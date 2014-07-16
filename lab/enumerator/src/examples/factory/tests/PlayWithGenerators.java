@@ -27,6 +27,7 @@ public class PlayWithGenerators {
 
 			Map<Class<?>,StringBuilder>  generatedCode=GeneratorFactory.getGenerator(targetClass).generateEnumerator(packagePath,existingdCode);
 
+			// TODO: handle existing files (e.g. if we generate Car + Student, the code in Student is duplicated)
 			// create files with the generated code
 			for(Class<?> c:generatedCode.keySet()){
 				// TODO: change hard-coded with classList
@@ -40,10 +41,10 @@ public class PlayWithGenerators {
 
 	public static void main(String args[]) throws IOException, ClassNotFoundException, GeneratorFactoryException{
 		String packagePath="examples.factory.tests";
-//		PlayWithGenerators.generateFactoryFiles(Car.class,packagePath);
+		PlayWithGenerators.generateFactoryFiles(Car.class,packagePath);
 		PlayWithGenerators.generateFactoryFiles(Garage.class,packagePath);
 //		PlayWithGenerators.generateFactoryFiles(Garage2.class,packagePath);
-		PlayWithGenerators.generateFactoryFiles(Student.class,packagePath);
+//		PlayWithGenerators.generateFactoryFiles(Student.class,packagePath);
 
 		////PlayWithGenerators.generateFactoryFiles(T3.class,"examples.factory.tests");
 		//		

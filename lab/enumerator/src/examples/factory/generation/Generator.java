@@ -4,6 +4,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
 import java.math.BigInteger;
@@ -19,6 +20,7 @@ import tom.library.enumerator.F;
 
 public class Generator {
 	public static final String ENDL = System.getProperty("line.separator");
+	public static final int CLASS = Integer.MAX_VALUE;
 
 	private final Class<?> class2enumerate;
 	private String classTypeParameters;
@@ -146,8 +148,8 @@ public class Generator {
 
 		// import the class to be enumerated
 		// really needed?
-//		generatorHeader.append("import " + class2enumerate.getCanonicalName()
-//				+ ";" + ENDL);
+		generatorHeader.append("import " + class2enumerate.getCanonicalName()
+				+ ";" + ENDL);
 
 		// import the classes used in the profile of the constructor to be used
 		// for the enumeration
@@ -236,9 +238,10 @@ public class Generator {
 
 	public String generateEnumerationFunction(int index) {
 		StringBuilder sb = new StringBuilder();
-		if (index < paraType.size()) {
+		if (index < this.constructorParameters.size()) {
 			sb.append("public " + getParameterList(index) + " apply (final "
-					+ paraType.get(index - 1).getStringClass() + "" + " arg"
+//					+ paraType.get(index - 1).getStringClass() + "" + " arg"
+					+ typeName4Parameter(index - 1) + "" + " arg"
 					+ (index - 1) + "){" + ENDL);
 			sb.append("return new " + getParameterList(index) + "() {" + ENDL);
 			sb.append(generateEnumerationFunction(index + 1));
@@ -246,12 +249,15 @@ public class Generator {
 			sb.append("}" + ENDL);
 		} else {
 			sb.append("public "
-					+ ParaType.createParaType(class2enumerate).getStringClass()
+//					+ ParaType.createParaType(class2enumerate).getStringClass()
+					+ class2enumerate.getCanonicalName()+this.classTypeParameters
 					+ " apply (final "
-					+ paraType.get(index - 1).getStringClass() + "" + " arg"
+//					+ paraType.get(index - 1).getStringClass() + "" + " arg"
+					+ typeName4Parameter(index - 1) + "" + " arg"
 					+ (index - 1) + "){" + ENDL);
 			sb.append("return new "
-					+ ParaType.createParaType(class2enumerate).getStringClass()
+//					+ ParaType.createParaType(class2enumerate).getStringClass()
+					+ class2enumerate.getCanonicalName()+this.classTypeParameters
 					+ "(" + listArgs() + ");" + ENDL);
 			sb.append("}" + ENDL);
 		}
@@ -260,7 +266,7 @@ public class Generator {
 	}
 
 	
-	public  String variableName4Class() {
+	private String variableName4Class() {
 		String canonicalName=this.class2enumerate.getCanonicalName().toLowerCase();
 		StringBuilder sb = new StringBuilder();
 		String l[] = canonicalName.split(Pattern.quote("."));
@@ -272,7 +278,7 @@ public class Generator {
 
 	private String listArgs() {
 		StringBuilder sb = new StringBuilder();
-		for (int i = 0; i < paraType.size(); i++) {
+		for (int i = 0; i < this.constructorParameters.size(); i++) {
 			sb.append("arg" + i);
 			if (i < paraType.size() - 1) {
 				sb.append(", ");
@@ -281,48 +287,96 @@ public class Generator {
 		return sb + "";
 	}
 
-	private String getParameterList(int index) {
-		StringBuilder sb = new StringBuilder();
-
-		if (index < paraType.size()) {
-			sb.append("F<" + paraType.get(index).getStringClass() + ",");
-			sb.append(getParameterList(index + 1));
-			sb.append(">");
-		} else {
-			sb.append(ParaType.createParaType(class2enumerate).getStringClass());
-		}
-		return sb + "";
-	}
+//	private String getParameterList(int index) {
+//		StringBuilder sb = new StringBuilder();
+//
+//		if (index < paraType.size()) {
+//			sb.append("F<" + paraType.get(index).getStringClass() + ",");
+//			sb.append(getParameterList(index + 1));
+//			sb.append(">");
+//		} else {
+//			sb.append(ParaType.createParaType(class2enumerate).getStringClass());
+//		}
+//		return sb + "";
+//	}
 
 
 	/****************************************** END ---- GenerateFunction---- **********************************************************/
 
+	private String getParameterList(int index) {
+		StringBuilder sb = new StringBuilder();
+
+		if (index < this.constructorParametersTypes.size()) {
+			sb.append("F<" + typeName4Parameter(index) + ",");
+			sb.append(getParameterList(index + 1));
+			sb.append(">");
+		} else {
+//			sb.append(class2enumerate.getCanonicalName()+this.classTypeParameters);
+			sb.append(typeName4Parameter(CLASS));
+		}
+
+		return sb + "";
+	}
+
+	private  String typeName4Parameter(int index){
+		String res="";
+		Type paraType=class2enumerate;
+		if (index < this.constructorParametersTypes.size()) {
+			 paraType=this.constructorParametersTypes.get(index);
+		}else{
+			return class2enumerate.getCanonicalName()+this.classTypeParameters;
+		}
+		// TODO: misses GenericArrayType (http://www.artima.com/weblogs/viewpost.jsp?thread=208860)
+		if(paraType instanceof TypeVariable || paraType instanceof ParameterizedType){
+			res+=paraType;
+		}else if(paraType instanceof Class){
+			if(Tools.isBasicType(paraType)){
+				// System.out.println("PRIMITIVE = "+paraType);
+				res=Tools.name4PrimitiveType(paraType);
+			}else{
+				res=this.constructorParameters.get(index).getCanonicalName();
+				// System.out.println("CLASS = "+paraType);
+			}
+		}else {
+			res="ERROR";
+		}
+		
+		return res;
+	}
 	
 	/************************************* GENERATE ENUMERATOR **************************************/
 
 	protected void generateEnum(String packagePath) {
 
+		// TODO: constructor contains other type parameters than the class
 		if (constructorParameters.contains(class2enumerate)) {
 			recursiveCall();
 		}
 
-		for (int i = 0; i < paraType.size(); i++) {
+		for (int i = 0; i < this.constructorParameters.size(); i++) {
 			ParaType pt = paraType.get(i);
-			Class<?> cla = constructorParameters.get(i);
+			Class<?> cla = this.constructorParameters.get(i);
+			Type paramType = this.constructorParametersTypes.get(i);
+			
 			Enumerate annotation = getEnumerateAnnotation(i);
 
 			// case : the Parameter is the class that we want to generate the
 			// Factory
 
-			if (cla != class2enumerate) {
+//			if (cla != class2enumerate) {
+		    if (!class2enumerate.equals(cla)) {
 
-				if (Tools.isPrimitive(cla)) {
+//				if (Tools.isPrimitive(cla)) {
+			    if (Tools.isBasicType(paramType)) {
 					enumeratorCode.append("final Enumeration<"
-							+ pt.getStringClass() + "> arg" + i + " = ");
+//							+ pt.getStringClass() + "> arg" + i + " = ");
+							+ Tools.name4PrimitiveType(paramType) + "> arg" + i + " = ");
 					enumeratorCode.append("new Enumeration <"
-							+ pt.getStringClass() + ">(");
+//							+ pt.getStringClass() + ">(");
+							+ Tools.name4PrimitiveType(paramType) + ">(");
 					enumeratorCode.append("Combinators.make"
-							+ paraType.get(i).getStringClass() + "().parts()");
+//							+ paraType.get(i).getStringClass() + "().parts()");
+							+ Tools.name4PrimitiveType(paramType) + "().parts()");
 
 					if (annotation != null && annotation.maxSize() > 0) {//
 						// make anything
@@ -330,7 +384,23 @@ public class Generator {
 								+ annotation.maxSize() + "))");
 					}
 					enumeratorCode.append(");" + ENDL);
+				} else if(cla.equals(String.class)){
+					enumeratorCode.append("final Enumeration<"
+							+ typeName4Parameter(i) + "> arg" + i + " = ");
+					enumeratorCode.append("new Enumeration <"
+							+ typeName4Parameter(i) + ">(");
+					enumeratorCode.append("Combinators.make"
+							+ "String" + "().parts()");
+
+					if (annotation != null && annotation.maxSize() > 0) {//
+						// make anything
+						enumeratorCode.append(".take(BigInteger.valueOf("
+								+ annotation.maxSize() + "))");
+					}
+					enumeratorCode.append(");" + ENDL);
+					
 				} else if (List.class.isAssignableFrom(cla)) {
+				
 					// PACKAGELIBRARY
 
 					enumeratorCode.append("Enumeration<" + pt.getStringClass()
@@ -340,9 +410,10 @@ public class Generator {
 
 				} else if (pt instanceof ParaTypeClass) {
 					enumeratorCode.append("final Enumeration<"
-							+ pt.getStringClass() + "> arg" + i + " = ");
+//							+ pt.getStringClass() + "> arg" + i + " = ");
+							+ typeName4Parameter(i) + "> arg" + i + " = ");
 					enumeratorCode.append(packagePath + "."
-							+ cla.getSimpleName() + "Factory.getEnumeration();"
+							+ this.constructorParameters.get(i).getSimpleName() + "Factory.getEnumeration();"
 							+ ENDL);
 				}
 			}
@@ -377,7 +448,8 @@ public class Generator {
 	}
 
 	private void recursiveCall() {
-		String cl = ParaType.createParaType(class2enumerate).getStringClass();
+//		String cl = ParaType.createParaType(class2enumerate).getStringClass();
+		String cl = class2enumerate.getCanonicalName()+this.classTypeParameters;
 
 		enumeratorCode.append("// recursive call" + ENDL);
 
