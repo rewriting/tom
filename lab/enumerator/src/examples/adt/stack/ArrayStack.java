@@ -42,7 +42,6 @@ public class ArrayStack implements IStack {
 
  		return stack[index];
 // 		return stack[index-1];
-//		return stack[(SIZE+index-1)%SIZE]; 
 	}
 
 	
