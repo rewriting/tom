@@ -6,7 +6,7 @@ package tom.library.shrink.metaterm;
 import aterm.*;
 import aterm.pure.PureFactory;
 
-import examples.adt.tree.types.*;
+import examples.adt.tree.tree.types.*;
 
 import tom.library.sl.Visitable;
 import tom.library.sl.VisitableBuiltin;
@@ -17,6 +17,7 @@ import java.lang.reflect.Method;
 import java.util.*;
 
 import tom.library.shrink.Shrink;
+import java.lang.reflect.InvocationTargetException;
 
 public class TomShrink implements Shrink {
   %include { int.tom }

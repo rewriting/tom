@@ -1,0 +1,10 @@
+module examples.adt.list.AList
+	imports int String boolean
+	abstract syntax
+
+	AList = empty()
+        | con(head:Elem, tail:AList)
+	
+	Elem = cs(i:int)
+	
+//	Elem = cs(name:String)

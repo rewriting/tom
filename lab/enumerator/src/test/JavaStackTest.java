@@ -20,7 +20,8 @@ import examples.adt.stack.stack.types.Stack;
 @RunWith(PropCheck.class)
 public class JavaStackTest {
 
-	private static StackFactory factory= StackFactory.getInstance(StackFactory.ARRAY);
+	private static StackFactory factory = StackFactory
+			.getInstance(StackFactory.ARRAY);
 	private static IStack init = factory.makeStack();
 
 	@Theory
@@ -39,8 +40,7 @@ public class JavaStackTest {
 	}
 
 	@Theory
-	public void testPopSize(@ForSome Stack gs)
-			throws EmptyStackException {
+	public void testPopSize(@ForSome Stack gs) throws EmptyStackException {
 		IStack s = factory.makeStack(gs);
 		assumeThat(s.isEmpty(), equalTo(false));
 		int initSize = s.size();
@@ -48,19 +48,21 @@ public class JavaStackTest {
 	}
 
 	@Theory
-	public void testPopPush(@ForSome Stack gs, @ForSome int n) 
-			throws EmptyStackException {
+	public void testPopPush(@ForSome(minSampleSize = 30, maxSampleSize = 50) Stack gs,
+			@ForSome(maxSampleSize = 10) int n) throws EmptyStackException {
 		IStack s = factory.makeStack(gs);
 		IStack sclone = factory.makeStack(gs);
 		assertThat(s.push(n).pop(), is(sclone));
 	}
 
-	@Theory public void testTop(@ForSome Stack gs, @ForSome int n) 
-					throws EmptyStackException {
+	@Theory
+	public void testTop(@ForSome(minSampleSize = 10, maxSampleSize = 50) Stack gs,
+			@ForSome(maxSampleSize = 10) int n)
+			throws EmptyStackException {
 		IStack s = factory.makeStack(gs);
 		assertThat(s.push(n).top(), is(n));
 	}
-	
+
 	@Test
 	public void testIsEmptyEmpty() {
 		IStack s = init.empty();
@@ -84,6 +86,5 @@ public class JavaStackTest {
 		IStack s = init.empty();
 		s.top();
 	}
-
 
 }

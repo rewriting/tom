@@ -3,10 +3,19 @@ package tom.library.theory.internal;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.media.j3d.Link;
+
 import org.junit.internal.AssumptionViolatedException;
+import org.junit.runners.model.Statement;
 
 import tom.library.theory.shrink.ShrinkHandler;
 
+/**
+ * Handles the actions when a {@code Statement} is evaluated in {@link StatementBuilder}. 
+ * 
+ * @author nauval
+ *
+ */
 public class ExecutionHandler {
 
 	private final List<AssumptionViolatedException> invalidParameters =
@@ -47,6 +56,15 @@ public class ExecutionHandler {
 		statistic.increaseBadInputCount();
 	}
 
+	/**
+	 * Handle failed test. When a test is fail, the failure count will be increased
+	 * and the counter-example will be shrunk to produce smaller counter example.
+	 * 
+	 * @param exception
+	 * @param methodName
+	 * @param params
+	 * @throws Throwable
+	 */
 	public void handleFailures(Throwable exception, String methodName, Object...params) throws Throwable {
 		increaseFailureCount();
 		counterExample = CounterExample.build(params);
@@ -75,6 +93,10 @@ public class ExecutionHandler {
 	
 	public Statistic getStatistic() {
 		return statistic;
+	}
+	
+	public String generateTestStatistics() {
+		return statistic.generateStatistic();
 	}
 	
 	public boolean isTestNeverSucceed() {

@@ -11,11 +11,11 @@ import tom.library.enumerator.Enumeration;
 import tom.library.theory.Enum;
 import tom.library.theory.ForSome;
 import tom.library.theory.PropCheck;
-import examples.data.treenat.Fork;
-import examples.data.treenat.Leaf;
-import examples.data.treenat.Nat;
-import examples.data.treenat.Suc;
-import examples.data.treenat.Tree;
+import examples.tomchecktest.treenat.Fork;
+import examples.tomchecktest.treenat.Leaf;
+import examples.tomchecktest.treenat.Nat;
+import examples.tomchecktest.treenat.Suc;
+import examples.tomchecktest.treenat.Tree;
 
 @RunWith(PropCheck.class)
 public class TomCheckTest {

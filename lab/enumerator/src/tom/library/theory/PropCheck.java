@@ -25,6 +25,19 @@ import tom.library.theory.internal.TestObject;
 import tom.library.theory.shrink.DefaultShrinkHandler;
 import tom.library.theory.shrink.ShrinkHandler;
 
+/**
+ * <p>
+ * The test runner that extends {@code Theories} where the evaluation of a {@code Statement} 
+ * is located. To use this class as a runner, a JUnit test class should be marked with {@code PropCheck.class}
+ * in the class definition:
+ * </p>
+ * <pre>
+{@code @RunWith(PropCheck.class) 
+public class FooTest {
+	....
+}
+</pre>
+ */
 public final class PropCheck extends Theories {
 	private static HashMap<Type, Enumeration<?>> map;
 
@@ -126,7 +139,7 @@ public final class PropCheck extends Theories {
 		 */
 		for (Method method : testclass.getMethods()) {
 			if (method.getAnnotation(Theory.class) != null) {
-				Class[] parameterTypes = method.getParameterTypes();
+				Class<?>[] parameterTypes = method.getParameterTypes();
 
 				Annotation[][] parameterAnnotations = method.getParameterAnnotations();
 
@@ -196,23 +209,14 @@ public final class PropCheck extends Theories {
 	       testObject = new TestObject(method, testClass);
 	    }
 	    
-	    // TODO move to another class!!
-		private ShrinkHandler newHandlerInstance() {
+	    // instantiate shrink handler, if none is specified, then 
+	    // the default DefaultShrinkHandler will be used.
+	    private ShrinkHandler newShrinkHandlerInstance() {
 			ShrinkHandler handler = null;
 			try {
 				handler = getShrinkHandlerClass().getConstructor(
 						TestObject.class).newInstance(testObject);
-			} catch (InstantiationException e) {
-				e.printStackTrace();
-			} catch (IllegalAccessException e) {
-				e.printStackTrace();
-			} catch (IllegalArgumentException e) {
-				e.printStackTrace();
-			} catch (InvocationTargetException e) {
-				e.printStackTrace();
-			} catch (NoSuchMethodException e) {
-				e.printStackTrace();
-			} catch (SecurityException e) {
+			} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
 				e.printStackTrace();
 			}
 			return handler;
@@ -220,7 +224,11 @@ public final class PropCheck extends Theories {
 
 		private Class<? extends ShrinkHandler> getShrinkHandlerClass() {
 			Class<? extends ShrinkHandler> shrinkClass;
-			if (testObject.getMethod().getAnnotation(Shrink.class) != null) {
+			// handles the @Shrink when it is declared in a class level
+			if (testObject.getTestClass().getJavaClass().getAnnotation(Shrink.class) != null) {
+				shrinkClass = testObject.getTestClass().getJavaClass()
+						.getAnnotation(Shrink.class).handler();
+			} else if (testObject.getMethod().getAnnotation(Shrink.class) != null) {
 				shrinkClass = testObject.getMethod()
 						.getAnnotation(Shrink.class).handler();
 			} else {
@@ -231,7 +239,7 @@ public final class PropCheck extends Theories {
 	    
 	    @Override
 	    public void evaluate() throws Throwable {
-	    	handler = new ExecutionHandler(newHandlerInstance());
+	    	handler = new ExecutionHandler(newShrinkHandlerInstance());
 	    	AssignmentRunner runner = new AssignmentRunner(testObject, handler);
 	    	runner.runWithAssignment(getUnassignedAssignments());
 	    	
@@ -246,10 +254,14 @@ public final class PropCheck extends Theories {
 					testObject.getTestClass());
 		}
 		
+		/**
+		 * Generates the statistics of the test
+		 * @return a readable statistic format
+		 */
 		public String generateStatistic() {
 			return String.format("Testing %s().\n%s", 
 					testObject.getMethodName(), 
-					handler.getStatistic().generateStatistic());
+					handler.generateTestStatistics());
 		}
 	}
 }

@@ -11,6 +11,12 @@ import tom.library.theory.shrink.suppliers.ShrinkParameterSupplier;
 import tom.library.theory.shrink.suppliers.ShrinkValueSupplier;
 import tom.library.theory.shrink.suppliers.TomShrinkValueSupplier;
 
+/**
+ * Handles the shrink mechanism. 
+ *  
+ * @author nauval
+ *
+ */
 public class DefaultShrinkHandler implements ShrinkHandler {
 	private TestObject testObject;
 	private int shrunkCount = 0;
@@ -28,6 +34,12 @@ public class DefaultShrinkHandler implements ShrinkHandler {
 		throwParameterizedAssertionFailureWithCounterExamples(e, counterExample.getCounterExamples());
 	}
 	
+	/**
+	 * The core of the shrink mechanism where how the shrink is done and which 
+	 * implementation of {@code ShrinkParameterSupplier} is used.
+	 * 
+	 * @throws Throwable
+	 */
 	protected void handleShrink() throws Throwable {
 		ExecutionHandler handler = new ExecutionHandler(this) {
 			@Override
@@ -60,7 +72,6 @@ public class DefaultShrinkHandler implements ShrinkHandler {
 	
 	protected void repeatShrink(Throwable e, Object... params) throws Throwable {
 		CounterExample temporaryCounterExample = CounterExample.build(params);
-		//if (temporaryCounterExample.isSmallerThan(currentCounterExample)) {
 		if (!temporaryCounterExample.isEqualsTo(currentCounterExample)) {
 			increaseShrunkCount();
 			currentCounterExample = temporaryCounterExample;

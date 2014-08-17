@@ -1,27 +1,29 @@
 package test;
 
-import static org.junit.Assert.*;
-import static org.junit.Assume.*;
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import static org.junit.Assume.assumeThat;
 
 import org.junit.Before;
 import org.junit.contrib.theories.Theory;
 import org.junit.runner.RunWith;
 
-import examples.adt.queue.SimpleQueue;
-import examples.adt.queue.SimpleQueue.EmptyQueueException;
-import examples.adt.queue.queue.types.Elem;
-import examples.adt.queue.queue.types.Queue;
-import tom.library.enumerator.Enumeration;
-import tom.library.theory.Enum;
-import tom.library.theory.Shrink;
-import tom.library.theory.PropCheck;
 import tom.library.theory.ForSome;
+import tom.library.theory.PropCheck;
+import tom.library.theory.Shrink;
 import tom.library.theory.internal.CounterExample;
 import tom.library.theory.internal.ParameterizedAssertionFailure;
 import tom.library.theory.internal.TestObject;
 import tom.library.theory.shrink.DefaultShrinkHandler;
+import examples.adt.queue.SimpleQueue;
+import examples.adt.queue.SimpleQueue.EmptyQueueException;
+import examples.adt.queue.queue.types.Elem;
+import examples.adt.queue.queue.types.Queue;
 
+//@Shrink(handler=SimpleQueueTest.CustomShrinkHandler.class)
 @RunWith(PropCheck.class)
 public class SimpleQueueTest {
 	private SimpleQueue classUnderTest;
@@ -93,7 +95,7 @@ public class SimpleQueueTest {
 	}
 	
 	@Theory
-	@Shrink(handler=CustomShrinkHandler.class)
+	//@Shrink(handler=CustomShrinkHandler.class)
 	public void testAssociativityEnqueDequeueWithCustomShrink(
 			@ForSome(maxSampleSize = 10) Elem element,
 			@ForSome(minSampleSize=25, maxSampleSize = 30) Queue queue) throws EmptyQueueException {
@@ -117,9 +119,9 @@ public class SimpleQueueTest {
 		}
 		
 		@Override
-		public void shrink(CounterExample counterExample) throws Throwable {
+		public void shrink(Throwable e, CounterExample counterExample) throws Throwable {
 			// do nothing, no shrink defined
-			throw new ParameterizedAssertionFailure(new Exception("no shrink"), "", counterExample.getCounterExamples());
+			throw new ParameterizedAssertionFailure(e, "", counterExample.getCounterExamples());
 		}
 	}
 }

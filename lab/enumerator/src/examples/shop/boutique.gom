@@ -1,0 +1,90 @@
+module examples.shop.Boutique
+imports int
+abstract syntax
+
+// item
+Item = item(id:int, price:int)
+// line items
+LineItem = lineItem(item:Item, quantity:int)
+// inventory
+Inventory = items(LineItem*)
+// carts => buyer's cart
+Carts = carts(id:int, line:Inventory)
+// selling
+Selling = selling(Carts*)
+// shop containing inventory and selling
+Shop = shop(inventory:Inventory, selling:Selling)
+
+
+// positive ids and prices
+item:make(id,p) {
+  return realMake(Math.abs(id),Math.abs(p));
+}
+
+// positive ids and prices
+lineItem:make(it,q) {
+  return realMake(it,Math.abs(q));
+}
+
+// inventories should contain only one line per item
+items:make_insert(e,l) {
+  %match(LineItem e, Inventory l) {
+    lineItem(item(id,p), q), items(IL1*, lineItem(item(id,p2),q2), IL2*) -> { 
+      return `items(IL1*, lineItem(item(id,p),q+q2), IL2*); 
+    }
+  }
+  return realMake(e,l);
+}
+
+/*
+// same price for the same id in all carts
+carts:make_insert(e,l) {
+  %match(Inventory e, Carts l) {
+    items(IL1*, lineItem(item(id,p2),q2), IL2*) , ocarts@carts(C1*, items(id, I1*, lineItem(item(id,p1),q1), I2*), C2*)  -> { 
+      if(`p1!=`p2){
+        return `carts(items(IL1*, lineItem(item(id,p1),q2), IL2*), ocarts); 
+      }
+    }
+  }
+  return realMake(e,l);
+}
+*/
+
+// same price for the same id in all lines of a cart
+/*lines:make_insert(e,l) {
+  %match(Inventory e, Lines l) {
+    items(IL1*, lineItem(item(id,p2),q2), IL2*) , olines@lines(C1*, items(I1*, lineItem(item(id,p1),q1), I2*), C2*)  -> { 
+      if(`p1!=`p2){
+        return `lines(items(IL1*, lineItem(item(id,p1),q2), IL2*), olines); 
+      }
+    }
+  }
+  return realMake(e,l);
+}
+*/
+// positives id for carts
+carts:make(id, l) {
+	return realMake(Math.abs(id), l);
+}
+
+// carts should only contain items from the inventory
+// items should have same price in carts and inventory
+// TODO: sum of quantities in carts = quantity in inventory
+// TODO: quantities (in carts) bigger than 0
+shop:make(i,s) {
+  %match(Selling s, Inventory i) {
+
+		sselling@selling(C1*, carts(id, items(I1*, it@lineItem(item(id,p), q), I2*)), C2*),
+		!items(IL1*, lineItem(item(id,_),_), IL2*) -> {
+			return `shop(items(it,i*), sselling);
+		}
+
+		sselling@selling(C1*, carts(id, items(I1*, it@lineItem(item(id,p), q), I2*)), C2*),
+		items(IL1*, lineItem(item(id,pi),qi), IL2*) -> {
+			if(`pi!=`p){
+        return `shop( items(IL1*, lineItem(item(id,p),qi), IL2*), sselling );
+      }
+		}
+  }
+  return realMake(i,s);
+}

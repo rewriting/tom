@@ -1,0 +1,40 @@
+module examples.shop.Shop
+imports int
+abstract syntax
+
+Inventory = EmptyInv()
+		| Inv(LineItem:LineItem, Inventory:Inventory)
+
+ShoppingCart = EmptyCart()
+		| Cart(LineItem:LineItem, ShoppingCart:ShoppingCart)
+
+LineItem = Line(Item:Item, Quantity:int)
+
+Item = Product(Id:int, Price:int)
+
+
+Line:make(item, quantity) {
+	int newQuantity = 1;
+	if (quantity < 0) {
+		newQuantity = Math.abs(quantity);
+	} else if (quantity > 0) {
+		newQuantity = quantity;
+	} 
+	return realMake(item, newQuantity);
+}
+
+Product:make(id, price) {
+	int newId = 1;
+	int newPrice = 1;
+	if (id < 0) {
+		newId = Math.abs(id);
+	} else if (id > 0) {
+		newId = id;
+	} 
+	if (price < 0) {
+		newPrice = Math.abs(price);
+	} else if (price > 0) {
+		newPrice = price;
+	} 
+	return realMake(newId, newPrice);
+}

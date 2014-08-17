@@ -91,6 +91,8 @@ What must I do when there is an unsolved conflict:
 [en] http://team.gcu.info/~ange/git_article/
 [en] http://www.zorched.net/2008/04/14/start-a-new-branch-on-your-remote-git-repository/
 [en] http://www.gitready.com/beginner/2009/02/02/push-and-delete-branches.html
+http://nvie.com/posts/a-successful-git-branching-model/
 
 [en] ProGit book (complete reference): http://progit.org/book/
+http://git-scm.com/book
 [en] « Version Control with Git » book: http://oreilly.com/catalog/9780596520137

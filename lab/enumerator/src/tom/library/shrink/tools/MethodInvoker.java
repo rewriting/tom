@@ -3,12 +3,19 @@ package tom.library.shrink.tools;
 import java.lang.reflect.InvocationTargetException;
 
 
-
+/**
+ * <p>
+ * A helper class to deal with reflective method calls.
+ * </p>
+ * @author nauval
+ *
+ */
 public final class MethodInvoker {
 
 	/**
+	 * <p>
 	 * Invokes the given {@code static} method from an instance.
-	 *  
+	 * </p>
 	 * @param instance the instance from which the method is invoked
 	 * @param method the invoked static method name
 	 * 
@@ -35,8 +42,9 @@ public final class MethodInvoker {
 	}
 
 	/**
+	 * <p>
 	 * Invokes the given {@code static} method from an instance's {@code Class<?>}.
-	 *  
+	 * </p>
 	 * @param instance the instance from which the method is invoked
 	 * @param method the invoked static method name
 	 * 
@@ -69,11 +77,13 @@ public final class MethodInvoker {
 	public static Object invokeStaticMethodFromSuperclass(Class<?> instance, String method) throws Exception {
 		return invokeStaticMethod(instance.getSuperclass(), method);
 	}
+	
 	/**
-	 * Invokes the given method from an instance.
-	 * 
+	 * <p>
+	 * Invokes the given method from an instance without parameters.
+	 * </p>
 	 * @param instance the instance from which the method is invoked
-	 * @param method the invoked static method name
+	 * @param method the invoked method name
 	 * @return the resulting object from method invocation
 	 * @throws Exception
 	 */
@@ -82,6 +92,17 @@ public final class MethodInvoker {
 	
 	}
 
+	/**
+	 * <p>
+	 * Invokes the given method from the given instance using the given parameter types and values.
+	 * </p>
+	 * @param instance the instance from which the method is invoked
+	 * @param method the method name
+	 * @param paramType type of each parameters
+	 * @param paramVal value of each parameters, accordingly to the type
+	 * @return
+	 * @throws Exception
+	 */
 	public static Object invokeMethod(Object instance, String method, Class<?>[] paramType, Object[] paramVal) throws Exception {
 		Object result = null;
 		try{

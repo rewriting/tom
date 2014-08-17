@@ -14,7 +14,7 @@ import tom.library.theory.shrink.ShrinkHandler;
  *
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.METHOD)
+@Target({ElementType.METHOD, ElementType.TYPE})
 public @interface Shrink {
 	Class<? extends ShrinkHandler> handler() default DefaultShrinkHandler.class; 
 }

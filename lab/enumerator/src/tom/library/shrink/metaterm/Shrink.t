@@ -7,7 +7,7 @@ package tom.library.shrink.metaterm;
 import aterm.*;
 import aterm.pure.PureFactory;
 
-import examples.adt.tree.types.*;
+import examples.adt.tree.tree.types.*;
 
 import tom.library.sl.Visitable;
 import tom.library.sl.VisitableBuiltin;

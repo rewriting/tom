@@ -1,8 +1,0 @@
-module examples.adt.Tree
-imports int String
-abstract syntax
-
-Tree = empty()
-	| tree(node:Node, left:Tree, right:Tree)
-
-Node = val(val:int)

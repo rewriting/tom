@@ -1,98 +1,58 @@
 package tom.library.shrink;
 
-import static tom.library.shrink.tools.VisitableTools.isInstanceOfVisitable;
-
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.TreeSet;
 
-import tom.library.shrink.metaterm.TomShrink;
-import tom.library.shrink.reducers.ExplotionReducer;
-import tom.library.shrink.reducers.IntegerReducer;
-import tom.library.shrink.reducers.Reducer;
-import tom.library.shrink.reducers.StringReducer;
-import tom.library.shrink.reducers.SubtermReducer;
-import tom.library.shrink.reducers.ValueReducer;
-import tom.library.sl.Visitable;
+import tom.library.shrink.reducers.ReducerFactory;
 
+
+
+/**
+ * <p>
+ * Generates terms from a given counter-example. The steps that are used in this process are:
+ * <ul>
+ * <li>Get immediate sub-terms that have the same type with the counter-examples</li>
+ * <li>Replace subterms with their terminal constructor</li>
+ * <li>Generate terms that have smaller int/String values based on the given counter-example</li>
+ * </ul>
+ * By using this process, the shrink mechanism should be done repetitively, i.e. the new counter-examples
+ * need to be shrunk again using this class until no smaller counter-example found.
+ * </p>
+ * 
+ * <p>
+ * To apply the rules, {@code SimpleShrink} uses a {@code Reducer}. {@code Reducer}
+ * is an interface to reduce a given term to some smaller terms. A decorator pattern
+ * has been used to build the reducers. A {@code ReducerFactory} is used to
+ * create the appropriate reducer for a given term.
+ * </p>
+ * 
+ * @author nauval
+ *
+ */
 public class SimpleShrink implements Shrink {
 
-	private Collection<Object> terms;
-	
-	private Reducer<Visitable> subtermReducer;
-	private Reducer<Visitable> explotionReducer;
-	private Reducer<Visitable> valueReducer;
-	private Reducer<String> stringReducer;
-	private Reducer<Integer> intReducer;
-	
-	public SimpleShrink() {
-		terms = new HashSet<Object>();
-		
-		subtermReducer = new SubtermReducer();
-		explotionReducer = new ExplotionReducer();
-		valueReducer = new ValueReducer();
-		stringReducer = new StringReducer();
-		intReducer = new IntegerReducer();
-	}
-	
+
+	/**
+	 * Returns an unsorted collection of terms after the mutation process. 
+	 */
 	@Override
 	public Collection<Object> shrink(Object term) {
-		terms.clear();
-		buildSmallerTerms(term);
-		terms.add(term);
-		//addTermIfBuiltTermsIsEmpty(term);
+		Collection<Object> terms = new HashSet<Object>();
+		terms.addAll(ReducerFactory.getInstance(term).createReducer().reduce());
 		return terms;
 	}
-	
+
+
+	/**
+	 * Returns a sorted collection of terms after the mutation process
+	 */
 	@Override
 	public Collection<Object> shrink(Object term,
 			Comparator<? super Object> comparator) {
-		terms = new TreeSet<Object>(comparator);
-		buildSmallerTerms(term);
-		//addTermIfBuiltTermsIsEmpty(term);
-		terms.add(term);
+		Collection<Object>  terms = new TreeSet<Object>(comparator);
+		terms.addAll(ReducerFactory.getInstance(term).createReducer().reduce());
 		return terms;
-	}
-
-	private void buildSmallerTerms(Object object) {
-		if (isInstanceOfVisitable(object)) {
-			Visitable term = (Visitable) object;
-
-			// try to substitute SimpleShrink by TomShrink
-			//TomShrink ts = new TomShrink();
-			//terms.addAll(ts.shrink(term));
-			
-			terms.addAll(subtermReducer.reduce(term));
-			terms.addAll(explotionReducer.reduce(term));
-			terms.addAll(valueReducer.reduce(term));
-			
-		} else {
-			reducePrimitives(object);
-		}
-	}
-	
-	private void reducePrimitives(Object object) {
-		if (isInstanceOfString(object)) {
-			String term = (String) object;
-			terms.addAll(stringReducer.reduce(term));
-		} else if (isInstanceOfInteger(object)) {
-			int term = (int) object;
-			terms.addAll(intReducer.reduce(term));
-		}
-	}
-	
-	private boolean isInstanceOfString(Object term) {
-		return term instanceof String;
-	}
-
-	private boolean isInstanceOfInteger(Object term) {
-		return term instanceof Integer;
-	}
-	
-	private void addTermIfBuiltTermsIsEmpty(Object term) {
-		if (terms.isEmpty()) {
-			terms.add(term);
-		}
 	}
 }
