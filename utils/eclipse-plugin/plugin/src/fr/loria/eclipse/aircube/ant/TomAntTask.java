@@ -2,7 +2,7 @@
   
     TOM - To One Matching Compiler
 
-    Copyright (c) 2004-2014, Inria Nancy, France.
+    Copyright (c) 2004-2015, Inria Nancy, France.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
