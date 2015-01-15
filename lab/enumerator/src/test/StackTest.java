@@ -66,7 +66,7 @@ public class StackTest {
 //	@Ignore
 	@Theory
 	public void testNonEmptySize(
-			@ForSome(minSampleSize = 25, maxSampleSize = 30) Stack gs) {
+			@ForSome(minSampleSize = 25, maxSampleSize = 30, numberOfSamples = 20) Stack gs) {
 		IStack s = factory.makeStack(gs);
 		assumeThat(s.isEmpty(), is(false));
 		assertThat(s.size(), greaterThan(0));
