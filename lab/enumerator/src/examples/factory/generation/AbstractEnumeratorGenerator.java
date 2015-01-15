@@ -1,24 +1,33 @@
 package examples.factory.generation;
 
 import java.io.IOException;
+import java.lang.reflect.Constructor;
 import java.math.BigInteger;
 import java.util.Map;
 
 import tom.library.enumerator.Combinators;
 import tom.library.enumerator.Enumeration;
 import tom.library.enumerator.F;
+import tom.library.theory.ForSome;
 
 public abstract class AbstractEnumeratorGenerator {
 
 	public static final String ENDL = System.getProperty("line.separator");
 	public static final String TAB = "\t";
 	
+	protected boolean canBeNull;
 
 	/**
 	 * Constuctor
 	 */
-	public AbstractEnumeratorGenerator() {
+	public AbstractEnumeratorGenerator(Class<?> class2enumerate) {
 		super();
+		// TODO: handle Exceptions
+		for(Constructor<?> constructor: class2enumerate.getConstructors()){
+			if(constructor.getAnnotation(EnumerateGenerator.class)!=null){
+				this.canBeNull = constructor.getAnnotation(EnumerateGenerator.class).canBeNull();
+			}
+		}
 	}
 
 	/***
@@ -73,7 +82,7 @@ public abstract class AbstractEnumeratorGenerator {
 		for (Class<?> cla : MyIntrospection.getClassFromConstructorEnumerator(class2enumerate)) {
 			// TODO: isPrimitive = int, long, byte, float, double, boolean, short, char   OU   java.lang.*
 			// Actually it s just int, long, byte, float, double, boolean, short, char that are considered as Primitive
-			if (!Tools.isLanguage(cla)) {
+			if (!Tools.isLanguage(cla) && !Tools.isPrimitive(cla)) {
 				generatorHeader.append("import " + cla.getCanonicalName()+";"+ENDL);
 			}
 		}

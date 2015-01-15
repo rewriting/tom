@@ -3,6 +3,7 @@ package examples.shop;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 
 public class Cart {
 	private int id;
@@ -71,6 +72,10 @@ public class Cart {
 	
 	public int getId() {
 		return id;
+	}
+	
+	public Collection<LineItem> getLineItems() {
+		return lines;
 	}
 
 //	public void addToCart(Item item, int quantity) {

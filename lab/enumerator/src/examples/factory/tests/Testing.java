@@ -159,6 +159,6 @@ public class Testing {
 		t.affichage(cons);
 		
 		System.out.println("BBBBBBBBBBBBBBBBBBBBB");
-		System.out.println(ParaType.createParaTypeforConstructorParameter(cons));
+//		System.out.println(ParaType.createParaTypeforConstructorParameter(cons));
 	}
 }

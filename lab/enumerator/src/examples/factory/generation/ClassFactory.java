@@ -21,6 +21,11 @@ import examples.factory.generation.Enumerate;
 public class ClassFactory extends AbstractEnumeratorGenerator{
 
 
+	public ClassFactory(Class<?> class2enumerate) {
+		super(class2enumerate);
+	}
+
+
 	@Override
 	protected  StringBuilder generateParticularImports(Class<?> class2enumerate){
 		return new StringBuilder("");
@@ -39,9 +44,11 @@ public class ClassFactory extends AbstractEnumeratorGenerator{
 		appendln(sb,"public static final "+preBuiltEnumeration1(fc.getTypeChamp())+" getEnumeration(){");
 		appendln(sb,"boolean canBeNull = false;");
 		// TODO: generate "canBeNull = true;" if  canBeNull==true in the annotation Enumerate
-		appendln(sb,"// if(@PlayWithGenerators(canBeNull)){");
-		appendln(sb,"    canBeNull = true;");
-		appendln(sb,"// }");
+		if(canBeNull){
+			//		appendln(sb,"// if(@PlayWithGenerators(canBeNull)){");
+			appendln(sb,"    canBeNull = true;");
+			//		appendln(sb,"// }");
+		}
 		appendln(sb,"return getEnumeration(canBeNull);");
 		appendln(sb,"}");
 		//fin methode enumeration
@@ -166,12 +173,7 @@ public class ClassFactory extends AbstractEnumeratorGenerator{
 		return ecrireF1(listClass, index);
 	}
 	
-	public static void main(String args[]){
-		ClassFactory cf=new ClassFactory();
-		System.out.println(cf.listArgs(2));
-		
-	}
-
+	
 
 	public void makeF(StringBuilder sb,Class<?> c,List<Class<?>>list,int index){
 		Class<?> nextClass=list.get(index-1);
@@ -231,7 +233,7 @@ public class ClassFactory extends AbstractEnumeratorGenerator{
 		}
 		else if(!o.getClass().equals(fc.getTypeChamp())){
 			sb.append(treatClassNameWithGenericType(fc.getParameter()+"",packagePath, classLists));
-			GeneratorFactory.getGenerator(fc.getTypeChamp()).generateEnumerator(fc.getTypeChamp(), packagePath, classLists);
+			GeneratorFactory.getGenerator(fc.getTypeChamp()).generateEnumerator(packagePath, classLists);
 		}
 		sb.append(";");
 		return sb+"";
@@ -262,7 +264,7 @@ public class ClassFactory extends AbstractEnumeratorGenerator{
 		try{
 			Class<?> nc=Class.forName(classType+"");
 			if(!nc.isPrimitive()){
-				GeneratorFactory.getGenerator(nc).generateEnumerator(nc, packagePath, classLists);
+				GeneratorFactory.getGenerator(nc).generateEnumerator(packagePath, classLists);
 
 			}
 			classTypeSimpleName=nc.getSimpleName();

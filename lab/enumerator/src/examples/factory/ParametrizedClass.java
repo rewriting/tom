@@ -1,7 +1,6 @@
 package examples.factory;
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
 
 public class ParametrizedClass<A,B,C,D,E,F> {
 	A a;

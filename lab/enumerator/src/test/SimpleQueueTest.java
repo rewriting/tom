@@ -23,6 +23,7 @@ import examples.adt.queue.SimpleQueue.EmptyQueueException;
 import examples.adt.queue.queue.types.Elem;
 import examples.adt.queue.queue.types.Queue;
 
+//@Shrink(handler=SimpleQueueTest.CustomShrinkHandler.class)
 @RunWith(PropCheck.class)
 public class SimpleQueueTest {
 	private SimpleQueue classUnderTest;
@@ -94,7 +95,7 @@ public class SimpleQueueTest {
 	}
 	
 	@Theory
-	@Shrink(handler=CustomShrinkHandler.class)
+	//@Shrink(handler=CustomShrinkHandler.class)
 	public void testAssociativityEnqueDequeueWithCustomShrink(
 			@ForSome(maxSampleSize = 10) Elem element,
 			@ForSome(minSampleSize=25, maxSampleSize = 30) Queue queue) throws EmptyQueueException {

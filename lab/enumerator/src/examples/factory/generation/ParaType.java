@@ -2,33 +2,57 @@ package examples.factory.generation;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Type;
+import java.lang.reflect.TypeVariable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
+
+import examples.factory.Car;
+import examples.factory.Garage;
 
 import sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl;
 import sun.reflect.generics.reflectiveObjects.TypeVariableImpl;
 
 public 	abstract class ParaType{
-	private List<ParaType> list;
-	
+	protected List<ParaType> paraTypes;
+
 	public ParaType(){
-		
-		this.list=new ArrayList<ParaType>();
+
+		this.paraTypes=new ArrayList<ParaType>();
 	}
 	public void addParaType(ParaType pt){
-		this.list.add(pt);
+		this.paraTypes.add(pt);
 	}
-	
+
 	public boolean isLeaf(){
-		return this.list.isEmpty();
+		return this.paraTypes.isEmpty();
+	}
+
+	public List<ParaType> getParaTypes() {
+		return paraTypes;
+	}
+	public void setParaTypes(List<ParaType> paraTypes) {
+		this.paraTypes = paraTypes;
 	}
 	@Override
 	public String toString() {
-		return getStringClass()+" ListParaType = "+list;
+		return getStringClass()+" ListParaType = "+paraTypes;
 	}
-	
+
 	public abstract String getStringClass();
-	
+
+
+	public String getSimpleStringClass(){
+		String r=getStringClass();
+		if(r.indexOf("<")!=-1){
+			r=r.substring(0,r.indexOf("<"));
+		}
+
+		String tab[]=r.split(Pattern.quote("."));
+		r=tab[tab.length-1];
+		return r;
+	}
+
 	/**
 	 * factory method to create paraType
 	 * @param t
@@ -36,29 +60,41 @@ public 	abstract class ParaType{
 	 */
 	public static ParaType createParaType(Type t){
 		ParaType paraType=null;
-		if(t instanceof ParameterizedTypeImpl){
+		if(t instanceof TypeVariableImpl){
+			paraType=new ParaTypeGeneric(t+"");
+		}else if(t instanceof ParameterizedTypeImpl){
 			paraType=new ParaTypeClass(((ParameterizedTypeImpl)t).getRawType());
 			for(Type t2:((ParameterizedTypeImpl)t).getActualTypeArguments()){
 				paraType.addParaType(createParaType(t2));
 			}
-		}else if(t instanceof TypeVariableImpl){
-			paraType=new ParaTypeGeneric(t+"");
 		}else{
 			paraType=new ParaTypeClass(((Class<?>)t));
 		}
 		return paraType;
 	}
-	
-	public static List<ParaType> createParaTypeforConstructorParameter(Constructor<?> cons){
-		List<ParaType> list=new ArrayList<ParaType>();
-		for(Type t:cons.getGenericParameterTypes()){
-			list.add(createParaType(t));
+
+	public static ParaType createParaType(Class<?> c){
+		ParaType paraType=new ParaTypeClass(((Class<?>)c));
+		for(TypeVariable<?> tvi:c.getTypeParameters()){
+			paraType.addParaType(new ParaTypeGeneric(tvi.getName()+""));
 		}
-		return list;
+
+
+		return paraType;
 	}
-	
+
+	public static void main(String args[]){
+		//		List<ParaType> l=ParaType.createParaTypeforClassWithEnumerateGenerator(Garage.class);
+		//		for(ParaType pt:l){
+		//			System.out.println(pt.getStringClass());
+		//		}
+		//	System.out.println(ParaType.createParaType(ParametrizedClass2.class));
+		System.out.println(ParaType.createParaType(List.class).getStringClass());
+	}
+
+
 	public static List<ParaType> createParaTypeforClassWithEnumerateGenerator(Class<?> c){
-		Constructor<?>cons=MyIntrospection.extractConstructorWithEnumerateGenerator(c, EnumerateGenerator.class);
+		Constructor<?>cons=extractConstructorWithEnumerateGenerator(c, EnumerateGenerator.class);
 		List<ParaType> list=new ArrayList<ParaType>();
 		for(Type t:cons.getGenericParameterTypes()){
 			list.add(createParaType(t));
@@ -66,17 +102,16 @@ public 	abstract class ParaType{
 		return list;
 	}
 
-}
 
-class ParaTypeClass extends ParaType{
-	private Class classType;
-	public ParaTypeClass(Class classType){
-		this.classType=classType;
-	}
-	@Override
-	public String getStringClass() {
-		// TODO Auto-generated method stub
-		return classType.getCanonicalName();
+	public static Constructor extractConstructorWithEnumerateGenerator(Class c,Class enumerator){
+		int i=0;
+		while(i<c.getConstructors().length){
+			if(c.getConstructors()[i].getAnnotation(enumerator)!=null){
+				return c.getConstructors()[i];
+			}
+			i++;
+		}
+		return null;
 	}
 }
 

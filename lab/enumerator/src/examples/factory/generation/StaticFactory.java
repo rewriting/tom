@@ -10,6 +10,13 @@ import examples.factory.Color;
 
 public class StaticFactory extends AbstractEnumeratorGenerator{
 
+	public StaticFactory(Class<?> class2enumerate) {
+		super(class2enumerate);
+		// TODO Auto-generated constructor stub
+	}
+
+
+
 	@Override
 	protected StringBuilder generateParticularImports(Class<?>c){
 		StringBuilder sb = new StringBuilder();

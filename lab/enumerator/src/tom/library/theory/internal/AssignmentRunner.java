@@ -23,7 +23,7 @@ public class AssignmentRunner {
 
 	/**
 	 * Assigns test method's parameters with values and then runs the 
-	 * test methods after the assigment complete.
+	 * test methods after the assignment is complete.
 	 * 
 	 * @param parameterAssignment
 	 * @throws Throwable
@@ -37,8 +37,8 @@ public class AssignmentRunner {
 	}
 
 	/**
-	 * Retrieves potentials assignment values for a parameter and then assign the  
-	 * value to the parameter.
+	 * Retrieves potentials assignment values for a parameter and then assign them
+	 * to the parameter.
 	 * 
 	 * @param incomplete
 	 * @throws Throwable
@@ -49,6 +49,13 @@ public class AssignmentRunner {
 		}
 	}
 
+	/**
+	 * Runs a test after all its parameters has been assigned with values.
+	 * The test is wrapped in a {@code Statement} that later on is evaluated
+	 * by the method.
+	 * @param complete
+	 * @throws Throwable
+	 */
 	protected void runWithCompleteAssignment(final Assignments complete) throws Throwable {
 		StatementBuilder builder = new StatementBuilder(testObject, handler);
 		Statement statement = builder.buildStatementForCompleteAssignment(complete);
