@@ -9,16 +9,125 @@
 // // Example ex:
 // let S=signature {Zero:0, Succ:1, Plus:2} in
 // let r1 = { Plus(Zero(),x) -> x } in 
-// r1;r1
+// let r2 = { Plus(Zero(),x) -> x } in 
+// all(r1)
 // // on Plus(Zero(),Succ(Zero()))
 // // on Plus(Zero(),Plus(Zero(),Succ(Zero())))
 // // on Zero()
 
 
-// Example ex:
-let S=signature {Zero:0, Succ:1, Plus:2} in
-let r1 = { Plus(Zero(),x) -> x } in 
-one(r1)
-// on Plus(Zero(),Succ(Zero()))
-// on Plus(Zero(),Plus(Zero(),Succ(Zero())))
-// on Zero()
+// // Example ex:
+// let S=signature {Zero:0, Succ:1, Plus:2} in
+// let r1 = { Plus(Zero(),x) -> x } in 
+// all(r1)
+// // on Plus(Zero(),Succ(Zero()))
+// // on Plus(Zero(),Plus(Zero(),Succ(Zero())))
+// // on Zero()
+
+
+// repeat(otd(r1))
+// let S=signature {a:0, b:0, f:1} in
+// let r1 = { b() -> f(b()) } in 
+// let otd = mu y.(r1<+one(y)) in
+// mu x .((otd;x) <+ identity)
+
+
+// repeat(obu(r1))
+ let S=signature {a:0, b:0, f:2} in
+ let r1 = { f(x,x) -> f(b(),a()) } in 
+//  let obu = mu y.(one(y)<+r1) in
+//  mu x .((obu;x) <+ identity)
+r1
+
+// // td(try(r1))
+// let S=signature {a:0, b:0, f:1} in
+// let r1 = { a() -> f(a()) } in 
+// // let bu = mu y.(all(y);(r1<+identity)) in
+// let td = mu y.((r1<+identity);all(y)) in
+// // bu
+// td
+
+
+
+
+
+// let td = mu y.((r1<+identity);all(y)) in
+// (STRATEGY INNERMOST)
+// (VAR X1 Z14_1 Z18_1 Z10_1 INTERNALX Z12_1 Z8_1 Z16_1 Y X Z)
+// (RULES
+//         seq6(f(Z10_1)) -> seq27(all5(choice3(f(Z10_1))),f(Z10_1))
+//         seq6(a) -> seq27(all5(choice3(a)),a)
+//         seq6(b) -> seq27(all5(choice3(b)),b)
+//         seq6(Bottom(Y)) -> Bottom(Y)
+//         seq27(f(Z10_1),Z) -> f(Z10_1)
+//         seq27(b,Z) -> b
+//         seq27(a,Z) -> a
+//         seq27(Bottom(Y),X) -> Bottom(X)
+//         rule1(f(Z16_1)) -> Bottom(f(Z16_1))
+//         rule1(b) -> Bottom(b)
+//         rule1(a) -> f(a)
+//         rule1(Bottom(INTERNALX)) -> Bottom(INTERNALX)
+//         mu0(f(Z8_1)) -> seq6(f(Z8_1))
+//         mu0(b) -> seq6(b)
+//         mu0(a) -> seq6(a)
+//         mu0(Bottom(X)) -> Bottom(X)
+//         id2(X) -> X
+//         choice4(f(Z12_1)) -> f(Z12_1)
+//         choice4(b) -> b
+//         choice4(a) -> a
+//         choice4(Bottom(X)) -> id2(X)
+//         choice3(f(Z18_1)) -> choice4(rule1(f(Z18_1)))
+//         choice3(b) -> choice4(rule1(b))
+//         choice3(a) -> choice4(rule1(a))
+//         choice3(Bottom(X)) -> Bottom(X)
+//         all5_f(f(Z14_1),Z) -> f(f(Z14_1))
+//         all5_f(b,Z) -> f(b)
+//         all5_f(a,Z) -> f(a)
+//         all5_f(Bottom(X1),Z) -> Bottom(Z)
+//         all5(f(X1)) -> all5_f(mu0(X1),f(X1))
+//         all5(b) -> b
+//         all5(a) -> a
+//         all5(Bottom(X)) -> Bottom(X)
+// )
+
+
+// INLINE let td = mu y.((r1<+identity);all(y)) in
+// (STRATEGY INNERMOST)
+// (VAR X1 Z14_1 Z18_1 Z10_1 INTERNALX Z12_1 Z8_1 Z16_1 Y X Z)
+// (RULES
+//         seq6(f(Z10_1)) -> seq27(all5(f(Z10_1)),f(Z10_1))
+//         seq6(a) -> seq27(all5(f(a)),a)
+//         seq6(b) -> seq27(all5(b),b)
+//         seq6(Bottom(Y)) -> Bottom(Y)
+//         seq27(f(Z10_1),Z) -> f(Z10_1)
+//         seq27(b,Z) -> b
+//         seq27(a,Z) -> a
+//         seq27(Bottom(Y),X) -> Bottom(X)
+//         mu0(f(Z8_1)) -> seq6(f(Z8_1))
+//         mu0(b) -> seq6(b)
+//         mu0(a) -> seq6(a)
+//         mu0(Bottom(X)) -> Bottom(X)
+//         all5_f(f(Z14_1),Z) -> f(f(Z14_1))
+//         all5_f(b,Z) -> f(b)
+//         all5_f(a,Z) -> f(a)
+//         all5_f(Bottom(X1),Z) -> Bottom(Z)
+//         all5(f(X1)) -> all5_f(mu0(X1),f(X1))
+//         all5(b) -> b
+//         all5(a) -> a
+//         all5(Bottom(X)) -> Bottom(X)
+
+//         rule1(f(Z16_1)) -> Bottom(f(Z16_1))
+//         rule1(b) -> Bottom(b)
+//         rule1(a) -> f(a)
+//         rule1(Bottom(INTERNALX)) -> Bottom(INTERNALX)
+
+//         choice4(f(Z12_1)) -> f(Z12_1)
+//         choice4(b) -> b
+//         choice4(a) -> a
+//         choice4(Bottom(X)) -> id2(X)
+//         choice3(f(Z18_1)) -> choice4(rule1(f(Z18_1)))
+//         choice3(b) -> choice4(rule1(b))
+//         choice3(a) -> choice4(rule1(a))
+//         choice3(Bottom(X)) -> Bottom(X)
+//         id2(X) -> X
+// )
