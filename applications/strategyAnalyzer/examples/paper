@@ -7,8 +7,10 @@
 
 
 // // Example ex:
-// let S=signature {Zero:0, Succ:1, Plus:2} in
-// let r1 = { Plus(Zero(),x) -> x } in 
+let S=signature {Zero:0, Succ:1, Plus:2} in
+let r1 = { Plus(Zero(),x) -> x } in 
+mu y. ( (r1 ; y) <+ identity )
+// mu y.(r1 ; ( y <+ identity ) ) 
 // r1;r1
 // // on Plus(Zero(),Succ(Zero()))
 // // on Plus(Zero(),Plus(Zero(),Succ(Zero())))
@@ -16,9 +18,9 @@
 
 
 // Example ex:
-let S=signature {Zero:0, Succ:1, Plus:2} in
-let r1 = { Plus(Zero(),x) -> x } in 
-one(r1)
+// let S=signature {Zero:0, Succ:1, Plus:2} in
+// let r1 = { Plus(Zero(),x) -> x } in 
+// one(r1)
 // on Plus(Zero(),Succ(Zero()))
 // on Plus(Zero(),Plus(Zero(),Succ(Zero())))
 // on Zero()
