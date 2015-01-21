@@ -93,22 +93,22 @@ public class ShopFactory {
 		return shop;
 	}
 
-	public Shop makeShop(examples.shop.boutique.types.Shop shopGom) {
-		Shop shop = new Shop();
-		examples.shop.boutique.types.Inventory invGom = shopGom.getinventory();
-		shop.setInventory(makeInventory(invGom));
-		
-		examples.shop.boutique.types.Selling sellingGom = shopGom.getselling();
-		List<Cart> selling = new ArrayList<Cart>();
-		
-		while (sellingGom.isConsselling()) {
-			selling.add(makeCart(sellingGom.getHeadselling()));
-			sellingGom = sellingGom.getTailselling();
-		}
-		
-		shop.setSelling(selling);
-		return shop;
-	}
+//	public Shop makeShop(examples.shop.boutique.types.Shop shopGom) {
+//		Shop shop = new Shop();
+//		examples.shop.boutique.types.Inventory invGom = shopGom.getinventory();
+//		shop.setInventory(makeInventory(invGom));
+//		
+//		examples.shop.boutique.types.Selling sellingGom = shopGom.getselling();
+//		List<Cart> selling = new ArrayList<Cart>();
+//		
+//		while (sellingGom.isConsselling()) {
+//			selling.add(makeCart(sellingGom.getHeadselling()));
+//			sellingGom = sellingGom.getTailselling();
+//		}
+//		
+//		shop.setSelling(selling);
+//		return shop;
+//	}
 	
 	public Shop makeShop() {
 		return new Shop();
