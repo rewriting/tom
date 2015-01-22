@@ -5,24 +5,27 @@ let r1 = { f(x) -> f(f(x)) } in
 let td = mu y.((r1<+identity);all(y)) in
 td
 
-// FOR RULE  let r1 = { f(x) -> f(f(x)) } in 
+// -exact FOR RULE  let r1 = { f(x) -> f(f(x)) } in 
+// without inlining it works for Aprove but not for TTT
 
-(STRATEGY INNERMOST)
+
 (VAR X1 Z14_1 Z10_1 INTERNALX Z17_1 Z12_1 Z8_1 Y X x Z)
 (RULES
+        seq6(f(X)) -> seq27(all5(f(f(X))),X)
+        seq6(b) -> seq27(all5(choice3(id(Bottom(b)))),id(Bottom(b)))
+        seq6(a) -> seq27(all5(choice3(id(Bottom(a)))),id(Bottom(a)))
+        seq6(Bottom(X)) -> seq27(all5(Bottom(X)),Bottom(X))
         seq27(f(Z10_1),Z) -> f(Z10_1)
         seq27(b,Z) -> b
         seq27(a,Z) -> a
         seq27(Bottom(Y),X) -> Bottom(X)
-        mu0(f(Z8_1)) -> seq27(all5(choice4(f(f(Z8_1)))),f(Z8_1)) 
-        mu0(b) -> seq27(all5(choice4(Bottom(b))),b)
-        mu0(a) -> seq27(all5(choice4(Bottom(a))),a)
+        mu0(f(Z8_1)) -> seq6(f(Z8_1))
+        mu0(b) -> seq6(b)
+        mu0(a) -> seq6(a)
         mu0(Bottom(X)) -> Bottom(X)
-        id2(X) -> X
-        choice4(f(Z12_1)) -> f(Z12_1)
-        choice4(b) -> b
-        choice4(a) -> a
-        choice4(Bottom(X)) -> id2(X)
+        id2(b) -> b
+        id2(a) -> a
+        id2(Bottom(X)) -> Bottom(X)
         all5_f(f(Z14_1),Z) -> f(f(Z14_1))
         all5_f(b,Z) -> f(b)
         all5_f(a,Z) -> f(a)
@@ -31,16 +34,16 @@ td
         all5(b) -> b
         all5(a) -> a
         all5(Bottom(X)) -> Bottom(X)
-        Bottom(Bottom(X)) -> Bottom(X)
 )
-
 
 starting from
 
-(STRATEGY INNERMOST)
-(VAR X1 Z14_1 Z10_1 INTERNALX Z17_1 Z12_1 Z8_1 Y X x Z)
+(VAR X1 Z14_1 Z21_1 Z10_1 INTERNALX Z17_1 Z12_1 Z19_1 Z8_1 Y X x Z)
 (RULES
-        seq6(X) -> seq27(all5(choice3(X)),X)
+        seq6(f(Z19_1)) -> seq27(all5(choice3(f(Z19_1))),f(Z19_1))
+        seq6(b) -> seq27(all5(choice3(b)),b)
+        seq6(a) -> seq27(all5(choice3(a)),a)
+        seq6(Bottom(X)) -> Bottom(X)
         seq27(f(Z10_1),Z) -> f(Z10_1)
         seq27(b,Z) -> b
         seq27(a,Z) -> a
@@ -53,12 +56,15 @@ starting from
         mu0(b) -> seq6(b)
         mu0(a) -> seq6(a)
         mu0(Bottom(X)) -> Bottom(X)
-        id2(X) -> X
+        id2(f(Z17_1)) -> f(Z17_1)
+        id2(b) -> b
+        id2(a) -> a
+        id2(Bottom(X)) -> Bottom(X)
         choice4(f(Z12_1)) -> f(Z12_1)
         choice4(b) -> b
         choice4(a) -> a
         choice4(Bottom(X)) -> id2(X)
-        choice3(f(Z17_1)) -> choice4(rule1(f(Z17_1)))
+        choice3(f(Z21_1)) -> choice4(rule1(f(Z21_1)))
         choice3(b) -> choice4(rule1(b))
         choice3(a) -> choice4(rule1(a))
         choice3(Bottom(X)) -> Bottom(X)
@@ -70,7 +76,6 @@ starting from
         all5(b) -> b
         all5(a) -> a
         all5(Bottom(X)) -> Bottom(X)
-        Bottom(Bottom(X)) -> Bottom(X)
 )
 
 
