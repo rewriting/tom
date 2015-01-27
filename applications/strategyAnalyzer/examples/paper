@@ -9,16 +9,45 @@
 // // Example ex:
 // let S=signature {Zero:0, Succ:1, Plus:2} in
 // let r1 = { Plus(Zero(),x) -> x } in 
-// r1;r1
+// mu y. ( (r1 ; y) <+ identity )
+// // mu y.(r1 ; ( y <+ identity ) ) 
+// // r1;r1
+// // all(r1)
 // // on Plus(Zero(),Succ(Zero()))
 // // on Plus(Zero(),Plus(Zero(),Succ(Zero())))
 // // on Zero()
 
 
-// Example ex:
-let S=signature {Zero:0, Succ:1, Plus:2} in
-let r1 = { Plus(Zero(),x) -> x } in 
-one(r1)
-// on Plus(Zero(),Succ(Zero()))
-// on Plus(Zero(),Plus(Zero(),Succ(Zero())))
-// on Zero()
+// // Example ex:
+// let S=signature {Zero:0, Succ:1, Plus:2} in
+// let r1 = { Plus(Zero(),x) -> x } in 
+// all(r1)
+// // on Plus(Zero(),Succ(Zero()))
+// // on Plus(Zero(),Plus(Zero(),Succ(Zero())))
+// // on Zero()
+
+
+// repeat(otd(r1))
+// let S=signature {a:0, b:0, f:1} in
+// let r1 = { b() -> f(b()) } in 
+// let otd = mu y.(r1<+one(y)) in
+// mu x .((otd;x) <+ identity)
+
+
+// // repeat(obu(r1))
+//  let S=signature {a:0, b:0, f:2} in
+//  let r1 = { f(x,x) -> f(b(),a()) } in 
+// //  let obu = mu y.(one(y)<+r1) in
+// //  mu x .((obu;x) <+ identity)
+// r1
+
+// // td(try(r1))
+let S=signature {a:0, b:0, f:1} in
+// let r1 = { a() -> f(a()) } in 
+let r1 = { f(x) -> f(f(x)) } in 
+// let bu = mu y.(all(y);(r1<+identity)) in
+let td = mu y.((r1<+identity);all(y)) in
+// bu
+td
+
+
