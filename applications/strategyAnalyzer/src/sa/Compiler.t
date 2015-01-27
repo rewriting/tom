@@ -39,7 +39,9 @@ public class Compiler {
         compileExp(bag,extractedSignature,generatedSignature,`x);
       }
     }
+    generateEquality(bag, extractedSignature, generatedSignature);
   }
+
 
   private static void compileExp(Collection<Rule> bag, Map<String,Integer> extractedSignature, Map<String,Integer> generatedSignature, Expression e) {
     //System.out.println("exp = " + e);
@@ -71,7 +73,7 @@ public class Compiler {
    * compile a strategy in a classical way (without using meta-representation)
    * return the name of the top symbol (phi) introduced
    * @param bag set of rule that is extended by compilation
-   * @param extractedSignature associates arity to a name, for all constructor of the initial strategy
+   * @param extractedSignature associates arity to a name, for all constructors of the initial strategy
    * @param generatedSignature associates arity to a name, for all generated defined symbols
    * @param strat the strategy to compile
    * @return the name of the last compiled strategy
@@ -82,13 +84,41 @@ public class Compiler {
       StratExp(Set(rulelist)) -> {
         String r = getName("rule");
         generatedSignature.put(r,1);
+        String cr = getName("crule");
+        generatedSignature.put(cr,2);
+        /*
+         * lhs -> rhs becomes
+         * in the linear case:
+         *   rule(lhs) -> rhs
+         *   rule(X@!lhs) -> Bottom(X)
+         * in the non-linear case:
+         *   rule(X@linear-lhs) -> rule'(X, true ^ constraint on non linear variables)
+         *   rule(X@!linear-lhs) -> Bottom(X)
+         *   rule'(linear-lhs, true) -> rhs
+         *   rule'(X@linear-lhs, false) -> Bottom(x)
+         */
         %match(rulelist) {
           RuleList(_*,Rule(lhs,rhs),_*) -> {
+            String atname = "INTERNALX";
+            Term atvar = tools.encode(atname);
             // use AST-syntax because lhs and rhs are already encoded
-            bag.add(`Rule(Appl(r,TermList(lhs)),rhs));
-            bag.add(`Rule(Appl(r,TermList(At(tools.encode("INTERNALX"),Anti(lhs)))),tools.encode("Bottom(INTERNALX)")));
+            //bag.add(`Rule(Appl(r,TermList(lhs)),rhs));
+            //bag.add(`Rule(Appl(r,TermList(At(tools.encode("INTERNALX"),Anti(lhs)))),tools.encode("Bottom(INTERNALX)")));
             // propagate failure; if the rule is applied to the result of a strategy that failed then the result is a failure
-            bag.add(`Rule(Appl(r,TermList(tools.encode("Bottom(INTERNALX)"))),tools.encode("Bottom(INTERNALX)")));
+            bag.add(`Rule(Appl(r,TermList(tools.encode("Bottom("+atname+")"))),tools.encode("Bottom("+atname+")")));
+
+            TermList result = linearize(`lhs);
+            %match(result) {
+              TermList(linearlhs, cond) -> {
+                bag.add(`Rule(Appl(r,TermList(At(atvar,linearlhs))),
+                              Appl(cr, TermList(atvar, cond))));
+                bag.add(`Rule(Appl(r,TermList(At(atvar,Anti(linearlhs)))),tools.encode("Bottom("+atname+")")));
+
+                bag.add(`Rule(Appl(cr,TermList(linearlhs, tools.encode("True"))), rhs));
+                bag.add(`Rule(Appl(cr,TermList(At(atvar,linearlhs), tools.encode("False"))),tools.encode("Bottom("+atname+")")));
+              }
+            }
+            //System.out.println(cr);
           }
         }
         return r;
@@ -174,6 +204,7 @@ public class Compiler {
         return seq;
       }
 
+      // TODO [20/01/2015]: see if not exact is interesting
       StratChoice(s1,s2) -> {
         String n1 = compileStrat(bag,extractedSignature,generatedSignature,`s1);
         String n2 = compileStrat(bag,extractedSignature,generatedSignature,`s2);
@@ -670,14 +701,13 @@ public class Compiler {
    * @param arity the arity of the symbol
    * @return the string that represents the term
    */
-  private static String genAbstractTerm(String name, int arity) {
+  private static String genAbstractTerm(String name, int arity, String varname) {
     if(arity==0) {
       return name;
     } else {
-      String z = getName("Z");
-      String args = z+"_"+"1";
+      String args = varname+"_"+"1";
       for(int i=2 ; i<=arity ; i++) {
-        args += ", " + z+"_"+i;
+        args += ", " + varname+"_"+i;
       }
       return name + "(" + args + ")";
     }
@@ -707,7 +737,7 @@ public class Compiler {
             for(String otherName:signature.keySet()) {
               if(!`name.equals(otherName)) {
                 int arity = signature.get(otherName);
-                Term newt = tools.encode(genAbstractTerm(otherName,arity));
+                Term newt = tools.encode(genAbstractTerm(otherName,arity, getName("Z")));
                 if(Main.options.generic) {
                   newt = tools.metaEncodeConsNil(newt);
                 }
@@ -774,7 +804,7 @@ public class Compiler {
                 for(String otherName:signature.keySet()) {
                   if(!`name.equals(otherName)) {
                     int arity = signature.get(otherName);
-                    Term newt = tools.encode(genAbstractTerm(otherName,arity));
+                    Term newt = tools.encode(genAbstractTerm(otherName,arity, getName("Z")));
                     if(Main.options.generic) {
                       newt = tools.metaEncodeConsNil(newt);
                     }
@@ -827,7 +857,8 @@ public class Compiler {
                 }
                 if(nonlinear){
                   for(String v:nonlinVars){
-                    lint = `TopDown(ReplaceWithFreshVar(v)).visitLight(lint);
+                    // desactivate
+                    //lint = `TopDown(ReplaceWithFreshVar(v)).visitLight(lint);
                   }
                   Term newt = lint;
                   if(Main.options.generic) {
@@ -884,7 +915,7 @@ public class Compiler {
   }
 
  
-  // search all At and store their values
+  // search all Var and store their values
   %strategy CollectVars(bag:Collection) extends Identity() {
     visit Term {
       Var(name)-> {
@@ -893,11 +924,14 @@ public class Compiler {
     }
   }
 
-  %strategy ReplaceWithFreshVar(name:String) extends Identity() {
+  %strategy ReplaceWithFreshVar(name:String, multiplicityMap:Map, map:Map) extends Identity() {
     visit Term {
       Var(n)  -> {
-        if(`n.compareTo(`name)==0){
+        int value = (Integer)multiplicityMap.get(`name);
+        if(`n.compareTo(`name)==0 && value>1) {
           String z = getName("Z");
+          map.put(z,`n);
+          multiplicityMap.put(`name, value - 1);
           Term newt = tools.encode(z);
           if(Main.options.generic) {
             newt = tools.metaEncodeConsNil(newt);
@@ -908,6 +942,102 @@ public class Compiler {
     }
   }
 
+  /*
+   * Transform lhs into linear-lhs + true ^ constraint on non linear variables
+   */
+  private static TermList linearize(Term lhs) {
+    //System.out.println("lhs = " + lhs);
+    Map<String,Integer> map = collectMultiplicity(lhs);
+    Map<String,String> mapToOldName = new HashMap<String,String>();
+
+    for(String name:map.keySet()) {
+      //System.out.println(name + " --> " + map.get(name));
+      if(map.get(name) > 1) {
+        try {
+          HashMap copy = new HashMap(map);
+          lhs = `TopDown(ReplaceWithFreshVar(name,copy,mapToOldName)).visitLight(lhs);
+          //System.out.println("linear lhs = " + lhs);
+        } catch(VisitFailure e) {
+          throw new RuntimeException("Should not be there");
+        }
+      }
+    }
+
+    Term constraint = tools.encode("True");
+    for(String name:mapToOldName.keySet()) {
+      String oldName = mapToOldName.get(name);
+      constraint = `Appl("and",TermList( Appl("eq",TermList(Var(oldName),Var(name))), constraint));
+    }
+
+/*
+    Condition constraint = `CondTrue();
+    for(String name:mapToOldName.keySet()) {
+      String oldName = mapToOldName.get(name);
+      constraint = `CondAnd(CondEquals(Var(oldName),Var(name)), constraint);
+    }
+    */
+    //System.out.println("constraint = " + constraint);
+    return `TermList(lhs,constraint);
+
+  }
   
+  /**
+   * Returns a Map which associates an integer to each variable name
+   */
+  public static Map<String,Integer> collectMultiplicity(tom.library.sl.Visitable subject) {
+    // collect variables
+    Collection<String> variableList = new LinkedList<String>();
+    try {
+      `TopDown(CollectVars(variableList)).visitLight(subject);
+    } catch(VisitFailure e) {
+      throw new RuntimeException("Should not be there");
+    }
+
+    // compute multiplicities
+    HashMap<String,Integer> multiplicityMap = new HashMap<String,Integer>();
+    for(String varName:variableList) {
+      if(multiplicityMap.containsKey(varName)) {
+        int value = multiplicityMap.get(varName);
+        multiplicityMap.put(varName, 1+value);
+      } else {
+        multiplicityMap.put(varName, 1);
+      }
+    }
+    return multiplicityMap;
+  }
+
+  private static void generateEquality(Collection<Rule> bag, Map<String,Integer> signature, Map<String,Integer> generatedSignature) {
+    generatedSignature.put("True",0);
+    generatedSignature.put("False",0);
+    generatedSignature.put("and",2);
+    generatedSignature.put("eq",2);
+
+    bag.add(tools.encodeRule(%[rule(and(True,True), True)]%));
+    bag.add(tools.encodeRule(%[rule(and(True,False), False)]%));
+    bag.add(tools.encodeRule(%[rule(and(False,True), False)]%));
+    bag.add(tools.encodeRule(%[rule(and(False,False), False)]%));
+
+    for(String f:signature.keySet()) {
+      for(String g:signature.keySet()) {
+        int arf = signature.get(f);
+        int arg = signature.get(g);
+        if(!f.equals(g)) {
+          bag.add(tools.encodeRule(%[rule(eq(@genAbstractTerm(f,arf, getName("Z"))@,@genAbstractTerm(g,arg, getName("Z"))@), False)]%));
+        } else {
+          String z1 = getName("Z");
+          String z2 = getName("Z");
+          String t1 = genAbstractTerm(f,arf,z1);
+          String t2 = genAbstractTerm(f,arf,z2);
+          String scond = "True";
+          for(int i=1 ; i<=arf ; i++) {
+            scond = %[and(eq(@z1@_@i@,@z2@_@i@),@scond@)]%;
+          }
+          //System.out.println(t1 + " = " + t2 + " --> " + scond);
+          bag.add(tools.encodeRule(%[rule(eq(@t1@,@t2@),@scond@)]%));
+        }
+      }
+    }
+    //bag.add(tools.encodeRule(%[rule(@mu@(Bottom(X)), Bottom(X))]%));
+  }
 
 }
