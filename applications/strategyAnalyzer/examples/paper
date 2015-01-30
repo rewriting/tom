@@ -41,13 +41,39 @@
 // //  mu x .((obu;x) <+ identity)
 // r1
 
-// // td(try(r1))
-let S=signature {a:0, b:0, f:1} in
-// let r1 = { a() -> f(a()) } in 
-let r1 = { f(x) -> f(f(x)) } in 
-// let bu = mu y.(all(y);(r1<+identity)) in
-let td = mu y.((r1<+identity);all(y)) in
-// bu
-td
+// // // td(try(r1))
+// let S=signature {a:0, b:0, f:1} in
+// // let r1 = { a() -> f(a()) } in 
+// let r1 = { f(x) -> f(f(x)) } in 
+// // let bu = mu y.(all(y);(r1<+identity)) in
+// let td = mu y.((r1<+identity);all(y)) in
+// // bu
+// td
 
 
+
+// let S=signature {Zero:0, Succ:1, Plus:2, Mult:2} in
+// let r1 = { Mult(x,Plus(y,z)) -> Plus(Mult(x,y),Mult(x,z)) } in 
+// let r2 = { Mult(Plus(y,z),x) -> Plus(Mult(y,x),Mult(z,x)) } in 
+// let r3 = { Plus(Mult(x,y),Mult(x,z)) -> Mult(x,Plus(y,z)) } in 
+// let r4 = { Plus(Mult(y,x),Mult(z,x)) -> Mult(Plus(y,z),x) } in 
+// let obu12 = mu y.(one(y)<+(r1<+r2)) in
+// let repeat12 = mu x .((obu12;x) <+ identity) in
+// let obu34 = mu y.(one(y)<+(r3<+r4)) in
+// let repeat34 = mu x .((obu34;x) <+ identity) in
+// repeat12;repeat34
+
+
+let S=signature {Zero:0, Succ:1, Plus:2, Mult:2} in
+let r1 = { Mult(x,Plus(y,z)) -> Plus(Mult(x,y),Mult(x,z)) } in 
+// let r2 = { Mult(Plus(y,z),x) -> Plus(Mult(y,x),Mult(z,x)) } in 
+let r3 = { Plus(Mult(x,y),Mult(x,z)) -> Mult(x,Plus(y,z)) } in 
+// let r4 = { Plus(Mult(y,x),Mult(z,x)) -> Mult(Plus(y,z),x) } in 
+let obu12 = mu y.(one(y)<+r1) in
+let repeat12 = mu x .((obu12;x) <+ identity) in
+let obu34 = mu y.(one(y)<+r3) in
+let repeat34 = mu x .((obu34;x) <+ identity) in
+repeat12;repeat34
+
+// Plus(Mult(Succ(Zero()),Plus(Succ(Zero()),Succ(Zero()))),Mult(Succ(Zero()),Plus(Succ(Zero()),Succ(Zero()))))
+// Plus(Mult(Succ(Zero()),Plus(Succ(Zero()),Succ(Zero()))),Mult(Plus(Succ(Zero()),Succ(Zero())),Succ(Zero())))
