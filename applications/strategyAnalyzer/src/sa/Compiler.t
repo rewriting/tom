@@ -159,16 +159,16 @@ public class Compiler {
       StratIdentity() -> {
         String id = getName("id");
         generatedSignature.put(id,1);
-        if( !Main.options.exact ){
+	if( !Main.options.approx ) {
+	  // the rule cannot be applied on arguments containing fresh variables but only on terms from the signature or Bottom
+	  // normally it will follow reduction in original TRS
+	  bag.add(tools.encodeRule(%[rule(@id@(at(@X@,anti(Bottom(@Y@)))), @X@)]%,generatedSignature));
+          bag.add(tools.encodeRule(%[rule(@id@(Bottom(@X@)), Bottom(@X@))]%,generatedSignature));
+	} else { 
           bag.add(tools.encodeRule(%[rule(@id@(@X@), @X@)]%,generatedSignature));
           // Bottom of Bottom is Bottom
           // this is not necessary if exact reduction - in this case Bottom is propagated immediately 
           bag.add(tools.encodeRule(%[rule(Bottom(Bottom(@X@)), Bottom(@X@))]%,generatedSignature));
-       } else { 
-          // the rule cannot be applied on arguments containing fresh variables but only on terms from the signature or Bottom
-          // normally it will follow reduction in original TRS
-          bag.add(tools.encodeRule(%[rule(@id@(at(@X@,anti(Bottom(@Y@)))), @X@)]%,generatedSignature));
-          bag.add(tools.encodeRule(%[rule(@id@(Bottom(@X@)), Bottom(@X@))]%,generatedSignature));
         }
         return id;
       }
@@ -176,16 +176,16 @@ public class Compiler {
       StratFail() -> {
         String fail = getName("fail");
         generatedSignature.put(fail,1);
-        if( !Main.options.exact ){
-          bag.add(tools.encodeRule(%[rule(@fail@(X), Bottom(X))]%,generatedSignature));
+	if( !Main.options.approx ) {
+	  // the rule cannot be applied on arguments containing fresh variables but only on terms from the signature or Bottom
+	  // normally it will follow reduction in original TRS
+	  bag.add(tools.encodeRule(%[rule(@fail@(at(X,anti(Bottom(@Y@)))), Bottom(X))]%,generatedSignature));
+	  bag.add(tools.encodeRule(%[rule(@fail@(Bottom(X)), Bottom(X))]%,generatedSignature));
+	} else { 
+	  bag.add(tools.encodeRule(%[rule(@fail@(X), Bottom(X))]%,generatedSignature));
           // Bottom of Bottom is Bottom
           // this is not necessary if exact reduction - in this case Bottom is propagated immediately 
           bag.add(tools.encodeRule(%[rule(Bottom(Bottom(X)), Bottom(X))]%,generatedSignature));
-       } else { 
-          // the rule cannot be applied on arguments containing fresh variables but only on terms from the signature or Bottom
-          // normally it will follow reduction in original TRS
-          bag.add(tools.encodeRule(%[rule(@fail@(at(X,anti(Bottom(@Y@)))), Bottom(X))]%,generatedSignature));
-          bag.add(tools.encodeRule(%[rule(@fail@(Bottom(X)), Bottom(X))]%,generatedSignature));
         }
         return fail;
       }
@@ -197,18 +197,17 @@ public class Compiler {
         String seq2 = getName("seq2");
         generatedSignature.put(seq,1);
         generatedSignature.put(seq2,2);
-        if( !Main.options.exact ){
-          //           bag.add(tools.encodeRule(%[rule(@seq@(X), @n2@(@n1@(X)))]%)); // old version - doesn't keep track of input
-          bag.add(tools.encodeRule(%[rule(@seq@(@X@), @seq2@(@n2@(@n1@(@X@)),@X@))]%,generatedSignature));
-          // Bottom of Bottom is Bottom
-          // this is not necessary if exact reduction - in this case Bottom is propagated immediately 
+	if( !Main.options.approx ) {
+	  // the rule cannot be applied on arguments containing fresh variables but only on terms from the signature or Bottom
+	  // normally it will follow reduction in original TRS
+	  bag.add(tools.encodeRule(%[rule(@seq@(at(@X@,anti(Bottom(@Y@)))), @seq2@(@n2@(@n1@(@X@)),@X@))]%,generatedSignature));
+	  bag.add(tools.encodeRule(%[rule(@seq@(Bottom(@X@)), Bottom(@X@))]%,generatedSignature));
+	} else { 
+	  bag.add(tools.encodeRule(%[rule(@seq@(@X@), @seq2@(@n2@(@n1@(@X@)),@X@))]%,generatedSignature));
+	  // Bottom of Bottom is Bottom
+	  // this is not necessary if exact reduction - in this case Bottom is propagated immediately 
           bag.add(tools.encodeRule(%[rule(Bottom(Bottom(@X@)), Bottom(@X@))]%,generatedSignature));
-       } else { 
-          // the rule cannot be applied on arguments containing fresh variables but only on terms from the signature or Bottom
-          // normally it will follow reduction in original TRS
-          bag.add(tools.encodeRule(%[rule(@seq@(at(@X@,anti(Bottom(@Y@)))), @seq2@(@n2@(@n1@(@X@)),@X@))]%,generatedSignature));
-          bag.add(tools.encodeRule(%[rule(@seq@(Bottom(@X@)), Bottom(@X@))]%,generatedSignature));
-        }
+	}
         bag.add(tools.encodeRule(%[rule(@seq2@(Bottom(@Y@),@X@), Bottom(@X@))]%,generatedSignature));
         bag.add(tools.encodeRule(%[rule(@seq2@(at(@X@,anti(Bottom(@Y@))),@Z@), @X@)]%,generatedSignature));
         return seq;
