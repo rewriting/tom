@@ -84,6 +84,13 @@ public class Compiler {
    * @return the name of the last compiled strategy
    */
   private static String compileStrat(Collection<Rule> bag, Map<String,Integer> extractedSignature, Map<String,Integer> generatedSignature, Strat strat) {
+    String X = getName("X");
+    String Y = getName("Y");
+    String Z = getName("Z");
+    Term varX = tools.encode(X,generatedSignature);
+    Term botX = tools.encode("Bottom("+X+")",generatedSignature);
+    Term True = tools.encode("True",generatedSignature);
+    Term False = tools.encode("False",generatedSignature);
 
     %match(strat) {
       StratExp(Set(rulelist)) -> {
@@ -104,11 +111,6 @@ public class Compiler {
          */
         %match(rulelist) {
           RuleList(_*,Rule(lhs,rhs),_*) -> {
-            String X = getName("X");
-            Term varX = tools.encode(X,generatedSignature);
-            Term botX = tools.encode("Bottom("+X+")",generatedSignature);
-            Term True = tools.encode("True",generatedSignature);
-            Term False = tools.encode("False",generatedSignature);
             // use AST-syntax because lhs and rhs are already encoded
             //bag.add(`Rule(Appl(r,TermList(lhs)),rhs));
             //bag.add(`Rule(Appl(r,TermList(At(tools.encode("INTERNALX"),Anti(lhs)))),tools.encode("Bottom(INTERNALX)")));
@@ -138,8 +140,6 @@ public class Compiler {
       StratMu(name,s) -> {
         try {
           String mu = getName("mu");
-          String X = getName("X");
-          String Y = getName("Y");
           generatedSignature.put(mu,1);
           Strat newStrat = `TopDown(ReplaceMuVar(name,mu)).visitLight(`s);
           String phi_s = compileStrat(bag,extractedSignature,generatedSignature,newStrat);
@@ -158,7 +158,6 @@ public class Compiler {
 
       StratIdentity() -> {
         String id = getName("id");
-        String X = getName("X");
         generatedSignature.put(id,1);
         if( !Main.options.exact ){
           bag.add(tools.encodeRule(%[rule(@id@(@X@), @X@)]%,generatedSignature));
@@ -168,7 +167,7 @@ public class Compiler {
        } else { 
           // the rule cannot be applied on arguments containing fresh variables but only on terms from the signature or Bottom
           // normally it will follow reduction in original TRS
-          bag.add(tools.encodeRule(%[rule(@id@(at(@X@,anti(Dummy()))), @X@)]%,generatedSignature));
+          bag.add(tools.encodeRule(%[rule(@id@(at(@X@,anti(Bottom(@Y@)))), @X@)]%,generatedSignature));
           bag.add(tools.encodeRule(%[rule(@id@(Bottom(@X@)), Bottom(@X@))]%,generatedSignature));
         }
         return id;
@@ -176,7 +175,6 @@ public class Compiler {
 
       StratFail() -> {
         String fail = getName("fail");
-        String X = getName("X");
         generatedSignature.put(fail,1);
         if( !Main.options.exact ){
           bag.add(tools.encodeRule(%[rule(@fail@(X), Bottom(X))]%,generatedSignature));
@@ -186,7 +184,7 @@ public class Compiler {
        } else { 
           // the rule cannot be applied on arguments containing fresh variables but only on terms from the signature or Bottom
           // normally it will follow reduction in original TRS
-          bag.add(tools.encodeRule(%[rule(@fail@(at(X,anti(Dummy()))), Bottom(X))]%,generatedSignature));
+          bag.add(tools.encodeRule(%[rule(@fail@(at(X,anti(Bottom(@Y@)))), Bottom(X))]%,generatedSignature));
           bag.add(tools.encodeRule(%[rule(@fail@(Bottom(X)), Bottom(X))]%,generatedSignature));
         }
         return fail;
@@ -199,9 +197,6 @@ public class Compiler {
         String seq2 = getName("seq2");
         generatedSignature.put(seq,1);
         generatedSignature.put(seq2,2);
-        String X = getName("X");
-        String Y = getName("Y");
-        String Z = getName("Z");
         if( !Main.options.exact ){
           //           bag.add(tools.encodeRule(%[rule(@seq@(X), @n2@(@n1@(X)))]%)); // old version - doesn't keep track of input
           bag.add(tools.encodeRule(%[rule(@seq@(@X@), @seq2@(@n2@(@n1@(@X@)),@X@))]%,generatedSignature));
@@ -211,7 +206,7 @@ public class Compiler {
        } else { 
           // the rule cannot be applied on arguments containing fresh variables but only on terms from the signature or Bottom
           // normally it will follow reduction in original TRS
-          bag.add(tools.encodeRule(%[rule(@seq@(at(@X@,anti(Dummy()))), @seq2@(@n2@(@n1@(@X@)),@X@))]%,generatedSignature));
+          bag.add(tools.encodeRule(%[rule(@seq@(at(@X@,anti(Bottom(@Y@)))), @seq2@(@n2@(@n1@(@X@)),@X@))]%,generatedSignature));
           bag.add(tools.encodeRule(%[rule(@seq@(Bottom(@X@)), Bottom(@X@))]%,generatedSignature));
         }
         bag.add(tools.encodeRule(%[rule(@seq2@(Bottom(@Y@),@X@), Bottom(@X@))]%,generatedSignature));
@@ -225,12 +220,9 @@ public class Compiler {
         String n2 = compileStrat(bag,extractedSignature,generatedSignature,`s2);
         String choice = getName("choice");
         String choice2 = getName("choice");
-        String X = getName("X");
-        String Y = getName("Y");
         generatedSignature.put(choice,1);
         generatedSignature.put(choice2,1);
-        //         bag.add(tools.encodeRule(%[rule(@choice@(@X@), @choice2@(@n1@(@X@)))]%)); // old version - Bottom not propagated directly
-        bag.add(tools.encodeRule(%[rule(@choice@(at(@X@,anti(Dummy()))),  @choice2@(@n1@(@X@)) )]%,generatedSignature));
+        bag.add(tools.encodeRule(%[rule(@choice@(at(@X@,anti(Bottom(@Y@)))),  @choice2@(@n1@(@X@)) )]%,generatedSignature));
         bag.add(tools.encodeRule(%[rule(@choice@(Bottom(@X@)), Bottom(@X@))]%,generatedSignature));
         bag.add(tools.encodeRule(%[rule(@choice2@(Bottom(@X@)), @n2@(@X@))]%,generatedSignature));
         bag.add(tools.encodeRule(%[rule(@choice2@(at(@X@,anti(Bottom(@Y@)))), @X@)]%,generatedSignature));
@@ -240,8 +232,6 @@ public class Compiler {
       StratAll(s) -> {
         String phi_s = compileStrat(bag,extractedSignature,generatedSignature,`s);
         String all = getName("all");
-        String X = getName("X");
-        String Z = getName("Z");
         generatedSignature.put(all,1);
         //         Iterator<String> it = extractedSignature.keySet().iterator();
         //         while(it.hasNext()) {
@@ -301,8 +291,6 @@ public class Compiler {
       StratOne(s) -> {
         String phi_s = compileStrat(bag,extractedSignature,generatedSignature,`s);
         String one = getName("one");
-        String Y = getName("Y");
-        String X = getName("X");
         generatedSignature.put(one,1);
         //         Iterator<String> it = extractedSignature.keySet().iterator();
         //         while(it.hasNext()) {
@@ -403,13 +391,17 @@ public class Compiler {
    * @return the name of the last compiled strategy
    */
   private static String compileGenericStrat(Collection<Rule> bag, Map<String,Integer> extractedSignature, Map<String,Integer> generatedSignature, Strat strat) {
+    String X = getName("X");
+    String Y = getName("Y");
+    String Z = getName("Z");
+    Term varX = tools.encode(X,generatedSignature);
+    Term botX = tools.encode("Bottom("+X+")",generatedSignature);
+    Term True = tools.encode("True",generatedSignature);
+    Term False = tools.encode("False",generatedSignature);
 
     %match(strat) {
       StratExp(Set(rulelist)) -> {
         String r = getName("rule");
-        String X = getName("X");
-        Term varX = tools.encode(X,generatedSignature);
-        Term botX = tools.encode("Bottom("+X+")",generatedSignature);
         generatedSignature.put(r,1);
         %match(rulelist) {
           RuleList(_*,Rule(lhs,rhs),_*) -> {
@@ -436,7 +428,6 @@ public class Compiler {
       StratMu(name,s) -> {
         try {
           String mu = getName("mu");
-          String X = getName("X");
           generatedSignature.put(mu,1);
           Strat newStrat = `TopDown(ReplaceMuVar(name,mu)).visitLight(`s);
           String phi_s = compileGenericStrat(bag,extractedSignature,generatedSignature,newStrat);
@@ -492,9 +483,6 @@ public class Compiler {
       StratAll(s) -> {
         String phi_s = compileGenericStrat(bag,extractedSignature,generatedSignature,`s);
         String all = getName("all");
-        String X = getName("X");
-        String Y = getName("Y");
-        String Z = getName("Z");
         generatedSignature.put(all,1);
         String all_1 = all+"_1";
         generatedSignature.put(all_1,1);
@@ -525,10 +513,10 @@ public class Compiler {
     
         return all;
       }
+
       StratOne(s) -> {
         String phi_s = compileGenericStrat(bag,extractedSignature,generatedSignature,`s);
         String one = getName("one");
-        String Z = getName("Z");
         generatedSignature.put(one,1);
         String one_1 = one+"_1";
         generatedSignature.put(one_1,1);

@@ -92,7 +92,7 @@ public class Main {
 
       // Transforms Let(name,exp,body) into body[name/exp]
       ExpressionList expandl = Compiler.expand(expl);
-      System.out.println(expandl);
+      //System.out.println(expandl);
       //       System.out.println(expandl);
 
       //       System.out.println(pretty.toString(expandl));
@@ -104,7 +104,7 @@ public class Main {
 
       // Transforms the strategy into a rewrite system
       Compiler.compile(generatedRules,extractedSignature,generatedSignature,expandl);
-      System.out.println(generatedRules );
+      //System.out.println(generatedRules );
 
       if(options.withAP == false) {
          for(Rule r:new HashSet<Rule>(generatedRules)) { 
