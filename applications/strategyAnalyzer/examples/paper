@@ -102,3 +102,4 @@ repeatobu1 ; repeatobu3
 // td(r1) ; bu(r3) : OK
 // repeat(td(r1)) : contre exemple
 
+// Plus(Mult(A(),Mult(A(),A())),Mult(A(),Mult(A(),A())))
