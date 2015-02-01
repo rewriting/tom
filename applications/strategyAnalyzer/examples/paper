@@ -80,21 +80,21 @@
 
 let S=signature {A:0, S:0, Plus:2, Mult:2} in
 let r1 = { Mult(x,Plus(y,z)) -> Plus(Mult(x,y),Mult(x,z)) } in 
-// let r2 = { Mult(Plus(y,z),x) -> Plus(Mult(y,x),Mult(z,x)) } in 
+let r3 = { Plus(Mult(x,y),Mult(x,z)) -> Mult(x,Plus(y,z)) } in 
 //let td1 = mu y.((r1<+identity);all(y)) in
-let obu1 = mu y.(one(y)<+r1) in
-let obu3 = mu y.(one(y)<+r3) in
+//let obu1 = mu y.(one(y)<+r1) in
+//let obu3 = mu y.(one(y)<+r3) in
 //let td3 = mu y.((r3<+identity);all(y)) in
 //let bu3 = mu y.(all(y);(r3<+identity)) in
 let repeatobu1 = mu x .((obu1;x) <+ identity) in
 let repeatobu3 = mu x .((obu3;x) <+ identity) in
 //let repeat1 = mu x .((obu1;x) <+ identity) in
 //let repeat3 = mu x .((r3;x) <+ identity) in
-//let rbu3 = mu y.(all(y);((r3;all(y))<+identity)) in
+let rbu3 = mu y.(all(y);((r3;all(y))<+identity)) in
 //rbu3
 //td1 ; bu3
 //otd1 ; bu3
-repeatobu1
+repeatobu1 ; repeatobu3
 
 // repeat(obu(r1)) : ?
 // repeat(otd(r1)) : ?
