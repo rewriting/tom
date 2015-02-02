@@ -52,7 +52,12 @@ public class Compiler {
         compileExp(bag,extractedSignature,generatedSignature,`x);
       }
     }
-    generateEquality(bag, extractedSignature, generatedSignature);
+
+    if(Main.options.generic) {
+      // do nothing
+    } else {
+      generateEquality(bag, extractedSignature, generatedSignature);
+    }
   }
 
 
@@ -405,11 +410,11 @@ public class Compiler {
         %match(rulelist) {
           RuleList(_*,Rule(lhs,rhs),_*) -> {
             // use AST-syntax because lhs and rhs are already encoded
-            System.out.println("lhs = " + `lhs);
-            System.out.println("encode lhs = " + tools.metaEncodeConsNil(`lhs,generatedSignature));
-            System.out.println("rhs = " + `rhs);
-            System.out.println("encode rhs = " + tools.metaEncodeConsNil(`rhs,generatedSignature));
-            System.out.println("decode(encode rhs) = " + tools.decodeConsNil(tools.metaEncodeConsNil(`rhs,generatedSignature)));
+            //System.out.println("lhs = " + `lhs);
+            //System.out.println("encode lhs = " + tools.metaEncodeConsNil(`lhs,generatedSignature));
+            //System.out.println("rhs = " + `rhs);
+            //System.out.println("encode rhs = " + tools.metaEncodeConsNil(`rhs,generatedSignature));
+            //System.out.println("decode(encode rhs) = " + tools.decodeConsNil(tools.metaEncodeConsNil(`rhs,generatedSignature)));
             bag.add(`Rule(Appl(rule,TermList(tools.metaEncodeConsNil(lhs,generatedSignature))),tools.metaEncodeConsNil(rhs,generatedSignature)));
 
             // TODO: non-linear anti-pattern
@@ -679,20 +684,19 @@ public class Compiler {
   
   /**
    * Expand an anti-pattern
-   * PEM's version
    * @param generatedRules initial set of rules
    * @param rule the rule to expand
    * @param extractedSignature the signature
    * @return nothing, but modifies generatedRules
    */
-  public static void expandAntiPattern(Collection<Rule> generatedRules, Rule rule, Map<String,Integer> generatedSignature) {
+  public static void expandAntiPattern(Collection<Rule> generatedRules, Rule rule, Map<String,Integer> extractedSignature, Map<String,Integer> generatedSignature) {
     try {
       `OnceBottomUp(ContainsAntiPattern()).visitLight(rule); // check if the rule contains an anti-pattern (exception otherwise)
       generatedRules.remove(rule); // remove the rule since it will be expanded
       //       System.out.println("RULE: "+`rule);
       Collection<Rule> bag = new HashSet<Rule>();
       // perform one-step expansion
-      `TopDown(ExpandAntiPattern(bag,rule,generatedSignature)).visit(rule);
+      `TopDown(ExpandAntiPattern(bag,rule,extractedSignature, generatedSignature)).visit(rule);
 
       /*
        * add rules from bag into generatedRules only if
@@ -705,12 +709,12 @@ public class Compiler {
        */
       for(Rule expandr:bag) {
         boolean toAdd = true;
-        for(Rule r:generatedRules) {
-          toAdd &= (!matchModuloAt(r.getlhs(), expandr.getlhs())); 
-        }
-        if(true || toAdd) {
+        //for(Rule r:generatedRules) {
+        //  toAdd &= (!matchModuloAt(r.getlhs(), expandr.getlhs())); 
+        //}
+        if(toAdd) {
           //System.out.println("YES");
-          expandAntiPattern(generatedRules,expandr,generatedSignature);
+          expandAntiPattern(generatedRules,expandr,extractedSignature,generatedSignature);
         } else {
           // do not add expandr
           //System.out.println("NO");
@@ -773,18 +777,20 @@ public class Compiler {
    * @param rule the rule to expand
    * @param extractedSignature the signature
    */
-  %strategy ExpandAntiPattern(bag:Collection,subject:Rule,generatedSignature:Map) extends Identity() {
+  %strategy ExpandAntiPattern(bag:Collection,subject:Rule,extractedSignature:Map, generatedSignature:Map) extends Identity() {
     visit Term {
       Anti(t) -> {
+        //System.out.println("ExpandAntiPattern: " + `t);
         Term antiterm = (Main.options.generic)?tools.decodeConsNil(`t):`t;
+        //System.out.println("ExpandAntiPattern antiterm: " + antiterm);
         %match(antiterm) { 
           Appl(name,args)  -> {
-            Map<String,Integer> signature = (Map<String,Integer>)generatedSignature;
             // add g(Z1,...) ... h(Z1,...)
-            for(String otherName:signature.keySet()) {
+            Set<String> otherNames = new HashSet<String>( ((Map<String,Integer>)extractedSignature).keySet() );
+            for(String otherName:otherNames) {
               if(!`name.equals(otherName)) {
-                int arity = signature.get(otherName);
-                Term newt = tools.encode(genAbstractTerm(otherName,arity, getName("Z")),signature);
+                int arity = ((Map<String,Integer>)extractedSignature).get(otherName);
+                Term newt = tools.encode(genAbstractTerm(otherName,arity, getName("Z")),generatedSignature);
                 if(Main.options.generic) {
                   newt = tools.metaEncodeConsNil(newt,generatedSignature);
                 }
