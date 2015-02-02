@@ -391,6 +391,7 @@ public class Compiler {
    * @param strat the strategy to compile
    * @return the name of the last compiled strategy
    */
+  private static boolean generated_aux_functions = false;
   private static String compileGenericStrat(Collection<Rule> bag, Map<String,Integer> extractedSignature, Map<String,Integer> generatedSignature, Strat strat) {
     String X = getName("X");
     String Y = getName("Y");
@@ -528,10 +529,14 @@ public class Compiler {
         generatedSignature.put(all_2,1);
         String all_3 = all+"_3";
         generatedSignature.put(all_3,4);
-        //         String concat = getName("concat");
-        String concat = "concat";
-        generatedSignature.put(concat,2); 
- 
+        
+	String append = "append";
+        generatedSignature.put(append,2); 
+	String reverse = "reverse";
+        generatedSignature.put(reverse,1); 
+	String rconcat = "rconcat";
+        generatedSignature.put(rconcat,2); 
+	
         // all
         bag.add(tools.encodeRule(%[rule(@all@(Appl(@Z0@,@Z1@)), @all_1@(Appl(@Z0@,@all_2@(@Z1@))))]%,generatedSignature));
         // all_1
@@ -541,13 +546,27 @@ public class Compiler {
         
         bag.add(tools.encodeRule(%[rule(@all_2@(Nil()) , Nil())]%,generatedSignature));
         bag.add(tools.encodeRule(%[rule(@all_2@(Cons(@Z1@,@Z2@)) , @all_3@(@phi_s@(@Z1@),@Z2@,Cons(@Z1@,Nil),Nil))]%,generatedSignature));
-        
-        bag.add(tools.encodeRule(%[rule(@all_3@(Bottom(@X@),@Z1@,@Z2@,@Z3@) , BottomList(@concat@(@Z2@,@Z1@)))]%,generatedSignature));
-        bag.add(tools.encodeRule(%[rule(@all_3@(Appl(@X@,@Y@),Nil,@Z2@,@Z3@) , @concat@(@Z3@,Cons(Appl(@X@,@Y@),Nil)))]%,generatedSignature));
-        bag.add(tools.encodeRule(%[rule(@all_3@(Appl(@X@,@Y@),Cons(@XX@,@YY@),@Z2@,@Z3@) , @all_3@(@phi_s@(@XX@),@YY@,@concat@(@Z2@,Cons(@XX@,Nil)),@concat@(@Z3@,Cons(Appl(@X@,@Y@),Nil))))]%,generatedSignature));
+        /*
+	 * all_3(Bottom(X),todo,rargs,rs_args) -> BottomList(rconcat(rargs,todo))
+	 * all_3(Appl(X,Y),Nil,rargs,rs_args) -> reverse(Cons(Appl(X,Y),rs_args))
+	 * all_3(Appl(X,Y), Cons(XX,YY), rargs, rs_args) -> 
+         *      all_3(rule47(XX), YY, Cons(XX,rargs), Cons(Appl(X,Y),rs_args))
+	 */ 
+        bag.add(tools.encodeRule(%[rule(@all_3@(Bottom(@X@),@Z1@,@Z2@,@Z3@) , BottomList(@rconcat@(@Z2@,@Z1@)))]%,generatedSignature));
+        bag.add(tools.encodeRule(%[rule(@all_3@(Appl(@X@,@Y@),Nil,@Z2@,@Z3@) , @reverse@(Cons(Appl(@X@,@Y@),@Z3@)))]%,generatedSignature));
+        bag.add(tools.encodeRule(%[rule(@all_3@(Appl(@X@,@Y@),Cons(@XX@,@YY@),@Z2@,@Z3@) , @all_3@(@phi_s@(@XX@),@YY@,Cons(@XX@,@Z2@), Cons(Appl(@X@,@Y@),@Z3@)))]%,generatedSignature));
 
-        bag.add(tools.encodeRule(%[rule(@concat@(Nil,@Z@), @Z@)]%,generatedSignature));
-        bag.add(tools.encodeRule(%[rule(@concat@(Cons(@X@,@Y@),@Z@), Cons(@X@,@concat@(@Y@,@Z@)))]%,generatedSignature));
+	if(!generated_aux_functions) { 
+	  generated_aux_functions = true;
+	  bag.add(tools.encodeRule(%[rule(@append@(Nil,@Z@), Cons(@Z@,Nil))]%,generatedSignature));
+	  bag.add(tools.encodeRule(%[rule(@append@(Cons(@X@,@Y@),@Z@), Cons(@X@,@append@(@Y@,@Z@)))]%,generatedSignature));
+
+	  bag.add(tools.encodeRule(%[rule(@reverse@(Nil), Nil)]%,generatedSignature));
+	  bag.add(tools.encodeRule(%[rule(@reverse@(Cons(@X@,@Y@)), @append@(@reverse@(@Y@),@X@))]%,generatedSignature));
+
+	  bag.add(tools.encodeRule(%[rule(@rconcat@(Nil,@Z@), @Z@)]%,generatedSignature));
+	  bag.add(tools.encodeRule(%[rule(@rconcat@(Cons(@X@,@Y@),@Z@), @rconcat@(@Y@,Cons(@X@,@Z@)))]%,generatedSignature));
+	}
     
         return all;
       }
@@ -561,10 +580,15 @@ public class Compiler {
         String one_2 = one+"_2";
         generatedSignature.put(one_2,1);
         String one_3 = one+"_3";
-        generatedSignature.put(one_3,2);
-        //         String clean = getName("clean");
-        String clean = "clean";
-        generatedSignature.put(clean,2); 
+        generatedSignature.put(one_3,3);
+
+	String append = "append";
+        generatedSignature.put(append,2); 
+	String reverse = "reverse";
+        generatedSignature.put(reverse,1); 
+	String rconcat = "rconcat";
+        generatedSignature.put(rconcat,2); 
+
         // one
         bag.add(tools.encodeRule(%[rule(@one@(Appl(@Z0@,@Z1@)), @one_1@(Appl(@Z0@,@one_2@(@Z1@))))]%,generatedSignature));
         // one_1
@@ -572,16 +596,28 @@ public class Compiler {
         bag.add(tools.encodeRule(%[rule(@one_1@(Appl(@Z0@,Cons(@X@,@Y@))), Appl(@Z0@,Cons(@X@,@Y@)))]%,generatedSignature));
         // one_2
         bag.add(tools.encodeRule(%[rule(@one_2@(Nil()), BottomList(Nil()))]%,generatedSignature));
-        bag.add(tools.encodeRule(%[rule(@one_2@(Cons(@X@,@Y@)), @one_3@(@phi_s@(@X@),@Y@))]%,generatedSignature));
+        bag.add(tools.encodeRule(%[rule(@one_2@(Cons(@X@,@Y@)), @one_3@(@phi_s@(@X@),@Y@,Cons(@X@,Nil)))]%,generatedSignature));
         // one_3
-        bag.add(tools.encodeRule(%[rule(@one_3@(Appl(@Z0@,@Z1@),@Y@), Cons(Appl(@Z0@,@Z1@),@Y@))]%,generatedSignature));
-        bag.add(tools.encodeRule(%[rule(@one_3@(Bottom(@Z@),Nil()), BottomList(Cons(@Z@,Nil())))]%,generatedSignature));
-        bag.add(tools.encodeRule(%[rule(@one_3@(Bottom(@Z@),Cons(@Z0@,@Z1@)), @clean@(@Z@,@one_2@(Cons(@Z0@,@Z1@))))]%,generatedSignature));
-        // clean
-        bag.add(tools.encodeRule(%[rule(@clean@(@Z@,BottomList(Nil())), BottomList(Cons(@Z@,Nil())))]%,generatedSignature));
-        bag.add(tools.encodeRule(%[rule(@clean@(@Z@,BottomList(Cons(@Z1@,Nil()))), BottomList(Cons(@Z@,Cons(@Z1@,Nil()))))]%,generatedSignature));
-        bag.add(tools.encodeRule(%[rule(@clean@(@Z@,Cons(@Z0@,@Z1@)), Cons(@Z@,Cons(@Z0@,@Z1@)))]%,generatedSignature));
+	/*
+	 * one_3(Bottom(X),Nil,rargs) -> BottomList(reverse(rargs))
+	 * one_3(Bottom(X),Cons(head,tail),rargs) -> ONE(head, tail, Cons(head,rargs))
+	 * one_3(Appl(X,Y),todo,Cons(last,rargs)) -> rconcat(rargs,Cons(Appl(X,Y),todo))
+	 */
+        bag.add(tools.encodeRule(%[rule(@one_3@(Bottom(@Z@),Nil, @Z2@), BottomList(@reverse@(@Z2@)))]%,generatedSignature));
+        bag.add(tools.encodeRule(%[rule(@one_3@(Bottom(@Z@),Cons(@XX@,@YY@),@Z2@), @one_3@(@XX@, @YY@, Cons(@XX@,@Z2@)))]%,generatedSignature));
+        bag.add(tools.encodeRule(%[rule(@one_3@(Appl(@X@,@Y@),@Z1@, Cons(@Z2@,@Z3@)), @rconcat@(@Z3@, Cons(Appl(@X@,@Y@),@Z1@)))]%,generatedSignature));
 
+	if(!generated_aux_functions) { 
+	  generated_aux_functions = true;
+	  bag.add(tools.encodeRule(%[rule(@append@(Nil,@Z@), Cons(@Z@,Nil))]%,generatedSignature));
+	  bag.add(tools.encodeRule(%[rule(@append@(Cons(@X@,@Y@),@Z@), Cons(@X@,@append@(@Y@,@Z@)))]%,generatedSignature));
+
+	  bag.add(tools.encodeRule(%[rule(@reverse@(Nil), Nil)]%,generatedSignature));
+	  bag.add(tools.encodeRule(%[rule(@reverse@(Cons(@X@,@Y@)), @append@(@reverse@(@Y@),@X@))]%,generatedSignature));
+
+	  bag.add(tools.encodeRule(%[rule(@rconcat@(Nil,@Z@), @Z@)]%,generatedSignature));
+	  bag.add(tools.encodeRule(%[rule(@rconcat@(Cons(@X@,@Y@),@Z@), @rconcat@(@Y@,Cons(@X@,@Z@)))]%,generatedSignature));
+	}
         return one;
       }
 
