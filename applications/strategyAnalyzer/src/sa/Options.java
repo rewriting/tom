@@ -24,9 +24,6 @@ public class Options {
   @Option(name="-generic",usage="use a generic compilation scheme")
     public boolean generic = false;
 
-  @Option(name="-exact",usage="use an exact compilation scheme")
-    public boolean exact = true;
-
   @Option(name="-tom",usage="generate a Tom program")
     public String classname;
 

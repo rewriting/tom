@@ -155,17 +155,7 @@ public class Pretty {
   }  
 
   public String generateTom(List<Rule> bag, Map<String,Integer> sig, String classname) {
-    sig.put("Bottom",1);
-    if(Main.options.exact) {
-      sig.put("Dummy",0);
-    }
-    if(Main.options.generic) {
-      sig.put("BottomList",1);
-      sig.put("Appl",2);
-      sig.put("Cons",2);
-      sig.put("Nil",0);
-    }
-    StringBuffer sb = new StringBuffer();
+        StringBuffer sb = new StringBuffer();
     String lowercaseClassname = classname.toLowerCase();
     sb.append(
         %[

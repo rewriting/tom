@@ -75,7 +75,7 @@ public class Tools {
         }
         break;
     }
-    //System.out.println("encodeRule: " + res);
+    // System.out.println("encodeRule: " + res);
     return res;
   }
 
@@ -115,7 +115,9 @@ public class Tools {
   private static String encodeConsNil(Term t, Map<String,Integer> signature) {
     %match(t) {
       Appl(symb,args) -> {
-        return "Appl(symb_" + `symb + "," + encodeConsNil(`args,signature) + ")";
+        String symbName = "symb_" + `symb;
+        signature.put(symbName,0);
+        return "Appl(" + symbName + "," + encodeConsNil(`args,signature) + ")";
       }
 
       Var(name) -> {
@@ -242,7 +244,7 @@ public class Tools {
     * generalMetaEncodeConsNil: transforms a Term representation into a generic term representation
     * - the term can contain Anti and At - only the terms in the original signature are encoded
     */
-
+/*
   public static Term generalMetaEncodeConsNil(Term t, Set<String> extractedSignature, Map<String,Integer> signature) {
     %match(t) {
       Appl(symb,args) -> {
@@ -280,7 +282,7 @@ public class Tools {
     }
     return t;
   }
-
+*/
 
 
 

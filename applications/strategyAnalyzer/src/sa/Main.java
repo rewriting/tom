@@ -100,6 +100,7 @@ public class Main {
 
       Map<String,Integer> generatedSignature = new HashMap<String,Integer>();
       Map<String,Integer> extractedSignature = new HashMap<String,Integer>();
+
       Collection<Rule> generatedRules = new HashSet<Rule>();
 
       // Transforms the strategy into a rewrite system
