@@ -40,6 +40,7 @@ public class Main {
     }
 
     // print current options
+    /*
     try {
       Class c = options.getClass();
       Field[] fields = c.getDeclaredFields();
@@ -62,17 +63,7 @@ public class Main {
       System.err.println("No field: " + ef);
     }
     System.out.println("\n------------------------------------------   ");
-
-//     System.out.println("withAP: " + options.withAP);
-//     System.out.println("aprove: " + options.aprove);
-//     System.out.println("classname: " + options.classname);
-//     System.out.println("out: " + options.out);
-//     System.out.println("in: " + options.in);
-//     System.out.println("level: " + options.level);
-//     System.out.println("other arguments are:");
-//     for( String s : options.arguments ) {
-//       System.out.println(s);
-//     }
+      */
 
     try {
       InputStream fileinput = System.in;
@@ -137,7 +128,8 @@ public class Main {
         tomoutputfile.println( pretty.generateTom(orderedRules,generatedSignature,options.classname) );
       } 
       if(options.aprove) {
-        outputfile.println( pretty.generateAprove(orderedRules,extractedSignature,true) );
+        boolean innermost = false;
+        outputfile.println( pretty.generateAprove(orderedRules,extractedSignature,innermost) );
       }
     } catch (Exception e) {
       System.err.println("exception: " + e);
