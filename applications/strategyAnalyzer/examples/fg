@@ -1,0 +1,10 @@
+let S=signature {a:0, b:0, f:1, g:1} in
+let r = { g(f(x)) -> f(g(x)) } in 
+let innermost = mu x.(all(x);((r;x)<+identity)) in
+let td = mu y.((innermost<+identity);all(y)) in
+let propagate = mu x. (r ; (all(x)<+identity)) in
+let bup = mu y.(all(y);(propagate<+identity)) in
+//innermost
+//propagate
+//td
+bup
