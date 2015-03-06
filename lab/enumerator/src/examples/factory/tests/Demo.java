@@ -6,6 +6,7 @@ import tom.library.enumerator.Finite;
 import tom.library.enumerator.LazyList;
 import examples.factory.Car;
 import examples.factory.Student;
+import examples.factory.StudentFactory;
 import examples.factory.Tree;
 import examples.factory.TreeFactory;
 

@@ -26,5 +26,5 @@ gom examples/conslist.gom
 gom examples/recursive.gom 
 
 
-# tom -gi tom/library/shrink/metaterm/Shrink.t
-# tom -gi tom/library/shrink/metaterm/TomShrink.t
+tom -gi tom/library/shrink/metaterm/Shrink.t
+tom -gi tom/library/shrink/metaterm/TomShrink.t
