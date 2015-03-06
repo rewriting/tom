@@ -102,7 +102,6 @@ public class Main {
          for(Rule r:new HashSet<Rule>(generatedRules)) { 
            // add new rules to generatedRules (for each anti-pattern)
            Compiler.expandAntiPattern(generatedRules,r,extractedSignature,generatedSignature);
-           //Compiler.expandAntiPatternWithLevel(generatedRules,r,extractedSignature,options.level);
          }
       }
       

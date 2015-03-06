@@ -9,6 +9,7 @@ import aterm.pure.*;
 public class Tools {
   %include { rule/Rule.tom }
   %include { sl.tom }
+  %include { aterm.tom }
   %include { java/util/types/Collection.tom }
   %include { java/util/types/Map.tom }
   %include { java/util/types/HashSet.tom }
@@ -55,6 +56,22 @@ public class Tools {
         }
        break; 
     }
+    return res;
+  }
+
+  public static RuleList encodeRuleList(String stringterm, Map<String,Integer> signature) {
+    System.out.println("encodeRuleList: " + stringterm);
+    RuleList res = `RuleList();
+    ATermFactory factory = SingletonFactory.getInstance();
+    ATerm at = factory.parse(stringterm);
+    %match(at) {
+      ATermList(_*,ATermAppl(AFun("rule",2,_),concATerm(atlhs,atrhs)), _*) -> {
+        Term lhs = encode(`atlhs,signature);
+        Term rhs = encode(`atrhs,signature);
+        res = `RuleList(res*, Rule(lhs,rhs));
+      }
+    }
+    System.out.println("encodeRuleList: " + res);
     return res;
   }
 

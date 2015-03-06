@@ -189,8 +189,11 @@ public class @classname@ {
     try {
       BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
       T input = T.fromString(reader.readLine());
+      long start = System.currentTimeMillis();
       T t = `@Compiler.getTopName()@(input);
+      long stop = System.currentTimeMillis();
       System.out.println(t);
+      System.out.println("time1 (ms): " + ((stop-start)));
     } catch (IOException e) {
       e.printStackTrace();
     }

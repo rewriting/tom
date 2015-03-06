@@ -49,6 +49,9 @@ rule :
   pattern ARROW term (IF cond=condition)?
     -> { cond == null }? ^(Rule pattern term)
     -> ^(ConditionalRule pattern term $cond)
+  | ID ARROW term (IF cond=condition)?
+    -> { cond == null }? ^(Rule ^(Var ID)term)
+    -> ^(ConditionalRule ^(Var ID) term $cond)
   ;
 condition :
   p1=term DOUBLEEQUALS p2=term

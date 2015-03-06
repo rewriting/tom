@@ -4,7 +4,11 @@ let innermost = mu x.(all(x);((r;x)<+identity)) in
 let td = mu y.((innermost<+identity);all(y)) in
 let propagate = mu x. (r ; (all(x)<+identity)) in
 let bup = mu y.(all(y);(propagate<+identity)) in
-//innermost
+let obu = mu y.(one(y) <+ r) in
+let repeatobu = mu X.((obu ; X) <+ identity) in
+innermost
 //propagate
 //td
-bup
+//bup
+//repeatobu
+
