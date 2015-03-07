@@ -1,6 +1,6 @@
 package examples.factory;
 
-import examples.factory.generation.EnumerateGenerator;
+import tom.library.factory.EnumerateGenerator;
 
 public class TrickyTree<E,F,G> {
 	private E elemE;

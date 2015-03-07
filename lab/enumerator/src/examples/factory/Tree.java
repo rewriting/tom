@@ -1,6 +1,6 @@
 package examples.factory;
 
-import examples.factory.generation.EnumerateGenerator;
+import tom.library.factory.EnumerateGenerator;
 
 public class Tree<E> {
 	private E elem;

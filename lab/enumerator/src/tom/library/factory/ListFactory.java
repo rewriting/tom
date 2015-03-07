@@ -1,13 +1,9 @@
-package examples.factory.generation;
+package tom.library.factory;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
-import examples.factory.Garage;
-import tom.library.enumerator.Enumeration;
-import tom.library.enumerator.F;
 
 public class ListFactory extends AbstractEnumeratorGenerator{
 

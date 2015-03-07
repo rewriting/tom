@@ -1,4 +1,4 @@
-package examples.factory.generation;
+package tom.library.factory;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;

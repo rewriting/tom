@@ -1,22 +1,12 @@
-package examples.factory.generation;
+package tom.library.factory;
 
 import java.io.IOException;
 import java.lang.annotation.Annotation;
-import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-
-import tom.library.enumerator.Combinators;
-import tom.library.enumerator.Enumeration;
-import examples.factory.Car;
-import examples.factory.Color;
-import examples.factory.Garage;
-import examples.factory.Student;
-import examples.factory.generation.Enumerate;
 
 public class ClassFactory extends AbstractEnumeratorGenerator{
 

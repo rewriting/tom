@@ -9,15 +9,13 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import tom.library.factory.GeneratorFactory;
+import tom.library.factory.GeneratorFactoryException;
+import tom.library.factory.Tools;
 import examples.factory.Car;
 import examples.factory.Garage;
-import examples.factory.Garage2;
-import examples.factory.Student;
 import examples.factory.Tree;
-import examples.factory.TrickyTree;
-import examples.factory.generation.GeneratorFactory;
-import examples.factory.generation.GeneratorFactoryException;
-import examples.factory.generation.Tools;
+
 
 public class PlayWithGenerators {
 
