@@ -35,7 +35,7 @@ public class ClassFactory extends AbstractEnumeratorGenerator{
 		appendln(sb,"boolean canBeNull = false;");
 		// TODO: generate "canBeNull = true;" if  canBeNull==true in the annotation Enumerate
 		if(canBeNull){
-			//		appendln(sb,"// if(@PlayWithGenerators(canBeNull)){");
+			//		appendln(sb,"// if(@MainFactoryGenerator(canBeNull)){");
 			appendln(sb,"    canBeNull = true;");
 			//		appendln(sb,"// }");
 		}

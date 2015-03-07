@@ -10,7 +10,7 @@ public class CarFactory {
 
 	public static final Enumeration<Car> getEnumeration() {
 		boolean canBeNull = false;
-		// if(@PlayWithGenerators(canBeNull)){
+		// if(@MainFactoryGenerator(canBeNull)){
 		     canBeNull = true;
 	    // }
 		return getEnumeration(canBeNull);
