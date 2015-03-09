@@ -107,10 +107,6 @@ public class Compiler {
 
     %match(strat) {
       StratExp(Set(rulelist)) -> {
-        String rule = getName("rule");
-        generatedSignature.put(rule,1);
-        String cr = getName("crule");
-        generatedSignature.put(cr,2);
         /*
          * lhs -> rhs becomes
          * in the linear case:
@@ -122,6 +118,10 @@ public class Compiler {
          *   rule'(linear-lhs, true) -> rhs
          *   rule'(X@linear-lhs, false) -> Bottom(x)
          */
+        String rule = getName("rule");
+        generatedSignature.put(rule,1);
+        String cr = getName("crule");
+        generatedSignature.put(cr,2);
         %match(rulelist) {
           RuleList(_*,Rule(lhs,rhs),_*) -> {
             // use AST-syntax because lhs and rhs are already encoded
@@ -427,17 +427,49 @@ public class Compiler {
 
     %match(strat) {
       StratExp(Set(rulelist)) -> {
+        /*
+         * lhs -> rhs becomes
+         * in the linear case:
+         *   rule(lhs) -> rhs
+         *   rule(X@!lhs) -> Bottom(X)
+         * in the non-linear case:
+         *   rule(X@linear-lhs) -> rule'(X, true ^ constraint on non linear variables)
+         *   rule(X@!linear-lhs) -> Bottom(X)
+         *   rule'(linear-lhs, true) -> rhs
+         *   rule'(X@linear-lhs, false) -> Bottom(x)
+         */
         String rule = getName("rule");
         generatedSignature.put(rule,1);
+        String cr = getName("crule");
+        generatedSignature.put(cr,2);
         %match(rulelist) {
           RuleList(_*,Rule(lhs,rhs),_*) -> {
+            Term mlhs = tools.metaEncodeConsNil(`lhs,generatedSignature);
+            Term mrhs = tools.metaEncodeConsNil(`rhs,generatedSignature);
+
             // use AST-syntax because lhs and rhs are already encoded
             //System.out.println("lhs = " + `lhs);
-            //System.out.println("encode lhs = " + tools.metaEncodeConsNil(`lhs,generatedSignature));
+            //System.out.println("encode lhs = " + mlhs);
             //System.out.println("rhs = " + `rhs);
-            //System.out.println("encode rhs = " + tools.metaEncodeConsNil(`rhs,generatedSignature));
+            //System.out.println("encode rhs = " + mrhs);
             //System.out.println("decode(encode rhs) = " + tools.decodeConsNil(tools.metaEncodeConsNil(`rhs,generatedSignature)));
-            bag.add(`Rule(Appl(rule,TermList(tools.metaEncodeConsNil(lhs,generatedSignature))),tools.metaEncodeConsNil(rhs,generatedSignature)));
+
+            bag.add(`Rule(Appl(rule,TermList(botX)),botX));
+            //bag.add(`Rule(Appl(rule,TermList(mlhs)),mrhs));
+
+            TermList result = linearize(`lhs,generatedSignature);
+            %match(result) {
+              TermList(linearlhs, cond) -> {
+                Term mlinearlhs = tools.metaEncodeConsNil(`linearlhs,generatedSignature);
+
+                bag.add(`Rule(Appl(rule,TermList(At(varX,mlinearlhs))),
+                              Appl(cr, TermList(varX, cond))));
+                bag.add(`Rule(Appl(rule,TermList(At(varX,Anti(mlinearlhs)))),botX));
+
+                bag.add(`Rule(Appl(cr,TermList(mlinearlhs, True)), rhs));
+                bag.add(`Rule(Appl(cr,TermList(At(varX,mlinearlhs), False)),botX));
+              }
+            }
 
             // TODO: non-linear anti-pattern
             bag.add(`Rule(Appl(rule,TermList(At(varX,Anti(tools.metaEncodeConsNil(lhs,generatedSignature))))),botX));
