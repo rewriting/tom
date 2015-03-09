@@ -1,4 +1,4 @@
-package examples.factory.generation;
+package tom.library.factory;
 
 import java.util.HashMap;
 import java.util.Map;

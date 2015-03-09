@@ -1,6 +1,7 @@
 package examples.factory;
 
-import examples.factory.generation.EnumerateStatic;
+import tom.library.factory.EnumerateStatic;
+
 
 @EnumerateStatic
 public class Color {

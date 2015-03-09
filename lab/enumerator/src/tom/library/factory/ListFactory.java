@@ -1,4 +1,4 @@
-package examples.factory;
+package tom.library.factory;
 
 import tom.library.enumerator.Enumeration;
 import tom.library.enumerator.F;
