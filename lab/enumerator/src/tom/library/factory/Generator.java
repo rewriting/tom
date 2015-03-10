@@ -44,18 +44,6 @@ public class Generator {
 
 		// build type parameters (if any)
 		this.classTypeParameters=Tools.getStringTypeParametersOfTheClass(class2enumerate);
-//		this.classTypeParameters="";
-		int i = 0;
-//		for (TypeVariable<?> tv : class2enumerate.getTypeParameters()) {
-//			this.classTypeParameters = classTypeParameters + tv.getName();
-//			if (i < class2enumerate.getTypeParameters().length - 1) {
-//				this.classTypeParameters += ",";
-//			}
-//			i++;
-//		}
-//		if (i > 0) { // if at least one type parameter
-//			this.classTypeParameters = "<" + classTypeParameters + ">";
-//		}
 		
 		// choose the constructor used for generating the instances
 		// TODO: what if the selected constructor has an argument of type interface/abstract class? 
@@ -78,7 +66,7 @@ public class Generator {
 		// store the parameters of the constructor and their annotations
 		this.constructorParameters = new ArrayList<Class<?>>();
 		this.constructorParametersAnnotations = new ArrayList<Annotation[]>();
-		i = 0;
+		int i = 0;
 		for (Class<?> param : constructor4Enumerate.getParameterTypes()) {
 			this.constructorParameters.add(param);
 			this.constructorParametersAnnotations.add(constructor4Enumerate.getParameterAnnotations()[i++]);
@@ -92,6 +80,9 @@ public class Generator {
 			this.constructorParametersTypes.add(t);
 		}
 
+		// TODO
+		// Allow methods to be enumerate generators (if they return an object of the type of the class)?
+		
 		// TODO
 		this.enumeratorCode = new StringBuilder();
 		this.isParametrized = class2enumerate.getTypeParameters().length != 0;
