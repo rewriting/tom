@@ -47,7 +47,7 @@ public class PlayWithGenerators {
 
 		////MainFactoryGenerator.generateFactoryFiles(T3.class,"examples.factory.tests");
 		//		
-//		PlayWithGenerators.generateFactoryFiles(Tree.class,packagePath);		
+		PlayWithGenerators.generateFactoryFiles(Tree.class,packagePath);		
 
 		// TODO: check it
 //		MainFactoryGenerator.generateFactoryFiles(TrickyTree.class,packagePath);

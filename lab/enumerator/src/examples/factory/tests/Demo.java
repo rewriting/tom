@@ -46,13 +46,13 @@ public class Demo {
 		}
 		
 
-//		// Tree of Integeres
-//		Enumeration<Tree<Integer>> enumTree = TreeFactory.getEnumeration(enumInt);
-//		LazyList<Finite<Tree<Integer>>> partsTree = enumTree.parts();
-//		for (int i = 0; i < 8 && !partsTree.isEmpty(); i++) {
-//			System.out.println(i + " --> " + partsTree.head());
-//			partsTree = partsTree.tail();
-//		}
+		// Tree of Integeres
+		Enumeration<Tree<Integer>> enumTree = TreeFactory.getEnumeration(enumInt);
+		LazyList<Finite<Tree<Integer>>> partsTree = enumTree.parts();
+		for (int i = 0; i < 8 && !partsTree.isEmpty(); i++) {
+			System.out.println(i + " --> " + partsTree.head());
+			partsTree = partsTree.tail();
+		}
 		 
 //		Enumeration<Car> enumCar = CarFactory.getEnumeration();
 //		LazyList<Finite<Car>> partsCar = enumCar.parts();

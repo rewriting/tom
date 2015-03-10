@@ -1,10 +1,11 @@
 package tom.library.factory;
 
 import java.lang.reflect.Type;
+import java.lang.reflect.TypeVariable;
 import java.util.regex.Pattern;
 
 public class Tools {
-	
+
 	public static final String INTEGER = Integer.class.getSimpleName();
 	public static final String LONG = Long.class.getSimpleName();
 	public static final String BYTE = Byte.class.getSimpleName();
@@ -19,7 +20,10 @@ public class Tools {
 			FLOAT, DOUBLE, BOOLEAN, STRING };
 
 	public static boolean isBasicType(Type type) {
-		if(type.equals(int.class) || type.equals(long.class) || type.equals(byte.class) || type.equals(float.class) || type.equals(double.class) || type.equals(boolean.class) || type.equals(short.class) || type.equals(char.class)){
+		if (type.equals(int.class) || type.equals(long.class)
+				|| type.equals(byte.class) || type.equals(float.class)
+				|| type.equals(double.class) || type.equals(boolean.class)
+				|| type.equals(short.class) || type.equals(char.class)) {
 			return true;
 		}
 		return false;
@@ -27,22 +31,22 @@ public class Tools {
 
 	public static String name4PrimitiveType(Type type) {
 		String name = "";
-		if(type.equals(int.class)){
-			name="Integer";
-		}else if(type.equals(long.class)){
-			name="Long";
-		}else if(type.equals(byte.class)){
-			name="Byte";
-		}else if(type.equals(float.class)){
-			name="Float";
-		}else if(type.equals(double.class)){
-			name="Double";
-		}else if(type.equals(boolean.class)){
-			name="Boolean";
-		}else if(type.equals(short.class)){
-			name="Short";
-		}else if(type.equals(char.class)){
-			name="Character";
+		if (type.equals(int.class)) {
+			name = "Integer";
+		} else if (type.equals(long.class)) {
+			name = "Long";
+		} else if (type.equals(byte.class)) {
+			name = "Byte";
+		} else if (type.equals(float.class)) {
+			name = "Float";
+		} else if (type.equals(double.class)) {
+			name = "Double";
+		} else if (type.equals(boolean.class)) {
+			name = "Boolean";
+		} else if (type.equals(short.class)) {
+			name = "Short";
+		} else if (type.equals(char.class)) {
+			name = "Character";
 		}
 		return name;
 	}
@@ -120,18 +124,14 @@ public class Tools {
 
 	protected static String getStringTypeParametersOfTheClass(Class<?> c) {
 		StringBuilder typeParameters = new StringBuilder();
-		if (c.getTypeParameters().length > 0) {
-			typeParameters.append("<");
-			for (int i = 0; i < c.getTypeParameters().length; i++) {
-				typeParameters.append(c.getTypeParameters()[i]);
-				if (i < c.getTypeParameters().length - 1) {
-					typeParameters.append(",");
-				}
-			}
-			typeParameters.append(">");
+		for (TypeVariable<?> tv : c.getTypeParameters()) {
+			typeParameters = typeParameters.append(tv.getName()).append(",");
 		}
-		;
+		// if there are some types
+		if (typeParameters.length() > 0) {
+			typeParameters.insert(0,'<');
+			typeParameters.replace(typeParameters.length()-1,typeParameters.length(),">");
+		}
 		return typeParameters + "";
-		// return "";
 	}
 }

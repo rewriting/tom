@@ -43,21 +43,23 @@ public class Generator {
 		this.class2enumerate = class2enumerate;
 
 		// build type parameters (if any)
-		this.classTypeParameters="";
+		this.classTypeParameters=Tools.getStringTypeParametersOfTheClass(class2enumerate);
+//		this.classTypeParameters="";
 		int i = 0;
-		for (TypeVariable<?> tv : class2enumerate.getTypeParameters()) {
-			this.classTypeParameters = classTypeParameters + tv.getName();
-			if (i < class2enumerate.getTypeParameters().length - 1) {
-				this.classTypeParameters += ",";
-			}
-			i++;
-		}
-		if (i > 0) { // if at least one type parameter
-			this.classTypeParameters = "<" + classTypeParameters + ">";
-		}
+//		for (TypeVariable<?> tv : class2enumerate.getTypeParameters()) {
+//			this.classTypeParameters = classTypeParameters + tv.getName();
+//			if (i < class2enumerate.getTypeParameters().length - 1) {
+//				this.classTypeParameters += ",";
+//			}
+//			i++;
+//		}
+//		if (i > 0) { // if at least one type parameter
+//			this.classTypeParameters = "<" + classTypeParameters + ">";
+//		}
 		
 		// choose the constructor used for generating the instances
-		// TODO: what if the selected constructor has an argument of type interface/abstract class
+		// TODO: what if the selected constructor has an argument of type interface/abstract class? 
+		//    --> specify a concrete class?
 		int maxLenght = -1;
 		for (Constructor<?> constr : class2enumerate.getConstructors()) {
 			if (constr.getAnnotation(EnumerateGenerator.class) != null) {
