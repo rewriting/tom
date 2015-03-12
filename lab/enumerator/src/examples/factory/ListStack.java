@@ -82,4 +82,10 @@ public class ListStack implements IStack {
 		}
 	}
 
+	@Override
+	public String toString() {
+		return "ListStack [stack=" + stack + "]";
+	}
+
+	
 }
