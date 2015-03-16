@@ -3,29 +3,49 @@ package examples.factory;
 import java.util.LinkedList;
 import java.util.List;
 
+import tom.library.factory.Enumerate;
+import tom.library.factory.EnumerateBase;
+import tom.library.factory.EnumerateBaseConstructor;
 import tom.library.factory.EnumerateGenerator;
 
 public class ListStack implements IStack {
 
 	private List<Integer> stack;
 
+	@EnumerateBaseConstructor
 	public ListStack() {
 		stack = new LinkedList<Integer>();
 	}
 
+	// used in the factory
 	@Override
-	@EnumerateGenerator(canBeNull = false)
+	public ListStack clone() {
+		ListStack ls = new ListStack();
+		for (Integer n : this.stack) {
+			ls.stack.add(n);
+		}
+		return ls;
+	}
+
+	@Override
+	@EnumerateBase
 	public IStack empty() {
 		return new ListStack();
 	}
 
 	@Override
 	@EnumerateGenerator(canBeNull = false)
-	public IStack push(Integer elem) {
+	public IStack push(@Enumerate(maxSize = 4) Integer elem) {
 		stack.add(elem);
 		return this;
 	}
 
+	@EnumerateGenerator
+	public IStack extend() {
+		this.stack.add(100);
+		return this;
+	}
+	
 	@Override
 	public boolean isEmpty() {
 		return stack.isEmpty();
@@ -41,10 +61,10 @@ public class ListStack implements IStack {
 
 	@Override
 	public IStack pop() throws EmptyStackException {
-//		Integer e = top();
+		// Integer e = top();
 		stack.remove(size() - 1);
 		return this;
-//		return e;
+		// return e;
 	}
 
 	@Override
@@ -87,5 +107,4 @@ public class ListStack implements IStack {
 		return "ListStack [stack=" + stack + "]";
 	}
 
-	
 }

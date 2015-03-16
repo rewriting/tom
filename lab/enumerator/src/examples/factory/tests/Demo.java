@@ -51,7 +51,7 @@ public class Demo {
 		// Stacks
 		Enumeration<ListStack> enumListStack = ListStackFactory.getEnumeration();
 		LazyList<Finite<ListStack>> partsListStack = enumListStack.parts();
-		for (int i = 0; i < 5 && !partsListStack.isEmpty(); i++) {
+		for (int i = 0; i < 7 && !partsListStack.isEmpty(); i++) {
 			System.out.println(i + " --> " + partsListStack.head());
 			partsListStack = partsListStack.tail();
 		}
@@ -60,7 +60,7 @@ public class Demo {
 		// Stacks
 		Enumeration<Stack> en = Stack.getEnumeration();
 		LazyList<Finite<Stack>> partsEn = en.parts();
-		for (int i = 0; i < 5 && !partsEn.isEmpty(); i++) {
+		for (int i = 0; i < 7 && !partsEn.isEmpty(); i++) {
 			System.out.println(i + " --> " + partsEn.head());
 			partsEn = partsEn.tail();
 		}
