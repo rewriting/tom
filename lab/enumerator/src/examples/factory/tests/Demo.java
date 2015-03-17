@@ -18,7 +18,6 @@ import examples.factory.Garage;
 import examples.factory.GarageFactory;
 import examples.factory.ListStack;
 import examples.factory.ListStackFactory;
-import examples.factory.SmartFactory;
 import examples.factory.Student;
 import examples.factory.StudentFactory;
 import examples.factory.Tree;
