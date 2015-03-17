@@ -15,72 +15,96 @@ public class ListStackFactory {
 
 	public static Enumeration<ListStack> getEnumeration() {
 
-		boolean canBeNull = false;
-		// if(@Generator(canBeNull)){
-		//     canBeNull = true;
-	    // }
-		
-		// we need at least one base case constructor method
-		// could be a constructor
-		// or a method - in this case we should specify a constructor for the
-		// this used to call the method (something like EnumerationBase)
+		// final result
 		Enumeration<ListStack> enumRes = null;
 
 		// constructor with no arguments
-		ListStack _listStack_base_constructor = new ListStack();
+		Enumeration<ListStack> enumCons1 = Enumeration.singleton(new ListStack());
+
+		// constructor with arguments 
+		// F< arg1, F< arg2, ... F <argn, Student>...>
+		F<Integer, ListStack> _listStack_cons2 = new F<Integer, ListStack>() {
+			public ListStack apply(final Integer t2) {
+				return  new ListStack(t2);
+			}
+		};
+		// //@Enumerate(maxSize=5)
+		// int nbElem
+		final Enumeration<Integer> nbElemEnum = new Enumeration<Integer>(
+				Combinators.makeInteger().parts().take(BigInteger.valueOf(5)));
+		Enumeration<ListStack> enumCons2 = Enumeration.apply(Enumeration.singleton(_listStack_cons2), nbElemEnum);
+
+		// enumeration for all constructors (as many PLUS as constructors-1)
+		Enumeration<ListStack>  enumCons = enumCons1.plus(enumCons2);
+		
+		// element in the constructor based enumeration that will be used in enumerating methods with numberOfSamples=1
+		ListStack _listStack_base_constructor = enumCons.get(BigInteger.valueOf(0));
 
 		// F< arg1, F< arg2, ... F <argn, Student>...>
 		F<Enumeration<ListStack>, F<Enumeration<Integer>, Enumeration<ListStack>>> _listStack_push = new F<Enumeration<ListStack>, F<Enumeration<Integer>, Enumeration<ListStack>>>() {
 			public F<Enumeration<Integer>, Enumeration<ListStack>> apply(
 					final Enumeration<ListStack> t1) {
 				return new F<Enumeration<Integer>, Enumeration<ListStack>>() {
-					public Enumeration<ListStack> apply(
-							final Enumeration<Integer> t2) {
-						return Enumeration.apply(Enumeration.apply(Enumeration.singleton((F<ListStack, F<Integer, ListStack>>) new F<ListStack, F<Integer, ListStack>>() {
-							public F<Integer, ListStack> apply(
-									final ListStack t1) {
-								return new F<Integer, ListStack>() {
-									public ListStack apply(final Integer t2) {
-										// should build a completely new object which does not interfere with the others
-										return (ListStack) t1.clone().push(t2);
-									}
-								};
-							}
-						}), t1), t2).pay();
+					public Enumeration<ListStack> apply(final Enumeration<Integer> t2) {
+						return Enumeration
+								.apply(Enumeration.apply(
+										Enumeration
+												.singleton((F<ListStack, F<Integer, ListStack>>) new F<ListStack, F<Integer, ListStack>>() {
+													public F<Integer, ListStack> apply(final ListStack t1) {
+														return new F<Integer, ListStack>() {
+															public ListStack apply(final Integer t2) {
+																// should build a completely new object which does not interfere with the others
+																return (ListStack) t1.clone().push(t2);
+															}
+														};
+													}
+												}), t1), t2).pay();
 					}
 				};
 			}
 		};
-
 		// //@Enumerate(maxSize=4)
 		// int no,
-		final Enumeration<Integer> noEnum = new Enumeration<Integer>(Combinators.makeInteger().parts().take(BigInteger.valueOf(4)));
+		final Enumeration<Integer> noEnum = new Enumeration<Integer>(
+				Combinators.makeInteger().parts().take(BigInteger.valueOf(4)));
 
-		// the "this" used in the call to push
+		// the "this" used in the call to enumerating methods with numberOfSamples>1 (push, extend, etc.)
 		Enumeration<ListStack> tmpListStackEnum = new Enumeration<ListStack>((LazyList<Finite<ListStack>>) null);
 
-		// (constructor) base method (with no arguments)
-		Enumeration<ListStack> _listStack_empty = Enumeration.singleton((ListStack) _listStack_base_constructor.empty());
-
-		// other method without parameters but not a base case
-		F<Enumeration<ListStack>, Enumeration<ListStack>> _listStack_extend = new F<Enumeration<ListStack>, Enumeration<ListStack>>() {
+		// enumerating method 
+		F<Enumeration<ListStack>, Enumeration<ListStack>> _listStack_empty = new F<Enumeration<ListStack>, Enumeration<ListStack>>() {
 			public Enumeration<ListStack> apply(final Enumeration<ListStack> e) {
-				return Enumeration.apply(Enumeration.singleton((F<ListStack, ListStack>) new F<ListStack, ListStack>() {
-					public ListStack apply(final ListStack e) {
-						return (ListStack) e.clone().extend();
-					}
-				}), e).pay();
+				return Enumeration
+						.apply(Enumeration.singleton((F<ListStack, ListStack>) new F<ListStack, ListStack>() {
+							public ListStack apply(final ListStack e) {
+								return (ListStack) e.clone().empty();
+							}
+						}), e).pay();
 			}
 		};
 
-		// base case
-		enumListStack = _listStack_empty;
+		// other method without parameters but not a base case (normally no difference to the others)
+		F<Enumeration<ListStack>, Enumeration<ListStack>> _listStack_extend = new F<Enumeration<ListStack>, Enumeration<ListStack>>() {
+			public Enumeration<ListStack> apply(final Enumeration<ListStack> e) {
+				return Enumeration
+						.apply(Enumeration.singleton((F<ListStack, ListStack>) new F<ListStack, ListStack>() {
+							public ListStack apply(final ListStack e) {
+								return (ListStack) e.clone().extend();
+							}
+						}), e).pay();
+			}
+		};
+
+		// method with numberOfSamples=1 ==> applied to only one element (the default one)
+		enumListStack = _listStack_empty.apply(Enumeration.singleton(_listStack_base_constructor));
 
 		// method
-		enumListStack = enumListStack.plus(_listStack_push.apply(tmpListStackEnum).apply(noEnum));
+		enumListStack = enumListStack.plus(_listStack_push.apply(
+				tmpListStackEnum).apply(noEnum));
 
 		// generation method without parameters
-//		enumListStack = enumListStack.plus(_listStack_extend.apply(tmpListStackEnum));
+		 enumListStack = enumListStack.plus(_listStack_extend.apply(
+				 tmpListStackEnum));
 
 		tmpListStackEnum.p1 = new P1<LazyList<Finite<ListStack>>>() {
 			public LazyList<Finite<ListStack>> _1() {
@@ -88,14 +112,18 @@ public class ListStackFactory {
 			}
 		};
 
-		if (canBeNull) {
-			Enumeration<ListStack> emptyEnum = Enumeration.singleton(null);
-			emptyEnum = emptyEnum.plus(enumListStack.pay());
-			enumRes = emptyEnum;
-		} else {
-			enumRes = enumListStack;
-		}
+//		TODO: code related to canBeNull
+//		if (canBeNull) {
+//			Enumeration<ListStack> emptyEnum = Enumeration.singleton(null);
+//			emptyEnum = emptyEnum.plus(enumListStack.pay());
+//			enumRes = emptyEnum;
+//		} else {
+////			enumRes = enumListStack;
+//			enumRes = enumCons2;
+//		}
 
+		enumRes = enumListStack;
+		
 		return enumRes;
 	}
 }

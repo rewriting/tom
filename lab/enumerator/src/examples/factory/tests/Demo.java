@@ -1,5 +1,7 @@
 package examples.factory.tests;
 
+import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.List;
 
 import tom.library.enumerator.Combinators;
@@ -16,6 +18,7 @@ import examples.factory.Garage;
 import examples.factory.GarageFactory;
 import examples.factory.ListStack;
 import examples.factory.ListStackFactory;
+import examples.factory.SmartFactory;
 import examples.factory.Student;
 import examples.factory.StudentFactory;
 import examples.factory.Tree;
@@ -43,11 +46,12 @@ public class Demo {
 //		// Lists of Students
 //		Enumeration<List<Student>> enumListStudent = ListFactory.getEnumeration(StudentFactory.getEnumeration());
 //		LazyList<Finite<List<Student>>> partsListStudent = enumListStudent.parts();
-//		for (int i = 0; i < 5 && !partsListStudent.isEmpty(); i++) {
+//		for (int i = 0; i < 7 && !partsListStudent.isEmpty(); i++) {
 //			System.out.println(i + " --> " + partsListStudent.head());
 //			partsListStudent = partsListStudent.tail();
 //		}
-
+		
+//		System.out.println(Combinators.makeInteger().get(BigInteger.valueOf(0)));
 		// Stacks
 		Enumeration<ListStack> enumListStack = ListStackFactory.getEnumeration();
 		LazyList<Finite<ListStack>> partsListStack = enumListStack.parts();
