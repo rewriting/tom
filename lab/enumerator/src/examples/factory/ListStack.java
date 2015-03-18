@@ -1,12 +1,9 @@
 package examples.factory;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 import tom.library.factory.Enumerate;
-import tom.library.factory.EnumerateBase;
-import tom.library.factory.EnumerateBaseConstructor;
 import tom.library.factory.EnumerateGenerator;
 
 public class ListStack implements IStack {
@@ -36,14 +33,14 @@ public class ListStack implements IStack {
 	}
 
 	@Override
-	@Enumerate(numberOfSamples = 1)
+	@Enumerate(numberOfSamples = 1) // canBeNull should be false
 	public IStack empty() {
 		return new ListStack();
 	}
 
 	@Override
 	@Enumerate
-	public IStack push(@Enumerate(maxSize = 4, numberOfSamples = 20, canBeNull = false) Integer elem) {
+	public IStack push(@Enumerate(maxSize = 4, numberOfSamples = 20, canBeNull = true) Integer elem) {
 		stack.add(elem);
 		return this;
 	}

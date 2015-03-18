@@ -65,8 +65,11 @@ public class ListStackFactory {
 		};
 		// //@Enumerate(maxSize=4)
 		// int no,
-		final Enumeration<Integer> noEnum = new Enumeration<Integer>(
+		Enumeration<Integer> noEnum = new Enumeration<Integer>(
 				Combinators.makeInteger().parts().take(BigInteger.valueOf(4)));
+		// canBeNull = true
+		Enumeration<Integer> emptyEnum = Enumeration.singleton(null);
+		noEnum = emptyEnum.plus(noEnum);
 
 		// the "this" used in the call to enumerating methods with numberOfSamples>1 (push, extend, etc.)
 		Enumeration<ListStack> tmpListStackEnum = new Enumeration<ListStack>((LazyList<Finite<ListStack>>) null);
@@ -103,24 +106,14 @@ public class ListStackFactory {
 				tmpListStackEnum).apply(noEnum));
 
 		// generation method without parameters
-		 enumListStack = enumListStack.plus(_listStack_extend.apply(
-				 tmpListStackEnum));
+//		 enumListStack = enumListStack.plus(_listStack_extend.apply(
+//				 tmpListStackEnum));
 
 		tmpListStackEnum.p1 = new P1<LazyList<Finite<ListStack>>>() {
 			public LazyList<Finite<ListStack>> _1() {
 				return enumListStack.parts();
 			}
 		};
-
-//		TODO: code related to canBeNull
-//		if (canBeNull) {
-//			Enumeration<ListStack> emptyEnum = Enumeration.singleton(null);
-//			emptyEnum = emptyEnum.plus(enumListStack.pay());
-//			enumRes = emptyEnum;
-//		} else {
-////			enumRes = enumListStack;
-//			enumRes = enumCons2;
-//		}
 
 		enumRes = enumListStack;
 		
