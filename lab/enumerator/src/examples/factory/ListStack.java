@@ -33,14 +33,14 @@ public class ListStack implements IStack {
 	}
 
 	@Override
-	@Enumerate(numberOfSamples = 1) // canBeNull should be false
+	@Enumerate(singleton = 1) 
 	public IStack empty() {
 		return new ListStack();
 	}
 
 	@Override
 	@Enumerate
-	public IStack push(@Enumerate(maxSize = 4, numberOfSamples = 20, canBeNull = true) Integer elem) {
+	public IStack push(@Enumerate(maxSize = 4, singleton = 3, canBeNull = true) Integer elem) {
 		stack.add(elem);
 		return this;
 	}

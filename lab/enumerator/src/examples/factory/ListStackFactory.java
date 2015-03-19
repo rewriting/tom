@@ -1,6 +1,7 @@
 package examples.factory;
 
 import java.math.BigInteger;
+import java.util.Random;
 
 import tom.library.enumerator.Combinators;
 import tom.library.enumerator.Enumeration;
@@ -8,6 +9,7 @@ import tom.library.enumerator.F;
 import tom.library.enumerator.Finite;
 import tom.library.enumerator.LazyList;
 import tom.library.enumerator.P1;
+import tom.library.factory.Enumerate;
 
 public class ListStackFactory {
 
@@ -63,13 +65,23 @@ public class ListStackFactory {
 				};
 			}
 		};
-		// //@Enumerate(maxSize=4)
-		// int no,
-		Enumeration<Integer> noEnum = new Enumeration<Integer>(
+		// @Enumerate(maxSize = 4, ...
+		// Integer elem
+		Enumeration<Integer> elemEnum = new Enumeration<Integer>(
 				Combinators.makeInteger().parts().take(BigInteger.valueOf(4)));
-		// canBeNull = true
+		// @Enumerate(... singleton = 20, ...
+		boolean notFound=true;
+		Integer _elemSingleton=null;
+		do{
+			try{
+				_elemSingleton = elemEnum.get(nextRandomBigInteger(BigInteger.valueOf(3)));
+				notFound=false;
+			}catch(RuntimeException exc){}
+		}while(notFound);
+		elemEnum = Enumeration.singleton(_elemSingleton);
+		// @Enumerate(...  canBeNull = true
 		Enumeration<Integer> emptyEnum = Enumeration.singleton(null);
-		noEnum = emptyEnum.plus(noEnum);
+		elemEnum = emptyEnum.plus(elemEnum);
 
 		// the "this" used in the call to enumerating methods with numberOfSamples>1 (push, extend, etc.)
 		Enumeration<ListStack> tmpListStackEnum = new Enumeration<ListStack>((LazyList<Finite<ListStack>>) null);
@@ -103,7 +115,7 @@ public class ListStackFactory {
 
 		// method
 		enumListStack = enumListStack.plus(_listStack_push.apply(
-				tmpListStackEnum).apply(noEnum));
+				tmpListStackEnum).apply(elemEnum));
 
 		// generation method without parameters
 //		 enumListStack = enumListStack.plus(_listStack_extend.apply(
@@ -118,5 +130,14 @@ public class ListStackFactory {
 		enumRes = enumListStack;
 		
 		return enumRes;
+	}
+	
+	private static BigInteger nextRandomBigInteger(BigInteger n) {
+		Random rand = new Random();
+		BigInteger result = new BigInteger(n.bitLength(), rand);
+		while (result.compareTo(n) >= 0) {
+			result = new BigInteger(n.bitLength(), rand);
+		}
+		return result;
 	}
 }
