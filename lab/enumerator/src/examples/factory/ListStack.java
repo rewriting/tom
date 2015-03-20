@@ -33,7 +33,7 @@ public class ListStack implements IStack {
 	}
 
 	@Override
-	@Enumerate(singleton = 1) 
+	@Enumerate(singleton = 0) 
 	public IStack empty() {
 		return new ListStack();
 	}
