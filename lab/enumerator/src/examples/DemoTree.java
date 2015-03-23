@@ -15,6 +15,7 @@ public class DemoTree {
 		Enumeration<A> aEnum = Enumeration.singleton((A) new aa());
 		Enumeration<A> bEnum = Enumeration.singleton((A) new bb());
 		final Enumeration<A> AEnum = aEnum.plus(bEnum);
+		
 		final Enumeration<String> StringEnum = Enumeration.singleton("f").plus(Enumeration.singleton("g"));
 
 		System.out.println("Enumerator for " + "A");
