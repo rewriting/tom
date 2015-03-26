@@ -1,4 +1,4 @@
-package examples.factory;
+package tom.library.factory;
 
 import java.lang.reflect.Constructor;
 import tom.library.factory.EnumerateGenerator;

@@ -1,4 +1,4 @@
-package examples.factory;
+package tom.library.factory;
 
 import java.io.StringWriter;
 import org.apache.velocity.Template;

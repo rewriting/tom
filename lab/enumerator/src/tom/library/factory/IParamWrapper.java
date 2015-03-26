@@ -1,4 +1,4 @@
-package examples.factory;
+package tom.library.factory;
 
 /**
  * wraps a parameter object of a method 
