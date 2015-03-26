@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/antlr-runtime-3.1.2.jar"/>
 	<classpathentry kind="lib" path="lib/aterm.jar"/>
+	<classpathentry kind="lib" path="lib/hamcrest-all-1.3.jar"/>
 	<classpathentry kind="lib" path="lib/javaruntype-1.2.jar"/>
 	<classpathentry kind="lib" path="lib/jcheck-0.1.jar"/>
 	<classpathentry kind="lib" path="lib/jjtraveler.jar"/>
@@ -14,6 +14,7 @@
 	<classpathentry kind="lib" path="lib/ognl-3.0.jar"/>
 	<classpathentry kind="lib" path="lib/shared-objects.jar"/>
 	<classpathentry kind="lib" path="lib/tom-tiny-library.jar"/>
-	<classpathentry kind="lib" path="lib/hamcrest-all-1.3.jar"/>
+	<classpathentry kind="lib" path="/Users/ahmad/tom/lab/enumerator/lib/junit-4.11.jar"/>
+	<classpathentry kind="lib" path="/Users/ahmad/tom/lab/enumerator/lib/hamcrest-core-1.3.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
