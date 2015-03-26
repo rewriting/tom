@@ -2,7 +2,7 @@ package tom.library.factory;
 
 import java.lang.reflect.Parameter;
 
-import org.apache.commons.lang.ClassUtils;
+import org.apache.velocity.util.ClassUtils;
 
 import tom.library.factory.Enumerate;
 
