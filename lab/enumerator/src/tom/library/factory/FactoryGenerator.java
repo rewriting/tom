@@ -5,6 +5,9 @@ import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 
+import examples.factory.Student;
+
+
 /**
  * sample client for the generator api
  * it initializes Apache Velocity template engine, call the parse method on a class 
@@ -22,7 +25,7 @@ public class FactoryGenerator {
 		
 		VelocityEngine ve = new VelocityEngine();
 		ve.init();
-		Template t = ve.getTemplate("./src/examples/factory/templates/FactoryTemplate.vm");
+		Template t = ve.getTemplate("./src/tom/library/factory/templates/FactoryTemplate.vm");
 		
 		VelocityContext context = new VelocityContext();
 		context.put("parsedClass", parsedClass);

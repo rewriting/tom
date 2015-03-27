@@ -1,32 +1,18 @@
 package tom.library.factory;
 
-import java.lang.reflect.Parameter;
-
-import tom.library.factory.Enumerate;
-
 /**
  * wraps a String parameter
  * @author Ahmad
  *
  */
-public class StringWrapper implements IParamWrapper {
-	/**
-	 * parameter to wrap
-	 */
-	private Parameter param;
+public class StringWrapper extends ParamWrapper {
 	
 	/**
-	 * the @Enumerate annotation on wrapped parameter
+	 * construct the wrapper by calling the ParamWrapper constructor
+	 * @param param
 	 */
-	private Enumerate enumerateAnnotation;
-	
-	/**
-	 * initializes the wrapper
-	 * @param param parameter to wrap
-	 */
-	public StringWrapper(Parameter param) {
-		this.param = param;
-		this.enumerateAnnotation = param.getAnnotation(Enumerate.class);
+	public StringWrapper(Class param) {
+		super(param);
 	}
 	
 	@Override

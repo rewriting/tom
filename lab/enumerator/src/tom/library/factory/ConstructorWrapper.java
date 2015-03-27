@@ -22,7 +22,7 @@ public class ConstructorWrapper {
 	/**
 	 * represents list of parameters of the constructor
 	 */
-	private final List<IParamWrapper> parameters;
+	private final List<ParamWrapper> parameters;
 	
 	/**
 	 * name of the variable representing this constructor in the generated Factory
@@ -36,9 +36,9 @@ public class ConstructorWrapper {
 	 */
 	public ConstructorWrapper(Constructor cons, int index) {
 		this.constructor = cons;
-		this.parameters = new ArrayList<IParamWrapper>(); 
-		for (int i=0; i<cons.getParameterCount(); i++) {
-			this.parameters.add(ParamFactory.createParamWrapper(cons.getParameters()[i]));
+		this.parameters = new ArrayList<ParamWrapper>(); 
+		for (int i=0; i<cons.getParameterTypes().length; i++) {
+			this.parameters.add(ParamFactory.createParamWrapper(cons.getParameterTypes()[i]));
 		
 		}
 		this.variableName = "cons"+index;
@@ -57,10 +57,17 @@ public class ConstructorWrapper {
 	 * getter for parameters
 	 * @return list of ParameterWrapper object corresponding to the constructor parameters
 	 */
-	public List<IParamWrapper> getParameters() {
+	public List<ParamWrapper> getParameters() {
 		return parameters;
 	}
 	
+	/**
+	 * convenience method to get parameters count
+	 * @return number of parameters of constructor
+	 */
+	public int getParamCount() {
+		return this.constructor.getParameterTypes().length;
+	}
 	
 	/**
 	 * getter for variable name
@@ -85,7 +92,7 @@ public class ConstructorWrapper {
 	 * @return name of the parameter
 	 */
 	public String getParameterName(int index) {
-		return this.constructor.getParameters()[index].getName();
+		return this.constructor.getParameterTypes()[index].getName();
 	}
 	
 	/**
@@ -103,7 +110,7 @@ public class ConstructorWrapper {
 		curriedType.append("F<");
 		curriedType.append(this.getParameterType(index));
 		curriedType.append(", ");
-		if (index == this.constructor.getParameterCount()-1) {
+		if (index == this.getParamCount()-1) {
 			curriedType.append(this.getConstructor().getName());        // last input parameter, so append the output (of type T)
 		} else {
 			curriedType.append(this.getCurriedType(index+1));			// partial application, append the currying of the output (a new function)
@@ -121,7 +128,7 @@ public class ConstructorWrapper {
 	public String getCurriedDefinition(int index) {
 		StringBuilder curriedDef = new StringBuilder();
 		
-		if (index == this.constructor.getParameterCount()-1) {
+		if (index == this.getParamCount()-1) {
 			// last parameter, apply the constructor with all the parameters
 			curriedDef.append("public ");
 			curriedDef.append(this.constructor.getName());
@@ -133,7 +140,7 @@ public class ConstructorWrapper {
 			curriedDef.append(this.constructor.getName());
 			curriedDef.append("(");
 			
-			for (int i=0;i<this.constructor.getParameterCount()-1;i++) {
+			for (int i=0;i<this.getParamCount()-1;i++) {
 				curriedDef.append(this.getParameterName(i));
 				curriedDef.append(", ");
 			}
@@ -165,7 +172,7 @@ public class ConstructorWrapper {
 		
 		String applyExpr = "Enumeration.singleton("+this.variableName+")";
 		
-		for(int i=0; i<this.getConstructor().getParameterCount(); i++) {
+		for(int i=0; i<this.getParamCount(); i++) {
 			applyExpr = "Enumeration.apply(" + applyExpr + ", "+this.getParameterName(i)+"Enum)";
 		}
 		

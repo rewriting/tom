@@ -43,7 +43,7 @@ public class PlayWithGenerators {
 //		PlayWithGenerators.generateFactoryFiles(Car.class,packagePath);
 //		PlayWithGenerators.generateFactoryFiles(Garage.class,packagePath);
 //		PlayWithGenerators.generateFactoryFiles(Garage2.class,packagePath);
-		PlayWithGenerators.generateFactoryFiles(Student.class,packagePath);
+		PlayWithGenerators.generateFactoryFiles(Car.class,packagePath);
 
 		////MainFactoryGenerator.generateFactoryFiles(T3.class,"examples.factory.tests");
 		//		

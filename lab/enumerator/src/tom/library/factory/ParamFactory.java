@@ -1,7 +1,5 @@
 package tom.library.factory;
 
-import java.lang.reflect.Parameter;
-
 /**
  * simple factory for ParamWrapper objects
  * generates the suitable wrapper type based in the parameter type
@@ -14,16 +12,16 @@ public class ParamFactory {
 	/**
 	 * create a wrapper object around the passed parameter
 	 * @param param parameter to be wrapped
-	 * @return newly created IParamWrapper object
+	 * @return newly created ParamWrapper object
 	 */
-	public static IParamWrapper createParamWrapper(Parameter param) {
+	public static ParamWrapper createParamWrapper(Class param) {
 	
-		if (param.getType().isPrimitive()) {
+		if (param.isPrimitive()) {
 			return new PrimitiveWrapper(param);
-		} else if (param.getType().equals(String.class)) {
+		} else if (param.equals(String.class)) {
 			return new StringWrapper(param);
 		} else {
-			throw new IllegalArgumentException("Unknown parameter type.");
+			return new ObjectWrapper(param);
 		}
 	}
 }

@@ -1,23 +1,14 @@
 package tom.library.factory;
 
-import java.lang.reflect.Parameter;
-
-import org.apache.velocity.util.ClassUtils;
-
-import tom.library.factory.Enumerate;
+import org.apache.commons.lang.ClassUtils;
 
 /**
  * wraps a primitive parameter
  * @author Ahmad
  *
  */
-public class PrimitiveWrapper implements IParamWrapper {
+public class PrimitiveWrapper extends ParamWrapper {
 
-	/**
-	 * parameter to be wrapped
-	 */
-	private Parameter param;
-	
 	/**
 	 * name of the java primitive wrapper for this type 
 	 * e.g. Integer for int
@@ -25,19 +16,13 @@ public class PrimitiveWrapper implements IParamWrapper {
 	private String javaWrapperName;
 	
 	/**
-	 * the @Enumerate annotation on that parameter
-	 */
-	private Enumerate enumerateAnnotation;
-	
-	/**
 	 * constructs the wrapper
 	 * uses the org.apache.commons.lang.ClassUtils to get java Wrapper for a primitive
 	 * @param param primitive to be wrapped
 	 */
-	public PrimitiveWrapper(Parameter param) {
-		this.param = param;
-		this.javaWrapperName = ClassUtils.primitiveToWrapper(param.getType()).getSimpleName();
-		this.enumerateAnnotation = param.getAnnotation(Enumerate.class);
+	public PrimitiveWrapper(Class param) {
+		super(param);
+		this.javaWrapperName = ClassUtils.primitiveToWrapper(param).getSimpleName();
 	}
 	
 	@Override
