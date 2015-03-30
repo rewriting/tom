@@ -26,7 +26,14 @@ public class Parser {
 		// load all constructors having EnumerateGenerator annotations
 		for (Constructor cons:classToParse.getDeclaredConstructors()) {
 			if (cons.isAnnotationPresent(EnumerateGenerator.class)) {
-				parsedClass.addConstructor(cons);
+				if (cons.getParameterTypes().length == 0) {
+					// no args cons
+					parsedClass.setNoArgsConstructor(cons);
+				} else {
+					// cons with parameters
+					parsedClass.addConstructor(cons);
+				}
+				
 			}
 		}
 	}

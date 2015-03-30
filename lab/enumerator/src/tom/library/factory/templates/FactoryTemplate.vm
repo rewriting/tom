@@ -20,6 +20,10 @@ public class $parsedClass.getFactoryClassName() {
 		
 		Enumeration<$parsedClass.getSimpleName()> enumRes = null;
 		
+		#if ($parsedClass.hasNoArgsConstructor())
+			Enumeration<$parsedClass.getSimpleName()>  $parsedClass.getNoArgsConstructor().getVariableName() = Enumeration.singleton(new $parsedClass.getSimpleName()());
+		#end
+		
 		#foreach($cons in $parsedClass.getConstructors())
 			
 			final $cons.getCurriedType(0) $cons.getVariableName() = new $cons.getCurriedType(0)() {
@@ -33,7 +37,7 @@ public class $parsedClass.getFactoryClassName() {
 			enumRes = $cons.apply();
 			
 		#end
-		
+				
 		return enumRes;
 		
 	}

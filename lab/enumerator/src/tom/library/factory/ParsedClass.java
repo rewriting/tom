@@ -22,7 +22,12 @@ public class ParsedClass {
 	private String canonicalName;
 	
 	/**
-	 * list of class constructors that are annotated with @EnumerateGenerator
+	 * the no-arguments constructor of the class - if it exists -
+	 */
+	private ConstructorWrapper noArgsConstructor;
+	
+	/**
+	 * list of class constructors that are annotated with @EnumerateGenerator and have parameters
 	 */
 	List<ConstructorWrapper> constructors = new ArrayList<ConstructorWrapper>();
 	
@@ -53,6 +58,16 @@ public class ParsedClass {
 	public void setConstructors(List<ConstructorWrapper> constructors) {
 		this.constructors = constructors;
 	}
+	public ConstructorWrapper getNoArgsConstructor() {
+		return noArgsConstructor;
+	}
+	/**
+	 * creates a wrapper for the no args constructor annotated with @EnumerateGenerator
+	 * @param noArgsConstructor constructor to wrap
+	 */
+	public void setNoArgsConstructor(Constructor noArgsConstructor) {
+		this.noArgsConstructor = new ConstructorWrapper(noArgsConstructor);
+	}
 	
 	/**
 	 * adds a constructor annotated with @EnumerateGenerator to the list after wrapping it in ConstructorWrapper
@@ -69,6 +84,13 @@ public class ParsedClass {
 	 */
 	public String getFactoryClassName() {
 		return this.simpleName+"Factory";
+	}
+	
+	/**
+	 * 
+	 */
+	public boolean hasNoArgsConstructor() {
+		return this.noArgsConstructor != null;
 	}
 	
 }

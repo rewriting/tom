@@ -30,7 +30,7 @@ public class ConstructorWrapper {
 	private String variableName;
 	
 	/**
-	 * instantiating ConstructorWrapper
+	 * instantiating ConstructorWrapper to wrap a constructor that have parameters
 	 * @param cons The constructor object to wrap
 	 * @param index The index of the constructor in the constructor in the constructors list of the class
 	 */
@@ -44,6 +44,16 @@ public class ConstructorWrapper {
 		this.variableName = "cons"+index;
 	}
 	
+	/**
+	 * instantiating ConstructorWrapper to wrap a constructor that have no parameters
+	 * @param noArgsConstructor constructor to wrap
+	 */
+	public ConstructorWrapper(Constructor noArgsConstructor) {
+		this.constructor = noArgsConstructor;
+		this.parameters = null;
+		this.variableName = "noArgsCons";
+	}
+
 	/**
 	 * getter method for the underlying constructor
 	 * @return java.lang.reflect.Constructor
