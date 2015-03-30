@@ -6,12 +6,13 @@
 * This is auto generated class by the Apache velocity template engine
 * The corresponding template is FactoryTemplate.vm
 **/
-package examples.factory;
+package examples.factory.tests;
 
 import java.math.BigInteger;
 import tom.library.enumerator.Combinators;
 import tom.library.enumerator.Enumeration;
 import tom.library.enumerator.F;
+import $parsedClass.getCanonicalName();
 
 public class $parsedClass.getFactoryClassName() {
 

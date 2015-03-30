@@ -1,5 +1,8 @@
 package tom.library.factory;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
 import java.io.StringWriter;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
@@ -32,7 +35,17 @@ public class FactoryGenerator {
 		
 		StringWriter writer = new StringWriter();
 		t.merge(context, writer);
-		System.out.println(writer.toString());
+		
+		try {
+			PrintWriter pw = new PrintWriter("./src/examples/factory/tests/"+parsedClass.getFactoryClassName()+".java");
+			pw.print(writer.toString());
+			pw.flush();
+			pw.close();
+			
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		System.out.println("done");
 
 	}
 

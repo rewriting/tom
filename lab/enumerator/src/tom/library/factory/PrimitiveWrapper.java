@@ -1,5 +1,7 @@
 package tom.library.factory;
 
+import java.lang.annotation.Annotation;
+
 import org.apache.commons.lang.ClassUtils;
 
 /**
@@ -14,14 +16,16 @@ public class PrimitiveWrapper extends ParamWrapper {
 	 * e.g. Integer for int
 	 */
 	private String javaWrapperName;
-	
+		
 	/**
 	 * constructs the wrapper
 	 * uses the org.apache.commons.lang.ClassUtils to get java Wrapper for a primitive
 	 * @param param primitive to be wrapped
+	 * @param paramIndex index of the parameter among the constructor parameters
+	 * @param paramAnnotations 
 	 */
-	public PrimitiveWrapper(Class param) {
-		super(param);
+	public PrimitiveWrapper(Class param, int paramIndex, Annotation[] paramAnnotations) {
+		super(param, paramIndex, paramAnnotations);
 		this.javaWrapperName = ClassUtils.primitiveToWrapper(param).getSimpleName();
 	}
 	
@@ -36,7 +40,7 @@ public class PrimitiveWrapper extends ParamWrapper {
 		enumStatement.append("final Enumeration<");
 		enumStatement.append(javaWrapperName);
 		enumStatement.append("> ");
-		enumStatement.append(param.getName()+"Enum");
+		enumStatement.append(paramName+"Enum");
 		enumStatement.append(" = new Enumeration<");
 		enumStatement.append(javaWrapperName);
 		enumStatement.append(">(Combinators.make");

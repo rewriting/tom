@@ -38,7 +38,7 @@ public class ConstructorWrapper {
 		this.constructor = cons;
 		this.parameters = new ArrayList<ParamWrapper>(); 
 		for (int i=0; i<cons.getParameterTypes().length; i++) {
-			this.parameters.add(ParamFactory.createParamWrapper(cons.getParameterTypes()[i]));
+			this.parameters.add(ParamFactory.createParamWrapper(cons.getParameterTypes()[i], i, cons.getParameterAnnotations()[i]));
 		
 		}
 		this.variableName = "cons"+index;
@@ -92,7 +92,7 @@ public class ConstructorWrapper {
 	 * @return name of the parameter
 	 */
 	public String getParameterName(int index) {
-		return this.constructor.getParameterTypes()[index].getName();
+		return "arg"+index;
 	}
 	
 	/**
