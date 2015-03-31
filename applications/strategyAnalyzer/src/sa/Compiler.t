@@ -14,7 +14,7 @@ public class Compiler {
   %include { java/util/types/HashSet.tom }
 
   private static Tools tools = new Tools();
-  private static Pretty pp = new Pretty();
+  private static Pretty pretty = new Pretty();
 
   private static int phiNumber = 0;
   private static String getName(String name) {
@@ -799,7 +799,7 @@ public class Compiler {
       //       System.out.println("RULE: "+`rule);
       Collection<Rule> bag = new HashSet<Rule>();
       // perform one-step expansion
-      `TopDown(ExpandAntiPattern(bag,rule,extractedSignature, generatedSignature)).visit(rule);
+      `OnceTopDown(ExpandAntiPattern(bag,rule,extractedSignature, generatedSignature)).visit(rule);
 
       /*
        * add rules from bag into generatedRules only if
@@ -880,8 +880,15 @@ public class Compiler {
    * @param rule the rule to expand
    * @param extractedSignature the signature
    */
-  %strategy ExpandAntiPattern(bag:Collection,subject:Rule,extractedSignature:Map, generatedSignature:Map) extends Identity() {
+  %strategy ExpandAntiPattern(bag:Collection,subject:Rule,extractedSignature:Map, generatedSignature:Map) extends Fail() {
     visit Term {
+      Anti(Anti(t)) -> {
+        Rule newr = (Rule) getEnvironment().getPosition().getReplace(`t).visit(subject);
+        //System.out.println("add bag0:" + pretty.toString(newr));
+        bag.add(newr);
+        return `t;
+      }
+
       Anti(t) -> {
         //System.out.println("ExpandAntiPattern: " + `t);
         Term antiterm = (Main.options.generic)?tools.decodeConsNil(`t):`t;
@@ -898,6 +905,7 @@ public class Compiler {
                   newt = tools.metaEncodeConsNil(newt,generatedSignature);
                 }
                 Rule newr = (Rule) getEnvironment().getPosition().getReplace(newt).visit(subject);
+                //System.out.println("add bag1:" + pretty.toString(newr));
                 bag.add(newr);
               }
             }
@@ -923,11 +931,12 @@ public class Compiler {
               }
               Rule newr = (Rule) getEnvironment().getPosition().getReplace(newt).visit(subject);
 
+              //System.out.println("add bag2:" + pretty.toString(newr));
               bag.add(newr);
             }
-           
           }
         }
+        return `t;
       }
     }
   }
