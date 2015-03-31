@@ -15,8 +15,8 @@ public class StringWrapper extends ParamWrapper {
 	 * @param paramIndex index of the parameter among the constructor parameters
 	 * @param paramAnnotations 
 	 */
-	public StringWrapper(Class param, int paramIndex, Annotation[] paramAnnotations) {
-		super(param, paramIndex, paramAnnotations);
+	public StringWrapper(Class param, int paramIndex, ConstructorWrapper declaringCons) {
+		super(param, paramIndex, declaringCons);
 	}
 	
 	@Override
