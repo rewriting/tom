@@ -26,6 +26,11 @@ public abstract class ParamWrapper {
      * the @Enumerate annotation on wrapped parameter
      */
     protected Enumerate enumerateAnnotation;
+    
+    /**
+     * the constructor where this parameter was declared
+     */
+    protected ConstructorWrapper declaringCons;
 
     /**
      * initializes the wrapper
@@ -34,9 +39,12 @@ public abstract class ParamWrapper {
      *            parameter to wrap
      * @param paramIndex
      *            index of the parameter among the constructor parameters
+     * @param declaringCons
+     *            the constructor where this parameter was declared
      */
     public ParamWrapper(Class param, int paramIndex, ConstructorWrapper declaringCons) {
         this.param = param;
+        this.declaringCons = declaringCons;
         this.paramName = declaringCons.getVariableName() +"_arg" + paramIndex;
         for (Annotation annotation : declaringCons.getConstructor().getParameterAnnotations()[paramIndex]) {
             if (annotation instanceof Enumerate) {
