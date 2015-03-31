@@ -107,7 +107,7 @@ public class StackTest {
 
 //	@Ignore
 	@Theory public void testTop(
-			@ForSome(minSampleSize = 0, maxSampleSize = 100) Stack gs,
+			@ForSome(minSampleSize = 10, maxSampleSize = 20) Stack gs,
 			@ForSome(maxSampleSize = 10) int n) throws EmptyStackException {
 		IStack s = factory.makeStack(gs);
 		assertThat(s.push(n).top(), is(n));

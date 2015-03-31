@@ -75,6 +75,8 @@ git reset --hard HEAD~1 : delete last commit (if not pushed, othrewise 'git
 			  number of commits to reset, or to give the SHA-1 hash
 			  instead of HEAD.
 
+git reset --hard origin/master: retrieve last version of master
+
 What must I do when there is an unsolved conflict:
 - solve manually the conflict by editing the problematic file
 - execute the following command: git add <file>
