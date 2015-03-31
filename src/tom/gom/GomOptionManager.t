@@ -1,7 +1,7 @@
 /*
  * Gom
  *
- * Copyright (c) 2000-2014, Universite de Lorraine, Inria
+ * Copyright (c) 2000-2015, Universite de Lorraine, Inria
  * Nancy, France.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -319,7 +319,7 @@ public class GomOptionManager implements OptionManager, OptionOwner {
    */
   public void displayVersion() {
     System.out.println("Gom " + tom.engine.Tom.VERSION + "\n\n"
-                       + "Copyright (c) 2000-2014, Universite de Lorraine, Inria, Nancy, France.\n");
+                       + "Copyright (c) 2000-2015, Universite de Lorraine, Inria, Nancy, France.\n");
   }
 
   /**

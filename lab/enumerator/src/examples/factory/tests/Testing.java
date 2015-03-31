@@ -8,12 +8,11 @@ import java.util.List;
 
 import sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl;
 import sun.reflect.generics.reflectiveObjects.TypeVariableImpl;
-
+import tom.library.factory.AbstractEnumeratorGenerator;
+import tom.library.factory.EnumerateGenerator;
+import tom.library.factory.MyIntrospection;
+import tom.library.factory.ParaType;
 import examples.factory.Car;
-import examples.factory.generation.AbstractEnumeratorGenerator;
-import examples.factory.generation.EnumerateGenerator;
-import examples.factory.generation.MyIntrospection;
-import examples.factory.generation.ParaType;
 
 class T1{
 	@EnumerateGenerator

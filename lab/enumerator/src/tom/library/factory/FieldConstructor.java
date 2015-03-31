@@ -1,6 +1,4 @@
-package examples.factory.generation;
-
-import examples.factory.generation.Enumerate;
+package tom.library.factory;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;

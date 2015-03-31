@@ -1,7 +1,7 @@
 package regress;
 
 /*
- * Copyright (c) 2004-2014, Universite de Lorraine, Inria
+ * Copyright (c) 2004-2015, Universite de Lorraine, Inria
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without

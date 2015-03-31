@@ -36,8 +36,8 @@ public class Options {
   @Option(name="-l",usage="anti-pattern level",metaVar="LEVEL")
     public int level = 100;
 
-  @Option(name="-exact",usage="compilation respects the reduction in the original system")
-    public boolean exact = false;
+  @Option(name="-approx",usage="compilation does not respects the reduction in the original system")
+    public boolean approx = false;
 
   // receives other command line parameters than options
   @Argument

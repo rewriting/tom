@@ -1,4 +1,4 @@
-package examples.factory.generation;
+package tom.library.factory;
 
 public class GeneratorFactoryException extends Exception{
 	public GeneratorFactoryException(String s){

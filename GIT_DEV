@@ -1,7 +1,7 @@
 1. Configuration (l.8)
 2. Getting Tom from Git repository (l.20)
 3. Useful commands (l.26)
-4. Useful links (l.83)
+4. Useful links (l.86)
 
 
 ##########################################
@@ -23,7 +23,7 @@ git clone ssh://<user>@scm.gforge.inria.fr/git/tom/jtom.git jtom
 
 
 ##########################################
-3. Useful commands
+3. Useful (but non exhaustive) commands
 
 git status, git add/rm
 
@@ -34,6 +34,8 @@ git push : send local modifications (commits) towards a remote repository
 git pull : retrieve the remote version of the repository (/!\ be careful,
            depending on the version of Git you are using, on ly the current 
 	   branch be retrieved during a pull)
+
+git rebase : merge several commits before pushing in order to see them as a single commit
 
 git branch -a : list branches (remote and local)
 
@@ -87,12 +89,16 @@ What must I do when there is an unsolved conflict:
 4.  Useful links
 
 [fr] https://wiki.bordeaux.inria.fr/runtime/doku.php?id=git
-[fr] http://www.unixgarden.com/index.php/administration-systeme/git-pour-les-futurs-barbus
-[en] http://team.gcu.info/~ange/git_article/
+[en] http://justinhileman.info/article/git-pretty/git-pretty.png (graphical cheat sheet)
 [en] http://www.zorched.net/2008/04/14/start-a-new-branch-on-your-remote-git-repository/
 [en] http://www.gitready.com/beginner/2009/02/02/push-and-delete-branches.html
-http://nvie.com/posts/a-successful-git-branching-model/
+[en] http://nvie.com/posts/a-successful-git-branching-model/
+[en] http://swcarpentry.github.io/git-novice/01-backup.html
+[en] http://betterexplained.com/articles/aha-moments-when-learning-git/
+[en] http://git-lectures.github.io/
+[en] https://try.github.io/
+[en] http://pcottle.github.io/learnGitBranching/
 
 [en] ProGit book (complete reference): http://progit.org/book/
-http://git-scm.com/book
+([en] http://git-scm.com/book)
 [en] « Version Control with Git » book: http://oreilly.com/catalog/9780596520137

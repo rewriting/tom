@@ -25,6 +25,10 @@ Rule = Rule(lhs:Term,rhs:Term)
 
 Condition = 
           | CondEquals(t1:Term,t2:Term)
+          | CondAnd(c1:Condition,c2:Condition)
+          | CondNot(c1:Condition)
+          | CondTrue()
+          | CondFalse()
 
 RuleList = RuleList(Rule*)
 

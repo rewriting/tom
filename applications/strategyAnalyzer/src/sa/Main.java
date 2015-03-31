@@ -40,6 +40,7 @@ public class Main {
     }
 
     // print current options
+    /*
     try {
       Class c = options.getClass();
       Field[] fields = c.getDeclaredFields();
@@ -62,17 +63,7 @@ public class Main {
       System.err.println("No field: " + ef);
     }
     System.out.println("\n------------------------------------------   ");
-
-//     System.out.println("withAP: " + options.withAP);
-//     System.out.println("aprove: " + options.aprove);
-//     System.out.println("classname: " + options.classname);
-//     System.out.println("out: " + options.out);
-//     System.out.println("in: " + options.in);
-//     System.out.println("level: " + options.level);
-//     System.out.println("other arguments are:");
-//     for( String s : options.arguments ) {
-//       System.out.println(s);
-//     }
+      */
 
     try {
       InputStream fileinput = System.in;
@@ -92,6 +83,7 @@ public class Main {
 
       // Transforms Let(name,exp,body) into body[name/exp]
       ExpressionList expandl = Compiler.expand(expl);
+      //System.out.println(expandl);
       //       System.out.println(expandl);
 
       //       System.out.println(pretty.toString(expandl));
@@ -99,16 +91,17 @@ public class Main {
 
       Map<String,Integer> generatedSignature = new HashMap<String,Integer>();
       Map<String,Integer> extractedSignature = new HashMap<String,Integer>();
+
       Collection<Rule> generatedRules = new HashSet<Rule>();
 
       // Transforms the strategy into a rewrite system
       Compiler.compile(generatedRules,extractedSignature,generatedSignature,expandl);
+      //System.out.println(generatedRules );
 
       if(options.withAP == false) {
          for(Rule r:new HashSet<Rule>(generatedRules)) { 
            // add new rules to generatedRules (for each anti-pattern)
-//           Compiler.expandAntiPattern(generatedRules,r,extractedSignature);
-           Compiler.expandAntiPatternWithLevel(generatedRules,r,extractedSignature,options.level);
+           Compiler.expandAntiPattern(generatedRules,r,extractedSignature,generatedSignature);
          }
       }
       
@@ -134,7 +127,8 @@ public class Main {
         tomoutputfile.println( pretty.generateTom(orderedRules,generatedSignature,options.classname) );
       } 
       if(options.aprove) {
-        outputfile.println( pretty.generateAprove(orderedRules,extractedSignature,true) );
+        boolean innermost = false;
+        outputfile.println( pretty.generateAprove(orderedRules,extractedSignature,innermost) );
       }
     } catch (Exception e) {
       System.err.println("exception: " + e);

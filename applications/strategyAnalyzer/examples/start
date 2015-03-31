@@ -1,9 +1,13 @@
+//let S=signature {a:0, b:0, g:1, f:2} in
+//let r1 = { f(x,f(x,g(x))) -> x } in 
+//let bu = mu y.(all(y);(r1<+identity)) in
+// bu
 
-let S=signature {a:0, b:0, c:0, s:0, f:1} in
-let r1 = { f(s()) -> a() } in 
-let r2 = { f(x) -> b() } in 
+//let S=signature {a:0, b:0, c:0, s:0, f:1} in
+//let r1 = { f(s()) -> a() } in 
+//let r2 = { f(x) -> b() } in 
 // r1 <+ r2
-all(r1)
+//all(r1)
 
 //let R1 = { f(x) -> x } in 
 //let R2 = { b() -> c() } in 
@@ -57,13 +61,19 @@ all(r1)
 //   innermost
 // td
 
-// innermost(r1)
-// let S=signature {a:0, b:0, f:1, g:2} in
-// let r1 = { f(b()) -> a() } in 
-// let innermost = mu x.(all(x);((r1;x)<+identity)) in
-// let td = mu y.(r1;all(y)) in
-//  innermost
-// td
+// innermost(g(f(x)) -> f(g(x)))
+ let S=signature {a:0, b:0, f:1, g:1} in
+ let r1 = { g(f(x)) -> f(g(x)) } in 
+let innermost = mu x.(all(x) ; ((r1;x)<+identity)) in
+// let propagate = mu y.(r1;(all(y)<+identity)) in
+// let bu = mu z.(all(z);(propagate<+identity)) in
+ innermost
+// bu
+
+
+ // g(f(a))
+ // Appl(symb_g(),Cons(Appl(symb_f(),Cons(symb_a(),Nil())),Nil()))
+ // Appl(symb_a(), Nil())
 
 // repeat(r1)
 //let S=signature {a:0, b:0, f:1, g:2} in

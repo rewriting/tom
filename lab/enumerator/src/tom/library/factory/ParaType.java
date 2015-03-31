@@ -1,4 +1,4 @@
-package examples.factory.generation;
+package tom.library.factory;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Type;
@@ -6,9 +6,6 @@ import java.lang.reflect.TypeVariable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
-
-import examples.factory.Car;
-import examples.factory.Garage;
 
 import sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl;
 import sun.reflect.generics.reflectiveObjects.TypeVariableImpl;

@@ -14,18 +14,14 @@ import java.util.regex.Pattern;
 import tom.library.enumerator.Combinators;
 import tom.library.enumerator.Enumeration;
 import tom.library.enumerator.F;
+import tom.library.factory.AbstractEnumeratorGenerator;
+import tom.library.factory.FieldConstructor;
+import tom.library.factory.GeneratorFactoryException;
+import tom.library.factory.ParaType;
 import examples.factory.Car;
 import examples.factory.Color;
 import examples.factory.Garage;
 import examples.factory.Student;
-import examples.factory.generation.AbstractEnumeratorGenerator;
-import examples.factory.generation.Enumerate;
-import examples.factory.generation.FieldConstructor;
-import examples.factory.generation.GeneratorFactory;
-import examples.factory.generation.GeneratorFactoryException;
-import examples.factory.generation.MyIntrospection;
-import examples.factory.generation.ParaType;
-import examples.factory.generation.Tools;
 
 abstract class T{
 	public abstract String built();

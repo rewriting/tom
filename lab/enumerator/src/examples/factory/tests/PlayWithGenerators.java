@@ -9,15 +9,14 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import tom.library.factory.GeneratorFactory;
+import tom.library.factory.GeneratorFactoryException;
+import tom.library.factory.Tools;
 import examples.factory.Car;
 import examples.factory.Garage;
-import examples.factory.Garage2;
 import examples.factory.Student;
 import examples.factory.Tree;
-import examples.factory.TrickyTree;
-import examples.factory.generation.GeneratorFactory;
-import examples.factory.generation.GeneratorFactoryException;
-import examples.factory.generation.Tools;
+
 
 public class PlayWithGenerators {
 
@@ -41,17 +40,17 @@ public class PlayWithGenerators {
 
 	public static void main(String args[]) throws IOException, ClassNotFoundException, GeneratorFactoryException{
 		String packagePath="examples.factory.tests";
-		PlayWithGenerators.generateFactoryFiles(Car.class,packagePath);
-		PlayWithGenerators.generateFactoryFiles(Garage.class,packagePath);
+//		PlayWithGenerators.generateFactoryFiles(Car.class,packagePath);
+//		PlayWithGenerators.generateFactoryFiles(Garage.class,packagePath);
 //		PlayWithGenerators.generateFactoryFiles(Garage2.class,packagePath);
-//		PlayWithGenerators.generateFactoryFiles(Student.class,packagePath);
+		PlayWithGenerators.generateFactoryFiles(Car.class,packagePath);
 
-		////PlayWithGenerators.generateFactoryFiles(T3.class,"examples.factory.tests");
+		////MainFactoryGenerator.generateFactoryFiles(T3.class,"examples.factory.tests");
 		//		
-		PlayWithGenerators.generateFactoryFiles(Tree.class,packagePath);		
+		//PlayWithGenerators.generateFactoryFiles(Tree.class,packagePath);		
 
 		// TODO: check it
-//		PlayWithGenerators.generateFactoryFiles(TrickyTree.class,packagePath);
+//		MainFactoryGenerator.generateFactoryFiles(TrickyTree.class,packagePath);
 	}
 
 }

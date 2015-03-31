@@ -3,8 +3,8 @@ package examples.factory;
 import java.util.ArrayList;
 import java.util.List;
 
-import examples.factory.generation.Enumerate;
-import examples.factory.generation.EnumerateGenerator;
+import tom.library.factory.Enumerate;
+import tom.library.factory.EnumerateGenerator;
 
 public class Garage2 {
 	// a car can appear twice!
@@ -17,7 +17,7 @@ public class Garage2 {
 	}
 
 	@EnumerateGenerator(canBeNull = false)
-	public Garage2(@Enumerate(memberCanBeNull = false) List<List<Car>> cars,@Enumerate(memberCanBeNull = false) List<Car> cars2) {
+	public Garage2(@Enumerate(canBeNull = false) List<List<Car>> cars,@Enumerate(canBeNull = false) List<Car> cars2) {
 		this.cars = cars;
 		this.cars2=cars2;
 	}

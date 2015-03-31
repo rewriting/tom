@@ -1,4 +1,4 @@
-package examples.factory.generation;
+package tom.library.factory;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
