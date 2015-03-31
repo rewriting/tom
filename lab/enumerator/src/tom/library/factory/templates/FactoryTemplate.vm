@@ -19,23 +19,26 @@ public class $parsedClass.getFactoryClassName() {
     public static final Enumeration<$parsedClass.getSimpleName()>  getEnumeration() {
         
         Enumeration<$parsedClass.getSimpleName()> finalEnum = null;
-    #if ($parsedClass.hasNoArgsConstructor())
-        Enumeration<$parsedClass.getSimpleName()>  $parsedClass.getNoArgsConstructor().getEnumName() = Enumeration.singleton(new $parsedClass.getSimpleName()());
-    #end
-    
-    #foreach($cons in $parsedClass.getConstructors())
+        
+#if ($parsedClass.hasNoArgsConstructor())
+        Enumeration<$parsedClass.getSimpleName()> $parsedClass.getNoArgsConstructor().getEnumName() = Enumeration.singleton(new $parsedClass.getSimpleName()());
+#end
+        
+#foreach($cons in $parsedClass.getConstructors())
         final $cons.getCurriedType(0) $cons.getVariableName() = new $cons.getCurriedType(0)() {
             $cons.getCurriedDefinition(0)
         };
         
-    #foreach($param in $cons.getParameters())
+#foreach($param in $cons.getParameters())
         $param.enumerate();
-    #end
+#end
         
-    Enumeration<$parsedClass.getSimpleName()> $cons.getEnumName() = $cons.apply();
-    #end
-            
-    return finalEnum;
+        Enumeration<$parsedClass.getSimpleName()> $cons.getEnumName() = $cons.apply();
+#end
+        
+        finalEnum = $parsedClass.getFinalEnum();
+        
+        return finalEnum;
         
     }
 
