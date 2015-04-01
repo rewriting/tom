@@ -129,6 +129,9 @@ public class Compiler {
             bag.add(`Rule(Appl(rule,TermList(botX)),botX));
 
             TermList result = linearize(`lhs,generatedSignature);
+
+            System.out.println("linear lhs = " + pretty.toString(result));
+
             %match(result) {
               TermList(linearlhs, cond) -> {
                 bag.add(`Rule(Appl(rule,TermList(At(varX,linearlhs))),
@@ -942,33 +945,6 @@ public class Compiler {
   }
 
 
-  // search all Var and store their values
-  %strategy CollectVars(bag:Collection) extends Identity() {
-    visit Term {
-      Var(name)-> {
-        bag.add(`name);
-      }
-    }
-  }
-
-  %strategy ReplaceWithFreshVar(name:String, multiplicityMap:Map, map:Map, signature:Map) extends Identity() {
-    visit Term {
-      Var(n)  -> {
-        int value = (Integer)multiplicityMap.get(`name);
-        if(`n.compareTo(`name)==0 && value>1) {
-          String z = getName("Z");
-          map.put(z,`n);
-          multiplicityMap.put(`name, value - 1);
-          Term newt = `Var(z);
-          if(Main.options.generic) {
-            newt = tools.metaEncodeConsNil(newt,signature);
-          }
-          return newt;
-        }
-      }
-    }
-  }
-
   /*
    * Transform lhs into linear-lhs + true ^ constraint on non linear variables
    */
@@ -996,17 +972,28 @@ public class Compiler {
       constraint = `Appl("and",TermList( Appl("eq",TermList(Var(oldName),Var(name))), constraint));
     }
 
-/*
-    Condition constraint = `CondTrue();
-    for(String name:mapToOldName.keySet()) {
-      String oldName = mapToOldName.get(name);
-      constraint = `CondAnd(CondEquals(Var(oldName),Var(name)), constraint);
-    }
-    */
-    //System.out.println("constraint = " + constraint);
     return `TermList(lhs,constraint);
 
   }
+  
+  %strategy ReplaceWithFreshVar(name:String, multiplicityMap:Map, map:Map, signature:Map) extends Identity() {
+    visit Term {
+      Var(n)  -> {
+        int value = (Integer)multiplicityMap.get(`name);
+        if(`n.compareTo(`name)==0 && value>1) {
+          String z = getName("Z");
+          map.put(z,`n);
+          multiplicityMap.put(`name, value - 1);
+          Term newt = `Var(z);
+          if(Main.options.generic) {
+            newt = tools.metaEncodeConsNil(newt,signature);
+          }
+          return newt;
+        }
+      }
+    }
+  }
+
   
   /**
    * Returns a Map which associates an integer to each variable name
@@ -1031,6 +1018,15 @@ public class Compiler {
       }
     }
     return multiplicityMap;
+  }
+
+  // search all Var and store their values
+  %strategy CollectVars(bag:Collection) extends Identity() {
+    visit Term {
+      Var(name)-> {
+        bag.add(`name);
+      }
+    }
   }
 
   /*
