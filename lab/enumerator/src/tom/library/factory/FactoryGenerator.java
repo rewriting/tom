@@ -20,14 +20,44 @@ import examples.factory.Student;
  * 
  */
 public class FactoryGenerator {
+    
+    /**
+     * path to the templates directory
+     */
+    private String templatePath;
+    
+    /**
+     * path to directory where generated XFactory.java files should be saved
+     */
+    private String generationPath;
+    
+    /**
+     * path to directory where compiled XFactory.class files should be saved
+     */
+    private String compilationPath;
+    
+    /**
+     * initiates generator and sets all paths to default values
+     * TODO: could be read from configurations file
+     */
+    public FactoryGenerator() {
+        this.templatePath = "./src/tom/library/factory/templates/";
+        this.generationPath = "./src/examples/factory/tests/";
+        this.compilationPath = "./src/examples/factory/tests/";
+        
+    }
+    
+    /**
+     * generate corresponding source code of factory for a class
+     * @param classToGenerateFactoriesFor
+     */
+    public <T> void generateSources(Class<T> classToGenerateFactoriesFor) {
 
-    public static void main(String[] args) {
-
-        ParsedClass parsedClass = Parser.parse(ListStack.class);
+        ParsedClass parsedClass = Parser.parse(classToGenerateFactoriesFor);
 
         VelocityEngine ve = new VelocityEngine();
         ve.init();
-        Template t = ve.getTemplate("./src/tom/library/factory/templates/FactoryTemplate.vm");
+        Template t = ve.getTemplate(templatePath + "FactoryTemplate.vm");
 
         VelocityContext context = new VelocityContext();
         context.put("parsedClass", parsedClass);
@@ -36,7 +66,7 @@ public class FactoryGenerator {
         t.merge(context, writer);
 
         try {
-            PrintWriter pw = new PrintWriter("./src/examples/factory/tests/" + parsedClass.getFactoryClassName()
+            PrintWriter pw = new PrintWriter(generationPath + parsedClass.getFactoryClassName()
                 + ".java");
             pw.print(writer.toString());
             pw.flush();
@@ -45,8 +75,14 @@ public class FactoryGenerator {
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
-        System.out.println("done");
+        System.out.println("sources generated");
 
+    }
+    
+    public static void main(String[] args) {
+        FactoryGenerator generator = new FactoryGenerator();
+        generator.generateSources(ListStack.class);
+        
     }
 
 }
