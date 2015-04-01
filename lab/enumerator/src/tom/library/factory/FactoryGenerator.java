@@ -23,8 +23,7 @@ public class FactoryGenerator {
 
     public static void main(String[] args) {
 
-        ParsedClass parsedClass = new ParsedClass();
-        Parser.parse(ListStack.class, parsedClass);
+        ParsedClass parsedClass = Parser.parse(ListStack.class);
 
         VelocityEngine ve = new VelocityEngine();
         ve.init();
