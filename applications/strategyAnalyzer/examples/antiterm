@@ -1,0 +1,4 @@
+let S=signature {a:0, b:0, g:1, f:2} in
+let r1 = { f(x,!g(x)) -> x } in 
+r1
+

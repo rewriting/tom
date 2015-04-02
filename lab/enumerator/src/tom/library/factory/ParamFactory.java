@@ -18,14 +18,14 @@ public class ParamFactory {
 	 * @param paramAnnotations 
 	 * @return newly created ParamWrapper object
 	 */
-	public static ParamWrapper createParamWrapper(Class param, int paramIndex, Annotation[] paramAnnotations) {
+	public static ParamWrapper createParamWrapper(Class param, int paramIndex, ConstructorWrapper declaringCons) {
 	
 		if (param.isPrimitive()) {
-			return new PrimitiveWrapper(param, paramIndex, paramAnnotations);
+			return new PrimitiveWrapper(param, paramIndex, declaringCons);
 		} else if (param.equals(String.class)) {
-			return new StringWrapper(param, paramIndex, paramAnnotations);
+			return new StringWrapper(param, paramIndex, declaringCons);
 		} else {
-			return new ObjectWrapper(param, paramIndex, paramAnnotations);
+			return new ObjectWrapper(param, paramIndex, declaringCons);
 		}
 	}
 }

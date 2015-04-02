@@ -14,7 +14,7 @@ public class Compiler {
   %include { java/util/types/HashSet.tom }
 
   private static Tools tools = new Tools();
-  private static Pretty pp = new Pretty();
+  private static Pretty pretty = new Pretty();
 
   private static int phiNumber = 0;
   private static String getName(String name) {
@@ -129,6 +129,9 @@ public class Compiler {
             bag.add(`Rule(Appl(rule,TermList(botX)),botX));
 
             TermList result = linearize(`lhs,generatedSignature);
+
+            System.out.println("linear lhs = " + pretty.toString(result));
+
             %match(result) {
               TermList(linearlhs, cond) -> {
                 bag.add(`Rule(Appl(rule,TermList(At(varX,linearlhs))),
@@ -799,7 +802,7 @@ public class Compiler {
       //       System.out.println("RULE: "+`rule);
       Collection<Rule> bag = new HashSet<Rule>();
       // perform one-step expansion
-      `TopDown(ExpandAntiPattern(bag,rule,extractedSignature, generatedSignature)).visit(rule);
+      `OnceTopDown(ExpandAntiPattern(bag,rule,extractedSignature, generatedSignature)).visit(rule);
 
       /*
        * add rules from bag into generatedRules only if
@@ -880,8 +883,15 @@ public class Compiler {
    * @param rule the rule to expand
    * @param extractedSignature the signature
    */
-  %strategy ExpandAntiPattern(bag:Collection,subject:Rule,extractedSignature:Map, generatedSignature:Map) extends Identity() {
+  %strategy ExpandAntiPattern(bag:Collection,subject:Rule,extractedSignature:Map, generatedSignature:Map) extends Fail() {
     visit Term {
+      Anti(Anti(t)) -> {
+        Rule newr = (Rule) getEnvironment().getPosition().getReplace(`t).visit(subject);
+        //System.out.println("add bag0:" + pretty.toString(newr));
+        bag.add(newr);
+        return `t;
+      }
+
       Anti(t) -> {
         //System.out.println("ExpandAntiPattern: " + `t);
         Term antiterm = (Main.options.generic)?tools.decodeConsNil(`t):`t;
@@ -898,6 +908,7 @@ public class Compiler {
                   newt = tools.metaEncodeConsNil(newt,generatedSignature);
                 }
                 Rule newr = (Rule) getEnvironment().getPosition().getReplace(newt).visit(subject);
+                //System.out.println("add bag1:" + pretty.toString(newr));
                 bag.add(newr);
               }
             }
@@ -923,42 +934,16 @@ public class Compiler {
               }
               Rule newr = (Rule) getEnvironment().getPosition().getReplace(newt).visit(subject);
 
+              //System.out.println("add bag2:" + pretty.toString(newr));
               bag.add(newr);
             }
-           
           }
         }
+        return `t;
       }
     }
   }
 
-
-  // search all Var and store their values
-  %strategy CollectVars(bag:Collection) extends Identity() {
-    visit Term {
-      Var(name)-> {
-        bag.add(`name);
-      }
-    }
-  }
-
-  %strategy ReplaceWithFreshVar(name:String, multiplicityMap:Map, map:Map, signature:Map) extends Identity() {
-    visit Term {
-      Var(n)  -> {
-        int value = (Integer)multiplicityMap.get(`name);
-        if(`n.compareTo(`name)==0 && value>1) {
-          String z = getName("Z");
-          map.put(z,`n);
-          multiplicityMap.put(`name, value - 1);
-          Term newt = `Var(z);
-          if(Main.options.generic) {
-            newt = tools.metaEncodeConsNil(newt,signature);
-          }
-          return newt;
-        }
-      }
-    }
-  }
 
   /*
    * Transform lhs into linear-lhs + true ^ constraint on non linear variables
@@ -987,17 +972,28 @@ public class Compiler {
       constraint = `Appl("and",TermList( Appl("eq",TermList(Var(oldName),Var(name))), constraint));
     }
 
-/*
-    Condition constraint = `CondTrue();
-    for(String name:mapToOldName.keySet()) {
-      String oldName = mapToOldName.get(name);
-      constraint = `CondAnd(CondEquals(Var(oldName),Var(name)), constraint);
-    }
-    */
-    //System.out.println("constraint = " + constraint);
     return `TermList(lhs,constraint);
 
   }
+  
+  %strategy ReplaceWithFreshVar(name:String, multiplicityMap:Map, map:Map, signature:Map) extends Identity() {
+    visit Term {
+      Var(n)  -> {
+        int value = (Integer)multiplicityMap.get(`name);
+        if(`n.compareTo(`name)==0 && value>1) {
+          String z = getName("Z");
+          map.put(z,`n);
+          multiplicityMap.put(`name, value - 1);
+          Term newt = `Var(z);
+          if(Main.options.generic) {
+            newt = tools.metaEncodeConsNil(newt,signature);
+          }
+          return newt;
+        }
+      }
+    }
+  }
+
   
   /**
    * Returns a Map which associates an integer to each variable name
@@ -1022,6 +1018,15 @@ public class Compiler {
       }
     }
     return multiplicityMap;
+  }
+
+  // search all Var and store their values
+  %strategy CollectVars(bag:Collection) extends Identity() {
+    visit Term {
+      Var(name)-> {
+        bag.add(`name);
+      }
+    }
   }
 
   /*
