@@ -92,32 +92,6 @@ public class ConstructorWrapper {
     }
 
     /**
-     * convenient method to get the type of index-th parameter of the wrapped
-     * constructor
-     * 
-     * @param index
-     *            the index of the parameter to fetch
-     * @return canonical name of the type of parameter for primitives it returns
-     *         corresponding wrapper
-     */
-    public String getParameterType(int index) {
-        return this.parameters.get(index).getType();
-    }
-
-    /**
-     * convenient method to get the name of index-th parameter of the wrapped
-     * constructor
-     * 
-     * @param index
-     *            the index of the parameter to fetch
-     * @return name of the parameter
-     */
-    public String getParameterName(int index) {
-        //return variableName + "_arg" + index;
-        return this.parameters.get(index).getName();
-    }
-
-    /**
      * generates a string representing the type of the constructor in curried
      * form i.e. F<arg1, F<arg2,...,F<argn, T>...> for a constructor with n
      * arguments that generates object T
@@ -133,7 +107,7 @@ public class ConstructorWrapper {
 
         StringBuilder curriedType = new StringBuilder();
         curriedType.append("F<");
-        curriedType.append(this.getParameterType(index));
+        curriedType.append(this.parameters.get(index).getType());
         curriedType.append(", ");
         if (index == this.getParameters().size() - 1) {
             // last input parameter, so append the output (of type T)
@@ -163,27 +137,27 @@ public class ConstructorWrapper {
             curriedDef.append("public ");
             curriedDef.append(this.constructor.getName());
             curriedDef.append(" apply(final ");
-            curriedDef.append(this.getParameterType(index));
+            curriedDef.append(this.parameters.get(index).getType());
             curriedDef.append(" ");
-            curriedDef.append(this.getParameterName(index));
+            curriedDef.append(this.parameters.get(index).getName());
             curriedDef.append(") { return new ");
             curriedDef.append(this.constructor.getName());
             curriedDef.append("(");
 
             for (int i = 0; i < this.getParameters().size() - 1; i++) {
-                curriedDef.append(this.getParameterName(i));
+                curriedDef.append(this.parameters.get(index).getName());
                 curriedDef.append(", ");
             }
-            curriedDef.append(this.getParameterName(index)); // last param
+            curriedDef.append(this.parameters.get(index).getName()); // last param
             curriedDef.append("); }");
         } else {
             // partial application
             curriedDef.append("public ");
             curriedDef.append(this.getCurriedType(index + 1));
             curriedDef.append(" apply(final ");
-            curriedDef.append(this.getParameterType(index));
+            curriedDef.append(this.parameters.get(index).getType());
             curriedDef.append(" ");
-            curriedDef.append(this.getParameterName(index));
+            curriedDef.append(this.parameters.get(index).getName());
             curriedDef.append(") { return new ");
             curriedDef.append(this.getCurriedType(index + 1));
             curriedDef.append("() {");
@@ -204,7 +178,7 @@ public class ConstructorWrapper {
         String applyExpr = "Enumeration.singleton(" + this.variableName + ")";
 
         for (int i = 0; i < this.getParameters().size(); i++) {
-            applyExpr = "Enumeration.apply(" + applyExpr + ", " + this.getParameterName(i) + "Enum)";
+            applyExpr = "Enumeration.apply(" + applyExpr + ", " + this.parameters.get(i).getName() + "Enum)";
         }
 
         return applyExpr;
