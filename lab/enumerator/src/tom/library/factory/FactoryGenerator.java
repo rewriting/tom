@@ -61,7 +61,7 @@ public class FactoryGenerator {
         this.generationPath = "./src/examples/factory/tests/";
         this.compilationPath = "./src/examples/factory/tests/";
         this.generatedFactories = new HashMap<String, String>();
-        generatedFactories.put("examples.factory.tests.StudentFactory", "examples.factory.tests.Student"); // for testing
+        generatedFactories.put("examples.factory.tests.Student", "examples.factory.tests.StudentFactory"); // for testing
 
     }
     
