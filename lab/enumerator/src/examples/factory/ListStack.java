@@ -10,6 +10,7 @@ public class ListStack implements IStack {
 
 	private List<Integer> stack= new ArrayList<Integer>();
 
+	@EnumerateGenerator
 	public ListStack() {
 		stack = new ArrayList<Integer>();
 	}
@@ -45,7 +46,7 @@ public class ListStack implements IStack {
 		return this;
 	}
 
-	@EnumerateGenerator
+	@Enumerate
 	public IStack extend() {
 		this.stack.add(100);
 		return this;
