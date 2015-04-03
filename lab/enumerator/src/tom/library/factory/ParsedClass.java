@@ -61,11 +61,6 @@ public class ParsedClass {
 
     public ConstructorWrapper getNoArgsConstructor() {
     	return noArgsConstructor;
-//    	if(hasNoArgsConstructor()){
-//    		return this.constructors.get(0);
-//    	}else{
-//    		return null;
-//    	}
     }
 
     /**
@@ -75,8 +70,7 @@ public class ParsedClass {
      *            constructor to wrap
      */
     public <T> void addNoArgsConstructor(Constructor<T> noArgsConstructor) {
-        this.noArgsConstructor = new ConstructorWrapper(noArgsConstructor);
-//        this.constructors.add(0,new ConstructorWrapper(noArgsConstructor, constructors.size()));
+        this.noArgsConstructor = new ConstructorWrapper(noArgsConstructor,-1);
     }
 
     /**
@@ -107,7 +101,6 @@ public class ParsedClass {
 	 */
     public boolean hasNoArgsConstructor() {
         return this.noArgsConstructor != null;
-//        return !this.constructors.isEmpty() && this.constructors.get(0).getParameters().size()==0;
     }
     
     /**

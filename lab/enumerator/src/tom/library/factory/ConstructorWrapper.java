@@ -46,30 +46,14 @@ public class ConstructorWrapper {
      */
     public ConstructorWrapper(Constructor cons, int index) {
         this.constructor = cons;
-        this.variableName = "cons" + index;
-        this.enumName = "cons" + index + "Enum";
+        this.variableName = "cons" + (index+1);
+        this.enumName = this.variableName + "Enum";
         this.parameters = new ArrayList<ParamWrapper>();
         for (int i = 0; i < cons.getParameterTypes().length; i++) {
             this.parameters.add(ParamFactory.createParamWrapper(cons.getParameterTypes()[i],
                 i,
                 this));
-
         }
-        this.variableName = "cons" + index;
-        this.enumName = "cons" + index + "Enum";
-    }
-
-    /**
-     * instantiating ConstructorWrapper to wrap a constructor that have no
-     * parameters
-     * 
-     * @param noArgsConstructor
-     *            constructor to wrap
-     */
-    public ConstructorWrapper(Constructor noArgsConstructor) {
-        this.constructor = noArgsConstructor;
-        this.parameters = null;
-        this.enumName = "noArgsConsEnum";
     }
 
     /**
@@ -89,15 +73,6 @@ public class ConstructorWrapper {
      */
     public List<ParamWrapper> getParameters() {
         return parameters;
-    }
-
-    /**
-     * convenience method to get parameters count
-     * 
-     * @return number of parameters of constructor
-     */
-    public int getParamCount() {
-        return this.constructor.getParameterTypes().length;
     }
 
     /**
@@ -160,7 +135,7 @@ public class ConstructorWrapper {
         curriedType.append("F<");
         curriedType.append(this.getParameterType(index));
         curriedType.append(", ");
-        if (index == this.getParamCount() - 1) {
+        if (index == this.getParameters().size() - 1) {
             // last input parameter, so append the output (of type T)
             curriedType.append(this.getConstructor().getName());
         } else {
@@ -183,7 +158,7 @@ public class ConstructorWrapper {
     public String getCurriedDefinition(int index) {
         StringBuilder curriedDef = new StringBuilder();
 
-        if (index == this.getParamCount() - 1) {
+        if (index == this.getParameters().size() - 1) {
             // last parameter, apply the constructor with all the parameters
             curriedDef.append("public ");
             curriedDef.append(this.constructor.getName());
@@ -195,7 +170,7 @@ public class ConstructorWrapper {
             curriedDef.append(this.constructor.getName());
             curriedDef.append("(");
 
-            for (int i = 0; i < this.getParamCount() - 1; i++) {
+            for (int i = 0; i < this.getParameters().size() - 1; i++) {
                 curriedDef.append(this.getParameterName(i));
                 curriedDef.append(", ");
             }
@@ -228,7 +203,7 @@ public class ConstructorWrapper {
 
         String applyExpr = "Enumeration.singleton(" + this.variableName + ")";
 
-        for (int i = 0; i < this.getParamCount(); i++) {
+        for (int i = 0; i < this.getParameters().size(); i++) {
             applyExpr = "Enumeration.apply(" + applyExpr + ", " + this.getParameterName(i) + "Enum)";
         }
 
