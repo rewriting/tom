@@ -8,6 +8,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
@@ -51,6 +52,12 @@ public class FactoryGenerator {
      * of the form <"nameOfClassToEnumerate", "nameOfFactoryClass">
      */
     private Map<String, String> generatedFactories;
+    
+    /**
+     * represents list of classes that we need to generate factories for
+     * a factory will be generated for each class in this list provided that it does not exist already in generated factories
+     */
+    private List<Class> classesToProcess;
 
     /**
      * initiates generator and sets all paths to default values TODO: could be
