@@ -18,6 +18,17 @@ public class Student {
 		new ArrayList<Integer>();
 	}
 
+	
+	public int getNo() {
+		return no;
+	}
+
+
+	public String getName() {
+		return name;
+	}
+
+
 	@Override
 	public String toString() {
 		return "Student [no=" + no + ", name=" + name + "]";
