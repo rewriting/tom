@@ -23,17 +23,17 @@ public class Parser {
      *         annotations...)
      */
     public static <T> ParsedClass parse(Class<T> classToParse) {
-        ParsedClass parsedClass = new ParsedClass();
+        ParsedClass parsedClass = new ParsedClass(classToParse);
         // set class properties
-        parsedClass.setSimpleName(classToParse.getSimpleName());
-        parsedClass.setCanonicalName(classToParse.getCanonicalName());
+//        parsedClass.setSimpleName(classToParse.getSimpleName());
+//        parsedClass.setCanonicalName(classToParse.getCanonicalName());
 
         // load all constructors having EnumerateGenerator annotations
         for (Constructor cons : classToParse.getDeclaredConstructors()) {
             if (cons.isAnnotationPresent(EnumerateGenerator.class)) {
                 if (cons.getParameterTypes().length == 0) {
                     // no args cons
-                    parsedClass.setNoArgsConstructor(cons);
+                    parsedClass.addNoArgsConstructor(cons);
                 } else {
                     // cons with parameters
                     parsedClass.addConstructor(cons);

@@ -37,21 +37,18 @@ public class ParsedClass {
      * constant representing line separator
      */
     public static final String ENDL = System.getProperty("line.separator");
-    
+
+    public <T> ParsedClass(Class<T> classToParse) {
+        this.canonicalName = classToParse.getCanonicalName();
+        this.simpleName = classToParse.getSimpleName();
+	}
+
     public String getSimpleName() {
         return simpleName;
     }
 
-    public void setSimpleName(String simpleName) {
-        this.simpleName = simpleName;
-    }
-
     public String getCanonicalName() {
         return canonicalName;
-    }
-
-    public void setCanonicalName(String canonicalName) {
-        this.canonicalName = canonicalName;
     }
 
     public List<ConstructorWrapper> getConstructors() {
@@ -62,12 +59,13 @@ public class ParsedClass {
         return constructors.get(index);
     }
 
-    public void setConstructors(List<ConstructorWrapper> constructors) {
-        this.constructors = constructors;
-    }
-
     public ConstructorWrapper getNoArgsConstructor() {
-        return noArgsConstructor;
+    	return noArgsConstructor;
+//    	if(hasNoArgsConstructor()){
+//    		return this.constructors.get(0);
+//    	}else{
+//    		return null;
+//    	}
     }
 
     /**
@@ -76,8 +74,9 @@ public class ParsedClass {
      * @param noArgsConstructor
      *            constructor to wrap
      */
-    public void setNoArgsConstructor(Constructor noArgsConstructor) {
+    public <T> void addNoArgsConstructor(Constructor<T> noArgsConstructor) {
         this.noArgsConstructor = new ConstructorWrapper(noArgsConstructor);
+//        this.constructors.add(0,new ConstructorWrapper(noArgsConstructor, constructors.size()));
     }
 
     /**
@@ -89,7 +88,7 @@ public class ParsedClass {
      * @param cons
      *            Constructor to add
      */
-    public void addConstructor(Constructor cons) {
+    public <T> void addConstructor(Constructor<T> cons) {
         this.constructors
                 .add(new ConstructorWrapper(cons, constructors.size()));
     }
@@ -108,6 +107,7 @@ public class ParsedClass {
 	 */
     public boolean hasNoArgsConstructor() {
         return this.noArgsConstructor != null;
+//        return !this.constructors.isEmpty() && this.constructors.get(0).getParameters().size()==0;
     }
     
     /**

@@ -137,6 +137,7 @@ public class FactoryGenerator {
     public static void main(String[] args) {
         FactoryGenerator generator = FactoryGenerator.getInstance();
         generator.generateSources(ListStack.class);
+        generator.generateSources(Student.class);
 
     }
 
