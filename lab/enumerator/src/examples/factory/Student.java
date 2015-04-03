@@ -1,7 +1,6 @@
 package examples.factory;
 
 import java.util.ArrayList;
-
 import tom.library.factory.Enumerate;
 import tom.library.factory.EnumerateGenerator;
 
