@@ -61,7 +61,7 @@ public class FactoryGenerator {
         this.generationPath = "./src/examples/factory/tests/";
         this.compilationPath = "./src/examples/factory/tests/";
         this.generatedFactories = new HashMap<String, String>();
-        generatedFactories.put("examples.factory.tests.Student", "examples.factory.tests.StudentFactory"); // for testing
+        generatedFactories.put("examples.factory.Student", "examples.factory.tests.StudentFactory"); // for testing
 
     }
     
@@ -116,6 +116,7 @@ public class FactoryGenerator {
      * @return an instance of the corresponding factory class
      */
     public Class<?> getFactoryClass(String nameOfClassToEnumerate) {
+        System.out.println("hiii");
         String factoryClassName = generatedFactories.get(nameOfClassToEnumerate);
         Object factoryInstance = null;
         Class<?> factoryClass = null;
@@ -124,6 +125,7 @@ public class FactoryGenerator {
             URL[] urls = new URL[]{ compilationDir.toURI().toURL() };
             URLClassLoader classLoader = URLClassLoader.newInstance(urls);
             factoryClass = classLoader.loadClass(factoryClassName);
+            System.out.println(factoryClass.getCanonicalName());
             //factoryInstance = factoryClass.newInstance();
         } catch (MalformedURLException | ClassNotFoundException e) {
             e.printStackTrace();

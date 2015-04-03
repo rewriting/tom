@@ -147,26 +147,27 @@ public final class PropCheck extends Theories {
                 for (int i = 0; i < parameterTypes.length; i++) {
                     if (parameterAnnotations[i].length > 0) {
                         Type key = parameterTypes[i];
-
-                        System.out.println(key + " ; " +  parameterTypes[i] + " ; " + parameterAnnotations[i][0]);
-
+                        
+//                        System.out.println(key + " ; " +  parameterTypes[i] + " ; " + parameterAnnotations[i][0]);
                         for (Annotation annotation : parameterAnnotations[i]) {
                             if (annotation.annotationType().equals(ForSome.class) && !map.containsKey(key)) {
                                 Enumeration<?> myEnum = null;
-                                boolean useFactory = false;
+                                boolean classEnumeratorFound = false;
                                 try {
-                                    for (Method pramMethod : parameterTypes[i].getMethods()) {
+                                    for (Method pramMethod : parameterTypes[i].getDeclaredMethods()) {
                                         if (pramMethod.getName().equals("getEnumeration")) {
+                                            // generating using class
                                             myEnum = (Enumeration<?>) pramMethod.invoke(null, null); // static + no parameter
-                                            useFactory = true;
+                                            classEnumeratorFound = true;
                                             break;
                                         }
                                     }
-                                    if (useFactory) {
-                                        System.out.println("generating using factory");
+                                    if (!classEnumeratorFound) {
+                                        // generating using factory
                                         Class<?> factory = FactoryGenerator.getInstance().getFactoryClass(parameterTypes[i].getCanonicalName());
                                         myEnum = (Enumeration<?>) factory.getMethod("getEnumeration", null).invoke(null, null); // for testing
                                     }
+                                    map.put(key, myEnum);
                                 } catch (SecurityException | IllegalAccessException | IllegalArgumentException
                                     | InvocationTargetException | NoSuchMethodException e) {
                                     e.printStackTrace();
@@ -178,7 +179,7 @@ public final class PropCheck extends Theories {
                     }
                 }
 
-                System.out.println("print map " + map.keySet());
+//                System.out.println("print map " + map.keySet());
             }
 
         }
