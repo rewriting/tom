@@ -20,6 +20,7 @@ public class ObjectWrapper extends ParamWrapper {
      */
     public ObjectWrapper(Class param, int paramIndex, ConstructorWrapper declaringCons) {
         super(param, paramIndex, declaringCons);
+        this.declaringCons.getDeclaringClass().addDependency(this.getType());
     }
 
     @Override
@@ -35,7 +36,7 @@ public class ObjectWrapper extends ParamWrapper {
         enumStatement.append("> ");
         enumStatement.append(paramName + "Enum");
         enumStatement.append(" = ");
-        enumStatement.append(this.getType() + "Factory"); // TODO: use reference to ParsedClass.getFactoryClassName()
+        enumStatement.append(this.getType() + "Factory");
         enumStatement.append(".getEnumeration()");
         return enumStatement.toString();
     }

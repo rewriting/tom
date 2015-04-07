@@ -17,7 +17,12 @@ public class ConstructorWrapper {
      * the wrapped constructor object it must be set on instantiation
      */
     private final Constructor constructor;
-
+    
+    /**
+     * The parsed class containing this constructor
+     */
+    private ParsedClass declaringClass;
+    
     /**
      * represents list of parameters of the constructor
      */
@@ -30,7 +35,7 @@ public class ConstructorWrapper {
     private String variableName;
 
     /**
-     * name of the enumuration generated from that constructor
+     * name of the enumuration generated from this constructor
      */
     private String enumName;
 
@@ -43,10 +48,13 @@ public class ConstructorWrapper {
      * @param index
      *            The index of the constructor in the constructor in the
      *            constructors list of the class
+     * @param declaringClass
+     *            The parsed class containing this constructor
      */
-    public ConstructorWrapper(Constructor cons, int index) {
+    public ConstructorWrapper(Constructor cons, int index, ParsedClass declaringClass) {
         this.constructor = cons;
-        this.variableName = "cons" + (index+1);
+        this.declaringClass = declaringClass;
+        this.variableName = "cons" + (index + 1);
         this.enumName = this.variableName + "Enum";
         this.parameters = new ArrayList<ParamWrapper>();
         for (int i = 0; i < cons.getParameterTypes().length; i++) {
@@ -63,6 +71,14 @@ public class ConstructorWrapper {
      */
     public Constructor getConstructor() {
         return constructor;
+    }
+    
+    /**
+     * getter method for the declaring class
+     * @return the parsed class which declared this constructor
+     */
+    public ParsedClass getDeclaringClass() {
+        return declaringClass;
     }
 
     /**
@@ -145,7 +161,7 @@ public class ConstructorWrapper {
             curriedDef.append("(");
 
             for (int i = 0; i < this.getParameters().size() - 1; i++) {
-                curriedDef.append(this.parameters.get(index).getName());
+                curriedDef.append(this.parameters.get(i).getName());
                 curriedDef.append(", ");
             }
             curriedDef.append(this.parameters.get(index).getName()); // last param

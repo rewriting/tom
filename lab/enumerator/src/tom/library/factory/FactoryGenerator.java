@@ -8,11 +8,14 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
+import com.sun.tracing.dtrace.DependencyClass;
 import examples.factory.Car;
 import examples.factory.ListStack;
 import examples.factory.Student;
@@ -54,10 +57,10 @@ public class FactoryGenerator {
     private Map<String, String> generatedFactories;
     
     /**
-     * represents list of classes that we need to generate factories for
+     * represents names of classes that we need to generate factories for
      * a factory will be generated for each class in this list provided that it does not exist already in generated factories
      */
-    private List<Class> classesToProcess;
+    private Set<String> classesToProcess;
 
     /**
      * initiates generator and sets all paths to default values TODO: could be
@@ -68,7 +71,8 @@ public class FactoryGenerator {
         this.generationPath = "./src/examples/factory/tests/";
         this.compilationPath = "./src/examples/factory/tests/";
         this.generatedFactories = new HashMap<String, String>();
-        generatedFactories.put("examples.factory.Student", "examples.factory.tests.StudentFactory"); // for testing
+        this.classesToProcess = new HashSet<String>();
+        //generatedFactories.put("examples.factory.Student", "examples.factory.tests.StudentFactory"); // for testing
 
     }
     
@@ -82,16 +86,35 @@ public class FactoryGenerator {
         }
         return generator;
     }
-
+    
     /**
-     * generate corresponding source code of factory for a class
-     * 
-     * @param classToGenerateFactoriesFor
+     * generates source code files for factories starting from the specified class then its dependencies
+     * @param classToGenerateFactoriesFor entry point for factories generation
      */
     public <T> void generateSources(Class<T> classToGenerateFactoriesFor) {
+        classesToProcess.add(classToGenerateFactoriesFor.getCanonicalName());
+//        do {
+//            generateSourceForClass(classToGenerateFactoriesFor);
+//        } while (classesToProcess);
+        
+        for (String className: classesToProcess) {
+            if (!generatedFactories.containsKey(className)) {
+                generateSourceForClass(classToGenerateFactoriesFor);
+            }
+        }
+        
+        System.out.println("sources generated");
+    }
+    
+    /**
+     * generate source code of corresponding factory for a class
+     * 
+     * @param classToGenerateFactoryFor
+     */
+    public <T> void generateSourceForClass(Class<T> classToGenerateFactoryFor) {
 
-        ParsedClass parsedClass = Parser.parse(classToGenerateFactoriesFor);
-
+        ParsedClass parsedClass = Parser.parse(classToGenerateFactoryFor);
+        
         VelocityEngine ve = new VelocityEngine();
         ve.init();
         Template t = ve.getTemplate(templatePath + "FactoryTemplate.vm");
@@ -112,7 +135,12 @@ public class FactoryGenerator {
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
-        System.out.println("sources generated");
+        
+        // handle dependencies
+        generatedFactories.put(parsedClass.getCanonicalName(), parsedClass.getFactoryClassName());
+        classesToProcess.addAll(parsedClass.getDependencies());
+        
+        System.out.println("factory source generated for class" + classToGenerateFactoryFor.getCanonicalName());
 
     }
     
@@ -123,7 +151,6 @@ public class FactoryGenerator {
      * @return an instance of the corresponding factory class
      */
     public Class<?> getFactoryClass(String nameOfClassToEnumerate) {
-        System.out.println("hiii");
         String factoryClassName = generatedFactories.get(nameOfClassToEnumerate);
         Object factoryInstance = null;
         Class<?> factoryClass = null;
@@ -143,7 +170,7 @@ public class FactoryGenerator {
     
     public static void main(String[] args) {
         FactoryGenerator generator = FactoryGenerator.getInstance();
-        generator.generateSources(ListStack.class);
+        generator.generateSources(Car.class);
 //        generator.generateSources(Student.class);
 
     }

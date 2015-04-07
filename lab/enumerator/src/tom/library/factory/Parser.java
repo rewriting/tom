@@ -24,10 +24,6 @@ public class Parser {
      */
     public static <T> ParsedClass parse(Class<T> classToParse) {
         ParsedClass parsedClass = new ParsedClass(classToParse);
-        // set class properties
-//        parsedClass.setSimpleName(classToParse.getSimpleName());
-//        parsedClass.setCanonicalName(classToParse.getCanonicalName());
-
         // load all constructors having EnumerateGenerator annotations
         for (Constructor cons : classToParse.getDeclaredConstructors()) {
             if (cons.isAnnotationPresent(EnumerateGenerator.class)) {
