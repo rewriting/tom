@@ -194,7 +194,7 @@ public class FactoryGenerator {
 
     public static void main(String[] args) {
         FactoryGenerator generator = FactoryGenerator.getInstance();
-        generator.generateSources(Room.class);
+        generator.generateSources(StudentWithCar.class);
         //        generator.generateSources(Student.class);
 
     }
