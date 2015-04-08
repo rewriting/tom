@@ -21,6 +21,8 @@ import com.sun.tracing.dtrace.DependencyClass;
 import examples.factory.Car;
 import examples.factory.ListStack;
 import examples.factory.Student;
+import examples.factory.StudentCar;
+import examples.factory.StudentWithCar;
 
 /**
  * It initializes Apache Velocity template engine, call the parse method on a
@@ -64,21 +66,31 @@ public class FactoryGenerator {
      * does not exist already in generated factories
      */
     private Queue<String> classesToProcess;
+    
+    /**
+     * factory template to be filled
+     */
+    private Template template;
 
     /**
      * initiates generator and sets all paths to default values TODO: could be
      * read from configurations file
      */
     private FactoryGenerator() {
+        // init Apache Velocity
+        VelocityEngine ve = new VelocityEngine();
+        ve.init();
+        
         this.templatePath = "./src/tom/library/factory/templates/";
+        this.template = ve.getTemplate(templatePath + "FactoryTemplate.vm");
         this.generationPath = "./src/examples/factory/tests/";
         this.compilationPath = "./src/examples/factory/tests/";
         this.generatedFactories = new HashMap<String, String>();
         this.classesToProcess = new LinkedList<String>();
-        //generatedFactories.put("examples.factory.Student", "examples.factory.tests.StudentFactory"); // for testing
+//        generatedFactories.put("examples.factory.Student", "examples.factory.tests.StudentFactory"); // for testing
 
     }
-
+    
     /**
      * returning a reference to the single instance
      * 
@@ -112,24 +124,22 @@ public class FactoryGenerator {
      * @param classToGenerateFactoryFor
      */
     public <T> void generateSourceForClass(String classToGenerateFactoryFor) {
-
+        // parse class
         ParsedClass parsedClass = null;
         try {
             parsedClass = Parser.parse(Class.forName(classToGenerateFactoryFor));
         } catch (ClassNotFoundException e1) {
             e1.printStackTrace();
         }
-
-        VelocityEngine ve = new VelocityEngine();
-        ve.init();
-        Template t = ve.getTemplate(templatePath + "FactoryTemplate.vm");
-
+        
+        // generate code using velocity
         VelocityContext context = new VelocityContext();
         context.put("parsedClass", parsedClass);
 
         StringWriter writer = new StringWriter();
-        t.merge(context, writer);
-
+        template.merge(context, writer);
+        
+        // save code to a file
         try {
             PrintWriter pw = new PrintWriter(generationPath + parsedClass.getFactoryClassName()
                 + ".java");
