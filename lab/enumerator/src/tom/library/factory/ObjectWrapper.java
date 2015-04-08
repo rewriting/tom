@@ -36,7 +36,7 @@ public class ObjectWrapper extends ParamWrapper {
         enumStatement.append("> ");
         enumStatement.append(paramName + "Enum");
         enumStatement.append(" = ");
-        enumStatement.append(this.getType() + "Factory");
+        enumStatement.append(this.getType() + "Factory"); //TODO: get corresponding factory from FactoryGenerator (handle different packages)
         enumStatement.append(".getEnumeration()");
         return enumStatement.toString();
     }

@@ -178,7 +178,7 @@ public class ConstructorWrapper {
             curriedDef.append(this.getCurriedType(index + 1));
             curriedDef.append("() {");
             curriedDef.append(this.getCurriedDefinition(index + 1));
-            curriedDef.append(" };");
+            curriedDef.append(" }; }");
         }
         return curriedDef.toString();
 
