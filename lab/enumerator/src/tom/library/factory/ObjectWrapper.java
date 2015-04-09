@@ -20,7 +20,8 @@ public class ObjectWrapper extends ParamWrapper {
      */
     public ObjectWrapper(Class param, int paramIndex, ConstructorWrapper declaringCons) {
         super(param, paramIndex, declaringCons);
-        this.declaringCons.getDeclaringClass().addDependency(this.getType());
+//        this.declaringCons.getDeclaringClass().addDependency(this.getType());
+        this.declaringCons.getDeclaringClass().addDependency(param);
     }
 
     @Override

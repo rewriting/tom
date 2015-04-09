@@ -8,24 +8,16 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.Queue;
-import java.util.Set;
 
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 
-import com.sun.tracing.dtrace.DependencyClass;
-
-import examples.factory.Car;
-import examples.factory.ListStack;
 //import examples.factory.Room;
 import examples.factory.Student;
-import examples.factory.StudentCar;
 import examples.factory.StudentWithCar;
 
 /**
@@ -62,14 +54,14 @@ public class FactoryGenerator {
      * the factories that have been generated so far of the form
      * <"nameOfClassToEnumerate", "nameOfFactoryClass">
      */
-    private Map<String, String> generatedFactories;
+    private Map<Class<?>, String> generatedFactories;
 
     /**
      * represents names of classes that we need to generate factories for a
      * factory will be generated for each class in this queue provided that it
      * does not exist already in generated factories
      */
-    private Queue<String> classesToProcess;
+    private Queue<Class<?>> classesToProcess;
     
     /**
      * factory template to be filled
@@ -89,8 +81,8 @@ public class FactoryGenerator {
         this.template = ve.getTemplate(templatePath + "FactoryTemplate.vm");
         this.generationPath = "./src/examples/factory/";
         this.compilationPath = "./src/examples/factory/";
-        this.generatedFactories = new HashMap<String, String>();
-        this.classesToProcess = new LinkedList<String>();
+        this.generatedFactories = new HashMap<Class<?>, String>();
+        this.classesToProcess = new LinkedList<Class<?>>();
 //        generatedFactories.put("examples.factory.Student", "examples.factory.tests.StudentFactory"); // for testing
 
     }
@@ -115,7 +107,7 @@ public class FactoryGenerator {
      *            entry point for factories generation
      */
     public <T> void generateSources(Class<T> classToGenerateFactoriesFor) {
-        classesToProcess.add(classToGenerateFactoriesFor.getCanonicalName());
+        classesToProcess.add(classToGenerateFactoriesFor);
         while (!classesToProcess.isEmpty()) {
             generateSourceForClass(classesToProcess.poll());
         }
@@ -127,14 +119,15 @@ public class FactoryGenerator {
      * 
      * @param classToGenerateFactoryFor
      */
-    public <T> void generateSourceForClass(String classToGenerateFactoryFor) {
+    public <T> void generateSourceForClass(Class<T> classToGenerateFactoryFor) {
         // parse class
         ParsedClass parsedClass = null;
-        try {
-            parsedClass = Parser.parse(Class.forName(classToGenerateFactoryFor));
-        } catch (ClassNotFoundException e1) {
-            e1.printStackTrace();
-        }
+//        try {
+//            parsedClass = Parser.parse(Class.forName(classToGenerateFactoryFor));
+            parsedClass = Parser.parse(classToGenerateFactoryFor);
+//        } catch (ClassNotFoundException e1) {
+//            e1.printStackTrace();
+//        }
         
         // generate code using velocity
         VelocityContext context = new VelocityContext();
@@ -156,8 +149,8 @@ public class FactoryGenerator {
         }
 
         // handle dependencies
-        generatedFactories.put(parsedClass.getCanonicalName(), parsedClass.getFactoryClassName());
-        for (String dependency : parsedClass.getDependencies()) {
+        generatedFactories.put(classToGenerateFactoryFor, parsedClass.getFactoryClassName());
+        for (Class dependency : parsedClass.getDependencies()) {
             if (!generatedFactories.containsKey(dependency)) {
                 classesToProcess.add(dependency);
             }
