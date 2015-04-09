@@ -1,5 +1,6 @@
-package examples.factory;
+package examples.factory.handwritten;
 
+import examples.factory.Color;
 import tom.library.enumerator.Enumeration;
 
 public class ColorFactory {

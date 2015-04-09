@@ -1,5 +1,6 @@
-package examples.factory;
+package examples.factory.handwritten;
 import java.math.BigInteger;
+import examples.factory.Student;
 
 import tom.library.enumerator.Combinators;
 import tom.library.enumerator.Enumeration;

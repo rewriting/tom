@@ -1,6 +1,8 @@
-package examples.factory;
+package examples.factory.handwritten;
 
 import java.util.List;
+import examples.factory.Car;
+import examples.factory.Garage;
 
 import tom.library.enumerator.Enumeration;
 import tom.library.enumerator.F;

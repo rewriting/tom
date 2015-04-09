@@ -10,18 +10,7 @@ import tom.library.enumerator.Finite;
 import tom.library.enumerator.LazyList;
 import tom.library.factory.ListFactory;
 import examples.adt.stack.stack.types.Stack;
-import examples.factory.Car;
-import examples.factory.CarFactory;
-import examples.factory.Color;
-import examples.factory.ColorFactory;
-import examples.factory.Garage;
-import examples.factory.GarageFactory;
-import examples.factory.ListStack;
-import examples.factory.ListStackFactory;
-import examples.factory.Student;
-import examples.factory.StudentFactory;
-import examples.factory.Tree;
-import examples.factory.TreeFactory;
+import examples.factory.*;
 
 public class Demo {
 	public static void main(String[] args) {
@@ -41,6 +30,13 @@ public class Demo {
 //			System.out.println(i + " --> " + partsStudent.head());
 //			partsStudent = partsStudent.tail();
 //		}
+//		// StudentWithCar
+//		Enumeration<StudentWithCar> enumStudent = StudentWithCarFactory.getEnumeration();
+//        LazyList<Finite<StudentWithCar>> partsStudentWC = enumStudent.parts();
+//        for (int i = 0; i < 4 && !partsStudentWC.isEmpty(); i++) {
+//            System.out.println(i + " --> " + partsStudentWC.head());
+//            partsStudentWC = partsStudentWC.tail();
+//        }
 //
 //		// Lists of Students
 //		Enumeration<List<Student>> enumListStudent = ListFactory.getEnumeration(StudentFactory.getEnumeration());
@@ -52,21 +48,21 @@ public class Demo {
 		
 //		System.out.println(Combinators.makeInteger().get(BigInteger.valueOf(0)));
 		// Stacks
-		Enumeration<ListStack> enumListStack = ListStackFactory.getEnumeration();
-		LazyList<Finite<ListStack>> partsListStack = enumListStack.parts();
-		for (int i = 0; i < 7 && !partsListStack.isEmpty(); i++) {
-			System.out.println(i + " --> " + partsListStack.head());
-			partsListStack = partsListStack.tail();
-		}
-		
-
-		// Stacks
-		Enumeration<Stack> en = Stack.getEnumeration();
-		LazyList<Finite<Stack>> partsEn = en.parts();
-		for (int i = 0; i < 7 && !partsEn.isEmpty(); i++) {
-			System.out.println(i + " --> " + partsEn.head());
-			partsEn = partsEn.tail();
-		}
+//		Enumeration<ListStack> enumListStack = ListStackFactory.getEnumeration();
+//		LazyList<Finite<ListStack>> partsListStack = enumListStack.parts();
+//		for (int i = 0; i < 7 && !partsListStack.isEmpty(); i++) {
+//			System.out.println(i + " --> " + partsListStack.head());
+//			partsListStack = partsListStack.tail();
+//		}
+//		
+//
+//		// Stacks
+//		Enumeration<Stack> en = Stack.getEnumeration();
+//		LazyList<Finite<Stack>> partsEn = en.parts();
+//		for (int i = 0; i < 7 && !partsEn.isEmpty(); i++) {
+//			System.out.println(i + " --> " + partsEn.head());
+//			partsEn = partsEn.tail();
+//		}
 		
 
 

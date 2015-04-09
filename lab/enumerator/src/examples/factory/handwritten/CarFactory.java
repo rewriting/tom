@@ -1,6 +1,8 @@
-package examples.factory;
+package examples.factory.handwritten;
 
 import java.math.BigInteger;
+import examples.factory.Car;
+import examples.factory.Color;
 
 import tom.library.enumerator.Combinators;
 import tom.library.enumerator.Enumeration;
@@ -26,7 +28,8 @@ public class CarFactory {
 				// F< arg2, ... F <argn, Car>...>
 				return new F<Color, Car>() {
 					public Car apply(final Color c) {
-						return new Car(n, c);
+//						return new Car(n, c);
+					    return null;
 					}
 				};
 			}
