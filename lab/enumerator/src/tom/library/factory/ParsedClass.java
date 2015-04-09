@@ -39,7 +39,7 @@ public class ParsedClass {
      * contained non-primitive classes references that need factories to be
      * generated for them the set contains the canonical names for these classes
      */
-    Set<String> dependencies;
+    Set<Class> dependencies;
 
     /**
      * constant representing line separator
@@ -49,7 +49,7 @@ public class ParsedClass {
     public <T> ParsedClass(Class<T> classToParse) {
         this.canonicalName = classToParse.getCanonicalName();
         this.simpleName = classToParse.getSimpleName();
-        this.dependencies = new HashSet<String>();
+        this.dependencies = new HashSet<Class>();
     }
 
     public String getSimpleName() {
@@ -72,7 +72,7 @@ public class ParsedClass {
         return noArgsConstructor;
     }
     
-    public Set<String> getDependencies() {
+    public Set<Class> getDependencies() {
         return dependencies;
     }
 
@@ -107,7 +107,8 @@ public class ParsedClass {
      * @param referencedClassName
      *            name of the dependent class to add.
      */
-    public void addDependency(String referencedClassName) {
+//    public void addDependency(String referencedClassName) {
+        public void addDependency(Class referencedClassName) {
         this.dependencies.add(referencedClassName);
     }
 
