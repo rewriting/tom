@@ -23,7 +23,7 @@ import com.sun.tracing.dtrace.DependencyClass;
 
 import examples.factory.Car;
 import examples.factory.ListStack;
-import examples.factory.Room;
+//import examples.factory.Room;
 import examples.factory.Student;
 import examples.factory.StudentCar;
 import examples.factory.StudentWithCar;
@@ -196,7 +196,7 @@ public class FactoryGenerator {
         FactoryGenerator generator = FactoryGenerator.getInstance();
         generator.generateSources(StudentWithCar.class);
         generator.generateSources(Student.class);
-        generator.generateSources(Room.class);
+//        generator.generateSources(Room.class);
 
     }
 
