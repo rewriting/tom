@@ -14,12 +14,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
+
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
+
 import com.sun.tracing.dtrace.DependencyClass;
+
 import examples.factory.Car;
 import examples.factory.ListStack;
+import examples.factory.Room;
 import examples.factory.Student;
 import examples.factory.StudentCar;
 import examples.factory.StudentWithCar;
@@ -190,8 +194,9 @@ public class FactoryGenerator {
 
     public static void main(String[] args) {
         FactoryGenerator generator = FactoryGenerator.getInstance();
-        generator.generateSources(Car.class);
-        //        generator.generateSources(Student.class);
+        generator.generateSources(StudentWithCar.class);
+        generator.generateSources(Student.class);
+        generator.generateSources(Room.class);
 
     }
 
