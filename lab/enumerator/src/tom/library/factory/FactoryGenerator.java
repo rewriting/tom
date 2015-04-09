@@ -83,8 +83,8 @@ public class FactoryGenerator {
         
         this.templatePath = "./src/tom/library/factory/templates/";
         this.template = ve.getTemplate(templatePath + "FactoryTemplate.vm");
-        this.generationPath = "./src/examples/factory/tests/";
-        this.compilationPath = "./src/examples/factory/tests/";
+        this.generationPath = "./src/examples/factory/";
+        this.compilationPath = "./src/examples/factory/";
         this.generatedFactories = new HashMap<String, String>();
         this.classesToProcess = new LinkedList<String>();
 //        generatedFactories.put("examples.factory.Student", "examples.factory.tests.StudentFactory"); // for testing
