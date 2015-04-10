@@ -16,6 +16,7 @@ import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 
+import examples.factory.Garage;
 //import examples.factory.Room;
 import examples.factory.Student;
 import examples.factory.StudentWithCar;
@@ -187,8 +188,7 @@ public class FactoryGenerator {
 
     public static void main(String[] args) {
         FactoryGenerator generator = FactoryGenerator.getInstance();
-        generator.generateSources(StudentWithCar.class);
-        generator.generateSources(Student.class);
+        generator.generateSources(Garage.class);
 //        generator.generateSources(Room.class);
 
     }
