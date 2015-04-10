@@ -14,7 +14,7 @@ import java.util.regex.Pattern;
 import tom.library.enumerator.Combinators;
 import tom.library.enumerator.Enumeration;
 import tom.library.enumerator.F;
-import tom.library.factory.ParaType;
+import tom.library.factory.old.ParaType;
 import tom.library.factory.old.AbstractEnumeratorGenerator;
 import tom.library.factory.old.FieldConstructor;
 import tom.library.factory.old.GeneratorFactoryException;
