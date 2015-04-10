@@ -1,7 +1,7 @@
 package examples.factory;
 
-import tom.library.factory.old.Enumerate;
-import tom.library.factory.old.EnumerateGenerator;
+import tom.library.factory.Enumerate;
+import tom.library.factory.EnumerateGenerator;
 
 public class Car {
     private int no;

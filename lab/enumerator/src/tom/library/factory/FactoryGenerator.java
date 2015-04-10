@@ -18,6 +18,7 @@ import org.apache.velocity.app.VelocityEngine;
 
 import tom.library.factory.old.Parser;
 import examples.factory.Garage;
+import examples.factory.Room;
 //import examples.factory.Room;
 import examples.factory.Student;
 import examples.factory.StudentWithCar;
@@ -189,8 +190,8 @@ public class FactoryGenerator {
 
     public static void main(String[] args) {
         FactoryGenerator generator = FactoryGenerator.getInstance();
-        generator.generateSources(Garage.class);
-//        generator.generateSources(Room.class);
+        generator.generateSources(Room.class);
+        generator.generateSources(Student.class);
 
     }
 

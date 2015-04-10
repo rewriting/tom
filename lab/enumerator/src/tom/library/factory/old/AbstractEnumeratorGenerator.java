@@ -8,6 +8,7 @@ import java.util.Map;
 import tom.library.enumerator.Combinators;
 import tom.library.enumerator.Enumeration;
 import tom.library.enumerator.F;
+import tom.library.factory.EnumerateGenerator;
 import tom.library.theory.ForSome;
 
 public abstract class AbstractEnumeratorGenerator {

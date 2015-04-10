@@ -3,8 +3,8 @@ package examples.factory;
 import java.util.ArrayList;
 import java.util.List;
 
-import tom.library.factory.old.Enumerate;
-import tom.library.factory.old.EnumerateGenerator;
+import tom.library.factory.Enumerate;
+import tom.library.factory.EnumerateGenerator;
 
 public class Garage2 {
 	// a car can appear twice!

@@ -9,6 +9,7 @@ import java.util.regex.Pattern;
 
 import sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl;
 import sun.reflect.generics.reflectiveObjects.TypeVariableImpl;
+import tom.library.factory.EnumerateGenerator;
 
 public 	abstract class ParaType{
 	protected List<ParaType> paraTypes;

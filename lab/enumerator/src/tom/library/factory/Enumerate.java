@@ -1,4 +1,4 @@
-package tom.library.factory.old;
+package tom.library.factory;
 
 import java.lang.annotation.*;
 

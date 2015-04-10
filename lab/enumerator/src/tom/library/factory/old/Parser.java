@@ -2,7 +2,7 @@ package tom.library.factory.old;
 
 import java.lang.reflect.Constructor;
 
-import tom.library.factory.old.EnumerateGenerator;
+import tom.library.factory.EnumerateGenerator;
 import tom.library.factory.ParsedClass;
 
 /**

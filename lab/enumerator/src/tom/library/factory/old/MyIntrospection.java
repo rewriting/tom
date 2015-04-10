@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import tom.library.factory.EnumerateGenerator;
 import examples.factory.Student;
 
 public class MyIntrospection {

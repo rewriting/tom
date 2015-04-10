@@ -17,6 +17,8 @@ import java.util.regex.Pattern;
 import tom.library.enumerator.Combinators;
 import tom.library.enumerator.Enumeration;
 import tom.library.enumerator.F;
+import tom.library.factory.Enumerate;
+import tom.library.factory.EnumerateGenerator;
 
 public class Generator {
 	public static final String ENDL = System.getProperty("line.separator");

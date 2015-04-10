@@ -23,13 +23,22 @@ public class Demo {
 //			parts = parts.tail();
 //		}
 //
-//		// Students
-//		Enumeration<Student> enumStudent = StudentFactory.getEnumeration();
-//		LazyList<Finite<Student>> partsStudent = enumStudent.parts();
-//		for (int i = 0; i < 4 && !partsStudent.isEmpty(); i++) {
-//			System.out.println(i + " --> " + partsStudent.head());
-//			partsStudent = partsStudent.tail();
-//		}
+		// Students
+		Enumeration<Student> enumStudent = StudentFactory.getEnumeration();
+		LazyList<Finite<Student>> partsStudent = enumStudent.parts();
+		for (int i = 0; i < 4 && !partsStudent.isEmpty(); i++) {
+			System.out.println(i + " --> " + partsStudent.head());
+			partsStudent = partsStudent.tail();
+		}
+
+		// Rooms
+		Enumeration<Room> enumRoom = RoomFactory.getEnumeration();
+		LazyList<Finite<Room>> partsRoom = enumRoom.parts();
+		for (int i = 0; i < 4 && !partsRoom.isEmpty(); i++) {
+			System.out.println(i + " --> " + partsRoom.head());
+			partsRoom = partsRoom.tail();
+		}
+		
 //		// StudentWithCar
 //		Enumeration<StudentWithCar> enumStudent = StudentWithCarFactory.getEnumeration();
 //        LazyList<Finite<StudentWithCar>> partsStudentWC = enumStudent.parts();

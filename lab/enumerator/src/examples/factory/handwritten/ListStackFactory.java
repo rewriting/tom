@@ -10,7 +10,7 @@ import tom.library.enumerator.F;
 import tom.library.enumerator.Finite;
 import tom.library.enumerator.LazyList;
 import tom.library.enumerator.P1;
-import tom.library.factory.old.Enumerate;
+import tom.library.factory.Enumerate;
 
 public class ListStackFactory {
 
