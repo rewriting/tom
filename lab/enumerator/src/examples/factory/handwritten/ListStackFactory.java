@@ -2,15 +2,15 @@ package examples.factory.handwritten;
 
 import java.math.BigInteger;
 import java.util.Random;
-import examples.factory.ListStack;
 
+import examples.factory.ListStack;
 import tom.library.enumerator.Combinators;
 import tom.library.enumerator.Enumeration;
 import tom.library.enumerator.F;
 import tom.library.enumerator.Finite;
 import tom.library.enumerator.LazyList;
 import tom.library.enumerator.P1;
-import tom.library.factory.Enumerate;
+import tom.library.factory.old.Enumerate;
 
 public class ListStackFactory {
 

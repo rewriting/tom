@@ -16,6 +16,7 @@ import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 
+import tom.library.factory.old.Parser;
 import examples.factory.Garage;
 //import examples.factory.Room;
 import examples.factory.Student;

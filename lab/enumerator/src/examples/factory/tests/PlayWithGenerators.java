@@ -9,9 +9,9 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import tom.library.factory.GeneratorFactory;
-import tom.library.factory.GeneratorFactoryException;
-import tom.library.factory.Tools;
+import tom.library.factory.old.GeneratorFactory;
+import tom.library.factory.old.GeneratorFactoryException;
+import tom.library.factory.old.Tools;
 import examples.factory.Car;
 import examples.factory.Garage;
 import examples.factory.Student;

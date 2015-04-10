@@ -1,4 +1,5 @@
-package tom.library.factory;
+package tom.library.factory.old;
+
 
 public class ParaTypeClass extends ParaType{
 	private Class<?> classType;

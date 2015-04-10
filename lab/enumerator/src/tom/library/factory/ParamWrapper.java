@@ -2,7 +2,8 @@ package tom.library.factory;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
-import tom.library.factory.Enumerate;
+
+import tom.library.factory.old.Enumerate;
 
 /**
  * wraps a parameter of a method

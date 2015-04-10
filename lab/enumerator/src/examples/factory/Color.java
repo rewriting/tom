@@ -1,6 +1,6 @@
 package examples.factory;
 
-import tom.library.factory.EnumerateStatic;
+import tom.library.factory.old.EnumerateStatic;
 
 
 @EnumerateStatic

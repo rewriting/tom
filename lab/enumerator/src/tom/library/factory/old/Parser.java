@@ -1,7 +1,9 @@
-package tom.library.factory;
+package tom.library.factory.old;
 
 import java.lang.reflect.Constructor;
-import tom.library.factory.EnumerateGenerator;
+
+import tom.library.factory.old.EnumerateGenerator;
+import tom.library.factory.ParsedClass;
 
 /**
  * the class represents a parser which is given a class to parse in order to
