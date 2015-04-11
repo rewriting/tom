@@ -57,7 +57,7 @@ public class FactoryGenerator {
      * the factories that have been generated so far of the form
      * <"nameOfClassToEnumerate", "nameOfFactoryClass">
      */
-    private Map<Class<?>, String> generatedFactories;
+    private Map<Class<?>, ParsedClass> generatedFactories;
 
     /**
      * represents names of classes that we need to generate factories for a
@@ -84,7 +84,7 @@ public class FactoryGenerator {
         this.template = ve.getTemplate(templatePath + "FactoryTemplate.vm");
         this.generationPath = "./src/examples/factory/";
         this.compilationPath = "./src/examples/factory/";
-        this.generatedFactories = new HashMap<Class<?>, String>();
+        this.generatedFactories = new HashMap<Class<?>, ParsedClass>();
         this.classesToProcess = new LinkedList<Class<?>>();
 //        generatedFactories.put("examples.factory.Student", "examples.factory.tests.StudentFactory"); // for testing
 
@@ -152,7 +152,7 @@ public class FactoryGenerator {
         }
 
         // handle dependencies
-        generatedFactories.put(classToGenerateFactoryFor, parsedClass.getFactoryClassName());
+        generatedFactories.put(classToGenerateFactoryFor, parsedClass);
         for (Class dependency : parsedClass.getDependencies()) {
             if (!generatedFactories.containsKey(dependency)) {
                 classesToProcess.add(dependency);
@@ -171,7 +171,8 @@ public class FactoryGenerator {
      * @return an instance of the corresponding factory class
      */
     public Class<?> getFactoryClass(String nameOfClassToEnumerate) {
-        String factoryClassName = generatedFactories.get(nameOfClassToEnumerate);
+//        String factoryClassName = generatedFactories.get(nameOfClassToEnumerate);
+        String factoryClassName = nameOfClassToEnumerate+"Factory";
         Object factoryInstance = null;
         Class<?> factoryClass = null;
         try {
