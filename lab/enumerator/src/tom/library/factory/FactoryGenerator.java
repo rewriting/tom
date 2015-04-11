@@ -110,13 +110,13 @@ public class FactoryGenerator {
 		}
 	}
 
-
 	public void outputSourceForClasses() {
 		// generate code using velocity
 		VelocityContext context = new VelocityContext();
 
-		for (Class<?> class2generate : generatedFactories.keySet()) {
-			ParsedClass parsedClass = generatedFactories.get(class2generate);
+		// for (Class<?> class2generate : generatedFactories.keySet()) {
+		for (ParsedClass parsedClass : generatedFactories.values()) {
+			// ParsedClass parsedClass = generatedFactories.get(class2generate);
 			context.put("parsedClass", parsedClass);
 
 			StringWriter writer = new StringWriter();
@@ -134,8 +134,7 @@ public class FactoryGenerator {
 				e.printStackTrace();
 			}
 
-			System.out.println("factory source generated for class"
-					+ class2generate);
+			System.out.println("factory source generated:" + parsedClass);
 		}
 	}
 
@@ -166,7 +165,7 @@ public class FactoryGenerator {
 		FactoryGenerator generator = FactoryGenerator.getInstance();
 		generator.generateSources(Room.class);
 		generator.generateSources(Student.class);
-		
+
 		generator.outputSourceForClasses();
 
 	}
