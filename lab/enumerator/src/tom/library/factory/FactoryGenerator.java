@@ -16,12 +16,11 @@ import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 
-import tom.library.factory.old.Parser;
-import examples.factory.Garage;
+//import examples.factory.Garage;
 import examples.factory.Room;
 //import examples.factory.Room;
 import examples.factory.Student;
-import examples.factory.StudentWithCar;
+//import examples.factory.StudentWithCar;
 
 /**
  * It initializes Apache Velocity template engine, call the parse method on a class and output the template filled with the information from parsed class It implements the singleton pattern
