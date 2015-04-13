@@ -24,7 +24,7 @@ public class Parser {
     public static <T> ParsedClass parse(Class<T> classToParse) {
         ParsedClass parsedClass = new ParsedClass(classToParse);
         // load all constructors having EnumerateGenerator annotations
-        for (Constructor cons : classToParse.getDeclaredConstructors()) {
+        for (Constructor<?> cons : classToParse.getDeclaredConstructors()) {
             if (cons.isAnnotationPresent(EnumerateGenerator.class)) {
                 if (cons.getParameterTypes().length == 0) {
                     // no args cons

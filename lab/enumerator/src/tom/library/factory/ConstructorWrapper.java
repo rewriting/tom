@@ -11,12 +11,12 @@ import java.util.List;
  * @author Ahmad
  * 
  */
-public class ConstructorWrapper {
+public class ConstructorWrapper<T> {
 
     /**
      * the wrapped constructor object it must be set on instantiation
      */
-    private final Constructor constructor;
+    private final Constructor<T> constructor;
     
     /**
      * The parsed class containing this constructor
@@ -51,7 +51,7 @@ public class ConstructorWrapper {
      * @param declaringClass
      *            The parsed class containing this constructor
      */
-    public ConstructorWrapper(Constructor cons, int index, ParsedClass declaringClass) {
+    public ConstructorWrapper(Constructor<T> cons, int index, ParsedClass declaringClass) {
         this.constructor = cons;
         this.declaringClass = declaringClass;
         this.variableName = "cons" + (index + 1);
@@ -69,7 +69,7 @@ public class ConstructorWrapper {
      * 
      * @return java.lang.reflect.Constructor
      */
-    public Constructor getConstructor() {
+    public Constructor<T> getConstructor() {
         return constructor;
     }
     
@@ -125,9 +125,9 @@ public class ConstructorWrapper {
         curriedType.append("F<");
         curriedType.append(this.parameters.get(index).getType());
         curriedType.append(", ");
-        if (index == this.getParameters().size() - 1) {
+        if (index == this.parameters.size() - 1) {
             // last input parameter, so append the output (of type T)
-            curriedType.append(this.getConstructor().getName());
+            curriedType.append(this.constructor.getName());
         } else {
             // partial application, append the currying of the output (a new function)
             curriedType.append(this.getCurriedType(index + 1));
@@ -148,7 +148,7 @@ public class ConstructorWrapper {
     public String getCurriedDefinition(int index) {
         StringBuilder curriedDef = new StringBuilder();
 
-        if (index == this.getParameters().size() - 1) {
+        if (index == this.parameters.size() - 1) {
             // last parameter, apply the constructor with all the parameters
             curriedDef.append("public ");
             curriedDef.append(this.constructor.getName());
@@ -160,12 +160,11 @@ public class ConstructorWrapper {
             curriedDef.append(this.constructor.getName());
             curriedDef.append("(");
 
-            for (int i = 0; i < this.getParameters().size() - 1; i++) {
-                curriedDef.append(this.parameters.get(i).getName());
+            for (ParamWrapper param: parameters) {
+                curriedDef.append(param.getName());
                 curriedDef.append(", ");
             }
-            curriedDef.append(this.parameters.get(index).getName()); // last param
-            curriedDef.append("); }");
+            curriedDef.replace(curriedDef.length()-2,curriedDef.length(),"); }");
         } else {
             // partial application
             curriedDef.append("public ");
@@ -189,13 +188,15 @@ public class ConstructorWrapper {
      * 
      * @return String represents the application statement of the constructor
      */
-    public String apply() {
-
+    public String getEnumerationConstruction() {
         String applyExpr = "Enumeration.singleton(" + this.variableName + ")";
 
-        for (int i = 0; i < this.getParameters().size(); i++) {
-            applyExpr = "Enumeration.apply(" + applyExpr + ", " + this.parameters.get(i).getName() + "Enum)";
+        for (ParamWrapper param: parameters) {
+            applyExpr = "Enumeration.apply(" + applyExpr + ", " + param.getName() + "Enum)";
         }
+//        for (int i = 0; i < this.parameters.size(); i++) {
+//            applyExpr = "Enumeration.apply(" + applyExpr + ", " + this.parameters.get(i).getName() + "Enum)";
+//        }
 
         return applyExpr;
 
