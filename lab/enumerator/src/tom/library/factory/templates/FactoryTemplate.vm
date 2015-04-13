@@ -33,7 +33,7 @@ public class $parsedClass.getFactoryClassName() {
         $param.enumerate();
 #end
         
-        Enumeration<$parsedClass.getSimpleName()> $cons.getEnumName() = $cons.apply();
+        Enumeration<$parsedClass.getSimpleName()> $cons.getEnumName() = $cons.getEnumerationConstruction();
 #end
         
         finalEnum = $parsedClass.getFinalEnum();
