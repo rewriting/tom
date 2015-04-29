@@ -20,6 +20,7 @@ expressionlist :
 expression :
     LET ID EQUALS v=expression IN t=expression -> ^(Let ID $v $t)
   | LBRACE (rule (COMA rule)*)? RBRACE -> ^(Set ^(RuleList (rule)*))
+  | LBRACKET (rule (COMA rule)*)? RBRACKET -> ^(List ^(RuleList (rule)*))
   | strategy -> ^(Strat strategy)
   | SIGNATURE LBRACE (symbol (COMA symbol)*)? RBRACE -> ^(Signature ^(SymbolList (symbol)*))
 
@@ -82,6 +83,8 @@ LPAR : '(' ;
 RPAR : ')' ;
 LBRACE : '{' ;
 RBRACE : '}' ;
+LBRACKET : '[' ;
+RBRACKET : ']' ;
 COMA : ',' ;
 SEMICOLON : ';' ;
 CHOICE : '<+' ;

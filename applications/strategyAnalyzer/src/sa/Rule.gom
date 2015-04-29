@@ -3,6 +3,7 @@ imports String int
 abstract syntax
 
 Expression = Let(name:String, v:Expression, t:Expression)
+           | List(list:RuleList)
            | Set(list:RuleList)
            | Strat(strat:Strat)
            | Signature(symbollist:SymbolList)

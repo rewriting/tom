@@ -99,7 +99,7 @@ public class Main {
       //System.out.println(generatedRules );
 
       if(options.withAP == false) {
-         for(Rule r:new HashSet<Rule>(generatedRules)) { 
+         for(Rule r:new HashSet<Rule>(generatedRules)) { // copy of generatedRules
            // add new rules to generatedRules (for each anti-pattern)
            Compiler.expandAntiPattern(generatedRules,r,extractedSignature,generatedSignature);
          }

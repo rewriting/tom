@@ -12,6 +12,7 @@ public class Compiler {
   %include { java/util/types/Collection.tom }
   %include { java/util/types/Map.tom }
   %include { java/util/types/HashSet.tom }
+  %include { java/util/types/List.tom }
 
   private static Tools tools = new Tools();
   private static Pretty pretty = new Pretty();
@@ -429,7 +430,7 @@ public class Compiler {
     Term False = tools.encode("False",generatedSignature);
 
     %match(strat) {
-      StratExp(Set(rulelist)) -> {
+      StratExp(List(rulelist)) -> {
         /*
          * lhs -> rhs becomes
          * in the linear case:
@@ -803,28 +804,8 @@ public class Compiler {
       Collection<Rule> bag = new HashSet<Rule>();
       // perform one-step expansion
       `OnceTopDown(ExpandAntiPattern(bag,rule,extractedSignature, generatedSignature)).visit(rule);
-
-      /*
-       * add rules from bag into generatedRules only if
-       * they do not overlap with previous rules (from generatedRules)
-       * 
-       * In fact, more complicated: we should do unification and generate new rules 
-       * if they unify
-       * Example: a->c, f(a,x)->c
-       * -- we generate for !a->c the rule f(x,y)->BOTTOM but we should generate f(!a,x)->BOTTOM
-       */
       for(Rule expandr:bag) {
-        boolean toAdd = true;
-        //for(Rule r:generatedRules) {
-        //  toAdd &= (!matchModuloAt(r.getlhs(), expandr.getlhs())); 
-        //}
-        if(toAdd) {
-          //System.out.println("YES");
-          expandAntiPattern(generatedRules,expandr,extractedSignature,generatedSignature);
-        } else {
-          // do not add expandr
-          //System.out.println("NO");
-        }
+        expandAntiPattern(generatedRules,expandr,extractedSignature,generatedSignature);
       }
     } catch(VisitFailure e) {
       // add the rule since it contains no more anti-pattern
@@ -1065,4 +1046,55 @@ public class Compiler {
     //bag.add(tools.encodeRule(%[rule(@mu@(Bottom(X)), Bottom(X))]%));
   }
 
+
+
+
+  private static Position getAntiPatternPosition(Term t) {
+    List<Position> list = new ArrayList<Position>();
+    try {
+      `SearchAntiPattern(list).visit(t);
+      return list.get(0);
+    } catch(VisitFailure e) {
+      // no anti pattern found
+      return null;
+    }
+  }
+
+  %strategy SearchAntiPattern(list:List) extends Fail() {
+    visit Term {
+      s@Anti(t) -> {
+        list.add(0,getEnvironment().getPosition());
+        return `s;
+      }
+    }
+  }
+
+  /*
+   * Perform one-step expansion
+   *
+   * @param ordered list of rules
+   * @param rule the rule to expand (may contain nested anti-pattern and be non-linear)
+   * @param extractedSignature the signature
+   */
+  %strategy ExpandGeneralAntiPattern(orderedTRS:List,subject:Rule,extractedSignature:Map, generatedSignature:Map) extends Fail() {
+    visit Term {
+      Anti(Anti(t)) -> {
+        Rule newr = (Rule) getEnvironment().getPosition().getReplace(`t).visit(subject);
+        //System.out.println("add list0:" + pretty.toString(newr));
+        `orderedTRS.add(`orderedTRS.size(),newr);
+        return `t;
+      }
+
+      Anti(t) -> {
+        /*
+         * x@q[!q'] -> r      becomes x@q[q'] -> bot(x)
+         *                              q[z]  -> r
+         *
+         * x@q[!q'] -> bot(_) becomes   q[q'] -> r
+         *                            x@q[z]  -> bot(x)
+         */
+        return `t;
+      }
+    }
+  }
 }
