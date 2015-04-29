@@ -30,7 +30,7 @@ public class $parsedClass.getFactoryClassName() {
         };
         
 #foreach($param in $cons.getParameters())
-        $param.enumerate();
+        $param.enumDeclare() = $param.enumCreate();
 #end
         
         Enumeration<$parsedClass.getSimpleName()> $cons.getEnumName() = $cons.getEnumerationConstruction();

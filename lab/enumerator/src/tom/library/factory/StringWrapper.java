@@ -29,11 +29,18 @@ public class StringWrapper extends ParamWrapper {
     }
 
     @Override
-    public String enumerate() {
+    public String enumDeclare() {
         StringBuilder enumStatement = new StringBuilder();
         enumStatement.append("final Enumeration<String> ");
         enumStatement.append(paramName + "Enum");
-        enumStatement.append(" = new Enumeration<String>(Combinators.makeString().parts()");
+        
+        return enumStatement.toString();
+    }
+    
+    @Override
+    public String enumCreate() {
+        StringBuilder enumStatement = new StringBuilder();
+        enumStatement.append("new Enumeration<String>(Combinators.makeString().parts()");
 
         if (enumerateAnnotation != null) {
             enumStatement.append(".take(BigInteger.valueOf(");

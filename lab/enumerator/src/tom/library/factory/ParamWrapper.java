@@ -69,10 +69,17 @@ public abstract class ParamWrapper {
     public abstract String getType();
     
     /**
-     * generates the enumerate expression used to enumerate wrapped parameter
+     * generates the left-hand side of enumerate expression used to enumerate wrapped parameter
      * 
      * @return string enumerate expression
      */
-    public abstract String enumerate();
+    public abstract String enumDeclare();
+    
+    /**
+     * generates the right-hand side of enumerate expression used to enumerate wrapped parameter
+     * 
+     * @return string enumerate expression
+     */
+    public abstract String enumCreate();
 
 }

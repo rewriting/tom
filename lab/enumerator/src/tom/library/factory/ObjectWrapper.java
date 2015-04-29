@@ -30,13 +30,18 @@ public class ObjectWrapper extends ParamWrapper {
     }
 
     @Override
-    public String enumerate() {
+    public String enumDeclare() {
         StringBuilder enumStatement = new StringBuilder();
         enumStatement.append("final Enumeration<");
         enumStatement.append(this.getType());
         enumStatement.append("> ");
         enumStatement.append(paramName + "Enum");
-        enumStatement.append(" = ");
+        return enumStatement.toString();
+    }
+    
+    @Override
+    public String enumCreate() {
+        StringBuilder enumStatement = new StringBuilder();
         enumStatement.append(this.getType() + "Factory"); //TODO: get corresponding factory from FactoryGenerator (handle different packages)
         enumStatement.append(".getEnumeration()");
         return enumStatement.toString();
