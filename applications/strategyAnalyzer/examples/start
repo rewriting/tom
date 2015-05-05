@@ -1,3 +1,8 @@
+let S=signature {Zero:0, Succ:1, Plus:2} in
+let r1 = { Plus(Zero(),x) -> x } in 
+r1
+
+
 //let S=signature {a:0, b:0, g:1, f:2} in
 //let r1 = { f(x,f(x,g(x))) -> x } in 
 //let bu = mu y.(all(y);(r1<+identity)) in
@@ -61,14 +66,14 @@
 //   innermost
 // td
 
-// innermost(g(f(x)) -> f(g(x)))
- let S=signature {a:0, b:0, f:1, g:1} in
- let r1 = { g(f(x)) -> f(g(x)) } in 
-let innermost = mu x.(all(x) ; ((r1;x)<+identity)) in
-// let propagate = mu y.(r1;(all(y)<+identity)) in
-// let bu = mu z.(all(z);(propagate<+identity)) in
- innermost
-// bu
+// // innermost(g(f(x)) -> f(g(x)))
+//  let S=signature {a:0, b:0, f:1, g:1} in
+//  let r1 = { g(f(x)) -> f(g(x)) } in 
+// let innermost = mu x.(all(x) ; ((r1;x)<+identity)) in
+// // let propagate = mu y.(r1;(all(y)<+identity)) in
+// // let bu = mu z.(all(z);(propagate<+identity)) in
+//  innermost
+// // bu
 
 
  // g(f(a))

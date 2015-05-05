@@ -31,10 +31,43 @@ public class Compiler {
     return topName;
   }
 
+
+  /*
+   * Extract the initial (declared) signature
+   */
+//   public static void compileSignature(Map<String,Integer> extractedSignature, Map<String,Integer> generatedSignature, ExpressionList expl) {
+//     generatedSignature.put("True",0);
+//     generatedSignature.put("False",0);
+//     generatedSignature.put("and",2);
+//     generatedSignature.put("eq",2);
+
+//     generatedSignature.put("Bottom",1);
+//     if(Main.options.generic) {
+//       generatedSignature.put("BottomList",1);
+//       generatedSignature.put("Appl",2);
+//       generatedSignature.put("Cons",2);
+//       generatedSignature.put("Nil",0);
+//     }
+
+//     %match(expl) {
+//       ExpressionList(_*,x,_*) -> {
+//         compileExp(bag,extractedSignature,generatedSignature,`x);
+//       }
+//     }
+
+//     if(Main.options.generic) {
+//       // do nothing
+//     } else {
+//       generateEquality(bag, extractedSignature, generatedSignature);
+//     }
+//   }
+
+
   /*
    * Compile a strategy into a rewrite system
    */
   public static void compile(Collection<Rule> bag, Map<String,Integer> extractedSignature, Map<String,Integer> generatedSignature, ExpressionList expl) {
+
     generatedSignature.put("True",0);
     generatedSignature.put("False",0);
     generatedSignature.put("and",2);

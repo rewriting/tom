@@ -83,7 +83,7 @@ public class Main {
 
       // Transforms Let(name,exp,body) into body[name/exp]
       ExpressionList expandl = Compiler.expand(expl);
-      //System.out.println(expandl);
+      System.out.println(expandl);
       //       System.out.println(expandl);
 
       //       System.out.println(pretty.toString(expandl));
@@ -91,6 +91,11 @@ public class Main {
 
       Map<String,Integer> generatedSignature = new HashMap<String,Integer>();
       Map<String,Integer> extractedSignature = new HashMap<String,Integer>();
+
+      // Extract the signature and take it off the ExpressionList
+//       Compiler.compileSignature(extractedSignature,generatedSignature,expandl);
+      //System.out.println(extractedSignature);
+      //System.out.println(generatedSignature);
 
       Collection<Rule> generatedRules = new HashSet<Rule>();
 
