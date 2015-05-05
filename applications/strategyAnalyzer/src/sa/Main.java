@@ -83,11 +83,20 @@ public class Main {
 
       // Transforms Let(name,exp,body) into body[name/exp]
       ExpressionList expandl = Compiler.expand(expl);
-      System.out.println(expandl);
-      //       System.out.println(expandl);
+//       System.out.println(expandl);
+//       System.out.println(pretty.toString(expandl));
+//       System.out.println("------------------------------------------   ");
 
-      //       System.out.println(pretty.toString(expandl));
-      //       System.out.println("------------------------------------------   ");
+      // Get the list of defined signatures, each of them with a corresponding strategy
+      List<Expression> signatures=new ArrayList<Expression>(); 
+      List<Strat> strategies=new ArrayList<Strat>(); 
+      Map<String,Integer> symbols = Compiler.extractSignaturesAndStrategies(signatures,strategies,expandl);
+      Map<String,Integer> extract = Compiler.generateSignature(symbols);
+      System.out.println(signatures);
+      System.out.println(strategies);
+      System.out.println(symbols);
+      System.out.println(extract);
+      System.out.println("------------------------------------------   ");
 
       Map<String,Integer> generatedSignature = new HashMap<String,Integer>();
       Map<String,Integer> extractedSignature = new HashMap<String,Integer>();

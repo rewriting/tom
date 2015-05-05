@@ -33,35 +33,68 @@ public class Compiler {
 
 
   /*
-   * Extract the initial (declared) signature
+   * Extract all signatures and strategies
+   * We suppose we always have let(_,signature,strategy)
+   * For the moment a set of rules is not a strategy and not handled (see compileExp and Replace)
    */
-//   public static void compileSignature(Map<String,Integer> extractedSignature, Map<String,Integer> generatedSignature, ExpressionList expl) {
-//     generatedSignature.put("True",0);
-//     generatedSignature.put("False",0);
-//     generatedSignature.put("and",2);
-//     generatedSignature.put("eq",2);
+  public static Map<String,Integer> extractSignaturesAndStrategies(List<Expression> signatures, List<Strat> strategies, ExpressionList expl) throws SymbolAlredyExistsException {
+    %match(expl) {
+      ExpressionList(_*,Let(_,sig@Signature(_),Strat(strat)),_*) -> {
+            signatures.add(`sig);
+            strategies.add(`strat);
+      }
+    }
+    return expandSignature(signatures);
+  }
 
-//     generatedSignature.put("Bottom",1);
-//     if(Main.options.generic) {
-//       generatedSignature.put("BottomList",1);
-//       generatedSignature.put("Appl",2);
-//       generatedSignature.put("Cons",2);
-//       generatedSignature.put("Nil",0);
-//     }
+  // Merge all signatures and test if compatible
+  private static Map<String,Integer>  expandSignature(List<Expression> signatures) throws SymbolAlredyExistsException {
+      Map<String,Integer> extractedSignature = new HashMap<String,Integer>();
+      Integer previous;
+      for(Expression signature:signatures){
+        %match(signature) {
+          Signature(SymbolList(_*,Symbol(name,arity),_*)) -> {
+            // if symbol already exists
+            if((previous=extractedSignature.put(`name,`arity)) != null){
+              if(! previous.equals(`arity)){
+                throw new SymbolAlredyExistsException();
+              }
+            }
+          }
+        }
+      }
+      return extractedSignature;
+  }
 
-//     %match(expl) {
-//       ExpressionList(_*,x,_*) -> {
-//         compileExp(bag,extractedSignature,generatedSignature,`x);
-//       }
-//     }
+  /*
+   * Initialize the generated signature: add built-in symbols
+   */
+  public static Map<String,Integer>  generateSignature(Map<String,Integer> extractedSignature) throws SymbolAlredyExistsException {
+    Integer previous;
+    Map<String,Integer> generatedSignature = new HashMap<String,Integer>();
 
-//     if(Main.options.generic) {
-//       // do nothing
-//     } else {
-//       generateEquality(bag, extractedSignature, generatedSignature);
-//     }
-//   }
+    generatedSignature.put("True",0);
+    generatedSignature.put("False",0);
+    generatedSignature.put("and",2);
+    generatedSignature.put("eq",2);
 
+    generatedSignature.put("Bottom",1);
+    if(Main.options.generic) {
+      generatedSignature.put("BottomList",1);
+      generatedSignature.put("Appl",2);
+      generatedSignature.put("Cons",2);
+      generatedSignature.put("Nil",0);
+    }
+
+    for(String symbolName: extractedSignature.keySet()){
+      Integer arity = extractedSignature.get(symbolName);
+      // if built-in symbols used in the declared signatures
+      if((previous=generatedSignature.put(symbolName,arity)) != null){
+                throw new SymbolAlredyExistsException();
+      }
+    }
+    return generatedSignature;
+  }
 
   /*
    * Compile a strategy into a rewrite system
@@ -120,6 +153,7 @@ public class Compiler {
       }
     }
   }
+
 
   /**
    * compile a strategy in a classical way (without using meta-representation)
