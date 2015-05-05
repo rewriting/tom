@@ -83,33 +83,30 @@ public class Main {
 
       // Transforms Let(name,exp,body) into body[name/exp]
       ExpressionList expandl = Compiler.expand(expl);
-//       System.out.println(expandl);
-//       System.out.println(pretty.toString(expandl));
-//       System.out.println("------------------------------------------   ");
+      //       System.out.println(expandl);
+      //       System.out.println(pretty.toString(expandl));
+      //       System.out.println("------------------------------------------   ");
 
       // Get the list of defined signatures, each of them with a corresponding strategy
       List<Expression> signatures=new ArrayList<Expression>(); 
       List<Strat> strategies=new ArrayList<Strat>(); 
-      Map<String,Integer> symbols = Compiler.extractSignaturesAndStrategies(signatures,strategies,expandl);
-      Map<String,Integer> extract = Compiler.generateSignature(symbols);
-      System.out.println(signatures);
-      System.out.println(strategies);
-      System.out.println(symbols);
-      System.out.println(extract);
-      System.out.println("------------------------------------------   ");
-
-      Map<String,Integer> generatedSignature = new HashMap<String,Integer>();
-      Map<String,Integer> extractedSignature = new HashMap<String,Integer>();
-
-      // Extract the signature and take it off the ExpressionList
-//       Compiler.compileSignature(extractedSignature,generatedSignature,expandl);
-      //System.out.println(extractedSignature);
-      //System.out.println(generatedSignature);
+      Map<String,Integer> extractedSignature = Compiler.extractSignaturesAndStrategies(signatures,strategies,expandl);
+      Map<String,Integer> generatedSignature = Compiler.generateSignature(extractedSignature);
+      //       System.out.println(signatures);
+      //       System.out.println(strategies);
+      //       System.out.println(extractedSignature);
+      //       System.out.println(generatedSignature);
+      //       System.out.println("------------------------------------------   ");
 
       Collection<Rule> generatedRules = new HashSet<Rule>();
 
+      // Uncomment to test previous version (against the new one)
+      //       generatedSignature = new HashMap<String,Integer>();
+      //       extractedSignature = new HashMap<String,Integer>();
+      //       Compiler.compileOLD(generatedRules,extractedSignature,generatedSignature,expandl);
+
       // Transforms the strategy into a rewrite system
-      Compiler.compile(generatedRules,extractedSignature,generatedSignature,expandl);
+      Compiler.compile(generatedRules,extractedSignature,generatedSignature,strategies);
       //System.out.println(generatedRules );
 
       if(options.withAP == false) {

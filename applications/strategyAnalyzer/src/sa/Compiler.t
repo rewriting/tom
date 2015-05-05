@@ -97,60 +97,22 @@ public class Compiler {
   }
 
   /*
-   * Compile a strategy into a rewrite system
+   * Compile a (list of) strategy into a rewrite system
    */
-  public static void compile(Collection<Rule> bag, Map<String,Integer> extractedSignature, Map<String,Integer> generatedSignature, ExpressionList expl) {
-
-    generatedSignature.put("True",0);
-    generatedSignature.put("False",0);
-    generatedSignature.put("and",2);
-    generatedSignature.put("eq",2);
-
-    generatedSignature.put("Bottom",1);
-    if(Main.options.generic) {
-      generatedSignature.put("BottomList",1);
-      generatedSignature.put("Appl",2);
-      generatedSignature.put("Cons",2);
-      generatedSignature.put("Nil",0);
-    }
-
-    %match(expl) {
-      ExpressionList(_*,x,_*) -> {
-        compileExp(bag,extractedSignature,generatedSignature,`x);
-      }
+  public static void compile(Collection<Rule> bag, Map<String,Integer> extractedSignature, Map<String,Integer> generatedSignature, List<Strat> strategies) {
+    // the (name of the last) strategy is used 
+    for(Strat strategy:strategies){
+        if(Main.options.generic) {
+          topName = compileGenericStrat(bag,extractedSignature,generatedSignature,strategy);
+        } else {
+          topName = compileStrat(bag,extractedSignature,generatedSignature,strategy);
+        }
     }
 
     if(Main.options.generic) {
       // do nothing
     } else {
       generateEquality(bag, extractedSignature, generatedSignature);
-    }
-  }
-
-
-  private static void compileExp(Collection<Rule> bag, Map<String,Integer> extractedSignature, Map<String,Integer> generatedSignature, Expression e) {
-    //System.out.println("exp = " + e);
-    %match(e) {
-      Let(_,Signature(sl),body) -> {
-        %match(sl) {
-          SymbolList(_*,Symbol(name,arity),_*) -> {
-            extractedSignature.put(`name,`arity);
-            generatedSignature.put(`name,`arity);
-          }
-        }
-        //System.out.println("Original generatedSignature= " + generatedSignature);
-        compileExp(bag,extractedSignature,generatedSignature,`body);
-      }
-
-      Strat(s) -> {
-        String start = "";
-        if(Main.options.generic) {
-          start = compileGenericStrat(bag,extractedSignature,generatedSignature,`s);
-        } else {
-          start = compileStrat(bag,extractedSignature,generatedSignature,`s);
-        }
-        topName = start;
-      }
     }
   }
 
@@ -1164,4 +1126,70 @@ public class Compiler {
       }
     }
   }
+
+
+
+// OLD version
+
+
+  /*
+   * Compile a strategy into a rewrite system
+   */
+  public static void compileOLD(Collection<Rule> bag, Map<String,Integer> extractedSignature, Map<String,Integer> generatedSignature, ExpressionList expl) {
+
+    generatedSignature.put("True",0);
+    generatedSignature.put("False",0);
+    generatedSignature.put("and",2);
+    generatedSignature.put("eq",2);
+
+    generatedSignature.put("Bottom",1);
+    if(Main.options.generic) {
+      generatedSignature.put("BottomList",1);
+      generatedSignature.put("Appl",2);
+      generatedSignature.put("Cons",2);
+      generatedSignature.put("Nil",0);
+    }
+
+    %match(expl) {
+      ExpressionList(_*,x,_*) -> {
+        compileExp(bag,extractedSignature,generatedSignature,`x);
+      }
+    }
+
+    if(Main.options.generic) {
+      // do nothing
+    } else {
+      generateEquality(bag, extractedSignature, generatedSignature);
+    }
+  }
+
+
+  private static void compileExp(Collection<Rule> bag, Map<String,Integer> extractedSignature, Map<String,Integer> generatedSignature, Expression e) {
+    //System.out.println("exp = " + e);
+    %match(e) {
+      Let(_,Signature(sl),body) -> {
+        %match(sl) {
+          SymbolList(_*,Symbol(name,arity),_*) -> {
+            extractedSignature.put(`name,`arity);
+            generatedSignature.put(`name,`arity);
+          }
+        }
+        //System.out.println("Original generatedSignature= " + generatedSignature);
+        compileExp(bag,extractedSignature,generatedSignature,`body);
+      }
+
+      Strat(s) -> {
+        String start = "";
+        if(Main.options.generic) {
+          start = compileGenericStrat(bag,extractedSignature,generatedSignature,`s);
+        } else {
+          start = compileStrat(bag,extractedSignature,generatedSignature,`s);
+        }
+        topName = start;
+      }
+    }
+  }
+
+
+
 }
