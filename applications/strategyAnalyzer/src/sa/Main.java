@@ -81,40 +81,16 @@ public class Main {
       //       System.out.println(pretty.toString(expl));
       //       System.out.println("------------------------------------------   ");
 
-//       Compiler compiler = new Compiler();
       Compiler compiler = Compiler.getInstance(expl);
-      // Transforms Let(name,exp,body) into body[name/exp]
-      ExpressionList expandl = compiler.expand(expl);
-      //       System.out.println(expandl);
-      //       System.out.println(pretty.toString(expandl));
-      //       System.out.println("------------------------------------------   ");
-
-      // Get the list of defined signatures, each of them with a corresponding strategy
-      List<Expression> signatures=new ArrayList<Expression>(); 
-      List<Strat> strategies=new ArrayList<Strat>(); 
-      Map<String,Integer> extractedSignature = compiler.extractSignaturesAndStrategies(signatures,strategies,expandl);
-      Map<String,Integer> generatedSignature = compiler.generateSignature(extractedSignature);
-      //       System.out.println(signatures);
-      //       System.out.println(strategies);
-      //       System.out.println(extractedSignature);
-      //       System.out.println(generatedSignature);
-      //       System.out.println("------------------------------------------   ");
-
-      Collection<Rule> generatedRules = new HashSet<Rule>();
-
-      // Uncomment to test previous version (against the new one)
-      //       generatedSignature = new HashMap<String,Integer>();
-      //       extractedSignature = new HashMap<String,Integer>();
-      //       compiler.compileOLD(generatedRules,extractedSignature,generatedSignature,expandl);
 
       // Transforms the strategy into a rewrite system
-      compiler.compile(generatedRules,extractedSignature,generatedSignature,strategies);
+      Collection<Rule> generatedRules = compiler.compile();
       //System.out.println(generatedRules );
 
       if(options.withAP == false) {
          for(Rule r:new HashSet<Rule>(generatedRules)) { // copy of generatedRules
            // add new rules to generatedRules (for each anti-pattern)
-           compiler.expandAntiPattern(generatedRules,r,extractedSignature,generatedSignature);
+           compiler.expandAntiPattern(generatedRules,r);
          }
       }
       
@@ -137,11 +113,11 @@ public class Main {
       }
 
       if(options.classname != null) {
-        tomoutputfile.println( pretty.generateTom(orderedRules,generatedSignature,options.classname) );
+        tomoutputfile.println( pretty.generateTom(orderedRules,compiler.getGeneratedSignature(),options.classname) );
       } 
       if(options.aprove) {
         boolean innermost = false;
-        outputfile.println( pretty.generateAprove(orderedRules,extractedSignature,innermost) );
+        outputfile.println( pretty.generateAprove(orderedRules,compiler.getExtractedSignature(),innermost) );
       }
     } catch (Exception e) {
       System.err.println("exception: " + e);

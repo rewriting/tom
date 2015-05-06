@@ -16,10 +16,37 @@ public class Compiler {
 
   private static Map<ExpressionList,Compiler> instances = new HashMap<ExpressionList,Compiler>();
 
-  private Compiler(ExpressionList expression){
+  // List of (abstract) signatures for the strategies to translate
+  private List<Expression> signatures;
+  // List of strategies to translate (same index as corresponding signature)
+  private List<Strat> strategies;
+
+  // The extracted (concrete) signature
+  private Map<String,Integer> extractedSignature;
+  // The generated (concrete) signature
+  private Map<String,Integer> generatedSignature;
+
+  private Collection<Rule> generatedRules;
+  /**
+   * 
+   * 
+   */
+  private Compiler(ExpressionList expression) throws SymbolAlredyExistsException{
+      // Transforms Let(name,exp,body) into body[name/exp]
+      ExpressionList expandl = this.expand(expression);
+      // Get the list of defined signatures, each of them with a corresponding strategy
+      this.extractSignaturesAndStrategies(expandl);
+      // Merge all signatures in a concrete signature, add built-ins, and test if compatible
+      this.expandSignature();
+      // intialize the TRS
+      this.generatedRules = new HashSet<Rule>();
   }
 
-  public static Compiler getInstance(ExpressionList expression){
+  /**
+   * 
+   * 
+   */
+  public static Compiler getInstance(ExpressionList expression) throws SymbolAlredyExistsException{
     Compiler compiler;
     if((compiler=instances.get(expression)) == null){
       compiler = new Compiler(expression);
@@ -47,88 +74,83 @@ public class Compiler {
   }
 
 
-  /*
+  /**
    * Extract all signatures and strategies
    * We suppose we always have let(_,signature,strategy)
    * For the moment a set of rules is not a strategy and not handled (see compileExp and Replace)
    */
-  public  Map<String,Integer> extractSignaturesAndStrategies(List<Expression> signatures, List<Strat> strategies, ExpressionList expl) throws SymbolAlredyExistsException {
+  private void extractSignaturesAndStrategies(ExpressionList expl) throws SymbolAlredyExistsException {
+    this.signatures=new ArrayList<Expression>(); 
+    this.strategies=new ArrayList<Strat>(); 
+
     %match(expl) {
       ExpressionList(_*,Let(_,sig@Signature(_),Strat(strat)),_*) -> {
-            signatures.add(`sig);
-            strategies.add(`strat);
+            this.signatures.add(`sig);
+            this.strategies.add(`strat);
       }
     }
-    return expandSignature(signatures);
   }
+  // Merge all signatures, add built-ins, and test if compatible
+  private  void  expandSignature() throws SymbolAlredyExistsException {
+    this.extractedSignature = new HashMap<String,Integer>();
+    this.generatedSignature = new HashMap<String,Integer>();
+    Integer previous;
 
-  // Merge all signatures and test if compatible
-  private  Map<String,Integer>  expandSignature(List<Expression> signatures) throws SymbolAlredyExistsException {
-      Map<String,Integer> extractedSignature = new HashMap<String,Integer>();
-      Integer previous;
-      for(Expression signature:signatures){
+    // Initialize the generated signature: add built-in symbols
+    this.generatedSignature.put("True",0);
+    this.generatedSignature.put("False",0);
+    this.generatedSignature.put("and",2);
+    this.generatedSignature.put("eq",2);
+
+    this.generatedSignature.put("Bottom",1);
+    if(Main.options.generic) {
+      this.generatedSignature.put("BottomList",1);
+      this.generatedSignature.put("Appl",2);
+      this.generatedSignature.put("Cons",2);
+      this.generatedSignature.put("Nil",0);
+    }
+
+    for(Expression signature:this.signatures){
         %match(signature) {
           Signature(SymbolList(_*,Symbol(name,arity),_*)) -> {
-            // if symbol already exists
-            if((previous=extractedSignature.put(`name,`arity)) != null){
+            // if symbol already exists 
+            if((previous=this.extractedSignature.put(`name,`arity)) != null){
               if(! previous.equals(`arity)){
+                throw new SymbolAlredyExistsException();
+              }
+            }else{
+              // if it doens't exist try to add it also to the generated signature
+              // if built-in symbols used in the declared signatures
+              if(this.generatedSignature.put(`name,`arity) != null){
                 throw new SymbolAlredyExistsException();
               }
             }
           }
         }
       }
-      return extractedSignature;
-  }
-
-  /*
-   * Initialize the generated signature: add built-in symbols
-   */
-  public  Map<String,Integer>  generateSignature(Map<String,Integer> extractedSignature) throws SymbolAlredyExistsException {
-    Integer previous;
-    Map<String,Integer> generatedSignature = new HashMap<String,Integer>();
-
-    generatedSignature.put("True",0);
-    generatedSignature.put("False",0);
-    generatedSignature.put("and",2);
-    generatedSignature.put("eq",2);
-
-    generatedSignature.put("Bottom",1);
-    if(Main.options.generic) {
-      generatedSignature.put("BottomList",1);
-      generatedSignature.put("Appl",2);
-      generatedSignature.put("Cons",2);
-      generatedSignature.put("Nil",0);
-    }
-
-    for(String symbolName: extractedSignature.keySet()){
-      Integer arity = extractedSignature.get(symbolName);
-      // if built-in symbols used in the declared signatures
-      if((previous=generatedSignature.put(symbolName,arity)) != null){
-                throw new SymbolAlredyExistsException();
-      }
-    }
-    return generatedSignature;
   }
 
   /*
    * Compile a (list of) strategy into a rewrite system
    */
-  public  void compile(Collection<Rule> bag, Map<String,Integer> extractedSignature, Map<String,Integer> generatedSignature, List<Strat> strategies) {
+  public Collection<Rule>  compile() {
+    this.generatedRules = new HashSet<Rule>();
+
     // the (name of the last) strategy is used 
-    for(Strat strategy:strategies){
+    for(Strat strategy:this.strategies){
         if(Main.options.generic) {
-          topName = compileGenericStrat(bag,extractedSignature,generatedSignature,strategy);
+          topName = this.compileGenericStrat(generatedRules,extractedSignature,generatedSignature,strategy);
         } else {
-          topName = compileStrat(bag,extractedSignature,generatedSignature,strategy);
+          topName = compileStrat(generatedRules,extractedSignature,generatedSignature,strategy);
         }
     }
 
     if(Main.options.generic) {
       // do nothing
     } else {
-      generateEquality(bag, extractedSignature, generatedSignature);
+      generateEquality(this.generatedRules, this.extractedSignature, this.generatedSignature);
     }
+    return generatedRules;
   }
 
 
@@ -748,7 +770,7 @@ public class Compiler {
   /*
    * Transforms Let(name,exp,body) into body[name/exp]
    */
-  public  ExpressionList expand(ExpressionList expl) {
+  private  ExpressionList expand(ExpressionList expl) {
     try {
       return `RepeatId(TopDown(Expand())).visitLight(expl);
     } catch(VisitFailure e) {
@@ -840,16 +862,16 @@ public class Compiler {
    * @param extractedSignature the signature
    * @return nothing, but modifies generatedRules
    */
-  public  void expandAntiPattern(Collection<Rule> generatedRules, Rule rule, Map<String,Integer> extractedSignature, Map<String,Integer> generatedSignature) {
+  public  void expandAntiPattern(Collection<Rule> generatedRules, Rule rule) {
     try {
       `OnceBottomUp(ContainsAntiPattern()).visitLight(rule); // check if the rule contains an anti-pattern (exception otherwise)
       generatedRules.remove(rule); // remove the rule since it will be expanded
       //       System.out.println("RULE: "+`rule);
       Collection<Rule> bag = new HashSet<Rule>();
       // perform one-step expansion
-      `OnceTopDown(ExpandAntiPattern(bag,rule,extractedSignature, generatedSignature)).visit(rule);
+      `OnceTopDown(ExpandAntiPattern(bag,rule,this.extractedSignature, this.generatedSignature)).visit(rule);
       for(Rule expandr:bag) {
-        expandAntiPattern(generatedRules,expandr,extractedSignature,generatedSignature);
+        expandAntiPattern(generatedRules,expandr);
       }
     } catch(VisitFailure e) {
       // add the rule since it contains no more anti-pattern
@@ -1144,68 +1166,12 @@ public class Compiler {
   }
 
 
-
-// OLD version
-
-
-  /*
-   * Compile a strategy into a rewrite system
-   */
-  public  void compileOLD(Collection<Rule> bag, Map<String,Integer> extractedSignature, Map<String,Integer> generatedSignature, ExpressionList expl) {
-
-    generatedSignature.put("True",0);
-    generatedSignature.put("False",0);
-    generatedSignature.put("and",2);
-    generatedSignature.put("eq",2);
-
-    generatedSignature.put("Bottom",1);
-    if(Main.options.generic) {
-      generatedSignature.put("BottomList",1);
-      generatedSignature.put("Appl",2);
-      generatedSignature.put("Cons",2);
-      generatedSignature.put("Nil",0);
-    }
-
-    %match(expl) {
-      ExpressionList(_*,x,_*) -> {
-        compileExp(bag,extractedSignature,generatedSignature,`x);
-      }
-    }
-
-    if(Main.options.generic) {
-      // do nothing
-    } else {
-      generateEquality(bag, extractedSignature, generatedSignature);
-    }
+  public   Map<String,Integer> getExtractedSignature(){
+    return this.extractedSignature;
   }
-
-
-  private  void compileExp(Collection<Rule> bag, Map<String,Integer> extractedSignature, Map<String,Integer> generatedSignature, Expression e) {
-    //System.out.println("exp = " + e);
-    %match(e) {
-      Let(_,Signature(sl),body) -> {
-        %match(sl) {
-          SymbolList(_*,Symbol(name,arity),_*) -> {
-            extractedSignature.put(`name,`arity);
-            generatedSignature.put(`name,`arity);
-          }
-        }
-        //System.out.println("Original generatedSignature= " + generatedSignature);
-        compileExp(bag,extractedSignature,generatedSignature,`body);
-      }
-
-      Strat(s) -> {
-        String start = "";
-        if(Main.options.generic) {
-          start = compileGenericStrat(bag,extractedSignature,generatedSignature,`s);
-        } else {
-          start = compileStrat(bag,extractedSignature,generatedSignature,`s);
-        }
-        topName = start;
-      }
-    }
+  public Map<String,Integer> getGeneratedSignature(){
+    return this.generatedSignature;
   }
-
 
 
 }
