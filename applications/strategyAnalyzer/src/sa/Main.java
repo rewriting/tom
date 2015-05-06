@@ -81,7 +81,8 @@ public class Main {
       //       System.out.println(pretty.toString(expl));
       //       System.out.println("------------------------------------------   ");
 
-      Compiler compiler = new Compiler();
+//       Compiler compiler = new Compiler();
+      Compiler compiler = Compiler.getInstance(expl);
       // Transforms Let(name,exp,body) into body[name/exp]
       ExpressionList expandl = compiler.expand(expl);
       //       System.out.println(expandl);

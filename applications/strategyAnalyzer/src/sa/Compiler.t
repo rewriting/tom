@@ -19,7 +19,7 @@ public class Compiler {
   private Compiler(ExpressionList expression){
   }
 
-  public Compiler getInstance(ExpressionList expression){
+  public static Compiler getInstance(ExpressionList expression){
     Compiler compiler;
     if((compiler=instances.get(expression)) == null){
       compiler = new Compiler(expression);
