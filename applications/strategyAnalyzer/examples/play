@@ -2,8 +2,8 @@ let S=signature {Zero:0, Succ:1, Plus:2} in
 let r1 = { Plus(Zero(),x) -> x } in 
 r1
 
-let S=signature {a:0, b:0, c:0, s:0, f:1} in
-let r1 = { f(s()) -> a() } in 
-let r2 = { f(x) -> b() } in 
-r1 <+ r2
+// let S=signature {a:0, b:0, c:0, s:0, f:1} in
+// let r1 = { f(s()) -> a() } in 
+// let r2 = { f(x) -> b() } in 
+// r1 <+ r2
 

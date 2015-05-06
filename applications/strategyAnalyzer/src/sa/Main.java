@@ -85,7 +85,7 @@ public class Main {
 
       // Transforms the strategy into a rewrite system
       Collection<Rule> generatedRules = compiler.compile();
-      //System.out.println(generatedRules );
+      // System.out.println(generatedRules);
 
       if(options.withAP == false) {
          for(Rule r:new HashSet<Rule>(generatedRules)) { // copy of generatedRules
@@ -101,7 +101,7 @@ public class Main {
       }
       
       List<Rule> orderedRules = new ArrayList<Rule>(generatedRules);
-      Collections.sort(orderedRules, new MyRuleComparator());
+//       Collections.sort(orderedRules, new MyRuleComparator());
 
       PrintStream outputfile = System.out;
       if(options.out != null) {

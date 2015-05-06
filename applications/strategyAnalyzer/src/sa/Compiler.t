@@ -13,6 +13,7 @@ public class Compiler {
   %include { java/util/types/Map.tom }
   %include { java/util/types/HashSet.tom }
   %include { java/util/types/List.tom }
+  %include { java/util/types/ArrayList.tom }
 
   private static Map<ExpressionList,Compiler> instances = new HashMap<ExpressionList,Compiler>();
 
@@ -39,7 +40,7 @@ public class Compiler {
       // Merge all signatures in a concrete signature, add built-ins, and test if compatible
       this.expandSignature();
       // intialize the TRS
-      this.generatedRules = new HashSet<Rule>();
+      this.generatedRules = new ArrayList<Rule>();
   }
 
   /**
@@ -68,8 +69,8 @@ public class Compiler {
    * getTopName
    * @return the name of the strategy which starts the computation
    */
-  private  String topName = "";
-  public  String getTopName() {
+  private String topName = "";
+  public String getTopName() {
     return topName;
   }
 
@@ -134,14 +135,14 @@ public class Compiler {
    * Compile a (list of) strategy into a rewrite system
    */
   public Collection<Rule>  compile() {
-    this.generatedRules = new HashSet<Rule>();
+    this.generatedRules = new ArrayList<Rule>();
 
     // the (name of the last) strategy is used 
     for(Strat strategy:this.strategies){
         if(Main.options.generic) {
           topName = this.compileGenericStrat(generatedRules,extractedSignature,generatedSignature,strategy);
         } else {
-          topName = compileStrat(generatedRules,extractedSignature,generatedSignature,strategy);
+          topName = this.compileStrat(strategy);
         }
     }
 
@@ -163,7 +164,7 @@ public class Compiler {
    * @param strat the strategy to compile
    * @return the name of the last compiled strategy
    */
-  private  String compileStrat(Collection<Rule> bag, Map<String,Integer> extractedSignature, Map<String,Integer> generatedSignature, Strat strat) {
+  private  String compileStrat(Strat strat) {
     String X = getName("X");
     String Y = getName("Y");
     String Z = getName("Z");
@@ -193,7 +194,7 @@ public class Compiler {
           RuleList(_*,Rule(lhs,rhs),_*) -> {
             // use AST-syntax because lhs and rhs are already encoded
             // propagate failure; if the rule is applied to the result of a strategy that failed then the result is a failure
-            bag.add(`Rule(Appl(rule,TermList(botX)),botX));
+            generatedRules.add(`Rule(Appl(rule,TermList(botX)),botX));
 
             TermList result = linearize(`lhs,generatedSignature);
 
@@ -201,12 +202,12 @@ public class Compiler {
 
             %match(result) {
               TermList(linearlhs, cond) -> {
-                bag.add(`Rule(Appl(rule,TermList(At(varX,linearlhs))),
+                generatedRules.add(`Rule(Appl(rule,TermList(At(varX,linearlhs))),
                               Appl(cr, TermList(varX, cond))));
-                bag.add(`Rule(Appl(rule,TermList(At(varX,Anti(linearlhs)))),botX));
+                generatedRules.add(`Rule(Appl(rule,TermList(At(varX,Anti(linearlhs)))),botX));
 
-                bag.add(`Rule(Appl(cr,TermList(linearlhs, True)), rhs));
-                bag.add(`Rule(Appl(cr,TermList(At(varX,linearlhs), False)),botX));
+                generatedRules.add(`Rule(Appl(cr,TermList(linearlhs, True)), rhs));
+                generatedRules.add(`Rule(Appl(cr,TermList(At(varX,linearlhs), False)),botX));
               }
             }
             //System.out.println(cr);
@@ -223,8 +224,8 @@ public class Compiler {
           String mu = getName("mu");
           generatedSignature.put(mu,1);
           Strat newStrat = `TopDown(ReplaceMuVar(name,mu)).visitLight(`s);
-          String phi_s = compileStrat(bag,extractedSignature,generatedSignature,newStrat);
-          bag.addAll(Tools.encodeRuleList(%[[
+          String phi_s = compileStrat(newStrat);
+          generatedRules.addAll(Tools.encodeRuleList(%[[
                 rule(@mu@(at(@X@,anti(Bottom(@Y@)))), @phi_s@(@X@)),
                 rule(@mu@(Bottom(@X@)), Bottom(@X@))
                 ]]%,generatedSignature).getCollectionRuleList());
@@ -245,14 +246,14 @@ public class Compiler {
         if( !Main.options.approx ) {
           // the rule cannot be applied on arguments containing fresh variables but only on terms from the signature or Bottom
           // normally it will follow reduction in original TRS
-          bag.addAll(Tools.encodeRuleList(%[[
+          generatedRules.addAll(Tools.encodeRuleList(%[[
                 rule(@id@(at(@X@,anti(Bottom(@Y@)))), @X@),
                 rule(@id@(Bottom(@X@)), Bottom(@X@))
                 ]]%,generatedSignature).getCollectionRuleList());
         } else { 
           // Bottom of Bottom is Bottom
           // this is not necessary if exact reduction - in this case Bottom is propagated immediately 
-          bag.addAll(Tools.encodeRuleList(%[[
+          generatedRules.addAll(Tools.encodeRuleList(%[[
                 rule(@id@(@X@), @X@),
                 rule(Bottom(Bottom(@X@)), Bottom(@X@))
                 ]]%,generatedSignature).getCollectionRuleList());
@@ -266,14 +267,14 @@ public class Compiler {
         if( !Main.options.approx ) {
           // the rule cannot be applied on arguments containing fresh variables but only on terms from the signature or Bottom
           // normally it will follow reduction in original TRS
-          bag.addAll(Tools.encodeRuleList(%[[
+          generatedRules.addAll(Tools.encodeRuleList(%[[
                 rule(@fail@(at(X,anti(Bottom(@Y@)))), Bottom(X)),
                 rule(@fail@(Bottom(X)), Bottom(X))
                 ]]%,generatedSignature).getCollectionRuleList());
         } else { 
           // Bottom of Bottom is Bottom
           // this is not necessary if exact reduction - in this case Bottom is propagated immediately 
-          bag.addAll(Tools.encodeRuleList(%[[
+          generatedRules.addAll(Tools.encodeRuleList(%[[
                 rule(@fail@(X), Bottom(X)),
                 rule(Bottom(Bottom(@X@)), Bottom(@X@))
                 ]]%,generatedSignature).getCollectionRuleList());
@@ -282,8 +283,8 @@ public class Compiler {
       }
 
       StratSequence(s1,s2) -> {
-        String n1 = compileStrat(bag,extractedSignature,generatedSignature,`s1);
-        String n2 = compileStrat(bag,extractedSignature,generatedSignature,`s2);
+        String n1 = compileStrat(`s1);
+        String n2 = compileStrat(`s2);
         String seq = getName("seq");
         String seq2 = getName("seq2");
         generatedSignature.put(seq,1);
@@ -291,7 +292,7 @@ public class Compiler {
         if( !Main.options.approx ) {
           // the rule cannot be applied on arguments containing fresh variables but only on terms from the signature or Bottom
           // normally it will follow reduction in original TRS
-          bag.addAll(Tools.encodeRuleList(%[[
+          generatedRules.addAll(Tools.encodeRuleList(%[[
                 rule(@seq@(at(@X@,anti(Bottom(@Y@)))), @seq2@(@n2@(@n1@(@X@)),@X@)),
                 rule(@seq@(Bottom(@X@)), Bottom(@X@)),
                 rule(@seq2@(at(@X@,anti(Bottom(@Y@))),@Z@), @X@),
@@ -300,7 +301,7 @@ public class Compiler {
         } else { 
           // Bottom of Bottom is Bottom
           // this is not necessary if exact reduction - in this case Bottom is propagated immediately 
-          bag.addAll(Tools.encodeRuleList(%[[
+          generatedRules.addAll(Tools.encodeRuleList(%[[
                 rule(@seq@(@X@), @seq2@(@n2@(@n1@(@X@)),@X@)),
                 rule(Bottom(Bottom(@X@)), Bottom(@X@)),
                 rule(@seq2@(at(@X@,anti(Bottom(@Y@))),@Z@), @X@),
@@ -312,13 +313,13 @@ public class Compiler {
 
       // TODO [20/01/2015]: see if not exact is interesting
       StratChoice(s1,s2) -> {
-        String n1 = compileStrat(bag,extractedSignature,generatedSignature,`s1);
-        String n2 = compileStrat(bag,extractedSignature,generatedSignature,`s2);
+        String n1 = compileStrat(`s1);
+        String n2 = compileStrat(`s2);
         String choice = getName("choice");
         String choice2 = getName("choice");
         generatedSignature.put(choice,1);
         generatedSignature.put(choice2,1);
-        bag.addAll(Tools.encodeRuleList(%[[
+        generatedRules.addAll(Tools.encodeRuleList(%[[
               rule(@choice@(at(@X@,anti(Bottom(@Y@)))),  @choice2@(@n1@(@X@)) ),
               rule(@choice@(Bottom(@X@)), Bottom(@X@)),
               rule(@choice2@(at(@X@,anti(Bottom(@Y@)))), @X@),
@@ -328,14 +329,14 @@ public class Compiler {
       }
 
       StratAll(s) -> {
-        String phi_s = compileStrat(bag,extractedSignature,generatedSignature,`s);
+        String phi_s = compileStrat(`s);
         String all = getName("all");
         generatedSignature.put(all,1);
         for(String name : extractedSignature.keySet()) {
           int arity = generatedSignature.get(name);
           int arity_all = arity+1;
           if(arity==0) {
-            bag.add(Tools.encodeRule(%[rule(@all@(@name@), @name@)]%,generatedSignature));
+            generatedRules.add(Tools.encodeRule(%[rule(@all@(@name@), @name@)]%,generatedSignature));
           } else {
             String all_n = all+"_"+name;
             generatedSignature.put(all_n,arity_all);
@@ -348,9 +349,9 @@ public class Compiler {
                 lx += ",X"+i;
                 rx += ","+phi_s+"(X"+i+")";
               }
-              bag.add(Tools.encodeRule(%[rule(@all@(@name@(@lx@)), @all_n@(@rx@,@name@(@lx@)))]%,generatedSignature)); 
+              generatedRules.add(Tools.encodeRule(%[rule(@all@(@name@(@lx@)), @all_n@(@rx@,@name@(@lx@)))]%,generatedSignature)); 
               // propagate Bottom  (otherwise not reduced and leads to bug in Sequence)
-              bag.add(Tools.encodeRule(%[rule(@all@(Bottom(@X@)), Bottom(@X@) )]%,generatedSignature));               
+              generatedRules.add(Tools.encodeRule(%[rule(@all@(Bottom(@X@)), Bottom(@X@) )]%,generatedSignature));               
             }
 
             // generate success rules
@@ -361,7 +362,7 @@ public class Compiler {
               lx += ",at(X"+j+",anti(Bottom(Y"+j+")))";
               rx += ",X"+j;
             }
-            bag.add(Tools.encodeRule(%[rule(@all_n@(@lx@,@Z@), @name@(@rx@))]%,generatedSignature));
+            generatedRules.add(Tools.encodeRule(%[rule(@all_n@(@lx@,@Z@), @name@(@rx@))]%,generatedSignature));
 
             // generate failure rules
             // phi_n(BOTTOM,_,...,_,x) -> BOTTOM
@@ -376,7 +377,7 @@ public class Compiler {
                   llx += ",X"+j;
                 }
               }
-              bag.add(Tools.encodeRule(%[rule(@all_n@(@llx@,@Z@), Bottom(@Z@))]%,generatedSignature));
+              generatedRules.add(Tools.encodeRule(%[rule(@all_n@(@llx@,@Z@), Bottom(@Z@))]%,generatedSignature));
             }
           }
         }        
@@ -384,13 +385,13 @@ public class Compiler {
       }
 
       StratOne(s) -> {
-        String phi_s = compileStrat(bag,extractedSignature,generatedSignature,`s);
+        String phi_s = compileStrat(`s);
         String one = getName("one");
         generatedSignature.put(one,1);
         for(String name : extractedSignature.keySet()) {
           int arity = generatedSignature.get(name);
           if(arity==0) {
-            bag.add(Tools.encodeRule(%[rule(@one@(@name@), Bottom(@name@))]%,generatedSignature));
+            generatedRules.add(Tools.encodeRule(%[rule(@one@(@name@), Bottom(@name@))]%,generatedSignature));
           } else {
             String one_n = one+"_"+name;
 
@@ -403,9 +404,9 @@ public class Compiler {
                 lx += ",X"+i;
                 rx += ",X"+i;
               }
-              bag.add(Tools.encodeRule(%[rule(@one@(@name@(@lx@)), @one_n@_1(@rx@))]%,generatedSignature));
+              generatedRules.add(Tools.encodeRule(%[rule(@one@(@name@(@lx@)), @one_n@_1(@rx@))]%,generatedSignature));
               // propagate Bottom  (otherwise not reduced and leads to bug in Sequence)
-              bag.add(Tools.encodeRule(%[rule(@one@(Bottom(@X@)), Bottom(@X@) )]%,generatedSignature));               
+              generatedRules.add(Tools.encodeRule(%[rule(@one@(Bottom(@X@)), Bottom(@X@) )]%,generatedSignature));               
             }
 
             for(int i=1 ; i<=arity ; i++) {
@@ -430,7 +431,7 @@ public class Compiler {
                 }
                 String one_n_ii = one_n + "_"+(i+1);
                 generatedSignature.put(one_n_ii,arity);
-                bag.add(Tools.encodeRule(%[rule(@one_n_i@(@lx@), @one_n_ii@(@rx@))]%,generatedSignature));
+                generatedRules.add(Tools.encodeRule(%[rule(@one_n_i@(@lx@), @one_n_ii@(@rx@))]%,generatedSignature));
               } else {
                 // one_f_n(Bottom(x1),...,Bottom(xn)) -> Bottom(f(x1,...,xn))
                 String lx = "Bottom(X1)";
@@ -439,7 +440,7 @@ public class Compiler {
                   lx += ",Bottom(X"+j+")";
                   rx += ",X"+j;
                 }
-                bag.add(Tools.encodeRule(%[rule(@one_n_i@(@lx@), Bottom(@name@(@rx@)))]%,generatedSignature));
+                generatedRules.add(Tools.encodeRule(%[rule(@one_n_i@(@lx@), Bottom(@name@(@rx@)))]%,generatedSignature));
               }
 
               // one_f_i(Bottom(x1),...,xi@!Bottom(_),xj,...,xn)
@@ -458,7 +459,7 @@ public class Compiler {
                   rx += ",X"+j;
                 }
               }
-              bag.add(Tools.encodeRule(%[rule(@one_n_i@(@lx@), @name@(@rx@))]%,generatedSignature));
+              generatedRules.add(Tools.encodeRule(%[rule(@one_n_i@(@lx@), @name@(@rx@))]%,generatedSignature));
 
             }
           }
