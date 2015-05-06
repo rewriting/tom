@@ -14,7 +14,22 @@ public class Compiler {
   %include { java/util/types/HashSet.tom }
   %include { java/util/types/List.tom }
 
-//   private  Tools tools = new Tools();
+  private static Map<ExpressionList,Compiler> instances = new HashMap<ExpressionList,Compiler>();
+
+  private Compiler(ExpressionList expression){
+  }
+
+  public Compiler getInstance(ExpressionList expression){
+    Compiler compiler;
+    if((compiler=instances.get(expression)) == null){
+      compiler = new Compiler(expression);
+      instances.put(expression,compiler);
+    }
+    return compiler;
+  }
+
+
+  //   private  Tools tools = new Tools();
   private  Pretty pretty = new Pretty();
 
   private static int phiNumber = 0;
