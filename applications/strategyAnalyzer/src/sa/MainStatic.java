@@ -12,7 +12,7 @@ import org.kohsuke.args4j.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.Type;
 
-public class Main {
+public class MainStatic {
   protected static Options options = new Options();
 
   public static void main(String[] args) {
@@ -82,7 +82,7 @@ public class Main {
       //       System.out.println("------------------------------------------   ");
 
       // Transforms Let(name,exp,body) into body[name/exp]
-      ExpressionList expandl = Compiler.expand(expl);
+      ExpressionList expandl = CompilerStatic.expand(expl);
       //       System.out.println(expandl);
       //       System.out.println(pretty.toString(expandl));
       //       System.out.println("------------------------------------------   ");
@@ -90,8 +90,8 @@ public class Main {
       // Get the list of defined signatures, each of them with a corresponding strategy
       List<Expression> signatures=new ArrayList<Expression>(); 
       List<Strat> strategies=new ArrayList<Strat>(); 
-      Map<String,Integer> extractedSignature = Compiler.extractSignaturesAndStrategies(signatures,strategies,expandl);
-      Map<String,Integer> generatedSignature = Compiler.generateSignature(extractedSignature);
+      Map<String,Integer> extractedSignature = CompilerStatic.extractSignaturesAndStrategies(signatures,strategies,expandl);
+      Map<String,Integer> generatedSignature = CompilerStatic.generateSignature(extractedSignature);
       //       System.out.println(signatures);
       //       System.out.println(strategies);
       //       System.out.println(extractedSignature);
@@ -103,23 +103,23 @@ public class Main {
       // Uncomment to test previous version (against the new one)
       //       generatedSignature = new HashMap<String,Integer>();
       //       extractedSignature = new HashMap<String,Integer>();
-      //       Compiler.compileOLD(generatedRules,extractedSignature,generatedSignature,expandl);
+      //       CompilerStatic.compileOLD(generatedRules,extractedSignature,generatedSignature,expandl);
 
       // Transforms the strategy into a rewrite system
-      Compiler.compile(generatedRules,extractedSignature,generatedSignature,strategies);
+      CompilerStatic.compile(generatedRules,extractedSignature,generatedSignature,strategies);
       //System.out.println(generatedRules );
 
       if(options.withAP == false) {
          for(Rule r:new HashSet<Rule>(generatedRules)) { // copy of generatedRules
            // add new rules to generatedRules (for each anti-pattern)
-           Compiler.expandAntiPattern(generatedRules,r,extractedSignature,generatedSignature);
+           CompilerStatic.expandAntiPattern(generatedRules,r,extractedSignature,generatedSignature);
          }
       }
       
       // if we don't expand the anti-patterns then we should keep the at-annotations as well
       // otherwise output is strange
       if(options.withAT == false && options.withAP == false) {
-        generatedRules = Compiler.expandAt(generatedRules);
+        generatedRules = CompilerStatic.expandAt(generatedRules);
       }
       
       List<Rule> orderedRules = new ArrayList<Rule>(generatedRules);

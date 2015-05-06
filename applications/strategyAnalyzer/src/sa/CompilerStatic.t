@@ -6,7 +6,7 @@ import tom.library.sl.*;
 import aterm.*;
 import aterm.pure.*;
 
-public class Compiler {
+public class CompilerStatic {
   %include { rule/Rule.tom }
   %include { sl.tom }
   %include { java/util/types/Collection.tom }
