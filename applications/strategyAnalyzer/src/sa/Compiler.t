@@ -208,9 +208,9 @@ public class Compiler {
 
             %match(result) {
               // if already linear rhs
-              TermList(linearlhs, Appl("True",TermList())) -> {
+              TermList(_, Appl("True",TermList())) -> {
                 this.generatedRules.add(`Rule(Appl(rule,TermList(At(varX,lhs))),rhs));
-                this.generatedRules.add(`Rule(Appl(rule,TermList(At(varX,Anti(linearlhs)))),botX));
+                this.generatedRules.add(`Rule(Appl(rule,TermList(At(varX,Anti(lhs)))),botX));
               }
               // if non-linear add rules for checking equality for corresponding arguments
               TermList(linearlhs, cond@!Appl("True",TermList())) -> {
