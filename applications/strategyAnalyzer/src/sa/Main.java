@@ -39,32 +39,6 @@ public class Main {
       return;
     }
 
-    // print current options
-    /*
-    try {
-      Class c = options.getClass();
-      Field[] fields = c.getDeclaredFields();
-      for(Field f : fields){
-        if( !f.getName().startsWith("h") ){
-          System.out.print(f.getName() + ":  " );
-          if( f.getType() != Class.forName("java.util.List") ){
-            System.out.println(f.get(options));
-          } else {
-            for( Object s : (List)f.get(options) ) {
-              System.out.println("\n   "+ s);
-            }
-          }
-        }
-      }
-    }
-    catch (java.lang.ClassNotFoundException ec) {
-      System.err.println("No class: " + ec);
-    }    catch (java.lang.IllegalAccessException ef) {
-      System.err.println("No field: " + ef);
-    }
-    System.out.println("\n------------------------------------------   ");
-      */
-
     try {
       InputStream fileinput = System.in;
       if(options.in != null) {

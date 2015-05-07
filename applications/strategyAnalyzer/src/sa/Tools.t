@@ -303,5 +303,26 @@ public class Tools {
 
 
 
+  // TODO: doesn't take into account non-linear patterns
+  // f(x,x) matches f(x,y) because name variables are ignored
+  private  boolean matchModuloAt(Term pattern, Term subject) {
+    try {
+      Term p = `TopDown(RemoveAtAndRenameVariables()).visitLight(pattern);
+      Term s = `TopDown(RemoveAtAndRenameVariables()).visitLight(subject);
+      //System.out.println(pattern + " <--> " + subject + " ==> " + (p==s));
+      return p==s;
+    } catch(VisitFailure e) {}
+    throw new RuntimeException("should not be there");
+  }
+  /*
+   * put terms in normal form to detect redundant patterns
+   */
+  %strategy RemoveAtAndRenameVariables() extends Identity() {
+    visit Term {
+      At(_,t2)  -> { return `t2; }
+      Var(_)  -> { return `Var("_"); }
+    }
+  }
+
 
 }

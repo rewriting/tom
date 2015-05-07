@@ -895,26 +895,6 @@ public class Compiler {
     }
   }
 
-  private  boolean matchModuloAt(Term pattern, Term subject) {
-    try {
-      Term p = `TopDown(RemoveAtAndRenameVariables()).visitLight(pattern);
-      Term s = `TopDown(RemoveAtAndRenameVariables()).visitLight(subject);
-      //System.out.println(pattern + " <--> " + subject + " ==> " + (p==s));
-      return p==s;
-    } catch(VisitFailure e) {}
-    throw new RuntimeException("should not be there");
-  }
- 
-  /*
-   * put terms in normal form to detect redundant patterns
-   */
-  %strategy RemoveAtAndRenameVariables() extends Identity() {
-    visit Term {
-      At(_,t2)  -> { return `t2; }
-      Var(_)  -> { return `Var("_"); }
-    }
-  }
-
   /*
    * generate a term for the form f(Z1,...,Zn)
    * @param name the symbol name 
