@@ -1,4 +1,4 @@
-package examples.factory;
+package examples.factory.handwritten.recursive2;
 
 import tom.library.factory.Enumerate;
 import tom.library.factory.EnumerateGenerator;
