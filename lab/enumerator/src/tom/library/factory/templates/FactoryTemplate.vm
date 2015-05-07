@@ -6,7 +6,7 @@
 * This is auto generated class by the Apache velocity template engine
 * The corresponding template is FactoryTemplate.vm
 **/
-package examples.factory;
+package $parsedClass.getPackageName();
 
 import java.math.BigInteger;
 import tom.library.enumerator.Combinators;
