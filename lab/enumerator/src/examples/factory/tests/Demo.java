@@ -11,42 +11,90 @@ import tom.library.enumerator.LazyList;
 import tom.library.factory.ListFactory;
 import examples.adt.stack.stack.types.Stack;
 import examples.factory.*;
+import examples.factory.handwritten.recursive1.*;
+import examples.factory.handwritten.recursive2.*;
+import examples.factory.handwritten.recursive3.*;
 
 public class Demo {
 	public static void main(String[] args) {
 
-//		// Integers
+		// Integers
 //		Enumeration<Integer> enumInt = Combinators.makeInteger();
 //		LazyList<Finite<Integer>> parts = enumInt.parts();
 //		for (int i = 0; i < 8 && !parts.isEmpty(); i++) {
 //			System.out.println(i + " --> " + parts.head());
 //			parts = parts.tail();
 //		}
+		
+//		Enumeration<Character> enumChar = Combinators.makeCharacter();
+//        LazyList<Finite<Character>> partsChar = enumChar.parts();
+//        for (int i = 0; i < 8 && !partsChar.isEmpty(); i++) {
+//            System.out.println(i + " --> " + partsChar.head());
+//            partsChar = partsChar.tail();
+//        }
+	    // User
+	    Enumeration<User> enumUser = UserFactory.getEnumeration();
+	    LazyList<Finite<User>> partsUser = enumUser.parts();
+	    for (int i = 0; i < 7 && !partsUser.isEmpty(); i++) {
+	        System.out.println(i + " --> " + partsUser.head());
+	        partsUser = partsUser.tail();
+	    }
+	    // Account
+	    Enumeration<Account> enumAccount = AccountFactory.getEnumeration();
+        LazyList<Finite<Account>> partsAccount = enumAccount.parts();
+        for (int i = 0; i < 7 && !partsAccount.isEmpty(); i++) {
+            System.out.println(i + " --> " + partsAccount.head());
+            partsAccount = partsAccount.tail();
+        }
+        // Address
+        Enumeration<Address> enumAddress = AddressFactory.getEnumeration();
+        LazyList<Finite<Address>> partsAddress = enumAddress.parts();
+        for (int i = 0; i < 7 && !partsAddress.isEmpty(); i++) {
+            System.out.println(i + " --> " + partsAddress.head());
+            partsAddress = partsAddress.tail();
+        }
+	    
 //
-		// Students
-		Enumeration<Student> enumStudent = StudentFactory.getEnumeration();
-		LazyList<Finite<Student>> partsStudent = enumStudent.parts();
-		for (int i = 0; i < 4 && !partsStudent.isEmpty(); i++) {
-			System.out.println(i + " --> " + partsStudent.head());
-			partsStudent = partsStudent.tail();
-		}
+//		// Students
+//		Enumeration<Student> enumStudent = StudentFactory.getEnumeration();
+//		LazyList<Finite<Student>> partsStudent = enumStudent.parts();
+//		for (int i = 0; i < 4 && !partsStudent.isEmpty(); i++) {
+//			System.out.println(i + " --> " + partsStudent.head());
+//			partsStudent = partsStudent.tail();
+//		}
 
-		// Rooms
-		Enumeration<Room> enumRoom = RoomFactory.getEnumeration();
-		LazyList<Finite<Room>> partsRoom = enumRoom.parts();
-		for (int i = 0; i < 4 && !partsRoom.isEmpty(); i++) {
-			System.out.println(i + " --> " + partsRoom.head());
-			partsRoom = partsRoom.tail();
-		}
+//		// Rooms
+//		Enumeration<Room> enumRoom = RoomFactory.getEnumeration();
+//		LazyList<Finite<Room>> partsRoom = enumRoom.parts();
+//		for (int i = 0; i < 4 && !partsRoom.isEmpty(); i++) {
+//			System.out.println(i + " --> " + partsRoom.head());
+//			partsRoom = partsRoom.tail();
+//		}
 		
 //		// StudentWithCar
-//		Enumeration<StudentWithCar> enumStudent = StudentWithCarFactory.getEnumeration();
-//        LazyList<Finite<StudentWithCar>> partsStudentWC = enumStudent.parts();
-//        for (int i = 0; i < 4 && !partsStudentWC.isEmpty(); i++) {
+//		Enumeration<StudentWithCar> enumStudentWC = examples.factory.handwritten.recursive2.StudentWithCarFactory.getEnumeration();
+//        LazyList<Finite<StudentWithCar>> partsStudentWC = enumStudentWC.parts();
+//        for (int i = 0; i < 8 && !partsStudentWC.isEmpty(); i++) {
 //            System.out.println(i + " --> " + partsStudentWC.head());
 //            partsStudentWC = partsStudentWC.tail();
 //        }
-//
+        
+      // StudentCar
+//      Enumeration<StudentCar> enumStudentCar = examples.factory.handwritten.recursive2.StudentCarFactory.getEnumeration();
+//        LazyList<Finite<StudentCar>> partsStudentCar = enumStudentCar.parts();
+//        for (int i = 0; i < 8 && !partsStudentCar.isEmpty(); i++) {
+//            System.out.println(i + " --> " + partsStudentCar.head());
+//            partsStudentCar = partsStudentCar.tail();
+//        }
+		
+      // StudentFriend
+//      Enumeration<StudentFriend> enumStudentFriend = StudentFriendFactory.getEnumeration();
+//        LazyList<Finite<StudentFriend>> partsStudentFriend = enumStudentFriend.parts();
+//        for (int i = 0; i < 10 && !partsStudentFriend.isEmpty(); i++) {
+//            System.out.println(i + " --> " + partsStudentFriend.head());
+//            partsStudentFriend = partsStudentFriend.tail();
+//        }
+		
 //		// Lists of Students
 //		Enumeration<List<Student>> enumListStudent = ListFactory.getEnumeration(StudentFactory.getEnumeration());
 //		LazyList<Finite<List<Student>>> partsListStudent = enumListStudent.parts();
@@ -92,7 +140,7 @@ public class Demo {
 //		
 //		Enumeration<Garage> enumGarage = GarageFactory.getEnumeration();
 //		LazyList<Finite<Garage>> partsGarage = enumGarage.parts();
-//		for (int i = 0; i < 8 && !partsGarage.isEmpty(); i++) {
+//		for (int i = 0; i < 6 && !partsGarage.isEmpty(); i++) {
 //			System.out.println(i + " --> " + partsGarage.head());
 //			partsGarage = partsGarage.tail();
 //		}
