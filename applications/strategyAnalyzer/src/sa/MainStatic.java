@@ -12,7 +12,7 @@ import org.kohsuke.args4j.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.Type;
 
-public class Main {
+public class MainStatic {
   protected static Options options = new Options();
 
   public static void main(String[] args) {
@@ -39,6 +39,32 @@ public class Main {
       return;
     }
 
+    // print current options
+    /*
+    try {
+      Class c = options.getClass();
+      Field[] fields = c.getDeclaredFields();
+      for(Field f : fields){
+        if( !f.getName().startsWith("h") ){
+          System.out.print(f.getName() + ":  " );
+          if( f.getType() != Class.forName("java.util.List") ){
+            System.out.println(f.get(options));
+          } else {
+            for( Object s : (List)f.get(options) ) {
+              System.out.println("\n   "+ s);
+            }
+          }
+        }
+      }
+    }
+    catch (java.lang.ClassNotFoundException ec) {
+      System.err.println("No class: " + ec);
+    }    catch (java.lang.IllegalAccessException ef) {
+      System.err.println("No field: " + ef);
+    }
+    System.out.println("\n------------------------------------------   ");
+      */
+
     try {
       InputStream fileinput = System.in;
       if(options.in != null) {
@@ -55,27 +81,49 @@ public class Main {
       //       System.out.println(pretty.toString(expl));
       //       System.out.println("------------------------------------------   ");
 
-      Compiler compiler = Compiler.getInstance(expl);
+      // Transforms Let(name,exp,body) into body[name/exp]
+      ExpressionList expandl = CompilerStatic.expand(expl);
+      //       System.out.println(expandl);
+      //       System.out.println(pretty.toString(expandl));
+      //       System.out.println("------------------------------------------   ");
+
+      // Get the list of defined signatures, each of them with a corresponding strategy
+      List<Expression> signatures=new ArrayList<Expression>(); 
+      List<Strat> strategies=new ArrayList<Strat>(); 
+      Map<String,Integer> extractedSignature = CompilerStatic.extractSignaturesAndStrategies(signatures,strategies,expandl);
+      Map<String,Integer> generatedSignature = CompilerStatic.generateSignature(extractedSignature);
+      //       System.out.println(signatures);
+      //       System.out.println(strategies);
+      //       System.out.println(extractedSignature);
+      //       System.out.println(generatedSignature);
+      //       System.out.println("------------------------------------------   ");
+
+      Collection<Rule> generatedRules = new HashSet<Rule>();
+
+      // Uncomment to test previous version (against the new one)
+      //       generatedSignature = new HashMap<String,Integer>();
+      //       extractedSignature = new HashMap<String,Integer>();
+      //       CompilerStatic.compileOLD(generatedRules,extractedSignature,generatedSignature,expandl);
 
       // Transforms the strategy into a rewrite system
-      Collection<Rule> generatedRules = compiler.compile();
-      // System.out.println(generatedRules);
+      CompilerStatic.compile(generatedRules,extractedSignature,generatedSignature,strategies);
+      //System.out.println(generatedRules );
 
       if(options.withAP == false) {
          for(Rule r:new HashSet<Rule>(generatedRules)) { // copy of generatedRules
            // add new rules to generatedRules (for each anti-pattern)
-           compiler.expandAntiPattern(generatedRules,r);
+           CompilerStatic.expandAntiPattern(generatedRules,r,extractedSignature,generatedSignature);
          }
       }
       
       // if we don't expand the anti-patterns then we should keep the at-annotations as well
       // otherwise output is strange
       if(options.withAT == false && options.withAP == false) {
-        generatedRules = compiler.expandAt(generatedRules);
+        generatedRules = CompilerStatic.expandAt(generatedRules);
       }
       
       List<Rule> orderedRules = new ArrayList<Rule>(generatedRules);
-//       Collections.sort(orderedRules, new MyRuleComparator());
+      Collections.sort(orderedRules, new MyRuleComparator());
 
       PrintStream outputfile = System.out;
       if(options.out != null) {
@@ -87,11 +135,11 @@ public class Main {
       }
 
       if(options.classname != null) {
-        tomoutputfile.println( pretty.generateTom(orderedRules,compiler.getGeneratedSignature(),options.classname) );
+        tomoutputfile.println( pretty.generateTom(orderedRules,generatedSignature,options.classname) );
       } 
       if(options.aprove) {
         boolean innermost = false;
-        outputfile.println( pretty.generateAprove(orderedRules,compiler.getExtractedSignature(),innermost) );
+        outputfile.println( pretty.generateAprove(orderedRules,extractedSignature,innermost) );
       }
     } catch (Exception e) {
       System.err.println("exception: " + e);
