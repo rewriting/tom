@@ -20,7 +20,7 @@ public class Compiler {
   // List of (abstract) signatures for the strategies to translate
   private List<Expression> signatures;
   // List of strategies to translate (same index as corresponding signature)
-  private List<Strat> strategies;
+  private Map<String,Strat> strategies;
 
   // The extracted (concrete) signature
   private Map<String,Integer> extractedSignature;
@@ -87,12 +87,14 @@ public class Compiler {
    */
   private void extractSignaturesAndStrategies(ExpressionList expl) throws SymbolAlredyExistsException {
     this.signatures=new ArrayList<Expression>(); 
-    this.strategies=new ArrayList<Strat>(); 
+    this.strategies=new HashMap<String,Strat>(); 
+
+    int index=0;
 
     %match(expl) {
       ExpressionList(_*,Let(_,sig@Signature(_),Strat(strat)),_*) -> {
             this.signatures.add(`sig);
-            this.strategies.add(`strat);
+            this.strategies.put("strat"+index++,`strat);
       }
     }
   }
@@ -143,11 +145,12 @@ public class Compiler {
     this.generatedRules = new ArrayList<Rule>();
 
     // the (name of the last) strategy is used 
-    for(Strat strategy:this.strategies){
+//     for(Strat strategy:this.strategies){
+    for(String name:this.strategies.keySet()){
         if(Main.options.generic) {
-          topName = this.compileGenericStrat(generatedRules,extractedSignature,generatedSignature,strategy);
+          topName = this.compileGenericStrat(generatedRules,extractedSignature,generatedSignature,strategies.get(name));
         } else {
-          topName = this.compileStrat(strategy);
+          topName = this.compileStrat(name,this.strategies.get(name));
         }
     }
 
@@ -169,7 +172,7 @@ public class Compiler {
    * @param strat the strategy to compile
    * @return the name of the last compiled strategy
    */
-  private  String compileStrat(Strat strat) {
+  private  String compileStrat(String stratName, Strat strat) {
     String X = getName("X");
     String Y = getName("Y");
     String Z = getName("Z");
@@ -192,6 +195,10 @@ public class Compiler {
          *   rule'(X@linear-lhs, false) -> Bottom(x)
          */
         String rule = getName("rule");
+        // if declared strategy (i.e. defind name)
+        if(stratName != null){
+          rule = stratName;
+        }
         this.generatedSignature.put(rule,1);
         String cr = getName("crule");
         this.generatedSignature.put(cr,2);
@@ -235,7 +242,7 @@ public class Compiler {
           String mu = getName("mu");
           generatedSignature.put(mu,1);
           Strat newStrat = `TopDown(ReplaceMuVar(name,mu)).visitLight(`s);
-          String phi_s = compileStrat(newStrat);
+          String phi_s = compileStrat(null,newStrat);
           generatedRules.addAll(Tools.encodeRuleList(%[[
                 rule(@mu@(at(@X@,anti(Bottom(@Y@)))), @phi_s@(@X@)),
                 rule(@mu@(Bottom(@X@)), Bottom(@X@))
@@ -294,8 +301,8 @@ public class Compiler {
       }
 
       StratSequence(s1,s2) -> {
-        String n1 = compileStrat(`s1);
-        String n2 = compileStrat(`s2);
+        String n1 = compileStrat(null,`s1);
+        String n2 = compileStrat(null,`s2);
         String seq = getName("seq");
         String seq2 = getName("seq2");
         generatedSignature.put(seq,1);
@@ -324,8 +331,8 @@ public class Compiler {
 
       // TODO [20/01/2015]: see if not exact is interesting
       StratChoice(s1,s2) -> {
-        String n1 = compileStrat(`s1);
-        String n2 = compileStrat(`s2);
+        String n1 = compileStrat(null,`s1);
+        String n2 = compileStrat(null,`s2);
         String choice = getName("choice");
         String choice2 = getName("choice");
         generatedSignature.put(choice,1);
@@ -340,7 +347,7 @@ public class Compiler {
       }
 
       StratAll(s) -> {
-        String phi_s = compileStrat(`s);
+        String phi_s = compileStrat(null,`s);
         String all = getName("all");
         generatedSignature.put(all,1);
         for(String name : extractedSignature.keySet()) {
@@ -396,7 +403,7 @@ public class Compiler {
       }
 
       StratOne(s) -> {
-        String phi_s = compileStrat(`s);
+        String phi_s = compileStrat(null,`s);
         String one = getName("one");
         generatedSignature.put(one,1);
         for(String name : extractedSignature.keySet()) {
