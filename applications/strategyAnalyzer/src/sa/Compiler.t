@@ -194,11 +194,8 @@ public class Compiler {
          *   rule'(linear-lhs, true) -> rhs
          *   rule'(X@linear-lhs, false) -> Bottom(x)
          */
-        String rule = getName("rule");
-        // if declared strategy (i.e. defind name)
-        if(stratName != null){
-          rule = stratName;
-        }
+        // if declared strategy (i.e. defind name) use its name; otherwise generate fresh name
+        String rule = (stratName!=null)?stratName:this.getName("rule");
         this.generatedSignature.put(rule,1);
         String cr = getName("crule");
         this.generatedSignature.put(cr,2);
@@ -239,7 +236,7 @@ public class Compiler {
        */
       StratMu(name,s) -> {
         try {
-          String mu = getName("mu");
+          String mu = (stratName!=null)?stratName:this.getName("mu");
           generatedSignature.put(mu,1);
           Strat newStrat = `TopDown(ReplaceMuVar(name,mu)).visitLight(`s);
           String phi_s = compileStrat(null,newStrat);
@@ -259,7 +256,7 @@ public class Compiler {
       }
 
       StratIdentity() -> {
-        String id = getName("id");
+        String id = (stratName!=null)?stratName:this.getName("id");
         generatedSignature.put(id,1);
         if( !Main.options.approx ) {
           // the rule cannot be applied on arguments containing fresh variables but only on terms from the signature or Bottom
@@ -280,7 +277,7 @@ public class Compiler {
       }
 
       StratFail() -> {
-        String fail = getName("fail");
+        String fail = (stratName!=null)?stratName:this.getName("fail");
         generatedSignature.put(fail,1);
         if( !Main.options.approx ) {
           // the rule cannot be applied on arguments containing fresh variables but only on terms from the signature or Bottom
@@ -303,7 +300,7 @@ public class Compiler {
       StratSequence(s1,s2) -> {
         String n1 = compileStrat(null,`s1);
         String n2 = compileStrat(null,`s2);
-        String seq = getName("seq");
+        String seq = (stratName!=null)?stratName:this.getName("seq");
         String seq2 = getName("seq2");
         generatedSignature.put(seq,1);
         generatedSignature.put(seq2,2);
@@ -333,7 +330,7 @@ public class Compiler {
       StratChoice(s1,s2) -> {
         String n1 = compileStrat(null,`s1);
         String n2 = compileStrat(null,`s2);
-        String choice = getName("choice");
+        String choice = (stratName!=null)?stratName:this.getName("choice");
         String choice2 = getName("choice");
         generatedSignature.put(choice,1);
         generatedSignature.put(choice2,1);
@@ -348,7 +345,7 @@ public class Compiler {
 
       StratAll(s) -> {
         String phi_s = compileStrat(null,`s);
-        String all = getName("all");
+        String all = (stratName!=null)?stratName:this.getName("all");
         generatedSignature.put(all,1);
         for(String name : extractedSignature.keySet()) {
           int arity = generatedSignature.get(name);
@@ -404,7 +401,7 @@ public class Compiler {
 
       StratOne(s) -> {
         String phi_s = compileStrat(null,`s);
-        String one = getName("one");
+        String one = (stratName!=null)?stratName:this.getName("one");
         generatedSignature.put(one,1);
         for(String name : extractedSignature.keySet()) {
           int arity = generatedSignature.get(name);
