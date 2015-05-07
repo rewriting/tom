@@ -28,6 +28,15 @@ public class Compiler {
   private Map<String,Integer> generatedSignature;
 
   private Collection<Rule> generatedRules;
+
+
+  //   private  Tools tools = new Tools();
+  // pretty is used just for debugging
+  // TODO: remove it
+  private  Pretty pretty = new Pretty();
+
+
+
   /**
    * 
    * 
@@ -55,10 +64,6 @@ public class Compiler {
     }
     return compiler;
   }
-
-
-  //   private  Tools tools = new Tools();
-  private  Pretty pretty = new Pretty();
 
   private static int phiNumber = 0;
   private static String getName(String name) {
@@ -168,10 +173,10 @@ public class Compiler {
     String X = getName("X");
     String Y = getName("Y");
     String Z = getName("Z");
-    Term varX = Tools.encode(X,generatedSignature);
-    Term botX = Tools.encode("Bottom("+X+")",generatedSignature);
-    Term True = Tools.encode("True",generatedSignature);
-    Term False = Tools.encode("False",generatedSignature);
+    Term varX = Tools.encode(X,this.generatedSignature);
+    Term botX = Tools.encode("Bottom("+X+")",this.generatedSignature);
+    Term True = Tools.encode("True",this.generatedSignature);
+    Term False = Tools.encode("False",this.generatedSignature);
 
     %match(strat) {
       StratExp(Set(rulelist)) -> {
@@ -187,27 +192,33 @@ public class Compiler {
          *   rule'(X@linear-lhs, false) -> Bottom(x)
          */
         String rule = getName("rule");
-        generatedSignature.put(rule,1);
+        this.generatedSignature.put(rule,1);
         String cr = getName("crule");
-        generatedSignature.put(cr,2);
+        this.generatedSignature.put(cr,2);
         %match(rulelist) {
           RuleList(_*,Rule(lhs,rhs),_*) -> {
             // use AST-syntax because lhs and rhs are already encoded
+
             // propagate failure; if the rule is applied to the result of a strategy that failed then the result is a failure
-            generatedRules.add(`Rule(Appl(rule,TermList(botX)),botX));
+            this.generatedRules.add(`Rule(Appl(rule,TermList(botX)),botX));
 
-            TermList result = linearize(`lhs,generatedSignature);
-
-            System.out.println("linear lhs = " + pretty.toString(result));
+            TermList result = this.linearize(`lhs,this.generatedSignature);
+            Term constraint = `Appl("True",TermList());
+            //             System.out.println("linear lhs = " + pretty.toString(result));
 
             %match(result) {
-              TermList(linearlhs, cond) -> {
-                generatedRules.add(`Rule(Appl(rule,TermList(At(varX,linearlhs))),
-                              Appl(cr, TermList(varX, cond))));
-                generatedRules.add(`Rule(Appl(rule,TermList(At(varX,Anti(linearlhs)))),botX));
+              // if already linear rhs
+              TermList(linearlhs, Appl("True",TermList())) -> {
+                this.generatedRules.add(`Rule(Appl(rule,TermList(At(varX,lhs))),rhs));
+                this.generatedRules.add(`Rule(Appl(rule,TermList(At(varX,Anti(linearlhs)))),botX));
+              }
+              // if non-linear add rules for checking equality for corresponding arguments
+              TermList(linearlhs, cond@!Appl("True",TermList())) -> {
+                this.generatedRules.add(`Rule(Appl(rule,TermList(At(varX,linearlhs))),Appl(cr, TermList(varX, cond))));
+                this.generatedRules.add(`Rule(Appl(rule,TermList(At(varX,Anti(linearlhs)))),botX));
 
-                generatedRules.add(`Rule(Appl(cr,TermList(linearlhs, True)), rhs));
-                generatedRules.add(`Rule(Appl(cr,TermList(At(varX,linearlhs), False)),botX));
+                this.generatedRules.add(`Rule(Appl(cr,TermList(linearlhs, True)), rhs));
+                this.generatedRules.add(`Rule(Appl(cr,TermList(At(varX,linearlhs), False)),botX));
               }
             }
             //System.out.println(cr);
