@@ -15,6 +15,12 @@ public class Tools {
   %include { java/util/types/HashSet.tom }
   %include { java/util/types/Set.tom }
 
+
+  private static int phiNumber = 0;
+  public static String getName(String name) {
+    return name + (phiNumber++);
+  }
+
   /**
    * encode: transforms a string "f(a,X)" into its Term representation
    * e.g. `Appl("f",TermList(Appl("a",TermList()),Var("X")))

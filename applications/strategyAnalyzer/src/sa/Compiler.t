@@ -65,11 +65,6 @@ public class Compiler {
     return compiler;
   }
 
-  private static int phiNumber = 0;
-  private static String getName(String name) {
-    return name + (phiNumber++);
-  }
-
   /**
    * getTopName
    * @return the name of the strategy which starts the computation
@@ -141,7 +136,7 @@ public class Compiler {
   /*
    * Compile a (list of) strategy into a rewrite system
    */
-  public Collection<Rule>  compile() {
+  public List<Rule>  compile() {
     this.generatedRules = new ArrayList<Rule>();
 
     // the (name of the last) strategy is used 
@@ -159,7 +154,7 @@ public class Compiler {
     } else {
       generateEquality(this.generatedRules, this.extractedSignature, this.generatedSignature);
     }
-    return generatedRules;
+    return new ArrayList(generatedRules);
   }
 
 
@@ -173,9 +168,9 @@ public class Compiler {
    * @return the name of the last compiled strategy
    */
   private  String compileStrat(String stratName, Strat strat) {
-    String X = getName("X");
-    String Y = getName("Y");
-    String Z = getName("Z");
+    String X = Tools.getName("X");
+    String Y = Tools.getName("Y");
+    String Z = Tools.getName("Z");
     Term varX = Tools.encode(X,this.generatedSignature);
     Term botX = Tools.encode("Bottom("+X+")",this.generatedSignature);
     Term True = Tools.encode("True",this.generatedSignature);
@@ -195,9 +190,9 @@ public class Compiler {
          *   rule'(X@linear-lhs, false) -> Bottom(x)
          */
         // if declared strategy (i.e. defind name) use its name; otherwise generate fresh name
-        String rule = (stratName!=null)?stratName:this.getName("rule");
+        String rule = (stratName!=null)?stratName:Tools.getName("rule");
         this.generatedSignature.put(rule,1);
-        String cr = getName("crule");
+        String cr = Tools.getName("crule");
         this.generatedSignature.put(cr,2);
         %match(rulelist) {
           RuleList(_*,Rule(lhs,rhs),_*) -> {
@@ -236,7 +231,7 @@ public class Compiler {
        */
       StratMu(name,s) -> {
         try {
-          String mu = (stratName!=null)?stratName:this.getName("mu");
+          String mu = (stratName!=null)?stratName:Tools.getName("mu");
           generatedSignature.put(mu,1);
           Strat newStrat = `TopDown(ReplaceMuVar(name,mu)).visitLight(`s);
           String phi_s = compileStrat(null,newStrat);
@@ -256,7 +251,7 @@ public class Compiler {
       }
 
       StratIdentity() -> {
-        String id = (stratName!=null)?stratName:this.getName("id");
+        String id = (stratName!=null)?stratName:Tools.getName("id");
         generatedSignature.put(id,1);
         if( !Main.options.approx ) {
           // the rule cannot be applied on arguments containing fresh variables but only on terms from the signature or Bottom
@@ -277,7 +272,7 @@ public class Compiler {
       }
 
       StratFail() -> {
-        String fail = (stratName!=null)?stratName:this.getName("fail");
+        String fail = (stratName!=null)?stratName:Tools.getName("fail");
         generatedSignature.put(fail,1);
         if( !Main.options.approx ) {
           // the rule cannot be applied on arguments containing fresh variables but only on terms from the signature or Bottom
@@ -300,8 +295,8 @@ public class Compiler {
       StratSequence(s1,s2) -> {
         String n1 = compileStrat(null,`s1);
         String n2 = compileStrat(null,`s2);
-        String seq = (stratName!=null)?stratName:this.getName("seq");
-        String seq2 = getName("seq2");
+        String seq = (stratName!=null)?stratName:Tools.getName("seq");
+        String seq2 = Tools.getName("seq2");
         generatedSignature.put(seq,1);
         generatedSignature.put(seq2,2);
         if( !Main.options.approx ) {
@@ -330,8 +325,8 @@ public class Compiler {
       StratChoice(s1,s2) -> {
         String n1 = compileStrat(null,`s1);
         String n2 = compileStrat(null,`s2);
-        String choice = (stratName!=null)?stratName:this.getName("choice");
-        String choice2 = getName("choice");
+        String choice = (stratName!=null)?stratName:Tools.getName("choice");
+        String choice2 = Tools.getName("choice");
         generatedSignature.put(choice,1);
         generatedSignature.put(choice2,1);
         generatedRules.addAll(Tools.encodeRuleList(%[[
@@ -345,7 +340,7 @@ public class Compiler {
 
       StratAll(s) -> {
         String phi_s = compileStrat(null,`s);
-        String all = (stratName!=null)?stratName:this.getName("all");
+        String all = (stratName!=null)?stratName:Tools.getName("all");
         generatedSignature.put(all,1);
         for(String name : extractedSignature.keySet()) {
           int arity = generatedSignature.get(name);
@@ -401,7 +396,7 @@ public class Compiler {
 
       StratOne(s) -> {
         String phi_s = compileStrat(null,`s);
-        String one = (stratName!=null)?stratName:this.getName("one");
+        String one = (stratName!=null)?stratName:Tools.getName("one");
         generatedSignature.put(one,1);
         for(String name : extractedSignature.keySet()) {
           int arity = generatedSignature.get(name);
@@ -497,15 +492,15 @@ public class Compiler {
    */
   private  boolean generated_aux_functions = false;
   private  String compileGenericStrat(Collection<Rule> bag, Map<String,Integer> extractedSignature, Map<String,Integer> generatedSignature, Strat strat) {
-    String X = getName("X");
-    String Y = getName("Y");
-    String Z = getName("Z");
-    String XX = getName("XX");
-    String YY = getName("YY");
-    String Z0 = getName("Z0");
-    String Z1 = getName("Z1");
-    String Z2 = getName("Z2");
-    String Z3 = getName("Z3");
+    String X = Tools.getName("X");
+    String Y = Tools.getName("Y");
+    String Z = Tools.getName("Z");
+    String XX = Tools.getName("XX");
+    String YY = Tools.getName("YY");
+    String Z0 = Tools.getName("Z0");
+    String Z1 = Tools.getName("Z1");
+    String Z2 = Tools.getName("Z2");
+    String Z3 = Tools.getName("Z3");
     Term varX = Tools.encode(X,generatedSignature);
     Term botX = Tools.encode("Bottom("+X+")",generatedSignature);
     Term True = Tools.encode("True",generatedSignature);
@@ -524,9 +519,9 @@ public class Compiler {
          *   rule'(linear-lhs, true) -> rhs
          *   rule'(X@linear-lhs, false) -> Bottom(x)
          */
-        String rule = getName("rule");
+        String rule = Tools.getName("rule");
         generatedSignature.put(rule,1);
-        String cr = getName("crule");
+        String cr = Tools.getName("crule");
         generatedSignature.put(cr,2);
         %match(rulelist) {
           RuleList(_*,Rule(lhs,rhs),_*) -> {
@@ -574,7 +569,7 @@ public class Compiler {
        */
       StratMu(name,s) -> {
         try {
-          String mu = getName("mu");
+          String mu = Tools.getName("mu");
           generatedSignature.put(mu,1);
           Strat newStrat = `TopDown(ReplaceMuVar(name,mu)).visitLight(`s);
           String phi_s = compileGenericStrat(bag,extractedSignature,generatedSignature,newStrat);
@@ -592,7 +587,7 @@ public class Compiler {
       }
 
       StratIdentity() -> {
-        String id = getName("id");
+        String id = Tools.getName("id");
         generatedSignature.put(id,1);
         if( !Main.options.approx ) {
           bag.add(Tools.encodeRule(%[rule(@id@(Appl(@X@,@Y@)), Appl(@X@,@Y@))]%,generatedSignature));
@@ -605,7 +600,7 @@ public class Compiler {
       }
 
       StratFail() -> {
-        String fail = getName("fail");
+        String fail = Tools.getName("fail");
         generatedSignature.put(fail,1);
         if( !Main.options.approx ) {
           bag.add(Tools.encodeRule(%[rule(@fail@(Appl(@X@,@Y@)), Bottom(Appl(@X@,@Y@)))]%,generatedSignature));
@@ -620,8 +615,8 @@ public class Compiler {
       StratSequence(s1,s2) -> {
         String n1 = compileGenericStrat(bag,extractedSignature,generatedSignature,`s1);
         String n2 = compileGenericStrat(bag,extractedSignature,generatedSignature,`s2);
-        String seq = getName("seq");
-        String seq2 = getName("seq2");
+        String seq = Tools.getName("seq");
+        String seq2 = Tools.getName("seq2");
         generatedSignature.put(seq,1);
         generatedSignature.put(seq2,2);
         if( !Main.options.approx ) {
@@ -640,8 +635,8 @@ public class Compiler {
       StratChoice(s1,s2) -> {
         String n1 = compileGenericStrat(bag,extractedSignature,generatedSignature,`s1);
         String n2 = compileGenericStrat(bag,extractedSignature,generatedSignature,`s2);
-        String choice = getName("choice");
-        String choice2 = getName("choice");
+        String choice = Tools.getName("choice");
+        String choice2 = Tools.getName("choice");
         generatedSignature.put(choice,1);
         generatedSignature.put(choice2,1);
         if( !Main.options.approx ) {
@@ -663,7 +658,7 @@ public class Compiler {
 
       StratAll(s) -> {
         String phi_s = compileGenericStrat(bag,extractedSignature,generatedSignature,`s);
-        String all = getName("all");
+        String all = Tools.getName("all");
         generatedSignature.put(all,1);
         String all_1 = all+"_1";
         generatedSignature.put(all_1,1);
@@ -719,7 +714,7 @@ public class Compiler {
 
       StratOne(s) -> {
         String phi_s = compileGenericStrat(bag,extractedSignature,generatedSignature,`s);
-        String one = getName("one");
+        String one = Tools.getName("one");
         generatedSignature.put(one,1);
         String one_1 = one+"_1";
         generatedSignature.put(one_1,1);
@@ -845,8 +840,8 @@ public class Compiler {
     * @param bag the set of rules to expand
     * @return a new set that contains the expanded rules
     */
-  public  Collection<Rule> expandAt(Collection<Rule> bag) throws VisitFailure {
-    Collection<Rule> res = new HashSet<Rule>();
+  public  List<Rule> expandAt(List<Rule> bag) throws VisitFailure {
+    List<Rule> res = new ArrayList<Rule>();
     for(Rule rule:bag) {
       //System.out.println("expand at rule: " + rule);
       Map<String,Term> map = new HashMap<String,Term>();
@@ -869,111 +864,11 @@ public class Compiler {
     return res;
   }
 
- 
-  
-  /**
-   * Expand an anti-pattern
-   * @param generatedRules initial set of rules
-   * @param rule the rule to expand
-   * @param extractedSignature the signature
-   * @return nothing, but modifies generatedRules
-   */
-  public  void expandAntiPattern(Collection<Rule> generatedRules, Rule rule) {
-    try {
-      `OnceBottomUp(ContainsAntiPattern()).visitLight(rule); // check if the rule contains an anti-pattern (exception otherwise)
-      generatedRules.remove(rule); // remove the rule since it will be expanded
-      //       System.out.println("RULE: "+`rule);
-      Collection<Rule> bag = new HashSet<Rule>();
-      // perform one-step expansion
-      `OnceTopDown(ExpandAntiPattern(bag,rule,this.extractedSignature, this.generatedSignature)).visit(rule);
-      for(Rule expandr:bag) {
-        expandAntiPattern(generatedRules,expandr);
-      }
-    } catch(VisitFailure e) {
-      // add the rule since it contains no more anti-pattern
-      generatedRules.add(rule);
-    }
-  }
-
-  %strategy ContainsAntiPattern() extends Fail() {
-    visit Term {
-      t@Anti(_)  -> { return `t; }
-    }
-  }
-
-  /*
-   * Perform one-step expansion
-   *
-   * @param bag the resulted set of rules
-   * @param rule the rule to expand
-   * @param extractedSignature the signature
-   */
-  %strategy ExpandAntiPattern(bag:Collection,subject:Rule,extractedSignature:Map, generatedSignature:Map) extends Fail() {
-    visit Term {
-      Anti(Anti(t)) -> {
-        Rule newr = (Rule) getEnvironment().getPosition().getReplace(`t).visit(subject);
-        //System.out.println("add bag0:" + pretty.toString(newr));
-        bag.add(newr);
-        return `t;
-      }
-
-      Anti(t) -> {
-        //System.out.println("ExpandAntiPattern: " + `t);
-        Term antiterm = (Main.options.generic)?Tools.decodeConsNil(`t):`t;
-        //System.out.println("ExpandAntiPattern antiterm: " + antiterm);
-        %match(antiterm) { 
-          Appl(name,args)  -> {
-            // add g(Z1,...) ... h(Z1,...)
-            Set<String> otherNames = new HashSet<String>( ((Map<String,Integer>)extractedSignature).keySet() );
-            for(String otherName:otherNames) {
-              if(!`name.equals(otherName)) {
-                int arity = ((Map<String,Integer>)extractedSignature).get(otherName);
-                Term newt = Tools.encode(Tools.genAbstractTerm(otherName,arity,Compiler.getName("Z")),generatedSignature);
-                if(Main.options.generic) {
-                  newt = Tools.metaEncodeConsNil(newt,generatedSignature);
-                }
-                Rule newr = (Rule) getEnvironment().getPosition().getReplace(newt).visit(subject);
-                //System.out.println("add bag1:" + pretty.toString(newr));
-                bag.add(newr);
-              }
-            }
-            
-            // add f(!a1,...) ... f(a1,...,!an)
-            sa.rule.types.termlist.TermList tl = (sa.rule.types.termlist.TermList) `args;
-            int arity = tl.length();
-            Term[] array = new Term[arity];
-            Term[] tarray = new Term[arity];
-            tarray = tl.toArray(tarray);
-            String z = Compiler.getName("Z");
-            for(int i=0 ; i<arity ; i++) {
-              array[i] = Tools.encode(z+"_"+i,generatedSignature);
-            }
-            for(int i=0 ; i<arity ; i++) {
-              Term ti = tarray[i];
-              array[i] = `Anti(ti);
-              Term newt = `Appl(name,sa.rule.types.termlist.TermList.fromArray(array));
-              //               System.out.println("NEWT:"+`newt);
-              array[i] = Tools.encode(z+"_"+i,generatedSignature);
-              if(Main.options.generic) {
-                newt = Tools.metaEncodeConsNil(newt,generatedSignature);
-              }
-              Rule newr = (Rule) getEnvironment().getPosition().getReplace(newt).visit(subject);
-
-              //System.out.println("add bag2:" + pretty.toString(newr));
-              bag.add(newr);
-            }
-          }
-        }
-        return `t;
-      }
-    }
-  }
-
 
   /*
    * Transform lhs into linear-lhs + true ^ constraint on non linear variables
    */
-  private  TermList linearize(Term lhs, Map<String,Integer> signature) {
+  private TermList linearize(Term lhs, Map<String,Integer> signature) {
     //System.out.println("lhs = " + lhs);
     Map<String,Integer> map = collectMultiplicity(lhs);
     Map<String,String> mapToOldName = new HashMap<String,String>();
@@ -1006,7 +901,7 @@ public class Compiler {
       Var(n)  -> {
         int value = (Integer)multiplicityMap.get(`name);
         if(`n.compareTo(`name)==0 && value>1) {
-          String z = Compiler.getName("Z");
+          String z = Tools.getName("Z");
           map.put(z,`n);
           multiplicityMap.put(`name, value - 1);
           Term newt = `Var(z);
@@ -1020,6 +915,7 @@ public class Compiler {
   }
 
   
+
   /**
    * Returns a Map which associates an integer to each variable name
    */
@@ -1067,8 +963,8 @@ public class Compiler {
     bag.add(Tools.encodeRule(%[rule(and(False,True), False)]%,generatedSignature));
     bag.add(Tools.encodeRule(%[rule(and(False,False), False)]%,generatedSignature));
 
-    String z1 = getName("Z");
-    String z2 = getName("Z");
+    String z1 = Tools.getName("Z");
+    String z2 = Tools.getName("Z"); 
     for(String f:extractedSignature.keySet()) {
       for(String g:extractedSignature.keySet()) {
         int arf = extractedSignature.get(f);
@@ -1109,35 +1005,6 @@ public class Compiler {
       s@Anti(t) -> {
         list.add(0,getEnvironment().getPosition());
         return `s;
-      }
-    }
-  }
-
-  /*
-   * Perform one-step expansion
-   *
-   * @param ordered list of rules
-   * @param rule the rule to expand (may contain nested anti-pattern and be non-linear)
-   * @param extractedSignature the signature
-   */
-  %strategy ExpandGeneralAntiPattern(orderedTRS:List,subject:Rule,extractedSignature:Map, generatedSignature:Map) extends Fail() {
-    visit Term {
-      Anti(Anti(t)) -> {
-        Rule newr = (Rule) getEnvironment().getPosition().getReplace(`t).visit(subject);
-        //System.out.println("add list0:" + pretty.toString(newr));
-        `orderedTRS.add(`orderedTRS.size(),newr);
-        return `t;
-      }
-
-      Anti(t) -> {
-        /*
-         * x@q[!q'] -> r      becomes x@q[q'] -> bot(x)
-         *                              q[z]  -> r
-         *
-         * x@q[!q'] -> bot(_) becomes   q[q'] -> r
-         *                            x@q[z]  -> bot(x)
-         */
-        return `t;
       }
     }
   }

@@ -58,14 +58,13 @@ public class Main {
       Compiler compiler = Compiler.getInstance(expl);
 
       // Transforms the strategy into a rewrite system
-      Collection<Rule> generatedRules = compiler.compile();
+      List<Rule> generatedRules = compiler.compile();
       // System.out.println(generatedRules);
 
+
       if(options.withAP == false) {
-         for(Rule r:new HashSet<Rule>(generatedRules)) { // copy of generatedRules
-           // add new rules to generatedRules (for each anti-pattern)
-           compiler.expandAntiPattern(generatedRules,r);
-         }
+        RuleCompiler ruleCompiler = new RuleCompiler(compiler.getExtractedSignature(),compiler.getGeneratedSignature());
+        ruleCompiler.expandAntiPatterns(generatedRules);
       }
       
       // if we don't expand the anti-patterns then we should keep the at-annotations as well
