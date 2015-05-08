@@ -325,4 +325,23 @@ public class Tools {
   }
 
 
+  /*
+   * generate a term for the form f(Z1,...,Zn)
+   * @param name the symbol name 
+   * @param arity the arity of the symbol
+   * @return the string that represents the term
+   */
+  public static String genAbstractTerm(String name, int arity, String varname) {
+    if(arity==0) {
+      return name + "()";
+    } else {
+      String args = varname+"_"+"1";
+      for(int i=2 ; i<=arity ; i++) {
+        args += ", " + varname+"_"+i;
+      }
+      return name + "(" + args + ")";
+    }
+  }
+
+
 }

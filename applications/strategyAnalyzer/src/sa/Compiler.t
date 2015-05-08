@@ -895,25 +895,6 @@ public class Compiler {
     }
   }
 
-  /*
-   * generate a term for the form f(Z1,...,Zn)
-   * @param name the symbol name 
-   * @param arity the arity of the symbol
-   * @return the string that represents the term
-   */
-  // MOVE to Tools ???
-  private static String genAbstractTerm(String name, int arity, String varname) {
-    if(arity==0) {
-      return name + "()";
-    } else {
-      String args = varname+"_"+"1";
-      for(int i=2 ; i<=arity ; i++) {
-        args += ", " + varname+"_"+i;
-      }
-      return name + "(" + args + ")";
-    }
-  }
-
   %strategy ContainsAntiPattern() extends Fail() {
     visit Term {
       t@Anti(_)  -> { return `t; }
@@ -947,7 +928,7 @@ public class Compiler {
             for(String otherName:otherNames) {
               if(!`name.equals(otherName)) {
                 int arity = ((Map<String,Integer>)extractedSignature).get(otherName);
-                Term newt = Tools.encode(genAbstractTerm(otherName,arity,Compiler.getName("Z")),generatedSignature);
+                Term newt = Tools.encode(Tools.genAbstractTerm(otherName,arity,Compiler.getName("Z")),generatedSignature);
                 if(Main.options.generic) {
                   newt = Tools.metaEncodeConsNil(newt,generatedSignature);
                 }
@@ -1093,10 +1074,10 @@ public class Compiler {
         int arf = extractedSignature.get(f);
         int arg = extractedSignature.get(g);
         if(!f.equals(g)) {
-          bag.add(Tools.encodeRule(%[rule(eq(@genAbstractTerm(f,arf,z1)@,@genAbstractTerm(g,arg,z2)@), False)]%,generatedSignature));
+          bag.add(Tools.encodeRule(%[rule(eq(@Tools.genAbstractTerm(f,arf,z1)@,@Tools.genAbstractTerm(g,arg,z2)@), False)]%,generatedSignature));
         } else {
-          String t1 = genAbstractTerm(f,arf,z1);
-          String t2 = genAbstractTerm(f,arf,z2);
+          String t1 = Tools.genAbstractTerm(f,arf,z1);
+          String t2 = Tools.genAbstractTerm(f,arf,z2);
           String scond = "True";
           for(int i=1 ; i<=arf ; i++) {
             scond = %[and(eq(@z1@_@i@,@z2@_@i@),@scond@)]%;
