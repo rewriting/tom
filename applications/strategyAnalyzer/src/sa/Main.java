@@ -64,7 +64,7 @@ public class Main {
 
       if(options.withAP == false) {
         RuleCompiler ruleCompiler = new RuleCompiler(compiler.getExtractedSignature(),compiler.getGeneratedSignature());
-        ruleCompiler.expandAntiPatterns(generatedRules);
+        generatedRules=ruleCompiler.expandAntiPatterns(generatedRules);
       }
       
       // if we don't expand the anti-patterns then we should keep the at-annotations as well

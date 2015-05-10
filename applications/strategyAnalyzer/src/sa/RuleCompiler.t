@@ -60,7 +60,6 @@ public class RuleCompiler {
    * @return the list of generated rules
    */
   private List<Rule> expandAntiPatternInRule(Rule rule) {
-    System.out.println("EXPAND:" + pretty.toString(rule));
     List<Rule> genRules = new ArrayList<Rule>();
     try {
       `OnceBottomUp(ContainsAntiPattern()).visitLight(rule); // check if the rule contains an anti-pattern (exception otherwise)
@@ -69,7 +68,6 @@ public class RuleCompiler {
       `OnceTopDown(ExpandAntiPattern(bag,rule,this.extractedSignature, this.generatedSignature)).visit(rule);
       for(Rule expandr:bag) {
         // add the list of rules generated for the expandr rule to the final result
-        System.out.println("RULE to expand:" + pretty.toString(expandr));
         List<Rule> expandedRules = expandAntiPatternInRule(expandr);
         genRules.addAll(expandedRules);
       }
@@ -103,9 +101,7 @@ public class RuleCompiler {
       }
 
       Anti(t) -> {
-        System.out.println("ExpandAntiPattern: " + `t);
         Term antiterm = (Main.options.generic)?Tools.decodeConsNil(`t):`t;
-        System.out.println("ExpandAntiPattern antiterm: " + antiterm);
         %match(antiterm) { 
           Appl(name,args)  -> {
             // add g(Z1,...) ... h(Z1,...)
@@ -118,7 +114,6 @@ public class RuleCompiler {
                   newt = Tools.metaEncodeConsNil(newt,generatedSignature);
                 }
                 Rule newr = (Rule) getEnvironment().getPosition().getReplace(newt).visit(subject);
-                System.out.println("add bag1:" + pretty.toString(newr));
                 bag.add(newr);
               }
             }
@@ -144,7 +139,6 @@ public class RuleCompiler {
               }
               Rule newr = (Rule) getEnvironment().getPosition().getReplace(newt).visit(subject);
 
-              System.out.println("add bag2:" + pretty.toString(newr));
               bag.add(newr);
             }
           }
