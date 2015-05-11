@@ -2,6 +2,22 @@ module sa.Rule
 imports String int
 abstract syntax
 
+// New AST
+
+Production = SortType(Type:GomType,AlternativeList:AlternativeList)
+Alternative = Alternative(Name:String, DomainList:FieldList, Codomain:GomType)
+AlternativeList = ConcAlternative(Alternative*)
+GomType = GomType(Name:String)
+GomTypeList = ConcGomType(GomType*)
+Field = UnamedField(FieldType:GomType)
+FieldList = ConcField(Field*)
+
+StrategyDecl = StrategyDecl(Name:String, ParamList:ParamList, Body:Strat)
+Param = Param(Name:String)
+ParamList = ConcParam(Param*)
+
+
+// Old AST
 Expression = Let(name:String, v:Expression, t:Expression)
            | List(list:RuleList)
            | Set(list:RuleList)
