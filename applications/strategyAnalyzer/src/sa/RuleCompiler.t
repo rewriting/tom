@@ -9,9 +9,7 @@ import aterm.pure.*;
 public class RuleCompiler {
   %include { rule/Rule.tom }
   %include { sl.tom }
-  %include { java/util/types/Collection.tom }
   %include { java/util/types/Map.tom }
-  %include { java/util/types/HashSet.tom }
   %include { java/util/types/List.tom }
   %include { java/util/types/ArrayList.tom }
 
@@ -19,22 +17,14 @@ public class RuleCompiler {
   private Map<String,Integer> extractedSignature;
   // The generated (concrete) signature
   private Map<String,Integer> generatedSignature;
-
-  private Collection<Rule> generatedRules;
-
-
-  //   private  Tools tools = new Tools();
-  // pretty is used just for debugging
-  // TODO: remove it
-  private static  Pretty pretty = new Pretty();
+  // The generated (ordered) TRS
+  private List<Rule> generatedRules;
 
 
   public RuleCompiler(Map<String,Integer> extractedSignature, Map<String,Integer> generatedSignature){
     this.extractedSignature=extractedSignature;
     this.generatedSignature=generatedSignature;
   }
-
-
   
   /**
    * Expand an anti-patterns in each of the LINEAR rules in the list
@@ -95,7 +85,6 @@ public class RuleCompiler {
     visit Term {
       Anti(Anti(t)) -> {
         Rule newr = (Rule) getEnvironment().getPosition().getReplace(`t).visit(subject);
-        //System.out.println("add bag0:" + pretty.toString(newr));
         bag.add(newr);
         return `t;
       }
@@ -132,7 +121,6 @@ public class RuleCompiler {
               Term ti = tarray[i];
               array[i] = `Anti(ti);
               Term newt = `Appl(name,sa.rule.types.termlist.TermList.fromArray(array));
-              //               System.out.println("NEWT:"+`newt);
               array[i] = Tools.encode(z+"_"+i,generatedSignature);
               if(Main.options.generic) {
                 newt = Tools.metaEncodeConsNil(newt,generatedSignature);
@@ -159,7 +147,6 @@ public class RuleCompiler {
     visit Term {
       Anti(Anti(t)) -> {
         Rule newr = (Rule) getEnvironment().getPosition().getReplace(`t).visit(subject);
-        //System.out.println("add list0:" + pretty.toString(newr));
         `orderedTRS.add(`orderedTRS.size(),newr);
         return `t;
       }

@@ -9,9 +9,8 @@ public class Pretty {
   %include { sl.tom }
   %include { java/util/types/Collection.tom }
 
-  private HashMap<String,Term> varsig = new HashMap<String,Term>();
 
-  public String toString(ExpressionList l) {
+  public static String toString(ExpressionList l) {
     StringBuffer sb = new StringBuffer();
     %match(l) {
       ExpressionList(_*,x,_*) -> {
@@ -22,7 +21,7 @@ public class Pretty {
     return sb.toString();
   }
 
-  public String toString(Expression e) {
+  public static String toString(Expression e) {
     StringBuffer sb = new StringBuffer();
     %match(e) {
       Let(x,v,t) -> {
@@ -68,7 +67,7 @@ public class Pretty {
     return sb.toString();
   }
   
-  public String toString(Rule r) {
+  public static String toString(Rule r) {
     %match(r) {
       Rule(lhs,rhs) -> {
         return toString(`lhs) + " -> " + toString(`rhs);
@@ -77,7 +76,7 @@ public class Pretty {
     return "toString(Rule): error";
   }
 
-  public String addBrace(String name) {
+  public static String addBrace(String name) {
     if(Main.options.aprove) {
       return name;
     } else {
@@ -85,7 +84,7 @@ public class Pretty {
     }
   }
 
-  public String toString(TermList t) {
+  public static String toString(TermList t) {
     StringBuffer sb = new StringBuffer();
     %match(t) {
       TermList(_*,x,end*) -> {
@@ -98,7 +97,7 @@ public class Pretty {
     return sb.toString();
   }
 
-  public String toString(Term t) {
+  public static String toString(Term t) {
     %match(t) {
       Var(n) -> { return `n; }
 
@@ -128,7 +127,7 @@ public class Pretty {
     }
   }
 
-  public String generateAprove(List<Rule> bag, Map<String,Integer> extractedSignature, boolean innermost) 
+  public static String generateAprove(List<Rule> bag, Map<String,Integer> extractedSignature, boolean innermost) 
     throws VisitFailure {
     StringBuffer rulesb = new StringBuffer();
     Collection<String> varSet = new HashSet<String>();
@@ -154,7 +153,7 @@ public class Pretty {
     return varsb.toString()+rulesb.toString();
   }  
 
-  public String generateTom(List<Rule> bag, Map<String,Integer> sig, String classname) {
+  public static String generateTom(List<Rule> bag, Map<String,Integer> sig, String classname) {
         StringBuffer sb = new StringBuffer();
     String lowercaseClassname = classname.toLowerCase();
     sb.append(
