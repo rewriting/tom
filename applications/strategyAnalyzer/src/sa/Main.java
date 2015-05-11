@@ -55,7 +55,8 @@ public class Main {
       //       System.out.println(pretty.toString(expl));
       //       System.out.println("------------------------------------------   ");
 
-      Compiler compiler = Compiler.getInstance(expl);
+      Compiler compiler = Compiler.getInstance();
+      compiler.setSignature(expl);
 
       // Transforms the strategy into a rewrite system
       List<Rule> generatedRules = compiler.compile();

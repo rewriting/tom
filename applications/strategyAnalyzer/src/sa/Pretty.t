@@ -190,7 +190,7 @@ public class @classname@ {
       BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
       T input = T.fromString(reader.readLine());
       long start = System.currentTimeMillis();
-      T t = `@Compiler.getTopName()@(input);
+      T t = `@Compiler.getInstance().getTopName()@(input);
       long stop = System.currentTimeMillis();
       System.out.println(t);
       System.out.println("time1 (ms): " + ((stop-start)));

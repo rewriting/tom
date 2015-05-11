@@ -15,7 +15,7 @@ public class Compiler {
   %include { java/util/types/List.tom }
   %include { java/util/types/ArrayList.tom }
 
-  private static Map<ExpressionList,Compiler> instances = new HashMap<ExpressionList,Compiler>();
+  private static Compiler instance = null;
 
   // List of (abstract) signatures for the strategies to translate
   private List<Expression> signatures;
@@ -29,6 +29,8 @@ public class Compiler {
 
   private Collection<Rule> generatedRules;
 
+  private String topName;
+
 
   //   private  Tools tools = new Tools();
   // pretty is used just for debugging
@@ -38,40 +40,41 @@ public class Compiler {
 
 
   /**
-   * 
+   * initialize the TRS and set the (generated) symbol that should be
+   * used to wrap the terms to reduce
    * 
    */
-  private Compiler(ExpressionList expression) throws SymbolAlredyExistsException{
-      // Transforms Let(name,exp,body) into body[name/exp]
-      ExpressionList expandl = this.expand(expression);
-      // Get the list of defined signatures, each of them with a corresponding strategy
-      this.extractSignaturesAndStrategies(expandl);
-      // Merge all signatures in a concrete signature, add built-ins, and test if compatible
-      this.expandSignature();
-      // intialize the TRS
+  private Compiler(){
       this.generatedRules = new ArrayList<Rule>();
+      topName = "";
   }
 
   /**
-   * 
+   * get the instance of the Singleton
    * 
    */
-  public static Compiler getInstance(ExpressionList expression) throws SymbolAlredyExistsException{
-    Compiler compiler;
-    if((compiler=instances.get(expression)) == null){
-      compiler = new Compiler(expression);
-      instances.put(expression,compiler);
+  public static Compiler getInstance(){
+    if(instance == null){
+      instance = new Compiler();
     }
-    return compiler;
+    return instance;
   }
 
   /**
    * getTopName
    * @return the name of the strategy which starts the computation
    */
-  private String topName = "";
   public String getTopName() {
     return topName;
+  }
+
+  public void setSignature(ExpressionList expression) throws SymbolAlredyExistsException{
+      // Transforms Let(name,exp,body) into body[name/exp]
+      ExpressionList expandl = this.expand(expression);
+      // Get the list of defined signatures, each of them with a corresponding strategy
+      this.extractSignaturesAndStrategies(expandl);
+      // Merge all signatures in a concrete signature, add built-ins, and test if compatible
+      this.expandSignature();
   }
 
 
