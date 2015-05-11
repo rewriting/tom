@@ -59,22 +59,23 @@ public class Main {
 
       // Transforms the strategy into a rewrite system
       List<Rule> generatedRules = compiler.compile();
-      // System.out.println(generatedRules);
+      Map<String,Integer> extractedSignature = compiler.getExtractedSignature();
+      Map<String,Integer> generatedSignature = compiler.getGeneratedSignature();
 
-
+      // transform the LINEAR TRS: compile Aps and remove ATs
+      RuleCompiler ruleCompiler = new RuleCompiler(extractedSignature,generatedSignature);
       if(options.withAP == false) {
-        RuleCompiler ruleCompiler = new RuleCompiler(compiler.getExtractedSignature(),compiler.getGeneratedSignature());
-        generatedRules=ruleCompiler.expandAntiPatterns(generatedRules);
-      }
-      
+        generatedRules = ruleCompiler.expandAntiPatterns(generatedRules);
+      }      
       // if we don't expand the anti-patterns then we should keep the at-annotations as well
       // otherwise output is strange
       if(options.withAT == false && options.withAP == false) {
-        generatedRules = compiler.expandAt(generatedRules);
+        generatedRules = ruleCompiler.expandAt(generatedRules);
       }
-      
-      List<Rule> orderedRules = new ArrayList<Rule>(generatedRules);
-//       Collections.sort(orderedRules, new MyRuleComparator());
+      // refresh the signatures (presently no modifications)
+      extractedSignature = ruleCompiler.getExtractedSignature();
+      generatedSignature = ruleCompiler.getGeneratedSignature();
+ 
 
       PrintStream outputfile = System.out;
       if(options.out != null) {
@@ -86,11 +87,11 @@ public class Main {
       }
 
       if(options.classname != null) {
-        tomoutputfile.println( pretty.generateTom(orderedRules,compiler.getGeneratedSignature(),options.classname) );
+        tomoutputfile.println( pretty.generateTom(generatedRules,generatedSignature,options.classname) );
       } 
       if(options.aprove) {
         boolean innermost = false;
-        outputfile.println( pretty.generateAprove(orderedRules,compiler.getExtractedSignature(),innermost) );
+        outputfile.println( pretty.generateAprove(generatedRules,extractedSignature,innermost) );
       }
     } catch (Exception e) {
       System.err.println("exception: " + e);
@@ -99,10 +100,4 @@ public class Main {
     }
   }
 
-
-  private static  class MyRuleComparator implements Comparator<Rule> {
-    public int compare(Rule r1, Rule r2) {
-      return r2.getlhs().toString().compareTo(r1.getlhs().toString());
-    }
-  }
 }

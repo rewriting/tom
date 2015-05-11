@@ -3,7 +3,8 @@
 // r1
 
 let S=signature {a:0, b:0, c:0, g:2, f:1} in
-// let r1 = { g(x,x) -> a() } in 
-let r2 = { f(x) -> b() } in 
+let r1 = { g(x,x) -> a() } in 
+// let r2 = { f(x) -> b() } in 
 // r1 <+ r2
-r2
+r1
+// r2

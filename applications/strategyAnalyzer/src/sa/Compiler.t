@@ -806,63 +806,8 @@ public class Compiler {
     }
   }
  
-  // search all At and store their values
-  %strategy CollectAt(map:Map) extends Identity() {
-    visit Term {
-      At(Var(name),t2)-> {
-        map.put(`name,`t2);
-      }
-    }
-  }
 
-  // replace x by t, and thus x@t by t@t
-  %strategy ReplaceVariable(name:String, term:Term) extends Identity() {
-    visit Term {
-      Var(n) -> {
-        if(`n==name) {
-          return `term;
-        }
-      }
-    }
-  }
-  
-    // replace t@t by t
-  %strategy EliminateAt() extends Identity() {
-    visit Term {
-      At(t,t) -> {
-        return `t;
-      }
-    }
-  }
 
-  /**
-    * transforms a set of rule that contains x@t into a set of rules without @ 
-    * @param bag the set of rules to expand
-    * @return a new set that contains the expanded rules
-    */
-  public  List<Rule> expandAt(List<Rule> bag) throws VisitFailure {
-    List<Rule> res = new ArrayList<Rule>();
-    for(Rule rule:bag) {
-      //System.out.println("expand at rule: " + rule);
-      Map<String,Term> map = new HashMap<String,Term>();
-      `TopDown(CollectAt(map)).visitLight(rule);
-      if(map.keySet().isEmpty()) {
-        res.add(rule);
-      }
-      //System.out.println("at-map: " + map);
-      Rule newRule = rule;
-      for(String name:map.keySet()) {
-        Term t = map.get(name);
-        //System.out.println("replace variable: " + name);
-        newRule = `TopDown(ReplaceVariable(name,t)).visitLight(newRule);
-        //System.out.println("new rule (instantiate): " + newRule);
-        newRule = `TopDown(EliminateAt()).visitLight(newRule);
-        //System.out.println("new rule (elimAt): " + newRule);
-      }
-      res.add(newRule);
-    }
-    return res;
-  }
 
 
   /*
@@ -1011,10 +956,10 @@ public class Compiler {
 
 
   public   Map<String,Integer> getExtractedSignature(){
-    return this.extractedSignature;
+    return new HashMap(this.extractedSignature);
   }
   public Map<String,Integer> getGeneratedSignature(){
-    return this.generatedSignature;
+    return new HashMap(this.generatedSignature);
   }
 
 

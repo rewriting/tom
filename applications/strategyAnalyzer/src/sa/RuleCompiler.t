@@ -37,8 +37,8 @@ public class RuleCompiler {
 
   
   /**
-   * Expand an anti-patterns in each of the rules in the list
-   * - the rules replacing the orginal should be at the same position in the list
+   * Expand an anti-patterns in each of the LINEAR rules in the list
+   * - the rules replacing the orginal are at the same position in the list
    * @param generatedRules initial set of rules
    * @param rule the rule to expand
    * @return the modified list of generatedRules (with no anti-paterns left)
@@ -84,7 +84,7 @@ public class RuleCompiler {
     }
   }
 
-  /*
+  /**
    * Perform one-step expansion
    *
    * @param bag the resulted set of rules
@@ -178,12 +178,74 @@ public class RuleCompiler {
   }
 
 
-  public   Map<String,Integer> getExtractedSignature(){
-    return this.extractedSignature;
-  }
-  public Map<String,Integer> getGeneratedSignature(){
-    return this.generatedSignature;
+
+  /**
+    * transforms a set of rules that contain x@t into a set of rules without @ 
+    * @param bag the set of rules to expand
+    * @return a new set that contains the expanded rules
+    */
+  public  List<Rule> expandAt(List<Rule> bag) throws VisitFailure {
+    List<Rule> res = new ArrayList<Rule>();
+    for(Rule rule:bag) {
+      Map<String,Term> map = new HashMap<String,Term>();
+      `TopDown(CollectAt(map)).visitLight(rule);
+      if(map.keySet().isEmpty()) {
+        // if no AT in the rule just add it to the result
+        res.add(rule);
+      }else{
+        // if some AT in the rule then build a new one
+        Rule newRule = rule;
+        for(String name:map.keySet()) {
+          Term t = map.get(name);
+          // replace the ATs with the corresponding expressions
+          newRule = `TopDown(ReplaceVariable(name,t)).visitLight(newRule);
+          // and remove the ATs
+          newRule = `TopDown(EliminateAt()).visitLight(newRule);
+        }
+        res.add(newRule);
+      }
+    }
+    return res;
   }
 
+
+  // search all At and store their values
+  %strategy CollectAt(map:Map) extends Identity() {
+    visit Term {
+      At(Var(name),t2)-> {
+        map.put(`name,`t2);
+      }
+    }
+  }
+
+  // replace x by t, and thus x@t by t@t
+  %strategy ReplaceVariable(name:String, term:Term) extends Identity() {
+    visit Term {
+      Var(n) -> {
+        if(`n==name) {
+          return `term;
+        }
+      }
+    }
+  }
+  
+  // replace t@t by t
+  %strategy EliminateAt() extends Identity() {
+    visit Term {
+      At(t,t) -> {
+        return `t;
+      }
+    }
+  }
+
+
+
+
+  public   Map<String,Integer> getExtractedSignature(){
+    return new HashMap(this.extractedSignature);
+  }
+  public Map<String,Integer> getGeneratedSignature(){
+    return new HashMap(this.generatedSignature);
+  }
 
 }
