@@ -88,11 +88,11 @@ public class Main {
       }
 
       if(options.classname != null) {
-        tomoutputfile.println( pretty.generateTom(generatedRules,generatedSignature,options.classname) );
+        tomoutputfile.println( Pretty.generateTom(generatedRules,generatedSignature,options.classname) );
       } 
       if(options.aprove) {
         boolean innermost = false;
-        outputfile.println( pretty.generateAprove(generatedRules,extractedSignature,innermost) );
+        outputfile.println( Pretty.generateAprove(generatedRules,extractedSignature,innermost) );
       }
     } catch (Exception e) {
       System.err.println("exception: " + e);

@@ -9,11 +9,9 @@ import aterm.pure.*;
 public class Compiler {
   %include { rule/Rule.tom }
   %include { sl.tom }
-  %include { java/util/types/Collection.tom }
   %include { java/util/types/Map.tom }
-  %include { java/util/types/HashSet.tom }
   %include { java/util/types/List.tom }
-  %include { java/util/types/ArrayList.tom }
+
 
   private static Compiler instance = null;
 
@@ -27,16 +25,11 @@ public class Compiler {
   // The generated (concrete) signature
   private Map<String,Integer> generatedSignature;
 
+  // The generated rules
   private Collection<Rule> generatedRules;
 
+  // Name of the symbol to trigger the application of the generated TRS
   private String topName;
-
-
-  //   private  Tools tools = new Tools();
-  // pretty is used just for debugging
-  // TODO: remove it
-  private  Pretty pretty = new Pretty();
-
 
 
   /**
@@ -136,17 +129,17 @@ public class Compiler {
       }
   }
 
-  /*
+  /**
    * Compile a (list of) strategy into a rewrite system
    */
   public List<Rule>  compile() {
     this.generatedRules = new ArrayList<Rule>();
 
     // the (name of the last) strategy is used 
-//     for(Strat strategy:this.strategies){
     for(String name:this.strategies.keySet()){
         if(Main.options.generic) {
-          topName = this.compileGenericStrat(generatedRules,extractedSignature,generatedSignature,strategies.get(name));
+          // commented out at the end of the file
+          //           topName = this.compileGenericStrat(generatedRules,extractedSignature,generatedSignature,strategies.get(name));
         } else {
           topName = this.compileStrat(name,this.strategies.get(name));
         }
@@ -206,7 +199,6 @@ public class Compiler {
 
             TermList result = this.linearize(`lhs,this.generatedSignature);
             Term constraint = `Appl("True",TermList());
-            //             System.out.println("linear lhs = " + pretty.toString(result));
 
             %match(result) {
               // if already linear rhs
@@ -223,7 +215,6 @@ public class Compiler {
                 this.generatedRules.add(`Rule(Appl(cr,TermList(At(varX,linearlhs), False)),botX));
               }
             }
-            //System.out.println(cr);
           }
         }
         return rule;
@@ -484,295 +475,6 @@ public class Compiler {
     return strat.toString();
   }
 
-  /**
-   * compile a strategy in a generic way (using a meta-representation)
-   * return the name of the top symbol (phi) introduced
-   * @param bag set of rule that is extended by compilation
-   * @param extractedSignature associates arity to a name, for all constructor of the initial strategy
-   * @param generatedSignature associates arity to a name, for all generated defined symbols
-   * @param strat the strategy to compile
-   * @return the name of the last compiled strategy
-   */
-  private  boolean generated_aux_functions = false;
-  private  String compileGenericStrat(Collection<Rule> bag, Map<String,Integer> extractedSignature, Map<String,Integer> generatedSignature, Strat strat) {
-    String X = Tools.getName("X");
-    String Y = Tools.getName("Y");
-    String Z = Tools.getName("Z");
-    String XX = Tools.getName("XX");
-    String YY = Tools.getName("YY");
-    String Z0 = Tools.getName("Z0");
-    String Z1 = Tools.getName("Z1");
-    String Z2 = Tools.getName("Z2");
-    String Z3 = Tools.getName("Z3");
-    Term varX = Tools.encode(X,generatedSignature);
-    Term botX = Tools.encode("Bottom("+X+")",generatedSignature);
-    Term True = Tools.encode("True",generatedSignature);
-    Term False = Tools.encode("False",generatedSignature);
-
-    %match(strat) {
-      StratExp(List(rulelist)) -> {
-        /*
-         * lhs -> rhs becomes
-         * in the linear case:
-         *   rule(lhs) -> rhs
-         *   rule(X@!lhs) -> Bottom(X)
-         * in the non-linear case:
-         *   rule(X@linear-lhs) -> rule'(X, true ^ constraint on non linear variables)
-         *   rule(X@!linear-lhs) -> Bottom(X)
-         *   rule'(linear-lhs, true) -> rhs
-         *   rule'(X@linear-lhs, false) -> Bottom(x)
-         */
-        String rule = Tools.getName("rule");
-        generatedSignature.put(rule,1);
-        String cr = Tools.getName("crule");
-        generatedSignature.put(cr,2);
-        %match(rulelist) {
-          RuleList(_*,Rule(lhs,rhs),_*) -> {
-            Term mlhs = Tools.metaEncodeConsNil(`lhs,generatedSignature);
-            Term mrhs = Tools.metaEncodeConsNil(`rhs,generatedSignature);
-
-            // use AST-syntax because lhs and rhs are already encoded
-            //System.out.println("lhs = " + `lhs);
-            //System.out.println("encode lhs = " + mlhs);
-            //System.out.println("rhs = " + `rhs);
-            //System.out.println("encode rhs = " + mrhs);
-            //System.out.println("decode(encode rhs) = " + Tools.decodeConsNil(Tools.metaEncodeConsNil(`rhs,generatedSignature)));
-
-            bag.add(`Rule(Appl(rule,TermList(botX)),botX));
-            //bag.add(`Rule(Appl(rule,TermList(mlhs)),mrhs));
-
-            TermList result = linearize(`lhs,generatedSignature);
-            %match(result) {
-              TermList(linearlhs, cond) -> {
-                Term mlinearlhs = Tools.metaEncodeConsNil(`linearlhs,generatedSignature);
-
-                bag.add(`Rule(Appl(rule,TermList(At(varX,mlinearlhs))),
-                              Appl(cr, TermList(varX, cond))));
-                bag.add(`Rule(Appl(rule,TermList(At(varX,Anti(mlinearlhs)))),botX));
-
-                bag.add(`Rule(Appl(cr,TermList(mlinearlhs, True)), rhs));
-                bag.add(`Rule(Appl(cr,TermList(At(varX,mlinearlhs), False)),botX));
-              }
-            }
-
-            // TODO: non-linear anti-pattern
-            bag.add(`Rule(Appl(rule,TermList(At(varX,Anti(Tools.metaEncodeConsNil(lhs,generatedSignature))))),botX));
-          }
-        }
-
-        for(String name:extractedSignature.keySet()) {
-          // add symb_a(), symb_b(), symb_f(), symb_g() in the signature
-          generatedSignature.put("symb_"+name,0);
-        }
-        return rule;
-      }
-
-      /*
-       * TODO: fix non confluence here
-       */
-      StratMu(name,s) -> {
-        try {
-          String mu = Tools.getName("mu");
-          generatedSignature.put(mu,1);
-          Strat newStrat = `TopDown(ReplaceMuVar(name,mu)).visitLight(`s);
-          String phi_s = compileGenericStrat(bag,extractedSignature,generatedSignature,newStrat);
-          bag.add(Tools.encodeRule(%[rule(@mu@(Appl(@Y@,@Z@)), @phi_s@(Appl(@Y@,@Z@)))]%,generatedSignature));
-          bag.add(Tools.encodeRule(%[rule(@mu@(Bottom(@X@)), Bottom(@X@))]%,generatedSignature));
-          return phi_s;
-        } catch(VisitFailure e) {
-          System.out.println("failure in StratMu on: " + `s);
-        }
-      }
-
-      // mu fix point: transform the startame into a function call
-      StratName(name) -> {
-        return `name;
-      }
-
-      StratIdentity() -> {
-        String id = Tools.getName("id");
-        generatedSignature.put(id,1);
-        if( !Main.options.approx ) {
-          bag.add(Tools.encodeRule(%[rule(@id@(Appl(@X@,@Y@)), Appl(@X@,@Y@))]%,generatedSignature));
-          bag.add(Tools.encodeRule(%[rule(@id@(Bottom(@X@)), Bottom(@X@))]%,generatedSignature));
-        } else {
-          bag.add(Tools.encodeRule(%[rule(@id@(@X@), @X@)]%,generatedSignature));
-          bag.add(Tools.encodeRule(%[rule(Bottom(Bottom(@X@)), Bottom(@X@))]%,generatedSignature));
-        }
-        return id;
-      }
-
-      StratFail() -> {
-        String fail = Tools.getName("fail");
-        generatedSignature.put(fail,1);
-        if( !Main.options.approx ) {
-          bag.add(Tools.encodeRule(%[rule(@fail@(Appl(@X@,@Y@)), Bottom(Appl(@X@,@Y@)))]%,generatedSignature));
-          bag.add(Tools.encodeRule(%[rule(@fail@(Bottom(@X@)), Bottom(@X@))]%,generatedSignature));
-        } else { 
-          bag.add(Tools.encodeRule(%[rule(@fail@(X), Bottom(X))]%,generatedSignature));
-          bag.add(Tools.encodeRule(%[rule(Bottom(Bottom(@X@)), Bottom(@X@))]%,generatedSignature));
-        }
-        return fail;
-      }
-
-      StratSequence(s1,s2) -> {
-        String n1 = compileGenericStrat(bag,extractedSignature,generatedSignature,`s1);
-        String n2 = compileGenericStrat(bag,extractedSignature,generatedSignature,`s2);
-        String seq = Tools.getName("seq");
-        String seq2 = Tools.getName("seq2");
-        generatedSignature.put(seq,1);
-        generatedSignature.put(seq2,2);
-        if( !Main.options.approx ) {
-          bag.addAll(Tools.encodeRuleList(%[[
-                rule(@seq@(Appl(@X@,@Y@)), @seq2@(@n2@(@n1@(Appl(@X@,@Y@))),Appl(@X@,@Y@))),
-                rule(@seq@(Bottom(@X@)), Bottom(@X@)),
-                rule(@seq2@(Appl(@X@,@Y@),@Z@), Appl(@X@,@Y@)),
-                rule(@seq2@(Bottom(@Y@),@X@), Bottom(@X@))
-                ]]%,generatedSignature).getCollectionRuleList());
-        } else { 
-          bag.add(Tools.encodeRule(%[rule(@seq@(@X@), @n2@(@n1@(@X@)))]%,generatedSignature));
-        }
-        return seq;
-      }
-
-      StratChoice(s1,s2) -> {
-        String n1 = compileGenericStrat(bag,extractedSignature,generatedSignature,`s1);
-        String n2 = compileGenericStrat(bag,extractedSignature,generatedSignature,`s2);
-        String choice = Tools.getName("choice");
-        String choice2 = Tools.getName("choice");
-        generatedSignature.put(choice,1);
-        generatedSignature.put(choice2,1);
-        if( !Main.options.approx ) {
-          bag.addAll(Tools.encodeRuleList(%[[
-                rule(@choice@(Appl(@X@,@Y@)), @choice2@(@n1@(Appl(@X@,@Y@)))),
-                rule(@choice@(Bottom(@X@)), Bottom(@X@)),
-                rule(@choice2@(Appl(@X@,@Y@)), Appl(@X@,@Y@)),
-                rule(@choice2@(Bottom(@X@)), @n2@(@X@))
-                ]]%,generatedSignature).getCollectionRuleList());
-        } else {
-          bag.addAll(Tools.encodeRuleList(%[[
-                rule(@choice@(@X@), @choice2@(@n1@(@X@))),
-                rule(@choice2@(Appl(@X@,@Y@)), Appl(@X@,@Y@)),
-                rule(@choice2@(Bottom(@X@)), @n2@(@X@))
-                ]]%,generatedSignature).getCollectionRuleList());
-        }
-        return choice;
-      }
-
-      StratAll(s) -> {
-        String phi_s = compileGenericStrat(bag,extractedSignature,generatedSignature,`s);
-        String all = Tools.getName("all");
-        generatedSignature.put(all,1);
-        String all_1 = all+"_1";
-        generatedSignature.put(all_1,1);
-        String all_2 = all+"_2";
-        generatedSignature.put(all_2,1);
-        String all_3 = all+"_3";
-        generatedSignature.put(all_3,4);
-        
-	String append = "append";
-        generatedSignature.put(append,2); 
-	String reverse = "reverse";
-        generatedSignature.put(reverse,1); 
-	String rconcat = "rconcat";
-        generatedSignature.put(rconcat,2); 
-	
-        bag.addAll(Tools.encodeRuleList(%[[
-              // all
-              rule(@all@(Appl(@Z0@,@Z1@)), @all_1@(Appl(@Z0@,@all_2@(@Z1@)))),
-              // all_1
-              rule(@all_1@(Appl(@Z0@,BottomList(@Z@))), Bottom(Appl(@Z0@,@Z@))),
-              rule(@all_1@(Appl(@Z0@,Cons(@Z1@,@Z2@))), Appl(@Z0@,Cons(@Z1@,@Z2@))),
-              rule(@all_1@(Appl(@Z0@,Nil)) , Appl(@Z0@,Nil)),
-
-              rule(@all_2@(Nil()) , Nil()),
-              rule(@all_2@(Cons(@Z1@,@Z2@)) , @all_3@(@phi_s@(@Z1@),@Z2@,Cons(@Z1@,Nil),Nil)),
-              /*
-               * all_3(Bottom(X),todo,rargs,rs_args) -> BottomList(rconcat(rargs,todo))
-               * all_3(Appl(X,Y),Nil,rargs,rs_args) -> reverse(Cons(Appl(X,Y),rs_args))
-               * all_3(Appl(X,Y), Cons(XX,YY), rargs, rs_args) -> 
-               * all_3(rule47(XX), YY, Cons(XX,rargs), Cons(Appl(X,Y),rs_args))
-               */ 
-              rule(@all_3@(Bottom(@X@),@Z1@,@Z2@,@Z3@) , BottomList(@rconcat@(@Z2@,@Z1@))),
-              rule(@all_3@(Appl(@X@,@Y@),Nil,@Z2@,@Z3@) , @reverse@(Cons(Appl(@X@,@Y@),@Z3@))),
-              rule(@all_3@(Appl(@X@,@Y@),Cons(@XX@,@YY@),@Z2@,@Z3@) , @all_3@(@phi_s@(@XX@),@YY@,Cons(@XX@,@Z2@), Cons(Appl(@X@,@Y@),@Z3@)))
-              ]]%,generatedSignature).getCollectionRuleList());
-
-	if(!generated_aux_functions) { 
-	  generated_aux_functions = true;
-    bag.addAll(Tools.encodeRuleList(%[[
-          rule(@append@(Nil,@Z@), Cons(@Z@,Nil)),
-          rule(@append@(Cons(@X@,@Y@),@Z@), Cons(@X@,@append@(@Y@,@Z@))),
-
-          rule(@reverse@(Nil), Nil),
-          rule(@reverse@(Cons(@X@,@Y@)), @append@(@reverse@(@Y@),@X@)),
-
-          rule(@rconcat@(Nil,@Z@), @Z@),
-          rule(@rconcat@(Cons(@X@,@Y@),@Z@), @rconcat@(@Y@,Cons(@X@,@Z@)))
-          ]]%,generatedSignature).getCollectionRuleList());
-	}
-    
-        return all;
-      }
-
-      StratOne(s) -> {
-        String phi_s = compileGenericStrat(bag,extractedSignature,generatedSignature,`s);
-        String one = Tools.getName("one");
-        generatedSignature.put(one,1);
-        String one_1 = one+"_1";
-        generatedSignature.put(one_1,1);
-        String one_2 = one+"_2";
-        generatedSignature.put(one_2,1);
-        String one_3 = one+"_3";
-        generatedSignature.put(one_3,3);
-
-	String append = "append";
-        generatedSignature.put(append,2); 
-	String reverse = "reverse";
-        generatedSignature.put(reverse,1); 
-	String rconcat = "rconcat";
-        generatedSignature.put(rconcat,2); 
-
-        bag.addAll(Tools.encodeRuleList(%[[
-              // one
-              rule(@one@(Appl(@Z0@,@Z1@)), @one_1@(Appl(@Z0@,@one_2@(@Z1@)))),
-              // one_1
-              rule(@one_1@(Appl(@Z0@,BottomList(@Z@))), Bottom(Appl(@Z0@,@Z@))),
-              rule(@one_1@(Appl(@Z0@,Cons(@X@,@Y@))), Appl(@Z0@,Cons(@X@,@Y@))),
-              // one_2
-              rule(@one_2@(Nil()), BottomList(Nil())),
-              rule(@one_2@(Cons(@X@,@Y@)), @one_3@(@phi_s@(@X@),@Y@,Cons(@X@,Nil))),
-              // one_3
-              /*
-               * one_3(Bottom(X),Nil,rargs) -> BottomList(reverse(rargs))
-               * one_3(Bottom(X),Cons(head,tail),rargs) -> ONE(head, tail, Cons(head,rargs))
-               * one_3(Appl(X,Y),todo,Cons(last,rargs)) -> rconcat(rargs,Cons(Appl(X,Y),todo))
-               */
-              rule(@one_3@(Bottom(@Z@),Nil, @Z2@), BottomList(@reverse@(@Z2@))),
-              rule(@one_3@(Bottom(@Z@),Cons(@XX@,@YY@),@Z2@), @one_3@(@XX@, @YY@, Cons(@XX@,@Z2@))),
-              rule(@one_3@(Appl(@X@,@Y@),@Z1@, Cons(@Z2@,@Z3@)), @rconcat@(@Z3@, Cons(Appl(@X@,@Y@),@Z1@)))
-              ]]%,generatedSignature).getCollectionRuleList());
-
-	if(!generated_aux_functions) { 
-	  generated_aux_functions = true;
-    bag.addAll(Tools.encodeRuleList(%[[
-          rule(@append@(Nil,@Z@), Cons(@Z@,Nil)),
-          rule(@append@(Cons(@X@,@Y@),@Z@), Cons(@X@,@append@(@Y@,@Z@))),
-
-          rule(@reverse@(Nil), Nil),
-          rule(@reverse@(Cons(@X@,@Y@)), @append@(@reverse@(@Y@),@X@)),
-
-          rule(@rconcat@(Nil,@Z@), @Z@),
-          rule(@rconcat@(Cons(@X@,@Y@),@Z@), @rconcat@(@Y@,Cons(@X@,@Z@)))
-          ]]%,generatedSignature).getCollectionRuleList());
-	}
-        return one;
-      }
-
-    }
-    return strat.toString();
-  }
-
   %strategy ReplaceMuVar(name:String, appl:String) extends Identity() {
     visit Strat {
       StratName(n) && n==name -> {
@@ -811,23 +513,18 @@ public class Compiler {
  
 
 
-
-
   /*
    * Transform lhs into linear-lhs + true ^ constraint on non linear variables
    */
   private TermList linearize(Term lhs, Map<String,Integer> signature) {
-    //System.out.println("lhs = " + lhs);
     Map<String,Integer> map = collectMultiplicity(lhs);
     Map<String,String> mapToOldName = new HashMap<String,String>();
 
     for(String name:map.keySet()) {
-      //System.out.println(name + " --> " + map.get(name));
       if(map.get(name) > 1) {
         try {
           HashMap copy = new HashMap(map);
           lhs = `TopDown(ReplaceWithFreshVar(name,copy,mapToOldName,signature)).visitLight(lhs);
-          //System.out.println("linear lhs = " + lhs);
         } catch(VisitFailure e) {
           throw new RuntimeException("Should not be there");
         }
@@ -869,7 +566,7 @@ public class Compiler {
    */
   public  Map<String,Integer> collectMultiplicity(tom.library.sl.Visitable subject) {
     // collect variables
-    Collection<String> variableList = new LinkedList<String>();
+    List<String> variableList = new LinkedList<String>();
     try {
       `TopDown(CollectVars(variableList)).visitLight(subject);
     } catch(VisitFailure e) {
@@ -890,7 +587,7 @@ public class Compiler {
   }
 
   // search all Var and store their values
-  %strategy CollectVars(bag:Collection) extends Identity() {
+  %strategy CollectVars(bag:List) extends Identity() {
     visit Term {
       Var(name)-> {
         bag.add(`name);
@@ -926,7 +623,6 @@ public class Compiler {
           for(int i=1 ; i<=arf ; i++) {
             scond = %[and(eq(@z1@_@i@,@z2@_@i@),@scond@)]%;
           }
-          //System.out.println(t1 + " = " + t2 + " --> " + scond);
           bag.add(Tools.encodeRule(%[rule(eq(@t1@,@t2@),@scond@)]%,generatedSignature));
         }
       }
@@ -966,4 +662,289 @@ public class Compiler {
   }
 
 
+  
+
+//   /**
+//    * compile a strategy in a generic way (using a meta-representation)
+//    * return the name of the top symbol (phi) introduced
+//    * @param bag set of rule that is extended by compilation
+//    * @param extractedSignature associates arity to a name, for all constructor of the initial strategy
+//    * @param generatedSignature associates arity to a name, for all generated defined symbols
+//    * @param strat the strategy to compile
+//    * @return the name of the last compiled strategy
+//    */
+  
+//   private  boolean generated_aux_functions = false;
+//   private  String compileGenericStrat(Collection<Rule> bag, Map<String,Integer> extractedSignature, Map<String,Integer> generatedSignature, Strat strat) {
+//     String X = Tools.getName("X");
+//     String Y = Tools.getName("Y");
+//     String Z = Tools.getName("Z");
+//     String XX = Tools.getName("XX");
+//     String YY = Tools.getName("YY");
+//     String Z0 = Tools.getName("Z0");
+//     String Z1 = Tools.getName("Z1");
+//     String Z2 = Tools.getName("Z2");
+//     String Z3 = Tools.getName("Z3");
+//     Term varX = Tools.encode(X,generatedSignature);
+//     Term botX = Tools.encode("Bottom("+X+")",generatedSignature);
+//     Term True = Tools.encode("True",generatedSignature);
+//     Term False = Tools.encode("False",generatedSignature);
+
+//     %match(strat) {
+//       StratExp(List(rulelist)) -> {
+//         /*
+//          * lhs -> rhs becomes
+//          * in the linear case:
+//          *   rule(lhs) -> rhs
+//          *   rule(X@!lhs) -> Bottom(X)
+//          * in the non-linear case:
+//          *   rule(X@linear-lhs) -> rule'(X, true ^ constraint on non linear variables)
+//          *   rule(X@!linear-lhs) -> Bottom(X)
+//          *   rule'(linear-lhs, true) -> rhs
+//          *   rule'(X@linear-lhs, false) -> Bottom(x)
+//          */
+//         String rule = Tools.getName("rule");
+//         generatedSignature.put(rule,1);
+//         String cr = Tools.getName("crule");
+//         generatedSignature.put(cr,2);
+//         %match(rulelist) {
+//           RuleList(_*,Rule(lhs,rhs),_*) -> {
+
+//             // use AST-syntax because lhs and rhs are already encoded
+//             //  propagate failure
+//             bag.add(`Rule(Appl(rule,TermList(botX)),botX));
+
+            
+//             TermList result = linearize(`lhs,generatedSignature);
+//             %match(result) {
+//               TermList(linearlhs, cond) -> {
+//                 Term mlinearlhs = Tools.metaEncodeConsNil(`linearlhs,generatedSignature);
+
+//                 bag.add(`Rule(Appl(rule,TermList(At(varX,mlinearlhs))),
+//                               Appl(cr, TermList(varX, cond))));
+//                 bag.add(`Rule(Appl(rule,TermList(At(varX,Anti(mlinearlhs)))),botX));
+
+//                 bag.add(`Rule(Appl(cr,TermList(mlinearlhs, True)), rhs));
+//                 bag.add(`Rule(Appl(cr,TermList(At(varX,mlinearlhs), False)),botX));
+//               }
+//             }
+
+//             // TODO: non-linear anti-pattern
+//             bag.add(`Rule(Appl(rule,TermList(At(varX,Anti(Tools.metaEncodeConsNil(lhs,generatedSignature))))),botX));
+//           }
+//         }
+
+//         for(String name:extractedSignature.keySet()) {
+//           // add symb_a(), symb_b(), symb_f(), symb_g() in the signature
+//           generatedSignature.put("symb_"+name,0);
+//         }
+//         return rule;
+//       }
+
+//       /*
+//        * TODO: fix non confluence here
+//        */
+//       StratMu(name,s) -> {
+//         try {
+//           String mu = Tools.getName("mu");
+//           generatedSignature.put(mu,1);
+//           Strat newStrat = `TopDown(ReplaceMuVar(name,mu)).visitLight(`s);
+//           String phi_s = compileGenericStrat(bag,extractedSignature,generatedSignature,newStrat);
+//           bag.add(Tools.encodeRule(%[rule(@mu@(Appl(@Y@,@Z@)), @phi_s@(Appl(@Y@,@Z@)))]%,generatedSignature));
+//           bag.add(Tools.encodeRule(%[rule(@mu@(Bottom(@X@)), Bottom(@X@))]%,generatedSignature));
+//           return phi_s;
+//         } catch(VisitFailure e) {
+//           System.out.println("failure in StratMu on: " + `s);
+//         }
+//       }
+
+//       // mu fix point: transform the startame into a function call
+//       StratName(name) -> {
+//         return `name;
+//       }
+
+//       StratIdentity() -> {
+//         String id = Tools.getName("id");
+//         generatedSignature.put(id,1);
+//         if( !Main.options.approx ) {
+//           bag.add(Tools.encodeRule(%[rule(@id@(Appl(@X@,@Y@)), Appl(@X@,@Y@))]%,generatedSignature));
+//           bag.add(Tools.encodeRule(%[rule(@id@(Bottom(@X@)), Bottom(@X@))]%,generatedSignature));
+//         } else {
+//           bag.add(Tools.encodeRule(%[rule(@id@(@X@), @X@)]%,generatedSignature));
+//           bag.add(Tools.encodeRule(%[rule(Bottom(Bottom(@X@)), Bottom(@X@))]%,generatedSignature));
+//         }
+//         return id;
+//       }
+
+//       StratFail() -> {
+//         String fail = Tools.getName("fail");
+//         generatedSignature.put(fail,1);
+//         if( !Main.options.approx ) {
+//           bag.add(Tools.encodeRule(%[rule(@fail@(Appl(@X@,@Y@)), Bottom(Appl(@X@,@Y@)))]%,generatedSignature));
+//           bag.add(Tools.encodeRule(%[rule(@fail@(Bottom(@X@)), Bottom(@X@))]%,generatedSignature));
+//         } else { 
+//           bag.add(Tools.encodeRule(%[rule(@fail@(X), Bottom(X))]%,generatedSignature));
+//           bag.add(Tools.encodeRule(%[rule(Bottom(Bottom(@X@)), Bottom(@X@))]%,generatedSignature));
+//         }
+//         return fail;
+//       }
+
+//       StratSequence(s1,s2) -> {
+//         String n1 = compileGenericStrat(bag,extractedSignature,generatedSignature,`s1);
+//         String n2 = compileGenericStrat(bag,extractedSignature,generatedSignature,`s2);
+//         String seq = Tools.getName("seq");
+//         String seq2 = Tools.getName("seq2");
+//         generatedSignature.put(seq,1);
+//         generatedSignature.put(seq2,2);
+//         if( !Main.options.approx ) {
+//           bag.addAll(Tools.encodeRuleList(%[[
+//                 rule(@seq@(Appl(@X@,@Y@)), @seq2@(@n2@(@n1@(Appl(@X@,@Y@))),Appl(@X@,@Y@))),
+//                 rule(@seq@(Bottom(@X@)), Bottom(@X@)),
+//                 rule(@seq2@(Appl(@X@,@Y@),@Z@), Appl(@X@,@Y@)),
+//                 rule(@seq2@(Bottom(@Y@),@X@), Bottom(@X@))
+//                 ]]%,generatedSignature).getCollectionRuleList());
+//         } else { 
+//           bag.add(Tools.encodeRule(%[rule(@seq@(@X@), @n2@(@n1@(@X@)))]%,generatedSignature));
+//         }
+//         return seq;
+//       }
+
+//       StratChoice(s1,s2) -> {
+//         String n1 = compileGenericStrat(bag,extractedSignature,generatedSignature,`s1);
+//         String n2 = compileGenericStrat(bag,extractedSignature,generatedSignature,`s2);
+//         String choice = Tools.getName("choice");
+//         String choice2 = Tools.getName("choice");
+//         generatedSignature.put(choice,1);
+//         generatedSignature.put(choice2,1);
+//         if( !Main.options.approx ) {
+//           bag.addAll(Tools.encodeRuleList(%[[
+//                 rule(@choice@(Appl(@X@,@Y@)), @choice2@(@n1@(Appl(@X@,@Y@)))),
+//                 rule(@choice@(Bottom(@X@)), Bottom(@X@)),
+//                 rule(@choice2@(Appl(@X@,@Y@)), Appl(@X@,@Y@)),
+//                 rule(@choice2@(Bottom(@X@)), @n2@(@X@))
+//                 ]]%,generatedSignature).getCollectionRuleList());
+//         } else {
+//           bag.addAll(Tools.encodeRuleList(%[[
+//                 rule(@choice@(@X@), @choice2@(@n1@(@X@))),
+//                 rule(@choice2@(Appl(@X@,@Y@)), Appl(@X@,@Y@)),
+//                 rule(@choice2@(Bottom(@X@)), @n2@(@X@))
+//                 ]]%,generatedSignature).getCollectionRuleList());
+//         }
+//         return choice;
+//       }
+
+//       StratAll(s) -> {
+//         String phi_s = compileGenericStrat(bag,extractedSignature,generatedSignature,`s);
+//         String all = Tools.getName("all");
+//         generatedSignature.put(all,1);
+//         String all_1 = all+"_1";
+//         generatedSignature.put(all_1,1);
+//         String all_2 = all+"_2";
+//         generatedSignature.put(all_2,1);
+//         String all_3 = all+"_3";
+//         generatedSignature.put(all_3,4);
+        
+// 	String append = "append";
+//         generatedSignature.put(append,2); 
+// 	String reverse = "reverse";
+//         generatedSignature.put(reverse,1); 
+// 	String rconcat = "rconcat";
+//         generatedSignature.put(rconcat,2); 
+	
+//         bag.addAll(Tools.encodeRuleList(%[[
+//               // all
+//               rule(@all@(Appl(@Z0@,@Z1@)), @all_1@(Appl(@Z0@,@all_2@(@Z1@)))),
+//               // all_1
+//               rule(@all_1@(Appl(@Z0@,BottomList(@Z@))), Bottom(Appl(@Z0@,@Z@))),
+//               rule(@all_1@(Appl(@Z0@,Cons(@Z1@,@Z2@))), Appl(@Z0@,Cons(@Z1@,@Z2@))),
+//               rule(@all_1@(Appl(@Z0@,Nil)) , Appl(@Z0@,Nil)),
+
+//               rule(@all_2@(Nil()) , Nil()),
+//               rule(@all_2@(Cons(@Z1@,@Z2@)) , @all_3@(@phi_s@(@Z1@),@Z2@,Cons(@Z1@,Nil),Nil)),
+//               /*
+//                * all_3(Bottom(X),todo,rargs,rs_args) -> BottomList(rconcat(rargs,todo))
+//                * all_3(Appl(X,Y),Nil,rargs,rs_args) -> reverse(Cons(Appl(X,Y),rs_args))
+//                * all_3(Appl(X,Y), Cons(XX,YY), rargs, rs_args) -> 
+//                * all_3(rule47(XX), YY, Cons(XX,rargs), Cons(Appl(X,Y),rs_args))
+//                */ 
+//               rule(@all_3@(Bottom(@X@),@Z1@,@Z2@,@Z3@) , BottomList(@rconcat@(@Z2@,@Z1@))),
+//               rule(@all_3@(Appl(@X@,@Y@),Nil,@Z2@,@Z3@) , @reverse@(Cons(Appl(@X@,@Y@),@Z3@))),
+//               rule(@all_3@(Appl(@X@,@Y@),Cons(@XX@,@YY@),@Z2@,@Z3@) , @all_3@(@phi_s@(@XX@),@YY@,Cons(@XX@,@Z2@), Cons(Appl(@X@,@Y@),@Z3@)))
+//               ]]%,generatedSignature).getCollectionRuleList());
+
+// 	if(!generated_aux_functions) { 
+// 	  generated_aux_functions = true;
+//     bag.addAll(Tools.encodeRuleList(%[[
+//           rule(@append@(Nil,@Z@), Cons(@Z@,Nil)),
+//           rule(@append@(Cons(@X@,@Y@),@Z@), Cons(@X@,@append@(@Y@,@Z@))),
+
+//           rule(@reverse@(Nil), Nil),
+//           rule(@reverse@(Cons(@X@,@Y@)), @append@(@reverse@(@Y@),@X@)),
+
+//           rule(@rconcat@(Nil,@Z@), @Z@),
+//           rule(@rconcat@(Cons(@X@,@Y@),@Z@), @rconcat@(@Y@,Cons(@X@,@Z@)))
+//           ]]%,generatedSignature).getCollectionRuleList());
+// 	}
+    
+//         return all;
+//       }
+
+//       StratOne(s) -> {
+//         String phi_s = compileGenericStrat(bag,extractedSignature,generatedSignature,`s);
+//         String one = Tools.getName("one");
+//         generatedSignature.put(one,1);
+//         String one_1 = one+"_1";
+//         generatedSignature.put(one_1,1);
+//         String one_2 = one+"_2";
+//         generatedSignature.put(one_2,1);
+//         String one_3 = one+"_3";
+//         generatedSignature.put(one_3,3);
+
+// 	String append = "append";
+//         generatedSignature.put(append,2); 
+// 	String reverse = "reverse";
+//         generatedSignature.put(reverse,1); 
+// 	String rconcat = "rconcat";
+//         generatedSignature.put(rconcat,2); 
+
+//         bag.addAll(Tools.encodeRuleList(%[[
+//               // one
+//               rule(@one@(Appl(@Z0@,@Z1@)), @one_1@(Appl(@Z0@,@one_2@(@Z1@)))),
+//               // one_1
+//               rule(@one_1@(Appl(@Z0@,BottomList(@Z@))), Bottom(Appl(@Z0@,@Z@))),
+//               rule(@one_1@(Appl(@Z0@,Cons(@X@,@Y@))), Appl(@Z0@,Cons(@X@,@Y@))),
+//               // one_2
+//               rule(@one_2@(Nil()), BottomList(Nil())),
+//               rule(@one_2@(Cons(@X@,@Y@)), @one_3@(@phi_s@(@X@),@Y@,Cons(@X@,Nil))),
+//               // one_3
+//               /*
+//                * one_3(Bottom(X),Nil,rargs) -> BottomList(reverse(rargs))
+//                * one_3(Bottom(X),Cons(head,tail),rargs) -> ONE(head, tail, Cons(head,rargs))
+//                * one_3(Appl(X,Y),todo,Cons(last,rargs)) -> rconcat(rargs,Cons(Appl(X,Y),todo))
+//                */
+//               rule(@one_3@(Bottom(@Z@),Nil, @Z2@), BottomList(@reverse@(@Z2@))),
+//               rule(@one_3@(Bottom(@Z@),Cons(@XX@,@YY@),@Z2@), @one_3@(@XX@, @YY@, Cons(@XX@,@Z2@))),
+//               rule(@one_3@(Appl(@X@,@Y@),@Z1@, Cons(@Z2@,@Z3@)), @rconcat@(@Z3@, Cons(Appl(@X@,@Y@),@Z1@)))
+//               ]]%,generatedSignature).getCollectionRuleList());
+
+// 	if(!generated_aux_functions) { 
+// 	  generated_aux_functions = true;
+//     bag.addAll(Tools.encodeRuleList(%[[
+//           rule(@append@(Nil,@Z@), Cons(@Z@,Nil)),
+//           rule(@append@(Cons(@X@,@Y@),@Z@), Cons(@X@,@append@(@Y@,@Z@))),
+
+//           rule(@reverse@(Nil), Nil),
+//           rule(@reverse@(Cons(@X@,@Y@)), @append@(@reverse@(@Y@),@X@)),
+
+//           rule(@rconcat@(Nil,@Z@), @Z@),
+//           rule(@rconcat@(Cons(@X@,@Y@),@Z@), @rconcat@(@Y@,Cons(@X@,@Z@)))
+//           ]]%,generatedSignature).getCollectionRuleList());
+// 	}
+//         return one;
+//       }
+
+//     }
+//     return strat.toString();
+//   }
+ 
 }
