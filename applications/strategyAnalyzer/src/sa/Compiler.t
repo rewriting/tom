@@ -26,7 +26,7 @@ public class Compiler {
   private Map<String,Integer> generatedSignature;
 
   // The generated rules
-  private Collection<Rule> generatedRules;
+  private List<Rule> generatedRules;
 
   // Name of the symbol to trigger the application of the generated TRS
   private String topName;
@@ -157,9 +157,7 @@ public class Compiler {
   /**
    * compile a strategy in a classical way (without using meta-representation)
    * return the name of the top symbol (phi) introduced
-   * @param bag set of rule that is extended by compilation
-   * @param extractedSignature associates arity to a name, for all constructors of the initial strategy
-   * @param generatedSignature associates arity to a name, for all generated defined symbols
+   * @param stratName the name of the strategy to compile
    * @param strat the strategy to compile
    * @return the name of the last compiled strategy
    */
@@ -601,7 +599,7 @@ public class Compiler {
    * f(x_1,...,x_n) = f(y_1,...,y_n) -> x_1=y1 ^ ... ^ x_n=y_n ^ true
    *
    */
-  private  void generateEquality(Collection<Rule> bag, Map<String,Integer> extractedSignature, Map<String,Integer> generatedSignature) {
+  private  void generateEquality(List<Rule> bag, Map<String,Integer> extractedSignature, Map<String,Integer> generatedSignature) {
 
     bag.add(Tools.encodeRule(%[rule(and(True,True), True)]%,generatedSignature));
     bag.add(Tools.encodeRule(%[rule(and(True,False), False)]%,generatedSignature));
