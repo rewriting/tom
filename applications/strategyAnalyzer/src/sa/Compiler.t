@@ -31,10 +31,6 @@ public class Compiler {
   // strategy name -> strategy compiled into a TRS
   private Map<String,List<Rule>> generatedTRSs;
 
-  // Name of the symbol to trigger the application of the generated TRS
-  private String topName;
-
-
   /**
    * initialize the TRS and set the (generated) symbol that should be
    * used to wrap the terms to reduce
@@ -43,7 +39,6 @@ public class Compiler {
   private Compiler(){
       this.generatedRules = new ArrayList<Rule>();
       this.generatedTRSs = new HashMap<String,List<Rule>>();
-      topName = "";
   }
 
   /**
@@ -58,11 +53,11 @@ public class Compiler {
   }
 
   /**
-   * getTopName
-   * @return the name of the strategy which starts the computation
+   * get the names of the compiled strategies
+   * @return the names of the compiled strategies
    */
-  public String getTopName() {
-    return topName;
+  public List<String> getStrategyNames() {
+    return new ArrayList(strategies.keySet());
   }
 
   public void setSignature(ExpressionList expression) throws SymbolAlredyExistsException{
@@ -134,10 +129,16 @@ public class Compiler {
   }
 
   /**
-   * Compile a (list of) strategy into a rewrite system
+   * Compile a (list of) strategy into a rewrite system. Each strategy
+   * has a corresponding (complete) TRS.
+   * @param strategyName the name of the strategy to compile
+   * @return the TRS for strategyName 
    */
-  public List<Rule>  compile() {
+  public List<Rule>  compile(String strategyName) {
     //     this.generatedRules = new ArrayList<Rule>();
+
+    // Name of the symbol to trigger the application of the generated TRS
+    String topName="";
 
     // the (name of the last) strategy is used 
     for(String name:this.strategies.keySet()){
@@ -152,12 +153,17 @@ public class Compiler {
         }
     }
 
-//     if(Main.options.generic) {
-//       // do nothing
-//     } else {
-//       generateEquality(this.generatedRules, this.extractedSignature, this.generatedSignature);
-//     }
-//     return new ArrayList(generatedRules);
+    // if strategy (name)  exists use it; otherwise use the name of the strategy compiled last
+    if(this.generatedTRSs.keySet().contains(strategyName)){
+      topName = strategyName;
+    }
+
+    //     if(Main.options.generic) {
+    //       // do nothing
+    //     } else {
+    //       generateEquality(this.generatedRules, this.extractedSignature, this.generatedSignature);
+    //     }
+    //     return new ArrayList(generatedRules);
     return new ArrayList(this.generatedTRSs.get(topName));
   }
 

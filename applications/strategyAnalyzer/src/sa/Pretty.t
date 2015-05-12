@@ -153,7 +153,7 @@ public class Pretty {
     return varsb.toString()+rulesb.toString();
   }  
 
-  public static String generateTom(List<Rule> bag, Map<String,Integer> sig, String classname) {
+  public static String generateTom(String strategyName, List<Rule> bag, Map<String,Integer> sig, String classname) {
         StringBuffer sb = new StringBuffer();
     String lowercaseClassname = classname.toLowerCase();
     sb.append(
@@ -189,7 +189,16 @@ public class @classname@ {
       BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
       T input = T.fromString(reader.readLine());
       long start = System.currentTimeMillis();
-      T t = `@Compiler.getInstance().getTopName()@(input);
+      ]%);
+
+  // by default use the last compiled strategy
+  String name=Compiler.getInstance().getStrategyNames().get(Compiler.getInstance().getStrategyNames().size()-1);
+  if(Compiler.getInstance().getStrategyNames().contains(strategyName)){
+     name = strategyName;
+  }
+
+  sb.append(%[
+      T t = `@name@(input);
       long stop = System.currentTimeMillis();
       System.out.println(t);
       System.out.println("time1 (ms): " + ((stop-start)));

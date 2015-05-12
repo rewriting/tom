@@ -72,7 +72,9 @@ public class Main {
         compiler.setSignature(expl);
 
         // Transforms the strategy into a rewrite system
-        List<Rule> generatedRules = compiler.compile();
+        //   get the TRS for the strategy named strategyName
+        String strategyName="strat0";
+        List<Rule> generatedRules = compiler.compile(strategyName);
         Map<String,Integer> extractedSignature = compiler.getExtractedSignature();
         Map<String,Integer> generatedSignature = compiler.getGeneratedSignature();
 
@@ -90,7 +92,8 @@ public class Main {
         extractedSignature = ruleCompiler.getExtractedSignature();
         generatedSignature = ruleCompiler.getGeneratedSignature();
 
-
+        //         System.out.println("COMPILED STRATEGIES: "+Compiler.getInstance().getStrategyNames());
+        
         PrintStream outputfile = System.out;
         if(options.out != null) {
           outputfile = new PrintStream(options.out);
@@ -101,7 +104,7 @@ public class Main {
         }
 
         if(options.classname != null) {
-          tomoutputfile.println( Pretty.generateTom(generatedRules,generatedSignature,options.classname) );
+          tomoutputfile.println( Pretty.generateTom(strategyName,generatedRules,generatedSignature,options.classname) );
         } 
         if(options.aprove) {
           boolean innermost = false;
