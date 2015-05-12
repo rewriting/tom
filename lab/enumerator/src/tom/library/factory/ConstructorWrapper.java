@@ -11,33 +11,12 @@ import java.util.List;
  * @author Ahmad
  * 
  */
-public class ConstructorWrapper<T> {
+public class ConstructorWrapper<T> extends GeneratorWrapper {
 
     /**
      * the wrapped constructor object it must be set on instantiation
      */
     private final Constructor<T> constructor;
-    
-    /**
-     * The parsed class containing this constructor
-     */
-    private ParsedClass declaringClass;
-    
-    /**
-     * represents list of parameters of the constructor
-     */
-    private final List<ParamWrapper> parameters;
-
-    /**
-     * name of the variable representing this constructor in the generated
-     * Factory
-     */
-    private String variableName;
-
-    /**
-     * name of the enumuration generated from this constructor
-     */
-    private String enumName;
 
     /**
      * instantiating ConstructorWrapper to wrap a constructor that have
@@ -72,52 +51,9 @@ public class ConstructorWrapper<T> {
     public Constructor<T> getConstructor() {
         return constructor;
     }
-    
-    /**
-     * getter method for the declaring class
-     * @return the parsed class which declared this constructor
-     */
-    public ParsedClass getDeclaringClass() {
-        return declaringClass;
-    }
 
     /**
-     * getter for parameters
-     * 
-     * @return list of ParameterWrapper object corresponding to the constructor
-     *         parameters
-     */
-    public List<ParamWrapper> getParameters() {
-        return parameters;
-    }
-
-    /**
-     * getter for variable name
-     */
-    public String getVariableName() {
-        return variableName;
-    }
-
-    /**
-     * getter for enum name
-     * 
-     * @return name of the enumeration generated from this constructor
-     */
-    public String getEnumName() {
-        return enumName;
-    }
-
-    /**
-     * generates a string representing the type of the constructor in curried
-     * form i.e. F<arg1, F<arg2,...,F<argn, T>...> for a constructor with n
-     * arguments that generates object T
-     * 
-     * @param index
-     *            the starting point of currying. index 0 start from first
-     *            argument (i.e. returns F<arg1, F<arg2,...,F<argn, T>...>)
-     *            index 1 start from second argument(i.e. returns
-     *            F<arg2,..,F<argn, T>..>) and so on...
-     * @return the type of the constructor in curried form
+     * {@inheritDoc}
      */
     public String getCurriedType(int index) {
 
@@ -137,13 +73,7 @@ public class ConstructorWrapper<T> {
     }
 
     /**
-     * generates the representation of curried constructor call
-     * 
-     * @param index
-     *            the starting point of currying.
-     * @return string representing curried function application of the
-     *         constructor
-     * @see getCurriedType(int index)
+     * {@inheritDoc}
      */
     public String getCurriedDefinition(int index) {
         StringBuilder curriedDef = new StringBuilder();
@@ -184,9 +114,7 @@ public class ConstructorWrapper<T> {
     }
 
     /**
-     * generates the apply expression for applying the constructor
-     * 
-     * @return String represents the application statement of the constructor
+     * {@inheritDoc}
      */
     public String getEnumerationConstruction() {
         String applyExpr = "Enumeration.singleton(" + this.variableName + ")";
@@ -194,9 +122,6 @@ public class ConstructorWrapper<T> {
         for (ParamWrapper param: parameters) {
             applyExpr = "Enumeration.apply(" + applyExpr + ", " + param.getName() + "Enum)";
         }
-//        for (int i = 0; i < this.parameters.size(); i++) {
-//            applyExpr = "Enumeration.apply(" + applyExpr + ", " + this.parameters.get(i).getName() + "Enum)";
-//        }
 
         return applyExpr;
 

@@ -1,6 +1,7 @@
 package tom.library.factory;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -36,9 +37,14 @@ public class ParsedClass {
 
     /**
      * list of class constructors that are annotated with @EnumerateGenerator
-     * and have parameters and have parameters
+     * and have parameters
      */
     private List<ConstructorWrapper> constructors;
+    
+    /**
+     * list of class methods that are annotated with @Enumerate
+     */
+    private List<MethodWrapper> methods;
 
     /**
      * contained non-primitive classes references that need factories to be
@@ -53,6 +59,7 @@ public class ParsedClass {
 
     public <T> ParsedClass(Class<T> classToParse) {
         this.constructors = new ArrayList<ConstructorWrapper>();
+        this.methods = new ArrayList<MethodWrapper>();
         this.canonicalName = classToParse.getCanonicalName();
         this.simpleName = classToParse.getSimpleName();
         this.packageName = classToParse.getPackage().getName();
@@ -109,17 +116,28 @@ public class ParsedClass {
     public <T> void addConstructor(Constructor<T> cons) {
         this.constructors.add(new ConstructorWrapper(cons, constructors.size(), this));
     }
-
+    
     /**
-     * adds the canonical name of a class to the set of dependent classes
-     * factories will be generated for all dependencies if not generated already
+     * adds a method annotated with @Enumerate to the list after
+     * wrapping it in MethodWrapper the size of the list is also passed to
+     * the wrapper to indicate the index of the method in the list
      * 
-     * @param referencedClassName
-     *            name of the dependent class to add.
+     * @param method
+     *            Method to add
      */
-    // public void addDependency(String referencedClassName) {
-    public void addDependency(Class<?> referencedClassName) {
-        this.dependencies.add(referencedClassName);
+    public void addMethod(Method method) {
+        this.methods.add(new MethodWrapper(method, methods.size(), this));
+    }
+    
+    /**
+     * Adds a class to the set of dependent classes.
+     * Factories will be generated for all dependencies if not generated already
+     * 
+     * @param referencedClass
+     *            the dependent class to add.
+     */
+    public void addDependency(Class<?> referencedClass) {
+        this.dependencies.add(referencedClass);
     }
 
     /**
@@ -143,7 +161,7 @@ public class ParsedClass {
      * class i.e. generates the string
      * noArgsConsEnum.plus(cons0Enum)....plus(consNEnum)
      * 
-     * @return accumulated final enumeraion
+     * @return accumulated final enumeration
      */
     public String getFinalEnum() {
         StringBuilder finalEnum = new StringBuilder();

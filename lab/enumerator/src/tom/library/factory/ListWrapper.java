@@ -28,10 +28,10 @@ public class ListWrapper extends ParamWrapper {
      */
     
     
-    public ListWrapper(Class param, int paramIndex, ConstructorWrapper declaringCons) {
-        super(param, paramIndex, declaringCons);
-        ParameterizedType parameterizedType = (ParameterizedType) declaringCons.getConstructor().getGenericParameterTypes()[paramIndex];
-        this.genericType = ParamFactory.createParamWrapper((Class) parameterizedType.getActualTypeArguments()[0], 0, declaringCons);
+    public ListWrapper(Class param, int paramIndex, GeneratorWrapper declaringGenerator) {
+        super(param, paramIndex, declaringGenerator);
+        ParameterizedType parameterizedType = (ParameterizedType) declaringGenerator.getGenericParameterTypes()[paramIndex];
+        this.genericType = ParamFactory.createParamWrapper((Class) parameterizedType.getActualTypeArguments()[0], 0, declaringGenerator);
     }
 
     @Override

@@ -16,11 +16,13 @@ import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 
+import examples.factory.Garage;
+import examples.factory.Garage2;
+import examples.factory.ListStack;
 //import examples.factory.Garage;
 import examples.factory.Room;
 //import examples.factory.Room;
 import examples.factory.Student;
-//import examples.factory.StudentWithCar;
 
 /**
  * It initializes Apache Velocity template engine, call the parse method on a class and output the template filled with the information from parsed class It implements the singleton pattern
@@ -133,7 +135,7 @@ public class FactoryGenerator {
 				e.printStackTrace();
 			}
 
-			System.out.println("factory source generated:" + parsedClass);
+			System.out.println("factory source generated:" + parsedClass.getCanonicalName());
 		}
 	}
 
@@ -162,9 +164,7 @@ public class FactoryGenerator {
 
 	public static void main(String[] args) {
 		FactoryGenerator generator = FactoryGenerator.getInstance();
-		generator.generateSources(Room.class);
-		generator.generateSources(Student.class);
-
+		generator.generateSources(ListStack.class);
 		generator.outputSourceForClasses();
 
 	}
