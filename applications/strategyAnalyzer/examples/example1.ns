@@ -1,0 +1,38 @@
+
+abstract syntax
+T = a()
+  | b()
+  | g(T)
+  | f(T,T)
+
+
+strategies
+
+r1() =  identity
+
+r2() = [ f(x,g(x)) -> x, a() -> a() ]
+
+
+obu(s) = mu y.(one(y) <+ s)
+//innermost(r) = obu(r)
+//main() = innermost(r2)
+
+/*
+
+Program(
+
+ConcProduction(
+  SortType(GomType("T"),
+  ConcAlternative(
+  Alternative("a",ConcField(),GomType("T")),
+  Alternative("b",ConcField(),GomType("T")),
+  Alternative("g",ConcField(UnamedField(GomType("T"))),GomType("T")),
+  Alternative("f",ConcField(UnamedField(GomType("T")),UnamedField(GomType("T"))),GomType("T"))))),
+
+ConcStratDecl(
+StratDecl("r1",ConcParam(),Strat(StratIdentity())),
+StratDecl("r2",ConcParam(),List(RuleList(
+  Rule(Appl("f",TermList(Var("x"),Appl("g",TermList(Var("x"))))),Var("x")),
+  Rule(Appl("a",TermList()),Appl("a",TermList())))))))
+
+*/

@@ -1,0 +1,48 @@
+
+abstract syntax
+T = a()
+  | b()
+  | g(T)
+  | f(T,T)
+
+/*
+Strategy =
+    r1 
+  | obu(Strategy)
+  | r2
+  | r4(T)
+*/
+
+strategies
+
+r1() = f(x,!g(x)) -> x
+
+obu(s) = mu y.(one(y) <+ s)
+
+// r2() = { f(x,y) -> g(x), f(x,y) -> g(y) }
+
+r3() = [ f(x,y) -> g(x), f(x,y) -> g(y) ]
+
+r4(y) = g(x) -> f(x,y)
+
+r5() = g(x) -> fn(x)
+
+innermost(r) = obu(r)
+
+main() = innermost(r1)
+
+
+
+
+/*
+phi_main(x) -> ...
+
+phi_obu(phi_s,x) -> ...
+
+phi_r1(x) -> ...
+
+phi_obu(phi_r1,a())
+
+*/
+
+

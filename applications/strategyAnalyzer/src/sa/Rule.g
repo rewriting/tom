@@ -13,16 +13,86 @@ options {
   package sa;
 }
 
+// new syntax
+program :
+  abstractsyntax strategies EOF
+  -> ^(Program abstractsyntax strategies)
+;
+
+abstractsyntax :
+(ABSTRACT SYNTAX) (typedecl)*
+  -> ^(ConcProduction (typedecl)*) 
+;
+
+strategies :
+STRATEGIES (stratdecl)*
+  -> ^(ConcStratDecl (stratdecl)*) 
+;
+
+stratdecl :
+    stratname=ID paramlist  EQUALS stratbody
+      -> ^(StratDecl $stratname paramlist stratbody)
+  ;
+
+paramlist :
+  LPAR (param (COMMA param)* )? RPAR
+ -> ^(ConcParam (param)*) 
+;
+
+param:
+  ID
+ -> ^(Param ID)
+  ;
+
+stratbody :
+  | LBRACE (rule (COMMA rule)*)? RBRACE -> ^(Set ^(RuleList (rule)*))
+  | LBRACKET (rule (COMMA rule)*)? RBRACKET -> ^(List ^(RuleList (rule)*))
+  | strategy -> ^(Strat strategy)
+  ;
+
+//----------------------------
+typedecl :
+    typename=ID EQUALS alts=alternatives[typename]
+      -> ^(SortType ^(GomType $typename) $alts)
+  ;
+
+alternatives[Token typename] :
+  (ALT)? opdecl[typename] (ALT opdecl[typename])* 
+  -> ^(ConcAlternative (opdecl)+)
+  ;
+
+opdecl[Token type] :
+ ID fieldlist
+  -> ^(Alternative ID fieldlist ^(GomType ID[type])
+      )
+  ;
+
+fieldlist :
+  LPAR (field (COMMA field)* )? RPAR -> ^(ConcField (field)*) 
+;
+
+field:
+  type -> ^(UnamedField type)
+  ;
+
+type:
+  ID -> ^(GomType ID)
+  ;
+
+
+
+
+// old syntax
 expressionlist :
   (expression)* EOF -> ^(ExpressionList (expression)*)
   ;
 
 expression :
     LET ID EQUALS v=expression IN t=expression -> ^(Let ID $v $t)
-  | LBRACE (rule (COMA rule)*)? RBRACE -> ^(Set ^(RuleList (rule)*))
-  | LBRACKET (rule (COMA rule)*)? RBRACKET -> ^(List ^(RuleList (rule)*))
+  | LBRACE (rule (COMMA rule)*)? RBRACE -> ^(Set ^(RuleList (rule)*))
+  | LBRACKET (rule (COMMA rule)*)? RBRACKET -> ^(List ^(RuleList (rule)*))
   | strategy -> ^(Strat strategy)
-  | SIGNATURE LBRACE (symbol (COMA symbol)*)? RBRACE -> ^(Signature ^(SymbolList (symbol)*))
+  | SIGNATURE LBRACE (symbol (COMMA symbol)*)? RBRACE -> ^(Signature ^(SymbolList (symbol)*))
 
   ;
 
@@ -59,7 +129,7 @@ condition :
     -> ^(CondEquals $p1 $p2)
   ;
 pattern :
-    ID LPAR (term (COMA term)*)? RPAR -> ^(Appl ID ^(TermList term*))
+    ID LPAR (term (COMMA term)*)? RPAR -> ^(Appl ID ^(TermList term*))
   | '!' term -> ^(Anti term)
 ;
 term :
@@ -76,6 +146,11 @@ symbol :
   ID COLON INT -> ^(Symbol ID INT)
 ;
 
+ABSTRACT : 'abstract';
+SYNTAX   : 'syntax';
+STRATEGIES   : 'strategies';
+
+
 ARROW : '->' ;
 AMPERCENT : '&' ;
 COLON : ':' ;
@@ -85,7 +160,7 @@ LBRACE : '{' ;
 RBRACE : '}' ;
 LBRACKET : '[' ;
 RBRACKET : ']' ;
-COMA : ',' ;
+COMMA : ',' ;
 SEMICOLON : ';' ;
 CHOICE : '<+' ;
 IDENTITY : 'identity';
@@ -97,6 +172,7 @@ LET : 'let';
 IN : 'in';
 SIGNATURE : 'signature';
 EQUALS : '=';
+ALT : '|';
 DOUBLEEQUALS : '==';
 NOTEQUALS : '!=';
 DOT : '.';
@@ -112,3 +188,10 @@ ID : ('a'..'z'|'A'..'Z'|'_') ('a'..'z'|'A'..'Z'|'_'|'0'..'9')* ('*')?;
 WS : (' '|'\t'|'\n')+ { $channel=HIDDEN; } ;
 
 SLCOMMENT : '//' (~('\n'|'\r'))* ('\n'|'\r'('\n')?)? { $channel=HIDDEN; } ;
+
+MLCOMMENT :
+  '/*' ~'*'.* '*/'
+  {$channel=HIDDEN;}
+  ;
+
+

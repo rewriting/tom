@@ -15,6 +15,12 @@ public class Tools {
   %include { java/util/types/HashSet.tom }
   %include { java/util/types/Set.tom }
 
+
+  private static int phiNumber = 0;
+  public static String getName(String name) {
+    return name + (phiNumber++);
+  }
+
   /**
    * encode: transforms a string "f(a,X)" into its Term representation
    * e.g. `Appl("f",TermList(Appl("a",TermList()),Var("X")))
@@ -321,6 +327,25 @@ public class Tools {
     visit Term {
       At(_,t2)  -> { return `t2; }
       Var(_)  -> { return `Var("_"); }
+    }
+  }
+
+
+  /*
+   * generate a term for the form f(Z1,...,Zn)
+   * @param name the symbol name 
+   * @param arity the arity of the symbol
+   * @return the string that represents the term
+   */
+  public static String genAbstractTerm(String name, int arity, String varname) {
+    if(arity==0) {
+      return name + "()";
+    } else {
+      String args = varname+"_"+"1";
+      for(int i=2 ; i<=arity ; i++) {
+        args += ", " + varname+"_"+i;
+      }
+      return name + "(" + args + ")";
     }
   }
 

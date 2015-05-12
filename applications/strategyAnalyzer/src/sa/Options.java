@@ -39,6 +39,9 @@ public class Options {
   @Option(name="-approx",usage="compilation does not respects the reduction in the original system")
     public boolean approx = false;
 
+  @Option(name="-newparser",usage="use new syntax for strategies")
+    public boolean newparser = false;
+
   // receives other command line parameters than options
   @Argument
     public List<String> arguments = new ArrayList<String>();
