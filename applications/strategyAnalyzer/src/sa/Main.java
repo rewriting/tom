@@ -46,6 +46,7 @@ public class Main {
       }
 
       if(options.newparser) {
+        System.out.println("NEW PARSER");
         // Parse the input expression and build an AST
         RuleLexer lexer = new RuleLexer(new ANTLRInputStream(fileinput));
         CommonTokenStream tokens = new CommonTokenStream(lexer);
@@ -57,6 +58,9 @@ public class Main {
         System.out.println(t);
         //System.out.println(pretty.toString(expl));
         System.out.println("------------------------------------------   ");
+
+        Compiler compiler = Compiler.getInstance();
+        System.out.println("SIG = " +compiler.setProgram(t));
 
       } else {
         // Parse the input expression and build an AST

@@ -70,6 +70,15 @@ public class Compiler {
   }
 
 
+  public Signature setProgram(Program program) throws SymbolAlredyExistsException{
+    Signature sig = new Signature();
+    sig.setSignature(program);
+    return sig;
+  }
+
+
+
+
   /**
    * Extract all signatures and strategies
    * We suppose we always have let(_,signature,strategy)
