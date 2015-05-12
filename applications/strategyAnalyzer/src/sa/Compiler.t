@@ -26,7 +26,10 @@ public class Compiler {
   private Map<String,Integer> generatedSignature;
 
   // The generated rules
-  private Collection<Rule> generatedRules;
+  private List<Rule> generatedRules;
+
+  // strategy name -> strategy compiled into a TRS
+  private Map<String,List<Rule>> generatedTRSs;
 
   // Name of the symbol to trigger the application of the generated TRS
   private String topName;
@@ -39,6 +42,7 @@ public class Compiler {
    */
   private Compiler(){
       this.generatedRules = new ArrayList<Rule>();
+      this.generatedTRSs = new HashMap<String,List<Rule>>();
       topName = "";
   }
 
@@ -133,7 +137,7 @@ public class Compiler {
    * Compile a (list of) strategy into a rewrite system
    */
   public List<Rule>  compile() {
-    this.generatedRules = new ArrayList<Rule>();
+    //     this.generatedRules = new ArrayList<Rule>();
 
     // the (name of the last) strategy is used 
     for(String name:this.strategies.keySet()){
@@ -141,29 +145,31 @@ public class Compiler {
           // commented out at the end of the file
           //           topName = this.compileGenericStrat(generatedRules,extractedSignature,generatedSignature,strategies.get(name));
         } else {
-          topName = this.compileStrat(name,this.strategies.get(name));
+          this.generatedTRSs.put(name,new ArrayList<Rule>());
+          //           topName = this.compileStrat(name,this.strategies.get(name),this.generatedRules);
+          topName = this.compileStrat(name,this.strategies.get(name),this.generatedTRSs.get(name));
+          generateEquality(this.generatedTRSs.get(name), this.extractedSignature, this.generatedSignature);
         }
     }
 
-    if(Main.options.generic) {
-      // do nothing
-    } else {
-      generateEquality(this.generatedRules, this.extractedSignature, this.generatedSignature);
-    }
-    return new ArrayList(generatedRules);
+//     if(Main.options.generic) {
+//       // do nothing
+//     } else {
+//       generateEquality(this.generatedRules, this.extractedSignature, this.generatedSignature);
+//     }
+//     return new ArrayList(generatedRules);
+    return new ArrayList(this.generatedTRSs.get(topName));
   }
 
 
   /**
    * compile a strategy in a classical way (without using meta-representation)
    * return the name of the top symbol (phi) introduced
-   * @param bag set of rule that is extended by compilation
-   * @param extractedSignature associates arity to a name, for all constructors of the initial strategy
-   * @param generatedSignature associates arity to a name, for all generated defined symbols
+   * @param stratName the name of the strategy to compile
    * @param strat the strategy to compile
    * @return the name of the last compiled strategy
    */
-  private  String compileStrat(String stratName, Strat strat) {
+  private  String compileStrat(String stratName, Strat strat, List<Rule> generatedRules) {
     String X = Tools.getName("X");
     String Y = Tools.getName("Y");
     String Z = Tools.getName("Z");
@@ -195,7 +201,7 @@ public class Compiler {
             // use AST-syntax because lhs and rhs are already encoded
 
             // propagate failure; if the rule is applied to the result of a strategy that failed then the result is a failure
-            this.generatedRules.add(`Rule(Appl(rule,TermList(botX)),botX));
+            generatedRules.add(`Rule(Appl(rule,TermList(botX)),botX));
 
             TermList result = this.linearize(`lhs,this.generatedSignature);
             Term constraint = `Appl("True",TermList());
@@ -203,16 +209,16 @@ public class Compiler {
             %match(result) {
               // if already linear rhs
               TermList(_, Appl("True",TermList())) -> {
-                this.generatedRules.add(`Rule(Appl(rule,TermList(At(varX,lhs))),rhs));
-                this.generatedRules.add(`Rule(Appl(rule,TermList(At(varX,Anti(lhs)))),botX));
+                generatedRules.add(`Rule(Appl(rule,TermList(At(varX,lhs))),rhs));
+                generatedRules.add(`Rule(Appl(rule,TermList(At(varX,Anti(lhs)))),botX));
               }
               // if non-linear add rules for checking equality for corresponding arguments
               TermList(linearlhs, cond@!Appl("True",TermList())) -> {
-                this.generatedRules.add(`Rule(Appl(rule,TermList(At(varX,linearlhs))),Appl(cr, TermList(varX, cond))));
-                this.generatedRules.add(`Rule(Appl(rule,TermList(At(varX,Anti(linearlhs)))),botX));
+                generatedRules.add(`Rule(Appl(rule,TermList(At(varX,linearlhs))),Appl(cr, TermList(varX, cond))));
+                generatedRules.add(`Rule(Appl(rule,TermList(At(varX,Anti(linearlhs)))),botX));
 
-                this.generatedRules.add(`Rule(Appl(cr,TermList(linearlhs, True)), rhs));
-                this.generatedRules.add(`Rule(Appl(cr,TermList(At(varX,linearlhs), False)),botX));
+                generatedRules.add(`Rule(Appl(cr,TermList(linearlhs, True)), rhs));
+                generatedRules.add(`Rule(Appl(cr,TermList(At(varX,linearlhs), False)),botX));
               }
             }
           }
@@ -228,7 +234,7 @@ public class Compiler {
           String mu = (stratName!=null)?stratName:Tools.getName("mu");
           generatedSignature.put(mu,1);
           Strat newStrat = `TopDown(ReplaceMuVar(name,mu)).visitLight(`s);
-          String phi_s = compileStrat(null,newStrat);
+          String phi_s = compileStrat(null,newStrat,generatedRules);
           generatedRules.addAll(Tools.encodeRuleList(%[[
                 rule(@mu@(at(@X@,anti(Bottom(@Y@)))), @phi_s@(@X@)),
                 rule(@mu@(Bottom(@X@)), Bottom(@X@))
@@ -287,8 +293,8 @@ public class Compiler {
       }
 
       StratSequence(s1,s2) -> {
-        String n1 = compileStrat(null,`s1);
-        String n2 = compileStrat(null,`s2);
+        String n1 = compileStrat(null,`s1,generatedRules);
+        String n2 = compileStrat(null,`s2,generatedRules);
         String seq = (stratName!=null)?stratName:Tools.getName("seq");
         String seq2 = Tools.getName("seq2");
         generatedSignature.put(seq,1);
@@ -317,8 +323,8 @@ public class Compiler {
 
       // TODO [20/01/2015]: see if not exact is interesting
       StratChoice(s1,s2) -> {
-        String n1 = compileStrat(null,`s1);
-        String n2 = compileStrat(null,`s2);
+        String n1 = compileStrat(null,`s1,generatedRules);
+        String n2 = compileStrat(null,`s2,generatedRules);
         String choice = (stratName!=null)?stratName:Tools.getName("choice");
         String choice2 = Tools.getName("choice");
         generatedSignature.put(choice,1);
@@ -333,7 +339,7 @@ public class Compiler {
       }
 
       StratAll(s) -> {
-        String phi_s = compileStrat(null,`s);
+        String phi_s = compileStrat(null,`s,generatedRules);
         String all = (stratName!=null)?stratName:Tools.getName("all");
         generatedSignature.put(all,1);
         for(String name : extractedSignature.keySet()) {
@@ -389,7 +395,7 @@ public class Compiler {
       }
 
       StratOne(s) -> {
-        String phi_s = compileStrat(null,`s);
+        String phi_s = compileStrat(null,`s,generatedRules);
         String one = (stratName!=null)?stratName:Tools.getName("one");
         generatedSignature.put(one,1);
         for(String name : extractedSignature.keySet()) {
@@ -601,7 +607,7 @@ public class Compiler {
    * f(x_1,...,x_n) = f(y_1,...,y_n) -> x_1=y1 ^ ... ^ x_n=y_n ^ true
    *
    */
-  private  void generateEquality(Collection<Rule> bag, Map<String,Integer> extractedSignature, Map<String,Integer> generatedSignature) {
+  private  void generateEquality(List<Rule> bag, Map<String,Integer> extractedSignature, Map<String,Integer> generatedSignature) {
 
     bag.add(Tools.encodeRule(%[rule(and(True,True), True)]%,generatedSignature));
     bag.add(Tools.encodeRule(%[rule(and(True,False), False)]%,generatedSignature));
