@@ -16,19 +16,22 @@ options {
 // new syntax
 program :
   abstractsyntax strategies EOF
+  -> ^(Program abstractsyntax strategies)
 ;
 
 abstractsyntax :
 (ABSTRACT SYNTAX) (typedecl)*
+  -> ^(ConcProduction (typedecl)*) 
 ;
 
 strategies :
 STRATEGIES (stratdecl)*
+  -> ^(ConcStratDecl (stratdecl)*) 
 ;
 
 stratdecl :
-    stratname=ID LPAR paramlist RPAR EQUALS stratbody
-      -> ^(StrategyDecl $stratname paramlist stratbody)
+    stratname=ID paramlist  EQUALS stratbody
+      -> ^(StratDecl $stratname paramlist stratbody)
   ;
 
 paramlist :
@@ -54,7 +57,7 @@ typedecl :
   ;
 
 alternatives[Token typename] :
-  opdecl[typename] ( opdecl[typename])* 
+  (ALT)? opdecl[typename] (ALT opdecl[typename])* 
   -> ^(ConcAlternative (opdecl)+)
   ;
 
@@ -169,6 +172,7 @@ LET : 'let';
 IN : 'in';
 SIGNATURE : 'signature';
 EQUALS : '=';
+ALT : '|';
 DOUBLEEQUALS : '==';
 NOTEQUALS : '!=';
 DOT : '.';
@@ -184,3 +188,10 @@ ID : ('a'..'z'|'A'..'Z'|'_') ('a'..'z'|'A'..'Z'|'_'|'0'..'9')* ('*')?;
 WS : (' '|'\t'|'\n')+ { $channel=HIDDEN; } ;
 
 SLCOMMENT : '//' (~('\n'|'\r'))* ('\n'|'\r'('\n')?)? { $channel=HIDDEN; } ;
+
+MLCOMMENT :
+  '/*' ~'*'.* '*/'
+  {$channel=HIDDEN;}
+  ;
+
+

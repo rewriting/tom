@@ -3,8 +3,10 @@ imports String int
 abstract syntax
 
 // New AST
-
+Program = Program(productionList:ProductionList, stratList:StratDeclList)
 Production = SortType(Type:GomType,AlternativeList:AlternativeList)
+ProductionList = ConcProduction(Production*)
+
 Alternative = Alternative(Name:String, DomainList:FieldList, Codomain:GomType)
 AlternativeList = ConcAlternative(Alternative*)
 GomType = GomType(Name:String)
@@ -12,7 +14,8 @@ GomTypeList = ConcGomType(GomType*)
 Field = UnamedField(FieldType:GomType)
 FieldList = ConcField(Field*)
 
-StrategyDecl = StrategyDecl(Name:String, ParamList:ParamList, Body:Strat)
+StratDecl = StratDecl(Name:String, ParamList:ParamList, Body:Expression)
+StratDeclList = ConcStratDecl(StratDecl*)
 Param = Param(Name:String)
 ParamList = ConcParam(Param*)
 
