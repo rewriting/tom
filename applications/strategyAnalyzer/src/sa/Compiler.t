@@ -70,10 +70,12 @@ public class Compiler {
   }
 
 
-  public Signature setProgram(Program program) throws SymbolAlredyExistsException{
-    Signature sig = new Signature();
-    sig.setSignature(program);
-    return sig;
+  public Signature setProgram(Program program) throws SymbolAlredyExistsException, TypeMismatchException{
+    Signature extractedSignature = new Signature();
+    extractedSignature.setSignature(program);
+    Signature generatedSignature = extractedSignature.expandSignature();
+//     return extractedSignature;
+    return generatedSignature;
   }
 
 
