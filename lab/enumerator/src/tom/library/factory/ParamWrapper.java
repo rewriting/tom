@@ -27,9 +27,9 @@ public abstract class ParamWrapper {
     protected Enumerate enumerateAnnotation;
     
     /**
-     * the constructor where this parameter was declared
+     * the constructor or method where this parameter was declared
      */
-    protected ConstructorWrapper declaringCons;
+    protected GeneratorWrapper declaringGenerator;
 
     /**
      * initializes the wrapper
@@ -41,11 +41,11 @@ public abstract class ParamWrapper {
      * @param declaringCons
      *            the constructor where this parameter was declared
      */
-    public ParamWrapper(Class param, int paramIndex, ConstructorWrapper declaringCons) {
+    public ParamWrapper(Class param, int paramIndex, GeneratorWrapper declaringGenerator) {
         this.param = param;
-        this.declaringCons = declaringCons;
-        this.paramName = declaringCons.getVariableName() +"_arg" + paramIndex;
-        for (Annotation annotation : declaringCons.getConstructor().getParameterAnnotations()[paramIndex]) {
+        this.declaringGenerator = declaringGenerator;
+        this.paramName = declaringGenerator.getVariableName() +"_arg" + paramIndex;
+        for (Annotation annotation : declaringGenerator.getParameterAnnotations()[paramIndex]) {
             if (annotation instanceof Enumerate) {
                 this.enumerateAnnotation = (Enumerate) annotation;
             }

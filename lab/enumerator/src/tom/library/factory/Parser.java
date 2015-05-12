@@ -1,6 +1,7 @@
 package tom.library.factory;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
 
 /**
  * the class represents a parser which is given a class to parse in order to
@@ -23,7 +24,7 @@ public class Parser {
      */
     public static <T> ParsedClass parse(Class<T> classToParse) {
         ParsedClass parsedClass = new ParsedClass(classToParse);
-        // load all constructors having EnumerateGenerator annotations
+        // load all constructors having @EnumerateGenerator annotations
         for (Constructor<?> cons : classToParse.getDeclaredConstructors()) {
             if (cons.isAnnotationPresent(EnumerateGenerator.class)) {
                 if (cons.getParameterTypes().length == 0) {
@@ -33,6 +34,13 @@ public class Parser {
                     // cons with parameters
                     parsedClass.addConstructor(cons);
                 }
+
+            }
+        }
+        // load all methods annotated as @Enumerate
+        for (Method method : classToParse.getDeclaredMethods()) {
+            if (method.isAnnotationPresent(Enumerate.class)) {
+                parsedClass.addMethod(method);
 
             }
         }

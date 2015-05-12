@@ -26,7 +26,7 @@ public class PrimitiveWrapper extends ParamWrapper {
      *            index of the parameter among the constructor parameters
      * @param paramAnnotations
      */
-    public PrimitiveWrapper(Class param, int paramIndex, ConstructorWrapper declaringCons) {
+    public PrimitiveWrapper(Class param, int paramIndex, GeneratorWrapper declaringCons) {
         super(param, paramIndex, declaringCons);
         this.javaWrapperName = ClassUtils.primitiveToWrapper(param).getSimpleName();
     }
