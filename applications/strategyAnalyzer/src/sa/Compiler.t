@@ -81,11 +81,67 @@ public class Compiler {
     this.extSignature = new Signature();
     extSignature.setSignature(program);
     this.genSignature = this.extSignature.expandSignature();
+
+    %match(program) {
+      Program(_, ConcStratDecl(_*,StratDecl(name, params, body),_*)) -> {
+
+      }
+    }
+
+
 //     return extractedSignature;
     return this.genSignature;
   }
 
+  // for testing purpose
+  public StratList getStratR() {
+    return `ConcStrat(StratName("R"));
+  }
 
+
+
+  public Expression instantiateStrategy(StratDecl sd, StratList args) {
+    Expression res = null;
+
+    try {
+      %match(sd) {
+        StratDecl(name, params, body) -> {
+          if(`params.length() == args.length()) {
+            res = `(TopDown(ReplaceParameters(params,args))).visit(`body);
+          }
+        }
+      }
+    } catch(VisitFailure e) {
+    }
+
+    return res;
+  }
+
+  %strategy ReplaceParameters(params:ParamList, args:StratList) extends Identity() {
+    visit Strat {
+      StratName(n) -> {
+          System.out.println("stratname = " + `n); 
+          System.out.println("params = " + params); 
+          System.out.println("args = " + args); 
+          ParamList plist = params;
+          StratList slist = args;
+
+        while(!plist.isEmptyConcParam() && !slist.isEmptyConcStrat()) {
+          Param p = plist.getHeadConcParam();
+          Strat s = slist.getHeadConcStrat();
+          System.out.println("param = " + p + " -- arg = " + s); 
+          %match(p) {
+            Param(name) && n==name -> {
+              return s;
+            }
+          }
+          plist = plist.getTailConcParam();
+          slist = slist.getTailConcStrat();
+        }
+      }
+    }
+  }
+ 
 
 
   /**
@@ -106,6 +162,7 @@ public class Compiler {
       }
     }
   }
+
   // Merge all signatures, add built-ins, and test if compatible
   private  void  expandSignature() throws SymbolAlredyExistsException {
     this.extractedSignature = new HashMap<String,Integer>();

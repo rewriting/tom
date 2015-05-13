@@ -106,13 +106,15 @@ strategy :
      -> $s1
   ;
 
-elementarystrategy :
+elementarystrategy options { backtrack = true; }:
     IDENTITY -> ^(StratIdentity)
   | FAIL -> ^(StratFail)
   | LPAR strategy RPAR -> strategy
   | ALL LPAR strategy RPAR -> ^(StratAll strategy)
   | ONE LPAR strategy RPAR -> ^(StratOne strategy)
   | MU ID DOT LPAR strategy RPAR -> ^(StratMu ID strategy)
+  | ID LPAR (strategy (COMMA strategy)*)? RPAR
+       -> ^(StratAppl ID ^(ConcStrat (strategy)*))
   | ID -> ^(StratName ID)
   ;
 
