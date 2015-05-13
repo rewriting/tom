@@ -12,13 +12,16 @@ import java.math.BigInteger;
 import tom.library.enumerator.Combinators;
 import tom.library.enumerator.Enumeration;
 import tom.library.enumerator.F;
+import tom.library.enumerator.Finite;
+import tom.library.enumerator.LazyList;
+import tom.library.enumerator.P1;
 import $parsedClass.getCanonicalName();
 
 public class $parsedClass.getFactoryClassName() {
 
+    private static Enumeration<$parsedClass.getSimpleName()> finalEnum = null;
+    
     public static final Enumeration<$parsedClass.getSimpleName()>  getEnumeration() {
-        
-        Enumeration<$parsedClass.getSimpleName()> finalEnum = null;
         
 #if ($parsedClass.hasNoArgsConstructor())
         Enumeration<$parsedClass.getSimpleName()> $parsedClass.getNoArgsConstructor().getEnumName() = Enumeration.singleton(new $parsedClass.getSimpleName()());
@@ -35,6 +38,27 @@ public class $parsedClass.getFactoryClassName() {
         
         Enumeration<$parsedClass.getSimpleName()> $cons.getEnumName() = $cons.getEnumerationConstruction();
 #end
+//////////////// generating methods ////////////////
+
+        Enumeration<$parsedClass.getSimpleName()> tmpThisEnum = new Enumeration<$parsedClass.getSimpleName()>((LazyList<Finite<$parsedClass.getSimpleName()>>) null);
+
+#foreach($method in $parsedClass.getMethods())
+        final $method.getCurriedType(-1) $method.getVariableName() = new $method.getCurriedType(-1)() {
+            $method.getCurriedDefinition(-1)
+        };
+        
+#foreach($param in $method.getParameters())
+        $param.enumDeclare() = $param.enumCreate();
+#end
+        
+        Enumeration<$parsedClass.getSimpleName()> $method.getEnumName() = $method.getEnumerationConstruction();
+#end
+        tmpThisEnum.p1 = new P1<LazyList<Finite<$parsedClass.getSimpleName()>>>() {
+            public LazyList<Finite<$parsedClass.getSimpleName()>> _1() {
+                return finalEnum.parts();
+            }
+        };
+////////////////////////////////////////////////////
         
         finalEnum = $parsedClass.getFinalEnum();
         

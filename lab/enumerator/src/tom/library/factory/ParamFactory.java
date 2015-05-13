@@ -2,6 +2,7 @@ package tom.library.factory;
 
 import java.lang.annotation.Annotation;
 import java.util.List;
+import org.apache.commons.lang.ClassUtils;
 
 /**
  * simple factory for ParamWrapper objects generates the suitable wrapper type
@@ -26,7 +27,10 @@ public class ParamFactory {
 
         if (param.isPrimitive()) {
             return new PrimitiveWrapper(param, paramIndex, declaringGenerator);
-        } else if (param.equals(String.class)) {
+        } else if (ClassUtils.wrapperToPrimitive(param) != null) {
+            return new PrimitiveWrapper(ClassUtils.wrapperToPrimitive(param), paramIndex, declaringGenerator);
+        }
+        else if (param.equals(String.class)) {
             return new StringWrapper(param, paramIndex, declaringGenerator);
         } else if (List.class.isAssignableFrom(param)) {
             return new ListWrapper(param, paramIndex, declaringGenerator);
