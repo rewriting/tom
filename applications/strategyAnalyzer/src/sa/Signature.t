@@ -16,7 +16,7 @@ public class Signature {
   public static String TRUE = "True";
   public static String FALSE = "False";
   public static String AND = "and";
-  public static String BOT = "bot";
+  public static String BOTTOM = "bottom";
   public static String EQ = "eq";
 
 
@@ -54,9 +54,6 @@ public class Signature {
   /*
    * Create a new signature
    */
-
-  // pem: ne peut-on pas faire : expandedSignature.signature = new HashMap(this.signature) ?
-
   public Signature expandSignature() throws TypeMismatchException {
     Signature expandedSignature = new Signature();
     for(GomType type: this.signature.keySet()) {
@@ -75,10 +72,10 @@ public class Signature {
     String eq_boolean = desambiguateSymbol(EQ, Arrays.asList(BOOLEAN,BOOLEAN));
     expandedSignature.addSymbol(eq_boolean,Arrays.asList(BOOLEAN,BOOLEAN),BOOLEAN);
 
-    // add: bot(T), eq_T(T,T)
+    // add: bottom(T), eq_T(T,T)
     for(GomType type: this.signature.keySet()) {
       String t = type.getName();
-      expandedSignature.addSymbol(BOT,Arrays.asList(t),t);
+      expandedSignature.addSymbol(BOTTOM,Arrays.asList(t),t);
       String eq_t = desambiguateSymbol(EQ, Arrays.asList(t,t));
       expandedSignature.addSymbol(eq_t,Arrays.asList(t,t),BOOLEAN);
     }
