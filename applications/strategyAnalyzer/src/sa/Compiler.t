@@ -12,11 +12,13 @@ public class Compiler {
   %include { java/util/types/Map.tom }
   %include { java/util/types/List.tom }
 
+  %typeterm Compiler { implement { Compiler }}
   private static final String DUMMY = "Dummy";
 
   private static Compiler instance = null;
 
-
+  // initial AST
+  private Program program;
 
   // List of (abstract) signatures for the strategies to translate
   private List<Expression> signatures;
@@ -78,6 +80,7 @@ public class Compiler {
 
 
   public Signature setProgram(Program program) throws SymbolAlredyExistsException, TypeMismatchException {
+    this.program = program;
     this.extSignature = new Signature();
     extSignature.setSignature(program);
     this.genSignature = this.extSignature.expandSignature();
@@ -93,13 +96,11 @@ public class Compiler {
     return this.genSignature;
   }
 
-  // for testing purpose
-  public StratList getStratR() {
-    return `ConcStrat(StratName("R"));
-  }
-
-
-
+  /*
+   * Given a StratDecl (name, params, body)
+   * Replace the parameters by their effective values (args) in body
+   * i.e. apply the substitution [param_1 -> arg_1, ..., param_n -> arg_n]
+   */
   public Expression instantiateStrategy(StratDecl sd, StratList args) {
     Expression res = null;
 
@@ -117,19 +118,22 @@ public class Compiler {
     return res;
   }
 
+  /*
+   * used by instantiateStrategy to apply the substitution
+   */
   %strategy ReplaceParameters(params:ParamList, args:StratList) extends Identity() {
     visit Strat {
       StratName(n) -> {
-          System.out.println("stratname = " + `n); 
-          System.out.println("params = " + params); 
-          System.out.println("args = " + args); 
+          //System.out.println("stratname = " + `n); 
+          //System.out.println("params = " + params); 
+          //System.out.println("args = " + args); 
           ParamList plist = params;
           StratList slist = args;
 
         while(!plist.isEmptyConcParam() && !slist.isEmptyConcStrat()) {
           Param p = plist.getHeadConcParam();
           Strat s = slist.getHeadConcStrat();
-          System.out.println("param = " + p + " -- arg = " + s); 
+          //System.out.println("param = " + p + " -- arg = " + s); 
           %match(p) {
             Param(name) && n==name -> {
               return s;
@@ -141,8 +145,73 @@ public class Compiler {
       }
     }
   }
- 
 
+  /*
+   * Given a name, retrieve the corresponding StratDecl (which should not have parameter)
+   * and return an expanded version of the body 
+   * The resulting strategy is self-contained
+   */
+  public Expression expandStrategy(String name) {
+    StratDecl sd = Tools.getStratDecl(name, this.program);
+    Expression res = null;
+
+    try {
+      %match(sd) {
+        StratDecl(name, ConcParam() , body) -> {
+            res = `RepeatId(TopDown(ExpandStratAppl(this))).visit(`body);
+        }
+      }
+    } catch(VisitFailure e) {
+    }
+
+    return res;
+  }
+
+  /*
+   * used by expandStrategy
+   * for each StratAppl:
+   * retrieve the corresponding StratDecl
+   * rename with fresh variables
+   * apply the macro expansion 
+   */
+  %strategy ExpandStratAppl(compiler:Compiler) extends Identity() {
+    visit Strat {
+      StratAppl(name, args) -> {
+        StratDecl sd = Tools.getStratDecl(`name, compiler.program);
+        Map map = new HashMap();
+        sd = `TopDown(FreshStratDecl(map)).visitLight(sd);
+        Expression si = compiler.instantiateStrategy(sd, `args);
+        return `StratExp(si);
+      }
+    }
+  }
+
+  /*
+   * Rename the variables of a StratDecl into fresh names
+   */
+  %strategy FreshStratDecl(map:Map) extends Identity() {
+    visit Param {
+      Param(n) -> {
+        String newName = (String) map.get(`n);
+        if(newName == null) {
+          newName = Tools.getName("_"+`n);
+          map.put(`n,newName);
+        }
+        return `Param(newName);
+      }
+    }
+
+    visit Strat {
+      s@(StratName|StratMu)[name=n] -> {
+        String newName = (String) map.get(`n);
+        if(newName == null) {
+          newName = Tools.getName("_"+`n);
+          map.put(`n,newName);
+        }
+        return `s.setname(newName);
+      }
+    }
+  }
 
   /**
    * Extract all signatures and strategies

@@ -16,7 +16,7 @@ r2() = [ f(x,g(x)) -> x, a() -> a() ]
 obu(s) = mu y.(one(y) <+ s)
 innermost(r) = obu(r)
 
-main() = innermost(r2)
+main() = innermost(r2())
 
 /*
 

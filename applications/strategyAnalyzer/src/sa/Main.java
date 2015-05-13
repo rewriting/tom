@@ -70,11 +70,18 @@ public class Main {
         //this.generatedTRSs.put(strategyName,new ArrayList<Rule>());
         //topName = this.compileStrat(strategyName,this.strategies.get(name),this.generatedTRSs.get(name));
 
-        StratDecl sd = Tools.getStratDecl("obu",t);
-        System.out.println("sd = " + sd);
-        Expression si = compiler.instantiateStrategy(sd, compiler.getStratR());
-        System.out.println("si = " + si);
-  
+        //StratDecl sd = Tools.getStratDecl("obu",t);
+        //System.out.println("sd = " + sd);
+        //Expression si = compiler.instantiateStrategy(sd, compiler.getStratR());
+        //System.out.println("si = " + si);
+
+        System.out.println("main = " + Tools.getStratDecl("main", t));
+        Expression expand = compiler.expandStrategy("main");
+        System.out.println("expanded version = " + expand);
+
+
+
+
       } else {
 
         // TEMPORARY
