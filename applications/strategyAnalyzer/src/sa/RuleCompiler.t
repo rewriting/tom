@@ -13,15 +13,19 @@ public class RuleCompiler {
   %include { java/util/types/List.tom }
   %include { java/util/types/ArrayList.tom }
 
+  %typeterm Signature { implement { Signature } }
+
   // The extracted (concrete) signature
-  private Map<String,Integer> extractedSignature;
+  private Signature extractedSignature;
+  //   private Map<String,Integer> extractedSignature;
   // The generated (concrete) signature
-  private Map<String,Integer> generatedSignature;
+  private Signature generatedSignature;
+  //   private Map<String,Integer> generatedSignature;
   // The generated (ordered) TRS
+
   private List<Rule> generatedRules;
 
-
-  public RuleCompiler(Map<String,Integer> extractedSignature, Map<String,Integer> generatedSignature){
+  public RuleCompiler(Signature extractedSignature, Signature generatedSignature){
     this.extractedSignature=extractedSignature;
     this.generatedSignature=generatedSignature;
   }
@@ -81,7 +85,7 @@ public class RuleCompiler {
    * @param rule the rule to expand
    * @param extractedSignature the signature
    */
-  %strategy ExpandAntiPattern(bag:List,subject:Rule,extractedSignature:Map, generatedSignature:Map) extends Fail() {
+  %strategy ExpandAntiPattern(bag:List,subject:Rule,extractedSignature:Signature, generatedSignature:Signature) extends Fail() {
     visit Term {
       Anti(Anti(t)) -> {
         Rule newr = (Rule) getEnvironment().getPosition().getReplace(`t).visit(subject);
@@ -94,10 +98,11 @@ public class RuleCompiler {
         %match(antiterm) { 
           Appl(name,args)  -> {
             // add g(Z1,...) ... h(Z1,...)
-            Set<String> otherNames = new HashSet<String>( ((Map<String,Integer>)extractedSignature).keySet() );
+            //             Set<String> otherNames = new HashSet<String>( ((Map<String,Integer>)extractedSignature).keySet() );
+            Set<String> otherNames = new HashSet<String>(extractedSignature.getSymbolNames() );
             for(String otherName:otherNames) {
               if(!`name.equals(otherName)) {
-                int arity = ((Map<String,Integer>)extractedSignature).get(otherName);
+                int arity = extractedSignature.getArity(otherName);
                 Term newt = Tools.encode(Tools.genAbstractTerm(otherName,arity,Tools.getName("Z")),generatedSignature);
                 if(Main.options.generic) {
                   newt = Tools.metaEncodeConsNil(newt,generatedSignature);
@@ -228,11 +233,12 @@ public class RuleCompiler {
 
 
 
-  public   Map<String,Integer> getExtractedSignature(){
-    return new HashMap(this.extractedSignature);
+
+  public Signature getExtractedSignature(){
+    return this.extractedSignature;
   }
-  public Map<String,Integer> getGeneratedSignature(){
-    return new HashMap(this.generatedSignature);
+  public Signature getGeneratedSignature(){
+    return this.generatedSignature;
   }
 
 }

@@ -19,6 +19,8 @@ public class Signature {
   public static String BOTTOM = "bottom";
   public static String EQ = "eq";
 
+  public static final String DUMMY = "Dummy";
+
 
   // Codomain Type -> (SymbolName -> Domain List of types)
   private Map<GomType,Map<String,List<GomType>>> signature;
@@ -112,6 +114,57 @@ public class Signature {
     signature.put(`GomType(codomain),symbols); 
   }
 
+  /** Get codomain for symbol
+   */
+  public GomType getCodomain(String symbol){
+    GomType codomain=null;
+
+    for(GomType type: this.signature.keySet()) {
+      if(this.signature.get(type).get(symbol)!=null) {
+        codomain = type;
+        break;
+      }
+    }
+    return codomain;
+  }
+
+  /** Get the list of types of its arguments
+   */
+  public List<GomType> getProfile(String symbol){
+    List<GomType> profile = null;
+
+    for(GomType type: this.signature.keySet()) {
+      if((profile=this.signature.get(type).get(symbol))!=null) {
+        break;
+      }
+    }
+    return profile;
+  }
+
+
+  /** Get the arity of a symbol
+   */
+  public int getArity(String symbol){
+    int arity = -1;
+    if(this.getProfile(symbol)!=null){
+      arity = this.getProfile(symbol).size();
+    }
+    return arity;
+  }
+
+
+  /** Get the list of all symbols
+   */
+  public List<String> getSymbolNames(){
+    List<String> symbols = new ArrayList<String>();
+
+    for(GomType type: this.signature.keySet()) {
+        for(String symbol: signature.get(type).keySet()) {
+          symbols.add(symbol);
+        }
+    }
+    return symbols;
+  }
 
   public String toString() {
     return "" + this.signature;

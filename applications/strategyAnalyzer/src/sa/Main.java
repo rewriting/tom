@@ -104,8 +104,8 @@ public class Main {
         //   get the TRS for the strategy named strategyName
         String strategyName="strat0";
         List<Rule> generatedRules = compiler.compile(strategyName);
-        Map<String,Integer> extractedSignature = compiler.getExtractedSignature();
-        Map<String,Integer> generatedSignature = compiler.getGeneratedSignature();
+        Signature extractedSignature = compiler.getExtractedSignature();
+        Signature generatedSignature = compiler.getGeneratedSignature();
 
         // transform the LINEAR TRS: compile Aps and remove ATs
         RuleCompiler ruleCompiler = new RuleCompiler(extractedSignature,generatedSignature);
