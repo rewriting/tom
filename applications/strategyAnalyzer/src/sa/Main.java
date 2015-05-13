@@ -62,6 +62,11 @@ public class Main {
         Compiler compiler = Compiler.getInstance();
         System.out.println("SIG = " +compiler.setProgram(t));
 
+        
+        //String strategyName="strat0";
+        //this.generatedTRSs.put(strategyName,new ArrayList<Rule>());
+        //topName = this.compileStrat(strategyName,this.strategies.get(name),this.generatedTRSs.get(name));
+
       } else {
         // Parse the input expression and build an AST
         RuleLexer lexer = new RuleLexer(new ANTLRInputStream(fileinput));

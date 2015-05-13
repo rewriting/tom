@@ -36,7 +36,7 @@ public class Compiler {
    * used to wrap the terms to reduce
    * 
    */
-  private Compiler(){
+  private Compiler() {
       this.generatedRules = new ArrayList<Rule>();
       this.generatedTRSs = new HashMap<String,List<Rule>>();
   }
@@ -45,8 +45,8 @@ public class Compiler {
    * get the instance of the Singleton
    * 
    */
-  public static Compiler getInstance(){
-    if(instance == null){
+  public static Compiler getInstance() {
+    if(instance == null) {
       instance = new Compiler();
     }
     return instance;
@@ -60,7 +60,7 @@ public class Compiler {
     return new ArrayList(strategies.keySet());
   }
 
-  public void setSignature(ExpressionList expression) throws SymbolAlredyExistsException{
+  public void setSignature(ExpressionList expression) throws SymbolAlredyExistsException {
       // Transforms Let(name,exp,body) into body[name/exp]
       ExpressionList expandl = this.expand(expression);
       // Get the list of defined signatures, each of them with a corresponding strategy
@@ -70,7 +70,7 @@ public class Compiler {
   }
 
 
-  public Signature setProgram(Program program) throws SymbolAlredyExistsException, TypeMismatchException{
+  public Signature setProgram(Program program) throws SymbolAlredyExistsException, TypeMismatchException {
     Signature extractedSignature = new Signature();
     extractedSignature.setSignature(program);
     Signature generatedSignature = extractedSignature.expandSignature();
@@ -669,7 +669,7 @@ public class Compiler {
 
   %strategy SearchAntiPattern(list:List) extends Fail() {
     visit Term {
-      s@Anti(t) -> {
+      s@Anti(_) -> {
         list.add(0,getEnvironment().getPosition());
         return `s;
       }
