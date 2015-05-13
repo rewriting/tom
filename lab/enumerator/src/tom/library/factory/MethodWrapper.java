@@ -3,6 +3,7 @@ package tom.library.factory;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+import tom.library.enumerator.Enumeration;
 
 /**
  * This class wraps the java.lang.reflect.Method object It adds some
@@ -55,7 +56,35 @@ public class MethodWrapper extends GeneratorWrapper{
      */
     public String getCurriedType(int index) {
 
-        return "";
+        StringBuilder curriedType = new StringBuilder();
+        
+        if (index == -1) {
+            // first call, prepend enumeration for "this"
+            curriedType.append("F<");
+            curriedType.append(this.declaringClass.getSimpleName());
+            curriedType.append(", ");
+            curriedType.append(this.getCurriedType(index + 1));
+            curriedType.append(">");
+        } else if (this.parameters.size() == 0) {
+            // a method with no input parameters
+            curriedType.append(this.declaringClass.getSimpleName());
+        } else if (index == this.parameters.size() - 1) {
+            // last input parameter, so append the output (the enumerated Type)
+            curriedType.append("F<");
+            curriedType.append(this.parameters.get(index).getType());
+            curriedType.append(", ");
+            curriedType.append(this.declaringClass.getSimpleName());
+            curriedType.append(">");
+        } else {
+            // partial application, append the currying of the output (a new function)
+            curriedType.append("F<");
+            curriedType.append(this.parameters.get(index).getType());
+            curriedType.append(", ");
+            curriedType.append(this.getCurriedType(index + 1));
+            curriedType.append(">");
+        }
+        
+        return curriedType.toString();
     }
 
     /**
@@ -63,7 +92,59 @@ public class MethodWrapper extends GeneratorWrapper{
      */
     public String getCurriedDefinition(int index) {
 
-        return "";
+        StringBuilder curriedDef = new StringBuilder();
+        if (index == -1 && this.parameters.size() == 0) {
+            curriedDef.append("public ");
+            curriedDef.append(this.getCurriedType(index + 1));
+            curriedDef.append(" apply(final ");
+            curriedDef.append(this.declaringClass.getSimpleName());
+            curriedDef.append(" instance) { return (");
+            curriedDef.append(this.declaringClass.getSimpleName());
+            curriedDef.append(") instance.");
+            curriedDef.append(this.method.getName());
+            curriedDef.append("(); }");
+        } else if (index == -1 && this.parameters.size() > 0) {
+            curriedDef.append("public ");
+            curriedDef.append(this.getCurriedType(index + 1));
+            curriedDef.append(" apply(final ");
+            curriedDef.append(this.declaringClass.getSimpleName());
+            curriedDef.append(" instance) { return new ");
+            curriedDef.append(this.getCurriedType(index + 1));
+            curriedDef.append("() {");
+            curriedDef.append(this.getCurriedDefinition(index + 1));
+            curriedDef.append(" }; }");
+        } else if (index == this.parameters.size() - 1) {
+            // last parameter, apply the method with all the parameters
+            curriedDef.append("public ");
+            curriedDef.append(this.declaringClass.getSimpleName());
+            curriedDef.append(" apply(final ");
+            curriedDef.append(this.parameters.get(index).getType());
+            curriedDef.append(" ");
+            curriedDef.append(this.parameters.get(index).getName());
+            curriedDef.append(") { return ");
+            curriedDef.append("("+this.declaringClass.getSimpleName()+") instance.");
+            curriedDef.append(this.method.getName());
+            curriedDef.append("(");
+            for (ParamWrapper param: parameters) {
+                curriedDef.append(param.getName());
+                curriedDef.append(", ");
+            }
+            curriedDef.replace(curriedDef.length()-2,curriedDef.length(),"); }");
+        } else {
+            // partial application
+            curriedDef.append("public ");
+            curriedDef.append(this.getCurriedType(index + 1));
+            curriedDef.append(" apply(final ");
+            curriedDef.append(this.parameters.get(index).getType());
+            curriedDef.append(" ");
+            curriedDef.append(this.parameters.get(index).getName());
+            curriedDef.append(") { return new ");
+            curriedDef.append(this.getCurriedType(index + 1));
+            curriedDef.append("() {");
+            curriedDef.append(this.getCurriedDefinition(index + 1));
+            curriedDef.append(" }; }");
+        }
+        return curriedDef.toString();
     }
 
     /**
@@ -71,7 +152,13 @@ public class MethodWrapper extends GeneratorWrapper{
      */
     public String getEnumerationConstruction() {
 
-        return "";
+        String applyExpr = "Enumeration.apply(Enumeration.singleton(" + this.variableName + "), "+ "tmpThisEnum)";
+
+        for (ParamWrapper param: parameters) {
+            applyExpr = "Enumeration.apply(" + applyExpr + ", " + param.getName() + "Enum)";
+        }
+
+        return applyExpr+".pay()";
     }
 
 }

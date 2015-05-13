@@ -63,7 +63,7 @@ public class ConstructorWrapper<T> extends GeneratorWrapper {
         curriedType.append(", ");
         if (index == this.parameters.size() - 1) {
             // last input parameter, so append the output (of type T)
-            curriedType.append(this.constructor.getName());
+            curriedType.append(this.declaringClass.getSimpleName());
         } else {
             // partial application, append the currying of the output (a new function)
             curriedType.append(this.getCurriedType(index + 1));
