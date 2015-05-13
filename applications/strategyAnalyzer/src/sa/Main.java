@@ -45,6 +45,9 @@ public class Main {
         fileinput = new FileInputStream(options.in);
       }
 
+      // TEMPORARY
+      InputStream newsyntax = new FileInputStream("../examples/example1.ns");
+
       if(options.newparser) {
         System.out.println("NEW PARSER");
         // Parse the input expression and build an AST
@@ -68,6 +71,18 @@ public class Main {
         //topName = this.compileStrat(strategyName,this.strategies.get(name),this.generatedTRSs.get(name));
 
       } else {
+
+        // TEMPORARY
+        RuleLexer lexerNEW = new RuleLexer(new ANTLRInputStream(newsyntax));
+        CommonTokenStream tokensNEW = new CommonTokenStream(lexerNEW);
+        RuleParser ruleParserNEW = new RuleParser(tokensNEW);
+        Tree bNEW = (Tree) ruleParserNEW.program().getTree();
+        Program t = (Program) RuleAdaptor.getTerm(bNEW);
+
+        Compiler compiler = Compiler.getInstance();
+        System.out.println("SIG NEW = " +compiler.setProgram(t));
+        // END TEMPORARY
+
         // Parse the input expression and build an AST
         RuleLexer lexer = new RuleLexer(new ANTLRInputStream(fileinput));
         CommonTokenStream tokens = new CommonTokenStream(lexer);
@@ -77,7 +92,7 @@ public class Main {
         //       System.out.println(pretty.toString(expl));
         //       System.out.println("------------------------------------------   ");
 
-        Compiler compiler = Compiler.getInstance();
+        //         Compiler compiler = Compiler.getInstance();
         compiler.setSignature(expl);
 
         // Transforms the strategy into a rewrite system

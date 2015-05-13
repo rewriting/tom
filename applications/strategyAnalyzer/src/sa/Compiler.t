@@ -12,8 +12,11 @@ public class Compiler {
   %include { java/util/types/Map.tom }
   %include { java/util/types/List.tom }
 
+  private static final String DUMMY = "Dummy";
 
   private static Compiler instance = null;
+
+
 
   // List of (abstract) signatures for the strategies to translate
   private List<Expression> signatures;
@@ -24,6 +27,10 @@ public class Compiler {
   private Map<String,Integer> extractedSignature;
   // The generated (concrete) signature
   private Map<String,Integer> generatedSignature;
+  
+  // NEW SIGNATURES (remove the above when ported)
+  private Signature extSignature;
+  private Signature genSignature;
 
   // The generated rules
   private List<Rule> generatedRules;
@@ -71,11 +78,11 @@ public class Compiler {
 
 
   public Signature setProgram(Program program) throws SymbolAlredyExistsException, TypeMismatchException {
-    Signature extractedSignature = new Signature();
-    extractedSignature.setSignature(program);
-    Signature generatedSignature = extractedSignature.expandSignature();
+    this.extSignature = new Signature();
+    extSignature.setSignature(program);
+    this.genSignature = this.extSignature.expandSignature();
 //     return extractedSignature;
-    return generatedSignature;
+    return this.genSignature;
   }
 
 
@@ -210,8 +217,10 @@ public class Compiler {
          */
         // if declared strategy (i.e. defind name) use its name; otherwise generate fresh name
         String rule = (stratName!=null)?stratName:Tools.getName("rule");
+        this.genSignature.addSymbol(rule,Arrays.asList(DUMMY),DUMMY);
         this.generatedSignature.put(rule,1);
         String cr = Tools.getName("crule");
+        this.genSignature.addSymbol(cr,Arrays.asList(DUMMY,DUMMY),DUMMY);
         this.generatedSignature.put(cr,2);
         %match(rulelist) {
           RuleList(_*,Rule(lhs,rhs),_*) -> {
