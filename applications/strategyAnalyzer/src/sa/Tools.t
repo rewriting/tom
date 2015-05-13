@@ -349,5 +349,19 @@ public class Tools {
     }
   }
 
+  /*
+   * tools for manipulating Program
+   */
+  public static StratDecl getStratDecl(String name, Program program) {
+    %match(program) {
+      Program(_, ConcStratDecl(_*,decl@StratDecl(n, args,body),_*)) -> {
+        if(`n.equals(name)) {
+          return `decl;
+        }
+      }
+    }
+    return null;
+  }
+
 
 }

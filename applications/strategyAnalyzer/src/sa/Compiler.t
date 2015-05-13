@@ -12,8 +12,11 @@ public class Compiler {
   %include { java/util/types/Map.tom }
   %include { java/util/types/List.tom }
 
+  private static final String DUMMY = "Dummy";
 
   private static Compiler instance = null;
+
+
 
   // List of (abstract) signatures for the strategies to translate
   private List<Expression> signatures;
@@ -24,6 +27,10 @@ public class Compiler {
   private Map<String,Integer> extractedSignature;
   // The generated (concrete) signature
   private Map<String,Integer> generatedSignature;
+  
+  // NEW SIGNATURES (remove the above when ported)
+  private Signature extSignature;
+  private Signature genSignature;
 
   // The generated rules
   private List<Rule> generatedRules;
@@ -36,7 +43,7 @@ public class Compiler {
    * used to wrap the terms to reduce
    * 
    */
-  private Compiler(){
+  private Compiler() {
       this.generatedRules = new ArrayList<Rule>();
       this.generatedTRSs = new HashMap<String,List<Rule>>();
   }
@@ -45,8 +52,8 @@ public class Compiler {
    * get the instance of the Singleton
    * 
    */
-  public static Compiler getInstance(){
-    if(instance == null){
+  public static Compiler getInstance() {
+    if(instance == null) {
       instance = new Compiler();
     }
     return instance;
@@ -60,7 +67,7 @@ public class Compiler {
     return new ArrayList(strategies.keySet());
   }
 
-  public void setSignature(ExpressionList expression) throws SymbolAlredyExistsException{
+  public void setSignature(ExpressionList expression) throws SymbolAlredyExistsException {
       // Transforms Let(name,exp,body) into body[name/exp]
       ExpressionList expandl = this.expand(expression);
       // Get the list of defined signatures, each of them with a corresponding strategy
@@ -68,6 +75,73 @@ public class Compiler {
       // Merge all signatures in a concrete signature, add built-ins, and test if compatible
       this.expandSignature();
   }
+
+
+  public Signature setProgram(Program program) throws SymbolAlredyExistsException, TypeMismatchException {
+    this.extSignature = new Signature();
+    extSignature.setSignature(program);
+    this.genSignature = this.extSignature.expandSignature();
+
+    %match(program) {
+      Program(_, ConcStratDecl(_*,StratDecl(name, params, body),_*)) -> {
+
+      }
+    }
+
+
+//     return extractedSignature;
+    return this.genSignature;
+  }
+
+  // for testing purpose
+  public StratList getStratR() {
+    return `ConcStrat(StratName("R"));
+  }
+
+
+
+  public Expression instantiateStrategy(StratDecl sd, StratList args) {
+    Expression res = null;
+
+    try {
+      %match(sd) {
+        StratDecl(name, params, body) -> {
+          if(`params.length() == args.length()) {
+            res = `(TopDown(ReplaceParameters(params,args))).visit(`body);
+          }
+        }
+      }
+    } catch(VisitFailure e) {
+    }
+
+    return res;
+  }
+
+  %strategy ReplaceParameters(params:ParamList, args:StratList) extends Identity() {
+    visit Strat {
+      StratName(n) -> {
+          System.out.println("stratname = " + `n); 
+          System.out.println("params = " + params); 
+          System.out.println("args = " + args); 
+          ParamList plist = params;
+          StratList slist = args;
+
+        while(!plist.isEmptyConcParam() && !slist.isEmptyConcStrat()) {
+          Param p = plist.getHeadConcParam();
+          Strat s = slist.getHeadConcStrat();
+          System.out.println("param = " + p + " -- arg = " + s); 
+          %match(p) {
+            Param(name) && n==name -> {
+              return s;
+            }
+          }
+          plist = plist.getTailConcParam();
+          slist = slist.getTailConcStrat();
+        }
+      }
+    }
+  }
+ 
 
 
   /**
@@ -88,6 +162,7 @@ public class Compiler {
       }
     }
   }
+
   // Merge all signatures, add built-ins, and test if compatible
   private  void  expandSignature() throws SymbolAlredyExistsException {
     this.extractedSignature = new HashMap<String,Integer>();
@@ -199,8 +274,10 @@ public class Compiler {
          */
         // if declared strategy (i.e. defind name) use its name; otherwise generate fresh name
         String rule = (stratName!=null)?stratName:Tools.getName("rule");
+        this.genSignature.addSymbol(rule,Arrays.asList(DUMMY),DUMMY);
         this.generatedSignature.put(rule,1);
         String cr = Tools.getName("crule");
+        this.genSignature.addSymbol(cr,Arrays.asList(DUMMY,DUMMY),DUMMY);
         this.generatedSignature.put(cr,2);
         %match(rulelist) {
           RuleList(_*,Rule(lhs,rhs),_*) -> {
@@ -658,7 +735,7 @@ public class Compiler {
 
   %strategy SearchAntiPattern(list:List) extends Fail() {
     visit Term {
-      s@Anti(t) -> {
+      s@Anti(_) -> {
         list.add(0,getEnvironment().getPosition());
         return `s;
       }

@@ -62,6 +62,9 @@ Strat = StratName(name:String)
       | StratOne(s:Strat)
       | StratExp(e:Expression)
       | StratMu(name:String, s:Strat)
+      | StratAppl(name:String, args:StratList)
+
+StratList = ConcStrat(Strat*)
 
 module Rule:rules() {
   StratExp(Strat(s)) -> s
