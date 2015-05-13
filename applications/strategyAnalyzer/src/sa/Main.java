@@ -67,6 +67,11 @@ public class Main {
         //this.generatedTRSs.put(strategyName,new ArrayList<Rule>());
         //topName = this.compileStrat(strategyName,this.strategies.get(name),this.generatedTRSs.get(name));
 
+        StratDecl sd = Tools.getStratDecl("obu",t);
+        System.out.println("sd = " + sd);
+        Expression si = compiler.instantiateStrategy(sd, compiler.getStratR());
+        System.out.println("si = " + si);
+  
       } else {
         // Parse the input expression and build an AST
         RuleLexer lexer = new RuleLexer(new ANTLRInputStream(fileinput));
