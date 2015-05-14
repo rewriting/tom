@@ -78,10 +78,11 @@ public class Compiler {
 
 
   public Signature setProgram(Program program) throws SymbolAlredyExistsException, TypeMismatchException {
+    this.extractedSignature = new Signature();
+    extractedSignature.setSignature(program);
+    this.generatedSignature = this.extractedSignature.expandSignature();
+
     this.program = program;
-    this.extSignature = new Signature();
-    extSignature.setSignature(program);
-    this.genSignature = this.extSignature.expandSignature();
 
     %match(program) {
       Program(_, ConcStratDecl(_*,StratDecl(name, params, body),_*)) -> {
