@@ -6,7 +6,6 @@ T = a()
   | g(T)
   | f(T,T)
 
-E = e()
 
 strategies
 

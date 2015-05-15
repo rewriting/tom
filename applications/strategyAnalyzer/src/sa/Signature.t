@@ -2,15 +2,9 @@ package sa;
 
 import sa.rule.types.*;
 import java.util.*;
-// import tom.library.sl.*;
-// import aterm.*;
-// import aterm.pure.*;
 
 public class Signature {
   %include { rule/Rule.tom }
-//   %include { sl.tom }
-//   %include { java/util/types/Map.tom }
-//   %include { java/util/types/List.tom }
 
   public static String BOOLEAN = "Boolean";
   public static String TRUE = "True";
