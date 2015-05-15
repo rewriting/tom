@@ -128,6 +128,7 @@ public class Signature {
         break;
       }
     }
+    // pem: make a defensive copy of the list?
     return codomain;
   }
 
@@ -141,6 +142,7 @@ public class Signature {
         break;
       }
     }
+    // pem: make a defensive copy of the list?
     return profile;
   }
 
@@ -149,7 +151,7 @@ public class Signature {
    */
   public int getArity(String symbol){
     int arity = -1;
-    if(this.getProfile(symbol)!=null){
+    if(this.getProfile(symbol)!=null) {
       arity = this.getProfile(symbol).size();
     }
     return arity;
@@ -158,13 +160,14 @@ public class Signature {
 
   /** Get the list of all symbols
    */
-  public List<String> getSymbolNames(){
+  public List<String> getSymbolNames() {
     List<String> symbols = new ArrayList<String>();
 
     for(GomType type: this.signature.keySet()) {
-        for(String symbol: signature.get(type).keySet()) {
-          symbols.add(symbol);
-        }
+      symbols.addAll(signature.get(type).keySet());
+      //for(String symbol: signature.get(type).keySet()) {
+      //  symbols.add(symbol);
+      //}
     }
     return symbols;
   }

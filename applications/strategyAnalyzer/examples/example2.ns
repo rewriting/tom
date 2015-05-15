@@ -14,9 +14,11 @@ r2() = [ b() -> b() ]
 
 r3() = [ b() -> a() ]
 
+r4() = [ f(x,x) -> x ]
+
 innermost(s) = mu x.(all(x);((s;x)<+identity)) 
 
 td(s) = mu y.((s<+identity);all(y)) 
 
-strat0() = innermost(r3())
-// strat0() = r3()
+//strat0() = innermost(r3())
+strat0() = r4() <+ identity

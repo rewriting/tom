@@ -20,8 +20,6 @@ public class Compiler {
   // initial AST
   private Program program;
 
-  // List of (abstract) signatures for the strategies to translate
-  private List<Expression> signatures;
   // List of strategies to translate (same index as corresponding signature)
   private Map<String,Strat> strategies;
 
@@ -64,19 +62,8 @@ public class Compiler {
    * @return the names of the compiled strategies
    */
   public List<String> getStrategyNames() {
-//     return new ArrayList(strategies.keySet());
     return new ArrayList(generatedTRSs.keySet());
   }
-
-  public void setSignature(ExpressionList expression) throws SymbolAlredyExistsException {
-      // Transforms Let(name,exp,body) into body[name/exp]
-      ExpressionList expandl = this.expand(expression);
-      // Get the list of defined signatures, each of them with a corresponding strategy
-      this.extractSignaturesAndStrategies(expandl);
-      // Merge all signatures in a concrete signature, add built-ins, and test if compatible
-//       this.expandSignature();
-  }
-
 
   public Signature setProgram(Program program) throws SymbolAlredyExistsException, TypeMismatchException {
     this.extractedSignature = new Signature();
@@ -212,26 +199,6 @@ public class Compiler {
       }
     }
   }
-
-  /**
-   * Extract all signatures and strategies
-   * We suppose we always have let(_,signature,strategy)
-   * For the moment a set of rules is not a strategy and not handled (see compileExp and Replace)
-   */
-  private void extractSignaturesAndStrategies(ExpressionList expl) throws SymbolAlredyExistsException {
-//     this.signatures=new ArrayList<Expression>(); 
-    this.strategies=new HashMap<String,Strat>(); 
-
-    int index=0;
-
-    %match(expl) {
-      ExpressionList(_*,Let(_,sig@Signature(_),Strat(strat)),_*) -> {
-//             this.signatures.add(`sig);
-            this.strategies.put("strat"+index++,`strat);
-      }
-    }
-  }
-
 
   public List<Rule>  compileStrategy(String strategyName) {
     Expression expand = this.expandStrategy(strategyName);
@@ -645,35 +612,6 @@ public class Compiler {
       }
     }
   }
-
-  /*
-   * Transforms Let(name,exp,body) into body[name/exp]
-   */
-  private  ExpressionList expand(ExpressionList expl) {
-    try {
-      return `RepeatId(TopDown(Expand())).visitLight(expl);
-    } catch(VisitFailure e) {
-      System.out.println("failure on: " + e);
-    }
-    return expl;
-  }
-
-  %strategy Expand() extends Identity() {
-    visit Expression {
-      Let(name,exp@(Strat|Set)[],body) -> {
-        return `TopDown(Replace(name,exp)).visitLight(`body);
-      }
-    }
-  }
-
-  %strategy Replace(name:String, exp:Expression) extends Identity() {
-    visit Strat {
-      StratName(n) && n==name -> {
-        return `StratExp(exp);
-      }
-    }
-  }
- 
 
 
   /**
