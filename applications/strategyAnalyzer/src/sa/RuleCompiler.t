@@ -17,12 +17,9 @@ public class RuleCompiler {
 
   // The extracted (concrete) signature
   private Signature extractedSignature;
-  //   private Map<String,Integer> extractedSignature;
   // The generated (concrete) signature
   private Signature generatedSignature;
-  //   private Map<String,Integer> generatedSignature;
   // The generated (ordered) TRS
-
   private List<Rule> generatedRules;
 
   public RuleCompiler(Signature extractedSignature, Signature generatedSignature){
@@ -31,7 +28,7 @@ public class RuleCompiler {
   }
   
   /**
-   * Expand an anti-patterns in each of the LINEAR rules in the list
+   * Expand an anti-pattern in each of the LINEAR rules in the list
    * - the rules replacing the orginal are at the same position in the list
    * @param generatedRules initial set of rules
    * @param rule the rule to expand
