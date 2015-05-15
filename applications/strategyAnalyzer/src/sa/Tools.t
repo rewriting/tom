@@ -31,7 +31,7 @@ public class Tools {
    * @param exp the string representation of the term to meta-encode
    * @return meta-encoding using Appl and TermList
    */
-  public static Term encode(String stringterm, Map<String,Integer> signature) {
+  public static Term encode(String stringterm, Signature signature) {
     //System.out.println("encode: " + stringterm);
     Term res = null;
     ATermFactory factory = SingletonFactory.getInstance();
@@ -41,7 +41,7 @@ public class Tools {
     return res;
   }
   
-  private static Term encode(ATerm at, Map<String,Integer> signature) {
+  private static Term encode(ATerm at, Signature signature) {
     Term res = null;
     switch(at.getType()) {
 	  	case ATerm.APPL:
@@ -65,7 +65,7 @@ public class Tools {
     return res;
   }
 
-  public static RuleList encodeRuleList(String stringterm, Map<String,Integer> signature) {
+  public static RuleList encodeRuleList(String stringterm, Signature signature) {
     System.out.println("encodeRuleList: " + stringterm);
     RuleList res = `RuleList();
     ATermFactory factory = SingletonFactory.getInstance();
@@ -81,7 +81,7 @@ public class Tools {
     return res;
   }
 
-  public static Rule encodeRule(String stringterm, Map<String,Integer> signature) {
+  public static Rule encodeRule(String stringterm, Signature signature) {
     //System.out.println("encodeRule: " + stringterm);
     Rule res = null;
     ATermFactory factory = SingletonFactory.getInstance();
@@ -102,8 +102,8 @@ public class Tools {
     return res;
   }
 
-  private static boolean isVariableName(String name, Map<String,Integer> signature) {
-    return !signature.keySet().contains(name);
+  private static boolean isVariableName(String name, Signature signature) {
+    return signature.getCodomain(name) == null;
 
     /*
     boolean res = true;
@@ -115,7 +115,7 @@ public class Tools {
 
   }
 
-  private static TermList encodeList(ATermList list, Map<String,Integer> signature) {
+  private static TermList encodeList(ATermList list, Signature signature) {
     if(list.isEmpty()) {
       return `TermList();
     } else {
@@ -131,15 +131,15 @@ public class Tools {
     * the string "Appl(symb_f,Cons(Appl(symb_b,Nil()),Nil()))"
     * this string can be encoded into a Term, using the "encode" method
     */
-  public static Term metaEncodeConsNil(Term t, Map<String,Integer> signature) {
+  public static Term metaEncodeConsNil(Term t, Signature signature) {
     return encode(encodeConsNil(t,signature),signature);
   }
 
-  private static String encodeConsNil(Term t, Map<String,Integer> signature) {
+  private static String encodeConsNil(Term t, Signature signature) {
     %match(t) {
       Appl(symb,args) -> {
         String symbName = "symb_" + `symb;
-        signature.put(symbName,0);
+        signature.addSymbol(symbName,new ArrayList<String>(),Signature.DUMMY);
         return "Appl(" + symbName + "," + encodeConsNil(`args,signature) + ")";
       }
 
@@ -155,7 +155,7 @@ public class Tools {
     return null;
   }
 
-  private static String encodeConsNil(TermList t, Map<String,Integer> signature) {
+  private static String encodeConsNil(TermList t, Signature signature) {
     %match(t) {
       TermList(head,tail*) -> {
         return "Cons(" + encodeConsNil(`head,signature) + "," + encodeConsNil(`tail,signature) + ")";

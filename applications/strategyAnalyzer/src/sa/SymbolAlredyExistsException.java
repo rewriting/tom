@@ -1,4 +1,4 @@
 package sa;
 
-public class SymbolAlredyExistsException extends Exception{
+public class SymbolAlredyExistsException extends RuntimeException{
 }

@@ -29,7 +29,7 @@ r5() = g(x) -> fn(x)
 
 innermost(r) = obu(r)
 
-main() = innermost(r1)
+strat0() = innermost(r1)
 
 
 

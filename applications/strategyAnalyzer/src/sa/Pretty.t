@@ -76,6 +76,19 @@ public class Pretty {
     return "toString(Rule): error";
   }
 
+
+  public static String toString(List<Rule> rules) {
+    String res = "";
+    for(Rule r: rules){
+      %match(r) {
+        Rule(lhs,rhs) -> {
+          res += toString(`lhs) + " -> " + toString(`rhs) + "\n";
+        }
+      }
+    }
+    return res;
+  }
+
   public static String addBrace(String name) {
     if(Main.options.aprove) {
       return name;
@@ -127,7 +140,7 @@ public class Pretty {
     }
   }
 
-  public static String generateAprove(List<Rule> bag, Map<String,Integer> extractedSignature, boolean innermost) 
+  public static String generateAprove(List<Rule> bag, Signature extractedSignature, boolean innermost) 
     throws VisitFailure {
     StringBuffer rulesb = new StringBuffer();
     Collection<String> varSet = new HashSet<String>();
@@ -153,7 +166,10 @@ public class Pretty {
     return varsb.toString()+rulesb.toString();
   }  
 
-  public static String generateTom(String strategyName, List<Rule> bag, Map<String,Integer> sig, String classname) {
+  public static String generateTom(String strategyName, List<Rule> bag, Signature sig, String classname) {
+    System.out.println("--------- TOM ----------------------");
+//     System.out.println("RULEs: " + toString(bag));
+
         StringBuffer sb = new StringBuffer();
     String lowercaseClassname = classname.toLowerCase();
     sb.append(
@@ -166,8 +182,8 @@ public class @classname@ {
       abstract syntax
       T = 
 ]%);
-    for(String name: sig.keySet()) {
-      int arity = sig.get(name);
+    for(String name: sig.getSymbolNames()) {
+      int arity = sig.getArity(name);
       String args = "";
       for(int i=0 ; i<arity ; i++) {
         args += "kid"+i+":T";
