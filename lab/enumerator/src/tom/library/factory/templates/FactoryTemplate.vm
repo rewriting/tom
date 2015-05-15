@@ -52,6 +52,7 @@ public class $parsedClass.getFactoryClassName() {
 #end
         
         Enumeration<$parsedClass.getSimpleName()> $method.getEnumName() = $method.getEnumerationConstruction();
+        
 #end
         tmpThisEnum.p1 = new P1<LazyList<Finite<$parsedClass.getSimpleName()>>>() {
             public LazyList<Finite<$parsedClass.getSimpleName()>> _1() {
