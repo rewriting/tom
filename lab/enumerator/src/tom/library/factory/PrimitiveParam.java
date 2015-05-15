@@ -9,7 +9,7 @@ import org.apache.commons.lang.ClassUtils;
  * @author Ahmad
  * 
  */
-public class PrimitiveWrapper extends ParamWrapper {
+public class PrimitiveParam extends ParamWrapper {
 
     /**
      * name of the java primitive wrapper for this type e.g. Integer for int
@@ -26,7 +26,7 @@ public class PrimitiveWrapper extends ParamWrapper {
      *            index of the parameter among the constructor parameters
      * @param paramAnnotations
      */
-    public PrimitiveWrapper(Class param, int paramIndex, GeneratorWrapper declaringCons) {
+    public PrimitiveParam(Class param, int paramIndex, GeneratorWrapper declaringCons) {
         super(param, paramIndex, declaringCons);
         this.javaWrapperName = ClassUtils.primitiveToWrapper(param).getSimpleName();
     }

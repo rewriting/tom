@@ -8,7 +8,7 @@ import java.lang.reflect.Type;
  * @author ahmad
  *
  */
-public class ListWrapper extends ParamWrapper {
+public class ListParam extends ParamWrapper {
 
     /**
      * Actual type of the List
@@ -28,7 +28,7 @@ public class ListWrapper extends ParamWrapper {
      */
     
     
-    public ListWrapper(Class param, int paramIndex, GeneratorWrapper declaringGenerator) {
+    public ListParam(Class param, int paramIndex, GeneratorWrapper declaringGenerator) {
         super(param, paramIndex, declaringGenerator);
         ParameterizedType parameterizedType = (ParameterizedType) declaringGenerator.getGenericParameterTypes()[paramIndex];
         this.genericType = ParamFactory.createParamWrapper((Class) parameterizedType.getActualTypeArguments()[0], 0, declaringGenerator);
