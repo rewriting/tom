@@ -33,18 +33,18 @@ public class ParsedClass {
     /**
      * the no-arguments constructor of the class - if it exists -
      */
-    private ConstructorWrapper noArgsConstructor;
+    private GeneratingConstructor noArgsConstructor;
 
     /**
      * list of class constructors that are annotated with @EnumerateGenerator
      * and have parameters
      */
-    private List<ConstructorWrapper> constructors;
+    private List<GeneratingConstructor> constructors;
 
     /**
      * list of class methods that are annotated with @Enumerate
      */
-    private List<MethodWrapper> methods;
+    private List<GeneratingMethod> methods;
 
     /**
      * contained non-primitive classes references that need factories to be
@@ -58,8 +58,8 @@ public class ParsedClass {
     public static final String ENDL = System.getProperty("line.separator");
 
     public <T> ParsedClass(Class<T> classToParse) {
-        this.constructors = new ArrayList<ConstructorWrapper>();
-        this.methods = new ArrayList<MethodWrapper>();
+        this.constructors = new ArrayList<GeneratingConstructor>();
+        this.methods = new ArrayList<GeneratingMethod>();
         this.canonicalName = classToParse.getCanonicalName();
         this.simpleName = classToParse.getSimpleName();
         this.packageName = classToParse.getPackage().getName();
@@ -78,19 +78,19 @@ public class ParsedClass {
         return packageName;
     }
 
-    public List<ConstructorWrapper> getConstructors() {
+    public List<GeneratingConstructor> getConstructors() {
         return constructors;
     }
 
-    public List<MethodWrapper> getMethods() {
+    public List<GeneratingMethod> getMethods() {
         return methods;
     }
 
-    public ConstructorWrapper getConstructor(int index) {
+    public GeneratingConstructor getConstructor(int index) {
         return constructors.get(index);
     }
 
-    public ConstructorWrapper getNoArgsConstructor() {
+    public GeneratingConstructor getNoArgsConstructor() {
         return noArgsConstructor;
     }
 
@@ -105,7 +105,7 @@ public class ParsedClass {
      *            constructor to wrap
      */
     public <T> void addNoArgsConstructor(Constructor<T> noArgsConstructor) {
-        this.noArgsConstructor = new ConstructorWrapper(noArgsConstructor, -1, this);
+        this.noArgsConstructor = new GeneratingConstructor(noArgsConstructor, -1, this);
     }
 
     /**
@@ -118,7 +118,7 @@ public class ParsedClass {
      *            Constructor to add
      */
     public <T> void addConstructor(Constructor<T> cons) {
-        this.constructors.add(new ConstructorWrapper(cons, constructors.size(), this));
+        this.constructors.add(new GeneratingConstructor(cons, constructors.size(), this));
     }
 
     /**
@@ -130,7 +130,7 @@ public class ParsedClass {
      *            Method to add
      */
     public void addMethod(Method method) {
-        this.methods.add(new MethodWrapper(method, methods.size(), this));
+        this.methods.add(new GeneratingMethod(method, methods.size(), this));
     }
 
     /**

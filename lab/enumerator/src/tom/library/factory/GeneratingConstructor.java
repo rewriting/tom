@@ -11,7 +11,7 @@ import java.util.List;
  * @author Ahmad
  * 
  */
-public class ConstructorWrapper<T> extends GeneratorWrapper {
+public class GeneratingConstructor<T> extends GeneratorWrapper {
 
     /**
      * the wrapped constructor object it must be set on instantiation
@@ -19,7 +19,7 @@ public class ConstructorWrapper<T> extends GeneratorWrapper {
     private final Constructor<T> constructor;
 
     /**
-     * instantiating ConstructorWrapper to wrap a constructor that have
+     * instantiating GeneratingConstructor to wrap a constructor that have
      * parameters
      * 
      * @param cons
@@ -30,7 +30,7 @@ public class ConstructorWrapper<T> extends GeneratorWrapper {
      * @param declaringClass
      *            The parsed class containing this constructor
      */
-    public ConstructorWrapper(Constructor<T> cons, int index, ParsedClass declaringClass) {
+    public GeneratingConstructor(Constructor<T> cons, int index, ParsedClass declaringClass) {
         this.constructor = cons;
         this.declaringClass = declaringClass;
         this.variableName = "cons" + (index + 1);
