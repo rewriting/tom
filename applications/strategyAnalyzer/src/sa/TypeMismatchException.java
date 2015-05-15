@@ -1,4 +1,4 @@
 package sa;
 
-public class TypeMismatchException extends Exception{
+public class TypeMismatchException extends RuntimeException{
 }

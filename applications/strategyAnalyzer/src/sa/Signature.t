@@ -30,7 +30,12 @@ public class Signature {
   }
 
 
-  public void setSignature(Program program) throws TypeMismatchException {
+  /**
+   * Add the symbols defined for a given type in the corresponding
+   * entry in the signature Map. 
+   * @param program the AST of the program containing the signature
+   */
+  public void setSignature(Program program) {
     %match(program) {
       Program(ConcProduction(_*,SortType(type,symb),_*),_) -> {
         Map<String,List<GomType>> symbols = new HashMap<String,List<GomType>>(); 
@@ -53,11 +58,15 @@ public class Signature {
     }
   }
 
-  /*
-   * Create a new signature
+  /**
+   * Create an expanded signature containing the symbols in the
+   * current one (set from a program) and builtin symbols used in the
+   * translation of strategies
+   * @return the expanded signature
    */
-  public Signature expandSignature() throws TypeMismatchException {
+  public Signature expandSignature()  {
     Signature expandedSignature = new Signature();
+    // clone everything (lists could be just copied since normally not modified later on)
     for(GomType type: this.signature.keySet()) {
         Map<String,List<GomType>> symbols = new HashMap<String,List<GomType>>(); 
         for(String symbol: signature.get(type).keySet()) {
@@ -71,30 +80,44 @@ public class Signature {
     expandedSignature.addSymbol(TRUE,new ArrayList<String>(),BOOLEAN);
     expandedSignature.addSymbol(FALSE,new ArrayList<String>(),BOOLEAN);
     expandedSignature.addSymbol(AND,Arrays.asList(BOOLEAN,BOOLEAN),BOOLEAN);
-    String eq_boolean = desambiguateSymbol(EQ, Arrays.asList(BOOLEAN,BOOLEAN));
+    String eq_boolean = this.disambiguateSymbol(EQ, Arrays.asList(BOOLEAN,BOOLEAN));
     expandedSignature.addSymbol(eq_boolean,Arrays.asList(BOOLEAN,BOOLEAN),BOOLEAN);
 
     // add: bottom(T), eq_T(T,T)
     for(GomType type: this.signature.keySet()) {
       String t = type.getName();
       expandedSignature.addSymbol(BOTTOM,Arrays.asList(t),t);
-      String eq_t = desambiguateSymbol(EQ, Arrays.asList(t,t));
+      String eq_t = this.disambiguateSymbol(EQ, Arrays.asList(t,t));
       expandedSignature.addSymbol(eq_t,Arrays.asList(t,t),BOOLEAN);
     }
 
     return expandedSignature;
   }
 
-  private String desambiguateSymbol(String name, List<String> argTypes) {
+  /**
+   * Generate a new name for potentially overloaded symbols; use the
+   * types of its arguments to disambiguate.
+   * @param name the name of the symbol
+   * @param argTypes the types of its arguments
+   * @return the new name of the form name_T1_T2_..._Tn
+   */
+  private String disambiguateSymbol(String name, List<String> argTypes) {
     String res = name;
     // Just for TESTING
     // TODO: generate the correct eq_X_X in the rules (for the moment only "eq" generate)
-//     for(String argType:argTypes) {
-//       res += "_" + argType;
-//     }
+    //     for(String argType:argTypes) {
+    //       res += "_" + argType;
+    //     }
     return res;
   }
 
+
+  /**
+   * Add a symbol (with the corresponding profile).
+   * @param name the name of the symbol
+   * @param argTypes the types of its arguments
+   * @param codomain the return type 
+   */
   public void addSymbol(String name, List<String> argTypes, String codomain) {
     Map<String,List<GomType>> symbols = this.signature.get(`GomType(codomain));
     // if type of codomain doesn't exist then create it
@@ -106,13 +129,12 @@ public class Signature {
     for(String argType:argTypes) {
       args.add(`GomType(argType));
     }
-
     // detect overloading
     List<GomType> oldDomain = symbols.put(name,args);
     if(oldDomain != null) {
       //System.out.println("redefinition: '" + name +"'" + oldDomain + " becomes '" + name + "'" + args);
       System.out.println(%[redefinition: '@name@'@oldDomain@ becomes '@name@'@args@]%);
-      //throw new TypeMismatchException();
+      //       throw new TypeMismatchException();
     }
     signature.put(`GomType(codomain),symbols); 
   }
@@ -132,10 +154,11 @@ public class Signature {
   }
 
   /** Get the list of types of its arguments
+   * @param symbol the name of the symbol
+   * @return the list of types of its arguments
    */
   public List<GomType> getProfile(String symbol){
     List<GomType> profile = null;
-
     for(GomType type: this.signature.keySet()) {
       if((profile=this.signature.get(type).get(symbol))!=null) {
         break;
@@ -144,8 +167,9 @@ public class Signature {
     return profile;
   }
 
-
   /** Get the arity of a symbol
+   * @param symbol the name of the symbol
+   * @return the arity of the symbol
    */
   public int getArity(String symbol){
     int arity = -1;
@@ -155,8 +179,8 @@ public class Signature {
     return arity;
   }
 
-
   /** Get the list of all symbols
+   * @return the list of symbols in the signature
    */
   public List<String> getSymbolNames(){
     List<String> symbols = new ArrayList<String>();
@@ -168,6 +192,7 @@ public class Signature {
     }
     return symbols;
   }
+
 
   public String toString() {
     return "" + this.signature;
