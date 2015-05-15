@@ -12,7 +12,7 @@ import tom.library.enumerator.Enumeration;
  * @author Ahmad
  * 
  */
-public class MethodWrapper extends GeneratorWrapper{
+public class GeneratingMethod extends GeneratorWrapper{
 
     /**
      * the wrapped method object it must be set on instantiation
@@ -20,7 +20,7 @@ public class MethodWrapper extends GeneratorWrapper{
     private final Method method;
 
     /**
-     * instantiating MethodWrapper to wrap a method annotated with @Enumerate
+     * instantiating GeneratingMethod to wrap a method annotated with @Enumerate
      * 
      * @param method
      *            The method object to wrap
@@ -29,7 +29,7 @@ public class MethodWrapper extends GeneratorWrapper{
      * @param declaringClass
      *            The parsed class containing this method
      */
-    public MethodWrapper(Method method, int index, ParsedClass declaringClass) {
+    public GeneratingMethod(Method method, int index, ParsedClass declaringClass) {
         this.method = method;
         this.declaringClass = declaringClass;
         this.variableName = "_method" +index+"_"+ method.getName();

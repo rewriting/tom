@@ -75,10 +75,10 @@ public abstract class GeneratorWrapper {
      * @return an array of arrays that represent the annotations on the formal parameters of underlying method or constructor
      */
     public Annotation[][] getParameterAnnotations() {
-        if (this instanceof ConstructorWrapper) {
-            return ((ConstructorWrapper) this).getConstructor().getParameterAnnotations();
+        if (this instanceof GeneratingConstructor) {
+            return ((GeneratingConstructor) this).getConstructor().getParameterAnnotations();
         } else {
-            return ((MethodWrapper) this).getMethod().getParameterAnnotations();
+            return ((GeneratingMethod) this).getMethod().getParameterAnnotations();
         }
     }
     
@@ -87,10 +87,10 @@ public abstract class GeneratorWrapper {
      * @return an array of Type objects that represent the formal parameter types
      */
     public Type[] getGenericParameterTypes() {
-        if (this instanceof ConstructorWrapper) {
-            return ((ConstructorWrapper<?>) this).getConstructor().getGenericParameterTypes();
+        if (this instanceof GeneratingConstructor) {
+            return ((GeneratingConstructor<?>) this).getConstructor().getGenericParameterTypes();
         } else {
-            return ((MethodWrapper) this).getMethod().getGenericParameterTypes();
+            return ((GeneratingMethod) this).getMethod().getGenericParameterTypes();
         }
     }
 

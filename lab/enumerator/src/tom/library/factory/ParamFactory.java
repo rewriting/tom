@@ -26,16 +26,15 @@ public class ParamFactory {
     public static ParamWrapper createParamWrapper(Class param, int paramIndex, GeneratorWrapper declaringGenerator) {
 
         if (param.isPrimitive()) {
-            return new PrimitiveWrapper(param, paramIndex, declaringGenerator);
+            return new PrimitiveParam(param, paramIndex, declaringGenerator);
         } else if (ClassUtils.wrapperToPrimitive(param) != null) {
-            return new PrimitiveWrapper(ClassUtils.wrapperToPrimitive(param), paramIndex, declaringGenerator);
-        }
-        else if (param.equals(String.class)) {
-            return new StringWrapper(param, paramIndex, declaringGenerator);
+            return new PrimitiveParam(ClassUtils.wrapperToPrimitive(param), paramIndex, declaringGenerator);
+        } else if (param.equals(String.class)) {
+            return new StringParam(param, paramIndex, declaringGenerator);
         } else if (List.class.isAssignableFrom(param)) {
-            return new ListWrapper(param, paramIndex, declaringGenerator);
+            return new ListParam(param, paramIndex, declaringGenerator);
         } else {
-            return new ObjectWrapper(param, paramIndex, declaringGenerator);
+            return new ObjectParam(param, paramIndex, declaringGenerator);
         }
     }
 
