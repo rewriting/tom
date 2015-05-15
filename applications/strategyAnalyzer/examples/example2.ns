@@ -1,0 +1,22 @@
+
+abstract syntax
+T = a()
+  | b()
+  | g(T)
+  | f(T,T)
+
+
+strategies
+
+r1() = [ a() -> f(b(),b()) ]
+
+r2() = [ b() -> b() ]
+
+r3() = [ b() -> a() ]
+
+innermost(s) = mu x.(all(x);((s;x)<+identity)) 
+
+td(s) = mu y.((s<+identity);all(y)) 
+
+strat0() = innermost(r3())
+// strat0() = r3()

@@ -46,6 +46,7 @@ public class Main {
       }
 
       // TEMPORARY
+//       InputStream newsyntax = new FileInputStream("../examples/newsyntax.txt");
       InputStream newsyntax = new FileInputStream("../examples/example1.ns");
 
       if(options.newparser) {
@@ -81,11 +82,11 @@ public class Main {
 
 
 
-
       } else {
 
         // TEMPORARY
-        RuleLexer lexerNEW = new RuleLexer(new ANTLRInputStream(newsyntax));
+//         RuleLexer lexerNEW = new RuleLexer(new ANTLRInputStream(newsyntax));
+        RuleLexer lexerNEW = new RuleLexer(new ANTLRInputStream(fileinput));
         CommonTokenStream tokensNEW = new CommonTokenStream(lexerNEW);
         RuleParser ruleParserNEW = new RuleParser(tokensNEW);
         Tree bNEW = (Tree) ruleParserNEW.program().getTree();
@@ -96,21 +97,22 @@ public class Main {
         // END TEMPORARY
 
         // Parse the input expression and build an AST
-        RuleLexer lexer = new RuleLexer(new ANTLRInputStream(fileinput));
-        CommonTokenStream tokens = new CommonTokenStream(lexer);
-        RuleParser ruleParser = new RuleParser(tokens);
-        Tree b = (Tree) ruleParser.expressionlist().getTree();
-        ExpressionList expl = (ExpressionList) RuleAdaptor.getTerm(b);
-        //       System.out.println(pretty.toString(expl));
-        //       System.out.println("------------------------------------------   ");
+//         RuleLexer lexer = new RuleLexer(new ANTLRInputStream(fileinput));
+//         CommonTokenStream tokens = new CommonTokenStream(lexer);
+//         RuleParser ruleParser = new RuleParser(tokens);
+//         Tree b = (Tree) ruleParser.expressionlist().getTree();
+//         ExpressionList expl = (ExpressionList) RuleAdaptor.getTerm(b);
+//         //       System.out.println(pretty.toString(expl));
+//         //       System.out.println("------------------------------------------   ");
 
-        //         Compiler compiler = Compiler.getInstance();
-        compiler.setSignature(expl);
+//         //         Compiler compiler = Compiler.getInstance();
+//         compiler.setSignature(expl); 
 
         // Transforms the strategy into a rewrite system
         //   get the TRS for the strategy named strategyName
         String strategyName="strat0";
-        List<Rule> generatedRules = compiler.compile(strategyName);
+//         List<Rule> generatedRules = compiler.compile(strategyName);
+        List<Rule> generatedRules = compiler.compileStrategy(strategyName);
         Signature extractedSignature = compiler.getExtractedSignature();
         Signature generatedSignature = compiler.getGeneratedSignature();
 

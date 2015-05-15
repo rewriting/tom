@@ -16,7 +16,7 @@ public class Signature {
   public static String TRUE = "True";
   public static String FALSE = "False";
   public static String AND = "and";
-  public static String BOTTOM = "bottom";
+  public static String BOTTOM = "Bottom";
   public static String EQ = "eq";
 
   public static final String DUMMY = "Dummy";
@@ -86,9 +86,12 @@ public class Signature {
   }
 
   private String desambiguateSymbol(String name, List<String> argTypes) {
-    String res = name;for(String argType:argTypes) {
-      res += "_" + argType;
-    }
+    String res = name;
+    // Just for TESTING
+    // TODO: generate the correct eq_X_X in the rules (for the moment only "eq" generate)
+//     for(String argType:argTypes) {
+//       res += "_" + argType;
+//     }
     return res;
   }
 

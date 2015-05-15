@@ -64,7 +64,8 @@ public class Compiler {
    * @return the names of the compiled strategies
    */
   public List<String> getStrategyNames() {
-    return new ArrayList(strategies.keySet());
+//     return new ArrayList(strategies.keySet());
+    return new ArrayList(generatedTRSs.keySet());
   }
 
   public void setSignature(ExpressionList expression) throws SymbolAlredyExistsException {
@@ -231,6 +232,26 @@ public class Compiler {
     }
   }
 
+
+  public List<Rule>  compileStrategy(String strategyName) {
+    Expression expand = this.expandStrategy(strategyName);
+    System.out.println("expanded version for "+strategyName+"  = " + expand);
+
+    Strat strategy=null;
+    %match(expand) {
+      Strat(strat) -> { strategy = `strat;      }
+    }
+    System.out.println("STRATEGY "+strategyName+"  = " + strategy);
+
+    this.generatedTRSs.put(strategyName,new ArrayList<Rule>());
+
+    this.compileStrat(strategyName,strategy,this.generatedTRSs.get(strategyName));
+    generateEquality(this.generatedTRSs.get(strategyName), this.extractedSignature, this.generatedSignature);
+
+    return new ArrayList(this.generatedTRSs.get(strategyName));
+  }
+
+
   /**
    * Compile a (list of) strategy into a rewrite system. Each strategy
    * has a corresponding (complete) TRS.
@@ -288,7 +309,7 @@ public class Compiler {
     Term False = Tools.encode("False",this.generatedSignature);
 
     %match(strat) {
-      StratExp(Set(rulelist)) -> {
+      StratExp((Set|List)(rulelist)) -> {
         /*
          * lhs -> rhs becomes
          * in the linear case:
@@ -345,7 +366,6 @@ public class Compiler {
           String mu = (stratName!=null)?stratName:Tools.getName("mu");
           this.generatedSignature.addSymbol(mu,Arrays.asList(Signature.DUMMY),Signature.DUMMY);
           //           this.generatedSignature.put(mu,1);
-          this.generatedSignature.addSymbol(mu,Arrays.asList(Signature.DUMMY),Signature.DUMMY);
           Strat newStrat = `TopDown(ReplaceMuVar(name,mu)).visitLight(`s);
           String phi_s = compileStrat(null,newStrat,generatedRules);
           generatedRules.addAll(Tools.encodeRuleList(%[[
@@ -1091,5 +1111,6 @@ public class Compiler {
 //     }
 //     return strat.toString();
 //   }
- 
+
+   
 }

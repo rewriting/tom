@@ -76,6 +76,19 @@ public class Pretty {
     return "toString(Rule): error";
   }
 
+
+  public static String toString(List<Rule> rules) {
+    String res = "";
+    for(Rule r: rules){
+      %match(r) {
+        Rule(lhs,rhs) -> {
+          res += toString(`lhs) + " -> " + toString(`rhs) + "\n";
+        }
+      }
+    }
+    return res;
+  }
+
   public static String addBrace(String name) {
     if(Main.options.aprove) {
       return name;
@@ -154,6 +167,9 @@ public class Pretty {
   }  
 
   public static String generateTom(String strategyName, List<Rule> bag, Signature sig, String classname) {
+    System.out.println("--------- TOM ----------------------");
+//     System.out.println("RULEs: " + toString(bag));
+
         StringBuffer sb = new StringBuffer();
     String lowercaseClassname = classname.toLowerCase();
     sb.append(
