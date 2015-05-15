@@ -45,10 +45,6 @@ public class Main {
         fileinput = new FileInputStream(options.in);
       }
 
-      // TEMPORARY
-//       InputStream newsyntax = new FileInputStream("../examples/newsyntax.txt");
-      InputStream newsyntax = new FileInputStream("../examples/example1.ns");
-
       if(options.newparser) {
         System.out.println("NEW PARSER");
         // Parse the input expression and build an AST
@@ -58,34 +54,17 @@ public class Main {
         Tree b = (Tree) ruleParser.program().getTree();
         Program t = (Program) RuleAdaptor.getTerm(b);
 
-
-        System.out.println(t);
-        //System.out.println(pretty.toString(expl));
+        System.out.println(t); // AST of the program
         System.out.println("------------------------------------------   ");
 
         Compiler compiler = Compiler.getInstance();
         System.out.println("SIG = " +compiler.setProgram(t));
 
-        
-        //String strategyName="strat0";
-        //this.generatedTRSs.put(strategyName,new ArrayList<Rule>());
-        //topName = this.compileStrat(strategyName,this.strategies.get(name),this.generatedTRSs.get(name));
-
-        //StratDecl sd = Tools.getStratDecl("obu",t);
-        //System.out.println("sd = " + sd);
-        //Expression si = compiler.instantiateStrategy(sd, compiler.getStratR());
-        //System.out.println("si = " + si);
-
         System.out.println("main = " + Tools.getStratDecl("main", t));
         Expression expand = compiler.expandStrategy("main");
         System.out.println("expanded version = " + expand);
-
-
-
       } else {
-
-        // TEMPORARY
-//         RuleLexer lexerNEW = new RuleLexer(new ANTLRInputStream(newsyntax));
+        // TODO: remove the if branch when option newparser removed
         RuleLexer lexerNEW = new RuleLexer(new ANTLRInputStream(fileinput));
         CommonTokenStream tokensNEW = new CommonTokenStream(lexerNEW);
         RuleParser ruleParserNEW = new RuleParser(tokensNEW);
@@ -93,25 +72,11 @@ public class Main {
         Program t = (Program) RuleAdaptor.getTerm(bNEW);
 
         Compiler compiler = Compiler.getInstance();
-        System.out.println("SIG NEW = " +compiler.setProgram(t));
-        // END TEMPORARY
-
-        // Parse the input expression and build an AST
-//         RuleLexer lexer = new RuleLexer(new ANTLRInputStream(fileinput));
-//         CommonTokenStream tokens = new CommonTokenStream(lexer);
-//         RuleParser ruleParser = new RuleParser(tokens);
-//         Tree b = (Tree) ruleParser.expressionlist().getTree();
-//         ExpressionList expl = (ExpressionList) RuleAdaptor.getTerm(b);
-//         //       System.out.println(pretty.toString(expl));
-//         //       System.out.println("------------------------------------------   ");
-
-//         //         Compiler compiler = Compiler.getInstance();
-//         compiler.setSignature(expl); 
+        Signature signature = compiler.setProgram(t);
 
         // Transforms the strategy into a rewrite system
         //   get the TRS for the strategy named strategyName
-        String strategyName="strat0";
-//         List<Rule> generatedRules = compiler.compile(strategyName);
+        String strategyName="mainStrat";
         List<Rule> generatedRules = compiler.compileStrategy(strategyName);
         Signature extractedSignature = compiler.getExtractedSignature();
         Signature generatedSignature = compiler.getGeneratedSignature();
@@ -130,7 +95,6 @@ public class Main {
         extractedSignature = ruleCompiler.getExtractedSignature();
         generatedSignature = ruleCompiler.getGeneratedSignature();
 
-        //         System.out.println("COMPILED STRATEGIES: "+Compiler.getInstance().getStrategyNames());
         
         PrintStream outputfile = System.out;
         if(options.out != null) {

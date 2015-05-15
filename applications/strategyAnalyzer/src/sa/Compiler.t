@@ -68,7 +68,7 @@ public class Compiler {
     return new ArrayList(generatedTRSs.keySet());
   }
 
-  public void setSignature(ExpressionList expression) throws SymbolAlredyExistsException {
+  public void setSignature(ExpressionList expression)  {
       // Transforms Let(name,exp,body) into body[name/exp]
       ExpressionList expandl = this.expand(expression);
       // Get the list of defined signatures, each of them with a corresponding strategy
@@ -78,7 +78,7 @@ public class Compiler {
   }
 
 
-  public Signature setProgram(Program program) throws SymbolAlredyExistsException, TypeMismatchException {
+  public Signature setProgram(Program program) throws TypeMismatchException {
     this.extractedSignature = new Signature();
     extractedSignature.setSignature(program);
     this.generatedSignature = this.extractedSignature.expandSignature();
@@ -218,7 +218,7 @@ public class Compiler {
    * We suppose we always have let(_,signature,strategy)
    * For the moment a set of rules is not a strategy and not handled (see compileExp and Replace)
    */
-  private void extractSignaturesAndStrategies(ExpressionList expl) throws SymbolAlredyExistsException {
+  private void extractSignaturesAndStrategies(ExpressionList expl)  {
 //     this.signatures=new ArrayList<Expression>(); 
     this.strategies=new HashMap<String,Strat>(); 
 
