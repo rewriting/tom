@@ -1,3 +1,4 @@
+
 package tom.library.factory;
 
 import java.lang.reflect.Constructor;
@@ -168,7 +169,7 @@ public class ParsedClass {
      * 
      * @return accumulated all-constructors enumeration
      */
-    private String getAllContructorsEnum() {
+    public String getAllContructorsEnum() {
         StringBuilder allConsEnum = new StringBuilder();
         // TODO: find a cleaner way to specify first additional constructor
         int firstAdditionalCons = 0;
@@ -195,7 +196,7 @@ public class ParsedClass {
      * 
      * @return accumulated all-methods enumeration
      */
-    private String getAllMethodsEnum() {
+    public String getAllMethodsEnum() {
         StringBuilder allMethodsEnum = new StringBuilder();
         if (!this.methods.isEmpty()) {
             allMethodsEnum.append(methods.get(0).getEnumName());
@@ -217,11 +218,11 @@ public class ParsedClass {
      */
     public String getFinalEnum() {
         if (this.methods.isEmpty()) {
-            return getAllContructorsEnum();
+            return "allConstructorsEnum";
         } else if (this.constructors.isEmpty() && !this.hasNoArgsConstructor()) {
-            return getAllMethodsEnum();
+            return "allMethodsEnum";
         }
-        return getAllContructorsEnum() + ".plus(" + getAllMethodsEnum() + ")";
+        return  "allConstructorsEnum.plus(allMethodsEnum)";
     }
 
 }

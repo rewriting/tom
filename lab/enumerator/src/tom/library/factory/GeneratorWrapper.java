@@ -37,6 +37,11 @@ public abstract class GeneratorWrapper {
     protected String enumName;
     
     /**
+     * the @Enumerate annotation on the generating method or constructor
+     */
+    protected Enumerate enumerateAnnotation;
+    
+    /**
      * getter method for the declaring class
      * @return the parsed class which declared this constructor
      */
@@ -70,6 +75,14 @@ public abstract class GeneratorWrapper {
         return enumName;
     }
     
+    /**
+     * getter of Enumerate annotation of this method
+     * @return Enumerate annotation
+     */
+    public Enumerate getEnumerateAnnotation() {
+        return enumerateAnnotation;
+    }
+
     /**
      * Delegates the call to the underlying constructor or method 
      * @return an array of arrays that represent the annotations on the formal parameters of underlying method or constructor

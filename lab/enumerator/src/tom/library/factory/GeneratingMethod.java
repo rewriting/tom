@@ -18,7 +18,12 @@ public class GeneratingMethod extends GeneratorWrapper{
      * the wrapped method object it must be set on instantiation
      */
     private final Method method;
-
+    
+    /**
+     * name of enumeration that represent instance of the enumerated type
+     */
+    private final String thisEnumName;
+    
     /**
      * instantiating GeneratingMethod to wrap a method annotated with @Enumerate
      * 
@@ -34,6 +39,8 @@ public class GeneratingMethod extends GeneratorWrapper{
         this.declaringClass = declaringClass;
         this.variableName = "_method" +index+"_"+ method.getName();
         this.enumName = this.variableName + "Enum";
+        this.thisEnumName = this.variableName + "ThisEnum";
+        this.enumerateAnnotation = method.getAnnotation(Enumerate.class);
         this.parameters = new ArrayList<ParamWrapper>();
         for (int i = 0; i < method.getParameterTypes().length; i++) {
             this.parameters.add(ParamFactory.createParamWrapper(method.getParameterTypes()[i],
@@ -49,6 +56,14 @@ public class GeneratingMethod extends GeneratorWrapper{
      */
     public Method getMethod() {
         return method;
+    }
+    
+    /**
+     * getter method for name of the enumeration used for "this" instance
+     * 
+     */
+    public String getThisEnumName() {
+        return thisEnumName;
     }
 
     /**
@@ -152,7 +167,7 @@ public class GeneratingMethod extends GeneratorWrapper{
      */
     public String getEnumerationConstruction() {
 
-        String applyExpr = "Enumeration.apply(Enumeration.singleton(" + this.variableName + "), "+ "tmpThisEnum)";
+        String applyExpr = "Enumeration.apply(Enumeration.singleton(" + this.variableName + "), "+ this.thisEnumName +")";
 
         for (ParamWrapper param: parameters) {
             applyExpr = "Enumeration.apply(" + applyExpr + ", " + param.getName() + "Enum)";
