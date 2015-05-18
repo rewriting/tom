@@ -8,7 +8,7 @@ public class User {
     private int no;
     private Account account;
 
-    @EnumerateGenerator(canBeNull = true)
+    @Enumerate(canBeNull = true)
     public User(@Enumerate(maxSize = 3) int no,
             @Enumerate(maxSize = 4) Account account) {
         this.no = no;

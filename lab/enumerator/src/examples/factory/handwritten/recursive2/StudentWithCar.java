@@ -11,7 +11,7 @@ public class StudentWithCar {
     private String name;
     private StudentCar car;
 
-    @EnumerateGenerator(canBeNull = true)
+    @Enumerate(canBeNull = true)
     public StudentWithCar(
         @Enumerate(maxSize = 8) int no,
         @Enumerate(maxSize = 4) String name,

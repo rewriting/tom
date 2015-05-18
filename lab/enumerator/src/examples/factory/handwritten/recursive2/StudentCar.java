@@ -9,7 +9,7 @@ public class StudentCar {
     private StudentWithCar driver;
 
 
-    @EnumerateGenerator(canBeNull = true)
+    @Enumerate(canBeNull = true)
     public StudentCar(@Enumerate(maxSize = 8) int no, @Enumerate(maxSize = 4) StudentWithCar driver) {
         this.no = no;
         this.driver = driver;

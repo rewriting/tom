@@ -7,7 +7,7 @@ public class Address {
     private int no;
     private User user;
 
-    @EnumerateGenerator(canBeNull = true)
+    @Enumerate(canBeNull = true)
     public Address(@Enumerate(maxSize = 3) int no,
             @Enumerate(maxSize = 8) User user) {
         this.no = no;

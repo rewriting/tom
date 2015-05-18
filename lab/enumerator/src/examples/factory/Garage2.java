@@ -16,7 +16,7 @@ public class Garage2 {
 		cars = new ArrayList<List<Car>>();
 	}
 
-	@EnumerateGenerator(canBeNull = false)
+	@Enumerate(canBeNull = false)
 	public Garage2(@Enumerate(canBeNull = false) List<List<Car>> cars,@Enumerate(canBeNull = false) List<Car> cars2) {
 		this.cars = cars;
 		this.cars2=cars2;

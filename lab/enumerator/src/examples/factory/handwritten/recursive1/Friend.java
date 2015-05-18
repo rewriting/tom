@@ -3,16 +3,16 @@ package examples.factory.handwritten.recursive1;
 import tom.library.factory.Enumerate;
 import tom.library.factory.EnumerateGenerator;
 
-public class StudentFriend {
+public class Friend {
 
     private int no;
     private String name;
-    private StudentFriend friend;
+    private Friend friend;
 
-    @EnumerateGenerator(canBeNull = true)
-    public StudentFriend(
+    @Enumerate(canBeNull = true)
+    public Friend(
         @Enumerate(maxSize = 8) int no,
-        @Enumerate(maxSize = 6) StudentFriend friend
+        @Enumerate(maxSize = 6) Friend friend
     ) {
         this.no = no;
         this.friend = friend;
@@ -27,13 +27,13 @@ public class StudentFriend {
     }
 
     
-    public StudentFriend getFriend() {
+    public Friend getFriend() {
         return friend;
     }
 
     @Override
     public String toString() {
-        return "StudentFriend [no=" + no + ", studentfriend="+friend+ "]";
+        return "StudentFriend [no=" + no + ", friend="+friend+ "]";
     }
 
 }

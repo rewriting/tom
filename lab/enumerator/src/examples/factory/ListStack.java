@@ -10,12 +10,12 @@ public class ListStack implements IStack {
 
 	private List<Integer> stack= new ArrayList<Integer>();
 
-	@EnumerateGenerator
+	@Enumerate
 	public ListStack() {
 		stack = new ArrayList<Integer>();
 	}
 
-	@EnumerateGenerator
+	@Enumerate
 	public ListStack(@Enumerate(maxSize = 5) int nbElem) {
 		this.stack = new ArrayList<Integer>(nbElem);
 		for(int i=0; i<nbElem; i++){

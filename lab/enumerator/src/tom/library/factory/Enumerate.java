@@ -2,7 +2,7 @@ package tom.library.factory;
 
 import java.lang.annotation.*;
 
-@Target({ElementType.METHOD, ElementType.PARAMETER})
+@Target({ElementType.CONSTRUCTOR, ElementType.METHOD, ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Enumerate {
 	int maxSize() default 8; // maybe should be infinite (use -1)
