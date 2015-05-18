@@ -17,12 +17,9 @@ public class RuleCompiler {
 
   // The extracted (concrete) signature
   private Signature extractedSignature;
-  //   private Map<String,Integer> extractedSignature;
   // The generated (concrete) signature
   private Signature generatedSignature;
-  //   private Map<String,Integer> generatedSignature;
   // The generated (ordered) TRS
-
   private List<Rule> generatedRules;
 
   public RuleCompiler(Signature extractedSignature, Signature generatedSignature){
@@ -30,25 +27,29 @@ public class RuleCompiler {
     this.generatedSignature=generatedSignature;
   }
   
+
+  /********************************************************************************
+   *     Transform a list of LINEAR rules (with only one anti-pattern)
+   *     in a list of rules with no anti-patterns. The order of rules
+   *     is preserved.
+   ********************************************************************************/
   /**
-   * Expand an anti-patterns in each of the LINEAR rules in the list
+   * Expand an anti-pattern in each of the LINEAR rules (with only one anti-pattern) in the list
    * - the rules replacing the orginal are at the same position in the list
-   * @param generatedRules initial set of rules
-   * @param rule the rule to expand
-   * @return the modified list of generatedRules (with no anti-paterns left)
+   * @param rules the rules to expand
+   * @return the list of generatedRules (with no anti-paterns left)
    */
   public  List<Rule> expandAntiPatterns(List<Rule> rules) {
     List<Rule> newRules = new ArrayList<Rule>();
     for(Rule rule:rules) { 
-      List<Rule> genRules=expandAntiPatternInRule(rule);
+      List<Rule> genRules=this.expandAntiPatternInRule(rule);
       // add the generated rules for rule to the result (list of rule)
       newRules.addAll(genRules);
     }
     return newRules;
-  }
-  
+  }  
   /**
-   * Expand an anti-pattern
+   * Expand an anti-pattern in a LINEAR Rule (with only one anti-pattern)
    * @param generatedRules initial set of rules
    * @param rule the rule to expand
    * @return the list of generated rules
@@ -60,9 +61,10 @@ public class RuleCompiler {
       List<Rule> bag = new ArrayList<Rule>();
       // perform one-step expansion
       `OnceTopDown(ExpandAntiPattern(bag,rule,this.extractedSignature, this.generatedSignature)).visit(rule);
+      // for each generated rule restart the expansion
       for(Rule expandr:bag) {
         // add the list of rules generated for the expandr rule to the final result
-        List<Rule> expandedRules = expandAntiPatternInRule(expandr);
+        List<Rule> expandedRules = this.expandAntiPatternInRule(expandr);
         genRules.addAll(expandedRules);
       }
     } catch(VisitFailure e) {
@@ -71,19 +73,21 @@ public class RuleCompiler {
     }
     return genRules;
   }
-
+  /**
+   * Do nothing if it Term contains anti-pattern;
+   * Fail (i.e. exception) otherwise
+   */
   %strategy ContainsAntiPattern() extends Fail() {
     visit Term {
       t@Anti(_)  -> { return `t; }
     }
   }
-
   /**
-   * Perform one-step expansion
-   *
-   * @param bag the resulted set of rules
+   * Perform one-step expansion for a LINEAR Rule
+   * @param bag the resulted list of rules
    * @param rule the rule to expand
-   * @param extractedSignature the signature
+   * @param extractedSignature the extracted signature
+   * @param generatedSignature the generated signature
    */
   %strategy ExpandAntiPattern(bag:List,subject:Rule,extractedSignature:Signature, generatedSignature:Signature) extends Fail() {
     visit Term {
@@ -140,6 +144,9 @@ public class RuleCompiler {
       }
     }
   }
+  /********************************************************************************
+   *     END
+   ********************************************************************************/
 
   /*
    * Perform one-step expansion
@@ -171,8 +178,12 @@ public class RuleCompiler {
 
 
 
+  /********************************************************************************
+   *     Transform a list of rules with @ in a list of rules with the
+   *     @ expanded accordingly. The order of rules is preserved.
+   ********************************************************************************/
   /**
-    * transforms a set of rules that contain x@t into a set of rules without @ 
+    * Transforms a set of rules that contain x@t into a set of rules without @ 
     * @param bag the set of rules to expand
     * @return a new set that contains the expanded rules
     */
@@ -199,7 +210,6 @@ public class RuleCompiler {
     }
     return res;
   }
-
 
   // search all At and store their values
   %strategy CollectAt(map:Map) extends Identity() {
@@ -229,9 +239,9 @@ public class RuleCompiler {
       }
     }
   }
-
-
-
+  /********************************************************************************
+   *     END
+   ********************************************************************************/
 
 
   public Signature getExtractedSignature(){

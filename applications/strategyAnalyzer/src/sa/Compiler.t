@@ -20,18 +20,10 @@ public class Compiler {
   // initial AST
   private Program program;
 
-  // List of strategies to translate (same index as corresponding signature)
-  private Map<String,Strat> strategies;
-
   // The extracted (concrete) signature
   private Signature extractedSignature;
-  //   private Map<String,Integer> extractedSignature;
   // The generated (concrete) signature
   private Signature generatedSignature;
-  //   private Map<String,Integer> generatedSignature;
-  
-    // The generated rules
-  private List<Rule> generatedRules;
 
   // strategy name -> strategy compiled into a TRS
   private Map<String,List<Rule>> generatedTRSs;
@@ -42,7 +34,6 @@ public class Compiler {
    * 
    */
   private Compiler() {
-      this.generatedRules = new ArrayList<Rule>();
       this.generatedTRSs = new HashMap<String,List<Rule>>();
   }
 
@@ -67,71 +58,43 @@ public class Compiler {
 
   public Signature setProgram(Program program) throws TypeMismatchException {
     this.extractedSignature = new Signature();
-    extractedSignature.setSignature(program);
+    this.extractedSignature.setSignature(program);
     this.generatedSignature = this.extractedSignature.expandSignature();
 
     this.program = program;
 
-    %match(program) {
-      Program(_, ConcStratDecl(_*,StratDecl(name, params, body),_*)) -> {
-
-      }
-    }
-
-
-//     return extractedSignature;
     return this.generatedSignature;
   }
 
-  /*
-   * Given a StratDecl (name, params, body)
-   * Replace the parameters by their effective values (args) in body
-   * i.e. apply the substitution [param_1 -> arg_1, ..., param_n -> arg_n]
-   */
-  public Expression instantiateStrategy(StratDecl sd, StratList args) {
-    Expression res = null;
 
-    try {
-      %match(sd) {
-        StratDecl(name, params, body) -> {
-          if(`params.length() == args.length()) {
-            res = `(TopDown(ReplaceParameters(params,args))).visit(`body);
-          }
-        }
-      }
-    } catch(VisitFailure e) {
+
+  /**
+   * Compile the strategy strategyName into a rewrite system.
+   * @param strategyName the name of the strategy to compile
+   * @return the TRS for strategyName 
+   */
+  public List<Rule>  compileStrategy(String strategyName) {
+    Expression expand = this.expandStrategy(strategyName);
+    System.out.println("expanded version for "+strategyName+"  = " + expand);
+
+    Strat strategy=null;
+    %match(expand) {
+      Strat(strat) -> { strategy = `strat;      }
+    }
+    System.out.println("STRATEGY "+strategyName+"  = " + strategy);
+
+    this.generatedTRSs.put(strategyName,new ArrayList<Rule>());
+
+    if(Main.options.generic) {
+      // TODO: topName = this.compileGenericStrat(generatedRules,extractedSignature,generatedSignature,strategies.get(name));
+    } else {
+      this.compileStrat(strategyName,strategy,this.generatedTRSs.get(strategyName));
+      this.generateEquality(this.generatedTRSs.get(strategyName), this.extractedSignature, this.generatedSignature);
     }
 
-    return res;
+    return new ArrayList(this.generatedTRSs.get(strategyName));
   }
 
-  /*
-   * used by instantiateStrategy to apply the substitution
-   */
-  %strategy ReplaceParameters(params:ParamList, args:StratList) extends Identity() {
-    visit Strat {
-      StratName(n) -> {
-          //System.out.println("stratname = " + `n); 
-          //System.out.println("params = " + params); 
-          //System.out.println("args = " + args); 
-          ParamList plist = params;
-          StratList slist = args;
-
-        while(!plist.isEmptyConcParam() && !slist.isEmptyConcStrat()) {
-          Param p = plist.getHeadConcParam();
-          Strat s = slist.getHeadConcStrat();
-          //System.out.println("param = " + p + " -- arg = " + s); 
-          %match(p) {
-            Param(name) && n==name -> {
-              return s;
-            }
-          }
-          plist = plist.getTailConcParam();
-          slist = slist.getTailConcStrat();
-        }
-      }
-    }
-  }
 
   /*
    * Given a name, retrieve the corresponding StratDecl (which should not have parameter)
@@ -200,62 +163,55 @@ public class Compiler {
     }
   }
 
-  public List<Rule>  compileStrategy(String strategyName) {
-    Expression expand = this.expandStrategy(strategyName);
-    System.out.println("expanded version for "+strategyName+"  = " + expand);
 
-    Strat strategy=null;
-    %match(expand) {
-      Strat(strat) -> { strategy = `strat;      }
+  /*
+   * Given a StratDecl (name, params, body)
+   * Replace the parameters by their effective values (args) in body
+   * i.e. apply the substitution [param_1 -> arg_1, ..., param_n -> arg_n]
+   */
+  public Expression instantiateStrategy(StratDecl sd, StratList args) {
+    Expression res = null;
+
+    try {
+      %match(sd) {
+        StratDecl(name, params, body) -> {
+          if(`params.length() == args.length()) {
+            res = `(TopDown(ReplaceParameters(params,args))).visit(`body);
+          }
+        }
+      }
+    } catch(VisitFailure e) {
     }
-    System.out.println("STRATEGY "+strategyName+"  = " + strategy);
 
-    this.generatedTRSs.put(strategyName,new ArrayList<Rule>());
-
-    this.compileStrat(strategyName,strategy,this.generatedTRSs.get(strategyName));
-    generateEquality(this.generatedTRSs.get(strategyName), this.extractedSignature, this.generatedSignature);
-
-    return new ArrayList(this.generatedTRSs.get(strategyName));
+    return res;
   }
 
-
-  /**
-   * Compile a (list of) strategy into a rewrite system. Each strategy
-   * has a corresponding (complete) TRS.
-   * @param strategyName the name of the strategy to compile
-   * @return the TRS for strategyName 
+  /*
+   * used by instantiateStrategy to apply the substitution
    */
-  public List<Rule>  compile(String strategyName) {
-    //     this.generatedRules = new ArrayList<Rule>();
+  %strategy ReplaceParameters(params:ParamList, args:StratList) extends Identity() {
+    visit Strat {
+      StratName(n) -> {
+          //System.out.println("stratname = " + `n); 
+          //System.out.println("params = " + params); 
+          //System.out.println("args = " + args); 
+          ParamList plist = params;
+          StratList slist = args;
 
-    // Name of the symbol to trigger the application of the generated TRS
-    String topName="";
-
-    // the (name of the last) strategy is used 
-    for(String name:this.strategies.keySet()){
-        if(Main.options.generic) {
-          // commented out at the end of the file
-          //           topName = this.compileGenericStrat(generatedRules,extractedSignature,generatedSignature,strategies.get(name));
-        } else {
-          this.generatedTRSs.put(name,new ArrayList<Rule>());
-          //           topName = this.compileStrat(name,this.strategies.get(name),this.generatedRules);
-          topName = this.compileStrat(name,this.strategies.get(name),this.generatedTRSs.get(name));
-          generateEquality(this.generatedTRSs.get(name), this.extractedSignature, this.generatedSignature);
+        while(!plist.isEmptyConcParam() && !slist.isEmptyConcStrat()) {
+          Param p = plist.getHeadConcParam();
+          Strat s = slist.getHeadConcStrat();
+          //System.out.println("param = " + p + " -- arg = " + s); 
+          %match(p) {
+            Param(name) && n==name -> {
+              return s;
+            }
+          }
+          plist = plist.getTailConcParam();
+          slist = slist.getTailConcStrat();
         }
+      }
     }
-
-    // if strategy (name)  exists use it; otherwise use the name of the strategy compiled last
-    if(this.generatedTRSs.keySet().contains(strategyName)){
-      topName = strategyName;
-    }
-
-    //     if(Main.options.generic) {
-    //       // do nothing
-    //     } else {
-    //       generateEquality(this.generatedRules, this.extractedSignature, this.generatedSignature);
-    //     }
-    //     return new ArrayList(generatedRules);
-    return new ArrayList(this.generatedTRSs.get(topName));
   }
 
 
@@ -612,7 +568,6 @@ public class Compiler {
       }
     }
   }
-
 
   /**
    * Transform lhs into linear-lhs + true ^ constraint on non linear variables

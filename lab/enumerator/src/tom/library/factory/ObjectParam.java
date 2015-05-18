@@ -3,52 +3,47 @@ package tom.library.factory;
 import java.lang.annotation.Annotation;
 
 /**
- * wraps a String parameter
+ * wraps an object parameter
  * 
  * @author Ahmad
- * 
  */
-public class StringWrapper extends ParamWrapper {
+public class ObjectParam extends ParamWrapper {
 
     /**
      * construct the wrapper by calling the ParamWrapper constructor
      * 
      * @param param
-     *            string to wrap
+     *            object to wrap
      * @param paramIndex
      *            index of the parameter among the constructor parameters
      * @param paramAnnotations
      */
-    public StringWrapper(Class param, int paramIndex, GeneratorWrapper declaringGenerator) {
+    public ObjectParam(Class param, int paramIndex, GeneratorWrapper declaringGenerator) {
         super(param, paramIndex, declaringGenerator);
+//        this.declaringCons.getDeclaringClass().addDependency(this.getType());
+        this.declaringGenerator.getDeclaringClass().addDependency(param);
     }
 
     @Override
     public String getType() {
-        return "String";
+        return param.getCanonicalName();
     }
 
     @Override
     public String enumDeclare() {
         StringBuilder enumStatement = new StringBuilder();
-        enumStatement.append("final Enumeration<String> ");
+        enumStatement.append("final Enumeration<");
+        enumStatement.append(this.getType());
+        enumStatement.append("> ");
         enumStatement.append(paramName + "Enum");
-        
         return enumStatement.toString();
     }
     
     @Override
     public String enumCreate() {
         StringBuilder enumStatement = new StringBuilder();
-        enumStatement.append("new Enumeration<String>(Combinators.makeString().parts()");
-
-        if (enumerateAnnotation != null) {
-            enumStatement.append(".take(BigInteger.valueOf(");
-            enumStatement.append(enumerateAnnotation.maxSize());
-            enumStatement.append("))");
-        }
-
-        enumStatement.append(")");
+        enumStatement.append(this.getType() + "Factory"); //TODO: get corresponding factory from FactoryGenerator (handle different packages)
+        enumStatement.append(".getEnumeration()");
         return enumStatement.toString();
     }
 

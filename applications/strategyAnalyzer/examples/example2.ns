@@ -24,3 +24,4 @@ td(s) = mu y.((s<+identity);all(y))
 mainStrat() = innermost(r3())
 // mainStrat() = r3()
 // mainStrat() = r4() <+ identity
+// mainStrat() = innermost(r3())
