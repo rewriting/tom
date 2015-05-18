@@ -65,7 +65,7 @@ public class Compiler {
     return new ArrayList(generatedTRSs.keySet());
   }
 
-  public Signature setProgram(Program program) throws SymbolAlredyExistsException, TypeMismatchException {
+  public Signature setProgram(Program program) throws TypeMismatchException {
     this.extractedSignature = new Signature();
     extractedSignature.setSignature(program);
     this.generatedSignature = this.extractedSignature.expandSignature();

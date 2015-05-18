@@ -3,6 +3,7 @@ abstract syntax
 T = a()
   | b()
   | g(T)
+  | g(T)
   | f(T,T)
 
 
@@ -20,5 +21,6 @@ innermost(s) = mu x.(all(x);((s;x)<+identity))
 
 td(s) = mu y.((s<+identity);all(y)) 
 
-//strat0() = innermost(r3())
-strat0() = r4() <+ identity
+mainStrat() = innermost(r3())
+// mainStrat() = r3()
+// mainStrat() = r4() <+ identity
