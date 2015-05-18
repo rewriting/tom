@@ -78,12 +78,18 @@ public class Signature {
     expandedSignature.addSymbol(eq_boolean,Arrays.asList(BOOLEAN,BOOLEAN),BOOLEAN);
 
     // add: bottom(T), eq_T(T,T)
+    /*
     for(GomType type: this.signature.keySet()) {
       String t = type.getName();
       expandedSignature.addSymbol(BOTTOM,Arrays.asList(t),t);
       String eq_t = this.disambiguateSymbol(EQ, Arrays.asList(t,t));
       expandedSignature.addSymbol(eq_t,Arrays.asList(t,t),BOOLEAN);
     }
+    */
+    // add: bottom(DUMMY), eq(DUMMY,DUMMY)
+      expandedSignature.addSymbol(BOTTOM,Arrays.asList(DUMMY),DUMMY);
+      String eq_t = this.disambiguateSymbol(EQ, Arrays.asList(DUMMY,DUMMY));
+      expandedSignature.addSymbol(eq_t,Arrays.asList(DUMMY,DUMMY),BOOLEAN);
 
     return expandedSignature;
   }
@@ -95,13 +101,13 @@ public class Signature {
    * @param argTypes the types of its arguments
    * @return the new name of the form name_T1_T2_..._Tn
    */
-  private String disambiguateSymbol(String name, List<String> argTypes) {
+  public String disambiguateSymbol(String name, List<String> argTypes) {
     String res = name;
     // Just for TESTING
     // TODO: generate the correct eq_X_X in the rules (for the moment only "eq" generate)
-    //     for(String argType:argTypes) {
-    //       res += "_" + argType;
-    //     }
+    //for(String argType:argTypes) {
+    //  res += "_" + argType;
+    //}
     return res;
   }
 
@@ -135,39 +141,35 @@ public class Signature {
 
   /** Get codomain for symbol
    */
-  public GomType getCodomain(String symbol){
-    GomType codomain=null;
-
+  public GomType getCodomain(String symbol) {
     for(GomType type: this.signature.keySet()) {
       if(this.signature.get(type).get(symbol)!=null) {
-        codomain = type;
-        break;
+        return type;
       }
     }
-    // pem: make a defensive copy of the list?
-    return codomain;
+    return null;
   }
 
   /** Get the list of types of its arguments
    * @param symbol the name of the symbol
    * @return the list of types of its arguments
    */
-  public List<GomType> getProfile(String symbol){
-    List<GomType> profile = null;
+  public List<GomType> getProfile(String symbol) {
     for(GomType type: this.signature.keySet()) {
-      if((profile=this.signature.get(type).get(symbol))!=null) {
-        break;
+    List<GomType> profile = this.signature.get(type).get(symbol);
+      if(profile!=null) {
+        // pem: make a defensive copy of the list?
+        return profile;
       }
     }
-    // pem: make a defensive copy of the list?
-    return profile;
+    return null;
   }
 
   /** Get the arity of a symbol
    * @param symbol the name of the symbol
    * @return the arity of the symbol
    */
-  public int getArity(String symbol){
+  public int getArity(String symbol) {
     int arity = -1;
     if(this.getProfile(symbol)!=null) {
       arity = this.getProfile(symbol).size();
@@ -178,15 +180,33 @@ public class Signature {
   /** Get the list of all symbols
    * @return the list of symbols in the signature
    */
+  public List<String> getTypeNames() {
+    List<String> types = new ArrayList<String>();
+    for(GomType type: this.signature.keySet()) {
+      types.add(type.getName());
+    }
+    return types;
+  }
+
+  /** Get the list of all symbols
+   * @return the list of symbols in the signature
+   */
   public List<String> getSymbolNames() {
     List<String> symbols = new ArrayList<String>();
 
     for(GomType type: this.signature.keySet()) {
       symbols.addAll(signature.get(type).keySet());
-      //for(String symbol: signature.get(type).keySet()) {
-      //  symbols.add(symbol);
-      //}
     }
+    return symbols;
+  }
+
+  /** Get the list of symbols for a given typeName
+    * @typeName the name of the type
+    * @return the list of symbols in the type
+   */
+  public List<String> getSymbolNames(String typeName) {
+    List<String> symbols = new ArrayList<String>();
+    symbols.addAll(signature.get(`GomType(typeName)).keySet());
     return symbols;
   }
 
