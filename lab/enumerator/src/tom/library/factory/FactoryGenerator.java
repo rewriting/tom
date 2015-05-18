@@ -185,9 +185,9 @@ public class FactoryGenerator {
      */
     private <T> ParsedClass parse(Class<T> classToParse) {
         ParsedClass parsedClass = new ParsedClass(classToParse);
-        // load all constructors having @EnumerateGenerator annotations
+        // load all constructors having @Enumerate annotations
         for (Constructor<?> cons : classToParse.getDeclaredConstructors()) {
-            if (cons.isAnnotationPresent(EnumerateGenerator.class)) {
+            if (cons.isAnnotationPresent(Enumerate.class)) {
                 if (cons.getParameterTypes().length == 0) {
                     // no args cons
                     parsedClass.addNoArgsConstructor(cons);
