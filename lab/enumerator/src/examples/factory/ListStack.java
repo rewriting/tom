@@ -34,14 +34,14 @@ public class ListStack implements IStack {
 	}
 
 	@Override
-	@Enumerate(singleton = 0) 
+	@Enumerate(singleton = true, singletonSize = 0) 
 	public IStack empty() {
 		return new ListStack();
 	}
 
 	@Override
 	@Enumerate
-	public IStack push(@Enumerate(maxSize = 4, singleton = 3, canBeNull = true) Integer elem) {
+	public IStack push(@Enumerate(maxSize = 4, singleton = true, singletonSize = 3, canBeNull = true) Integer elem) {
 		stack.add(elem);
 		return this;
 	}
