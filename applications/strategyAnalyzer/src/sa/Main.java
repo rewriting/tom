@@ -58,7 +58,9 @@ public class Main {
         System.out.println("------------------------------------------   ");
 
         Compiler compiler = Compiler.getInstance();
-        System.out.println("SIG = " +compiler.setProgram(t));
+        compiler.setProgram(t);
+
+        System.out.println("SIG = " + compiler.getExtractedSignature());
 
         System.out.println("main = " + Tools.getStratDecl("main", t));
         Expression expand = compiler.expandStrategy("main");
@@ -72,7 +74,7 @@ public class Main {
         Program t = (Program) RuleAdaptor.getTerm(bNEW);
 
         Compiler compiler = Compiler.getInstance();
-        Signature signature = compiler.setProgram(t);
+        compiler.setProgram(t);
 
         // Transforms the strategy into a rewrite system
         //   get the TRS for the strategy named strategyName
@@ -85,7 +87,7 @@ public class Main {
         RuleCompiler ruleCompiler = new RuleCompiler(extractedSignature,generatedSignature);
         if(options.withAP == false) {
           generatedRules = ruleCompiler.expandAntiPatterns(generatedRules);
-        }      
+        }
         // if we don't expand the anti-patterns then we should keep the at-annotations as well
         // otherwise output is strange
         if(options.withAT == false && options.withAP == false) {

@@ -2,10 +2,10 @@
 abstract syntax
 T = a()
   | b()
-  | g(T)
-  | g(T)
+  | i(G)
   | f(T,T)
 
+G = g(T)
 
 strategies
 
@@ -21,6 +21,7 @@ innermost(s) = mu x.(all(x);((s;x)<+identity))
 
 td(s) = mu y.((s<+identity);all(y)) 
 
+//mainStrat() = innermost(r3())
+// mainStrat() = r3()
+mainStrat() = r4() <+ identity
 // mainStrat() = innermost(r3())
-
-mainStrat() = r4()

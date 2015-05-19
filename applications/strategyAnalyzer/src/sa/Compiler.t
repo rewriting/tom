@@ -56,16 +56,21 @@ public class Compiler {
     return new ArrayList(generatedTRSs.keySet());
   }
 
-  public Signature setProgram(Program program) throws TypeMismatchException {
+  public void setProgram(Program program) throws TypeMismatchException {
     this.extractedSignature = new Signature();
     this.extractedSignature.setSignature(program);
     this.generatedSignature = this.extractedSignature.expandSignature();
 
     this.program = program;
-
-    return this.generatedSignature;
   }
 
+  public Signature getExtractedSignature() {
+    return this.extractedSignature;
+  }
+
+  public Signature getGeneratedSignature() {
+    return this.generatedSignature;
+  }
 
 
   /**
@@ -89,7 +94,7 @@ public class Compiler {
       // TODO: topName = this.compileGenericStrat(generatedRules,extractedSignature,generatedSignature,strategies.get(name));
     } else {
       this.compileStrat(strategyName,strategy,this.generatedTRSs.get(strategyName));
-      this.generateEquality(this.generatedTRSs.get(strategyName), this.extractedSignature, this.generatedSignature);
+      this.generateEquality(this.generatedTRSs.get(strategyName));
     }
 
     return new ArrayList(this.generatedTRSs.get(strategyName));
@@ -220,6 +225,7 @@ public class Compiler {
    * return the name of the top symbol (phi) introduced
    * @param stratName the name of the strategy to compile
    * @param strat the strategy to compile
+   * @param generatedRules the list of rewrite rules generated for this strategy
    * @return the name of the last compiled strategy
    */
   private  String compileStrat(String stratName, Strat strat, List<Rule> generatedRules) {
@@ -568,8 +574,6 @@ public class Compiler {
       }
     }
   }
- 
-
 
   /**
    * Transform lhs into linear-lhs + true ^ constraint on non linear variables
@@ -593,7 +597,9 @@ public class Compiler {
     Term constraint = `Appl("True",TermList());
     for(String name:mapToOldName.keySet()) {
       String oldName = mapToOldName.get(name);
-      constraint = `Appl("and",TermList( Appl("eq",TermList(Var(oldName),Var(name))), constraint));
+      String argType = "T"; // TODO: we have to find the type of the variable here!!!
+      String eq_arg = getExtractedSignature().disambiguateSymbol(Signature.EQ, Arrays.asList(argType,argType) );
+      constraint = `Appl("and",TermList( Appl(eq_arg,TermList(Var(oldName),Var(name))), constraint));
     }
     return `TermList(lhs,constraint);
 
@@ -624,7 +630,7 @@ public class Compiler {
    * representing the number of occurences of the variable in the
    * (Visitable) Term
    */
-  public  Map<String,Integer> collectMultiplicity(tom.library.sl.Visitable subject) {
+  public Map<String,Integer> collectMultiplicity(tom.library.sl.Visitable subject) {
     // collect variables
     List<String> variableList = new LinkedList<String>();
     try {
@@ -638,7 +644,7 @@ public class Compiler {
     for(String varName:variableList) {
       if(multiplicityMap.containsKey(varName)) {
         int value = multiplicityMap.get(varName);
-        multiplicityMap.put(varName, 1+value);
+        multiplicityMap.put(varName, 1 + value);
       } else {
         multiplicityMap.put(varName, 1);
       }
@@ -661,33 +667,42 @@ public class Compiler {
    * f(x_1,...,x_n) = f(y_1,...,y_n) -> x_1=y1 ^ ... ^ x_n=y_n ^ true
    *
    */
-  private  void generateEquality(List<Rule> bag, Signature extractedSignature, Signature generatedSignature) {
-
-    bag.add(Tools.encodeRule(%[rule(and(True,True), True)]%,this.generatedSignature));
-    bag.add(Tools.encodeRule(%[rule(and(True,False), False)]%,this.generatedSignature));
-    bag.add(Tools.encodeRule(%[rule(and(False,True), False)]%,this.generatedSignature));
-    bag.add(Tools.encodeRule(%[rule(and(False,False), False)]%,this.generatedSignature));
+  private void generateEquality(List<Rule> generatedRules) {
+    Signature gSig = getGeneratedSignature();
+    Signature eSig = getExtractedSignature();
+    generatedRules.add(Tools.encodeRule(%[rule(and(True,True), True)]%,gSig));
+    generatedRules.add(Tools.encodeRule(%[rule(and(True,False), False)]%,gSig));
+    generatedRules.add(Tools.encodeRule(%[rule(and(False,True), False)]%,gSig));
+    generatedRules.add(Tools.encodeRule(%[rule(and(False,False), False)]%,gSig));
 
     String z1 = Tools.getName("Z");
     String z2 = Tools.getName("Z"); 
-    for(String f:extractedSignature.getSymbolNames()) {
-      for(String g:extractedSignature.getSymbolNames()) {
-        int arf = extractedSignature.getArity(f);
-        int arg = extractedSignature.getArity(g);
-        if(!f.equals(g)) {
-          bag.add(Tools.encodeRule(%[rule(eq(@Tools.genAbstractTerm(f,arf,z1)@,@Tools.genAbstractTerm(g,arg,z2)@), False)]%,this.generatedSignature));
-        } else {
-          String t1 = Tools.genAbstractTerm(f,arf,z1);
-          String t2 = Tools.genAbstractTerm(f,arf,z2);
-          String scond = "True";
-          for(int i=1 ; i<=arf ; i++) {
-            scond = %[and(eq(@z1@_@i@,@z2@_@i@),@scond@)]%;
+    //for(String type:eSig.getTypeNames()) {
+      //List<String> symbolNames = eSig.getSymbolNames(type);
+      List<String> symbolNames = eSig.getSymbolNames();
+      for(String f:symbolNames) {
+        for(String g:symbolNames) {
+          int arf = eSig.getArity(f);
+          int arg = eSig.getArity(g);
+          String eq_type = "eq"; //eSig.disambiguateSymbol(Signature.EQ, Arrays.asList(type,type) );
+          if(!f.equals(g)) {
+            generatedRules.add(Tools.encodeRule(%[rule(@eq_type@(@Tools.genAbstractTerm(f,arf,z1)@,@Tools.genAbstractTerm(g,arg,z2)@), False)]%,gSig));
+          } else {
+            String t1 = Tools.genAbstractTerm(f,arf,z1);
+            String t2 = Tools.genAbstractTerm(f,arf,z2);
+            List<GomType> domain = eSig.getProfile(f);
+            String scond = "True";
+            for(int i=1 ; i<=arf ; i++) {
+              String argType = domain.get(i-1).getName();
+              String eq_arg = "eq"; //eSig.disambiguateSymbol(Signature.EQ, Arrays.asList(argType,argType) );
+              scond = %[and(@eq_arg@(@z1@_@i@,@z2@_@i@),@scond@)]%;
+            }
+            generatedRules.add(Tools.encodeRule(%[rule(@eq_type@(@t1@,@t2@),@scond@)]%,gSig));
           }
-          bag.add(Tools.encodeRule(%[rule(eq(@t1@,@t2@),@scond@)]%,this.generatedSignature));
         }
       }
-    }
-    //bag.add(Tools.encodeRule(%[rule(@mu@(Bottom(X)), Bottom(X))]%));
+    //}
+    //generatedRules.add(Tools.encodeRule(%[rule(@mu@(Bottom(X)), Bottom(X))]%));
   }
 
 
@@ -714,12 +729,6 @@ public class Compiler {
   }
 
 
-  public Signature getExtractedSignature(){
-    return this.extractedSignature;
-  }
-  public Signature getGeneratedSignature(){
-    return this.generatedSignature;
-  }
 
 
   
