@@ -21,21 +21,21 @@ import tom.library.enumerator.P1;
 import $parsedClass.getCanonicalName();
 
 public class $parsedClass.getFactoryClassName() {
-
+    
     private static Enumeration<$parsedClass.getSimpleName()> finalEnum = null;
     
     public static final Enumeration<$parsedClass.getSimpleName()>  getEnumeration() {
         
         boolean singleton = false;
         int singletonSize = 0;
-
+        
 //////////////// generating constructors /////////////
         
 #if ($parsedClass.hasNoArgsConstructor())
         // no args constructor
         Enumeration<$parsedClass.getSimpleName()> $parsedClass.getNoArgsConstructor().getEnumName() = Enumeration.singleton(new $parsedClass.getSimpleName()());
-#end
         
+#end
 #foreach($cons in $parsedClass.getConstructors())
         // constructor $cons.getVariableName()
         final $cons.getCurriedType(0) $cons.getVariableName() = new $cons.getCurriedType(0)() {
@@ -62,17 +62,18 @@ public class $parsedClass.getFactoryClassName() {
         // accumulating all constructors
         Enumeration<$parsedClass.getSimpleName()> allConstructorsEnum = $parsedClass.getAllContructorsEnum();
         
+#if(!$parsedClass.getMethods().isEmpty())
 //////////////// generating methods ////////////////
-
+        
         Enumeration<$parsedClass.getSimpleName()> tmpThisEnum = new Enumeration<$parsedClass.getSimpleName()>((LazyList<Finite<$parsedClass.getSimpleName()>>) null);
-
 #foreach($method in $parsedClass.getMethods())
+        
         // method $method.getVariableName()
         final $method.getCurriedType(-1) $method.getVariableName() = new $method.getCurriedType(-1)() {
             $method.getCurriedDefinition(-1)
         };
-        
 #foreach($param in $method.getParameters())
+        
         // method $method.getVariableName(), param $param.getName()
         $param.enumDeclare() = $param.enumCreate();
         singleton = $param.getEnumerateAnnotation().singleton();
@@ -83,7 +84,6 @@ public class $parsedClass.getFactoryClassName() {
                 singletonInstance = $param.getEnumName()$getNextElem;
             }
             $param.getEnumName() = Enumeration.singleton(singletonInstance);
-            
         }
 #end
         
@@ -99,7 +99,6 @@ public class $parsedClass.getFactoryClassName() {
         }
         
         Enumeration<$parsedClass.getSimpleName()> $method.getEnumName() = $method.getEnumerationConstruction();
-        
 #end
         
         // accumulating all methods
@@ -110,6 +109,7 @@ public class $parsedClass.getFactoryClassName() {
                 return finalEnum.parts();
             }
         };
+#end
         
         finalEnum = $parsedClass.getFinalEnum();
         
