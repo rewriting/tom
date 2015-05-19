@@ -19,6 +19,8 @@ StratDeclList = ConcStratDecl(StratDecl*)
 Param = Param(Name:String)
 ParamList = ConcParam(Param*)
 
+TypeEnvironment = EmptyEnvironment()
+                | PushEnvironment(Name:String, Type:GomType, Env:TypeEnvironment)
 
 // Old AST
 Expression = Let(name:String, v:Expression, t:Expression)

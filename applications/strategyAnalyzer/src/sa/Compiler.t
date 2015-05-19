@@ -690,10 +690,10 @@ public class Compiler {
           } else {
             String t1 = Tools.genAbstractTerm(f,arf,z1);
             String t2 = Tools.genAbstractTerm(f,arf,z2);
-            List<GomType> domain = eSig.getProfile(f);
+            List<String> domain = eSig.getProfile(f);
             String scond = "True";
             for(int i=1 ; i<=arf ; i++) {
-              String argType = domain.get(i-1).getName();
+              String argType = domain.get(i-1);
               String eq_arg = "eq"; //eSig.disambiguateSymbol(Signature.EQ, Arrays.asList(argType,argType) );
               scond = %[and(@eq_arg@(@z1@_@i@,@z2@_@i@),@scond@)]%;
             }
@@ -1015,6 +1015,140 @@ public class Compiler {
 //     }
 //     return strat.toString();
 //   }
+
+  /*
+   * Specializer
+   * @param symbol the symbol whose type is enforce
+   * @param the type of the symbol
+   * @param trs the TRS to transform
+   */
+  public List<Rule> specialize(String symbol, String typeName, List<Rule> trs) {
+    Signature gSig = getGeneratedSignature();
+    GomType codomain = gSig.getCodomain(symbol);
+
+    for(Rule r: trs) {
+      %match(r) {
+        Rule(lhs@Appl(name,args),rhs) -> {
+          if(`name.equals(symbol)) {
+            Term newLhs = propagateType(`EmptyEnvironment(), `lhs, `GomType(typeName));
+            System.out.println("newLhs = " + newLhs);
+          }
+        }
+      }
+
+    }
+    return null;
+  }
+
+  private Term propagateType(TypeEnvironment env, Term t, GomType type) {
+    Signature gSig = getGeneratedSignature();
+    %match(t) {
+      Appl(name,args) -> {
+        GomType codomain = gSig.getCodomain(`name);
+        if(codomain == `GomType("Dummy")) {
+          List<String> domain = gSig.getProfile(`name);
+          String dname = gSig.disambiguateSymbol(`name, domain);
+          gSig.addSymbol(dname,domain,codomain.getName());
+          int i = 0;
+          TermList args = `args;
+          TermList newArgs = `TermList();
+          while(!args.isEmptyTermList()) {
+            Term arg = args.getHeadTermList();
+            // compute GOOD type here!
+            Term arg2 = propagateType(env, arg, `GomType(domain.get(i)));
+            if(arg2!=null) {
+              newArgs = `TermList(newArgs*, arg2);
+            } else {
+              // throw exception
+              System.out.println("bad arg2: " + arg2);
+              return null;
+            }
+            i++;
+            args = args.getTailTermList();
+          }
+          return `Appl(dname,newArgs);
+        } else if(type != codomain) {
+          // throw exception
+          System.out.println("bad type: " + t + " : " + type);
+          return null;
+        }
+
+      }
+
+      Anti(t1) -> {
+        return propagateType(env, `t1,type);
+      }
+
+      At(t1,t2) -> {
+        env = checkType(env,`t1, type);
+        if(env == null) {
+          // throw exception
+          System.out.println("bad type: " + `t1 + " : " + type);
+          return null;
+        }
+        return propagateType(env, `t2,type);
+      }
+
+      s@BuiltinInt(i) -> {
+        if(type != `GomType("int")) {
+          // throw exception
+          System.out.println("bad type: " + `s + " : " + type);
+          return null;
+        }
+        return `s;
+      }
+
+      s@Var(name) -> {
+        env = checkType(env,`s, type);
+        if(env == null) {
+          // throw exception
+          System.out.println("bad type: " + `s + " : " + type);
+          return null;
+        } 
+        return `s;
+      }
+
+    }
+    System.out.println("propagateType should not be there: " + t);
+    return null;
+  }
+
+  /*
+   * check that t is a variable with a type compatible with the enviroment
+   * @param env the environment
+   * @param t the term to type check
+   * @param type the type
+   * @return null is t is not correctly typed, or the enviroment enriched with t:type
+   */
+  private TypeEnvironment checkType(TypeEnvironment env, Term t, GomType type) {
+    %match(env, t) {
+      EmptyEnvironment(), Var(x) -> {
+        return `PushEnvironment(x, type, EmptyEnvironment());
+      }
+      
+      PushEnvironment(x,xtype,tail), Var(x) -> {
+        if(`xtype == type) {
+          return env;
+        } else {
+          // type mismatch
+          return null;
+        }
+      }
+      
+      PushEnvironment(y,ytype,tail), Var(x) -> {
+        TypeEnvironment tmp = checkType(`tail, t, type);
+        if(tmp == null) {
+          return null;
+        } else {
+          return `PushEnvironment(y,type, tmp);
+        }
+      }
+
+    }
+
+    System.out.println("checkType should not be there: " + t);
+    return null;
+  }
 
    
 }
