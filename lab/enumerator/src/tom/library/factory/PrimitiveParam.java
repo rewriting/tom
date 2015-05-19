@@ -1,6 +1,5 @@
 package tom.library.factory;
 
-import java.lang.annotation.Annotation;
 import org.apache.commons.lang.ClassUtils;
 
 /**
@@ -39,10 +38,10 @@ public class PrimitiveParam extends ParamWrapper {
     @Override
     public String enumDeclare() {
         StringBuilder enumStatement = new StringBuilder();
-        enumStatement.append("final Enumeration<");
+        enumStatement.append("Enumeration<");
         enumStatement.append(javaWrapperName);
         enumStatement.append("> ");
-        enumStatement.append(paramName + "Enum");
+        enumStatement.append(paramEnumName);
         return enumStatement.toString();
     }
 

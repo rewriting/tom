@@ -1,7 +1,6 @@
 package tom.library.factory;
 
 import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 
 /**
  * wraps a List parameter
@@ -42,10 +41,10 @@ public class ListParam extends ParamWrapper {
     @Override
     public String enumDeclare() {
         StringBuilder enumStatement = new StringBuilder();
-        enumStatement.append("final Enumeration<");
+        enumStatement.append("Enumeration<");
         enumStatement.append(this.getType());
         enumStatement.append("> ");
-        enumStatement.append(paramName + "Enum");
+        enumStatement.append(paramEnumName);
         return enumStatement.toString();
     }
     
