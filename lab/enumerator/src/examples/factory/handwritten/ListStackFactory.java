@@ -22,7 +22,8 @@ public class ListStackFactory {
 //        Enumeration<ListStack> enumRes = null;
         int maxSize = 8;
         boolean canBeNull = false; 
-        int singleton = -1;
+        int singletonSize = -1;
+        boolean singleton = false;
 
         // constructor with no arguments
         Enumeration<ListStack> enumCons1 = Enumeration.singleton(new ListStack());
@@ -47,6 +48,7 @@ public class ListStackFactory {
         
         // the "this" used in the call to enumerating methods with numberOfSamples>1 (push, extend, etc.)
         Enumeration<ListStack> tmpListStackEnum = new Enumeration<ListStack>((LazyList<Finite<ListStack>>) null);
+        
 /**********************************************************************************************************************************
 ********************************************    push()    *************************************************************************
 ***********************************************************************************************************************************/
@@ -94,20 +96,18 @@ public class ListStackFactory {
         
         // @Enumerate(...
         // Integer elem
+        
         // @Enumerate(maxSize = 4, ...
         maxSize = 4; // try with 2 and singleton 8 to see how the try-catch works
         Enumeration<Integer> elemEnum = new Enumeration<Integer>(Combinators.makeInteger().parts().take(BigInteger.valueOf(maxSize)));
-        // @Enumerate(... singleton = 3, ...
-        singleton = -1; //3;
-        if(singleton >= 0){
-            Integer _elemSingleton=null;
-            try{
-                _elemSingleton = elemEnum.get(nextRandomBigInteger(BigInteger.valueOf(singleton)));
-            }catch(RuntimeException exc){}  
+        
+        // @Enumerate(... singleton = true, singletonSize = 3 ...
+        singleton = true;
+        singletonSize = 3; 
+        if(singleton){
+            Integer _elemSingleton = elemEnum.get(BigInteger.valueOf(singletonSize));
             while(_elemSingleton==null){ // no element at randomly generated index 
-                try{ // try exhaustively from singleton downwards
-                    _elemSingleton = elemEnum.get(BigInteger.valueOf(singleton--));
-                }catch(RuntimeException exc){}  
+                _elemSingleton = elemEnum.get(BigInteger.valueOf(singletonSize++));
             }
             // should we handle the case of an empty enumeration?
             elemEnum = Enumeration.singleton(_elemSingleton);
@@ -121,24 +121,26 @@ public class ListStackFactory {
         
         // METHOD level
         // @Enumerate(...
-        maxSize = -1; // can't be used for enumerating this (or we can use it on enumCons but doesn't make too much sense)
-        Enumeration<ListStack> pushThisEnum = enumCons;  //new Enumeration<ListStack>(enumCons.parts().take(BigInteger.valueOf(maxSize)));
-        // @Enumerate(... singleton = 0, ...
-        singleton = -1; // by default 
-        if(singleton >= 0){
-            ListStack _pushThisSingleton=null;
-            try{
-                _pushThisSingleton = pushThisEnum.get(nextRandomBigInteger(BigInteger.valueOf(singleton)));
-            }catch(RuntimeException exc){}  
-            while(_pushThisSingleton==null){ // no element at randomly generated index 
-                try{ // try exhaustively from singleton downwards
-                    _pushThisSingleton = pushThisEnum.get(BigInteger.valueOf(singleton--));
-                }catch(RuntimeException exc){}  
+        maxSize = -1;   // can't be used for enumerating this (or we can use it on enumCons but doesn't make too much sense)
+                        //new Enumeration<ListStack>(enumCons.parts().take(BigInteger.valueOf(maxSize)));
+        
+        // @Enumerate(... singletonSize = 0, ...
+        Enumeration<ListStack> pushThisEnum = tmpListStackEnum;
+        singleton = false;
+        singletonSize = 0;
+        if(singleton){
+            ListStack _pushThisSingleton = null;
+            try {
+                _pushThisSingleton = enumCons.get(BigInteger.valueOf(singletonSize));
+            } catch (RuntimeException e1) {}
+            while(_pushThisSingleton==null){ // no element at specified size 
+                try {
+                    _pushThisSingleton = enumCons.get(BigInteger.valueOf(singletonSize++));
+                } catch (RuntimeException e1) {}
             }
             pushThisEnum = Enumeration.singleton(_pushThisSingleton);
-        }else{
-            pushThisEnum = tmpListStackEnum;
         }
+        
         // @Enumerate(... 
         canBeNull = false; // only possible choice for @Enumerate on METHOD
         
@@ -185,23 +187,24 @@ public class ListStackFactory {
         
         // METHOD level
         // @Enumerate(...
-        maxSize = -1; // can't be used for enumerating this (or we can use it on enumCons but doesn't make too much sense)
-        Enumeration<ListStack> emptyThisEnum = enumCons;  //new Enumeration<ListStack>(enumCons.parts().take(BigInteger.valueOf(maxSize)));
-        // @Enumerate(... singleton = 0, ...
-        singleton = 0;
-        if(singleton >= 0){
-            ListStack _emptyThisSingleton=null;
+        maxSize = -1;   // can't be used for enumerating this (or we can use it on enumCons but doesn't make too much sense)
+                        //new Enumeration<ListStack>(enumCons.parts().take(BigInteger.valueOf(maxSize)));
+        
+        // @Enumerate(... singleton = true, ...
+        Enumeration<ListStack> emptyThisEnum = tmpListStackEnum;
+        singleton = true;
+        singletonSize = 0;  // by default
+        if(singleton){
+            ListStack _emptyThisSingleton = null;
             try{
-                _emptyThisSingleton = emptyThisEnum.get(nextRandomBigInteger(BigInteger.valueOf(singleton)));
+                _emptyThisSingleton = enumCons.get(BigInteger.valueOf(singletonSize));
             }catch(RuntimeException exc){}  
             while(_emptyThisSingleton==null){ // no element at randomly generated index 
                 try{ // try exhaustively from singleton downwards
-                    _emptyThisSingleton = emptyThisEnum.get(BigInteger.valueOf(singleton--));
+                    _emptyThisSingleton = enumCons.get(BigInteger.valueOf(singletonSize++));
                 }catch(RuntimeException exc){}  
             }
             emptyThisEnum = Enumeration.singleton(_emptyThisSingleton);
-        }else{
-            emptyThisEnum = tmpListStackEnum;
         }
         // @Enumerate(... 
         canBeNull = false; // only possible choice fro @Enumerate on METHOD
@@ -235,23 +238,24 @@ public class ListStackFactory {
         
         // METHOD level
         // @Enumerate(...
-        maxSize = -1; // can't be used for enumerating this (or we can use it on enumCons but doesn't make too much sense)
-        Enumeration<ListStack> extendThisEnum = enumCons;  //new Enumeration<ListStack>(enumCons.parts().take(BigInteger.valueOf(maxSize)));
+        maxSize = -1;   // can't be used for enumerating this (or we can use it on enumCons but doesn't make too much sense)
+                        //new Enumeration<ListStack>(enumCons.parts().take(BigInteger.valueOf(maxSize)));
+        
         // @Enumerate(... singleton = 0, ...
-        singleton = -1; // by default 
-        if(singleton >= 0){
+        Enumeration<ListStack> extendThisEnum = tmpListStackEnum;
+        singleton = false;  // by default
+        singletonSize = 0; // by default 
+        if(singleton){
             ListStack _extendThisSingleton=null;
             try{
-                _extendThisSingleton = pushThisEnum.get(nextRandomBigInteger(BigInteger.valueOf(singleton)));
+                _extendThisSingleton = enumCons.get(BigInteger.valueOf(singletonSize));
             }catch(RuntimeException exc){}  
             while(_extendThisSingleton==null){ // no element at randomly generated index 
                 try{ // try exhaustively from singleton downwards
-                    _extendThisSingleton = pushThisEnum.get(BigInteger.valueOf(singleton--));
+                    _extendThisSingleton = enumCons.get(BigInteger.valueOf(singletonSize++));
                 }catch(RuntimeException exc){}  
             }
             extendThisEnum = Enumeration.singleton(_extendThisSingleton);
-        }else{
-            extendThisEnum = tmpListStackEnum;
         }
         // @Enumerate(... 
         canBeNull = false; // only possible choice for @Enumerate on METHOD
@@ -279,7 +283,8 @@ public class ListStackFactory {
         return enumListStack;
     }
     
-    private static BigInteger nextRandomBigInteger(BigInteger n) {
+/*
+        private static BigInteger nextRandomBigInteger(BigInteger n) {
         Random rand = new Random();
         BigInteger result = new BigInteger(n.bitLength(), rand);
         while (result.compareTo(n) > 0) {
@@ -287,4 +292,5 @@ public class ListStackFactory {
         }
         return result;
     }
+*/
 }
