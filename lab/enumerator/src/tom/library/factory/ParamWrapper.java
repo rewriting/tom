@@ -1,7 +1,6 @@
 package tom.library.factory;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Constructor;
 
 /**
  * wraps a parameter of a method
@@ -17,9 +16,16 @@ public abstract class ParamWrapper {
     protected Class param;
 
     /**
-     * represents the name of the parameter e.g. arg0, arg1 ...
+     * represents the name of the parameter 
+     * e.g. _cons0_arg0, _method0_<methodname>_arg0, ...
      */
     protected String paramName;
+    
+    /**
+     * represents the name of the enumeration generated for parameter 
+     * e.g. _cons0_arg0Enum, _method0_<methodname>_arg0 ...
+     */
+    protected String paramEnumName;
 
     /**
      * the @Enumerate annotation on wrapped parameter
@@ -45,6 +51,7 @@ public abstract class ParamWrapper {
         this.param = param;
         this.declaringGenerator = declaringGenerator;
         this.paramName = declaringGenerator.getVariableName() +"_arg" + paramIndex;
+        this.paramEnumName = paramName + "Enum";
         for (Annotation annotation : declaringGenerator.getParameterAnnotations()[paramIndex]) {
             if (annotation instanceof Enumerate) {
                 this.enumerateAnnotation = (Enumerate) annotation;
@@ -59,6 +66,24 @@ public abstract class ParamWrapper {
      */
     public String getName() {
         return this.paramName;
+    }
+    
+    /**
+     * gets a string representing the name of the enumeration of this parameter
+     * 
+     * @return parameter enumeration name
+     */
+    public String getEnumName() {
+        return this.paramEnumName;
+    }
+    
+    /**
+     * returns Enumerate object represtenting the @Enumerate annotaion on this parameter
+     * 
+     * @return parameter annotation
+     */
+    public Enumerate getEnumerateAnnotation() {
+        return this.enumerateAnnotation;
     }
     
     /**

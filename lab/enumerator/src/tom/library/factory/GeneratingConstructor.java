@@ -33,7 +33,7 @@ public class GeneratingConstructor<T> extends GeneratorWrapper {
     public GeneratingConstructor(Constructor<T> cons, int index, ParsedClass declaringClass) {
         this.constructor = cons;
         this.declaringClass = declaringClass;
-        this.variableName = "cons" + (index + 1);
+        this.variableName = "_cons" + (index + 1);
         this.enumName = this.variableName + "Enum";
         this.enumerateAnnotation = cons.getAnnotation(Enumerate.class);
         this.parameters = new ArrayList<ParamWrapper>();

@@ -1,7 +1,5 @@
 package tom.library.factory;
 
-import java.lang.annotation.Annotation;
-
 /**
  * wraps a String parameter
  * 
@@ -31,8 +29,8 @@ public class StringParam extends ParamWrapper {
     @Override
     public String enumDeclare() {
         StringBuilder enumStatement = new StringBuilder();
-        enumStatement.append("final Enumeration<String> ");
-        enumStatement.append(paramName + "Enum");
+        enumStatement.append("Enumeration<String> ");
+        enumStatement.append(paramEnumName);
         
         return enumStatement.toString();
     }
