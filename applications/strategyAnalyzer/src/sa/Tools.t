@@ -363,5 +363,13 @@ public class Tools {
     return null;
   }
 
-
+  public static List<String> gomTypeListToStringList(GomTypeList argTypes) {
+    List<String> res = new ArrayList<String>();
+    while(!argTypes.isEmptyConcGomType()) {
+      String name = argTypes.getHeadConcGomType().getName();
+      res.add(name);
+      argTypes = argTypes.getTailConcGomType();
+    }
+    return res;
+  }
 }

@@ -97,7 +97,13 @@ public class Main {
         extractedSignature = ruleCompiler.getExtractedSignature();
         generatedSignature = ruleCompiler.getGeneratedSignature();
 
-        
+        System.out.println("gSIG = " + generatedSignature);
+
+        // TEST
+        List<Rule> newRules = compiler.specialize("rule6", "T", generatedRules);  
+
+
+
         PrintStream outputfile = System.out;
         if(options.out != null) {
           outputfile = new PrintStream(options.out);
@@ -121,5 +127,6 @@ public class Main {
       return;
     }
   }
+
 
 }
