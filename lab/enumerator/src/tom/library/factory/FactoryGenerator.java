@@ -127,7 +127,7 @@ public class FactoryGenerator {
             String templateName = null;
             switch (enumerableType.getDependencyType()) {
                 case SIMPLE:
-                    templateName = templatePath + "FactoryTemplate.vm";
+                    templateName = templatePath + "SimpleTypeFactoryTemplate.vm";
                     context.put("parsedClass", enumerableType.getParsedClass());
                     break;
                 case SUPERTYPE:
