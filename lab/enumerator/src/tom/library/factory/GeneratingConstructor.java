@@ -33,14 +33,18 @@ public class GeneratingConstructor<T> extends GeneratorWrapper {
     public GeneratingConstructor(Constructor<T> cons, int index, ParsedClass declaringClass) {
         this.constructor = cons;
         this.declaringClass = declaringClass;
-        this.variableName = "_cons" + (index + 1);
+        this.variableName = "_cons" + (index + 1) + declaringClass.getSimpleName();
         this.enumName = this.variableName + "Enum";
         this.enumerateAnnotation = cons.getAnnotation(Enumerate.class);
         this.parameters = new ArrayList<ParamWrapper>();
         for (int i = 0; i < cons.getParameterTypes().length; i++) {
-            this.parameters.add(ParamFactory.createParamWrapper(cons.getParameterTypes()[i],
-                i,
-                this));
+            this.parameters.add(
+                ParamFactory.createParamWrapper(
+                    cons.getParameterTypes()[i],
+                    i,
+                    this
+                )
+            );
         }
     }
 
@@ -64,7 +68,7 @@ public class GeneratingConstructor<T> extends GeneratorWrapper {
         curriedType.append(", ");
         if (index == this.parameters.size() - 1) {
             // last input parameter, so append the output (of type T)
-            curriedType.append(this.declaringClass.getSimpleName());
+            curriedType.append(this.declaringClass.getEnumerableType().getSimpleName());
         } else {
             // partial application, append the currying of the output (a new function)
             curriedType.append(this.getCurriedType(index + 1));
@@ -121,7 +125,7 @@ public class GeneratingConstructor<T> extends GeneratorWrapper {
         String applyExpr = "Enumeration.singleton(" + this.variableName + ")";
 
         for (ParamWrapper param: parameters) {
-            applyExpr = "Enumeration.apply(" + applyExpr + ", " + param.getName() + "Enum)";
+            applyExpr = "Enumeration.apply(" + applyExpr + ", " + param.getEnumName() + ")";
         }
 
         return applyExpr;

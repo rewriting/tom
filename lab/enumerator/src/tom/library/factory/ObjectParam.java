@@ -18,8 +18,12 @@ public class ObjectParam extends ParamWrapper {
      */
     public ObjectParam(Class param, int paramIndex, GeneratorWrapper declaringGenerator) {
         super(param, paramIndex, declaringGenerator);
-//        this.declaringCons.getDeclaringClass().addDependency(this.getType());
-        this.declaringGenerator.getDeclaringClass().addDependency(param);
+        if (this.enumerateAnnotation != null && this.enumerateAnnotation.concreteClasses().length >0) {
+            this.declaringGenerator.getDeclaringClass().addDependency(new EnumerableType(param, enumerateAnnotation.concreteClasses()));
+        } else {
+            this.declaringGenerator.getDeclaringClass().addDependency(new EnumerableType(param));
+        }
+        
     }
 
     @Override

@@ -37,7 +37,7 @@ public class GeneratingMethod extends GeneratorWrapper{
     public GeneratingMethod(Method method, int index, ParsedClass declaringClass) {
         this.method = method;
         this.declaringClass = declaringClass;
-        this.variableName = "_method" +index+"_"+ method.getName();
+        this.variableName = "_method" +index+"_"+ declaringClass.getSimpleName() + "_" + method.getName();
         this.enumName = this.variableName + "Enum";
         this.thisEnumName = this.variableName + "ThisEnum";
         this.enumerateAnnotation = method.getAnnotation(Enumerate.class);

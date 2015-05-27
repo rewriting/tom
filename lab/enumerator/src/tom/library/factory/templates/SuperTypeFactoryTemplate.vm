@@ -1,15 +1,15 @@
 ## This is the main factory template
 ## It contains all the static code for the to-be-generated Factory
-## The dynamic contents is filled from the corresponding ParsedClass object
+## The dynamic contents is filled from the corresponding EnumerableType object
 ##
 #set($getElem = ".get(BigInteger.valueOf(singletonSize))")
 #set($getNextElem = ".get(BigInteger.valueOf(singletonSize++))")
 
 /**
 * This is auto generated class by the Apache velocity template engine
-* The corresponding template is FactoryTemplate.vm
+* The corresponding template is SuperTypeFactoryTemplate.vm
 **/
-//package $parsedClass.getPackageName();
+//package $enumerableType.getPackageName();
 package examples.factory;
 
 import java.math.BigInteger;
@@ -19,16 +19,17 @@ import tom.library.enumerator.F;
 import tom.library.enumerator.Finite;
 import tom.library.enumerator.LazyList;
 import tom.library.enumerator.P1;
-import $parsedClass.getCanonicalName();
+import $enumerableType.getCanonicalName();
 
-public class $parsedClass.getFactoryClassName() {
+public class $enumerableType.getFactoryName() {
     
-    private static Enumeration<$parsedClass.getSimpleName()> finalEnum = null;
+    private static Enumeration<$enumerableType.getSimpleName()> finalEnum = null;
     
-    public static final Enumeration<$parsedClass.getSimpleName()>  getEnumeration() {
+    public static final Enumeration<$enumerableType.getSimpleName()>  getEnumeration() {
         
         boolean singleton = false;
         int singletonSize = 0;
+#foreach($parsedClass in $enumerableType.getParsedClasses())
         
         /*************** $parsedClass.getSimpleName() generating constructors *****************/
         
@@ -57,11 +58,11 @@ public class $parsedClass.getFactoryClassName() {
         }
 #end
         
-        Enumeration<$parsedClass.getSimpleName()> $cons.getEnumName() = $cons.getEnumerationConstruction();
+        Enumeration<$enumerableType.getSimpleName()> $cons.getEnumName() = $cons.getEnumerationConstruction();
 #end
         
         // accumulating all constructors
-        Enumeration<$parsedClass.getSimpleName()> $parsedClass.getAllConstructorsEnumName() = $parsedClass.getAllContructorsEnum();
+        Enumeration<$enumerableType.getSimpleName()> $parsedClass.getAllConstructorsEnumName() = $parsedClass.getAllContructorsEnum();
         
 #if(!$parsedClass.getMethods().isEmpty())
         /*************** $parsedClass.getSimpleName() generating methods *****************/
@@ -111,10 +112,10 @@ public class $parsedClass.getFactoryClassName() {
             }
         };
 #end
-        
         Enumeration<$parsedClass.getEnumerableType().getSimpleName()> $parsedClass.getFinalEnumName() = $parsedClass.getFinalEnum();
+#end
         
-        finalEnum = $parsedClass.getEnumerableType().getFinalEnum();
+        finalEnum = $enumerableType.getFinalEnum();
         return finalEnum;
         
     }

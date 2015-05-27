@@ -16,6 +16,7 @@ import java.util.Queue;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
+import examples.factory.Car;
 import examples.factory.Garage;
 import examples.factory.Garage2;
 import examples.factory.ListStack;
@@ -23,6 +24,7 @@ import examples.factory.ListStack;
 import examples.factory.Room;
 //import examples.factory.Room;
 import examples.factory.Student;
+import examples.factory.inheritance.*;
 
 /**
  * It initializes Apache Velocity template engine, call the parse method on a
@@ -58,12 +60,12 @@ public class FactoryGenerator {
      * the factories that have been generated so far of the form
      * <"nameOfClassToEnumerate", "nameOfFactoryClass">
      */
-    private Map<Class<?>, ParsedClass> generatedFactories;
+    private Map<Class<?>, EnumerableType> generatedFactories;
 
     /**
-     * factory template to be filled
+     * velocity Engine
      */
-    private Template template;
+    private VelocityEngine velocityEngine;
 
     /**
      * initiates generator and sets all paths to default values TODO: could be
@@ -71,14 +73,13 @@ public class FactoryGenerator {
      */
     private FactoryGenerator() {
         // init Apache Velocity
-        VelocityEngine ve = new VelocityEngine();
-        ve.init();
+        velocityEngine = new VelocityEngine();
+        velocityEngine.init();
 
         this.templatePath = "./src/tom/library/factory/templates/";
-        this.template = ve.getTemplate(templatePath + "FactoryTemplate.vm");
         this.generationPath = "./src/examples/factory/";
         this.compilationPath = "./src/examples/factory/";
-        this.generatedFactories = new HashMap<Class<?>, ParsedClass>();
+        this.generatedFactories = new HashMap<Class<?>, EnumerableType>();
     }
 
     /**
@@ -101,16 +102,16 @@ public class FactoryGenerator {
      *            entry point for factories generation
      */
     public <T> void generateSources(Class<T> classToGenerateFactoriesFor) {
-        Queue<Class<?>> classesToProcess = new LinkedList<Class<?>>();
-        classesToProcess.add(classToGenerateFactoriesFor);
-        while (!classesToProcess.isEmpty()) {
-            Class<?> class2process = classesToProcess.poll();
-            ParsedClass parsedClass = this.parse(class2process);
-            generatedFactories.put(class2process, parsedClass);
+        Queue<EnumerableType> typesToEnumerate = new LinkedList<EnumerableType>();
+        typesToEnumerate.add(new EnumerableType(classToGenerateFactoriesFor));
+        while (!typesToEnumerate.isEmpty()) {
+            EnumerableType enumerableType = typesToEnumerate.poll();
+            enumerableType.parse();
+            generatedFactories.put(enumerableType.getTypeClass(), enumerableType);
             // handle dependencies
-            for (Class<?> dependency : parsedClass.getDependencies()) {
-                if (!generatedFactories.containsKey(dependency)) {
-                    classesToProcess.add(dependency);
+            for (EnumerableType dependency : enumerableType.getDependencies()) {
+                if (!generatedFactories.containsKey(dependency.getTypeClass())) {
+                    typesToEnumerate.add(dependency);
                 }
             }
         }
@@ -120,18 +121,27 @@ public class FactoryGenerator {
         // generate code using velocity
         VelocityContext context = new VelocityContext();
 
-        // for (Class<?> class2generate : generatedFactories.keySet()) {
-        for (ParsedClass parsedClass : generatedFactories.values()) {
-            // ParsedClass parsedClass = generatedFactories.get(class2generate);
-            context.put("parsedClass", parsedClass);
-
+        for (EnumerableType enumerableType : generatedFactories.values()) {
+            
             StringWriter writer = new StringWriter();
+            String templateName = null;
+            switch (enumerableType.getDependencyType()) {
+                case SIMPLE:
+                    templateName = templatePath + "FactoryTemplate.vm";
+                    context.put("parsedClass", enumerableType.getParsedClass());
+                    break;
+                case SUPERTYPE:
+                    templateName = templatePath + "SuperTypeFactoryTemplate.vm";
+                    context.put("enumerableType", enumerableType);
+                    break;
+            }
+            Template template = velocityEngine.getTemplate(templateName);
             template.merge(context, writer);
 
             // save code to a file
             try {
                 PrintWriter pw = new PrintWriter(generationPath
-                    + parsedClass.getFactoryClassName() + ".java");
+                    + enumerableType.getFactoryName() + ".java");
                 pw.print(writer.toString());
                 pw.flush();
                 pw.close();
@@ -140,7 +150,7 @@ public class FactoryGenerator {
                 e.printStackTrace();
             }
 
-            System.out.println("factory source generated:" + parsedClass.getCanonicalName());
+            System.out.println("factory generated for: " + enumerableType.getCanonicalName());
         }
     }
 
@@ -160,7 +170,7 @@ public class FactoryGenerator {
             URL[] urls = new URL[] { compilationDir.toURI().toURL() };
             URLClassLoader classLoader = URLClassLoader.newInstance(urls);
             factoryClass = classLoader.loadClass(factoryClassName);
-            System.out.println(factoryClass.getCanonicalName());
+            System.out.println("class loaded: " + factoryClass.getCanonicalName());
         } catch (MalformedURLException | ClassNotFoundException e) {
             e.printStackTrace();
         }
@@ -170,42 +180,9 @@ public class FactoryGenerator {
 
     public static void main(String[] args) {
         FactoryGenerator generator = FactoryGenerator.getInstance();
-        generator.generateSources(ListStack.class);
+        generator.generateSources(Person.class);
         generator.outputSourceForClasses();
 
-    }
-
-    /**
-     * parses a class and stores parsed information into the ParsedClass
-     * 
-     * @param classToParse
-     *            the class to be parsed
-     * @return parsedClass object holding the parsed information (constructors,
-     *         annotations...)
-     */
-    private <T> ParsedClass parse(Class<T> classToParse) {
-        ParsedClass parsedClass = new ParsedClass(classToParse);
-        // load all constructors having @Enumerate annotations
-        for (Constructor<?> cons : classToParse.getDeclaredConstructors()) {
-            if (cons.isAnnotationPresent(Enumerate.class)) {
-                if (cons.getParameterTypes().length == 0) {
-                    // no args cons
-                    parsedClass.addNoArgsConstructor(cons);
-                } else {
-                    // cons with parameters
-                    parsedClass.addConstructor(cons);
-                }
-
-            }
-        }
-        // load all methods annotated as @Enumerate
-        for (Method method : classToParse.getDeclaredMethods()) {
-            if (method.isAnnotationPresent(Enumerate.class)) {
-                parsedClass.addMethod(method);
-
-            }
-        }
-        return parsedClass;
     }
 
 }
