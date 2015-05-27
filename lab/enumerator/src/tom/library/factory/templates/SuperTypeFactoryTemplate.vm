@@ -30,7 +30,7 @@ public class $enumerableType.getFactoryName() {
         boolean singleton = false;
         int singletonSize = 0;
 #foreach($parsedClass in $enumerableType.getParsedClasses())
-        #parse("./src/tom/library/factory/templates/ClassBody.vm")
+        #parse("./src/tom/library/factory/templates/ParsedClassBody.vm")
 #end
         
         finalEnum = $enumerableType.getFinalEnum();
