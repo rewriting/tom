@@ -7,7 +7,7 @@
 
 /**
 * This is auto generated class by the Apache velocity template engine
-* The corresponding template is FactoryTemplate.vm
+* The corresponding template is FactoryTemplate.vm xx
 **/
 //package $parsedClass.getPackageName();
 package examples.factory;
@@ -30,89 +30,7 @@ public class $parsedClass.getFactoryClassName() {
         boolean singleton = false;
         int singletonSize = 0;
         
-        /*************** $parsedClass.getSimpleName() generating constructors *****************/
-        
-#if ($parsedClass.hasNoArgsConstructor())
-        // no args constructor
-        Enumeration<$parsedClass.getSimpleName()> $parsedClass.getNoArgsConstructor().getEnumName() = Enumeration.singleton(new $parsedClass.getSimpleName()());
-        
-#end
-#foreach($cons in $parsedClass.getConstructors())
-        // constructor $cons.getVariableName()
-        final $cons.getCurriedType(0) $cons.getVariableName() = new $cons.getCurriedType(0)() {
-            $cons.getCurriedDefinition(0)
-        };
-        
-#foreach($param in $cons.getParameters())
-        // constructor $cons.getVariableName(), param $param.getName()
-        $param.enumDeclare() = $param.enumCreate();
-        singleton = $param.getEnumerateAnnotation().singleton();
-        singletonSize = $param.getEnumerateAnnotation().singletonSize();
-        if (singleton) {
-            $param.getType() singletonInstance = $param.getEnumName()$getElem;
-            while (singletonInstance == null) {
-                singletonInstance = $param.getEnumName()$getNextElem;
-            }
-            $param.getEnumName() = Enumeration.singleton(singletonInstance);
-        }
-#end
-        
-        Enumeration<$parsedClass.getSimpleName()> $cons.getEnumName() = $cons.getEnumerationConstruction();
-#end
-        
-        // accumulating all constructors
-        Enumeration<$parsedClass.getSimpleName()> $parsedClass.getAllConstructorsEnumName() = $parsedClass.getAllContructorsEnum();
-        
-#if(!$parsedClass.getMethods().isEmpty())
-        /*************** $parsedClass.getSimpleName() generating methods *****************/
-        
-        Enumeration<$parsedClass.getSimpleName()> tmpThisEnum = new Enumeration<$parsedClass.getSimpleName()>((LazyList<Finite<$parsedClass.getSimpleName()>>) null);
-#foreach($method in $parsedClass.getMethods())
-        
-        // method $method.getVariableName()
-        final $method.getCurriedType(-1) $method.getVariableName() = new $method.getCurriedType(-1)() {
-            $method.getCurriedDefinition(-1)
-        };
-#foreach($param in $method.getParameters())
-        
-        // method $method.getVariableName(), param $param.getName()
-        $param.enumDeclare() = $param.enumCreate();
-        singleton = $param.getEnumerateAnnotation().singleton();
-        singletonSize = $param.getEnumerateAnnotation().singletonSize();
-        if (singleton) {
-            $param.getType() singletonInstance = $param.getEnumName()$getElem;
-            while (singletonInstance == null) {
-                singletonInstance = $param.getEnumName()$getNextElem;
-            }
-            $param.getEnumName() = Enumeration.singleton(singletonInstance);
-        }
-#end
-        
-        Enumeration<$parsedClass.getSimpleName()> $method.getThisEnumName() = tmpThisEnum;
-        singleton = $method.getEnumerateAnnotation().singleton();
-        singletonSize = $method.getEnumerateAnnotation().singletonSize();
-        if (singleton) {
-            $parsedClass.getSimpleName() singletonInstance = allConstructorsEnum.get(BigInteger.valueOf(singletonSize));
-            while (singletonInstance == null) {
-                singletonInstance = allConstructorsEnum.get(BigInteger.valueOf(singletonSize++));
-            }
-            $method.getThisEnumName() = Enumeration.singleton(singletonInstance);
-        }
-        
-        Enumeration<$parsedClass.getSimpleName()> $method.getEnumName() = $method.getEnumerationConstruction();
-#end
-        
-        // accumulating all methods
-        Enumeration<$parsedClass.getSimpleName()> $parsedClass.getAllMethodsEnumName() = $parsedClass.getAllMethodsEnum();
-        
-        tmpThisEnum.p1 = new P1<LazyList<Finite<$parsedClass.getSimpleName()>>>() {
-            public LazyList<Finite<$parsedClass.getSimpleName()>> _1() {
-                return finalEnum.parts();
-            }
-        };
-#end
-        
-        Enumeration<$parsedClass.getEnumerableType().getSimpleName()> $parsedClass.getFinalEnumName() = $parsedClass.getFinalEnum();
+        #parse("./src/tom/library/factory/templates/ClassBody.vm")
         
         finalEnum = $parsedClass.getEnumerableType().getFinalEnum();
         return finalEnum;
