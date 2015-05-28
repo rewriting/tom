@@ -13,6 +13,12 @@ public class Dog implements Pet {
         this.age = age;
     }
     
+    @Enumerate
+    public Dog getHonored() {
+        name = "X" + name;
+        return this;
+    }
+    
     @Override
     public String toString() {
         return "Dog [name=" + name +", age="+age+ "]";

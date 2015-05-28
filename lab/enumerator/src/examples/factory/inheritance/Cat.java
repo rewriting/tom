@@ -13,6 +13,12 @@ public class Cat implements Pet {
         this.age = age;
     }
     
+    @Enumerate
+    public Cat getHonored() {
+        name = "X" + name;
+        return this;
+    }
+    
     @Override
     public String toString() {
         return "Cat [name=" + name +", age="+age+ "]";

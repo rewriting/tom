@@ -13,7 +13,7 @@ private Pet pet;
     
     @Override
     public String toString() {
-        return "Pet [pet=" + pet + "]";
+        return "Person [pet=" + pet + "]";
     }
     
 }
