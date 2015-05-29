@@ -113,6 +113,10 @@ public class ParsedClass {
         return "finalEnum"+simpleName;
     }
     
+    public String getThisEnumName() {
+        return "thisEnum"+simpleName;
+    }
+    
     /**
      * creates a wrapper for the no args constructor annotated with @EnumerateGenerator
      * 

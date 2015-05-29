@@ -1,8 +1,9 @@
+        
 /*************** $parsedClass.getSimpleName() generating constructors *****************/
         
 #if ($parsedClass.hasNoArgsConstructor())
         // no args constructor
-        Enumeration<$parsedClass.getSimpleName()> $parsedClass.getNoArgsConstructor().getEnumName() = Enumeration.singleton(new $parsedClass.getSimpleName()());
+        Enumeration<$parsedClass.getEnumerableType().getSimpleName()> $parsedClass.getNoArgsConstructor().getEnumName() = Enumeration.singleton(($parsedClass.getEnumerableType().getSimpleName())new $parsedClass.getSimpleName()());
         
 #end
 #foreach($cons in $parsedClass.getConstructors())
@@ -17,9 +18,9 @@
         singleton = $param.getEnumerateAnnotation().singleton();
         singletonSize = $param.getEnumerateAnnotation().singletonSize();
         if (singleton) {
-            $param.getType() singletonInstance = $param.getEnumName()$getElem;
+            $param.getType() singletonInstance = ${param.getEnumName()}.get(BigInteger.valueOf(singletonSize));
             while (singletonInstance == null) {
-                singletonInstance = $param.getEnumName()$getNextElem;
+                singletonInstance = ${param.getEnumName()}.get(BigInteger.valueOf(singletonSize++));
             }
             $param.getEnumName() = Enumeration.singleton(singletonInstance);
         }
@@ -34,7 +35,7 @@
 #if(!$parsedClass.getMethods().isEmpty())
         /*************** $parsedClass.getSimpleName() generating methods *****************/
         
-        Enumeration<$parsedClass.getSimpleName()> tmpThisEnum = new Enumeration<$parsedClass.getSimpleName()>((LazyList<Finite<$parsedClass.getSimpleName()>>) null);
+        Enumeration<$parsedClass.getEnumerableType().getSimpleName()> $parsedClass.getThisEnumName() = new Enumeration<$parsedClass.getEnumerableType().getSimpleName()>((LazyList<Finite<$parsedClass.getEnumerableType().getSimpleName()>>) null);
 #foreach($method in $parsedClass.getMethods())
         
         // method $method.getVariableName()
@@ -48,35 +49,35 @@
         singleton = $param.getEnumerateAnnotation().singleton();
         singletonSize = $param.getEnumerateAnnotation().singletonSize();
         if (singleton) {
-            $param.getType() singletonInstance = $param.getEnumName()$getElem;
+            $param.getType() singletonInstance = ${param.getEnumName()}.get(BigInteger.valueOf(singletonSize));
             while (singletonInstance == null) {
-                singletonInstance = $param.getEnumName()$getNextElem;
+                singletonInstance = ${param.getEnumName()}.get(BigInteger.valueOf(singletonSize++));
             }
             $param.getEnumName() = Enumeration.singleton(singletonInstance);
         }
 #end
         
-        Enumeration<$parsedClass.getSimpleName()> $method.getThisEnumName() = tmpThisEnum;
+        Enumeration<$parsedClass.getEnumerableType().getSimpleName()> $method.getThisEnumName() = $parsedClass.getThisEnumName();
         singleton = $method.getEnumerateAnnotation().singleton();
         singletonSize = $method.getEnumerateAnnotation().singletonSize();
         if (singleton) {
-            $parsedClass.getSimpleName() singletonInstance = allConstructorsEnum.get(BigInteger.valueOf(singletonSize));
+            $parsedClass.getEnumerableType().getSimpleName() singletonInstance = ${parsedClass.getAllConstructorsEnumName()}.get(BigInteger.valueOf(singletonSize));
             while (singletonInstance == null) {
-                singletonInstance = allConstructorsEnum.get(BigInteger.valueOf(singletonSize++));
+                singletonInstance = ${parsedClass.getAllConstructorsEnumName()}.get(BigInteger.valueOf(singletonSize++));
             }
             $method.getThisEnumName() = Enumeration.singleton(singletonInstance);
         }
         
-        Enumeration<$parsedClass.getSimpleName()> $method.getEnumName() = $method.getEnumerationConstruction();
+        Enumeration<$parsedClass.getEnumerableType().getSimpleName()> $method.getEnumName() = $method.getEnumerationConstruction();
 #end
         
         // accumulating all methods
-        Enumeration<$parsedClass.getSimpleName()> $parsedClass.getAllMethodsEnumName() = $parsedClass.getAllMethodsEnum();
+        Enumeration<$parsedClass.getEnumerableType().getSimpleName()> $parsedClass.getAllMethodsEnumName() = $parsedClass.getAllMethodsEnum();
         
-        tmpThisEnum.p1 = new P1<LazyList<Finite<$parsedClass.getSimpleName()>>>() {
-            public LazyList<Finite<$parsedClass.getSimpleName()>> _1() {
-                return finalEnum.parts();
+        ${parsedClass.getThisEnumName()}.p1 = new P1<LazyList<Finite<$parsedClass.getEnumerableType().getSimpleName()>>>() {
+            public LazyList<Finite<$parsedClass.getEnumerableType().getSimpleName()>> _1() {
+                return ${parsedClass.getFinalEnumName()}.parts();
             }
         };
 #end
-        Enumeration<$parsedClass.getEnumerableType().getSimpleName()> $parsedClass.getFinalEnumName() = $parsedClass.getFinalEnum();
+        $parsedClass.getFinalEnumName() = $parsedClass.getFinalEnum();

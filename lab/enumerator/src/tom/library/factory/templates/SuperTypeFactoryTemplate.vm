@@ -19,11 +19,14 @@ import tom.library.enumerator.F;
 import tom.library.enumerator.Finite;
 import tom.library.enumerator.LazyList;
 import tom.library.enumerator.P1;
-import $enumerableType.getCanonicalName();
+import ${enumerableType.getPackageName()}.*;
 
 public class $enumerableType.getFactoryName() {
     
     private static Enumeration<$enumerableType.getSimpleName()> finalEnum = null;
+#foreach($parsedClass in $enumerableType.getParsedClasses())
+    private static Enumeration<$enumerableType.getSimpleName()> $parsedClass.getFinalEnumName() = null;
+#end
     
     public static final Enumeration<$enumerableType.getSimpleName()>  getEnumeration() {
         

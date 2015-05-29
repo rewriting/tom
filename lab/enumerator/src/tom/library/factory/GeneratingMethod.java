@@ -76,19 +76,19 @@ public class GeneratingMethod extends GeneratorWrapper{
         if (index == -1) {
             // first call, prepend enumeration for "this"
             curriedType.append("F<");
-            curriedType.append(this.declaringClass.getSimpleName());
+            curriedType.append(this.declaringClass.getEnumerableType().getSimpleName());
             curriedType.append(", ");
             curriedType.append(this.getCurriedType(index + 1));
             curriedType.append(">");
         } else if (this.parameters.size() == 0) {
             // a method with no input parameters
-            curriedType.append(this.declaringClass.getSimpleName());
+            curriedType.append(this.declaringClass.getEnumerableType().getSimpleName());
         } else if (index == this.parameters.size() - 1) {
             // last input parameter, so append the output (the enumerated Type)
             curriedType.append("F<");
             curriedType.append(this.parameters.get(index).getType());
             curriedType.append(", ");
-            curriedType.append(this.declaringClass.getSimpleName());
+            curriedType.append(this.declaringClass.getEnumerableType().getSimpleName());
             curriedType.append(">");
         } else {
             // partial application, append the currying of the output (a new function)
@@ -111,19 +111,17 @@ public class GeneratingMethod extends GeneratorWrapper{
         if (index == -1 && this.parameters.size() == 0) {
             curriedDef.append("public ");
             curriedDef.append(this.getCurriedType(index + 1));
-            curriedDef.append(" apply(final ");
-            curriedDef.append(this.declaringClass.getSimpleName());
-            curriedDef.append(" instance) { return (");
-            curriedDef.append(this.declaringClass.getSimpleName());
-            curriedDef.append(") instance.");
-            curriedDef.append(this.method.getName());
-            curriedDef.append("(); }");
+            curriedDef.append(" apply(final "+ declaringClass.getEnumerableType().getSimpleName() + " instance)" + " { ");
+            curriedDef.append("return ");
+            curriedDef.append("("+this.declaringClass.getSimpleName()+") ");
+            curriedDef.append("(("+this.declaringClass.getSimpleName()+")"+"instance)");
+            curriedDef.append("."+this.method.getName()+"();");
+            curriedDef.append(" }");
         } else if (index == -1 && this.parameters.size() > 0) {
             curriedDef.append("public ");
             curriedDef.append(this.getCurriedType(index + 1));
-            curriedDef.append(" apply(final ");
-            curriedDef.append(this.declaringClass.getSimpleName());
-            curriedDef.append(" instance) { return new ");
+            curriedDef.append(" apply(final "+ declaringClass.getEnumerableType().getSimpleName() + " instance)" + " { ");
+            curriedDef.append("return new ");
             curriedDef.append(this.getCurriedType(index + 1));
             curriedDef.append("() {");
             curriedDef.append(this.getCurriedDefinition(index + 1));
@@ -131,14 +129,12 @@ public class GeneratingMethod extends GeneratorWrapper{
         } else if (index == this.parameters.size() - 1) {
             // last parameter, apply the method with all the parameters
             curriedDef.append("public ");
-            curriedDef.append(this.declaringClass.getSimpleName());
-            curriedDef.append(" apply(final ");
-            curriedDef.append(this.parameters.get(index).getType());
-            curriedDef.append(" ");
-            curriedDef.append(this.parameters.get(index).getName());
-            curriedDef.append(") { return ");
-            curriedDef.append("("+this.declaringClass.getSimpleName()+") instance.");
-            curriedDef.append(this.method.getName());
+            curriedDef.append(declaringClass.getEnumerableType().getSimpleName());
+            curriedDef.append(" apply(final " + parameters.get(index).getType() + " " + parameters.get(index).getName() + ") { ");
+            curriedDef.append("return ");
+            curriedDef.append("("+this.declaringClass.getSimpleName()+") ");
+            curriedDef.append("(("+this.declaringClass.getSimpleName()+")"+"instance)");
+            curriedDef.append("." + this.method.getName());
             curriedDef.append("(");
             for (ParamWrapper param: parameters) {
                 curriedDef.append(param.getName());

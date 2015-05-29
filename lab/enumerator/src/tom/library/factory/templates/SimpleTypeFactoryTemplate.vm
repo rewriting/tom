@@ -2,8 +2,6 @@
 ## It contains all the static code for the to-be-generated Factory
 ## The dynamic contents is filled from the corresponding ParsedClass object
 ##
-#set($getElem = ".get(BigInteger.valueOf(singletonSize))")
-#set($getNextElem = ".get(BigInteger.valueOf(singletonSize++))")
 
 /**
 * This is auto generated class by the Apache velocity template engine
@@ -19,11 +17,12 @@ import tom.library.enumerator.F;
 import tom.library.enumerator.Finite;
 import tom.library.enumerator.LazyList;
 import tom.library.enumerator.P1;
-import $parsedClass.getCanonicalName();
+import ${parsedClass.getPackageName()}.*;
 
 public class $parsedClass.getFactoryClassName() {
     
     private static Enumeration<$parsedClass.getSimpleName()> finalEnum = null;
+    private static Enumeration<$parsedClass.getSimpleName()> $parsedClass.getFinalEnumName() = null;
     
     public static final Enumeration<$parsedClass.getSimpleName()>  getEnumeration() {
         
