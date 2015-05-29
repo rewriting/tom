@@ -8,15 +8,14 @@ public class Dog implements Pet {
     private int age;
     
     @Enumerate
-    public Dog(@Enumerate String name,@Enumerate int age) {
-        this.name = name;
-        this.age = age;
+    public Dog() {
+        
     }
     
     @Enumerate
-    public Dog getHonored() {
-        name = "X" + name;
-        return this;
+    public Dog(@Enumerate String name,@Enumerate int age) {
+        this.name = name;
+        this.age = age;
     }
     
     @Override
