@@ -11,6 +11,13 @@ enum DependencyType {
     SIMPLE, SUPERTYPE, RECURSIVE
 }
 
+/**
+ * encapsulates a class to be enumerated along with possibly empty set of subtypes of this class
+ * after parsing these classes (typeClass and subTypes) all information is saved in corresponding pasedClass and parsedClasses
+ * 
+ * @author ahmad
+ *
+ */
 public class EnumerableType {
     
     private final Class<?> typeClass;
@@ -59,7 +66,7 @@ public class EnumerableType {
         }
     }
     /**
-     * parses a class and stores parsed information into the ParsedClass
+     * Parses a class and stores parsed information into the ParsedClass
      * 
      * @param classToParse
      *            the class to be parsed
@@ -90,7 +97,10 @@ public class EnumerableType {
         }
         return parsedClass;
     }
-
+    /**
+     * Returns a set of referenced types by this type and its subtypes
+     * @return set of referenced types
+     */
     public Set<EnumerableType> getDependencies() {
         Set<EnumerableType> dependencies = new HashSet<EnumerableType>();
         dependencies.addAll(parsedClass.getDependencies());
@@ -116,6 +126,11 @@ public class EnumerableType {
         return typeClass.getCanonicalName();
     }
     
+    /**
+     * For super types it accumulates all enumerations of all subtypes
+     * otherwise it is just the enumeration of that type
+     * @return the final enumeration for this Type
+     */
     public String getFinalEnum() {
         StringBuilder finalEnum = new StringBuilder();
         if (dependencyType.equals(DependencyType.SIMPLE)) {
