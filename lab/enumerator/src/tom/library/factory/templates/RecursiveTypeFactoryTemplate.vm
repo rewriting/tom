@@ -5,7 +5,7 @@
 
 /**
 * This is auto generated class by the Apache velocity template engine
-* The corresponding template is SimpleTypeFactoryTemplate.vm
+* The corresponding template is RecursiveTypeFactoryTemplate.vm
 **/
 //package $parsedClass.getPackageName();
 package examples.factory;
@@ -26,13 +26,8 @@ public class $parsedClass.getFactoryClassName() {
     
     public static final Enumeration<$parsedClass.getSimpleName()>  getEnumeration() {
         
-        boolean singleton = false;
-        int singletonSize = 0;
-        
-        #parse("./src/tom/library/factory/templates/ParsedClassBody.vm")
-        
-        finalEnum = $parsedClass.getEnumerableType().getFinalEnum();
-        return finalEnum;
+        // this is a cyclic reference
+        return null;
         
     }
 

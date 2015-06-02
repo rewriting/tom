@@ -54,7 +54,7 @@ public class ParsedClass {
     Set<EnumerableType> dependencies;
     
     /**
-     * enumerable type referring to this class
+     * enumerable type containing this class
      */
     EnumerableType enumerableType;
     

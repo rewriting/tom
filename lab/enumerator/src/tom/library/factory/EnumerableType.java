@@ -25,15 +25,18 @@ public class EnumerableType {
     private DependencyType dependencyType;
     private ParsedClass parsedClass;
     private Set<ParsedClass> parsedClasses = new HashSet<ParsedClass>();
+    private EnumerableType referencingType;
     
-    public EnumerableType(Class enumertableClass) {
+    public EnumerableType(Class enumerableClass, EnumerableType declaringType) {
         this.dependencyType = DependencyType.SIMPLE;
-        this.typeClass = enumertableClass;
+        this.typeClass = enumerableClass;
+        this.referencingType = declaringType;
     }
 
-    public EnumerableType(Class enumertableClass, Class<?>[] concreteClasses) {
+    public EnumerableType(Class enumerableClass, EnumerableType declaringType, Class<?>[] concreteClasses) {
         this.dependencyType = DependencyType.SUPERTYPE;
-        this.typeClass = enumertableClass;
+        this.typeClass = enumerableClass;
+        this.referencingType = declaringType;
         Collections.addAll(subTypes, concreteClasses);
     }
 
@@ -57,6 +60,17 @@ public class EnumerableType {
         return parsedClasses;
     }
     
+    public EnumerableType getReferencingType() {
+        return referencingType;
+    }
+    
+    public void setReferencingType(EnumerableType referencingType) {
+        this.referencingType = referencingType;
+    }
+    
+    public void setDependencyType(DependencyType dependencyType) {
+        this.dependencyType = dependencyType;
+    }
     
     public void parse() {
         this.parsedClass = parseClass(typeClass);

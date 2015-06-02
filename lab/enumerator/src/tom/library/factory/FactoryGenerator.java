@@ -24,6 +24,7 @@ import examples.factory.ListStack;
 import examples.factory.Room;
 //import examples.factory.Room;
 import examples.factory.Student;
+import examples.factory.handwritten.recursive3.User;
 import examples.factory.inheritance.*;
 
 /**
@@ -103,7 +104,7 @@ public class FactoryGenerator {
      */
     public <T> void generateSources(Class<T> classToGenerateFactoriesFor) {
         Queue<EnumerableType> typesToEnumerate = new LinkedList<EnumerableType>();
-        typesToEnumerate.add(new EnumerableType(classToGenerateFactoriesFor));
+        typesToEnumerate.add(new EnumerableType(classToGenerateFactoriesFor, null));
         while (!typesToEnumerate.isEmpty()) {
             EnumerableType enumerableType = typesToEnumerate.poll();
             enumerableType.parse();
@@ -133,6 +134,10 @@ public class FactoryGenerator {
                 case SUPERTYPE:
                     templateName = templatePath + "SuperTypeFactoryTemplate.vm";
                     context.put("enumerableType", enumerableType);
+                    break;
+                case RECURSIVE:
+                    templateName = templatePath + "RecursiveTypeFactoryTemplate.vm";
+                    context.put("parsedClass", enumerableType.getParsedClass());
                     break;
             }
             Template template = velocityEngine.getTemplate(templateName);
@@ -180,7 +185,7 @@ public class FactoryGenerator {
 
     public static void main(String[] args) {
         FactoryGenerator generator = FactoryGenerator.getInstance();
-        generator.generateSources(Person.class);
+        generator.generateSources(User.class);
         generator.outputSourceForClasses();
 
     }

@@ -18,12 +18,18 @@ public class ObjectParam extends ParamWrapper {
      */
     public ObjectParam(Class param, int paramIndex, GeneratorWrapper declaringGenerator) {
         super(param, paramIndex, declaringGenerator);
-        if (this.enumerateAnnotation != null && this.enumerateAnnotation.concreteClasses().length >0) {
-            this.declaringGenerator.getDeclaringClass().addDependency(new EnumerableType(param, enumerateAnnotation.concreteClasses()));
+        EnumerableType dependency;
+        ParsedClass declaringClass = this.declaringGenerator.getDeclaringClass();
+        EnumerableType declaringType = declaringClass.getEnumerableType();
+        if (isCyclic()) {
+            declaringType.setDependencyType(DependencyType.RECURSIVE);
+            return;
+        } else if (isSuperType()) {
+            dependency = new EnumerableType(param, declaringType, enumerateAnnotation.concreteClasses());
         } else {
-            this.declaringGenerator.getDeclaringClass().addDependency(new EnumerableType(param));
+            dependency = new EnumerableType(param, declaringType);
         }
-        
+        declaringClass.addDependency(dependency);
     }
 
     @Override
@@ -47,6 +53,21 @@ public class ObjectParam extends ParamWrapper {
         enumStatement.append(this.getType() + "Factory"); //TODO: get corresponding factory from FactoryGenerator (handle different packages)
         enumStatement.append(".getEnumeration()");
         return enumStatement.toString();
+    }
+    
+    private boolean isSuperType() {
+        return this.enumerateAnnotation != null && this.enumerateAnnotation.concreteClasses().length >0;
+    }
+    
+    private boolean isCyclic() {
+        EnumerableType parentType = declaringGenerator.getDeclaringClass().getEnumerableType();
+        while (parentType != null) {
+            if (parentType.getCanonicalName().equals(param.getCanonicalName())) {
+                return true;
+            }
+            parentType = parentType.getReferencingType();
+        }
+        return false;
     }
 
 }
