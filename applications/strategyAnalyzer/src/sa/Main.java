@@ -83,6 +83,9 @@ public class Main {
         Signature extractedSignature = compiler.getExtractedSignature();
         Signature generatedSignature = compiler.getGeneratedSignature();
 
+        System.out.println("EXT SIG = " + extractedSignature);
+        System.out.println("GEN SIG = " + generatedSignature);
+
         // transform the LINEAR TRS: compile Aps and remove ATs
         RuleCompiler ruleCompiler = new RuleCompiler(extractedSignature,generatedSignature);
         if(options.withAP == false) {
