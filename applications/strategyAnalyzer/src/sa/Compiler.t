@@ -28,6 +28,8 @@ public class Compiler {
   // strategy name -> strategy compiled into a TRS
   private Map<String,List<Rule>> generatedTRSs;
 
+  private Map<Strategy,List<Rule>> storedTRSs;
+
   /**
    * initialize the TRS and set the (generated) symbol that should be
    * used to wrap the terms to reduce
