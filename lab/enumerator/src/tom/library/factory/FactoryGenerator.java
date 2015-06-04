@@ -129,16 +129,20 @@ public class FactoryGenerator {
             String templateName = null;
             switch (enumerableType.getDependencyType()) {
                 case SIMPLE:
-                    templateName = templatePath + "SimpleTypeFactoryTemplate.vm";
+                    templateName = templatePath + "SimpleTypeFactory.vm";
                     context.put("parsedClass", enumerableType.getParsedClass());
                     break;
                 case SUPERTYPE:
-                    templateName = templatePath + "SuperTypeFactoryTemplate.vm";
+                    templateName = templatePath + "SuperTypeFactory.vm";
                     context.put("enumerableType", enumerableType);
                     break;
                 case RECURSIVE:
-                    templateName = templatePath + "RecursiveTypeFactoryTemplate.vm";
+                    templateName = templatePath + "RecursiveTypeFactory.vm";
                     context.put("parsedClass", enumerableType.getParsedClass());
+                    break;
+                case MUTUALLY_RECURSIVE:
+                    templateName = templatePath + "MutuallyRecursiveTypeFactory.vm";
+                    context.put("enumerableType", enumerableType);
                     break;
             }
             Template template = velocityEngine.getTemplate(templateName);
