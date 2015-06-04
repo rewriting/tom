@@ -14,20 +14,46 @@ import java.math.BigInteger;
 import tom.library.enumerator.Combinators;
 import tom.library.enumerator.Enumeration;
 import tom.library.enumerator.F;
-import tom.library.enumerator.Finite;
-import tom.library.enumerator.LazyList;
-import tom.library.enumerator.P1;
 import ${parsedClass.getPackageName()}.*;
 
 public class $parsedClass.getFactoryClassName() {
     
-    private static Enumeration<$parsedClass.getSimpleName()> finalEnum = null;
-    private static Enumeration<$parsedClass.getSimpleName()> $parsedClass.getFinalEnumName() = null;
-    
     public static final Enumeration<$parsedClass.getSimpleName()>  getEnumeration() {
         
-        // this is a cyclic reference
-        return null;
+        final Enumeration<$parsedClass.getSimpleName()> emptyEnum = Enumeration.singleton(null);
+        
+#if ($parsedClass.hasNoArgsConstructor())
+        // no args constructor
+        Enumeration<$parsedClass.getEnumerableType().getSimpleName()> $parsedClass.getNoArgsConstructor().getEnumName() = Enumeration.singleton(($parsedClass.getEnumerableType().getSimpleName())new $parsedClass.getSimpleName()());
+        
+#end
+#foreach($cons in $parsedClass.getConstructors())
+        // constructor $cons.getVariableName()
+        final $cons.getCurriedType(0) $cons.getVariableName() = new $cons.getCurriedType(0)() {
+            $cons.getCurriedDefinition(0)
+        };
+        
+#foreach($param in $cons.getParameters())
+#if(!$param.isRecursive())
+        // constructor $cons.getVariableName(), param $param.getName()
+        final $param.enumDeclare() = $param.enumCreate();
+#end
+#end
+        
+        F<Enumeration<$parsedClass.getEnumerableType().getSimpleName()>, Enumeration<$parsedClass.getEnumerableType().getSimpleName()>> $cons.getRecursiveFunctionName() = new F<Enumeration<$parsedClass.getEnumerableType().getSimpleName()>, Enumeration<$parsedClass.getEnumerableType().getSimpleName()>>() {
+            public Enumeration<$parsedClass.getEnumerableType().getSimpleName()> apply(final Enumeration<$parsedClass.getEnumerableType().getSimpleName()> $cons.getRecursiveEnumName()) {
+                return emptyEnum.plus(
+                    $cons.getEnumerationConstruction()
+                ).pay();
+            }
+        };
+        Enumeration<$parsedClass.getEnumerableType().getSimpleName()> $cons.getEnumName() = Enumeration.fix($cons.getRecursiveFunctionName());
+#end
+        
+        // accumulating all constructors
+        Enumeration<$parsedClass.getEnumerableType().getSimpleName()> $parsedClass.getAllConstructorsEnumName() = $parsedClass.getAllContructorsEnum();
+        
+        return $parsedClass.getAllConstructorsEnumName();
         
     }
 

@@ -42,6 +42,11 @@ public abstract class GeneratorWrapper {
     protected Enumerate enumerateAnnotation;
     
     /**
+     * name of the recursive parameter in this constructor or method (if there is one)
+     */
+    private String recursiveEnumName;
+    
+    /**
      * getter method for the declaring class
      * @return the parsed class which declared this constructor
      */
@@ -73,6 +78,18 @@ public abstract class GeneratorWrapper {
      */
     public String getEnumName() {
         return enumName;
+    }
+    
+    public String getRecursiveEnumName() {
+        return recursiveEnumName;
+    }
+    
+    public String getRecursiveFunctionName() {
+        return variableName + "Function";
+    }
+    
+    public void setRecursiveEnumName(String name) {
+        this.recursiveEnumName = name;
     }
     
     /**

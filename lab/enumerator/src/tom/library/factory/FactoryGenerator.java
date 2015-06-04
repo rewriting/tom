@@ -24,6 +24,7 @@ import examples.factory.ListStack;
 import examples.factory.Room;
 //import examples.factory.Room;
 import examples.factory.Student;
+import examples.factory.handwritten.recursive1.Friend;
 import examples.factory.handwritten.recursive3.User;
 import examples.factory.inheritance.*;
 
@@ -185,7 +186,7 @@ public class FactoryGenerator {
 
     public static void main(String[] args) {
         FactoryGenerator generator = FactoryGenerator.getInstance();
-        generator.generateSources(User.class);
+        generator.generateSources(Friend.class);
         generator.outputSourceForClasses();
 
     }

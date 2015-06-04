@@ -2,13 +2,15 @@ package tom.library.factory;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 enum DependencyType {
-    SIMPLE, SUPERTYPE, RECURSIVE
+    SIMPLE, SUPERTYPE, RECURSIVE, MUTUALLY_RECURSIVE
 }
 
 /**
@@ -26,6 +28,7 @@ public class EnumerableType {
     private ParsedClass parsedClass;
     private Set<ParsedClass> parsedClasses = new HashSet<ParsedClass>();
     private EnumerableType referencingType;
+    private List<EnumerableType> mutualRecTypes = new ArrayList<EnumerableType>();
     
     public EnumerableType(Class enumerableClass, EnumerableType declaringType) {
         this.dependencyType = DependencyType.SIMPLE;
@@ -64,6 +67,10 @@ public class EnumerableType {
         return referencingType;
     }
     
+    public List<EnumerableType> getMutualRecTypes() {
+        return mutualRecTypes;
+    }
+    
     public void setReferencingType(EnumerableType referencingType) {
         this.referencingType = referencingType;
     }
@@ -72,6 +79,10 @@ public class EnumerableType {
         this.dependencyType = dependencyType;
     }
     
+    public void setMutualRecTypes(List<EnumerableType> mutualRecTypes) {
+        this.mutualRecTypes = mutualRecTypes;
+    }
+
     public void parse() {
         this.parsedClass = parseClass(typeClass);
         for (Class<?> classToParse : subTypes) {

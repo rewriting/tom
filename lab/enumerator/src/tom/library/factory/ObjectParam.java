@@ -1,11 +1,20 @@
 package tom.library.factory;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * wraps an object parameter
  * 
  * @author Ahmad
  */
 public class ObjectParam extends ParamWrapper {
+    
+    private boolean recursive;
+    
+    public boolean isRecursive() {
+        return recursive;
+    }
 
     /**
      * construct the wrapper by calling the ParamWrapper constructor
@@ -21,8 +30,14 @@ public class ObjectParam extends ParamWrapper {
         EnumerableType dependency;
         ParsedClass declaringClass = this.declaringGenerator.getDeclaringClass();
         EnumerableType declaringType = declaringClass.getEnumerableType();
-        if (isCyclic()) {
+        detectRecursion();
+        if (isRecursive()) {
             declaringType.setDependencyType(DependencyType.RECURSIVE);
+            declaringGenerator.setRecursiveEnumName(paramEnumName);
+            return;
+        } else if (isMutuallyRecursive()) {
+            declaringType.setDependencyType(DependencyType.MUTUALLY_RECURSIVE);
+            declaringType.setMutualRecTypes(listMutuallyRecursiveTypes());
             return;
         } else if (isSuperType()) {
             dependency = new EnumerableType(param, declaringType, enumerateAnnotation.concreteClasses());
@@ -31,7 +46,7 @@ public class ObjectParam extends ParamWrapper {
         }
         declaringClass.addDependency(dependency);
     }
-
+    
     @Override
     public String getType() {
         return param.getCanonicalName();
@@ -55,12 +70,17 @@ public class ObjectParam extends ParamWrapper {
         return enumStatement.toString();
     }
     
+    private void detectRecursion() {
+        EnumerableType currentType = declaringGenerator.getDeclaringClass().getEnumerableType();
+        this.recursive = currentType.getCanonicalName().equals(param.getCanonicalName());
+    }
+    
     private boolean isSuperType() {
         return this.enumerateAnnotation != null && this.enumerateAnnotation.concreteClasses().length >0;
     }
     
-    private boolean isCyclic() {
-        EnumerableType parentType = declaringGenerator.getDeclaringClass().getEnumerableType();
+    private boolean isMutuallyRecursive() {
+        EnumerableType parentType = declaringGenerator.getDeclaringClass().getEnumerableType().getReferencingType();
         while (parentType != null) {
             if (parentType.getCanonicalName().equals(param.getCanonicalName())) {
                 return true;
@@ -68,6 +88,17 @@ public class ObjectParam extends ParamWrapper {
             parentType = parentType.getReferencingType();
         }
         return false;
+    }
+    
+    private List<EnumerableType> listMutuallyRecursiveTypes() {
+        EnumerableType parentType = declaringGenerator.getDeclaringClass().getEnumerableType().getReferencingType();
+        List<EnumerableType> mutualRecTypes = new ArrayList<EnumerableType>();
+        while (!parentType.getCanonicalName().equals(param.getCanonicalName())) {
+            mutualRecTypes.add(parentType);
+            parentType = parentType.getReferencingType();
+        }
+        mutualRecTypes.add(parentType);
+        return mutualRecTypes;
     }
 
 }
