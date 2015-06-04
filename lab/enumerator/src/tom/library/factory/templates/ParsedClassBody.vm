@@ -15,15 +15,7 @@
 #foreach($param in $cons.getParameters())
         // constructor $cons.getVariableName(), param $param.getName()
         $param.enumDeclare() = $param.enumCreate();
-        singleton = $param.getEnumerateAnnotation().singleton();
-        singletonSize = $param.getEnumerateAnnotation().singletonSize();
-        if (singleton) {
-            $param.getType() singletonInstance = ${param.getEnumName()}.get(BigInteger.valueOf(singletonSize));
-            while (singletonInstance == null) {
-                singletonInstance = ${param.getEnumName()}.get(BigInteger.valueOf(singletonSize++));
-            }
-            $param.getEnumName() = Enumeration.singleton(singletonInstance);
-        }
+        #parse("./src/tom/library/factory/templates/ParamSingleton.vm")
 #end
         
         Enumeration<$parsedClass.getEnumerableType().getSimpleName()> $cons.getEnumName() = $cons.getEnumerationConstruction();
@@ -46,15 +38,7 @@
         
         // method $method.getVariableName(), param $param.getName()
         $param.enumDeclare() = $param.enumCreate();
-        singleton = $param.getEnumerateAnnotation().singleton();
-        singletonSize = $param.getEnumerateAnnotation().singletonSize();
-        if (singleton) {
-            $param.getType() singletonInstance = ${param.getEnumName()}.get(BigInteger.valueOf(singletonSize));
-            while (singletonInstance == null) {
-                singletonInstance = ${param.getEnumName()}.get(BigInteger.valueOf(singletonSize++));
-            }
-            $param.getEnumName() = Enumeration.singleton(singletonInstance);
-        }
+        #parse("./src/tom/library/factory/templates/ParamSingleton.vm")
 #end
         
         Enumeration<$parsedClass.getEnumerableType().getSimpleName()> $method.getThisEnumName() = $parsedClass.getThisEnumName();

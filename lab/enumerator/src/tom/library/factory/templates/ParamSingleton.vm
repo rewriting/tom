@@ -1,0 +1,12 @@
+##
+## sub-template for checking singleton annotation of a parameter
+##
+        singleton = $param.getEnumerateAnnotation().singleton();
+        singletonSize = $param.getEnumerateAnnotation().singletonSize();
+        if (singleton) {
+            $param.getType() singletonInstance = ${param.getEnumName()}.get(BigInteger.valueOf(singletonSize));
+            while (singletonInstance == null) {
+                singletonInstance = ${param.getEnumName()}.get(BigInteger.valueOf(singletonSize++));
+            }
+            $param.getEnumName() = Enumeration.singleton(singletonInstance);
+        }
