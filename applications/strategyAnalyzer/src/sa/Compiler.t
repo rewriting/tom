@@ -278,7 +278,7 @@ public class Compiler {
               Term constraint = `Appl("True",TermList());
 
               %match(result) {
-                // if already linear rhs
+                // if already linear lhs
                 TermList(_, Appl("True",TermList())) -> {
                   generatedRules.add(`Rule(Appl(rule,TermList(At(varX,lhs))),rhs));
                   generatedRules.add(`Rule(Appl(rule,TermList(At(varX,Anti(lhs)))),botX));
@@ -311,7 +311,7 @@ public class Compiler {
 
               Term mlhs = Tools.metaEncodeConsNil(`lhs,generatedSignature);
               %match(result) {
-                // if already linear rhs
+                // if already linear lhs
                 TermList(_, Appl("True",TermList())) -> {
                   generatedRules.add(`Rule(Appl(rule,TermList(At(varX,mlhs))),rhs));
                   generatedRules.add(`Rule(Appl(rule,TermList(At(varX,Anti(mlhs)))),botX));
