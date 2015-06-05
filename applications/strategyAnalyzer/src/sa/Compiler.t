@@ -231,6 +231,10 @@ public class Compiler {
    * @return the name of the last compiled strategy
    */
   private  String compileStrat(String stratName, Strat strat, List<Rule> generatedRules) {
+    // by default, if strategy can't be compiled, a meaningless name
+    // TODO: change to exception ?
+    String strategySymbol = strat.toString();
+
     String X = Tools.getName("X");
     String Y = Tools.getName("Y");
     String Z = Tools.getName("Z");
@@ -286,7 +290,7 @@ public class Compiler {
             }
           }
         }
-        return rule;
+        strategySymbol=rule;
       }
 
       /*
@@ -303,7 +307,7 @@ public class Compiler {
                 rule(@mu@(at(@X@,anti(Bottom(@Y@)))), @phi_s@(@X@)),
                 rule(@mu@(Bottom(@X@)), Bottom(@X@))
                 ]]%,this.generatedSignature).getCollectionRuleList());
-          return phi_s;
+          strategySymbol = phi_s;
         } catch(VisitFailure e) {
           System.out.println("failure in StratMu on: " + `s);
         }
@@ -311,7 +315,7 @@ public class Compiler {
 
       // mu fix point: transform the startame into a function call
       StratName(name) -> {
-        return `name;
+        strategySymbol = `name;
       }
 
       StratIdentity() -> {
@@ -333,7 +337,7 @@ public class Compiler {
                 rule(Bottom(Bottom(@X@)), Bottom(@X@))
                 ]]%,this.generatedSignature).getCollectionRuleList());
         }
-        return id;
+        strategySymbol = id;
       }
 
       StratFail() -> {
@@ -355,7 +359,7 @@ public class Compiler {
                 rule(Bottom(Bottom(@X@)), Bottom(@X@))
                 ]]%,this.generatedSignature).getCollectionRuleList());
         }
-        return fail;
+        strategySymbol = fail;
       }
 
       StratSequence(s1,s2) -> {
@@ -386,7 +390,7 @@ public class Compiler {
                 rule(@seq2@(Bottom(@Y@),@X@), Bottom(@X@))
                 ]]%,this.generatedSignature).getCollectionRuleList());
         }
-        return seq;
+        strategySymbol = seq;
       }
 
       // TODO [20/01/2015]: see if not exact is interesting
@@ -405,7 +409,7 @@ public class Compiler {
               rule(@choice2@(at(@X@,anti(Bottom(@Y@)))), @X@),
               rule(@choice2@(Bottom(@X@)), @n2@(@X@))
               ]]%,this.generatedSignature).getCollectionRuleList());
-        return choice;
+        strategySymbol = choice;
       }
 
       StratAll(s) -> {
@@ -467,7 +471,7 @@ public class Compiler {
             }
           }
         }        
-        return all;
+        strategySymbol = all;
       }
 
       StratOne(s) -> {
@@ -562,11 +566,11 @@ public class Compiler {
             }
           }
         }
-        return one;
+        strategySymbol = one;
       }
 
     }
-    return strat.toString();
+    return strategySymbol; //strat.toString();
   }
 
   %strategy ReplaceMuVar(name:String, appl:String) extends Identity() {
