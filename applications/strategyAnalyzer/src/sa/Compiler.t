@@ -310,6 +310,8 @@ public class Compiler {
               Term constraint = `Appl("True",TermList());
 
               Term mlhs = Tools.metaEncodeConsNil(`lhs,generatedSignature);
+              System.out.println("RuleList lhs  = " + `lhs);
+              System.out.println("RuleList mlhs = " + mlhs);
               %match(result) {
                 // if already linear lhs
                 TermList(_, Appl("True",TermList())) -> {
@@ -827,7 +829,7 @@ public class Compiler {
       if(map.get(name) > 1) {
         try {
           HashMap copy = new HashMap(map);
-          lhs = `TopDown(ReplaceWithFreshVar(name,copy,mapToOldName)).visitLight(lhs);
+          lhs = `TopDown(ReplaceWithFreshVar(this,name,copy,mapToOldName)).visitLight(lhs);
         } catch(VisitFailure e) {
           throw new RuntimeException("Should not be there");
         }
@@ -847,7 +849,7 @@ public class Compiler {
   
   // for Main.options.metalevel we need the (generated)signature 
   //   -> in previous versions it was one of the parameters
-  %strategy ReplaceWithFreshVar(name:String, multiplicityMap:Map, map:Map) extends Identity() {
+  %strategy ReplaceWithFreshVar(compiler:Compiler,name:String, multiplicityMap:Map, map:Map) extends Identity() {
     visit Term {
       Var(n)  -> {
         int value = (Integer)multiplicityMap.get(`name);
@@ -856,9 +858,9 @@ public class Compiler {
           map.put(z,`n);
           multiplicityMap.put(`name, value - 1);
           Term newt = `Var(z);
-          //           if(Main.options.metalevel) {
-          //             newt = Tools.metaEncodeConsNil(newt,signature);
-          //           }
+          if(Main.options.metalevel) {
+            newt = Tools.metaEncodeConsNil(newt,compiler.generatedSignature);
+          }
           return newt;
         }
       }

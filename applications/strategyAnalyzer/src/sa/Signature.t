@@ -13,6 +13,8 @@ public class Signature {
   public static String AND = "and";
   public static String BOTTOM = "Bottom";
   public static String EQ = "eq";
+  public static String APPL = "Appl";
+  public static String NIL = "Nil";
 
   public static final String DUMMY = "Dummy";
 
@@ -69,6 +71,12 @@ public class Signature {
           symbols.put(symbol.intern(),args);
         }
         expandedSignature.signature.put(type,symbols);
+    }
+
+    if(Main.options.metalevel) {
+      // add: Appl, Nil
+      expandedSignature.addSymbol(APPL,Arrays.asList(DUMMY,DUMMY),DUMMY);
+      expandedSignature.addSymbol(NIL,new ArrayList<String>(),DUMMY);
     }
 
     // add: True, False, and, eq
