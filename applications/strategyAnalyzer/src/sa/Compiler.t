@@ -310,12 +310,14 @@ public class Compiler {
               Term constraint = `Appl("True",TermList());
 
               Term mlhs = Tools.metaEncodeConsNil(`lhs,generatedSignature);
-              System.out.println("RuleList lhs  = " + `lhs);
-              System.out.println("RuleList mlhs = " + mlhs);
+              Term mrhs = Tools.metaEncodeConsNil(`rhs,generatedSignature);
+
+              //System.out.println("RuleList lhs  = " + `lhs);
+              //System.out.println("RuleList mlhs = " + mlhs);
               %match(result) {
                 // if already linear lhs
                 TermList(_, Appl("True",TermList())) -> {
-                  generatedRules.add(`Rule(Appl(rule,TermList(At(varX,mlhs))),rhs));
+                  generatedRules.add(`Rule(Appl(rule,TermList(At(varX,mlhs))), mrhs));
                   generatedRules.add(`Rule(Appl(rule,TermList(At(varX,Anti(mlhs)))),botX));
                 }
 
@@ -326,13 +328,13 @@ public class Compiler {
                   generatedRules.add(`Rule(Appl(rule,TermList(At(varX,mlinearlhs))),Appl(cr, TermList(varX, cond))));
                   generatedRules.add(`Rule(Appl(rule,TermList(At(varX,Anti(mlinearlhs)))),botX));
 
-                  generatedRules.add(`Rule(Appl(cr,TermList(mlinearlhs, True)), rhs));
+                  generatedRules.add(`Rule(Appl(cr,TermList(mlinearlhs, True)), mrhs));
                   generatedRules.add(`Rule(Appl(cr,TermList(At(varX,mlinearlhs), False)),botX));
                 }
               }
 
               // TODO: non-linear anti-pattern
-              generatedRules.add(`Rule(Appl(rule,TermList(At(varX,Anti(mlhs)))),botX));
+              // generatedRules.add(`Rule(Appl(rule,TermList(At(varX,Anti(mlhs)))),botX));
             }
           }
 
