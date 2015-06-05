@@ -13,7 +13,6 @@ public class Compiler {
   %include { java/util/types/List.tom }
 
   %typeterm Compiler { implement { Compiler }}
-  private static final String DUMMY = "Dummy";
 
   private static Compiler instance = null;
 
@@ -93,7 +92,7 @@ public class Compiler {
     this.generatedTRSs.put(strategyName,new ArrayList<Rule>());
 
     if(Main.options.metalevel) {
-      // TODO: topName = this.compileGenericStrat(generatedRules,extractedSignature,generatedSignature,strategies.get(name));
+      this.compileStrat(strategyName,strategy,this.generatedTRSs.get(strategyName));
     } else {
       this.compileStrat(strategyName,strategy,this.generatedTRSs.get(strategyName));
       this.generateEquality(this.generatedTRSs.get(strategyName));
