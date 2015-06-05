@@ -14,9 +14,14 @@ public class Signature {
   public static String BOTTOM = "Bottom";
   public static String EQ = "eq";
   public static String APPL = "Appl";
+  public static String CONS = "Cons";
   public static String NIL = "Nil";
 
+  // Types
   public static final String DUMMY = "Dummy";
+  public static final String METASYMBOL = "MetaSymbol";
+  public static final String METATERM = "MetaTerm";
+  public static final String METALIST = "MetaList";
 
 
   // Codomain Type -> (SymbolName -> Domain List of types)
@@ -75,8 +80,9 @@ public class Signature {
 
     if(Main.options.metalevel) {
       // add: Appl, Nil
-      expandedSignature.addSymbol(APPL,Arrays.asList(DUMMY,DUMMY),DUMMY);
-      expandedSignature.addSymbol(NIL,new ArrayList<String>(),DUMMY);
+      expandedSignature.addSymbol(APPL,Arrays.asList(METASYMBOL,METALIST),METATERM);
+      expandedSignature.addSymbol(CONS,Arrays.asList(METATERM,METALIST),METALIST);
+      expandedSignature.addSymbol(NIL,new ArrayList<String>(),METALIST);
     }
 
     // add: True, False, and, eq
