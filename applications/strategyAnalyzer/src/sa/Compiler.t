@@ -1026,7 +1026,7 @@ public class Compiler {
    */
   public List<Rule> specialize(String symbol, String typeName, List<Rule> trs) {
     Signature gSig = getGeneratedSignature();
-    GomType codomain = gSig.getCodomain(symbol);
+    String codomainName = gSig.getCodomain(symbol);
 
     for(Rule r: trs) {
       %match(r) {
@@ -1046,11 +1046,11 @@ public class Compiler {
     Signature gSig = getGeneratedSignature();
     %match(t) {
       Appl(name,args) -> {
-        GomType codomain = gSig.getCodomain(`name);
-        if(codomain == `GomType("Dummy")) {
+        String codomainName = gSig.getCodomain(`name);
+        if(codomainName == Signature.DUMMY) {
           List<String> domain = gSig.getProfile(`name);
           String dname = gSig.disambiguateSymbol(`name, domain);
-          gSig.addSymbol(dname,domain,codomain.getName());
+          gSig.addSymbol(dname,domain,codomainName);
           int i = 0;
           TermList args = `args;
           TermList newArgs = `TermList();
@@ -1069,7 +1069,7 @@ public class Compiler {
             args = args.getTailTermList();
           }
           return `Appl(dname,newArgs);
-        } else if(type != codomain) {
+        } else if(type != `GomType(codomainName)) {
           // throw exception
           System.out.println("bad type: " + t + " : " + type);
           return null;
