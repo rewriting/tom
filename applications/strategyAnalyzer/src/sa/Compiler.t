@@ -232,10 +232,12 @@ public class Compiler {
    * @return the name of the last compiled strategy
    */
   private boolean generated_aux_functions = false;
-  private String compileStrat(Strat strat, List<Rule> generatedRules) {
-  // by default, if strategy can't be compiled, a meaningless name
+  private String compileStrat(Strat strat, List<Rule> rules) {
+    // by default, if strategy can't be compiled, a meaningless name
     // TODO: change to exception ?
     String strategySymbol = strat.toString();
+
+    List<Rule> generatedRules=new ArrayList<Rule>();
 
     String X = Tools.getName("X");
     String Y = Tools.getName("Y");
@@ -810,6 +812,11 @@ public class Compiler {
       }
 
     }
+    for(Rule rule:generatedRules){
+      if(!rules.contains(rule)){
+        rules.add(rule);
+      }
+    }
     return strategySymbol; //strat.toString();
   }
 
@@ -952,6 +959,10 @@ public class Compiler {
   }
 
 
+  /**
+   * generates a rule of the form name(X) -> symbol(X)
+   * name can be then see as an alias for symbol in terms of reduction 
+   **/
   private void generateTriggerRule(String name, String symbol, List<Rule> generatedRules) {
     String codomain = this.generatedSignature.getCodomain(symbol);
     List<String> profile = this.generatedSignature.getProfile(symbol);
@@ -959,6 +970,7 @@ public class Compiler {
 
     String x = Tools.getName("X");
 
+    // X matches anything but morally matches only symbols from the extracted signature
     generatedRules.add(Tools.encodeRule(%[rule(@name@(x), @symbol@(x))]%,this.generatedSignature));
   }
 
