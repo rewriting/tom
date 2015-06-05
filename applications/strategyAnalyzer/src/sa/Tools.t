@@ -175,7 +175,7 @@ public class Tools {
      */
   public static Term decodeConsNil(Term t) {
 
-//     System.out.println("IN DECODE = "+ `t);
+    //System.out.println("IN DECODE = "+ `t);
     %match(t) {
       Appl("Appl",TermList(Appl(symb_name,TermList()),args)) -> {
           String name = `symb_name.substring("symb_".length());
@@ -192,15 +192,17 @@ public class Tools {
   }
 
   public static TermList decodeConsNilList(Term t) {
+     //System.out.println("IN DECODE LIST = "+ `t);
     %match(t) {
       Appl("Cons",TermList(head,tail)) -> {
-//         System.out.println("HEAD = "+ `head);
-//         System.out.println("TAIL = "+ `tail);
+         //System.out.println("HEAD = "+ `head);
+         //System.out.println("TAIL = "+ `tail);
         TermList newTail = decodeConsNilList(`tail);
         return `TermList(decodeConsNil(head), newTail*);
       }
 
       Appl("Nil",TermList()) -> {
+         //System.out.println("NIL");
         return `TermList();
       }
 
