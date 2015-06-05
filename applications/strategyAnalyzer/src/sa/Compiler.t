@@ -91,11 +91,13 @@ public class Compiler {
 
     this.generatedTRSs.put(strategyName,new ArrayList<Rule>());
 
+    String strategySymbol = "NONE";
     if(Main.options.metalevel) {
-      this.compileStrat(strategyName,strategy,this.generatedTRSs.get(strategyName));
+      strategySymbol=this.compileStrat(strategy,this.generatedTRSs.get(strategyName));
     } else {
-      this.compileStrat(strategyName,strategy,this.generatedTRSs.get(strategyName));
+      strategySymbol=this.compileStrat(strategy,this.generatedTRSs.get(strategyName));
       this.generateEquality(this.generatedTRSs.get(strategyName));
+      this.generateTriggerRule(strategyName,strategySymbol,this.generatedTRSs.get(strategyName));
     }
 
     return new ArrayList(this.generatedTRSs.get(strategyName));
@@ -230,7 +232,7 @@ public class Compiler {
    * @return the name of the last compiled strategy
    */
   private boolean generated_aux_functions = false;
-  private String compileStrat(String stratName, Strat strat, List<Rule> generatedRules) {
+  private String compileStrat(Strat strat, List<Rule> generatedRules) {
   // by default, if strategy can't be compiled, a meaningless name
     // TODO: change to exception ?
     String strategySymbol = strat.toString();
@@ -263,7 +265,7 @@ public class Compiler {
          *   rule'(X@linear-lhs, false) -> Bottom(x)
          */
 
-        String rule = (stratName!=null)?stratName:Tools.getName("rule");
+        String rule = Tools.getName("rule");
         String cr = Tools.getName("crule");
 
         if(!Main.options.metalevel) {
@@ -352,10 +354,10 @@ public class Compiler {
        */
       StratMu(name,s) -> {
         try {
-          String mu = (stratName!=null)?stratName:Tools.getName("mu");
+          String mu = Tools.getName("mu");
           this.generatedSignature.addSymbol(mu,Arrays.asList(Signature.DUMMY),Signature.DUMMY);
           Strat newStrat = `TopDown(ReplaceMuVar(name,mu)).visitLight(`s);
-          String phi_s = compileStrat(null,newStrat,generatedRules);
+          String phi_s = compileStrat(newStrat,generatedRules);
           if(!Main.options.metalevel) {
             generatedRules.addAll(Tools.encodeRuleList(%[[
                   rule(@mu@(at(@X@,anti(Bottom(@Y@)))), @phi_s@(@X@)),
@@ -380,7 +382,7 @@ public class Compiler {
       }
 
       StratIdentity() -> {
-        String id = (stratName!=null)?stratName:Tools.getName("id");
+        String id = Tools.getName("id");
         if(!Main.options.metalevel) {
           this.generatedSignature.addSymbol(id,Arrays.asList(Signature.DUMMY),Signature.DUMMY);
           if( !Main.options.approx ) {
@@ -421,7 +423,7 @@ public class Compiler {
       }
 
       StratFail() -> {
-        String fail = (stratName!=null)?stratName:Tools.getName("fail");
+        String fail = Tools.getName("fail");
         this.generatedSignature.addSymbol(fail,Arrays.asList(Signature.DUMMY),Signature.DUMMY);
         if( !Main.options.metalevel ) {
           if( !Main.options.approx ) {
@@ -462,9 +464,9 @@ public class Compiler {
       }
 
       StratSequence(s1,s2) -> {
-        String n1 = compileStrat(null,`s1,generatedRules);
-        String n2 = compileStrat(null,`s2,generatedRules);
-        String seq = (stratName!=null)?stratName:Tools.getName("seq");
+        String n1 = compileStrat(`s1,generatedRules);
+        String n2 = compileStrat(`s2,generatedRules);
+        String seq = Tools.getName("seq");
         String seq2 = Tools.getName("seq2");
         if( !Main.options.metalevel ) {
           this.generatedSignature.addSymbol(seq,Arrays.asList(Signature.DUMMY),Signature.DUMMY);
@@ -511,9 +513,9 @@ public class Compiler {
       }
 
       StratChoice(s1,s2) -> {
-        String n1 = compileStrat(null,`s1,generatedRules);
-        String n2 = compileStrat(null,`s2,generatedRules);
-        String choice = (stratName!=null)?stratName:Tools.getName("choice");
+        String n1 = compileStrat(`s1,generatedRules);
+        String n2 = compileStrat(`s2,generatedRules);
+        String choice = Tools.getName("choice");
         String choice2 = Tools.getName("choice");
         if( !Main.options.metalevel ) {
           this.generatedSignature.addSymbol(choice,Arrays.asList(Signature.DUMMY),Signature.DUMMY);
@@ -548,8 +550,8 @@ public class Compiler {
       }
 
       StratAll(s) -> {
-        String phi_s = compileStrat(null,`s,generatedRules);
-        String all = (stratName!=null)?stratName:Tools.getName("all");
+        String phi_s = compileStrat(`s,generatedRules);
+        String all = Tools.getName("all");
         if( !Main.options.metalevel ) {
           this.generatedSignature.addSymbol(all,Arrays.asList(Signature.DUMMY),Signature.DUMMY);
           for(String name : this.extractedSignature.getSymbolNames()) {
@@ -662,8 +664,8 @@ public class Compiler {
       }
 
       StratOne(s) -> {
-        String phi_s = compileStrat(null,`s,generatedRules);
-        String one = (stratName!=null)?stratName:Tools.getName("one");
+        String phi_s = compileStrat(`s,generatedRules);
+        String one = Tools.getName("one");
         if( !Main.options.metalevel ) {
           this.generatedSignature.addSymbol(one,Arrays.asList(Signature.DUMMY),Signature.DUMMY);
           //         generatedSignature.put(one,1);
@@ -947,6 +949,17 @@ public class Compiler {
       }
     //}
     //generatedRules.add(Tools.encodeRule(%[rule(@mu@(Bottom(X)), Bottom(X))]%));
+  }
+
+
+  private void generateTriggerRule(String name, String symbol, List<Rule> generatedRules) {
+    String codomain = this.generatedSignature.getCodomain(symbol);
+    List<String> profile = this.generatedSignature.getProfile(symbol);
+    this.generatedSignature.addSymbol(name,profile,codomain);
+
+    String x = Tools.getName("X");
+
+    generatedRules.add(Tools.encodeRule(%[rule(@name@(x), @symbol@(x))]%,this.generatedSignature));
   }
 
   private  Position getAntiPatternPosition(Term t) {
