@@ -20,4 +20,6 @@ innermost(r) = obu(r)
 
 // main() = innermost(r2())
 
-mainStrat() = r2();r1();r1()
+// mainStrat() = r2();r1();r1()
+
+mainStrat() = innermost(r2());innermost(r2())
