@@ -79,7 +79,7 @@ public class Signature {
     }
 
     if(Main.options.metalevel) {
-      // add: Appl, Nil
+      // add: Appl, Cons, Nil
       expandedSignature.addSymbol(APPL,Arrays.asList(METASYMBOL,METALIST),METATERM);
       expandedSignature.addSymbol(CONS,Arrays.asList(METATERM,METALIST),METALIST);
       expandedSignature.addSymbol(NIL,new ArrayList<String>(),METALIST);

@@ -279,7 +279,6 @@ public class Compiler {
               generatedRules.add(`Rule(Appl(rule,TermList(botX)),botX));
 
               TermList result = this.linearize(`lhs);
-              Term constraint = `Appl("True",TermList());
 
               %match(result) {
                 // if already linear lhs
@@ -301,17 +300,15 @@ public class Compiler {
           }
         } else {
           // META-LEVEL
-          this.generatedSignature.addSymbol(rule,Arrays.asList(Signature.DUMMY),Signature.DUMMY);
-          this.generatedSignature.addSymbol(cr,Arrays.asList(Signature.DUMMY,Signature.DUMMY),Signature.DUMMY);
+          this.generatedSignature.addSymbol(rule,Arrays.asList(Signature.METATERM),Signature.METATERM);
+          this.generatedSignature.addSymbol(cr,Arrays.asList(Signature.METATERM,Signature.BOOLEAN),Signature.METATERM);
 
           %match(rulelist) {
             RuleList(_*,Rule(lhs,rhs),_*) -> {
-              // use AST-syntax because lhs and rhs are already encoded
               // propagate failure
               generatedRules.add(`Rule(Appl(rule,TermList(botX)),botX));
 
               TermList result = this.linearize(`lhs);
-              Term constraint = `Appl("True",TermList());
 
               Term mlhs = Tools.metaEncodeConsNil(`lhs,generatedSignature);
               Term mrhs = Tools.metaEncodeConsNil(`rhs,generatedSignature);
@@ -344,7 +341,7 @@ public class Compiler {
 
           for(String name:this.extractedSignature.getSymbolNames()) {
             // add symb_a(), symb_b(), symb_f(), symb_g() in the signature
-            this.generatedSignature.addSymbol("symb_"+name,new ArrayList<String>(),Signature.DUMMY);
+            this.generatedSignature.addSymbol("symb_"+name,new ArrayList<String>(),Signature.METASYMBOL);
           }
         }
         strategySymbol=rule;
@@ -403,7 +400,7 @@ public class Compiler {
           }
         } else {
           // META-LEVEL
-          this.generatedSignature.addSymbol(id,Arrays.asList(Signature.DUMMY),Signature.DUMMY);
+          this.generatedSignature.addSymbol(id,Arrays.asList(Signature.METATERM),Signature.METATERM);
           if( !Main.options.approx ) {
             // the rule cannot be applied on arguments containing fresh variables but only on terms from the signature or Bottom
             // normally it will follow reduction in original TRS
@@ -493,8 +490,8 @@ public class Compiler {
           }
         } else {
           // META-LEVEL
-          this.generatedSignature.addSymbol(seq,Arrays.asList(Signature.DUMMY),Signature.DUMMY);
-          this.generatedSignature.addSymbol(seq2,Arrays.asList(Signature.DUMMY,Signature.DUMMY),Signature.DUMMY);
+          this.generatedSignature.addSymbol(seq,Arrays.asList(Signature.METATERM),Signature.METATERM);
+          this.generatedSignature.addSymbol(seq2,Arrays.asList(Signature.METATERM,Signature.METATERM),Signature.METATERM);
           if( !Main.options.approx ) {
             // the rule cannot be applied on arguments containing fresh variables but only on terms from the signature or Bottom
             // normally it will follow reduction in original TRS
@@ -530,8 +527,8 @@ public class Compiler {
                 ]]%,this.generatedSignature).getCollectionRuleList());
         } else {
           // META-LEVEL
-          this.generatedSignature.addSymbol(choice,Arrays.asList(Signature.DUMMY),Signature.DUMMY);
-          this.generatedSignature.addSymbol(choice2,Arrays.asList(Signature.DUMMY),Signature.DUMMY);
+          this.generatedSignature.addSymbol(choice,Arrays.asList(Signature.METATERM),Signature.METATERM);
+          this.generatedSignature.addSymbol(choice2,Arrays.asList(Signature.METATERM),Signature.METATERM);
           if( !Main.options.approx ) {
             generatedRules.addAll(Tools.encodeRuleList(%[[
                   rule(@choice@(Appl(@X@,@Y@)), @choice2@(@n1@(Appl(@X@,@Y@)))),
@@ -611,19 +608,19 @@ public class Compiler {
           }
         } else {
           // META-LEVEL
-          this.generatedSignature.addSymbol(all,Arrays.asList(Signature.DUMMY),Signature.DUMMY);
+          this.generatedSignature.addSymbol(all,Arrays.asList(Signature.METATERM),Signature.METATERM);
           String all_1 = all+"_1";
           String all_2 = all+"_2";
           String all_3 = all+"_3";
           String append = "append";
           String reverse = "reverse";
           String rconcat = "rconcat";
-          generatedSignature.addSymbol(all_1,Arrays.asList(Signature.DUMMY),Signature.DUMMY);
-          generatedSignature.addSymbol(all_2,Arrays.asList(Signature.DUMMY),Signature.DUMMY);
-          generatedSignature.addSymbol(all_3,Arrays.asList(Signature.DUMMY,Signature.DUMMY,Signature.DUMMY,Signature.DUMMY),Signature.DUMMY);
-          generatedSignature.addSymbol(append,Arrays.asList(Signature.DUMMY,Signature.DUMMY),Signature.DUMMY);
-          generatedSignature.addSymbol(reverse,Arrays.asList(Signature.DUMMY),Signature.DUMMY);
-          generatedSignature.addSymbol(rconcat,Arrays.asList(Signature.DUMMY,Signature.DUMMY),Signature.DUMMY);
+          generatedSignature.addSymbol(all_1,Arrays.asList(Signature.METATERM),Signature.METATERM);
+          generatedSignature.addSymbol(all_2,Arrays.asList(Signature.METALIST),Signature.METALIST);
+          generatedSignature.addSymbol(all_3,Arrays.asList(Signature.METATERM,Signature.METALIST,Signature.METALIST,Signature.METALIST),Signature.METALIST);
+          generatedSignature.addSymbol(append,Arrays.asList(Signature.METALIST,Signature.METATERM),Signature.METALIST);
+          generatedSignature.addSymbol(reverse,Arrays.asList(Signature.METALIST),Signature.METALIST);
+          generatedSignature.addSymbol(rconcat,Arrays.asList(Signature.METALIST,Signature.METALIST),Signature.METALIST);
 
           generatedRules.addAll(Tools.encodeRuleList(%[[
                 // all
@@ -766,12 +763,12 @@ public class Compiler {
           String append = "append";
           String reverse = "reverse";
           String rconcat = "rconcat";
-          generatedSignature.addSymbol(one_1,Arrays.asList(Signature.DUMMY),Signature.DUMMY);
-          generatedSignature.addSymbol(one_2,Arrays.asList(Signature.DUMMY),Signature.DUMMY);
-          generatedSignature.addSymbol(one_3,Arrays.asList(Signature.DUMMY,Signature.DUMMY,Signature.DUMMY),Signature.DUMMY);
-          generatedSignature.addSymbol(append,Arrays.asList(Signature.DUMMY,Signature.DUMMY),Signature.DUMMY);
-          generatedSignature.addSymbol(reverse,Arrays.asList(Signature.DUMMY),Signature.DUMMY);
-          generatedSignature.addSymbol(rconcat,Arrays.asList(Signature.DUMMY,Signature.DUMMY),Signature.DUMMY);
+          generatedSignature.addSymbol(one_1,Arrays.asList(Signature.METATERM),Signature.METATERM);
+          generatedSignature.addSymbol(one_2,Arrays.asList(Signature.METALIST),Signature.METALIST);
+          generatedSignature.addSymbol(one_3,Arrays.asList(Signature.METATERM,Signature.METALIST,Signature.METALIST),Signature.METALIST);
+          generatedSignature.addSymbol(append,Arrays.asList(Signature.METALIST,Signature.METATERM),Signature.METALIST);
+          generatedSignature.addSymbol(reverse,Arrays.asList(Signature.METALIST),Signature.METALIST);
+          generatedSignature.addSymbol(rconcat,Arrays.asList(Signature.METALIST,Signature.METALIST),Signature.METALIST);
 
           generatedRules.addAll(Tools.encodeRuleList(%[[
                 // one
