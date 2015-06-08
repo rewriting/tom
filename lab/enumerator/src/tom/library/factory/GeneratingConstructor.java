@@ -131,5 +131,23 @@ public class GeneratingConstructor<T> extends GeneratorWrapper {
         return applyExpr;
 
     }
+    
+    public String getRecEnumConstruction(EnumerableType mutRecType) {
+        String applyExpr = "Enumeration.singleton(" + this.variableName + ")";
+        ParsedClass recParsedClass = null;
+        for (ParamWrapper param: parameters) {
+            if (param.getType().equals(mutRecType.getCanonicalName()) ) {
+                applyExpr = "Enumeration.apply(" + applyExpr + ", t)";
+            } else if (param.isInRecChainOf(mutRecType)) {
+                recParsedClass = mutRecType.getMutRecType(param.getType()).getParsedClass();
+                applyExpr = "Enumeration.apply(" + applyExpr + ", " + recParsedClass.getConstructor(0).getRecEnumConstruction(mutRecType) + ")";
+            } else {
+                applyExpr = "Enumeration.apply(" + applyExpr + ", " + param.getEnumName() + ")";
+            }
+        }
+
+        return applyExpr;
+
+    }
 
 }

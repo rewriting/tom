@@ -155,5 +155,12 @@ public abstract class GeneratorWrapper {
      * @return String represents the application statement of the constructor
      */
     public abstract String getEnumerationConstruction();
+    
+    /**
+     * String represents the application statement of a recursive constructor
+     * @param mutRecType the recursive type under generation
+     * @return String represents the application statement of the recursive constructor
+     */
+    public abstract String getRecEnumConstruction(EnumerableType mutRecType);
 
 }

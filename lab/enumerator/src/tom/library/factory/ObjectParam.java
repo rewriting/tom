@@ -10,12 +10,6 @@ import java.util.List;
  */
 public class ObjectParam extends ParamWrapper {
     
-    private boolean recursive;
-    
-    public boolean isRecursive() {
-        return recursive;
-    }
-
     /**
      * construct the wrapper by calling the ParamWrapper constructor
      * 
@@ -27,10 +21,12 @@ public class ObjectParam extends ParamWrapper {
      */
     public ObjectParam(Class param, int paramIndex, GeneratorWrapper declaringGenerator) {
         super(param, paramIndex, declaringGenerator);
+        detectRecursion();
+        detectMutualRecursion();
+        // handle dependencies
         EnumerableType dependency;
         ParsedClass declaringClass = this.declaringGenerator.getDeclaringClass();
         EnumerableType declaringType = declaringClass.getEnumerableType();
-        detectRecursion();
         if (isRecursive()) {
             declaringType.setDependencyType(DependencyType.RECURSIVE);
             declaringGenerator.setRecursiveEnumName(paramEnumName);
@@ -38,6 +34,7 @@ public class ObjectParam extends ParamWrapper {
         } else if (isMutuallyRecursive()) {
             declaringType.setDependencyType(DependencyType.MUTUALLY_RECURSIVE);
             declaringType.setMutualRecTypes(listMutuallyRecursiveTypes());
+            declaringGenerator.setRecursiveEnumName(paramEnumName);
             return;
         } else if (isSuperType()) {
             dependency = new EnumerableType(param, declaringType, enumerateAnnotation.concreteClasses());
@@ -65,7 +62,7 @@ public class ObjectParam extends ParamWrapper {
     @Override
     public String enumCreate() {
         StringBuilder enumStatement = new StringBuilder();
-        enumStatement.append(this.getType() + "Factory"); //TODO: get corresponding factory from FactoryGenerator (handle different packages)
+        enumStatement.append(this.getType() + "Factory"); //TODO: might be better to lookup the corresponding factory name from FactoryGenerator
         enumStatement.append(".getEnumeration()");
         return enumStatement.toString();
     }
@@ -79,15 +76,15 @@ public class ObjectParam extends ParamWrapper {
         return this.enumerateAnnotation != null && this.enumerateAnnotation.concreteClasses().length >0;
     }
     
-    private boolean isMutuallyRecursive() {
+    private void detectMutualRecursion() {
         EnumerableType parentType = declaringGenerator.getDeclaringClass().getEnumerableType().getReferencingType();
         while (parentType != null) {
             if (parentType.getCanonicalName().equals(param.getCanonicalName())) {
-                return true;
+                this.mutuallyRecursive = true;
+                return;
             }
             parentType = parentType.getReferencingType();
         }
-        return false;
     }
     
     private List<EnumerableType> listMutuallyRecursiveTypes() {

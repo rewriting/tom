@@ -143,6 +143,7 @@ public class FactoryGenerator {
                 case MUTUALLY_RECURSIVE:
                     templateName = templatePath + "MutuallyRecursiveTypeFactory.vm";
                     context.put("enumerableType", enumerableType);
+                    context.put("parsedClass", enumerableType.getParsedClass());
                     break;
             }
             Template template = velocityEngine.getTemplate(templateName);
@@ -190,7 +191,7 @@ public class FactoryGenerator {
 
     public static void main(String[] args) {
         FactoryGenerator generator = FactoryGenerator.getInstance();
-        generator.generateSources(Friend.class);
+        generator.generateSources(User.class);
         generator.outputSourceForClasses();
 
     }

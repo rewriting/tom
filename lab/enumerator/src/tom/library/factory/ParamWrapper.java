@@ -36,7 +36,17 @@ public abstract class ParamWrapper {
      * the constructor or method where this parameter was declared
      */
     protected GeneratorWrapper declaringGenerator;
-
+    
+    /**
+     * flag for recursive parameters
+     */
+    protected boolean recursive;
+    
+    /**
+     * flag for mutually-recursive parameters
+     */
+    protected boolean mutuallyRecursive;
+    
     /**
      * initializes the wrapper
      * 
@@ -85,6 +95,28 @@ public abstract class ParamWrapper {
     public Enumerate getEnumerateAnnotation() {
         return this.enumerateAnnotation;
     }
+    
+    public boolean isRecursive() {
+        return recursive;
+    }
+    
+    public boolean isMutuallyRecursive() {
+        return mutuallyRecursive;
+    }
+    
+    public boolean isInRecChainOf(EnumerableType enumeableType) {
+        if (param.getCanonicalName().equals(enumeableType.getCanonicalName())) {
+            return true;
+        } else {
+            for (EnumerableType mutRecType : enumeableType.getMutualRecTypes()) {
+                if (param.getCanonicalName().equals(mutRecType.getCanonicalName())) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    
     
     /**
      * gets parameter type

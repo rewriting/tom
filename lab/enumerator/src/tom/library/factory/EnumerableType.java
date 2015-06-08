@@ -172,4 +172,18 @@ public class EnumerableType {
         }
         return finalEnum.toString();
     }
+    
+    /**
+     * returns an enumerable type, that has a canonical name matching the input parameter, from this type's recursion chain
+     * @param canonicalName
+     * @return
+     */
+    public EnumerableType getMutRecType(String canonicalName) {
+        for (EnumerableType enumerableType : mutualRecTypes) {
+            if (enumerableType.getCanonicalName().equals(canonicalName)) {
+                return enumerableType;
+            }
+        }
+        throw new RuntimeException("Unknown type name to method getMutRecType");
+    }
 }
