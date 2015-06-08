@@ -426,7 +426,7 @@ public class Compiler {
                                                             rule(@mu@(Bottom(@X@)), Bottom(@X@))
                                                             ]]%,this.generatedSignature).getCollectionRuleList());
                */
-              // alternative syntax
+              // new syntax:
               generatedRules.add(Rule(Mu(mu,At(varX,Anti(Bottom(varY)))), Appl(phi_s,varX)));
               generatedRules.add(Rule(Mu(mu,Bottom(varX)), Bottom(varX)));
             } else {
@@ -442,7 +442,7 @@ public class Compiler {
           }
         }
 
-        // mu fix point: transform the stratame into a function call
+        // mu fix point: transform the stratname into a function call
         StratName(name) -> {
           strategySymbol = `name;
         }
