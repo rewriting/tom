@@ -6,14 +6,22 @@ import java.util.*;
 public class Signature {
   %include { rule/Rule.tom }
 
+  // All literal strings and string-valued constant expressions are interned.
   public static String BOOLEAN = "Boolean";
   public static String TRUE = "True";
   public static String FALSE = "False";
   public static String AND = "and";
   public static String BOTTOM = "Bottom";
   public static String EQ = "eq";
+  public static String APPL = "Appl";
+  public static String CONS = "Cons";
+  public static String NIL = "Nil";
 
+  // Types
   public static final String DUMMY = "Dummy";
+  public static final String METASYMBOL = "MetaSymbol";
+  public static final String METATERM = "MetaTerm";
+  public static final String METALIST = "MetaList";
 
 
   // Codomain Type -> (SymbolName -> Domain List of types)
@@ -65,9 +73,16 @@ public class Signature {
         Map<String,List<GomType>> symbols = new HashMap<String,List<GomType>>(); 
         for(String symbol: signature.get(type).keySet()) {
           List<GomType> args = new ArrayList<GomType>(signature.get(type).get(symbol));
-          symbols.put(symbol,args);
+          symbols.put(symbol.intern(),args);
         }
         expandedSignature.signature.put(type,symbols);
+    }
+
+    if(Main.options.metalevel) {
+      // add: Appl, Cons, Nil
+      expandedSignature.addSymbol(APPL,Arrays.asList(METASYMBOL,METALIST),METATERM);
+      expandedSignature.addSymbol(CONS,Arrays.asList(METATERM,METALIST),METALIST);
+      expandedSignature.addSymbol(NIL,new ArrayList<String>(),METALIST);
     }
 
     // add: True, False, and, eq
@@ -108,7 +123,7 @@ public class Signature {
     //for(String argType:argTypes) {
     //  res += "_" + argType;
     //}
-    return res;
+    return res.intern();
   }
 
 
@@ -130,7 +145,7 @@ public class Signature {
       args.add(`GomType(argType));
     }
     // detect overloading
-    List<GomType> oldDomain = symbols.put(name,args);
+    List<GomType> oldDomain = symbols.put(name.intern(),args);
     if(oldDomain != null) {
       //System.out.println("redefinition: '" + name +"'" + oldDomain + " becomes '" + name + "'" + args);
       System.out.println(%[redefinition: '@name@'@oldDomain@ becomes '@name@'@args@]%);
@@ -141,10 +156,10 @@ public class Signature {
 
   /** Get codomain for symbol
    */
-  public GomType getCodomain(String symbol) {
+  public String getCodomain(String symbol) {
     for(GomType type: this.signature.keySet()) {
       if(this.signature.get(type).get(symbol)!=null) {
-        return type;
+        return type.getName();
       }
     }
     return null;

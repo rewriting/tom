@@ -65,6 +65,16 @@ public class Tools {
     return res;
   }
 
+  private static TermList encodeList(ATermList list, Signature signature) {
+    if(list.isEmpty()) {
+      return `TermList();
+    } else {
+      Term head = encode(list.getFirst(),signature);
+      TermList tail = encodeList(list.getNext(),signature);
+      return `TermList(head,tail*);
+    }
+  }
+
   public static RuleList encodeRuleList(String stringterm, Signature signature) {
     System.out.println("encodeRuleList: " + stringterm);
     RuleList res = `RuleList();
@@ -115,15 +125,6 @@ public class Tools {
 
   }
 
-  private static TermList encodeList(ATermList list, Signature signature) {
-    if(list.isEmpty()) {
-      return `TermList();
-    } else {
-      Term head = encode(list.getFirst(),signature);
-      TermList tail = encodeList(list.getNext(),signature);
-      return `TermList(head,tail*);
-    }
-  }
 
   /**
     * metaEncodeConsNil: transforms a Term representation into a generic term representation
@@ -175,7 +176,7 @@ public class Tools {
      */
   public static Term decodeConsNil(Term t) {
 
-//     System.out.println("IN DECODE = "+ `t);
+    //System.out.println("IN DECODE = "+ `t);
     %match(t) {
       Appl("Appl",TermList(Appl(symb_name,TermList()),args)) -> {
           String name = `symb_name.substring("symb_".length());
@@ -192,15 +193,17 @@ public class Tools {
   }
 
   public static TermList decodeConsNilList(Term t) {
+     //System.out.println("IN DECODE LIST = "+ `t);
     %match(t) {
       Appl("Cons",TermList(head,tail)) -> {
-//         System.out.println("HEAD = "+ `head);
-//         System.out.println("TAIL = "+ `tail);
+         //System.out.println("HEAD = "+ `head);
+         //System.out.println("TAIL = "+ `tail);
         TermList newTail = decodeConsNilList(`tail);
         return `TermList(decodeConsNil(head), newTail*);
       }
 
       Appl("Nil",TermList()) -> {
+         //System.out.println("NIL");
         return `TermList();
       }
 

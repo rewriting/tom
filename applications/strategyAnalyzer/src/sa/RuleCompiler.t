@@ -98,7 +98,7 @@ public class RuleCompiler {
       }
 
       Anti(t) -> {
-        Term antiterm = (Main.options.generic)?Tools.decodeConsNil(`t):`t;
+        Term antiterm = (Main.options.metalevel)?Tools.decodeConsNil(`t):`t;
         %match(antiterm) { 
           Appl(name,args)  -> {
             // add g(Z1,...) ... h(Z1,...)
@@ -108,7 +108,7 @@ public class RuleCompiler {
               if(!`name.equals(otherName)) {
                 int arity = extractedSignature.getArity(otherName);
                 Term newt = Tools.encode(Tools.genAbstractTerm(otherName,arity,Tools.getName("Z")),generatedSignature);
-                if(Main.options.generic) {
+                if(Main.options.metalevel) {
                   newt = Tools.metaEncodeConsNil(newt,generatedSignature);
                 }
                 Rule newr = (Rule) getEnvironment().getPosition().getReplace(newt).visit(subject);
@@ -131,7 +131,7 @@ public class RuleCompiler {
               array[i] = `Anti(ti);
               Term newt = `Appl(name,sa.rule.types.termlist.TermList.fromArray(array));
               array[i] = Tools.encode(z+"_"+i,generatedSignature);
-              if(Main.options.generic) {
+              if(Main.options.metalevel) {
                 newt = Tools.metaEncodeConsNil(newt,generatedSignature);
               }
               Rule newr = (Rule) getEnvironment().getPosition().getReplace(newt).visit(subject);
