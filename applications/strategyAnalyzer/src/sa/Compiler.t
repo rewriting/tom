@@ -93,7 +93,7 @@ public class Compiler {
     System.out.println("STRATEGY "+strategyName+"  = " + strategy);
 
     // if not generated yet
-    if(this.generatedTRSs.get(strategyName)==null){
+    if(this.generatedTRSs.get(strategyName)==null) {
       this.generatedTRSs.put(strategyName,new ArrayList<Rule>());
       
       String strategySymbol = "NONE";
@@ -228,6 +228,47 @@ public class Compiler {
   }
 
 
+  private Term Var(String name) {
+    return `Var(name);
+  }
+
+  private Term Anti(Term t) {
+    return `Anti(t);
+  }
+
+  private Term At(Term t1, Term t2) {
+    return `At(t1,t2);
+  }
+  
+  private Term Bottom(Term t) {
+    return Appl(Signature.BOTTOM,t);
+  }
+
+  private Term True() {
+    return Appl(Signature.TRUE);
+  }
+
+  private Term False() {
+    return Appl(Signature.FALSE);
+  }
+
+  private Term Mu(String muName, Term t) {
+    return Appl(muName,t);
+  }
+
+  private Term Appl(String name, Term... args) {
+    TermList tl = `TermList();
+    for(Term t:args) {
+      tl = `TermList(tl*,t);
+    }
+    return `Appl(name,tl);
+  }
+
+  private Rule Rule(Term lhs, Term rhs) {
+    return `Rule(lhs,rhs);
+  }
+
+
   /**
    * compile a strategy in a classical way (without using meta-representation)
    * return the name of the top symbol (phi) introduced
@@ -239,14 +280,14 @@ public class Compiler {
   private String compileStrat(Strat strat, List<Rule> rules) {
     // by default, if strategy can't be compiled, a meaningless name
     // TODO: change to exception ?
-    String strategySymbol = strat.toString();
-    List<Rule> generatedRules=new ArrayList<Rule>();
+    List<Rule> generatedRules = new ArrayList<Rule>();
 
     // if the stategy has been already compiled and a symbol generated
-    if((strategySymbol=this.strategySymbols.get(strat))!=null){
-      generatedRules=this.storedTRSs.get(strat);
+    String strategySymbol = this.strategySymbols.get(strat);
+    if(strategySymbol!=null) {
+      generatedRules = this.storedTRSs.get(strat);
       System.out.println("ALREADY EXISTING: "+strat);
-    }else{
+    } else {
       String X = Tools.getName("X");
       String Y = Tools.getName("Y");
       String Z = Tools.getName("Z");
@@ -256,8 +297,9 @@ public class Compiler {
       String Z1 = Tools.getName("Z1");
       String Z2 = Tools.getName("Z2");
       String Z3 = Tools.getName("Z3");
-      Term varX = Tools.encode(X,this.generatedSignature);
-      Term botX = Tools.encode("Bottom("+X+")",this.generatedSignature);
+      Term varX = Var(X); //Tools.encode(X,this.generatedSignature);
+      Term varY = Var(Y);
+      Term botX = Tools.encode(Signature.BOTTOM + "("+X+")",this.generatedSignature);
       Term True = Tools.encode("True",this.generatedSignature);
       Term False = Tools.encode("False",this.generatedSignature);
 
@@ -295,17 +337,26 @@ public class Compiler {
                 %match(result) {
                   // if already linear lhs
                   TermList(_, Appl("True",TermList())) -> {
-                    generatedRules.add(`Rule(Appl(rule,TermList(At(varX,lhs))),rhs));
-                    generatedRules.add(`Rule(Appl(rule,TermList(At(varX,Anti(lhs)))),botX));
+                    //generatedRules.add(`Rule(Appl(rule,TermList(At(varX,lhs))),rhs));
+                    //generatedRules.add(`Rule(Appl(rule,TermList(At(varX,Anti(lhs)))),botX));
+                    // new syntax:
+                    generatedRules.add(Rule(Appl(rule,At(varX,`lhs)), `rhs));
+                    generatedRules.add(Rule(Appl(rule,At(varX,Anti(`lhs))), Bottom(varX)));
                   }
 
                   // if non-linear add rules for checking equality for corresponding arguments
                   TermList(linearlhs, cond@!Appl("True",TermList())) -> {
-                    generatedRules.add(`Rule(Appl(rule,TermList(At(varX,linearlhs))),Appl(cr, TermList(varX, cond))));
-                    generatedRules.add(`Rule(Appl(rule,TermList(At(varX,Anti(linearlhs)))),botX));
+                    //generatedRules.add(`Rule(Appl(rule,TermList(At(varX,linearlhs))),Appl(cr, TermList(varX, cond))));
+                    //generatedRules.add(`Rule(Appl(rule,TermList(At(varX,Anti(linearlhs)))),botX));
+                    // new syntax:
+                    generatedRules.add(Rule(Appl(rule,At(varX,`linearlhs)), Appl(cr, varX, `cond)));
+                    generatedRules.add(Rule(Appl(rule,At(varX,Anti(`linearlhs))), Bottom(varX)));
 
-                    generatedRules.add(`Rule(Appl(cr,TermList(linearlhs, True)), rhs));
-                    generatedRules.add(`Rule(Appl(cr,TermList(At(varX,linearlhs), False)),botX));
+                    //generatedRules.add(`Rule(Appl(cr,TermList(linearlhs, True)), rhs));
+                    //generatedRules.add(`Rule(Appl(cr,TermList(At(varX,linearlhs), False)),botX));
+                    // new syntax:
+                    generatedRules.add(Rule(Appl(cr,`linearlhs, True()), `rhs));
+                    generatedRules.add(Rule(Appl(cr,At(varX,`linearlhs),False()), Bottom(varX)));
                   }
                 }
               }
@@ -369,10 +420,15 @@ public class Compiler {
             Strat newStrat = `TopDown(ReplaceMuVar(name,mu)).visitLight(`s);
             String phi_s = compileStrat(newStrat,generatedRules);
             if(!Main.options.metalevel) {
+              /*
               generatedRules.addAll(Tools.encodeRuleList(%[[
                                                             rule(@mu@(at(@X@,anti(Bottom(@Y@)))), @phi_s@(@X@)),
                                                             rule(@mu@(Bottom(@X@)), Bottom(@X@))
                                                             ]]%,this.generatedSignature).getCollectionRuleList());
+               */
+              // alternative syntax
+              generatedRules.add(Rule(Mu(mu,At(varX,Anti(Bottom(varY)))), Appl(phi_s,varX)));
+              generatedRules.add(Rule(Mu(mu,Bottom(varX)), Bottom(varX)));
             } else {
               // META-LEVEL
               generatedRules.addAll(Tools.encodeRuleList(%[[
@@ -824,8 +880,8 @@ public class Compiler {
     } // strategy not yet compiled
 
     // add the generated rules to the rules for the global strategy only if not already existing
-    for(Rule rule:generatedRules){
-      if(!rules.contains(rule)){
+    for(Rule rule:generatedRules) {
+      if(!rules.contains(rule)) {
         rules.add(rule);
       }
     }
