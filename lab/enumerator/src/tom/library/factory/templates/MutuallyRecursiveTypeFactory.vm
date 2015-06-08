@@ -8,38 +8,38 @@
 * This is auto generated class by the Apache velocity template engine
 * The corresponding template is RecursiveTypeFactoryTemplate.vm
 **/
-//package $parsedClass.getPackageName();
+//package $parsedClass.packageName;
 package examples.factory;
 
 import java.math.BigInteger;
 import tom.library.enumerator.Combinators;
 import tom.library.enumerator.Enumeration;
 import tom.library.enumerator.F;
-import ${enumerableType.getPackageName()}.*;
+import ${enumerableType.packageName}.*;
 
-public class $parsedClass.getFactoryClassName() {
+public class $parsedClass.factoryClassName {
     
-    public static final Enumeration<$enumerableType.getSimpleName()>  getEnumeration() {
+    public static final Enumeration<$enumerableType.simpleName>  getEnumeration() {
         
         final Enumeration<$enumerableType.simpleName> emptyEnumA = Enumeration.singleton(null);
         final Enumeration<$recursiveType.simpleName> emptyEnumB = Enumeration.singleton(null);
         
-#foreach($cons in $parsedClass.getConstructors())
-        // constructor $cons.getVariableName()
-        final $cons.getCurriedType(0) $cons.getVariableName() = new $cons.getCurriedType(0)() {
+#foreach($cons in $parsedClass.constructors)
+        // constructor $cons.variableName
+        final $cons.getCurriedType(0) $cons.variableName = new $cons.getCurriedType(0)() {
             $cons.getCurriedDefinition(0)
         };
         
-#foreach($param in $cons.getParameters())
+#foreach($param in $cons.parameters)
 #if(!$param.isMutuallyRecursive())
-        // constructor $cons.getVariableName(), param $param.getName()  $param.isRecursive()
+        // constructor $cons.variableName, param $param.name
         final $param.enumDeclare() = $param.enumCreate();
 #end
 #end
         
         /* handling recursive mutually recursive parameters */
-        F<Enumeration<$recursiveType.getSimpleName()>, Enumeration<$enumerableType.getSimpleName()>> ${cons.variableName}_f1BA = new F<Enumeration<$recursiveType.getSimpleName()>, Enumeration<$enumerableType.getSimpleName()>>() {
-            public Enumeration<$enumerableType.getSimpleName()> apply(final Enumeration<$recursiveType.getSimpleName()> $cons.recursiveEnumName) {
+        F<Enumeration<$recursiveType.simpleName>, Enumeration<$enumerableType.simpleName>> ${cons.variableName}_f1BA = new F<Enumeration<$recursiveType.simpleName>, Enumeration<$enumerableType.simpleName>>() {
+            public Enumeration<$enumerableType.simpleName> apply(final Enumeration<$recursiveType.simpleName> $cons.recursiveEnumName) {
                 return emptyEnumA.plus(
                     $cons.getEnumerationConstruction()
                 ).pay();
@@ -60,11 +60,11 @@ public class $parsedClass.getFactoryClassName() {
         
 #foreach($mutualRecType in $enumerableType.mutualRecTypes)
 #foreach($cons in $mutualRecType.parsedClass.constructors)
-        // constructor $cons.getVariableName()
-        final $cons.getCurriedType(0) $cons.getVariableName() = new $cons.getCurriedType(0)() {
+        // constructor $cons.variableName
+        final $cons.getCurriedType(0) $cons.variableName = new $cons.getCurriedType(0)() {
             $cons.getCurriedDefinition(0)
         };
-#foreach($param in $cons.getParameters())
+#foreach($param in $cons.parameters)
 #if(!$param.isInRecChainOf($enumerableType))
         final $param.enumDeclare() = $param.enumCreate();
 #end
@@ -81,13 +81,13 @@ public class $parsedClass.getFactoryClassName() {
             }
         };
         
-        Enumeration<$enumerableType.getSimpleName()> $cons.getEnumName() = Enumeration.fixMultiple(${cons.variableName}_f1AB, ${cons.variableName}_f1BB, ${cons.variableName}_f1BA, ${cons.variableName}_f1AA, ${cons.variableName}_f1AA);
+        Enumeration<$enumerableType.simpleName> $cons.enumName = Enumeration.fixMultiple(${cons.variableName}_f1AB, ${cons.variableName}_f1BB, ${cons.variableName}_f1BA, ${cons.variableName}_f1AA, ${cons.variableName}_f1AA);
 #end
         
         // accumulating all constructors
-        Enumeration<$parsedClass.getEnumerableType().getSimpleName()> $parsedClass.getAllConstructorsEnumName() = $parsedClass.getAllContructorsEnum();
+        Enumeration<$enumerableType.simpleName> $parsedClass.allConstructorsEnumName = $parsedClass.getAllContructorsEnum();
         
-        return $parsedClass.getAllConstructorsEnumName();
+        return $parsedClass.allConstructorsEnumName;
         
     }
 
