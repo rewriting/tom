@@ -12,6 +12,7 @@ public class Signature {
   public static String FALSE = "False";
   public static String AND = "and";
   public static String BOTTOM = "Bottom";
+  public static String BOTTOMLIST = "BottomList";
   public static String EQ = "eq";
   public static String APPL = "Appl";
   public static String CONS = "Cons";

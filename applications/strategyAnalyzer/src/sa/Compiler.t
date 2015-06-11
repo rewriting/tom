@@ -228,46 +228,25 @@ public class Compiler {
   }
 
 
-  private Term Var(String name) {
-    return `Var(name);
-  }
+  private Term Var(String name) { return `Var(name); }
+  private Term Anti(Term t) { return `Anti(t); }
+  private Term At(Term t1, Term t2) { return `At(t1,t2); }
+  private Term Bottom(Term t) { return _appl(Signature.BOTTOM,t); }
+  private Term BottomList(Term t) { return _appl(Signature.BOTTOMLIST,t); }
+  private Term True() { return _appl(Signature.TRUE); }
+  private Term False() { return _appl(Signature.FALSE); }
+  private Term Appl(Term t1, Term t2) { return _appl(Signature.APPL,t1,t2); }
+  private Rule Rule(Term lhs, Term rhs) { return `Rule(lhs,rhs); }
+  private Term Nil() { return _appl(Signature.NIL); }
+  private Term Cons(Term t1, Term t2) { return _appl(Signature.CONS,t1,t2); }
 
-  private Term Anti(Term t) {
-    return `Anti(t);
-  }
-
-  private Term At(Term t1, Term t2) {
-    return `At(t1,t2);
-  }
-  
-  private Term Bottom(Term t) {
-    return Appl(Signature.BOTTOM,t);
-  }
-
-  private Term True() {
-    return Appl(Signature.TRUE);
-  }
-
-  private Term False() {
-    return Appl(Signature.FALSE);
-  }
-
-  private Term Mu(String muName, Term t) {
-    return Appl(muName,t);
-  }
-
-  private Term Appl(String name, Term... args) {
+  private Term _appl(String name, Term... args) {
     TermList tl = `TermList();
     for(Term t:args) {
       tl = `TermList(tl*,t);
     }
     return `Appl(name,tl);
   }
-
-  private Rule Rule(Term lhs, Term rhs) {
-    return `Rule(lhs,rhs);
-  }
-
 
   /**
    * compile a strategy in a classical way (without using meta-representation)
@@ -288,20 +267,15 @@ public class Compiler {
       generatedRules = this.storedTRSs.get(strat);
       System.out.println("ALREADY EXISTING: "+strat);
     } else {
-      String X = Tools.getName("X");
-      String Y = Tools.getName("Y");
-      String Z = Tools.getName("Z");
-      String XX = Tools.getName("XX");
-      String YY = Tools.getName("YY");
-      String Z0 = Tools.getName("Z0");
-      String Z1 = Tools.getName("Z1");
-      String Z2 = Tools.getName("Z2");
-      String Z3 = Tools.getName("Z3");
-      Term varX = Var(X); //Tools.encode(X,this.generatedSignature);
-      Term varY = Var(Y);
-      Term botX = Tools.encode(Signature.BOTTOM + "("+X+")",this.generatedSignature);
-      Term True = Tools.encode("True",this.generatedSignature);
-      Term False = Tools.encode("False",this.generatedSignature);
+      Term varX = Var(Tools.getName("X"));
+      Term varY = Var(Tools.getName("Y"));
+      Term varXX = Var(Tools.getName("XX"));
+      Term varYY = Var(Tools.getName("YY"));
+      Term varZ = Var(Tools.getName("Z"));
+      Term varZ0 = Var(Tools.getName("Z0"));
+      Term varZ1 = Var(Tools.getName("Z1"));
+      Term varZ2 = Var(Tools.getName("Z2"));
+      Term varZ3 = Var(Tools.getName("Z3"));
 
       %match(strat) {
         StratExp((Set|List)(rulelist)) -> {
@@ -327,36 +301,31 @@ public class Compiler {
 
             %match(rulelist) {
               RuleList(_*,Rule(lhs,rhs),_*) -> {
-                // use AST-syntax because lhs and rhs are already encoded
-
                 // propagate failure; if the rule is applied to the result of a strategy that failed then the result is a failure
-                generatedRules.add(`Rule(Appl(rule,TermList(botX)),botX));
+                // rule(Bot(X)) -> Bot(X)
+                generatedRules.add(Rule(_appl(rule,Bottom(varX)), Bottom(varX)));
 
                 TermList result = this.linearize(`lhs);
 
                 %match(result) {
-                  // if already linear lhs
                   TermList(_, Appl("True",TermList())) -> {
-                    //generatedRules.add(`Rule(Appl(rule,TermList(At(varX,lhs))),rhs));
-                    //generatedRules.add(`Rule(Appl(rule,TermList(At(varX,Anti(lhs)))),botX));
-                    // new syntax:
-                    generatedRules.add(Rule(Appl(rule,At(varX,`lhs)), `rhs));
-                    generatedRules.add(Rule(Appl(rule,At(varX,Anti(`lhs))), Bottom(varX)));
+                    // if already linear lhs
+                    // rule(X@lhs) -> rhs
+                    // rule(X@!lhs) -> Bot(X)
+                    generatedRules.add(Rule(_appl(rule,At(varX,`lhs)), `rhs));
+                    generatedRules.add(Rule(_appl(rule,At(varX,Anti(`lhs))), Bottom(varX)));
                   }
 
-                  // if non-linear add rules for checking equality for corresponding arguments
                   TermList(linearlhs, cond@!Appl("True",TermList())) -> {
-                    //generatedRules.add(`Rule(Appl(rule,TermList(At(varX,linearlhs))),Appl(cr, TermList(varX, cond))));
-                    //generatedRules.add(`Rule(Appl(rule,TermList(At(varX,Anti(linearlhs)))),botX));
-                    // new syntax:
-                    generatedRules.add(Rule(Appl(rule,At(varX,`linearlhs)), Appl(cr, varX, `cond)));
-                    generatedRules.add(Rule(Appl(rule,At(varX,Anti(`linearlhs))), Bottom(varX)));
-
-                    //generatedRules.add(`Rule(Appl(cr,TermList(linearlhs, True)), rhs));
-                    //generatedRules.add(`Rule(Appl(cr,TermList(At(varX,linearlhs), False)),botX));
-                    // new syntax:
-                    generatedRules.add(Rule(Appl(cr,`linearlhs, True()), `rhs));
-                    generatedRules.add(Rule(Appl(cr,At(varX,`linearlhs),False()), Bottom(varX)));
+                    // if non-linear add rules for checking equality for corresponding arguments
+                    // rule(X@linearlhs) -> cr(X,cond)
+                    // rule(X@!linearlhs) -> Bot(X)
+                    // cr(linearlhs, True) -> rhs
+                    // cr(X@linearlhs, False) -> Bot(X)
+                    generatedRules.add(Rule(_appl(rule,At(varX,`linearlhs)), _appl(cr, varX, `cond)));
+                    generatedRules.add(Rule(_appl(rule,At(varX,Anti(`linearlhs))), Bottom(varX)));
+                    generatedRules.add(Rule(_appl(cr,`linearlhs, True()), `rhs));
+                    generatedRules.add(Rule(_appl(cr,At(varX,`linearlhs),False()), Bottom(varX)));
                   }
                 }
               }
@@ -369,31 +338,33 @@ public class Compiler {
             %match(rulelist) {
               RuleList(_*,Rule(lhs,rhs),_*) -> {
                 // propagate failure
-                generatedRules.add(`Rule(Appl(rule,TermList(botX)),botX));
+                // rule(Bot(X)) -> Bot(X)
+                generatedRules.add(Rule(_appl(rule,Bottom(varX)), Bottom(varX)));
 
                 TermList result = this.linearize(`lhs);
-
                 Term mlhs = Tools.metaEncodeConsNil(`lhs,generatedSignature);
                 Term mrhs = Tools.metaEncodeConsNil(`rhs,generatedSignature);
 
-                //System.out.println("RuleList lhs  = " + `lhs);
-                //System.out.println("RuleList mlhs = " + mlhs);
                 %match(result) {
-                  // if already linear lhs
                   TermList(_, Appl("True",TermList())) -> {
-                    generatedRules.add(`Rule(Appl(rule,TermList(At(varX,mlhs))), mrhs));
-                    generatedRules.add(`Rule(Appl(rule,TermList(At(varX,Anti(mlhs)))),botX));
+                    // if already linear lhs
+                    // rule(X@mlhs) -> mrhs
+                    // rule(X@!mlhs) -> Bot(X)
+                    generatedRules.add(Rule(_appl(rule,At(varX,mlhs)), mrhs));
+                    generatedRules.add(Rule(_appl(rule,At(varX,Anti(mlhs))), Bottom(varX)));
                   }
 
-                  // if non-linear add rules for checking equality for corresponding arguments
                   TermList(linearlhs, cond@!Appl("True",TermList())) -> {
+                    // if non-linear add rules for checking equality for corresponding arguments
                     Term mlinearlhs = Tools.metaEncodeConsNil(`linearlhs,generatedSignature);
-
-                    generatedRules.add(`Rule(Appl(rule,TermList(At(varX,mlinearlhs))),Appl(cr, TermList(varX, cond))));
-                    generatedRules.add(`Rule(Appl(rule,TermList(At(varX,Anti(mlinearlhs)))),botX));
-
-                    generatedRules.add(`Rule(Appl(cr,TermList(mlinearlhs, True)), mrhs));
-                    generatedRules.add(`Rule(Appl(cr,TermList(At(varX,mlinearlhs), False)),botX));
+                    // rule(X@mlinearlhs) -> cr(X,cond)
+                    // rule(X@!mlinearlhs) -> Bot(X)
+                    // cr(mlinearlhs, True) -> mrhs
+                    // cr(X@mlinearlhs, False) -> Bot(X)
+                    generatedRules.add(Rule(_appl(rule,At(varX,mlinearlhs)), _appl(cr,varX,`cond)));
+                    generatedRules.add(Rule(_appl(rule,At(varX,Anti(mlinearlhs))), Bottom(varX)));
+                    generatedRules.add(Rule(_appl(cr,mlinearlhs, True()), mrhs));
+                    generatedRules.add(Rule(_appl(cr,At(varX,mlinearlhs), False()), Bottom(varX)));
                   }
                 }
 
@@ -420,21 +391,16 @@ public class Compiler {
             Strat newStrat = `TopDown(ReplaceMuVar(name,mu)).visitLight(`s);
             String phi_s = compileStrat(newStrat,generatedRules);
             if(!Main.options.metalevel) {
-              /*
-              generatedRules.addAll(Tools.encodeRuleList(%[[
-                                                            rule(@mu@(at(@X@,anti(Bottom(@Y@)))), @phi_s@(@X@)),
-                                                            rule(@mu@(Bottom(@X@)), Bottom(@X@))
-                                                            ]]%,this.generatedSignature).getCollectionRuleList());
-               */
-              // new syntax:
-              generatedRules.add(Rule(Mu(mu,At(varX,Anti(Bottom(varY)))), Appl(phi_s,varX)));
-              generatedRules.add(Rule(Mu(mu,Bottom(varX)), Bottom(varX)));
+              // mu(X@!Bot(Y)) -> phi_s(X)
+              // mu(Bot(X)) -> Bot(X)
+              generatedRules.add(Rule(_appl(mu,At(varX,Anti(Bottom(varY)))), _appl(phi_s,varX)));
+              generatedRules.add(Rule(_appl(mu,Bottom(varX)), Bottom(varX)));
             } else {
               // META-LEVEL
-              generatedRules.addAll(Tools.encodeRuleList(%[[
-                                                            rule(@mu@(Appl(@Y@,@Z@)), @phi_s@(Appl(@Y@,@Z@))),
-                                                            rule(@mu@(Bottom(@X@)), Bottom(@X@)) 
-                                                            ]]%,this.generatedSignature).getCollectionRuleList());
+              // mu(Appl(Y,Z)) -> phi_s(Appl(Y,Z))
+              // mu(Bot(X)) -> Bot(X)
+              generatedRules.add(Rule(_appl(mu,Appl(varY,varZ)), _appl(phi_s,Appl(varY,varZ))));
+              generatedRules.add(Rule(_appl(mu,Bottom(varX)), Bottom(varX)));
             }
             strategySymbol = phi_s;
           } catch(VisitFailure e) {
@@ -454,35 +420,32 @@ public class Compiler {
             if( !Main.options.approx ) {
               // the rule cannot be applied on arguments containing fresh variables but only on terms from the signature or Bottom
               // normally it will follow reduction in original TRS
-              generatedRules.addAll(Tools.encodeRuleList(%[[
-                                                            rule(@id@(at(@X@,anti(Bottom(@Y@)))), @X@),
-                                                            rule(@id@(Bottom(@X@)), Bottom(@X@))
-                                                            ]]%,this.generatedSignature).getCollectionRuleList());
+
+              // id(X@!Bot(Y)) -> X
+              // id(Bot(X)) -> Bot(X)
+              generatedRules.add(Rule(_appl(id,At(varX,Anti(Bottom(varY)))), varX));
+              generatedRules.add(Rule(_appl(id,Bottom(varX)), Bottom(varX)));
             } else { 
               // Bottom of Bottom is Bottom
               // this is not necessary if exact reduction - in this case Bottom is propagated immediately 
-              generatedRules.addAll(Tools.encodeRuleList(%[[
-                                                            rule(@id@(@X@), @X@),
-                                                            rule(Bottom(Bottom(@X@)), Bottom(@X@))
-                                                            ]]%,this.generatedSignature).getCollectionRuleList());
+              // id(X) -> X
+              // Bot(Bot(X)) -> Bot(X)
+              generatedRules.add(Rule(_appl(id,varX), varX));
+              generatedRules.add(Rule(Bottom(Bottom(varX)), Bottom(varX)));
             }
           } else {
             // META-LEVEL
             this.generatedSignature.addSymbol(id,Arrays.asList(Signature.METATERM),Signature.METATERM);
             if( !Main.options.approx ) {
-              // the rule cannot be applied on arguments containing fresh variables but only on terms from the signature or Bottom
-              // normally it will follow reduction in original TRS
-              generatedRules.addAll(Tools.encodeRuleList(%[[
-                                                            rule(@id@(Appl(@X@,@Y@)), Appl(@X@,@Y@)),
-                                                            rule(@id@(Bottom(@X@)), Bottom(@X@))
-                                                            ]]%,this.generatedSignature).getCollectionRuleList());
+              // id(Appl(X,Y)) -> Appl(X,Y)
+              // id(Bot(X)) -> Bot(X)
+              generatedRules.add(Rule(_appl(id,Appl(varX,varY)), Appl(varX,varY)));
+              generatedRules.add(Rule(_appl(id,Bottom(varX)), Bottom(varX)));
             } else { 
-              // Bottom of Bottom is Bottom
-              // this is not necessary if exact reduction - in this case Bottom is propagated immediately 
-              generatedRules.addAll(Tools.encodeRuleList(%[[
-                                                            rule(@id@(@X@), @X@),
-                                                            rule(Bottom(Bottom(@X@)), Bottom(@X@))
-                                                            ]]%,this.generatedSignature).getCollectionRuleList());
+              // id(X) -> X
+              // Bot(Bot(X)) -> Bot(X)
+              generatedRules.add(Rule(_appl(id,varX), varX));
+              generatedRules.add(Rule(Bottom(Bottom(varX)), Bottom(varX)));
             }
           }
           strategySymbol = id;
@@ -493,36 +456,28 @@ public class Compiler {
           this.generatedSignature.addSymbol(fail,Arrays.asList(Signature.DUMMY),Signature.DUMMY);
           if( !Main.options.metalevel ) {
             if( !Main.options.approx ) {
-              // the rule cannot be applied on arguments containing fresh variables but only on terms from the signature or Bottom
-              // normally it will follow reduction in original TRS
-              generatedRules.addAll(Tools.encodeRuleList(%[[
-                                                            rule(@fail@(at(@X@,anti(Bottom(@Y@)))), Bottom(@X@)),
-                                                            rule(@fail@(Bottom(@X@)), Bottom(@X@))
-                                                            ]]%,this.generatedSignature).getCollectionRuleList());
+              // fail(X@!Bot(Y)) -> Bot(X)
+              // fail(Bot(X)) -> Bot(X)
+              generatedRules.add(Rule(_appl(fail,At(varX,Anti(Bottom(varY)))), Bottom(varX)));
+              generatedRules.add(Rule(_appl(fail,Bottom(varX)), Bottom(varX)));
             } else { 
-              // Bottom of Bottom is Bottom
-              // this is not necessary if exact reduction - in this case Bottom is propagated immediately 
-              generatedRules.addAll(Tools.encodeRuleList(%[[
-                                                            rule(@fail@(@X@), Bottom(@X@)),
-                                                            rule(Bottom(Bottom(@X@)), Bottom(@X@))
-                                                            ]]%,this.generatedSignature).getCollectionRuleList());
+              // fail(X) -> Bot(X)
+              // Bot(Bot(X)) -> Bot(X)
+              generatedRules.add(Rule(_appl(fail,varX), Bottom(varX)));
+              generatedRules.add(Rule(Bottom(Bottom(varX)), Bottom(varX)));
             }
           } else {
             // META-LEVEL
             if( !Main.options.approx ) {
-              // the rule cannot be applied on arguments containing fresh variables but only on terms from the signature or Bottom
-              // normally it will follow reduction in original TRS
-              generatedRules.addAll(Tools.encodeRuleList(%[[
-                                                            rule(@fail@(Appl(@X@,@Y@)), Bottom(Appl(@X@,@Y@))),
-                                                            rule(@fail@(Bottom(@X@)), Bottom(@X@))
-                                                            ]]%,this.generatedSignature).getCollectionRuleList());
+              // fail(Appl(X,Y)) -> Bot(Appl(X,Y))
+              // fail(Bot(X)) -> Bot(X)
+              generatedRules.add(Rule(_appl(fail,Appl(varX,varY)), Bottom(Appl(varX,varY))));
+              generatedRules.add(Rule(_appl(fail,Bottom(varX)), Bottom(varX)));
             } else { 
-              // Bottom of Bottom is Bottom
-              // this is not necessary if exact reduction - in this case Bottom is propagated immediately 
-              generatedRules.addAll(Tools.encodeRuleList(%[[
-                                                            rule(@fail@(@X@), Bottom(@X@)),
-                                                            rule(Bottom(Bottom(@X@)), Bottom(@X@))
-                                                            ]]%,this.generatedSignature).getCollectionRuleList());
+              // fail(X) -> Bot(X)
+              // Bot(Bot(X)) -> Bot(X)
+              generatedRules.add(Rule(_appl(fail,varX), Bottom(varX)));
+              generatedRules.add(Rule(Bottom(Bottom(varX)), Bottom(varX)));
             }
 
           }
@@ -540,38 +495,42 @@ public class Compiler {
             if( !Main.options.approx ) {
               // the rule cannot be applied on arguments containing fresh variables but only on terms from the signature or Bottom
               // normally it will follow reduction in original TRS
-              generatedRules.addAll(Tools.encodeRuleList(%[[
-                                                            rule(@seq@(at(@X@,anti(Bottom(@Y@)))), @seq2@(@n2@(@n1@(@X@)),@X@)),
-                                                            rule(@seq@(Bottom(@X@)), Bottom(@X@)),
-                                                            rule(@seq2@(at(@X@,anti(Bottom(@Y@))),@Z@), @X@),
-                                                            rule(@seq2@(Bottom(@Y@),@X@), Bottom(@X@))
-                                                            ]]%,this.generatedSignature).getCollectionRuleList());
+              // seq(X@!Bot(Y)) -> seq2(n2(n1(X)),X)
+              // seq(Bot(X)) -> Bot(X)
+              // seq2(X@!Bot(Y),Z) -> X
+              // seq2(Bot(Y),X) -> Bot(X)
+              generatedRules.add(Rule(_appl(seq,At(varX,Anti(Bottom(varY)))), _appl(seq2,_appl(n2,_appl(n1,varX)),varX)));
+              generatedRules.add(Rule(_appl(seq,Bottom(varX)), Bottom(varX)));
+              generatedRules.add(Rule(_appl(seq2,At(varX,Anti(Bottom(varY))),varZ), varX));
+              generatedRules.add(Rule(_appl(seq2,Bottom(varY),varX), Bottom(varX)));
+
             } else { 
-              // Bottom of Bottom is Bottom
-              // this is not necessary if exact reduction - in this case Bottom is propagated immediately 
-              generatedRules.addAll(Tools.encodeRuleList(%[[
-                                                            rule(@seq@(@X@), @seq2@(@n2@(@n1@(@X@)),@X@)),
-                                                            rule(Bottom(Bottom(@X@)), Bottom(@X@)),
-                                                            rule(@seq2@(at(@X@,anti(Bottom(@Y@))),@Z@), @X@),
-                                                            rule(@seq2@(Bottom(@Y@),@X@), Bottom(@X@))
-                                                            ]]%,this.generatedSignature).getCollectionRuleList());
+              // seq(X) -> seq2(n2(n1(X)),X)
+              // Bot(Bot(X)) -> Bot(X)
+              // seq2(X@!Bot(Y),Z) -> X
+              // seq2(Bot(Y),X) -> Bot(X)
+              generatedRules.add(Rule(_appl(seq,varX), _appl(seq2,_appl(n2,_appl(n1,varX)),varX)));
+              generatedRules.add(Rule(Bottom(Bottom(varX)), Bottom(varX)));
+              generatedRules.add(Rule(_appl(seq2,At(varX,Anti(Bottom(varY))),varZ), varX));
+              generatedRules.add(Rule(_appl(seq2,Bottom(varY),varX), Bottom(varX)));
             }
           } else {
             // META-LEVEL
             this.generatedSignature.addSymbol(seq,Arrays.asList(Signature.METATERM),Signature.METATERM);
             this.generatedSignature.addSymbol(seq2,Arrays.asList(Signature.METATERM,Signature.METATERM),Signature.METATERM);
             if( !Main.options.approx ) {
-              // the rule cannot be applied on arguments containing fresh variables but only on terms from the signature or Bottom
-              // normally it will follow reduction in original TRS
-              generatedRules.addAll(Tools.encodeRuleList(%[[
-                                                            rule(@seq@(Appl(@X@,@Y@)), @seq2@(@n2@(@n1@(Appl(@X@,@Y@))),Appl(@X@,@Y@))),
-                                                            rule(@seq@(Bottom(@X@)), Bottom(@X@)),
-                                                            rule(@seq2@(Appl(@X@,@Y@),@Z@), Appl(@X@,@Y@)),
-                                                            rule(@seq2@(Bottom(@Y@),@X@), Bottom(@X@))
-                                                            ]]%,this.generatedSignature).getCollectionRuleList());
+              // seq(Appl(X,Y)) -> seq2(n2(n1(Appl(X,Y))),Appl(X,Y))
+              // seq(Bot(X)) -> Bot(X)
+              // seq2(Appl(X,Y),Z) -> Appl(X,Y)
+              // seq2(Bot(Y),X) -> Bot(X)
+              generatedRules.add(Rule(Appl(varX,varY), _appl(seq2,_appl(n2,_appl(n1,Appl(varX,varY))),Appl(varX,varY))));
+              generatedRules.add(Rule(_appl(seq,Bottom(varX)), Bottom(varX)));
+              generatedRules.add(Rule(_appl(seq2,Appl(varX,varY),varZ), Appl(varX,varY)));
+              generatedRules.add(Rule(_appl(seq2,Bottom(varY),varX), Bottom(varX)));
             } else { 
               // CHECK HERE
-              generatedRules.add(Tools.encodeRule(%[rule(@seq@(@X@), @n2@(@n1@(@X@)))]%,generatedSignature));
+              // seq(X) -> n2(n1(X))
+              generatedRules.add(Rule(varX, _appl(n2,_appl(n1,varX))));
             }
 
           }
@@ -587,29 +546,34 @@ public class Compiler {
             this.generatedSignature.addSymbol(choice,Arrays.asList(Signature.DUMMY),Signature.DUMMY);
             this.generatedSignature.addSymbol(choice2,Arrays.asList(Signature.DUMMY),Signature.DUMMY);
             // TODO [20/01/2015]: see if not exact is interesting
-            generatedRules.addAll(Tools.encodeRuleList(%[[
-                                                          rule(@choice@(at(@X@,anti(Bottom(@Y@)))),  @choice2@(@n1@(@X@)) ),
-                                                          rule(@choice@(Bottom(@X@)), Bottom(@X@)),
-                                                          rule(@choice2@(at(@X@,anti(Bottom(@Y@)))), @X@),
-                                                          rule(@choice2@(Bottom(@X@)), @n2@(@X@))
-                                                          ]]%,this.generatedSignature).getCollectionRuleList());
+            // choice(X@!Bot(Y)) -> choice2(n1(X))
+            // choice(Bot(X)) -> Bot(X)
+            // choice2(X@!Bot(Y)) -> X
+            // choice2(Bot(X)) -> n2(X)
+            generatedRules.add(Rule(_appl(choice,At(varX,Anti(Bottom(varY)))), _appl(choice2,_appl(n1,varX))));
+            generatedRules.add(Rule(_appl(choice,Bottom(varX)), Bottom(varX)));
+            generatedRules.add(Rule(_appl(choice2,At(varX,Anti(Bottom(varY)))), varX));
+            generatedRules.add(Rule(_appl(choice2,Bottom(varX)), _appl(n2,varX)));
           } else {
             // META-LEVEL
             this.generatedSignature.addSymbol(choice,Arrays.asList(Signature.METATERM),Signature.METATERM);
             this.generatedSignature.addSymbol(choice2,Arrays.asList(Signature.METATERM),Signature.METATERM);
             if( !Main.options.approx ) {
-              generatedRules.addAll(Tools.encodeRuleList(%[[
-                                                            rule(@choice@(Appl(@X@,@Y@)), @choice2@(@n1@(Appl(@X@,@Y@)))),
-                                                            rule(@choice@(Bottom(@X@)), Bottom(@X@)),
-                                                            rule(@choice2@(Appl(@X@,@Y@)), Appl(@X@,@Y@)),
-                                                            rule(@choice2@(Bottom(@X@)), @n2@(@X@))
-                                                            ]]%,generatedSignature).getCollectionRuleList());
+              // choice(Appl(X,Y)) -> choice2(n1(Appl(X,Y)))
+              // choice(Bot(X)) -> Bot(X)
+              // choice2(Appl(X,Y) -> Appl(X,Y)
+              // choice2(Bot(X)) -> n2(X)
+              generatedRules.add(Rule(_appl(choice,Appl(varX,varY)), _appl(choice2,_appl(n1,Appl(varX,varY)))));
+              generatedRules.add(Rule(_appl(choice,Bottom(varX)), Bottom(varX)));
+              generatedRules.add(Rule(_appl(choice2,Appl(varX,varY)), Appl(varX,varY)));
+              generatedRules.add(Rule(_appl(choice2,Bottom(varX)), _appl(n2,varX)));
             } else {
-              generatedRules.addAll(Tools.encodeRuleList(%[[
-                                                            rule(@choice@(@X@), @choice2@(@n1@(@X@))),
-                                                            rule(@choice2@(Appl(@X@,@Y@)), Appl(@X@,@Y@)),
-                                                            rule(@choice2@(Bottom(@X@)), @n2@(@X@))
-                                                            ]]%,generatedSignature).getCollectionRuleList());
+              // choice(X) -> choice2(n1(X))
+              // choice2(Appl(X,Y) -> Appl(X,Y)
+              // choice2(Bot(X)) -> n2(X)
+              generatedRules.add(Rule(_appl(choice,varX), _appl(choice2,_appl(n1,varX))));
+              generatedRules.add(Rule(_appl(choice2,Appl(varX,varY)), Appl(varX,varY)));
+              generatedRules.add(Rule(_appl(choice2,Bottom(varX)), _appl(n2,varX)));
             }
           }
           strategySymbol = choice;
@@ -624,7 +588,9 @@ public class Compiler {
               int arity = this.generatedSignature.getArity(name);
               int arity_all = arity+1;
               if(arity==0) {
-                generatedRules.add(Tools.encodeRule(%[rule(@all@(@name@), @name@)]%,this.generatedSignature));
+                // all(name) -> name
+                //generatedRules.add(Tools.encodeRule(%[rule(@all@(@name@), @name@)]%,this.generatedSignature));
+                generatedRules.add(Rule(_appl(all,_appl(name)), _appl(name)));
               } else {
                 String all_n = all+"_"+name;
                 List<String> all_args = new ArrayList<String>();
@@ -632,45 +598,54 @@ public class Compiler {
                   all_args.add(Signature.DUMMY);
                 }
                 this.generatedSignature.addSymbol(all_n,all_args,Signature.DUMMY);
-                //             generatedSignature.put(all_n,arity_all);
-                {
-                  // main case
-                  // all(f(x1,...,xn)) -> all_n(phi_s(x1),phi_s(x2),...,phi_s(xn),f(x1,...,xn))
-                  String lx = "X1"; 
-                  String rx = phi_s+"(X1)"; 
-                  for(int i=2 ; i<=arity ; i++) {
-                    lx += ",X"+i;
-                    rx += ","+phi_s+"(X"+i+")";
-                  }
-                  generatedRules.add(Tools.encodeRule(%[rule(@all@(@name@(@lx@)), @all_n@(@rx@,@name@(@lx@)))]%,this.generatedSignature)); 
-                  // propagate Bottom  (otherwise not reduced and leads to bug in Sequence)
-                  generatedRules.add(Tools.encodeRule(%[rule(@all@(Bottom(@X@)), Bottom(@X@) )]%,this.generatedSignature));               
+
+                // main case
+                // all(f(x1,...,xn)) -> all_n(phi_s(x1),phi_s(x2),...,phi_s(xn),f(x1,...,xn))
+                Term[] a_lx = new Term[arity];
+                Term[] a_rx = new Term[arity+1];
+                for(int i=0 ; i<arity ; i++) {
+                  Term Xi = `Var("X" + i);
+                  a_lx[i] = Xi;
+                  a_rx[i] = _appl(phi_s, Xi);
                 }
+                a_rx[arity] = _appl(name, a_lx);
+                generatedRules.add(Rule(_appl(all,_appl(name, a_lx)), _appl(all_n, a_rx)));
+
+                // propagate Bottom  (otherwise not reduced and leads to bug in Sequence)
+                // all(Bot(X)) -> Bot(X)
+                generatedRules.add(Rule(_appl(all,Bottom(varX)), Bottom(varX)));
 
                 // generate success rules
-                // all_g(x1@!BOTTOM,...,xN@!BOTTOM,_) -> g(x1,...,xN)
-                String lx = "at(X1,anti(Bottom(Y1)))";
-                String rx = "X1"; 
-                for(int j=2; j<=arity;j++) {
-                  lx += ",at(X"+j+",anti(Bottom(Y"+j+")))";
-                  rx += ",X"+j;
+                // all_g(X1@!Bottom(Y1),...,X_n@!Bottom(Y_n),_) -> g(X1,...,X_n)
+                a_lx = new Term[arity+1];
+                a_rx = new Term[arity];
+                for(int i=0 ; i<arity ; i++) {
+                  Term Xi = `Var("X" + i);
+                  Term Yi = `Var("Y" + i);
+                  a_lx[i] = At(Xi,Anti(Bottom(Yi)));
+                  a_rx[i] = Xi;
                 }
-                generatedRules.add(Tools.encodeRule(%[rule(@all_n@(@lx@,@Z@), @name@(@rx@))]%,this.generatedSignature));
+                a_lx[arity] = varZ;
+                generatedRules.add(Rule(_appl(all_n,a_lx), _appl(name, a_rx)));
 
                 // generate failure rules
-                // phi_n(BOTTOM,_,...,_,x) -> BOTTOM
-                // phi_n(...,BOTTOM,...,x) -> BOTTOM
-                // phi_n(_,...,_,BOTTOM,x) -> BOTTOM
-                for(int i=1 ; i<=arity ; i++) {
-                  String llx = (i==1)?"Bottom(X1)":"X1";
-                  for(int j=2; j<=arity;j++) {
+                // phi_n(Bottom(_),_,...,_,Z) -> Bottom(Z)
+                // phi_n(...,Bottom(_),...,Z) -> Bottom(Z)
+                // phi_n(_,...,_,Bottom(_),Z) -> Bottom(Z)
+                Term[] a_llx = new Term[arity+1];
+                for(int i=0 ; i<arity ; i++) {
+                  Term X0 = `Var("X0");
+                  a_llx[0] = (i==0)?Bottom(X0):X0;
+                  for(int j=1 ; i<arity ; i++) {
+                    Term Xj = `Var("X" + i);
                     if(j==i) {
-                      llx += ",Bottom(X"+j+")";
+                      a_llx[j] = Bottom(Xj);
                     } else {
-                      llx += ",X"+j;
+                      a_llx[j] = Xj;
                     }
                   }
-                  generatedRules.add(Tools.encodeRule(%[rule(@all_n@(@llx@,@Z@), Bottom(@Z@))]%,this.generatedSignature));
+                  a_llx[arity] = varZ;
+                  generatedRules.add(Rule(_appl(all_n,a_llx), Bottom(varZ)));
                 }
               }
             }
@@ -689,42 +664,45 @@ public class Compiler {
             generatedSignature.addSymbol(append,Arrays.asList(Signature.METALIST,Signature.METATERM),Signature.METALIST);
             generatedSignature.addSymbol(reverse,Arrays.asList(Signature.METALIST),Signature.METALIST);
             generatedSignature.addSymbol(rconcat,Arrays.asList(Signature.METALIST,Signature.METALIST),Signature.METALIST);
+            // all(Appl(Z0,Z1)) -> all_1(Appl(Z0,all_2(Z1)))
+            // all_1(Appl(Z0, BottomList(Z))) -> Bottom(Appl(Z0,Z))
+            // all_1(Appl(Z0, Cons(Z1,Z2))) -> Appl(Z0,Cons(Z1,Z2))
+            // all_1(Appl(Z0, Nil)) -> Appl(Z0,Nil)
+            // all_2(Nil) -> Nil
+            // all_2(Cons(Z1,Z2)) -> all_3(phi_s(Z1),Z2,Cons(Z1,Nil),Nil)
+            // all_3(Bottom(X),todo,rargs,rs_args) -> BottomList(rconcat(rargs,todo))
+            // all_3(Appl(X,Y),Nil,rargs,rs_args) -> reverse(Cons(Appl(X,Y),rs_args))
+            // all_3(Appl(X,Y), Cons(XX,YY), rargs, rs_args) -> 
+            // all_3(phi_s(XX), YY, Cons(XX,rargs), Cons(Appl(X,Y),rs_args))
+            generatedRules.add(Rule(_appl(all,Appl(varZ0,varZ1)), _appl(all_1,Appl(varZ0,_appl(all_2,varZ1)))));
+            generatedRules.add(Rule(_appl(all_1,Appl(varZ0,BottomList(varZ))), Bottom(Appl(varZ0,varZ))));
+            generatedRules.add(Rule(_appl(all_1,Appl(varZ0,Cons(varZ1,varZ2))), Appl(varZ0,Cons(varZ1,varZ2))));
+            generatedRules.add(Rule(_appl(all_1,Nil()), Appl(varZ0,Nil())));
+            generatedRules.add(Rule(_appl(all_2,Nil()), Nil()));
+            generatedRules.add(Rule(_appl(all_2,Cons(varZ1,varZ2)), _appl(all_3,_appl(phi_s,varZ1),varZ2,Cons(varZ1,Nil()),Nil())));
 
-            generatedRules.addAll(Tools.encodeRuleList(%[[
-                                                          // all
-                                                          rule(@all@(Appl(@Z0@,@Z1@)), @all_1@(Appl(@Z0@,@all_2@(@Z1@)))),
-                                                          // all_1
-                                                          rule(@all_1@(Appl(@Z0@,BottomList(@Z@))), Bottom(Appl(@Z0@,@Z@))),
-                                                          rule(@all_1@(Appl(@Z0@,Cons(@Z1@,@Z2@))), Appl(@Z0@,Cons(@Z1@,@Z2@))),
-                                                          rule(@all_1@(Appl(@Z0@,Nil)) , Appl(@Z0@,Nil)),
+            generatedRules.add(Rule(_appl(all_3,Bottom(varX),varZ1,varZ2,varZ3), BottomList(_appl(rconcat,varZ2,varZ1))));
+            generatedRules.add(Rule(_appl(all_3,Appl(varX,varY),Nil(),varZ2,varZ3), _appl(reverse,Cons(Appl(varX,varY),varZ3))));
+            generatedRules.add(Rule(_appl(all_3,Appl(varX,varY),Cons(varXX,varYY),varZ2,varZ3), 
+                  _appl(all_3,_appl(phi_s,varXX),varYY,Cons(varXX,varZ2),Cons(Appl(varX,varY),varZ3))));
 
-                                                          rule(@all_2@(Nil()) , Nil()),
-                                                          rule(@all_2@(Cons(@Z1@,@Z2@)) , @all_3@(@phi_s@(@Z1@),@Z2@,Cons(@Z1@,Nil),Nil)),
-                                                          /*
-                                                           * all_3(Bottom(X),todo,rargs,rs_args) -> BottomList(rconcat(rargs,todo))
-                                                           * all_3(Appl(X,Y),Nil,rargs,rs_args) -> reverse(Cons(Appl(X,Y),rs_args))
-                                                           * all_3(Appl(X,Y), Cons(XX,YY), rargs, rs_args) -> 
-                                                           * all_3(rule47(XX), YY, Cons(XX,rargs), Cons(Appl(X,Y),rs_args))
-                                                           */ 
-                                                          rule(@all_3@(Bottom(@X@),@Z1@,@Z2@,@Z3@) , BottomList(@rconcat@(@Z2@,@Z1@))),
-                                                          rule(@all_3@(Appl(@X@,@Y@),Nil,@Z2@,@Z3@) , @reverse@(Cons(Appl(@X@,@Y@),@Z3@))),
-                                                          rule(@all_3@(Appl(@X@,@Y@),Cons(@XX@,@YY@),@Z2@,@Z3@) , @all_3@(@phi_s@(@XX@),@YY@,Cons(@XX@,@Z2@), Cons(Appl(@X@,@Y@),@Z3@)))
-                                                          ]]%,generatedSignature).getCollectionRuleList());
-
-            if(!generated_aux_functions) { 
+            if(!generated_aux_functions) {
               generated_aux_functions = true;
-              generatedRules.addAll(Tools.encodeRuleList(%[[
-                                                            rule(@append@(Nil,@Z@), Cons(@Z@,Nil)),
-                                                            rule(@append@(Cons(@X@,@Y@),@Z@), Cons(@X@,@append@(@Y@,@Z@))),
+              // append(Nil,Z) -> Cons(Z,Nil)
+              // append(Cons(X,Y),Z) -> Cons(X,append(Y,Z))
+              // reverse(Nil) -> Nil
+              // reverse(Cons(X,Y)) -> append(reverse(Y),X)
+              // rconcat(Nil,Z) -> Z
+              // rconcat(Cons(X,Y),Z) -> rconcat(Y,Cons(X,Z))
 
-                                                            rule(@reverse@(Nil), Nil),
-                                                            rule(@reverse@(Cons(@X@,@Y@)), @append@(@reverse@(@Y@),@X@)),
+              generatedRules.add(Rule(_appl(append,Nil(),varZ), Cons(varZ,Nil())));
+              generatedRules.add(Rule(_appl(append,Cons(varX,varY),varZ), Cons(varX,_appl(append,varY,varZ))));
+              generatedRules.add(Rule(_appl(reverse,Nil()), Nil()));
+              generatedRules.add(Rule(_appl(reverse,Cons(varX,varY)), _appl(append,_appl(reverse,varY),varX)));
+              generatedRules.add(Rule(_appl(rconcat,Nil(),varZ), varZ));
+              generatedRules.add(Rule(_appl(rconcat,Cons(varX,varY),varZ), _appl(rconcat,varY,Cons(varX,varZ))));
 
-                                                            rule(@rconcat@(Nil,@Z@), @Z@),
-                                                            rule(@rconcat@(Cons(@X@,@Y@),@Z@), @rconcat@(@Y@,Cons(@X@,@Z@)))
-                                                            ]]%,generatedSignature).getCollectionRuleList());
             }
-
           }
           strategySymbol = all;
         }
@@ -734,90 +712,84 @@ public class Compiler {
           String one = Tools.getName("one");
           if( !Main.options.metalevel ) {
             this.generatedSignature.addSymbol(one,Arrays.asList(Signature.DUMMY),Signature.DUMMY);
-            //         generatedSignature.put(one,1);
             for(String name : this.extractedSignature.getSymbolNames()) {
               int arity = this.extractedSignature.getArity(name);
               if(arity==0) {
-                generatedRules.add(Tools.encodeRule(%[rule(@one@(@name@), Bottom(@name@))]%,this.generatedSignature));
+                // one(name) -> Bottom(name)
+                generatedRules.add(Rule(_appl(one,_appl(name)), Bottom(_appl(name))));
               } else {
                 String one_n = one+"_"+name;
+                String one_n_1 = one_n + "_1";
 
-                {
-                  // main case
-                  // one(f(x1,...,xn)) -> one_n_1(phi_s(x1),x2,...,xn)
-                  String lx = "X1"; 
-                  String rx = phi_s+"(X1)"; 
-                  for(int i=2 ; i<=arity ; i++) {
-                    lx += ",X"+i;
-                    rx += ",X"+i;
-                  }
-                  generatedRules.add(Tools.encodeRule(%[rule(@one@(@name@(@lx@)), @one_n@_1(@rx@))]%,this.generatedSignature));
-                  // propagate Bottom  (otherwise not reduced and leads to bug in Sequence)
-                  generatedRules.add(Tools.encodeRule(%[rule(@one@(Bottom(@X@)), Bottom(@X@) )]%,this.generatedSignature));               
+                // main case
+                // one(f(x1,...,xn)) -> one_n_1(phi_s(x1),x2,...,xn)
+                Term[] a_lx = new Term[arity];
+                Term[] a_rx = new Term[arity];
+                for(int i=1 ; i<=arity ; i++) {
+                  Term Xi = `Var("X" + i);
+                  a_lx[i-1] = Xi;
+                  a_rx[i-1] = (i==1)?_appl(phi_s, Xi):Xi;
                 }
+                generatedRules.add(Rule(_appl(one,_appl(name, a_lx)), _appl(one_n_1, a_rx)));
+                
+                // propagate Bottom  (otherwise not reduced and leads to bug in Sequence)
+                // one(Bottom(X)) -> Bottom(X)
+                generatedRules.add(Rule(_appl(one,Bottom(varX)), Bottom(varX)));
+
 
                 for(int i=1 ; i<=arity ; i++) {
-                  String one_n_i = one_n + "_"+i;
+                  String one_n_i = one_n + "_" + i;
+                  String one_n_ii = one_n + "_"+(i+1);
                   List<String> one_n_args = new ArrayList<String>();
+                  List<String> one_n_ii_args = new ArrayList<String>();
                   for(int ni=0; ni<arity; ni++){
                     one_n_args.add(Signature.DUMMY);
+                    one_n_ii_args.add(Signature.DUMMY);
                   }
                   this.generatedSignature.addSymbol(one_n_i,one_n_args,Signature.DUMMY);
-                  //               generatedSignature.put(one_n_i,arity);
                   if(i<arity) {
+                    this.generatedSignature.addSymbol(one_n_ii,one_n_ii_args,Signature.DUMMY);
                     // one_f_i(Bottom(x1),...,Bottom(xi),xj,...,xn)
                     // -> one_f_(i+1)(Bottom(x1),...,Bottom(xi),phi_s(x_i+1),...,xn)
-                    String lx = "Bottom(X1)";
-                    String rx = "Bottom(X1)";
-                    for(int j=2; j<=arity;j++) {
+                    for(int j=1 ; j<=i ; j++) {
+                      Term Xj = Var("X"+j);
                       if(j<=i) {
-                        lx += ",Bottom(X"+j+")";
-                        rx += ",Bottom(X"+j+")";
-                      } else if(j==i+1) {
-                        lx += ",X"+j;
-                        rx += ","+phi_s+"(X"+j+")";
+                        a_lx[j-1] = Bottom(Xj);
+                        a_rx[j-1] = Bottom(Xj);
                       } else {
-                        lx += ",X"+j;
-                        rx += ",X"+j;
+                        a_lx[j-1] = Xj;
+                        a_rx[j-1] = (j==i+1)?_appl(phi_s,Xj):Xj;
                       }
                     }
-                    String one_n_ii = one_n + "_"+(i+1);
 
-                    List<String> one_n_ii_args = new ArrayList<String>();
-                    for(int nii=0; nii<arity; nii++){
-                      one_n_ii_args.add(Signature.DUMMY);
-                    }
-                    this.generatedSignature.addSymbol(one_n_ii,one_n_ii_args,Signature.DUMMY);
-                    //                 generatedSignature.put(one_n_ii,arity);
-                    generatedRules.add(Tools.encodeRule(%[rule(@one_n_i@(@lx@), @one_n_ii@(@rx@))]%,this.generatedSignature));
+                    // one_n_i(lx) -> one_n_ii(rx)
+                    generatedRules.add(Rule(_appl(one_n_i,a_lx), _appl(one_n_ii, a_rx)));
                   } else {
                     // one_f_n(Bottom(x1),...,Bottom(xn)) -> Bottom(f(x1,...,xn))
-                    String lx = "Bottom(X1)";
-                    String rx = "X1";
-                    for(int j=2; j<=arity;j++) {
-                      lx += ",Bottom(X"+j+")";
-                      rx += ",X"+j;
+                    for(int j=1 ; j<=arity ; j++) {
+                      Term Xj = Var("X"+j);
+                      a_lx[j-1] = Bottom(Xj);
+                      a_rx[j-1] = Xj;
                     }
-                    generatedRules.add(Tools.encodeRule(%[rule(@one_n_i@(@lx@), Bottom(@name@(@rx@)))]%,this.generatedSignature));
+                    generatedRules.add(Rule(_appl(one_n_i,a_lx), Bottom(_appl(name, a_rx))));
                   }
 
                   // one_f_i(Bottom(x1),...,xi@!Bottom(_),xj,...,xn)
                   // -> f(x1,...,xi,...,xn)
-                  String lx = (i==1)?%[at(X1,anti(Bottom(@Y@)))]%:%[Bottom(X1)]%;
-                  String rx = "X1";
-                  for(int j=2; j<=arity;j++) {
+                  for(int j=1 ; j<=arity ; j++) {
+                    Term Xj = Var("X"+j);
                     if(j<i) {
-                      lx += ",Bottom(X"+j+")";
-                      rx += ",X"+j;
+                      a_lx[j-1] = Bottom(Xj);
                     } else if(j==i) {
-                      lx += ",at(X"+j+",anti(Bottom("+Y+")))";
-                      rx += ",X"+j;
+                      a_lx[j-1] = At(Xj,Anti(Bottom(varY)));
                     } else {
-                      lx += ",X"+j;
-                      rx += ",X"+j;
+                      a_lx[j-1] = Xj;
                     }
+                    a_rx[j-1] = Xj;
                   }
-                  generatedRules.add(Tools.encodeRule(%[rule(@one_n_i@(@lx@), @name@(@rx@))]%,this.generatedSignature));
+
+                  // one_n_i(lx) -> name(rx)
+                  generatedRules.add(Rule(_appl(one_n_i,a_lx), _appl(name, a_rx)));
 
                 }
               }
@@ -837,39 +809,39 @@ public class Compiler {
             generatedSignature.addSymbol(append,Arrays.asList(Signature.METALIST,Signature.METATERM),Signature.METALIST);
             generatedSignature.addSymbol(reverse,Arrays.asList(Signature.METALIST),Signature.METALIST);
             generatedSignature.addSymbol(rconcat,Arrays.asList(Signature.METALIST,Signature.METALIST),Signature.METALIST);
-
-            generatedRules.addAll(Tools.encodeRuleList(%[[
-                                                          // one
-                                                          rule(@one@(Appl(@Z0@,@Z1@)), @one_1@(Appl(@Z0@,@one_2@(@Z1@)))),
-                                                          // one_1
-                                                          rule(@one_1@(Appl(@Z0@,BottomList(@Z@))), Bottom(Appl(@Z0@,@Z@))),
-                                                          rule(@one_1@(Appl(@Z0@,Cons(@X@,@Y@))), Appl(@Z0@,Cons(@X@,@Y@))),
-                                                          // one_2
-                                                          rule(@one_2@(Nil()), BottomList(Nil())),
-                                                          rule(@one_2@(Cons(@X@,@Y@)), @one_3@(@phi_s@(@X@),@Y@,Cons(@X@,Nil))),
-                                                          // one_3
-                                                          /*
-                                                           * one_3(Bottom(X),Nil,rargs) -> BottomList(reverse(rargs))
-                                                           * one_3(Bottom(X),Cons(head,tail),rargs) -> ONE(head, tail, Cons(head,rargs))
-                                                           * one_3(Appl(X,Y),todo,Cons(last,rargs)) -> rconcat(rargs,Cons(Appl(X,Y),todo))
-                                                           */
-                                                          rule(@one_3@(Bottom(@Z@),Nil, @Z2@), BottomList(@reverse@(@Z2@))),
-                                                          rule(@one_3@(Bottom(@Z@),Cons(@XX@,@YY@),@Z2@), @one_3@(@XX@, @YY@, Cons(@XX@,@Z2@))),
-                                                          rule(@one_3@(Appl(@X@,@Y@),@Z1@, Cons(@Z2@,@Z3@)), @rconcat@(@Z3@, Cons(Appl(@X@,@Y@),@Z1@)))
-                                                          ]]%,generatedSignature).getCollectionRuleList());
+            // one(Appl(Z0,Z1)) -> one_1(Appl(Z0,one_2(Z1)))
+            generatedRules.add(Rule(_appl(one,Appl(varZ0,varZ1)), _appl(one_1,Appl(varZ0,_appl(one_2,varZ1)))));
+            // one_1(Appl(Z0,BottomList(Z))) -> Bottom(Appl(Z0,Z))
+            // one_1(Appl(Z0,Cons(Z1,Z2))) -> Appl(Z0,Cons(Z1,Z2))
+            generatedRules.add(Rule(_appl(one_1,Appl(varZ0,BottomList(varZ))), Bottom(Appl(varZ0,varZ))));
+            generatedRules.add(Rule(_appl(one_1,Appl(varZ0,Cons(varZ1,varZ2))), Appl(varZ0,Cons(varZ1,varZ2))));
+            // one_2(Nil) -> BottomList(Nil)
+            // one_2(Cons(X,Y)) -> one_3(phi_s(X),Y,Cons(X,Nil))
+            generatedRules.add(Rule(_appl(one_2,Nil()), BottomList(Nil())));
+            generatedRules.add(Rule(_appl(one_2,Cons(varZ1,varZ2)), _appl(one_3,_appl(phi_s,varZ1),varZ2,Cons(varZ1,Nil()))));
+            // one_3(Bottom(X),Nil,rargs) -> BottomList(reverse(rargs))
+            // one_3(Bottom(X),Cons(head,tail),rargs) -> ONE(head, tail, Cons(head,rargs))
+            // one_3(Appl(X,Y),todo,Cons(last,rargs)) -> rconcat(rargs,Cons(Appl(X,Y),todo))
+            generatedRules.add(Rule(_appl(one_3,Bottom(varZ),Nil(),varZ2), BottomList(_appl(reverse,varZ2))));
+            generatedRules.add(Rule(_appl(one_3,Bottom(varZ),Cons(varXX,varYY),varZ2), _appl(one_3,varXX,varYY,Cons(varXX,varZ2))));
+            generatedRules.add(Rule(_appl(one_3,Appl(varX,varY),varZ1,Cons(varZ2,varZ3)), _appl(rconcat,varZ3,Cons(Appl(varX,varY),varZ1))));
 
             if(!generated_aux_functions) { 
               generated_aux_functions = true;
-              generatedRules.addAll(Tools.encodeRuleList(%[[
-                                                            rule(@append@(Nil,@Z@), Cons(@Z@,Nil)),
-                                                            rule(@append@(Cons(@X@,@Y@),@Z@), Cons(@X@,@append@(@Y@,@Z@))),
+              // append(Nil,Z) -> Cons(Z,Nil)
+              // append(Cons(X,Y),Z) -> Cons(X,append(Y,Z))
+              // reverse(Nil) -> Nil
+              // reverse(Cons(X,Y)) -> append(reverse(Y),X)
+              // rconcat(Nil,Z) -> Z
+              // rconcat(Cons(X,Y),Z) -> rconcat(Y,Cons(X,Z))
 
-                                                            rule(@reverse@(Nil), Nil),
-                                                            rule(@reverse@(Cons(@X@,@Y@)), @append@(@reverse@(@Y@),@X@)),
+              generatedRules.add(Rule(_appl(append,Nil(),varZ), Cons(varZ,Nil())));
+              generatedRules.add(Rule(_appl(append,Cons(varX,varY),varZ), Cons(varX,_appl(append,varY,varZ))));
+              generatedRules.add(Rule(_appl(reverse,Nil()), Nil()));
+              generatedRules.add(Rule(_appl(reverse,Cons(varX,varY)), _appl(append,_appl(reverse,varY),varX)));
+              generatedRules.add(Rule(_appl(rconcat,Nil(),varZ), varZ));
+              generatedRules.add(Rule(_appl(rconcat,Cons(varX,varY),varZ), _appl(rconcat,varY,Cons(varX,varZ))));
 
-                                                            rule(@rconcat@(Nil,@Z@), @Z@),
-                                                            rule(@rconcat@(Cons(@X@,@Y@),@Z@), @rconcat@(@Y@,Cons(@X@,@Z@)))
-                                                            ]]%,generatedSignature).getCollectionRuleList());
             }
           }
           strategySymbol = one;
@@ -878,7 +850,7 @@ public class Compiler {
       this.strategySymbols.put(strat,strategySymbol);
       this.storedTRSs.put(strat,generatedRules);
     } // strategy not yet compiled
-
+        
     // add the generated rules to the rules for the global strategy only if not already existing
     for(Rule rule:generatedRules) {
       if(!rules.contains(rule)) {
