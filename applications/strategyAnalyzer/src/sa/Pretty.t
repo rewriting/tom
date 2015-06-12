@@ -168,9 +168,9 @@ public class Pretty {
 
   public static String generateTom(String strategyName, List<Rule> bag, Signature sig, String classname) {
     System.out.println("--------- TOM ----------------------");
-//     System.out.println("RULEs: " + toString(bag));
+    //     System.out.println("RULEs: " + toString(bag));
 
-        StringBuffer sb = new StringBuffer();
+    StringBuffer sb = new StringBuffer();
     String lowercaseClassname = classname.toLowerCase();
     sb.append(
         %[
@@ -180,18 +180,24 @@ public class @classname@ {
   %gom {
     module m
       abstract syntax
-      T = 
 ]%);
-    for(String name: sig.getSymbolNames()) {
-      int arity = sig.getArity(name);
-      String args = "";
-      for(int i=0 ; i<arity ; i++) {
-        args += "kid"+i+":T";
-        if(i+1<arity) { args += ","; }
+    // generate signature
+    for(String typeName: sig.getTypeNames()) {
+      sb.append("      " + typeName + " = \n");
+      for(String name: sig.getSymbolNames(typeName)) {
+        int arity = sig.getArity(name);
+        List<String> profile = sig.getProfile(name);
+        String args = "";
+        for(int i=0 ; i<arity ; i++) {
+          args += "kid" + i + "_" + profile.get(i) + ":" + profile.get(i);
+          if(i+1<arity) { args += ","; }
+        }
+        sb.append("        | " + name + "(" + args + ")\n");
       }
-      sb.append("        | " + name + "(" + args + ")\n");
+
     }
 
+    // generate rules
     sb.append("      module m:rules() {\n");
     for(Rule r:bag) {
       sb.append("        " + toString(r) + "\n");

@@ -140,7 +140,11 @@ public class Tools {
     %match(t) {
       Appl(symb,args) -> {
         String symbName = "symb_" + `symb;
-        signature.addSymbol(symbName,new ArrayList<String>(),Signature.DUMMY);
+        if(!Main.options.metalevel) {
+          signature.addSymbol(symbName,new ArrayList<String>(),Signature.DUMMY);
+        } else {
+          signature.addSymbol(symbName,new ArrayList<String>(),Signature.METASYMBOL);
+        }
         return "Appl(" + symbName + "," + encodeConsNil(`args,signature) + ")";
       }
 

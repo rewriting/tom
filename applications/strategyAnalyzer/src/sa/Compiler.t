@@ -99,6 +99,7 @@ public class Compiler {
       String strategySymbol = "NONE";
       if(Main.options.metalevel) {
         strategySymbol=this.compileStrat(strategy,this.generatedTRSs.get(strategyName));
+        this.generateTriggerRule(strategyName,strategySymbol,this.generatedTRSs.get(strategyName));
       } else {
         strategySymbol=this.compileStrat(strategy,this.generatedTRSs.get(strategyName));
         this.generateEquality(this.generatedTRSs.get(strategyName));
@@ -235,6 +236,7 @@ public class Compiler {
   private Term BottomList(Term t) { return _appl(Signature.BOTTOMLIST,t); }
   private Term True() { return _appl(Signature.TRUE); }
   private Term False() { return _appl(Signature.FALSE); }
+  private Term And(Term t1, Term t2) { return _appl(Signature.AND,t1,t2); }
   private Term Appl(Term t1, Term t2) { return _appl(Signature.APPL,t1,t2); }
   private Rule Rule(Term lhs, Term rhs) { return `Rule(lhs,rhs); }
   private Term Nil() { return _appl(Signature.NIL); }
@@ -267,15 +269,15 @@ public class Compiler {
       generatedRules = this.storedTRSs.get(strat);
       System.out.println("ALREADY EXISTING: "+strat);
     } else {
-      Term varX = Var(Tools.getName("X"));
-      Term varY = Var(Tools.getName("Y"));
-      Term varXX = Var(Tools.getName("XX"));
-      Term varYY = Var(Tools.getName("YY"));
-      Term varZ = Var(Tools.getName("Z"));
-      Term varZ0 = Var(Tools.getName("Z0"));
-      Term varZ1 = Var(Tools.getName("Z1"));
-      Term varZ2 = Var(Tools.getName("Z2"));
-      Term varZ3 = Var(Tools.getName("Z3"));
+      Term X = Var(Tools.getName("X"));
+      Term Y = Var(Tools.getName("Y"));
+      Term XX = Var(Tools.getName("XX"));
+      Term YY = Var(Tools.getName("YY"));
+      Term Z = Var(Tools.getName("Z"));
+      Term Z0 = Var(Tools.getName("Z0"));
+      Term Z1 = Var(Tools.getName("Z1"));
+      Term Z2 = Var(Tools.getName("Z2"));
+      Term Z3 = Var(Tools.getName("Z3"));
 
       %match(strat) {
         StratExp((Set|List)(rulelist)) -> {
@@ -303,7 +305,7 @@ public class Compiler {
               RuleList(_*,Rule(lhs,rhs),_*) -> {
                 // propagate failure; if the rule is applied to the result of a strategy that failed then the result is a failure
                 // rule(Bot(X)) -> Bot(X)
-                generatedRules.add(Rule(_appl(rule,Bottom(varX)), Bottom(varX)));
+                generatedRules.add(Rule(_appl(rule,Bottom(X)), Bottom(X)));
 
                 TermList result = this.linearize(`lhs);
 
@@ -312,8 +314,8 @@ public class Compiler {
                     // if already linear lhs
                     // rule(X@lhs) -> rhs
                     // rule(X@!lhs) -> Bot(X)
-                    generatedRules.add(Rule(_appl(rule,At(varX,`lhs)), `rhs));
-                    generatedRules.add(Rule(_appl(rule,At(varX,Anti(`lhs))), Bottom(varX)));
+                    generatedRules.add(Rule(_appl(rule,At(X,`lhs)), `rhs));
+                    generatedRules.add(Rule(_appl(rule,At(X,Anti(`lhs))), Bottom(X)));
                   }
 
                   TermList(linearlhs, cond@!Appl("True",TermList())) -> {
@@ -322,10 +324,10 @@ public class Compiler {
                     // rule(X@!linearlhs) -> Bot(X)
                     // cr(linearlhs, True) -> rhs
                     // cr(X@linearlhs, False) -> Bot(X)
-                    generatedRules.add(Rule(_appl(rule,At(varX,`linearlhs)), _appl(cr, varX, `cond)));
-                    generatedRules.add(Rule(_appl(rule,At(varX,Anti(`linearlhs))), Bottom(varX)));
+                    generatedRules.add(Rule(_appl(rule,At(X,`linearlhs)), _appl(cr, X, `cond)));
+                    generatedRules.add(Rule(_appl(rule,At(X,Anti(`linearlhs))), Bottom(X)));
                     generatedRules.add(Rule(_appl(cr,`linearlhs, True()), `rhs));
-                    generatedRules.add(Rule(_appl(cr,At(varX,`linearlhs),False()), Bottom(varX)));
+                    generatedRules.add(Rule(_appl(cr,At(X,`linearlhs),False()), Bottom(X)));
                   }
                 }
               }
@@ -339,7 +341,7 @@ public class Compiler {
               RuleList(_*,Rule(lhs,rhs),_*) -> {
                 // propagate failure
                 // rule(Bot(X)) -> Bot(X)
-                generatedRules.add(Rule(_appl(rule,Bottom(varX)), Bottom(varX)));
+                generatedRules.add(Rule(_appl(rule,Bottom(X)), Bottom(X)));
 
                 TermList result = this.linearize(`lhs);
                 Term mlhs = Tools.metaEncodeConsNil(`lhs,generatedSignature);
@@ -350,8 +352,8 @@ public class Compiler {
                     // if already linear lhs
                     // rule(X@mlhs) -> mrhs
                     // rule(X@!mlhs) -> Bot(X)
-                    generatedRules.add(Rule(_appl(rule,At(varX,mlhs)), mrhs));
-                    generatedRules.add(Rule(_appl(rule,At(varX,Anti(mlhs))), Bottom(varX)));
+                    generatedRules.add(Rule(_appl(rule,At(X,mlhs)), mrhs));
+                    generatedRules.add(Rule(_appl(rule,At(X,Anti(mlhs))), Bottom(X)));
                   }
 
                   TermList(linearlhs, cond@!Appl("True",TermList())) -> {
@@ -361,15 +363,15 @@ public class Compiler {
                     // rule(X@!mlinearlhs) -> Bot(X)
                     // cr(mlinearlhs, True) -> mrhs
                     // cr(X@mlinearlhs, False) -> Bot(X)
-                    generatedRules.add(Rule(_appl(rule,At(varX,mlinearlhs)), _appl(cr,varX,`cond)));
-                    generatedRules.add(Rule(_appl(rule,At(varX,Anti(mlinearlhs))), Bottom(varX)));
+                    generatedRules.add(Rule(_appl(rule,At(X,mlinearlhs)), _appl(cr,X,`cond)));
+                    generatedRules.add(Rule(_appl(rule,At(X,Anti(mlinearlhs))), Bottom(X)));
                     generatedRules.add(Rule(_appl(cr,mlinearlhs, True()), mrhs));
-                    generatedRules.add(Rule(_appl(cr,At(varX,mlinearlhs), False()), Bottom(varX)));
+                    generatedRules.add(Rule(_appl(cr,At(X,mlinearlhs), False()), Bottom(X)));
                   }
                 }
 
                 // TODO: non-linear anti-pattern
-                // generatedRules.add(`Rule(Appl(rule,TermList(At(varX,Anti(mlhs)))),botX));
+                // generatedRules.add(`Rule(Appl(rule,TermList(At(X,Anti(mlhs)))),botX));
               }
             }
 
@@ -387,20 +389,21 @@ public class Compiler {
         StratMu(name,s) -> {
           try {
             String mu = Tools.getName("mu");
-            this.generatedSignature.addSymbol(mu,Arrays.asList(Signature.DUMMY),Signature.DUMMY);
             Strat newStrat = `TopDown(ReplaceMuVar(name,mu)).visitLight(`s);
             String phi_s = compileStrat(newStrat,generatedRules);
             if(!Main.options.metalevel) {
+              this.generatedSignature.addSymbol(mu,Arrays.asList(Signature.DUMMY),Signature.DUMMY);
               // mu(X@!Bot(Y)) -> phi_s(X)
               // mu(Bot(X)) -> Bot(X)
-              generatedRules.add(Rule(_appl(mu,At(varX,Anti(Bottom(varY)))), _appl(phi_s,varX)));
-              generatedRules.add(Rule(_appl(mu,Bottom(varX)), Bottom(varX)));
+              generatedRules.add(Rule(_appl(mu,At(X,Anti(Bottom(Y)))), _appl(phi_s,X)));
+              generatedRules.add(Rule(_appl(mu,Bottom(X)), Bottom(X)));
             } else {
               // META-LEVEL
+              this.generatedSignature.addSymbol(mu,Arrays.asList(Signature.METATERM),Signature.METATERM);
               // mu(Appl(Y,Z)) -> phi_s(Appl(Y,Z))
               // mu(Bot(X)) -> Bot(X)
-              generatedRules.add(Rule(_appl(mu,Appl(varY,varZ)), _appl(phi_s,Appl(varY,varZ))));
-              generatedRules.add(Rule(_appl(mu,Bottom(varX)), Bottom(varX)));
+              generatedRules.add(Rule(_appl(mu,Appl(Y,Z)), _appl(phi_s,Appl(Y,Z))));
+              generatedRules.add(Rule(_appl(mu,Bottom(X)), Bottom(X)));
             }
             strategySymbol = phi_s;
           } catch(VisitFailure e) {
@@ -423,15 +426,15 @@ public class Compiler {
 
               // id(X@!Bot(Y)) -> X
               // id(Bot(X)) -> Bot(X)
-              generatedRules.add(Rule(_appl(id,At(varX,Anti(Bottom(varY)))), varX));
-              generatedRules.add(Rule(_appl(id,Bottom(varX)), Bottom(varX)));
+              generatedRules.add(Rule(_appl(id,At(X,Anti(Bottom(Y)))), X));
+              generatedRules.add(Rule(_appl(id,Bottom(X)), Bottom(X)));
             } else { 
               // Bottom of Bottom is Bottom
               // this is not necessary if exact reduction - in this case Bottom is propagated immediately 
               // id(X) -> X
               // Bot(Bot(X)) -> Bot(X)
-              generatedRules.add(Rule(_appl(id,varX), varX));
-              generatedRules.add(Rule(Bottom(Bottom(varX)), Bottom(varX)));
+              generatedRules.add(Rule(_appl(id,X), X));
+              generatedRules.add(Rule(Bottom(Bottom(X)), Bottom(X)));
             }
           } else {
             // META-LEVEL
@@ -439,13 +442,13 @@ public class Compiler {
             if( !Main.options.approx ) {
               // id(Appl(X,Y)) -> Appl(X,Y)
               // id(Bot(X)) -> Bot(X)
-              generatedRules.add(Rule(_appl(id,Appl(varX,varY)), Appl(varX,varY)));
-              generatedRules.add(Rule(_appl(id,Bottom(varX)), Bottom(varX)));
+              generatedRules.add(Rule(_appl(id,Appl(X,Y)), Appl(X,Y)));
+              generatedRules.add(Rule(_appl(id,Bottom(X)), Bottom(X)));
             } else { 
               // id(X) -> X
               // Bot(Bot(X)) -> Bot(X)
-              generatedRules.add(Rule(_appl(id,varX), varX));
-              generatedRules.add(Rule(Bottom(Bottom(varX)), Bottom(varX)));
+              generatedRules.add(Rule(_appl(id,X), X));
+              generatedRules.add(Rule(Bottom(Bottom(X)), Bottom(X)));
             }
           }
           strategySymbol = id;
@@ -453,31 +456,32 @@ public class Compiler {
 
         StratFail() -> {
           String fail = Tools.getName("fail");
-          this.generatedSignature.addSymbol(fail,Arrays.asList(Signature.DUMMY),Signature.DUMMY);
           if( !Main.options.metalevel ) {
+            this.generatedSignature.addSymbol(fail,Arrays.asList(Signature.DUMMY),Signature.DUMMY);
             if( !Main.options.approx ) {
               // fail(X@!Bot(Y)) -> Bot(X)
               // fail(Bot(X)) -> Bot(X)
-              generatedRules.add(Rule(_appl(fail,At(varX,Anti(Bottom(varY)))), Bottom(varX)));
-              generatedRules.add(Rule(_appl(fail,Bottom(varX)), Bottom(varX)));
+              generatedRules.add(Rule(_appl(fail,At(X,Anti(Bottom(Y)))), Bottom(X)));
+              generatedRules.add(Rule(_appl(fail,Bottom(X)), Bottom(X)));
             } else { 
               // fail(X) -> Bot(X)
               // Bot(Bot(X)) -> Bot(X)
-              generatedRules.add(Rule(_appl(fail,varX), Bottom(varX)));
-              generatedRules.add(Rule(Bottom(Bottom(varX)), Bottom(varX)));
+              generatedRules.add(Rule(_appl(fail,X), Bottom(X)));
+              generatedRules.add(Rule(Bottom(Bottom(X)), Bottom(X)));
             }
           } else {
             // META-LEVEL
+            this.generatedSignature.addSymbol(fail,Arrays.asList(Signature.METATERM),Signature.METATERM);
             if( !Main.options.approx ) {
               // fail(Appl(X,Y)) -> Bot(Appl(X,Y))
               // fail(Bot(X)) -> Bot(X)
-              generatedRules.add(Rule(_appl(fail,Appl(varX,varY)), Bottom(Appl(varX,varY))));
-              generatedRules.add(Rule(_appl(fail,Bottom(varX)), Bottom(varX)));
+              generatedRules.add(Rule(_appl(fail,Appl(X,Y)), Bottom(Appl(X,Y))));
+              generatedRules.add(Rule(_appl(fail,Bottom(X)), Bottom(X)));
             } else { 
               // fail(X) -> Bot(X)
               // Bot(Bot(X)) -> Bot(X)
-              generatedRules.add(Rule(_appl(fail,varX), Bottom(varX)));
-              generatedRules.add(Rule(Bottom(Bottom(varX)), Bottom(varX)));
+              generatedRules.add(Rule(_appl(fail,X), Bottom(X)));
+              generatedRules.add(Rule(Bottom(Bottom(X)), Bottom(X)));
             }
 
           }
@@ -499,20 +503,20 @@ public class Compiler {
               // seq(Bot(X)) -> Bot(X)
               // seq2(X@!Bot(Y),Z) -> X
               // seq2(Bot(Y),X) -> Bot(X)
-              generatedRules.add(Rule(_appl(seq,At(varX,Anti(Bottom(varY)))), _appl(seq2,_appl(n2,_appl(n1,varX)),varX)));
-              generatedRules.add(Rule(_appl(seq,Bottom(varX)), Bottom(varX)));
-              generatedRules.add(Rule(_appl(seq2,At(varX,Anti(Bottom(varY))),varZ), varX));
-              generatedRules.add(Rule(_appl(seq2,Bottom(varY),varX), Bottom(varX)));
+              generatedRules.add(Rule(_appl(seq,At(X,Anti(Bottom(Y)))), _appl(seq2,_appl(n2,_appl(n1,X)),X)));
+              generatedRules.add(Rule(_appl(seq,Bottom(X)), Bottom(X)));
+              generatedRules.add(Rule(_appl(seq2,At(X,Anti(Bottom(Y))),Z), X));
+              generatedRules.add(Rule(_appl(seq2,Bottom(Y),X), Bottom(X)));
 
             } else { 
               // seq(X) -> seq2(n2(n1(X)),X)
               // Bot(Bot(X)) -> Bot(X)
               // seq2(X@!Bot(Y),Z) -> X
               // seq2(Bot(Y),X) -> Bot(X)
-              generatedRules.add(Rule(_appl(seq,varX), _appl(seq2,_appl(n2,_appl(n1,varX)),varX)));
-              generatedRules.add(Rule(Bottom(Bottom(varX)), Bottom(varX)));
-              generatedRules.add(Rule(_appl(seq2,At(varX,Anti(Bottom(varY))),varZ), varX));
-              generatedRules.add(Rule(_appl(seq2,Bottom(varY),varX), Bottom(varX)));
+              generatedRules.add(Rule(_appl(seq,X), _appl(seq2,_appl(n2,_appl(n1,X)),X)));
+              generatedRules.add(Rule(Bottom(Bottom(X)), Bottom(X)));
+              generatedRules.add(Rule(_appl(seq2,At(X,Anti(Bottom(Y))),Z), X));
+              generatedRules.add(Rule(_appl(seq2,Bottom(Y),X), Bottom(X)));
             }
           } else {
             // META-LEVEL
@@ -523,14 +527,14 @@ public class Compiler {
               // seq(Bot(X)) -> Bot(X)
               // seq2(Appl(X,Y),Z) -> Appl(X,Y)
               // seq2(Bot(Y),X) -> Bot(X)
-              generatedRules.add(Rule(Appl(varX,varY), _appl(seq2,_appl(n2,_appl(n1,Appl(varX,varY))),Appl(varX,varY))));
-              generatedRules.add(Rule(_appl(seq,Bottom(varX)), Bottom(varX)));
-              generatedRules.add(Rule(_appl(seq2,Appl(varX,varY),varZ), Appl(varX,varY)));
-              generatedRules.add(Rule(_appl(seq2,Bottom(varY),varX), Bottom(varX)));
+              generatedRules.add(Rule(Appl(X,Y), _appl(seq2,_appl(n2,_appl(n1,Appl(X,Y))),Appl(X,Y))));
+              generatedRules.add(Rule(_appl(seq,Bottom(X)), Bottom(X)));
+              generatedRules.add(Rule(_appl(seq2,Appl(X,Y),Z), Appl(X,Y)));
+              generatedRules.add(Rule(_appl(seq2,Bottom(Y),X), Bottom(X)));
             } else { 
               // CHECK HERE
               // seq(X) -> n2(n1(X))
-              generatedRules.add(Rule(varX, _appl(n2,_appl(n1,varX))));
+              generatedRules.add(Rule(X, _appl(n2,_appl(n1,X))));
             }
 
           }
@@ -550,10 +554,10 @@ public class Compiler {
             // choice(Bot(X)) -> Bot(X)
             // choice2(X@!Bot(Y)) -> X
             // choice2(Bot(X)) -> n2(X)
-            generatedRules.add(Rule(_appl(choice,At(varX,Anti(Bottom(varY)))), _appl(choice2,_appl(n1,varX))));
-            generatedRules.add(Rule(_appl(choice,Bottom(varX)), Bottom(varX)));
-            generatedRules.add(Rule(_appl(choice2,At(varX,Anti(Bottom(varY)))), varX));
-            generatedRules.add(Rule(_appl(choice2,Bottom(varX)), _appl(n2,varX)));
+            generatedRules.add(Rule(_appl(choice,At(X,Anti(Bottom(Y)))), _appl(choice2,_appl(n1,X))));
+            generatedRules.add(Rule(_appl(choice,Bottom(X)), Bottom(X)));
+            generatedRules.add(Rule(_appl(choice2,At(X,Anti(Bottom(Y)))), X));
+            generatedRules.add(Rule(_appl(choice2,Bottom(X)), _appl(n2,X)));
           } else {
             // META-LEVEL
             this.generatedSignature.addSymbol(choice,Arrays.asList(Signature.METATERM),Signature.METATERM);
@@ -563,17 +567,17 @@ public class Compiler {
               // choice(Bot(X)) -> Bot(X)
               // choice2(Appl(X,Y) -> Appl(X,Y)
               // choice2(Bot(X)) -> n2(X)
-              generatedRules.add(Rule(_appl(choice,Appl(varX,varY)), _appl(choice2,_appl(n1,Appl(varX,varY)))));
-              generatedRules.add(Rule(_appl(choice,Bottom(varX)), Bottom(varX)));
-              generatedRules.add(Rule(_appl(choice2,Appl(varX,varY)), Appl(varX,varY)));
-              generatedRules.add(Rule(_appl(choice2,Bottom(varX)), _appl(n2,varX)));
+              generatedRules.add(Rule(_appl(choice,Appl(X,Y)), _appl(choice2,_appl(n1,Appl(X,Y)))));
+              generatedRules.add(Rule(_appl(choice,Bottom(X)), Bottom(X)));
+              generatedRules.add(Rule(_appl(choice2,Appl(X,Y)), Appl(X,Y)));
+              generatedRules.add(Rule(_appl(choice2,Bottom(X)), _appl(n2,X)));
             } else {
               // choice(X) -> choice2(n1(X))
               // choice2(Appl(X,Y) -> Appl(X,Y)
               // choice2(Bot(X)) -> n2(X)
-              generatedRules.add(Rule(_appl(choice,varX), _appl(choice2,_appl(n1,varX))));
-              generatedRules.add(Rule(_appl(choice2,Appl(varX,varY)), Appl(varX,varY)));
-              generatedRules.add(Rule(_appl(choice2,Bottom(varX)), _appl(n2,varX)));
+              generatedRules.add(Rule(_appl(choice,X), _appl(choice2,_appl(n1,X))));
+              generatedRules.add(Rule(_appl(choice2,Appl(X,Y)), Appl(X,Y)));
+              generatedRules.add(Rule(_appl(choice2,Bottom(X)), _appl(n2,X)));
             }
           }
           strategySymbol = choice;
@@ -589,7 +593,6 @@ public class Compiler {
               int arity_all = arity+1;
               if(arity==0) {
                 // all(name) -> name
-                //generatedRules.add(Tools.encodeRule(%[rule(@all@(@name@), @name@)]%,this.generatedSignature));
                 generatedRules.add(Rule(_appl(all,_appl(name)), _appl(name)));
               } else {
                 String all_n = all+"_"+name;
@@ -613,7 +616,7 @@ public class Compiler {
 
                 // propagate Bottom  (otherwise not reduced and leads to bug in Sequence)
                 // all(Bot(X)) -> Bot(X)
-                generatedRules.add(Rule(_appl(all,Bottom(varX)), Bottom(varX)));
+                generatedRules.add(Rule(_appl(all,Bottom(X)), Bottom(X)));
 
                 // generate success rules
                 // all_g(X1@!Bottom(Y1),...,X_n@!Bottom(Y_n),_) -> g(X1,...,X_n)
@@ -625,7 +628,7 @@ public class Compiler {
                   a_lx[i] = At(Xi,Anti(Bottom(Yi)));
                   a_rx[i] = Xi;
                 }
-                a_lx[arity] = varZ;
+                a_lx[arity] = Z;
                 generatedRules.add(Rule(_appl(all_n,a_lx), _appl(name, a_rx)));
 
                 // generate failure rules
@@ -644,8 +647,8 @@ public class Compiler {
                       a_llx[j] = Xj;
                     }
                   }
-                  a_llx[arity] = varZ;
-                  generatedRules.add(Rule(_appl(all_n,a_llx), Bottom(varZ)));
+                  a_llx[arity] = Z;
+                  generatedRules.add(Rule(_appl(all_n,a_llx), Bottom(Z)));
                 }
               }
             }
@@ -674,17 +677,17 @@ public class Compiler {
             // all_3(Appl(X,Y),Nil,rargs,rs_args) -> reverse(Cons(Appl(X,Y),rs_args))
             // all_3(Appl(X,Y), Cons(XX,YY), rargs, rs_args) -> 
             // all_3(phi_s(XX), YY, Cons(XX,rargs), Cons(Appl(X,Y),rs_args))
-            generatedRules.add(Rule(_appl(all,Appl(varZ0,varZ1)), _appl(all_1,Appl(varZ0,_appl(all_2,varZ1)))));
-            generatedRules.add(Rule(_appl(all_1,Appl(varZ0,BottomList(varZ))), Bottom(Appl(varZ0,varZ))));
-            generatedRules.add(Rule(_appl(all_1,Appl(varZ0,Cons(varZ1,varZ2))), Appl(varZ0,Cons(varZ1,varZ2))));
-            generatedRules.add(Rule(_appl(all_1,Nil()), Appl(varZ0,Nil())));
+            generatedRules.add(Rule(_appl(all,Appl(Z0,Z1)), _appl(all_1,Appl(Z0,_appl(all_2,Z1)))));
+            generatedRules.add(Rule(_appl(all_1,Appl(Z0,BottomList(Z))), Bottom(Appl(Z0,Z))));
+            generatedRules.add(Rule(_appl(all_1,Appl(Z0,Cons(Z1,Z2))), Appl(Z0,Cons(Z1,Z2))));
+            generatedRules.add(Rule(_appl(all_1,Nil()), Appl(Z0,Nil())));
             generatedRules.add(Rule(_appl(all_2,Nil()), Nil()));
-            generatedRules.add(Rule(_appl(all_2,Cons(varZ1,varZ2)), _appl(all_3,_appl(phi_s,varZ1),varZ2,Cons(varZ1,Nil()),Nil())));
+            generatedRules.add(Rule(_appl(all_2,Cons(Z1,Z2)), _appl(all_3,_appl(phi_s,Z1),Z2,Cons(Z1,Nil()),Nil())));
 
-            generatedRules.add(Rule(_appl(all_3,Bottom(varX),varZ1,varZ2,varZ3), BottomList(_appl(rconcat,varZ2,varZ1))));
-            generatedRules.add(Rule(_appl(all_3,Appl(varX,varY),Nil(),varZ2,varZ3), _appl(reverse,Cons(Appl(varX,varY),varZ3))));
-            generatedRules.add(Rule(_appl(all_3,Appl(varX,varY),Cons(varXX,varYY),varZ2,varZ3), 
-                  _appl(all_3,_appl(phi_s,varXX),varYY,Cons(varXX,varZ2),Cons(Appl(varX,varY),varZ3))));
+            generatedRules.add(Rule(_appl(all_3,Bottom(X),Z1,Z2,Z3), BottomList(_appl(rconcat,Z2,Z1))));
+            generatedRules.add(Rule(_appl(all_3,Appl(X,Y),Nil(),Z2,Z3), _appl(reverse,Cons(Appl(X,Y),Z3))));
+            generatedRules.add(Rule(_appl(all_3,Appl(X,Y),Cons(XX,YY),Z2,Z3), 
+                  _appl(all_3,_appl(phi_s,XX),YY,Cons(XX,Z2),Cons(Appl(X,Y),Z3))));
 
             if(!generated_aux_functions) {
               generated_aux_functions = true;
@@ -695,12 +698,12 @@ public class Compiler {
               // rconcat(Nil,Z) -> Z
               // rconcat(Cons(X,Y),Z) -> rconcat(Y,Cons(X,Z))
 
-              generatedRules.add(Rule(_appl(append,Nil(),varZ), Cons(varZ,Nil())));
-              generatedRules.add(Rule(_appl(append,Cons(varX,varY),varZ), Cons(varX,_appl(append,varY,varZ))));
+              generatedRules.add(Rule(_appl(append,Nil(),Z), Cons(Z,Nil())));
+              generatedRules.add(Rule(_appl(append,Cons(X,Y),Z), Cons(X,_appl(append,Y,Z))));
               generatedRules.add(Rule(_appl(reverse,Nil()), Nil()));
-              generatedRules.add(Rule(_appl(reverse,Cons(varX,varY)), _appl(append,_appl(reverse,varY),varX)));
-              generatedRules.add(Rule(_appl(rconcat,Nil(),varZ), varZ));
-              generatedRules.add(Rule(_appl(rconcat,Cons(varX,varY),varZ), _appl(rconcat,varY,Cons(varX,varZ))));
+              generatedRules.add(Rule(_appl(reverse,Cons(X,Y)), _appl(append,_appl(reverse,Y),X)));
+              generatedRules.add(Rule(_appl(rconcat,Nil(),Z), Z));
+              generatedRules.add(Rule(_appl(rconcat,Cons(X,Y),Z), _appl(rconcat,Y,Cons(X,Z))));
 
             }
           }
@@ -734,7 +737,7 @@ public class Compiler {
                 
                 // propagate Bottom  (otherwise not reduced and leads to bug in Sequence)
                 // one(Bottom(X)) -> Bottom(X)
-                generatedRules.add(Rule(_appl(one,Bottom(varX)), Bottom(varX)));
+                generatedRules.add(Rule(_appl(one,Bottom(X)), Bottom(X)));
 
 
                 for(int i=1 ; i<=arity ; i++) {
@@ -781,7 +784,7 @@ public class Compiler {
                     if(j<i) {
                       a_lx[j-1] = Bottom(Xj);
                     } else if(j==i) {
-                      a_lx[j-1] = At(Xj,Anti(Bottom(varY)));
+                      a_lx[j-1] = At(Xj,Anti(Bottom(Y)));
                     } else {
                       a_lx[j-1] = Xj;
                     }
@@ -796,7 +799,7 @@ public class Compiler {
             }
           } else {
             // META-LEVEL
-            this.generatedSignature.addSymbol(one,Arrays.asList(Signature.DUMMY),Signature.DUMMY);
+            this.generatedSignature.addSymbol(one,Arrays.asList(Signature.METATERM),Signature.METATERM);
             String one_1 = one+"_1";
             String one_2 = one+"_2";
             String one_3 = one+"_3";
@@ -810,21 +813,21 @@ public class Compiler {
             generatedSignature.addSymbol(reverse,Arrays.asList(Signature.METALIST),Signature.METALIST);
             generatedSignature.addSymbol(rconcat,Arrays.asList(Signature.METALIST,Signature.METALIST),Signature.METALIST);
             // one(Appl(Z0,Z1)) -> one_1(Appl(Z0,one_2(Z1)))
-            generatedRules.add(Rule(_appl(one,Appl(varZ0,varZ1)), _appl(one_1,Appl(varZ0,_appl(one_2,varZ1)))));
+            generatedRules.add(Rule(_appl(one,Appl(Z0,Z1)), _appl(one_1,Appl(Z0,_appl(one_2,Z1)))));
             // one_1(Appl(Z0,BottomList(Z))) -> Bottom(Appl(Z0,Z))
             // one_1(Appl(Z0,Cons(Z1,Z2))) -> Appl(Z0,Cons(Z1,Z2))
-            generatedRules.add(Rule(_appl(one_1,Appl(varZ0,BottomList(varZ))), Bottom(Appl(varZ0,varZ))));
-            generatedRules.add(Rule(_appl(one_1,Appl(varZ0,Cons(varZ1,varZ2))), Appl(varZ0,Cons(varZ1,varZ2))));
+            generatedRules.add(Rule(_appl(one_1,Appl(Z0,BottomList(Z))), Bottom(Appl(Z0,Z))));
+            generatedRules.add(Rule(_appl(one_1,Appl(Z0,Cons(Z1,Z2))), Appl(Z0,Cons(Z1,Z2))));
             // one_2(Nil) -> BottomList(Nil)
             // one_2(Cons(X,Y)) -> one_3(phi_s(X),Y,Cons(X,Nil))
             generatedRules.add(Rule(_appl(one_2,Nil()), BottomList(Nil())));
-            generatedRules.add(Rule(_appl(one_2,Cons(varZ1,varZ2)), _appl(one_3,_appl(phi_s,varZ1),varZ2,Cons(varZ1,Nil()))));
+            generatedRules.add(Rule(_appl(one_2,Cons(Z1,Z2)), _appl(one_3,_appl(phi_s,Z1),Z2,Cons(Z1,Nil()))));
             // one_3(Bottom(X),Nil,rargs) -> BottomList(reverse(rargs))
             // one_3(Bottom(X),Cons(head,tail),rargs) -> ONE(head, tail, Cons(head,rargs))
             // one_3(Appl(X,Y),todo,Cons(last,rargs)) -> rconcat(rargs,Cons(Appl(X,Y),todo))
-            generatedRules.add(Rule(_appl(one_3,Bottom(varZ),Nil(),varZ2), BottomList(_appl(reverse,varZ2))));
-            generatedRules.add(Rule(_appl(one_3,Bottom(varZ),Cons(varXX,varYY),varZ2), _appl(one_3,varXX,varYY,Cons(varXX,varZ2))));
-            generatedRules.add(Rule(_appl(one_3,Appl(varX,varY),varZ1,Cons(varZ2,varZ3)), _appl(rconcat,varZ3,Cons(Appl(varX,varY),varZ1))));
+            generatedRules.add(Rule(_appl(one_3,Bottom(Z),Nil(),Z2), BottomList(_appl(reverse,Z2))));
+            generatedRules.add(Rule(_appl(one_3,Bottom(Z),Cons(XX,YY),Z2), _appl(one_3,XX,YY,Cons(XX,Z2))));
+            generatedRules.add(Rule(_appl(one_3,Appl(X,Y),Z1,Cons(Z2,Z3)), _appl(rconcat,Z3,Cons(Appl(X,Y),Z1))));
 
             if(!generated_aux_functions) { 
               generated_aux_functions = true;
@@ -835,12 +838,12 @@ public class Compiler {
               // rconcat(Nil,Z) -> Z
               // rconcat(Cons(X,Y),Z) -> rconcat(Y,Cons(X,Z))
 
-              generatedRules.add(Rule(_appl(append,Nil(),varZ), Cons(varZ,Nil())));
-              generatedRules.add(Rule(_appl(append,Cons(varX,varY),varZ), Cons(varX,_appl(append,varY,varZ))));
+              generatedRules.add(Rule(_appl(append,Nil(),Z), Cons(Z,Nil())));
+              generatedRules.add(Rule(_appl(append,Cons(X,Y),Z), Cons(X,_appl(append,Y,Z))));
               generatedRules.add(Rule(_appl(reverse,Nil()), Nil()));
-              generatedRules.add(Rule(_appl(reverse,Cons(varX,varY)), _appl(append,_appl(reverse,varY),varX)));
-              generatedRules.add(Rule(_appl(rconcat,Nil(),varZ), varZ));
-              generatedRules.add(Rule(_appl(rconcat,Cons(varX,varY),varZ), _appl(rconcat,varY,Cons(varX,varZ))));
+              generatedRules.add(Rule(_appl(reverse,Cons(X,Y)), _appl(append,_appl(reverse,Y),X)));
+              generatedRules.add(Rule(_appl(rconcat,Nil(),Z), Z));
+              generatedRules.add(Rule(_appl(rconcat,Cons(X,Y),Z), _appl(rconcat,Y,Cons(X,Z))));
 
             }
           }
@@ -963,10 +966,11 @@ public class Compiler {
   private void generateEquality(List<Rule> generatedRules) {
     Signature gSig = getGeneratedSignature();
     Signature eSig = getExtractedSignature();
-    generatedRules.add(Tools.encodeRule(%[rule(and(True,True), True)]%,gSig));
-    generatedRules.add(Tools.encodeRule(%[rule(and(True,False), False)]%,gSig));
-    generatedRules.add(Tools.encodeRule(%[rule(and(False,True), False)]%,gSig));
-    generatedRules.add(Tools.encodeRule(%[rule(and(False,False), False)]%,gSig));
+
+    generatedRules.add(Rule(And(True(),True()), True()));
+    generatedRules.add(Rule(And(True(),False()), False()));
+    generatedRules.add(Rule(And(False(),True()), False()));
+    generatedRules.add(Rule(And(False(),False()), False()));
 
     String z1 = Tools.getName("Z");
     String z2 = Tools.getName("Z"); 
@@ -1008,10 +1012,11 @@ public class Compiler {
     List<String> profile = this.generatedSignature.getProfile(symbol);
     this.generatedSignature.addSymbol(name,profile,codomain);
 
-    String x = Tools.getName("X");
+    Term X = Var(Tools.getName("X"));
 
     // X matches anything but morally matches only symbols from the extracted signature
-    generatedRules.add(Tools.encodeRule(%[rule(@name@(x), @symbol@(x))]%,this.generatedSignature));
+    // name(X) -> symbol(X)
+    generatedRules.add(Rule(_appl(name,X), _appl(symbol,X)));
   }
 
   private  Position getAntiPatternPosition(Term t) {

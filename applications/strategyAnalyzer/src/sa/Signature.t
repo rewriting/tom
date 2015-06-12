@@ -7,7 +7,7 @@ public class Signature {
   %include { rule/Rule.tom }
 
   // All literal strings and string-valued constant expressions are interned.
-  public static String BOOLEAN = "Boolean";
+  public static String BOOLEAN = "Bool";
   public static String TRUE = "True";
   public static String FALSE = "False";
   public static String AND = "and";
@@ -103,9 +103,15 @@ public class Signature {
     }
     */
     // add: bottom(DUMMY), eq(DUMMY,DUMMY)
+    if(!Main.options.metalevel) {
       expandedSignature.addSymbol(BOTTOM,Arrays.asList(DUMMY),DUMMY);
       String eq_t = this.disambiguateSymbol(EQ, Arrays.asList(DUMMY,DUMMY));
       expandedSignature.addSymbol(eq_t,Arrays.asList(DUMMY,DUMMY),BOOLEAN);
+    } else {
+      expandedSignature.addSymbol(BOTTOM,Arrays.asList(METATERM),METATERM);
+      String eq_t = this.disambiguateSymbol(EQ, Arrays.asList(METATERM,METATERM));
+      expandedSignature.addSymbol(eq_t,Arrays.asList(METATERM,METATERM),BOOLEAN);
+    }
 
     return expandedSignature;
   }
