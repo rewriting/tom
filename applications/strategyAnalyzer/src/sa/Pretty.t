@@ -140,7 +140,7 @@ public class Pretty {
     }
   }
 
-  public static String generateAprove(List<Rule> bag, Signature extractedSignature, boolean innermost) 
+  public static String generateAprove(List<Rule> bag, boolean innermost) 
     throws VisitFailure {
     StringBuffer rulesb = new StringBuffer();
     Collection<String> varSet = new HashSet<String>();
@@ -164,6 +164,32 @@ public class Pretty {
     varsb.append(")");
 
     return varsb.toString()+rulesb.toString();
+  }  
+  
+  public static String generateTimbuk(List<Rule> bag, Signature generatedSignature) throws VisitFailure {
+    StringBuffer rulesb = new StringBuffer();
+    StringBuffer opsb = new StringBuffer();
+    StringBuffer varsb = new StringBuffer();
+    Collection<String> varSet = new HashSet<String>();
+
+    opsb.append("\nOps\n");
+    for(String name: generatedSignature.getSymbolNames()) {
+      opsb.append(name  + " : " + generatedSignature.getArity(name) + "\n");
+    }
+
+    rulesb.append("\nTRS R");
+    for(Rule r:bag) {
+      `BottomUp(CollectVars(varSet)).visit(r);
+      rulesb.append("        " + toString(r) + "\n");
+    }
+
+    varsb.append("\nVars ");
+    for(String name: varSet) {
+      varsb.append(name + " ");
+    }
+    varsb.deleteCharAt(varsb.length()-1);
+
+    return opsb.toString() + varsb.toString() + rulesb.toString();
   }  
 
   public static String generateTom(String strategyName, List<Rule> bag, Signature sig, String classname) {

@@ -121,7 +121,10 @@ public class Main {
         } 
         if(options.aprove) {
           boolean innermost = false;
-          outputfile.println( Pretty.generateAprove(generatedRules,extractedSignature,innermost) );
+          outputfile.println( Pretty.generateAprove(generatedRules,innermost) );
+        }
+        if(options.timbuk) {
+          outputfile.println( Pretty.generateTimbuk(generatedRules,generatedSignature) );
         }
       }
     } catch (Exception e) {
