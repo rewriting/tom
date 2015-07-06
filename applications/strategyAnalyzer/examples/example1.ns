@@ -5,21 +5,11 @@ T = a()
   | g(T)
   | f(T,T)
 
-
 strategies
 
-r1() =  identity
+r1() =  [ g(x) -> x ]
 
-// r2() = [ f(x,g(x)) -> x, a() -> a() ]
-// r2() = [ a() -> a(), b() -> b() ]
-r2() = [ a() -> a() ]
+obu(s) = mu x.(one(x) <+ s)
+innermost(s) = obu(s)
 
-
-obu(s) = mu y.(one(y) <+ s)
-innermost(r) = obu(r)
-
-// main() = innermost(r2())
-
-// mainStrat() = r2();r1();r1()
-
-mainStrat() = innermost(r2());innermost(r2())
+mainStrat() = innermost(r1())

@@ -100,6 +100,7 @@ public class Compiler {
       if(Main.options.metalevel) {
         strategySymbol=this.compileStrat(strategy,this.generatedTRSs.get(strategyName));
         this.generateTriggerRule(strategyName,strategySymbol,this.generatedTRSs.get(strategyName));
+        this.generateEncodeDecode(this.generatedTRSs.get(strategyName));
       } else {
         strategySymbol=this.compileStrat(strategy,this.generatedTRSs.get(strategyName));
         this.generateEquality(this.generatedTRSs.get(strategyName));
@@ -527,7 +528,7 @@ public class Compiler {
               // seq(Bot(X)) -> Bot(X)
               // seq2(Appl(X,Y),Z) -> Appl(X,Y)
               // seq2(Bot(Y),X) -> Bot(X)
-              generatedRules.add(Rule(Appl(X,Y), _appl(seq2,_appl(n2,_appl(n1,Appl(X,Y))),Appl(X,Y))));
+              generatedRules.add(Rule(_appl(seq,Appl(X,Y)), _appl(seq2,_appl(n2,_appl(n1,Appl(X,Y))),Appl(X,Y))));
               generatedRules.add(Rule(_appl(seq,Bottom(X)), Bottom(X)));
               generatedRules.add(Rule(_appl(seq2,Appl(X,Y),Z), Appl(X,Y)));
               generatedRules.add(Rule(_appl(seq2,Bottom(Y),X), Bottom(X)));
@@ -754,7 +755,7 @@ public class Compiler {
                     this.generatedSignature.addSymbol(one_n_ii,one_n_ii_args,Signature.DUMMY);
                     // one_f_i(Bottom(x1),...,Bottom(xi),xj,...,xn)
                     // -> one_f_(i+1)(Bottom(x1),...,Bottom(xi),phi_s(x_i+1),...,xn)
-                    for(int j=1 ; j<=i ; j++) {
+                    for(int j=1 ; j<=arity ; j++) {
                       Term Xj = Var("X"+j);
                       if(j<=i) {
                         a_lx[j-1] = Bottom(Xj);
@@ -823,10 +824,10 @@ public class Compiler {
             generatedRules.add(Rule(_appl(one_2,Nil()), BottomList(Nil())));
             generatedRules.add(Rule(_appl(one_2,Cons(Z1,Z2)), _appl(one_3,_appl(phi_s,Z1),Z2,Cons(Z1,Nil()))));
             // one_3(Bottom(X),Nil,rargs) -> BottomList(reverse(rargs))
-            // one_3(Bottom(X),Cons(head,tail),rargs) -> ONE(head, tail, Cons(head,rargs))
+            // one_3(Bottom(X),Cons(head,tail),rargs) -> one_3(phi_s(head), tail, Cons(head,rargs))
             // one_3(Appl(X,Y),todo,Cons(last,rargs)) -> rconcat(rargs,Cons(Appl(X,Y),todo))
             generatedRules.add(Rule(_appl(one_3,Bottom(Z),Nil(),Z2), BottomList(_appl(reverse,Z2))));
-            generatedRules.add(Rule(_appl(one_3,Bottom(Z),Cons(XX,YY),Z2), _appl(one_3,XX,YY,Cons(XX,Z2))));
+            generatedRules.add(Rule(_appl(one_3,Bottom(Z),Cons(XX,YY),Z2), _appl(one_3,_appl(phi_s,XX),YY,Cons(XX,Z2))));
             generatedRules.add(Rule(_appl(one_3,Appl(X,Y),Z1,Cons(Z2,Z3)), _appl(rconcat,Z3,Cons(Appl(X,Y),Z1))));
 
             if(!generated_aux_functions) { 
@@ -983,10 +984,10 @@ public class Compiler {
           int arg = eSig.getArity(g);
           String eq_type = "eq"; //eSig.disambiguateSymbol(Signature.EQ, Arrays.asList(type,type) );
           if(!f.equals(g)) {
-            generatedRules.add(Tools.encodeRule(%[rule(@eq_type@(@Tools.genAbstractTerm(f,arf,z1)@,@Tools.genAbstractTerm(g,arg,z2)@), False)]%,gSig));
+            generatedRules.add(Tools.encodeRule(%[rule(@eq_type@(@Tools.genStringAbstractTerm(f,arf,z1)@,@Tools.genStringAbstractTerm(g,arg,z2)@), False)]%,gSig));
           } else {
-            String t1 = Tools.genAbstractTerm(f,arf,z1);
-            String t2 = Tools.genAbstractTerm(f,arf,z2);
+            String t1 = Tools.genStringAbstractTerm(f,arf,z1);
+            String t2 = Tools.genStringAbstractTerm(f,arf,z2);
             List<String> domain = eSig.getProfile(f);
             String scond = "True";
             for(int i=1 ; i<=arf ; i++) {
@@ -1000,6 +1001,41 @@ public class Compiler {
       }
     //}
     //generatedRules.add(Tools.encodeRule(%[rule(@mu@(Bottom(X)), Bottom(X))]%));
+  }
+
+  /**
+   * generates encode/decode functions for metalevel
+   * encode(f(x1,...,xn)) -> Appl(symb_f, Cons(encode(x1), ..., Cons(encode(xn),Nil())))
+   **/
+  private void generateEncodeDecode(List<Rule> generatedRules) {
+    Signature gSig = getGeneratedSignature();
+    Signature eSig = getExtractedSignature();
+    String x = Tools.getName("X");
+    List<String> symbolNames = eSig.getSymbolNames();
+    for(String f:symbolNames) {
+      int arf = eSig.getArity(f);
+
+      Term args_encode = Nil();
+      Term largs_decode = Nil();
+      TermList rargs_decode = `TermList();
+
+      for(int i=arf ; i>=1 ; i--) {
+        Term var = `Var(x+"_"+i);
+        args_encode = Cons(_appl(Signature.ENCODE,var),args_encode);
+        largs_decode = Cons(var,largs_decode);
+        rargs_decode = `TermList(_appl(Signature.DECODE,var),rargs_decode*);
+      }
+
+      Term lhs_encode = _appl(Signature.ENCODE, Tools.genAbstractTerm(f,arf,x));
+      Term rhs_encode = Appl(_appl("symb_" + f), args_encode);
+
+      Term lhs_decode = _appl(Signature.DECODE, Appl(_appl("symb_" + f), largs_decode));
+      Term rhs_decode = `Appl(f,rargs_decode); 
+
+      generatedRules.add(Rule(lhs_encode,rhs_encode));
+      generatedRules.add(Rule(lhs_decode,rhs_decode));
+    }
+
   }
 
 

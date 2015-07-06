@@ -119,6 +119,7 @@ public class Main {
         if(options.classname != null) {
           tomoutputfile.println( Pretty.generateTom(strategyName,generatedRules,generatedSignature,options.classname) );
         } 
+
         if(options.aprove) {
           boolean innermost = false;
           outputfile.println( Pretty.generateAprove(generatedRules,innermost) );

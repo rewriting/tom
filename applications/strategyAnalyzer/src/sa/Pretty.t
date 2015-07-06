@@ -90,7 +90,7 @@ public class Pretty {
   }
 
   public static String addBrace(String name) {
-    if(Main.options.aprove) {
+    if(Main.options.aprove || Main.options.timbuk) {
       return name;
     } else {
       return name + "()";
@@ -174,22 +174,22 @@ public class Pretty {
 
     opsb.append("\nOps\n");
     for(String name: generatedSignature.getSymbolNames()) {
-      opsb.append(name  + " : " + generatedSignature.getArity(name) + "\n");
+      opsb.append(name  + ":" + generatedSignature.getArity(name) + " ");
     }
 
-    rulesb.append("\nTRS R");
+    rulesb.append("\nTRS R\n");
     for(Rule r:bag) {
       `BottomUp(CollectVars(varSet)).visit(r);
       rulesb.append("        " + toString(r) + "\n");
     }
 
-    varsb.append("\nVars ");
+    varsb.append("\nVars\n");
     for(String name: varSet) {
       varsb.append(name + " ");
     }
     varsb.deleteCharAt(varsb.length()-1);
 
-    return opsb.toString() + varsb.toString() + rulesb.toString();
+    return opsb.toString() + "\n" + varsb.toString() + "\n" + rulesb.toString();
   }  
 
   public static String generateTom(String strategyName, List<Rule> bag, Signature sig, String classname) {
@@ -228,6 +228,9 @@ public class @classname@ {
     for(Rule r:bag) {
       sb.append("        " + toString(r) + "\n");
     }
+
+
+
     sb.append(%[
     }
   }
@@ -245,8 +248,17 @@ public class @classname@ {
      name = strategyName;
   }
 
-  sb.append(%[
+  if(!Main.options.metalevel) {
+    sb.append(%[
       T t = `@name@(input);
+      ]%);
+  } else {
+    sb.append(%[
+      T t = `decode(@name@(encode(input)));
+      ]%);
+  }
+
+  sb.append(%[
       long stop = System.currentTimeMillis();
       System.out.println(t);
       System.out.println("time1 (ms): " + ((stop-start)));
