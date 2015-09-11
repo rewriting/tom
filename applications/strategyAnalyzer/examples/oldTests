@@ -1,0 +1,177 @@
+// // Test Identity & Fail
+// // Fail should propagate Bottom directly : 
+// // Fail( Bottom(a) ) --> Bottom(a)   
+// //               and not Bottom(Bottom(a))
+// // Fail and Identity should apply only on terms of the signature
+// // (not on Dummy)
+let S=signature {a:0, b:0, f:1, g:2, h:1} in
+// identity
+fail
+
+
+
+
+// // Test one rule 
+// // Expected resuts:
+// //    a --> b()
+// //    b --> Bottom(b())
+// //    f(a) --> Bottom(f(a()))
+// let S=signature {a:0, b:0,  f:1, g:2} in
+// let r1 = { a() -> b() } in 
+// r1 <+ fail
+
+// // Expected resuts:
+// //    a --> b()
+// //    b --> b()
+// //    f(a) --> f(a())
+// let S=signature {a:0, b:0,  f:1, g:2} in
+// let r1 = { a() -> b() } in 
+// r1 <+ identity
+
+
+
+
+
+// // Test SEQUENCE
+// // Expected resuts:
+// //    a -->  c()
+// //    b --> Bottom(b())
+// //    c --> Bottom(c())
+// //    f(a) --> Bottom(f(a()))
+// let S=signature {a:0, b:0, c:0, f:1, g:2} in
+// let r1 = { a() -> b() } in 
+// let r2 = { b() -> c() } in 
+// (r1 ; r2)
+// apply on Bottom(a)
+// -- if 'exact=true' result is : Bottom(a)
+// -- if 'exact=false' (and no rule Bottom(Bottom) --> Bottom ) result is : Bottom(Bottom(a))
+
+// BUG !!!! a reduces to b and should be a
+// in case of failure, the implementation of sequence doesn't keep the
+// original term before the application of Seq strategy but the term
+// that triggered the failure
+// Result should be Bottom(a)  not Bottom(b) 
+//  --> Fixed: add parameter to keep the original input 
+// let S=signature {a:0, b:0, c:0, f:1, g:2} in
+// let r1 = { a() -> b() } in 
+// let r2 = { c() -> c() } in 
+// r1 ; r2
+// // result should be 'a' and not 'b'
+// // (r1 ; r2) <+ identity 
+
+// let S=signature {a:0, b:0, c:0, f:1, g:2} in
+// let r1 = { a() -> b() } in 
+// let r2 = { b() -> c() } in 
+// let r3 = { c() -> a() } in 
+// r1 ; (r2 ; r3)
+
+// // doesn't work if the failure is not propagated for each rule
+// let S=signature {a:0, b:0, c:0, f:1, g:2} in
+// let r1 = { a() -> b() } in 
+// let r2 = { b() -> c() } in 
+// (r1 ; r2) <+ identity
+
+
+
+
+// // Test CHOICE
+// BUG !!!! 'b' reduces to 'c' and should be 'Bottom(b)'
+//  --> Fixed: add immediate propagation of Bottom (if Bottom is the input)
+// let S=signature {a:0, b:0, c:0, f:1, g:2} in
+// let r1 = { a() -> b() } in 
+// let r2 = { b() -> c() } in 
+// r1 ; (r1 <+ r2)
+
+// let S=signature {a:0, b:0, c:0, f:1, g:2} in
+// let r1 = { a() -> b() } in 
+// let r2 = { b() -> c() } in 
+// r1 <+ r2
+
+
+
+
+
+// // Test ALL
+// let S=signature {a:0, b:0, f:1, g:2, h:1} in
+// let r1 = { a() -> b() } in 
+// let simplest = all(r1)  in
+// simplest
+
+// // BUG (if Bottom not propagated directly)
+// let S=signature {a:0, b:0, f:1, g:2, h:1} in
+// let r1 = { a() -> b() } in 
+// // let bug = r1 ; all(r1)  in
+// let bug = (r1 ; all(r1)) <+ identity  in
+// bug
+
+
+
+
+
+
+// // Test ONE
+// let S=signature {a:0, b:0, f:1, g:2, h:1} in
+// let r1 = { a() -> b() } in 
+// let simplest = one(r1)  in
+// simplest
+
+// // BUG (if Bottom not propagated directly)
+// let S=signature {a:0, b:0, f:1, g:2, h:1} in
+// let r1 = { a() -> b() } in 
+// // let bug = r1 ; one(r1)  in
+// let bug = (r1 ; one(r1)) <+ identity  in
+// bug
+
+
+
+
+
+
+
+
+
+
+
+
+// Test MU
+// let S=signature {a:0, b:0, c:0, f:1, g:2} in
+// let simplest = mu x .(identity <+ x) in
+// simplest
+
+
+// let S=signature {a:0, b:0, c:0, f:1, g:2} in
+// let r1 = { a() -> b() } in 
+// let repeatR1 = mu x .((r1;x) <+ identity) in
+// repeatR1
+
+
+// // non-terminating
+// let S=signature {a:0, b:0, c:0, f:1, g:2} in
+// let infinite = mu x .(identity ; x) in
+// infinite
+
+// let S=signature {a:0, b:0, c:0, f:1, g:2} in
+// let infinite = mu x .(fail <+ x) in
+// infinite
+
+// let S=signature {a:0, b:0, c:0, f:1, g:2} in
+// let r1 = { a() -> a() } in 
+// let infinite = mu x .((r1;x) <+ identity) in
+// infinite
+
+// let S=signature {a:0, b:0, c:0, f:1, g:2} in
+// let infinite = mu x .(x ; identity) in
+// infinite
+
+// let S=signature {a:0, b:0, c:0, f:1, g:2} in
+// let r1 = { a() -> b() } in 
+// let r2 = { b() -> a() } in 
+// let infinite = mu x .(((r1 <+ r2);x) <+ identity) in
+// infinite
+
+
+
+
+
+
+
