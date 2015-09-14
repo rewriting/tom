@@ -322,7 +322,8 @@ public class Compiler {
                   }
                 }
 
-                rule = rule+"_"+lhsType;
+
+//                 rule = rule+"_"+lhsType;
 
                 TermList result = this.linearize(`lhs);
 

@@ -1,20 +1,29 @@
 
 abstract syntax
 T = a()
-  | b()
+//   | b()
   | h(T)
   | f(T)
+	| i(U)
+
+U = g(T)
 
 strategies
 
+// r1() =  [ h(x) -> f(h(f(x))) ]
 r1() =  [ h(x) -> f(h(x)) ]
+
+r2() =  [ g(x) -> g(i(g(x))) ]
 
 try(s) = s <+ Identity
 
-bu(s) = mu x.(all(x) <+ s)
+bu(s) = mu x.(all(x) ; s)
 td(s) = mu x.(s ; all(x))
 
 obu(s) = mu x.(one(x) <+ s)
 
 // mainStrat() = bu(try(r1()))
-mainStrat() = td(try(r1()))
+// mainStrat() = td(try(r1()))
+
+mainStrat() = bu(try(r2()))
+// mainStrat() = td(try(r2()))
