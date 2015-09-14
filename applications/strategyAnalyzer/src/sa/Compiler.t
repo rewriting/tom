@@ -322,6 +322,8 @@ public class Compiler {
                   }
                 }
 
+                rule = rule+"_"+lhsType;
+
                 TermList result = this.linearize(`lhs);
 
                 %match(result) {
@@ -329,8 +331,8 @@ public class Compiler {
                     // if already linear lhs
                     // rule(X@lhs) -> rhs
                     // rule(X@!lhs) -> Bot(X)
-                    generatedRules.add(Rule(_appl(rule+"_"+lhsType,At(X,`lhs)), `rhs));
-                    generatedRules.add(Rule(_appl(rule+"_"+lhsType,At(X,Anti(`lhs))), Bottom(X)));
+                    generatedRules.add(Rule(_appl(rule,At(X,`lhs)), `rhs));
+                    generatedRules.add(Rule(_appl(rule,At(X,Anti(`lhs))), Bottom(X)));
                   }
 
                   TermList(linearlhs, cond@!Appl("True",TermList())) -> {
