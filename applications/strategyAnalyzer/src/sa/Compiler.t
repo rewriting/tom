@@ -250,6 +250,14 @@ public class Compiler {
     return `Appl(name,tl);
   }
 
+  private Term _applTyped(String type, String name, Term... args) {
+    TermList tl = `TermList();
+    for(Term t:args) {
+      tl = `TermList(tl*,t);
+    }
+    return `Appl(name,tl);
+  }
+
   /**
    * compile a strategy in a classical way (without using meta-representation)
    * return the name of the top symbol (phi) introduced
@@ -303,9 +311,15 @@ public class Compiler {
 
             %match(rulelist) {
               RuleList(_*,Rule(lhs,rhs),_*) -> {
-                // propagate failure; if the rule is applied to the result of a strategy that failed then the result is a failure
-                // rule(Bot(X)) -> Bot(X)
-                generatedRules.add(Rule(_appl(rule,Bottom(X)), Bottom(X)));
+
+                String lhsType="";
+
+                %match(lhs) {
+                  Appl(funsymb,_) -> {
+                    lhsType = this.extractedSignature.getCodomain(`funsymb);
+                    System.out.println("Type of LHS "+`lhs+" = "+lhsType);
+                  }
+                }
 
                 TermList result = this.linearize(`lhs);
 
@@ -314,8 +328,8 @@ public class Compiler {
                     // if already linear lhs
                     // rule(X@lhs) -> rhs
                     // rule(X@!lhs) -> Bot(X)
-                    generatedRules.add(Rule(_appl(rule,At(X,`lhs)), `rhs));
-                    generatedRules.add(Rule(_appl(rule,At(X,Anti(`lhs))), Bottom(X)));
+                    generatedRules.add(Rule(_appl(rule+"_"+lhsType,At(X,`lhs)), `rhs));
+                    generatedRules.add(Rule(_appl(rule+"_"+lhsType,At(X,Anti(`lhs))), Bottom(X)));
                   }
 
                   TermList(linearlhs, cond@!Appl("True",TermList())) -> {
@@ -330,6 +344,9 @@ public class Compiler {
                     generatedRules.add(Rule(_appl(cr,At(X,`linearlhs),False()), Bottom(X)));
                   }
                 }
+                // propagate failure; if the rule is applied to the result of a strategy that failed then the result is a failure
+                // rule(Bot(X)) -> Bot(X)
+                generatedRules.add(Rule(_appl(rule,Bottom(X)), Bottom(X)));
               }
             }
           } else {
