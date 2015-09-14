@@ -107,7 +107,7 @@ public class RuleCompiler {
             for(String otherName:otherNames) {
               if(!`name.equals(otherName)) {
                 int arity = extractedSignature.getArity(otherName);
-                Term newt = Tools.encode(Tools.genAbstractTerm(otherName,arity,Tools.getName("Z")),generatedSignature);
+                Term newt = Tools.encode(Tools.genStringAbstractTerm(otherName,arity,Tools.getName("Z")),generatedSignature);
                 if(Main.options.metalevel) {
                   newt = Tools.metaEncodeConsNil(newt,generatedSignature);
                 }

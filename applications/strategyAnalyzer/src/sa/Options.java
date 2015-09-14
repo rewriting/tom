@@ -21,6 +21,9 @@ public class Options {
   @Option(name="-aprove",usage="generate rules for Aprove")
     public boolean aprove = false;
 
+  @Option(name="-timbuk",usage="generate rules for Timbuk")
+    public boolean timbuk = false;
+
   @Option(name="-metalevel",usage="use a metalevel encoding of strategies")
     public boolean metalevel = false;
 

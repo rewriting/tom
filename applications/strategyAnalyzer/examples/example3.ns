@@ -1,0 +1,20 @@
+
+abstract syntax
+T = a()
+  | b()
+  | h(T)
+  | f(T)
+
+strategies
+
+r1() =  [ h(x) -> f(h(x)) ]
+
+try(s) = s <+ Identity
+
+bu(s) = mu x.(all(x) <+ s)
+td(s) = mu x.(s ; all(x))
+
+obu(s) = mu x.(one(x) <+ s)
+
+// mainStrat() = bu(try(r1()))
+mainStrat() = td(try(r1()))

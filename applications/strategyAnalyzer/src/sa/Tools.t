@@ -20,6 +20,14 @@ public class Tools {
   public static String getName(String name) {
     return name + (phiNumber++);
   }
+  
+  private static Term _appl(String name, Term... args) {
+    TermList tl = `TermList();
+    for(Term t:args) {
+      tl = `TermList(tl*,t);
+    }
+    return `Appl(name,tl);
+  }
 
   /**
    * encode: transforms a string "f(a,X)" into its Term representation
@@ -344,7 +352,16 @@ public class Tools {
    * @param arity the arity of the symbol
    * @return the string that represents the term
    */
-  public static String genAbstractTerm(String name, int arity, String varname) {
+  public static Term genAbstractTerm(String name, int arity, String varname) {
+    TermList args = `TermList();
+    for(int i=arity ; i>= 1 ; i--) {
+      Term var = `Var(varname+"_"+i);
+      args = `TermList(var, args*);
+    }
+    return `Appl(name, args);
+  }
+  
+  public static String genStringAbstractTerm(String name, int arity, String varname) {
     if(arity==0) {
       return name + "()";
     } else {

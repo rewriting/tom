@@ -119,9 +119,13 @@ public class Main {
         if(options.classname != null) {
           tomoutputfile.println( Pretty.generateTom(strategyName,generatedRules,generatedSignature,options.classname) );
         } 
+
         if(options.aprove) {
           boolean innermost = false;
-          outputfile.println( Pretty.generateAprove(generatedRules,extractedSignature,innermost) );
+          outputfile.println( Pretty.generateAprove(generatedRules,innermost) );
+        }
+        if(options.timbuk) {
+          outputfile.println( Pretty.generateTimbuk(generatedRules,generatedSignature) );
         }
       }
     } catch (Exception e) {

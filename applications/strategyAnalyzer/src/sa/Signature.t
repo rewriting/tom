@@ -17,6 +17,9 @@ public class Signature {
   public static String APPL = "Appl";
   public static String CONS = "Cons";
   public static String NIL = "Nil";
+  
+  public static String ENCODE = "encode";
+  public static String DECODE = "decode";
 
   // Types
   public static final String DUMMY = "Dummy";
@@ -80,10 +83,11 @@ public class Signature {
     }
 
     if(Main.options.metalevel) {
-      // add: Appl, Cons, Nil
+      // add: Appl, Cons, Nil, BottomList
       expandedSignature.addSymbol(APPL,Arrays.asList(METASYMBOL,METALIST),METATERM);
       expandedSignature.addSymbol(CONS,Arrays.asList(METATERM,METALIST),METALIST);
       expandedSignature.addSymbol(NIL,new ArrayList<String>(),METALIST);
+      expandedSignature.addSymbol(BOTTOMLIST,Arrays.asList(METALIST),METALIST);
     }
 
     // add: True, False, and, eq
@@ -113,6 +117,12 @@ public class Signature {
       expandedSignature.addSymbol(eq_t,Arrays.asList(METATERM,METATERM),BOOLEAN);
     }
 
+    // for metalevel + Tom code
+    if(Main.options.metalevel && Main.options.classname != null) {
+      // add: encode, decode
+      expandedSignature.addSymbol(ENCODE,Arrays.asList(DUMMY),METATERM);
+      expandedSignature.addSymbol(DECODE,Arrays.asList(METATERM),DUMMY);
+    }
     return expandedSignature;
   }
 
