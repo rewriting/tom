@@ -213,6 +213,13 @@ public class Signature {
     return arity;
   }
 
+  /** Get the list of all types
+   * @return the list of types in the signature
+   */
+  public Set<GomType> getTypes() {
+    return signature.keySet();
+  }
+
   /** Get the list of all symbols
    * @return the list of symbols in the signature
    */
@@ -222,6 +229,13 @@ public class Signature {
       types.add(type.getName());
     }
     return types;
+  }
+
+  /** Get the profiles for the symbols of a given type
+   * @return the map of profiles for the symbols of a given type
+   */
+  public Map<String,List<GomType>> getSymbolsOfType(GomType type) {
+    return signature.get(type);
   }
 
   /** Get the list of all symbols
@@ -244,6 +258,33 @@ public class Signature {
     List<String> symbols = new ArrayList<String>();
     symbols.addAll(signature.get(`GomType(typeName)).keySet());
     return symbols;
+  }
+
+
+  /** Set the profiles of symbols for a given type
+    * @type the type to be enhanced
+    * @newProfiles the profiles of the symbols to be added
+   */
+  public void addProfilesForType(GomType type, Map<String,List<GomType>> newProfiles) {
+    Map<String,List<GomType>> profiles = signature.get(type);
+    if(profiles == null){
+      signature.put(type, newProfiles);
+    }else{
+      for(String symbol: newProfiles.keySet()){
+        // TODO: 
+        if(profiles.get(symbol)!=null){
+          System.out.println("WARNING: Symbol already in the generated signature");
+        }
+        profiles.put(symbol, newProfiles.get(symbol));
+      }
+    }
+  }
+
+  /** Remove the profiles of symbols for a given type
+    * @type the type
+   */
+  public void removeType(GomType type) {
+    signature.remove(type);
   }
 
 

@@ -238,7 +238,7 @@ public class @classname@ {
   public static void main(String[] args) {
     try {
       BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-      T input = T.fromString(reader.readLine());
+      Dummy input = Dummy.fromString(reader.readLine());
       long start = System.currentTimeMillis();
       ]%);
 
@@ -250,7 +250,7 @@ public class @classname@ {
 
   if(!Main.options.metalevel) {
     sb.append(%[
-      T t = `@name@(input);
+      Dummy t = `@name@(input);
       ]%);
   } else {
     sb.append(%[
