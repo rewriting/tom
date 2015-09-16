@@ -100,18 +100,19 @@ public class Main {
         extractedSignature = ruleCompiler.getExtractedSignature();
         generatedSignature = ruleCompiler.getGeneratedSignature();
 
-        System.out.println("gSIG = " + generatedSignature);
+        //         System.out.println("gSIG = " + generatedSignature);
 
 
         // TEST (flatten types)
-        TypeCompiler typeCompiler = new TypeCompiler(extractedSignature,generatedSignature);
+        TypeCompiler typeCompiler = new TypeCompiler(extractedSignature,generatedSignature,generatedRules);
         typeCompiler.flattenSignature();
         // refresh the signatures (presently no modifications)
         extractedSignature = typeCompiler.getExtractedSignature();
         generatedSignature = typeCompiler.getGeneratedSignature();
 
-        System.out.println("gSIG = " + generatedSignature);
-
+        typeCompiler.typeRules();
+        //         System.out.println("gSIG = " + generatedSignature);
+        
 
         // TEST
         //         List<Rule> newRules = compiler.specialize("rule6", "T", generatedRules);  

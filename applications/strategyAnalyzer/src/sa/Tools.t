@@ -18,7 +18,7 @@ public class Tools {
 
   private static int phiNumber = 0;
   public static String getName(String name) {
-    return name + (phiNumber++);
+    return name + "_" + (phiNumber++);
   }
   
   private static Term _appl(String name, Term... args) {
@@ -396,4 +396,26 @@ public class Tools {
     }
     return res;
   }
+
+  public static StrategyOperator getRuleOperator(Rule rule) {
+    StrategyOperator op = StrategyOperator.IDENTITY;
+    %match(rule){
+      Rule(Appl(symbol,args),_) ->{
+        String opSymb = `symbol;
+        int last = opSymb.indexOf('_');
+        if(last==-1){ last=opSymb.length();}
+        switch(opSymb.substring(0,last)){
+        case "id": 
+          op = StrategyOperator.IDENTITY;
+          break;
+        default:
+          op = StrategyOperator.NONE;
+          break;
+        }
+      }
+    }
+    return op;
+  }
+
+
 }

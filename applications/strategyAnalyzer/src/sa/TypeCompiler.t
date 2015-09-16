@@ -20,14 +20,19 @@ public class TypeCompiler {
   // The generated (concrete) signature
   private Signature generatedSignature;
   // The generated (ordered) TRS
+  private List<Rule> untypedRules;
   private List<Rule> generatedRules;
 
-  public TypeCompiler(Signature extractedSignature, Signature generatedSignature){
+  public TypeCompiler(Signature extractedSignature, Signature generatedSignature, List<Rule> untypedRules){
     this.extractedSignature=extractedSignature;
     this.generatedSignature=generatedSignature;
+    this.untypedRules=untypedRules;
   }
 
 
+  /**
+   * Flattens all the types from the (extracted) signature into a unique (DUMMY) type
+   */
   public  void flattenSignature() {
     Set<GomType> extractedTypes = extractedSignature.getTypes();
     for(GomType type: extractedTypes){
@@ -51,6 +56,14 @@ public class TypeCompiler {
       generatedSignature.removeType(type);
     }
   }
+
+
+  public  void typeRules() {
+    for(Rule rule: untypedRules){
+      System.out.println("RULE symbol: "+ Tools.getRuleOperator(rule));
+    }
+  }
+
   /********************************************************************************
    *     END
    ********************************************************************************/
