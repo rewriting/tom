@@ -60,7 +60,9 @@ public class TypeCompiler {
 
   public  void typeRules() {
     for(Rule rule: untypedRules){
-      System.out.println("RULE symbol: "+ Tools.getRuleOperator(rule));
+      System.out.println("RULE symbol: "+ Tools.getRuleOperator(rule) 
+                       + " for symbol "+Tools.getArgumentSymbol(rule)
+                         + " of type " + extractedSignature.getCodomain(Tools.getArgumentSymbol(rule)));
     }
   }
 

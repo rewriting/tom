@@ -404,20 +404,21 @@ public class Tools {
         String opSymb = `symbol;
         int last = opSymb.indexOf('_');
         if(last==-1){ last=opSymb.length();}
-
-//         switch(opSymb.substring(0,last)){
-//         case StrategyOperator.IDENTITY.getName(): 
-//           op = StrategyOperator.IDENTITY;
-//           break;
-//         default:
-//           op = StrategyOperator.NONE;
-//           break;
-//         }
-
         op = StrategyOperator.getStrategyOperator(opSymb.substring(0,last));
       }
     }
     return op;
+  }
+
+
+  public static String getArgumentSymbol(Rule rule) {
+    String funSymb = null;
+    %match(rule){
+      Rule(Appl(symbol,TermList(Appl(fun,args),_*)),_) ->{
+        funSymb = `fun;
+      }
+    }
+    return funSymb;
   }
 
 
