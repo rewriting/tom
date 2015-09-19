@@ -302,7 +302,7 @@ public class Compiler {
            *   rule'(X@linear-lhs, false) -> Bottom(x)
            */
 
-          String rule = Tools.getName("rule");
+          String rule = Tools.getName(StrategyOperator.RULE.getName());
           String cr = Tools.getName("crule");
 
           if(!Main.options.metalevel) {
@@ -409,7 +409,7 @@ public class Compiler {
          */
         StratMu(name,s) -> {
           try {
-            String mu = Tools.getName("mu");
+            String mu = Tools.getName(StrategyOperator.MU.getName());
             Strat newStrat = `TopDown(ReplaceMuVar(name,mu)).visitLight(`s);
             String phi_s = compileStrat(newStrat,generatedRules);
             if(!Main.options.metalevel) {
@@ -438,7 +438,7 @@ public class Compiler {
         }
 
         StratIdentity() -> {
-          String id = Tools.getName("id");
+          String id = Tools.getName(StrategyOperator.IDENTITY.getName());
           if(!Main.options.metalevel) {
             this.generatedSignature.addSymbol(id,Arrays.asList(Signature.DUMMY),Signature.DUMMY);
             if( !Main.options.approx ) {
@@ -476,7 +476,7 @@ public class Compiler {
         }
 
         StratFail() -> {
-          String fail = Tools.getName("fail");
+          String fail = Tools.getName(StrategyOperator.FAIL.getName());
           if( !Main.options.metalevel ) {
             this.generatedSignature.addSymbol(fail,Arrays.asList(Signature.DUMMY),Signature.DUMMY);
             if( !Main.options.approx ) {
@@ -512,7 +512,7 @@ public class Compiler {
         StratSequence(s1,s2) -> {
           String n1 = compileStrat(`s1,generatedRules);
           String n2 = compileStrat(`s2,generatedRules);
-          String seq = Tools.getName("seq");
+          String seq = Tools.getName(StrategyOperator.SEQ.getName());
           String seq2 = Tools.getName("seq2");
           if( !Main.options.metalevel ) {
             this.generatedSignature.addSymbol(seq,Arrays.asList(Signature.DUMMY),Signature.DUMMY);
@@ -565,7 +565,7 @@ public class Compiler {
         StratChoice(s1,s2) -> {
           String n1 = compileStrat(`s1,generatedRules);
           String n2 = compileStrat(`s2,generatedRules);
-          String choice = Tools.getName("choice");
+          String choice = Tools.getName(StrategyOperator.CHOICE.getName());
           String choice2 = Tools.getName("choice");
           if( !Main.options.metalevel ) {
             this.generatedSignature.addSymbol(choice,Arrays.asList(Signature.DUMMY),Signature.DUMMY);
@@ -606,7 +606,7 @@ public class Compiler {
 
         StratAll(s) -> {
           String phi_s = compileStrat(`s,generatedRules);
-          String all = Tools.getName("all");
+          String all = Tools.getName(StrategyOperator.ALL.getName());
           if( !Main.options.metalevel ) {
             this.generatedSignature.addSymbol(all,Arrays.asList(Signature.DUMMY),Signature.DUMMY);
             for(String name : this.extractedSignature.getSymbolNames()) {
@@ -733,7 +733,7 @@ public class Compiler {
 
         StratOne(s) -> {
           String phi_s = compileStrat(`s,generatedRules);
-          String one = Tools.getName("one");
+          String one = Tools.getName(StrategyOperator.ONE.getName());
           if( !Main.options.metalevel ) {
             this.generatedSignature.addSymbol(one,Arrays.asList(Signature.DUMMY),Signature.DUMMY);
             for(String name : this.extractedSignature.getSymbolNames()) {

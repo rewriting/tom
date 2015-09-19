@@ -404,14 +404,17 @@ public class Tools {
         String opSymb = `symbol;
         int last = opSymb.indexOf('_');
         if(last==-1){ last=opSymb.length();}
-        switch(opSymb.substring(0,last)){
-        case "id": 
-          op = StrategyOperator.IDENTITY;
-          break;
-        default:
-          op = StrategyOperator.NONE;
-          break;
-        }
+
+//         switch(opSymb.substring(0,last)){
+//         case StrategyOperator.IDENTITY.getName(): 
+//           op = StrategyOperator.IDENTITY;
+//           break;
+//         default:
+//           op = StrategyOperator.NONE;
+//           break;
+//         }
+
+        op = StrategyOperator.getStrategyOperator(opSymb.substring(0,last));
       }
     }
     return op;
