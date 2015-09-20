@@ -20,7 +20,33 @@ public class Tools {
   public static String getName(String name) {
     return name + "_" + (phiNumber++);
   }
+
+  public static StrategyOperator getOperator(String symbol) {
+    int last = symbol.indexOf('_');
+    if(last==-1){ last=symbol.length();}
+    return StrategyOperator.getStrategyOperator(symbol.substring(0,last));
+  }
   
+  public static String getCompositeName(String opName, String aux) {
+    return opName+"_"+aux;
+  }
+
+  public static String getComposite(String symbol) {
+    String aux=null;
+    int last = symbol.indexOf('_');
+    if(last != -1){ // if generated symbol containing a seq number 
+      int numberLast = symbol.indexOf('_',last+1);
+      if(numberLast != -1){ // if composed
+        int funLast = symbol.indexOf('_',numberLast+1);
+        if(funLast == -1){ // if no extra symbols after
+          funLast = symbol.length();
+        }
+        aux = symbol.substring(numberLast+1,funLast);
+      }
+    }
+    return aux;
+  }
+
   private static Term _appl(String name, Term... args) {
     TermList tl = `TermList();
     for(Term t:args) {
@@ -397,29 +423,27 @@ public class Tools {
     return res;
   }
 
-  public static StrategyOperator getRuleOperator(Rule rule) {
-    StrategyOperator op = StrategyOperator.IDENTITY;
-    %match(rule){
-      Rule(Appl(symbol,args),_) ->{
-        String opSymb = `symbol;
-        int last = opSymb.indexOf('_');
-        if(last==-1){ last=opSymb.length();}
-        op = StrategyOperator.getStrategyOperator(opSymb.substring(0,last));
-      }
-    }
-    return op;
-  }
+//   public static StrategyOperator getRuleOperator(Rule rule) {
+//     StrategyOperator op = StrategyOperator.IDENTITY;
+//     %match(rule){
+//       Rule(Appl(symbol,args),_) ->{
+//         String opSymb = `symbol;
+//         op = Tools.getOperator(opSymb);
+//       }
+//     }
+//     return op;
+//   }
 
 
-  public static String getArgumentSymbol(Rule rule) {
-    String funSymb = null;
-    %match(rule){
-      Rule(Appl(symbol,TermList(Appl(fun,args),_*)),_) ->{
-        funSymb = `fun;
-      }
-    }
-    return funSymb;
-  }
+//   public static String getArgumentSymbol(Rule rule) {
+//     String funSymb = null;
+//     %match(rule){
+//       Rule(Appl(symbol,TermList(Appl(fun,args),_*)),_) ->{
+//         funSymb = `fun;
+//       }
+//     }
+//     return funSymb;
+//   }
 
 
 }

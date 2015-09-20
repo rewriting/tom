@@ -14,6 +14,8 @@ public class Compiler {
 
   %typeterm Compiler { implement { Compiler }}
 
+  private static final String AUX="Aux";
+
   private static Compiler instance = null;
 
   // initial AST
@@ -303,7 +305,7 @@ public class Compiler {
            */
 
           String rule = Tools.getName(StrategyOperator.RULE.getName());
-          String cr = Tools.getName("crule");
+          String cr = Tools.getName(StrategyOperator.RULE.getName()+AUX);
 
           if(!Main.options.metalevel) {
             // if declared strategy (i.e. defined name) use its name; otherwise generate fresh name
@@ -513,7 +515,7 @@ public class Compiler {
           String n1 = compileStrat(`s1,generatedRules);
           String n2 = compileStrat(`s2,generatedRules);
           String seq = Tools.getName(StrategyOperator.SEQ.getName());
-          String seq2 = Tools.getName("seq2");
+          String seq2 = Tools.getName(StrategyOperator.SEQ.getName()+AUX);
           if( !Main.options.metalevel ) {
             this.generatedSignature.addSymbol(seq,Arrays.asList(Signature.DUMMY),Signature.DUMMY);
             this.generatedSignature.addSymbol(seq2,Arrays.asList(Signature.DUMMY,Signature.DUMMY),Signature.DUMMY);
@@ -566,7 +568,7 @@ public class Compiler {
           String n1 = compileStrat(`s1,generatedRules);
           String n2 = compileStrat(`s2,generatedRules);
           String choice = Tools.getName(StrategyOperator.CHOICE.getName());
-          String choice2 = Tools.getName("choice");
+          String choice2 = Tools.getName(StrategyOperator.CHOICE.getName()+AUX);
           if( !Main.options.metalevel ) {
             this.generatedSignature.addSymbol(choice,Arrays.asList(Signature.DUMMY),Signature.DUMMY);
             this.generatedSignature.addSymbol(choice2,Arrays.asList(Signature.DUMMY),Signature.DUMMY);
@@ -616,7 +618,7 @@ public class Compiler {
                 // all(name) -> name
                 generatedRules.add(Rule(_appl(all,_appl(name)), _appl(name)));
               } else {
-                String all_n = all+"_"+name;
+                String all_n = Tools.getCompositeName(all,name);
                 List<String> all_args = new ArrayList<String>();
                 for(int i=0; i<arity_all; i++){
                   all_args.add(Signature.DUMMY);
@@ -742,7 +744,7 @@ public class Compiler {
                 // one(name) -> Bottom(name)
                 generatedRules.add(Rule(_appl(one,_appl(name)), Bottom(_appl(name))));
               } else {
-                String one_n = one+"_"+name;
+                String one_n = Tools.getCompositeName(one,name);
                 String one_n_1 = one_n + "_1";
 
                 // main case

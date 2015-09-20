@@ -60,9 +60,24 @@ public class TypeCompiler {
 
   public  void typeRules() {
     for(Rule rule: untypedRules){
-      System.out.println("RULE symbol: "+ Tools.getRuleOperator(rule) 
-                       + " for symbol "+Tools.getArgumentSymbol(rule)
-                         + " of type " + extractedSignature.getCodomain(Tools.getArgumentSymbol(rule)));
+      //       System.out.println(rule);
+      // if BOTTOM propagation rule
+
+      %match(rule){
+        Rule(Appl(stratOp,TermList(Appl(fun,args),_*)), Appl(newOp,_)) ->{
+          //           System.out.println("RULE symbol: "+ Tools.getRuleOperator(rule) 
+          //                              + " for symbol "+Tools.getArgumentSymbol(rule)
+          //                              + " of type " + extractedSignature.getCodomain(Tools.getArgumentSymbol(rule)));
+          
+          String opSymb = `stratOp;
+          StrategyOperator op = Tools.getOperator(opSymb);
+          System.out.print("RULE symbol: "+ op);
+          System.out.print(" for symbol "+ `fun);
+          System.out.print(" of type " + extractedSignature.getCodomain(`fun));
+          System.out.println(" -- FUN symbol for "+ opSymb + " :  "+ Tools.getComposite(opSymb));
+        }
+      }
+
     }
   }
 
