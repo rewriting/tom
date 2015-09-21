@@ -31,7 +31,7 @@ public class TypeCompiler {
 
 
   /**
-   * Flattens all the types from the (extracted) signature into a unique (DUMMY) type
+   * Flattens all the types from the (extracted) signature into a unique (TERM) type
    */
   public  void flattenSignature() {
     Set<GomType> extractedTypes = extractedSignature.getTypes();
@@ -43,16 +43,16 @@ public class TypeCompiler {
         List<GomType> newTypes = new ArrayList<GomType>();
         List<GomType> types = profiles.get(symbol);
         for(GomType ptype: types){
-          // if a specific type in the signature than flatten it to DUMMY
-          if(!ptype.equals(`GomType(Signature.DUMMY)) && !ptype.equals(`GomType(Signature.BOOLEAN))){
-            newTypes.add(`GomType(Signature.DUMMY));
+          // if a specific type in the signature than flatten it to TERM
+          if(!ptype.equals(`GomType(Signature.TERM)) && !ptype.equals(`GomType(Signature.BOOLEAN))){
+            newTypes.add(`GomType(Signature.TERM));
           }else{ // otherwise leave it as it is
-            newTypes.add(`GomType(Signature.DUMMY));
+            newTypes.add(`GomType(Signature.TERM));
           }
         }
         newProfiles.put(symbol,newTypes);
       }
-      generatedSignature.addProfilesForType(`GomType(Signature.DUMMY),newProfiles);
+      generatedSignature.addProfilesForType(`GomType(Signature.TERM),newProfiles);
       generatedSignature.removeType(type);
     }
   }
