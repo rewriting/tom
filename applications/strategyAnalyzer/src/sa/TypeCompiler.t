@@ -59,12 +59,15 @@ public class TypeCompiler {
 
 
   public  void typeRules() {
+    Signature localSignature = new Signature();
+    Set<GomType> extractedTypes = extractedSignature.getTypes();
+
     for(Rule rule: untypedRules){
       //       System.out.println(rule);
       // if BOTTOM propagation rule
 
       %match(rule){
-        Rule(Appl(stratOp,TermList(Appl(fun,args),_*)), Appl(newOp,_)) ->{
+        Rule(Appl(stratOp,TermList(Appl(fun,args),X*)), Appl(rightOp,A)) ->{
           //           System.out.println("RULE symbol: "+ Tools.getRuleOperator(rule) 
           //                              + " for symbol "+Tools.getArgumentSymbol(rule)
           //                              + " of type " + extractedSignature.getCodomain(Tools.getArgumentSymbol(rule)));
@@ -75,12 +78,26 @@ public class TypeCompiler {
           System.out.print(" for symbol "+ `fun);
           System.out.print(" of type " + extractedSignature.getCodomain(`fun));
           System.out.println(" -- FUN symbol for "+ opSymb + " :  "+ Tools.getComposite(opSymb));
+
+          // not an AUXiliary symbol and thus with a strict propagation of Bottom
+          if(`fun == Signature.BOTTOM && !Tools.isAuxiliary(opSymb)){
+            for(GomType type: extractedTypes){
+              String typedSymbol = Tools.typeSymbol(opSymb,type.getName());
+              String typedRightOp = Tools.typeSymbol(`rightOp,type.getName());
+              Rule newRule = `Rule(Appl(typedSymbol,TermList(Appl(fun,args),X*)), Appl(typedRightOp,A));
+//               generatedRules.
+  
+              System.out.println(" RULE "+ newRule);
+
+              localSignature.addSymbol(typedSymbol,new ArrayList<String>(),type.toString());
+            }
+          }
         }
       }
-
+      
     }
   }
-
+  
   /********************************************************************************
    *     END
    ********************************************************************************/
