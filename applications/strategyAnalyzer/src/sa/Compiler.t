@@ -14,7 +14,7 @@ public class Compiler {
 
   %typeterm Compiler { implement { Compiler }}
 
-  private static final String AUX="Aux";
+  private static final String AUX = "Aux";
 
   private static Compiler instance = null;
 
@@ -634,7 +634,7 @@ public class Compiler {
                 Term[] a_lx = new Term[arity];
                 Term[] a_rx = new Term[arity+1];
                 for(int i=0 ; i<arity ; i++) {
-                  Term Xi = `Var("X" + i);
+                  Term Xi = `Var("X_" + i);
                   a_lx[i] = Xi;
                   a_rx[i] = _appl(phi_s, Xi);
                 }
@@ -650,7 +650,7 @@ public class Compiler {
                 a_lx = new Term[arity+1];
                 a_rx = new Term[arity];
                 for(int i=0 ; i<arity ; i++) {
-                  Term Xi = `Var("X" + i);
+                  Term Xi = `Var("X_" + i);
                   Term Yi = `Var("Y" + i);
                   a_lx[i] = At(Xi,Anti(Bottom(Yi)));
                   a_rx[i] = Xi;
@@ -667,7 +667,7 @@ public class Compiler {
                   Term X0 = `Var("X0");
                   a_llx[0] = (i==0)?Bottom(X0):X0;
                   for(int j=1 ; i<arity ; i++) {
-                    Term Xj = `Var("X" + i);
+                    Term Xj = `Var("X_" + i);
                     if(j==i) {
                       a_llx[j] = Bottom(Xj);
                     } else {
@@ -756,7 +756,7 @@ public class Compiler {
                 Term[] a_lx = new Term[arity];
                 Term[] a_rx = new Term[arity];
                 for(int i=1 ; i<=arity ; i++) {
-                  Term Xi = `Var("X" + i);
+                  Term Xi = `Var("X_" + i);
                   a_lx[i-1] = Xi;
                   a_rx[i-1] = (i==1)?_appl(phi_s, Xi):Xi;
                 }
@@ -782,7 +782,7 @@ public class Compiler {
                     // one_f_i(Bottom(x1),...,Bottom(xi),xj,...,xn)
                     // -> one_f_(i+1)(Bottom(x1),...,Bottom(xi),phi_s(x_i+1),...,xn)
                     for(int j=1 ; j<=arity ; j++) {
-                      Term Xj = Var("X"+j);
+                      Term Xj = Var("X_"+j);
                       if(j<=i) {
                         a_lx[j-1] = Bottom(Xj);
                         a_rx[j-1] = Bottom(Xj);
@@ -797,7 +797,7 @@ public class Compiler {
                   } else {
                     // one_f_n(Bottom(x1),...,Bottom(xn)) -> Bottom(f(x1,...,xn))
                     for(int j=1 ; j<=arity ; j++) {
-                      Term Xj = Var("X"+j);
+                      Term Xj = Var("X_"+j);
                       a_lx[j-1] = Bottom(Xj);
                       a_rx[j-1] = Xj;
                     }
@@ -807,7 +807,7 @@ public class Compiler {
                   // one_f_i(Bottom(x1),...,xi@!Bottom(_),xj,...,xn)
                   // -> f(x1,...,xi,...,xn)
                   for(int j=1 ; j<=arity ; j++) {
-                    Term Xj = Var("X"+j);
+                    Term Xj = Var("X_"+j);
                     if(j<i) {
                       a_lx[j-1] = Bottom(Xj);
                     } else if(j==i) {
@@ -1006,7 +1006,7 @@ public class Compiler {
         Term[] a_lx = new Term[arf];
         Term[] a_rx = new Term[arg];
         for(int i=1 ; i<=arf ; i++) {
-          a_lx[i-1] = Var("X" + i);
+          a_lx[i-1] = Var("X_" + i);
         }
         for(int i=1 ; i<=arg ; i++) {
           a_rx[i-1] = Var("Y" + i);
@@ -1018,7 +1018,7 @@ public class Compiler {
           // eq(f(x1,...,xn),f(y1,...,yn)) -> True ^ eq(x1,y1) ^ ... ^ eq(xn,yn)
           Term scond = True();
           for(int i=1 ; i<=arf ; i++) {
-            scond = And(Eq(Var("X" + i),Var("Y" + i)),scond);
+            scond = And(Eq(Var("X_" + i),Var("Y" + i)),scond);
           }
           generatedRules.add(Rule(Eq(_appl(f,a_lx),_appl(g,a_rx)), scond));
         }
