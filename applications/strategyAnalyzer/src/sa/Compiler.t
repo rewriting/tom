@@ -335,27 +335,33 @@ public class Compiler {
 
                 %match(result) {
                   TermList(_, Appl("True",TermList())) -> {
-                    // if already linear lhs
-                    // rule(X@lhs) -> rhs
-                    // rule(X@!lhs) -> Bot(X)
+                    /*
+                     * if already linear lhs
+                     * rule(X@lhs) -> rhs
+                     * rule(X@!lhs) -> Bot(X)
+                     */
                     generatedRules.add(Rule(_appl(rule,At(X,`lhs)), `rhs));
                     generatedRules.add(Rule(_appl(rule,At(X,Anti(`lhs))), Bottom(X)));
                   }
 
                   TermList(linearlhs, cond@!Appl("True",TermList())) -> {
-                    // if non-linear add rules for checking equality for corresponding arguments
-                    // rule(X@linearlhs) -> cr(X,cond)
-                    // rule(X@!linearlhs) -> Bot(X)
-                    // cr(linearlhs, True) -> rhs
-                    // cr(X@linearlhs, False) -> Bot(X)
+                    /*
+                     * if non-linear add rules for checking equality for corresponding arguments
+                     * rule(X@linearlhs) -> cr(X,cond)
+                     * rule(X@!linearlhs) -> Bot(X)
+                     * cr(linearlhs, True) -> rhs
+                     * cr(X@linearlhs, False) -> Bot(X)
+                     */
                     generatedRules.add(Rule(_appl(rule,At(X,`linearlhs)), _appl(cr, X, `cond)));
                     generatedRules.add(Rule(_appl(rule,At(X,Anti(`linearlhs))), Bottom(X)));
                     generatedRules.add(Rule(_appl(cr,`linearlhs, True()), `rhs));
                     generatedRules.add(Rule(_appl(cr,At(X,`linearlhs),False()), Bottom(X)));
                   }
                 }
-                // propagate failure; if the rule is applied to the result of a strategy that failed then the result is a failure
-                // rule(Bot(X)) -> Bot(X)
+                /*
+                 * propagate failure; if the rule is applied to the result of a strategy that failed then the result is a failure
+                 * rule(Bot(X)) -> Bot(X)
+                 */
                 generatedRules.add(Rule(_appl(rule,Bottom(X)), Bottom(X)));
               }
             }
@@ -366,8 +372,10 @@ public class Compiler {
 
             %match(rulelist) {
               RuleList(_*,Rule(lhs,rhs),_*) -> {
-                // propagate failure
-                // rule(Bot(X)) -> Bot(X)
+                /*
+                 * propagate failure
+                 * rule(Bot(X)) -> Bot(X)
+                 */
                 generatedRules.add(Rule(_appl(rule,Bottom(X)), Bottom(X)));
 
                 TermList result = this.linearize(`lhs);
@@ -376,9 +384,11 @@ public class Compiler {
 
                 %match(result) {
                   TermList(_, Appl("True",TermList())) -> {
-                    // if already linear lhs
-                    // rule(X@mlhs) -> mrhs
-                    // rule(X@!mlhs) -> Bot(X)
+                    /*
+                     * if already linear lhs
+                     * rule(X@mlhs) -> mrhs
+                     * rule(X@!mlhs) -> Bot(X)
+                     */
                     generatedRules.add(Rule(_appl(rule,At(X,mlhs)), mrhs));
                     generatedRules.add(Rule(_appl(rule,At(X,Anti(mlhs))), Bottom(X)));
                   }
@@ -386,10 +396,12 @@ public class Compiler {
                   TermList(linearlhs, cond@!Appl("True",TermList())) -> {
                     // if non-linear add rules for checking equality for corresponding arguments
                     Term mlinearlhs = Tools.metaEncodeConsNil(`linearlhs,generatedSignature);
-                    // rule(X@mlinearlhs) -> cr(X,cond)
-                    // rule(X@!mlinearlhs) -> Bot(X)
-                    // cr(mlinearlhs, True) -> mrhs
-                    // cr(X@mlinearlhs, False) -> Bot(X)
+                    /*
+                     * rule(X@mlinearlhs) -> cr(X,cond)
+                     * rule(X@!mlinearlhs) -> Bot(X)
+                     * cr(mlinearlhs, True) -> mrhs
+                     * cr(X@mlinearlhs, False) -> Bot(X)
+                     */
                     generatedRules.add(Rule(_appl(rule,At(X,mlinearlhs)), _appl(cr,X,`cond)));
                     generatedRules.add(Rule(_appl(rule,At(X,Anti(mlinearlhs))), Bottom(X)));
                     generatedRules.add(Rule(_appl(cr,mlinearlhs, True()), mrhs));
@@ -420,15 +432,19 @@ public class Compiler {
             String phi_s = compileStrat(newStrat,generatedRules);
             if(!Main.options.metalevel) {
               gSig.addSymbol(mu,Arrays.asList(Signature.TERM),Signature.TERM);
-              // mu(X@!Bot(Y)) -> phi_s(X)
-              // mu(Bot(X)) -> Bot(X)
+              /*
+               * mu(X@!Bot(Y)) -> phi_s(X)
+               * mu(Bot(X)) -> Bot(X)
+               */
               generatedRules.add(Rule(_appl(mu,At(X,Anti(Bottom(Y)))), _appl(phi_s,X)));
               generatedRules.add(Rule(_appl(mu,Bottom(X)), Bottom(X)));
             } else {
               // META-LEVEL
               gSig.addSymbol(mu,Arrays.asList(Signature.METATERM),Signature.METATERM);
-              // mu(Appl(Y,Z)) -> phi_s(Appl(Y,Z))
-              // mu(Bot(X)) -> Bot(X)
+              /*
+               * mu(Appl(Y,Z)) -> phi_s(Appl(Y,Z))
+               * mu(Bot(X)) -> Bot(X)
+               */
               generatedRules.add(Rule(_appl(mu,Appl(Y,Z)), _appl(phi_s,Appl(Y,Z))));
               generatedRules.add(Rule(_appl(mu,Bottom(X)), Bottom(X)));
             }
@@ -448,18 +464,22 @@ public class Compiler {
           if(!Main.options.metalevel) {
             gSig.addSymbol(id,Arrays.asList(Signature.TERM),Signature.TERM);
             if( !Main.options.approx ) {
-              // the rule cannot be applied on arguments containing fresh variables but only on terms from the signature or Bottom
-              // normally it will follow reduction in original TRS
-
-              // id(X@!Bot(Y)) -> X
-              // id(Bot(X)) -> Bot(X)
+              /*
+               * the rule cannot be applied on arguments containing fresh
+               * variables but only on terms from the signature or Bottom
+               * normally it will follow reduction in original TRS
+               * id(X@!Bot(Y)) -> X
+               * id(Bot(X)) -> Bot(X)
+               */
               generatedRules.add(Rule(_appl(id,At(X,Anti(Bottom(Y)))), X));
               generatedRules.add(Rule(_appl(id,Bottom(X)), Bottom(X)));
             } else { 
-              // Bottom of Bottom is Bottom
-              // this is not necessary if exact reduction - in this case Bottom is propagated immediately 
-              // id(X) -> X
-              // Bot(Bot(X)) -> Bot(X)
+              /*
+               * Bottom of Bottom is Bottom
+               * this is not necessary if exact reduction - in this case Bottom is propagated immediately 
+               * id(X) -> X
+               * Bot(Bot(X)) -> Bot(X)
+               */
               generatedRules.add(Rule(_appl(id,X), X));
               generatedRules.add(Rule(Bottom(Bottom(X)), Bottom(X)));
             }
@@ -467,13 +487,17 @@ public class Compiler {
             // META-LEVEL
             gSig.addSymbol(id,Arrays.asList(Signature.METATERM),Signature.METATERM);
             if( !Main.options.approx ) {
-              // id(Appl(X,Y)) -> Appl(X,Y)
-              // id(Bot(X)) -> Bot(X)
+              /*
+               * id(Appl(X,Y)) -> Appl(X,Y)
+               * id(Bot(X)) -> Bot(X)
+               */
               generatedRules.add(Rule(_appl(id,Appl(X,Y)), Appl(X,Y)));
               generatedRules.add(Rule(_appl(id,Bottom(X)), Bottom(X)));
             } else { 
-              // id(X) -> X
-              // Bot(Bot(X)) -> Bot(X)
+              /*
+               * id(X) -> X
+               * Bot(Bot(X)) -> Bot(X)
+               */
               generatedRules.add(Rule(_appl(id,X), X));
               generatedRules.add(Rule(Bottom(Bottom(X)), Bottom(X)));
             }
@@ -486,13 +510,17 @@ public class Compiler {
           if( !Main.options.metalevel ) {
             gSig.addSymbol(fail,Arrays.asList(Signature.TERM),Signature.TERM);
             if( !Main.options.approx ) {
-              // fail(X@!Bot(Y)) -> Bot(X)
-              // fail(Bot(X)) -> Bot(X)
+              /*
+               * fail(X@!Bot(Y)) -> Bot(X)
+               * fail(Bot(X)) -> Bot(X)
+               */
               generatedRules.add(Rule(_appl(fail,At(X,Anti(Bottom(Y)))), Bottom(X)));
               generatedRules.add(Rule(_appl(fail,Bottom(X)), Bottom(X)));
             } else { 
-              // fail(X) -> Bot(X)
-              // Bot(Bot(X)) -> Bot(X)
+              /*
+               * fail(X) -> Bot(X)
+               * Bot(Bot(X)) -> Bot(X)
+               */
               generatedRules.add(Rule(_appl(fail,X), Bottom(X)));
               generatedRules.add(Rule(Bottom(Bottom(X)), Bottom(X)));
             }
@@ -500,13 +528,17 @@ public class Compiler {
             // META-LEVEL
             gSig.addSymbol(fail,Arrays.asList(Signature.METATERM),Signature.METATERM);
             if( !Main.options.approx ) {
-              // fail(Appl(X,Y)) -> Bot(Appl(X,Y))
-              // fail(Bot(X)) -> Bot(X)
+              /*
+               * fail(Appl(X,Y)) -> Bot(Appl(X,Y))
+               * fail(Bot(X)) -> Bot(X)
+               */
               generatedRules.add(Rule(_appl(fail,Appl(X,Y)), Bottom(Appl(X,Y))));
               generatedRules.add(Rule(_appl(fail,Bottom(X)), Bottom(X)));
             } else { 
-              // fail(X) -> Bot(X)
-              // Bot(Bot(X)) -> Bot(X)
+              /*
+               * fail(X) -> Bot(X)
+               * Bot(Bot(X)) -> Bot(X)
+               */
               generatedRules.add(Rule(_appl(fail,X), Bottom(X)));
               generatedRules.add(Rule(Bottom(Bottom(X)), Bottom(X)));
             }
@@ -524,22 +556,26 @@ public class Compiler {
             gSig.addSymbol(seq,Arrays.asList(Signature.TERM),Signature.TERM);
             gSig.addSymbol(seq2,Arrays.asList(Signature.TERM,Signature.TERM),Signature.TERM);
             if( !Main.options.approx ) {
-              // the rule cannot be applied on arguments containing fresh variables but only on terms from the signature or Bottom
-              // normally it will follow reduction in original TRS
-              // seq(X@!Bot(Y)) -> seq2(n2(n1(X)),X)
-              // seq(Bot(X)) -> Bot(X)
-              // seq2(X@!Bot(Y),Z) -> X
-              // seq2(Bot(Y),X) -> Bot(X)
+              /*
+               * the rule cannot be applied on arguments containing fresh variables but only on terms from the signature or Bottom
+               * normally it will follow reduction in original TRS
+               * seq(X@!Bot(Y)) -> seq2(n2(n1(X)),X)
+               * seq(Bot(X)) -> Bot(X)
+               * seq2(X@!Bot(Y),Z) -> X
+               * seq2(Bot(Y),X) -> Bot(X)
+               */
               generatedRules.add(Rule(_appl(seq,At(X,Anti(Bottom(Y)))), _appl(seq2,_appl(n2,_appl(n1,X)),X)));
               generatedRules.add(Rule(_appl(seq,Bottom(X)), Bottom(X)));
               generatedRules.add(Rule(_appl(seq2,At(X,Anti(Bottom(Y))),Z), X));
               generatedRules.add(Rule(_appl(seq2,Bottom(Y),X), Bottom(X)));
 
             } else { 
-              // seq(X) -> seq2(n2(n1(X)),X)
-              // Bot(Bot(X)) -> Bot(X)
-              // seq2(X@!Bot(Y),Z) -> X
-              // seq2(Bot(Y),X) -> Bot(X)
+              /*
+               * seq(X) -> seq2(n2(n1(X)),X)
+               * Bot(Bot(X)) -> Bot(X)
+               * seq2(X@!Bot(Y),Z) -> X
+               * seq2(Bot(Y),X) -> Bot(X)
+               */
               generatedRules.add(Rule(_appl(seq,X), _appl(seq2,_appl(n2,_appl(n1,X)),X)));
               generatedRules.add(Rule(Bottom(Bottom(X)), Bottom(X)));
               generatedRules.add(Rule(_appl(seq2,At(X,Anti(Bottom(Y))),Z), X));
@@ -550,17 +586,21 @@ public class Compiler {
             gSig.addSymbol(seq,Arrays.asList(Signature.METATERM),Signature.METATERM);
             gSig.addSymbol(seq2,Arrays.asList(Signature.METATERM,Signature.METATERM),Signature.METATERM);
             if( !Main.options.approx ) {
-              // seq(Appl(X,Y)) -> seq2(n2(n1(Appl(X,Y))),Appl(X,Y))
-              // seq(Bot(X)) -> Bot(X)
-              // seq2(Appl(X,Y),Z) -> Appl(X,Y)
-              // seq2(Bot(Y),X) -> Bot(X)
+              /*
+               * seq(Appl(X,Y)) -> seq2(n2(n1(Appl(X,Y))),Appl(X,Y))
+               * seq(Bot(X)) -> Bot(X)
+               * seq2(Appl(X,Y),Z) -> Appl(X,Y)
+               * seq2(Bot(Y),X) -> Bot(X)
+               */
               generatedRules.add(Rule(_appl(seq,Appl(X,Y)), _appl(seq2,_appl(n2,_appl(n1,Appl(X,Y))),Appl(X,Y))));
               generatedRules.add(Rule(_appl(seq,Bottom(X)), Bottom(X)));
               generatedRules.add(Rule(_appl(seq2,Appl(X,Y),Z), Appl(X,Y)));
               generatedRules.add(Rule(_appl(seq2,Bottom(Y),X), Bottom(X)));
             } else { 
-              // CHECK HERE
-              // seq(X) -> n2(n1(X))
+              /*
+               * CHECK HERE
+               * seq(X) -> n2(n1(X))
+               */
               generatedRules.add(Rule(X, _appl(n2,_appl(n1,X))));
             }
 
@@ -576,11 +616,13 @@ public class Compiler {
           if( !Main.options.metalevel ) {
             gSig.addSymbol(choice,Arrays.asList(Signature.TERM),Signature.TERM);
             gSig.addSymbol(choice2,Arrays.asList(Signature.TERM),Signature.TERM);
-            // TODO [20/01/2015]: see if not exact is interesting
-            // choice(X@!Bot(Y)) -> choice2(n1(X))
-            // choice(Bot(X)) -> Bot(X)
-            // choice2(X@!Bot(Y)) -> X
-            // choice2(Bot(X)) -> n2(X)
+            /*
+             * TODO [20/01/2015]: see if not exact is interesting
+             * choice(X@!Bot(Y)) -> choice2(n1(X))
+             * choice(Bot(X)) -> Bot(X)
+             * choice2(X@!Bot(Y)) -> X
+             * choice2(Bot(X)) -> n2(X)
+             */
             generatedRules.add(Rule(_appl(choice,At(X,Anti(Bottom(Y)))), _appl(choice2,_appl(n1,X))));
             generatedRules.add(Rule(_appl(choice,Bottom(X)), Bottom(X)));
             generatedRules.add(Rule(_appl(choice2,At(X,Anti(Bottom(Y)))), X));
@@ -590,18 +632,22 @@ public class Compiler {
             gSig.addSymbol(choice,Arrays.asList(Signature.METATERM),Signature.METATERM);
             gSig.addSymbol(choice2,Arrays.asList(Signature.METATERM),Signature.METATERM);
             if( !Main.options.approx ) {
-              // choice(Appl(X,Y)) -> choice2(n1(Appl(X,Y)))
-              // choice(Bot(X)) -> Bot(X)
-              // choice2(Appl(X,Y) -> Appl(X,Y)
-              // choice2(Bot(X)) -> n2(X)
+              /*
+               * choice(Appl(X,Y)) -> choice2(n1(Appl(X,Y)))
+               * choice(Bot(X)) -> Bot(X)
+               * choice2(Appl(X,Y) -> Appl(X,Y)
+               * choice2(Bot(X)) -> n2(X)
+               */
               generatedRules.add(Rule(_appl(choice,Appl(X,Y)), _appl(choice2,_appl(n1,Appl(X,Y)))));
               generatedRules.add(Rule(_appl(choice,Bottom(X)), Bottom(X)));
               generatedRules.add(Rule(_appl(choice2,Appl(X,Y)), Appl(X,Y)));
               generatedRules.add(Rule(_appl(choice2,Bottom(X)), _appl(n2,X)));
             } else {
-              // choice(X) -> choice2(n1(X))
-              // choice2(Appl(X,Y) -> Appl(X,Y)
-              // choice2(Bot(X)) -> n2(X)
+              /*
+               * choice(X) -> choice2(n1(X))
+               * choice2(Appl(X,Y) -> Appl(X,Y)
+               * choice2(Bot(X)) -> n2(X)
+               */
               generatedRules.add(Rule(_appl(choice,X), _appl(choice2,_appl(n1,X))));
               generatedRules.add(Rule(_appl(choice2,Appl(X,Y)), Appl(X,Y)));
               generatedRules.add(Rule(_appl(choice2,Bottom(X)), _appl(n2,X)));
@@ -619,7 +665,9 @@ public class Compiler {
               int arity = gSig.getArity(name);
               int arity_all = arity+1;
               if(arity==0) {
-                // all(name) -> name
+                /*
+                 * all(name) -> name
+                 */
                 generatedRules.add(Rule(_appl(all,_appl(name)), _appl(name)));
               } else {
                 String all_n = Tools.getCompositeName(all,name);
@@ -628,9 +676,10 @@ public class Compiler {
                   all_args.add(Signature.TERM);
                 }
                 gSig.addSymbol(all_n,all_args,Signature.TERM);
-
-                // main case
-                // all(f(x1,...,xn)) -> all_n(phi_s(x1),phi_s(x2),...,phi_s(xn),f(x1,...,xn))
+                /*
+                 * main case
+                 * all(f(x1,...,xn)) -> all_n(phi_s(x1),phi_s(x2),...,phi_s(xn),f(x1,...,xn))
+                 */
                 Term[] a_lx = new Term[arity];
                 Term[] a_rx = new Term[arity+1];
                 for(int i=0 ; i<arity ; i++) {
@@ -640,13 +689,15 @@ public class Compiler {
                 }
                 a_rx[arity] = _appl(name, a_lx);
                 generatedRules.add(Rule(_appl(all,_appl(name, a_lx)), _appl(all_n, a_rx)));
-
-                // propagate Bottom  (otherwise not reduced and leads to bug in Sequence)
-                // all(Bot(X)) -> Bot(X)
+                /*
+                 * propagate Bottom  (otherwise not reduced and leads to bug in Sequence)
+                 * all(Bot(X)) -> Bot(X)
+                 */
                 generatedRules.add(Rule(_appl(all,Bottom(X)), Bottom(X)));
-
-                // generate success rules
-                // all_g(X1@!Bottom(Y1),...,X_n@!Bottom(Y_n),_) -> g(X1,...,X_n)
+                /*
+                 * generate success rules
+                 * all_g(X1@!Bottom(Y1),...,X_n@!Bottom(Y_n),_) -> g(X1,...,X_n)
+                 */
                 a_lx = new Term[arity+1];
                 a_rx = new Term[arity];
                 for(int i=0 ; i<arity ; i++) {
@@ -657,11 +708,12 @@ public class Compiler {
                 }
                 a_lx[arity] = Z;
                 generatedRules.add(Rule(_appl(all_n,a_lx), _appl(name, a_rx)));
-
-                // generate failure rules
-                // phi_n(Bottom(_),_,...,_,Z) -> Bottom(Z)
-                // phi_n(...,Bottom(_),...,Z) -> Bottom(Z)
-                // phi_n(_,...,_,Bottom(_),Z) -> Bottom(Z)
+                /*
+                 * generate failure rules
+                 * phi_n(Bottom(_),_,...,_,Z) -> Bottom(Z)
+                 * phi_n(...,Bottom(_),...,Z) -> Bottom(Z)
+                 * phi_n(_,...,_,Bottom(_),Z) -> Bottom(Z)
+                 */
                 Term[] a_llx = new Term[arity+1];
                 for(int i=0 ; i<arity ; i++) {
                   Term X0 = `Var("X0");
@@ -694,16 +746,18 @@ public class Compiler {
             generatedSignature.addSymbol(append,Arrays.asList(Signature.METALIST,Signature.METATERM),Signature.METALIST);
             generatedSignature.addSymbol(reverse,Arrays.asList(Signature.METALIST),Signature.METALIST);
             generatedSignature.addSymbol(rconcat,Arrays.asList(Signature.METALIST,Signature.METALIST),Signature.METALIST);
-            // all(Appl(Z0,Z1)) -> all_1(Appl(Z0,all_2(Z1)))
-            // all_1(Appl(Z0, BottomList(Z))) -> Bottom(Appl(Z0,Z))
-            // all_1(Appl(Z0, Cons(Z1,Z2))) -> Appl(Z0,Cons(Z1,Z2))
-            // all_1(Appl(Z0, Nil)) -> Appl(Z0,Nil)
-            // all_2(Nil) -> Nil
-            // all_2(Cons(Z1,Z2)) -> all_3(phi_s(Z1),Z2,Cons(Z1,Nil),Nil)
-            // all_3(Bottom(X),todo,rargs,rs_args) -> BottomList(rconcat(rargs,todo))
-            // all_3(Appl(X,Y),Nil,rargs,rs_args) -> reverse(Cons(Appl(X,Y),rs_args))
-            // all_3(Appl(X,Y), Cons(XX,YY), rargs, rs_args) -> 
-            // all_3(phi_s(XX), YY, Cons(XX,rargs), Cons(Appl(X,Y),rs_args))
+            /*
+             * all(Appl(Z0,Z1)) -> all_1(Appl(Z0,all_2(Z1)))
+             * all_1(Appl(Z0, BottomList(Z))) -> Bottom(Appl(Z0,Z))
+             * all_1(Appl(Z0, Cons(Z1,Z2))) -> Appl(Z0,Cons(Z1,Z2))
+             * all_1(Appl(Z0, Nil)) -> Appl(Z0,Nil)
+             * all_2(Nil) -> Nil
+             * all_2(Cons(Z1,Z2)) -> all_3(phi_s(Z1),Z2,Cons(Z1,Nil),Nil)
+             * all_3(Bottom(X),todo,rargs,rs_args) -> BottomList(rconcat(rargs,todo))
+             * all_3(Appl(X,Y),Nil,rargs,rs_args) -> reverse(Cons(Appl(X,Y),rs_args))
+             * all_3(Appl(X,Y), Cons(XX,YY), rargs, rs_args) -> 
+             * all_3(phi_s(XX), YY, Cons(XX,rargs), Cons(Appl(X,Y),rs_args))
+             */
             generatedRules.add(Rule(_appl(all,Appl(Z0,Z1)), _appl(all_1,Appl(Z0,_appl(all_2,Z1)))));
             generatedRules.add(Rule(_appl(all_1,Appl(Z0,BottomList(Z))), Bottom(Appl(Z0,Z))));
             generatedRules.add(Rule(_appl(all_1,Appl(Z0,Cons(Z1,Z2))), Appl(Z0,Cons(Z1,Z2))));
@@ -718,12 +772,14 @@ public class Compiler {
 
             if(!generated_aux_functions) {
               generated_aux_functions = true;
-              // append(Nil,Z) -> Cons(Z,Nil)
-              // append(Cons(X,Y),Z) -> Cons(X,append(Y,Z))
-              // reverse(Nil) -> Nil
-              // reverse(Cons(X,Y)) -> append(reverse(Y),X)
-              // rconcat(Nil,Z) -> Z
-              // rconcat(Cons(X,Y),Z) -> rconcat(Y,Cons(X,Z))
+              /*
+               * append(Nil,Z) -> Cons(Z,Nil)
+               * append(Cons(X,Y),Z) -> Cons(X,append(Y,Z))
+               * reverse(Nil) -> Nil
+               * reverse(Cons(X,Y)) -> append(reverse(Y),X)
+               * rconcat(Nil,Z) -> Z
+               * rconcat(Cons(X,Y),Z) -> rconcat(Y,Cons(X,Z))
+               */
 
               generatedRules.add(Rule(_appl(append,Nil(),Z), Cons(Z,Nil())));
               generatedRules.add(Rule(_appl(append,Cons(X,Y),Z), Cons(X,_appl(append,Y,Z))));
@@ -745,14 +801,17 @@ public class Compiler {
             for(String name : eSig.getSymbolNames()) {
               int arity = eSig.getArity(name);
               if(arity==0) {
-                // one(name) -> Bottom(name)
+                /*
+                 * one(name) -> Bottom(name)
+                 */
                 generatedRules.add(Rule(_appl(one,_appl(name)), Bottom(_appl(name))));
               } else {
                 String one_n = Tools.getCompositeName(one,name);
                 String one_n_1 = one_n + "_1";
-
-                // main case
-                // one(f(x1,...,xn)) -> one_n_1(phi_s(x1),x2,...,xn)
+                /*
+                 * main case
+                 * one(f(x1,...,xn)) -> one_n_1(phi_s(x1),x2,...,xn)
+                 */
                 Term[] a_lx = new Term[arity];
                 Term[] a_rx = new Term[arity];
                 for(int i=1 ; i<=arity ; i++) {
@@ -761,11 +820,11 @@ public class Compiler {
                   a_rx[i-1] = (i==1)?_appl(phi_s, Xi):Xi;
                 }
                 generatedRules.add(Rule(_appl(one,_appl(name, a_lx)), _appl(one_n_1, a_rx)));
-                
-                // propagate Bottom  (otherwise not reduced and leads to bug in Sequence)
-                // one(Bottom(X)) -> Bottom(X)
+                /*
+                 * propagate Bottom  (otherwise not reduced and leads to bug in Sequence)
+                 * one(Bottom(X)) -> Bottom(X)
+                 */
                 generatedRules.add(Rule(_appl(one,Bottom(X)), Bottom(X)));
-
 
                 for(int i=1 ; i<=arity ; i++) {
                   String one_n_i = one_n + "_" + i;
@@ -779,8 +838,10 @@ public class Compiler {
                   gSig.addSymbol(one_n_i,one_n_args,Signature.TERM);
                   if(i<arity) {
                     gSig.addSymbol(one_n_ii,one_n_ii_args,Signature.TERM);
-                    // one_f_i(Bottom(x1),...,Bottom(xi),xj,...,xn)
-                    // -> one_f_(i+1)(Bottom(x1),...,Bottom(xi),phi_s(x_i+1),...,xn)
+                    /*
+                     * one_f_i(Bottom(x1),...,Bottom(xi),xj,...,xn)
+                     * -> one_f_(i+1)(Bottom(x1),...,Bottom(xi),phi_s(x_i+1),...,xn)
+                     */
                     for(int j=1 ; j<=arity ; j++) {
                       Term Xj = Var("X_"+j);
                       if(j<=i) {
@@ -791,11 +852,14 @@ public class Compiler {
                         a_rx[j-1] = (j==i+1)?_appl(phi_s,Xj):Xj;
                       }
                     }
-
-                    // one_n_i(lx) -> one_n_ii(rx)
+                    /*
+                     * one_n_i(lx) -> one_n_ii(rx)
+                     */
                     generatedRules.add(Rule(_appl(one_n_i,a_lx), _appl(one_n_ii, a_rx)));
                   } else {
-                    // one_f_n(Bottom(x1),...,Bottom(xn)) -> Bottom(f(x1,...,xn))
+                    /*
+                     * one_f_n(Bottom(x1),...,Bottom(xn)) -> Bottom(f(x1,...,xn))
+                     */
                     for(int j=1 ; j<=arity ; j++) {
                       Term Xj = Var("X_"+j);
                       a_lx[j-1] = Bottom(Xj);
@@ -803,9 +867,10 @@ public class Compiler {
                     }
                     generatedRules.add(Rule(_appl(one_n_i,a_lx), Bottom(_appl(name, a_rx))));
                   }
-
-                  // one_f_i(Bottom(x1),...,xi@!Bottom(_),xj,...,xn)
-                  // -> f(x1,...,xi,...,xn)
+                  /*
+                   * one_f_i(Bottom(x1),...,xi@!Bottom(_),xj,...,xn)
+                   * -> f(x1,...,xi,...,xn)
+                   */
                   for(int j=1 ; j<=arity ; j++) {
                     Term Xj = Var("X_"+j);
                     if(j<i) {
@@ -817,8 +882,9 @@ public class Compiler {
                     }
                     a_rx[j-1] = Xj;
                   }
-
-                  // one_n_i(lx) -> name(rx)
+                  /*
+                   * one_n_i(lx) -> name(rx)
+                   */
                   generatedRules.add(Rule(_appl(one_n_i,a_lx), _appl(name, a_rx)));
 
                 }
@@ -839,32 +905,41 @@ public class Compiler {
             generatedSignature.addSymbol(append,Arrays.asList(Signature.METALIST,Signature.METATERM),Signature.METALIST);
             generatedSignature.addSymbol(reverse,Arrays.asList(Signature.METALIST),Signature.METALIST);
             generatedSignature.addSymbol(rconcat,Arrays.asList(Signature.METALIST,Signature.METALIST),Signature.METALIST);
-            // one(Appl(Z0,Z1)) -> one_1(Appl(Z0,one_2(Z1)))
+            /*
+             * one(Appl(Z0,Z1)) -> one_1(Appl(Z0,one_2(Z1)))
+             */
             generatedRules.add(Rule(_appl(one,Appl(Z0,Z1)), _appl(one_1,Appl(Z0,_appl(one_2,Z1)))));
-            // one_1(Appl(Z0,BottomList(Z))) -> Bottom(Appl(Z0,Z))
-            // one_1(Appl(Z0,Cons(Z1,Z2))) -> Appl(Z0,Cons(Z1,Z2))
+            /*
+             * one_1(Appl(Z0,BottomList(Z))) -> Bottom(Appl(Z0,Z))
+             * one_1(Appl(Z0,Cons(Z1,Z2))) -> Appl(Z0,Cons(Z1,Z2))
+             */
             generatedRules.add(Rule(_appl(one_1,Appl(Z0,BottomList(Z))), Bottom(Appl(Z0,Z))));
             generatedRules.add(Rule(_appl(one_1,Appl(Z0,Cons(Z1,Z2))), Appl(Z0,Cons(Z1,Z2))));
-            // one_2(Nil) -> BottomList(Nil)
-            // one_2(Cons(X,Y)) -> one_3(phi_s(X),Y,Cons(X,Nil))
+            /*
+             * one_2(Nil) -> BottomList(Nil)
+             * one_2(Cons(X,Y)) -> one_3(phi_s(X),Y,Cons(X,Nil))
+             */
             generatedRules.add(Rule(_appl(one_2,Nil()), BottomList(Nil())));
             generatedRules.add(Rule(_appl(one_2,Cons(Z1,Z2)), _appl(one_3,_appl(phi_s,Z1),Z2,Cons(Z1,Nil()))));
-            // one_3(Bottom(X),Nil,rargs) -> BottomList(reverse(rargs))
-            // one_3(Bottom(X),Cons(head,tail),rargs) -> one_3(phi_s(head), tail, Cons(head,rargs))
-            // one_3(Appl(X,Y),todo,Cons(last,rargs)) -> rconcat(rargs,Cons(Appl(X,Y),todo))
+            /*
+             * one_3(Bottom(X),Nil,rargs) -> BottomList(reverse(rargs))
+             * one_3(Bottom(X),Cons(head,tail),rargs) -> one_3(phi_s(head), tail, Cons(head,rargs))
+             * one_3(Appl(X,Y),todo,Cons(last,rargs)) -> rconcat(rargs,Cons(Appl(X,Y),todo))
+             */
             generatedRules.add(Rule(_appl(one_3,Bottom(Z),Nil(),Z2), BottomList(_appl(reverse,Z2))));
             generatedRules.add(Rule(_appl(one_3,Bottom(Z),Cons(XX,YY),Z2), _appl(one_3,_appl(phi_s,XX),YY,Cons(XX,Z2))));
             generatedRules.add(Rule(_appl(one_3,Appl(X,Y),Z1,Cons(Z2,Z3)), _appl(rconcat,Z3,Cons(Appl(X,Y),Z1))));
 
             if(!generated_aux_functions) { 
               generated_aux_functions = true;
-              // append(Nil,Z) -> Cons(Z,Nil)
-              // append(Cons(X,Y),Z) -> Cons(X,append(Y,Z))
-              // reverse(Nil) -> Nil
-              // reverse(Cons(X,Y)) -> append(reverse(Y),X)
-              // rconcat(Nil,Z) -> Z
-              // rconcat(Cons(X,Y),Z) -> rconcat(Y,Cons(X,Z))
-
+              /*
+               * append(Nil,Z) -> Cons(Z,Nil)
+               * append(Cons(X,Y),Z) -> Cons(X,append(Y,Z))
+               * reverse(Nil) -> Nil
+               * reverse(Cons(X,Y)) -> append(reverse(Y),X)
+               * rconcat(Nil,Z) -> Z
+               * rconcat(Cons(X,Y),Z) -> rconcat(Y,Cons(X,Z))
+               */
               generatedRules.add(Rule(_appl(append,Nil(),Z), Cons(Z,Nil())));
               generatedRules.add(Rule(_appl(append,Cons(X,Y),Z), Cons(X,_appl(append,Y,Z))));
               generatedRules.add(Rule(_appl(reverse,Nil()), Nil()));
@@ -988,7 +1063,6 @@ public class Compiler {
    * Generate equality rules:
    * f(x_1,...,x_n) = g(y_1,...,y_m) -> False
    * f(x_1,...,x_n) = f(y_1,...,y_n) -> x_1=y1 ^ ... ^ x_n=y_n ^ true
-   *
    */
   private void generateEquality(List<Rule> generatedRules) {
     Signature eSig = getExtractedSignature();
@@ -1012,10 +1086,14 @@ public class Compiler {
           a_rx[i-1] = Var("Y" + i);
         }
         if(!f.equals(g)) {
-          // eq(f(x1,...,xn),g(y1,...,ym)) -> False
+          /*
+           * eq(f(x1,...,xn),g(y1,...,ym)) -> False
+           */
           generatedRules.add(Rule(Eq(_appl(f,a_lx),_appl(g,a_rx)), False()));
         } else {
-          // eq(f(x1,...,xn),f(y1,...,yn)) -> True ^ eq(x1,y1) ^ ... ^ eq(xn,yn)
+          /*
+           * eq(f(x1,...,xn),f(y1,...,yn)) -> True ^ eq(x1,y1) ^ ... ^ eq(xn,yn)
+           */
           Term scond = True();
           for(int i=1 ; i<=arf ; i++) {
             scond = And(Eq(Var("X_" + i),Var("Y" + i)),scond);
@@ -1072,9 +1150,10 @@ public class Compiler {
     gSig.addSymbol(name,profile,codomain);
 
     Term X = Var(Tools.getName("X"));
-
-    // X matches anything but morally matches only symbols from the extracted signature
-    // name(X) -> symbol(X)
+    /*
+     * X matches anything but morally matches only symbols from the extracted signature
+     * name(X) -> symbol(X)
+     */
     generatedRules.add(Rule(_appl(name,X), _appl(symbol,X)));
   }
 
