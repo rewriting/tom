@@ -189,7 +189,7 @@ public class Tools {
       Appl(symb,args) -> {
         String symbName = "symb_" + `symb;
         if(!Main.options.metalevel) {
-          signature.addSymbol(symbName,new ArrayList<String>(),Signature.DUMMY);
+          signature.addSymbol(symbName,new ArrayList<String>(),Signature.TERM);
         } else {
           signature.addSymbol(symbName,new ArrayList<String>(),Signature.METASYMBOL);
         }

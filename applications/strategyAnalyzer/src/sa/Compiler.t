@@ -240,6 +240,7 @@ public class Compiler {
   private Term True() { return _appl(Signature.TRUE); }
   private Term False() { return _appl(Signature.FALSE); }
   private Term And(Term t1, Term t2) { return _appl(Signature.AND,t1,t2); }
+  private Term Eq(Term t1, Term t2) { return _appl(Signature.EQ,t1,t2); }
   private Term Appl(Term t1, Term t2) { return _appl(Signature.APPL,t1,t2); }
   private Rule Rule(Term lhs, Term rhs) { return `Rule(lhs,rhs); }
   private Term Nil() { return _appl(Signature.NIL); }
@@ -270,6 +271,9 @@ public class Compiler {
    */
   private boolean generated_aux_functions = false;
   private String compileStrat(Strat strat, List<Rule> rules) {
+    Signature gSig = getGeneratedSignature();
+    Signature eSig = getExtractedSignature();
+
     // by default, if strategy can't be compiled, a meaningless name
     // TODO: change to exception ?
     List<Rule> generatedRules = new ArrayList<Rule>();
@@ -309,8 +313,8 @@ public class Compiler {
 
           if(!Main.options.metalevel) {
             // if declared strategy (i.e. defined name) use its name; otherwise generate fresh name
-            this.generatedSignature.addSymbol(rule,Arrays.asList(Signature.DUMMY),Signature.DUMMY);
-            this.generatedSignature.addSymbol(cr,Arrays.asList(Signature.DUMMY,Signature.DUMMY),Signature.DUMMY);
+            gSig.addSymbol(rule,Arrays.asList(Signature.TERM),Signature.TERM);
+            gSig.addSymbol(cr,Arrays.asList(Signature.TERM,Signature.TERM),Signature.TERM);
 
             %match(rulelist) {
               RuleList(_*,Rule(lhs,rhs),_*) -> {
@@ -319,7 +323,7 @@ public class Compiler {
 
                 %match(lhs) {
                   Appl(funsymb,_) -> {
-                    lhsType = this.extractedSignature.getCodomain(`funsymb);
+                    lhsType = eSig.getCodomain(`funsymb);
                     System.out.println("Type of LHS "+`lhs+" = "+lhsType);
                   }
                 }
@@ -357,8 +361,8 @@ public class Compiler {
             }
           } else {
             // META-LEVEL
-            this.generatedSignature.addSymbol(rule,Arrays.asList(Signature.METATERM),Signature.METATERM);
-            this.generatedSignature.addSymbol(cr,Arrays.asList(Signature.METATERM,Signature.BOOLEAN),Signature.METATERM);
+            gSig.addSymbol(rule,Arrays.asList(Signature.METATERM),Signature.METATERM);
+            gSig.addSymbol(cr,Arrays.asList(Signature.METATERM,Signature.BOOLEAN),Signature.METATERM);
 
             %match(rulelist) {
               RuleList(_*,Rule(lhs,rhs),_*) -> {
@@ -398,9 +402,9 @@ public class Compiler {
               }
             }
 
-            for(String name:this.extractedSignature.getSymbolNames()) {
+            for(String name:eSig.getSymbolNames()) {
               // add symb_a(), symb_b(), symb_f(), symb_g() in the signature
-              this.generatedSignature.addSymbol("symb_"+name,new ArrayList<String>(),Signature.METASYMBOL);
+              gSig.addSymbol("symb_"+name,new ArrayList<String>(),Signature.METASYMBOL);
             }
           }
           strategySymbol=rule;
@@ -415,14 +419,14 @@ public class Compiler {
             Strat newStrat = `TopDown(ReplaceMuVar(name,mu)).visitLight(`s);
             String phi_s = compileStrat(newStrat,generatedRules);
             if(!Main.options.metalevel) {
-              this.generatedSignature.addSymbol(mu,Arrays.asList(Signature.DUMMY),Signature.DUMMY);
+              gSig.addSymbol(mu,Arrays.asList(Signature.TERM),Signature.TERM);
               // mu(X@!Bot(Y)) -> phi_s(X)
               // mu(Bot(X)) -> Bot(X)
               generatedRules.add(Rule(_appl(mu,At(X,Anti(Bottom(Y)))), _appl(phi_s,X)));
               generatedRules.add(Rule(_appl(mu,Bottom(X)), Bottom(X)));
             } else {
               // META-LEVEL
-              this.generatedSignature.addSymbol(mu,Arrays.asList(Signature.METATERM),Signature.METATERM);
+              gSig.addSymbol(mu,Arrays.asList(Signature.METATERM),Signature.METATERM);
               // mu(Appl(Y,Z)) -> phi_s(Appl(Y,Z))
               // mu(Bot(X)) -> Bot(X)
               generatedRules.add(Rule(_appl(mu,Appl(Y,Z)), _appl(phi_s,Appl(Y,Z))));
@@ -442,7 +446,7 @@ public class Compiler {
         StratIdentity() -> {
           String id = Tools.getName(StrategyOperator.IDENTITY.getName());
           if(!Main.options.metalevel) {
-            this.generatedSignature.addSymbol(id,Arrays.asList(Signature.DUMMY),Signature.DUMMY);
+            gSig.addSymbol(id,Arrays.asList(Signature.TERM),Signature.TERM);
             if( !Main.options.approx ) {
               // the rule cannot be applied on arguments containing fresh variables but only on terms from the signature or Bottom
               // normally it will follow reduction in original TRS
@@ -461,7 +465,7 @@ public class Compiler {
             }
           } else {
             // META-LEVEL
-            this.generatedSignature.addSymbol(id,Arrays.asList(Signature.METATERM),Signature.METATERM);
+            gSig.addSymbol(id,Arrays.asList(Signature.METATERM),Signature.METATERM);
             if( !Main.options.approx ) {
               // id(Appl(X,Y)) -> Appl(X,Y)
               // id(Bot(X)) -> Bot(X)
@@ -480,7 +484,7 @@ public class Compiler {
         StratFail() -> {
           String fail = Tools.getName(StrategyOperator.FAIL.getName());
           if( !Main.options.metalevel ) {
-            this.generatedSignature.addSymbol(fail,Arrays.asList(Signature.DUMMY),Signature.DUMMY);
+            gSig.addSymbol(fail,Arrays.asList(Signature.TERM),Signature.TERM);
             if( !Main.options.approx ) {
               // fail(X@!Bot(Y)) -> Bot(X)
               // fail(Bot(X)) -> Bot(X)
@@ -494,7 +498,7 @@ public class Compiler {
             }
           } else {
             // META-LEVEL
-            this.generatedSignature.addSymbol(fail,Arrays.asList(Signature.METATERM),Signature.METATERM);
+            gSig.addSymbol(fail,Arrays.asList(Signature.METATERM),Signature.METATERM);
             if( !Main.options.approx ) {
               // fail(Appl(X,Y)) -> Bot(Appl(X,Y))
               // fail(Bot(X)) -> Bot(X)
@@ -517,8 +521,8 @@ public class Compiler {
           String seq = Tools.getName(StrategyOperator.SEQ.getName());
           String seq2 = Tools.getName(StrategyOperator.SEQ.getName()+AUX);
           if( !Main.options.metalevel ) {
-            this.generatedSignature.addSymbol(seq,Arrays.asList(Signature.DUMMY),Signature.DUMMY);
-            this.generatedSignature.addSymbol(seq2,Arrays.asList(Signature.DUMMY,Signature.DUMMY),Signature.DUMMY);
+            gSig.addSymbol(seq,Arrays.asList(Signature.TERM),Signature.TERM);
+            gSig.addSymbol(seq2,Arrays.asList(Signature.TERM,Signature.TERM),Signature.TERM);
             if( !Main.options.approx ) {
               // the rule cannot be applied on arguments containing fresh variables but only on terms from the signature or Bottom
               // normally it will follow reduction in original TRS
@@ -543,8 +547,8 @@ public class Compiler {
             }
           } else {
             // META-LEVEL
-            this.generatedSignature.addSymbol(seq,Arrays.asList(Signature.METATERM),Signature.METATERM);
-            this.generatedSignature.addSymbol(seq2,Arrays.asList(Signature.METATERM,Signature.METATERM),Signature.METATERM);
+            gSig.addSymbol(seq,Arrays.asList(Signature.METATERM),Signature.METATERM);
+            gSig.addSymbol(seq2,Arrays.asList(Signature.METATERM,Signature.METATERM),Signature.METATERM);
             if( !Main.options.approx ) {
               // seq(Appl(X,Y)) -> seq2(n2(n1(Appl(X,Y))),Appl(X,Y))
               // seq(Bot(X)) -> Bot(X)
@@ -570,8 +574,8 @@ public class Compiler {
           String choice = Tools.getName(StrategyOperator.CHOICE.getName());
           String choice2 = Tools.getName(StrategyOperator.CHOICE.getName()+AUX);
           if( !Main.options.metalevel ) {
-            this.generatedSignature.addSymbol(choice,Arrays.asList(Signature.DUMMY),Signature.DUMMY);
-            this.generatedSignature.addSymbol(choice2,Arrays.asList(Signature.DUMMY),Signature.DUMMY);
+            gSig.addSymbol(choice,Arrays.asList(Signature.TERM),Signature.TERM);
+            gSig.addSymbol(choice2,Arrays.asList(Signature.TERM),Signature.TERM);
             // TODO [20/01/2015]: see if not exact is interesting
             // choice(X@!Bot(Y)) -> choice2(n1(X))
             // choice(Bot(X)) -> Bot(X)
@@ -583,8 +587,8 @@ public class Compiler {
             generatedRules.add(Rule(_appl(choice2,Bottom(X)), _appl(n2,X)));
           } else {
             // META-LEVEL
-            this.generatedSignature.addSymbol(choice,Arrays.asList(Signature.METATERM),Signature.METATERM);
-            this.generatedSignature.addSymbol(choice2,Arrays.asList(Signature.METATERM),Signature.METATERM);
+            gSig.addSymbol(choice,Arrays.asList(Signature.METATERM),Signature.METATERM);
+            gSig.addSymbol(choice2,Arrays.asList(Signature.METATERM),Signature.METATERM);
             if( !Main.options.approx ) {
               // choice(Appl(X,Y)) -> choice2(n1(Appl(X,Y)))
               // choice(Bot(X)) -> Bot(X)
@@ -610,9 +614,9 @@ public class Compiler {
           String phi_s = compileStrat(`s,generatedRules);
           String all = Tools.getName(StrategyOperator.ALL.getName());
           if( !Main.options.metalevel ) {
-            this.generatedSignature.addSymbol(all,Arrays.asList(Signature.DUMMY),Signature.DUMMY);
-            for(String name : this.extractedSignature.getSymbolNames()) {
-              int arity = this.generatedSignature.getArity(name);
+            gSig.addSymbol(all,Arrays.asList(Signature.TERM),Signature.TERM);
+            for(String name : eSig.getSymbolNames()) {
+              int arity = gSig.getArity(name);
               int arity_all = arity+1;
               if(arity==0) {
                 // all(name) -> name
@@ -621,9 +625,9 @@ public class Compiler {
                 String all_n = Tools.getCompositeName(all,name);
                 List<String> all_args = new ArrayList<String>();
                 for(int i=0; i<arity_all; i++){
-                  all_args.add(Signature.DUMMY);
+                  all_args.add(Signature.TERM);
                 }
-                this.generatedSignature.addSymbol(all_n,all_args,Signature.DUMMY);
+                gSig.addSymbol(all_n,all_args,Signature.TERM);
 
                 // main case
                 // all(f(x1,...,xn)) -> all_n(phi_s(x1),phi_s(x2),...,phi_s(xn),f(x1,...,xn))
@@ -677,7 +681,7 @@ public class Compiler {
             }
           } else {
             // META-LEVEL
-            this.generatedSignature.addSymbol(all,Arrays.asList(Signature.METATERM),Signature.METATERM);
+            gSig.addSymbol(all,Arrays.asList(Signature.METATERM),Signature.METATERM);
             String all_1 = all+"_1";
             String all_2 = all+"_2";
             String all_3 = all+"_3";
@@ -737,9 +741,9 @@ public class Compiler {
           String phi_s = compileStrat(`s,generatedRules);
           String one = Tools.getName(StrategyOperator.ONE.getName());
           if( !Main.options.metalevel ) {
-            this.generatedSignature.addSymbol(one,Arrays.asList(Signature.DUMMY),Signature.DUMMY);
-            for(String name : this.extractedSignature.getSymbolNames()) {
-              int arity = this.extractedSignature.getArity(name);
+            gSig.addSymbol(one,Arrays.asList(Signature.TERM),Signature.TERM);
+            for(String name : eSig.getSymbolNames()) {
+              int arity = eSig.getArity(name);
               if(arity==0) {
                 // one(name) -> Bottom(name)
                 generatedRules.add(Rule(_appl(one,_appl(name)), Bottom(_appl(name))));
@@ -769,12 +773,12 @@ public class Compiler {
                   List<String> one_n_args = new ArrayList<String>();
                   List<String> one_n_ii_args = new ArrayList<String>();
                   for(int ni=0; ni<arity; ni++){
-                    one_n_args.add(Signature.DUMMY);
-                    one_n_ii_args.add(Signature.DUMMY);
+                    one_n_args.add(Signature.TERM);
+                    one_n_ii_args.add(Signature.TERM);
                   }
-                  this.generatedSignature.addSymbol(one_n_i,one_n_args,Signature.DUMMY);
+                  gSig.addSymbol(one_n_i,one_n_args,Signature.TERM);
                   if(i<arity) {
-                    this.generatedSignature.addSymbol(one_n_ii,one_n_ii_args,Signature.DUMMY);
+                    gSig.addSymbol(one_n_ii,one_n_ii_args,Signature.TERM);
                     // one_f_i(Bottom(x1),...,Bottom(xi),xj,...,xn)
                     // -> one_f_(i+1)(Bottom(x1),...,Bottom(xi),phi_s(x_i+1),...,xn)
                     for(int j=1 ; j<=arity ; j++) {
@@ -822,7 +826,7 @@ public class Compiler {
             }
           } else {
             // META-LEVEL
-            this.generatedSignature.addSymbol(one,Arrays.asList(Signature.METATERM),Signature.METATERM);
+            gSig.addSymbol(one,Arrays.asList(Signature.METATERM),Signature.METATERM);
             String one_1 = one+"_1";
             String one_2 = one+"_2";
             String one_3 = one+"_3";
@@ -987,7 +991,6 @@ public class Compiler {
    *
    */
   private void generateEquality(List<Rule> generatedRules) {
-    Signature gSig = getGeneratedSignature();
     Signature eSig = getExtractedSignature();
 
     generatedRules.add(Rule(And(True(),True()), True()));
@@ -995,47 +998,32 @@ public class Compiler {
     generatedRules.add(Rule(And(False(),True()), False()));
     generatedRules.add(Rule(And(False(),False()), False()));
 
-    String z1 = Tools.getName("Z");
-    String z2 = Tools.getName("Z"); 
-    //for(String type:eSig.getTypeNames()) {
-      //List<String> symbolNames = eSig.getSymbolNames(type);
-      List<String> symbolNames = eSig.getSymbolNames();
-      for(String f:symbolNames) {
-        for(String g:symbolNames) {
-          int arf = eSig.getArity(f);
-          int arg = eSig.getArity(g);
-          String eq_type = "eq"; //eSig.disambiguateSymbol(Signature.EQ, Arrays.asList(type,type) );
-          this.generatedSignature.addSymbol(eq_type,Arrays.asList(Signature.DUMMY,Signature.DUMMY),Signature.BOOLEAN);
-
-          if(!f.equals(g)) {
-            // eq(f(x1,...,xn),g(y1,...,ym)) -> False
-            Term lhs = Tools.genAbstractTerm(f,arf,z1);
-            Term rhs = Tools.genAbstractTerm(g,arg,z2);
-            generatedRules.add(Rule(_appl(eq_type,lhs,rhs), False()));
-
-          } else {
-            // eq(f(x1,...,xn),f(y1,...,yn)) -> True ^ eq(x1,y1) ^ ... ^ eq(xn,yn)
-            Term[] a_lx = new Term[arf];
-            Term[] a_rx = new Term[arf];
-            List<String> domain = eSig.getProfile(f);
-            Term scond = True();
-            for(int i=1 ; i<=arf ; i++) {
-              Term Xi = `Var("X" + i);
-              Term Yi = `Var("Y" + i);
-              a_lx[i-1] = Xi;
-              a_rx[i-1] = Yi;
-
-              String argType = domain.get(i-1);
-              String eq_arg = "eq"; //eSig.disambiguateSymbol(Signature.EQ, Arrays.asList(argType,argType) );
-              this.generatedSignature.addSymbol(eq_type,Arrays.asList(Signature.DUMMY,Signature.DUMMY),Signature.BOOLEAN);
-              scond = And(_appl(eq_arg,Xi,Yi),scond);
-            }
-            generatedRules.add(Rule(_appl(eq_type,_appl(f,a_lx),_appl(g,a_rx)), scond));
+    List<String> symbolNames = eSig.getSymbolNames();
+    for(String f:symbolNames) {
+      for(String g:symbolNames) {
+        int arf = eSig.getArity(f);
+        int arg = eSig.getArity(g);
+        Term[] a_lx = new Term[arf];
+        Term[] a_rx = new Term[arg];
+        for(int i=1 ; i<=arf ; i++) {
+          a_lx[i-1] = Var("X" + i);
+        }
+        for(int i=1 ; i<=arg ; i++) {
+          a_rx[i-1] = Var("Y" + i);
+        }
+        if(!f.equals(g)) {
+          // eq(f(x1,...,xn),g(y1,...,ym)) -> False
+          generatedRules.add(Rule(Eq(_appl(f,a_lx),_appl(g,a_rx)), False()));
+        } else {
+          // eq(f(x1,...,xn),f(y1,...,yn)) -> True ^ eq(x1,y1) ^ ... ^ eq(xn,yn)
+          Term scond = True();
+          for(int i=1 ; i<=arf ; i++) {
+            scond = And(Eq(Var("X" + i),Var("Y" + i)),scond);
           }
+          generatedRules.add(Rule(Eq(_appl(f,a_lx),_appl(g,a_rx)), scond));
         }
       }
-    //}
-    //generatedRules.add(Tools.encodeRule(%[rule(@mu@(Bottom(X)), Bottom(X))]%));
+    }
   }
 
   /**
@@ -1043,7 +1031,6 @@ public class Compiler {
    * encode(f(x1,...,xn)) -> Appl(symb_f, Cons(encode(x1), ..., Cons(encode(xn),Nil())))
    **/
   private void generateEncodeDecode(List<Rule> generatedRules) {
-    Signature gSig = getGeneratedSignature();
     Signature eSig = getExtractedSignature();
     String x = Tools.getName("X");
     List<String> symbolNames = eSig.getSymbolNames();
@@ -1055,7 +1042,7 @@ public class Compiler {
       TermList rargs_decode = `TermList();
 
       for(int i=arf ; i>=1 ; i--) {
-        Term var = `Var(x+"_"+i);
+        Term var = Var(x+"_"+i);
         args_encode = Cons(_appl(Signature.ENCODE,var),args_encode);
         largs_decode = Cons(var,largs_decode);
         rargs_decode = `TermList(_appl(Signature.DECODE,var),rargs_decode*);
@@ -1079,9 +1066,10 @@ public class Compiler {
    * name can be then see as an alias for symbol in terms of reduction 
    **/
   private void generateTriggerRule(String name, String symbol, List<Rule> generatedRules) {
-    String codomain = this.generatedSignature.getCodomain(symbol);
-    List<String> profile = this.generatedSignature.getProfile(symbol);
-    this.generatedSignature.addSymbol(name,profile,codomain);
+    Signature gSig = getGeneratedSignature();
+    String codomain = gSig.getCodomain(symbol);
+    List<String> profile = gSig.getProfile(symbol);
+    gSig.addSymbol(name,profile,codomain);
 
     Term X = Var(Tools.getName("X"));
 
@@ -1140,7 +1128,7 @@ public class Compiler {
     %match(t) {
       Appl(name,args) -> {
         String codomainName = gSig.getCodomain(`name);
-        if(codomainName == Signature.DUMMY) {
+        if(codomainName == Signature.TERM) {
           List<String> domain = gSig.getProfile(`name);
           String dname = gSig.disambiguateSymbol(`name, domain);
           gSig.addSymbol(dname,domain,codomainName);

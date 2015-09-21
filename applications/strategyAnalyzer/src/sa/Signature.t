@@ -22,7 +22,7 @@ public class Signature {
   public static String DECODE = "decode";
 
   // Types
-  public static final String DUMMY = "Dummy";
+  public static final String TERM = "Term";
   public static final String METASYMBOL = "MetaSymbol";
   public static final String METATERM = "MetaTerm";
   public static final String METALIST = "MetaList";
@@ -74,12 +74,13 @@ public class Signature {
     Signature expandedSignature = new Signature();
     // clone everything (lists could be just copied since normally not modified later on)
     for(GomType type: this.signature.keySet()) {
-        Map<String,List<GomType>> symbols = new HashMap<String,List<GomType>>(); 
-        for(String symbol: signature.get(type).keySet()) {
-          List<GomType> args = new ArrayList<GomType>(signature.get(type).get(symbol));
-          symbols.put(symbol.intern(),args);
+      for(String symbol: signature.get(type).keySet()) {
+        List<String> domain = new ArrayList<String>();
+        for(int i=0 ; i < getArity(symbol) ; i++) {
+          domain.add(TERM);
         }
-        expandedSignature.signature.put(type,symbols);
+        expandedSignature.addSymbol(symbol,domain,TERM);
+      }
     }
 
     if(Main.options.metalevel) {
@@ -94,34 +95,20 @@ public class Signature {
     expandedSignature.addSymbol(TRUE,new ArrayList<String>(),BOOLEAN);
     expandedSignature.addSymbol(FALSE,new ArrayList<String>(),BOOLEAN);
     expandedSignature.addSymbol(AND,Arrays.asList(BOOLEAN,BOOLEAN),BOOLEAN);
-    String eq_boolean = this.disambiguateSymbol(EQ, Arrays.asList(BOOLEAN,BOOLEAN));
-    expandedSignature.addSymbol(eq_boolean,Arrays.asList(BOOLEAN,BOOLEAN),BOOLEAN);
+    expandedSignature.addSymbol(EQ,Arrays.asList(TERM,TERM),BOOLEAN);
 
-    // add: bottom(T), eq_T(T,T)
-    /*
-    for(GomType type: this.signature.keySet()) {
-      String t = type.getName();
-      expandedSignature.addSymbol(BOTTOM,Arrays.asList(t),t);
-      String eq_t = this.disambiguateSymbol(EQ, Arrays.asList(t,t));
-      expandedSignature.addSymbol(eq_t,Arrays.asList(t,t),BOOLEAN);
-    }
-    */
-    // add: bottom(DUMMY), eq(DUMMY,DUMMY)
+    // add: bottom
     if(!Main.options.metalevel) {
-      expandedSignature.addSymbol(BOTTOM,Arrays.asList(DUMMY),DUMMY);
-      String eq_t = this.disambiguateSymbol(EQ, Arrays.asList(DUMMY,DUMMY));
-      expandedSignature.addSymbol(eq_t,Arrays.asList(DUMMY,DUMMY),BOOLEAN);
+      expandedSignature.addSymbol(BOTTOM,Arrays.asList(TERM),TERM);
     } else {
       expandedSignature.addSymbol(BOTTOM,Arrays.asList(METATERM),METATERM);
-      String eq_t = this.disambiguateSymbol(EQ, Arrays.asList(METATERM,METATERM));
-      expandedSignature.addSymbol(eq_t,Arrays.asList(METATERM,METATERM),BOOLEAN);
     }
 
     // for metalevel + Tom code
     if(Main.options.metalevel && Main.options.classname != null) {
       // add: encode, decode
-      expandedSignature.addSymbol(ENCODE,Arrays.asList(DUMMY),METATERM);
-      expandedSignature.addSymbol(DECODE,Arrays.asList(METATERM),DUMMY);
+      expandedSignature.addSymbol(ENCODE,Arrays.asList(TERM),METATERM);
+      expandedSignature.addSymbol(DECODE,Arrays.asList(METATERM),TERM);
     }
     return expandedSignature;
   }

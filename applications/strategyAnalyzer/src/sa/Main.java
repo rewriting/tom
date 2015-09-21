@@ -105,13 +105,13 @@ public class Main {
 
         // TEST (flatten types)
         TypeCompiler typeCompiler = new TypeCompiler(extractedSignature,generatedSignature,generatedRules);
-        typeCompiler.flattenSignature();
+        //pem typeCompiler.flattenSignature();
         
         // refresh the signatures (presently no modifications)
         extractedSignature = typeCompiler.getExtractedSignature();
         generatedSignature = typeCompiler.getGeneratedSignature();
 
-        typeCompiler.typeRules();
+        //pem typeCompiler.typeRules();
         //         System.out.println("gSIG = " + generatedSignature);
         
 
