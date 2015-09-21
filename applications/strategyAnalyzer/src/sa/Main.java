@@ -106,6 +106,7 @@ public class Main {
         // TEST (flatten types)
         TypeCompiler typeCompiler = new TypeCompiler(extractedSignature,generatedSignature,generatedRules);
         typeCompiler.flattenSignature();
+        
         // refresh the signatures (presently no modifications)
         extractedSignature = typeCompiler.getExtractedSignature();
         generatedSignature = typeCompiler.getGeneratedSignature();
