@@ -229,8 +229,6 @@ public class @classname@ {
       sb.append("        " + toString(r) + "\n");
     }
 
-
-
     sb.append(%[
     }
   }
@@ -238,7 +236,7 @@ public class @classname@ {
   public static void main(String[] args) {
     try {
       BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-      Dummy input = Dummy.fromString(reader.readLine());
+      @Signature.TERM@ input = @Signature.TERM@.fromString(reader.readLine());
       long start = System.currentTimeMillis();
       ]%);
 
@@ -250,7 +248,7 @@ public class @classname@ {
 
   if(!Main.options.metalevel) {
     sb.append(%[
-      Dummy t = `@name@(input);
+      @Signature.TERM@ t = `@name@(input);
       ]%);
   } else {
     sb.append(%[
