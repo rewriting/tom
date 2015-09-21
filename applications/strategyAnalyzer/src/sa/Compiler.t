@@ -780,7 +780,6 @@ public class Compiler {
                * rconcat(Nil,Z) -> Z
                * rconcat(Cons(X,Y),Z) -> rconcat(Y,Cons(X,Z))
                */
-
               generatedRules.add(Rule(_appl(append,Nil(),Z), Cons(Z,Nil())));
               generatedRules.add(Rule(_appl(append,Cons(X,Y),Z), Cons(X,_appl(append,Y,Z))));
               generatedRules.add(Rule(_appl(reverse,Nil()), Nil()));

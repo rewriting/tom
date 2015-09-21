@@ -79,6 +79,8 @@ public class Tools {
    * @param exp the string representation of the term to meta-encode
    * @return meta-encoding using Appl and TermList
    */
+  /*
+   * REMOVE
   public static Term encode(String stringterm, Signature signature) {
     //System.out.println("encode: " + stringterm);
     Term res = null;
@@ -159,6 +161,7 @@ public class Tools {
     // System.out.println("encodeRule: " + res);
     return res;
   }
+*/
 
   private static boolean isVariableName(String name, Signature signature) {
     return signature.getCodomain(name) == null;
@@ -400,7 +403,9 @@ public class Tools {
     }
     return `Appl(name, args);
   }
-  
+ 
+  /*
+   * REMOVE
   public static String genStringAbstractTerm(String name, int arity, String varname) {
     if(arity==0) {
       return name + "()";
@@ -412,6 +417,7 @@ public class Tools {
       return name + "(" + args + ")";
     }
   }
+  */
 
   /*
    * tools for manipulating Program
