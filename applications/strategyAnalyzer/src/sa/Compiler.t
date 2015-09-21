@@ -1005,19 +1005,32 @@ public class Compiler {
           int arf = eSig.getArity(f);
           int arg = eSig.getArity(g);
           String eq_type = "eq"; //eSig.disambiguateSymbol(Signature.EQ, Arrays.asList(type,type) );
+          this.generatedSignature.addSymbol(eq_type,Arrays.asList(Signature.DUMMY,Signature.DUMMY),Signature.BOOLEAN);
+
           if(!f.equals(g)) {
-            generatedRules.add(Tools.encodeRule(%[rule(@eq_type@(@Tools.genStringAbstractTerm(f,arf,z1)@,@Tools.genStringAbstractTerm(g,arg,z2)@), False)]%,gSig));
+            // eq(f(x1,...,xn),g(y1,...,ym)) -> False
+            Term lhs = Tools.genAbstractTerm(f,arf,z1);
+            Term rhs = Tools.genAbstractTerm(g,arg,z2);
+            generatedRules.add(Rule(_appl(eq_type,lhs,rhs), False()));
+
           } else {
-            String t1 = Tools.genStringAbstractTerm(f,arf,z1);
-            String t2 = Tools.genStringAbstractTerm(f,arf,z2);
+            // eq(f(x1,...,xn),f(y1,...,yn)) -> True ^ eq(x1,y1) ^ ... ^ eq(xn,yn)
+            Term[] a_lx = new Term[arf];
+            Term[] a_rx = new Term[arf];
             List<String> domain = eSig.getProfile(f);
-            String scond = "True";
+            Term scond = True();
             for(int i=1 ; i<=arf ; i++) {
+              Term Xi = `Var("X" + i);
+              Term Yi = `Var("Y" + i);
+              a_lx[i-1] = Xi;
+              a_rx[i-1] = Yi;
+
               String argType = domain.get(i-1);
               String eq_arg = "eq"; //eSig.disambiguateSymbol(Signature.EQ, Arrays.asList(argType,argType) );
-              scond = %[and(@eq_arg@(@z1@_@i@,@z2@_@i@),@scond@)]%;
+              this.generatedSignature.addSymbol(eq_type,Arrays.asList(Signature.DUMMY,Signature.DUMMY),Signature.BOOLEAN);
+              scond = And(_appl(eq_arg,Xi,Yi),scond);
             }
-            generatedRules.add(Tools.encodeRule(%[rule(@eq_type@(@t1@,@t2@),@scond@)]%,gSig));
+            generatedRules.add(Rule(_appl(eq_type,_appl(f,a_lx),_appl(g,a_rx)), scond));
           }
         }
       }
