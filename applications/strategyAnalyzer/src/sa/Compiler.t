@@ -14,7 +14,7 @@ public class Compiler {
 
   %typeterm Compiler { implement { Compiler }}
 
-  private static final String AUX="Aux";
+  public static final String AUX="Aux";
 
   private static Compiler instance = null;
 
