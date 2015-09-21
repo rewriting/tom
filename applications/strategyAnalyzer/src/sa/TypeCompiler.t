@@ -27,6 +27,7 @@ public class TypeCompiler {
     this.extractedSignature=extractedSignature;
     this.generatedSignature=generatedSignature;
     this.untypedRules=untypedRules;
+    this.generatedRules = new ArrayList<Rule>();
   }
 
 
@@ -68,40 +69,188 @@ public class TypeCompiler {
 
       %match(rule){
         Rule(Appl(stratOp,TermList(Appl(fun,args),X*)), Appl(rightOp,A)) ->{
-          //           System.out.println("RULE symbol: "+ Tools.getRuleOperator(rule) 
-          //                              + " for symbol "+Tools.getArgumentSymbol(rule)
-          //                              + " of type " + extractedSignature.getCodomain(Tools.getArgumentSymbol(rule)));
-          
           String opSymb = `stratOp;
           StrategyOperator op = Tools.getOperator(opSymb);
-          System.out.print("RULE symbol: "+ op);
-          System.out.print(" for symbol "+ `fun);
-          System.out.print(" of type " + extractedSignature.getCodomain(`fun));
-          System.out.println(" -- FUN symbol for "+ opSymb + " :  "+ Tools.getComposite(opSymb));
 
-          // not an AUXiliary symbol and thus with a strict propagation of Bottom
-          if(`fun == Signature.BOTTOM && !Tools.isAuxiliary(opSymb)){
-            for(GomType type: extractedTypes){
-              String typedSymbol = Tools.typeSymbol(opSymb,type.getName());
-              String typedRightOp = Tools.typeSymbol(`rightOp,type.getName());
-              Rule newRule = `Rule(Appl(typedSymbol,TermList(Appl(fun,args),X*)), Appl(typedRightOp,A));
-//               generatedRules.
-  
-              System.out.println(" RULE "+ newRule);
-
-              localSignature.addSymbol(typedSymbol,new ArrayList<String>(),type.toString());
+          // not an auxiliary symbol for ONE or ALL (i.e. one_..._f)  and thus with a strict propagation of Bottom
+          if(Tools.getComposite(opSymb)==null){
+            // if rule for BOTTOM propagation
+            if(`fun == Signature.BOTTOM){
+              for(GomType type: extractedTypes){
+                String typedSymbol = Tools.typeSymbol(opSymb,type.getName());
+                String typedRightOp = Tools.typeSymbol(`rightOp,type.getName());
+                Rule newRule = `Rule(Appl(typedSymbol,TermList(Appl(fun,args),X*)), Appl(typedRightOp,A));
+                generatedRules.add(newRule);
+                
+                localSignature.addSymbol(typedSymbol,new ArrayList<String>(),type.toString());
+              }
+            }else{
+              if(op == StrategyOperator.RULE){
+                System.out.println("RRR : "+ Pretty.toString(`rule) );
+              }else{
+                System.out.println("TODO : "+ Pretty.toString(`rule) );
+              }
             }
+          }else{
+            System.out.print("RULE symbol: "+ op);
+            System.out.print(" for symbol "+ `fun);
+            System.out.print(" of type " + extractedSignature.getCodomain(`fun));
+            System.out.println(" -- FUN symbol for "+ opSymb + " :  "+ Tools.getComposite(opSymb));
           }
         }
       }
       
     }
+
+    for(Rule rule: generatedRules){
+      System.out.println(" RULE "+ Pretty.toString(rule));
+    }
+
+    System.out.println("GEN SIG = " + localSignature);
   }
   
   /********************************************************************************
    *     END
    ********************************************************************************/
 
+
+
+//   /*
+//    * Specializer
+//    * @param symbol the symbol whose type is enforce
+//    * @param the type of the symbol
+//    * @param trs the TRS to transform
+//    */
+//   public List<Rule> specialize(String symbol, String typeName, List<Rule> trs) {
+//     Signature gSig = getGeneratedSignature();
+//     String codomainName = gSig.getCodomain(symbol);
+
+//     for(Rule r: trs) {
+//       %match(r) {
+//         Rule(lhs@Appl(name,args),rhs) -> {
+//           if(`name.equals(symbol)) {
+//             Term newLhs = propagateType(`EmptyEnvironment(), `lhs, `GomType(typeName));
+//             System.out.println("newLhs = " + newLhs);
+//           }
+//         }
+//       }
+
+//     }
+//     return null;
+//   }
+
+  private Term propagateType(TypeEnvironment env, Term t, GomType type) {
+    Signature gSig = getGeneratedSignature();
+    %match(t) {
+      Appl(name,args) -> {
+        String codomainName = gSig.getCodomain(`name);
+        if(codomainName == Signature.TERM) {
+          List<String> domain = gSig.getProfile(`name);
+          String dname = gSig.disambiguateSymbol(`name, domain);
+          gSig.addSymbol(dname,domain,codomainName);
+          int i = 0;
+          TermList args = `args;
+          TermList newArgs = `TermList();
+          while(!args.isEmptyTermList()) {
+            Term arg = args.getHeadTermList();
+            // compute GOOD type here!
+            Term arg2 = propagateType(env, arg, `GomType(domain.get(i)));
+            if(arg2!=null) {
+              newArgs = `TermList(newArgs*, arg2);
+            } else {
+              // throw exception
+              System.out.println("bad arg2: " + arg2);
+              return null;
+            }
+            i++;
+            args = args.getTailTermList();
+          }
+          return `Appl(dname,newArgs);
+        } else if(type != `GomType(codomainName)) {
+          // throw exception
+          System.out.println("bad type: " + t + " : " + type);
+          return null;
+        }
+
+      }
+
+      Anti(t1) -> {
+        return propagateType(env, `t1,type);
+      }
+
+      At(t1,t2) -> {
+        env = checkType(env,`t1, type);
+        if(env == null) {
+          // throw exception
+          System.out.println("bad type: " + `t1 + " : " + type);
+          return null;
+        }
+        return propagateType(env, `t2,type);
+      }
+
+      s@BuiltinInt(i) -> {
+        if(type != `GomType("int")) {
+          // throw exception
+          System.out.println("bad type: " + `s + " : " + type);
+          return null;
+        }
+        return `s;
+      }
+
+      s@Var(name) -> {
+        env = checkType(env,`s, type);
+        if(env == null) {
+          // throw exception
+          System.out.println("bad type: " + `s + " : " + type);
+          return null;
+        } 
+        return `s;
+      }
+
+    }
+    System.out.println("propagateType should not be there: " + t);
+    return null;
+  }
+
+  /*
+   * check that t is a variable with a type compatible with the enviroment
+   * @param env the environment
+   * @param t the term to type check
+   * @param type the type
+   * @return null is t is not correctly typed, or the enviroment enriched with t:type
+   */
+  private TypeEnvironment checkType(TypeEnvironment env, Term t, GomType type) {
+    %match(env, t) {
+      EmptyEnvironment(), Var(x) -> {
+        return `PushEnvironment(x, type, EmptyEnvironment());
+      }
+      
+      PushEnvironment(x,xtype,tail), Var(x) -> {
+        if(`xtype == type) {
+          return env;
+        } else {
+          // type mismatch
+          return null;
+        }
+      }
+      
+      PushEnvironment(y,ytype,tail), Var(x) -> {
+        TypeEnvironment tmp = checkType(`tail, t, type);
+        if(tmp == null) {
+          return null;
+        } else {
+          return `PushEnvironment(y,type, tmp);
+        }
+      }
+
+    }
+
+    System.out.println("checkType should not be there: " + t);
+    return null;
+  }
+
+
+  /***********************************************************************************/
 
   public Signature getExtractedSignature(){
     return this.extractedSignature;

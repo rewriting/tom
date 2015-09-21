@@ -111,7 +111,7 @@ public class Main {
         extractedSignature = typeCompiler.getExtractedSignature();
         generatedSignature = typeCompiler.getGeneratedSignature();
 
-        //pem typeCompiler.typeRules();
+        typeCompiler.typeRules();
         //         System.out.println("gSIG = " + generatedSignature);
         
 

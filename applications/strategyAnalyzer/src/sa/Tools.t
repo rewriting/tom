@@ -27,14 +27,14 @@ public class Tools {
     return StrategyOperator.getStrategyOperator(symbol.substring(0,last));
   }
 
-  public static boolean isAuxiliary(String symbol) {
-    int last = symbol.indexOf('_');
-    if(last==-1){ last=symbol.length();}
-    if(symbol.contains(Compiler.AUX) &&  symbol.substring(last-Compiler.AUX.length(), last).equals(Compiler.AUX)){
-          return true;
-    }
-    return false;
-  }
+//   public static boolean isAuxiliary(String symbol) {
+//     int last = symbol.indexOf('_');
+//     if(last==-1){ last=symbol.length();}
+//     if(symbol.contains(Compiler.AUX) &&  symbol.substring(last-Compiler.AUX.length(), last).equals(Compiler.AUX)){
+//           return true;
+//     }
+//     return false;
+//   }
   
   public static String getCompositeName(String opName, String aux) {
     return opName+"_"+aux;
