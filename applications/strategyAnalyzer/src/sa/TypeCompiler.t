@@ -130,9 +130,36 @@ public class TypeCompiler {
     Term typedTerm = t;
     %match(t) {
       Appl(name,args) -> {
-        if(`name == Signature.BOTTOM){
-          typedTerm = `Appl(Tools.typeSymbol(Signature.BOTTOM,type.getName()),args);
+        //         if(`name == Signature.BOTTOM){
+        //           typedTerm = `Appl(Tools.typeSymbol(Signature.BOTTOM,type.getName()),args);
+        //         }
+        
+        // if term in the extracted signature then don't change it; change symbol names otherwise
+        if(extractedSignature.getCodomainType(`name) == null){
+          String dname = Tools.typeSymbol(`name,type.getName());
+          int i = 0;
+          TermList args = `args;
+          TermList newArgs = `TermList();
+          while(!args.isEmptyTermList()) {
+            Term arg = args.getHeadTermList();
+            // compute GOOD type here!
+            Term arg2 = propagateType(env, arg, type);
+            if(arg2!=null) {
+              newArgs = `TermList(newArgs*, arg2);
+            } else {
+              // throw exception
+              System.out.println("bad arg2: " + arg2);
+              return null;
+            }
+            i++;
+            args = args.getTailTermList();
+          }
+          typedTerm = `Appl(dname,newArgs);
         }
+      }
+
+      s@Var(name) -> {
+        typedTerm = `s;
       }
     }
     return typedTerm;
