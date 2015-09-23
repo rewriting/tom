@@ -37,24 +37,38 @@ public class Tools {
 //   }
   
   public static String getCompositeName(String opName, String aux) {
-    return opName+"_"+aux;
+    //     return opName+"_"+aux;
+    return opName+"-"+aux;
   }
 
   public static String getComposite(String symbol) {
     String aux=null;
-    int last = symbol.indexOf('_');
-    if(last != -1){ // if generated symbol containing a seq number 
-      int numberLast = symbol.indexOf('_',last+1);
-      if(numberLast != -1){ // if composed
-        int funLast = symbol.indexOf('_',numberLast+1);
-        if(funLast == -1){ // if no extra symbols after
-          funLast = symbol.length();
-        }
-        aux = symbol.substring(numberLast+1,funLast);
+    int last = symbol.indexOf('-');
+    if(last != -1){ // if containing a composite
+      int  funLast = symbol.indexOf('_',last+1);
+      if(funLast == -1){ //  if no other information after composite
+        funLast = symbol.length();
       }
+      aux = symbol.substring(last+1,funLast);
     }
     return aux;
   }
+
+//   public static String getComposite(String symbol) {
+//     String aux=null;
+//     int last = symbol.indexOf('_');
+//     if(last != -1){ // if generated symbol containing a seq number 
+//       int numberLast = symbol.indexOf('_',last+1);
+//       if(numberLast != -1){ // if composed
+//         int funLast = symbol.indexOf('_',numberLast+1);
+//         if(funLast == -1){ // if no extra symbols after
+//           funLast = symbol.length();
+//         }
+//         aux = symbol.substring(numberLast+1,funLast);
+//       }
+//     }
+//     return aux;
+//   }
 
   public static String typeSymbol(String symbol, String type) {
     return symbol+"_"+type;

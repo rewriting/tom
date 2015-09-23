@@ -180,19 +180,32 @@ public class Signature {
    * @param symbol the name of the symbol
    * @return the list of types of its arguments
    */
-  public List<String> getProfile(String symbol) {
-    List<String> res = new ArrayList<String>();
+  public List<GomType> getProfileType(String symbol) {
+    List<GomType> res = null;
     for(GomType type: this.signature.keySet()) {
       List<GomType> profile = this.signature.get(type).get(symbol);
       if(profile!=null) {
+        res = new ArrayList<GomType>();
         // pem: make a defensive copy of the list?
         for(GomType argtype:profile) {
-          res.add(argtype.getName());
+          res.add(argtype);
         }
         return res;
       }
     }
-    return null;
+    return res;
+  }
+
+  public List<String> getProfile(String symbol) {
+    List<GomType> profile = getProfileType(symbol);
+    List<String> res = null;
+    if(profile != null){
+      res = new ArrayList<String>();
+      for(GomType type: profile) {
+          res.add(type.getName());
+      }
+    }
+    return res;
   }
 
   /** Get the arity of a symbol

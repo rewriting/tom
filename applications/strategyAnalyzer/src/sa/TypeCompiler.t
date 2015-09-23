@@ -75,7 +75,8 @@ public class TypeCompiler {
           StrategyOperator op = Tools.getOperator(opSymb);
 
           // not an auxiliary symbol for ONE or ALL (i.e. one_..._f)  and thus with a strict propagation of Bottom
-          if(Tools.getComposite(opSymb)==null && `stratOp != Signature.AND  && `stratOp != Signature.EQ ){
+          //           if(Tools.getComposite(opSymb)==null && `stratOp != Signature.AND  && `stratOp != Signature.EQ ){
+          if(`stratOp != Signature.AND  && `stratOp != Signature.EQ ){
             System.out.print("FUN : "+ `fun);
               for(GomType type: this.getTypes(`fun)){
                 String typedSymbol = Tools.typeSymbol(opSymb,type.getName());
@@ -130,20 +131,28 @@ public class TypeCompiler {
     Term typedTerm = t;
     %match(t) {
       Appl(name,args) -> {
-        //         if(`name == Signature.BOTTOM){
-        //           typedTerm = `Appl(Tools.typeSymbol(Signature.BOTTOM,type.getName()),args);
-        //         }
-        
         // if term in the extracted signature then don't change it; change symbol names otherwise
         if(extractedSignature.getCodomainType(`name) == null){
+          List<GomType> domain = new ArrayList<GomType>();
+          String fun = Tools.getComposite(`name);
+          if(fun != null){ // if a composite symbol (e.g. all_...-f)
+            domain = extractedSignature.getProfileType(fun);
+            // TODO : domain == null
+            domain.add(domain.size(),type); // for all_f add the type of f(...) at the end; will be ignored for one_f
+          }else{
+            // at most 2 arguments; propagate the type
+            // TODO: be more general ?
+            domain.add(type);
+            domain.add(type);
+          }
           String dname = Tools.typeSymbol(`name,type.getName());
           int i = 0;
           TermList args = `args;
           TermList newArgs = `TermList();
           while(!args.isEmptyTermList()) {
             Term arg = args.getHeadTermList();
-            // compute GOOD type here!
-            Term arg2 = propagateType(env, arg, type);
+            //             Term arg2 = propagateType(env, arg, type);
+            Term arg2 = propagateType(env, arg, domain.get(i));
             if(arg2!=null) {
               newArgs = `TermList(newArgs*, arg2);
             } else {
