@@ -64,45 +64,21 @@ public class TypeCompiler {
     Set<GomType> extractedTypes = extractedSignature.getTypes();
 
     for(Rule rule: untypedRules){
-      //       System.out.println(rule);
-      // if BOTTOM propagation rule
-
       %match(rule){
-
-        //         Rule(Appl(stratOp,TermList(Appl(fun,args),X*)), Appl(rightOp,A)) ->{
         Rule(lhs@Appl(stratOp,TermList(Appl(fun,args),X*)), rhs) ->{
-          String opSymb = `stratOp;
-//           StrategyOperator op = Tools.getOperator(opSymb);
-//           String op = Tools.getOperator(opSymb);
-
-          // not an auxiliary symbol for ONE or ALL (i.e. one_..._f)  and thus with a strict propagation of Bottom
-          //           if(Tools.getComposite(opSymb)==null && `stratOp != Signature.AND  && `stratOp != Signature.EQ ){
-          if(`stratOp != Signature.EQ ){
-              for(GomType type: this.getTypes(`fun)){
-                try{
-                  //                 String typedSymbol = Tools.typeSymbol(opSymb,type.getName());
-                  Term typedLhs = propagateType(`EmptyEnvironment(),`lhs,type);
-                  //                 String typedRightOp = Tools.typeSymbol(`rightOp,type.getName());
-                  Term typedRhs = propagateType(`EmptyEnvironment(),`rhs,type);
-                  //                 Rule newRule = `Rule(Appl(typedSymbol,TermList(Appl(fun,args),X*)), Appl(typedRightOp,A));
-                  //                 Rule newRule = `Rule(Appl(typedSymbol,TermList(Appl(fun,args),X*)), typedRhs);
-                  Rule newRule = `Rule(typedLhs, typedRhs);
-                  generatedRules.add(newRule);
-                
-                  //                 localSignature.addSymbol(typedSymbol,new ArrayList<String>(),type.toString());
-                }catch(TypeMismatchException typeExc){
-                  System.out.println("RULE OMITTED: " + typeExc.getMessage());
-                }
-              }
-          }else{
-            System.out.print("RULE symbol: "+ `stratOp);
-            System.out.print(" for symbol "+ `fun);
-            System.out.print(" of type " + extractedSignature.getCodomain(`fun));
-            System.out.println(" -- FUN symbol for "+ opSymb + " :  "+ Tools.getComposite(opSymb));
+          for(GomType type: this.getTypes(`fun)){
+            try{
+              Term typedLhs = propagateType(`EmptyEnvironment(),`lhs,type);
+              Term typedRhs = propagateType(`EmptyEnvironment(),`rhs,type);
+              Rule newRule = `Rule(typedLhs, typedRhs);
+              generatedRules.add(newRule);
+              //                 localSignature.addSymbol(typedSymbol,new ArrayList<String>(),type.toString());
+            }catch(TypeMismatchException typeExc){
+              System.out.println("RULE OMITTED for " + `stratOp + "  because of " + typeExc.getMessage());
+            }
           }
         }
       }
-      
     }
 
     for(Rule rule: generatedRules){
@@ -126,8 +102,12 @@ public class TypeCompiler {
         types.add(type);
       }
     }else{
-      if(extractedSignature.getCodomainType(symbol) != null){
-        types.add(extractedSignature.getCodomainType(symbol));
+      if(symbol == Signature.TRUE || symbol == Signature.FALSE){
+        types.add(`GomType(Signature.BOOLEAN));
+      }else{
+        if(extractedSignature.getCodomainType(symbol) != null){
+          types.add(extractedSignature.getCodomainType(symbol));
+        }
       }
     }
     return types;
@@ -146,7 +126,6 @@ public class TypeCompiler {
         }else{
           // TODO: equals?
           if(Signature.AND.equals(`name) || `name == Signature.TRUE || `name == Signature.FALSE){
-            System.out.println("GOT : "+ `name);
             // DO NOTHING
           }else{
             List<GomType> domain = new ArrayList<GomType>();
