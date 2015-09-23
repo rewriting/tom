@@ -160,11 +160,18 @@ public class Signature {
 
   /** Get codomain for symbol
    */
-  public String getCodomain(String symbol) {
+  public GomType getCodomainType(String symbol) {
     for(GomType type: this.signature.keySet()) {
       if(this.signature.get(type).get(symbol)!=null) {
-        return type.getName();
+        return type;
       }
+    }
+    return null;
+  }
+
+  public String getCodomain(String symbol) {
+    if(this.getCodomainType(symbol) != null){
+        return this.getCodomainType(symbol).getName();
     }
     return null;
   }

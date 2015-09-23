@@ -80,8 +80,8 @@ public class Tools {
    * @return meta-encoding using Appl and TermList
    */
   /*
-   * REMOVE
-  public static Term encode(String stringterm, Signature signature) {
+   * REMOVE 
+   public static Term encode(String stringterm, Signature signature) {
     //System.out.println("encode: " + stringterm);
     Term res = null;
     ATermFactory factory = SingletonFactory.getInstance();
@@ -161,7 +161,7 @@ public class Tools {
     // System.out.println("encodeRule: " + res);
     return res;
   }
-*/
+  REMOVE */
 
   private static boolean isVariableName(String name, Signature signature) {
     return signature.getCodomain(name) == null;
@@ -177,15 +177,18 @@ public class Tools {
   }
 
 
+
   /**
     * metaEncodeConsNil: transforms a Term representation into a generic term representation
     * for instance, Appl("f",TermList(Appl("b",TermList()))) is transformed into
     * the string "Appl(symb_f,Cons(Appl(symb_b,Nil()),Nil()))"
     * this string can be encoded into a Term, using the "encode" method
     */
+  /*   REMOVE 
   public static Term metaEncodeConsNil(Term t, Signature signature) {
     return encode(encodeConsNil(t,signature),signature);
   }
+  REMOVE */
 
   private static String encodeConsNil(Term t, Signature signature) {
     %match(t) {
@@ -405,7 +408,7 @@ public class Tools {
   }
  
   /*
-   * REMOVE
+   * REMOVE 
   public static String genStringAbstractTerm(String name, int arity, String varname) {
     if(arity==0) {
       return name + "()";
@@ -417,7 +420,7 @@ public class Tools {
       return name + "(" + args + ")";
     }
   }
-  */
+    REMOVE */
 
   /*
    * tools for manipulating Program
