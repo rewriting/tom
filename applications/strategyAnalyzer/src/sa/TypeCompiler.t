@@ -72,7 +72,10 @@ public class TypeCompiler {
               Term typedRhs = propagateType(`EmptyEnvironment(),`rhs,type);
               Rule newRule = `Rule(typedLhs, typedRhs);
               generatedRules.add(newRule);
+
               //                 localSignature.addSymbol(typedSymbol,new ArrayList<String>(),type.toString());
+              // add head of LHS to signature
+              addTypeForTerm(typedLhs);
             }catch(TypeMismatchException typeExc){
               System.out.println("RULE OMITTED for " + `stratOp + "  because of " + typeExc.getMessage());
             }
@@ -88,6 +91,32 @@ public class TypeCompiler {
     System.out.println("GEN SIG = " + localSignature);
   }
   
+
+  // doesn't work yet - should first add type information to variables
+  private void addTypeForTerm(Term t) {
+    String codomain=null;
+    List<String> argTypes = new ArrayList<String>();
+
+    %match(t) {
+      Appl(name,args) -> {
+        codomain = Tools.getTypeOfSymbol(`name);
+        System.out.println("CODOMAIN for " + t + "  : " + codomain);
+
+        TermList args = `args;
+        while(!args.isEmptyTermList()) {
+          Term arg = args.getHeadTermList();
+          %match(arg) {
+            Appl(name,args) -> {
+              argTypes.add(Tools.getTypeOfSymbol(`name));
+            }
+          }
+          args = args.getTailTermList();
+        }
+        System.out.println("DOMAIN for " + t + "  : " + argTypes);
+      }
+    }
+  }
+
   /********************************************************************************
    *     END
    ********************************************************************************/

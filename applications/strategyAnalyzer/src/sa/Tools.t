@@ -29,6 +29,12 @@ public class Tools {
     return StrategyOperator.getStrategyOperator(symbol.substring(0,last));
   }
 
+  public static String getTypeOfSymbol(String symbol) {
+    int last = symbol.lastIndexOf('_');
+    if(last==-1){ return Signature.BOOLEAN;} // TODO: change it when and becomes and_Bool
+    return symbol.substring(last+1,symbol.length());
+  }
+
 //   public static boolean isAuxiliary(String symbol) {
 //     int last = symbol.indexOf('_');
 //     if(last==-1){ last=symbol.length();}
