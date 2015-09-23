@@ -72,11 +72,12 @@ public class TypeCompiler {
         //         Rule(Appl(stratOp,TermList(Appl(fun,args),X*)), Appl(rightOp,A)) ->{
         Rule(lhs@Appl(stratOp,TermList(Appl(fun,args),X*)), rhs) ->{
           String opSymb = `stratOp;
-          StrategyOperator op = Tools.getOperator(opSymb);
+//           StrategyOperator op = Tools.getOperator(opSymb);
+//           String op = Tools.getOperator(opSymb);
 
           // not an auxiliary symbol for ONE or ALL (i.e. one_..._f)  and thus with a strict propagation of Bottom
           //           if(Tools.getComposite(opSymb)==null && `stratOp != Signature.AND  && `stratOp != Signature.EQ ){
-          if(`stratOp != Signature.AND  && `stratOp != Signature.EQ ){
+          if(`stratOp != Signature.EQ ){
               for(GomType type: this.getTypes(`fun)){
                 try{
                   //                 String typedSymbol = Tools.typeSymbol(opSymb,type.getName());
@@ -94,7 +95,7 @@ public class TypeCompiler {
                 }
               }
           }else{
-            System.out.print("RULE symbol: "+ op);
+            System.out.print("RULE symbol: "+ `stratOp);
             System.out.print(" for symbol "+ `fun);
             System.out.print(" of type " + extractedSignature.getCodomain(`fun));
             System.out.println(" -- FUN symbol for "+ opSymb + " :  "+ Tools.getComposite(opSymb));
@@ -134,47 +135,51 @@ public class TypeCompiler {
 
   private Term propagateType(TypeEnvironment env, Term t, GomType type) {
     Term typedTerm = t;
+
     %match(t) {
       Appl(name,args) -> {
         // if term in the extracted signature then don't change it; change symbol names otherwise
-        if(extractedSignature.getCodomainType(`name) == null){
-          List<GomType> domain = new ArrayList<GomType>();
-          String fun = Tools.getComposite(`name);
-          if(fun != null){ // if a composite symbol (e.g. all_...-f)
-            domain = extractedSignature.getProfileType(fun);
-            // TODO : domain == null
-            domain.add(domain.size(),type); // for all_f add the type of f(...) at the end; will be ignored for one_f
-          }else{
-            // at most 2 arguments; propagate the type
-            // TODO: be more general ?
-            domain.add(type);
-            domain.add(type);
-          }
-          String dname = Tools.typeSymbol(`name,type.getName());
-          int i = 0;
-          TermList args = `args;
-          TermList newArgs = `TermList();
-          while(!args.isEmptyTermList()) {
-            Term arg = args.getHeadTermList();
-            //             Term arg2 = propagateType(env, arg, type);
-            Term arg2 = propagateType(env, arg, domain.get(i));
-            if(arg2!=null) {
-              newArgs = `TermList(newArgs*, arg2);
-            } else {
-              // throw exception
-              System.out.println("bad arg2: " + arg2);
-              return null;
-            }
-            i++;
-            args = args.getTailTermList();
-          }
-          typedTerm = `Appl(dname,newArgs);
-        }else{
+        if(extractedSignature.getCodomainType(`name) != null){
           if(extractedSignature.getCodomainType(`name) != type){
-              // throw exception
             throw new TypeMismatchException("BAD ARG: " + `name + " TRY TYPE " + type);
-            //    System.out.println("BAD ARG: " + `name + " TRY TYPE " + type);
-            //               return null;
+          }
+        }else{
+          // TODO: equals?
+          if(Signature.AND.equals(`name) || `name == Signature.TRUE || `name == Signature.FALSE){
+            System.out.println("GOT : "+ `name);
+            // DO NOTHING
+          }else{
+            List<GomType> domain = new ArrayList<GomType>();
+            String fun = Tools.getComposite(`name);
+            if(fun != null){ // if a composite symbol (e.g. all_...-f)
+              domain = extractedSignature.getProfileType(fun);
+              // TODO : domain == null
+              domain.add(domain.size(),type); // for all_f add the type of f(...) at the end; will be ignored for one_f
+            }else{
+              // at most 2 arguments; propagate the type
+              // TODO: be more general ?
+              domain.add(type);
+              domain.add(type);
+            }
+            String dname = Tools.typeSymbol(`name,type.getName());
+            int i = 0;
+            TermList args = `args;
+            TermList newArgs = `TermList();
+            while(!args.isEmptyTermList()) {
+              Term arg = args.getHeadTermList();
+              //             Term arg2 = propagateType(env, arg, type);
+              Term arg2 = propagateType(env, arg, domain.get(i));
+              if(arg2!=null) {
+                newArgs = `TermList(newArgs*, arg2);
+              } else {
+                // throw exception
+                System.out.println("bad arg2: " + arg2);
+                return null;
+              }
+              i++;
+              args = args.getTailTermList();
+            }
+            typedTerm = `Appl(dname,newArgs);
           }
         }
       }

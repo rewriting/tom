@@ -22,8 +22,10 @@ public class Tools {
   }
 
   public static StrategyOperator getOperator(String symbol) {
+//   public static String getOperator(String symbol) {
     int last = symbol.indexOf('_');
     if(last==-1){ last=symbol.length();}
+//     return symbol.substring(0,last);
     return StrategyOperator.getStrategyOperator(symbol.substring(0,last));
   }
 
