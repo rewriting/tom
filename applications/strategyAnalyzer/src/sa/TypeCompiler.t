@@ -70,23 +70,28 @@ public class TypeCompiler {
       %match(rule){
 
         //         Rule(Appl(stratOp,TermList(Appl(fun,args),X*)), Appl(rightOp,A)) ->{
-        Rule(Appl(stratOp,TermList(Appl(fun,args),X*)), rhs) ->{
+        Rule(lhs@Appl(stratOp,TermList(Appl(fun,args),X*)), rhs) ->{
           String opSymb = `stratOp;
           StrategyOperator op = Tools.getOperator(opSymb);
 
           // not an auxiliary symbol for ONE or ALL (i.e. one_..._f)  and thus with a strict propagation of Bottom
           //           if(Tools.getComposite(opSymb)==null && `stratOp != Signature.AND  && `stratOp != Signature.EQ ){
           if(`stratOp != Signature.AND  && `stratOp != Signature.EQ ){
-            System.out.print("FUN : "+ `fun);
               for(GomType type: this.getTypes(`fun)){
-                String typedSymbol = Tools.typeSymbol(opSymb,type.getName());
-                //                 String typedRightOp = Tools.typeSymbol(`rightOp,type.getName());
-                Term typedRhs = propagateType(`EmptyEnvironment(),`rhs,type);
-                //                 Rule newRule = `Rule(Appl(typedSymbol,TermList(Appl(fun,args),X*)), Appl(typedRightOp,A));
-                Rule newRule = `Rule(Appl(typedSymbol,TermList(Appl(fun,args),X*)), typedRhs);
-                generatedRules.add(newRule);
+                try{
+                  //                 String typedSymbol = Tools.typeSymbol(opSymb,type.getName());
+                  Term typedLhs = propagateType(`EmptyEnvironment(),`lhs,type);
+                  //                 String typedRightOp = Tools.typeSymbol(`rightOp,type.getName());
+                  Term typedRhs = propagateType(`EmptyEnvironment(),`rhs,type);
+                  //                 Rule newRule = `Rule(Appl(typedSymbol,TermList(Appl(fun,args),X*)), Appl(typedRightOp,A));
+                  //                 Rule newRule = `Rule(Appl(typedSymbol,TermList(Appl(fun,args),X*)), typedRhs);
+                  Rule newRule = `Rule(typedLhs, typedRhs);
+                  generatedRules.add(newRule);
                 
-                localSignature.addSymbol(typedSymbol,new ArrayList<String>(),type.toString());
+                  //                 localSignature.addSymbol(typedSymbol,new ArrayList<String>(),type.toString());
+                }catch(TypeMismatchException typeExc){
+                  System.out.println("RULE OMITTED: " + typeExc.getMessage());
+                }
               }
           }else{
             System.out.print("RULE symbol: "+ op);
@@ -164,6 +169,13 @@ public class TypeCompiler {
             args = args.getTailTermList();
           }
           typedTerm = `Appl(dname,newArgs);
+        }else{
+          if(extractedSignature.getCodomainType(`name) != type){
+              // throw exception
+            throw new TypeMismatchException("BAD ARG: " + `name + " TRY TYPE " + type);
+            //    System.out.println("BAD ARG: " + `name + " TRY TYPE " + type);
+            //               return null;
+          }
         }
       }
 
