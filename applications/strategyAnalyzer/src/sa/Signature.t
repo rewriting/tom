@@ -67,6 +67,18 @@ public class Signature {
       }
     }
   }
+  
+  public Signature cloneSignature()  {
+    Signature res = new Signature();
+    // clone everything (lists could be just copied since normally not modified later on)
+    for(GomType type: this.signature.keySet()) {
+      for(String symbol: signature.get(type).keySet()) {
+        List<GomType> domain = this.getProfileType(symbol);
+        res.addSymbolType(symbol,domain,type);
+      }
+    }
+    return res;
+  }
 
   /**
    * Create an expanded signature containing the symbols in the

@@ -25,7 +25,7 @@ public class TypeCompiler {
 
   public TypeCompiler(Signature extractedSignature, List<Rule> untypedRules) {
     this.extractedSignature = extractedSignature;
-    this.typedSignature = new Signature();
+    this.typedSignature = extractedSignature.cloneSignature();
     this.untypedRules = untypedRules;
     this.generatedRules = new ArrayList<Rule>();
   }
