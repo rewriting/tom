@@ -7,25 +7,25 @@ public class Signature {
   %include { rule/Rule.tom }
 
   // All literal strings and string-valued constant expressions are interned.
-  public static String BOOLEAN = "Bool";
-  public static String TRUE = "True";
-  public static String FALSE = "False";
-  public static String AND = "and";
-  public static String BOTTOM = "Bottom";
-  public static String BOTTOMLIST = "BottomList";
-  public static String EQ = "eq";
-  public static String APPL = "Appl";
-  public static String CONS = "Cons";
-  public static String NIL = "Nil";
+  public final static String TRUE = "True";
+  public final static String FALSE = "False";
+  public final static String AND = "and";
+  public final static String BOTTOM = "Bottom";
+  public final static String BOTTOMLIST = "BottomList";
+  public final static String EQ = "eq";
+  public final static String APPL = "Appl";
+  public final static String CONS = "Cons";
+  public final static String NIL = "Nil";
   
-  public static String ENCODE = "encode";
-  public static String DECODE = "decode";
+  public final static String ENCODE = "encode";
+  public final static String DECODE = "decode";
 
   // Types
-  public static final String TERM = "Term";
-  public static final String METASYMBOL = "MetaSymbol";
-  public static final String METATERM = "MetaTerm";
-  public static final String METALIST = "MetaList";
+  public final static String BOOLEAN = "Bool";
+  public final static String TERM = "Term";
+  public final static String METASYMBOL = "MetaSymbol";
+  public final static String METATERM = "MetaTerm";
+  public final static String METALIST = "MetaList";
 
 
   // Codomain Type -> (SymbolName -> Domain List of types)
@@ -35,6 +35,10 @@ public class Signature {
     this.signature = new HashMap<GomType,Map<String,List<GomType>>>(); 
   }
 
+  public boolean isBooleanOperator(String opname) {
+    String s = opname.intern();
+    return s == Signature.AND || s == Signature.TRUE || s == Signature.FALSE;
+  }
 
   /**
    * Add the symbols defined for a given type in the corresponding
@@ -138,31 +142,37 @@ public class Signature {
    * @param codomain the return type 
    */
   public void addSymbol(String name, List<String> argTypes, String codomain) {
-    Map<String,List<GomType>> symbols = this.signature.get(`GomType(codomain));
+    List<GomType> domain = new ArrayList<GomType>();
+    for(String s: argTypes) {
+      domain.add(`GomType(s));
+    }
+    addSymbolType(name,domain,`GomType(codomain));
+  }
+
+  public void addSymbolType(String name, List<GomType> argTypes, GomType codomain) {
+    Map<String,List<GomType>> symbols = this.signature.get(codomain);
     // if type of codomain doesn't exist then create it
     if(symbols==null) {
       symbols = new HashMap<String,List<GomType>>();
     }
     // create arguments' types list
     List<GomType> args = new ArrayList<GomType>();
-    for(String argType:argTypes) {
-      args.add(`GomType(argType));
+    for(GomType argType:argTypes) {
+      args.add(argType);
     }
     // detect overloading
     List<GomType> oldDomain = symbols.put(name.intern(),args);
     if(oldDomain != null) {
-      //System.out.println("redefinition: '" + name +"'" + oldDomain + " becomes '" + name + "'" + args);
       System.out.println(%[redefinition: '@name@'@oldDomain@ becomes '@name@'@args@]%);
-      //       throw new TypeMismatchException();
     }
-    signature.put(`GomType(codomain),symbols); 
+    signature.put(codomain,symbols); 
   }
 
   /** Get codomain for symbol
    */
   public GomType getCodomainType(String symbol) {
     for(GomType type: this.signature.keySet()) {
-      if(this.signature.get(type).get(symbol)!=null) {
+      if(this.signature.get(type).get(symbol) != null) {
         return type;
       }
     }
@@ -170,7 +180,7 @@ public class Signature {
   }
 
   public String getCodomain(String symbol) {
-    if(this.getCodomainType(symbol) != null){
+    if(this.getCodomainType(symbol) != null) {
         return this.getCodomainType(symbol).getName();
     }
     return null;

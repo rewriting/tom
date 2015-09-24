@@ -670,7 +670,7 @@ public class Compiler {
                  */
                 generatedRules.add(Rule(_appl(all,_appl(name)), _appl(name)));
               } else {
-                String all_n = Tools.getCompositeName(all,name);
+                String all_n = Tools.addOperatorName(all,name);
                 List<String> all_args = new ArrayList<String>();
                 for(int i=0; i<arity_all; i++){
                   all_args.add(Signature.TERM);
@@ -805,7 +805,7 @@ public class Compiler {
                  */
                 generatedRules.add(Rule(_appl(one,_appl(name)), Bottom(_appl(name))));
               } else {
-                String one_n = Tools.getCompositeName(one,name);
+                String one_n = Tools.addOperatorName(one,name);
                 String one_n_1 = one_n + "_1";
                 /*
                  * main case

@@ -21,40 +21,60 @@ public class Tools {
     return name + "_" + (phiNumber++);
   }
 
-  public static StrategyOperator getOperator(String symbol) {
-//   public static String getOperator(String symbol) {
+  /*
+   * helpers to build and decompose symbol names
+   */
+  
+  /*
+   * given symbolName and operatorName
+   * returns symbolName-operatorName
+   */
+  public static String addOperatorName(String symbolName, String operatorName) {
+    return symbolName + "-" + operatorName;
+  }
+
+  /*
+   * given symbolName and typeName
+   * returns symbolName_typeName
+   */
+  public static String addTypeName(String symbol, String typeName) {
+    return symbol + "_" + typeName;
+  }
+
+  /*
+   * a symbol is of the form:
+   * - symbolName
+   * - symbolName_typeName
+   * - symbolName-operatorName_typeName
+   */
+
+  public static StrategyOperator getSymbolName(String symbol) {
     int last = symbol.indexOf('_');
-    if(last==-1){ last=symbol.length();}
-//     return symbol.substring(0,last);
+    if(last == -1) {
+      last=symbol.length();
+    }
     return StrategyOperator.getStrategyOperator(symbol.substring(0,last));
   }
 
-  public static String getTypeOfSymbol(String symbol) {
+  public static String getTypeName(String symbol) {
     int last = symbol.lastIndexOf('_');
-    if(last==-1){ return Signature.BOOLEAN;} // TODO: change it when and becomes and_Bool
+    if(last == -1) {
+      // TODO: change it when and becomes and_Bool
+      return Signature.BOOLEAN;
+    }
     return symbol.substring(last+1,symbol.length());
   }
 
-//   public static boolean isAuxiliary(String symbol) {
-//     int last = symbol.indexOf('_');
-//     if(last==-1){ last=symbol.length();}
-//     if(symbol.contains(Compiler.AUX) &&  symbol.substring(last-Compiler.AUX.length(), last).equals(Compiler.AUX)){
-//           return true;
-//     }
-//     return false;
-//   }
-  
-  public static String getCompositeName(String opName, String aux) {
-    //     return opName+"_"+aux;
-    return opName+"-"+aux;
-  }
-
-  public static String getComposite(String symbol) {
-    String aux=null;
+  /*
+   * Given a symbol name of the form "name-opName" or "name-opName_typeName"
+   * @returns opName
+   */
+  public static String getOperatorName(String symbol) {
+    String aux = null;
     int last = symbol.indexOf('-');
-    if(last != -1){ // if containing a composite
-      int  funLast = symbol.indexOf('_',last+1);
-      if(funLast == -1){ //  if no other information after composite
+    if(last != -1) { // if containing a composite
+      int funLast = symbol.indexOf('_',last+1);
+      if(funLast == -1) { //  if no other information after composite
         funLast = symbol.length();
       }
       aux = symbol.substring(last+1,funLast);
@@ -62,27 +82,10 @@ public class Tools {
     return aux;
   }
 
-//   public static String getComposite(String symbol) {
-//     String aux=null;
-//     int last = symbol.indexOf('_');
-//     if(last != -1){ // if generated symbol containing a seq number 
-//       int numberLast = symbol.indexOf('_',last+1);
-//       if(numberLast != -1){ // if composed
-//         int funLast = symbol.indexOf('_',numberLast+1);
-//         if(funLast == -1){ // if no extra symbols after
-//           funLast = symbol.length();
-//         }
-//         aux = symbol.substring(numberLast+1,funLast);
-//       }
-//     }
-//     return aux;
-//   }
 
-  public static String typeSymbol(String symbol, String type) {
-    return symbol+"_"+type;
-  }
-
-
+  /*
+   * helpers to build AST
+   */
   private static Term _appl(String name, Term... args) {
     TermList tl = `TermList();
     for(Term t:args) {

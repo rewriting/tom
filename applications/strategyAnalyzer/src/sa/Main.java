@@ -45,101 +45,85 @@ public class Main {
         fileinput = new FileInputStream(options.in);
       }
 
-      if(options.newparser) {
-        System.out.println("NEW PARSER");
-        // Parse the input expression and build an AST
-        RuleLexer lexer = new RuleLexer(new ANTLRInputStream(fileinput));
-        CommonTokenStream tokens = new CommonTokenStream(lexer);
-        RuleParser ruleParser = new RuleParser(tokens);
-        Tree b = (Tree) ruleParser.program().getTree();
-        Program t = (Program) RuleAdaptor.getTerm(b);
+      // TODO: remove the if branch when option newparser removed
+      RuleLexer lexerNEW = new RuleLexer(new ANTLRInputStream(fileinput));
+      CommonTokenStream tokensNEW = new CommonTokenStream(lexerNEW);
+      RuleParser ruleParserNEW = new RuleParser(tokensNEW);
+      Tree bNEW = (Tree) ruleParserNEW.program().getTree();
+      Program t = (Program) RuleAdaptor.getTerm(bNEW);
 
-        System.out.println(t); // AST of the program
-        System.out.println("------------------------------------------   ");
+      Compiler compiler = Compiler.getInstance();
+      compiler.setProgram(t);
 
-        Compiler compiler = Compiler.getInstance();
-        compiler.setProgram(t);
+      // Transforms the strategy into a rewrite system
+      //   get the TRS for the strategy named strategyName
+      String strategyName="mainStrat";
+      List<Rule> generatedRules = compiler.compileStrategy(strategyName);
+      Signature extractedSignature = compiler.getExtractedSignature();
+      Signature generatedSignature = compiler.getGeneratedSignature();
 
-        System.out.println("SIG = " + compiler.getExtractedSignature());
+      System.out.println("EXT SIG = " + extractedSignature);
+      System.out.println("GEN SIG = " + generatedSignature);
 
-        System.out.println("main = " + Tools.getStratDecl("main", t));
-        Expression expand = compiler.expandStrategy("main");
-        System.out.println("expanded version = " + expand);
-      } else {
-        // TODO: remove the if branch when option newparser removed
-        RuleLexer lexerNEW = new RuleLexer(new ANTLRInputStream(fileinput));
-        CommonTokenStream tokensNEW = new CommonTokenStream(lexerNEW);
-        RuleParser ruleParserNEW = new RuleParser(tokensNEW);
-        Tree bNEW = (Tree) ruleParserNEW.program().getTree();
-        Program t = (Program) RuleAdaptor.getTerm(bNEW);
+      // transform the LINEAR TRS: compile Aps and remove ATs
+      RuleCompiler ruleCompiler = new RuleCompiler(extractedSignature,generatedSignature);
+      if(options.withAP == false) {
+        generatedRules = ruleCompiler.expandAntiPatterns(generatedRules);
+      }
+      // if we don't expand the anti-patterns then we should keep the at-annotations as well
+      // otherwise output is strange
+      if(options.withAT == false && options.withAP == false) {
+        generatedRules = ruleCompiler.expandAt(generatedRules);
+      }
+      // refresh the signatures (presently no modifications)
+      extractedSignature = ruleCompiler.getExtractedSignature();
+      generatedSignature = ruleCompiler.getGeneratedSignature();
 
-        Compiler compiler = Compiler.getInstance();
-        compiler.setProgram(t);
-
-        // Transforms the strategy into a rewrite system
-        //   get the TRS for the strategy named strategyName
-        String strategyName="mainStrat";
-        List<Rule> generatedRules = compiler.compileStrategy(strategyName);
-        Signature extractedSignature = compiler.getExtractedSignature();
-        Signature generatedSignature = compiler.getGeneratedSignature();
-
-        System.out.println("EXT SIG = " + extractedSignature);
-        System.out.println("GEN SIG = " + generatedSignature);
-
-        // transform the LINEAR TRS: compile Aps and remove ATs
-        RuleCompiler ruleCompiler = new RuleCompiler(extractedSignature,generatedSignature);
-        if(options.withAP == false) {
-          generatedRules = ruleCompiler.expandAntiPatterns(generatedRules);
-        }
-        // if we don't expand the anti-patterns then we should keep the at-annotations as well
-        // otherwise output is strange
-        if(options.withAT == false && options.withAP == false) {
-          generatedRules = ruleCompiler.expandAt(generatedRules);
-        }
-        // refresh the signatures (presently no modifications)
-        extractedSignature = ruleCompiler.getExtractedSignature();
-        generatedSignature = ruleCompiler.getGeneratedSignature();
-
-        //         System.out.println("gSIG = " + generatedSignature);
+      //         System.out.println("gSIG = " + generatedSignature);
 
 
+      if(options.typed) {
         // TEST (flatten types)
-        TypeCompiler typeCompiler = new TypeCompiler(extractedSignature,generatedSignature,generatedRules);
+        TypeCompiler typeCompiler = new TypeCompiler(extractedSignature,generatedRules);
         //pem typeCompiler.flattenSignature();
-        
+
         // refresh the signatures (presently no modifications)
         extractedSignature = typeCompiler.getExtractedSignature();
-        generatedSignature = typeCompiler.getGeneratedSignature();
+        Signature typedSignature = typeCompiler.getTypedSignature();
 
         typeCompiler.typeRules();
+
+
+        generatedRules = typeCompiler.getGeneratedRules();
+        generatedSignature = typedSignature;
+
         //         System.out.println("gSIG = " + generatedSignature);
-        
+
 
         // TEST
         //         List<Rule> newRules = compiler.specialize("rule6", "T", generatedRules);  
+      }
 
 
+      PrintStream outputfile = System.out;
+      if(options.out != null) {
+        outputfile = new PrintStream(options.out);
+      }
+      PrintStream tomoutputfile = System.out;
+      if(options.classname != null) {
+        tomoutputfile = new PrintStream(options.classname+".t");
+      }
 
-        PrintStream outputfile = System.out;
-        if(options.out != null) {
-          outputfile = new PrintStream(options.out);
-        }
-        PrintStream tomoutputfile = System.out;
-        if(options.classname != null) {
-          tomoutputfile = new PrintStream(options.classname+".t");
-        }
+      if(options.classname != null) {
+        tomoutputfile.println( Pretty.generateTom(strategyName,generatedRules,generatedSignature,options.classname) );
+      } 
 
-        if(options.classname != null) {
-          tomoutputfile.println( Pretty.generateTom(strategyName,generatedRules,generatedSignature,options.classname) );
-        } 
-
-        if(options.aprove) {
-          boolean innermost = false;
-          outputfile.println( Pretty.generateAprove(generatedRules,innermost) );
-        }
-        if(options.timbuk) {
-          outputfile.println( Pretty.generateTimbuk(generatedRules,generatedSignature) );
-        }
+      if(options.aprove) {
+        boolean innermost = false;
+        outputfile.println( Pretty.generateAprove(generatedRules,innermost) );
+      }
+      if(options.timbuk) {
+        outputfile.println( Pretty.generateTimbuk(generatedRules,generatedSignature) );
       }
     } catch (Exception e) {
       System.err.println("exception: " + e);
