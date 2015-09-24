@@ -35,7 +35,7 @@ public class Signature {
     this.signature = new HashMap<GomType,Map<String,List<GomType>>>(); 
   }
 
-  public boolean isBooleanOperator(String opname) {
+  public boolean isBooleanOperatorExceptEQ(String opname) {
     String s = opname.intern();
     return s == Signature.AND || s == Signature.TRUE || s == Signature.FALSE;
   }

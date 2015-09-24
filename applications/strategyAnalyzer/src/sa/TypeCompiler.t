@@ -47,8 +47,16 @@ public class TypeCompiler {
 
     for(Rule rule: untypedRules) {
       %match(rule) {
-        Rule(lhs@Appl(stratOp,TermList(Appl(fun,args),X*)), rhs) ->{
-          for(GomType type: this.getTypes(`fun)) {
+        Rule(lhs@Appl(stratOp,TermList(Appl(fun,args),X*)), rhs) -> {
+          Collection<GomType> types = null;
+          if(getExtractedSignature().isBooleanOperatorExceptEQ(`stratOp)) {
+            types = new HashSet<GomType>();
+            types.add(`GomType(Signature.BOOLEAN));
+          } else {
+            types = this.getTypes(`fun);
+          }
+
+          for(GomType type: types) {
             try {
               Term typedLhs = propagateType(`EmptyEnvironment(),`lhs,type);
               Term typedRhs = propagateType(`EmptyEnvironment(),`rhs,type);
@@ -74,6 +82,7 @@ public class TypeCompiler {
   
 
   // doesn't work yet - should first add type information to variables
+  /*
   private void addTypeForTerm(Term t) {
     Signature eSig = getExtractedSignature();
     String codomain = null;
@@ -102,6 +111,7 @@ public class TypeCompiler {
       }
     }
   }
+  */
 
   /********************************************************************************
    *     END
@@ -144,11 +154,14 @@ public class TypeCompiler {
             throw new TypeMismatchException("BAD ARG: " + `name + " TRY TYPE " + type);
           }
         } else {
-          if(eSig.isBooleanOperator(`name)) {
-            typedSignature.addSymbol(Signature.TRUE,new ArrayList<String>(),Signature.BOOLEAN);
-            typedSignature.addSymbol(Signature.FALSE,new ArrayList<String>(),Signature.BOOLEAN);
-            typedSignature.addSymbol(Signature.AND,Arrays.asList(Signature.BOOLEAN,Signature.BOOLEAN),Signature.BOOLEAN);
-          } else {
+          if(eSig.isBooleanOperatorExceptEQ(`name)) {
+            type = `GomType(Signature.BOOLEAN);
+            //typedSignature.addSymbol(Signature.TRUE,new ArrayList<String>(),Signature.BOOLEAN);
+            //typedSignature.addSymbol(Signature.FALSE,new ArrayList<String>(),Signature.BOOLEAN);
+            //typedSignature.addSymbol(Signature.AND,Arrays.asList(Signature.BOOLEAN,Signature.BOOLEAN),Signature.BOOLEAN);
+          }
+          //} else {
+        {
             List<GomType> domain = null;
             // retrieve fun from name of the form symbolName-fun_typeName
             String fun = Tools.getOperatorName(`name);

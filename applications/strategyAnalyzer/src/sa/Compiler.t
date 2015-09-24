@@ -86,25 +86,25 @@ public class Compiler {
    */
   public List<Rule>  compileStrategy(String strategyName) {
     Expression expand = this.expandStrategy(strategyName);
-    System.out.println("expanded version for "+strategyName+"  = " + expand);
+    System.out.println("expanded version for " + strategyName + "  = " + expand);
 
     Strat strategy=null;
     %match(expand) {
       Strat(strat) -> { strategy = `strat;      }
     }
-    System.out.println("STRATEGY "+strategyName+"  = " + strategy);
+    System.out.println("STRATEGY " + strategyName + "  = " + strategy);
 
     // if not generated yet
-    if(this.generatedTRSs.get(strategyName)==null) {
+    if(this.generatedTRSs.get(strategyName) == null) {
       this.generatedTRSs.put(strategyName,new ArrayList<Rule>());
       
       String strategySymbol = "NONE";
       if(Main.options.metalevel) {
-        strategySymbol=this.compileStrat(strategy,this.generatedTRSs.get(strategyName));
+        strategySymbol = this.compileStrat(strategy,this.generatedTRSs.get(strategyName));
         this.generateTriggerRule(strategyName,strategySymbol,this.generatedTRSs.get(strategyName));
         this.generateEncodeDecode(this.generatedTRSs.get(strategyName));
       } else {
-        strategySymbol=this.compileStrat(strategy,this.generatedTRSs.get(strategyName));
+        strategySymbol = this.compileStrat(strategy,this.generatedTRSs.get(strategyName));
         this.generateEquality(this.generatedTRSs.get(strategyName));
         this.generateTriggerRule(strategyName,strategySymbol,this.generatedTRSs.get(strategyName));
       }
