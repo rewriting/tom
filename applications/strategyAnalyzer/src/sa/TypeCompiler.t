@@ -47,6 +47,7 @@ public class TypeCompiler {
    **/
   public  void typeRules() {
     Set<GomType> extractedTypes = getExtractedSignature().getTypes();
+    Map<String,GomType> env = new HashMap<String,GomType>();
 
     for(Rule rule: untypedRules) {
       %match(rule) {
@@ -57,7 +58,9 @@ public class TypeCompiler {
             types = new HashSet<GomType>();
             types.add(`GomType(Signature.BOOLEAN));
           } else { // otherwise the codomain is given by the codomain of its first argument
-            types = this.getTypes(`arg);
+            env = new HashMap<String,GomType>();
+            // TODO: handle empty types
+            types = this.getTypes(env,`arg);
           }
 
           // the each potential codomain
@@ -65,9 +68,10 @@ public class TypeCompiler {
           //  which can be of any type of the declared (ie extracted signature)
           for(GomType type: types) {
             try {
-              TypeEnvironment vars = `EmptyEnvironment();
-              Term typedLhs = this.propagateType(vars,`lhs,type);
-              Term typedRhs = this.propagateType(vars,`rhs,type);
+              //               TypeEnvironment env = `EmptyEnvironment();
+              env = new HashMap<String,GomType>();
+              Term typedLhs = this.propagateType(env,`lhs,type);
+              Term typedRhs = this.propagateType(env,`rhs,type);
               Rule newRule = `Rule(typedLhs, typedRhs);
               // rule is added and the head symbol added to the typed signature
               this.generatedRules.add(newRule);
@@ -90,7 +94,7 @@ public class TypeCompiler {
    *  symbol can be a symbol from the extracted signature or Bottom
    */
   
-  private List<GomType> getTypes(Term term) {
+  private List<GomType> getTypes(Map<String,GomType> env, Term term) {
     List<GomType> types = new ArrayList<GomType>();
     Signature eSig = this.getExtractedSignature();
     %match(term) {
@@ -106,7 +110,9 @@ public class TypeCompiler {
         }
 
         s@Var(name) -> {
-          types.add(`GomType(Signature.BOOLEAN));
+          if(env.get(`name) != null){
+            types.add(env.get(`name));
+          }
         }
     }
     return types;
@@ -123,7 +129,9 @@ public class TypeCompiler {
    * - one_42(s1)
    * - one_42-f(s1,...,sn) with n=ar(f)
    */
-  private Term propagateType(TypeEnvironment env, Term t, GomType type) {
+
+    //   private Term propagateType(TypeEnvironment env, Term t, GomType type) {
+  private Term propagateType(Map<String,GomType> env, Term t, GomType type) {
     Term typedTerm = t;
     Signature eSig = getExtractedSignature();
 
@@ -137,7 +145,8 @@ public class TypeCompiler {
          if(eSig.isBooleanOperatorEQ(`name)) {
             %match(args) {
               TermList(arg,_*) -> {
-                type = this.getTypes(`arg).get(0);;
+                // TODO: handle empty types
+                type = this.getTypes(env,`arg).get(0);;
               }
             }
           }
@@ -200,7 +209,16 @@ public class TypeCompiler {
       }
 
       s@Var(name) -> {
-        //           this.AddVarToEnv();
+        // set the type in the environment
+        GomType varType = env.get(`name);
+        if(varType != null){ // if type already set
+          if(varType != type){ // if try to assigne a different type
+            throw new RuntimeException("Attemp to type variable with different type");
+          }
+        }else{ // set type if not already done
+          env.put(`name,type);
+        }
+        // dont't change it
         typedTerm = `s;
       }
     }
