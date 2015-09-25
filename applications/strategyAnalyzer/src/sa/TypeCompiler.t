@@ -89,19 +89,6 @@ public class TypeCompiler {
   /** Get the potential types of symbol
    *  symbol can be a symbol from the extracted signature or Bottom
    */
-  private List<GomType> getTypes(String symbol) {
-    List<GomType> types = new ArrayList<GomType>();
-    Signature eSig = this.getExtractedSignature();
-    if(symbol == Signature.BOTTOM) {
-      // for BOTTOM add all possible types
-      types.addAll(eSig.getTypes());
-    } else if(symbol == Signature.TRUE || symbol == Signature.FALSE) {
-      types.add(`GomType(Signature.BOOLEAN));
-    } else if(eSig.getCodomainType(symbol) != null) {
-      types.add(eSig.getCodomainType(symbol));
-    }
-    return types;
-  }
   
   private List<GomType> getTypes(Term term) {
     List<GomType> types = new ArrayList<GomType>();
@@ -460,4 +447,18 @@ public class TypeCompiler {
 //       }
 //     }
 //     return typedTerm;
+//   }
+
+//   private List<GomType> getTypes(String symbol) {
+//     List<GomType> types = new ArrayList<GomType>();
+//     Signature eSig = this.getExtractedSignature();
+//     if(symbol == Signature.BOTTOM) {
+//       // for BOTTOM add all possible types
+//       types.addAll(eSig.getTypes());
+//     } else if(symbol == Signature.TRUE || symbol == Signature.FALSE) {
+//       types.add(`GomType(Signature.BOOLEAN));
+//     } else if(eSig.getCodomainType(symbol) != null) {
+//       types.add(eSig.getCodomainType(symbol));
+//     }
+//     return types;
 //   }
