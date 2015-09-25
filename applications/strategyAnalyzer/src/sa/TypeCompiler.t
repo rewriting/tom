@@ -42,29 +42,35 @@ public class TypeCompiler {
     return this.generatedRules;
   }
 
+  /**
+   * Transform each rewrite rule to a set of well-typed rules with the same behaviour. 
+   **/
   public  void typeRules() {
     Set<GomType> extractedTypes = getExtractedSignature().getTypes();
 
     for(Rule rule: untypedRules) {
       %match(rule) {
-        Rule(lhs@Appl(stratOp,TermList(Appl(fun,args),X*)), rhs) -> {
+        Rule(lhs@Appl(stratOp,TermList(arg,_*)), rhs) -> {
           Collection<GomType> types = null;
+          // if head opearator of the rule is EQ than the codomain should be BOOL 
           if(getExtractedSignature().isBooleanOperatorExceptEQ(`stratOp)) {
             types = new HashSet<GomType>();
             types.add(`GomType(Signature.BOOLEAN));
-          } else {
-            types = this.getTypes(`fun);
+          } else { // otherwise the codomain is given by the codomain of its first argument
+            types = this.getTypes(`arg);
           }
 
+          // the each potential codomain
+          // (the potential codomain is unique for all operators but for BOTTOM
+          //  which can be of any type of the declared (ie extracted signature)
           for(GomType type: types) {
             try {
-              Term typedLhs = propagateType(`EmptyEnvironment(),`lhs,type);
-              Term typedRhs = propagateType(`EmptyEnvironment(),`rhs,type);
+              TypeEnvironment vars = `EmptyEnvironment();
+              Term typedLhs = this.propagateType(vars,`lhs,type);
+              Term typedRhs = this.propagateType(vars,`rhs,type);
               Rule newRule = `Rule(typedLhs, typedRhs);
-              generatedRules.add(newRule);
-
-              // add head of LHS to signature
-              //addTypeForTerm(typedLhs);
+              // rule is added and the head symbol added to the typed signature
+              this.generatedRules.add(newRule);
             } catch(TypeMismatchException typeExc) {
               System.out.println("RULE OMITTED for " + `stratOp + "  because of " + typeExc.getMessage());
             }
@@ -79,50 +85,13 @@ public class TypeCompiler {
 
     System.out.println("TYPED SIG = " + getTypedSignature());
   }
-  
-
-  // doesn't work yet - should first add type information to variables
-  /*
-  private void addTypeForTerm(Term t) {
-    Signature eSig = getExtractedSignature();
-    String codomain = null;
-    List<String> argTypes = new ArrayList<String>();
-
-    %match(t) {
-      Appl(name,args) -> {
-        codomain = Tools.getTypeName(`name);
-        System.out.println("CODOMAIN for " + t + "  : " + codomain);
-
-        TermList args = `args;
-        while(!args.isEmptyTermList()) {
-          Term arg = args.getHeadTermList();
-          %match(arg) {
-            Appl(kidname,kidargs) -> {
-              if(eSig.getCodomain(`kidname) != null) {
-                argTypes.add(eSig.getCodomain(`kidname));
-              } else {
-                argTypes.add(Tools.getTypeName(`kidname));
-              }
-            }
-          }
-          args = args.getTailTermList();
-        }
-        System.out.println("DOMAIN for " + t + "  : " + argTypes);
-      }
-    }
-  }
-  */
-
-  /********************************************************************************
-   *     END
-   ********************************************************************************/
 
   /** Get the potential types of symbol
    *  symbol can be a symbol from the extracted signature or Bottom
    */
   private List<GomType> getTypes(String symbol) {
     List<GomType> types = new ArrayList<GomType>();
-    Signature eSig = getExtractedSignature();
+    Signature eSig = this.getExtractedSignature();
     if(symbol == Signature.BOTTOM) {
       // for BOTTOM add all possible types
       types.addAll(eSig.getTypes());
@@ -133,14 +102,39 @@ public class TypeCompiler {
     }
     return types;
   }
+  
+  private List<GomType> getTypes(Term term) {
+    List<GomType> types = new ArrayList<GomType>();
+    Signature eSig = this.getExtractedSignature();
+    %match(term) {
+        Appl(symbol,_) -> {
+          if(`symbol == Signature.BOTTOM) {
+            // for BOTTOM add all possible types
+            types.addAll(eSig.getTypes());
+          } else if(`symbol == Signature.TRUE || `symbol == Signature.FALSE) {
+            types.add(`GomType(Signature.BOOLEAN));
+          } else if(eSig.getCodomainType(`symbol) != null) {
+            types.add(eSig.getCodomainType(`symbol));
+          }
+        }
 
+        s@Var(name) -> {
+          types.add(`GomType(Signature.BOOLEAN));
+        }
+    }
+    return types;
+  }
+  
+  /********************************************************************************
+   *     END
+   ********************************************************************************/
+   
   /*
    * term t of the form:
    * - all_39(s1)
    * - all_39-f(s1,...,sn,s) with n=ar(f)
    * - one_42(s1)
    * - one_42-f(s1,...,sn) with n=ar(f)
-
    */
   private Term propagateType(TypeEnvironment env, Term t, GomType type) {
     Term typedTerm = t;
@@ -148,67 +142,78 @@ public class TypeCompiler {
 
     %match(t) {
       Appl(name,args) -> {
-        // if term in the extracted signature then don't change it; change symbol names otherwise
-        if(eSig.getCodomainType(`name) != null) {
-          if(eSig.getCodomainType(`name) != type) {
-            throw new TypeMismatchException("BAD ARG: " + `name + " TRY TYPE " + type);
-          }
-        } else {
+        // for AND, TRUE, FALSE we override the "type" imposed by propagateType: always BOOLEAN
           if(eSig.isBooleanOperatorExceptEQ(`name)) {
             type = `GomType(Signature.BOOLEAN);
-            //typedSignature.addSymbol(Signature.TRUE,new ArrayList<String>(),Signature.BOOLEAN);
-            //typedSignature.addSymbol(Signature.FALSE,new ArrayList<String>(),Signature.BOOLEAN);
-            //typedSignature.addSymbol(Signature.AND,Arrays.asList(Signature.BOOLEAN,Signature.BOOLEAN),Signature.BOOLEAN);
           }
-          //} else {
-        {
-            List<GomType> domain = null;
-            // retrieve fun from name of the form symbolName-fun_typeName
-            String fun = Tools.getOperatorName(`name);
-            if(fun != null) { // if a composite symbol (e.g. all-f_...)
-              domain = eSig.getProfileType(fun);
-              // TODO : domain == null
-              // pem why not using add as below? domain.add(domain.size(),type); // for all_f add the type of f(...) at the end; will be ignored for one_f
-              domain.add(type); // THIS IS HACK. ONLY WORK FOR ALL and ONE
-            } else {
-              // at most 2 arguments; propagate the type
-              // TODO: be more general ?
-              domain = new ArrayList<GomType>();
-              //pem: why arity 2 ? THIS IS HACK !!!
-              domain.add(type);
-              domain.add(type);
-            }
-
-            String typedName = Tools.addTypeName(`name,type.getName());
-            int i = 0;
-            TermList args = `args;
-            TermList newArgs = `TermList();
-            while(!args.isEmptyTermList()) {
-              Term arg = args.getHeadTermList();
-              Term typedArg = propagateType(env, arg, domain.get(i));
-              if(typedArg != null) {
-                newArgs = `TermList(newArgs*, typedArg);
-              } else {
-                // throw exception
-                System.out.println("bad typedArg: " + typedArg);
-                return null;
+        // for EQ we override the "type" imposed by propagateType: the type of its first argument
+         if(eSig.isBooleanOperatorEQ(`name)) {
+            %match(args) {
+              TermList(arg,_*) -> {
+                type = this.getTypes(`arg).get(0);;
               }
-              i++;
-              args = args.getTailTermList();
-            }
-            typedTerm = `Appl(typedName,newArgs);
-
-            // add info into typed signature
-            if(`name == Signature.EQ) {
-              typedSignature.addSymbolType(typedName,domain.subList(0,i),`GomType(Signature.BOOLEAN));
-            } else {
-              typedSignature.addSymbolType(typedName,domain.subList(0,i),type);
             }
           }
-        }
+
+          List<GomType> domain = null;
+          String fun = null;
+          String typedName = null;
+
+          if(eSig.getCodomainType(`name) != null){ // if term in the extracted signature check if it's well-typed
+            fun = `name;
+            // if type mismatch than the rule should be eventually removed
+            if(eSig.getCodomainType(`name) != type) {
+              throw new TypeMismatchException("BAD ARG: " + `name + " TRY TYPE " + type);
+            }
+            // don't change its name
+            typedName = `name;
+          }else{
+            // retrieve fun from name of the form symbolName-fun_typeName
+            fun = Tools.getOperatorName(`name);
+            typedName = Tools.addTypeName(`name,type.getName());
+          }
+
+          if(fun != null) { // if a composite symbol (e.g. all-f_...)  or symbol from original signature (eg  f, g, ...)
+            domain = eSig.getProfileType(fun);
+            // TODO : domain == null
+            // for all_f add the type of f(...) at the end
+            domain.add(type); // THIS IS HACK. ONLY needed for ALL and ignored for ONE and f,g,...
+          } else {
+            // at most 2 arguments; propagate the type of the type symbol
+            domain = new ArrayList<GomType>();
+            //pem: THIS IS HACK !!! (2 because all generated symbols but ONE/ALL-f_... have at most 2 arguments
+            domain.add(type);
+            domain.add(type);
+          }
+
+          int i = 0;
+          TermList args = `args;
+          TermList newArgs = `TermList();
+          while(!args.isEmptyTermList()) {
+            Term arg = args.getHeadTermList();
+            Term typedArg = propagateType(env, arg, domain.get(i));
+            if(typedArg != null) {
+              newArgs = `TermList(newArgs*, typedArg);
+            } else {
+              // throw exception
+              System.out.println("bad typedArg: " + typedArg);
+              return null;
+            }
+            i++;
+            args = args.getTailTermList();
+          }
+          typedTerm = `Appl(typedName,newArgs);
+
+          // add info into typed signature
+          if(`name == Signature.EQ) {
+            typedSignature.addSymbolType(typedName,domain.subList(0,i),`GomType(Signature.BOOLEAN));
+          } else {
+            typedSignature.addSymbolType(typedName,domain.subList(0,i),type);
+          }
       }
 
       s@Var(name) -> {
+        //           this.AddVarToEnv();
         typedTerm = `s;
       }
     }
@@ -354,3 +359,105 @@ public class TypeCompiler {
   /***********************************************************************************/
 
 }
+ 
+//   /*
+//    * term t of the form:
+//    * - all_39(s1)
+//    * - all_39-f(s1,...,sn,s) with n=ar(f)
+//    * - one_42(s1)
+//    * - one_42-f(s1,...,sn) with n=ar(f)
+//    */
+//   private Term propagateType(TypeEnvironment env, Term t, GomType type) {
+//     Term typedTerm = t;
+//     Signature eSig = getExtractedSignature();
+
+// //           this.AddVarToEnv();
+
+//     System.out.println("PROPAGATE " + t);
+
+//     %match(t) {
+//       Appl(name,args) -> {
+//         // if term in the extracted signature then don't change it
+// //         if(eSig.getCodomainType(`name) != null) {
+// //           // if type mismatch than the rule should be eventually removed
+// //           if(eSig.getCodomainType(`name) != type) {
+// //             throw new TypeMismatchException("BAD ARG: " + `name + " TRY TYPE " + type);
+// //           }
+// //         }else{ //change symbol names otherwise
+//           if(eSig.isBooleanOperatorExceptEQ(`name)) {
+//             type = `GomType(Signature.BOOLEAN);
+//             //typedSignature.addSymbol(Signature.TRUE,new ArrayList<String>(),Signature.BOOLEAN);
+//             //typedSignature.addSymbol(Signature.FALSE,new ArrayList<String>(),Signature.BOOLEAN);
+//             //typedSignature.addSymbol(Signature.AND,Arrays.asList(Signature.BOOLEAN,Signature.BOOLEAN),Signature.BOOLEAN);
+//           }
+//           //} else {
+//         {
+//             List<GomType> domain = null;
+
+//             String fun = null;
+//             String typedName = null;
+
+//             if(eSig.getCodomainType(`name) != null){ // if term in the extracted signature check if it's well-typed
+//               fun = `name;
+//               // if type mismatch than the rule should be eventually removed
+//               if(eSig.getCodomainType(`name) != type) {
+//                 throw new TypeMismatchException("BAD ARG: " + `name + " TRY TYPE " + type);
+//               }
+//               // don't change its name
+//               typedName = `name;
+//             }else{
+//               // retrieve fun from name of the form symbolName-fun_typeName
+//               fun = Tools.getOperatorName(`name);
+//               typedName = Tools.addTypeName(`name,type.getName());
+//             }
+
+//             if(fun != null) { // if a composite symbol (e.g. all-f_...)  or symbol from original signature (eg  f, g, ...)
+//               domain = eSig.getProfileType(fun);
+//               // TODO : domain == null
+//               // pem why not using add as below? domain.add(domain.size(),type); // for all_f add the type of f(...) at the end; will be ignored for one_f
+//               domain.add(type); // THIS IS HACK. ONLY needed for ALL and ignored for ONE and f,g,...
+//             } else {
+//               // at most 2 arguments; propagate the type
+//               // TODO: be more general ?
+//               domain = new ArrayList<GomType>();
+//               //pem: why arity 2 ? THIS IS HACK !!!
+//               domain.add(type);
+//               domain.add(type);
+//             }
+
+//             int i = 0;
+//             TermList args = `args;
+//             TermList newArgs = `TermList();
+//             while(!args.isEmptyTermList()) {
+//               Term arg = args.getHeadTermList();
+//               Term typedArg = propagateType(env, arg, domain.get(i));
+//               if(typedArg != null) {
+//                 newArgs = `TermList(newArgs*, typedArg);
+//               } else {
+//                 // throw exception
+//                 System.out.println("bad typedArg: " + typedArg);
+//                 return null;
+//               }
+//               i++;
+//               args = args.getTailTermList();
+//             }
+//             System.out.println("APPP " + typedName + "  -- " + newArgs);
+//             typedTerm = `Appl(typedName,newArgs);
+
+//             // add info into typed signature
+//             if(`name == Signature.EQ) {
+//               typedSignature.addSymbolType(typedName,domain.subList(0,i),`GomType(Signature.BOOLEAN));
+//             } else {
+//               typedSignature.addSymbolType(typedName,domain.subList(0,i),type);
+//             }
+//           }
+// //         }
+//       }
+
+//       s@Var(name) -> {
+//         System.out.println("VAR " + `s);
+//         typedTerm = `s;
+//       }
+//     }
+//     return typedTerm;
+//   }

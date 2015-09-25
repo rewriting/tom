@@ -40,6 +40,11 @@ public class Signature {
     return s == Signature.AND || s == Signature.TRUE || s == Signature.FALSE;
   }
 
+  public boolean isBooleanOperatorEQ(String opname) {
+    String s = opname.intern();
+    return s == Signature.EQ;
+  }
+
   /**
    * Add the symbols defined for a given type in the corresponding
    * entry in the signature Map. 
