@@ -180,7 +180,7 @@ public class Signature {
     // detect overloading
     List<GomType> oldDomain = symbols.put(name.intern(),args);
     if(oldDomain != null) {
-      System.out.println(%[redefinition: '@name@'@oldDomain@ becomes '@name@'@args@]%);
+//       System.out.println(%[redefinition: '@name@'@oldDomain@ becomes '@name@'@args@]%);
     }
     signature.put(codomain,symbols); 
   }

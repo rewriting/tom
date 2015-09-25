@@ -57,10 +57,15 @@ public class TypeCompiler {
           if(getExtractedSignature().isBooleanOperatorExceptEQ(`stratOp)) {
             types = new HashSet<GomType>();
             types.add(`GomType(Signature.BOOLEAN));
-          } else { // otherwise the codomain is given by the codomain of its first argument
-            env = new HashMap<String,GomType>();
-            // TODO: handle empty types
-            types = this.getTypes(env,`arg);
+          } else { 
+            String fun = Tools.getOperatorName(`stratOp);
+            if(fun != null){
+              types = this.getTypes(fun);
+            }else{// otherwise the codomain is given by the codomain of its first argument
+              env = new HashMap<String,GomType>();
+              // TODO: handle empty types
+              types = this.getTypes(env,`arg);
+            }
           }
 
           // the each potential codomain
@@ -117,6 +122,21 @@ public class TypeCompiler {
     }
     return types;
   }
+
+
+  private List<GomType> getTypes(String symbol) {
+    List<GomType> types = new ArrayList<GomType>();
+    Signature eSig = this.getExtractedSignature();
+    if(symbol == Signature.BOTTOM) {
+      // for BOTTOM add all possible types
+      types.addAll(eSig.getTypes());
+    } else if(symbol == Signature.TRUE || symbol == Signature.FALSE) {
+      types.add(`GomType(Signature.BOOLEAN));
+    } else if(eSig.getCodomainType(symbol) != null) {
+      types.add(eSig.getCodomainType(symbol));
+    }
+    return types;
+  }
   
   /********************************************************************************
    *     END
@@ -159,7 +179,7 @@ public class TypeCompiler {
             fun = `name;
             // if type mismatch than the rule should be eventually removed
             if(eSig.getCodomainType(`name) != type) {
-              throw new TypeMismatchException("BAD ARG: " + `name + " TRY TYPE " + type);
+              throw new TypeMismatchException("BAD ARG: " + `name + " TRY TYPE " + type + " IN TERM "+t);
             }
             // don't change its name
             typedName = `name;
@@ -465,18 +485,4 @@ public class TypeCompiler {
 //       }
 //     }
 //     return typedTerm;
-//   }
-
-//   private List<GomType> getTypes(String symbol) {
-//     List<GomType> types = new ArrayList<GomType>();
-//     Signature eSig = this.getExtractedSignature();
-//     if(symbol == Signature.BOTTOM) {
-//       // for BOTTOM add all possible types
-//       types.addAll(eSig.getTypes());
-//     } else if(symbol == Signature.TRUE || symbol == Signature.FALSE) {
-//       types.add(`GomType(Signature.BOOLEAN));
-//     } else if(eSig.getCodomainType(symbol) != null) {
-//       types.add(eSig.getCodomainType(symbol));
-//     }
-//     return types;
 //   }
