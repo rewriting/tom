@@ -197,7 +197,7 @@ public class Pretty {
     return opsb.toString() + "\n" + varsb.toString() + "\n" + rulesb.toString();
   }  
 
-  public static String generateTom(String strategyName, List<Rule> bag, Signature sig, String classname) {
+  public static String generateTom(String strategyName, String type, List<Rule> bag, Signature sig, String classname) {
     System.out.println("--------- TOM ----------------------");
     //     System.out.println("RULEs: " + toString(bag));
 
@@ -235,6 +235,9 @@ public class @classname@ {
     }
 
     String inputType = Signature.TERM;
+    if(type != null){ // if typed compilation and initial term of type type
+      inputType = type;
+    }
 
     sb.append(%[
     }
@@ -251,6 +254,9 @@ public class @classname@ {
   String name=Compiler.getInstance().getStrategyNames().get(Compiler.getInstance().getStrategyNames().size()-1);
   if(Compiler.getInstance().getStrategyNames().contains(strategyName)){
      name = strategyName;
+  }
+  if(type != null){ // if typed compilation and initial term of type type
+      name += "_"+type;
   }
 
   if(Main.options.metalevel) {

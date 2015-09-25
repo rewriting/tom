@@ -42,8 +42,8 @@ public class Options {
   @Option(name="-approx",usage="compilation does not respects the reduction in the original system")
     public boolean approx = false;
 
-  @Option(name="-typed",usage="generate typed signature")
-    public boolean typed = false;
+  @Option(name="-typed",usage="generate typed signature",metaVar="TYPE")
+    public String type = null;
 
   // receives other command line parameters than options
   @Argument

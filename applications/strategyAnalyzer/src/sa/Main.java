@@ -82,7 +82,7 @@ public class Main {
       //         System.out.println("gSIG = " + generatedSignature);
 
 
-      if(options.typed) {
+      if(options.type != null) {
         // TEST (flatten types)
         TypeCompiler typeCompiler = new TypeCompiler(extractedSignature,generatedRules);
         //pem typeCompiler.flattenSignature();
@@ -115,7 +115,7 @@ public class Main {
       }
 
       if(options.classname != null) {
-        tomoutputfile.println( Pretty.generateTom(strategyName,generatedRules,generatedSignature,options.classname) );
+        tomoutputfile.println( Pretty.generateTom(strategyName,options.type,generatedRules,generatedSignature,options.classname) );
       } 
 
       if(options.aprove) {
