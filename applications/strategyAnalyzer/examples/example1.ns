@@ -1,4 +1,5 @@
 
+
 abstract syntax
 T = a()
   | b()
@@ -11,5 +12,11 @@ r1() =  [ g(x) -> x ]
 
 obu(s) = mu x.(one(x) <+ s)
 innermost(s) = obu(s)
+
+// mainStrat() = innermost(r2());innermost(r2())
+
+// mainStrat() = r1();r1()
+
+// mainStrat() = r2()
 
 mainStrat() = innermost(r1())

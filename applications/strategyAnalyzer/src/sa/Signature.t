@@ -7,25 +7,25 @@ public class Signature {
   %include { rule/Rule.tom }
 
   // All literal strings and string-valued constant expressions are interned.
-  public static String BOOLEAN = "Bool";
-  public static String TRUE = "True";
-  public static String FALSE = "False";
-  public static String AND = "and";
-  public static String BOTTOM = "Bottom";
-  public static String BOTTOMLIST = "BottomList";
-  public static String EQ = "eq";
-  public static String APPL = "Appl";
-  public static String CONS = "Cons";
-  public static String NIL = "Nil";
+  public final static String TRUE = "True";
+  public final static String FALSE = "False";
+  public final static String AND = "and";
+  public final static String BOTTOM = "Bottom";
+  public final static String BOTTOMLIST = "BottomList";
+  public final static String EQ = "eq";
+  public final static String APPL = "Appl";
+  public final static String CONS = "Cons";
+  public final static String NIL = "Nil";
   
-  public static String ENCODE = "encode";
-  public static String DECODE = "decode";
+  public final static String ENCODE = "encode";
+  public final static String DECODE = "decode";
 
   // Types
-  public static final String DUMMY = "Dummy";
-  public static final String METASYMBOL = "MetaSymbol";
-  public static final String METATERM = "MetaTerm";
-  public static final String METALIST = "MetaList";
+  public final static String BOOLEAN = "Bool";
+  public final static String TERM = "Term";
+  public final static String METASYMBOL = "MetaSymbol";
+  public final static String METATERM = "MetaTerm";
+  public final static String METALIST = "MetaList";
 
 
   // Codomain Type -> (SymbolName -> Domain List of types)
@@ -35,6 +35,10 @@ public class Signature {
     this.signature = new HashMap<GomType,Map<String,List<GomType>>>(); 
   }
 
+  public boolean isBooleanOperatorExceptEQ(String opname) {
+    String s = opname.intern();
+    return s == Signature.AND || s == Signature.TRUE || s == Signature.FALSE;
+  }
 
   /**
    * Add the symbols defined for a given type in the corresponding
@@ -63,6 +67,18 @@ public class Signature {
       }
     }
   }
+  
+  public Signature cloneSignature()  {
+    Signature res = new Signature();
+    // clone everything (lists could be just copied since normally not modified later on)
+    for(GomType type: this.signature.keySet()) {
+      for(String symbol: signature.get(type).keySet()) {
+        List<GomType> domain = this.getProfileType(symbol);
+        res.addSymbolType(symbol,domain,type);
+      }
+    }
+    return res;
+  }
 
   /**
    * Create an expanded signature containing the symbols in the
@@ -74,12 +90,13 @@ public class Signature {
     Signature expandedSignature = new Signature();
     // clone everything (lists could be just copied since normally not modified later on)
     for(GomType type: this.signature.keySet()) {
-        Map<String,List<GomType>> symbols = new HashMap<String,List<GomType>>(); 
-        for(String symbol: signature.get(type).keySet()) {
-          List<GomType> args = new ArrayList<GomType>(signature.get(type).get(symbol));
-          symbols.put(symbol.intern(),args);
+      for(String symbol: signature.get(type).keySet()) {
+        List<String> domain = new ArrayList<String>();
+        for(int i=0 ; i < getArity(symbol) ; i++) {
+          domain.add(TERM);
         }
-        expandedSignature.signature.put(type,symbols);
+        expandedSignature.addSymbol(symbol,domain,TERM);
+      }
     }
 
     if(Main.options.metalevel) {
@@ -94,34 +111,20 @@ public class Signature {
     expandedSignature.addSymbol(TRUE,new ArrayList<String>(),BOOLEAN);
     expandedSignature.addSymbol(FALSE,new ArrayList<String>(),BOOLEAN);
     expandedSignature.addSymbol(AND,Arrays.asList(BOOLEAN,BOOLEAN),BOOLEAN);
-    String eq_boolean = this.disambiguateSymbol(EQ, Arrays.asList(BOOLEAN,BOOLEAN));
-    expandedSignature.addSymbol(eq_boolean,Arrays.asList(BOOLEAN,BOOLEAN),BOOLEAN);
+    expandedSignature.addSymbol(EQ,Arrays.asList(TERM,TERM),BOOLEAN);
 
-    // add: bottom(T), eq_T(T,T)
-    /*
-    for(GomType type: this.signature.keySet()) {
-      String t = type.getName();
-      expandedSignature.addSymbol(BOTTOM,Arrays.asList(t),t);
-      String eq_t = this.disambiguateSymbol(EQ, Arrays.asList(t,t));
-      expandedSignature.addSymbol(eq_t,Arrays.asList(t,t),BOOLEAN);
-    }
-    */
-    // add: bottom(DUMMY), eq(DUMMY,DUMMY)
+    // add: bottom
     if(!Main.options.metalevel) {
-      expandedSignature.addSymbol(BOTTOM,Arrays.asList(DUMMY),DUMMY);
-      String eq_t = this.disambiguateSymbol(EQ, Arrays.asList(DUMMY,DUMMY));
-      expandedSignature.addSymbol(eq_t,Arrays.asList(DUMMY,DUMMY),BOOLEAN);
+      expandedSignature.addSymbol(BOTTOM,Arrays.asList(TERM),TERM);
     } else {
       expandedSignature.addSymbol(BOTTOM,Arrays.asList(METATERM),METATERM);
-      String eq_t = this.disambiguateSymbol(EQ, Arrays.asList(METATERM,METATERM));
-      expandedSignature.addSymbol(eq_t,Arrays.asList(METATERM,METATERM),BOOLEAN);
     }
 
     // for metalevel + Tom code
     if(Main.options.metalevel && Main.options.classname != null) {
       // add: encode, decode
-      expandedSignature.addSymbol(ENCODE,Arrays.asList(DUMMY),METATERM);
-      expandedSignature.addSymbol(DECODE,Arrays.asList(METATERM),DUMMY);
+      expandedSignature.addSymbol(ENCODE,Arrays.asList(TERM),METATERM);
+      expandedSignature.addSymbol(DECODE,Arrays.asList(METATERM),TERM);
     }
     return expandedSignature;
   }
@@ -151,33 +154,46 @@ public class Signature {
    * @param codomain the return type 
    */
   public void addSymbol(String name, List<String> argTypes, String codomain) {
-    Map<String,List<GomType>> symbols = this.signature.get(`GomType(codomain));
+    List<GomType> domain = new ArrayList<GomType>();
+    for(String s: argTypes) {
+      domain.add(`GomType(s));
+    }
+    addSymbolType(name,domain,`GomType(codomain));
+  }
+
+  public void addSymbolType(String name, List<GomType> argTypes, GomType codomain) {
+    Map<String,List<GomType>> symbols = this.signature.get(codomain);
     // if type of codomain doesn't exist then create it
     if(symbols==null) {
       symbols = new HashMap<String,List<GomType>>();
     }
     // create arguments' types list
     List<GomType> args = new ArrayList<GomType>();
-    for(String argType:argTypes) {
-      args.add(`GomType(argType));
+    for(GomType argType:argTypes) {
+      args.add(argType);
     }
     // detect overloading
     List<GomType> oldDomain = symbols.put(name.intern(),args);
     if(oldDomain != null) {
-      //System.out.println("redefinition: '" + name +"'" + oldDomain + " becomes '" + name + "'" + args);
       System.out.println(%[redefinition: '@name@'@oldDomain@ becomes '@name@'@args@]%);
-      //       throw new TypeMismatchException();
     }
-    signature.put(`GomType(codomain),symbols); 
+    signature.put(codomain,symbols); 
   }
 
   /** Get codomain for symbol
    */
-  public String getCodomain(String symbol) {
+  public GomType getCodomainType(String symbol) {
     for(GomType type: this.signature.keySet()) {
-      if(this.signature.get(type).get(symbol)!=null) {
-        return type.getName();
+      if(this.signature.get(type).get(symbol) != null) {
+        return type;
       }
+    }
+    return null;
+  }
+
+  public String getCodomain(String symbol) {
+    if(this.getCodomainType(symbol) != null) {
+        return this.getCodomainType(symbol).getName();
     }
     return null;
   }
@@ -186,19 +202,32 @@ public class Signature {
    * @param symbol the name of the symbol
    * @return the list of types of its arguments
    */
-  public List<String> getProfile(String symbol) {
-    List<String> res = new ArrayList<String>();
+  public List<GomType> getProfileType(String symbol) {
+    List<GomType> res = null;
     for(GomType type: this.signature.keySet()) {
       List<GomType> profile = this.signature.get(type).get(symbol);
       if(profile!=null) {
+        res = new ArrayList<GomType>();
         // pem: make a defensive copy of the list?
         for(GomType argtype:profile) {
-          res.add(argtype.getName());
+          res.add(argtype);
         }
         return res;
       }
     }
-    return null;
+    return res;
+  }
+
+  public List<String> getProfile(String symbol) {
+    List<GomType> profile = getProfileType(symbol);
+    List<String> res = null;
+    if(profile != null){
+      res = new ArrayList<String>();
+      for(GomType type: profile) {
+          res.add(type.getName());
+      }
+    }
+    return res;
   }
 
   /** Get the arity of a symbol
@@ -213,6 +242,13 @@ public class Signature {
     return arity;
   }
 
+  /** Get the list of all types
+   * @return the list of types in the signature
+   */
+  public Set<GomType> getTypes() {
+    return signature.keySet();
+  }
+
   /** Get the list of all symbols
    * @return the list of symbols in the signature
    */
@@ -222,6 +258,13 @@ public class Signature {
       types.add(type.getName());
     }
     return types;
+  }
+
+  /** Get the profiles for the symbols of a given type
+   * @return the map of profiles for the symbols of a given type
+   */
+  public Map<String,List<GomType>> getSymbolsOfType(GomType type) {
+    return signature.get(type);
   }
 
   /** Get the list of all symbols
@@ -244,6 +287,33 @@ public class Signature {
     List<String> symbols = new ArrayList<String>();
     symbols.addAll(signature.get(`GomType(typeName)).keySet());
     return symbols;
+  }
+
+
+  /** Set the profiles of symbols for a given type
+    * @type the type to be enhanced
+    * @newProfiles the profiles of the symbols to be added
+   */
+  public void addProfilesForType(GomType type, Map<String,List<GomType>> newProfiles) {
+    Map<String,List<GomType>> profiles = signature.get(type);
+    if(profiles == null){
+      signature.put(type, newProfiles);
+    }else{
+      for(String symbol: newProfiles.keySet()){
+        // TODO: 
+        if(profiles.get(symbol)!=null){
+          System.out.println("WARNING: Symbol already in the generated signature");
+        }
+        profiles.put(symbol, newProfiles.get(symbol));
+      }
+    }
+  }
+
+  /** Remove the profiles of symbols for a given type
+    * @type the type
+   */
+  public void removeType(GomType type) {
+    signature.remove(type);
   }
 
 

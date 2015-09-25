@@ -9,6 +9,10 @@ public class Pretty {
   %include { sl.tom }
   %include { java/util/types/Collection.tom }
 
+  private static String generateJavaName(String name) {
+    name = name.replace('-','_');
+    return name;
+  }
 
   public static String toString(ExpressionList l) {
     StringBuffer sb = new StringBuffer();
@@ -79,7 +83,7 @@ public class Pretty {
 
   public static String toString(List<Rule> rules) {
     String res = "";
-    for(Rule r: rules){
+    for(Rule r: rules) {
       %match(r) {
         Rule(lhs,rhs) -> {
           res += toString(`lhs) + " -> " + toString(`rhs) + "\n";
@@ -121,10 +125,11 @@ public class Pretty {
       At(var,term) -> { return toString(`var) + "@" + toString(`term); }
 
       Appl(symb,args) -> {
+        String name = generateJavaName(`symb);
         if(`args.isEmptyTermList()) {
-          return addBrace(`symb);
+          return addBrace(name);
         } else {
-          return `symb + "(" + toString(`args) + ")";
+          return name + "(" + toString(`args) + ")";
         }
       }
     }
@@ -174,7 +179,7 @@ public class Pretty {
 
     opsb.append("\nOps\n");
     for(String name: generatedSignature.getSymbolNames()) {
-      opsb.append(name  + ":" + generatedSignature.getArity(name) + " ");
+      opsb.append(generateJavaName(name)  + ":" + generatedSignature.getArity(name) + " ");
     }
 
     rulesb.append("\nTRS R\n");
@@ -218,7 +223,7 @@ public class @classname@ {
           args += "kid" + i + "_" + profile.get(i) + ":" + profile.get(i);
           if(i+1<arity) { args += ","; }
         }
-        sb.append("        | " + name + "(" + args + ")\n");
+        sb.append("        | " + generateJavaName(name) + "(" + args + ")\n");
       }
 
     }
@@ -229,7 +234,7 @@ public class @classname@ {
       sb.append("        " + toString(r) + "\n");
     }
 
-
+    String inputType = Signature.TERM;
 
     sb.append(%[
     }
@@ -238,7 +243,7 @@ public class @classname@ {
   public static void main(String[] args) {
     try {
       BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-      T input = T.fromString(reader.readLine());
+      @inputType@ input = @inputType@.fromString(reader.readLine());
       long start = System.currentTimeMillis();
       ]%);
 
@@ -248,13 +253,13 @@ public class @classname@ {
      name = strategyName;
   }
 
-  if(!Main.options.metalevel) {
-    sb.append(%[
-      T t = `@name@(input);
-      ]%);
-  } else {
+  if(Main.options.metalevel) {
     sb.append(%[
       T t = `decode(@name@(encode(input)));
+      ]%);
+  } else {
+      sb.append(%[
+      @inputType@ t = `@name@(input);
       ]%);
   }
 

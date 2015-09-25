@@ -18,9 +18,73 @@ public class Tools {
 
   private static int phiNumber = 0;
   public static String getName(String name) {
-    return name + (phiNumber++);
+    return name + "_" + (phiNumber++);
   }
+
+  /*
+   * helpers to build and decompose symbol names
+   */
   
+  /*
+   * given symbolName and operatorName
+   * returns symbolName-operatorName
+   */
+  public static String addOperatorName(String symbolName, String operatorName) {
+    return symbolName + "-" + operatorName;
+  }
+
+  /*
+   * given symbolName and typeName
+   * returns symbolName_typeName
+   */
+  public static String addTypeName(String symbol, String typeName) {
+    return symbol + "_" + typeName;
+  }
+
+  /*
+   * a symbol is of the form:
+   * - symbolName
+   * - symbolName_typeName
+   * - symbolName-operatorName_typeName
+   */
+
+  public static StrategyOperator getSymbolName(String symbol) {
+    int last = symbol.indexOf('_');
+    if(last == -1) {
+      last=symbol.length();
+    }
+    return StrategyOperator.getStrategyOperator(symbol.substring(0,last));
+  }
+
+  public static String getTypeName(String symbol) {
+    int last = symbol.lastIndexOf('_');
+    if(last == -1) {
+      // TODO: change it when and becomes and_Bool
+      return Signature.BOOLEAN;
+    }
+    return symbol.substring(last+1,symbol.length());
+  }
+
+  /*
+   * Given a symbol name of the form "name-opName" or "name-opName_typeName"
+   * @returns opName
+   */
+  public static String getOperatorName(String symbol) {
+    String aux = null;
+    int last = symbol.indexOf('-');
+    if(last != -1) { // if containing a composite
+      int funLast = symbol.indexOf('_',last+1);
+      if(funLast == -1) { //  if no other information after composite
+        funLast = symbol.length();
+      }
+      aux = symbol.substring(last+1,funLast);
+    }
+    return aux;
+  }
+
+  /*
+   * helpers to build AST
+   */
   private static Term _appl(String name, Term... args) {
     TermList tl = `TermList();
     for(Term t:args) {
@@ -39,7 +103,9 @@ public class Tools {
    * @param exp the string representation of the term to meta-encode
    * @return meta-encoding using Appl and TermList
    */
-  public static Term encode(String stringterm, Signature signature) {
+  /*
+   * REMOVE */
+   public static Term encode(String stringterm, Signature signature) {
     //System.out.println("encode: " + stringterm);
     Term res = null;
     ATermFactory factory = SingletonFactory.getInstance();
@@ -119,6 +185,7 @@ public class Tools {
     // System.out.println("encodeRule: " + res);
     return res;
   }
+  /* REMOVE */
 
   private static boolean isVariableName(String name, Signature signature) {
     return signature.getCodomain(name) == null;
@@ -134,22 +201,25 @@ public class Tools {
   }
 
 
+
   /**
     * metaEncodeConsNil: transforms a Term representation into a generic term representation
     * for instance, Appl("f",TermList(Appl("b",TermList()))) is transformed into
     * the string "Appl(symb_f,Cons(Appl(symb_b,Nil()),Nil()))"
     * this string can be encoded into a Term, using the "encode" method
     */
+  /*   REMOVE */ 
   public static Term metaEncodeConsNil(Term t, Signature signature) {
     return encode(encodeConsNil(t,signature),signature);
   }
+  /*  REMOVE */
 
   private static String encodeConsNil(Term t, Signature signature) {
     %match(t) {
       Appl(symb,args) -> {
         String symbName = "symb_" + `symb;
         if(!Main.options.metalevel) {
-          signature.addSymbol(symbName,new ArrayList<String>(),Signature.DUMMY);
+          signature.addSymbol(symbName,new ArrayList<String>(),Signature.TERM);
         } else {
           signature.addSymbol(symbName,new ArrayList<String>(),Signature.METASYMBOL);
         }
@@ -360,7 +430,9 @@ public class Tools {
     }
     return `Appl(name, args);
   }
-  
+ 
+  /*
+   * REMOVE */ 
   public static String genStringAbstractTerm(String name, int arity, String varname) {
     if(arity==0) {
       return name + "()";
@@ -372,6 +444,7 @@ public class Tools {
       return name + "(" + args + ")";
     }
   }
+  /*    REMOVE */
 
   /*
    * tools for manipulating Program
@@ -396,4 +469,28 @@ public class Tools {
     }
     return res;
   }
+
+//   public static StrategyOperator getRuleOperator(Rule rule) {
+//     StrategyOperator op = StrategyOperator.IDENTITY;
+//     %match(rule){
+//       Rule(Appl(symbol,args),_) ->{
+//         String opSymb = `symbol;
+//         op = Tools.getOperator(opSymb);
+//       }
+//     }
+//     return op;
+//   }
+
+
+//   public static String getArgumentSymbol(Rule rule) {
+//     String funSymb = null;
+//     %match(rule){
+//       Rule(Appl(symbol,TermList(Appl(fun,args),_*)),_) ->{
+//         funSymb = `fun;
+//       }
+//     }
+//     return funSymb;
+//   }
+
+
 }
