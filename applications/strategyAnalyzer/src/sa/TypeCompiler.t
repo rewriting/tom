@@ -117,6 +117,8 @@ public class TypeCompiler {
         s@Var(name) -> { // for VAR get the type from the environment
           if(env.get(`name) != null){
             types.add(env.get(`name));
+          }else{ // if we don't know it's type than it could be any type (eg for mainstrat)
+            types.addAll(eSig.getTypes());
           }
         }
     }
