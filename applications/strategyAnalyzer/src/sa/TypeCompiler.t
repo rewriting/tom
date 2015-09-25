@@ -58,10 +58,9 @@ public class TypeCompiler {
             types = new HashSet<GomType>();
             types.add(`GomType(Signature.BOOLEAN));
           } else { 
-            String fun = Tools.getOperatorName(`stratOp);
-            if(fun != null){
-              types = this.getTypes(fun);
-            }else{// otherwise the codomain is given by the codomain of its first argument
+            if(Tools.getOperatorName(`stratOp) != null){ // if symbol of the form ALL-f... the codomain is given by the codomain of f
+              types = this.getTypes(env,`lhs);
+            }else{ // otherwise the codomain is given by the codomain of its first argument
               env = new HashMap<String,GomType>();
               // TODO: handle empty types
               types = this.getTypes(env,`arg);
@@ -104,17 +103,18 @@ public class TypeCompiler {
     Signature eSig = this.getExtractedSignature();
     %match(term) {
         Appl(symbol,_) -> {
-          if(`symbol == Signature.BOTTOM) {
-            // for BOTTOM add all possible types
+          if(`symbol == Signature.BOTTOM) { // for BOTTOM add all possible types
             types.addAll(eSig.getTypes());
-          } else if(`symbol == Signature.TRUE || `symbol == Signature.FALSE) {
+          } else if(`symbol == Signature.TRUE || `symbol == Signature.FALSE) {  // for TRUE or FALSE add BOOLEAN
             types.add(`GomType(Signature.BOOLEAN));
-          } else if(eSig.getCodomainType(`symbol) != null) {
+          } else if(Tools.getOperatorName(`symbol) != null) {   // for symbol of the form ALL-f add the type of f
+            types.add(eSig.getCodomainType(Tools.getOperatorName(`symbol)));
+          } else if(eSig.getCodomainType(`symbol) != null) {  // for symbols of the original signature add their type
             types.add(eSig.getCodomainType(`symbol));
           }
         }
 
-        s@Var(name) -> {
+        s@Var(name) -> { // for VAR get the type from the environment
           if(env.get(`name) != null){
             types.add(env.get(`name));
           }
@@ -124,19 +124,19 @@ public class TypeCompiler {
   }
 
 
-  private List<GomType> getTypes(String symbol) {
-    List<GomType> types = new ArrayList<GomType>();
-    Signature eSig = this.getExtractedSignature();
-    if(symbol == Signature.BOTTOM) {
-      // for BOTTOM add all possible types
-      types.addAll(eSig.getTypes());
-    } else if(symbol == Signature.TRUE || symbol == Signature.FALSE) {
-      types.add(`GomType(Signature.BOOLEAN));
-    } else if(eSig.getCodomainType(symbol) != null) {
-      types.add(eSig.getCodomainType(symbol));
-    }
-    return types;
-  }
+//   private List<GomType> getTypes(String symbol) {
+//     List<GomType> types = new ArrayList<GomType>();
+//     Signature eSig = this.getExtractedSignature();
+//     if(symbol == Signature.BOTTOM) {
+//       // for BOTTOM add all possible types
+//       types.addAll(eSig.getTypes());
+//     } else if(symbol == Signature.TRUE || symbol == Signature.FALSE) {
+//       types.add(`GomType(Signature.BOOLEAN));
+//     } else if(eSig.getCodomainType(symbol) != null) {
+//       types.add(eSig.getCodomainType(symbol));
+//     }
+//     return types;
+//   }
   
   /********************************************************************************
    *     END
