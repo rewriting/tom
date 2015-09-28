@@ -70,8 +70,8 @@ public class Tools {
   public static boolean isSymbolNameAux(String symbol) {
     boolean res = false;
     String name = getSymbolName(symbol);
-    if(name.length()>3){
-      res = name.substring(name.length()-3,name.length()).equals(AUX);
+    if(name.length()>AUX.length()){
+      res = name.substring(name.length()-AUX.length(),name.length()).equals(AUX);
     }
     return res;
   }
@@ -79,7 +79,7 @@ public class Tools {
   public static String getSymbolNameMain(String symbol) {
     String name = getSymbolName(symbol);
     if(isSymbolNameAux(symbol)){
-      name = name.substring(0,name.length()-3);
+      name = name.substring(0,name.length()-AUX.length());
     }
     return name;
   }
