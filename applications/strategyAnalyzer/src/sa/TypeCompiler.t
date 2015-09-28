@@ -176,7 +176,7 @@ public class TypeCompiler {
             if(eSig.getCodomainType(`name) != type) {
               throw new TypeMismatchException("BAD ARG: " + `name + " TRY TYPE " + type + " IN TERM "+t);
             }
-            // don't change its name
+            // don't change its name if symbol from original (extracted) signature
             typedName = `name;
           }else{
             // retrieve fun from name of the form symbolName-fun_typeName
@@ -186,9 +186,13 @@ public class TypeCompiler {
 
           if(fun != null) { // if a composite symbol (e.g. all-f_...)  or symbol from original signature (eg  f, g, ...)
             domain = eSig.getProfileType(fun);
-            // TODO : domain == null
+            if(domain == null){  // normally should'n happen (unless wrongly built symbol name)
+              throw new UntypableTermException("Type of symbol "+ fun +"cannot be determined");
+            }
             // for all_f add the type of f(...) at the end
-            domain.add(type); // THIS IS HACK. ONLY needed for ALL and ignored for ONE and f,g,...
+            if(StrategyOperator.getStrategyOperator(Tools.getSymbolNameMain(`name))==StrategyOperator.ALL){
+              domain.add(type); 
+            }
           } else {
             // at most 2 arguments; propagate the type of the type symbol
             domain = new ArrayList<GomType>();

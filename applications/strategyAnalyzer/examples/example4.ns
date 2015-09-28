@@ -17,5 +17,6 @@ td(s) = mu x.(s ; all(x))
 
 obu(s) = mu x.(one(x) <+ s)
 
-mainStrat() = r1()
+// mainStrat() = bu(try(r1()))
+mainStrat() = obu(r1())
 
