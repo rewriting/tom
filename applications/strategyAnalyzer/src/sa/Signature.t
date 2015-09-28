@@ -28,11 +28,17 @@ public class Signature {
   public final static String METALIST = "MetaList";
 
 
+
   // Codomain Type -> (SymbolName -> Domain List of types)
   private Map<GomType,Map<String,List<GomType>>> signature;
 
   public Signature() {
     this.signature = new HashMap<GomType,Map<String,List<GomType>>>(); 
+  }
+
+  public boolean isBooleanOperator(String opname) {
+    String s = opname.intern();
+    return s == Signature.AND || s == Signature.TRUE || s == Signature.FALSE || s == Signature.EQ;
   }
 
   public boolean isBooleanOperatorExceptEQ(String opname) {

@@ -15,6 +15,8 @@ public class Tools {
   %include { java/util/types/HashSet.tom }
   %include { java/util/types/Set.tom }
 
+  // extension for auxiliary symbols
+  private static final String AUX = "Aux";
 
   private static int phiNumber = 0;
   public static String getName(String name) {
@@ -42,18 +44,44 @@ public class Tools {
   }
 
   /*
+   * given symbolName
+   * returns symbolNameAUX
+   */
+  public static String addAuxExtension(String symbol) {
+    return symbol + AUX;
+  }
+
+
+  /*
    * a symbol is of the form:
    * - symbolName
    * - symbolName_typeName
    * - symbolName-operatorName_typeName
    */
 
-  public static StrategyOperator getSymbolName(String symbol) {
+  public static String getSymbolName(String symbol) {
     int last = symbol.indexOf('_');
     if(last == -1) {
       last=symbol.length();
     }
-    return StrategyOperator.getStrategyOperator(symbol.substring(0,last));
+    return symbol.substring(0,last);
+  }
+
+  public static boolean isSymbolNameAux(String symbol) {
+    boolean res = false;
+    String name = getSymbolName(symbol);
+    if(name.length()>3){
+      res = name.substring(name.length()-3,name.length()).equals(AUX);
+    }
+    return res;
+  }
+
+  public static String getSymbolNameMain(String symbol) {
+    String name = getSymbolName(symbol);
+    if(isSymbolNameAux(symbol)){
+      name = name.substring(0,name.length()-3);
+    }
+    return name;
   }
 
   public static String getTypeName(String symbol) {

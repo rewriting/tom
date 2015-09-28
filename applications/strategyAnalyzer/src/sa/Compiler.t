@@ -14,8 +14,6 @@ public class Compiler {
 
   %typeterm Compiler { implement { Compiler }}
 
-  private static final String AUX = "Aux";
-
   private static Compiler instance = null;
 
   // initial AST
@@ -309,7 +307,7 @@ public class Compiler {
            */
 
           String rule = Tools.getName(StrategyOperator.RULE.getName());
-          String cr = Tools.getName(StrategyOperator.RULE.getName()+AUX);
+          String cr = Tools.getName(Tools.addAuxExtension(StrategyOperator.RULE.getName()));
 
           if(!Main.options.metalevel) {
             // if declared strategy (i.e. defined name) use its name; otherwise generate fresh name
@@ -551,7 +549,7 @@ public class Compiler {
           String n1 = compileStrat(`s1,generatedRules);
           String n2 = compileStrat(`s2,generatedRules);
           String seq = Tools.getName(StrategyOperator.SEQ.getName());
-          String seq2 = Tools.getName(StrategyOperator.SEQ.getName()+AUX);
+          String seq2 = Tools.getName(Tools.addAuxExtension(StrategyOperator.SEQ.getName()));
           if( !Main.options.metalevel ) {
             gSig.addSymbol(seq,Arrays.asList(Signature.TERM),Signature.TERM);
             gSig.addSymbol(seq2,Arrays.asList(Signature.TERM,Signature.TERM),Signature.TERM);
@@ -612,7 +610,7 @@ public class Compiler {
           String n1 = compileStrat(`s1,generatedRules);
           String n2 = compileStrat(`s2,generatedRules);
           String choice = Tools.getName(StrategyOperator.CHOICE.getName());
-          String choice2 = Tools.getName(StrategyOperator.CHOICE.getName()+AUX);
+          String choice2 = Tools.getName(Tools.addAuxExtension(StrategyOperator.CHOICE.getName()));
           if( !Main.options.metalevel ) {
             gSig.addSymbol(choice,Arrays.asList(Signature.TERM),Signature.TERM);
             gSig.addSymbol(choice2,Arrays.asList(Signature.TERM),Signature.TERM);

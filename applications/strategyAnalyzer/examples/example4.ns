@@ -1,0 +1,21 @@
+
+abstract syntax
+T = a()
+  | f(T,T)
+	| i(U)
+
+U = g(T)
+  | b()
+
+strategies
+
+r1() =  [ f(x,x) -> x ]
+
+try(s) = s <+ Identity
+bu(s) = mu x.(all(x) ; s)
+td(s) = mu x.(s ; all(x))
+
+obu(s) = mu x.(one(x) <+ s)
+
+mainStrat() = r1()
+

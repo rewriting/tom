@@ -36,7 +36,6 @@ public enum StrategyOperator{
       case "seq":
         op = SEQ;
         break;
-      case "choiceAux": 
       case "choice":
         op = CHOICE;
         break;

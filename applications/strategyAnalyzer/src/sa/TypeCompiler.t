@@ -46,30 +46,37 @@ public class TypeCompiler {
    * Transform each rewrite rule to a set of well-typed rules with the same behaviour. 
    **/
   public  void typeRules() {
-    Set<GomType> extractedTypes = getExtractedSignature().getTypes();
+    //     Set<GomType> extractedTypes = getExtractedSignature().getTypes();
     Map<String,GomType> env = new HashMap<String,GomType>();
 
     for(Rule rule: untypedRules) {
+
       %match(rule) {
         Rule(lhs@Appl(stratOp,TermList(arg,_*)), rhs) -> {
-          Collection<GomType> types = null;
+          // get the possible codomain(s) for the head operator of the LHS
+          // - boolean operators: Bool
+          // - operators of the form ALL-f... : codomain of f
+          // - operators of the form CHOICE... (no ...-f) : codomain of its first argument
+          Collection<GomType> types = new HashSet<GomType>();
           // if head opearator of the rule is EQ than the codomain should be BOOL 
-          if(getExtractedSignature().isBooleanOperatorExceptEQ(`stratOp)) {
-            types = new HashSet<GomType>();
+          if(getExtractedSignature().isBooleanOperator(`stratOp)) {
             types.add(`GomType(Signature.BOOLEAN));
           } else { 
             if(Tools.getOperatorName(`stratOp) != null){ // if symbol of the form ALL-f... the codomain is given by the codomain of f
               types = this.getTypes(env,`lhs);
-            }else{ // otherwise the codomain is given by the codomain of its first argument
-              env = new HashMap<String,GomType>();
-              // TODO: handle empty types
+            }else{ // otherwise the codomain is given by the codomain of 
+              //               env = new HashMap<String,GomType>();
               types = this.getTypes(env,`arg);
             }
           }
+          // normally should'n happen
+          if(types.size() == 0){
+              System.out.println("RULE OMITTED for " + `stratOp + "  because no possible codomain");
+          }
 
-          // the each potential codomain
+          // for each potential codomain generate a new rule
           // (the potential codomain is unique for all operators but for BOTTOM
-          //  which can be of any type of the declared (ie extracted signature)
+          //  which can be of any type of the declared (ie extracted) signature
           for(GomType type: types) {
             try {
               //               TypeEnvironment env = `EmptyEnvironment();
@@ -125,20 +132,6 @@ public class TypeCompiler {
     return types;
   }
 
-
-//   private List<GomType> getTypes(String symbol) {
-//     List<GomType> types = new ArrayList<GomType>();
-//     Signature eSig = this.getExtractedSignature();
-//     if(symbol == Signature.BOTTOM) {
-//       // for BOTTOM add all possible types
-//       types.addAll(eSig.getTypes());
-//     } else if(symbol == Signature.TRUE || symbol == Signature.FALSE) {
-//       types.add(`GomType(Signature.BOOLEAN));
-//     } else if(eSig.getCodomainType(symbol) != null) {
-//       types.add(eSig.getCodomainType(symbol));
-//     }
-//     return types;
-//   }
   
   /********************************************************************************
    *     END
@@ -199,9 +192,15 @@ public class TypeCompiler {
           } else {
             // at most 2 arguments; propagate the type of the type symbol
             domain = new ArrayList<GomType>();
-            //pem: THIS IS HACK !!! (2 because all generated symbols but ONE/ALL-f_... have at most 2 arguments
             domain.add(type);
-            domain.add(type);
+            if(eSig.isBooleanOperator(`name) ||
+               (Tools.isSymbolNameAux(`name) && StrategyOperator.getStrategyOperator(Tools.getSymbolNameMain(`name))==StrategyOperator.SEQ)){
+              // if boolean operator (EQ or AND) or if aux symbol for SEQ (ie seqAux_...) then there is a second parameter of the same type
+              domain.add(type);
+            }else if(Tools.isSymbolNameAux(`name) && StrategyOperator.getStrategyOperator(Tools.getSymbolNameMain(`name))==StrategyOperator.RULE){
+              // if aux symbol for RULE (originating from a non-linear rule compilation) then there is a second parameter of type Bool
+              domain.add(`GomType(Signature.BOOLEAN));
+            }
           }
 
           int i = 0;
