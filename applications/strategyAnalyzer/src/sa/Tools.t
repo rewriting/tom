@@ -15,27 +15,27 @@ public class Tools {
   %include { java/util/types/HashSet.tom }
   %include { java/util/types/Set.tom }
 
-  // extension for auxiliary symbols
-  private static final String AUX = "Aux";
+  private static final String AUX = "Aux";   // extension for auxiliary symbols
+  private static int phiNumber = 0;          // sequence number for symbol (names)
 
-  private static int phiNumber = 0;
+  /*** helpers to build and decompose symbol names ***/
+  
+  /**
+   * Builds a unique symbol (name)
+   */
   public static String getName(String name) {
     return name + "_" + (phiNumber++);
   }
 
-  /*
-   * helpers to build and decompose symbol names
-   */
-  
-  /*
-   * given symbolName and operatorName
+  /**
+   * Given symbolName and operatorName
    * returns symbolName-operatorName
    */
   public static String addOperatorName(String symbolName, String operatorName) {
     return symbolName + "-" + operatorName;
   }
 
-  /*
+  /**
    * given symbolName and typeName
    * returns symbolName_typeName
    */
@@ -43,22 +43,22 @@ public class Tools {
     return symbol + "_" + typeName;
   }
 
-  /*
-   * given symbolName
+  /**
+   * Given symbolName
    * returns symbolNameAUX
    */
   public static String addAuxExtension(String symbol) {
     return symbol + AUX;
   }
 
-
-  /*
-   * a symbol is of the form:
-   * - symbolName
-   * - symbolName_typeName
-   * - symbolName-operatorName_typeName
+  /**
+   * A symbol is of the form:
+   * - symbolName[AUX]
+   * - symbolName[AUX][_<number>]
+   * - symbolName[AUX][_<number>]_typeName
+   * - symbolName[AUX][_<number>]-operatorName[_<number>]_typeName
+   * @returns symbolName[AUX]
    */
-
   public static String getSymbolName(String symbol) {
     int last = symbol.indexOf('_');
     if(last == -1) {
@@ -67,6 +67,10 @@ public class Tools {
     return symbol.substring(0,last);
   }
 
+  /**
+   * Determines if auxiliary symbol
+   * @returns true if of the form symbolNameAUX; false otherwise
+   */
   public static boolean isSymbolNameAux(String symbol) {
     boolean res = false;
     String name = getSymbolName(symbol);
@@ -76,6 +80,10 @@ public class Tools {
     return res;
   }
 
+  /**
+   * Retuns the name of the strategy it has been generated for (strips of the AUX)
+   * @returns symbolName
+   */
   public static String getSymbolNameMain(String symbol) {
     String name = getSymbolName(symbol);
     if(isSymbolNameAux(symbol)){
@@ -84,18 +92,24 @@ public class Tools {
     return name;
   }
 
+  /**
+   * A symbol is expected to be of the form:
+   * - symbolName[AUX][_<number>]_typeName
+   * - symbolName[AUX][_<number>]-operatorName[_<number>]_typeName
+   * @returns symbolName[AUX]
+   */
   public static String getTypeName(String symbol) {
     int last = symbol.lastIndexOf('_');
-    if(last == -1) {
-      // TODO: change it when and becomes and_Bool
-      return Signature.BOOLEAN;
+    if(last == -1){ // nothing if type not specified in the symbol name 
+      return ""; 
     }
     return symbol.substring(last+1,symbol.length());
   }
 
-  /*
-   * Given a symbol name of the form "name-opName" or "name-opName_typeName"
-   * @returns opName
+  /**
+   * Given a symbol name of the form 
+   * - symbolName[AUX][_<number>]-operatorName[_<number>][_typeName]
+   * @returns operatorName
    */
   public static String getOperatorName(String symbol) {
     String aux = null;
@@ -110,9 +124,7 @@ public class Tools {
     return aux;
   }
 
-  /*
-   * helpers to build AST
-   */
+  /*** helpers to build AST ***/
   private static Term _appl(String name, Term... args) {
     TermList tl = `TermList();
     for(Term t:args) {
@@ -424,6 +436,7 @@ public class Tools {
 
   // TODO: doesn't take into account non-linear patterns
   // f(x,x) matches f(x,y) because name variables are ignored
+  /* REMOVE *
   private  boolean matchModuloAt(Term pattern, Term subject) {
     try {
       Term p = `TopDown(RemoveAtAndRenameVariables()).visitLight(pattern);
@@ -433,6 +446,8 @@ public class Tools {
     } catch(VisitFailure e) {}
     throw new RuntimeException("should not be there");
   }
+  * REMOVE */
+
   /*
    * put terms in normal form to detect redundant patterns
    */
