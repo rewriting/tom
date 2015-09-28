@@ -186,9 +186,9 @@ public class TypeCompiler {
           }
         }else{  // if Boolean or Generated symbol
           domain = new ArrayList<GomType>();
-          if(!Tools.getSymbolNameMain(`name).equals(Signature.TRUE) && !Tools.getSymbolNameMain(`name).equals(Signature.FALSE)){
+          if(!Tools.getSymbolNameMain(`name).equals(Signature.TRUE) && !Tools.getSymbolNameMain(`name).equals(Signature.FALSE)){ // if any arguments
             domain.add(type); // first argument has always the same type as the term
-            if(eSig.isBooleanOperator(`name) ||
+            if(eSig.isBooleanOperator(`name) || 
                (Tools.isSymbolNameAux(`name) && StrategyOperator.getStrategyOperator(Tools.getSymbolNameMain(`name))==StrategyOperator.SEQ)){
               // if boolean operator (EQ or AND) or if aux symbol for SEQ (ie seqAux_...) then there is a second parameter of the same type
               domain.add(type);
@@ -218,11 +218,9 @@ public class TypeCompiler {
 
         // add info into typed signature
         if(`name == Signature.EQ) {
-//           typedSignature.addSymbolType(typedName,domain.subList(0,i),`GomType(Signature.BOOLEAN));
-          typedSignature.addSymbolType(typedName,domain.subList(0,i),`GomType(Signature.BOOLEAN));
+          typedSignature.addSymbolType(typedName,domain,`GomType(Signature.BOOLEAN));
         } else {
-//           typedSignature.addSymbolType(typedName,domain.subList(0,i),type);
-          typedSignature.addSymbolType(typedName,domain.subList(0,i),type);
+          typedSignature.addSymbolType(typedName,domain,type);
         }
         // TODO: build domain exactly as it should be (problem for TRUE, ruleAUX, ...?)
       }
