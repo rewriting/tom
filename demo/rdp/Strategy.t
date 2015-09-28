@@ -17,12 +17,9 @@ class Strategy {
   }
  
   public final static void main(String[] args) {
-    T t = `f(
-              f(c(),a()), 
-              g(a())
-            );
+    T t = `f(a(),g(a()));
     try {
-      T result = (T) `Innermost(  Sequence(ReplaceAB(), TraceAB()) ).visit(t);
+      T result = (T) `Repeat(OnceBottomUp(ReplaceAB())).visit(t);
       System.out.println("result = " + result);
     } catch(VisitFailure e) {
       System.out.println("failure on " + t);
@@ -30,13 +27,22 @@ class Strategy {
   }
   
   // Replace a by b
+  // ReplaceAB : a -> b
   %strategy ReplaceAB() extends Fail() {
     visit T {
       a() -> { return `b(); }
-      a() -> { return `c(); }
     }
   }
- 
+
+
+
+
+
+
+
+
+
+
   %strategy TraceAB() extends Identity() {
     visit T {
       x -> { System.out.println("Application de a->b: " + getEnvironment().getPosition());  }
