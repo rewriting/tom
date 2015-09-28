@@ -11,16 +11,31 @@ public class Term {
         | c()
         | f(x1:T, x2:T) 
         | g(x1:T)
+        | zero()
+        | s(x1:T)
+
+     L = conc( T* )
+
   }
 
+  public static T plus(T a1, T a2) {
+    %match(T a1,a2) {
+      x, zero() -> { return `x; }
+      x, s(y)   -> { return `s(plus(x,y)); }
+    }
+      return null;
+  }
+
+
   public final static void main(String[] args) {
-    T s = `f(a(),b());
+    String t = "abcab";
+    
+    System.out.println("t = " + t);
 
-   %match(s) {
-     f(x,y) -> { s = `g(y); }
-   }
+    %match(t) {
+      concString(C1*,x,_*,x,_*) -> { System.out.println("x = " + `x);  }
+    }
 
-    System.out.println("s = " + s);
   }
 
 }
