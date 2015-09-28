@@ -45,7 +45,6 @@ public class Main {
         fileinput = new FileInputStream(options.in);
       }
 
-      // TODO: remove the if branch when option newparser removed
       RuleLexer lexerNEW = new RuleLexer(new ANTLRInputStream(fileinput));
       CommonTokenStream tokensNEW = new CommonTokenStream(lexerNEW);
       RuleParser ruleParserNEW = new RuleParser(tokensNEW);
@@ -62,8 +61,8 @@ public class Main {
       Signature extractedSignature = compiler.getExtractedSignature();
       Signature generatedSignature = compiler.getGeneratedSignature();
 
-      System.out.println("EXT SIG = " + extractedSignature);
-      System.out.println("GEN SIG = " + generatedSignature);
+      //       System.out.println("EXT SIG = " + extractedSignature);
+      //       System.out.println("GEN SIG = " + generatedSignature);
 
       // transform the LINEAR TRS: compile Aps and remove ATs
       RuleCompiler ruleCompiler = new RuleCompiler(extractedSignature,generatedSignature);
@@ -79,29 +78,11 @@ public class Main {
       extractedSignature = ruleCompiler.getExtractedSignature();
       generatedSignature = ruleCompiler.getGeneratedSignature();
 
-      //         System.out.println("gSIG = " + generatedSignature);
-
-
       if(options.type != null) {
-        // TEST (flatten types)
         TypeCompiler typeCompiler = new TypeCompiler(extractedSignature,generatedRules);
-        //pem typeCompiler.flattenSignature();
-
-        // refresh the signatures (presently no modifications)
-        extractedSignature = typeCompiler.getExtractedSignature();
-        Signature typedSignature = typeCompiler.getTypedSignature();
-
         typeCompiler.typeRules();
-
-
         generatedRules = typeCompiler.getGeneratedRules();
-        generatedSignature = typedSignature;
-
-        //         System.out.println("gSIG = " + generatedSignature);
-
-
-        // TEST
-        //         List<Rule> newRules = compiler.specialize("rule6", "T", generatedRules);  
+        generatedSignature = typeCompiler.getTypedSignature();
       }
 
 

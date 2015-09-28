@@ -89,9 +89,9 @@ public class TypeCompiler {
       }
     }
 
-    for(Rule rule: generatedRules) {
-      System.out.println(" RULE "+ Pretty.toString(rule));
-    }
+    //     for(Rule rule: generatedRules) {
+    //       System.out.println(" RULE "+ Pretty.toString(rule));
+    //     }
 
   }
 

@@ -84,13 +84,11 @@ public class Compiler {
    */
   public List<Rule>  compileStrategy(String strategyName) {
     Expression expand = this.expandStrategy(strategyName);
-    System.out.println("expanded version for " + strategyName + "  = " + expand);
 
     Strat strategy=null;
     %match(expand) {
       Strat(strat) -> { strategy = `strat;      }
     }
-    System.out.println("STRATEGY " + strategyName + "  = " + strategy);
 
     // if not generated yet
     if(this.generatedTRSs.get(strategyName) == null) {
@@ -122,7 +120,7 @@ public class Compiler {
 
     try {
       %match(sd) {
-        StratDecl(name, ConcParam() , body) -> {
+        StratDecl(_, ConcParam() , body) -> {
             res = `RepeatId(TopDown(ExpandStratAppl(this))).visit(`body);
         }
       }
@@ -189,7 +187,7 @@ public class Compiler {
 
     try {
       %match(sd) {
-        StratDecl(name, params, body) -> {
+        StratDecl(_, params, body) -> {
           if(`params.length() == args.length()) {
             res = `(TopDown(ReplaceParameters(params,args))).visit(`body);
           }
@@ -317,17 +315,14 @@ public class Compiler {
             %match(rulelist) {
               RuleList(_*,Rule(lhs,rhs),_*) -> {
 
-                String lhsType="";
-
-                %match(lhs) {
-                  Appl(funsymb,_) -> {
-                    lhsType = eSig.getCodomain(`funsymb);
-                    System.out.println("Type of LHS "+`lhs+" = "+lhsType);
-                  }
-                }
-
-
-//                 rule = rule+"_"+lhsType;
+                //                 String lhsType="";
+                //                 %match(lhs) {
+                //                   Appl(funsymb,_) -> {
+                //                     lhsType = eSig.getCodomain(`funsymb);
+                //                     System.out.println("Type of LHS "+`lhs+" = "+lhsType);
+                //                   }
+                //                 }
+                // //                 rule = rule+"_"+lhsType;
 
                 TermList result = this.linearize(`lhs);
 
