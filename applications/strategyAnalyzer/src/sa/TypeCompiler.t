@@ -184,21 +184,22 @@ public class TypeCompiler {
           if(StrategyOperator.getStrategyOperator(Tools.getSymbolNameMain(`name))==StrategyOperator.ALL){
             domain.add(type); 
           }
-        }else{
-          // propagate the right type(s) to the arguments
+        }else{  // if Boolean or Generated symbol
           domain = new ArrayList<GomType>();
-          domain.add(type); // first argument has always the same type as the term
-          if(eSig.isBooleanOperator(`name) ||
-             (Tools.isSymbolNameAux(`name) && StrategyOperator.getStrategyOperator(Tools.getSymbolNameMain(`name))==StrategyOperator.SEQ)){
-            // if boolean operator (EQ or AND) or if aux symbol for SEQ (ie seqAux_...) then there is a second parameter of the same type
-            domain.add(type);
-          }else if(Tools.isSymbolNameAux(`name) && StrategyOperator.getStrategyOperator(Tools.getSymbolNameMain(`name))==StrategyOperator.RULE){
-            // if aux symbol for RULE (originating from a non-linear rule compilation) then there is a second parameter of type Bool
-            domain.add(`GomType(Signature.BOOLEAN));
+          if(!Tools.getSymbolNameMain(`name).equals(Signature.TRUE) && !Tools.getSymbolNameMain(`name).equals(Signature.FALSE)){
+            domain.add(type); // first argument has always the same type as the term
+            if(eSig.isBooleanOperator(`name) ||
+               (Tools.isSymbolNameAux(`name) && StrategyOperator.getStrategyOperator(Tools.getSymbolNameMain(`name))==StrategyOperator.SEQ)){
+              // if boolean operator (EQ or AND) or if aux symbol for SEQ (ie seqAux_...) then there is a second parameter of the same type
+              domain.add(type);
+            }else if(Tools.isSymbolNameAux(`name) && StrategyOperator.getStrategyOperator(Tools.getSymbolNameMain(`name))==StrategyOperator.RULE){
+              // if aux symbol for RULE (originating from a non-linear rule compilation) then there is a second parameter of type Bool
+              domain.add(`GomType(Signature.BOOLEAN));
+            }
           }
         }
 
-        // propagate the type tp the subterms
+        // propagate the type to the subterms
         int i = 0;
         TermList args = `args;
         TermList newArgs = `TermList();
@@ -217,8 +218,10 @@ public class TypeCompiler {
 
         // add info into typed signature
         if(`name == Signature.EQ) {
+//           typedSignature.addSymbolType(typedName,domain.subList(0,i),`GomType(Signature.BOOLEAN));
           typedSignature.addSymbolType(typedName,domain.subList(0,i),`GomType(Signature.BOOLEAN));
         } else {
+//           typedSignature.addSymbolType(typedName,domain.subList(0,i),type);
           typedSignature.addSymbolType(typedName,domain.subList(0,i),type);
         }
         // TODO: build domain exactly as it should be (problem for TRUE, ruleAUX, ...?)
