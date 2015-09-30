@@ -124,15 +124,6 @@ public class Tools {
     return aux;
   }
 
-  /*** helpers to build AST ***/
-  private static Term _appl(String name, Term... args) {
-    TermList tl = `TermList();
-    for(Term t:args) {
-      tl = `TermList(tl*,t);
-    }
-    return `Appl(name,tl);
-  }
-
   /**
    * encode: transforms a string "f(a,X)" into its Term representation
    * e.g. `Appl("f",TermList(Appl("a",TermList()),Var("X")))
@@ -144,7 +135,7 @@ public class Tools {
    * @return meta-encoding using Appl and TermList
    */
   /*
-   * REMOVE */
+   * REMOVE 
    public static Term encode(String stringterm, Signature signature) {
     //System.out.println("encode: " + stringterm);
     Term res = null;
@@ -241,11 +232,27 @@ public class Tools {
     */
   /*   REMOVE */ 
   public static Term metaEncodeConsNil(Term t, Signature signature) {
-    return encode(encodeConsNil(t,signature),signature);
+    //return encode(encodeConsNil(t,signature),signature);
+    return encodeConsNil(t,signature);
   }
   /*  REMOVE */
 
-  private static String encodeConsNil(Term t, Signature signature) {
+  /*** helpers to build AST ***/
+  private static Term Anti(Term t) { return `Anti(t); }
+  private static Term Var(String name) { return `Var(name); }
+  private static Term Appl(Term t1, Term t2) { return _appl(Signature.APPL,t1,t2); }
+  private static Rule Rule(Term lhs, Term rhs) { return `Rule(lhs,rhs); }
+  private static Term Nil() { return _appl(Signature.NIL); }
+  private static Term Cons(Term t1, Term t2) { return _appl(Signature.CONS,t1,t2); }
+  private static Term _appl(String name, Term... args) {
+    TermList tl = `TermList();
+    for(Term t:args) {
+      tl = `TermList(tl*,t);
+    }
+    return `Appl(name,tl);
+  }
+
+  private static Term encodeConsNil(Term t, Signature signature) {
     %match(t) {
       Appl(symb,args) -> {
         String symbName = "symb_" + `symb;
@@ -254,31 +261,34 @@ public class Tools {
         } else {
           signature.addSymbol(symbName,new ArrayList<String>(),Signature.METASYMBOL);
         }
-        return "Appl(" + symbName + "," + encodeConsNil(`args,signature) + ")";
+        //return "Appl(" + symbName + "," + encodeConsNil(`args,signature) + ")";
+        return Appl(_appl(symbName), encodeConsNil(`args,signature));
       }
 
       Var(name) -> {
-        return "var_" + `name;
+        //return "var_" + `name;
+        return Var("var_"+`name);
       }
 
       Anti(term) -> {
         //System.out.println("ENCODE ANTI: " + `term);
-        return "anti(" + encodeConsNil(`term,signature) + ")";
+        //return "anti(" + encodeConsNil(`term,signature) + ")";
+        return Anti(encodeConsNil(`term,signature));
       }
     }
     return null;
   }
 
-  private static String encodeConsNil(TermList t, Signature signature) {
+  private static Term encodeConsNil(TermList t, Signature signature) {
     %match(t) {
       TermList(head,tail*) -> {
-        return "Cons(" + encodeConsNil(`head,signature) + "," + encodeConsNil(`tail,signature) + ")";
+        return Cons(encodeConsNil(`head,signature),encodeConsNil(`tail,signature));
       }
       TermList() -> {
-        return "Nil()";
+        return Nil();
       }
     }
-    return "null";
+    return null;
   }
 
   /*
@@ -431,7 +441,7 @@ public class Tools {
    * generate a term for the form f(Z1,...,Zn)
    * @param name the symbol name 
    * @param arity the arity of the symbol
-   * @return the string that represents the term
+   * @return the Term that represents the term
    */
   public static Term genAbstractTerm(String name, int arity, String varname) {
     TermList args = `TermList();
@@ -443,7 +453,7 @@ public class Tools {
   }
  
   /*
-   * REMOVE */
+   * REMOVE 
   public static String genStringAbstractTerm(String name, int arity, String varname) {
     if(arity==0) {
       return name + "()";

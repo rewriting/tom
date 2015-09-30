@@ -109,9 +109,7 @@ public class RuleCompiler {
             for(String otherName:otherNames) {
               if(!`name.equals(otherName)) {
                 int arity = extractedSignature.getArity(otherName);
-                // TODO: use genAbstractTerm
-                // TODO: do not use encode
-                Term newt = Tools.encode(Tools.genStringAbstractTerm(otherName,arity,Tools.getName("Z")),generatedSignature);
+                Term newt = Tools.genAbstractTerm(otherName,arity,Tools.getName("Z"));
                 if(Main.options.metalevel) {
                   newt = Tools.metaEncodeConsNil(newt,generatedSignature);
                 }
@@ -122,21 +120,21 @@ public class RuleCompiler {
             
             // add f(!a1,...) ... f(a1,...,!an)
             sa.rule.types.termlist.TermList tl = (sa.rule.types.termlist.TermList) `args;
+            //int arity = extractedSignature.getArity(`name); // arity(Bottom)=-1 instead of 1 !!!
             int arity = tl.length();
+            //System.out.println(`name + " -- " + arity);
+
             Term[] array = new Term[arity];
             Term[] tarray = new Term[arity];
             tarray = tl.toArray(tarray);
-            String z = Tools.getName("Z");
-            for(int i=0 ; i<arity ; i++) {
-              // TODO: do not use encode
-              array[i] = Tools.encode(z+"_"+i,generatedSignature);
+            for(int i=1 ; i<=arity ; i++) {
+              array[i-1] = `Var("Z_" + i);
             }
-            for(int i=0 ; i<arity ; i++) {
-              Term ti = tarray[i];
-              array[i] = `Anti(ti);
+            for(int i=1 ; i<=arity ; i++) {
+              Term ti = tarray[i-1];
+              array[i-1] = `Anti(ti);
               Term newt = `Appl(name,sa.rule.types.termlist.TermList.fromArray(array));
-              // TODO: do not use encode
-              array[i] = Tools.encode(z+"_"+i,generatedSignature);
+              array[i-1] = `Var("Z_" + i);
               if(Main.options.metalevel) {
                 newt = Tools.metaEncodeConsNil(newt,generatedSignature);
               }

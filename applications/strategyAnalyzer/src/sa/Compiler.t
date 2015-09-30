@@ -250,6 +250,7 @@ public class Compiler {
     return `Appl(name,tl);
   }
 
+  /*
   private Term _applTyped(String type, String name, Term... args) {
     TermList tl = `TermList();
     for(Term t:args) {
@@ -257,6 +258,7 @@ public class Compiler {
     }
     return `Appl(name,tl);
   }
+*/
 
   /**
    * compile a strategy in a classical way (without using meta-representation)
