@@ -141,24 +141,6 @@ public class Signature {
   }
 
   /**
-   * Generate a new name for potentially overloaded symbols; use the
-   * types of its arguments to disambiguate.
-   * @param name the name of the symbol
-   * @param argTypes the types of its arguments
-   * @return the new name of the form name_T1_T2_..._Tn
-   */
-  public String disambiguateSymbol(String name, List<String> argTypes) {
-    String res = name;
-    // Just for TESTING
-    // TODO: generate the correct eq_X_X in the rules (for the moment only "eq" generate)
-    //for(String argType:argTypes) {
-    //  res += "_" + argType;
-    //}
-    return res.intern();
-  }
-
-
-  /**
    * Add a symbol (with the corresponding profile).
    * @param name the name of the symbol
    * @param argTypes the types of its arguments

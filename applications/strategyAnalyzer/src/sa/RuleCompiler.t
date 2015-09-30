@@ -39,15 +39,16 @@ public class RuleCompiler {
    * @param rules the rules to expand
    * @return the list of generatedRules (with no anti-paterns left)
    */
-  public  List<Rule> expandAntiPatterns(List<Rule> rules) {
+  public List<Rule> expandAntiPatterns(List<Rule> rules) {
     List<Rule> newRules = new ArrayList<Rule>();
     for(Rule rule:rules) { 
-      List<Rule> genRules=this.expandAntiPatternInRule(rule);
+      List<Rule> genRules = this.expandAntiPatternInRule(rule);
       // add the generated rules for rule to the result (list of rule)
       newRules.addAll(genRules);
     }
     return newRules;
   }  
+  
   /**
    * Expand an anti-pattern in a LINEAR Rule (with only one anti-pattern)
    * @param generatedRules initial set of rules
@@ -73,6 +74,7 @@ public class RuleCompiler {
     }
     return genRules;
   }
+
   /**
    * Do nothing if it Term contains anti-pattern;
    * Fail (i.e. exception) otherwise
@@ -82,6 +84,7 @@ public class RuleCompiler {
       t@Anti(_)  -> { return `t; }
     }
   }
+
   /**
    * Perform one-step expansion for a LINEAR Rule
    * @param bag the resulted list of rules
@@ -102,11 +105,12 @@ public class RuleCompiler {
         %match(antiterm) { 
           Appl(name,args)  -> {
             // add g(Z1,...) ... h(Z1,...)
-            //             Set<String> otherNames = new HashSet<String>( ((Map<String,Integer>)extractedSignature).keySet() );
             Set<String> otherNames = new HashSet<String>(extractedSignature.getSymbolNames() );
             for(String otherName:otherNames) {
               if(!`name.equals(otherName)) {
                 int arity = extractedSignature.getArity(otherName);
+                // TODO: use genAbstractTerm
+                // TODO: do not use encode
                 Term newt = Tools.encode(Tools.genStringAbstractTerm(otherName,arity,Tools.getName("Z")),generatedSignature);
                 if(Main.options.metalevel) {
                   newt = Tools.metaEncodeConsNil(newt,generatedSignature);
@@ -124,12 +128,14 @@ public class RuleCompiler {
             tarray = tl.toArray(tarray);
             String z = Tools.getName("Z");
             for(int i=0 ; i<arity ; i++) {
+              // TODO: do not use encode
               array[i] = Tools.encode(z+"_"+i,generatedSignature);
             }
             for(int i=0 ; i<arity ; i++) {
               Term ti = tarray[i];
               array[i] = `Anti(ti);
               Term newt = `Appl(name,sa.rule.types.termlist.TermList.fromArray(array));
+              // TODO: do not use encode
               array[i] = Tools.encode(z+"_"+i,generatedSignature);
               if(Main.options.metalevel) {
                 newt = Tools.metaEncodeConsNil(newt,generatedSignature);
@@ -195,7 +201,7 @@ public class RuleCompiler {
       if(map.keySet().isEmpty()) {
         // if no AT in the rule just add it to the result
         res.add(rule);
-      }else{
+      } else {
         // if some AT in the rule then build a new one
         Rule newRule = rule;
         for(String name:map.keySet()) {
@@ -224,7 +230,7 @@ public class RuleCompiler {
   %strategy ReplaceVariable(name:String, term:Term) extends Identity() {
     visit Term {
       Var(n) -> {
-        if(`n==name) {
+        if(`n == name) {
           return `term;
         }
       }

@@ -229,15 +229,6 @@ public class Tools {
 
   private static boolean isVariableName(String name, Signature signature) {
     return signature.getCodomain(name) == null;
-
-    /*
-    boolean res = true;
-    for(int i=0 ; i<name.length(); i++) {
-      res &= (Character.isUpperCase(name.charAt(i)) || Character.isDigit(name.charAt(i)) || name.charAt(i)=='_');
-    }
-    return name.startsWith("var_") || res;
-    */
-
   }
 
 
@@ -333,6 +324,7 @@ public class Tools {
     return null;
   }
 
+  /* REMOVE
   public static TermList generalDecodeConsNilList(TermList t) {
     %match(t) {
       TermList(head,tail*) -> { 
@@ -342,11 +334,13 @@ public class Tools {
     }
     return t; // liste vide
   }
+  */
 
   /** 
    * Decodes (the) encoded (part of) terms
    * The term can contain Anti and At - only the encoded parts are decoded
    */
+  /* REMOVE
   public static Term generalDecodeConsNil(Term t) {
     %match(t) {
       Appl("Appl",TermList(Appl(symb_name,TermList()),args)) -> {
@@ -370,7 +364,8 @@ public class Tools {
     // never
     return t;
   }
-
+*/
+  /* REMOVE
   public static TermList generalDecodeConsNilList(Term t) {
     %match(t) {
       Appl("Cons",TermList(head,tail)) -> {
@@ -386,7 +381,7 @@ public class Tools {
     // never
     return `TermList();
   }
-
+*/
 
   /**
     * generalMetaEncodeConsNil: transforms a Term representation into a generic term representation
@@ -432,33 +427,6 @@ public class Tools {
   }
 */
 
-
-
-  // TODO: doesn't take into account non-linear patterns
-  // f(x,x) matches f(x,y) because name variables are ignored
-  /* REMOVE *
-  private  boolean matchModuloAt(Term pattern, Term subject) {
-    try {
-      Term p = `TopDown(RemoveAtAndRenameVariables()).visitLight(pattern);
-      Term s = `TopDown(RemoveAtAndRenameVariables()).visitLight(subject);
-      //System.out.println(pattern + " <--> " + subject + " ==> " + (p==s));
-      return p==s;
-    } catch(VisitFailure e) {}
-    throw new RuntimeException("should not be there");
-  }
-  * REMOVE */
-
-  /*
-   * put terms in normal form to detect redundant patterns
-   */
-  %strategy RemoveAtAndRenameVariables() extends Identity() {
-    visit Term {
-      At(_,t2)  -> { return `t2; }
-      Var(_)  -> { return `Var("_"); }
-    }
-  }
-
-
   /*
    * generate a term for the form f(Z1,...,Zn)
    * @param name the symbol name 
@@ -475,7 +443,7 @@ public class Tools {
   }
  
   /*
-   * REMOVE */ 
+   * REMOVE */
   public static String genStringAbstractTerm(String name, int arity, String varname) {
     if(arity==0) {
       return name + "()";

@@ -987,9 +987,7 @@ public class Compiler {
     Term constraint = `Appl("True",TermList());
     for(String name:mapToOldName.keySet()) {
       String oldName = mapToOldName.get(name);
-      String argType = "T"; // TODO: we have to find the type of the variable here!!!
-      String eq_arg = getExtractedSignature().disambiguateSymbol(Signature.EQ, Arrays.asList(argType,argType) );
-      constraint = `Appl("and",TermList( Appl(eq_arg,TermList(Var(oldName),Var(name))), constraint));
+      constraint = `Appl("and",TermList( Appl(Signature.EQ,TermList(Var(oldName),Var(name))), constraint));
     }
     return `TermList(lhs,constraint);
 
