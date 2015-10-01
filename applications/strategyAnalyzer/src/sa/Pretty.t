@@ -257,8 +257,8 @@ public class @classname@ {
       ]%);
 
   // by default use the last compiled strategy
-  String name=Compiler.getInstance().getStrategyNames().get(Compiler.getInstance().getStrategyNames().size()-1);
-  if(Compiler.getInstance().getStrategyNames().contains(strategyName)){
+  String name = "no_strategy_name";
+  if(Compiler.getInstance().getStrategyNames().contains(strategyName)) {
      name = strategyName;
   }
   if(typeName != null) { // if typed compilation and initial term of type typeName

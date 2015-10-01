@@ -26,7 +26,7 @@ public class Compiler {
   private Signature generatedSignature;
 
   // strategy name -> strategy compiled into a TRS
-  private Map<String,List<Rule>> generatedTRSs;
+  private Map<String,RuleList> generatedTRSs;
 
   private Map<Strat,List<Rule>> storedTRSs;
   private Map<Strat,String> strategySymbols;
@@ -37,7 +37,7 @@ public class Compiler {
    * 
    */
   private Compiler() {
-    this.generatedTRSs = new HashMap<String,List<Rule>>();
+    this.generatedTRSs = new HashMap<String,RuleList>();
     this.storedTRSs = new HashMap<Strat,List<Rule>>();;
     this.strategySymbols = new HashMap<Strat,String>();;
   }
@@ -83,7 +83,7 @@ public class Compiler {
    * @param strategyName the name of the strategy to compile
    * @return the TRS for strategyName 
    */
-  public List<Rule> compileStrategy(String strategyName) {
+  public RuleList compileStrategy(String strategyName) {
     Expression expand = this.expandStrategy(strategyName);
 
     Strat strategy=null;
@@ -92,23 +92,32 @@ public class Compiler {
     }
 
     // if not generated yet
-    if(this.generatedTRSs.get(strategyName) == null) {
-      this.generatedTRSs.put(strategyName,new ArrayList<Rule>());
+    if(generatedTRSs.get(strategyName) == null) {
       
       String strategySymbol = "NONE";
+      List<Rule> mutableList = new ArrayList<Rule>();
+      strategySymbol = this.compileStrat(strategy,mutableList);
+      RuleList ruleList = fromListOfRule(mutableList);
+
       if(Main.options.metalevel) {
-        strategySymbol = this.compileStrat(strategy,this.generatedTRSs.get(strategyName));
-        this.generateTriggerRule(strategyName,strategySymbol,this.generatedTRSs.get(strategyName));
-        this.generateEncodeDecode(this.generatedTRSs.get(strategyName));
+        ruleList = generateTriggerRule(strategyName,strategySymbol,ruleList);
+        ruleList = generateEncodeDecode(ruleList);
       } else {
-        strategySymbol = this.compileStrat(strategy,this.generatedTRSs.get(strategyName));
-        this.generateEquality(this.generatedTRSs.get(strategyName));
-        this.generateTriggerRule(strategyName,strategySymbol,this.generatedTRSs.get(strategyName));
+        ruleList = generateEquality(ruleList);
+        ruleList = generateTriggerRule(strategyName,strategySymbol,ruleList);
       }
+      generatedTRSs.put(strategyName,ruleList);
     }
-    return new ArrayList(this.generatedTRSs.get(strategyName));
+    return generatedTRSs.get(strategyName);
   }
 
+  private RuleList fromListOfRule(List<Rule> l) {
+    RuleList res = `ConcRule();
+    for(Rule r:l) {
+      res = `ConcRule(r,res*);
+    }
+    return res.reverse();
+  }
 
   /*
    * Given a name, retrieve the corresponding StratDecl (which should not have parameter)
@@ -1057,13 +1066,13 @@ public class Compiler {
    * f(x_1,...,x_n) = g(y_1,...,y_m) -> False
    * f(x_1,...,x_n) = f(y_1,...,y_n) -> x_1=y1 ^ ... ^ x_n=y_n ^ true
    */
-  private void generateEquality(List<Rule> generatedRules) {
+  private RuleList generateEquality(RuleList generatedRules) {
     Signature eSig = getExtractedSignature();
 
-    generatedRules.add(Rule(And(True(),True()), True()));
-    generatedRules.add(Rule(And(True(),False()), False()));
-    generatedRules.add(Rule(And(False(),True()), False()));
-    generatedRules.add(Rule(And(False(),False()), False()));
+    generatedRules = `ConcRule(generatedRules*,Rule(And(True(),True()), True()));
+    generatedRules = `ConcRule(generatedRules*,Rule(And(True(),False()), False()));
+    generatedRules = `ConcRule(generatedRules*,Rule(And(False(),True()), False()));
+    generatedRules = `ConcRule(generatedRules*,Rule(And(False(),False()), False()));
 
     Set<String> symbolNames = eSig.getSymbols();
     for(String f:symbolNames) {
@@ -1082,7 +1091,7 @@ public class Compiler {
           /*
            * eq(f(x1,...,xn),g(y1,...,ym)) -> False
            */
-          generatedRules.add(Rule(Eq(_appl(f,a_lx),_appl(g,a_rx)), False()));
+          generatedRules = `ConcRule(generatedRules*,Rule(Eq(_appl(f,a_lx),_appl(g,a_rx)), False()));
         } else {
           /*
            * eq(f(x1,...,xn),f(y1,...,yn)) -> True ^ eq(x1,y1) ^ ... ^ eq(xn,yn)
@@ -1091,17 +1100,18 @@ public class Compiler {
           for(int i=1 ; i<=arf ; i++) {
             scond = And(Eq(Var("X_" + i),Var("Y" + i)),scond);
           }
-          generatedRules.add(Rule(Eq(_appl(f,a_lx),_appl(g,a_rx)), scond));
+          generatedRules = `ConcRule(generatedRules*,Rule(Eq(_appl(f,a_lx),_appl(g,a_rx)), scond));
         }
       }
     }
+    return generatedRules;
   }
 
   /**
    * generates encode/decode functions for metalevel
    * encode(f(x1,...,xn)) -> Appl(symb_f, Cons(encode(x1), ..., Cons(encode(xn),Nil())))
    **/
-  private void generateEncodeDecode(List<Rule> generatedRules) {
+  private RuleList generateEncodeDecode(RuleList generatedRules) {
     Signature eSig = getExtractedSignature();
     String x = Tools.getName("X");
     Set<String> symbolNames = eSig.getSymbols();
@@ -1125,10 +1135,10 @@ public class Compiler {
       Term lhs_decode = _appl(Signature.DECODE, Appl(_appl("symb_" + f), largs_decode));
       Term rhs_decode = `Appl(f,rargs_decode); 
 
-      generatedRules.add(Rule(lhs_encode,rhs_encode));
-      generatedRules.add(Rule(lhs_decode,rhs_decode));
+      generatedRules = `ConcRule(generatedRules*, Rule(lhs_encode,rhs_encode));
+      generatedRules = `ConcRule(generatedRules*, Rule(lhs_decode,rhs_decode));
     }
-
+    return generatedRules;
   }
 
 
@@ -1136,7 +1146,7 @@ public class Compiler {
    * generates a rule of the form name(X) -> symbol(X)
    * name can be then see as an alias for symbol in terms of reduction 
    **/
-  private void generateTriggerRule(String name, String symbol, List<Rule> generatedRules) {
+  private RuleList generateTriggerRule(String name, String symbol, RuleList generatedRules) {
     Signature gSig = getGeneratedSignature();
     GomType codomain = gSig.getCodomain(symbol);
     GomTypeList domain = gSig.getDomain(symbol);
@@ -1147,7 +1157,7 @@ public class Compiler {
      * X matches anything but morally matches only symbols from the extracted signature
      * name(X) -> symbol(X)
      */
-    generatedRules.add(Rule(_appl(name,X), _appl(symbol,X)));
+    return `ConcRule(generatedRules*, Rule(_appl(name,X), _appl(symbol,X)));
   }
 
   private  Position getAntiPatternPosition(Term t) {
