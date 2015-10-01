@@ -87,7 +87,7 @@ public class Compiler {
 
     Strat strategy=null;
     %match(expand) {
-      Strat(strat) -> { strategy = `strat;      }
+      Strat(strat) -> { strategy = `strat; }
     }
 
     // if not generated yet

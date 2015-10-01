@@ -56,23 +56,26 @@ public class TypeCompiler {
           // - operators of the form ALL-f... : codomain of f
           // - operators of the form CHOICE... (no ...-f) : codomain of its first argument
           Collection<GomType> types = new HashSet<GomType>();
-          if(getExtractedSignature().isBooleanOperator(`stratOp)) { // if head opearator of the rule is EQ or AND than the codomain should be BOOL 
+          if(getExtractedSignature().isBooleanOperator(`stratOp)) {
+            // if head opearator of the rule is EQ or AND then the codomain should be BOOL 
             types.add(`GomType(Signature.BOOLEAN));
           } else { 
-            if(Tools.getOperatorName(`stratOp) != null){ // if symbol of the form ALL-f... the codomain is given by the codomain of f
+            if(Tools.getOperatorName(`stratOp) != null) {
+              // if symbol of the form ALL-f... the codomain is given by the codomain of f
               types = this.getTypes(env,`lhs);
-            }else{ // otherwise the codomain is given by the codomain of its argument
+            } else { 
+              // otherwise the codomain is given by the codomain of its argument
               types = this.getTypes(env,`arg);
             }
           }
           // normally shouldn't happen 
-          if(types.size() == 0){
+          if(types.size() == 0) {
             throw new UntypableTermException("RULE OMITTED for " + `stratOp + "  because no possible codomain");
           }
 
           // for each potential codomain generate a new rule
           // (the potential codomain is unique for all operators but for BOTTOM
-          //  which can be of any type of the declared (ie extracted) signature
+          // which can be of any type of the declared (ie extracted) signature
           for(GomType type: types) {
             try {
               env = new HashMap<String,GomType>(); // start with fresh env for each rule generation
@@ -106,11 +109,14 @@ public class TypeCompiler {
         Appl(symbol,_) -> {
           if(`symbol == Signature.BOTTOM) { // for BOTTOM add all possible types
             types.addAll(eSig.getTypes());
-          } else if(eSig.isBooleanOperator(`symbol)) {  // for boolean ops (in fact only TRUE or FALSE can occur) add BOOLEAN
+          } else if(eSig.isBooleanOperator(`symbol)) {
+            // for boolean ops (in fact only TRUE or FALSE can occur) add BOOLEAN
             types.add(`GomType(Signature.BOOLEAN));
-          } else if(Tools.getOperatorName(`symbol) != null) {   // for symbol of the form ALL-f add the type of f
+          } else if(Tools.getOperatorName(`symbol) != null) { 
+            // for symbol of the form ALL-f add the type of f
             types.add(eSig.getCodomainType(Tools.getOperatorName(`symbol)));
-          } else if(eSig.getCodomainType(`symbol) != null) {  // for symbols of the original signature add their type
+          } else if(eSig.getCodomainType(`symbol) != null) {
+            // for symbols of the original signature add their type
             types.add(eSig.getCodomainType(`symbol));
           }
         }
@@ -118,7 +124,7 @@ public class TypeCompiler {
         Var(name) -> { // for VAR get the type from the environment
           if(env.get(`name) != null){
             types.add(env.get(`name));
-          }else{ // if we don't know it's type than it could be any type (eg for mainstrat)
+          } else { // if we don't know it's type than it could be any type (eg for mainstrat)
             types.addAll(eSig.getTypes());
           }
         }
@@ -140,18 +146,19 @@ public class TypeCompiler {
 
     %match(t) {
       Appl(name,args) -> {
-        if(eSig.isBooleanOperatorExceptEQ(`name)){ // for AND, TRUE, FALSE we override the "type" imposed by propagateType: always BOOLEAN
+        if(eSig.isBooleanOperatorExceptEQ(`name)) {
+          // for AND, TRUE, FALSE we override the "type" imposed by propagateType: always BOOLEAN
           type = `GomType(Signature.BOOLEAN);
-        }        
-        if(eSig.isBooleanOperatorEQ(`name)) { // for EQ we override the "type" imposed by propagateType: the type of its first argument
-            %match(args) {
-              TermList(arg,_*) -> {
-                if(this.getTypes(env,`arg).size() == 1){ // at least one type (ie well-typed) and only one (ie no Bottom)
-                  type = this.getTypes(env,`arg).get(0);
-                }else{  // normally shouldn't happen 
-                  throw new UntypableTermException("No possible type for "+`arg+" in term "+t);
-                }
+        } else if(eSig.isBooleanOperatorEQ(`name)) {
+          // for EQ we override the "type" imposed by propagateType: the type of its first argument
+          %match(args) {
+            TermList(arg,_*) -> {
+              if(this.getTypes(env,`arg).size() == 1) { // at least one type (ie well-typed) and only one (ie no Bottom)
+                type = this.getTypes(env,`arg).get(0);
+              } else {  // normally shouldn't happen 
+                throw new UntypableTermException("No possible type for "+`arg+" in term "+t);
               }
+            }
           }
         }
 
@@ -160,39 +167,43 @@ public class TypeCompiler {
         String typedName = null;
 
         // build the symbol name by adding the type information
-        if(eSig.getCodomainType(`name) != null){ // if term in the extracted signature then first check if it's well-typed
+        if(eSig.getCodomainType(`name) != null) {
+          // if term in the extracted signature then first check if it's well-typed
           fun = `name;
-          // if type mismatch than the rule should be eventually removed
           if(eSig.getCodomainType(`name) != type) {
+            // if type mismatch than the rule should be eventually removed
             throw new TypeMismatchException("BAD ARG: " + `name + " TRY TYPE " + type + " IN TERM "+t);
           }
           // don't change its name if symbol from original (extracted) signature
           typedName = `name;
-        }else{
+        } else {
           // retrieve fun from name of the form symbolName-fun_typeName
           fun = Tools.getOperatorName(`name);
           typedName = Tools.addTypeName(`name,type.getName()); // add type information to symbol name
         }
 
+        String nameMain = Tools.getSymbolNameMain(`name);
         // build the domain of the typed symbol
-        if(fun != null){ // if a composite symbol (e.g. all-f_...)  or symbol from original signature (eg  f, g, ...)
+        if(fun != null) {
+          // if a composite symbol (e.g. all-f_...)  or symbol from original signature (eg  f, g, ...)
           domain = eSig.getProfileType(fun);
-          if(domain == null){  // normally should'n happen (unless wrongly built symbol name)
+          if(domain == null) {
+            // normally should'n happen (unless wrongly built symbol name)
             throw new UntypableTermException("Type of symbol "+ fun +"cannot be determined");
           }
           // for all_f add the type of f(...) at the end
-          if(StrategyOperator.getStrategyOperator(Tools.getSymbolNameMain(`name))==StrategyOperator.ALL){
+          if(StrategyOperator.getStrategyOperator(nameMain)==StrategyOperator.ALL) {
             domain.add(type); 
           }
-        }else{  // if Boolean or Generated symbol
+        } else {  // if Boolean or Generated symbol
           domain = new ArrayList<GomType>();
-          if(!Tools.getSymbolNameMain(`name).equals(Signature.TRUE) && !Tools.getSymbolNameMain(`name).equals(Signature.FALSE)){ // if any arguments
+          if(!nameMain.equals(Signature.TRUE) && !nameMain.equals(Signature.FALSE)) { // if any arguments
             domain.add(type); // first argument has always the same type as the term
             if(eSig.isBooleanOperator(`name) || 
-               (Tools.isSymbolNameAux(`name) && StrategyOperator.getStrategyOperator(Tools.getSymbolNameMain(`name))==StrategyOperator.SEQ)){
+               (Tools.isSymbolNameAux(`name) && StrategyOperator.getStrategyOperator(nameMain)==StrategyOperator.SEQ)) {
               // if boolean operator (EQ or AND) or if aux symbol for SEQ (ie seqAux_...) then there is a second parameter of the same type
               domain.add(type);
-            }else if(Tools.isSymbolNameAux(`name) && StrategyOperator.getStrategyOperator(Tools.getSymbolNameMain(`name))==StrategyOperator.RULE){
+            } else if(Tools.isSymbolNameAux(`name) && StrategyOperator.getStrategyOperator(nameMain)==StrategyOperator.RULE){
               // if aux symbol for RULE (originating from a non-linear rule compilation) then there is a second parameter of type Bool
               domain.add(`GomType(Signature.BOOLEAN));
             }
@@ -208,7 +219,7 @@ public class TypeCompiler {
           Term typedArg = propagateType(env, arg, domain.get(i));
           if(typedArg != null) {
             newArgs = `TermList(newArgs*, typedArg);
-          }else{
+          } else {
             throw new UntypableTermException("Can't type argument " + arg +" in "+t);
           }
           i++;
@@ -228,11 +239,11 @@ public class TypeCompiler {
       s@Var(name) -> {
         // set the type in the environment
         GomType varType = env.get(`name);
-        if(varType != null){ // if type already set
-          if(varType != type){ // if try to assigne a different type
+        if(varType != null) { // if type already set
+          if(varType != type) { // if try to assign a different type
             throw new RuntimeException("Attemp to type variable with different type");
           }
-        }else{ // set type if not already done
+        } else { // set type if not already done
           env.put(`name,type);
         }
         // dont't change it

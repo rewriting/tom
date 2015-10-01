@@ -175,6 +175,7 @@ public class RuleCompiler {
          * x@q[!q'] -> bot(_) becomes   q[q'] -> r
          *                            x@q[z]  -> bot(x)
          */
+        // Not Yet Implemented
         return `t;
       }
     }
@@ -248,10 +249,10 @@ public class RuleCompiler {
    ********************************************************************************/
 
 
-  public Signature getExtractedSignature(){
+  public Signature getExtractedSignature() {
     return this.extractedSignature;
   }
-  public Signature getGeneratedSignature(){
+  public Signature getGeneratedSignature() {
     return this.generatedSignature;
   }
 

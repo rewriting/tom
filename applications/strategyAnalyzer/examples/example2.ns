@@ -23,9 +23,9 @@ td(s) = mu y.((s<+identity);all(y))
 
 repeat(s) = mu x.((s<+identity);x)
 
-mainStrat() = innermost(r3())
+//mainStrat() = innermost(r3())
 // mainStrat() = r3()
-// mainStrat() = r4() <+ identity
+ mainStrat() = r4() <+ identity
 
 //mainStrat() = repeat(r3())
 

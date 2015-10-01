@@ -17,11 +17,11 @@ public enum StrategyOperator{
     this.name = name;
   }
 
-  public String getName(){
+  public String getName() {
     return this.name;
   }
 
-  public static StrategyOperator getStrategyOperator(String name){
+  public static StrategyOperator getStrategyOperator(String name) {
     StrategyOperator op=NONE;
     switch (name){
       case "id":
@@ -54,4 +54,5 @@ public enum StrategyOperator{
       }
     return op;
   }
+
 }
