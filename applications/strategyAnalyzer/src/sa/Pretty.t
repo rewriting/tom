@@ -40,9 +40,9 @@ public class Pretty {
       Set(rulelist) -> {
         sb.append("{ ");
         %match(rulelist) {
-          RuleList(_*,x,end*) -> {
+          ConcRule(_*,x,end*) -> {
             sb.append(toString(`x));
-            if(!`end.isEmptyRuleList()) {
+            if(!`end.isEmptyConcRule()) {
               sb.append(", ");
             }
           }

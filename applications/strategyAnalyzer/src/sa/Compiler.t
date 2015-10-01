@@ -5,6 +5,7 @@ import java.util.*;
 import tom.library.sl.*;
 import aterm.*;
 import aterm.pure.*;
+import com.google.common.collect.*;
 
 public class Compiler {
   %include { rule/Rule.tom }
@@ -82,7 +83,7 @@ public class Compiler {
    * @param strategyName the name of the strategy to compile
    * @return the TRS for strategyName 
    */
-  public List<Rule>  compileStrategy(String strategyName) {
+  public List<Rule> compileStrategy(String strategyName) {
     Expression expand = this.expandStrategy(strategyName);
 
     Strat strategy=null;
@@ -315,7 +316,7 @@ public class Compiler {
             gSig.addSymbol(cr,`ConcGomType(Signature.TYPE_TERM,Signature.TYPE_TERM),Signature.TYPE_TERM);
 
             %match(rulelist) {
-              RuleList(_*,Rule(lhs,rhs),_*) -> {
+              ConcRule(_*,Rule(lhs,rhs),_*) -> {
 
                 //                 String lhsType="";
                 //                 %match(lhs) {
@@ -366,7 +367,7 @@ public class Compiler {
             gSig.addSymbol(cr,`ConcGomType(Signature.TYPE_METATERM,Signature.TYPE_BOOLEAN),Signature.TYPE_METATERM);
 
             %match(rulelist) {
-              RuleList(_*,Rule(lhs,rhs),_*) -> {
+              ConcRule(_*,Rule(lhs,rhs),_*) -> {
                 /*
                  * propagate failure
                  * rule(Bot(X)) -> Bot(X)
@@ -1020,7 +1021,7 @@ public class Compiler {
    * representing the number of occurences of the variable in the
    * (Visitable) Term
    */
-  public Map<String,Integer> collectMultiplicity(tom.library.sl.Visitable subject) {
+  private Map<String,Integer> collectMultiplicity(tom.library.sl.Visitable subject) {
     // collect variables
     List<String> variableList = new LinkedList<String>();
     try {
@@ -1030,7 +1031,7 @@ public class Compiler {
     }
 
     // compute multiplicities
-    HashMap<String,Integer> multiplicityMap = new HashMap<String,Integer>();
+    Map<String,Integer> multiplicityMap = new HashMap<String,Integer>();
     for(String varName:variableList) {
       if(multiplicityMap.containsKey(varName)) {
         int value = multiplicityMap.get(varName);

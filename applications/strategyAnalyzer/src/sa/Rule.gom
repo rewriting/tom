@@ -52,7 +52,7 @@ Condition =
           | CondTrue()
           | CondFalse()
 
-RuleList = RuleList(Rule*)
+RuleList = ConcRule(Rule*)
 
 Strat = StratName(name:String)
       | StratRule(rule:Rule)
