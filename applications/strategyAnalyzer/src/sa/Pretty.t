@@ -145,15 +145,18 @@ public class Pretty {
     }
   }
 
-  public static String generateAprove(List<Rule> bag, boolean innermost) 
+  public static String generateAprove(RuleList bag, boolean innermost) 
     throws VisitFailure {
     StringBuffer rulesb = new StringBuffer();
     Collection<String> varSet = new HashSet<String>();
 
     rulesb.append("\n(RULES\n");
-    for(Rule r:bag) {
-      `BottomUp(CollectVars(varSet)).visit(r);
-      rulesb.append("        " + toString(r) + "\n");
+    //     for(Rule r:bag) {
+    %match(bag) {
+      ConcRule(_*,r,_*) -> {
+        `BottomUp(CollectVars(varSet)).visit(`r);
+        rulesb.append("        " + toString(`r) + "\n");
+      }
     }
     rulesb.append(")\n");
 
@@ -171,7 +174,7 @@ public class Pretty {
     return varsb.toString()+rulesb.toString();
   }  
   
-  public static String generateTimbuk(List<Rule> bag, Signature generatedSignature) throws VisitFailure {
+  public static String generateTimbuk(RuleList bag, Signature generatedSignature) throws VisitFailure {
     StringBuffer rulesb = new StringBuffer();
     StringBuffer opsb = new StringBuffer();
     StringBuffer varsb = new StringBuffer();
@@ -183,9 +186,12 @@ public class Pretty {
     }
 
     rulesb.append("\nTRS R\n");
-    for(Rule r:bag) {
-      `BottomUp(CollectVars(varSet)).visit(r);
-      rulesb.append("        " + toString(r) + "\n");
+    //     for(Rule r:bag) {
+    %match(bag) {
+      ConcRule(_*,r,_*) -> {
+        `BottomUp(CollectVars(varSet)).visit(`r);
+        rulesb.append("        " + toString(`r) + "\n");
+      }
     }
 
     varsb.append("\nVars\n");
@@ -197,7 +203,7 @@ public class Pretty {
     return opsb.toString() + "\n" + varsb.toString() + "\n" + rulesb.toString();
   }  
 
-  public static String generateTom(String strategyName, String typeName, List<Rule> bag, Signature sig, String classname) {
+  public static String generateTom(String strategyName, String typeName, RuleList bag, Signature sig, String classname) {
     System.out.println("--------- TOM ----------------------");
     //     System.out.println("RULEs: " + toString(bag));
 
@@ -236,8 +242,11 @@ public class @classname@ {
 
     // generate rules
     sb.append("      module m:rules() {\n");
-    for(Rule r:bag) {
-      sb.append("        " + toString(r) + "\n");
+    //     for(Rule r:bag) {
+    %match(bag) {
+      ConcRule(_*,r,_*) -> {
+        sb.append("        " + toString(`r) + "\n");
+      }
     }
 
     String inputTypeName = Signature.TYPE_TERM.getName();

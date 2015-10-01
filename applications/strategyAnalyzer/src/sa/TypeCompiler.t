@@ -20,14 +20,14 @@ public class TypeCompiler {
   // The typed signature
   private Signature typedSignature;
   // The generated (ordered) TRS
-  private List<Rule> untypedRules;
-  private List<Rule> generatedRules;
+//   private RuleList untypedRules;
+  private RuleList generatedRules;
 
-  public TypeCompiler(Signature extractedSignature, List<Rule> untypedRules) {
+  public TypeCompiler(Signature extractedSignature) {
     this.extractedSignature = extractedSignature;
     this.typedSignature = new Signature(extractedSignature);
-    this.untypedRules = untypedRules;
-    this.generatedRules = new ArrayList<Rule>();
+//     this.untypedRules = untypedRules;
+    this.generatedRules = `ConcRule();
   }
 
   public Signature getExtractedSignature() {
@@ -38,60 +38,63 @@ public class TypeCompiler {
     return this.typedSignature;
   }
 
-  public List<Rule> getGeneratedRules() {
+  public RuleList getGeneratedRules() {
     return this.generatedRules;
   }
 
   /**
    * Transform each rewrite rule to a set of well-typed rules with the same behaviour. 
    **/
-  public void typeRules() {
+  public void typeRules(RuleList untypedRules) {
     Map<String,GomType> env = new HashMap<String,GomType>();
 
-    for(Rule rule: untypedRules) {
-      %match(rule) {
-        Rule(lhs@Appl(stratOp,TermList(arg,_*)), rhs) -> {
-          // get the possible codomain(s) for the head operator of the LHS
-          // - boolean operators: Bool
-          // - operators of the form ALL-f... : codomain of f
-          // - operators of the form CHOICE... (no ...-f) : codomain of its first argument
-          Collection<GomType> types = new HashSet<GomType>();
-          if(getExtractedSignature().isBooleanOperator(`stratOp)) {
-            // if head opearator of the rule is EQ or AND then the codomain should be BOOL 
-            types.add(Signature.TYPE_BOOLEAN);
-          } else { 
-            if(Tools.getOperatorName(`stratOp) != null) {
-              // if symbol of the form ALL-f... the codomain is given by the codomain of f
-              types = this.getTypes(env,`lhs);
+//     for(Rule rule: untypedRules) {
+    %match(untypedRules) {
+      ConcRule(_*,rule,_*) -> {
+        %match(rule) {
+          Rule(lhs@Appl(stratOp,TermList(arg,_*)), rhs) -> {
+            // get the possible codomain(s) for the head operator of the LHS
+            // - boolean operators: Bool
+            // - operators of the form ALL-f... : codomain of f
+            // - operators of the form CHOICE... (no ...-f) : codomain of its first argument
+            Collection<GomType> types = new HashSet<GomType>();
+            if(getExtractedSignature().isBooleanOperator(`stratOp)) {
+              // if head opearator of the rule is EQ or AND then the codomain should be BOOL 
+              types.add(Signature.TYPE_BOOLEAN);
             } else { 
-              // otherwise the codomain is given by the codomain of its argument
-              types = this.getTypes(env,`arg);
+              if(Tools.getOperatorName(`stratOp) != null) {
+                // if symbol of the form ALL-f... the codomain is given by the codomain of f
+                types = this.getTypes(env,`lhs);
+              } else { 
+                // otherwise the codomain is given by the codomain of its argument
+                types = this.getTypes(env,`arg);
+              }
             }
-          }
-          // normally shouldn't happen 
-          if(types.size() == 0) {
-            throw new UntypableTermException("RULE OMITTED for " + `stratOp + "  because no possible codomain");
-          }
+            // normally shouldn't happen 
+            if(types.size() == 0) {
+              throw new UntypableTermException("RULE OMITTED for " + `stratOp + "  because no possible codomain");
+            }
 
-          // for each potential codomain generate a new rule
-          // (the potential codomain is unique for all operators but for BOTTOM
-          // which can be of any type of the declared (ie extracted) signature
-          for(GomType type: types) {
-            try {
-              env = new HashMap<String,GomType>(); // start with fresh env for each rule generation
-              Term typedLhs = this.propagateType(env,`lhs,type); // type of all variables is inferred in env
-                                                                 // head symbol of LHS is added to the typed signature
-              Term typedRhs = this.propagateType(env,`rhs,type);
-              Rule newRule = `Rule(typedLhs, typedRhs);
-              this.generatedRules.add(newRule);
-            } catch(TypeMismatchException typeExc) {
-              System.err.println("RULE OMITTED for " + `stratOp + "  because of " + typeExc.getMessage());
+            // for each potential codomain generate a new rule
+            // (the potential codomain is unique for all operators but for BOTTOM
+            // which can be of any type of the declared (ie extracted) signature
+            for(GomType type: types) {
+              try {
+                env = new HashMap<String,GomType>(); // start with fresh env for each rule generation
+                Term typedLhs = this.propagateType(env,`lhs,type); // type of all variables is inferred in env
+                // head symbol of LHS is added to the typed signature
+                Term typedRhs = this.propagateType(env,`rhs,type);
+                Rule newRule = `Rule(typedLhs, typedRhs);
+                //                 this.generatedRules.add(newRule);
+                generatedRules = `ConcRule(newRule,generatedRules*);
+              } catch(TypeMismatchException typeExc) {
+                System.err.println("RULE OMITTED for " + `stratOp + "  because of " + typeExc.getMessage());
+              }
             }
           }
         }
       }
     }
-
     //     for(Rule rule: generatedRules) {
     //       System.out.println(" RULE "+ Pretty.toString(rule));
     //     }
