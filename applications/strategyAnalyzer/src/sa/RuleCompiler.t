@@ -39,12 +39,15 @@ public class RuleCompiler {
    * @param rules the rules to expand
    * @return the list of generatedRules (with no anti-paterns left)
    */
-  public List<Rule> expandAntiPatterns(List<Rule> rules) {
-    List<Rule> newRules = new ArrayList<Rule>();
-    for(Rule rule:rules) { 
-      List<Rule> genRules = this.expandAntiPatternInRule(rule);
-      // add the generated rules for rule to the result (list of rule)
-      newRules.addAll(genRules);
+  public RuleList expandAntiPatterns(RuleList rules) {
+    RuleList newRules = `ConcRule();
+    %match(rules) {
+      ConcRule(_*,rule,_*) -> {
+        RuleList genRules = this.expandAntiPatternInRule(`rule);
+        // add the generated rules for rule to the result (list of rule)
+        //         newRules.addAll(genRules);
+        newRules = `ConcRule(genRules*,newRules*);
+      }
     }
     return newRules;
   }  
@@ -55,8 +58,8 @@ public class RuleCompiler {
    * @param rule the rule to expand
    * @return the list of generated rules
    */
-  private List<Rule> expandAntiPatternInRule(Rule rule) {
-    List<Rule> genRules = new ArrayList<Rule>();
+  private RuleList expandAntiPatternInRule(Rule rule) {
+    RuleList genRules = `ConcRule();
     try {
       `OnceBottomUp(ContainsAntiPattern()).visitLight(rule); // check if the rule contains an anti-pattern (exception otherwise)
       List<Rule> bag = new ArrayList<Rule>();
@@ -65,12 +68,15 @@ public class RuleCompiler {
       // for each generated rule restart the expansion
       for(Rule expandr:bag) {
         // add the list of rules generated for the expandr rule to the final result
-        List<Rule> expandedRules = this.expandAntiPatternInRule(expandr);
-        genRules.addAll(expandedRules);
+        //         List<Rule> expandedRules = this.expandAntiPatternInRule(expandr);
+        RuleList expandedRules = this.expandAntiPatternInRule(expandr);
+        //         genRules.addAll(expandedRules);
+        genRules = `ConcRule(expandedRules*,genRules*);
       }
     } catch(VisitFailure e) {
       // add the rule since it contains no anti-pattern
-      genRules.add(rule);
+      //       genRules.add(rule);
+      genRules = `ConcRule(rule,genRules*);
     }
     return genRules;
   }
@@ -191,25 +197,28 @@ public class RuleCompiler {
     * @param bag the set of rules to expand
     * @return a new set that contains the expanded rules
     */
-  public  List<Rule> expandAt(List<Rule> bag) throws VisitFailure {
-    List<Rule> res = new ArrayList<Rule>();
-    for(Rule rule:bag) {
-      Map<String,Term> map = new HashMap<String,Term>();
-      `TopDown(CollectAt(map)).visitLight(rule);
-      if(map.keySet().isEmpty()) {
-        // if no AT in the rule just add it to the result
-        res.add(rule);
-      } else {
-        // if some AT in the rule then build a new one
-        Rule newRule = rule;
-        for(String name:map.keySet()) {
-          Term t = map.get(name);
-          // replace the ATs with the corresponding expressions
-          newRule = `TopDown(ReplaceVariable(name,t)).visitLight(newRule);
-          // and remove the ATs
-          newRule = `TopDown(EliminateAt()).visitLight(newRule);
+  public  RuleList expandAt(RuleList bag) throws VisitFailure {
+    RuleList res = `ConcRule();
+    %match(bag) {
+      ConcRule(_*,rule,_*) -> {
+        Map<String,Term> map = new HashMap<String,Term>();
+        `TopDown(CollectAt(map)).visitLight(`rule);
+        if(map.keySet().isEmpty()) {
+          // if no AT in the rule just add it to the result
+          res = `ConcRule(rule,res*);
+        } else {
+          // if some AT in the rule then build a new one
+          Rule newRule = `rule;
+          for(String name:map.keySet()) {
+            Term t = map.get(name);
+            // replace the ATs with the corresponding expressions
+            newRule = `TopDown(ReplaceVariable(name,t)).visitLight(newRule);
+            // and remove the ATs
+            newRule = `TopDown(EliminateAt()).visitLight(newRule);
+          }
+          //           res.add(newRule);
+          res = `ConcRule(newRule,res*);
         }
-        res.add(newRule);
       }
     }
     return res;
