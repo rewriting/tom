@@ -105,8 +105,7 @@ public class RuleCompiler {
         %match(antiterm) { 
           Appl(name,args)  -> {
             // add g(Z1,...) ... h(Z1,...)
-            Set<String> otherNames = new HashSet<String>(extractedSignature.getSymbolNames() );
-            for(String otherName:otherNames) {
+            for(String otherName: extractedSignature.getSymbols()) {
               if(!`name.equals(otherName)) {
                 int arity = extractedSignature.getArity(otherName);
                 Term newt = Tools.genAbstractTerm(otherName,arity,Tools.getName("Z"));

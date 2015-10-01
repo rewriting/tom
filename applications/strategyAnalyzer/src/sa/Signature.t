@@ -2,6 +2,7 @@ package sa;
 
 import sa.rule.types.*;
 import java.util.*;
+import com.google.common.collect.*;
 
 public class Signature {
   %include { rule/Rule.tom }
@@ -21,19 +22,22 @@ public class Signature {
   public final static String DECODE = "decode";
 
   // Types
-  public final static String BOOLEAN = "Bool";
-  public final static String TERM = "Term";
-  public final static String METASYMBOL = "MetaSymbol";
-  public final static String METATERM = "MetaTerm";
-  public final static String METALIST = "MetaList";
+  public final static GomType TYPE_BOOLEAN = `GomType("Bool");
+  public final static GomType TYPE_TERM = `GomType("Term");
+  public final static GomType TYPE_METASYMBOL = `GomType("MetaSymbol");
+  public final static GomType TYPE_METATERM = `GomType("MetaTerm");
+  public final static GomType TYPE_METALIST = `GomType("MetaList");
 
+  // R=Codomain x C=SymbolName -> V=Domain List of types
+  private HashBasedTable<GomType,String,GomTypeList> table;
 
-
-  // Codomain Type -> (SymbolName -> Domain List of types)
-  private Map<GomType,Map<String,List<GomType>>> signature;
 
   public Signature() {
-    this.signature = new HashMap<GomType,Map<String,List<GomType>>>(); 
+    this.table = HashBasedTable.create();
+  }
+
+  public Signature(Signature from) {
+    this.table = HashBasedTable.create(from.table);
   }
 
   public boolean isBooleanOperator(String opname) {
@@ -58,39 +62,18 @@ public class Signature {
    */
   public void setSignature(Program program) {
     %match(program) {
-      Program(ConcProduction(_*,SortType(type,symb),_*),_) -> {
-        Map<String,List<GomType>> symbols = new HashMap<String,List<GomType>>(); 
-        %match(symb) {
-          ConcAlternative(_*,Alternative(name,args,codomain),_*) -> {
-            if(`codomain != `type) {
-              throw new TypeMismatchException();
-            }
-            List<GomType> arguments = new ArrayList<GomType>(); 
-            %match(args) {
-              ConcField(_*,UnamedField(argType),_*) -> {
-                arguments.add(`argType);
-              }
-            }
-            symbols.put(`name,arguments);
+      Program(ConcProduction(_*,SortType(codomain,ConcAlternative(_*,Alternative(name,args,codomain),_*)),_*),_) -> {
+        GomTypeList domain = `ConcGomType();
+        %match(args) {
+          ConcField(_*,UnamedField(argType),_*) -> {
+            domain = `ConcGomType(domain*,argType);
           }
         }
-        signature.put(`type,symbols);
+        addSymbol(`name,domain,`codomain);
       }
     }
   }
   
-  public Signature cloneSignature()  {
-    Signature res = new Signature();
-    // clone everything (lists could be just copied since normally not modified later on)
-    for(GomType type: this.signature.keySet()) {
-      for(String symbol: signature.get(type).keySet()) {
-        List<GomType> domain = this.getProfileType(symbol);
-        res.addSymbolType(symbol,domain,type);
-      }
-    }
-    return res;
-  }
-
   /**
    * Create an expanded signature containing the symbols in the
    * current one (set from a program) and builtin symbols used in the
@@ -99,218 +82,127 @@ public class Signature {
    */
   public Signature expandSignature()  {
     Signature expandedSignature = new Signature();
-    // clone everything (lists could be just copied since normally not modified later on)
-    for(GomType type: this.signature.keySet()) {
-      for(String symbol: signature.get(type).keySet()) {
-        List<String> domain = new ArrayList<String>();
+    // clone everything, but forget types (use TERM instead)
+    for(GomType type: getCodomains()) {
+      for(String symbol: getSymbols()) {
+        GomTypeList domain = `ConcGomType();
         for(int i=0 ; i < getArity(symbol) ; i++) {
-          domain.add(TERM);
+          domain = `ConcGomType(TYPE_TERM, domain*);
         }
-        expandedSignature.addSymbol(symbol,domain,TERM);
+        expandedSignature.addSymbol(symbol,domain,TYPE_TERM);
       }
     }
 
     if(Main.options.metalevel) {
       // add: Appl, Cons, Nil, BottomList
-      expandedSignature.addSymbol(APPL,Arrays.asList(METASYMBOL,METALIST),METATERM);
-      expandedSignature.addSymbol(CONS,Arrays.asList(METATERM,METALIST),METALIST);
-      expandedSignature.addSymbol(NIL,new ArrayList<String>(),METALIST);
-      expandedSignature.addSymbol(BOTTOMLIST,Arrays.asList(METALIST),METALIST);
+      expandedSignature.addSymbol(APPL,`ConcGomType(TYPE_METASYMBOL,TYPE_METALIST),TYPE_METATERM);
+      expandedSignature.addSymbol(CONS,`ConcGomType(TYPE_METATERM,TYPE_METALIST),TYPE_METALIST);
+      expandedSignature.addSymbol(NIL,`ConcGomType(),TYPE_METALIST);
+      expandedSignature.addSymbol(BOTTOMLIST,`ConcGomType(TYPE_METALIST),TYPE_METALIST);
     }
 
     // add: True, False, and, eq
-    expandedSignature.addSymbol(TRUE,new ArrayList<String>(),BOOLEAN);
-    expandedSignature.addSymbol(FALSE,new ArrayList<String>(),BOOLEAN);
-    expandedSignature.addSymbol(AND,Arrays.asList(BOOLEAN,BOOLEAN),BOOLEAN);
-    expandedSignature.addSymbol(EQ,Arrays.asList(TERM,TERM),BOOLEAN);
+    expandedSignature.addSymbol(TRUE,`ConcGomType(),TYPE_BOOLEAN);
+    expandedSignature.addSymbol(FALSE,`ConcGomType(),TYPE_BOOLEAN);
+    expandedSignature.addSymbol(AND,`ConcGomType(TYPE_BOOLEAN,TYPE_BOOLEAN),TYPE_BOOLEAN);
+    expandedSignature.addSymbol(EQ,`ConcGomType(TYPE_TERM,TYPE_TERM),TYPE_BOOLEAN);
 
     // add: bottom
     if(!Main.options.metalevel) {
-      expandedSignature.addSymbol(BOTTOM,Arrays.asList(TERM),TERM);
+      expandedSignature.addSymbol(BOTTOM,`ConcGomType(TYPE_TERM),TYPE_TERM);
     } else {
-      expandedSignature.addSymbol(BOTTOM,Arrays.asList(METATERM),METATERM);
+      expandedSignature.addSymbol(BOTTOM,`ConcGomType(TYPE_METATERM),TYPE_METATERM);
     }
 
     // for metalevel + Tom code
     if(Main.options.metalevel && Main.options.classname != null) {
       // add: encode, decode
-      expandedSignature.addSymbol(ENCODE,Arrays.asList(TERM),METATERM);
-      expandedSignature.addSymbol(DECODE,Arrays.asList(METATERM),TERM);
+      expandedSignature.addSymbol(ENCODE,`ConcGomType(TYPE_TERM),TYPE_METATERM);
+      expandedSignature.addSymbol(DECODE,`ConcGomType(TYPE_METATERM),TYPE_TERM);
     }
     return expandedSignature;
   }
 
-  /**
-   * Add a symbol (with the corresponding profile).
-   * @param name the name of the symbol
-   * @param argTypes the types of its arguments
-   * @param codomain the return type 
-   */
-  public void addSymbol(String name, List<String> argTypes, String codomain) {
-    List<GomType> domain = new ArrayList<GomType>();
-    for(String s: argTypes) {
-      domain.add(`GomType(s));
-    }
-    addSymbolType(name,domain,`GomType(codomain));
-  }
-
-  public void addSymbolType(String name, List<GomType> argTypes, GomType codomain) {
-    Map<String,List<GomType>> symbols = this.signature.get(codomain);
-    // if type of codomain doesn't exist then create it
-    if(symbols==null) {
-      symbols = new HashMap<String,List<GomType>>();
-    }
-    // create arguments' types list
-    List<GomType> args = new ArrayList<GomType>();
-    for(GomType argType:argTypes) {
-      args.add(argType);
-    }
-    // detect overloading
-    List<GomType> oldDomain = symbols.put(name.intern(),args);
-    if(oldDomain != null) {
-      //       System.out.println(%[redefinition: '@name@'@oldDomain@ becomes '@name@'@args@]%);
-    }
-    signature.put(codomain,symbols); 
-  }
-
-  /** Get codomain for symbol
-   */
-  public GomType getCodomainType(String symbol) {
-    for(GomType type: this.signature.keySet()) {
-      if(this.signature.get(type).get(symbol) != null) {
-        return type;
-      }
-    }
-    return null;
-  }
-
-  public String getCodomain(String symbol) {
-    if(this.getCodomainType(symbol) != null) {
-        return this.getCodomainType(symbol).getName();
-    }
-    return null;
-  }
-
-  /** Get the list of types of its arguments
-   * @param symbol the name of the symbol
-   * @return the list of types of its arguments
-   */
-  public List<GomType> getProfileType(String symbol) {
-    List<GomType> res = null;
-    for(GomType type: this.signature.keySet()) {
-      List<GomType> profile = this.signature.get(type).get(symbol);
-      if(profile!=null) {
-        res = new ArrayList<GomType>();
-        // pem: make a defensive copy of the list?
-        for(GomType argtype:profile) {
-          res.add(argtype);
-        }
-        return res;
-      }
-    }
-    return res;
-  }
-
-  public List<String> getProfile(String symbol) {
-    List<GomType> profile = getProfileType(symbol);
-    List<String> res = null;
-    if(profile != null){
-      res = new ArrayList<String>();
-      for(GomType type: profile) {
-          res.add(type.getName());
-      }
-    }
-    return res;
-  }
 
   /** Get the arity of a symbol
    * @param symbol the name of the symbol
    * @return the arity of the symbol
    */
   public int getArity(String symbol) {
-    int arity = -1;
-    if(this.getProfile(symbol)!=null) {
-      arity = this.getProfile(symbol).size();
+    GomTypeList domain = getDomain(symbol);
+    if(domain != null) {
+      return domain.length();
     }
-    return arity;
+    return -1;
   }
 
-  /** Get the list of all types
-   * @return the list of types in the signature
+  /**
+   * Add a symbol (with the corresponding profile).
+   * @param name the name of the symbol
+   * @param domain the types of its arguments
+   * @param codomain the return type 
    */
-  public Set<GomType> getTypes() {
-    return signature.keySet();
-  }
-
-  /** Get the list of all symbols
-   * @return the list of symbols in the signature
-   */
-  public List<String> getTypeNames() {
-    List<String> types = new ArrayList<String>();
-    for(GomType type: this.signature.keySet()) {
-      types.add(type.getName());
-    }
-    return types;
-  }
-
-  /** Get the profiles for the symbols of a given type
-   * @return the map of profiles for the symbols of a given type
-   */
-  public Map<String,List<GomType>> getSymbolsOfType(GomType type) {
-    return signature.get(type);
-  }
-
-  /** Get the list of all symbols
-   * @return the list of symbols in the signature
-   */
-  public List<String> getSymbolNames() {
-    List<String> symbols = new ArrayList<String>();
-
-    for(GomType type: this.signature.keySet()) {
-      symbols.addAll(signature.get(type).keySet());
-    }
-    return symbols;
-  }
-
-  /** Get the list of symbols for a given typeName
-    * @typeName the name of the type
-    * @return the list of symbols in the type
-   */
-  public List<String> getSymbolNames(String typeName) {
-    List<String> symbols = new ArrayList<String>();
-    symbols.addAll(signature.get(`GomType(typeName)).keySet());
-    return symbols;
+  public void addSymbol(String name, GomTypeList domain, GomType codomain) {
+    table.put(codomain, name.intern(), domain);
   }
 
 
-  /** Set the profiles of symbols for a given type
-    * @type the type to be enhanced
-    * @newProfiles the profiles of the symbols to be added
+  /** Get the list of all codomains
+   * @return the list of codomains in the table
    */
-  public void addProfilesForType(GomType type, Map<String,List<GomType>> newProfiles) {
-    Map<String,List<GomType>> profiles = signature.get(type);
-    if(profiles == null){
-      signature.put(type, newProfiles);
-    }else{
-      for(String symbol: newProfiles.keySet()){
-        // TODO: 
-        if(profiles.get(symbol)!=null){
-          System.out.println("WARNING: Symbol already in the generated signature");
-        }
-        profiles.put(symbol, newProfiles.get(symbol));
+  public Set<GomType> getCodomains() {
+    return table.rowKeySet();
+  }
+
+  /** 
+   * Get the unique codomain for symbol
+   * @return the codomain or null if symbol does not exist
+   */
+  public GomType getCodomain(String symbol) {
+    for(GomType type: getCodomains()) {
+      if(getDomain(type,symbol) != null) {
+        return type;
       }
     }
+    return null;
   }
 
-  /** Remove the profiles of symbols for a given type
-    * @type the type
+  /** 
+   * Get the unique domain for symbol
+   * @return the domain or null if symbol does not exist
    */
-  public void removeType(GomType type) {
-    signature.remove(type);
+  public GomTypeList getDomain(String symbol) {
+    GomType codomain = getCodomain(symbol);
+    if(codomain != null) {
+      return getDomain(codomain, symbol);
+    }
+    return null;
   }
 
+  /** 
+   * Get the unique domain for symbol and a codomain
+   * @return the domain or null if symbol does not exist
+   */
+  private GomTypeList getDomain(GomType codomain, String symbol) {
+    return table.get(codomain,symbol);
+  }
+
+  /** Get the set of all symbols
+   * @return the set of symbols in the signature
+   */
+  public Set<String> getSymbols() {
+    return table.columnKeySet();
+  }
+
+  /** Get the set of symbols for a given codomain
+    * @codomain the type of the codomain
+    * @return the list of symbols in the type
+   */
+  public Set<String> getSymbols(GomType codomain) {
+    return table.row(codomain).keySet();
+  }
 
   public String toString() {
-    return "" + this.signature;
+    return "" + this.table;
   }
 }

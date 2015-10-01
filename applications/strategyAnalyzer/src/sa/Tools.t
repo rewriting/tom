@@ -62,7 +62,7 @@ public class Tools {
   public static String getSymbolName(String symbol) {
     int last = symbol.indexOf('_');
     if(last == -1) {
-      last=symbol.length();
+      return symbol; //last=symbol.length();
     }
     return symbol.substring(0,last);
   }
@@ -72,12 +72,13 @@ public class Tools {
    * @returns true if of the form symbolNameAUX; false otherwise
    */
   public static boolean isSymbolNameAux(String symbol) {
-    boolean res = false;
-    String name = getSymbolName(symbol);
-    if(name.length() > AUX.length()) {
-      res = name.substring(name.length()-AUX.length(),name.length()).equals(AUX);
-    }
-    return res;
+    //boolean res = false;
+    //String name = getSymbolName(symbol);
+    //if(name.length() > AUX.length()) {
+    //  res = name.substring(name.length()-AUX.length(),name.length()).equals(AUX);
+    //}
+    //return res;
+    return getSymbolName(symbol).endsWith(AUX);
   }
 
   /**
@@ -160,9 +161,9 @@ public class Tools {
       Appl(symb,args) -> {
         String symbName = "symb_" + `symb;
         if(!Main.options.metalevel) {
-          signature.addSymbol(symbName,new ArrayList<String>(),Signature.TERM);
+          signature.addSymbol(symbName,`ConcGomType(),Signature.TYPE_TERM);
         } else {
-          signature.addSymbol(symbName,new ArrayList<String>(),Signature.METASYMBOL);
+          signature.addSymbol(symbName,`ConcGomType(),Signature.TYPE_METASYMBOL);
         }
         //return "Appl(" + symbName + "," + encodeConsNil(`args,signature) + ")";
         return Appl(_appl(symbName), encodeConsNil(`args,signature));

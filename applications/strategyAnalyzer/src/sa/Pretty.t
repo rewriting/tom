@@ -178,7 +178,7 @@ public class Pretty {
     Collection<String> varSet = new HashSet<String>();
 
     opsb.append("\nOps\n");
-    for(String name: generatedSignature.getSymbolNames()) {
+    for(String name: generatedSignature.getSymbols()) {
       opsb.append(generateJavaName(name)  + ":" + generatedSignature.getArity(name) + " ");
     }
 
@@ -197,7 +197,7 @@ public class Pretty {
     return opsb.toString() + "\n" + varsb.toString() + "\n" + rulesb.toString();
   }  
 
-  public static String generateTom(String strategyName, String type, List<Rule> bag, Signature sig, String classname) {
+  public static String generateTom(String strategyName, String typeName, List<Rule> bag, Signature sig, String classname) {
     System.out.println("--------- TOM ----------------------");
     //     System.out.println("RULEs: " + toString(bag));
 
@@ -213,16 +213,22 @@ public class @classname@ {
       abstract syntax
 ]%);
     // generate signature
-    for(String typeName: sig.getTypeNames()) {
-      sb.append("      " + typeName + " = \n");
-      for(String name: sig.getSymbolNames(typeName)) {
+    for(GomType codomain: sig.getCodomains()) {
+      sb.append("      " + codomain.getName() + " = \n");
+      for(String name: sig.getSymbols(codomain)) {
         int arity = sig.getArity(name);
-        List<String> profile = sig.getProfile(name);
+        GomTypeList domain = sig.getDomain(name);
         String args = "";
-        for(int i=0 ; i<arity ; i++) {
-          args += "kid" + i + "_" + profile.get(i) + ":" + profile.get(i);
+        int i = 0;
+        while(!domain.isEmptyConcGomType()) {
+          String argTypeName = domain.getHeadConcGomType().getName();
+          args += "kid" + i + "_" + argTypeName + ":" + argTypeName;
           if(i+1<arity) { args += ","; }
+          domain = domain.getTailConcGomType();
+          i++;
         }
+
+
         sb.append("        | " + generateJavaName(name) + "(" + args + ")\n");
       }
 
@@ -234,9 +240,9 @@ public class @classname@ {
       sb.append("        " + toString(r) + "\n");
     }
 
-    String inputType = Signature.TERM;
-    if(type != null){ // if typed compilation and initial term of type type
-      inputType = type;
+    String inputTypeName = Signature.TYPE_TERM.getName();
+    if(typeName != null) { // if typed compilation and initial term of type typeName
+      inputTypeName = typeName;
     }
 
     sb.append(%[
@@ -246,7 +252,7 @@ public class @classname@ {
   public static void main(String[] args) {
     try {
       BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-      @inputType@ input = @inputType@.fromString(reader.readLine());
+      @inputTypeName@ input = @inputTypeName@.fromString(reader.readLine());
       long start = System.currentTimeMillis();
       ]%);
 
@@ -255,8 +261,8 @@ public class @classname@ {
   if(Compiler.getInstance().getStrategyNames().contains(strategyName)){
      name = strategyName;
   }
-  if(type != null){ // if typed compilation and initial term of type type
-      name += "_"+type;
+  if(typeName != null) { // if typed compilation and initial term of type typeName
+      name += "_" + typeName;
   }
 
   if(Main.options.metalevel) {
@@ -265,7 +271,7 @@ public class @classname@ {
       ]%);
   } else {
       sb.append(%[
-      @inputType@ t = `@name@(input);
+      @inputTypeName@ t = `@name@(input);
       ]%);
   }
 

@@ -5,6 +5,7 @@
   <property environment="env"/>
   <property name="tom.home"    location="../../src/dist"/>
   <property name="sa.dir"      location="."/>
+  <property name="sa.lib"      location="${sa.dir}/lib"/>
   <property name="sa.src"      location="${sa.dir}/src"/>
   <property name="sa.gen"      location="${sa.dir}/gen"/>
   <property name="sa.build"    location="${sa.dir}/build"/>
@@ -15,16 +16,15 @@
 
   <import file="${tom.home}/lib/tom-common.xml"/>
 
-    <path id="tom.classpath">
-      <path refid="external.classpath"/>
-      <fileset dir="${tom.home}/lib">
-	<include name="**/*.jar"/>
-      </fileset>
-    </path>
+  <path id="tom.classpath">
+    <path refid="external.classpath"/>
+    <fileset dir="${tom.home}/lib">
+      <include name="**/*.jar"/>
+    </fileset>
+  </path>
 
   <taskdef name="antlr3"
     classname="org.apache.tools.ant.antlr.ANTLR3">
-
     <classpath refid="tom.classpath"/>
   </taskdef>
 
@@ -65,9 +65,7 @@
   </target>
 
   <target name="javac" depends="tom, antlr">
-
     <javac.preset source="1.7"  target="1.7"  destdir="${sa.build}" includeantruntime="false">
-      <!--<src path="${sa.src}"/>-->
       <src path="${sa.gen}"/>
       <src path="${sa.src}"/>
       <include name="**/*.java"/>
