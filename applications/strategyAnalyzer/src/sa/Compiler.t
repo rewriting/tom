@@ -985,6 +985,7 @@ public class Compiler {
    * Transform lhs into linear-lhs + true ^ constraint on non linear variables
    * TODO: not really related to the Compiler but more to the Tools (for Terms)
    */
+  // TODO: use HashMultiset
   private TermList linearize(Term lhs) {
     Map<String,Integer> map = this.collectMultiplicity(lhs);
     Map<String,String> mapToOldName = new HashMap<String,String>();
@@ -1011,6 +1012,7 @@ public class Compiler {
   
   // for Main.options.metalevel we need the (generated)signature 
   //   -> in previous versions it was one of the parameters
+  // TODO: use HashMultiset
   %strategy ReplaceWithFreshVar(compiler:Compiler,name:String, multiplicityMap:Map, map:Map) extends Identity() {
     visit Term {
       Var(n)  -> {
