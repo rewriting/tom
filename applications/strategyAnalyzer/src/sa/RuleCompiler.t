@@ -1,7 +1,10 @@
 package sa;
 
 import sa.rule.types.*;
-import java.util.*;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.HashMap;
 import tom.library.sl.*;
 import aterm.*;
 import aterm.pure.*;

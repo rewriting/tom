@@ -1,7 +1,11 @@
 package sa;
 
 import sa.rule.types.*;
-import java.util.*;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Set;
+import java.util.Map;
+import java.util.HashMap;
 import tom.library.sl.*;
 import aterm.*;
 import aterm.pure.*;
@@ -1032,7 +1036,7 @@ public class Compiler {
    */
   private Map<String,Integer> collectMultiplicity(tom.library.sl.Visitable subject) {
     // collect variables
-    List<String> variableList = new LinkedList<String>();
+    List<String> variableList = new ArrayList<String>();
     try {
       `TopDown(CollectVars(variableList)).visitLight(subject);
     } catch(VisitFailure e) {
