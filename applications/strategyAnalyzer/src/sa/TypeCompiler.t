@@ -1,7 +1,10 @@
 package sa;
 
 import sa.rule.types.*;
-import java.util.*;
+import java.util.Set;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.HashMap;
 import tom.library.sl.*;
 import aterm.*;
 import aterm.pure.*;
@@ -9,9 +12,9 @@ import aterm.pure.*;
 public class TypeCompiler {
   %include { rule/Rule.tom }
   %include { sl.tom }
-  %include { java/util/types/Map.tom }
-  %include { java/util/types/List.tom }
-  %include { java/util/types/ArrayList.tom }
+//   %include { java/util/types/Map.tom }
+//   %include { java/util/types/List.tom }
+//   %include { java/util/types/ArrayList.tom }
 
   %typeterm Signature { implement { Signature } }
 
@@ -20,13 +23,11 @@ public class TypeCompiler {
   // The typed signature
   private Signature typedSignature;
   // The generated (ordered) TRS
-//   private RuleList untypedRules;
   private RuleList generatedRules;
 
   public TypeCompiler(Signature extractedSignature) {
     this.extractedSignature = extractedSignature;
     this.typedSignature = new Signature(extractedSignature);
-//     this.untypedRules = untypedRules;
     this.generatedRules = `ConcRule();
   }
 
@@ -46,9 +47,9 @@ public class TypeCompiler {
    * Transform each rewrite rule to a set of well-typed rules with the same behaviour. 
    **/
   public void typeRules(RuleList untypedRules) {
+    this.generatedRules = `ConcRule();
     Map<String,GomType> env = new HashMap<String,GomType>();
 
-//     for(Rule rule: untypedRules) {
     %match(untypedRules) {
       ConcRule(_*,rule,_*) -> {
         %match(rule) {
@@ -57,7 +58,7 @@ public class TypeCompiler {
             // - boolean operators: Bool
             // - operators of the form ALL-f... : codomain of f
             // - operators of the form CHOICE... (no ...-f) : codomain of its first argument
-            Collection<GomType> types = new HashSet<GomType>();
+            Set<GomType> types = new HashSet<GomType>();
             if(getExtractedSignature().isBooleanOperator(`stratOp)) {
               // if head opearator of the rule is EQ or AND then the codomain should be BOOL 
               types.add(Signature.TYPE_BOOLEAN);
@@ -95,18 +96,14 @@ public class TypeCompiler {
         }
       }
     }
-    //     for(Rule rule: generatedRules) {
-    //       System.out.println(" RULE "+ Pretty.toString(rule));
-    //     }
-
   }
 
   /** Get the potential types of a term by looking at its head symbol
    *  The head symbol can be a symbol from the extracted signature or Bottom or a boolean operator
    *  (symbol can't be a generated)
    */  
-  private List<GomType> getTypes(Map<String,GomType> env, Term term) {
-    List<GomType> types = new ArrayList<GomType>();
+  private Set<GomType> getTypes(Map<String,GomType> env, Term term) {
+    Set<GomType> types = new HashSet<GomType>();
     Signature eSig = this.getExtractedSignature();
     %match(term) {
         Appl(symbol,_) -> {
@@ -157,7 +154,8 @@ public class TypeCompiler {
           %match(args) {
             TermList(arg,_*) -> {
               if(this.getTypes(env,`arg).size() == 1) { // at least one type (ie well-typed) and only one (ie no Bottom)
-                type = this.getTypes(env,`arg).get(0);
+                //                 type = this.getTypes(env,`arg).get(0);
+                type = this.getTypes(env,`arg).iterator().next(); // get the "first" (and only) element 
               } else {  // normally shouldn't happen 
                 throw new UntypableTermException("No possible type for "+`arg+" in term "+t);
               }

@@ -1,7 +1,6 @@
 package sa;
 
 import sa.rule.types.*;
-import java.util.*;
 import com.google.common.collect.*;
 
 public class Signature {
