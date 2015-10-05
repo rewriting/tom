@@ -327,7 +327,7 @@ public class Compiler {
           if(!Main.options.metalevel) {
             // if declared strategy (i.e. defined name) use its name; otherwise generate fresh name
             gSig.addSymbol(rule,`ConcGomType(Signature.TYPE_TERM),Signature.TYPE_TERM);
-            gSig.addSymbol(cr,`ConcGomType(Signature.TYPE_TERM,Signature.TYPE_TERM),Signature.TYPE_TERM);
+            gSig.addSymbol(cr,`ConcGomType(Signature.TYPE_TERM,Signature.TYPE_BOOLEAN),Signature.TYPE_TERM);
 
             %match(rulelist) {
               ConcRule(_*,Rule(lhs,rhs),_*) -> {
