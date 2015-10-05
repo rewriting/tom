@@ -18,6 +18,7 @@ public class Compiler {
   %include { java/util/types/List.tom }
 
   %typeterm Compiler { implement { Compiler }}
+  %typeterm HashMultiset { implement { HashMultiset }}
 
   private static Compiler instance = null;
 
@@ -987,18 +988,20 @@ public class Compiler {
    */
   // TODO: use HashMultiset
   private TermList linearize(Term lhs) {
-    Map<String,Integer> map = this.collectMultiplicity(lhs);
     Map<String,String> mapToOldName = new HashMap<String,String>();
+    HashMultiset<String> bag = this.collectMultiplicity(lhs);
 
-    for(String name:map.keySet()) {
-      if(map.get(name) > 1) {
-        try {
-          HashMap copy = new HashMap(map);
-          lhs = `TopDown(ReplaceWithFreshVar(this,name,copy,mapToOldName)).visitLight(lhs);
-        } catch(VisitFailure e) {
-          throw new RuntimeException("Should not be there");
-        }
+    for(String name:bag.elementSet()) {
+      if(bag.count(name) == 1) {
+        bag.remove(name);
       }
+    }
+
+
+    try {
+      lhs = `TopDown(ReplaceWithFreshVar(this,bag,mapToOldName)).visitLight(lhs);
+    } catch(VisitFailure e) {
+      throw new RuntimeException("Should not be there");
     }
 
     Term constraint = `Appl("True",TermList());
@@ -1013,14 +1016,13 @@ public class Compiler {
   // for Main.options.metalevel we need the (generated)signature 
   //   -> in previous versions it was one of the parameters
   // TODO: use HashMultiset
-  %strategy ReplaceWithFreshVar(compiler:Compiler,name:String, multiplicityMap:Map, map:Map) extends Identity() {
+  %strategy ReplaceWithFreshVar(compiler:Compiler, bag:HashMultiset, map:Map) extends Identity() {
     visit Term {
       Var(n)  -> {
-        int value = (Integer)multiplicityMap.get(`name);
-        if(`n.compareTo(`name)==0 && value>1) {
+        if(bag.count(`n) > 1) {
+          bag.remove(`n);
           String z = Tools.getName("Z");
           map.put(z,`n);
-          multiplicityMap.put(`name, value - 1);
           Term newt = `Var(z);
           if(Main.options.metalevel) {
             newt = Tools.metaEncodeConsNil(newt,compiler.generatedSignature);
@@ -1036,30 +1038,20 @@ public class Compiler {
    * representing the number of occurences of the variable in the
    * (Visitable) Term
    */
-  private Map<String,Integer> collectMultiplicity(tom.library.sl.Visitable subject) {
+  private HashMultiset<String> collectMultiplicity(tom.library.sl.Visitable subject) {
     // collect variables
-    List<String> variableList = new ArrayList<String>();
+    HashMultiset<String> bag = HashMultiset.create();
     try {
-      `TopDown(CollectVars(variableList)).visitLight(subject);
+      `TopDown(CollectVars(bag)).visitLight(subject);
     } catch(VisitFailure e) {
       throw new RuntimeException("Should not be there");
     }
 
-    // compute multiplicities
-    Map<String,Integer> multiplicityMap = new HashMap<String,Integer>();
-    for(String varName:variableList) {
-      if(multiplicityMap.containsKey(varName)) {
-        int value = multiplicityMap.get(varName);
-        multiplicityMap.put(varName, 1 + value);
-      } else {
-        multiplicityMap.put(varName, 1);
-      }
-    }
-    return multiplicityMap;
+    return bag;
   }
 
   // search all Var and store their values
-  %strategy CollectVars(bag:List) extends Identity() {
+  %strategy CollectVars(bag:HashMultiset) extends Identity() {
     visit Term {
       Var(name)-> {
         bag.add(`name);
