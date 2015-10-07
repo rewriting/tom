@@ -324,7 +324,7 @@ public class Compiler {
               /*
                * if non-linear add rules for checking equality for corresponding arguments
                * rule(X@linearlhs) -> cr(X,cond)
-               * rule(X@!linearlhs) -> Bot(X)
+               * rule(X@!linearlhs) -> nextRule(X)       // could be Bot(X) if only one rule, i.e. non next rule
                * cr(linearlhs, True) -> rhs
                * cr(X@linearlhs, False) -> nextRule(X)       // could be Bot(X) if only one rule, i.e. non next rule
                */
