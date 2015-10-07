@@ -12,6 +12,21 @@ import aterm.*;
 import aterm.pure.*;
 import com.google.common.collect.*;
 
+import static sa.Tools.Var;
+import static sa.Tools.Anti;
+import static sa.Tools.At;
+import static sa.Tools.Bottom;
+import static sa.Tools.BottomList;
+import static sa.Tools.True;
+import static sa.Tools.False;
+import static sa.Tools.And;
+import static sa.Tools.Eq;
+import static sa.Tools.Appl;
+import static sa.Tools.Rule;
+import static sa.Tools.Nil;
+import static sa.Tools.Cons;
+import static sa.Tools._appl;
+
 public class Compiler {
   %include { rule/Rule.tom }
   %include { sl.tom }
@@ -242,30 +257,6 @@ public class Compiler {
       }
     }
   }
-
-
-  private Term Var(String name) { return `Var(name); }
-  private Term Anti(Term t) { return `Anti(t); }
-  private Term At(Term t1, Term t2) { return `At(t1,t2); }
-  private Term Bottom(Term t) { return _appl(Signature.BOTTOM,t); }
-  private Term BottomList(Term t) { return _appl(Signature.BOTTOMLIST,t); }
-  private Term True() { return _appl(Signature.TRUE); }
-  private Term False() { return _appl(Signature.FALSE); }
-  private Term And(Term t1, Term t2) { return _appl(Signature.AND,t1,t2); }
-  private Term Eq(Term t1, Term t2) { return _appl(Signature.EQ,t1,t2); }
-  private Term Appl(Term t1, Term t2) { return _appl(Signature.APPL,t1,t2); }
-  private Rule Rule(Term lhs, Term rhs) { return `Rule(lhs,rhs); }
-  private Term Nil() { return _appl(Signature.NIL); }
-  private Term Cons(Term t1, Term t2) { return _appl(Signature.CONS,t1,t2); }
-
-  private Term _appl(String name, Term... args) {
-    TermList tl = `TermList();
-    for(Term t:args) {
-      tl = `TermList(tl*,t);
-    }
-    return `Appl(name,tl);
-  }
-
 
   /**
    * compile a (ordered) list of rules

@@ -131,13 +131,21 @@ public class Tools {
 
 
   /*** helpers to build AST ***/
-  private static Term Anti(Term t) { return `Anti(t); }
-  private static Term Var(String name) { return `Var(name); }
-  private static Term Appl(Term t1, Term t2) { return _appl(Signature.APPL,t1,t2); }
-  private static Rule Rule(Term lhs, Term rhs) { return `Rule(lhs,rhs); }
-  private static Term Nil() { return _appl(Signature.NIL); }
-  private static Term Cons(Term t1, Term t2) { return _appl(Signature.CONS,t1,t2); }
-  private static Term _appl(String name, Term... args) {
+  public static Term Var(String name) { return `Var(name); }
+  public static Term Anti(Term t) { return `Anti(t); }
+  public static Term At(Term t1, Term t2) { return `At(t1,t2); }
+  public static Term Bottom(Term t) { return _appl(Signature.BOTTOM,t); }
+  public static Term Bottom2(Term t1,Term t2) { return _appl(Signature.BOTTOM,t1,t2); }
+  public static Term BottomList(Term t) { return _appl(Signature.BOTTOMLIST,t); }
+  public static Term True() { return _appl(Signature.TRUE); }
+  public static Term False() { return _appl(Signature.FALSE); }
+  public static Term And(Term t1, Term t2) { return _appl(Signature.AND,t1,t2); }
+  public static Term Eq(Term t1, Term t2) { return _appl(Signature.EQ,t1,t2); }
+  public static Term Appl(Term t1, Term t2) { return _appl(Signature.APPL,t1,t2); }
+  public static Rule Rule(Term lhs, Term rhs) { return `Rule(lhs,rhs); }
+  public static Term Nil() { return _appl(Signature.NIL); }
+  public static Term Cons(Term t1, Term t2) { return _appl(Signature.CONS,t1,t2); }
+  public static Term _appl(String name, Term... args) {
     TermList tl = `TermList();
     for(Term t:args) {
       tl = `TermList(tl*,t);
