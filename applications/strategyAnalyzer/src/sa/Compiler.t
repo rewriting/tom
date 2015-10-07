@@ -315,15 +315,16 @@ public class Compiler {
               /*
                * if non-linear add rules for checking equality for corresponding arguments
                * rule(X@linearlhs) -> cr(X,cond)
-               * rule(X@!linearlhs) -> Bot(X)
+               * rule(X@!linearlhs) -> nextRule(X)       // could be Bot(X) if only one rule, i.e. non next rule
                * cr(linearlhs, True) -> rhs
                * cr(X@linearlhs, False) -> nextRule(X)       // could be Bot(X) if only one rule, i.e. non next rule
                */
               generatedRules.add(Rule(_appl(rule,At(X,`linearlhs)), _appl(cr, X, `cond)));
-              generatedRules.add(Rule(_appl(rule,At(X,Anti(`linearlhs))), Bottom(X)));
+              //               generatedRules.add(Rule(_appl(rule,At(X,Anti(`linearlhs))), Bottom(X)));
+              generatedRules.add(Rule(_appl(rule,At(X,Anti(`linearlhs))), _appl(nextRule,X) ));
               generatedRules.add(Rule(_appl(cr,`linearlhs, True()), `rhs));
               //                   generatedRules.add(Rule(_appl(cr,At(X,`linearlhs),False()), Bottom(X)));
-              generatedRules.add(Rule(_appl(cr,At(X,`linearlhs),False()), _appl(nextRule,X)) );
+              generatedRules.add(Rule(_appl(cr,At(X,`linearlhs),False()), _appl(nextRule,X) ) );
             }
           }
           /*
@@ -343,12 +344,9 @@ public class Compiler {
           gSig.addSymbol(cr,`ConcGomType(Signature.TYPE_METATERM,Signature.TYPE_BOOLEAN),Signature.TYPE_METATERM);
 
           %match(ruleList) {
-            ConcRule(_*,Rule(lhs,rhs),_*) -> {
-              /*
-               * propagate failure
-               * rule(Bot(X)) -> Bot(X)
-               */
-              generatedRules.add(Rule(_appl(rule,Bottom(X)), Bottom(X)));
+            ConcRule(Rule(lhs,rhs),A*) -> {
+
+              String nextRule = compileRuleList(`A*,generatedRules);
 
               TermList result = Tools.linearize(`lhs, this.generatedSignature);
               Term mlhs = Tools.metaEncodeConsNil(`lhs,generatedSignature);
@@ -359,10 +357,11 @@ public class Compiler {
                   /*
                    * if already linear lhs
                    * rule(X@mlhs) -> mrhs
-                   * rule(X@!mlhs) -> Bot(X)
+                   * rule(X@!mlhs) -> nextRule(X)       // could be Bot(X) if only one rule, i.e. non next rule
                    */
                   generatedRules.add(Rule(_appl(rule,At(X,mlhs)), mrhs));
-                  generatedRules.add(Rule(_appl(rule,At(X,Anti(mlhs))), Bottom(X)));
+                  //                   generatedRules.add(Rule(_appl(rule,At(X,Anti(mlhs))), Bottom(X)));
+                  generatedRules.add(Rule(_appl(rule,At(X,Anti(mlhs))), _appl(nextRule,X) ) );
                 }
 
                 TermList(linearlhs, cond@!Appl("True",TermList())) -> {
@@ -370,19 +369,31 @@ public class Compiler {
                   Term mlinearlhs = Tools.metaEncodeConsNil(`linearlhs,generatedSignature);
                   /*
                    * rule(X@mlinearlhs) -> cr(X,cond)
-                   * rule(X@!mlinearlhs) -> Bot(X)
+                   * rule(X@!mlinearlhs) -> nextRule(X)       // could be Bot(X) if only one rule, i.e. non next rule
                    * cr(mlinearlhs, True) -> mrhs
-                   * cr(X@mlinearlhs, False) -> Bot(X)
+                   * cr(X@mlinearlhs, False) -> nextRule(X)       // could be Bot(X) if only one rule, i.e. non next rule
                    */
                   generatedRules.add(Rule(_appl(rule,At(X,mlinearlhs)), _appl(cr,X,`cond)));
-                  generatedRules.add(Rule(_appl(rule,At(X,Anti(mlinearlhs))), Bottom(X)));
+                  //                   generatedRules.add(Rule(_appl(rule,At(X,Anti(mlinearlhs))), Bottom(X)));
+                  generatedRules.add(Rule(_appl(rule,At(X,Anti(mlinearlhs))), _appl(nextRule,X)));
                   generatedRules.add(Rule(_appl(cr,mlinearlhs, True()), mrhs));
-                  generatedRules.add(Rule(_appl(cr,At(X,mlinearlhs), False()), Bottom(X)));
+                  //                   generatedRules.add(Rule(_appl(cr,At(X,mlinearlhs), False()), Bottom(X)));
+                  generatedRules.add(Rule(_appl(cr,At(X,mlinearlhs), False()), _appl(nextRule,X)));
                 }
               }
 
+              /*
+               * propagate failure
+               * rule(Bot(X)) -> Bot(X)
+               */
+              generatedRules.add(Rule(_appl(rule,Bottom(X)), Bottom(X)));
+
               // TODO: non-linear anti-pattern
               // generatedRules.add(`Rule(Appl(rule,TermList(At(X,Anti(mlhs)))),botX));
+            }
+
+            ConcRule() -> {
+              generatedRules.add(Rule(_appl(rule,X), Bottom(X))); // X should be a term of the signature; morally X@!Bottom(_)
             }
           }
 

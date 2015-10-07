@@ -10,7 +10,10 @@ U = g(T)
 
 strategies
 
-r1() =  [ f(x,x) -> x , f(a,c) -> c ]
+r1() =  [  f(a(),c()) -> c() , f(x,y) -> x ]
+// r1() =  [ f(x,x) -> x , f(a(),c()) -> c() ]
+// r1() =  [ f(x,x) -> x , f(a(),c()) -> c() , b() -> b() ]
+// r1() =  [ a() -> a() , b() -> b() ]
 
 try(s) = s <+ Identity
 bu(s) = mu x.(all(x) ; s)
@@ -19,5 +22,6 @@ td(s) = mu x.(s ; all(x))
 obu(s) = mu x.(one(x) <+ s)
 
 // mainStrat() = bu(try(r1()))
-mainStrat() = obu(r1())
+// mainStrat() = obu(r1())
+mainStrat() = r1()
 

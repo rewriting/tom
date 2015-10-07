@@ -276,7 +276,7 @@ public class @classname@ {
 
   if(Main.options.metalevel) {
     sb.append(%[
-      T t = `decode(@name@(encode(input)));
+      Term t = `decode(@name@(encode(input)));
       ]%);
   } else {
       sb.append(%[
