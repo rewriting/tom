@@ -1158,25 +1158,6 @@ public class Compiler {
     return `ConcRule(generatedRules*, Rule(_appl(name,X), _appl(symbol,X)));
   }
 
-  private  Position getAntiPatternPosition(Term t) {
-    List<Position> list = new ArrayList<Position>();
-    try {
-      `SearchAntiPattern(list).visit(t);
-      return list.get(0);
-    } catch(VisitFailure e) {
-      // no anti pattern found
-      return null;
-    }
-  }
-
-  %strategy SearchAntiPattern(list:List) extends Fail() {
-    visit Term {
-      s@Anti(_) -> {
-        list.add(0,getEnvironment().getPosition());
-        return `s;
-      }
-    }
-  }
 
 
    

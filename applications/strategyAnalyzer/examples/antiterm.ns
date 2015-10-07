@@ -1,0 +1,14 @@
+abstract syntax
+T = a()
+  | b()
+  | g(T)
+  | f(T,T)
+
+strategies
+
+r1() =  [ f(x,!g(x)) -> x ]
+
+obu(s) = mu x.(one(x) <+ s)
+innermost(s) = obu(s)
+
+mainStrat() = r1()
