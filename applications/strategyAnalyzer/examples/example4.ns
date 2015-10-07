@@ -1,6 +1,7 @@
 
 abstract syntax
 T = a()
+  | c()
   | f(T,T)
 	| i(U)
 
@@ -9,7 +10,7 @@ U = g(T)
 
 strategies
 
-r1() =  [ f(x,x) -> x ]
+r1() =  [ f(x,x) -> x , f(a,c) -> c ]
 
 try(s) = s <+ Identity
 bu(s) = mu x.(all(x) ; s)
