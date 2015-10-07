@@ -1,0 +1,16 @@
+cd test
+
+rm -rf build
+mkdir build
+cd build
+
+java -classpath ../../build:$CLASSPATH sa.Main -i ../gxx.ns -tom Gxx -typed T
+
+tom Gxx.t
+
+tom ../TestGxx.t 
+
+javac -cp .:$TOM_HOME/lib/tom-runtime-full.jar:$TOM_HOME/lib/compiletime/junit.jar TestGxx.java
+
+java -cp .:$TOM_HOME/lib/tom-runtime-full.jar:$TOM_HOME/lib/compiletime/junit.jar org.junit.runner.JUnitCore TestGxx
+

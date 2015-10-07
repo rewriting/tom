@@ -1,0 +1,15 @@
+abstract syntax
+T = a()
+  | b()
+  | g(T)
+  | f(T,T)
+
+strategies
+
+r1() =  [ g(x) -> x ]
+
+obu(s) = mu x.(one(x) <+ s)
+repeat(s) = mu x.((s;x)<+identity)
+innermost(s) = repeat(obu(s))
+
+mainStrat() = innermost(r1())
