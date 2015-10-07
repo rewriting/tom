@@ -6,7 +6,8 @@ T = a()
 
 strategies
 
-r1() =  [ f(x,!g(x)) -> x ]
+//r1() =  [ f(x,!g(x)) -> x ]
+r1() =  [ f(x,!f(y,!g(x))) -> x ]
 
 obu(s) = mu x.(one(x) <+ s)
 innermost(s) = obu(s)
@@ -17,6 +18,18 @@ f(x,!g(x)) -> x
 ==>
 X@f(x,g(x)) -> Bot_x(X)
 f(x,Z) -> x
+
+------------
+f(x,!f(y,!g(x))) -> x
+==>
+X@f(x,f(y,!g(x))) -> Bot_x(X)
+f(x,Z) -> x
+==>
+X@f(x,f(y,!g(x))) -> Bot_x(X)
+X@f(x,f(y,g(x))) -> x
+X@f(x,f(y,Z)) -> Bot_x(X)
+f(x,Z) -> x
+
  */
 
 

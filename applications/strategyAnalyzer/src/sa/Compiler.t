@@ -288,8 +288,7 @@ public class Compiler {
       ruleList = ruleCompiler.eliminateBottom2(ruleList);
 
       for(Rule rule: ruleList.getCollectionConcRule()) {
-        System.out.println("EXPAND AP: " + Pretty.toString(rule) );
-
+        System.out.println("EXPANDED AP RULE: " + Pretty.toString(rule) );
       }
     }
 

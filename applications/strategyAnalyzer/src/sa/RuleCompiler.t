@@ -80,6 +80,7 @@ public class RuleCompiler {
       } else if(nbOfAnti == 1 && Tools.isLinear(lhs)) {
         /*
          * case: rule is left-linear and there is only one negation
+         * should only be done in post-treatment, not during compilation of strategies
          */
         List<Rule> ruleList = new ArrayList<Rule>();
         // perform one-step expansion
@@ -183,13 +184,13 @@ public class RuleCompiler {
    */
   %strategy ExpandGeneralAntiPattern(orderedTRS:List,subject:Rule) extends Fail() {
     visit Term {
-      Anti(Anti(t)) -> {
+      s@Anti(Anti(t)) -> {
         Rule newr = (Rule) getEnvironment().getPosition().getReplace(`t).visit(subject);
         `orderedTRS.add(newr);
-        return `t;
+        return `s;
       }
 
-      Anti(t) -> {
+      s@Anti(t) -> {
         /*
          * x@q[!q'] -> bot(x,r) becomes   q[q'] -> r
          *                              x@q[z]  -> bot(x,r)
@@ -199,8 +200,9 @@ public class RuleCompiler {
          */
 
         // here: t is q'
+        System.out.println("EXPAND AP: " + Pretty.toString(subject));
         %match(subject) {
-          Rule(lhs,Appl(bottom,TermList(x,r))) && bottom == Signature.BOTTOM -> {
+          Rule(lhs,Appl(bottom,TermList(x,r))) && bottom == Signature.BOTTOM2 -> {
             // here we generate x@q[q'] but x will be eliminated later
             Rule r1 = (Rule) getEnvironment().getPosition().getReplace(`t).visit(subject);
             r1 = r1.setrhs(`r);
@@ -211,6 +213,9 @@ public class RuleCompiler {
 
             `orderedTRS.add(r1);
             `orderedTRS.add(r2);
+            System.out.println("case 1 ==> " + Pretty.toString(r1));
+            System.out.println("case 1 ==> " + Pretty.toString(r2));
+            return `s;
           }
 
           Rule(lhs,r) -> {
@@ -225,11 +230,12 @@ public class RuleCompiler {
 
             `orderedTRS.add(r1);
             `orderedTRS.add(r2);
+            System.out.println("case 2 ==> " + Pretty.toString(r1));
+            System.out.println("case 2 ==> " + Pretty.toString(r2));
+            return `s;
           }
 
         }
-
-        return `t;
       }
     }
   }
