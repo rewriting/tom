@@ -9,6 +9,11 @@ import tom.library.sl.*;
 import aterm.*;
 import aterm.pure.*;
 
+import static sa.Tools.Var;
+import static sa.Tools.At;
+import static sa.Tools.Bottom2;
+
+
 public class RuleCompiler {
   %include { rule/Rule.tom }
   %include { sl.tom }
@@ -212,16 +217,16 @@ public class RuleCompiler {
     }
   }
 
-  private static Term Var(String name) { return `Var(name); }
-  private static Term At(Term t1, Term t2) { return `At(t1,t2); }
-  private static Term Bottom2(Term t1,Term t2) { return _appl(Signature.BOTTOM,t1,t2); }
-  private static Term _appl(String name, Term... args) {
-    TermList tl = `TermList();
-    for(Term t:args) {
-      tl = `TermList(tl*,t);
-    }
-    return `Appl(name,tl);
-  }
+  //private static Term Var(String name) { return `Var(name); }
+  //private static Term At(Term t1, Term t2) { return `At(t1,t2); }
+  //private static Term Bottom2(Term t1,Term t2) { return _appl(Signature.BOTTOM,t1,t2); }
+  //private static Term _appl(String name, Term... args) {
+  //  TermList tl = `TermList();
+  //  for(Term t:args) {
+  //    tl = `TermList(tl*,t);
+  //  }
+  //  return `Appl(name,tl);
+ // }
 
 
   /********************************************************************************
