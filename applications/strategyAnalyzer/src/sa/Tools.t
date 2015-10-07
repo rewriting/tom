@@ -139,7 +139,7 @@ public class Tools {
   public static Term Anti(Term t) { return `Anti(t); }
   public static Term At(Term t1, Term t2) { return `At(t1,t2); }
   public static Term Bottom(Term t) { return _appl(Signature.BOTTOM,t); }
-  public static Term Bottom2(Term t1,Term t2) { return _appl(Signature.BOTTOM,t1,t2); }
+  public static Term Bottom2(Term t1,Term t2) { return _appl(Signature.BOTTOM2,t1,t2); }
   public static Term BottomList(Term t) { return _appl(Signature.BOTTOMLIST,t); }
   public static Term True() { return _appl(Signature.TRUE); }
   public static Term False() { return _appl(Signature.FALSE); }

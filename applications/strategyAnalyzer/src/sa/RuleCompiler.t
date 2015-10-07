@@ -12,6 +12,7 @@ import com.google.common.collect.HashMultiset;
 
 import static sa.Tools.Var;
 import static sa.Tools.At;
+import static sa.Tools.Bottom;
 import static sa.Tools.Bottom2;
 
 
@@ -32,11 +33,10 @@ public class RuleCompiler {
   // The generated (ordered) TRS
   private List<Rule> generatedRules;
 
-  public RuleCompiler(Signature extractedSignature, Signature generatedSignature){
+  public RuleCompiler(Signature extractedSignature, Signature generatedSignature) {
     this.extractedSignature=extractedSignature;
     this.generatedSignature=generatedSignature;
   }
-  
 
   /********************************************************************************
    *     Transform a list of LINEAR rules (with only one anti-pattern)
@@ -95,7 +95,7 @@ public class RuleCompiler {
          * general case: rule is non left-linear or may contain nested anti patterns
          */
         List<Rule> ruleList = new ArrayList<Rule>();
-        `OnceTopDown(ExpandGeneralAntiPattern(ruleList,rule,this.extractedSignature, this.generatedSignature)).visit(rule);
+        `OnceTopDown(ExpandGeneralAntiPattern(ruleList,rule)).visit(rule);
         // for each generated rule restart the expansion
         for(Rule expandr:ruleList) {
           // add the list of rules generated for the expandr rule to the final result
@@ -180,9 +180,8 @@ public class RuleCompiler {
    *
    * @param ordered list of rules
    * @param rule the rule to expand (may contain nested anti-pattern and be non-linear)
-   * @param extractedSignature the signature
    */
-  %strategy ExpandGeneralAntiPattern(orderedTRS:List,subject:Rule,extractedSignature:Signature, generatedSignature:Signature) extends Fail() {
+  %strategy ExpandGeneralAntiPattern(orderedTRS:List,subject:Rule) extends Fail() {
     visit Term {
       Anti(Anti(t)) -> {
         Rule newr = (Rule) getEnvironment().getPosition().getReplace(`t).visit(subject);
@@ -235,17 +234,26 @@ public class RuleCompiler {
     }
   }
 
-  //private static Term Var(String name) { return `Var(name); }
-  //private static Term At(Term t1, Term t2) { return `At(t1,t2); }
-  //private static Term Bottom2(Term t1,Term t2) { return _appl(Signature.BOTTOM,t1,t2); }
-  //private static Term _appl(String name, Term... args) {
-  //  TermList tl = `TermList();
-  //  for(Term t:args) {
-  //    tl = `TermList(tl*,t);
-  //  }
-  //  return `Appl(name,tl);
- // }
+  /*
+   * replace Bottom2 by Bottom
+   */
+  public RuleList eliminateBottom2(RuleList subject) {
+    RuleList res = subject;
+    try {
+      res = `TopDown(EliminateBottom2()).visitLight(subject);
+    } catch(VisitFailure e) {
+      throw new RuntimeException("Should not be there");
+    }
+    return res;
+  }
 
+  %strategy EliminateBottom2() extends Identity() {
+    visit Term {
+      Appl(bottom2,TermList(x,r)) && bottom2 == Signature.BOTTOM2 -> {
+        return Bottom(`x);
+      }
+    }
+  }
 
   /********************************************************************************
    *     Transform a list of rules with @ in a list of rules with the

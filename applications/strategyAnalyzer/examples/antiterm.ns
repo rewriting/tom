@@ -12,3 +12,11 @@ obu(s) = mu x.(one(x) <+ s)
 innermost(s) = obu(s)
 
 mainStrat() = r1()
+/*
+f(x,!g(x)) -> x
+==>
+X@f(x,g(x)) -> Bot_x(X)
+f(x,Z) -> x
+ */
+
+
