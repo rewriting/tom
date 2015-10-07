@@ -44,13 +44,10 @@ public class RuleCompiler {
    */
   public RuleList expandAntiPatterns(RuleList rules) {
     RuleList newRules = `ConcRule();
-    %match(rules) {
-      ConcRule(_*,rule,_*) -> {
-        RuleList genRules = this.expandAntiPatternInRule(`rule);
-        // add the generated rules for rule to the result (list of rule)
-        //         newRules.addAll(genRules);
-        newRules = `ConcRule(genRules*,newRules*);
-      }
+    for(Rule rule:rules.getCollectionConcRule()) {
+      RuleList genRules = this.expandAntiPatternInRule(`rule);
+      // add the generated rules for rule to the result (list of rule)
+      newRules = `ConcRule(newRules*,genRules*);
     }
     return newRules;
   }  
@@ -65,21 +62,18 @@ public class RuleCompiler {
     RuleList genRules = `ConcRule();
     try {
       `OnceBottomUp(ContainsAntiPattern()).visitLight(rule); // check if the rule contains an anti-pattern (exception otherwise)
-      List<Rule> bag = new ArrayList<Rule>();
+      List<Rule> ruleList = new ArrayList<Rule>();
       // perform one-step expansion
-      `OnceTopDown(ExpandAntiPattern(bag,rule,this.extractedSignature, this.generatedSignature)).visit(rule);
+      `OnceTopDown(ExpandAntiPattern(ruleList,rule,this.extractedSignature, this.generatedSignature)).visit(rule);
       // for each generated rule restart the expansion
-      for(Rule expandr:bag) {
+      for(Rule expandr:ruleList) {
         // add the list of rules generated for the expandr rule to the final result
-        //         List<Rule> expandedRules = this.expandAntiPatternInRule(expandr);
         RuleList expandedRules = this.expandAntiPatternInRule(expandr);
-        //         genRules.addAll(expandedRules);
-        genRules = `ConcRule(expandedRules*,genRules*);
+        genRules = `ConcRule(genRules*,expandedRules*);
       }
     } catch(VisitFailure e) {
       // add the rule since it contains no anti-pattern
-      //       genRules.add(rule);
-      genRules = `ConcRule(rule,genRules*);
+      genRules = `ConcRule(genRules*,rule);
     }
     return genRules;
   }
@@ -96,16 +90,16 @@ public class RuleCompiler {
 
   /**
    * Perform one-step expansion for a LINEAR Rule
-   * @param bag the resulted list of rules
+   * @param ruleList the resulted list of rules
    * @param rule the rule to expand
    * @param extractedSignature the extracted signature
    * @param generatedSignature the generated signature
    */
-  %strategy ExpandAntiPattern(bag:List,subject:Rule,extractedSignature:Signature, generatedSignature:Signature) extends Fail() {
+  %strategy ExpandAntiPattern(ruleList:List,subject:Rule,extractedSignature:Signature, generatedSignature:Signature) extends Fail() {
     visit Term {
       Anti(Anti(t)) -> {
         Rule newr = (Rule) getEnvironment().getPosition().getReplace(`t).visit(subject);
-        bag.add(newr);
+        ruleList.add(newr);
         return `t;
       }
 
@@ -122,7 +116,7 @@ public class RuleCompiler {
                   newt = Tools.metaEncodeConsNil(newt,generatedSignature);
                 }
                 Rule newr = (Rule) getEnvironment().getPosition().getReplace(newt).visit(subject);
-                bag.add(newr);
+                ruleList.add(newr);
               }
             }
             
@@ -148,7 +142,7 @@ public class RuleCompiler {
               }
               Rule newr = (Rule) getEnvironment().getPosition().getReplace(newt).visit(subject);
 
-              bag.add(newr);
+              ruleList.add(newr);
             }
           }
         }
@@ -171,24 +165,63 @@ public class RuleCompiler {
     visit Term {
       Anti(Anti(t)) -> {
         Rule newr = (Rule) getEnvironment().getPosition().getReplace(`t).visit(subject);
-        `orderedTRS.add(`orderedTRS.size(),newr);
+        `orderedTRS.add(newr);
         return `t;
       }
 
       Anti(t) -> {
         /*
-         * x@q[!q'] -> r      becomes x@q[q'] -> bot(x)
-         *                              q[z]  -> r
+         * x@q[!q'] -> bot(x,r) becomes x@q[q'] -> r
+         *                              x@q[z]  -> bot(x,r)
          *
-         * x@q[!q'] -> bot(_) becomes   q[q'] -> r
-         *                            x@q[z]  -> bot(x)
+         *   q[!q'] -> r        becomes x@q[q'] -> bot(x,r)
+         *                                q[z]  -> r
          */
-        // Not Yet Implemented
+
+        // here: t is q'
+        %match(subject) {
+          Rule(lhs,Appl(bottom,TermList(x,r))) && bottom == Signature.BOTTOM -> {
+            Rule r1 = (Rule) getEnvironment().getPosition().getReplace(`t).visit(subject);
+            r1 = r1.setrhs(`r);
+
+            Term Z = Var(Tools.getName("Z"));
+            Rule r2 = (Rule) getEnvironment().getPosition().getReplace(Z).visit(subject);
+            r2 = r2.setrhs(Bottom2(`x,`r));
+
+            `orderedTRS.add(r1);
+            `orderedTRS.add(r2);
+          }
+
+          Rule(lhs,r) -> {
+            Term X = Var(Tools.getName("X"));
+            Rule r1 = (Rule) getEnvironment().getPosition().getReplace(`t).visit(subject);
+            r1 = r1.setlhs(At(X,r1.getlhs()));
+            r1 = r1.setrhs(Bottom2(X,r1.getrhs()));
+
+            Term Z = Var(Tools.getName("Z"));
+            Rule r2 = (Rule) getEnvironment().getPosition().getReplace(Z).visit(subject);
+
+            `orderedTRS.add(r1);
+            `orderedTRS.add(r2);
+          }
+
+        }
+
         return `t;
       }
     }
   }
 
+  private static Term Var(String name) { return `Var(name); }
+  private static Term At(Term t1, Term t2) { return `At(t1,t2); }
+  private static Term Bottom2(Term t1,Term t2) { return _appl(Signature.BOTTOM,t1,t2); }
+  private static Term _appl(String name, Term... args) {
+    TermList tl = `TermList();
+    for(Term t:args) {
+      tl = `TermList(tl*,t);
+    }
+    return `Appl(name,tl);
+  }
 
 
   /********************************************************************************
@@ -197,31 +230,28 @@ public class RuleCompiler {
    ********************************************************************************/
   /**
     * Transforms a set of rules that contain x@t into a set of rules without @ 
-    * @param bag the set of rules to expand
+    * @param ruleList the set of rules to expand
     * @return a new set that contains the expanded rules
     */
-  public  RuleList expandAt(RuleList bag) throws VisitFailure {
+  public  RuleList expandAt(RuleList ruleList) throws VisitFailure {
     RuleList res = `ConcRule();
-    %match(bag) {
-      ConcRule(_*,rule,_*) -> {
-        Map<String,Term> map = new HashMap<String,Term>();
-        `TopDown(CollectAt(map)).visitLight(`rule);
-        if(map.keySet().isEmpty()) {
-          // if no AT in the rule just add it to the result
-          res = `ConcRule(rule,res*);
-        } else {
-          // if some AT in the rule then build a new one
-          Rule newRule = `rule;
-          for(String name:map.keySet()) {
-            Term t = map.get(name);
-            // replace the ATs with the corresponding expressions
-            newRule = `TopDown(ReplaceVariable(name,t)).visitLight(newRule);
-            // and remove the ATs
-            newRule = `TopDown(EliminateAt()).visitLight(newRule);
-          }
-          //           res.add(newRule);
-          res = `ConcRule(newRule,res*);
+    for(Rule rule:ruleList.getCollectionConcRule()) {
+      Map<String,Term> map = new HashMap<String,Term>();
+      `TopDown(CollectAt(map)).visitLight(`rule); // add x->t into map for each x@t
+      if(map.keySet().isEmpty()) {
+        // if no AT in the rule just add it to the result
+        res = `ConcRule(res*,rule);
+      } else {
+        // if some AT in the rule then build a new one
+        Rule newRule = `rule;
+        for(String name:map.keySet()) {
+          Term t = map.get(name);
+          // replace the ATs with the corresponding expressions
+          newRule = `TopDown(ReplaceVariable(name,t)).visitLight(newRule);
+          // and remove the ATs
+          newRule = `TopDown(EliminateAt()).visitLight(newRule);
         }
+        res = `ConcRule(res*,newRule);
       }
     }
     return res;
