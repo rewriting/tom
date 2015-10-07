@@ -8,6 +8,7 @@ import java.util.HashMap;
 import tom.library.sl.*;
 import aterm.*;
 import aterm.pure.*;
+import com.google.common.collect.HashMultiset;
 
 import static sa.Tools.Var;
 import static sa.Tools.At;
@@ -22,6 +23,7 @@ public class RuleCompiler {
   %include { java/util/types/ArrayList.tom }
 
   %typeterm Signature { implement { Signature } }
+  %typeterm HashMultiset { implement { HashMultiset }}
 
   // The extracted (concrete) signature
   private Signature extractedSignature;
@@ -65,32 +67,46 @@ public class RuleCompiler {
    */
   private RuleList expandAntiPatternInRule(Rule rule) {
     RuleList genRules = `ConcRule();
+
+
     try {
-      `OnceBottomUp(ContainsAntiPattern()).visitLight(rule); // check if the rule contains an anti-pattern (exception otherwise)
-      List<Rule> ruleList = new ArrayList<Rule>();
-      // perform one-step expansion
-      `OnceTopDown(ExpandAntiPattern(ruleList,rule,this.extractedSignature, this.generatedSignature)).visit(rule);
-      // for each generated rule restart the expansion
-      for(Rule expandr:ruleList) {
-        // add the list of rules generated for the expandr rule to the final result
-        RuleList expandedRules = this.expandAntiPatternInRule(expandr);
-        genRules = `ConcRule(genRules*,expandedRules*);
+      HashMultiset<Term> antiBag = HashMultiset.create();
+      Term lhs = rule.getlhs();
+      `TopDown(CollectAnti(antiBag)).visitLight(lhs);
+      int nbOfAnti = antiBag.size();
+      if(nbOfAnti == 0) {
+        // add the rule since it contains no anti-pattern
+        genRules = `ConcRule(genRules*,rule);
+      } else if(nbOfAnti == 1 && Tools.isLinear(lhs)) {
+        /*
+         * case: rule is left-linear and there is only one negation
+         */
+        List<Rule> ruleList = new ArrayList<Rule>();
+        // perform one-step expansion
+        `OnceTopDown(ExpandAntiPattern(ruleList,rule,this.extractedSignature, this.generatedSignature)).visit(rule);
+        // for each generated rule restart the expansion
+        for(Rule expandr:ruleList) {
+          // add the list of rules generated for the expandr rule to the final result
+          RuleList expandedRules = this.expandAntiPatternInRule(expandr);
+          genRules = `ConcRule(genRules*,expandedRules*);
+        }
+      } else {
+        /*
+         * general case: rule is non left-linear or may contain nested anti patterns
+         */
+        List<Rule> ruleList = new ArrayList<Rule>();
+        `OnceTopDown(ExpandGeneralAntiPattern(ruleList,rule,this.extractedSignature, this.generatedSignature)).visit(rule);
+        // for each generated rule restart the expansion
+        for(Rule expandr:ruleList) {
+          // add the list of rules generated for the expandr rule to the final result
+          RuleList expandedRules = this.expandAntiPatternInRule(expandr);
+          genRules = `ConcRule(genRules*,expandedRules*);
+        }
       }
     } catch(VisitFailure e) {
-      // add the rule since it contains no anti-pattern
-      genRules = `ConcRule(genRules*,rule);
+      throw new RuntimeException("Should not be there");
     }
     return genRules;
-  }
-
-  /**
-   * Do nothing if it Term contains anti-pattern;
-   * Fail (i.e. exception) otherwise
-   */
-  %strategy ContainsAntiPattern() extends Fail() {
-    visit Term {
-      t@Anti(_)  -> { return `t; }
-    }
   }
 
   /**
@@ -166,7 +182,7 @@ public class RuleCompiler {
    * @param rule the rule to expand (may contain nested anti-pattern and be non-linear)
    * @param extractedSignature the signature
    */
-  %strategy ExpandGeneralAntiPattern(orderedTRS:List,subject:Rule,extractedSignature:Map, generatedSignature:Map) extends Fail() {
+  %strategy ExpandGeneralAntiPattern(orderedTRS:List,subject:Rule,extractedSignature:Signature, generatedSignature:Signature) extends Fail() {
     visit Term {
       Anti(Anti(t)) -> {
         Rule newr = (Rule) getEnvironment().getPosition().getReplace(`t).visit(subject);
@@ -176,7 +192,7 @@ public class RuleCompiler {
 
       Anti(t) -> {
         /*
-         * x@q[!q'] -> bot(x,r) becomes x@q[q'] -> r
+         * x@q[!q'] -> bot(x,r) becomes   q[q'] -> r
          *                              x@q[z]  -> bot(x,r)
          *
          *   q[!q'] -> r        becomes x@q[q'] -> bot(x,r)
@@ -186,6 +202,7 @@ public class RuleCompiler {
         // here: t is q'
         %match(subject) {
           Rule(lhs,Appl(bottom,TermList(x,r))) && bottom == Signature.BOTTOM -> {
+            // here we generate x@q[q'] but x will be eliminated later
             Rule r1 = (Rule) getEnvironment().getPosition().getReplace(`t).visit(subject);
             r1 = r1.setrhs(`r);
 
@@ -203,6 +220,7 @@ public class RuleCompiler {
             r1 = r1.setlhs(At(X,r1.getlhs()));
             r1 = r1.setrhs(Bottom2(X,r1.getrhs()));
 
+            // here we generate x@q[z] but x will be eliminated later
             Term Z = Var(Tools.getName("Z"));
             Rule r2 = (Rule) getEnvironment().getPosition().getReplace(Z).visit(subject);
 
@@ -267,6 +285,15 @@ public class RuleCompiler {
     visit Term {
       At(Var(name),t2)-> {
         map.put(`name,`t2);
+      }
+    }
+  }
+  
+  // search all Anti symbols
+  %strategy CollectAnti(bag:HashMultiset) extends Identity() {
+    visit Term {
+      x@Anti(t)-> {
+        bag.add(`x);
       }
     }
   }

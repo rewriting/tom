@@ -5,6 +5,7 @@ import java.util.*;
 import tom.library.sl.*;
 import aterm.*;
 import aterm.pure.*;
+import com.google.common.collect.HashMultiset;
 
 public class Tools {
   %include { rule/Rule.tom }
@@ -14,6 +15,9 @@ public class Tools {
   %include { java/util/types/Map.tom }
   %include { java/util/types/HashSet.tom }
   %include { java/util/types/Set.tom }
+
+  %typeterm Signature { implement { Signature }}
+  %typeterm HashMultiset { implement { HashMultiset }}
 
   private static final String AUX = "Aux";   // extension for auxiliary symbols
   private static int phiNumber = 0;          // sequence number for symbol (names)
@@ -275,38 +279,90 @@ public class Tools {
     return null;
   }
 
-  /*
-  public static List<String> gomTypeListToStringList(GomTypeList argTypes) {
-    List<String> res = new ArrayList<String>();
-    while(!argTypes.isEmptyConcGomType()) {
-      String name = argTypes.getHeadConcGomType().getName();
-      res.add(name);
-      argTypes = argTypes.getTailConcGomType();
+  /**
+   * Transform lhs into linear-lhs + true ^ constraint on non linear variables
+   * TODO: not really related to the Compiler but more to the Tools (for Terms)
+   */
+  public static TermList linearize(Term lhs, Signature signature) {
+    Map<String,String> mapToOldName = new HashMap<String,String>();
+    HashMultiset<String> bag = collectVariableMultiplicity(lhs);
+
+    Set<String> elements = new HashSet<String>(bag.elementSet());
+
+    for(String name:elements) {
+      if(bag.count(name) == 1) {
+        bag.remove(name);
+      }
     }
-    return res;
+
+    try {
+      lhs = `TopDown(ReplaceWithFreshVar(signature,bag,mapToOldName)).visitLight(lhs);
+    } catch(VisitFailure e) {
+      throw new RuntimeException("Should not be there");
+    }
+
+    Term constraint = `Appl("True",TermList());
+    for(String name:mapToOldName.keySet()) {
+      String oldName = mapToOldName.get(name);
+      constraint = `Appl("and",TermList( Appl(Signature.EQ,TermList(Var(oldName),Var(name))), constraint));
+    }
+    return `TermList(lhs,constraint);
+
   }
-*/
-//   public static StrategyOperator getRuleOperator(Rule rule) {
-//     StrategyOperator op = StrategyOperator.IDENTITY;
-//     %match(rule){
-//       Rule(Appl(symbol,args),_) ->{
-//         String opSymb = `symbol;
-//         op = Tools.getOperator(opSymb);
-//       }
-//     }
-//     return op;
-//   }
 
+  public static boolean isLinear(Term t) {
+    HashMultiset<String> bag = collectVariableMultiplicity(t);
+    for(String name:bag.elementSet()) {
+      if(bag.count(name) > 1) {
+        return false;
+      }
+    }
+    return true;
+  }
+  
+  // for Main.options.metalevel we need the (generated)signature 
+  //   -> in previous versions it was one of the parameters
+  // TODO: use HashMultiset
+  %strategy ReplaceWithFreshVar(signature:Signature, bag:HashMultiset, map:Map) extends Identity() {
+    visit Term {
+      Var(n)  -> {
+        if(bag.count(`n) > 1) {
+          bag.remove(`n);
+          String z = Tools.getName("Z");
+          map.put(z,`n);
+          Term newt = `Var(z);
+          if(Main.options.metalevel) {
+            newt = Tools.metaEncodeConsNil(newt,signature);
+          }
+          return newt;
+        }
+      }
+    }
+  }
 
-//   public static String getArgumentSymbol(Rule rule) {
-//     String funSymb = null;
-//     %match(rule){
-//       Rule(Appl(symbol,TermList(Appl(fun,args),_*)),_) ->{
-//         funSymb = `fun;
-//       }
-//     }
-//     return funSymb;
-//   }
+  /**
+   * Returns a Map which associates to each variable name an integer
+   * representing the number of occurences of the variable in the
+   * (Visitable) Term
+   */
+  private static HashMultiset<String> collectVariableMultiplicity(tom.library.sl.Visitable subject) {
+    // collect variables
+    HashMultiset<String> bag = HashMultiset.create();
+    try {
+      `TopDown(CollectVars(bag)).visitLight(subject);
+    } catch(VisitFailure e) {
+      throw new RuntimeException("Should not be there");
+    }
 
+    return bag;
+  }
 
+  // search all Var and store their values
+  %strategy CollectVars(bag:HashMultiset) extends Identity() {
+    visit Term {
+      Var(name)-> {
+        bag.add(`name);
+      }
+    }
+  }
 }

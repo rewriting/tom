@@ -2,7 +2,7 @@ package sa;
 
 import sa.rule.types.*;
 import java.util.Set;
-import com.google.common.collect.*;
+import com.google.common.collect.HashBasedTable;
 
 public class Signature {
   %include { rule/Rule.tom }

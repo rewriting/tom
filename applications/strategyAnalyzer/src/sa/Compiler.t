@@ -10,7 +10,7 @@ import java.util.HashMap;
 import tom.library.sl.*;
 import aterm.*;
 import aterm.pure.*;
-import com.google.common.collect.*;
+import com.google.common.collect.HashMultiset;
 
 import static sa.Tools.Var;
 import static sa.Tools.Anti;
@@ -297,7 +297,7 @@ public class Compiler {
 
           String nextRule = compileRuleList(`A*,generatedRules);
           
-          TermList result = this.linearize(`lhs);
+          TermList result = Tools.linearize(`lhs, this.generatedSignature );
           
           %match(result) {
             TermList(_, Appl("True",TermList())) -> {
@@ -350,7 +350,7 @@ public class Compiler {
                */
               generatedRules.add(Rule(_appl(rule,Bottom(X)), Bottom(X)));
 
-              TermList result = this.linearize(`lhs);
+              TermList result = Tools.linearize(`lhs, this.generatedSignature);
               Term mlhs = Tools.metaEncodeConsNil(`lhs,generatedSignature);
               Term mrhs = Tools.metaEncodeConsNil(`rhs,generatedSignature);
 
@@ -984,82 +984,6 @@ public class Compiler {
     }
   }
 
-  /**
-   * Transform lhs into linear-lhs + true ^ constraint on non linear variables
-   * TODO: not really related to the Compiler but more to the Tools (for Terms)
-   */
-  private TermList linearize(Term lhs) {
-    Map<String,String> mapToOldName = new HashMap<String,String>();
-    HashMultiset<String> bag = this.collectMultiplicity(lhs);
-
-    Set<String> elements = new HashSet<String>(bag.elementSet());
-
-    for(String name:elements) {
-      if(bag.count(name) == 1) {
-        bag.remove(name);
-      }
-    }
-
-    try {
-      lhs = `TopDown(ReplaceWithFreshVar(this,bag,mapToOldName)).visitLight(lhs);
-    } catch(VisitFailure e) {
-      throw new RuntimeException("Should not be there");
-    }
-
-    Term constraint = `Appl("True",TermList());
-    for(String name:mapToOldName.keySet()) {
-      String oldName = mapToOldName.get(name);
-      constraint = `Appl("and",TermList( Appl(Signature.EQ,TermList(Var(oldName),Var(name))), constraint));
-    }
-    return `TermList(lhs,constraint);
-
-  }
-  
-  // for Main.options.metalevel we need the (generated)signature 
-  //   -> in previous versions it was one of the parameters
-  // TODO: use HashMultiset
-  %strategy ReplaceWithFreshVar(compiler:Compiler, bag:HashMultiset, map:Map) extends Identity() {
-    visit Term {
-      Var(n)  -> {
-        if(bag.count(`n) > 1) {
-          bag.remove(`n);
-          String z = Tools.getName("Z");
-          map.put(z,`n);
-          Term newt = `Var(z);
-          if(Main.options.metalevel) {
-            newt = Tools.metaEncodeConsNil(newt,compiler.generatedSignature);
-          }
-          return newt;
-        }
-      }
-    }
-  }
-
-  /**
-   * Returns a Map which associates to each variable name an integer
-   * representing the number of occurences of the variable in the
-   * (Visitable) Term
-   */
-  private HashMultiset<String> collectMultiplicity(tom.library.sl.Visitable subject) {
-    // collect variables
-    HashMultiset<String> bag = HashMultiset.create();
-    try {
-      `TopDown(CollectVars(bag)).visitLight(subject);
-    } catch(VisitFailure e) {
-      throw new RuntimeException("Should not be there");
-    }
-
-    return bag;
-  }
-
-  // search all Var and store their values
-  %strategy CollectVars(bag:HashMultiset) extends Identity() {
-    visit Term {
-      Var(name)-> {
-        bag.add(`name);
-      }
-    }
-  }
 
   /*
    * Generate equality rules:
@@ -1160,7 +1084,4 @@ public class Compiler {
     return `ConcRule(generatedRules*, Rule(_appl(name,X), _appl(symbol,X)));
   }
 
-
-
-   
 }
