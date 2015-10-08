@@ -80,15 +80,10 @@ public class Pretty {
     return "toString(Rule): error";
   }
 
-
-  public static String toString(List<Rule> rules) {
+  public static String toString(RuleList rules) {
     String res = "";
-    for(Rule r: rules) {
-      %match(r) {
-        Rule(lhs,rhs) -> {
-          res += toString(`lhs) + " -> " + toString(`rhs) + "\n";
-        }
-      }
+    for(Rule r: rules.getCollectionConcRule()) {
+      res += toString(r) + "\n";
     }
     return res;
   }

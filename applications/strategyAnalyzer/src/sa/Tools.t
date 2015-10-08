@@ -373,4 +373,13 @@ public class Tools {
       }
     }
   }
+
+  public static RuleList fromListOfRule(List<Rule> l) {
+    RuleList res = `ConcRule();
+    for(Rule r:l) {
+      res = `ConcRule(r,res*);
+    }
+    return res.reverse();
+  }
+
 }

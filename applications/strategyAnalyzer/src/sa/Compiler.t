@@ -118,7 +118,7 @@ public class Compiler {
       String strategySymbol = "NONE";
       List<Rule> mutableList = new ArrayList<Rule>();
       strategySymbol = this.compileStrat(strategy,mutableList);
-      RuleList ruleList = fromListOfRule(mutableList);
+      RuleList ruleList = Tools.fromListOfRule(mutableList);
 
       if(Main.options.metalevel) {
         ruleList = generateTriggerRule(strategyName,strategySymbol,ruleList);
@@ -130,14 +130,6 @@ public class Compiler {
       generatedTRSs.put(strategyName,ruleList);
     }
     return generatedTRSs.get(strategyName);
-  }
-
-  private RuleList fromListOfRule(List<Rule> l) {
-    RuleList res = `ConcRule();
-    for(Rule r:l) {
-      res = `ConcRule(r,res*);
-    }
-    return res.reverse();
   }
 
   /*
@@ -441,18 +433,20 @@ public class Compiler {
 
       %match(strat) {
         // TODO: handle Set without an order
-        StratExp((Set|List)(rulelist)) -> {
+        StratExp(Set(_)) -> {
+          throw new RuntimeException("Not Yet Implemented");
+        }
 
-
+        StratExp(List(rulelist)) -> {
           /*
-           * Pre-treatment: move elsewhere
+           * Pre-treatment: remove anti-patterns
+           * move into compileStrategy ?
            */
           RuleList rList = `rulelist;
           if(Main.options.withAP == false) {
             /*
-             * apply expandAntiPatterns until there is no more anti-pattern in rules
+             * apply expandGeneralAntiPatterns until there is no more anti-pattern in rules
              */
-
             RuleCompiler ruleCompiler = new RuleCompiler(eSig,gSig);
             RuleList old = null;
             while(rList != old) {
@@ -463,13 +457,6 @@ public class Compiler {
              * replace Bottom2 by Bottom
              */
             rList = ruleCompiler.eliminateBottom2(rList);
-
-//             try{
-//               rList = ruleCompiler.expandAt(rList);
-//             }catch(VisitFailure exp){
-//               System.out.println("OUPS: " + exp.getMessage() );
-//             }
-            
             for(Rule rule: rList.getCollectionConcRule()) {
               System.out.println("EXPANDED AP RULE: " + Pretty.toString(rule) );
             }

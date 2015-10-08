@@ -99,48 +99,7 @@ public class RuleCompiler {
     }
     return genRules;
   }
-  
-  public RuleList expandGeneralAntiPatterns(RuleList rules) {
-    RuleList newRules = `ConcRule();
-    for(Rule rule:rules.getCollectionConcRule()) {
-      RuleList genRules = this.expandGeneralAntiPatternInRule(`rule);
-      // add the generated rules for rule to the result (list of rule)
-      newRules = `ConcRule(newRules*,genRules*);
-    }
-    return newRules;
-  }  
-
-  /**
-   * Expand a general anti-pattern (non-linear with nested negations) into a list of rules
-   * @param generatedRules initial set of rules
-   * @param rule the rule to expand
-   * @return the list of generated rules
-   */
-  private RuleList expandGeneralAntiPatternInRule(Rule rule) {
-    RuleList genRules = `ConcRule();
-
-    try {
-      List<Rule> ruleList = new ArrayList<Rule>();
-      `OnceTopDown(ExpandGeneralAntiPattern(ruleList,rule)).visit(rule);
-      // for each generated rule restart the expansion
-      for(Rule expandr:ruleList) {
-        // add the list of rules generated for the expandr rule to the final result
-        /*
-           RuleList expandedRules = this.expandGeneralAntiPatternInRule(expandr);
-        genRules = `ConcRule(genRules*,expandedRules*);
-        */
-        genRules = `ConcRule(genRules*,expandr);
-      }
-    } catch(VisitFailure e) {
-      /*
-       * no anti-pattern found: add the rule
-       */
-      System.out.println("EXPAND AP add rule: " + Pretty.toString(rule));
-      genRules = `ConcRule(genRules*,rule);
-    }
-    return genRules;
-  }
-
+ 
   /**
    * Perform one-step expansion for a LINEAR Rule
    * @param ruleList the resulted list of rules
@@ -179,19 +138,19 @@ public class RuleCompiler {
             int arity = tl.length();
             //System.out.println(`name + " -- " + arity);
 
-            Term[] array = new Term[arity];
-            Term[] tarray = new Term[arity];
+            Term[] arrayOfVariable = new Term[arity];
+            Term[] arrayOfTerm = new Term[arity];
+            arrayOfTerm = tl.toArray(arrayOfTerm);
             String Z = Tools.getName("Z");
-            tarray = tl.toArray(tarray);
             for(int i=1 ; i<=arity ; i++) {
-//               array[i-1] = `Var("Z_" + i);
-              array[i-1] = `Var(Z +"_"+ i);
+              arrayOfVariable[i-1] = Var(Z +"_"+ i);
             }
             for(int i=1 ; i<=arity ; i++) {
-              Term ti = tarray[i-1];
-              array[i-1] = `Anti(ti);
-              Term newt = `Appl(name,sa.rule.types.termlist.TermList.fromArray(array));
-              array[i-1] = `Var(Z +"_"+ i);
+              Term variable = arrayOfVariable[i-1];
+              Term ti = arrayOfTerm[i-1];
+              arrayOfVariable[i-1] = `Anti(ti);
+              Term newt = `Appl(name,sa.rule.types.termlist.TermList.fromArray(arrayOfVariable));
+              arrayOfVariable[i-1] = variable;
               if(Main.options.metalevel) {
                 newt = Tools.metaEncodeConsNil(newt,generatedSignature);
               }
@@ -202,6 +161,40 @@ public class RuleCompiler {
         }
         return `t;
       }
+    }
+  }
+
+
+  /*
+   * Remove nested anti-patterns
+   */
+  public RuleList expandGeneralAntiPatterns(RuleList rules) {
+    RuleList newRules = `ConcRule();
+    for(Rule rule:rules.getCollectionConcRule()) {
+      RuleList genRules = this.expandGeneralAntiPatternInRule(`rule);
+      // add the generated rules for rule to the result (list of rule)
+      newRules = `ConcRule(newRules*,genRules*);
+    }
+    return newRules;
+  }  
+
+  /**
+   * Expand a general anti-pattern (non-linear with nested negations) into a list of rules
+   * @param generatedRules initial set of rules
+   * @param rule the rule to expand
+   * @return the list of generated rules
+   */
+  private RuleList expandGeneralAntiPatternInRule(Rule rule) {
+    try {
+      List<Rule> ruleList = new ArrayList<Rule>();
+      `OnceTopDown(ExpandGeneralAntiPattern(ruleList,rule)).visit(rule);
+      return Tools.fromListOfRule(ruleList);
+    } catch(VisitFailure e) {
+      /*
+       * no anti-pattern found: return the rule
+       */
+      //System.out.println("EXPAND AP add rule: " + Pretty.toString(rule));
+      return `ConcRule(rule);
     }
   }
 
@@ -242,8 +235,8 @@ public class RuleCompiler {
 
             `orderedTRS.add(r1);
             `orderedTRS.add(r2);
-            System.out.println("case 1 ==> " + Pretty.toString(r1));
-            System.out.println("case 1 ==> " + Pretty.toString(r2));
+            System.out.println("  case 1 ==> " + Pretty.toString(r1));
+            System.out.println("  case 1 ==> " + Pretty.toString(r2));
             return `s;
           }
 
@@ -259,8 +252,8 @@ public class RuleCompiler {
 
             `orderedTRS.add(r1);
             `orderedTRS.add(r2);
-            System.out.println("case 2 ==> " + Pretty.toString(r1));
-            System.out.println("case 2 ==> " + Pretty.toString(r2));
+            System.out.println("  case 2 ==> " + Pretty.toString(r1));
+            System.out.println("  case 2 ==> " + Pretty.toString(r2));
             return `s;
           }
 
