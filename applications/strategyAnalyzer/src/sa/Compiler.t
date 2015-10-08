@@ -464,11 +464,11 @@ public class Compiler {
              */
             rList = ruleCompiler.eliminateBottom2(rList);
 
-            try{
-              rList = ruleCompiler.expandAt(rList);
-            }catch(VisitFailure exp){
-              System.out.println("OUPS: " + exp.getMessage() );
-            }
+//             try{
+//               rList = ruleCompiler.expandAt(rList);
+//             }catch(VisitFailure exp){
+//               System.out.println("OUPS: " + exp.getMessage() );
+//             }
             
             for(Rule rule: rList.getCollectionConcRule()) {
               System.out.println("EXPANDED AP RULE: " + Pretty.toString(rule) );

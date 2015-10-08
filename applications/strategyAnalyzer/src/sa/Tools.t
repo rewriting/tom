@@ -136,7 +136,15 @@ public class Tools {
 
   /*** helpers to build AST ***/
   public static Term Var(String name) { return `Var(name); }
-  public static Term Anti(Term t) { return `Anti(t); }
+  public static Term Anti(Term t) { 
+    %match(t){ 
+      At(var,term) -> {
+        Term antiterm = Anti(`term);
+        return `At(var,antiterm);         
+      }
+    }
+    return `Anti(t); 
+  }
   public static Term At(Term t1, Term t2) { return `At(t1,t2); }
   public static Term Bottom(Term t) { return _appl(Signature.BOTTOM,t); }
   public static Term Bottom2(Term t1,Term t2) { return _appl(Signature.BOTTOM2,t1,t2); }
