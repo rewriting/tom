@@ -270,8 +270,9 @@ public class Compiler {
     Signature gSig = getGeneratedSignature();
     Signature eSig = getExtractedSignature();
 
-    Term X = Var(Tools.getName("X"));
-
+    /*
+     * Pre-treatment: move elsewhere
+     */
     if(Main.options.withAP == false) {
       /*
        * apply expandAntiPatterns until there is no more anti-pattern in rules
@@ -280,7 +281,7 @@ public class Compiler {
       RuleList old = null;
       while(ruleList != old) {
         old = ruleList;
-        ruleList = ruleCompiler.expandAntiPatterns(ruleList);
+        ruleList = ruleCompiler.expandGeneralAntiPatterns(ruleList);
       }
       /*
        * replace Bottom2 by Bottom
@@ -304,6 +305,7 @@ public class Compiler {
      *   rule'(X@linear-lhs, false) -> Bottom(x)
      */
     
+    Term X = Var(Tools.getName("X"));
     String rule = Tools.getName(StrategyOperator.RULE.getName());
     String cr = Tools.getName(Tools.addAuxExtension(StrategyOperator.RULE.getName()));
 

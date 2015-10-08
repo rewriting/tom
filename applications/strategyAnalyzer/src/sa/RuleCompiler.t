@@ -67,8 +67,6 @@ public class RuleCompiler {
    */
   private RuleList expandAntiPatternInRule(Rule rule) {
     RuleList genRules = `ConcRule();
-
-
     try {
       HashMultiset<Term> antiBag = HashMultiset.create();
       Term lhs = rule.getlhs();
@@ -84,7 +82,7 @@ public class RuleCompiler {
          */
         List<Rule> ruleList = new ArrayList<Rule>();
         // perform one-step expansion
-        `OnceTopDown(ExpandAntiPattern(ruleList,rule,this.extractedSignature, this.generatedSignature)).visit(rule);
+        `OnceTopDown(ExpandAntiPatternPostTreatment(ruleList,rule,this.extractedSignature, this.generatedSignature)).visit(rule);
         // for each generated rule restart the expansion
         for(Rule expandr:ruleList) {
           // add the list of rules generated for the expandr rule to the final result
@@ -92,20 +90,51 @@ public class RuleCompiler {
           genRules = `ConcRule(genRules*,expandedRules*);
         }
       } else {
-        /*
-         * general case: rule is non left-linear or may contain nested anti patterns
-         */
-        List<Rule> ruleList = new ArrayList<Rule>();
-        `OnceTopDown(ExpandGeneralAntiPattern(ruleList,rule)).visit(rule);
-        // for each generated rule restart the expansion
-        for(Rule expandr:ruleList) {
-          // add the list of rules generated for the expandr rule to the final result
-          RuleList expandedRules = this.expandAntiPatternInRule(expandr);
-          genRules = `ConcRule(genRules*,expandedRules*);
-        }
+        throw new RuntimeException("Should not be there");
       }
     } catch(VisitFailure e) {
       throw new RuntimeException("Should not be there");
+    }
+    return genRules;
+  }
+  
+  public RuleList expandGeneralAntiPatterns(RuleList rules) {
+    RuleList newRules = `ConcRule();
+    for(Rule rule:rules.getCollectionConcRule()) {
+      RuleList genRules = this.expandGeneralAntiPatternInRule(`rule);
+      // add the generated rules for rule to the result (list of rule)
+      newRules = `ConcRule(newRules*,genRules*);
+    }
+    return newRules;
+  }  
+
+  /**
+   * Expand a general anti-pattern (non-linear with nested negations) into a list of rules
+   * @param generatedRules initial set of rules
+   * @param rule the rule to expand
+   * @return the list of generated rules
+   */
+  private RuleList expandGeneralAntiPatternInRule(Rule rule) {
+    RuleList genRules = `ConcRule();
+
+    try {
+      List<Rule> ruleList = new ArrayList<Rule>();
+      `OnceTopDown(ExpandGeneralAntiPattern(ruleList,rule)).visit(rule);
+      // for each generated rule restart the expansion
+      for(Rule expandr:ruleList) {
+        // add the list of rules generated for the expandr rule to the final result
+        /*
+           RuleList expandedRules = this.expandGeneralAntiPatternInRule(expandr);
+        genRules = `ConcRule(genRules*,expandedRules*);
+        */
+        genRules = `ConcRule(genRules*,expandr);
+      }
+    } catch(VisitFailure e) {
+      /*
+       * no anti-pattern found: add the rule
+       */
+      System.out.println("EXPAND AP add rule: " + Pretty.toString(rule));
+      genRules = `ConcRule(genRules*,rule);
     }
     return genRules;
   }
@@ -117,7 +146,7 @@ public class RuleCompiler {
    * @param extractedSignature the extracted signature
    * @param generatedSignature the generated signature
    */
-  %strategy ExpandAntiPattern(ruleList:List,subject:Rule,extractedSignature:Signature, generatedSignature:Signature) extends Fail() {
+  %strategy ExpandAntiPatternPostTreatment(ruleList:List,subject:Rule,extractedSignature:Signature, generatedSignature:Signature) extends Fail() {
     visit Term {
       Anti(Anti(t)) -> {
         Rule newr = (Rule) getEnvironment().getPosition().getReplace(`t).visit(subject);
@@ -172,9 +201,6 @@ public class RuleCompiler {
       }
     }
   }
-  /********************************************************************************
-   *     END
-   ********************************************************************************/
 
   /*
    * Perform one-step expansion
