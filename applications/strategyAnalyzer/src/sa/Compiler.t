@@ -271,29 +271,6 @@ public class Compiler {
     Signature eSig = getExtractedSignature();
 
     /*
-     * Pre-treatment: move elsewhere
-     */
-    if(Main.options.withAP == false) {
-      /*
-       * apply expandAntiPatterns until there is no more anti-pattern in rules
-       */
-      RuleCompiler ruleCompiler = new RuleCompiler(eSig,gSig);
-      RuleList old = null;
-      while(ruleList != old) {
-        old = ruleList;
-        ruleList = ruleCompiler.expandGeneralAntiPatterns(ruleList);
-      }
-      /*
-       * replace Bottom2 by Bottom
-       */
-      ruleList = ruleCompiler.eliminateBottom2(ruleList);
-
-      for(Rule rule: ruleList.getCollectionConcRule()) {
-        System.out.println("EXPANDED AP RULE: " + Pretty.toString(rule) );
-      }
-    }
-
-    /*
      * lhs -> rhs becomes
      * in the linear case:
      *   rule(lhs) -> rhs
@@ -465,7 +442,40 @@ public class Compiler {
       %match(strat) {
         // TODO: handle Set without an order
         StratExp((Set|List)(rulelist)) -> {
-          strategySymbol = this.compileRuleList(`rulelist,generatedRules);
+
+
+          /*
+           * Pre-treatment: move elsewhere
+           */
+          RuleList rList = `rulelist;
+          if(Main.options.withAP == false) {
+            /*
+             * apply expandAntiPatterns until there is no more anti-pattern in rules
+             */
+
+            RuleCompiler ruleCompiler = new RuleCompiler(eSig,gSig);
+            RuleList old = null;
+            while(rList != old) {
+              old = rList;
+              rList = ruleCompiler.expandGeneralAntiPatterns(rList);
+            }
+            /*
+             * replace Bottom2 by Bottom
+             */
+            rList = ruleCompiler.eliminateBottom2(rList);
+            try{
+              rList = ruleCompiler.expandAt(rList);
+            }catch(VisitFailure exp){
+              System.out.println("OUPS: " + exp.getMessage() );
+            }
+            
+            for(Rule rule: rList.getCollectionConcRule()) {
+              System.out.println("EXPANDED AP RULE: " + Pretty.toString(rule) );
+            }
+          }
+
+          strategySymbol = this.compileRuleList(rList,generatedRules);
+          //           strategySymbol = this.compileRuleList(`rulelist,generatedRules);
         }
 
         /*
