@@ -83,6 +83,7 @@ public class RuleCompiler {
         List<Rule> ruleList = new ArrayList<Rule>();
         // perform one-step expansion
         `OnceTopDown(ExpandAntiPatternPostTreatment(ruleList,rule,this.extractedSignature, this.generatedSignature)).visit(rule);
+
         // for each generated rule restart the expansion
         for(Rule expandr:ruleList) {
           // add the list of rules generated for the expandr rule to the final result
@@ -90,7 +91,8 @@ public class RuleCompiler {
           genRules = `ConcRule(genRules*,expandedRules*);
         }
       } else {
-        throw new RuntimeException("Should not be there");
+        System.out.println("NON LIN: " + Pretty.toString(rule) );
+        throw new RuntimeException("Should not be there EXP ");
       }
     } catch(VisitFailure e) {
       throw new RuntimeException("Should not be there");
@@ -179,20 +181,21 @@ public class RuleCompiler {
 
             Term[] array = new Term[arity];
             Term[] tarray = new Term[arity];
+            String Z = Tools.getName("Z");
             tarray = tl.toArray(tarray);
             for(int i=1 ; i<=arity ; i++) {
-              array[i-1] = `Var("Z_" + i);
+//               array[i-1] = `Var("Z_" + i);
+              array[i-1] = `Var(Z +"_"+ i);
             }
             for(int i=1 ; i<=arity ; i++) {
               Term ti = tarray[i-1];
               array[i-1] = `Anti(ti);
               Term newt = `Appl(name,sa.rule.types.termlist.TermList.fromArray(array));
-              array[i-1] = `Var("Z_" + i);
+              array[i-1] = `Var(Z +"_"+ i);
               if(Main.options.metalevel) {
                 newt = Tools.metaEncodeConsNil(newt,generatedSignature);
               }
               Rule newr = (Rule) getEnvironment().getPosition().getReplace(newt).visit(subject);
-
               ruleList.add(newr);
             }
           }
@@ -301,6 +304,9 @@ public class RuleCompiler {
     for(Rule rule:ruleList.getCollectionConcRule()) {
       Map<String,Term> map = new HashMap<String,Term>();
       `TopDown(CollectAt(map)).visitLight(`rule); // add x->t into map for each x@t
+
+//       System.out.println("AT MAP: " + map);
+
       if(map.keySet().isEmpty()) {
         // if no AT in the rule just add it to the result
         res = `ConcRule(res*,rule);

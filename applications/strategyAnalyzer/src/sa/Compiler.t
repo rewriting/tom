@@ -295,7 +295,7 @@ public class Compiler {
         ConcRule(Rule(lhs,rhs),A*) -> {
 
           String nextRule = compileRuleList(`A*,generatedRules);
-
+          
           TermList result = Tools.linearize(`lhs, this.generatedSignature );
 
           %match(result) {
@@ -463,6 +463,7 @@ public class Compiler {
              * replace Bottom2 by Bottom
              */
             rList = ruleCompiler.eliminateBottom2(rList);
+
             try{
               rList = ruleCompiler.expandAt(rList);
             }catch(VisitFailure exp){
@@ -476,6 +477,7 @@ public class Compiler {
 
           strategySymbol = this.compileRuleList(rList,generatedRules);
           //           strategySymbol = this.compileRuleList(`rulelist,generatedRules);
+
         }
 
         /*
