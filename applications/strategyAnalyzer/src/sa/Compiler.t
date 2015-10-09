@@ -117,8 +117,8 @@ public class Compiler {
       
       String strategySymbol = "NONE";
       List<Rule> mutableList = new ArrayList<Rule>();
-//             strategySymbol = this.compileStratOrdered(strategy,mutableList);
-      strategySymbol = this.compileStrat(strategy,mutableList);
+      strategySymbol = this.compileStratOrdered(strategy,mutableList,true);
+//       strategySymbol = this.compileStrat(strategy,mutableList);
       RuleList ruleList = Tools.fromListOfRule(mutableList);
 
       if(Main.options.metalevel) {
@@ -255,10 +255,10 @@ public class Compiler {
    * compile a (ordered) list of rules
    * return the name of the top symbol (phi) introduced
    * @param ruleList the list of rules to compile
-   * @param rules the list of rewrite rules generated 
+   * @param generatedRules the list of rewrite rules generated 
+   * @param ordered set it to true if the semantics of the transalation is based on the order of the generated rules
    * @return the symbol to be used for the compiled strategy
    */
-
   private String compileRuleList(RuleList ruleList, List<Rule> generatedRules, boolean ordered) {
     Signature gSig = getGeneratedSignature();
     Signature eSig = getExtractedSignature();
@@ -306,11 +306,13 @@ public class Compiler {
                * rule(X@!lhs) -> nextRule(X)       // could be Bot(X) if only one rule, i.e. non next rule
                */
               localRules.add(Rule(_appl(rule,At(X,`lhs)), `rhs));
-              if(!ordered){
-                localRules.add(Rule(_appl(rule,At(X,Anti(`lhs))), _appl(nextRule,X)) );
-              }else{
-                localRules.add(Rule(_appl(rule,X), _appl(nextRule,X)) );
-              }
+              Term lhs = ordered ? _appl(rule,X) : _appl(rule,At(X,Anti(`lhs)));
+              localRules.add(Rule(lhs, _appl(nextRule,X)) );
+//               if(!ordered){
+//                 localRules.add(Rule(_appl(rule,At(X,Anti(`lhs))), _appl(nextRule,X)) );
+//               }else{
+//                 localRules.add(Rule(_appl(rule,X), _appl(nextRule,X)) );
+//               }
             }
 
             TermList(linearlhs, cond@!Appl("True",TermList())) -> {
@@ -322,11 +324,13 @@ public class Compiler {
                * cr(X@linearlhs, False) -> nextRule(X)       // could be Bot(X) if only one rule, i.e. non next rule
                */
               localRules.add(Rule(_appl(rule,At(X,`linearlhs)), _appl(cr, X, `cond)));
-              if(!ordered){
-                localRules.add(Rule(_appl(rule,At(X,Anti(`linearlhs))), _appl(nextRule,X) ));
-              }else{
-                localRules.add(Rule(_appl(rule,X), _appl(nextRule,X) ));
-              }
+              Term lhs = ordered ? _appl(rule,X) : _appl(rule,At(X,Anti(`linearlhs)));
+              localRules.add(Rule(lhs, _appl(nextRule,X)) );
+//               if(!ordered){
+//                 localRules.add(Rule(_appl(rule,At(X,Anti(`linearlhs))), _appl(nextRule,X) ));
+//               }else{
+//                 localRules.add(Rule(_appl(rule,X), _appl(nextRule,X) ));
+//               }
               localRules.add(Rule(_appl(cr,`linearlhs, True()), `rhs));
               localRules.add(Rule(_appl(cr,At(X,`linearlhs),False()), _appl(nextRule,X) ) );
             }
@@ -337,7 +341,7 @@ public class Compiler {
           localRules.add(Rule(_appl(rule,X), Bottom(X))); // X should be a term of the signature; morally X@!Bottom(_)
         }
       }
-    } else { // TODO: ordered not done
+    } else { 
       // META-LEVEL
       gSig.addSymbol(rule,`ConcGomType(Signature.TYPE_METATERM),Signature.TYPE_METATERM);
       gSig.addSymbol(cr,`ConcGomType(Signature.TYPE_METATERM,Signature.TYPE_BOOLEAN),Signature.TYPE_METATERM);
@@ -365,7 +369,13 @@ public class Compiler {
                * rule(X@!mlhs) -> nextRule(X)       // could be Bot(X) if only one rule, i.e. non next rule
                */
               localRules.add(Rule(_appl(rule,At(X,mlhs)), mrhs));
-              localRules.add(Rule(_appl(rule,At(X,Anti(mlhs))), _appl(nextRule,X) ) );
+              Term lhs = ordered ? _appl(rule,X) : _appl(rule,At(X,Anti(mlhs)));
+              localRules.add(Rule(lhs, _appl(nextRule,X)) );
+//               if(!ordered){
+//                 localRules.add(Rule(_appl(rule,At(X,Anti(mlhs))), _appl(nextRule,X) ) );
+//               }else{
+//                 localRules.add(Rule(_appl(rule,X), _appl(nextRule,X) ) );
+//               }
             }
 
             TermList(linearlhs, cond@!Appl("True",TermList())) -> {
@@ -378,7 +388,13 @@ public class Compiler {
                * cr(X@mlinearlhs, False) -> nextRule(X)       // could be Bot(X) if only one rule, i.e. non next rule
                */
               localRules.add(Rule(_appl(rule,At(X,mlinearlhs)), _appl(cr,X,`cond)));
-              localRules.add(Rule(_appl(rule,At(X,Anti(mlinearlhs))), _appl(nextRule,X)));
+              Term lhs = ordered ? _appl(rule,X) : _appl(rule,At(X,Anti(mlinearlhs)));
+              localRules.add(Rule(lhs, _appl(nextRule,X)) );
+//               if(!ordered){
+//                 localRules.add(Rule(_appl(rule,At(X,Anti(mlinearlhs))), _appl(nextRule,X)));
+//               }else{
+//                 localRules.add(Rule(_appl(rule,X), _appl(nextRule,X)));
+//               }
               localRules.add(Rule(_appl(cr,mlinearlhs, True()), mrhs));
               localRules.add(Rule(_appl(cr,At(X,mlinearlhs), False()), _appl(nextRule,X)));
             }
@@ -1128,9 +1144,13 @@ public class Compiler {
 
   /*************************************************************************************/
 
-  private String compileStratOrdered(Strat strat, List<Rule> rules) {
+  private String compileStratOrdered(Strat strat, List<Rule> rules, boolean ordered) {
     Signature gSig = getGeneratedSignature();
     Signature eSig = getExtractedSignature();
+
+    Term X = Var(Tools.getName("X"));
+    Term Y = Var(Tools.getName("Y"));
+    Term Z = Var(Tools.getName("Z"));
 
     // by default, if strategy can't be compiled, a meaningless name
     // TODO: change to exception ?
@@ -1175,6 +1195,113 @@ public class Compiler {
           }
 
           strategySymbol = this.compileRuleList(rList,generatedRules,true);
+        }
+
+        StratIdentity() -> {
+          String id = Tools.getName(StrategyOperator.IDENTITY.getName());
+          if(!Main.options.metalevel) {
+            gSig.addSymbol(id,`ConcGomType(Signature.TYPE_TERM),Signature.TYPE_TERM);
+            if( !Main.options.approx ) {
+              /*
+               * the rule cannot be applied on arguments containing fresh
+               * variables but only on terms from the signature or Bottom
+               * normally it will follow reduction in original TRS
+               * id(Bot(X)) -> Bot(X)
+               * id(X@!Bot(Y)) -> X
+               */
+              generatedRules.add(Rule(_appl(id,Bottom(X)), Bottom(X)));
+              Term lhs = ordered ? _appl(id,X) : _appl(id,At(X,Anti(Bottom(Y))));
+              generatedRules.add(Rule(lhs, X));
+            } 
+          } else {
+            // META-LEVEL
+            gSig.addSymbol(id,`ConcGomType(Signature.TYPE_METATERM),Signature.TYPE_METATERM);
+            if( !Main.options.approx ) {
+              /*
+               * id(Bot(X)) -> Bot(X)
+               * id(Appl(X,Y)) -> Appl(X,Y)
+               */
+              generatedRules.add(Rule(_appl(id,Bottom(X)), Bottom(X)));
+              // could use X instead of Appl(X,Y) but it wouldn't change too much (thanks to metalevel)
+              generatedRules.add(Rule(_appl(id,Appl(X,Y)), Appl(X,Y)));
+            } 
+          }
+          strategySymbol = id;
+        }
+
+        StratFail() -> {
+          String fail = Tools.getName(StrategyOperator.FAIL.getName());
+          if( !Main.options.metalevel ) {
+            gSig.addSymbol(fail,`ConcGomType(Signature.TYPE_TERM),Signature.TYPE_TERM);
+            if( !Main.options.approx ) {
+              /*
+               * fail(Bot(X)) -> Bot(X)
+               * fail(X@!Bot(Y)) -> Bot(X)
+               */
+              generatedRules.add(Rule(_appl(fail,Bottom(X)), Bottom(X)));
+              Term lhs = ordered ? _appl(fail,X) : _appl(fail,At(X,Anti(Bottom(Y))));
+              generatedRules.add(Rule(lhs, X));
+            } 
+          } else {
+            // META-LEVEL
+            gSig.addSymbol(fail,`ConcGomType(Signature.TYPE_METATERM),Signature.TYPE_METATERM);
+            if( !Main.options.approx ) {
+              /*
+               * fail(Bot(X)) -> Bot(X)
+               * fail(Appl(X,Y)) -> Bot(Appl(X,Y))
+               */
+              generatedRules.add(Rule(_appl(fail,Bottom(X)), Bottom(X)));
+              // could use X instead of Appl(X,Y) but it wouldn't change too much (thanks to metalevel)
+              generatedRules.add(Rule(_appl(fail,Appl(X,Y)), Bottom(Appl(X,Y))));
+            } 
+          }
+          strategySymbol = fail;
+        }
+
+        StratSequence(s1,s2) -> {
+          String n1 = compileStrat(`s1,generatedRules);
+          String n2 = compileStrat(`s2,generatedRules);
+          String seq = Tools.getName(StrategyOperator.SEQ.getName());
+          String seq2 = Tools.getName(Tools.addAuxExtension(StrategyOperator.SEQ.getName()));
+          if( !Main.options.metalevel ) {
+            gSig.addSymbol(seq,`ConcGomType(Signature.TYPE_TERM),Signature.TYPE_TERM);
+            gSig.addSymbol(seq2,`ConcGomType(Signature.TYPE_TERM,Signature.TYPE_TERM),Signature.TYPE_TERM);
+            if( !Main.options.approx ) {
+              /*
+               * the rule cannot be applied on arguments containing fresh variables but only on terms from the signature or Bottom
+               * normally it will follow reduction in original TRS
+               * seq(Bot(X)) -> Bot(X)
+               * seq(X@!Bot(Y)) -> seq2(n2(n1(X)),X)
+               * seq2(Bot(Y),X) -> Bot(X)
+               * seq2(X@!Bot(Y),Z) -> X
+               */
+              generatedRules.add(Rule(_appl(seq,Bottom(X)), Bottom(X)));
+              Term lhs = ordered ? _appl(seq,X) : _appl(seq,At(X,Anti(Bottom(Y))));
+              generatedRules.add(Rule(lhs, _appl(seq2,_appl(n2,_appl(n1,X)),X)));
+              generatedRules.add(Rule(_appl(seq2,Bottom(Y),X), Bottom(X)));
+              Term nlhs = ordered ? _appl(seq2,X,Z) : _appl(seq2,At(X,Anti(Bottom(Y))),Z);
+              generatedRules.add(Rule(nlhs,X));
+            } 
+          } else {
+            // META-LEVEL
+            gSig.addSymbol(seq,`ConcGomType(Signature.TYPE_METATERM),Signature.TYPE_METATERM);
+            gSig.addSymbol(seq2,`ConcGomType(Signature.TYPE_METATERM,Signature.TYPE_METATERM),Signature.TYPE_METATERM);
+            if( !Main.options.approx ) {
+              /*
+               * seq(Bot(X)) -> Bot(X)
+               * seq(Appl(X,Y)) -> seq2(n2(n1(Appl(X,Y))),Appl(X,Y))
+               * seq2(Bot(Y),X) -> Bot(X)
+               * seq2(Appl(X,Y),Z) -> Appl(X,Y)
+               */
+              generatedRules.add(Rule(_appl(seq,Bottom(X)), Bottom(X)));
+              // could use X instead of Appl(X,Y) but it wouldn't change too much (thanks to metalevel)
+              generatedRules.add(Rule(_appl(seq,Appl(X,Y)), _appl(seq2,_appl(n2,_appl(n1,Appl(X,Y))),Appl(X,Y))));
+              generatedRules.add(Rule(_appl(seq2,Bottom(Y),X), Bottom(X)));
+              // could use X instead of Appl(X,Y) but it wouldn't change too much (thanks to metalevel)
+              generatedRules.add(Rule(_appl(seq2,Appl(X,Y),Z), Appl(X,Y)));
+            } 
+          }
+          strategySymbol = seq;
         }
 
       } // match

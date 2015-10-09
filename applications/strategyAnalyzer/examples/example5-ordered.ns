@@ -9,6 +9,11 @@ T = a()
 strategies
 
 r1() =  [  f(b()) -> a() , f(x) -> c() , g(x,x) -> x  ]
+// r1() =  [  f(b()) -> a() , f(x) -> c() ]
 
-mainStrat() = r1()
+// r1() =  [  f(b()) -> a() , f(x) -> c() ]
+// r2() =  [  c() -> a() , a() -> c() ]
+
+// mainStrat() = r1() ; r2() ; Identity
+mainStrat() = r1() ; Identity
 
