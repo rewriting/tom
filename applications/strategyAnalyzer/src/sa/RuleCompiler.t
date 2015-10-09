@@ -75,7 +75,9 @@ public class RuleCompiler {
       if(nbOfAnti == 0) {
         // add the rule since it contains no anti-pattern
         genRules = `ConcRule(genRules*,rule);
-      } else if(nbOfAnti == 1 && Tools.isLinear(lhs)) {
+     // TODO [hc:09/09/15]: check preconditions 
+     //       } else if(nbOfAnti == 1 && Tools.isLinear(lhs)) {
+      } else if(Tools.isLinear(lhs)) {
         /*
          * case: rule is left-linear and there is only one negation
          * should only be done in post-treatment, not during compilation of strategies

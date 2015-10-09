@@ -731,6 +731,11 @@ public class Compiler {
           String all = Tools.getName(StrategyOperator.ALL.getName());
           if( !Main.options.metalevel ) {
             gSig.addSymbol(all,`ConcGomType(Signature.TYPE_TERM),Signature.TYPE_TERM);
+            /*
+             * propagate Bottom  (otherwise not reduced and leads to bug in Sequence)
+             * all(Bot(X)) -> Bot(X)
+             */
+            generatedRules.add(Rule(_appl(all,Bottom(X)), Bottom(X)));
             for(String name : eSig.getSymbols()) {
               int arity = gSig.getArity(name);
               int arity_all = arity+1;
@@ -759,11 +764,6 @@ public class Compiler {
                 }
                 a_rx[arity] = _appl(name, a_lx);
                 generatedRules.add(Rule(_appl(all,_appl(name, a_lx)), _appl(all_n, a_rx)));
-                /*
-                 * propagate Bottom  (otherwise not reduced and leads to bug in Sequence)
-                 * all(Bot(X)) -> Bot(X)
-                 */
-                generatedRules.add(Rule(_appl(all,Bottom(X)), Bottom(X)));
                 /*
                  * generate success rules
                  * all_g(X1@!Bottom(Y1),...,X_n@!Bottom(Y_n),_) -> g(X1,...,X_n)
@@ -1150,7 +1150,14 @@ public class Compiler {
 
     Term X = Var(Tools.getName("X"));
     Term Y = Var(Tools.getName("Y"));
+    Term XX = Var(Tools.getName("XX"));
+    Term YY = Var(Tools.getName("YY"));
     Term Z = Var(Tools.getName("Z"));
+    Term Z0 = Var(Tools.getName("Z0"));
+    Term Z1 = Var(Tools.getName("Z1"));
+    Term Z2 = Var(Tools.getName("Z2"));
+    Term Z3 = Var(Tools.getName("Z3"));
+
 
     // by default, if strategy can't be compiled, a meaningless name
     // TODO: change to exception ?
@@ -1195,6 +1202,45 @@ public class Compiler {
           }
 
           strategySymbol = this.compileRuleList(rList,generatedRules,true);
+        }
+
+        /*
+         * TODO: fix non confluence here
+         */
+        StratMu(name,s) -> {
+          try {
+            String mu = Tools.getName(StrategyOperator.MU.getName());
+            Strat newStrat = `TopDown(ReplaceMuVar(name,mu)).visitLight(`s);
+            String phi_s = compileStrat(newStrat,generatedRules);
+            if(!Main.options.metalevel) {
+              gSig.addSymbol(mu,`ConcGomType(Signature.TYPE_TERM),Signature.TYPE_TERM);
+              /*
+               * mu(Bot(X)) -> Bot(X)
+               * mu(X@!Bot(Y)) -> phi_s(X)
+               */
+              generatedRules.add(Rule(_appl(mu,Bottom(X)), Bottom(X)));
+              Term lhs = ordered ? _appl(mu,X) : _appl(mu,At(X,Anti(Bottom(Y))));
+              generatedRules.add(Rule(lhs, _appl(phi_s,X)));
+            } else {
+              // META-LEVEL
+              gSig.addSymbol(mu,`ConcGomType(Signature.TYPE_METATERM),Signature.TYPE_METATERM);
+              /*
+               * mu(Bot(X)) -> Bot(X)
+               * mu(Appl(Y,Z)) -> phi_s(Appl(Y,Z))
+               */
+              generatedRules.add(Rule(_appl(mu,Bottom(X)), Bottom(X)));
+              // could use X instead of Appl(X,Y) but it wouldn't change too much (thanks to metalevel)
+              generatedRules.add(Rule(_appl(mu,Appl(Y,Z)), _appl(phi_s,Appl(Y,Z))));
+            }
+            strategySymbol = phi_s;
+          } catch(VisitFailure e) {
+            System.out.println("failure in StratMu on: " + `s);
+          }
+        }
+
+        // mu fix point: transform the stratname into a function call
+        StratName(name) -> {
+          strategySymbol = `name;
         }
 
         StratIdentity() -> {
@@ -1302,6 +1348,195 @@ public class Compiler {
             } 
           }
           strategySymbol = seq;
+        }
+
+        StratChoice(s1,s2) -> {
+          String n1 = compileStrat(`s1,generatedRules);
+          String n2 = compileStrat(`s2,generatedRules);
+          String choice = Tools.getName(StrategyOperator.CHOICE.getName());
+          String choice2 = Tools.getName(Tools.addAuxExtension(StrategyOperator.CHOICE.getName()));
+          if( !Main.options.metalevel ) {
+            gSig.addSymbol(choice,`ConcGomType(Signature.TYPE_TERM),Signature.TYPE_TERM);
+            gSig.addSymbol(choice2,`ConcGomType(Signature.TYPE_TERM),Signature.TYPE_TERM);
+            /*
+             * TODO [20/01/2015]: see if not exact is interesting
+             * choice(Bot(X)) -> Bot(X)
+             * choice(X@!Bot(Y)) -> choice2(n1(X))
+             * choice2(Bot(X)) -> n2(X)
+             * choice2(X@!Bot(Y)) -> X
+             */
+            generatedRules.add(Rule(_appl(choice,Bottom(X)), Bottom(X)));
+            Term lhs = ordered ? _appl(choice,X) : _appl(choice,At(X,Anti(Bottom(Y))));
+            generatedRules.add(Rule(lhs, _appl(choice2,_appl(n1,X))));
+            generatedRules.add(Rule(_appl(choice2,Bottom(X)), _appl(n2,X)));
+            Term nlhs = ordered ? _appl(choice2,X) : _appl(choice2,At(X,Anti(Bottom(Y))));
+            generatedRules.add(Rule(nlhs, X));
+          } else {
+            // META-LEVEL
+            gSig.addSymbol(choice,`ConcGomType(Signature.TYPE_METATERM),Signature.TYPE_METATERM);
+            gSig.addSymbol(choice2,`ConcGomType(Signature.TYPE_METATERM),Signature.TYPE_METATERM);
+            if( !Main.options.approx ) {
+              /*
+               * choice(Bot(X)) -> Bot(X)
+               * choice(Appl(X,Y)) -> choice2(n1(Appl(X,Y)))
+               * choice2(Bot(X)) -> n2(X)
+               * choice2(Appl(X,Y) -> Appl(X,Y)
+               */
+              generatedRules.add(Rule(_appl(choice,Bottom(X)), Bottom(X)));
+              // could use X instead of Appl(X,Y) but it wouldn't change too much (thanks to metalevel)
+              generatedRules.add(Rule(_appl(choice,Appl(X,Y)), _appl(choice2,_appl(n1,Appl(X,Y)))));
+              generatedRules.add(Rule(_appl(choice2,Bottom(X)), _appl(n2,X)));
+              // could use X instead of Appl(X,Y) but it wouldn't change too much (thanks to metalevel)
+              generatedRules.add(Rule(_appl(choice2,Appl(X,Y)), Appl(X,Y)));
+            }
+          }
+          strategySymbol = choice;
+        }
+
+
+        StratAll(s) -> {
+          String phi_s = compileStrat(`s,generatedRules);
+          String all = Tools.getName(StrategyOperator.ALL.getName());
+          if( !Main.options.metalevel ) {
+            gSig.addSymbol(all,`ConcGomType(Signature.TYPE_TERM),Signature.TYPE_TERM);
+
+            /*
+             * propagate Bottom  (otherwise not reduced and leads to bug in Sequence)
+             * all(Bot(X)) -> Bot(X)
+             */
+            generatedRules.add(Rule(_appl(all,Bottom(X)), Bottom(X)));
+
+            for(String name : eSig.getSymbols()) {
+              int arity = gSig.getArity(name);
+              int arity_all = arity+1;
+              if(arity==0) {
+                /*
+                 * all(name) -> name
+                 */
+                generatedRules.add(Rule(_appl(all,_appl(name)), _appl(name)));
+              } else {
+                String all_n = Tools.addOperatorName(all,name);
+                GomTypeList all_args = `ConcGomType();
+                for(int i=0; i<arity_all; i++){
+                  all_args = `ConcGomType(Signature.TYPE_TERM,all_args*);
+                }
+                gSig.addSymbol(all_n,all_args,Signature.TYPE_TERM);
+                /*
+                 * main case
+                 * all(f(x1,...,xn)) -> all_n(phi_s(x1),phi_s(x2),...,phi_s(xn),f(x1,...,xn))
+                 */
+                Term[] a_lx = new Term[arity];
+                Term[] a_rx = new Term[arity+1];
+                for(int i=0 ; i<arity ; i++) {
+                  Term Xi = `Var("X_" + i);
+                  a_lx[i] = Xi;
+                  a_rx[i] = _appl(phi_s, Xi);
+                }
+                a_rx[arity] = _appl(name, a_lx);
+                generatedRules.add(Rule(_appl(all,_appl(name, a_lx)), _appl(all_n, a_rx)));
+                /*
+                 * generate failure rules
+                 * phi_n(Bottom(_),_,...,_,Z) -> Bottom(Z)
+                 * phi_n(...,Bottom(_),...,Z) -> Bottom(Z)
+                 * phi_n(_,...,_,Bottom(_),Z) -> Bottom(Z)
+                 */
+                Term[] a_llx = new Term[arity+1];
+                for(int i=0 ; i<arity ; i++) {
+                  Term X0 = `Var("X0");
+                  a_llx[0] = (i==0)?Bottom(X0):X0;
+                  for(int j=1 ; i<arity ; i++) {
+                    Term Xj = `Var("X_" + i);
+                    if(j==i) {
+                      a_llx[j] = Bottom(Xj);
+                    } else {
+                      a_llx[j] = Xj;
+                    }
+                  }
+                  a_llx[arity] = Z;
+                  generatedRules.add(Rule(_appl(all_n,a_llx), Bottom(Z)));
+                }
+                /*
+                 * generate success rules
+                 * all_g(X1@!Bottom(Y1),...,X_n@!Bottom(Y_n),_) -> g(X1,...,X_n)
+                 */
+                a_lx = new Term[arity+1];
+                a_rx = new Term[arity];
+                for(int i=0 ; i<arity ; i++) {
+                  Term Xi = `Var("X_" + i);
+                  Term Yi = `Var("Y" + i);
+                  a_lx[i] = ordered ? Xi : At(Xi,Anti(Bottom(Yi)));
+                  a_rx[i] = Xi;
+                }
+                a_lx[arity] = Z;
+                generatedRules.add(Rule(_appl(all_n,a_lx), _appl(name, a_rx)));
+              }
+            }
+          } else {
+            // META-LEVEL
+            gSig.addSymbol(all,`ConcGomType(Signature.TYPE_METATERM),Signature.TYPE_METATERM);
+            String all_1 = all+"_1";
+            String all_2 = all+"_2";
+            String all_3 = all+"_3";
+            String append = "append";
+            String reverse = "reverse";
+            String rconcat = "rconcat";
+            generatedSignature.addSymbol(all_1,`ConcGomType(Signature.TYPE_METATERM),Signature.TYPE_METATERM);
+            generatedSignature.addSymbol(all_2,`ConcGomType(Signature.TYPE_METALIST),Signature.TYPE_METALIST);
+            generatedSignature.addSymbol(all_3,`ConcGomType(Signature.TYPE_METATERM,Signature.TYPE_METALIST,Signature.TYPE_METALIST,Signature.TYPE_METALIST),Signature.TYPE_METALIST);
+            generatedSignature.addSymbol(append,`ConcGomType(Signature.TYPE_METALIST,Signature.TYPE_METATERM),Signature.TYPE_METALIST);
+            generatedSignature.addSymbol(reverse,`ConcGomType(Signature.TYPE_METALIST),Signature.TYPE_METALIST);
+            generatedSignature.addSymbol(rconcat,`ConcGomType(Signature.TYPE_METALIST,Signature.TYPE_METALIST),Signature.TYPE_METALIST);
+
+            /*
+             * propagate Bottom  (otherwise not reduced and leads to bug in Sequence)
+             * all(Bot(X)) -> Bot(X)
+             */
+            generatedRules.add(Rule(_appl(all,Bottom(X)), Bottom(X)));
+
+            /*
+             * all(Appl(Z0,Z1)) -> all_1(Appl(Z0,all_2(Z1)))
+             * all_1(Appl(Z0, BottomList(Z))) -> Bottom(Appl(Z0,Z))
+             * all_1(Appl(Z0, Cons(Z1,Z2))) -> Appl(Z0,Cons(Z1,Z2))
+             * all_1(Appl(Z0, Nil)) -> Appl(Z0,Nil)
+             * all_2(Nil) -> Nil
+             * all_2(Cons(Z1,Z2)) -> all_3(phi_s(Z1),Z2,Cons(Z1,Nil),Nil)
+             * all_3(Bottom(X),todo,rargs,rs_args) -> BottomList(rconcat(rargs,todo))
+             * all_3(Appl(X,Y),Nil,rargs,rs_args) -> reverse(Cons(Appl(X,Y),rs_args))
+             * all_3(Appl(X,Y), Cons(XX,YY), rargs, rs_args) -> 
+             * all_3(phi_s(XX), YY, Cons(XX,rargs), Cons(Appl(X,Y),rs_args))
+             */
+            generatedRules.add(Rule(_appl(all,Appl(Z0,Z1)), _appl(all_1,Appl(Z0,_appl(all_2,Z1)))));
+            generatedRules.add(Rule(_appl(all_1,Appl(Z0,BottomList(Z))), Bottom(Appl(Z0,Z))));
+            generatedRules.add(Rule(_appl(all_1,Appl(Z0,Cons(Z1,Z2))), Appl(Z0,Cons(Z1,Z2))));
+            generatedRules.add(Rule(_appl(all_1,Nil()), Appl(Z0,Nil())));
+            generatedRules.add(Rule(_appl(all_2,Nil()), Nil()));
+            generatedRules.add(Rule(_appl(all_2,Cons(Z1,Z2)), _appl(all_3,_appl(phi_s,Z1),Z2,Cons(Z1,Nil()),Nil())));
+
+            generatedRules.add(Rule(_appl(all_3,Bottom(X),Z1,Z2,Z3), BottomList(_appl(rconcat,Z2,Z1))));
+            generatedRules.add(Rule(_appl(all_3,Appl(X,Y),Nil(),Z2,Z3), _appl(reverse,Cons(Appl(X,Y),Z3))));
+            generatedRules.add(Rule(_appl(all_3,Appl(X,Y),Cons(XX,YY),Z2,Z3), 
+                  _appl(all_3,_appl(phi_s,XX),YY,Cons(XX,Z2),Cons(Appl(X,Y),Z3))));
+
+            if(!generated_aux_functions) {
+              generated_aux_functions = true;
+              /*
+               * append(Nil,Z) -> Cons(Z,Nil)
+               * append(Cons(X,Y),Z) -> Cons(X,append(Y,Z))
+               * reverse(Nil) -> Nil
+               * reverse(Cons(X,Y)) -> append(reverse(Y),X)
+               * rconcat(Nil,Z) -> Z
+               * rconcat(Cons(X,Y),Z) -> rconcat(Y,Cons(X,Z))
+               */
+              generatedRules.add(Rule(_appl(append,Nil(),Z), Cons(Z,Nil())));
+              generatedRules.add(Rule(_appl(append,Cons(X,Y),Z), Cons(X,_appl(append,Y,Z))));
+              generatedRules.add(Rule(_appl(reverse,Nil()), Nil()));
+              generatedRules.add(Rule(_appl(reverse,Cons(X,Y)), _appl(append,_appl(reverse,Y),X)));
+              generatedRules.add(Rule(_appl(rconcat,Nil(),Z), Z));
+              generatedRules.add(Rule(_appl(rconcat,Cons(X,Y),Z), _appl(rconcat,Y,Cons(X,Z))));
+
+            }
+          }
+          strategySymbol = all;
         }
 
       } // match
