@@ -104,7 +104,7 @@ public class Compiler {
    * @param strategyName the name of the strategy to compile
    * @return the TRS for strategyName 
    */
-  public RuleList compileStrategy(String strategyName,boolean ordered) {
+  public RuleList compileStrategy(String strategyName) {
     Expression expand = this.expandStrategy(strategyName);
 
     Strat strategy=null;
@@ -117,7 +117,7 @@ public class Compiler {
       
       String strategySymbol = "NONE";
       List<Rule> mutableList = new ArrayList<Rule>();
-      strategySymbol = this.compileStrat(strategy,mutableList,ordered);
+      strategySymbol = this.compileStrat(strategy,mutableList);
       RuleList ruleList = Tools.fromListOfRule(mutableList);
 
       if(Main.options.metalevel) {
@@ -255,10 +255,9 @@ public class Compiler {
    * return the name of the top symbol (phi) introduced
    * @param ruleList the list of rules to compile
    * @param generatedRules the list of rewrite rules generated 
-   * @param ordered set it to true if the semantics of the transalation is based on the order of the generated rules
    * @return the symbol to be used for the compiled strategy
    */
-  private String compileRuleList(RuleList ruleList, List<Rule> generatedRules, boolean ordered) {
+  private String compileRuleList(RuleList ruleList, List<Rule> generatedRules) {
     Signature gSig = getGeneratedSignature();
     Signature eSig = getExtractedSignature();
 
@@ -288,7 +287,7 @@ public class Compiler {
 
       %match(ruleList) {
         ConcRule(Rule(lhs,rhs),A*) -> {
-          String nextRule = compileRuleList(`A*,generatedRules,ordered);
+          String nextRule = compileRuleList(`A*,generatedRules);
           TermList result = Tools.linearize(`lhs, this.generatedSignature );
 
           /*
@@ -305,7 +304,7 @@ public class Compiler {
                * rule(X@!lhs) -> nextRule(X)       // could be Bot(X) if only one rule, i.e. non next rule
                */
               localRules.add(Rule(_appl(rule,At(X,`lhs)), `rhs));
-              Term lhs = ordered ? _appl(rule,X) : _appl(rule,At(X,Anti(`lhs)));
+              Term lhs = Main.options.ordered ? _appl(rule,X) : _appl(rule,At(X,Anti(`lhs)));
               localRules.add(Rule(lhs, _appl(nextRule,X)) );
 //               if(!ordered){
 //                 localRules.add(Rule(_appl(rule,At(X,Anti(`lhs))), _appl(nextRule,X)) );
@@ -323,7 +322,7 @@ public class Compiler {
                * cr(X@linearlhs, False) -> nextRule(X)       // could be Bot(X) if only one rule, i.e. non next rule
                */
               localRules.add(Rule(_appl(rule,At(X,`linearlhs)), _appl(cr, X, `cond)));
-              Term lhs = ordered ? _appl(rule,X) : _appl(rule,At(X,Anti(`linearlhs)));
+              Term lhs = Main.options.ordered ? _appl(rule,X) : _appl(rule,At(X,Anti(`linearlhs)));
               localRules.add(Rule(lhs, _appl(nextRule,X)) );
 //               if(!ordered){
 //                 localRules.add(Rule(_appl(rule,At(X,Anti(`linearlhs))), _appl(nextRule,X) ));
@@ -348,7 +347,7 @@ public class Compiler {
       %match(ruleList) {
         ConcRule(Rule(lhs,rhs),A*) -> {
 
-          String nextRule = compileRuleList(`A*,generatedRules,ordered);
+          String nextRule = compileRuleList(`A*,generatedRules);
 
           TermList result = Tools.linearize(`lhs, this.generatedSignature);
           Term mlhs = Tools.metaEncodeConsNil(`lhs,generatedSignature);
@@ -368,7 +367,7 @@ public class Compiler {
                * rule(X@!mlhs) -> nextRule(X)       // could be Bot(X) if only one rule, i.e. non next rule
                */
               localRules.add(Rule(_appl(rule,At(X,mlhs)), mrhs));
-              Term lhs = ordered ? _appl(rule,X) : _appl(rule,At(X,Anti(mlhs)));
+              Term lhs = Main.options.ordered ? _appl(rule,X) : _appl(rule,At(X,Anti(mlhs)));
               localRules.add(Rule(lhs, _appl(nextRule,X)) );
 //               if(!ordered){
 //                 localRules.add(Rule(_appl(rule,At(X,Anti(mlhs))), _appl(nextRule,X) ) );
@@ -387,7 +386,7 @@ public class Compiler {
                * cr(X@mlinearlhs, False) -> nextRule(X)       // could be Bot(X) if only one rule, i.e. non next rule
                */
               localRules.add(Rule(_appl(rule,At(X,mlinearlhs)), _appl(cr,X,`cond)));
-              Term lhs = ordered ? _appl(rule,X) : _appl(rule,At(X,Anti(mlinearlhs)));
+              Term lhs = Main.options.ordered ? _appl(rule,X) : _appl(rule,At(X,Anti(mlinearlhs)));
               localRules.add(Rule(lhs, _appl(nextRule,X)) );
 //               if(!ordered){
 //                 localRules.add(Rule(_appl(rule,At(X,Anti(mlinearlhs))), _appl(nextRule,X)));
@@ -430,7 +429,7 @@ public class Compiler {
    * @return the symbol to be used for the compiled strategy
    */
   private boolean generated_aux_functions = false;
-  private String compileStrat(Strat strat, List<Rule> rules, boolean ordered) {
+  private String compileStrat(Strat strat, List<Rule> rules) {
     Signature gSig = getGeneratedSignature();
     Signature eSig = getExtractedSignature();
 
@@ -486,7 +485,7 @@ public class Compiler {
             }
           }
 
-          strategySymbol = this.compileRuleList(rList,generatedRules,ordered);
+          strategySymbol = this.compileRuleList(rList,generatedRules);
         }
 
         /*
@@ -496,7 +495,7 @@ public class Compiler {
           try {
             String mu = Tools.getName(StrategyOperator.MU.getName());
             Strat newStrat = `TopDown(ReplaceMuVar(name,mu)).visitLight(`s);
-            String phi_s = compileStrat(newStrat,generatedRules,ordered);
+            String phi_s = compileStrat(newStrat,generatedRules);
             if(!Main.options.metalevel) {
               gSig.addSymbol(mu,`ConcGomType(Signature.TYPE_TERM),Signature.TYPE_TERM);
               /*
@@ -504,7 +503,7 @@ public class Compiler {
                * mu(X@!Bot(Y)) -> phi_s(X)
                */
               generatedRules.add(Rule(_appl(mu,Bottom(X)), Bottom(X)));
-              Term lhs = ordered ? _appl(mu,X) : _appl(mu,At(X,Anti(Bottom(Y))));
+              Term lhs = Main.options.ordered ? _appl(mu,X) : _appl(mu,At(X,Anti(Bottom(Y))));
               generatedRules.add(Rule(lhs, _appl(phi_s,X)));
             } else {
               // META-LEVEL
@@ -541,7 +540,7 @@ public class Compiler {
                * id(X@!Bot(Y)) -> X
                */
               generatedRules.add(Rule(_appl(id,Bottom(X)), Bottom(X)));
-              Term lhs = ordered ? _appl(id,X) : _appl(id,At(X,Anti(Bottom(Y))));
+              Term lhs = Main.options.ordered ? _appl(id,X) : _appl(id,At(X,Anti(Bottom(Y))));
               generatedRules.add(Rule(lhs, X));
             } else { // TODO: remove APPROX branch?
               /*
@@ -586,7 +585,7 @@ public class Compiler {
                * fail(X@!Bot(Y)) -> Bot(X)
                */
               generatedRules.add(Rule(_appl(fail,Bottom(X)), Bottom(X)));
-              Term lhs = ordered ? _appl(fail,X) : _appl(fail,At(X,Anti(Bottom(Y))));
+              Term lhs = Main.options.ordered ? _appl(fail,X) : _appl(fail,At(X,Anti(Bottom(Y))));
               generatedRules.add(Rule(lhs, X));
             } else { // TODO: remove APPROX branch?
               /*
@@ -621,8 +620,8 @@ public class Compiler {
         }
 
         StratSequence(s1,s2) -> {
-          String n1 = compileStrat(`s1,generatedRules,ordered);
-          String n2 = compileStrat(`s2,generatedRules,ordered);
+          String n1 = compileStrat(`s1,generatedRules);
+          String n2 = compileStrat(`s2,generatedRules);
           String seq = Tools.getName(StrategyOperator.SEQ.getName());
           String seq2 = Tools.getName(Tools.addAuxExtension(StrategyOperator.SEQ.getName()));
           if( !Main.options.metalevel ) {
@@ -638,10 +637,10 @@ public class Compiler {
                * seq2(X@!Bot(Y),Z) -> X
                */
               generatedRules.add(Rule(_appl(seq,Bottom(X)), Bottom(X)));
-              Term lhs = ordered ? _appl(seq,X) : _appl(seq,At(X,Anti(Bottom(Y))));
+              Term lhs = Main.options.ordered ? _appl(seq,X) : _appl(seq,At(X,Anti(Bottom(Y))));
               generatedRules.add(Rule(lhs, _appl(seq2,_appl(n2,_appl(n1,X)),X)));
               generatedRules.add(Rule(_appl(seq2,Bottom(Y),X), Bottom(X)));
-              Term nlhs = ordered ? _appl(seq2,X,Z) : _appl(seq2,At(X,Anti(Bottom(Y))),Z);
+              Term nlhs = Main.options.ordered ? _appl(seq2,X,Z) : _appl(seq2,At(X,Anti(Bottom(Y))),Z);
               generatedRules.add(Rule(nlhs,X));
             } else { // TODO: remove APPROX branch?
               /*
@@ -685,8 +684,8 @@ public class Compiler {
         }
 
         StratChoice(s1,s2) -> {
-          String n1 = compileStrat(`s1,generatedRules,ordered);
-          String n2 = compileStrat(`s2,generatedRules,ordered);
+          String n1 = compileStrat(`s1,generatedRules);
+          String n2 = compileStrat(`s2,generatedRules);
           String choice = Tools.getName(StrategyOperator.CHOICE.getName());
           String choice2 = Tools.getName(Tools.addAuxExtension(StrategyOperator.CHOICE.getName()));
           if( !Main.options.metalevel ) {
@@ -700,10 +699,10 @@ public class Compiler {
              * choice2(X@!Bot(Y)) -> X
              */
             generatedRules.add(Rule(_appl(choice,Bottom(X)), Bottom(X)));
-            Term lhs = ordered ? _appl(choice,X) : _appl(choice,At(X,Anti(Bottom(Y))));
+            Term lhs = Main.options.ordered ? _appl(choice,X) : _appl(choice,At(X,Anti(Bottom(Y))));
             generatedRules.add(Rule(lhs, _appl(choice2,_appl(n1,X))));
             generatedRules.add(Rule(_appl(choice2,Bottom(X)), _appl(n2,X)));
-            Term nlhs = ordered ? _appl(choice2,X) : _appl(choice2,At(X,Anti(Bottom(Y))));
+            Term nlhs = Main.options.ordered ? _appl(choice2,X) : _appl(choice2,At(X,Anti(Bottom(Y))));
             generatedRules.add(Rule(nlhs, X));
           } else {
             // META-LEVEL
@@ -728,7 +727,7 @@ public class Compiler {
         }
 
         StratAll(s) -> {
-          String phi_s = compileStrat(`s,generatedRules,ordered);
+          String phi_s = compileStrat(`s,generatedRules);
           String all = Tools.getName(StrategyOperator.ALL.getName());
           if( !Main.options.metalevel ) {
             gSig.addSymbol(all,`ConcGomType(Signature.TYPE_TERM),Signature.TYPE_TERM);
@@ -797,7 +796,7 @@ public class Compiler {
                 for(int i=0 ; i<arity ; i++) {
                   Term Xi = `Var("X_" + i);
                   Term Yi = `Var("Y" + i);
-                  a_lx[i] = ordered ? Xi : At(Xi,Anti(Bottom(Yi)));
+                  a_lx[i] = Main.options.ordered ? Xi : At(Xi,Anti(Bottom(Yi)));
                   a_rx[i] = Xi;
                 }
                 a_lx[arity] = Z;
@@ -873,7 +872,7 @@ public class Compiler {
         }
 
         StratOne(s) -> {
-          String phi_s = compileStrat(`s,generatedRules,ordered);
+          String phi_s = compileStrat(`s,generatedRules);
           String one = Tools.getName(StrategyOperator.ONE.getName());
           if( !Main.options.metalevel ) {
             gSig.addSymbol(one,`ConcGomType(Signature.TYPE_TERM),Signature.TYPE_TERM);
@@ -957,7 +956,7 @@ public class Compiler {
                     if(j<i) {
                       a_lx[j-1] = Bottom(Xj);
                     } else if(j==i) {
-                      a_lx[j-1] = ordered ? Xj : At(Xj,Anti(Bottom(Y)));
+                      a_lx[j-1] = Main.options.ordered ? Xj : At(Xj,Anti(Bottom(Y)));
                     } else {
                       a_lx[j-1] = Xj;
                     }
