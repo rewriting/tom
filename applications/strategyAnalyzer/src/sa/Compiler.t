@@ -117,8 +117,8 @@ public class Compiler {
       
       String strategySymbol = "NONE";
       List<Rule> mutableList = new ArrayList<Rule>();
-      strategySymbol = this.compileStratOrdered(strategy,mutableList,true);
-//       strategySymbol = this.compileStrat(strategy,mutableList);
+//       strategySymbol = this.compileStratOrdered(strategy,mutableList,true);
+      strategySymbol = this.compileStrat(strategy,mutableList);
       RuleList ruleList = Tools.fromListOfRule(mutableList);
 
       if(Main.options.metalevel) {
