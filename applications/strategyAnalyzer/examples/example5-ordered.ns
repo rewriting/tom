@@ -4,11 +4,11 @@ T = a()
   | b()
   | c()
   | f(T)
-	| g(T)
+	| g(T,T)
 
 strategies
 
-r1() =  [  f(b()) -> a() , f(x) -> c()  ]
+r1() =  [  f(b()) -> a() , f(x) -> c() , g(x,x) -> x  ]
 
 mainStrat() = r1()
 
