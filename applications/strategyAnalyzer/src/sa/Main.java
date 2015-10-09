@@ -57,7 +57,7 @@ public class Main {
       // Transforms the strategy into a rewrite system
       //   get the TRS for the strategy named strategyName
       String strategyName="mainStrat";
-      RuleList generatedRules = compiler.compileStrategy(strategyName);
+      RuleList generatedRules = compiler.compileStrategy(strategyName,options.ordered);
       Signature extractedSignature = compiler.getExtractedSignature();
       Signature generatedSignature = compiler.getGeneratedSignature();
 

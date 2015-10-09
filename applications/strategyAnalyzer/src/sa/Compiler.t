@@ -104,7 +104,7 @@ public class Compiler {
    * @param strategyName the name of the strategy to compile
    * @return the TRS for strategyName 
    */
-  public RuleList compileStrategy(String strategyName) {
+  public RuleList compileStrategy(String strategyName,boolean ordered) {
     Expression expand = this.expandStrategy(strategyName);
 
     Strat strategy=null;
@@ -117,8 +117,7 @@ public class Compiler {
       
       String strategySymbol = "NONE";
       List<Rule> mutableList = new ArrayList<Rule>();
-      strategySymbol = this.compileStratOrdered(strategy,mutableList,true);
-//       strategySymbol = this.compileStrat(strategy,mutableList);
+      strategySymbol = this.compileStrat(strategy,mutableList,ordered);
       RuleList ruleList = Tools.fromListOfRule(mutableList);
 
       if(Main.options.metalevel) {
@@ -431,7 +430,7 @@ public class Compiler {
    * @return the symbol to be used for the compiled strategy
    */
   private boolean generated_aux_functions = false;
-  private String compileStrat(Strat strat, List<Rule> rules) {
+  private String compileStrat(Strat strat, List<Rule> rules, boolean ordered) {
     Signature gSig = getGeneratedSignature();
     Signature eSig = getExtractedSignature();
 
@@ -487,9 +486,7 @@ public class Compiler {
             }
           }
 
-          strategySymbol = this.compileRuleList(rList,generatedRules,false);
-          //           strategySymbol = this.compileRuleList(`rulelist,generatedRules);
-
+          strategySymbol = this.compileRuleList(rList,generatedRules,ordered);
         }
 
         /*
@@ -499,24 +496,26 @@ public class Compiler {
           try {
             String mu = Tools.getName(StrategyOperator.MU.getName());
             Strat newStrat = `TopDown(ReplaceMuVar(name,mu)).visitLight(`s);
-            String phi_s = compileStrat(newStrat,generatedRules);
+            String phi_s = compileStrat(newStrat,generatedRules,ordered);
             if(!Main.options.metalevel) {
               gSig.addSymbol(mu,`ConcGomType(Signature.TYPE_TERM),Signature.TYPE_TERM);
               /*
-               * mu(X@!Bot(Y)) -> phi_s(X)
                * mu(Bot(X)) -> Bot(X)
+               * mu(X@!Bot(Y)) -> phi_s(X)
                */
-              generatedRules.add(Rule(_appl(mu,At(X,Anti(Bottom(Y)))), _appl(phi_s,X)));
               generatedRules.add(Rule(_appl(mu,Bottom(X)), Bottom(X)));
+              Term lhs = ordered ? _appl(mu,X) : _appl(mu,At(X,Anti(Bottom(Y))));
+              generatedRules.add(Rule(lhs, _appl(phi_s,X)));
             } else {
               // META-LEVEL
               gSig.addSymbol(mu,`ConcGomType(Signature.TYPE_METATERM),Signature.TYPE_METATERM);
               /*
-               * mu(Appl(Y,Z)) -> phi_s(Appl(Y,Z))
                * mu(Bot(X)) -> Bot(X)
+               * mu(Appl(Y,Z)) -> phi_s(Appl(Y,Z))
                */
-              generatedRules.add(Rule(_appl(mu,Appl(Y,Z)), _appl(phi_s,Appl(Y,Z))));
               generatedRules.add(Rule(_appl(mu,Bottom(X)), Bottom(X)));
+              // could use X instead of Appl(X,Y) but it wouldn't change too much (thanks to metalevel)
+              generatedRules.add(Rule(_appl(mu,Appl(Y,Z)), _appl(phi_s,Appl(Y,Z))));
             }
             strategySymbol = phi_s;
           } catch(VisitFailure e) {
@@ -538,12 +537,13 @@ public class Compiler {
                * the rule cannot be applied on arguments containing fresh
                * variables but only on terms from the signature or Bottom
                * normally it will follow reduction in original TRS
-               * id(X@!Bot(Y)) -> X
                * id(Bot(X)) -> Bot(X)
+               * id(X@!Bot(Y)) -> X
                */
-              generatedRules.add(Rule(_appl(id,At(X,Anti(Bottom(Y)))), X));
               generatedRules.add(Rule(_appl(id,Bottom(X)), Bottom(X)));
-            } else { 
+              Term lhs = ordered ? _appl(id,X) : _appl(id,At(X,Anti(Bottom(Y))));
+              generatedRules.add(Rule(lhs, X));
+            } else { // TODO: remove APPROX branch?
               /*
                * Bottom of Bottom is Bottom
                * this is not necessary if exact reduction - in this case Bottom is propagated immediately 
@@ -553,17 +553,18 @@ public class Compiler {
               generatedRules.add(Rule(_appl(id,X), X));
               generatedRules.add(Rule(Bottom(Bottom(X)), Bottom(X)));
             }
-          } else {
-            // META-LEVEL
+          } else { 
+            // Meta-LEVEL
             gSig.addSymbol(id,`ConcGomType(Signature.TYPE_METATERM),Signature.TYPE_METATERM);
             if( !Main.options.approx ) {
               /*
-               * id(Appl(X,Y)) -> Appl(X,Y)
                * id(Bot(X)) -> Bot(X)
+               * id(Appl(X,Y)) -> Appl(X,Y)
                */
-              generatedRules.add(Rule(_appl(id,Appl(X,Y)), Appl(X,Y)));
               generatedRules.add(Rule(_appl(id,Bottom(X)), Bottom(X)));
-            } else { 
+              // could use X instead of Appl(X,Y) but it wouldn't change too much (thanks to metalevel)
+              generatedRules.add(Rule(_appl(id,Appl(X,Y)), Appl(X,Y)));
+            } else {  // TODO: remove APPROX branch?
               /*
                * id(X) -> X
                * Bot(Bot(X)) -> Bot(X)
@@ -581,12 +582,13 @@ public class Compiler {
             gSig.addSymbol(fail,`ConcGomType(Signature.TYPE_TERM),Signature.TYPE_TERM);
             if( !Main.options.approx ) {
               /*
-               * fail(X@!Bot(Y)) -> Bot(X)
                * fail(Bot(X)) -> Bot(X)
+               * fail(X@!Bot(Y)) -> Bot(X)
                */
-              generatedRules.add(Rule(_appl(fail,At(X,Anti(Bottom(Y)))), Bottom(X)));
               generatedRules.add(Rule(_appl(fail,Bottom(X)), Bottom(X)));
-            } else { 
+              Term lhs = ordered ? _appl(fail,X) : _appl(fail,At(X,Anti(Bottom(Y))));
+              generatedRules.add(Rule(lhs, X));
+            } else { // TODO: remove APPROX branch?
               /*
                * fail(X) -> Bot(X)
                * Bot(Bot(X)) -> Bot(X)
@@ -599,12 +601,13 @@ public class Compiler {
             gSig.addSymbol(fail,`ConcGomType(Signature.TYPE_METATERM),Signature.TYPE_METATERM);
             if( !Main.options.approx ) {
               /*
-               * fail(Appl(X,Y)) -> Bot(Appl(X,Y))
                * fail(Bot(X)) -> Bot(X)
+               * fail(Appl(X,Y)) -> Bot(Appl(X,Y))
                */
-              generatedRules.add(Rule(_appl(fail,Appl(X,Y)), Bottom(Appl(X,Y))));
               generatedRules.add(Rule(_appl(fail,Bottom(X)), Bottom(X)));
-            } else { 
+              // could use X instead of Appl(X,Y) but it wouldn't change too much (thanks to metalevel)
+              generatedRules.add(Rule(_appl(fail,Appl(X,Y)), Bottom(Appl(X,Y))));
+            } else { // TODO: remove APPROX branch?
               /*
                * fail(X) -> Bot(X)
                * Bot(Bot(X)) -> Bot(X)
@@ -618,8 +621,8 @@ public class Compiler {
         }
 
         StratSequence(s1,s2) -> {
-          String n1 = compileStrat(`s1,generatedRules);
-          String n2 = compileStrat(`s2,generatedRules);
+          String n1 = compileStrat(`s1,generatedRules,ordered);
+          String n2 = compileStrat(`s2,generatedRules,ordered);
           String seq = Tools.getName(StrategyOperator.SEQ.getName());
           String seq2 = Tools.getName(Tools.addAuxExtension(StrategyOperator.SEQ.getName()));
           if( !Main.options.metalevel ) {
@@ -629,17 +632,18 @@ public class Compiler {
               /*
                * the rule cannot be applied on arguments containing fresh variables but only on terms from the signature or Bottom
                * normally it will follow reduction in original TRS
-               * seq(X@!Bot(Y)) -> seq2(n2(n1(X)),X)
                * seq(Bot(X)) -> Bot(X)
-               * seq2(X@!Bot(Y),Z) -> X
+               * seq(X@!Bot(Y)) -> seq2(n2(n1(X)),X)
                * seq2(Bot(Y),X) -> Bot(X)
+               * seq2(X@!Bot(Y),Z) -> X
                */
-              generatedRules.add(Rule(_appl(seq,At(X,Anti(Bottom(Y)))), _appl(seq2,_appl(n2,_appl(n1,X)),X)));
               generatedRules.add(Rule(_appl(seq,Bottom(X)), Bottom(X)));
-              generatedRules.add(Rule(_appl(seq2,At(X,Anti(Bottom(Y))),Z), X));
+              Term lhs = ordered ? _appl(seq,X) : _appl(seq,At(X,Anti(Bottom(Y))));
+              generatedRules.add(Rule(lhs, _appl(seq2,_appl(n2,_appl(n1,X)),X)));
               generatedRules.add(Rule(_appl(seq2,Bottom(Y),X), Bottom(X)));
-
-            } else { 
+              Term nlhs = ordered ? _appl(seq2,X,Z) : _appl(seq2,At(X,Anti(Bottom(Y))),Z);
+              generatedRules.add(Rule(nlhs,X));
+            } else { // TODO: remove APPROX branch?
               /*
                * seq(X) -> seq2(n2(n1(X)),X)
                * Bot(Bot(X)) -> Bot(X)
@@ -651,22 +655,24 @@ public class Compiler {
               generatedRules.add(Rule(_appl(seq2,At(X,Anti(Bottom(Y))),Z), X));
               generatedRules.add(Rule(_appl(seq2,Bottom(Y),X), Bottom(X)));
             }
-          } else {
+          } else { 
             // META-LEVEL
             gSig.addSymbol(seq,`ConcGomType(Signature.TYPE_METATERM),Signature.TYPE_METATERM);
             gSig.addSymbol(seq2,`ConcGomType(Signature.TYPE_METATERM,Signature.TYPE_METATERM),Signature.TYPE_METATERM);
             if( !Main.options.approx ) {
               /*
-               * seq(Appl(X,Y)) -> seq2(n2(n1(Appl(X,Y))),Appl(X,Y))
                * seq(Bot(X)) -> Bot(X)
-               * seq2(Appl(X,Y),Z) -> Appl(X,Y)
+               * seq(Appl(X,Y)) -> seq2(n2(n1(Appl(X,Y))),Appl(X,Y))
                * seq2(Bot(Y),X) -> Bot(X)
+               * seq2(Appl(X,Y),Z) -> Appl(X,Y)
                */
-              generatedRules.add(Rule(_appl(seq,Appl(X,Y)), _appl(seq2,_appl(n2,_appl(n1,Appl(X,Y))),Appl(X,Y))));
               generatedRules.add(Rule(_appl(seq,Bottom(X)), Bottom(X)));
-              generatedRules.add(Rule(_appl(seq2,Appl(X,Y),Z), Appl(X,Y)));
+              // could use X instead of Appl(X,Y) but it wouldn't change too much (thanks to metalevel)
+              generatedRules.add(Rule(_appl(seq,Appl(X,Y)), _appl(seq2,_appl(n2,_appl(n1,Appl(X,Y))),Appl(X,Y))));
               generatedRules.add(Rule(_appl(seq2,Bottom(Y),X), Bottom(X)));
-            } else { 
+              // could use X instead of Appl(X,Y) but it wouldn't change too much (thanks to metalevel)
+              generatedRules.add(Rule(_appl(seq2,Appl(X,Y),Z), Appl(X,Y)));
+            } else { // TODO: remove APPROX branch?
               /*
                * CHECK HERE
                * seq(X) -> n2(n1(X))
@@ -679,8 +685,8 @@ public class Compiler {
         }
 
         StratChoice(s1,s2) -> {
-          String n1 = compileStrat(`s1,generatedRules);
-          String n2 = compileStrat(`s2,generatedRules);
+          String n1 = compileStrat(`s1,generatedRules,ordered);
+          String n2 = compileStrat(`s2,generatedRules,ordered);
           String choice = Tools.getName(StrategyOperator.CHOICE.getName());
           String choice2 = Tools.getName(Tools.addAuxExtension(StrategyOperator.CHOICE.getName()));
           if( !Main.options.metalevel ) {
@@ -688,54 +694,51 @@ public class Compiler {
             gSig.addSymbol(choice2,`ConcGomType(Signature.TYPE_TERM),Signature.TYPE_TERM);
             /*
              * TODO [20/01/2015]: see if not exact is interesting
-             * choice(X@!Bot(Y)) -> choice2(n1(X))
              * choice(Bot(X)) -> Bot(X)
-             * choice2(X@!Bot(Y)) -> X
+             * choice(X@!Bot(Y)) -> choice2(n1(X))
              * choice2(Bot(X)) -> n2(X)
+             * choice2(X@!Bot(Y)) -> X
              */
-            generatedRules.add(Rule(_appl(choice,At(X,Anti(Bottom(Y)))), _appl(choice2,_appl(n1,X))));
             generatedRules.add(Rule(_appl(choice,Bottom(X)), Bottom(X)));
-            generatedRules.add(Rule(_appl(choice2,At(X,Anti(Bottom(Y)))), X));
+            Term lhs = ordered ? _appl(choice,X) : _appl(choice,At(X,Anti(Bottom(Y))));
+            generatedRules.add(Rule(lhs, _appl(choice2,_appl(n1,X))));
             generatedRules.add(Rule(_appl(choice2,Bottom(X)), _appl(n2,X)));
+            Term nlhs = ordered ? _appl(choice2,X) : _appl(choice2,At(X,Anti(Bottom(Y))));
+            generatedRules.add(Rule(nlhs, X));
           } else {
             // META-LEVEL
             gSig.addSymbol(choice,`ConcGomType(Signature.TYPE_METATERM),Signature.TYPE_METATERM);
             gSig.addSymbol(choice2,`ConcGomType(Signature.TYPE_METATERM),Signature.TYPE_METATERM);
             if( !Main.options.approx ) {
               /*
-               * choice(Appl(X,Y)) -> choice2(n1(Appl(X,Y)))
                * choice(Bot(X)) -> Bot(X)
-               * choice2(Appl(X,Y) -> Appl(X,Y)
+               * choice(Appl(X,Y)) -> choice2(n1(Appl(X,Y)))
                * choice2(Bot(X)) -> n2(X)
+               * choice2(Appl(X,Y) -> Appl(X,Y)
                */
-              generatedRules.add(Rule(_appl(choice,Appl(X,Y)), _appl(choice2,_appl(n1,Appl(X,Y)))));
               generatedRules.add(Rule(_appl(choice,Bottom(X)), Bottom(X)));
-              generatedRules.add(Rule(_appl(choice2,Appl(X,Y)), Appl(X,Y)));
+              // could use X instead of Appl(X,Y) but it wouldn't change too much (thanks to metalevel)
+              generatedRules.add(Rule(_appl(choice,Appl(X,Y)), _appl(choice2,_appl(n1,Appl(X,Y)))));
               generatedRules.add(Rule(_appl(choice2,Bottom(X)), _appl(n2,X)));
-            } else {
-              /*
-               * choice(X) -> choice2(n1(X))
-               * choice2(Appl(X,Y) -> Appl(X,Y)
-               * choice2(Bot(X)) -> n2(X)
-               */
-              generatedRules.add(Rule(_appl(choice,X), _appl(choice2,_appl(n1,X))));
+              // could use X instead of Appl(X,Y) but it wouldn't change too much (thanks to metalevel)
               generatedRules.add(Rule(_appl(choice2,Appl(X,Y)), Appl(X,Y)));
-              generatedRules.add(Rule(_appl(choice2,Bottom(X)), _appl(n2,X)));
             }
           }
           strategySymbol = choice;
         }
 
         StratAll(s) -> {
-          String phi_s = compileStrat(`s,generatedRules);
+          String phi_s = compileStrat(`s,generatedRules,ordered);
           String all = Tools.getName(StrategyOperator.ALL.getName());
           if( !Main.options.metalevel ) {
             gSig.addSymbol(all,`ConcGomType(Signature.TYPE_TERM),Signature.TYPE_TERM);
+
             /*
              * propagate Bottom  (otherwise not reduced and leads to bug in Sequence)
              * all(Bot(X)) -> Bot(X)
              */
             generatedRules.add(Rule(_appl(all,Bottom(X)), Bottom(X)));
+
             for(String name : eSig.getSymbols()) {
               int arity = gSig.getArity(name);
               int arity_all = arity+1;
@@ -765,20 +768,6 @@ public class Compiler {
                 a_rx[arity] = _appl(name, a_lx);
                 generatedRules.add(Rule(_appl(all,_appl(name, a_lx)), _appl(all_n, a_rx)));
                 /*
-                 * generate success rules
-                 * all_g(X1@!Bottom(Y1),...,X_n@!Bottom(Y_n),_) -> g(X1,...,X_n)
-                 */
-                a_lx = new Term[arity+1];
-                a_rx = new Term[arity];
-                for(int i=0 ; i<arity ; i++) {
-                  Term Xi = `Var("X_" + i);
-                  Term Yi = `Var("Y" + i);
-                  a_lx[i] = At(Xi,Anti(Bottom(Yi)));
-                  a_rx[i] = Xi;
-                }
-                a_lx[arity] = Z;
-                generatedRules.add(Rule(_appl(all_n,a_lx), _appl(name, a_rx)));
-                /*
                  * generate failure rules
                  * phi_n(Bottom(_),_,...,_,Z) -> Bottom(Z)
                  * phi_n(...,Bottom(_),...,Z) -> Bottom(Z)
@@ -799,6 +788,20 @@ public class Compiler {
                   a_llx[arity] = Z;
                   generatedRules.add(Rule(_appl(all_n,a_llx), Bottom(Z)));
                 }
+                /*
+                 * generate success rules
+                 * all_g(X1@!Bottom(Y1),...,X_n@!Bottom(Y_n),_) -> g(X1,...,X_n)
+                 */
+                a_lx = new Term[arity+1];
+                a_rx = new Term[arity];
+                for(int i=0 ; i<arity ; i++) {
+                  Term Xi = `Var("X_" + i);
+                  Term Yi = `Var("Y" + i);
+                  a_lx[i] = ordered ? Xi : At(Xi,Anti(Bottom(Yi)));
+                  a_rx[i] = Xi;
+                }
+                a_lx[arity] = Z;
+                generatedRules.add(Rule(_appl(all_n,a_lx), _appl(name, a_rx)));
               }
             }
           } else {
@@ -816,6 +819,13 @@ public class Compiler {
             generatedSignature.addSymbol(append,`ConcGomType(Signature.TYPE_METALIST,Signature.TYPE_METATERM),Signature.TYPE_METALIST);
             generatedSignature.addSymbol(reverse,`ConcGomType(Signature.TYPE_METALIST),Signature.TYPE_METALIST);
             generatedSignature.addSymbol(rconcat,`ConcGomType(Signature.TYPE_METALIST,Signature.TYPE_METALIST),Signature.TYPE_METALIST);
+
+            /*
+             * propagate Bottom  (otherwise not reduced and leads to bug in Sequence)
+             * all(Bot(X)) -> Bot(X)
+             */
+            generatedRules.add(Rule(_appl(all,Bottom(X)), Bottom(X)));
+
             /*
              * all(Appl(Z0,Z1)) -> all_1(Appl(Z0,all_2(Z1)))
              * all_1(Appl(Z0, BottomList(Z))) -> Bottom(Appl(Z0,Z))
@@ -863,10 +873,17 @@ public class Compiler {
         }
 
         StratOne(s) -> {
-          String phi_s = compileStrat(`s,generatedRules);
+          String phi_s = compileStrat(`s,generatedRules,ordered);
           String one = Tools.getName(StrategyOperator.ONE.getName());
           if( !Main.options.metalevel ) {
             gSig.addSymbol(one,`ConcGomType(Signature.TYPE_TERM),Signature.TYPE_TERM);
+
+            /*
+             * propagate Bottom  (otherwise not reduced and leads to bug in Sequence)
+             * one(Bottom(X)) -> Bottom(X)
+             */
+            generatedRules.add(Rule(_appl(one,Bottom(X)), Bottom(X)));
+
             for(String name : eSig.getSymbols()) {
               int arity = eSig.getArity(name);
               if(arity==0) {
@@ -889,11 +906,6 @@ public class Compiler {
                   a_rx[i-1] = (i==1)?_appl(phi_s, Xi):Xi;
                 }
                 generatedRules.add(Rule(_appl(one,_appl(name, a_lx)), _appl(one_n_1, a_rx)));
-                /*
-                 * propagate Bottom  (otherwise not reduced and leads to bug in Sequence)
-                 * one(Bottom(X)) -> Bottom(X)
-                 */
-                generatedRules.add(Rule(_appl(one,Bottom(X)), Bottom(X)));
 
                 for(int i=1 ; i<=arity ; i++) {
                   String one_n_i = one_n + "_" + i;
@@ -945,7 +957,7 @@ public class Compiler {
                     if(j<i) {
                       a_lx[j-1] = Bottom(Xj);
                     } else if(j==i) {
-                      a_lx[j-1] = At(Xj,Anti(Bottom(Y)));
+                      a_lx[j-1] = ordered ? Xj : At(Xj,Anti(Bottom(Y)));
                     } else {
                       a_lx[j-1] = Xj;
                     }
@@ -1140,579 +1152,6 @@ public class Compiler {
      * name(X) -> symbol(X)
      */
     return `ConcRule(generatedRules*, Rule(_appl(name,X), _appl(symbol,X)));
-  }
-
-  /*************************************************************************************/
-
-  private String compileStratOrdered(Strat strat, List<Rule> rules, boolean ordered) {
-    Signature gSig = getGeneratedSignature();
-    Signature eSig = getExtractedSignature();
-
-    Term X = Var(Tools.getName("X"));
-    Term Y = Var(Tools.getName("Y"));
-    Term XX = Var(Tools.getName("XX"));
-    Term YY = Var(Tools.getName("YY"));
-    Term Z = Var(Tools.getName("Z"));
-    Term Z0 = Var(Tools.getName("Z0"));
-    Term Z1 = Var(Tools.getName("Z1"));
-    Term Z2 = Var(Tools.getName("Z2"));
-    Term Z3 = Var(Tools.getName("Z3"));
-
-
-    // by default, if strategy can't be compiled, a meaningless name
-    // TODO: change to exception ?
-    List<Rule> generatedRules = null;
-
-    // if the stategy has been already compiled and a symbol generated
-    String strategySymbol = this.strategySymbols.get(strat);
-    if(strategySymbol != null) {
-      generatedRules = this.storedTRSs.get(strat);
-      System.out.println("ALREADY EXISTING: "+strat);
-    } else {
-      generatedRules = new ArrayList<Rule>();
-
-      %match(strat) {
-        StratExp(Set(_)) -> {
-          throw new RuntimeException("Not Yet Implemented");
-        }
-
-        StratExp(List(rulelist)) -> {
-          /*
-           * Pre-treatment: remove anti-patterns
-           * move into compileStrategy ?
-           */
-          RuleList rList = `rulelist;
-          if(Main.options.withAP == false) {
-            /*
-             * apply expandGeneralAntiPatterns until there is no more anti-pattern in rules
-             */
-            RuleCompiler ruleCompiler = new RuleCompiler(eSig,gSig);
-            RuleList old = null;
-            while(rList != old) {
-              old = rList;
-              rList = ruleCompiler.expandGeneralAntiPatterns(rList);
-            }
-            /*
-             * replace Bottom2 by Bottom
-             */
-            rList = ruleCompiler.eliminateBottom2(rList);
-            for(Rule rule: rList.getCollectionConcRule()) {
-              System.out.println("EXPANDED AP RULE: " + Pretty.toString(rule) );
-            }
-          }
-
-          strategySymbol = this.compileRuleList(rList,generatedRules,true);
-        }
-
-        /*
-         * TODO: fix non confluence here
-         */
-        StratMu(name,s) -> {
-          try {
-            String mu = Tools.getName(StrategyOperator.MU.getName());
-            Strat newStrat = `TopDown(ReplaceMuVar(name,mu)).visitLight(`s);
-            String phi_s = compileStratOrdered(newStrat,generatedRules,ordered);
-            if(!Main.options.metalevel) {
-              gSig.addSymbol(mu,`ConcGomType(Signature.TYPE_TERM),Signature.TYPE_TERM);
-              /*
-               * mu(Bot(X)) -> Bot(X)
-               * mu(X@!Bot(Y)) -> phi_s(X)
-               */
-              generatedRules.add(Rule(_appl(mu,Bottom(X)), Bottom(X)));
-              Term lhs = ordered ? _appl(mu,X) : _appl(mu,At(X,Anti(Bottom(Y))));
-              generatedRules.add(Rule(lhs, _appl(phi_s,X)));
-            } else {
-              // META-LEVEL
-              gSig.addSymbol(mu,`ConcGomType(Signature.TYPE_METATERM),Signature.TYPE_METATERM);
-              /*
-               * mu(Bot(X)) -> Bot(X)
-               * mu(Appl(Y,Z)) -> phi_s(Appl(Y,Z))
-               */
-              generatedRules.add(Rule(_appl(mu,Bottom(X)), Bottom(X)));
-              // could use X instead of Appl(X,Y) but it wouldn't change too much (thanks to metalevel)
-              generatedRules.add(Rule(_appl(mu,Appl(Y,Z)), _appl(phi_s,Appl(Y,Z))));
-            }
-            strategySymbol = phi_s;
-          } catch(VisitFailure e) {
-            System.out.println("failure in StratMu on: " + `s);
-          }
-        }
-
-        // mu fix point: transform the stratname into a function call
-        StratName(name) -> {
-          strategySymbol = `name;
-        }
-
-        StratIdentity() -> {
-          String id = Tools.getName(StrategyOperator.IDENTITY.getName());
-          if(!Main.options.metalevel) {
-            gSig.addSymbol(id,`ConcGomType(Signature.TYPE_TERM),Signature.TYPE_TERM);
-            if( !Main.options.approx ) {
-              /*
-               * the rule cannot be applied on arguments containing fresh
-               * variables but only on terms from the signature or Bottom
-               * normally it will follow reduction in original TRS
-               * id(Bot(X)) -> Bot(X)
-               * id(X@!Bot(Y)) -> X
-               */
-              generatedRules.add(Rule(_appl(id,Bottom(X)), Bottom(X)));
-              Term lhs = ordered ? _appl(id,X) : _appl(id,At(X,Anti(Bottom(Y))));
-              generatedRules.add(Rule(lhs, X));
-            } 
-          } else {
-            // META-LEVEL
-            gSig.addSymbol(id,`ConcGomType(Signature.TYPE_METATERM),Signature.TYPE_METATERM);
-            if( !Main.options.approx ) {
-              /*
-               * id(Bot(X)) -> Bot(X)
-               * id(Appl(X,Y)) -> Appl(X,Y)
-               */
-              generatedRules.add(Rule(_appl(id,Bottom(X)), Bottom(X)));
-              // could use X instead of Appl(X,Y) but it wouldn't change too much (thanks to metalevel)
-              generatedRules.add(Rule(_appl(id,Appl(X,Y)), Appl(X,Y)));
-            } 
-          }
-          strategySymbol = id;
-        }
-
-        StratFail() -> {
-          String fail = Tools.getName(StrategyOperator.FAIL.getName());
-          if( !Main.options.metalevel ) {
-            gSig.addSymbol(fail,`ConcGomType(Signature.TYPE_TERM),Signature.TYPE_TERM);
-            if( !Main.options.approx ) {
-              /*
-               * fail(Bot(X)) -> Bot(X)
-               * fail(X@!Bot(Y)) -> Bot(X)
-               */
-              generatedRules.add(Rule(_appl(fail,Bottom(X)), Bottom(X)));
-              Term lhs = ordered ? _appl(fail,X) : _appl(fail,At(X,Anti(Bottom(Y))));
-              generatedRules.add(Rule(lhs, X));
-            } 
-          } else {
-            // META-LEVEL
-            gSig.addSymbol(fail,`ConcGomType(Signature.TYPE_METATERM),Signature.TYPE_METATERM);
-            if( !Main.options.approx ) {
-              /*
-               * fail(Bot(X)) -> Bot(X)
-               * fail(Appl(X,Y)) -> Bot(Appl(X,Y))
-               */
-              generatedRules.add(Rule(_appl(fail,Bottom(X)), Bottom(X)));
-              // could use X instead of Appl(X,Y) but it wouldn't change too much (thanks to metalevel)
-              generatedRules.add(Rule(_appl(fail,Appl(X,Y)), Bottom(Appl(X,Y))));
-            } 
-          }
-          strategySymbol = fail;
-        }
-
-        StratSequence(s1,s2) -> {
-          String n1 = compileStratOrdered(`s1,generatedRules,ordered);
-          String n2 = compileStratOrdered(`s2,generatedRules,ordered);
-          String seq = Tools.getName(StrategyOperator.SEQ.getName());
-          String seq2 = Tools.getName(Tools.addAuxExtension(StrategyOperator.SEQ.getName()));
-          if( !Main.options.metalevel ) {
-            gSig.addSymbol(seq,`ConcGomType(Signature.TYPE_TERM),Signature.TYPE_TERM);
-            gSig.addSymbol(seq2,`ConcGomType(Signature.TYPE_TERM,Signature.TYPE_TERM),Signature.TYPE_TERM);
-            if( !Main.options.approx ) {
-              /*
-               * the rule cannot be applied on arguments containing fresh variables but only on terms from the signature or Bottom
-               * normally it will follow reduction in original TRS
-               * seq(Bot(X)) -> Bot(X)
-               * seq(X@!Bot(Y)) -> seq2(n2(n1(X)),X)
-               * seq2(Bot(Y),X) -> Bot(X)
-               * seq2(X@!Bot(Y),Z) -> X
-               */
-              generatedRules.add(Rule(_appl(seq,Bottom(X)), Bottom(X)));
-              Term lhs = ordered ? _appl(seq,X) : _appl(seq,At(X,Anti(Bottom(Y))));
-              generatedRules.add(Rule(lhs, _appl(seq2,_appl(n2,_appl(n1,X)),X)));
-              generatedRules.add(Rule(_appl(seq2,Bottom(Y),X), Bottom(X)));
-              Term nlhs = ordered ? _appl(seq2,X,Z) : _appl(seq2,At(X,Anti(Bottom(Y))),Z);
-              generatedRules.add(Rule(nlhs,X));
-            } 
-          } else {
-            // META-LEVEL
-            gSig.addSymbol(seq,`ConcGomType(Signature.TYPE_METATERM),Signature.TYPE_METATERM);
-            gSig.addSymbol(seq2,`ConcGomType(Signature.TYPE_METATERM,Signature.TYPE_METATERM),Signature.TYPE_METATERM);
-            if( !Main.options.approx ) {
-              /*
-               * seq(Bot(X)) -> Bot(X)
-               * seq(Appl(X,Y)) -> seq2(n2(n1(Appl(X,Y))),Appl(X,Y))
-               * seq2(Bot(Y),X) -> Bot(X)
-               * seq2(Appl(X,Y),Z) -> Appl(X,Y)
-               */
-              generatedRules.add(Rule(_appl(seq,Bottom(X)), Bottom(X)));
-              // could use X instead of Appl(X,Y) but it wouldn't change too much (thanks to metalevel)
-              generatedRules.add(Rule(_appl(seq,Appl(X,Y)), _appl(seq2,_appl(n2,_appl(n1,Appl(X,Y))),Appl(X,Y))));
-              generatedRules.add(Rule(_appl(seq2,Bottom(Y),X), Bottom(X)));
-              // could use X instead of Appl(X,Y) but it wouldn't change too much (thanks to metalevel)
-              generatedRules.add(Rule(_appl(seq2,Appl(X,Y),Z), Appl(X,Y)));
-            } 
-          }
-          strategySymbol = seq;
-        }
-
-        StratChoice(s1,s2) -> {
-          String n1 = compileStratOrdered(`s1,generatedRules,ordered);
-          String n2 = compileStratOrdered(`s2,generatedRules,ordered);
-          String choice = Tools.getName(StrategyOperator.CHOICE.getName());
-          String choice2 = Tools.getName(Tools.addAuxExtension(StrategyOperator.CHOICE.getName()));
-          if( !Main.options.metalevel ) {
-            gSig.addSymbol(choice,`ConcGomType(Signature.TYPE_TERM),Signature.TYPE_TERM);
-            gSig.addSymbol(choice2,`ConcGomType(Signature.TYPE_TERM),Signature.TYPE_TERM);
-            /*
-             * TODO [20/01/2015]: see if not exact is interesting
-             * choice(Bot(X)) -> Bot(X)
-             * choice(X@!Bot(Y)) -> choice2(n1(X))
-             * choice2(Bot(X)) -> n2(X)
-             * choice2(X@!Bot(Y)) -> X
-             */
-            generatedRules.add(Rule(_appl(choice,Bottom(X)), Bottom(X)));
-            Term lhs = ordered ? _appl(choice,X) : _appl(choice,At(X,Anti(Bottom(Y))));
-            generatedRules.add(Rule(lhs, _appl(choice2,_appl(n1,X))));
-            generatedRules.add(Rule(_appl(choice2,Bottom(X)), _appl(n2,X)));
-            Term nlhs = ordered ? _appl(choice2,X) : _appl(choice2,At(X,Anti(Bottom(Y))));
-            generatedRules.add(Rule(nlhs, X));
-          } else {
-            // META-LEVEL
-            gSig.addSymbol(choice,`ConcGomType(Signature.TYPE_METATERM),Signature.TYPE_METATERM);
-            gSig.addSymbol(choice2,`ConcGomType(Signature.TYPE_METATERM),Signature.TYPE_METATERM);
-            if( !Main.options.approx ) {
-              /*
-               * choice(Bot(X)) -> Bot(X)
-               * choice(Appl(X,Y)) -> choice2(n1(Appl(X,Y)))
-               * choice2(Bot(X)) -> n2(X)
-               * choice2(Appl(X,Y) -> Appl(X,Y)
-               */
-              generatedRules.add(Rule(_appl(choice,Bottom(X)), Bottom(X)));
-              // could use X instead of Appl(X,Y) but it wouldn't change too much (thanks to metalevel)
-              generatedRules.add(Rule(_appl(choice,Appl(X,Y)), _appl(choice2,_appl(n1,Appl(X,Y)))));
-              generatedRules.add(Rule(_appl(choice2,Bottom(X)), _appl(n2,X)));
-              // could use X instead of Appl(X,Y) but it wouldn't change too much (thanks to metalevel)
-              generatedRules.add(Rule(_appl(choice2,Appl(X,Y)), Appl(X,Y)));
-            }
-          }
-          strategySymbol = choice;
-        }
-
-
-        StratAll(s) -> {
-          String phi_s = compileStratOrdered(`s,generatedRules,ordered);
-          String all = Tools.getName(StrategyOperator.ALL.getName());
-          if( !Main.options.metalevel ) {
-            gSig.addSymbol(all,`ConcGomType(Signature.TYPE_TERM),Signature.TYPE_TERM);
-
-            /*
-             * propagate Bottom  (otherwise not reduced and leads to bug in Sequence)
-             * all(Bot(X)) -> Bot(X)
-             */
-            generatedRules.add(Rule(_appl(all,Bottom(X)), Bottom(X)));
-
-            for(String name : eSig.getSymbols()) {
-              int arity = gSig.getArity(name);
-              int arity_all = arity+1;
-              if(arity==0) {
-                /*
-                 * all(name) -> name
-                 */
-                generatedRules.add(Rule(_appl(all,_appl(name)), _appl(name)));
-              } else {
-                String all_n = Tools.addOperatorName(all,name);
-                GomTypeList all_args = `ConcGomType();
-                for(int i=0; i<arity_all; i++){
-                  all_args = `ConcGomType(Signature.TYPE_TERM,all_args*);
-                }
-                gSig.addSymbol(all_n,all_args,Signature.TYPE_TERM);
-                /*
-                 * main case
-                 * all(f(x1,...,xn)) -> all_n(phi_s(x1),phi_s(x2),...,phi_s(xn),f(x1,...,xn))
-                 */
-                Term[] a_lx = new Term[arity];
-                Term[] a_rx = new Term[arity+1];
-                for(int i=0 ; i<arity ; i++) {
-                  Term Xi = `Var("X_" + i);
-                  a_lx[i] = Xi;
-                  a_rx[i] = _appl(phi_s, Xi);
-                }
-                a_rx[arity] = _appl(name, a_lx);
-                generatedRules.add(Rule(_appl(all,_appl(name, a_lx)), _appl(all_n, a_rx)));
-                /*
-                 * generate failure rules
-                 * phi_n(Bottom(_),_,...,_,Z) -> Bottom(Z)
-                 * phi_n(...,Bottom(_),...,Z) -> Bottom(Z)
-                 * phi_n(_,...,_,Bottom(_),Z) -> Bottom(Z)
-                 */
-                Term[] a_llx = new Term[arity+1];
-                for(int i=0 ; i<arity ; i++) {
-                  Term X0 = `Var("X0");
-                  a_llx[0] = (i==0)?Bottom(X0):X0;
-                  for(int j=1 ; i<arity ; i++) {
-                    Term Xj = `Var("X_" + i);
-                    if(j==i) {
-                      a_llx[j] = Bottom(Xj);
-                    } else {
-                      a_llx[j] = Xj;
-                    }
-                  }
-                  a_llx[arity] = Z;
-                  generatedRules.add(Rule(_appl(all_n,a_llx), Bottom(Z)));
-                }
-                /*
-                 * generate success rules
-                 * all_g(X1@!Bottom(Y1),...,X_n@!Bottom(Y_n),_) -> g(X1,...,X_n)
-                 */
-                a_lx = new Term[arity+1];
-                a_rx = new Term[arity];
-                for(int i=0 ; i<arity ; i++) {
-                  Term Xi = `Var("X_" + i);
-                  Term Yi = `Var("Y" + i);
-                  a_lx[i] = ordered ? Xi : At(Xi,Anti(Bottom(Yi)));
-                  a_rx[i] = Xi;
-                }
-                a_lx[arity] = Z;
-                generatedRules.add(Rule(_appl(all_n,a_lx), _appl(name, a_rx)));
-              }
-            }
-          } else {
-            // META-LEVEL
-            gSig.addSymbol(all,`ConcGomType(Signature.TYPE_METATERM),Signature.TYPE_METATERM);
-            String all_1 = all+"_1";
-            String all_2 = all+"_2";
-            String all_3 = all+"_3";
-            String append = "append";
-            String reverse = "reverse";
-            String rconcat = "rconcat";
-            generatedSignature.addSymbol(all_1,`ConcGomType(Signature.TYPE_METATERM),Signature.TYPE_METATERM);
-            generatedSignature.addSymbol(all_2,`ConcGomType(Signature.TYPE_METALIST),Signature.TYPE_METALIST);
-            generatedSignature.addSymbol(all_3,`ConcGomType(Signature.TYPE_METATERM,Signature.TYPE_METALIST,Signature.TYPE_METALIST,Signature.TYPE_METALIST),Signature.TYPE_METALIST);
-            generatedSignature.addSymbol(append,`ConcGomType(Signature.TYPE_METALIST,Signature.TYPE_METATERM),Signature.TYPE_METALIST);
-            generatedSignature.addSymbol(reverse,`ConcGomType(Signature.TYPE_METALIST),Signature.TYPE_METALIST);
-            generatedSignature.addSymbol(rconcat,`ConcGomType(Signature.TYPE_METALIST,Signature.TYPE_METALIST),Signature.TYPE_METALIST);
-
-            /*
-             * propagate Bottom  (otherwise not reduced and leads to bug in Sequence)
-             * all(Bot(X)) -> Bot(X)
-             */
-            generatedRules.add(Rule(_appl(all,Bottom(X)), Bottom(X)));
-
-            /*
-             * all(Appl(Z0,Z1)) -> all_1(Appl(Z0,all_2(Z1)))
-             * all_1(Appl(Z0, BottomList(Z))) -> Bottom(Appl(Z0,Z))
-             * all_1(Appl(Z0, Cons(Z1,Z2))) -> Appl(Z0,Cons(Z1,Z2))
-             * all_1(Appl(Z0, Nil)) -> Appl(Z0,Nil)
-             * all_2(Nil) -> Nil
-             * all_2(Cons(Z1,Z2)) -> all_3(phi_s(Z1),Z2,Cons(Z1,Nil),Nil)
-             * all_3(Bottom(X),todo,rargs,rs_args) -> BottomList(rconcat(rargs,todo))
-             * all_3(Appl(X,Y),Nil,rargs,rs_args) -> reverse(Cons(Appl(X,Y),rs_args))
-             * all_3(Appl(X,Y), Cons(XX,YY), rargs, rs_args) -> 
-             * all_3(phi_s(XX), YY, Cons(XX,rargs), Cons(Appl(X,Y),rs_args))
-             */
-            generatedRules.add(Rule(_appl(all,Appl(Z0,Z1)), _appl(all_1,Appl(Z0,_appl(all_2,Z1)))));
-            generatedRules.add(Rule(_appl(all_1,Appl(Z0,BottomList(Z))), Bottom(Appl(Z0,Z))));
-            generatedRules.add(Rule(_appl(all_1,Appl(Z0,Cons(Z1,Z2))), Appl(Z0,Cons(Z1,Z2))));
-            generatedRules.add(Rule(_appl(all_1,Nil()), Appl(Z0,Nil())));
-            generatedRules.add(Rule(_appl(all_2,Nil()), Nil()));
-            generatedRules.add(Rule(_appl(all_2,Cons(Z1,Z2)), _appl(all_3,_appl(phi_s,Z1),Z2,Cons(Z1,Nil()),Nil())));
-
-            generatedRules.add(Rule(_appl(all_3,Bottom(X),Z1,Z2,Z3), BottomList(_appl(rconcat,Z2,Z1))));
-            generatedRules.add(Rule(_appl(all_3,Appl(X,Y),Nil(),Z2,Z3), _appl(reverse,Cons(Appl(X,Y),Z3))));
-            generatedRules.add(Rule(_appl(all_3,Appl(X,Y),Cons(XX,YY),Z2,Z3), 
-                  _appl(all_3,_appl(phi_s,XX),YY,Cons(XX,Z2),Cons(Appl(X,Y),Z3))));
-
-            if(!generated_aux_functions) {
-              generated_aux_functions = true;
-              /*
-               * append(Nil,Z) -> Cons(Z,Nil)
-               * append(Cons(X,Y),Z) -> Cons(X,append(Y,Z))
-               * reverse(Nil) -> Nil
-               * reverse(Cons(X,Y)) -> append(reverse(Y),X)
-               * rconcat(Nil,Z) -> Z
-               * rconcat(Cons(X,Y),Z) -> rconcat(Y,Cons(X,Z))
-               */
-              generatedRules.add(Rule(_appl(append,Nil(),Z), Cons(Z,Nil())));
-              generatedRules.add(Rule(_appl(append,Cons(X,Y),Z), Cons(X,_appl(append,Y,Z))));
-              generatedRules.add(Rule(_appl(reverse,Nil()), Nil()));
-              generatedRules.add(Rule(_appl(reverse,Cons(X,Y)), _appl(append,_appl(reverse,Y),X)));
-              generatedRules.add(Rule(_appl(rconcat,Nil(),Z), Z));
-              generatedRules.add(Rule(_appl(rconcat,Cons(X,Y),Z), _appl(rconcat,Y,Cons(X,Z))));
-
-            }
-          }
-          strategySymbol = all;
-        }
-
-
-        StratOne(s) -> {
-          String phi_s = compileStratOrdered(`s,generatedRules,ordered);
-          String one = Tools.getName(StrategyOperator.ONE.getName());
-          if( !Main.options.metalevel ) {
-            gSig.addSymbol(one,`ConcGomType(Signature.TYPE_TERM),Signature.TYPE_TERM);
-
-            /*
-             * propagate Bottom  (otherwise not reduced and leads to bug in Sequence)
-             * one(Bottom(X)) -> Bottom(X)
-             */
-            generatedRules.add(Rule(_appl(one,Bottom(X)), Bottom(X)));
-
-            for(String name : eSig.getSymbols()) {
-              int arity = eSig.getArity(name);
-              if(arity==0) {
-                /*
-                 * one(name) -> Bottom(name)
-                 */
-                generatedRules.add(Rule(_appl(one,_appl(name)), Bottom(_appl(name))));
-              } else {
-                String one_n = Tools.addOperatorName(one,name);
-                String one_n_1 = one_n + "_1";
-                /*
-                 * main case
-                 * one(f(x1,...,xn)) -> one_n_1(phi_s(x1),x2,...,xn)
-                 */
-                Term[] a_lx = new Term[arity];
-                Term[] a_rx = new Term[arity];
-                for(int i=1 ; i<=arity ; i++) {
-                  Term Xi = `Var("X_" + i);
-                  a_lx[i-1] = Xi;
-                  a_rx[i-1] = (i==1)?_appl(phi_s, Xi):Xi;
-                }
-                generatedRules.add(Rule(_appl(one,_appl(name, a_lx)), _appl(one_n_1, a_rx)));
-
-                for(int i=1 ; i<=arity ; i++) {
-                  String one_n_i = one_n + "_" + i;
-                  String one_n_ii = one_n + "_"+(i+1);
-                  GomTypeList one_n_args = `ConcGomType();
-                  GomTypeList one_n_ii_args = `ConcGomType();
-                  for(int ni=0; ni<arity; ni++) {
-                    one_n_args = `ConcGomType(Signature.TYPE_TERM, one_n_args*);
-                    one_n_ii_args = `ConcGomType(Signature.TYPE_TERM, one_n_ii_args*);
-                  }
-                  gSig.addSymbol(one_n_i,one_n_args,Signature.TYPE_TERM);
-                  if(i<arity) {
-                    gSig.addSymbol(one_n_ii,one_n_ii_args,Signature.TYPE_TERM);
-                    /*
-                     * one_f_i(Bottom(x1),...,Bottom(xi),xj,...,xn)
-                     * -> one_f_(i+1)(Bottom(x1),...,Bottom(xi),phi_s(x_i+1),...,xn)
-                     */
-                    for(int j=1 ; j<=arity ; j++) {
-                      Term Xj = Var("X_"+j);
-                      if(j<=i) {
-                        a_lx[j-1] = Bottom(Xj);
-                        a_rx[j-1] = Bottom(Xj);
-                      } else {
-                        a_lx[j-1] = Xj;
-                        a_rx[j-1] = (j==i+1)?_appl(phi_s,Xj):Xj;
-                      }
-                    }
-                    /*
-                     * one_n_i(lx) -> one_n_ii(rx)
-                     */
-                    generatedRules.add(Rule(_appl(one_n_i,a_lx), _appl(one_n_ii, a_rx)));
-                  } else {
-                    /*
-                     * one_f_n(Bottom(x1),...,Bottom(xn)) -> Bottom(f(x1,...,xn))
-                     */
-                    for(int j=1 ; j<=arity ; j++) {
-                      Term Xj = Var("X_"+j);
-                      a_lx[j-1] = Bottom(Xj);
-                      a_rx[j-1] = Xj;
-                    }
-                    generatedRules.add(Rule(_appl(one_n_i,a_lx), Bottom(_appl(name, a_rx))));
-                  }
-                  /*
-                   * one_f_i(Bottom(x1),...,xi@!Bottom(_),xj,...,xn)
-                   * -> f(x1,...,xi,...,xn)
-                   */
-                  for(int j=1 ; j<=arity ; j++) {
-                    Term Xj = Var("X_"+j);
-                    if(j<i) {
-                      a_lx[j-1] = Bottom(Xj);
-                    } else if(j==i) {
-                      a_lx[j-1] = ordered ? Xj : At(Xj,Anti(Bottom(Y)));
-                    } else {
-                      a_lx[j-1] = Xj;
-                    }
-                    a_rx[j-1] = Xj;
-                  }
-                  /*
-                   * one_n_i(lx) -> name(rx)
-                   */
-                  generatedRules.add(Rule(_appl(one_n_i,a_lx), _appl(name, a_rx)));
-
-                }
-              }
-            }
-          } else {
-            // META-LEVEL
-            gSig.addSymbol(one,`ConcGomType(Signature.TYPE_METATERM),Signature.TYPE_METATERM);
-            String one_1 = one+"_1";
-            String one_2 = one+"_2";
-            String one_3 = one+"_3";
-            String append = "append";
-            String reverse = "reverse";
-            String rconcat = "rconcat";
-            generatedSignature.addSymbol(one_1,`ConcGomType(Signature.TYPE_METATERM),Signature.TYPE_METATERM);
-            generatedSignature.addSymbol(one_2,`ConcGomType(Signature.TYPE_METALIST),Signature.TYPE_METALIST);
-            generatedSignature.addSymbol(one_3,`ConcGomType(Signature.TYPE_METATERM,Signature.TYPE_METALIST,Signature.TYPE_METALIST),Signature.TYPE_METALIST);
-            generatedSignature.addSymbol(append,`ConcGomType(Signature.TYPE_METALIST,Signature.TYPE_METATERM),Signature.TYPE_METALIST);
-            generatedSignature.addSymbol(reverse,`ConcGomType(Signature.TYPE_METALIST),Signature.TYPE_METALIST);
-            generatedSignature.addSymbol(rconcat,`ConcGomType(Signature.TYPE_METALIST,Signature.TYPE_METALIST),Signature.TYPE_METALIST);
-            /*
-             * one(Appl(Z0,Z1)) -> one_1(Appl(Z0,one_2(Z1)))
-             */
-            generatedRules.add(Rule(_appl(one,Appl(Z0,Z1)), _appl(one_1,Appl(Z0,_appl(one_2,Z1)))));
-            /*
-             * one_1(Appl(Z0,BottomList(Z))) -> Bottom(Appl(Z0,Z))
-             * one_1(Appl(Z0,Cons(Z1,Z2))) -> Appl(Z0,Cons(Z1,Z2))
-             */
-            generatedRules.add(Rule(_appl(one_1,Appl(Z0,BottomList(Z))), Bottom(Appl(Z0,Z))));
-            generatedRules.add(Rule(_appl(one_1,Appl(Z0,Cons(Z1,Z2))), Appl(Z0,Cons(Z1,Z2))));
-            /*
-             * one_2(Nil) -> BottomList(Nil)
-             * one_2(Cons(X,Y)) -> one_3(phi_s(X),Y,Cons(X,Nil))
-             */
-            generatedRules.add(Rule(_appl(one_2,Nil()), BottomList(Nil())));
-            generatedRules.add(Rule(_appl(one_2,Cons(Z1,Z2)), _appl(one_3,_appl(phi_s,Z1),Z2,Cons(Z1,Nil()))));
-            /*
-             * one_3(Bottom(X),Nil,rargs) -> BottomList(reverse(rargs))
-             * one_3(Bottom(X),Cons(head,tail),rargs) -> one_3(phi_s(head), tail, Cons(head,rargs))
-             * one_3(Appl(X,Y),todo,Cons(last,rargs)) -> rconcat(rargs,Cons(Appl(X,Y),todo))
-             */
-            generatedRules.add(Rule(_appl(one_3,Bottom(Z),Nil(),Z2), BottomList(_appl(reverse,Z2))));
-            generatedRules.add(Rule(_appl(one_3,Bottom(Z),Cons(XX,YY),Z2), _appl(one_3,_appl(phi_s,XX),YY,Cons(XX,Z2))));
-            generatedRules.add(Rule(_appl(one_3,Appl(X,Y),Z1,Cons(Z2,Z3)), _appl(rconcat,Z3,Cons(Appl(X,Y),Z1))));
-
-            if(!generated_aux_functions) { 
-              generated_aux_functions = true;
-              /*
-               * append(Nil,Z) -> Cons(Z,Nil)
-               * append(Cons(X,Y),Z) -> Cons(X,append(Y,Z))
-               * reverse(Nil) -> Nil
-               * reverse(Cons(X,Y)) -> append(reverse(Y),X)
-               * rconcat(Nil,Z) -> Z
-               * rconcat(Cons(X,Y),Z) -> rconcat(Y,Cons(X,Z))
-               */
-              generatedRules.add(Rule(_appl(append,Nil(),Z), Cons(Z,Nil())));
-              generatedRules.add(Rule(_appl(append,Cons(X,Y),Z), Cons(X,_appl(append,Y,Z))));
-              generatedRules.add(Rule(_appl(reverse,Nil()), Nil()));
-              generatedRules.add(Rule(_appl(reverse,Cons(X,Y)), _appl(append,_appl(reverse,Y),X)));
-              generatedRules.add(Rule(_appl(rconcat,Nil(),Z), Z));
-              generatedRules.add(Rule(_appl(rconcat,Cons(X,Y),Z), _appl(rconcat,Y,Cons(X,Z))));
-
-            }
-          }
-          strategySymbol = one;
-        }
-
-      } // match
-      this.strategySymbols.put(strat,strategySymbol);
-      this.storedTRSs.put(strat,generatedRules);
-    } // strategy not yet compiled
-        
-    // add the generated rules to the rules for the global strategy only if not already existing
-    for(Rule rule:generatedRules) {
-      if(!rules.contains(rule)) {
-        rules.add(rule);
-      }
-    }
-    return strategySymbol;
   }
 
 

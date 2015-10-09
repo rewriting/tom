@@ -45,6 +45,9 @@ public class Options {
   @Option(name="-typed",usage="generate typed signature",metaVar="TYPE")
     public String type = null;
 
+  @Option(name="-ordered",usage="compilation produces a TRS which should be evaluated in the specified order")
+    public boolean ordered = false;
+
   // receives other command line parameters than options
   @Argument
     public List<String> arguments = new ArrayList<String>();
