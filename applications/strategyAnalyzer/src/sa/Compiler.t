@@ -1539,6 +1539,168 @@ public class Compiler {
           strategySymbol = all;
         }
 
+
+        StratOne(s) -> {
+          String phi_s = compileStrat(`s,generatedRules);
+          String one = Tools.getName(StrategyOperator.ONE.getName());
+          if( !Main.options.metalevel ) {
+            gSig.addSymbol(one,`ConcGomType(Signature.TYPE_TERM),Signature.TYPE_TERM);
+
+            /*
+             * propagate Bottom  (otherwise not reduced and leads to bug in Sequence)
+             * one(Bottom(X)) -> Bottom(X)
+             */
+            generatedRules.add(Rule(_appl(one,Bottom(X)), Bottom(X)));
+
+            for(String name : eSig.getSymbols()) {
+              int arity = eSig.getArity(name);
+              if(arity==0) {
+                /*
+                 * one(name) -> Bottom(name)
+                 */
+                generatedRules.add(Rule(_appl(one,_appl(name)), Bottom(_appl(name))));
+              } else {
+                String one_n = Tools.addOperatorName(one,name);
+                String one_n_1 = one_n + "_1";
+                /*
+                 * main case
+                 * one(f(x1,...,xn)) -> one_n_1(phi_s(x1),x2,...,xn)
+                 */
+                Term[] a_lx = new Term[arity];
+                Term[] a_rx = new Term[arity];
+                for(int i=1 ; i<=arity ; i++) {
+                  Term Xi = `Var("X_" + i);
+                  a_lx[i-1] = Xi;
+                  a_rx[i-1] = (i==1)?_appl(phi_s, Xi):Xi;
+                }
+                generatedRules.add(Rule(_appl(one,_appl(name, a_lx)), _appl(one_n_1, a_rx)));
+
+                for(int i=1 ; i<=arity ; i++) {
+                  String one_n_i = one_n + "_" + i;
+                  String one_n_ii = one_n + "_"+(i+1);
+                  GomTypeList one_n_args = `ConcGomType();
+                  GomTypeList one_n_ii_args = `ConcGomType();
+                  for(int ni=0; ni<arity; ni++) {
+                    one_n_args = `ConcGomType(Signature.TYPE_TERM, one_n_args*);
+                    one_n_ii_args = `ConcGomType(Signature.TYPE_TERM, one_n_ii_args*);
+                  }
+                  gSig.addSymbol(one_n_i,one_n_args,Signature.TYPE_TERM);
+                  if(i<arity) {
+                    gSig.addSymbol(one_n_ii,one_n_ii_args,Signature.TYPE_TERM);
+                    /*
+                     * one_f_i(Bottom(x1),...,Bottom(xi),xj,...,xn)
+                     * -> one_f_(i+1)(Bottom(x1),...,Bottom(xi),phi_s(x_i+1),...,xn)
+                     */
+                    for(int j=1 ; j<=arity ; j++) {
+                      Term Xj = Var("X_"+j);
+                      if(j<=i) {
+                        a_lx[j-1] = Bottom(Xj);
+                        a_rx[j-1] = Bottom(Xj);
+                      } else {
+                        a_lx[j-1] = Xj;
+                        a_rx[j-1] = (j==i+1)?_appl(phi_s,Xj):Xj;
+                      }
+                    }
+                    /*
+                     * one_n_i(lx) -> one_n_ii(rx)
+                     */
+                    generatedRules.add(Rule(_appl(one_n_i,a_lx), _appl(one_n_ii, a_rx)));
+                  } else {
+                    /*
+                     * one_f_n(Bottom(x1),...,Bottom(xn)) -> Bottom(f(x1,...,xn))
+                     */
+                    for(int j=1 ; j<=arity ; j++) {
+                      Term Xj = Var("X_"+j);
+                      a_lx[j-1] = Bottom(Xj);
+                      a_rx[j-1] = Xj;
+                    }
+                    generatedRules.add(Rule(_appl(one_n_i,a_lx), Bottom(_appl(name, a_rx))));
+                  }
+                  /*
+                   * one_f_i(Bottom(x1),...,xi@!Bottom(_),xj,...,xn)
+                   * -> f(x1,...,xi,...,xn)
+                   */
+                  for(int j=1 ; j<=arity ; j++) {
+                    Term Xj = Var("X_"+j);
+                    if(j<i) {
+                      a_lx[j-1] = Bottom(Xj);
+                    } else if(j==i) {
+                      a_lx[j-1] = ordered ? Xj : At(Xj,Anti(Bottom(Y)));
+                    } else {
+                      a_lx[j-1] = Xj;
+                    }
+                    a_rx[j-1] = Xj;
+                  }
+                  /*
+                   * one_n_i(lx) -> name(rx)
+                   */
+                  generatedRules.add(Rule(_appl(one_n_i,a_lx), _appl(name, a_rx)));
+
+                }
+              }
+            }
+          } else {
+            // META-LEVEL
+            gSig.addSymbol(one,`ConcGomType(Signature.TYPE_METATERM),Signature.TYPE_METATERM);
+            String one_1 = one+"_1";
+            String one_2 = one+"_2";
+            String one_3 = one+"_3";
+            String append = "append";
+            String reverse = "reverse";
+            String rconcat = "rconcat";
+            generatedSignature.addSymbol(one_1,`ConcGomType(Signature.TYPE_METATERM),Signature.TYPE_METATERM);
+            generatedSignature.addSymbol(one_2,`ConcGomType(Signature.TYPE_METALIST),Signature.TYPE_METALIST);
+            generatedSignature.addSymbol(one_3,`ConcGomType(Signature.TYPE_METATERM,Signature.TYPE_METALIST,Signature.TYPE_METALIST),Signature.TYPE_METALIST);
+            generatedSignature.addSymbol(append,`ConcGomType(Signature.TYPE_METALIST,Signature.TYPE_METATERM),Signature.TYPE_METALIST);
+            generatedSignature.addSymbol(reverse,`ConcGomType(Signature.TYPE_METALIST),Signature.TYPE_METALIST);
+            generatedSignature.addSymbol(rconcat,`ConcGomType(Signature.TYPE_METALIST,Signature.TYPE_METALIST),Signature.TYPE_METALIST);
+            /*
+             * one(Appl(Z0,Z1)) -> one_1(Appl(Z0,one_2(Z1)))
+             */
+            generatedRules.add(Rule(_appl(one,Appl(Z0,Z1)), _appl(one_1,Appl(Z0,_appl(one_2,Z1)))));
+            /*
+             * one_1(Appl(Z0,BottomList(Z))) -> Bottom(Appl(Z0,Z))
+             * one_1(Appl(Z0,Cons(Z1,Z2))) -> Appl(Z0,Cons(Z1,Z2))
+             */
+            generatedRules.add(Rule(_appl(one_1,Appl(Z0,BottomList(Z))), Bottom(Appl(Z0,Z))));
+            generatedRules.add(Rule(_appl(one_1,Appl(Z0,Cons(Z1,Z2))), Appl(Z0,Cons(Z1,Z2))));
+            /*
+             * one_2(Nil) -> BottomList(Nil)
+             * one_2(Cons(X,Y)) -> one_3(phi_s(X),Y,Cons(X,Nil))
+             */
+            generatedRules.add(Rule(_appl(one_2,Nil()), BottomList(Nil())));
+            generatedRules.add(Rule(_appl(one_2,Cons(Z1,Z2)), _appl(one_3,_appl(phi_s,Z1),Z2,Cons(Z1,Nil()))));
+            /*
+             * one_3(Bottom(X),Nil,rargs) -> BottomList(reverse(rargs))
+             * one_3(Bottom(X),Cons(head,tail),rargs) -> one_3(phi_s(head), tail, Cons(head,rargs))
+             * one_3(Appl(X,Y),todo,Cons(last,rargs)) -> rconcat(rargs,Cons(Appl(X,Y),todo))
+             */
+            generatedRules.add(Rule(_appl(one_3,Bottom(Z),Nil(),Z2), BottomList(_appl(reverse,Z2))));
+            generatedRules.add(Rule(_appl(one_3,Bottom(Z),Cons(XX,YY),Z2), _appl(one_3,_appl(phi_s,XX),YY,Cons(XX,Z2))));
+            generatedRules.add(Rule(_appl(one_3,Appl(X,Y),Z1,Cons(Z2,Z3)), _appl(rconcat,Z3,Cons(Appl(X,Y),Z1))));
+
+            if(!generated_aux_functions) { 
+              generated_aux_functions = true;
+              /*
+               * append(Nil,Z) -> Cons(Z,Nil)
+               * append(Cons(X,Y),Z) -> Cons(X,append(Y,Z))
+               * reverse(Nil) -> Nil
+               * reverse(Cons(X,Y)) -> append(reverse(Y),X)
+               * rconcat(Nil,Z) -> Z
+               * rconcat(Cons(X,Y),Z) -> rconcat(Y,Cons(X,Z))
+               */
+              generatedRules.add(Rule(_appl(append,Nil(),Z), Cons(Z,Nil())));
+              generatedRules.add(Rule(_appl(append,Cons(X,Y),Z), Cons(X,_appl(append,Y,Z))));
+              generatedRules.add(Rule(_appl(reverse,Nil()), Nil()));
+              generatedRules.add(Rule(_appl(reverse,Cons(X,Y)), _appl(append,_appl(reverse,Y),X)));
+              generatedRules.add(Rule(_appl(rconcat,Nil(),Z), Z));
+              generatedRules.add(Rule(_appl(rconcat,Cons(X,Y),Z), _appl(rconcat,Y,Cons(X,Z))));
+
+            }
+          }
+          strategySymbol = one;
+        }
+
       } // match
       this.strategySymbols.put(strat,strategySymbol);
       this.storedTRSs.put(strat,generatedRules);
