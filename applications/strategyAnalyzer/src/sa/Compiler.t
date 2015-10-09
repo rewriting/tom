@@ -117,8 +117,8 @@ public class Compiler {
       
       String strategySymbol = "NONE";
       List<Rule> mutableList = new ArrayList<Rule>();
-//       strategySymbol = this.compileStratOrdered(strategy,mutableList,true);
-      strategySymbol = this.compileStrat(strategy,mutableList);
+      strategySymbol = this.compileStratOrdered(strategy,mutableList,true);
+//       strategySymbol = this.compileStrat(strategy,mutableList);
       RuleList ruleList = Tools.fromListOfRule(mutableList);
 
       if(Main.options.metalevel) {
@@ -1211,7 +1211,7 @@ public class Compiler {
           try {
             String mu = Tools.getName(StrategyOperator.MU.getName());
             Strat newStrat = `TopDown(ReplaceMuVar(name,mu)).visitLight(`s);
-            String phi_s = compileStrat(newStrat,generatedRules);
+            String phi_s = compileStratOrdered(newStrat,generatedRules,ordered);
             if(!Main.options.metalevel) {
               gSig.addSymbol(mu,`ConcGomType(Signature.TYPE_TERM),Signature.TYPE_TERM);
               /*
@@ -1305,8 +1305,8 @@ public class Compiler {
         }
 
         StratSequence(s1,s2) -> {
-          String n1 = compileStrat(`s1,generatedRules);
-          String n2 = compileStrat(`s2,generatedRules);
+          String n1 = compileStratOrdered(`s1,generatedRules,ordered);
+          String n2 = compileStratOrdered(`s2,generatedRules,ordered);
           String seq = Tools.getName(StrategyOperator.SEQ.getName());
           String seq2 = Tools.getName(Tools.addAuxExtension(StrategyOperator.SEQ.getName()));
           if( !Main.options.metalevel ) {
@@ -1351,8 +1351,8 @@ public class Compiler {
         }
 
         StratChoice(s1,s2) -> {
-          String n1 = compileStrat(`s1,generatedRules);
-          String n2 = compileStrat(`s2,generatedRules);
+          String n1 = compileStratOrdered(`s1,generatedRules,ordered);
+          String n2 = compileStratOrdered(`s2,generatedRules,ordered);
           String choice = Tools.getName(StrategyOperator.CHOICE.getName());
           String choice2 = Tools.getName(Tools.addAuxExtension(StrategyOperator.CHOICE.getName()));
           if( !Main.options.metalevel ) {
@@ -1395,7 +1395,7 @@ public class Compiler {
 
 
         StratAll(s) -> {
-          String phi_s = compileStrat(`s,generatedRules);
+          String phi_s = compileStratOrdered(`s,generatedRules,ordered);
           String all = Tools.getName(StrategyOperator.ALL.getName());
           if( !Main.options.metalevel ) {
             gSig.addSymbol(all,`ConcGomType(Signature.TYPE_TERM),Signature.TYPE_TERM);
@@ -1541,7 +1541,7 @@ public class Compiler {
 
 
         StratOne(s) -> {
-          String phi_s = compileStrat(`s,generatedRules);
+          String phi_s = compileStratOrdered(`s,generatedRules,ordered);
           String one = Tools.getName(StrategyOperator.ONE.getName());
           if( !Main.options.metalevel ) {
             gSig.addSymbol(one,`ConcGomType(Signature.TYPE_TERM),Signature.TYPE_TERM);
