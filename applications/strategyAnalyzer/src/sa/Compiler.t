@@ -117,6 +117,7 @@ public class Compiler {
       
       String strategySymbol = "NONE";
       List<Rule> mutableList = new ArrayList<Rule>();
+      //       strategySymbol = this.compileStratOrdered(strategy,mutableList);
       strategySymbol = this.compileStrat(strategy,mutableList);
       RuleList ruleList = Tools.fromListOfRule(mutableList);
 
@@ -1117,4 +1118,131 @@ public class Compiler {
     return `ConcRule(generatedRules*, Rule(_appl(name,X), _appl(symbol,X)));
   }
 
+  /*************************************************************************************/
+
+  private String compileStratOrdered(Strat strat, List<Rule> rules) {
+    Signature gSig = getGeneratedSignature();
+    Signature eSig = getExtractedSignature();
+
+    // by default, if strategy can't be compiled, a meaningless name
+    // TODO: change to exception ?
+    List<Rule> generatedRules = null;
+
+    // if the stategy has been already compiled and a symbol generated
+    String strategySymbol = this.strategySymbols.get(strat);
+    if(strategySymbol != null) {
+      generatedRules = this.storedTRSs.get(strat);
+      System.out.println("ALREADY EXISTING: "+strat);
+    } else {
+      generatedRules = new ArrayList<Rule>();
+
+      %match(strat) {
+        StratExp(Set(_)) -> {
+          throw new RuntimeException("Not Yet Implemented");
+        }
+
+        StratExp(List(rulelist)) -> {
+          /*
+           * Pre-treatment: remove anti-patterns
+           * move into compileStrategy ?
+           */
+          RuleList rList = `rulelist;
+          if(Main.options.withAP == false) {
+            /*
+             * apply expandGeneralAntiPatterns until there is no more anti-pattern in rules
+             */
+            RuleCompiler ruleCompiler = new RuleCompiler(eSig,gSig);
+            RuleList old = null;
+            while(rList != old) {
+              old = rList;
+              rList = ruleCompiler.expandGeneralAntiPatterns(rList);
+            }
+            /*
+             * replace Bottom2 by Bottom
+             */
+            rList = ruleCompiler.eliminateBottom2(rList);
+            for(Rule rule: rList.getCollectionConcRule()) {
+              System.out.println("EXPANDED AP RULE: " + Pretty.toString(rule) );
+            }
+          }
+
+          strategySymbol = this.compileRuleListOrdered(rList,generatedRules);
+        }
+
+      } // match
+      this.strategySymbols.put(strat,strategySymbol);
+      this.storedTRSs.put(strat,generatedRules);
+    } // strategy not yet compiled
+        
+    // add the generated rules to the rules for the global strategy only if not already existing
+    for(Rule rule:generatedRules) {
+      if(!rules.contains(rule)) {
+        rules.add(rule);
+      }
+    }
+    return strategySymbol;
+  }
+
+  private String compileRuleListOrdered(RuleList ruleList, List<Rule> generatedRules) {
+    Signature gSig = getGeneratedSignature();
+    Signature eSig = getExtractedSignature();
+    
+    Term X = Var(Tools.getName("X"));
+    String rule = Tools.getName(StrategyOperator.RULE.getName());
+    String cr = Tools.getName(Tools.addAuxExtension(StrategyOperator.RULE.getName()));
+
+    if(!Main.options.metalevel) {
+      // if declared strategy (i.e. defined name) use its name; otherwise generate fresh name
+      gSig.addSymbol(rule,`ConcGomType(Signature.TYPE_TERM),Signature.TYPE_TERM);
+      gSig.addSymbol(cr,`ConcGomType(Signature.TYPE_TERM,Signature.TYPE_BOOLEAN),Signature.TYPE_TERM);
+
+      %match(ruleList) {
+        ConcRule(Rule(lhs,rhs),A*) -> {
+          String nextRule = compileRuleListOrdered(`A*,generatedRules);
+          TermList result = Tools.linearize(`lhs, this.generatedSignature );
+          /*
+           * propagate failure; if the rule is applied to the result of a strategy that failed then the result is a failure
+           * rule(Bot(X)) -> Bot(X)
+           */
+          generatedRules.add(Rule(_appl(rule,Bottom(X)), Bottom(X)));
+
+          %match(result) {
+            TermList(_, Appl("True",TermList())) -> {
+              /*
+               * if already linear lhs
+               * rule(X@lhs) -> rhs
+               * rule(X) -> nextRule(X)       // could be Bot(X) if only one rule, i.e. non next rule
+               */
+              generatedRules.add(Rule(_appl(rule,At(X,`lhs)), `rhs));
+              generatedRules.add(Rule(_appl(rule,X), _appl(nextRule,X)) );
+            }
+
+            TermList(linearlhs, cond@!Appl("True",TermList())) -> {
+              /*
+               * if non-linear add rules for checking equality for corresponding arguments
+               * rule(X@linearlhs) -> cr(X,cond)
+               * rule(X) -> nextRule(X)       // could be Bot(X) if only one rule, i.e. non next rule
+               * cr(linearlhs, True) -> rhs
+               * cr(X@linearlhs, False) -> nextRule(X)       // could be Bot(X) if only one rule, i.e. non next rule
+               */
+              generatedRules.add(Rule(_appl(rule,At(X,`linearlhs)), _appl(cr, X, `cond)));
+              generatedRules.add(Rule(_appl(rule,X), _appl(nextRule,X) ));
+              generatedRules.add(Rule(_appl(cr,`linearlhs, True()), `rhs));
+              generatedRules.add(Rule(_appl(cr,At(X,`linearlhs),False()), _appl(nextRule,X) ) );
+            }
+          }
+        }
+
+        ConcRule() -> {
+          generatedRules.add(Rule(_appl(rule,X), Bottom(X))); // X should be a term of the signature; morally X@!Bottom(_)
+        }
+      }
+    } 
+
+    return rule;
+  }
+
+
 }
+
+
