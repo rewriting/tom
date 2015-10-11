@@ -50,9 +50,22 @@ public class RuleCompiler {
    * @return the list of generatedRules (with no anti-paterns left)
    */
   public RuleList expandAntiPatterns(RuleList rules) {
+    return expandAntiPatternsAux(rules, true);
+  }
+  
+  /*
+   * Remove nested anti-patterns
+   */
+  public RuleList expandGeneralAntiPatterns(RuleList rules) {
+    rules = expandAntiPatternsAux(rules, false);
+    rules = eliminateBottom2(rules);
+    return rules;
+  }
+
+  public RuleList expandAntiPatternsAux(RuleList rules, boolean postTreatment) {
     RuleList newRules = `ConcRule();
     for(Rule rule:rules.getCollectionConcRule()) {
-      RuleList genRules = this.expandAntiPatternInRule(`rule);
+      RuleList genRules = this.expandAntiPatternInRule(`rule, postTreatment);
       // add the generated rules for rule to the result (list of rule)
       newRules = `ConcRule(newRules*,genRules*);
     }
@@ -65,7 +78,7 @@ public class RuleCompiler {
    * @param rule the rule to expand
    * @return the list of generated rules
    */
-  private RuleList expandAntiPatternInRule(Rule rule) {
+  private RuleList expandAntiPatternInRule(Rule rule, boolean postTreatment) {
     RuleList genRules = `ConcRule();
     try {
       HashMultiset<Term> antiBag = HashMultiset.create();
@@ -75,26 +88,33 @@ public class RuleCompiler {
       if(nbOfAnti == 0) {
         // add the rule since it contains no anti-pattern
         genRules = `ConcRule(genRules*,rule);
-     // TODO [hc:09/09/15]: check preconditions 
-     //       } else if(nbOfAnti == 1 && Tools.isLinear(lhs)) {
-      } else if(Tools.isLinear(lhs)) {
-        /*
-         * case: rule is left-linear and there is only one negation
-         * should only be done in post-treatment, not during compilation of strategies
-         */
+      } else {
         List<Rule> ruleList = new ArrayList<Rule>();
-        // perform one-step expansion
-        `OnceTopDown(ExpandAntiPatternPostTreatment(ruleList,rule,this.extractedSignature, this.generatedSignature)).visit(rule);
+        if(postTreatment) {
+          if(Tools.isLinear(lhs)) {
+            /*
+             * case: rule is left-linear and there is only one negation
+             * should only be done in post-treatment, not during compilation of strategies
+             */
+            `OnceTopDown(ExpandAntiPatternPostTreatment(ruleList,rule,this.extractedSignature, this.generatedSignature)).visit(rule);
+          } else {
+            System.out.println("NON LIN: " + Pretty.toString(rule) );
+            throw new RuntimeException("Should not be there EXP ");
+          }
+        } else {
+          /*
+           * General case
+           */
+          `OnceTopDown(ExpandGeneralAntiPattern(ruleList,rule)).visit(rule);
+        }
 
         // for each generated rule restart the expansion
         for(Rule expandr:ruleList) {
           // add the list of rules generated for the expandr rule to the final result
-          RuleList expandedRules = this.expandAntiPatternInRule(expandr);
+          RuleList expandedRules = this.expandAntiPatternInRule(expandr,postTreatment);
           genRules = `ConcRule(genRules*,expandedRules*);
         }
-      } else {
-        System.out.println("NON LIN: " + Pretty.toString(rule) );
-        throw new RuntimeException("Should not be there EXP ");
+
       }
     } catch(VisitFailure e) {
       throw new RuntimeException("Should not be there");
@@ -163,40 +183,6 @@ public class RuleCompiler {
         }
         return `t;
       }
-    }
-  }
-
-
-  /*
-   * Remove nested anti-patterns
-   */
-  public RuleList expandGeneralAntiPatterns(RuleList rules) {
-    RuleList newRules = `ConcRule();
-    for(Rule rule:rules.getCollectionConcRule()) {
-      RuleList genRules = this.expandGeneralAntiPatternInRule(`rule);
-      // add the generated rules for rule to the result (list of rule)
-      newRules = `ConcRule(newRules*,genRules*);
-    }
-    return newRules;
-  }  
-
-  /**
-   * Expand a general anti-pattern (non-linear with nested negations) into a list of rules
-   * @param generatedRules initial set of rules
-   * @param rule the rule to expand
-   * @return the list of generated rules
-   */
-  private RuleList expandGeneralAntiPatternInRule(Rule rule) {
-    try {
-      List<Rule> ruleList = new ArrayList<Rule>();
-      `OnceTopDown(ExpandGeneralAntiPattern(ruleList,rule)).visit(rule);
-      return Tools.fromListOfRule(ruleList);
-    } catch(VisitFailure e) {
-      /*
-       * no anti-pattern found: return the rule
-       */
-      //System.out.println("EXPAND AP add rule: " + Pretty.toString(rule));
-      return `ConcRule(rule);
     }
   }
 

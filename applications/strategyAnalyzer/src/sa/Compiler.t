@@ -462,24 +462,14 @@ public class Compiler {
 
         StratExp(List(rulelist)) -> {
           /*
-           * Pre-treatment: remove anti-patterns
+           * Pre-treatment: remove anti-patterns (expandGeneralAntiPatterns)
            * move into compileStrategy ?
            */
           RuleList rList = `rulelist;
           if(Main.options.withAP == false) {
-            /*
-             * apply expandGeneralAntiPatterns until there is no more anti-pattern in rules
-             */
             RuleCompiler ruleCompiler = new RuleCompiler(eSig,gSig);
-            RuleList old = null;
-            while(rList != old) {
-              old = rList;
-              rList = ruleCompiler.expandGeneralAntiPatterns(rList);
-            }
-            /*
-             * replace Bottom2 by Bottom
-             */
-            rList = ruleCompiler.eliminateBottom2(rList);
+            rList = ruleCompiler.expandGeneralAntiPatterns(rList);
+
             for(Rule rule: rList.getCollectionConcRule()) {
               System.out.println("EXPANDED AP RULE: " + Pretty.toString(rule) );
             }
