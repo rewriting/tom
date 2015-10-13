@@ -58,14 +58,14 @@ public class Pattern {
         return `Var("_");
       }
 
-      // g(t) + g(t') -> g(t+t')
-      Add(TermList(C1*, Appl(f,tl1), C2*, Appl(f, tl2), C3*)) -> {
-        return `Add(TermList(C1*, Appl(f,TermList(Add(TermList(tl1*,tl2*)))), C2*, C3*));
-      }
-
       // (a+b) + (c+d) -> (a+b+c+d)
       Add(TermList(C1*, Add(tl1), C2*, Add(tl2), C3*)) -> {
         return `Add(TermList(C1*,tl1*,C2*,tl2*,C3*));
+      }
+
+      // g(t) + g(t') -> g(t + t')
+      Add(TermList(C1*, Appl(f,tl1), C2*, Appl(f, tl2), C3*)) -> {
+        return `Add(TermList(C1*, Appl(f,TermList(Add(TermList(tl1*,tl2*)))), C2*, C3*));
       }
 
     }
@@ -73,6 +73,21 @@ public class Pattern {
 
   %strategy SimplifySub() extends Fail() {
     visit Term {
+      // t - t -> ()
+      Sub(t, t) -> {
+        return `Add(TermList());
+      }
+
+      // t - () -> t
+      Sub(t, Add(TermList())) -> {
+        return `t;
+      }
+
+      // (a + t + b) - t -> (a + b)
+      Sub(Add(TermList(C1*,t,C2*)),t) -> {
+        return `Add(TermList(C1*,C2*));
+      }
+
       // g(t) - g(t') -> g(t - t')
       Sub(Appl(f,tl1), Appl(f, tl2)) -> {
         TermList tl = `sub(tl1,tl2);
@@ -85,26 +100,21 @@ public class Pattern {
         return `Sub(Appl(f,TermList(tl*)), Add(TermList(C1*,C2*)));
       }
 
-      // x - (a+b) -> x - a - b
+      // TODO: t - t' -> t if t' not matched t
+      // g(t) - f(t') -> g(t)
+      Sub(Appl(f,tl1), Appl(g, tl2)) && f!=g -> {
+        return `Appl(f,(tl1));
+      }
+
+      // g(t) - (a + f(t') + b) -> g(t) - (a + b)
+      Sub(Appl(f,tl1),Add(TermList(C1*, Appl(g, tl2), C2*))) && f!=g -> {
+        return `Sub(Appl(f,tl1), Add(TermList(C1*,C2*)));
+      }
+
+      // x - (a + b) -> x - a - b
       Sub(t1, Add(TermList(head,tail*))) -> {
         return `Sub(Sub(t1,head), Add(TermList(tail*)));
       }
-
-      // t - () -> t
-      Sub(t, Add(TermList())) -> {
-        return `t;
-      }
-
-      // t - t -> ()
-      Sub(t, t) -> {
-        return `Add(TermList());
-      }
-
-      // (a+t+b) - t -> (a+b)
-      Sub(Add(TermList(C1*,t,C2*)),t) -> {
-        return `Add(TermList(C1*,C2*));
-      }
-
 
     }
   }  
