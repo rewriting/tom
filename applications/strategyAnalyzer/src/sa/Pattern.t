@@ -23,9 +23,16 @@ public class Pattern {
     Term a =`Appl("a", TermList());
     Term ga =`Appl("g", TermList(a));
     Term gv =`Appl("g", TermList(V));
-
-    t = `Appl("f", TermList(Sub(gv,Add(TermList(a,ga)))));
+    //t = `Appl("f", TermList(Sub(gv,Add(TermList(a,ga)))));
     //t = `Appl("f", TermList(Sub(V,Add(TermList(a,ga,gv)))));
+
+    Term fa =`Appl("f", TermList(a));
+    Term fga =`Appl("f", TermList(ga));
+    Term fgv =`Appl("f", TermList(gv));
+    Term fv =`Appl("f", TermList(V));
+    t = `Sub(fgv, Add(TermList(fa,fga)));
+    //t = `Sub(fv, Add(TermList(fa,fga,fgv)));
+
 
     // example 2
     eSig.addSymbol("Nil", `ConcGomType(), `GomType("List") );
@@ -37,7 +44,7 @@ public class Pattern {
     Term sep1 = `Appl("sep", TermList(V,x_y_ys));
     Term sep2 = `Appl("sep", TermList(V,V));
 
-    t = `Sub(sep2,sep1);
+    //t = `Sub(sep2,sep1);
 
     System.out.println("pretty t = " + Pretty.toString(t));
 
@@ -64,9 +71,11 @@ public class Pattern {
   %strategy SimplifyAdd() extends Fail() {
     visit Term {
 
-      // (a+b) + (c+d) -> (a+b+c+d)
-      Add(TermList(C1*, Add(tl1), C2*, Add(tl2), C3*)) -> {
-        return `Add(TermList(C1*,tl1*,C2*,tl2*,C3*));
+      // flatten: (a + (b + c) + d) -> (a + b + c + d)
+      s@Add(TermList(C1*, Add(TermList(tl*)), C2*)) -> {
+        Term res = `Add(TermList(C1*,tl*,C2*));
+        //System.out.println("flatten: " + Pretty.toString(`s) + " --> " + Pretty.toString(res));
+        return res;
       }
 
       // a + x + b -> x
