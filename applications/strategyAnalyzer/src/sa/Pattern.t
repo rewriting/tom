@@ -24,26 +24,23 @@ public class Pattern {
     Term ga =`Appl("g", TermList(a));
     Term gv =`Appl("g", TermList(V));
 
-    Term t = `Appl("f", TermList(Sub(V,Add(TermList(a,ga,gv)))));
+    Term t = `Appl("f", TermList(Sub(gv,Add(TermList(a,ga)))));
+    //Term t = `Appl("f", TermList(Sub(V,Add(TermList(a,ga,gv)))));
 
-    System.out.println("t = " + t);
     System.out.println("pretty t = " + Pretty.toString(t));
 
     try {
       //t = `Repeat(OnceTopDown(Choice(SimplifyAdd(),SimplifySub()))).visitLight(t);
-      t = `Repeat(OnceTopDown(SimplifyAdd())).visitLight(t);
-      System.out.println("t1 = " + Pretty.toString(t));
-      t = `Repeat(OnceTopDown(SimplifySub())).visitLight(t);
-      System.out.println("t2 = " + Pretty.toString(t));
-      t = `Repeat(OnceTopDown(ExpandSub())).visitLight(t);
-      System.out.println("t3 = " + Pretty.toString(t));
-
-      t = `Repeat(OnceTopDown(SimplifyAdd())).visitLight(t);
-      System.out.println("t1 = " + Pretty.toString(t));
-      t = `Repeat(OnceTopDown(SimplifySub())).visitLight(t);
-      System.out.println("t2 = " + Pretty.toString(t));
-      t = `Repeat(OnceTopDown(ExpandSub())).visitLight(t);
-      System.out.println("t3 = " + Pretty.toString(t));
+      Term oldT = null;
+      while(oldT != t) {
+        oldT = t;
+        t = `Repeat(OnceTopDown(SimplifyAdd())).visitLight(t);
+        System.out.println("t1 = " + Pretty.toString(t));
+        t = `Repeat(OnceTopDown(SimplifySub())).visitLight(t);
+        System.out.println("t2 = " + Pretty.toString(t));
+        t = `Repeat(OnceTopDown(ExpandSub())).visitLight(t);
+        System.out.println("t3 = " + Pretty.toString(t));
+      }
 
 
     } catch(VisitFailure e) {
@@ -52,6 +49,7 @@ public class Pattern {
     System.out.println("res = " + Pretty.toString(t));
   }
 
+  // (a,b,c) - (a',b',c') -> (a-a', b-b', c-c')
   %strategy SimplifyAdd() extends Fail() {
     visit Term {
 
@@ -75,6 +73,17 @@ public class Pattern {
 
   %strategy SimplifySub() extends Fail() {
     visit Term {
+      // g(t) - g(t') -> g(t - t')
+      Sub(Appl(f,tl1), Appl(f, tl2)) -> {
+        TermList tl = `sub(tl1,tl2);
+        return `Appl(f,TermList(tl*));
+      }
+
+      // g(t) - (a + g(t') + b) -> g(t - t') - (a + b)
+      Sub(Appl(f,tl1),Add(TermList(C1*, Appl(f, tl2), C2*))) -> {
+        TermList tl = `sub(tl1,tl2);
+        return `Sub(Appl(f,TermList(tl*)), Add(TermList(C1*,C2*)));
+      }
 
       // x - (a+b) -> x - a - b
       Sub(t1, Add(TermList(head,tail*))) -> {
@@ -96,9 +105,24 @@ public class Pattern {
         return `Add(TermList(C1*,C2*));
       }
 
+
     }
   }  
-  
+
+  private static TermList sub(TermList tl1,TermList tl2) {
+    TermList tl = `TermList();
+    while(!tl1.isEmptyTermList()) {
+      Term h1 = tl1.getHeadTermList();
+      Term h2 = tl2.getHeadTermList();
+      tl = `TermList(tl*, Sub(h1,h2));
+
+      tl1 = tl1.getTailTermList();
+      tl2 = tl2.getTailTermList();
+    }
+    return tl;
+  }
+
+
   %strategy ExpandSub() extends Fail() {
     visit Term {
       // x - a -> expand AP
