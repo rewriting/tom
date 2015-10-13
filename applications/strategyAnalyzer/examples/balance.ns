@@ -1,0 +1,18 @@
+
+abstract syntax
+Tree = E() | T(Color,Tree,Nat,Tree)
+Color = R() | B()
+Nat = Z() | S(Nat)
+
+strategies
+
+r1() =  [  
+  balance(T(B(),T(R(),T(R(),a,x,b),y,c),z,d)) -> T(R(),T(B(),a,x,b),y,T(B(),c,z,d)),
+  balance(T(B(),T(R(),a,x,T(R(),b,y,c)),z,d)) -> T(R(),T(B(),a,x,b),y,T(B(),c,z,d)),
+  balance(T(B(),a,x,T(R(),T(R(),b,y,c),z,d))) -> T(R(),T(B(),a,x,b),y,T(B(),c,z,d)),
+  balance(T(B(),a,x,T(R(),b,y,T(R(),c,z,d)))) -> T(R(),T(B(),a,x,b),y,T(B(),c,z,d)),
+  balance(t) -> t
+]
+
+mainStrat() = r1()
+
