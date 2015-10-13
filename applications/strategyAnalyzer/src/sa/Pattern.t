@@ -56,6 +56,42 @@ public class Pattern {
     //t = `Sub(sep2,sep1);
     //type = `GomType("List");
 
+    // example 3
+    eSig.addSymbol("Z", `ConcGomType(), `GomType("Nat") );
+    eSig.addSymbol("S", `ConcGomType(GomType("Nat")), `GomType("Nat") );
+    eSig.addSymbol("C", `ConcGomType(GomType("Nat")), `GomType("TT") );
+    eSig.addSymbol("Bound", `ConcGomType(GomType("Nat")), `GomType("TT") );
+    eSig.addSymbol("Neg", `ConcGomType(GomType("TT")), `GomType("TT") );
+    eSig.addSymbol("Add", `ConcGomType(GomType("TT"),GomType("TT")), `GomType("TT") );
+    eSig.addSymbol("Sub", `ConcGomType(GomType("TT"),GomType("TT")), `GomType("TT") );
+    eSig.addSymbol("Mul", `ConcGomType(GomType("Nat"),GomType("TT")), `GomType("TT") );
+
+
+    gSig.addSymbol("Z", `ConcGomType(), `GomType("Nat") );
+    gSig.addSymbol("S", `ConcGomType(GomType("Nat")), `GomType("Nat") );
+    gSig.addSymbol("C", `ConcGomType(GomType("Nat")), `GomType("TT") );
+    gSig.addSymbol("Bound", `ConcGomType(GomType("Nat")), `GomType("TT") );
+    gSig.addSymbol("Neg", `ConcGomType(GomType("TT")), `GomType("TT") );
+    gSig.addSymbol("Add", `ConcGomType(GomType("TT"),GomType("TT")), `GomType("TT") );
+    gSig.addSymbol("Sub", `ConcGomType(GomType("TT"),GomType("TT")), `GomType("TT") );
+    gSig.addSymbol("Mul", `ConcGomType(GomType("Nat"),GomType("TT")), `GomType("TT") );
+    gSig.addSymbol("numadd", `ConcGomType(GomType("TT"),GomType("TT")), `GomType("TT") );
+
+    Term pat = `Appl("Add",TermList(Appl("Mul",TermList(V,Appl("Bound",TermList(V)))),V));
+    Term p1 = `Appl("numadd",TermList(pat,pat));
+    Term p2 = `Appl("numadd",TermList(pat,V));
+    Term p3 = `Appl("numadd",TermList(V,pat));
+    Term p4 = `Appl("numadd",TermList(Appl("C",TermList(V)),Appl("C",TermList(V))));
+    Term p5 = `Appl("numadd",TermList(V,V));
+
+    t = `Sub(p2,p1);
+    t = `Sub(p3,Add(TermList(p1,p2)));
+    t = `Sub(p4,Add(TermList(p1,p2,p3)));
+    //t = `Sub(p5,Add(TermList(p1,p2,p3,p4)));
+    type = `GomType("TT");
+
+
+
     System.out.println("pretty t = " + Pretty.toString(t));
 
     try {
@@ -90,33 +126,43 @@ public class Pattern {
       // flatten: (a + (b + c) + d) -> (a + b + c + d)
       s@Add(TermList(C1*, Add(TermList(tl*)), C2*)) -> {
         Term res = `Add(TermList(C1*,tl*,C2*));
-        //System.out.println("flatten: " + Pretty.toString(`s) + " --> " + Pretty.toString(res));
+        System.out.println("flatten: " + Pretty.toString(`s) + " --> " + Pretty.toString(res));
         return res;
       }
 
       // a + x + b -> x
-      Add(TermList(_*, Var("_"), _*)) -> {
-        return `Var("_");
+      s@Add(TermList(_*, Var("_"), _*)) -> {
+        Term res = `Var("_");
+        System.out.println("a + x + b -> x : " + Pretty.toString(`s) + " --> " + Pretty.toString(res));
+        return res;
       }
       
       // t + t -> t
-      Add(TermList(C1*, t, C2*, t, C3*)) -> {
-        return `Add(TermList(C1*,t,C2*,C3*));
+      s@Add(TermList(C1*, t, C2*, t, C3*)) -> {
+        Term res = `Add(TermList(C1*,t,C2*,C3*));
+        System.out.println("t + t -> t : " + Pretty.toString(`s) + " --> " + Pretty.toString(res));
+        return res;
       }
 
       // g(t) + g(t') -> g(t + t')
-      Add(TermList(C1*, Appl(f,tl1), C2*, Appl(f, tl2), C3*)) -> {
+      s@Add(TermList(C1*, Appl(f,tl1), C2*, Appl(f, tl2), C3*)) -> {
         TermList tl = `add(tl1,tl2);
-        return `Add(TermList(C1*, Appl(f,tl), C2*, C3*));
+        Term res = `Add(TermList(C1*, Appl(f,tl), C2*, C3*));
+        System.out.println("g(t) + g(t') -> g(t + t') : " + Pretty.toString(`s) + " --> " + Pretty.toString(res));
+        return res;
       }
 
       // t + () -> t
-      Add(TermList(C1*,Empty(),C2*)) -> {
-        return `Add(TermList(C1*,C2*));
+      s@Add(TermList(C1*,Empty(),C2*)) -> {
+        Term res = `Add(TermList(C1*,C2*));
+        System.out.println("t + () -> t : " + Pretty.toString(`s) + " --> " + Pretty.toString(res));
+        return res;
       }
 
-      Add(TermList()) -> {
-        return `Empty();
+      s@Add(TermList()) -> {
+        Term res = `Empty();
+        System.out.println("elim () : " + Pretty.toString(`s) + " --> " + Pretty.toString(res));
+        return res;
       }
 
     }
