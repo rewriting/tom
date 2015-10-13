@@ -1,0 +1,18 @@
+
+abstract syntax
+T = C(Nat) | Bound(Nat) | Neg(T) | Add(T,T) | Sub(T,T) | Mul(Nat,T) | numadd(T,T)
+Nat = Z() | S(Nat)
+
+strategies
+
+r1() =  [  
+  numadd( Add(Mul(c1,Bound(n1)),r1), Add(Mul(c2,Bound(n2)),r2) ) -> C(Z()),
+  numadd( Add(Mul(c1,Bound(n1)),r1), t ) -> C(Z()),
+  numadd( Add(Mul(c2,Bound(n2)),r2), t ) -> C(Z()),
+  numadd( C(b1), C(b2) ) -> C(Z()),
+  numadd( a, b ) -> C(Z())
+
+]
+
+mainStrat() = r1()
+
