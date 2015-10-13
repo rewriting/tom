@@ -91,7 +91,7 @@ public class RuleCompiler {
       } else {
         List<Rule> ruleList = new ArrayList<Rule>();
         if(postTreatment) {
-          if(Tools.isLinear(lhs)) {
+          if(true || Tools.isLinear(lhs)) {
             /*
              * case: rule is left-linear and there is only one negation
              * should only be done in post-treatment, not during compilation of strategies
