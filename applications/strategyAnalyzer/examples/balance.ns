@@ -1,6 +1,6 @@
 
 abstract syntax
-Tree = E() | T(Color,Tree,Nat,Tree)
+Tree = E() | T(Color,Tree,Nat,Tree) | balance(Tree)
 Color = R() | B()
 Nat = Z() | S(Nat)
 
