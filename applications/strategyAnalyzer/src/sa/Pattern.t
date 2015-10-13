@@ -13,12 +13,18 @@ public class Pattern {
   public static void main(String args[]) {
     Term V = `Var("_");
     Term t = null;
+    GomType type = null;
 
     // example 1
     eSig.addSymbol("a", `ConcGomType(), `GomType("T") );
     eSig.addSymbol("b", `ConcGomType(), `GomType("T") );
     eSig.addSymbol("g", `ConcGomType(GomType("T")), `GomType("T") );
     eSig.addSymbol("f", `ConcGomType(GomType("T"),GomType("T")), `GomType("T") );
+
+    gSig.addSymbol("a", `ConcGomType(), `GomType("T") );
+    gSig.addSymbol("b", `ConcGomType(), `GomType("T") );
+    gSig.addSymbol("g", `ConcGomType(GomType("T")), `GomType("T") );
+    gSig.addSymbol("f", `ConcGomType(GomType("T"),GomType("T")), `GomType("T") );
 
     Term a =`Appl("a", TermList());
     Term ga =`Appl("g", TermList(a));
@@ -30,21 +36,25 @@ public class Pattern {
     Term fga =`Appl("f", TermList(ga));
     Term fgv =`Appl("f", TermList(gv));
     Term fv =`Appl("f", TermList(V));
-    t = `Sub(fgv, Add(TermList(fa,fga)));
-    //t = `Sub(fv, Add(TermList(fa,fga,fgv)));
-
+    //t = `Sub(fgv, Add(TermList(fa,fga)));
+    t = `Sub(fv, Add(TermList(fa,fga,fgv)));
+    type = `GomType("T");
 
     // example 2
     eSig.addSymbol("Nil", `ConcGomType(), `GomType("List") );
     eSig.addSymbol("Cons", `ConcGomType(GomType("T"),GomType("List")), `GomType("List") );
-    //eSig.addSymbol("sep", `ConcGomType(GomType("T"),GomType("List")), `GomType("List") );
+
+    gSig.addSymbol("Nil", `ConcGomType(), `GomType("List") );
+    gSig.addSymbol("Cons", `ConcGomType(GomType("T"),GomType("List")), `GomType("List") );
+    gSig.addSymbol("sep", `ConcGomType(GomType("T"),GomType("List")), `GomType("List") );
 
     Term y_ys = `Appl("Cons", TermList(V,V));
     Term x_y_ys = `Appl("Cons", TermList(V,y_ys));
     Term sep1 = `Appl("sep", TermList(V,x_y_ys));
     Term sep2 = `Appl("sep", TermList(V,V));
 
-    t = `Sub(sep2,sep1);
+    //t = `Sub(sep2,sep1);
+    //type = `GomType("List");
 
     System.out.println("pretty t = " + Pretty.toString(t));
 
@@ -59,12 +69,18 @@ public class Pattern {
         System.out.println("t2 = " + Pretty.toString(t));
         t = `Repeat(OnceTopDown(ExpandSub())).visitLight(t);
         System.out.println("t3 = " + Pretty.toString(t));
+
+        //GomType type = gSig.getCodomain(t.getsymbol());
+        //System.out.println("symbol = " + t.getsymbol());
+        //System.out.println("type = " + type);
+        t = eliminateIllTyped(t, type);
       }
 
 
     } catch(VisitFailure e) {
       System.out.println("failure on: " + t);
     }
+
     System.out.println("res = " + Pretty.toString(t));
   }
 
@@ -199,17 +215,17 @@ public class Pattern {
     visit Term {
       // x - a -> expand AP
       Sub(Var("_"),t@Appl(f,args_f)) -> {
-        GomType codomain = eSig.getCodomain(`f);
+        //GomType codomain = gSig.getCodomain(`f);
         RuleCompiler ruleCompiler = new RuleCompiler(Pattern.eSig, Pattern.gSig);
         RuleList rl = ruleCompiler.expandAntiPatterns(`ConcRule(Rule(Anti(t),Var("_"))));
         //System.out.println("rl = " + Pretty.toString(rl));
         TermList tl = `TermList();
         %match(rl) {
           ConcRule(_*,Rule(lhs@Appl(g,args_g),rhs),_*) -> {
-            if(eSig.getCodomain(`g) == codomain) {
+            //if(gSig.getCodomain(`g) == codomain) {
               Term newLhs = `TopDown(RemoveVar()).visitLight(`lhs);
               tl = `TermList(tl*,newLhs);
-            }
+            //}
           }
         }
         return `Add(tl);
@@ -223,6 +239,52 @@ public class Pattern {
         return `Var("_");
       }
     }
+  }
+
+  private static Term eliminateIllTyped(Term t, GomType type) {
+    //System.out.println(Pretty.toString(t) + ":" + type.getName());
+    %match(t) {
+      Var("_") -> {
+        return t;
+      }
+
+      Appl(f,args) -> {
+        if(gSig.getCodomain(`f) == type) {
+          GomTypeList types = gSig.getDomain(`f);
+          TermList tail = `args;
+          TermList res = `TermList();
+          while(!tail.isEmptyTermList()) {
+            Term head = tail.getHeadTermList();
+            GomType arg_type = types.getHeadConcGomType();
+            res = `TermList(res*, eliminateIllTyped(head,arg_type));
+            tail = tail.getTailTermList();
+            types = types.getTailConcGomType();
+          }
+          return `Appl(f,res);
+        } else {
+          return `Empty();
+        }
+      }
+
+      Sub(t1,t2) -> {
+        return `Sub(eliminateIllTyped(t1,type),eliminateIllTyped(t2,type));
+      }
+
+      Add(tl) -> {
+        TermList tail = `tl;
+        TermList res = `TermList();
+        while(!tail.isEmptyTermList()) {
+          Term head = tail.getHeadTermList();
+          res = `TermList(res*, eliminateIllTyped(head,type));
+          tail = tail.getTailTermList();
+        }
+        return `Add(res);
+      }
+
+    }
+
+    System.out.println("Should not be there: " + `t);
+    return t;
   }
 
 }
