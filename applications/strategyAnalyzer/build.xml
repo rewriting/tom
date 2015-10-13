@@ -54,6 +54,7 @@
     <gom.preset srcdir="${sa.src}"
                 destdir="${sa.gen}">
       <include name="${sa.ast}.gom"/>
+      <!-- <include name="${sa.package}/Pattern.gom"/> -->
     </gom.preset>
   </target>
 

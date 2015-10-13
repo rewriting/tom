@@ -80,22 +80,6 @@ type:
   ;
 
 
-
-
-// old syntax
-expressionlist :
-  (expression)* EOF -> ^(ExpressionList (expression)*)
-  ;
-
-expression :
-    LET ID EQUALS v=expression IN t=expression -> ^(Let ID $v $t)
-  | LBRACE (rule (COMMA rule)*)? RBRACE -> ^(Set ^(ConcRule (rule)*))
-  | LBRACKET (rule (COMMA rule)*)? RBRACKET -> ^(List ^(ConcRule (rule)*))
-  | strategy -> ^(Strat strategy)
-  | SIGNATURE LBRACE (symbol (COMMA symbol)*)? RBRACE -> ^(Signature ^(SymbolList (symbol)*))
-
-  ;
-
 strategy :
   s1=elementarystrategy (
        SEMICOLON s2=strategy

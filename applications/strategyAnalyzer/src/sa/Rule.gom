@@ -23,11 +23,10 @@ TypeEnvironment = EmptyEnvironment()
                 | PushEnvironment(Name:String, Type:GomType, Env:TypeEnvironment)
 
 // Old AST
-Expression = Let(name:String, v:Expression, t:Expression)
+Expression = 
            | List(list:RuleList)
            | Set(list:RuleList)
            | Strat(strat:Strat)
-           | Signature(symbollist:SymbolList)
 
 Symbol = Symbol(name:String,arity:int)
 SymbolList = SymbolList(Symbol*)
@@ -39,6 +38,8 @@ Term = Appl(symbol:String,args:TermList)
      | BuiltinInt(i:int)
      | Anti(term:Term)
      | At(term1:Term,term2:Term)
+     | Add(args:TermList)
+     | Sub(term1:Term, term2:Term)
 
 TermList = TermList(Term*)
 

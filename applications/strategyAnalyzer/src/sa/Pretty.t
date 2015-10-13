@@ -28,15 +28,6 @@ public class Pretty {
   public static String toString(Expression e) {
     StringBuffer sb = new StringBuffer();
     %match(e) {
-      Let(x,v,t) -> {
-        sb.append("let ");
-        sb.append(`x);
-        sb.append(" = ");
-        sb.append(toString(`v));
-        sb.append(" in ");
-        sb.append(toString(`t));
-      }
-
       Set(rulelist) -> {
         sb.append("{ ");
         %match(rulelist) {
@@ -53,7 +44,7 @@ public class Pretty {
       Strat(s) -> {
         sb.append(`s);
       }
-      
+     /* 
       Signature(symbollist) -> {
         sb.append("signature { ");
         %match(symbollist) {
@@ -66,6 +57,7 @@ public class Pretty {
         }
         sb.append(" }");
       }
+      */
 
     }
     return sb.toString();
@@ -97,12 +89,16 @@ public class Pretty {
   }
 
   public static String toString(TermList t) {
+    return toStringAux(t, ",");
+  }
+
+  private static String toStringAux(TermList t, String sep) {
     StringBuffer sb = new StringBuffer();
     %match(t) {
       TermList(_*,x,end*) -> {
         sb.append(toString(`x));
         if(!`end.isEmptyTermList()) {
-          sb.append(",");
+          sb.append(sep);
         }
       }
     }
@@ -127,6 +123,16 @@ public class Pretty {
           return name + "(" + toString(`args) + ")";
         }
       }
+
+      Add(TermList(l*)) -> {
+        return "(" + toStringAux(`l," + ") + ")";
+      }
+
+      Sub(t1,t2) -> {
+        return "(" + toString(`t1) + " \\ " + toString(`t2) + ")";
+      }
+
+
     }
     return "toString(Term): error";
   }
