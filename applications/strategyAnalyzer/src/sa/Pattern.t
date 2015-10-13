@@ -44,7 +44,7 @@ public class Pattern {
     Term sep1 = `Appl("sep", TermList(V,x_y_ys));
     Term sep2 = `Appl("sep", TermList(V,V));
 
-    //t = `Sub(sep2,sep1);
+    t = `Sub(sep2,sep1);
 
     System.out.println("pretty t = " + Pretty.toString(t));
 
@@ -94,6 +94,15 @@ public class Pattern {
         return `Add(TermList(C1*, Appl(f,tl), C2*, C3*));
       }
 
+      // t + () -> t
+      Add(TermList(C1*,Empty(),C2*)) -> {
+        return `Add(TermList(C1*,C2*));
+      }
+
+      Add(TermList()) -> {
+        return `Empty();
+      }
+
     }
   }
 
@@ -106,15 +115,20 @@ public class Pattern {
 
       // t - t -> ()
       Sub(t, t) -> {
-        return `t;
+        return `Empty();
       }
       //Sub(Appl(f,tl), Appl(f,tl)) -> {
       //  return `Appl(f,tl);
       //}
 
       // t - () -> t
-      Sub(t, Add(TermList())) -> {
+      Sub(t, Empty()) -> {
         return `t;
+      }
+
+      // () - t -> ()
+      Sub(Empty(),t) -> {
+        return `Empty();
       }
 
       // (a + t + b) - t -> (a + b)
@@ -122,25 +136,25 @@ public class Pattern {
         return `Add(TermList(C1*,C2*));
       }
 
-      // g(t) - g(t') -> g(t - t')
+      // g(t1,...,tn) - g(t1',...,tn') -> g(t1 - t1', ...,tn - tn')
       Sub(Appl(f,tl1), Appl(f, tl2)) && tl1!=tl2-> {
         TermList tl = `sub(tl1,tl2);
         return `Appl(f,TermList(tl*));
       }
 
-      // g(t) - (a + g(t') + b) -> g(t - t') - (a + b)
+      // g(t1,...,tn) - (a + g(t1',...,tn') + b) -> g(t1 - t1', ...,tn - tn') - (a + b)
       Sub(Appl(f,tl1),Add(TermList(C1*, Appl(f, tl2), C2*))) -> {
         TermList tl = `sub(tl1,tl2);
         return `Sub(Appl(f,TermList(tl*)), Add(TermList(C1*,C2*)));
       }
 
       // TODO: t - t' -> t if t' not matched t
-      // g(t) - f(t') -> g(t)
+      // g(t1,...,tn) - f(t1',...,tm') -> g(t1,...,tn)
       Sub(Appl(f,tl1), Appl(g, tl2)) && f!=g -> {
         return `Appl(f,(tl1));
       }
 
-      // g(t) - (a + f(t') + b) -> g(t) - (a + b)
+      // g(t1,...,tn) - (a + f(t1',...,tm') + b) -> g(t1,...,tn) - (a + b)
       Sub(Appl(f,tl1),Add(TermList(C1*, Appl(g, tl2), C2*))) && f!=g -> {
         return `Sub(Appl(f,tl1), Add(TermList(C1*,C2*)));
       }
@@ -153,7 +167,7 @@ public class Pattern {
     }
   }
 
-  // (a,b,c) - (a',b',c') -> (a-a', b-b', c-c')
+  // (a,b,c) - (a',b',c') -> (a - a', b - b', c - c')
   private static TermList sub(TermList tl1,TermList tl2) {
     TermList tl = `TermList();
     while(!tl1.isEmptyTermList()) {
@@ -167,6 +181,7 @@ public class Pattern {
     return tl;
   }
 
+  // (a,b,c) + (a',b',c') -> (a + a', b + b', c + c')
   private static TermList add(TermList tl1,TermList tl2) {
     TermList tl = `TermList();
     while(!tl1.isEmptyTermList()) {

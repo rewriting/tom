@@ -132,6 +132,10 @@ public class Pretty {
         return "(" + toString(`t1) + " \\ " + toString(`t2) + ")";
       }
 
+      Empty() -> {
+        return "empty";
+      }
+
 
     }
     return "toString(Term): error";
