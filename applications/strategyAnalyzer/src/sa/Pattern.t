@@ -37,8 +37,8 @@ public class Pattern {
     Term fgv =`Appl("f", TermList(gv));
     Term fv =`Appl("f", TermList(V));
     //t = `Sub(fgv, Add(TermList(fa,fga)));
-    t = `Sub(fv, Add(TermList(fa,fga,fgv)));
-    type = `GomType("T");
+    //t = `Sub(fv, Add(TermList(fa,fga,fgv)));
+    //type = `GomType("T");
 
     // example 2
     eSig.addSymbol("Nil", `ConcGomType(), `GomType("List") );
@@ -86,7 +86,7 @@ public class Pattern {
 
     t = `Sub(p2,p1);
     t = `Sub(p3,Add(TermList(p1,p2)));
-    t = `Sub(p4,Add(TermList(p1,p2,p3)));
+    //t = `Sub(p4,Add(TermList(p1,p2,p3)));
     //t = `Sub(p5,Add(TermList(p1,p2,p3,p4)));
     type = `GomType("TT");
 
@@ -99,11 +99,11 @@ public class Pattern {
       Term oldT = null;
       while(oldT != t) {
         oldT = t;
-        t = `Repeat(OnceTopDown(SimplifyAdd())).visitLight(t);
-        System.out.println("t1 = " + Pretty.toString(t));
         t = `Repeat(OnceTopDown(SimplifySub())).visitLight(t);
-        System.out.println("t2 = " + Pretty.toString(t));
+        System.out.println("t1 = " + Pretty.toString(t));
         t = `Repeat(OnceTopDown(ExpandSub())).visitLight(t);
+        System.out.println("t2 = " + Pretty.toString(t));
+        t = `Repeat(OnceTopDown(SimplifyAdd())).visitLight(t);
         System.out.println("t3 = " + Pretty.toString(t));
 
         //GomType type = gSig.getCodomain(t.getsymbol());
@@ -137,6 +137,20 @@ public class Pattern {
         return res;
       }
       
+      // t + empty -> t
+      s@Add(TermList(C1*,Empty(),C2*)) -> {
+        Term res = `Add(TermList(C1*,C2*));
+        //System.out.println("t + () -> t : " + Pretty.toString(`s) + " --> " + Pretty.toString(res));
+        return res;
+      }
+      
+      // Add(t) -> t
+      s@Add(TermList(t)) -> {
+        Term res = `t;
+        System.out.println("Add(t) -> t : " + Pretty.toString(`s) + " --> " + Pretty.toString(res));
+        return res;
+      }
+      
       // t + t -> t
       s@Add(TermList(C1*, t, C2*, t, C3*)) -> {
         Term res = `Add(TermList(C1*,t,C2*,C3*));
@@ -145,19 +159,25 @@ public class Pattern {
       }
 
       // g(t) + g(t') -> g(t + t')
+      //s@Add(TermList(C1*, Appl(f,tl1), C2*, Appl(f, tl2), C3*)) -> {
+      //  TermList tl = `add(tl1,tl2);
+      //  Term res = `Add(TermList(C1*, Appl(f,tl), C2*, C3*));
+      //  System.out.println("g(t) + g(t') -> g(t + t') : " + Pretty.toString(`s) + " --> " + Pretty.toString(res));
+      //  return res;
+     // }
+      
+      // f(t1,...,tn) + f(t1',...,tn') -> f(t1,..., ti + ti',...,tn)
       s@Add(TermList(C1*, Appl(f,tl1), C2*, Appl(f, tl2), C3*)) -> {
-        TermList tl = `add(tl1,tl2);
-        Term res = `Add(TermList(C1*, Appl(f,tl), C2*, C3*));
-        System.out.println("g(t) + g(t') -> g(t + t') : " + Pretty.toString(`s) + " --> " + Pretty.toString(res));
-        return res;
+        TermList tl = `addUniqueTi(tl1,tl2);
+        if(tl != null) {
+          Term res = `Add(TermList(C1*, Appl(f,tl), C2*, C3*));
+          System.out.println("add merge: " + Pretty.toString(`s) + " --> " + Pretty.toString(res));
+          return res;
+        } else {
+          System.out.println("add merge failed");
+        }
       }
 
-      // t + () -> t
-      s@Add(TermList(C1*,Empty(),C2*)) -> {
-        Term res = `Add(TermList(C1*,C2*));
-        System.out.println("t + () -> t : " + Pretty.toString(`s) + " --> " + Pretty.toString(res));
-        return res;
-      }
 
       s@Add(TermList()) -> {
         Term res = `Empty();
@@ -170,12 +190,29 @@ public class Pattern {
 
   %strategy SimplifySub() extends Fail() {
     visit Term {
-      // x - x -> x
-      Sub(Var("_"), Var("_")) -> {
-        return `Var("_");
+      s@Add(TermList()) -> {
+        Term res = `Empty();
+        System.out.println("sub elim Add() : " + Pretty.toString(`s) + " --> " + Pretty.toString(res));
+        return res;
+      }
+      // Add(t) -> t
+      s@Add(TermList(t)) -> {
+        Term res = `t;
+        System.out.println("sub Add(t) -> t : " + Pretty.toString(`s) + " --> " + Pretty.toString(res));
+        return res;
       }
 
-      // t - t -> ()
+      // x - x -> x
+      //Sub(Var("_"), Var("_")) -> {
+      //  return `Var("_");
+      //}
+      
+      // t - x -> empty
+      Sub(t, Var("_")) -> {
+        return `Empty();
+      }
+
+      // t - t -> empty
       Sub(t, t) -> {
         return `Empty();
       }
@@ -183,12 +220,12 @@ public class Pattern {
       //  return `Appl(f,tl);
       //}
 
-      // t - () -> t
+      // t - empty -> t
       Sub(t, Empty()) -> {
         return `t;
       }
 
-      // () - t -> ()
+      // empty - t -> empty
       Sub(Empty(),t) -> {
         return `Empty();
       }
@@ -199,62 +236,132 @@ public class Pattern {
       }
 
       // g(t1,...,tn) - g(t1',...,tn') -> g(t1 - t1', ...,tn - tn')
-      Sub(Appl(f,tl1), Appl(f, tl2)) && tl1!=tl2-> {
-        TermList tl = `sub(tl1,tl2);
-        return `Appl(f,TermList(tl*));
-      }
+      //Sub(Appl(f,tl1), Appl(f, tl2)) && tl1!=tl2-> {
+      //  TermList tl = `sub(tl1,tl2);
+      //  return `Appl(f,TermList(tl*));
+      //}
 
       // g(t1,...,tn) - (a + g(t1',...,tn') + b) -> g(t1 - t1', ...,tn - tn') - (a + b)
-      Sub(Appl(f,tl1),Add(TermList(C1*, Appl(f, tl2), C2*))) -> {
-        TermList tl = `sub(tl1,tl2);
-        return `Sub(Appl(f,TermList(tl*)), Add(TermList(C1*,C2*)));
-      }
+      //Sub(Appl(f,tl1),Add(TermList(C1*, Appl(f, tl2), C2*))) -> {
+      //  TermList tl = `sub(tl1,tl2);
+      //  return `Sub(Appl(f,TermList(tl*)), Add(TermList(C1*,C2*)));
+     // }
 
-      // TODO: t - t' -> t if t' not matched t
+      // f(t1,t2) - f(t1',t2') -> f(t1, t2-t2') + f(t1-t1', t2)
+      // f(t1,...,tn) - f(t1',...,tn') -> f(t1-t1',t2,...,tn) + f(t1, t2-t2',...,tn) + ... + f(t1,...,tn-tn')
+      s@Sub(t1@Appl(f,tl1), t2@Appl(f, tl2)) -> {
+        Term res = `sub(t1,t2);
+        System.out.println("sub1 : " + Pretty.toString(`s) + " --> " + Pretty.toString(res));
+        return res;
+      }
+      s@Sub(t1@Appl(f,tl1),Add(TermList(C1*, t2@Appl(f, tl2), C2*))) -> {
+        Term res = `Sub(sub(t1,t2), Add(TermList(C1*,C2*)));
+        System.out.println("sub2 : " + Pretty.toString(`s) + " --> " + Pretty.toString(res));
+        return res;
+     }
+      
       // g(t1,...,tn) - f(t1',...,tm') -> g(t1,...,tn)
-      Sub(Appl(f,tl1), Appl(g, tl2)) && f!=g -> {
-        return `Appl(f,(tl1));
+      s@Sub(Appl(f,tl1), Appl(g, tl2)) && f!=g -> {
+        Term res = `Appl(f,(tl1));
+        System.out.println("sub elim1 : " + Pretty.toString(`s) + " --> " + Pretty.toString(res));
+        return res;
       }
 
       // g(t1,...,tn) - (a + f(t1',...,tm') + b) -> g(t1,...,tn) - (a + b)
-      Sub(Appl(f,tl1),Add(TermList(C1*, Appl(g, tl2), C2*))) && f!=g -> {
-        return `Sub(Appl(f,tl1), Add(TermList(C1*,C2*)));
+      s@Sub(Appl(f,tl1),Add(TermList(C1*, Appl(g, tl2), C2*))) && f!=g -> {
+        Term res = `Sub(Appl(f,tl1), Add(TermList(C1*,C2*)));
+        System.out.println("sub elim2 : " + Pretty.toString(`s) + " --> " + Pretty.toString(res));
+        return res;
       }
 
-      // x - (a + b) -> x - a - b
-      Sub(t1, Add(TermList(head,tail*))) -> {
-        return `Sub(Sub(t1,head), Add(TermList(tail*)));
+      // t - (a1 + ... + an) -> (t - a) - (a2 + ... + an))
+      s@Sub(t, Add(TermList(head,tail*))) -> {
+        Term res = `Sub(Sub(t,head), Add(TermList(tail*)));
+        System.out.println("sub distrib1 : " + Pretty.toString(`s) + " --> " + Pretty.toString(res));
+        return res;
       }
+      
+      // (a1 + ... + an) - b -> (a1 - b) + ( (a2 + ... + an) - b )
+      s@Sub(Add(TermList(head,tail*)), t) -> {
+        Term res = `Add(TermList(Sub(head,t), Sub(Add(TermList(tail*)),t)));
+        System.out.println("sub distrib2 : " + Pretty.toString(`s) + " --> " + Pretty.toString(res));
+        return res;
+      }
+
 
     }
   }
 
-  // (a,b,c) - (a',b',c') -> (a - a', b - b', c - c')
-  private static TermList sub(TermList tl1,TermList tl2) {
-    TermList tl = `TermList();
-    while(!tl1.isEmptyTermList()) {
-      Term h1 = tl1.getHeadTermList();
-      Term h2 = tl2.getHeadTermList();
-      tl = `TermList(tl*, Sub(h1,h2));
+  // f(a1,...,an) - f(b1,...,bn) -> f(a1-b1,..., an) + ... + f(a1,...,an-bn)
+  private static Term sub(Term t1,Term t2) {
+    %match(t1,t2) {
+      Appl(f,args1), Appl(f,args2) -> {
+        TermList tl1 = `args1;
+        TermList tl2 = `args2;
+        int len = `tl1.length();
+        TermList args[] = new TermList[len];
+        for(int i=0 ; i<len ; i++) {
+          args[i] = `TermList();
+        }
+        int cpt = 0;
+        while(!tl1.isEmptyTermList()) {
+          Term h1 = tl1.getHeadTermList();
+          Term h2 = tl2.getHeadTermList();
 
-      tl1 = tl1.getTailTermList();
-      tl2 = tl2.getTailTermList();
+          for(int i=0 ; i<len ; i++) {
+            TermList tl = args[i]; // cannot use [] in `
+            if(i==cpt) {
+              tl = `TermList(tl*, Sub(h1,h2));
+            } else {
+              tl = `TermList(tl*, h1);
+            }
+            args[i] = tl;
+          }
+
+          tl1 = tl1.getTailTermList();
+          tl2 = tl2.getTailTermList();
+          cpt++;
+        }
+
+        TermList sum = `TermList();
+        for(int i=0 ; i<len ; i++) {
+          TermList tl = args[i]; // cannot use [] in `
+          sum = `TermList(sum*,Appl(f,tl));;
+        }
+
+        return `Add(sum);
+      }
     }
-    return tl;
+    System.out.println("cannot sub " + t1 + " and " + t2);
+    return null;
   }
 
-  // (a,b,c) + (a',b',c') -> (a + a', b + b', c + c')
-  private static TermList add(TermList tl1,TermList tl2) {
+  // (a1,...,an) + (b1,...,bn) -> (a1,..., ai+bi,..., an)
+  // for the unique i such that ai != bi
+  private static TermList addUniqueTi(TermList l1,TermList l2) {
+    TermList tl1=l1;
+    TermList tl2=l2;
     TermList tl = `TermList();
+    int cpt = 0;
     while(!tl1.isEmptyTermList()) {
       Term h1 = tl1.getHeadTermList();
       Term h2 = tl2.getHeadTermList();
-      tl = `TermList(tl*, Add(TermList(h1,h2)));
+      if(h1==h2) {
+        tl = `TermList(tl*, h1);
+      } else {
+        tl = `TermList(tl*, Add(TermList(h1,h2)));
+        cpt++;
+      }
 
       tl1 = tl1.getTailTermList();
       tl2 = tl2.getTailTermList();
     }
-    return tl;
+    if(cpt <= 1) {
+      return tl;
+    } else {
+      System.out.println("cannot add " + l1 + " and " + l2);
+      return null;
+    }
   }
 
   %strategy ExpandSub() extends Fail() {
@@ -301,6 +408,9 @@ public class Pattern {
           TermList res = `TermList();
           while(!tail.isEmptyTermList()) {
             Term head = tail.getHeadTermList();
+            if(head == `Empty()) {
+              return `Empty();
+            }
             GomType arg_type = types.getHeadConcGomType();
             res = `TermList(res*, eliminateIllTyped(head,arg_type));
             tail = tail.getTailTermList();
@@ -329,7 +439,7 @@ public class Pattern {
 
     }
 
-    System.out.println("Should not be there: " + `t);
+    System.out.println("eliminateIllTyped Should not be there: " + `t);
     return t;
   }
 
