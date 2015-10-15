@@ -4,12 +4,8 @@
 	<property name="classpath" location="../../../src/dist/lib/tom-runtime-full.jar"/>
 	<property name="tom.home" location="../../../src/dist"/>
 	<property name="test.dir" location="."/>
-	<property name="test.test" location="${test.dir}/test"/>
-	<property name="test.src" location="${test.dir}/src"/>
 	<property name="test.build" location="${test.dir}/build"/>
-	<property name="build.tom" location="${test.build}/tom"/>
-	<property name="build.src" location="${test.build}/src"/>
-	<property name="build.bin" location="${test.build}/bin"/>
+	<property name="test.gen" location="${test.dir}/gen"/>
   
 	<import file="${tom.home}/lib/tom-common.xml"/>
 
@@ -22,19 +18,18 @@
 
 	<target name="clean">
 		<delete dir="${test.build}"/>
+		<delete dir="${test.gen}"/>
 	</target>
 
 	<target name="init" depends="tom.init">
 		<mkdir dir="${test.build}"/>
-		<mkdir dir="${build.tom}"/>
-		<mkdir dir="${build.src}"/>
-		<mkdir dir="${build.bin}"/>
+		<mkdir dir="${test.gen}"/>
 	</target>	
 
 	<target name="typed" depends="init">
 		<java classpath="../build:${classpath}" classname="sa.Main" fork="true">
 			<arg value="-i"/>
-			<arg file="${test.src}/gxx.ns"/>
+			<arg file="gxx.ns"/>
 			<arg value="-tom"/>
 			<arg value="Gxx"/>
 			<arg value="-typed"/>
@@ -46,7 +41,7 @@
 	<target name="untyped" depends="init">
 		<java classpath="../build:${classpath}" classname="sa.Main" fork="true">
 			<arg value="-i"/>
-			<arg file="${test.src}/gxx.ns"/>
+			<arg file="gxx.ns"/>
 			<arg value="-tom"/>
 			<arg value="Gxx"/>
 		</java>
@@ -54,21 +49,21 @@
 	</target>
 
 	<target name="tomSrc">
-		<move file="Gxx.t" todir="${build.tom}"/>
-		<tom.preset srcdir="${build.tom}" destdir="${build.src}"> 
+		<move file="Gxx.t" todir="${test.gen}"/>
+		<tom.preset srcdir="${test.gen}" destdir="${test.build}"> 
    			<include name="*.t"/>
 			<exclude name="*Test*.t"/> 
     		</tom.preset>
 	</target> 
 
 	<target name="tomTest" depends="tomSrc">
-		<tom.preset srcdir="${test.test}" destdir="${build.src}">
+		<tom.preset srcdir="${test.dir}" destdir="${test.build}">
 			<include name="*Test*.t"/>
 		</tom.preset>
 	</target>
 	
 	<target name="compile" depends="tomTest">
-		<javac classpath=".:${tom.home}/lib/tom-runtime-full.jar:${tom.home}/lib/compiletime/junit.jar" srcdir="${build.src}" destdir="${build.bin}" includeantruntime="false"/>
+		<javac classpath=".:${tom.home}/lib/tom-runtime-full.jar:${tom.home}/lib/compiletime/junit.jar" srcdir="${test.build}" destdir="${test.build}" includeantruntime="false"/>
 	</target>	
 	
 	<target name="runTests" depends="compile">
