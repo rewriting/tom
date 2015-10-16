@@ -12,6 +12,8 @@ public class Pattern {
 
   public static void main(String args[]) {
     Term V = `Var("_");
+    Term X = `Var("x");
+    Term Y = `Var("y");
     Term t = null;
     GomType type = null;
 
@@ -20,11 +22,13 @@ public class Pattern {
     eSig.addSymbol("b", `ConcGomType(), `GomType("T") );
     eSig.addSymbol("g", `ConcGomType(GomType("T")), `GomType("T") );
     eSig.addSymbol("f", `ConcGomType(GomType("T")), `GomType("T") );
+    eSig.addSymbol("h", `ConcGomType(GomType("T"),GomType("T")), `GomType("T") );
 
     gSig.addSymbol("a", `ConcGomType(), `GomType("T") );
     gSig.addSymbol("b", `ConcGomType(), `GomType("T") );
     gSig.addSymbol("g", `ConcGomType(GomType("T")), `GomType("T") );
     gSig.addSymbol("f", `ConcGomType(GomType("T")), `GomType("T") );
+    eSig.addSymbol("h", `ConcGomType(GomType("T"),GomType("T")), `GomType("T") );
 
     Term a =`Appl("a", TermList());
     Term b =`Appl("b", TermList());
@@ -36,12 +40,24 @@ public class Pattern {
     Term fgv =`Appl("f", TermList(gv));
     Term fv =`Appl("f", TermList(V));
 
+    Term hxy =`Appl("h", TermList(X,Y));
+    Term hab =`Appl("h", TermList(a,b));
+    Term hba =`Appl("h", TermList(b,a));
+    Term fhxy =`Appl("f", TermList(hxy));
+    Term fhab =`Appl("f", TermList(hab));
+    Term fhba =`Appl("f", TermList(hba));
+
     // f(g(x)) \ ( f(a) + f(g(a)) )
     //t = `Sub(fgv, Add(TermList(fa,fga)));
     //t = `Sub(fv, Add(TermList(fa,fga,fgv)));
 
     // X \ f(a + b)
-    t = `Sub(V, Appl("f",TermList(Add(TermList(a,b)))));
+    //     t = `Sub(V, Appl("f",TermList(Add(TermList(a,b)))));
+    t = `Sub(V, Add(TermList(fhba,fhab)));
+
+//  t = (_ \ (f(h(b(),a())) + f(h(a(),b()))))
+// t1 = (_ \ f((h(b(),a()) + h(a(),b()))))
+
 
     type = `GomType("T");
 
