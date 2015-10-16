@@ -153,6 +153,17 @@ public class Pattern {
     }
   }
 
+  %strategy DistributeAdd() extends Fail() {
+    visit Term {
+      // f(t1,..., ti + ti',...,tn)  ->  f(t1,...,tn) + f(t1',...,tn')
+      s@Appl(f, TermList(C1*, Add(TermList(u,v)), C2*)) -> {
+        Term res = `Add(TermList(Appl(f, TermList(C1*,u,C2*)), Appl(f,TermList(C1*,v,C2*))));
+        System.out.println("f(u+v)-> f(u)+f(v) : " + Pretty.toString(`s) + " --> " + Pretty.toString(res));
+        return res;
+      }
+    }
+  }
+
   %strategy SimplifyAdd() extends Fail() {
     visit Term {
 
@@ -198,6 +209,7 @@ public class Pattern {
      // }
 
       // f(t1,...,tn) + f(t1',...,tn') -> f(t1,..., ti + ti',...,tn)
+      // all but one ti, ti' should be identical
       s@Add(TermList(C1*, Appl(f,tl1), C2*, Appl(f, tl2), C3*)) -> {
         TermList tl = `addUniqueTi(tl1,tl2);
         if(tl != null) {
@@ -208,7 +220,6 @@ public class Pattern {
           System.out.println("add merge failed");
         }
       }
-
     }
   }
 
