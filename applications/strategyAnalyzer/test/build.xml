@@ -67,7 +67,7 @@
 	</target>	
 	
 	<target name="runTests" depends="compile">
-		<java classpath=".:${build.bin}:${tom.home}/lib/tom-runtime-full.jar:${tom.home}/lib/compiletime/junit.jar" classname="org.junit.runner.JUnitCore">
+		<java classpath=".:${test.build}:${tom.home}/lib/tom-runtime-full.jar:${tom.home}/lib/compiletime/junit.jar" classname="org.junit.runner.JUnitCore">
 			<arg value="TestGxx"/>
 		</java> 
 	</target>
