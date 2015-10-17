@@ -116,8 +116,17 @@ public class Pattern {
     System.out.println("pretty t = " + Pretty.toString(t));
 
     try {
-      t = `Repeat(OnceBottomUp(Choice(PropagateEmpty(),SimplifyAdd(),SimplifySub()))).visitLight(t);
-      System.out.println("t1 = " + Pretty.toString(t));
+//       t = `Repeat(OnceBottomUp(Choice(PropagateEmpty(),SimplifyAdd(),SimplifySub()))).visitLight(t);
+//       t = `Sequence(
+//                     Repeat(OnceBottomUp(Choice(DistributeAdd(),SimplifySub()))),
+//                     Repeat(OnceBottomUp(Choice(PropagateEmpty(),SimplifyAdd())))
+//                     ).visitLight(t);
+
+      t =  `Repeat(OnceBottomUp(Choice(EmptyAdd2Empty(),DistributeAdd(),SimplifySub()))).visitLight(t);
+      System.out.println("NO SUBs = " + Pretty.toString(t));
+
+      t = `Repeat(OnceBottomUp(Choice(EmptyAdd2Empty(),PropagateEmpty(),SimplifyAdd()))).visitLight(t);
+      System.out.println("NO ADD = " + Pretty.toString(t));
 
       /*
       Term oldT = null;
@@ -153,12 +162,23 @@ public class Pattern {
     }
   }
 
+
+  %strategy EmptyAdd2Empty() extends Fail() {
+    visit Term {
+      s@Add(TermList()) -> {
+        Term res = `Empty();
+        System.out.println("elim () : " + Pretty.toString(`s) + " --> " + Pretty.toString(res));
+        return res;
+      }
+    }
+  }
+
   %strategy DistributeAdd() extends Fail() {
     visit Term {
       // f(t1,..., ti + ti',...,tn)  ->  f(t1,...,tn) + f(t1',...,tn')
       s@Appl(f, TermList(C1*, Add(TermList(u,v)), C2*)) -> {
         Term res = `Add(TermList(Appl(f, TermList(C1*,u,C2*)), Appl(f,TermList(C1*,v,C2*))));
-        System.out.println("f(u+v)-> f(u)+f(v) : " + Pretty.toString(`s) + " --> " + Pretty.toString(res));
+        System.out.println("distribute add: " + Pretty.toString(`s) + " --> " + Pretty.toString(res));
         return res;
       }
     }
@@ -181,11 +201,11 @@ public class Pattern {
         return res;
       }
 
-      s@Add(TermList()) -> {
-        Term res = `Empty();
-        System.out.println("elim () : " + Pretty.toString(`s) + " --> " + Pretty.toString(res));
-        return res;
-      }
+//       s@Add(TermList()) -> {
+//         Term res = `Empty();
+//         System.out.println("elim () : " + Pretty.toString(`s) + " --> " + Pretty.toString(res));
+//         return res;
+//       }
 
       // a + x + b -> x
       s@Add(TermList(_*, Var("_"), _*)) -> {
