@@ -2,10 +2,14 @@ package sa;
 
 import sa.rule.types.*;
 import tom.library.sl.*;
+import com.google.common.collect.HashMultiset;
+import java.util.HashSet;
 
 public class Pattern {
   %include { rule/Rule.tom }
   %include { sl.tom }
+  %include { java/util/types/HashSet.tom }
+  %typeterm HashMultiset { implement { HashMultiset }}
 
   private static Signature eSig = new Signature();
   private static Signature gSig = new Signature();
@@ -58,7 +62,6 @@ public class Pattern {
 //  t = (_ \ (f(h(b(),a())) + f(h(a(),b()))))
 // t1 = (_ \ f((h(b(),a()) + h(a(),b()))))
 
-
     type = `GomType("T");
 
     // example 2
@@ -74,8 +77,8 @@ public class Pattern {
     Term sep1 = `Appl("sep", TermList(V,x_y_ys));
     Term sep2 = `Appl("sep", TermList(V,V));
 
-    //t = `Sub(sep2,sep1);
-    //type = `GomType("List");
+    t = `Sub(sep2,sep1);
+    type = `GomType("List");
 
     // example 3
     eSig.addSymbol("Z", `ConcGomType(), `GomType("Nat") );
@@ -105,53 +108,43 @@ public class Pattern {
     Term p4 = `Appl("numadd",TermList(Appl("C",TermList(V)),Appl("C",TermList(V))));
     Term p5 = `Appl("numadd",TermList(V,V));
 
-    //t = `Sub(p2,p1);
-    //t = `Sub(p3,Add(TermList(p1,p2)));
-    //t = `Sub(p4,Add(TermList(p1,p2,p3)));
-    //t = `Sub(p5,Add(TermList(p1,p2,p3,p4)));
-    //type = `GomType("TT");
+    t = `Sub(p2,p1);
+    t = `Sub(p3,Add(TermList(p1,p2)));
+    t = `Sub(p4,Add(TermList(p1,p2,p3)));
+    t = `Sub(p5,Add(TermList(p1,p2,p3,p4)));
+    type = `GomType("TT");
 
 
 
     System.out.println("pretty t = " + Pretty.toString(t));
 
     try {
-//       t = `Repeat(OnceBottomUp(Choice(PropagateEmpty(),SimplifyAdd(),SimplifySub()))).visitLight(t);
-//       t = `Sequence(
-//                     Repeat(OnceBottomUp(Choice(DistributeAdd(),SimplifySub()))),
-//                     Repeat(OnceBottomUp(Choice(PropagateEmpty(),SimplifyAdd())))
-//                     ).visitLight(t);
+      Strategy S1 = `Choice(EmptyAdd2Empty(),PropagateEmpty(),ElimEmpty(),DistributeAdd(),SimplifySub());
+      Strategy S2 = `Choice(EmptyAdd2Empty(),PropagateEmpty(),SimplifyAdd());
 
-      t =  `Repeat(OnceBottomUp(Choice(EmptyAdd2Empty(),PropagateEmpty(),ElimEmpty(),DistributeAdd(),SimplifySub()))).visitLight(t);
+      //t =  `Repeat(OnceBottomUp(S1)).visitLight(t);
+      t =  `Innermost(S1).visitLight(t);
       System.out.println("NO SUBs = " + Pretty.toString(t));
 
-      t = `Repeat(OnceBottomUp(Choice(EmptyAdd2Empty(),PropagateEmpty(),SimplifyAdd()))).visitLight(t);
+      //t = `Repeat(OnceBottomUp(S2)).visitLight(t);
+      t = `Innermost(S2).visitLight(t);
       System.out.println("NO ADD = " + Pretty.toString(t));
-
-      /*
-      Term oldT = null;
-      while(oldT != t) {
-        oldT = t;
-        t = `Repeat(OnceTopDown(SimplifySub())).visitLight(t);
-        System.out.println("t1 = " + Pretty.toString(t));
-        t = `Repeat(OnceTopDown(ExpandSub())).visitLight(t);
-        System.out.println("t2 = " + Pretty.toString(t));
-        t = `Repeat(OnceTopDown(SimplifyAdd())).visitLight(t);
-        System.out.println("t3 = " + Pretty.toString(t));
-
-        //GomType type = gSig.getCodomain(t.getsymbol());
-        //System.out.println("symbol = " + t.getsymbol());
-        //System.out.println("type = " + type);
-        t = eliminateIllTyped(t, type);
-      }
-      */
-      t = eliminateIllTyped(t, type);
 
     } catch(VisitFailure e) {
       System.out.println("failure on: " + t);
     }
 
     System.out.println("res = " + Pretty.toString(t));
+
+    HashSet<Term> c = new HashSet<Term>();
+    expandAdd(c,t);
+
+    System.out.println("c = ");
+    for(Term e:c) {
+      System.out.println(Pretty.toString(e));
+    }
+
+
   }
 
   %strategy PropagateEmpty() extends Fail() {
@@ -544,5 +537,52 @@ public class Pattern {
     System.out.println("eliminateIllTyped Should not be there: " + `t);
     return t;
   }
+
+
+  private static void expandAdd(HashSet<Term> c, Term subject) {
+    HashSet<Term> todo = new HashSet<Term>();
+    HashSet<Term> cache = new HashSet<Term>();
+    todo.add(subject);
+
+    while(todo.size() > 0) {
+      HashSet<Term> todo2 = new HashSet<Term>();
+      for(Term t:todo) {
+        HashSet<Term> tmpC = new HashSet<Term>();
+        try {
+          `TopDown(ExpandAdd(tmpC,t)).visit(t);
+        } catch(VisitFailure e) {
+        }
+        for(Term e:tmpC) {
+          if(cache.contains(e)) {
+            // do nothing
+          } else if(isPlainTerm(e)) {
+            c.add(e);
+            cache.add(e);
+          } else {
+            todo2.add(e);
+            cache.add(e);
+          }
+        }
+      }
+      todo = todo2;
+      System.out.println("size(c) = " + c.size());
+      System.out.println("size(cache) = " + cache.size());
+    }
+
+  }
+
+  %strategy ExpandAdd(c:HashSet, subject:Term) extends Identity() {
+    visit Term {
+      Add(TermList(_*,t,_*)) -> {
+        Term newt = (Term) getEnvironment().getPosition().getReplace(`t).visit(subject);
+        c.add(newt);
+      }
+      
+      Add(TermList(head,tail*)) -> {
+        c.remove(`subject);
+      }
+    }
+  }
+
 
 }
