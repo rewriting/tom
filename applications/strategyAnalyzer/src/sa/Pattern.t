@@ -9,13 +9,13 @@ public class Pattern {
 
   private static Signature eSig = new Signature();
   private static Signature gSig = new Signature();
+  private static GomType type = null;
 
   public static void main(String args[]) {
     Term V = `Var("_");
     Term X = `Var("x");
     Term Y = `Var("y");
     Term t = null;
-    GomType type = null;
 
     // example 1
     eSig.addSymbol("a", `ConcGomType(), `GomType("T") );
@@ -122,7 +122,7 @@ public class Pattern {
 //                     Repeat(OnceBottomUp(Choice(PropagateEmpty(),SimplifyAdd())))
 //                     ).visitLight(t);
 
-      t =  `Repeat(OnceBottomUp(Choice(EmptyAdd2Empty(),DistributeAdd(),SimplifySub()))).visitLight(t);
+      t =  `Repeat(OnceBottomUp(Choice(EmptyAdd2Empty(),PropagateEmpty(),ElimEmpty(),DistributeAdd(),SimplifySub()))).visitLight(t);
       System.out.println("NO SUBs = " + Pretty.toString(t));
 
       t = `Repeat(OnceBottomUp(Choice(EmptyAdd2Empty(),PropagateEmpty(),SimplifyAdd()))).visitLight(t);
@@ -168,6 +168,17 @@ public class Pattern {
       s@Add(TermList()) -> {
         Term res = `Empty();
         System.out.println("elim () : " + Pretty.toString(`s) + " --> " + Pretty.toString(res));
+        return res;
+      }
+    }
+  }
+
+  %strategy ElimEmpty() extends Fail() {
+    visit Term {
+      // t + empty -> t
+      s@Add(TermList(C1*,Empty(),C2*)) -> {
+        Term res = `Add(TermList(C1*,C2*));
+        System.out.println("t + empty -> t : " + Pretty.toString(`s) + " --> " + Pretty.toString(res));
         return res;
       }
     }
@@ -237,7 +248,7 @@ public class Pattern {
           System.out.println("add merge: " + Pretty.toString(`s) + " --> " + Pretty.toString(res));
           return res;
         } else {
-          System.out.println("add merge failed");
+          //System.out.println("add merge failed");
         }
       }
     }
@@ -308,7 +319,9 @@ public class Pattern {
             }
           }
           System.out.println("expand AP");
-          return `Add(tl);
+          Term res = `Add(tl);
+          res = eliminateIllTyped(res, type);
+          return res;
         }
       }
 
@@ -448,7 +461,7 @@ public class Pattern {
     if(cpt <= 1) {
       return tl;
     } else {
-      System.out.println("cannot add " + l1 + " and " + l2);
+      //System.out.println("cannot add " + l1 + " and " + l2);
       return null;
     }
   }
