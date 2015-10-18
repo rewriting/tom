@@ -22,7 +22,7 @@ public class Pattern {
   /*
    * Transform a list of ordered patterns into a TRS
    */
-  private static TermList trs(TermList orderedPatterns, GomType type, Signature eSig, Signature gSig) {
+  private static TermList trs(TermList orderedPatterns, Signature eSig, Signature gSig) {
     TermList tl = `TermList();
     %match(orderedPatterns) {
       TermList(C1*,p,C2*) -> {
@@ -32,7 +32,7 @@ public class Pattern {
     Term t = `Add(tl);
 
     try {
-      Strategy S1 = `Choice(EmptyAdd2Empty(),PropagateEmpty(),ElimEmpty(),DistributeAdd(),SimplifySub(type,eSig,gSig));
+      Strategy S1 = `Choice(EmptyAdd2Empty(),PropagateEmpty(),ElimEmpty(),DistributeAdd(),SimplifySub(eSig,gSig));
       Strategy S2 = `Choice(EmptyAdd2Empty(),PropagateEmpty(),SimplifyAdd());
 
       //t =  `Repeat(OnceBottomUp(S1)).visitLight(t);
@@ -185,7 +185,7 @@ public class Pattern {
   }
 
 
-  %strategy SimplifySub(type:GomType,eSig:Signature,gSig:Signature) extends Fail() {
+  %strategy SimplifySub(eSig:Signature,gSig:Signature) extends Fail() {
     visit Term {
       //s@Add(TermList()) -> {
       //  Term res = `Empty();
@@ -232,7 +232,8 @@ public class Pattern {
           }
           System.out.println("expand AP");
           Term res = `Add(tl);
-          res = eliminateIllTyped(res, `type, `gSig);
+          GomType codomain = gSig.getCodomain(`f);
+          res = eliminateIllTyped(res, codomain, `gSig);
           return res;
         }
       }
@@ -417,20 +418,21 @@ public class Pattern {
 
       Appl(f,args) -> {
         if(gSig.getCodomain(`f) == type) {
-          GomTypeList types = gSig.getDomain(`f);
+          GomTypeList domain = gSig.getDomain(`f);
           TermList tail = `args;
-          TermList res = `TermList();
+          TermList new_args = `TermList();
           while(!tail.isEmptyTermList()) {
             Term head = tail.getHeadTermList();
+            GomType arg_type = domain.getHeadConcGomType();
             if(head == `Empty()) {
+              // propagate Empty for any term which contains Empty
               return `Empty();
             }
-            GomType arg_type = types.getHeadConcGomType();
-            res = `TermList(res*, eliminateIllTyped(head,arg_type,gSig));
+            new_args = `TermList(new_args*, eliminateIllTyped(head,arg_type,gSig));
             tail = tail.getTailTermList();
-            types = types.getTailConcGomType();
+            domain = domain.getTailConcGomType();
           }
-          return `Appl(f,res);
+          return `Appl(f,new_args);
         } else {
           return `Empty();
         }
@@ -558,7 +560,7 @@ public class Pattern {
 // t1 = (_ \ f((h(b(),a()) + h(a(),b()))))
 
     //type = `GomType("T");
-    TermList res1 = `trs(TermList(fhba,fhab,V),GomType("T"),eSig,gSig);
+    TermList res1 = `trs(TermList(fhba,fhab,V),eSig,gSig);
 
   }
   
@@ -579,7 +581,7 @@ public class Pattern {
     Term sep1 = `Appl("sep", TermList(V,x_y_ys));
     Term sep2 = `Appl("sep", TermList(V,V));
 
-    TermList res2 = `trs(TermList(sep1,sep2),GomType("List"),eSig,gSig);
+    TermList res2 = `trs(TermList(sep1,sep2),eSig,gSig);
 
   }
 
@@ -615,7 +617,7 @@ public class Pattern {
     Term p4 = `Appl("numadd",TermList(Appl("C",TermList(V)),Appl("C",TermList(V))));
     Term p5 = `Appl("numadd",TermList(V,V));
 
-    TermList res3 = `trs(TermList(p1,p2,p3,p4,p5),GomType("TT"),eSig,gSig);
+    TermList res3 = `trs(TermList(p1,p2,p3,p4,p5),eSig,gSig);
 
   }
 
@@ -626,13 +628,10 @@ public class Pattern {
     Term V = `Var("_");
     eSig.addSymbol("True", `ConcGomType(), `GomType("Bool") );
     eSig.addSymbol("False", `ConcGomType(), `GomType("Bool") );
-
     eSig.addSymbol("Z", `ConcGomType(), `GomType("Nat") );
     eSig.addSymbol("S", `ConcGomType(GomType("Nat")), `GomType("Nat") );
-
     eSig.addSymbol("Nil", `ConcGomType(), `GomType("List") );
     eSig.addSymbol("Cons", `ConcGomType(GomType("Val"),GomType("List")), `GomType("List") );
-
     eSig.addSymbol("Nv", `ConcGomType(GomType("Nat")), `GomType("Val") );
     eSig.addSymbol("Nb", `ConcGomType(GomType("Bool")), `GomType("Val") );
     eSig.addSymbol("Undef", `ConcGomType(), `GomType("Val") );
@@ -647,6 +646,7 @@ public class Pattern {
     gSig.addSymbol("Nv", `ConcGomType(GomType("Nat")), `GomType("Val") );
     gSig.addSymbol("Nb", `ConcGomType(GomType("Bool")), `GomType("Val") );
     gSig.addSymbol("Undef", `ConcGomType(), `GomType("Val") );
+
     gSig.addSymbol("interp", `ConcGomType(GomType("Nat"),GomType("List")), `GomType("Val") );
 
     Term nat0 = `Appl("Z",TermList());
@@ -669,7 +669,7 @@ public class Pattern {
     Term p6 = `Appl("interp",TermList(nat6,Appl("Cons",TermList(nv,Appl("Cons",TermList(nv,nil))))));
     Term p7 = `Appl("interp",TermList(V,V));
 
-    TermList res4 = `trs(TermList(p1,p2,p3,p4,p5,p6,p7),GomType("Val"),eSig,gSig);
+    TermList res4 = `trs(TermList(p0,p1,p2,p3,p4,p5,p6,p7),eSig,gSig);
 
   }
 
