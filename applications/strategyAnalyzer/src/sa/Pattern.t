@@ -143,6 +143,7 @@ public class Pattern {
     for(Term e:c) {
       System.out.println(Pretty.toString(e));
     }
+    System.out.println("size = " + c.size());
 
 
   }
@@ -541,7 +542,6 @@ public class Pattern {
 
   private static void expandAdd(HashSet<Term> c, Term subject) {
     HashSet<Term> todo = new HashSet<Term>();
-    HashSet<Term> cache = new HashSet<Term>();
     todo.add(subject);
 
     while(todo.size() > 0) {
@@ -549,24 +549,23 @@ public class Pattern {
       for(Term t:todo) {
         HashSet<Term> tmpC = new HashSet<Term>();
         try {
-          `TopDown(ExpandAdd(tmpC,t)).visit(t);
+          /*
+           * TopDownCollect: apply s1 in a top-down way, s should extends the identity
+           * a failure stops the top-down process under this current node
+           */
+          `TopDownCollect(ExpandAdd(tmpC,t)).visit(t);
         } catch(VisitFailure e) {
         }
         for(Term e:tmpC) {
-          if(cache.contains(e)) {
-            // do nothing
-          } else if(isPlainTerm(e)) {
+          if(isPlainTerm(e)) {
             c.add(e);
-            cache.add(e);
           } else {
             todo2.add(e);
-            cache.add(e);
           }
         }
       }
       todo = todo2;
-      System.out.println("size(c) = " + c.size());
-      System.out.println("size(cache) = " + cache.size());
+      //System.out.println("size(c) = " + c.size());
     }
 
   }
@@ -579,7 +578,10 @@ public class Pattern {
       }
       
       Add(TermList(head,tail*)) -> {
+        // remove the term which contains Add(TermList(...))
         c.remove(`subject);
+        // fails to stop the TopDownCollect, and thus do not expand deeper terms
+        `Fail().visit(`subject);
       }
     }
   }
