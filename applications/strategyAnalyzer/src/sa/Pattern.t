@@ -54,9 +54,11 @@ public class Pattern {
     tl = `TermList();
     for(Term e:c) {
       tl = `TermList(e,tl*);
+      System.out.println(Pretty.toString(e));
     }
 
-    System.out.println("res = " + Pretty.toString(tl));
+    //System.out.println("res = " + Pretty.toString(tl));
+
     System.out.println("size = " + c.size());
 
     return tl;
@@ -633,7 +635,7 @@ public class Pattern {
 
     eSig.addSymbol("Nv", `ConcGomType(GomType("Nat")), `GomType("Val") );
     eSig.addSymbol("Nb", `ConcGomType(GomType("Bool")), `GomType("Val") );
-    eSig.addSymbol("Undef", `ConcGomType(), `GomType("TT") );
+    eSig.addSymbol("Undef", `ConcGomType(), `GomType("Val") );
 
 
     gSig.addSymbol("True", `ConcGomType(), `GomType("Bool") );
@@ -644,7 +646,7 @@ public class Pattern {
     gSig.addSymbol("Cons", `ConcGomType(GomType("Val"),GomType("List")), `GomType("List") );
     gSig.addSymbol("Nv", `ConcGomType(GomType("Nat")), `GomType("Val") );
     gSig.addSymbol("Nb", `ConcGomType(GomType("Bool")), `GomType("Val") );
-    gSig.addSymbol("Undef", `ConcGomType(), `GomType("TT") );
+    gSig.addSymbol("Undef", `ConcGomType(), `GomType("Val") );
     gSig.addSymbol("interp", `ConcGomType(GomType("Nat"),GomType("List")), `GomType("Val") );
 
     Term nat0 = `Appl("Z",TermList());
