@@ -2,124 +2,36 @@ package sa;
 
 import sa.rule.types.*;
 import tom.library.sl.*;
-import com.google.common.collect.HashMultiset;
 import java.util.HashSet;
 
 public class Pattern {
   %include { rule/Rule.tom }
   %include { sl.tom }
   %include { java/util/types/HashSet.tom }
-  %typeterm HashMultiset { implement { HashMultiset }}
+  %typeterm Signature { implement { Signature } }
 
-  private static Signature eSig = new Signature();
-  private static Signature gSig = new Signature();
-  private static GomType type = null;
+
 
   public static void main(String args[]) {
-    Term V = `Var("_");
-    Term X = `Var("x");
-    Term Y = `Var("y");
-    Term t = null;
+    //example1();
+    //example2();
+    example3();
+  }
 
-    // example 1
-    eSig.addSymbol("a", `ConcGomType(), `GomType("T") );
-    eSig.addSymbol("b", `ConcGomType(), `GomType("T") );
-    eSig.addSymbol("g", `ConcGomType(GomType("T")), `GomType("T") );
-    eSig.addSymbol("f", `ConcGomType(GomType("T")), `GomType("T") );
-    eSig.addSymbol("h", `ConcGomType(GomType("T"),GomType("T")), `GomType("T") );
-
-    gSig.addSymbol("a", `ConcGomType(), `GomType("T") );
-    gSig.addSymbol("b", `ConcGomType(), `GomType("T") );
-    gSig.addSymbol("g", `ConcGomType(GomType("T")), `GomType("T") );
-    gSig.addSymbol("f", `ConcGomType(GomType("T")), `GomType("T") );
-    eSig.addSymbol("h", `ConcGomType(GomType("T"),GomType("T")), `GomType("T") );
-
-    Term a =`Appl("a", TermList());
-    Term b =`Appl("b", TermList());
-    Term ga =`Appl("g", TermList(a));
-    Term gv =`Appl("g", TermList(V));
-
-    Term fa =`Appl("f", TermList(a));
-    Term fga =`Appl("f", TermList(ga));
-    Term fgv =`Appl("f", TermList(gv));
-    Term fv =`Appl("f", TermList(V));
-
-    Term hxy =`Appl("h", TermList(X,Y));
-    Term hab =`Appl("h", TermList(a,b));
-    Term hba =`Appl("h", TermList(b,a));
-    Term fhxy =`Appl("f", TermList(hxy));
-    Term fhab =`Appl("f", TermList(hab));
-    Term fhba =`Appl("f", TermList(hba));
-
-    // f(g(x)) \ ( f(a) + f(g(a)) )
-    //t = `Sub(fgv, Add(TermList(fa,fga)));
-    //t = `Sub(fv, Add(TermList(fa,fga,fgv)));
-
-    // X \ f(a + b)
-    //     t = `Sub(V, Appl("f",TermList(Add(TermList(a,b)))));
-    t = `Sub(V, Add(TermList(fhba,fhab)));
-
-//  t = (_ \ (f(h(b(),a())) + f(h(a(),b()))))
-// t1 = (_ \ f((h(b(),a()) + h(a(),b()))))
-
-    type = `GomType("T");
-
-    // example 2
-    eSig.addSymbol("Nil", `ConcGomType(), `GomType("List") );
-    eSig.addSymbol("Cons", `ConcGomType(GomType("T"),GomType("List")), `GomType("List") );
-
-    gSig.addSymbol("Nil", `ConcGomType(), `GomType("List") );
-    gSig.addSymbol("Cons", `ConcGomType(GomType("T"),GomType("List")), `GomType("List") );
-    gSig.addSymbol("sep", `ConcGomType(GomType("T"),GomType("List")), `GomType("List") );
-
-    Term y_ys = `Appl("Cons", TermList(V,V));
-    Term x_y_ys = `Appl("Cons", TermList(V,y_ys));
-    Term sep1 = `Appl("sep", TermList(V,x_y_ys));
-    Term sep2 = `Appl("sep", TermList(V,V));
-
-    t = `Sub(sep2,sep1);
-    type = `GomType("List");
-
-    // example 3
-    eSig.addSymbol("Z", `ConcGomType(), `GomType("Nat") );
-    eSig.addSymbol("S", `ConcGomType(GomType("Nat")), `GomType("Nat") );
-    eSig.addSymbol("C", `ConcGomType(GomType("Nat")), `GomType("TT") );
-    eSig.addSymbol("Bound", `ConcGomType(GomType("Nat")), `GomType("TT") );
-    eSig.addSymbol("Neg", `ConcGomType(GomType("TT")), `GomType("TT") );
-    eSig.addSymbol("Add", `ConcGomType(GomType("TT"),GomType("TT")), `GomType("TT") );
-    eSig.addSymbol("Sub", `ConcGomType(GomType("TT"),GomType("TT")), `GomType("TT") );
-    eSig.addSymbol("Mul", `ConcGomType(GomType("Nat"),GomType("TT")), `GomType("TT") );
-
-
-    gSig.addSymbol("Z", `ConcGomType(), `GomType("Nat") );
-    gSig.addSymbol("S", `ConcGomType(GomType("Nat")), `GomType("Nat") );
-    gSig.addSymbol("C", `ConcGomType(GomType("Nat")), `GomType("TT") );
-    gSig.addSymbol("Bound", `ConcGomType(GomType("Nat")), `GomType("TT") );
-    gSig.addSymbol("Neg", `ConcGomType(GomType("TT")), `GomType("TT") );
-    gSig.addSymbol("Add", `ConcGomType(GomType("TT"),GomType("TT")), `GomType("TT") );
-    gSig.addSymbol("Sub", `ConcGomType(GomType("TT"),GomType("TT")), `GomType("TT") );
-    gSig.addSymbol("Mul", `ConcGomType(GomType("Nat"),GomType("TT")), `GomType("TT") );
-    gSig.addSymbol("numadd", `ConcGomType(GomType("TT"),GomType("TT")), `GomType("TT") );
-
-    Term pat = `Appl("Add",TermList(Appl("Mul",TermList(V,Appl("Bound",TermList(V)))),V));
-    Term p1 = `Appl("numadd",TermList(pat,pat));
-    Term p2 = `Appl("numadd",TermList(pat,V));
-    Term p3 = `Appl("numadd",TermList(V,pat));
-    Term p4 = `Appl("numadd",TermList(Appl("C",TermList(V)),Appl("C",TermList(V))));
-    Term p5 = `Appl("numadd",TermList(V,V));
-
-    t = `Sub(p2,p1);
-    t = `Sub(p3,Add(TermList(p1,p2)));
-    t = `Sub(p4,Add(TermList(p1,p2,p3)));
-    t = `Sub(p5,Add(TermList(p1,p2,p3,p4)));
-    type = `GomType("TT");
-
-
-
-    System.out.println("pretty t = " + Pretty.toString(t));
+  /*
+   * Transform a list of ordered patterns into a TRS
+   */
+  private static TermList trs(TermList orderedPatterns, GomType type, Signature eSig, Signature gSig) {
+    TermList tl = `TermList();
+    %match(orderedPatterns) {
+      TermList(C1*,p,C2*) -> {
+        tl = `TermList(tl*, Sub(p,Add(TermList(C1*))));
+      }
+    }
+    Term t = `Add(tl);
 
     try {
-      Strategy S1 = `Choice(EmptyAdd2Empty(),PropagateEmpty(),ElimEmpty(),DistributeAdd(),SimplifySub());
+      Strategy S1 = `Choice(EmptyAdd2Empty(),PropagateEmpty(),ElimEmpty(),DistributeAdd(),SimplifySub(type,eSig,gSig));
       Strategy S2 = `Choice(EmptyAdd2Empty(),PropagateEmpty(),SimplifyAdd());
 
       //t =  `Repeat(OnceBottomUp(S1)).visitLight(t);
@@ -134,19 +46,22 @@ public class Pattern {
       System.out.println("failure on: " + t);
     }
 
-    System.out.println("res = " + Pretty.toString(t));
 
     HashSet<Term> c = new HashSet<Term>();
     expandAdd(c,t);
 
-    System.out.println("c = ");
+    tl = `TermList();
     for(Term e:c) {
-      System.out.println(Pretty.toString(e));
+      tl = `TermList(e,tl*);
     }
+
+    System.out.println("res = " + Pretty.toString(tl));
     System.out.println("size = " + c.size());
 
-
+    return tl;
   }
+
+
 
   %strategy PropagateEmpty() extends Fail() {
     visit Term {
@@ -267,7 +182,7 @@ public class Pattern {
   }
 
 
-  %strategy SimplifySub() extends Fail() {
+  %strategy SimplifySub(type:GomType,eSig:Signature,gSig:Signature) extends Fail() {
     visit Term {
       //s@Add(TermList()) -> {
       //  Term res = `Empty();
@@ -302,7 +217,7 @@ public class Pattern {
       // X - t -> expand AP
       Sub(Var("_"),t@Appl(f,args_f)) -> {
         if(isPlainTerm(`t)) {
-          RuleCompiler ruleCompiler = new RuleCompiler(Pattern.eSig, Pattern.gSig);
+          RuleCompiler ruleCompiler = new RuleCompiler(`eSig, `gSig);
           RuleList rl = ruleCompiler.expandAntiPatterns(`ConcRule(Rule(Anti(t),Var("_"))));
           //System.out.println("rl = " + Pretty.toString(rl));
           TermList tl = `TermList();
@@ -314,7 +229,7 @@ public class Pattern {
           }
           System.out.println("expand AP");
           Term res = `Add(tl);
-          res = eliminateIllTyped(res, type);
+          res = eliminateIllTyped(res, `type, `gSig);
           return res;
         }
       }
@@ -460,12 +375,12 @@ public class Pattern {
     }
   }
 
-  %strategy ExpandSub() extends Fail() {
+  %strategy ExpandSub(eSig:Signature,gSig:Signature) extends Fail() {
     visit Term {
       // x - a -> expand AP
       Sub(Var("_"),t@Appl(f,args_f)) -> {
         //GomType codomain = gSig.getCodomain(`f);
-        RuleCompiler ruleCompiler = new RuleCompiler(Pattern.eSig, Pattern.gSig);
+        RuleCompiler ruleCompiler = new RuleCompiler(`eSig, `gSig);
         RuleList rl = ruleCompiler.expandAntiPatterns(`ConcRule(Rule(Anti(t),Var("_"))));
         //System.out.println("rl = " + Pretty.toString(rl));
         TermList tl = `TermList();
@@ -490,7 +405,7 @@ public class Pattern {
     }
   }
 
-  private static Term eliminateIllTyped(Term t, GomType type) {
+  private static Term eliminateIllTyped(Term t, GomType type, Signature gSig) {
     //System.out.println(Pretty.toString(t) + ":" + type.getName());
     %match(t) {
       Var("_") -> {
@@ -508,7 +423,7 @@ public class Pattern {
               return `Empty();
             }
             GomType arg_type = types.getHeadConcGomType();
-            res = `TermList(res*, eliminateIllTyped(head,arg_type));
+            res = `TermList(res*, eliminateIllTyped(head,arg_type,gSig));
             tail = tail.getTailTermList();
             types = types.getTailConcGomType();
           }
@@ -519,7 +434,7 @@ public class Pattern {
       }
 
       Sub(t1,t2) -> {
-        return `Sub(eliminateIllTyped(t1,type),eliminateIllTyped(t2,type));
+        return `Sub(eliminateIllTyped(t1,type,gSig),eliminateIllTyped(t2,type,gSig));
       }
 
       Add(tl) -> {
@@ -527,7 +442,7 @@ public class Pattern {
         TermList res = `TermList();
         while(!tail.isEmptyTermList()) {
           Term head = tail.getHeadTermList();
-          res = `TermList(res*, eliminateIllTyped(head,type));
+          res = `TermList(res*, eliminateIllTyped(head,type,gSig));
           tail = tail.getTailTermList();
         }
         return `Add(res);
@@ -539,7 +454,9 @@ public class Pattern {
     return t;
   }
 
-
+  /*
+   * Transform a term which contains Add into a set of plain terms
+   */
   private static void expandAdd(HashSet<Term> c, Term subject) {
     HashSet<Term> todo = new HashSet<Term>();
     todo.add(subject);
@@ -584,6 +501,119 @@ public class Pattern {
         `Fail().visit(`subject);
       }
     }
+  }
+
+  /*
+   * examples
+   */
+  private static void example1() {
+    Signature eSig = new Signature();
+    Signature gSig = new Signature();
+
+    Term V = `Var("_");
+    Term X = `Var("x");
+    Term Y = `Var("y");
+
+    eSig.addSymbol("a", `ConcGomType(), `GomType("T") );
+    eSig.addSymbol("b", `ConcGomType(), `GomType("T") );
+    eSig.addSymbol("g", `ConcGomType(GomType("T")), `GomType("T") );
+    eSig.addSymbol("f", `ConcGomType(GomType("T")), `GomType("T") );
+    eSig.addSymbol("h", `ConcGomType(GomType("T"),GomType("T")), `GomType("T") );
+
+    gSig.addSymbol("a", `ConcGomType(), `GomType("T") );
+    gSig.addSymbol("b", `ConcGomType(), `GomType("T") );
+    gSig.addSymbol("g", `ConcGomType(GomType("T")), `GomType("T") );
+    gSig.addSymbol("f", `ConcGomType(GomType("T")), `GomType("T") );
+    eSig.addSymbol("h", `ConcGomType(GomType("T"),GomType("T")), `GomType("T") );
+
+    Term a =`Appl("a", TermList());
+    Term b =`Appl("b", TermList());
+    Term ga =`Appl("g", TermList(a));
+    Term gv =`Appl("g", TermList(V));
+
+    Term fa =`Appl("f", TermList(a));
+    Term fga =`Appl("f", TermList(ga));
+    Term fgv =`Appl("f", TermList(gv));
+    Term fv =`Appl("f", TermList(V));
+
+    Term hxy =`Appl("h", TermList(X,Y));
+    Term hab =`Appl("h", TermList(a,b));
+    Term hba =`Appl("h", TermList(b,a));
+    Term fhxy =`Appl("f", TermList(hxy));
+    Term fhab =`Appl("f", TermList(hab));
+    Term fhba =`Appl("f", TermList(hba));
+
+    // f(g(x)) \ ( f(a) + f(g(a)) )
+    //t = `Sub(fgv, Add(TermList(fa,fga)));
+    //t = `Sub(fv, Add(TermList(fa,fga,fgv)));
+
+    // X \ f(a + b)
+    //     t = `Sub(V, Appl("f",TermList(Add(TermList(a,b)))));
+    //t = `Sub(V, Add(TermList(fhba,fhab)));
+
+//  t = (_ \ (f(h(b(),a())) + f(h(a(),b()))))
+// t1 = (_ \ f((h(b(),a()) + h(a(),b()))))
+
+    //type = `GomType("T");
+    TermList res1 = `trs(TermList(fhba,fhab,V),GomType("T"),eSig,gSig);
+
+  }
+  
+  private static void example2() {
+    Signature eSig = new Signature();
+    Signature gSig = new Signature();
+
+    Term V = `Var("_");
+    eSig.addSymbol("Nil", `ConcGomType(), `GomType("List") );
+    eSig.addSymbol("Cons", `ConcGomType(GomType("T"),GomType("List")), `GomType("List") );
+
+    gSig.addSymbol("Nil", `ConcGomType(), `GomType("List") );
+    gSig.addSymbol("Cons", `ConcGomType(GomType("T"),GomType("List")), `GomType("List") );
+    gSig.addSymbol("sep", `ConcGomType(GomType("T"),GomType("List")), `GomType("List") );
+
+    Term y_ys = `Appl("Cons", TermList(V,V));
+    Term x_y_ys = `Appl("Cons", TermList(V,y_ys));
+    Term sep1 = `Appl("sep", TermList(V,x_y_ys));
+    Term sep2 = `Appl("sep", TermList(V,V));
+
+    TermList res2 = `trs(TermList(sep1,sep2),GomType("List"),eSig,gSig);
+
+  }
+
+  private static void example3() {
+    Signature eSig = new Signature();
+    Signature gSig = new Signature();
+
+    Term V = `Var("_");
+    eSig.addSymbol("Z", `ConcGomType(), `GomType("Nat") );
+    eSig.addSymbol("S", `ConcGomType(GomType("Nat")), `GomType("Nat") );
+    eSig.addSymbol("C", `ConcGomType(GomType("Nat")), `GomType("TT") );
+    eSig.addSymbol("Bound", `ConcGomType(GomType("Nat")), `GomType("TT") );
+    eSig.addSymbol("Neg", `ConcGomType(GomType("TT")), `GomType("TT") );
+    eSig.addSymbol("Add", `ConcGomType(GomType("TT"),GomType("TT")), `GomType("TT") );
+    eSig.addSymbol("Sub", `ConcGomType(GomType("TT"),GomType("TT")), `GomType("TT") );
+    eSig.addSymbol("Mul", `ConcGomType(GomType("Nat"),GomType("TT")), `GomType("TT") );
+
+
+    gSig.addSymbol("Z", `ConcGomType(), `GomType("Nat") );
+    gSig.addSymbol("S", `ConcGomType(GomType("Nat")), `GomType("Nat") );
+    gSig.addSymbol("C", `ConcGomType(GomType("Nat")), `GomType("TT") );
+    gSig.addSymbol("Bound", `ConcGomType(GomType("Nat")), `GomType("TT") );
+    gSig.addSymbol("Neg", `ConcGomType(GomType("TT")), `GomType("TT") );
+    gSig.addSymbol("Add", `ConcGomType(GomType("TT"),GomType("TT")), `GomType("TT") );
+    gSig.addSymbol("Sub", `ConcGomType(GomType("TT"),GomType("TT")), `GomType("TT") );
+    gSig.addSymbol("Mul", `ConcGomType(GomType("Nat"),GomType("TT")), `GomType("TT") );
+    gSig.addSymbol("numadd", `ConcGomType(GomType("TT"),GomType("TT")), `GomType("TT") );
+
+    Term pat = `Appl("Add",TermList(Appl("Mul",TermList(V,Appl("Bound",TermList(V)))),V));
+    Term p1 = `Appl("numadd",TermList(pat,pat));
+    Term p2 = `Appl("numadd",TermList(pat,V));
+    Term p3 = `Appl("numadd",TermList(V,pat));
+    Term p4 = `Appl("numadd",TermList(Appl("C",TermList(V)),Appl("C",TermList(V))));
+    Term p5 = `Appl("numadd",TermList(V,V));
+
+    TermList res3 = `trs(TermList(p1,p2,p3,p4,p5),GomType("TT"),eSig,gSig);
+
   }
 
 
