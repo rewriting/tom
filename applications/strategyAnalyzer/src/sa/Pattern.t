@@ -15,7 +15,8 @@ public class Pattern {
   public static void main(String args[]) {
     //example1();
     //example2();
-    example3();
+    //example3();
+    example4();
   }
 
   /*
@@ -613,6 +614,60 @@ public class Pattern {
     Term p5 = `Appl("numadd",TermList(V,V));
 
     TermList res3 = `trs(TermList(p1,p2,p3,p4,p5),GomType("TT"),eSig,gSig);
+
+  }
+
+  private static void example4() {
+    Signature eSig = new Signature();
+    Signature gSig = new Signature();
+
+    Term V = `Var("_");
+    eSig.addSymbol("True", `ConcGomType(), `GomType("Bool") );
+    eSig.addSymbol("False", `ConcGomType(), `GomType("Bool") );
+
+    eSig.addSymbol("Z", `ConcGomType(), `GomType("Nat") );
+    eSig.addSymbol("S", `ConcGomType(GomType("Nat")), `GomType("Nat") );
+
+    eSig.addSymbol("Nil", `ConcGomType(), `GomType("List") );
+    eSig.addSymbol("Cons", `ConcGomType(GomType("Val"),GomType("List")), `GomType("List") );
+
+    eSig.addSymbol("Nv", `ConcGomType(GomType("Nat")), `GomType("Val") );
+    eSig.addSymbol("Nb", `ConcGomType(GomType("Bool")), `GomType("Val") );
+    eSig.addSymbol("Undef", `ConcGomType(), `GomType("TT") );
+
+
+    gSig.addSymbol("True", `ConcGomType(), `GomType("Bool") );
+    gSig.addSymbol("False", `ConcGomType(), `GomType("Bool") );
+    gSig.addSymbol("Z", `ConcGomType(), `GomType("Nat") );
+    gSig.addSymbol("S", `ConcGomType(GomType("Nat")), `GomType("Nat") );
+    gSig.addSymbol("Nil", `ConcGomType(), `GomType("List") );
+    gSig.addSymbol("Cons", `ConcGomType(GomType("Val"),GomType("List")), `GomType("List") );
+    gSig.addSymbol("Nv", `ConcGomType(GomType("Nat")), `GomType("Val") );
+    gSig.addSymbol("Nb", `ConcGomType(GomType("Bool")), `GomType("Val") );
+    gSig.addSymbol("Undef", `ConcGomType(), `GomType("TT") );
+    gSig.addSymbol("interp", `ConcGomType(GomType("Nat"),GomType("List")), `GomType("Val") );
+
+    Term nat0 = `Appl("Z",TermList());
+    Term nat1 = `Appl("S",TermList(nat0));
+    Term nat2 = `Appl("S",TermList(nat1));
+    Term nat3 = `Appl("S",TermList(nat2));
+    Term nat4 = `Appl("S",TermList(nat3));
+    Term nat5 = `Appl("S",TermList(nat4));
+    Term nat6 = `Appl("S",TermList(nat5));
+    Term nv = `Appl("Nv",TermList(V));
+    Term bv = `Appl("Bv",TermList(V));
+    Term nil = `Appl("Nil",TermList(V));
+
+    Term p0 = `Appl("interp",TermList(nat0,nil));
+    Term p1 = `Appl("interp",TermList(nat1,Appl("Cons",TermList(nv,nil))));
+    Term p2 = `Appl("interp",TermList(nat2,Appl("Cons",TermList(nv,Appl("Cons",TermList(nv,nil))))));
+    Term p3 = `Appl("interp",TermList(nat3,nil));
+    Term p4 = `Appl("interp",TermList(nat4,Appl("Cons",TermList(bv,nil))));
+    Term p5 = `Appl("interp",TermList(nat5,Appl("Cons",TermList(bv,Appl("Cons",TermList(bv,nil))))));
+    Term p6 = `Appl("interp",TermList(nat6,Appl("Cons",TermList(nv,Appl("Cons",TermList(nv,nil))))));
+    Term p7 = `Appl("interp",TermList(V,V));
+
+    TermList res4 = `trs(TermList(p1,p2,p3,p4,p5,p6,p7),GomType("Val"),eSig,gSig);
 
   }
 
