@@ -22,7 +22,7 @@ public class Pattern {
   /*
    * Transform a list of ordered patterns into a TRS
    */
-  private static TermList trs(TermList orderedPatterns, Signature eSig, Signature gSig) {
+  private static Term trs(TermList orderedPatterns, Signature eSig, Signature gSig) {
     TermList tl = `TermList();
     %match(orderedPatterns) {
       TermList(C1*,p,C2*) -> {
@@ -48,20 +48,13 @@ public class Pattern {
     }
 
 
-    HashSet<Term> c = new HashSet<Term>();
-    expandAdd(c,t);
+    t = expandAdd(t);
+    System.out.println("res = " + Pretty.toString(tl));
 
-    tl = `TermList();
-    for(Term e:c) {
-      tl = `TermList(e,tl*);
-      System.out.println(Pretty.toString(e));
-    }
+    tl = t.getargs();
+    System.out.println("size = " + tl.length());
 
-    //System.out.println("res = " + Pretty.toString(tl));
-
-    System.out.println("size = " + c.size());
-
-    return tl;
+    return t;
   }
 
 
@@ -90,7 +83,8 @@ public class Pattern {
       // t + empty -> t
       s@Add(TermList(C1*,Empty(),C2*)) -> {
         Term res = `Add(TermList(C1*,C2*));
-        System.out.println("t + empty -> t : " + Pretty.toString(`s) + " --> " + Pretty.toString(res));
+        System.out.println("elim empty");
+        //System.out.println("t + empty -> t : " + Pretty.toString(`s) + " --> " + Pretty.toString(res));
         return res;
       }
     }
@@ -140,7 +134,8 @@ public class Pattern {
       // t + empty -> t
       s@Add(TermList(C1*,Empty(),C2*)) -> {
         Term res = `Add(TermList(C1*,C2*));
-        System.out.println("t + empty -> t : " + Pretty.toString(`s) + " --> " + Pretty.toString(res));
+        System.out.println("elim empty");
+        //System.out.println("t + empty -> t : " + Pretty.toString(`s) + " --> " + Pretty.toString(res));
         return res;
       }
       
@@ -459,10 +454,20 @@ public class Pattern {
     return t;
   }
 
+  private static Term expandAdd(Term t) {
+    HashSet<Term> bag = new HashSet<Term>();
+    expandAddAux(bag,t);
+    TermList tl = `TermList();
+    for(Term e:bag) {
+      tl = `TermList(e,tl*);
+    }
+    return `Add(tl);
+  }
+
   /*
    * Transform a term which contains Add into a set of plain terms
    */
-  private static void expandAdd(HashSet<Term> c, Term subject) {
+  private static void expandAddAux(HashSet<Term> c, Term subject) {
     HashSet<Term> todo = new HashSet<Term>();
     todo.add(subject);
 
@@ -489,7 +494,6 @@ public class Pattern {
       todo = todo2;
       //System.out.println("size(c) = " + c.size());
     }
-
   }
 
   %strategy ExpandAdd(c:HashSet, subject:Term) extends Identity() {
@@ -560,7 +564,7 @@ public class Pattern {
 // t1 = (_ \ f((h(b(),a()) + h(a(),b()))))
 
     //type = `GomType("T");
-    TermList res1 = `trs(TermList(fhba,fhab,V),eSig,gSig);
+    Term res1 = `trs(TermList(fhba,fhab,V),eSig,gSig);
 
   }
   
@@ -581,7 +585,7 @@ public class Pattern {
     Term sep1 = `Appl("sep", TermList(V,x_y_ys));
     Term sep2 = `Appl("sep", TermList(V,V));
 
-    TermList res2 = `trs(TermList(sep1,sep2),eSig,gSig);
+    Term res2 = `trs(TermList(sep1,sep2),eSig,gSig);
 
   }
 
@@ -617,7 +621,7 @@ public class Pattern {
     Term p4 = `Appl("numadd",TermList(Appl("C",TermList(V)),Appl("C",TermList(V))));
     Term p5 = `Appl("numadd",TermList(V,V));
 
-    TermList res3 = `trs(TermList(p1,p2,p3,p4,p5),eSig,gSig);
+    Term res3 = `trs(TermList(p1,p2,p3,p4,p5),eSig,gSig);
 
   }
 
@@ -669,7 +673,7 @@ public class Pattern {
     Term p6 = `Appl("interp",TermList(nat6,Appl("Cons",TermList(nv,Appl("Cons",TermList(nv,nil))))));
     Term p7 = `Appl("interp",TermList(V,V));
 
-    TermList res4 = `trs(TermList(p0,p1,p2,p3,p4,p5,p6,p7),eSig,gSig);
+    Term res4 = `trs(TermList(p0,p1,p2,p3,p4,p5,p6,p7),eSig,gSig);
 
   }
 
