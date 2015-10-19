@@ -11,6 +11,12 @@ public class Pattern {
   %typeterm Signature { implement { Signature } }
 
 
+  private static void debug(String ruleName, Term input, Term res) {
+    System.out.println(ruleName);
+    // verbose
+    //System.out.println(ruleName + ": " + Pretty.toString(input) + " --> " + Pretty.toString(res));
+
+  }
 
   public static void main(String args[]) {
     //example1();
@@ -32,15 +38,13 @@ public class Pattern {
     Term t = `Add(tl);
 
     try {
-      Strategy S1 = `Choice(EmptyAdd2Empty(),PropagateEmpty(),ElimEmpty(),DistributeAdd(),SimplifySub(eSig,gSig));
-      Strategy S2 = `Choice(EmptyAdd2Empty(),PropagateEmpty(),SimplifyAdd());
+      Strategy S1 = `ChoiceId(EmptyAdd2Empty(),PropagateEmpty(),ElimEmpty(),DistributeAdd(),SimplifySub(eSig,gSig));
+      Strategy S2 = `ChoiceId(EmptyAdd2Empty(),PropagateEmpty(),SimplifyAdd());
 
-      //t =  `Repeat(OnceBottomUp(S1)).visitLight(t);
-      t =  `Innermost(S1).visitLight(t);
+      t =  `InnermostId(S1).visitLight(t);
       System.out.println("NO SUBs = " + Pretty.toString(t));
-
-      //t = `Repeat(OnceBottomUp(S2)).visitLight(t);
-      t = `Innermost(S2).visitLight(t);
+    
+      t = `InnermostId(S2).visitLight(t);
       System.out.println("NO ADD = " + Pretty.toString(t));
 
     } catch(VisitFailure e) {
@@ -59,62 +63,63 @@ public class Pattern {
 
 
 
-  %strategy PropagateEmpty() extends Fail() {
+  %strategy PropagateEmpty() extends Identity() {//Fail() {
     visit Term {
-      Appl(f,TermList(_*,Empty(),_*)) -> {
-        return `Empty();
-      }
-    }
-  }
-
-
-  %strategy EmptyAdd2Empty() extends Fail() {
-    visit Term {
-      s@Add(TermList()) -> {
+      s@Appl(f,TermList(_*,Empty(),_*)) -> {
         Term res = `Empty();
-        System.out.println("elim () : " + Pretty.toString(`s) + " --> " + Pretty.toString(res));
+        debug("propagate empty",`s,res);
         return res;
       }
     }
   }
 
-  %strategy ElimEmpty() extends Fail() {
+
+  %strategy EmptyAdd2Empty() extends Identity() {//Fail() {
+    visit Term {
+      s@Add(TermList()) -> {
+        Term res = `Empty();
+        debug("elim ()",`s,res);
+        return res;
+      }
+    }
+  }
+
+  %strategy ElimEmpty() extends Identity() {//Fail() {
     visit Term {
       // t + empty -> t
       s@Add(TermList(C1*,Empty(),C2*)) -> {
         Term res = `Add(TermList(C1*,C2*));
-        System.out.println("elim empty");
-        //System.out.println("t + empty -> t : " + Pretty.toString(`s) + " --> " + Pretty.toString(res));
+        debug("elim empty",`s,res);
         return res;
       }
     }
   }
 
-  %strategy DistributeAdd() extends Fail() {
+  %strategy DistributeAdd() extends Identity() {//Fail() {
     visit Term {
       // f(t1,..., ti + ti',...,tn)  ->  f(t1,...,tn) + f(t1',...,tn')
       s@Appl(f, TermList(C1*, Add(TermList(u,v)), C2*)) -> {
         Term res = `Add(TermList(Appl(f, TermList(C1*,u,C2*)), Appl(f,TermList(C1*,v,C2*))));
-        System.out.println("distribute add: " + Pretty.toString(`s) + " --> " + Pretty.toString(res));
+        debug("distribute add",`s,res);
         return res;
       }
     }
   }
 
-  %strategy SimplifyAdd() extends Fail() {
+  %strategy SimplifyAdd() extends Identity() { //Fail() {
     visit Term {
 
       // flatten: (a + (b + c) + d) -> (a + b + c + d)
       s@Add(TermList(C1*, Add(TermList(tl*)), C2*)) -> {
         Term res = `Add(TermList(C1*,tl*,C2*));
-        System.out.println("flatten1: " + Pretty.toString(`s) + " --> " + Pretty.toString(res));
+        debug("flatten1",`s,res);
         return res;
       }
 
       // Add(t) -> t
       s@Add(TermList(t)) -> {
         Term res = `t;
-        System.out.println("flatten2: " + Pretty.toString(`s) + " --> " + Pretty.toString(res));
+        debug("flatten2",`s,res);
         return res;
       }
 
@@ -125,17 +130,16 @@ public class Pattern {
 //       }
 
       // a + x + b -> x
-      s@Add(TermList(_*, Var("_"), _*)) -> {
-        Term res = `Var("_");
-        System.out.println("a + x + b -> x : " + Pretty.toString(`s) + " --> " + Pretty.toString(res));
+      s@Add(TermList(_*, x@Var("_"), _*)) -> {
+        Term res = `x;
+        debug("a + x + b -> x",`s,res);
         return res;
       }
       
       // t + empty -> t
       s@Add(TermList(C1*,Empty(),C2*)) -> {
         Term res = `Add(TermList(C1*,C2*));
-        System.out.println("elim empty");
-        //System.out.println("t + empty -> t : " + Pretty.toString(`s) + " --> " + Pretty.toString(res));
+        debug("elim empty",`s,res);
         return res;
       }
       
@@ -152,7 +156,7 @@ public class Pattern {
         TermList tl = `addUniqueTi(tl1,tl2);
         if(tl != null) {
           Term res = `Add(TermList(C1*, Appl(f,tl), C2*, C3*));
-          System.out.println("add merge: " + Pretty.toString(`s) + " --> " + Pretty.toString(res));
+          debug("add merge",`s,res);
           return res;
         } else {
           //System.out.println("add merge failed");
@@ -180,7 +184,7 @@ public class Pattern {
   }
 
 
-  %strategy SimplifySub(eSig:Signature,gSig:Signature) extends Fail() {
+  %strategy SimplifySub(eSig:Signature,gSig:Signature) extends Identity() {//Fail() {
     visit Term {
       //s@Add(TermList()) -> {
       //  Term res = `Empty();
@@ -195,39 +199,44 @@ public class Pattern {
      // }
 
       // t - x -> empty
-      Sub(t, Var("_")) -> {
-        System.out.println("t - x -> empty");
-        return `Empty();
+      s@Sub(t, Var("_")) -> {
+        Term res = `Empty();
+        debug("t - x -> empty",`s,res);
+        return res;
       }
 
       // t - empty -> t
-      Sub(t, Empty()) -> {
-        return `t;
+      s@Sub(t, Empty()) -> {
+        Term res = `t;
+        debug("t - empty -> t",`s,res);
+        return res;
       }
-
+      
       // t - (a1 + ... + an) -> (t - a) - (a2 + ... + an))
       s@Sub(t, Add(TermList(head,tail*))) -> {
         Term res = `Sub(Sub(t,head), Add(TermList(tail*)));
-        System.out.println("sub distrib1 : " + Pretty.toString(`s) + " --> " + Pretty.toString(res));
+        debug("sub distrib1",`s,res);
         return res;
       }
      
       // X - t -> expand AP
-      Sub(Var("_"),t@Appl(f,args_f)) -> {
+      s@Sub(Var("_"), t@Appl(f,args_f)) -> {
         if(isPlainTerm(`t)) {
           RuleCompiler ruleCompiler = new RuleCompiler(`eSig, `gSig);
           RuleList rl = ruleCompiler.expandAntiPatterns(`ConcRule(Rule(Anti(t),Var("_"))));
           //System.out.println("rl = " + Pretty.toString(rl));
           TermList tl = `TermList();
+          GomType codomain = gSig.getCodomain(`f);
           %match(rl) {
             ConcRule(_*,Rule(lhs@Appl(g,args_g),rhs),_*) -> {
-              Term newLhs = `TopDown(RemoveVar()).visitLight(`lhs);
-              tl = `TermList(tl*,newLhs);
+              //if(gSig.getCodomain(`g) == codomain) { // optim: remove ill typed terms 
+                Term newLhs = `TopDown(RemoveVar()).visitLight(`lhs);
+                tl = `TermList(newLhs,tl*); // order not preserved
+              //}
             }
           }
-          System.out.println("expand AP");
           Term res = `Add(tl);
-          GomType codomain = gSig.getCodomain(`f);
+          debug("expand AP",`s,res);
           res = eliminateIllTyped(res, codomain, `gSig);
           return res;
         }
@@ -239,8 +248,9 @@ public class Pattern {
       //}
 
       // empty - f(t1,...,tn) -> empty
-      Sub(Empty(),Appl(f,tl)) -> {
-        System.out.println("empty - f(...)");
+      s@Sub(Empty(),Appl(f,tl)) -> {
+        Term res = `Empty();
+        debug("empty - f(...) -> empty",`s,res);
         return `Empty();
       }
 
@@ -266,14 +276,14 @@ public class Pattern {
       // (a1 + ... + an) - t@f(t1,...,tn) -> (a1 - t) + ( (a2 + ... + an) - t )
       s@Sub(Add(TermList(head,tail*)), t@Appl(f,tl)) -> {
         Term res = `Add(TermList(Sub(head,t), Sub(Add(TermList(tail*)),t)));
-        System.out.println("sub distrib2 : " + Pretty.toString(`s) + " --> " + Pretty.toString(res));
+        debug("sub distrib2",`s,res);
         return res;
       }
 
-      // f(t1,...,tn) - g(t1',...,tm') -> f(t1,...,tn)
+      // t@f(t1,...,tn) - g(t1',...,tm') -> t
       s@Sub(t@Appl(f,tl1), Appl(g, tl2)) && f!=g -> {
         Term res = `t;
-        System.out.println("sub elim1 : " + Pretty.toString(`s) + " --> " + Pretty.toString(res));
+        debug("sub elim1",`s,res);
         return res;
       }
 
@@ -289,7 +299,7 @@ public class Pattern {
       // f(t1,...,tn) - f(t1',...,tn') -> f(t1-t1',t2,...,tn) + f(t1, t2-t2',...,tn) + ... + f(t1,...,tn-tn')
       s@Sub(t1@Appl(f,tl1), t2@Appl(f, tl2)) -> {
         Term res = `sub(t1,t2);
-        System.out.println("sub1 : " + Pretty.toString(`s) + " --> " + Pretty.toString(res));
+        debug("sub1",`s,res);
         return res;
       }
 
@@ -371,28 +381,6 @@ public class Pattern {
     } else {
       //System.out.println("cannot add " + l1 + " and " + l2);
       return null;
-    }
-  }
-
-  %strategy ExpandSub(eSig:Signature,gSig:Signature) extends Fail() {
-    visit Term {
-      // x - a -> expand AP
-      Sub(Var("_"),t@Appl(f,args_f)) -> {
-        //GomType codomain = gSig.getCodomain(`f);
-        RuleCompiler ruleCompiler = new RuleCompiler(`eSig, `gSig);
-        RuleList rl = ruleCompiler.expandAntiPatterns(`ConcRule(Rule(Anti(t),Var("_"))));
-        //System.out.println("rl = " + Pretty.toString(rl));
-        TermList tl = `TermList();
-        %match(rl) {
-          ConcRule(_*,Rule(lhs@Appl(g,args_g),rhs),_*) -> {
-            //if(gSig.getCodomain(`g) == codomain) {
-              Term newLhs = `TopDown(RemoveVar()).visitLight(`lhs);
-              tl = `TermList(tl*,newLhs);
-            //}
-          }
-        }
-        return `Add(tl);
-      }
     }
   }
 
