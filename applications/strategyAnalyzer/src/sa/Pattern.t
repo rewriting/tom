@@ -13,9 +13,10 @@ public class Pattern {
 
   private static void debug(String ruleName, Term input, Term res) {
     System.out.println(ruleName);
-    // verbose
-    //System.out.println(ruleName + ": " + Pretty.toString(input) + " --> " + Pretty.toString(res));
+  }
 
+  private static void debugVerbose(String ruleName, Term input, Term res) {
+    System.out.println(ruleName + ": " + Pretty.toString(input) + " --> " + Pretty.toString(res));
   }
 
   public static void main(String args[]) {
@@ -43,6 +44,7 @@ public class Pattern {
 
       t =  `InnermostId(S1).visitLight(t);
       System.out.println("NO SUBs = " + Pretty.toString(t));
+      //       System.out.println("NO SUBs = " + t);
     
       t = `InnermostId(S2).visitLight(t);
       System.out.println("NO ADD = " + Pretty.toString(t));
@@ -57,6 +59,34 @@ public class Pattern {
 
     tl = t.getargs();
     System.out.println("size = " + tl.length());
+
+    return t;
+  }
+
+
+  /*
+   * Transform a list of ordered patterns into a TRS
+   */
+  private static Term reduce(Term term, Signature eSig, Signature gSig) {
+    Term t = term;
+
+    try {
+      Strategy S1 = `ChoiceId(EmptyAdd2Empty(),PropagateEmpty(),ElimEmpty(),DistributeAdd(),SimplifySub(eSig,gSig));
+      Strategy S2 = `ChoiceId(EmptyAdd2Empty(),PropagateEmpty(),SimplifyAdd());
+
+      t =  `InnermostId(S1).visitLight(t);
+      System.out.println("NO SUBs = " + Pretty.toString(t));
+    
+      t = `InnermostId(S2).visitLight(t);
+      System.out.println("NO ADD = " + Pretty.toString(t));
+
+    } catch(VisitFailure e) {
+      System.out.println("failure on: " + t);
+    }
+
+
+    t = expandAdd(t);
+    System.out.println("res = " + Pretty.toString(t));
 
     return t;
   }
@@ -97,12 +127,21 @@ public class Pattern {
 
   %strategy DistributeAdd() extends Identity() {//Fail() {
     visit Term {
+
+      // Add(t) -> t
+      s@Add(TermList(t)) -> {
+        Term res = `t;
+        debug("flatten2",`s,res);
+        return res;
+      }
+
       // f(t1,..., ti + ti',...,tn)  ->  f(t1,...,tn) + f(t1',...,tn')
-      s@Appl(f, TermList(C1*, Add(TermList(u,v)), C2*)) -> {
-        Term res = `Add(TermList(Appl(f, TermList(C1*,u,C2*)), Appl(f,TermList(C1*,v,C2*))));
+      s@Appl(f, TermList(C1*, Add(TermList(A1*,u,v,A2*)), C2*)) -> {
+        Term res = `Add(TermList(Appl(f, TermList(C1*,Add(TermList(A1*,u,A2*)),C2*)), Appl(f,TermList(C1*,Add(TermList(A1*,v,A2*)),C2*))));
         debug("distribute add",`s,res);
         return res;
       }
+
     }
   }
 
@@ -662,8 +701,24 @@ public class Pattern {
     Term p7 = `Appl("interp",TermList(V,V));
 
     Term res4 = `trs(TermList(p0,p1,p2,p3,p4,p5,p6,p7),eSig,gSig);
+//     Term res4 = `trs(TermList(p0,p1,p7),eSig,gSig);
+
+
+//     Term tt = `reduce(
+//                                    Appl("interp",TermList(
+//                                                           Appl("S",TermList(Var("_"))),
+//                                                           Add(TermList(
+//                                                                        Appl("Cons",TermList(Var("_"),Appl("Cons",TermList(Var("_"),Var("_"))))),
+//                                                                        Appl("Cons",TermList(Appl("Nb",TermList(Var("_"))),Var("_"))),
+//                                                                        Appl("Cons",TermList(Appl("Undef",TermList()),Var("_"))),
+//                                                                        Appl("Nil",TermList())))
+//                                                           ))
+//                       ,eSig,gSig);
+
 
   }
 
 
 }
+
+
