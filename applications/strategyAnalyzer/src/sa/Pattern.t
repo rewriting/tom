@@ -541,7 +541,7 @@ public class Pattern {
     Term fgv =`Appl("f", TermList(gv));
     Term fv =`Appl("f", TermList(V));
 
-    Term hxy =`Appl("h", TermList(X,Y));
+    Term hxy =`Appl("h", TermList(V,V));
     Term hab =`Appl("h", TermList(a,b));
     Term hba =`Appl("h", TermList(b,a));
     Term fhxy =`Appl("f", TermList(hxy));
