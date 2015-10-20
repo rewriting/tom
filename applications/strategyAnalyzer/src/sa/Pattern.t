@@ -20,7 +20,7 @@ public class Pattern {
   }
 
   public static void main(String args[]) {
-    //example1();
+//     example1();
     //example2();
     //example3();
     example4();
@@ -39,8 +39,9 @@ public class Pattern {
     Term t = `Add(tl);
 
     try {
-      Strategy S1 = `ChoiceId(EmptyAdd2Empty(),PropagateEmpty(),ElimEmpty(),DistributeAdd(),SimplifySub(eSig,gSig));
-      //Strategy S1 = `ChoiceId(EmptyAdd2Empty(),PropagateEmpty(),ElimEmpty(),SimplifySub(eSig,gSig));
+      //       Strategy S1 = `ChoiceId(EmptyAdd2Empty(),PropagateEmpty(),ElimEmpty(),DistributeAdd(),SimplifySub(eSig,gSig));
+      // DistributeAdd needed if we can start with terms like X \ f(a+b) or X \ (f(X)\f(f(_)))
+      Strategy S1 = `ChoiceId(EmptyAdd2Empty(),PropagateEmpty(),SimplifySub(eSig,gSig));
       Strategy S2 = `ChoiceId(EmptyAdd2Empty(),PropagateEmpty(),SimplifyAdd());
       Strategy S3 = `ChoiceId(DistributeAdd(),FlattenAdd());
 
@@ -98,9 +99,9 @@ public class Pattern {
   }
 
 
-
   %strategy PropagateEmpty() extends Identity() {//Fail() {
     visit Term {
+      //   f(t1,...,empty,...,tn) -> empty
       s@Appl(f,TermList(_*,Empty(),_*)) -> {
         Term res = `Empty();
         debug("propagate empty",`s,res);
