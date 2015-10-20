@@ -23,7 +23,8 @@ public class Pattern {
 //     example1();
     //example2();
     //example3();
-    example4();
+    //example4();
+    example5();
   }
 
   /*
@@ -749,6 +750,42 @@ public class Pattern {
     Term res4 = `trs(TermList(p0,p1,p2,p3,p4,p5,p6,p7),eSig,gSig);
     //Term res4 = `trs(TermList(p0,p1,p7),eSig,gSig);
 
+  }
+
+  private static Term T(Term t1, Term t2, Term t3, Term t4) {
+    return `Appl("T",TermList(t1,t2,t3,t4));
+  }
+
+  private static void example5() {
+    Signature eSig = new Signature();
+    Signature gSig = new Signature();
+
+    Term V = `Var("_");
+    eSig.addSymbol("Z", `ConcGomType(), `GomType("Nat") );
+    eSig.addSymbol("S", `ConcGomType(GomType("Nat")), `GomType("Nat") );
+    eSig.addSymbol("R", `ConcGomType(), `GomType("Color") );
+    eSig.addSymbol("B", `ConcGomType(), `GomType("Color") );
+    eSig.addSymbol("E", `ConcGomType(), `GomType("Tree") );
+    eSig.addSymbol("T", `ConcGomType(GomType("Color"), GomType("Tree"), GomType("Nat"), GomType("Tree")), `GomType("Tree"));
+
+    gSig.addSymbol("Z", `ConcGomType(), `GomType("Nat") );
+    gSig.addSymbol("S", `ConcGomType(GomType("Nat")), `GomType("Nat") );
+    gSig.addSymbol("R", `ConcGomType(), `GomType("Color") );
+    gSig.addSymbol("B", `ConcGomType(), `GomType("Color") );
+    gSig.addSymbol("E", `ConcGomType(), `GomType("Tree") );
+    gSig.addSymbol("T", `ConcGomType(GomType("Color"), GomType("Tree"), GomType("Nat"), GomType("Tree")), `GomType("Tree"));
+    gSig.addSymbol("balance", `ConcGomType(GomType("Tree")), `GomType("Tree") );
+
+    Term B = `Appl("B",TermList());
+    Term R = `Appl("R",TermList());
+
+    Term p0 = `Appl("balance", TermList(T(B,T(R,T(R,V,V,V),V,V),V,V)));
+    Term p1 = `Appl("balance", TermList(T(B,T(R,V,V,T(R,V,V,V)),V,V)));
+    Term p2 = `Appl("balance", TermList(T(B,V,V,T(R,T(R,V,V,V),V,V))));
+    Term p3 = `Appl("balance", TermList(T(B,V,V,T(R,V,V,T(R,V,V,V)))));
+    Term p4 = `Appl("balance", TermList(V));
+
+    Term res5 = `trs(TermList(p0,p1,p2,p3,p4),eSig,gSig);
   }
 
 
