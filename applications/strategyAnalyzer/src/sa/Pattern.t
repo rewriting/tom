@@ -32,8 +32,8 @@ public class Pattern {
   private static Term trs(TermList orderedPatterns, Signature eSig, Signature gSig) {
     TermList tl = `TermList();
     %match(orderedPatterns) {
-      TermList(C1*,p,C2*) -> {
-        tl = `TermList(tl*, Sub(p,Add(TermList(C1*))));
+      TermList(C1*,p,_*) -> {
+        tl = `TermList(Sub(p,Add(TermList(C1*))),tl*);
       }
     }
     Term t = `Add(tl);
@@ -772,20 +772,6 @@ public class Pattern {
 
     Term res4 = `trs(TermList(p0,p1,p2,p3,p4,p5,p6,p7),eSig,gSig);
     //Term res4 = `trs(TermList(p0,p1,p7),eSig,gSig);
-//     Term res4 = `trs(TermList(p0,p1,p7),eSig,gSig);
-
-
-//     Term tt = `reduce(
-//                                    Appl("interp",TermList(
-//                                                           Appl("S",TermList(Var("_"))),
-//                                                           Add(TermList(
-//                                                                        Appl("Cons",TermList(Var("_"),Appl("Cons",TermList(Var("_"),Var("_"))))),
-//                                                                        Appl("Cons",TermList(Appl("Nb",TermList(Var("_"))),Var("_"))),
-//                                                                        Appl("Cons",TermList(Appl("Undef",TermList()),Var("_"))),
-//                                                                        Appl("Nil",TermList())))
-//                                                           ))
-//                       ,eSig,gSig);
-
 
   }
 

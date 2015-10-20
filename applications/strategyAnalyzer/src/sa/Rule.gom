@@ -74,6 +74,12 @@ module Rule:rules() {
   StratExp(Strat(s)) -> s
   StratName("Identity") -> StratIdentity()
   StratName("Fail") -> StratFail()
+
+  //Add(TermList()) -> Empty()
+  //Add(TermList(Empty(),tail*)) -> Add(TermList(tail*))
+  //Appl(_,TermList(Empty(),tail*)) -> Empty()
+  
+
 }
 
 
