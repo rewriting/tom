@@ -42,6 +42,7 @@ public class Pattern {
       Strategy S1 = `ChoiceId(EmptyAdd2Empty(),PropagateEmpty(),ElimEmpty(),DistributeAdd(),SimplifySub(eSig,gSig));
       //Strategy S1 = `ChoiceId(EmptyAdd2Empty(),PropagateEmpty(),ElimEmpty(),SimplifySub(eSig,gSig));
       Strategy S2 = `ChoiceId(EmptyAdd2Empty(),PropagateEmpty(),SimplifyAdd());
+      Strategy S3 = `ChoiceId(DistributeAdd(),FlattenAdd());
 
       t =  `InnermostId(S1).visitLight(t);
       System.out.println("NO SUBs = " + Pretty.toString(t));
@@ -49,6 +50,9 @@ public class Pattern {
     
       t = `InnermostId(S2).visitLight(t);
       System.out.println("NO ADD = " + Pretty.toString(t));
+
+//       t = `InnermostId(S3).visitLight(t);
+//       System.out.println("FLAT = " + Pretty.toString(t));
 
     } catch(VisitFailure e) {
       System.out.println("failure on: " + t);
@@ -147,6 +151,28 @@ public class Pattern {
 
     }
   }
+
+
+  %strategy FlattenAdd() extends Identity() {//Fail() {
+    visit Term {
+
+      // flatten: (a + (b + c) + d) -> (a + b + c + d)
+      s@Add(TermList(C1*, Add(TermList(tl*)), C2*)) -> {
+        Term res = `Add(TermList(C1*,tl*,C2*));
+        debug("flatten1",`s,res);
+        return res;
+      }
+
+      // t + t -> t
+      s@Add(TermList(C1*, t, C2*, t, C3*)) -> {
+       Term res = `Add(TermList(C1*,t,C2*,C3*));
+       System.out.println("t + t -> t : " + Pretty.toString(`s) + " --> " + Pretty.toString(res));
+       return res;
+     }
+
+    }
+  }
+
 
   %strategy SimplifyAdd() extends Identity() { //Fail() {
     visit Term {
