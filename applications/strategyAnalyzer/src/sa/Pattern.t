@@ -210,6 +210,19 @@ public class Pattern {
       // f(t1,...,tn) + f(t1',...,tn') -> f(t1,..., ti + ti',...,tn)
       // all but one ti, ti' should be identical
       s@Add(AddList(C1*, Appl(f,tl1), C2*, Appl(f, tl2), C3*)) -> {
+        TermList res = mergeAdd(`s);
+        int n = res.length();
+        if(n>0) {
+          int r = (int)(java.lang.Math.random()*n);
+          System.out.println("n = " + n + " random = " + r);
+          for(int i=0 ; i<r ; i++) {
+            res = res.getTailTermList();
+          }
+          return res.getHeadTermList();
+        } else {
+          return `s; // perform identity 
+        }
+        /*
         TermList tl = `addUniqueTi(tl1,tl2);
         if(tl != null) {
           Term res = `Add(AddList(C1*, Appl(f,tl), C2*, C3*));
@@ -218,9 +231,30 @@ public class Pattern {
         } else {
           //System.out.println("add merge failed");
         }
+        */
       }
+
+
     }
   }
+
+  private static TermList mergeAdd(Term t) {
+    TermList res = `TermList();
+    %match(t) {
+      s@Add(AddList(C1*, Appl(f,tl1), C2*, Appl(f, tl2), C3*)) -> {
+        TermList tl = `addUniqueTi(tl1,tl2);
+        if(tl != null) {
+          res = `TermList(Add(AddList(C1*, Appl(f,tl), C2*, C3*)),res*);
+          return res; // to remove non determinism
+        } else {
+          //System.out.println("add merge failed");
+        }
+
+      }
+    }
+    return res;
+  }
+
 
   private static boolean isPlainTerm(Term t) {
     try {
