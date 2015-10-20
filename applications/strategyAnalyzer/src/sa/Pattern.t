@@ -40,6 +40,7 @@ public class Pattern {
 
     try {
       Strategy S1 = `ChoiceId(EmptyAdd2Empty(),PropagateEmpty(),ElimEmpty(),DistributeAdd(),SimplifySub(eSig,gSig));
+      //Strategy S1 = `ChoiceId(EmptyAdd2Empty(),PropagateEmpty(),ElimEmpty(),SimplifySub(eSig,gSig));
       Strategy S2 = `ChoiceId(EmptyAdd2Empty(),PropagateEmpty(),SimplifyAdd());
 
       t =  `InnermostId(S1).visitLight(t);
@@ -132,14 +133,15 @@ public class Pattern {
       // Add(t) -> t
       s@Add(TermList(t)) -> {
         Term res = `t;
-        debug("flatten2",`s,res);
+        //debug("flatten2",`s,res);
         return res;
       }
 
       // f(t1,..., ti + ti',...,tn)  ->  f(t1,...,tn) + f(t1',...,tn')
       s@Appl(f, TermList(C1*, Add(TermList(u,v,A2*)), C2*)) -> {
-        Term res = `Add(TermList(Appl(f, TermList(C1*,Add(TermList(u,A2*)),C2*)), Appl(f,TermList(C1*,Add(TermList(v,A2*)),C2*))));
-        debug("distribute add",`s,res);
+        Term res = `Add(TermList(Appl(f, TermList(C1*,Add(TermList(u,A2*)),C2*)), 
+                                 Appl(f, TermList(C1*,Add(TermList(v,A2*)),C2*))));
+        //debug("distribute add",`s,res);
         return res;
       }
 
