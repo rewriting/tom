@@ -16,6 +16,12 @@
     		</fileset>
  	</path>
 
+	<taskdef resource="net/sf/antcontrib/antlib.xml">
+    		<classpath>
+          		<fileset file="${tom.home}/lib/compiletime/ant-contrib-1.0b3.jar"/>
+ 		</classpath>
+	</taskdef>
+
 	<target name="clean">
 		<delete dir="${test.build}"/>
 		<delete dir="${test.gen}"/>
@@ -27,48 +33,76 @@
 	</target>	
 
 	<target name="typed" depends="init">
-		<java classpath="../build:${classpath}" classname="sa.Main" fork="true">
-			<arg value="-i"/>
-			<arg file="gxx.ns"/>
-			<arg value="-tom"/>
-			<arg value="Gxx"/>
-			<arg value="-typed"/>
-			<arg value="T"/>
-	        </java>
+		<for param="file"> 
+			<path>
+				<fileset dir="${test.dir}" includes="*.ns"/>
+			</path>
+			<sequential>
+				<basename property="nsNameOf@{file}" file="@{file}" suffix=".ns"/>
+				<java classpath="../build:${classpath}" classname="sa.Main" fork="true">
+					<arg value="-i"/>
+					<arg file="@{file}"/>
+					<arg value="-tom"/>
+					<arg value="${nsNameOf@{file}}"/>
+					<arg value="-typed"/>
+					<arg value="T"/>
+			
+	        		</java>
+				<move file="${nsNameOf@{file}}.t" todir="${test.gen}"/>
+			</sequential>
+		</for>
 		<antcall target="runTests"/>
 	</target>
 
 	<target name="untyped" depends="init">
-		<java classpath="../build:${classpath}" classname="sa.Main" fork="true">
-			<arg value="-i"/>
-			<arg file="gxx.ns"/>
-			<arg value="-tom"/>
-			<arg value="Gxx"/>
-		</java>
+		<for param="file"> 
+			<path>
+				<fileset dir="${test.dir}" includes="*.ns"/>
+			</path>
+			<sequential>
+				<basename property="nsNameOf@{file}" file="@{file}" suffix=".ns"/>
+				<java classpath="../build:${classpath}" classname="sa.Main" fork="true">
+					<arg value="-i"/>
+					<arg file="@{file}"/>
+					<arg value="-tom"/>
+					<arg value="${nsNameOf@{file}}"/>
+			
+	        		</java>
+				<move file="${nsNameOf@{file}}.t" todir="${test.gen}"/>
+			</sequential>
+		</for>
 		<antcall target="runTests"/>
 	</target>
 
 	<target name="tomSrc">
-		<move file="Gxx.t" todir="${test.gen}"/>
-		<tom.preset srcdir="${test.gen}" destdir="${test.build}"> 
+		<tom.preset srcdir="${test.gen}" destdir="${test.gen}"> 
    			<include name="*.t"/>
 			<exclude name="*Test*.t"/> 
     		</tom.preset>
 	</target> 
 
 	<target name="tomTest" depends="tomSrc">
-		<tom.preset srcdir="${test.dir}" destdir="${test.build}">
+		<tom.preset srcdir="${test.dir}" destdir="${test.gen}">
 			<include name="*Test*.t"/>
 		</tom.preset>
 	</target>
 	
 	<target name="compile" depends="tomTest">
-		<javac classpath=".:${tom.home}/lib/tom-runtime-full.jar:${tom.home}/lib/compiletime/junit.jar" srcdir="${test.build}" destdir="${test.build}" includeantruntime="false"/>
+		<javac classpath=".:${tom.home}/lib/tom-runtime-full.jar:${tom.home}/lib/compiletime/junit.jar" srcdir="${test.gen}" destdir="${test.build}" includeantruntime="false"/>
 	</target>	
 	
 	<target name="runTests" depends="compile">
-		<java classpath=".:${test.build}:${tom.home}/lib/tom-runtime-full.jar:${tom.home}/lib/compiletime/junit.jar" classname="org.junit.runner.JUnitCore">
-			<arg value="TestGxx"/>
-		</java> 
+		<for param="file">
+			<path>
+				<fileset dir="${test.build}" includes="*Test*.class"/>
+			</path>
+			<sequential>
+				<basename property="classOf@{file}" file="@{file}" suffix=".class"/>
+				<echo> Running test : ${classOf@{file}} </echo>
+				<java classpath=".:${test.build}:${tom.home}/lib/tom-runtime-full.jar:${tom.home}/lib/compiletime/junit.jar" classname="org.junit.runner.JUnitCore">
+					<arg value="${classOf@{file}}"/>
+				</java> 
+			</sequential>
+		</for>
 	</target>
 </project>

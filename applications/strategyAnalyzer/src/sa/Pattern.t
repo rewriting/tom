@@ -57,11 +57,12 @@ public class Pattern {
       System.out.println("failure on: " + t);
     }
 
-
     t = expandAdd(t);
-    System.out.println("res = " + Pretty.toString(tl));
-
     tl = t.getargs();
+    tl = simplifySubsumption(tl);
+    for(Term e:tl.getCollectionTermList()) {
+      System.out.println(Pretty.toString(e));
+    }
     System.out.println("size = " + tl.length());
 
     return t;
@@ -140,8 +141,8 @@ public class Pattern {
       }
 
       // f(t1,..., ti + ti',...,tn)  ->  f(t1,...,tn) + f(t1',...,tn')
-      s@Appl(f, TermList(C1*, Add(TermList(A1*,u,v,A2*)), C2*)) -> {
-        Term res = `Add(TermList(Appl(f, TermList(C1*,Add(TermList(A1*,u,A2*)),C2*)), Appl(f,TermList(C1*,Add(TermList(A1*,v,A2*)),C2*))));
+      s@Appl(f, TermList(C1*, Add(TermList(u,v,A2*)), C2*)) -> {
+        Term res = `Add(TermList(Appl(f, TermList(C1*,Add(TermList(u,A2*)),C2*)), Appl(f,TermList(C1*,Add(TermList(v,A2*)),C2*))));
         debug("distribute add",`s,res);
         return res;
       }
@@ -565,6 +566,46 @@ public class Pattern {
     }
   }
 
+  private static TermList simplifySubsumption(TermList tl) {
+    %match(tl) {
+      TermList(C1*,t1,C2*,t2,C3*) -> {
+        if(`match(t1,t2)) {
+          return simplifySubsumption(`TermList(C1*,t1,C2*,C3*));
+        } else if(`match(t2,t1)) {
+          return simplifySubsumption(`TermList(C1*,C2*,t2,C3*));
+        }
+      }
+    }
+    return tl;
+  }
+
+  private static boolean match(Term t1, Term t2) {
+    %match(t1,t2) {
+      // Delete
+      Appl(name,TermList()),Appl(name,TermList()) -> { return true; }
+      // Decompose
+      Appl(name,a1),Appl(name,a2) -> { return `decomposeList(a1,a2); }
+      // SymbolClash
+      Appl(name1,args1),Appl(name2,args2) && name1!=name2 -> { return false; }
+
+      // Match
+      Var(_),Appl(name2,args2) -> { return true; }
+      Var(_),Var(_) -> { return true; }
+
+    }
+    return false;
+  }
+
+  private static boolean decomposeList(TermList tl1, TermList tl2) {
+    %match(tl1,tl2) {
+      TermList(), TermList() -> { return true; }
+      TermList(head1,tail1*), TermList(head2,tail2*) -> { 
+        return `match(head1,head2) && `decomposeList(tail1,tail2); 
+      }
+    }
+    return false;
+  }
+
   /*
    * examples
    */
@@ -727,6 +768,7 @@ public class Pattern {
     Term p7 = `Appl("interp",TermList(V,V));
 
     Term res4 = `trs(TermList(p0,p1,p2,p3,p4,p5,p6,p7),eSig,gSig);
+    //Term res4 = `trs(TermList(p0,p1,p7),eSig,gSig);
 //     Term res4 = `trs(TermList(p0,p1,p7),eSig,gSig);
 
 
