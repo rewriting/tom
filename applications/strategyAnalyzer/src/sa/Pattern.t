@@ -733,6 +733,7 @@ public class Pattern {
 
   }
 
+
   private static void example4() {
     Signature eSig = new Signature();
     Signature gSig = new Signature();
@@ -770,7 +771,7 @@ public class Pattern {
     Term nat6 = `Appl("S",TermList(nat5));
     Term nv = `Appl("Nv",TermList(V));
     Term bv = `Appl("Bv",TermList(V));
-    Term nil = `Appl("Nil",TermList(V));
+    Term nil = `Appl("Nil",TermList());
 
     Term p0 = `Appl("interp",TermList(nat0,nil));
     Term p1 = `Appl("interp",TermList(nat1,Appl("Cons",TermList(nv,nil))));
