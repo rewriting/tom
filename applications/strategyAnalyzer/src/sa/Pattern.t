@@ -167,7 +167,7 @@ public class Pattern {
       // t + t -> t
       s@Add(TermList(C1*, t, C2*, t, C3*)) -> {
        Term res = `Add(TermList(C1*,t,C2*,C3*));
-       System.out.println("t + t -> t : " + Pretty.toString(`s) + " --> " + Pretty.toString(res));
+       debug("t + t -> t",`s,res);
        return res;
      }
 
@@ -192,12 +192,6 @@ public class Pattern {
         return res;
       }
 
-//       s@Add(TermList()) -> {
-//         Term res = `Empty();
-//         System.out.println("elim () : " + Pretty.toString(`s) + " --> " + Pretty.toString(res));
-//         return res;
-//       }
-
       // a + x + b -> x
       s@Add(TermList(_*, x@Var("_"), _*)) -> {
         Term res = `x;
@@ -212,13 +206,6 @@ public class Pattern {
         return res;
       }
       
-      // t + t -> t
-      //s@Add(TermList(C1*, t, C2*, t, C3*)) -> {
-      //  Term res = `Add(TermList(C1*,t,C2*,C3*));
-      //  System.out.println("t + t -> t : " + Pretty.toString(`s) + " --> " + Pretty.toString(res));
-      //  return res;
-     // }
-
       // f(t1,...,tn) + f(t1',...,tn') -> f(t1,..., ti + ti',...,tn)
       // all but one ti, ti' should be identical
       s@Add(TermList(C1*, Appl(f,tl1), C2*, Appl(f, tl2), C3*)) -> {
@@ -255,17 +242,6 @@ public class Pattern {
 
   %strategy SimplifySub(eSig:Signature,gSig:Signature) extends Identity() {//Fail() {
     visit Term {
-      //s@Add(TermList()) -> {
-      //  Term res = `Empty();
-      //  System.out.println("sub elim Add() : " + Pretty.toString(`s) + " --> " + Pretty.toString(res));
-      //  return res;
-     // }
-      // Add(t) -> t
-      //s@Add(TermList(t)) -> {
-      //  Term res = `t;
-      //  System.out.println("sub Add(t) -> t : " + Pretty.toString(`s) + " --> " + Pretty.toString(res));
-      //  return res;
-     // }
 
       // t - x -> empty
       s@Sub(t, Var("_")) -> {
