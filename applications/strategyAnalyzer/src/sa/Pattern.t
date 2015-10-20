@@ -13,13 +13,14 @@ public class Pattern {
 
   private static void debug(String ruleName, Term input, Term res) {
     System.out.println(ruleName);
-    // verbose
-    //System.out.println(ruleName + ": " + Pretty.toString(input) + " --> " + Pretty.toString(res));
+  }
 
+  private static void debugVerbose(String ruleName, Term input, Term res) {
+    System.out.println(ruleName + ": " + Pretty.toString(input) + " --> " + Pretty.toString(res));
   }
 
   public static void main(String args[]) {
-    //example1();
+//     example1();
     //example2();
     //example3();
     example4();
@@ -38,6 +39,45 @@ public class Pattern {
     Term t = `Add(tl);
 
     try {
+      //       Strategy S1 = `ChoiceId(EmptyAdd2Empty(),PropagateEmpty(),ElimEmpty(),DistributeAdd(),SimplifySub(eSig,gSig));
+      // DistributeAdd needed if we can start with terms like X \ f(a+b) or X \ (f(X)\f(f(_)))
+      Strategy S1 = `ChoiceId(EmptyAdd2Empty(),PropagateEmpty(),SimplifySub(eSig,gSig));
+      Strategy S2 = `ChoiceId(EmptyAdd2Empty(),PropagateEmpty(),SimplifyAdd());
+      Strategy S3 = `ChoiceId(DistributeAdd(),FlattenAdd());
+
+      t =  `InnermostId(S1).visitLight(t);
+      System.out.println("NO SUBs = " + Pretty.toString(t));
+      //       System.out.println("NO SUBs = " + t);
+    
+      t = `InnermostId(S2).visitLight(t);
+      System.out.println("NO ADD = " + Pretty.toString(t));
+
+//       t = `InnermostId(S3).visitLight(t);
+//       System.out.println("FLAT = " + Pretty.toString(t));
+
+    } catch(VisitFailure e) {
+      System.out.println("failure on: " + t);
+    }
+
+    t = expandAdd(t);
+    tl = t.getargs();
+    tl = simplifySubsumption(tl);
+    for(Term e:tl.getCollectionTermList()) {
+      System.out.println(Pretty.toString(e));
+    }
+    System.out.println("size = " + tl.length());
+
+    return t;
+  }
+
+
+  /*
+   * Transform a list of ordered patterns into a TRS
+   */
+  private static Term reduce(Term term, Signature eSig, Signature gSig) {
+    Term t = term;
+
+    try {
       Strategy S1 = `ChoiceId(EmptyAdd2Empty(),PropagateEmpty(),ElimEmpty(),DistributeAdd(),SimplifySub(eSig,gSig));
       Strategy S2 = `ChoiceId(EmptyAdd2Empty(),PropagateEmpty(),SimplifyAdd());
 
@@ -53,18 +93,15 @@ public class Pattern {
 
 
     t = expandAdd(t);
-    System.out.println("res = " + Pretty.toString(tl));
-
-    tl = t.getargs();
-    System.out.println("size = " + tl.length());
+    System.out.println("res = " + Pretty.toString(t));
 
     return t;
   }
 
 
-
   %strategy PropagateEmpty() extends Identity() {//Fail() {
     visit Term {
+      //   f(t1,...,empty,...,tn) -> empty
       s@Appl(f,TermList(_*,Empty(),_*)) -> {
         Term res = `Empty();
         debug("propagate empty",`s,res);
@@ -97,14 +134,45 @@ public class Pattern {
 
   %strategy DistributeAdd() extends Identity() {//Fail() {
     visit Term {
+
+      // Add(t) -> t
+      s@Add(TermList(t)) -> {
+        Term res = `t;
+        debug("flatten2",`s,res);
+        return res;
+      }
+
       // f(t1,..., ti + ti',...,tn)  ->  f(t1,...,tn) + f(t1',...,tn')
-      s@Appl(f, TermList(C1*, Add(TermList(u,v)), C2*)) -> {
-        Term res = `Add(TermList(Appl(f, TermList(C1*,u,C2*)), Appl(f,TermList(C1*,v,C2*))));
+      s@Appl(f, TermList(C1*, Add(TermList(u,v,A2*)), C2*)) -> {
+        Term res = `Add(TermList(Appl(f, TermList(C1*,Add(TermList(u,A2*)),C2*)), Appl(f,TermList(C1*,Add(TermList(v,A2*)),C2*))));
         debug("distribute add",`s,res);
         return res;
       }
+
     }
   }
+
+
+  %strategy FlattenAdd() extends Identity() {//Fail() {
+    visit Term {
+
+      // flatten: (a + (b + c) + d) -> (a + b + c + d)
+      s@Add(TermList(C1*, Add(TermList(tl*)), C2*)) -> {
+        Term res = `Add(TermList(C1*,tl*,C2*));
+        debug("flatten1",`s,res);
+        return res;
+      }
+
+      // t + t -> t
+      s@Add(TermList(C1*, t, C2*, t, C3*)) -> {
+       Term res = `Add(TermList(C1*,t,C2*,C3*));
+       System.out.println("t + t -> t : " + Pretty.toString(`s) + " --> " + Pretty.toString(res));
+       return res;
+     }
+
+    }
+  }
+
 
   %strategy SimplifyAdd() extends Identity() { //Fail() {
     visit Term {
@@ -500,6 +568,46 @@ public class Pattern {
     }
   }
 
+  private static TermList simplifySubsumption(TermList tl) {
+    %match(tl) {
+      TermList(C1*,t1,C2*,t2,C3*) -> {
+        if(`match(t1,t2)) {
+          return simplifySubsumption(`TermList(C1*,t1,C2*,C3*));
+        } else if(`match(t2,t1)) {
+          return simplifySubsumption(`TermList(C1*,C2*,t2,C3*));
+        }
+      }
+    }
+    return tl;
+  }
+
+  private static boolean match(Term t1, Term t2) {
+    %match(t1,t2) {
+      // Delete
+      Appl(name,TermList()),Appl(name,TermList()) -> { return true; }
+      // Decompose
+      Appl(name,a1),Appl(name,a2) -> { return `decomposeList(a1,a2); }
+      // SymbolClash
+      Appl(name1,args1),Appl(name2,args2) && name1!=name2 -> { return false; }
+
+      // Match
+      Var(_),Appl(name2,args2) -> { return true; }
+      Var(_),Var(_) -> { return true; }
+
+    }
+    return false;
+  }
+
+  private static boolean decomposeList(TermList tl1, TermList tl2) {
+    %match(tl1,tl2) {
+      TermList(), TermList() -> { return true; }
+      TermList(head1,tail1*), TermList(head2,tail2*) -> { 
+        return `match(head1,head2) && `decomposeList(tail1,tail2); 
+      }
+    }
+    return false;
+  }
+
   /*
    * examples
    */
@@ -662,8 +770,25 @@ public class Pattern {
     Term p7 = `Appl("interp",TermList(V,V));
 
     Term res4 = `trs(TermList(p0,p1,p2,p3,p4,p5,p6,p7),eSig,gSig);
+    //Term res4 = `trs(TermList(p0,p1,p7),eSig,gSig);
+//     Term res4 = `trs(TermList(p0,p1,p7),eSig,gSig);
+
+
+//     Term tt = `reduce(
+//                                    Appl("interp",TermList(
+//                                                           Appl("S",TermList(Var("_"))),
+//                                                           Add(TermList(
+//                                                                        Appl("Cons",TermList(Var("_"),Appl("Cons",TermList(Var("_"),Var("_"))))),
+//                                                                        Appl("Cons",TermList(Appl("Nb",TermList(Var("_"))),Var("_"))),
+//                                                                        Appl("Cons",TermList(Appl("Undef",TermList()),Var("_"))),
+//                                                                        Appl("Nil",TermList())))
+//                                                           ))
+//                       ,eSig,gSig);
+
 
   }
 
 
 }
+
+
