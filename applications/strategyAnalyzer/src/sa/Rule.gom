@@ -38,11 +38,12 @@ Term = Appl(symbol:String,args:TermList)
      | BuiltinInt(i:int)
      | Anti(term:Term)
      | At(term1:Term,term2:Term)
-     | Add(args:TermList)
+     | Add(addlist:AddList)
      | Sub(term1:Term, term2:Term)
      | Empty()
 
 TermList = TermList(Term*)
+AddList = AddList(Term*)
 
 Rule = Rule(lhs:Term,rhs:Term)
      | ConditionalRule(lhs:Term,rhs:Term,cond:Condition)
@@ -82,6 +83,21 @@ module Rule:rules() {
 
 }
 
+AddList:make_insert(e,l) {
+  %match(e) {
+    Empty() -> { return l; }
+    Add(AddList(L*)) -> { return `AddList(L*,l*); }
+  }
+
+  if(!l.isEmptyAddList()) {
+    if(0 < e.compareToLPO(l.getHeadAddList())) {
+      sa.rule.types.AddList newTail = l.getTailAddList();
+      return realMake(l.getHeadAddList(), `AddList(e,newTail*));
+    } else {
+      return realMake(e,l);
+      }
+  }
+}
 
 // sort Rule:block() {
 //   public int compareTo(Object r){
