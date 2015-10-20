@@ -710,7 +710,7 @@ public class Pattern {
     eSig.addSymbol("Nil", `ConcGomType(), `GomType("List") );
     eSig.addSymbol("Cons", `ConcGomType(GomType("Val"),GomType("List")), `GomType("List") );
     eSig.addSymbol("Nv", `ConcGomType(GomType("Nat")), `GomType("Val") );
-    eSig.addSymbol("Nb", `ConcGomType(GomType("Bool")), `GomType("Val") );
+    eSig.addSymbol("Bv", `ConcGomType(GomType("Bool")), `GomType("Val") );
     eSig.addSymbol("Undef", `ConcGomType(), `GomType("Val") );
 
 
@@ -721,7 +721,7 @@ public class Pattern {
     gSig.addSymbol("Nil", `ConcGomType(), `GomType("List") );
     gSig.addSymbol("Cons", `ConcGomType(GomType("Val"),GomType("List")), `GomType("List") );
     gSig.addSymbol("Nv", `ConcGomType(GomType("Nat")), `GomType("Val") );
-    gSig.addSymbol("Nb", `ConcGomType(GomType("Bool")), `GomType("Val") );
+    gSig.addSymbol("Bv", `ConcGomType(GomType("Bool")), `GomType("Val") );
     gSig.addSymbol("Undef", `ConcGomType(), `GomType("Val") );
 
     gSig.addSymbol("interp", `ConcGomType(GomType("Nat"),GomType("List")), `GomType("Val") );
