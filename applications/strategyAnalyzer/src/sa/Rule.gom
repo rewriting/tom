@@ -43,7 +43,7 @@ Term = Appl(symbol:String,args:TermList)
      | Empty()
 
 TermList = TermList(Term*)
-AddList = AddList(Term*)
+AddList = ConcAdd(Term*)
 
 Rule = Rule(lhs:Term,rhs:Term)
      | ConditionalRule(lhs:Term,rhs:Term,cond:Condition)
@@ -83,16 +83,16 @@ module Rule:rules() {
 
 }
 
-AddList:make_insert(e,l) {
+ConcAdd:make_insert(e,l) {
   %match(e) {
     Empty() -> { return l; }
-    Add(AddList(L*)) -> { return `AddList(L*,l*); }
+    Add(ConcAdd(L*)) -> { return `ConcAdd(L*,l*); }
   }
 
-  if(!l.isEmptyAddList()) {
-    if(0 < e.compareToLPO(l.getHeadAddList())) {
-      sa.rule.types.AddList newTail = l.getTailAddList();
-      return realMake(l.getHeadAddList(), `AddList(e,newTail*));
+  if(!l.isEmptyConcAdd()) {
+    if(0 < e.compareToLPO(l.getHeadConcAdd())) {
+      sa.rule.types.AddList newTail = l.getTailConcAdd();
+      return realMake(l.getHeadConcAdd(), `ConcAdd(e,newTail*));
     } else {
       return realMake(e,l);
       }

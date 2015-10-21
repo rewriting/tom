@@ -280,6 +280,10 @@ public class Compiler {
     // used just to have in generatedRules the packages of rules in the order they are called 
     List<Rule> localRules = new ArrayList<Rule>();
 
+    if(Main.options.pattern) {
+      RuleList res = Pattern.trsRule(ruleList,eSig,gSig);
+    }
+
     if(!Main.options.metalevel) {
       // if declared strategy (i.e. defined name) use its name; otherwise generate fresh name
       gSig.addSymbol(rule,`ConcGomType(Signature.TYPE_TERM),Signature.TYPE_TERM);

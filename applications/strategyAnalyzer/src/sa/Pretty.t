@@ -108,9 +108,9 @@ public class Pretty {
   private static String toString(AddList t) {
     StringBuffer sb = new StringBuffer();
     %match(t) {
-      AddList(_*,x,end*) -> {
+      ConcAdd(_*,x,end*) -> {
         sb.append(toString(`x));
-        if(!`end.isEmptyAddList()) {
+        if(!`end.isEmptyConcAdd()) {
           sb.append("+");
         }
       }
@@ -137,7 +137,7 @@ public class Pretty {
         }
       }
 
-      Add(AddList(l*)) -> {
+      Add(ConcAdd(l*)) -> {
         return "(" + toString(`l) + ")";
       }
 
