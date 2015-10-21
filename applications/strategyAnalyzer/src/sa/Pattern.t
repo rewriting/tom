@@ -168,7 +168,7 @@ public class Pattern {
         return res;
       }
 
-      s@Add(AddList(C1*,t1,C2*,t2,C3*)) -> {
+      s@Add(AddList(C1*,t1@(Appl|Var)[],C2*,t2@(Appl|Var)[],C3*)) -> {
         //System.out.println("try: " + `t1 + " << " + `t2); 
         if(match(`t1,`t2)) {
           Term res = `Add(AddList(t1,C1*,C2*,C3*));
