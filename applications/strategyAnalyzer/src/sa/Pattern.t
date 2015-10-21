@@ -22,16 +22,16 @@ public class Pattern {
 
   public static void main(String args[]) {
 //     example1();
-    //example2();
-    //example3();
+//     example2();
+//     example3();
     example4();
-    //example5();
+//     example5();
   }
 
   /*
    * Transform a list of ordered patterns into a TRS
    */
-  private static Term trs(AddList orderedPatterns, Signature eSig, Signature gSig) {
+  private static Term trsAll(AddList orderedPatterns, Signature eSig, Signature gSig) {
     AddList tl = `AddList();
     %match(orderedPatterns) {
       AddList(C1*,p,_*) -> {
@@ -41,6 +41,38 @@ public class Pattern {
     Term t = `Add(tl);
     return reduce(t,eSig,gSig);
   }
+
+
+  /*
+   * Transform a list of ordered patterns into a TRS; rule by rule
+   */
+  private static Term trs(TermList orderedPatterns, Signature eSig, Signature gSig) {
+    AddList tl = `AddList();
+    %match(orderedPatterns) {
+      TermList(C1*,p,_*) -> {
+        AddList prev = `AddList();
+        for(Term e:`C1*.getCollectionTermList()) {
+          System.out.println(Pretty.toString(e));
+          prev = `AddList(e,prev*);
+        }
+        Term pattern = `Sub(p,Add(prev*));
+        System.out.println("PATTERN : " + Pretty.toString(pattern));
+        Term t = `reduce(pattern,eSig,gSig);
+        System.out.println("REDUCED : " + Pretty.toString(t));
+        tl = `AddList(t,tl*);
+      }
+    }
+
+    for(Term e:`(tl).getCollectionAddList()) {
+      System.out.println(Pretty.toString(e));
+    }
+    System.out.println("size = " + `tl.length());
+
+    Term t = `Add(tl);
+    System.out.println(Pretty.toString(t));
+    return t;
+  }
+
 
   private static Term reduce(Term t, Signature eSig, Signature gSig) {
     try {
@@ -74,19 +106,19 @@ public class Pattern {
 
     //t = expandAdd(t);
 
-    %match(t) {
-      Add(tl) -> {
-        //tl = simplifySubsumption(tl);
-        for(Term e:`(tl).getCollectionAddList()) {
-          System.out.println(Pretty.toString(e));
-          //System.out.println(e);
-        }
-        System.out.println("size = " + `tl.length());
-        return t;
-      }
-    }
+//     %match(t) {
+//       Add(tl) -> {
+//         //tl = simplifySubsumption(tl);
+//         for(Term e:`(tl).getCollectionAddList()) {
+//           System.out.println(Pretty.toString(e));
+//           //System.out.println(e);
+//         }
+//         System.out.println("size = " + `tl.length());
+//         return t;
+//       }
+//     }
 
-    System.out.println(Pretty.toString(t));
+//     System.out.println(Pretty.toString(t));
     return t;
   }
 
@@ -685,7 +717,7 @@ public class Pattern {
 // t1 = (_ \ f((h(b(),a()) + h(a(),b()))))
 
     //type = `GomType("T");
-    Term res1 = `trs(AddList(fhba,fhab,V),eSig,gSig);
+    Term res1 = `trs(TermList(fhba,fhab,V),eSig,gSig);
 
   }
   
@@ -706,7 +738,7 @@ public class Pattern {
     Term sep1 = `Appl("sep", TermList(V,x_y_ys));
     Term sep2 = `Appl("sep", TermList(V,V));
 
-    Term res2 = `trs(AddList(sep1,sep2),eSig,gSig);
+    Term res2 = `trs(TermList(sep1,sep2),eSig,gSig);
 
   }
 
@@ -742,7 +774,7 @@ public class Pattern {
     Term p4 = `Appl("numadd",TermList(Appl("C",TermList(V)),Appl("C",TermList(V))));
     Term p5 = `Appl("numadd",TermList(V,V));
 
-    Term res3 = `trs(AddList(p1,p2,p3,p4,p5),eSig,gSig);
+    Term res3 = `trs(TermList(p1,p2,p3,p4,p5),eSig,gSig);
 
   }
 
@@ -795,17 +827,18 @@ public class Pattern {
     Term p6 = `Appl("interp",TermList(nat6,Appl("Cons",TermList(nv,Appl("Cons",TermList(nv,nil))))));
     Term p7 = `Appl("interp",TermList(V,V));
 
-    Term res4 = `trs(AddList(p0,p1,p2,p3,p4,p5,p6,p7),eSig,gSig);
+    Term res4 = `trs(TermList(p0,p1,p2,p3,p4,p5,p6,p7),eSig,gSig);
+//     Term res4 = `trs(AddList(p0,p1,p2,p3,p4,p5,p6,p7),eSig,gSig);
     //Term res4 = `trs(AddList(p0,p1,p7),eSig,gSig);
 
-    //interp(S(Z()),Cons(Undef(),Cons(_,_)))
-    //interp(S(Z()),Cons(Undef(),Nil()))
-    //interp(S(Z()),Cons(Undef(),_))
-    Term t1 = `Appl("interp",TermList(Appl("S",TermList(Appl("Z",TermList()))),Appl("Cons",TermList(Appl("Undef",TermList()),Appl("Cons",TermList(Var("_"),Var("_")))))));
-      Term t2 = `Appl("interp",TermList(Appl("S",TermList(Appl("Z",TermList()))),Appl("Cons",TermList(Appl("Undef",TermList()),Appl("Nil",TermList())))));
-      Term t3 = `Appl("interp",TermList(Appl("S",TermList(Appl("Z",TermList()))),Appl("Cons",TermList(Appl("Undef",TermList()),Var("_")))));
+//     //interp(S(Z()),Cons(Undef(),Cons(_,_)))
+//     //interp(S(Z()),Cons(Undef(),Nil()))
+//     //interp(S(Z()),Cons(Undef(),_))
+//     Term t1 = `Appl("interp",TermList(Appl("S",TermList(Appl("Z",TermList()))),Appl("Cons",TermList(Appl("Undef",TermList()),Appl("Cons",TermList(Var("_"),Var("_")))))));
+//       Term t2 = `Appl("interp",TermList(Appl("S",TermList(Appl("Z",TermList()))),Appl("Cons",TermList(Appl("Undef",TermList()),Appl("Nil",TermList())))));
+//       Term t3 = `Appl("interp",TermList(Appl("S",TermList(Appl("Z",TermList()))),Appl("Cons",TermList(Appl("Undef",TermList()),Var("_")))));
 
-    //`reduce(Add(AddList(t1,t2,t3)),eSig,gSig);
+//     //`reduce(Add(AddList(t1,t2,t3)),eSig,gSig);
 
   }
 
@@ -843,7 +876,7 @@ public class Pattern {
     Term p3 = `Appl("balance", TermList(T(B,V,V,T(R,V,V,T(R,V,V,V)))));
     Term p4 = `Appl("balance", TermList(V));
 
-    Term res5 = `trs(AddList(p0,p1,p2,p3,p4),eSig,gSig);
+    Term res5 = `trs(TermList(p0,p1,p2,p3,p4),eSig,gSig);
   }
 
 
