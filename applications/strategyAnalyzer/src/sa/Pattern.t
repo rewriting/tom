@@ -3,6 +3,7 @@ package sa;
 import sa.rule.types.*;
 import tom.library.sl.*;
 import java.util.HashSet;
+import java.util.Set;
 
 public class Pattern {
   %include { rule/Rule.tom }
@@ -79,7 +80,7 @@ public class Pattern {
       //       Strategy S1 = `ChoiceId(EmptyAdd2Empty(),PropagateEmpty(),ElimEmpty(),DistributeAdd(),SimplifySub(eSig,gSig));
       // DistributeAdd needed if we can start with terms like X \ f(a+b) or X \ (f(X)\f(f(_)))
       Strategy S1 = `ChoiceId(EmptyAdd2Empty(),PropagateEmpty(),SimplifySub(eSig,gSig));
-      Strategy S2 = `ChoiceId(EmptyAdd2Empty(),PropagateEmpty(),SimplifyAdd());
+      Strategy S2 = `ChoiceId(EmptyAdd2Empty(),PropagateEmpty(),SimplifyAdd(eSig));
 
       t =  `InnermostId(S1).visitLight(t);
       System.out.println("NO SUBs = " + Pretty.toString(t));
@@ -176,7 +177,7 @@ public class Pattern {
   }
 
 
-  %strategy SimplifyAdd() extends Identity() { //Fail() {
+  %strategy SimplifyAdd(eSig:Signature) extends Identity() { //Fail() {
     visit Term {
 
       // flatten: (a + (b + c) + d) -> (a + b + c + d)
@@ -219,7 +220,34 @@ public class Pattern {
         debug("elim empty",`s,res);
         return res;
       }
-      
+     
+      // check abstraction
+      // a + b + g(_) + f(_) == signature ==> X
+      /*
+      s@Add(al@AddList(Appl(f,_),_*)) -> {
+          GomType codomain = eSig.getCodomain(`f);
+          if(codomain != null) {
+            Set<String> ops = eSig.getSymbols(codomain);
+            AddList l = `AddList();
+            for(String name:ops) {
+              TermList args = `TermList();
+              for(int i=0 ; i<eSig.getArity(name) ; i++) {
+                args = `TermList(Var("_"),args*);
+              }
+              Term p = `Appl(name,args);
+              l = `AddList(p,l*);
+            }
+            if(l == `al) {
+              System.out.println("OPS = " + ops + " al = " + `al);
+              return `Var("_");
+            }
+          } else {
+            // do nothing
+            //System.out.println("f -> null " + `f);
+          }
+      }
+*/
+
       // f(t1,...,tn) + f(t1',...,tn') -> f(t1,..., ti + ti',...,tn)
       // all but one ti, ti' should be identical
       s@Add(AddList(C1*, Appl(f,tl1), C2*, Appl(f, tl2), C3*)) -> {
