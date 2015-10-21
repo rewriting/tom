@@ -88,11 +88,22 @@ public class Main {
 
       PrintStream outputfile = System.out;
       if(options.out != null) {
+	if(options.directory != null) {
+          outputfile = new PrintStream(options.directory + "/" + options.out);
+        }
+	else {
         outputfile = new PrintStream(options.out);
+        }
       }
       PrintStream tomoutputfile = System.out;
       if(options.classname != null) {
-        tomoutputfile = new PrintStream(options.classname+".t");
+	if(options.directory != null) {
+          tomoutputfile = new PrintStream(options.directory + "/" + options.classname+".t");
+        }
+        else {
+          tomoutputfile = new PrintStream(options.classname+".t");
+     
+        }
       }
 
       if(options.classname != null) {
