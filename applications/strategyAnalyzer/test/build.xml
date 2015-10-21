@@ -45,7 +45,7 @@
 					<arg value="-d"/>
 					<arg value="${test.gen}"/>
 					<arg value="-tom"/>
-					<arg value="${nsNameOf@{file}}"/>
+					<arg value="Main${nsNameOf@{file}}"/>
 					<arg value="-typed"/>
 					<arg value="T"/>
 			
@@ -68,7 +68,7 @@
 					<arg value="-d"/>
 					<arg value="${test.gen}"/>
 					<arg value="-tom"/>
-					<arg value="${nsNameOf@{file}}"/>
+					<arg value="Main${nsNameOf@{file}}"/>
 			
 	        		</java>
 			</sequential>
@@ -90,7 +90,7 @@
 					<arg value="-d"/>
 					<arg value="${test.gen}"/>
 					<arg value="-tom"/>
-					<arg value="${nsNameOf@{file}}"/>
+					<arg value="Main${nsNameOf@{file}}"/>
 	        		</java>
 			</sequential>
 		</for>

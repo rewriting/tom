@@ -28,8 +28,8 @@
  */
 
 
-import gxx.m.*;
-import gxx.m.types.*;
+import maingxx.m.*;
+import maingxx.m.types.*;
 
 import static org.junit.Assert.*;
 import org.junit.Test;
@@ -40,9 +40,9 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 public class TestGxxBis {
-  %include { gxxbis/m/m.tom }
+  %include { maingxxbis/m/m.tom }
 	public static void main(String[] args) {
-    org.junit.runner.JUnitCore.main(GxxBis.class.getName());
+    org.junit.runner.JUnitCore.main(MaingxxBis.class.getName());
 	}
  
   @Before
@@ -52,7 +52,7 @@ public class TestGxxBis {
   Object run(Object t) {
 
 	try{
-		Class<?> c = Class.forName("GxxBis");
+		Class<?> c = Class.forName("MaingxxBis");
 		Method[] allMethods = c.getDeclaredMethods();
 		Pattern p = Pattern.compile(".*mainStrat.*");
 		List<Method> matchingMethod = new ArrayList<Method>();
