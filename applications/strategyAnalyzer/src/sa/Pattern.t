@@ -13,6 +13,7 @@ public class Pattern {
 
   private static void debug(String ruleName, Term input, Term res) {
     System.out.println(ruleName);
+    //debugVerbose(ruleName,input,res);
   }
 
   private static void debugVerbose(String ruleName, Term input, Term res) {
@@ -38,67 +39,56 @@ public class Pattern {
       }
     }
     Term t = `Add(tl);
+    return reduce(t,eSig,gSig);
+  }
 
+  private static Term reduce(Term t, Signature eSig, Signature gSig) {
     try {
       //       Strategy S1 = `ChoiceId(EmptyAdd2Empty(),PropagateEmpty(),ElimEmpty(),DistributeAdd(),SimplifySub(eSig,gSig));
       // DistributeAdd needed if we can start with terms like X \ f(a+b) or X \ (f(X)\f(f(_)))
       Strategy S1 = `ChoiceId(EmptyAdd2Empty(),PropagateEmpty(),SimplifySub(eSig,gSig));
       Strategy S2 = `ChoiceId(EmptyAdd2Empty(),PropagateEmpty(),SimplifyAdd());
-      Strategy S3 = `ChoiceId(DistributeAdd(),FlattenAdd());
 
       t =  `InnermostId(S1).visitLight(t);
       System.out.println("NO SUBs = " + Pretty.toString(t));
       //       System.out.println("NO SUBs = " + t);
-    
+
       t = `InnermostId(S2).visitLight(t);
       System.out.println("NO ADD = " + Pretty.toString(t));
 
-//       t = `InnermostId(S3).visitLight(t);
-//       System.out.println("FLAT = " + Pretty.toString(t));
+
+      Term old = null;
+      while(old != t) {
+        old = t;
+        System.out.println("S2: " + t);
+        t = `InnermostId(S2).visitLight(t);
+        System.out.println("EXPAND: " + t);
+        t = expandAdd(t);
+      }
+      System.out.println("FIXPOINT = " + Pretty.toString(t));
+      System.out.println("FIXPOINT = " + t);
 
     } catch(VisitFailure e) {
       System.out.println("failure on: " + t);
     }
 
-    t = expandAdd(t);
-    tl = t.getaddlist();
-    tl = simplifySubsumption(tl);
-    for(Term e:tl.getCollectionAddList()) {
-      System.out.println(Pretty.toString(e));
-    }
-    System.out.println("size = " + tl.length());
+    //t = expandAdd(t);
 
-    return t;
-  }
-
-
-  /*
-   * Transform a list of ordered patterns into a TRS
-   */
-  private static Term reduce(Term term, Signature eSig, Signature gSig) {
-    Term t = term;
-
-    try {
-      Strategy S1 = `ChoiceId(EmptyAdd2Empty(),PropagateEmpty(),ElimEmpty(),DistributeAdd(),SimplifySub(eSig,gSig));
-      Strategy S2 = `ChoiceId(EmptyAdd2Empty(),PropagateEmpty(),SimplifyAdd());
-
-      t =  `InnermostId(S1).visitLight(t);
-      System.out.println("NO SUBs = " + Pretty.toString(t));
-    
-      t = `InnermostId(S2).visitLight(t);
-      System.out.println("NO ADD = " + Pretty.toString(t));
-
-    } catch(VisitFailure e) {
-      System.out.println("failure on: " + t);
+    %match(t) {
+      Add(tl) -> {
+        //tl = simplifySubsumption(tl);
+        for(Term e:`(tl).getCollectionAddList()) {
+          System.out.println(Pretty.toString(e));
+          //System.out.println(e);
+        }
+        System.out.println("size = " + `tl.length());
+        return t;
+      }
     }
 
-
-    t = expandAdd(t);
-    System.out.println("res = " + Pretty.toString(t));
-
+    System.out.println(Pretty.toString(t));
     return t;
   }
-
 
   %strategy PropagateEmpty() extends Identity() {//Fail() {
     visit Term {
@@ -132,28 +122,6 @@ public class Pattern {
       }
     }
   }
-
-  %strategy DistributeAdd() extends Identity() {//Fail() {
-    visit Term {
-
-      // Add(t) -> t
-      s@Add(AddList(t)) -> {
-        Term res = `t;
-        //debug("flatten2",`s,res);
-        return res;
-      }
-
-      // f(t1,..., ti + ti',...,tn)  ->  f(t1,...,tn) + f(t1',...,tn')
-      s@Appl(f, TermList(C1*, Add(AddList(u,v,A2*)), C2*)) -> {
-        Term res = `Add(AddList(Appl(f, TermList(C1*,Add(AddList(u,A2*)),C2*)), 
-                                 Appl(f, TermList(C1*,Add(AddList(v,A2*)),C2*))));
-        //debug("distribute add",`s,res);
-        return res;
-      }
-
-    }
-  }
-
 
   %strategy FlattenAdd() extends Identity() {//Fail() {
     visit Term {
@@ -199,6 +167,19 @@ public class Pattern {
         debug("a + x + b -> x",`s,res);
         return res;
       }
+
+      s@Add(AddList(C1*,t1,C2*,t2,C3*)) -> {
+        //System.out.println("try: " + `t1 + " << " + `t2); 
+        if(match(`t1,`t2)) {
+          Term res = `Add(AddList(t1,C1*,C2*,C3*));
+          debug("subsumtion",`s,res);
+          return res;
+        } else if(match(`t2,`t1)) {
+          Term res = `Add(AddList(t2,C1*,C2*,C3*));
+          debug("subsumtion",`s,res);
+          return res;
+        }
+      }
       
       // t + empty -> t
       s@Add(AddList(C1*,Empty(),C2*)) -> {
@@ -210,6 +191,7 @@ public class Pattern {
       // f(t1,...,tn) + f(t1',...,tn') -> f(t1,..., ti + ti',...,tn)
       // all but one ti, ti' should be identical
       s@Add(AddList(C1*, Appl(f,tl1), C2*, Appl(f, tl2), C3*)) -> {
+        /*
         TermList res = mergeAdd(`s);
         int n = res.length();
         if(n>0) {
@@ -222,7 +204,7 @@ public class Pattern {
         } else {
           return `s; // perform identity 
         }
-        /*
+        */
         TermList tl = `addUniqueTi(tl1,tl2);
         if(tl != null) {
           Term res = `Add(AddList(C1*, Appl(f,tl), C2*, C3*));
@@ -231,13 +213,12 @@ public class Pattern {
         } else {
           //System.out.println("add merge failed");
         }
-        */
       }
 
 
     }
   }
-
+/*
   private static TermList mergeAdd(Term t) {
     TermList res = `TermList();
     %match(t) {
@@ -254,7 +235,7 @@ public class Pattern {
     }
     return res;
   }
-
+*/
 
   private static boolean isPlainTerm(Term t) {
     try {
@@ -521,7 +502,39 @@ public class Pattern {
     System.out.println("eliminateIllTyped Should not be there: " + `t);
     return t;
   }
+/*
+  private static Term expandAdd(Term t) {
+    try {
+      return `RepeatId(TopDown(DistributeAdd())).visitLight(t);
+    } catch(VisitFailure e) {
+      System.out.println("expandAdd: failure");
+    }
+    return t;
+  }
 
+  %strategy DistributeAdd() extends Identity() {//Fail() {
+    visit Term {
+
+      // Add(t) -> t
+      s@Add(AddList(t)) -> {
+        Term res = `t;
+        //debug("flatten2",`s,res);
+        return res;
+      }
+
+      // f(t1,..., ti + ti',...,tn)  ->  f(t1,...,tn) + f(t1',...,tn')
+      s@Appl(f, TermList(C1*, Add(AddList(u,v,A2*)), C2*)) -> {
+        Term res = `Add(AddList(Appl(f, TermList(C1*,Add(AddList(u,A2*)),C2*)), 
+                                 Appl(f, TermList(C1*,Add(AddList(v,A2*)),C2*))));
+        //debug("distribute add",`s,res);
+        return res;
+      }
+
+    }
+  }
+*/
+
+ 
   private static Term expandAdd(Term t) {
     HashSet<Term> bag = new HashSet<Term>();
     expandAddAux(bag,t);
@@ -532,9 +545,7 @@ public class Pattern {
     return `Add(tl);
   }
 
-  /*
-   * Transform a term which contains Add into a set of plain terms
-   */
+   // Transform a term which contains Add into a set of plain terms
   private static void expandAddAux(HashSet<Term> c, Term subject) {
     HashSet<Term> todo = new HashSet<Term>();
     todo.add(subject);
@@ -544,18 +555,20 @@ public class Pattern {
       for(Term t:todo) {
         HashSet<Term> tmpC = new HashSet<Term>();
         try {
-          /*
-           * TopDownCollect: apply s1 in a top-down way, s should extends the identity
-           * a failure stops the top-down process under this current node
-           */
+           // TopDownCollect: apply s1 in a top-down way, s should extends the identity
+           // a failure stops the top-down process under this current node
           `TopDownCollect(ExpandAdd(tmpC,t)).visit(t);
         } catch(VisitFailure e) {
         }
-        for(Term e:tmpC) {
-          if(isPlainTerm(e)) {
-            c.add(e);
-          } else {
-            todo2.add(e);
+        if(tmpC.isEmpty()) {
+          c.add(t);
+        } else {
+          for(Term e:tmpC) {
+            if(isPlainTerm(e)) {
+              c.add(e);
+            } else {
+              todo2.add(e);
+            }
           }
         }
       }
@@ -784,6 +797,15 @@ public class Pattern {
 
     Term res4 = `trs(AddList(p0,p1,p2,p3,p4,p5,p6,p7),eSig,gSig);
     //Term res4 = `trs(AddList(p0,p1,p7),eSig,gSig);
+
+    //interp(S(Z()),Cons(Undef(),Cons(_,_)))
+    //interp(S(Z()),Cons(Undef(),Nil()))
+    //interp(S(Z()),Cons(Undef(),_))
+    Term t1 = `Appl("interp",TermList(Appl("S",TermList(Appl("Z",TermList()))),Appl("Cons",TermList(Appl("Undef",TermList()),Appl("Cons",TermList(Var("_"),Var("_")))))));
+      Term t2 = `Appl("interp",TermList(Appl("S",TermList(Appl("Z",TermList()))),Appl("Cons",TermList(Appl("Undef",TermList()),Appl("Nil",TermList())))));
+      Term t3 = `Appl("interp",TermList(Appl("S",TermList(Appl("Z",TermList()))),Appl("Cons",TermList(Appl("Undef",TermList()),Var("_")))));
+
+    //`reduce(Add(AddList(t1,t2,t3)),eSig,gSig);
 
   }
 
