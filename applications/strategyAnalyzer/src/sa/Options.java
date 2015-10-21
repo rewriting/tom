@@ -48,6 +48,9 @@ public class Options {
   @Option(name="-ordered",usage="compilation produces a TRS which should be evaluated in the specified order")
     public boolean ordered = false;
 
+  @Option(name="-d", usage="define directory in which to place output file")
+    public String directory = null;
+
   // receives other command line parameters than options
   @Argument
     public List<String> arguments = new ArrayList<String>();

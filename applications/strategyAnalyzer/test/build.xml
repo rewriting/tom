@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 
-<project default="untyped" basedir=".">
+<project default="junit" basedir=".">
 	<property name="classpath" location="../../../src/dist/lib/tom-runtime-full.jar"/>
 	<property name="tom.home" location="../../../src/dist"/>
 	<property name="test.dir" location="."/>
@@ -32,7 +32,7 @@
 		<mkdir dir="${test.gen}"/>
 	</target>	
 
-	<target name="typed" depends="init">
+	<target name="junit.typed" depends="init">
 		<for param="file"> 
 			<path>
 				<fileset dir="${test.dir}" includes="*.ns"/>
@@ -42,19 +42,20 @@
 				<java classpath="../build:${classpath}" classname="sa.Main" fork="true">
 					<arg value="-i"/>
 					<arg file="@{file}"/>
+					<arg value="-d"/>
+					<arg value="${test.gen}"/>
 					<arg value="-tom"/>
-					<arg value="${nsNameOf@{file}}"/>
+					<arg value="Main${nsNameOf@{file}}"/>
 					<arg value="-typed"/>
 					<arg value="T"/>
 			
 	        		</java>
-				<move file="${nsNameOf@{file}}.t" todir="${test.gen}"/>
 			</sequential>
 		</for>
 		<antcall target="runTests"/>
 	</target>
 
-	<target name="untyped" depends="init">
+	<target name="junit" depends="init">
 		<for param="file"> 
 			<path>
 				<fileset dir="${test.dir}" includes="*.ns"/>
@@ -64,11 +65,33 @@
 				<java classpath="../build:${classpath}" classname="sa.Main" fork="true">
 					<arg value="-i"/>
 					<arg file="@{file}"/>
+					<arg value="-d"/>
+					<arg value="${test.gen}"/>
 					<arg value="-tom"/>
-					<arg value="${nsNameOf@{file}}"/>
+					<arg value="Main${nsNameOf@{file}}"/>
 			
 	        		</java>
-				<move file="${nsNameOf@{file}}.t" todir="${test.gen}"/>
+			</sequential>
+		</for>
+		<antcall target="runTests"/>
+	</target>
+
+		<target name="junit.metalevel" depends="init">
+		<for param="file"> 
+			<path>
+				<fileset dir="${test.dir}" includes="*.ns"/>
+			</path>
+			<sequential>
+				<basename property="nsNameOf@{file}" file="@{file}" suffix=".ns"/>
+				<java classpath="../build:${classpath}" classname="sa.Main" fork="true">
+					<arg value="-i"/>
+					<arg file="@{file}"/>
+					<arg value="-metalevel"/>
+					<arg value="-d"/>
+					<arg value="${test.gen}"/>
+					<arg value="-tom"/>
+					<arg value="Main${nsNameOf@{file}}"/>
+	        		</java>
 			</sequential>
 		</for>
 		<antcall target="runTests"/>
