@@ -84,7 +84,7 @@
 		<antcall target="runTests"/>
 	</target>
 
-		<target name="junit.metalevel" depends="init">
+	<target name="junit.metalevel" depends="init">
 		<for param="file"> 
 			<path>
 				<fileset dir="${test.dir}" includes="*.ns"/>
@@ -95,6 +95,27 @@
 					<arg value="-i"/>
 					<arg file="@{file}"/>
 					<arg value="-metalevel"/>
+					<arg value="-d"/>
+					<arg value="${test.gen}"/>
+					<arg value="-tom"/>
+					<arg value="Main${nsNameOf@{file}}"/>
+	        		</java>
+			</sequential>
+		</for>
+		<antcall target="runTests"/>
+	</target>
+
+	<target name="junit.ordered" depends="init">
+		<for param="file"> 
+			<path>
+				<fileset dir="${test.dir}" includes="*.ns"/>
+			</path>
+			<sequential>
+				<basename property="nsNameOf@{file}" file="@{file}" suffix=".ns"/>
+				<java classpath="../build:${classpath}" classname="sa.Main" fork="true">
+					<arg value="-i"/>
+					<arg file="@{file}"/>
+					<arg value="-ordered"/>
 					<arg value="-d"/>
 					<arg value="${test.gen}"/>
 					<arg value="-tom"/>
