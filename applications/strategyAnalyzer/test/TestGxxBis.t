@@ -55,21 +55,42 @@ public class TestGxxBis {
 		Class<?> c = Class.forName("MaingxxBis");
 		Method[] allMethods = c.getDeclaredMethods();
 		Pattern p = Pattern.compile(".*mainStrat.*");
+		Pattern encodeToMetalevel = Pattern.compile(".*encode.*");
+		Pattern decodeFromMetalevel = Pattern.compile(".*decode.*");
 		List<Method> matchingMethod = new ArrayList<Method>();
-
+		List<Method> encodeMethod = new ArrayList<Method>();
+		List<Method> decodeMethod = new ArrayList<Method>();
 		for(Method m: allMethods) {
 			if(p.matcher(m.getName()).matches()){
 				matchingMethod.add(m);
 			}	
-			
+			if(encodeToMetalevel.matcher(m.getName()).matches()){
+				encodeMethod.add(m);
+			}
+			if(decodeFromMetalevel.matcher(m.getName()).matches()){
+				decodeMethod.add(m);
+			}
 		}
 		
 		try{
 			matchingMethod.get(0).setAccessible(true);
-			Object res = matchingMethod.get(0).invoke(null, matchingMethod.get(0).getParameterTypes()[0].cast(t));
-			matchingMethod.get(0).setAccessible(false);
-
-			return res;
+			Object res = t;
+			if(!encodeMethod.isEmpty()) {
+				encodeMethod.get(0).setAccessible(true);
+				decodeMethod.get(0).setAccessible(true);
+				res = encodeMethod.get(0).invoke(null, encodeMethod.get(0).getParameterTypes()[0].cast(res));			
+				res = matchingMethod.get(0).invoke(null, matchingMethod.get(0).getParameterTypes()[0].cast(res));
+				res = decodeMethod.get(0).invoke(null, decodeMethod.get(0).getParameterTypes()[0].cast(res));
+				encodeMethod.get(0).setAccessible(false);
+				decodeMethod.get(0).setAccessible(false);
+				matchingMethod.get(0).setAccessible(false);
+				return res;
+			}
+			else {	
+				res = matchingMethod.get(0).invoke(null, matchingMethod.get(0).getParameterTypes()[0].cast(res));
+				matchingMethod.get(0).setAccessible(false);
+				return res;
+			}
 		}
 		catch (Exception e){
 			 e.printStackTrace();
