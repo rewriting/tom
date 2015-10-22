@@ -6,6 +6,7 @@
 	<property name="test.dir" location="."/>
 	<property name="test.build" location="${test.dir}/build"/>
 	<property name="test.gen" location="${test.dir}/gen"/>
+	<property name="test.dist" location="${test.dir}/dist"/>
   
 	<import file="${tom.home}/lib/tom-common.xml"/>
 
@@ -25,12 +26,40 @@
 	<target name="clean">
 		<delete dir="${test.build}"/>
 		<delete dir="${test.gen}"/>
+		<delete dir="${test.dist}"/>
 	</target>
 
 	<target name="init" depends="tom.init">
 		<mkdir dir="${test.build}"/>
 		<mkdir dir="${test.gen}"/>
+		<mkdir dir="${test.dist}"/>
+		<javac srcdir="${test.dir}" destdir="${test.build}" includeantruntime="false"/>
+		<jar destfile="${test.dist}/runningTests.jar">
+			<fileset dir="${test.build}" includes="*.class"/>
+		</jar>
+				
 	</target>	
+
+	<target name="junit" depends="init">
+		<for param="file"> 
+			<path>
+				<fileset dir="${test.dir}" includes="*.ns"/>
+			</path>
+			<sequential>
+				<basename property="nsNameOf@{file}" file="@{file}" suffix=".ns"/>
+				<java classpath="../build:${classpath}" classname="sa.Main" fork="true">
+					<arg value="-i"/>
+					<arg file="@{file}"/>
+					<arg value="-d"/>
+					<arg value="${test.gen}"/>
+					<arg value="-tom"/>
+					<arg value="Main${nsNameOf@{file}}"/>
+			
+	        		</java>
+			</sequential>
+		</for>
+		<antcall target="runTests"/>
+	</target>
 
 	<target name="junit.typed" depends="init">
 		<for param="file"> 
@@ -48,27 +77,6 @@
 					<arg value="Main${nsNameOf@{file}}"/>
 					<arg value="-typed"/>
 					<arg value="T"/>
-			
-	        		</java>
-			</sequential>
-		</for>
-		<antcall target="runTests"/>
-	</target>
-
-	<target name="junit" depends="init">
-		<for param="file"> 
-			<path>
-				<fileset dir="${test.dir}" includes="*.ns"/>
-			</path>
-			<sequential>
-				<basename property="nsNameOf@{file}" file="@{file}" suffix=".ns"/>
-				<java classpath="../build:${classpath}" classname="sa.Main" fork="true">
-					<arg value="-i"/>
-					<arg file="@{file}"/>
-					<arg value="-d"/>
-					<arg value="${test.gen}"/>
-					<arg value="-tom"/>
-					<arg value="Main${nsNameOf@{file}}"/>
 			
 	        		</java>
 			</sequential>
@@ -111,7 +119,7 @@
 	</target>
 	
 	<target name="compile" depends="tomTest">
-		<javac classpath=".:${tom.home}/lib/tom-runtime-full.jar:${tom.home}/lib/compiletime/junit.jar" srcdir="${test.gen}" destdir="${test.build}" includeantruntime="false"/>
+		<javac classpath="${test.dir}:${test.dist}/*.jar:${tom.home}/lib/tom-runtime-full.jar:${tom.home}/lib/compiletime/junit.jar" srcdir="${test.gen}" destdir="${test.build}" includeantruntime="false"/>
 	</target>	
 	
 	<target name="runTests" depends="compile">
