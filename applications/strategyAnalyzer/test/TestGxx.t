@@ -34,13 +34,10 @@ import maingxx.m.types.*;
 import static org.junit.Assert.*;
 import org.junit.Test;
 import org.junit.Before;
-import java.lang.reflect.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.regex.Pattern;
 
 public class TestGxx {
   %include { maingxx/m/m.tom }
+  	FindMainStrat mainStrat = new FindMainStrat(Maingxx.class.getName());
 	public static void main(String[] args) {
     org.junit.runner.JUnitCore.main(Maingxx.class.getName());
 	}
@@ -49,58 +46,22 @@ public class TestGxx {
   public void setUp() {
   }
 
-  Object run(Object t) {
-
-	try{
-		Class<?> c = Class.forName("Maingxx");
-		Method[] allMethods = c.getDeclaredMethods();
-		Pattern p = Pattern.compile(".*mainStrat.*");
-		List<Method> matchingMethod = new ArrayList<Method>();
-
-		for(Method m: allMethods) {
-			if(p.matcher(m.getName()).matches()){
-				matchingMethod.add(m);
-			}	
-			
-		}
-		
-		try{
-			matchingMethod.get(0).setAccessible(true);
-			Object res = matchingMethod.get(0).invoke(null, matchingMethod.get(0).getParameterTypes()[0].cast(t));
-			matchingMethod.get(0).setAccessible(false);
-
-			return res;
-		}
-		catch (Exception e){
-			 e.printStackTrace();
-	 		 return null;
-		}
-
-	}
-	catch (ClassNotFoundException e) {
-	    e.printStackTrace();
-	    return null;
-	    
-	}
-
-  }
-
   @Test
   public void testGxx1() {
     assertEquals("mainStrat(g(a)) should be a()",
-                 `a(), run(`g(a())));
+                 `a(), mainStrat.run(`g(a())));
   }
   
   @Test
   public void testGxx2() {
     assertEquals("mainStrat(g(g(a))) should be a()",
-                 `a(), run(`g(g(a()))));
+                 `a(), mainStrat.run(`g(g(a()))));
   }
 
   @Test
   public void testGxx3() {
     assertEquals("mainStrat(g(f(g(a),g(b)))) should be f(a,b)",
-                 `f(a(),b()), run(`g(f(g(a()),g(b())))));
+                 `f(a(),b()), mainStrat.run(`g(f(g(a()),g(b())))));
   }
 
 }

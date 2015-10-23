@@ -41,6 +41,7 @@ import java.util.regex.Pattern;
 
 public class TestGxxBis {
   %include { maingxxbis/m/m.tom }
+  	FindMainStrat mainStrat = new FindMainStrat(MaingxxBis.class.getName());
 	public static void main(String[] args) {
     org.junit.runner.JUnitCore.main(MaingxxBis.class.getName());
 	}
@@ -49,45 +50,9 @@ public class TestGxxBis {
   public void setUp() {
   }
 
-  Object run(Object t) {
-
-	try{
-		Class<?> c = Class.forName("MaingxxBis");
-		Method[] allMethods = c.getDeclaredMethods();
-		Pattern p = Pattern.compile(".*mainStrat.*");
-		List<Method> matchingMethod = new ArrayList<Method>();
-
-		for(Method m: allMethods) {
-			if(p.matcher(m.getName()).matches()){
-				matchingMethod.add(m);
-			}	
-			
-		}
-		
-		try{
-			matchingMethod.get(0).setAccessible(true);
-			Object res = matchingMethod.get(0).invoke(null, matchingMethod.get(0).getParameterTypes()[0].cast(t));
-			matchingMethod.get(0).setAccessible(false);
-
-			return res;
-		}
-		catch (Exception e){
-			 e.printStackTrace();
-	 		 return null;
-		}
-
-	}
-	catch (ClassNotFoundException e) {
-	    e.printStackTrace();
-	    return null;
-	    
-	}
-
-  }
-
   @Test
   public void testGxx3() {
     assertEquals("mainStrat(g(f(g(a),g(b)))) should be f(a,b)",
-                 `f(a(),b()), run(`g(f(g(a()),g(b())))));
+                 `f(a(),b()), mainStrat.run(`g(f(g(a()),g(b())))));
   }
 }
