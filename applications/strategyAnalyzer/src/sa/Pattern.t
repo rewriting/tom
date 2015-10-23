@@ -25,8 +25,9 @@ public class Pattern {
 //     example1();
 //     example2();
 //     example3();
-//    example4();
-     example5();
+    example4();
+     //example5();
+//     example6();
   }
 
   /*
@@ -895,6 +896,8 @@ public class Pattern {
     return `Appl("T",TermList(t1,t2,t3,t4));
   }
 
+  
+  
   private static void example5() {
     Signature eSig = new Signature();
     Signature gSig = new Signature();
@@ -934,6 +937,36 @@ public class Pattern {
     RuleList res = `trsRule(ConcRule(Rule(p0,r0), Rule(p1,r1), Rule(p2,r2),
                                       Rule(p3,r3), Rule(p4,r4)), eSig,gSig);
   }
+
+  private static void example6() {
+    Signature eSig = new Signature();
+    Signature gSig = new Signature();
+
+    Term V = `Var("_");
+    eSig.addSymbol("True", `ConcGomType(), `GomType("Bool") );
+    eSig.addSymbol("False", `ConcGomType(), `GomType("Bool") );
+
+    gSig.addSymbol("True", `ConcGomType(), `GomType("Bool") );
+    gSig.addSymbol("False", `ConcGomType(), `GomType("Bool") );
+    gSig.addSymbol("and", `ConcGomType(GomType("Bool"),GomType("Bool")), `GomType("Bool") );
+    gSig.addSymbol("or",  `ConcGomType(GomType("Bool"),GomType("Bool")), `GomType("Bool") );
+
+    Term True = `Appl("True",TermList());
+    Term False = `Appl("False",TermList());
+
+    Rule r0 = `Rule(Appl("and", TermList(True,True)), True);
+    Rule r1 = `Rule(Appl("and", TermList(V,V)), False);
+
+    Rule r2 = `Rule(Appl("or", TermList(False,False)), False);
+    //Rule r3 = `Rule(Appl("or", TermList(V,V)), True);
+    Rule r3 = `Rule(Add(ConcAdd( 
+            Appl("or", TermList(False,True)), 
+            Appl("or", TermList(True,False)), 
+            Appl("or", TermList(True,True)))), True);
+
+    RuleList res = trsRule(`ConcRule(r0,r1,r2,r3), eSig,gSig);
+  }
+
 
 
 }
