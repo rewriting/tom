@@ -47,6 +47,12 @@ public class Options {
 
   @Option(name="-ordered",usage="compilation produces a TRS which should be evaluated in the specified order")
     public boolean ordered = false;
+  
+  @Option(name="-pattern",usage="use experimental ordered->trs direct translation")
+    public boolean pattern = false;
+
+  @Option(name="-d", usage="define directory in which to place output file")
+    public String directory = null;
 
   // receives other command line parameters than options
   @Argument

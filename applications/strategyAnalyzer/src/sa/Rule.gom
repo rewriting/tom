@@ -38,11 +38,12 @@ Term = Appl(symbol:String,args:TermList)
      | BuiltinInt(i:int)
      | Anti(term:Term)
      | At(term1:Term,term2:Term)
-     | Add(args:TermList)
+     | Add(addlist:AddList)
      | Sub(term1:Term, term2:Term)
      | Empty()
 
 TermList = TermList(Term*)
+AddList = ConcAdd(Term*)
 
 Rule = Rule(lhs:Term,rhs:Term)
      | ConditionalRule(lhs:Term,rhs:Term,cond:Condition)
@@ -74,8 +75,29 @@ module Rule:rules() {
   StratExp(Strat(s)) -> s
   StratName("Identity") -> StratIdentity()
   StratName("Fail") -> StratFail()
+
+  //Add(TermList()) -> Empty()
+  //Add(TermList(Empty(),tail*)) -> Add(TermList(tail*))
+  //Appl(_,TermList(Empty(),tail*)) -> Empty()
+  
+
 }
 
+ConcAdd:make_insert(e,l) {
+  %match(e) {
+    Empty() -> { return l; }
+    Add(ConcAdd(L*)) -> { return `ConcAdd(L*,l*); }
+  }
+
+  if(!l.isEmptyConcAdd()) {
+    if(0 < e.compareToLPO(l.getHeadConcAdd())) {
+      sa.rule.types.AddList newTail = l.getTailConcAdd();
+      return realMake(l.getHeadConcAdd(), `ConcAdd(e,newTail*));
+    } else {
+      return realMake(e,l);
+      }
+  }
+}
 
 // sort Rule:block() {
 //   public int compareTo(Object r){

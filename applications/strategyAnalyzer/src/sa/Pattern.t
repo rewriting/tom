@@ -3,6 +3,7 @@ package sa;
 import sa.rule.types.*;
 import tom.library.sl.*;
 import java.util.HashSet;
+import java.util.Set;
 
 public class Pattern {
   %include { rule/Rule.tom }
@@ -13,6 +14,7 @@ public class Pattern {
 
   private static void debug(String ruleName, Term input, Term res) {
     System.out.println(ruleName);
+    //debugVerbose(ruleName,input,res);
   }
 
   private static void debugVerbose(String ruleName, Term input, Term res) {
@@ -21,85 +23,100 @@ public class Pattern {
 
   public static void main(String args[]) {
 //     example1();
-    //example2();
-    //example3();
+//     example2();
+//     example3();
     example4();
+     //example5();
+//     example6();
   }
 
   /*
-   * Transform a list of ordered patterns into a TRS
+   * Transform a list of ordered rules into a TRS; rule by rule
    */
-  private static Term trs(TermList orderedPatterns, Signature eSig, Signature gSig) {
-    TermList tl = `TermList();
-    %match(orderedPatterns) {
-      TermList(C1*,p,C2*) -> {
-        tl = `TermList(tl*, Sub(p,Add(TermList(C1*))));
-      }
-    }
-    Term t = `Add(tl);
+  public static RuleList trsRule(RuleList ruleList, Signature eSig, Signature gSig) {
 
     try {
-      //       Strategy S1 = `ChoiceId(EmptyAdd2Empty(),PropagateEmpty(),ElimEmpty(),DistributeAdd(),SimplifySub(eSig,gSig));
+      ruleList = `TopDown(RemoveVar()).visitLight(`ruleList);
+    } catch(VisitFailure e) {
+    }
+    RuleList res = `ConcRule();
+    %match(ruleList) {
+      ConcRule(C1*,Rule(lhs,rhs),_*) -> {
+        AddList prev = `ConcAdd();
+        %match(C1) {
+          ConcRule(_*,Rule(l,r),_*) -> {
+            prev = `ConcAdd(l,prev*);
+          }
+        }
+        Term pattern = `Sub(lhs,Add(prev*));
+        System.out.println("PATTERN : " + Pretty.toString(pattern));
+        Term t = `reduce(pattern,eSig,gSig);
+        System.out.println("REDUCED : " + Pretty.toString(t));
+        %match(t) {
+          Add(ConcAdd(_*,e,_*)) -> {
+            res = `ConcRule(Rule(e,rhs),res*);
+          }
+
+          e@(Appl|Var)[] -> {
+            res = `ConcRule(Rule(e,rhs),res*);
+          }
+        }
+      }
+    }
+
+    for(Rule rule:`res.getCollectionConcRule()) {
+      System.out.println(Pretty.toString(rule));
+    }
+    System.out.println("size = " + `res.length());
+
+    return res;
+  }
+
+  private static Term reduce(Term t, Signature eSig, Signature gSig) {
+    try {
       // DistributeAdd needed if we can start with terms like X \ f(a+b) or X \ (f(X)\f(f(_)))
       Strategy S1 = `ChoiceId(EmptyAdd2Empty(),PropagateEmpty(),SimplifySub(eSig,gSig));
-      Strategy S2 = `ChoiceId(EmptyAdd2Empty(),PropagateEmpty(),SimplifyAdd());
-      Strategy S3 = `ChoiceId(DistributeAdd(),FlattenAdd());
+      Strategy S2 = `ChoiceId(EmptyAdd2Empty(),PropagateEmpty(), SimplifyAdd());
+      //Strategy S2 = `ChoiceId(EmptyAdd2Empty(),PropagateEmpty(),TrySubsumption(), SimplifyAdd());
 
       t =  `InnermostId(S1).visitLight(t);
       System.out.println("NO SUBs = " + Pretty.toString(t));
       //       System.out.println("NO SUBs = " + t);
-    
+
       t = `InnermostId(S2).visitLight(t);
       System.out.println("NO ADD = " + Pretty.toString(t));
 
-//       t = `InnermostId(S3).visitLight(t);
-//       System.out.println("FLAT = " + Pretty.toString(t));
+      /*
+      Term old = null;
+      while(old != t) {
+        old = t;
+        System.out.println("S2: " + t);
+        t = `InnermostId(S2).visitLight(t);
+        System.out.println("EXPAND: " + t);
+        t = expandAdd(t);
+      }
+      System.out.println("FIXPOINT = " + Pretty.toString(t));
+      System.out.println("FIXPOINT = " + t);
+      */
 
     } catch(VisitFailure e) {
       System.out.println("failure on: " + t);
     }
 
     t = expandAdd(t);
-    tl = t.getargs();
-    tl = simplifySubsumption(tl);
-    for(Term e:tl.getCollectionTermList()) {
-      System.out.println(Pretty.toString(e));
+    System.out.println("EXPAND = " + Pretty.toString(t));
+
+    %match(t) {
+      Add(tl) -> {
+        t = `Add(simplifySubsumption(tl));
+        System.out.println("REMOVE SUBSUMTION = " + Pretty.toString(t));
+      }
     }
-    System.out.println("size = " + tl.length());
-
-    return t;
-  }
-
-
-  /*
-   * Transform a list of ordered patterns into a TRS
-   */
-  private static Term reduce(Term term, Signature eSig, Signature gSig) {
-    Term t = term;
-
-    try {
-      Strategy S1 = `ChoiceId(EmptyAdd2Empty(),PropagateEmpty(),ElimEmpty(),DistributeAdd(),SimplifySub(eSig,gSig));
-      Strategy S2 = `ChoiceId(EmptyAdd2Empty(),PropagateEmpty(),SimplifyAdd());
-
-      t =  `InnermostId(S1).visitLight(t);
-      System.out.println("NO SUBs = " + Pretty.toString(t));
     
-      t = `InnermostId(S2).visitLight(t);
-      System.out.println("NO ADD = " + Pretty.toString(t));
-
-    } catch(VisitFailure e) {
-      System.out.println("failure on: " + t);
-    }
-
-
-    t = expandAdd(t);
-    System.out.println("res = " + Pretty.toString(t));
-
     return t;
   }
 
-
-  %strategy PropagateEmpty() extends Identity() {//Fail() {
+  %strategy PropagateEmpty() extends Identity() {
     visit Term {
       //   f(t1,...,empty,...,tn) -> empty
       s@Appl(f,TermList(_*,Empty(),_*)) -> {
@@ -110,10 +127,9 @@ public class Pattern {
     }
   }
 
-
-  %strategy EmptyAdd2Empty() extends Identity() {//Fail() {
+  %strategy EmptyAdd2Empty() extends Identity() {
     visit Term {
-      s@Add(TermList()) -> {
+      s@Add(ConcAdd()) -> {
         Term res = `Empty();
         debug("elim ()",`s,res);
         return res;
@@ -121,117 +137,162 @@ public class Pattern {
     }
   }
 
-  %strategy ElimEmpty() extends Identity() {//Fail() {
+  %strategy ElimEmpty() extends Identity() {
     visit Term {
       // t + empty -> t
-      s@Add(TermList(C1*,Empty(),C2*)) -> {
-        Term res = `Add(TermList(C1*,C2*));
+      s@Add(ConcAdd(C1*,Empty(),C2*)) -> {
+        Term res = `Add(ConcAdd(C1*,C2*));
         debug("elim empty",`s,res);
         return res;
       }
     }
   }
 
-  %strategy DistributeAdd() extends Identity() {//Fail() {
-    visit Term {
-
-      // Add(t) -> t
-      s@Add(TermList(t)) -> {
-        Term res = `t;
-        debug("flatten2",`s,res);
-        return res;
-      }
-
-      // f(t1,..., ti + ti',...,tn)  ->  f(t1,...,tn) + f(t1',...,tn')
-      s@Appl(f, TermList(C1*, Add(TermList(u,v,A2*)), C2*)) -> {
-        Term res = `Add(TermList(Appl(f, TermList(C1*,Add(TermList(u,A2*)),C2*)), Appl(f,TermList(C1*,Add(TermList(v,A2*)),C2*))));
-        debug("distribute add",`s,res);
-        return res;
-      }
-
-    }
-  }
-
-
-  %strategy FlattenAdd() extends Identity() {//Fail() {
+  %strategy FlattenAdd() extends Identity() {
     visit Term {
 
       // flatten: (a + (b + c) + d) -> (a + b + c + d)
-      s@Add(TermList(C1*, Add(TermList(tl*)), C2*)) -> {
-        Term res = `Add(TermList(C1*,tl*,C2*));
+      s@Add(ConcAdd(C1*, Add(ConcAdd(tl*)), C2*)) -> {
+        Term res = `Add(ConcAdd(C1*,tl*,C2*));
         debug("flatten1",`s,res);
         return res;
       }
 
       // t + t -> t
-      s@Add(TermList(C1*, t, C2*, t, C3*)) -> {
-       Term res = `Add(TermList(C1*,t,C2*,C3*));
-       System.out.println("t + t -> t : " + Pretty.toString(`s) + " --> " + Pretty.toString(res));
+      s@Add(ConcAdd(C1*, t, C2*, t, C3*)) -> {
+       Term res = `Add(ConcAdd(C1*,t,C2*,C3*));
+       debug("t + t -> t",`s,res);
        return res;
      }
 
     }
   }
 
+  // check abstraction
+  // a + b + g(_) + f(_) == signature ==> X
+  %strategy TryAbstraction(eSig:Signature) extends Identity() {
+    visit Term {
+      s@Add(al@ConcAdd(Appl(f,_),_*)) -> {
+          GomType codomain = eSig.getCodomain(`f);
+          if(codomain != null) {
+            Set<String> ops = eSig.getSymbols(codomain);
+            AddList l = `ConcAdd();
+            for(String name:ops) {
+              TermList args = `TermList();
+              for(int i=0 ; i<eSig.getArity(name) ; i++) {
+                args = `TermList(Var("_"),args*);
+              }
+              Term p = `Appl(name,args);
+              l = `ConcAdd(p,l*);
+            }
+            if(l == `al) {
+              System.out.println("OPS = " + ops + " al = " + `al);
+              return `Var("_");
+            }
+          } else {
+            // do nothing
+            //System.out.println("f -> null " + `f);
+          }
+      }
+    }
+  }
 
-  %strategy SimplifyAdd() extends Identity() { //Fail() {
+  %strategy TrySubsumption() extends Identity() {
+    visit Term {
+      s@Add(ConcAdd(C1*,t1@(Appl|Var)[],C2*,t2@(Appl|Var)[],C3*)) -> {
+        //System.out.println("try: " + `t1 + " << " + `t2); 
+        if(match(`t1,`t2)) {
+          Term res = `Add(ConcAdd(t1,C1*,C2*,C3*));
+          debug("subsumtion",`s,res);
+          return res;
+        } else if(match(`t2,`t1)) {
+          Term res = `Add(ConcAdd(t2,C1*,C2*,C3*));
+          debug("subsumtion",`s,res);
+          return res;
+        }
+      }
+    }
+  }
+      
+  %strategy SimplifyAdd() extends Identity() {
     visit Term {
 
       // flatten: (a + (b + c) + d) -> (a + b + c + d)
-      s@Add(TermList(C1*, Add(TermList(tl*)), C2*)) -> {
-        Term res = `Add(TermList(C1*,tl*,C2*));
+      s@Add(ConcAdd(C1*, Add(ConcAdd(tl*)), C2*)) -> {
+        Term res = `Add(ConcAdd(C1*,tl*,C2*));
         debug("flatten1",`s,res);
         return res;
       }
 
       // Add(t) -> t
-      s@Add(TermList(t)) -> {
+      s@Add(ConcAdd(t)) -> {
         Term res = `t;
         debug("flatten2",`s,res);
         return res;
       }
 
-//       s@Add(TermList()) -> {
-//         Term res = `Empty();
-//         System.out.println("elim () : " + Pretty.toString(`s) + " --> " + Pretty.toString(res));
-//         return res;
-//       }
-
       // a + x + b -> x
-      s@Add(TermList(_*, x@Var("_"), _*)) -> {
+      s@Add(ConcAdd(_*, x@Var("_"), _*)) -> {
         Term res = `x;
         debug("a + x + b -> x",`s,res);
         return res;
       }
-      
+
       // t + empty -> t
-      s@Add(TermList(C1*,Empty(),C2*)) -> {
-        Term res = `Add(TermList(C1*,C2*));
+      s@Add(ConcAdd(C1*,Empty(),C2*)) -> {
+        Term res = `Add(ConcAdd(C1*,C2*));
         debug("elim empty",`s,res);
         return res;
       }
-      
-      // t + t -> t
-      //s@Add(TermList(C1*, t, C2*, t, C3*)) -> {
-      //  Term res = `Add(TermList(C1*,t,C2*,C3*));
-      //  System.out.println("t + t -> t : " + Pretty.toString(`s) + " --> " + Pretty.toString(res));
-      //  return res;
-     // }
-
+     
       // f(t1,...,tn) + f(t1',...,tn') -> f(t1,..., ti + ti',...,tn)
       // all but one ti, ti' should be identical
-      s@Add(TermList(C1*, Appl(f,tl1), C2*, Appl(f, tl2), C3*)) -> {
+      s@Add(ConcAdd(C1*, Appl(f,tl1), C2*, Appl(f, tl2), C3*)) -> {
+        /*
+        TermList res = mergeAdd(`s);
+        int n = res.length();
+        if(n>0) {
+          int r = (int)(java.lang.Math.random()*n);
+          System.out.println("n = " + n + " random = " + r);
+          for(int i=0 ; i<r ; i++) {
+            res = res.getTailTermList();
+          }
+          return res.getHeadTermList();
+        } else {
+          return `s; // perform identity 
+        }
+        */
         TermList tl = `addUniqueTi(tl1,tl2);
         if(tl != null) {
-          Term res = `Add(TermList(C1*, Appl(f,tl), C2*, C3*));
+          Term res = `Add(ConcAdd(C1*, Appl(f,tl), C2*, C3*));
           debug("add merge",`s,res);
           return res;
         } else {
           //System.out.println("add merge failed");
         }
       }
+
+
     }
   }
+/*
+  private static TermList mergeAdd(Term t) {
+    TermList res = `TermList();
+    %match(t) {
+      s@Add(ConcAdd(C1*, Appl(f,tl1), C2*, Appl(f, tl2), C3*)) -> {
+        TermList tl = `addUniqueTi(tl1,tl2);
+        if(tl != null) {
+          res = `TermList(Add(ConcAdd(C1*, Appl(f,tl), C2*, C3*)),res*);
+          return res; // to remove non determinism
+        } else {
+          //System.out.println("add merge failed");
+        }
+
+      }
+    }
+    return res;
+  }
+*/
 
   private static boolean isPlainTerm(Term t) {
     try {
@@ -254,17 +315,6 @@ public class Pattern {
 
   %strategy SimplifySub(eSig:Signature,gSig:Signature) extends Identity() {//Fail() {
     visit Term {
-      //s@Add(TermList()) -> {
-      //  Term res = `Empty();
-      //  System.out.println("sub elim Add() : " + Pretty.toString(`s) + " --> " + Pretty.toString(res));
-      //  return res;
-     // }
-      // Add(t) -> t
-      //s@Add(TermList(t)) -> {
-      //  Term res = `t;
-      //  System.out.println("sub Add(t) -> t : " + Pretty.toString(`s) + " --> " + Pretty.toString(res));
-      //  return res;
-     // }
 
       // t - x -> empty
       s@Sub(t, Var("_")) -> {
@@ -281,8 +331,8 @@ public class Pattern {
       }
       
       // t - (a1 + ... + an) -> (t - a) - (a2 + ... + an))
-      s@Sub(t, Add(TermList(head,tail*))) -> {
-        Term res = `Sub(Sub(t,head), Add(TermList(tail*)));
+      s@Sub(t, Add(ConcAdd(head,tail*))) -> {
+        Term res = `Sub(Sub(t,head), Add(ConcAdd(tail*)));
         debug("sub distrib1",`s,res);
         return res;
       }
@@ -293,13 +343,13 @@ public class Pattern {
           RuleCompiler ruleCompiler = new RuleCompiler(`eSig, `gSig);
           RuleList rl = ruleCompiler.expandAntiPatterns(`ConcRule(Rule(Anti(t),Var("_"))));
           //System.out.println("rl = " + Pretty.toString(rl));
-          TermList tl = `TermList();
+          AddList tl = `ConcAdd();
           GomType codomain = gSig.getCodomain(`f);
           %match(rl) {
             ConcRule(_*,Rule(lhs@Appl(g,args_g),rhs),_*) -> {
               //if(gSig.getCodomain(`g) == codomain) { // optim: remove ill typed terms 
                 Term newLhs = `TopDown(RemoveVar()).visitLight(`lhs);
-                tl = `TermList(newLhs,tl*); // order not preserved
+                tl = `ConcAdd(newLhs,tl*); // order not preserved
               //}
             }
           }
@@ -329,21 +379,21 @@ public class Pattern {
       //}
 
       // (a + t + b) - t -> (a + b)
-      //Sub(Add(TermList(C1*,t,C2*)),t) -> {
-      //  return `Add(TermList(C1*,C2*));
+      //Sub(Add(ConcAdd(C1*,t,C2*)),t) -> {
+      //  return `Add(ConcAdd(C1*,C2*));
       //}
 
 
       // (a1 + ... + an) - b -> (a1 - b) + ( (a2 + ... + an) - b )
-      //s@Sub(Add(TermList(head,tail*)), t) -> {
-      //  Term res = `Add(TermList(Sub(head,t), Sub(Add(TermList(tail*)),t)));
+      //s@Sub(Add(ConcAdd(head,tail*)), t) -> {
+      //  Term res = `Add(ConcAdd(Sub(head,t), Sub(Add(ConcAdd(tail*)),t)));
       //  System.out.println("sub distrib2 : " + Pretty.toString(`s) + " --> " + Pretty.toString(res));
       //  return res;
       //}
 
       // (a1 + ... + an) - t@f(t1,...,tn) -> (a1 - t) + ( (a2 + ... + an) - t )
-      s@Sub(Add(TermList(head,tail*)), t@Appl(f,tl)) -> {
-        Term res = `Add(TermList(Sub(head,t), Sub(Add(TermList(tail*)),t)));
+      s@Sub(Add(ConcAdd(head,tail*)), t@Appl(f,tl)) -> {
+        Term res = `Add(ConcAdd(Sub(head,t), Sub(Add(ConcAdd(tail*)),t)));
         debug("sub distrib2",`s,res);
         return res;
       }
@@ -356,8 +406,8 @@ public class Pattern {
       }
 
       // f(t1,...,tn) - (a + g(t1',...,tm') + b) -> f(t1,...,tn) - (a + b)
-      //s@Sub(t@Appl(f,tl1),Add(TermList(C1*, Appl(g, tl2), C2*))) && f!=g -> {
-      //  Term res = `Sub(t, Add(TermList(C1*,C2*)));
+      //s@Sub(t@Appl(f,tl1),Add(ConcAdd(C1*, Appl(g, tl2), C2*))) && f!=g -> {
+      //  Term res = `Sub(t, Add(ConcAdd(C1*,C2*)));
       //  System.out.println("sub elim2 : " + Pretty.toString(`s) + " --> " + Pretty.toString(res));
       //  return res;
       // }
@@ -371,8 +421,8 @@ public class Pattern {
         return res;
       }
 
-      //s@Sub(t1@Appl(f,tl1),Add(TermList(C1*, t2@Appl(f, tl2), C2*))) -> {
-      //  Term res = `Sub(sub(t1,t2), Add(TermList(C1*,C2*)));
+      //s@Sub(t1@Appl(f,tl1),Add(ConcAdd(C1*, t2@Appl(f, tl2), C2*))) -> {
+      //  Term res = `Sub(sub(t1,t2), Add(ConcAdd(C1*,C2*)));
       //  System.out.println("sub2 : " + Pretty.toString(`s) + " --> " + Pretty.toString(res));
       //  return res;
       // }
@@ -411,10 +461,10 @@ public class Pattern {
           cpt++;
         }
 
-        TermList sum = `TermList();
+        AddList sum = `ConcAdd();
         for(int i=0 ; i<len ; i++) {
           TermList tl = args[i]; // cannot use [] in `
-          sum = `TermList(sum*,Appl(f,tl));;
+          sum = `ConcAdd(Appl(f,tl),sum*);;
         }
 
         return `Add(sum);
@@ -437,7 +487,7 @@ public class Pattern {
       if(h1==h2) {
         tl = `TermList(tl*, h1);
       } else {
-        tl = `TermList(tl*, Add(TermList(h1,h2)));
+        tl = `TermList(tl*, Add(ConcAdd(h1,h2)));
         cpt++;
       }
 
@@ -494,12 +544,12 @@ public class Pattern {
       }
 
       Add(tl) -> {
-        TermList tail = `tl;
-        TermList res = `TermList();
-        while(!tail.isEmptyTermList()) {
-          Term head = tail.getHeadTermList();
-          res = `TermList(res*, eliminateIllTyped(head,type,gSig));
-          tail = tail.getTailTermList();
+        AddList tail = `tl;
+        AddList res = `ConcAdd();
+        while(!tail.isEmptyConcAdd()) {
+          Term head = tail.getHeadConcAdd();
+          res = `ConcAdd(eliminateIllTyped(head,type,gSig),res*);
+          tail = tail.getTailConcAdd();
         }
         return `Add(res);
       }
@@ -509,20 +559,54 @@ public class Pattern {
     System.out.println("eliminateIllTyped Should not be there: " + `t);
     return t;
   }
+/*
+   //
+   // implementation using rules
+   // stack overflow on big terms
+   //
+  private static Term expandAdd(Term t) {
+    try {
+      return `RepeatId(TopDown(DistributeAdd())).visitLight(t);
+    } catch(VisitFailure e) {
+      System.out.println("expandAdd: failure");
+    }
+    return t;
+  }
 
+  %strategy DistributeAdd() extends Identity() {//Fail() {
+    visit Term {
+
+      // Add(t) -> t
+      s@Add(ConcAdd(t)) -> {
+        Term res = `t;
+        //debug("flatten2",`s,res);
+        return res;
+      }
+
+      // f(t1,..., ti + ti',...,tn)  ->  f(t1,...,tn) + f(t1',...,tn')
+      s@Appl(f, TermList(C1*, Add(ConcAdd(u,v,A2*)), C2*)) -> {
+        Term res = `Add(ConcAdd(Appl(f, TermList(C1*,Add(ConcAdd(u,A2*)),C2*)), 
+                                 Appl(f, TermList(C1*,Add(ConcAdd(v,A2*)),C2*))));
+        //debug("distribute add",`s,res);
+        return res;
+      }
+
+    }
+  }
+*/
+
+  // more efficient implementation 
   private static Term expandAdd(Term t) {
     HashSet<Term> bag = new HashSet<Term>();
     expandAddAux(bag,t);
-    TermList tl = `TermList();
+    AddList tl = `ConcAdd();
     for(Term e:bag) {
-      tl = `TermList(e,tl*);
+      tl = `ConcAdd(e,tl*);
     }
     return `Add(tl);
   }
 
-  /*
-   * Transform a term which contains Add into a set of plain terms
-   */
+   // Transform a term which contains Add into a set of plain terms
   private static void expandAddAux(HashSet<Term> c, Term subject) {
     HashSet<Term> todo = new HashSet<Term>();
     todo.add(subject);
@@ -532,18 +616,20 @@ public class Pattern {
       for(Term t:todo) {
         HashSet<Term> tmpC = new HashSet<Term>();
         try {
-          /*
-           * TopDownCollect: apply s1 in a top-down way, s should extends the identity
-           * a failure stops the top-down process under this current node
-           */
+           // TopDownCollect: apply s1 in a top-down way, s should extends the identity
+           // a failure stops the top-down process under this current node
           `TopDownCollect(ExpandAdd(tmpC,t)).visit(t);
         } catch(VisitFailure e) {
         }
-        for(Term e:tmpC) {
-          if(isPlainTerm(e)) {
-            c.add(e);
-          } else {
-            todo2.add(e);
+        if(tmpC.isEmpty()) {
+          c.add(t);
+        } else {
+          for(Term e:tmpC) {
+            if(isPlainTerm(e)) {
+              c.add(e);
+            } else {
+              todo2.add(e);
+            }
           }
         }
       }
@@ -554,13 +640,13 @@ public class Pattern {
 
   %strategy ExpandAdd(c:HashSet, subject:Term) extends Identity() {
     visit Term {
-      Add(TermList(_*,t,_*)) -> {
+      Add(ConcAdd(_*,t,_*)) -> {
         Term newt = (Term) getEnvironment().getPosition().getReplace(`t).visit(subject);
         c.add(newt);
       }
       
-      Add(TermList(head,tail*)) -> {
-        // remove the term which contains Add(TermList(...))
+      Add(ConcAdd(head,tail*)) -> {
+        // remove the term which contains Add(ConcAdd(...))
         c.remove(`subject);
         // fails to stop the TopDownCollect, and thus do not expand deeper terms
         `Fail().visit(`subject);
@@ -568,13 +654,13 @@ public class Pattern {
     }
   }
 
-  private static TermList simplifySubsumption(TermList tl) {
+  private static AddList simplifySubsumption(AddList tl) {
     %match(tl) {
-      TermList(C1*,t1,C2*,t2,C3*) -> {
+      ConcAdd(C1*,t1,C2*,t2,C3*) -> {
         if(`match(t1,t2)) {
-          return simplifySubsumption(`TermList(C1*,t1,C2*,C3*));
+          return simplifySubsumption(`ConcAdd(t1,C1*,C2*,C3*));
         } else if(`match(t2,t1)) {
-          return simplifySubsumption(`TermList(C1*,C2*,t2,C3*));
+          return simplifySubsumption(`ConcAdd(t2,C1*,C2*,C3*));
         }
       }
     }
@@ -649,19 +735,22 @@ public class Pattern {
     Term fhba =`Appl("f", TermList(hba));
 
     // f(g(x)) \ ( f(a) + f(g(a)) )
-    //t = `Sub(fgv, Add(TermList(fa,fga)));
-    //t = `Sub(fv, Add(TermList(fa,fga,fgv)));
+    //t = `Sub(fgv, Add(ConcAdd(fa,fga)));
+    //t = `Sub(fv, Add(ConcAdd(fa,fga,fgv)));
 
     // X \ f(a + b)
-    //     t = `Sub(V, Appl("f",TermList(Add(TermList(a,b)))));
-    //t = `Sub(V, Add(TermList(fhba,fhab)));
+    //     t = `Sub(V, Appl("f",TermList(Add(ConcAdd(a,b)))));
+    //t = `Sub(V, Add(ConcAdd(fhba,fhab)));
 
 //  t = (_ \ (f(h(b(),a())) + f(h(a(),b()))))
 // t1 = (_ \ f((h(b(),a()) + h(a(),b()))))
 
     //type = `GomType("T");
-    Term res1 = `trs(TermList(fhba,fhab,V),eSig,gSig);
+    Term r0 = `Appl("rhs0",TermList());
+    Term r1 = `Appl("rhr1",TermList());
+    Term r2 = `Appl("rhs2",TermList());
 
+    RuleList res = `trsRule(ConcRule(Rule(fhba,r0), Rule(fhab,r1), Rule(V,r2)), eSig,gSig);
   }
   
   private static void example2() {
@@ -678,10 +767,13 @@ public class Pattern {
 
     Term y_ys = `Appl("Cons", TermList(V,V));
     Term x_y_ys = `Appl("Cons", TermList(V,y_ys));
-    Term sep1 = `Appl("sep", TermList(V,x_y_ys));
-    Term sep2 = `Appl("sep", TermList(V,V));
+    Term p0 = `Appl("sep", TermList(V,x_y_ys));
+    Term p1 = `Appl("sep", TermList(V,V));
 
-    Term res2 = `trs(TermList(sep1,sep2),eSig,gSig);
+    Term r0 = `Appl("rhs0",TermList());
+    Term r1 = `Appl("rhs1",TermList());
+
+    RuleList res = `trsRule(ConcRule(Rule(p0,r0), Rule(p1,r1)), eSig,gSig);
 
   }
 
@@ -717,9 +809,16 @@ public class Pattern {
     Term p4 = `Appl("numadd",TermList(Appl("C",TermList(V)),Appl("C",TermList(V))));
     Term p5 = `Appl("numadd",TermList(V,V));
 
-    Term res3 = `trs(TermList(p1,p2,p3,p4,p5),eSig,gSig);
+    Term r1 = `Appl("rhs1",TermList());
+    Term r2 = `Appl("rhs2",TermList());
+    Term r3 = `Appl("rhs3",TermList());
+    Term r4 = `Appl("rhs4",TermList());
+    Term r5 = `Appl("rhs5",TermList());
+
+    RuleList res = `trsRule(ConcRule(Rule(p1,r1), Rule(p2,r2), Rule(p3,r3), Rule(p4,r4), Rule(p5,r5)), eSig,gSig);
 
   }
+
 
   private static void example4() {
     Signature eSig = new Signature();
@@ -733,7 +832,7 @@ public class Pattern {
     eSig.addSymbol("Nil", `ConcGomType(), `GomType("List") );
     eSig.addSymbol("Cons", `ConcGomType(GomType("Val"),GomType("List")), `GomType("List") );
     eSig.addSymbol("Nv", `ConcGomType(GomType("Nat")), `GomType("Val") );
-    eSig.addSymbol("Nb", `ConcGomType(GomType("Bool")), `GomType("Val") );
+    eSig.addSymbol("Bv", `ConcGomType(GomType("Bool")), `GomType("Val") );
     eSig.addSymbol("Undef", `ConcGomType(), `GomType("Val") );
 
 
@@ -744,7 +843,7 @@ public class Pattern {
     gSig.addSymbol("Nil", `ConcGomType(), `GomType("List") );
     gSig.addSymbol("Cons", `ConcGomType(GomType("Val"),GomType("List")), `GomType("List") );
     gSig.addSymbol("Nv", `ConcGomType(GomType("Nat")), `GomType("Val") );
-    gSig.addSymbol("Nb", `ConcGomType(GomType("Bool")), `GomType("Val") );
+    gSig.addSymbol("Bv", `ConcGomType(GomType("Bool")), `GomType("Val") );
     gSig.addSymbol("Undef", `ConcGomType(), `GomType("Val") );
 
     gSig.addSymbol("interp", `ConcGomType(GomType("Nat"),GomType("List")), `GomType("Val") );
@@ -758,7 +857,7 @@ public class Pattern {
     Term nat6 = `Appl("S",TermList(nat5));
     Term nv = `Appl("Nv",TermList(V));
     Term bv = `Appl("Bv",TermList(V));
-    Term nil = `Appl("Nil",TermList(V));
+    Term nil = `Appl("Nil",TermList());
 
     Term p0 = `Appl("interp",TermList(nat0,nil));
     Term p1 = `Appl("interp",TermList(nat1,Appl("Cons",TermList(nv,nil))));
@@ -769,24 +868,105 @@ public class Pattern {
     Term p6 = `Appl("interp",TermList(nat6,Appl("Cons",TermList(nv,Appl("Cons",TermList(nv,nil))))));
     Term p7 = `Appl("interp",TermList(V,V));
 
-    Term res4 = `trs(TermList(p0,p1,p2,p3,p4,p5,p6,p7),eSig,gSig);
-    //Term res4 = `trs(TermList(p0,p1,p7),eSig,gSig);
-//     Term res4 = `trs(TermList(p0,p1,p7),eSig,gSig);
+    Term r0 = `Appl("rhs0",TermList());
+    Term r1 = `Appl("rhs1",TermList());
+    Term r2 = `Appl("rhs2",TermList());
+    Term r3 = `Appl("rhs3",TermList());
+    Term r4 = `Appl("rhs4",TermList());
+    Term r5 = `Appl("rhs5",TermList());
+    Term r6 = `Appl("rhs6",TermList());
+    Term r7 = `Appl("rhs7",TermList());
+    RuleList res4 = `trsRule(ConcRule(Rule(p0,r0), Rule(p1,r1), Rule(p2,r2),
+                                      Rule(p3,r3), Rule(p4,r4), Rule(p5,r5),
+                                      Rule(p6,r6),Rule(p7,r7)),eSig,gSig);
+    //RuleList res4 = `trsRule(ConcRule(Rule(p0,r0),Rule(p1,r1), Rule(p7,r7)),eSig,gSig);
 
+//     //interp(S(Z()),Cons(Undef(),Cons(_,_)))
+//     //interp(S(Z()),Cons(Undef(),Nil()))
+//     //interp(S(Z()),Cons(Undef(),_))
+//     Term t1 = `Appl("interp",TermList(Appl("S",TermList(Appl("Z",TermList()))),Appl("Cons",TermList(Appl("Undef",TermList()),Appl("Cons",TermList(Var("_"),Var("_")))))));
+//       Term t2 = `Appl("interp",TermList(Appl("S",TermList(Appl("Z",TermList()))),Appl("Cons",TermList(Appl("Undef",TermList()),Appl("Nil",TermList())))));
+//       Term t3 = `Appl("interp",TermList(Appl("S",TermList(Appl("Z",TermList()))),Appl("Cons",TermList(Appl("Undef",TermList()),Var("_")))));
 
-//     Term tt = `reduce(
-//                                    Appl("interp",TermList(
-//                                                           Appl("S",TermList(Var("_"))),
-//                                                           Add(TermList(
-//                                                                        Appl("Cons",TermList(Var("_"),Appl("Cons",TermList(Var("_"),Var("_"))))),
-//                                                                        Appl("Cons",TermList(Appl("Nb",TermList(Var("_"))),Var("_"))),
-//                                                                        Appl("Cons",TermList(Appl("Undef",TermList()),Var("_"))),
-//                                                                        Appl("Nil",TermList())))
-//                                                           ))
-//                       ,eSig,gSig);
-
+//     //`reduce(Add(ConcAdd(t1,t2,t3)),eSig,gSig);
 
   }
+
+  private static Term T(Term t1, Term t2, Term t3, Term t4) {
+    return `Appl("T",TermList(t1,t2,t3,t4));
+  }
+
+  
+  
+  private static void example5() {
+    Signature eSig = new Signature();
+    Signature gSig = new Signature();
+
+    Term V = `Var("_");
+    eSig.addSymbol("Z", `ConcGomType(), `GomType("Nat") );
+    eSig.addSymbol("S", `ConcGomType(GomType("Nat")), `GomType("Nat") );
+    eSig.addSymbol("R", `ConcGomType(), `GomType("Color") );
+    eSig.addSymbol("B", `ConcGomType(), `GomType("Color") );
+    eSig.addSymbol("E", `ConcGomType(), `GomType("Tree") );
+    eSig.addSymbol("T", `ConcGomType(GomType("Color"), GomType("Tree"), GomType("Nat"), GomType("Tree")), `GomType("Tree"));
+
+    gSig.addSymbol("Z", `ConcGomType(), `GomType("Nat") );
+    gSig.addSymbol("S", `ConcGomType(GomType("Nat")), `GomType("Nat") );
+    gSig.addSymbol("R", `ConcGomType(), `GomType("Color") );
+    gSig.addSymbol("B", `ConcGomType(), `GomType("Color") );
+    gSig.addSymbol("E", `ConcGomType(), `GomType("Tree") );
+    gSig.addSymbol("T", `ConcGomType(GomType("Color"), GomType("Tree"), GomType("Nat"), GomType("Tree")), `GomType("Tree"));
+
+    gSig.addSymbol("balance", `ConcGomType(GomType("Tree")), `GomType("Tree") );
+
+    Term B = `Appl("B",TermList());
+    Term R = `Appl("R",TermList());
+
+    Term p0 = `Appl("balance", TermList(T(B,T(R,T(R,V,V,V),V,V),V,V)));
+    Term p1 = `Appl("balance", TermList(T(B,T(R,V,V,T(R,V,V,V)),V,V)));
+    Term p2 = `Appl("balance", TermList(T(B,V,V,T(R,T(R,V,V,V),V,V))));
+    Term p3 = `Appl("balance", TermList(T(B,V,V,T(R,V,V,T(R,V,V,V)))));
+    Term p4 = `Appl("balance", TermList(V));
+
+    Term r0 = `Appl("rhs0",TermList());
+    Term r1 = `Appl("rhs1",TermList());
+    Term r2 = `Appl("rhs2",TermList());
+    Term r3 = `Appl("rhs3",TermList());
+    Term r4 = `Appl("rhs4",TermList());
+
+    RuleList res = `trsRule(ConcRule(Rule(p0,r0), Rule(p1,r1), Rule(p2,r2),
+                                      Rule(p3,r3), Rule(p4,r4)), eSig,gSig);
+  }
+
+  private static void example6() {
+    Signature eSig = new Signature();
+    Signature gSig = new Signature();
+
+    Term V = `Var("_");
+    eSig.addSymbol("True", `ConcGomType(), `GomType("Bool") );
+    eSig.addSymbol("False", `ConcGomType(), `GomType("Bool") );
+
+    gSig.addSymbol("True", `ConcGomType(), `GomType("Bool") );
+    gSig.addSymbol("False", `ConcGomType(), `GomType("Bool") );
+    gSig.addSymbol("and", `ConcGomType(GomType("Bool"),GomType("Bool")), `GomType("Bool") );
+    gSig.addSymbol("or",  `ConcGomType(GomType("Bool"),GomType("Bool")), `GomType("Bool") );
+
+    Term True = `Appl("True",TermList());
+    Term False = `Appl("False",TermList());
+
+    Rule r0 = `Rule(Appl("and", TermList(True,True)), True);
+    Rule r1 = `Rule(Appl("and", TermList(V,V)), False);
+
+    Rule r2 = `Rule(Appl("or", TermList(False,False)), False);
+    //Rule r3 = `Rule(Appl("or", TermList(V,V)), True);
+    Rule r3 = `Rule(Add(ConcAdd( 
+            Appl("or", TermList(False,True)), 
+            Appl("or", TermList(True,False)), 
+            Appl("or", TermList(True,True)))), True);
+
+    RuleList res = trsRule(`ConcRule(r0,r1,r2,r3), eSig,gSig);
+  }
+
 
 
 }

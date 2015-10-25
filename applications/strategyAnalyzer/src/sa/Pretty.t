@@ -105,6 +105,19 @@ public class Pretty {
     return sb.toString();
   }
 
+  private static String toString(AddList t) {
+    StringBuffer sb = new StringBuffer();
+    %match(t) {
+      ConcAdd(_*,x,end*) -> {
+        sb.append(toString(`x));
+        if(!`end.isEmptyConcAdd()) {
+          sb.append("+");
+        }
+      }
+    }
+    return sb.toString();
+  }
+
   public static String toString(Term t) {
     %match(t) {
       Var(n) -> { return `n; }
@@ -124,8 +137,8 @@ public class Pretty {
         }
       }
 
-      Add(TermList(l*)) -> {
-        return "(" + toStringAux(`l," + ") + ")";
+      Add(ConcAdd(l*)) -> {
+        return "(" + toString(`l) + ")";
       }
 
       Sub(t1,t2) -> {
