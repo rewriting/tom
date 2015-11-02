@@ -78,7 +78,7 @@ public class Main {
       extractedSignature = ruleCompiler.getExtractedSignature();
       generatedSignature = ruleCompiler.getGeneratedSignature();
 
-      if(options.type != null) {
+      if(options.withType || options.type != null) {
         TypeCompiler typeCompiler = new TypeCompiler(extractedSignature);
         typeCompiler.typeRules(generatedRules);
         generatedRules = typeCompiler.getGeneratedRules();
@@ -107,7 +107,7 @@ public class Main {
       }
 
       if(options.classname != null) {
-        tomoutputfile.println( Pretty.generateTom(strategyName,options.type,generatedRules,generatedSignature,options.classname) );
+        tomoutputfile.println( Pretty.generateTom(strategyName,options.type,generatedRules,generatedSignature,options.classname, options.withType) );
       } 
 
       if(options.aprove) {
