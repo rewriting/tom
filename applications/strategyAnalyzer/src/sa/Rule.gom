@@ -76,8 +76,8 @@ module Rule:rules() {
   StratName("Identity") -> StratIdentity()
   StratName("Fail") -> StratFail()
 
-  //Add(TermList()) -> Empty()
-  //Add(TermList(Empty(),tail*)) -> Add(TermList(tail*))
+  //Add(ConcAdd()) -> Empty()
+  //Add(ConcAdd(Empty(),tail*)) -> Add(ConcAdd(tail*))
   //Appl(_,TermList(Empty(),tail*)) -> Empty()
   
 
