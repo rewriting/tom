@@ -221,7 +221,7 @@ public class Pretty {
     return opsb.toString() + "\n" + varsb.toString() + "\n" + rulesb.toString();
   }  
 
-  public static String generateTom(String strategyName, String typeName, RuleList bag, Signature sig, String classname) {
+  public static String generateTom(String strategyName, String typeName, RuleList bag, Signature sig, String classname, boolean typed) {
     System.out.println("--------- TOM ----------------------");
     //     System.out.println("RULEs: " + toString(bag));
 
@@ -279,7 +279,13 @@ public class @classname@ {
   public static void main(String[] args) {
     try {
       BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+  ]%);
+     if(!typed){
+	sb.append(%[
       @inputTypeName@ input = @inputTypeName@.fromString(reader.readLine());
+      ]%);
+     }
+     sb.append(%[
       long start = System.currentTimeMillis();
       ]%);
 
@@ -296,11 +302,12 @@ public class @classname@ {
     sb.append(%[
       Term t = `decode(@name@(encode(input)));
       ]%);
-  } else {
+  } else if(!typed){
       sb.append(%[
       @inputTypeName@ t = `@name@(input);
       ]%);
   }
+
 
   sb.append(%[
       long stop = System.currentTimeMillis();

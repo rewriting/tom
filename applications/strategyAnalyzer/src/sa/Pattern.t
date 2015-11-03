@@ -23,10 +23,10 @@ public class Pattern {
 
   public static void main(String args[]) {
 //     example1();
-//     example2();
+     //example2();
 //     example3();
     example4();
-     //example5();
+//     example5();
 //     example6();
   }
 
@@ -64,10 +64,19 @@ public class Pattern {
       }
     }
 
+
+
     for(Rule rule:`res.getCollectionConcRule()) {
       System.out.println(Pretty.toString(rule));
     }
     System.out.println("size = " + `res.length());
+
+    // test subsumtion idea
+    %match(res) {
+      ConcRule(C1*,rule,C2*) -> {
+        boolean bingo = canBeRemoved(`rule, `ConcRule(C1*,C2*), eSig, gSig);
+      }
+    }
 
     return res;
   }
@@ -294,6 +303,9 @@ public class Pattern {
   }
 */
 
+  /*
+   * returns true is the term does not contain any Add or Sub
+   */
   private static boolean isPlainTerm(Term t) {
     try {
       `TopDown(PlainTerm()).visitLight(t);
@@ -305,7 +317,7 @@ public class Pattern {
 
   %strategy PlainTerm() extends Identity() {
     visit Term {
-      t@Add(_) -> {
+      t@(Add|Sub)[] -> {
         `Fail().visitLight(`t);
       }
     }
@@ -502,6 +514,9 @@ public class Pattern {
     }
   }
 
+  /*
+   * Replace a named variable by an underscore
+   */
   %strategy RemoveVar() extends Identity() {
     visit Term {
       Var(_) -> {
@@ -510,6 +525,10 @@ public class Pattern {
     }
   }
 
+  /*
+   * given a term (which contains Add and Sub) and a type
+   * returns a term where badly typed terms are replaced by Empty()
+   */
   private static Term eliminateIllTyped(Term t, GomType type, Signature gSig) {
     //System.out.println(Pretty.toString(t) + ":" + type.getName());
     %match(t) {
@@ -525,11 +544,14 @@ public class Pattern {
           while(!tail.isEmptyTermList()) {
             Term head = tail.getHeadTermList();
             GomType arg_type = domain.getHeadConcGomType();
-            if(head == `Empty()) {
+
+            Term new_arg = eliminateIllTyped(head,arg_type,gSig);
+            if(new_arg == `Empty()) {
               // propagate Empty for any term which contains Empty
               return `Empty();
             }
-            new_args = `TermList(new_args*, eliminateIllTyped(head,arg_type,gSig));
+
+            new_args = `TermList(new_args*, new_arg);
             tail = tail.getTailTermList();
             domain = domain.getTailConcGomType();
           }
@@ -606,7 +628,7 @@ public class Pattern {
     return `Add(tl);
   }
 
-   // Transform a term which contains Add into a set of plain terms
+  // Transform a term which contains Add into a set of plain terms
   private static void expandAddAux(HashSet<Term> c, Term subject) {
     HashSet<Term> todo = new HashSet<Term>();
     todo.add(subject);
@@ -695,6 +717,121 @@ public class Pattern {
   }
 
   /*
+   * expand once all occurence of _ in a term
+   */
+  private  static Term expandVar(Term t, Signature eSig, Signature gSig) {
+    HashSet<Position> bag = new HashSet<Position>();
+    HashSet<Term> res = new HashSet<Term>();
+
+    GomType codomain = null;
+    %match(t) {
+      Appl(f,_) -> {
+          codomain = gSig.getCodomain(`f);
+      }
+    }
+
+    //System.out.println("t = " + t);
+    //System.out.println("codomain = " + codomain);
+
+    res.add(t);
+    try {
+      `TopDown(CollectVarPosition(bag)).visit(t);
+
+      for(Position omega:bag) {
+        //System.out.println("omega = " + omega);
+        /*
+        try {
+          System.out.println("subterm: " + omega.getSubterm().visit(t));
+        } catch(VisitFailure e) {
+          System.out.println("getSubterm failed: " + t);
+          System.out.println("pos = " + omega);
+
+        }
+*/
+
+
+
+        HashSet<Term> todo = new HashSet<Term>();
+        System.out.println("res.size  = " + res.size());
+        for(Term subject:res) {
+          // add g(Z1,...) ... h(Z1,...)
+          for(String name: eSig.getSymbols()) {
+            int arity = eSig.getArity(name);
+            Term expand = Tools.genAbstractTerm(name,arity, "_");
+            expand = `TopDown(RemoveVar()).visitLight(expand);
+
+            Term newt = (Term) omega.getReplace(expand).visit(subject);
+
+            //System.out.println("newt1 = " + Pretty.toString(newt));
+            newt = eliminateIllTyped(newt, codomain, gSig);
+            //System.out.println("newt2 = " + Pretty.toString(newt));
+            if(newt != `Empty()) {
+              todo.add(newt);
+            }
+          }
+          System.out.println("todo.size = " + todo.size());
+
+        }
+        res=todo;
+
+        
+      }
+
+    } catch(VisitFailure e) {
+      System.out.println("expandVar failed");
+    }
+
+    AddList al = `ConcAdd();
+    for(Term newt:res) {
+      al = `ConcAdd(newt,al*);
+    }
+
+    //for(Term e:res) {
+    //  System.out.println("expandVar = " + Pretty.toString(e));
+    //}
+
+    return `Add(al);
+  }
+
+  %strategy CollectVarPosition(c:HashSet) extends Identity() {
+    visit Term {
+      Var("_") -> {
+        c.add(getEnvironment().getPosition());
+      }
+    }
+  }
+
+  public static boolean canBeRemoved(Rule rule, RuleList ruleList, Signature eSig, Signature gSig) {
+    System.out.println("CAN BE REMOVED:");
+    %match(rule) {
+      Rule(lhs,rhs) -> {
+
+        Term t = expandVar(`lhs,eSig, gSig);
+        %match(t) {
+          Add(ConcAdd(_*,et,_*)) -> {
+            boolean foundMatch = false;
+            %match(ruleList) {
+              ConcRule(_*,Rule(lhs,_),_*) -> {
+                if(match(`lhs,`et)) {
+                  foundMatch = true;
+                }
+              }
+            }
+            if(!foundMatch) {
+              return false;
+            }
+          }
+        }
+      }
+    }
+
+    System.out.println("BINGO: " + Pretty.toString(rule));
+    return true;
+  }
+
+
+
+  /*
    * examples
    */
   private static void example1() {
@@ -758,9 +895,11 @@ public class Pattern {
     Signature gSig = new Signature();
 
     Term V = `Var("_");
+    eSig.addSymbol("a", `ConcGomType(), `GomType("T") );
     eSig.addSymbol("Nil", `ConcGomType(), `GomType("List") );
     eSig.addSymbol("Cons", `ConcGomType(GomType("T"),GomType("List")), `GomType("List") );
 
+    gSig.addSymbol("a", `ConcGomType(), `GomType("T") );
     gSig.addSymbol("Nil", `ConcGomType(), `GomType("List") );
     gSig.addSymbol("Cons", `ConcGomType(GomType("T"),GomType("List")), `GomType("List") );
     gSig.addSymbol("sep", `ConcGomType(GomType("T"),GomType("List")), `GomType("List") );

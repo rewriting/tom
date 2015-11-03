@@ -45,6 +45,9 @@ public class Options {
   @Option(name="-typed",usage="generate typed signature",metaVar="TYPE")
     public String type = null;
 
+  @Option(name="-withType", usage="specify that a typed signature will be used")
+    public boolean withType = false;
+
   @Option(name="-ordered",usage="compilation produces a TRS which should be evaluated in the specified order")
     public boolean ordered = false;
   
