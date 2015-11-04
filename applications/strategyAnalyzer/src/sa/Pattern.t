@@ -717,6 +717,8 @@ public class Pattern {
   }
 
   /*
+   * 1st idea to remove redundant patterns
+   *
    * expand once all occurence of _ in a term
    */
   private  static Term expandVar(Term t, Signature eSig, Signature gSig) {
@@ -827,6 +829,83 @@ public class Pattern {
 
     System.out.println("BINGO: " + Pretty.toString(rule));
     return true;
+  }
+
+
+  /*
+   * 2nd idea to remove redundant patterns
+   *
+   * introduce matching constraints inside patterns
+   */
+
+  %strategy SimplifyMatch() extends Identity() {
+    visit Term {
+      // delete: a() << a() -> TrueMatch()
+      s@Match(Appl(name,TermList()),Appl(name,TermList())) -> {
+        Term res = `TrueMatch();
+        debug("match delete",`s,res);
+        return res;
+      }
+
+      // decompose: f(a1,...,an) << f(b1,...,bn) -> f(a1<<b1,...,an<<bn) 
+      s@Match(Appl(f,arg1),Appl(f,arg2)) -> {
+        TermList tl1 = `arg1;
+        TermList tl2 = `arg2;
+        TermList newarg = `TermList();
+        while(!tl1.isEmptyTermList()) {
+          Term h1 = tl1.getHeadTermList();
+          Term h2 = tl2.getHeadTermList();
+          newarg = `TermList(newarg*, Match(h1,h2));
+          tl1 = tl1.getTailTermList();
+          tl2 = tl2.getTailTermList();
+        }
+        Term res = `Appl(f,newarg);
+        debug("match decompose",`s,res);
+        return res;
+      }
+
+      // match: _ << f(...) -> TrueMatch()
+      s@Match(Var(_),Appl(name,args)) -> {
+        Term res = `TrueMatch();
+        debug("match1",`s,res);
+        return res;
+      }
+
+      // match: _ << _ -> TrueMatch()
+      s@Match(Var(_),Var(_)) -> {
+        Term res = `TrueMatch();
+        debug("match2",`s,res);
+        return res;
+      }
+
+      // symbol clash: f(t1,..., a() << a() ,...,tn) -> f(t1,...,  TrueMatch ,...,tn)
+      s@Match(Appl(f,argf),Appl(g,argg)) && f!=g -> {
+        Term res = `Empty();
+        debug("match symbol clash",`s,res);
+        return res;
+      }
+
+    }
+  }
+
+  %strategy PropagateMatchTrue() extends Identity() {
+    visit Term {
+      // f(TrueMatch,...,TrueMatch) -> TrueMatch
+      s@Appl(f,argf) -> {
+        boolean ok = true;
+        %match(argf) {
+          TermList(_*,!TrueMatch(),_*) -> {
+            ok = false;
+          }
+        }
+        
+        if(ok) {
+          Term res = `TrueMatch();
+          debug("propagate match true",`s,res);
+          return res;
+        }
+      }
+    }
   }
 
 
