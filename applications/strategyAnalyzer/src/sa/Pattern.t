@@ -67,8 +67,7 @@ public class Pattern {
 
 
     // test subsumtion idea
-    //res = removeRedundantRule(res,eSig,gSig);
-    res = removeRedundantRuleAux(res,`ConcRule(), eSig,gSig);
+    res = removeRedundantRule(res,eSig,gSig);
 
     for(Rule rule:`res.getCollectionConcRule()) {
       System.out.println(Pretty.toString(rule));
@@ -81,33 +80,7 @@ public class Pattern {
 
 
   private static RuleList removeRedundantRule(RuleList rules, Signature eSig, Signature gSig) {
-    HashSet<RuleList> bag = new HashSet<RuleList>();
-
-    %match(rules) {
-      ConcRule(C1*,rule,C2*) -> {
-        boolean b = canBeRemoved2(`rule, `ConcRule(C1*,C2*), eSig, gSig);
-        if(b) {
-          System.out.println("REMOVE: " + Pretty.toString(`rule));
-          bag.add(removeRedundantRule(`ConcRule(C1*,C2*), eSig, gSig));
-
-          // uncomment the following return for a greedy algorithm:
-          //return removeRedundantRule(`ConcRule(C1*,C2*), eSig, gSig);
-
-        }
-      }
-    }
-
-    RuleList minrules = rules;
-    int minlength = minrules.length();
-    for(RuleList e:bag) {
-      if(e.length() < minlength) {
-        minrules = e;
-        minlength = minrules.length();
-      }
-    }
-
-    return minrules;
-
+    return removeRedundantRuleAux(rules,`ConcRule(), eSig,gSig);
   }
 
   private static RuleList removeRedundantRuleAux(RuleList candidates, RuleList kernel, Signature eSig, Signature gSig) {
@@ -186,7 +159,7 @@ public class Pattern {
         System.out.println("REMOVE SUBSUMTION = " + Pretty.toString(t));
       }
     }
-    
+
     return t;
   }
 
