@@ -2,6 +2,7 @@ package sa;
 
 import sa.rule.types.*;
 import java.util.Set;
+import java.util.HashSet;
 import com.google.common.collect.HashBasedTable;
 
 public class Signature {
@@ -32,9 +33,12 @@ public class Signature {
   // R=Codomain x C=SymbolName -> V=Domain List of types
   private HashBasedTable<GomType,String,GomTypeList> table;
 
+  // set of names that correspond to defined symbols (i.e. not constructors)
+  private HashSet<String> functions;
 
   public Signature() {
     this.table = HashBasedTable.create();
+    this.functions = new HashSet<String>();
   }
 
   public Signature(Signature from) {
@@ -63,7 +67,7 @@ public class Signature {
    */
   public void setSignature(Program program) {
     %match(program) {
-      Program(ConcProduction(_*,SortType(codomain,ConcAlternative(_*,Alternative(name,args,codomain),_*)),_*),_) -> {
+      Program(ConcProduction(_*,SortType(codomain,ConcAlternative(_*,Alternative(name,args,codomain),_*)),_*),functionList,_) -> {
         GomTypeList domain = `ConcGomType();
         %match(args) {
           ConcField(_*,UnamedField(argType),_*) -> {
@@ -71,6 +75,14 @@ public class Signature {
           }
         }
         addSymbol(`name,domain,`codomain);
+
+        %match(functionList) {
+          ConcProduction(_*,SortType(codomain2,ConcAlternative(_*,Alternative(name2,args2,codomain2),_*)),_*) -> {
+            if(`name2 == `name && `codomain==`codomain2) {
+              setFunction(`name);
+            }
+          }
+        }
       }
     }
   }
@@ -147,6 +159,13 @@ public class Signature {
     table.put(codomain, name.intern(), domain);
   }
 
+  public void setFunction(String name) {
+    functions.add(name);
+  }
+
+  public boolean isFunction(String name) {
+    return functions.contains(name);
+  }
 
   /** Get the list of all codomains
    * @return the list of codomains in the table
@@ -193,6 +212,19 @@ public class Signature {
    */
   public Set<String> getSymbols() {
     return table.columnKeySet();
+  }
+  
+  /** Get the set of all constructors (symbols but not functions)
+   * @return the set of constructors in the signature
+   */
+  public Set<String> getConstructors() {
+    HashSet<String> res = new HashSet<String>();
+    for(String e:getSymbols()) {
+      if(!isFunction(e)) {
+        res.add(e);
+      }
+    }
+    return res;
   }
 
   /** Get the set of symbols for a given codomain

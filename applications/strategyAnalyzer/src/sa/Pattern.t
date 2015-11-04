@@ -25,12 +25,12 @@ public class Pattern {
 //     example1();
     // example2();
 //     example3(); // numadd
-//     example4(); // interp
+     example4(); // interp
 //     example5(); // balance
 //     example6(); // and-or
 //     example7(); // simplest reduce
 //     example7bis(); // simplest reduce with one type
-    example8(); // reduce deeper
+//    example8(); // reduce deeper
   }
 
   /*
@@ -42,6 +42,7 @@ public class Pattern {
       ruleList = `TopDown(RemoveVar()).visitLight(`ruleList);
     } catch(VisitFailure e) {
     }
+
     RuleList res = `ConcRule();
     %match(ruleList) {
       ConcRule(C1*,Rule(lhs,rhs),_*) -> {
@@ -92,21 +93,27 @@ public class Pattern {
     %match( candidates ) {
       ConcRule(head, tail*) -> {
         boolean b = canBeRemoved2(`head, `ConcRule(tail*,kernel*), eSig, gSig);
+        RuleList res = removeRedundantRuleAux(`tail, `ConcRule(head,kernel*), eSig, gSig);
         if(b) {
           System.out.println("REMOVE: " + Pretty.toString(`head));
           // try with the head removed 
-          bag.add(removeRedundantRuleAux(`tail, kernel, eSig, gSig));
+         RuleList tmp = removeRedundantRuleAux(`tail, kernel, eSig, gSig);
+         if(tmp.length() < res.length()) {
+             return tmp;
+         }
+         // bag.add(removeRedundantRuleAux(`tail, kernel, eSig, gSig));
 
           // uncomment the following return for a greedy algorithm:
           //return removeRedundantRule(`ConcRule(C1*,C2*), eSig, gSig);
 
         }
+        return res;
 
         // try with the head kept in kernel
-        bag.add(removeRedundantRuleAux(`tail, `ConcRule(head,kernel*), eSig, gSig));
+        //bag.add(removeRedundantRuleAux(`tail, `ConcRule(head,kernel*), eSig, gSig));
       }
     }
-
+/*
     RuleList minrules = `ConcRule(candidates*,kernel*);
     int minlength = minrules.length();
     for(RuleList e:bag) {
@@ -117,7 +124,8 @@ public class Pattern {
     }
 
     return minrules;
-
+    */
+    return `ConcRule(candidates*,kernel*);
   }
 
 
@@ -127,7 +135,6 @@ public class Pattern {
       // DistributeAdd needed if we can start with terms like X \ f(a+b) or X \ (f(X)\f(f(_)))
       Strategy S1 = `ChoiceId(EmptyAdd2Empty(),PropagateEmpty(),SimplifySub(eSig,gSig));
       Strategy S2 = `ChoiceId(EmptyAdd2Empty(),PropagateEmpty(), SimplifyAdd());
-      //Strategy S2 = `ChoiceId(EmptyAdd2Empty(),PropagateEmpty(),TrySubsumption(), SimplifyAdd());
 
       t =  `InnermostId(S1).visitLight(t);
       System.out.println("NO SUBs = " + Pretty.toString(t));
@@ -158,7 +165,7 @@ public class Pattern {
 
     %match(t) {
       Add(tl) -> {
-        t = `Add(simplifySubsumption(tl));
+        t = `Add(simplifySubsumtion(tl));
         System.out.println("REMOVE SUBSUMTION = " + Pretty.toString(t));
       }
     }
@@ -247,23 +254,6 @@ public class Pattern {
     }
   }
 
-  %strategy TrySubsumption() extends Identity() {
-    visit Term {
-      s@Add(ConcAdd(C1*,t1@(Appl|Var)[],C2*,t2@(Appl|Var)[],C3*)) -> {
-        //System.out.println("try: " + `t1 + " << " + `t2); 
-        if(match(`t1,`t2)) {
-          Term res = `Add(ConcAdd(t1,C1*,C2*,C3*));
-          debug("subsumtion",`s,res);
-          return res;
-        } else if(match(`t2,`t1)) {
-          Term res = `Add(ConcAdd(t2,C1*,C2*,C3*));
-          debug("subsumtion",`s,res);
-          return res;
-        }
-      }
-    }
-  }
-      
   %strategy SimplifyAdd() extends Identity() {
     visit Term {
 
@@ -298,20 +288,6 @@ public class Pattern {
       // f(t1,...,ti,...,tn) + f(t1,...,ti',...,tn) -> f(t1,..., ti + ti',...,tn)
       // all but one ti, ti' should be identical
       s@Add(ConcAdd(C1*, Appl(f,tl1), C2*, Appl(f, tl2), C3*)) -> {
-        /*
-        TermList res = mergeAdd(`s);
-        int n = res.length();
-        if(n>0) {
-          int r = (int)(java.lang.Math.random()*n);
-          System.out.println("n = " + n + " random = " + r);
-          for(int i=0 ; i<r ; i++) {
-            res = res.getTailTermList();
-          }
-          return res.getHeadTermList();
-        } else {
-          return `s; // perform identity 
-        }
-        */
         TermList tl = `addUniqueTi(tl1,tl2);
         if(tl != null) {
           Term res = `Add(ConcAdd(C1*, Appl(f,tl), C2*, C3*));
@@ -325,24 +301,6 @@ public class Pattern {
 
     }
   }
-/*
-  private static TermList mergeAdd(Term t) {
-    TermList res = `TermList();
-    %match(t) {
-      s@Add(ConcAdd(C1*, Appl(f,tl1), C2*, Appl(f, tl2), C3*)) -> {
-        TermList tl = `addUniqueTi(tl1,tl2);
-        if(tl != null) {
-          res = `TermList(Add(ConcAdd(C1*, Appl(f,tl), C2*, C3*)),res*);
-          return res; // to remove non determinism
-        } else {
-          //System.out.println("add merge failed");
-        }
-
-      }
-    }
-    return res;
-  }
-*/
 
   /*
    * returns true is the term does not contain any Add or Sub
@@ -725,13 +683,13 @@ public class Pattern {
    * Given a list of terms
    * remove those which are subsumed by another one
    */
-  private static AddList simplifySubsumption(AddList tl) {
+  private static AddList simplifySubsumtion(AddList tl) {
     %match(tl) {
       ConcAdd(C1*,t1,C2*,t2,C3*) -> {
         if(`match(t1,t2)) {
-          return simplifySubsumption(`ConcAdd(t1,C1*,C2*,C3*));
+          return simplifySubsumtion(`ConcAdd(t1,C1*,C2*,C3*));
         } else if(`match(t2,t1)) {
-          return simplifySubsumption(`ConcAdd(t2,C1*,C2*,C3*));
+          return simplifySubsumtion(`ConcAdd(t2,C1*,C2*,C3*));
         }
       }
     }
@@ -792,19 +750,6 @@ public class Pattern {
       `TopDown(CollectVarPosition(bag)).visit(t);
 
       for(Position omega:bag) {
-        //System.out.println("omega = " + omega);
-        /*
-        try {
-          System.out.println("subterm: " + omega.getSubterm().visit(t));
-        } catch(VisitFailure e) {
-          System.out.println("getSubterm failed: " + t);
-          System.out.println("pos = " + omega);
-
-        }
-*/
-
-
-
         HashSet<Term> todo = new HashSet<Term>();
         System.out.println("res.size  = " + res.size());
         for(Term subject:res) {
@@ -827,10 +772,7 @@ public class Pattern {
 
         }
         res=todo;
-
-        
       }
-
     } catch(VisitFailure e) {
       System.out.println("expandVar failed");
     }
@@ -839,10 +781,6 @@ public class Pattern {
     for(Term newt:res) {
       al = `ConcAdd(newt,al*);
     }
-
-    //for(Term e:res) {
-    //  System.out.println("expandVar = " + Pretty.toString(e));
-    //}
 
     return `Add(al);
   }
@@ -942,15 +880,21 @@ public class Pattern {
 
   %strategy PropagateTrueMatch() extends Identity() {
     visit Term {
-      // f(TrueMatch,...,TrueMatch) -> TrueMatch
+      // f(TrueMatch,...,TrueMatch) -> TrueMatch with arity(f)>0
       s@Appl(f,argf@TermList(_,_*)) -> { // at least one argument
         boolean ok = true;
+        TermList tl = `argf;
+        while(ok && !tl.isEmptyTermList()) {
+          ok &= (tl.getHeadTermList() == `TrueMatch());
+          tl = tl.getTailTermList();
+        }
+/*
         %match(argf) {
           TermList(_*,!TrueMatch(),_*) -> {
             ok = false;
           }
         }
-        
+  */      
         if(ok) {
           Term res = `TrueMatch();
           debug("propagate match true",`s,res);

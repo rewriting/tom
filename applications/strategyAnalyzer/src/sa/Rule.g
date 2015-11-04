@@ -15,12 +15,18 @@ options {
 
 // new syntax
 program :
-  abstractsyntax strategies EOF
-  -> ^(Program abstractsyntax strategies)
+  abstractsyntax (f=functions)? strategies EOF
+  -> {f!=null}? ^(Program abstractsyntax $f strategies)
+  -> ^(Program abstractsyntax ^(ConcProduction) strategies)
 ;
 
 abstractsyntax :
 (ABSTRACT SYNTAX) (typedecl)*
+  -> ^(ConcProduction (typedecl)*) 
+;
+
+functions :
+(FUNCTIONS) (typedecl)*
   -> ^(ConcProduction (typedecl)*) 
 ;
 
@@ -135,6 +141,7 @@ symbol :
 ABSTRACT : 'abstract';
 SYNTAX   : 'syntax';
 STRATEGIES   : 'strategies';
+FUNCTIONS : 'functions';
 
 
 ARROW : '->' ;
