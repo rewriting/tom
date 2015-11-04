@@ -897,25 +897,13 @@ public class Pattern {
         return res;
       }
 
-      /*
-      s@Match(TrueMatch(),_) -> {
-        Term res = `TrueMatch();
-        debug("match true",`s,res);
-        return res;
-      }
-      s@Match(_,TrueMatch()) -> {
-        Term res = `TrueMatch();
-        debug("match true",`s,res);
-        return res;
-      }
-*/
     }
   }
 
   %strategy PropagateTrueMatch() extends Identity() {
     visit Term {
       // f(TrueMatch,...,TrueMatch) -> TrueMatch
-      s@Appl(f,argf) -> {
+      s@Appl(f,argf@TermList(_,_*)) -> { // at least one argument
         boolean ok = true;
         %match(argf) {
           TermList(_*,!TrueMatch(),_*) -> {
