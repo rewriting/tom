@@ -23,11 +23,11 @@ public class Pattern {
 
   public static void main(String args[]) {
 //     example1();
-     //example2();
-//     example3();
-    example4();
-//     example5();
-//     example6();
+    // example2();
+//     example3(); // numadd
+    example4(); // interp
+//     example5(); // balance
+//     example6(); // and-or
   }
 
   /*
@@ -74,7 +74,8 @@ public class Pattern {
     // test subsumtion idea
     %match(res) {
       ConcRule(C1*,rule,C2*) -> {
-        boolean bingo = canBeRemoved(`rule, `ConcRule(C1*,C2*), eSig, gSig);
+        //boolean bingo = canBeRemoved1(`rule, `ConcRule(C1*,C2*), eSig, gSig);
+        boolean bingo = canBeRemoved2(`rule, `ConcRule(C1*,C2*), eSig, gSig);
       }
     }
 
@@ -254,7 +255,7 @@ public class Pattern {
         return res;
       }
      
-      // f(t1,...,tn) + f(t1',...,tn') -> f(t1,..., ti + ti',...,tn)
+      // f(t1,...,ti,...,tn) + f(t1,...,ti',...,tn) -> f(t1,..., ti + ti',...,tn)
       // all but one ti, ti' should be identical
       s@Add(ConcAdd(C1*, Appl(f,tl1), C2*, Appl(f, tl2), C3*)) -> {
         /*
@@ -617,7 +618,11 @@ public class Pattern {
   }
 */
 
-  // more efficient implementation 
+  /*
+   * Transform a term which contains Add into
+   * a sum of terms which do no longer contain any Add
+   * (more efficient implementation)
+   */
   private static Term expandAdd(Term t) {
     HashSet<Term> bag = new HashSet<Term>();
     expandAddAux(bag,t);
@@ -676,6 +681,10 @@ public class Pattern {
     }
   }
 
+  /*
+   * Given a list of terms
+   * remove those which are subsumed by another one
+   */
   private static AddList simplifySubsumption(AddList tl) {
     %match(tl) {
       ConcAdd(C1*,t1,C2*,t2,C3*) -> {
@@ -689,6 +698,9 @@ public class Pattern {
     return tl;
   }
 
+  /*
+   * Return true if t1 matches t2
+   */
   private static boolean match(Term t1, Term t2) {
     %match(t1,t2) {
       // Delete
@@ -803,8 +815,8 @@ public class Pattern {
     }
   }
 
-  public static boolean canBeRemoved(Rule rule, RuleList ruleList, Signature eSig, Signature gSig) {
-    System.out.println("CAN BE REMOVED:");
+  public static boolean canBeRemoved1(Rule rule, RuleList ruleList, Signature eSig, Signature gSig) {
+    System.out.println("CAN BE REMOVED1:");
     %match(rule) {
       Rule(lhs,rhs) -> {
 
@@ -865,7 +877,7 @@ public class Pattern {
       }
 
       // match: _ << f(...) -> TrueMatch()
-      s@Match(Var(_),Appl(name,args)) -> {
+      s@Match(Var(_),Appl(_,_)) -> {
         Term res = `TrueMatch();
         debug("match1",`s,res);
         return res;
@@ -878,8 +890,8 @@ public class Pattern {
         return res;
       }
 
-      // symbol clash: f(t1,..., a() << a() ,...,tn) -> f(t1,...,  TrueMatch ,...,tn)
-      s@Match(Appl(f,argf),Appl(g,argg)) && f!=g -> {
+      // symbol clash: f(t1,...,tn) -> g(u1,...,um) -> Empty
+      s@Match(Appl(f,_),Appl(g,_)) && f!=g -> {
         Term res = `Empty();
         debug("match symbol clash",`s,res);
         return res;
@@ -888,7 +900,7 @@ public class Pattern {
     }
   }
 
-  %strategy PropagateMatchTrue() extends Identity() {
+  %strategy PropagateTrueMatch() extends Identity() {
     visit Term {
       // f(TrueMatch,...,TrueMatch) -> TrueMatch
       s@Appl(f,argf) -> {
@@ -907,8 +919,50 @@ public class Pattern {
       }
     }
   }
+  
+  %strategy SimplifyAddMatch() extends Identity() {
+    visit Term {
+      // t1 << _ + t2 << _ -> (t1+t2) << _ if t1,t2 != _
+      s@Add(ConcAdd(C1*, Match(t1@!Appl[], Var("_")), C2*, Match(t2@!Appl[], Var("_")), C3*)) -> {
+        Term match = `Match(Add(ConcAdd(t1,t2)),Var("_"));
+        Term res = `Add(ConcAdd(match, C1*,C2*,C3));
+        debug("simplify add match",`s,res);
+        return res;
+      }
+    }
+  }
+  
+  public static boolean canBeRemoved2(Rule rule, RuleList ruleList, Signature eSig, Signature gSig) {
+    System.out.println("CAN BE REMOVED2:");
+    boolean res = false;
+    %match(rule) {
+      Rule(lhs,rhs) -> {
+        AddList constraint = `ConcAdd();
+        %match(ruleList) {
+          ConcRule(_*,Rule(l,r),_*) -> {
+            constraint = `ConcAdd(Match(l, lhs),constraint*);
+          }
+        }
+        Term matchingProblem = `Add(constraint);
+        try {
+          // PropagateTrueMatch()
+          Strategy S2 = `ChoiceId(EmptyAdd2Empty(),PropagateEmpty(),SimplifyAddMatch(),SimplifyAdd(),SimplifyMatch(), TrySubsumption());
+          matchingProblem = `InnermostId(S2).visitLight(matchingProblem);
+          System.out.println("matchingProblem = " + Pretty.toString(matchingProblem));
+          if(matchingProblem == `TrueMatch()) {
+            res = true;
+          }
+        } catch(VisitFailure e) {
+          System.out.println("canBeremoves failure");
+        }
+      }
+    }
 
-
+    if(res) {
+      System.out.println("BINGO: " + Pretty.toString(rule));
+    }
+    return res;
+  }
 
   /*
    * examples
