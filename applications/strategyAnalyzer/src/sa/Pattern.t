@@ -66,21 +66,32 @@ public class Pattern {
 
 
 
+    // test subsumtion idea
+    res = removeRedundantRule(res,eSig,gSig);
+
     for(Rule rule:`res.getCollectionConcRule()) {
       System.out.println(Pretty.toString(rule));
     }
     System.out.println("size = " + `res.length());
 
-    // test subsumtion idea
-    %match(res) {
-      ConcRule(C1*,rule,C2*) -> {
-        //canBeRemoved1(`rule, `ConcRule(C1*,C2*), eSig, gSig);
-        canBeRemoved2(`rule, `ConcRule(C1*,C2*), eSig, gSig);
-      }
-    }
 
     return res;
   }
+
+
+  private static RuleList removeRedundantRule(RuleList rules, Signature eSig, Signature gSig) {
+    %match(rules) {
+      ConcRule(C1*,rule,C2*) -> {
+        boolean b = canBeRemoved2(`rule, `ConcRule(C1*,C2*), eSig, gSig);
+        if(b) {
+          System.out.println("CAN BE REMOVE: " + Pretty.toString(`rule));
+          //return removeRedundantRule(`ConcRule(C1*,C2*), eSig, gSig);
+        }
+      }
+    }
+    return rules;
+  }
+
 
   private static Term reduce(Term t, Signature eSig, Signature gSig) {
     try {
@@ -816,7 +827,6 @@ public class Pattern {
   }
 
   public static boolean canBeRemoved1(Rule rule, RuleList ruleList, Signature eSig, Signature gSig) {
-    System.out.println("CAN BE REMOVED1:");
     %match(rule) {
       Rule(lhs,rhs) -> {
 
@@ -839,7 +849,6 @@ public class Pattern {
       }
     }
 
-    System.out.println("BINGO: " + Pretty.toString(rule));
     return true;
   }
 
@@ -940,7 +949,6 @@ public class Pattern {
   }
   
   public static boolean canBeRemoved2(Rule rule, RuleList ruleList, Signature eSig, Signature gSig) {
-    System.out.println("CAN BE REMOVED2:");
     boolean res = false;
     %match(rule) {
       Rule(lhs,rhs) -> {
@@ -966,9 +974,6 @@ public class Pattern {
       }
     }
 
-    if(res) {
-      System.out.println("BINGO: " + Pretty.toString(rule));
-    }
     return res;
   }
 
