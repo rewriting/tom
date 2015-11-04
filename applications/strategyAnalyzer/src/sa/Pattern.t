@@ -25,9 +25,12 @@ public class Pattern {
 //     example1();
     // example2();
 //     example3(); // numadd
-    example4(); // interp
+//     example4(); // interp
 //     example5(); // balance
 //     example6(); // and-or
+//     example7(); // simplest reduce
+//     example7bis(); // simplest reduce with one type
+    example8(); // reduce deeper
   }
 
   /*
@@ -840,9 +843,9 @@ public class Pattern {
 
             Term newt = (Term) omega.getReplace(expand).visit(subject);
 
-            //System.out.println("newt1 = " + Pretty.toString(newt));
+            System.out.println("newt1 = " + Pretty.toString(newt));
             newt = eliminateIllTyped(newt, codomain, gSig);
-            //System.out.println("newt2 = " + Pretty.toString(newt));
+            System.out.println("newt2 = " + Pretty.toString(newt));
             if(newt != `Empty()) {
               todo.add(newt);
             }
@@ -882,8 +885,9 @@ public class Pattern {
   public static boolean canBeRemoved1(Rule rule, RuleList ruleList, Signature eSig, Signature gSig) {
     %match(rule) {
       Rule(lhs,rhs) -> {
-
+        System.out.println("CAN BE REMOVED 1 = " + Pretty.toString(`lhs));
         Term t = expandVar(`lhs,eSig, gSig);
+        System.out.println("Expanded REMOVED 1 = " + Pretty.toString(t));
         %match(t) {
           Add(ConcAdd(_*,et,_*)) -> {
             boolean foundMatch = false;
@@ -902,6 +906,7 @@ public class Pattern {
       }
     }
 
+    System.out.println("BINGO 1 = ");
     return true;
   }
 
@@ -1305,6 +1310,114 @@ public class Pattern {
     RuleList res = trsRule(`ConcRule(r0,r1,r2,r3), eSig,gSig);
   }
 
+
+  private static void example7() {
+    Signature eSig = new Signature();
+    Signature gSig = new Signature();
+
+    Term V = `Var("_");
+
+    eSig.addSymbol("a", `ConcGomType(), `GomType("T") );
+    eSig.addSymbol("b", `ConcGomType(), `GomType("T") );
+    eSig.addSymbol("f", `ConcGomType(GomType("T"),GomType("T")), `GomType("U") );
+
+    gSig.addSymbol("a", `ConcGomType(), `GomType("T") );
+    gSig.addSymbol("b", `ConcGomType(), `GomType("T") );
+    gSig.addSymbol("f", `ConcGomType(GomType("T"),GomType("T")), `GomType("U") );
+
+    Term a =`Appl("a", TermList());
+    Term b =`Appl("b", TermList());
+
+    Term fav =`Appl("f", TermList(a,V));
+    Term fbv =`Appl("f", TermList(b,V));
+    Term fva =`Appl("f", TermList(V,a));
+
+    Term r0 = `Appl("rhs0",TermList());
+
+    RuleList res = `reduceRules(ConcRule(Rule(fav,r0), Rule(fbv,r0), Rule(fva,r0)), eSig,gSig);
+  }
+
+  private static void example7bis() {
+    Signature eSig = new Signature();
+    Signature gSig = new Signature();
+
+    Term V = `Var("_");
+
+    eSig.addSymbol("a", `ConcGomType(), `GomType("T") );
+    eSig.addSymbol("b", `ConcGomType(), `GomType("T") );
+    eSig.addSymbol("f", `ConcGomType(GomType("T"),GomType("T")), `GomType("T") );
+
+    gSig.addSymbol("a", `ConcGomType(), `GomType("T") );
+    gSig.addSymbol("b", `ConcGomType(), `GomType("T") );
+    gSig.addSymbol("f", `ConcGomType(GomType("T"),GomType("T")), `GomType("T") );
+
+    Term a =`Appl("a", TermList());
+    Term b =`Appl("b", TermList());
+
+    Term fvv =`Appl("f", TermList(V,V));
+    Term fav =`Appl("f", TermList(a,V));
+    Term fbv =`Appl("f", TermList(b,V));
+    Term ffv =`Appl("f", TermList(fvv,V));
+    Term fva =`Appl("f", TermList(V,a));
+
+    Term r0 = `Appl("rhs0",TermList());
+
+    RuleList res = `reduceRules(ConcRule(Rule(fav,r0), Rule(ffv,r0), Rule(fbv,r0), Rule(fva,r0)), eSig,gSig);
+  }
+
+
+  private static void example8() {
+    Signature eSig = new Signature();
+    Signature gSig = new Signature();
+
+    Term V = `Var("_");
+
+    eSig.addSymbol("a", `ConcGomType(), `GomType("T") );
+    eSig.addSymbol("b", `ConcGomType(), `GomType("T") );
+    eSig.addSymbol("g", `ConcGomType(GomType("T")), `GomType("T") );
+    eSig.addSymbol("f", `ConcGomType(GomType("T"),GomType("T")), `GomType("U") );
+
+    gSig.addSymbol("a", `ConcGomType(), `GomType("T") );
+    gSig.addSymbol("b", `ConcGomType(), `GomType("T") );
+    eSig.addSymbol("g", `ConcGomType(GomType("T")), `GomType("T") );
+    gSig.addSymbol("f", `ConcGomType(GomType("T"),GomType("T")), `GomType("U") );
+
+    Term a =`Appl("a", TermList());
+    Term b =`Appl("b", TermList());
+
+    Term gv =`Appl("g", TermList(V));
+    Term ga =`Appl("g", TermList(a));
+    Term gb =`Appl("g", TermList(b));
+    Term gg =`Appl("g", TermList(gv));
+
+    Term fgaa =`Appl("f", TermList(ga,a));
+    Term fgba =`Appl("f", TermList(gb,a));
+    Term fgga =`Appl("f", TermList(gg,a));
+    Term faa =`Appl("f", TermList(a,a));
+    Term fba =`Appl("f", TermList(b,a));
+    Term fva =`Appl("f", TermList(V,a));
+
+    Term r0 = `Appl("rhs0",TermList());
+
+    RuleList res = `reduceRules(ConcRule(Rule(fgaa,r0), Rule(fgba,r0), Rule(fgga,r0), Rule(faa,r0), Rule(fba,r0), Rule(fva,r0)), eSig,gSig);
+  }
+
+
+  /*
+   * Reduce a list of rules
+   */
+  public static RuleList reduceRules(RuleList ruleList, Signature eSig, Signature gSig) {
+    
+    // test subsumtion idea
+    %match(ruleList) {
+      ConcRule(C1*,rule,C2*) -> {
+        canBeRemoved1(`rule, `ConcRule(C1*,C2*), eSig, gSig);
+//         canBeRemoved2(`rule, `ConcRule(C1*,C2*), eSig, gSig);
+      }
+    }
+
+    return ruleList;
+  }
 
 
 }
