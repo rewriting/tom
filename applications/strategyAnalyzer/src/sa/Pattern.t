@@ -74,8 +74,8 @@ public class Pattern {
     // test subsumtion idea
     %match(res) {
       ConcRule(C1*,rule,C2*) -> {
-        //boolean bingo = canBeRemoved1(`rule, `ConcRule(C1*,C2*), eSig, gSig);
-        boolean bingo = canBeRemoved2(`rule, `ConcRule(C1*,C2*), eSig, gSig);
+        //canBeRemoved1(`rule, `ConcRule(C1*,C2*), eSig, gSig);
+        canBeRemoved2(`rule, `ConcRule(C1*,C2*), eSig, gSig);
       }
     }
 
@@ -897,6 +897,18 @@ public class Pattern {
         return res;
       }
 
+      /*
+      s@Match(TrueMatch(),_) -> {
+        Term res = `TrueMatch();
+        debug("match true",`s,res);
+        return res;
+      }
+      s@Match(_,TrueMatch()) -> {
+        Term res = `TrueMatch();
+        debug("match true",`s,res);
+        return res;
+      }
+*/
     }
   }
 
@@ -922,8 +934,15 @@ public class Pattern {
   
   %strategy SimplifyAddMatch() extends Identity() {
     visit Term {
+      // t + TrueMatch -> TrueMatch
+      s@Add(ConcAdd(_*, TrueMatch(), _*)) -> {
+        Term res = `TrueMatch();
+        debug("elim TrueMatch",`s,res);
+        return res;
+      }
+
       // t1 << _ + t2 << _ -> (t1+t2) << _ if t1,t2 != _
-      s@Add(ConcAdd(C1*, Match(t1@!Appl[], Var("_")), C2*, Match(t2@!Appl[], Var("_")), C3*)) -> {
+      s@Add(ConcAdd(C1*, Match(t1@!Var[], Var("_")), C2*, Match(t2@!Var[], Var("_")), C3*)) -> {
         Term match = `Match(Add(ConcAdd(t1,t2)),Var("_"));
         Term res = `Add(ConcAdd(match, C1*,C2*,C3));
         debug("simplify add match",`s,res);
@@ -946,8 +965,9 @@ public class Pattern {
         Term matchingProblem = `Add(constraint);
         try {
           // PropagateTrueMatch()
-          Strategy S2 = `ChoiceId(EmptyAdd2Empty(),PropagateEmpty(),SimplifyAddMatch(),SimplifyAdd(),SimplifyMatch(), TrySubsumption());
+          Strategy S2 = `ChoiceId(EmptyAdd2Empty(),PropagateEmpty(),PropagateTrueMatch(),SimplifyAddMatch(),SimplifyAdd(),SimplifyMatch(), TryAbstraction(eSig));
           matchingProblem = `InnermostId(S2).visitLight(matchingProblem);
+          System.out.println("case = " + Pretty.toString(`lhs));
           System.out.println("matchingProblem = " + Pretty.toString(matchingProblem));
           if(matchingProblem == `TrueMatch()) {
             res = true;
