@@ -23,11 +23,14 @@ public class Pattern {
 
   public static void main(String args[]) {
 //     example1();
-     //example2();
-//     example3();
-    example4();
-//     example5();
-//     example6();
+    // example2();
+//     example3(); // numadd
+//     example4(); // interp
+//     example5(); // balance
+//     example6(); // and-or
+//     example7(); // simplest reduce
+//     example7bis(); // simplest reduce with one type
+    example8(); // reduce deeper
   }
 
   /*
@@ -66,20 +69,58 @@ public class Pattern {
 
 
 
+    // test subsumtion idea
+    res = removeRedundantRule(res,eSig,gSig);
+
     for(Rule rule:`res.getCollectionConcRule()) {
       System.out.println(Pretty.toString(rule));
     }
     System.out.println("size = " + `res.length());
 
-    // test subsumtion idea
-    %match(res) {
-      ConcRule(C1*,rule,C2*) -> {
-        boolean bingo = canBeRemoved(`rule, `ConcRule(C1*,C2*), eSig, gSig);
-      }
-    }
 
     return res;
   }
+
+
+  private static RuleList removeRedundantRule(RuleList rules, Signature eSig, Signature gSig) {
+    return removeRedundantRuleAux(rules,`ConcRule(), eSig,gSig);
+  }
+
+  private static RuleList removeRedundantRuleAux(RuleList candidates, RuleList kernel, Signature eSig, Signature gSig) {
+    HashSet<RuleList> bag = new HashSet<RuleList>();
+
+    %match( candidates ) {
+      ConcRule(head, tail*) -> {
+        boolean b = canBeRemoved2(`head, `ConcRule(tail*,kernel*), eSig, gSig);
+        if(b) {
+          System.out.println("REMOVE: " + Pretty.toString(`head));
+          // try with the head removed 
+          bag.add(removeRedundantRuleAux(`tail, kernel, eSig, gSig));
+
+          // uncomment the following return for a greedy algorithm:
+          //return removeRedundantRule(`ConcRule(C1*,C2*), eSig, gSig);
+
+        }
+
+        // try with the head kept in kernel
+        bag.add(removeRedundantRuleAux(`tail, `ConcRule(head,kernel*), eSig, gSig));
+      }
+    }
+
+    RuleList minrules = `ConcRule(candidates*,kernel*);
+    int minlength = minrules.length();
+    for(RuleList e:bag) {
+      if(e.length() < minlength) {
+        minrules = e;
+        minlength = minrules.length();
+      }
+    }
+
+    return minrules;
+
+  }
+
+
 
   private static Term reduce(Term t, Signature eSig, Signature gSig) {
     try {
@@ -121,7 +162,7 @@ public class Pattern {
         System.out.println("REMOVE SUBSUMTION = " + Pretty.toString(t));
       }
     }
-    
+
     return t;
   }
 
@@ -254,7 +295,7 @@ public class Pattern {
         return res;
       }
      
-      // f(t1,...,tn) + f(t1',...,tn') -> f(t1,..., ti + ti',...,tn)
+      // f(t1,...,ti,...,tn) + f(t1,...,ti',...,tn) -> f(t1,..., ti + ti',...,tn)
       // all but one ti, ti' should be identical
       s@Add(ConcAdd(C1*, Appl(f,tl1), C2*, Appl(f, tl2), C3*)) -> {
         /*
@@ -617,7 +658,11 @@ public class Pattern {
   }
 */
 
-  // more efficient implementation 
+  /*
+   * Transform a term which contains Add into
+   * a sum of terms which do no longer contain any Add
+   * (more efficient implementation)
+   */
   private static Term expandAdd(Term t) {
     HashSet<Term> bag = new HashSet<Term>();
     expandAddAux(bag,t);
@@ -676,6 +721,10 @@ public class Pattern {
     }
   }
 
+  /*
+   * Given a list of terms
+   * remove those which are subsumed by another one
+   */
   private static AddList simplifySubsumption(AddList tl) {
     %match(tl) {
       ConcAdd(C1*,t1,C2*,t2,C3*) -> {
@@ -689,6 +738,9 @@ public class Pattern {
     return tl;
   }
 
+  /*
+   * Return true if t1 matches t2
+   */
   private static boolean match(Term t1, Term t2) {
     %match(t1,t2) {
       // Delete
@@ -717,6 +769,8 @@ public class Pattern {
   }
 
   /*
+   * 1st idea to remove redundant patterns
+   *
    * expand once all occurence of _ in a term
    */
   private  static Term expandVar(Term t, Signature eSig, Signature gSig) {
@@ -762,9 +816,9 @@ public class Pattern {
 
             Term newt = (Term) omega.getReplace(expand).visit(subject);
 
-            //System.out.println("newt1 = " + Pretty.toString(newt));
+            System.out.println("newt1 = " + Pretty.toString(newt));
             newt = eliminateIllTyped(newt, codomain, gSig);
-            //System.out.println("newt2 = " + Pretty.toString(newt));
+            System.out.println("newt2 = " + Pretty.toString(newt));
             if(newt != `Empty()) {
               todo.add(newt);
             }
@@ -801,12 +855,12 @@ public class Pattern {
     }
   }
 
-  public static boolean canBeRemoved(Rule rule, RuleList ruleList, Signature eSig, Signature gSig) {
-    System.out.println("CAN BE REMOVED:");
+  public static boolean canBeRemoved1(Rule rule, RuleList ruleList, Signature eSig, Signature gSig) {
     %match(rule) {
       Rule(lhs,rhs) -> {
-
+        System.out.println("CAN BE REMOVED 1 = " + Pretty.toString(`lhs));
         Term t = expandVar(`lhs,eSig, gSig);
+        System.out.println("Expanded REMOVED 1 = " + Pretty.toString(t));
         %match(t) {
           Add(ConcAdd(_*,et,_*)) -> {
             boolean foundMatch = false;
@@ -825,11 +879,134 @@ public class Pattern {
       }
     }
 
-    System.out.println("BINGO: " + Pretty.toString(rule));
+    System.out.println("BINGO 1 = ");
     return true;
   }
 
 
+  /*
+   * 2nd idea to remove redundant patterns
+   *
+   * introduce matching constraints inside patterns
+   */
+
+  %strategy SimplifyMatch() extends Identity() {
+    visit Term {
+      // delete: a() << a() -> TrueMatch()
+      s@Match(Appl(name,TermList()),Appl(name,TermList())) -> {
+        Term res = `TrueMatch();
+        debug("match delete",`s,res);
+        return res;
+      }
+
+      // decompose: f(a1,...,an) << f(b1,...,bn) -> f(a1<<b1,...,an<<bn) 
+      s@Match(Appl(f,arg1),Appl(f,arg2)) -> {
+        TermList tl1 = `arg1;
+        TermList tl2 = `arg2;
+        TermList newarg = `TermList();
+        while(!tl1.isEmptyTermList()) {
+          Term h1 = tl1.getHeadTermList();
+          Term h2 = tl2.getHeadTermList();
+          newarg = `TermList(newarg*, Match(h1,h2));
+          tl1 = tl1.getTailTermList();
+          tl2 = tl2.getTailTermList();
+        }
+        Term res = `Appl(f,newarg);
+        debug("match decompose",`s,res);
+        return res;
+      }
+
+      // match: _ << f(...) -> TrueMatch()
+      s@Match(Var(_),Appl(_,_)) -> {
+        Term res = `TrueMatch();
+        debug("match1",`s,res);
+        return res;
+      }
+
+      // match: _ << _ -> TrueMatch()
+      s@Match(Var(_),Var(_)) -> {
+        Term res = `TrueMatch();
+        debug("match2",`s,res);
+        return res;
+      }
+
+      // symbol clash: f(t1,...,tn) -> g(u1,...,um) -> Empty
+      s@Match(Appl(f,_),Appl(g,_)) && f!=g -> {
+        Term res = `Empty();
+        debug("match symbol clash",`s,res);
+        return res;
+      }
+
+    }
+  }
+
+  %strategy PropagateTrueMatch() extends Identity() {
+    visit Term {
+      // f(TrueMatch,...,TrueMatch) -> TrueMatch
+      s@Appl(f,argf@TermList(_,_*)) -> { // at least one argument
+        boolean ok = true;
+        %match(argf) {
+          TermList(_*,!TrueMatch(),_*) -> {
+            ok = false;
+          }
+        }
+        
+        if(ok) {
+          Term res = `TrueMatch();
+          debug("propagate match true",`s,res);
+          return res;
+        }
+      }
+    }
+  }
+  
+  %strategy SimplifyAddMatch() extends Identity() {
+    visit Term {
+      // t + TrueMatch -> TrueMatch
+      s@Add(ConcAdd(_*, TrueMatch(), _*)) -> {
+        Term res = `TrueMatch();
+        debug("elim TrueMatch",`s,res);
+        return res;
+      }
+
+      // t1 << _ + t2 << _ -> (t1+t2) << _ if t1,t2 != _
+      s@Add(ConcAdd(C1*, Match(t1@!Var[], Var("_")), C2*, Match(t2@!Var[], Var("_")), C3*)) -> {
+        Term match = `Match(Add(ConcAdd(t1,t2)),Var("_"));
+        Term res = `Add(ConcAdd(match, C1*,C2*,C3));
+        debug("simplify add match",`s,res);
+        return res;
+      }
+    }
+  }
+  
+  public static boolean canBeRemoved2(Rule rule, RuleList ruleList, Signature eSig, Signature gSig) {
+    boolean res = false;
+    %match(rule) {
+      Rule(lhs,rhs) -> {
+        AddList constraint = `ConcAdd();
+        %match(ruleList) {
+          ConcRule(_*,Rule(l,r),_*) -> {
+            constraint = `ConcAdd(Match(l, lhs),constraint*);
+          }
+        }
+        Term matchingProblem = `Add(constraint);
+        try {
+          // PropagateTrueMatch()
+          Strategy S2 = `ChoiceId(EmptyAdd2Empty(),PropagateEmpty(),PropagateTrueMatch(),SimplifyAddMatch(),SimplifyAdd(),SimplifyMatch(), TryAbstraction(eSig));
+          matchingProblem = `InnermostId(S2).visitLight(matchingProblem);
+          System.out.println("case = " + Pretty.toString(`lhs));
+          System.out.println("matchingProblem = " + Pretty.toString(matchingProblem));
+          if(matchingProblem == `TrueMatch()) {
+            res = true;
+          }
+        } catch(VisitFailure e) {
+          System.out.println("can be removed2 failure");
+        }
+      }
+    }
+
+    return res;
+  }
 
   /*
    * examples
@@ -1106,6 +1283,114 @@ public class Pattern {
     RuleList res = trsRule(`ConcRule(r0,r1,r2,r3), eSig,gSig);
   }
 
+
+  private static void example7() {
+    Signature eSig = new Signature();
+    Signature gSig = new Signature();
+
+    Term V = `Var("_");
+
+    eSig.addSymbol("a", `ConcGomType(), `GomType("T") );
+    eSig.addSymbol("b", `ConcGomType(), `GomType("T") );
+    eSig.addSymbol("f", `ConcGomType(GomType("T"),GomType("T")), `GomType("U") );
+
+    gSig.addSymbol("a", `ConcGomType(), `GomType("T") );
+    gSig.addSymbol("b", `ConcGomType(), `GomType("T") );
+    gSig.addSymbol("f", `ConcGomType(GomType("T"),GomType("T")), `GomType("U") );
+
+    Term a =`Appl("a", TermList());
+    Term b =`Appl("b", TermList());
+
+    Term fav =`Appl("f", TermList(a,V));
+    Term fbv =`Appl("f", TermList(b,V));
+    Term fva =`Appl("f", TermList(V,a));
+
+    Term r0 = `Appl("rhs0",TermList());
+
+    RuleList res = `reduceRules(ConcRule(Rule(fav,r0), Rule(fbv,r0), Rule(fva,r0)), eSig,gSig);
+  }
+
+  private static void example7bis() {
+    Signature eSig = new Signature();
+    Signature gSig = new Signature();
+
+    Term V = `Var("_");
+
+    eSig.addSymbol("a", `ConcGomType(), `GomType("T") );
+    eSig.addSymbol("b", `ConcGomType(), `GomType("T") );
+    eSig.addSymbol("f", `ConcGomType(GomType("T"),GomType("T")), `GomType("T") );
+
+    gSig.addSymbol("a", `ConcGomType(), `GomType("T") );
+    gSig.addSymbol("b", `ConcGomType(), `GomType("T") );
+    gSig.addSymbol("f", `ConcGomType(GomType("T"),GomType("T")), `GomType("T") );
+
+    Term a =`Appl("a", TermList());
+    Term b =`Appl("b", TermList());
+
+    Term fvv =`Appl("f", TermList(V,V));
+    Term fav =`Appl("f", TermList(a,V));
+    Term fbv =`Appl("f", TermList(b,V));
+    Term ffv =`Appl("f", TermList(fvv,V));
+    Term fva =`Appl("f", TermList(V,a));
+
+    Term r0 = `Appl("rhs0",TermList());
+
+    RuleList res = `reduceRules(ConcRule(Rule(fav,r0), Rule(ffv,r0), Rule(fbv,r0), Rule(fva,r0)), eSig,gSig);
+  }
+
+
+  private static void example8() {
+    Signature eSig = new Signature();
+    Signature gSig = new Signature();
+
+    Term V = `Var("_");
+
+    eSig.addSymbol("a", `ConcGomType(), `GomType("T") );
+    eSig.addSymbol("b", `ConcGomType(), `GomType("T") );
+    eSig.addSymbol("g", `ConcGomType(GomType("T")), `GomType("T") );
+    eSig.addSymbol("f", `ConcGomType(GomType("T"),GomType("T")), `GomType("U") );
+
+    gSig.addSymbol("a", `ConcGomType(), `GomType("T") );
+    gSig.addSymbol("b", `ConcGomType(), `GomType("T") );
+    eSig.addSymbol("g", `ConcGomType(GomType("T")), `GomType("T") );
+    gSig.addSymbol("f", `ConcGomType(GomType("T"),GomType("T")), `GomType("U") );
+
+    Term a =`Appl("a", TermList());
+    Term b =`Appl("b", TermList());
+
+    Term gv =`Appl("g", TermList(V));
+    Term ga =`Appl("g", TermList(a));
+    Term gb =`Appl("g", TermList(b));
+    Term gg =`Appl("g", TermList(gv));
+
+    Term fgaa =`Appl("f", TermList(ga,a));
+    Term fgba =`Appl("f", TermList(gb,a));
+    Term fgga =`Appl("f", TermList(gg,a));
+    Term faa =`Appl("f", TermList(a,a));
+    Term fba =`Appl("f", TermList(b,a));
+    Term fva =`Appl("f", TermList(V,a));
+
+    Term r0 = `Appl("rhs0",TermList());
+
+    RuleList res = `reduceRules(ConcRule(Rule(fgaa,r0), Rule(fgba,r0), Rule(fgga,r0), Rule(faa,r0), Rule(fba,r0), Rule(fva,r0)), eSig,gSig);
+  }
+
+
+  /*
+   * Reduce a list of rules
+   */
+  public static RuleList reduceRules(RuleList ruleList, Signature eSig, Signature gSig) {
+    
+    // test subsumtion idea
+    %match(ruleList) {
+      ConcRule(C1*,rule,C2*) -> {
+        canBeRemoved1(`rule, `ConcRule(C1*,C2*), eSig, gSig);
+//         canBeRemoved2(`rule, `ConcRule(C1*,C2*), eSig, gSig);
+      }
+    }
+
+    return ruleList;
+  }
 
 
 }

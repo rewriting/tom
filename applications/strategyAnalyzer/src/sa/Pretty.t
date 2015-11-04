@@ -149,6 +149,13 @@ public class Pretty {
         return "empty";
       }
 
+      TrueMatch() -> {
+        return "TrueMatch";
+      }
+      
+      Match(t1,t2) -> {
+        return "(" + toString(`t1) + " << " + toString(`t2) + ")";
+      }
 
     }
     return "toString(Term): error";
