@@ -1000,7 +1000,7 @@ public class Pattern {
             res = true;
           }
         } catch(VisitFailure e) {
-          System.out.println("canBeremoves failure");
+          System.out.println("can be removed2 failure");
         }
       }
     }
