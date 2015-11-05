@@ -280,10 +280,6 @@ public class Compiler {
     // used just to have in generatedRules the packages of rules in the order they are called 
     List<Rule> localRules = new ArrayList<Rule>();
 
-    if(Main.options.pattern) {
-      //System.out.println("pattern: " + ruleList);
-      RuleList res = Pattern.trsRule(ruleList,eSig,gSig);
-    }
 
     if(!Main.options.metalevel) {
       // if declared strategy (i.e. defined name) use its name; otherwise generate fresh name
@@ -481,6 +477,12 @@ public class Compiler {
           }
 
           strategySymbol = this.compileRuleList(rList,generatedRules);
+
+          if(Main.options.pattern) {
+            System.out.println("pattern: " + rList);
+            RuleList res = Pattern.trsRule(rList,eSig,gSig);
+          }
+
         }
 
         /*

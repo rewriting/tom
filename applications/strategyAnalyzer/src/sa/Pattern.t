@@ -705,7 +705,7 @@ public class Pattern {
         System.out.println("res.size  = " + res.size());
         for(Term subject:res) {
           // add g(Z1,...) ... h(Z1,...)
-          for(String name: eSig.getSymbols()) {
+          for(String name: eSig.getConstructors()) {
             int arity = eSig.getArity(name);
             Term expand = Tools.genAbstractTerm(name,arity, "_");
             expand = `TopDown(RemoveVar()).visitLight(expand);
@@ -874,7 +874,7 @@ public class Pattern {
       s@Add(al@ConcAdd(Appl(f,_),_*)) -> {
         GomType codomain = eSig.getCodomain(`f);
         if(codomain != null) {
-          Set<String> ops = eSig.getSymbols(codomain);
+          Set<String> ops = eSig.getConstructors(codomain);
           AddList l = `ConcAdd();
           for(String name:ops) {
             TermList args = `TermList();
