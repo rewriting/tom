@@ -75,8 +75,7 @@
 					<arg value="${test.gen}"/>
 					<arg value="-tom"/>
 					<arg value="Main${nsNameOf@{file}}"/>
-					<arg value="-typed"/>
-					<arg value="T"/>
+					<arg value="-withType"/>	
 			
 	        		</java>
 			</sequential>

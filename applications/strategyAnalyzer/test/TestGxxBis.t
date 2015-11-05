@@ -41,7 +41,6 @@ import java.util.regex.Pattern;
 
 public class TestGxxBis {
   %include { maingxxbis/m/m.tom }
-  	FindMainStrat mainStrat = new FindMainStrat(MaingxxBis.class.getName());
 	public static void main(String[] args) {
     org.junit.runner.JUnitCore.main(MaingxxBis.class.getName());
 	}
@@ -53,6 +52,6 @@ public class TestGxxBis {
   @Test
   public void testGxx3() {
     assertEquals("mainStrat(g(f(g(a),g(b)))) should be f(a,b)",
-                 `f(a(),b()), mainStrat.run(`g(f(g(a()),g(b())))));
+                 `f(a(),b()), MaingxxBis.mainStrat(`g(f(g(a()),g(b())))));
   }
 }

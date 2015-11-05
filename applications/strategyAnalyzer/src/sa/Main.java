@@ -107,7 +107,7 @@ public class Main {
       }
 
       if(options.classname != null) {
-        tomoutputfile.println( Pretty.generateTom(strategyName,options.type,generatedRules,generatedSignature,options.classname, options.withType) );
+        tomoutputfile.println( Pretty.generateTom(strategyName,options.type, generatedRules, extractedSignature, generatedSignature, options.classname, options.withType) );
       } 
 
       if(options.aprove) {
