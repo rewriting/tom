@@ -37,7 +37,6 @@ import org.junit.Before;
 
 public class TestGxx {
   %include { maingxx/m/m.tom }
-  	FindMainStrat mainStrat = new FindMainStrat(Maingxx.class.getName());
 	public static void main(String[] args) {
     org.junit.runner.JUnitCore.main(Maingxx.class.getName());
 	}
@@ -49,19 +48,19 @@ public class TestGxx {
   @Test
   public void testGxx1() {
     assertEquals("mainStrat(g(a)) should be a()",
-                 `a(), mainStrat.run(`g(a())));
+                 `a(), Maingxx.mainStrat(`g(a())));
   }
   
   @Test
   public void testGxx2() {
     assertEquals("mainStrat(g(g(a))) should be a()",
-                 `a(), mainStrat.run(`g(g(a()))));
+                 `a(), Maingxx.mainStrat(`g(g(a()))));
   }
 
   @Test
   public void testGxx3() {
     assertEquals("mainStrat(g(f(g(a),g(b)))) should be f(a,b)",
-                 `f(a(),b()), mainStrat.run(`g(f(g(a()),g(b())))));
+                 `f(a(),b()), Maingxx.mainStrat(`g(f(g(a()),g(b())))));
   }
 
 }

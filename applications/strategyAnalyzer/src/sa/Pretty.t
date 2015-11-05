@@ -228,7 +228,7 @@ public class Pretty {
     return opsb.toString() + "\n" + varsb.toString() + "\n" + rulesb.toString();
   }  
 
-  public static String generateTom(String strategyName, String typeName, RuleList bag, Signature sig, String classname, boolean typed) {
+  public static String generateTom(String strategyName, String typeName, RuleList bag, Signature esig, Signature gsig, String classname, boolean isTyped) {
     System.out.println("--------- TOM ----------------------");
     //     System.out.println("RULEs: " + toString(bag));
 
@@ -244,11 +244,11 @@ public class @classname@ {
       abstract syntax
 ]%);
     // generate signature
-    for(GomType codomain: sig.getCodomains()) {
+    for(GomType codomain: gsig.getCodomains()) {
       sb.append("      " + codomain.getName() + " = \n");
-      for(String name: sig.getSymbols(codomain)) {
-        int arity = sig.getArity(name);
-        GomTypeList domain = sig.getDomain(name);
+      for(String name: gsig.getSymbols(codomain)) {
+        int arity = gsig.getArity(name);
+        GomTypeList domain = gsig.getDomain(name);
         String args = "";
         int i = 0;
         while(!domain.isEmptyConcGomType()) {
@@ -284,15 +284,21 @@ public class @classname@ {
   }
   
   public static void main(String[] args) {
-    try {
-      BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
   ]%);
-     if(!typed){
-	sb.append(%[
+  if(!isTyped){
+    sb.append(%[
+    try {
+    ]%);
+  }
+  sb.append(%[
+      BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+    ]%); 
+    if(typeName != null || !isTyped) {
+    sb.append(%[
       @inputTypeName@ input = @inputTypeName@.fromString(reader.readLine());
-      ]%);
-     }
-     sb.append(%[
+    ]%);
+    }
+    sb.append(%[
       long start = System.currentTimeMillis();
       ]%);
 
@@ -308,22 +314,71 @@ public class @classname@ {
   if(Main.options.metalevel) {
     sb.append(%[
       Term t = `decode(@name@(encode(input)));
+      System.out.println(t);
       ]%);
-  } else if(!typed){
+  } else if(!isTyped){
       sb.append(%[
-      @inputTypeName@ t = `@name@(input);
+      Object t = @classname@.mainStrat(input);
+      System.out.println(t);
       ]%);
   }
 
 
   sb.append(%[
       long stop = System.currentTimeMillis();
-      System.out.println(t);
+ 
       System.out.println("time1 (ms): " + ((stop-start)));
+    ]%);
+    if(!isTyped) {
+    sb.append(%[
     } catch (IOException e) {
       e.printStackTrace();
+      }
+    ]%);
+    }
+  sb.append(%[
+  }
+  ]%);
+  	
+    sb.append(%[
+
+  public static Object mainStrat(Object t){
+  ]%);		
+  if(isTyped || typeName != null) {
+    for(GomType codomain: esig.getCodomains()) {
+      
+      sb.append(%[
+      if(t instanceof @codomain.getName()@) {
+	return `mainStrat_@codomain.getName()@((@codomain.getName()@)t);
+      }
+      ]%);
     }
   }
+  if(Main.options.metalevel) {      
+      sb.append(%[
+  	return `decode(mainStrat(encode((Term)t)));
+      ]%);
+  }
+  else {
+    if(isTyped || typeName != null) {
+    sb.append(%[
+        else {
+	  return `mainStrat(t);
+        }
+    ]%);
+    }
+    else {
+    sb.append(%[
+        return `mainStrat((Term) t);
+    ]%);
+    }
+  }
+  sb.append(%[    
+  }
+    ]%);	
+  
+
+sb.append(%[
 }
 ]%);
 

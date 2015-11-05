@@ -281,6 +281,7 @@ public class Compiler {
     List<Rule> localRules = new ArrayList<Rule>();
 
     if(Main.options.pattern) {
+      //System.out.println("pattern: " + ruleList);
       RuleList res = Pattern.trsRule(ruleList,eSig,gSig);
     }
 
