@@ -133,8 +133,8 @@ public class Pattern {
   private static Term reduce(Term t, Signature eSig, Signature gSig) {
     try {
       // DistributeAdd needed if we can start with terms like X \ f(a+b) or X \ (f(X)\f(f(_)))
-      Strategy S1 = `ChoiceId(EmptyAdd2Empty(),PropagateEmpty(),SimplifySub(eSig,gSig));
-      Strategy S2 = `ChoiceId(EmptyAdd2Empty(),PropagateEmpty(), SimplifyAdd());
+      Strategy S1 = `ChoiceId(CleanAdd(),PropagateEmpty(),SimplifySub(eSig,gSig));
+      Strategy S2 = `ChoiceId(CleanAdd(),PropagateEmpty(), VarAdd(), FactorizeAdd());
 
       t =  `InnermostId(S1).visitLight(t);
       System.out.println("NO SUBs = " + Pretty.toString(t));
@@ -175,7 +175,7 @@ public class Pattern {
 
   %strategy PropagateEmpty() extends Identity() {
     visit Term {
-      //   f(t1,...,empty,...,tn) -> empty
+      // f(t1,...,empty,...,tn) -> empty
       s@Appl(f,TermList(_*,Empty(),_*)) -> {
         Term res = `Empty();
         debug("propagate empty",`s,res);
@@ -184,83 +184,16 @@ public class Pattern {
     }
   }
 
-  %strategy EmptyAdd2Empty() extends Identity() {
+  /*
+   * no longer needed
+   * done in hooks
+   */
+  %strategy CleanAdd() extends Identity() {
     visit Term {
+      // Add() -> empty
       s@Add(ConcAdd()) -> {
         Term res = `Empty();
         debug("elim ()",`s,res);
-        return res;
-      }
-    }
-  }
-
-  %strategy ElimEmpty() extends Identity() {
-    visit Term {
-      // t + empty -> t
-      s@Add(ConcAdd(C1*,Empty(),C2*)) -> {
-        Term res = `Add(ConcAdd(C1*,C2*));
-        debug("elim empty",`s,res);
-        return res;
-      }
-    }
-  }
-
-  %strategy FlattenAdd() extends Identity() {
-    visit Term {
-
-      // flatten: (a + (b + c) + d) -> (a + b + c + d)
-      s@Add(ConcAdd(C1*, Add(ConcAdd(tl*)), C2*)) -> {
-        Term res = `Add(ConcAdd(C1*,tl*,C2*));
-        debug("flatten1",`s,res);
-        return res;
-      }
-
-      // t + t -> t
-      s@Add(ConcAdd(C1*, t, C2*, t, C3*)) -> {
-       Term res = `Add(ConcAdd(C1*,t,C2*,C3*));
-       debug("t + t -> t",`s,res);
-       return res;
-     }
-
-    }
-  }
-
-  // check abstraction
-  // a + b + g(_) + f(_) == signature ==> X
-  %strategy TryAbstraction(eSig:Signature) extends Identity() {
-    visit Term {
-      s@Add(al@ConcAdd(Appl(f,_),_*)) -> {
-          GomType codomain = eSig.getCodomain(`f);
-          if(codomain != null) {
-            Set<String> ops = eSig.getSymbols(codomain);
-            AddList l = `ConcAdd();
-            for(String name:ops) {
-              TermList args = `TermList();
-              for(int i=0 ; i<eSig.getArity(name) ; i++) {
-                args = `TermList(Var("_"),args*);
-              }
-              Term p = `Appl(name,args);
-              l = `ConcAdd(p,l*);
-            }
-            if(l == `al) {
-              System.out.println("OPS = " + ops + " al = " + `al);
-              return `Var("_");
-            }
-          } else {
-            // do nothing
-            //System.out.println("f -> null " + `f);
-          }
-      }
-    }
-  }
-
-  %strategy SimplifyAdd() extends Identity() {
-    visit Term {
-
-      // flatten: (a + (b + c) + d) -> (a + b + c + d)
-      s@Add(ConcAdd(C1*, Add(ConcAdd(tl*)), C2*)) -> {
-        Term res = `Add(ConcAdd(C1*,tl*,C2*));
-        debug("flatten1",`s,res);
         return res;
       }
 
@@ -271,26 +204,31 @@ public class Pattern {
         return res;
       }
 
-      // a + x + b -> x
-      s@Add(ConcAdd(_*, x@Var("_"), _*)) -> {
-        Term res = `x;
-        debug("a + x + b -> x",`s,res);
-        return res;
-      }
-
       // t + empty -> t
       s@Add(ConcAdd(C1*,Empty(),C2*)) -> {
         Term res = `Add(ConcAdd(C1*,C2*));
         debug("elim empty",`s,res);
         return res;
       }
-     
+
+      // flatten: (a + (b + c) + d) -> (a + b + c + d)
+      s@Add(ConcAdd(C1*, Add(ConcAdd(tl*)), C2*)) -> {
+        Term res = `Add(ConcAdd(C1*,tl*,C2*));
+        debug("flatten1",`s,res);
+        return res;
+      }
+
+    }
+  }
+
+  %strategy FactorizeAdd() extends Identity() {
+    visit Term {
       // f(t1,...,ti,...,tn) + f(t1,...,ti',...,tn) -> f(t1,..., ti + ti',...,tn)
       // all but one ti, ti' should be identical
       s@Add(ConcAdd(C1*, Appl(f,tl1), C2*, Appl(f, tl2), C3*)) -> {
         TermList tl = `addUniqueTi(tl1,tl2);
         if(tl != null) {
-          Term res = `Add(ConcAdd(C1*, Appl(f,tl), C2*, C3*));
+          Term res = `Add(ConcAdd(Appl(f,tl), C1*, C2*, C3*));
           debug("add merge",`s,res);
           return res;
         } else {
@@ -298,7 +236,17 @@ public class Pattern {
         }
       }
 
+    }
+  }
 
+  %strategy VarAdd() extends Identity() {
+    visit Term {
+      // a + x + b -> x
+      s@Add(ConcAdd(_*, x@Var("_"), _*)) -> {
+        Term res = `x;
+        debugVerbose("a + x + b -> x",`s,res);
+        return res;
+      }
     }
   }
 
@@ -490,9 +438,12 @@ public class Pattern {
   private static TermList addUniqueTi(TermList l1,TermList l2) {
     TermList tl1=l1;
     TermList tl2=l2;
+    if(l1==l2) {
+      return l1;
+    }
     TermList tl = `TermList();
     int cpt = 0;
-    while(!tl1.isEmptyTermList()) {
+    while(!tl1.isEmptyTermList() && cpt <= 1) {
       Term h1 = tl1.getHeadTermList();
       Term h2 = tl2.getHeadTermList();
       if(h1==h2) {
@@ -754,7 +705,7 @@ public class Pattern {
         System.out.println("res.size  = " + res.size());
         for(Term subject:res) {
           // add g(Z1,...) ... h(Z1,...)
-          for(String name: eSig.getSymbols()) {
+          for(String name: eSig.getConstructors()) {
             int arity = eSig.getArity(name);
             Term expand = Tools.genAbstractTerm(name,arity, "_");
             expand = `TopDown(RemoveVar()).visitLight(expand);
@@ -855,16 +806,9 @@ public class Pattern {
       }
 
       // match: _ << f(...) -> TrueMatch()
-      s@Match(Var(_),Appl(_,_)) -> {
+      s@Match(Var(_),(Appl|Var)[]) -> {
         Term res = `TrueMatch();
-        debug("match1",`s,res);
-        return res;
-      }
-
-      // match: _ << _ -> TrueMatch()
-      s@Match(Var(_),Var(_)) -> {
-        Term res = `TrueMatch();
-        debug("match2",`s,res);
+        debug("match",`s,res);
         return res;
       }
 
@@ -923,6 +867,37 @@ public class Pattern {
     }
   }
   
+  // check abstraction
+  // a + b + g(_) + f(_) == signature ==> X
+  %strategy TryAbstraction(eSig:Signature) extends Identity() {
+    visit Term {
+      s@Add(al@ConcAdd(Appl(f,_),_*)) -> {
+        GomType codomain = eSig.getCodomain(`f);
+        if(codomain != null) {
+          Set<String> ops = eSig.getConstructors(codomain);
+          AddList l = `ConcAdd();
+          for(String name:ops) {
+            TermList args = `TermList();
+            for(int i=0 ; i<eSig.getArity(name) ; i++) {
+              args = `TermList(Var("_"),args*);
+            }
+            Term p = `Appl(name,args);
+            l = `ConcAdd(p,l*);
+          }
+          if(l == `al) {
+            //System.out.println("OPS = " + ops + " al = " + `al);
+            Term res = `Var("_");
+            debug("abstraction",`s,res);
+            return res;
+          }
+        } else {
+          // do nothing
+          //System.out.println("f -> null " + `f);
+        }
+      }
+    }
+  }
+
   public static boolean canBeRemoved2(Rule rule, RuleList ruleList, Signature eSig, Signature gSig) {
     boolean res = false;
     %match(rule) {
@@ -936,12 +911,13 @@ public class Pattern {
         Term matchingProblem = `Add(constraint);
         try {
           // PropagateTrueMatch()
-          Strategy S2 = `ChoiceId(EmptyAdd2Empty(),PropagateEmpty(),PropagateTrueMatch(),SimplifyAddMatch(),SimplifyAdd(),SimplifyMatch(), TryAbstraction(eSig));
+          Strategy S2 = `ChoiceId(CleanAdd(),PropagateEmpty(),PropagateTrueMatch(),SimplifyAddMatch(),VarAdd(),FactorizeAdd(),SimplifyMatch(), TryAbstraction(eSig));
           matchingProblem = `InnermostId(S2).visitLight(matchingProblem);
           System.out.println("case = " + Pretty.toString(`lhs));
           System.out.println("matchingProblem = " + Pretty.toString(matchingProblem));
           if(matchingProblem == `TrueMatch()) {
             res = true;
+            //System.out.println("BINGO");
           }
         } catch(VisitFailure e) {
           System.out.println("can be removed2 failure");

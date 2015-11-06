@@ -1,0 +1,25 @@
+
+abstract syntax
+Bool = True() | False()
+Nat = Z() | S(Nat)
+List = Nil() | Cons(Val,List)
+Val = Nv(Nat) | Bv(Bool) | Undef() | interp(Nat,List)
+
+functions
+Val = interp(Nat,List)
+
+strategies
+
+r1() =  [  
+  interp(Z(), Nil())                                             -> Nv(Z()),
+  interp(S(Z()), Cons(Nv(n),Nil()))                              -> Nv(Z()), //Nv(S(n)),
+  interp(S(S(Z())), Cons(Nv(m),Cons(Nv(n),Nil())))               -> Nv(Z()), //Nv(plus(m,n)),
+  interp(S(S(S(Z()))), Nil())                                    -> Nv(Z()), //Bv(True()),
+  interp(S(S(S(S(Z())))), Cons(Bv(b),Nil()))                     -> Nv(Z()), //Bv(not(b)),
+  interp(S(S(S(S(S(Z()))))), Cons(Nv(b1),Cons(Bv(b2),Nil())))    -> Nv(Z()), //Bv(or(b1,b2)),
+  interp(S(S(S(S(S(S(Z())))))), Cons(Nv(n1),Cons(Nv(n2),Nil()))) -> Nv(Z()), //Bv(inf(n1,n2)),
+  interp(x,y)                                                    -> Undef()
+]
+
+mainStrat() = r1()
+

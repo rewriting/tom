@@ -142,7 +142,7 @@ public class RuleCompiler {
         %match(antiterm) { 
           Appl(name,args)  -> {
             // add g(Z1,...) ... h(Z1,...)
-            for(String otherName: extractedSignature.getSymbols()) {
+            for(String otherName: extractedSignature.getConstructors()) {
               if(!`name.equals(otherName)) {
                 int arity = extractedSignature.getArity(otherName);
                 Term newt = Tools.genAbstractTerm(otherName,arity,Tools.getName("Z"));

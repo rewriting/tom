@@ -213,6 +213,14 @@ public class Signature {
   public Set<String> getSymbols() {
     return table.columnKeySet();
   }
+
+  /** Get the set of symbols for a given codomain
+   * @codomain the type of the codomain
+   * @return the list of symbols in the type
+   */
+  public Set<String> getSymbols(GomType codomain) {
+    return table.row(codomain).keySet();
+  }
   
   /** Get the set of all constructors (symbols but not functions)
    * @return the set of constructors in the signature
@@ -227,12 +235,18 @@ public class Signature {
     return res;
   }
 
-  /** Get the set of symbols for a given codomain
-    * @codomain the type of the codomain
-    * @return the list of symbols in the type
+  /** Get the set of constructors for a given codomain
+   * @codomain the type of the codomain
+   * @return the list of constructors in the type
    */
-  public Set<String> getSymbols(GomType codomain) {
-    return table.row(codomain).keySet();
+  public Set<String> getConstructors(GomType codomain) {
+    HashSet<String> res = new HashSet<String>();
+    for(String e:getSymbols(codomain)) {
+      if(!isFunction(e)) {
+        res.add(e);
+      }
+    }
+    return res;
   }
 
   public String toString() {

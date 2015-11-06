@@ -4,6 +4,9 @@ Tree = E() | T(Color,Tree,Nat,Tree) | balance(Tree)
 Color = R() | B()
 Nat = Z() | S(Nat)
 
+functions
+Tree = balance(Tree)
+
 strategies
 
 r1() =  [  

@@ -3,6 +3,9 @@ abstract syntax
 T = C(Nat) | Bound(Nat) | Neg(T) | Add(T,T) | Sub(T,T) | Mul(Nat,T) | numadd(T,T)
 Nat = Z() | S(Nat)
 
+functions
+T = numadd(T,T)
+
 strategies
 
 r1() =  [  
