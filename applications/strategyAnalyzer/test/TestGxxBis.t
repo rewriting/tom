@@ -28,8 +28,8 @@
  */
 
 
-import maingxx.m.*;
-import maingxx.m.types.*;
+import maingxxbis.m.*;
+import maingxxbis.m.types.*;
 
 import static org.junit.Assert.*;
 import org.junit.Test;

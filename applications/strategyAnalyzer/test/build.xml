@@ -6,7 +6,7 @@
 	<property name="test.dir" location="."/>
 	<property name="test.build" location="${test.dir}/build"/>
 	<property name="test.gen" location="${test.dir}/gen"/>
-  
+
 	<import file="${tom.home}/lib/tom-common.xml"/>
 
   	<path id="tom.classpath">
@@ -27,11 +27,28 @@
 		<delete dir="${test.gen}"/>
 	</target>
 
-	<target name="init" depends="tom.init">
+	<target name="init" depends="clean, tom.init">
 		<mkdir dir="${test.build}"/>
 		<mkdir dir="${test.gen}"/>
 		<javac srcdir="${test.dir}" destdir="${test.build}" includeantruntime="false"/>	
 	</target>	
+
+	<target name="junit.all">
+		<antcallback target="junit" return="failure"/>
+		<antcallback target="junit.typed" return="failure"/>
+		<antcallback target="junit.metalevel" return="failure"/>
+		<antcallback target="junit.ordered" return="failure"/>
+
+		<if>
+			<isset property="failure"/>
+			<then>
+				<echo> FAILURE ! </echo>
+			</then>
+			<else>
+				<echo> SUCCESS </echo>
+			</else>
+		</if>
+	</target>
 
 	<target name="junit" depends="init">
 		<for param="file"> 
@@ -51,7 +68,7 @@
 	        		</java>
 			</sequential>
 		</for>
-		<antcall target="runTests"/>
+		<antcallback target="runTests" return="failure"/>
 	</target>
 
 	<target name="junit.typed" depends="init">
@@ -73,7 +90,7 @@
 	        		</java>
 			</sequential>
 		</for>
-		<antcall target="runTests"/>
+		<antcallback target="runTests" return="test"/>
 	</target>
 
 	<target name="junit.metalevel" depends="init">
@@ -94,7 +111,7 @@
 	        		</java>
 			</sequential>
 		</for>
-		<antcall target="runTests"/>
+		<antcallback target="runTests" return="failure"/>
 	</target>
 
 	<target name="junit.ordered" depends="init">
@@ -115,7 +132,117 @@
 	        		</java>
 			</sequential>
 		</for>
-		<antcall target="runTests"/>
+		<antcallback target="runTests" return="failure"/>
+	</target>
+
+	<target name="junit.withAP" depends="init">
+		<for param="file"> 
+			<path>
+				<fileset dir="${test.dir}" includes="*.ns"/>
+			</path>
+			<sequential>
+				<basename property="nsNameOf@{file}" file="@{file}" suffix=".ns"/>
+				<java classpath="../build:${classpath}" classname="sa.Main" fork="true">
+					<arg value="-i"/>
+					<arg file="@{file}"/>
+					<arg value="-withAP"/>
+					<arg value="-d"/>
+					<arg value="${test.gen}"/>
+					<arg value="-tom"/>
+					<arg value="Main${nsNameOf@{file}}"/>
+	        		</java>
+			</sequential>
+		</for>
+		<antcallback target="runTests" return="failure"/>
+	</target>
+
+
+	<target name="junit.orderedWithType" depends="init">
+		<for param="file"> 
+			<path>
+				<fileset dir="${test.dir}" includes="*.ns"/>
+			</path>
+			<sequential>
+				<basename property="nsNameOf@{file}" file="@{file}" suffix=".ns"/>
+				<java classpath="../build:${classpath}" classname="sa.Main" fork="true">
+					<arg value="-i"/>
+					<arg file="@{file}"/>
+					<arg value="-ordered"/>
+					<arg value="-withType"/>
+					<arg value="-d"/>
+					<arg value="${test.gen}"/>
+					<arg value="-tom"/>
+					<arg value="Main${nsNameOf@{file}}"/>
+	        		</java>
+			</sequential>
+		</for>
+		<antcallback target="runTests" return="failure"/>
+	</target>
+
+	<target name="junit.orderedMetalevel" depends="init">
+		<for param="file"> 
+			<path>
+				<fileset dir="${test.dir}" includes="*.ns"/>
+			</path>
+			<sequential>
+				<basename property="nsNameOf@{file}" file="@{file}" suffix=".ns"/>
+				<java classpath="../build:${classpath}" classname="sa.Main" fork="true">
+					<arg value="-i"/>
+					<arg file="@{file}"/>
+					<arg value="-ordered"/>
+					<arg value="-metalevel"/>
+					<arg value="-d"/>
+					<arg value="${test.gen}"/>
+					<arg value="-tom"/>
+					<arg value="Main${nsNameOf@{file}}"/>
+	        		</java>
+			</sequential>
+		</for>
+		<antcallback target="runTests" return="failure"/>
+	</target>
+
+	<target name="junit.orderedWithAP" depends="init">
+		<for param="file"> 
+			<path>
+				<fileset dir="${test.dir}" includes="*.ns"/>
+			</path>
+			<sequential>
+				<basename property="nsNameOf@{file}" file="@{file}" suffix=".ns"/>
+				<java classpath="../build:${classpath}" classname="sa.Main" fork="true">
+					<arg value="-i"/>
+					<arg file="@{file}"/>
+					<arg value="-ordered"/>
+					<arg value="-withAP"/>
+					<arg value="-d"/>
+					<arg value="${test.gen}"/>
+					<arg value="-tom"/>
+					<arg value="Main${nsNameOf@{file}}"/>
+	        		</java>
+			</sequential>
+		</for>
+		<antcallback target="runTests" return="failure"/>
+	</target>
+
+	<target name="junit.withAPMetalevel" depends="init">
+		<for param="file"> 
+			<path>
+				<fileset dir="${test.dir}" includes="*.ns"/>
+			</path>
+			<sequential>
+				<basename property="nsNameOf@{file}" file="@{file}" suffix=".ns"/>
+				<java classpath="../build:${classpath}" classname="sa.Main" fork="true">
+					<arg value="-i"/>
+					<arg file="@{file}"/>
+					<arg value="-withAP"/>
+					<arg value="-metalevel"/>
+					<arg value="-d"/>
+					<arg value="${test.gen}"/>
+					<arg value="-tom"/>
+					<arg value="Main${nsNameOf@{file}}"/>
+	        		</java>
+			</sequential>
+		</for>
+		<antcallback target="runTests" return="failure"/>
 	</target>
 
 	<target name="tomSrc">
@@ -143,9 +270,15 @@
 			<sequential>
 				<basename property="classOf@{file}" file="@{file}" suffix=".class"/>
 				<echo> Running test : ${classOf@{file}} </echo>
-				<java classpath=".:${test.build}:${tom.home}/lib/tom-runtime-full.jar:${tom.home}/lib/compiletime/junit.jar" classname="org.junit.runner.JUnitCore">
+				<java classpath=".:${test.build}:${tom.home}/lib/tom-runtime-full.jar:${tom.home}/lib/compiletime/junit.jar" classname="org.junit.runner.JUnitCore" fork="true" resultproperty="success">
 					<arg value="${classOf@{file}}"/>
 				</java> 
+				<if>
+					<equals arg1="${success}" arg2="1"/>
+					<then>
+						<property name="failure" value="false"/>
+					</then>
+				</if>		
 			</sequential>
 		</for>
 	</target>
