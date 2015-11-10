@@ -38,6 +38,8 @@
 		<antcallback target="junit.typed" return="failure"/>
 		<antcallback target="junit.metalevel" return="failure"/>
 		<antcallback target="junit.ordered" return="failure"/>
+		<antcallback target="junit.orderedMetalevel" return="failure"/>
+		<antcallback target="junit.orderedWithAP" return="failure"/>
 
 		<if>
 			<isset property="failure"/>
