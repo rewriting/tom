@@ -1,0 +1,20 @@
+parse a program
+create a Compiler
+store the program in the compiler
+create a signature (extractedSignature) and fill it using the program
+create another signature (generatedSignature):
+  - add each symbol from extractedSignature (replacing types by TYPE_TERM)
+  - add booleans (TRUE, FALSE, AND, EQ)
+  - add BOTTOM
+  - add meta-level constructors (APPL, CONS, NIL, BOTTOMLIST) 
+    and ENCODE, DECODE (for tom code only)
+
+[compiler.compileStrategy]
+compile a strategy into a list of "untyped" linear rules (ordered or using top-level anti-pattern):
+  - before compiling a strategy [r1,...,rn]: remove general anti-patterns
+
+post-treatments:
+  - remove top-level anti-patterns
+  - expand @
+  - option: generate a list of typed rules and a typed generatedSignature
+

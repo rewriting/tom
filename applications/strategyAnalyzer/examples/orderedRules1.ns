@@ -1,0 +1,20 @@
+abstract syntax
+Nat = Z() | S(Nat) | Error()
+
+functions
+Nat = add(Nat,Nat)
+
+strategies
+
+r1() =  [  
+  add(Error(), y) -> Error(),
+  add(x, Error()) -> Error(),
+  add(x, Z()) -> x,
+  add(x, S(y)) -> S(add(x,y)),
+  add(Z(),x) -> x,
+  add(S(y),x) -> S(add(x,y)),
+  add(x, y) -> Error()
+]
+
+mainStrat() = r1()
+

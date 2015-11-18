@@ -25,10 +25,10 @@ public class Pattern {
 //     example1();
     // example2();
 //     example3(); // numadd
-     example4(); // interp
+//      example4(); // interp
 //     example5(); // balance
 //     example6(); // and-or
-//     example7(); // simplest reduce
+    example7(); // simplest reduce
 //     example7bis(); // simplest reduce with one type
 //    example8(); // reduce deeper
   }
@@ -36,7 +36,7 @@ public class Pattern {
   /*
    * Transform a list of ordered rules into a TRS; rule by rule
    */
-  public static RuleList trsRule(RuleList ruleList, Signature eSig, Signature gSig) {
+  public static RuleList trsRule(RuleList ruleList, Signature eSig) {
 
     try {
       ruleList = `TopDown(RemoveVar()).visitLight(`ruleList);
@@ -54,7 +54,7 @@ public class Pattern {
         }
         Term pattern = `Sub(lhs,Add(prev*));
         System.out.println("PATTERN : " + Pretty.toString(pattern));
-        Term t = `reduce(pattern,eSig,gSig);
+        Term t = `reduce(pattern,eSig);
         System.out.println("REDUCED : " + Pretty.toString(t));
         %match(t) {
           Add(ConcAdd(_*,e,_*)) -> {
@@ -71,7 +71,7 @@ public class Pattern {
 
 
     // test subsumtion idea
-    res = removeRedundantRule(res,eSig,gSig);
+    res = removeRedundantRule(res,eSig);
 
     for(Rule rule:`res.getCollectionConcRule()) {
       System.out.println(Pretty.toString(rule));
@@ -83,34 +83,34 @@ public class Pattern {
   }
 
 
-  private static RuleList removeRedundantRule(RuleList rules, Signature eSig, Signature gSig) {
-    return removeRedundantRuleAux(rules,`ConcRule(), eSig,gSig);
+  private static RuleList removeRedundantRule(RuleList rules, Signature eSig) {
+    return removeRedundantRuleAux(rules,`ConcRule(), eSig);
   }
 
-  private static RuleList removeRedundantRuleAux(RuleList candidates, RuleList kernel, Signature eSig, Signature gSig) {
+  private static RuleList removeRedundantRuleAux(RuleList candidates, RuleList kernel, Signature eSig) {
     HashSet<RuleList> bag = new HashSet<RuleList>();
 
     %match( candidates ) {
       ConcRule(head, tail*) -> {
-        boolean b = canBeRemoved2(`head, `ConcRule(tail*,kernel*), eSig, gSig);
-        RuleList res = removeRedundantRuleAux(`tail, `ConcRule(head,kernel*), eSig, gSig);
+        boolean b = canBeRemoved2(`head, `ConcRule(tail*,kernel*), eSig);
+        RuleList res = removeRedundantRuleAux(`tail, `ConcRule(head,kernel*), eSig);
         if(b) {
           System.out.println("REMOVE: " + Pretty.toString(`head));
           // try with the head removed 
-         RuleList tmp = removeRedundantRuleAux(`tail, kernel, eSig, gSig);
+         RuleList tmp = removeRedundantRuleAux(`tail, kernel, eSig);
          if(tmp.length() < res.length()) {
              return tmp;
          }
-         // bag.add(removeRedundantRuleAux(`tail, kernel, eSig, gSig));
+         // bag.add(removeRedundantRuleAux(`tail, kernel, eSig));
 
           // uncomment the following return for a greedy algorithm:
-          //return removeRedundantRule(`ConcRule(C1*,C2*), eSig, gSig);
+          //return removeRedundantRule(`ConcRule(C1*,C2*), eSig);
 
         }
         return res;
 
         // try with the head kept in kernel
-        //bag.add(removeRedundantRuleAux(`tail, `ConcRule(head,kernel*), eSig, gSig));
+        //bag.add(removeRedundantRuleAux(`tail, `ConcRule(head,kernel*), eSig));
       }
     }
 /*
@@ -130,10 +130,10 @@ public class Pattern {
 
 
 
-  private static Term reduce(Term t, Signature eSig, Signature gSig) {
+  private static Term reduce(Term t, Signature eSig) {
     try {
       // DistributeAdd needed if we can start with terms like X \ f(a+b) or X \ (f(X)\f(f(_)))
-      Strategy S1 = `ChoiceId(CleanAdd(),PropagateEmpty(),SimplifySub(eSig,gSig));
+      Strategy S1 = `ChoiceId(CleanAdd(),PropagateEmpty(),SimplifySub(eSig));
       Strategy S2 = `ChoiceId(CleanAdd(),PropagateEmpty(), VarAdd(), FactorizeAdd());
 
       t =  `InnermostId(S1).visitLight(t);
@@ -272,7 +272,7 @@ public class Pattern {
   }
 
 
-  %strategy SimplifySub(eSig:Signature,gSig:Signature) extends Identity() {//Fail() {
+  %strategy SimplifySub(eSig:Signature) extends Identity() {//Fail() {
     visit Term {
 
       // t - x -> empty
@@ -299,14 +299,14 @@ public class Pattern {
       // X - t -> expand AP
       s@Sub(Var("_"), t@Appl(f,args_f)) -> {
         if(isPlainTerm(`t)) {
-          RuleCompiler ruleCompiler = new RuleCompiler(`eSig, `gSig);
+          RuleCompiler ruleCompiler = new RuleCompiler(`eSig, `eSig); // gSig
           RuleList rl = ruleCompiler.expandAntiPatterns(`ConcRule(Rule(Anti(t),Var("_"))));
           //System.out.println("rl = " + Pretty.toString(rl));
           AddList tl = `ConcAdd();
-          GomType codomain = gSig.getCodomain(`f);
+          GomType codomain = eSig.getCodomain(`f);
           %match(rl) {
             ConcRule(_*,Rule(lhs@Appl(g,args_g),rhs),_*) -> {
-              //if(gSig.getCodomain(`g) == codomain) { // optim: remove ill typed terms 
+              //if(eSig.getCodomain(`g) == codomain) { // optim: remove ill typed terms 
                 Term newLhs = `TopDown(RemoveVar()).visitLight(`lhs);
                 tl = `ConcAdd(newLhs,tl*); // order not preserved
               //}
@@ -314,7 +314,7 @@ public class Pattern {
           }
           Term res = `Add(tl);
           debug("expand AP",`s,res);
-          res = eliminateIllTyped(res, codomain, `gSig);
+          res = eliminateIllTyped(res, codomain, `eSig);
           return res;
         }
       }
@@ -479,7 +479,7 @@ public class Pattern {
    * given a term (which contains Add and Sub) and a type
    * returns a term where badly typed terms are replaced by Empty()
    */
-  private static Term eliminateIllTyped(Term t, GomType type, Signature gSig) {
+  private static Term eliminateIllTyped(Term t, GomType type, Signature eSig) {
     //System.out.println(Pretty.toString(t) + ":" + type.getName());
     %match(t) {
       Var("_") -> {
@@ -487,15 +487,15 @@ public class Pattern {
       }
 
       Appl(f,args) -> {
-        if(gSig.getCodomain(`f) == type) {
-          GomTypeList domain = gSig.getDomain(`f);
+        if(eSig.getCodomain(`f) == type) {
+          GomTypeList domain = eSig.getDomain(`f);
           TermList tail = `args;
           TermList new_args = `TermList();
           while(!tail.isEmptyTermList()) {
             Term head = tail.getHeadTermList();
             GomType arg_type = domain.getHeadConcGomType();
 
-            Term new_arg = eliminateIllTyped(head,arg_type,gSig);
+            Term new_arg = eliminateIllTyped(head,arg_type,eSig);
             if(new_arg == `Empty()) {
               // propagate Empty for any term which contains Empty
               return `Empty();
@@ -512,7 +512,7 @@ public class Pattern {
       }
 
       Sub(t1,t2) -> {
-        return `Sub(eliminateIllTyped(t1,type,gSig),eliminateIllTyped(t2,type,gSig));
+        return `Sub(eliminateIllTyped(t1,type,eSig),eliminateIllTyped(t2,type,eSig));
       }
 
       Add(tl) -> {
@@ -520,7 +520,7 @@ public class Pattern {
         AddList res = `ConcAdd();
         while(!tail.isEmptyConcAdd()) {
           Term head = tail.getHeadConcAdd();
-          res = `ConcAdd(eliminateIllTyped(head,type,gSig),res*);
+          res = `ConcAdd(eliminateIllTyped(head,type,eSig),res*);
           tail = tail.getTailConcAdd();
         }
         return `Add(res);
@@ -682,14 +682,14 @@ public class Pattern {
    *
    * expand once all occurence of _ in a term
    */
-  private  static Term expandVar(Term t, Signature eSig, Signature gSig) {
+  private  static Term expandVar(Term t, Signature eSig) {
     HashSet<Position> bag = new HashSet<Position>();
     HashSet<Term> res = new HashSet<Term>();
 
     GomType codomain = null;
     %match(t) {
       Appl(f,_) -> {
-          codomain = gSig.getCodomain(`f);
+          codomain = eSig.getCodomain(`f);
       }
     }
 
@@ -713,7 +713,7 @@ public class Pattern {
             Term newt = (Term) omega.getReplace(expand).visit(subject);
 
             System.out.println("newt1 = " + Pretty.toString(newt));
-            newt = eliminateIllTyped(newt, codomain, gSig);
+            newt = eliminateIllTyped(newt, codomain, eSig);
             System.out.println("newt2 = " + Pretty.toString(newt));
             if(newt != `Empty()) {
               todo.add(newt);
@@ -744,11 +744,11 @@ public class Pattern {
     }
   }
 
-  public static boolean canBeRemoved1(Rule rule, RuleList ruleList, Signature eSig, Signature gSig) {
+  public static boolean canBeRemoved1(Rule rule, RuleList ruleList, Signature eSig) {
     %match(rule) {
       Rule(lhs,rhs) -> {
         System.out.println("CAN BE REMOVED 1 = " + Pretty.toString(`lhs));
-        Term t = expandVar(`lhs,eSig, gSig);
+        Term t = expandVar(`lhs,eSig);
         System.out.println("Expanded REMOVED 1 = " + Pretty.toString(t));
         %match(t) {
           Add(ConcAdd(_*,et,_*)) -> {
@@ -898,7 +898,7 @@ public class Pattern {
     }
   }
 
-  public static boolean canBeRemoved2(Rule rule, RuleList ruleList, Signature eSig, Signature gSig) {
+  public static boolean canBeRemoved2(Rule rule, RuleList ruleList, Signature eSig) {
     boolean res = false;
     %match(rule) {
       Rule(lhs,rhs) -> {
@@ -933,7 +933,6 @@ public class Pattern {
    */
   private static void example1() {
     Signature eSig = new Signature();
-    Signature gSig = new Signature();
 
     Term V = `Var("_");
     Term X = `Var("x");
@@ -943,12 +942,6 @@ public class Pattern {
     eSig.addSymbol("b", `ConcGomType(), `GomType("T") );
     eSig.addSymbol("g", `ConcGomType(GomType("T")), `GomType("T") );
     eSig.addSymbol("f", `ConcGomType(GomType("T")), `GomType("T") );
-    eSig.addSymbol("h", `ConcGomType(GomType("T"),GomType("T")), `GomType("T") );
-
-    gSig.addSymbol("a", `ConcGomType(), `GomType("T") );
-    gSig.addSymbol("b", `ConcGomType(), `GomType("T") );
-    gSig.addSymbol("g", `ConcGomType(GomType("T")), `GomType("T") );
-    gSig.addSymbol("f", `ConcGomType(GomType("T")), `GomType("T") );
     eSig.addSymbol("h", `ConcGomType(GomType("T"),GomType("T")), `GomType("T") );
 
     Term a =`Appl("a", TermList());
@@ -984,22 +977,18 @@ public class Pattern {
     Term r1 = `Appl("rhr1",TermList());
     Term r2 = `Appl("rhs2",TermList());
 
-    RuleList res = `trsRule(ConcRule(Rule(fhba,r0), Rule(fhab,r1), Rule(V,r2)), eSig,gSig);
+    RuleList res = `trsRule(ConcRule(Rule(fhba,r0), Rule(fhab,r1), Rule(V,r2)), eSig);
   }
   
   private static void example2() {
     Signature eSig = new Signature();
-    Signature gSig = new Signature();
 
     Term V = `Var("_");
     eSig.addSymbol("a", `ConcGomType(), `GomType("T") );
     eSig.addSymbol("Nil", `ConcGomType(), `GomType("List") );
     eSig.addSymbol("Cons", `ConcGomType(GomType("T"),GomType("List")), `GomType("List") );
-
-    gSig.addSymbol("a", `ConcGomType(), `GomType("T") );
-    gSig.addSymbol("Nil", `ConcGomType(), `GomType("List") );
-    gSig.addSymbol("Cons", `ConcGomType(GomType("T"),GomType("List")), `GomType("List") );
-    gSig.addSymbol("sep", `ConcGomType(GomType("T"),GomType("List")), `GomType("List") );
+    eSig.addSymbol("sep", `ConcGomType(GomType("T"),GomType("List")), `GomType("List") );
+    eSig.setFunction("sep");
 
     Term y_ys = `Appl("Cons", TermList(V,V));
     Term x_y_ys = `Appl("Cons", TermList(V,y_ys));
@@ -1009,13 +998,12 @@ public class Pattern {
     Term r0 = `Appl("rhs0",TermList());
     Term r1 = `Appl("rhs1",TermList());
 
-    RuleList res = `trsRule(ConcRule(Rule(p0,r0), Rule(p1,r1)), eSig,gSig);
+    RuleList res = `trsRule(ConcRule(Rule(p0,r0), Rule(p1,r1)), eSig);
 
   }
 
   private static void example3() {
     Signature eSig = new Signature();
-    Signature gSig = new Signature();
 
     Term V = `Var("_");
     eSig.addSymbol("Z", `ConcGomType(), `GomType("Nat") );
@@ -1026,17 +1014,8 @@ public class Pattern {
     eSig.addSymbol("Add", `ConcGomType(GomType("TT"),GomType("TT")), `GomType("TT") );
     eSig.addSymbol("Sub", `ConcGomType(GomType("TT"),GomType("TT")), `GomType("TT") );
     eSig.addSymbol("Mul", `ConcGomType(GomType("Nat"),GomType("TT")), `GomType("TT") );
-
-
-    gSig.addSymbol("Z", `ConcGomType(), `GomType("Nat") );
-    gSig.addSymbol("S", `ConcGomType(GomType("Nat")), `GomType("Nat") );
-    gSig.addSymbol("C", `ConcGomType(GomType("Nat")), `GomType("TT") );
-    gSig.addSymbol("Bound", `ConcGomType(GomType("Nat")), `GomType("TT") );
-    gSig.addSymbol("Neg", `ConcGomType(GomType("TT")), `GomType("TT") );
-    gSig.addSymbol("Add", `ConcGomType(GomType("TT"),GomType("TT")), `GomType("TT") );
-    gSig.addSymbol("Sub", `ConcGomType(GomType("TT"),GomType("TT")), `GomType("TT") );
-    gSig.addSymbol("Mul", `ConcGomType(GomType("Nat"),GomType("TT")), `GomType("TT") );
-    gSig.addSymbol("numadd", `ConcGomType(GomType("TT"),GomType("TT")), `GomType("TT") );
+    eSig.addSymbol("numadd", `ConcGomType(GomType("TT"),GomType("TT")), `GomType("TT") );
+    eSig.setFunction("numadd");
 
     Term pat = `Appl("Add",TermList(Appl("Mul",TermList(V,Appl("Bound",TermList(V)))),V));
     Term p1 = `Appl("numadd",TermList(pat,pat));
@@ -1051,14 +1030,13 @@ public class Pattern {
     Term r4 = `Appl("rhs4",TermList());
     Term r5 = `Appl("rhs5",TermList());
 
-    RuleList res = `trsRule(ConcRule(Rule(p1,r1), Rule(p2,r2), Rule(p3,r3), Rule(p4,r4), Rule(p5,r5)), eSig,gSig);
+    RuleList res = `trsRule(ConcRule(Rule(p1,r1), Rule(p2,r2), Rule(p3,r3), Rule(p4,r4), Rule(p5,r5)), eSig);
 
   }
 
 
   private static void example4() {
     Signature eSig = new Signature();
-    Signature gSig = new Signature();
 
     Term V = `Var("_");
     eSig.addSymbol("True", `ConcGomType(), `GomType("Bool") );
@@ -1071,18 +1049,8 @@ public class Pattern {
     eSig.addSymbol("Bv", `ConcGomType(GomType("Bool")), `GomType("Val") );
     eSig.addSymbol("Undef", `ConcGomType(), `GomType("Val") );
 
-
-    gSig.addSymbol("True", `ConcGomType(), `GomType("Bool") );
-    gSig.addSymbol("False", `ConcGomType(), `GomType("Bool") );
-    gSig.addSymbol("Z", `ConcGomType(), `GomType("Nat") );
-    gSig.addSymbol("S", `ConcGomType(GomType("Nat")), `GomType("Nat") );
-    gSig.addSymbol("Nil", `ConcGomType(), `GomType("List") );
-    gSig.addSymbol("Cons", `ConcGomType(GomType("Val"),GomType("List")), `GomType("List") );
-    gSig.addSymbol("Nv", `ConcGomType(GomType("Nat")), `GomType("Val") );
-    gSig.addSymbol("Bv", `ConcGomType(GomType("Bool")), `GomType("Val") );
-    gSig.addSymbol("Undef", `ConcGomType(), `GomType("Val") );
-
-    gSig.addSymbol("interp", `ConcGomType(GomType("Nat"),GomType("List")), `GomType("Val") );
+    eSig.addSymbol("interp", `ConcGomType(GomType("Nat"),GomType("List")), `GomType("Val") );
+    eSig.setFunction("interp");
 
     Term nat0 = `Appl("Z",TermList());
     Term nat1 = `Appl("S",TermList(nat0));
@@ -1114,8 +1082,8 @@ public class Pattern {
     Term r7 = `Appl("rhs7",TermList());
     RuleList res4 = `trsRule(ConcRule(Rule(p0,r0), Rule(p1,r1), Rule(p2,r2),
                                       Rule(p3,r3), Rule(p4,r4), Rule(p5,r5),
-                                      Rule(p6,r6),Rule(p7,r7)),eSig,gSig);
-    //RuleList res4 = `trsRule(ConcRule(Rule(p0,r0),Rule(p1,r1), Rule(p7,r7)),eSig,gSig);
+                                      Rule(p6,r6),Rule(p7,r7)),eSig);
+    //RuleList res4 = `trsRule(ConcRule(Rule(p0,r0),Rule(p1,r1), Rule(p7,r7)),eSig);
 
 //     //interp(S(Z()),Cons(Undef(),Cons(_,_)))
 //     //interp(S(Z()),Cons(Undef(),Nil()))
@@ -1124,7 +1092,7 @@ public class Pattern {
 //       Term t2 = `Appl("interp",TermList(Appl("S",TermList(Appl("Z",TermList()))),Appl("Cons",TermList(Appl("Undef",TermList()),Appl("Nil",TermList())))));
 //       Term t3 = `Appl("interp",TermList(Appl("S",TermList(Appl("Z",TermList()))),Appl("Cons",TermList(Appl("Undef",TermList()),Var("_")))));
 
-//     //`reduce(Add(ConcAdd(t1,t2,t3)),eSig,gSig);
+//     //`reduce(Add(ConcAdd(t1,t2,t3)),eSig);
 
   }
 
@@ -1136,7 +1104,6 @@ public class Pattern {
   
   private static void example5() {
     Signature eSig = new Signature();
-    Signature gSig = new Signature();
 
     Term V = `Var("_");
     eSig.addSymbol("Z", `ConcGomType(), `GomType("Nat") );
@@ -1145,15 +1112,8 @@ public class Pattern {
     eSig.addSymbol("B", `ConcGomType(), `GomType("Color") );
     eSig.addSymbol("E", `ConcGomType(), `GomType("Tree") );
     eSig.addSymbol("T", `ConcGomType(GomType("Color"), GomType("Tree"), GomType("Nat"), GomType("Tree")), `GomType("Tree"));
-
-    gSig.addSymbol("Z", `ConcGomType(), `GomType("Nat") );
-    gSig.addSymbol("S", `ConcGomType(GomType("Nat")), `GomType("Nat") );
-    gSig.addSymbol("R", `ConcGomType(), `GomType("Color") );
-    gSig.addSymbol("B", `ConcGomType(), `GomType("Color") );
-    gSig.addSymbol("E", `ConcGomType(), `GomType("Tree") );
-    gSig.addSymbol("T", `ConcGomType(GomType("Color"), GomType("Tree"), GomType("Nat"), GomType("Tree")), `GomType("Tree"));
-
-    gSig.addSymbol("balance", `ConcGomType(GomType("Tree")), `GomType("Tree") );
+    eSig.addSymbol("balance", `ConcGomType(GomType("Tree")), `GomType("Tree") );
+    eSig.setFunction("balance");
 
     Term B = `Appl("B",TermList());
     Term R = `Appl("R",TermList());
@@ -1171,21 +1131,19 @@ public class Pattern {
     Term r4 = `Appl("rhs4",TermList());
 
     RuleList res = `trsRule(ConcRule(Rule(p0,r0), Rule(p1,r1), Rule(p2,r2),
-                                      Rule(p3,r3), Rule(p4,r4)), eSig,gSig);
+                                      Rule(p3,r3), Rule(p4,r4)), eSig);
   }
 
   private static void example6() {
     Signature eSig = new Signature();
-    Signature gSig = new Signature();
 
     Term V = `Var("_");
     eSig.addSymbol("True", `ConcGomType(), `GomType("Bool") );
     eSig.addSymbol("False", `ConcGomType(), `GomType("Bool") );
-
-    gSig.addSymbol("True", `ConcGomType(), `GomType("Bool") );
-    gSig.addSymbol("False", `ConcGomType(), `GomType("Bool") );
-    gSig.addSymbol("and", `ConcGomType(GomType("Bool"),GomType("Bool")), `GomType("Bool") );
-    gSig.addSymbol("or",  `ConcGomType(GomType("Bool"),GomType("Bool")), `GomType("Bool") );
+    eSig.addSymbol("and", `ConcGomType(GomType("Bool"),GomType("Bool")), `GomType("Bool") );
+    eSig.addSymbol("or",  `ConcGomType(GomType("Bool"),GomType("Bool")), `GomType("Bool") );
+    eSig.setFunction("and");
+    eSig.setFunction("or");
 
     Term True = `Appl("True",TermList());
     Term False = `Appl("False",TermList());
@@ -1200,23 +1158,19 @@ public class Pattern {
             Appl("or", TermList(True,False)), 
             Appl("or", TermList(True,True)))), True);
 
-    RuleList res = trsRule(`ConcRule(r0,r1,r2,r3), eSig,gSig);
+    RuleList res = trsRule(`ConcRule(r0,r1,r2,r3), eSig);
   }
 
 
   private static void example7() {
     Signature eSig = new Signature();
-    Signature gSig = new Signature();
 
     Term V = `Var("_");
 
     eSig.addSymbol("a", `ConcGomType(), `GomType("T") );
     eSig.addSymbol("b", `ConcGomType(), `GomType("T") );
     eSig.addSymbol("f", `ConcGomType(GomType("T"),GomType("T")), `GomType("U") );
-
-    gSig.addSymbol("a", `ConcGomType(), `GomType("T") );
-    gSig.addSymbol("b", `ConcGomType(), `GomType("T") );
-    gSig.addSymbol("f", `ConcGomType(GomType("T"),GomType("T")), `GomType("U") );
+    eSig.setFunction("f");
 
     Term a =`Appl("a", TermList());
     Term b =`Appl("b", TermList());
@@ -1227,22 +1181,17 @@ public class Pattern {
 
     Term r0 = `Appl("rhs0",TermList());
 
-    RuleList res = `reduceRules(ConcRule(Rule(fav,r0), Rule(fbv,r0), Rule(fva,r0)), eSig,gSig);
+    RuleList res = `trsRule(ConcRule(Rule(fav,r0), Rule(fbv,r0), Rule(fva,r0)), eSig);
   }
 
   private static void example7bis() {
     Signature eSig = new Signature();
-    Signature gSig = new Signature();
 
     Term V = `Var("_");
 
     eSig.addSymbol("a", `ConcGomType(), `GomType("T") );
     eSig.addSymbol("b", `ConcGomType(), `GomType("T") );
     eSig.addSymbol("f", `ConcGomType(GomType("T"),GomType("T")), `GomType("T") );
-
-    gSig.addSymbol("a", `ConcGomType(), `GomType("T") );
-    gSig.addSymbol("b", `ConcGomType(), `GomType("T") );
-    gSig.addSymbol("f", `ConcGomType(GomType("T"),GomType("T")), `GomType("T") );
 
     Term a =`Appl("a", TermList());
     Term b =`Appl("b", TermList());
@@ -1255,13 +1204,12 @@ public class Pattern {
 
     Term r0 = `Appl("rhs0",TermList());
 
-    RuleList res = `reduceRules(ConcRule(Rule(fav,r0), Rule(ffv,r0), Rule(fbv,r0), Rule(fva,r0)), eSig,gSig);
+    RuleList res = `trsRule(ConcRule(Rule(fav,r0), Rule(ffv,r0), Rule(fbv,r0), Rule(fva,r0)), eSig);
   }
 
 
   private static void example8() {
     Signature eSig = new Signature();
-    Signature gSig = new Signature();
 
     Term V = `Var("_");
 
@@ -1269,11 +1217,6 @@ public class Pattern {
     eSig.addSymbol("b", `ConcGomType(), `GomType("T") );
     eSig.addSymbol("g", `ConcGomType(GomType("T")), `GomType("T") );
     eSig.addSymbol("f", `ConcGomType(GomType("T"),GomType("T")), `GomType("U") );
-
-    gSig.addSymbol("a", `ConcGomType(), `GomType("T") );
-    gSig.addSymbol("b", `ConcGomType(), `GomType("T") );
-    eSig.addSymbol("g", `ConcGomType(GomType("T")), `GomType("T") );
-    gSig.addSymbol("f", `ConcGomType(GomType("T"),GomType("T")), `GomType("U") );
 
     Term a =`Appl("a", TermList());
     Term b =`Appl("b", TermList());
@@ -1292,20 +1235,21 @@ public class Pattern {
 
     Term r0 = `Appl("rhs0",TermList());
 
-    RuleList res = `reduceRules(ConcRule(Rule(fgaa,r0), Rule(fgba,r0), Rule(fgga,r0), Rule(faa,r0), Rule(fba,r0), Rule(fva,r0)), eSig,gSig);
+    RuleList res = `trsRule(ConcRule(Rule(fgba,r0), Rule(fgaa,r0), Rule(fgga,r0), Rule(faa,r0), Rule(fba,r0), Rule(fva,r0)), eSig);
+
   }
 
 
   /*
    * Reduce a list of rules
    */
-  public static RuleList reduceRules(RuleList ruleList, Signature eSig, Signature gSig) {
+  public static RuleList reduceRules(RuleList ruleList, Signature eSig) {
     
     // test subsumtion idea
     %match(ruleList) {
       ConcRule(C1*,rule,C2*) -> {
-        canBeRemoved1(`rule, `ConcRule(C1*,C2*), eSig, gSig);
-//         canBeRemoved2(`rule, `ConcRule(C1*,C2*), eSig, gSig);
+        canBeRemoved1(`rule, `ConcRule(C1*,C2*), eSig);
+//         canBeRemoved2(`rule, `ConcRule(C1*,C2*), eSig);
       }
     }
 

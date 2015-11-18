@@ -9,10 +9,9 @@ strategies
 //r1() =  [ f(x,!g(x)) -> x ]
 r1() =  [ f(x,!f(y,!g(x))) -> x ]
 
-obu(s) = mu x.(one(x) <+ s)
-innermost(s) = obu(s)
-
 mainStrat() = r1()
+
+
 /*
 f(x,!g(x)) -> x
 ==>

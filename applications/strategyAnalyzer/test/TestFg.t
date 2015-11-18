@@ -28,21 +28,17 @@
  */
 
 
-import maingxxbis.m.*;
-import maingxxbis.m.types.*;
+import mainfg.m.*;
+import mainfg.m.types.*;
 
 import static org.junit.Assert.*;
 import org.junit.Test;
 import org.junit.Before;
-import java.lang.reflect.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.regex.Pattern;
 
-public class TestGxxBis {
-  %include { maingxxbis/m/m.tom }
-	public static void main(String[] args) {
-    org.junit.runner.JUnitCore.main(MaingxxBis.class.getName());
+public class TestFg {
+  %include { mainfg/m/m.tom }
+  public static void main(String[] args) {
+    org.junit.runner.JUnitCore.main(Mainfg.class.getName());
 	}
  
   @Before
@@ -50,8 +46,10 @@ public class TestGxxBis {
   }
 
   @Test
-  public void testGxx3() {
-    assertEquals("mainStrat(g(f(g(a),g(b)))) should be f(a,b)",
-                 `f(a(),b()), MaingxxBis.mainStrat(`g(f(g(a()),g(b())))));
+  public void test1() {
+    assertEquals("mainStrat(g(f(a))) should be f(g(a()))",
+                 `f(g(a())), Mainfg.mainStrat(`g(f(a()))));
   }
+  
+
 }

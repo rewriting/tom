@@ -55,6 +55,7 @@ public class RuleCompiler {
   
   /*
    * Remove nested anti-patterns
+   * @param rules the list of rules to expand
    */
   public RuleList expandGeneralAntiPatterns(RuleList rules) {
     rules = expandAntiPatternsAux(rules, false);
@@ -62,6 +63,12 @@ public class RuleCompiler {
     return rules;
   }
 
+  /*
+   * Remove nested anti-patterns
+   * @param rules the list of rules to expand
+   * @param postTreatment true to remove only top-level anti-patterns
+   * @returns a (ordered) list of rules
+   */
   public RuleList expandAntiPatternsAux(RuleList rules, boolean postTreatment) {
     RuleList newRules = `ConcRule();
     for(Rule rule:rules.getCollectionConcRule()) {
@@ -73,14 +80,15 @@ public class RuleCompiler {
   }  
   
   /**
-   * Expand an anti-pattern in a LINEAR Rule (with only one anti-pattern)
-   * @param generatedRules initial set of rules
+   * Expand a rule (with anti-patterns) in list of LINEAR rules (with only one anti-pattern)
    * @param rule the rule to expand
+   * @param postTreatment true to remove only top-level anti-pattern
    * @return the list of generated rules
    */
   private RuleList expandAntiPatternInRule(Rule rule, boolean postTreatment) {
     RuleList genRules = `ConcRule();
     try {
+      // collect the anti-patterns in a multiset
       HashMultiset<Term> antiBag = HashMultiset.create();
       Term lhs = rule.getlhs();
       `TopDown(CollectAnti(antiBag)).visitLight(lhs);
@@ -99,7 +107,7 @@ public class RuleCompiler {
             `OnceTopDown(ExpandAntiPatternPostTreatment(ruleList,rule,this.extractedSignature, this.generatedSignature)).visit(rule);
           } else {
             System.out.println("NON LIN: " + Pretty.toString(rule) );
-            throw new RuntimeException("Should not be there EXP ");
+            throw new RuntimeException("Should not be there");
           }
         } else {
           /*
@@ -108,7 +116,7 @@ public class RuleCompiler {
           `OnceTopDown(ExpandGeneralAntiPattern(ruleList,rule)).visit(rule);
         }
 
-        // for each generated rule restart the expansion
+        // for each generated rule re-start the expansion
         for(Rule expandr:ruleList) {
           // add the list of rules generated for the expandr rule to the final result
           RuleList expandedRules = this.expandAntiPatternInRule(expandr,postTreatment);
@@ -124,8 +132,8 @@ public class RuleCompiler {
  
   /**
    * Perform one-step expansion for a LINEAR Rule
-   * @param ruleList the resulted list of rules
-   * @param rule the rule to expand
+   * @param ruleList the resulting list of rules (extended by side effect)
+   * @param subject the rule to expand
    * @param extractedSignature the extracted signature
    * @param generatedSignature the generated signature
    */
@@ -138,7 +146,7 @@ public class RuleCompiler {
       }
 
       Anti(t) -> {
-        Term antiterm = (Main.options.metalevel)?Tools.decodeConsNil(`t):`t;
+        Term antiterm = (Main.options.metalevel)?Tools.metaDecodeConsNil(`t):`t;
         %match(antiterm) { 
           Appl(name,args)  -> {
             // add g(Z1,...) ... h(Z1,...)

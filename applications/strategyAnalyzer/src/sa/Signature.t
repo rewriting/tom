@@ -35,10 +35,13 @@ public class Signature {
 
   // set of names that correspond to defined symbols (i.e. not constructors)
   private HashSet<String> functions;
+  // set of names that correspond to internals symbols (i.e. bottom, meta-symbols)
+  private HashSet<String> internals;
 
   public Signature() {
     this.table = HashBasedTable.create();
     this.functions = new HashSet<String>();
+    this.internals = new HashSet<String>();
   }
 
   public Signature(Signature from) {
@@ -90,7 +93,7 @@ public class Signature {
   /**
    * Create an expanded signature containing the symbols in the
    * current one (set from a program) and builtin symbols used in the
-   * translation of strategies
+   * translation of strategies. This signature is mono-sorted (TERM only)
    * @return the expanded signature
    */
   public Signature expandSignature()  {
@@ -117,21 +120,21 @@ public class Signature {
     // add: True, False, and, eq
     expandedSignature.addSymbol(TRUE,`ConcGomType(),TYPE_BOOLEAN);
     expandedSignature.addSymbol(FALSE,`ConcGomType(),TYPE_BOOLEAN);
-    expandedSignature.addSymbol(AND,`ConcGomType(TYPE_BOOLEAN,TYPE_BOOLEAN),TYPE_BOOLEAN);
-    expandedSignature.addSymbol(EQ,`ConcGomType(TYPE_TERM,TYPE_TERM),TYPE_BOOLEAN);
+    expandedSignature.addFunctionSymbol(AND,`ConcGomType(TYPE_BOOLEAN,TYPE_BOOLEAN),TYPE_BOOLEAN);
+    expandedSignature.addFunctionSymbol(EQ,`ConcGomType(TYPE_TERM,TYPE_TERM),TYPE_BOOLEAN);
 
     // add: bottom
     if(!Main.options.metalevel) {
-      expandedSignature.addSymbol(BOTTOM,`ConcGomType(TYPE_TERM),TYPE_TERM);
+      expandedSignature.addInternalSymbol(BOTTOM,`ConcGomType(TYPE_TERM),TYPE_TERM);
     } else {
-      expandedSignature.addSymbol(BOTTOM,`ConcGomType(TYPE_METATERM),TYPE_METATERM);
+      expandedSignature.addInternalSymbol(BOTTOM,`ConcGomType(TYPE_METATERM),TYPE_METATERM);
     }
 
     // for metalevel + Tom code
     if(Main.options.metalevel && Main.options.classname != null) {
       // add: encode, decode
-      expandedSignature.addSymbol(ENCODE,`ConcGomType(TYPE_TERM),TYPE_METATERM);
-      expandedSignature.addSymbol(DECODE,`ConcGomType(TYPE_METATERM),TYPE_TERM);
+      expandedSignature.addFunctionSymbol(ENCODE,`ConcGomType(TYPE_TERM),TYPE_METATERM);
+      expandedSignature.addFunctionSymbol(DECODE,`ConcGomType(TYPE_METATERM),TYPE_TERM);
     }
     return expandedSignature;
   }
@@ -159,12 +162,30 @@ public class Signature {
     table.put(codomain, name.intern(), domain);
   }
 
+  public void addFunctionSymbol(String name, GomTypeList domain, GomType codomain) {
+    addSymbol(name, domain, codomain);
+    setFunction(name);
+  }
+
+  public void addInternalSymbol(String name, GomTypeList domain, GomType codomain) {
+    addSymbol(name, domain, codomain);
+    setInternal(name);
+  }
+
   public void setFunction(String name) {
     functions.add(name);
   }
 
   public boolean isFunction(String name) {
     return functions.contains(name);
+  }
+
+  public void setInternal(String name) {
+    internals.add(name);
+  }
+
+  public boolean isInternal(String name) {
+    return internals.contains(name);
   }
 
   /** Get the list of all codomains
@@ -228,7 +249,7 @@ public class Signature {
   public Set<String> getConstructors() {
     HashSet<String> res = new HashSet<String>();
     for(String e:getSymbols()) {
-      if(!isFunction(e)) {
+      if(!isFunction(e) && !isInternal(e)) {
         res.add(e);
       }
     }
@@ -242,7 +263,7 @@ public class Signature {
   public Set<String> getConstructors(GomType codomain) {
     HashSet<String> res = new HashSet<String>();
     for(String e:getSymbols(codomain)) {
-      if(!isFunction(e)) {
+      if(!isFunction(e) && !isInternal(e)) {
         res.add(e);
       }
     }
