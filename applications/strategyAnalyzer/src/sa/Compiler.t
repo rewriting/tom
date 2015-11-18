@@ -480,7 +480,7 @@ public class Compiler {
 
           if(Main.options.pattern) {
             System.out.println("pattern: " + rList);
-            RuleList res = Pattern.trsRule(rList,eSig,gSig);
+            RuleList res = Pattern.trsRule(rList,eSig);
           }
 
         }
