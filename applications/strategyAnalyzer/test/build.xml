@@ -35,11 +35,14 @@
 
 	<target name="junit.all">
 		<antcallback target="junit" return="failure"/>
-		<antcallback target="junit.typed" return="failure"/>
+		<antcallback target="junit.withType" return="failure"/>
 		<antcallback target="junit.metalevel" return="failure"/>
 		<antcallback target="junit.ordered" return="failure"/>
 		<antcallback target="junit.orderedMetalevel" return="failure"/>
-		<antcallback target="junit.orderedWithAP" return="failure"/>
+	<!--	<antcallback target="junit.orderedWithAP" return="failure"/>
+		<antcallback target="junit.withAP" return="failure"/>
+		<antcallback target="junit.withAPMetalevel" return="failure"/>
+		<antcallback target="junit.orderedWithType" return="failure"/>   -->
 
 		<if>
 			<isset property="failure"/>
@@ -73,7 +76,7 @@
 		<antcallback target="runTests" return="failure"/>
 	</target>
 
-	<target name="junit.typed" depends="init">
+	<target name="junit.withType" depends="init">
 		<for param="file"> 
 			<path>
 				<fileset dir="${test.dir}" includes="*.ns"/>
