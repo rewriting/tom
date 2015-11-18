@@ -42,9 +42,6 @@ public class Options {
   @Option(name="-approx",usage="compilation does not respects the reduction in the original system")
     public boolean approx = false;
 
-  @Option(name="-typed",usage="generate typed signature",metaVar="TYPE")
-    public String type = null;
-
   @Option(name="-withType", usage="specify that a typed signature will be used")
     public boolean withType = false;
 

@@ -172,31 +172,26 @@ public class Tools {
     * implemented by Appl("Appl",TermList(Appl("symb_f",TermList()),Appl("Cons",TermList(Appl("Appl",TermList(Appl("symb_a",TermList()),Appl("Nil",TermList()))),Appl("Nil",TermList())))))
     */
   public static Term metaEncodeConsNil(Term t, Signature signature) {
-    //return encode(encodeConsNil(t,signature),signature);
-    return encodeConsNil(t,signature);
+    if(Main.options.metalevel) {
+      return encodeConsNil(t,signature);
+    } else {
+      throw new RuntimeException("metaEncodeConsNil can only be used with meta-level active");
+    }
   }
   
   private static Term encodeConsNil(Term t, Signature signature) {
     %match(t) {
       Appl(symb,args) -> {
         String symbName = "symb_" + `symb;
-        if(!Main.options.metalevel) {
-          signature.addSymbol(symbName,`ConcGomType(),Signature.TYPE_TERM);
-        } else {
-          signature.addSymbol(symbName,`ConcGomType(),Signature.TYPE_METASYMBOL);
-        }
-        //return "Appl(" + symbName + "," + encodeConsNil(`args,signature) + ")";
+        signature.addSymbol(symbName,`ConcGomType(),Signature.TYPE_METASYMBOL);
         return Appl(_appl(symbName), encodeConsNil(`args,signature));
       }
 
       Var(name) -> {
-        //return "var_" + `name;
         return Var("var_"+`name);
       }
 
       Anti(term) -> {
-        //System.out.println("ENCODE ANTI: " + `term);
-        //return "anti(" + encodeConsNil(`term,signature) + ")";
         return Anti(encodeConsNil(`term,signature));
       }
     }
@@ -221,7 +216,15 @@ public class Tools {
     * is decoded to Appl("f",TermList(Appl("b",TermList())))
      *
      */
-  public static Term decodeConsNil(Term t) {
+  public static Term metaDecodeConsNil(Term t) {
+    if(Main.options.metalevel) {
+      return decodeConsNil(t);
+    } else {
+      throw new RuntimeException("metaDecodeConsNil can only be used with meta-level active");
+    }
+  }
+
+  private static Term decodeConsNil(Term t) {
 
     //System.out.println("IN DECODE = "+ `t);
     %match(t) {
@@ -239,7 +242,7 @@ public class Tools {
     return t;
   }
 
-  public static TermList decodeConsNilList(Term t) {
+  private static TermList decodeConsNilList(Term t) {
      //System.out.println("IN DECODE LIST = "+ `t);
     %match(t) {
       Appl("Cons",TermList(head,tail)) -> {
@@ -296,7 +299,6 @@ public class Tools {
     HashMultiset<String> bag = collectVariableMultiplicity(lhs);
 
     Set<String> elements = new HashSet<String>(bag.elementSet());
-
     for(String name:elements) {
       if(bag.count(name) == 1) {
         bag.remove(name);

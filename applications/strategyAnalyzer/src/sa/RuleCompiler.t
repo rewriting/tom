@@ -138,7 +138,7 @@ public class RuleCompiler {
       }
 
       Anti(t) -> {
-        Term antiterm = (Main.options.metalevel)?Tools.decodeConsNil(`t):`t;
+        Term antiterm = (Main.options.metalevel)?Tools.metaDecodeConsNil(`t):`t;
         %match(antiterm) { 
           Appl(name,args)  -> {
             // add g(Z1,...) ... h(Z1,...)

@@ -228,7 +228,7 @@ public class Pretty {
     return opsb.toString() + "\n" + varsb.toString() + "\n" + rulesb.toString();
   }  
 
-  public static String generateTom(String strategyName, String typeName, RuleList bag, Signature esig, Signature gsig, String classname, boolean isTyped) {
+  public static String generateTom(String strategyName, RuleList bag, Signature esig, Signature gsig, String classname, boolean isTyped) {
     System.out.println("--------- TOM ----------------------");
     //     System.out.println("RULEs: " + toString(bag));
 
@@ -258,129 +258,105 @@ public class @classname@ {
           domain = domain.getTailConcGomType();
           i++;
         }
-
-
         sb.append("        | " + generateJavaName(name) + "(" + args + ")\n");
       }
-
     }
 
     // generate rules
     sb.append("      module m:rules() {\n");
-    //     for(Rule r:bag) {
     %match(bag) {
       ConcRule(_*,r,_*) -> {
         sb.append("        " + toString(`r) + "\n");
       }
     }
 
-    String inputTypeName = Signature.TYPE_TERM.getName();
-    if(typeName != null) { // if typed compilation and initial term of type typeName
-      inputTypeName = typeName;
-    }
-
+    // generate main
     sb.append(%[
     }
   }
   
   public static void main(String[] args) {
-  ]%);
-  if(!isTyped){
-    sb.append(%[
     try {
-    ]%);
-  }
-  sb.append(%[
       BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-    ]%); 
-    if(typeName != null || !isTyped) {
-    sb.append(%[
-      @inputTypeName@ input = @inputTypeName@.fromString(reader.readLine());
-    ]%);
-    }
-    sb.append(%[
+      Object input = @classname@.fromString(reader.readLine());
       long start = System.currentTimeMillis();
-      ]%);
-
-  // by default use the last compiled strategy
-  String name = "no_strategy_name";
-  if(Compiler.getInstance().getStrategyNames().contains(strategyName)) {
-     name = strategyName;
-  }
-  if(typeName != null) { // if typed compilation and initial term of type typeName
-      name += "_" + typeName;
-  }
-
-  if(Main.options.metalevel) {
-    sb.append(%[
-      Term t = `decode(@name@(encode(input)));
-      System.out.println(t);
-      ]%);
-  } else if(!isTyped){
-      sb.append(%[
       Object t = @classname@.mainStrat(input);
       System.out.println(t);
-      ]%);
-  }
-
-
-  sb.append(%[
       long stop = System.currentTimeMillis();
- 
       System.out.println("time1 (ms): " + ((stop-start)));
-    ]%);
-    if(!isTyped) {
-    sb.append(%[
     } catch (IOException e) {
       e.printStackTrace();
-      }
-    ]%);
     }
-  sb.append(%[
   }
   ]%);
-  	
-    sb.append(%[
 
-  public static Object mainStrat(Object t){
-  ]%);		
-  if(isTyped || typeName != null) {
+  // generate mainStrat
+  sb.append(%[
+  public static Object mainStrat(Object t) {
+  ]%);
+
+  if(isTyped) {
     for(GomType codomain: esig.getCodomains()) {
-      
       sb.append(%[
-      if(t instanceof @codomain.getName()@) {
-	return `mainStrat_@codomain.getName()@((@codomain.getName()@)t);
-      }
+    if(t instanceof @codomain.getName()@) {
+      return `mainStrat_@codomain.getName()@((@codomain.getName()@)t);
+    }
       ]%);
     }
+    sb.append(%[
+    throw new RuntimeException("cannot find a mainstrat for: " + t);
+    ]%);
   }
-  if(Main.options.metalevel) {      
+
+  if(isTyped) {
+    // generate nothing
+  } else if(Main.options.metalevel) {      
       sb.append(%[
   	return `decode(mainStrat(encode((Term)t)));
       ]%);
-  }
-  else {
-    if(isTyped || typeName != null) {
-    sb.append(%[
-        else {
-	  return `mainStrat(t);
-        }
-    ]%);
-    }
-    else {
-    sb.append(%[
-        return `mainStrat((Term) t);
-    ]%);
-    }
+  } else {
+      sb.append(%[
+    return `mainStrat((Term) t);
+      ]%);
   }
   sb.append(%[    
   }
-    ]%);	
-  
+  ]%); // end mainStrat
 
-sb.append(%[
+  // generate fromString
+  sb.append(%[
+  public static Object fromString(String s) {
+  ]%);
+
+  if(isTyped) {
+    for(GomType codomain: esig.getCodomains()) {
+      sb.append(%[
+    try {
+      return @codomain.getName()@.fromString(s);
+    } catch(IllegalArgumentException e) {
+    }
+      ]%);
+    }
+
+    sb.append(%[
+    throw new RuntimeException("cannot find a valid type for: " + s);
+    ]%);
+
+  } else {
+    sb.append(%[
+    return Term.fromString(s);
+    ]%);
+
+  }
+
+  sb.append(%[    
+  }
+  ]%); // end fromString
+
+
+  sb.append(%[    
 }
-]%);
+  ]%); // end class
 
     return sb.toString();
   }

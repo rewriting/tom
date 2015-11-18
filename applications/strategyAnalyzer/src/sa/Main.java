@@ -39,6 +39,12 @@ public class Main {
       return;
     }
 
+    // check options
+    if(Main.options.metalevel && Main.options.withType) {
+      System.err.println("options metalevel and withType are incompatible");
+      return;
+    }
+
     try {
       InputStream fileinput = System.in;
       if(options.in != null) {
@@ -78,7 +84,7 @@ public class Main {
       extractedSignature = ruleCompiler.getExtractedSignature();
       generatedSignature = ruleCompiler.getGeneratedSignature();
 
-      if(options.withType || options.type != null) {
+      if(options.withType) {
         TypeCompiler typeCompiler = new TypeCompiler(extractedSignature);
         typeCompiler.typeRules(generatedRules);
         generatedRules = typeCompiler.getGeneratedRules();
@@ -107,7 +113,7 @@ public class Main {
       }
 
       if(options.classname != null) {
-        tomoutputfile.println( Pretty.generateTom(strategyName,options.type, generatedRules, extractedSignature, generatedSignature, options.classname, options.withType) );
+        tomoutputfile.println( Pretty.generateTom(strategyName, generatedRules, extractedSignature, generatedSignature, options.classname, options.withType) );
       } 
 
       if(options.aprove) {
