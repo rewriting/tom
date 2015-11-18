@@ -1,0 +1,17 @@
+
+abstract syntax
+T = a()
+	| b()
+
+functions
+U = f(T,T)
+
+strategies
+
+r1() =  [  
+  f(a(),x) ->  a(),
+  f(b(),x) ->  a()
+]
+
+mainStrat() = r1()
+

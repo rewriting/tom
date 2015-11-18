@@ -25,10 +25,10 @@ public class Pattern {
 //     example1();
     // example2();
 //     example3(); // numadd
-     example4(); // interp
+//      example4(); // interp
 //     example5(); // balance
 //     example6(); // and-or
-//     example7(); // simplest reduce
+    example7(); // simplest reduce
 //     example7bis(); // simplest reduce with one type
 //    example8(); // reduce deeper
   }
@@ -1170,6 +1170,7 @@ public class Pattern {
     eSig.addSymbol("a", `ConcGomType(), `GomType("T") );
     eSig.addSymbol("b", `ConcGomType(), `GomType("T") );
     eSig.addSymbol("f", `ConcGomType(GomType("T"),GomType("T")), `GomType("U") );
+    eSig.setFunction("f");
 
     Term a =`Appl("a", TermList());
     Term b =`Appl("b", TermList());
@@ -1180,7 +1181,7 @@ public class Pattern {
 
     Term r0 = `Appl("rhs0",TermList());
 
-    RuleList res = `reduceRules(ConcRule(Rule(fav,r0), Rule(fbv,r0), Rule(fva,r0)), eSig);
+    RuleList res = `trsRule(ConcRule(Rule(fav,r0), Rule(fbv,r0), Rule(fva,r0)), eSig);
   }
 
   private static void example7bis() {
@@ -1203,7 +1204,7 @@ public class Pattern {
 
     Term r0 = `Appl("rhs0",TermList());
 
-    RuleList res = `reduceRules(ConcRule(Rule(fav,r0), Rule(ffv,r0), Rule(fbv,r0), Rule(fva,r0)), eSig);
+    RuleList res = `trsRule(ConcRule(Rule(fav,r0), Rule(ffv,r0), Rule(fbv,r0), Rule(fva,r0)), eSig);
   }
 
 
@@ -1234,7 +1235,8 @@ public class Pattern {
 
     Term r0 = `Appl("rhs0",TermList());
 
-    RuleList res = `reduceRules(ConcRule(Rule(fgaa,r0), Rule(fgba,r0), Rule(fgga,r0), Rule(faa,r0), Rule(fba,r0), Rule(fva,r0)), eSig);
+    RuleList res = `trsRule(ConcRule(Rule(fgba,r0), Rule(fgaa,r0), Rule(fgga,r0), Rule(faa,r0), Rule(fba,r0), Rule(fva,r0)), eSig);
+
   }
 
 
