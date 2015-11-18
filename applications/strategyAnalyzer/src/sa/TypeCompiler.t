@@ -44,7 +44,7 @@ public class TypeCompiler {
   }
 
   /**
-   * Transform each rewrite rule to a set of well-typed rules with the same behaviour. 
+   * Transform each rewrite rule to a list of well-typed rules with the same behaviour. 
    **/
   public void typeRules(RuleList untypedRules) {
     this.generatedRules = `ConcRule();
@@ -87,7 +87,7 @@ public class TypeCompiler {
                 Term typedRhs = this.propagateType(env,`rhs,type);
                 Rule newRule = `Rule(typedLhs, typedRhs);
                 //                 this.generatedRules.add(newRule);
-                generatedRules = `ConcRule(newRule,generatedRules*);
+                generatedRules = `ConcRule(generatedRules*, newRule); // must preserve the order
               } catch(TypeMismatchException typeExc) {
                 System.err.println("RULE OMITTED for " + `stratOp + "  because of " + typeExc.getMessage());
               }
@@ -122,7 +122,7 @@ public class TypeCompiler {
         }
 
         Var(name) -> { // for VAR get the type from the environment
-          if(env.get(`name) != null){
+          if(env.get(`name) != null) {
             types.add(env.get(`name));
           } else { // if we don't know it's type than it could be any type (eg for mainstrat)
             types.addAll(eSig.getCodomains());

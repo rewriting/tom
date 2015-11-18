@@ -213,9 +213,9 @@ public class Tools {
   /*
    * go from meta-level to term level
    * Appl("Appl",TermList(Appl("symb_f",TermList()),Appl("Cons",TermList(Appl("Appl",TermList(Appl("symb_a",TermList()),Appl("Nil",TermList()))),Appl("Nil",TermList())))))
-    * is decoded to Appl("f",TermList(Appl("b",TermList())))
-     *
-     */
+   * is decoded to Appl("f",TermList(Appl("b",TermList())))
+   *
+   */
   public static Term metaDecodeConsNil(Term t) {
     if(Main.options.metalevel) {
       return decodeConsNil(t);
@@ -225,7 +225,6 @@ public class Tools {
   }
 
   private static Term decodeConsNil(Term t) {
-
     //System.out.println("IN DECODE = "+ `t);
     %match(t) {
       Appl("Appl",TermList(Appl(symb_name,TermList()),args)) -> {
@@ -243,22 +242,17 @@ public class Tools {
   }
 
   private static TermList decodeConsNilList(Term t) {
-     //System.out.println("IN DECODE LIST = "+ `t);
     %match(t) {
       Appl("Cons",TermList(head,tail)) -> {
-         //System.out.println("HEAD = "+ `head);
-         //System.out.println("TAIL = "+ `tail);
         TermList newTail = decodeConsNilList(`tail);
         return `TermList(decodeConsNil(head), newTail*);
       }
 
       Appl("Nil",TermList()) -> {
-         //System.out.println("NIL");
         return `TermList();
       }
-
     }
-    return null;
+    throw new RuntimeException("should not be there");
   }
 
   /*
@@ -292,7 +286,6 @@ public class Tools {
 
   /**
    * Transform lhs into linear-lhs + true ^ constraint on non linear variables
-   * TODO: not really related to the Compiler but more to the Tools (for Terms)
    */
   public static TermList linearize(Term lhs, Signature signature) {
     Map<String,String> mapToOldName = new HashMap<String,String>();
@@ -329,27 +322,21 @@ public class Tools {
     }
     return true;
   }
-  
-  // for Main.options.metalevel we need the (generated)signature 
-  //   -> in previous versions it was one of the parameters
-  // TODO: use HashMultiset
-  %strategy ReplaceWithFreshVar(signature:Signature, bag:HashMultiset, map:Map) extends Identity() {
-    visit Term {
-      Var(n)  -> {
-        if(bag.count(`n) > 1) {
-          bag.remove(`n);
-          String z = Tools.getName("Z");
-          map.put(z,`n);
-          Term newt = `Var(z);
-          if(Main.options.metalevel) {
-            newt = Tools.metaEncodeConsNil(newt,signature);
-          }
-          return newt;
-        }
-      }
-    }
+
+  public static void assertLinear(Term t) {
+    assert(isLinear(t));
   }
 
+  public static void assertLinear(Rule r) {
+    assertLinear(r.getlhs());
+  }
+
+  public static void assertLinear(RuleList rules) {
+    for(Rule r: rules.getCollectionConcRule()) {
+      assertLinear(r);
+    }
+  }
+  
   /**
    * Returns a Map which associates to each variable name an integer
    * representing the number of occurences of the variable in the
@@ -372,6 +359,24 @@ public class Tools {
     visit Term {
       Var(name)-> {
         bag.add(`name);
+      }
+    }
+  }
+
+  // for Main.options.metalevel we need the (generated)signature 
+  %strategy ReplaceWithFreshVar(signature:Signature, bag:HashMultiset, map:Map) extends Identity() {
+    visit Term {
+      Var(n)  -> {
+        if(bag.count(`n) > 1) {
+          bag.remove(`n);
+          String z = Tools.getName("Z");
+          map.put(z,`n);
+          Term newt = `Var(z);
+          if(Main.options.metalevel) {
+            newt = Tools.metaEncodeConsNil(newt,signature);
+          }
+          return newt;
+        }
       }
     }
   }

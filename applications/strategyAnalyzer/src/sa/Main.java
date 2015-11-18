@@ -51,11 +51,11 @@ public class Main {
         fileinput = new FileInputStream(options.in);
       }
 
-      RuleLexer lexerNEW = new RuleLexer(new ANTLRInputStream(fileinput));
-      CommonTokenStream tokensNEW = new CommonTokenStream(lexerNEW);
-      RuleParser ruleParserNEW = new RuleParser(tokensNEW);
-      Tree bNEW = (Tree) ruleParserNEW.program().getTree();
-      Program t = (Program) RuleAdaptor.getTerm(bNEW);
+      RuleLexer lexer = new RuleLexer(new ANTLRInputStream(fileinput));
+      CommonTokenStream tokens = new CommonTokenStream(lexer);
+      RuleParser ruleParser = new RuleParser(tokens);
+      Tree tree = (Tree) ruleParser.program().getTree();
+      Program t = (Program) RuleAdaptor.getTerm(tree);
 
       Compiler compiler = Compiler.getInstance();
       compiler.setProgram(t);
@@ -67,9 +67,7 @@ public class Main {
       Signature extractedSignature = compiler.getExtractedSignature();
       Signature generatedSignature = compiler.getGeneratedSignature();
 
-      //       System.out.println("EXT SIG = " + extractedSignature);
-      //       System.out.println("GEN SIG = " + generatedSignature);
-
+      Tools.assertLinear(generatedRules);
       // transform the LINEAR TRS: compile Aps and remove ATs
       RuleCompiler ruleCompiler = new RuleCompiler(extractedSignature,generatedSignature);
       if(options.withAP == false) {
@@ -89,26 +87,29 @@ public class Main {
         typeCompiler.typeRules(generatedRules);
         generatedRules = typeCompiler.getGeneratedRules();
         generatedSignature = typeCompiler.getTypedSignature();
+
       }
 
+      if(Main.options.pattern && Main.options.ordered && Main.options.withType) {
+        System.out.println("after compilation");
+        System.out.println("generatedRules = " + Pretty.toString(generatedRules));
+        // run the Pattern transformation here
+      }
 
       PrintStream outputfile = System.out;
       if(options.out != null) {
-	if(options.directory != null) {
+        if(options.directory != null) {
           outputfile = new PrintStream(options.directory + "/" + options.out);
-        }
-	else {
-        outputfile = new PrintStream(options.out);
+        } else {
+          outputfile = new PrintStream(options.out);
         }
       }
       PrintStream tomoutputfile = System.out;
       if(options.classname != null) {
-	if(options.directory != null) {
-          tomoutputfile = new PrintStream(options.directory + "/" + options.classname+".t");
-        }
-        else {
-          tomoutputfile = new PrintStream(options.classname+".t");
-     
+        if(options.directory != null) {
+          tomoutputfile = new PrintStream(options.directory + "/" + options.classname + ".t");
+        } else {
+          tomoutputfile = new PrintStream(options.classname + ".t");
         }
       }
 
