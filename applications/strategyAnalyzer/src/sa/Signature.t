@@ -90,7 +90,7 @@ public class Signature {
   /**
    * Create an expanded signature containing the symbols in the
    * current one (set from a program) and builtin symbols used in the
-   * translation of strategies
+   * translation of strategies. This signature is mono-sorted (TERM only)
    * @return the expanded signature
    */
   public Signature expandSignature()  {

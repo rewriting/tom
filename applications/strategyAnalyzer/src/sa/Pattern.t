@@ -25,8 +25,8 @@ public class Pattern {
 //     example1();
     // example2();
 //     example3(); // numadd
-     example4(); // interp
-//     example5(); // balance
+//     example4(); // interp
+     example5(); // balance
 //     example6(); // and-or
 //     example7(); // simplest reduce
 //     example7bis(); // simplest reduce with one type
