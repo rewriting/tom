@@ -251,14 +251,14 @@
 	</target>
 
 	<target name="tomSrc">
-		<tom.preset srcdir="${test.gen}" destdir="${test.gen}"> 
+		<tom.preset nowarn="true" srcdir="${test.gen}" destdir="${test.gen}"> 
    			<include name="*.t"/>
 			<exclude name="*Test*.t"/> 
     		</tom.preset>
 	</target> 
 
 	<target name="tomTest" depends="tomSrc">
-		<tom.preset srcdir="${test.dir}" destdir="${test.gen}">
+		<tom.preset nowarn="true" srcdir="${test.dir}" destdir="${test.gen}">
 			<include name="*Test*.t"/>
 		</tom.preset>
 	</target>
