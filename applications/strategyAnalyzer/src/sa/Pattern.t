@@ -38,10 +38,7 @@ public class Pattern {
    */
   public static RuleList trsRule(RuleList ruleList, Signature eSig) {
 
-    try {
-      ruleList = `TopDown(RemoveVar()).visitLight(`ruleList);
-    } catch(VisitFailure e) {
-    }
+    //ruleList = (RuleList) removeVar(ruleList);
 
     RuleList res = `ConcRule();
     %match(ruleList) {
@@ -67,8 +64,6 @@ public class Pattern {
         }
       }
     }
-
-
 
     // test subsumtion idea
     res = removeRedundantRule(res,eSig);
@@ -134,14 +129,14 @@ public class Pattern {
     try {
       // DistributeAdd needed if we can start with terms like X \ f(a+b) or X \ (f(X)\f(f(_)))
       Strategy S1 = `ChoiceId(CleanAdd(),PropagateEmpty(),SimplifySub(eSig));
+      t = `InnermostId(S1).visitLight(t);
+      //System.out.println("NO SUBs = " + Pretty.toString(t));
+      System.out.println("NO SUBs");
+
       Strategy S2 = `ChoiceId(CleanAdd(),PropagateEmpty(), VarAdd(), FactorizeAdd());
-
-      t =  `InnermostId(S1).visitLight(t);
-      System.out.println("NO SUBs = " + Pretty.toString(t));
-      //       System.out.println("NO SUBs = " + t);
-
       t = `InnermostId(S2).visitLight(t);
-      System.out.println("NO ADD = " + Pretty.toString(t));
+      //System.out.println("NO ADD = " + Pretty.toString(t));
+      System.out.println("NO ADD");
 
       /*
       Term old = null;
@@ -161,12 +156,14 @@ public class Pattern {
     }
 
     t = expandAdd(t);
-    System.out.println("EXPAND = " + Pretty.toString(t));
+    //System.out.println("EXPAND = " + Pretty.toString(t));
+    System.out.println("EXPAND");
 
     %match(t) {
       Add(tl) -> {
         t = `Add(simplifySubsumtion(tl));
-        System.out.println("REMOVE SUBSUMTION = " + Pretty.toString(t));
+        //System.out.println("REMOVE SUBSUMTION = " + Pretty.toString(t));
+        System.out.println("REMOVE SUBSUMTION");
       }
     }
 
@@ -307,9 +304,8 @@ public class Pattern {
           %match(rl) {
             ConcRule(_*,Rule(lhs@Appl(g,args_g),rhs),_*) -> {
               //if(eSig.getCodomain(`g) == codomain) { // optim: remove ill typed terms 
-                Term newLhs = `TopDown(RemoveVar()).visitLight(`lhs);
-                tl = `ConcAdd(newLhs,tl*); // order not preserved
-                //tl = `ConcAdd(lhs,tl*); // order not preserved
+                //tl = `ConcAdd((Term)removeVar(lhs),tl*); // order not preserved
+                tl = `ConcAdd(lhs,tl*); // order not preserved
               //}
             }
           }
@@ -320,36 +316,12 @@ public class Pattern {
         }
       }
 
-      // empty - t -> empty
-      //Sub(Empty(),t) -> {
-      //  return `Empty();
-      //}
-
       // empty - f(t1,...,tn) -> empty
       s@Sub(Empty(),Appl(f,tl)) -> {
         Term res = `Empty();
         debug("empty - f(...) -> empty",`s,res);
         return `Empty();
       }
-
-
-      // t - t -> empty
-      //Sub(t, t) -> {
-      //  return `Empty();
-      //}
-
-      // (a + t + b) - t -> (a + b)
-      //Sub(Add(ConcAdd(C1*,t,C2*)),t) -> {
-      //  return `Add(ConcAdd(C1*,C2*));
-      //}
-
-
-      // (a1 + ... + an) - b -> (a1 - b) + ( (a2 + ... + an) - b )
-      //s@Sub(Add(ConcAdd(head,tail*)), t) -> {
-      //  Term res = `Add(ConcAdd(Sub(head,t), Sub(Add(ConcAdd(tail*)),t)));
-      //  System.out.println("sub distrib2 : " + Pretty.toString(`s) + " --> " + Pretty.toString(res));
-      //  return res;
-      //}
 
       // (a1 + ... + an) - t@f(t1,...,tn) -> (a1 - t) + ( (a2 + ... + an) - t )
       s@Sub(Add(ConcAdd(head,tail*)), t@Appl(f,tl)) -> {
@@ -365,27 +337,12 @@ public class Pattern {
         return res;
       }
 
-      // f(t1,...,tn) - (a + g(t1',...,tm') + b) -> f(t1,...,tn) - (a + b)
-      //s@Sub(t@Appl(f,tl1),Add(ConcAdd(C1*, Appl(g, tl2), C2*))) && f!=g -> {
-      //  Term res = `Sub(t, Add(ConcAdd(C1*,C2*)));
-      //  System.out.println("sub elim2 : " + Pretty.toString(`s) + " --> " + Pretty.toString(res));
-      //  return res;
-      // }
-
-
-      // f(t1,t2) - f(t1',t2') -> f(t1, t2-t2') + f(t1-t1', t2)
       // f(t1,...,tn) - f(t1',...,tn') -> f(t1-t1',t2,...,tn) + f(t1, t2-t2',...,tn) + ... + f(t1,...,tn-tn')
       s@Sub(t1@Appl(f,tl1), t2@Appl(f, tl2)) -> {
         Term res = `sub(t1,t2);
         debug("sub1",`s,res);
         return res;
       }
-
-      //s@Sub(t1@Appl(f,tl1),Add(ConcAdd(C1*, t2@Appl(f, tl2), C2*))) -> {
-      //  Term res = `Sub(sub(t1,t2), Add(ConcAdd(C1*,C2*)));
-      //  System.out.println("sub2 : " + Pretty.toString(`s) + " --> " + Pretty.toString(res));
-      //  return res;
-      // }
 
     }
   }
@@ -447,7 +404,11 @@ public class Pattern {
     while(!tl1.isEmptyTermList() && cpt <= 1) {
       Term h1 = tl1.getHeadTermList();
       Term h2 = tl2.getHeadTermList();
-      if(h1==h2) {
+      if(h1 == h2) {
+        tl = `TermList(tl*, h1);
+      } else if(removeVar(h1) == removeVar(h2)) {
+        System.out.println("h1 = " + h1);
+        System.out.println("h2 = " + h2);
         tl = `TermList(tl*, h1);
       } else {
         tl = `TermList(tl*, Add(ConcAdd(h1,h2)));
@@ -473,6 +434,14 @@ public class Pattern {
       Var[] -> {
         return `Var("_");
       }
+    }
+  }
+
+  private static tom.library.sl.Visitable removeVar(tom.library.sl.Visitable t) {
+    try {
+      return `TopDown(RemoveVar()).visitLight(t);
+    } catch(VisitFailure e) {
+      throw new RuntimeException("should not be there");
     }
   }
 
@@ -636,6 +605,25 @@ public class Pattern {
    * remove those which are subsumed by another one
    */
   private static AddList simplifySubsumtion(AddList tl) {
+    return simplifySubsumtionAux(tl, `ConcAdd());
+  }
+
+  private static AddList simplifySubsumtionAux(AddList candidates, AddList kernel) {
+    %match( candidates ) {
+      ConcAdd(head, tail*) -> {
+        boolean b = match(`head, `ConcAdd(tail*,kernel*));
+        if(b) {
+          return simplifySubsumtionAux(`tail, kernel);
+        } else {
+          return simplifySubsumtionAux(`tail, `ConcAdd(head,kernel*));
+        }
+      }
+    }
+    return kernel;
+  }
+
+  /*
+  private static AddList simplifySubsumtion(AddList tl) {
     %match(tl) {
       ConcAdd(C1*,t1,C2*,t2,C3*) -> {
         if(`match(t1,t2)) {
@@ -647,6 +635,7 @@ public class Pattern {
     }
     return tl;
   }
+  */
 
   /*
    * Return true if t1 matches t2
@@ -661,12 +650,27 @@ public class Pattern {
       Appl(name1,args1),Appl(name2,args2) && name1!=name2 -> { return false; }
 
       // Match
-      Var(_),Appl(name2,args2) -> { return true; }
-      Var(_),Var(_) -> { return true; }
+      Var[],Appl(name2,args2) -> { return true; }
+      Var[],Var[] -> { return true; }
 
     }
     return false;
   }
+
+  /*
+   * return true is t can be match by a term of al
+   */
+  private static boolean match(Term t, AddList al) {
+    %match(al) {
+      ConcAdd(_*,p,_*) -> {
+        if(`match(p,t)) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
 
   private static boolean decomposeList(TermList tl1, TermList tl2) {
     %match(tl1,tl2) {
@@ -709,7 +713,7 @@ public class Pattern {
           for(String name: eSig.getConstructors()) {
             int arity = eSig.getArity(name);
             Term expand = Tools.genAbstractTerm(name,arity, "_");
-            expand = `TopDown(RemoveVar()).visitLight(expand);
+            expand =  (Term) removeVar(expand);
 
             Term newt = (Term) omega.getReplace(expand).visit(subject);
 
@@ -807,7 +811,7 @@ public class Pattern {
       }
 
       // match: _ << f(...) -> TrueMatch()
-      s@Match(Var(_),(Appl|Var)[]) -> {
+      s@Match(Var[],(Appl|Var)[]) -> {
         Term res = `TrueMatch();
         debug("match",`s,res);
         return res;
@@ -908,11 +912,8 @@ public class Pattern {
   public static boolean canBeRemoved2(Rule rule, RuleList ruleList, Signature eSig) {
     boolean res = false;
 
-    try {
-      rule = `TopDown(RemoveVar()).visitLight(rule);
-      ruleList = `TopDown(RemoveVar()).visitLight(ruleList);
-    } catch(VisitFailure e) {
-    }
+    rule = (Rule) removeVar(rule);
+    ruleList = (RuleList) removeVar(ruleList);
 
     %match(rule) {
       Rule(lhs,rhs) -> {

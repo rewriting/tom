@@ -14,12 +14,12 @@ strategies
 
 r1() =  [  
   interp(Z(), Nil())                                             -> Nv(Z()),
-  interp(S(Z()), Cons(Nv(n),Nil()))                              -> Nv(Z()), //Nv(S(n)),
-  interp(S(S(Z())), Cons(Nv(m),Cons(Nv(n),Nil())))               -> Nv(Z()), //Nv(plus(m,n)),
-  interp(S(S(S(Z()))), Nil())                                    -> Nv(Z()), //Bv(True()),
-  interp(S(S(S(S(Z())))), Cons(Bv(b),Nil()))                     -> Nv(Z()), //Bv(not(b)),
-  interp(S(S(S(S(S(Z()))))), Cons(Nv(b1),Cons(Bv(b2),Nil())))    -> Nv(Z()), //Bv(or(b1,b2)),
-  interp(S(S(S(S(S(S(Z())))))), Cons(Nv(n1),Cons(Nv(n2),Nil()))) -> Nv(Z()), //Bv(inf(n1,n2)),
+  interp(S(Z()), Cons(Nv(n),Nil()))                              -> Nv(S(n)),
+  interp(S(S(Z())), Cons(Nv(m),Cons(Nv(n),Nil())))               -> Nv(plus(m,n)),
+  interp(S(S(S(Z()))), Nil())                                    -> Bv(True()),
+  interp(S(S(S(S(Z())))), Cons(Bv(b),Nil()))                     -> Bv(not(b)),
+  interp(S(S(S(S(S(Z()))))), Cons(Nv(b1),Cons(Bv(b2),Nil())))    -> Bv(or(b1,b2)),
+  interp(S(S(S(S(S(S(Z())))))), Cons(Nv(n1),Cons(Nv(n2),Nil()))) -> Bv(inf(n1,n2)),
   interp(x,y)                                                    -> Undef(),
 
   plus(x,Z())    -> x,
