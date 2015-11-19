@@ -1,12 +1,14 @@
 
 abstract syntax
-Bool = True() | False()
-Nat = Z() | S(Nat)
+Bool = True() | False() | not(Bool) | or(Bool,Bool) | inf(Nat,Nat)
+Nat = Z() | S(Nat) | plus(Nat,Nat)
 List = Nil() | Cons(Val,List)
 Val = Nv(Nat) | Bv(Bool) | Undef() | interp(Nat,List)
 
 functions
 Val = interp(Nat,List)
+Nat = plus(Nat,Nat)
+Bool = not(Bool) | or(Bool,Bool) | inf(Nat,Nat)
 
 strategies
 
@@ -18,7 +20,22 @@ r1() =  [
   interp(S(S(S(S(Z())))), Cons(Bv(b),Nil()))                     -> Nv(Z()), //Bv(not(b)),
   interp(S(S(S(S(S(Z()))))), Cons(Nv(b1),Cons(Bv(b2),Nil())))    -> Nv(Z()), //Bv(or(b1,b2)),
   interp(S(S(S(S(S(S(Z())))))), Cons(Nv(n1),Cons(Nv(n2),Nil()))) -> Nv(Z()), //Bv(inf(n1,n2)),
-  interp(x,y)                                                    -> Undef()
+  interp(x,y)                                                    -> Undef(),
+
+  plus(x,Z())    -> x,
+  plus(x,S(y))   -> S(plus(x,y)),
+
+  inf(Z(),S(x))  -> True(),
+  inf(S(x),S(y)) -> inf(x,y),
+  inf(x,y)       -> False(),
+
+  not(True())    -> False(),
+  not(False())   -> True(),
+  or(True(),x)   -> x,
+  or(x,True())   -> x,
+  or(False(),x)  -> False(),
+  or(x,False())  -> False()
+
 ]
 
 mainStrat() = r1()

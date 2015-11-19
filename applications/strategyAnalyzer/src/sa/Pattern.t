@@ -242,7 +242,7 @@ public class Pattern {
   %strategy VarAdd() extends Identity() {
     visit Term {
       // a + x + b -> x
-      s@Add(ConcAdd(_*, x@Var("_"), _*)) -> {
+      s@Add(ConcAdd(_*, x@Var[], _*)) -> {
         Term res = `x;
         debugVerbose("a + x + b -> x",`s,res);
         return res;
@@ -276,7 +276,7 @@ public class Pattern {
     visit Term {
 
       // t - x -> empty
-      s@Sub(t, Var("_")) -> {
+      s@Sub(t, Var[]) -> {
         Term res = `Empty();
         debug("t - x -> empty",`s,res);
         return res;
@@ -297,7 +297,7 @@ public class Pattern {
       }
      
       // X - t -> expand AP
-      s@Sub(Var("_"), t@Appl(f,args_f)) -> {
+      s@Sub(Var[], t@Appl(f,args_f)) -> {
         if(isPlainTerm(`t)) {
           RuleCompiler ruleCompiler = new RuleCompiler(`eSig, `eSig); // gSig
           RuleList rl = ruleCompiler.expandAntiPatterns(`ConcRule(Rule(Anti(t),Var("_"))));
@@ -309,6 +309,7 @@ public class Pattern {
               //if(eSig.getCodomain(`g) == codomain) { // optim: remove ill typed terms 
                 Term newLhs = `TopDown(RemoveVar()).visitLight(`lhs);
                 tl = `ConcAdd(newLhs,tl*); // order not preserved
+                //tl = `ConcAdd(lhs,tl*); // order not preserved
               //}
             }
           }
@@ -469,7 +470,7 @@ public class Pattern {
    */
   %strategy RemoveVar() extends Identity() {
     visit Term {
-      Var(_) -> {
+      Var[] -> {
         return `Var("_");
       }
     }
@@ -482,8 +483,8 @@ public class Pattern {
   private static Term eliminateIllTyped(Term t, GomType type, Signature eSig) {
     //System.out.println(Pretty.toString(t) + ":" + type.getName());
     %match(t) {
-      Var("_") -> {
-        return t;
+      v@Var[] -> {
+        return `v;
       }
 
       Appl(f,args) -> {
@@ -738,7 +739,7 @@ public class Pattern {
 
   %strategy CollectVarPosition(c:HashSet) extends Identity() {
     visit Term {
-      Var("_") -> {
+      Var[] -> {
         c.add(getEnvironment().getPosition());
       }
     }
@@ -858,8 +859,8 @@ public class Pattern {
       }
 
       // t1 << _ + t2 << _ -> (t1+t2) << _ if t1,t2 != _
-      s@Add(ConcAdd(C1*, Match(t1@!Var[], Var("_")), C2*, Match(t2@!Var[], Var("_")), C3*)) -> {
-        Term match = `Match(Add(ConcAdd(t1,t2)),Var("_"));
+      s@Add(ConcAdd(C1*, Match(t1@!Var[], X@Var("_")), C2*, Match(t2@!Var[], X@Var("_")), C3*)) -> {
+        Term match = `Match(Add(ConcAdd(t1,t2)),X);
         Term res = `Add(ConcAdd(match, C1*,C2*,C3));
         debug("simplify add match",`s,res);
         return res;
@@ -874,17 +875,18 @@ public class Pattern {
       s@Add(al@ConcAdd(Appl(f,_),_*)) -> {
         GomType codomain = eSig.getCodomain(`f);
         if(codomain != null) {
-          Set<String> ops = eSig.getConstructors(codomain);
-          AddList l = `ConcAdd();
-          for(String name:ops) {
-            TermList args = `TermList();
-            for(int i=0 ; i<eSig.getArity(name) ; i++) {
-              args = `TermList(Var("_"),args*);
+          Set<String> foundConstructors = new HashSet<String>();
+          for(Term t: `al.getCollectionConcAdd()) {
+            // check that t is composed of variables only
+            %match(t) {
+              Appl(opname,!TermList(_*,!Var[],_*)) -> {
+                // add f to set of names
+                foundConstructors.add(`opname);
+              }
             }
-            Term p = `Appl(name,args);
-            l = `ConcAdd(p,l*);
           }
-          if(l == `al) {
+
+          if(foundConstructors.equals(eSig.getConstructors(codomain))) {
             //System.out.println("OPS = " + ops + " al = " + `al);
             Term res = `Var("_");
             debug("abstraction",`s,res);
