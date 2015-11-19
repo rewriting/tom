@@ -337,6 +337,15 @@ public class Tools {
     }
   }
   
+  public static void assertNoNamedVar(tom.library.sl.Visitable t) {
+    HashMultiset<String> bag = collectVariableMultiplicity(t);
+    if(bag.isEmpty()) {
+      return;
+    }
+    assert(bag.contains("_"));
+    assert(bag.elementSet().size()==1);
+  }
+
   /**
    * Returns a Map which associates to each variable name an integer
    * representing the number of occurences of the variable in the

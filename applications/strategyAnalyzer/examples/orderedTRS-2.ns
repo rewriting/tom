@@ -3,6 +3,8 @@ abstract syntax
 T = a()
 	| b()
 
+U = f(T,T)
+
 functions
 U = f(T,T)
 

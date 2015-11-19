@@ -851,6 +851,11 @@ public class Pattern {
   
   %strategy SimplifyAddMatch() extends Identity() {
     visit Term {
+
+      s -> {
+        Tools.assertNoNamedVar(`s);
+      }
+
       // t + TrueMatch -> TrueMatch
       s@Add(ConcAdd(_*, TrueMatch(), _*)) -> {
         Term res = `TrueMatch();
@@ -859,7 +864,7 @@ public class Pattern {
       }
 
       // t1 << _ + t2 << _ -> (t1+t2) << _ if t1,t2 != _
-      s@Add(ConcAdd(C1*, Match(t1@!Var[], X@Var("_")), C2*, Match(t2@!Var[], X@Var("_")), C3*)) -> {
+      s@Add(ConcAdd(C1*, Match(t1@!Var[], X@Var("_")), C2*, Match(t2@!Var[], Var("_")), C3*)) -> {
         Term match = `Match(Add(ConcAdd(t1,t2)),X);
         Term res = `Add(ConcAdd(match, C1*,C2*,C3));
         debug("simplify add match",`s,res);
@@ -902,6 +907,13 @@ public class Pattern {
 
   public static boolean canBeRemoved2(Rule rule, RuleList ruleList, Signature eSig) {
     boolean res = false;
+
+    try {
+      rule = `TopDown(RemoveVar()).visitLight(rule);
+      ruleList = `TopDown(RemoveVar()).visitLight(ruleList);
+    } catch(VisitFailure e) {
+    }
+
     %match(rule) {
       Rule(lhs,rhs) -> {
         AddList constraint = `ConcAdd();
