@@ -323,27 +323,41 @@ public class Tools {
     return true;
   }
 
-  public static void assertLinear(Term t) {
-    assert(isLinear(t));
-  }
-
-  public static void assertLinear(Rule r) {
-    assertLinear(r.getlhs());
-  }
-
-  public static void assertLinear(RuleList rules) {
+  public static boolean isLhsLinear(RuleList rules) {
+    boolean res = true;
     for(Rule r: rules.getCollectionConcRule()) {
-      assertLinear(r);
+      res &= isLinear(r.getlhs());
     }
+    return res;
   }
   
-  public static void assertNoNamedVar(tom.library.sl.Visitable t) {
+  public static boolean containNamedVar(tom.library.sl.Visitable t) {
     HashMultiset<String> bag = collectVariableMultiplicity(t);
-    if(bag.isEmpty()) {
-      return;
+    for(String name:bag.elementSet()) {
+      if(name != "_") {
+        return true;
+      }
     }
-    assert(bag.contains("_"));
-    assert(bag.elementSet().size()==1);
+
+    return false;
+  }
+
+  public static boolean containAt(tom.library.sl.Visitable t) {
+    HashMultiset<Term> bag = HashMultiset.create();
+    try {
+      `TopDown(CollectAt(bag)).visitLight(t);
+    } catch(VisitFailure e) {
+    }
+     return !bag.isEmpty();
+  }
+  
+  // search all At symbols
+  %strategy CollectAt(bag:HashMultiset) extends Identity() {
+    visit Term {
+      x@At[]-> {
+        bag.add(`x);
+      }
+    }
   }
 
   /**

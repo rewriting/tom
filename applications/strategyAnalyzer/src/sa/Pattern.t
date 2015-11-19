@@ -67,6 +67,12 @@ public class Pattern {
       }
     }
 
+    // remove x@t
+    RuleCompiler ruleCompiler = new RuleCompiler(`eSig, `eSig); 
+    res = ruleCompiler.expandAt(res);
+
+    assert !Tools.containAt(res) : "check contai no AT";
+
     // minimize the set of rules
     res = removeRedundantRule(res,eSig);
 
@@ -159,6 +165,14 @@ public class Pattern {
         debug("propagate empty",`s,res);
         return res;
       }
+
+      // At(x,empty) -> empty
+      s@At(x,Empty()) -> {
+        Term res = `Empty();
+        debug("x@empty",`s,res);
+        return res;
+      }
+
     }
   }
 
@@ -292,9 +306,13 @@ public class Pattern {
           }
           Term res = `Add(tl);
           debug("expand AP",`s,res);
+
           res = eliminateIllTyped(res, codomain, `eSig);
+
           // PEM: we should generate X@Add(tl)
+          // but it breaks the work done by reduce
           //res = `At(X,res);
+
           return res;
         }
       }
@@ -324,6 +342,13 @@ public class Pattern {
       s@Sub(t1@Appl(f,tl1), t2@Appl(f, tl2)) -> {
         Term res = `sub(t1,t2);
         debug("sub1",`s,res);
+        return res;
+      }
+
+      // x@t1 - t2 -> x@(t1 - t2)
+      s@Sub(At(x,t1), t2) -> {
+        Term res = `At(x,Sub(t1,t2));
+        debug("at",`s,res);
         return res;
       }
 
@@ -418,6 +443,10 @@ public class Pattern {
       Var[] -> {
         return `Var("_");
       }
+
+      At(_,t) -> {
+        return `t;
+      }
     }
   }
 
@@ -485,6 +514,7 @@ public class Pattern {
     System.out.println("eliminateIllTyped Should not be there: " + `t);
     return t;
   }
+
 /*
    //
    // implementation using rules
@@ -846,7 +876,7 @@ public class Pattern {
     visit Term {
 
       s -> {
-        Tools.assertNoNamedVar(`s);
+        assert !Tools.containNamedVar(`s) : `s;
       }
 
       // t + TrueMatch -> TrueMatch
