@@ -53,19 +53,21 @@ public class Pattern {
         System.out.println("PATTERN : " + Pretty.toString(pattern));
         Term t = `reduce(pattern,eSig);
         System.out.println("REDUCED : " + Pretty.toString(t));
+
+        // put back the rhs
         %match(t) {
           Add(ConcAdd(_*,e,_*)) -> {
-            res = `ConcRule(Rule(e,rhs),res*);
+            res = `ConcRule(res*,Rule(e,rhs));
           }
 
           e@(Appl|Var)[] -> {
-            res = `ConcRule(Rule(e,rhs),res*);
+            res = `ConcRule(res*,Rule(e,rhs));
           }
         }
       }
     }
 
-    // test subsumtion idea
+    // minimize the set of rules
     res = removeRedundantRule(res,eSig);
 
     for(Rule rule:`res.getCollectionConcRule()) {
@@ -77,11 +79,37 @@ public class Pattern {
     return res;
   }
 
+  private static Term reduce(Term t, Signature eSig) {
+    try {
+      // DistributeAdd needed if we can start with terms like X \ f(a+b) or X \ (f(X)\f(f(_)))
+      Strategy S1 = `ChoiceId(CleanAdd(),PropagateEmpty(),SimplifySub(eSig));
+      t = `InnermostId(S1).visitLight(t);
+      System.out.println("NO SUB = " + Pretty.toString(t));
 
+      Strategy S2 = `ChoiceId(CleanAdd(),PropagateEmpty(), VarAdd(), FactorizeAdd());
+      t = `InnermostId(S2).visitLight(t);
+      System.out.println("NO ADD = " + Pretty.toString(t));
+    } catch(VisitFailure e) {
+      System.out.println("failure on: " + t);
+    }
+
+    t = expandAdd(t);
+    System.out.println("EXPAND = " + Pretty.toString(t));
+
+    t = simplifySubsumtion(t);
+    System.out.println("REMOVE SUBSUMTION = " + Pretty.toString(t));
+
+    return t;
+  }
+
+  /*
+   * remove redundant rules using a very smart matching algorithm :-)
+   */
   private static RuleList removeRedundantRule(RuleList rules, Signature eSig) {
     return removeRedundantRuleAux(rules,`ConcRule(), eSig);
   }
 
+  // TODO: remove variables only once (and no longer in canBeRemove2) to speedup the process
   private static RuleList removeRedundantRuleAux(RuleList candidates, RuleList kernel, Signature eSig) {
     HashSet<RuleList> bag = new HashSet<RuleList>();
 
@@ -121,53 +149,6 @@ public class Pattern {
     return minrules;
     */
     return `ConcRule(candidates*,kernel*);
-  }
-
-
-
-  private static Term reduce(Term t, Signature eSig) {
-    try {
-      // DistributeAdd needed if we can start with terms like X \ f(a+b) or X \ (f(X)\f(f(_)))
-      Strategy S1 = `ChoiceId(CleanAdd(),PropagateEmpty(),SimplifySub(eSig));
-      t = `InnermostId(S1).visitLight(t);
-      //System.out.println("NO SUBs = " + Pretty.toString(t));
-      System.out.println("NO SUBs");
-
-      Strategy S2 = `ChoiceId(CleanAdd(),PropagateEmpty(), VarAdd(), FactorizeAdd());
-      t = `InnermostId(S2).visitLight(t);
-      //System.out.println("NO ADD = " + Pretty.toString(t));
-      System.out.println("NO ADD");
-
-      /*
-      Term old = null;
-      while(old != t) {
-        old = t;
-        System.out.println("S2: " + t);
-        t = `InnermostId(S2).visitLight(t);
-        System.out.println("EXPAND: " + t);
-        t = expandAdd(t);
-      }
-      System.out.println("FIXPOINT = " + Pretty.toString(t));
-      System.out.println("FIXPOINT = " + t);
-      */
-
-    } catch(VisitFailure e) {
-      System.out.println("failure on: " + t);
-    }
-
-    t = expandAdd(t);
-    //System.out.println("EXPAND = " + Pretty.toString(t));
-    System.out.println("EXPAND");
-
-    %match(t) {
-      Add(tl) -> {
-        t = `Add(simplifySubsumtion(tl));
-        //System.out.println("REMOVE SUBSUMTION = " + Pretty.toString(t));
-        System.out.println("REMOVE SUBSUMTION");
-      }
-    }
-
-    return t;
   }
 
   %strategy PropagateEmpty() extends Identity() {
@@ -241,7 +222,7 @@ public class Pattern {
       // a + x + b -> x
       s@Add(ConcAdd(_*, x@Var[], _*)) -> {
         Term res = `x;
-        debugVerbose("a + x + b -> x",`s,res);
+        debug("a + x + b -> x",`s,res);
         return res;
       }
     }
@@ -269,7 +250,7 @@ public class Pattern {
   }
 
 
-  %strategy SimplifySub(eSig:Signature) extends Identity() {//Fail() {
+  %strategy SimplifySub(eSig:Signature) extends Identity() {
     visit Term {
 
       // t - x -> empty
@@ -294,7 +275,7 @@ public class Pattern {
       }
      
       // X - t -> expand AP
-      s@Sub(Var[], t@Appl(f,args_f)) -> {
+      s@Sub(X@Var[], t@Appl(f,args_f)) -> {
         if(isPlainTerm(`t)) {
           RuleCompiler ruleCompiler = new RuleCompiler(`eSig, `eSig); // gSig
           RuleList rl = ruleCompiler.expandAntiPatterns(`ConcRule(Rule(Anti(t),Var("_"))));
@@ -312,6 +293,8 @@ public class Pattern {
           Term res = `Add(tl);
           debug("expand AP",`s,res);
           res = eliminateIllTyped(res, codomain, `eSig);
+          // PEM: we should generate X@Add(tl)
+          //res = `At(X,res);
           return res;
         }
       }
@@ -407,8 +390,9 @@ public class Pattern {
       if(h1 == h2) {
         tl = `TermList(tl*, h1);
       } else if(removeVar(h1) == removeVar(h2)) {
-        System.out.println("h1 = " + h1);
-        System.out.println("h2 = " + h2);
+        // PEM: check that we can keep h1 only
+        //System.out.println("h1 = " + h1);
+        //System.out.println("h2 = " + h2);
         tl = `TermList(tl*, h1);
       } else {
         tl = `TermList(tl*, Add(ConcAdd(h1,h2)));
@@ -604,8 +588,13 @@ public class Pattern {
    * Given a list of terms
    * remove those which are subsumed by another one
    */
-  private static AddList simplifySubsumtion(AddList tl) {
-    return simplifySubsumtionAux(tl, `ConcAdd());
+  private static Term simplifySubsumtion(Term t) {
+    %match(t) {
+      Add(tl) -> {
+        return `Add(simplifySubsumtionAux(tl, ConcAdd()));
+      }
+    }
+    return t;
   }
 
   private static AddList simplifySubsumtionAux(AddList candidates, AddList kernel) {

@@ -1,0 +1,26 @@
+
+abstract syntax
+Bool = True() | False() | not(Bool) | or(Bool,Bool) | and(Bool,Bool)
+
+functions
+Bool = not(Bool) | or(Bool,Bool) | and(Bool,Bool)
+
+strategies
+
+r1() =  [  
+  not(True())    -> False(),
+  not(False())   -> True(),
+
+  or(True(),x)   -> True,
+  or(x,True())   -> True,
+  or(False(),x)  -> x,
+  or(x,False())  -> x,
+
+  and(True(),x)   -> x,
+  and(x,True())   -> x,
+  and(False(),x)  -> False(),
+  and(x,False())  -> False()
+]
+
+mainStrat() = r1()
+
