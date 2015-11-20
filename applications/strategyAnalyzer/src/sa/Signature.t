@@ -13,6 +13,7 @@ public class Signature {
   public final static String FALSE = "False";
   public final static String AND = "and";
   public final static String BOTTOM = "Bottom";
+  public final static String FAIL = "bottom";
   public final static String BOTTOM2 = "Bottom2";
   public final static String BOTTOMLIST = "BottomList";
   public final static String EQ = "eq";
@@ -121,7 +122,12 @@ public class Signature {
     expandedSignature.addSymbol(TRUE,`ConcGomType(),TYPE_BOOLEAN);
     expandedSignature.addSymbol(FALSE,`ConcGomType(),TYPE_BOOLEAN);
     expandedSignature.addFunctionSymbol(AND,`ConcGomType(TYPE_BOOLEAN,TYPE_BOOLEAN),TYPE_BOOLEAN);
-    expandedSignature.addFunctionSymbol(EQ,`ConcGomType(TYPE_TERM,TYPE_TERM),TYPE_BOOLEAN);
+    //     expandedSignature.addFunctionSymbol(EQ,`ConcGomType(TYPE_TERM,TYPE_TERM),TYPE_BOOLEAN);
+    if(!Main.options.metalevel) {
+      expandedSignature.addFunctionSymbol(EQ,`ConcGomType(TYPE_TERM,TYPE_TERM),TYPE_BOOLEAN);
+    } else {
+      expandedSignature.addFunctionSymbol(EQ,`ConcGomType(TYPE_METATERM,TYPE_METATERM),TYPE_BOOLEAN);
+    }
 
     // add: bottom
     if(!Main.options.metalevel) {
@@ -135,6 +141,8 @@ public class Signature {
       // add: encode, decode
       expandedSignature.addFunctionSymbol(ENCODE,`ConcGomType(TYPE_TERM),TYPE_METATERM);
       expandedSignature.addFunctionSymbol(DECODE,`ConcGomType(TYPE_METATERM),TYPE_TERM);
+      // BOTTOM at the term level (at metalevel we already have Bottom)
+      expandedSignature.addFunctionSymbol(FAIL,`ConcGomType(TYPE_TERM),TYPE_TERM);
     }
     return expandedSignature;
   }
