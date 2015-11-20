@@ -50,7 +50,7 @@ public class Pattern {
           }
         }
         Term pattern = `Sub(lhs,Add(prev*));
-        System.out.println("PATTERN : " + Pretty.toString(pattern));
+        System.out.println("\nPATTERN : " + Pretty.toString(pattern));
         Term t = `reduce(pattern,eSig);
         System.out.println("REDUCED : " + Pretty.toString(t));
 
@@ -70,8 +70,7 @@ public class Pattern {
     // remove x@t
     RuleCompiler ruleCompiler = new RuleCompiler(`eSig, `eSig); 
     res = ruleCompiler.expandAt(res);
-
-    assert !Tools.containAt(res) : "check contai no AT";
+    assert !Tools.containAt(res) : "check contain no AT";
 
     // minimize the set of rules
     res = removeRedundantRule(res,eSig);
@@ -311,7 +310,7 @@ public class Pattern {
 
           // PEM: we should generate X@Add(tl)
           // but it breaks the work done by reduce
-          //res = `At(X,res);
+          res = `At(X,res);
 
           return res;
         }
@@ -414,7 +413,8 @@ public class Pattern {
       Term h2 = tl2.getHeadTermList();
       if(h1 == h2) {
         tl = `TermList(tl*, h1);
-      } else if(removeVar(h1) == removeVar(h2)) {
+      //} else if(removeVar(h1) == removeVar(h2)) { // less efficient than h1<<h2 && h2<<h1
+      } else if(match(h1,h2) && match(h2,h1)) {
         // PEM: check that we can keep h1 only
         //System.out.println("h1 = " + h1);
         //System.out.println("h2 = " + h2);
@@ -660,7 +660,14 @@ public class Pattern {
    * Return true if t1 matches t2
    */
   private static boolean match(Term t1, Term t2) {
+    //assert !Tools.containAt(t1) : "check contain no AT";
+    //assert !Tools.containAt(t2) : "check contain no AT";
+
     %match(t1,t2) {
+      // ElimAt
+      At(_,p1), p2 -> { return `match(p1,p2); }
+      p1, At(_,p2) -> { return `match(p1,p2); }
+
       // Delete
       Appl(name,TermList()),Appl(name,TermList()) -> { return true; }
       // Decompose
@@ -680,6 +687,9 @@ public class Pattern {
    * return true is t can be match by a term of al
    */
   private static boolean match(Term t, AddList al) {
+    //t = (Term) removeVar(t);
+    //al = (AddList) removeVar(al);
+
     %match(al) {
       ConcAdd(_*,p,_*) -> {
         if(`match(p,t)) {
