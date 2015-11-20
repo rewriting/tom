@@ -309,7 +309,6 @@ public class Pattern {
           res = eliminateIllTyped(res, codomain, `eSig);
 
           // PEM: we should generate X@Add(tl)
-          // but it breaks the work done by reduce
           res = `At(X,res);
 
           return res;
@@ -411,13 +410,12 @@ public class Pattern {
     while(!tl1.isEmptyTermList() && cpt <= 1) {
       Term h1 = tl1.getHeadTermList();
       Term h2 = tl2.getHeadTermList();
+      // we have to compare modulo renaming and AT
       if(h1 == h2) {
         tl = `TermList(tl*, h1);
-      //} else if(removeVar(h1) == removeVar(h2)) { // less efficient than h1<<h2 && h2<<h1
       } else if(match(h1,h2) && match(h2,h1)) {
+        // match(h1,h2) && match(h2,h1) is more efficient than removeVar(h1) == removeVar(h2)
         // PEM: check that we can keep h1 only
-        //System.out.println("h1 = " + h1);
-        //System.out.println("h2 = " + h2);
         tl = `TermList(tl*, h1);
       } else {
         tl = `TermList(tl*, Add(ConcAdd(h1,h2)));
@@ -664,7 +662,7 @@ public class Pattern {
     //assert !Tools.containAt(t2) : "check contain no AT";
 
     %match(t1,t2) {
-      // ElimAt
+      // ElimAt (more efficient than removing AT before matching)
       At(_,p1), p2 -> { return `match(p1,p2); }
       p1, At(_,p2) -> { return `match(p1,p2); }
 
