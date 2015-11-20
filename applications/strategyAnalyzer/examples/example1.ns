@@ -10,7 +10,10 @@ T = a()
 strategies
 
 r1() =  [ f(x,x) -> x ]
+
 r2() =  [ h(x,x,x) -> x ]
+
+r3() =  [ g(a()) -> b(), g(x) -> x ]
 
 obu(s) = mu x.(one(x) <+ s)
 innermost(s) = obu(s)
@@ -19,8 +22,8 @@ innermost(s) = obu(s)
 
 // mainStrat() = r1();r1()
 
-// mainStrat() = r1()
+mainStrat() = r3()
 
-mainStrat() = r2()
+// mainStrat() = r2()
 
 // mainStrat() = innermost(r1())

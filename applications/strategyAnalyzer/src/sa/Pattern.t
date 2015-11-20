@@ -43,6 +43,8 @@ public class Pattern {
     RuleList res = `ConcRule();
     %match(ruleList) {
       ConcRule(C1*,Rule(lhs,rhs),_*) -> {
+        // build the collection of all  prevlhs = l1+l2+...+ln   before  rule=Rule(lhs,rhs)
+        // the lhs of rule in the unordered TRS = lhs - prevlhs
         AddList prev = `ConcAdd();
         %match(C1) {
           ConcRule(_*,Rule(l,r),_*) -> {
@@ -51,6 +53,7 @@ public class Pattern {
         }
         Term pattern = `Sub(lhs,Add(prev*));
         System.out.println("\nPATTERN : " + Pretty.toString(pattern));
+        // transform   lhs - prevlhs   into a collection of patterns matching exactly the same terms
         Term t = `reduce(pattern,eSig);
         System.out.println("REDUCED : " + Pretty.toString(t));
 
@@ -165,6 +168,7 @@ public class Pattern {
         return res;
       }
 
+      // HC: chechk where is this used; what happens if x in the RHS?
       // At(x,empty) -> empty
       s@At(x,Empty()) -> {
         Term res = `Empty();
@@ -287,7 +291,7 @@ public class Pattern {
         return res;
       }
      
-      // X - t -> expand AP
+      // X - t -> expand AP   ==>    t should be in TFX (only symbols from declared signature)
       s@Sub(X@Var[], t@Appl(f,args_f)) -> {
         if(isPlainTerm(`t)) {
           RuleCompiler ruleCompiler = new RuleCompiler(`eSig, `eSig); // gSig
