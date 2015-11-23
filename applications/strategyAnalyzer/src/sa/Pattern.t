@@ -611,7 +611,7 @@ public class Pattern {
         // remove the term which contains Add(ConcAdd(...))
         c.remove(`subject);
         // fails to stop the TopDownCollect, and thus do not expand deeper terms
-        `Fail().visit(`subject);
+        `Fail().visitLight(`subject);
       }
     }
   }

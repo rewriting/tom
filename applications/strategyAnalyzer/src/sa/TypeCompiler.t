@@ -232,9 +232,9 @@ public class TypeCompiler {
 
         // add info into typed signature
         if(`name == Signature.EQ) {
-          typedSignature.addSymbol(typedName,domain,Signature.TYPE_BOOLEAN);
+          typedSignature.addFunctionSymbol(typedName,domain,Signature.TYPE_BOOLEAN);
         } else {
-          typedSignature.addSymbol(typedName,domain,type);
+          typedSignature.addFunctionSymbol(typedName,domain,type);
         }
         // TODO: build domain exactly as it should be (problem for TRUE, ruleAUX, ...?)
       }
