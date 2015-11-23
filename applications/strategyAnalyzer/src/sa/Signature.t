@@ -47,6 +47,8 @@ public class Signature {
 
   public Signature(Signature from) {
     this.table = HashBasedTable.create(from.table);
+    this.functions = new HashSet<String>(from.functions);
+    this.internals = new HashSet<String>(from.internals);
   }
 
   public boolean isBooleanOperator(String opname) {

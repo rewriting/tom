@@ -43,6 +43,8 @@ public class Pattern {
     RuleList res = `ConcRule();
     %match(ruleList) {
       ConcRule(C1*,Rule(lhs,rhs),_*) -> {
+        // build the collection of all  prevlhs = l1+l2+...+ln   before  rule=Rule(lhs,rhs)
+        // the lhs of rule in the unordered TRS = lhs - prevlhs
         AddList prev = `ConcAdd();
         %match(C1) {
           ConcRule(_*,Rule(l,r),_*) -> {
@@ -51,6 +53,7 @@ public class Pattern {
         }
         Term pattern = `Sub(lhs,Add(prev*));
         System.out.println("\nPATTERN : " + Pretty.toString(pattern));
+        // transform   lhs - prevlhs   into a collection of patterns matching exactly the same terms
         Term t = `reduce(pattern,eSig);
         System.out.println("REDUCED : " + Pretty.toString(t));
 
@@ -60,7 +63,7 @@ public class Pattern {
             res = `ConcRule(res*,Rule(e,rhs));
           }
 
-          e@(Appl|Var)[] -> {
+          e@(At|Appl|Var)[] -> {
             res = `ConcRule(res*,Rule(e,rhs));
           }
         }
@@ -70,7 +73,7 @@ public class Pattern {
     // remove x@t
     RuleCompiler ruleCompiler = new RuleCompiler(`eSig, `eSig); 
     res = ruleCompiler.expandAt(res);
-    assert !Tools.containAt(res) : "check contain no AT";
+    assert !Tools.containsAt(res) : "check contain no AT";
 
     // minimize the set of rules
     res = removeRedundantRule(res,eSig);
@@ -165,6 +168,7 @@ public class Pattern {
         return res;
       }
 
+      // HC: check where is this used; what happens if x in the RHS?
       // At(_,empty) -> empty
       s@At(_,Empty()) -> {
         Term res = `Empty();
@@ -287,7 +291,7 @@ public class Pattern {
         return res;
       }
      
-      // X - t -> expand AP
+      // X - t -> expand AP   ==>    t should be in TFX (only symbols from declared signature)
       s@Sub(X@Var[], t@Appl(f,args_f)) -> {
         if(isPlainTerm(`t)) {
           RuleCompiler ruleCompiler = new RuleCompiler(`eSig, `eSig); // gSig
@@ -347,6 +351,13 @@ public class Pattern {
       s@Sub(At(x,t1), t2) -> {
         Term res = `At(x,Sub(t1,t2));
         debug("at",`s,res);
+        return res;
+      }
+
+      // t1 - x@t2 -> t1 - t2
+      s@Sub(t1, At(x,t2)) -> {
+        Term res = `Sub(t1,t2);
+        debug("at2",`s,res);
         return res;
       }
 
@@ -607,7 +618,7 @@ public class Pattern {
         // remove the term which contains Add(ConcAdd(...))
         c.remove(`subject);
         // fails to stop the TopDownCollect, and thus do not expand deeper terms
-        `Fail().visit(`subject);
+        `Fail().visitLight(`subject);
       }
     }
   }
@@ -658,8 +669,8 @@ public class Pattern {
    * Return true if t1 matches t2
    */
   private static boolean match(Term t1, Term t2) {
-    //assert !Tools.containAt(t1) : "check contain no AT";
-    //assert !Tools.containAt(t2) : "check contain no AT";
+    //assert !Tools.containsAt(t1) : "check contain no AT";
+    //assert !Tools.containsAt(t2) : "check contain no AT";
 
     %match(t1,t2) {
       // ElimAt (more efficient than removing AT before matching)
@@ -885,7 +896,7 @@ public class Pattern {
     visit Term {
 
       s -> {
-        assert !Tools.containNamedVar(`s) : `s;
+        assert !Tools.containsNamedVar(`s) : `s;
       }
 
       // t + TrueMatch -> TrueMatch

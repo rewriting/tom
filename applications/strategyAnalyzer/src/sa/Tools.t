@@ -348,10 +348,10 @@ public class Tools {
       throw new RuntimeException("Should not be there");
     }
 
-    Term constraint = `Appl("True",TermList());
+    Term constraint = `Appl(Signature.TRUE,TermList());
     for(String name:mapToOldName.keySet()) {
       String oldName = mapToOldName.get(name);
-      constraint = `Appl("and",TermList( Appl(Signature.EQ,TermList(Var(oldName),Var(name))), constraint));
+      constraint = `Appl(Signature.AND,TermList( Appl(Signature.EQ,TermList(Var(oldName),Var(name))), constraint));
     }
     return `TermList(lhs,constraint);
 
@@ -375,7 +375,7 @@ public class Tools {
     return res;
   }
   
-  public static boolean containNamedVar(tom.library.sl.Visitable t) {
+  public static boolean containsNamedVar(tom.library.sl.Visitable t) {
     HashMultiset<String> bag = collectVariableMultiplicity(t);
     for(String name:bag.elementSet()) {
       if(name != "_") {
@@ -386,7 +386,7 @@ public class Tools {
     return false;
   }
 
-  public static boolean containAt(tom.library.sl.Visitable t) {
+  public static boolean containsAt(tom.library.sl.Visitable t) {
     HashMultiset<Term> bag = HashMultiset.create();
     try {
       `TopDown(CollectAt(bag)).visitLight(t);
@@ -400,6 +400,27 @@ public class Tools {
     visit Term {
       x@At[]-> {
         bag.add(`x);
+      }
+    }
+  }
+
+  public static boolean containsEqAnd(tom.library.sl.Visitable t) {
+    try {
+      `TopDown(ContainsEqAnd()).visitLight(t);
+      return false;
+    } catch(VisitFailure e) {
+      return true;
+    }
+  }
+
+  %strategy ContainsEqAnd() extends Identity() {
+    visit Term {
+      t@Appl("eq",_) -> {
+        `Fail().visitLight(`t);
+      }
+
+      t@Appl("and",_) -> {
+        `Fail().visitLight(`t);
       }
     }
   }
