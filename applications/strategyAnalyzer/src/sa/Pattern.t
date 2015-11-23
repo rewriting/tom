@@ -63,7 +63,7 @@ public class Pattern {
             res = `ConcRule(res*,Rule(e,rhs));
           }
 
-          e@(Appl|Var)[] -> {
+          e@(At|Appl|Var)[] -> {
             res = `ConcRule(res*,Rule(e,rhs));
           }
         }
@@ -351,6 +351,13 @@ public class Pattern {
       s@Sub(At(x,t1), t2) -> {
         Term res = `At(x,Sub(t1,t2));
         debug("at",`s,res);
+        return res;
+      }
+
+      // t1 - x@t2 -> t1 - t2
+      s@Sub(t1, At(x,t2)) -> {
+        Term res = `Sub(t1,t2);
+        debug("at2",`s,res);
         return res;
       }
 

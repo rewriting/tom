@@ -428,7 +428,9 @@ public class Compiler {
 
 
   /**
-   * compile a strategy in a classical way (without using meta-representation)
+   * compile a strategy built with strategy operator, ordered lists of rules; 
+   * rules can be non-linear and contain imbricated APs
+   * (classical OR  using meta-representation)
    * return the name of the top symbol (phi) introduced
    * @param strat the strategy to compile
    * @param rules the list of rewrite rules generated for this strategy
