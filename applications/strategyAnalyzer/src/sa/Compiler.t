@@ -121,14 +121,18 @@ public class Compiler {
       RuleList ruleList = Tools.fromListOfRule(mutableList);
 
       if(Main.options.metalevel) {
-        ruleList = generateEquality(ruleList);
+        if(!Tools.isLhsLinear(ruleList) || Tools.containsEqAnd(ruleList)) {
+          ruleList = generateEquality(ruleList);
+        }
         ruleList = generateTriggerRule(strategyName,strategySymbol,ruleList);
         // generate encode/decode only for Tom 
         if(Main.options.classname != null){
           ruleList = generateEncodeDecode(ruleList);
         }
       } else {
-        ruleList = generateEquality(ruleList);
+        if(!Tools.isLhsLinear(ruleList) || Tools.containsEqAnd(ruleList)) {
+          ruleList = generateEquality(ruleList);
+        }
         ruleList = generateTriggerRule(strategyName,strategySymbol,ruleList);
       }
       generatedTRSs.put(strategyName,ruleList);
@@ -413,7 +417,7 @@ public class Compiler {
         }
       }
 
-      for(String name:eSig.getSymbols()) {
+      for(String name:eSig.getConstructors()) {
         // add symb_a(), symb_b(), symb_f(), symb_g() in the signature
         gSig.addSymbol("symb_"+name,`ConcGomType(),Signature.TYPE_METASYMBOL);
       }
@@ -740,7 +744,7 @@ public class Compiler {
              */
             generatedRules.add(Rule(_appl(all,Bottom(X)), Bottom(X)));
 
-            for(String name : eSig.getSymbols()) {
+            for(String name : eSig.getConstructors()) {
               int arity = gSig.getArity(name);
               int arity_all = arity+1;
               if(arity==0) {
@@ -885,7 +889,7 @@ public class Compiler {
              */
             generatedRules.add(Rule(_appl(one,Bottom(X)), Bottom(X)));
 
-            for(String name : eSig.getSymbols()) {
+            for(String name : eSig.getConstructors()) {
               int arity = eSig.getArity(name);
               if(arity==0) {
                 /*
@@ -1070,7 +1074,7 @@ public class Compiler {
     generatedRules = `ConcRule(generatedRules*,Rule(And(False(),True()), False()));
     generatedRules = `ConcRule(generatedRules*,Rule(And(False(),False()), False()));
 
-    Set<String> symbolNames = eSig.getSymbols();
+    Set<String> symbolNames = eSig.getConstructors();
     for(String f:symbolNames) {
       for(String g:symbolNames) {
         int arf = eSig.getArity(f);
@@ -1120,7 +1124,7 @@ public class Compiler {
   private RuleList generateEncodeDecode(RuleList generatedRules) {
     Signature eSig = getExtractedSignature();
     String x = Tools.getName("X");
-    Set<String> symbolNames = eSig.getSymbols();
+    Set<String> symbolNames = eSig.getConstructors();
     for(String f:symbolNames) {
       int arf = eSig.getArity(f);
 

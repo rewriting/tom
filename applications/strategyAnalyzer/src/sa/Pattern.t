@@ -73,7 +73,7 @@ public class Pattern {
     // remove x@t
     RuleCompiler ruleCompiler = new RuleCompiler(`eSig, `eSig); 
     res = ruleCompiler.expandAt(res);
-    assert !Tools.containAt(res) : "check contain no AT";
+    assert !Tools.containsAt(res) : "check contain no AT";
 
     // minimize the set of rules
     res = removeRedundantRule(res,eSig);
@@ -662,8 +662,8 @@ public class Pattern {
    * Return true if t1 matches t2
    */
   private static boolean match(Term t1, Term t2) {
-    //assert !Tools.containAt(t1) : "check contain no AT";
-    //assert !Tools.containAt(t2) : "check contain no AT";
+    //assert !Tools.containsAt(t1) : "check contain no AT";
+    //assert !Tools.containsAt(t2) : "check contain no AT";
 
     %match(t1,t2) {
       // ElimAt (more efficient than removing AT before matching)
@@ -888,7 +888,7 @@ public class Pattern {
     visit Term {
 
       s -> {
-        assert !Tools.containNamedVar(`s) : `s;
+        assert !Tools.containsNamedVar(`s) : `s;
       }
 
       // t + TrueMatch -> TrueMatch
