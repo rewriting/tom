@@ -43,6 +43,8 @@ public class Pattern {
     RuleList res = `ConcRule();
     %match(ruleList) {
       ConcRule(C1*,Rule(lhs,rhs),_*) -> {
+        // build the collection of all  prevlhs = l1+l2+...+ln   before  rule=Rule(lhs,rhs)
+        // the lhs of rule in the unordered TRS = lhs - prevlhs
         AddList prev = `ConcAdd();
         %match(C1) {
           ConcRule(_*,Rule(l,r),_*) -> {
@@ -50,7 +52,8 @@ public class Pattern {
           }
         }
         Term pattern = `Sub(lhs,Add(prev*));
-        System.out.println("PATTERN : " + Pretty.toString(pattern));
+        System.out.println("\nPATTERN : " + Pretty.toString(pattern));
+        // transform   lhs - prevlhs   into a collection of patterns matching exactly the same terms
         Term t = `reduce(pattern,eSig);
         System.out.println("REDUCED : " + Pretty.toString(t));
 
@@ -66,6 +69,11 @@ public class Pattern {
         }
       }
     }
+
+    // remove x@t
+    RuleCompiler ruleCompiler = new RuleCompiler(`eSig, `eSig); 
+    res = ruleCompiler.expandAt(res);
+    assert !Tools.containAt(res) : "check contain no AT";
 
     // minimize the set of rules
     res = removeRedundantRule(res,eSig);
@@ -159,6 +167,15 @@ public class Pattern {
         debug("propagate empty",`s,res);
         return res;
       }
+
+      // HC: chechk where is this used; what happens if x in the RHS?
+      // At(x,empty) -> empty
+      s@At(x,Empty()) -> {
+        Term res = `Empty();
+        debug("x@empty",`s,res);
+        return res;
+      }
+
     }
   }
 
@@ -274,7 +291,7 @@ public class Pattern {
         return res;
       }
      
-      // X - t -> expand AP
+      // X - t -> expand AP   ==>    t should be in TFX (only symbols from declared signature)
       s@Sub(X@Var[], t@Appl(f,args_f)) -> {
         if(isPlainTerm(`t)) {
           RuleCompiler ruleCompiler = new RuleCompiler(`eSig, `eSig); // gSig
@@ -292,9 +309,12 @@ public class Pattern {
           }
           Term res = `Add(tl);
           debug("expand AP",`s,res);
+
           res = eliminateIllTyped(res, codomain, `eSig);
+
           // PEM: we should generate X@Add(tl)
-          //res = `At(X,res);
+          res = `At(X,res);
+
           return res;
         }
       }
@@ -324,6 +344,13 @@ public class Pattern {
       s@Sub(t1@Appl(f,tl1), t2@Appl(f, tl2)) -> {
         Term res = `sub(t1,t2);
         debug("sub1",`s,res);
+        return res;
+      }
+
+      // x@t1 - t2 -> x@(t1 - t2)
+      s@Sub(At(x,t1), t2) -> {
+        Term res = `At(x,Sub(t1,t2));
+        debug("at",`s,res);
         return res;
       }
 
@@ -387,12 +414,12 @@ public class Pattern {
     while(!tl1.isEmptyTermList() && cpt <= 1) {
       Term h1 = tl1.getHeadTermList();
       Term h2 = tl2.getHeadTermList();
+      // we have to compare modulo renaming and AT
       if(h1 == h2) {
         tl = `TermList(tl*, h1);
-      } else if(removeVar(h1) == removeVar(h2)) {
+      } else if(match(h1,h2) && match(h2,h1)) {
+        // match(h1,h2) && match(h2,h1) is more efficient than removeVar(h1) == removeVar(h2)
         // PEM: check that we can keep h1 only
-        //System.out.println("h1 = " + h1);
-        //System.out.println("h2 = " + h2);
         tl = `TermList(tl*, h1);
       } else {
         tl = `TermList(tl*, Add(ConcAdd(h1,h2)));
@@ -417,6 +444,10 @@ public class Pattern {
     visit Term {
       Var[] -> {
         return `Var("_");
+      }
+
+      At(_,t) -> {
+        return `t;
       }
     }
   }
@@ -485,6 +516,7 @@ public class Pattern {
     System.out.println("eliminateIllTyped Should not be there: " + `t);
     return t;
   }
+
 /*
    //
    // implementation using rules
@@ -630,7 +662,14 @@ public class Pattern {
    * Return true if t1 matches t2
    */
   private static boolean match(Term t1, Term t2) {
+    //assert !Tools.containAt(t1) : "check contain no AT";
+    //assert !Tools.containAt(t2) : "check contain no AT";
+
     %match(t1,t2) {
+      // ElimAt (more efficient than removing AT before matching)
+      At(_,p1), p2 -> { return `match(p1,p2); }
+      p1, At(_,p2) -> { return `match(p1,p2); }
+
       // Delete
       Appl(name,TermList()),Appl(name,TermList()) -> { return true; }
       // Decompose
@@ -650,6 +689,9 @@ public class Pattern {
    * return true is t can be match by a term of al
    */
   private static boolean match(Term t, AddList al) {
+    //t = (Term) removeVar(t);
+    //al = (AddList) removeVar(al);
+
     %match(al) {
       ConcAdd(_*,p,_*) -> {
         if(`match(p,t)) {
@@ -846,7 +888,7 @@ public class Pattern {
     visit Term {
 
       s -> {
-        Tools.assertNoNamedVar(`s);
+        assert !Tools.containNamedVar(`s) : `s;
       }
 
       // t + TrueMatch -> TrueMatch

@@ -121,8 +121,12 @@ public class Compiler {
       RuleList ruleList = Tools.fromListOfRule(mutableList);
 
       if(Main.options.metalevel) {
+        ruleList = generateEquality(ruleList);
         ruleList = generateTriggerRule(strategyName,strategySymbol,ruleList);
-        ruleList = generateEncodeDecode(ruleList);
+        // generate encode/decode only for Tom 
+        if(Main.options.classname != null){
+          ruleList = generateEncodeDecode(ruleList);
+        }
       } else {
         ruleList = generateEquality(ruleList);
         ruleList = generateTriggerRule(strategyName,strategySymbol,ruleList);
@@ -380,13 +384,14 @@ public class Compiler {
             TermList(linearlhs, cond@!Appl("True",TermList())) -> {
               // if non-linear add rules for checking equality for corresponding arguments
               Term mlinearlhs = Tools.metaEncodeConsNil(`linearlhs,generatedSignature);
+              Term mcond = Tools.metaEncodeVars(`cond,generatedSignature);
               /*
                * rule(X@mlinearlhs) -> cr(X,cond)
                * rule(X@!mlinearlhs) -> nextRule(X)       // could be Bot(X) if only one rule, i.e. non next rule
                * cr(mlinearlhs, True) -> mrhs
                * cr(X@mlinearlhs, False) -> nextRule(X)       // could be Bot(X) if only one rule, i.e. non next rule
                */
-              localRules.add(Rule(_appl(rule,At(X,mlinearlhs)), _appl(cr,X,`cond)));
+              localRules.add(Rule(_appl(rule,At(X,mlinearlhs)), _appl(cr,X,mcond)));
               Term lhs = Main.options.ordered ? _appl(rule,X) : _appl(rule,At(X,Anti(mlinearlhs)));
               localRules.add(Rule(lhs, _appl(nextRule,X)) );
 //               if(!ordered){
@@ -1058,6 +1063,7 @@ public class Compiler {
    */
   private RuleList generateEquality(RuleList generatedRules) {
     Signature eSig = getExtractedSignature();
+    Signature dummySig = new Signature();
 
     generatedRules = `ConcRule(generatedRules*,Rule(And(True(),True()), True()));
     generatedRules = `ConcRule(generatedRules*,Rule(And(True(),False()), False()));
@@ -1081,7 +1087,11 @@ public class Compiler {
           /*
            * eq(f(x1,...,xn),g(y1,...,ym)) -> False
            */
-          generatedRules = `ConcRule(generatedRules*,Rule(Eq(_appl(f,a_lx),_appl(g,a_rx)), False()));
+          if(!Main.options.metalevel){
+            generatedRules = `ConcRule(generatedRules*,Rule(Eq(_appl(f,a_lx),_appl(g,a_rx)), False()));
+          }else{
+            generatedRules = `ConcRule(generatedRules*,Rule(Eq(Tools.metaEncodeConsNil(_appl(f,a_lx),dummySig),Tools.metaEncodeConsNil(_appl(g,a_rx),dummySig)), False()));
+          }
         } else {
           /*
            * eq(f(x1,...,xn),f(y1,...,yn)) -> True ^ eq(x1,y1) ^ ... ^ eq(xn,yn)
@@ -1090,12 +1100,18 @@ public class Compiler {
           for(int i=1 ; i<=arf ; i++) {
             scond = And(Eq(Var("X_" + i),Var("Y" + i)),scond);
           }
-          generatedRules = `ConcRule(generatedRules*,Rule(Eq(_appl(f,a_lx),_appl(g,a_rx)), scond));
+          if(!Main.options.metalevel){
+            generatedRules = `ConcRule(generatedRules*,Rule(Eq(_appl(f,a_lx),_appl(g,a_rx)), scond));
+          }else{
+            // TODO: could be factorized
+            generatedRules = `ConcRule(generatedRules*,Rule(Eq(Tools.metaEncodeConsNil(_appl(f,a_lx),dummySig),Tools.metaEncodeConsNil(_appl(g,a_rx),dummySig)), Tools.metaEncodeVars(scond,dummySig)));
+          }
         }
       }
     }
     return generatedRules;
   }
+
 
   /**
    * generates encode/decode functions for metalevel
@@ -1128,6 +1144,12 @@ public class Compiler {
       generatedRules = `ConcRule(generatedRules*, Rule(lhs_encode,rhs_encode));
       generatedRules = `ConcRule(generatedRules*, Rule(lhs_decode,rhs_decode));
     }
+
+    Term lhs_decode_bottom = _appl(Signature.DECODE, _appl(Signature.BOTTOM, Var(x)));
+    Term rhs_decode_bottom = _appl(Signature.FAIL, _appl(Signature.DECODE, Var(x))); 
+
+    generatedRules = `ConcRule(generatedRules*, Rule(lhs_decode_bottom,rhs_decode_bottom));
+
     return generatedRules;
   }
 

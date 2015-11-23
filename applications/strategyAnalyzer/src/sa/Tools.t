@@ -165,6 +165,50 @@ public class Tools {
     return `Appl(name,tl);
   }
 
+
+  /**
+    * metaVars: add a "var_" to all variables
+    * used to have the same name for variable in the conditions generated when linearing a term
+    */
+  public static Term metaEncodeVars(Term t, Signature signature) {
+    if(Main.options.metalevel) {
+      return encodeVars(t,signature);
+    } else {
+      throw new RuntimeException("metaEncodeVars can only be used with meta-level active");
+    }
+  }
+  
+  private static Term encodeVars(Term t, Signature signature) {
+    %match(t) {
+      Appl(symb,args) -> {
+        return `Appl(symb, encodeVars(args,signature));
+      }
+
+      Var(name) -> {
+        return Var("var_"+`name);
+      }
+
+      Anti(term) -> {
+        return Anti(encodeVars(`term,signature));
+      }
+    }
+    return null;
+  }
+
+  private static TermList encodeVars(TermList t, Signature signature) {
+    %match(t) {
+      TermList(head,tail*) -> {
+        Term he = encodeVars(`head,signature);
+        TermList ta = encodeVars(`tail,signature);
+        return `TermList(he,ta*);
+      }
+      TermList() -> {
+        return `TermList();
+      }
+    }
+    return null;
+  }
+
   /**
     * metaEncodeConsNil: transforms a Term representation into a generic term representation
     * for instance, the term f(b()) (implemented by Appl("f",TermList(Appl("b",TermList()))))
@@ -323,27 +367,41 @@ public class Tools {
     return true;
   }
 
-  public static void assertLinear(Term t) {
-    assert(isLinear(t));
-  }
-
-  public static void assertLinear(Rule r) {
-    assertLinear(r.getlhs());
-  }
-
-  public static void assertLinear(RuleList rules) {
+  public static boolean isLhsLinear(RuleList rules) {
+    boolean res = true;
     for(Rule r: rules.getCollectionConcRule()) {
-      assertLinear(r);
+      res &= isLinear(r.getlhs());
     }
+    return res;
   }
   
-  public static void assertNoNamedVar(tom.library.sl.Visitable t) {
+  public static boolean containNamedVar(tom.library.sl.Visitable t) {
     HashMultiset<String> bag = collectVariableMultiplicity(t);
-    if(bag.isEmpty()) {
-      return;
+    for(String name:bag.elementSet()) {
+      if(name != "_") {
+        return true;
+      }
     }
-    assert(bag.contains("_"));
-    assert(bag.elementSet().size()==1);
+
+    return false;
+  }
+
+  public static boolean containAt(tom.library.sl.Visitable t) {
+    HashMultiset<Term> bag = HashMultiset.create();
+    try {
+      `TopDown(CollectAt(bag)).visitLight(t);
+    } catch(VisitFailure e) {
+    }
+     return !bag.isEmpty();
+  }
+  
+  // search all At symbols
+  %strategy CollectAt(bag:HashMultiset) extends Identity() {
+    visit Term {
+      x@At[]-> {
+        bag.add(`x);
+      }
+    }
   }
 
   /**
@@ -381,9 +439,10 @@ public class Tools {
           String z = Tools.getName("Z");
           map.put(z,`n);
           Term newt = `Var(z);
-          if(Main.options.metalevel) {
-            newt = Tools.metaEncodeConsNil(newt,signature);
-          }
+          // HC: why should we encode it?
+//           if(Main.options.metalevel) {
+//             newt = Tools.metaEncodeConsNil(newt,signature);
+//           }
           return newt;
         }
       }
