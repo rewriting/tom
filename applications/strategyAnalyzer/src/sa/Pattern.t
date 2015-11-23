@@ -165,10 +165,10 @@ public class Pattern {
         return res;
       }
 
-      // At(x,empty) -> empty
-      s@At(x,Empty()) -> {
+      // At(_,empty) -> empty
+      s@At(_,Empty()) -> {
         Term res = `Empty();
-        debug("x@empty",`s,res);
+        debug("_@empty",`s,res);
         return res;
       }
 
@@ -714,6 +714,7 @@ public class Pattern {
    *
    * expand once all occurence of _ in a term
    */
+/*
   private  static Term expandVar(Term t, Signature eSig) {
     HashSet<Position> bag = new HashSet<Position>();
     HashSet<Term> res = new HashSet<Term>();
@@ -803,7 +804,7 @@ public class Pattern {
     System.out.println("BINGO 1 = ");
     return true;
   }
-
+*/
 
   /*
    * 2nd idea to remove redundant patterns
