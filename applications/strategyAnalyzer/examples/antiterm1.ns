@@ -1,0 +1,23 @@
+abstract syntax
+T = a()
+  | b()
+  | g(T)
+  | f(T,T)
+
+strategies
+
+r1() =  [ f(x,!g(y)) -> x ]
+
+mainStrat() = r1()
+
+
+/*
+f(x,!g(y)) -> x
+==>
+X@f(x,g(y)) -> Bot_x(X)
+f(x,Z) -> x
+
+
+ */
+
+
