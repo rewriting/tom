@@ -725,7 +725,7 @@ public class Pattern {
    *
    * expand once all occurence of _ in a term
    */
-/*
+
   private  static Term expandVar(Term t, Signature eSig) {
     HashSet<Position> bag = new HashSet<Position>();
     HashSet<Term> res = new HashSet<Term>();
@@ -815,7 +815,7 @@ public class Pattern {
     System.out.println("BINGO 1 = ");
     return true;
   }
-*/
+
 
   /*
    * 2nd idea to remove redundant patterns
@@ -1303,7 +1303,7 @@ public class Pattern {
     %match(ruleList) {
       ConcRule(C1*,rule,C2*) -> {
         canBeRemoved1(`rule, `ConcRule(C1*,C2*), eSig);
-//         canBeRemoved2(`rule, `ConcRule(C1*,C2*), eSig);
+         //canBeRemoved2(`rule, `ConcRule(C1*,C2*), eSig);
       }
     }
 
