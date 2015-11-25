@@ -95,7 +95,7 @@ public class Main {
         System.out.println("generatedRules = " + Pretty.toString(generatedRules));
         // run the Pattern transformation here
         //for(String name:generatedSignature.getSymbols()) {
-        //  System.out.println("symbol: " + name + " function: " + generatedSignature.isFunction(name) + " internal: " + generatedSignature.isInternal(name));
+          //System.out.println("symbol: " + name + " function: " + generatedSignature.isFunction(name) + " internal: " + generatedSignature.isInternal(name));
 
         //}
        

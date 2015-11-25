@@ -234,7 +234,13 @@ public class TypeCompiler {
         if(`name == Signature.EQ) {
           typedSignature.addFunctionSymbol(typedName,domain,Signature.TYPE_BOOLEAN);
         } else {
-          typedSignature.addFunctionSymbol(typedName,domain,type);
+          if(typedSignature.getSymbols().contains(typedName)) {
+            // do not add symbols which are already in the signature
+            // at least: should not be added as a function
+            //typedSignature.addSymbol(typedName,domain,type);
+          } else {
+            typedSignature.addFunctionSymbol(typedName,domain,type);
+          }
         }
         // TODO: build domain exactly as it should be (problem for TRUE, ruleAUX, ...?)
       }
