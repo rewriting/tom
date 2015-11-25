@@ -270,26 +270,27 @@ public class Compiler {
     Signature gSig = getGeneratedSignature();
     Signature eSig = getExtractedSignature();
     boolean ordered = Main.options.ordered;
+
     /*
      * Pre-treatment: remove anti-patterns (expandGeneralAntiPatterns)
      * move into compileStrategy ?
      */
     RuleList rList = ruleList;
-    if(Main.options.withAP == false) {
-      RuleCompiler ruleCompiler = new RuleCompiler(eSig,gSig);
-      rList = ruleCompiler.expandGeneralAntiPatterns(rList);
+//     if(Main.options.withAP == false) {
+//       RuleCompiler ruleCompiler = new RuleCompiler(eSig,gSig);
+//       rList = ruleCompiler.expandGeneralAntiPatterns(rList);
       
-      for(Rule rule: rList.getCollectionConcRule()) {
-        System.out.println("EXPANDED AP RULE: " + Pretty.toString(rule) );
-      }
-    }
+//       for(Rule rule: rList.getCollectionConcRule()) {
+//         System.out.println("EXPANDED AP RULE: " + Pretty.toString(rule) );
+//       }
+//     }
     
-    if(Main.options.pattern) {
-      System.out.println("pattern: " + rList);
-      RuleList res = Pattern.trsRule(rList,eSig);
-    }
+//     if(Main.options.pattern) {
+//       System.out.println("pattern: " + rList);
+//       RuleList res = Pattern.trsRule(rList,eSig);
+//     }
+//     ruleList = rList;
 
-    ruleList = rList;
     /*
      * lhs -> rhs becomes
      * in the linear case:
@@ -339,8 +340,23 @@ public class Compiler {
           localRules.add(Rule(_appl(rule,X), Bottom(X))); // X should be a term of the signature; morally X@!Bottom(_)
         }
 
-        ConcRule(Rule(lhs,rhs),A*) -> {
-          String nextRule = compileRuleList(`A*,generatedRules,rule);
+        ConcRule(currentRule@Rule(lhs,rhs),A*) -> {
+          // if it is a rule with anti-patterns we need a fresh symbol even if it is an ordered compilation
+          String nextRuleSymbol = rule;
+          if(Tools.containsAP(`currentRule)){
+            nextRuleSymbol = null;
+          }
+          String nextRule = compileRuleList(`A*,generatedRules,nextRuleSymbol);
+
+          if(Main.options.withAP == false) {
+            RuleCompiler ruleCompiler = new RuleCompiler(eSig,gSig);
+            rList = ruleCompiler.expandGeneralAntiPatterns(`ConcRule(currentRule),nextRule);
+            
+            for(Rule r: rList.getCollectionConcRule()) {
+              System.out.println("CompileRuleList -> EXPANDED AP RULE: " + Pretty.toString(r) );
+            }
+          }
+
           TermList result = Tools.linearize(`lhs, this.generatedSignature );
 
           %match(result) {
@@ -348,7 +364,6 @@ public class Compiler {
               /*
                * if already linear lhs
                * rule(Bottom(X)) -> Bottom(X) propagate failure; if the rule is applied to the result of a strategy that failed then the result is a failure
-
                * rule(X@lhs) -> rhs
                * rule(X@!lhs) -> nextRule(X), could be Bottom(X) when it is the last rule
                * in the ordered case:

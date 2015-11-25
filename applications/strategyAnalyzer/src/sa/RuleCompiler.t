@@ -10,6 +10,7 @@ import aterm.*;
 import aterm.pure.*;
 import com.google.common.collect.HashMultiset;
 
+import static sa.Tools._appl;
 import static sa.Tools.Var;
 import static sa.Tools.At;
 import static sa.Tools.Bottom;
@@ -57,9 +58,13 @@ public class RuleCompiler {
    * Remove nested anti-patterns
    * @param rules the list of rules to expand
    */
-  public RuleList expandGeneralAntiPatterns(RuleList rules) {
+  public RuleList expandGeneralAntiPatterns(RuleList rules, String nextRuleSymbol) {
     rules = expandAntiPatternsAux(rules, false);
-    rules = eliminateBottom2(rules);
+    if(nextRuleSymbol == null){ //if we don't know what to do with the Bottom2 (than change to Bottom)
+      rules = eliminateBottom2(rules);
+    }else{ // chain to the next call
+      rules = changeBottom2(rules,nextRuleSymbol);      
+    }
     return rules;
   }
 
@@ -275,6 +280,27 @@ public class RuleCompiler {
     visit Term {
       Appl(bottom2,TermList(x,r)) && bottom2 == Signature.BOTTOM2 -> {
         return Bottom(`x);
+      }
+    }
+  }
+
+  /*
+   * replace Bottom2(x,_) by nextRuleSymbol(x)
+   */
+  public RuleList changeBottom2(RuleList subject, String nextRuleSymbol) {
+    RuleList res = subject;
+    try {
+      res = `TopDown(ChangeBottom2(nextRuleSymbol)).visitLight(subject);
+    } catch(VisitFailure e) {
+      throw new RuntimeException("Should not be there");
+    }
+    return res;
+  }
+
+  %strategy ChangeBottom2(String nextRuleSymbol) extends Identity() {
+    visit Term {
+      Appl(bottom2,TermList(x,r)) && bottom2 == Signature.BOTTOM2 -> {
+        return _appl(nextRuleSymbol,`x);
       }
     }
   }
