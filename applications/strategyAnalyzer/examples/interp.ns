@@ -18,7 +18,7 @@ r1() =  [
   interp(S(S(Z())), Cons(Nv(m),Cons(Nv(n),Nil())))               -> Nv(plus(m,n)),
   interp(S(S(S(Z()))), Nil())                                    -> Bv(True()),
   interp(S(S(S(S(Z())))), Cons(Bv(b),Nil()))                     -> Bv(not(b)),
-  interp(S(S(S(S(S(Z()))))), Cons(Nv(b1),Cons(Bv(b2),Nil())))    -> Bv(or(b1,b2)),
+  interp(S(S(S(S(S(Z()))))), Cons(Bv(b1),Cons(Bv(b2),Nil())))    -> Bv(or(b1,b2)),
   interp(S(S(S(S(S(S(Z())))))), Cons(Nv(n1),Cons(Nv(n2),Nil()))) -> Bv(inf(n1,n2)),
   interp(x,y)                                                    -> Undef(),
 

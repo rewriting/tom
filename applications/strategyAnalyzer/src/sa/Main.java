@@ -94,6 +94,18 @@ public class Main {
         System.out.println("after compilation");
         System.out.println("generatedRules = " + Pretty.toString(generatedRules));
         // run the Pattern transformation here
+        //for(String name:generatedSignature.getSymbols()) {
+          //System.out.println("symbol: " + name + " function: " + generatedSignature.isFunction(name) + " internal: " + generatedSignature.isInternal(name));
+
+        //}
+       
+        generatedRules = Pattern.trsRule(generatedRules,generatedSignature);
+
+        //for(Rule r:res.getCollectionConcRule()) {
+        //  System.out.println(Pretty.toString(r));
+        //}
+        //System.out.println("size = " + res.length());
+       
       }
 
       PrintStream outputfile = System.out;

@@ -63,7 +63,7 @@ public class Pattern {
             res = `ConcRule(res*,Rule(e,rhs));
           }
 
-          e@(Appl|Var)[] -> {
+          e@(At|Appl|Var)[] -> {
             res = `ConcRule(res*,Rule(e,rhs));
           }
         }
@@ -73,7 +73,7 @@ public class Pattern {
     // remove x@t
     RuleCompiler ruleCompiler = new RuleCompiler(`eSig, `eSig); 
     res = ruleCompiler.expandAt(res);
-    assert !Tools.containAt(res) : "check contain no AT";
+    assert !Tools.containsAt(res) : "check contain no AT";
 
     // minimize the set of rules
     res = removeRedundantRule(res,eSig);
@@ -168,10 +168,11 @@ public class Pattern {
         return res;
       }
 
-      // At(x,empty) -> empty
-      s@At(x,Empty()) -> {
+      // HC: check where is this used; what happens if x in the RHS?
+      // At(_,empty) -> empty
+      s@At(_,Empty()) -> {
         Term res = `Empty();
-        debug("x@empty",`s,res);
+        debug("_@empty",`s,res);
         return res;
       }
 
@@ -350,6 +351,13 @@ public class Pattern {
       s@Sub(At(x,t1), t2) -> {
         Term res = `At(x,Sub(t1,t2));
         debug("at",`s,res);
+        return res;
+      }
+
+      // t1 - x@t2 -> t1 - t2
+      s@Sub(t1, At(x,t2)) -> {
+        Term res = `Sub(t1,t2);
+        debug("at2",`s,res);
         return res;
       }
 
@@ -610,7 +618,7 @@ public class Pattern {
         // remove the term which contains Add(ConcAdd(...))
         c.remove(`subject);
         // fails to stop the TopDownCollect, and thus do not expand deeper terms
-        `Fail().visit(`subject);
+        `Fail().visitLight(`subject);
       }
     }
   }
@@ -661,8 +669,8 @@ public class Pattern {
    * Return true if t1 matches t2
    */
   private static boolean match(Term t1, Term t2) {
-    //assert !Tools.containAt(t1) : "check contain no AT";
-    //assert !Tools.containAt(t2) : "check contain no AT";
+    //assert !Tools.containsAt(t1) : "check contain no AT";
+    //assert !Tools.containsAt(t2) : "check contain no AT";
 
     %match(t1,t2) {
       // ElimAt (more efficient than removing AT before matching)
@@ -717,6 +725,7 @@ public class Pattern {
    *
    * expand once all occurence of _ in a term
    */
+
   private  static Term expandVar(Term t, Signature eSig) {
     HashSet<Position> bag = new HashSet<Position>();
     HashSet<Term> res = new HashSet<Term>();
@@ -887,7 +896,7 @@ public class Pattern {
     visit Term {
 
       s -> {
-        assert !Tools.containNamedVar(`s) : `s;
+        assert !Tools.containsNamedVar(`s) : `s;
       }
 
       // t + TrueMatch -> TrueMatch
@@ -1294,7 +1303,7 @@ public class Pattern {
     %match(ruleList) {
       ConcRule(C1*,rule,C2*) -> {
         canBeRemoved1(`rule, `ConcRule(C1*,C2*), eSig);
-//         canBeRemoved2(`rule, `ConcRule(C1*,C2*), eSig);
+         //canBeRemoved2(`rule, `ConcRule(C1*,C2*), eSig);
       }
     }
 

@@ -301,7 +301,7 @@ public class RuleCompiler {
 
       if(map.keySet().isEmpty()) {
         // if no AT in the rule just add it to the result
-        assert !Tools.containAt(rule): rule;
+        assert !Tools.containsAt(rule): rule;
         res = `ConcRule(res*,rule);
       } else {
         // if some AT in the rule then build a new one
@@ -316,7 +316,7 @@ public class RuleCompiler {
           } catch(VisitFailure e) {
           }
         }
-        assert !Tools.containAt(newRule): newRule;
+        assert !Tools.containsAt(newRule): newRule;
         res = `ConcRule(res*,newRule);
       }
     }

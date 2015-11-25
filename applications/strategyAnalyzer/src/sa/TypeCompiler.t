@@ -232,9 +232,15 @@ public class TypeCompiler {
 
         // add info into typed signature
         if(`name == Signature.EQ) {
-          typedSignature.addSymbol(typedName,domain,Signature.TYPE_BOOLEAN);
+          typedSignature.addFunctionSymbol(typedName,domain,Signature.TYPE_BOOLEAN);
         } else {
-          typedSignature.addSymbol(typedName,domain,type);
+          if(typedSignature.getSymbols().contains(typedName)) {
+            // do not add symbols which are already in the signature
+            // at least: should not be added as a function
+            //typedSignature.addSymbol(typedName,domain,type);
+          } else {
+            typedSignature.addFunctionSymbol(typedName,domain,type);
+          }
         }
         // TODO: build domain exactly as it should be (problem for TRUE, ruleAUX, ...?)
       }
@@ -244,7 +250,7 @@ public class TypeCompiler {
         GomType varType = env.get(`name);
         if(varType != null) { // if type already set
           if(varType != type) { // if try to assign a different type
-            throw new RuntimeException("Attemp to type variable with different type");
+            throw new RuntimeException("Attemp to type variable with different type: " + `name);
           }
         } else { // set type if not already done
           env.put(`name,type);
