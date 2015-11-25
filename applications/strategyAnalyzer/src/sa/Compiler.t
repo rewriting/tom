@@ -261,28 +261,42 @@ public class Compiler {
   /**
    * compile a (ordered) list of rules
    * return the name of the top symbol (phi) introduced
-   * @param ruleList the list of rules to compile
-   * @param generatedRules the list of rewrite rules generated 
+   * @param ruleList the ordered list of rules to compile
+   * @param generatedRules the (possibily ordered) list of rewrite rules generated 
+   * @param strategyName the strategy name to generate (if not null)
    * @return the symbol to be used for the compiled strategy
    */
-  private String compileRuleList(RuleList ruleList, List<Rule> generatedRules) {
+  private String compileRuleList(RuleList ruleList, List<Rule> generatedRules, String strategyName) {
     Signature gSig = getGeneratedSignature();
     Signature eSig = getExtractedSignature();
-
+    boolean ordered = Main.options.ordered;
     /*
      * lhs -> rhs becomes
      * in the linear case:
      *   rule(lhs) -> rhs
-     *   rule(X@!lhs) -> Bottom(X)
+     *   rule(X@!lhs) -> nextRule(X), could be Bottom(X) when it is the last rule
      * in the non-linear case:
      *   rule(X@linear-lhs) -> rule'(X, true ^ constraint on non linear variables)
-     *   rule(X@!linear-lhs) -> Bottom(X)
+     *   rule(X@!linear-lhs) -> nextRule(X), could be Bottom(X) when it is the last rule
      *   rule'(linear-lhs, true) -> rhs
-     *   rule'(X@linear-lhs, false) -> Bottom(x)
+     *   rule'(X@linear-lhs, false) -> nextRule(X), could be Bottom(X) when it is the last rule
+     *
+     * in the ordered case
+     * in the linear case:
+     *   rule(lhs) -> rhs
+     *   rule(X) -> Bottom(X) after the last rule
+     * in the non-linear case:
+     *   rule(X@linear-lhs) -> rule'(X, true ^ constraint on non linear variables)
+     *   rule'(linear-lhs, true) -> rhs
+     *   rule(X) -> Bottom(X) after the last rule
      */
     
     Term X = Var(Tools.getName("X"));
-    String rule = Tools.getName(StrategyOperator.RULE.getName());
+    String rule = strategyName;
+    if(rule == null || ordered==false) {
+      rule = Tools.getName(StrategyOperator.RULE.getName());
+    }
+
     String cr = Tools.getName(Tools.addAuxExtension(StrategyOperator.RULE.getName()));
 
     // used just to have in generatedRules the packages of rules in the order they are called 
@@ -295,58 +309,76 @@ public class Compiler {
       gSig.addFunctionSymbol(cr,`ConcGomType(Signature.TYPE_TERM,Signature.TYPE_BOOLEAN),Signature.TYPE_TERM);
 
       %match(ruleList) {
-        ConcRule(Rule(lhs,rhs),A*) -> {
-          String nextRule = compileRuleList(`A*,generatedRules);
-          TermList result = Tools.linearize(`lhs, this.generatedSignature );
+        ConcRule() -> {
+          if(ordered) {
+            // after the last rule: rule(Bottom(X)) -> Bottom(X)
+            localRules.add(Rule(_appl(rule,Bottom(X)), Bottom(X)));
+          }
 
-          /*
-           * propagate failure; if the rule is applied to the result of a strategy that failed then the result is a failure
-           * rule(Bot(X)) -> Bot(X)
-           */
-          localRules.add(Rule(_appl(rule,Bottom(X)), Bottom(X)));
+          // after the last rule: rule(X) -> Bottom(X)
+          localRules.add(Rule(_appl(rule,X), Bottom(X))); // X should be a term of the signature; morally X@!Bottom(_)
+        }
+
+        ConcRule(Rule(lhs,rhs),A*) -> {
+          String nextRule = compileRuleList(`A*,generatedRules,rule);
+          TermList result = Tools.linearize(`lhs, this.generatedSignature );
 
           %match(result) {
             TermList(_, Appl("True",TermList())) -> {
               /*
                * if already linear lhs
+               * rule(Bottom(X)) -> Bottom(X) propagate failure; if the rule is applied to the result of a strategy that failed then the result is a failure
+
                * rule(X@lhs) -> rhs
-               * rule(X@!lhs) -> nextRule(X)       // could be Bot(X) if only one rule, i.e. non next rule
+               * rule(X@!lhs) -> nextRule(X), could be Bottom(X) when it is the last rule
+               * in the ordered case:
+               * rule(lhs) -> rhs
+               * rule(Bottom(X)) -> Bottom(X) after the last rule
+               * rule(X) -> Bottom(X) after the last rule
                */
-              localRules.add(Rule(_appl(rule,At(X,`lhs)), `rhs));
-              Term lhs = Main.options.ordered ? _appl(rule,X) : _appl(rule,At(X,Anti(`lhs)));
-              localRules.add(Rule(lhs, _appl(nextRule,X)) );
-//               if(!ordered){
-//                 localRules.add(Rule(_appl(rule,At(X,Anti(`lhs))), _appl(nextRule,X)) );
-//               }else{
-//                 localRules.add(Rule(_appl(rule,X), _appl(nextRule,X)) );
-//               }
+              //Term lhs = Main.options.ordered ? _appl(rule,X) : _appl(rule,At(X,Anti(`lhs)));
+              //localRules.add(Rule(lhs, _appl(nextRule,X)) );
+              if(!ordered) {
+                // rule(Bottom(X)) -> Bottom(X)
+                localRules.add(Rule(_appl(rule,Bottom(X)), Bottom(X)));
+                localRules.add(Rule(_appl(rule,At(X,`lhs)), `rhs));
+                localRules.add(Rule(_appl(rule,At(X,Anti(`lhs))), _appl(nextRule,X)) );
+              } else {
+                localRules.add(Rule(_appl(rule,At(X,`lhs)), `rhs));
+              }
             }
 
             TermList(linearlhs, cond@!Appl("True",TermList())) -> {
               /*
                * if non-linear add rules for checking equality for corresponding arguments
+               * rule(Bottom(X)) -> Bottom(X)
                * rule(X@linearlhs) -> cr(X,cond)
-               * rule(X@!linearlhs) -> nextRule(X)       // could be Bot(X) if only one rule, i.e. non next rule
+               * rule(X@!linearlhs) -> nextRule(X) // could be Bot(X) if only one rule, i.e. non next rule
                * cr(linearlhs, True) -> rhs
-               * cr(X@linearlhs, False) -> nextRule(X)       // could be Bot(X) if only one rule, i.e. non next rule
+               * cr(X@linearlhs, False) -> nextRule(X) // could be Bot(X) if only one rule, i.e. non next rule
+               * in the ordered case:
+               * rule(X@linear-lhs) -> cr(X, cond)
+               * cr(linear-lhs, true) -> rhs
+               * rule(Bottom(X)) -> Bottom(X) after the last rule
+               * rule(X) -> Bottom(X) after the last rule
                */
-              localRules.add(Rule(_appl(rule,At(X,`linearlhs)), _appl(cr, X, `cond)));
-              Term lhs = Main.options.ordered ? _appl(rule,X) : _appl(rule,At(X,Anti(`linearlhs)));
-              localRules.add(Rule(lhs, _appl(nextRule,X)) );
-//               if(!ordered){
-//                 localRules.add(Rule(_appl(rule,At(X,Anti(`linearlhs))), _appl(nextRule,X) ));
-//               }else{
-//                 localRules.add(Rule(_appl(rule,X), _appl(nextRule,X) ));
-//               }
-              localRules.add(Rule(_appl(cr,`linearlhs, True()), `rhs));
-              localRules.add(Rule(_appl(cr,At(X,`linearlhs),False()), _appl(nextRule,X) ) );
+              //Term lhs = Main.options.ordered ? _appl(rule,X) : _appl(rule,At(X,Anti(`linearlhs)));
+              //localRules.add(Rule(lhs, _appl(nextRule,X)) );
+
+              if(!ordered) {
+                localRules.add(Rule(_appl(rule,Bottom(X)), Bottom(X)));
+                localRules.add(Rule(_appl(rule,At(X,`linearlhs)), _appl(cr, X, `cond)));
+                localRules.add(Rule(_appl(rule,At(X,Anti(`linearlhs))), _appl(nextRule,X) ));
+                localRules.add(Rule(_appl(cr,`linearlhs, True()), `rhs));
+                localRules.add(Rule(_appl(cr,At(X,`linearlhs),False()), _appl(nextRule,X) ) );
+              } else {
+                localRules.add(Rule(_appl(rule,At(X,`linearlhs)), _appl(cr, X, `cond)));
+                localRules.add(Rule(_appl(cr,`linearlhs, True()), `rhs));
+              }
             }
           }
         }
 
-        ConcRule() -> {
-          localRules.add(Rule(_appl(rule,X), Bottom(X))); // X should be a term of the signature; morally X@!Bottom(_)
-        }
       }
     } else { 
       // META-LEVEL
@@ -356,7 +388,7 @@ public class Compiler {
       %match(ruleList) {
         ConcRule(Rule(lhs,rhs),A*) -> {
 
-          String nextRule = compileRuleList(`A*,generatedRules);
+          String nextRule = compileRuleList(`A*,generatedRules,rule);
 
           TermList result = Tools.linearize(`lhs, this.generatedSignature);
           Term mlhs = Tools.metaEncodeConsNil(`lhs,generatedSignature);
@@ -487,7 +519,7 @@ public class Compiler {
             }
           }
 
-          strategySymbol = this.compileRuleList(rList,generatedRules);
+          strategySymbol = this.compileRuleList(rList,generatedRules, null);
 
           if(Main.options.pattern) {
             System.out.println("pattern: " + rList);
