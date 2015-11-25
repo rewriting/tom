@@ -266,6 +266,26 @@ public class Compiler {
     Signature eSig = getExtractedSignature();
 
     /*
+     * Pre-treatment: remove anti-patterns (expandGeneralAntiPatterns)
+     * move into compileStrategy ?
+     */
+    RuleList rList = ruleList;
+    if(Main.options.withAP == false) {
+      RuleCompiler ruleCompiler = new RuleCompiler(eSig,gSig);
+      rList = ruleCompiler.expandGeneralAntiPatterns(rList);
+      
+      for(Rule rule: rList.getCollectionConcRule()) {
+        System.out.println("EXPANDED AP RULE: " + Pretty.toString(rule) );
+      }
+    }
+    
+    if(Main.options.pattern) {
+      System.out.println("pattern: " + rList);
+      RuleList res = Pattern.trsRule(rList,eSig);
+    }
+
+    ruleList = rList;
+    /*
      * lhs -> rhs becomes
      * in the linear case:
      *   rule(lhs) -> rhs
@@ -467,27 +487,7 @@ public class Compiler {
         }
 
         StratExp(List(rulelist)) -> {
-          /*
-           * Pre-treatment: remove anti-patterns (expandGeneralAntiPatterns)
-           * move into compileStrategy ?
-           */
-          RuleList rList = `rulelist;
-          if(Main.options.withAP == false) {
-            RuleCompiler ruleCompiler = new RuleCompiler(eSig,gSig);
-            rList = ruleCompiler.expandGeneralAntiPatterns(rList);
-
-            for(Rule rule: rList.getCollectionConcRule()) {
-              System.out.println("EXPANDED AP RULE: " + Pretty.toString(rule) );
-            }
-          }
-
-          strategySymbol = this.compileRuleList(rList,generatedRules);
-
-          if(Main.options.pattern) {
-            System.out.println("pattern: " + rList);
-            RuleList res = Pattern.trsRule(rList,eSig);
-          }
-
+          strategySymbol = this.compileRuleList(`rulelist,generatedRules);
         }
 
         /*

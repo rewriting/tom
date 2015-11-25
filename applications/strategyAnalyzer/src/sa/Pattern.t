@@ -168,7 +168,6 @@ public class Pattern {
         return res;
       }
 
-      // HC: chechk where is this used; what happens if x in the RHS?
       // At(x,empty) -> empty
       s@At(x,Empty()) -> {
         Term res = `Empty();
