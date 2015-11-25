@@ -165,6 +165,50 @@ public class Tools {
     return `Appl(name,tl);
   }
 
+
+  /**
+    * metaVars: add a "var_" to all variables
+    * used to have the same name for variable in the conditions generated when linearing a term
+    */
+  public static Term metaEncodeVars(Term t, Signature signature) {
+    if(Main.options.metalevel) {
+      return encodeVars(t,signature);
+    } else {
+      throw new RuntimeException("metaEncodeVars can only be used with meta-level active");
+    }
+  }
+  
+  private static Term encodeVars(Term t, Signature signature) {
+    %match(t) {
+      Appl(symb,args) -> {
+        return `Appl(symb, encodeVars(args,signature));
+      }
+
+      Var(name) -> {
+        return Var("var_"+`name);
+      }
+
+      Anti(term) -> {
+        return Anti(encodeVars(`term,signature));
+      }
+    }
+    return null;
+  }
+
+  private static TermList encodeVars(TermList t, Signature signature) {
+    %match(t) {
+      TermList(head,tail*) -> {
+        Term he = encodeVars(`head,signature);
+        TermList ta = encodeVars(`tail,signature);
+        return `TermList(he,ta*);
+      }
+      TermList() -> {
+        return `TermList();
+      }
+    }
+    return null;
+  }
+
   /**
     * metaEncodeConsNil: transforms a Term representation into a generic term representation
     * for instance, the term f(b()) (implemented by Appl("f",TermList(Appl("b",TermList()))))
@@ -304,10 +348,10 @@ public class Tools {
       throw new RuntimeException("Should not be there");
     }
 
-    Term constraint = `Appl("True",TermList());
+    Term constraint = `Appl(Signature.TRUE,TermList());
     for(String name:mapToOldName.keySet()) {
       String oldName = mapToOldName.get(name);
-      constraint = `Appl("and",TermList( Appl(Signature.EQ,TermList(Var(oldName),Var(name))), constraint));
+      constraint = `Appl(Signature.AND,TermList( Appl(Signature.EQ,TermList(Var(oldName),Var(name))), constraint));
     }
     return `TermList(lhs,constraint);
 
@@ -323,20 +367,64 @@ public class Tools {
     return true;
   }
 
-  public static void assertLinear(Term t) {
-    assert(isLinear(t));
-  }
-
-  public static void assertLinear(Rule r) {
-    assertLinear(r.getlhs());
-  }
-
-  public static void assertLinear(RuleList rules) {
+  public static boolean isLhsLinear(RuleList rules) {
+    boolean res = true;
     for(Rule r: rules.getCollectionConcRule()) {
-      assertLinear(r);
+      res &= isLinear(r.getlhs());
     }
+    return res;
   }
   
+  public static boolean containsNamedVar(tom.library.sl.Visitable t) {
+    HashMultiset<String> bag = collectVariableMultiplicity(t);
+    for(String name:bag.elementSet()) {
+      if(name != "_") {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  public static boolean containsAt(tom.library.sl.Visitable t) {
+    HashMultiset<Term> bag = HashMultiset.create();
+    try {
+      `TopDown(CollectAt(bag)).visitLight(t);
+    } catch(VisitFailure e) {
+    }
+     return !bag.isEmpty();
+  }
+  
+  // search all At symbols
+  %strategy CollectAt(bag:HashMultiset) extends Identity() {
+    visit Term {
+      x@At[]-> {
+        bag.add(`x);
+      }
+    }
+  }
+
+  public static boolean containsEqAnd(tom.library.sl.Visitable t) {
+    try {
+      `TopDown(ContainsEqAnd()).visitLight(t);
+      return false;
+    } catch(VisitFailure e) {
+      return true;
+    }
+  }
+
+  %strategy ContainsEqAnd() extends Identity() {
+    visit Term {
+      t@Appl("eq",_) -> {
+        `Fail().visitLight(`t);
+      }
+
+      t@Appl("and",_) -> {
+        `Fail().visitLight(`t);
+      }
+    }
+  }
+
   /**
    * Returns a Map which associates to each variable name an integer
    * representing the number of occurences of the variable in the
@@ -372,9 +460,10 @@ public class Tools {
           String z = Tools.getName("Z");
           map.put(z,`n);
           Term newt = `Var(z);
-          if(Main.options.metalevel) {
-            newt = Tools.metaEncodeConsNil(newt,signature);
-          }
+          // HC: why should we encode it?
+//           if(Main.options.metalevel) {
+//             newt = Tools.metaEncodeConsNil(newt,signature);
+//           }
           return newt;
         }
       }

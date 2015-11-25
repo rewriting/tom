@@ -288,42 +288,67 @@ public class RuleCompiler {
     * @param ruleList the set of rules to expand
     * @return a new set that contains the expanded rules
     */
-  public  RuleList expandAt(RuleList ruleList) throws VisitFailure {
+  public  RuleList expandAt(RuleList ruleList) {
     RuleList res = `ConcRule();
     for(Rule rule:ruleList.getCollectionConcRule()) {
       Map<String,Term> map = new HashMap<String,Term>();
-      `TopDown(CollectAt(map)).visitLight(`rule); // add x->t into map for each x@t
+      try {
+        `TopDown(CollectAt(map)).visitLight(`rule); // add x->t into map for each x@t
+      } catch(VisitFailure e) {
+      }
 
 //       System.out.println("AT MAP: " + map);
 
       if(map.keySet().isEmpty()) {
         // if no AT in the rule just add it to the result
+        assert !Tools.containsAt(rule): rule;
         res = `ConcRule(res*,rule);
       } else {
         // if some AT in the rule then build a new one
         Rule newRule = `rule;
         for(String name:map.keySet()) {
           Term t = map.get(name);
-          // replace the ATs with the corresponding expressions
-          newRule = `TopDown(ReplaceVariable(name,t)).visitLight(newRule);
-          // and remove the ATs
-          newRule = `TopDown(EliminateAt()).visitLight(newRule);
+          try {
+            // replace the ATs with the corresponding expressions
+            newRule = `BottomUp(ReplaceVariable(name,t)).visitLight(newRule);
+            // and remove the ATs
+            newRule = `BottomUp(EliminateAt()).visitLight(newRule);
+          } catch(VisitFailure e) {
+          }
         }
+        assert !Tools.containsAt(newRule): newRule;
         res = `ConcRule(res*,newRule);
       }
     }
     return res;
   }
 
-  // search all At and store their values
+  // search all AT and store their values
   %strategy CollectAt(map:Map) extends Identity() {
     visit Term {
       At(Var(name),t2)-> {
-        map.put(`name,`t2);
+        // we remove the AT from the term we store in the map
+        map.put(`name,removeAt(`t2));
       }
     }
   }
   
+  private static tom.library.sl.Visitable removeAt(tom.library.sl.Visitable t) {
+    try {
+      return `TopDown(RemoveAt()).visitLight(t);
+    } catch(VisitFailure e) {
+      throw new RuntimeException("should not be there");
+    }
+  }
+
+  %strategy RemoveAt() extends Identity() {
+    visit Term {
+      At(_,t) -> {
+        return `t;
+      }
+    }
+  }
+
   // search all Anti symbols
   %strategy CollectAnti(bag:HashMultiset) extends Identity() {
     visit Term {

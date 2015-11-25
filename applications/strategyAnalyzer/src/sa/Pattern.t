@@ -38,14 +38,13 @@ public class Pattern {
    */
   public static RuleList trsRule(RuleList ruleList, Signature eSig) {
 
-    try {
-      ruleList = `TopDown(RemoveVar()).visitLight(`ruleList);
-    } catch(VisitFailure e) {
-    }
+    //ruleList = (RuleList) removeVar(ruleList);
 
     RuleList res = `ConcRule();
     %match(ruleList) {
       ConcRule(C1*,Rule(lhs,rhs),_*) -> {
+        // build the collection of all  prevlhs = l1+l2+...+ln   before  rule=Rule(lhs,rhs)
+        // the lhs of rule in the unordered TRS = lhs - prevlhs
         AddList prev = `ConcAdd();
         %match(C1) {
           ConcRule(_*,Rule(l,r),_*) -> {
@@ -53,24 +52,30 @@ public class Pattern {
           }
         }
         Term pattern = `Sub(lhs,Add(prev*));
-        System.out.println("PATTERN : " + Pretty.toString(pattern));
+        System.out.println("\nPATTERN : " + Pretty.toString(pattern));
+        // transform   lhs - prevlhs   into a collection of patterns matching exactly the same terms
         Term t = `reduce(pattern,eSig);
         System.out.println("REDUCED : " + Pretty.toString(t));
+
+        // put back the rhs
         %match(t) {
           Add(ConcAdd(_*,e,_*)) -> {
-            res = `ConcRule(Rule(e,rhs),res*);
+            res = `ConcRule(res*,Rule(e,rhs));
           }
 
-          e@(Appl|Var)[] -> {
-            res = `ConcRule(Rule(e,rhs),res*);
+          e@(At|Appl|Var)[] -> {
+            res = `ConcRule(res*,Rule(e,rhs));
           }
         }
       }
     }
 
+    // remove x@t
+    RuleCompiler ruleCompiler = new RuleCompiler(`eSig, `eSig); 
+    res = ruleCompiler.expandAt(res);
+    assert !Tools.containsAt(res) : "check contain no AT";
 
-
-    // test subsumtion idea
+    // minimize the set of rules
     res = removeRedundantRule(res,eSig);
 
     for(Rule rule:`res.getCollectionConcRule()) {
@@ -82,11 +87,37 @@ public class Pattern {
     return res;
   }
 
+  private static Term reduce(Term t, Signature eSig) {
+    try {
+      // DistributeAdd needed if we can start with terms like X \ f(a+b) or X \ (f(X)\f(f(_)))
+      Strategy S1 = `ChoiceId(CleanAdd(),PropagateEmpty(),SimplifySub(eSig));
+      t = `InnermostId(S1).visitLight(t);
+      System.out.println("NO SUB = " + Pretty.toString(t));
 
+      Strategy S2 = `ChoiceId(CleanAdd(),PropagateEmpty(), VarAdd(), FactorizeAdd());
+      t = `InnermostId(S2).visitLight(t);
+      System.out.println("NO ADD = " + Pretty.toString(t));
+    } catch(VisitFailure e) {
+      System.out.println("failure on: " + t);
+    }
+
+    t = expandAdd(t);
+    System.out.println("EXPAND = " + Pretty.toString(t));
+
+    t = simplifySubsumtion(t);
+    System.out.println("REMOVE SUBSUMTION = " + Pretty.toString(t));
+
+    return t;
+  }
+
+  /*
+   * remove redundant rules using a very smart matching algorithm :-)
+   */
   private static RuleList removeRedundantRule(RuleList rules, Signature eSig) {
     return removeRedundantRuleAux(rules,`ConcRule(), eSig);
   }
 
+  // TODO: remove variables only once (and no longer in canBeRemove2) to speedup the process
   private static RuleList removeRedundantRuleAux(RuleList candidates, RuleList kernel, Signature eSig) {
     HashSet<RuleList> bag = new HashSet<RuleList>();
 
@@ -128,51 +159,6 @@ public class Pattern {
     return `ConcRule(candidates*,kernel*);
   }
 
-
-
-  private static Term reduce(Term t, Signature eSig) {
-    try {
-      // DistributeAdd needed if we can start with terms like X \ f(a+b) or X \ (f(X)\f(f(_)))
-      Strategy S1 = `ChoiceId(CleanAdd(),PropagateEmpty(),SimplifySub(eSig));
-      Strategy S2 = `ChoiceId(CleanAdd(),PropagateEmpty(), VarAdd(), FactorizeAdd());
-
-      t =  `InnermostId(S1).visitLight(t);
-      System.out.println("NO SUBs = " + Pretty.toString(t));
-      //       System.out.println("NO SUBs = " + t);
-
-      t = `InnermostId(S2).visitLight(t);
-      System.out.println("NO ADD = " + Pretty.toString(t));
-
-      /*
-      Term old = null;
-      while(old != t) {
-        old = t;
-        System.out.println("S2: " + t);
-        t = `InnermostId(S2).visitLight(t);
-        System.out.println("EXPAND: " + t);
-        t = expandAdd(t);
-      }
-      System.out.println("FIXPOINT = " + Pretty.toString(t));
-      System.out.println("FIXPOINT = " + t);
-      */
-
-    } catch(VisitFailure e) {
-      System.out.println("failure on: " + t);
-    }
-
-    t = expandAdd(t);
-    System.out.println("EXPAND = " + Pretty.toString(t));
-
-    %match(t) {
-      Add(tl) -> {
-        t = `Add(simplifySubsumtion(tl));
-        System.out.println("REMOVE SUBSUMTION = " + Pretty.toString(t));
-      }
-    }
-
-    return t;
-  }
-
   %strategy PropagateEmpty() extends Identity() {
     visit Term {
       // f(t1,...,empty,...,tn) -> empty
@@ -181,6 +167,15 @@ public class Pattern {
         debug("propagate empty",`s,res);
         return res;
       }
+
+      // HC: check where is this used; what happens if x in the RHS?
+      // At(_,empty) -> empty
+      s@At(_,Empty()) -> {
+        Term res = `Empty();
+        debug("_@empty",`s,res);
+        return res;
+      }
+
     }
   }
 
@@ -242,9 +237,9 @@ public class Pattern {
   %strategy VarAdd() extends Identity() {
     visit Term {
       // a + x + b -> x
-      s@Add(ConcAdd(_*, x@Var("_"), _*)) -> {
+      s@Add(ConcAdd(_*, x@Var[], _*)) -> {
         Term res = `x;
-        debugVerbose("a + x + b -> x",`s,res);
+        debug("a + x + b -> x",`s,res);
         return res;
       }
     }
@@ -272,11 +267,11 @@ public class Pattern {
   }
 
 
-  %strategy SimplifySub(eSig:Signature) extends Identity() {//Fail() {
+  %strategy SimplifySub(eSig:Signature) extends Identity() {
     visit Term {
 
       // t - x -> empty
-      s@Sub(t, Var("_")) -> {
+      s@Sub(t, Var[]) -> {
         Term res = `Empty();
         debug("t - x -> empty",`s,res);
         return res;
@@ -296,8 +291,8 @@ public class Pattern {
         return res;
       }
      
-      // X - t -> expand AP
-      s@Sub(Var("_"), t@Appl(f,args_f)) -> {
+      // X - t -> expand AP   ==>    t should be in TFX (only symbols from declared signature)
+      s@Sub(X@Var[], t@Appl(f,args_f)) -> {
         if(isPlainTerm(`t)) {
           RuleCompiler ruleCompiler = new RuleCompiler(`eSig, `eSig); // gSig
           RuleList rl = ruleCompiler.expandAntiPatterns(`ConcRule(Rule(Anti(t),Var("_"))));
@@ -307,22 +302,22 @@ public class Pattern {
           %match(rl) {
             ConcRule(_*,Rule(lhs@Appl(g,args_g),rhs),_*) -> {
               //if(eSig.getCodomain(`g) == codomain) { // optim: remove ill typed terms 
-                Term newLhs = `TopDown(RemoveVar()).visitLight(`lhs);
-                tl = `ConcAdd(newLhs,tl*); // order not preserved
+                //tl = `ConcAdd((Term)removeVar(lhs),tl*); // order not preserved
+                tl = `ConcAdd(lhs,tl*); // order not preserved
               //}
             }
           }
           Term res = `Add(tl);
           debug("expand AP",`s,res);
+
           res = eliminateIllTyped(res, codomain, `eSig);
+
+          // PEM: we should generate X@Add(tl)
+          res = `At(X,res);
+
           return res;
         }
       }
-
-      // empty - t -> empty
-      //Sub(Empty(),t) -> {
-      //  return `Empty();
-      //}
 
       // empty - f(t1,...,tn) -> empty
       s@Sub(Empty(),Appl(f,tl)) -> {
@@ -330,25 +325,6 @@ public class Pattern {
         debug("empty - f(...) -> empty",`s,res);
         return `Empty();
       }
-
-
-      // t - t -> empty
-      //Sub(t, t) -> {
-      //  return `Empty();
-      //}
-
-      // (a + t + b) - t -> (a + b)
-      //Sub(Add(ConcAdd(C1*,t,C2*)),t) -> {
-      //  return `Add(ConcAdd(C1*,C2*));
-      //}
-
-
-      // (a1 + ... + an) - b -> (a1 - b) + ( (a2 + ... + an) - b )
-      //s@Sub(Add(ConcAdd(head,tail*)), t) -> {
-      //  Term res = `Add(ConcAdd(Sub(head,t), Sub(Add(ConcAdd(tail*)),t)));
-      //  System.out.println("sub distrib2 : " + Pretty.toString(`s) + " --> " + Pretty.toString(res));
-      //  return res;
-      //}
 
       // (a1 + ... + an) - t@f(t1,...,tn) -> (a1 - t) + ( (a2 + ... + an) - t )
       s@Sub(Add(ConcAdd(head,tail*)), t@Appl(f,tl)) -> {
@@ -364,15 +340,6 @@ public class Pattern {
         return res;
       }
 
-      // f(t1,...,tn) - (a + g(t1',...,tm') + b) -> f(t1,...,tn) - (a + b)
-      //s@Sub(t@Appl(f,tl1),Add(ConcAdd(C1*, Appl(g, tl2), C2*))) && f!=g -> {
-      //  Term res = `Sub(t, Add(ConcAdd(C1*,C2*)));
-      //  System.out.println("sub elim2 : " + Pretty.toString(`s) + " --> " + Pretty.toString(res));
-      //  return res;
-      // }
-
-
-      // f(t1,t2) - f(t1',t2') -> f(t1, t2-t2') + f(t1-t1', t2)
       // f(t1,...,tn) - f(t1',...,tn') -> f(t1-t1',t2,...,tn) + f(t1, t2-t2',...,tn) + ... + f(t1,...,tn-tn')
       s@Sub(t1@Appl(f,tl1), t2@Appl(f, tl2)) -> {
         Term res = `sub(t1,t2);
@@ -380,11 +347,19 @@ public class Pattern {
         return res;
       }
 
-      //s@Sub(t1@Appl(f,tl1),Add(ConcAdd(C1*, t2@Appl(f, tl2), C2*))) -> {
-      //  Term res = `Sub(sub(t1,t2), Add(ConcAdd(C1*,C2*)));
-      //  System.out.println("sub2 : " + Pretty.toString(`s) + " --> " + Pretty.toString(res));
-      //  return res;
-      // }
+      // x@t1 - t2 -> x@(t1 - t2)
+      s@Sub(At(x,t1), t2) -> {
+        Term res = `At(x,Sub(t1,t2));
+        debug("at",`s,res);
+        return res;
+      }
+
+      // t1 - x@t2 -> t1 - t2
+      s@Sub(t1, At(x,t2)) -> {
+        Term res = `Sub(t1,t2);
+        debug("at2",`s,res);
+        return res;
+      }
 
     }
   }
@@ -446,7 +421,12 @@ public class Pattern {
     while(!tl1.isEmptyTermList() && cpt <= 1) {
       Term h1 = tl1.getHeadTermList();
       Term h2 = tl2.getHeadTermList();
-      if(h1==h2) {
+      // we have to compare modulo renaming and AT
+      if(h1 == h2) {
+        tl = `TermList(tl*, h1);
+      } else if(match(h1,h2) && match(h2,h1)) {
+        // match(h1,h2) && match(h2,h1) is more efficient than removeVar(h1) == removeVar(h2)
+        // PEM: check that we can keep h1 only
         tl = `TermList(tl*, h1);
       } else {
         tl = `TermList(tl*, Add(ConcAdd(h1,h2)));
@@ -469,9 +449,21 @@ public class Pattern {
    */
   %strategy RemoveVar() extends Identity() {
     visit Term {
-      Var(_) -> {
+      Var[] -> {
         return `Var("_");
       }
+
+      At(_,t) -> {
+        return `t;
+      }
+    }
+  }
+
+  private static tom.library.sl.Visitable removeVar(tom.library.sl.Visitable t) {
+    try {
+      return `TopDown(RemoveVar()).visitLight(t);
+    } catch(VisitFailure e) {
+      throw new RuntimeException("should not be there");
     }
   }
 
@@ -482,8 +474,8 @@ public class Pattern {
   private static Term eliminateIllTyped(Term t, GomType type, Signature eSig) {
     //System.out.println(Pretty.toString(t) + ":" + type.getName());
     %match(t) {
-      Var("_") -> {
-        return t;
+      v@Var[] -> {
+        return `v;
       }
 
       Appl(f,args) -> {
@@ -531,6 +523,7 @@ public class Pattern {
     System.out.println("eliminateIllTyped Should not be there: " + `t);
     return t;
   }
+
 /*
    //
    // implementation using rules
@@ -625,7 +618,7 @@ public class Pattern {
         // remove the term which contains Add(ConcAdd(...))
         c.remove(`subject);
         // fails to stop the TopDownCollect, and thus do not expand deeper terms
-        `Fail().visit(`subject);
+        `Fail().visitLight(`subject);
       }
     }
   }
@@ -634,6 +627,30 @@ public class Pattern {
    * Given a list of terms
    * remove those which are subsumed by another one
    */
+  private static Term simplifySubsumtion(Term t) {
+    %match(t) {
+      Add(tl) -> {
+        return `Add(simplifySubsumtionAux(tl, ConcAdd()));
+      }
+    }
+    return t;
+  }
+
+  private static AddList simplifySubsumtionAux(AddList candidates, AddList kernel) {
+    %match( candidates ) {
+      ConcAdd(head, tail*) -> {
+        boolean b = match(`head, `ConcAdd(tail*,kernel*));
+        if(b) {
+          return simplifySubsumtionAux(`tail, kernel);
+        } else {
+          return simplifySubsumtionAux(`tail, `ConcAdd(head,kernel*));
+        }
+      }
+    }
+    return kernel;
+  }
+
+  /*
   private static AddList simplifySubsumtion(AddList tl) {
     %match(tl) {
       ConcAdd(C1*,t1,C2*,t2,C3*) -> {
@@ -646,12 +663,20 @@ public class Pattern {
     }
     return tl;
   }
+  */
 
   /*
    * Return true if t1 matches t2
    */
   private static boolean match(Term t1, Term t2) {
+    //assert !Tools.containsAt(t1) : "check contain no AT";
+    //assert !Tools.containsAt(t2) : "check contain no AT";
+
     %match(t1,t2) {
+      // ElimAt (more efficient than removing AT before matching)
+      At(_,p1), p2 -> { return `match(p1,p2); }
+      p1, At(_,p2) -> { return `match(p1,p2); }
+
       // Delete
       Appl(name,TermList()),Appl(name,TermList()) -> { return true; }
       // Decompose
@@ -660,12 +685,30 @@ public class Pattern {
       Appl(name1,args1),Appl(name2,args2) && name1!=name2 -> { return false; }
 
       // Match
-      Var(_),Appl(name2,args2) -> { return true; }
-      Var(_),Var(_) -> { return true; }
+      Var[],Appl(name2,args2) -> { return true; }
+      Var[],Var[] -> { return true; }
 
     }
     return false;
   }
+
+  /*
+   * return true is t can be match by a term of al
+   */
+  private static boolean match(Term t, AddList al) {
+    //t = (Term) removeVar(t);
+    //al = (AddList) removeVar(al);
+
+    %match(al) {
+      ConcAdd(_*,p,_*) -> {
+        if(`match(p,t)) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
 
   private static boolean decomposeList(TermList tl1, TermList tl2) {
     %match(tl1,tl2) {
@@ -682,6 +725,7 @@ public class Pattern {
    *
    * expand once all occurence of _ in a term
    */
+
   private  static Term expandVar(Term t, Signature eSig) {
     HashSet<Position> bag = new HashSet<Position>();
     HashSet<Term> res = new HashSet<Term>();
@@ -708,7 +752,7 @@ public class Pattern {
           for(String name: eSig.getConstructors()) {
             int arity = eSig.getArity(name);
             Term expand = Tools.genAbstractTerm(name,arity, "_");
-            expand = `TopDown(RemoveVar()).visitLight(expand);
+            expand =  (Term) removeVar(expand);
 
             Term newt = (Term) omega.getReplace(expand).visit(subject);
 
@@ -738,7 +782,7 @@ public class Pattern {
 
   %strategy CollectVarPosition(c:HashSet) extends Identity() {
     visit Term {
-      Var("_") -> {
+      Var[] -> {
         c.add(getEnvironment().getPosition());
       }
     }
@@ -806,7 +850,7 @@ public class Pattern {
       }
 
       // match: _ << f(...) -> TrueMatch()
-      s@Match(Var(_),(Appl|Var)[]) -> {
+      s@Match(Var[],(Appl|Var)[]) -> {
         Term res = `TrueMatch();
         debug("match",`s,res);
         return res;
@@ -850,6 +894,11 @@ public class Pattern {
   
   %strategy SimplifyAddMatch() extends Identity() {
     visit Term {
+
+      s -> {
+        assert !Tools.containsNamedVar(`s) : `s;
+      }
+
       // t + TrueMatch -> TrueMatch
       s@Add(ConcAdd(_*, TrueMatch(), _*)) -> {
         Term res = `TrueMatch();
@@ -858,8 +907,8 @@ public class Pattern {
       }
 
       // t1 << _ + t2 << _ -> (t1+t2) << _ if t1,t2 != _
-      s@Add(ConcAdd(C1*, Match(t1@!Var[], Var("_")), C2*, Match(t2@!Var[], Var("_")), C3*)) -> {
-        Term match = `Match(Add(ConcAdd(t1,t2)),Var("_"));
+      s@Add(ConcAdd(C1*, Match(t1@!Var[], X@Var("_")), C2*, Match(t2@!Var[], Var("_")), C3*)) -> {
+        Term match = `Match(Add(ConcAdd(t1,t2)),X);
         Term res = `Add(ConcAdd(match, C1*,C2*,C3));
         debug("simplify add match",`s,res);
         return res;
@@ -874,17 +923,18 @@ public class Pattern {
       s@Add(al@ConcAdd(Appl(f,_),_*)) -> {
         GomType codomain = eSig.getCodomain(`f);
         if(codomain != null) {
-          Set<String> ops = eSig.getConstructors(codomain);
-          AddList l = `ConcAdd();
-          for(String name:ops) {
-            TermList args = `TermList();
-            for(int i=0 ; i<eSig.getArity(name) ; i++) {
-              args = `TermList(Var("_"),args*);
+          Set<String> foundConstructors = new HashSet<String>();
+          for(Term t: `al.getCollectionConcAdd()) {
+            // check that t is composed of variables only
+            %match(t) {
+              Appl(opname,!TermList(_*,!Var[],_*)) -> {
+                // add f to set of names
+                foundConstructors.add(`opname);
+              }
             }
-            Term p = `Appl(name,args);
-            l = `ConcAdd(p,l*);
           }
-          if(l == `al) {
+
+          if(foundConstructors.equals(eSig.getConstructors(codomain))) {
             //System.out.println("OPS = " + ops + " al = " + `al);
             Term res = `Var("_");
             debug("abstraction",`s,res);
@@ -900,6 +950,10 @@ public class Pattern {
 
   public static boolean canBeRemoved2(Rule rule, RuleList ruleList, Signature eSig) {
     boolean res = false;
+
+    rule = (Rule) removeVar(rule);
+    ruleList = (RuleList) removeVar(ruleList);
+
     %match(rule) {
       Rule(lhs,rhs) -> {
         AddList constraint = `ConcAdd();
@@ -1249,7 +1303,7 @@ public class Pattern {
     %match(ruleList) {
       ConcRule(C1*,rule,C2*) -> {
         canBeRemoved1(`rule, `ConcRule(C1*,C2*), eSig);
-//         canBeRemoved2(`rule, `ConcRule(C1*,C2*), eSig);
+         //canBeRemoved2(`rule, `ConcRule(C1*,C2*), eSig);
       }
     }
 
