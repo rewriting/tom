@@ -202,8 +202,8 @@ public class RuleCompiler {
   /*
    * Perform one-step expansion
    *
-   * @param ordered list of rules
-   * @param rule the rule to expand (may contain nested anti-pattern and be non-linear)
+   * @param orderedTRS the resulting list of rules
+   * @param subject the rule to expand (may contain nested anti-pattern and be non-linear)
    */
   %strategy ExpandGeneralAntiPattern(orderedTRS:List,subject:Rule) extends Fail() {
     visit Term {
@@ -314,7 +314,7 @@ public class RuleCompiler {
     * @param ruleList the set of rules to expand
     * @return a new set that contains the expanded rules
     */
-  public  RuleList expandAt(RuleList ruleList) {
+  public RuleList expandAt(RuleList ruleList) {
     RuleList res = `ConcRule();
     for(Rule rule:ruleList.getCollectionConcRule()) {
       Map<String,Term> map = new HashMap<String,Term>();
@@ -323,7 +323,8 @@ public class RuleCompiler {
       } catch(VisitFailure e) {
       }
 
-//       System.out.println("AT MAP: " + map);
+      //System.out.println("AT MAP: " + map);
+      //System.out.println("RULE: " + rule);
 
       if(map.keySet().isEmpty()) {
         // if no AT in the rule just add it to the result
@@ -336,7 +337,9 @@ public class RuleCompiler {
           Term t = map.get(name);
           try {
             // replace the ATs with the corresponding expressions
-            newRule = `BottomUp(ReplaceVariable(name,t)).visitLight(newRule);
+            if(name != "_") { // special treatment for _@t: they will be removed by EliminateAt
+              newRule = `BottomUp(ReplaceVariable(name,t)).visitLight(newRule);
+            }
             // and remove the ATs
             newRule = `BottomUp(EliminateAt()).visitLight(newRule);
           } catch(VisitFailure e) {
@@ -399,6 +402,9 @@ public class RuleCompiler {
   %strategy EliminateAt() extends Identity() {
     visit Term {
       At(t,t) -> {
+        return `t;
+      }
+      At(Var("_"),t) -> {
         return `t;
       }
     }

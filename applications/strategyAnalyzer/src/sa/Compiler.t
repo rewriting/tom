@@ -315,6 +315,7 @@ public class Compiler {
     Term X = Var(Tools.getName("X"));
     String rule = strategyName;
     if(rule == null || ordered==false) {
+      // we generate a new fresh name for each rule in the non-ordered case
       rule = Tools.getName(StrategyOperator.RULE.getName());
     }
 
@@ -343,7 +344,7 @@ public class Compiler {
         ConcRule(currentRule@Rule(lhs,rhs),A*) -> {
           // if it is a rule with anti-patterns we need a fresh symbol even if it is an ordered compilation
           String nextRuleSymbol = rule;
-          if(Tools.containsAP(`currentRule)){
+          if(Tools.containsAP(`currentRule)) {
             nextRuleSymbol = null;
           }
           String nextRule = compileRuleList(`A*,generatedRules,nextRuleSymbol);
