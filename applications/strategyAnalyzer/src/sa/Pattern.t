@@ -313,17 +313,15 @@ public class Pattern {
           return res;
         } else {
           // replace X \ t by X@((a+b+g(_)+f(_,_)) \ t)
-          // this version is slower than the previous one, but simpler
+          // this version is as efficient as the previous one, but simpler
           AddList al = `ConcAdd();
-          for(String name: eSig.getConstructors()) {
+          GomType codomain = eSig.getCodomain(`f); // use codomain to generate well typed terms
+          for(String name: eSig.getConstructors(codomain)) {
             int arity = eSig.getArity(name);
             Term expand = Tools.genAbstractTerm(name,arity, Tools.getName("Z"));
-            //expand =  (Term) removeVar(expand);
             al = `ConcAdd(expand,al*);
           }
-          GomType codomain = eSig.getCodomain(`f);
-          Term sum = eliminateIllTyped(`Add(al), codomain, `eSig);
-          Term res = `Sub(sum,t);
+          Term res = `Sub(Add(al),t);
           debug("expand AP2", `s,res);
           // generate X@Add(tl)
           res = `At(X,res);
@@ -851,10 +849,11 @@ public class Pattern {
         while(!tl1.isEmptyTermList()) {
           Term h1 = tl1.getHeadTermList();
           Term h2 = tl2.getHeadTermList();
-          newarg = `TermList(newarg*, Match(h1,h2));
+          newarg = `TermList(Match(h1,h2), newarg*); // build in reverse order
           tl1 = tl1.getTailTermList();
           tl2 = tl2.getTailTermList();
         }
+        newarg = newarg.reverse();
         Term res = `Appl(f,newarg);
         debug("match decompose",`s,res);
         return res;
@@ -978,11 +977,10 @@ public class Pattern {
           // PropagateTrueMatch()
           Strategy S2 = `ChoiceId(CleanAdd(),PropagateEmpty(),PropagateTrueMatch(),SimplifyAddMatch(),VarAdd(),FactorizeAdd(),SimplifyMatch(), TryAbstraction(eSig));
           matchingProblem = `InnermostId(S2).visitLight(matchingProblem);
-          System.out.println("case = " + Pretty.toString(`lhs));
-          System.out.println("matchingProblem = " + Pretty.toString(matchingProblem));
+          //System.out.println("case = " + Pretty.toString(`lhs));
+          //System.out.println("matchingProblem = " + Pretty.toString(matchingProblem));
           if(matchingProblem == `TrueMatch()) {
             res = true;
-            //System.out.println("BINGO");
           }
         } catch(VisitFailure e) {
           System.out.println("can be removed2 failure");
