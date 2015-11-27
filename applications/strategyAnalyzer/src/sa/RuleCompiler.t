@@ -10,6 +10,7 @@ import aterm.*;
 import aterm.pure.*;
 import com.google.common.collect.HashMultiset;
 
+import static sa.Tools._appl;
 import static sa.Tools.Var;
 import static sa.Tools.At;
 import static sa.Tools.Bottom;
@@ -57,9 +58,13 @@ public class RuleCompiler {
    * Remove nested anti-patterns
    * @param rules the list of rules to expand
    */
-  public RuleList expandGeneralAntiPatterns(RuleList rules) {
+  public RuleList expandGeneralAntiPatterns(RuleList rules, String nextRuleSymbol) {
     rules = expandAntiPatternsAux(rules, false);
-    rules = eliminateBottom2(rules);
+    if(nextRuleSymbol == null){ //if we don't know what to do with the Bottom2 (than change to Bottom)
+      rules = eliminateBottom2(rules);
+    }else{ // chain to the next call
+      rules = changeBottom2(rules,nextRuleSymbol);      
+    }
     return rules;
   }
 
@@ -197,8 +202,8 @@ public class RuleCompiler {
   /*
    * Perform one-step expansion
    *
-   * @param ordered list of rules
-   * @param rule the rule to expand (may contain nested anti-pattern and be non-linear)
+   * @param orderedTRS the resulting list of rules
+   * @param subject the rule to expand (may contain nested anti-pattern and be non-linear)
    */
   %strategy ExpandGeneralAntiPattern(orderedTRS:List,subject:Rule) extends Fail() {
     visit Term {
@@ -279,6 +284,27 @@ public class RuleCompiler {
     }
   }
 
+  /*
+   * replace Bottom2(x,_) by nextRuleSymbol(x)
+   */
+  public RuleList changeBottom2(RuleList subject, String nextRuleSymbol) {
+    RuleList res = subject;
+    try {
+      res = `TopDown(ChangeBottom2(nextRuleSymbol)).visitLight(subject);
+    } catch(VisitFailure e) {
+      throw new RuntimeException("Should not be there");
+    }
+    return res;
+  }
+
+  %strategy ChangeBottom2(String nextRuleSymbol) extends Identity() {
+    visit Term {
+      Appl(bottom2,TermList(x,r)) && bottom2 == Signature.BOTTOM2 -> {
+        return _appl(nextRuleSymbol,`x);
+      }
+    }
+  }
+
   /********************************************************************************
    *     Transform a list of rules with @ in a list of rules with the
    *     @ expanded accordingly. The order of rules is preserved.
@@ -288,7 +314,7 @@ public class RuleCompiler {
     * @param ruleList the set of rules to expand
     * @return a new set that contains the expanded rules
     */
-  public  RuleList expandAt(RuleList ruleList) {
+  public RuleList expandAt(RuleList ruleList) {
     RuleList res = `ConcRule();
     for(Rule rule:ruleList.getCollectionConcRule()) {
       Map<String,Term> map = new HashMap<String,Term>();
@@ -297,7 +323,8 @@ public class RuleCompiler {
       } catch(VisitFailure e) {
       }
 
-//       System.out.println("AT MAP: " + map);
+      //System.out.println("AT MAP: " + map);
+      //System.out.println("RULE: " + rule);
 
       if(map.keySet().isEmpty()) {
         // if no AT in the rule just add it to the result
@@ -310,7 +337,9 @@ public class RuleCompiler {
           Term t = map.get(name);
           try {
             // replace the ATs with the corresponding expressions
-            newRule = `BottomUp(ReplaceVariable(name,t)).visitLight(newRule);
+            if(name != "_") { // special treatment for _@t: they will be removed by EliminateAt
+              newRule = `BottomUp(ReplaceVariable(name,t)).visitLight(newRule);
+            }
             // and remove the ATs
             newRule = `BottomUp(EliminateAt()).visitLight(newRule);
           } catch(VisitFailure e) {
@@ -373,6 +402,9 @@ public class RuleCompiler {
   %strategy EliminateAt() extends Identity() {
     visit Term {
       At(t,t) -> {
+        return `t;
+      }
+      At(Var("_"),t) -> {
         return `t;
       }
     }

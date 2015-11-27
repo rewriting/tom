@@ -15,7 +15,7 @@ r2() =  [ h(x,x,x) -> x ]
 
 r3() =  [ g(a()) -> b(), g(x) -> x ]
 
-r4() =  [ ! f(x,y) -> x ]
+r4() =  [ ! f(x,y) -> a() , f(a(),b()) -> c() ]
 
 obu(s) = mu x.(one(x) <+ s)
 innermost(s) = obu(s)
@@ -24,7 +24,7 @@ innermost(s) = obu(s)
 
 // mainStrat() = r1();r1()
 
-mainStrat() = r4()
+mainStrat() = r3()
 
 // mainStrat() = r3()
 

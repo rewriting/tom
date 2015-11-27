@@ -404,6 +404,25 @@ public class Tools {
     }
   }
 
+  public static boolean containsAP(tom.library.sl.Visitable t) {
+    HashMultiset<Term> bag = HashMultiset.create();
+    try {
+      `TopDown(CollectAP(bag)).visitLight(t);
+    } catch(VisitFailure e) {
+    }
+     return !bag.isEmpty();
+  }
+  
+  // search all APs
+  %strategy CollectAP(bag:HashMultiset) extends Identity() {
+    visit Term {
+      x@Anti[]-> {
+        bag.add(`x);
+      }
+    }
+  }
+
+
   public static boolean containsEqAnd(tom.library.sl.Visitable t) {
     try {
       `TopDown(ContainsEqAnd()).visitLight(t);

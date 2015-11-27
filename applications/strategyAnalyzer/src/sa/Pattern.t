@@ -25,12 +25,13 @@ public class Pattern {
 //     example1();
     // example2();
 //     example3(); // numadd
-//      example4(); // interp
+      example4(); // interp
 //     example5(); // balance
 //     example6(); // and-or
-    example7(); // simplest reduce
+//    example7(); // simplest reduce
 //     example7bis(); // simplest reduce with one type
 //    example8(); // reduce deeper
+//    example9(); // nested anti-pattern
   }
 
   /*
@@ -293,7 +294,7 @@ public class Pattern {
      
       // X - t -> expand AP   ==>    t should be in TFX (only symbols from declared signature)
       s@Sub(X@Var[], t@Appl(f,args_f)) -> {
-        if(isPlainTerm(`t)) {
+        if(false && isPlainTerm(`t)) { // desactivate old version of X \ t
           RuleCompiler ruleCompiler = new RuleCompiler(`eSig, `eSig); // gSig
           RuleList rl = ruleCompiler.expandAntiPatterns(`ConcRule(Rule(Anti(t),Var("_"))));
           //System.out.println("rl = " + Pretty.toString(rl));
@@ -301,20 +302,29 @@ public class Pattern {
           GomType codomain = eSig.getCodomain(`f);
           %match(rl) {
             ConcRule(_*,Rule(lhs@Appl(g,args_g),rhs),_*) -> {
-              //if(eSig.getCodomain(`g) == codomain) { // optim: remove ill typed terms 
-                //tl = `ConcAdd((Term)removeVar(lhs),tl*); // order not preserved
-                tl = `ConcAdd(lhs,tl*); // order not preserved
-              //}
+              tl = `ConcAdd(lhs,tl*); // order not preserved
             }
           }
           Term res = `Add(tl);
-          debug("expand AP",`s,res);
-
           res = eliminateIllTyped(res, codomain, `eSig);
-
-          // PEM: we should generate X@Add(tl)
+          debug("expand AP",`s,res);
+          // generate X@Add(tl)
           res = `At(X,res);
-
+          return res;
+        } else {
+          // replace X \ t by X@((a+b+g(_)+f(_,_)) \ t)
+          // this version is as efficient as the previous one, but simpler
+          AddList al = `ConcAdd();
+          GomType codomain = eSig.getCodomain(`f); // use codomain to generate well typed terms
+          for(String name: eSig.getConstructors(codomain)) {
+            int arity = eSig.getArity(name);
+            Term expand = Tools.genAbstractTerm(name,arity, Tools.getName("Z"));
+            al = `ConcAdd(expand,al*);
+          }
+          Term res = `Sub(Add(al),t);
+          debug("expand AP2", `s,res);
+          // generate X@Add(tl)
+          res = `At(X,res);
           return res;
         }
       }
@@ -323,7 +333,7 @@ public class Pattern {
       s@Sub(Empty(),Appl(f,tl)) -> {
         Term res = `Empty();
         debug("empty - f(...) -> empty",`s,res);
-        return `Empty();
+        return res;
       }
 
       // (a1 + ... + an) - t@f(t1,...,tn) -> (a1 - t) + ( (a2 + ... + an) - t )
@@ -651,6 +661,8 @@ public class Pattern {
   }
 
   /*
+   * simple but inefficient version
+   *
   private static AddList simplifySubsumtion(AddList tl) {
     %match(tl) {
       ConcAdd(C1*,t1,C2*,t2,C3*) -> {
@@ -669,9 +681,6 @@ public class Pattern {
    * Return true if t1 matches t2
    */
   private static boolean match(Term t1, Term t2) {
-    //assert !Tools.containsAt(t1) : "check contain no AT";
-    //assert !Tools.containsAt(t2) : "check contain no AT";
-
     %match(t1,t2) {
       // ElimAt (more efficient than removing AT before matching)
       At(_,p1), p2 -> { return `match(p1,p2); }
@@ -840,10 +849,11 @@ public class Pattern {
         while(!tl1.isEmptyTermList()) {
           Term h1 = tl1.getHeadTermList();
           Term h2 = tl2.getHeadTermList();
-          newarg = `TermList(newarg*, Match(h1,h2));
+          newarg = `TermList(Match(h1,h2), newarg*); // build in reverse order
           tl1 = tl1.getTailTermList();
           tl2 = tl2.getTailTermList();
         }
+        newarg = newarg.reverse();
         Term res = `Appl(f,newarg);
         debug("match decompose",`s,res);
         return res;
@@ -967,11 +977,10 @@ public class Pattern {
           // PropagateTrueMatch()
           Strategy S2 = `ChoiceId(CleanAdd(),PropagateEmpty(),PropagateTrueMatch(),SimplifyAddMatch(),VarAdd(),FactorizeAdd(),SimplifyMatch(), TryAbstraction(eSig));
           matchingProblem = `InnermostId(S2).visitLight(matchingProblem);
-          System.out.println("case = " + Pretty.toString(`lhs));
-          System.out.println("matchingProblem = " + Pretty.toString(matchingProblem));
+          //System.out.println("case = " + Pretty.toString(`lhs));
+          //System.out.println("matchingProblem = " + Pretty.toString(matchingProblem));
           if(matchingProblem == `TrueMatch()) {
             res = true;
-            //System.out.println("BINGO");
           }
         } catch(VisitFailure e) {
           System.out.println("can be removed2 failure");
@@ -1293,6 +1302,26 @@ public class Pattern {
 
   }
 
+  private static void example9() {
+    Signature eSig = new Signature();
+    // !f(a,!g(y)) ==> Z \ f(a, Z' \ g(y) )
+
+    Term V = `Var("_");
+
+    eSig.addSymbol("a", `ConcGomType(), `GomType("T") );
+    eSig.addSymbol("b", `ConcGomType(), `GomType("T") );
+    eSig.addSymbol("g", `ConcGomType(GomType("T")), `GomType("T") );
+    eSig.addSymbol("f", `ConcGomType(GomType("T"),GomType("T")), `GomType("T") );
+
+    Term a =`Appl("a", TermList());
+    Term b =`Appl("b", TermList());
+    Term gv =`Appl("g", TermList(V));
+
+    Term r0 = `Appl("rhs0",TermList());
+
+    Term pattern = `Sub(V, Appl("f",TermList(a,Sub(V,gv))));
+    RuleList res = `trsRule(ConcRule(Rule(pattern,r0)), eSig);
+  }
 
   /*
    * Reduce a list of rules
