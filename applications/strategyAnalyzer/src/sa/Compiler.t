@@ -1233,23 +1233,60 @@ public class Compiler {
     Signature gSig = getGeneratedSignature();
     Signature eSig = getExtractedSignature();
 
-    RuleList rList = ruleList;
+    %match(ruleList) {
+      ConcRule() -> {
+        return ruleList;
+      }
 
-    /*
-     * f(t1_1,...,t1_n) -> rhs_1 (with f(t1_1,...,t1_n) non linear)
-     * ...
-     * f(tm_1,...,tm_n) -> rhs_m
-     * becomes (with t1'_1,...,t1'_n linear):
-     *   f(t1'_1,...,t1'_n) -> f_1(t1'_1,...,t1'_n, true ^ constraint on non linear variables)
-     *   f_1(t1'_1,...,t1'_n, true) -> rhs_1
-     *   f_1(t2_1,...,t1_n, false) -> rhs_2  \
-     *   ...                                  | apply the algorithm recursively on these rules
-     *   f_1(tm_1,...,tm_n, false) -> rhs_m  /
-     */
+      ConcRule(Rule(lhs,rhs),tail*) -> {
+        TermList result = Tools.linearize(`lhs, gSig);
+        %match(result) {
+          TermList(_, Appl("True",TermList())) -> {
+            // lhs is linear
+            RuleList newTail = transformNLOTRSintoLOTRS(`tail);
+            return `ConcRule(Rule(lhs,rhs), newTail*);
+          }
 
-    Term X = Var(Tools.getName("X"));
-    return rList;
+          TermList(newLhs@Appl(f,args_f), cond@!Appl("True",TermList())) -> {
+            /*
+             * lhs is non linear
+             * f(t1_1,...,t1_n) -> rhs_1
+             * ...
+             * f(tm_1,...,tm_n) -> rhs_m
+             * becomes (with t1'_1,...,t1'_n linear):
+             *   f(t1'_1,...,t1'_n) -> f_1(t1'_1,...,t1'_n, true ^ constraint on non linear variables)
+             *   f_1(t1'_1,...,t1'_n, true) -> rhs_1
+             *   f_1(t2_1,...,t1_n, false) -> rhs_2  \
+             *   ...                                  | apply the algorithm recursively on these rules
+             *   f_1(tm_1,...,tm_n, false) -> rhs_m  /
+             */
+            String f_1 = Tools.getName(Tools.addAuxExtension(`f));
+            //TODO: gSig.addFunctionSymbol(f_1,`ConcGomType(Signature.TYPE_TERM,Signature.TYPE_BOOLEAN),Signature.TYPE_TERM);
+            Term newRhs = `Appl(f_1, TermList(args_f*,cond));
+            RuleList newTail = transformNLOTRSintoLOTRS(transformHeadSymbol(`tail, f_1));
+            return `ConcRule(Rule(newLhs,newRhs), newTail*);
+          }
+        }
 
+      }
+    }
+
+
+    return ruleList;
+  }
+
+  private static RuleList transformHeadSymbol(RuleList ruleList, String headSymbol) {
+    %match(ruleList) {
+      ConcRule() -> {
+        return ruleList;
+      }
+
+      ConcRule(Rule(Appl(f,f_args),rhs),tail*) -> {
+        RuleList newTail = transformHeadSymbol(`tail,headSymbol);
+        return `ConcRule(Rule(Appl(headSymbol,TermList(f_args*,Appl("False",TermList()))),rhs),newTail*);
+      }
+    }
+    return ruleList;
   }
 
 }
