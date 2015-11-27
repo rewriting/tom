@@ -11,11 +11,13 @@ U = f(T,T)
 
 strategies
 
-r1() =  [  
-  f(a(),x) ->  a(),
-  f(x,x) ->  a(),
-  f(b(),x) ->  a()
-]
-
+r1() =  [ a() ->  b() ]
 mainStrat() = r1()
+
+trs
+
+  f(a(),x) ->  a()
+  f(x,x) ->  a()
+  f(b(),x) ->  a()
+
 

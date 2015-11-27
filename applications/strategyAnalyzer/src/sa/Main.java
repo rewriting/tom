@@ -55,10 +55,10 @@ public class Main {
       CommonTokenStream tokens = new CommonTokenStream(lexer);
       RuleParser ruleParser = new RuleParser(tokens);
       Tree tree = (Tree) ruleParser.program().getTree();
-      Program t = (Program) RuleAdaptor.getTerm(tree);
+      Program program = (Program) RuleAdaptor.getTerm(tree);
 
       Compiler compiler = Compiler.getInstance();
-      compiler.setProgram(t);
+      compiler.setProgram(program);
 
       // Transforms the strategy into a rewrite system
       //   get the TRS for the strategy named strategyName
@@ -96,7 +96,6 @@ public class Main {
         // run the Pattern transformation here
         //for(String name:generatedSignature.getSymbols()) {
           //System.out.println("symbol: " + name + " function: " + generatedSignature.isFunction(name) + " internal: " + generatedSignature.isInternal(name));
-
         //}
        
         generatedRules = Pattern.trsRule(generatedRules,generatedSignature);
@@ -107,6 +106,18 @@ public class Main {
         //System.out.println("size = " + res.length());
        
       }
+
+      /*
+       * Handle the TRS part of a specification
+       */
+      RuleList trs = program.gettrs();
+      trs = Pattern.transformNLOTRSintoLOTRS(trs,generatedSignature);
+      trs = Pattern.trsRule(trs,generatedSignature);
+      for(Rule r:trs.getCollectionConcRule()) {
+        // System.out.println(Pretty.toString(r));
+        generatedRules = ((sa.rule.types.rulelist.ConcRule)generatedRules).append(r);
+      }
+
 
       PrintStream outputfile = System.out;
       if(options.out != null) {

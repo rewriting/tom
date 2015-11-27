@@ -1316,6 +1316,69 @@ public class Pattern {
     return ruleList;
   }
 
+  /*
+   * Transform an ordered TRS with non-linear lhs rules into an ordered TRS with left-linear rules
+   */
+  public static RuleList transformNLOTRSintoLOTRS(RuleList ruleList, Signature gSig) {
+
+    %match(ruleList) {
+      ConcRule() -> {
+        return ruleList;
+      }
+
+      ConcRule(Rule(lhs,rhs),tail*) -> {
+        TermList result = Tools.linearize(`lhs, gSig);
+        %match(result) {
+          TermList(_, Appl("True",TermList())) -> {
+            // lhs is linear
+            RuleList newTail = Pattern.transformNLOTRSintoLOTRS(`tail,gSig);
+            return `ConcRule(Rule(lhs,rhs), newTail*);
+          }
+
+          TermList(newLhs@Appl(f,f_args), cond@!Appl("True",TermList())) -> {
+            /*
+             * lhs is non linear
+             * f(t1_1,...,t1_n) -> rhs_1
+             * ...
+             * f(tm_1,...,tm_n) -> rhs_m
+             * becomes (with t1'_1,...,t1'_n linear):
+             *   f(t1'_1,...,t1'_n) -> f_1(t1'_1,...,t1'_n, true ^ constraint on non linear variables)
+             *   f_1(t1'_1,...,t1'_n, true) -> rhs_1
+             *   f_1(t2_1,...,t1_n, false) -> rhs_2  \
+             *   ...                                  | apply the algorithm recursively on these rules
+             *   f_1(tm_1,...,tm_n, false) -> rhs_m  /
+             */
+            String f_1 = Tools.getName(Tools.addAuxExtension(`f));
+            GomTypeList f_domain = gSig.getDomain(`f);
+            GomType f_codomain = gSig.getCodomain(`f);
+            gSig.addFunctionSymbol(f_1,`ConcGomType(f_domain*,Signature.TYPE_BOOLEAN),f_codomain);
+            Term newRhs = `Appl(f_1, TermList(f_args*,cond));
+            RuleList newTail = Pattern.transformNLOTRSintoLOTRS(transformHeadSymbol(`tail, f_1),gSig);
+            Rule trueCase = `Rule(Appl(f_1,TermList(f_args*,Appl("True",TermList()))),rhs);
+            return `ConcRule(Rule(newLhs,newRhs), trueCase, newTail*);
+          }
+        }
+
+      }
+    }
+
+
+    return ruleList;
+  }
+
+  private static RuleList transformHeadSymbol(RuleList ruleList, String headSymbol) {
+    %match(ruleList) {
+      ConcRule() -> {
+        return ruleList;
+      }
+
+      ConcRule(Rule(Appl(f,f_args),rhs),tail*) -> {
+        RuleList newTail = transformHeadSymbol(`tail,headSymbol);
+        return `ConcRule(Rule(Appl(headSymbol,TermList(f_args*,Appl("False",TermList()))),rhs),newTail*);
+      }
+    }
+    return ruleList;
+  }
 
 }
 

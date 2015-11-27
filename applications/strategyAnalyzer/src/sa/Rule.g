@@ -42,7 +42,7 @@ STRATEGIES (stratdecl)*
 ;
 
 trs :
-TRS (rule (COMMA rule)*)
+TRS (rule (COMMA? rule)*)
   -> ^(ConcRule (rule)*)
 ;
 
