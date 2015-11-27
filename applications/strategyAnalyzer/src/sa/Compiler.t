@@ -1226,6 +1226,31 @@ public class Compiler {
     return `ConcRule(generatedRules*, Rule(_appl(name,X), _appl(symbol,X)));
   }
 
+  /*
+   * Transform an ordered TRS with non-linear lhs rules into an ordered TRS with left-linear rules
+   */
+  private RuleList transformNLOTRSintoLOTRS(RuleList ruleList) {
+    Signature gSig = getGeneratedSignature();
+    Signature eSig = getExtractedSignature();
+
+    RuleList rList = ruleList;
+
+    /*
+     * f(t1_1,...,t1_n) -> rhs_1 (with f(t1_1,...,t1_n) non linear)
+     * ...
+     * f(tm_1,...,tm_n) -> rhs_m
+     * becomes (with t1'_1,...,t1'_n linear):
+     *   f(t1'_1,...,t1'_n) -> f_1(t1'_1,...,t1'_n, true ^ constraint on non linear variables)
+     *   f_1(t1'_1,...,t1'_n, true) -> rhs_1
+     *   f_1(t2_1,...,t1_n, false) -> rhs_2  \
+     *   ...                                  | apply the algorithm recursively on these rules
+     *   f_1(tm_1,...,tm_n, false) -> rhs_m  /
+     */
+
+    Term X = Var(Tools.getName("X"));
+    return rList;
+
+  }
 
 }
 

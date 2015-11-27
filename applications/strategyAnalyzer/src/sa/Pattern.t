@@ -88,6 +88,9 @@ public class Pattern {
     return res;
   }
 
+  /*
+   * Transform a term which contains Sub/Add into a list (top-level Add) of terms without Sub/Add
+   */
   private static Term reduce(Term t, Signature eSig) {
     try {
       // DistributeAdd needed if we can start with terms like X \ f(a+b) or X \ (f(X)\f(f(_)))
@@ -125,6 +128,7 @@ public class Pattern {
     %match( candidates ) {
       ConcRule(head, tail*) -> {
         boolean b = canBeRemoved2(`head, `ConcRule(tail*,kernel*), eSig);
+        // try with the head kept in kernel
         RuleList res = removeRedundantRuleAux(`tail, `ConcRule(head,kernel*), eSig);
         if(b) {
           System.out.println("REMOVE: " + Pretty.toString(`head));
@@ -133,30 +137,10 @@ public class Pattern {
          if(tmp.length() < res.length()) {
              return tmp;
          }
-         // bag.add(removeRedundantRuleAux(`tail, kernel, eSig));
-
-          // uncomment the following return for a greedy algorithm:
-          //return removeRedundantRule(`ConcRule(C1*,C2*), eSig);
-
         }
         return res;
-
-        // try with the head kept in kernel
-        //bag.add(removeRedundantRuleAux(`tail, `ConcRule(head,kernel*), eSig));
       }
     }
-/*
-    RuleList minrules = `ConcRule(candidates*,kernel*);
-    int minlength = minrules.length();
-    for(RuleList e:bag) {
-      if(e.length() < minlength) {
-        minrules = e;
-        minlength = minrules.length();
-      }
-    }
-
-    return minrules;
-    */
     return `ConcRule(candidates*,kernel*);
   }
 
@@ -247,7 +231,7 @@ public class Pattern {
   }
 
   /*
-   * returns true is the term does not contain any Add or Sub
+   * returns true if the term does not contain any Add or Sub
    */
   private static boolean isPlainTerm(Term t) {
     try {
@@ -886,13 +870,6 @@ public class Pattern {
           ok &= (tl.getHeadTermList() == `TrueMatch());
           tl = tl.getTailTermList();
         }
-/*
-        %match(argf) {
-          TermList(_*,!TrueMatch(),_*) -> {
-            ok = false;
-          }
-        }
-  */      
         if(ok) {
           Term res = `TrueMatch();
           debug("propagate match true",`s,res);
