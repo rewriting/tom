@@ -15,9 +15,15 @@ options {
 
 // new syntax
 program :
-  abstractsyntax (f=functions)? strategies EOF
-  -> {f!=null}? ^(Program abstractsyntax $f strategies)
-  -> ^(Program abstractsyntax ^(ConcProduction) strategies)
+  abstractsyntax (f=functions)? (s=strategies)? (t=trs)? EOF
+  -> {f!=null && s!=null && t!= null }? ^(Program abstractsyntax $f $s $t)
+  -> {f!=null && s!=null }? ^(Program abstractsyntax $f $s ^(ConcRule))
+  -> {f!=null && t!=null }? ^(Program abstractsyntax $f ^(ConcStratDecl) $t)
+  -> {t!=null && s!=null }? ^(Program abstractsyntax ^(ConcProduction) $t $s)
+  -> {f!=null}? ^(Program abstractsyntax $f ^(ConcStratDecl) ^(ConcRule))
+  -> {s!=null}? ^(Program abstractsyntax ^(ConcProduction) $s ^(ConcRule))
+  -> {t!=null}? ^(Program abstractsyntax ^(ConcProduction) ^(ConcStratDecl) $t)
+  -> ^(Program abstractsyntax ^(ConcProduction) ^(ConcStratDecl) ^(ConcRule))
 ;
 
 abstractsyntax :
@@ -33,6 +39,11 @@ functions :
 strategies :
 STRATEGIES (stratdecl)*
   -> ^(ConcStratDecl (stratdecl)*) 
+;
+
+trs :
+TRS (rule (COMMA rule)*)
+  -> ^(ConcRule (rule)*)
 ;
 
 stratdecl :
@@ -142,6 +153,7 @@ ABSTRACT : 'abstract';
 SYNTAX   : 'syntax';
 STRATEGIES   : 'strategies';
 FUNCTIONS : 'functions';
+TRS : 'trs';
 
 
 ARROW : '->' ;

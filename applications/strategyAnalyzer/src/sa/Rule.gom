@@ -3,7 +3,7 @@ imports String int
 abstract syntax
 
 // New AST
-Program = Program(productionList:ProductionList, functionList:ProductionList, stratList:StratDeclList)
+Program = Program(productionList:ProductionList, functionList:ProductionList, stratList:StratDeclList, trs:RuleList)
 Production = SortType(Type:GomType,AlternativeList:AlternativeList)
 ProductionList = ConcProduction(Production*)
 
