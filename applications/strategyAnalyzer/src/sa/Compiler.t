@@ -285,10 +285,6 @@ public class Compiler {
 //       }
 //     }
     
-//     if(Main.options.pattern) {
-//       System.out.println("pattern: " + rList);
-//       RuleList res = Pattern.trsRule(rList,eSig);
-//     }
 //     ruleList = rList;
 
     /*
@@ -541,6 +537,14 @@ public class Compiler {
         }
 
         StratExp(List(rulelist)) -> {
+
+          if(Main.options.pattern) {
+            System.out.println("pattern: " + `rulelist);
+            RuleList lin = this.transformNLOTRSintoLOTRS(`rulelist);
+            System.out.println("linear otrs: " + lin);
+            RuleList res = Pattern.trsRule(lin,eSig);
+          }
+
           strategySymbol = this.compileRuleList(`rulelist,generatedRules,null);
         }
 
@@ -1247,7 +1251,7 @@ public class Compiler {
             return `ConcRule(Rule(lhs,rhs), newTail*);
           }
 
-          TermList(newLhs@Appl(f,args_f), cond@!Appl("True",TermList())) -> {
+          TermList(newLhs@Appl(f,f_args), cond@!Appl("True",TermList())) -> {
             /*
              * lhs is non linear
              * f(t1_1,...,t1_n) -> rhs_1
@@ -1261,10 +1265,13 @@ public class Compiler {
              *   f_1(tm_1,...,tm_n, false) -> rhs_m  /
              */
             String f_1 = Tools.getName(Tools.addAuxExtension(`f));
-            //TODO: gSig.addFunctionSymbol(f_1,`ConcGomType(Signature.TYPE_TERM,Signature.TYPE_BOOLEAN),Signature.TYPE_TERM);
-            Term newRhs = `Appl(f_1, TermList(args_f*,cond));
+            GomTypeList f_domain = gSig.getDomain(`f);
+            GomType f_codomain = gSig.getCodomain(`f);
+            gSig.addFunctionSymbol(f_1,`ConcGomType(f_domain*,Signature.TYPE_BOOLEAN),f_codomain);
+            Term newRhs = `Appl(f_1, TermList(f_args*,cond));
             RuleList newTail = transformNLOTRSintoLOTRS(transformHeadSymbol(`tail, f_1));
-            return `ConcRule(Rule(newLhs,newRhs), newTail*);
+            Rule trueCase = `Rule(Appl(f_1,TermList(f_args*,Appl("True",TermList()))),rhs);
+            return `ConcRule(Rule(newLhs,newRhs), trueCase, newTail*);
           }
         }
 

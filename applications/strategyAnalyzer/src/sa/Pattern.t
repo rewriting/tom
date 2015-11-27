@@ -127,9 +127,9 @@ public class Pattern {
 
     %match( candidates ) {
       ConcRule(head, tail*) -> {
-        boolean b = canBeRemoved2(`head, `ConcRule(tail*,kernel*), eSig);
+        boolean b = canBeRemoved2(`head, `ConcRule(kernel*,tail*), eSig);
         // try with the head kept in kernel
-        RuleList res = removeRedundantRuleAux(`tail, `ConcRule(head,kernel*), eSig);
+        RuleList res = removeRedundantRuleAux(`tail, `ConcRule(kernel*,head), eSig);
         if(b) {
           System.out.println("REMOVE: " + Pretty.toString(`head));
           // try with the head removed 
