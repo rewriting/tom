@@ -73,7 +73,7 @@ public class Signature {
    */
   public void setSignature(Program program) {
     %match(program) {
-      Program(ConcProduction(_*,SortType(codomain,ConcAlternative(_*,Alternative(name,args,codomain),_*)),_*),functionList,_) -> {
+      Program[productionList=ConcProduction(_*,SortType(codomain,ConcAlternative(_*,Alternative(name,args,codomain),_*)),_*),functionList=functionList] -> {
         GomTypeList domain = `ConcGomType();
         %match(args) {
           ConcField(_*,UnamedField(argType),_*) -> {

@@ -88,6 +88,9 @@ public class Pattern {
     return res;
   }
 
+  /*
+   * Transform a term which contains Sub/Add into a list (top-level Add) of terms without Sub/Add
+   */
   private static Term reduce(Term t, Signature eSig) {
     try {
       // DistributeAdd needed if we can start with terms like X \ f(a+b) or X \ (f(X)\f(f(_)))
@@ -124,8 +127,9 @@ public class Pattern {
 
     %match( candidates ) {
       ConcRule(head, tail*) -> {
-        boolean b = canBeRemoved2(`head, `ConcRule(tail*,kernel*), eSig);
-        RuleList res = removeRedundantRuleAux(`tail, `ConcRule(head,kernel*), eSig);
+        boolean b = canBeRemoved2(`head, `ConcRule(kernel*,tail*), eSig);
+        // try with the head kept in kernel
+        RuleList res = removeRedundantRuleAux(`tail, `ConcRule(kernel*,head), eSig);
         if(b) {
           System.out.println("REMOVE: " + Pretty.toString(`head));
           // try with the head removed 
@@ -133,30 +137,10 @@ public class Pattern {
          if(tmp.length() < res.length()) {
              return tmp;
          }
-         // bag.add(removeRedundantRuleAux(`tail, kernel, eSig));
-
-          // uncomment the following return for a greedy algorithm:
-          //return removeRedundantRule(`ConcRule(C1*,C2*), eSig);
-
         }
         return res;
-
-        // try with the head kept in kernel
-        //bag.add(removeRedundantRuleAux(`tail, `ConcRule(head,kernel*), eSig));
       }
     }
-/*
-    RuleList minrules = `ConcRule(candidates*,kernel*);
-    int minlength = minrules.length();
-    for(RuleList e:bag) {
-      if(e.length() < minlength) {
-        minrules = e;
-        minlength = minrules.length();
-      }
-    }
-
-    return minrules;
-    */
     return `ConcRule(candidates*,kernel*);
   }
 
@@ -247,7 +231,7 @@ public class Pattern {
   }
 
   /*
-   * returns true is the term does not contain any Add or Sub
+   * returns true if the term does not contain any Add or Sub
    */
   private static boolean isPlainTerm(Term t) {
     try {
@@ -886,13 +870,6 @@ public class Pattern {
           ok &= (tl.getHeadTermList() == `TrueMatch());
           tl = tl.getTailTermList();
         }
-/*
-        %match(argf) {
-          TermList(_*,!TrueMatch(),_*) -> {
-            ok = false;
-          }
-        }
-  */      
         if(ok) {
           Term res = `TrueMatch();
           debug("propagate match true",`s,res);
@@ -1339,6 +1316,69 @@ public class Pattern {
     return ruleList;
   }
 
+  /*
+   * Transform an ordered TRS with non-linear lhs rules into an ordered TRS with left-linear rules
+   */
+  public static RuleList transformNLOTRSintoLOTRS(RuleList ruleList, Signature gSig) {
+
+    %match(ruleList) {
+      ConcRule() -> {
+        return ruleList;
+      }
+
+      ConcRule(Rule(lhs,rhs),tail*) -> {
+        TermList result = Tools.linearize(`lhs, gSig);
+        %match(result) {
+          TermList(_, Appl("True",TermList())) -> {
+            // lhs is linear
+            RuleList newTail = Pattern.transformNLOTRSintoLOTRS(`tail,gSig);
+            return `ConcRule(Rule(lhs,rhs), newTail*);
+          }
+
+          TermList(newLhs@Appl(f,f_args), cond@!Appl("True",TermList())) -> {
+            /*
+             * lhs is non linear
+             * f(t1_1,...,t1_n) -> rhs_1
+             * ...
+             * f(tm_1,...,tm_n) -> rhs_m
+             * becomes (with t1'_1,...,t1'_n linear):
+             *   f(t1'_1,...,t1'_n) -> f_1(t1'_1,...,t1'_n, true ^ constraint on non linear variables)
+             *   f_1(t1'_1,...,t1'_n, true) -> rhs_1
+             *   f_1(t2_1,...,t1_n, false) -> rhs_2  \
+             *   ...                                  | apply the algorithm recursively on these rules
+             *   f_1(tm_1,...,tm_n, false) -> rhs_m  /
+             */
+            String f_1 = Tools.getName(Tools.addAuxExtension(`f));
+            GomTypeList f_domain = gSig.getDomain(`f);
+            GomType f_codomain = gSig.getCodomain(`f);
+            gSig.addFunctionSymbol(f_1,`ConcGomType(f_domain*,Signature.TYPE_BOOLEAN),f_codomain);
+            Term newRhs = `Appl(f_1, TermList(f_args*,cond));
+            RuleList newTail = Pattern.transformNLOTRSintoLOTRS(transformHeadSymbol(`tail, f_1),gSig);
+            Rule trueCase = `Rule(Appl(f_1,TermList(f_args*,Appl("True",TermList()))),rhs);
+            return `ConcRule(Rule(newLhs,newRhs), trueCase, newTail*);
+          }
+        }
+
+      }
+    }
+
+
+    return ruleList;
+  }
+
+  private static RuleList transformHeadSymbol(RuleList ruleList, String headSymbol) {
+    %match(ruleList) {
+      ConcRule() -> {
+        return ruleList;
+      }
+
+      ConcRule(Rule(Appl(f,f_args),rhs),tail*) -> {
+        RuleList newTail = transformHeadSymbol(`tail,headSymbol);
+        return `ConcRule(Rule(Appl(headSymbol,TermList(f_args*,Appl("False",TermList()))),rhs),newTail*);
+      }
+    }
+    return ruleList;
+  }
 
 }
 

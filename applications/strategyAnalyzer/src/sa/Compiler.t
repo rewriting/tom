@@ -285,10 +285,6 @@ public class Compiler {
 //       }
 //     }
     
-//     if(Main.options.pattern) {
-//       System.out.println("pattern: " + rList);
-//       RuleList res = Pattern.trsRule(rList,eSig);
-//     }
 //     ruleList = rList;
 
     /*
@@ -541,6 +537,14 @@ public class Compiler {
         }
 
         StratExp(List(rulelist)) -> {
+
+          //if(Main.options.pattern) {
+          //  System.out.println("pattern: " + `rulelist);
+          //  RuleList lin = this.transformNLOTRSintoLOTRS(`rulelist, gSig);
+          //  System.out.println("linear otrs: " + lin);
+          //  RuleList res = Pattern.trsRule(lin,eSig);
+          //}
+
           strategySymbol = this.compileRuleList(`rulelist,generatedRules,null);
         }
 

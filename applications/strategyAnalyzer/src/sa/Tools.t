@@ -319,7 +319,7 @@ public class Tools {
    */
   public static StratDecl getStratDecl(String name, Program program) {
     %match(program) {
-      Program(_,_,ConcStratDecl(_*,decl@StratDecl(n,_,_),_*)) -> {
+      Program[stratList=ConcStratDecl(_*,decl@StratDecl(n,_,_),_*)] -> {
         if(`n.equals(name)) {
           return `decl;
         }
