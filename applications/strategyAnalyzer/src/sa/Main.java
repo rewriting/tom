@@ -57,13 +57,14 @@ public class Main {
       Tree tree = (Tree) ruleParser.program().getTree();
       Program program = (Program) RuleAdaptor.getTerm(tree);
 
+      /*
+       * Compilation of the strategy section
+       */
       Compiler compiler = Compiler.getInstance();
       compiler.setProgram(program);
 
       // Transforms the strategy into a rewrite system
       //   get the TRS for the strategy named strategyName
-      //StratDeclList strat = program.getstratList();
-      //if(!strat.isEmptyConcStratDecl()) { 
       String strategyName="mainStrat";
       RuleList generatedRules = compiler.compileStrategy(strategyName);
       Signature extractedSignature = compiler.getExtractedSignature();
@@ -92,6 +93,9 @@ public class Main {
 
       }
 
+      /*
+       * Post treatment
+       */
       if(Main.options.pattern && Main.options.ordered && Main.options.withType) {
         System.out.println("after compilation");
         System.out.println("generatedRules = " + Pretty.toString(generatedRules));
@@ -121,6 +125,9 @@ public class Main {
       }
 
 
+      /*
+       * Generate output
+       */
       PrintStream outputfile = System.out;
       if(options.out != null) {
         if(options.directory != null) {
