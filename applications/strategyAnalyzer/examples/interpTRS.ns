@@ -1,0 +1,38 @@
+
+abstract syntax
+Bool = True() | False() | not(Bool) | or(Bool,Bool) | inf(Nat,Nat)
+Nat = Z() | S(Nat) | plus(Nat,Nat)
+List = Nil() | Cons(Val,List)
+Val = Nv(Nat) | Bv(Bool) | Undef() | interp(Nat,List)
+
+functions
+Val = interp(Nat,List)
+Nat = plus(Nat,Nat)
+Bool = not(Bool) | or(Bool,Bool) | inf(Nat,Nat)
+
+trs
+
+  interp(Z(), Nil())                                             -> Nv(Z())
+  interp(S(Z()), Cons(Nv(n),Nil()))                              -> Nv(S(n))
+  interp(S(S(Z())), Cons(Nv(m),Cons(Nv(n),Nil())))               -> Nv(plus(m,n))
+  interp(S(S(S(Z()))), Nil())                                    -> Bv(True())
+  interp(S(S(S(S(Z())))), Cons(Bv(b),Nil()))                     -> Bv(not(b))
+  interp(S(S(S(S(S(Z()))))), Cons(Bv(b1),Cons(Bv(b2),Nil())))    -> Bv(or(b1,b2))
+  interp(S(S(S(S(S(S(Z())))))), Cons(Nv(n1),Cons(Nv(n2),Nil()))) -> Bv(inf(n1,n2))
+  interp(x,y)                                                    -> Undef()
+
+  plus(x,Z())    -> x
+  plus(x,S(y))   -> S(plus(x,y))
+
+  inf(Z(),S(x))  -> True()
+  inf(S(x),S(y)) -> inf(x,y)
+  inf(x,y)       -> False()
+
+  not(True())    -> False()
+  not(False())   -> True()
+
+  or(True(),x)   -> True
+  or(x,True())   -> True
+  or(False(),x)  -> x
+  or(x,False())  -> x
+
