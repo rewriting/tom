@@ -147,7 +147,7 @@ public class Compiler {
    */
   public Expression expandStrategy(String name) {
     StratDecl sd = Tools.getStratDecl(name, this.program);
-    Expression res = null;
+    Expression res = `Strat(StratIdentity()); // identity if name does not exist
 
     try {
       %match(sd) {
