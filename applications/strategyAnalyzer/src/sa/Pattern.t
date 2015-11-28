@@ -1353,7 +1353,7 @@ public class Pattern {
             GomType f_codomain = gSig.getCodomain(`f);
             gSig.addFunctionSymbol(f_1,`ConcGomType(f_domain*,Signature.TYPE_BOOLEAN),f_codomain);
             Term newRhs = `Appl(f_1, TermList(f_args*,cond));
-            RuleList newTail = Pattern.transformNLOTRSintoLOTRS(transformHeadSymbol(`tail, f_1),gSig);
+            RuleList newTail = Pattern.transformNLOTRSintoLOTRS(transformHeadSymbol(`tail,`f,f_1),gSig);
             Rule trueCase = `Rule(Appl(f_1,TermList(f_args*,Appl("True",TermList()))),rhs);
             return `ConcRule(Rule(newLhs,newRhs), trueCase, newTail*);
           }
@@ -1366,15 +1366,20 @@ public class Pattern {
     return ruleList;
   }
 
-  private static RuleList transformHeadSymbol(RuleList ruleList, String headSymbol) {
+  private static RuleList transformHeadSymbol(RuleList ruleList, String oldSymbol, String newSymbol) {
     %match(ruleList) {
       ConcRule() -> {
         return ruleList;
       }
 
-      ConcRule(Rule(Appl(f,f_args),rhs),tail*) -> {
-        RuleList newTail = transformHeadSymbol(`tail,headSymbol);
-        return `ConcRule(Rule(Appl(headSymbol,TermList(f_args*,Appl("False",TermList()))),rhs),newTail*);
+      ConcRule(rule@Rule(Appl(f,f_args),rhs),tail*) -> {
+        RuleList newTail = transformHeadSymbol(`tail,oldSymbol, newSymbol);
+        if(`f == oldSymbol) {
+          return `ConcRule(Rule(Appl(newSymbol,TermList(f_args*,Appl("False",TermList()))),rhs),newTail*);
+        } else {
+          return `ConcRule(rule,newTail*);
+
+        }
       }
     }
     return ruleList;
