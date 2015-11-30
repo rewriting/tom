@@ -25,13 +25,13 @@ public class Pattern {
 //     example1();
     // example2();
 //     example3(); // numadd
-      example4(); // interp
+//       example4(); // interp
 //     example5(); // balance
 //     example6(); // and-or
 //    example7(); // simplest reduce
 //     example7bis(); // simplest reduce with one type
 //    example8(); // reduce deeper
-//    example9(); // nested anti-pattern
+   example10(); // nested anti-pattern
   }
 
   /*
@@ -1297,6 +1297,28 @@ public class Pattern {
     Term r0 = `Appl("rhs0",TermList());
 
     Term pattern = `Sub(V, Appl("f",TermList(a,Sub(V,gv))));
+    RuleList res = `trsRule(ConcRule(Rule(pattern,r0)), eSig);
+  }
+
+  private static void example10() {
+    Signature eSig = new Signature();
+    // !f(x,x) ==> Z \ f(x,x)
+
+    Term V = `Var("_");
+    Term X = `Var("x");
+
+    eSig.addSymbol("a", `ConcGomType(), `GomType("T") );
+    eSig.addSymbol("b", `ConcGomType(), `GomType("T") );
+    eSig.addSymbol("g", `ConcGomType(GomType("T")), `GomType("T") );
+    eSig.addSymbol("f", `ConcGomType(GomType("T"),GomType("T")), `GomType("T") );
+
+    Term a =`Appl("a", TermList());
+    Term b =`Appl("b", TermList());
+    Term gv =`Appl("g", TermList(V));
+
+    Term r0 = `Appl("rhs0",TermList());
+
+    Term pattern = `Sub(V, Appl("f",TermList(X,X)));
     RuleList res = `trsRule(ConcRule(Rule(pattern,r0)), eSig);
   }
 
