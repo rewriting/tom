@@ -1355,7 +1355,9 @@ public class Pattern {
           TermList(_, Appl("True",TermList())) -> {
             // lhs is linear
             RuleList newTail = Pattern.transformNLOTRSintoLOTRS(`tail,gSig);
-            return `ConcRule(Rule(lhs,rhs), newTail*);
+            RuleList res = `ConcRule(Rule(lhs,rhs), newTail*);
+            assert Tools.isLhsLinear(res);
+            return res;
           }
 
           TermList(newLhs@Appl(f,f_args), cond@!Appl("True",TermList())) -> {
@@ -1379,14 +1381,16 @@ public class Pattern {
             int arity = gSig.getArity(`f);
             RuleList newTail = Pattern.transformNLOTRSintoLOTRS(transformHeadSymbol(`tail,`f,f_1,arity),gSig);
             Rule trueCase = `Rule(Appl(f_1,TermList(f_args*,Appl("True",TermList()))),rhs);
-            return `ConcRule(Rule(newLhs,newRhs), trueCase, newTail*);
+            RuleList res = `ConcRule(Rule(newLhs,newRhs), trueCase, newTail*);
+            assert Tools.isLhsLinear(res);
+            return res;
           }
         }
 
       }
     }
 
-
+    assert Tools.isLhsLinear(ruleList);
     return ruleList;
   }
 
