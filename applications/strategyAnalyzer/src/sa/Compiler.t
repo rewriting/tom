@@ -276,16 +276,16 @@ public class Compiler {
      * move into compileStrategy ?
      */
     RuleList rList = ruleList;
-//     if(Main.options.withAP == false) {
-//       RuleCompiler ruleCompiler = new RuleCompiler(eSig,gSig);
-//       rList = ruleCompiler.expandGeneralAntiPatterns(rList);
+    if(Main.options.withAP == false) {
+      RuleCompiler ruleCompiler = new RuleCompiler(eSig,gSig);
+      rList = ruleCompiler.expandGeneralAntiPatterns(rList,null);
       
-//       for(Rule rule: rList.getCollectionConcRule()) {
-//         System.out.println("EXPANDED AP RULE: " + Pretty.toString(rule) );
-//       }
-//     }
+      for(Rule rule: rList.getCollectionConcRule()) {
+        System.out.println("EXPANDED AP RULE: " + Pretty.toString(rule) );
+      }
+    }
     
-//     ruleList = rList;
+    ruleList = rList;
 
     /*
      * lhs -> rhs becomes

@@ -25,13 +25,13 @@ public class Pattern {
 //     example1();
     // example2();
 //     example3(); // numadd
-      example4(); // interp
+//       example4(); // interp
 //     example5(); // balance
 //     example6(); // and-or
 //    example7(); // simplest reduce
 //     example7bis(); // simplest reduce with one type
 //    example8(); // reduce deeper
-//    example9(); // nested anti-pattern
+   example10(); // nested anti-pattern
   }
 
   /*
@@ -364,12 +364,13 @@ public class Pattern {
       Appl(f,args1), Appl(f,args2) -> {
         TermList tl1 = `args1;
         TermList tl2 = `args2;
-        int len = `tl1.length();
+        int len = tl1.length();
         TermList args[] = new TermList[len];
         for(int i=0 ; i<len ; i++) {
           args[i] = `TermList();
         }
         int cpt = 0;
+        assert tl1.length() == tl2.length();
         while(!tl1.isEmptyTermList()) {
           Term h1 = tl1.getHeadTermList();
           Term h2 = tl2.getHeadTermList();
@@ -1300,6 +1301,28 @@ public class Pattern {
     RuleList res = `trsRule(ConcRule(Rule(pattern,r0)), eSig);
   }
 
+  private static void example10() {
+    Signature eSig = new Signature();
+    // !f(x,x) ==> Z \ f(x,x)
+
+    Term V = `Var("_");
+    Term X = `Var("x");
+
+    eSig.addSymbol("a", `ConcGomType(), `GomType("T") );
+    eSig.addSymbol("b", `ConcGomType(), `GomType("T") );
+    eSig.addSymbol("g", `ConcGomType(GomType("T")), `GomType("T") );
+    eSig.addSymbol("f", `ConcGomType(GomType("T"),GomType("T")), `GomType("T") );
+
+    Term a =`Appl("a", TermList());
+    Term b =`Appl("b", TermList());
+    Term gv =`Appl("g", TermList(V));
+
+    Term r0 = `Appl("rhs0",TermList());
+
+    Term pattern = `Sub(V, Appl("f",TermList(X,X)));
+    RuleList res = `trsRule(ConcRule(Rule(pattern,r0)), eSig);
+  }
+
   /*
    * Reduce a list of rules
    */
@@ -1332,7 +1355,9 @@ public class Pattern {
           TermList(_, Appl("True",TermList())) -> {
             // lhs is linear
             RuleList newTail = Pattern.transformNLOTRSintoLOTRS(`tail,gSig);
-            return `ConcRule(Rule(lhs,rhs), newTail*);
+            RuleList res = `ConcRule(Rule(lhs,rhs), newTail*);
+            assert Tools.isLhsLinear(res);
+            return res;
           }
 
           TermList(newLhs@Appl(f,f_args), cond@!Appl("True",TermList())) -> {
@@ -1353,27 +1378,30 @@ public class Pattern {
             GomType f_codomain = gSig.getCodomain(`f);
             gSig.addFunctionSymbol(f_1,`ConcGomType(f_domain*,Signature.TYPE_BOOLEAN),f_codomain);
             Term newRhs = `Appl(f_1, TermList(f_args*,cond));
-            RuleList newTail = Pattern.transformNLOTRSintoLOTRS(transformHeadSymbol(`tail,`f,f_1),gSig);
+            int arity = gSig.getArity(`f);
+            RuleList newTail = Pattern.transformNLOTRSintoLOTRS(transformHeadSymbol(`tail,`f,f_1,arity),gSig);
             Rule trueCase = `Rule(Appl(f_1,TermList(f_args*,Appl("True",TermList()))),rhs);
-            return `ConcRule(Rule(newLhs,newRhs), trueCase, newTail*);
+            RuleList res = `ConcRule(Rule(newLhs,newRhs), trueCase, newTail*);
+            assert Tools.isLhsLinear(res);
+            return res;
           }
         }
 
       }
     }
 
-
+    assert Tools.isLhsLinear(ruleList);
     return ruleList;
   }
 
-  private static RuleList transformHeadSymbol(RuleList ruleList, String oldSymbol, String newSymbol) {
+  private static RuleList transformHeadSymbol(RuleList ruleList, String oldSymbol, String newSymbol, int old_arity) {
     %match(ruleList) {
       ConcRule() -> {
         return ruleList;
       }
 
       ConcRule(rule@Rule(Appl(f,f_args),rhs),tail*) -> {
-        RuleList newTail = transformHeadSymbol(`tail,oldSymbol, newSymbol);
+        RuleList newTail = transformHeadSymbol(`tail,oldSymbol, newSymbol, old_arity);
         if(`f == oldSymbol) {
           return `ConcRule(Rule(Appl(newSymbol,TermList(f_args*,Appl("False",TermList()))),rhs),newTail*);
         } else {
@@ -1381,6 +1409,19 @@ public class Pattern {
 
         }
       }
+
+      // special case for X -> rhs
+      // generate f'(Z1,...,Zn,False) -> rhs
+      //          X -> rhs
+      ConcRule(rule@Rule(Var[],rhs),tail*) -> {
+        RuleList newTail = transformHeadSymbol(`tail,oldSymbol, newSymbol, old_arity);
+        TermList args = `TermList(Appl("False",TermList()));
+        for(int i=0 ; i<old_arity ; i++) {
+          args = `TermList(Var(Tools.getName("Z")),args*);
+        }
+        return `ConcRule(Rule(Appl(newSymbol,args),rhs),rule,newTail*);
+      }
+
     }
     return ruleList;
   }
