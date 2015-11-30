@@ -278,7 +278,7 @@ public class Pattern {
      
       // X - t -> expand AP   ==>    t should be in TFX (only symbols from declared signature)
       s@Sub(X@Var[], t@Appl(f,args_f)) -> {
-        if(false && isPlainTerm(`t)) { // desactivate old version of X \ t
+        if(isPlainTerm(`t)) { // desactivate old version of X \ t
           RuleCompiler ruleCompiler = new RuleCompiler(`eSig, `eSig); // gSig
           RuleList rl = ruleCompiler.expandAntiPatterns(`ConcRule(Rule(Anti(t),Var("_"))));
           //System.out.println("rl = " + Pretty.toString(rl));
