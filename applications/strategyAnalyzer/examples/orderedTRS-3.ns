@@ -3,18 +3,18 @@ abstract syntax
 T = a()
 	| b()
 	| g(T)
+  | f(T,T)
 
-U = f(T,T)
-
-functions
-U = f(T,T)
+//functions
+//T = f(T,T)
 
 trs
 
-  f(a(),x) ->  a()
-  f(x,x)   ->  a()
+  f(a(),b()) ->  a()
+  !f(a(),!g(y)) -> g(b())
+  f(b(),x) ->  g(a())
   x -> b()
-  f(b(),x) ->  a()
-  g(x)     -> x
+  g(x) -> x
 
+//  f(x,x)   ->  a()
 

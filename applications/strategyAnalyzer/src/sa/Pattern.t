@@ -31,7 +31,8 @@ public class Pattern {
 //    example7(); // simplest reduce
 //     example7bis(); // simplest reduce with one type
 //    example8(); // reduce deeper
-   example10(); // nested anti-pattern
+   example9(); // nested anti-pattern
+//   example10(); // nested anti-pattern
   }
 
   /*
@@ -275,10 +276,18 @@ public class Pattern {
         debug("sub distrib1",`s,res);
         return res;
       }
-     
+    
+      // !t -> X - t
+      s@Anti(t) -> {
+        Term Z = `Var(Tools.getName("Z"));
+        Term res = `Sub(Z,t);
+        debugVerbose("AP",`s,res);
+        return res;
+      }
+
       // X - t -> expand AP   ==>    t should be in TFX (only symbols from declared signature)
       s@Sub(X@Var[], t@Appl(f,args_f)) -> {
-        if(isPlainTerm(`t)) { // desactivate old version of X \ t
+        if(false && isPlainTerm(`t)) { // desactivate old version of X \ t
           RuleCompiler ruleCompiler = new RuleCompiler(`eSig, `eSig); // gSig
           RuleList rl = ruleCompiler.expandAntiPatterns(`ConcRule(Rule(Anti(t),Var("_"))));
           //System.out.println("rl = " + Pretty.toString(rl));
@@ -720,7 +729,7 @@ public class Pattern {
    * expand once all occurence of _ in a term
    */
 
-  private  static Term expandVar(Term t, Signature eSig) {
+  private static Term expandVar(Term t, Signature eSig) {
     HashSet<Position> bag = new HashSet<Position>();
     HashSet<Term> res = new HashSet<Term>();
 

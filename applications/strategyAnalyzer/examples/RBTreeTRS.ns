@@ -1,0 +1,30 @@
+
+abstract syntax
+Tree = E() | T(Color,Tree,Nat,Tree) | balance(Tree) | ins(Nat,Tree) | insAux(Nat,Tree,Cmp)
+Color = R() | B()
+Nat = Z() | S(Nat)
+Cmp = lt() | gt() | eq() | cmp(Nat,Nat)
+
+functions
+Tree = balance(Tree) | ins(Nat,Tree) | insAux(Nat,Tree,Cmp)
+Cmp = cmp(Nat,Nat)
+
+trs
+  balance(T(B(),T(R(),T(R(),a,x,b),y,c),z,d)) -> T(R(),T(B(),a,x,b),y,T(B(),c,z,d))
+  balance(T(B(),T(R(),a,x,T(R(),b,y,c)),z,d)) -> T(R(),T(B(),a,x,b),y,T(B(),c,z,d))
+  balance(T(B(),a,x,T(R(),T(R(),b,y,c),z,d))) -> T(R(),T(B(),a,x,b),y,T(B(),c,z,d))
+  balance(T(B(),a,x,T(R(),b,y,T(R(),c,z,d)))) -> T(R(),T(B(),a,x,b),y,T(B(),c,z,d))
+  balance(t) -> t
+
+  ins(x,E()) -> T(R(),E(),x,E())
+  ins(x,T(c,l,y,r)) -> insAux(x,T(c,l,y,r),cmp(x,y))
+
+  insAux(x,T(c,l,y,r),eq()) -> T(c,l,y,r)
+  insAux(x,T(c,l,y,r),lt()) -> balance(T(c,ins(x,l),y,r))
+  insAux(x,T(c,l,y,r),gt()) -> balance(T(c,l,y,ins(x,r)))
+
+  cmp(Z(),S(x)) -> lt()
+  cmp(S(x),Z()) -> gt()
+  cmp(Z(),Z())  -> eq()
+  cmp(S(x),S(y)) -> cmp(x,y)
+
