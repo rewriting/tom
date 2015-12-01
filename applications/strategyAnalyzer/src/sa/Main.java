@@ -65,8 +65,10 @@ public class Main {
 
       // Transforms the strategy into a rewrite system
       //   get the TRS for the strategy named strategyName
-      String strategyName="mainStrat";
-      RuleList generatedRules = compiler.compileStrategy(strategyName);
+      Set<String> strategyNames = compiler.collectConstantStrategyName(program);
+      strategyNames.add("mainStrat");
+
+      RuleList generatedRules = compiler.compileStrategy(strategyNames);
       Signature extractedSignature = compiler.getExtractedSignature();
       Signature generatedSignature = compiler.getGeneratedSignature();
 
@@ -90,7 +92,6 @@ public class Main {
         typeCompiler.typeRules(generatedRules);
         generatedRules = typeCompiler.getGeneratedRules();
         generatedSignature = typeCompiler.getTypedSignature();
-
       }
 
       /*
@@ -146,7 +147,7 @@ public class Main {
       }
 
       if(options.classname != null) {
-        tomoutputfile.println( Pretty.generateTom(strategyName, generatedRules, extractedSignature, generatedSignature, options.classname, options.withType) );
+        tomoutputfile.println( Pretty.generateTom(strategyNames, generatedRules, extractedSignature, generatedSignature) );
       } 
 
       if(options.aprove) {

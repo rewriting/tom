@@ -30,7 +30,7 @@
 	<target name="init" depends="clean, tom.init">
 		<mkdir dir="${test.build}"/>
 		<mkdir dir="${test.gen}"/>
-		<javac srcdir="${test.dir}" destdir="${test.build}" includeantruntime="false"/>	
+		<javac srcdir="${test.dir}" destdir="${test.build}" debug="true" includeantruntime="false"/>	
 	</target>	
 
 	<target name="junit.all">
@@ -264,7 +264,7 @@
 	</target>
 	
 	<target name="compile" depends="tomTest">
-		<javac classpath="${test.dir}:${tom.home}/lib/tom-runtime-full.jar:${tom.home}/lib/compiletime/junit.jar" srcdir="${test.gen}" destdir="${test.build}" includeantruntime="false"/>
+		<javac classpath="${test.dir}:${tom.home}/lib/tom-runtime-full.jar:${tom.home}/lib/compiletime/junit.jar" srcdir="${test.gen}" destdir="${test.build}" debug="true" includeantruntime="false"/>
 	</target>	
 	
 	<target name="runTests" depends="compile">

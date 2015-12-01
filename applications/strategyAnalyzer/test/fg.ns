@@ -10,9 +10,12 @@ r1() =  [ g(f(x)) -> f(g(x)) ]
 
 obu(s) = mu x.(one(x) <+ s)
 repeat(s) = mu x.((s;x)<+identity)
-innermost(s) = repeat(obu(s))
+innermost1(s) = repeat(obu(s))
 innermost2(s) = mu x.(all(x);((s;x)<+identity))
 propagate(s) = mu x. (s ; (all(x)<+identity))
-bup(s) = mu y.(all(y);(propagate(s)<+identity))
+bupropagate(s) = mu y.(all(y);(propagate(s)<+identity))
 
-mainStrat() = innermost(r1())
+mainStrat() = innermost1(r1())
+in1() = innermost1(r1())
+in2() = innermost2(r1())
+bupr1() = bupropagate(r1())

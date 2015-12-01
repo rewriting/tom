@@ -170,14 +170,13 @@ public class Pretty {
     }
   }
 
-  public static String generateAprove(RuleList bag, boolean innermost) 
+  public static String generateAprove(RuleList ruleList, boolean innermost) 
     throws VisitFailure {
     StringBuffer rulesb = new StringBuffer();
     Collection<String> varSet = new HashSet<String>();
 
     rulesb.append("\n(RULES\n");
-    //     for(Rule r:bag) {
-    %match(bag) {
+    %match(ruleList) {
       ConcRule(_*,r,_*) -> {
         `BottomUp(CollectVars(varSet)).visit(`r);
         rulesb.append("        " + toString(`r) + "\n");
@@ -199,7 +198,7 @@ public class Pretty {
     return varsb.toString()+rulesb.toString();
   }  
   
-  public static String generateTimbuk(RuleList bag, Signature generatedSignature) throws VisitFailure {
+  public static String generateTimbuk(RuleList ruleList, Signature generatedSignature) throws VisitFailure {
     StringBuffer rulesb = new StringBuffer();
     StringBuffer opsb = new StringBuffer();
     StringBuffer varsb = new StringBuffer();
@@ -211,8 +210,7 @@ public class Pretty {
     }
 
     rulesb.append("\nTRS R\n");
-    //     for(Rule r:bag) {
-    %match(bag) {
+    %match(ruleList) {
       ConcRule(_*,r,_*) -> {
         `BottomUp(CollectVars(varSet)).visit(`r);
         rulesb.append("        " + toString(`r) + "\n");
@@ -228,9 +226,11 @@ public class Pretty {
     return opsb.toString() + "\n" + varsb.toString() + "\n" + rulesb.toString();
   }  
 
-  public static String generateTom(String strategyName, RuleList bag, Signature esig, Signature gsig, String classname, boolean isTyped) {
+  public static String generateTom(Set<String> strategyNames, RuleList ruleList, Signature esig, Signature gsig) {
+    String classname = Main.options.classname;
+    boolean isTyped = Main.options.withType;
     System.out.println("--------- TOM ----------------------");
-    //     System.out.println("RULEs: " + toString(bag));
+    //     System.out.println("RULEs: " + toString(ruleList));
 
     StringBuffer sb = new StringBuffer();
     String lowercaseClassname = classname.toLowerCase();
@@ -264,7 +264,7 @@ public class @classname@ {
 
     // generate rules
     sb.append("      module m:rules() {\n");
-    %match(bag) {
+    %match(ruleList) {
       ConcRule(_*,r,_*) -> {
         sb.append("        " + toString(`r) + "\n");
       }
@@ -290,38 +290,35 @@ public class @classname@ {
   }
   ]%);
 
-  // generate mainStrat
-  sb.append(%[
-  public static Object mainStrat(Object t) {
-  ]%);
+    for(String strategyName:strategyNames) {
+      // generate strategyName
+      sb.append(%[
+  public static Object @strategyName@(Object t) {]%);
 
-  if(isTyped) {
-    for(GomType codomain: esig.getCodomains()) {
+      if(isTyped) {
+        for(GomType codomain: esig.getCodomains()) {
       sb.append(%[
     if(t instanceof @codomain.getName()@) {
-      return `mainStrat_@codomain.getName()@((@codomain.getName()@)t);
-    }
-      ]%);
-    }
-    sb.append(%[
-    throw new RuntimeException("cannot find a mainstrat for: " + t);
-    ]%);
-  }
+      return `@strategyName@_@codomain.getName()@((@codomain.getName()@)t);
+    }]%);
+      }
+      sb.append(%[
+    throw new RuntimeException("cannot find a mainstrat for: " + t);]%);
+      }
 
-  if(isTyped) {
-    // generate nothing
-  } else if(Main.options.metalevel) {      
-      sb.append(%[
-  	return `decode(mainStrat(encode((Term)t)));
-      ]%);
-  } else {
-      sb.append(%[
-    return `mainStrat((Term) t);
-      ]%);
+      if(isTyped) {
+        // generate nothing
+      } else if(Main.options.metalevel) {      
+        sb.append(%[
+  	return `decode(@strategyName@(encode((Term)t)));]%);
+      } else {
+        sb.append(%[
+    return `@strategyName@((Term) t);]%);
+      }
+      sb.append(%[    
   }
-  sb.append(%[    
-  }
-  ]%); // end mainStrat
+  ]%); // end strategyName
+    }
 
   // generate fromString
   sb.append(%[
