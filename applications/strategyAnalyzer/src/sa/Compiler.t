@@ -47,7 +47,7 @@ public class Compiler {
   // The generated (concrete) signature
   private Signature generatedSignature;
 
-  // strategy name -> strategy compiled into a TRS
+  // names of strategies already compiled
   private Set<String> generatedStrategy;
 
   private Map<Strat,List<Rule>> storedTRSs;
@@ -109,46 +109,23 @@ public class Compiler {
     List<Rule> mutableList = new ArrayList<Rule>();
 
     for(String strategyName: strategyNames) {
-      //System.out.println("strategyName = " + strategyName);
-
       Expression expand = this.expandStrategy(strategyName);
-      //System.out.println("expand = " + expand);
-
       Strat strategy = null;
       %match(expand) {
         Strat(strat) -> { strategy = `strat; }
         s@List(rules) -> { strategy = `StratExp(s); }
       }
       assert strategy != null;
-      //System.out.println("strategy = " + strategy);
 
-      // if not generated yet
       if(!generatedStrategy.contains(strategyName)) {
-        //System.out.println("* generation...");
-
-        String strategySymbol = "NONE";
-        strategySymbol = this.compileStrat(strategy,mutableList);
-        //RuleList tmp = Tools.fromListOfRule(mutableList);
-
-        //System.out.println("strategySymbol = " + strategySymbol);
-
+        // if not generated yet
+        String strategySymbol = this.compileStrat(strategy,mutableList);
         generateTriggerRule(strategyName,strategySymbol,mutableList);
-
         generatedStrategy.add(strategyName);
       } else {
-        //System.out.println("* already generated");
-        //RuleList tmp = generatedTRSs.get(strategyName);
-        //ruleList = `ConcRule(ruleList*,tmp*);
+        // do nothing
       }
     }
-
-    //for(Rule r:mutableList) {
-    //  ruleList = `ConcRule(ruleList*,r);
-    //}
-
-    //for(String strategyName: strategyNames) {
-    //    ruleList = generateTriggerRule(strategyName,strategySymbol,ruleList);
-    //}
 
     RuleList ruleList = Tools.fromListOfRule(mutableList);
 
@@ -530,6 +507,7 @@ public class Compiler {
    * @return the symbol to be used for the compiled strategy
    */
   private boolean generated_aux_functions = false;
+
   private String compileStrat(Strat strat, List<Rule> rules) {
     Signature gSig = getGeneratedSignature();
     Signature eSig = getExtractedSignature();
@@ -542,7 +520,7 @@ public class Compiler {
     String strategySymbol = this.strategySymbols.get(strat);
     if(strategySymbol != null) {
       generatedRules = this.storedTRSs.get(strat);
-      System.out.println("ALREADY EXISTING: "+strat);
+      //System.out.println("ALREADY EXISTING: "+strat);
     } else {
       generatedRules = new ArrayList<Rule>();
       Term X = Var(Tools.getName("X"));
