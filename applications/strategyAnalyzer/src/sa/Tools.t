@@ -357,6 +357,29 @@ public class Tools {
 
   }
 
+  /*
+   * Replace a named variable by an underscore
+   */
+  %strategy RemoveVar() extends Identity() {
+    visit Term {
+      Var[] -> {
+        return `Var("_");
+      }
+
+      At(_,t) -> {
+        return `t;
+      }
+    }
+  }
+
+  public static tom.library.sl.Visitable removeVar(tom.library.sl.Visitable t) {
+    try {
+      return `TopDown(RemoveVar()).visitLight(t);
+    } catch(VisitFailure e) {
+      throw new RuntimeException("should not be there");
+    }
+  }
+
   public static boolean isLinear(Term t) {
     HashMultiset<String> bag = collectVariableMultiplicity(t);
     for(String name:bag.elementSet()) {

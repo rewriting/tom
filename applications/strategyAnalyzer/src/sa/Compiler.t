@@ -545,7 +545,7 @@ public class Compiler {
           //  System.out.println("pattern: " + `rulelist);
           //  RuleList lin = this.transformNLOTRSintoLOTRS(`rulelist, gSig);
           //  System.out.println("linear otrs: " + lin);
-          //  RuleList res = Pattern.trsRule(lin,eSig);
+          //  RuleList res = Trs.trsRule(lin,eSig);
           //}
 
           strategySymbol = this.compileRuleList(`rulelist,generatedRules,null);

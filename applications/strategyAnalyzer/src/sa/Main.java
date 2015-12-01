@@ -105,7 +105,7 @@ public class Main {
           //System.out.println("symbol: " + name + " function: " + generatedSignature.isFunction(name) + " internal: " + generatedSignature.isInternal(name));
         //}
        
-        generatedRules = Pattern.trsRule(generatedRules,generatedSignature);
+        generatedRules = Trs.trsRule(generatedRules,generatedSignature);
 
         //for(Rule r:res.getCollectionConcRule()) {
         //  System.out.println(Pretty.toString(r));
@@ -118,8 +118,8 @@ public class Main {
        * Handle the TRS part of a specification
        */
       RuleList trs = program.gettrs();
-      trs = Pattern.transformNLOTRSintoLOTRS(trs,generatedSignature);
-      trs = Pattern.trsRule(trs,generatedSignature);
+      trs = Trs.transformNLOTRSintoLOTRS(trs,generatedSignature);
+      trs = Trs.trsRule(trs,generatedSignature);
       for(Rule r:trs.getCollectionConcRule()) {
         // System.out.println(Pretty.toString(r));
         generatedRules = ((sa.rule.types.rulelist.ConcRule)generatedRules).append(r);
