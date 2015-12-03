@@ -158,15 +158,6 @@ public class Trs {
     }
   }
 
-  %strategy CheckEmpty() extends Identity() {
-    visit Term {
-      // empty -> failure
-      s@Empty() -> {
-        `Fail().visitLight(`s);
-      }
-    }
-  }
-
   /*
    * no longer needed
    * done in hooks
@@ -644,11 +635,10 @@ public class Trs {
       // Decompose
       Appl(name,a1),Appl(name,a2) -> { return `decomposeList(a1,a2); }
       // SymbolClash
-      Appl(name1,args1),Appl(name2,args2) && name1!=name2 -> { return false; }
+      Appl(name1,_),Appl(name2,_) && name1!=name2 -> { return false; }
 
       // Match
-      Var[],Appl(name2,args2) -> { return true; }
-      Var[],Var[] -> { return true; }
+      Var[],(Var|Appl)[] -> { return true; }
 
     }
     return false;
@@ -866,7 +856,7 @@ public class Trs {
 
       // t1 << _ + t2 << _ -> (t1+t2) << _ if t1,t2 != _
       s@Add(ConcAdd(C1*, Match(t1@!Var[], X@Var("_")), C2*, Match(t2@!Var[], Var("_")), C3*)) -> {
-        Term match = `Match(Add(ConcAdd(t1,t2)),X);
+        Term match = `matchConstraint(Add(ConcAdd(t1,t2)),X);
         Term res = `Add(ConcAdd(match, C1*,C2*,C3));
         debug("simplify add match",`s,res);
         return res;
@@ -917,13 +907,19 @@ public class Trs {
         AddList constraint = `ConcAdd();
         %match(ruleList) {
           ConcRule(_*,Rule(l,r),_*) -> {
-            constraint = `ConcAdd(Match(l, lhs),constraint*);
+            Term mc = matchConstraint(`l, `lhs);
+            if(mc == `TrueMatch()) {
+              res = true;
+              System.out.println("can be removed2 cut");
+              return res;
+            } else {
+              constraint = `ConcAdd(mc,constraint*);
+            }
           }
         }
         Term matchingProblem = `Add(constraint);
-        //debug("\nmatching problem: ",matchingProblem,`Empty());
+        debugVerbose("\nmatching problem: ",matchingProblem,`Empty());
         try {
-          //Strategy S2 = `ChoiceId(CleanAdd(),PropagateEmpty(),CheckEmpty(),PropagateTrueMatch(),SimplifyAddMatch(),VarAdd(),FactorizeAdd(),SimplifyMatch(), TryAbstraction(eSig));
           Strategy S2 = `ChoiceId(CleanAdd(),PropagateEmpty(),PropagateTrueMatch(),SimplifyAddMatch(),VarAdd(),FactorizeAdd(),SimplifyMatch(), TryAbstraction(eSig));
           Term sol = `InnermostId(S2).visitLight(matchingProblem);
           //sol = `RepeatId(OnceTopDownId(S2)).visitLight(matchingProblem);
@@ -941,6 +937,72 @@ public class Trs {
 
     return res;
   }
+
+/*
+ * more efficient version of SimplifyMatch (factor 2!)
+ */
+
+  /*
+   * Return TrueMatch() if t1 matches t2
+   *        Empty()     if t1 does not match t2
+   *        a constaint if no decision can be taken
+   */
+  // TODO: can be  used to replace both the function match(Term,Term) and the strategy SimplifyMatch()
+  private static boolean newVersion = true;
+  private static Term matchConstraint(Term t1, Term t2) {
+    if(!newVersion) {
+      return `Match(t1,t2);
+    }
+
+    %match(t1,t2) {
+      // ElimAt (more efficient than removing AT before matching)
+      At(_,p1), p2 -> { return `matchConstraint(p1,p2); }
+      p1, At(_,p2) -> { return `matchConstraint(p1,p2); }
+
+      // Delete
+      Appl(name,TermList()),Appl(name,TermList()) -> { return `TrueMatch(); }
+      // Decompose
+      Appl(name,a1),Appl(name,a2) -> { return `Appl(name,decomposeListConstraint(a1,a2,false)); }
+      // SymbolClash
+      Appl(name1,_),Appl(name2,_) && name1!=name2 -> { return `Empty(); }
+      // Match
+      Var[],(Var|Appl)[] -> { return `TrueMatch(); }
+    }
+    return `Match(t1,t2);
+  }
+
+  /*
+   * return a list of matching constraints
+   * TermList(Empty(),...,Empty()) when one of the constaint is Empty()
+   */
+  private static TermList decomposeListConstraint(TermList tl1, TermList tl2, boolean propagateEmpty) {
+    %match(tl1,tl2) {
+      TermList(), TermList() -> { return `TermList(); }
+      TermList(head1,tail1*), TermList(head2,tail2*) -> { 
+        if(propagateEmpty) {
+          //return `TermList(Empty()); // optim: can be removed
+          TermList tail = decomposeListConstraint(`tail1,`tail2,true);
+          return `TermList(Empty(),tail*);
+        }
+
+        Term res = matchConstraint(`head1,`head2); 
+        if(res == `Empty()) {
+          //return `TermList(Empty()); // optim: can be removed
+          TermList tail = decomposeListConstraint(`tail1,`tail2,true);
+          return `TermList(Empty(),tail*);
+        }
+
+        TermList tail = decomposeListConstraint(`tail1,`tail2,propagateEmpty);
+        return `TermList(res,tail*);
+      }
+    }
+    assert false : "should not be there";
+    return null;
+  }
+
+
+
+
 
 
   /*

@@ -84,7 +84,7 @@ module Rule:rules() {
 
 
 }
-/*
+
 // optim: can be removed
 Appl:make(f,args) {
   %match(args) {
@@ -95,11 +95,10 @@ Appl:make(f,args) {
 // optim: can be removed
 TermList:make_insert(e,l) {
   %match(e,l) {
-    Empty(),_                 -> { return `realMake(Empty(),TermList()); }
     _      ,TermList(Empty()) -> { return l; }
+    Empty(),_                 -> { return `realMake(Empty(),TermList()); }
   }
 }
-*/
 
 ConcAdd:make_insert(e,l) {
   %match(e) {
