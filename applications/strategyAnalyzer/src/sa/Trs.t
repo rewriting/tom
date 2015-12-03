@@ -918,6 +918,11 @@ public class Trs {
           }
         }
         Term matchingProblem = `Add(constraint);
+        if(matchingProblem == `Empty()) {
+          res = false;
+          System.out.println("can be removed2 empty");
+          return res;
+        }
         debugVerbose("\nmatching problem: ",matchingProblem,`Empty());
         try {
           Strategy S2 = `ChoiceId(CleanAdd(),PropagateEmpty(),PropagateTrueMatch(),SimplifyAddMatch(),VarAdd(),FactorizeAdd(),SimplifyMatch(), TryAbstraction(eSig));
