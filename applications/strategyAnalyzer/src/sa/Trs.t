@@ -158,6 +158,15 @@ public class Trs {
     }
   }
 
+  %strategy CheckEmpty() extends Identity() {
+    visit Term {
+      // empty -> failure
+      s@Empty() -> {
+        `Fail().visitLight(`s);
+      }
+    }
+  }
+
   /*
    * no longer needed
    * done in hooks
@@ -773,6 +782,13 @@ public class Trs {
 
   %strategy SimplifyMatch() extends Identity() {
     visit Term {
+      // optim delete: t << t -> TrueMatch()
+      s@Match(t,t) -> {
+        Term res = `TrueMatch();
+        debug("optim match delete",`s,res);
+        return res;
+      }
+
       // delete: a() << a() -> TrueMatch()
       s@Match(Appl(name,TermList()),Appl(name,TermList())) -> {
         Term res = `TrueMatch();
@@ -905,18 +921,21 @@ public class Trs {
           }
         }
         Term matchingProblem = `Add(constraint);
+        //debug("\nmatching problem: ",matchingProblem,`Empty());
         try {
-          // PropagateTrueMatch()
+          //Strategy S2 = `ChoiceId(CleanAdd(),PropagateEmpty(),CheckEmpty(),PropagateTrueMatch(),SimplifyAddMatch(),VarAdd(),FactorizeAdd(),SimplifyMatch(), TryAbstraction(eSig));
           Strategy S2 = `ChoiceId(CleanAdd(),PropagateEmpty(),PropagateTrueMatch(),SimplifyAddMatch(),VarAdd(),FactorizeAdd(),SimplifyMatch(), TryAbstraction(eSig));
-          matchingProblem = `InnermostId(S2).visitLight(matchingProblem);
+          Term sol = `InnermostId(S2).visitLight(matchingProblem);
+          //sol = `RepeatId(OnceTopDownId(S2)).visitLight(matchingProblem);
           //System.out.println("case = " + Pretty.toString(`lhs));
           //System.out.println("matchingProblem = " + Pretty.toString(matchingProblem));
-          if(matchingProblem == `TrueMatch()) {
+          if(sol == `TrueMatch()) {
             res = true;
           }
         } catch(VisitFailure e) {
           System.out.println("can be removed2 failure");
         }
+
       }
     }
 

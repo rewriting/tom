@@ -84,6 +84,22 @@ module Rule:rules() {
 
 
 }
+/*
+// optim: can be removed
+Appl:make(f,args) {
+  %match(args) {
+    TermList(Empty()) -> { return `Empty(); }
+  }
+}
+
+// optim: can be removed
+TermList:make_insert(e,l) {
+  %match(e,l) {
+    Empty(),_                 -> { return `realMake(Empty(),TermList()); }
+    _      ,TermList(Empty()) -> { return l; }
+  }
+}
+*/
 
 ConcAdd:make_insert(e,l) {
   %match(e) {
@@ -92,17 +108,16 @@ ConcAdd:make_insert(e,l) {
   }
 
   if(!l.isEmptyConcAdd()) {
-    if(0 < e.compareToLPO(l.getHeadConcAdd())) {
+    int cmp = e.compareToLPO(l.getHeadConcAdd());
+    if(cmp == 0) { // eliminate identical elements: t + t -> t
+      // optim: can be removed
+      return l;
+    } else if(cmp > 0) { // recursive insertion
       sa.rule.types.AddList newTail = l.getTailConcAdd();
       return realMake(l.getHeadConcAdd(), `ConcAdd(e,newTail*));
-    } else {
+    } else { // head insertion
       return realMake(e,l);
-      }
+    }
   }
 }
 
-// sort Rule:block() {
-//   public int compareTo(Object r){
-//     return this.compareToLPO(r);
-//   }
-// }
