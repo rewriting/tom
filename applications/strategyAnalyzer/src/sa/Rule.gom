@@ -85,22 +85,39 @@ module Rule:rules() {
 
 }
 
-/*
+
 // optim: can be removed
+// hooks for PropagateTrueMatch and PropagateEmpty
+// needed to use matchConstaint instead of match
 Appl:make(f,args) {
   %match(args) {
     TermList(Empty()) -> { return `Empty(); }
+    TermList(_,_*) -> { // at least one argument
+      boolean ok = true;
+      sa.rule.types.Term truematch = `TrueMatch();
+      sa.rule.types.TermList tl = `args;
+      while(ok && !tl.isEmptyTermList()) {
+        ok &= (tl.getHeadTermList() == truematch);
+        tl = tl.getTailTermList();
+      }
+      if(ok) {
+        return truematch;
+      }
+    }
+
   }
 }
 
 // optim: can be removed
+// hooks for PropagateEmpty
+// needed to use matchConstaint instead of match
 TermList:make_insert(e,l) {
   %match(e,l) {
     _      ,TermList(Empty()) -> { return l; }
     Empty(),_                 -> { return `realMake(Empty(),TermList()); }
   }
 }
-*/
+
 
 ConcAdd:make_insert(e,l) {
   %match(e) {

@@ -65,7 +65,7 @@ public class Trs {
     assert !Tools.containsAt(res) : "check contain no AT";
 
     // minimize the set of rules
-    res = removeRedundantRule(res,eSig);
+    res = removeRedundantRule(res,`ConcRule(),eSig);
 
     for(Rule rule:`res.getCollectionConcRule()) {
       System.out.println(Pretty.toString(rule));
@@ -110,32 +110,29 @@ public class Trs {
   /*
    * remove redundant rules using a very smart matching algorithm :-)
    */
-  private static RuleList removeRedundantRule(RuleList rules, Signature eSig) {
-    assert Tools.isLhsLinear(rules) : "check lhs-linear" ;
-    return removeRedundantRuleAux(rules,`ConcRule(), eSig);
-  }
-
   // TODO: remove variables only once (and no longer in canBeRemove2) to speedup the process
-  private static RuleList removeRedundantRuleAux(RuleList candidates, RuleList kernel, Signature eSig) {
-    HashSet<RuleList> bag = new HashSet<RuleList>();
+  private static RuleList removeRedundantRule(RuleList candidates, RuleList kernel, Signature eSig) {
+    assert Tools.isLhsLinear(candidates) : "check lhs-linear" ;
+    RuleList res = kernel;
 
     %match( candidates ) {
       ConcRule(head, tail*) -> {
-        boolean b = canBeRemoved2(`head, `ConcRule(kernel*,tail*), eSig);
         // try with the head kept in kernel
-        RuleList res = removeRedundantRuleAux(`tail, `ConcRule(kernel*,head), eSig);
+        RuleList branch1 = removeRedundantRule(`tail, `ConcRule(kernel*,head), eSig);
+        res = branch1;
+
+        boolean b = canBeRemoved2(`head, `ConcRule(kernel*,tail*), eSig);
         if(b) {
           System.out.println("REMOVE: " + Pretty.toString(`head));
           // try with the head removed 
-         RuleList tmp = removeRedundantRuleAux(`tail, kernel, eSig);
-         if(tmp.length() < res.length()) {
-             return tmp;
-         }
+          RuleList branch2 = removeRedundantRule(`tail, kernel, eSig);
+          if(branch2.length() < branch1.length()) {
+            res = branch2;
+          }
         }
-        return res;
       }
     }
-    return `ConcRule(candidates*,kernel*);
+    return res;
   }
 
   %strategy PropagateEmpty() extends Identity() {
@@ -650,7 +647,12 @@ public class Trs {
   private static boolean matchFromList(Term t, AddList al) {
     %match(al) {
       ConcAdd(_*,p,_*) -> {
-        if(`match(p,t)) {
+        /*
+         * to use matchConstraint algorithm we need to activate hooks for
+         * PropagateTrueMatch and PropagateEmpty
+         */
+        //if(`match(p,t)) { // match is no longer needed
+        if(`matchConstraint(p,t) == `TrueMatch()) { // use this more general algorithm to factorize code
           return true;
         }
       }
@@ -950,7 +952,7 @@ public class Trs {
   /*
    * Return TrueMatch() if t1 matches t2
    *        Empty()     if t1 does not match t2
-   *        a constaint if no decision can be taken
+   *        a constraint if no decision can be taken
    */
   // TODO: can be  used to replace both the function match(Term,Term) and the strategy SimplifyMatch()
   private static boolean newVersion = true;
