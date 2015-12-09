@@ -11,6 +11,11 @@ public class Trs {
   %include { java/util/types/HashSet.tom }
   %typeterm Signature { implement { Signature } }
 
+  private static long timeSubElim;
+  private static long timeAddElim;
+  private static long timeExpand;
+  private static long timeSubsumtion;
+  private static long timeMinimize;
 
   private static void debug(String ruleName, Term input, Term res) {
     System.out.println(ruleName);
@@ -65,12 +70,19 @@ public class Trs {
     assert !Tools.containsAt(res) : "check contain no AT";
 
     // minimize the set of rules
+    long startChrono = System.currentTimeMillis();
     res = removeRedundantRule(res,`ConcRule(),eSig);
+    timeMinimize += (System.currentTimeMillis()-startChrono);
 
     for(Rule rule:`res.getCollectionConcRule()) {
       System.out.println(Pretty.toString(rule));
     }
     System.out.println("size = " + `res.length());
+    System.out.println("subElim:       " + timeSubElim + " ms");
+    System.out.println("addElim:       " + timeAddElim + " ms");
+    System.out.println("expand:        " + timeExpand + " ms");
+    System.out.println("subSubsumtion: " + timeSubsumtion + " ms");
+    System.out.println("subMinimize:   " + timeMinimize + " ms");
 
     assert !Tools.containsAP(res) : "check contain no AP";
     assert Tools.isLhsLinear(res) : "check lhs-linear";
@@ -83,25 +95,33 @@ public class Trs {
    * result may also be non linear: f(X) + g(X)
    */
   private static Term reduce(Term t, Signature eSig) {
-    
+   long startChrono; 
     try {
       // DistributeAdd needed if we can start with terms like X \ f(a+b) or X \ (f(X)\f(f(_)))
+      startChrono = System.currentTimeMillis();
       Strategy S1 = `ChoiceId(CleanAdd(),PropagateEmpty(),SimplifySub(eSig));
       t = `InnermostId(S1).visitLight(t);
       System.out.println("NO SUB = " + Pretty.toString(t));
+      timeSubElim += (System.currentTimeMillis()-startChrono);
 
+      startChrono = System.currentTimeMillis();
       Strategy S2 = `ChoiceId(CleanAdd(),PropagateEmpty(), VarAdd(), FactorizeAdd());
       t = `InnermostId(S2).visitLight(t);
       System.out.println("NO ADD = " + Pretty.toString(t));
+      timeAddElim += (System.currentTimeMillis()-startChrono);
     } catch(VisitFailure e) {
       System.out.println("failure on: " + t);
     }
 
+    startChrono = System.currentTimeMillis();
     t = expandAdd(t);
     System.out.println("EXPAND = " + Pretty.toString(t));
+    timeExpand += (System.currentTimeMillis()-startChrono);
 
+    startChrono = System.currentTimeMillis();
     t = simplifySubsumtion(t);
     System.out.println("REMOVE SUBSUMTION = " + Pretty.toString(t));
+    timeSubsumtion += (System.currentTimeMillis()-startChrono);
 
     assert onlyTopLevelAdd(t) : "check only top-level Add";
     return t;
@@ -397,7 +417,7 @@ public class Trs {
       // we have to compare modulo renaming and AT
       if(h1 == h2) {
         tl = `TermList(tl*, h1);
-      } else if(match(h1,h2) && match(h2,h1)) {
+      } else if(matchConstraint(h1,h2)==`TrueMatch() && matchConstraint(h2,h1)==`TrueMatch()) {
         // match(h1,h2) && match(h2,h1) is more efficient than removeVar(h1) == removeVar(h2)
         // PEM: check that we can keep h1 only
         tl = `TermList(tl*, h1);
@@ -529,12 +549,14 @@ public class Trs {
   // Transform a term which contains Add into a set of plain terms
   private static void expandAddAux(HashSet<Term> c, Term subject) {
     HashSet<Term> todo = new HashSet<Term>();
+    HashSet<Term> todo2 = new HashSet<Term>();
+    HashSet<Term> tmpC = new HashSet<Term>();
     todo.add(subject);
 
     while(todo.size() > 0) {
-      HashSet<Term> todo2 = new HashSet<Term>();
+      todo2.clear();
       for(Term t:todo) {
-        HashSet<Term> tmpC = new HashSet<Term>();
+        tmpC.clear();
         try {
            // TopDownCollect: apply s1 in a top-down way, s should extends the identity
            // a failure stops the top-down process under this current node
@@ -553,7 +575,10 @@ public class Trs {
           }
         }
       }
+      // swap todo, todo2
+      HashSet<Term> tmp = todo;
       todo = todo2;
+      todo2 = tmp;
       //System.out.println("size(c) = " + c.size());
     }
   }
@@ -576,7 +601,7 @@ public class Trs {
 
   /*
    * Given a list of terms
-   * remove those which are subsumed by another one
+   * remove those which are subsumed by another ones
    */
   private static Term simplifySubsumtion(Term t) {
     %match(t) {
@@ -619,29 +644,6 @@ public class Trs {
   */
 
   /*
-   * Return true if t1 matches t2
-   */
-  private static boolean match(Term t1, Term t2) {
-    %match(t1,t2) {
-      // ElimAt (more efficient than removing AT before matching)
-      At(_,p1), p2 -> { return `match(p1,p2); }
-      p1, At(_,p2) -> { return `match(p1,p2); }
-
-      // Delete
-      Appl(name,TermList()),Appl(name,TermList()) -> { return true; }
-      // Decompose
-      Appl(name,a1),Appl(name,a2) -> { return `decomposeList(a1,a2); }
-      // SymbolClash
-      Appl(name1,_),Appl(name2,_) && name1!=name2 -> { return false; }
-
-      // Match
-      Var[],(Var|Appl)[] -> { return true; }
-
-    }
-    return false;
-  }
-
-  /*
    * return true is t can be match by a term of al
    */
   private static boolean matchFromList(Term t, AddList al) {
@@ -651,21 +653,9 @@ public class Trs {
          * to use matchConstraint algorithm we need to activate hooks for
          * PropagateTrueMatch and PropagateEmpty
          */
-        //if(`match(p,t)) { // match is no longer needed
         if(`matchConstraint(p,t) == `TrueMatch()) { // use this more general algorithm to factorize code
           return true;
         }
-      }
-    }
-    return false;
-  }
-
-
-  private static boolean decomposeList(TermList tl1, TermList tl2) {
-    %match(tl1,tl2) {
-      TermList(), TermList() -> { return true; }
-      TermList(head1,tail1*), TermList(head2,tail2*) -> { 
-        return `match(head1,head2) && `decomposeList(tail1,tail2); 
       }
     }
     return false;
@@ -969,13 +959,22 @@ public class Trs {
       // Delete
       Appl(name,TermList()),Appl(name,TermList()) -> { return `TrueMatch(); }
       // Decompose
-      Appl(name,a1),Appl(name,a2) -> { return `Appl(name,decomposeListConstraint(a1,a2,false)); }
+      Appl(name,a1),Appl(name,a2) -> { return `propagateMatchConstraint(Appl(name,decomposeListConstraint(a1,a2,false))); }
       // SymbolClash
       Appl(name1,_),Appl(name2,_) && name1!=name2 -> { return `Empty(); }
       // Match
       Var[],(Var|Appl)[] -> { return `TrueMatch(); }
     }
     return `Match(t1,t2);
+  }
+
+  private static Term propagateMatchConstraint(Term t) {
+    try {
+      Strategy S = `ChoiceId(PropagateEmpty(),PropagateTrueMatch());
+      return `InnermostId(S).visitLight(t);
+    } catch(VisitFailure e) {
+    }
+    return t;
   }
 
   /*
@@ -1006,11 +1005,6 @@ public class Trs {
     assert false : "should not be there";
     return null;
   }
-
-
-
-
-
 
   /*
    * Transform an ordered TRS with non-linear lhs rules into an ordered TRS with left-LINEAR rules

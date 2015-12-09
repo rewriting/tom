@@ -85,7 +85,7 @@ module Rule:rules() {
 
 }
 
-
+/*
 // optim: can be removed
 // hooks for PropagateTrueMatch and PropagateEmpty
 // needed to use matchConstaint instead of match
@@ -117,7 +117,7 @@ TermList:make_insert(e,l) {
     Empty(),_                 -> { return `realMake(Empty(),TermList()); }
   }
 }
-
+*/
 
 ConcAdd:make_insert(e,l) {
   %match(e) {
