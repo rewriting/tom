@@ -18,8 +18,12 @@ public class Trs {
   private static long timeMinimize;
 
   private static void debug(String ruleName, Term input, Term res) {
-    System.out.println(ruleName);
-    //debugVerbose(ruleName,input,res);
+    if(Main.options.debug && Main.options.verbose) {
+    debugVerbose(ruleName,input,res);
+    } else if(Main.options.debug) {
+      System.out.println(ruleName);
+    }
+
   }
 
   private static void debugVerbose(String ruleName, Term input, Term res) {
@@ -46,10 +50,14 @@ public class Trs {
           }
         }
         Term pattern = `Sub(lhs,Add(prev*));
+        if(Main.options.verbose) {
         System.out.println("\nPATTERN : " + Pretty.toString(pattern));
+        }
         // transform   lhs - prevlhs   into a collection of patterns matching exactly the same terms
         Term t = `reduce(pattern,eSig);
-        System.out.println("REDUCED : " + Pretty.toString(t));
+        if(Main.options.verbose) {
+          System.out.println("REDUCED : " + Pretty.toString(t));
+        }
 
         // put back the rhs
         %match(t) {
@@ -74,15 +82,17 @@ public class Trs {
     res = removeRedundantRule(res,`ConcRule(),eSig);
     timeMinimize += (System.currentTimeMillis()-startChrono);
 
-    for(Rule rule:`res.getCollectionConcRule()) {
-      System.out.println(Pretty.toString(rule));
+    if(Main.options.verbose) {
+      for(Rule rule:`res.getCollectionConcRule()) {
+        System.out.println(Pretty.toString(rule));
+      }
+      System.out.println("size = " + `res.length());
+      System.out.println("subElim:       " + timeSubElim + " ms");
+      System.out.println("addElim:       " + timeAddElim + " ms");
+      System.out.println("expand:        " + timeExpand + " ms");
+      System.out.println("subSubsumtion: " + timeSubsumtion + " ms");
+      System.out.println("subMinimize:   " + timeMinimize + " ms");
     }
-    System.out.println("size = " + `res.length());
-    System.out.println("subElim:       " + timeSubElim + " ms");
-    System.out.println("addElim:       " + timeAddElim + " ms");
-    System.out.println("expand:        " + timeExpand + " ms");
-    System.out.println("subSubsumtion: " + timeSubsumtion + " ms");
-    System.out.println("subMinimize:   " + timeMinimize + " ms");
 
     assert !Tools.containsAP(res) : "check contain no AP";
     assert Tools.isLhsLinear(res) : "check lhs-linear";
@@ -101,13 +111,17 @@ public class Trs {
       startChrono = System.currentTimeMillis();
       Strategy S1 = `ChoiceId(CleanAdd(),PropagateEmpty(),SimplifySub(eSig));
       t = `InnermostId(S1).visitLight(t);
-      System.out.println("NO SUB = " + Pretty.toString(t));
+      if(Main.options.verbose) {
+        System.out.println("NO SUB = " + Pretty.toString(t));
+      }
       timeSubElim += (System.currentTimeMillis()-startChrono);
 
       startChrono = System.currentTimeMillis();
       Strategy S2 = `ChoiceId(CleanAdd(),PropagateEmpty(), VarAdd(), FactorizeAdd());
       t = `InnermostId(S2).visitLight(t);
-      System.out.println("NO ADD = " + Pretty.toString(t));
+      if(Main.options.verbose) {
+        System.out.println("NO ADD = " + Pretty.toString(t));
+      }
       timeAddElim += (System.currentTimeMillis()-startChrono);
     } catch(VisitFailure e) {
       System.out.println("failure on: " + t);
@@ -115,12 +129,16 @@ public class Trs {
 
     startChrono = System.currentTimeMillis();
     t = expandAdd(t);
-    System.out.println("EXPAND = " + Pretty.toString(t));
+    if(Main.options.verbose) {
+      System.out.println("EXPAND = " + Pretty.toString(t));
+    }
     timeExpand += (System.currentTimeMillis()-startChrono);
 
     startChrono = System.currentTimeMillis();
     t = simplifySubsumtion(t);
-    System.out.println("REMOVE SUBSUMTION = " + Pretty.toString(t));
+    if(Main.options.verbose) {
+      System.out.println("REMOVE SUBSUMTION = " + Pretty.toString(t));
+    }
     timeSubsumtion += (System.currentTimeMillis()-startChrono);
 
     assert onlyTopLevelAdd(t) : "check only top-level Add";
@@ -143,7 +161,9 @@ public class Trs {
 
         boolean b = canBeRemoved2(`head, `ConcRule(kernel*,tail*), eSig);
         if(b) {
-          System.out.println("REMOVE: " + Pretty.toString(`head));
+          if(Main.options.verbose) {
+            System.out.println("REMOVE: " + Pretty.toString(`head));
+          }
           // try with the head removed 
           RuleList branch2 = removeRedundantRule(`tail, kernel, eSig);
           if(branch2.length() < branch1.length()) {
@@ -552,7 +572,6 @@ public class Trs {
     HashSet<Term> todo2 = new HashSet<Term>();
     HashSet<Term> tmpC = new HashSet<Term>();
     todo.add(subject);
-
     while(todo.size() > 0) {
       todo2.clear();
       for(Term t:todo) {
@@ -902,7 +921,6 @@ public class Trs {
             Term mc = matchConstraint(`l, `lhs);
             if(mc == `TrueMatch()) {
               res = true;
-              System.out.println("can be removed2 cut");
               return res;
             } else {
               constraint = `ConcAdd(mc,constraint*);
@@ -912,10 +930,8 @@ public class Trs {
         Term matchingProblem = `Add(constraint);
         if(matchingProblem == `Empty()) {
           res = false;
-          System.out.println("can be removed2 empty");
           return res;
         }
-        debugVerbose("\nmatching problem: ",matchingProblem,`Empty());
         try {
           Strategy S2 = `ChoiceId(CleanAdd(),PropagateEmpty(),PropagateTrueMatch(),SimplifyAddMatch(),VarAdd(),FactorizeAdd(),SimplifyMatch(), TryAbstraction(eSig));
           Term sol = `InnermostId(S2).visitLight(matchingProblem);
