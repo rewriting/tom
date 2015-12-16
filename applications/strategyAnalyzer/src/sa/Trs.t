@@ -109,6 +109,10 @@ public class Trs {
     try {
       // DistributeAdd needed if we can start with terms like X \ f(a+b) or X \ (f(X)\f(f(_)))
       startChrono = System.currentTimeMillis();
+      // pre-treatment: remove AP
+      t = `InnermostId(ExpandAP()).visitLight(t);
+
+      //Strategy S1 = `ChoiceId(CleanAdd(),PropagateEmpty(),SimplifySub(eSig),DistributeAdd());
       Strategy S1 = `ChoiceId(CleanAdd(),PropagateEmpty(),SimplifySub(eSig));
       t = `InnermostId(S1).visitLight(t);
       if(Main.options.verbose) {
@@ -118,7 +122,7 @@ public class Trs {
 
       startChrono = System.currentTimeMillis();
       Strategy S2 = `ChoiceId(CleanAdd(),PropagateEmpty(), VarAdd(), FactorizeAdd());
-      t = `InnermostId(S2).visitLight(t);
+      t = `InnermostId(S2).visitLight(t); // can be replaced by DistributeAdd() in S1
       if(Main.options.verbose) {
         System.out.println("NO ADD = " + Pretty.toString(t));
       }
@@ -128,7 +132,7 @@ public class Trs {
     }
 
     startChrono = System.currentTimeMillis();
-    t = expandAdd(t);
+    t = expandAdd(t); // can be replaced by DistributeAdd() in S1
     if(Main.options.verbose) {
       System.out.println("EXPAND = " + Pretty.toString(t));
     }
@@ -261,6 +265,17 @@ public class Trs {
     }
   }
 
+  %strategy ExpandAP() extends Identity() {
+    visit Term {
+      // !t -> X - t
+      s@Anti(t) -> {
+        Term Z = `Var(Tools.getName("Z"));
+        Term res = `Sub(Z,t);
+        debugVerbose("AP",`s,res);
+        return res;
+      }
+    }
+  }
 
   %strategy SimplifySub(eSig:Signature) extends Identity() {
     visit Term {
@@ -286,14 +301,6 @@ public class Trs {
         return res;
       }
     
-      // !t -> X - t
-      s@Anti(t) -> {
-        Term Z = `Var(Tools.getName("Z"));
-        Term res = `Sub(Z,t);
-        debugVerbose("AP",`s,res);
-        return res;
-      }
-
       // X - t -> expand AP   ==>    t should be in TFX (only symbols from declared signature)
       s@Sub(X@Var[], t@Appl(f,args_f)) -> {
         if(false && isPlainTerm(`t)) { // desactivate old version of X \ t
@@ -528,8 +535,8 @@ public class Trs {
     }
     return t;
   }
-
-  %strategy DistributeAdd() extends Identity() {//Fail() {
+*/
+  %strategy DistributeAdd() extends Identity() {
     visit Term {
 
       // Add(t) -> t
@@ -538,6 +545,24 @@ public class Trs {
         //debug("flatten2",`s,res);
         return res;
       }
+
+      // Z@(t1+t2) -> Z@t1 + Z@t2
+      s@At(Z,Add(ConcAdd(head,tail*))) -> {
+        Term res = `Add(ConcAdd(At(Z,head),At(Z,Add(tail))));
+        return res;
+      }
+
+      // Z@(t1+t2) -> Z@t1 + Z@t2
+      //s@At(Z,Add(tl)) -> {
+      //  AddList tail = `tl;
+      //  AddList res = `ConcAdd();
+      //  while(!tail.isEmptyConcAdd()) {
+      //    Term head = tail.getHeadConcAdd();
+      //    res = `ConcAdd(At(Z,head),res*);
+      //    tail = tail.getTailConcAdd();
+      //  }
+      //  return `Add(res);
+      // }
 
       // f(t1,..., ti + ti',...,tn)  ->  f(t1,...,tn) + f(t1',...,tn')
       s@Appl(f, TermList(C1*, Add(ConcAdd(u,v,A2*)), C2*)) -> {
@@ -549,7 +574,7 @@ public class Trs {
 
     }
   }
-*/
+
 
   /*
    * Transform a term which contains Add into
