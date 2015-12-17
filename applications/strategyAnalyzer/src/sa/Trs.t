@@ -79,7 +79,7 @@ public class Trs {
 
     // minimize the set of rules
     long startChrono = System.currentTimeMillis();
-    res = removeRedundantRule(res,`ConcRule(),eSig);
+    res = removeRedundantRule(res,eSig);
     timeMinimize += (System.currentTimeMillis()-startChrono);
 
     if(Main.options.verbose) {
@@ -153,14 +153,31 @@ public class Trs {
    * remove redundant rules using a very smart matching algorithm :-)
    */
   // TODO: remove variables only once (and no longer in canBeRemove2) to speedup the process
-  private static RuleList removeRedundantRule(RuleList candidates, RuleList kernel, Signature eSig) {
+  private static RuleList removeRedundantRule(RuleList candidates, Signature eSig) {
+    RuleList kernel  = `ConcRule();
+    RuleList start  = `ConcRule();
+    %match(candidates) {
+      ConcRule(C1*,r,C2*) -> {
+        boolean b = canBeRemoved2(`r, `ConcRule(C1*,C2*), eSig);
+        if(!b) {
+          kernel = `ConcRule(r,kernel*);
+        } else {
+          start = `ConcRule(r,start*);
+        }
+      }
+    }
+    return removeRedundantRuleAux(start,kernel,eSig);
+    //return removeRedundantRuleAux(candidates,`ConcRule(),eSig);
+  }
+
+  private static RuleList removeRedundantRuleAux(RuleList candidates, RuleList kernel, Signature eSig) {
     assert Tools.isLhsLinear(candidates) : "check lhs-linear" ;
     RuleList res = kernel;
 
     %match( candidates ) {
       ConcRule(head, tail*) -> {
         // try with the head kept in kernel
-        RuleList branch1 = removeRedundantRule(`tail, `ConcRule(kernel*,head), eSig);
+        RuleList branch1 = removeRedundantRuleAux(`tail, `ConcRule(kernel*,head), eSig);
         res = branch1;
 
         boolean b = canBeRemoved2(`head, `ConcRule(kernel*,tail*), eSig);
@@ -169,7 +186,7 @@ public class Trs {
             System.out.println("REMOVE: " + Pretty.toString(`head));
           }
           // try with the head removed 
-          RuleList branch2 = removeRedundantRule(`tail, kernel, eSig);
+          RuleList branch2 = removeRedundantRuleAux(`tail, kernel, eSig);
           if(branch2.length() < branch1.length()) {
             res = branch2;
           }

@@ -21,8 +21,9 @@ public class Pattern {
 //    example7(); // simplest reduce
 //     example7bis(); // simplest reduce with one type
 //    example8(); // reduce deeper
-   example9(); // nested anti-pattern
+//   example9(); // nested anti-pattern
 //   example10(); // nested anti-pattern
+ //  example11(); // exact cover
   }
 
   /*
@@ -390,7 +391,39 @@ public class Pattern {
 
     return ruleList;
   }
+/*
+  private static Term nat(int n) {
+    if(n==0) { 
+      return `Appl("Z",TermList()); 
+    } else {
+      Term t = nat(n-1);
+      return `Appl("S",TermList(t)); 
+    }
+    //return `Empty();
+  }
 
+  private static void example11() {
+    Signature eSig = new Signature();
+
+    Term V = `Var("_");
+    eSig.addSymbol("Z", `ConcGomType(), `GomType("Nat") );
+    eSig.addSymbol("S", `ConcGomType(GomType("Nat")), `GomType("Nat") );
+
+    Term A = `Add(ConcAdd(nat(1),nat(4),nat(7)));
+
+    Term r = `Appl("rhs",TermList());
+
+    RuleList candidates = `ConcRule(Rule(A,r));
+    RuleList kernel = `ConcRule();
+    RuleList res = Trs.removeRedundantRule(candidates,kernel,eSig);
+
+    for(Rule rule:`res.getCollectionConcRule()) {
+      System.out.println(Pretty.toString(rule));
+    }
+    System.out.println("size = " + `res.length());
+
+  }
+  */
 }
 
 
