@@ -72,10 +72,16 @@ public class Trs {
       }
     }
 
+    // TODO: normalize name of variables
     // remove x@t
     RuleCompiler ruleCompiler = new RuleCompiler(`eSig, `eSig); 
     res = ruleCompiler.expandAt(res);
     assert !Tools.containsAt(res) : "check contain no AT";
+    //if(Main.options.verbose) {
+    //  for(Rule rule:`res.getCollectionConcRule()) {
+    //    System.out.println(Pretty.toString(rule));
+    //  }
+    //}
 
     // minimize the set of rules
     long startChrono = System.currentTimeMillis();
@@ -139,7 +145,7 @@ public class Trs {
     timeExpand += (System.currentTimeMillis()-startChrono);
 
     startChrono = System.currentTimeMillis();
-    t = simplifySubsumtion(t);
+    //t = simplifySubsumtion(t);
     if(Main.options.verbose) {
       System.out.println("REMOVE SUBSUMTION = " + Pretty.toString(t));
     }

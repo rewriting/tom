@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.HashSet;
 import tom.library.sl.*;
 import aterm.*;
 import aterm.pure.*;
@@ -316,6 +317,7 @@ public class RuleCompiler {
     */
   public RuleList expandAt(RuleList ruleList) {
     RuleList res = `ConcRule();
+    HashSet<Rule> bag = new HashSet<Rule>();
     for(Rule rule:ruleList.getCollectionConcRule()) {
       Map<String,Term> map = new HashMap<String,Term>();
       try {
@@ -329,7 +331,8 @@ public class RuleCompiler {
       if(map.keySet().isEmpty()) {
         // if no AT in the rule just add it to the result
         assert !Tools.containsAt(rule): rule;
-        res = `ConcRule(res*,rule);
+        //res = `ConcRule(res*,rule);
+        bag.add(rule);
       } else {
         // if some AT in the rule then build a new one
         Rule newRule = `rule;
@@ -346,8 +349,12 @@ public class RuleCompiler {
           }
         }
         assert !Tools.containsAt(newRule): newRule;
-        res = `ConcRule(res*,newRule);
+        //res = `ConcRule(res*,newRule);
+        bag.add(newRule);
       }
+    }
+    for(Rule r:bag) {
+      res = `ConcRule(r,res*);
     }
     return res;
   }
