@@ -145,7 +145,7 @@ public class Trs {
     timeExpand += (System.currentTimeMillis()-startChrono);
 
     startChrono = System.currentTimeMillis();
-    //t = simplifySubsumtion(t);
+    t = simplifySubsumtion(t);
     if(Main.options.verbose) {
       System.out.println("REMOVE SUBSUMTION = " + Pretty.toString(t));
     }
