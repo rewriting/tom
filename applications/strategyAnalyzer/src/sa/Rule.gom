@@ -32,7 +32,6 @@ Rule = Rule(lhs:Term,rhs:Term)
      | ConditionalRule(lhs:Term,rhs:Term,cond:Condition)
 
 Symbol = Symbol(name:String,arity:int)
-SymbolList = SymbolList(Symbol*)
 
 Term = Appl(symbol:String,args:TermList)
      | Var(name:String)
