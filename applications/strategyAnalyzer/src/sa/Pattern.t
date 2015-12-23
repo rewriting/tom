@@ -75,7 +75,7 @@ public class Pattern {
     Term r1 = `Appl("rhr1",TermList());
     Term r2 = `Appl("rhs2",TermList());
 
-    RuleList res = Trs.trsRule(`ConcRule(Rule(fhba,r0), Rule(fhab,r1), Rule(V,r2)), eSig);
+    Trs res = RewriteSystem.trsRule(`Otrs(ConcRule(Rule(fhba,r0), Rule(fhab,r1), Rule(V,r2))), eSig);
   }
   
   private static void example2() {
@@ -96,7 +96,7 @@ public class Pattern {
     Term r0 = `Appl("rhs0",TermList());
     Term r1 = `Appl("rhs1",TermList());
 
-    RuleList res = Trs.trsRule(`ConcRule(Rule(p0,r0), Rule(p1,r1)), eSig);
+    Trs res = RewriteSystem.trsRule(`Otrs(ConcRule(Rule(p0,r0), Rule(p1,r1))), eSig);
 
   }
 
@@ -128,7 +128,7 @@ public class Pattern {
     Term r4 = `Appl("rhs4",TermList());
     Term r5 = `Appl("rhs5",TermList());
 
-    RuleList res = Trs.trsRule(`ConcRule(Rule(p1,r1), Rule(p2,r2), Rule(p3,r3), Rule(p4,r4), Rule(p5,r5)), eSig);
+    Trs res = RewriteSystem.trsRule(`Otrs(ConcRule(Rule(p1,r1), Rule(p2,r2), Rule(p3,r3), Rule(p4,r4), Rule(p5,r5))), eSig);
 
   }
 
@@ -177,10 +177,10 @@ public class Pattern {
     Term r5 = `Appl("rhs5",TermList());
     Term r6 = `Appl("rhs6",TermList());
     Term r7 = `Appl("rhs7",TermList());
-    RuleList res4 = Trs.trsRule(`ConcRule(Rule(p0,r0), Rule(p1,r1), Rule(p2,r2),
+    Trs res4 = RewriteSystem.trsRule(`Otrs(ConcRule(Rule(p0,r0), Rule(p1,r1), Rule(p2,r2),
                                       Rule(p3,r3), Rule(p4,r4), Rule(p5,r5),
-                                      Rule(p6,r6),Rule(p7,r7)),eSig);
-    //RuleList res4 = `trsRule(ConcRule(Rule(p0,r0),Rule(p1,r1), Rule(p7,r7)),eSig);
+                                      Rule(p6,r6),Rule(p7,r7))),eSig);
+    //Trs res4 = `trsRule(ConcRule(Rule(p0,r0),Rule(p1,r1), Rule(p7,r7)),eSig);
 
 //     //interp(S(Z()),Cons(Undef(),Cons(_,_)))
 //     //interp(S(Z()),Cons(Undef(),Nil()))
@@ -225,8 +225,8 @@ public class Pattern {
     Term r3 = `Appl("rhs3",TermList());
     Term r4 = `Appl("rhs4",TermList());
 
-    RuleList res = Trs.trsRule(`ConcRule(Rule(p0,r0), Rule(p1,r1), Rule(p2,r2),
-                                      Rule(p3,r3), Rule(p4,r4)), eSig);
+    Trs res = RewriteSystem.trsRule(`Otrs(ConcRule(Rule(p0,r0), Rule(p1,r1), Rule(p2,r2),
+                                      Rule(p3,r3), Rule(p4,r4))), eSig);
   }
 
   private static void example6() {
@@ -253,7 +253,7 @@ public class Pattern {
             Appl("or", TermList(True,False)), 
             Appl("or", TermList(True,True)))), True);
 
-    RuleList res = Trs.trsRule(`ConcRule(r0,r1,r2,r3), eSig);
+    Trs res = RewriteSystem.trsRule(`Otrs(ConcRule(r0,r1,r2,r3)), eSig);
   }
 
   private static void example7() {
@@ -275,7 +275,7 @@ public class Pattern {
 
     Term r0 = `Appl("rhs0",TermList());
 
-    RuleList res = Trs.trsRule(`ConcRule(Rule(fav,r0), Rule(fbv,r0), Rule(fva,r0)), eSig);
+    Trs res = RewriteSystem.trsRule(`Otrs(ConcRule(Rule(fav,r0), Rule(fbv,r0), Rule(fva,r0))), eSig);
   }
 
   private static void example7bis() {
@@ -298,7 +298,7 @@ public class Pattern {
 
     Term r0 = `Appl("rhs0",TermList());
 
-    RuleList res = Trs.trsRule(`ConcRule(Rule(fav,r0), Rule(ffv,r0), Rule(fbv,r0), Rule(fva,r0)), eSig);
+    Trs res = RewriteSystem.trsRule(`Otrs(ConcRule(Rule(fav,r0), Rule(ffv,r0), Rule(fbv,r0), Rule(fva,r0))), eSig);
   }
 
 
@@ -329,7 +329,7 @@ public class Pattern {
 
     Term r0 = `Appl("rhs0",TermList());
 
-    RuleList res = Trs.trsRule(`ConcRule(Rule(fgba,r0), Rule(fgaa,r0), Rule(fgga,r0), Rule(faa,r0), Rule(fba,r0), Rule(fva,r0)), eSig);
+    Trs res = RewriteSystem.trsRule(`Otrs(ConcRule(Rule(fgba,r0), Rule(fgaa,r0), Rule(fgga,r0), Rule(faa,r0), Rule(fba,r0), Rule(fva,r0))), eSig);
 
   }
 
@@ -351,7 +351,7 @@ public class Pattern {
     Term r0 = `Appl("rhs0",TermList());
 
     Term pattern = `Sub(V, Appl("f",TermList(a,Sub(V,gv))));
-    RuleList res = Trs.trsRule(`ConcRule(Rule(pattern,r0)), eSig);
+    Trs res = RewriteSystem.trsRule(`Otrs(ConcRule(Rule(pattern,r0))), eSig);
   }
 
   private static void example10() {
@@ -373,7 +373,7 @@ public class Pattern {
     Term r0 = `Appl("rhs0",TermList());
 
     Term pattern = `Sub(V, Appl("f",TermList(X,X)));
-    RuleList res = Trs.trsRule(`ConcRule(Rule(pattern,r0)), eSig);
+    Trs res = RewriteSystem.trsRule(`Otrs(ConcRule(Rule(pattern,r0))), eSig);
   }
 
   /*
@@ -384,8 +384,8 @@ public class Pattern {
     // test subsumtion idea
     %match(ruleList) {
       ConcRule(C1*,rule,C2*) -> {
-        //Trs.canBeRemoved1(`rule, `ConcRule(C1*,C2*), eSig);
-        Trs.canBeRemoved2(`rule, `ConcRule(C1*,C2*), eSig);
+        //RewriteSystem.canBeRemoved1(`rule, `ConcRule(C1*,C2*), eSig);
+        RewriteSystem.canBeRemoved2(`rule, `ConcRule(C1*,C2*), eSig);
       }
     }
 
@@ -415,7 +415,7 @@ public class Pattern {
 
     RuleList candidates = `ConcRule(Rule(A,r));
     RuleList kernel = `ConcRule();
-    RuleList res = Trs.removeRedundantRule(candidates,kernel,eSig);
+    RuleList res = RewriteSystem.removeRedundantRule(candidates,kernel,eSig);
 
     for(Rule rule:`res.getCollectionConcRule()) {
       System.out.println(Pretty.toString(rule));

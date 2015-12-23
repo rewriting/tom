@@ -5,7 +5,7 @@ import tom.library.sl.*;
 import java.util.HashSet;
 import java.util.Set;
 
-public class Trs {
+public class RewriteSystem {
   %include { rule/Rule.tom }
   %include { sl.tom }
   %include { java/util/types/HashSet.tom }
@@ -35,25 +35,29 @@ public class Trs {
    * input can contains: linear lhs rules with nested AP
    * result is LINEAR, without AP
    */
-  public static RuleList trsRule(RuleList ruleList, Signature eSig) {
-    assert Tools.isLhsLinear(ruleList) : "check lhs-linear";
+  public static Trs trsRule(Trs trs, Signature eSig) {
+    assert Tools.isLhsLinear(trs) : "check lhs-linear";
+    boolean ordered = trs.isOtrs();
 
     RuleList res = `ConcRule();
-    %match(ruleList) {
-      ConcRule(C1*,Rule(lhs,rhs),_*) -> {
-        // build the collection of all  prevlhs = l1+l2+...+ln   before  rule=Rule(lhs,rhs)
-        // the lhs of rule in the unordered TRS = lhs - prevlhs
+    %match(trs) {
+      (Trs|Otrs)(ConcRule(C1*,Rule(lhs,rhs),_*)) -> {
+        // build the collection of all prev = l1+l2+...+ln   before  rule=Rule(lhs,rhs)
+        // the lhs of rule in the unordered TRS = lhs - prev
         AddList prev = `ConcAdd();
-        %match(C1) {
-          ConcRule(_*,Rule(l,r),_*) -> {
-            prev = `ConcAdd(l,prev*);
+        if(ordered) {
+          %match(C1) {
+            ConcRule(_*,Rule(l,r),_*) -> {
+              prev = `ConcAdd(l,prev*);
+            }
           }
         }
         Term pattern = `Sub(lhs,Add(prev*));
         if(Main.options.verbose) {
-        System.out.println("\nPATTERN : " + Pretty.toString(pattern));
+          System.out.println("\nPATTERN : " + Pretty.toString(pattern));
         }
-        // transform   lhs - prevlhs   into a collection of patterns matching exactly the same terms
+
+        // transform lhs - prev into a collection of patterns matching exactly the same terms
         Term t = `reduce(pattern,eSig);
         if(Main.options.verbose) {
           System.out.println("REDUCED : " + Pretty.toString(t));
@@ -102,7 +106,11 @@ public class Trs {
 
     assert !Tools.containsAP(res) : "check contain no AP";
     assert Tools.isLhsLinear(res) : "check lhs-linear";
-    return res;
+    if(ordered) {
+      return `Otrs(res);
+    } else {
+      return `Trs(res);
+    }
   }
 
   /*
@@ -1073,22 +1081,22 @@ public class Trs {
   /*
    * Transform an ordered TRS with non-linear lhs rules into an ordered TRS with left-LINEAR rules
    */
-  public static RuleList transformNLOTRSintoLOTRS(RuleList ruleList, Signature gSig) {
+  public static Trs transformNLOTRSintoLOTRS(Trs trs, Signature gSig) {
 
-    %match(ruleList) {
-      ConcRule() -> {
-        return ruleList;
+    %match(trs) {
+      s@Otrs(ConcRule()) -> {
+        return `s;
       }
 
-      ConcRule(Rule(lhs,rhs),tail*) -> {
+      Otrs(ConcRule(Rule(lhs,rhs),tail*)) -> {
         TermList result = Tools.linearize(`lhs, gSig);
         %match(result) {
           TermList(_, Appl("True",TermList())) -> {
             // lhs is linear
-            RuleList newTail = Trs.transformNLOTRSintoLOTRS(`tail,gSig);
+            RuleList newTail = transformNLOTRSintoLOTRS(`Otrs(tail),gSig).getlist();
             RuleList res = `ConcRule(Rule(lhs,rhs), newTail*);
             assert Tools.isLhsLinear(res);
-            return res;
+            return `Otrs(res);
           }
 
           TermList(newLhs@Appl(f,f_args), cond@!Appl("True",TermList())) -> {
@@ -1110,19 +1118,19 @@ public class Trs {
             gSig.addFunctionSymbol(f_1,`ConcGomType(f_domain*,Signature.TYPE_BOOLEAN),f_codomain);
             Term newRhs = `Appl(f_1, TermList(f_args*,cond));
             int arity = gSig.getArity(`f);
-            RuleList newTail = Trs.transformNLOTRSintoLOTRS(transformHeadSymbol(`tail,`f,f_1,arity),gSig);
+            RuleList newTail = transformNLOTRSintoLOTRS(`Otrs(transformHeadSymbol(tail,f,f_1,arity)),gSig).getlist();
             Rule trueCase = `Rule(Appl(f_1,TermList(f_args*,Appl("True",TermList()))),rhs);
             RuleList res = `ConcRule(Rule(newLhs,newRhs), trueCase, newTail*);
             assert Tools.isLhsLinear(res);
-            return res;
+            return `Otrs(res);
           }
         }
 
       }
     }
 
-    assert Tools.isLhsLinear(ruleList);
-    return ruleList;
+    assert Tools.isLhsLinear(trs);
+    return trs;
   }
 
   private static RuleList transformHeadSymbol(RuleList ruleList, String oldSymbol, String newSymbol, int old_arity) {

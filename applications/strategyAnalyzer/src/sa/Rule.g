@@ -17,13 +17,13 @@ options {
 program :
   abstractsyntax (f=functions)? (s=strategies)? (t=trs)? EOF
   -> {f!=null && s!=null && t!= null }? ^(Program abstractsyntax $f $s $t)
-  -> {f!=null && s!=null }? ^(Program abstractsyntax $f $s ^(ConcRule))
+  -> {f!=null && s!=null }? ^(Program abstractsyntax $f $s ^(EmptyTrs))
   -> {f!=null && t!=null }? ^(Program abstractsyntax $f ^(ConcStratDecl) $t)
   -> {t!=null && s!=null }? ^(Program abstractsyntax ^(ConcProduction) $t $s)
-  -> {f!=null}? ^(Program abstractsyntax $f ^(ConcStratDecl) ^(ConcRule))
-  -> {s!=null}? ^(Program abstractsyntax ^(ConcProduction) $s ^(ConcRule))
+  -> {f!=null}? ^(Program abstractsyntax $f ^(ConcStratDecl) ^(EmptyTrs))
+  -> {s!=null}? ^(Program abstractsyntax ^(ConcProduction) $s ^(EmptyTrs))
   -> {t!=null}? ^(Program abstractsyntax ^(ConcProduction) ^(ConcStratDecl) $t)
-  -> ^(Program abstractsyntax ^(ConcProduction) ^(ConcStratDecl) ^(ConcRule))
+  -> ^(Program abstractsyntax ^(ConcProduction) ^(ConcStratDecl) ^(EmptyTrs))
 ;
 
 abstractsyntax :
@@ -42,8 +42,11 @@ STRATEGIES (stratdecl)*
 ;
 
 trs :
-TRS (rule (COMMA? rule)*)
-  -> ^(ConcRule (rule)*)
+  TRS LBRACKET (rule (COMMA? rule)*) RBRACKET
+  -> ^(Otrs ^(ConcRule (rule)*))
+
+| TRS (rule (COMMA? rule)*) 
+  -> ^(Trs ^(ConcRule (rule)*))
 ;
 
 stratdecl :

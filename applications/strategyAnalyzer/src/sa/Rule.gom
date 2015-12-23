@@ -3,7 +3,7 @@ imports String int
 abstract syntax
 
 // New AST
-Program = Program(productionList:ProductionList, functionList:ProductionList, stratList:StratDeclList, trs:RuleList)
+Program = Program(productionList:ProductionList, functionList:ProductionList, stratList:StratDeclList, trs:Trs)
 Production = SortType(Type:GomType,AlternativeList:AlternativeList)
 ProductionList = ConcProduction(Production*)
 
@@ -21,6 +21,10 @@ ParamList = ConcParam(Param*)
 
 TypeEnvironment = EmptyEnvironment()
                 | PushEnvironment(Name:String, Type:GomType, Env:TypeEnvironment)
+
+Trs = | Otrs(list:RuleList)
+                | Trs(list:RuleList)
+                | EmptyTrs()
 
 // Old AST
 Expression = 

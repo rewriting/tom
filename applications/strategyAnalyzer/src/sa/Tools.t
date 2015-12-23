@@ -398,6 +398,16 @@ public class Tools {
     return res;
   }
   
+  public static boolean isLhsLinear(Trs trs) {
+    boolean res = true;
+    %match(trs) {
+      (Trs|Otrs)(list) -> {
+        res = isLhsLinear(`list);
+      }
+    }
+    return res;
+  }
+  
   public static boolean containsNamedVar(tom.library.sl.Visitable t) {
     HashMultiset<String> bag = collectVariableMultiplicity(t);
     for(String name:bag.elementSet()) {
