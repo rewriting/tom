@@ -109,12 +109,7 @@ public class Compiler {
     List<Rule> mutableList = new ArrayList<Rule>();
 
     for(String strategyName: strategyNames) {
-      Expression expand = this.expandStrategy(strategyName);
-      Strat strategy = null;
-      %match(expand) {
-        Strat(strat) -> { strategy = `strat; }
-        s@List(rules) -> { strategy = `StratExp(s); }
-      }
+      Strat strategy = this.expandStrategy(strategyName);
       assert strategy != null;
 
       if(!generatedStrategy.contains(strategyName)) {
@@ -147,9 +142,9 @@ public class Compiler {
    * and return an expanded version of the body 
    * The resulting strategy is self-contained
    */
-  public Expression expandStrategy(String strategyName) {
+  public Strat expandStrategy(String strategyName) {
     StratDecl sd = Tools.getStratDecl(strategyName, this.program);
-    Expression res = `Strat(StratIdentity()); // identity if strategyName does not exist
+    Strat res = `StratIdentity(); // identity if strategyName does not exist
 
     try {
       %match(sd) {
@@ -176,8 +171,8 @@ public class Compiler {
         StratDecl sd = Tools.getStratDecl(`name, compiler.program);
         Map map = new HashMap();
         sd = `TopDown(FreshStratDecl(map)).visitLight(sd);
-        Expression si = compiler.instantiateStrategy(sd, `args);
-        return `StratExp(si);
+        Strat si = compiler.instantiateStrategy(sd, `args);
+        return si;
       }
     }
   }
@@ -215,8 +210,8 @@ public class Compiler {
    * Replace the parameters by their effective values (args) in body
    * i.e. apply the substitution [param_1 -> arg_1, ..., param_n -> arg_n]
    */
-  public Expression instantiateStrategy(StratDecl sd, StratList args) {
-    Expression res = null;
+  public Strat instantiateStrategy(StratDecl sd, StratList args) {
+    Strat res = null;
 
     try {
       %match(sd) {
@@ -535,11 +530,11 @@ public class Compiler {
 
       %match(strat) {
         // TODO: handle Set without an order
-        StratExp(Set(_)) -> {
+        StratTrs(Trs(_)) -> {
           throw new RuntimeException("Not Yet Implemented");
         }
 
-        StratExp(List(rulelist)) -> {
+        StratTrs(Otrs(rulelist)) -> {
 
           //if(Main.options.pattern) {
           //  System.out.println("pattern: " + `rulelist);

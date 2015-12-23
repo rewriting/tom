@@ -50,8 +50,8 @@ trs :
 ;
 
 stratdecl :
-    stratname=ID paramlist  EQUALS stratbody
-      -> ^(StratDecl $stratname paramlist stratbody)
+    stratname=ID paramlist  EQUALS strategy
+      -> ^(StratDecl $stratname paramlist strategy)
   ;
 
 paramlist :
@@ -62,12 +62,6 @@ paramlist :
 param:
   ID
  -> ^(Param ID)
-  ;
-
-stratbody :
-  | LBRACE (rule (COMMA rule)*)? RBRACE -> ^(Set ^(ConcRule (rule)*))
-  | LBRACKET (rule (COMMA rule)*)? RBRACKET -> ^(List ^(ConcRule (rule)*))
-  | strategy -> ^(Strat strategy)
   ;
 
 //----------------------------
@@ -108,6 +102,10 @@ strategy :
      -> {s2!=null}? ^(StratSequence $s1 $s2)
      -> {s3!=null}? ^(StratChoice $s1 $s3)
      -> $s1
+
+  | LBRACE (rule (COMMA rule)*)? RBRACE -> ^(StratTrs ^(Trs ^(ConcRule (rule)*)))
+  | LBRACKET (rule (COMMA rule)*)? RBRACKET -> ^(StratTrs ^(Otrs ^(ConcRule (rule)*)))
+
   ;
 
 elementarystrategy options { backtrack = true; }:

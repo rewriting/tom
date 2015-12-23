@@ -14,17 +14,7 @@ public class Pretty {
     return name;
   }
 
-  public static String toString(ExpressionList l) {
-    StringBuffer sb = new StringBuffer();
-    %match(l) {
-      ExpressionList(_*,x,_*) -> {
-        sb.append(toString(`x)); 
-        sb.append("\n");
-      }
-    }
-    return sb.toString();
-  }
-
+  /*
   public static String toString(Expression e) {
     StringBuffer sb = new StringBuffer();
     %match(e) {
@@ -44,25 +34,11 @@ public class Pretty {
       Strat(s) -> {
         sb.append(`s);
       }
-     /* 
-      Signature(symbollist) -> {
-        sb.append("signature { ");
-        %match(symbollist) {
-          SymbolList(_*,Symbol(name,arity),end*) -> {
-            sb.append(`name + ":" + `arity);
-            if(!`end.isEmptySymbolList()) {
-              sb.append(", ");
-            }
-          }
-        }
-        sb.append(" }");
-      }
-      */
-
     }
     return sb.toString();
   }
-  
+  */
+
   public static String toString(Rule r) {
     %match(r) {
       Rule(lhs,rhs) -> {

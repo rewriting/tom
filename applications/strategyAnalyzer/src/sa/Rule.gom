@@ -14,7 +14,7 @@ GomTypeList = ConcGomType(GomType*)
 Field = UnamedField(FieldType:GomType)
 FieldList = ConcField(Field*)
 
-StratDecl = StratDecl(Name:String, ParamList:ParamList, Body:Expression)
+StratDecl = StratDecl(Name:String, ParamList:ParamList, Body:Strat)
 StratDeclList = ConcStratDecl(StratDecl*)
 Param = Param(Name:String)
 ParamList = ConcParam(Param*)
@@ -23,19 +23,16 @@ TypeEnvironment = EmptyEnvironment()
                 | PushEnvironment(Name:String, Type:GomType, Env:TypeEnvironment)
 
 Trs = | Otrs(list:RuleList)
-                | Trs(list:RuleList)
-                | EmptyTrs()
+      | Trs(list:RuleList)
+      | EmptyTrs()
 
-// Old AST
-Expression = 
-           | List(list:RuleList)
-           | Set(list:RuleList)
-           | Strat(strat:Strat)
+RuleList = ConcRule(Rule*)
+
+Rule = Rule(lhs:Term,rhs:Term)
+     | ConditionalRule(lhs:Term,rhs:Term,cond:Condition)
 
 Symbol = Symbol(name:String,arity:int)
 SymbolList = SymbolList(Symbol*)
-
-ExpressionList = ExpressionList(Expression*)
 
 Term = Appl(symbol:String,args:TermList)
      | Var(name:String)
@@ -51,17 +48,12 @@ Term = Appl(symbol:String,args:TermList)
 TermList = TermList(Term*)
 AddList = ConcAdd(Term*)
 
-Rule = Rule(lhs:Term,rhs:Term)
-     | ConditionalRule(lhs:Term,rhs:Term,cond:Condition)
-
 Condition = 
           | CondEquals(t1:Term,t2:Term)
           | CondAnd(c1:Condition,c2:Condition)
           | CondNot(c1:Condition)
           | CondTrue()
           | CondFalse()
-
-RuleList = ConcRule(Rule*)
 
 Strat = StratName(name:String)
       | StratRule(rule:Rule)
@@ -71,22 +63,19 @@ Strat = StratName(name:String)
       | StratFail()
       | StratAll(s:Strat)
       | StratOne(s:Strat)
-      | StratExp(e:Expression)
+      | StratTrs(trs:Trs)
       | StratMu(name:String, s:Strat)
       | StratAppl(name:String, args:StratList)
 
 StratList = ConcStrat(Strat*)
 
 module Rule:rules() {
-  StratExp(Strat(s)) -> s
   StratName("Identity") -> StratIdentity()
   StratName("Fail") -> StratFail()
 
   // CleanAdd
   Add(ConcAdd()) -> Empty()
   Add(ConcAdd(t)) -> t
-
-
 }
 
 /*
