@@ -7,9 +7,10 @@ functions
 T = numadd(T,T)
 
 trs
+[
   numadd( Add(Mul(c1,Bound(n1)),r1), Add(Mul(c2,Bound(n2)),r2) ) -> C(Z())
   numadd( Add(Mul(c1,Bound(n1)),r1), t ) -> C(Z())
   numadd( t, Add(Mul(c2,Bound(n2)),r2) ) -> C(Z())
   numadd( C(b1), C(b2) ) -> C(Z())
   numadd( a, b ) -> C(Z())
-
+]

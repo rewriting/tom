@@ -7,4 +7,23 @@ javac Main.java
 java Main
   <enter input term>
 
+SYNTAX OF A NS FILE:
 
+abstract syntax
+// list of operators
+// similar to Gom without slot-name
+Bool = true() | false() | not(Bool) | or(Bool,Bool)
+
+functions
+// list of defined symbols
+Bool = not(Bool) | or(Bool,Bool)
+
+trs
+[ // use [...] to define an OTRS, otherwise it is a TRS
+  not(true())    -> false(), // coma is optional
+  not(false())   -> true()
+  or(true(),x)   -> true()
+  or(x,true())   -> true()
+  or(false(),x)  -> x
+  or(x,false())  -> x
+]
