@@ -10,6 +10,7 @@ Tree = balance(Tree) | ins(Nat,Tree) | insAux(Nat,Tree,Cmp)
 Cmp = cmp(Nat,Nat)
 
 trs
+[
   balance(T(B(),T(R(),T(R(),a,x,b),y,c),z,d)) -> T(R(),T(B(),a,x,b),y,T(B(),c,z,d))
   balance(T(B(),T(R(),a,x,T(R(),b,y,c)),z,d)) -> T(R(),T(B(),a,x,b),y,T(B(),c,z,d))
   balance(T(B(),a,x,T(R(),T(R(),b,y,c),z,d))) -> T(R(),T(B(),a,x,b),y,T(B(),c,z,d))
@@ -27,4 +28,4 @@ trs
   cmp(S(x),Z()) -> gt()
   cmp(Z(),Z())  -> eq()
   cmp(S(x),S(y)) -> cmp(x,y)
-
+]

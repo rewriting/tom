@@ -11,7 +11,7 @@ Nat = plus(Nat,Nat)
 Bool = not(Bool) | or(Bool,Bool) | inf(Nat,Nat)
 
 trs
-
+[
   interp(Z(), Nil())                                             -> Nv(Z())
   interp(S(Z()), Cons(Nv(n),Nil()))                              -> Nv(S(n))
   interp(S(S(Z())), Cons(Nv(m),Cons(Nv(n),Nil())))               -> Nv(plus(m,n))
@@ -35,4 +35,4 @@ trs
   or(x,true())   -> true()
   or(false(),x)  -> x
   or(x,false())  -> x
-
+]

@@ -13,6 +13,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Type;
 
 public class Main {
+  %include { rule/Rule.tom }
   protected static Options options = new Options();
 
   public static void main(String[] args) {
@@ -104,9 +105,9 @@ public class Main {
         //for(String name:generatedSignature.getSymbols()) {
           //System.out.println("symbol: " + name + " function: " + generatedSignature.isFunction(name) + " internal: " + generatedSignature.isInternal(name));
         //}
-       
-        generatedRules = Trs.trsRule(generatedRules,generatedSignature);
-
+      
+        Trs otrs = RewriteSystem.trsRule(`Otrs(generatedRules),generatedSignature);
+        generatedRules = otrs.getlist();
         //for(Rule r:res.getCollectionConcRule()) {
         //  System.out.println(Pretty.toString(r));
         //}
@@ -117,10 +118,10 @@ public class Main {
       /*
        * Handle the TRS part of a specification
        */
-      RuleList trs = program.gettrs();
-      trs = Trs.transformNLOTRSintoLOTRS(trs,generatedSignature);
-      trs = Trs.trsRule(trs,generatedSignature);
-      for(Rule r:trs.getCollectionConcRule()) {
+      Trs trs = program.gettrs();
+      trs = RewriteSystem.transformNLOTRSintoLOTRS(trs,generatedSignature);
+      trs = RewriteSystem.trsRule(trs,generatedSignature);
+      for(Rule r:trs.getlist().getCollectionConcRule()) {
         // System.out.println(Pretty.toString(r));
         generatedRules = ((sa.rule.types.rulelist.ConcRule)generatedRules).append(r);
       }
