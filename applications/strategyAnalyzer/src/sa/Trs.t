@@ -77,11 +77,13 @@ public class Trs {
     RuleCompiler ruleCompiler = new RuleCompiler(`eSig, `eSig); 
     res = ruleCompiler.expandAt(res);
     assert !Tools.containsAt(res) : "check contain no AT";
-    //if(Main.options.verbose) {
-    //  for(Rule rule:`res.getCollectionConcRule()) {
-    //    System.out.println(Pretty.toString(rule));
-    //  }
-    //}
+
+    if(Main.options.verbose) {
+      for(Rule rule:`res.getCollectionConcRule()) {
+        System.out.println(Pretty.toString(rule));
+      }
+      System.out.println("size = " + `res.length());
+    }
 
     // minimize the set of rules
     long startChrono = System.currentTimeMillis();
@@ -148,6 +150,16 @@ public class Trs {
     t = simplifySubsumtion(t);
     if(Main.options.verbose) {
       System.out.println("REMOVE SUBSUMTION = " + Pretty.toString(t));
+
+      //%match(t) {
+      //  Add(tl) -> {
+      //    for(Term p:`tl.getCollectionConcAdd()) {
+      //      System.out.println(Pretty.toString(p));
+      //    }
+      //    System.out.println("size = " + `tl.length());
+      //  }
+     // }
+
     }
     timeSubsumtion += (System.currentTimeMillis()-startChrono);
 
