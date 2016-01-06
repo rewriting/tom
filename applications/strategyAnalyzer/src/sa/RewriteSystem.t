@@ -655,9 +655,9 @@ public class RewriteSystem {
 
   // Transform a term which contains Add into a set of plain terms
   private static void expandAddAux(HashSet<Term> c, Term subject) {
-    HashSet<Term> todo = new HashSet<Term>();
+    HashSet<Term> todo = new HashSet<Term>(); // terms to expand
     HashSet<Term> todo2 = new HashSet<Term>();
-    HashSet<Term> tmpC = new HashSet<Term>();
+    HashSet<Term> tmpC = new HashSet<Term>(); // working memory when expanding a single term
     todo.add(subject);
     while(todo.size() > 0) {
       todo2.clear();
@@ -670,21 +670,26 @@ public class RewriteSystem {
         } catch(VisitFailure e) {
         }
         if(tmpC.isEmpty()) {
+          // t is a plain term
+          t = Tools.normalizeVariable(t);
           c.add(t);
         } else {
           for(Term e:tmpC) {
             if(isPlainTerm(e)) {
+              e = Tools.normalizeVariable(e);
               c.add(e);
             } else {
+              // todo list for the next round
               todo2.add(e);
             }
           }
         }
       }
+      // all terms of toto have been expanded
       // swap todo, todo2
       HashSet<Term> tmp = todo;
-      todo = todo2;
-      todo2 = tmp;
+      todo = todo2; // new terms which have to be expanded
+      todo2 = tmp;  // reuse toto set, will be cleared next round
       //System.out.println("size(c) = " + c.size());
     }
   }

@@ -31,6 +31,10 @@ public class Tools {
     return name + "_" + (phiNumber++);
   }
 
+  public static boolean isGeneratedVariableName(String name) {
+    return name.contains("_");
+  }
+
   /**
    * Given symbolName and operatorName
    * returns symbolName-operatorName
@@ -513,7 +517,7 @@ public class Tools {
   }
 
   // search all Var and store their values
-  %strategy CollectVars(bag:HashMultiset) extends Identity() {
+  %strategy CollectVars(bag:Collection) extends Identity() {
     visit Term {
       Var(name)-> {
         bag.add(`name);
@@ -546,6 +550,42 @@ public class Tools {
       res = `ConcRule(r,res*);
     }
     return res.reverse();
+  }
+
+  /*
+   * rename variables into x1,...,xn (using a topdown traversal)
+   */
+  public static Term normalizeVariable(Term subject) {
+    ArrayList<String> list = new ArrayList<String>();
+    Map<String,String> mapToNewName = new HashMap<String,String>();
+    int cpt = 0;
+    try {
+      `TopDown(CollectVars(list)).visitLight(subject);
+      for(String name:list) {
+        
+        if(mapToNewName.get(name) == null) {
+          String newName = "x_" + (cpt++);
+          mapToNewName.put(name,newName);
+        }
+      }
+      subject = `TopDown(RenameVars(mapToNewName)).visitLight(subject);
+    } catch(VisitFailure e) {
+      throw new RuntimeException("Should not be there");
+    }
+    return subject;
+  }
+  
+  %strategy RenameVars(map:Map) extends Identity() {
+    visit Term {
+      Var(n)  -> {
+        if(isGeneratedVariableName(`n)) {
+          String newName = (String) map.get(`n);
+          if(newName != null) {
+            return `Var(newName);
+          }
+        }
+      }
+    }
   }
 
 }
