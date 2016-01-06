@@ -477,6 +477,24 @@ public class Tools {
     }
   }
 
+  public static boolean containsSub(tom.library.sl.Visitable t) {
+    try {
+      `TopDown(ContainsSub()).visitLight(t);
+      return false;
+    } catch(VisitFailure e) {
+      return true;
+    }
+  }
+
+  %strategy ContainsSub() extends Identity() {
+    visit Term {
+      t@Sub(_,_) -> {
+        `Fail().visitLight(`t);
+      }
+
+    }
+  }
+
   /**
    * Returns a Map which associates to each variable name an integer
    * representing the number of occurences of the variable in the

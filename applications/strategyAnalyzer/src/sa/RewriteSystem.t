@@ -339,6 +339,7 @@ public class RewriteSystem {
       
       // t - (a1 + ... + an) -> (t - a) - (a2 + ... + an))
       s@Sub(t, Add(ConcAdd(head,tail*))) -> {
+        assert !Tools.containsSub(`head) : `head;
         Term res = `Sub(Sub(t,head), Add(ConcAdd(tail*)));
         debug("sub distrib1",`s,res);
         return res;
@@ -366,6 +367,7 @@ public class RewriteSystem {
         } else {
           // replace X \ t by X@((a+b+g(_)+f(_,_)) \ t)
           // this version is as efficient as the previous one, but simpler
+          assert !Tools.containsSub(`t) : `t;
           AddList al = `ConcAdd();
           GomType codomain = eSig.getCodomain(`f); // use codomain to generate well typed terms
           for(String name: eSig.getConstructors(codomain)) {
@@ -382,7 +384,7 @@ public class RewriteSystem {
       }
 
       // empty - f(t1,...,tn) -> empty
-      s@Sub(Empty(),Appl(f,tl)) -> {
+      s@Sub(Empty(),u@Appl(f,tl)) -> {
         Term res = `Empty();
         debug("empty - f(...) -> empty",`s,res);
         return res;
@@ -390,13 +392,17 @@ public class RewriteSystem {
 
       // (a1 + ... + an) - t@f(t1,...,tn) -> (a1 - t) + ( (a2 + ... + an) - t )
       s@Sub(Add(ConcAdd(head,tail*)), t@Appl(f,tl)) -> {
+        assert !Tools.containsSub(`head) : `head;
+        assert !Tools.containsSub(`t) : `t;
         Term res = `Add(ConcAdd(Sub(head,t), Sub(Add(ConcAdd(tail*)),t)));
         debug("sub distrib2",`s,res);
         return res;
       }
 
       // t@f(t1,...,tn) - g(t1',...,tm') -> t
-      s@Sub(t@Appl(f,tl1), Appl(g, tl2)) && f!=g -> {
+      s@Sub(t@Appl(f,tl1), u@Appl(g, tl2)) && f!=g -> {
+        assert !Tools.containsSub(`t) : `t;
+        assert !Tools.containsSub(`u) : `u;
         Term res = `t;
         debug("sub elim1",`s,res);
         return res;
@@ -404,6 +410,8 @@ public class RewriteSystem {
 
       // f(t1,...,tn) - f(t1',...,tn') -> f(t1-t1',t2,...,tn) + f(t1, t2-t2',...,tn) + ... + f(t1,...,tn-tn')
       s@Sub(t1@Appl(f,tl1), t2@Appl(f, tl2)) -> {
+        assert !Tools.containsSub(`t1):`t1;
+        assert !Tools.containsSub(`t2):`t2;
         Term res = `sub(t1,t2);
         debug("sub1",`s,res);
         return res;
@@ -411,6 +419,8 @@ public class RewriteSystem {
 
       // x@t1 - t2 -> x@(t1 - t2)
       s@Sub(At(x,t1), t2) -> {
+        assert !Tools.containsSub(`t1):`t1;
+        assert !Tools.containsSub(`t2):`t2;
         Term res = `At(x,Sub(t1,t2));
         debug("at",`s,res);
         return res;
@@ -418,6 +428,8 @@ public class RewriteSystem {
 
       // t1 - x@t2 -> t1 - t2
       s@Sub(t1, At(x,t2)) -> {
+        assert !Tools.containsSub(`t1):`t1;
+        assert !Tools.containsSub(`t2):`t2;
         Term res = `Sub(t1,t2);
         debug("at2",`s,res);
         return res;
