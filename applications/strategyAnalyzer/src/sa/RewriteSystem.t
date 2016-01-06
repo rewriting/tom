@@ -226,6 +226,7 @@ public class RewriteSystem {
     visit Term {
       // f(t1,...,empty,...,tn) -> empty
       s@Appl(f,TermList(_*,Empty(),_*)) -> {
+        assert !Tools.containsSub(`s) : `s;
         Term res = `Empty();
         debug("propagate empty",`s,res);
         return res;
@@ -234,6 +235,7 @@ public class RewriteSystem {
       // HC: check where is this used; what happens if x in the RHS?
       // At(_,empty) -> empty
       s@At(_,Empty()) -> {
+        assert !Tools.containsSub(`s) : `s;
         Term res = `Empty();
         debug("_@empty",`s,res);
         return res;
@@ -264,6 +266,7 @@ public class RewriteSystem {
 
       // t + empty -> t
       s@Add(ConcAdd(C1*,Empty(),C2*)) -> {
+        assert !Tools.containsSub(`s) : `s;
         Term res = `Add(ConcAdd(C1*,C2*));
         debug("elim empty",`s,res);
         return res;
@@ -325,6 +328,7 @@ public class RewriteSystem {
 
       // t - x -> empty
       s@Sub(t, Var[]) -> {
+        assert !Tools.containsSub(`t) : `t;
         Term res = `Empty();
         debug("t - x -> empty",`s,res);
         return res;
@@ -332,6 +336,7 @@ public class RewriteSystem {
 
       // t - empty -> t
       s@Sub(t, Empty()) -> {
+        assert !Tools.containsSub(`t) : `t;
         Term res = `t;
         debug("t - empty -> t",`s,res);
         return res;
@@ -339,6 +344,7 @@ public class RewriteSystem {
       
       // t - (a1 + ... + an) -> (t - a) - (a2 + ... + an))
       s@Sub(t, Add(ConcAdd(head,tail*))) -> {
+        assert !Tools.containsSub(`t) : `t;
         assert !Tools.containsSub(`head) : `head;
         Term res = `Sub(Sub(t,head), Add(ConcAdd(tail*)));
         debug("sub distrib1",`s,res);
@@ -385,6 +391,7 @@ public class RewriteSystem {
 
       // empty - f(t1,...,tn) -> empty
       s@Sub(Empty(),u@Appl(f,tl)) -> {
+        assert !Tools.containsSub(`u) : `u;
         Term res = `Empty();
         debug("empty - f(...) -> empty",`s,res);
         return res;
