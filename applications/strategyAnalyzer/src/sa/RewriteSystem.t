@@ -131,31 +131,33 @@ public class RewriteSystem {
       //Strategy S1 = `ChoiceId(CleanAdd(),PropagateEmpty(),SimplifySub(eSig),DistributeAdd());
       Strategy S1 = `ChoiceId(CleanAdd(),PropagateEmpty(),SimplifySub(eSig));
       t = `InnermostId(S1).visitLight(t);
+      timeSubElim += (System.currentTimeMillis()-startChrono);
+      
       if(Main.options.verbose) {
         System.out.println("NO SUB = " + Pretty.toString(t));
       }
-      timeSubElim += (System.currentTimeMillis()-startChrono);
 
       startChrono = System.currentTimeMillis();
       Strategy S2 = `ChoiceId(CleanAdd(),PropagateEmpty(), VarAdd(), FactorizeAdd());
       t = `InnermostId(S2).visitLight(t); // can be replaced by DistributeAdd() in S1
+      timeAddElim += (System.currentTimeMillis()-startChrono);
       if(Main.options.verbose) {
         System.out.println("NO ADD = " + Pretty.toString(t));
       }
-      timeAddElim += (System.currentTimeMillis()-startChrono);
     } catch(VisitFailure e) {
       System.out.println("failure on: " + t);
     }
 
     startChrono = System.currentTimeMillis();
     t = expandAdd(t); // can be replaced by DistributeAdd() in S1
+    timeExpand += (System.currentTimeMillis()-startChrono);
     if(Main.options.verbose) {
       System.out.println("EXPAND = " + Pretty.toString(t));
     }
-    timeExpand += (System.currentTimeMillis()-startChrono);
 
     startChrono = System.currentTimeMillis();
     t = simplifySubsumtion(t);
+    timeSubsumtion += (System.currentTimeMillis()-startChrono);
     if(Main.options.verbose) {
       System.out.println("REMOVE SUBSUMTION = " + Pretty.toString(t));
 
@@ -169,7 +171,6 @@ public class RewriteSystem {
      // }
 
     }
-    timeSubsumtion += (System.currentTimeMillis()-startChrono);
 
     assert onlyTopLevelAdd(t) : "check only top-level Add";
     return t;
