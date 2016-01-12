@@ -32,6 +32,7 @@ public class Compiler {
   %include { sl.tom }
   %include { java/util/types/Map.tom }
   %include { java/util/types/List.tom }
+  %include { java/util/types/Set.tom }
 
   %typeterm Compiler { implement { Compiler }}
   %typeterm HashMultiset { implement { HashMultiset }}
@@ -46,8 +47,8 @@ public class Compiler {
   // The generated (concrete) signature
   private Signature generatedSignature;
 
-  // strategy name -> strategy compiled into a TRS
-  private Map<String,RuleList> generatedTRSs;
+  // names of strategies already compiled
+  private Set<String> generatedStrategy;
 
   private Map<Strat,List<Rule>> storedTRSs;
   private Map<Strat,String> strategySymbols;
@@ -58,7 +59,7 @@ public class Compiler {
    * 
    */
   private Compiler() {
-    this.generatedTRSs = new HashMap<String,RuleList>();
+    this.generatedStrategy = new HashSet<String>();
     this.storedTRSs = new HashMap<Strat,List<Rule>>();;
     this.strategySymbols = new HashMap<Strat,String>();;
   }
@@ -79,7 +80,7 @@ public class Compiler {
    * @return the names of the compiled strategies
    */
   public List<String> getStrategyNames() {
-    return new ArrayList(generatedTRSs.keySet());
+    return new ArrayList(generatedStrategy);
   }
 
   public void setProgram(Program program) throws TypeMismatchException {
@@ -104,40 +105,36 @@ public class Compiler {
    * @param strategyName the name of the strategy to compile
    * @return the TRS for strategyName 
    */
-  public RuleList compileStrategy(String strategyName) {
-    Expression expand = this.expandStrategy(strategyName);
+  public RuleList compileStrategy(Set<String> strategyNames) {
+    List<Rule> mutableList = new ArrayList<Rule>();
 
-    Strat strategy=null;
-    %match(expand) {
-      Strat(strat) -> { strategy = `strat; }
-    }
+    for(String strategyName: strategyNames) {
+      Strat strategy = this.expandStrategy(strategyName);
+      assert strategy != null;
 
-    // if not generated yet
-    if(generatedTRSs.get(strategyName) == null) {
-      
-      String strategySymbol = "NONE";
-      List<Rule> mutableList = new ArrayList<Rule>();
-      strategySymbol = this.compileStrat(strategy,mutableList);
-      RuleList ruleList = Tools.fromListOfRule(mutableList);
-
-      if(Main.options.metalevel) {
-        if(!Tools.isLhsLinear(ruleList) || Tools.containsEqAnd(ruleList)) {
-          ruleList = generateEquality(ruleList);
-        }
-        ruleList = generateTriggerRule(strategyName,strategySymbol,ruleList);
-        // generate encode/decode only for Tom 
-        if(Main.options.classname != null){
-          ruleList = generateEncodeDecode(ruleList);
-        }
+      if(!generatedStrategy.contains(strategyName)) {
+        // if not generated yet
+        String strategySymbol = this.compileStrat(strategy,mutableList);
+        generateTriggerRule(strategyName,strategySymbol,mutableList);
+        generatedStrategy.add(strategyName);
       } else {
-        if(!Tools.isLhsLinear(ruleList) || Tools.containsEqAnd(ruleList)) {
-          ruleList = generateEquality(ruleList);
-        }
-        ruleList = generateTriggerRule(strategyName,strategySymbol,ruleList);
+        // do nothing
       }
-      generatedTRSs.put(strategyName,ruleList);
     }
-    return generatedTRSs.get(strategyName);
+
+    RuleList ruleList = Tools.fromListOfRule(mutableList);
+
+    if(!Tools.isLhsLinear(ruleList) || Tools.containsEqAnd(ruleList)) {
+      ruleList = generateEquality(ruleList);
+    }
+
+    if(Main.options.metalevel) {
+      // generate encode/decode only for Tom 
+      if(Main.options.classname != null) {
+        ruleList = generateEncodeDecode(ruleList);
+      }
+    }
+    return ruleList;
   }
 
   /*
@@ -145,9 +142,9 @@ public class Compiler {
    * and return an expanded version of the body 
    * The resulting strategy is self-contained
    */
-  public Expression expandStrategy(String name) {
-    StratDecl sd = Tools.getStratDecl(name, this.program);
-    Expression res = null;
+  public Strat expandStrategy(String strategyName) {
+    StratDecl sd = Tools.getStratDecl(strategyName, this.program);
+    Strat res = `StratIdentity(); // identity if strategyName does not exist
 
     try {
       %match(sd) {
@@ -174,8 +171,8 @@ public class Compiler {
         StratDecl sd = Tools.getStratDecl(`name, compiler.program);
         Map map = new HashMap();
         sd = `TopDown(FreshStratDecl(map)).visitLight(sd);
-        Expression si = compiler.instantiateStrategy(sd, `args);
-        return `StratExp(si);
+        Strat si = compiler.instantiateStrategy(sd, `args);
+        return si;
       }
     }
   }
@@ -213,14 +210,14 @@ public class Compiler {
    * Replace the parameters by their effective values (args) in body
    * i.e. apply the substitution [param_1 -> arg_1, ..., param_n -> arg_n]
    */
-  public Expression instantiateStrategy(StratDecl sd, StratList args) {
-    Expression res = null;
+  public Strat instantiateStrategy(StratDecl sd, StratList args) {
+    Strat res = null;
 
     try {
       %match(sd) {
         StratDecl(_, params, body) -> {
           if(`params.length() == args.length()) {
-            res = `(TopDown(ReplaceParameters(params,args))).visit(`body);
+            res = `TopDown(ReplaceParameters(params,args)).visit(`body);
           }
         }
       }
@@ -276,16 +273,16 @@ public class Compiler {
      * move into compileStrategy ?
      */
     RuleList rList = ruleList;
-//     if(Main.options.withAP == false) {
-//       RuleCompiler ruleCompiler = new RuleCompiler(eSig,gSig);
-//       rList = ruleCompiler.expandGeneralAntiPatterns(rList);
+    if(Main.options.withAP == false) {
+      RuleCompiler ruleCompiler = new RuleCompiler(eSig,gSig);
+      rList = ruleCompiler.expandGeneralAntiPatterns(rList,null);
       
-//       for(Rule rule: rList.getCollectionConcRule()) {
-//         System.out.println("EXPANDED AP RULE: " + Pretty.toString(rule) );
-//       }
-//     }
+      for(Rule rule: rList.getCollectionConcRule()) {
+        System.out.println("EXPANDED AP RULE: " + Pretty.toString(rule) );
+      }
+    }
     
-//     ruleList = rList;
+    ruleList = rList;
 
     /*
      * lhs -> rhs becomes
@@ -505,6 +502,7 @@ public class Compiler {
    * @return the symbol to be used for the compiled strategy
    */
   private boolean generated_aux_functions = false;
+
   private String compileStrat(Strat strat, List<Rule> rules) {
     Signature gSig = getGeneratedSignature();
     Signature eSig = getExtractedSignature();
@@ -517,7 +515,7 @@ public class Compiler {
     String strategySymbol = this.strategySymbols.get(strat);
     if(strategySymbol != null) {
       generatedRules = this.storedTRSs.get(strat);
-      System.out.println("ALREADY EXISTING: "+strat);
+      //System.out.println("ALREADY EXISTING: "+strat);
     } else {
       generatedRules = new ArrayList<Rule>();
       Term X = Var(Tools.getName("X"));
@@ -532,17 +530,17 @@ public class Compiler {
 
       %match(strat) {
         // TODO: handle Set without an order
-        StratExp(Set(_)) -> {
+        StratTrs(Trs(_)) -> {
           throw new RuntimeException("Not Yet Implemented");
         }
 
-        StratExp(List(rulelist)) -> {
+        StratTrs(Otrs(rulelist)) -> {
 
           //if(Main.options.pattern) {
           //  System.out.println("pattern: " + `rulelist);
           //  RuleList lin = this.transformNLOTRSintoLOTRS(`rulelist, gSig);
           //  System.out.println("linear otrs: " + lin);
-          //  RuleList res = Pattern.trsRule(lin,eSig);
+          //  RuleList res = Trs.trsRule(lin,eSig);
           //}
 
           strategySymbol = this.compileRuleList(`rulelist,generatedRules,null);
@@ -1216,7 +1214,7 @@ public class Compiler {
    * generates a rule of the form name(X) -> symbol(X)
    * name can be then see as an alias for symbol in terms of reduction 
    **/
-  private RuleList generateTriggerRule(String name, String symbol, RuleList generatedRules) {
+  private void generateTriggerRule(String name, String symbol, List<Rule> generatedRules) {
     Signature gSig = getGeneratedSignature();
     GomType codomain = gSig.getCodomain(symbol);
     GomTypeList domain = gSig.getDomain(symbol);
@@ -1227,9 +1225,26 @@ public class Compiler {
      * X matches anything but morally matches only symbols from the extracted signature
      * name(X) -> symbol(X)
      */
-    return `ConcRule(generatedRules*, Rule(_appl(name,X), _appl(symbol,X)));
+    generatedRules.add(`Rule(_appl(name,X), _appl(symbol,X)));
   }
 
+  %strategy CollectConstantStrategyName(c:Set) extends Identity() {
+    visit StratDecl {
+      StratDecl[Name=name, ParamList=ConcParam()] -> {
+        c.add(`name);
+      }
+    }
+  }
+
+  public Set<String> collectConstantStrategyName(Program program) {
+    Set<String> res = new HashSet<String>();
+    try {
+      `TopDown(CollectConstantStrategyName(res)).visitLight(program);
+    } catch(VisitFailure e) {
+      System.out.println("failure on: " + program);
+    }
+    return res;
+  }
 
 }
 

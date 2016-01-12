@@ -3,9 +3,12 @@
 abstract syntax
 T = a()
   | b()
+  | c()
   | g(T)
   | f(T,T)
   | h(T,T,T)
+
+U = u()
 
 strategies
 
@@ -25,6 +28,9 @@ innermost(s) = obu(s)
 // mainStrat() = r1();r1()
 
 mainStrat() = r3()
+
+rule1() = r1()
+in1() = innermost(r1())
 
 // mainStrat() = r3()
 

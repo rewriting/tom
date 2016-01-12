@@ -13,6 +13,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Type;
 
 public class Main {
+  %include { rule/Rule.tom }
   protected static Options options = new Options();
 
   public static void main(String[] args) {
@@ -57,13 +58,18 @@ public class Main {
       Tree tree = (Tree) ruleParser.program().getTree();
       Program program = (Program) RuleAdaptor.getTerm(tree);
 
+      /*
+       * Compilation of the strategy section
+       */
       Compiler compiler = Compiler.getInstance();
       compiler.setProgram(program);
 
       // Transforms the strategy into a rewrite system
       //   get the TRS for the strategy named strategyName
-      String strategyName="mainStrat";
-      RuleList generatedRules = compiler.compileStrategy(strategyName);
+      Set<String> strategyNames = compiler.collectConstantStrategyName(program);
+      strategyNames.add("mainStrat");
+
+      RuleList generatedRules = compiler.compileStrategy(strategyNames);
       Signature extractedSignature = compiler.getExtractedSignature();
       Signature generatedSignature = compiler.getGeneratedSignature();
 
@@ -87,9 +93,11 @@ public class Main {
         typeCompiler.typeRules(generatedRules);
         generatedRules = typeCompiler.getGeneratedRules();
         generatedSignature = typeCompiler.getTypedSignature();
-
       }
 
+      /*
+       * Post treatment
+       */
       if(Main.options.pattern && Main.options.ordered && Main.options.withType) {
         System.out.println("after compilation");
         System.out.println("generatedRules = " + Pretty.toString(generatedRules));
@@ -97,9 +105,9 @@ public class Main {
         //for(String name:generatedSignature.getSymbols()) {
           //System.out.println("symbol: " + name + " function: " + generatedSignature.isFunction(name) + " internal: " + generatedSignature.isInternal(name));
         //}
-       
-        generatedRules = Pattern.trsRule(generatedRules,generatedSignature);
-
+      
+        Trs otrs = RewriteSystem.trsRule(`Otrs(generatedRules),generatedSignature);
+        generatedRules = otrs.getlist();
         //for(Rule r:res.getCollectionConcRule()) {
         //  System.out.println(Pretty.toString(r));
         //}
@@ -110,15 +118,18 @@ public class Main {
       /*
        * Handle the TRS part of a specification
        */
-      RuleList trs = program.gettrs();
-      trs = Pattern.transformNLOTRSintoLOTRS(trs,generatedSignature);
-      trs = Pattern.trsRule(trs,generatedSignature);
-      for(Rule r:trs.getCollectionConcRule()) {
+      Trs trs = program.gettrs();
+      trs = RewriteSystem.transformNLOTRSintoLOTRS(trs,generatedSignature);
+      trs = RewriteSystem.trsRule(trs,generatedSignature);
+      for(Rule r:trs.getlist().getCollectionConcRule()) {
         // System.out.println(Pretty.toString(r));
         generatedRules = ((sa.rule.types.rulelist.ConcRule)generatedRules).append(r);
       }
 
 
+      /*
+       * Generate output
+       */
       PrintStream outputfile = System.out;
       if(options.out != null) {
         if(options.directory != null) {
@@ -137,7 +148,7 @@ public class Main {
       }
 
       if(options.classname != null) {
-        tomoutputfile.println( Pretty.generateTom(strategyName, generatedRules, extractedSignature, generatedSignature, options.classname, options.withType) );
+        tomoutputfile.println( Pretty.generateTom(strategyNames, generatedRules, extractedSignature, generatedSignature) );
       } 
 
       if(options.aprove) {

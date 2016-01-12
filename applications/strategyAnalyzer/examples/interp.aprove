@@ -1,0 +1,27 @@
+structure boolean
+	T : boolean
+	F : boolean
+
+structure nat
+	Z : nat
+	S : nat -> nat
+
+structure val
+  Nv : nat -> val
+  Bv : boolean -> val
+  Undef : val
+
+structure list
+	Nil : list
+	Cons : val, list -> list
+
+function interp: nat, list -> val
+  interp(Z, Nil)                                             = Undef
+  interp(S(Z), Cons(Nv(n),Nil))                              = Undef
+  interp(S(S(Z)), Cons(Nv(m),Cons(Nv(n),Nil)))               = Undef
+  interp(S(S(S(Z))), Nil)                                    = Undef
+  interp(S(S(S(S(Z)))), Cons(Bv(b),Nil))                     = Undef
+  interp(S(S(S(S(S(Z))))), Cons(Bv(b1),Cons(Bv(b2),Nil)))    = Undef
+  interp(S(S(S(S(S(S(Z)))))), Cons(Nv(n1),Cons(Nv(n2),Nil))) = Undef
+  interp(x,y)                                                = Undef
+

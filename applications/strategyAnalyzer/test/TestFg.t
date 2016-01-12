@@ -51,5 +51,22 @@ public class TestFg {
                  `f(g(a())), Mainfg.mainStrat(`g(f(a()))));
   }
   
+  @Test
+  public void test2() {
+    assertEquals("f(g(a())) = innermost1(g(f(a)))",
+                 `f(g(a())), Mainfg.in1(`g(f(a()))));
+  }
+
+  @Test
+  public void test3() {
+    assertEquals("f(g(a())) = innermost2(g(f(a)))",
+                 `f(g(a())), Mainfg.in2(`g(f(a()))));
+  }
+
+  @Test
+  public void test4() {
+    assertEquals("f(g(a())) = bupr1(g(f(a)))",
+                 `f(g(a())), Mainfg.bupr1(`g(f(a()))));
+  }
 
 }

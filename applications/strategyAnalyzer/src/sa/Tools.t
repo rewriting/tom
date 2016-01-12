@@ -31,6 +31,10 @@ public class Tools {
     return name + "_" + (phiNumber++);
   }
 
+  public static boolean isGeneratedVariableName(String name) {
+    return name.contains("_");
+  }
+
   /**
    * Given symbolName and operatorName
    * returns symbolName-operatorName
@@ -357,6 +361,29 @@ public class Tools {
 
   }
 
+  /*
+   * Replace a named variable by an underscore
+   */
+  %strategy RemoveVar() extends Identity() {
+    visit Term {
+      Var[] -> {
+        return `Var("_");
+      }
+
+      At(_,t) -> {
+        return `t;
+      }
+    }
+  }
+
+  public static tom.library.sl.Visitable removeVar(tom.library.sl.Visitable t) {
+    try {
+      return `TopDown(RemoveVar()).visitLight(t);
+    } catch(VisitFailure e) {
+      throw new RuntimeException("should not be there");
+    }
+  }
+
   public static boolean isLinear(Term t) {
     HashMultiset<String> bag = collectVariableMultiplicity(t);
     for(String name:bag.elementSet()) {
@@ -371,6 +398,16 @@ public class Tools {
     boolean res = true;
     for(Rule r: rules.getCollectionConcRule()) {
       res &= isLinear(r.getlhs());
+    }
+    return res;
+  }
+  
+  public static boolean isLhsLinear(Trs trs) {
+    boolean res = true;
+    %match(trs) {
+      (Trs|Otrs)(list) -> {
+        res = isLhsLinear(`list);
+      }
     }
     return res;
   }
@@ -444,6 +481,24 @@ public class Tools {
     }
   }
 
+  public static boolean containsSub(tom.library.sl.Visitable t) {
+    try {
+      `TopDown(ContainsSub()).visitLight(t);
+      return false;
+    } catch(VisitFailure e) {
+      return true;
+    }
+  }
+
+  %strategy ContainsSub() extends Identity() {
+    visit Term {
+      t@Sub(_,_) -> {
+        `Fail().visitLight(`t);
+      }
+
+    }
+  }
+
   /**
    * Returns a Map which associates to each variable name an integer
    * representing the number of occurences of the variable in the
@@ -462,7 +517,7 @@ public class Tools {
   }
 
   // search all Var and store their values
-  %strategy CollectVars(bag:HashMultiset) extends Identity() {
+  %strategy CollectVars(bag:Collection) extends Identity() {
     visit Term {
       Var(name)-> {
         bag.add(`name);
@@ -495,6 +550,42 @@ public class Tools {
       res = `ConcRule(r,res*);
     }
     return res.reverse();
+  }
+
+  /*
+   * rename variables into x1,...,xn (using a topdown traversal)
+   */
+  public static Term normalizeVariable(Term subject) {
+    ArrayList<String> list = new ArrayList<String>();
+    Map<String,String> mapToNewName = new HashMap<String,String>();
+    int cpt = 0;
+    try {
+      `TopDown(CollectVars(list)).visitLight(subject);
+      for(String name:list) {
+        
+        if(mapToNewName.get(name) == null) {
+          String newName = "x_" + (cpt++);
+          mapToNewName.put(name,newName);
+        }
+      }
+      subject = `TopDown(RenameVars(mapToNewName)).visitLight(subject);
+    } catch(VisitFailure e) {
+      throw new RuntimeException("Should not be there");
+    }
+    return subject;
+  }
+  
+  %strategy RenameVars(map:Map) extends Identity() {
+    visit Term {
+      Var(n)  -> {
+        if(isGeneratedVariableName(`n)) {
+          String newName = (String) map.get(`n);
+          if(newName != null) {
+            return `Var(newName);
+          }
+        }
+      }
+    }
   }
 
 }

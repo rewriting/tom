@@ -11,6 +11,12 @@ public class Options {
 
   @Option(name="-h",usage="print usage")
     public boolean h;
+  
+  @Option(name="-verbose",usage="verbose")
+    public boolean verbose = false;
+
+  @Option(name="-debug",usage="debug")
+    public boolean debug = false;
 
   @Option(name="-withAP",usage="generate rules with anti-patterns")
     public boolean withAP = false;

@@ -1,0 +1,19 @@
+structure color
+	R : color
+	B : color
+
+structure nat
+	Z : nat
+	S : nat -> nat
+
+structure tree
+  E : tree
+  T : color,tree,nat,tree -> tree
+
+function balance: tree -> tree
+  balance(T(B,T(R,T(R,a,x,b),y,c),z,d)) = T(R,T(B,a,x,b),y,T(B,c,z,d))
+  balance(T(B,T(R,a,x,T(R,b,y,c)),z,d)) = T(R,T(B,a,x,b),y,T(B,c,z,d))
+  balance(T(B,a,x,T(R,T(R,b,y,c),z,d))) = T(R,T(B,a,x,b),y,T(B,c,z,d))
+  balance(T(B,a,x,T(R,b,y,T(R,c,z,d)))) = T(R,T(B,a,x,b),y,T(B,c,z,d))
+  balance(z) = z
+

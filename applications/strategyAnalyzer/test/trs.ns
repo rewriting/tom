@@ -1,0 +1,14 @@
+abstract syntax
+T = a()
+  | b()
+  | g(T)
+  | f(T)
+
+functions
+T = f(T)
+
+trs
+  f(a()) -> b()
+  f(g(a())) -> a()
+  f(x) -> x
+

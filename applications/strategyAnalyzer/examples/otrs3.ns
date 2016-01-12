@@ -1,0 +1,15 @@
+
+abstract syntax
+T = a()
+	| b()
+//	| g(T)
+  | f(T,T)
+
+//functions
+//T = f(T,T)
+
+trs
+[
+  f(a(),b()) ->  a()
+  !f(a(),b()) -> b()
+]
