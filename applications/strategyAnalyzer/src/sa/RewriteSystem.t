@@ -115,6 +115,22 @@ public class RewriteSystem {
     }
   }
 
+   /*
+    * Transform a term which contains Sub/Add into a term without Sub
+    */
+  private static Term simplifySub(Term t, Signature eSig) {
+    long startChrono = System.currentTimeMillis();
+    try {
+      Strategy S1 = `ChoiceId(CleanAdd(),PropagateEmpty(),SimplifySub(eSig),DistributeAdd());
+      //Strategy S1 = `ChoiceId(CleanAdd(),PropagateEmpty(),SimplifySub(eSig));
+      t = `InnermostId(S1).visitLight(t);
+      timeSubElim += (System.currentTimeMillis()-startChrono);
+    } catch(VisitFailure e) {
+      System.out.println("failure on: " + t);
+    }
+    return t;
+  }
+
   /*
    * Transform a term which contains Sub/Add into a list (top-level Add) of (linear) terms without Sub/Add
    * input may be non linear: X \ X for instance
@@ -128,18 +144,14 @@ public class RewriteSystem {
       // pre-treatment: remove AP
       t = `InnermostId(ExpandAP()).visitLight(t);
 
-      //Strategy S1 = `ChoiceId(CleanAdd(),PropagateEmpty(),SimplifySub(eSig),DistributeAdd());
-      Strategy S1 = `ChoiceId(CleanAdd(),PropagateEmpty(),SimplifySub(eSig));
-      t = `InnermostId(S1).visitLight(t);
-      timeSubElim += (System.currentTimeMillis()-startChrono);
-      
+      t = simplifySub(t,eSig);
       if(Main.options.verbose) {
         System.out.println("NO SUB = " + Pretty.toString(t));
       }
 
       startChrono = System.currentTimeMillis();
       Strategy S2 = `ChoiceId(CleanAdd(),PropagateEmpty(), VarAdd(), FactorizeAdd());
-      t = `InnermostId(S2).visitLight(t); // can be replaced by DistributeAdd() in S1
+      //t = `InnermostId(S2).visitLight(t); // can be replaced by DistributeAdd() in S1
       timeAddElim += (System.currentTimeMillis()-startChrono);
       if(Main.options.verbose) {
         System.out.println("NO ADD = " + Pretty.toString(t));
@@ -149,7 +161,8 @@ public class RewriteSystem {
     }
 
     startChrono = System.currentTimeMillis();
-    t = expandAdd(t); // can be replaced by DistributeAdd() in S1
+    // note that expandAdd normalize variable's name
+    //t = expandAdd(t); // can be replaced by DistributeAdd() in S1
     timeExpand += (System.currentTimeMillis()-startChrono);
     if(Main.options.verbose) {
       System.out.println("EXPAND = " + Pretty.toString(t));
@@ -160,15 +173,6 @@ public class RewriteSystem {
     timeSubsumtion += (System.currentTimeMillis()-startChrono);
     if(Main.options.verbose) {
       System.out.println("REMOVE SUBSUMTION = " + Pretty.toString(t));
-
-      //%match(t) {
-      //  Add(tl) -> {
-      //    for(Term p:`tl.getCollectionConcAdd()) {
-      //      System.out.println(Pretty.toString(p));
-      //    }
-      //    System.out.println("size = " + `tl.length());
-      //  }
-     // }
 
     }
 
@@ -508,13 +512,7 @@ public class RewriteSystem {
         while(!tl1.isEmptyTermList()) {
           Term h1 = tl1.getHeadTermList();
           Term h2 = tl2.getHeadTermList();
-          //Term sub = reduce(`Sub(h1,h2),eSig);
-          Term sub = `Sub(h1,h2);
-          try {
-            Strategy S1 = `ChoiceId(CleanAdd(),PropagateEmpty(),SimplifySub(eSig));
-            sub = `InnermostId(S1).visitLight(sub);
-          } catch(VisitFailure e) {
-          }
+          Term sub = simplifySub(`Sub(h1,h2),eSig); // do not use reduce because variables are normalized
 
           if(sub==h1) {
             return t1;
@@ -642,20 +640,6 @@ public class RewriteSystem {
     return t;
   }
 
-/*
-   //
-   // implementation using rules
-   // stack overflow on big terms
-   //
-  private static Term expandAdd(Term t) {
-    try {
-      return `RepeatId(TopDown(DistributeAdd())).visitLight(t);
-    } catch(VisitFailure e) {
-      System.out.println("expandAdd: failure");
-    }
-    return t;
-  }
-*/
   %strategy DistributeAdd() extends Identity() {
     visit Term {
 
@@ -1116,13 +1100,13 @@ public class RewriteSystem {
           }
         }
         Term problem = `Sub(lhs,Add(sum));
-        if(Main.options.verbose) {
-          System.out.println("\nPROBLEM : " + Pretty.toString(problem));
-        }
-        Term t = `reduce(problem,eSig);
-        if(Main.options.verbose) {
-          System.out.println("PROBLEM REDUCED : " + Pretty.toString(t));
-        }
+        //if(Main.options.verbose) {
+        //  System.out.println("\nPROBLEM : " + Pretty.toString(problem));
+        //}
+        Term t = `simplifySub(problem,eSig);
+        //if(Main.options.verbose) {
+        //  System.out.println("PROBLEM REDUCED : " + Pretty.toString(t));
+        //}
 
         if(t == `Empty()) {
           res = true;
