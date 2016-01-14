@@ -19,7 +19,7 @@ public class RewriteSystem {
 
   private static void debug(String ruleName, Term input, Term res) {
     if(Main.options.debug && Main.options.verbose) {
-    debugVerbose(ruleName,input,res);
+      debugVerbose(ruleName,input,res);
     } else if(Main.options.debug) {
       System.out.println(ruleName);
     }
@@ -179,13 +179,13 @@ public class RewriteSystem {
   /*
    * remove redundant rules using a very smart matching algorithm :-)
    */
-  // TODO: remove variables only once (and no longer in canBeRemove2) to speedup the process
+  // TODO: remove variables only once (and no longer in canBeRemoved2) to speedup the process
   private static RuleList removeRedundantRule(RuleList candidates, Signature eSig) {
     RuleList kernel  = `ConcRule();
     RuleList start  = `ConcRule();
     %match(candidates) {
       ConcRule(C1*,r,C2*) -> {
-        boolean b = canBeRemoved2(`r, `ConcRule(C1*,C2*), eSig);
+        boolean b = canBeRemoved3(`r, `ConcRule(C1*,C2*), eSig);
         if(!b) {
           kernel = `ConcRule(r,kernel*);
         } else {
@@ -207,7 +207,7 @@ public class RewriteSystem {
         RuleList branch1 = removeRedundantRuleAux(`tail, `ConcRule(kernel*,head), eSig);
         res = branch1;
 
-        boolean b = canBeRemoved2(`head, `ConcRule(kernel*,tail*), eSig);
+        boolean b = canBeRemoved3(`head, `ConcRule(kernel*,tail*), eSig);
         if(b) {
           if(Main.options.verbose) {
             System.out.println("REMOVE: " + Pretty.toString(`head));
@@ -420,7 +420,8 @@ public class RewriteSystem {
       s@Sub(t1@Appl(f,tl1), t2@Appl(f, tl2)) -> {
         assert !Tools.containsSub(`t1):`t1;
         assert !Tools.containsSub(`t2):`t2;
-        Term res = `sub(t1,t2);
+        //Term res = `sub(t1,t2);
+        Term res = `subopt(t1,t2,eSig);
         debug("sub1",`s,res);
         return res;
       }
@@ -467,6 +468,62 @@ public class RewriteSystem {
             TermList tl = args[i]; // cannot use [] in `
             if(i==cpt) {
               tl = `TermList(tl*, Sub(h1,h2));
+            } else {
+              tl = `TermList(tl*, h1);
+            }
+            args[i] = tl;
+          }
+
+          tl1 = tl1.getTailTermList();
+          tl2 = tl2.getTailTermList();
+          cpt++;
+        }
+
+        AddList sum = `ConcAdd();
+        for(int i=0 ; i<len ; i++) {
+          TermList tl = args[i]; // cannot use [] in `
+          sum = `ConcAdd(Appl(f,tl),sum*);;
+        }
+
+        return `Add(sum);
+      }
+    }
+    System.out.println("cannot sub " + t1 + " and " + t2);
+    return null;
+  }
+
+  // f(a1,...,an) - f(b1,...,bn) -> f(a1-b1,..., an) + ... + f(a1,...,an-bn)
+  private static Term subopt(Term t1,Term t2, Signature eSig) {
+    %match(t1,t2) {
+      Appl(f,args1), Appl(f,args2) -> {
+        TermList tl1 = `args1;
+        TermList tl2 = `args2;
+        int len = tl1.length();
+        TermList args[] = new TermList[len];
+        for(int i=0 ; i<len ; i++) {
+          args[i] = `TermList();
+        }
+        int cpt = 0;
+        assert tl1.length() == tl2.length();
+        while(!tl1.isEmptyTermList()) {
+          Term h1 = tl1.getHeadTermList();
+          Term h2 = tl2.getHeadTermList();
+          //Term sub = reduce(`Sub(h1,h2),eSig);
+          Term sub = `Sub(h1,h2);
+          try {
+            Strategy S1 = `ChoiceId(CleanAdd(),PropagateEmpty(),SimplifySub(eSig));
+            sub = `InnermostId(S1).visitLight(sub);
+          } catch(VisitFailure e) {
+          }
+
+          if(sub==h1) {
+            return t1;
+          }
+
+          for(int i=0 ; i<len ; i++) {
+            TermList tl = args[i]; // cannot use [] in `
+            if(i==cpt) {
+              tl = `TermList(tl*, sub);
             } else {
               tl = `TermList(tl*, h1);
             }
@@ -1038,6 +1095,39 @@ public class RewriteSystem {
           System.out.println("can be removed2 failure");
         }
 
+      }
+    }
+
+    return res;
+  }
+
+  public static boolean canBeRemoved3(Rule rule, RuleList ruleList, Signature eSig) {
+    boolean res = false;
+
+    rule = (Rule) Tools.removeVar(rule);
+    ruleList = (RuleList) Tools.removeVar(ruleList);
+
+    %match(rule) {
+      Rule(lhs,rhs) -> {
+        AddList sum = `ConcAdd();
+        %match(ruleList) {
+          ConcRule(_*,Rule(l,r),_*) -> {
+            sum = `ConcAdd(l,sum*);
+          }
+        }
+        Term problem = `Sub(lhs,Add(sum));
+        if(Main.options.verbose) {
+          System.out.println("\nPROBLEM : " + Pretty.toString(problem));
+        }
+        Term t = `reduce(problem,eSig);
+        if(Main.options.verbose) {
+          System.out.println("PROBLEM REDUCED : " + Pretty.toString(t));
+        }
+
+        if(t == `Empty()) {
+          res = true;
+          return res;
+        }
       }
     }
 
