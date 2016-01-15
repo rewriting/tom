@@ -1,0 +1,72 @@
+
+abstract syntax
+Symbol = name(Nat)
+Nat = z() | s(Nat)
+    | len(List)
+
+List = nil() | cons(T,List)
+     | genvar(Nat)
+     | diff(List,List,Nat,Sig)
+
+Sig = nilsig() | conssig(Symbol,Nat,Sig)
+
+T = bot()
+  | var(Nat)
+  | at(T,T)
+  | plus(T,T)
+  | appl(Symbol,List)
+  | minus(T,T,Sig)
+  | gensum(Sig)
+  | genm8(Symbol,List,List,Nat,sig)
+
+functions
+Nat = len(List)
+
+List = genvar(Nat)
+     | diff(List,List,Nat,Sig)
+
+T = gensum(Sig)
+  | genm8(Symbol,List,List,Nat,sig)
+
+trs
+[
+  plus(bot(),v) -> v
+  plus(v,bot()) -> v
+
+  appl(f,lv) -> bot()
+  at(var(n),bot()) -> bot()
+
+  minus(v, var(X), sig) -> bot()
+  minus(v, bot(), sig) -> v
+  minus(w, plus(v1,v2), sig) -> minus(minus(w,v1, sig),v2, sig)
+  
+  minus(var(m), appl(g,l), sig) -> at(var(m),minus(gensum(sig),appl(g,l), sig))
+
+  minus(bot(), appl(f,l), sig) -> bot()
+
+  minus(plus(u,v), appl(f,l), sig) -> plus(minus(u,appl(f,l), sig),minus(v,appl(f,l), sig))
+
+  minus(appl(f,lu), appl(g,lv), sig) -> genm8(f,lu,lv,len(lu), sig)
+
+  minus(appl(f,lu), appl(g,lv), sig) -> appl(f,lu)
+
+  minus(appl(f,nil()),appl(g,nil()), sig) -> bot()
+  minus(at(var(n),v),w, sig) -> at(var(n),minus(v,w, sig))
+  minus(v,at(var(n),w), sig) -> minus(v,w, sig)
+
+  gensum(nilsig) -> bot()
+  gensum(conssig(f,n,tail)) -> plus(appl(f,genvar(n)), gensum(tail))
+
+  genvar(z()) -> nil()
+  genvar(s(n)) -> cons(var(s(n)),genvar(n))
+
+  genm8(f,lu,lv,suc(z()), sig) -> bot()
+  genm8(f,lu,lv,suc(i), sig) -> plus(genm8(f,lu,lv,i, sig), appl(f,diff(lu,lv,suc(i), sig)))
+
+  diff(nil(),nil(),i, sig) -> nil()
+  diff(cons(u,lu),cons(v,lv),s(i), sig) -> cons(u,diff(lu,lv,i, sig))
+  diff(cons(u,lu),cons(v,lv),z(), sig)    -> cons(minus(u,v, sig),lu)
+
+  len(nil()) -> z()
+  len(cons(u,lu)) -> s(len(lu))
+]
