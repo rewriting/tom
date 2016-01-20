@@ -94,6 +94,25 @@ public class RewriteSystem {
     res = removeRedundantRule(res,eSig);
     timeMinimize += (System.currentTimeMillis()-startChrono);
 
+
+    // new algo for minimizing 
+    /*
+    RuleList res2 = res;
+    %match(res) {
+      ConcRule(C1*,r,C2*) -> {
+        HashSet<Rule> bag = new HashSet<Rule>();
+        searchAbstraction(bag,`r,res,eSig);
+        for(Rule r:bag) {
+          res2 = `ConcRule(r,res2*);
+        }
+      }
+    }
+    System.out.println("#res2 = " + `res2.length());
+    */
+
+
+
+
     if(Main.options.verbose) {
       for(Rule rule:`res.getCollectionConcRule()) {
         System.out.println(Pretty.toString(rule));
@@ -177,6 +196,10 @@ public class RewriteSystem {
 
     }
 
+    // test new idea
+    // very slow
+    //t = simplifyAbstraction(t,eSig);
+
     assert onlyTopLevelAdd(t) : "check only top-level Add";
     return t;
   }
@@ -198,7 +221,8 @@ public class RewriteSystem {
         }
       }
     }
-    return removeRedundantRuleAux(start,kernel,eSig);
+    RuleList result = removeRedundantRuleAux(start,kernel,eSig);
+    return result;
     //return removeRedundantRuleAux(candidates,`ConcRule(),eSig);
   }
 
@@ -1117,6 +1141,115 @@ public class RewriteSystem {
     }
 
     return res;
+  }
+
+
+  public static void searchAbstractionRule(HashSet<Rule> c, Rule rule, RuleList ruleList, Signature eSig) {
+    %match(rule) {
+      Rule(lhs,rhs) -> {
+        AddList sum = `ConcAdd();
+        %match(ruleList) {
+          ConcRule(_*,Rule(l,r),_*) -> {
+            sum = `ConcAdd(l,sum*);
+          }
+        }
+
+        HashSet<Term> saturate = new HashSet<Term>();
+        generateAbstraction(saturate,`lhs);
+        //System.out.println("#saturate = " + saturate.size());
+        for(Term newlhs:saturate) {
+          Term problem = `Sub(newlhs,Add(sum));
+          if(simplifySub(problem,eSig) == `Empty()) {
+            newlhs = Tools.normalizeVariable(newlhs);
+            Rule newrule = `Rule(newlhs,rhs);
+            System.out.println("new candidate: " + Pretty.toString(newrule));
+            c.add(newrule);
+          }
+        }
+
+      }
+    }
+  }
+
+  private static Term simplifyAbstraction(Term sum, Signature eSig) {
+    HashSet<Term> bag = new HashSet<Term>();
+    %match(sum) {
+      Add(tl) -> {
+        AddList res = `tl; 
+        %match(tl) {
+          ConcAdd(_*,t,_*) -> {
+            searchAbstractionTerm(bag,`t,sum,eSig);
+          }
+        }
+        for(Term t:bag) {
+          res = `ConcAdd(t,res*);
+        }
+        return `Add(res);
+      }
+    }
+    return sum;
+  }
+
+  public static void searchAbstractionTerm(HashSet<Term> c, Term subject, Term sum, Signature eSig) {
+    HashSet<Term> saturate = new HashSet<Term>();
+    generateAbstraction(saturate,subject);
+    //System.out.println("#saturate = " + saturate.size());
+    for(Term t:saturate) {
+      Term problem = `Sub(t,sum);
+      if(simplifySub(problem,eSig) == `Empty()) {
+        t = Tools.normalizeVariable(t);
+        System.out.println("new candidate: " + Pretty.toString(t));
+        c.add(t);
+      }
+    }
+  }
+
+  private static void generateAbstraction(HashSet<Term> c, Term subject) {
+    HashSet<Term> todo = new HashSet<Term>(); // terms to expand
+    HashSet<Term> todo2 = new HashSet<Term>();
+    HashSet<Term> tmpC = new HashSet<Term>(); // working memory when expanding a single term
+    todo.add(subject);
+    while(todo.size() > 0) {
+      todo2.clear();
+      for(Term t:todo) {
+        tmpC.clear();
+        try {
+          // TopDownCollect: apply s1 in a top-down way, s should extends the identity
+          // a failure stops the top-down process under this current node
+          `TopDownCollect(GenerateAbstraction(tmpC,t)).visit(t);
+        } catch(VisitFailure e) {
+        }
+        if(tmpC.isEmpty()) {
+          // t is a plain term
+          c.add(t);
+        } else {
+          for(Term e:tmpC) {
+            if(isPlainTerm(e)) {
+              c.add(e);
+            } else {
+              // todo list for the next round
+              todo2.add(e);
+            }
+          }
+        }
+      }
+      // all terms of toto have been expanded
+      // swap todo, todo2
+      HashSet<Term> tmp = todo;
+      todo = todo2; // new terms which have to be expanded
+      todo2 = tmp;  // reuse toto set, will be cleared next round
+      //System.out.println("size(c) = " + c.size());
+    }
+
+  }
+
+  %strategy GenerateAbstraction(c:HashSet, subject:Term) extends Identity() {
+    visit Term {
+      Appl(_,_) -> {
+        Term newt = (Term) getEnvironment().getPosition().getReplace(`Var(Tools.getName("Z"))).visit(subject);
+        c.add(newt);
+      }
+    }
   }
 
 /*
