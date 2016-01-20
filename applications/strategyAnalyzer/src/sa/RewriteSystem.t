@@ -121,7 +121,8 @@ public class RewriteSystem {
   private static Term simplifySub(Term t, Signature eSig) {
     long startChrono = System.currentTimeMillis();
     try {
-      Strategy S1 = `ChoiceId(CleanAdd(),PropagateEmpty(),SimplifySub(eSig),DistributeAdd());
+      Strategy S1 = `ChoiceId(PropagateEmpty(),SimplifySub(eSig),DistributeAdd());
+      //Strategy S1 = `ChoiceId(CleanAdd(),PropagateEmpty(),SimplifySub(eSig),DistributeAdd());
       //Strategy S1 = `ChoiceId(CleanAdd(),PropagateEmpty(),SimplifySub(eSig));
       t = `InnermostId(S1).visitLight(t);
       timeSubElim += (System.currentTimeMillis()-startChrono);
@@ -351,7 +352,7 @@ public class RewriteSystem {
       s@Sub(t, Add(ConcAdd(head,tail*))) -> {
         assert !Tools.containsSub(`t) : `t;
         assert !Tools.containsSub(`head) : `head;
-        Term res = `Sub(Sub(t,head), Add(ConcAdd(tail*)));
+        Term res = `Sub(Sub(t,head), Add(tail));
         debug("sub distrib1",`s,res);
         return res;
       }
@@ -406,7 +407,7 @@ public class RewriteSystem {
       s@Sub(Add(ConcAdd(head,tail*)), t@Appl(f,tl)) -> {
         assert !Tools.containsSub(`head) : `head;
         assert !Tools.containsSub(`t) : `t;
-        Term res = `Add(ConcAdd(Sub(head,t), Sub(Add(ConcAdd(tail*)),t)));
+        Term res = `Add(ConcAdd(Sub(head,t), Sub(Add(tail),t)));
         debug("sub distrib2",`s,res);
         return res;
       }
