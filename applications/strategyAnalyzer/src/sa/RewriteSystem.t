@@ -137,18 +137,29 @@ public class RewriteSystem {
    /*
     * Transform a term which contains Sub/Add into a term without Sub
     */
+  private static LRUCache<Term,Term> cache = new LRUCache<Term,Term>(1000);
   private static Term simplifySub(Term t, Signature eSig) {
+    Term res = cache.get(t);
+    if(res!=null) {
+      //System.out.println("cache hit");
+      return res;
+    } else {
+      //System.out.println("nohit");
+    }
+
     long startChrono = System.currentTimeMillis();
     try {
       Strategy S1 = `ChoiceId(PropagateEmpty(),SimplifySub(eSig),DistributeAdd());
+      //Strategy S1 = `ChoiceId(PropagateEmpty(),SimplifySub(eSig));
       //Strategy S1 = `ChoiceId(CleanAdd(),PropagateEmpty(),SimplifySub(eSig),DistributeAdd());
       //Strategy S1 = `ChoiceId(CleanAdd(),PropagateEmpty(),SimplifySub(eSig));
-      t = `InnermostId(S1).visitLight(t);
+      res = `InnermostId(S1).visitLight(t);
+      cache.put(t,res);
       timeSubElim += (System.currentTimeMillis()-startChrono);
     } catch(VisitFailure e) {
       System.out.println("failure on: " + t);
     }
-    return t;
+    return res;
   }
 
   /*
@@ -169,31 +180,30 @@ public class RewriteSystem {
         System.out.println("NO SUB = " + Pretty.toString(t));
       }
 
-      startChrono = System.currentTimeMillis();
-      Strategy S2 = `ChoiceId(CleanAdd(),PropagateEmpty(), VarAdd(), FactorizeAdd());
+      //startChrono = System.currentTimeMillis();
+      //Strategy S2 = `ChoiceId(CleanAdd(),PropagateEmpty(), VarAdd(), FactorizeAdd());
       //t = `InnermostId(S2).visitLight(t); // can be replaced by DistributeAdd() in S1
-      timeAddElim += (System.currentTimeMillis()-startChrono);
-      if(Main.options.verbose) {
-        System.out.println("NO ADD = " + Pretty.toString(t));
-      }
+      //timeAddElim += (System.currentTimeMillis()-startChrono);
+      //if(Main.options.verbose) {
+      //  System.out.println("NO ADD = " + Pretty.toString(t));
+      //}
     } catch(VisitFailure e) {
       System.out.println("failure on: " + t);
     }
 
-    startChrono = System.currentTimeMillis();
+    //startChrono = System.currentTimeMillis();
     // note that expandAdd normalize variable's name
     //t = expandAdd(t); // can be replaced by DistributeAdd() in S1
-    timeExpand += (System.currentTimeMillis()-startChrono);
-    if(Main.options.verbose) {
-      System.out.println("EXPAND = " + Pretty.toString(t));
-    }
+    //timeExpand += (System.currentTimeMillis()-startChrono);
+    //if(Main.options.verbose) {
+    //  System.out.println("EXPAND = " + Pretty.toString(t));
+    //}
 
     startChrono = System.currentTimeMillis();
     t = simplifySubsumtion(t);
     timeSubsumtion += (System.currentTimeMillis()-startChrono);
     if(Main.options.verbose) {
       System.out.println("REMOVE SUBSUMTION = " + Pretty.toString(t));
-
     }
 
     // test new idea
@@ -210,20 +220,38 @@ public class RewriteSystem {
   // TODO: remove variables only once (and no longer in canBeRemoved2) to speedup the process
   private static RuleList removeRedundantRule(RuleList candidates, Signature eSig) {
     RuleList kernel  = `ConcRule();
+    AddList pkernel  = `ConcAdd();
     RuleList start  = `ConcRule();
     %match(candidates) {
-      ConcRule(C1*,r,C2*) -> {
+      ConcRule(C1*,r@Rule(lhs,rhs),C2*) -> {
         boolean b = canBeRemoved3(`r, `ConcRule(C1*,C2*), eSig);
         if(!b) {
           kernel = `ConcRule(r,kernel*);
+          pkernel = `ConcAdd(lhs,pkernel*);
         } else {
           start = `ConcRule(r,start*);
         }
       }
     }
+
+    /*
+     * build the list
+     * [q1\(q2\...\(k1+...+kn)), q2\...\kernel, ..., qm\(k1+...+kn)]
+     */
+
+    TermList deltak = `TermList();
+    Term d = `Add(pkernel);
+    RuleList rstart = start.reverse();
+    %match(rstart) {
+      ConcRule(_*,r@Rule(lhs,rhs),_*) -> {
+        d = simplifySub(`Sub(lhs,d),eSig);
+        deltak = `TermList(d,deltak*);
+      }
+    }
+
     RuleList result = removeRedundantRuleAux(start,kernel,eSig);
+    //RuleList result = removeRedundantRuleAux2(start,kernel,deltak,eSig);
     return result;
-    //return removeRedundantRuleAux(candidates,`ConcRule(),eSig);
   }
 
   private static RuleList removeRedundantRuleAux(RuleList candidates, RuleList kernel, Signature eSig) {
@@ -251,6 +279,46 @@ public class RewriteSystem {
     }
     return res;
   }
+  
+  private static RuleList removeRedundantRuleAux2(RuleList candidates, RuleList kernel, TermList deltak, Signature eSig) {
+    assert Tools.isLhsLinear(candidates) : "check lhs-linear" ;
+    System.out.println("DELTA KERNEL = " + Pretty.toString(deltak));
+    RuleList res = kernel;
+
+    %match( candidates, deltak ) {
+      ConcRule(head@Rule(lhs,rhs), tail*), TermList(headk, tailk*) -> {
+        // try with the head kept in kernel
+        TermList mapTailk = `mapSub(lhs,tailk);
+        RuleList branch1 = `removeRedundantRuleAux2(tail, ConcRule(kernel*,head), tailk, eSig);
+        res = branch1;
+
+        boolean b = (`headk == `Empty());
+        if(b) {
+          if(Main.options.verbose) {
+            System.out.println("REMOVE2: " + Pretty.toString(`head));
+          }
+          // try with the head removed 
+          RuleList branch2 = `removeRedundantRuleAux2(tail, kernel, tailk, eSig);
+          if(branch2.length() < branch1.length()) {
+            res = branch2;
+          }
+        }
+      }
+    }
+    return res;
+  }
+
+  private static TermList mapSub(Term t, TermList l) {
+    %match(l) {
+      TermList() -> { return l; }
+      TermList(head,tail*) -> { 
+        TermList tmp = mapSub(t,`tail);
+        return `TermList(Sub(head,t),tmp*); 
+      }
+    }
+    return l;
+  }
+
 
   %strategy PropagateEmpty() extends Identity() {
     visit Term {
