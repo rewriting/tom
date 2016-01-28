@@ -209,9 +209,11 @@ public class RewriteSystem {
       System.out.println("REMOVE SUBSUMTION = " + Pretty.toString(t));
     }
 
-    // test new idea
-    // very slow
-    //t = simplifyAbstraction(t,eSig);
+    if(Main.options.minimize) {
+      // test new idea
+      // quite slow
+      t = simplifyAbstraction(t,eSig);
+    }
 
     assert onlyTopLevelAdd(t) : "check only top-level Add";
     return t;
@@ -1243,6 +1245,7 @@ public class RewriteSystem {
   }
 
   private static Term simplifyAbstraction(Term sum, Signature eSig) {
+    System.out.println("simplifyAbstraction");
     HashSet<Term> bag = new HashSet<Term>();
     %match(sum) {
       Add(tl) -> {
@@ -1253,6 +1256,7 @@ public class RewriteSystem {
           }
         }
         for(Term t:bag) {
+          System.out.println("new candidate: " + Pretty.toString(t));
           res = `ConcAdd(t,res*);
         }
         return `Add(res);
@@ -1269,14 +1273,14 @@ public class RewriteSystem {
     HashSet<Term> saturate = new HashSet<Term>();
     generateAbstraction(saturate,subject);
     //System.out.println("#saturate = " + saturate.size());
-    // TODO: order saturate to start with most general terms
+    // TODO: order saturate to start with least general terms
     List<Term> list = new ArrayList<Term>(saturate);
     java.util.Comparator<Term> cmp = new java.util.Comparator<Term>() {
       public int compare(Term t1, Term t2) {
         if(matchConstraint(t1,t2)==`TrueMatch()) {
-          return -1;
-        } else if(matchConstraint(t2,t1)==`TrueMatch()) {
           return 1;
+        } else if(matchConstraint(t2,t1)==`TrueMatch()) {
+          return -1;
         } else {
           return 0;
         }
@@ -1285,18 +1289,24 @@ public class RewriteSystem {
 
     java.util.Collections.sort(list, cmp);
 
+    //System.out.println("#list = " + list.size());
     //System.out.println("#list = " + list);
 
     for(Term t:list) { // saturate
       Term problem = `Sub(t,sum);
       if(simplifySub(problem,eSig) == `Empty()) {
         t = Tools.normalizeVariable(t);
-        System.out.println("new candidate: " + Pretty.toString(t));
+        //System.out.println("new candidate: " + Pretty.toString(t));
         c.add(t);
-        // TODO: return to stop the search
+        // continue the search for a more general term
+      } else {
+        // stop the search
         return;
       }
     }
+
+
+
   }
 
   /*
