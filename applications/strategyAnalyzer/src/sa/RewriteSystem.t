@@ -4,6 +4,8 @@ import sa.rule.types.*;
 import tom.library.sl.*;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.List;
+import java.util.ArrayList;
 
 public class RewriteSystem {
   %include { rule/Rule.tom }
@@ -1259,20 +1261,48 @@ public class RewriteSystem {
     return sum;
   }
 
+  /*
+   * given subject and sum
+   * search abstractions of subject such that [subject] \subseteq [sum]
+   */
   public static void searchAbstractionTerm(HashSet<Term> c, Term subject, Term sum, Signature eSig) {
     HashSet<Term> saturate = new HashSet<Term>();
     generateAbstraction(saturate,subject);
     //System.out.println("#saturate = " + saturate.size());
-    for(Term t:saturate) {
+    // TODO: order saturate to start with most general terms
+    List<Term> list = new ArrayList<Term>(saturate);
+    java.util.Comparator<Term> cmp = new java.util.Comparator<Term>() {
+      public int compare(Term t1, Term t2) {
+        if(matchConstraint(t1,t2)==`TrueMatch()) {
+          return -1;
+        } else if(matchConstraint(t2,t1)==`TrueMatch()) {
+          return 1;
+        } else {
+          return 0;
+        }
+      }
+    };
+
+    java.util.Collections.sort(list, cmp);
+
+    //System.out.println("#list = " + list);
+
+    for(Term t:list) { // saturate
       Term problem = `Sub(t,sum);
       if(simplifySub(problem,eSig) == `Empty()) {
         t = Tools.normalizeVariable(t);
         System.out.println("new candidate: " + Pretty.toString(t));
         c.add(t);
+        // TODO: return to stop the search
+        return;
       }
     }
   }
 
+  /*
+   * given subject
+   * generate all possible abstractions (no order)
+   */
   private static void generateAbstraction(HashSet<Term> c, Term subject) {
     HashSet<Term> todo = new HashSet<Term>(); // terms to expand
     HashSet<Term> todo2 = new HashSet<Term>();
