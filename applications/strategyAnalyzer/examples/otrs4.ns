@@ -1,0 +1,20 @@
+
+abstract syntax
+T = 
+	| a()
+	| b()
+  | f(T)
+
+//functions
+//T = f(T,T)
+
+
+trs
+[
+  f(f(a())) -> f(f(f(a())))
+  f(x) ->  b()
+]
+
+
+// check (STRATEGY INNERMOST)
+// term in INNERMOST (bug in TTT), non-term in general
