@@ -1,0 +1,23 @@
+
+abstract syntax
+List = nil() | cons(Nat,List) | insert(Nat,List) | insertAux(Nat,List,Cmp)
+Nat = Z() | S(Nat)
+Cmp = lt() | gt() | unknown(Nat,Nat) | cmp(Nat,Nat)
+
+functions
+List = insert(Nat,List)
+Cmp = cmp(Nat,Nat)
+
+trs
+[
+  insert(x,nil()) -> nil()
+  insert(x,cons(h,t)) -> insertAux(x,cons(h,t),cmp(x,h))
+
+  insertAux(x,l,lt()) -> cons(x,l)
+  insertAux(x,cons(h,t),z) -> cons(h,insert(x,t))
+
+  cmp(Z(),S(x)) -> lt()
+  cmp(S(x),Z()) -> gt()
+  cmp(S(x),S(y)) -> cmp(x,y)
+  cmp(x,y)  -> unknown(x,y)
+]
