@@ -41,8 +41,9 @@ trs
   ins(x,T(c,l,y,r)) -> insAux(x,T(c,l,y,r),cmp(x,y))
 
   insAux(x,T(c,l,y,r),lt()) -> balance(T(c,ins(x,l),y,r))
-  insAux(x,T(c,l,y,r),eq()) -> T(c,l,y,r)
   insAux(x,T(c,l,y,r),gt()) -> balance(T(c,l,y,ins(x,r)))
+  insAux(x,T(c,l,y,r),eq()) -> T(c,l,y,r)
+  //insAux(x,y,z) -> y
 
   cmp(Z(),S(x)) -> lt()
   cmp(S(x),Z()) -> gt()
