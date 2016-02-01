@@ -9,13 +9,13 @@ G = g(T)
 
 strategies
 
-r1() = [ a() -> f(b(),b()) ]
+//r1() = [ a() -> f(b(),b()) ]
 
-r2() = [ b() -> b() ]
+//r2() = [ b() -> b() ]
 
-r3() = [ b() -> a() ]
+r3() = [ b() -> a(), i(g(x)) -> x ]
 
-r4() = [ f(x,x) -> x ]
+//r4() = [ f(x,x) -> x ]
 
 innermost(s) = mu x.(all(x);((s;x)<+identity)) 
 
@@ -23,9 +23,9 @@ td(s) = mu y.((s<+identity);all(y))
 
 repeat(s) = mu x.((s<+identity);x)
 
-//mainStrat() = innermost(r3())
+mainStrat() = innermost(r3())
 // mainStrat() = r3()
- mainStrat() = r4() <+ identity
+// mainStrat() = r4() <+ identity
 
 //mainStrat() = repeat(r3())
 

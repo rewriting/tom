@@ -1289,19 +1289,32 @@ public class RewriteSystem {
 
     java.util.Collections.sort(list, cmp);
 
+    subject = (Term)Tools.removeAt(subject);
+    subject = Tools.normalizeVariable(subject);
+    System.out.println("for: = " + Pretty.toString(subject));
     //System.out.println("#list = " + list.size());
-    //System.out.println("#list = " + list);
+    //for(Term t:list) {
+    //  t = Tools.normalizeVariable(t);
+    //  System.out.print(Pretty.toString(t) + "  ");
+    //}
+    //System.out.println();
 
     for(Term t:list) { // saturate
+      t = (Term)Tools.removeAt(t);
+      t = Tools.normalizeVariable(t);
       Term problem = `Sub(t,sum);
-      if(simplifySub(problem,eSig) == `Empty()) {
-        t = Tools.normalizeVariable(t);
+      System.out.println("try: " + Pretty.toString(t));
+      Term res = simplifySub(problem,eSig);
+      res = (Term)Tools.removeAt(res);
+      res = Tools.normalizeVariable(res);
+      System.out.println("res = " + Pretty.toString(res));
+      if(res == `Empty()) {
         //System.out.println("new candidate: " + Pretty.toString(t));
         c.add(t);
         // continue the search for a more general term
       } else {
         // stop the search
-        return;
+        //return;
       }
     }
 

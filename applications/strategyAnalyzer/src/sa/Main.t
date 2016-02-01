@@ -72,23 +72,28 @@ public class Main {
       RuleList generatedRules = compiler.compileStrategy(strategyNames);
       Signature extractedSignature = compiler.getExtractedSignature();
       Signature generatedSignature = compiler.getGeneratedSignature();
+        
+      //System.out.println("compileStrategy: generatedRules = " + Pretty.toString(generatedRules));
 
       assert Tools.isLhsLinear(generatedRules);
       // transform the LINEAR TRS: compile Aps and remove ATs
       RuleCompiler ruleCompiler = new RuleCompiler(extractedSignature,generatedSignature);
       if(options.withAP == false) {
         generatedRules = ruleCompiler.expandAntiPatterns(generatedRules);
+        //System.out.println("expandAntiPatterns: generatedRules = " + Pretty.toString(generatedRules));
       }
       // if we don't expand the anti-patterns then we should keep the at-annotations as well
       // otherwise output is strange
       if(options.withAT == false && options.withAP == false) {
         generatedRules = ruleCompiler.expandAt(generatedRules);
+        //System.out.println("expandAt: generatedRules = " + Pretty.toString(generatedRules));
       }
       // refresh the signatures (presently no modifications)
       extractedSignature = ruleCompiler.getExtractedSignature();
       generatedSignature = ruleCompiler.getGeneratedSignature();
 
       if(options.withType) {
+        //System.out.println("before typing: generatedRules = " + Pretty.toString(generatedRules));
         TypeCompiler typeCompiler = new TypeCompiler(extractedSignature);
         typeCompiler.typeRules(generatedRules);
         generatedRules = typeCompiler.getGeneratedRules();
