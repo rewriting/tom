@@ -1,0 +1,28 @@
+structure cmp
+	lt : cmp
+	gt : cmp
+	unknown : nat, nat -> cmp
+
+structure nat
+	z : nat
+	s : nat -> nat
+
+structure list
+	nil : list
+	cons : nat, list -> list
+
+function compare: nat, nat -> cmp
+  compare(z,s(x)) = lt
+  compare(s(x),z) = gt
+  compare(s(x),s(y)) = compare(x,y)
+  compare(x,y)  = unknown(x,y)
+
+function insert: nat, list -> list
+  insert(x,nil) = nil
+  insert(x,cons(h,t)) = insertAux(x,cons(h,t),compare(x,h))
+
+function insertAux: nat, list, cmp -> list
+  insertAux(x,l,lt) = cons(x,l)
+  insertAux(x,cons(h,t),y) = cons(h,insert(x,t))
+  insertAux(x,l,y) = nil
+
