@@ -1,0 +1,13 @@
+abstract syntax
+Nat = z() | s(Nat) | A(Nat,Nat)
+
+functions
+Nat = A(Nat,Nat)
+
+trs
+[
+  A(z(),n) -> s(n)
+  A(s(m),z()) -> A(m,s(z()))
+  A(s(m),s(n)) -> A(m,A(s(m),n))
+]
+
