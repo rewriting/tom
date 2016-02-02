@@ -113,11 +113,6 @@ public class Main {
       
         Trs otrs = RewriteSystem.trsRule(`Otrs(generatedRules),generatedSignature);
         generatedRules = otrs.getlist();
-        //for(Rule r:res.getCollectionConcRule()) {
-        //  System.out.println(Pretty.toString(r));
-        //}
-        //System.out.println("size = " + res.length());
-       
       }
 
       /*
