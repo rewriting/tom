@@ -65,24 +65,42 @@ public class RewriteSystem {
           System.out.println("REDUCED : " + Pretty.toString(t));
         }
 
+        RuleList rules = `ConcRule();
         // put back the rhs
+        boolean flag = false;
         %match(t) {
           Add(ConcAdd(_*,e,_*)) -> {
-            res = `ConcRule(res*,Rule(e,rhs));
+            rules = `ConcRule(rules*,Rule(e,rhs));
+            flag = true;
           }
 
           e@(At|Appl|Var)[] -> {
-            res = `ConcRule(res*,Rule(e,rhs));
+            rules = `ConcRule(rules*,Rule(e,rhs));
+            flag = true;
+          }
+
+          _ -> {
+            if(!flag) {
+              System.out.println("WARNING NOT PUT BACK : " + Pretty.toString(t));
+            }
           }
         }
+
+        // TODO: normalize name of variables
+        // remove x@t
+        RuleCompiler ruleCompiler = new RuleCompiler(`eSig, `eSig); 
+        rules = ruleCompiler.expandAt(rules);
+        assert !Tools.containsAt(rules) : "check contain no AT";
+
+        // minimize the set of rules
+        long startChrono = System.currentTimeMillis();
+        rules = removeRedundantRule(rules,eSig);
+        timeMinimize += (System.currentTimeMillis()-startChrono);
+        res = `ConcRule(res*,rules*);
+
       }
     }
 
-    // TODO: normalize name of variables
-    // remove x@t
-    RuleCompiler ruleCompiler = new RuleCompiler(`eSig, `eSig); 
-    res = ruleCompiler.expandAt(res);
-    assert !Tools.containsAt(res) : "check contain no AT";
 
     if(Main.options.verbose) {
       for(Rule rule:`res.getCollectionConcRule()) {
@@ -90,11 +108,6 @@ public class RewriteSystem {
       }
       System.out.println("size = " + `res.length());
     }
-
-    // minimize the set of rules
-    long startChrono = System.currentTimeMillis();
-    res = removeRedundantRule(res,eSig);
-    timeMinimize += (System.currentTimeMillis()-startChrono);
 
 
     // new algo for minimizing 
@@ -213,6 +226,7 @@ public class RewriteSystem {
       // test new idea
       // quite slow
       t = simplifyAbstraction(t,eSig);
+      t = simplifySubsumtion(t);
     }
 
     assert onlyTopLevelAdd(t) : "check only top-level Add";
@@ -1289,19 +1303,32 @@ public class RewriteSystem {
 
     java.util.Collections.sort(list, cmp);
 
+    subject = (Term)Tools.removeAt(subject);
+    subject = Tools.normalizeVariable(subject);
+    System.out.println("for: = " + Pretty.toString(subject));
     //System.out.println("#list = " + list.size());
-    //System.out.println("#list = " + list);
+    //for(Term t:list) {
+    //  t = Tools.normalizeVariable(t);
+    //  System.out.print(Pretty.toString(t) + "  ");
+    //}
+    //System.out.println();
 
     for(Term t:list) { // saturate
+      t = (Term)Tools.removeAt(t);
+      t = Tools.normalizeVariable(t);
       Term problem = `Sub(t,sum);
-      if(simplifySub(problem,eSig) == `Empty()) {
-        t = Tools.normalizeVariable(t);
+      System.out.println("try: " + Pretty.toString(t));
+      Term res = simplifySub(problem,eSig);
+      res = (Term)Tools.removeAt(res);
+      res = Tools.normalizeVariable(res);
+      System.out.println("res = " + Pretty.toString(res));
+      if(res == `Empty()) {
         //System.out.println("new candidate: " + Pretty.toString(t));
         c.add(t);
         // continue the search for a more general term
       } else {
         // stop the search
-        return;
+        //return;
       }
     }
 

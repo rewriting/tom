@@ -48,10 +48,11 @@ public class TypeCompiler {
    **/
   public void typeRules(RuleList untypedRules) {
     this.generatedRules = `ConcRule();
-    Map<String,GomType> env = new HashMap<String,GomType>();
 
     %match(untypedRules) {
       ConcRule(_*,rule,_*) -> {
+        Map<String,GomType> env = new HashMap<String,GomType>();
+        //System.out.println("RULE: " + Pretty.toString(`rule));
         %match(rule) {
           Rule(lhs@Appl(stratOp,TermList(arg,_*)), rhs) -> {
             // get the possible codomain(s) for the head operator of the LHS
@@ -75,6 +76,7 @@ public class TypeCompiler {
             if(types.size() == 0) {
               throw new UntypableTermException("RULE OMITTED for " + `stratOp + "  because no possible codomain");
             }
+
 
             // for each potential codomain generate a new rule
             // (the potential codomain is unique for all operators but for BOTTOM
@@ -122,6 +124,7 @@ public class TypeCompiler {
         }
 
         Var(name) -> { // for VAR get the type from the environment
+          //System.out.println("getTypes: " + `name + " --> " + env.get(`name));
           if(env.get(`name) != null) {
             types.add(env.get(`name));
           } else { // if we don't know it's type than it could be any type (eg for mainstrat)

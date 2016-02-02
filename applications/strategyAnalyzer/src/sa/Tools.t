@@ -383,6 +383,22 @@ public class Tools {
       throw new RuntimeException("should not be there");
     }
   }
+  
+  %strategy RemoveAt() extends Identity() {
+    visit Term {
+      At(_,t) -> {
+        return `t;
+      }
+    }
+  }
+  
+  public static tom.library.sl.Visitable removeAt(tom.library.sl.Visitable t) {
+    try {
+      return `InnermostId(RemoveAt()).visitLight(t);
+    } catch(VisitFailure e) {
+      throw new RuntimeException("should not be there");
+    }
+  }
 
   public static boolean isLinear(Term t) {
     HashMultiset<String> bag = collectVariableMultiplicity(t);
