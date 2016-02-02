@@ -40,6 +40,7 @@ public class RewriteSystem {
   public static Trs trsRule(Trs trs, Signature eSig) {
     assert Tools.isLhsLinear(trs) : "check lhs-linear";
     boolean ordered = trs.isOtrs();
+    long startChrono; 
 
     RuleList res = `ConcRule();
     %match(trs) {
@@ -60,7 +61,37 @@ public class RewriteSystem {
         }
 
         // transform lhs - prev into a collection of patterns matching exactly the same terms
-        Term t = `reduce(pattern,eSig);
+        //Term t = `reduce(pattern,eSig);
+        Term t = pattern;
+
+
+        try {
+          // pre-treatment: remove AP
+          t = `InnermostId(ExpandAP()).visitLight(t);
+        } catch(VisitFailure e) {
+          System.out.println("failure on: " + t);
+        }
+
+        t = simplifySub(t,eSig);
+        if(Main.options.verbose) {
+          System.out.println("NO SUB = " + Pretty.toString(t));
+        }
+
+        startChrono = System.currentTimeMillis();
+        t = simplifySubsumtion(t);
+        timeSubsumtion += (System.currentTimeMillis()-startChrono);
+        if(Main.options.verbose) {
+          System.out.println("REMOVE SUBSUMTION = " + Pretty.toString(t));
+        }
+
+        if(Main.options.minimize) {
+          // test new idea
+          // quite slow
+          t = simplifyAbstraction(t,eSig);
+          t = simplifySubsumtion(t);
+        }
+        //assert onlyTopLevelAdd(t) : "check only top-level Add";
+
         if(Main.options.verbose) {
           System.out.println("REDUCED : " + Pretty.toString(t));
         }
@@ -92,11 +123,11 @@ public class RewriteSystem {
         rules = ruleCompiler.expandAt(rules);
         assert !Tools.containsAt(rules) : "check contain no AT";
 
-        // minimize the set of rules
-        long startChrono = System.currentTimeMillis();
-        rules = removeRedundantRule(rules,eSig);
-        timeMinimize += (System.currentTimeMillis()-startChrono);
-        res = `ConcRule(res*,rules*);
+          // minimize the set of rules
+          startChrono = System.currentTimeMillis();
+          rules = removeRedundantRule(rules,eSig);
+          timeMinimize += (System.currentTimeMillis()-startChrono);
+          res = `ConcRule(res*,rules*);
 
       }
     }
@@ -1249,6 +1280,7 @@ public class RewriteSystem {
           if(simplifySub(problem,eSig) == `Empty()) {
             newlhs = Tools.normalizeVariable(newlhs);
             Rule newrule = `Rule(newlhs,rhs);
+            System.out.println("rule: " + Pretty.toString(rule));
             System.out.println("new candidate: " + Pretty.toString(newrule));
             c.add(newrule);
           }
@@ -1305,23 +1337,17 @@ public class RewriteSystem {
 
     subject = (Term)Tools.removeAt(subject);
     subject = Tools.normalizeVariable(subject);
-    System.out.println("for: = " + Pretty.toString(subject));
-    //System.out.println("#list = " + list.size());
-    //for(Term t:list) {
-    //  t = Tools.normalizeVariable(t);
-    //  System.out.print(Pretty.toString(t) + "  ");
-    //}
-    //System.out.println();
+    //System.out.println("for: = " + Pretty.toString(subject));
 
     for(Term t:list) { // saturate
       t = (Term)Tools.removeAt(t);
       t = Tools.normalizeVariable(t);
       Term problem = `Sub(t,sum);
-      System.out.println("try: " + Pretty.toString(t));
+      //System.out.println("try: " + Pretty.toString(t));
       Term res = simplifySub(problem,eSig);
       res = (Term)Tools.removeAt(res);
       res = Tools.normalizeVariable(res);
-      System.out.println("res = " + Pretty.toString(res));
+      //System.out.println("res = " + Pretty.toString(res));
       if(res == `Empty()) {
         //System.out.println("new candidate: " + Pretty.toString(t));
         c.add(t);

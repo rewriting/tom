@@ -103,7 +103,7 @@ public class Main {
       /*
        * Post treatment
        */
-      if(Main.options.pattern && Main.options.ordered && Main.options.withType) {
+      if(Main.options.pattern && Main.options.ordered) { // && Main.options.withType) {
         System.out.println("after compilation");
         System.out.println("generatedRules = " + Pretty.toString(generatedRules));
         // run the Pattern transformation here

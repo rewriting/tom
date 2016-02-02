@@ -6,6 +6,7 @@ structure cmp
 structure nat
 	z : nat
 	s : nat -> nat
+	tree : nat, nat -> nat
 
 structure list
 	nil : list
@@ -18,6 +19,8 @@ function compare: nat, nat -> cmp
   compare(x,y)  = unknown(x,y)
 
 function insert: nat, list -> list
+  insert(tree(s(x),y),tail) = insert(x,insert(tree(y,x),tail))
+  insert(tree(x,s(y)),tail) = insert(x,insert(tree(y,x),tail))
   insert(x,nil) = nil
   insert(x,cons(h,t)) = insertAux(x,cons(h,t),compare(x,h))
 
