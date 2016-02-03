@@ -1261,7 +1261,7 @@ public class RewriteSystem {
     return res;
   }
 
-
+/*
   public static void searchAbstractionRule(HashSet<Rule> c, Rule rule, RuleList ruleList, Signature eSig) {
     %match(rule) {
       Rule(lhs,rhs) -> {
@@ -1289,7 +1289,7 @@ public class RewriteSystem {
       }
     }
   }
-
+*/
   private static Term simplifyAbstraction(Term sum, Signature eSig) {
     System.out.println("simplifyAbstraction");
     HashSet<Term> bag = new HashSet<Term>();
@@ -1320,6 +1320,7 @@ public class RewriteSystem {
     generateAbstraction(saturate,subject);
     //System.out.println("#saturate = " + saturate.size());
     // TODO: order saturate to start with least general terms
+    /*
     List<Term> list = new ArrayList<Term>(saturate);
     java.util.Comparator<Term> cmp = new java.util.Comparator<Term>() {
       public int compare(Term t1, Term t2) {
@@ -1334,14 +1335,14 @@ public class RewriteSystem {
     };
 
     java.util.Collections.sort(list, cmp);
-
-    subject = (Term)Tools.removeAt(subject);
-    subject = Tools.normalizeVariable(subject);
+     */
+    //subject = (Term)Tools.removeAt(subject); // don't remove at to keep variable name used in rhs
+    //subject = Tools.normalizeVariable(subject);
     //System.out.println("for: = " + Pretty.toString(subject));
 
-    for(Term t:list) { // saturate
-      t = (Term)Tools.removeAt(t);
-      t = Tools.normalizeVariable(t);
+    for(Term t:saturate) { // list / saturate
+      //t = (Term)Tools.removeAt(t);
+      //t = Tools.normalizeVariable(t);
       Term problem = `Sub(t,sum);
       //System.out.println("try: " + Pretty.toString(t));
       Term res = simplifySub(problem,eSig);
@@ -1357,8 +1358,6 @@ public class RewriteSystem {
         //return;
       }
     }
-
-
 
   }
 
@@ -1407,9 +1406,16 @@ public class RewriteSystem {
 
   %strategy GenerateAbstraction(c:HashSet, subject:Term) extends Identity() {
     visit Term {
-      Appl(_,_) -> {
+      s@At(var,Appl(_,_)) -> {
+        Term newt = (Term) getEnvironment().getPosition().getReplace(`var).visit(subject);
+        c.add(newt);
+        //`Fail().visitLight(`s); // stop collect under this node
+      }
+
+      s@Appl(_,_) -> {
         Term newt = (Term) getEnvironment().getPosition().getReplace(`Var(Tools.getName("Z"))).visit(subject);
         c.add(newt);
+        //`Fail().visitLight(`s); // stop collect under this node
       }
     }
   }
