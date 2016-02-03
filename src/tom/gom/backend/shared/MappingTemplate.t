@@ -36,10 +36,11 @@ public class MappingTemplate extends MappingTemplateClass {
   GomClassList sortClasses;
   GomClassList operatorClasses;
   TemplateClass strategyMapping;
+  boolean gwt;
 
   %include { ../../adt/objects/Objects.tom}
 
-  public MappingTemplate(GomClass gomClass, TemplateClass strategyMapping, GomEnvironment gomEnvironment) {
+  public MappingTemplate(GomClass gomClass, TemplateClass strategyMapping, boolean gwt, GomEnvironment gomEnvironment) {
     super(gomClass,gomEnvironment);
     %match(gomClass) {
       TomMapping[SortClasses=sortClasses,
@@ -47,6 +48,7 @@ public class MappingTemplate extends MappingTemplateClass {
         this.sortClasses = `sortClasses;
         this.operatorClasses = `ops;
         this.strategyMapping = strategyMapping;
+        this.gwt = gwt;
 
         assert this.templates!=null ;
         return;
@@ -92,12 +94,12 @@ public class MappingTemplate extends MappingTemplateClass {
 %include { float.tom }
 ]%);
     }
-    if (getGomEnvironment().isBuiltinSort("ATerm")) {
+    if (getGomEnvironment().isBuiltinSort("ATerm") && !gwt) {
       writer.write(%[
 %include { aterm.tom }
 ]%);
     }
-    if (getGomEnvironment().isBuiltinSort("ATermList")) {
+    if (getGomEnvironment().isBuiltinSort("ATermList") && !gwt) {
       writer.write(%[
 %include { aterm.tom }
 ]%);

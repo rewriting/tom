@@ -41,18 +41,21 @@ public class SortTemplate extends TemplateHookedClass {
   GomClassList operatorClasses;
   SlotFieldList slotList;
   boolean maximalsharing;
+  boolean gwt;
 
   %include { ../../adt/objects/Objects.tom}
 
   public SortTemplate(File tomHomePath,
                       OptionManager manager,
                       boolean maximalsharing,
-                      List importList, 	
+                      List importList,
                       GomClass gomClass,
                       TemplateClass mapping,
+                      boolean gwt,
                       GomEnvironment gomEnvironment) {
     super(gomClass,manager,tomHomePath,importList,mapping,gomEnvironment);
     this.maximalsharing = maximalsharing;
+    this.gwt = gwt;
     %match(gomClass) {
       SortClass[AbstractType=abstractType,
                 Operators=ops,
@@ -147,9 +150,13 @@ writer.write(%[
     }
 
     /* fromTerm method, dispatching to operator classes */
+    if(!gwt){
     writer.write(%[
   protected static tom.library.utils.IdConverter idConv = new tom.library.utils.IdConverter();
-
+]%);
+    }
+if(!gwt){
+writer.write(%[
   /**
    * Returns an ATerm representation of this term.
    *
@@ -204,17 +211,20 @@ writer.write(%[
     @fullClassName()@ tmp;
     java.util.ArrayList<@fullClassName()@> results = new java.util.ArrayList<@fullClassName()@>();
 ]%);
+}
     ClassNameList constructor = `ConcClassName(operatorList*,variadicOperatorList*);
     while(!constructor.isEmptyConcClassName()) {
       ClassName operatorName = constructor.getHeadConcClassName();
       constructor = constructor.getTailConcClassName();
+      if(!gwt) {
       writer.write(%[
     tmp = @fullClassName(operatorName)@.fromTerm(convertedTerm,atConv);
     if(tmp!=null) {
       results.add(tmp);
     }]%);
+  }
     }
-
+    if(!gwt) {
     writer.write(%[
     switch(results.size()) {
       case 0:
@@ -226,7 +236,10 @@ writer.write(%[
         return results.get(0);
     }
   }
-
+]%);
+}
+if(!gwt) {
+writer.write(%[
   /**
    * Apply a conversion on the ATerm contained in the String and returns a @fullClassName()@ from it
    *
@@ -249,7 +262,7 @@ writer.write(%[
     return fromTerm(atermFactory.readFromFile(stream),atConv);
   }
 ]%);
-
+}
     /* abstract method to compare two terms represented by objects without maximal sharing */
     /* used in the mapping */
     if(!maximalsharing) {
@@ -375,8 +388,8 @@ matchblock: {
  }
 
 private void generateEnum(java.io.Writer writer) throws java.io.IOException {
-  String P = "tom.library.enumerator.";
-  String E = "tom.library.enumerator.Enumeration";
+  String P = gwt ? "tom.library.enumerator." : "tom.library.enumerator.";
+  String E = gwt ? "tom.library.enumerator.Enumeration" : "tom.library.enumerator.Enumeration";
 
   writer.write(
 %[
@@ -389,7 +402,7 @@ private void generateEnum(java.io.Writer writer) throws java.io.IOException {
   public static final @E@<@fullClassName()@> tmpenum@className()@ = new @E@<@fullClassName()@>((@P@LazyList<@P@Finite<@fullClassName()@>>) null);
 
   public static @E@<@fullClassName()@> getEnumeration() {
-    if(enum@className()@ == null) { 
+    if(enum@className()@ == null) {
       enum@className()@ = @generateSum()@
       tmpenum@className()@.p1 = new @P@P1<@P@LazyList<@P@Finite<@fullClassName()@>>>() {
         public @P@LazyList<@P@Finite<@fullClassName()@>> _1() { return enum@className()@.parts(); }
@@ -415,13 +428,17 @@ private String generateSum() {
   %match(operatorClasses) {
     ConcGomClass(_*,OperatorClass[ClassName=className, SortName=ClassName[Name=sortName], SlotFields=slotList],_*) && className()==`sortName -> {
       String exp = fullClassName(`className) + ".funMake()";
-      %match(slotList) { 
+      %match(slotList) {
         ConcSlotField() -> {
           exp += ".apply(" + fullClassName() + ".tmpenum" + className() + ")";
         }
         ConcSlotField(_*,SlotField[Domain=domain@ClassName[Name=domainName]],_*) -> {
           if(getGomEnvironment().isBuiltinClass(`domain)) {
+            if(!gwt) {
             exp += ".apply(tom.library.enumerator.Combinators.make" + `domainName + "())";
+            } else {
+            exp += ".apply(tom.library.enumerator.Combinators.make" + `domainName + "())";
+            }
           } else {
             exp += ".apply(" + fullClassName(`domain) + ".tmpenum" + `domainName + ")";
             if(!fullClassName().equals(fullClassName(`domain))) {
@@ -433,15 +450,15 @@ private String generateSum() {
       res = (res==null)?exp:res+"\n        .plus(" + exp + ")";
     }
 
-    ConcGomClass(_*,VariadicOperatorClass[ClassName=className, SortName=ClassName[Name=sortName], 
-        Empty=OperatorClass[ClassName=emptyClassName, SortName=ClassName[Name=emptySortName], SlotFields=emptySlotList], 
+    ConcGomClass(_*,VariadicOperatorClass[ClassName=className, SortName=ClassName[Name=sortName],
+        Empty=OperatorClass[ClassName=emptyClassName, SortName=ClassName[Name=emptySortName], SlotFields=emptySlotList],
         Cons=OperatorClass[ClassName=consClassName, SortName=ClassName[Name=consSortName], SlotFields=consSlotList]
         ],_*) && className()==`sortName -> {
       String exp = fullClassName(`emptyClassName) + ".funMake().apply(" + fullClassName() + ".tmpenum" + className() + ")";
       res = (res==null)?exp:res+"\n        .plus(" + exp + ")";
-      
+
       exp = fullClassName(`consClassName) + ".funMake()";
-      %match(consSlotList) { 
+      %match(consSlotList) {
         ConcSlotField() -> {
           exp += ".apply(" + fullClassName() + ".tmpenum" + className() + ")";
         }

@@ -51,19 +51,16 @@ public class Main {
       if(options.in != null) {
         fileinput = new FileInputStream(options.in);
       }
-
       RuleLexer lexer = new RuleLexer(new ANTLRInputStream(fileinput));
       CommonTokenStream tokens = new CommonTokenStream(lexer);
       RuleParser ruleParser = new RuleParser(tokens);
       Tree tree = (Tree) ruleParser.program().getTree();
       Program program = (Program) RuleAdaptor.getTerm(tree);
-
       /*
        * Compilation of the strategy section
        */
       Compiler compiler = Compiler.getInstance();
       compiler.setProgram(program);
-
       // Transforms the strategy into a rewrite system
       //   get the TRS for the strategy named strategyName
       Set<String> strategyNames = compiler.collectConstantStrategyName(program);
@@ -105,14 +102,14 @@ public class Main {
         //for(String name:generatedSignature.getSymbols()) {
           //System.out.println("symbol: " + name + " function: " + generatedSignature.isFunction(name) + " internal: " + generatedSignature.isInternal(name));
         //}
-      
+
         Trs otrs = RewriteSystem.trsRule(`Otrs(generatedRules),generatedSignature);
         generatedRules = otrs.getlist();
         //for(Rule r:res.getCollectionConcRule()) {
         //  System.out.println(Pretty.toString(r));
         //}
         //System.out.println("size = " + res.length());
-       
+
       }
 
       /*
@@ -149,7 +146,7 @@ public class Main {
 
       if(options.classname != null) {
         tomoutputfile.println( Pretty.generateTom(strategyNames, generatedRules, extractedSignature, generatedSignature) );
-      } 
+      }
 
       if(options.aprove) {
         boolean innermost = false;

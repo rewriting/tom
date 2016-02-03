@@ -7,8 +7,8 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.HashSet;
 import tom.library.sl.*;
-import aterm.*;
-import aterm.pure.*;
+/*import aterm.*;
+import aterm.pure.*;*/
 import com.google.common.collect.HashMultiset;
 
 import static sa.Tools._appl;
@@ -54,7 +54,7 @@ public class RuleCompiler {
   public RuleList expandAntiPatterns(RuleList rules) {
     return expandAntiPatternsAux(rules, true);
   }
-  
+
   /*
    * Remove nested anti-patterns
    * @param rules the list of rules to expand
@@ -64,7 +64,7 @@ public class RuleCompiler {
     if(nextRuleSymbol == null){ //if we don't know what to do with the Bottom2 (than change to Bottom)
       rules = eliminateBottom2(rules);
     }else{ // chain to the next call
-      rules = changeBottom2(rules,nextRuleSymbol);      
+      rules = changeBottom2(rules,nextRuleSymbol);
     }
     return rules;
   }
@@ -83,8 +83,8 @@ public class RuleCompiler {
       newRules = `ConcRule(newRules*,genRules*);
     }
     return newRules;
-  }  
-  
+  }
+
   /**
    * Expand a rule (with anti-patterns) in list of LINEAR rules (with only one anti-pattern)
    * @param rule the rule to expand
@@ -135,7 +135,7 @@ public class RuleCompiler {
     }
     return genRules;
   }
- 
+
   /**
    * Perform one-step expansion for a LINEAR Rule
    * @param ruleList the resulting list of rules (extended by side effect)
@@ -153,7 +153,7 @@ public class RuleCompiler {
 
       Anti(t) -> {
         Term antiterm = (Main.options.metalevel)?Tools.metaDecodeConsNil(`t):`t;
-        %match(antiterm) { 
+        %match(antiterm) {
           Appl(name,args)  -> {
             // add g(Z1,...) ... h(Z1,...)
             for(String otherName: extractedSignature.getConstructors()) {
@@ -167,7 +167,7 @@ public class RuleCompiler {
                 ruleList.add(newr);
               }
             }
-            
+
             // add f(!a1,...) ... f(a1,...,!an)
             sa.rule.types.termlist.TermList tl = (sa.rule.types.termlist.TermList) `args;
             //int arity = extractedSignature.getArity(`name); // arity(Bottom)=-1 instead of 1 !!!
@@ -311,7 +311,7 @@ public class RuleCompiler {
    *     @ expanded accordingly. The order of rules is preserved.
    ********************************************************************************/
   /**
-    * Transforms a set of rules that contain x@t into a set of rules without @ 
+    * Transforms a set of rules that contain x@t into a set of rules without @
     * @param ruleList the set of rules to expand
     * @return a new set that contains the expanded rules
     */
@@ -368,7 +368,7 @@ public class RuleCompiler {
       }
     }
   }
-  
+
   private static tom.library.sl.Visitable removeAt(tom.library.sl.Visitable t) {
     try {
       return `TopDown(RemoveAt()).visitLight(t);
@@ -404,7 +404,7 @@ public class RuleCompiler {
       }
     }
   }
-  
+
   // replace t@t by t
   %strategy EliminateAt() extends Identity() {
     visit Term {

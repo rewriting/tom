@@ -46,22 +46,25 @@ public class OperatorTemplate extends TemplateHookedClass {
   boolean maximalsharing;
   boolean jmicompatible;
   boolean variadicconstructor;
+  boolean gwt;
 
   %include { ../../adt/objects/Objects.tom}
 
   public OperatorTemplate(File tomHomePath,
                           OptionManager manager,
-                          List importList, 	
+                          List importList,
                           GomClass gomClass,
                           TemplateClass mapping,
                           boolean multithread,
                           boolean maximalsharing,
                           boolean jmicompatible,
+                          boolean gwt,
                           GomEnvironment gomEnvironment) {
     super(gomClass,manager,tomHomePath,importList,mapping,gomEnvironment);
     this.multithread = multithread;
     this.maximalsharing = maximalsharing;
     this.jmicompatible = jmicompatible;
+    this.gwt = gwt;
     %match(gomClass) {
       OperatorClass[AbstractType=abstractType,
                     ExtendsType=extendsType,
@@ -102,13 +105,14 @@ public final class @className()@ extends @fullClassName(extendsType)@ implements
 ]%);
 
 
+
   if(slotList.length() > 0) {
     writer.write(%[
 
   private @className()@() {}
   private int hashCode;
   private static @className()@ gomProto = new @className()@();
-  ]%); 
+  ]%);
     if(variadicconstructor) {
       /* get the domain type of the constructor */
       %match(slotList) {
@@ -124,7 +128,7 @@ public final class @className()@ extends @fullClassName(extendsType)@ implements
           }
         }
       }
-    } 
+    }
   } else {
     writer.write(%[
 
@@ -141,6 +145,7 @@ public final class @className()@ extends @fullClassName(extendsType)@ implements
   @generateBlock()@
   private static String symbolName = "@className()@";
 ]%);
+
     if(variadicconstructor) {
       /* get the domain type of the constructor */
       %match(slotList) {
@@ -153,6 +158,7 @@ public final class @className()@ extends @fullClassName(extendsType)@ implements
           writer.write(%[
    private tom.library.sl.VisitableBuiltin<@primitiveToReferenceType(fullClassName(`domainclass))@>[] children;
           ]%);
+
         }
         }
       }
@@ -552,8 +558,8 @@ writer.write(%[
   ]%);
 
 generateGetters(writer);
-
-    writer.write(%[
+if(!gwt) {
+writer.write(%[
   /* AbstractType */
   /**
    * Returns an ATerm representation of this term.
@@ -592,6 +598,7 @@ generateGetters(writer);
     return null;
   }
 ]%);
+}
 
     writer.write(%[
   /* Visitable */
@@ -654,7 +661,6 @@ generateGetters(writer);
     @getchildren(slotList)@
   }
 ]%);
-
 if(maximalsharing) {
   // OLD VERSION
     writer.write(%[
@@ -758,7 +764,7 @@ private void generateEnum(java.io.Writer writer) throws java.io.IOException {
       public String apply(Integer index) {
         SlotField[] array = slotList.getCollectionConcSlotField().toArray(new SlotField[1]);
         String res = "make(";
-        for(int i=1 ; i<index ; i++) { 
+        for(int i=1 ; i<index ; i++) {
           String arg = "t"+i;
           ClassName domain = array[i-1].getDomain();
           String sort = fullClassName(domain);
@@ -769,7 +775,7 @@ private void generateEnum(java.io.Writer writer) throws java.io.IOException {
           if(i<index-1) { res += ","; }
         }
         res += ")";
-        return res; 
+        return res;
       }
     };
 
@@ -977,7 +983,7 @@ private void generateEnum(java.io.Writer writer) throws java.io.IOException {
     return res.toString();
   }
 
-  private String generatefromATermChildren(String appl, String atConv) {
+ private String generatefromATermChildren(String appl, String atConv) {
     StringBuilder res = new StringBuilder();
     int index = 0;
     SlotFieldList slots = slotList;
@@ -993,7 +999,7 @@ private void generateEnum(java.io.Writer writer) throws java.io.IOException {
     return res.toString();
   }
 
-  private String fieldName(String fieldName) {
+ private String fieldName(String fieldName) {
     return "_"+fieldName;
   }
 
@@ -1162,7 +1168,7 @@ private void generateEnum(java.io.Writer writer) throws java.io.IOException {
             }
           }
         }
-      } 
+      }
       // default case: empty constructor
       return %[
         return new tom.library.sl.Visitable[]{};
@@ -1220,7 +1226,7 @@ private void generateEnum(java.io.Writer writer) throws java.io.IOException {
               return %[
                @fullClassName(`domainclass)@[] typed_children = new @fullClassName(`domainclass)@[children.length];
               for (int i=0; i<children.length; i++) {
-                typed_children[i] = (@fullClassName(`domainclass)@) children[i]; 
+                typed_children[i] = (@fullClassName(`domainclass)@) children[i];
               }
               return fromArray(typed_children);
               ]%;
@@ -1229,17 +1235,17 @@ private void generateEnum(java.io.Writer writer) throws java.io.IOException {
               return %[
                @builtin_type@[] builtin_children = new @builtin_type@[children.length];
                for (int i=0; i<children.length; i++) {
-                 builtin_children[i] = ((tom.library.sl.VisitableBuiltin<@primitiveToReferenceType(builtin_type)@>) children[i]).getBuiltin(); 
+                 builtin_children[i] = ((tom.library.sl.VisitableBuiltin<@primitiveToReferenceType(builtin_type)@>) children[i]).getBuiltin();
                }
                return fromArray(builtin_children);
               ]%;
             }
           }
         }
-      } 
+      }
       /* Empty constructor */
       return "return this;";
-    } else { 
+    } else {
       StringBuilder res = new StringBuilder("return make(");
       int index = 0;
       %match(slotList) {
@@ -1254,7 +1260,11 @@ private void generateEnum(java.io.Writer writer) throws java.io.IOException {
             res.append(index);
             res.append("]");
           } else {
+            if(!gwt) {
             res.append("((tom.library.sl.VisitableBuiltin<");
+            } else {
+            res.append("((tom.library.sl.VisitableBuiltin<");
+            }
             res.append(primitiveToReferenceType(fullClassName(`domain)));
             res.append(">)");
             res.append(arrayName);
@@ -1285,7 +1295,7 @@ private void generateEnum(java.io.Writer writer) throws java.io.IOException {
             }
           }
       } else {
-        /* empty constructor */ 
+        /* empty constructor */
         return "";
       }
     } else {
@@ -1310,7 +1320,7 @@ private String setchildat(String argName) {
     /* get the domain type of the constructor */
      %match(slotList) {
       ConcSlotField(SlotField[Domain=domainclass],_*) -> {
-        String domain = fullClassName(`domainclass); 
+        String domain = fullClassName(`domainclass);
         StringBuilder res = new StringBuilder();
         String class_name = fullClassName(`domainclass);
             if (!getGomEnvironment().isBuiltinClass(`domainclass)) {
@@ -1318,7 +1328,7 @@ private String setchildat(String argName) {
       tom.library.sl.Visitable[] children = getChildren();
       @class_name@[] new_children = new @class_name@[children.length];
       for(int i =0; i<children.length; i++) {
-        new_children[i] = ((@class_name@) children[i]); 
+        new_children[i] = ((@class_name@) children[i]);
       }
      new_children[index] = (@domain@) @argName@;
      return fromArray(new_children);
@@ -1328,13 +1338,13 @@ private String setchildat(String argName) {
       tom.library.sl.Visitable[] children = getChildren();
       @class_name@[] new_children = new @class_name@[children.length];
       for(int i =0; i<children.length; i++) {
-        new_children[i] = ((tom.library.sl.VisitableBuiltin<@primitiveToReferenceType(class_name)@>) children[i]).getBuiltin(); 
+        new_children[i] = ((tom.library.sl.VisitableBuiltin<@primitiveToReferenceType(class_name)@>) children[i]).getBuiltin();
       }
       new_children[index] = ((tom.library.sl.VisitableBuiltin<@primitiveToReferenceType(class_name)@>) @argName@).getBuiltin();
       return fromArray(new_children);
                   ]%);
             }
-            return res.toString();
+      return res.toString();
       }
      }
     }
@@ -1447,7 +1457,7 @@ private String generateMakeArgsFor(SlotField slot, String argName) {
 
 ]%);
          } else if (`domain.equals(`ClassName("aterm","ATerm"))
-             ||`domain.equals(`ClassName("aterm","ATermList"))) {
+             ||`domain.equals(`ClassName("aterm","ATermList")) && !gwt) {
            res.append(%[
     /* Inefficient total order on ATerm */
     int @fieldName(`slotName)@Cmp = ((this.@fieldName(`slotName)@).toString()).compareTo((@other@.@fieldName(`slotName)@).toString());
@@ -1498,7 +1508,7 @@ private String generateMakeArgsFor(SlotField slot, String argName) {
             writer.write(fieldName(`slotName));
             writer.write(")>>>32");
             writer.write("))");
-          } else if (`domain.equals(`ClassName("aterm","ATerm"))||`domain.equals(`ClassName("aterm","ATermList"))) {
+          } else if (`domain.equals(`ClassName("aterm","ATerm"))||`domain.equals(`ClassName("aterm","ATermList")) && !gwt) {
             // Use the string hashFunction for Strings, and pass index as arity
             writer.write(fieldName(`slotName)+".hashCode()");
           }  else {
@@ -1544,7 +1554,7 @@ private String generateMakeArgsFor(SlotField slot, String argName) {
             writer.write(fieldName(`slotName));
             writer.write(")>>>32");
             writer.write("))");
-          } else if (`domain.equals(`ClassName("aterm","ATerm"))||`domain.equals(`ClassName("aterm","ATermList"))) {
+          } else if (`domain.equals(`ClassName("aterm","ATerm"))||`domain.equals(`ClassName("aterm","ATermList")) && !gwt) {
             // Use the string hashFunction for Strings, and pass index as arity
             writer.write(fieldName(`slotName)+".hashCode()");
           }  else {

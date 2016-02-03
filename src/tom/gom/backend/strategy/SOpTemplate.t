@@ -34,6 +34,7 @@ import tom.gom.adt.objects.types.*;
 public class SOpTemplate extends TemplateClass {
   ClassName operator;
   SlotFieldList slotList;
+  boolean gwt;
 
   %include { ../../adt/objects/Objects.tom}
 
@@ -41,9 +42,10 @@ public class SOpTemplate extends TemplateClass {
    * The argument is an operator class, and this template generates the
    * assotiated _Op strategy
    */
-  public SOpTemplate(GomClass gomClass, GomEnvironment gomEnvironment) {
+  public SOpTemplate(GomClass gomClass, GomEnvironment gomEnvironment, boolean gwt) {
     super(gomClass,gomEnvironment);
     ClassName clsName = this.className;
+    this.gwt = gwt;
     %match(clsName) {
       ClassName(pkg,name) -> {
         String newpkg = `pkg.replaceFirst(".types.",".strategy.");

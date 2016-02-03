@@ -66,6 +66,7 @@ public class BackendPlugin extends GomGenericPlugin {
     "<boolean name='multithread' altName='mt' description='Generate code compatible with multi-threading' value='false'/>" +
     "<boolean name='nosharing' altName='ns' description='Generate code without maximal sharing' value='false'/>" +
     "<boolean name='jmicompatible' altName='jmi' description='Generate code whose syntax is compatible with JMI standards (capitalize getters and setters)' value='false'/>" +
+    "<boolean name='gwt' altName='gwt' description='Generate Rule.gom for gwt development' value='false'/>" +
     "</options>";
 
   /**
@@ -122,10 +123,11 @@ public class BackendPlugin extends GomGenericPlugin {
     boolean multithread = getOptionBooleanValue("multithread");
     boolean nosharing = getOptionBooleanValue("nosharing");
     boolean jmicompatible = getOptionBooleanValue("jmicompatible");
+    boolean gwt = getOptionBooleanValue("gwt");
     Backend backend =
       new Backend(templateFactory.getFactory(getOptionManager()),
           tomHomePath, generateStratMapping, multithread, nosharing, jmicompatible,
-          getStreamManager().getImportList(),getGomEnvironment());
+          getStreamManager().getImportList(),gwt, getGomEnvironment());
     backend.generate(classList);
     if (null == classList) {
       GomMessage.error(getLogger(), getStreamManager().getInputFileName(),0,

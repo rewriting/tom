@@ -8,8 +8,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.HashMap;
 import tom.library.sl.*;
-import aterm.*;
-import aterm.pure.*;
+/*import aterm.*;
+import aterm.pure.*;*/
 import com.google.common.collect.HashMultiset;
 
 import static sa.Tools.Var;
@@ -37,7 +37,7 @@ public class Compiler {
   %typeterm Compiler { implement { Compiler }}
   %typeterm HashMultiset { implement { HashMultiset }}
 
-  private static Compiler instance = null;
+  public static Compiler instance = null;
 
   // initial AST
   private Program program;
@@ -56,7 +56,7 @@ public class Compiler {
   /**
    * initialize the TRS and set the (generated) symbol that should be
    * used to wrap the terms to reduce
-   * 
+   *
    */
   private Compiler() {
     this.generatedStrategy = new HashSet<String>();
@@ -66,7 +66,7 @@ public class Compiler {
 
   /**
    * get the instance of the Singleton
-   * 
+   *
    */
   public static Compiler getInstance() {
     if(instance == null) {
@@ -103,7 +103,7 @@ public class Compiler {
   /**
    * Compile the strategy strategyName into a rewrite system.
    * @param strategyName the name of the strategy to compile
-   * @return the TRS for strategyName 
+   * @return the TRS for strategyName
    */
   public RuleList compileStrategy(Set<String> strategyNames) {
     List<Rule> mutableList = new ArrayList<Rule>();
@@ -129,7 +129,7 @@ public class Compiler {
     }
 
     if(Main.options.metalevel) {
-      // generate encode/decode only for Tom 
+      // generate encode/decode only for Tom
       if(Main.options.classname != null) {
         ruleList = generateEncodeDecode(ruleList);
       }
@@ -139,7 +139,7 @@ public class Compiler {
 
   /*
    * Given a name, retrieve the corresponding StratDecl (which should not have parameter)
-   * and return an expanded version of the body 
+   * and return an expanded version of the body
    * The resulting strategy is self-contained
    */
   public Strat expandStrategy(String strategyName) {
@@ -163,7 +163,7 @@ public class Compiler {
    * for each StratAppl:
    * retrieve the corresponding StratDecl
    * rename with fresh variables
-   * apply the macro expansion 
+   * apply the macro expansion
    */
   %strategy ExpandStratAppl(compiler:Compiler) extends Identity() {
     visit Strat {
@@ -233,16 +233,16 @@ public class Compiler {
   %strategy ReplaceParameters(params:ParamList, args:StratList) extends Identity() {
     visit Strat {
       StratName(n) -> {
-          //System.out.println("stratname = " + `n); 
-          //System.out.println("params = " + params); 
-          //System.out.println("args = " + args); 
+          //System.out.println("stratname = " + `n);
+          //System.out.println("params = " + params);
+          //System.out.println("args = " + args);
           ParamList plist = params;
           StratList slist = args;
 
         while(!plist.isEmptyConcParam() && !slist.isEmptyConcStrat()) {
           Param p = plist.getHeadConcParam();
           Strat s = slist.getHeadConcStrat();
-          //System.out.println("param = " + p + " -- arg = " + s); 
+          //System.out.println("param = " + p + " -- arg = " + s);
           %match(p) {
             Param(name) && n==name -> {
               return s;
@@ -259,7 +259,7 @@ public class Compiler {
    * compile a (ordered) list of rules
    * return the name of the top symbol (phi) introduced
    * @param ruleList the ordered list of rules to compile
-   * @param generatedRules the (possibily ordered) list of rewrite rules generated 
+   * @param generatedRules the (possibily ordered) list of rewrite rules generated
    * @param strategyName the strategy name to generate (if not null)
    * @return the symbol to be used for the compiled strategy
    */
@@ -276,12 +276,12 @@ public class Compiler {
     if(Main.options.withAP == false) {
       RuleCompiler ruleCompiler = new RuleCompiler(eSig,gSig);
       rList = ruleCompiler.expandGeneralAntiPatterns(rList,null);
-      
+
       for(Rule rule: rList.getCollectionConcRule()) {
         System.out.println("EXPANDED AP RULE: " + Pretty.toString(rule) );
       }
     }
-    
+
     ruleList = rList;
 
     /*
@@ -304,7 +304,7 @@ public class Compiler {
      *   rule'(linear-lhs, true) -> rhs
      *   rule(X) -> Bottom(X) after the last rule
      */
-    
+
     Term X = Var(Tools.getName("X"));
     String rule = strategyName;
     if(rule == null || ordered==false) {
@@ -314,7 +314,7 @@ public class Compiler {
 
     String cr = Tools.getName(Tools.addAuxExtension(StrategyOperator.RULE.getName()));
 
-    // used just to have in generatedRules the packages of rules in the order they are called 
+    // used just to have in generatedRules the packages of rules in the order they are called
     List<Rule> localRules = new ArrayList<Rule>();
 
 
@@ -345,7 +345,7 @@ public class Compiler {
           if(Main.options.withAP == false) {
             RuleCompiler ruleCompiler = new RuleCompiler(eSig,gSig);
             rList = ruleCompiler.expandGeneralAntiPatterns(`ConcRule(currentRule),nextRule);
-            
+
             for(Rule r: rList.getCollectionConcRule()) {
               System.out.println("CompileRuleList -> EXPANDED AP RULE: " + Pretty.toString(r) );
             }
@@ -409,7 +409,7 @@ public class Compiler {
         }
 
       }
-    } else { 
+    } else {
       // META-LEVEL
       gSig.addFunctionSymbol(rule,`ConcGomType(Signature.TYPE_METATERM),Signature.TYPE_METATERM);
       gSig.addFunctionSymbol(cr,`ConcGomType(Signature.TYPE_METATERM,Signature.TYPE_BOOLEAN),Signature.TYPE_METATERM);
@@ -483,7 +483,7 @@ public class Compiler {
         gSig.addSymbol("symb_"+name,`ConcGomType(),Signature.TYPE_METASYMBOL);
       }
     }
-    
+
     // put the locally generated rules at the beginning
     // efficient for LinkedLists but not for ArrayLists
     generatedRules.addAll(0,localRules);
@@ -493,7 +493,7 @@ public class Compiler {
 
 
   /**
-   * compile a strategy built with strategy operator, ordered lists of rules; 
+   * compile a strategy built with strategy operator, ordered lists of rules;
    * rules can be non-linear and contain imbricated APs
    * (classical OR  using meta-representation)
    * return the name of the top symbol (phi) introduced
@@ -603,14 +603,14 @@ public class Compiler {
             } else { // TODO: remove APPROX branch?
               /*
                * Bottom of Bottom is Bottom
-               * this is not necessary if exact reduction - in this case Bottom is propagated immediately 
+               * this is not necessary if exact reduction - in this case Bottom is propagated immediately
                * id(X) -> X
                * Bot(Bot(X)) -> Bot(X)
                */
               generatedRules.add(Rule(_appl(id,X), X));
               generatedRules.add(Rule(Bottom(Bottom(X)), Bottom(X)));
             }
-          } else { 
+          } else {
             // Meta-LEVEL
             gSig.addFunctionSymbol(id,`ConcGomType(Signature.TYPE_METATERM),Signature.TYPE_METATERM);
             if( !Main.options.approx ) {
@@ -712,7 +712,7 @@ public class Compiler {
               generatedRules.add(Rule(_appl(seq2,At(X,Anti(Bottom(Y))),Z), X));
               generatedRules.add(Rule(_appl(seq2,Bottom(Y),X), Bottom(X)));
             }
-          } else { 
+          } else {
             // META-LEVEL
             gSig.addFunctionSymbol(seq,`ConcGomType(Signature.TYPE_METATERM),Signature.TYPE_METATERM);
             gSig.addFunctionSymbol(seq2,`ConcGomType(Signature.TYPE_METATERM,Signature.TYPE_METATERM),Signature.TYPE_METATERM);
@@ -892,7 +892,7 @@ public class Compiler {
              * all_2(Cons(Z1,Z2)) -> all_3(phi_s(Z1),Z2,Cons(Z1,Nil),Nil)
              * all_3(Bottom(X),todo,rargs,rs_args) -> BottomList(rconcat(rargs,todo))
              * all_3(Appl(X,Y),Nil,rargs,rs_args) -> reverse(Cons(Appl(X,Y),rs_args))
-             * all_3(Appl(X,Y), Cons(XX,YY), rargs, rs_args) -> 
+             * all_3(Appl(X,Y), Cons(XX,YY), rargs, rs_args) ->
              * all_3(phi_s(XX), YY, Cons(XX,rargs), Cons(Appl(X,Y),rs_args))
              */
             generatedRules.add(Rule(_appl(all,Appl(Z0,Z1)), _appl(all_1,Appl(Z0,_appl(all_2,Z1)))));
@@ -904,7 +904,7 @@ public class Compiler {
 
             generatedRules.add(Rule(_appl(all_3,Bottom(X),Z1,Z2,Z3), BottomList(_appl(rconcat,Z2,Z1))));
             generatedRules.add(Rule(_appl(all_3,Appl(X,Y),Nil(),Z2,Z3), _appl(reverse,Cons(Appl(X,Y),Z3))));
-            generatedRules.add(Rule(_appl(all_3,Appl(X,Y),Cons(XX,YY),Z2,Z3), 
+            generatedRules.add(Rule(_appl(all_3,Appl(X,Y),Cons(XX,YY),Z2,Z3),
                   _appl(all_3,_appl(phi_s,XX),YY,Cons(XX,Z2),Cons(Appl(X,Y),Z3))));
 
             if(!generated_aux_functions) {
@@ -1068,7 +1068,7 @@ public class Compiler {
             generatedRules.add(Rule(_appl(one_3,Bottom(Z),Cons(XX,YY),Z2), _appl(one_3,_appl(phi_s,XX),YY,Cons(XX,Z2))));
             generatedRules.add(Rule(_appl(one_3,Appl(X,Y),Z1,Cons(Z2,Z3)), _appl(rconcat,Z3,Cons(Appl(X,Y),Z1))));
 
-            if(!generated_aux_functions) { 
+            if(!generated_aux_functions) {
               generated_aux_functions = true;
               /*
                * append(Nil,Z) -> Cons(Z,Nil)
@@ -1093,7 +1093,7 @@ public class Compiler {
       this.strategySymbols.put(strat,strategySymbol);
       this.storedTRSs.put(strat,generatedRules);
     } // strategy not yet compiled
-        
+
     // add the generated rules to the rules for the global strategy only if not already existing
     for(Rule rule:generatedRules) {
       if(!rules.contains(rule)) {
@@ -1195,14 +1195,14 @@ public class Compiler {
       Term rhs_encode = Appl(_appl("symb_" + f), args_encode);
 
       Term lhs_decode = _appl(Signature.DECODE, Appl(_appl("symb_" + f), largs_decode));
-      Term rhs_decode = `Appl(f,rargs_decode); 
+      Term rhs_decode = `Appl(f,rargs_decode);
 
       generatedRules = `ConcRule(generatedRules*, Rule(lhs_encode,rhs_encode));
       generatedRules = `ConcRule(generatedRules*, Rule(lhs_decode,rhs_decode));
     }
 
     Term lhs_decode_bottom = _appl(Signature.DECODE, _appl(Signature.BOTTOM, Var(x)));
-    Term rhs_decode_bottom = _appl(Signature.FAIL, _appl(Signature.DECODE, Var(x))); 
+    Term rhs_decode_bottom = _appl(Signature.FAIL, _appl(Signature.DECODE, Var(x)));
 
     generatedRules = `ConcRule(generatedRules*, Rule(lhs_decode_bottom,rhs_decode_bottom));
 
@@ -1212,7 +1212,7 @@ public class Compiler {
 
   /**
    * generates a rule of the form name(X) -> symbol(X)
-   * name can be then see as an alias for symbol in terms of reduction 
+   * name can be then see as an alias for symbol in terms of reduction
    **/
   private void generateTriggerRule(String name, String symbol, List<Rule> generatedRules) {
     Signature gSig = getGeneratedSignature();
@@ -1247,5 +1247,3 @@ public class Compiler {
   }
 
 }
-
-

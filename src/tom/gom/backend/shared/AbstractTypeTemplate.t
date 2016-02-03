@@ -39,6 +39,7 @@ public class AbstractTypeTemplate extends TemplateHookedClass {
 
   %include { ../../adt/objects/Objects.tom }
   boolean maximalsharing;
+  boolean gwt;
 
   public AbstractTypeTemplate(File tomHomePath,
                               OptionManager manager,
@@ -46,9 +47,11 @@ public class AbstractTypeTemplate extends TemplateHookedClass {
                               GomClass gomClass,
                               TemplateClass mapping,
                               boolean maximalsharing,
+                              boolean gwt,
                               GomEnvironment gomEnvironment){
     super(gomClass,manager,tomHomePath,importList,mapping,gomEnvironment);
     this.maximalsharing = maximalsharing;
+    this.gwt = gwt;
     %match(gomClass) {
       AbstractTypeClass[SortList=sortList] -> {
         this.sortList = `sortList;
@@ -76,9 +79,9 @@ package @getPackage()@;
 
     String implementsInterface;
     if(maximalsharing) {
-      implementsInterface = "shared.SharedObjectWithID, tom.library.sl.Visitable, Comparable";
+      implementsInterface = gwt ? "shared.SharedObjectWithID, tom.library.sl.Visitable, Comparable" : "shared.SharedObjectWithID, tom.library.sl.Visitable, Comparable";
     } else {
-      implementsInterface = "tom.library.sl.Visitable, Cloneable, Comparable";
+      implementsInterface = gwt ? "tom.library.sl.Visitable, Cloneable, Comparable" : "tom.library.sl.Visitable, Cloneable, Comparable";
     }
     writer.write(
 %[
@@ -105,6 +108,7 @@ public abstract class @className()@ implements @implementsInterface@ @generateIn
 ]%);
     }
 
+if(!gwt) {
 writer.write(
 %[
   protected static final aterm.ATermFactory atermFactory = aterm.pure.SingletonFactory.getInstance();
@@ -115,7 +119,10 @@ writer.write(
     * @@return an ATerm representation of this term.
     */
   public abstract aterm.ATerm toATerm();
-
+]%);
+}
+writer.write(
+%[
   /**
     * Returns a string representation of the top symbol of this term.
     *
@@ -159,7 +166,12 @@ writer.write(
     *         term is less than, equal to, or greater than the argument
     */
   public abstract int compareToLPO(Object o);
+]%);
 
+if(!gwt) {
+
+writer.write(
+%[
   /**
     * Converts an ATerm into a string
     *
@@ -277,7 +289,7 @@ writer.write(
   }
 
 ]%);
-
+}
   if(maximalsharing) {
    writer.write(
 %[
@@ -316,4 +328,3 @@ writer.write(
 }
 
 }
-

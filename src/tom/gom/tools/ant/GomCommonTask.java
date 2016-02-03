@@ -62,6 +62,7 @@ import org.apache.tools.ant.types.Environment.Variable;
  * <li>fresh</li>
  * <li>multithread</li>
  * <li>nosharing</li>
+ * <li>gwt</li>
  * <li></li>
  * </ul>
  * Of these arguments, the <b>srcdir</b> and <b>destdir</b> are
@@ -89,6 +90,7 @@ public class GomCommonTask extends MatchingTask {
   private boolean fresh = false;
   private boolean multithread = false;
   private boolean nosharing = false;
+  private boolean gwt = false;
 
   protected final String protectedFileSeparator = "\\"+File.separatorChar;
   private static final String TOM_HOME = "tom.home";
@@ -259,6 +261,24 @@ public class GomCommonTask extends MatchingTask {
     return nosharing;
   }
 
+
+  /**
+   * If true, compiles for GWT development   
+   * @param gwt if true, activate the option
+   */
+  public void setGWT(boolean flag) {
+    this.gwt = flag;
+  }
+
+
+  /**
+   * Gets the gwt flag.
+   * @return the gwt flag
+   */
+  public boolean getGwt() {
+    return gwt;
+  }
+
   /**
    * If true, asks the compiler for verbose output.
    * @param verbose if true, asks the compiler for verbose output
@@ -423,6 +443,9 @@ public class GomCommonTask extends MatchingTask {
       }
       if(getNosharing()) {
         javaRunner.createArg().setValue("--nosharing");
+      }
+      if(getGwt()) {
+	javaRunner.createArg().setValue("--gwt");
       }
       if(getTermpointer()) {
         javaRunner.createArg().setValue("--termpointer");

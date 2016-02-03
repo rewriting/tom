@@ -47,6 +47,7 @@ public class Backend {
   private boolean multithread = false;
   private boolean maximalsharing = true;
   private boolean jmicompatible = false;
+  private boolean gwt = false;
   private GomEnvironment gomEnvironment;
 
   %include { ../adt/objects/Objects.tom }
@@ -59,6 +60,7 @@ public class Backend {
           boolean nosharing,
           boolean jmicompatible,
           List importList,
+	        boolean gwt,
           GomEnvironment gomEnvironment) {
     this.templatefactory = templatefactory;
     this.tomHomePath = tomHomePath;
@@ -67,6 +69,7 @@ public class Backend {
     this.maximalsharing = !nosharing;
     this.jmicompatible = jmicompatible;
     this.importList = importList;
+    this.gwt = gwt;
     this.gomEnvironment = gomEnvironment;
   }
 
@@ -87,18 +90,18 @@ public class Backend {
         if (generateStratMapping > 0) { // generate congruence strategies
           ClassName smappingclass = `ClassName(pkg,"_"+name);
           GomClass nGomClass = `gomclass.setClassName(smappingclass);
-          TemplateClass stratMapping = new tom.gom.backend.strategy.StratMappingTemplate(nGomClass,getGomEnvironment(),generateStratMapping);
+          TemplateClass stratMapping = new tom.gom.backend.strategy.StratMappingTemplate(nGomClass,getGomEnvironment(),generateStratMapping, gwt);
           if (1 == generateStratMapping) {
             // classical mode: generate extra-mapping in file.tom
-            mapping = templatefactory.makeTomMappingTemplate(`gomclass,stratMapping,getGomEnvironment());
+            mapping = templatefactory.makeTomMappingTemplate(`gomclass,stratMapping, gwt, getGomEnvironment());
           } else {
             // expert mode: generate extra-mapping in _file.tom
             generators.put(smappingclass,stratMapping);
-            mapping = templatefactory.makeTomMappingTemplate(`gomclass,null,getGomEnvironment());
+            mapping = templatefactory.makeTomMappingTemplate(`gomclass,null, gwt, getGomEnvironment());
           }
         } else {
           // do not generate congruence strategies
-          mapping = templatefactory.makeTomMappingTemplate(`gomclass,null,getGomEnvironment());
+          mapping = templatefactory.makeTomMappingTemplate(`gomclass,null, gwt, getGomEnvironment());
         }
         mappingSet.add(mapping);
         generators.put(`className,mapping);
@@ -157,7 +160,7 @@ public class Backend {
         generators.get(clsName).generateFile();
       }
     }
-    
+
     return 1;
   }
 
@@ -184,6 +187,7 @@ public class Backend {
               gomclass,
               (TemplateClass)generators.get(`mapping),
               maximalsharing,
+              gwt,
               getGomEnvironment());
         generators.put(`className,abstracttype);
         return 1;
@@ -196,6 +200,7 @@ public class Backend {
               gomclass,
               (TemplateClass)generators.get(`mapping),
               maximalsharing,
+              gwt,
               getGomEnvironment());
         generators.put(`className,sort);
         return 1;
@@ -209,16 +214,17 @@ public class Backend {
             multithread,
             maximalsharing,
             jmicompatible,
+            gwt,
             getGomEnvironment());
         generators.put(`className,operator);
         if(generateStratMapping>0) {
-          TemplateClass sOpStrat = new tom.gom.backend.strategy.SOpTemplate(gomclass,getGomEnvironment());
+          TemplateClass sOpStrat = new tom.gom.backend.strategy.SOpTemplate(gomclass,getGomEnvironment(), gwt);
           sOpStrat.generateFile();
 
-          TemplateClass isOpStrat = new tom.gom.backend.strategy.IsOpTemplate(gomclass,getGomEnvironment());
+          TemplateClass isOpStrat = new tom.gom.backend.strategy.IsOpTemplate(gomclass,getGomEnvironment(), gwt);
           isOpStrat.generateFile();
 
-          TemplateClass makeOpStrat = new tom.gom.backend.strategy.MakeOpTemplate(gomclass,getGomEnvironment());
+          TemplateClass makeOpStrat = new tom.gom.backend.strategy.MakeOpTemplate(gomclass,getGomEnvironment(), gwt);
           makeOpStrat.generateFile();
         }
        return 1;
@@ -233,6 +239,7 @@ public class Backend {
               importList,
               gomclass,
               (TemplateClass)generators.get(`mapping),
+              gwt,
               getGomEnvironment());
         generators.put(`className,operator);
         /* Generate files for cons and empty */

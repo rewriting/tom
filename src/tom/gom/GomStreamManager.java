@@ -64,6 +64,9 @@ public class GomStreamManager {
   /** Suffixes */
   private String inputSuffix;
 
+  /** GWT */
+  private boolean gwt;
+
   public GomStreamManager() {
     clear();
   }
@@ -77,6 +80,7 @@ public class GomStreamManager {
     defaultPackagePath = "";
     inputSuffix = ".gom";
     packagePathMap.clear();
+    gwt = false;
   }
 
   public void initializeFromOptionManager(OptionManager optionManager) {
@@ -94,6 +98,7 @@ public class GomStreamManager {
       // note : destdir is `.` by default
       setDestDir(dest);
     }
+    System.out.println(optionManager.getOptionValue("destdir"));
     // package and name for apigen
     String pack = (String)optionManager.getOptionValue("package");
     if (pack.length() > 0) {

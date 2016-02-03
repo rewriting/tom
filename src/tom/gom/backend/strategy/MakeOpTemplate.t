@@ -34,6 +34,7 @@ import tom.gom.adt.objects.types.*;
 public class MakeOpTemplate extends TemplateClass {
   ClassName operator;
   SlotFieldList slotList;
+  boolean gwt;
 
   %include { ../../adt/objects/Objects.tom}
 
@@ -41,9 +42,10 @@ public class MakeOpTemplate extends TemplateClass {
    * The argument is an operator class, and this template generates the
    * assotiated MakeOp strategy
    */
-  public MakeOpTemplate(GomClass gomClass, GomEnvironment gomEnvironment) {
+  public MakeOpTemplate(GomClass gomClass, GomEnvironment gomEnvironment, boolean gwt) {
     super(gomClass,gomEnvironment);
     ClassName clsName = this.className;
+    this.gwt = gwt;
     %match(clsName) {
       ClassName(pkg,name) -> {
         String newpkg = `pkg.replaceFirst(".types.",".strategy.");
@@ -165,6 +167,8 @@ public class @className()@ implements tom.library.sl.Strategy {
   }
 }
 ]%);
+
+
   }
 
   public String generateMapping() {
@@ -188,9 +192,9 @@ private String genGetSlot(String prefix,SlotFieldList slots,String arg) {
         get_slot(@prefix+arg+i@, t) { (tom.library.sl.Strategy)((@fullClassName()@)$t).getChildAt(@i@) }]%);
       } else {
         out.append(%[
-        get_slot(@prefix+arg+i@, t) { ((tom.library.sl.VisitableBuiltin<@primitiveToReferenceType(fullClassName(`domain))@>)(((@fullClassName()@)$t).getChildAt(@i@))).getBuiltin() }]%); 
+        get_slot(@prefix+arg+i@, t) { ((tom.library.sl.VisitableBuiltin<@primitiveToReferenceType(fullClassName(`domain))@>)(((@fullClassName()@)$t).getChildAt(@i@))).getBuiltin() }]%);
       }
-      i++; 
+      i++;
     }
   }
   return out.toString();

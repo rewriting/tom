@@ -39,6 +39,7 @@ package tom.gom.tools.ant;
  * <li>termgraph</li>
  * <li>fresh</li>
  * <li>pointer</li>
+ * <li>gwt</li>
  * <li></li>
  * </ul>
  * Of these arguments, the <b>srcdir</b> and <b>destdir</b> are

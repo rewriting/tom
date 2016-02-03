@@ -62,6 +62,7 @@ public class GomTask extends GomCommonTask {
   private boolean optimize = false;
   private boolean optimize2 = false;
   private boolean inlineplus = false;
+  private boolean gwt = false;
 
   protected String toPattern() {
     return "\\1\\L\\3" + protectedFileSeparator + "\\3.tom";
@@ -147,5 +148,9 @@ public class GomTask extends GomCommonTask {
     if(inlineplus) {
       javaRunner.createArg().setValue("--inlineplus");
     }
+    if(gwt) {
+      javaRunner.createArg().setValue("--gwt");
+    }
+
   }
 }

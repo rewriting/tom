@@ -34,12 +34,14 @@ import tom.gom.tools.error.GomRuntimeException;
 public class StratMappingTemplate extends MappingTemplateClass {
   GomClassList operatorClasses;
   int generateStratMapping = 0;
+  boolean gwt;
 
   %include { ../../adt/objects/Objects.tom }
 
-  public StratMappingTemplate(GomClass gomClass, GomEnvironment gomEnvironment, int generateStratMapping) {
+  public StratMappingTemplate(GomClass gomClass, GomEnvironment gomEnvironment, int generateStratMapping, boolean gwt) {
     super(gomClass,gomEnvironment);
     this.generateStratMapping = generateStratMapping;
+    this.gwt = gwt;
     %match(gomClass) {
       TomMapping[OperatorClasses=ops] -> {
         this.operatorClasses = `ops;
@@ -66,11 +68,11 @@ public class StratMappingTemplate extends MappingTemplateClass {
       ConcGomClass(_*,op@OperatorClass[],_*) -> {
         //TODO: change the generation for Empty and Cons constructors
         writer.write(
-            (new tom.gom.backend.strategy.SOpTemplate(`op,getGomEnvironment())).generateMapping());
+            (new tom.gom.backend.strategy.SOpTemplate(`op,getGomEnvironment(), gwt)).generateMapping());
         writer.write(
-            (new tom.gom.backend.strategy.IsOpTemplate(`op,getGomEnvironment())).generateMapping());
+            (new tom.gom.backend.strategy.IsOpTemplate(`op,getGomEnvironment(), gwt)).generateMapping());
         writer.write(
-            (new tom.gom.backend.strategy.MakeOpTemplate(`op,getGomEnvironment())).generateMapping());
+            (new tom.gom.backend.strategy.MakeOpTemplate(`op,getGomEnvironment(), gwt)).generateMapping());
       }
       ConcGomClass(_*,
           VariadicOperatorClass[ClassName=vopName,

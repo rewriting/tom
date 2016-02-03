@@ -3,14 +3,14 @@ package sa;
 import sa.rule.types.*;
 import java.util.*;
 import tom.library.sl.*;
-import aterm.*;
-import aterm.pure.*;
+/*import aterm.*;
+import aterm.pure.*;*/
 import com.google.common.collect.HashMultiset;
 
 public class Tools {
   %include { rule/Rule.tom }
   %include { sl.tom }
-  %include { aterm.tom }
+  /*%include { aterm.tom }*/
   %include { java/util/types/Collection.tom }
   %include { java/util/types/Map.tom }
   %include { java/util/types/HashSet.tom }
@@ -23,7 +23,7 @@ public class Tools {
   private static int phiNumber = 0;          // sequence number for symbol (names)
 
   /*** helpers to build and decompose symbol names ***/
-  
+
   /**
    * Builds a unique symbol (name)
    */
@@ -105,14 +105,14 @@ public class Tools {
    */
   public static String getTypeName(String symbol) {
     int last = symbol.lastIndexOf('_');
-    if(last == -1) { // nothing if type not specified in the symbol name 
-      return ""; 
+    if(last == -1) { // nothing if type not specified in the symbol name
+      return "";
     }
     return symbol.substring(last+1,symbol.length());
   }
 
   /**
-   * Given a symbol name of the form 
+   * Given a symbol name of the form
    * - symbolName[AUX][_<number>]-operatorName[_<number>][_typeName]
    * @returns operatorName
    */
@@ -136,14 +136,14 @@ public class Tools {
 
   /*** helpers to build AST ***/
   public static Term Var(String name) { return `Var(name); }
-  public static Term Anti(Term t) { 
-    %match(t){ 
+  public static Term Anti(Term t) {
+    %match(t){
       At(var,term) -> {
         Term antiterm = Anti(`term);
-        return `At(var,antiterm);         
+        return `At(var,antiterm);
       }
     }
-    return `Anti(t); 
+    return `Anti(t);
   }
   public static Term At(Term t1, Term t2) { return `At(t1,t2); }
   public static Term Bottom(Term t) { return _appl(Signature.BOTTOM,t); }
@@ -177,7 +177,7 @@ public class Tools {
       throw new RuntimeException("metaEncodeVars can only be used with meta-level active");
     }
   }
-  
+
   private static Term encodeVars(Term t, Signature signature) {
     %match(t) {
       Appl(symb,args) -> {
@@ -222,7 +222,7 @@ public class Tools {
       throw new RuntimeException("metaEncodeConsNil can only be used with meta-level active");
     }
   }
-  
+
   private static Term encodeConsNil(Term t, Signature signature) {
     %match(t) {
       Appl(symb,args) -> {
@@ -301,7 +301,7 @@ public class Tools {
 
   /*
    * generate a term for the form f(Z1,...,Zn)
-   * @param name the symbol name 
+   * @param name the symbol name
    * @param arity the arity of the symbol
    * @return the Term that represents the term
    */
@@ -313,7 +313,7 @@ public class Tools {
     }
     return `Appl(name, args);
   }
- 
+
   /*
    * tools for manipulating Program
    */
@@ -397,7 +397,7 @@ public class Tools {
     }
     return res;
   }
-  
+
   public static boolean isLhsLinear(Trs trs) {
     boolean res = true;
     %match(trs) {
@@ -407,7 +407,7 @@ public class Tools {
     }
     return res;
   }
-  
+
   public static boolean containsNamedVar(tom.library.sl.Visitable t) {
     HashMultiset<String> bag = collectVariableMultiplicity(t);
     for(String name:bag.elementSet()) {
@@ -427,7 +427,7 @@ public class Tools {
     }
      return !bag.isEmpty();
   }
-  
+
   // search all At symbols
   %strategy CollectAt(bag:HashMultiset) extends Identity() {
     visit Term {
@@ -445,7 +445,7 @@ public class Tools {
     }
      return !bag.isEmpty();
   }
-  
+
   // search all APs
   %strategy CollectAP(bag:HashMultiset) extends Identity() {
     visit Term {
@@ -503,7 +503,7 @@ public class Tools {
     }
   }
 
-  // for Main.options.metalevel we need the (generated)signature 
+  // for Main.options.metalevel we need the (generated)signature
   %strategy ReplaceWithFreshVar(signature:Signature, bag:HashMultiset, map:Map) extends Identity() {
     visit Term {
       Var(n)  -> {

@@ -9,6 +9,7 @@
   <property name="sa.src"      location="${sa.dir}/src"/>
   <property name="sa.gen"      location="${sa.dir}/gen"/>
   <property name="sa.build"    location="${sa.dir}/build"/>
+  <property name="sa.genGWT"   location="${sa.dir}/tomwebapp/src"/>
   <property name="sa.package"  value="sa"/>
   <property name="sa.ast"      value="${sa.package}/Rule"/>
   <property name="sa.grammarname"  value="Rule"/>
@@ -42,9 +43,34 @@
     </tom.preset>
   </target>
 
+  <target name="tomGWT" depends="gomGWT">
+    <tom.preset srcdir="${sa.src}"
+                destdir="${sa.genGWT}"
+                import="${sa.genGWT}">
+      <include name="**/*.t"/>
+      <exclude name="**/Main.t"/>
+      <exclude name="**/Options.t"/>
+      <exclude name="**/*.g.t"/>
+    </tom.preset>
+    <antcall target="antlrGWT"/>
+    <copy todir="${sa.genGWT}/${sa.package}">
+          <fileset dir="${sa.src}/${sa.package}">
+   		<include name="*.java"/>
+          </fileset>
+    </copy>
+  </target>
+
   <target name="gomantlradapter" depends="init">
     <gomantlradapter.preset srcdir="${sa.src}"
                             destdir="${sa.gen}"
+                            package="${sa.package}">
+      <include name="${sa.ast}.gom"/>
+    </gomantlradapter.preset>
+  </target>
+
+  <target name="gomantlradapterGWT">
+    <gomantlradapter.preset srcdir="${sa.src}"
+                            destdir="${sa.genGWT}"
                             package="${sa.package}">
       <include name="${sa.ast}.gom"/>
     </gomantlradapter.preset>
@@ -58,10 +84,26 @@
     </gom.preset>
   </target>
 
+  <target name="gomGWT" depends="tom.init">
+    <gom.preset srcdir="${sa.src}"
+                destdir="${sa.genGWT}"
+                gwt="on">
+      <include name="${sa.ast}.gom"/>
+      <!-- <include name="${sa.package}/Pattern.gom"/> -->
+    </gom.preset>
+  </target>
+
   <target name="antlr" depends="gomantlradapter">
     <antlr3 target="${sa.src}/${sa.grammar}.g"
             libdirectory="${sa.gen}/${sa.package}/rule"
             outputdirectory="${sa.gen}/${sa.package}"
+            />
+  </target>
+
+  <target name="antlrGWT" depends="gomantlradapterGWT">
+    <antlr3 target="${sa.src}/${sa.grammar}.g"
+            libdirectory="${sa.genGWT}/${sa.package}/rule"
+            outputdirectory="${sa.genGWT}/${sa.package}"
             />
   </target>
 
@@ -76,6 +118,16 @@
   <target name="clean">
     <delete dir="${sa.gen}"/>
     <delete dir="${sa.build}"/>
+  </target>
+
+  <target name="cleanGWT">
+     <delete>
+       <fileset dir="${sa.genGWT}/${sa.package}">
+         <exclude name="**/Main.java"/>
+         <exclude name="**/Options.java"/>
+       </fileset>
+     </delete>
+     <delete dir="${sa.genGWT}/${sa.package}/rule"/>
   </target>
 
 </project>

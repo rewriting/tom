@@ -6,8 +6,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.HashMap;
 import tom.library.sl.*;
-import aterm.*;
-import aterm.pure.*;
+/*import aterm.*;
+import aterm.pure.*;*/
 
 public class TypeCompiler {
   %include { rule/Rule.tom }
@@ -44,7 +44,7 @@ public class TypeCompiler {
   }
 
   /**
-   * Transform each rewrite rule to a list of well-typed rules with the same behaviour. 
+   * Transform each rewrite rule to a list of well-typed rules with the same behaviour.
    **/
   public void typeRules(RuleList untypedRules) {
     this.generatedRules = `ConcRule();
@@ -60,18 +60,18 @@ public class TypeCompiler {
             // - operators of the form CHOICE... (no ...-f) : codomain of its first argument
             Set<GomType> types = new HashSet<GomType>();
             if(getExtractedSignature().isBooleanOperator(`stratOp)) {
-              // if head opearator of the rule is EQ or AND then the codomain should be BOOL 
+              // if head opearator of the rule is EQ or AND then the codomain should be BOOL
               types.add(Signature.TYPE_BOOLEAN);
-            } else { 
+            } else {
               if(Tools.getOperatorName(`stratOp) != null) {
                 // if symbol of the form ALL-f... the codomain is given by the codomain of f
                 types = this.getTypes(env,`lhs);
-              } else { 
+              } else {
                 // otherwise the codomain is given by the codomain of its argument
                 types = this.getTypes(env,`arg);
               }
             }
-            // normally shouldn't happen 
+            // normally shouldn't happen
             if(types.size() == 0) {
               throw new UntypableTermException("RULE OMITTED for " + `stratOp + "  because no possible codomain");
             }
@@ -101,7 +101,7 @@ public class TypeCompiler {
   /** Get the potential types of a term by looking at its head symbol
    *  The head symbol can be a symbol from the extracted signature or Bottom or a boolean operator
    *  (symbol can't be a generated)
-   */  
+   */
   private Set<GomType> getTypes(Map<String,GomType> env, Term term) {
     Set<GomType> types = new HashSet<GomType>();
     Signature eSig = this.getExtractedSignature();
@@ -112,7 +112,7 @@ public class TypeCompiler {
           } else if(eSig.isBooleanOperator(`symbol)) {
             // for boolean ops (in fact only TRUE or FALSE can occur) add BOOLEAN
             types.add(Signature.TYPE_BOOLEAN);
-          } else if(Tools.getOperatorName(`symbol) != null) { 
+          } else if(Tools.getOperatorName(`symbol) != null) {
             // for symbol of the form ALL-f add the type of f
             types.add(eSig.getCodomain(Tools.getOperatorName(`symbol)));
           } else if(eSig.getCodomain(`symbol) != null) {
@@ -131,7 +131,7 @@ public class TypeCompiler {
     }
     return types;
   }
-   
+
   /**
    * Propagate the type information in the names of the symbols. Term t of the form:
    * - all_39(s1)
@@ -155,8 +155,8 @@ public class TypeCompiler {
             TermList(arg,_*) -> {
               if(this.getTypes(env,`arg).size() == 1) { // at least one type (ie well-typed) and only one (ie no Bottom)
                 //                 type = this.getTypes(env,`arg).get(0);
-                type = this.getTypes(env,`arg).iterator().next(); // get the "first" (and only) element 
-              } else {  // normally shouldn't happen 
+                type = this.getTypes(env,`arg).iterator().next(); // get the "first" (and only) element
+              } else {  // normally shouldn't happen
                 throw new UntypableTermException("No possible type for "+`arg+" in term "+t);
               }
             }
@@ -194,14 +194,14 @@ public class TypeCompiler {
           }
           // for all_f add the type of f(...) at the end
           if(StrategyOperator.getStrategyOperator(nameMain)==StrategyOperator.ALL) {
-            domain = `ConcGomType(domain*, type); 
+            domain = `ConcGomType(domain*, type);
           }
         } else {
           // if Boolean or Generated symbol or Bottom
           domain = `ConcGomType();
           if(!nameMain.equals(Signature.TRUE) && !nameMain.equals(Signature.FALSE)) { // if any arguments
             domain = `ConcGomType(type); // first argument has always the same type as the term
-            if(eSig.isBooleanOperator(`name) || 
+            if(eSig.isBooleanOperator(`name) ||
                (Tools.isSymbolNameAux(`name) && StrategyOperator.getStrategyOperator(nameMain)==StrategyOperator.SEQ)) {
               // if boolean operator (EQ or AND) or if aux symbol for SEQ (ie seqAux_...) then there is a second parameter of the same type
               domain = `ConcGomType(type,type);
@@ -263,8 +263,8 @@ public class TypeCompiler {
   }
 
 }
- 
-  
+
+
   /********************************************************************************
    *     END
    ********************************************************************************/

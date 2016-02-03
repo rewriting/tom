@@ -1,4 +1,4 @@
-module sa.Rule
+  module sa.Rule
 imports String int
 abstract syntax
 
@@ -47,7 +47,7 @@ Term = Appl(symbol:String,args:TermList)
 TermList = TermList(Term*)
 AddList = ConcAdd(Term*)
 
-Condition = 
+Condition =
           | CondEquals(t1:Term,t2:Term)
           | CondAnd(c1:Condition,c2:Condition)
           | CondNot(c1:Condition)
@@ -130,4 +130,3 @@ ConcAdd:make_insert(e,l) {
     }
   }
 }
-

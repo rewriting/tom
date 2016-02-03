@@ -656,7 +656,7 @@ public class GraphExpander {
         CollectRefCode.append(%[
       visit @`sortName@ {
         p@@Path@`sortName@(_*) -> {
-          /* 
+          /*
            * use String instead of Position because containskey method does
            * not use the method equals to compare values
            */

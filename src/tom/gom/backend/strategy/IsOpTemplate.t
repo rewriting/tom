@@ -34,6 +34,7 @@ import tom.gom.adt.objects.types.*;
 public class IsOpTemplate extends TemplateClass {
   ClassName operator;
   SlotFieldList slotList;
+  boolean gwt;
 
   %include { ../../adt/objects/Objects.tom}
 
@@ -41,9 +42,10 @@ public class IsOpTemplate extends TemplateClass {
    * The argument is an operator class, and this template generates the
    * assotiated _Op strategy
    */
-  public IsOpTemplate(GomClass gomClass, GomEnvironment gomEnvironment) {
+  public IsOpTemplate(GomClass gomClass, GomEnvironment gomEnvironment, boolean gwt) {
     super(gomClass,gomEnvironment);
     ClassName clsName = this.className;
+    this.gwt = gwt;
     %match(clsName) {
       ClassName(pkg,name) -> {
         String newpkg = `pkg.replaceFirst(".types.",".strategy.");
@@ -63,7 +65,9 @@ public class IsOpTemplate extends TemplateClass {
   }
 
   public void generate(java.io.Writer writer) throws java.io.IOException {
+if(!gwt) {
 writer.write(%[
+System.out.println("coucou");
 package @getPackage()@;
 
 public class @className()@ extends tom.library.sl.AbstractStrategyCombinator {
@@ -104,6 +108,49 @@ public class @className()@ extends tom.library.sl.AbstractStrategyCombinator {
   }
 }
 ]%);
+} else {
+  writer.write(%[
+  package @getPackage()@;
+
+  public class @className()@ extends tom.library.sl.AbstractStrategyCombinator {
+    private static final String msg = "Not an @className(operator)@";
+
+    public @className()@() {
+      initSubterm();
+    }
+
+    @@SuppressWarnings("unchecked")
+    public <T extends tom.library.sl.Visitable> T visit(tom.library.sl.Environment envt) throws tom.library.sl.VisitFailure {
+      return (T) visit(envt,tom.library.sl.VisitableIntrospector.getInstance());
+    }
+
+    public <T extends tom.library.sl.Visitable> T visit(T any) throws tom.library.sl.VisitFailure{
+      return visit(any,tom.library.sl.VisitableIntrospector.getInstance());
+    }
+
+    public <T extends tom.library.sl.Visitable> T visitLight(T any) throws tom.library.sl.VisitFailure {
+      return visitLight(any,tom.library.sl.VisitableIntrospector.getInstance());
+    }
+
+    public <T> T visitLight(T any, tom.library.sl.Introspector i) throws tom.library.sl.VisitFailure {
+      if(any instanceof @fullClassName(operator)@) {
+       return any;
+      } else {
+        throw new tom.library.sl.VisitFailure(msg);
+      }
+    }
+
+    public int visit(tom.library.sl.Introspector i) {
+      Object any = environment.getSubject();
+      if(any instanceof @fullClassName(operator)@) {
+       return tom.library.sl.Environment.SUCCESS;
+      } else {
+        return tom.library.sl.Environment.FAILURE;
+      }
+    }
+  }
+  ]%);
+}
 }
 
 public String generateMapping() {

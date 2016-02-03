@@ -15,7 +15,7 @@
   <property name="pretty"      value="off"/>
   <property name="visitable"   value="on"/>
   <property name="tomfork"     value="on"/>
-  <property name="genIntrospector"  value="off"/>		
+  <property name="genIntrospector"  value="off"/>	
   <property name="memoryInitSize" value="512m" />
   <property name="memoryMaxSize"  value="1024m" />
 

@@ -125,6 +125,10 @@
       <boolean name="intermediate" altName="i"
         description="Generate intermediate files"
         value="false"/>
+      <boolean name='gwt'
+        atlname='gwt'
+        description="Generate Rule.gom for gwt development"
+        value='false'/>
     </options>
   </optionmanager>
 </platform>

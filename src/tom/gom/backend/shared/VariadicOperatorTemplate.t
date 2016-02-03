@@ -41,14 +41,16 @@ public class VariadicOperatorTemplate extends TemplateHookedClass {
   GomClass empty;
   GomClass cons;
   String comments;
+  boolean gwt;
 
   %include { ../../adt/objects/Objects.tom}
 
   public VariadicOperatorTemplate(File tomHomePath,
                                   OptionManager manager,
-                                  List importList, 	
+                                  List importList,
                                   GomClass gomClass,
                                   TemplateClass mapping,
+                                  boolean gwt,
                                   GomEnvironment gomEnvironment) {
     super(gomClass,manager,tomHomePath,importList,mapping,gomEnvironment);
     %match(gomClass) {
@@ -62,6 +64,7 @@ public class VariadicOperatorTemplate extends TemplateHookedClass {
         this.empty = `empty;
         this.cons = `cons;
         this.comments = `comments;
+        this.gwt = gwt;
         return;
       }
     }
@@ -74,6 +77,7 @@ public class VariadicOperatorTemplate extends TemplateHookedClass {
     writer.write(%[
 package @getPackage()@;
 @generateImport()@
+import java.util.*;
 
 @comments@
 public abstract class @className()@ extends @fullClassName(sortName)@ @generateInterface()@ {
@@ -207,7 +211,9 @@ writer.write(%[
     }
     buffer.append(")");
   }
-
+]%);
+if(!gwt) {
+writer.write(%[
   /**
    * Returns an ATerm representation of this term.
    *
@@ -263,7 +269,9 @@ writer.write(%[
 
     return null;
   }
-
+]%);
+}
+writer.write(%[
   /*
    * Checks if the Collection contains all elements of the parameter Collection
    *
@@ -384,6 +392,8 @@ writer.write(%[
    *
    * @@return an array of elements
    */
+]%);
+writer.write(%[
   public Object[] toArray() {
     int size = this.length();
     Object[] array = new Object[size];
@@ -403,6 +413,10 @@ writer.write(%[
     return array;
   }
 
+]%);
+
+if(!gwt) {
+writer.write(%[
   @@SuppressWarnings("unchecked")
   public <T> T[] toArray(T[] array) {
     int size = this.length();
@@ -426,7 +440,40 @@ writer.write(%[
     }
     return array;
   }
+  ]%);
+} else {
+writer.write(%[
+  @@SuppressWarnings("unchecked")
+  public <T> T[] toArray(T[] array) {
+    int size = this.length();
+    if (array.length < size) {
+        ArrayList<T> a = new ArrayList<T>();
+        for(int i = 0; i<size; i++) {
+          a.add(null);
+        }
+        array = a.toArray(array);
+    } else if (array.length > size) {
+      array[size] = null;
+    }
+    int i=0;
+    if(this instanceof @fullClassName(cons.getClassName())@) {
+      @fullClassName(sortName)@ cur = this;
+      while(cur instanceof @fullClassName(cons.getClassName())@) {
+        @primitiveToReferenceType(domainClassName)@ elem = cur.getHead@className()@();
+        array[i] = (T)elem;
+        cur = cur.getTail@className()@();
+        i++;
+      }
+      if(!(cur instanceof @fullClassName(empty.getClassName())@)) {
+        array[i] = (T)cur;
+      }
+    }
+    return array;
+  }
+  ]%);
+}
 
+writer.write(%[
   /*
    * to get a Collection for an immutable list
    */
@@ -538,6 +585,8 @@ writer.write(%[
    * @@param array array which will contain the result
    * @@return an array of elements
    */
+]%);
+writer.write(%[
   public <T> T[] toArray(T[] array) {
     return get@className(sortName)@().toArray(array);
   }
@@ -557,6 +606,9 @@ writer.write(%[
     return array;
   }
 */
+]%);
+writer.write(%[
+
     /**
      * Collection
      */
