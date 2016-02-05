@@ -26,6 +26,7 @@ otd(s) = mu x.(s <+ one(x))
 
 // mainStrat() = bu(try(r1()))
 // mainStrat() = td(try(r1()))
+// mainStrat() = td(r1() <+ r2()) ; repeat(bu(r3() <+ r4()))
 
-mainStrat() = td(r1() <+ r2()) ; repeat(bu(r3() <+ r4()))
+mainStrat() = repeat(td(r1() <+ r2()))
 

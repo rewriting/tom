@@ -273,8 +273,16 @@ public class Signature {
   public Set<String> getConstructors(GomType codomain) {
     HashSet<String> res = new HashSet<String>();
     for(String e:getSymbols(codomain)) {
-      if(!isFunction(e) && !isInternal(e)) {
-        res.add(e);
+      if(Main.options.ordered && Main.options.pattern) {
+        // special case when using the "pattern" algorithm to compile ordered rules generated
+        if(!isFunction(e)) {
+          res.add(e);
+        }
+
+      } else {
+        if(!isFunction(e) && !isInternal(e)) {
+          res.add(e);
+        }
       }
     }
     return res;

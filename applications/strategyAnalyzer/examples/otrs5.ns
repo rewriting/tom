@@ -3,7 +3,8 @@ abstract syntax
 T = 
 	| a()
 	| b()
-  | f(T)
+	| g(T)
+  | f(T,T)
 
 //functions
 //T = f(T,T)
@@ -11,8 +12,10 @@ T =
 
 trs
 [
-  f(f(a())) -> f(f(f(a())))
-  f(x) ->  b()
+  f(a(),      f(a(),z)) -> a()
+  f(g(a()),   f(b(),z)) -> a()
+  f(g(g(a())),f(a(),a())) -> a()
+  f(x,y) -> b()
 ]
 
 

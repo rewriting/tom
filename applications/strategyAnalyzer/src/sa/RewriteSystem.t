@@ -4,6 +4,8 @@ import sa.rule.types.*;
 import tom.library.sl.*;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.List;
+import java.util.ArrayList;
 
 public class RewriteSystem {
   %include { rule/Rule.tom }
@@ -38,6 +40,7 @@ public class RewriteSystem {
   public static Trs trsRule(Trs trs, Signature eSig) {
     assert Tools.isLhsLinear(trs) : "check lhs-linear";
     boolean ordered = trs.isOtrs();
+    long startChrono; 
 
     RuleList res = `ConcRule();
     %match(trs) {
@@ -58,29 +61,77 @@ public class RewriteSystem {
         }
 
         // transform lhs - prev into a collection of patterns matching exactly the same terms
-        Term t = `reduce(pattern,eSig);
+        //Term t = `reduce(pattern,eSig);
+        Term t = pattern;
+
+
+        try {
+          // pre-treatment: remove AP
+          t = `InnermostId(ExpandAP()).visitLight(t);
+        } catch(VisitFailure e) {
+          System.out.println("failure on: " + t);
+        }
+
+        t = simplifySub(t,eSig);
+        if(Main.options.verbose) {
+          System.out.println("NO SUB = " + Pretty.toString(t));
+        }
+
+        startChrono = System.currentTimeMillis();
+        t = simplifySubsumtion(t);
+        timeSubsumtion += (System.currentTimeMillis()-startChrono);
+        if(Main.options.verbose) {
+          System.out.println("REMOVE SUBSUMTION = " + Pretty.toString(t));
+        }
+
+        if(Main.options.minimize) {
+          // test new idea
+          // quite slow
+          t = simplifyAbstraction(t,eSig);
+          t = simplifySubsumtion(t);
+        }
+        //assert onlyTopLevelAdd(t) : "check only top-level Add";
+
         if(Main.options.verbose) {
           System.out.println("REDUCED : " + Pretty.toString(t));
         }
 
+        RuleList rules = `ConcRule();
         // put back the rhs
+        boolean flag = false;
         %match(t) {
           Add(ConcAdd(_*,e,_*)) -> {
-            res = `ConcRule(res*,Rule(e,rhs));
+            rules = `ConcRule(rules*,Rule(e,rhs));
+            flag = true;
           }
 
           e@(At|Appl|Var)[] -> {
-            res = `ConcRule(res*,Rule(e,rhs));
+            rules = `ConcRule(rules*,Rule(e,rhs));
+            flag = true;
+          }
+
+          _ -> {
+            if(!flag) {
+              System.out.println("WARNING NOT PUT BACK : " + Pretty.toString(t));
+            }
           }
         }
+
+        // TODO: normalize name of variables
+        // remove x@t
+        RuleCompiler ruleCompiler = new RuleCompiler(`eSig, `eSig); 
+        rules = ruleCompiler.expandAt(rules);
+        assert !Tools.containsAt(rules) : "check contain no AT";
+
+          // minimize the set of rules
+          startChrono = System.currentTimeMillis();
+          rules = removeRedundantRule(rules,eSig);
+          timeMinimize += (System.currentTimeMillis()-startChrono);
+          res = `ConcRule(res*,rules*);
+
       }
     }
 
-    // TODO: normalize name of variables
-    // remove x@t
-    RuleCompiler ruleCompiler = new RuleCompiler(`eSig, `eSig); 
-    res = ruleCompiler.expandAt(res);
-    assert !Tools.containsAt(res) : "check contain no AT";
 
     if(Main.options.verbose) {
       for(Rule rule:`res.getCollectionConcRule()) {
@@ -88,11 +139,6 @@ public class RewriteSystem {
       }
       System.out.println("size = " + `res.length());
     }
-
-    // minimize the set of rules
-    long startChrono = System.currentTimeMillis();
-    res = removeRedundantRule(res,eSig);
-    timeMinimize += (System.currentTimeMillis()-startChrono);
 
 
     // new algo for minimizing 
@@ -137,17 +183,30 @@ public class RewriteSystem {
    /*
     * Transform a term which contains Sub/Add into a term without Sub
     */
+  private static LRUCache<Term,Term> cache = new LRUCache<Term,Term>(1000);
   private static Term simplifySub(Term t, Signature eSig) {
+    Term res = cache.get(t);
+    if(res!=null) {
+      //System.out.println("cache hit");
+      return res;
+    } else {
+      //System.out.println("nohit");
+    }
+
     long startChrono = System.currentTimeMillis();
     try {
-      Strategy S1 = `ChoiceId(CleanAdd(),PropagateEmpty(),SimplifySub(eSig),DistributeAdd());
+      Strategy S1 = `ChoiceId(PropagateEmpty(),SimplifySub(eSig),DistributeAdd());
+      //Strategy S1 = `ChoiceId(PropagateEmpty(),SimplifySub(eSig),DistributeAdd());
+      //Strategy S1 = `ChoiceId(PropagateEmpty(),SimplifySub(eSig));
+      //Strategy S1 = `ChoiceId(CleanAdd(),PropagateEmpty(),SimplifySub(eSig),DistributeAdd());
       //Strategy S1 = `ChoiceId(CleanAdd(),PropagateEmpty(),SimplifySub(eSig));
-      t = `InnermostId(S1).visitLight(t);
+      res = `InnermostId(S1).visitLight(t);
+      cache.put(t,res);
       timeSubElim += (System.currentTimeMillis()-startChrono);
     } catch(VisitFailure e) {
       System.out.println("failure on: " + t);
     }
-    return t;
+    return res;
   }
 
   /*
@@ -168,36 +227,38 @@ public class RewriteSystem {
         System.out.println("NO SUB = " + Pretty.toString(t));
       }
 
-      startChrono = System.currentTimeMillis();
-      Strategy S2 = `ChoiceId(CleanAdd(),PropagateEmpty(), VarAdd(), FactorizeAdd());
+      //startChrono = System.currentTimeMillis();
+      //Strategy S2 = `ChoiceId(CleanAdd(),PropagateEmpty(), VarAdd(), FactorizeAdd());
       //t = `InnermostId(S2).visitLight(t); // can be replaced by DistributeAdd() in S1
-      timeAddElim += (System.currentTimeMillis()-startChrono);
-      if(Main.options.verbose) {
-        System.out.println("NO ADD = " + Pretty.toString(t));
-      }
+      //timeAddElim += (System.currentTimeMillis()-startChrono);
+      //if(Main.options.verbose) {
+      //  System.out.println("NO ADD = " + Pretty.toString(t));
+      //}
     } catch(VisitFailure e) {
       System.out.println("failure on: " + t);
     }
 
-    startChrono = System.currentTimeMillis();
+    //startChrono = System.currentTimeMillis();
     // note that expandAdd normalize variable's name
     //t = expandAdd(t); // can be replaced by DistributeAdd() in S1
-    timeExpand += (System.currentTimeMillis()-startChrono);
-    if(Main.options.verbose) {
-      System.out.println("EXPAND = " + Pretty.toString(t));
-    }
+    //timeExpand += (System.currentTimeMillis()-startChrono);
+    //if(Main.options.verbose) {
+    //  System.out.println("EXPAND = " + Pretty.toString(t));
+    //}
 
     startChrono = System.currentTimeMillis();
     t = simplifySubsumtion(t);
     timeSubsumtion += (System.currentTimeMillis()-startChrono);
     if(Main.options.verbose) {
       System.out.println("REMOVE SUBSUMTION = " + Pretty.toString(t));
-
     }
 
-    // test new idea
-    // very slow
-    //t = simplifyAbstraction(t,eSig);
+    if(Main.options.minimize) {
+      // test new idea
+      // quite slow
+      t = simplifyAbstraction(t,eSig);
+      t = simplifySubsumtion(t);
+    }
 
     assert onlyTopLevelAdd(t) : "check only top-level Add";
     return t;
@@ -209,20 +270,38 @@ public class RewriteSystem {
   // TODO: remove variables only once (and no longer in canBeRemoved2) to speedup the process
   private static RuleList removeRedundantRule(RuleList candidates, Signature eSig) {
     RuleList kernel  = `ConcRule();
+    AddList pkernel  = `ConcAdd();
     RuleList start  = `ConcRule();
     %match(candidates) {
-      ConcRule(C1*,r,C2*) -> {
+      ConcRule(C1*,r@Rule(lhs,rhs),C2*) -> {
         boolean b = canBeRemoved3(`r, `ConcRule(C1*,C2*), eSig);
         if(!b) {
           kernel = `ConcRule(r,kernel*);
+          pkernel = `ConcAdd(lhs,pkernel*);
         } else {
           start = `ConcRule(r,start*);
         }
       }
     }
+
+    /*
+     * build the list
+     * [q1\(q2\...\(k1+...+kn)), q2\...\kernel, ..., qm\(k1+...+kn)]
+     */
+
+    TermList deltak = `TermList();
+    Term d = `Add(pkernel);
+    RuleList rstart = start.reverse();
+    %match(rstart) {
+      ConcRule(_*,r@Rule(lhs,rhs),_*) -> {
+        d = simplifySub(`Sub(lhs,d),eSig);
+        deltak = `TermList(d,deltak*);
+      }
+    }
+
     RuleList result = removeRedundantRuleAux(start,kernel,eSig);
+    //RuleList result = removeRedundantRuleAux2(start,kernel,deltak,eSig);
     return result;
-    //return removeRedundantRuleAux(candidates,`ConcRule(),eSig);
   }
 
   private static RuleList removeRedundantRuleAux(RuleList candidates, RuleList kernel, Signature eSig) {
@@ -250,6 +329,46 @@ public class RewriteSystem {
     }
     return res;
   }
+  
+  private static RuleList removeRedundantRuleAux2(RuleList candidates, RuleList kernel, TermList deltak, Signature eSig) {
+    assert Tools.isLhsLinear(candidates) : "check lhs-linear" ;
+    System.out.println("DELTA KERNEL = " + Pretty.toString(deltak));
+    RuleList res = kernel;
+
+    %match( candidates, deltak ) {
+      ConcRule(head@Rule(lhs,rhs), tail*), TermList(headk, tailk*) -> {
+        // try with the head kept in kernel
+        TermList mapTailk = `mapSub(lhs,tailk);
+        RuleList branch1 = `removeRedundantRuleAux2(tail, ConcRule(kernel*,head), tailk, eSig);
+        res = branch1;
+
+        boolean b = (`headk == `Empty());
+        if(b) {
+          if(Main.options.verbose) {
+            System.out.println("REMOVE2: " + Pretty.toString(`head));
+          }
+          // try with the head removed 
+          RuleList branch2 = `removeRedundantRuleAux2(tail, kernel, tailk, eSig);
+          if(branch2.length() < branch1.length()) {
+            res = branch2;
+          }
+        }
+      }
+    }
+    return res;
+  }
+
+  private static TermList mapSub(Term t, TermList l) {
+    %match(l) {
+      TermList() -> { return l; }
+      TermList(head,tail*) -> { 
+        TermList tmp = mapSub(t,`tail);
+        return `TermList(Sub(head,t),tmp*); 
+      }
+    }
+    return l;
+  }
+
 
   %strategy PropagateEmpty() extends Identity() {
     visit Term {
@@ -375,7 +494,7 @@ public class RewriteSystem {
       s@Sub(t, Add(ConcAdd(head,tail*))) -> {
         assert !Tools.containsSub(`t) : `t;
         assert !Tools.containsSub(`head) : `head;
-        Term res = `Sub(Sub(t,head), Add(ConcAdd(tail*)));
+        Term res = `Sub(Sub(t,head), Add(tail));
         debug("sub distrib1",`s,res);
         return res;
       }
@@ -430,7 +549,7 @@ public class RewriteSystem {
       s@Sub(Add(ConcAdd(head,tail*)), t@Appl(f,tl)) -> {
         assert !Tools.containsSub(`head) : `head;
         assert !Tools.containsSub(`t) : `t;
-        Term res = `Add(ConcAdd(Sub(head,t), Sub(Add(ConcAdd(tail*)),t)));
+        Term res = `Add(ConcAdd(Sub(head,t), Sub(Add(tail),t)));
         debug("sub distrib2",`s,res);
         return res;
       }
@@ -1142,7 +1261,7 @@ public class RewriteSystem {
     return res;
   }
 
-
+/*
   public static void searchAbstractionRule(HashSet<Rule> c, Rule rule, RuleList ruleList, Signature eSig) {
     %match(rule) {
       Rule(lhs,rhs) -> {
@@ -1161,6 +1280,7 @@ public class RewriteSystem {
           if(simplifySub(problem,eSig) == `Empty()) {
             newlhs = Tools.normalizeVariable(newlhs);
             Rule newrule = `Rule(newlhs,rhs);
+            System.out.println("rule: " + Pretty.toString(rule));
             System.out.println("new candidate: " + Pretty.toString(newrule));
             c.add(newrule);
           }
@@ -1169,8 +1289,9 @@ public class RewriteSystem {
       }
     }
   }
-
+*/
   private static Term simplifyAbstraction(Term sum, Signature eSig) {
+    System.out.println("simplifyAbstraction");
     HashSet<Term> bag = new HashSet<Term>();
     %match(sum) {
       Add(tl) -> {
@@ -1181,6 +1302,7 @@ public class RewriteSystem {
           }
         }
         for(Term t:bag) {
+          System.out.println("new candidate: " + Pretty.toString(t));
           res = `ConcAdd(t,res*);
         }
         return `Add(res);
@@ -1189,20 +1311,60 @@ public class RewriteSystem {
     return sum;
   }
 
+  /*
+   * given subject and sum
+   * search abstractions of subject such that [subject] \subseteq [sum]
+   */
   public static void searchAbstractionTerm(HashSet<Term> c, Term subject, Term sum, Signature eSig) {
     HashSet<Term> saturate = new HashSet<Term>();
     generateAbstraction(saturate,subject);
     //System.out.println("#saturate = " + saturate.size());
-    for(Term t:saturate) {
+    // TODO: order saturate to start with least general terms
+    /*
+    List<Term> list = new ArrayList<Term>(saturate);
+    java.util.Comparator<Term> cmp = new java.util.Comparator<Term>() {
+      public int compare(Term t1, Term t2) {
+        if(matchConstraint(t1,t2)==`TrueMatch()) {
+          return 1;
+        } else if(matchConstraint(t2,t1)==`TrueMatch()) {
+          return -1;
+        } else {
+          return 0;
+        }
+      }
+    };
+
+    java.util.Collections.sort(list, cmp);
+     */
+    //subject = (Term)Tools.removeAt(subject); // don't remove at to keep variable name used in rhs
+    //subject = Tools.normalizeVariable(subject);
+    //System.out.println("for: = " + Pretty.toString(subject));
+
+    for(Term t:saturate) { // list / saturate
+      //t = (Term)Tools.removeAt(t);
+      //t = Tools.normalizeVariable(t);
       Term problem = `Sub(t,sum);
-      if(simplifySub(problem,eSig) == `Empty()) {
-        t = Tools.normalizeVariable(t);
-        System.out.println("new candidate: " + Pretty.toString(t));
+      //System.out.println("try: " + Pretty.toString(t));
+      Term res = simplifySub(problem,eSig);
+      res = (Term)Tools.removeAt(res);
+      res = Tools.normalizeVariable(res);
+      //System.out.println("res = " + Pretty.toString(res));
+      if(res == `Empty()) {
+        //System.out.println("new candidate: " + Pretty.toString(t));
         c.add(t);
+        // continue the search for a more general term
+      } else {
+        // stop the search
+        //return;
       }
     }
+
   }
 
+  /*
+   * given subject
+   * generate all possible abstractions (no order)
+   */
   private static void generateAbstraction(HashSet<Term> c, Term subject) {
     HashSet<Term> todo = new HashSet<Term>(); // terms to expand
     HashSet<Term> todo2 = new HashSet<Term>();
@@ -1244,9 +1406,16 @@ public class RewriteSystem {
 
   %strategy GenerateAbstraction(c:HashSet, subject:Term) extends Identity() {
     visit Term {
-      Appl(_,_) -> {
+      s@At(var,Appl(_,_)) -> {
+        Term newt = (Term) getEnvironment().getPosition().getReplace(`var).visit(subject);
+        c.add(newt);
+        //`Fail().visitLight(`s); // stop collect under this node
+      }
+
+      s@Appl(_,_) -> {
         Term newt = (Term) getEnvironment().getPosition().getReplace(`Var(Tools.getName("Z"))).visit(subject);
         c.add(newt);
+        //`Fail().visitLight(`s); // stop collect under this node
       }
     }
   }
@@ -1452,6 +1621,229 @@ public class RewriteSystem {
     }
     return true;
   }
+
+  /**
+    * experiments with set
+    */
+
+  %strategy SimplifySet(eSig:Signature) extends Identity() {
+    visit Term {
+      // x@t -> t
+      s@At(x,t) -> {
+        Term res = `t;
+        debug("remove at",`s,res);
+        return res;
+      }
+
+      // t ^ empty -> empty
+      s@Inter(t, Empty()) -> {
+        Term res = `Empty();
+        debug("t ^ empty -> empty",`s,res);
+        return res;
+      }
+      
+      // empty ^ t -> empty
+      s@Sub(Empty(),t) -> {
+        Term res = `Empty();
+        debug("empty ^ t -> empty",`s,res);
+        return res;
+      }
+      
+      // t ^ x -> t
+      s@Inter(t, Var[]) -> {
+        Term res = `t;
+        debug("t ^ x -> t",`s,res);
+        return res;
+      }
+
+      // x ^ t -> t
+      s@Inter(Var[],t) -> {
+        Term res = `t;
+        debug("x ^ t -> t",`s,res);
+        return res;
+      }
+
+      // t@f(t1,...,tn) ^ g(t1',...,tm') -> empty
+      s@Inter(t@Appl(f,tl1), u@Appl(g, tl2)) && f!=g -> {
+        Term res = `Empty();
+        debug("inter fail",`s,res);
+        return res;
+      }
+      
+      // t@f(t1,...,tn) ^ f(t1',...,tn') -> f(t1 ^ t1',...,tn ^ tn')
+      s@Inter(t@Appl(f,tl1), u@Appl(f, tl2)) -> {
+        Term res = `Appl(f,zipInter(tl1,tl2));
+        debug("inter match",`s,res);
+        return res;
+      }
+
+      // t ^ (a1 + ... + an) -> (t ^ a1) + (t ^ (a2 + ... + an))
+      s@Inter(t, Add(ConcAdd(head,tail*))) -> {
+        Term res = `Add(ConcAdd(Inter(t,head), Inter(t,Add(tail))));
+        debug("inter distrib1",`s,res);
+        return res;
+      }
+      
+      // (a1 + ... + an) ^ t -> (a1 ^ t) + ((a2 + ... + an) ^ t)
+      s@Inter(Add(ConcAdd(head,tail*)), t@Appl[]) -> {
+        Term res = `Add(ConcAdd(Inter(head,t), Inter(Add(tail),t)));
+        debug("inter distrib2",`s,res);
+        return res;
+      }
+
+      // x@t1 ^ t2 -> x@(t1 ^ t2)
+      s@Inter(At(x,t1), t2) -> {
+        Term res = `At(x,Inter(t1,t2));
+        debug("at ^",`s,res);
+        return res;
+      }
+
+      // t1 ^ x@t2 -> x@(t1 ^ t2)
+      s@Inter(t1, At(x,t2)) -> {
+        Term res = `At(x,Inter(t1,t2));
+        debug("at2 ^",`s,res);
+        return res;
+      }
+
+
+      // x@empty -> empty
+      s@At(x,Empty()) -> {
+        Term res = `Empty();
+        debug("elim at",`s,res);
+        return res;
+      }
+
+
+
+      // t - x -> empty
+      s@Sub(t, Var[]) -> {
+        assert !Tools.containsSub(`t) : `t;
+        Term res = `Empty();
+        debug("t - x -> empty",`s,res);
+        return res;
+      }
+
+      // t - empty -> t
+      s@Sub(t, Empty()) -> {
+        assert !Tools.containsSub(`t) : `t;
+        Term res = `t;
+        debug("t - empty -> t",`s,res);
+        return res;
+      }
+      
+      // empty - t -> empty
+      s@Sub(Empty(),t) -> {
+        Term res = `Empty();
+        debug("empty - t -> empty",`s,res);
+        return res;
+      }
+
+      // t - (a1 + ... + an) -> (t - a1) ^ t - (a2 + ... + an))
+      s@Sub(t, Add(ConcAdd(head,tail*))) -> {
+        assert !Tools.containsSub(`t) : `t;
+        assert !Tools.containsSub(`head) : `head;
+        Term res = `Inter(Sub(t,head), Sub(t,Add(tail)));
+        debug("sub distrib1",`s,res);
+        return res;
+      }
+      
+      // (a1 + ... + an) - t@f(t1,...,tn) -> (a1 - t) + ( (a2 + ... + an) - t )
+      s@Sub(Add(ConcAdd(head,tail*)), t@Appl(f,tl)) -> {
+        assert !Tools.containsSub(`head) : `head;
+        assert !Tools.containsSub(`t) : `t;
+        Term res = `Add(ConcAdd(Sub(head,t), Sub(Add(tail),t)));
+        debug("sub distrib4",`s,res);
+        return res;
+      }
+    
+      // C \ (A ^ B)  =  (C \ A) + (C \ B)
+      s@Sub(t, Inter(a,b)) -> {
+        assert !Tools.containsSub(`t) : `t;
+        Term res = `Add(ConcAdd(Sub(t,a), Sub(t,b)));
+        debug("sub distrib2",`s,res);
+        return res;
+      }
+      
+      // C \ (A \ B)  =  (C ^ A) + (C \ B)
+      s@Sub(t, Sub(a,b)) -> {
+        assert !Tools.containsSub(`t) : `t;
+        Term res = `Add(ConcAdd(Inter(t,a), Sub(t,b)));
+        debug("sub distrib3",`s,res);
+        return res;
+      }
+      
+
+      // X - t -> expand AP   ==>    t should be in TFX (only symbols from declared signature)
+      s@Sub(X@Var[], t@Appl(f,args_f)) -> {
+        // replace X \ t by X@((a+b+g(_)+f(_,_)) \ t)
+        // this version is as efficient as the previous one, but simpler
+        assert !Tools.containsSub(`t) : `t;
+        AddList al = `ConcAdd();
+        GomType codomain = eSig.getCodomain(`f); // use codomain to generate well typed terms
+        for(String name: eSig.getConstructors(codomain)) {
+          int arity = eSig.getArity(name);
+          Term expand = Tools.genAbstractTerm(name,arity, Tools.getName("Z"));
+          al = `ConcAdd(expand,al*);
+        }
+        Term res = `Sub(Add(al),t);
+        debug("expand AP2", `s,res);
+        // generate X@Add(tl)
+        res = `At(X,res);
+        return res;
+      }
+
+      // t@f(t1,...,tn) - g(t1',...,tm') -> t
+      s@Sub(t@Appl(f,tl1), u@Appl(g, tl2)) && f!=g -> {
+        assert !Tools.containsSub(`t) : `t;
+        assert !Tools.containsSub(`u) : `u;
+        Term res = `t;
+        debug("sub elim1",`s,res);
+        return res;
+      }
+
+      // f(t1,...,tn) - f(t1',...,tn') -> f(t1-t1',t2,...,tn) + f(t1, t2-t2',...,tn) + ... + f(t1,...,tn-tn')
+      s@Sub(t1@Appl(f,tl1), t2@Appl(f, tl2)) -> {
+        assert !Tools.containsSub(`t1):`t1;
+        assert !Tools.containsSub(`t2):`t2;
+        //Term res = `sub(t1,t2);
+        Term res = `subopt(t1,t2,eSig);
+        debug("sub1",`s,res);
+        return res;
+      }
+
+      // x@t1 - t2 -> x@(t1 - t2)
+      s@Sub(At(x,t1), t2) -> {
+        assert !Tools.containsSub(`t1):`t1;
+        assert !Tools.containsSub(`t2):`t2;
+        Term res = `At(x,Sub(t1,t2));
+        debug("at",`s,res);
+        return res;
+      }
+
+      // t1 - x@t2 -> t1 - t2
+      s@Sub(t1, At(x,t2)) -> {
+        assert !Tools.containsSub(`t1):`t1;
+        assert !Tools.containsSub(`t2):`t2;
+        Term res = `Sub(t1,t2);
+        debug("at2",`s,res);
+        return res;
+      }
+
+    }
+  }
+
+  private static TermList zipInter(TermList tl1, TermList tl2) {
+    %match(tl1,tl2) {
+      TermList(), TermList() -> { return tl1; }
+      TermList(head1,tail1*), TermList(head2,tail2*) -> { 
+        TermList tmp = `zipInter(tail1,tail2);
+        return `TermList(Inter(head1,head2),tmp*);
+      }
+    }
+    return null;
+  }
+
+
 
 }
 
