@@ -82,6 +82,9 @@ TOM WEB APPLICATION - GWT
   Caution though! Since the Main.java and Options.java files of tomwebapp/src/sa are adapted to GWT specifactions, they won't 
   be affected by this method. Thus, you will have to edit them directly in the application folder.
 
+  ant cleanGWT: clean all generated sources, except Main.java and Option.java
+  ant tomGWT: generate Java sources corresponding to src/sa/*.t
+
   Modules
   -------
   
@@ -116,3 +119,8 @@ TOM WEB APPLICATION - GWT
   To build the user interface, the most efficient way is to use the UIBinder tool of GWT.
   This consists of a pair of files: UIBinderName.ui.xml and UIBinderName.java. The former is an xml file enabling to define all
   the widgets required for the application (Buttons, Labels, TextAreas,...), the latter is mainly used to customize events handlers.  The complete tutorial is available here: <http://www.gwtproject.org/doc/latest/DevGuideUiBinder.html>
+
+NOTES:
+in tomWebApp:
+- ant devmode
+
