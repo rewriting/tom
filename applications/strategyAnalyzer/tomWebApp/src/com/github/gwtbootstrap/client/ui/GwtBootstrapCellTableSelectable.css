@@ -1,0 +1,102 @@
+@def selectionBorderWidth 1px;
+
+.cellTableWidget {
+	
+}
+
+.cellTableFirstColumn {
+	
+}
+
+.cellTableLastColumn {
+	
+}
+
+.cellTableFooter {
+}
+
+.cellTableHeader {
+}
+
+.cellTableCell {
+}
+
+.cellTableFirstColumnFooter {
+	
+}
+
+.cellTableFirstColumnHeader {
+	
+}
+
+.cellTableLastColumnFooter {
+	
+}
+
+.cellTableLastColumnHeader {
+	
+}
+
+.cellTableSortableHeader {
+}
+
+.cellTableSortableHeader:hover {
+}
+
+.cellTableSortedHeaderAscending {
+	
+}
+
+.cellTableSortedHeaderDescending {
+	
+}
+
+.cellTableEvenRow {
+}
+
+.cellTableEvenRowCell {
+}
+
+.cellTableOddRow {
+}
+
+.cellTableOddRowCell {
+}
+
+.cellTableHoveredRow {
+}
+
+.cellTableHoveredRowCell {
+  background: #EEEEEE !important;
+}
+
+.cellTableKeyboardSelectedRow, .cellTableKeyboardSelectedRow td , .cellTableKeyboardSelectedRow th{
+  background: #0E90D2 !important;
+}
+
+.cellTableSelectedRow, .cellTableSelectedRow td, .cellTableSelectedRow th{
+  background: #0E90D2 !important;
+  color : white;
+  height: auto;
+  overflow: auto;
+}
+
+.cellTableSelectedRowCell, .cellTableSelectedRow td.cellTableSelectedRowCell {
+  background: #0E90D2 !important;
+  color : white;
+}
+
+.cellTableKeyboardSelectedRowCell, .cellTableKeyboardSelectedRow td.cellTableKeyboardSelectedRowCell {
+  background: #0E90D2 !important;
+  color : white;
+}
+
+.cellTableKeyboardSelectedCell, .cellTableKeyboardSelectedRow td.cellTableKeyboardSelectedCell{
+  background: #0E90D2 !important;
+  color: white !important;
+
+}
+
+.cellTableLoading {
+	margin: 30px;
+}

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE module 
+	PUBLIC "-//Google Inc.//DTD Google Web Toolkit 1.6.4//EN" 
+	"http://google-web-toolkit.googlecode.com/svn/tags/1.6.4/distro-source/core/src/gwt-module.dtd">
+<module>
+	<super-source path="gwt">
+	</super-source>
+	
+	<source path="runtime">
+		<exclude name="ANTLRInputStream.java" />
+		<exclude name="ANTLRFileStream.java" />
+		<exclude name="ANTLRReaderStream.java" />
+		<exclude name="SerializedGrammar.java" />
+	</source>
+
+	<source path="runtime/tree">
+		<exclude name="DOTTreeGenerator.java" />
+	</source>
+
+	<source path="runtime/debug">
+		<exclude name="DebugEventSocketProxy.java" />
+		<exclude name="Profiler.java" />
+		<exclude name="RemoteDebugEventSocketListener.java" />
+	</source>
+
+	<source path="runtime/misc">
+		<exclude name="Stats.java" />
+	</source>
+</module>

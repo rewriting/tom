@@ -1,0 +1,94 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"  xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:b="urn:import:com.github.gwtbootstrap.client.ui">
+
+<g:VerticalPanel ui:field="mainPanel">
+
+  <b:Row>
+    <b:Column size="12">
+      <g:HTMLPanel>
+        <div class="navbar navbar-inverse navbar-fixed-top">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse" OnClick="javascript:window.location.reload()">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              <a class="navbar-brand" href="#" style="color:#ffffff">Tom Web Application</a>
+            </div>
+          </div>
+        </div>
+      </g:HTMLPanel>
+    </b:Column>
+  </b:Row>
+
+  <b:Row>
+    <b:Column size="2" offset="1">
+      <g:HTMLPanel>
+        <a href="http://www.loria.fr/loria-news"><img src="loria.gif" alt="Go to Loria website"/></a>
+      </g:HTMLPanel>
+    </b:Column>
+
+    <b:Column size="2" offset="7">
+      <g:HTMLPanel>
+        <a href="http://www.inria.fr"><img src="inria.gif" alt="Go to Inria website"/></a>
+      </g:HTMLPanel>
+    </b:Column>
+  </b:Row>
+
+  <b:Row>
+    <g:HorizontalPanel ui:field="frontPanel" styleName="marginBetweenRows">
+      <b:Column size="2" offset="3">
+        <g:Label ui:field="example" text="Choose example: " styleName="labelStyle"></g:Label>
+      </b:Column>
+      <b:Column size="7">
+        <g:ListBox ui:field="models"></g:ListBox>
+      </b:Column>
+
+    </g:HorizontalPanel>
+  </b:Row>
+
+  <b:Row>
+    <b:Column size="4" offset="4">
+      <g:HTMLPanel>
+        <strong style="font-size:1.2em"> Write your code in the text area: </strong>
+      </g:HTMLPanel>
+    </b:Column>
+    <b:Column size="4"></b:Column>
+  </b:Row>
+
+  <b:Row>
+    <g:HorizontalPanel ui:field="codingPanel" styleName="marginBetweenRows">
+      <b:Column size="6" offset="2">
+        <b:TextArea ui:field="nsArea" height="600px" width="600px"></b:TextArea>
+      </b:Column>
+      <b:Column size="3" offset="1">
+        <g:VerticalPanel ui:field="checkboxesPanel">
+          <g:Label ui:field="options" text="Options: " styleName="labelStyle"></g:Label>
+          <b:CheckBox ui:field="verbose" text="verbose"/>
+          <b:CheckBox ui:field="debug" text="debug"/>
+          <b:CheckBox ui:field="withAP" text="withAP"/>
+          <b:CheckBox ui:field="withAT" text="withAT"/>
+          <b:CheckBox ui:field="aprove" text="aprove" value="true"/>
+          <b:CheckBox ui:field="timbuk" text="timbuk"/>
+          <b:CheckBox ui:field="metalevel" text="metalevel"/>
+          <b:CheckBox ui:field="approx" text="approx"/>
+          <b:CheckBox ui:field="withType" text="withType"/>
+          <b:CheckBox ui:field="minimize" text="minimize"/>
+          <b:CheckBox ui:field="ordered" text="ordered"/>
+          <b:CheckBox ui:field="pattern" text="pattern"/>
+        </g:VerticalPanel>
+      </b:Column>
+    </g:HorizontalPanel>
+  </b:Row>
+
+  <b:Row>
+    <b:Column size="2" offset="5">
+      <b:Button ui:field="runButton" type="PRIMARY"> Run </b:Button>
+    </b:Column>
+    <b:Column size="5"></b:Column>
+  </b:Row>
+
+</g:VerticalPanel>
+
+</ui:UiBinder>

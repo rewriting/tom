@@ -1,0 +1,675 @@
+
+%include { string.tom }
+
+%include { int.tom }
+
+%typeterm StratDecl {
+  implement { sa.rule.types.StratDecl }
+  is_sort(t) { ($t instanceof sa.rule.types.StratDecl) }
+
+  equals(t1,t2) { ($t1==$t2) }
+
+}
+
+%typeterm Field {
+  implement { sa.rule.types.Field }
+  is_sort(t) { ($t instanceof sa.rule.types.Field) }
+
+  equals(t1,t2) { ($t1==$t2) }
+
+}
+
+%typeterm ParamList {
+  implement { sa.rule.types.ParamList }
+  is_sort(t) { ($t instanceof sa.rule.types.ParamList) }
+
+  equals(t1,t2) { ($t1==$t2) }
+
+}
+
+%typeterm GomType {
+  implement { sa.rule.types.GomType }
+  is_sort(t) { ($t instanceof sa.rule.types.GomType) }
+
+  equals(t1,t2) { ($t1==$t2) }
+
+}
+
+%typeterm Strat {
+  implement { sa.rule.types.Strat }
+  is_sort(t) { ($t instanceof sa.rule.types.Strat) }
+
+  equals(t1,t2) { ($t1==$t2) }
+
+}
+
+%typeterm StratDeclList {
+  implement { sa.rule.types.StratDeclList }
+  is_sort(t) { ($t instanceof sa.rule.types.StratDeclList) }
+
+  equals(t1,t2) { ($t1==$t2) }
+
+}
+
+%typeterm TypeEnvironment {
+  implement { sa.rule.types.TypeEnvironment }
+  is_sort(t) { ($t instanceof sa.rule.types.TypeEnvironment) }
+
+  equals(t1,t2) { ($t1==$t2) }
+
+}
+
+%typeterm Param {
+  implement { sa.rule.types.Param }
+  is_sort(t) { ($t instanceof sa.rule.types.Param) }
+
+  equals(t1,t2) { ($t1==$t2) }
+
+}
+
+%typeterm AddList {
+  implement { sa.rule.types.AddList }
+  is_sort(t) { ($t instanceof sa.rule.types.AddList) }
+
+  equals(t1,t2) { ($t1==$t2) }
+
+}
+
+%typeterm GomTypeList {
+  implement { sa.rule.types.GomTypeList }
+  is_sort(t) { ($t instanceof sa.rule.types.GomTypeList) }
+
+  equals(t1,t2) { ($t1==$t2) }
+
+}
+
+%typeterm RuleList {
+  implement { sa.rule.types.RuleList }
+  is_sort(t) { ($t instanceof sa.rule.types.RuleList) }
+
+  equals(t1,t2) { ($t1==$t2) }
+
+}
+
+%typeterm Term {
+  implement { sa.rule.types.Term }
+  is_sort(t) { ($t instanceof sa.rule.types.Term) }
+
+  equals(t1,t2) { ($t1==$t2) }
+
+}
+
+%typeterm Condition {
+  implement { sa.rule.types.Condition }
+  is_sort(t) { ($t instanceof sa.rule.types.Condition) }
+
+  equals(t1,t2) { ($t1==$t2) }
+
+}
+
+%typeterm TermList {
+  implement { sa.rule.types.TermList }
+  is_sort(t) { ($t instanceof sa.rule.types.TermList) }
+
+  equals(t1,t2) { ($t1==$t2) }
+
+}
+
+%typeterm StratList {
+  implement { sa.rule.types.StratList }
+  is_sort(t) { ($t instanceof sa.rule.types.StratList) }
+
+  equals(t1,t2) { ($t1==$t2) }
+
+}
+
+%typeterm Trs {
+  implement { sa.rule.types.Trs }
+  is_sort(t) { ($t instanceof sa.rule.types.Trs) }
+
+  equals(t1,t2) { ($t1==$t2) }
+
+}
+
+%typeterm Rule {
+  implement { sa.rule.types.Rule }
+  is_sort(t) { ($t instanceof sa.rule.types.Rule) }
+
+  equals(t1,t2) { ($t1==$t2) }
+
+}
+
+%typeterm FieldList {
+  implement { sa.rule.types.FieldList }
+  is_sort(t) { ($t instanceof sa.rule.types.FieldList) }
+
+  equals(t1,t2) { ($t1==$t2) }
+
+}
+
+%typeterm AlternativeList {
+  implement { sa.rule.types.AlternativeList }
+  is_sort(t) { ($t instanceof sa.rule.types.AlternativeList) }
+
+  equals(t1,t2) { ($t1==$t2) }
+
+}
+
+%typeterm Symbol {
+  implement { sa.rule.types.Symbol }
+  is_sort(t) { ($t instanceof sa.rule.types.Symbol) }
+
+  equals(t1,t2) { ($t1==$t2) }
+
+}
+
+%typeterm Alternative {
+  implement { sa.rule.types.Alternative }
+  is_sort(t) { ($t instanceof sa.rule.types.Alternative) }
+
+  equals(t1,t2) { ($t1==$t2) }
+
+}
+
+%typeterm ProductionList {
+  implement { sa.rule.types.ProductionList }
+  is_sort(t) { ($t instanceof sa.rule.types.ProductionList) }
+
+  equals(t1,t2) { ($t1==$t2) }
+
+}
+
+%typeterm Production {
+  implement { sa.rule.types.Production }
+  is_sort(t) { ($t instanceof sa.rule.types.Production) }
+
+  equals(t1,t2) { ($t1==$t2) }
+
+}
+
+%typeterm Program {
+  implement { sa.rule.types.Program }
+  is_sort(t) { ($t instanceof sa.rule.types.Program) }
+
+  equals(t1,t2) { ($t1==$t2) }
+
+}
+%op StratDecl StratDecl(Name:String, ParamList:ParamList, Body:Strat) {
+  is_fsym(t) { ($t instanceof sa.rule.types.stratdecl.StratDecl) }
+  get_slot(Name, t) { $t.getName() }
+  get_slot(ParamList, t) { $t.getParamList() }
+  get_slot(Body, t) { $t.getBody() }
+  make(t0, t1, t2) { sa.rule.types.stratdecl.StratDecl.make($t0, $t1, $t2) }
+}
+
+%op Field UnamedField(FieldType:GomType) {
+  is_fsym(t) { ($t instanceof sa.rule.types.field.UnamedField) }
+  get_slot(FieldType, t) { $t.getFieldType() }
+  make(t0) { sa.rule.types.field.UnamedField.make($t0) }
+}
+
+%op ParamList EmptyConcParam() {
+  is_fsym(t) { ($t instanceof sa.rule.types.paramlist.EmptyConcParam) }
+  make() { sa.rule.types.paramlist.EmptyConcParam.make() }
+}
+
+%op ParamList ConsConcParam(HeadConcParam:Param, TailConcParam:ParamList) {
+  is_fsym(t) { ($t instanceof sa.rule.types.paramlist.ConsConcParam) }
+  get_slot(HeadConcParam, t) { $t.getHeadConcParam() }
+  get_slot(TailConcParam, t) { $t.getTailConcParam() }
+  make(t0, t1) { sa.rule.types.paramlist.ConsConcParam.make($t0, $t1) }
+}
+
+%op GomType GomType(Name:String) {
+  is_fsym(t) { ($t instanceof sa.rule.types.gomtype.GomType) }
+  get_slot(Name, t) { $t.getName() }
+  make(t0) { sa.rule.types.gomtype.GomType.make($t0) }
+}
+
+%op Strat StratName(name:String) {
+  is_fsym(t) { ($t instanceof sa.rule.types.strat.StratName) }
+  get_slot(name, t) { $t.getname() }
+  make(t0) { sa.rule.types.strat.StratName.make($t0) }
+}
+
+%op Strat StratRule(rule:Rule) {
+  is_fsym(t) { ($t instanceof sa.rule.types.strat.StratRule) }
+  get_slot(rule, t) { $t.getrule() }
+  make(t0) { sa.rule.types.strat.StratRule.make($t0) }
+}
+
+%op Strat StratSequence(s1:Strat, s2:Strat) {
+  is_fsym(t) { ($t instanceof sa.rule.types.strat.StratSequence) }
+  get_slot(s1, t) { $t.gets1() }
+  get_slot(s2, t) { $t.gets2() }
+  make(t0, t1) { sa.rule.types.strat.StratSequence.make($t0, $t1) }
+}
+
+%op Strat StratChoice(s1:Strat, s2:Strat) {
+  is_fsym(t) { ($t instanceof sa.rule.types.strat.StratChoice) }
+  get_slot(s1, t) { $t.gets1() }
+  get_slot(s2, t) { $t.gets2() }
+  make(t0, t1) { sa.rule.types.strat.StratChoice.make($t0, $t1) }
+}
+
+%op Strat StratIdentity() {
+  is_fsym(t) { ($t instanceof sa.rule.types.strat.StratIdentity) }
+  make() { sa.rule.types.strat.StratIdentity.make() }
+}
+
+%op Strat StratFail() {
+  is_fsym(t) { ($t instanceof sa.rule.types.strat.StratFail) }
+  make() { sa.rule.types.strat.StratFail.make() }
+}
+
+%op Strat StratAll(s:Strat) {
+  is_fsym(t) { ($t instanceof sa.rule.types.strat.StratAll) }
+  get_slot(s, t) { $t.gets() }
+  make(t0) { sa.rule.types.strat.StratAll.make($t0) }
+}
+
+%op Strat StratOne(s:Strat) {
+  is_fsym(t) { ($t instanceof sa.rule.types.strat.StratOne) }
+  get_slot(s, t) { $t.gets() }
+  make(t0) { sa.rule.types.strat.StratOne.make($t0) }
+}
+
+%op Strat StratTrs(trs:Trs) {
+  is_fsym(t) { ($t instanceof sa.rule.types.strat.StratTrs) }
+  get_slot(trs, t) { $t.gettrs() }
+  make(t0) { sa.rule.types.strat.StratTrs.make($t0) }
+}
+
+%op Strat StratMu(name:String, s:Strat) {
+  is_fsym(t) { ($t instanceof sa.rule.types.strat.StratMu) }
+  get_slot(name, t) { $t.getname() }
+  get_slot(s, t) { $t.gets() }
+  make(t0, t1) { sa.rule.types.strat.StratMu.make($t0, $t1) }
+}
+
+%op Strat StratAppl(name:String, args:StratList) {
+  is_fsym(t) { ($t instanceof sa.rule.types.strat.StratAppl) }
+  get_slot(name, t) { $t.getname() }
+  get_slot(args, t) { $t.getargs() }
+  make(t0, t1) { sa.rule.types.strat.StratAppl.make($t0, $t1) }
+}
+
+%op StratDeclList EmptyConcStratDecl() {
+  is_fsym(t) { ($t instanceof sa.rule.types.stratdecllist.EmptyConcStratDecl) }
+  make() { sa.rule.types.stratdecllist.EmptyConcStratDecl.make() }
+}
+
+%op StratDeclList ConsConcStratDecl(HeadConcStratDecl:StratDecl, TailConcStratDecl:StratDeclList) {
+  is_fsym(t) { ($t instanceof sa.rule.types.stratdecllist.ConsConcStratDecl) }
+  get_slot(HeadConcStratDecl, t) { $t.getHeadConcStratDecl() }
+  get_slot(TailConcStratDecl, t) { $t.getTailConcStratDecl() }
+  make(t0, t1) { sa.rule.types.stratdecllist.ConsConcStratDecl.make($t0, $t1) }
+}
+
+%op TypeEnvironment EmptyEnvironment() {
+  is_fsym(t) { ($t instanceof sa.rule.types.typeenvironment.EmptyEnvironment) }
+  make() { sa.rule.types.typeenvironment.EmptyEnvironment.make() }
+}
+
+%op TypeEnvironment PushEnvironment(Name:String, Type:GomType, Env:TypeEnvironment) {
+  is_fsym(t) { ($t instanceof sa.rule.types.typeenvironment.PushEnvironment) }
+  get_slot(Name, t) { $t.getName() }
+  get_slot(Type, t) { $t.getType() }
+  get_slot(Env, t) { $t.getEnv() }
+  make(t0, t1, t2) { sa.rule.types.typeenvironment.PushEnvironment.make($t0, $t1, $t2) }
+}
+
+%op Param Param(Name:String) {
+  is_fsym(t) { ($t instanceof sa.rule.types.param.Param) }
+  get_slot(Name, t) { $t.getName() }
+  make(t0) { sa.rule.types.param.Param.make($t0) }
+}
+
+%op AddList EmptyConcAdd() {
+  is_fsym(t) { ($t instanceof sa.rule.types.addlist.EmptyConcAdd) }
+  make() { sa.rule.types.addlist.EmptyConcAdd.make() }
+}
+
+%op AddList ConsConcAdd(HeadConcAdd:Term, TailConcAdd:AddList) {
+  is_fsym(t) { ($t instanceof sa.rule.types.addlist.ConsConcAdd) }
+  get_slot(HeadConcAdd, t) { $t.getHeadConcAdd() }
+  get_slot(TailConcAdd, t) { $t.getTailConcAdd() }
+  make(t0, t1) { sa.rule.types.addlist.ConsConcAdd.make($t0, $t1) }
+}
+
+%op GomTypeList EmptyConcGomType() {
+  is_fsym(t) { ($t instanceof sa.rule.types.gomtypelist.EmptyConcGomType) }
+  make() { sa.rule.types.gomtypelist.EmptyConcGomType.make() }
+}
+
+%op GomTypeList ConsConcGomType(HeadConcGomType:GomType, TailConcGomType:GomTypeList) {
+  is_fsym(t) { ($t instanceof sa.rule.types.gomtypelist.ConsConcGomType) }
+  get_slot(HeadConcGomType, t) { $t.getHeadConcGomType() }
+  get_slot(TailConcGomType, t) { $t.getTailConcGomType() }
+  make(t0, t1) { sa.rule.types.gomtypelist.ConsConcGomType.make($t0, $t1) }
+}
+
+%op RuleList EmptyConcRule() {
+  is_fsym(t) { ($t instanceof sa.rule.types.rulelist.EmptyConcRule) }
+  make() { sa.rule.types.rulelist.EmptyConcRule.make() }
+}
+
+%op RuleList ConsConcRule(HeadConcRule:Rule, TailConcRule:RuleList) {
+  is_fsym(t) { ($t instanceof sa.rule.types.rulelist.ConsConcRule) }
+  get_slot(HeadConcRule, t) { $t.getHeadConcRule() }
+  get_slot(TailConcRule, t) { $t.getTailConcRule() }
+  make(t0, t1) { sa.rule.types.rulelist.ConsConcRule.make($t0, $t1) }
+}
+
+%op Term Appl(symbol:String, args:TermList) {
+  is_fsym(t) { ($t instanceof sa.rule.types.term.Appl) }
+  get_slot(symbol, t) { $t.getsymbol() }
+  get_slot(args, t) { $t.getargs() }
+  make(t0, t1) { sa.rule.types.term.Appl.make($t0, $t1) }
+}
+
+%op Term Var(name:String) {
+  is_fsym(t) { ($t instanceof sa.rule.types.term.Var) }
+  get_slot(name, t) { $t.getname() }
+  make(t0) { sa.rule.types.term.Var.make($t0) }
+}
+
+%op Term BuiltinInt(i:int) {
+  is_fsym(t) { ($t instanceof sa.rule.types.term.BuiltinInt) }
+  get_slot(i, t) { $t.geti() }
+  make(t0) { sa.rule.types.term.BuiltinInt.make($t0) }
+}
+
+%op Term Anti(term:Term) {
+  is_fsym(t) { ($t instanceof sa.rule.types.term.Anti) }
+  get_slot(term, t) { $t.getterm() }
+  make(t0) { sa.rule.types.term.Anti.make($t0) }
+}
+
+%op Term At(term1:Term, term2:Term) {
+  is_fsym(t) { ($t instanceof sa.rule.types.term.At) }
+  get_slot(term1, t) { $t.getterm1() }
+  get_slot(term2, t) { $t.getterm2() }
+  make(t0, t1) { sa.rule.types.term.At.make($t0, $t1) }
+}
+
+%op Term Add(addlist:AddList) {
+  is_fsym(t) { ($t instanceof sa.rule.types.term.Add) }
+  get_slot(addlist, t) { $t.getaddlist() }
+  make(t0) { sa.rule.types.term.Add.make($t0) }
+}
+
+%op Term Sub(term1:Term, term2:Term) {
+  is_fsym(t) { ($t instanceof sa.rule.types.term.Sub) }
+  get_slot(term1, t) { $t.getterm1() }
+  get_slot(term2, t) { $t.getterm2() }
+  make(t0, t1) { sa.rule.types.term.Sub.make($t0, $t1) }
+}
+
+%op Term Inter(term1:Term, term2:Term) {
+  is_fsym(t) { ($t instanceof sa.rule.types.term.Inter) }
+  get_slot(term1, t) { $t.getterm1() }
+  get_slot(term2, t) { $t.getterm2() }
+  make(t0, t1) { sa.rule.types.term.Inter.make($t0, $t1) }
+}
+
+%op Term Match(term1:Term, term2:Term) {
+  is_fsym(t) { ($t instanceof sa.rule.types.term.Match) }
+  get_slot(term1, t) { $t.getterm1() }
+  get_slot(term2, t) { $t.getterm2() }
+  make(t0, t1) { sa.rule.types.term.Match.make($t0, $t1) }
+}
+
+%op Term TrueMatch() {
+  is_fsym(t) { ($t instanceof sa.rule.types.term.TrueMatch) }
+  make() { sa.rule.types.term.TrueMatch.make() }
+}
+
+%op Term Empty() {
+  is_fsym(t) { ($t instanceof sa.rule.types.term.Empty) }
+  make() { sa.rule.types.term.Empty.make() }
+}
+
+%op Condition CondEquals(t1:Term, t2:Term) {
+  is_fsym(t) { ($t instanceof sa.rule.types.condition.CondEquals) }
+  get_slot(t1, t) { $t.gett1() }
+  get_slot(t2, t) { $t.gett2() }
+  make(t0, t1) { sa.rule.types.condition.CondEquals.make($t0, $t1) }
+}
+
+%op Condition CondAnd(c1:Condition, c2:Condition) {
+  is_fsym(t) { ($t instanceof sa.rule.types.condition.CondAnd) }
+  get_slot(c1, t) { $t.getc1() }
+  get_slot(c2, t) { $t.getc2() }
+  make(t0, t1) { sa.rule.types.condition.CondAnd.make($t0, $t1) }
+}
+
+%op Condition CondNot(c1:Condition) {
+  is_fsym(t) { ($t instanceof sa.rule.types.condition.CondNot) }
+  get_slot(c1, t) { $t.getc1() }
+  make(t0) { sa.rule.types.condition.CondNot.make($t0) }
+}
+
+%op Condition CondTrue() {
+  is_fsym(t) { ($t instanceof sa.rule.types.condition.CondTrue) }
+  make() { sa.rule.types.condition.CondTrue.make() }
+}
+
+%op Condition CondFalse() {
+  is_fsym(t) { ($t instanceof sa.rule.types.condition.CondFalse) }
+  make() { sa.rule.types.condition.CondFalse.make() }
+}
+
+%op TermList EmptyTermList() {
+  is_fsym(t) { ($t instanceof sa.rule.types.termlist.EmptyTermList) }
+  make() { sa.rule.types.termlist.EmptyTermList.make() }
+}
+
+%op TermList ConsTermList(HeadTermList:Term, TailTermList:TermList) {
+  is_fsym(t) { ($t instanceof sa.rule.types.termlist.ConsTermList) }
+  get_slot(HeadTermList, t) { $t.getHeadTermList() }
+  get_slot(TailTermList, t) { $t.getTailTermList() }
+  make(t0, t1) { sa.rule.types.termlist.ConsTermList.make($t0, $t1) }
+}
+
+%op StratList EmptyConcStrat() {
+  is_fsym(t) { ($t instanceof sa.rule.types.stratlist.EmptyConcStrat) }
+  make() { sa.rule.types.stratlist.EmptyConcStrat.make() }
+}
+
+%op StratList ConsConcStrat(HeadConcStrat:Strat, TailConcStrat:StratList) {
+  is_fsym(t) { ($t instanceof sa.rule.types.stratlist.ConsConcStrat) }
+  get_slot(HeadConcStrat, t) { $t.getHeadConcStrat() }
+  get_slot(TailConcStrat, t) { $t.getTailConcStrat() }
+  make(t0, t1) { sa.rule.types.stratlist.ConsConcStrat.make($t0, $t1) }
+}
+
+%op Trs Otrs(list:RuleList) {
+  is_fsym(t) { ($t instanceof sa.rule.types.trs.Otrs) }
+  get_slot(list, t) { $t.getlist() }
+  make(t0) { sa.rule.types.trs.Otrs.make($t0) }
+}
+
+%op Trs Trs(list:RuleList) {
+  is_fsym(t) { ($t instanceof sa.rule.types.trs.Trs) }
+  get_slot(list, t) { $t.getlist() }
+  make(t0) { sa.rule.types.trs.Trs.make($t0) }
+}
+
+%op Trs EmptyTrs() {
+  is_fsym(t) { ($t instanceof sa.rule.types.trs.EmptyTrs) }
+  make() { sa.rule.types.trs.EmptyTrs.make() }
+}
+
+%op Rule Rule(lhs:Term, rhs:Term) {
+  is_fsym(t) { ($t instanceof sa.rule.types.rule.Rule) }
+  get_slot(lhs, t) { $t.getlhs() }
+  get_slot(rhs, t) { $t.getrhs() }
+  make(t0, t1) { sa.rule.types.rule.Rule.make($t0, $t1) }
+}
+
+%op Rule ConditionalRule(lhs:Term, rhs:Term, cond:Condition) {
+  is_fsym(t) { ($t instanceof sa.rule.types.rule.ConditionalRule) }
+  get_slot(lhs, t) { $t.getlhs() }
+  get_slot(rhs, t) { $t.getrhs() }
+  get_slot(cond, t) { $t.getcond() }
+  make(t0, t1, t2) { sa.rule.types.rule.ConditionalRule.make($t0, $t1, $t2) }
+}
+
+%op FieldList EmptyConcField() {
+  is_fsym(t) { ($t instanceof sa.rule.types.fieldlist.EmptyConcField) }
+  make() { sa.rule.types.fieldlist.EmptyConcField.make() }
+}
+
+%op FieldList ConsConcField(HeadConcField:Field, TailConcField:FieldList) {
+  is_fsym(t) { ($t instanceof sa.rule.types.fieldlist.ConsConcField) }
+  get_slot(HeadConcField, t) { $t.getHeadConcField() }
+  get_slot(TailConcField, t) { $t.getTailConcField() }
+  make(t0, t1) { sa.rule.types.fieldlist.ConsConcField.make($t0, $t1) }
+}
+
+%op AlternativeList EmptyConcAlternative() {
+  is_fsym(t) { ($t instanceof sa.rule.types.alternativelist.EmptyConcAlternative) }
+  make() { sa.rule.types.alternativelist.EmptyConcAlternative.make() }
+}
+
+%op AlternativeList ConsConcAlternative(HeadConcAlternative:Alternative, TailConcAlternative:AlternativeList) {
+  is_fsym(t) { ($t instanceof sa.rule.types.alternativelist.ConsConcAlternative) }
+  get_slot(HeadConcAlternative, t) { $t.getHeadConcAlternative() }
+  get_slot(TailConcAlternative, t) { $t.getTailConcAlternative() }
+  make(t0, t1) { sa.rule.types.alternativelist.ConsConcAlternative.make($t0, $t1) }
+}
+
+%op Symbol Symbol(name:String, arity:int) {
+  is_fsym(t) { ($t instanceof sa.rule.types.symbol.Symbol) }
+  get_slot(name, t) { $t.getname() }
+  get_slot(arity, t) { $t.getarity() }
+  make(t0, t1) { sa.rule.types.symbol.Symbol.make($t0, $t1) }
+}
+
+%op Alternative Alternative(Name:String, DomainList:FieldList, Codomain:GomType) {
+  is_fsym(t) { ($t instanceof sa.rule.types.alternative.Alternative) }
+  get_slot(Name, t) { $t.getName() }
+  get_slot(DomainList, t) { $t.getDomainList() }
+  get_slot(Codomain, t) { $t.getCodomain() }
+  make(t0, t1, t2) { sa.rule.types.alternative.Alternative.make($t0, $t1, $t2) }
+}
+
+%op ProductionList EmptyConcProduction() {
+  is_fsym(t) { ($t instanceof sa.rule.types.productionlist.EmptyConcProduction) }
+  make() { sa.rule.types.productionlist.EmptyConcProduction.make() }
+}
+
+%op ProductionList ConsConcProduction(HeadConcProduction:Production, TailConcProduction:ProductionList) {
+  is_fsym(t) { ($t instanceof sa.rule.types.productionlist.ConsConcProduction) }
+  get_slot(HeadConcProduction, t) { $t.getHeadConcProduction() }
+  get_slot(TailConcProduction, t) { $t.getTailConcProduction() }
+  make(t0, t1) { sa.rule.types.productionlist.ConsConcProduction.make($t0, $t1) }
+}
+
+%op Production SortType(Type:GomType, AlternativeList:AlternativeList) {
+  is_fsym(t) { ($t instanceof sa.rule.types.production.SortType) }
+  get_slot(Type, t) { $t.getType() }
+  get_slot(AlternativeList, t) { $t.getAlternativeList() }
+  make(t0, t1) { sa.rule.types.production.SortType.make($t0, $t1) }
+}
+
+%op Program Program(productionList:ProductionList, functionList:ProductionList, stratList:StratDeclList, trs:Trs) {
+  is_fsym(t) { ($t instanceof sa.rule.types.program.Program) }
+  get_slot(productionList, t) { $t.getproductionList() }
+  get_slot(functionList, t) { $t.getfunctionList() }
+  get_slot(stratList, t) { $t.getstratList() }
+  get_slot(trs, t) { $t.gettrs() }
+  make(t0, t1, t2, t3) { sa.rule.types.program.Program.make($t0, $t1, $t2, $t3) }
+}
+
+
+%oplist ParamList ConcParam(Param*) {
+  is_fsym(t) { (($t instanceof sa.rule.types.paramlist.ConsConcParam) || ($t instanceof sa.rule.types.paramlist.EmptyConcParam)) }
+  make_empty() { sa.rule.types.paramlist.EmptyConcParam.make() }
+  make_insert(e,l) { sa.rule.types.paramlist.ConsConcParam.make($e,$l) }
+  get_head(l) { $l.getHeadConcParam() }
+  get_tail(l) { $l.getTailConcParam() }
+  is_empty(l) { $l.isEmptyConcParam() }
+}
+
+%oplist StratDeclList ConcStratDecl(StratDecl*) {
+  is_fsym(t) { (($t instanceof sa.rule.types.stratdecllist.ConsConcStratDecl) || ($t instanceof sa.rule.types.stratdecllist.EmptyConcStratDecl)) }
+  make_empty() { sa.rule.types.stratdecllist.EmptyConcStratDecl.make() }
+  make_insert(e,l) { sa.rule.types.stratdecllist.ConsConcStratDecl.make($e,$l) }
+  get_head(l) { $l.getHeadConcStratDecl() }
+  get_tail(l) { $l.getTailConcStratDecl() }
+  is_empty(l) { $l.isEmptyConcStratDecl() }
+}
+
+%oplist AddList ConcAdd(Term*) {
+  is_fsym(t) { (($t instanceof sa.rule.types.addlist.ConsConcAdd) || ($t instanceof sa.rule.types.addlist.EmptyConcAdd)) }
+  make_empty() { sa.rule.types.addlist.EmptyConcAdd.make() }
+  make_insert(e,l) { sa.rule.types.addlist.ConsConcAdd.make($e,$l) }
+  get_head(l) { $l.getHeadConcAdd() }
+  get_tail(l) { $l.getTailConcAdd() }
+  is_empty(l) { $l.isEmptyConcAdd() }
+}
+
+%oplist GomTypeList ConcGomType(GomType*) {
+  is_fsym(t) { (($t instanceof sa.rule.types.gomtypelist.ConsConcGomType) || ($t instanceof sa.rule.types.gomtypelist.EmptyConcGomType)) }
+  make_empty() { sa.rule.types.gomtypelist.EmptyConcGomType.make() }
+  make_insert(e,l) { sa.rule.types.gomtypelist.ConsConcGomType.make($e,$l) }
+  get_head(l) { $l.getHeadConcGomType() }
+  get_tail(l) { $l.getTailConcGomType() }
+  is_empty(l) { $l.isEmptyConcGomType() }
+}
+
+%oplist RuleList ConcRule(Rule*) {
+  is_fsym(t) { (($t instanceof sa.rule.types.rulelist.ConsConcRule) || ($t instanceof sa.rule.types.rulelist.EmptyConcRule)) }
+  make_empty() { sa.rule.types.rulelist.EmptyConcRule.make() }
+  make_insert(e,l) { sa.rule.types.rulelist.ConsConcRule.make($e,$l) }
+  get_head(l) { $l.getHeadConcRule() }
+  get_tail(l) { $l.getTailConcRule() }
+  is_empty(l) { $l.isEmptyConcRule() }
+}
+
+%oplist TermList TermList(Term*) {
+  is_fsym(t) { (($t instanceof sa.rule.types.termlist.ConsTermList) || ($t instanceof sa.rule.types.termlist.EmptyTermList)) }
+  make_empty() { sa.rule.types.termlist.EmptyTermList.make() }
+  make_insert(e,l) { sa.rule.types.termlist.ConsTermList.make($e,$l) }
+  get_head(l) { $l.getHeadTermList() }
+  get_tail(l) { $l.getTailTermList() }
+  is_empty(l) { $l.isEmptyTermList() }
+}
+
+%oplist StratList ConcStrat(Strat*) {
+  is_fsym(t) { (($t instanceof sa.rule.types.stratlist.ConsConcStrat) || ($t instanceof sa.rule.types.stratlist.EmptyConcStrat)) }
+  make_empty() { sa.rule.types.stratlist.EmptyConcStrat.make() }
+  make_insert(e,l) { sa.rule.types.stratlist.ConsConcStrat.make($e,$l) }
+  get_head(l) { $l.getHeadConcStrat() }
+  get_tail(l) { $l.getTailConcStrat() }
+  is_empty(l) { $l.isEmptyConcStrat() }
+}
+
+%oplist FieldList ConcField(Field*) {
+  is_fsym(t) { (($t instanceof sa.rule.types.fieldlist.ConsConcField) || ($t instanceof sa.rule.types.fieldlist.EmptyConcField)) }
+  make_empty() { sa.rule.types.fieldlist.EmptyConcField.make() }
+  make_insert(e,l) { sa.rule.types.fieldlist.ConsConcField.make($e,$l) }
+  get_head(l) { $l.getHeadConcField() }
+  get_tail(l) { $l.getTailConcField() }
+  is_empty(l) { $l.isEmptyConcField() }
+}
+
+%oplist AlternativeList ConcAlternative(Alternative*) {
+  is_fsym(t) { (($t instanceof sa.rule.types.alternativelist.ConsConcAlternative) || ($t instanceof sa.rule.types.alternativelist.EmptyConcAlternative)) }
+  make_empty() { sa.rule.types.alternativelist.EmptyConcAlternative.make() }
+  make_insert(e,l) { sa.rule.types.alternativelist.ConsConcAlternative.make($e,$l) }
+  get_head(l) { $l.getHeadConcAlternative() }
+  get_tail(l) { $l.getTailConcAlternative() }
+  is_empty(l) { $l.isEmptyConcAlternative() }
+}
+
+%oplist ProductionList ConcProduction(Production*) {
+  is_fsym(t) { (($t instanceof sa.rule.types.productionlist.ConsConcProduction) || ($t instanceof sa.rule.types.productionlist.EmptyConcProduction)) }
+  make_empty() { sa.rule.types.productionlist.EmptyConcProduction.make() }
+  make_insert(e,l) { sa.rule.types.productionlist.ConsConcProduction.make($e,$l) }
+  get_head(l) { $l.getHeadConcProduction() }
+  get_tail(l) { $l.getTailConcProduction() }
+  is_empty(l) { $l.isEmptyConcProduction() }
+}

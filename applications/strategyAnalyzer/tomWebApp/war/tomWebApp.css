@@ -1,0 +1,25 @@
+/** Add css rules here for your application. */
+
+
+/** Example rules used by the template application (remove for your app) */
+
+.marginBetweenRows {
+    margin:30px;
+}
+
+.labelStyle {
+  font-size:1.2em;
+  font-weight: bold;
+}
+
+.selectbox {
+    width: 98%;
+    height: 27px;
+    background-color: #FFF;
+    font: 400 12px/18px 'Open Sans' , sans-serif;
+    color: #000;
+    font-weight: normal;
+    border: 1px solid #ccc;
+    margin: 5px 0 0 0;
+    padding: 5px;
+}

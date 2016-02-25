@@ -1,0 +1,93 @@
+<html>
+<head>
+<title>GWT-Bootstrap Javadoc</title>
+</head>
+<body>
+	Welcome to the GWT-Bootstrap Javadoc.
+	<p>
+		GWT-Bootstrap provides GWT widgets styled and (partly) operated by Twitter's <a
+			href="twitter.github.com/bootstrap">Bootstrap.</a> Bootstrap is a
+		project of <a href="https://twitter.com/#!/mdo">Mark Otto</a> and <a
+			href="https://twitter.com/#!/fat">Jacob Thornton</a>.
+	</p>
+	<h2>Installation</h2>
+	Add
+	<pre>
+	{@literal <inherits name="com.github.gwtbootstrap.Bootstrap" />}
+	</pre>
+	to your {@code *.gwt.xml} file. 
+	<br />
+	and Add below to your html's head tag.
+	<pre>{@literal
+	<head>
+ 		<!-- before your module(*.nocache.js) loading  -->
+		<!--[if lt IE 9]>
+		<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+		<![endif]-->
+		<!--[if IE 7]>
+ 		<link rel="stylesheet" href="{your module name}/css/font-awesome-ie7.css">
+		<![endif]-->
+		<!-- your module(*.nocache.js) loading  -->
+		...
+	</head>
+}
+	</pre>
+	<br />
+	<p>
+		<strong>IMPORTANT: </strong>If you are using <a href="http://code.google.com/p/gwt-platform/">GWT-Platform</a>, 
+		please take a look at <a href="https://github.com/gwtbootstrap/gwt-bootstrap/issues/82#issuecomment-5354194">this comment on issue #82</a>.
+	</p>
+	<br />
+	
+	<h2>Setting up <a href="https://developers.google.com/web-toolkit/doc/latest/DevGuideUiBinder">UiBinder</a></h2>
+	Add
+	<pre>
+	xmlns:b="urn:import:com.github.gwtbootstrap.client.ui"
+	</pre>
+	to the top of every UiBinder file that uses GWT-Bootstrap widgets. You
+	can then use the widgets in the
+	<code>"b"</code>
+	namespace:
+	<pre>
+	{@literal <b:Button>Some Button</b:Button>}
+	</pre>
+	<p>As usual, all setters map to UiBinder attributes. So the method
+		{@link com.github.gwtbootstrap.client.ui.Icon#setType(IconType type)
+		setType(IconType type)} can (and in this case: has to) be used via:
+	
+	<pre>
+	{@literal <b:Icon type="PLANE" />}
+	</pre>
+	As you can see, the values are the ones of Bootstrap without the prefix
+	and in capital letters (<code>"PLANE"</code> instead of 
+	<code>"icon-plane"</code>).
+	</p>
+	<h2>Enabling <a href="http://twitter.github.com/bootstrap/scaffolding.html#responsive">Responsive Design</a></h2>
+	Add the following to your {@code *.gwt.xml} file:
+	<pre>{@literal
+<set-property name="bootstrap.responsiveDesign" value="true"/>
+ 	}</pre>
+	
+	<h2>Getting started with the library</h2>
+	Some things to get you started with:
+	<p>
+		-- {@link com.github.gwtbootstrap.client.ui The list of all available
+		widgets.}<br /> -- {@link
+		com.github.gwtbootstrap.client.ui.config.Configurator A way to
+		provide your own Bootstrap JavaScript/CSS files.}<br />
+		-- <a
+			href="http://gwtbootstrap.github.com">Our Showcase (external)</a><br />
+		-- <a
+			href="https://github.com/gwtbootstrap/gwt-bootstrap">The code on
+			Github (external)</a><br />
+		<br />
+	</p>
+	<p>
+		Please don't hesitate to ask questions in our 
+		<a href="https://groups.google.com/d/forum/gwt-bootstrap">Google Group</a> 
+		and open an <a href="https://github.com/gwtbootstrap/gwt-bootstrap/issues">issue</a>
+		if you found a bug or have a feature suggestion. 
+	</p>
+	@see <a href="http://gwtbootstrap.github.com/gwt-bootstrap">Maven project site</a>
+</body>
+</html>
