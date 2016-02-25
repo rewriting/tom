@@ -1,0 +1,118 @@
+---------------------------------------------------------------------
+TOM WEB APPLICATION - GWT
+---------------------------------------------------------------------
+
+  What is it?
+  -----------
+
+  It is a web application, developped with GWT (Google Web Toolkit), which enables 
+  to generate a set of rules from a set of strategies.
+
+  Documentation
+  -------------
+
+  The complete documentation of GWT is avaible on the following web site 
+  <http://www.gwtproject.org>.
+
+  Structure of the project
+  ------------------------
+
+  The project mainly contains:
+
+    1) build.xml
+
+      This file defines the ant tasks available for development mode. To compile 
+      the application, use "ant devmode". To clean the project, use "ant clean".
+
+      
+    2) war 
+
+      This directory gathers all the files generated during compilation whether it 
+      be .class files or html file. In addition, this is the directory in which 
+      additional css files or other useful ressources such as images. 
+      To add jar files, include them in the war/WEB-INF/lib directory.
+
+    3) src
+
+      This directory contains all the source files used to develop the application.
+      It consists of the following directory layout:
+
+      src
+      +--- com
+      |    +--- github
+      |    |    +--- gwtbootstrap // GWT bootstrap
+      |    |
+      |    +--- google
+      |    |    +--- gwt
+      |    |         +--- tomwebapp
+      |    |         |    +--- client             // Client side code (all used java classes are to be converted into JavaScript, see <http://www.gwtproject.org/doc/latest/RefJreEmulation.html> for the complete list of translatable classes) 
+      |    |         |    +--- server             // Server side code (all java classes are available)
+      |    |         |    +--- shared             // Code available for both server and client side
+      |    |         |    +--- ui                 // Handles user interface (see "User Interface" section for more information)
+      |    |         |    +--- tomWebApp.gwt.xml  // Defines the modules that have to be used by the application (see "Modules" section for more information) 
+      |    |         |
+      +--- org
+      |    +--- antlr                             // org.antlr library
+      |    |    +--- runtime
+      |    |    +--- gwt
+      |    |    +--- AntLR.gwt.xml
+      |    |
+      +--- sa
+      |
+      +--- tom
+      |    +--- library
+      |    |    +--- sl
+      |    |    +--- enumerator
+      |    |    +--- lib.gwt.xml
+      |    |
+      +--- shared                                 // SharedObject library
+
+
+      
+  Update source code (sa directory)
+  ---------------------------------
+
+  In order to modify the java files of the sa directory, you can of course edit them directly within the application 
+  project. However, this method might make the functioning of the application differ from that of the command line tool.
+  Consequently, you are advised to modify the .t files (strategyAnalyzer/src/sa folder) corresponding to the java files
+  you want to modify instead.
+  Then, place yourself in the strategyAnalyzer directory and type "ant tomGWT". This will result in updating the tomwebapp/src/sa 
+  directory according to the changes made to .t files.
+
+  Caution though! Since the Main.java and Options.java files of tomwebapp/src/sa are adapted to GWT specifactions, they won't 
+  be affected by this method. Thus, you will have to edit them directly in the application folder.
+
+  Modules
+  -------
+  
+  Modules are the individual units of GWT. It may be useful to create a module when you want to add a new (complex) functionality to  the application.
+  To define a new module, you have to create a gwt.xml file as follows:
+
+  *** module layout ***
+
+  myModule
+  +--- firstSubFolder
+  |
+  +--- secondSubFolder
+  |
+  +--- something.gwt.xml
+
+  *********************
+
+  something.gwt.xml:
+
+  <module>
+    <source path=''></source>
+    <source path='firstSubFolder'></source>
+    <source path='secondSubFolder'></source>
+  </module>
+
+  Afterwards, you have to add the module to the classpath of the application by adding this line to tomwebapp.gwt.xml:
+  "<inherits name='path.to.module.myModule.something'/>
+
+  User Interface
+  --------------
+
+  To build the user interface, the most efficient way is to use the UIBinder tool of GWT.
+  This consists of a pair of files: UIBinderName.ui.xml and UIBinderName.java. The former is an xml file enabling to define all
+  the widgets required for the application (Buttons, Labels, TextAreas,...), the latter is mainly used to customize events handlers.  The complete tutorial is available here: <http://www.gwtproject.org/doc/latest/DevGuideUiBinder.html>
