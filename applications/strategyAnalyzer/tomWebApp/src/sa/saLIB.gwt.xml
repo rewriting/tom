@@ -1,0 +1,82 @@
+<module>
+  <source path=''>
+  </source>
+
+  <source path='rule'>
+  </source>
+
+  <source path='rule/types'>
+  </source>
+
+  <source path='rule/types/addlist'>
+  </source>
+
+  <source path='rule/types/alternative'>
+  </source>
+
+  <source path='rule/types/alternativelist'>
+  </source>
+
+  <source path='rule/types/condition'>
+  </source>
+
+  <source path='rule/types/field'>
+  </source>
+
+  <source path='rule/types/fieldlist'>
+  </source>
+
+  <source path='rule/types/gomtype'>
+  </source>
+
+  <source path='rule/types/gomtypelist'>
+  </source>
+
+  <source path='rule/types/param'>
+  </source>
+
+  <source path='rule/types/paramlist'>
+  </source>
+
+  <source path='rule/types/production'>
+  </source>
+
+  <source path='rule/types/productionlist'>
+  </source>
+
+  <source path='rule/types/program'>
+  </source>
+
+  <source path='rule/types/rule'>
+  </source>
+
+  <source path='rule/types/rulelist'>
+  </source>
+
+  <source path='rule/types/strat'>
+  </source>
+
+  <source path='rule/types/stratdecl'>
+  </source>
+
+  <source path='rule/types/stratdecllist'>
+  </source>
+
+  <source path='rule/types/stratlist'>
+  </source>
+
+  <source path='rule/types/symbol'>
+  </source>
+
+  <source path='rule/types/term'>
+  </source>
+
+  <source path='rule/types/termlist'>
+  </source>
+
+  <source path='rule/types/trs'>
+  </source>
+
+  <source path='rule/types/typeenvironment'>
+  </source>
+</module>
