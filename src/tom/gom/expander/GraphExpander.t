@@ -2,7 +2,7 @@
  *
  * GOM
  *
- * Copyright (c) 2006-2015, Universite de Lorraine, Inria
+ * Copyright (c) 2006-2016, Universite de Lorraine, Inria
  * Nancy, France.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -656,7 +656,7 @@ public class GraphExpander {
         CollectRefCode.append(%[
       visit @`sortName@ {
         p@@Path@`sortName@(_*) -> {
-          /*
+          /* 
            * use String instead of Position because containskey method does
            * not use the method equals to compare values
            */

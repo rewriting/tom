@@ -50,6 +50,9 @@ public class Options {
 
   @Option(name="-withType", usage="specify that a typed signature will be used")
     public boolean withType = false;
+  
+  @Option(name="-minimize", usage="compute the minimum global")
+    public boolean minimize = false;
 
   @Option(name="-ordered",usage="compilation produces a TRS which should be evaluated in the specified order")
     public boolean ordered = false;

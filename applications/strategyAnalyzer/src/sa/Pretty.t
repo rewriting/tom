@@ -1,7 +1,7 @@
 package sa;
 
 import sa.rule.types.*;
-import tom.library.sl.*; 
+import tom.library.sl.*;
 import java.util.*;
 
 public class Pretty {
@@ -121,6 +121,10 @@ public class Pretty {
         return "(" + toString(`t1) + " \\ " + toString(`t2) + ")";
       }
 
+      Inter(t1,t2) -> {
+        return "(" + toString(`t1) + " ^ " + toString(`t2) + ")";
+      }
+      
       Empty() -> {
         return "empty";
       }
@@ -128,7 +132,7 @@ public class Pretty {
       TrueMatch() -> {
         return "TrueMatch";
       }
-      
+
       Match(t1,t2) -> {
         return "(" + toString(`t1) + " << " + toString(`t2) + ")";
       }
@@ -146,7 +150,7 @@ public class Pretty {
     }
   }
 
-  public static String generateAprove(RuleList ruleList, boolean innermost) 
+  public static String generateAprove(RuleList ruleList, boolean innermost)
     throws VisitFailure {
     StringBuffer rulesb = new StringBuffer();
     Collection<String> varSet = new HashSet<String>();
@@ -172,8 +176,8 @@ public class Pretty {
     varsb.append(")");
 
     return varsb.toString()+rulesb.toString();
-  }  
-  
+  }
+
   public static String generateTimbuk(RuleList ruleList, Signature generatedSignature) throws VisitFailure {
     StringBuffer rulesb = new StringBuffer();
     StringBuffer opsb = new StringBuffer();
@@ -200,7 +204,7 @@ public class Pretty {
     varsb.deleteCharAt(varsb.length()-1);
 
     return opsb.toString() + "\n" + varsb.toString() + "\n" + rulesb.toString();
-  }  
+  }
 
   public static String generateTom(Set<String> strategyNames, RuleList ruleList, Signature esig, Signature gsig) {
     String classname = Main.options.classname;
@@ -250,7 +254,7 @@ public class @classname@ {
     sb.append(%[
     }
   }
-  
+
   public static void main(String[] args) {
     try {
       BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
@@ -284,14 +288,14 @@ public class @classname@ {
 
       if(isTyped) {
         // generate nothing
-      } else if(Main.options.metalevel) {      
+      } else if(Main.options.metalevel) {
         sb.append(%[
   	return `decode(@strategyName@(encode((Term)t)));]%);
       } else {
         sb.append(%[
     return `@strategyName@((Term) t);]%);
       }
-      sb.append(%[    
+      sb.append(%[
   }
   ]%); // end strategyName
     }
@@ -322,12 +326,12 @@ public class @classname@ {
 
   }
 
-  sb.append(%[    
+  sb.append(%[
   }
   ]%); // end fromString
 
 
-  sb.append(%[    
+  sb.append(%[
 }
   ]%); // end class
 

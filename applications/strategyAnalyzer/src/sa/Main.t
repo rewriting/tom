@@ -51,16 +51,20 @@ public class Main {
       if(options.in != null) {
         fileinput = new FileInputStream(options.in);
       }
+
       RuleLexer lexer = new RuleLexer(new ANTLRInputStream(fileinput));
       CommonTokenStream tokens = new CommonTokenStream(lexer);
       RuleParser ruleParser = new RuleParser(tokens);
       Tree tree = (Tree) ruleParser.program().getTree();
       Program program = (Program) RuleAdaptor.getTerm(tree);
+      System.out.println(program);
+
       /*
        * Compilation of the strategy section
        */
       Compiler compiler = Compiler.getInstance();
       compiler.setProgram(program);
+
       // Transforms the strategy into a rewrite system
       //   get the TRS for the strategy named strategyName
       Set<String> strategyNames = compiler.collectConstantStrategyName(program);
@@ -69,23 +73,32 @@ public class Main {
       RuleList generatedRules = compiler.compileStrategy(strategyNames);
       Signature extractedSignature = compiler.getExtractedSignature();
       Signature generatedSignature = compiler.getGeneratedSignature();
+      System.out.println(extractedSignature);
+      System.out.println(generatedSignature);
+      System.out.println(generatedRules);
+      System.out.println(strategyNames.toString());
+
+      //System.out.println("compileStrategy: generatedRules = " + Pretty.toString(generatedRules));
 
       assert Tools.isLhsLinear(generatedRules);
       // transform the LINEAR TRS: compile Aps and remove ATs
       RuleCompiler ruleCompiler = new RuleCompiler(extractedSignature,generatedSignature);
       if(options.withAP == false) {
         generatedRules = ruleCompiler.expandAntiPatterns(generatedRules);
+        //System.out.println("expandAntiPatterns: generatedRules = " + Pretty.toString(generatedRules));
       }
       // if we don't expand the anti-patterns then we should keep the at-annotations as well
       // otherwise output is strange
       if(options.withAT == false && options.withAP == false) {
         generatedRules = ruleCompiler.expandAt(generatedRules);
+        //System.out.println("expandAt: generatedRules = " + Pretty.toString(generatedRules));
       }
       // refresh the signatures (presently no modifications)
       extractedSignature = ruleCompiler.getExtractedSignature();
       generatedSignature = ruleCompiler.getGeneratedSignature();
 
       if(options.withType) {
+        //System.out.println("before typing: generatedRules = " + Pretty.toString(generatedRules));
         TypeCompiler typeCompiler = new TypeCompiler(extractedSignature);
         typeCompiler.typeRules(generatedRules);
         generatedRules = typeCompiler.getGeneratedRules();
@@ -95,7 +108,7 @@ public class Main {
       /*
        * Post treatment
        */
-      if(Main.options.pattern && Main.options.ordered && Main.options.withType) {
+      if(Main.options.pattern && Main.options.ordered) { // && Main.options.withType) {
         System.out.println("after compilation");
         System.out.println("generatedRules = " + Pretty.toString(generatedRules));
         // run the Pattern transformation here
@@ -105,11 +118,6 @@ public class Main {
 
         Trs otrs = RewriteSystem.trsRule(`Otrs(generatedRules),generatedSignature);
         generatedRules = otrs.getlist();
-        //for(Rule r:res.getCollectionConcRule()) {
-        //  System.out.println(Pretty.toString(r));
-        //}
-        //System.out.println("size = " + res.length());
-
       }
 
       /*

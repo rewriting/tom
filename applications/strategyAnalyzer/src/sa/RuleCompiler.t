@@ -311,13 +311,13 @@ public class RuleCompiler {
    *     @ expanded accordingly. The order of rules is preserved.
    ********************************************************************************/
   /**
-    * Transforms a set of rules that contain x@t into a set of rules without @
-    * @param ruleList the set of rules to expand
-    * @return a new set that contains the expanded rules
+    * Transforms a list of rules that contain x@t into a list of rules without @
+    * @param ruleList the list of rules to expand
+    * @return a new list that contains the expanded rules
     */
   public RuleList expandAt(RuleList ruleList) {
     RuleList res = `ConcRule();
-    HashSet<Rule> bag = new HashSet<Rule>();
+    ArrayList<Rule> list = new ArrayList<Rule>();
     for(Rule rule:ruleList.getCollectionConcRule()) {
       Map<String,Term> map = new HashMap<String,Term>();
       try {
@@ -332,7 +332,7 @@ public class RuleCompiler {
         // if no AT in the rule just add it to the result
         assert !Tools.containsAt(rule): rule;
         //res = `ConcRule(res*,rule);
-        bag.add(rule);
+        list.add(rule);
       } else {
         // if some AT in the rule then build a new one
         Rule newRule = `rule;
@@ -350,12 +350,13 @@ public class RuleCompiler {
         }
         assert !Tools.containsAt(newRule): newRule;
         //res = `ConcRule(res*,newRule);
-        bag.add(newRule);
+        list.add(newRule);
       }
     }
-    for(Rule r:bag) {
+    for(Rule r:list) {
       res = `ConcRule(r,res*);
     }
+    res = res.reverse();
     return res;
   }
 

@@ -1,7 +1,7 @@
 /*
  * Gom
  *
- * Copyright (c) 2006-2015, Universite de Lorraine, Inria
+ * Copyright (c) 2006-2016, Universite de Lorraine, Inria
  * Nancy, France.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -53,7 +53,7 @@ public class CodeGen {
     try {
       generateCode(code,writer);
     } catch (java.io.IOException e) {
-      GomMessage.error(logger, null, 0, 
+      GomMessage.error(logger, null, 0,
           GomMessage.codeGenerationFailure , code);
     }
     return writer.toString();
@@ -94,7 +94,7 @@ public class CodeGen {
             return;
           }
         }
-        GomMessage.error(logger, null, 0, 
+        GomMessage.error(logger, null, 0,
             GomMessage.expectingVariadicButGot, `(opdecl));
         return;
       }
@@ -115,7 +115,7 @@ public class CodeGen {
             return;
           }
         }
-        GomMessage.error(logger, null, 0, 
+        GomMessage.error(logger, null, 0,
             GomMessage.expectingVariadicButGot, `(opdecl));
         return;
       }

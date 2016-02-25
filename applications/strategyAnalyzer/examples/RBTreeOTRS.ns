@@ -9,23 +9,46 @@ functions
 Tree = balance(Tree) | ins(Nat,Tree) | insAux(Nat,Tree,Cmp)
 Cmp = cmp(Nat,Nat)
 
+// Functional Pearls. Okasaki 1993
 trs
 [
+/*
   balance(T(B(),T(R(),T(R(),a,x,b),y,c),z,d)) -> T(R(),T(B(),a,x,b),y,T(B(),c,z,d))
   balance(T(B(),T(R(),a,x,T(R(),b,y,c)),z,d)) -> T(R(),T(B(),a,x,b),y,T(B(),c,z,d))
   balance(T(B(),a,x,T(R(),T(R(),b,y,c),z,d))) -> T(R(),T(B(),a,x,b),y,T(B(),c,z,d))
   balance(T(B(),a,x,T(R(),b,y,T(R(),c,z,d)))) -> T(R(),T(B(),a,x,b),y,T(B(),c,z,d))
+*/
+
+// alternative balance implementation
+// color flips
+  balance(T(B(),T(R(),T(R(),a1,a2,a3),x,b),y,T(R(),c,z,d))) -> T(R(),T(B(),T(R(),a1,a2,a3),x,b),y,T(B(),c,z,d))
+  balance(T(B(),T(R(),a,x,T(R(),b1,b2,b3)),y,T(R(),c,z,d))) -> T(R(),T(B(),a,x,T(R(),b1,b2,b3)),y,T(B(),c,z,d))
+  balance(T(B(),T(R(),a,x,b),y,T(R(),T(R(),c1,c2,c3),z,d))) -> T(R(),T(B(),a,x,b),y,T(B(),T(R(),c1,c2,c3),z,d))
+  balance(T(B(),T(R(),a,x,b),y,T(R(),c,z,T(R(),d1,d2,d3)))) -> T(R(),T(B(),a,x,b),y,T(B(),c,z,T(R(),d1,d2,d3)))
+
+// single rotations
+  balance(T(B(),T(R(),T(R(),a1,a2,a3),x,b),y,c)) -> T(B(),T(R(),a1,a2,a3),x,T(B(),b,y,c))
+  balance(T(B(),a,x,T(R(),b,y,T(R(),c1,c2,c3)))) -> T(B(),T(R(),a,x,b),y,T(R(),c1,c2,c3))
+
+// double rotations
+  balance(T(B(),T(R(),a,x,T(R(),b,y,c)),z,d)) -> T(B(),T(R(),a,x,b),y,T(R(),c,z,d))
+  balance(T(B(),a,x,T(R(),T(R(),b,y,c),z,d))) -> T(B(),T(R(),a,x,b),y,T(R(),c,z,d))
+
+// no balancing necessary
   balance(t) -> t
 
   ins(x,E()) -> T(R(),E(),x,E())
   ins(x,T(c,l,y,r)) -> insAux(x,T(c,l,y,r),cmp(x,y))
 
-  insAux(x,T(c,l,y,r),eq()) -> T(c,l,y,r)
   insAux(x,T(c,l,y,r),lt()) -> balance(T(c,ins(x,l),y,r))
   insAux(x,T(c,l,y,r),gt()) -> balance(T(c,l,y,ins(x,r)))
+  insAux(x,T(c,l,y,r),eq()) -> T(c,l,y,r)
+  //insAux(x,y,z) -> y
 
   cmp(Z(),S(x)) -> lt()
   cmp(S(x),Z()) -> gt()
   cmp(Z(),Z())  -> eq()
   cmp(S(x),S(y)) -> cmp(x,y)
+
+
 ]

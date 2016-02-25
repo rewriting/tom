@@ -12,13 +12,13 @@ trs
   transition(Z(), S(S(S(S(S(S(S(Z()))))))),Z(),Z(), Z()) -> a()
   transition(Z(), x,Z(),Z(), Z()) -> a()
   transition(Z(), S(Z()),Z(),Z(), S(Z())) -> a()
-/*
   transition(Z(), S(S(Z())),Z(),Z(), S(Z())) -> a()
   transition(Z(), S(S(S(Z()))),Z(),Z(), S(Z())) -> a()
   transition(Z(), S(Z()),Z(),Z(), S(S(Z()))) -> a()
   transition(Z(), S(S(S(S(S(S(Z())))))),Z(),Z(), S(S(Z()))) -> a()
   transition(Z(), S(S(S(S(S(S(S(Z()))))))),Z(),Z(), S(S(Z()))) -> a()
   transition(Z(), S(S(Z())),Z(),Z(), S(S(S(S(S(Z())))))) -> a()
+/*
   transition(Z(), S(S(Z())),Z(),Z(), S(S(S(S(S(S(Z()))))))) -> a()
   transition(Z(), S(S(Z())),Z(),Z(), S(S(S(S(S(S(S(Z())))))))) -> a()
   transition(Z(), S(S(Z())),Z(),S(Z()), Z()) -> a()

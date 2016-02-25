@@ -23,7 +23,7 @@ public class Pattern {
 //    example8(); // reduce deeper
 //   example9(); // nested anti-pattern
 //   example10(); // nested anti-pattern
- //  example11(); // exact cover
+   example11(); // exact cover
   }
 
   /*
@@ -52,7 +52,7 @@ public class Pattern {
     Term fgv =`Appl("f", TermList(gv));
     Term fv =`Appl("f", TermList(V));
 
-    Term hxy =`Appl("h", TermList(X,Y));
+    Term hxy =`Appl("h", TermList(V,V));
     Term hab =`Appl("h", TermList(a,b));
     Term hba =`Appl("h", TermList(b,a));
     Term fhxy =`Appl("f", TermList(hxy));
@@ -77,7 +77,7 @@ public class Pattern {
 
     Trs res = RewriteSystem.trsRule(`Otrs(ConcRule(Rule(fhba,r0), Rule(fhab,r1), Rule(V,r2))), eSig);
   }
-  
+
   private static void example2() {
     Signature eSig = new Signature();
 
@@ -248,9 +248,9 @@ public class Pattern {
 
     Rule r2 = `Rule(Appl("or", TermList(False,False)), False);
     //Rule r3 = `Rule(Appl("or", TermList(V,V)), True);
-    Rule r3 = `Rule(Add(ConcAdd( 
-            Appl("or", TermList(False,True)), 
-            Appl("or", TermList(True,False)), 
+    Rule r3 = `Rule(Add(ConcAdd(
+            Appl("or", TermList(False,True)),
+            Appl("or", TermList(True,False)),
             Appl("or", TermList(True,True)))), True);
 
     Trs res = RewriteSystem.trsRule(`Otrs(ConcRule(r0,r1,r2,r3)), eSig);
@@ -376,11 +376,31 @@ public class Pattern {
     Trs res = RewriteSystem.trsRule(`Otrs(ConcRule(Rule(pattern,r0))), eSig);
   }
 
+  private static void example11() {
+    Signature eSig = new Signature();
+
+    Term V = `Var("_");
+
+    eSig.addSymbol("a", `ConcGomType(), `GomType("T") );
+    eSig.addSymbol("f", `ConcGomType(GomType("T"),GomType("T")), `GomType("T") );
+
+    Term a =`Appl("a", TermList());
+
+    Term fav =`Appl("f", TermList(a,V));
+    Term fva =`Appl("f", TermList(V,a));
+    Term fvv =`Appl("f", TermList(V,V));
+    Term fff =`Appl("f", TermList(fvv,fvv));
+
+    boolean b = RewriteSystem.canBeRemoved3(`Rule(fvv,a), `ConcRule(Rule(fav,a),Rule(fva,a),Rule(fff,a)), eSig);
+    System.out.println("b = " + b);
+
+  }
+  
   /*
    * Reduce a list of rules
    */
   public static RuleList reduceRules(RuleList ruleList, Signature eSig) {
-    
+
     // test subsumtion idea
     %match(ruleList) {
       ConcRule(C1*,rule,C2*) -> {
@@ -393,11 +413,11 @@ public class Pattern {
   }
 /*
   private static Term nat(int n) {
-    if(n==0) { 
-      return `Appl("Z",TermList()); 
+    if(n==0) {
+      return `Appl("Z",TermList());
     } else {
       Term t = nat(n-1);
-      return `Appl("S",TermList(t)); 
+      return `Appl("S",TermList(t));
     }
     //return `Empty();
   }
@@ -425,5 +445,3 @@ public class Pattern {
   }
   */
 }
-
-

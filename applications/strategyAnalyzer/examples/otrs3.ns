@@ -1,20 +1,23 @@
 
 abstract syntax
 T = a()
-	| b()
-	| g(T)
+  | b()
+//  | c()
+  | g(T)
   | f(T,T)
 
 //functions
 //T = f(T,T)
 
 trs
+[
+  //f(a(),b()) ->  a()
+  //!f(x,b()) -> b()
 
-  f(a(),b()) ->  a()
-  !f(a(),!g(y)) -> g(b())
-  f(b(),x) ->  g(a())
-  x -> b()
-  g(x) -> x
 
-//  f(x,x)   ->  a()
+  f(a(), f(a(),z)) -> a()
+  f(g(a()), f(b(),z)) -> b()
+  f(g(x), f(a(),a())) -> x
+
+  f(x,y) ->  y
 ]

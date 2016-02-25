@@ -1,7 +1,7 @@
 /*
  * Gom
  *
- * Copyright (c) 2006-2015, Universite de Lorraine, Inria
+ * Copyright (c) 2006-2016, Universite de Lorraine, Inria
  * Nancy, France.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -159,7 +159,7 @@ public abstract class TemplateHookedClass extends TemplateClass {
       }
       tomParams.add("--output");
       tomParams.add(file_path);
-    
+
       final File tmpFile;
       try {
         tmpFile = File.createTempFile("tmp", ".t", null).getCanonicalFile();
@@ -180,7 +180,7 @@ public abstract class TemplateHookedClass extends TemplateClass {
         generate(gen);
 
         Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(tmpFile)));
-        writer.write(new String(gen.toString().getBytes("UTF-8"))); 
+        writer.write(new String(gen.toString().getBytes("UTF-8")));
         writer.flush();
         writer.close();
 
