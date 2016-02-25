@@ -125,6 +125,7 @@
        <fileset dir="${sa.genGWT}/${sa.package}">
          <exclude name="**/Main.java"/>
          <exclude name="**/Options.java"/>
+	 <exclude name="**/*.xml"/>
        </fileset>
      </delete>
      <delete dir="${sa.genGWT}/${sa.package}/rule"/>
