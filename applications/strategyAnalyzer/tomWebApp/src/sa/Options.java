@@ -27,10 +27,12 @@ public class Options {
     public boolean ordered = false;
 
     public boolean pattern = false;
+    
+    public boolean tom = false;
 
-    public String classname = "";
+    public String classname = null;
 
-    public void setOptions(boolean verbose, boolean debug, boolean withAP, boolean withAT, boolean aprove, boolean timbuk, boolean metalevel, boolean approx, boolean withType, boolean minimize, boolean ordered, boolean pattern, String classname) {
+    public void setOptions(boolean verbose, boolean debug, boolean withAP, boolean withAT, boolean aprove, boolean timbuk, boolean metalevel, boolean approx, boolean withType, boolean minimize, boolean ordered, boolean pattern, boolean tom, String classname) {
       this.verbose = verbose;
 
       this.debug = debug;
@@ -56,5 +58,9 @@ public class Options {
       this.pattern = pattern;
 
       this.classname = classname;
+
+      if(tom) {
+        this.classname = "tom";
+      }
     }
 }

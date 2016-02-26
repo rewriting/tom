@@ -32,9 +32,9 @@ public class GreetingServiceImpl extends RemoteServiceServlet implements
         + ".<br><br>It looks like you are using:<br>" + userAgent;
   }
 
-  public String returnOutput(String input, boolean verbose, boolean debug, boolean withAP, boolean withAT, boolean aprove, boolean timbuk, boolean metalevel, boolean approx, boolean withType, boolean minimize, boolean ordered, boolean pattern, String classname) {
+  public String returnOutput(String input, boolean verbose, boolean debug, boolean withAP, boolean withAT, boolean aprove, boolean timbuk, boolean metalevel, boolean approx, boolean withType, boolean minimize, boolean ordered, boolean pattern, boolean tom, String classname) {
 	  Main m = new Main(input);
-          m.options.setOptions(verbose, debug, withAP, withAT, aprove, timbuk, metalevel, approx, withType, minimize, ordered, pattern, classname);
+          m.options.setOptions(verbose, debug, withAP, withAT, aprove, timbuk, metalevel, approx, withType, minimize, ordered, pattern, tom, classname);
           return m.getOutput();
   }
   /**

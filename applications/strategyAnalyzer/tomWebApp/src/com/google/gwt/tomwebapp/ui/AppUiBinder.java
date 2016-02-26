@@ -52,6 +52,7 @@ public class AppUiBinder extends Composite {
   @UiField CheckBox minimize;
   @UiField CheckBox ordered;
   @UiField CheckBox pattern;
+  @UiField CheckBox tom;
 
   @UiField VerticalPanel mainPanel;
   @UiField VerticalPanel checkboxesPanel;
@@ -66,8 +67,8 @@ public class AppUiBinder extends Composite {
   public AppUiBinder() {
     initWidget(uiBinder.createAndBindUi(this));
     models.addItem("Select ns file");
-    models.addItem("gxx.ns");
-    models.addItem("demo.ns");
+    models.addItem("gxx.ns");  // lb.isItemSelected(1)
+    models.addItem("demo.ns"); // lb.isItemSelected(2)
   }
 
   @UiHandler("runButton")
@@ -81,12 +82,12 @@ public class AppUiBinder extends Composite {
   }
 
   private void run() {
-   /* 	  
     Main m = new Main(nsArea.getText());
-    m.options.setOptions(verbose.getValue(), debug.getValue(), withAP.getValue(), withAT.getValue(), aprove.getValue(), timbuk.getValue(), metalevel.getValue(), approx.getValue(), withType.getValue(), minimize.getValue(), ordered.getValue(), pattern.getValue(), "test");
+    m.options.setOptions(verbose.getValue(), debug.getValue(), withAP.getValue(), withAT.getValue(), aprove.getValue(), timbuk.getValue(), metalevel.getValue(), approx.getValue(), withType.getValue(), minimize.getValue(), ordered.getValue(), pattern.getValue(), tom.getValue(), "test");
     nsArea.setText(m.getOutput());
-    */
-   runService.returnOutput(nsArea.getText(), verbose.getValue(), debug.getValue(), withAP.getValue(), withAT.getValue(), aprove.getValue(), timbuk.getValue(), metalevel.getValue(), approx.getValue(), withType.getValue(), minimize.getValue(), ordered.getValue(), pattern.getValue(), "test", new AsyncCallback<String>() {
+    
+    /*
+   runService.returnOutput(nsArea.getText(), verbose.getValue(), debug.getValue(), withAP.getValue(), withAT.getValue(), aprove.getValue(), timbuk.getValue(), metalevel.getValue(), approx.getValue(), withType.getValue(), minimize.getValue(), ordered.getValue(), pattern.getValue(), tom.getValue(),  "test", new AsyncCallback<String>() {
  
         public void onFailure(Throwable caught) {
         }
@@ -95,6 +96,7 @@ public class AppUiBinder extends Composite {
            nsArea.setText(result);
         }
     });  
+    */
     
   }
 

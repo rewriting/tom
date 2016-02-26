@@ -9,7 +9,7 @@
         <div class="navbar navbar-inverse navbar-fixed-top">
           <div class="container">
             <div class="navbar-header">
-              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse" OnClick="javascript:window.location.reload()">
+ z             <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse" OnClick="javascript:window.location.reload()">
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
@@ -73,10 +73,11 @@
           <b:CheckBox ui:field="timbuk" text="timbuk"/>
           <b:CheckBox ui:field="metalevel" text="metalevel"/>
           <b:CheckBox ui:field="approx" text="approx"/>
-          <b:CheckBox ui:field="withType" text="withType"/>
+          <b:CheckBox ui:field="withType" text="withType" value="true"/>
           <b:CheckBox ui:field="minimize" text="minimize"/>
           <b:CheckBox ui:field="ordered" text="ordered"/>
           <b:CheckBox ui:field="pattern" text="pattern"/>
+          <b:CheckBox ui:field="tom" text="tom"/>
         </g:VerticalPanel>
       </b:Column>
     </g:HorizontalPanel>
