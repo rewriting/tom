@@ -70,26 +70,26 @@ public class Pretty {
 
   private static String toStringAux(TermList t, String sep) {
     StringBuffer sb = new StringBuffer();
-    {{if (tom_is_sort_TermList(t)) {if (tom_is_fun_sym_TermList((( sa.rule.types.TermList )(( sa.rule.types.TermList )t)))) { sa.rule.types.TermList  tomMatch17_end_4=(( sa.rule.types.TermList )t);do {{if (!(tom_is_empty_TermList_TermList(tomMatch17_end_4))) {
+    {{if (tom_is_sort_TermList(t)) {if (tom_is_fun_sym_TermList((( sa.rule.types.TermList )(( sa.rule.types.TermList )t)))) { sa.rule.types.TermList  tomMatch3_end_4=(( sa.rule.types.TermList )t);do {{if (!(tom_is_empty_TermList_TermList(tomMatch3_end_4))) {
 
-        sb.append(toString(tom_get_head_TermList_TermList(tomMatch17_end_4)));
-        if(!tom_get_tail_TermList_TermList(tomMatch17_end_4).isEmptyTermList()) {
+        sb.append(toString(tom_get_head_TermList_TermList(tomMatch3_end_4)));
+        if(!tom_get_tail_TermList_TermList(tomMatch3_end_4).isEmptyTermList()) {
           sb.append(sep);
         }
-      }if (tom_is_empty_TermList_TermList(tomMatch17_end_4)) {tomMatch17_end_4=(( sa.rule.types.TermList )t);} else {tomMatch17_end_4=tom_get_tail_TermList_TermList(tomMatch17_end_4);}}} while(!(tom_equal_term_TermList(tomMatch17_end_4, (( sa.rule.types.TermList )t))));}}}}
+      }if (tom_is_empty_TermList_TermList(tomMatch3_end_4)) {tomMatch3_end_4=(( sa.rule.types.TermList )t);} else {tomMatch3_end_4=tom_get_tail_TermList_TermList(tomMatch3_end_4);}}} while(!(tom_equal_term_TermList(tomMatch3_end_4, (( sa.rule.types.TermList )t))));}}}}
 
     return sb.toString();
   }
 
   private static String toString(AddList t) {
     StringBuffer sb = new StringBuffer();
-    {{if (tom_is_sort_AddList(t)) {if (tom_is_fun_sym_ConcAdd((( sa.rule.types.AddList )(( sa.rule.types.AddList )t)))) { sa.rule.types.AddList  tomMatch18_end_4=(( sa.rule.types.AddList )t);do {{if (!(tom_is_empty_ConcAdd_AddList(tomMatch18_end_4))) {
+    {{if (tom_is_sort_AddList(t)) {if (tom_is_fun_sym_ConcAdd((( sa.rule.types.AddList )(( sa.rule.types.AddList )t)))) { sa.rule.types.AddList  tomMatch4_end_4=(( sa.rule.types.AddList )t);do {{if (!(tom_is_empty_ConcAdd_AddList(tomMatch4_end_4))) {
 
-        sb.append(toString(tom_get_head_ConcAdd_AddList(tomMatch18_end_4)));
-        if(!tom_get_tail_ConcAdd_AddList(tomMatch18_end_4).isEmptyConcAdd()) {
+        sb.append(toString(tom_get_head_ConcAdd_AddList(tomMatch4_end_4)));
+        if(!tom_get_tail_ConcAdd_AddList(tomMatch4_end_4).isEmptyConcAdd()) {
           sb.append("+");
         }
-      }if (tom_is_empty_ConcAdd_AddList(tomMatch18_end_4)) {tomMatch18_end_4=(( sa.rule.types.AddList )t);} else {tomMatch18_end_4=tom_get_tail_ConcAdd_AddList(tomMatch18_end_4);}}} while(!(tom_equal_term_AddList(tomMatch18_end_4, (( sa.rule.types.AddList )t))));}}}}
+      }if (tom_is_empty_ConcAdd_AddList(tomMatch4_end_4)) {tomMatch4_end_4=(( sa.rule.types.AddList )t);} else {tomMatch4_end_4=tom_get_tail_ConcAdd_AddList(tomMatch4_end_4);}}} while(!(tom_equal_term_AddList(tomMatch4_end_4, (( sa.rule.types.AddList )t))));}}}}
 
     return sb.toString();
   }
@@ -111,14 +111,18 @@ public class Pretty {
         } else {
           return name + "(" + toString(tom_args) + ")";
         }
-      }}}}{if (tom_is_sort_Term(t)) {if (tom_is_sort_Term((( sa.rule.types.Term )t))) {if (tom_is_fun_sym_Add((( sa.rule.types.Term )(( sa.rule.types.Term )t)))) { sa.rule.types.AddList  tomMatch19_23=tom_get_slot_Add_addlist((( sa.rule.types.Term )t));if (tom_is_fun_sym_ConcAdd((( sa.rule.types.AddList )tomMatch19_23))) {
+      }}}}{if (tom_is_sort_Term(t)) {if (tom_is_sort_Term((( sa.rule.types.Term )t))) {if (tom_is_fun_sym_Add((( sa.rule.types.Term )(( sa.rule.types.Term )t)))) { sa.rule.types.AddList  tomMatch5_23=tom_get_slot_Add_addlist((( sa.rule.types.Term )t));if (tom_is_fun_sym_ConcAdd((( sa.rule.types.AddList )tomMatch5_23))) {
 
 
-        return "(" + toString(tomMatch19_23) + ")";
+        return "(" + toString(tomMatch5_23) + ")";
       }}}}}{if (tom_is_sort_Term(t)) {if (tom_is_sort_Term((( sa.rule.types.Term )t))) {if (tom_is_fun_sym_Sub((( sa.rule.types.Term )(( sa.rule.types.Term )t)))) {
 
 
         return "(" + toString(tom_get_slot_Sub_term1((( sa.rule.types.Term )t))) + " \\ " + toString(tom_get_slot_Sub_term2((( sa.rule.types.Term )t))) + ")";
+      }}}}{if (tom_is_sort_Term(t)) {if (tom_is_sort_Term((( sa.rule.types.Term )t))) {if (tom_is_fun_sym_Inter((( sa.rule.types.Term )(( sa.rule.types.Term )t)))) {
+
+
+        return "(" + toString(tom_get_slot_Inter_term1((( sa.rule.types.Term )t))) + " ^ " + toString(tom_get_slot_Inter_term2((( sa.rule.types.Term )t))) + ")";
       }}}}{if (tom_is_sort_Term(t)) {if (tom_is_sort_Term((( sa.rule.types.Term )t))) {if (tom_is_fun_sym_Inter((( sa.rule.types.Term )(( sa.rule.types.Term )t)))) {
 
 
@@ -156,11 +160,11 @@ public class Pretty {
     Collection<String> varSet = new HashSet<String>();
 
     rulesb.append("\n(RULES\n");
-    {{if (tom_is_sort_RuleList(ruleList)) {if (tom_is_fun_sym_ConcRule((( sa.rule.types.RuleList )(( sa.rule.types.RuleList )ruleList)))) { sa.rule.types.RuleList  tomMatch21_end_4=(( sa.rule.types.RuleList )ruleList);do {{if (!(tom_is_empty_ConcRule_RuleList(tomMatch21_end_4))) { sa.rule.types.Rule  tom_r=tom_get_head_ConcRule_RuleList(tomMatch21_end_4);tom_make_BottomUp(tom_make_CollectVars(varSet))
+    {{if (tom_is_sort_RuleList(ruleList)) {if (tom_is_fun_sym_ConcRule((( sa.rule.types.RuleList )(( sa.rule.types.RuleList )ruleList)))) { sa.rule.types.RuleList  tomMatch7_end_4=(( sa.rule.types.RuleList )ruleList);do {{if (!(tom_is_empty_ConcRule_RuleList(tomMatch7_end_4))) { sa.rule.types.Rule  tom_r=tom_get_head_ConcRule_RuleList(tomMatch7_end_4);tom_make_BottomUp(tom_make_CollectVars(varSet))
 
 .visit(tom_r);
         rulesb.append("        " + toString(tom_r) + "\n");
-      }if (tom_is_empty_ConcRule_RuleList(tomMatch21_end_4)) {tomMatch21_end_4=(( sa.rule.types.RuleList )ruleList);} else {tomMatch21_end_4=tom_get_tail_ConcRule_RuleList(tomMatch21_end_4);}}} while(!(tom_equal_term_RuleList(tomMatch21_end_4, (( sa.rule.types.RuleList )ruleList))));}}}}
+      }if (tom_is_empty_ConcRule_RuleList(tomMatch7_end_4)) {tomMatch7_end_4=(( sa.rule.types.RuleList )ruleList);} else {tomMatch7_end_4=tom_get_tail_ConcRule_RuleList(tomMatch7_end_4);}}} while(!(tom_equal_term_RuleList(tomMatch7_end_4, (( sa.rule.types.RuleList )ruleList))));}}}}
 
     rulesb.append(")\n");
 
@@ -190,11 +194,11 @@ public class Pretty {
     }
 
     rulesb.append("\nTRS R\n");
-    {{if (tom_is_sort_RuleList(ruleList)) {if (tom_is_fun_sym_ConcRule((( sa.rule.types.RuleList )(( sa.rule.types.RuleList )ruleList)))) { sa.rule.types.RuleList  tomMatch22_end_4=(( sa.rule.types.RuleList )ruleList);do {{if (!(tom_is_empty_ConcRule_RuleList(tomMatch22_end_4))) { sa.rule.types.Rule  tom_r=tom_get_head_ConcRule_RuleList(tomMatch22_end_4);tom_make_BottomUp(tom_make_CollectVars(varSet))
+    {{if (tom_is_sort_RuleList(ruleList)) {if (tom_is_fun_sym_ConcRule((( sa.rule.types.RuleList )(( sa.rule.types.RuleList )ruleList)))) { sa.rule.types.RuleList  tomMatch8_end_4=(( sa.rule.types.RuleList )ruleList);do {{if (!(tom_is_empty_ConcRule_RuleList(tomMatch8_end_4))) { sa.rule.types.Rule  tom_r=tom_get_head_ConcRule_RuleList(tomMatch8_end_4);tom_make_BottomUp(tom_make_CollectVars(varSet))
 
 .visit(tom_r);
         rulesb.append("        " + toString(tom_r) + "\n");
-      }if (tom_is_empty_ConcRule_RuleList(tomMatch22_end_4)) {tomMatch22_end_4=(( sa.rule.types.RuleList )ruleList);} else {tomMatch22_end_4=tom_get_tail_ConcRule_RuleList(tomMatch22_end_4);}}} while(!(tom_equal_term_RuleList(tomMatch22_end_4, (( sa.rule.types.RuleList )ruleList))));}}}}
+      }if (tom_is_empty_ConcRule_RuleList(tomMatch8_end_4)) {tomMatch8_end_4=(( sa.rule.types.RuleList )ruleList);} else {tomMatch8_end_4=tom_get_tail_ConcRule_RuleList(tomMatch8_end_4);}}} while(!(tom_equal_term_RuleList(tomMatch8_end_4, (( sa.rule.types.RuleList )ruleList))));}}}}
 
 
     varsb.append("\nVars\n");
@@ -244,10 +248,10 @@ public class Pretty {
 
     // generate rules
     sb.append("      module m:rules() {\n");
-    {{if (tom_is_sort_RuleList(ruleList)) {if (tom_is_fun_sym_ConcRule((( sa.rule.types.RuleList )(( sa.rule.types.RuleList )ruleList)))) { sa.rule.types.RuleList  tomMatch23_end_4=(( sa.rule.types.RuleList )ruleList);do {{if (!(tom_is_empty_ConcRule_RuleList(tomMatch23_end_4))) {
+    {{if (tom_is_sort_RuleList(ruleList)) {if (tom_is_fun_sym_ConcRule((( sa.rule.types.RuleList )(( sa.rule.types.RuleList )ruleList)))) { sa.rule.types.RuleList  tomMatch9_end_4=(( sa.rule.types.RuleList )ruleList);do {{if (!(tom_is_empty_ConcRule_RuleList(tomMatch9_end_4))) {
 
-        sb.append("        " + toString(tom_get_head_ConcRule_RuleList(tomMatch23_end_4)) + "\n");
-      }if (tom_is_empty_ConcRule_RuleList(tomMatch23_end_4)) {tomMatch23_end_4=(( sa.rule.types.RuleList )ruleList);} else {tomMatch23_end_4=tom_get_tail_ConcRule_RuleList(tomMatch23_end_4);}}} while(!(tom_equal_term_RuleList(tomMatch23_end_4, (( sa.rule.types.RuleList )ruleList))));}}}}
+        sb.append("        " + toString(tom_get_head_ConcRule_RuleList(tomMatch9_end_4)) + "\n");
+      }if (tom_is_empty_ConcRule_RuleList(tomMatch9_end_4)) {tomMatch9_end_4=(( sa.rule.types.RuleList )ruleList);} else {tomMatch9_end_4=tom_get_tail_ConcRule_RuleList(tomMatch9_end_4);}}} while(!(tom_equal_term_RuleList(tomMatch9_end_4, (( sa.rule.types.RuleList )ruleList))));}}}}
 
 
     // generate main

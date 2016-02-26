@@ -49,11 +49,11 @@ public class TypeCompiler {
   public void typeRules(RuleList untypedRules) {
     this.generatedRules = tom_empty_list_ConcRule();
 
-    {{if (tom_is_sort_RuleList(untypedRules)) {if (tom_is_fun_sym_ConcRule((( sa.rule.types.RuleList )(( sa.rule.types.RuleList )untypedRules)))) { sa.rule.types.RuleList  tomMatch102_end_4=(( sa.rule.types.RuleList )untypedRules);do {{if (!(tom_is_empty_ConcRule_RuleList(tomMatch102_end_4))) { sa.rule.types.Rule  tom_rule=tom_get_head_ConcRule_RuleList(tomMatch102_end_4);
+    {{if (tom_is_sort_RuleList(untypedRules)) {if (tom_is_fun_sym_ConcRule((( sa.rule.types.RuleList )(( sa.rule.types.RuleList )untypedRules)))) { sa.rule.types.RuleList  tomMatch70_end_4=(( sa.rule.types.RuleList )untypedRules);do {{if (!(tom_is_empty_ConcRule_RuleList(tomMatch70_end_4))) { sa.rule.types.Rule  tom_rule=tom_get_head_ConcRule_RuleList(tomMatch70_end_4);
 
         Map<String,GomType> env = new HashMap<String,GomType>();
         //System.out.println("RULE: " + Pretty.toString(`rule));
-        {{if (tom_is_sort_Rule(tom_rule)) {if (tom_is_sort_Rule((( sa.rule.types.Rule )tom_rule))) {if (tom_is_fun_sym_Rule((( sa.rule.types.Rule )(( sa.rule.types.Rule )tom_rule)))) { sa.rule.types.Term  tomMatch103_1=tom_get_slot_Rule_lhs((( sa.rule.types.Rule )tom_rule));if (tom_is_sort_Term(tomMatch103_1)) {if (tom_is_fun_sym_Appl((( sa.rule.types.Term )tomMatch103_1))) { sa.rule.types.TermList  tomMatch103_6=tom_get_slot_Appl_args(tomMatch103_1); String  tom_stratOp=tom_get_slot_Appl_symbol(tomMatch103_1);if (tom_is_fun_sym_TermList((( sa.rule.types.TermList )tomMatch103_6))) {if (!(tom_is_empty_TermList_TermList(tomMatch103_6))) { sa.rule.types.Term  tom_lhs=tomMatch103_1;
+        {{if (tom_is_sort_Rule(tom_rule)) {if (tom_is_sort_Rule((( sa.rule.types.Rule )tom_rule))) {if (tom_is_fun_sym_Rule((( sa.rule.types.Rule )(( sa.rule.types.Rule )tom_rule)))) { sa.rule.types.Term  tomMatch71_1=tom_get_slot_Rule_lhs((( sa.rule.types.Rule )tom_rule));if (tom_is_sort_Term(tomMatch71_1)) {if (tom_is_fun_sym_Appl((( sa.rule.types.Term )tomMatch71_1))) { sa.rule.types.TermList  tomMatch71_6=tom_get_slot_Appl_args(tomMatch71_1); String  tom_stratOp=tom_get_slot_Appl_symbol(tomMatch71_1);if (tom_is_fun_sym_TermList((( sa.rule.types.TermList )tomMatch71_6))) {if (!(tom_is_empty_TermList_TermList(tomMatch71_6))) { sa.rule.types.Term  tom_lhs=tomMatch71_1;
 
             // get the possible codomain(s) for the head operator of the LHS
             // - boolean operators: Bool
@@ -69,7 +69,7 @@ public class TypeCompiler {
                 types = this.getTypes(env,tom_lhs);
               } else {
                 // otherwise the codomain is given by the codomain of its argument
-                types = this.getTypes(env,tom_get_head_TermList_TermList(tomMatch103_6));
+                types = this.getTypes(env,tom_get_head_TermList_TermList(tomMatch71_6));
               }
             }
             // normally shouldn't happen
@@ -96,7 +96,7 @@ public class TypeCompiler {
             }
           }}}}}}}}}
 
-      }if (tom_is_empty_ConcRule_RuleList(tomMatch102_end_4)) {tomMatch102_end_4=(( sa.rule.types.RuleList )untypedRules);} else {tomMatch102_end_4=tom_get_tail_ConcRule_RuleList(tomMatch102_end_4);}}} while(!(tom_equal_term_RuleList(tomMatch102_end_4, (( sa.rule.types.RuleList )untypedRules))));}}}}
+      }if (tom_is_empty_ConcRule_RuleList(tomMatch70_end_4)) {tomMatch70_end_4=(( sa.rule.types.RuleList )untypedRules);} else {tomMatch70_end_4=tom_get_tail_ConcRule_RuleList(tomMatch70_end_4);}}} while(!(tom_equal_term_RuleList(tomMatch70_end_4, (( sa.rule.types.RuleList )untypedRules))));}}}}
 
   }
 

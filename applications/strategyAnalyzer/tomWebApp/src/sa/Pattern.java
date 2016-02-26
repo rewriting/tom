@@ -375,7 +375,7 @@ public class Pattern {
     Term pattern = tom_make_Sub(V,tom_make_Appl("f",tom_cons_list_TermList(X,tom_cons_list_TermList(X,tom_empty_list_TermList()))));
     Trs res = RewriteSystem.trsRule(tom_make_Otrs(tom_cons_list_ConcRule(tom_make_Rule(pattern,r0),tom_empty_list_ConcRule())), eSig);
   }
-
+  
   private static void example11() {
     Signature eSig = new Signature();
 
@@ -395,18 +395,18 @@ public class Pattern {
     System.out.println("b = " + b);
 
   }
-  
+
   /*
    * Reduce a list of rules
    */
   public static RuleList reduceRules(RuleList ruleList, Signature eSig) {
 
     // test subsumtion idea
-    {{if (tom_is_sort_RuleList(ruleList)) {if (tom_is_fun_sym_ConcRule((( sa.rule.types.RuleList )(( sa.rule.types.RuleList )ruleList)))) { sa.rule.types.RuleList  tomMatch15_end_4=(( sa.rule.types.RuleList )ruleList);do {{if (!(tom_is_empty_ConcRule_RuleList(tomMatch15_end_4))) {
+    {{if (tom_is_sort_RuleList(ruleList)) {if (tom_is_fun_sym_ConcRule((( sa.rule.types.RuleList )(( sa.rule.types.RuleList )ruleList)))) { sa.rule.types.RuleList  tomMatch1_end_4=(( sa.rule.types.RuleList )ruleList);do {{if (!(tom_is_empty_ConcRule_RuleList(tomMatch1_end_4))) {
 
         //RewriteSystem.canBeRemoved1(`rule, `ConcRule(C1*,C2*), eSig);
-        RewriteSystem.canBeRemoved2(tom_get_head_ConcRule_RuleList(tomMatch15_end_4), tom_append_list_ConcRule(tom_get_slice_ConcRule((( sa.rule.types.RuleList )ruleList),tomMatch15_end_4,tom_empty_list_ConcRule()),tom_append_list_ConcRule(tom_get_tail_ConcRule_RuleList(tomMatch15_end_4),tom_empty_list_ConcRule())), eSig);
-      }if (tom_is_empty_ConcRule_RuleList(tomMatch15_end_4)) {tomMatch15_end_4=(( sa.rule.types.RuleList )ruleList);} else {tomMatch15_end_4=tom_get_tail_ConcRule_RuleList(tomMatch15_end_4);}}} while(!(tom_equal_term_RuleList(tomMatch15_end_4, (( sa.rule.types.RuleList )ruleList))));}}}}
+        RewriteSystem.canBeRemoved2(tom_get_head_ConcRule_RuleList(tomMatch1_end_4), tom_append_list_ConcRule(tom_get_slice_ConcRule((( sa.rule.types.RuleList )ruleList),tomMatch1_end_4,tom_empty_list_ConcRule()),tom_append_list_ConcRule(tom_get_tail_ConcRule_RuleList(tomMatch1_end_4),tom_empty_list_ConcRule())), eSig);
+      }if (tom_is_empty_ConcRule_RuleList(tomMatch1_end_4)) {tomMatch1_end_4=(( sa.rule.types.RuleList )ruleList);} else {tomMatch1_end_4=tom_get_tail_ConcRule_RuleList(tomMatch1_end_4);}}} while(!(tom_equal_term_RuleList(tomMatch1_end_4, (( sa.rule.types.RuleList )ruleList))));}}}}
 
 
     return ruleList;

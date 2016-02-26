@@ -274,10 +274,10 @@ public class Tools {
 
   private static Term decodeConsNil(Term t) {
     //System.out.println("IN DECODE = "+ `t);
-    {{if (tom_is_sort_Term(t)) {if (tom_is_sort_Term((( sa.rule.types.Term )t))) {if (tom_is_fun_sym_Appl((( sa.rule.types.Term )(( sa.rule.types.Term )t)))) { String  tomMatch89_1=tom_get_slot_Appl_symbol((( sa.rule.types.Term )t)); sa.rule.types.TermList  tomMatch89_2=tom_get_slot_Appl_args((( sa.rule.types.Term )t));if ( true ) {if (tom_equal_term_String("Appl", tomMatch89_1)) {if (tom_is_fun_sym_TermList((( sa.rule.types.TermList )tomMatch89_2))) {if (!(tom_is_empty_TermList_TermList(tomMatch89_2))) { sa.rule.types.Term  tomMatch89_12=tom_get_head_TermList_TermList(tomMatch89_2);if (tom_is_sort_Term(tomMatch89_12)) {if (tom_is_fun_sym_Appl((( sa.rule.types.Term )tomMatch89_12))) { sa.rule.types.TermList  tomMatch89_11=tom_get_slot_Appl_args(tomMatch89_12);if (tom_is_fun_sym_TermList((( sa.rule.types.TermList )tomMatch89_11))) {if (tom_is_empty_TermList_TermList(tomMatch89_11)) { sa.rule.types.TermList  tomMatch89_8=tom_get_tail_TermList_TermList(tomMatch89_2);if (!(tom_is_empty_TermList_TermList(tomMatch89_8))) {if (tom_is_empty_TermList_TermList(tom_get_tail_TermList_TermList(tomMatch89_8))) {
+    {{if (tom_is_sort_Term(t)) {if (tom_is_sort_Term((( sa.rule.types.Term )t))) {if (tom_is_fun_sym_Appl((( sa.rule.types.Term )(( sa.rule.types.Term )t)))) { String  tomMatch6_1=tom_get_slot_Appl_symbol((( sa.rule.types.Term )t)); sa.rule.types.TermList  tomMatch6_2=tom_get_slot_Appl_args((( sa.rule.types.Term )t));if ( true ) {if (tom_equal_term_String("Appl", tomMatch6_1)) {if (tom_is_fun_sym_TermList((( sa.rule.types.TermList )tomMatch6_2))) {if (!(tom_is_empty_TermList_TermList(tomMatch6_2))) { sa.rule.types.Term  tomMatch6_12=tom_get_head_TermList_TermList(tomMatch6_2);if (tom_is_sort_Term(tomMatch6_12)) {if (tom_is_fun_sym_Appl((( sa.rule.types.Term )tomMatch6_12))) { sa.rule.types.TermList  tomMatch6_11=tom_get_slot_Appl_args(tomMatch6_12);if (tom_is_fun_sym_TermList((( sa.rule.types.TermList )tomMatch6_11))) {if (tom_is_empty_TermList_TermList(tomMatch6_11)) { sa.rule.types.TermList  tomMatch6_8=tom_get_tail_TermList_TermList(tomMatch6_2);if (!(tom_is_empty_TermList_TermList(tomMatch6_8))) {if (tom_is_empty_TermList_TermList(tom_get_tail_TermList_TermList(tomMatch6_8))) {
 
-          String name = tom_get_slot_Appl_symbol(tomMatch89_12).substring("symb_".length());
-          return tom_make_Appl(name,decodeConsNilList(tom_get_head_TermList_TermList(tomMatch89_8)));
+          String name = tom_get_slot_Appl_symbol(tomMatch6_12).substring("symb_".length());
+          return tom_make_Appl(name,decodeConsNilList(tom_get_head_TermList_TermList(tomMatch6_8)));
       }}}}}}}}}}}}}}{if (tom_is_sort_Term(t)) {if (tom_is_sort_Term((( sa.rule.types.Term )t))) {if (tom_is_fun_sym_Var((( sa.rule.types.Term )(( sa.rule.types.Term )t)))) {
 
 
@@ -290,11 +290,11 @@ public class Tools {
   }
 
   private static TermList decodeConsNilList(Term t) {
-    {{if (tom_is_sort_Term(t)) {if (tom_is_sort_Term((( sa.rule.types.Term )t))) {if (tom_is_fun_sym_Appl((( sa.rule.types.Term )(( sa.rule.types.Term )t)))) { String  tomMatch90_1=tom_get_slot_Appl_symbol((( sa.rule.types.Term )t)); sa.rule.types.TermList  tomMatch90_2=tom_get_slot_Appl_args((( sa.rule.types.Term )t));if ( true ) {if (tom_equal_term_String("Cons", tomMatch90_1)) {if (tom_is_fun_sym_TermList((( sa.rule.types.TermList )tomMatch90_2))) {if (!(tom_is_empty_TermList_TermList(tomMatch90_2))) { sa.rule.types.TermList  tomMatch90_8=tom_get_tail_TermList_TermList(tomMatch90_2);if (!(tom_is_empty_TermList_TermList(tomMatch90_8))) {if (tom_is_empty_TermList_TermList(tom_get_tail_TermList_TermList(tomMatch90_8))) {
+    {{if (tom_is_sort_Term(t)) {if (tom_is_sort_Term((( sa.rule.types.Term )t))) {if (tom_is_fun_sym_Appl((( sa.rule.types.Term )(( sa.rule.types.Term )t)))) { String  tomMatch7_1=tom_get_slot_Appl_symbol((( sa.rule.types.Term )t)); sa.rule.types.TermList  tomMatch7_2=tom_get_slot_Appl_args((( sa.rule.types.Term )t));if ( true ) {if (tom_equal_term_String("Cons", tomMatch7_1)) {if (tom_is_fun_sym_TermList((( sa.rule.types.TermList )tomMatch7_2))) {if (!(tom_is_empty_TermList_TermList(tomMatch7_2))) { sa.rule.types.TermList  tomMatch7_8=tom_get_tail_TermList_TermList(tomMatch7_2);if (!(tom_is_empty_TermList_TermList(tomMatch7_8))) {if (tom_is_empty_TermList_TermList(tom_get_tail_TermList_TermList(tomMatch7_8))) {
 
-        TermList newTail = decodeConsNilList(tom_get_head_TermList_TermList(tomMatch90_8));
-        return tom_cons_list_TermList(decodeConsNil(tom_get_head_TermList_TermList(tomMatch90_2)),tom_append_list_TermList(newTail,tom_empty_list_TermList()));
-      }}}}}}}}}}{if (tom_is_sort_Term(t)) {if (tom_is_sort_Term((( sa.rule.types.Term )t))) {if (tom_is_fun_sym_Appl((( sa.rule.types.Term )(( sa.rule.types.Term )t)))) { String  tomMatch90_11=tom_get_slot_Appl_symbol((( sa.rule.types.Term )t)); sa.rule.types.TermList  tomMatch90_12=tom_get_slot_Appl_args((( sa.rule.types.Term )t));if ( true ) {if (tom_equal_term_String("Nil", tomMatch90_11)) {if (tom_is_fun_sym_TermList((( sa.rule.types.TermList )tomMatch90_12))) {if (tom_is_empty_TermList_TermList(tomMatch90_12)) {
+        TermList newTail = decodeConsNilList(tom_get_head_TermList_TermList(tomMatch7_8));
+        return tom_cons_list_TermList(decodeConsNil(tom_get_head_TermList_TermList(tomMatch7_2)),tom_append_list_TermList(newTail,tom_empty_list_TermList()));
+      }}}}}}}}}}{if (tom_is_sort_Term(t)) {if (tom_is_sort_Term((( sa.rule.types.Term )t))) {if (tom_is_fun_sym_Appl((( sa.rule.types.Term )(( sa.rule.types.Term )t)))) { String  tomMatch7_11=tom_get_slot_Appl_symbol((( sa.rule.types.Term )t)); sa.rule.types.TermList  tomMatch7_12=tom_get_slot_Appl_args((( sa.rule.types.Term )t));if ( true ) {if (tom_equal_term_String("Nil", tomMatch7_11)) {if (tom_is_fun_sym_TermList((( sa.rule.types.TermList )tomMatch7_12))) {if (tom_is_empty_TermList_TermList(tomMatch7_12)) {
 
 
         return tom_empty_list_TermList();
@@ -322,12 +322,12 @@ public class Tools {
    * tools for manipulating Program
    */
   public static StratDecl getStratDecl(String name, Program program) {
-    {{if (tom_is_sort_Program(program)) {if (tom_is_sort_Program((( sa.rule.types.Program )program))) {if (tom_is_fun_sym_Program((( sa.rule.types.Program )(( sa.rule.types.Program )program)))) { sa.rule.types.StratDeclList  tomMatch91_1=tom_get_slot_Program_stratList((( sa.rule.types.Program )program));if (tom_is_fun_sym_ConcStratDecl((( sa.rule.types.StratDeclList )tomMatch91_1))) { sa.rule.types.StratDeclList  tomMatch91_end_7=tomMatch91_1;do {{if (!(tom_is_empty_ConcStratDecl_StratDeclList(tomMatch91_end_7))) { sa.rule.types.StratDecl  tomMatch91_13=tom_get_head_ConcStratDecl_StratDeclList(tomMatch91_end_7);if (tom_is_sort_StratDecl(tomMatch91_13)) {if (tom_is_fun_sym_StratDecl((( sa.rule.types.StratDecl )tomMatch91_13))) {
+    {{if (tom_is_sort_Program(program)) {if (tom_is_sort_Program((( sa.rule.types.Program )program))) {if (tom_is_fun_sym_Program((( sa.rule.types.Program )(( sa.rule.types.Program )program)))) { sa.rule.types.StratDeclList  tomMatch8_1=tom_get_slot_Program_stratList((( sa.rule.types.Program )program));if (tom_is_fun_sym_ConcStratDecl((( sa.rule.types.StratDeclList )tomMatch8_1))) { sa.rule.types.StratDeclList  tomMatch8_end_7=tomMatch8_1;do {{if (!(tom_is_empty_ConcStratDecl_StratDeclList(tomMatch8_end_7))) { sa.rule.types.StratDecl  tomMatch8_13=tom_get_head_ConcStratDecl_StratDeclList(tomMatch8_end_7);if (tom_is_sort_StratDecl(tomMatch8_13)) {if (tom_is_fun_sym_StratDecl((( sa.rule.types.StratDecl )tomMatch8_13))) {
 
-        if(tom_get_slot_StratDecl_Name(tomMatch91_13).equals(name)) {
-          return tom_get_head_ConcStratDecl_StratDeclList(tomMatch91_end_7);
+        if(tom_get_slot_StratDecl_Name(tomMatch8_13).equals(name)) {
+          return tom_get_head_ConcStratDecl_StratDeclList(tomMatch8_end_7);
         }
-      }}}if (tom_is_empty_ConcStratDecl_StratDeclList(tomMatch91_end_7)) {tomMatch91_end_7=tomMatch91_1;} else {tomMatch91_end_7=tom_get_tail_ConcStratDecl_StratDeclList(tomMatch91_end_7);}}} while(!(tom_equal_term_StratDeclList(tomMatch91_end_7, tomMatch91_1)));}}}}}}
+      }}}if (tom_is_empty_ConcStratDecl_StratDeclList(tomMatch8_end_7)) {tomMatch8_end_7=tomMatch8_1;} else {tomMatch8_end_7=tom_get_tail_ConcStratDecl_StratDeclList(tomMatch8_end_7);}}} while(!(tom_equal_term_StratDeclList(tomMatch8_end_7, tomMatch8_1)));}}}}}}
 
     return null;
   }
@@ -383,7 +383,7 @@ public class Tools {
       throw new RuntimeException("should not be there");
     }
   }
-
+  
   public static class RemoveAt extends tom.library.sl.AbstractStrategyBasic {public RemoveAt() {super(tom_make_Identity());}public tom.library.sl.Visitable[] getChildren() {tom.library.sl.Visitable[] stratChildren = new tom.library.sl.Visitable[getChildCount()];stratChildren[0] = super.getChildAt(0);return stratChildren;}public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {super.setChildAt(0, children[0]);return this;}public int getChildCount() {return 1;}public tom.library.sl.Visitable getChildAt(int index) {switch (index) {case 0: return super.getChildAt(0);default: throw new IndexOutOfBoundsException();}}public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable child) {switch (index) {case 0: return super.setChildAt(0, child);default: throw new IndexOutOfBoundsException();}}@SuppressWarnings("unchecked")public <T> T visitLight(T v, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if (tom_is_sort_Term(v)) {return ((T)visit_Term((( sa.rule.types.Term )v),introspector));}if (!(( null  == environment))) {return ((T)any.visit(environment,introspector));} else {return any.visitLight(v,introspector);}}@SuppressWarnings("unchecked")public  sa.rule.types.Term  _visit_Term( sa.rule.types.Term  arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if (!(( null  == environment))) {return (( sa.rule.types.Term )any.visit(environment,introspector));} else {return any.visitLight(arg,introspector);}}@SuppressWarnings("unchecked")public  sa.rule.types.Term  visit_Term( sa.rule.types.Term  tom__arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {{{if (tom_is_sort_Term(tom__arg)) {if (tom_is_sort_Term((( sa.rule.types.Term )tom__arg))) {if (tom_is_fun_sym_At((( sa.rule.types.Term )(( sa.rule.types.Term )tom__arg)))) {
 
 
@@ -391,7 +391,7 @@ public class Tools {
       }}}}}return _visit_Term(tom__arg,introspector);}}private static  tom.library.sl.Strategy  tom_make_RemoveAt() { return new RemoveAt();}
 
 
-
+  
   public static tom.library.sl.Visitable removeAt(tom.library.sl.Visitable t) {
     try {
       return tom_make_InnermostId(tom_make_RemoveAt()).visitLight(t);
@@ -420,9 +420,9 @@ public class Tools {
 
   public static boolean isLhsLinear(Trs trs) {
     boolean res = true;
-    {{if (tom_is_sort_Trs(trs)) {boolean tomMatch94_5= false ; sa.rule.types.RuleList  tomMatch94_1= null ; sa.rule.types.Trs  tomMatch94_3= null ; sa.rule.types.Trs  tomMatch94_4= null ;if (tom_is_sort_Trs((( sa.rule.types.Trs )trs))) {if (tom_is_fun_sym_Trs((( sa.rule.types.Trs )(( sa.rule.types.Trs )trs)))) {{tomMatch94_5= true ;tomMatch94_3=(( sa.rule.types.Trs )trs);tomMatch94_1=tom_get_slot_Trs_list(tomMatch94_3);}} else {if (tom_is_sort_Trs((( sa.rule.types.Trs )trs))) {if (tom_is_fun_sym_Otrs((( sa.rule.types.Trs )(( sa.rule.types.Trs )trs)))) {{tomMatch94_5= true ;tomMatch94_4=(( sa.rule.types.Trs )trs);tomMatch94_1=tom_get_slot_Otrs_list(tomMatch94_4);}}}}}if (tomMatch94_5) {
+    {{if (tom_is_sort_Trs(trs)) {boolean tomMatch11_5= false ; sa.rule.types.RuleList  tomMatch11_1= null ; sa.rule.types.Trs  tomMatch11_3= null ; sa.rule.types.Trs  tomMatch11_4= null ;if (tom_is_sort_Trs((( sa.rule.types.Trs )trs))) {if (tom_is_fun_sym_Trs((( sa.rule.types.Trs )(( sa.rule.types.Trs )trs)))) {{tomMatch11_5= true ;tomMatch11_3=(( sa.rule.types.Trs )trs);tomMatch11_1=tom_get_slot_Trs_list(tomMatch11_3);}} else {if (tom_is_sort_Trs((( sa.rule.types.Trs )trs))) {if (tom_is_fun_sym_Otrs((( sa.rule.types.Trs )(( sa.rule.types.Trs )trs)))) {{tomMatch11_5= true ;tomMatch11_4=(( sa.rule.types.Trs )trs);tomMatch11_1=tom_get_slot_Otrs_list(tomMatch11_4);}}}}}if (tomMatch11_5) {
 
-        res = isLhsLinear(tomMatch94_1);
+        res = isLhsLinear(tomMatch11_1);
       }}}}
 
     return res;
@@ -485,11 +485,11 @@ public class Tools {
     }
   }
 
-  public static class ContainsEqAnd extends tom.library.sl.AbstractStrategyBasic {public ContainsEqAnd() {super(tom_make_Identity());}public tom.library.sl.Visitable[] getChildren() {tom.library.sl.Visitable[] stratChildren = new tom.library.sl.Visitable[getChildCount()];stratChildren[0] = super.getChildAt(0);return stratChildren;}public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {super.setChildAt(0, children[0]);return this;}public int getChildCount() {return 1;}public tom.library.sl.Visitable getChildAt(int index) {switch (index) {case 0: return super.getChildAt(0);default: throw new IndexOutOfBoundsException();}}public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable child) {switch (index) {case 0: return super.setChildAt(0, child);default: throw new IndexOutOfBoundsException();}}@SuppressWarnings("unchecked")public <T> T visitLight(T v, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if (tom_is_sort_Term(v)) {return ((T)visit_Term((( sa.rule.types.Term )v),introspector));}if (!(( null  == environment))) {return ((T)any.visit(environment,introspector));} else {return any.visitLight(v,introspector);}}@SuppressWarnings("unchecked")public  sa.rule.types.Term  _visit_Term( sa.rule.types.Term  arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if (!(( null  == environment))) {return (( sa.rule.types.Term )any.visit(environment,introspector));} else {return any.visitLight(arg,introspector);}}@SuppressWarnings("unchecked")public  sa.rule.types.Term  visit_Term( sa.rule.types.Term  tom__arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {{{if (tom_is_sort_Term(tom__arg)) {if (tom_is_sort_Term((( sa.rule.types.Term )tom__arg))) {if (tom_is_fun_sym_Appl((( sa.rule.types.Term )(( sa.rule.types.Term )tom__arg)))) { String  tomMatch97_1=tom_get_slot_Appl_symbol((( sa.rule.types.Term )tom__arg));if ( true ) {if (tom_equal_term_String("eq", tomMatch97_1)) {tom_make_Fail()
+  public static class ContainsEqAnd extends tom.library.sl.AbstractStrategyBasic {public ContainsEqAnd() {super(tom_make_Identity());}public tom.library.sl.Visitable[] getChildren() {tom.library.sl.Visitable[] stratChildren = new tom.library.sl.Visitable[getChildCount()];stratChildren[0] = super.getChildAt(0);return stratChildren;}public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {super.setChildAt(0, children[0]);return this;}public int getChildCount() {return 1;}public tom.library.sl.Visitable getChildAt(int index) {switch (index) {case 0: return super.getChildAt(0);default: throw new IndexOutOfBoundsException();}}public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable child) {switch (index) {case 0: return super.setChildAt(0, child);default: throw new IndexOutOfBoundsException();}}@SuppressWarnings("unchecked")public <T> T visitLight(T v, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if (tom_is_sort_Term(v)) {return ((T)visit_Term((( sa.rule.types.Term )v),introspector));}if (!(( null  == environment))) {return ((T)any.visit(environment,introspector));} else {return any.visitLight(v,introspector);}}@SuppressWarnings("unchecked")public  sa.rule.types.Term  _visit_Term( sa.rule.types.Term  arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if (!(( null  == environment))) {return (( sa.rule.types.Term )any.visit(environment,introspector));} else {return any.visitLight(arg,introspector);}}@SuppressWarnings("unchecked")public  sa.rule.types.Term  visit_Term( sa.rule.types.Term  tom__arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {{{if (tom_is_sort_Term(tom__arg)) {if (tom_is_sort_Term((( sa.rule.types.Term )tom__arg))) {if (tom_is_fun_sym_Appl((( sa.rule.types.Term )(( sa.rule.types.Term )tom__arg)))) { String  tomMatch14_1=tom_get_slot_Appl_symbol((( sa.rule.types.Term )tom__arg));if ( true ) {if (tom_equal_term_String("eq", tomMatch14_1)) {tom_make_Fail()
 
 
 .visitLight((( sa.rule.types.Term )tom__arg));
-      }}}}}}{if (tom_is_sort_Term(tom__arg)) {if (tom_is_sort_Term((( sa.rule.types.Term )tom__arg))) {if (tom_is_fun_sym_Appl((( sa.rule.types.Term )(( sa.rule.types.Term )tom__arg)))) { String  tomMatch97_8=tom_get_slot_Appl_symbol((( sa.rule.types.Term )tom__arg));if ( true ) {if (tom_equal_term_String("and", tomMatch97_8)) {tom_make_Fail()
+      }}}}}}{if (tom_is_sort_Term(tom__arg)) {if (tom_is_sort_Term((( sa.rule.types.Term )tom__arg))) {if (tom_is_fun_sym_Appl((( sa.rule.types.Term )(( sa.rule.types.Term )tom__arg)))) { String  tomMatch14_8=tom_get_slot_Appl_symbol((( sa.rule.types.Term )tom__arg));if ( true ) {if (tom_equal_term_String("and", tomMatch14_8)) {tom_make_Fail()
 
 
 .visitLight((( sa.rule.types.Term )tom__arg));
@@ -578,7 +578,6 @@ public class Tools {
     try {
       tom_make_TopDown(tom_make_CollectVars(list)).visitLight(subject);
       for(String name:list) {
-
         if(mapToNewName.get(name) == null) {
           String newName = "x_" + (cpt++);
           mapToNewName.put(name,newName);
