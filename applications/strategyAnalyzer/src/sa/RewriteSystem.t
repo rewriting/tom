@@ -369,47 +369,6 @@ public class RewriteSystem {
     return l;
   }
 
-
-  private static RuleList removeRedundantRuleAux2(RuleList candidates, RuleList kernel, TermList deltak, Signature eSig) {
-    assert Tools.isLhsLinear(candidates) : "check lhs-linear" ;
-    System.out.println("DELTA KERNEL = " + Pretty.toString(deltak));
-    RuleList res = kernel;
-
-    %match( candidates, deltak ) {
-      ConcRule(head@Rule(lhs,rhs), tail*), TermList(headk, tailk*) -> {
-        // try with the head kept in kernel
-        TermList mapTailk = `mapSub(lhs,tailk);
-        RuleList branch1 = `removeRedundantRuleAux2(tail, ConcRule(kernel*,head), tailk, eSig);
-        res = branch1;
-
-        boolean b = (`headk == `Empty());
-        if(b) {
-          if(Main.options.verbose) {
-            System.out.println("REMOVE2: " + Pretty.toString(`head));
-          }
-          // try with the head removed
-          RuleList branch2 = `removeRedundantRuleAux2(tail, kernel, tailk, eSig);
-          if(branch2.length() < branch1.length()) {
-            res = branch2;
-          }
-        }
-      }
-    }
-    return res;
-  }
-
-  private static TermList mapSub(Term t, TermList l) {
-    %match(l) {
-      TermList() -> { return l; }
-      TermList(head,tail*) -> {
-        TermList tmp = mapSub(t,`tail);
-        return `TermList(Sub(head,t),tmp*);
-      }
-    }
-    return l;
-  }
-
-
   %strategy PropagateEmpty() extends Identity() {
     visit Term {
       // f(t1,...,empty,...,tn) -> empty
