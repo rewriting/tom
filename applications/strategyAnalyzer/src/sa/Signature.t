@@ -84,7 +84,7 @@ public class Signature {
 
         %match(functionList) {
           ConcProduction(_*,SortType(codomain2,ConcAlternative(_*,Alternative(name2,args2,codomain2),_*)),_*) -> {
-            if(`name2 == `name && `codomain==`codomain2) {
+            if(`name2.equals(`name) && `codomain.equals(`codomain2)) {
               setFunction(`name);
             }
           }

@@ -109,7 +109,7 @@ public class TypeCompiler {
     Signature eSig = this.getExtractedSignature();
     %match(term) {
         Appl(symbol,_) -> {
-          if(`symbol == Signature.BOTTOM) { // for BOTTOM add all possible types
+          if(`symbol.equals(Signature.BOTTOM)) { // for BOTTOM add all possible types
             types.addAll(eSig.getCodomains());
           } else if(eSig.isBooleanOperator(`symbol)) {
             // for boolean ops (in fact only TRUE or FALSE can occur) add BOOLEAN
@@ -196,7 +196,7 @@ public class TypeCompiler {
             throw new UntypableTermException("Type of symbol "+ fun +"cannot be determined");
           }
           // for all_f add the type of f(...) at the end
-          if(StrategyOperator.getStrategyOperator(nameMain)==StrategyOperator.ALL) {
+          if(StrategyOperator.getStrategyOperator(nameMain).equals(StrategyOperator.ALL)) {
             domain = `ConcGomType(domain*, type); 
           }
         } else {
@@ -205,10 +205,10 @@ public class TypeCompiler {
           if(!nameMain.equals(Signature.TRUE) && !nameMain.equals(Signature.FALSE)) { // if any arguments
             domain = `ConcGomType(type); // first argument has always the same type as the term
             if(eSig.isBooleanOperator(`name) || 
-               (Tools.isSymbolNameAux(`name) && StrategyOperator.getStrategyOperator(nameMain)==StrategyOperator.SEQ)) {
+               (Tools.isSymbolNameAux(`name) && StrategyOperator.getStrategyOperator(nameMain).equals(StrategyOperator.SEQ))) {
               // if boolean operator (EQ or AND) or if aux symbol for SEQ (ie seqAux_...) then there is a second parameter of the same type
               domain = `ConcGomType(type,type);
-            } else if(Tools.isSymbolNameAux(`name) && StrategyOperator.getStrategyOperator(nameMain)==StrategyOperator.RULE) {
+            } else if(Tools.isSymbolNameAux(`name) && StrategyOperator.getStrategyOperator(nameMain).equals(StrategyOperator.RULE)) {
               // if aux symbol for RULE (originating from a non-linear rule compilation) then there is a second parameter of type Bool
               domain = `ConcGomType(type,Signature.TYPE_BOOLEAN);
             }
@@ -234,7 +234,7 @@ public class TypeCompiler {
         typedTerm = `Appl(typedName,newArgs);
 
         // add info into typed signature
-        if(`name == Signature.EQ) {
+        if(`name.equals(Signature.EQ)) {
           typedSignature.addFunctionSymbol(typedName,domain,Signature.TYPE_BOOLEAN);
         } else {
           if(typedSignature.getSymbols().contains(typedName)) {

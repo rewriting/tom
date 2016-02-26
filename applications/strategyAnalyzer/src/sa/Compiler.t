@@ -244,8 +244,10 @@ public class Compiler {
           Strat s = slist.getHeadConcStrat();
           //System.out.println("param = " + p + " -- arg = " + s); 
           %match(p) {
-            Param(name) && n==name -> {
-              return s;
+            Param(name) -> {
+              if(`n.equals(`name)) {
+                return s;
+              }
             }
           }
           plist = plist.getTailConcParam();
@@ -1105,8 +1107,10 @@ public class Compiler {
 
   %strategy ReplaceMuVar(name:String, appl:String) extends Identity() {
     visit Strat {
-      StratName(n) && n==name -> {
-        return `StratName(appl);
+      StratName(n) -> {
+        if(`n.equals(name)) {
+          return `StratName(appl);
+        }
       }
     }
   }

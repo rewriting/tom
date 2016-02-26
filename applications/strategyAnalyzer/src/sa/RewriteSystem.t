@@ -342,7 +342,7 @@ public class RewriteSystem {
         RuleList branch1 = `removeRedundantRuleAux2(tail, ConcRule(kernel*,head), tailk, eSig);
         res = branch1;
 
-        boolean b = (`headk == `Empty());
+        boolean b = `headk.isEmpty();
         if(b) {
           if(Main.options.verbose) {
             System.out.println("REMOVE2: " + Pretty.toString(`head));
@@ -705,7 +705,7 @@ public class RewriteSystem {
       // we have to compare modulo renaming and AT
       if(h1 == h2) {
         tl = `TermList(tl*, h1);
-      } else if(matchConstraint(h1,h2)==`TrueMatch() && matchConstraint(h2,h1)==`TrueMatch()) {
+      } else if(matchConstraint(h1,h2).isTrueMatch() && matchConstraint(h2,h1).isTrueMatch()) {
         // match(h1,h2) && match(h2,h1) is more efficient than removeVar(h1) == removeVar(h2)
         // PEM: check that we can keep h1 only
         tl = `TermList(tl*, h1);
@@ -738,7 +738,7 @@ public class RewriteSystem {
       }
 
       Appl(f,args) -> {
-        if(eSig.getCodomain(`f) == type) {
+        if(eSig.getCodomain(`f).equals(type)) {
           GomTypeList domain = eSig.getDomain(`f);
           TermList tail = `args;
           TermList new_args = `TermList();
@@ -747,7 +747,7 @@ public class RewriteSystem {
             GomType arg_type = domain.getHeadConcGomType();
 
             Term new_arg = eliminateIllTyped(head,arg_type,eSig);
-            if(new_arg == `Empty()) {
+            if(new_arg.isEmpty()) {
               // propagate Empty for any term which contains Empty
               return `Empty();
             }
@@ -949,7 +949,7 @@ public class RewriteSystem {
          * to use matchConstraint algorithm we need to activate hooks for
          * PropagateTrueMatch and PropagateEmpty
          */
-        if(`matchConstraint(p,t) == `TrueMatch()) { // use this more general algorithm to factorize code
+        if(`matchConstraint(p,t).isTrueMatch()) { // use this more general algorithm to factorize code
           return true;
         }
       }
@@ -1116,7 +1116,7 @@ public class RewriteSystem {
         boolean ok = true;
         TermList tl = `argf;
         while(ok && !tl.isEmptyTermList()) {
-          ok &= (tl.getHeadTermList() == `TrueMatch());
+          ok &= (tl.getHeadTermList().isTrueMatch());
           tl = tl.getTailTermList();
         }
         if(ok) {
@@ -1196,7 +1196,7 @@ public class RewriteSystem {
         %match(ruleList) {
           ConcRule(_*,Rule(l,r),_*) -> {
             Term mc = matchConstraint(`l, `lhs);
-            if(mc == `TrueMatch()) {
+            if(mc.isTrueMatch()) {
               res = true;
               return res;
             } else {
@@ -1205,7 +1205,7 @@ public class RewriteSystem {
           }
         }
         Term matchingProblem = `Add(constraint);
-        if(matchingProblem == `Empty()) {
+        if(matchingProblem.isEmpty()) {
           res = false;
           return res;
         }
@@ -1215,7 +1215,7 @@ public class RewriteSystem {
           //sol = `RepeatId(OnceTopDownId(S2)).visitLight(matchingProblem);
           //System.out.println("case = " + Pretty.toString(`lhs));
           //System.out.println("matchingProblem = " + Pretty.toString(matchingProblem));
-          if(sol == `TrueMatch()) {
+          if(sol.isTrueMatch()) {
             res = true;
           }
         } catch(VisitFailure e) {
@@ -1251,7 +1251,7 @@ public class RewriteSystem {
         //  System.out.println("PROBLEM REDUCED : " + Pretty.toString(t));
         //}
 
-        if(t == `Empty()) {
+        if(t.isEmpty()) {
           res = true;
           return res;
         }
@@ -1349,7 +1349,7 @@ public class RewriteSystem {
       res = (Term)Tools.removeAt(res);
       res = Tools.normalizeVariable(res);
       //System.out.println("res = " + Pretty.toString(res));
-      if(res == `Empty()) {
+      if(res.isEmpty()) {
         //System.out.println("new candidate: " + Pretty.toString(t));
         c.add(t);
         // continue the search for a more general term
@@ -1477,7 +1477,7 @@ public class RewriteSystem {
         }
 
         Term res = matchConstraint(`head1,`head2); 
-        if(res == `Empty()) {
+        if(res.isEmpty()) {
           //return `TermList(Empty()); // optim: can be removed
           TermList tail = decomposeListConstraint(`tail1,`tail2,true);
           return `TermList(Empty(),tail*);
@@ -1554,7 +1554,7 @@ public class RewriteSystem {
 
       ConcRule(rule@Rule(Appl(f,f_args),rhs),tail*) -> {
         RuleList newTail = transformHeadSymbol(`tail,oldSymbol, newSymbol, old_arity);
-        if(`f == oldSymbol) {
+        if(`f.equals(oldSymbol)) {
           return `ConcRule(Rule(Appl(newSymbol,TermList(f_args*,Appl("False",TermList()))),rhs),newTail*);
         } else {
           return `ConcRule(rule,newTail*);

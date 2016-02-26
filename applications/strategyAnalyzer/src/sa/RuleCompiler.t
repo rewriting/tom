@@ -61,7 +61,7 @@ public class RuleCompiler {
    */
   public RuleList expandGeneralAntiPatterns(RuleList rules, String nextRuleSymbol) {
     rules = expandAntiPatternsAux(rules, false);
-    if(nextRuleSymbol == null){ //if we don't know what to do with the Bottom2 (than change to Bottom)
+    if(nextRuleSymbol == null) { //if we don't know what to do with the Bottom2 (than change to Bottom)
       rules = eliminateBottom2(rules);
     }else{ // chain to the next call
       rules = changeBottom2(rules,nextRuleSymbol);      
@@ -226,20 +226,22 @@ public class RuleCompiler {
         // here: t is q'
         System.out.println("EXPAND AP: " + Pretty.toString(subject));
         %match(subject) {
-          Rule(lhs,Appl(bottom,TermList(x,r))) && bottom == Signature.BOTTOM2 -> {
-            // here we generate x@q[q'] but x will be eliminated later
-            Rule r1 = (Rule) getEnvironment().getPosition().getReplace(`t).visit(subject);
-            r1 = r1.setrhs(`r);
+          Rule(lhs,Appl(bottom,TermList(x,r))) -> {
+            if(`bottom.equals(Signature.BOTTOM2)) {
+              // here we generate x@q[q'] but x will be eliminated later
+              Rule r1 = (Rule) getEnvironment().getPosition().getReplace(`t).visit(subject);
+              r1 = r1.setrhs(`r);
 
-            Term Z = Var(Tools.getName("Z"));
-            Rule r2 = (Rule) getEnvironment().getPosition().getReplace(Z).visit(subject);
-            r2 = r2.setrhs(Bottom2(`x,`r));
+              Term Z = Var(Tools.getName("Z"));
+              Rule r2 = (Rule) getEnvironment().getPosition().getReplace(Z).visit(subject);
+              r2 = r2.setrhs(Bottom2(`x,`r));
 
-            `orderedTRS.add(r1);
-            `orderedTRS.add(r2);
-            System.out.println("  case 1 ==> " + Pretty.toString(r1));
-            System.out.println("  case 1 ==> " + Pretty.toString(r2));
-            return `s;
+              `orderedTRS.add(r1);
+              `orderedTRS.add(r2);
+              System.out.println("  case 1 ==> " + Pretty.toString(r1));
+              System.out.println("  case 1 ==> " + Pretty.toString(r2));
+              return `s;
+            }
           }
 
           Rule(lhs,r) -> {
@@ -279,8 +281,10 @@ public class RuleCompiler {
 
   %strategy EliminateBottom2() extends Identity() {
     visit Term {
-      Appl(bottom2,TermList(x,r)) && bottom2 == Signature.BOTTOM2 -> {
-        return Bottom(`x);
+      Appl(bottom2,TermList(x,r)) -> {
+        if(`bottom2.equals(Signature.BOTTOM2)) {
+          return Bottom(`x);
+        }
       }
     }
   }
@@ -300,8 +304,10 @@ public class RuleCompiler {
 
   %strategy ChangeBottom2(String nextRuleSymbol) extends Identity() {
     visit Term {
-      Appl(bottom2,TermList(x,r)) && bottom2 == Signature.BOTTOM2 -> {
-        return _appl(nextRuleSymbol,`x);
+      Appl(bottom2,TermList(x,r)) -> {
+        if(`bottom2.equals(Signature.BOTTOM2)) {
+          return _appl(nextRuleSymbol,`x);
+        }
       }
     }
   }
@@ -399,7 +405,7 @@ public class RuleCompiler {
   %strategy ReplaceVariable(name:String, term:Term) extends Identity() {
     visit Term {
       Var(n) -> {
-        if(`n == name) {
+        if(`n.equals(name)) {
           return `term;
         }
       }
