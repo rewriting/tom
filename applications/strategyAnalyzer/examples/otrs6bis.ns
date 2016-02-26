@@ -1,0 +1,45 @@
+
+abstract syntax
+T = 
+	| car(E,C)
+	| truck(E,C)
+// 	| bike(E,C)
+
+E = 
+	| gas()
+	| diesel()
+	| electric()
+  | hybrid()
+//   | void()
+
+V = 
+	| sedan()
+	| minivan()
+	| suv()
+// 	| coupe()
+
+C = 
+	| white()
+	| red()
+	| blue()
+	| paint(T)
+
+// functions
+//   C = paint(T)
+
+
+trs
+[
+  paint(car(electric(),!suv())) -> blue()
+  paint(car(!diesel(),!suv())) -> white()
+  paint(x)  ->  red()
+]
+
+// [
+//   paint(car(electric(),suv())) -> red()
+//   paint(car(electric(),x)) -> blue()
+//   paint(car(diesel(),y)) -> red()
+//   paint(car(x,suv())) -> red()
+//   paint(car(x,y)) -> white()
+//   paint(x)  ->  red()
+// ]

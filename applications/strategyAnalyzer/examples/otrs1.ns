@@ -3,6 +3,7 @@ abstract syntax
 T = 
 	| a()
 	| b()
+	| c()
   | f(T,T)
 
 //functions
@@ -11,7 +12,7 @@ T =
 
 trs
 [
-  f(a(),b()) -> a()
-  !f(y,b()) -> b()
-  f(z,b()) -> c()
+  a() -> b()
+  !f(x,b()) -> a()
+  f(y,z) -> c()
 ]

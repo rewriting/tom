@@ -73,11 +73,6 @@ public class Main {
       RuleList generatedRules = compiler.compileStrategy(strategyNames);
       Signature extractedSignature = compiler.getExtractedSignature();
       Signature generatedSignature = compiler.getGeneratedSignature();
-      System.out.println(extractedSignature);
-      System.out.println(generatedSignature);
-      System.out.println(generatedRules);
-      System.out.println(strategyNames.toString());
-
       //System.out.println("compileStrategy: generatedRules = " + Pretty.toString(generatedRules));
 
       assert Tools.isLhsLinear(generatedRules);

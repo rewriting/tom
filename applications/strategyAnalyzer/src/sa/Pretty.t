@@ -120,6 +120,10 @@ public class Pretty {
       Sub(t1,t2) -> {
         return "(" + toString(`t1) + " \\ " + toString(`t2) + ")";
       }
+      
+      Inter(t1,t2) -> {
+        return "(" + toString(`t1) + " ^ " + toString(`t2) + ")";
+      }
 
       Inter(t1,t2) -> {
         return "(" + toString(`t1) + " ^ " + toString(`t2) + ")";

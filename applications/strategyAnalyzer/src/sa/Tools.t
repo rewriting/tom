@@ -383,6 +383,22 @@ public class Tools {
       throw new RuntimeException("should not be there");
     }
   }
+  
+  %strategy RemoveAt() extends Identity() {
+    visit Term {
+      At(_,t) -> {
+        return `t;
+      }
+    }
+  }
+  
+  public static tom.library.sl.Visitable removeAt(tom.library.sl.Visitable t) {
+    try {
+      return `InnermostId(RemoveAt()).visitLight(t);
+    } catch(VisitFailure e) {
+      throw new RuntimeException("should not be there");
+    }
+  }
 
   %strategy RemoveAt() extends Identity() {
     visit Term {
@@ -578,7 +594,6 @@ public class Tools {
     try {
       `TopDown(CollectVars(list)).visitLight(subject);
       for(String name:list) {
-
         if(mapToNewName.get(name) == null) {
           String newName = "x_" + (cpt++);
           mapToNewName.put(name,newName);

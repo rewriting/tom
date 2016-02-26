@@ -375,6 +375,26 @@ public class Pattern {
     Term pattern = `Sub(V, Appl("f",TermList(X,X)));
     Trs res = RewriteSystem.trsRule(`Otrs(ConcRule(Rule(pattern,r0))), eSig);
   }
+  
+  private static void example11() {
+    Signature eSig = new Signature();
+
+    Term V = `Var("_");
+
+    eSig.addSymbol("a", `ConcGomType(), `GomType("T") );
+    eSig.addSymbol("f", `ConcGomType(GomType("T"),GomType("T")), `GomType("T") );
+
+    Term a =`Appl("a", TermList());
+
+    Term fav =`Appl("f", TermList(a,V));
+    Term fva =`Appl("f", TermList(V,a));
+    Term fvv =`Appl("f", TermList(V,V));
+    Term fff =`Appl("f", TermList(fvv,fvv));
+
+    boolean b = RewriteSystem.canBeRemoved3(`Rule(fvv,a), `ConcRule(Rule(fav,a),Rule(fva,a),Rule(fff,a)), eSig);
+    System.out.println("b = " + b);
+
+  }
 
   private static void example11() {
     Signature eSig = new Signature();

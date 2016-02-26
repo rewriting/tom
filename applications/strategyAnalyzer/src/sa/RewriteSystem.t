@@ -329,6 +329,46 @@ public class RewriteSystem {
     }
     return res;
   }
+  
+  private static RuleList removeRedundantRuleAux2(RuleList candidates, RuleList kernel, TermList deltak, Signature eSig) {
+    assert Tools.isLhsLinear(candidates) : "check lhs-linear" ;
+    System.out.println("DELTA KERNEL = " + Pretty.toString(deltak));
+    RuleList res = kernel;
+
+    %match( candidates, deltak ) {
+      ConcRule(head@Rule(lhs,rhs), tail*), TermList(headk, tailk*) -> {
+        // try with the head kept in kernel
+        TermList mapTailk = `mapSub(lhs,tailk);
+        RuleList branch1 = `removeRedundantRuleAux2(tail, ConcRule(kernel*,head), tailk, eSig);
+        res = branch1;
+
+        boolean b = (`headk == `Empty());
+        if(b) {
+          if(Main.options.verbose) {
+            System.out.println("REMOVE2: " + Pretty.toString(`head));
+          }
+          // try with the head removed 
+          RuleList branch2 = `removeRedundantRuleAux2(tail, kernel, tailk, eSig);
+          if(branch2.length() < branch1.length()) {
+            res = branch2;
+          }
+        }
+      }
+    }
+    return res;
+  }
+
+  private static TermList mapSub(Term t, TermList l) {
+    %match(l) {
+      TermList() -> { return l; }
+      TermList(head,tail*) -> { 
+        TermList tmp = mapSub(t,`tail);
+        return `TermList(Sub(head,t),tmp*); 
+      }
+    }
+    return l;
+  }
+
 
   private static RuleList removeRedundantRuleAux2(RuleList candidates, RuleList kernel, TermList deltak, Signature eSig) {
     assert Tools.isLhsLinear(candidates) : "check lhs-linear" ;
@@ -1261,7 +1301,7 @@ public class RewriteSystem {
     return res;
   }
 
-
+/*
   public static void searchAbstractionRule(HashSet<Rule> c, Rule rule, RuleList ruleList, Signature eSig) {
     %match(rule) {
       Rule(lhs,rhs) -> {
@@ -1289,13 +1329,13 @@ public class RewriteSystem {
       }
     }
   }
-
+*/
   private static Term simplifyAbstraction(Term sum, Signature eSig) {
     System.out.println("simplifyAbstraction");
     HashSet<Term> bag = new HashSet<Term>();
     %match(sum) {
       Add(tl) -> {
-        AddList res = `tl;
+        AddList res = `tl; 
         %match(tl) {
           ConcAdd(_*,t,_*) -> {
             searchAbstractionTerm(bag,`t,sum,eSig);
@@ -1320,6 +1360,7 @@ public class RewriteSystem {
     generateAbstraction(saturate,subject);
     //System.out.println("#saturate = " + saturate.size());
     // TODO: order saturate to start with least general terms
+    /*
     List<Term> list = new ArrayList<Term>(saturate);
     java.util.Comparator<Term> cmp = new java.util.Comparator<Term>() {
       public int compare(Term t1, Term t2) {
@@ -1334,14 +1375,14 @@ public class RewriteSystem {
     };
 
     java.util.Collections.sort(list, cmp);
-
-    subject = (Term)Tools.removeAt(subject);
-    subject = Tools.normalizeVariable(subject);
+     */
+    //subject = (Term)Tools.removeAt(subject); // don't remove at to keep variable name used in rhs
+    //subject = Tools.normalizeVariable(subject);
     //System.out.println("for: = " + Pretty.toString(subject));
 
-    for(Term t:list) { // saturate
-      t = (Term)Tools.removeAt(t);
-      t = Tools.normalizeVariable(t);
+    for(Term t:saturate) { // list / saturate
+      //t = (Term)Tools.removeAt(t);
+      //t = Tools.normalizeVariable(t);
       Term problem = `Sub(t,sum);
       //System.out.println("try: " + Pretty.toString(t));
       Term res = simplifySub(problem,eSig);
@@ -1357,8 +1398,6 @@ public class RewriteSystem {
         //return;
       }
     }
-
-
 
   }
 
@@ -1407,9 +1446,16 @@ public class RewriteSystem {
 
   %strategy GenerateAbstraction(c:HashSet, subject:Term) extends Identity() {
     visit Term {
-      Appl(_,_) -> {
+      s@At(var,Appl(_,_)) -> {
+        Term newt = (Term) getEnvironment().getPosition().getReplace(`var).visit(subject);
+        c.add(newt);
+        //`Fail().visitLight(`s); // stop collect under this node
+      }
+
+      s@Appl(_,_) -> {
         Term newt = (Term) getEnvironment().getPosition().getReplace(`Var(Tools.getName("Z"))).visit(subject);
         c.add(newt);
+        //`Fail().visitLight(`s); // stop collect under this node
       }
     }
   }
@@ -1635,14 +1681,12 @@ public class RewriteSystem {
         debug("t ^ empty -> empty",`s,res);
         return res;
       }
-
       // empty ^ t -> empty
       s@Sub(Empty(),t) -> {
         Term res = `Empty();
         debug("empty ^ t -> empty",`s,res);
         return res;
       }
-
       // t ^ x -> t
       s@Inter(t, Var[]) -> {
         Term res = `t;
@@ -1663,7 +1707,6 @@ public class RewriteSystem {
         debug("inter fail",`s,res);
         return res;
       }
-
       // t@f(t1,...,tn) ^ f(t1',...,tn') -> f(t1 ^ t1',...,tn ^ tn')
       s@Inter(t@Appl(f,tl1), u@Appl(f, tl2)) -> {
         Term res = `Appl(f,zipInter(tl1,tl2));
@@ -1677,7 +1720,6 @@ public class RewriteSystem {
         debug("inter distrib1",`s,res);
         return res;
       }
-
       // (a1 + ... + an) ^ t -> (a1 ^ t) + ((a2 + ... + an) ^ t)
       s@Inter(Add(ConcAdd(head,tail*)), t@Appl[]) -> {
         Term res = `Add(ConcAdd(Inter(head,t), Inter(Add(tail),t)));
@@ -1724,7 +1766,6 @@ public class RewriteSystem {
         debug("t - empty -> t",`s,res);
         return res;
       }
-
       // empty - t -> empty
       s@Sub(Empty(),t) -> {
         Term res = `Empty();
@@ -1740,7 +1781,7 @@ public class RewriteSystem {
         debug("sub distrib1",`s,res);
         return res;
       }
-
+      
       // (a1 + ... + an) - t@f(t1,...,tn) -> (a1 - t) + ( (a2 + ... + an) - t )
       s@Sub(Add(ConcAdd(head,tail*)), t@Appl(f,tl)) -> {
         assert !Tools.containsSub(`head) : `head;
@@ -1749,7 +1790,7 @@ public class RewriteSystem {
         debug("sub distrib4",`s,res);
         return res;
       }
-
+    
       // C \ (A ^ B)  =  (C \ A) + (C \ B)
       s@Sub(t, Inter(a,b)) -> {
         assert !Tools.containsSub(`t) : `t;
@@ -1757,7 +1798,7 @@ public class RewriteSystem {
         debug("sub distrib2",`s,res);
         return res;
       }
-
+      
       // C \ (A \ B)  =  (C ^ A) + (C \ B)
       s@Sub(t, Sub(a,b)) -> {
         assert !Tools.containsSub(`t) : `t;
@@ -1765,7 +1806,7 @@ public class RewriteSystem {
         debug("sub distrib3",`s,res);
         return res;
       }
-
+      
 
       // X - t -> expand AP   ==>    t should be in TFX (only symbols from declared signature)
       s@Sub(X@Var[], t@Appl(f,args_f)) -> {
@@ -1829,7 +1870,7 @@ public class RewriteSystem {
   private static TermList zipInter(TermList tl1, TermList tl2) {
     %match(tl1,tl2) {
       TermList(), TermList() -> { return tl1; }
-      TermList(head1,tail1*), TermList(head2,tail2*) -> {
+      TermList(head1,tail1*), TermList(head2,tail2*) -> { 
         TermList tmp = `zipInter(tail1,tail2);
         return `TermList(Inter(head1,head2),tmp*);
       }
