@@ -337,6 +337,7 @@ writer.write(%[
 ]%);
   }
 
+String equality = (maximalsharing)?"ao == this":"this.equals(ao)";
 writer.write(%[
 
   /**
@@ -357,7 +358,7 @@ writer.write(%[
      */
     @fullClassName(abstractType)@ ao = (@fullClassName(abstractType)@) o;
     /* return 0 for equality */
-    if (ao == this) { return 0; }
+    if (@equality@) { return 0; }
     /* compare the symbols */
     int symbCmp = this.symbolName().compareTo(ao.symbolName());
     if (symbCmp != 0) { return symbCmp; }

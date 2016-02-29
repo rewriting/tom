@@ -136,8 +136,8 @@ import org.antlr.runtime.tree.Tree;
     }
     writer.write(%[
 public class @filename()@Adaptor {
-  public static shared.SharedObject getTerm(Tree tree) {
-    shared.SharedObject res = null;
+  public static tom.library.sl.Visitable getTerm(Tree tree) {
+    tom.library.sl.Visitable res = null;
     if (tree.isNil()) {
       throw new RuntimeException("nil term");
     }
