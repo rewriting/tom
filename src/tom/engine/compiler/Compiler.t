@@ -292,11 +292,23 @@ public class Compiler extends TomGenericPlugin {
 
           Constraint newConstraint = `constr.setSubject(TomBase.convertFromVarToBQVar(renamedSubject));
 
-          return `AndConstraint(
-              MatchConstraint(TomBase.convertFromBQVarToVar(freshVar),subject,freshSubjectType),
-              IsSortConstraint(castType,freshVar),
-              MatchConstraint(renamedSubject,ExpressionToBQTerm(Cast(freshSubjectType,BQTermToExpression(freshVar))),freshSubjectType),
-              newConstraint);
+          //System.out.println("freshSubjectType = " + freshSubjectType);
+          //System.out.println("castType         = " + `castType);
+
+          if(freshSubjectType == `castType) {
+            return `AndConstraint(
+                MatchConstraint(TomBase.convertFromBQVarToVar(freshVar),subject,freshSubjectType),
+                IsSortConstraint(castType,freshVar),
+                MatchConstraint(renamedSubject,freshVar,freshSubjectType),
+                newConstraint);
+
+          } else {
+            return `AndConstraint(
+                MatchConstraint(TomBase.convertFromBQVarToVar(freshVar),subject,freshSubjectType),
+                IsSortConstraint(castType,freshVar),
+                MatchConstraint(renamedSubject,ExpressionToBQTerm(Cast(freshSubjectType,BQTermToExpression(freshVar))),freshSubjectType),
+                newConstraint);
+          }
         }
 
         TomNumberList path = compiler.getCompilerEnvironment().getRootpath();
@@ -318,17 +330,26 @@ public class Compiler extends TomGenericPlugin {
         }
 
         TomTerm renamedVar = `Variable(concOption(),freshSubjectName,freshSubjectType,concConstraint());
-        //TomTerm renamedVar = `Variable(concOption(),freshSubjectName,castType,concConstraint());
         subjectList.add(`subject);
         renamedSubjects.add(renamedVar);
         Constraint newConstraint = `constr.setSubject(TomBase.convertFromVarToBQVar(renamedVar));
         BQTerm freshVar = compiler.getFreshVariable(freshSubjectType);
 
-        return `AndConstraint(
-            MatchConstraint(TomBase.convertFromBQVarToVar(freshVar),subject,freshSubjectType),
-            IsSortConstraint(castType,freshVar),
-            MatchConstraint(renamedVar,ExpressionToBQTerm(Cast(freshSubjectType,BQTermToExpression(freshVar))),freshSubjectType),
-            newConstraint);
+        //System.out.println("freshSubjectType2 = " + freshSubjectType);
+        //System.out.println("castType2         = " + `castType);
+        if(freshSubjectType == `castType) {
+          return `AndConstraint(
+              MatchConstraint(TomBase.convertFromBQVarToVar(freshVar),subject,freshSubjectType),
+              IsSortConstraint(castType,freshVar),
+              MatchConstraint(renamedVar,freshVar,freshSubjectType),
+              newConstraint);
+        } else {
+          return `AndConstraint(
+              MatchConstraint(TomBase.convertFromBQVarToVar(freshVar),subject,freshSubjectType),
+              IsSortConstraint(castType,freshVar),
+              MatchConstraint(renamedVar,ExpressionToBQTerm(Cast(freshSubjectType,BQTermToExpression(freshVar))),freshSubjectType),
+              newConstraint);
+        }
 
       }
     }

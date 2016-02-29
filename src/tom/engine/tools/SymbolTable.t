@@ -137,6 +137,10 @@ public class SymbolTable {
     if (mapTypeName.containsKey(name)) {
       return mapTypeName.get(name);
     }
+
+    if(name.equals(TYPE_INT)) {
+      return getIntType();
+    }
     return null;
   }
 

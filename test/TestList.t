@@ -241,7 +241,7 @@ public class TestList {
     @Test
     public void testMatch4() {
       int nbSol = 0;
-      ATerm l = factory.parse("[a,b]");
+      ATermList l = (ATermList) factory.parse("[a,b]");
         %match(L l) {
           conc(_X1*,_X2*,_X3*) -> {
           nbSol++;
@@ -254,7 +254,7 @@ public class TestList {
     @Test
     public void testMatch5() {
       int nbSol = 0;
-      ATerm l = factory.parse("[l([a,b]),a,b]");
+      ATermList l = (ATermList) factory.parse("[l([a,b]),a,b]");
       %match(L l) {
         conc(l(conc(_R*,_T*)),_X1*,_u,_X2*) -> {
           nbSol++;
@@ -294,7 +294,8 @@ public class TestList {
     }
 
     public ATerm match6(ATerm l) {
-      %match(L l) {
+      ATermList ll = (ATermList) l;
+      %match(L ll) {
         conc(_,_*) -> {
           return factory.parse("ok");
         }

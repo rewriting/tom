@@ -137,7 +137,7 @@ public class TestList2 {
 
     public ATerm match1(ATerm t) {
       ATerm res = fail;
-      ATermList l = (ATermList)t;
+      ATermList l = (ATermList) t;
       %match(L l) {
         conc(f(a()))                           -> { return factory.parse("pattern1"); }
         conc(_X1*,f(a()))                      -> { return factory.parse("pattern2"); }
@@ -239,7 +239,7 @@ public class TestList2 {
   public static class Match45 {
     @Test
     public void match4() {
-      ATerm l = factory.parse("[a,b]");
+      ATermList l = (ATermList) factory.parse("[a,b]");
       int nbSol = 0;
       %match(L l) {
         conc(_X1*,_X2*,_X3*) -> {
@@ -251,7 +251,7 @@ public class TestList2 {
 
     @Test
     public void match5() {
-      ATerm l = factory.parse("[l([a,b]),a,b]");
+      ATermList l = (ATermList) factory.parse("[l([a,b]),a,b]");
       int nbSol = 0;
       %match(L l) {
         conc(l(conc(_R*,_T*)),_X1*,_u,_X2*) -> {
@@ -291,7 +291,8 @@ public class TestList2 {
     }
 
     public ATerm match6(ATerm l) {
-      %match(L l) {
+      ATermList ll = (ATermList) l;
+      %match(L ll) {
         conc(_,_*) -> {
           return factory.parse("ok");
         }

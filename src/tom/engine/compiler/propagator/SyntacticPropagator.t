@@ -83,17 +83,17 @@ public class SyntacticPropagator implements IBasePropagator {
       /**
        * Decompose
        * 
-       * f1:castType[slot1:T1=t1:S1,...,slotn:Tn=tn:Sn] << castType g:S 
-       * -> freshSubject:S << S g:S 
-       *    /\ IsSort(castType,freshSubject)
-       *    /\ f1:castType << castType SymbolOf(freshSubject:S) 
-       *    /\ freshVar1:T1 << T1 subterm1_f(freshSubject:S):T1 
+       * f1:aType[slot1:T1=t1:S1,...,slotn:Tn=tn:Sn] << aType g:gType 
+       * -> freshSubject:gType << gType g:gType 
+       *    /\ IsSort(aType,freshSubject) # if aType != gType
+       *    /\ f1:aType << aType SymbolOf(freshSubject:gType) 
+       *    /\ freshVar1:T1 << T1 subterm1_f(freshSubject:gType):T1 
        *    /\ ... 
-       *    /\ freshVarn:Tn << Tn subtermn_f(freshSubject:S):Tn 
+       *    /\ freshVarn:Tn << Tn subtermn_f(freshSubject:gType):Tn 
        *    /\ t1:S1 << S1 freshVar1:T1
        *    /\ ... 
        *    /\ tn:Sn << Sn freshVarn:Tn
-       * where castType is a subtype of S and Si is a subype of Ti for i in [i,n] 
+       * where aType is a subtype of gType and Si is a subtype of Ti for i in [i,n] 
        *
        * if f has multiple names (from f1|f2): 
        * (f1|f2)(t1,...,tn) = g 
@@ -110,23 +110,18 @@ public class SyntacticPropagator implements IBasePropagator {
           return `m; 
         }
        
-        //DEBUG System.out.println("m = " + `m);
-        //DEBUG System.out.println("aType = " + `aType);
         List<Constraint> lastPart = new ArrayList<Constraint>();
         ArrayList<BQTerm> freshVarList = new ArrayList<BQTerm>();
         // we build the last part only once, and we store the fresh variables we generate
         %match(slots) {
           concSlot(_*,PairSlotAppl(slotName,appl),_*) -> {
             TomType applType = sp.getCompiler().getTermTypeFromTerm(`appl);
-            TomType slotType =
-              sp.getCompiler().getSlotType(`firstName,`slotName);
-            //DEBUG System.out.println("slotType = " + slotType);
-            //DEBUG System.out.println("slotName= " + `slotName);
+            TomType slotType = sp.getCompiler().getSlotType(`firstName,`slotName);
             BQTerm freshVar = sp.getCompiler().getFreshVariable(slotType);
             // store the fresh variable
             freshVarList.add(freshVar);
             // build the last part
-            if (applType != slotType){
+            if(applType != slotType) {
               /*
                  This test is important when the type of the argument (appl) is a subtype
                  of the type expected by the slot
@@ -142,13 +137,13 @@ public class SyntacticPropagator implements IBasePropagator {
               lastPart.add(`IsSortConstraint(applType,freshVar));
             }
             lastPart.add(`MatchConstraint(appl,freshVar,applType));
-            //DEBUG System.out.println("Match#1= " + `MatchConstraint(appl,freshVar,applType));
           }
         }
-        //DEBUG System.out.println("*** aType = " + `aType);
-        BQTerm freshSubject =
-          //sp.getCompiler().getFreshVariable(aType);
-          sp.getCompiler().getFreshVariable(sp.getCompiler().getTermTypeFromTerm(`g));
+        
+        TomType gType = sp.getCompiler().getTermTypeFromTerm(`g);
+        BQTerm freshSubject = sp.getCompiler().getFreshVariable(gType);
+        //System.out.println("gType = " + gType);
+        //System.out.println("aType = " + `aType);
 
         // take each symbol and build the disjunction (OrConstraintDisjunction)
         Constraint l = `OrConstraintDisjunction();
@@ -156,20 +151,16 @@ public class SyntacticPropagator implements IBasePropagator {
           concTomName(_*,name,_*) -> {
             // the 'and' conjunction for each name
             List<Constraint> andForName = new ArrayList<Constraint>();
+            if(`aType != gType) {
+              andForName.add(`IsSortConstraint(aType,freshSubject));
+            }
             // add condition for symbolOf
-            andForName.add(`IsSortConstraint(aType,freshSubject));
             andForName.add(`MatchConstraint(RecordAppl(options,concTomName(name),concSlot(),concConstraint()),SymbolOf(freshSubject),aType));
-            //DEBUG System.out.println("Match#2= " + `MatchConstraint(RecordAppl(options,concTomName(name),concSlot(),concConstraint()),SymbolOf(freshSubject),aType));
             int counter = 0;
 
             BQTerm freshCastedSubject = sp.getCompiler().getFreshVariable(`aType);
             TomTerm var = TomBase.convertFromBQVarToVar(freshCastedSubject);
-            //DEBUG System.out.println("*** " + var);
-            //DEBUG System.out.println("+++ " + aType);
-            //DEBUG System.out.println("--- " + freshSubject);
             andForName.add(`MatchConstraint(var,freshSubject,aType));
-            //DEBUG System.out.println("Match#3= " +
-            //DEBUG     `MatchConstraint(var,freshSubject,aType));
 
             // for each slot
             %match(slots) {
@@ -178,10 +169,7 @@ public class SyntacticPropagator implements IBasePropagator {
                 TomType slotType =
                   sp.getCompiler().getSlotType(`name,`slotName); 
                 andForName.add(`MatchConstraint(TomBase.convertFromBQVarToVar(freshVar),Subterm(name,slotName,freshCastedSubject),slotType));
-                //DEBUG System.out.println("Match#4= " + `MatchConstraint(TomBase.convertFromBQVarToVar(freshVar),Subterm(name,slotName,freshCastedSubject),slotType));
                 counter++;
-                //DEBUG System.out.println("Type slot = " + slotType);
-                //DEBUG System.out.println("--- aType =  " + `aType);
               }
             }// match slots
             l = `OrConstraintDisjunction(l*,ASTFactory.makeAndConstraint(andForName));
@@ -189,10 +177,6 @@ public class SyntacticPropagator implements IBasePropagator {
         }
         lastPart.add(0,l);
         lastPart.add(0,`MatchConstraint(TomBase.convertFromBQVarToVar(freshSubject),g,aType));
-        //DEBUG System.out.println("Match#5 = " +
-        //DEBUG     `MatchConstraint(TomBase.convertFromBQVarToVar(freshSubject),g,sp.getCompiler().getTermTypeFromTerm(g)));
-        //DEBUG System.out.println("\n\n\nIn Syntactic Propagator: lastPart = " +
-        //DEBUG     lastPart + "\n\n");
         lastPart.add(sp.getConstraintPropagator().performDetach(`m));
         return ASTFactory.makeAndConstraint(lastPart);
       }      

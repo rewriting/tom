@@ -148,18 +148,26 @@ public class ConstraintGenerator {
 
         //System.out.println("In Constraint Generator with v = " + `v + '\n');
         //System.out.println("In Constraint Generator with t = " + `t + '\n');
-        TomType pType = TomBase.getTermType(`v,symbolTable);
-        TomType sType = TomBase.getTermType(`t,symbolTable);
-        //System.out.println("pType = " + pType);
-        //System.out.println("sType = " + sType);
-        %match(pType,sType) {
-          Type[TomType=tType],Type[TomType=!tType] -> {
-            return
-              `LetRef(TomBase.convertFromVarToBQVar(v),Cast(TomBase.getTermType(v,symbolTable),BQTermToExpression(t)),action);
-          } 
+        TomType patternType = TomBase.getTermType(`v,symbolTable);
+        TomType subjectType = TomBase.getTermType(`t,symbolTable);
+
+        //if(patternType == null) {
+        //  System.out.println("pattern     =  " + `v);
+        //  System.out.println("patternType =  " + patternType);
+        // }
+        //if(subjectType == null) {
+        //  System.out.println("subject     =  " + `t);
+        //  System.out.println("subjectType =  " + subjectType);
+        // }
+
+
+        if(TomBase.getTomType(patternType) != TomBase.getTomType(subjectType)) {
+          return `LetRef(TomBase.convertFromVarToBQVar(v),Cast(patternType,BQTermToExpression(t)),action);
+        } else {
+          return `LetRef(TomBase.convertFromVarToBQVar(v),BQTermToExpression(t),action);
         }
-        return `LetRef(TomBase.convertFromVarToBQVar(v),BQTermToExpression(t),action);
       }  
+
       // numeric constraints
       ConstraintToExpression(n@NumericConstraint[]) -> {
         return buildNumericCondition(`n,action);
