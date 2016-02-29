@@ -305,7 +305,7 @@ writer.write(%[
     return false;
   }
 
-  //public boolean equals(Object o) { return this == o; }
+  //public boolean equals(Object o) { return this.deepEquals(o); }
 
   //public int hashCode() { return hashCode(); }
 

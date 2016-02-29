@@ -261,6 +261,16 @@ writer.write(%[
    * @@return true if the two objects are equal
    */
   public abstract boolean deepEquals(Object o);
+
+  /**
+   * Checks if an object is equal
+   *
+   * @@param o object which is compared
+   * @@return true if objects are equal, false otherwise
+   */
+  @@Override
+  public boolean equals(Object o) { return this.deepEquals(o); }
+
 ]%);
     }
 
