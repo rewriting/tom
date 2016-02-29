@@ -45,14 +45,14 @@
   <target name="gomantlradapter" depends="init">
     <gomantlradapter.preset srcdir="${sa.src}"
                             destdir="${sa.gen}"
-                            package="${sa.package}">
+                            package="${sa.package}" nosharing="on">
       <include name="${sa.ast}.gom"/>
     </gomantlradapter.preset>
   </target>
 
   <target name="gom" depends="init">
     <gom.preset srcdir="${sa.src}"
-                destdir="${sa.gen}">
+                destdir="${sa.gen}" nosharing="on">
       <include name="${sa.ast}.gom"/>
       <!-- <include name="${sa.package}/Pattern.gom"/> -->
     </gom.preset>
