@@ -657,7 +657,7 @@ public class RewriteSystem {
           Term h2 = tl2.getHeadTermList();
           Term sub = simplifySub(`Sub(h1,h2),eSig); // do not use reduce because variables are normalized
 
-          if(sub==h1) {
+          if(sub.equals(h1)) {
             return t1;
           }
 
@@ -694,7 +694,7 @@ public class RewriteSystem {
   private static TermList addUniqueTi(TermList l1,TermList l2) {
     TermList tl1=l1;
     TermList tl2=l2;
-    if(l1==l2) {
+    if(l1.equals(l2)) {
       return l1;
     }
     TermList tl = `TermList();
@@ -703,7 +703,7 @@ public class RewriteSystem {
       Term h1 = tl1.getHeadTermList();
       Term h2 = tl2.getHeadTermList();
       // we have to compare modulo renaming and AT
-      if(h1 == h2) {
+      if(h1.equals(h2)) {
         tl = `TermList(tl*, h1);
       } else if(matchConstraint(h1,h2).isTrueMatch() && matchConstraint(h2,h1).isTrueMatch()) {
         // match(h1,h2) && match(h2,h1) is more efficient than removeVar(h1) == removeVar(h2)
