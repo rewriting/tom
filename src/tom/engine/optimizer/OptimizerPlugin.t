@@ -129,6 +129,7 @@ public class OptimizerPlugin extends TomGenericPlugin {
               );
           renamedTerm = optStrategy2.visitLight(renamedTerm);
           renamedTerm = `BuiltinBottomUp(Inline(TrueConstraint(),this)).visit(renamedTerm);
+          renamedTerm = `BottomUp(CastElim()).visitLight(renamedTerm);
           renamedTerm = optStrategy2.visitLight(renamedTerm);
           //System.out.println("opt renamedTerm = " + renamedTerm);
         } else if(getOptionBooleanValue("optimize")) {
@@ -137,6 +138,8 @@ public class OptimizerPlugin extends TomGenericPlugin {
               BuiltinBottomUp(Inline(TrueConstraint(),this)));
 
           renamedTerm = optStrategy.visit(renamedTerm);
+          renamedTerm = `BottomUp(CastElim()).visitLight(renamedTerm);
+          //System.out.println("opt renamedTerm = " + renamedTerm);
         }
         setWorkingTerm(renamedTerm);
 
@@ -181,6 +184,9 @@ public class OptimizerPlugin extends TomGenericPlugin {
     }
     
     visit Instruction {
+      //x -> {
+      //  System.out.println("Optimize Instruction: " + `x);
+      //}
 
       /* only for generated variables */
       /* Let x <- y in body where y is a variable ==> inline */
@@ -617,6 +623,14 @@ public class OptimizerPlugin extends TomGenericPlugin {
 
   private static boolean compare(tom.library.sl.Visitable term1, tom.library.sl.Visitable term2) {
     return factory.remove(term1)==factory.remove(term2);
+  }
+
+  %strategy CastElim() extends Identity() {
+    visit Expression {
+      Cast(type,c@Cast(type,e)) -> {
+        return `c;
+      }
+    }
   }
 
   %strategy NopElimAndFlatten(optimizer:OptimizerPlugin) extends Identity() {
