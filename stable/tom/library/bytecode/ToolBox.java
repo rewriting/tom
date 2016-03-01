@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2000-2014, Universite de Lorraine, Inria
+ * Copyright (c) 2000-2016, Universite de Lorraine, Inria
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
@@ -108,10 +108,10 @@ public class ToolBox {
       map.put(accessObj[i],accessFlags[i]);
     }
 
-    {{if ( (list instanceof tom.library.adt.bytecode.types.AccessList) ) {if ( (((( tom.library.adt.bytecode.types.AccessList )(( tom.library.adt.bytecode.types.AccessList )list)) instanceof tom.library.adt.bytecode.types.accesslist.ConsAccessList) || ((( tom.library.adt.bytecode.types.AccessList )(( tom.library.adt.bytecode.types.AccessList )list)) instanceof tom.library.adt.bytecode.types.accesslist.EmptyAccessList)) ) { tom.library.adt.bytecode.types.AccessList  tomMatch744_end_4=(( tom.library.adt.bytecode.types.AccessList )list);do {{if (!( tomMatch744_end_4.isEmptyAccessList() )) {
+    {{if ( (list instanceof tom.library.adt.bytecode.types.AccessList) ) {if ( (((( tom.library.adt.bytecode.types.AccessList )(( tom.library.adt.bytecode.types.AccessList )list)) instanceof tom.library.adt.bytecode.types.accesslist.ConsAccessList) || ((( tom.library.adt.bytecode.types.AccessList )(( tom.library.adt.bytecode.types.AccessList )list)) instanceof tom.library.adt.bytecode.types.accesslist.EmptyAccessList)) ) { tom.library.adt.bytecode.types.AccessList  tomMatch745_end_4=(( tom.library.adt.bytecode.types.AccessList )list);do {{if (!( tomMatch745_end_4.isEmptyAccessList() )) {
 
-        value = value | (map.get( tomMatch744_end_4.getHeadAccessList() )).intValue();
-      }if ( tomMatch744_end_4.isEmptyAccessList() ) {tomMatch744_end_4=(( tom.library.adt.bytecode.types.AccessList )list);} else {tomMatch744_end_4= tomMatch744_end_4.getTailAccessList() ;}}} while(!( (tomMatch744_end_4==(( tom.library.adt.bytecode.types.AccessList )list)) ));}}}}
+        value = value | (map.get( tomMatch745_end_4.getHeadAccessList() )).intValue();
+      }if ( tomMatch745_end_4.isEmptyAccessList() ) {tomMatch745_end_4=(( tom.library.adt.bytecode.types.AccessList )list);} else {tomMatch745_end_4= tomMatch745_end_4.getTailAccessList() ;}}} while(!( (tomMatch745_end_4==(( tom.library.adt.bytecode.types.AccessList )list)) ));}}}}
 
     return value;   
   }

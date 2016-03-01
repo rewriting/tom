@@ -2,7 +2,7 @@
  *
  * TOM - To One Matching Compiler
  *
- * Copyright (c) 2000-2014, Universite de Lorraine, Inria
+ * Copyright (c) 2000-2016, Universite de Lorraine, Inria
  * Nancy, France.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -136,6 +136,10 @@ public class SymbolTable {
   public TomType getType(String name) {
     if (mapTypeName.containsKey(name)) {
       return mapTypeName.get(name);
+    }
+
+    if(name.equals(TYPE_INT)) {
+      return getIntType();
     }
     return null;
   }

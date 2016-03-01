@@ -1,6 +1,6 @@
 /*
  *
- * Copyright (c) 2006-2014, Universite de Lorraine, Inria
+ * Copyright (c) 2006-2016, Universite de Lorraine, Inria
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
@@ -37,7 +37,7 @@
  * effects
  */
 %oparray ArrayList concArrayList(Object*) {
-  is_fsym(l)       { ($l!= null) && ($l instanceof java.util.ArrayList) }
+  is_fsym(l)       { ($l instanceof java.util.ArrayList) }
   make_empty(n)    { new java.util.ArrayList($n) }
   make_append(o,l) { concArrayListAppend($o,$l) }
   get_element(l,n) { $l.get($n) }

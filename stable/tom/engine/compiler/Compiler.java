@@ -2,7 +2,7 @@
  * 
  * TOM - To One Matching Expander
  * 
- * Copyright (c) 2000-2014, Universite de Lorraine, Inria
+ * Copyright (c) 2000-2016, Universite de Lorraine, Inria
  * Nancy, France.
  * 
  * This program is free software; you can redistribute it and/or modify
@@ -265,7 +265,7 @@ public class Compiler extends TomGenericPlugin {
    * Takes all MatchConstraints and renames the subjects;
    * (this ensures that the subject is not constructed more than once) 
    * Match(p,s,castType) -> Match(x,s,castType) /\ IsSort(castType,x) /\
-   * Match(y,Cast(x),castType) /\ Match(p,y,castType) 
+   *                        Match(y,Cast(x),castType) /\ Match(p,y,castType) 
    * 
    * @param subjectList the list of old subjects
    */
@@ -292,11 +292,23 @@ public class Compiler extends TomGenericPlugin {
 
           Constraint newConstraint = tom_constr.setSubject(TomBase.convertFromVarToBQVar(renamedSubject));
 
-          return  tom.engine.adt.tomconstraint.types.constraint.ConsAndConstraint.make( tom.engine.adt.tomconstraint.types.constraint.MatchConstraint.make(TomBase.convertFromBQVarToVar(freshVar), tom_subject, freshSubjectType) , tom.engine.adt.tomconstraint.types.constraint.ConsAndConstraint.make( tom.engine.adt.tomconstraint.types.constraint.IsSortConstraint.make(tom_castType, freshVar) , tom.engine.adt.tomconstraint.types.constraint.ConsAndConstraint.make( tom.engine.adt.tomconstraint.types.constraint.MatchConstraint.make(renamedSubject,  tom.engine.adt.code.types.bqterm.ExpressionToBQTerm.make( tom.engine.adt.tomexpression.types.expression.Cast.make(freshSubjectType,  tom.engine.adt.tomexpression.types.expression.BQTermToExpression.make(freshVar) ) ) , freshSubjectType) , tom.engine.adt.tomconstraint.types.constraint.ConsAndConstraint.make(newConstraint, tom.engine.adt.tomconstraint.types.constraint.EmptyAndConstraint.make() ) ) ) ) 
+          //System.out.println("freshSubjectType = " + freshSubjectType);
+          //System.out.println("castType         = " + `castType);
+
+          //if(freshSubjectType == `castType) {
+          //  return `AndConstraint(
+          //      MatchConstraint(TomBase.convertFromBQVarToVar(freshVar),subject,freshSubjectType),
+          //      IsSortConstraint(castType,freshVar),
+          //      MatchConstraint(renamedSubject,freshVar,freshSubjectType),
+          //      newConstraint);
+
+          //} else {
+            return  tom.engine.adt.tomconstraint.types.constraint.ConsAndConstraint.make( tom.engine.adt.tomconstraint.types.constraint.MatchConstraint.make(TomBase.convertFromBQVarToVar(freshVar), tom_subject, freshSubjectType) , tom.engine.adt.tomconstraint.types.constraint.ConsAndConstraint.make( tom.engine.adt.tomconstraint.types.constraint.IsSortConstraint.make(tom_castType, freshVar) , tom.engine.adt.tomconstraint.types.constraint.ConsAndConstraint.make( tom.engine.adt.tomconstraint.types.constraint.MatchConstraint.make(renamedSubject,  tom.engine.adt.code.types.bqterm.ExpressionToBQTerm.make( tom.engine.adt.tomexpression.types.expression.Cast.make(freshSubjectType,  tom.engine.adt.tomexpression.types.expression.BQTermToExpression.make(freshVar) ) ) , freshSubjectType) , tom.engine.adt.tomconstraint.types.constraint.ConsAndConstraint.make(newConstraint, tom.engine.adt.tomconstraint.types.constraint.EmptyAndConstraint.make() ) ) ) ) 
 
 
 
 ;
+          //}
         }
 
         TomNumberList path = compiler.getCompilerEnvironment().getRootpath();
@@ -318,17 +330,26 @@ public class Compiler extends TomGenericPlugin {
         }
 
         TomTerm renamedVar =  tom.engine.adt.tomterm.types.tomterm.Variable.make( tom.engine.adt.tomoption.types.optionlist.EmptyconcOption.make() , freshSubjectName, freshSubjectType,  tom.engine.adt.tomconstraint.types.constraintlist.EmptyconcConstraint.make() ) ;
-        //TomTerm renamedVar = `Variable(concOption(),freshSubjectName,castType,concConstraint());
         subjectList.add(tom_subject);
         renamedSubjects.add(renamedVar);
         Constraint newConstraint = tom_constr.setSubject(TomBase.convertFromVarToBQVar(renamedVar));
         BQTerm freshVar = compiler.getFreshVariable(freshSubjectType);
 
-        return  tom.engine.adt.tomconstraint.types.constraint.ConsAndConstraint.make( tom.engine.adt.tomconstraint.types.constraint.MatchConstraint.make(TomBase.convertFromBQVarToVar(freshVar), tom_subject, freshSubjectType) , tom.engine.adt.tomconstraint.types.constraint.ConsAndConstraint.make( tom.engine.adt.tomconstraint.types.constraint.IsSortConstraint.make(tom_castType, freshVar) , tom.engine.adt.tomconstraint.types.constraint.ConsAndConstraint.make( tom.engine.adt.tomconstraint.types.constraint.MatchConstraint.make(renamedVar,  tom.engine.adt.code.types.bqterm.ExpressionToBQTerm.make( tom.engine.adt.tomexpression.types.expression.Cast.make(freshSubjectType,  tom.engine.adt.tomexpression.types.expression.BQTermToExpression.make(freshVar) ) ) , freshSubjectType) , tom.engine.adt.tomconstraint.types.constraint.ConsAndConstraint.make(newConstraint, tom.engine.adt.tomconstraint.types.constraint.EmptyAndConstraint.make() ) ) ) ) 
+        //System.out.println("freshSubjectType2 = " + freshSubjectType);
+        //System.out.println("castType2         = " + `castType);
+        //if(freshSubjectType == `castType) {
+        //  return `AndConstraint(
+        //      MatchConstraint(TomBase.convertFromBQVarToVar(freshVar),subject,freshSubjectType),
+        //      IsSortConstraint(castType,freshVar),
+        //      MatchConstraint(renamedVar,freshVar,freshSubjectType),
+        //      newConstraint);
+        //} else {
+          return  tom.engine.adt.tomconstraint.types.constraint.ConsAndConstraint.make( tom.engine.adt.tomconstraint.types.constraint.MatchConstraint.make(TomBase.convertFromBQVarToVar(freshVar), tom_subject, freshSubjectType) , tom.engine.adt.tomconstraint.types.constraint.ConsAndConstraint.make( tom.engine.adt.tomconstraint.types.constraint.IsSortConstraint.make(tom_castType, freshVar) , tom.engine.adt.tomconstraint.types.constraint.ConsAndConstraint.make( tom.engine.adt.tomconstraint.types.constraint.MatchConstraint.make(renamedVar,  tom.engine.adt.code.types.bqterm.ExpressionToBQTerm.make( tom.engine.adt.tomexpression.types.expression.Cast.make(freshSubjectType,  tom.engine.adt.tomexpression.types.expression.BQTermToExpression.make(freshVar) ) ) , freshSubjectType) , tom.engine.adt.tomconstraint.types.constraint.ConsAndConstraint.make(newConstraint, tom.engine.adt.tomconstraint.types.constraint.EmptyAndConstraint.make() ) ) ) ) 
 
 
 
 ;
+        //}
 
       }}}}}return _visit_Constraint(tom__arg,introspector);}}private static  tom.library.sl.Strategy  tom_make_renameSubjects( java.util.ArrayList  t0,  java.util.ArrayList  t1,  Compiler  t2) { return new renameSubjects(t0,t1,t2);}
 

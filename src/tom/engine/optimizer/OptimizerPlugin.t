@@ -127,11 +127,14 @@ public class OptimizerPlugin extends TomGenericPlugin {
                     OnceTopDownId(BuiltinRepeatId(NopElimAndFlatten(this)))))
                 )
               );
+
+          System.out.println("opt2 input term = " + renamedTerm);
           renamedTerm = optStrategy2.visitLight(renamedTerm);
           renamedTerm = `BuiltinBottomUp(Inline(TrueConstraint(),this)).visit(renamedTerm);
           renamedTerm = `BottomUp(CastElim()).visitLight(renamedTerm);
           renamedTerm = optStrategy2.visitLight(renamedTerm);
-          //System.out.println("opt renamedTerm = " + renamedTerm);
+          System.out.println("opt2 renamedTerm = " + renamedTerm);
+
         } else if(getOptionBooleanValue("optimize")) {
           Strategy optStrategy = `Sequence(
               InnermostId(ChoiceId(NormExpr(this),NopElimAndFlatten(this))),

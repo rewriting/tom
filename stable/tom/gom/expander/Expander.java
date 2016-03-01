@@ -1,7 +1,7 @@
 /*
  * Gom
  *
- * Copyright (c) 2006-2014, Universite de Lorraine, Inria
+ * Copyright (c) 2006-2016, Universite de Lorraine, Inria
  * Nancy, France.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -168,10 +168,10 @@ public class Expander {
 
   public ImportList getImportList(GomModule module) {
     ImportList imports =  tom.gom.adt.gom.types.importlist.EmptyConcImportedModule.make() ;
-    {{if ( (module instanceof tom.gom.adt.gom.types.GomModule) ) {if ( ((( tom.gom.adt.gom.types.GomModule )module) instanceof tom.gom.adt.gom.types.GomModule) ) {if ( ((( tom.gom.adt.gom.types.GomModule )(( tom.gom.adt.gom.types.GomModule )module)) instanceof tom.gom.adt.gom.types.gommodule.GomModule) ) { tom.gom.adt.gom.types.SectionList  tomMatch631_2= (( tom.gom.adt.gom.types.GomModule )module).getSectionList() ;if ( (((( tom.gom.adt.gom.types.SectionList )tomMatch631_2) instanceof tom.gom.adt.gom.types.sectionlist.ConsConcSection) || ((( tom.gom.adt.gom.types.SectionList )tomMatch631_2) instanceof tom.gom.adt.gom.types.sectionlist.EmptyConcSection)) ) { tom.gom.adt.gom.types.SectionList  tomMatch631_end_8=tomMatch631_2;do {{if (!( tomMatch631_end_8.isEmptyConcSection() )) { tom.gom.adt.gom.types.Section  tomMatch631_12= tomMatch631_end_8.getHeadConcSection() ;if ( (tomMatch631_12 instanceof tom.gom.adt.gom.types.Section) ) {if ( ((( tom.gom.adt.gom.types.Section )tomMatch631_12) instanceof tom.gom.adt.gom.types.section.Imports) ) {
+    {{if ( (module instanceof tom.gom.adt.gom.types.GomModule) ) {if ( ((( tom.gom.adt.gom.types.GomModule )module) instanceof tom.gom.adt.gom.types.GomModule) ) {if ( ((( tom.gom.adt.gom.types.GomModule )(( tom.gom.adt.gom.types.GomModule )module)) instanceof tom.gom.adt.gom.types.gommodule.GomModule) ) { tom.gom.adt.gom.types.SectionList  tomMatch632_2= (( tom.gom.adt.gom.types.GomModule )module).getSectionList() ;if ( (((( tom.gom.adt.gom.types.SectionList )tomMatch632_2) instanceof tom.gom.adt.gom.types.sectionlist.ConsConcSection) || ((( tom.gom.adt.gom.types.SectionList )tomMatch632_2) instanceof tom.gom.adt.gom.types.sectionlist.EmptyConcSection)) ) { tom.gom.adt.gom.types.SectionList  tomMatch632_end_8=tomMatch632_2;do {{if (!( tomMatch632_end_8.isEmptyConcSection() )) { tom.gom.adt.gom.types.Section  tomMatch632_12= tomMatch632_end_8.getHeadConcSection() ;if ( (tomMatch632_12 instanceof tom.gom.adt.gom.types.Section) ) {if ( ((( tom.gom.adt.gom.types.Section )tomMatch632_12) instanceof tom.gom.adt.gom.types.section.Imports) ) {
 
-        imports = tom_append_list_ConcImportedModule( tomMatch631_12.getImportList() ,tom_append_list_ConcImportedModule(imports, tom.gom.adt.gom.types.importlist.EmptyConcImportedModule.make() ));
-      }}}if ( tomMatch631_end_8.isEmptyConcSection() ) {tomMatch631_end_8=tomMatch631_2;} else {tomMatch631_end_8= tomMatch631_end_8.getTailConcSection() ;}}} while(!( (tomMatch631_end_8==tomMatch631_2) ));}}}}}}
+        imports = tom_append_list_ConcImportedModule( tomMatch632_12.getImportList() ,tom_append_list_ConcImportedModule(imports, tom.gom.adt.gom.types.importlist.EmptyConcImportedModule.make() ));
+      }}}if ( tomMatch632_end_8.isEmptyConcSection() ) {tomMatch632_end_8=tomMatch632_2;} else {tomMatch632_end_8= tomMatch632_end_8.getTailConcSection() ;}}} while(!( (tomMatch632_end_8==tomMatch632_2) ));}}}}}}
 
     return imports;
   }

@@ -2,7 +2,7 @@
  *
  * TOM - To One Matching Compiler
  *
- * Copyright (c) 2000-2014, Universite de Lorraine, Inria
+ * Copyright (c) 2000-2016, Universite de Lorraine, Inria
  * Nancy, France.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -321,7 +321,15 @@ matchBlock: {
     //String toSet = genToSetFromResolveNameList(resolveNameList);
 
     //result/accumulator to change ("acc")
-    output.write("\n  public static void resolveInverseLinks(EObject resolveNode, EObject newNode, EObject acc) {\n    ECrossReferenceAdapter adapter = new ECrossReferenceAdapter();\n    acc.eAdapters().add(adapter);\n    Collection<EStructuralFeature.Setting> references = adapter.getInverseReferences(resolveNode);\n\n        boolean toSet = (false\n        "+genToSetFromResolveNameList(resolveNameList)+"\n        );\n\n    for (EStructuralFeature.Setting setting:references) {\n      EObject current = setting.getEObject();\n"
+
+    //TODO:
+    //Work in progress: optimization of resolve phase. trying to hook the
+    //EMF adapter by adding custom data structure or custom functions
+    output.write("\n  public static void resolveInverseLinks(EObject resolveNode, EObject newNode, EObject acc) {\n    //Work in progress: optimization of generated resolve phase\n    //trying to hook the EMF adapter\n    ECrossReferenceAdapter adapter = new ECrossReferenceAdapter();\n    //MyECrossReferenceAdapter adapter = new tom.library.utils.MyECrossReferenceAdapter();\n\n    acc.eAdapters().add(adapter);\n    Collection<EStructuralFeature.Setting> references = adapter.getInverseReferences(resolveNode);\n\n        boolean toSet = (false\n        "+genToSetFromResolveNameList(resolveNameList)+"\n        );\n\n    for (EStructuralFeature.Setting setting:references) {\n      EObject current = setting.getEObject();\n"
+
+
+
+
 
 
 

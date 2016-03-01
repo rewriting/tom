@@ -1,6 +1,6 @@
 /*
  *
- * Copyright (c) 2000-2014, Universite de Lorraine, Inria
+ * Copyright (c) 2000-2016, Universite de Lorraine, Inria
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -60,7 +60,8 @@ public class Omega extends AbstractStrategyCombinator {
     } else if(indexPosition>0 && indexPosition<=introspector.getChildCount(any)) {
       int childNumber = indexPosition-1;
       Object newChild = arguments[ARG].visitLight(introspector.getChildAt(any,childNumber),introspector);
-      return introspector.setChildAt(any,childNumber,newChild);
+      T res = introspector.setChildAt(any,childNumber,newChild);
+      return res;
     } else {
       throw new VisitFailure();
     }

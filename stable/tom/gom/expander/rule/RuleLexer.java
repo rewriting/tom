@@ -1,4 +1,4 @@
-// $ANTLR 3.2 Sep 23, 2009 12:02:23 /Users/jcb/workspace/tom/src/tom/gom/expander/rule/Rule.g 2013-03-21 14:06:56
+// $ANTLR 3.2 Sep 23, 2009 12:02:23 /Users/pem/github/tom/src/tom/gom/expander/rule/Rule.g 2016-03-01 15:43:35
 
 package tom.gom.expander.rule;
 
@@ -73,15 +73,15 @@ public class RuleLexer extends Lexer {
         super(input,state);
 
     }
-    public String getGrammarFileName() { return "/Users/jcb/workspace/tom/src/tom/gom/expander/rule/Rule.g"; }
+    public String getGrammarFileName() { return "/Users/pem/github/tom/src/tom/gom/expander/rule/Rule.g"; }
 
     // $ANTLR start "ARROW"
     public final void mARROW() throws RecognitionException {
         try {
             int _type = ARROW;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/jcb/workspace/tom/src/tom/gom/expander/rule/Rule.g:99:7: ( '->' )
-            // /Users/jcb/workspace/tom/src/tom/gom/expander/rule/Rule.g:99:9: '->'
+            // /Users/pem/github/tom/src/tom/gom/expander/rule/Rule.g:99:7: ( '->' )
+            // /Users/pem/github/tom/src/tom/gom/expander/rule/Rule.g:99:9: '->'
             {
             match("->"); 
 
@@ -101,8 +101,8 @@ public class RuleLexer extends Lexer {
         try {
             int _type = AMPERCENT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/jcb/workspace/tom/src/tom/gom/expander/rule/Rule.g:100:11: ( '&' )
-            // /Users/jcb/workspace/tom/src/tom/gom/expander/rule/Rule.g:100:13: '&'
+            // /Users/pem/github/tom/src/tom/gom/expander/rule/Rule.g:100:11: ( '&' )
+            // /Users/pem/github/tom/src/tom/gom/expander/rule/Rule.g:100:13: '&'
             {
             match('&'); 
 
@@ -121,8 +121,8 @@ public class RuleLexer extends Lexer {
         try {
             int _type = UNDERSCORE;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/jcb/workspace/tom/src/tom/gom/expander/rule/Rule.g:101:12: ( '_' )
-            // /Users/jcb/workspace/tom/src/tom/gom/expander/rule/Rule.g:101:14: '_'
+            // /Users/pem/github/tom/src/tom/gom/expander/rule/Rule.g:101:12: ( '_' )
+            // /Users/pem/github/tom/src/tom/gom/expander/rule/Rule.g:101:14: '_'
             {
             match('_'); 
 
@@ -141,8 +141,8 @@ public class RuleLexer extends Lexer {
         try {
             int _type = STAR;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/jcb/workspace/tom/src/tom/gom/expander/rule/Rule.g:102:6: ( '*' )
-            // /Users/jcb/workspace/tom/src/tom/gom/expander/rule/Rule.g:102:8: '*'
+            // /Users/pem/github/tom/src/tom/gom/expander/rule/Rule.g:102:6: ( '*' )
+            // /Users/pem/github/tom/src/tom/gom/expander/rule/Rule.g:102:8: '*'
             {
             match('*'); 
 
@@ -161,8 +161,8 @@ public class RuleLexer extends Lexer {
         try {
             int _type = AT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/jcb/workspace/tom/src/tom/gom/expander/rule/Rule.g:103:4: ( '@' )
-            // /Users/jcb/workspace/tom/src/tom/gom/expander/rule/Rule.g:103:6: '@'
+            // /Users/pem/github/tom/src/tom/gom/expander/rule/Rule.g:103:4: ( '@' )
+            // /Users/pem/github/tom/src/tom/gom/expander/rule/Rule.g:103:6: '@'
             {
             match('@'); 
 
@@ -181,8 +181,8 @@ public class RuleLexer extends Lexer {
         try {
             int _type = COLON;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/jcb/workspace/tom/src/tom/gom/expander/rule/Rule.g:104:7: ( ':' )
-            // /Users/jcb/workspace/tom/src/tom/gom/expander/rule/Rule.g:104:9: ':'
+            // /Users/pem/github/tom/src/tom/gom/expander/rule/Rule.g:104:7: ( ':' )
+            // /Users/pem/github/tom/src/tom/gom/expander/rule/Rule.g:104:9: ':'
             {
             match(':'); 
 
@@ -201,8 +201,8 @@ public class RuleLexer extends Lexer {
         try {
             int _type = LPAR;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/jcb/workspace/tom/src/tom/gom/expander/rule/Rule.g:105:6: ( '(' )
-            // /Users/jcb/workspace/tom/src/tom/gom/expander/rule/Rule.g:105:8: '('
+            // /Users/pem/github/tom/src/tom/gom/expander/rule/Rule.g:105:6: ( '(' )
+            // /Users/pem/github/tom/src/tom/gom/expander/rule/Rule.g:105:8: '('
             {
             match('('); 
 
@@ -221,8 +221,8 @@ public class RuleLexer extends Lexer {
         try {
             int _type = RPAR;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/jcb/workspace/tom/src/tom/gom/expander/rule/Rule.g:106:6: ( ')' )
-            // /Users/jcb/workspace/tom/src/tom/gom/expander/rule/Rule.g:106:8: ')'
+            // /Users/pem/github/tom/src/tom/gom/expander/rule/Rule.g:106:6: ( ')' )
+            // /Users/pem/github/tom/src/tom/gom/expander/rule/Rule.g:106:8: ')'
             {
             match(')'); 
 
@@ -241,8 +241,8 @@ public class RuleLexer extends Lexer {
         try {
             int _type = COMA;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/jcb/workspace/tom/src/tom/gom/expander/rule/Rule.g:107:6: ( ',' )
-            // /Users/jcb/workspace/tom/src/tom/gom/expander/rule/Rule.g:107:8: ','
+            // /Users/pem/github/tom/src/tom/gom/expander/rule/Rule.g:107:6: ( ',' )
+            // /Users/pem/github/tom/src/tom/gom/expander/rule/Rule.g:107:8: ','
             {
             match(','); 
 
@@ -261,8 +261,8 @@ public class RuleLexer extends Lexer {
         try {
             int _type = AND;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/jcb/workspace/tom/src/tom/gom/expander/rule/Rule.g:108:5: ( '&&' )
-            // /Users/jcb/workspace/tom/src/tom/gom/expander/rule/Rule.g:108:7: '&&'
+            // /Users/pem/github/tom/src/tom/gom/expander/rule/Rule.g:108:5: ( '&&' )
+            // /Users/pem/github/tom/src/tom/gom/expander/rule/Rule.g:108:7: '&&'
             {
             match("&&"); 
 
@@ -282,8 +282,8 @@ public class RuleLexer extends Lexer {
         try {
             int _type = OR;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/jcb/workspace/tom/src/tom/gom/expander/rule/Rule.g:109:4: ( '||' )
-            // /Users/jcb/workspace/tom/src/tom/gom/expander/rule/Rule.g:109:6: '||'
+            // /Users/pem/github/tom/src/tom/gom/expander/rule/Rule.g:109:4: ( '||' )
+            // /Users/pem/github/tom/src/tom/gom/expander/rule/Rule.g:109:6: '||'
             {
             match("||"); 
 
@@ -303,8 +303,8 @@ public class RuleLexer extends Lexer {
         try {
             int _type = NOT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/jcb/workspace/tom/src/tom/gom/expander/rule/Rule.g:110:5: ( '!' )
-            // /Users/jcb/workspace/tom/src/tom/gom/expander/rule/Rule.g:110:7: '!'
+            // /Users/pem/github/tom/src/tom/gom/expander/rule/Rule.g:110:5: ( '!' )
+            // /Users/pem/github/tom/src/tom/gom/expander/rule/Rule.g:110:7: '!'
             {
             match('!'); 
 
@@ -323,8 +323,8 @@ public class RuleLexer extends Lexer {
         try {
             int _type = EQUALS;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/jcb/workspace/tom/src/tom/gom/expander/rule/Rule.g:111:8: ( '==' )
-            // /Users/jcb/workspace/tom/src/tom/gom/expander/rule/Rule.g:111:10: '=='
+            // /Users/pem/github/tom/src/tom/gom/expander/rule/Rule.g:111:8: ( '==' )
+            // /Users/pem/github/tom/src/tom/gom/expander/rule/Rule.g:111:10: '=='
             {
             match("=="); 
 
@@ -344,8 +344,8 @@ public class RuleLexer extends Lexer {
         try {
             int _type = NOTEQUALS;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/jcb/workspace/tom/src/tom/gom/expander/rule/Rule.g:112:11: ( '!=' )
-            // /Users/jcb/workspace/tom/src/tom/gom/expander/rule/Rule.g:112:13: '!='
+            // /Users/pem/github/tom/src/tom/gom/expander/rule/Rule.g:112:11: ( '!=' )
+            // /Users/pem/github/tom/src/tom/gom/expander/rule/Rule.g:112:13: '!='
             {
             match("!="); 
 
@@ -365,8 +365,8 @@ public class RuleLexer extends Lexer {
         try {
             int _type = LEQ;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/jcb/workspace/tom/src/tom/gom/expander/rule/Rule.g:113:5: ( '<=' )
-            // /Users/jcb/workspace/tom/src/tom/gom/expander/rule/Rule.g:113:7: '<='
+            // /Users/pem/github/tom/src/tom/gom/expander/rule/Rule.g:113:5: ( '<=' )
+            // /Users/pem/github/tom/src/tom/gom/expander/rule/Rule.g:113:7: '<='
             {
             match("<="); 
 
@@ -386,8 +386,8 @@ public class RuleLexer extends Lexer {
         try {
             int _type = MATCH;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/jcb/workspace/tom/src/tom/gom/expander/rule/Rule.g:114:7: ( '<<' )
-            // /Users/jcb/workspace/tom/src/tom/gom/expander/rule/Rule.g:114:9: '<<'
+            // /Users/pem/github/tom/src/tom/gom/expander/rule/Rule.g:114:7: ( '<<' )
+            // /Users/pem/github/tom/src/tom/gom/expander/rule/Rule.g:114:9: '<<'
             {
             match("<<"); 
 
@@ -407,8 +407,8 @@ public class RuleLexer extends Lexer {
         try {
             int _type = LT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/jcb/workspace/tom/src/tom/gom/expander/rule/Rule.g:115:4: ( '<' )
-            // /Users/jcb/workspace/tom/src/tom/gom/expander/rule/Rule.g:115:6: '<'
+            // /Users/pem/github/tom/src/tom/gom/expander/rule/Rule.g:115:4: ( '<' )
+            // /Users/pem/github/tom/src/tom/gom/expander/rule/Rule.g:115:6: '<'
             {
             match('<'); 
 
@@ -427,8 +427,8 @@ public class RuleLexer extends Lexer {
         try {
             int _type = GEQ;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/jcb/workspace/tom/src/tom/gom/expander/rule/Rule.g:116:5: ( '>=' )
-            // /Users/jcb/workspace/tom/src/tom/gom/expander/rule/Rule.g:116:7: '>='
+            // /Users/pem/github/tom/src/tom/gom/expander/rule/Rule.g:116:5: ( '>=' )
+            // /Users/pem/github/tom/src/tom/gom/expander/rule/Rule.g:116:7: '>='
             {
             match(">="); 
 
@@ -448,8 +448,8 @@ public class RuleLexer extends Lexer {
         try {
             int _type = GT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/jcb/workspace/tom/src/tom/gom/expander/rule/Rule.g:117:4: ( '>' )
-            // /Users/jcb/workspace/tom/src/tom/gom/expander/rule/Rule.g:117:6: '>'
+            // /Users/pem/github/tom/src/tom/gom/expander/rule/Rule.g:117:4: ( '>' )
+            // /Users/pem/github/tom/src/tom/gom/expander/rule/Rule.g:117:6: '>'
             {
             match('>'); 
 
@@ -468,8 +468,8 @@ public class RuleLexer extends Lexer {
         try {
             int _type = IF;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/jcb/workspace/tom/src/tom/gom/expander/rule/Rule.g:118:4: ( 'if' )
-            // /Users/jcb/workspace/tom/src/tom/gom/expander/rule/Rule.g:118:6: 'if'
+            // /Users/pem/github/tom/src/tom/gom/expander/rule/Rule.g:118:4: ( 'if' )
+            // /Users/pem/github/tom/src/tom/gom/expander/rule/Rule.g:118:6: 'if'
             {
             match("if"); 
 
@@ -489,10 +489,10 @@ public class RuleLexer extends Lexer {
         try {
             int _type = INT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/jcb/workspace/tom/src/tom/gom/expander/rule/Rule.g:119:5: ( ( '0' .. '9' )+ )
-            // /Users/jcb/workspace/tom/src/tom/gom/expander/rule/Rule.g:119:7: ( '0' .. '9' )+
+            // /Users/pem/github/tom/src/tom/gom/expander/rule/Rule.g:119:5: ( ( '0' .. '9' )+ )
+            // /Users/pem/github/tom/src/tom/gom/expander/rule/Rule.g:119:7: ( '0' .. '9' )+
             {
-            // /Users/jcb/workspace/tom/src/tom/gom/expander/rule/Rule.g:119:7: ( '0' .. '9' )+
+            // /Users/pem/github/tom/src/tom/gom/expander/rule/Rule.g:119:7: ( '0' .. '9' )+
             int cnt1=0;
             loop1:
             do {
@@ -506,7 +506,7 @@ public class RuleLexer extends Lexer {
 
                 switch (alt1) {
             	case 1 :
-            	    // /Users/jcb/workspace/tom/src/tom/gom/expander/rule/Rule.g:119:8: '0' .. '9'
+            	    // /Users/pem/github/tom/src/tom/gom/expander/rule/Rule.g:119:8: '0' .. '9'
             	    {
             	    matchRange('0','9'); 
 
@@ -538,8 +538,8 @@ public class RuleLexer extends Lexer {
         try {
             int _type = ESC;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/jcb/workspace/tom/src/tom/gom/expander/rule/Rule.g:120:5: ( '\\\\' ( 'n' | 'r' | 't' | 'b' | 'f' | '\"' | '\\'' | '\\\\' ) )
-            // /Users/jcb/workspace/tom/src/tom/gom/expander/rule/Rule.g:120:7: '\\\\' ( 'n' | 'r' | 't' | 'b' | 'f' | '\"' | '\\'' | '\\\\' )
+            // /Users/pem/github/tom/src/tom/gom/expander/rule/Rule.g:120:5: ( '\\\\' ( 'n' | 'r' | 't' | 'b' | 'f' | '\"' | '\\'' | '\\\\' ) )
+            // /Users/pem/github/tom/src/tom/gom/expander/rule/Rule.g:120:7: '\\\\' ( 'n' | 'r' | 't' | 'b' | 'f' | '\"' | '\\'' | '\\\\' )
             {
             match('\\'); 
             if ( input.LA(1)=='\"'||input.LA(1)=='\''||input.LA(1)=='\\'||input.LA(1)=='b'||input.LA(1)=='f'||input.LA(1)=='n'||input.LA(1)=='r'||input.LA(1)=='t' ) {
@@ -567,11 +567,11 @@ public class RuleLexer extends Lexer {
         try {
             int _type = STRING;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/jcb/workspace/tom/src/tom/gom/expander/rule/Rule.g:121:8: ( '\"' ( ESC | ~ ( '\"' | '\\\\' | '\\n' | '\\r' ) )* '\"' )
-            // /Users/jcb/workspace/tom/src/tom/gom/expander/rule/Rule.g:121:10: '\"' ( ESC | ~ ( '\"' | '\\\\' | '\\n' | '\\r' ) )* '\"'
+            // /Users/pem/github/tom/src/tom/gom/expander/rule/Rule.g:121:8: ( '\"' ( ESC | ~ ( '\"' | '\\\\' | '\\n' | '\\r' ) )* '\"' )
+            // /Users/pem/github/tom/src/tom/gom/expander/rule/Rule.g:121:10: '\"' ( ESC | ~ ( '\"' | '\\\\' | '\\n' | '\\r' ) )* '\"'
             {
             match('\"'); 
-            // /Users/jcb/workspace/tom/src/tom/gom/expander/rule/Rule.g:121:14: ( ESC | ~ ( '\"' | '\\\\' | '\\n' | '\\r' ) )*
+            // /Users/pem/github/tom/src/tom/gom/expander/rule/Rule.g:121:14: ( ESC | ~ ( '\"' | '\\\\' | '\\n' | '\\r' ) )*
             loop2:
             do {
                 int alt2=3;
@@ -587,14 +587,14 @@ public class RuleLexer extends Lexer {
 
                 switch (alt2) {
             	case 1 :
-            	    // /Users/jcb/workspace/tom/src/tom/gom/expander/rule/Rule.g:121:15: ESC
+            	    // /Users/pem/github/tom/src/tom/gom/expander/rule/Rule.g:121:15: ESC
             	    {
             	    mESC(); 
 
             	    }
             	    break;
             	case 2 :
-            	    // /Users/jcb/workspace/tom/src/tom/gom/expander/rule/Rule.g:121:19: ~ ( '\"' | '\\\\' | '\\n' | '\\r' )
+            	    // /Users/pem/github/tom/src/tom/gom/expander/rule/Rule.g:121:19: ~ ( '\"' | '\\\\' | '\\n' | '\\r' )
             	    {
             	    if ( (input.LA(1)>='\u0000' && input.LA(1)<='\t')||(input.LA(1)>='\u000B' && input.LA(1)<='\f')||(input.LA(1)>='\u000E' && input.LA(1)<='!')||(input.LA(1)>='#' && input.LA(1)<='[')||(input.LA(1)>=']' && input.LA(1)<='\uFFFF') ) {
             	        input.consume();
@@ -631,8 +631,8 @@ public class RuleLexer extends Lexer {
         try {
             int _type = ID;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/jcb/workspace/tom/src/tom/gom/expander/rule/Rule.g:122:4: ( ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )* )
-            // /Users/jcb/workspace/tom/src/tom/gom/expander/rule/Rule.g:122:6: ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )*
+            // /Users/pem/github/tom/src/tom/gom/expander/rule/Rule.g:122:4: ( ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )* )
+            // /Users/pem/github/tom/src/tom/gom/expander/rule/Rule.g:122:6: ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )*
             {
             if ( (input.LA(1)>='A' && input.LA(1)<='Z')||input.LA(1)=='_'||(input.LA(1)>='a' && input.LA(1)<='z') ) {
                 input.consume();
@@ -643,7 +643,7 @@ public class RuleLexer extends Lexer {
                 recover(mse);
                 throw mse;}
 
-            // /Users/jcb/workspace/tom/src/tom/gom/expander/rule/Rule.g:122:30: ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )*
+            // /Users/pem/github/tom/src/tom/gom/expander/rule/Rule.g:122:30: ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )*
             loop3:
             do {
                 int alt3=2;
@@ -656,7 +656,7 @@ public class RuleLexer extends Lexer {
 
                 switch (alt3) {
             	case 1 :
-            	    // /Users/jcb/workspace/tom/src/tom/gom/expander/rule/Rule.g:
+            	    // /Users/pem/github/tom/src/tom/gom/expander/rule/Rule.g:
             	    {
             	    if ( (input.LA(1)>='0' && input.LA(1)<='9')||(input.LA(1)>='A' && input.LA(1)<='Z')||input.LA(1)=='_'||(input.LA(1)>='a' && input.LA(1)<='z') ) {
             	        input.consume();
@@ -692,10 +692,10 @@ public class RuleLexer extends Lexer {
         try {
             int _type = WS;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/jcb/workspace/tom/src/tom/gom/expander/rule/Rule.g:123:4: ( ( ' ' | '\\t' | '\\n' )+ )
-            // /Users/jcb/workspace/tom/src/tom/gom/expander/rule/Rule.g:123:6: ( ' ' | '\\t' | '\\n' )+
+            // /Users/pem/github/tom/src/tom/gom/expander/rule/Rule.g:123:4: ( ( ' ' | '\\t' | '\\n' )+ )
+            // /Users/pem/github/tom/src/tom/gom/expander/rule/Rule.g:123:6: ( ' ' | '\\t' | '\\n' )+
             {
-            // /Users/jcb/workspace/tom/src/tom/gom/expander/rule/Rule.g:123:6: ( ' ' | '\\t' | '\\n' )+
+            // /Users/pem/github/tom/src/tom/gom/expander/rule/Rule.g:123:6: ( ' ' | '\\t' | '\\n' )+
             int cnt4=0;
             loop4:
             do {
@@ -709,7 +709,7 @@ public class RuleLexer extends Lexer {
 
                 switch (alt4) {
             	case 1 :
-            	    // /Users/jcb/workspace/tom/src/tom/gom/expander/rule/Rule.g:
+            	    // /Users/pem/github/tom/src/tom/gom/expander/rule/Rule.g:
             	    {
             	    if ( (input.LA(1)>='\t' && input.LA(1)<='\n')||input.LA(1)==' ' ) {
             	        input.consume();
@@ -750,12 +750,12 @@ public class RuleLexer extends Lexer {
         try {
             int _type = SLCOMMENT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/jcb/workspace/tom/src/tom/gom/expander/rule/Rule.g:125:11: ( '//' (~ ( '\\n' | '\\r' ) )* ( '\\n' | '\\r' ( '\\n' )? )? )
-            // /Users/jcb/workspace/tom/src/tom/gom/expander/rule/Rule.g:125:13: '//' (~ ( '\\n' | '\\r' ) )* ( '\\n' | '\\r' ( '\\n' )? )?
+            // /Users/pem/github/tom/src/tom/gom/expander/rule/Rule.g:125:11: ( '//' (~ ( '\\n' | '\\r' ) )* ( '\\n' | '\\r' ( '\\n' )? )? )
+            // /Users/pem/github/tom/src/tom/gom/expander/rule/Rule.g:125:13: '//' (~ ( '\\n' | '\\r' ) )* ( '\\n' | '\\r' ( '\\n' )? )?
             {
             match("//"); 
 
-            // /Users/jcb/workspace/tom/src/tom/gom/expander/rule/Rule.g:125:18: (~ ( '\\n' | '\\r' ) )*
+            // /Users/pem/github/tom/src/tom/gom/expander/rule/Rule.g:125:18: (~ ( '\\n' | '\\r' ) )*
             loop5:
             do {
                 int alt5=2;
@@ -768,7 +768,7 @@ public class RuleLexer extends Lexer {
 
                 switch (alt5) {
             	case 1 :
-            	    // /Users/jcb/workspace/tom/src/tom/gom/expander/rule/Rule.g:125:19: ~ ( '\\n' | '\\r' )
+            	    // /Users/pem/github/tom/src/tom/gom/expander/rule/Rule.g:125:19: ~ ( '\\n' | '\\r' )
             	    {
             	    if ( (input.LA(1)>='\u0000' && input.LA(1)<='\t')||(input.LA(1)>='\u000B' && input.LA(1)<='\f')||(input.LA(1)>='\u000E' && input.LA(1)<='\uFFFF') ) {
             	        input.consume();
@@ -788,7 +788,7 @@ public class RuleLexer extends Lexer {
                 }
             } while (true);
 
-            // /Users/jcb/workspace/tom/src/tom/gom/expander/rule/Rule.g:125:34: ( '\\n' | '\\r' ( '\\n' )? )?
+            // /Users/pem/github/tom/src/tom/gom/expander/rule/Rule.g:125:34: ( '\\n' | '\\r' ( '\\n' )? )?
             int alt7=3;
             int LA7_0 = input.LA(1);
 
@@ -800,17 +800,17 @@ public class RuleLexer extends Lexer {
             }
             switch (alt7) {
                 case 1 :
-                    // /Users/jcb/workspace/tom/src/tom/gom/expander/rule/Rule.g:125:35: '\\n'
+                    // /Users/pem/github/tom/src/tom/gom/expander/rule/Rule.g:125:35: '\\n'
                     {
                     match('\n'); 
 
                     }
                     break;
                 case 2 :
-                    // /Users/jcb/workspace/tom/src/tom/gom/expander/rule/Rule.g:125:40: '\\r' ( '\\n' )?
+                    // /Users/pem/github/tom/src/tom/gom/expander/rule/Rule.g:125:40: '\\r' ( '\\n' )?
                     {
                     match('\r'); 
-                    // /Users/jcb/workspace/tom/src/tom/gom/expander/rule/Rule.g:125:44: ( '\\n' )?
+                    // /Users/pem/github/tom/src/tom/gom/expander/rule/Rule.g:125:44: ( '\\n' )?
                     int alt6=2;
                     int LA6_0 = input.LA(1);
 
@@ -819,7 +819,7 @@ public class RuleLexer extends Lexer {
                     }
                     switch (alt6) {
                         case 1 :
-                            // /Users/jcb/workspace/tom/src/tom/gom/expander/rule/Rule.g:125:45: '\\n'
+                            // /Users/pem/github/tom/src/tom/gom/expander/rule/Rule.g:125:45: '\\n'
                             {
                             match('\n'); 
 
@@ -847,187 +847,187 @@ public class RuleLexer extends Lexer {
     // $ANTLR end "SLCOMMENT"
 
     public void mTokens() throws RecognitionException {
-        // /Users/jcb/workspace/tom/src/tom/gom/expander/rule/Rule.g:1:8: ( ARROW | AMPERCENT | UNDERSCORE | STAR | AT | COLON | LPAR | RPAR | COMA | AND | OR | NOT | EQUALS | NOTEQUALS | LEQ | MATCH | LT | GEQ | GT | IF | INT | ESC | STRING | ID | WS | SLCOMMENT )
+        // /Users/pem/github/tom/src/tom/gom/expander/rule/Rule.g:1:8: ( ARROW | AMPERCENT | UNDERSCORE | STAR | AT | COLON | LPAR | RPAR | COMA | AND | OR | NOT | EQUALS | NOTEQUALS | LEQ | MATCH | LT | GEQ | GT | IF | INT | ESC | STRING | ID | WS | SLCOMMENT )
         int alt8=26;
         alt8 = dfa8.predict(input);
         switch (alt8) {
             case 1 :
-                // /Users/jcb/workspace/tom/src/tom/gom/expander/rule/Rule.g:1:10: ARROW
+                // /Users/pem/github/tom/src/tom/gom/expander/rule/Rule.g:1:10: ARROW
                 {
                 mARROW(); 
 
                 }
                 break;
             case 2 :
-                // /Users/jcb/workspace/tom/src/tom/gom/expander/rule/Rule.g:1:16: AMPERCENT
+                // /Users/pem/github/tom/src/tom/gom/expander/rule/Rule.g:1:16: AMPERCENT
                 {
                 mAMPERCENT(); 
 
                 }
                 break;
             case 3 :
-                // /Users/jcb/workspace/tom/src/tom/gom/expander/rule/Rule.g:1:26: UNDERSCORE
+                // /Users/pem/github/tom/src/tom/gom/expander/rule/Rule.g:1:26: UNDERSCORE
                 {
                 mUNDERSCORE(); 
 
                 }
                 break;
             case 4 :
-                // /Users/jcb/workspace/tom/src/tom/gom/expander/rule/Rule.g:1:37: STAR
+                // /Users/pem/github/tom/src/tom/gom/expander/rule/Rule.g:1:37: STAR
                 {
                 mSTAR(); 
 
                 }
                 break;
             case 5 :
-                // /Users/jcb/workspace/tom/src/tom/gom/expander/rule/Rule.g:1:42: AT
+                // /Users/pem/github/tom/src/tom/gom/expander/rule/Rule.g:1:42: AT
                 {
                 mAT(); 
 
                 }
                 break;
             case 6 :
-                // /Users/jcb/workspace/tom/src/tom/gom/expander/rule/Rule.g:1:45: COLON
+                // /Users/pem/github/tom/src/tom/gom/expander/rule/Rule.g:1:45: COLON
                 {
                 mCOLON(); 
 
                 }
                 break;
             case 7 :
-                // /Users/jcb/workspace/tom/src/tom/gom/expander/rule/Rule.g:1:51: LPAR
+                // /Users/pem/github/tom/src/tom/gom/expander/rule/Rule.g:1:51: LPAR
                 {
                 mLPAR(); 
 
                 }
                 break;
             case 8 :
-                // /Users/jcb/workspace/tom/src/tom/gom/expander/rule/Rule.g:1:56: RPAR
+                // /Users/pem/github/tom/src/tom/gom/expander/rule/Rule.g:1:56: RPAR
                 {
                 mRPAR(); 
 
                 }
                 break;
             case 9 :
-                // /Users/jcb/workspace/tom/src/tom/gom/expander/rule/Rule.g:1:61: COMA
+                // /Users/pem/github/tom/src/tom/gom/expander/rule/Rule.g:1:61: COMA
                 {
                 mCOMA(); 
 
                 }
                 break;
             case 10 :
-                // /Users/jcb/workspace/tom/src/tom/gom/expander/rule/Rule.g:1:66: AND
+                // /Users/pem/github/tom/src/tom/gom/expander/rule/Rule.g:1:66: AND
                 {
                 mAND(); 
 
                 }
                 break;
             case 11 :
-                // /Users/jcb/workspace/tom/src/tom/gom/expander/rule/Rule.g:1:70: OR
+                // /Users/pem/github/tom/src/tom/gom/expander/rule/Rule.g:1:70: OR
                 {
                 mOR(); 
 
                 }
                 break;
             case 12 :
-                // /Users/jcb/workspace/tom/src/tom/gom/expander/rule/Rule.g:1:73: NOT
+                // /Users/pem/github/tom/src/tom/gom/expander/rule/Rule.g:1:73: NOT
                 {
                 mNOT(); 
 
                 }
                 break;
             case 13 :
-                // /Users/jcb/workspace/tom/src/tom/gom/expander/rule/Rule.g:1:77: EQUALS
+                // /Users/pem/github/tom/src/tom/gom/expander/rule/Rule.g:1:77: EQUALS
                 {
                 mEQUALS(); 
 
                 }
                 break;
             case 14 :
-                // /Users/jcb/workspace/tom/src/tom/gom/expander/rule/Rule.g:1:84: NOTEQUALS
+                // /Users/pem/github/tom/src/tom/gom/expander/rule/Rule.g:1:84: NOTEQUALS
                 {
                 mNOTEQUALS(); 
 
                 }
                 break;
             case 15 :
-                // /Users/jcb/workspace/tom/src/tom/gom/expander/rule/Rule.g:1:94: LEQ
+                // /Users/pem/github/tom/src/tom/gom/expander/rule/Rule.g:1:94: LEQ
                 {
                 mLEQ(); 
 
                 }
                 break;
             case 16 :
-                // /Users/jcb/workspace/tom/src/tom/gom/expander/rule/Rule.g:1:98: MATCH
+                // /Users/pem/github/tom/src/tom/gom/expander/rule/Rule.g:1:98: MATCH
                 {
                 mMATCH(); 
 
                 }
                 break;
             case 17 :
-                // /Users/jcb/workspace/tom/src/tom/gom/expander/rule/Rule.g:1:104: LT
+                // /Users/pem/github/tom/src/tom/gom/expander/rule/Rule.g:1:104: LT
                 {
                 mLT(); 
 
                 }
                 break;
             case 18 :
-                // /Users/jcb/workspace/tom/src/tom/gom/expander/rule/Rule.g:1:107: GEQ
+                // /Users/pem/github/tom/src/tom/gom/expander/rule/Rule.g:1:107: GEQ
                 {
                 mGEQ(); 
 
                 }
                 break;
             case 19 :
-                // /Users/jcb/workspace/tom/src/tom/gom/expander/rule/Rule.g:1:111: GT
+                // /Users/pem/github/tom/src/tom/gom/expander/rule/Rule.g:1:111: GT
                 {
                 mGT(); 
 
                 }
                 break;
             case 20 :
-                // /Users/jcb/workspace/tom/src/tom/gom/expander/rule/Rule.g:1:114: IF
+                // /Users/pem/github/tom/src/tom/gom/expander/rule/Rule.g:1:114: IF
                 {
                 mIF(); 
 
                 }
                 break;
             case 21 :
-                // /Users/jcb/workspace/tom/src/tom/gom/expander/rule/Rule.g:1:117: INT
+                // /Users/pem/github/tom/src/tom/gom/expander/rule/Rule.g:1:117: INT
                 {
                 mINT(); 
 
                 }
                 break;
             case 22 :
-                // /Users/jcb/workspace/tom/src/tom/gom/expander/rule/Rule.g:1:121: ESC
+                // /Users/pem/github/tom/src/tom/gom/expander/rule/Rule.g:1:121: ESC
                 {
                 mESC(); 
 
                 }
                 break;
             case 23 :
-                // /Users/jcb/workspace/tom/src/tom/gom/expander/rule/Rule.g:1:125: STRING
+                // /Users/pem/github/tom/src/tom/gom/expander/rule/Rule.g:1:125: STRING
                 {
                 mSTRING(); 
 
                 }
                 break;
             case 24 :
-                // /Users/jcb/workspace/tom/src/tom/gom/expander/rule/Rule.g:1:132: ID
+                // /Users/pem/github/tom/src/tom/gom/expander/rule/Rule.g:1:132: ID
                 {
                 mID(); 
 
                 }
                 break;
             case 25 :
-                // /Users/jcb/workspace/tom/src/tom/gom/expander/rule/Rule.g:1:135: WS
+                // /Users/pem/github/tom/src/tom/gom/expander/rule/Rule.g:1:135: WS
                 {
                 mWS(); 
 
                 }
                 break;
             case 26 :
-                // /Users/jcb/workspace/tom/src/tom/gom/expander/rule/Rule.g:1:138: SLCOMMENT
+                // /Users/pem/github/tom/src/tom/gom/expander/rule/Rule.g:1:138: SLCOMMENT
                 {
                 mSLCOMMENT(); 
 

@@ -2,7 +2,7 @@
  *
  * TOM - To One Matching Compiler
  *
- * Copyright (c) 2000-2014, Universite de Lorraine, Inria
+ * Copyright (c) 2000-2016, Universite de Lorraine, Inria
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -319,10 +319,10 @@ public class XMLToTNode {
     {{if ( (elt instanceof tom.library.adt.tnode.types.TNode) ) {if ( ((( tom.library.adt.tnode.types.TNode )elt) instanceof tom.library.adt.tnode.types.TNode) ) {if ( ((( tom.library.adt.tnode.types.TNode )(( tom.library.adt.tnode.types.TNode )elt)) instanceof tom.library.adt.tnode.types.tnode.AttributeNode) ) {if ( (list instanceof tom.library.adt.tnode.types.TNodeList) ) {if ( (((( tom.library.adt.tnode.types.TNodeList )(( tom.library.adt.tnode.types.TNodeList )list)) instanceof tom.library.adt.tnode.types.tnodelist.ConsconcTNode) || ((( tom.library.adt.tnode.types.TNodeList )(( tom.library.adt.tnode.types.TNodeList )list)) instanceof tom.library.adt.tnode.types.tnodelist.EmptyconcTNode)) ) {if ( (( tom.library.adt.tnode.types.TNodeList )list).isEmptyconcTNode() ) {
 
         return  tom.library.adt.tnode.types.tnodelist.ConsconcTNode.make(elt,tom_append_list_concTNode(list, tom.library.adt.tnode.types.tnodelist.EmptyconcTNode.make() )) ;
-      }}}}}}}{if ( (elt instanceof tom.library.adt.tnode.types.TNode) ) {if ( ((( tom.library.adt.tnode.types.TNode )elt) instanceof tom.library.adt.tnode.types.TNode) ) {if ( ((( tom.library.adt.tnode.types.TNode )(( tom.library.adt.tnode.types.TNode )elt)) instanceof tom.library.adt.tnode.types.tnode.AttributeNode) ) {if ( (list instanceof tom.library.adt.tnode.types.TNodeList) ) {if ( (((( tom.library.adt.tnode.types.TNodeList )(( tom.library.adt.tnode.types.TNodeList )list)) instanceof tom.library.adt.tnode.types.tnodelist.ConsconcTNode) || ((( tom.library.adt.tnode.types.TNodeList )(( tom.library.adt.tnode.types.TNodeList )list)) instanceof tom.library.adt.tnode.types.tnodelist.EmptyconcTNode)) ) {if (!( (( tom.library.adt.tnode.types.TNodeList )list).isEmptyconcTNode() )) { tom.library.adt.tnode.types.TNode  tomMatch755_15= (( tom.library.adt.tnode.types.TNodeList )list).getHeadconcTNode() ;if ( (tomMatch755_15 instanceof tom.library.adt.tnode.types.TNode) ) {if ( ((( tom.library.adt.tnode.types.TNode )tomMatch755_15) instanceof tom.library.adt.tnode.types.tnode.AttributeNode) ) {
+      }}}}}}}{if ( (elt instanceof tom.library.adt.tnode.types.TNode) ) {if ( ((( tom.library.adt.tnode.types.TNode )elt) instanceof tom.library.adt.tnode.types.TNode) ) {if ( ((( tom.library.adt.tnode.types.TNode )(( tom.library.adt.tnode.types.TNode )elt)) instanceof tom.library.adt.tnode.types.tnode.AttributeNode) ) {if ( (list instanceof tom.library.adt.tnode.types.TNodeList) ) {if ( (((( tom.library.adt.tnode.types.TNodeList )(( tom.library.adt.tnode.types.TNodeList )list)) instanceof tom.library.adt.tnode.types.tnodelist.ConsconcTNode) || ((( tom.library.adt.tnode.types.TNodeList )(( tom.library.adt.tnode.types.TNodeList )list)) instanceof tom.library.adt.tnode.types.tnodelist.EmptyconcTNode)) ) {if (!( (( tom.library.adt.tnode.types.TNodeList )list).isEmptyconcTNode() )) { tom.library.adt.tnode.types.TNode  tomMatch756_15= (( tom.library.adt.tnode.types.TNodeList )list).getHeadconcTNode() ;if ( (tomMatch756_15 instanceof tom.library.adt.tnode.types.TNode) ) {if ( ((( tom.library.adt.tnode.types.TNode )tomMatch756_15) instanceof tom.library.adt.tnode.types.tnode.AttributeNode) ) {
 
 
-        if( (( tom.library.adt.tnode.types.TNode )elt).getName() .compareTo( tomMatch755_15.getName() ) >= 0) {
+        if( (( tom.library.adt.tnode.types.TNode )elt).getName() .compareTo( tomMatch756_15.getName() ) >= 0) {
           TNodeList tl = insertSortedAttribute(elt, (( tom.library.adt.tnode.types.TNodeList )list).getTailconcTNode() );
           return  tom.library.adt.tnode.types.tnodelist.ConsconcTNode.make( (( tom.library.adt.tnode.types.TNodeList )list).getHeadconcTNode() ,tom_append_list_concTNode(tl, tom.library.adt.tnode.types.tnodelist.EmptyconcTNode.make() )) ;
         } else {

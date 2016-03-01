@@ -1,7 +1,7 @@
 /*
  * Gom
  *
- * Copyright (c) 2006-2014, Universite de Lorraine, Inria
+ * Copyright (c) 2006-2016, Universite de Lorraine, Inria
  * Nancy, France.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -93,7 +93,7 @@ public class HookCompiler {
       GomClassList classes,
       Map declToClassName) {
     /* for each hook, find the class, and attach the hook */
-    {{if ( (declList instanceof tom.gom.adt.gom.types.HookDeclList) ) {if ( (((( tom.gom.adt.gom.types.HookDeclList )(( tom.gom.adt.gom.types.HookDeclList )declList)) instanceof tom.gom.adt.gom.types.hookdecllist.ConsConcHookDecl) || ((( tom.gom.adt.gom.types.HookDeclList )(( tom.gom.adt.gom.types.HookDeclList )declList)) instanceof tom.gom.adt.gom.types.hookdecllist.EmptyConcHookDecl)) ) { tom.gom.adt.gom.types.HookDeclList  tomMatch623_end_4=(( tom.gom.adt.gom.types.HookDeclList )declList);do {{if (!( tomMatch623_end_4.isEmptyConcHookDecl() )) { tom.gom.adt.gom.types.HookDecl  tom_hook= tomMatch623_end_4.getHeadConcHookDecl() ;
+    {{if ( (declList instanceof tom.gom.adt.gom.types.HookDeclList) ) {if ( (((( tom.gom.adt.gom.types.HookDeclList )(( tom.gom.adt.gom.types.HookDeclList )declList)) instanceof tom.gom.adt.gom.types.hookdecllist.ConsConcHookDecl) || ((( tom.gom.adt.gom.types.HookDeclList )(( tom.gom.adt.gom.types.HookDeclList )declList)) instanceof tom.gom.adt.gom.types.hookdecllist.EmptyConcHookDecl)) ) { tom.gom.adt.gom.types.HookDeclList  tomMatch624_end_4=(( tom.gom.adt.gom.types.HookDeclList )declList);do {{if (!( tomMatch624_end_4.isEmptyConcHookDecl() )) { tom.gom.adt.gom.types.HookDecl  tom_hook= tomMatch624_end_4.getHeadConcHookDecl() ;
 
         Decl decl = tom_hook.getPointcut();
         {{if ( (decl instanceof tom.gom.adt.gom.types.Decl) ) {if ( ((( tom.gom.adt.gom.types.Decl )decl) instanceof tom.gom.adt.gom.types.Decl) ) {if ( ((( tom.gom.adt.gom.types.Decl )(( tom.gom.adt.gom.types.Decl )decl)) instanceof tom.gom.adt.gom.types.decl.CutModule) ) {
@@ -140,7 +140,7 @@ public class HookCompiler {
             }
           }}}}}
 
-      }if ( tomMatch623_end_4.isEmptyConcHookDecl() ) {tomMatch623_end_4=(( tom.gom.adt.gom.types.HookDeclList )declList);} else {tomMatch623_end_4= tomMatch623_end_4.getTailConcHookDecl() ;}}} while(!( (tomMatch623_end_4==(( tom.gom.adt.gom.types.HookDeclList )declList)) ));}}}}
+      }if ( tomMatch624_end_4.isEmptyConcHookDecl() ) {tomMatch624_end_4=(( tom.gom.adt.gom.types.HookDeclList )declList);} else {tomMatch624_end_4= tomMatch624_end_4.getTailConcHookDecl() ;}}} while(!( (tomMatch624_end_4==(( tom.gom.adt.gom.types.HookDeclList )declList)) ));}}}}
 
     return classes;
   }

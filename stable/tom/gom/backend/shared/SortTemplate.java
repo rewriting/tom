@@ -1,7 +1,7 @@
 /*
  * Gom
  *
- * Copyright (c) 2006-2014, Universite de Lorraine, Inria
+ * Copyright (c) 2006-2016, Universite de Lorraine, Inria
  * Nancy, France.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -253,7 +253,33 @@ writer.write("\n}\n"
     /* abstract method to compare two terms represented by objects without maximal sharing */
     /* used in the mapping */
     if(!maximalsharing) {
-      writer.write("\n  /**\n   * Abstract method to compare two terms represented by objects without maximal sharing\n   *\n   * @param o Object used to compare\n   * @return true if the two objects are equal\n   */\n  public abstract boolean deepEquals(Object o);\n"
+      writer.write("\n  /**\n   * Abstract method to compare two terms represented by objects without maximal sharing\n   *\n   * @param o Object used to compare\n   * @return true if the two objects are equal\n   */\n  public abstract boolean deepEquals(Object o);\n\n\n"
+
+
+
+
+
+
+
+
+
+);
+    }
+
+    if(maximalsharing) {
+      writer.write("\n  /**\n   * Checks if an object is equal\n   *\n   * @param o object which is compared\n   * @return true if objects are equal, false otherwise\n   */\n  @Override\n  public boolean equals(Object o) { return this == o; }\n"
+
+
+
+
+
+
+
+
+);
+    } else {
+      writer.write("\n  /**\n   * Checks if an object is equal\n   *\n   * @param o object which is compared\n   * @return true if objects are equal, false otherwise\n   */\n  @Override\n  public boolean equals(Object o) { return this.deepEquals(o); }\n"
+
 
 
 
@@ -409,6 +435,9 @@ private String generateSum() {
   String res = null;
   Set<String> toInitialize = new HashSet<String>();
 
+  //System.out.println("operatorClasses = " + operatorClasses);
+  //System.out.println("variadicOperatorList = " + variadicOperatorList);
+
   {{if ( (operatorClasses instanceof tom.gom.adt.objects.types.GomClassList) ) {if ( (((( tom.gom.adt.objects.types.GomClassList )(( tom.gom.adt.objects.types.GomClassList )operatorClasses)) instanceof tom.gom.adt.objects.types.gomclasslist.ConsConcGomClass) || ((( tom.gom.adt.objects.types.GomClassList )(( tom.gom.adt.objects.types.GomClassList )operatorClasses)) instanceof tom.gom.adt.objects.types.gomclasslist.EmptyConcGomClass)) ) { tom.gom.adt.objects.types.GomClassList  tomMatch584_end_4=(( tom.gom.adt.objects.types.GomClassList )operatorClasses);do {{if (!( tomMatch584_end_4.isEmptyConcGomClass() )) { tom.gom.adt.objects.types.GomClass  tomMatch584_10= tomMatch584_end_4.getHeadConcGomClass() ;if ( (tomMatch584_10 instanceof tom.gom.adt.objects.types.GomClass) ) {if ( ((( tom.gom.adt.objects.types.GomClass )tomMatch584_10) instanceof tom.gom.adt.objects.types.gomclass.OperatorClass) ) { tom.gom.adt.objects.types.ClassName  tomMatch584_8= tomMatch584_10.getSortName() ;if ( (tomMatch584_8 instanceof tom.gom.adt.objects.types.ClassName) ) {if ( ((( tom.gom.adt.objects.types.ClassName )tomMatch584_8) instanceof tom.gom.adt.objects.types.classname.ClassName) ) { tom.gom.adt.objects.types.SlotFieldList  tom_slotList= tomMatch584_10.getSlotFields() ;if (  tomMatch584_8.getName() .equals(className()) ) {
 
       String exp = fullClassName( tomMatch584_10.getClassName() ) + ".funMake()";
@@ -428,7 +457,35 @@ private String generateSum() {
         }}}}}if ( tomMatch585_end_6.isEmptyConcSlotField() ) {tomMatch585_end_6=(( tom.gom.adt.objects.types.SlotFieldList )tom_slotList);} else {tomMatch585_end_6= tomMatch585_end_6.getTailConcSlotField() ;}}} while(!( (tomMatch585_end_6==(( tom.gom.adt.objects.types.SlotFieldList )tom_slotList)) ));}}}}
 
       res = (res==null)?exp:res+"\n        .plus(" + exp + ")";
-    }}}}}}if ( tomMatch584_end_4.isEmptyConcGomClass() ) {tomMatch584_end_4=(( tom.gom.adt.objects.types.GomClassList )operatorClasses);} else {tomMatch584_end_4= tomMatch584_end_4.getTailConcGomClass() ;}}} while(!( (tomMatch584_end_4==(( tom.gom.adt.objects.types.GomClassList )operatorClasses)) ));}}}}
+    }}}}}}if ( tomMatch584_end_4.isEmptyConcGomClass() ) {tomMatch584_end_4=(( tom.gom.adt.objects.types.GomClassList )operatorClasses);} else {tomMatch584_end_4= tomMatch584_end_4.getTailConcGomClass() ;}}} while(!( (tomMatch584_end_4==(( tom.gom.adt.objects.types.GomClassList )operatorClasses)) ));}}}{if ( (operatorClasses instanceof tom.gom.adt.objects.types.GomClassList) ) {if ( (((( tom.gom.adt.objects.types.GomClassList )(( tom.gom.adt.objects.types.GomClassList )operatorClasses)) instanceof tom.gom.adt.objects.types.gomclasslist.ConsConcGomClass) || ((( tom.gom.adt.objects.types.GomClassList )(( tom.gom.adt.objects.types.GomClassList )operatorClasses)) instanceof tom.gom.adt.objects.types.gomclasslist.EmptyConcGomClass)) ) { tom.gom.adt.objects.types.GomClassList  tomMatch584_end_19=(( tom.gom.adt.objects.types.GomClassList )operatorClasses);do {{if (!( tomMatch584_end_19.isEmptyConcGomClass() )) { tom.gom.adt.objects.types.GomClass  tomMatch584_26= tomMatch584_end_19.getHeadConcGomClass() ;if ( (tomMatch584_26 instanceof tom.gom.adt.objects.types.GomClass) ) {if ( ((( tom.gom.adt.objects.types.GomClass )tomMatch584_26) instanceof tom.gom.adt.objects.types.gomclass.VariadicOperatorClass) ) { tom.gom.adt.objects.types.ClassName  tomMatch584_23= tomMatch584_26.getSortName() ; tom.gom.adt.objects.types.GomClass  tomMatch584_24= tomMatch584_26.getEmpty() ; tom.gom.adt.objects.types.GomClass  tomMatch584_25= tomMatch584_26.getCons() ;if ( (tomMatch584_23 instanceof tom.gom.adt.objects.types.ClassName) ) {if ( ((( tom.gom.adt.objects.types.ClassName )tomMatch584_23) instanceof tom.gom.adt.objects.types.classname.ClassName) ) {if ( (tomMatch584_24 instanceof tom.gom.adt.objects.types.GomClass) ) {if ( ((( tom.gom.adt.objects.types.GomClass )tomMatch584_24) instanceof tom.gom.adt.objects.types.gomclass.OperatorClass) ) { tom.gom.adt.objects.types.ClassName  tomMatch584_32= tomMatch584_24.getSortName() ;if ( (tomMatch584_32 instanceof tom.gom.adt.objects.types.ClassName) ) {if ( ((( tom.gom.adt.objects.types.ClassName )tomMatch584_32) instanceof tom.gom.adt.objects.types.classname.ClassName) ) {if ( (tomMatch584_25 instanceof tom.gom.adt.objects.types.GomClass) ) {if ( ((( tom.gom.adt.objects.types.GomClass )tomMatch584_25) instanceof tom.gom.adt.objects.types.gomclass.OperatorClass) ) { tom.gom.adt.objects.types.ClassName  tomMatch584_40= tomMatch584_25.getSortName() ;if ( (tomMatch584_40 instanceof tom.gom.adt.objects.types.ClassName) ) {if ( ((( tom.gom.adt.objects.types.ClassName )tomMatch584_40) instanceof tom.gom.adt.objects.types.classname.ClassName) ) { tom.gom.adt.objects.types.SlotFieldList  tom_consSlotList= tomMatch584_25.getSlotFields() ;if (  tomMatch584_23.getName() .equals(className()) ) {
+
+
+
+
+
+      String exp = fullClassName( tomMatch584_24.getClassName() ) + ".funMake().apply(" + fullClassName() + ".tmpenum" + className() + ")";
+      res = (res==null)?exp:res+"\n        .plus(" + exp + ")";
+      
+      exp = fullClassName( tomMatch584_25.getClassName() ) + ".funMake()";
+      {{if ( (tom_consSlotList instanceof tom.gom.adt.objects.types.SlotFieldList) ) {if ( (((( tom.gom.adt.objects.types.SlotFieldList )(( tom.gom.adt.objects.types.SlotFieldList )tom_consSlotList)) instanceof tom.gom.adt.objects.types.slotfieldlist.ConsConcSlotField) || ((( tom.gom.adt.objects.types.SlotFieldList )(( tom.gom.adt.objects.types.SlotFieldList )tom_consSlotList)) instanceof tom.gom.adt.objects.types.slotfieldlist.EmptyConcSlotField)) ) {if ( (( tom.gom.adt.objects.types.SlotFieldList )tom_consSlotList).isEmptyConcSlotField() ) {
+
+          exp += ".apply(" + fullClassName() + ".tmpenum" + className() + ")";
+        }}}}{if ( (tom_consSlotList instanceof tom.gom.adt.objects.types.SlotFieldList) ) {if ( (((( tom.gom.adt.objects.types.SlotFieldList )(( tom.gom.adt.objects.types.SlotFieldList )tom_consSlotList)) instanceof tom.gom.adt.objects.types.slotfieldlist.ConsConcSlotField) || ((( tom.gom.adt.objects.types.SlotFieldList )(( tom.gom.adt.objects.types.SlotFieldList )tom_consSlotList)) instanceof tom.gom.adt.objects.types.slotfieldlist.EmptyConcSlotField)) ) { tom.gom.adt.objects.types.SlotFieldList  tomMatch586_end_6=(( tom.gom.adt.objects.types.SlotFieldList )tom_consSlotList);do {{if (!( tomMatch586_end_6.isEmptyConcSlotField() )) { tom.gom.adt.objects.types.SlotField  tomMatch586_10= tomMatch586_end_6.getHeadConcSlotField() ;if ( (tomMatch586_10 instanceof tom.gom.adt.objects.types.SlotField) ) {if ( ((( tom.gom.adt.objects.types.SlotField )tomMatch586_10) instanceof tom.gom.adt.objects.types.slotfield.SlotField) ) { tom.gom.adt.objects.types.ClassName  tomMatch586_9= tomMatch586_10.getDomain() ;if ( (tomMatch586_9 instanceof tom.gom.adt.objects.types.ClassName) ) {if ( ((( tom.gom.adt.objects.types.ClassName )tomMatch586_9) instanceof tom.gom.adt.objects.types.classname.ClassName) ) { String  tom_domainName= tomMatch586_9.getName() ; tom.gom.adt.objects.types.ClassName  tom_domain=tomMatch586_9;
+
+          if(getGomEnvironment().isBuiltinClass(tom_domain)) {
+            exp += ".apply(tom.library.enumerator.Combinators.make" + tom_domainName+ "())";
+          } else {
+            exp += ".apply(" + fullClassName(tom_domain) + ".tmpenum" + tom_domainName+ ")";
+            if(!fullClassName().equals(fullClassName(tom_domain))) {
+              toInitialize.add(fullClassName(tom_domain));
+            }
+          }
+        }}}}}if ( tomMatch586_end_6.isEmptyConcSlotField() ) {tomMatch586_end_6=(( tom.gom.adt.objects.types.SlotFieldList )tom_consSlotList);} else {tomMatch586_end_6= tomMatch586_end_6.getTailConcSlotField() ;}}} while(!( (tomMatch586_end_6==(( tom.gom.adt.objects.types.SlotFieldList )tom_consSlotList)) ));}}}}
+
+      res = (res==null)?exp:res+"\n        .plus(" + exp + ")";
+    }}}}}}}}}}}}}}if ( tomMatch584_end_19.isEmptyConcGomClass() ) {tomMatch584_end_19=(( tom.gom.adt.objects.types.GomClassList )operatorClasses);} else {tomMatch584_end_19= tomMatch584_end_19.getTailConcGomClass() ;}}} while(!( (tomMatch584_end_19==(( tom.gom.adt.objects.types.GomClassList )operatorClasses)) ));}}}}
+
+
 
   res += ";\n\n";
   for(String className:toInitialize) {

@@ -2,7 +2,7 @@
  *
  * TOM - To One Matching Compiler
  *
- * Copyright (c) 2000-2014, Universite de Lorraine, Inria
+ * Copyright (c) 2000-2016, Universite de Lorraine, Inria
  * Nancy, France.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -131,9 +131,9 @@ public abstract class GenericGenerator extends AbstractGenerator {
 
   protected void buildSymbolDecl(int deep, String tomName, String moduleName) throws IOException {
     TomSymbol tomSymbol = getSymbolTable(moduleName).getSymbolFromName(tomName);
-//    System.out.println("### DEBUG GenericGenerator ###");
+//    System.out.println("### DEBUG�GenericGenerator ###");
 //    System.out.println("tomName= "+tomName+"\nmoduleName= "+moduleName+"\ntomSymbol= "+tomSymbol);
-//    System.out.println("### /DEBUG GenericGenerator ###");
+//    System.out.println("### /DEBUG�GenericGenerator ###");
     OptionList optionList = tomSymbol.getOptions();
     PairNameDeclList pairNameDeclList = tomSymbol.getPairNameDeclList();
     // inspect the optionList
@@ -266,7 +266,7 @@ public abstract class GenericGenerator extends AbstractGenerator {
   }
 
   protected void buildExpIsSort(int deep, String type, BQTerm exp, String moduleName) throws IOException {
-	deep = 0; //to avoid usless spaces inside the code  
+    deep = 0; //to avoid usless spaces inside the code  
     if(getSymbolTable(moduleName).isBuiltinType(type)) {
       generateExpression(deep, tom.engine.adt.tomexpression.types.expression.TrueTL.make() ,moduleName);
       return;
@@ -282,7 +282,7 @@ public abstract class GenericGenerator extends AbstractGenerator {
   }
 
   protected void buildExpIsFsym(int deep, String opname, BQTerm exp, String moduleName) throws IOException {
-	deep = 0; //to avoid usless spaces inside the code  
+    deep = 0; //to avoid usless spaces inside the code  
     String template = getSymbolTable(moduleName).getIsFsym(opname);
     if(instantiateTemplate(deep,template,opname, tom.engine.adt.code.types.bqtermlist.ConsconcBQTerm.make(exp, tom.engine.adt.code.types.bqtermlist.EmptyconcBQTerm.make() ) ,moduleName) == false) {
       String s = isFsymMap.get(opname);
@@ -290,7 +290,7 @@ public abstract class GenericGenerator extends AbstractGenerator {
         s = "tom_is_fun_sym_" + opname + "(";
       }
       output.write(s);
-      //DEBUG System.out.println("generate BQTerm for '" + exp + "'");
+      //System.out.println("generate BQTerm for '" + exp + "'");
       generateBQTerm(deep,exp,moduleName);
       output.write(")");
     }
@@ -402,7 +402,7 @@ public abstract class GenericGenerator extends AbstractGenerator {
   }
 
   /*
-   * generate the function declaration when no substituion has been done
+   * generate the function declaration when no substitution has been done
    */
   protected void buildIsFsymDecl(int deep, String tomName, String varname,
                                  TargetLanguageType tlType, Expression code, String moduleName) throws IOException {
@@ -420,13 +420,12 @@ public abstract class GenericGenerator extends AbstractGenerator {
     }
     if(!inline || !code.isCode() || !inlined) {
       TomType returnType = getSymbolTable(moduleName).getBooleanType();
-      String argType;
       // [02/12/2010 pem] precise type is no longer necessary
       // [28/01/2011 tavaresc] we need precise types for those methods
       // automatically generated for mappings (e.g. tom_is_fun_sym_toto) when
       // using builtin types (e.g. boolean)
 
-      argType = TomBase.getTLCode(tlType);
+      String argType = TomBase.getTLCode(tlType);
       genDeclInstr(TomBase.getTLType(returnType), "tom_is_fun_sym", opname,
           new String[] { argType, varname },  tom.engine.adt.tominstruction.types.instruction.Return.make( tom.engine.adt.code.types.bqterm.ExpressionToBQTerm.make(code) ) ,deep,moduleName);
     }
@@ -902,18 +901,11 @@ public abstract class GenericGenerator extends AbstractGenerator {
 
         String utype = glType;
 
-        //String listCast = "(" + glType + ")";
-        //String eltCast = "(" + TomBase.getTLType(eltType) + ")";
-        //String make_empty = listCast + "tom_empty_array_" + name;
-        //String make_insert = listCast + "tom_cons_array_" + name;
-        //String get_element = eltCast + "tom_get_element_" + name +"_" + tomType;
-        //String get_size = "tom_get_size_" + name +"_" + tomType;
-
         String s = "";
- if(getSymbolTable(moduleName).isUsedSymbolDestructor(name)) {
+        if(getSymbolTable(moduleName).isUsedSymbolDestructor(name)) {
   	           // add this test to avoid generating get_slice and append_array when
   	           // the constructor is not used in any matching
-        s = "\n  "+modifier+" "+utype+" tom_get_slice_"+name+"("+utype+" subject, int begin, int end) {\n    "+glType+" result = "+getMakeEmptyArray(name,"end-begin",moduleName)+";\n    while(begin!=end) {\n      result = "+getMakeAddArray(name,getGetElementArray(name,tomType,"subject","begin",moduleName),"result",moduleName)+";\n      begin++;\n    }\n    return result;\n  }\n\n  "+modifier+" "+utype+" tom_append_array_"+name+"("+utype+" l2, "+utype+" l1) {\n    int size1 = "+getGetSizeArray(name,tomType,"l1",moduleName)+";\n    int size2 = "+getGetSizeArray(name,tomType,"l2",moduleName)+";\n    int index;\n    "+glType+" result = "+getMakeEmptyArray(name,"size1+size2",moduleName)+";\n    index=size1;\n    while(index >0) {\n      result = "+getMakeAddArray(name,getGetElementArray(name,tomType,"l1","size1-index",moduleName),"result",moduleName)+";\n      index--;\n    }\n\n    index=size2;\n    while(index > 0) {\n      result = "+getMakeAddArray(name,getGetElementArray(name,tomType,"l2","size2-index",moduleName),"result",moduleName)+";\n      index--;\n    }\n    return result;\n  }"
+          s = "\n  "+modifier+" "+utype+" tom_get_slice_"+name+"("+utype+" subject, int begin, int end) {\n    "+glType+" result = "+getMakeEmptyArray(name,"end-begin",moduleName)+";\n    while(begin!=end) {\n      result = "+getMakeAddArray(name,getGetElementArray(name,tomType,"subject","begin",moduleName),"result",moduleName)+";\n      begin++;\n    }\n    return result;\n  }\n\n  "+modifier+" "+utype+" tom_append_array_"+name+"("+utype+" l2, "+utype+" l1) {\n    int size1 = "+getGetSizeArray(name,tomType,"l1",moduleName)+";\n    int size2 = "+getGetSizeArray(name,tomType,"l2",moduleName)+";\n    int index;\n    "+glType+" result = "+getMakeEmptyArray(name,"size1+size2",moduleName)+";\n    index=size1;\n    while(index >0) {\n      result = "+getMakeAddArray(name,getGetElementArray(name,tomType,"l1","size1-index",moduleName),"result",moduleName)+";\n      index--;\n    }\n\n    index=size2;\n    while(index > 0) {\n      result = "+getMakeAddArray(name,getGetElementArray(name,tomType,"l2","size2-index",moduleName),"result",moduleName)+";\n      index--;\n    }\n    return result;\n  }"
 
 
 

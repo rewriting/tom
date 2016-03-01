@@ -1,4 +1,4 @@
-// $ANTLR 3.2 Sep 23, 2009 12:02:23 /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g 2013-03-21 14:06:45
+// $ANTLR 3.2 Sep 23, 2009 12:02:23 /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g 2016-03-01 15:43:27
 
 package tom.engine.parser.antlr3;
 import org.antlr.runtime.tree.Tree;
@@ -17,7 +17,7 @@ import org.antlr.runtime.tree.*;
 
 public class miniTomParser extends Parser {
     public static final String[] tokenNames = new String[] {
-        "<invalid>", "<EOR>", "<DOWN>", "<UP>", "Code", "IsSort", "DoWhileExpression", "ACMatchLoop", "ConstraintToExpression", "GetSliceArray", "GetSliceList", "GetElement", "GetSize", "Substract", "SubstractOne", "AddOne", "IsEmptyArray", "IsEmptyList", "GetTail", "GetHead", "IsFsym", "GetSlot", "Cast", "EqualBQTerm", "EqualTerm", "Integer", "FalseTL", "TrueTL", "Conditional", "AntiMatchExpression", "LessOrEqualThan", "LessThan", "GreaterOrEqualThan", "GreaterThan", "OrConnector", "OrExpressionDisjunction", "Or", "And", "Negation", "Bottom", "TomInstructionToExpression", "BQTermToExpression", "Cst_ConstantString", "Cst_ConstantDouble", "Cst_ConstantChar", "Cst_ConstantLong", "Cst_ConstantInt", "Cst_Symbol", "Cst_TheoryDEFAULT", "Cst_TheoryAC", "Cst_TheoryAU", "ConcCstSymbol", "Cst_Slot", "Cst_StrategyConstruct", "Cst_BQTermToBlock", "Cst_IncludeConstruct", "Cst_MetaQuoteConstruct", "Cst_TypetermConstruct", "Cst_OpListConstruct", "Cst_OpArrayConstruct", "Cst_OpConstruct", "Cst_MatchConstruct", "HOSTBLOCK", "Cst_PairPattern", "ConcCstPairPattern", "Cst_TermAppl", "Cst_TermVariableStar", "Cst_TermVariable", "ConcCstConstraint", "Cst_ConstraintAction", "Cst_OriginTracking", "Cst_Label", "NodeString", "ConcCstVisit", "ConcCstConstraintAction", "Cst_RecordAppl", "Cst_Appl", "Cst_UnamedVariableStar", "Cst_UnamedVariable", "Cst_ConstantStar", "Cst_Constant", "Cst_VariableStar", "Cst_Variable", "Cst_AnnotatedPattern", "Cst_Anti", "ConcCstBQTerm", "ConcCstTerm", "ConcCstOperator", "ConcCstName", "ConcCstPattern", "ConcCstOption", "ConcCstPairSlotBQTerm", "Cst_Program", "Cst_TypeUnknown", "Cst_Type", "Cst_PairSlotBQTerm", "Cst_VisitTerm", "Cst_Equals", "Cst_IsSort", "Cst_Implement", "Cst_MakeEmptyList", "Cst_Make", "Cst_MakeAppend", "Cst_GetElement", "Cst_MakeInsert", "Cst_GetSlot", "Cst_GetDefault", "Cst_GetTail", "Cst_GetSize", "Cst_MakeEmptyArray", "Cst_IsEmpty", "Cst_GetHead", "Cst_IsFsym", "NodeInt", "ConcCstBlock", "Cst_EmptyName", "Cst_Name", "ConcCstSlot", "Cst_NumDifferent", "Cst_NumEqualTo", "Cst_NumGreaterOrEqualTo", "Cst_NumGreaterThan", "Cst_NumLessOrEqualTo", "Cst_NumLessThan", "Cst_OrConstraint", "Cst_AndConstraint", "Cst_MatchArgumentConstraint", "Cst_MatchTermConstraint", "Cst_BQConstant", "Cst_ITL", "Cst_BQComposite", "Cst_BQDefault", "Cst_BQVarStar", "Cst_BQVar", "Cst_BQRecordAppl", "Cst_BQAppl", "AntiName", "EmptyName", "PositionName", "Name", "concTomNumber", "concTomName", "NameNumber", "RenamedVar", "AbsVar", "Position", "Save", "End", "Begin", "IndexNumber", "ListNumber", "PatternNumber", "MatchNumber", "UsedType", "UsedSymbolAC", "UsedSymbolDestructor", "UsedSymbolConstructor", "ResolveStratBlock", "VisitTerm", "concResolveStratElement", "concTomSymbol", "Entry", "concTomVisit", "concTomEntry", "TransfoStratInfo", "ResolveStratElement", "concElementaryTransformation", "concResolveStratBlock", "TextPosition", "StructTable", "ElementaryTransformation", "Symbol", "EmptySymbol", "Table", "TypeForVariable", "DefinedSymbol", "noOption", "ACSymbol", "ImplicitXMLChild", "ImplicitXMLAttribut", "ModuleName", "Debug", "Label", "MatchingTheory", "OriginalText", "OriginTracking", "GeneratedMatch", "TomTermToOption", "TomNameToOption", "DeclarationToOption", "concOption", "concConstraintInstruction", "concInstruction", "Resolve", "TracelinkPopulateResolve", "Tracelink", "RawAction", "CompiledPattern", "CompiledMatch", "Match", "NamedBlock", "UnamedBlock", "AbstractBlock", "Nop", "Return", "AssignArray", "Assign", "LetRef", "Let", "WhileDo", "DoWhile", "If", "CodeToInstruction", "ExpressionToInstruction", "BQTermToInstruction", "concRuleInstruction", "concRefClassTracelinkInstruction", "RefClassTracelinkInstruction", "ConstraintInstruction", "RuleInstruction", "EmptyTargetLanguageType", "TLType", "concTypeOption", "concTomType", "TypeVar", "EmptyType", "TypesToType", "Codomain", "Type", "SubtypeDecl", "WithSymbol", "IntegerPattern", "FalsePattern", "TruePattern", "TestVar", "Automata", "AntiTerm", "TomSymbolToTomTerm", "VariableStar", "Variable", "XMLAppl", "RecordAppl", "TermAppl", "concTomTerm", "concConstraint", "EmptyArrayConstraint", "EmptyListConstraint", "NumericConstraint", "AntiMatchConstraint", "MatchConstraint", "OrConstraintDisjunction", "OrConstraint", "AndConstraint", "IsSortConstraint", "Negate", "FalseConstraint", "TrueConstraint", "AssignPositionTo", "AliasTo", "NumEqual", "NumDifferent", "NumGreaterOrEqualThan", "NumGreaterThan", "NumLessOrEqualThan", "NumLessThan", "TomInclude", "Tom", "BQTermToCode", "DeclarationToCode", "InstructionToCode", "TargetLanguageToCode", "noTL", "Comment", "ITL", "TL", "ListTail", "ListHead", "VariableHeadArray", "VariableHeadList", "Subterm", "SymbolOf", "ExpressionToBQTerm", "BuildAppendArray", "BuildConsArray", "BuildEmptyArray", "BuildAppendList", "BuildConsList", "BuildEmptyList", "BuildTerm", "BuildConstant", "FunctionCall", "ReferencerBQTerm", "Composite", "BQDefault", "BQVariableStar", "BQVariable", "BQRecordAppl", "BQAppl", "concBQTerm", "CompositeTL", "CompositeBQTerm", "concCode", "AU", "AC", "Unitary", "Associative", "Syntactic", "concElementaryTheory", "PairNameOptions", "concTypeConstraint", "FalseTypeConstraint", "Subtype", "Equation", "concDeclaration", "BQTermToDeclaration", "ACSymbolDecl", "AbstractDecl", "EmptyDeclaration", "ArraySymbolDecl", "ListSymbolDecl", "SymbolDecl", "IntrospectorClass", "Class", "MethodDef", "FunctionDef", "ReferenceClass", "ResolveMakeDecl", "ResolveGetSlotDecl", "ResolveIsFsymDecl", "ResolveClassDecl", "ResolveInverseLinksDecl", "ResolveStratDecl", "Transformation", "Strategy", "MakeDecl", "MakeAddArray", "MakeEmptyArray", "GetSizeDecl", "GetElementDecl", "MakeAddList", "MakeEmptyList", "IsEmptyDecl", "GetTailDecl", "GetHeadDecl", "IsSortDecl", "EqualTermDecl", "ImplementDecl", "GetDefaultDecl", "GetSlotDecl", "IsFsymDecl", "TypeTermDecl", "concPairNameDecl", "PairNameDecl", "PairSlotBQTerm", "concSlot", "concBQSlot", "PairSlotAppl", "LBR", "IDENTIFIER", "RBR", "LPAR", "RPAR", "EXTENDS", "BQUOTE", "VISIT", "COLON", "ARROW", "COMMA", "STAR", "AND", "OR", "LARROW", "GREATERTHAN", "GREATEROREQU", "LOWERTHAN", "LOWEROREQU", "DOUBLEEQUAL", "DIFFERENT", "AT", "ANTI", "UNDERSCORE", "PIPE", "QMARK", "DQMARK", "INTEGER", "LONG", "CHAR", "DOUBLE", "STRING", "LSQUAREBR", "RSQUAREBR", "EQUAL", "KEYWORD_IS_FSYM", "KEYWORD_GET_SLOT", "KEYWORD_MAKE", "KEYWORD_GET_DEFAULT", "KEYWORD_IMPLEMENT", "KEYWORD_GET_HEAD", "KEYWORD_GET_TAIL", "KEYWORD_IS_EMPTY", "KEYWORD_MAKE_EMPTY", "KEYWORD_MAKE_INSERT", "KEYWORD_GET_ELEMENT", "KEYWORD_GET_SIZE", "KEYWORD_MAKE_APPEND", "KEYWORD_IS_SORT", "KEYWORD_EQUALS", "DQUOTE", "SQUOTE", "LETTER", "DIGIT", "MINUS", "UNSIGNED_DOUBLE", "LONG_SUFFIX", "HEX_DIGIT", "ESC", "WS", "SL_COMMENT", "ML_COMMENT", "DEFAULT"
+        "<invalid>", "<EOR>", "<DOWN>", "<UP>", "Code", "IsSort", "DoWhileExpression", "ACMatchLoop", "ConstraintToExpression", "GetSliceArray", "GetSliceList", "GetElement", "GetSize", "Substract", "SubstractOne", "AddOne", "IsEmptyArray", "IsEmptyList", "GetTail", "GetHead", "IsFsym", "GetSlot", "Cast", "EqualBQTerm", "EqualTerm", "Integer", "FalseTL", "TrueTL", "Conditional", "AntiMatchExpression", "LessOrEqualThan", "LessThan", "GreaterOrEqualThan", "GreaterThan", "OrConnector", "OrExpressionDisjunction", "Or", "And", "Negation", "Bottom", "TomInstructionToExpression", "BQTermToExpression", "Cst_ConstantString", "Cst_ConstantDouble", "Cst_ConstantChar", "Cst_ConstantLong", "Cst_ConstantInt", "Cst_Symbol", "Cst_TheoryDEFAULT", "Cst_TheoryAC", "Cst_TheoryAU", "ConcCstSymbol", "Cst_Slot", "Cst_StrategyConstruct", "Cst_BQTermToBlock", "Cst_IncludeConstruct", "Cst_MetaQuoteConstruct", "Cst_TypetermConstruct", "Cst_OpListConstruct", "Cst_OpArrayConstruct", "Cst_OpConstruct", "Cst_MatchConstruct", "HOSTBLOCK", "Cst_PairPattern", "ConcCstPairPattern", "Cst_TermAppl", "Cst_TermVariableStar", "Cst_TermVariable", "ConcCstConstraint", "Cst_ConstraintAction", "Cst_OriginTracking", "Cst_Label", "NodeString", "ConcCstVisit", "ConcCstConstraintAction", "Cst_RecordAppl", "Cst_Appl", "Cst_UnamedVariableStar", "Cst_UnamedVariable", "Cst_ConstantStar", "Cst_Constant", "Cst_VariableStar", "Cst_Variable", "Cst_AnnotatedPattern", "Cst_Anti", "ConcCstBQTerm", "ConcCstTerm", "ConcCstOperator", "ConcCstName", "ConcCstPattern", "ConcCstOption", "ConcCstPairSlotBQTerm", "Cst_Program", "Cst_PairSlotBQTerm", "Cst_TypeUnknown", "Cst_Type", "Cst_VisitTerm", "Cst_Equals", "Cst_IsSort", "Cst_Implement", "Cst_MakeEmptyList", "Cst_Make", "Cst_MakeAppend", "Cst_GetElement", "Cst_MakeInsert", "Cst_GetSlot", "Cst_GetDefault", "Cst_GetTail", "Cst_GetSize", "Cst_MakeEmptyArray", "Cst_IsEmpty", "Cst_GetHead", "Cst_IsFsym", "NodeInt", "ConcCstBlock", "Cst_EmptyName", "Cst_Name", "ConcCstSlot", "Cst_NumDifferent", "Cst_NumEqualTo", "Cst_NumGreaterOrEqualTo", "Cst_NumGreaterThan", "Cst_NumLessOrEqualTo", "Cst_NumLessThan", "Cst_OrConstraint", "Cst_AndConstraint", "Cst_MatchArgumentConstraint", "Cst_MatchTermConstraint", "Cst_BQConstant", "Cst_ITL", "Cst_BQComposite", "Cst_BQDefault", "Cst_BQVarStar", "Cst_BQVar", "Cst_BQRecordAppl", "Cst_BQAppl", "AntiName", "EmptyName", "PositionName", "Name", "concTomNumber", "concTomName", "NameNumber", "RenamedVar", "AbsVar", "Position", "Save", "End", "Begin", "IndexNumber", "ListNumber", "PatternNumber", "MatchNumber", "UsedType", "UsedSymbolAC", "UsedSymbolDestructor", "UsedSymbolConstructor", "ResolveStratBlock", "VisitTerm", "concResolveStratElement", "concTomSymbol", "concTomVisit", "Entry", "concTomEntry", "TransfoStratInfo", "ResolveStratElement", "concElementaryTransformation", "concResolveStratBlock", "TextPosition", "StructTable", "ElementaryTransformation", "Symbol", "EmptySymbol", "Table", "TypeForVariable", "DefinedSymbol", "noOption", "ACSymbol", "ImplicitXMLChild", "ImplicitXMLAttribut", "ModuleName", "Debug", "Label", "MatchingTheory", "OriginalText", "OriginTracking", "GeneratedMatch", "TomTermToOption", "TomNameToOption", "DeclarationToOption", "concOption", "concConstraintInstruction", "concInstruction", "Resolve", "TracelinkPopulateResolve", "Tracelink", "RawAction", "CompiledPattern", "CompiledMatch", "Match", "NamedBlock", "UnamedBlock", "AbstractBlock", "Nop", "Return", "AssignArray", "Assign", "LetRef", "Let", "WhileDo", "DoWhile", "If", "CodeToInstruction", "ExpressionToInstruction", "BQTermToInstruction", "concRuleInstruction", "concRefClassTracelinkInstruction", "RefClassTracelinkInstruction", "ConstraintInstruction", "RuleInstruction", "EmptyTargetLanguageType", "TLType", "concTypeOption", "concTomType", "TypeVar", "EmptyType", "TypesToType", "Codomain", "Type", "SubtypeDecl", "WithSymbol", "IntegerPattern", "FalsePattern", "TruePattern", "TestVar", "Automata", "AntiTerm", "TomSymbolToTomTerm", "VariableStar", "Variable", "XMLAppl", "RecordAppl", "TermAppl", "concTomTerm", "concConstraint", "EmptyArrayConstraint", "EmptyListConstraint", "NumericConstraint", "AntiMatchConstraint", "MatchConstraint", "OrConstraintDisjunction", "OrConstraint", "AndConstraint", "IsSortConstraint", "Negate", "FalseConstraint", "TrueConstraint", "AssignPositionTo", "AliasTo", "NumEqual", "NumDifferent", "NumGreaterOrEqualThan", "NumGreaterThan", "NumLessOrEqualThan", "NumLessThan", "TomInclude", "Tom", "BQTermToCode", "DeclarationToCode", "InstructionToCode", "TargetLanguageToCode", "noTL", "Comment", "ITL", "TL", "ListTail", "ListHead", "VariableHeadArray", "VariableHeadList", "Subterm", "SymbolOf", "ExpressionToBQTerm", "BuildAppendArray", "BuildConsArray", "BuildEmptyArray", "BuildAppendList", "BuildConsList", "BuildEmptyList", "BuildTerm", "BuildConstant", "FunctionCall", "ReferencerBQTerm", "Composite", "BQDefault", "BQVariableStar", "BQVariable", "BQRecordAppl", "BQAppl", "concBQTerm", "CompositeTL", "CompositeBQTerm", "concCode", "AU", "AC", "Unitary", "Associative", "Syntactic", "concElementaryTheory", "PairNameOptions", "concTypeConstraint", "FalseTypeConstraint", "Subtype", "Equation", "concDeclaration", "BQTermToDeclaration", "ACSymbolDecl", "AbstractDecl", "EmptyDeclaration", "ArraySymbolDecl", "ListSymbolDecl", "SymbolDecl", "IntrospectorClass", "Class", "MethodDef", "FunctionDef", "ReferenceClass", "ResolveMakeDecl", "ResolveGetSlotDecl", "ResolveIsFsymDecl", "ResolveClassDecl", "ResolveInverseLinksDecl", "ResolveStratDecl", "Transformation", "Strategy", "MakeDecl", "MakeAddArray", "MakeEmptyArray", "GetSizeDecl", "GetElementDecl", "MakeAddList", "MakeEmptyList", "IsEmptyDecl", "GetTailDecl", "GetHeadDecl", "IsSortDecl", "EqualTermDecl", "ImplementDecl", "GetDefaultDecl", "GetSlotDecl", "IsFsymDecl", "TypeTermDecl", "concPairNameDecl", "PairNameDecl", "PairSlotBQTerm", "concSlot", "concBQSlot", "PairSlotAppl", "LBR", "IDENTIFIER", "RBR", "LPAR", "RPAR", "EXTENDS", "BQUOTE", "VISIT", "COLON", "ARROW", "COMMA", "STAR", "AND", "OR", "LARROW", "GREATERTHAN", "GREATEROREQU", "LOWERTHAN", "LOWEROREQU", "DOUBLEEQUAL", "DIFFERENT", "AT", "ANTI", "UNDERSCORE", "PIPE", "QMARK", "DQMARK", "INTEGER", "LONG", "CHAR", "DOUBLE", "STRING", "LSQUAREBR", "RSQUAREBR", "EQUAL", "KEYWORD_IS_FSYM", "KEYWORD_GET_SLOT", "KEYWORD_MAKE", "KEYWORD_GET_DEFAULT", "KEYWORD_IMPLEMENT", "KEYWORD_GET_HEAD", "KEYWORD_GET_TAIL", "KEYWORD_IS_EMPTY", "KEYWORD_MAKE_EMPTY", "KEYWORD_MAKE_INSERT", "KEYWORD_GET_ELEMENT", "KEYWORD_GET_SIZE", "KEYWORD_MAKE_APPEND", "KEYWORD_IS_SORT", "KEYWORD_EQUALS", "DQUOTE", "SQUOTE", "LETTER", "DIGIT", "MINUS", "UNSIGNED_DOUBLE", "LONG_SUFFIX", "HEX_DIGIT", "ESC", "WS", "SL_COMMENT", "ML_COMMENT", "DEFAULT"
     };
     public static final int concInstruction=198;
     public static final int EmptyTargetLanguageType=226;
@@ -52,8 +52,8 @@ public class miniTomParser extends Parser {
     public static final int Cst_UnamedVariableStar=83;
     public static final int ACSymbolDecl=321;
     public static final int UNDERSCORE=386;
-    public static final int Cst_Name=122;
     public static final int ANTI=385;
+    public static final int Cst_Name=122;
     public static final int AndConstraint=258;
     public static final int KEYWORD_MAKE_INSERT=407;
     public static final int NamedBlock=206;
@@ -109,7 +109,7 @@ public class miniTomParser extends Parser {
     public static final int GetSizeDecl=343;
     public static final int Match=205;
     public static final int TomInclude=271;
-    public static final int concTomVisit=168;
+    public static final int concTomVisit=167;
     public static final int Cst_MakeEmptyList=106;
     public static final int BQTermToExpression=47;
     public static final int KEYWORD_GET_DEFAULT=401;
@@ -131,7 +131,7 @@ public class miniTomParser extends Parser {
     public static final int Cst_Anti=90;
     public static final int noTL=277;
     public static final int FalseConstraint=261;
-    public static final int Entry=167;
+    public static final int Entry=168;
     public static final int Let=214;
     public static final int LPAR=366;
     public static final int Cst_ITL=135;
@@ -156,7 +156,7 @@ public class miniTomParser extends Parser {
     public static final int TransfoStratInfo=170;
     public static final int ConcCstBlock=120;
     public static final int Cst_Appl=82;
-    public static final int Cst_Type=100;
+    public static final int Cst_Type=101;
     public static final int NumGreaterThan=268;
     public static final int BQVariableStar=300;
     public static final int IsSort=11;
@@ -354,7 +354,7 @@ public class miniTomParser extends Parser {
     public static final int Cst_GetElement=109;
     public static final int AntiTerm=242;
     public static final int concConstraintInstruction=197;
-    public static final int Cst_TypeUnknown=99;
+    public static final int Cst_TypeUnknown=100;
     public static final int GetElementDecl=344;
     public static final int concTomEntry=169;
     public static final int LONG_SUFFIX=419;
@@ -389,7 +389,7 @@ public class miniTomParser extends Parser {
     public static final int PatternNumber=157;
     public static final int ML_COMMENT=424;
     public static final int NumGreaterOrEqualThan=267;
-    public static final int Cst_PairSlotBQTerm=101;
+    public static final int Cst_PairSlotBQTerm=99;
     public static final int Cst_IsFsym=118;
     public static final int Cst_NumEqualTo=125;
     public static final int IndexNumber=155;
@@ -459,7 +459,7 @@ public class miniTomParser extends Parser {
     }
 
     public String[] getTokenNames() { return miniTomParser.tokenNames; }
-    public String getGrammarFileName() { return "/Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g"; }
+    public String getGrammarFileName() { return "/Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g"; }
 
 
 
@@ -506,7 +506,7 @@ public class miniTomParser extends Parser {
     };
 
     // $ANTLR start "csIncludeConstruct"
-    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:88:1: csIncludeConstruct returns [int marker] : LBR filename= IDENTIFIER RBR -> ^( Cst_IncludeConstruct $filename) ;
+    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:88:1: csIncludeConstruct returns [int marker] : LBR filename= IDENTIFIER RBR -> ^( Cst_IncludeConstruct $filename) ;
     public final miniTomParser.csIncludeConstruct_return csIncludeConstruct() throws RecognitionException {
         miniTomParser.csIncludeConstruct_return retval = new miniTomParser.csIncludeConstruct_return();
         retval.start = input.LT(1);
@@ -525,8 +525,8 @@ public class miniTomParser extends Parser {
         RewriteRuleTokenStream stream_LBR=new RewriteRuleTokenStream(adaptor,"token LBR");
 
         try {
-            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:89:22: ( LBR filename= IDENTIFIER RBR -> ^( Cst_IncludeConstruct $filename) )
-            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:91:20: LBR filename= IDENTIFIER RBR
+            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:89:22: ( LBR filename= IDENTIFIER RBR -> ^( Cst_IncludeConstruct $filename) )
+            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:91:20: LBR filename= IDENTIFIER RBR
             {
             LBR1=(Token)match(input,LBR,FOLLOW_LBR_in_csIncludeConstruct90); if (state.failed) return retval; 
             if ( state.backtracking==0 ) stream_LBR.add(LBR1);
@@ -557,7 +557,7 @@ public class miniTomParser extends Parser {
             root_0 = (Tree)adaptor.nil();
             // 96:3: -> ^( Cst_IncludeConstruct $filename)
             {
-                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:96:6: ^( Cst_IncludeConstruct $filename)
+                // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:96:6: ^( Cst_IncludeConstruct $filename)
                 {
                 Tree root_1 = (Tree)adaptor.nil();
                 root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_IncludeConstruct, "Cst_IncludeConstruct"), root_1);
@@ -599,7 +599,7 @@ public class miniTomParser extends Parser {
     };
 
     // $ANTLR start "csStrategyConstruct"
-    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:100:1: csStrategyConstruct returns [int marker] : csName LPAR csSlotList RPAR EXTENDS ( BQUOTE )? csBQTerm[false] LBR csStrategyVisitList RBR -> ^( Cst_StrategyConstruct csName csSlotList csBQTerm csStrategyVisitList ) ;
+    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:100:1: csStrategyConstruct returns [int marker] : csName LPAR csSlotList RPAR EXTENDS ( BQUOTE )? csBQTerm[false] LBR csStrategyVisitList RBR -> ^( Cst_StrategyConstruct csName csSlotList csBQTerm csStrategyVisitList ) ;
     public final miniTomParser.csStrategyConstruct_return csStrategyConstruct() throws RecognitionException {
         miniTomParser.csStrategyConstruct_return retval = new miniTomParser.csStrategyConstruct_return();
         retval.start = input.LT(1);
@@ -638,8 +638,8 @@ public class miniTomParser extends Parser {
         RewriteRuleSubtreeStream stream_csSlotList=new RewriteRuleSubtreeStream(adaptor,"rule csSlotList");
         RewriteRuleSubtreeStream stream_csStrategyVisitList=new RewriteRuleSubtreeStream(adaptor,"rule csStrategyVisitList");
         try {
-            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:101:21: ( csName LPAR csSlotList RPAR EXTENDS ( BQUOTE )? csBQTerm[false] LBR csStrategyVisitList RBR -> ^( Cst_StrategyConstruct csName csSlotList csBQTerm csStrategyVisitList ) )
-            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:102:1: csName LPAR csSlotList RPAR EXTENDS ( BQUOTE )? csBQTerm[false] LBR csStrategyVisitList RBR
+            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:101:21: ( csName LPAR csSlotList RPAR EXTENDS ( BQUOTE )? csBQTerm[false] LBR csStrategyVisitList RBR -> ^( Cst_StrategyConstruct csName csSlotList csBQTerm csStrategyVisitList ) )
+            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:102:1: csName LPAR csSlotList RPAR EXTENDS ( BQUOTE )? csBQTerm[false] LBR csStrategyVisitList RBR
             {
             pushFollow(FOLLOW_csName_in_csStrategyConstruct129);
             csName3=csName();
@@ -662,7 +662,7 @@ public class miniTomParser extends Parser {
             EXTENDS7=(Token)match(input,EXTENDS,FOLLOW_EXTENDS_in_csStrategyConstruct137); if (state.failed) return retval; 
             if ( state.backtracking==0 ) stream_EXTENDS.add(EXTENDS7);
 
-            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:102:37: ( BQUOTE )?
+            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:102:37: ( BQUOTE )?
             int alt1=2;
             int LA1_0 = input.LA(1);
 
@@ -675,7 +675,7 @@ public class miniTomParser extends Parser {
             }
             switch (alt1) {
                 case 1 :
-                    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:0:0: BQUOTE
+                    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:0:0: BQUOTE
                     {
                     BQUOTE8=(Token)match(input,BQUOTE,FOLLOW_BQUOTE_in_csStrategyConstruct139); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_BQUOTE.add(BQUOTE8);
@@ -723,7 +723,7 @@ public class miniTomParser extends Parser {
             root_0 = (Tree)adaptor.nil();
             // 106:3: -> ^( Cst_StrategyConstruct csName csSlotList csBQTerm csStrategyVisitList )
             {
-                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:106:6: ^( Cst_StrategyConstruct csName csSlotList csBQTerm csStrategyVisitList )
+                // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:106:6: ^( Cst_StrategyConstruct csName csSlotList csBQTerm csStrategyVisitList )
                 {
                 Tree root_1 = (Tree)adaptor.nil();
                 root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_StrategyConstruct, "Cst_StrategyConstruct"), root_1);
@@ -768,7 +768,7 @@ public class miniTomParser extends Parser {
     };
 
     // $ANTLR start "csStrategyVisitList"
-    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:115:1: csStrategyVisitList : ( csStrategyVisit )* -> ^( ConcCstVisit ( csStrategyVisit )* ) ;
+    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:115:1: csStrategyVisitList : ( csStrategyVisit )* -> ^( ConcCstVisit ( csStrategyVisit )* ) ;
     public final miniTomParser.csStrategyVisitList_return csStrategyVisitList() throws RecognitionException {
         miniTomParser.csStrategyVisitList_return retval = new miniTomParser.csStrategyVisitList_return();
         retval.start = input.LT(1);
@@ -780,10 +780,10 @@ public class miniTomParser extends Parser {
 
         RewriteRuleSubtreeStream stream_csStrategyVisit=new RewriteRuleSubtreeStream(adaptor,"rule csStrategyVisit");
         try {
-            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:115:21: ( ( csStrategyVisit )* -> ^( ConcCstVisit ( csStrategyVisit )* ) )
-            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:116:3: ( csStrategyVisit )*
+            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:115:21: ( ( csStrategyVisit )* -> ^( ConcCstVisit ( csStrategyVisit )* ) )
+            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:116:3: ( csStrategyVisit )*
             {
-            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:116:3: ( csStrategyVisit )*
+            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:116:3: ( csStrategyVisit )*
             loop2:
             do {
                 int alt2=2;
@@ -796,7 +796,7 @@ public class miniTomParser extends Parser {
 
                 switch (alt2) {
             	case 1 :
-            	    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:0:0: csStrategyVisit
+            	    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:0:0: csStrategyVisit
             	    {
             	    pushFollow(FOLLOW_csStrategyVisit_in_csStrategyVisitList251);
             	    csStrategyVisit13=csStrategyVisit();
@@ -829,12 +829,12 @@ public class miniTomParser extends Parser {
             root_0 = (Tree)adaptor.nil();
             // 116:20: -> ^( ConcCstVisit ( csStrategyVisit )* )
             {
-                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:116:23: ^( ConcCstVisit ( csStrategyVisit )* )
+                // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:116:23: ^( ConcCstVisit ( csStrategyVisit )* )
                 {
                 Tree root_1 = (Tree)adaptor.nil();
                 root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(ConcCstVisit, "ConcCstVisit"), root_1);
 
-                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:116:38: ( csStrategyVisit )*
+                // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:116:38: ( csStrategyVisit )*
                 while ( stream_csStrategyVisit.hasNext() ) {
                     adaptor.addChild(root_1, stream_csStrategyVisit.nextTree());
 
@@ -875,7 +875,7 @@ public class miniTomParser extends Parser {
     };
 
     // $ANTLR start "csStrategyVisit"
-    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:119:1: csStrategyVisit : VISIT IDENTIFIER LBR ( csVisitAction )* RBR -> ^( Cst_VisitTerm ^( Cst_Type IDENTIFIER ) ^( ConcCstConstraintAction ( csVisitAction )* ) ) ;
+    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:119:1: csStrategyVisit : VISIT IDENTIFIER LBR ( csVisitAction )* RBR -> ^( Cst_VisitTerm ^( Cst_Type IDENTIFIER ) ^( ConcCstConstraintAction ( csVisitAction )* ) ) ;
     public final miniTomParser.csStrategyVisit_return csStrategyVisit() throws RecognitionException {
         miniTomParser.csStrategyVisit_return retval = new miniTomParser.csStrategyVisit_return();
         retval.start = input.LT(1);
@@ -899,8 +899,8 @@ public class miniTomParser extends Parser {
         RewriteRuleTokenStream stream_LBR=new RewriteRuleTokenStream(adaptor,"token LBR");
         RewriteRuleSubtreeStream stream_csVisitAction=new RewriteRuleSubtreeStream(adaptor,"rule csVisitAction");
         try {
-            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:119:17: ( VISIT IDENTIFIER LBR ( csVisitAction )* RBR -> ^( Cst_VisitTerm ^( Cst_Type IDENTIFIER ) ^( ConcCstConstraintAction ( csVisitAction )* ) ) )
-            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:120:3: VISIT IDENTIFIER LBR ( csVisitAction )* RBR
+            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:119:17: ( VISIT IDENTIFIER LBR ( csVisitAction )* RBR -> ^( Cst_VisitTerm ^( Cst_Type IDENTIFIER ) ^( ConcCstConstraintAction ( csVisitAction )* ) ) )
+            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:120:3: VISIT IDENTIFIER LBR ( csVisitAction )* RBR
             {
             VISIT14=(Token)match(input,VISIT,FOLLOW_VISIT_in_csStrategyVisit274); if (state.failed) return retval; 
             if ( state.backtracking==0 ) stream_VISIT.add(VISIT14);
@@ -911,7 +911,7 @@ public class miniTomParser extends Parser {
             LBR16=(Token)match(input,LBR,FOLLOW_LBR_in_csStrategyVisit278); if (state.failed) return retval; 
             if ( state.backtracking==0 ) stream_LBR.add(LBR16);
 
-            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:120:24: ( csVisitAction )*
+            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:120:24: ( csVisitAction )*
             loop3:
             do {
                 int alt3=2;
@@ -924,7 +924,7 @@ public class miniTomParser extends Parser {
 
                 switch (alt3) {
             	case 1 :
-            	    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:120:25: csVisitAction
+            	    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:120:25: csVisitAction
             	    {
             	    pushFollow(FOLLOW_csVisitAction_in_csStrategyVisit281);
             	    csVisitAction17=csVisitAction();
@@ -960,12 +960,12 @@ public class miniTomParser extends Parser {
             root_0 = (Tree)adaptor.nil();
             // 121:5: -> ^( Cst_VisitTerm ^( Cst_Type IDENTIFIER ) ^( ConcCstConstraintAction ( csVisitAction )* ) )
             {
-                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:121:8: ^( Cst_VisitTerm ^( Cst_Type IDENTIFIER ) ^( ConcCstConstraintAction ( csVisitAction )* ) )
+                // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:121:8: ^( Cst_VisitTerm ^( Cst_Type IDENTIFIER ) ^( ConcCstConstraintAction ( csVisitAction )* ) )
                 {
                 Tree root_1 = (Tree)adaptor.nil();
                 root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_VisitTerm, "Cst_VisitTerm"), root_1);
 
-                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:122:11: ^( Cst_Type IDENTIFIER )
+                // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:122:11: ^( Cst_Type IDENTIFIER )
                 {
                 Tree root_2 = (Tree)adaptor.nil();
                 root_2 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_Type, "Cst_Type"), root_2);
@@ -974,12 +974,12 @@ public class miniTomParser extends Parser {
 
                 adaptor.addChild(root_1, root_2);
                 }
-                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:123:11: ^( ConcCstConstraintAction ( csVisitAction )* )
+                // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:123:11: ^( ConcCstConstraintAction ( csVisitAction )* )
                 {
                 Tree root_2 = (Tree)adaptor.nil();
                 root_2 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(ConcCstConstraintAction, "ConcCstConstraintAction"), root_2);
 
-                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:123:37: ( csVisitAction )*
+                // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:123:37: ( csVisitAction )*
                 while ( stream_csVisitAction.hasNext() ) {
                     adaptor.addChild(root_2, stream_csVisitAction.nextTree());
 
@@ -1024,7 +1024,7 @@ public class miniTomParser extends Parser {
     };
 
     // $ANTLR start "csVisitAction"
-    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:128:1: csVisitAction : ( ( IDENTIFIER l= COLON )? csExtendedConstraint ARROW LBR RBR -> {$l!=null}? ^( Cst_ConstraintAction csExtendedConstraint ^( ConcCstOption ^( Cst_Label IDENTIFIER ) ) ) -> ^( Cst_ConstraintAction csExtendedConstraint ^( ConcCstOption ) ) | ( IDENTIFIER l= COLON )? csExtendedConstraint ARROW csBQTerm[false] -> {$l!=null}? ^( Cst_ConstraintAction csExtendedConstraint ^( ConcCstBlock ^( Cst_BQTermToBlock csBQTerm ) ) ^( ConcCstOption ^( Cst_Label IDENTIFIER ) ) ) -> ^( Cst_ConstraintAction csExtendedConstraint ^( ConcCstBlock ^( Cst_BQTermToBlock csBQTerm ) ) ^( ConcCstOption ) ) );
+    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:128:1: csVisitAction : ( ( IDENTIFIER l= COLON )? csExtendedConstraint ARROW LBR RBR -> {$l!=null}? ^( Cst_ConstraintAction csExtendedConstraint ^( ConcCstOption ^( Cst_Label IDENTIFIER ) ) ) -> ^( Cst_ConstraintAction csExtendedConstraint ^( ConcCstOption ) ) | ( IDENTIFIER l= COLON )? csExtendedConstraint ARROW csBQTerm[false] -> {$l!=null}? ^( Cst_ConstraintAction csExtendedConstraint ^( ConcCstBlock ^( Cst_BQTermToBlock csBQTerm ) ) ^( ConcCstOption ^( Cst_Label IDENTIFIER ) ) ) -> ^( Cst_ConstraintAction csExtendedConstraint ^( ConcCstBlock ^( Cst_BQTermToBlock csBQTerm ) ) ^( ConcCstOption ) ) );
     public final miniTomParser.csVisitAction_return csVisitAction() throws RecognitionException {
         miniTomParser.csVisitAction_return retval = new miniTomParser.csVisitAction_return();
         retval.start = input.LT(1);
@@ -1060,14 +1060,14 @@ public class miniTomParser extends Parser {
         RewriteRuleSubtreeStream stream_csBQTerm=new RewriteRuleSubtreeStream(adaptor,"rule csBQTerm");
         RewriteRuleSubtreeStream stream_csExtendedConstraint=new RewriteRuleSubtreeStream(adaptor,"rule csExtendedConstraint");
         try {
-            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:128:15: ( ( IDENTIFIER l= COLON )? csExtendedConstraint ARROW LBR RBR -> {$l!=null}? ^( Cst_ConstraintAction csExtendedConstraint ^( ConcCstOption ^( Cst_Label IDENTIFIER ) ) ) -> ^( Cst_ConstraintAction csExtendedConstraint ^( ConcCstOption ) ) | ( IDENTIFIER l= COLON )? csExtendedConstraint ARROW csBQTerm[false] -> {$l!=null}? ^( Cst_ConstraintAction csExtendedConstraint ^( ConcCstBlock ^( Cst_BQTermToBlock csBQTerm ) ) ^( ConcCstOption ^( Cst_Label IDENTIFIER ) ) ) -> ^( Cst_ConstraintAction csExtendedConstraint ^( ConcCstBlock ^( Cst_BQTermToBlock csBQTerm ) ) ^( ConcCstOption ) ) )
+            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:128:15: ( ( IDENTIFIER l= COLON )? csExtendedConstraint ARROW LBR RBR -> {$l!=null}? ^( Cst_ConstraintAction csExtendedConstraint ^( ConcCstOption ^( Cst_Label IDENTIFIER ) ) ) -> ^( Cst_ConstraintAction csExtendedConstraint ^( ConcCstOption ) ) | ( IDENTIFIER l= COLON )? csExtendedConstraint ARROW csBQTerm[false] -> {$l!=null}? ^( Cst_ConstraintAction csExtendedConstraint ^( ConcCstBlock ^( Cst_BQTermToBlock csBQTerm ) ) ^( ConcCstOption ^( Cst_Label IDENTIFIER ) ) ) -> ^( Cst_ConstraintAction csExtendedConstraint ^( ConcCstBlock ^( Cst_BQTermToBlock csBQTerm ) ) ^( ConcCstOption ) ) )
             int alt6=2;
             alt6 = dfa6.predict(input);
             switch (alt6) {
                 case 1 :
-                    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:129:3: ( IDENTIFIER l= COLON )? csExtendedConstraint ARROW LBR RBR
+                    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:129:3: ( IDENTIFIER l= COLON )? csExtendedConstraint ARROW LBR RBR
                     {
-                    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:129:3: ( IDENTIFIER l= COLON )?
+                    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:129:3: ( IDENTIFIER l= COLON )?
                     int alt4=2;
                     int LA4_0 = input.LA(1);
 
@@ -1080,7 +1080,7 @@ public class miniTomParser extends Parser {
                     }
                     switch (alt4) {
                         case 1 :
-                            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:129:4: IDENTIFIER l= COLON
+                            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:129:4: IDENTIFIER l= COLON
                             {
                             IDENTIFIER19=(Token)match(input,IDENTIFIER,FOLLOW_IDENTIFIER_in_csVisitAction367); if (state.failed) return retval; 
                             if ( state.backtracking==0 ) stream_IDENTIFIER.add(IDENTIFIER19);
@@ -1125,19 +1125,19 @@ public class miniTomParser extends Parser {
                     root_0 = (Tree)adaptor.nil();
                     // 130:5: -> {$l!=null}? ^( Cst_ConstraintAction csExtendedConstraint ^( ConcCstOption ^( Cst_Label IDENTIFIER ) ) )
                     if (l!=null) {
-                        // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:130:20: ^( Cst_ConstraintAction csExtendedConstraint ^( ConcCstOption ^( Cst_Label IDENTIFIER ) ) )
+                        // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:130:20: ^( Cst_ConstraintAction csExtendedConstraint ^( ConcCstOption ^( Cst_Label IDENTIFIER ) ) )
                         {
                         Tree root_1 = (Tree)adaptor.nil();
                         root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_ConstraintAction, "Cst_ConstraintAction"), root_1);
 
                         adaptor.addChild(root_1, stream_csExtendedConstraint.nextTree());
                         adaptor.addChild(root_1, ((CustomToken)LBR22).getPayload(Tree.class));
-                        // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:132:28: ^( ConcCstOption ^( Cst_Label IDENTIFIER ) )
+                        // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:132:28: ^( ConcCstOption ^( Cst_Label IDENTIFIER ) )
                         {
                         Tree root_2 = (Tree)adaptor.nil();
                         root_2 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(ConcCstOption, "ConcCstOption"), root_2);
 
-                        // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:132:44: ^( Cst_Label IDENTIFIER )
+                        // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:132:44: ^( Cst_Label IDENTIFIER )
                         {
                         Tree root_3 = (Tree)adaptor.nil();
                         root_3 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_Label, "Cst_Label"), root_3);
@@ -1156,14 +1156,14 @@ public class miniTomParser extends Parser {
                     }
                     else // 134:5: -> ^( Cst_ConstraintAction csExtendedConstraint ^( ConcCstOption ) )
                     {
-                        // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:134:19: ^( Cst_ConstraintAction csExtendedConstraint ^( ConcCstOption ) )
+                        // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:134:19: ^( Cst_ConstraintAction csExtendedConstraint ^( ConcCstOption ) )
                         {
                         Tree root_1 = (Tree)adaptor.nil();
                         root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_ConstraintAction, "Cst_ConstraintAction"), root_1);
 
                         adaptor.addChild(root_1, stream_csExtendedConstraint.nextTree());
                         adaptor.addChild(root_1, ((CustomToken)LBR22).getPayload(Tree.class));
-                        // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:136:28: ^( ConcCstOption )
+                        // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:136:28: ^( ConcCstOption )
                         {
                         Tree root_2 = (Tree)adaptor.nil();
                         root_2 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(ConcCstOption, "ConcCstOption"), root_2);
@@ -1180,9 +1180,9 @@ public class miniTomParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:138:5: ( IDENTIFIER l= COLON )? csExtendedConstraint ARROW csBQTerm[false]
+                    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:138:5: ( IDENTIFIER l= COLON )? csExtendedConstraint ARROW csBQTerm[false]
                     {
-                    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:138:5: ( IDENTIFIER l= COLON )?
+                    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:138:5: ( IDENTIFIER l= COLON )?
                     int alt5=2;
                     int LA5_0 = input.LA(1);
 
@@ -1195,7 +1195,7 @@ public class miniTomParser extends Parser {
                     }
                     switch (alt5) {
                         case 1 :
-                            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:138:6: IDENTIFIER l= COLON
+                            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:138:6: IDENTIFIER l= COLON
                             {
                             IDENTIFIER24=(Token)match(input,IDENTIFIER,FOLLOW_IDENTIFIER_in_csVisitAction602); if (state.failed) return retval; 
                             if ( state.backtracking==0 ) stream_IDENTIFIER.add(IDENTIFIER24);
@@ -1227,7 +1227,7 @@ public class miniTomParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: csBQTerm, csBQTerm, csExtendedConstraint, csExtendedConstraint, IDENTIFIER
+                    // elements: csExtendedConstraint, csBQTerm, IDENTIFIER, csBQTerm, csExtendedConstraint
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -1240,18 +1240,18 @@ public class miniTomParser extends Parser {
                     root_0 = (Tree)adaptor.nil();
                     // 139:5: -> {$l!=null}? ^( Cst_ConstraintAction csExtendedConstraint ^( ConcCstBlock ^( Cst_BQTermToBlock csBQTerm ) ) ^( ConcCstOption ^( Cst_Label IDENTIFIER ) ) )
                     if (l!=null) {
-                        // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:139:20: ^( Cst_ConstraintAction csExtendedConstraint ^( ConcCstBlock ^( Cst_BQTermToBlock csBQTerm ) ) ^( ConcCstOption ^( Cst_Label IDENTIFIER ) ) )
+                        // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:139:20: ^( Cst_ConstraintAction csExtendedConstraint ^( ConcCstBlock ^( Cst_BQTermToBlock csBQTerm ) ) ^( ConcCstOption ^( Cst_Label IDENTIFIER ) ) )
                         {
                         Tree root_1 = (Tree)adaptor.nil();
                         root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_ConstraintAction, "Cst_ConstraintAction"), root_1);
 
                         adaptor.addChild(root_1, stream_csExtendedConstraint.nextTree());
-                        // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:142:28: ^( ConcCstBlock ^( Cst_BQTermToBlock csBQTerm ) )
+                        // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:142:28: ^( ConcCstBlock ^( Cst_BQTermToBlock csBQTerm ) )
                         {
                         Tree root_2 = (Tree)adaptor.nil();
                         root_2 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(ConcCstBlock, "ConcCstBlock"), root_2);
 
-                        // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:142:43: ^( Cst_BQTermToBlock csBQTerm )
+                        // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:142:43: ^( Cst_BQTermToBlock csBQTerm )
                         {
                         Tree root_3 = (Tree)adaptor.nil();
                         root_3 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_BQTermToBlock, "Cst_BQTermToBlock"), root_3);
@@ -1263,12 +1263,12 @@ public class miniTomParser extends Parser {
 
                         adaptor.addChild(root_1, root_2);
                         }
-                        // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:143:28: ^( ConcCstOption ^( Cst_Label IDENTIFIER ) )
+                        // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:143:28: ^( ConcCstOption ^( Cst_Label IDENTIFIER ) )
                         {
                         Tree root_2 = (Tree)adaptor.nil();
                         root_2 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(ConcCstOption, "ConcCstOption"), root_2);
 
-                        // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:143:44: ^( Cst_Label IDENTIFIER )
+                        // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:143:44: ^( Cst_Label IDENTIFIER )
                         {
                         Tree root_3 = (Tree)adaptor.nil();
                         root_3 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_Label, "Cst_Label"), root_3);
@@ -1287,18 +1287,18 @@ public class miniTomParser extends Parser {
                     }
                     else // 145:5: -> ^( Cst_ConstraintAction csExtendedConstraint ^( ConcCstBlock ^( Cst_BQTermToBlock csBQTerm ) ) ^( ConcCstOption ) )
                     {
-                        // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:145:19: ^( Cst_ConstraintAction csExtendedConstraint ^( ConcCstBlock ^( Cst_BQTermToBlock csBQTerm ) ) ^( ConcCstOption ) )
+                        // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:145:19: ^( Cst_ConstraintAction csExtendedConstraint ^( ConcCstBlock ^( Cst_BQTermToBlock csBQTerm ) ) ^( ConcCstOption ) )
                         {
                         Tree root_1 = (Tree)adaptor.nil();
                         root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_ConstraintAction, "Cst_ConstraintAction"), root_1);
 
                         adaptor.addChild(root_1, stream_csExtendedConstraint.nextTree());
-                        // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:148:28: ^( ConcCstBlock ^( Cst_BQTermToBlock csBQTerm ) )
+                        // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:148:28: ^( ConcCstBlock ^( Cst_BQTermToBlock csBQTerm ) )
                         {
                         Tree root_2 = (Tree)adaptor.nil();
                         root_2 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(ConcCstBlock, "ConcCstBlock"), root_2);
 
-                        // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:148:43: ^( Cst_BQTermToBlock csBQTerm )
+                        // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:148:43: ^( Cst_BQTermToBlock csBQTerm )
                         {
                         Tree root_3 = (Tree)adaptor.nil();
                         root_3 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_BQTermToBlock, "Cst_BQTermToBlock"), root_3);
@@ -1310,7 +1310,7 @@ public class miniTomParser extends Parser {
 
                         adaptor.addChild(root_1, root_2);
                         }
-                        // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:149:28: ^( ConcCstOption )
+                        // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:149:28: ^( ConcCstOption )
                         {
                         Tree root_2 = (Tree)adaptor.nil();
                         root_2 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(ConcCstOption, "ConcCstOption"), root_2);
@@ -1355,7 +1355,7 @@ public class miniTomParser extends Parser {
     };
 
     // $ANTLR start "csMatchConstruct"
-    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:159:1: csMatchConstruct returns [int marker] : ( LPAR csBQTerm[false] ( COMMA csBQTerm[false] )* RPAR LBR ( csExtendedConstraintAction )* RBR -> ^( Cst_MatchConstruct ^( ConcCstBQTerm ( csBQTerm )* ) ^( ConcCstConstraintAction ( csExtendedConstraintAction )* ) ) | ( LPAR RPAR )? LBR ( csConstraintAction )* RBR -> ^( Cst_MatchConstruct ^( ConcCstBQTerm ) ^( ConcCstConstraintAction ( csConstraintAction )* ) ) );
+    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:159:1: csMatchConstruct returns [int marker] : ( LPAR csBQTerm[false] ( COMMA csBQTerm[false] )* RPAR LBR ( csExtendedConstraintAction )* RBR -> ^( Cst_MatchConstruct ^( ConcCstBQTerm ( csBQTerm )* ) ^( ConcCstConstraintAction ( csExtendedConstraintAction )* ) ) | ( LPAR RPAR )? LBR ( csConstraintAction )* RBR -> ^( Cst_MatchConstruct ^( ConcCstBQTerm ) ^( ConcCstConstraintAction ( csConstraintAction )* ) ) );
     public final miniTomParser.csMatchConstruct_return csMatchConstruct() throws RecognitionException {
         miniTomParser.csMatchConstruct_return retval = new miniTomParser.csMatchConstruct_return();
         retval.start = input.LT(1);
@@ -1398,7 +1398,7 @@ public class miniTomParser extends Parser {
         RewriteRuleSubtreeStream stream_csConstraintAction=new RewriteRuleSubtreeStream(adaptor,"rule csConstraintAction");
         RewriteRuleSubtreeStream stream_csExtendedConstraintAction=new RewriteRuleSubtreeStream(adaptor,"rule csExtendedConstraintAction");
         try {
-            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:160:21: ( LPAR csBQTerm[false] ( COMMA csBQTerm[false] )* RPAR LBR ( csExtendedConstraintAction )* RBR -> ^( Cst_MatchConstruct ^( ConcCstBQTerm ( csBQTerm )* ) ^( ConcCstConstraintAction ( csExtendedConstraintAction )* ) ) | ( LPAR RPAR )? LBR ( csConstraintAction )* RBR -> ^( Cst_MatchConstruct ^( ConcCstBQTerm ) ^( ConcCstConstraintAction ( csConstraintAction )* ) ) )
+            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:160:21: ( LPAR csBQTerm[false] ( COMMA csBQTerm[false] )* RPAR LBR ( csExtendedConstraintAction )* RBR -> ^( Cst_MatchConstruct ^( ConcCstBQTerm ( csBQTerm )* ) ^( ConcCstConstraintAction ( csExtendedConstraintAction )* ) ) | ( LPAR RPAR )? LBR ( csConstraintAction )* RBR -> ^( Cst_MatchConstruct ^( ConcCstBQTerm ) ^( ConcCstConstraintAction ( csConstraintAction )* ) ) )
             int alt11=2;
             int LA11_0 = input.LA(1);
 
@@ -1431,7 +1431,7 @@ public class miniTomParser extends Parser {
             }
             switch (alt11) {
                 case 1 :
-                    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:165:1: LPAR csBQTerm[false] ( COMMA csBQTerm[false] )* RPAR LBR ( csExtendedConstraintAction )* RBR
+                    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:165:1: LPAR csBQTerm[false] ( COMMA csBQTerm[false] )* RPAR LBR ( csExtendedConstraintAction )* RBR
                     {
                     LPAR28=(Token)match(input,LPAR,FOLLOW_LPAR_in_csMatchConstruct972); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_LPAR.add(LPAR28);
@@ -1442,7 +1442,7 @@ public class miniTomParser extends Parser {
                     state._fsp--;
                     if (state.failed) return retval;
                     if ( state.backtracking==0 ) stream_csBQTerm.add(csBQTerm29.getTree());
-                    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:165:42: ( COMMA csBQTerm[false] )*
+                    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:165:42: ( COMMA csBQTerm[false] )*
                     loop7:
                     do {
                         int alt7=2;
@@ -1455,7 +1455,7 @@ public class miniTomParser extends Parser {
 
                         switch (alt7) {
                     	case 1 :
-                    	    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:165:43: COMMA csBQTerm[false]
+                    	    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:165:43: COMMA csBQTerm[false]
                     	    {
                     	    COMMA30=(Token)match(input,COMMA,FOLLOW_COMMA_in_csMatchConstruct980); if (state.failed) return retval; 
                     	    if ( state.backtracking==0 ) stream_COMMA.add(COMMA30);
@@ -1481,7 +1481,7 @@ public class miniTomParser extends Parser {
                     LBR33=(Token)match(input,LBR,FOLLOW_LBR_in_csMatchConstruct991); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_LBR.add(LBR33);
 
-                    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:167:1: ( csExtendedConstraintAction )*
+                    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:167:1: ( csExtendedConstraintAction )*
                     loop8:
                     do {
                         int alt8=2;
@@ -1494,7 +1494,7 @@ public class miniTomParser extends Parser {
 
                         switch (alt8) {
                     	case 1 :
-                    	    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:0:0: csExtendedConstraintAction
+                    	    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:0:0: csExtendedConstraintAction
                     	    {
                     	    pushFollow(FOLLOW_csExtendedConstraintAction_in_csMatchConstruct993);
                     	    csExtendedConstraintAction34=csExtendedConstraintAction();
@@ -1520,7 +1520,7 @@ public class miniTomParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: csBQTerm, csExtendedConstraintAction
+                    // elements: csExtendedConstraintAction, csBQTerm
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -1533,18 +1533,18 @@ public class miniTomParser extends Parser {
                     root_0 = (Tree)adaptor.nil();
                     // 173:1: -> ^( Cst_MatchConstruct ^( ConcCstBQTerm ( csBQTerm )* ) ^( ConcCstConstraintAction ( csExtendedConstraintAction )* ) )
                     {
-                        // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:173:4: ^( Cst_MatchConstruct ^( ConcCstBQTerm ( csBQTerm )* ) ^( ConcCstConstraintAction ( csExtendedConstraintAction )* ) )
+                        // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:173:4: ^( Cst_MatchConstruct ^( ConcCstBQTerm ( csBQTerm )* ) ^( ConcCstConstraintAction ( csExtendedConstraintAction )* ) )
                         {
                         Tree root_1 = (Tree)adaptor.nil();
                         root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_MatchConstruct, "Cst_MatchConstruct"), root_1);
 
                         adaptor.addChild(root_1, extractOptions((CommonToken)LPAR28, (CommonToken)RBR35));
-                        // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:175:5: ^( ConcCstBQTerm ( csBQTerm )* )
+                        // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:175:5: ^( ConcCstBQTerm ( csBQTerm )* )
                         {
                         Tree root_2 = (Tree)adaptor.nil();
                         root_2 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(ConcCstBQTerm, "ConcCstBQTerm"), root_2);
 
-                        // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:175:22: ( csBQTerm )*
+                        // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:175:22: ( csBQTerm )*
                         while ( stream_csBQTerm.hasNext() ) {
                             adaptor.addChild(root_2, stream_csBQTerm.nextTree());
 
@@ -1553,12 +1553,12 @@ public class miniTomParser extends Parser {
 
                         adaptor.addChild(root_1, root_2);
                         }
-                        // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:176:5: ^( ConcCstConstraintAction ( csExtendedConstraintAction )* )
+                        // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:176:5: ^( ConcCstConstraintAction ( csExtendedConstraintAction )* )
                         {
                         Tree root_2 = (Tree)adaptor.nil();
                         root_2 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(ConcCstConstraintAction, "ConcCstConstraintAction"), root_2);
 
-                        // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:176:32: ( csExtendedConstraintAction )*
+                        // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:176:32: ( csExtendedConstraintAction )*
                         while ( stream_csExtendedConstraintAction.hasNext() ) {
                             adaptor.addChild(root_2, stream_csExtendedConstraintAction.nextTree());
 
@@ -1577,9 +1577,9 @@ public class miniTomParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:181:1: ( LPAR RPAR )? LBR ( csConstraintAction )* RBR
+                    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:181:1: ( LPAR RPAR )? LBR ( csConstraintAction )* RBR
                     {
-                    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:181:1: ( LPAR RPAR )?
+                    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:181:1: ( LPAR RPAR )?
                     int alt9=2;
                     int LA9_0 = input.LA(1);
 
@@ -1588,7 +1588,7 @@ public class miniTomParser extends Parser {
                     }
                     switch (alt9) {
                         case 1 :
-                            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:181:2: LPAR RPAR
+                            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:181:2: LPAR RPAR
                             {
                             LPAR36=(Token)match(input,LPAR,FOLLOW_LPAR_in_csMatchConstruct1051); if (state.failed) return retval; 
                             if ( state.backtracking==0 ) stream_LPAR.add(LPAR36);
@@ -1605,7 +1605,7 @@ public class miniTomParser extends Parser {
                     LBR38=(Token)match(input,LBR,FOLLOW_LBR_in_csMatchConstruct1057); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_LBR.add(LBR38);
 
-                    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:183:1: ( csConstraintAction )*
+                    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:183:1: ( csConstraintAction )*
                     loop10:
                     do {
                         int alt10=2;
@@ -1618,7 +1618,7 @@ public class miniTomParser extends Parser {
 
                         switch (alt10) {
                     	case 1 :
-                    	    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:0:0: csConstraintAction
+                    	    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:0:0: csConstraintAction
                     	    {
                     	    pushFollow(FOLLOW_csConstraintAction_in_csMatchConstruct1059);
                     	    csConstraintAction39=csConstraintAction();
@@ -1657,25 +1657,25 @@ public class miniTomParser extends Parser {
                     root_0 = (Tree)adaptor.nil();
                     // 189:1: -> ^( Cst_MatchConstruct ^( ConcCstBQTerm ) ^( ConcCstConstraintAction ( csConstraintAction )* ) )
                     {
-                        // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:189:4: ^( Cst_MatchConstruct ^( ConcCstBQTerm ) ^( ConcCstConstraintAction ( csConstraintAction )* ) )
+                        // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:189:4: ^( Cst_MatchConstruct ^( ConcCstBQTerm ) ^( ConcCstConstraintAction ( csConstraintAction )* ) )
                         {
                         Tree root_1 = (Tree)adaptor.nil();
                         root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_MatchConstruct, "Cst_MatchConstruct"), root_1);
 
                         adaptor.addChild(root_1, extractOptions((CommonToken)LBR38, (CommonToken)RBR40));
-                        // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:191:5: ^( ConcCstBQTerm )
+                        // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:191:5: ^( ConcCstBQTerm )
                         {
                         Tree root_2 = (Tree)adaptor.nil();
                         root_2 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(ConcCstBQTerm, "ConcCstBQTerm"), root_2);
 
                         adaptor.addChild(root_1, root_2);
                         }
-                        // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:192:5: ^( ConcCstConstraintAction ( csConstraintAction )* )
+                        // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:192:5: ^( ConcCstConstraintAction ( csConstraintAction )* )
                         {
                         Tree root_2 = (Tree)adaptor.nil();
                         root_2 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(ConcCstConstraintAction, "ConcCstConstraintAction"), root_2);
 
-                        // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:192:32: ( csConstraintAction )*
+                        // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:192:32: ( csConstraintAction )*
                         while ( stream_csConstraintAction.hasNext() ) {
                             adaptor.addChild(root_2, stream_csConstraintAction.nextTree());
 
@@ -1721,7 +1721,7 @@ public class miniTomParser extends Parser {
     };
 
     // $ANTLR start "csConstraintAction"
-    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:196:1: csConstraintAction : ( IDENTIFIER l= COLON )? csConstraint ARROW LBR RBR -> {$l!=null}? ^( Cst_ConstraintAction csConstraint ^( ConcCstOption ^( Cst_Label IDENTIFIER ) ) ) -> ^( Cst_ConstraintAction csConstraint ^( ConcCstOption ) ) ;
+    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:196:1: csConstraintAction : ( IDENTIFIER l= COLON )? csConstraint ARROW LBR RBR -> {$l!=null}? ^( Cst_ConstraintAction csConstraint ^( ConcCstOption ^( Cst_Label IDENTIFIER ) ) ) -> ^( Cst_ConstraintAction csConstraint ^( ConcCstOption ) ) ;
     public final miniTomParser.csConstraintAction_return csConstraintAction() throws RecognitionException {
         miniTomParser.csConstraintAction_return retval = new miniTomParser.csConstraintAction_return();
         retval.start = input.LT(1);
@@ -1748,10 +1748,10 @@ public class miniTomParser extends Parser {
         RewriteRuleTokenStream stream_LBR=new RewriteRuleTokenStream(adaptor,"token LBR");
         RewriteRuleSubtreeStream stream_csConstraint=new RewriteRuleSubtreeStream(adaptor,"rule csConstraint");
         try {
-            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:196:20: ( ( IDENTIFIER l= COLON )? csConstraint ARROW LBR RBR -> {$l!=null}? ^( Cst_ConstraintAction csConstraint ^( ConcCstOption ^( Cst_Label IDENTIFIER ) ) ) -> ^( Cst_ConstraintAction csConstraint ^( ConcCstOption ) ) )
-            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:197:1: ( IDENTIFIER l= COLON )? csConstraint ARROW LBR RBR
+            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:196:20: ( ( IDENTIFIER l= COLON )? csConstraint ARROW LBR RBR -> {$l!=null}? ^( Cst_ConstraintAction csConstraint ^( ConcCstOption ^( Cst_Label IDENTIFIER ) ) ) -> ^( Cst_ConstraintAction csConstraint ^( ConcCstOption ) ) )
+            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:197:1: ( IDENTIFIER l= COLON )? csConstraint ARROW LBR RBR
             {
-            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:197:1: ( IDENTIFIER l= COLON )?
+            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:197:1: ( IDENTIFIER l= COLON )?
             int alt12=2;
             int LA12_0 = input.LA(1);
 
@@ -1764,7 +1764,7 @@ public class miniTomParser extends Parser {
             }
             switch (alt12) {
                 case 1 :
-                    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:197:2: IDENTIFIER l= COLON
+                    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:197:2: IDENTIFIER l= COLON
                     {
                     IDENTIFIER41=(Token)match(input,IDENTIFIER,FOLLOW_IDENTIFIER_in_csConstraintAction1118); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_IDENTIFIER.add(IDENTIFIER41);
@@ -1809,19 +1809,19 @@ public class miniTomParser extends Parser {
             root_0 = (Tree)adaptor.nil();
             // 198:3: -> {$l!=null}? ^( Cst_ConstraintAction csConstraint ^( ConcCstOption ^( Cst_Label IDENTIFIER ) ) )
             if (l!=null) {
-                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:198:18: ^( Cst_ConstraintAction csConstraint ^( ConcCstOption ^( Cst_Label IDENTIFIER ) ) )
+                // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:198:18: ^( Cst_ConstraintAction csConstraint ^( ConcCstOption ^( Cst_Label IDENTIFIER ) ) )
                 {
                 Tree root_1 = (Tree)adaptor.nil();
                 root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_ConstraintAction, "Cst_ConstraintAction"), root_1);
 
                 adaptor.addChild(root_1, stream_csConstraint.nextTree());
                 adaptor.addChild(root_1, ((CustomToken)LBR44).getPayload(Tree.class));
-                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:200:19: ^( ConcCstOption ^( Cst_Label IDENTIFIER ) )
+                // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:200:19: ^( ConcCstOption ^( Cst_Label IDENTIFIER ) )
                 {
                 Tree root_2 = (Tree)adaptor.nil();
                 root_2 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(ConcCstOption, "ConcCstOption"), root_2);
 
-                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:200:35: ^( Cst_Label IDENTIFIER )
+                // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:200:35: ^( Cst_Label IDENTIFIER )
                 {
                 Tree root_3 = (Tree)adaptor.nil();
                 root_3 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_Label, "Cst_Label"), root_3);
@@ -1840,14 +1840,14 @@ public class miniTomParser extends Parser {
             }
             else // 202:3: -> ^( Cst_ConstraintAction csConstraint ^( ConcCstOption ) )
             {
-                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:202:18: ^( Cst_ConstraintAction csConstraint ^( ConcCstOption ) )
+                // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:202:18: ^( Cst_ConstraintAction csConstraint ^( ConcCstOption ) )
                 {
                 Tree root_1 = (Tree)adaptor.nil();
                 root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_ConstraintAction, "Cst_ConstraintAction"), root_1);
 
                 adaptor.addChild(root_1, stream_csConstraint.nextTree());
                 adaptor.addChild(root_1, ((CustomToken)LBR44).getPayload(Tree.class));
-                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:204:19: ^( ConcCstOption )
+                // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:204:19: ^( ConcCstOption )
                 {
                 Tree root_2 = (Tree)adaptor.nil();
                 root_2 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(ConcCstOption, "ConcCstOption"), root_2);
@@ -1889,7 +1889,7 @@ public class miniTomParser extends Parser {
     };
 
     // $ANTLR start "csExtendedConstraintAction"
-    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:208:1: csExtendedConstraintAction : ( IDENTIFIER l= COLON )? csExtendedConstraint ARROW LBR RBR -> {$l!=null}? ^( Cst_ConstraintAction csExtendedConstraint ^( ConcCstOption ^( Cst_Label IDENTIFIER ) ) ) -> ^( Cst_ConstraintAction csExtendedConstraint ^( ConcCstOption ) ) ;
+    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:208:1: csExtendedConstraintAction : ( IDENTIFIER l= COLON )? csExtendedConstraint ARROW LBR RBR -> {$l!=null}? ^( Cst_ConstraintAction csExtendedConstraint ^( ConcCstOption ^( Cst_Label IDENTIFIER ) ) ) -> ^( Cst_ConstraintAction csExtendedConstraint ^( ConcCstOption ) ) ;
     public final miniTomParser.csExtendedConstraintAction_return csExtendedConstraintAction() throws RecognitionException {
         miniTomParser.csExtendedConstraintAction_return retval = new miniTomParser.csExtendedConstraintAction_return();
         retval.start = input.LT(1);
@@ -1916,10 +1916,10 @@ public class miniTomParser extends Parser {
         RewriteRuleTokenStream stream_LBR=new RewriteRuleTokenStream(adaptor,"token LBR");
         RewriteRuleSubtreeStream stream_csExtendedConstraint=new RewriteRuleSubtreeStream(adaptor,"rule csExtendedConstraint");
         try {
-            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:208:28: ( ( IDENTIFIER l= COLON )? csExtendedConstraint ARROW LBR RBR -> {$l!=null}? ^( Cst_ConstraintAction csExtendedConstraint ^( ConcCstOption ^( Cst_Label IDENTIFIER ) ) ) -> ^( Cst_ConstraintAction csExtendedConstraint ^( ConcCstOption ) ) )
-            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:209:1: ( IDENTIFIER l= COLON )? csExtendedConstraint ARROW LBR RBR
+            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:208:28: ( ( IDENTIFIER l= COLON )? csExtendedConstraint ARROW LBR RBR -> {$l!=null}? ^( Cst_ConstraintAction csExtendedConstraint ^( ConcCstOption ^( Cst_Label IDENTIFIER ) ) ) -> ^( Cst_ConstraintAction csExtendedConstraint ^( ConcCstOption ) ) )
+            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:209:1: ( IDENTIFIER l= COLON )? csExtendedConstraint ARROW LBR RBR
             {
-            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:209:1: ( IDENTIFIER l= COLON )?
+            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:209:1: ( IDENTIFIER l= COLON )?
             int alt13=2;
             int LA13_0 = input.LA(1);
 
@@ -1932,7 +1932,7 @@ public class miniTomParser extends Parser {
             }
             switch (alt13) {
                 case 1 :
-                    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:209:2: IDENTIFIER l= COLON
+                    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:209:2: IDENTIFIER l= COLON
                     {
                     IDENTIFIER46=(Token)match(input,IDENTIFIER,FOLLOW_IDENTIFIER_in_csExtendedConstraintAction1305); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_IDENTIFIER.add(IDENTIFIER46);
@@ -1977,19 +1977,19 @@ public class miniTomParser extends Parser {
             root_0 = (Tree)adaptor.nil();
             // 210:3: -> {$l!=null}? ^( Cst_ConstraintAction csExtendedConstraint ^( ConcCstOption ^( Cst_Label IDENTIFIER ) ) )
             if (l!=null) {
-                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:210:18: ^( Cst_ConstraintAction csExtendedConstraint ^( ConcCstOption ^( Cst_Label IDENTIFIER ) ) )
+                // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:210:18: ^( Cst_ConstraintAction csExtendedConstraint ^( ConcCstOption ^( Cst_Label IDENTIFIER ) ) )
                 {
                 Tree root_1 = (Tree)adaptor.nil();
                 root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_ConstraintAction, "Cst_ConstraintAction"), root_1);
 
                 adaptor.addChild(root_1, stream_csExtendedConstraint.nextTree());
                 adaptor.addChild(root_1, ((CustomToken)LBR49).getPayload(Tree.class));
-                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:212:19: ^( ConcCstOption ^( Cst_Label IDENTIFIER ) )
+                // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:212:19: ^( ConcCstOption ^( Cst_Label IDENTIFIER ) )
                 {
                 Tree root_2 = (Tree)adaptor.nil();
                 root_2 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(ConcCstOption, "ConcCstOption"), root_2);
 
-                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:212:35: ^( Cst_Label IDENTIFIER )
+                // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:212:35: ^( Cst_Label IDENTIFIER )
                 {
                 Tree root_3 = (Tree)adaptor.nil();
                 root_3 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_Label, "Cst_Label"), root_3);
@@ -2008,14 +2008,14 @@ public class miniTomParser extends Parser {
             }
             else // 214:3: -> ^( Cst_ConstraintAction csExtendedConstraint ^( ConcCstOption ) )
             {
-                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:214:18: ^( Cst_ConstraintAction csExtendedConstraint ^( ConcCstOption ) )
+                // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:214:18: ^( Cst_ConstraintAction csExtendedConstraint ^( ConcCstOption ) )
                 {
                 Tree root_1 = (Tree)adaptor.nil();
                 root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_ConstraintAction, "Cst_ConstraintAction"), root_1);
 
                 adaptor.addChild(root_1, stream_csExtendedConstraint.nextTree());
                 adaptor.addChild(root_1, ((CustomToken)LBR49).getPayload(Tree.class));
-                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:216:19: ^( ConcCstOption )
+                // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:216:19: ^( ConcCstOption )
                 {
                 Tree root_2 = (Tree)adaptor.nil();
                 root_2 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(ConcCstOption, "ConcCstOption"), root_2);
@@ -2057,7 +2057,7 @@ public class miniTomParser extends Parser {
     };
 
     // $ANTLR start "csBQTerm"
-    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:220:1: csBQTerm[ boolean typedAppl ] : ( (type= IDENTIFIER )? ( BQUOTE )? bqname= IDENTIFIER LPAR (a+= csBQTerm[false] ( COMMA a+= csBQTerm[false] )* )? RPAR -> {$typedAppl && type==null}? ^( Cst_BQAppl $bqname ^( ConcCstBQTerm ( $a)* ) ) ^( Cst_TypeUnknown ) -> {$typedAppl && type!=null}? ^( Cst_BQAppl $bqname ^( ConcCstBQTerm ( $a)* ) ) ^( Cst_Type $type) -> ^( Cst_BQAppl $bqname ^( ConcCstBQTerm ( $a)* ) ) | (type= IDENTIFIER )? ( BQUOTE )? name= IDENTIFIER (s= STAR )? -> {s!=null && type!=null && $typedAppl}? ^( Cst_BQVarStar $name ^( Cst_Type $type) ) ^( Cst_Type $type) -> {s!=null && type!=null && !$typedAppl}? ^( Cst_BQVarStar $name ^( Cst_Type $type) ) -> {s!=null && type==null && $typedAppl}? ^( Cst_BQVarStar $name ^( Cst_TypeUnknown ) ) ^( Cst_TypeUnknown ) -> {s!=null && type==null && !$typedAppl}? ^( Cst_BQVarStar $name ^( Cst_TypeUnknown ) ) -> {s==null && type!=null && $typedAppl}? ^( Cst_BQVar $name ^( Cst_Type $type) ) ^( Cst_Type $type) -> {s==null && type!=null && !$typedAppl}? ^( Cst_BQVar $name ^( Cst_Type $type) ) -> {s==null && type==null && $typedAppl}? ^( Cst_BQVar $name ^( Cst_TypeUnknown ) ) ^( Cst_TypeUnknown ) -> ^( Cst_BQVar $name ^( Cst_TypeUnknown ) ) | csConstantValue -> ^( Cst_BQConstant csConstantValue ) );
+    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:220:1: csBQTerm[ boolean typedAppl ] : ( (type= IDENTIFIER )? ( BQUOTE )? bqname= IDENTIFIER LPAR (a+= csBQTerm[false] ( COMMA a+= csBQTerm[false] )* )? RPAR -> {$typedAppl && type==null}? ^( Cst_BQAppl $bqname ^( ConcCstBQTerm ( $a)* ) ) ^( Cst_TypeUnknown ) -> {$typedAppl && type!=null}? ^( Cst_BQAppl $bqname ^( ConcCstBQTerm ( $a)* ) ) ^( Cst_Type $type) -> ^( Cst_BQAppl $bqname ^( ConcCstBQTerm ( $a)* ) ) | (type= IDENTIFIER )? ( BQUOTE )? name= IDENTIFIER (s= STAR )? -> {s!=null && type!=null && $typedAppl}? ^( Cst_BQVarStar $name ^( Cst_Type $type) ) ^( Cst_Type $type) -> {s!=null && type!=null && !$typedAppl}? ^( Cst_BQVarStar $name ^( Cst_Type $type) ) -> {s!=null && type==null && $typedAppl}? ^( Cst_BQVarStar $name ^( Cst_TypeUnknown ) ) ^( Cst_TypeUnknown ) -> {s!=null && type==null && !$typedAppl}? ^( Cst_BQVarStar $name ^( Cst_TypeUnknown ) ) -> {s==null && type!=null && $typedAppl}? ^( Cst_BQVar $name ^( Cst_Type $type) ) ^( Cst_Type $type) -> {s==null && type!=null && !$typedAppl}? ^( Cst_BQVar $name ^( Cst_Type $type) ) -> {s==null && type==null && $typedAppl}? ^( Cst_BQVar $name ^( Cst_TypeUnknown ) ) ^( Cst_TypeUnknown ) -> ^( Cst_BQVar $name ^( Cst_TypeUnknown ) ) | csConstantValue -> ^( Cst_BQConstant csConstantValue ) );
     public final miniTomParser.csBQTerm_return csBQTerm(boolean typedAppl) throws RecognitionException {
         miniTomParser.csBQTerm_return retval = new miniTomParser.csBQTerm_return();
         retval.start = input.LT(1);
@@ -2095,7 +2095,7 @@ public class miniTomParser extends Parser {
         RewriteRuleSubtreeStream stream_csBQTerm=new RewriteRuleSubtreeStream(adaptor,"rule csBQTerm");
         RewriteRuleSubtreeStream stream_csConstantValue=new RewriteRuleSubtreeStream(adaptor,"rule csConstantValue");
         try {
-            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:220:32: ( (type= IDENTIFIER )? ( BQUOTE )? bqname= IDENTIFIER LPAR (a+= csBQTerm[false] ( COMMA a+= csBQTerm[false] )* )? RPAR -> {$typedAppl && type==null}? ^( Cst_BQAppl $bqname ^( ConcCstBQTerm ( $a)* ) ) ^( Cst_TypeUnknown ) -> {$typedAppl && type!=null}? ^( Cst_BQAppl $bqname ^( ConcCstBQTerm ( $a)* ) ) ^( Cst_Type $type) -> ^( Cst_BQAppl $bqname ^( ConcCstBQTerm ( $a)* ) ) | (type= IDENTIFIER )? ( BQUOTE )? name= IDENTIFIER (s= STAR )? -> {s!=null && type!=null && $typedAppl}? ^( Cst_BQVarStar $name ^( Cst_Type $type) ) ^( Cst_Type $type) -> {s!=null && type!=null && !$typedAppl}? ^( Cst_BQVarStar $name ^( Cst_Type $type) ) -> {s!=null && type==null && $typedAppl}? ^( Cst_BQVarStar $name ^( Cst_TypeUnknown ) ) ^( Cst_TypeUnknown ) -> {s!=null && type==null && !$typedAppl}? ^( Cst_BQVarStar $name ^( Cst_TypeUnknown ) ) -> {s==null && type!=null && $typedAppl}? ^( Cst_BQVar $name ^( Cst_Type $type) ) ^( Cst_Type $type) -> {s==null && type!=null && !$typedAppl}? ^( Cst_BQVar $name ^( Cst_Type $type) ) -> {s==null && type==null && $typedAppl}? ^( Cst_BQVar $name ^( Cst_TypeUnknown ) ) ^( Cst_TypeUnknown ) -> ^( Cst_BQVar $name ^( Cst_TypeUnknown ) ) | csConstantValue -> ^( Cst_BQConstant csConstantValue ) )
+            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:220:32: ( (type= IDENTIFIER )? ( BQUOTE )? bqname= IDENTIFIER LPAR (a+= csBQTerm[false] ( COMMA a+= csBQTerm[false] )* )? RPAR -> {$typedAppl && type==null}? ^( Cst_BQAppl $bqname ^( ConcCstBQTerm ( $a)* ) ) ^( Cst_TypeUnknown ) -> {$typedAppl && type!=null}? ^( Cst_BQAppl $bqname ^( ConcCstBQTerm ( $a)* ) ) ^( Cst_Type $type) -> ^( Cst_BQAppl $bqname ^( ConcCstBQTerm ( $a)* ) ) | (type= IDENTIFIER )? ( BQUOTE )? name= IDENTIFIER (s= STAR )? -> {s!=null && type!=null && $typedAppl}? ^( Cst_BQVarStar $name ^( Cst_Type $type) ) ^( Cst_Type $type) -> {s!=null && type!=null && !$typedAppl}? ^( Cst_BQVarStar $name ^( Cst_Type $type) ) -> {s!=null && type==null && $typedAppl}? ^( Cst_BQVarStar $name ^( Cst_TypeUnknown ) ) ^( Cst_TypeUnknown ) -> {s!=null && type==null && !$typedAppl}? ^( Cst_BQVarStar $name ^( Cst_TypeUnknown ) ) -> {s==null && type!=null && $typedAppl}? ^( Cst_BQVar $name ^( Cst_Type $type) ) ^( Cst_Type $type) -> {s==null && type!=null && !$typedAppl}? ^( Cst_BQVar $name ^( Cst_Type $type) ) -> {s==null && type==null && $typedAppl}? ^( Cst_BQVar $name ^( Cst_TypeUnknown ) ) ^( Cst_TypeUnknown ) -> ^( Cst_BQVar $name ^( Cst_TypeUnknown ) ) | csConstantValue -> ^( Cst_BQConstant csConstantValue ) )
             int alt21=3;
             switch ( input.LA(1) ) {
             case IDENTIFIER:
@@ -2155,9 +2155,9 @@ public class miniTomParser extends Parser {
 
             switch (alt21) {
                 case 1 :
-                    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:221:3: (type= IDENTIFIER )? ( BQUOTE )? bqname= IDENTIFIER LPAR (a+= csBQTerm[false] ( COMMA a+= csBQTerm[false] )* )? RPAR
+                    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:221:3: (type= IDENTIFIER )? ( BQUOTE )? bqname= IDENTIFIER LPAR (a+= csBQTerm[false] ( COMMA a+= csBQTerm[false] )* )? RPAR
                     {
-                    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:221:3: (type= IDENTIFIER )?
+                    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:221:3: (type= IDENTIFIER )?
                     int alt14=2;
                     int LA14_0 = input.LA(1);
 
@@ -2170,7 +2170,7 @@ public class miniTomParser extends Parser {
                     }
                     switch (alt14) {
                         case 1 :
-                            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:221:4: type= IDENTIFIER
+                            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:221:4: type= IDENTIFIER
                             {
                             type=(Token)match(input,IDENTIFIER,FOLLOW_IDENTIFIER_in_csBQTerm1498); if (state.failed) return retval; 
                             if ( state.backtracking==0 ) stream_IDENTIFIER.add(type);
@@ -2181,7 +2181,7 @@ public class miniTomParser extends Parser {
 
                     }
 
-                    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:221:22: ( BQUOTE )?
+                    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:221:22: ( BQUOTE )?
                     int alt15=2;
                     int LA15_0 = input.LA(1);
 
@@ -2190,7 +2190,7 @@ public class miniTomParser extends Parser {
                     }
                     switch (alt15) {
                         case 1 :
-                            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:0:0: BQUOTE
+                            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:0:0: BQUOTE
                             {
                             BQUOTE51=(Token)match(input,BQUOTE,FOLLOW_BQUOTE_in_csBQTerm1502); if (state.failed) return retval; 
                             if ( state.backtracking==0 ) stream_BQUOTE.add(BQUOTE51);
@@ -2207,7 +2207,7 @@ public class miniTomParser extends Parser {
                     LPAR52=(Token)match(input,LPAR,FOLLOW_LPAR_in_csBQTerm1509); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_LPAR.add(LPAR52);
 
-                    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:221:53: (a+= csBQTerm[false] ( COMMA a+= csBQTerm[false] )* )?
+                    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:221:53: (a+= csBQTerm[false] ( COMMA a+= csBQTerm[false] )* )?
                     int alt17=2;
                     int LA17_0 = input.LA(1);
 
@@ -2216,7 +2216,7 @@ public class miniTomParser extends Parser {
                     }
                     switch (alt17) {
                         case 1 :
-                            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:221:54: a+= csBQTerm[false] ( COMMA a+= csBQTerm[false] )*
+                            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:221:54: a+= csBQTerm[false] ( COMMA a+= csBQTerm[false] )*
                             {
                             pushFollow(FOLLOW_csBQTerm_in_csBQTerm1514);
                             a=csBQTerm(false);
@@ -2227,7 +2227,7 @@ public class miniTomParser extends Parser {
                             if (list_a==null) list_a=new ArrayList();
                             list_a.add(a.getTree());
 
-                            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:221:73: ( COMMA a+= csBQTerm[false] )*
+                            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:221:73: ( COMMA a+= csBQTerm[false] )*
                             loop16:
                             do {
                                 int alt16=2;
@@ -2240,7 +2240,7 @@ public class miniTomParser extends Parser {
 
                                 switch (alt16) {
                             	case 1 :
-                            	    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:221:74: COMMA a+= csBQTerm[false]
+                            	    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:221:74: COMMA a+= csBQTerm[false]
                             	    {
                             	    COMMA53=(Token)match(input,COMMA,FOLLOW_COMMA_in_csBQTerm1518); if (state.failed) return retval; 
                             	    if ( state.backtracking==0 ) stream_COMMA.add(COMMA53);
@@ -2275,7 +2275,7 @@ public class miniTomParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: type, bqname, bqname, a, bqname, a, a
+                    // elements: bqname, bqname, a, a, type, bqname, a
                     // token labels: type, bqname
                     // rule labels: retval
                     // token list labels: 
@@ -2290,19 +2290,19 @@ public class miniTomParser extends Parser {
                     root_0 = (Tree)adaptor.nil();
                     // 222:4: -> {$typedAppl && type==null}? ^( Cst_BQAppl $bqname ^( ConcCstBQTerm ( $a)* ) ) ^( Cst_TypeUnknown )
                     if (typedAppl && type==null) {
-                        // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:222:35: ^( Cst_BQAppl $bqname ^( ConcCstBQTerm ( $a)* ) )
+                        // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:222:35: ^( Cst_BQAppl $bqname ^( ConcCstBQTerm ( $a)* ) )
                         {
                         Tree root_1 = (Tree)adaptor.nil();
                         root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_BQAppl, "Cst_BQAppl"), root_1);
 
                         adaptor.addChild(root_1, extractOptions((CommonToken)LPAR52, (CommonToken)RPAR54));
                         adaptor.addChild(root_1, stream_bqname.nextNode());
-                        // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:223:16: ^( ConcCstBQTerm ( $a)* )
+                        // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:223:16: ^( ConcCstBQTerm ( $a)* )
                         {
                         Tree root_2 = (Tree)adaptor.nil();
                         root_2 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(ConcCstBQTerm, "ConcCstBQTerm"), root_2);
 
-                        // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:223:32: ( $a)*
+                        // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:223:32: ( $a)*
                         while ( stream_a.hasNext() ) {
                             adaptor.addChild(root_2, stream_a.nextTree());
 
@@ -2314,7 +2314,7 @@ public class miniTomParser extends Parser {
 
                         adaptor.addChild(root_0, root_1);
                         }
-                        // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:223:38: ^( Cst_TypeUnknown )
+                        // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:223:38: ^( Cst_TypeUnknown )
                         {
                         Tree root_1 = (Tree)adaptor.nil();
                         root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_TypeUnknown, "Cst_TypeUnknown"), root_1);
@@ -2325,19 +2325,19 @@ public class miniTomParser extends Parser {
                     }
                     else // 224:4: -> {$typedAppl && type!=null}? ^( Cst_BQAppl $bqname ^( ConcCstBQTerm ( $a)* ) ) ^( Cst_Type $type)
                     if (typedAppl && type!=null) {
-                        // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:224:35: ^( Cst_BQAppl $bqname ^( ConcCstBQTerm ( $a)* ) )
+                        // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:224:35: ^( Cst_BQAppl $bqname ^( ConcCstBQTerm ( $a)* ) )
                         {
                         Tree root_1 = (Tree)adaptor.nil();
                         root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_BQAppl, "Cst_BQAppl"), root_1);
 
                         adaptor.addChild(root_1, extractOptions((CommonToken)LPAR52, (CommonToken)RPAR54));
                         adaptor.addChild(root_1, stream_bqname.nextNode());
-                        // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:225:16: ^( ConcCstBQTerm ( $a)* )
+                        // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:225:16: ^( ConcCstBQTerm ( $a)* )
                         {
                         Tree root_2 = (Tree)adaptor.nil();
                         root_2 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(ConcCstBQTerm, "ConcCstBQTerm"), root_2);
 
-                        // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:225:32: ( $a)*
+                        // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:225:32: ( $a)*
                         while ( stream_a.hasNext() ) {
                             adaptor.addChild(root_2, stream_a.nextTree());
 
@@ -2349,7 +2349,7 @@ public class miniTomParser extends Parser {
 
                         adaptor.addChild(root_0, root_1);
                         }
-                        // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:225:38: ^( Cst_Type $type)
+                        // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:225:38: ^( Cst_Type $type)
                         {
                         Tree root_1 = (Tree)adaptor.nil();
                         root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_Type, "Cst_Type"), root_1);
@@ -2362,19 +2362,19 @@ public class miniTomParser extends Parser {
                     }
                     else // 226:4: -> ^( Cst_BQAppl $bqname ^( ConcCstBQTerm ( $a)* ) )
                     {
-                        // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:226:35: ^( Cst_BQAppl $bqname ^( ConcCstBQTerm ( $a)* ) )
+                        // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:226:35: ^( Cst_BQAppl $bqname ^( ConcCstBQTerm ( $a)* ) )
                         {
                         Tree root_1 = (Tree)adaptor.nil();
                         root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_BQAppl, "Cst_BQAppl"), root_1);
 
                         adaptor.addChild(root_1, extractOptions((CommonToken)LPAR52, (CommonToken)RPAR54));
                         adaptor.addChild(root_1, stream_bqname.nextNode());
-                        // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:227:16: ^( ConcCstBQTerm ( $a)* )
+                        // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:227:16: ^( ConcCstBQTerm ( $a)* )
                         {
                         Tree root_2 = (Tree)adaptor.nil();
                         root_2 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(ConcCstBQTerm, "ConcCstBQTerm"), root_2);
 
-                        // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:227:32: ( $a)*
+                        // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:227:32: ( $a)*
                         while ( stream_a.hasNext() ) {
                             adaptor.addChild(root_2, stream_a.nextTree());
 
@@ -2393,9 +2393,9 @@ public class miniTomParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:229:4: (type= IDENTIFIER )? ( BQUOTE )? name= IDENTIFIER (s= STAR )?
+                    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:229:4: (type= IDENTIFIER )? ( BQUOTE )? name= IDENTIFIER (s= STAR )?
                     {
-                    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:229:4: (type= IDENTIFIER )?
+                    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:229:4: (type= IDENTIFIER )?
                     int alt18=2;
                     int LA18_0 = input.LA(1);
 
@@ -2415,7 +2415,7 @@ public class miniTomParser extends Parser {
                     }
                     switch (alt18) {
                         case 1 :
-                            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:229:5: type= IDENTIFIER
+                            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:229:5: type= IDENTIFIER
                             {
                             type=(Token)match(input,IDENTIFIER,FOLLOW_IDENTIFIER_in_csBQTerm1670); if (state.failed) return retval; 
                             if ( state.backtracking==0 ) stream_IDENTIFIER.add(type);
@@ -2426,7 +2426,7 @@ public class miniTomParser extends Parser {
 
                     }
 
-                    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:229:23: ( BQUOTE )?
+                    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:229:23: ( BQUOTE )?
                     int alt19=2;
                     int LA19_0 = input.LA(1);
 
@@ -2435,7 +2435,7 @@ public class miniTomParser extends Parser {
                     }
                     switch (alt19) {
                         case 1 :
-                            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:0:0: BQUOTE
+                            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:0:0: BQUOTE
                             {
                             BQUOTE55=(Token)match(input,BQUOTE,FOLLOW_BQUOTE_in_csBQTerm1674); if (state.failed) return retval; 
                             if ( state.backtracking==0 ) stream_BQUOTE.add(BQUOTE55);
@@ -2449,7 +2449,7 @@ public class miniTomParser extends Parser {
                     name=(Token)match(input,IDENTIFIER,FOLLOW_IDENTIFIER_in_csBQTerm1679); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_IDENTIFIER.add(name);
 
-                    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:229:47: (s= STAR )?
+                    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:229:47: (s= STAR )?
                     int alt20=2;
                     int LA20_0 = input.LA(1);
 
@@ -2458,7 +2458,7 @@ public class miniTomParser extends Parser {
                     }
                     switch (alt20) {
                         case 1 :
-                            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:229:48: s= STAR
+                            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:229:48: s= STAR
                             {
                             s=(Token)match(input,STAR,FOLLOW_STAR_in_csBQTerm1684); if (state.failed) return retval; 
                             if ( state.backtracking==0 ) stream_STAR.add(s);
@@ -2472,7 +2472,7 @@ public class miniTomParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: type, type, name, name, name, name, name, type, name, type, name, type, type, name
+                    // elements: name, type, type, name, name, name, name, type, name, type, name, type, name, type
                     // token labels: name, type
                     // rule labels: retval
                     // token list labels: 
@@ -2487,14 +2487,14 @@ public class miniTomParser extends Parser {
                     root_0 = (Tree)adaptor.nil();
                     // 230:4: -> {s!=null && type!=null && $typedAppl}? ^( Cst_BQVarStar $name ^( Cst_Type $type) ) ^( Cst_Type $type)
                     if (s!=null && type!=null && typedAppl) {
-                        // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:230:45: ^( Cst_BQVarStar $name ^( Cst_Type $type) )
+                        // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:230:45: ^( Cst_BQVarStar $name ^( Cst_Type $type) )
                         {
                         Tree root_1 = (Tree)adaptor.nil();
                         root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_BQVarStar, "Cst_BQVarStar"), root_1);
 
                         adaptor.addChild(root_1, extractOptions((CommonToken)name));
                         adaptor.addChild(root_1, stream_name.nextNode());
-                        // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:230:104: ^( Cst_Type $type)
+                        // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:230:104: ^( Cst_Type $type)
                         {
                         Tree root_2 = (Tree)adaptor.nil();
                         root_2 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_Type, "Cst_Type"), root_2);
@@ -2506,7 +2506,7 @@ public class miniTomParser extends Parser {
 
                         adaptor.addChild(root_0, root_1);
                         }
-                        // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:230:123: ^( Cst_Type $type)
+                        // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:230:123: ^( Cst_Type $type)
                         {
                         Tree root_1 = (Tree)adaptor.nil();
                         root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_Type, "Cst_Type"), root_1);
@@ -2519,14 +2519,14 @@ public class miniTomParser extends Parser {
                     }
                     else // 231:4: -> {s!=null && type!=null && !$typedAppl}? ^( Cst_BQVarStar $name ^( Cst_Type $type) )
                     if (s!=null && type!=null && !typedAppl) {
-                        // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:231:46: ^( Cst_BQVarStar $name ^( Cst_Type $type) )
+                        // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:231:46: ^( Cst_BQVarStar $name ^( Cst_Type $type) )
                         {
                         Tree root_1 = (Tree)adaptor.nil();
                         root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_BQVarStar, "Cst_BQVarStar"), root_1);
 
                         adaptor.addChild(root_1, extractOptions((CommonToken)name));
                         adaptor.addChild(root_1, stream_name.nextNode());
-                        // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:231:105: ^( Cst_Type $type)
+                        // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:231:105: ^( Cst_Type $type)
                         {
                         Tree root_2 = (Tree)adaptor.nil();
                         root_2 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_Type, "Cst_Type"), root_2);
@@ -2542,14 +2542,14 @@ public class miniTomParser extends Parser {
                     }
                     else // 233:4: -> {s!=null && type==null && $typedAppl}? ^( Cst_BQVarStar $name ^( Cst_TypeUnknown ) ) ^( Cst_TypeUnknown )
                     if (s!=null && type==null && typedAppl) {
-                        // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:233:45: ^( Cst_BQVarStar $name ^( Cst_TypeUnknown ) )
+                        // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:233:45: ^( Cst_BQVarStar $name ^( Cst_TypeUnknown ) )
                         {
                         Tree root_1 = (Tree)adaptor.nil();
                         root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_BQVarStar, "Cst_BQVarStar"), root_1);
 
                         adaptor.addChild(root_1, extractOptions((CommonToken)name));
                         adaptor.addChild(root_1, stream_name.nextNode());
-                        // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:233:104: ^( Cst_TypeUnknown )
+                        // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:233:104: ^( Cst_TypeUnknown )
                         {
                         Tree root_2 = (Tree)adaptor.nil();
                         root_2 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_TypeUnknown, "Cst_TypeUnknown"), root_2);
@@ -2559,7 +2559,7 @@ public class miniTomParser extends Parser {
 
                         adaptor.addChild(root_0, root_1);
                         }
-                        // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:233:125: ^( Cst_TypeUnknown )
+                        // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:233:125: ^( Cst_TypeUnknown )
                         {
                         Tree root_1 = (Tree)adaptor.nil();
                         root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_TypeUnknown, "Cst_TypeUnknown"), root_1);
@@ -2570,14 +2570,14 @@ public class miniTomParser extends Parser {
                     }
                     else // 234:4: -> {s!=null && type==null && !$typedAppl}? ^( Cst_BQVarStar $name ^( Cst_TypeUnknown ) )
                     if (s!=null && type==null && !typedAppl) {
-                        // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:234:46: ^( Cst_BQVarStar $name ^( Cst_TypeUnknown ) )
+                        // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:234:46: ^( Cst_BQVarStar $name ^( Cst_TypeUnknown ) )
                         {
                         Tree root_1 = (Tree)adaptor.nil();
                         root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_BQVarStar, "Cst_BQVarStar"), root_1);
 
                         adaptor.addChild(root_1, extractOptions((CommonToken)name));
                         adaptor.addChild(root_1, stream_name.nextNode());
-                        // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:234:105: ^( Cst_TypeUnknown )
+                        // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:234:105: ^( Cst_TypeUnknown )
                         {
                         Tree root_2 = (Tree)adaptor.nil();
                         root_2 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_TypeUnknown, "Cst_TypeUnknown"), root_2);
@@ -2591,14 +2591,14 @@ public class miniTomParser extends Parser {
                     }
                     else // 236:4: -> {s==null && type!=null && $typedAppl}? ^( Cst_BQVar $name ^( Cst_Type $type) ) ^( Cst_Type $type)
                     if (s==null && type!=null && typedAppl) {
-                        // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:236:45: ^( Cst_BQVar $name ^( Cst_Type $type) )
+                        // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:236:45: ^( Cst_BQVar $name ^( Cst_Type $type) )
                         {
                         Tree root_1 = (Tree)adaptor.nil();
                         root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_BQVar, "Cst_BQVar"), root_1);
 
                         adaptor.addChild(root_1, extractOptions((CommonToken)name));
                         adaptor.addChild(root_1, stream_name.nextNode());
-                        // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:236:100: ^( Cst_Type $type)
+                        // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:236:100: ^( Cst_Type $type)
                         {
                         Tree root_2 = (Tree)adaptor.nil();
                         root_2 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_Type, "Cst_Type"), root_2);
@@ -2610,7 +2610,7 @@ public class miniTomParser extends Parser {
 
                         adaptor.addChild(root_0, root_1);
                         }
-                        // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:236:119: ^( Cst_Type $type)
+                        // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:236:119: ^( Cst_Type $type)
                         {
                         Tree root_1 = (Tree)adaptor.nil();
                         root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_Type, "Cst_Type"), root_1);
@@ -2623,14 +2623,14 @@ public class miniTomParser extends Parser {
                     }
                     else // 237:4: -> {s==null && type!=null && !$typedAppl}? ^( Cst_BQVar $name ^( Cst_Type $type) )
                     if (s==null && type!=null && !typedAppl) {
-                        // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:237:46: ^( Cst_BQVar $name ^( Cst_Type $type) )
+                        // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:237:46: ^( Cst_BQVar $name ^( Cst_Type $type) )
                         {
                         Tree root_1 = (Tree)adaptor.nil();
                         root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_BQVar, "Cst_BQVar"), root_1);
 
                         adaptor.addChild(root_1, extractOptions((CommonToken)name));
                         adaptor.addChild(root_1, stream_name.nextNode());
-                        // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:237:101: ^( Cst_Type $type)
+                        // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:237:101: ^( Cst_Type $type)
                         {
                         Tree root_2 = (Tree)adaptor.nil();
                         root_2 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_Type, "Cst_Type"), root_2);
@@ -2646,14 +2646,14 @@ public class miniTomParser extends Parser {
                     }
                     else // 239:4: -> {s==null && type==null && $typedAppl}? ^( Cst_BQVar $name ^( Cst_TypeUnknown ) ) ^( Cst_TypeUnknown )
                     if (s==null && type==null && typedAppl) {
-                        // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:239:45: ^( Cst_BQVar $name ^( Cst_TypeUnknown ) )
+                        // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:239:45: ^( Cst_BQVar $name ^( Cst_TypeUnknown ) )
                         {
                         Tree root_1 = (Tree)adaptor.nil();
                         root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_BQVar, "Cst_BQVar"), root_1);
 
                         adaptor.addChild(root_1, extractOptions((CommonToken)name));
                         adaptor.addChild(root_1, stream_name.nextNode());
-                        // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:239:100: ^( Cst_TypeUnknown )
+                        // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:239:100: ^( Cst_TypeUnknown )
                         {
                         Tree root_2 = (Tree)adaptor.nil();
                         root_2 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_TypeUnknown, "Cst_TypeUnknown"), root_2);
@@ -2663,7 +2663,7 @@ public class miniTomParser extends Parser {
 
                         adaptor.addChild(root_0, root_1);
                         }
-                        // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:239:121: ^( Cst_TypeUnknown )
+                        // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:239:121: ^( Cst_TypeUnknown )
                         {
                         Tree root_1 = (Tree)adaptor.nil();
                         root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_TypeUnknown, "Cst_TypeUnknown"), root_1);
@@ -2674,14 +2674,14 @@ public class miniTomParser extends Parser {
                     }
                     else // 240:4: -> ^( Cst_BQVar $name ^( Cst_TypeUnknown ) )
                     {
-                        // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:240:45: ^( Cst_BQVar $name ^( Cst_TypeUnknown ) )
+                        // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:240:45: ^( Cst_BQVar $name ^( Cst_TypeUnknown ) )
                         {
                         Tree root_1 = (Tree)adaptor.nil();
                         root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_BQVar, "Cst_BQVar"), root_1);
 
                         adaptor.addChild(root_1, extractOptions((CommonToken)name));
                         adaptor.addChild(root_1, stream_name.nextNode());
-                        // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:240:100: ^( Cst_TypeUnknown )
+                        // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:240:100: ^( Cst_TypeUnknown )
                         {
                         Tree root_2 = (Tree)adaptor.nil();
                         root_2 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_TypeUnknown, "Cst_TypeUnknown"), root_2);
@@ -2698,7 +2698,7 @@ public class miniTomParser extends Parser {
                     }
                     break;
                 case 3 :
-                    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:242:5: csConstantValue
+                    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:242:5: csConstantValue
                     {
                     pushFollow(FOLLOW_csConstantValue_in_csBQTerm1934);
                     csConstantValue56=csConstantValue();
@@ -2722,7 +2722,7 @@ public class miniTomParser extends Parser {
                     root_0 = (Tree)adaptor.nil();
                     // 242:21: -> ^( Cst_BQConstant csConstantValue )
                     {
-                        // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:242:24: ^( Cst_BQConstant csConstantValue )
+                        // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:242:24: ^( Cst_BQConstant csConstantValue )
                         {
                         Tree root_1 = (Tree)adaptor.nil();
                         root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_BQConstant, "Cst_BQConstant"), root_1);
@@ -2766,7 +2766,7 @@ public class miniTomParser extends Parser {
     };
 
     // $ANTLR start "csExtendedConstraint"
-    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:247:1: csExtendedConstraint : csMatchArgumentConstraintList ( (a= AND | o= OR ) csConstraint )? -> {a!=null}? ^( Cst_AndConstraint csMatchArgumentConstraintList csConstraint ) -> {o!=null}? ^( Cst_OrConstraint csMatchArgumentConstraintList csConstraint ) -> csMatchArgumentConstraintList ;
+    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:247:1: csExtendedConstraint : csMatchArgumentConstraintList ( (a= AND | o= OR ) csConstraint )? -> {a!=null}? ^( Cst_AndConstraint csMatchArgumentConstraintList csConstraint ) -> {o!=null}? ^( Cst_OrConstraint csMatchArgumentConstraintList csConstraint ) -> csMatchArgumentConstraintList ;
     public final miniTomParser.csExtendedConstraint_return csExtendedConstraint() throws RecognitionException {
         miniTomParser.csExtendedConstraint_return retval = new miniTomParser.csExtendedConstraint_return();
         retval.start = input.LT(1);
@@ -2787,8 +2787,8 @@ public class miniTomParser extends Parser {
         RewriteRuleSubtreeStream stream_csMatchArgumentConstraintList=new RewriteRuleSubtreeStream(adaptor,"rule csMatchArgumentConstraintList");
         RewriteRuleSubtreeStream stream_csConstraint=new RewriteRuleSubtreeStream(adaptor,"rule csConstraint");
         try {
-            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:255:22: ( csMatchArgumentConstraintList ( (a= AND | o= OR ) csConstraint )? -> {a!=null}? ^( Cst_AndConstraint csMatchArgumentConstraintList csConstraint ) -> {o!=null}? ^( Cst_OrConstraint csMatchArgumentConstraintList csConstraint ) -> csMatchArgumentConstraintList )
-            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:256:2: csMatchArgumentConstraintList ( (a= AND | o= OR ) csConstraint )?
+            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:255:22: ( csMatchArgumentConstraintList ( (a= AND | o= OR ) csConstraint )? -> {a!=null}? ^( Cst_AndConstraint csMatchArgumentConstraintList csConstraint ) -> {o!=null}? ^( Cst_OrConstraint csMatchArgumentConstraintList csConstraint ) -> csMatchArgumentConstraintList )
+            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:256:2: csMatchArgumentConstraintList ( (a= AND | o= OR ) csConstraint )?
             {
             pushFollow(FOLLOW_csMatchArgumentConstraintList_in_csExtendedConstraint1965);
             csMatchArgumentConstraintList57=csMatchArgumentConstraintList();
@@ -2796,7 +2796,7 @@ public class miniTomParser extends Parser {
             state._fsp--;
             if (state.failed) return retval;
             if ( state.backtracking==0 ) stream_csMatchArgumentConstraintList.add(csMatchArgumentConstraintList57.getTree());
-            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:256:32: ( (a= AND | o= OR ) csConstraint )?
+            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:256:32: ( (a= AND | o= OR ) csConstraint )?
             int alt23=2;
             int LA23_0 = input.LA(1);
 
@@ -2805,9 +2805,9 @@ public class miniTomParser extends Parser {
             }
             switch (alt23) {
                 case 1 :
-                    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:256:33: (a= AND | o= OR ) csConstraint
+                    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:256:33: (a= AND | o= OR ) csConstraint
                     {
-                    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:256:33: (a= AND | o= OR )
+                    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:256:33: (a= AND | o= OR )
                     int alt22=2;
                     int LA22_0 = input.LA(1);
 
@@ -2826,7 +2826,7 @@ public class miniTomParser extends Parser {
                     }
                     switch (alt22) {
                         case 1 :
-                            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:256:34: a= AND
+                            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:256:34: a= AND
                             {
                             a=(Token)match(input,AND,FOLLOW_AND_in_csExtendedConstraint1971); if (state.failed) return retval; 
                             if ( state.backtracking==0 ) stream_AND.add(a);
@@ -2835,7 +2835,7 @@ public class miniTomParser extends Parser {
                             }
                             break;
                         case 2 :
-                            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:256:40: o= OR
+                            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:256:40: o= OR
                             {
                             o=(Token)match(input,OR,FOLLOW_OR_in_csExtendedConstraint1975); if (state.failed) return retval; 
                             if ( state.backtracking==0 ) stream_OR.add(o);
@@ -2861,7 +2861,7 @@ public class miniTomParser extends Parser {
 
 
             // AST REWRITE
-            // elements: csMatchArgumentConstraintList, csMatchArgumentConstraintList, csConstraint, csConstraint, csMatchArgumentConstraintList
+            // elements: csMatchArgumentConstraintList, csConstraint, csMatchArgumentConstraintList, csConstraint, csMatchArgumentConstraintList
             // token labels: 
             // rule labels: retval
             // token list labels: 
@@ -2874,7 +2874,7 @@ public class miniTomParser extends Parser {
             root_0 = (Tree)adaptor.nil();
             // 257:2: -> {a!=null}? ^( Cst_AndConstraint csMatchArgumentConstraintList csConstraint )
             if (a!=null) {
-                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:257:15: ^( Cst_AndConstraint csMatchArgumentConstraintList csConstraint )
+                // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:257:15: ^( Cst_AndConstraint csMatchArgumentConstraintList csConstraint )
                 {
                 Tree root_1 = (Tree)adaptor.nil();
                 root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_AndConstraint, "Cst_AndConstraint"), root_1);
@@ -2888,7 +2888,7 @@ public class miniTomParser extends Parser {
             }
             else // 258:2: -> {o!=null}? ^( Cst_OrConstraint csMatchArgumentConstraintList csConstraint )
             if (o!=null) {
-                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:258:15: ^( Cst_OrConstraint csMatchArgumentConstraintList csConstraint )
+                // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:258:15: ^( Cst_OrConstraint csMatchArgumentConstraintList csConstraint )
                 {
                 Tree root_1 = (Tree)adaptor.nil();
                 root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_OrConstraint, "Cst_OrConstraint"), root_1);
@@ -2935,7 +2935,7 @@ public class miniTomParser extends Parser {
     };
 
     // $ANTLR start "csMatchArgumentConstraintList"
-    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:262:1: csMatchArgumentConstraintList : csMatchArgumentConstraint ( COMMA c2= csMatchArgumentConstraint )* ( COMMA )? -> {c2!=null}? ^( Cst_AndConstraint ( csMatchArgumentConstraint )* ) -> csMatchArgumentConstraint ;
+    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:262:1: csMatchArgumentConstraintList : csMatchArgumentConstraint ( COMMA c2= csMatchArgumentConstraint )* ( COMMA )? -> {c2!=null}? ^( Cst_AndConstraint ( csMatchArgumentConstraint )* ) -> csMatchArgumentConstraint ;
     public final miniTomParser.csMatchArgumentConstraintList_return csMatchArgumentConstraintList() throws RecognitionException {
         miniTomParser.csMatchArgumentConstraintList_return retval = new miniTomParser.csMatchArgumentConstraintList_return();
         retval.start = input.LT(1);
@@ -2954,8 +2954,8 @@ public class miniTomParser extends Parser {
         RewriteRuleTokenStream stream_COMMA=new RewriteRuleTokenStream(adaptor,"token COMMA");
         RewriteRuleSubtreeStream stream_csMatchArgumentConstraint=new RewriteRuleSubtreeStream(adaptor,"rule csMatchArgumentConstraint");
         try {
-            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:262:31: ( csMatchArgumentConstraint ( COMMA c2= csMatchArgumentConstraint )* ( COMMA )? -> {c2!=null}? ^( Cst_AndConstraint ( csMatchArgumentConstraint )* ) -> csMatchArgumentConstraint )
-            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:263:3: csMatchArgumentConstraint ( COMMA c2= csMatchArgumentConstraint )* ( COMMA )?
+            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:262:31: ( csMatchArgumentConstraint ( COMMA c2= csMatchArgumentConstraint )* ( COMMA )? -> {c2!=null}? ^( Cst_AndConstraint ( csMatchArgumentConstraint )* ) -> csMatchArgumentConstraint )
+            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:263:3: csMatchArgumentConstraint ( COMMA c2= csMatchArgumentConstraint )* ( COMMA )?
             {
             pushFollow(FOLLOW_csMatchArgumentConstraint_in_csMatchArgumentConstraintList2031);
             csMatchArgumentConstraint59=csMatchArgumentConstraint();
@@ -2963,7 +2963,7 @@ public class miniTomParser extends Parser {
             state._fsp--;
             if (state.failed) return retval;
             if ( state.backtracking==0 ) stream_csMatchArgumentConstraint.add(csMatchArgumentConstraint59.getTree());
-            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:263:29: ( COMMA c2= csMatchArgumentConstraint )*
+            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:263:29: ( COMMA c2= csMatchArgumentConstraint )*
             loop24:
             do {
                 int alt24=2;
@@ -2982,7 +2982,7 @@ public class miniTomParser extends Parser {
 
                 switch (alt24) {
             	case 1 :
-            	    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:263:30: COMMA c2= csMatchArgumentConstraint
+            	    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:263:30: COMMA c2= csMatchArgumentConstraint
             	    {
             	    COMMA60=(Token)match(input,COMMA,FOLLOW_COMMA_in_csMatchArgumentConstraintList2034); if (state.failed) return retval; 
             	    if ( state.backtracking==0 ) stream_COMMA.add(COMMA60);
@@ -3002,7 +3002,7 @@ public class miniTomParser extends Parser {
                 }
             } while (true);
 
-            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:263:67: ( COMMA )?
+            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:263:67: ( COMMA )?
             int alt25=2;
             int LA25_0 = input.LA(1);
 
@@ -3011,7 +3011,7 @@ public class miniTomParser extends Parser {
             }
             switch (alt25) {
                 case 1 :
-                    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:263:68: COMMA
+                    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:263:68: COMMA
                     {
                     COMMA61=(Token)match(input,COMMA,FOLLOW_COMMA_in_csMatchArgumentConstraintList2043); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_COMMA.add(COMMA61);
@@ -3038,12 +3038,12 @@ public class miniTomParser extends Parser {
             root_0 = (Tree)adaptor.nil();
             // 264:3: -> {c2!=null}? ^( Cst_AndConstraint ( csMatchArgumentConstraint )* )
             if (c2!=null) {
-                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:264:17: ^( Cst_AndConstraint ( csMatchArgumentConstraint )* )
+                // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:264:17: ^( Cst_AndConstraint ( csMatchArgumentConstraint )* )
                 {
                 Tree root_1 = (Tree)adaptor.nil();
                 root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_AndConstraint, "Cst_AndConstraint"), root_1);
 
-                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:264:37: ( csMatchArgumentConstraint )*
+                // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:264:37: ( csMatchArgumentConstraint )*
                 while ( stream_csMatchArgumentConstraint.hasNext() ) {
                     adaptor.addChild(root_1, stream_csMatchArgumentConstraint.nextTree());
 
@@ -3089,7 +3089,7 @@ public class miniTomParser extends Parser {
     };
 
     // $ANTLR start "csMatchArgumentConstraint"
-    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:268:1: csMatchArgumentConstraint : csPattern -> ^( Cst_MatchArgumentConstraint csPattern ) ;
+    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:268:1: csMatchArgumentConstraint : csPattern -> ^( Cst_MatchArgumentConstraint csPattern ) ;
     public final miniTomParser.csMatchArgumentConstraint_return csMatchArgumentConstraint() throws RecognitionException {
         miniTomParser.csMatchArgumentConstraint_return retval = new miniTomParser.csMatchArgumentConstraint_return();
         retval.start = input.LT(1);
@@ -3101,8 +3101,8 @@ public class miniTomParser extends Parser {
 
         RewriteRuleSubtreeStream stream_csPattern=new RewriteRuleSubtreeStream(adaptor,"rule csPattern");
         try {
-            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:268:27: ( csPattern -> ^( Cst_MatchArgumentConstraint csPattern ) )
-            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:269:3: csPattern
+            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:268:27: ( csPattern -> ^( Cst_MatchArgumentConstraint csPattern ) )
+            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:269:3: csPattern
             {
             pushFollow(FOLLOW_csPattern_in_csMatchArgumentConstraint2085);
             csPattern62=csPattern();
@@ -3126,7 +3126,7 @@ public class miniTomParser extends Parser {
             root_0 = (Tree)adaptor.nil();
             // 270:3: -> ^( Cst_MatchArgumentConstraint csPattern )
             {
-                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:270:6: ^( Cst_MatchArgumentConstraint csPattern )
+                // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:270:6: ^( Cst_MatchArgumentConstraint csPattern )
                 {
                 Tree root_1 = (Tree)adaptor.nil();
                 root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_MatchArgumentConstraint, "Cst_MatchArgumentConstraint"), root_1);
@@ -3167,7 +3167,7 @@ public class miniTomParser extends Parser {
     };
 
     // $ANTLR start "csConstraint"
-    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:273:1: csConstraint : csConstraint_priority1 ;
+    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:273:1: csConstraint : csConstraint_priority1 ;
     public final miniTomParser.csConstraint_return csConstraint() throws RecognitionException {
         miniTomParser.csConstraint_return retval = new miniTomParser.csConstraint_return();
         retval.start = input.LT(1);
@@ -3179,8 +3179,8 @@ public class miniTomParser extends Parser {
 
 
         try {
-            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:285:14: ( csConstraint_priority1 )
-            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:286:2: csConstraint_priority1
+            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:285:14: ( csConstraint_priority1 )
+            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:286:2: csConstraint_priority1
             {
             root_0 = (Tree)adaptor.nil();
 
@@ -3219,7 +3219,7 @@ public class miniTomParser extends Parser {
     };
 
     // $ANTLR start "csConstraint_priority1"
-    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:289:1: csConstraint_priority1 : csConstraint_priority2 (or= OR csConstraint_priority2 )* -> {or!=null}? ^( Cst_OrConstraint ( csConstraint_priority2 )* ) -> csConstraint_priority2 ;
+    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:289:1: csConstraint_priority1 : csConstraint_priority2 (or= OR csConstraint_priority2 )* -> {or!=null}? ^( Cst_OrConstraint ( csConstraint_priority2 )* ) -> csConstraint_priority2 ;
     public final miniTomParser.csConstraint_priority1_return csConstraint_priority1() throws RecognitionException {
         miniTomParser.csConstraint_priority1_return retval = new miniTomParser.csConstraint_priority1_return();
         retval.start = input.LT(1);
@@ -3236,8 +3236,8 @@ public class miniTomParser extends Parser {
         RewriteRuleTokenStream stream_OR=new RewriteRuleTokenStream(adaptor,"token OR");
         RewriteRuleSubtreeStream stream_csConstraint_priority2=new RewriteRuleSubtreeStream(adaptor,"rule csConstraint_priority2");
         try {
-            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:289:24: ( csConstraint_priority2 (or= OR csConstraint_priority2 )* -> {or!=null}? ^( Cst_OrConstraint ( csConstraint_priority2 )* ) -> csConstraint_priority2 )
-            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:290:3: csConstraint_priority2 (or= OR csConstraint_priority2 )*
+            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:289:24: ( csConstraint_priority2 (or= OR csConstraint_priority2 )* -> {or!=null}? ^( Cst_OrConstraint ( csConstraint_priority2 )* ) -> csConstraint_priority2 )
+            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:290:3: csConstraint_priority2 (or= OR csConstraint_priority2 )*
             {
             pushFollow(FOLLOW_csConstraint_priority2_in_csConstraint_priority12119);
             csConstraint_priority264=csConstraint_priority2();
@@ -3245,7 +3245,7 @@ public class miniTomParser extends Parser {
             state._fsp--;
             if (state.failed) return retval;
             if ( state.backtracking==0 ) stream_csConstraint_priority2.add(csConstraint_priority264.getTree());
-            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:290:26: (or= OR csConstraint_priority2 )*
+            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:290:26: (or= OR csConstraint_priority2 )*
             loop26:
             do {
                 int alt26=2;
@@ -3258,7 +3258,7 @@ public class miniTomParser extends Parser {
 
                 switch (alt26) {
             	case 1 :
-            	    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:290:27: or= OR csConstraint_priority2
+            	    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:290:27: or= OR csConstraint_priority2
             	    {
             	    or=(Token)match(input,OR,FOLLOW_OR_in_csConstraint_priority12124); if (state.failed) return retval; 
             	    if ( state.backtracking==0 ) stream_OR.add(or);
@@ -3294,12 +3294,12 @@ public class miniTomParser extends Parser {
             root_0 = (Tree)adaptor.nil();
             // 291:3: -> {or!=null}? ^( Cst_OrConstraint ( csConstraint_priority2 )* )
             if (or!=null) {
-                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:291:17: ^( Cst_OrConstraint ( csConstraint_priority2 )* )
+                // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:291:17: ^( Cst_OrConstraint ( csConstraint_priority2 )* )
                 {
                 Tree root_1 = (Tree)adaptor.nil();
                 root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_OrConstraint, "Cst_OrConstraint"), root_1);
 
-                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:291:36: ( csConstraint_priority2 )*
+                // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:291:36: ( csConstraint_priority2 )*
                 while ( stream_csConstraint_priority2.hasNext() ) {
                     adaptor.addChild(root_1, stream_csConstraint_priority2.nextTree());
 
@@ -3345,7 +3345,7 @@ public class miniTomParser extends Parser {
     };
 
     // $ANTLR start "csConstraint_priority2"
-    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:295:1: csConstraint_priority2 : csConstraint_priority3 (and= AND csConstraint_priority3 )* -> {and!=null}? ^( Cst_AndConstraint ( csConstraint_priority3 )* ) -> csConstraint_priority3 ;
+    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:295:1: csConstraint_priority2 : csConstraint_priority3 (and= AND csConstraint_priority3 )* -> {and!=null}? ^( Cst_AndConstraint ( csConstraint_priority3 )* ) -> csConstraint_priority3 ;
     public final miniTomParser.csConstraint_priority2_return csConstraint_priority2() throws RecognitionException {
         miniTomParser.csConstraint_priority2_return retval = new miniTomParser.csConstraint_priority2_return();
         retval.start = input.LT(1);
@@ -3362,8 +3362,8 @@ public class miniTomParser extends Parser {
         RewriteRuleTokenStream stream_AND=new RewriteRuleTokenStream(adaptor,"token AND");
         RewriteRuleSubtreeStream stream_csConstraint_priority3=new RewriteRuleSubtreeStream(adaptor,"rule csConstraint_priority3");
         try {
-            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:295:24: ( csConstraint_priority3 (and= AND csConstraint_priority3 )* -> {and!=null}? ^( Cst_AndConstraint ( csConstraint_priority3 )* ) -> csConstraint_priority3 )
-            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:296:3: csConstraint_priority3 (and= AND csConstraint_priority3 )*
+            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:295:24: ( csConstraint_priority3 (and= AND csConstraint_priority3 )* -> {and!=null}? ^( Cst_AndConstraint ( csConstraint_priority3 )* ) -> csConstraint_priority3 )
+            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:296:3: csConstraint_priority3 (and= AND csConstraint_priority3 )*
             {
             pushFollow(FOLLOW_csConstraint_priority3_in_csConstraint_priority22157);
             csConstraint_priority366=csConstraint_priority3();
@@ -3371,7 +3371,7 @@ public class miniTomParser extends Parser {
             state._fsp--;
             if (state.failed) return retval;
             if ( state.backtracking==0 ) stream_csConstraint_priority3.add(csConstraint_priority366.getTree());
-            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:296:26: (and= AND csConstraint_priority3 )*
+            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:296:26: (and= AND csConstraint_priority3 )*
             loop27:
             do {
                 int alt27=2;
@@ -3384,7 +3384,7 @@ public class miniTomParser extends Parser {
 
                 switch (alt27) {
             	case 1 :
-            	    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:296:27: and= AND csConstraint_priority3
+            	    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:296:27: and= AND csConstraint_priority3
             	    {
             	    and=(Token)match(input,AND,FOLLOW_AND_in_csConstraint_priority22162); if (state.failed) return retval; 
             	    if ( state.backtracking==0 ) stream_AND.add(and);
@@ -3420,12 +3420,12 @@ public class miniTomParser extends Parser {
             root_0 = (Tree)adaptor.nil();
             // 297:3: -> {and!=null}? ^( Cst_AndConstraint ( csConstraint_priority3 )* )
             if (and!=null) {
-                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:297:18: ^( Cst_AndConstraint ( csConstraint_priority3 )* )
+                // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:297:18: ^( Cst_AndConstraint ( csConstraint_priority3 )* )
                 {
                 Tree root_1 = (Tree)adaptor.nil();
                 root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_AndConstraint, "Cst_AndConstraint"), root_1);
 
-                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:297:38: ( csConstraint_priority3 )*
+                // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:297:38: ( csConstraint_priority3 )*
                 while ( stream_csConstraint_priority3.hasNext() ) {
                     adaptor.addChild(root_1, stream_csConstraint_priority3.nextTree());
 
@@ -3471,7 +3471,7 @@ public class miniTomParser extends Parser {
     };
 
     // $ANTLR start "csConstraint_priority3"
-    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:301:1: csConstraint_priority3 : ( csPattern LARROW csBQTerm[true] -> ^( Cst_MatchTermConstraint csPattern csBQTerm ) | l= csTerm (gt= GREATERTHAN | ge= GREATEROREQU | lt= LOWERTHAN | le= LOWEROREQU | eq= DOUBLEEQUAL | ne= DIFFERENT ) r= csTerm -> {gt!=null}? ^( Cst_NumGreaterThan $l $r) -> {ge!=null}? ^( Cst_NumGreaterOrEqualTo $l $r) -> {lt!=null}? ^( Cst_NumLessThan $l $r) -> {le!=null}? ^( Cst_NumLessOrEqualTo $l $r) -> {eq!=null}? ^( Cst_NumEqualTo $l $r) -> ^( Cst_NumDifferent $l $r) | LPAR csConstraint RPAR -> csConstraint );
+    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:301:1: csConstraint_priority3 : ( csPattern LARROW csBQTerm[true] -> ^( Cst_MatchTermConstraint csPattern csBQTerm ) | l= csTerm (gt= GREATERTHAN | ge= GREATEROREQU | lt= LOWERTHAN | le= LOWEROREQU | eq= DOUBLEEQUAL | ne= DIFFERENT ) r= csTerm -> {gt!=null}? ^( Cst_NumGreaterThan $l $r) -> {ge!=null}? ^( Cst_NumGreaterOrEqualTo $l $r) -> {lt!=null}? ^( Cst_NumLessThan $l $r) -> {le!=null}? ^( Cst_NumLessOrEqualTo $l $r) -> {eq!=null}? ^( Cst_NumEqualTo $l $r) -> ^( Cst_NumDifferent $l $r) | LPAR csConstraint RPAR -> csConstraint );
     public final miniTomParser.csConstraint_priority3_return csConstraint_priority3() throws RecognitionException {
         miniTomParser.csConstraint_priority3_return retval = new miniTomParser.csConstraint_priority3_return();
         retval.start = input.LT(1);
@@ -3521,12 +3521,12 @@ public class miniTomParser extends Parser {
         RewriteRuleSubtreeStream stream_csConstraint=new RewriteRuleSubtreeStream(adaptor,"rule csConstraint");
         RewriteRuleSubtreeStream stream_csPattern=new RewriteRuleSubtreeStream(adaptor,"rule csPattern");
         try {
-            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:301:24: ( csPattern LARROW csBQTerm[true] -> ^( Cst_MatchTermConstraint csPattern csBQTerm ) | l= csTerm (gt= GREATERTHAN | ge= GREATEROREQU | lt= LOWERTHAN | le= LOWEROREQU | eq= DOUBLEEQUAL | ne= DIFFERENT ) r= csTerm -> {gt!=null}? ^( Cst_NumGreaterThan $l $r) -> {ge!=null}? ^( Cst_NumGreaterOrEqualTo $l $r) -> {lt!=null}? ^( Cst_NumLessThan $l $r) -> {le!=null}? ^( Cst_NumLessOrEqualTo $l $r) -> {eq!=null}? ^( Cst_NumEqualTo $l $r) -> ^( Cst_NumDifferent $l $r) | LPAR csConstraint RPAR -> csConstraint )
+            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:301:24: ( csPattern LARROW csBQTerm[true] -> ^( Cst_MatchTermConstraint csPattern csBQTerm ) | l= csTerm (gt= GREATERTHAN | ge= GREATEROREQU | lt= LOWERTHAN | le= LOWEROREQU | eq= DOUBLEEQUAL | ne= DIFFERENT ) r= csTerm -> {gt!=null}? ^( Cst_NumGreaterThan $l $r) -> {ge!=null}? ^( Cst_NumGreaterOrEqualTo $l $r) -> {lt!=null}? ^( Cst_NumLessThan $l $r) -> {le!=null}? ^( Cst_NumLessOrEqualTo $l $r) -> {eq!=null}? ^( Cst_NumEqualTo $l $r) -> ^( Cst_NumDifferent $l $r) | LPAR csConstraint RPAR -> csConstraint )
             int alt29=3;
             alt29 = dfa29.predict(input);
             switch (alt29) {
                 case 1 :
-                    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:303:3: csPattern LARROW csBQTerm[true]
+                    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:303:3: csPattern LARROW csBQTerm[true]
                     {
                     pushFollow(FOLLOW_csPattern_in_csConstraint_priority32197);
                     csPattern68=csPattern();
@@ -3559,7 +3559,7 @@ public class miniTomParser extends Parser {
                     root_0 = (Tree)adaptor.nil();
                     // 304:3: -> ^( Cst_MatchTermConstraint csPattern csBQTerm )
                     {
-                        // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:304:6: ^( Cst_MatchTermConstraint csPattern csBQTerm )
+                        // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:304:6: ^( Cst_MatchTermConstraint csPattern csBQTerm )
                         {
                         Tree root_1 = (Tree)adaptor.nil();
                         root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_MatchTermConstraint, "Cst_MatchTermConstraint"), root_1);
@@ -3576,7 +3576,7 @@ public class miniTomParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:306:5: l= csTerm (gt= GREATERTHAN | ge= GREATEROREQU | lt= LOWERTHAN | le= LOWEROREQU | eq= DOUBLEEQUAL | ne= DIFFERENT ) r= csTerm
+                    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:306:5: l= csTerm (gt= GREATERTHAN | ge= GREATEROREQU | lt= LOWERTHAN | le= LOWEROREQU | eq= DOUBLEEQUAL | ne= DIFFERENT ) r= csTerm
                     {
                     pushFollow(FOLLOW_csTerm_in_csConstraint_priority32224);
                     l=csTerm();
@@ -3584,7 +3584,7 @@ public class miniTomParser extends Parser {
                     state._fsp--;
                     if (state.failed) return retval;
                     if ( state.backtracking==0 ) stream_csTerm.add(l.getTree());
-                    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:307:5: (gt= GREATERTHAN | ge= GREATEROREQU | lt= LOWERTHAN | le= LOWEROREQU | eq= DOUBLEEQUAL | ne= DIFFERENT )
+                    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:307:5: (gt= GREATERTHAN | ge= GREATEROREQU | lt= LOWERTHAN | le= LOWEROREQU | eq= DOUBLEEQUAL | ne= DIFFERENT )
                     int alt28=6;
                     switch ( input.LA(1) ) {
                     case GREATERTHAN:
@@ -3627,7 +3627,7 @@ public class miniTomParser extends Parser {
 
                     switch (alt28) {
                         case 1 :
-                            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:307:6: gt= GREATERTHAN
+                            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:307:6: gt= GREATERTHAN
                             {
                             gt=(Token)match(input,GREATERTHAN,FOLLOW_GREATERTHAN_in_csConstraint_priority32234); if (state.failed) return retval; 
                             if ( state.backtracking==0 ) stream_GREATERTHAN.add(gt);
@@ -3636,7 +3636,7 @@ public class miniTomParser extends Parser {
                             }
                             break;
                         case 2 :
-                            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:307:21: ge= GREATEROREQU
+                            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:307:21: ge= GREATEROREQU
                             {
                             ge=(Token)match(input,GREATEROREQU,FOLLOW_GREATEROREQU_in_csConstraint_priority32238); if (state.failed) return retval; 
                             if ( state.backtracking==0 ) stream_GREATEROREQU.add(ge);
@@ -3645,7 +3645,7 @@ public class miniTomParser extends Parser {
                             }
                             break;
                         case 3 :
-                            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:307:37: lt= LOWERTHAN
+                            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:307:37: lt= LOWERTHAN
                             {
                             lt=(Token)match(input,LOWERTHAN,FOLLOW_LOWERTHAN_in_csConstraint_priority32242); if (state.failed) return retval; 
                             if ( state.backtracking==0 ) stream_LOWERTHAN.add(lt);
@@ -3654,7 +3654,7 @@ public class miniTomParser extends Parser {
                             }
                             break;
                         case 4 :
-                            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:308:6: le= LOWEROREQU
+                            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:308:6: le= LOWEROREQU
                             {
                             le=(Token)match(input,LOWEROREQU,FOLLOW_LOWEROREQU_in_csConstraint_priority32251); if (state.failed) return retval; 
                             if ( state.backtracking==0 ) stream_LOWEROREQU.add(le);
@@ -3663,7 +3663,7 @@ public class miniTomParser extends Parser {
                             }
                             break;
                         case 5 :
-                            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:308:21: eq= DOUBLEEQUAL
+                            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:308:21: eq= DOUBLEEQUAL
                             {
                             eq=(Token)match(input,DOUBLEEQUAL,FOLLOW_DOUBLEEQUAL_in_csConstraint_priority32256); if (state.failed) return retval; 
                             if ( state.backtracking==0 ) stream_DOUBLEEQUAL.add(eq);
@@ -3672,7 +3672,7 @@ public class miniTomParser extends Parser {
                             }
                             break;
                         case 6 :
-                            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:308:37: ne= DIFFERENT
+                            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:308:37: ne= DIFFERENT
                             {
                             ne=(Token)match(input,DIFFERENT,FOLLOW_DIFFERENT_in_csConstraint_priority32261); if (state.failed) return retval; 
                             if ( state.backtracking==0 ) stream_DIFFERENT.add(ne);
@@ -3692,7 +3692,7 @@ public class miniTomParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: r, r, r, l, l, l, l, l, r, l, r, r
+                    // elements: l, r, l, l, l, l, r, r, r, l, r, r
                     // token labels: 
                     // rule labels: retval, r, l
                     // token list labels: 
@@ -3707,7 +3707,7 @@ public class miniTomParser extends Parser {
                     root_0 = (Tree)adaptor.nil();
                     // 311:3: -> {gt!=null}? ^( Cst_NumGreaterThan $l $r)
                     if (gt!=null) {
-                        // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:311:17: ^( Cst_NumGreaterThan $l $r)
+                        // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:311:17: ^( Cst_NumGreaterThan $l $r)
                         {
                         Tree root_1 = (Tree)adaptor.nil();
                         root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_NumGreaterThan, "Cst_NumGreaterThan"), root_1);
@@ -3721,7 +3721,7 @@ public class miniTomParser extends Parser {
                     }
                     else // 312:3: -> {ge!=null}? ^( Cst_NumGreaterOrEqualTo $l $r)
                     if (ge!=null) {
-                        // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:312:17: ^( Cst_NumGreaterOrEqualTo $l $r)
+                        // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:312:17: ^( Cst_NumGreaterOrEqualTo $l $r)
                         {
                         Tree root_1 = (Tree)adaptor.nil();
                         root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_NumGreaterOrEqualTo, "Cst_NumGreaterOrEqualTo"), root_1);
@@ -3735,7 +3735,7 @@ public class miniTomParser extends Parser {
                     }
                     else // 313:3: -> {lt!=null}? ^( Cst_NumLessThan $l $r)
                     if (lt!=null) {
-                        // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:313:17: ^( Cst_NumLessThan $l $r)
+                        // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:313:17: ^( Cst_NumLessThan $l $r)
                         {
                         Tree root_1 = (Tree)adaptor.nil();
                         root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_NumLessThan, "Cst_NumLessThan"), root_1);
@@ -3749,7 +3749,7 @@ public class miniTomParser extends Parser {
                     }
                     else // 314:3: -> {le!=null}? ^( Cst_NumLessOrEqualTo $l $r)
                     if (le!=null) {
-                        // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:314:17: ^( Cst_NumLessOrEqualTo $l $r)
+                        // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:314:17: ^( Cst_NumLessOrEqualTo $l $r)
                         {
                         Tree root_1 = (Tree)adaptor.nil();
                         root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_NumLessOrEqualTo, "Cst_NumLessOrEqualTo"), root_1);
@@ -3763,7 +3763,7 @@ public class miniTomParser extends Parser {
                     }
                     else // 315:3: -> {eq!=null}? ^( Cst_NumEqualTo $l $r)
                     if (eq!=null) {
-                        // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:315:17: ^( Cst_NumEqualTo $l $r)
+                        // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:315:17: ^( Cst_NumEqualTo $l $r)
                         {
                         Tree root_1 = (Tree)adaptor.nil();
                         root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_NumEqualTo, "Cst_NumEqualTo"), root_1);
@@ -3777,7 +3777,7 @@ public class miniTomParser extends Parser {
                     }
                     else // 316:3: -> ^( Cst_NumDifferent $l $r)
                     {
-                        // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:316:17: ^( Cst_NumDifferent $l $r)
+                        // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:316:17: ^( Cst_NumDifferent $l $r)
                         {
                         Tree root_1 = (Tree)adaptor.nil();
                         root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_NumDifferent, "Cst_NumDifferent"), root_1);
@@ -3794,7 +3794,7 @@ public class miniTomParser extends Parser {
                     }
                     break;
                 case 3 :
-                    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:318:5: LPAR csConstraint RPAR
+                    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:318:5: LPAR csConstraint RPAR
                     {
                     LPAR71=(Token)match(input,LPAR,FOLLOW_LPAR_in_csConstraint_priority32400); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_LPAR.add(LPAR71);
@@ -3859,7 +3859,7 @@ public class miniTomParser extends Parser {
     };
 
     // $ANTLR start "csTerm"
-    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:324:1: csTerm : ( IDENTIFIER (s= STAR )? -> {s!=null}? ^( Cst_TermVariableStar IDENTIFIER ) -> ^( Cst_TermVariable IDENTIFIER ) | IDENTIFIER LPAR ( csTerm ( COMMA csTerm )* )? RPAR -> ^( Cst_TermAppl IDENTIFIER ^( ConcCstTerm ( csTerm )* ) ) );
+    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:324:1: csTerm : ( IDENTIFIER (s= STAR )? -> {s!=null}? ^( Cst_TermVariableStar IDENTIFIER ) -> ^( Cst_TermVariable IDENTIFIER ) | IDENTIFIER LPAR ( csTerm ( COMMA csTerm )* )? RPAR -> ^( Cst_TermAppl IDENTIFIER ^( ConcCstTerm ( csTerm )* ) ) );
     public final miniTomParser.csTerm_return csTerm() throws RecognitionException {
         miniTomParser.csTerm_return retval = new miniTomParser.csTerm_return();
         retval.start = input.LT(1);
@@ -3890,7 +3890,7 @@ public class miniTomParser extends Parser {
         RewriteRuleTokenStream stream_IDENTIFIER=new RewriteRuleTokenStream(adaptor,"token IDENTIFIER");
         RewriteRuleSubtreeStream stream_csTerm=new RewriteRuleSubtreeStream(adaptor,"rule csTerm");
         try {
-            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:324:8: ( IDENTIFIER (s= STAR )? -> {s!=null}? ^( Cst_TermVariableStar IDENTIFIER ) -> ^( Cst_TermVariable IDENTIFIER ) | IDENTIFIER LPAR ( csTerm ( COMMA csTerm )* )? RPAR -> ^( Cst_TermAppl IDENTIFIER ^( ConcCstTerm ( csTerm )* ) ) )
+            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:324:8: ( IDENTIFIER (s= STAR )? -> {s!=null}? ^( Cst_TermVariableStar IDENTIFIER ) -> ^( Cst_TermVariable IDENTIFIER ) | IDENTIFIER LPAR ( csTerm ( COMMA csTerm )* )? RPAR -> ^( Cst_TermAppl IDENTIFIER ^( ConcCstTerm ( csTerm )* ) ) )
             int alt33=2;
             int LA33_0 = input.LA(1);
 
@@ -3920,12 +3920,12 @@ public class miniTomParser extends Parser {
             }
             switch (alt33) {
                 case 1 :
-                    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:325:3: IDENTIFIER (s= STAR )?
+                    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:325:3: IDENTIFIER (s= STAR )?
                     {
                     IDENTIFIER74=(Token)match(input,IDENTIFIER,FOLLOW_IDENTIFIER_in_csTerm2423); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_IDENTIFIER.add(IDENTIFIER74);
 
-                    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:325:14: (s= STAR )?
+                    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:325:14: (s= STAR )?
                     int alt30=2;
                     int LA30_0 = input.LA(1);
 
@@ -3934,7 +3934,7 @@ public class miniTomParser extends Parser {
                     }
                     switch (alt30) {
                         case 1 :
-                            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:325:15: s= STAR
+                            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:325:15: s= STAR
                             {
                             s=(Token)match(input,STAR,FOLLOW_STAR_in_csTerm2428); if (state.failed) return retval; 
                             if ( state.backtracking==0 ) stream_STAR.add(s);
@@ -3961,7 +3961,7 @@ public class miniTomParser extends Parser {
                     root_0 = (Tree)adaptor.nil();
                     // 326:3: -> {s!=null}? ^( Cst_TermVariableStar IDENTIFIER )
                     if (s!=null) {
-                        // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:326:16: ^( Cst_TermVariableStar IDENTIFIER )
+                        // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:326:16: ^( Cst_TermVariableStar IDENTIFIER )
                         {
                         Tree root_1 = (Tree)adaptor.nil();
                         root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_TermVariableStar, "Cst_TermVariableStar"), root_1);
@@ -3974,7 +3974,7 @@ public class miniTomParser extends Parser {
                     }
                     else // 327:3: -> ^( Cst_TermVariable IDENTIFIER )
                     {
-                        // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:327:16: ^( Cst_TermVariable IDENTIFIER )
+                        // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:327:16: ^( Cst_TermVariable IDENTIFIER )
                         {
                         Tree root_1 = (Tree)adaptor.nil();
                         root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_TermVariable, "Cst_TermVariable"), root_1);
@@ -3990,7 +3990,7 @@ public class miniTomParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:329:3: IDENTIFIER LPAR ( csTerm ( COMMA csTerm )* )? RPAR
+                    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:329:3: IDENTIFIER LPAR ( csTerm ( COMMA csTerm )* )? RPAR
                     {
                     IDENTIFIER75=(Token)match(input,IDENTIFIER,FOLLOW_IDENTIFIER_in_csTerm2468); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_IDENTIFIER.add(IDENTIFIER75);
@@ -3998,7 +3998,7 @@ public class miniTomParser extends Parser {
                     LPAR76=(Token)match(input,LPAR,FOLLOW_LPAR_in_csTerm2470); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_LPAR.add(LPAR76);
 
-                    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:329:19: ( csTerm ( COMMA csTerm )* )?
+                    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:329:19: ( csTerm ( COMMA csTerm )* )?
                     int alt32=2;
                     int LA32_0 = input.LA(1);
 
@@ -4007,7 +4007,7 @@ public class miniTomParser extends Parser {
                     }
                     switch (alt32) {
                         case 1 :
-                            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:329:20: csTerm ( COMMA csTerm )*
+                            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:329:20: csTerm ( COMMA csTerm )*
                             {
                             pushFollow(FOLLOW_csTerm_in_csTerm2473);
                             csTerm77=csTerm();
@@ -4015,7 +4015,7 @@ public class miniTomParser extends Parser {
                             state._fsp--;
                             if (state.failed) return retval;
                             if ( state.backtracking==0 ) stream_csTerm.add(csTerm77.getTree());
-                            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:329:27: ( COMMA csTerm )*
+                            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:329:27: ( COMMA csTerm )*
                             loop31:
                             do {
                                 int alt31=2;
@@ -4028,7 +4028,7 @@ public class miniTomParser extends Parser {
 
                                 switch (alt31) {
                             	case 1 :
-                            	    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:329:28: COMMA csTerm
+                            	    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:329:28: COMMA csTerm
                             	    {
                             	    COMMA78=(Token)match(input,COMMA,FOLLOW_COMMA_in_csTerm2476); if (state.failed) return retval; 
                             	    if ( state.backtracking==0 ) stream_COMMA.add(COMMA78);
@@ -4073,18 +4073,18 @@ public class miniTomParser extends Parser {
                     root_0 = (Tree)adaptor.nil();
                     // 330:3: -> ^( Cst_TermAppl IDENTIFIER ^( ConcCstTerm ( csTerm )* ) )
                     {
-                        // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:330:6: ^( Cst_TermAppl IDENTIFIER ^( ConcCstTerm ( csTerm )* ) )
+                        // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:330:6: ^( Cst_TermAppl IDENTIFIER ^( ConcCstTerm ( csTerm )* ) )
                         {
                         Tree root_1 = (Tree)adaptor.nil();
                         root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_TermAppl, "Cst_TermAppl"), root_1);
 
                         adaptor.addChild(root_1, stream_IDENTIFIER.nextNode());
-                        // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:330:32: ^( ConcCstTerm ( csTerm )* )
+                        // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:330:32: ^( ConcCstTerm ( csTerm )* )
                         {
                         Tree root_2 = (Tree)adaptor.nil();
                         root_2 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(ConcCstTerm, "ConcCstTerm"), root_2);
 
-                        // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:330:46: ( csTerm )*
+                        // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:330:46: ( csTerm )*
                         while ( stream_csTerm.hasNext() ) {
                             adaptor.addChild(root_2, stream_csTerm.nextTree());
 
@@ -4130,7 +4130,7 @@ public class miniTomParser extends Parser {
     };
 
     // $ANTLR start "csPattern"
-    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:333:1: csPattern : ( IDENTIFIER AT csPattern -> ^( Cst_AnnotatedPattern csPattern IDENTIFIER ) | ANTI csPattern -> ^( Cst_Anti csPattern ) | csHeadSymbolList csExplicitTermList -> ^( Cst_Appl csHeadSymbolList csExplicitTermList ) | csHeadSymbolList csImplicitPairList -> ^( Cst_RecordAppl csHeadSymbolList csImplicitPairList ) | IDENTIFIER (s= STAR )? -> {s!=null}? ^( Cst_VariableStar IDENTIFIER ) -> ^( Cst_Variable IDENTIFIER ) | UNDERSCORE (s= STAR )? -> {s!=null}? ^( Cst_UnamedVariableStar ) -> ^( Cst_UnamedVariable ) | csConstantValue (s= STAR )? -> {s!=null}? ^( Cst_ConstantStar csConstantValue ) -> ^( Cst_Constant csConstantValue ) );
+    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:333:1: csPattern : ( IDENTIFIER AT csPattern -> ^( Cst_AnnotatedPattern csPattern IDENTIFIER ) | ANTI csPattern -> ^( Cst_Anti csPattern ) | csHeadSymbolList csExplicitTermList -> ^( Cst_Appl csHeadSymbolList csExplicitTermList ) | csHeadSymbolList csImplicitPairList -> ^( Cst_RecordAppl csHeadSymbolList csImplicitPairList ) | IDENTIFIER (s= STAR )? -> {s!=null}? ^( Cst_VariableStar IDENTIFIER ) -> ^( Cst_Variable IDENTIFIER ) | UNDERSCORE (s= STAR )? -> {s!=null}? ^( Cst_UnamedVariableStar ) -> ^( Cst_UnamedVariable ) | csConstantValue (s= STAR )? -> {s!=null}? ^( Cst_ConstantStar csConstantValue ) -> ^( Cst_Constant csConstantValue ) );
     public final miniTomParser.csPattern_return csPattern() throws RecognitionException {
         miniTomParser.csPattern_return retval = new miniTomParser.csPattern_return();
         retval.start = input.LT(1);
@@ -4175,12 +4175,12 @@ public class miniTomParser extends Parser {
         RewriteRuleSubtreeStream stream_csPattern=new RewriteRuleSubtreeStream(adaptor,"rule csPattern");
         RewriteRuleSubtreeStream stream_csConstantValue=new RewriteRuleSubtreeStream(adaptor,"rule csConstantValue");
         try {
-            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:333:11: ( IDENTIFIER AT csPattern -> ^( Cst_AnnotatedPattern csPattern IDENTIFIER ) | ANTI csPattern -> ^( Cst_Anti csPattern ) | csHeadSymbolList csExplicitTermList -> ^( Cst_Appl csHeadSymbolList csExplicitTermList ) | csHeadSymbolList csImplicitPairList -> ^( Cst_RecordAppl csHeadSymbolList csImplicitPairList ) | IDENTIFIER (s= STAR )? -> {s!=null}? ^( Cst_VariableStar IDENTIFIER ) -> ^( Cst_Variable IDENTIFIER ) | UNDERSCORE (s= STAR )? -> {s!=null}? ^( Cst_UnamedVariableStar ) -> ^( Cst_UnamedVariable ) | csConstantValue (s= STAR )? -> {s!=null}? ^( Cst_ConstantStar csConstantValue ) -> ^( Cst_Constant csConstantValue ) )
+            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:333:11: ( IDENTIFIER AT csPattern -> ^( Cst_AnnotatedPattern csPattern IDENTIFIER ) | ANTI csPattern -> ^( Cst_Anti csPattern ) | csHeadSymbolList csExplicitTermList -> ^( Cst_Appl csHeadSymbolList csExplicitTermList ) | csHeadSymbolList csImplicitPairList -> ^( Cst_RecordAppl csHeadSymbolList csImplicitPairList ) | IDENTIFIER (s= STAR )? -> {s!=null}? ^( Cst_VariableStar IDENTIFIER ) -> ^( Cst_Variable IDENTIFIER ) | UNDERSCORE (s= STAR )? -> {s!=null}? ^( Cst_UnamedVariableStar ) -> ^( Cst_UnamedVariable ) | csConstantValue (s= STAR )? -> {s!=null}? ^( Cst_ConstantStar csConstantValue ) -> ^( Cst_Constant csConstantValue ) )
             int alt37=7;
             alt37 = dfa37.predict(input);
             switch (alt37) {
                 case 1 :
-                    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:335:3: IDENTIFIER AT csPattern
+                    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:335:3: IDENTIFIER AT csPattern
                     {
                     IDENTIFIER81=(Token)match(input,IDENTIFIER,FOLLOW_IDENTIFIER_in_csPattern2515); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_IDENTIFIER.add(IDENTIFIER81);
@@ -4210,7 +4210,7 @@ public class miniTomParser extends Parser {
                     root_0 = (Tree)adaptor.nil();
                     // 336:3: -> ^( Cst_AnnotatedPattern csPattern IDENTIFIER )
                     {
-                        // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:336:6: ^( Cst_AnnotatedPattern csPattern IDENTIFIER )
+                        // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:336:6: ^( Cst_AnnotatedPattern csPattern IDENTIFIER )
                         {
                         Tree root_1 = (Tree)adaptor.nil();
                         root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_AnnotatedPattern, "Cst_AnnotatedPattern"), root_1);
@@ -4227,7 +4227,7 @@ public class miniTomParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:339:3: ANTI csPattern
+                    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:339:3: ANTI csPattern
                     {
                     ANTI84=(Token)match(input,ANTI,FOLLOW_ANTI_in_csPattern2539); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_ANTI.add(ANTI84);
@@ -4254,7 +4254,7 @@ public class miniTomParser extends Parser {
                     root_0 = (Tree)adaptor.nil();
                     // 340:3: -> ^( Cst_Anti csPattern )
                     {
-                        // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:340:6: ^( Cst_Anti csPattern )
+                        // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:340:6: ^( Cst_Anti csPattern )
                         {
                         Tree root_1 = (Tree)adaptor.nil();
                         root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_Anti, "Cst_Anti"), root_1);
@@ -4270,7 +4270,7 @@ public class miniTomParser extends Parser {
                     }
                     break;
                 case 3 :
-                    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:343:3: csHeadSymbolList csExplicitTermList
+                    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:343:3: csHeadSymbolList csExplicitTermList
                     {
                     pushFollow(FOLLOW_csHeadSymbolList_in_csPattern2559);
                     csHeadSymbolList86=csHeadSymbolList();
@@ -4287,7 +4287,7 @@ public class miniTomParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: csExplicitTermList, csHeadSymbolList
+                    // elements: csHeadSymbolList, csExplicitTermList
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -4300,7 +4300,7 @@ public class miniTomParser extends Parser {
                     root_0 = (Tree)adaptor.nil();
                     // 344:3: -> ^( Cst_Appl csHeadSymbolList csExplicitTermList )
                     {
-                        // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:344:6: ^( Cst_Appl csHeadSymbolList csExplicitTermList )
+                        // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:344:6: ^( Cst_Appl csHeadSymbolList csExplicitTermList )
                         {
                         Tree root_1 = (Tree)adaptor.nil();
                         root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_Appl, "Cst_Appl"), root_1);
@@ -4317,7 +4317,7 @@ public class miniTomParser extends Parser {
                     }
                     break;
                 case 4 :
-                    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:347:3: csHeadSymbolList csImplicitPairList
+                    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:347:3: csHeadSymbolList csImplicitPairList
                     {
                     pushFollow(FOLLOW_csHeadSymbolList_in_csPattern2582);
                     csHeadSymbolList88=csHeadSymbolList();
@@ -4334,7 +4334,7 @@ public class miniTomParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: csHeadSymbolList, csImplicitPairList
+                    // elements: csImplicitPairList, csHeadSymbolList
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -4347,7 +4347,7 @@ public class miniTomParser extends Parser {
                     root_0 = (Tree)adaptor.nil();
                     // 348:3: -> ^( Cst_RecordAppl csHeadSymbolList csImplicitPairList )
                     {
-                        // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:348:6: ^( Cst_RecordAppl csHeadSymbolList csImplicitPairList )
+                        // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:348:6: ^( Cst_RecordAppl csHeadSymbolList csImplicitPairList )
                         {
                         Tree root_1 = (Tree)adaptor.nil();
                         root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_RecordAppl, "Cst_RecordAppl"), root_1);
@@ -4364,12 +4364,12 @@ public class miniTomParser extends Parser {
                     }
                     break;
                 case 5 :
-                    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:352:3: IDENTIFIER (s= STAR )?
+                    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:352:3: IDENTIFIER (s= STAR )?
                     {
                     IDENTIFIER90=(Token)match(input,IDENTIFIER,FOLLOW_IDENTIFIER_in_csPattern2607); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_IDENTIFIER.add(IDENTIFIER90);
 
-                    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:352:14: (s= STAR )?
+                    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:352:14: (s= STAR )?
                     int alt34=2;
                     int LA34_0 = input.LA(1);
 
@@ -4378,7 +4378,7 @@ public class miniTomParser extends Parser {
                     }
                     switch (alt34) {
                         case 1 :
-                            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:352:15: s= STAR
+                            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:352:15: s= STAR
                             {
                             s=(Token)match(input,STAR,FOLLOW_STAR_in_csPattern2612); if (state.failed) return retval; 
                             if ( state.backtracking==0 ) stream_STAR.add(s);
@@ -4405,7 +4405,7 @@ public class miniTomParser extends Parser {
                     root_0 = (Tree)adaptor.nil();
                     // 353:3: -> {s!=null}? ^( Cst_VariableStar IDENTIFIER )
                     if (s!=null) {
-                        // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:353:17: ^( Cst_VariableStar IDENTIFIER )
+                        // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:353:17: ^( Cst_VariableStar IDENTIFIER )
                         {
                         Tree root_1 = (Tree)adaptor.nil();
                         root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_VariableStar, "Cst_VariableStar"), root_1);
@@ -4418,7 +4418,7 @@ public class miniTomParser extends Parser {
                     }
                     else // 354:3: -> ^( Cst_Variable IDENTIFIER )
                     {
-                        // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:354:17: ^( Cst_Variable IDENTIFIER )
+                        // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:354:17: ^( Cst_Variable IDENTIFIER )
                         {
                         Tree root_1 = (Tree)adaptor.nil();
                         root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_Variable, "Cst_Variable"), root_1);
@@ -4434,12 +4434,12 @@ public class miniTomParser extends Parser {
                     }
                     break;
                 case 6 :
-                    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:358:3: UNDERSCORE (s= STAR )?
+                    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:358:3: UNDERSCORE (s= STAR )?
                     {
                     UNDERSCORE91=(Token)match(input,UNDERSCORE,FOLLOW_UNDERSCORE_in_csPattern2650); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_UNDERSCORE.add(UNDERSCORE91);
 
-                    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:358:14: (s= STAR )?
+                    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:358:14: (s= STAR )?
                     int alt35=2;
                     int LA35_0 = input.LA(1);
 
@@ -4448,7 +4448,7 @@ public class miniTomParser extends Parser {
                     }
                     switch (alt35) {
                         case 1 :
-                            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:358:15: s= STAR
+                            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:358:15: s= STAR
                             {
                             s=(Token)match(input,STAR,FOLLOW_STAR_in_csPattern2655); if (state.failed) return retval; 
                             if ( state.backtracking==0 ) stream_STAR.add(s);
@@ -4475,7 +4475,7 @@ public class miniTomParser extends Parser {
                     root_0 = (Tree)adaptor.nil();
                     // 359:3: -> {s!=null}? ^( Cst_UnamedVariableStar )
                     if (s!=null) {
-                        // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:359:17: ^( Cst_UnamedVariableStar )
+                        // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:359:17: ^( Cst_UnamedVariableStar )
                         {
                         Tree root_1 = (Tree)adaptor.nil();
                         root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_UnamedVariableStar, "Cst_UnamedVariableStar"), root_1);
@@ -4486,7 +4486,7 @@ public class miniTomParser extends Parser {
                     }
                     else // 360:3: -> ^( Cst_UnamedVariable )
                     {
-                        // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:360:17: ^( Cst_UnamedVariable )
+                        // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:360:17: ^( Cst_UnamedVariable )
                         {
                         Tree root_1 = (Tree)adaptor.nil();
                         root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_UnamedVariable, "Cst_UnamedVariable"), root_1);
@@ -4500,7 +4500,7 @@ public class miniTomParser extends Parser {
                     }
                     break;
                 case 7 :
-                    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:364:3: csConstantValue (s= STAR )?
+                    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:364:3: csConstantValue (s= STAR )?
                     {
                     pushFollow(FOLLOW_csConstantValue_in_csPattern2690);
                     csConstantValue92=csConstantValue();
@@ -4508,7 +4508,7 @@ public class miniTomParser extends Parser {
                     state._fsp--;
                     if (state.failed) return retval;
                     if ( state.backtracking==0 ) stream_csConstantValue.add(csConstantValue92.getTree());
-                    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:364:19: (s= STAR )?
+                    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:364:19: (s= STAR )?
                     int alt36=2;
                     int LA36_0 = input.LA(1);
 
@@ -4517,7 +4517,7 @@ public class miniTomParser extends Parser {
                     }
                     switch (alt36) {
                         case 1 :
-                            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:364:20: s= STAR
+                            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:364:20: s= STAR
                             {
                             s=(Token)match(input,STAR,FOLLOW_STAR_in_csPattern2695); if (state.failed) return retval; 
                             if ( state.backtracking==0 ) stream_STAR.add(s);
@@ -4544,7 +4544,7 @@ public class miniTomParser extends Parser {
                     root_0 = (Tree)adaptor.nil();
                     // 365:3: -> {s!=null}? ^( Cst_ConstantStar csConstantValue )
                     if (s!=null) {
-                        // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:365:17: ^( Cst_ConstantStar csConstantValue )
+                        // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:365:17: ^( Cst_ConstantStar csConstantValue )
                         {
                         Tree root_1 = (Tree)adaptor.nil();
                         root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_ConstantStar, "Cst_ConstantStar"), root_1);
@@ -4557,7 +4557,7 @@ public class miniTomParser extends Parser {
                     }
                     else // 366:3: -> ^( Cst_Constant csConstantValue )
                     {
-                        // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:366:17: ^( Cst_Constant csConstantValue )
+                        // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:366:17: ^( Cst_Constant csConstantValue )
                         {
                         Tree root_1 = (Tree)adaptor.nil();
                         root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_Constant, "Cst_Constant"), root_1);
@@ -4600,7 +4600,7 @@ public class miniTomParser extends Parser {
     };
 
     // $ANTLR start "csHeadSymbolList"
-    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:373:1: csHeadSymbolList : ( csHeadSymbol -> ^( ConcCstSymbol csHeadSymbol ) | LPAR csHeadSymbol ( PIPE csHeadSymbol )* RPAR -> ^( ConcCstSymbol ( csHeadSymbol )* ) );
+    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:373:1: csHeadSymbolList : ( csHeadSymbol -> ^( ConcCstSymbol csHeadSymbol ) | LPAR csHeadSymbol ( PIPE csHeadSymbol )* RPAR -> ^( ConcCstSymbol ( csHeadSymbol )* ) );
     public final miniTomParser.csHeadSymbolList_return csHeadSymbolList() throws RecognitionException {
         miniTomParser.csHeadSymbolList_return retval = new miniTomParser.csHeadSymbolList_return();
         retval.start = input.LT(1);
@@ -4625,7 +4625,7 @@ public class miniTomParser extends Parser {
         RewriteRuleTokenStream stream_LPAR=new RewriteRuleTokenStream(adaptor,"token LPAR");
         RewriteRuleSubtreeStream stream_csHeadSymbol=new RewriteRuleSubtreeStream(adaptor,"rule csHeadSymbol");
         try {
-            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:373:18: ( csHeadSymbol -> ^( ConcCstSymbol csHeadSymbol ) | LPAR csHeadSymbol ( PIPE csHeadSymbol )* RPAR -> ^( ConcCstSymbol ( csHeadSymbol )* ) )
+            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:373:18: ( csHeadSymbol -> ^( ConcCstSymbol csHeadSymbol ) | LPAR csHeadSymbol ( PIPE csHeadSymbol )* RPAR -> ^( ConcCstSymbol ( csHeadSymbol )* ) )
             int alt39=2;
             int LA39_0 = input.LA(1);
 
@@ -4644,7 +4644,7 @@ public class miniTomParser extends Parser {
             }
             switch (alt39) {
                 case 1 :
-                    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:374:3: csHeadSymbol
+                    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:374:3: csHeadSymbol
                     {
                     pushFollow(FOLLOW_csHeadSymbol_in_csHeadSymbolList2745);
                     csHeadSymbol93=csHeadSymbol();
@@ -4668,7 +4668,7 @@ public class miniTomParser extends Parser {
                     root_0 = (Tree)adaptor.nil();
                     // 375:3: -> ^( ConcCstSymbol csHeadSymbol )
                     {
-                        // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:375:6: ^( ConcCstSymbol csHeadSymbol )
+                        // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:375:6: ^( ConcCstSymbol csHeadSymbol )
                         {
                         Tree root_1 = (Tree)adaptor.nil();
                         root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(ConcCstSymbol, "ConcCstSymbol"), root_1);
@@ -4684,7 +4684,7 @@ public class miniTomParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:376:4: LPAR csHeadSymbol ( PIPE csHeadSymbol )* RPAR
+                    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:376:4: LPAR csHeadSymbol ( PIPE csHeadSymbol )* RPAR
                     {
                     LPAR94=(Token)match(input,LPAR,FOLLOW_LPAR_in_csHeadSymbolList2760); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_LPAR.add(LPAR94);
@@ -4695,7 +4695,7 @@ public class miniTomParser extends Parser {
                     state._fsp--;
                     if (state.failed) return retval;
                     if ( state.backtracking==0 ) stream_csHeadSymbol.add(csHeadSymbol95.getTree());
-                    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:376:22: ( PIPE csHeadSymbol )*
+                    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:376:22: ( PIPE csHeadSymbol )*
                     loop38:
                     do {
                         int alt38=2;
@@ -4708,7 +4708,7 @@ public class miniTomParser extends Parser {
 
                         switch (alt38) {
                     	case 1 :
-                    	    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:376:23: PIPE csHeadSymbol
+                    	    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:376:23: PIPE csHeadSymbol
                     	    {
                     	    PIPE96=(Token)match(input,PIPE,FOLLOW_PIPE_in_csHeadSymbolList2765); if (state.failed) return retval; 
                     	    if ( state.backtracking==0 ) stream_PIPE.add(PIPE96);
@@ -4747,12 +4747,12 @@ public class miniTomParser extends Parser {
                     root_0 = (Tree)adaptor.nil();
                     // 377:3: -> ^( ConcCstSymbol ( csHeadSymbol )* )
                     {
-                        // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:377:6: ^( ConcCstSymbol ( csHeadSymbol )* )
+                        // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:377:6: ^( ConcCstSymbol ( csHeadSymbol )* )
                         {
                         Tree root_1 = (Tree)adaptor.nil();
                         root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(ConcCstSymbol, "ConcCstSymbol"), root_1);
 
-                        // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:377:23: ( csHeadSymbol )*
+                        // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:377:23: ( csHeadSymbol )*
                         while ( stream_csHeadSymbol.hasNext() ) {
                             adaptor.addChild(root_1, stream_csHeadSymbol.nextTree());
 
@@ -4795,7 +4795,7 @@ public class miniTomParser extends Parser {
     };
 
     // $ANTLR start "csHeadSymbol"
-    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:380:1: csHeadSymbol : ( IDENTIFIER -> ^( Cst_Symbol IDENTIFIER ^( Cst_TheoryDEFAULT ) ) | IDENTIFIER QMARK -> ^( Cst_Symbol IDENTIFIER ^( Cst_TheoryAU ) ) | IDENTIFIER DQMARK -> ^( Cst_Symbol IDENTIFIER ^( Cst_TheoryAC ) ) | INTEGER -> ^( Cst_ConstantInt INTEGER ) | LONG -> ^( Cst_ConstantLong LONG ) | CHAR -> ^( Cst_ConstantChar CHAR ) | DOUBLE -> ^( Cst_ConstantDouble DOUBLE ) | STRING -> ^( Cst_ConstantString STRING ) );
+    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:380:1: csHeadSymbol : ( IDENTIFIER -> ^( Cst_Symbol IDENTIFIER ^( Cst_TheoryDEFAULT ) ) | IDENTIFIER QMARK -> ^( Cst_Symbol IDENTIFIER ^( Cst_TheoryAU ) ) | IDENTIFIER DQMARK -> ^( Cst_Symbol IDENTIFIER ^( Cst_TheoryAC ) ) | INTEGER -> ^( Cst_ConstantInt INTEGER ) | LONG -> ^( Cst_ConstantLong LONG ) | CHAR -> ^( Cst_ConstantChar CHAR ) | DOUBLE -> ^( Cst_ConstantDouble DOUBLE ) | STRING -> ^( Cst_ConstantString STRING ) );
     public final miniTomParser.csHeadSymbol_return csHeadSymbol() throws RecognitionException {
         miniTomParser.csHeadSymbol_return retval = new miniTomParser.csHeadSymbol_return();
         retval.start = input.LT(1);
@@ -4833,12 +4833,12 @@ public class miniTomParser extends Parser {
         RewriteRuleTokenStream stream_STRING=new RewriteRuleTokenStream(adaptor,"token STRING");
 
         try {
-            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:380:14: ( IDENTIFIER -> ^( Cst_Symbol IDENTIFIER ^( Cst_TheoryDEFAULT ) ) | IDENTIFIER QMARK -> ^( Cst_Symbol IDENTIFIER ^( Cst_TheoryAU ) ) | IDENTIFIER DQMARK -> ^( Cst_Symbol IDENTIFIER ^( Cst_TheoryAC ) ) | INTEGER -> ^( Cst_ConstantInt INTEGER ) | LONG -> ^( Cst_ConstantLong LONG ) | CHAR -> ^( Cst_ConstantChar CHAR ) | DOUBLE -> ^( Cst_ConstantDouble DOUBLE ) | STRING -> ^( Cst_ConstantString STRING ) )
+            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:380:14: ( IDENTIFIER -> ^( Cst_Symbol IDENTIFIER ^( Cst_TheoryDEFAULT ) ) | IDENTIFIER QMARK -> ^( Cst_Symbol IDENTIFIER ^( Cst_TheoryAU ) ) | IDENTIFIER DQMARK -> ^( Cst_Symbol IDENTIFIER ^( Cst_TheoryAC ) ) | INTEGER -> ^( Cst_ConstantInt INTEGER ) | LONG -> ^( Cst_ConstantLong LONG ) | CHAR -> ^( Cst_ConstantChar CHAR ) | DOUBLE -> ^( Cst_ConstantDouble DOUBLE ) | STRING -> ^( Cst_ConstantString STRING ) )
             int alt40=8;
             alt40 = dfa40.predict(input);
             switch (alt40) {
                 case 1 :
-                    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:381:3: IDENTIFIER
+                    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:381:3: IDENTIFIER
                     {
                     IDENTIFIER99=(Token)match(input,IDENTIFIER,FOLLOW_IDENTIFIER_in_csHeadSymbol2796); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_IDENTIFIER.add(IDENTIFIER99);
@@ -4859,13 +4859,13 @@ public class miniTomParser extends Parser {
                     root_0 = (Tree)adaptor.nil();
                     // 382:3: -> ^( Cst_Symbol IDENTIFIER ^( Cst_TheoryDEFAULT ) )
                     {
-                        // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:382:6: ^( Cst_Symbol IDENTIFIER ^( Cst_TheoryDEFAULT ) )
+                        // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:382:6: ^( Cst_Symbol IDENTIFIER ^( Cst_TheoryDEFAULT ) )
                         {
                         Tree root_1 = (Tree)adaptor.nil();
                         root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_Symbol, "Cst_Symbol"), root_1);
 
                         adaptor.addChild(root_1, stream_IDENTIFIER.nextNode());
-                        // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:382:30: ^( Cst_TheoryDEFAULT )
+                        // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:382:30: ^( Cst_TheoryDEFAULT )
                         {
                         Tree root_2 = (Tree)adaptor.nil();
                         root_2 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_TheoryDEFAULT, "Cst_TheoryDEFAULT"), root_2);
@@ -4882,7 +4882,7 @@ public class miniTomParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:383:3: IDENTIFIER QMARK
+                    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:383:3: IDENTIFIER QMARK
                     {
                     IDENTIFIER100=(Token)match(input,IDENTIFIER,FOLLOW_IDENTIFIER_in_csHeadSymbol2814); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_IDENTIFIER.add(IDENTIFIER100);
@@ -4906,13 +4906,13 @@ public class miniTomParser extends Parser {
                     root_0 = (Tree)adaptor.nil();
                     // 384:3: -> ^( Cst_Symbol IDENTIFIER ^( Cst_TheoryAU ) )
                     {
-                        // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:384:6: ^( Cst_Symbol IDENTIFIER ^( Cst_TheoryAU ) )
+                        // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:384:6: ^( Cst_Symbol IDENTIFIER ^( Cst_TheoryAU ) )
                         {
                         Tree root_1 = (Tree)adaptor.nil();
                         root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_Symbol, "Cst_Symbol"), root_1);
 
                         adaptor.addChild(root_1, stream_IDENTIFIER.nextNode());
-                        // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:384:30: ^( Cst_TheoryAU )
+                        // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:384:30: ^( Cst_TheoryAU )
                         {
                         Tree root_2 = (Tree)adaptor.nil();
                         root_2 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_TheoryAU, "Cst_TheoryAU"), root_2);
@@ -4929,7 +4929,7 @@ public class miniTomParser extends Parser {
                     }
                     break;
                 case 3 :
-                    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:385:3: IDENTIFIER DQMARK
+                    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:385:3: IDENTIFIER DQMARK
                     {
                     IDENTIFIER102=(Token)match(input,IDENTIFIER,FOLLOW_IDENTIFIER_in_csHeadSymbol2834); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_IDENTIFIER.add(IDENTIFIER102);
@@ -4953,13 +4953,13 @@ public class miniTomParser extends Parser {
                     root_0 = (Tree)adaptor.nil();
                     // 386:3: -> ^( Cst_Symbol IDENTIFIER ^( Cst_TheoryAC ) )
                     {
-                        // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:386:6: ^( Cst_Symbol IDENTIFIER ^( Cst_TheoryAC ) )
+                        // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:386:6: ^( Cst_Symbol IDENTIFIER ^( Cst_TheoryAC ) )
                         {
                         Tree root_1 = (Tree)adaptor.nil();
                         root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_Symbol, "Cst_Symbol"), root_1);
 
                         adaptor.addChild(root_1, stream_IDENTIFIER.nextNode());
-                        // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:386:30: ^( Cst_TheoryAC )
+                        // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:386:30: ^( Cst_TheoryAC )
                         {
                         Tree root_2 = (Tree)adaptor.nil();
                         root_2 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_TheoryAC, "Cst_TheoryAC"), root_2);
@@ -4976,7 +4976,7 @@ public class miniTomParser extends Parser {
                     }
                     break;
                 case 4 :
-                    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:387:3: INTEGER
+                    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:387:3: INTEGER
                     {
                     INTEGER104=(Token)match(input,INTEGER,FOLLOW_INTEGER_in_csHeadSymbol2854); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_INTEGER.add(INTEGER104);
@@ -4997,7 +4997,7 @@ public class miniTomParser extends Parser {
                     root_0 = (Tree)adaptor.nil();
                     // 388:3: -> ^( Cst_ConstantInt INTEGER )
                     {
-                        // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:388:6: ^( Cst_ConstantInt INTEGER )
+                        // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:388:6: ^( Cst_ConstantInt INTEGER )
                         {
                         Tree root_1 = (Tree)adaptor.nil();
                         root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_ConstantInt, "Cst_ConstantInt"), root_1);
@@ -5013,7 +5013,7 @@ public class miniTomParser extends Parser {
                     }
                     break;
                 case 5 :
-                    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:389:3: LONG
+                    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:389:3: LONG
                     {
                     LONG105=(Token)match(input,LONG,FOLLOW_LONG_in_csHeadSymbol2868); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_LONG.add(LONG105);
@@ -5034,7 +5034,7 @@ public class miniTomParser extends Parser {
                     root_0 = (Tree)adaptor.nil();
                     // 390:3: -> ^( Cst_ConstantLong LONG )
                     {
-                        // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:390:6: ^( Cst_ConstantLong LONG )
+                        // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:390:6: ^( Cst_ConstantLong LONG )
                         {
                         Tree root_1 = (Tree)adaptor.nil();
                         root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_ConstantLong, "Cst_ConstantLong"), root_1);
@@ -5050,7 +5050,7 @@ public class miniTomParser extends Parser {
                     }
                     break;
                 case 6 :
-                    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:391:3: CHAR
+                    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:391:3: CHAR
                     {
                     CHAR106=(Token)match(input,CHAR,FOLLOW_CHAR_in_csHeadSymbol2882); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_CHAR.add(CHAR106);
@@ -5071,7 +5071,7 @@ public class miniTomParser extends Parser {
                     root_0 = (Tree)adaptor.nil();
                     // 392:3: -> ^( Cst_ConstantChar CHAR )
                     {
-                        // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:392:6: ^( Cst_ConstantChar CHAR )
+                        // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:392:6: ^( Cst_ConstantChar CHAR )
                         {
                         Tree root_1 = (Tree)adaptor.nil();
                         root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_ConstantChar, "Cst_ConstantChar"), root_1);
@@ -5087,7 +5087,7 @@ public class miniTomParser extends Parser {
                     }
                     break;
                 case 7 :
-                    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:393:3: DOUBLE
+                    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:393:3: DOUBLE
                     {
                     DOUBLE107=(Token)match(input,DOUBLE,FOLLOW_DOUBLE_in_csHeadSymbol2896); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_DOUBLE.add(DOUBLE107);
@@ -5108,7 +5108,7 @@ public class miniTomParser extends Parser {
                     root_0 = (Tree)adaptor.nil();
                     // 394:3: -> ^( Cst_ConstantDouble DOUBLE )
                     {
-                        // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:394:6: ^( Cst_ConstantDouble DOUBLE )
+                        // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:394:6: ^( Cst_ConstantDouble DOUBLE )
                         {
                         Tree root_1 = (Tree)adaptor.nil();
                         root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_ConstantDouble, "Cst_ConstantDouble"), root_1);
@@ -5124,7 +5124,7 @@ public class miniTomParser extends Parser {
                     }
                     break;
                 case 8 :
-                    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:395:3: STRING
+                    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:395:3: STRING
                     {
                     STRING108=(Token)match(input,STRING,FOLLOW_STRING_in_csHeadSymbol2910); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_STRING.add(STRING108);
@@ -5145,7 +5145,7 @@ public class miniTomParser extends Parser {
                     root_0 = (Tree)adaptor.nil();
                     // 396:3: -> ^( Cst_ConstantString STRING )
                     {
-                        // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:396:6: ^( Cst_ConstantString STRING )
+                        // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:396:6: ^( Cst_ConstantString STRING )
                         {
                         Tree root_1 = (Tree)adaptor.nil();
                         root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_ConstantString, "Cst_ConstantString"), root_1);
@@ -5188,7 +5188,7 @@ public class miniTomParser extends Parser {
     };
 
     // $ANTLR start "csConstantValue"
-    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:399:1: csConstantValue : ( INTEGER | LONG | CHAR | DOUBLE | STRING );
+    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:399:1: csConstantValue : ( INTEGER | LONG | CHAR | DOUBLE | STRING );
     public final miniTomParser.csConstantValue_return csConstantValue() throws RecognitionException {
         miniTomParser.csConstantValue_return retval = new miniTomParser.csConstantValue_return();
         retval.start = input.LT(1);
@@ -5200,8 +5200,8 @@ public class miniTomParser extends Parser {
         Tree set109_tree=null;
 
         try {
-            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:399:17: ( INTEGER | LONG | CHAR | DOUBLE | STRING )
-            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:
+            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:399:17: ( INTEGER | LONG | CHAR | DOUBLE | STRING )
+            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:
             {
             root_0 = (Tree)adaptor.nil();
 
@@ -5246,7 +5246,7 @@ public class miniTomParser extends Parser {
     };
 
     // $ANTLR start "csExplicitTermList"
-    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:403:1: csExplicitTermList : LPAR ( csPattern ( COMMA csPattern )* )? RPAR -> ^( ConcCstPattern ( csPattern )* ) ;
+    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:403:1: csExplicitTermList : LPAR ( csPattern ( COMMA csPattern )* )? RPAR -> ^( ConcCstPattern ( csPattern )* ) ;
     public final miniTomParser.csExplicitTermList_return csExplicitTermList() throws RecognitionException {
         miniTomParser.csExplicitTermList_return retval = new miniTomParser.csExplicitTermList_return();
         retval.start = input.LT(1);
@@ -5269,13 +5269,13 @@ public class miniTomParser extends Parser {
         RewriteRuleTokenStream stream_COMMA=new RewriteRuleTokenStream(adaptor,"token COMMA");
         RewriteRuleSubtreeStream stream_csPattern=new RewriteRuleSubtreeStream(adaptor,"rule csPattern");
         try {
-            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:403:20: ( LPAR ( csPattern ( COMMA csPattern )* )? RPAR -> ^( ConcCstPattern ( csPattern )* ) )
-            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:404:4: LPAR ( csPattern ( COMMA csPattern )* )? RPAR
+            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:403:20: ( LPAR ( csPattern ( COMMA csPattern )* )? RPAR -> ^( ConcCstPattern ( csPattern )* ) )
+            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:404:4: LPAR ( csPattern ( COMMA csPattern )* )? RPAR
             {
             LPAR110=(Token)match(input,LPAR,FOLLOW_LPAR_in_csExplicitTermList2953); if (state.failed) return retval; 
             if ( state.backtracking==0 ) stream_LPAR.add(LPAR110);
 
-            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:404:9: ( csPattern ( COMMA csPattern )* )?
+            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:404:9: ( csPattern ( COMMA csPattern )* )?
             int alt42=2;
             int LA42_0 = input.LA(1);
 
@@ -5284,7 +5284,7 @@ public class miniTomParser extends Parser {
             }
             switch (alt42) {
                 case 1 :
-                    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:404:10: csPattern ( COMMA csPattern )*
+                    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:404:10: csPattern ( COMMA csPattern )*
                     {
                     pushFollow(FOLLOW_csPattern_in_csExplicitTermList2956);
                     csPattern111=csPattern();
@@ -5292,7 +5292,7 @@ public class miniTomParser extends Parser {
                     state._fsp--;
                     if (state.failed) return retval;
                     if ( state.backtracking==0 ) stream_csPattern.add(csPattern111.getTree());
-                    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:404:20: ( COMMA csPattern )*
+                    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:404:20: ( COMMA csPattern )*
                     loop41:
                     do {
                         int alt41=2;
@@ -5305,7 +5305,7 @@ public class miniTomParser extends Parser {
 
                         switch (alt41) {
                     	case 1 :
-                    	    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:404:21: COMMA csPattern
+                    	    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:404:21: COMMA csPattern
                     	    {
                     	    COMMA112=(Token)match(input,COMMA,FOLLOW_COMMA_in_csExplicitTermList2959); if (state.failed) return retval; 
                     	    if ( state.backtracking==0 ) stream_COMMA.add(COMMA112);
@@ -5350,12 +5350,12 @@ public class miniTomParser extends Parser {
             root_0 = (Tree)adaptor.nil();
             // 406:2: -> ^( ConcCstPattern ( csPattern )* )
             {
-                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:406:5: ^( ConcCstPattern ( csPattern )* )
+                // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:406:5: ^( ConcCstPattern ( csPattern )* )
                 {
                 Tree root_1 = (Tree)adaptor.nil();
                 root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(ConcCstPattern, "ConcCstPattern"), root_1);
 
-                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:406:22: ( csPattern )*
+                // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:406:22: ( csPattern )*
                 while ( stream_csPattern.hasNext() ) {
                     adaptor.addChild(root_1, stream_csPattern.nextTree());
 
@@ -5396,7 +5396,7 @@ public class miniTomParser extends Parser {
     };
 
     // $ANTLR start "csImplicitPairList"
-    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:409:1: csImplicitPairList : LSQUAREBR ( csPairPattern ( COMMA csPairPattern )* )? RSQUAREBR -> ^( ConcCstPairPattern ( csPairPattern )* ) ;
+    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:409:1: csImplicitPairList : LSQUAREBR ( csPairPattern ( COMMA csPairPattern )* )? RSQUAREBR -> ^( ConcCstPairPattern ( csPairPattern )* ) ;
     public final miniTomParser.csImplicitPairList_return csImplicitPairList() throws RecognitionException {
         miniTomParser.csImplicitPairList_return retval = new miniTomParser.csImplicitPairList_return();
         retval.start = input.LT(1);
@@ -5419,13 +5419,13 @@ public class miniTomParser extends Parser {
         RewriteRuleTokenStream stream_RSQUAREBR=new RewriteRuleTokenStream(adaptor,"token RSQUAREBR");
         RewriteRuleSubtreeStream stream_csPairPattern=new RewriteRuleSubtreeStream(adaptor,"rule csPairPattern");
         try {
-            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:409:20: ( LSQUAREBR ( csPairPattern ( COMMA csPairPattern )* )? RSQUAREBR -> ^( ConcCstPairPattern ( csPairPattern )* ) )
-            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:410:3: LSQUAREBR ( csPairPattern ( COMMA csPairPattern )* )? RSQUAREBR
+            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:409:20: ( LSQUAREBR ( csPairPattern ( COMMA csPairPattern )* )? RSQUAREBR -> ^( ConcCstPairPattern ( csPairPattern )* ) )
+            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:410:3: LSQUAREBR ( csPairPattern ( COMMA csPairPattern )* )? RSQUAREBR
             {
             LSQUAREBR115=(Token)match(input,LSQUAREBR,FOLLOW_LSQUAREBR_in_csImplicitPairList2989); if (state.failed) return retval; 
             if ( state.backtracking==0 ) stream_LSQUAREBR.add(LSQUAREBR115);
 
-            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:410:13: ( csPairPattern ( COMMA csPairPattern )* )?
+            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:410:13: ( csPairPattern ( COMMA csPairPattern )* )?
             int alt44=2;
             int LA44_0 = input.LA(1);
 
@@ -5434,7 +5434,7 @@ public class miniTomParser extends Parser {
             }
             switch (alt44) {
                 case 1 :
-                    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:410:14: csPairPattern ( COMMA csPairPattern )*
+                    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:410:14: csPairPattern ( COMMA csPairPattern )*
                     {
                     pushFollow(FOLLOW_csPairPattern_in_csImplicitPairList2992);
                     csPairPattern116=csPairPattern();
@@ -5442,7 +5442,7 @@ public class miniTomParser extends Parser {
                     state._fsp--;
                     if (state.failed) return retval;
                     if ( state.backtracking==0 ) stream_csPairPattern.add(csPairPattern116.getTree());
-                    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:410:28: ( COMMA csPairPattern )*
+                    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:410:28: ( COMMA csPairPattern )*
                     loop43:
                     do {
                         int alt43=2;
@@ -5455,7 +5455,7 @@ public class miniTomParser extends Parser {
 
                         switch (alt43) {
                     	case 1 :
-                    	    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:410:29: COMMA csPairPattern
+                    	    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:410:29: COMMA csPairPattern
                     	    {
                     	    COMMA117=(Token)match(input,COMMA,FOLLOW_COMMA_in_csImplicitPairList2995); if (state.failed) return retval; 
                     	    if ( state.backtracking==0 ) stream_COMMA.add(COMMA117);
@@ -5500,12 +5500,12 @@ public class miniTomParser extends Parser {
             root_0 = (Tree)adaptor.nil();
             // 412:3: -> ^( ConcCstPairPattern ( csPairPattern )* )
             {
-                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:412:6: ^( ConcCstPairPattern ( csPairPattern )* )
+                // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:412:6: ^( ConcCstPairPattern ( csPairPattern )* )
                 {
                 Tree root_1 = (Tree)adaptor.nil();
                 root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(ConcCstPairPattern, "ConcCstPairPattern"), root_1);
 
-                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:412:27: ( csPairPattern )*
+                // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:412:27: ( csPairPattern )*
                 while ( stream_csPairPattern.hasNext() ) {
                     adaptor.addChild(root_1, stream_csPairPattern.nextTree());
 
@@ -5546,7 +5546,7 @@ public class miniTomParser extends Parser {
     };
 
     // $ANTLR start "csPairPattern"
-    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:415:1: csPairPattern : IDENTIFIER EQUAL csPattern -> ^( Cst_PairPattern IDENTIFIER csPattern ) ;
+    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:415:1: csPairPattern : IDENTIFIER EQUAL csPattern -> ^( Cst_PairPattern IDENTIFIER csPattern ) ;
     public final miniTomParser.csPairPattern_return csPairPattern() throws RecognitionException {
         miniTomParser.csPairPattern_return retval = new miniTomParser.csPairPattern_return();
         retval.start = input.LT(1);
@@ -5564,8 +5564,8 @@ public class miniTomParser extends Parser {
         RewriteRuleTokenStream stream_EQUAL=new RewriteRuleTokenStream(adaptor,"token EQUAL");
         RewriteRuleSubtreeStream stream_csPattern=new RewriteRuleSubtreeStream(adaptor,"rule csPattern");
         try {
-            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:415:15: ( IDENTIFIER EQUAL csPattern -> ^( Cst_PairPattern IDENTIFIER csPattern ) )
-            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:416:2: IDENTIFIER EQUAL csPattern
+            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:415:15: ( IDENTIFIER EQUAL csPattern -> ^( Cst_PairPattern IDENTIFIER csPattern ) )
+            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:416:2: IDENTIFIER EQUAL csPattern
             {
             IDENTIFIER120=(Token)match(input,IDENTIFIER,FOLLOW_IDENTIFIER_in_csPairPattern3026); if (state.failed) return retval; 
             if ( state.backtracking==0 ) stream_IDENTIFIER.add(IDENTIFIER120);
@@ -5582,7 +5582,7 @@ public class miniTomParser extends Parser {
 
 
             // AST REWRITE
-            // elements: csPattern, IDENTIFIER
+            // elements: IDENTIFIER, csPattern
             // token labels: 
             // rule labels: retval
             // token list labels: 
@@ -5595,7 +5595,7 @@ public class miniTomParser extends Parser {
             root_0 = (Tree)adaptor.nil();
             // 418:2: -> ^( Cst_PairPattern IDENTIFIER csPattern )
             {
-                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:418:5: ^( Cst_PairPattern IDENTIFIER csPattern )
+                // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:418:5: ^( Cst_PairPattern IDENTIFIER csPattern )
                 {
                 Tree root_1 = (Tree)adaptor.nil();
                 root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_PairPattern, "Cst_PairPattern"), root_1);
@@ -5638,7 +5638,7 @@ public class miniTomParser extends Parser {
     };
 
     // $ANTLR start "csOperatorConstruct"
-    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:422:1: csOperatorConstruct returns [int marker] : codomain= IDENTIFIER ctorName= csName LPAR csSlotList RPAR LBR (ks+= csKeywordIsFsym | ks+= csKeywordMake | ks+= csKeywordGetSlot | ks+= csKeywordGetDefault | ks+= csKeywordOpImplement )* RBR -> ^( Cst_OpConstruct ^( Cst_Type $codomain) $ctorName csSlotList ^( ConcCstOperator ( $ks)* ) ) ;
+    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:422:1: csOperatorConstruct returns [int marker] : codomain= IDENTIFIER ctorName= csName LPAR csSlotList RPAR LBR (ks+= csKeywordIsFsym | ks+= csKeywordMake | ks+= csKeywordGetSlot | ks+= csKeywordGetDefault | ks+= csKeywordOpImplement )* RBR -> ^( Cst_OpConstruct ^( Cst_Type $codomain) $ctorName csSlotList ^( ConcCstOperator ( $ks)* ) ) ;
     public final miniTomParser.csOperatorConstruct_return csOperatorConstruct() throws RecognitionException {
         miniTomParser.csOperatorConstruct_return retval = new miniTomParser.csOperatorConstruct_return();
         retval.start = input.LT(1);
@@ -5674,8 +5674,8 @@ public class miniTomParser extends Parser {
         RewriteRuleSubtreeStream stream_csKeywordGetSlot=new RewriteRuleSubtreeStream(adaptor,"rule csKeywordGetSlot");
         RewriteRuleSubtreeStream stream_csKeywordOpImplement=new RewriteRuleSubtreeStream(adaptor,"rule csKeywordOpImplement");
         try {
-            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:423:22: (codomain= IDENTIFIER ctorName= csName LPAR csSlotList RPAR LBR (ks+= csKeywordIsFsym | ks+= csKeywordMake | ks+= csKeywordGetSlot | ks+= csKeywordGetDefault | ks+= csKeywordOpImplement )* RBR -> ^( Cst_OpConstruct ^( Cst_Type $codomain) $ctorName csSlotList ^( ConcCstOperator ( $ks)* ) ) )
-            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:426:3: codomain= IDENTIFIER ctorName= csName LPAR csSlotList RPAR LBR (ks+= csKeywordIsFsym | ks+= csKeywordMake | ks+= csKeywordGetSlot | ks+= csKeywordGetDefault | ks+= csKeywordOpImplement )* RBR
+            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:423:22: (codomain= IDENTIFIER ctorName= csName LPAR csSlotList RPAR LBR (ks+= csKeywordIsFsym | ks+= csKeywordMake | ks+= csKeywordGetSlot | ks+= csKeywordGetDefault | ks+= csKeywordOpImplement )* RBR -> ^( Cst_OpConstruct ^( Cst_Type $codomain) $ctorName csSlotList ^( ConcCstOperator ( $ks)* ) ) )
+            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:426:3: codomain= IDENTIFIER ctorName= csName LPAR csSlotList RPAR LBR (ks+= csKeywordIsFsym | ks+= csKeywordMake | ks+= csKeywordGetSlot | ks+= csKeywordGetDefault | ks+= csKeywordOpImplement )* RBR
             {
             codomain=(Token)match(input,IDENTIFIER,FOLLOW_IDENTIFIER_in_csOperatorConstruct3065); if (state.failed) return retval; 
             if ( state.backtracking==0 ) stream_IDENTIFIER.add(codomain);
@@ -5701,7 +5701,7 @@ public class miniTomParser extends Parser {
             LBR126=(Token)match(input,LBR,FOLLOW_LBR_in_csOperatorConstruct3079); if (state.failed) return retval; 
             if ( state.backtracking==0 ) stream_LBR.add(LBR126);
 
-            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:428:5: (ks+= csKeywordIsFsym | ks+= csKeywordMake | ks+= csKeywordGetSlot | ks+= csKeywordGetDefault | ks+= csKeywordOpImplement )*
+            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:428:5: (ks+= csKeywordIsFsym | ks+= csKeywordMake | ks+= csKeywordGetSlot | ks+= csKeywordGetDefault | ks+= csKeywordOpImplement )*
             loop45:
             do {
                 int alt45=6;
@@ -5736,7 +5736,7 @@ public class miniTomParser extends Parser {
 
                 switch (alt45) {
             	case 1 :
-            	    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:428:8: ks+= csKeywordIsFsym
+            	    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:428:8: ks+= csKeywordIsFsym
             	    {
             	    pushFollow(FOLLOW_csKeywordIsFsym_in_csOperatorConstruct3091);
             	    ks=csKeywordIsFsym();
@@ -5751,7 +5751,7 @@ public class miniTomParser extends Parser {
             	    }
             	    break;
             	case 2 :
-            	    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:429:8: ks+= csKeywordMake
+            	    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:429:8: ks+= csKeywordMake
             	    {
             	    pushFollow(FOLLOW_csKeywordMake_in_csOperatorConstruct3102);
             	    ks=csKeywordMake();
@@ -5766,7 +5766,7 @@ public class miniTomParser extends Parser {
             	    }
             	    break;
             	case 3 :
-            	    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:430:8: ks+= csKeywordGetSlot
+            	    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:430:8: ks+= csKeywordGetSlot
             	    {
             	    pushFollow(FOLLOW_csKeywordGetSlot_in_csOperatorConstruct3113);
             	    ks=csKeywordGetSlot();
@@ -5781,7 +5781,7 @@ public class miniTomParser extends Parser {
             	    }
             	    break;
             	case 4 :
-            	    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:431:8: ks+= csKeywordGetDefault
+            	    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:431:8: ks+= csKeywordGetDefault
             	    {
             	    pushFollow(FOLLOW_csKeywordGetDefault_in_csOperatorConstruct3124);
             	    ks=csKeywordGetDefault();
@@ -5796,7 +5796,7 @@ public class miniTomParser extends Parser {
             	    }
             	    break;
             	case 5 :
-            	    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:432:8: ks+= csKeywordOpImplement
+            	    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:432:8: ks+= csKeywordOpImplement
             	    {
             	    pushFollow(FOLLOW_csKeywordOpImplement_in_csOperatorConstruct3135);
             	    ks=csKeywordOpImplement();
@@ -5825,7 +5825,7 @@ public class miniTomParser extends Parser {
 
 
             // AST REWRITE
-            // elements: ks, csSlotList, ctorName, codomain
+            // elements: csSlotList, ctorName, codomain, ks
             // token labels: codomain
             // rule labels: retval, ctorName
             // token list labels: 
@@ -5840,13 +5840,13 @@ public class miniTomParser extends Parser {
             root_0 = (Tree)adaptor.nil();
             // 438:3: -> ^( Cst_OpConstruct ^( Cst_Type $codomain) $ctorName csSlotList ^( ConcCstOperator ( $ks)* ) )
             {
-                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:438:6: ^( Cst_OpConstruct ^( Cst_Type $codomain) $ctorName csSlotList ^( ConcCstOperator ( $ks)* ) )
+                // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:438:6: ^( Cst_OpConstruct ^( Cst_Type $codomain) $ctorName csSlotList ^( ConcCstOperator ( $ks)* ) )
                 {
                 Tree root_1 = (Tree)adaptor.nil();
                 root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_OpConstruct, "Cst_OpConstruct"), root_1);
 
                 adaptor.addChild(root_1, extractOptions((CommonToken)codomain, (CommonToken)RBR127));
-                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:440:9: ^( Cst_Type $codomain)
+                // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:440:9: ^( Cst_Type $codomain)
                 {
                 Tree root_2 = (Tree)adaptor.nil();
                 root_2 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_Type, "Cst_Type"), root_2);
@@ -5857,12 +5857,12 @@ public class miniTomParser extends Parser {
                 }
                 adaptor.addChild(root_1, stream_ctorName.nextTree());
                 adaptor.addChild(root_1, stream_csSlotList.nextTree());
-                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:440:52: ^( ConcCstOperator ( $ks)* )
+                // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:440:52: ^( ConcCstOperator ( $ks)* )
                 {
                 Tree root_2 = (Tree)adaptor.nil();
                 root_2 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(ConcCstOperator, "ConcCstOperator"), root_2);
 
-                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:440:70: ( $ks)*
+                // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:440:70: ( $ks)*
                 while ( stream_ks.hasNext() ) {
                     adaptor.addChild(root_2, stream_ks.nextTree());
 
@@ -5907,7 +5907,7 @@ public class miniTomParser extends Parser {
     };
 
     // $ANTLR start "csOperatorArrayConstruct"
-    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:444:1: csOperatorArrayConstruct returns [int marker] : codomain= IDENTIFIER ctorName= csName LPAR domain= IDENTIFIER STAR RPAR LBR ks+= csKeywordIsFsym (ks+= csKeywordMakeEmpty_Array | ks+= csKeywordMakeAppend | ks+= csKeywordGetElement | ks+= csKeywordGetSize )* RBR -> ^( Cst_OpArrayConstruct ^( Cst_Type $codomain) $ctorName ^( Cst_Type $domain) ^( ConcCstOperator ( $ks)* ) ) ;
+    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:444:1: csOperatorArrayConstruct returns [int marker] : codomain= IDENTIFIER ctorName= csName LPAR domain= IDENTIFIER STAR RPAR LBR ks+= csKeywordIsFsym (ks+= csKeywordMakeEmpty_Array | ks+= csKeywordMakeAppend | ks+= csKeywordGetElement | ks+= csKeywordGetSize )* RBR -> ^( Cst_OpArrayConstruct ^( Cst_Type $codomain) $ctorName ^( Cst_Type $domain) ^( ConcCstOperator ( $ks)* ) ) ;
     public final miniTomParser.csOperatorArrayConstruct_return csOperatorArrayConstruct() throws RecognitionException {
         miniTomParser.csOperatorArrayConstruct_return retval = new miniTomParser.csOperatorArrayConstruct_return();
         retval.start = input.LT(1);
@@ -5945,8 +5945,8 @@ public class miniTomParser extends Parser {
         RewriteRuleSubtreeStream stream_csKeywordIsFsym=new RewriteRuleSubtreeStream(adaptor,"rule csKeywordIsFsym");
         RewriteRuleSubtreeStream stream_csKeywordMakeAppend=new RewriteRuleSubtreeStream(adaptor,"rule csKeywordMakeAppend");
         try {
-            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:445:22: (codomain= IDENTIFIER ctorName= csName LPAR domain= IDENTIFIER STAR RPAR LBR ks+= csKeywordIsFsym (ks+= csKeywordMakeEmpty_Array | ks+= csKeywordMakeAppend | ks+= csKeywordGetElement | ks+= csKeywordGetSize )* RBR -> ^( Cst_OpArrayConstruct ^( Cst_Type $codomain) $ctorName ^( Cst_Type $domain) ^( ConcCstOperator ( $ks)* ) ) )
-            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:448:3: codomain= IDENTIFIER ctorName= csName LPAR domain= IDENTIFIER STAR RPAR LBR ks+= csKeywordIsFsym (ks+= csKeywordMakeEmpty_Array | ks+= csKeywordMakeAppend | ks+= csKeywordGetElement | ks+= csKeywordGetSize )* RBR
+            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:445:22: (codomain= IDENTIFIER ctorName= csName LPAR domain= IDENTIFIER STAR RPAR LBR ks+= csKeywordIsFsym (ks+= csKeywordMakeEmpty_Array | ks+= csKeywordMakeAppend | ks+= csKeywordGetElement | ks+= csKeywordGetSize )* RBR -> ^( Cst_OpArrayConstruct ^( Cst_Type $codomain) $ctorName ^( Cst_Type $domain) ^( ConcCstOperator ( $ks)* ) ) )
+            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:448:3: codomain= IDENTIFIER ctorName= csName LPAR domain= IDENTIFIER STAR RPAR LBR ks+= csKeywordIsFsym (ks+= csKeywordMakeEmpty_Array | ks+= csKeywordMakeAppend | ks+= csKeywordGetElement | ks+= csKeywordGetSize )* RBR
             {
             codomain=(Token)match(input,IDENTIFIER,FOLLOW_IDENTIFIER_in_csOperatorArrayConstruct3228); if (state.failed) return retval; 
             if ( state.backtracking==0 ) stream_IDENTIFIER.add(codomain);
@@ -5981,7 +5981,7 @@ public class miniTomParser extends Parser {
             if (list_ks==null) list_ks=new ArrayList();
             list_ks.add(ks.getTree());
 
-            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:451:4: (ks+= csKeywordMakeEmpty_Array | ks+= csKeywordMakeAppend | ks+= csKeywordGetElement | ks+= csKeywordGetSize )*
+            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:451:4: (ks+= csKeywordMakeEmpty_Array | ks+= csKeywordMakeAppend | ks+= csKeywordGetElement | ks+= csKeywordGetSize )*
             loop46:
             do {
                 int alt46=5;
@@ -6011,7 +6011,7 @@ public class miniTomParser extends Parser {
 
                 switch (alt46) {
             	case 1 :
-            	    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:451:6: ks+= csKeywordMakeEmpty_Array
+            	    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:451:6: ks+= csKeywordMakeEmpty_Array
             	    {
             	    pushFollow(FOLLOW_csKeywordMakeEmpty_Array_in_csOperatorArrayConstruct3266);
             	    ks=csKeywordMakeEmpty_Array();
@@ -6026,7 +6026,7 @@ public class miniTomParser extends Parser {
             	    }
             	    break;
             	case 2 :
-            	    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:452:6: ks+= csKeywordMakeAppend
+            	    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:452:6: ks+= csKeywordMakeAppend
             	    {
             	    pushFollow(FOLLOW_csKeywordMakeAppend_in_csOperatorArrayConstruct3275);
             	    ks=csKeywordMakeAppend();
@@ -6041,7 +6041,7 @@ public class miniTomParser extends Parser {
             	    }
             	    break;
             	case 3 :
-            	    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:453:6: ks+= csKeywordGetElement
+            	    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:453:6: ks+= csKeywordGetElement
             	    {
             	    pushFollow(FOLLOW_csKeywordGetElement_in_csOperatorArrayConstruct3284);
             	    ks=csKeywordGetElement();
@@ -6056,7 +6056,7 @@ public class miniTomParser extends Parser {
             	    }
             	    break;
             	case 4 :
-            	    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:454:6: ks+= csKeywordGetSize
+            	    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:454:6: ks+= csKeywordGetSize
             	    {
             	    pushFollow(FOLLOW_csKeywordGetSize_in_csOperatorArrayConstruct3293);
             	    ks=csKeywordGetSize();
@@ -6101,13 +6101,13 @@ public class miniTomParser extends Parser {
             root_0 = (Tree)adaptor.nil();
             // 460:3: -> ^( Cst_OpArrayConstruct ^( Cst_Type $codomain) $ctorName ^( Cst_Type $domain) ^( ConcCstOperator ( $ks)* ) )
             {
-                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:460:6: ^( Cst_OpArrayConstruct ^( Cst_Type $codomain) $ctorName ^( Cst_Type $domain) ^( ConcCstOperator ( $ks)* ) )
+                // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:460:6: ^( Cst_OpArrayConstruct ^( Cst_Type $codomain) $ctorName ^( Cst_Type $domain) ^( ConcCstOperator ( $ks)* ) )
                 {
                 Tree root_1 = (Tree)adaptor.nil();
                 root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_OpArrayConstruct, "Cst_OpArrayConstruct"), root_1);
 
                 adaptor.addChild(root_1, extractOptions((CommonToken)codomain, (CommonToken)RBR132));
-                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:462:9: ^( Cst_Type $codomain)
+                // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:462:9: ^( Cst_Type $codomain)
                 {
                 Tree root_2 = (Tree)adaptor.nil();
                 root_2 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_Type, "Cst_Type"), root_2);
@@ -6117,7 +6117,7 @@ public class miniTomParser extends Parser {
                 adaptor.addChild(root_1, root_2);
                 }
                 adaptor.addChild(root_1, stream_ctorName.nextTree());
-                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:462:41: ^( Cst_Type $domain)
+                // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:462:41: ^( Cst_Type $domain)
                 {
                 Tree root_2 = (Tree)adaptor.nil();
                 root_2 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_Type, "Cst_Type"), root_2);
@@ -6126,12 +6126,12 @@ public class miniTomParser extends Parser {
 
                 adaptor.addChild(root_1, root_2);
                 }
-                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:462:61: ^( ConcCstOperator ( $ks)* )
+                // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:462:61: ^( ConcCstOperator ( $ks)* )
                 {
                 Tree root_2 = (Tree)adaptor.nil();
                 root_2 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(ConcCstOperator, "ConcCstOperator"), root_2);
 
-                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:462:79: ( $ks)*
+                // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:462:79: ( $ks)*
                 while ( stream_ks.hasNext() ) {
                     adaptor.addChild(root_2, stream_ks.nextTree());
 
@@ -6176,7 +6176,7 @@ public class miniTomParser extends Parser {
     };
 
     // $ANTLR start "csOperatorListConstruct"
-    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:466:1: csOperatorListConstruct returns [int marker] : codomain= IDENTIFIER ctorName= csName LPAR domain= IDENTIFIER STAR RPAR LBR ks+= csKeywordIsFsym (ks+= csKeywordMakeEmpty_List | ks+= csKeywordMakeInsert | ks+= csKeywordGetHead | ks+= csKeywordGetTail | ks+= csKeywordIsEmpty )* RBR -> ^( Cst_OpListConstruct ^( Cst_Type $codomain) $ctorName ^( Cst_Type $domain) ^( ConcCstOperator ( $ks)* ) ) ;
+    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:466:1: csOperatorListConstruct returns [int marker] : codomain= IDENTIFIER ctorName= csName LPAR domain= IDENTIFIER STAR RPAR LBR ks+= csKeywordIsFsym (ks+= csKeywordMakeEmpty_List | ks+= csKeywordMakeInsert | ks+= csKeywordGetHead | ks+= csKeywordGetTail | ks+= csKeywordIsEmpty )* RBR -> ^( Cst_OpListConstruct ^( Cst_Type $codomain) $ctorName ^( Cst_Type $domain) ^( ConcCstOperator ( $ks)* ) ) ;
     public final miniTomParser.csOperatorListConstruct_return csOperatorListConstruct() throws RecognitionException {
         miniTomParser.csOperatorListConstruct_return retval = new miniTomParser.csOperatorListConstruct_return();
         retval.start = input.LT(1);
@@ -6215,8 +6215,8 @@ public class miniTomParser extends Parser {
         RewriteRuleSubtreeStream stream_csKeywordMakeEmpty_List=new RewriteRuleSubtreeStream(adaptor,"rule csKeywordMakeEmpty_List");
         RewriteRuleSubtreeStream stream_csKeywordGetTail=new RewriteRuleSubtreeStream(adaptor,"rule csKeywordGetTail");
         try {
-            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:467:22: (codomain= IDENTIFIER ctorName= csName LPAR domain= IDENTIFIER STAR RPAR LBR ks+= csKeywordIsFsym (ks+= csKeywordMakeEmpty_List | ks+= csKeywordMakeInsert | ks+= csKeywordGetHead | ks+= csKeywordGetTail | ks+= csKeywordIsEmpty )* RBR -> ^( Cst_OpListConstruct ^( Cst_Type $codomain) $ctorName ^( Cst_Type $domain) ^( ConcCstOperator ( $ks)* ) ) )
-            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:470:3: codomain= IDENTIFIER ctorName= csName LPAR domain= IDENTIFIER STAR RPAR LBR ks+= csKeywordIsFsym (ks+= csKeywordMakeEmpty_List | ks+= csKeywordMakeInsert | ks+= csKeywordGetHead | ks+= csKeywordGetTail | ks+= csKeywordIsEmpty )* RBR
+            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:467:22: (codomain= IDENTIFIER ctorName= csName LPAR domain= IDENTIFIER STAR RPAR LBR ks+= csKeywordIsFsym (ks+= csKeywordMakeEmpty_List | ks+= csKeywordMakeInsert | ks+= csKeywordGetHead | ks+= csKeywordGetTail | ks+= csKeywordIsEmpty )* RBR -> ^( Cst_OpListConstruct ^( Cst_Type $codomain) $ctorName ^( Cst_Type $domain) ^( ConcCstOperator ( $ks)* ) ) )
+            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:470:3: codomain= IDENTIFIER ctorName= csName LPAR domain= IDENTIFIER STAR RPAR LBR ks+= csKeywordIsFsym (ks+= csKeywordMakeEmpty_List | ks+= csKeywordMakeInsert | ks+= csKeywordGetHead | ks+= csKeywordGetTail | ks+= csKeywordIsEmpty )* RBR
             {
             codomain=(Token)match(input,IDENTIFIER,FOLLOW_IDENTIFIER_in_csOperatorListConstruct3389); if (state.failed) return retval; 
             if ( state.backtracking==0 ) stream_IDENTIFIER.add(codomain);
@@ -6251,7 +6251,7 @@ public class miniTomParser extends Parser {
             if (list_ks==null) list_ks=new ArrayList();
             list_ks.add(ks.getTree());
 
-            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:473:4: (ks+= csKeywordMakeEmpty_List | ks+= csKeywordMakeInsert | ks+= csKeywordGetHead | ks+= csKeywordGetTail | ks+= csKeywordIsEmpty )*
+            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:473:4: (ks+= csKeywordMakeEmpty_List | ks+= csKeywordMakeInsert | ks+= csKeywordGetHead | ks+= csKeywordGetTail | ks+= csKeywordIsEmpty )*
             loop47:
             do {
                 int alt47=6;
@@ -6286,7 +6286,7 @@ public class miniTomParser extends Parser {
 
                 switch (alt47) {
             	case 1 :
-            	    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:473:6: ks+= csKeywordMakeEmpty_List
+            	    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:473:6: ks+= csKeywordMakeEmpty_List
             	    {
             	    pushFollow(FOLLOW_csKeywordMakeEmpty_List_in_csOperatorListConstruct3425);
             	    ks=csKeywordMakeEmpty_List();
@@ -6301,7 +6301,7 @@ public class miniTomParser extends Parser {
             	    }
             	    break;
             	case 2 :
-            	    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:474:6: ks+= csKeywordMakeInsert
+            	    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:474:6: ks+= csKeywordMakeInsert
             	    {
             	    pushFollow(FOLLOW_csKeywordMakeInsert_in_csOperatorListConstruct3434);
             	    ks=csKeywordMakeInsert();
@@ -6316,7 +6316,7 @@ public class miniTomParser extends Parser {
             	    }
             	    break;
             	case 3 :
-            	    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:475:6: ks+= csKeywordGetHead
+            	    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:475:6: ks+= csKeywordGetHead
             	    {
             	    pushFollow(FOLLOW_csKeywordGetHead_in_csOperatorListConstruct3443);
             	    ks=csKeywordGetHead();
@@ -6331,7 +6331,7 @@ public class miniTomParser extends Parser {
             	    }
             	    break;
             	case 4 :
-            	    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:476:6: ks+= csKeywordGetTail
+            	    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:476:6: ks+= csKeywordGetTail
             	    {
             	    pushFollow(FOLLOW_csKeywordGetTail_in_csOperatorListConstruct3452);
             	    ks=csKeywordGetTail();
@@ -6346,7 +6346,7 @@ public class miniTomParser extends Parser {
             	    }
             	    break;
             	case 5 :
-            	    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:477:6: ks+= csKeywordIsEmpty
+            	    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:477:6: ks+= csKeywordIsEmpty
             	    {
             	    pushFollow(FOLLOW_csKeywordIsEmpty_in_csOperatorListConstruct3461);
             	    ks=csKeywordIsEmpty();
@@ -6375,7 +6375,7 @@ public class miniTomParser extends Parser {
 
 
             // AST REWRITE
-            // elements: ctorName, ks, domain, codomain
+            // elements: ks, domain, codomain, ctorName
             // token labels: codomain, domain
             // rule labels: retval, ctorName
             // token list labels: 
@@ -6391,13 +6391,13 @@ public class miniTomParser extends Parser {
             root_0 = (Tree)adaptor.nil();
             // 483:3: -> ^( Cst_OpListConstruct ^( Cst_Type $codomain) $ctorName ^( Cst_Type $domain) ^( ConcCstOperator ( $ks)* ) )
             {
-                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:483:6: ^( Cst_OpListConstruct ^( Cst_Type $codomain) $ctorName ^( Cst_Type $domain) ^( ConcCstOperator ( $ks)* ) )
+                // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:483:6: ^( Cst_OpListConstruct ^( Cst_Type $codomain) $ctorName ^( Cst_Type $domain) ^( ConcCstOperator ( $ks)* ) )
                 {
                 Tree root_1 = (Tree)adaptor.nil();
                 root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_OpListConstruct, "Cst_OpListConstruct"), root_1);
 
                 adaptor.addChild(root_1, extractOptions((CommonToken)codomain, (CommonToken)RBR137));
-                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:485:9: ^( Cst_Type $codomain)
+                // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:485:9: ^( Cst_Type $codomain)
                 {
                 Tree root_2 = (Tree)adaptor.nil();
                 root_2 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_Type, "Cst_Type"), root_2);
@@ -6407,7 +6407,7 @@ public class miniTomParser extends Parser {
                 adaptor.addChild(root_1, root_2);
                 }
                 adaptor.addChild(root_1, stream_ctorName.nextTree());
-                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:485:41: ^( Cst_Type $domain)
+                // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:485:41: ^( Cst_Type $domain)
                 {
                 Tree root_2 = (Tree)adaptor.nil();
                 root_2 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_Type, "Cst_Type"), root_2);
@@ -6416,12 +6416,12 @@ public class miniTomParser extends Parser {
 
                 adaptor.addChild(root_1, root_2);
                 }
-                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:485:61: ^( ConcCstOperator ( $ks)* )
+                // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:485:61: ^( ConcCstOperator ( $ks)* )
                 {
                 Tree root_2 = (Tree)adaptor.nil();
                 root_2 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(ConcCstOperator, "ConcCstOperator"), root_2);
 
-                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:485:79: ( $ks)*
+                // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:485:79: ( $ks)*
                 while ( stream_ks.hasNext() ) {
                     adaptor.addChild(root_2, stream_ks.nextTree());
 
@@ -6466,7 +6466,7 @@ public class miniTomParser extends Parser {
     };
 
     // $ANTLR start "csTypetermConstruct"
-    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:490:1: csTypetermConstruct returns [int marker] : typeName= IDENTIFIER ( EXTENDS extend= IDENTIFIER )? LBR ks+= csKeywordImplement (ks+= csKeywordIsSort )? (ks+= csKeywordEquals )? RBR -> {extend==null}? ^( Cst_TypetermConstruct ^( Cst_Type $typeName) ^( Cst_TypeUnknown ) ^( ConcCstOperator ( $ks)* ) ) -> ^( Cst_TypetermConstruct ^( Cst_Type $typeName) ^( Cst_Type $extend) ^( ConcCstOperator ( $ks)* ) ) ;
+    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:490:1: csTypetermConstruct returns [int marker] : typeName= IDENTIFIER ( EXTENDS extend= IDENTIFIER )? LBR ks+= csKeywordImplement (ks+= csKeywordIsSort )? (ks+= csKeywordEquals )? RBR -> {extend==null}? ^( Cst_TypetermConstruct ^( Cst_Type $typeName) ^( Cst_TypeUnknown ) ^( ConcCstOperator ( $ks)* ) ) -> ^( Cst_TypetermConstruct ^( Cst_Type $typeName) ^( Cst_Type $extend) ^( ConcCstOperator ( $ks)* ) ) ;
     public final miniTomParser.csTypetermConstruct_return csTypetermConstruct() throws RecognitionException {
         miniTomParser.csTypetermConstruct_return retval = new miniTomParser.csTypetermConstruct_return();
         retval.start = input.LT(1);
@@ -6493,13 +6493,13 @@ public class miniTomParser extends Parser {
         RewriteRuleSubtreeStream stream_csKeywordIsSort=new RewriteRuleSubtreeStream(adaptor,"rule csKeywordIsSort");
         RewriteRuleSubtreeStream stream_csKeywordEquals=new RewriteRuleSubtreeStream(adaptor,"rule csKeywordEquals");
         try {
-            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:491:22: (typeName= IDENTIFIER ( EXTENDS extend= IDENTIFIER )? LBR ks+= csKeywordImplement (ks+= csKeywordIsSort )? (ks+= csKeywordEquals )? RBR -> {extend==null}? ^( Cst_TypetermConstruct ^( Cst_Type $typeName) ^( Cst_TypeUnknown ) ^( ConcCstOperator ( $ks)* ) ) -> ^( Cst_TypetermConstruct ^( Cst_Type $typeName) ^( Cst_Type $extend) ^( ConcCstOperator ( $ks)* ) ) )
-            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:494:3: typeName= IDENTIFIER ( EXTENDS extend= IDENTIFIER )? LBR ks+= csKeywordImplement (ks+= csKeywordIsSort )? (ks+= csKeywordEquals )? RBR
+            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:491:22: (typeName= IDENTIFIER ( EXTENDS extend= IDENTIFIER )? LBR ks+= csKeywordImplement (ks+= csKeywordIsSort )? (ks+= csKeywordEquals )? RBR -> {extend==null}? ^( Cst_TypetermConstruct ^( Cst_Type $typeName) ^( Cst_TypeUnknown ) ^( ConcCstOperator ( $ks)* ) ) -> ^( Cst_TypetermConstruct ^( Cst_Type $typeName) ^( Cst_Type $extend) ^( ConcCstOperator ( $ks)* ) ) )
+            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:494:3: typeName= IDENTIFIER ( EXTENDS extend= IDENTIFIER )? LBR ks+= csKeywordImplement (ks+= csKeywordIsSort )? (ks+= csKeywordEquals )? RBR
             {
             typeName=(Token)match(input,IDENTIFIER,FOLLOW_IDENTIFIER_in_csTypetermConstruct3558); if (state.failed) return retval; 
             if ( state.backtracking==0 ) stream_IDENTIFIER.add(typeName);
 
-            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:494:23: ( EXTENDS extend= IDENTIFIER )?
+            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:494:23: ( EXTENDS extend= IDENTIFIER )?
             int alt48=2;
             int LA48_0 = input.LA(1);
 
@@ -6508,7 +6508,7 @@ public class miniTomParser extends Parser {
             }
             switch (alt48) {
                 case 1 :
-                    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:494:24: EXTENDS extend= IDENTIFIER
+                    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:494:24: EXTENDS extend= IDENTIFIER
                     {
                     EXTENDS138=(Token)match(input,EXTENDS,FOLLOW_EXTENDS_in_csTypetermConstruct3561); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_EXTENDS.add(EXTENDS138);
@@ -6534,7 +6534,7 @@ public class miniTomParser extends Parser {
             if (list_ks==null) list_ks=new ArrayList();
             list_ks.add(ks.getTree());
 
-            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:496:28: (ks+= csKeywordIsSort )?
+            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:496:28: (ks+= csKeywordIsSort )?
             int alt49=2;
             int LA49_0 = input.LA(1);
 
@@ -6543,7 +6543,7 @@ public class miniTomParser extends Parser {
             }
             switch (alt49) {
                 case 1 :
-                    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:496:29: ks+= csKeywordIsSort
+                    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:496:29: ks+= csKeywordIsSort
                     {
                     pushFollow(FOLLOW_csKeywordIsSort_in_csTypetermConstruct3584);
                     ks=csKeywordIsSort();
@@ -6560,7 +6560,7 @@ public class miniTomParser extends Parser {
 
             }
 
-            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:496:51: (ks+= csKeywordEquals )?
+            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:496:51: (ks+= csKeywordEquals )?
             int alt50=2;
             int LA50_0 = input.LA(1);
 
@@ -6569,7 +6569,7 @@ public class miniTomParser extends Parser {
             }
             switch (alt50) {
                 case 1 :
-                    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:496:52: ks+= csKeywordEquals
+                    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:496:52: ks+= csKeywordEquals
                     {
                     pushFollow(FOLLOW_csKeywordEquals_in_csTypetermConstruct3591);
                     ks=csKeywordEquals();
@@ -6595,7 +6595,7 @@ public class miniTomParser extends Parser {
 
 
             // AST REWRITE
-            // elements: typeName, ks, typeName, ks, extend
+            // elements: typeName, extend, ks, ks, typeName
             // token labels: typeName, extend
             // rule labels: retval
             // token list labels: 
@@ -6610,13 +6610,13 @@ public class miniTomParser extends Parser {
             root_0 = (Tree)adaptor.nil();
             // 501:3: -> {extend==null}? ^( Cst_TypetermConstruct ^( Cst_Type $typeName) ^( Cst_TypeUnknown ) ^( ConcCstOperator ( $ks)* ) )
             if (extend==null) {
-                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:502:4: ^( Cst_TypetermConstruct ^( Cst_Type $typeName) ^( Cst_TypeUnknown ) ^( ConcCstOperator ( $ks)* ) )
+                // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:502:4: ^( Cst_TypetermConstruct ^( Cst_Type $typeName) ^( Cst_TypeUnknown ) ^( ConcCstOperator ( $ks)* ) )
                 {
                 Tree root_1 = (Tree)adaptor.nil();
                 root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_TypetermConstruct, "Cst_TypetermConstruct"), root_1);
 
                 adaptor.addChild(root_1, extractOptions((CommonToken)typeName, (CommonToken)RBR140));
-                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:504:9: ^( Cst_Type $typeName)
+                // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:504:9: ^( Cst_Type $typeName)
                 {
                 Tree root_2 = (Tree)adaptor.nil();
                 root_2 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_Type, "Cst_Type"), root_2);
@@ -6625,19 +6625,19 @@ public class miniTomParser extends Parser {
 
                 adaptor.addChild(root_1, root_2);
                 }
-                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:504:31: ^( Cst_TypeUnknown )
+                // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:504:31: ^( Cst_TypeUnknown )
                 {
                 Tree root_2 = (Tree)adaptor.nil();
                 root_2 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_TypeUnknown, "Cst_TypeUnknown"), root_2);
 
                 adaptor.addChild(root_1, root_2);
                 }
-                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:504:50: ^( ConcCstOperator ( $ks)* )
+                // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:504:50: ^( ConcCstOperator ( $ks)* )
                 {
                 Tree root_2 = (Tree)adaptor.nil();
                 root_2 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(ConcCstOperator, "ConcCstOperator"), root_2);
 
-                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:504:68: ( $ks)*
+                // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:504:68: ( $ks)*
                 while ( stream_ks.hasNext() ) {
                     adaptor.addChild(root_2, stream_ks.nextTree());
 
@@ -6653,13 +6653,13 @@ public class miniTomParser extends Parser {
             }
             else // 507:3: -> ^( Cst_TypetermConstruct ^( Cst_Type $typeName) ^( Cst_Type $extend) ^( ConcCstOperator ( $ks)* ) )
             {
-                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:508:4: ^( Cst_TypetermConstruct ^( Cst_Type $typeName) ^( Cst_Type $extend) ^( ConcCstOperator ( $ks)* ) )
+                // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:508:4: ^( Cst_TypetermConstruct ^( Cst_Type $typeName) ^( Cst_Type $extend) ^( ConcCstOperator ( $ks)* ) )
                 {
                 Tree root_1 = (Tree)adaptor.nil();
                 root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_TypetermConstruct, "Cst_TypetermConstruct"), root_1);
 
                 adaptor.addChild(root_1, extractOptions((CommonToken)typeName, (CommonToken)RBR140));
-                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:510:9: ^( Cst_Type $typeName)
+                // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:510:9: ^( Cst_Type $typeName)
                 {
                 Tree root_2 = (Tree)adaptor.nil();
                 root_2 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_Type, "Cst_Type"), root_2);
@@ -6668,7 +6668,7 @@ public class miniTomParser extends Parser {
 
                 adaptor.addChild(root_1, root_2);
                 }
-                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:510:31: ^( Cst_Type $extend)
+                // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:510:31: ^( Cst_Type $extend)
                 {
                 Tree root_2 = (Tree)adaptor.nil();
                 root_2 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_Type, "Cst_Type"), root_2);
@@ -6677,12 +6677,12 @@ public class miniTomParser extends Parser {
 
                 adaptor.addChild(root_1, root_2);
                 }
-                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:510:51: ^( ConcCstOperator ( $ks)* )
+                // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:510:51: ^( ConcCstOperator ( $ks)* )
                 {
                 Tree root_2 = (Tree)adaptor.nil();
                 root_2 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(ConcCstOperator, "ConcCstOperator"), root_2);
 
-                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:510:69: ( $ks)*
+                // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:510:69: ( $ks)*
                 while ( stream_ks.hasNext() ) {
                     adaptor.addChild(root_2, stream_ks.nextTree());
 
@@ -6726,7 +6726,7 @@ public class miniTomParser extends Parser {
     };
 
     // $ANTLR start "csSlotList"
-    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:514:1: csSlotList : ( csSlot ( COMMA csSlot )* )? -> ^( ConcCstSlot ( csSlot )* ) ;
+    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:514:1: csSlotList : ( csSlot ( COMMA csSlot )* )? -> ^( ConcCstSlot ( csSlot )* ) ;
     public final miniTomParser.csSlotList_return csSlotList() throws RecognitionException {
         miniTomParser.csSlotList_return retval = new miniTomParser.csSlotList_return();
         retval.start = input.LT(1);
@@ -6743,10 +6743,10 @@ public class miniTomParser extends Parser {
         RewriteRuleTokenStream stream_COMMA=new RewriteRuleTokenStream(adaptor,"token COMMA");
         RewriteRuleSubtreeStream stream_csSlot=new RewriteRuleSubtreeStream(adaptor,"rule csSlot");
         try {
-            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:514:12: ( ( csSlot ( COMMA csSlot )* )? -> ^( ConcCstSlot ( csSlot )* ) )
-            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:515:3: ( csSlot ( COMMA csSlot )* )?
+            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:514:12: ( ( csSlot ( COMMA csSlot )* )? -> ^( ConcCstSlot ( csSlot )* ) )
+            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:515:3: ( csSlot ( COMMA csSlot )* )?
             {
-            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:515:3: ( csSlot ( COMMA csSlot )* )?
+            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:515:3: ( csSlot ( COMMA csSlot )* )?
             int alt52=2;
             int LA52_0 = input.LA(1);
 
@@ -6755,7 +6755,7 @@ public class miniTomParser extends Parser {
             }
             switch (alt52) {
                 case 1 :
-                    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:515:4: csSlot ( COMMA csSlot )*
+                    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:515:4: csSlot ( COMMA csSlot )*
                     {
                     pushFollow(FOLLOW_csSlot_in_csSlotList3729);
                     csSlot141=csSlot();
@@ -6763,7 +6763,7 @@ public class miniTomParser extends Parser {
                     state._fsp--;
                     if (state.failed) return retval;
                     if ( state.backtracking==0 ) stream_csSlot.add(csSlot141.getTree());
-                    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:515:11: ( COMMA csSlot )*
+                    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:515:11: ( COMMA csSlot )*
                     loop51:
                     do {
                         int alt51=2;
@@ -6776,7 +6776,7 @@ public class miniTomParser extends Parser {
 
                         switch (alt51) {
                     	case 1 :
-                    	    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:515:12: COMMA csSlot
+                    	    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:515:12: COMMA csSlot
                     	    {
                     	    COMMA142=(Token)match(input,COMMA,FOLLOW_COMMA_in_csSlotList3732); if (state.failed) return retval; 
                     	    if ( state.backtracking==0 ) stream_COMMA.add(COMMA142);
@@ -6818,12 +6818,12 @@ public class miniTomParser extends Parser {
             root_0 = (Tree)adaptor.nil();
             // 515:30: -> ^( ConcCstSlot ( csSlot )* )
             {
-                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:515:33: ^( ConcCstSlot ( csSlot )* )
+                // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:515:33: ^( ConcCstSlot ( csSlot )* )
                 {
                 Tree root_1 = (Tree)adaptor.nil();
                 root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(ConcCstSlot, "ConcCstSlot"), root_1);
 
-                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:515:47: ( csSlot )*
+                // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:515:47: ( csSlot )*
                 while ( stream_csSlot.hasNext() ) {
                     adaptor.addChild(root_1, stream_csSlot.nextTree());
 
@@ -6864,7 +6864,7 @@ public class miniTomParser extends Parser {
     };
 
     // $ANTLR start "csSlot"
-    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:518:1: csSlot : (name= IDENTIFIER COLON type= IDENTIFIER -> ^( Cst_Slot ^( Cst_Name $name) ^( Cst_Type $type) ) | type= IDENTIFIER name= IDENTIFIER -> ^( Cst_Slot ^( Cst_Name $name) ^( Cst_Type $type) ) );
+    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:518:1: csSlot : (name= IDENTIFIER COLON type= IDENTIFIER -> ^( Cst_Slot ^( Cst_Name $name) ^( Cst_Type $type) ) | type= IDENTIFIER name= IDENTIFIER -> ^( Cst_Slot ^( Cst_Name $name) ^( Cst_Type $type) ) );
     public final miniTomParser.csSlot_return csSlot() throws RecognitionException {
         miniTomParser.csSlot_return retval = new miniTomParser.csSlot_return();
         retval.start = input.LT(1);
@@ -6882,7 +6882,7 @@ public class miniTomParser extends Parser {
         RewriteRuleTokenStream stream_IDENTIFIER=new RewriteRuleTokenStream(adaptor,"token IDENTIFIER");
 
         try {
-            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:518:8: (name= IDENTIFIER COLON type= IDENTIFIER -> ^( Cst_Slot ^( Cst_Name $name) ^( Cst_Type $type) ) | type= IDENTIFIER name= IDENTIFIER -> ^( Cst_Slot ^( Cst_Name $name) ^( Cst_Type $type) ) )
+            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:518:8: (name= IDENTIFIER COLON type= IDENTIFIER -> ^( Cst_Slot ^( Cst_Name $name) ^( Cst_Type $type) ) | type= IDENTIFIER name= IDENTIFIER -> ^( Cst_Slot ^( Cst_Name $name) ^( Cst_Type $type) ) )
             int alt53=2;
             int LA53_0 = input.LA(1);
 
@@ -6912,7 +6912,7 @@ public class miniTomParser extends Parser {
             }
             switch (alt53) {
                 case 1 :
-                    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:519:5: name= IDENTIFIER COLON type= IDENTIFIER
+                    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:519:5: name= IDENTIFIER COLON type= IDENTIFIER
                     {
                     name=(Token)match(input,IDENTIFIER,FOLLOW_IDENTIFIER_in_csSlot3764); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_IDENTIFIER.add(name);
@@ -6926,7 +6926,7 @@ public class miniTomParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: type, name
+                    // elements: name, type
                     // token labels: name, type
                     // rule labels: retval
                     // token list labels: 
@@ -6941,12 +6941,12 @@ public class miniTomParser extends Parser {
                     root_0 = (Tree)adaptor.nil();
                     // 519:43: -> ^( Cst_Slot ^( Cst_Name $name) ^( Cst_Type $type) )
                     {
-                        // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:519:46: ^( Cst_Slot ^( Cst_Name $name) ^( Cst_Type $type) )
+                        // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:519:46: ^( Cst_Slot ^( Cst_Name $name) ^( Cst_Type $type) )
                         {
                         Tree root_1 = (Tree)adaptor.nil();
                         root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_Slot, "Cst_Slot"), root_1);
 
-                        // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:519:57: ^( Cst_Name $name)
+                        // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:519:57: ^( Cst_Name $name)
                         {
                         Tree root_2 = (Tree)adaptor.nil();
                         root_2 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_Name, "Cst_Name"), root_2);
@@ -6955,7 +6955,7 @@ public class miniTomParser extends Parser {
 
                         adaptor.addChild(root_1, root_2);
                         }
-                        // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:519:75: ^( Cst_Type $type)
+                        // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:519:75: ^( Cst_Type $type)
                         {
                         Tree root_2 = (Tree)adaptor.nil();
                         root_2 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_Type, "Cst_Type"), root_2);
@@ -6974,7 +6974,7 @@ public class miniTomParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:520:5: type= IDENTIFIER name= IDENTIFIER
+                    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:520:5: type= IDENTIFIER name= IDENTIFIER
                     {
                     type=(Token)match(input,IDENTIFIER,FOLLOW_IDENTIFIER_in_csSlot3798); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_IDENTIFIER.add(type);
@@ -7000,12 +7000,12 @@ public class miniTomParser extends Parser {
                     root_0 = (Tree)adaptor.nil();
                     // 520:37: -> ^( Cst_Slot ^( Cst_Name $name) ^( Cst_Type $type) )
                     {
-                        // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:520:41: ^( Cst_Slot ^( Cst_Name $name) ^( Cst_Type $type) )
+                        // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:520:41: ^( Cst_Slot ^( Cst_Name $name) ^( Cst_Type $type) )
                         {
                         Tree root_1 = (Tree)adaptor.nil();
                         root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_Slot, "Cst_Slot"), root_1);
 
-                        // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:520:52: ^( Cst_Name $name)
+                        // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:520:52: ^( Cst_Name $name)
                         {
                         Tree root_2 = (Tree)adaptor.nil();
                         root_2 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_Name, "Cst_Name"), root_2);
@@ -7014,7 +7014,7 @@ public class miniTomParser extends Parser {
 
                         adaptor.addChild(root_1, root_2);
                         }
-                        // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:520:70: ^( Cst_Type $type)
+                        // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:520:70: ^( Cst_Type $type)
                         {
                         Tree root_2 = (Tree)adaptor.nil();
                         root_2 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_Type, "Cst_Type"), root_2);
@@ -7060,7 +7060,7 @@ public class miniTomParser extends Parser {
     };
 
     // $ANTLR start "csKeywordIsFsym"
-    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:525:1: csKeywordIsFsym : KEYWORD_IS_FSYM LPAR argName= csName RPAR LBR RBR -> ^( Cst_IsFsym $argName) ;
+    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:525:1: csKeywordIsFsym : KEYWORD_IS_FSYM LPAR argName= csName RPAR LBR RBR -> ^( Cst_IsFsym $argName) ;
     public final miniTomParser.csKeywordIsFsym_return csKeywordIsFsym() throws RecognitionException {
         miniTomParser.csKeywordIsFsym_return retval = new miniTomParser.csKeywordIsFsym_return();
         retval.start = input.LT(1);
@@ -7087,8 +7087,8 @@ public class miniTomParser extends Parser {
         RewriteRuleTokenStream stream_LBR=new RewriteRuleTokenStream(adaptor,"token LBR");
         RewriteRuleSubtreeStream stream_csName=new RewriteRuleSubtreeStream(adaptor,"rule csName");
         try {
-            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:525:17: ( KEYWORD_IS_FSYM LPAR argName= csName RPAR LBR RBR -> ^( Cst_IsFsym $argName) )
-            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:526:3: KEYWORD_IS_FSYM LPAR argName= csName RPAR LBR RBR
+            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:525:17: ( KEYWORD_IS_FSYM LPAR argName= csName RPAR LBR RBR -> ^( Cst_IsFsym $argName) )
+            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:526:3: KEYWORD_IS_FSYM LPAR argName= csName RPAR LBR RBR
             {
             KEYWORD_IS_FSYM145=(Token)match(input,KEYWORD_IS_FSYM,FOLLOW_KEYWORD_IS_FSYM_in_csKeywordIsFsym3836); if (state.failed) return retval; 
             if ( state.backtracking==0 ) stream_KEYWORD_IS_FSYM.add(KEYWORD_IS_FSYM145);
@@ -7128,7 +7128,7 @@ public class miniTomParser extends Parser {
             root_0 = (Tree)adaptor.nil();
             // 529:3: -> ^( Cst_IsFsym $argName)
             {
-                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:529:6: ^( Cst_IsFsym $argName)
+                // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:529:6: ^( Cst_IsFsym $argName)
                 {
                 Tree root_1 = (Tree)adaptor.nil();
                 root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_IsFsym, "Cst_IsFsym"), root_1);
@@ -7170,7 +7170,7 @@ public class miniTomParser extends Parser {
     };
 
     // $ANTLR start "csKeywordGetSlot"
-    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:534:1: csKeywordGetSlot : KEYWORD_GET_SLOT LPAR slotName= csName COMMA termName= csName RPAR LBR RBR -> ^( Cst_GetSlot $slotName $termName) ;
+    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:534:1: csKeywordGetSlot : KEYWORD_GET_SLOT LPAR slotName= csName COMMA termName= csName RPAR LBR RBR -> ^( Cst_GetSlot $slotName $termName) ;
     public final miniTomParser.csKeywordGetSlot_return csKeywordGetSlot() throws RecognitionException {
         miniTomParser.csKeywordGetSlot_return retval = new miniTomParser.csKeywordGetSlot_return();
         retval.start = input.LT(1);
@@ -7202,8 +7202,8 @@ public class miniTomParser extends Parser {
         RewriteRuleTokenStream stream_LBR=new RewriteRuleTokenStream(adaptor,"token LBR");
         RewriteRuleSubtreeStream stream_csName=new RewriteRuleSubtreeStream(adaptor,"rule csName");
         try {
-            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:534:18: ( KEYWORD_GET_SLOT LPAR slotName= csName COMMA termName= csName RPAR LBR RBR -> ^( Cst_GetSlot $slotName $termName) )
-            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:535:3: KEYWORD_GET_SLOT LPAR slotName= csName COMMA termName= csName RPAR LBR RBR
+            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:534:18: ( KEYWORD_GET_SLOT LPAR slotName= csName COMMA termName= csName RPAR LBR RBR -> ^( Cst_GetSlot $slotName $termName) )
+            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:535:3: KEYWORD_GET_SLOT LPAR slotName= csName COMMA termName= csName RPAR LBR RBR
             {
             KEYWORD_GET_SLOT150=(Token)match(input,KEYWORD_GET_SLOT,FOLLOW_KEYWORD_GET_SLOT_in_csKeywordGetSlot3892); if (state.failed) return retval; 
             if ( state.backtracking==0 ) stream_KEYWORD_GET_SLOT.add(KEYWORD_GET_SLOT150);
@@ -7253,7 +7253,7 @@ public class miniTomParser extends Parser {
             root_0 = (Tree)adaptor.nil();
             // 538:3: -> ^( Cst_GetSlot $slotName $termName)
             {
-                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:538:6: ^( Cst_GetSlot $slotName $termName)
+                // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:538:6: ^( Cst_GetSlot $slotName $termName)
                 {
                 Tree root_1 = (Tree)adaptor.nil();
                 root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_GetSlot, "Cst_GetSlot"), root_1);
@@ -7296,7 +7296,7 @@ public class miniTomParser extends Parser {
     };
 
     // $ANTLR start "csKeywordMake"
-    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:543:1: csKeywordMake : KEYWORD_MAKE LPAR argList= csNameList RPAR LBR RBR -> ^( Cst_Make $argList) ;
+    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:543:1: csKeywordMake : KEYWORD_MAKE LPAR argList= csNameList RPAR LBR RBR -> ^( Cst_Make $argList) ;
     public final miniTomParser.csKeywordMake_return csKeywordMake() throws RecognitionException {
         miniTomParser.csKeywordMake_return retval = new miniTomParser.csKeywordMake_return();
         retval.start = input.LT(1);
@@ -7323,8 +7323,8 @@ public class miniTomParser extends Parser {
         RewriteRuleTokenStream stream_LBR=new RewriteRuleTokenStream(adaptor,"token LBR");
         RewriteRuleSubtreeStream stream_csNameList=new RewriteRuleSubtreeStream(adaptor,"rule csNameList");
         try {
-            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:543:15: ( KEYWORD_MAKE LPAR argList= csNameList RPAR LBR RBR -> ^( Cst_Make $argList) )
-            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:544:3: KEYWORD_MAKE LPAR argList= csNameList RPAR LBR RBR
+            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:543:15: ( KEYWORD_MAKE LPAR argList= csNameList RPAR LBR RBR -> ^( Cst_Make $argList) )
+            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:544:3: KEYWORD_MAKE LPAR argList= csNameList RPAR LBR RBR
             {
             KEYWORD_MAKE156=(Token)match(input,KEYWORD_MAKE,FOLLOW_KEYWORD_MAKE_in_csKeywordMake3957); if (state.failed) return retval; 
             if ( state.backtracking==0 ) stream_KEYWORD_MAKE.add(KEYWORD_MAKE156);
@@ -7364,7 +7364,7 @@ public class miniTomParser extends Parser {
             root_0 = (Tree)adaptor.nil();
             // 547:3: -> ^( Cst_Make $argList)
             {
-                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:547:6: ^( Cst_Make $argList)
+                // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:547:6: ^( Cst_Make $argList)
                 {
                 Tree root_1 = (Tree)adaptor.nil();
                 root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_Make, "Cst_Make"), root_1);
@@ -7406,7 +7406,7 @@ public class miniTomParser extends Parser {
     };
 
     // $ANTLR start "csKeywordGetDefault"
-    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:552:1: csKeywordGetDefault : KEYWORD_GET_DEFAULT LPAR argName= csName RPAR LBR RBR -> ^( Cst_GetDefault $argName) ;
+    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:552:1: csKeywordGetDefault : KEYWORD_GET_DEFAULT LPAR argName= csName RPAR LBR RBR -> ^( Cst_GetDefault $argName) ;
     public final miniTomParser.csKeywordGetDefault_return csKeywordGetDefault() throws RecognitionException {
         miniTomParser.csKeywordGetDefault_return retval = new miniTomParser.csKeywordGetDefault_return();
         retval.start = input.LT(1);
@@ -7433,8 +7433,8 @@ public class miniTomParser extends Parser {
         RewriteRuleTokenStream stream_LBR=new RewriteRuleTokenStream(adaptor,"token LBR");
         RewriteRuleSubtreeStream stream_csName=new RewriteRuleSubtreeStream(adaptor,"rule csName");
         try {
-            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:552:21: ( KEYWORD_GET_DEFAULT LPAR argName= csName RPAR LBR RBR -> ^( Cst_GetDefault $argName) )
-            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:553:3: KEYWORD_GET_DEFAULT LPAR argName= csName RPAR LBR RBR
+            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:552:21: ( KEYWORD_GET_DEFAULT LPAR argName= csName RPAR LBR RBR -> ^( Cst_GetDefault $argName) )
+            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:553:3: KEYWORD_GET_DEFAULT LPAR argName= csName RPAR LBR RBR
             {
             KEYWORD_GET_DEFAULT161=(Token)match(input,KEYWORD_GET_DEFAULT,FOLLOW_KEYWORD_GET_DEFAULT_in_csKeywordGetDefault4013); if (state.failed) return retval; 
             if ( state.backtracking==0 ) stream_KEYWORD_GET_DEFAULT.add(KEYWORD_GET_DEFAULT161);
@@ -7474,7 +7474,7 @@ public class miniTomParser extends Parser {
             root_0 = (Tree)adaptor.nil();
             // 556:3: -> ^( Cst_GetDefault $argName)
             {
-                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:556:6: ^( Cst_GetDefault $argName)
+                // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:556:6: ^( Cst_GetDefault $argName)
                 {
                 Tree root_1 = (Tree)adaptor.nil();
                 root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_GetDefault, "Cst_GetDefault"), root_1);
@@ -7516,7 +7516,7 @@ public class miniTomParser extends Parser {
     };
 
     // $ANTLR start "csKeywordOpImplement"
-    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:561:1: csKeywordOpImplement : KEYWORD_IMPLEMENT LPAR RPAR LBR RBR -> ^( Cst_Implement ) ;
+    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:561:1: csKeywordOpImplement : KEYWORD_IMPLEMENT LPAR RPAR LBR RBR -> ^( Cst_Implement ) ;
     public final miniTomParser.csKeywordOpImplement_return csKeywordOpImplement() throws RecognitionException {
         miniTomParser.csKeywordOpImplement_return retval = new miniTomParser.csKeywordOpImplement_return();
         retval.start = input.LT(1);
@@ -7541,8 +7541,8 @@ public class miniTomParser extends Parser {
         RewriteRuleTokenStream stream_LBR=new RewriteRuleTokenStream(adaptor,"token LBR");
 
         try {
-            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:561:22: ( KEYWORD_IMPLEMENT LPAR RPAR LBR RBR -> ^( Cst_Implement ) )
-            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:562:3: KEYWORD_IMPLEMENT LPAR RPAR LBR RBR
+            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:561:22: ( KEYWORD_IMPLEMENT LPAR RPAR LBR RBR -> ^( Cst_Implement ) )
+            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:562:3: KEYWORD_IMPLEMENT LPAR RPAR LBR RBR
             {
             KEYWORD_IMPLEMENT166=(Token)match(input,KEYWORD_IMPLEMENT,FOLLOW_KEYWORD_IMPLEMENT_in_csKeywordOpImplement4069); if (state.failed) return retval; 
             if ( state.backtracking==0 ) stream_KEYWORD_IMPLEMENT.add(KEYWORD_IMPLEMENT166);
@@ -7575,7 +7575,7 @@ public class miniTomParser extends Parser {
             root_0 = (Tree)adaptor.nil();
             // 564:3: -> ^( Cst_Implement )
             {
-                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:564:6: ^( Cst_Implement )
+                // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:564:6: ^( Cst_Implement )
                 {
                 Tree root_1 = (Tree)adaptor.nil();
                 root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_Implement, "Cst_Implement"), root_1);
@@ -7616,7 +7616,7 @@ public class miniTomParser extends Parser {
     };
 
     // $ANTLR start "csKeywordGetHead"
-    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:568:1: csKeywordGetHead : KEYWORD_GET_HEAD LPAR argName= csName RPAR LBR RBR -> ^( Cst_GetHead $argName) ;
+    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:568:1: csKeywordGetHead : KEYWORD_GET_HEAD LPAR argName= csName RPAR LBR RBR -> ^( Cst_GetHead $argName) ;
     public final miniTomParser.csKeywordGetHead_return csKeywordGetHead() throws RecognitionException {
         miniTomParser.csKeywordGetHead_return retval = new miniTomParser.csKeywordGetHead_return();
         retval.start = input.LT(1);
@@ -7643,8 +7643,8 @@ public class miniTomParser extends Parser {
         RewriteRuleTokenStream stream_LBR=new RewriteRuleTokenStream(adaptor,"token LBR");
         RewriteRuleSubtreeStream stream_csName=new RewriteRuleSubtreeStream(adaptor,"rule csName");
         try {
-            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:568:18: ( KEYWORD_GET_HEAD LPAR argName= csName RPAR LBR RBR -> ^( Cst_GetHead $argName) )
-            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:569:3: KEYWORD_GET_HEAD LPAR argName= csName RPAR LBR RBR
+            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:568:18: ( KEYWORD_GET_HEAD LPAR argName= csName RPAR LBR RBR -> ^( Cst_GetHead $argName) )
+            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:569:3: KEYWORD_GET_HEAD LPAR argName= csName RPAR LBR RBR
             {
             KEYWORD_GET_HEAD171=(Token)match(input,KEYWORD_GET_HEAD,FOLLOW_KEYWORD_GET_HEAD_in_csKeywordGetHead4103); if (state.failed) return retval; 
             if ( state.backtracking==0 ) stream_KEYWORD_GET_HEAD.add(KEYWORD_GET_HEAD171);
@@ -7684,7 +7684,7 @@ public class miniTomParser extends Parser {
             root_0 = (Tree)adaptor.nil();
             // 572:3: -> ^( Cst_GetHead $argName)
             {
-                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:572:6: ^( Cst_GetHead $argName)
+                // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:572:6: ^( Cst_GetHead $argName)
                 {
                 Tree root_1 = (Tree)adaptor.nil();
                 root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_GetHead, "Cst_GetHead"), root_1);
@@ -7726,7 +7726,7 @@ public class miniTomParser extends Parser {
     };
 
     // $ANTLR start "csKeywordGetTail"
-    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:577:1: csKeywordGetTail : KEYWORD_GET_TAIL LPAR argName= csName RPAR LBR RBR -> ^( Cst_GetTail $argName) ;
+    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:577:1: csKeywordGetTail : KEYWORD_GET_TAIL LPAR argName= csName RPAR LBR RBR -> ^( Cst_GetTail $argName) ;
     public final miniTomParser.csKeywordGetTail_return csKeywordGetTail() throws RecognitionException {
         miniTomParser.csKeywordGetTail_return retval = new miniTomParser.csKeywordGetTail_return();
         retval.start = input.LT(1);
@@ -7753,8 +7753,8 @@ public class miniTomParser extends Parser {
         RewriteRuleTokenStream stream_LBR=new RewriteRuleTokenStream(adaptor,"token LBR");
         RewriteRuleSubtreeStream stream_csName=new RewriteRuleSubtreeStream(adaptor,"rule csName");
         try {
-            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:577:18: ( KEYWORD_GET_TAIL LPAR argName= csName RPAR LBR RBR -> ^( Cst_GetTail $argName) )
-            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:578:3: KEYWORD_GET_TAIL LPAR argName= csName RPAR LBR RBR
+            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:577:18: ( KEYWORD_GET_TAIL LPAR argName= csName RPAR LBR RBR -> ^( Cst_GetTail $argName) )
+            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:578:3: KEYWORD_GET_TAIL LPAR argName= csName RPAR LBR RBR
             {
             KEYWORD_GET_TAIL176=(Token)match(input,KEYWORD_GET_TAIL,FOLLOW_KEYWORD_GET_TAIL_in_csKeywordGetTail4160); if (state.failed) return retval; 
             if ( state.backtracking==0 ) stream_KEYWORD_GET_TAIL.add(KEYWORD_GET_TAIL176);
@@ -7794,7 +7794,7 @@ public class miniTomParser extends Parser {
             root_0 = (Tree)adaptor.nil();
             // 581:3: -> ^( Cst_GetTail $argName)
             {
-                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:581:6: ^( Cst_GetTail $argName)
+                // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:581:6: ^( Cst_GetTail $argName)
                 {
                 Tree root_1 = (Tree)adaptor.nil();
                 root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_GetTail, "Cst_GetTail"), root_1);
@@ -7836,7 +7836,7 @@ public class miniTomParser extends Parser {
     };
 
     // $ANTLR start "csKeywordIsEmpty"
-    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:586:1: csKeywordIsEmpty : KEYWORD_IS_EMPTY LPAR argName= csName RPAR LBR RBR -> ^( Cst_IsEmpty $argName) ;
+    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:586:1: csKeywordIsEmpty : KEYWORD_IS_EMPTY LPAR argName= csName RPAR LBR RBR -> ^( Cst_IsEmpty $argName) ;
     public final miniTomParser.csKeywordIsEmpty_return csKeywordIsEmpty() throws RecognitionException {
         miniTomParser.csKeywordIsEmpty_return retval = new miniTomParser.csKeywordIsEmpty_return();
         retval.start = input.LT(1);
@@ -7863,8 +7863,8 @@ public class miniTomParser extends Parser {
         RewriteRuleTokenStream stream_LBR=new RewriteRuleTokenStream(adaptor,"token LBR");
         RewriteRuleSubtreeStream stream_csName=new RewriteRuleSubtreeStream(adaptor,"rule csName");
         try {
-            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:586:18: ( KEYWORD_IS_EMPTY LPAR argName= csName RPAR LBR RBR -> ^( Cst_IsEmpty $argName) )
-            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:587:3: KEYWORD_IS_EMPTY LPAR argName= csName RPAR LBR RBR
+            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:586:18: ( KEYWORD_IS_EMPTY LPAR argName= csName RPAR LBR RBR -> ^( Cst_IsEmpty $argName) )
+            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:587:3: KEYWORD_IS_EMPTY LPAR argName= csName RPAR LBR RBR
             {
             KEYWORD_IS_EMPTY181=(Token)match(input,KEYWORD_IS_EMPTY,FOLLOW_KEYWORD_IS_EMPTY_in_csKeywordIsEmpty4216); if (state.failed) return retval; 
             if ( state.backtracking==0 ) stream_KEYWORD_IS_EMPTY.add(KEYWORD_IS_EMPTY181);
@@ -7904,7 +7904,7 @@ public class miniTomParser extends Parser {
             root_0 = (Tree)adaptor.nil();
             // 590:3: -> ^( Cst_IsEmpty $argName)
             {
-                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:590:6: ^( Cst_IsEmpty $argName)
+                // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:590:6: ^( Cst_IsEmpty $argName)
                 {
                 Tree root_1 = (Tree)adaptor.nil();
                 root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_IsEmpty, "Cst_IsEmpty"), root_1);
@@ -7946,7 +7946,7 @@ public class miniTomParser extends Parser {
     };
 
     // $ANTLR start "csKeywordMakeEmpty_List"
-    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:595:1: csKeywordMakeEmpty_List : KEYWORD_MAKE_EMPTY LPAR RPAR LBR RBR -> ^( Cst_MakeEmptyList ) ;
+    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:595:1: csKeywordMakeEmpty_List : KEYWORD_MAKE_EMPTY LPAR RPAR LBR RBR -> ^( Cst_MakeEmptyList ) ;
     public final miniTomParser.csKeywordMakeEmpty_List_return csKeywordMakeEmpty_List() throws RecognitionException {
         miniTomParser.csKeywordMakeEmpty_List_return retval = new miniTomParser.csKeywordMakeEmpty_List_return();
         retval.start = input.LT(1);
@@ -7971,8 +7971,8 @@ public class miniTomParser extends Parser {
         RewriteRuleTokenStream stream_LBR=new RewriteRuleTokenStream(adaptor,"token LBR");
 
         try {
-            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:595:25: ( KEYWORD_MAKE_EMPTY LPAR RPAR LBR RBR -> ^( Cst_MakeEmptyList ) )
-            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:596:3: KEYWORD_MAKE_EMPTY LPAR RPAR LBR RBR
+            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:595:25: ( KEYWORD_MAKE_EMPTY LPAR RPAR LBR RBR -> ^( Cst_MakeEmptyList ) )
+            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:596:3: KEYWORD_MAKE_EMPTY LPAR RPAR LBR RBR
             {
             KEYWORD_MAKE_EMPTY186=(Token)match(input,KEYWORD_MAKE_EMPTY,FOLLOW_KEYWORD_MAKE_EMPTY_in_csKeywordMakeEmpty_List4272); if (state.failed) return retval; 
             if ( state.backtracking==0 ) stream_KEYWORD_MAKE_EMPTY.add(KEYWORD_MAKE_EMPTY186);
@@ -8005,7 +8005,7 @@ public class miniTomParser extends Parser {
             root_0 = (Tree)adaptor.nil();
             // 599:3: -> ^( Cst_MakeEmptyList )
             {
-                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:599:6: ^( Cst_MakeEmptyList )
+                // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:599:6: ^( Cst_MakeEmptyList )
                 {
                 Tree root_1 = (Tree)adaptor.nil();
                 root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_MakeEmptyList, "Cst_MakeEmptyList"), root_1);
@@ -8046,7 +8046,7 @@ public class miniTomParser extends Parser {
     };
 
     // $ANTLR start "csKeywordMakeEmpty_Array"
-    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:604:1: csKeywordMakeEmpty_Array : KEYWORD_MAKE_EMPTY LPAR argName= csName RPAR LBR RBR -> ^( Cst_MakeEmptyArray $argName) ;
+    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:604:1: csKeywordMakeEmpty_Array : KEYWORD_MAKE_EMPTY LPAR argName= csName RPAR LBR RBR -> ^( Cst_MakeEmptyArray $argName) ;
     public final miniTomParser.csKeywordMakeEmpty_Array_return csKeywordMakeEmpty_Array() throws RecognitionException {
         miniTomParser.csKeywordMakeEmpty_Array_return retval = new miniTomParser.csKeywordMakeEmpty_Array_return();
         retval.start = input.LT(1);
@@ -8073,8 +8073,8 @@ public class miniTomParser extends Parser {
         RewriteRuleTokenStream stream_LBR=new RewriteRuleTokenStream(adaptor,"token LBR");
         RewriteRuleSubtreeStream stream_csName=new RewriteRuleSubtreeStream(adaptor,"rule csName");
         try {
-            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:604:26: ( KEYWORD_MAKE_EMPTY LPAR argName= csName RPAR LBR RBR -> ^( Cst_MakeEmptyArray $argName) )
-            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:605:3: KEYWORD_MAKE_EMPTY LPAR argName= csName RPAR LBR RBR
+            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:604:26: ( KEYWORD_MAKE_EMPTY LPAR argName= csName RPAR LBR RBR -> ^( Cst_MakeEmptyArray $argName) )
+            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:605:3: KEYWORD_MAKE_EMPTY LPAR argName= csName RPAR LBR RBR
             {
             KEYWORD_MAKE_EMPTY191=(Token)match(input,KEYWORD_MAKE_EMPTY,FOLLOW_KEYWORD_MAKE_EMPTY_in_csKeywordMakeEmpty_Array4321); if (state.failed) return retval; 
             if ( state.backtracking==0 ) stream_KEYWORD_MAKE_EMPTY.add(KEYWORD_MAKE_EMPTY191);
@@ -8114,7 +8114,7 @@ public class miniTomParser extends Parser {
             root_0 = (Tree)adaptor.nil();
             // 608:3: -> ^( Cst_MakeEmptyArray $argName)
             {
-                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:608:6: ^( Cst_MakeEmptyArray $argName)
+                // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:608:6: ^( Cst_MakeEmptyArray $argName)
                 {
                 Tree root_1 = (Tree)adaptor.nil();
                 root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_MakeEmptyArray, "Cst_MakeEmptyArray"), root_1);
@@ -8156,7 +8156,7 @@ public class miniTomParser extends Parser {
     };
 
     // $ANTLR start "csKeywordMakeInsert"
-    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:613:1: csKeywordMakeInsert : KEYWORD_MAKE_INSERT LPAR elementArgName= csName COMMA termArgName= csName RPAR LBR RBR -> ^( Cst_MakeInsert $elementArgName $termArgName) ;
+    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:613:1: csKeywordMakeInsert : KEYWORD_MAKE_INSERT LPAR elementArgName= csName COMMA termArgName= csName RPAR LBR RBR -> ^( Cst_MakeInsert $elementArgName $termArgName) ;
     public final miniTomParser.csKeywordMakeInsert_return csKeywordMakeInsert() throws RecognitionException {
         miniTomParser.csKeywordMakeInsert_return retval = new miniTomParser.csKeywordMakeInsert_return();
         retval.start = input.LT(1);
@@ -8188,8 +8188,8 @@ public class miniTomParser extends Parser {
         RewriteRuleTokenStream stream_LBR=new RewriteRuleTokenStream(adaptor,"token LBR");
         RewriteRuleSubtreeStream stream_csName=new RewriteRuleSubtreeStream(adaptor,"rule csName");
         try {
-            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:613:21: ( KEYWORD_MAKE_INSERT LPAR elementArgName= csName COMMA termArgName= csName RPAR LBR RBR -> ^( Cst_MakeInsert $elementArgName $termArgName) )
-            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:614:3: KEYWORD_MAKE_INSERT LPAR elementArgName= csName COMMA termArgName= csName RPAR LBR RBR
+            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:613:21: ( KEYWORD_MAKE_INSERT LPAR elementArgName= csName COMMA termArgName= csName RPAR LBR RBR -> ^( Cst_MakeInsert $elementArgName $termArgName) )
+            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:614:3: KEYWORD_MAKE_INSERT LPAR elementArgName= csName COMMA termArgName= csName RPAR LBR RBR
             {
             KEYWORD_MAKE_INSERT196=(Token)match(input,KEYWORD_MAKE_INSERT,FOLLOW_KEYWORD_MAKE_INSERT_in_csKeywordMakeInsert4377); if (state.failed) return retval; 
             if ( state.backtracking==0 ) stream_KEYWORD_MAKE_INSERT.add(KEYWORD_MAKE_INSERT196);
@@ -8239,7 +8239,7 @@ public class miniTomParser extends Parser {
             root_0 = (Tree)adaptor.nil();
             // 618:3: -> ^( Cst_MakeInsert $elementArgName $termArgName)
             {
-                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:618:6: ^( Cst_MakeInsert $elementArgName $termArgName)
+                // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:618:6: ^( Cst_MakeInsert $elementArgName $termArgName)
                 {
                 Tree root_1 = (Tree)adaptor.nil();
                 root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_MakeInsert, "Cst_MakeInsert"), root_1);
@@ -8282,7 +8282,7 @@ public class miniTomParser extends Parser {
     };
 
     // $ANTLR start "csKeywordGetElement"
-    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:623:1: csKeywordGetElement : KEYWORD_GET_ELEMENT LPAR termArgName= csName COMMA elementIndexArgName= csName RPAR LBR RBR -> ^( Cst_GetElement $termArgName $elementIndexArgName) ;
+    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:623:1: csKeywordGetElement : KEYWORD_GET_ELEMENT LPAR termArgName= csName COMMA elementIndexArgName= csName RPAR LBR RBR -> ^( Cst_GetElement $termArgName $elementIndexArgName) ;
     public final miniTomParser.csKeywordGetElement_return csKeywordGetElement() throws RecognitionException {
         miniTomParser.csKeywordGetElement_return retval = new miniTomParser.csKeywordGetElement_return();
         retval.start = input.LT(1);
@@ -8314,8 +8314,8 @@ public class miniTomParser extends Parser {
         RewriteRuleTokenStream stream_KEYWORD_GET_ELEMENT=new RewriteRuleTokenStream(adaptor,"token KEYWORD_GET_ELEMENT");
         RewriteRuleSubtreeStream stream_csName=new RewriteRuleSubtreeStream(adaptor,"rule csName");
         try {
-            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:623:21: ( KEYWORD_GET_ELEMENT LPAR termArgName= csName COMMA elementIndexArgName= csName RPAR LBR RBR -> ^( Cst_GetElement $termArgName $elementIndexArgName) )
-            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:624:3: KEYWORD_GET_ELEMENT LPAR termArgName= csName COMMA elementIndexArgName= csName RPAR LBR RBR
+            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:623:21: ( KEYWORD_GET_ELEMENT LPAR termArgName= csName COMMA elementIndexArgName= csName RPAR LBR RBR -> ^( Cst_GetElement $termArgName $elementIndexArgName) )
+            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:624:3: KEYWORD_GET_ELEMENT LPAR termArgName= csName COMMA elementIndexArgName= csName RPAR LBR RBR
             {
             KEYWORD_GET_ELEMENT202=(Token)match(input,KEYWORD_GET_ELEMENT,FOLLOW_KEYWORD_GET_ELEMENT_in_csKeywordGetElement4446); if (state.failed) return retval; 
             if ( state.backtracking==0 ) stream_KEYWORD_GET_ELEMENT.add(KEYWORD_GET_ELEMENT202);
@@ -8350,7 +8350,7 @@ public class miniTomParser extends Parser {
 
 
             // AST REWRITE
-            // elements: termArgName, elementIndexArgName
+            // elements: elementIndexArgName, termArgName
             // token labels: 
             // rule labels: retval, elementIndexArgName, termArgName
             // token list labels: 
@@ -8365,7 +8365,7 @@ public class miniTomParser extends Parser {
             root_0 = (Tree)adaptor.nil();
             // 628:3: -> ^( Cst_GetElement $termArgName $elementIndexArgName)
             {
-                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:628:6: ^( Cst_GetElement $termArgName $elementIndexArgName)
+                // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:628:6: ^( Cst_GetElement $termArgName $elementIndexArgName)
                 {
                 Tree root_1 = (Tree)adaptor.nil();
                 root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_GetElement, "Cst_GetElement"), root_1);
@@ -8408,7 +8408,7 @@ public class miniTomParser extends Parser {
     };
 
     // $ANTLR start "csKeywordGetSize"
-    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:633:1: csKeywordGetSize : KEYWORD_GET_SIZE LPAR termArgName= csName RPAR LBR RBR -> ^( Cst_GetSize $termArgName) ;
+    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:633:1: csKeywordGetSize : KEYWORD_GET_SIZE LPAR termArgName= csName RPAR LBR RBR -> ^( Cst_GetSize $termArgName) ;
     public final miniTomParser.csKeywordGetSize_return csKeywordGetSize() throws RecognitionException {
         miniTomParser.csKeywordGetSize_return retval = new miniTomParser.csKeywordGetSize_return();
         retval.start = input.LT(1);
@@ -8435,8 +8435,8 @@ public class miniTomParser extends Parser {
         RewriteRuleTokenStream stream_LBR=new RewriteRuleTokenStream(adaptor,"token LBR");
         RewriteRuleSubtreeStream stream_csName=new RewriteRuleSubtreeStream(adaptor,"rule csName");
         try {
-            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:633:18: ( KEYWORD_GET_SIZE LPAR termArgName= csName RPAR LBR RBR -> ^( Cst_GetSize $termArgName) )
-            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:634:3: KEYWORD_GET_SIZE LPAR termArgName= csName RPAR LBR RBR
+            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:633:18: ( KEYWORD_GET_SIZE LPAR termArgName= csName RPAR LBR RBR -> ^( Cst_GetSize $termArgName) )
+            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:634:3: KEYWORD_GET_SIZE LPAR termArgName= csName RPAR LBR RBR
             {
             KEYWORD_GET_SIZE208=(Token)match(input,KEYWORD_GET_SIZE,FOLLOW_KEYWORD_GET_SIZE_in_csKeywordGetSize4515); if (state.failed) return retval; 
             if ( state.backtracking==0 ) stream_KEYWORD_GET_SIZE.add(KEYWORD_GET_SIZE208);
@@ -8476,7 +8476,7 @@ public class miniTomParser extends Parser {
             root_0 = (Tree)adaptor.nil();
             // 637:3: -> ^( Cst_GetSize $termArgName)
             {
-                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:637:6: ^( Cst_GetSize $termArgName)
+                // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:637:6: ^( Cst_GetSize $termArgName)
                 {
                 Tree root_1 = (Tree)adaptor.nil();
                 root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_GetSize, "Cst_GetSize"), root_1);
@@ -8518,7 +8518,7 @@ public class miniTomParser extends Parser {
     };
 
     // $ANTLR start "csKeywordMakeAppend"
-    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:642:1: csKeywordMakeAppend : KEYWORD_MAKE_APPEND LPAR elementArgName= csName COMMA termArgName= csName RPAR LBR RBR -> ^( Cst_MakeAppend $elementArgName $termArgName) ;
+    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:642:1: csKeywordMakeAppend : KEYWORD_MAKE_APPEND LPAR elementArgName= csName COMMA termArgName= csName RPAR LBR RBR -> ^( Cst_MakeAppend $elementArgName $termArgName) ;
     public final miniTomParser.csKeywordMakeAppend_return csKeywordMakeAppend() throws RecognitionException {
         miniTomParser.csKeywordMakeAppend_return retval = new miniTomParser.csKeywordMakeAppend_return();
         retval.start = input.LT(1);
@@ -8550,8 +8550,8 @@ public class miniTomParser extends Parser {
         RewriteRuleTokenStream stream_LBR=new RewriteRuleTokenStream(adaptor,"token LBR");
         RewriteRuleSubtreeStream stream_csName=new RewriteRuleSubtreeStream(adaptor,"rule csName");
         try {
-            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:642:21: ( KEYWORD_MAKE_APPEND LPAR elementArgName= csName COMMA termArgName= csName RPAR LBR RBR -> ^( Cst_MakeAppend $elementArgName $termArgName) )
-            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:643:3: KEYWORD_MAKE_APPEND LPAR elementArgName= csName COMMA termArgName= csName RPAR LBR RBR
+            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:642:21: ( KEYWORD_MAKE_APPEND LPAR elementArgName= csName COMMA termArgName= csName RPAR LBR RBR -> ^( Cst_MakeAppend $elementArgName $termArgName) )
+            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:643:3: KEYWORD_MAKE_APPEND LPAR elementArgName= csName COMMA termArgName= csName RPAR LBR RBR
             {
             KEYWORD_MAKE_APPEND213=(Token)match(input,KEYWORD_MAKE_APPEND,FOLLOW_KEYWORD_MAKE_APPEND_in_csKeywordMakeAppend4571); if (state.failed) return retval; 
             if ( state.backtracking==0 ) stream_KEYWORD_MAKE_APPEND.add(KEYWORD_MAKE_APPEND213);
@@ -8601,7 +8601,7 @@ public class miniTomParser extends Parser {
             root_0 = (Tree)adaptor.nil();
             // 647:3: -> ^( Cst_MakeAppend $elementArgName $termArgName)
             {
-                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:647:6: ^( Cst_MakeAppend $elementArgName $termArgName)
+                // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:647:6: ^( Cst_MakeAppend $elementArgName $termArgName)
                 {
                 Tree root_1 = (Tree)adaptor.nil();
                 root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_MakeAppend, "Cst_MakeAppend"), root_1);
@@ -8644,7 +8644,7 @@ public class miniTomParser extends Parser {
     };
 
     // $ANTLR start "csKeywordImplement"
-    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:652:1: csKeywordImplement : KEYWORD_IMPLEMENT LBR RBR -> ^( Cst_Implement ) ;
+    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:652:1: csKeywordImplement : KEYWORD_IMPLEMENT LBR RBR -> ^( Cst_Implement ) ;
     public final miniTomParser.csKeywordImplement_return csKeywordImplement() throws RecognitionException {
         miniTomParser.csKeywordImplement_return retval = new miniTomParser.csKeywordImplement_return();
         retval.start = input.LT(1);
@@ -8663,8 +8663,8 @@ public class miniTomParser extends Parser {
         RewriteRuleTokenStream stream_LBR=new RewriteRuleTokenStream(adaptor,"token LBR");
 
         try {
-            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:652:20: ( KEYWORD_IMPLEMENT LBR RBR -> ^( Cst_Implement ) )
-            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:653:3: KEYWORD_IMPLEMENT LBR RBR
+            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:652:20: ( KEYWORD_IMPLEMENT LBR RBR -> ^( Cst_Implement ) )
+            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:653:3: KEYWORD_IMPLEMENT LBR RBR
             {
             KEYWORD_IMPLEMENT219=(Token)match(input,KEYWORD_IMPLEMENT,FOLLOW_KEYWORD_IMPLEMENT_in_csKeywordImplement4641); if (state.failed) return retval; 
             if ( state.backtracking==0 ) stream_KEYWORD_IMPLEMENT.add(KEYWORD_IMPLEMENT219);
@@ -8691,7 +8691,7 @@ public class miniTomParser extends Parser {
             root_0 = (Tree)adaptor.nil();
             // 655:3: -> ^( Cst_Implement )
             {
-                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:655:6: ^( Cst_Implement )
+                // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:655:6: ^( Cst_Implement )
                 {
                 Tree root_1 = (Tree)adaptor.nil();
                 root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_Implement, "Cst_Implement"), root_1);
@@ -8732,7 +8732,7 @@ public class miniTomParser extends Parser {
     };
 
     // $ANTLR start "csKeywordIsSort"
-    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:658:1: csKeywordIsSort : KEYWORD_IS_SORT LPAR argName= csName RPAR LBR RBR -> ^( Cst_IsSort $argName) ;
+    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:658:1: csKeywordIsSort : KEYWORD_IS_SORT LPAR argName= csName RPAR LBR RBR -> ^( Cst_IsSort $argName) ;
     public final miniTomParser.csKeywordIsSort_return csKeywordIsSort() throws RecognitionException {
         miniTomParser.csKeywordIsSort_return retval = new miniTomParser.csKeywordIsSort_return();
         retval.start = input.LT(1);
@@ -8759,8 +8759,8 @@ public class miniTomParser extends Parser {
         RewriteRuleTokenStream stream_LBR=new RewriteRuleTokenStream(adaptor,"token LBR");
         RewriteRuleSubtreeStream stream_csName=new RewriteRuleSubtreeStream(adaptor,"rule csName");
         try {
-            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:658:17: ( KEYWORD_IS_SORT LPAR argName= csName RPAR LBR RBR -> ^( Cst_IsSort $argName) )
-            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:659:3: KEYWORD_IS_SORT LPAR argName= csName RPAR LBR RBR
+            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:658:17: ( KEYWORD_IS_SORT LPAR argName= csName RPAR LBR RBR -> ^( Cst_IsSort $argName) )
+            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:659:3: KEYWORD_IS_SORT LPAR argName= csName RPAR LBR RBR
             {
             KEYWORD_IS_SORT222=(Token)match(input,KEYWORD_IS_SORT,FOLLOW_KEYWORD_IS_SORT_in_csKeywordIsSort4669); if (state.failed) return retval; 
             if ( state.backtracking==0 ) stream_KEYWORD_IS_SORT.add(KEYWORD_IS_SORT222);
@@ -8800,7 +8800,7 @@ public class miniTomParser extends Parser {
             root_0 = (Tree)adaptor.nil();
             // 662:3: -> ^( Cst_IsSort $argName)
             {
-                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:662:6: ^( Cst_IsSort $argName)
+                // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:662:6: ^( Cst_IsSort $argName)
                 {
                 Tree root_1 = (Tree)adaptor.nil();
                 root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_IsSort, "Cst_IsSort"), root_1);
@@ -8842,7 +8842,7 @@ public class miniTomParser extends Parser {
     };
 
     // $ANTLR start "csKeywordEquals"
-    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:665:1: csKeywordEquals : KEYWORD_EQUALS LPAR arg1= csName COMMA arg2= csName RPAR LBR RBR -> ^( Cst_Equals $arg1 $arg2) ;
+    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:665:1: csKeywordEquals : KEYWORD_EQUALS LPAR arg1= csName COMMA arg2= csName RPAR LBR RBR -> ^( Cst_Equals $arg1 $arg2) ;
     public final miniTomParser.csKeywordEquals_return csKeywordEquals() throws RecognitionException {
         miniTomParser.csKeywordEquals_return retval = new miniTomParser.csKeywordEquals_return();
         retval.start = input.LT(1);
@@ -8874,8 +8874,8 @@ public class miniTomParser extends Parser {
         RewriteRuleTokenStream stream_LBR=new RewriteRuleTokenStream(adaptor,"token LBR");
         RewriteRuleSubtreeStream stream_csName=new RewriteRuleSubtreeStream(adaptor,"rule csName");
         try {
-            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:665:17: ( KEYWORD_EQUALS LPAR arg1= csName COMMA arg2= csName RPAR LBR RBR -> ^( Cst_Equals $arg1 $arg2) )
-            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:666:3: KEYWORD_EQUALS LPAR arg1= csName COMMA arg2= csName RPAR LBR RBR
+            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:665:17: ( KEYWORD_EQUALS LPAR arg1= csName COMMA arg2= csName RPAR LBR RBR -> ^( Cst_Equals $arg1 $arg2) )
+            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:666:3: KEYWORD_EQUALS LPAR arg1= csName COMMA arg2= csName RPAR LBR RBR
             {
             KEYWORD_EQUALS227=(Token)match(input,KEYWORD_EQUALS,FOLLOW_KEYWORD_EQUALS_in_csKeywordEquals4712); if (state.failed) return retval; 
             if ( state.backtracking==0 ) stream_KEYWORD_EQUALS.add(KEYWORD_EQUALS227);
@@ -8910,7 +8910,7 @@ public class miniTomParser extends Parser {
 
 
             // AST REWRITE
-            // elements: arg1, arg2
+            // elements: arg2, arg1
             // token labels: 
             // rule labels: retval, arg2, arg1
             // token list labels: 
@@ -8925,7 +8925,7 @@ public class miniTomParser extends Parser {
             root_0 = (Tree)adaptor.nil();
             // 669:3: -> ^( Cst_Equals $arg1 $arg2)
             {
-                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:669:6: ^( Cst_Equals $arg1 $arg2)
+                // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:669:6: ^( Cst_Equals $arg1 $arg2)
                 {
                 Tree root_1 = (Tree)adaptor.nil();
                 root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_Equals, "Cst_Equals"), root_1);
@@ -8968,7 +8968,7 @@ public class miniTomParser extends Parser {
     };
 
     // $ANTLR start "csNameList"
-    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:674:1: csNameList : ( csName ( COMMA csName )* )? -> ^( ConcCstName ( csName )* ) ;
+    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:674:1: csNameList : ( csName ( COMMA csName )* )? -> ^( ConcCstName ( csName )* ) ;
     public final miniTomParser.csNameList_return csNameList() throws RecognitionException {
         miniTomParser.csNameList_return retval = new miniTomParser.csNameList_return();
         retval.start = input.LT(1);
@@ -8985,10 +8985,10 @@ public class miniTomParser extends Parser {
         RewriteRuleTokenStream stream_COMMA=new RewriteRuleTokenStream(adaptor,"token COMMA");
         RewriteRuleSubtreeStream stream_csName=new RewriteRuleSubtreeStream(adaptor,"rule csName");
         try {
-            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:674:12: ( ( csName ( COMMA csName )* )? -> ^( ConcCstName ( csName )* ) )
-            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:675:3: ( csName ( COMMA csName )* )?
+            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:674:12: ( ( csName ( COMMA csName )* )? -> ^( ConcCstName ( csName )* ) )
+            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:675:3: ( csName ( COMMA csName )* )?
             {
-            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:675:3: ( csName ( COMMA csName )* )?
+            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:675:3: ( csName ( COMMA csName )* )?
             int alt55=2;
             int LA55_0 = input.LA(1);
 
@@ -8997,7 +8997,7 @@ public class miniTomParser extends Parser {
             }
             switch (alt55) {
                 case 1 :
-                    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:675:4: csName ( COMMA csName )*
+                    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:675:4: csName ( COMMA csName )*
                     {
                     pushFollow(FOLLOW_csName_in_csNameList4781);
                     csName233=csName();
@@ -9005,7 +9005,7 @@ public class miniTomParser extends Parser {
                     state._fsp--;
                     if (state.failed) return retval;
                     if ( state.backtracking==0 ) stream_csName.add(csName233.getTree());
-                    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:675:11: ( COMMA csName )*
+                    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:675:11: ( COMMA csName )*
                     loop54:
                     do {
                         int alt54=2;
@@ -9018,7 +9018,7 @@ public class miniTomParser extends Parser {
 
                         switch (alt54) {
                     	case 1 :
-                    	    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:675:12: COMMA csName
+                    	    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:675:12: COMMA csName
                     	    {
                     	    COMMA234=(Token)match(input,COMMA,FOLLOW_COMMA_in_csNameList4784); if (state.failed) return retval; 
                     	    if ( state.backtracking==0 ) stream_COMMA.add(COMMA234);
@@ -9060,12 +9060,12 @@ public class miniTomParser extends Parser {
             root_0 = (Tree)adaptor.nil();
             // 676:3: -> ^( ConcCstName ( csName )* )
             {
-                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:676:6: ^( ConcCstName ( csName )* )
+                // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:676:6: ^( ConcCstName ( csName )* )
                 {
                 Tree root_1 = (Tree)adaptor.nil();
                 root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(ConcCstName, "ConcCstName"), root_1);
 
-                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:676:20: ( csName )*
+                // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:676:20: ( csName )*
                 while ( stream_csName.hasNext() ) {
                     adaptor.addChild(root_1, stream_csName.nextTree());
 
@@ -9106,7 +9106,7 @@ public class miniTomParser extends Parser {
     };
 
     // $ANTLR start "csName"
-    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:679:1: csName : IDENTIFIER -> ^( Cst_Name IDENTIFIER ) ;
+    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:679:1: csName : IDENTIFIER -> ^( Cst_Name IDENTIFIER ) ;
     public final miniTomParser.csName_return csName() throws RecognitionException {
         miniTomParser.csName_return retval = new miniTomParser.csName_return();
         retval.start = input.LT(1);
@@ -9119,8 +9119,8 @@ public class miniTomParser extends Parser {
         RewriteRuleTokenStream stream_IDENTIFIER=new RewriteRuleTokenStream(adaptor,"token IDENTIFIER");
 
         try {
-            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:679:8: ( IDENTIFIER -> ^( Cst_Name IDENTIFIER ) )
-            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:680:3: IDENTIFIER
+            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:679:8: ( IDENTIFIER -> ^( Cst_Name IDENTIFIER ) )
+            // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:680:3: IDENTIFIER
             {
             IDENTIFIER236=(Token)match(input,IDENTIFIER,FOLLOW_IDENTIFIER_in_csName4812); if (state.failed) return retval; 
             if ( state.backtracking==0 ) stream_IDENTIFIER.add(IDENTIFIER236);
@@ -9141,7 +9141,7 @@ public class miniTomParser extends Parser {
             root_0 = (Tree)adaptor.nil();
             // 681:3: -> ^( Cst_Name IDENTIFIER )
             {
-                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:681:6: ^( Cst_Name IDENTIFIER )
+                // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:681:6: ^( Cst_Name IDENTIFIER )
                 {
                 Tree root_1 = (Tree)adaptor.nil();
                 root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_Name, "Cst_Name"), root_1);
@@ -9178,8 +9178,8 @@ public class miniTomParser extends Parser {
 
     // $ANTLR start synpred1_miniTom
     public final void synpred1_miniTom_fragment() throws RecognitionException {   
-        // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:102:37: ( BQUOTE )
-        // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:102:37: BQUOTE
+        // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:102:37: ( BQUOTE )
+        // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:102:37: BQUOTE
         {
         match(input,BQUOTE,FOLLOW_BQUOTE_in_synpred1_miniTom139); if (state.failed) return ;
 
@@ -9191,10 +9191,10 @@ public class miniTomParser extends Parser {
     public final void synpred5_miniTom_fragment() throws RecognitionException {   
         Token l=null;
 
-        // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:129:3: ( ( IDENTIFIER l= COLON )? csExtendedConstraint ARROW LBR RBR )
-        // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:129:3: ( IDENTIFIER l= COLON )? csExtendedConstraint ARROW LBR RBR
+        // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:129:3: ( ( IDENTIFIER l= COLON )? csExtendedConstraint ARROW LBR RBR )
+        // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:129:3: ( IDENTIFIER l= COLON )? csExtendedConstraint ARROW LBR RBR
         {
-        // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:129:3: ( IDENTIFIER l= COLON )?
+        // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:129:3: ( IDENTIFIER l= COLON )?
         int alt56=2;
         int LA56_0 = input.LA(1);
 
@@ -9207,7 +9207,7 @@ public class miniTomParser extends Parser {
         }
         switch (alt56) {
             case 1 :
-                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:129:4: IDENTIFIER l= COLON
+                // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:129:4: IDENTIFIER l= COLON
                 {
                 match(input,IDENTIFIER,FOLLOW_IDENTIFIER_in_synpred5_miniTom367); if (state.failed) return ;
                 l=(Token)match(input,COLON,FOLLOW_COLON_in_synpred5_miniTom371); if (state.failed) return ;
@@ -9236,10 +9236,10 @@ public class miniTomParser extends Parser {
         Token bqname=null;
         List list_a=null;
         RuleReturnScope a = null;
-        // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:221:3: ( (type= IDENTIFIER )? ( BQUOTE )? bqname= IDENTIFIER LPAR (a+= csBQTerm[false] ( COMMA a+= csBQTerm[false] )* )? RPAR )
-        // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:221:3: (type= IDENTIFIER )? ( BQUOTE )? bqname= IDENTIFIER LPAR (a+= csBQTerm[false] ( COMMA a+= csBQTerm[false] )* )? RPAR
+        // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:221:3: ( (type= IDENTIFIER )? ( BQUOTE )? bqname= IDENTIFIER LPAR (a+= csBQTerm[false] ( COMMA a+= csBQTerm[false] )* )? RPAR )
+        // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:221:3: (type= IDENTIFIER )? ( BQUOTE )? bqname= IDENTIFIER LPAR (a+= csBQTerm[false] ( COMMA a+= csBQTerm[false] )* )? RPAR
         {
-        // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:221:3: (type= IDENTIFIER )?
+        // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:221:3: (type= IDENTIFIER )?
         int alt60=2;
         int LA60_0 = input.LA(1);
 
@@ -9252,7 +9252,7 @@ public class miniTomParser extends Parser {
         }
         switch (alt60) {
             case 1 :
-                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:221:4: type= IDENTIFIER
+                // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:221:4: type= IDENTIFIER
                 {
                 type=(Token)match(input,IDENTIFIER,FOLLOW_IDENTIFIER_in_synpred18_miniTom1498); if (state.failed) return ;
 
@@ -9261,7 +9261,7 @@ public class miniTomParser extends Parser {
 
         }
 
-        // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:221:22: ( BQUOTE )?
+        // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:221:22: ( BQUOTE )?
         int alt61=2;
         int LA61_0 = input.LA(1);
 
@@ -9270,7 +9270,7 @@ public class miniTomParser extends Parser {
         }
         switch (alt61) {
             case 1 :
-                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:0:0: BQUOTE
+                // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:0:0: BQUOTE
                 {
                 match(input,BQUOTE,FOLLOW_BQUOTE_in_synpred18_miniTom1502); if (state.failed) return ;
 
@@ -9281,7 +9281,7 @@ public class miniTomParser extends Parser {
 
         bqname=(Token)match(input,IDENTIFIER,FOLLOW_IDENTIFIER_in_synpred18_miniTom1507); if (state.failed) return ;
         match(input,LPAR,FOLLOW_LPAR_in_synpred18_miniTom1509); if (state.failed) return ;
-        // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:221:53: (a+= csBQTerm[false] ( COMMA a+= csBQTerm[false] )* )?
+        // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:221:53: (a+= csBQTerm[false] ( COMMA a+= csBQTerm[false] )* )?
         int alt63=2;
         int LA63_0 = input.LA(1);
 
@@ -9290,7 +9290,7 @@ public class miniTomParser extends Parser {
         }
         switch (alt63) {
             case 1 :
-                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:221:54: a+= csBQTerm[false] ( COMMA a+= csBQTerm[false] )*
+                // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:221:54: a+= csBQTerm[false] ( COMMA a+= csBQTerm[false] )*
                 {
                 pushFollow(FOLLOW_csBQTerm_in_synpred18_miniTom1514);
                 a=csBQTerm(false);
@@ -9300,7 +9300,7 @@ public class miniTomParser extends Parser {
                 if (list_a==null) list_a=new ArrayList();
                 list_a.add(a);
 
-                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:221:73: ( COMMA a+= csBQTerm[false] )*
+                // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:221:73: ( COMMA a+= csBQTerm[false] )*
                 loop62:
                 do {
                     int alt62=2;
@@ -9313,7 +9313,7 @@ public class miniTomParser extends Parser {
 
                     switch (alt62) {
                 	case 1 :
-                	    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:221:74: COMMA a+= csBQTerm[false]
+                	    // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:221:74: COMMA a+= csBQTerm[false]
                 	    {
                 	    match(input,COMMA,FOLLOW_COMMA_in_synpred18_miniTom1518); if (state.failed) return ;
                 	    pushFollow(FOLLOW_csBQTerm_in_synpred18_miniTom1522);
@@ -9349,8 +9349,8 @@ public class miniTomParser extends Parser {
     public final void synpred19_miniTom_fragment() throws RecognitionException {   
         Token type=null;
 
-        // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:229:5: (type= IDENTIFIER )
-        // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:229:5: type= IDENTIFIER
+        // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:229:5: (type= IDENTIFIER )
+        // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:229:5: type= IDENTIFIER
         {
         type=(Token)match(input,IDENTIFIER,FOLLOW_IDENTIFIER_in_synpred19_miniTom1670); if (state.failed) return ;
 
@@ -9364,10 +9364,10 @@ public class miniTomParser extends Parser {
         Token name=null;
         Token s=null;
 
-        // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:229:4: ( (type= IDENTIFIER )? ( BQUOTE )? name= IDENTIFIER (s= STAR )? )
-        // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:229:4: (type= IDENTIFIER )? ( BQUOTE )? name= IDENTIFIER (s= STAR )?
+        // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:229:4: ( (type= IDENTIFIER )? ( BQUOTE )? name= IDENTIFIER (s= STAR )? )
+        // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:229:4: (type= IDENTIFIER )? ( BQUOTE )? name= IDENTIFIER (s= STAR )?
         {
-        // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:229:4: (type= IDENTIFIER )?
+        // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:229:4: (type= IDENTIFIER )?
         int alt64=2;
         int LA64_0 = input.LA(1);
 
@@ -9380,7 +9380,7 @@ public class miniTomParser extends Parser {
         }
         switch (alt64) {
             case 1 :
-                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:229:5: type= IDENTIFIER
+                // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:229:5: type= IDENTIFIER
                 {
                 type=(Token)match(input,IDENTIFIER,FOLLOW_IDENTIFIER_in_synpred22_miniTom1670); if (state.failed) return ;
 
@@ -9389,7 +9389,7 @@ public class miniTomParser extends Parser {
 
         }
 
-        // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:229:23: ( BQUOTE )?
+        // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:229:23: ( BQUOTE )?
         int alt65=2;
         int LA65_0 = input.LA(1);
 
@@ -9398,7 +9398,7 @@ public class miniTomParser extends Parser {
         }
         switch (alt65) {
             case 1 :
-                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:0:0: BQUOTE
+                // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:0:0: BQUOTE
                 {
                 match(input,BQUOTE,FOLLOW_BQUOTE_in_synpred22_miniTom1674); if (state.failed) return ;
 
@@ -9408,7 +9408,7 @@ public class miniTomParser extends Parser {
         }
 
         name=(Token)match(input,IDENTIFIER,FOLLOW_IDENTIFIER_in_synpred22_miniTom1679); if (state.failed) return ;
-        // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:229:47: (s= STAR )?
+        // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:229:47: (s= STAR )?
         int alt66=2;
         int LA66_0 = input.LA(1);
 
@@ -9417,7 +9417,7 @@ public class miniTomParser extends Parser {
         }
         switch (alt66) {
             case 1 :
-                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:229:48: s= STAR
+                // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:229:48: s= STAR
                 {
                 s=(Token)match(input,STAR,FOLLOW_STAR_in_synpred22_miniTom1684); if (state.failed) return ;
 
@@ -9433,8 +9433,8 @@ public class miniTomParser extends Parser {
 
     // $ANTLR start synpred29_miniTom
     public final void synpred29_miniTom_fragment() throws RecognitionException {   
-        // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:303:3: ( csPattern LARROW csBQTerm[true] )
-        // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:303:3: csPattern LARROW csBQTerm[true]
+        // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:303:3: ( csPattern LARROW csBQTerm[true] )
+        // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:303:3: csPattern LARROW csBQTerm[true]
         {
         pushFollow(FOLLOW_csPattern_in_synpred29_miniTom2197);
         csPattern();
@@ -9465,15 +9465,15 @@ public class miniTomParser extends Parser {
         miniTomParser.csTerm_return r = null;
 
 
-        // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:306:5: (l= csTerm (gt= GREATERTHAN | ge= GREATEROREQU | lt= LOWERTHAN | le= LOWEROREQU | eq= DOUBLEEQUAL | ne= DIFFERENT ) r= csTerm )
-        // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:306:5: l= csTerm (gt= GREATERTHAN | ge= GREATEROREQU | lt= LOWERTHAN | le= LOWEROREQU | eq= DOUBLEEQUAL | ne= DIFFERENT ) r= csTerm
+        // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:306:5: (l= csTerm (gt= GREATERTHAN | ge= GREATEROREQU | lt= LOWERTHAN | le= LOWEROREQU | eq= DOUBLEEQUAL | ne= DIFFERENT ) r= csTerm )
+        // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:306:5: l= csTerm (gt= GREATERTHAN | ge= GREATEROREQU | lt= LOWERTHAN | le= LOWEROREQU | eq= DOUBLEEQUAL | ne= DIFFERENT ) r= csTerm
         {
         pushFollow(FOLLOW_csTerm_in_synpred35_miniTom2224);
         l=csTerm();
 
         state._fsp--;
         if (state.failed) return ;
-        // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:307:5: (gt= GREATERTHAN | ge= GREATEROREQU | lt= LOWERTHAN | le= LOWEROREQU | eq= DOUBLEEQUAL | ne= DIFFERENT )
+        // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:307:5: (gt= GREATERTHAN | ge= GREATEROREQU | lt= LOWERTHAN | le= LOWEROREQU | eq= DOUBLEEQUAL | ne= DIFFERENT )
         int alt68=6;
         switch ( input.LA(1) ) {
         case GREATERTHAN:
@@ -9516,42 +9516,42 @@ public class miniTomParser extends Parser {
 
         switch (alt68) {
             case 1 :
-                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:307:6: gt= GREATERTHAN
+                // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:307:6: gt= GREATERTHAN
                 {
                 gt=(Token)match(input,GREATERTHAN,FOLLOW_GREATERTHAN_in_synpred35_miniTom2234); if (state.failed) return ;
 
                 }
                 break;
             case 2 :
-                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:307:21: ge= GREATEROREQU
+                // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:307:21: ge= GREATEROREQU
                 {
                 ge=(Token)match(input,GREATEROREQU,FOLLOW_GREATEROREQU_in_synpred35_miniTom2238); if (state.failed) return ;
 
                 }
                 break;
             case 3 :
-                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:307:37: lt= LOWERTHAN
+                // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:307:37: lt= LOWERTHAN
                 {
                 lt=(Token)match(input,LOWERTHAN,FOLLOW_LOWERTHAN_in_synpred35_miniTom2242); if (state.failed) return ;
 
                 }
                 break;
             case 4 :
-                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:308:6: le= LOWEROREQU
+                // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:308:6: le= LOWEROREQU
                 {
                 le=(Token)match(input,LOWEROREQU,FOLLOW_LOWEROREQU_in_synpred35_miniTom2251); if (state.failed) return ;
 
                 }
                 break;
             case 5 :
-                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:308:21: eq= DOUBLEEQUAL
+                // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:308:21: eq= DOUBLEEQUAL
                 {
                 eq=(Token)match(input,DOUBLEEQUAL,FOLLOW_DOUBLEEQUAL_in_synpred35_miniTom2256); if (state.failed) return ;
 
                 }
                 break;
             case 6 :
-                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:308:37: ne= DIFFERENT
+                // /Users/pem/github/tom/src/tom/engine/parser/antlr3/miniTom.g:308:37: ne= DIFFERENT
                 {
                 ne=(Token)match(input,DIFFERENT,FOLLOW_DIFFERENT_in_synpred35_miniTom2261); if (state.failed) return ;
 

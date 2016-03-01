@@ -1,4 +1,4 @@
-// $ANTLR 3.2 Sep 23, 2009 12:02:23 /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g 2013-03-21 14:06:52
+// $ANTLR 3.2 Sep 23, 2009 12:02:23 /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g 2016-03-01 15:43:32
 
 package tom.gom.parser;
 import tom.gom.GomStreamManager;
@@ -14,7 +14,7 @@ import org.antlr.runtime.tree.*;
 
 public class GomLanguageParser extends Parser {
     public static final String[] tokenNames = new String[] {
-        "<invalid>", "<EOR>", "<DOWN>", "<UP>", "ConcClassName", "MappingHook", "ImportHook", "InterfaceHook", "BlockHook", "MakeBeforeHook", "MakeHook", "SlotField", "ConcSlotField", "TomMapping", "VariadicOperatorClass", "OperatorClass", "SortClass", "AbstractTypeClass", "ClassName", "ConcGomClass", "ConcHook", "Sort", "ConcSort", "Variadic", "Slots", "ConcAtom", "FutureCons", "FutureNil", "HookKind", "ConcField", "ModHookPair", "KindFutureOperator", "KindOperator", "KindSort", "KindModule", "ConcOperator", "ConcModuleDecl", "Details", "HasTomCode", "OptionList", "Origin", "NamedField", "StarredField", "Refresh", "Neutral", "Outer", "Inner", "None", "ModuleDecl", "ConcSortDecl", "Alternative", "GomModuleName", "ConcSlot", "CutFutureOperator", "CutOperator", "CutSort", "CutModule", "Arg", "ConcSection", "AtomDecl", "SortType", "Hook", "ConcGomModule", "OperatorDecl", "BuiltinSortDecl", "SortDecl", "ConcProduction", "ConcGomType", "ConcHookDecl", "MappingHookDecl", "ImportHookDecl", "InterfaceHookDecl", "BlockHookDecl", "MakeHookDecl", "Slot", "GomType", "ConcImportedModule", "Public", "Imports", "ConcModule", "GomModule", "ConcAlternative", "ConcArg", "Module", "AtomType", "ExpressionType", "PatternType", "CodeList", "Compare", "FullOperatorClass", "ShortSortClass", "FullSortClass", "Cons", "Empty", "IsCons", "IsEmpty", "Code", "MODULE", "ID", "DOT", "IMPORTS", "PUBLIC", "ABSTRACT", "SYNTAX", "ATOM", "EQUALS", "BINDS", "JAVADOC", "ALT", "SEMI", "LPAREN", "COMMA", "RPAREN", "STAR", "LDIPLE", "RDIPLE", "COLON", "INNER", "OUTER", "NEUTRAL", "LBRACE", "SORT", "OPERATOR", "PRIVATE", "ARROW", "RBRACE", "WS", "SLCOMMENT", "MLCOMMENT"
+        "<invalid>", "<EOR>", "<DOWN>", "<UP>", "ConcClassName", "MappingHook", "ImportHook", "InterfaceHook", "BlockHook", "MakeBeforeHook", "MakeHook", "SlotField", "ConcSlotField", "TomMapping", "VariadicOperatorClass", "OperatorClass", "SortClass", "AbstractTypeClass", "ClassName", "ConcGomClass", "ConcHook", "Sort", "ConcSort", "Variadic", "Slots", "ConcAtom", "FutureCons", "FutureNil", "HookKind", "ConcField", "ModHookPair", "KindFutureOperator", "KindOperator", "KindSort", "KindModule", "ConcOperator", "ConcModuleDecl", "Details", "HasTomCode", "OptionList", "Origin", "NamedField", "StarredField", "ModuleDecl", "Refresh", "Neutral", "Outer", "Inner", "None", "ConcSortDecl", "Alternative", "GomModuleName", "ConcSlot", "CutFutureOperator", "CutOperator", "CutSort", "CutModule", "Arg", "ConcSection", "AtomDecl", "SortType", "Hook", "ConcGomModule", "OperatorDecl", "BuiltinSortDecl", "SortDecl", "ConcProduction", "ConcGomType", "ConcHookDecl", "MappingHookDecl", "ImportHookDecl", "InterfaceHookDecl", "BlockHookDecl", "MakeHookDecl", "Slot", "GomType", "ConcImportedModule", "Public", "Imports", "ConcModule", "GomModule", "ConcAlternative", "ConcArg", "Module", "AtomType", "ExpressionType", "PatternType", "CodeList", "Compare", "FullOperatorClass", "ShortSortClass", "FullSortClass", "Cons", "Empty", "IsCons", "IsEmpty", "Code", "MODULE", "ID", "DOT", "IMPORTS", "PUBLIC", "ABSTRACT", "SYNTAX", "ATOM", "EQUALS", "BINDS", "JAVADOC", "ALT", "SEMI", "LPAREN", "COMMA", "RPAREN", "STAR", "LDIPLE", "RDIPLE", "COLON", "INNER", "OUTER", "NEUTRAL", "LBRACE", "SORT", "OPERATOR", "PRIVATE", "ARROW", "RBRACE", "WS", "SLCOMMENT", "MLCOMMENT"
     };
     public static final int Arg=63;
     public static final int STAR=119;
@@ -29,7 +29,7 @@ public class GomLanguageParser extends Parser {
     public static final int ExpressionType=91;
     public static final int SLCOMMENT=133;
     public static final int EQUALS=111;
-    public static final int Inner=52;
+    public static final int Inner=53;
     public static final int PatternType=92;
     public static final int ATOM=110;
     public static final int Slot=80;
@@ -40,11 +40,11 @@ public class GomLanguageParser extends Parser {
     public static final int BINDS=112;
     public static final int FullOperatorClass=95;
     public static final int ConcImportedModule=82;
-    public static final int ModuleDecl=54;
+    public static final int ModuleDecl=49;
     public static final int RPAREN=118;
     public static final int ImportHook=12;
     public static final int ConcArg=88;
-    public static final int Neutral=50;
+    public static final int Neutral=51;
     public static final int SortClass=22;
     public static final int StarredField=48;
     public static final int ConcHookDecl=74;
@@ -61,7 +61,7 @@ public class GomLanguageParser extends Parser {
     public static final int Code=102;
     public static final int BlockHookDecl=78;
     public static final int NEUTRAL=125;
-    public static final int None=53;
+    public static final int None=54;
     public static final int SlotField=17;
     public static final int ConcHook=26;
     public static final int ConcSlot=58;
@@ -70,7 +70,7 @@ public class GomLanguageParser extends Parser {
     public static final int BlockHook=14;
     public static final int IsEmpty=101;
     public static final int AtomType=90;
-    public static final int Outer=51;
+    public static final int Outer=52;
     public static final int IMPORTS=106;
     public static final int ConcField=35;
     public static final int ShortSortClass=96;
@@ -134,7 +134,7 @@ public class GomLanguageParser extends Parser {
     public static final int MappingHookDecl=75;
     public static final int MakeBeforeHook=15;
     public static final int VariadicOperatorClass=20;
-    public static final int Refresh=49;
+    public static final int Refresh=50;
     public static final int Slots=30;
     public static final int HookKind=34;
     public static final int SortType=66;
@@ -165,7 +165,7 @@ public class GomLanguageParser extends Parser {
     }
 
     public String[] getTokenNames() { return GomLanguageParser.tokenNames; }
-    public String getGrammarFileName() { return "/Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g"; }
+    public String getGrammarFileName() { return "/Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g"; }
 
 
       private GomStreamManager streamManager;
@@ -181,7 +181,7 @@ public class GomLanguageParser extends Parser {
     };
 
     // $ANTLR start "module"
-    // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:49:1: module : MODULE modulename (imps= imports )? section EOF -> {imps!=null}? ^( GomModule modulename ^( ConcSection imports section ) ) -> ^( GomModule modulename ^( ConcSection section ) ) ;
+    // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:49:1: module : MODULE modulename (imps= imports )? section EOF -> {imps!=null}? ^( GomModule modulename ^( ConcSection imports section ) ) -> ^( GomModule modulename ^( ConcSection section ) ) ;
     public final GomLanguageParser.module_return module() throws RecognitionException {
         GomLanguageParser.module_return retval = new GomLanguageParser.module_return();
         retval.start = input.LT(1);
@@ -205,8 +205,8 @@ public class GomLanguageParser extends Parser {
         RewriteRuleSubtreeStream stream_imports=new RewriteRuleSubtreeStream(adaptor,"rule imports");
         RewriteRuleSubtreeStream stream_section=new RewriteRuleSubtreeStream(adaptor,"rule section");
         try {
-            // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:49:8: ( MODULE modulename (imps= imports )? section EOF -> {imps!=null}? ^( GomModule modulename ^( ConcSection imports section ) ) -> ^( GomModule modulename ^( ConcSection section ) ) )
-            // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:50:2: MODULE modulename (imps= imports )? section EOF
+            // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:49:8: ( MODULE modulename (imps= imports )? section EOF -> {imps!=null}? ^( GomModule modulename ^( ConcSection imports section ) ) -> ^( GomModule modulename ^( ConcSection section ) ) )
+            // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:50:2: MODULE modulename (imps= imports )? section EOF
             {
             MODULE1=(Token)match(input,MODULE,FOLLOW_MODULE_in_module60);  
             stream_MODULE.add(MODULE1);
@@ -217,7 +217,7 @@ public class GomLanguageParser extends Parser {
             state._fsp--;
 
             stream_modulename.add(modulename2.getTree());
-            // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:50:20: (imps= imports )?
+            // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:50:20: (imps= imports )?
             int alt1=2;
             int LA1_0 = input.LA(1);
 
@@ -226,7 +226,7 @@ public class GomLanguageParser extends Parser {
             }
             switch (alt1) {
                 case 1 :
-                    // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:50:21: imps= imports
+                    // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:50:21: imps= imports
                     {
                     pushFollow(FOLLOW_imports_in_module67);
                     imps=imports();
@@ -252,7 +252,7 @@ public class GomLanguageParser extends Parser {
 
 
             // AST REWRITE
-            // elements: modulename, section, modulename, section, imports
+            // elements: modulename, section, imports, modulename, section
             // token labels: 
             // rule labels: retval
             // token list labels: 
@@ -264,13 +264,13 @@ public class GomLanguageParser extends Parser {
             root_0 = (Tree)adaptor.nil();
             // 51:3: -> {imps!=null}? ^( GomModule modulename ^( ConcSection imports section ) )
             if (imps!=null) {
-                // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:51:20: ^( GomModule modulename ^( ConcSection imports section ) )
+                // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:51:20: ^( GomModule modulename ^( ConcSection imports section ) )
                 {
                 Tree root_1 = (Tree)adaptor.nil();
                 root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(GomModule, "GomModule"), root_1);
 
                 adaptor.addChild(root_1, stream_modulename.nextTree());
-                // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:51:43: ^( ConcSection imports section )
+                // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:51:43: ^( ConcSection imports section )
                 {
                 Tree root_2 = (Tree)adaptor.nil();
                 root_2 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(ConcSection, "ConcSection"), root_2);
@@ -287,13 +287,13 @@ public class GomLanguageParser extends Parser {
             }
             else // 52:3: -> ^( GomModule modulename ^( ConcSection section ) )
             {
-                // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:52:6: ^( GomModule modulename ^( ConcSection section ) )
+                // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:52:6: ^( GomModule modulename ^( ConcSection section ) )
                 {
                 Tree root_1 = (Tree)adaptor.nil();
                 root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(GomModule, "GomModule"), root_1);
 
                 adaptor.addChild(root_1, stream_modulename.nextTree());
-                // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:52:29: ^( ConcSection section )
+                // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:52:29: ^( ConcSection section )
                 {
                 Tree root_2 = (Tree)adaptor.nil();
                 root_2 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(ConcSection, "ConcSection"), root_2);
@@ -335,7 +335,7 @@ public class GomLanguageParser extends Parser {
     };
 
     // $ANTLR start "modulename"
-    // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:55:1: modulename : (mod= ID DOT )* moduleName= ID -> ^( GomModuleName $moduleName) ;
+    // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:55:1: modulename : (mod= ID DOT )* moduleName= ID -> ^( GomModuleName $moduleName) ;
     public final GomLanguageParser.modulename_return modulename() throws RecognitionException {
         GomLanguageParser.modulename_return retval = new GomLanguageParser.modulename_return();
         retval.start = input.LT(1);
@@ -356,10 +356,10 @@ public class GomLanguageParser extends Parser {
           StringBuilder packagePrefix = new StringBuilder("");
 
         try {
-            // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:58:3: ( (mod= ID DOT )* moduleName= ID -> ^( GomModuleName $moduleName) )
-            // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:59:3: (mod= ID DOT )* moduleName= ID
+            // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:58:3: ( (mod= ID DOT )* moduleName= ID -> ^( GomModuleName $moduleName) )
+            // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:59:3: (mod= ID DOT )* moduleName= ID
             {
-            // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:59:3: (mod= ID DOT )*
+            // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:59:3: (mod= ID DOT )*
             loop2:
             do {
                 int alt2=2;
@@ -378,7 +378,7 @@ public class GomLanguageParser extends Parser {
 
                 switch (alt2) {
             	case 1 :
-            	    // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:59:4: mod= ID DOT
+            	    // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:59:4: mod= ID DOT
             	    {
             	    mod=(Token)match(input,ID,FOLLOW_ID_in_modulename130);  
             	    stream_ID.add(mod);
@@ -423,7 +423,7 @@ public class GomLanguageParser extends Parser {
             root_0 = (Tree)adaptor.nil();
             // 69:3: -> ^( GomModuleName $moduleName)
             {
-                // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:69:6: ^( GomModuleName $moduleName)
+                // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:69:6: ^( GomModuleName $moduleName)
                 {
                 Tree root_1 = (Tree)adaptor.nil();
                 root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(GomModuleName, "GomModuleName"), root_1);
@@ -462,7 +462,7 @@ public class GomLanguageParser extends Parser {
     };
 
     // $ANTLR start "imports"
-    // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:72:1: imports : IMPORTS ( importedModuleName )* -> ^( Imports ^( ConcImportedModule ( importedModuleName )* ) ) ;
+    // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:72:1: imports : IMPORTS ( importedModuleName )* -> ^( Imports ^( ConcImportedModule ( importedModuleName )* ) ) ;
     public final GomLanguageParser.imports_return imports() throws RecognitionException {
         GomLanguageParser.imports_return retval = new GomLanguageParser.imports_return();
         retval.start = input.LT(1);
@@ -477,13 +477,13 @@ public class GomLanguageParser extends Parser {
         RewriteRuleTokenStream stream_IMPORTS=new RewriteRuleTokenStream(adaptor,"token IMPORTS");
         RewriteRuleSubtreeStream stream_importedModuleName=new RewriteRuleSubtreeStream(adaptor,"rule importedModuleName");
         try {
-            // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:72:9: ( IMPORTS ( importedModuleName )* -> ^( Imports ^( ConcImportedModule ( importedModuleName )* ) ) )
-            // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:73:3: IMPORTS ( importedModuleName )*
+            // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:72:9: ( IMPORTS ( importedModuleName )* -> ^( Imports ^( ConcImportedModule ( importedModuleName )* ) ) )
+            // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:73:3: IMPORTS ( importedModuleName )*
             {
             IMPORTS6=(Token)match(input,IMPORTS,FOLLOW_IMPORTS_in_imports170);  
             stream_IMPORTS.add(IMPORTS6);
 
-            // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:73:11: ( importedModuleName )*
+            // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:73:11: ( importedModuleName )*
             loop3:
             do {
                 int alt3=2;
@@ -496,7 +496,7 @@ public class GomLanguageParser extends Parser {
 
                 switch (alt3) {
             	case 1 :
-            	    // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:73:12: importedModuleName
+            	    // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:73:12: importedModuleName
             	    {
             	    pushFollow(FOLLOW_importedModuleName_in_imports173);
             	    importedModuleName7=importedModuleName();
@@ -528,17 +528,17 @@ public class GomLanguageParser extends Parser {
             root_0 = (Tree)adaptor.nil();
             // 73:33: -> ^( Imports ^( ConcImportedModule ( importedModuleName )* ) )
             {
-                // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:73:36: ^( Imports ^( ConcImportedModule ( importedModuleName )* ) )
+                // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:73:36: ^( Imports ^( ConcImportedModule ( importedModuleName )* ) )
                 {
                 Tree root_1 = (Tree)adaptor.nil();
                 root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Imports, "Imports"), root_1);
 
-                // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:73:46: ^( ConcImportedModule ( importedModuleName )* )
+                // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:73:46: ^( ConcImportedModule ( importedModuleName )* )
                 {
                 Tree root_2 = (Tree)adaptor.nil();
                 root_2 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(ConcImportedModule, "ConcImportedModule"), root_2);
 
-                // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:73:67: ( importedModuleName )*
+                // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:73:67: ( importedModuleName )*
                 while ( stream_importedModuleName.hasNext() ) {
                     adaptor.addChild(root_2, stream_importedModuleName.nextTree());
 
@@ -580,7 +580,7 @@ public class GomLanguageParser extends Parser {
     };
 
     // $ANTLR start "importedModuleName"
-    // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:75:1: importedModuleName : ID -> ^( GomModuleName ID ) ;
+    // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:75:1: importedModuleName : ID -> ^( GomModuleName ID ) ;
     public final GomLanguageParser.importedModuleName_return importedModuleName() throws RecognitionException {
         GomLanguageParser.importedModuleName_return retval = new GomLanguageParser.importedModuleName_return();
         retval.start = input.LT(1);
@@ -593,8 +593,8 @@ public class GomLanguageParser extends Parser {
         RewriteRuleTokenStream stream_ID=new RewriteRuleTokenStream(adaptor,"token ID");
 
         try {
-            // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:75:20: ( ID -> ^( GomModuleName ID ) )
-            // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:76:3: ID
+            // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:75:20: ( ID -> ^( GomModuleName ID ) )
+            // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:76:3: ID
             {
             ID8=(Token)match(input,ID,FOLLOW_ID_in_importedModuleName202);  
             stream_ID.add(ID8);
@@ -614,7 +614,7 @@ public class GomLanguageParser extends Parser {
             root_0 = (Tree)adaptor.nil();
             // 76:6: -> ^( GomModuleName ID )
             {
-                // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:76:9: ^( GomModuleName ID )
+                // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:76:9: ^( GomModuleName ID )
                 {
                 Tree root_1 = (Tree)adaptor.nil();
                 root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(GomModuleName, "GomModuleName"), root_1);
@@ -653,7 +653,7 @@ public class GomLanguageParser extends Parser {
     };
 
     // $ANTLR start "section"
-    // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:79:1: section : ( PUBLIC )? adtgrammar -> ^( Public adtgrammar ) ;
+    // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:79:1: section : ( PUBLIC )? adtgrammar -> ^( Public adtgrammar ) ;
     public final GomLanguageParser.section_return section() throws RecognitionException {
         GomLanguageParser.section_return retval = new GomLanguageParser.section_return();
         retval.start = input.LT(1);
@@ -668,10 +668,10 @@ public class GomLanguageParser extends Parser {
         RewriteRuleTokenStream stream_PUBLIC=new RewriteRuleTokenStream(adaptor,"token PUBLIC");
         RewriteRuleSubtreeStream stream_adtgrammar=new RewriteRuleSubtreeStream(adaptor,"rule adtgrammar");
         try {
-            // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:79:9: ( ( PUBLIC )? adtgrammar -> ^( Public adtgrammar ) )
-            // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:80:3: ( PUBLIC )? adtgrammar
+            // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:79:9: ( ( PUBLIC )? adtgrammar -> ^( Public adtgrammar ) )
+            // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:80:3: ( PUBLIC )? adtgrammar
             {
-            // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:80:3: ( PUBLIC )?
+            // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:80:3: ( PUBLIC )?
             int alt4=2;
             int LA4_0 = input.LA(1);
 
@@ -680,7 +680,7 @@ public class GomLanguageParser extends Parser {
             }
             switch (alt4) {
                 case 1 :
-                    // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:80:4: PUBLIC
+                    // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:80:4: PUBLIC
                     {
                     PUBLIC9=(Token)match(input,PUBLIC,FOLLOW_PUBLIC_in_section224);  
                     stream_PUBLIC.add(PUBLIC9);
@@ -712,7 +712,7 @@ public class GomLanguageParser extends Parser {
             root_0 = (Tree)adaptor.nil();
             // 80:24: -> ^( Public adtgrammar )
             {
-                // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:80:27: ^( Public adtgrammar )
+                // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:80:27: ^( Public adtgrammar )
                 {
                 Tree root_1 = (Tree)adaptor.nil();
                 root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Public, "Public"), root_1);
@@ -751,7 +751,7 @@ public class GomLanguageParser extends Parser {
     };
 
     // $ANTLR start "adtgrammar"
-    // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:83:1: adtgrammar : (gr+= syntax )* -> $gr;
+    // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:83:1: adtgrammar : (gr+= syntax )* -> $gr;
     public final GomLanguageParser.adtgrammar_return adtgrammar() throws RecognitionException {
         GomLanguageParser.adtgrammar_return retval = new GomLanguageParser.adtgrammar_return();
         retval.start = input.LT(1);
@@ -762,10 +762,10 @@ public class GomLanguageParser extends Parser {
         RuleReturnScope gr = null;
         RewriteRuleSubtreeStream stream_syntax=new RewriteRuleSubtreeStream(adaptor,"rule syntax");
         try {
-            // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:83:12: ( (gr+= syntax )* -> $gr)
-            // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:84:3: (gr+= syntax )*
+            // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:83:12: ( (gr+= syntax )* -> $gr)
+            // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:84:3: (gr+= syntax )*
             {
-            // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:84:3: (gr+= syntax )*
+            // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:84:3: (gr+= syntax )*
             loop5:
             do {
                 int alt5=2;
@@ -778,7 +778,7 @@ public class GomLanguageParser extends Parser {
 
                 switch (alt5) {
             	case 1 :
-            	    // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:84:4: gr+= syntax
+            	    // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:84:4: gr+= syntax
             	    {
             	    pushFollow(FOLLOW_syntax_in_adtgrammar252);
             	    gr=syntax();
@@ -844,7 +844,7 @@ public class GomLanguageParser extends Parser {
     };
 
     // $ANTLR start "syntax"
-    // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:87:1: syntax : ( ABSTRACT SYNTAX ) (gr1+= hookConstruct | gr2+= typedecl | gr3+= atomdecl )* -> ^( ConcProduction ( $gr1)* ( $gr2)* ( $gr3)* ) ;
+    // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:87:1: syntax : ( ABSTRACT SYNTAX ) (gr1+= hookConstruct | gr2+= typedecl | gr3+= atomdecl )* -> ^( ConcProduction ( $gr1)* ( $gr2)* ( $gr3)* ) ;
     public final GomLanguageParser.syntax_return syntax() throws RecognitionException {
         GomLanguageParser.syntax_return retval = new GomLanguageParser.syntax_return();
         retval.start = input.LT(1);
@@ -867,11 +867,11 @@ public class GomLanguageParser extends Parser {
         RewriteRuleSubtreeStream stream_typedecl=new RewriteRuleSubtreeStream(adaptor,"rule typedecl");
         RewriteRuleSubtreeStream stream_atomdecl=new RewriteRuleSubtreeStream(adaptor,"rule atomdecl");
         try {
-            // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:87:8: ( ( ABSTRACT SYNTAX ) (gr1+= hookConstruct | gr2+= typedecl | gr3+= atomdecl )* -> ^( ConcProduction ( $gr1)* ( $gr2)* ( $gr3)* ) )
-            // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:88:3: ( ABSTRACT SYNTAX ) (gr1+= hookConstruct | gr2+= typedecl | gr3+= atomdecl )*
+            // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:87:8: ( ( ABSTRACT SYNTAX ) (gr1+= hookConstruct | gr2+= typedecl | gr3+= atomdecl )* -> ^( ConcProduction ( $gr1)* ( $gr2)* ( $gr3)* ) )
+            // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:88:3: ( ABSTRACT SYNTAX ) (gr1+= hookConstruct | gr2+= typedecl | gr3+= atomdecl )*
             {
-            // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:88:3: ( ABSTRACT SYNTAX )
-            // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:88:4: ABSTRACT SYNTAX
+            // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:88:3: ( ABSTRACT SYNTAX )
+            // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:88:4: ABSTRACT SYNTAX
             {
             ABSTRACT11=(Token)match(input,ABSTRACT,FOLLOW_ABSTRACT_in_syntax273);  
             stream_ABSTRACT.add(ABSTRACT11);
@@ -882,7 +882,7 @@ public class GomLanguageParser extends Parser {
 
             }
 
-            // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:88:21: (gr1+= hookConstruct | gr2+= typedecl | gr3+= atomdecl )*
+            // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:88:21: (gr1+= hookConstruct | gr2+= typedecl | gr3+= atomdecl )*
             loop6:
             do {
                 int alt6=4;
@@ -918,7 +918,7 @@ public class GomLanguageParser extends Parser {
 
                 switch (alt6) {
             	case 1 :
-            	    // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:88:22: gr1+= hookConstruct
+            	    // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:88:22: gr1+= hookConstruct
             	    {
             	    pushFollow(FOLLOW_hookConstruct_in_syntax281);
             	    gr1=hookConstruct();
@@ -933,7 +933,7 @@ public class GomLanguageParser extends Parser {
             	    }
             	    break;
             	case 2 :
-            	    // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:88:43: gr2+= typedecl
+            	    // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:88:43: gr2+= typedecl
             	    {
             	    pushFollow(FOLLOW_typedecl_in_syntax287);
             	    gr2=typedecl();
@@ -948,7 +948,7 @@ public class GomLanguageParser extends Parser {
             	    }
             	    break;
             	case 3 :
-            	    // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:88:59: gr3+= atomdecl
+            	    // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:88:59: gr3+= atomdecl
             	    {
             	    pushFollow(FOLLOW_atomdecl_in_syntax293);
             	    gr3=atomdecl();
@@ -971,7 +971,7 @@ public class GomLanguageParser extends Parser {
 
 
             // AST REWRITE
-            // elements: gr1, gr3, gr2
+            // elements: gr2, gr1, gr3
             // token labels: 
             // rule labels: retval
             // token list labels: 
@@ -985,24 +985,24 @@ public class GomLanguageParser extends Parser {
             root_0 = (Tree)adaptor.nil();
             // 89:5: -> ^( ConcProduction ( $gr1)* ( $gr2)* ( $gr3)* )
             {
-                // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:89:8: ^( ConcProduction ( $gr1)* ( $gr2)* ( $gr3)* )
+                // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:89:8: ^( ConcProduction ( $gr1)* ( $gr2)* ( $gr3)* )
                 {
                 Tree root_1 = (Tree)adaptor.nil();
                 root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(ConcProduction, "ConcProduction"), root_1);
 
-                // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:89:25: ( $gr1)*
+                // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:89:25: ( $gr1)*
                 while ( stream_gr1.hasNext() ) {
                     adaptor.addChild(root_1, stream_gr1.nextTree());
 
                 }
                 stream_gr1.reset();
-                // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:89:33: ( $gr2)*
+                // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:89:33: ( $gr2)*
                 while ( stream_gr2.hasNext() ) {
                     adaptor.addChild(root_1, stream_gr2.nextTree());
 
                 }
                 stream_gr2.reset();
-                // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:89:41: ( $gr3)*
+                // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:89:41: ( $gr3)*
                 while ( stream_gr3.hasNext() ) {
                     adaptor.addChild(root_1, stream_gr3.nextTree());
 
@@ -1041,7 +1041,7 @@ public class GomLanguageParser extends Parser {
     };
 
     // $ANTLR start "atomdecl"
-    // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:92:1: atomdecl : ATOM atom= ID -> ^( AtomDecl ID[atom] ) ;
+    // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:92:1: atomdecl : ATOM atom= ID -> ^( AtomDecl ID[atom] ) ;
     public final GomLanguageParser.atomdecl_return atomdecl() throws RecognitionException {
         GomLanguageParser.atomdecl_return retval = new GomLanguageParser.atomdecl_return();
         retval.start = input.LT(1);
@@ -1057,8 +1057,8 @@ public class GomLanguageParser extends Parser {
         RewriteRuleTokenStream stream_ID=new RewriteRuleTokenStream(adaptor,"token ID");
 
         try {
-            // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:92:10: ( ATOM atom= ID -> ^( AtomDecl ID[atom] ) )
-            // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:93:3: ATOM atom= ID
+            // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:92:10: ( ATOM atom= ID -> ^( AtomDecl ID[atom] ) )
+            // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:93:3: ATOM atom= ID
             {
             ATOM13=(Token)match(input,ATOM,FOLLOW_ATOM_in_atomdecl336);  
             stream_ATOM.add(ATOM13);
@@ -1081,7 +1081,7 @@ public class GomLanguageParser extends Parser {
             root_0 = (Tree)adaptor.nil();
             // 93:16: -> ^( AtomDecl ID[atom] )
             {
-                // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:93:19: ^( AtomDecl ID[atom] )
+                // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:93:19: ^( AtomDecl ID[atom] )
                 {
                 Tree root_1 = (Tree)adaptor.nil();
                 root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(AtomDecl, "AtomDecl"), root_1);
@@ -1120,7 +1120,7 @@ public class GomLanguageParser extends Parser {
     };
 
     // $ANTLR start "typedecl"
-    // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:96:1: typedecl : (typename= ID EQUALS alts= alternatives[typename] -> ^( SortType ^( GomType ^( ExpressionType ) $typename) ^( ConcAtom ) $alts) | ptypename= ID BINDS b= atoms EQUALS palts= pattern_alternatives[ptypename] -> ^( SortType ^( GomType ^( PatternType ) $ptypename) $b $palts) );
+    // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:96:1: typedecl : (typename= ID EQUALS alts= alternatives[typename] -> ^( SortType ^( GomType ^( ExpressionType ) $typename) ^( ConcAtom ) $alts) | ptypename= ID BINDS b= atoms EQUALS palts= pattern_alternatives[ptypename] -> ^( SortType ^( GomType ^( PatternType ) $ptypename) $b $palts) );
     public final GomLanguageParser.typedecl_return typedecl() throws RecognitionException {
         GomLanguageParser.typedecl_return retval = new GomLanguageParser.typedecl_return();
         retval.start = input.LT(1);
@@ -1151,7 +1151,7 @@ public class GomLanguageParser extends Parser {
         RewriteRuleSubtreeStream stream_alternatives=new RewriteRuleSubtreeStream(adaptor,"rule alternatives");
         RewriteRuleSubtreeStream stream_pattern_alternatives=new RewriteRuleSubtreeStream(adaptor,"rule pattern_alternatives");
         try {
-            // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:96:10: (typename= ID EQUALS alts= alternatives[typename] -> ^( SortType ^( GomType ^( ExpressionType ) $typename) ^( ConcAtom ) $alts) | ptypename= ID BINDS b= atoms EQUALS palts= pattern_alternatives[ptypename] -> ^( SortType ^( GomType ^( PatternType ) $ptypename) $b $palts) )
+            // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:96:10: (typename= ID EQUALS alts= alternatives[typename] -> ^( SortType ^( GomType ^( ExpressionType ) $typename) ^( ConcAtom ) $alts) | ptypename= ID BINDS b= atoms EQUALS palts= pattern_alternatives[ptypename] -> ^( SortType ^( GomType ^( PatternType ) $ptypename) $b $palts) )
             int alt7=2;
             int LA7_0 = input.LA(1);
 
@@ -1179,7 +1179,7 @@ public class GomLanguageParser extends Parser {
             }
             switch (alt7) {
                 case 1 :
-                    // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:97:5: typename= ID EQUALS alts= alternatives[typename]
+                    // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:97:5: typename= ID EQUALS alts= alternatives[typename]
                     {
                     typename=(Token)match(input,ID,FOLLOW_ID_in_typedecl366);  
                     stream_ID.add(typename);
@@ -1210,17 +1210,17 @@ public class GomLanguageParser extends Parser {
                     root_0 = (Tree)adaptor.nil();
                     // 98:7: -> ^( SortType ^( GomType ^( ExpressionType ) $typename) ^( ConcAtom ) $alts)
                     {
-                        // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:98:10: ^( SortType ^( GomType ^( ExpressionType ) $typename) ^( ConcAtom ) $alts)
+                        // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:98:10: ^( SortType ^( GomType ^( ExpressionType ) $typename) ^( ConcAtom ) $alts)
                         {
                         Tree root_1 = (Tree)adaptor.nil();
                         root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(SortType, "SortType"), root_1);
 
-                        // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:98:21: ^( GomType ^( ExpressionType ) $typename)
+                        // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:98:21: ^( GomType ^( ExpressionType ) $typename)
                         {
                         Tree root_2 = (Tree)adaptor.nil();
                         root_2 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(GomType, "GomType"), root_2);
 
-                        // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:98:31: ^( ExpressionType )
+                        // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:98:31: ^( ExpressionType )
                         {
                         Tree root_3 = (Tree)adaptor.nil();
                         root_3 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(ExpressionType, "ExpressionType"), root_3);
@@ -1231,7 +1231,7 @@ public class GomLanguageParser extends Parser {
 
                         adaptor.addChild(root_1, root_2);
                         }
-                        // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:98:60: ^( ConcAtom )
+                        // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:98:60: ^( ConcAtom )
                         {
                         Tree root_2 = (Tree)adaptor.nil();
                         root_2 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(ConcAtom, "ConcAtom"), root_2);
@@ -1249,7 +1249,7 @@ public class GomLanguageParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:99:6: ptypename= ID BINDS b= atoms EQUALS palts= pattern_alternatives[ptypename]
+                    // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:99:6: ptypename= ID BINDS b= atoms EQUALS palts= pattern_alternatives[ptypename]
                     {
                     ptypename=(Token)match(input,ID,FOLLOW_ID_in_typedecl412);  
                     stream_ID.add(ptypename);
@@ -1275,7 +1275,7 @@ public class GomLanguageParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: palts, b, ptypename
+                    // elements: b, palts, ptypename
                     // token labels: ptypename
                     // rule labels: retval, b, palts
                     // token list labels: 
@@ -1290,17 +1290,17 @@ public class GomLanguageParser extends Parser {
                     root_0 = (Tree)adaptor.nil();
                     // 100:7: -> ^( SortType ^( GomType ^( PatternType ) $ptypename) $b $palts)
                     {
-                        // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:100:10: ^( SortType ^( GomType ^( PatternType ) $ptypename) $b $palts)
+                        // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:100:10: ^( SortType ^( GomType ^( PatternType ) $ptypename) $b $palts)
                         {
                         Tree root_1 = (Tree)adaptor.nil();
                         root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(SortType, "SortType"), root_1);
 
-                        // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:100:21: ^( GomType ^( PatternType ) $ptypename)
+                        // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:100:21: ^( GomType ^( PatternType ) $ptypename)
                         {
                         Tree root_2 = (Tree)adaptor.nil();
                         root_2 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(GomType, "GomType"), root_2);
 
-                        // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:100:31: ^( PatternType )
+                        // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:100:31: ^( PatternType )
                         {
                         Tree root_3 = (Tree)adaptor.nil();
                         root_3 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(PatternType, "PatternType"), root_3);
@@ -1348,7 +1348,7 @@ public class GomLanguageParser extends Parser {
     };
 
     // $ANTLR start "atoms"
-    // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:103:1: atoms : (atom+= ID )+ -> ^( ConcAtom ( $atom)+ ) ;
+    // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:103:1: atoms : (atom+= ID )+ -> ^( ConcAtom ( $atom)+ ) ;
     public final GomLanguageParser.atoms_return atoms() throws RecognitionException {
         GomLanguageParser.atoms_return retval = new GomLanguageParser.atoms_return();
         retval.start = input.LT(1);
@@ -1362,10 +1362,10 @@ public class GomLanguageParser extends Parser {
         RewriteRuleTokenStream stream_ID=new RewriteRuleTokenStream(adaptor,"token ID");
 
         try {
-            // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:103:7: ( (atom+= ID )+ -> ^( ConcAtom ( $atom)+ ) )
-            // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:104:3: (atom+= ID )+
+            // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:103:7: ( (atom+= ID )+ -> ^( ConcAtom ( $atom)+ ) )
+            // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:104:3: (atom+= ID )+
             {
-            // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:104:3: (atom+= ID )+
+            // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:104:3: (atom+= ID )+
             int cnt8=0;
             loop8:
             do {
@@ -1379,7 +1379,7 @@ public class GomLanguageParser extends Parser {
 
                 switch (alt8) {
             	case 1 :
-            	    // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:104:4: atom+= ID
+            	    // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:104:4: atom+= ID
             	    {
             	    atom=(Token)match(input,ID,FOLLOW_ID_in_atoms470);  
             	    stream_ID.add(atom);
@@ -1416,7 +1416,7 @@ public class GomLanguageParser extends Parser {
             root_0 = (Tree)adaptor.nil();
             // 104:15: -> ^( ConcAtom ( $atom)+ )
             {
-                // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:104:18: ^( ConcAtom ( $atom)+ )
+                // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:104:18: ^( ConcAtom ( $atom)+ )
                 {
                 Tree root_1 = (Tree)adaptor.nil();
                 root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(ConcAtom, "ConcAtom"), root_1);
@@ -1462,7 +1462,7 @@ public class GomLanguageParser extends Parser {
     };
 
     // $ANTLR start "alternatives"
-    // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:107:1: alternatives[Token typename] : ( (jd1= JAVADOC ALT ) | ( ALT jd1= JAVADOC ) | jd1= JAVADOC | ( ALT )? ) opdecl[typename,jd1] ( ( (jd2= JAVADOC ALT ) | ( ALT jd2= JAVADOC ) | ALT ) opdecl[typename,jd2] )* ( SEMI )? -> ^( ConcAlternative ( opdecl )+ ) ;
+    // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:107:1: alternatives[Token typename] : ( (jd1= JAVADOC ALT ) | ( ALT jd1= JAVADOC ) | jd1= JAVADOC | ( ALT )? ) opdecl[typename,jd1] ( ( (jd2= JAVADOC ALT ) | ( ALT jd2= JAVADOC ) | ALT ) opdecl[typename,jd2] )* ( SEMI )? -> ^( ConcAlternative ( opdecl )+ ) ;
     public final GomLanguageParser.alternatives_return alternatives(Token typename) throws RecognitionException {
         GomLanguageParser.alternatives_return retval = new GomLanguageParser.alternatives_return();
         retval.start = input.LT(1);
@@ -1497,10 +1497,10 @@ public class GomLanguageParser extends Parser {
         RewriteRuleTokenStream stream_SEMI=new RewriteRuleTokenStream(adaptor,"token SEMI");
         RewriteRuleSubtreeStream stream_opdecl=new RewriteRuleSubtreeStream(adaptor,"rule opdecl");
         try {
-            // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:107:30: ( ( (jd1= JAVADOC ALT ) | ( ALT jd1= JAVADOC ) | jd1= JAVADOC | ( ALT )? ) opdecl[typename,jd1] ( ( (jd2= JAVADOC ALT ) | ( ALT jd2= JAVADOC ) | ALT ) opdecl[typename,jd2] )* ( SEMI )? -> ^( ConcAlternative ( opdecl )+ ) )
-            // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:108:3: ( (jd1= JAVADOC ALT ) | ( ALT jd1= JAVADOC ) | jd1= JAVADOC | ( ALT )? ) opdecl[typename,jd1] ( ( (jd2= JAVADOC ALT ) | ( ALT jd2= JAVADOC ) | ALT ) opdecl[typename,jd2] )* ( SEMI )?
+            // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:107:30: ( ( (jd1= JAVADOC ALT ) | ( ALT jd1= JAVADOC ) | jd1= JAVADOC | ( ALT )? ) opdecl[typename,jd1] ( ( (jd2= JAVADOC ALT ) | ( ALT jd2= JAVADOC ) | ALT ) opdecl[typename,jd2] )* ( SEMI )? -> ^( ConcAlternative ( opdecl )+ ) )
+            // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:108:3: ( (jd1= JAVADOC ALT ) | ( ALT jd1= JAVADOC ) | jd1= JAVADOC | ( ALT )? ) opdecl[typename,jd1] ( ( (jd2= JAVADOC ALT ) | ( ALT jd2= JAVADOC ) | ALT ) opdecl[typename,jd2] )* ( SEMI )?
             {
-            // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:108:3: ( (jd1= JAVADOC ALT ) | ( ALT jd1= JAVADOC ) | jd1= JAVADOC | ( ALT )? )
+            // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:108:3: ( (jd1= JAVADOC ALT ) | ( ALT jd1= JAVADOC ) | jd1= JAVADOC | ( ALT )? )
             int alt10=4;
             switch ( input.LA(1) ) {
             case JAVADOC:
@@ -1553,10 +1553,10 @@ public class GomLanguageParser extends Parser {
 
             switch (alt10) {
                 case 1 :
-                    // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:108:4: (jd1= JAVADOC ALT )
+                    // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:108:4: (jd1= JAVADOC ALT )
                     {
-                    // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:108:4: (jd1= JAVADOC ALT )
-                    // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:108:5: jd1= JAVADOC ALT
+                    // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:108:4: (jd1= JAVADOC ALT )
+                    // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:108:5: jd1= JAVADOC ALT
                     {
                     jd1=(Token)match(input,JAVADOC,FOLLOW_JAVADOC_in_alternatives502);  
                     stream_JAVADOC.add(jd1);
@@ -1571,10 +1571,10 @@ public class GomLanguageParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:108:24: ( ALT jd1= JAVADOC )
+                    // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:108:24: ( ALT jd1= JAVADOC )
                     {
-                    // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:108:24: ( ALT jd1= JAVADOC )
-                    // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:108:25: ALT jd1= JAVADOC
+                    // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:108:24: ( ALT jd1= JAVADOC )
+                    // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:108:25: ALT jd1= JAVADOC
                     {
                     ALT18=(Token)match(input,ALT,FOLLOW_ALT_in_alternatives510);  
                     stream_ALT.add(ALT18);
@@ -1589,7 +1589,7 @@ public class GomLanguageParser extends Parser {
                     }
                     break;
                 case 3 :
-                    // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:108:44: jd1= JAVADOC
+                    // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:108:44: jd1= JAVADOC
                     {
                     jd1=(Token)match(input,JAVADOC,FOLLOW_JAVADOC_in_alternatives521);  
                     stream_JAVADOC.add(jd1);
@@ -1598,9 +1598,9 @@ public class GomLanguageParser extends Parser {
                     }
                     break;
                 case 4 :
-                    // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:108:58: ( ALT )?
+                    // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:108:58: ( ALT )?
                     {
-                    // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:108:58: ( ALT )?
+                    // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:108:58: ( ALT )?
                     int alt9=2;
                     int LA9_0 = input.LA(1);
 
@@ -1609,7 +1609,7 @@ public class GomLanguageParser extends Parser {
                     }
                     switch (alt9) {
                         case 1 :
-                            // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:108:59: ALT
+                            // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:108:59: ALT
                             {
                             ALT19=(Token)match(input,ALT,FOLLOW_ALT_in_alternatives526);  
                             stream_ALT.add(ALT19);
@@ -1632,7 +1632,7 @@ public class GomLanguageParser extends Parser {
             state._fsp--;
 
             stream_opdecl.add(opdecl20.getTree());
-            // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:110:3: ( ( (jd2= JAVADOC ALT ) | ( ALT jd2= JAVADOC ) | ALT ) opdecl[typename,jd2] )*
+            // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:110:3: ( ( (jd2= JAVADOC ALT ) | ( ALT jd2= JAVADOC ) | ALT ) opdecl[typename,jd2] )*
             loop12:
             do {
                 int alt12=2;
@@ -1645,9 +1645,9 @@ public class GomLanguageParser extends Parser {
 
                 switch (alt12) {
             	case 1 :
-            	    // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:111:4: ( (jd2= JAVADOC ALT ) | ( ALT jd2= JAVADOC ) | ALT ) opdecl[typename,jd2]
+            	    // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:111:4: ( (jd2= JAVADOC ALT ) | ( ALT jd2= JAVADOC ) | ALT ) opdecl[typename,jd2]
             	    {
-            	    // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:111:4: ( (jd2= JAVADOC ALT ) | ( ALT jd2= JAVADOC ) | ALT )
+            	    // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:111:4: ( (jd2= JAVADOC ALT ) | ( ALT jd2= JAVADOC ) | ALT )
             	    int alt11=3;
             	    int LA11_0 = input.LA(1);
 
@@ -1678,10 +1678,10 @@ public class GomLanguageParser extends Parser {
             	    }
             	    switch (alt11) {
             	        case 1 :
-            	            // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:111:5: (jd2= JAVADOC ALT )
+            	            // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:111:5: (jd2= JAVADOC ALT )
             	            {
-            	            // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:111:5: (jd2= JAVADOC ALT )
-            	            // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:111:6: jd2= JAVADOC ALT
+            	            // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:111:5: (jd2= JAVADOC ALT )
+            	            // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:111:6: jd2= JAVADOC ALT
             	            {
             	            jd2=(Token)match(input,JAVADOC,FOLLOW_JAVADOC_in_alternatives547);  
             	            stream_JAVADOC.add(jd2);
@@ -1696,10 +1696,10 @@ public class GomLanguageParser extends Parser {
             	            }
             	            break;
             	        case 2 :
-            	            // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:111:25: ( ALT jd2= JAVADOC )
+            	            // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:111:25: ( ALT jd2= JAVADOC )
             	            {
-            	            // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:111:25: ( ALT jd2= JAVADOC )
-            	            // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:111:26: ALT jd2= JAVADOC
+            	            // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:111:25: ( ALT jd2= JAVADOC )
+            	            // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:111:26: ALT jd2= JAVADOC
             	            {
             	            ALT22=(Token)match(input,ALT,FOLLOW_ALT_in_alternatives555);  
             	            stream_ALT.add(ALT22);
@@ -1714,7 +1714,7 @@ public class GomLanguageParser extends Parser {
             	            }
             	            break;
             	        case 3 :
-            	            // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:111:45: ALT
+            	            // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:111:45: ALT
             	            {
             	            ALT23=(Token)match(input,ALT,FOLLOW_ALT_in_alternatives564);  
             	            stream_ALT.add(ALT23);
@@ -1741,7 +1741,7 @@ public class GomLanguageParser extends Parser {
                 }
             } while (true);
 
-            // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:113:6: ( SEMI )?
+            // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:113:6: ( SEMI )?
             int alt13=2;
             int LA13_0 = input.LA(1);
 
@@ -1750,7 +1750,7 @@ public class GomLanguageParser extends Parser {
             }
             switch (alt13) {
                 case 1 :
-                    // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:113:7: SEMI
+                    // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:113:7: SEMI
                     {
                     SEMI25=(Token)match(input,SEMI,FOLLOW_SEMI_in_alternatives581);  
                     stream_SEMI.add(SEMI25);
@@ -1776,7 +1776,7 @@ public class GomLanguageParser extends Parser {
             root_0 = (Tree)adaptor.nil();
             // 114:3: -> ^( ConcAlternative ( opdecl )+ )
             {
-                // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:114:6: ^( ConcAlternative ( opdecl )+ )
+                // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:114:6: ^( ConcAlternative ( opdecl )+ )
                 {
                 Tree root_1 = (Tree)adaptor.nil();
                 root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(ConcAlternative, "ConcAlternative"), root_1);
@@ -1822,7 +1822,7 @@ public class GomLanguageParser extends Parser {
     };
 
     // $ANTLR start "pattern_alternatives"
-    // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:118:1: pattern_alternatives[Token typename] : ( ALT )? pattern_opdecl[typename] ( ALT pattern_opdecl[typename] )* ( SEMI )? -> ^( ConcAlternative ( pattern_opdecl )+ ) ;
+    // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:118:1: pattern_alternatives[Token typename] : ( ALT )? pattern_opdecl[typename] ( ALT pattern_opdecl[typename] )* ( SEMI )? -> ^( ConcAlternative ( pattern_opdecl )+ ) ;
     public final GomLanguageParser.pattern_alternatives_return pattern_alternatives(Token typename) throws RecognitionException {
         GomLanguageParser.pattern_alternatives_return retval = new GomLanguageParser.pattern_alternatives_return();
         retval.start = input.LT(1);
@@ -1844,10 +1844,10 @@ public class GomLanguageParser extends Parser {
         RewriteRuleTokenStream stream_SEMI=new RewriteRuleTokenStream(adaptor,"token SEMI");
         RewriteRuleSubtreeStream stream_pattern_opdecl=new RewriteRuleSubtreeStream(adaptor,"rule pattern_opdecl");
         try {
-            // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:118:38: ( ( ALT )? pattern_opdecl[typename] ( ALT pattern_opdecl[typename] )* ( SEMI )? -> ^( ConcAlternative ( pattern_opdecl )+ ) )
-            // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:119:3: ( ALT )? pattern_opdecl[typename] ( ALT pattern_opdecl[typename] )* ( SEMI )?
+            // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:118:38: ( ( ALT )? pattern_opdecl[typename] ( ALT pattern_opdecl[typename] )* ( SEMI )? -> ^( ConcAlternative ( pattern_opdecl )+ ) )
+            // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:119:3: ( ALT )? pattern_opdecl[typename] ( ALT pattern_opdecl[typename] )* ( SEMI )?
             {
-            // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:119:3: ( ALT )?
+            // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:119:3: ( ALT )?
             int alt14=2;
             int LA14_0 = input.LA(1);
 
@@ -1856,7 +1856,7 @@ public class GomLanguageParser extends Parser {
             }
             switch (alt14) {
                 case 1 :
-                    // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:119:4: ALT
+                    // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:119:4: ALT
                     {
                     ALT26=(Token)match(input,ALT,FOLLOW_ALT_in_pattern_alternatives613);  
                     stream_ALT.add(ALT26);
@@ -1873,7 +1873,7 @@ public class GomLanguageParser extends Parser {
             state._fsp--;
 
             stream_pattern_opdecl.add(pattern_opdecl27.getTree());
-            // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:119:35: ( ALT pattern_opdecl[typename] )*
+            // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:119:35: ( ALT pattern_opdecl[typename] )*
             loop15:
             do {
                 int alt15=2;
@@ -1886,7 +1886,7 @@ public class GomLanguageParser extends Parser {
 
                 switch (alt15) {
             	case 1 :
-            	    // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:119:36: ALT pattern_opdecl[typename]
+            	    // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:119:36: ALT pattern_opdecl[typename]
             	    {
             	    ALT28=(Token)match(input,ALT,FOLLOW_ALT_in_pattern_alternatives621);  
             	    stream_ALT.add(ALT28);
@@ -1906,7 +1906,7 @@ public class GomLanguageParser extends Parser {
                 }
             } while (true);
 
-            // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:119:67: ( SEMI )?
+            // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:119:67: ( SEMI )?
             int alt16=2;
             int LA16_0 = input.LA(1);
 
@@ -1915,7 +1915,7 @@ public class GomLanguageParser extends Parser {
             }
             switch (alt16) {
                 case 1 :
-                    // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:119:68: SEMI
+                    // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:119:68: SEMI
                     {
                     SEMI30=(Token)match(input,SEMI,FOLLOW_SEMI_in_pattern_alternatives629);  
                     stream_SEMI.add(SEMI30);
@@ -1941,7 +1941,7 @@ public class GomLanguageParser extends Parser {
             root_0 = (Tree)adaptor.nil();
             // 120:3: -> ^( ConcAlternative ( pattern_opdecl )+ )
             {
-                // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:120:6: ^( ConcAlternative ( pattern_opdecl )+ )
+                // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:120:6: ^( ConcAlternative ( pattern_opdecl )+ )
                 {
                 Tree root_1 = (Tree)adaptor.nil();
                 root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(ConcAlternative, "ConcAlternative"), root_1);
@@ -1987,7 +1987,7 @@ public class GomLanguageParser extends Parser {
     };
 
     // $ANTLR start "opdecl"
-    // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:123:1: opdecl[Token type, Token JAVADOC] : ID fieldlist -> {JAVADOC!=null}? ^( Alternative ID fieldlist ^( GomType ^( ExpressionType ) ID[type] ) ^( OptionList ^( Origin ID[\"\"+input.LT(1).getLine()] ) ^( Details ID[JAVADOC] ) ) ) -> ^( Alternative ID fieldlist ^( GomType ^( ExpressionType ) ID[type] ) ^( Origin ID[\"\"+input.LT(1).getLine()] ) ) ;
+    // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:123:1: opdecl[Token type, Token JAVADOC] : ID fieldlist -> {JAVADOC!=null}? ^( Alternative ID fieldlist ^( GomType ^( ExpressionType ) ID[type] ) ^( OptionList ^( Origin ID[\"\"+input.LT(1).getLine()] ) ^( Details ID[JAVADOC] ) ) ) -> ^( Alternative ID fieldlist ^( GomType ^( ExpressionType ) ID[type] ) ^( Origin ID[\"\"+input.LT(1).getLine()] ) ) ;
     public final GomLanguageParser.opdecl_return opdecl(Token type, Token JAVADOC) throws RecognitionException {
         GomLanguageParser.opdecl_return retval = new GomLanguageParser.opdecl_return();
         retval.start = input.LT(1);
@@ -2002,8 +2002,8 @@ public class GomLanguageParser extends Parser {
         RewriteRuleTokenStream stream_ID=new RewriteRuleTokenStream(adaptor,"token ID");
         RewriteRuleSubtreeStream stream_fieldlist=new RewriteRuleSubtreeStream(adaptor,"rule fieldlist");
         try {
-            // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:123:35: ( ID fieldlist -> {JAVADOC!=null}? ^( Alternative ID fieldlist ^( GomType ^( ExpressionType ) ID[type] ) ^( OptionList ^( Origin ID[\"\"+input.LT(1).getLine()] ) ^( Details ID[JAVADOC] ) ) ) -> ^( Alternative ID fieldlist ^( GomType ^( ExpressionType ) ID[type] ) ^( Origin ID[\"\"+input.LT(1).getLine()] ) ) )
-            // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:124:2: ID fieldlist
+            // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:123:35: ( ID fieldlist -> {JAVADOC!=null}? ^( Alternative ID fieldlist ^( GomType ^( ExpressionType ) ID[type] ) ^( OptionList ^( Origin ID[\"\"+input.LT(1).getLine()] ) ^( Details ID[JAVADOC] ) ) ) -> ^( Alternative ID fieldlist ^( GomType ^( ExpressionType ) ID[type] ) ^( Origin ID[\"\"+input.LT(1).getLine()] ) ) )
+            // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:124:2: ID fieldlist
             {
             ID31=(Token)match(input,ID,FOLLOW_ID_in_opdecl657);  
             stream_ID.add(ID31);
@@ -2017,7 +2017,7 @@ public class GomLanguageParser extends Parser {
 
 
             // AST REWRITE
-            // elements: fieldlist, ID, ID, ID, fieldlist, ID, ID, ID, ID
+            // elements: ID, fieldlist, ID, ID, fieldlist, ID, ID, ID, ID
             // token labels: 
             // rule labels: retval
             // token list labels: 
@@ -2029,19 +2029,19 @@ public class GomLanguageParser extends Parser {
             root_0 = (Tree)adaptor.nil();
             // 125:3: -> {JAVADOC!=null}? ^( Alternative ID fieldlist ^( GomType ^( ExpressionType ) ID[type] ) ^( OptionList ^( Origin ID[\"\"+input.LT(1).getLine()] ) ^( Details ID[JAVADOC] ) ) )
             if (JAVADOC!=null) {
-                // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:125:23: ^( Alternative ID fieldlist ^( GomType ^( ExpressionType ) ID[type] ) ^( OptionList ^( Origin ID[\"\"+input.LT(1).getLine()] ) ^( Details ID[JAVADOC] ) ) )
+                // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:125:23: ^( Alternative ID fieldlist ^( GomType ^( ExpressionType ) ID[type] ) ^( OptionList ^( Origin ID[\"\"+input.LT(1).getLine()] ) ^( Details ID[JAVADOC] ) ) )
                 {
                 Tree root_1 = (Tree)adaptor.nil();
                 root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Alternative, "Alternative"), root_1);
 
                 adaptor.addChild(root_1, stream_ID.nextNode());
                 adaptor.addChild(root_1, stream_fieldlist.nextTree());
-                // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:125:50: ^( GomType ^( ExpressionType ) ID[type] )
+                // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:125:50: ^( GomType ^( ExpressionType ) ID[type] )
                 {
                 Tree root_2 = (Tree)adaptor.nil();
                 root_2 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(GomType, "GomType"), root_2);
 
-                // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:125:60: ^( ExpressionType )
+                // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:125:60: ^( ExpressionType )
                 {
                 Tree root_3 = (Tree)adaptor.nil();
                 root_3 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(ExpressionType, "ExpressionType"), root_3);
@@ -2052,12 +2052,12 @@ public class GomLanguageParser extends Parser {
 
                 adaptor.addChild(root_1, root_2);
                 }
-                // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:126:7: ^( OptionList ^( Origin ID[\"\"+input.LT(1).getLine()] ) ^( Details ID[JAVADOC] ) )
+                // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:126:7: ^( OptionList ^( Origin ID[\"\"+input.LT(1).getLine()] ) ^( Details ID[JAVADOC] ) )
                 {
                 Tree root_2 = (Tree)adaptor.nil();
                 root_2 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(OptionList, "OptionList"), root_2);
 
-                // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:126:20: ^( Origin ID[\"\"+input.LT(1).getLine()] )
+                // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:126:20: ^( Origin ID[\"\"+input.LT(1).getLine()] )
                 {
                 Tree root_3 = (Tree)adaptor.nil();
                 root_3 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Origin, "Origin"), root_3);
@@ -2066,7 +2066,7 @@ public class GomLanguageParser extends Parser {
 
                 adaptor.addChild(root_2, root_3);
                 }
-                // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:126:59: ^( Details ID[JAVADOC] )
+                // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:126:59: ^( Details ID[JAVADOC] )
                 {
                 Tree root_3 = (Tree)adaptor.nil();
                 root_3 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Details, "Details"), root_3);
@@ -2085,19 +2085,19 @@ public class GomLanguageParser extends Parser {
             }
             else // 127:3: -> ^( Alternative ID fieldlist ^( GomType ^( ExpressionType ) ID[type] ) ^( Origin ID[\"\"+input.LT(1).getLine()] ) )
             {
-                // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:127:6: ^( Alternative ID fieldlist ^( GomType ^( ExpressionType ) ID[type] ) ^( Origin ID[\"\"+input.LT(1).getLine()] ) )
+                // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:127:6: ^( Alternative ID fieldlist ^( GomType ^( ExpressionType ) ID[type] ) ^( Origin ID[\"\"+input.LT(1).getLine()] ) )
                 {
                 Tree root_1 = (Tree)adaptor.nil();
                 root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Alternative, "Alternative"), root_1);
 
                 adaptor.addChild(root_1, stream_ID.nextNode());
                 adaptor.addChild(root_1, stream_fieldlist.nextTree());
-                // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:127:33: ^( GomType ^( ExpressionType ) ID[type] )
+                // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:127:33: ^( GomType ^( ExpressionType ) ID[type] )
                 {
                 Tree root_2 = (Tree)adaptor.nil();
                 root_2 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(GomType, "GomType"), root_2);
 
-                // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:127:43: ^( ExpressionType )
+                // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:127:43: ^( ExpressionType )
                 {
                 Tree root_3 = (Tree)adaptor.nil();
                 root_3 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(ExpressionType, "ExpressionType"), root_3);
@@ -2108,7 +2108,7 @@ public class GomLanguageParser extends Parser {
 
                 adaptor.addChild(root_1, root_2);
                 }
-                // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:128:7: ^( Origin ID[\"\"+input.LT(1).getLine()] )
+                // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:128:7: ^( Origin ID[\"\"+input.LT(1).getLine()] )
                 {
                 Tree root_2 = (Tree)adaptor.nil();
                 root_2 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Origin, "Origin"), root_2);
@@ -2150,7 +2150,7 @@ public class GomLanguageParser extends Parser {
     };
 
     // $ANTLR start "pattern_opdecl"
-    // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:132:1: pattern_opdecl[Token type] : ID pattern_fieldlist -> ^( Alternative ID pattern_fieldlist ^( GomType ^( PatternType ) ID[type] ) ^( Origin ID[\"\"+input.LT(1).getLine()] ) ) ;
+    // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:132:1: pattern_opdecl[Token type] : ID pattern_fieldlist -> ^( Alternative ID pattern_fieldlist ^( GomType ^( PatternType ) ID[type] ) ^( Origin ID[\"\"+input.LT(1).getLine()] ) ) ;
     public final GomLanguageParser.pattern_opdecl_return pattern_opdecl(Token type) throws RecognitionException {
         GomLanguageParser.pattern_opdecl_return retval = new GomLanguageParser.pattern_opdecl_return();
         retval.start = input.LT(1);
@@ -2165,8 +2165,8 @@ public class GomLanguageParser extends Parser {
         RewriteRuleTokenStream stream_ID=new RewriteRuleTokenStream(adaptor,"token ID");
         RewriteRuleSubtreeStream stream_pattern_fieldlist=new RewriteRuleSubtreeStream(adaptor,"rule pattern_fieldlist");
         try {
-            // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:132:28: ( ID pattern_fieldlist -> ^( Alternative ID pattern_fieldlist ^( GomType ^( PatternType ) ID[type] ) ^( Origin ID[\"\"+input.LT(1).getLine()] ) ) )
-            // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:133:2: ID pattern_fieldlist
+            // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:132:28: ( ID pattern_fieldlist -> ^( Alternative ID pattern_fieldlist ^( GomType ^( PatternType ) ID[type] ) ^( Origin ID[\"\"+input.LT(1).getLine()] ) ) )
+            // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:133:2: ID pattern_fieldlist
             {
             ID33=(Token)match(input,ID,FOLLOW_ID_in_pattern_opdecl759);  
             stream_ID.add(ID33);
@@ -2180,7 +2180,7 @@ public class GomLanguageParser extends Parser {
 
 
             // AST REWRITE
-            // elements: pattern_fieldlist, ID, ID, ID
+            // elements: ID, ID, ID, pattern_fieldlist
             // token labels: 
             // rule labels: retval
             // token list labels: 
@@ -2192,19 +2192,19 @@ public class GomLanguageParser extends Parser {
             root_0 = (Tree)adaptor.nil();
             // 134:3: -> ^( Alternative ID pattern_fieldlist ^( GomType ^( PatternType ) ID[type] ) ^( Origin ID[\"\"+input.LT(1).getLine()] ) )
             {
-                // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:134:6: ^( Alternative ID pattern_fieldlist ^( GomType ^( PatternType ) ID[type] ) ^( Origin ID[\"\"+input.LT(1).getLine()] ) )
+                // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:134:6: ^( Alternative ID pattern_fieldlist ^( GomType ^( PatternType ) ID[type] ) ^( Origin ID[\"\"+input.LT(1).getLine()] ) )
                 {
                 Tree root_1 = (Tree)adaptor.nil();
                 root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Alternative, "Alternative"), root_1);
 
                 adaptor.addChild(root_1, stream_ID.nextNode());
                 adaptor.addChild(root_1, stream_pattern_fieldlist.nextTree());
-                // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:134:41: ^( GomType ^( PatternType ) ID[type] )
+                // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:134:41: ^( GomType ^( PatternType ) ID[type] )
                 {
                 Tree root_2 = (Tree)adaptor.nil();
                 root_2 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(GomType, "GomType"), root_2);
 
-                // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:134:51: ^( PatternType )
+                // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:134:51: ^( PatternType )
                 {
                 Tree root_3 = (Tree)adaptor.nil();
                 root_3 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(PatternType, "PatternType"), root_3);
@@ -2215,7 +2215,7 @@ public class GomLanguageParser extends Parser {
 
                 adaptor.addChild(root_1, root_2);
                 }
-                // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:135:7: ^( Origin ID[\"\"+input.LT(1).getLine()] )
+                // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:135:7: ^( Origin ID[\"\"+input.LT(1).getLine()] )
                 {
                 Tree root_2 = (Tree)adaptor.nil();
                 root_2 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Origin, "Origin"), root_2);
@@ -2257,7 +2257,7 @@ public class GomLanguageParser extends Parser {
     };
 
     // $ANTLR start "fieldlist"
-    // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:138:1: fieldlist : LPAREN ( field ( COMMA field )* )? RPAREN -> ^( ConcField ( field )* ) ;
+    // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:138:1: fieldlist : LPAREN ( field ( COMMA field )* )? RPAREN -> ^( ConcField ( field )* ) ;
     public final GomLanguageParser.fieldlist_return fieldlist() throws RecognitionException {
         GomLanguageParser.fieldlist_return retval = new GomLanguageParser.fieldlist_return();
         retval.start = input.LT(1);
@@ -2280,13 +2280,13 @@ public class GomLanguageParser extends Parser {
         RewriteRuleTokenStream stream_LPAREN=new RewriteRuleTokenStream(adaptor,"token LPAREN");
         RewriteRuleSubtreeStream stream_field=new RewriteRuleSubtreeStream(adaptor,"rule field");
         try {
-            // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:138:11: ( LPAREN ( field ( COMMA field )* )? RPAREN -> ^( ConcField ( field )* ) )
-            // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:139:3: LPAREN ( field ( COMMA field )* )? RPAREN
+            // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:138:11: ( LPAREN ( field ( COMMA field )* )? RPAREN -> ^( ConcField ( field )* ) )
+            // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:139:3: LPAREN ( field ( COMMA field )* )? RPAREN
             {
             LPAREN35=(Token)match(input,LPAREN,FOLLOW_LPAREN_in_fieldlist810);  
             stream_LPAREN.add(LPAREN35);
 
-            // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:139:10: ( field ( COMMA field )* )?
+            // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:139:10: ( field ( COMMA field )* )?
             int alt18=2;
             int LA18_0 = input.LA(1);
 
@@ -2295,7 +2295,7 @@ public class GomLanguageParser extends Parser {
             }
             switch (alt18) {
                 case 1 :
-                    // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:139:11: field ( COMMA field )*
+                    // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:139:11: field ( COMMA field )*
                     {
                     pushFollow(FOLLOW_field_in_fieldlist813);
                     field36=field();
@@ -2303,7 +2303,7 @@ public class GomLanguageParser extends Parser {
                     state._fsp--;
 
                     stream_field.add(field36.getTree());
-                    // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:139:17: ( COMMA field )*
+                    // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:139:17: ( COMMA field )*
                     loop17:
                     do {
                         int alt17=2;
@@ -2316,7 +2316,7 @@ public class GomLanguageParser extends Parser {
 
                         switch (alt17) {
                     	case 1 :
-                    	    // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:139:18: COMMA field
+                    	    // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:139:18: COMMA field
                     	    {
                     	    COMMA37=(Token)match(input,COMMA,FOLLOW_COMMA_in_fieldlist816);  
                     	    stream_COMMA.add(COMMA37);
@@ -2360,12 +2360,12 @@ public class GomLanguageParser extends Parser {
             root_0 = (Tree)adaptor.nil();
             // 139:42: -> ^( ConcField ( field )* )
             {
-                // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:139:45: ^( ConcField ( field )* )
+                // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:139:45: ^( ConcField ( field )* )
                 {
                 Tree root_1 = (Tree)adaptor.nil();
                 root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(ConcField, "ConcField"), root_1);
 
-                // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:139:57: ( field )*
+                // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:139:57: ( field )*
                 while ( stream_field.hasNext() ) {
                     adaptor.addChild(root_1, stream_field.nextTree());
 
@@ -2404,7 +2404,7 @@ public class GomLanguageParser extends Parser {
     };
 
     // $ANTLR start "pattern_fieldlist"
-    // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:142:1: pattern_fieldlist : LPAREN ( pattern_field ( COMMA pattern_field )* )? RPAREN -> ^( ConcField ( pattern_field )* ) ;
+    // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:142:1: pattern_fieldlist : LPAREN ( pattern_field ( COMMA pattern_field )* )? RPAREN -> ^( ConcField ( pattern_field )* ) ;
     public final GomLanguageParser.pattern_fieldlist_return pattern_fieldlist() throws RecognitionException {
         GomLanguageParser.pattern_fieldlist_return retval = new GomLanguageParser.pattern_fieldlist_return();
         retval.start = input.LT(1);
@@ -2427,13 +2427,13 @@ public class GomLanguageParser extends Parser {
         RewriteRuleTokenStream stream_LPAREN=new RewriteRuleTokenStream(adaptor,"token LPAREN");
         RewriteRuleSubtreeStream stream_pattern_field=new RewriteRuleSubtreeStream(adaptor,"rule pattern_field");
         try {
-            // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:142:19: ( LPAREN ( pattern_field ( COMMA pattern_field )* )? RPAREN -> ^( ConcField ( pattern_field )* ) )
-            // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:143:3: LPAREN ( pattern_field ( COMMA pattern_field )* )? RPAREN
+            // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:142:19: ( LPAREN ( pattern_field ( COMMA pattern_field )* )? RPAREN -> ^( ConcField ( pattern_field )* ) )
+            // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:143:3: LPAREN ( pattern_field ( COMMA pattern_field )* )? RPAREN
             {
             LPAREN40=(Token)match(input,LPAREN,FOLLOW_LPAREN_in_pattern_fieldlist849);  
             stream_LPAREN.add(LPAREN40);
 
-            // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:143:10: ( pattern_field ( COMMA pattern_field )* )?
+            // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:143:10: ( pattern_field ( COMMA pattern_field )* )?
             int alt20=2;
             int LA20_0 = input.LA(1);
 
@@ -2442,7 +2442,7 @@ public class GomLanguageParser extends Parser {
             }
             switch (alt20) {
                 case 1 :
-                    // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:143:11: pattern_field ( COMMA pattern_field )*
+                    // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:143:11: pattern_field ( COMMA pattern_field )*
                     {
                     pushFollow(FOLLOW_pattern_field_in_pattern_fieldlist852);
                     pattern_field41=pattern_field();
@@ -2450,7 +2450,7 @@ public class GomLanguageParser extends Parser {
                     state._fsp--;
 
                     stream_pattern_field.add(pattern_field41.getTree());
-                    // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:143:25: ( COMMA pattern_field )*
+                    // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:143:25: ( COMMA pattern_field )*
                     loop19:
                     do {
                         int alt19=2;
@@ -2463,7 +2463,7 @@ public class GomLanguageParser extends Parser {
 
                         switch (alt19) {
                     	case 1 :
-                    	    // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:143:26: COMMA pattern_field
+                    	    // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:143:26: COMMA pattern_field
                     	    {
                     	    COMMA42=(Token)match(input,COMMA,FOLLOW_COMMA_in_pattern_fieldlist855);  
                     	    stream_COMMA.add(COMMA42);
@@ -2507,12 +2507,12 @@ public class GomLanguageParser extends Parser {
             root_0 = (Tree)adaptor.nil();
             // 143:58: -> ^( ConcField ( pattern_field )* )
             {
-                // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:143:61: ^( ConcField ( pattern_field )* )
+                // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:143:61: ^( ConcField ( pattern_field )* )
                 {
                 Tree root_1 = (Tree)adaptor.nil();
                 root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(ConcField, "ConcField"), root_1);
 
-                // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:143:73: ( pattern_field )*
+                // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:143:73: ( pattern_field )*
                 while ( stream_pattern_field.hasNext() ) {
                     adaptor.addChild(root_1, stream_pattern_field.nextTree());
 
@@ -2551,7 +2551,7 @@ public class GomLanguageParser extends Parser {
     };
 
     // $ANTLR start "type"
-    // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:145:1: type : ID -> ^( GomType ^( ExpressionType ) ID ) ;
+    // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:145:1: type : ID -> ^( GomType ^( ExpressionType ) ID ) ;
     public final GomLanguageParser.type_return type() throws RecognitionException {
         GomLanguageParser.type_return retval = new GomLanguageParser.type_return();
         retval.start = input.LT(1);
@@ -2564,8 +2564,8 @@ public class GomLanguageParser extends Parser {
         RewriteRuleTokenStream stream_ID=new RewriteRuleTokenStream(adaptor,"token ID");
 
         try {
-            // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:145:5: ( ID -> ^( GomType ^( ExpressionType ) ID ) )
-            // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:146:3: ID
+            // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:145:5: ( ID -> ^( GomType ^( ExpressionType ) ID ) )
+            // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:146:3: ID
             {
             ID45=(Token)match(input,ID,FOLLOW_ID_in_type885);  
             stream_ID.add(ID45);
@@ -2585,12 +2585,12 @@ public class GomLanguageParser extends Parser {
             root_0 = (Tree)adaptor.nil();
             // 146:6: -> ^( GomType ^( ExpressionType ) ID )
             {
-                // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:146:9: ^( GomType ^( ExpressionType ) ID )
+                // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:146:9: ^( GomType ^( ExpressionType ) ID )
                 {
                 Tree root_1 = (Tree)adaptor.nil();
                 root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(GomType, "GomType"), root_1);
 
-                // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:146:19: ^( ExpressionType )
+                // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:146:19: ^( ExpressionType )
                 {
                 Tree root_2 = (Tree)adaptor.nil();
                 root_2 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(ExpressionType, "ExpressionType"), root_2);
@@ -2631,7 +2631,7 @@ public class GomLanguageParser extends Parser {
     };
 
     // $ANTLR start "pattern_type"
-    // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:150:1: pattern_type : ID -> ^( GomType ^( PatternType ) ID ) ;
+    // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:150:1: pattern_type : ID -> ^( GomType ^( PatternType ) ID ) ;
     public final GomLanguageParser.pattern_type_return pattern_type() throws RecognitionException {
         GomLanguageParser.pattern_type_return retval = new GomLanguageParser.pattern_type_return();
         retval.start = input.LT(1);
@@ -2644,8 +2644,8 @@ public class GomLanguageParser extends Parser {
         RewriteRuleTokenStream stream_ID=new RewriteRuleTokenStream(adaptor,"token ID");
 
         try {
-            // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:150:13: ( ID -> ^( GomType ^( PatternType ) ID ) )
-            // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:151:3: ID
+            // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:150:13: ( ID -> ^( GomType ^( PatternType ) ID ) )
+            // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:151:3: ID
             {
             ID46=(Token)match(input,ID,FOLLOW_ID_in_pattern_type911);  
             stream_ID.add(ID46);
@@ -2665,12 +2665,12 @@ public class GomLanguageParser extends Parser {
             root_0 = (Tree)adaptor.nil();
             // 151:6: -> ^( GomType ^( PatternType ) ID )
             {
-                // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:151:9: ^( GomType ^( PatternType ) ID )
+                // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:151:9: ^( GomType ^( PatternType ) ID )
                 {
                 Tree root_1 = (Tree)adaptor.nil();
                 root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(GomType, "GomType"), root_1);
 
-                // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:151:19: ^( PatternType )
+                // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:151:19: ^( PatternType )
                 {
                 Tree root_2 = (Tree)adaptor.nil();
                 root_2 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(PatternType, "PatternType"), root_2);
@@ -2711,7 +2711,7 @@ public class GomLanguageParser extends Parser {
     };
 
     // $ANTLR start "field"
-    // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:154:1: field : ( type STAR -> ^( StarredField type ^( None ) ) | LDIPLE pattern_type RDIPLE STAR -> ^( StarredField pattern_type ^( Refresh ) ) | ID COLON type -> ^( NamedField ID type ^( None ) ) | ID COLON LDIPLE pattern_type RDIPLE -> ^( NamedField ID pattern_type ^( Refresh ) ) );
+    // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:154:1: field : ( type STAR -> ^( StarredField type ^( None ) ) | LDIPLE pattern_type RDIPLE STAR -> ^( StarredField pattern_type ^( Refresh ) ) | ID COLON type -> ^( NamedField ID type ^( None ) ) | ID COLON LDIPLE pattern_type RDIPLE -> ^( NamedField ID pattern_type ^( Refresh ) ) );
     public final GomLanguageParser.field_return field() throws RecognitionException {
         GomLanguageParser.field_return retval = new GomLanguageParser.field_return();
         retval.start = input.LT(1);
@@ -2755,7 +2755,7 @@ public class GomLanguageParser extends Parser {
         RewriteRuleSubtreeStream stream_type=new RewriteRuleSubtreeStream(adaptor,"rule type");
         RewriteRuleSubtreeStream stream_pattern_type=new RewriteRuleSubtreeStream(adaptor,"rule pattern_type");
         try {
-            // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:154:6: ( type STAR -> ^( StarredField type ^( None ) ) | LDIPLE pattern_type RDIPLE STAR -> ^( StarredField pattern_type ^( Refresh ) ) | ID COLON type -> ^( NamedField ID type ^( None ) ) | ID COLON LDIPLE pattern_type RDIPLE -> ^( NamedField ID pattern_type ^( Refresh ) ) )
+            // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:154:6: ( type STAR -> ^( StarredField type ^( None ) ) | LDIPLE pattern_type RDIPLE STAR -> ^( StarredField pattern_type ^( Refresh ) ) | ID COLON type -> ^( NamedField ID type ^( None ) ) | ID COLON LDIPLE pattern_type RDIPLE -> ^( NamedField ID pattern_type ^( Refresh ) ) )
             int alt21=4;
             int LA21_0 = input.LA(1);
 
@@ -2799,7 +2799,7 @@ public class GomLanguageParser extends Parser {
             }
             switch (alt21) {
                 case 1 :
-                    // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:155:5: type STAR
+                    // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:155:5: type STAR
                     {
                     pushFollow(FOLLOW_type_in_field937);
                     type47=type();
@@ -2825,13 +2825,13 @@ public class GomLanguageParser extends Parser {
                     root_0 = (Tree)adaptor.nil();
                     // 155:15: -> ^( StarredField type ^( None ) )
                     {
-                        // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:155:18: ^( StarredField type ^( None ) )
+                        // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:155:18: ^( StarredField type ^( None ) )
                         {
                         Tree root_1 = (Tree)adaptor.nil();
                         root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(StarredField, "StarredField"), root_1);
 
                         adaptor.addChild(root_1, stream_type.nextTree());
-                        // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:155:38: ^( None )
+                        // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:155:38: ^( None )
                         {
                         Tree root_2 = (Tree)adaptor.nil();
                         root_2 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(None, "None"), root_2);
@@ -2848,7 +2848,7 @@ public class GomLanguageParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:156:5: LDIPLE pattern_type RDIPLE STAR
+                    // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:156:5: LDIPLE pattern_type RDIPLE STAR
                     {
                     LDIPLE49=(Token)match(input,LDIPLE,FOLLOW_LDIPLE_in_field957);  
                     stream_LDIPLE.add(LDIPLE49);
@@ -2880,13 +2880,13 @@ public class GomLanguageParser extends Parser {
                     root_0 = (Tree)adaptor.nil();
                     // 156:37: -> ^( StarredField pattern_type ^( Refresh ) )
                     {
-                        // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:156:40: ^( StarredField pattern_type ^( Refresh ) )
+                        // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:156:40: ^( StarredField pattern_type ^( Refresh ) )
                         {
                         Tree root_1 = (Tree)adaptor.nil();
                         root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(StarredField, "StarredField"), root_1);
 
                         adaptor.addChild(root_1, stream_pattern_type.nextTree());
-                        // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:156:68: ^( Refresh )
+                        // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:156:68: ^( Refresh )
                         {
                         Tree root_2 = (Tree)adaptor.nil();
                         root_2 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Refresh, "Refresh"), root_2);
@@ -2903,7 +2903,7 @@ public class GomLanguageParser extends Parser {
                     }
                     break;
                 case 3 :
-                    // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:157:5: ID COLON type
+                    // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:157:5: ID COLON type
                     {
                     ID53=(Token)match(input,ID,FOLLOW_ID_in_field981);  
                     stream_ID.add(ID53);
@@ -2932,14 +2932,14 @@ public class GomLanguageParser extends Parser {
                     root_0 = (Tree)adaptor.nil();
                     // 157:19: -> ^( NamedField ID type ^( None ) )
                     {
-                        // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:157:22: ^( NamedField ID type ^( None ) )
+                        // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:157:22: ^( NamedField ID type ^( None ) )
                         {
                         Tree root_1 = (Tree)adaptor.nil();
                         root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(NamedField, "NamedField"), root_1);
 
                         adaptor.addChild(root_1, stream_ID.nextNode());
                         adaptor.addChild(root_1, stream_type.nextTree());
-                        // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:157:43: ^( None )
+                        // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:157:43: ^( None )
                         {
                         Tree root_2 = (Tree)adaptor.nil();
                         root_2 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(None, "None"), root_2);
@@ -2956,7 +2956,7 @@ public class GomLanguageParser extends Parser {
                     }
                     break;
                 case 4 :
-                    // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:158:5: ID COLON LDIPLE pattern_type RDIPLE
+                    // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:158:5: ID COLON LDIPLE pattern_type RDIPLE
                     {
                     ID56=(Token)match(input,ID,FOLLOW_ID_in_field1005);  
                     stream_ID.add(ID56);
@@ -2991,14 +2991,14 @@ public class GomLanguageParser extends Parser {
                     root_0 = (Tree)adaptor.nil();
                     // 158:41: -> ^( NamedField ID pattern_type ^( Refresh ) )
                     {
-                        // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:158:44: ^( NamedField ID pattern_type ^( Refresh ) )
+                        // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:158:44: ^( NamedField ID pattern_type ^( Refresh ) )
                         {
                         Tree root_1 = (Tree)adaptor.nil();
                         root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(NamedField, "NamedField"), root_1);
 
                         adaptor.addChild(root_1, stream_ID.nextNode());
                         adaptor.addChild(root_1, stream_pattern_type.nextTree());
-                        // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:158:73: ^( Refresh )
+                        // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:158:73: ^( Refresh )
                         {
                         Tree root_2 = (Tree)adaptor.nil();
                         root_2 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Refresh, "Refresh"), root_2);
@@ -3040,7 +3040,7 @@ public class GomLanguageParser extends Parser {
     };
 
     // $ANTLR start "pattern_field"
-    // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:162:1: pattern_field : ( pattern_type STAR -> ^( StarredField pattern_type ^( None ) ) | INNER ID COLON type -> ^( NamedField ID type ^( Inner ) ) | OUTER ID COLON type -> ^( NamedField ID type ^( Outer ) ) | NEUTRAL ID COLON type -> ^( NamedField ID type ^( Neutral ) ) | ID COLON pattern_type -> ^( NamedField ID pattern_type ^( None ) ) );
+    // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:162:1: pattern_field : ( pattern_type STAR -> ^( StarredField pattern_type ^( None ) ) | INNER ID COLON type -> ^( NamedField ID type ^( Inner ) ) | OUTER ID COLON type -> ^( NamedField ID type ^( Outer ) ) | NEUTRAL ID COLON type -> ^( NamedField ID type ^( Neutral ) ) | ID COLON pattern_type -> ^( NamedField ID pattern_type ^( None ) ) );
     public final GomLanguageParser.pattern_field_return pattern_field() throws RecognitionException {
         GomLanguageParser.pattern_field_return retval = new GomLanguageParser.pattern_field_return();
         retval.start = input.LT(1);
@@ -3091,7 +3091,7 @@ public class GomLanguageParser extends Parser {
         RewriteRuleSubtreeStream stream_type=new RewriteRuleSubtreeStream(adaptor,"rule type");
         RewriteRuleSubtreeStream stream_pattern_type=new RewriteRuleSubtreeStream(adaptor,"rule pattern_type");
         try {
-            // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:162:14: ( pattern_type STAR -> ^( StarredField pattern_type ^( None ) ) | INNER ID COLON type -> ^( NamedField ID type ^( Inner ) ) | OUTER ID COLON type -> ^( NamedField ID type ^( Outer ) ) | NEUTRAL ID COLON type -> ^( NamedField ID type ^( Neutral ) ) | ID COLON pattern_type -> ^( NamedField ID pattern_type ^( None ) ) )
+            // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:162:14: ( pattern_type STAR -> ^( StarredField pattern_type ^( None ) ) | INNER ID COLON type -> ^( NamedField ID type ^( Inner ) ) | OUTER ID COLON type -> ^( NamedField ID type ^( Outer ) ) | NEUTRAL ID COLON type -> ^( NamedField ID type ^( Neutral ) ) | ID COLON pattern_type -> ^( NamedField ID pattern_type ^( None ) ) )
             int alt22=5;
             switch ( input.LA(1) ) {
             case ID:
@@ -3136,7 +3136,7 @@ public class GomLanguageParser extends Parser {
 
             switch (alt22) {
                 case 1 :
-                    // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:163:5: pattern_type STAR
+                    // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:163:5: pattern_type STAR
                     {
                     pushFollow(FOLLOW_pattern_type_in_pattern_field1043);
                     pattern_type61=pattern_type();
@@ -3162,13 +3162,13 @@ public class GomLanguageParser extends Parser {
                     root_0 = (Tree)adaptor.nil();
                     // 163:23: -> ^( StarredField pattern_type ^( None ) )
                     {
-                        // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:163:26: ^( StarredField pattern_type ^( None ) )
+                        // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:163:26: ^( StarredField pattern_type ^( None ) )
                         {
                         Tree root_1 = (Tree)adaptor.nil();
                         root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(StarredField, "StarredField"), root_1);
 
                         adaptor.addChild(root_1, stream_pattern_type.nextTree());
-                        // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:163:54: ^( None )
+                        // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:163:54: ^( None )
                         {
                         Tree root_2 = (Tree)adaptor.nil();
                         root_2 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(None, "None"), root_2);
@@ -3185,7 +3185,7 @@ public class GomLanguageParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:164:5: INNER ID COLON type
+                    // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:164:5: INNER ID COLON type
                     {
                     INNER63=(Token)match(input,INNER,FOLLOW_INNER_in_pattern_field1063);  
                     stream_INNER.add(INNER63);
@@ -3217,14 +3217,14 @@ public class GomLanguageParser extends Parser {
                     root_0 = (Tree)adaptor.nil();
                     // 164:25: -> ^( NamedField ID type ^( Inner ) )
                     {
-                        // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:164:28: ^( NamedField ID type ^( Inner ) )
+                        // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:164:28: ^( NamedField ID type ^( Inner ) )
                         {
                         Tree root_1 = (Tree)adaptor.nil();
                         root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(NamedField, "NamedField"), root_1);
 
                         adaptor.addChild(root_1, stream_ID.nextNode());
                         adaptor.addChild(root_1, stream_type.nextTree());
-                        // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:164:49: ^( Inner )
+                        // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:164:49: ^( Inner )
                         {
                         Tree root_2 = (Tree)adaptor.nil();
                         root_2 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Inner, "Inner"), root_2);
@@ -3241,7 +3241,7 @@ public class GomLanguageParser extends Parser {
                     }
                     break;
                 case 3 :
-                    // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:165:5: OUTER ID COLON type
+                    // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:165:5: OUTER ID COLON type
                     {
                     OUTER67=(Token)match(input,OUTER,FOLLOW_OUTER_in_pattern_field1089);  
                     stream_OUTER.add(OUTER67);
@@ -3273,14 +3273,14 @@ public class GomLanguageParser extends Parser {
                     root_0 = (Tree)adaptor.nil();
                     // 165:25: -> ^( NamedField ID type ^( Outer ) )
                     {
-                        // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:165:28: ^( NamedField ID type ^( Outer ) )
+                        // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:165:28: ^( NamedField ID type ^( Outer ) )
                         {
                         Tree root_1 = (Tree)adaptor.nil();
                         root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(NamedField, "NamedField"), root_1);
 
                         adaptor.addChild(root_1, stream_ID.nextNode());
                         adaptor.addChild(root_1, stream_type.nextTree());
-                        // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:165:49: ^( Outer )
+                        // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:165:49: ^( Outer )
                         {
                         Tree root_2 = (Tree)adaptor.nil();
                         root_2 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Outer, "Outer"), root_2);
@@ -3297,7 +3297,7 @@ public class GomLanguageParser extends Parser {
                     }
                     break;
                 case 4 :
-                    // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:166:5: NEUTRAL ID COLON type
+                    // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:166:5: NEUTRAL ID COLON type
                     {
                     NEUTRAL71=(Token)match(input,NEUTRAL,FOLLOW_NEUTRAL_in_pattern_field1115);  
                     stream_NEUTRAL.add(NEUTRAL71);
@@ -3317,7 +3317,7 @@ public class GomLanguageParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: type, ID
+                    // elements: ID, type
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -3329,14 +3329,14 @@ public class GomLanguageParser extends Parser {
                     root_0 = (Tree)adaptor.nil();
                     // 166:27: -> ^( NamedField ID type ^( Neutral ) )
                     {
-                        // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:166:30: ^( NamedField ID type ^( Neutral ) )
+                        // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:166:30: ^( NamedField ID type ^( Neutral ) )
                         {
                         Tree root_1 = (Tree)adaptor.nil();
                         root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(NamedField, "NamedField"), root_1);
 
                         adaptor.addChild(root_1, stream_ID.nextNode());
                         adaptor.addChild(root_1, stream_type.nextTree());
-                        // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:166:51: ^( Neutral )
+                        // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:166:51: ^( Neutral )
                         {
                         Tree root_2 = (Tree)adaptor.nil();
                         root_2 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Neutral, "Neutral"), root_2);
@@ -3353,7 +3353,7 @@ public class GomLanguageParser extends Parser {
                     }
                     break;
                 case 5 :
-                    // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:167:5: ID COLON pattern_type
+                    // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:167:5: ID COLON pattern_type
                     {
                     ID75=(Token)match(input,ID,FOLLOW_ID_in_pattern_field1141);  
                     stream_ID.add(ID75);
@@ -3370,7 +3370,7 @@ public class GomLanguageParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: pattern_type, ID
+                    // elements: ID, pattern_type
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -3382,14 +3382,14 @@ public class GomLanguageParser extends Parser {
                     root_0 = (Tree)adaptor.nil();
                     // 167:27: -> ^( NamedField ID pattern_type ^( None ) )
                     {
-                        // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:167:30: ^( NamedField ID pattern_type ^( None ) )
+                        // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:167:30: ^( NamedField ID pattern_type ^( None ) )
                         {
                         Tree root_1 = (Tree)adaptor.nil();
                         root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(NamedField, "NamedField"), root_1);
 
                         adaptor.addChild(root_1, stream_ID.nextNode());
                         adaptor.addChild(root_1, stream_pattern_type.nextTree());
-                        // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:167:59: ^( None )
+                        // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:167:59: ^( None )
                         {
                         Tree root_2 = (Tree)adaptor.nil();
                         root_2 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(None, "None"), root_2);
@@ -3431,7 +3431,7 @@ public class GomLanguageParser extends Parser {
     };
 
     // $ANTLR start "arglist"
-    // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:170:1: arglist : ( LPAREN ( arg ( COMMA arg )* )? RPAREN )? -> ^( ConcArg ( arg )* ) ;
+    // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:170:1: arglist : ( LPAREN ( arg ( COMMA arg )* )? RPAREN )? -> ^( ConcArg ( arg )* ) ;
     public final GomLanguageParser.arglist_return arglist() throws RecognitionException {
         GomLanguageParser.arglist_return retval = new GomLanguageParser.arglist_return();
         retval.start = input.LT(1);
@@ -3454,10 +3454,10 @@ public class GomLanguageParser extends Parser {
         RewriteRuleTokenStream stream_LPAREN=new RewriteRuleTokenStream(adaptor,"token LPAREN");
         RewriteRuleSubtreeStream stream_arg=new RewriteRuleSubtreeStream(adaptor,"rule arg");
         try {
-            // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:170:8: ( ( LPAREN ( arg ( COMMA arg )* )? RPAREN )? -> ^( ConcArg ( arg )* ) )
-            // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:171:3: ( LPAREN ( arg ( COMMA arg )* )? RPAREN )?
+            // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:170:8: ( ( LPAREN ( arg ( COMMA arg )* )? RPAREN )? -> ^( ConcArg ( arg )* ) )
+            // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:171:3: ( LPAREN ( arg ( COMMA arg )* )? RPAREN )?
             {
-            // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:171:3: ( LPAREN ( arg ( COMMA arg )* )? RPAREN )?
+            // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:171:3: ( LPAREN ( arg ( COMMA arg )* )? RPAREN )?
             int alt25=2;
             int LA25_0 = input.LA(1);
 
@@ -3466,12 +3466,12 @@ public class GomLanguageParser extends Parser {
             }
             switch (alt25) {
                 case 1 :
-                    // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:171:4: LPAREN ( arg ( COMMA arg )* )? RPAREN
+                    // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:171:4: LPAREN ( arg ( COMMA arg )* )? RPAREN
                     {
                     LPAREN78=(Token)match(input,LPAREN,FOLLOW_LPAREN_in_arglist1172);  
                     stream_LPAREN.add(LPAREN78);
 
-                    // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:171:11: ( arg ( COMMA arg )* )?
+                    // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:171:11: ( arg ( COMMA arg )* )?
                     int alt24=2;
                     int LA24_0 = input.LA(1);
 
@@ -3480,7 +3480,7 @@ public class GomLanguageParser extends Parser {
                     }
                     switch (alt24) {
                         case 1 :
-                            // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:171:12: arg ( COMMA arg )*
+                            // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:171:12: arg ( COMMA arg )*
                             {
                             pushFollow(FOLLOW_arg_in_arglist1175);
                             arg79=arg();
@@ -3488,7 +3488,7 @@ public class GomLanguageParser extends Parser {
                             state._fsp--;
 
                             stream_arg.add(arg79.getTree());
-                            // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:171:16: ( COMMA arg )*
+                            // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:171:16: ( COMMA arg )*
                             loop23:
                             do {
                                 int alt23=2;
@@ -3501,7 +3501,7 @@ public class GomLanguageParser extends Parser {
 
                                 switch (alt23) {
                             	case 1 :
-                            	    // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:171:17: COMMA arg
+                            	    // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:171:17: COMMA arg
                             	    {
                             	    COMMA80=(Token)match(input,COMMA,FOLLOW_COMMA_in_arglist1178);  
                             	    stream_COMMA.add(COMMA80);
@@ -3551,12 +3551,12 @@ public class GomLanguageParser extends Parser {
             root_0 = (Tree)adaptor.nil();
             // 172:3: -> ^( ConcArg ( arg )* )
             {
-                // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:172:6: ^( ConcArg ( arg )* )
+                // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:172:6: ^( ConcArg ( arg )* )
                 {
                 Tree root_1 = (Tree)adaptor.nil();
                 root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(ConcArg, "ConcArg"), root_1);
 
-                // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:172:16: ( arg )*
+                // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:172:16: ( arg )*
                 while ( stream_arg.hasNext() ) {
                     adaptor.addChild(root_1, stream_arg.nextTree());
 
@@ -3595,7 +3595,7 @@ public class GomLanguageParser extends Parser {
     };
 
     // $ANTLR start "arg"
-    // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:175:1: arg : ID -> ^( Arg ID ) ;
+    // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:175:1: arg : ID -> ^( Arg ID ) ;
     public final GomLanguageParser.arg_return arg() throws RecognitionException {
         GomLanguageParser.arg_return retval = new GomLanguageParser.arg_return();
         retval.start = input.LT(1);
@@ -3608,8 +3608,8 @@ public class GomLanguageParser extends Parser {
         RewriteRuleTokenStream stream_ID=new RewriteRuleTokenStream(adaptor,"token ID");
 
         try {
-            // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:175:5: ( ID -> ^( Arg ID ) )
-            // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:175:7: ID
+            // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:175:5: ( ID -> ^( Arg ID ) )
+            // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:175:7: ID
             {
             ID83=(Token)match(input,ID,FOLLOW_ID_in_arg1213);  
             stream_ID.add(ID83);
@@ -3629,7 +3629,7 @@ public class GomLanguageParser extends Parser {
             root_0 = (Tree)adaptor.nil();
             // 175:10: -> ^( Arg ID )
             {
-                // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:175:13: ^( Arg ID )
+                // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:175:13: ^( Arg ID )
                 {
                 Tree root_1 = (Tree)adaptor.nil();
                 root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Arg, "Arg"), root_1);
@@ -3668,7 +3668,7 @@ public class GomLanguageParser extends Parser {
     };
 
     // $ANTLR start "hookConstruct"
-    // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:177:1: hookConstruct : (hscope= hookScope )? pointCut= ID COLON hookType= ID arglist LBRACE -> {hscope!=null}? ^( Hook $hscope $pointCut ^( HookKind $hookType) arglist LBRACE ^( Origin ID[\"\"+input.LT(1).getLine()] ) ) -> ^( Hook ^( KindOperator ) $pointCut ^( HookKind $hookType) arglist LBRACE ^( Origin ID[\"\"+input.LT(1).getLine()] ) ) ;
+    // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:177:1: hookConstruct : (hscope= hookScope )? pointCut= ID COLON hookType= ID arglist LBRACE -> {hscope!=null}? ^( Hook $hscope $pointCut ^( HookKind $hookType) arglist LBRACE ^( Origin ID[\"\"+input.LT(1).getLine()] ) ) -> ^( Hook ^( KindOperator ) $pointCut ^( HookKind $hookType) arglist LBRACE ^( Origin ID[\"\"+input.LT(1).getLine()] ) ) ;
     public final GomLanguageParser.hookConstruct_return hookConstruct() throws RecognitionException {
         GomLanguageParser.hookConstruct_return retval = new GomLanguageParser.hookConstruct_return();
         retval.start = input.LT(1);
@@ -3694,10 +3694,10 @@ public class GomLanguageParser extends Parser {
         RewriteRuleSubtreeStream stream_arglist=new RewriteRuleSubtreeStream(adaptor,"rule arglist");
         RewriteRuleSubtreeStream stream_hookScope=new RewriteRuleSubtreeStream(adaptor,"rule hookScope");
         try {
-            // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:177:15: ( (hscope= hookScope )? pointCut= ID COLON hookType= ID arglist LBRACE -> {hscope!=null}? ^( Hook $hscope $pointCut ^( HookKind $hookType) arglist LBRACE ^( Origin ID[\"\"+input.LT(1).getLine()] ) ) -> ^( Hook ^( KindOperator ) $pointCut ^( HookKind $hookType) arglist LBRACE ^( Origin ID[\"\"+input.LT(1).getLine()] ) ) )
-            // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:178:3: (hscope= hookScope )? pointCut= ID COLON hookType= ID arglist LBRACE
+            // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:177:15: ( (hscope= hookScope )? pointCut= ID COLON hookType= ID arglist LBRACE -> {hscope!=null}? ^( Hook $hscope $pointCut ^( HookKind $hookType) arglist LBRACE ^( Origin ID[\"\"+input.LT(1).getLine()] ) ) -> ^( Hook ^( KindOperator ) $pointCut ^( HookKind $hookType) arglist LBRACE ^( Origin ID[\"\"+input.LT(1).getLine()] ) ) )
+            // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:178:3: (hscope= hookScope )? pointCut= ID COLON hookType= ID arglist LBRACE
             {
-            // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:178:3: (hscope= hookScope )?
+            // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:178:3: (hscope= hookScope )?
             int alt26=2;
             int LA26_0 = input.LA(1);
 
@@ -3706,7 +3706,7 @@ public class GomLanguageParser extends Parser {
             }
             switch (alt26) {
                 case 1 :
-                    // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:178:4: hscope= hookScope
+                    // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:178:4: hscope= hookScope
                     {
                     pushFollow(FOLLOW_hookScope_in_hookConstruct1234);
                     hscope=hookScope();
@@ -3741,7 +3741,7 @@ public class GomLanguageParser extends Parser {
 
 
             // AST REWRITE
-            // elements: LBRACE, ID, pointCut, arglist, hookType, arglist, hookType, LBRACE, ID, pointCut, hscope
+            // elements: LBRACE, ID, arglist, pointCut, hookType, hookType, pointCut, hscope, LBRACE, ID, arglist
             // token labels: hookType, pointCut
             // rule labels: retval, hscope
             // token list labels: 
@@ -3756,14 +3756,14 @@ public class GomLanguageParser extends Parser {
             root_0 = (Tree)adaptor.nil();
             // 179:3: -> {hscope!=null}? ^( Hook $hscope $pointCut ^( HookKind $hookType) arglist LBRACE ^( Origin ID[\"\"+input.LT(1).getLine()] ) )
             if (hscope!=null) {
-                // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:179:22: ^( Hook $hscope $pointCut ^( HookKind $hookType) arglist LBRACE ^( Origin ID[\"\"+input.LT(1).getLine()] ) )
+                // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:179:22: ^( Hook $hscope $pointCut ^( HookKind $hookType) arglist LBRACE ^( Origin ID[\"\"+input.LT(1).getLine()] ) )
                 {
                 Tree root_1 = (Tree)adaptor.nil();
                 root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Hook, "Hook"), root_1);
 
                 adaptor.addChild(root_1, stream_hscope.nextTree());
                 adaptor.addChild(root_1, stream_pointCut.nextNode());
-                // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:179:47: ^( HookKind $hookType)
+                // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:179:47: ^( HookKind $hookType)
                 {
                 Tree root_2 = (Tree)adaptor.nil();
                 root_2 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(HookKind, "HookKind"), root_2);
@@ -3774,7 +3774,7 @@ public class GomLanguageParser extends Parser {
                 }
                 adaptor.addChild(root_1, stream_arglist.nextTree());
                 adaptor.addChild(root_1, stream_LBRACE.nextNode());
-                // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:180:24: ^( Origin ID[\"\"+input.LT(1).getLine()] )
+                // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:180:24: ^( Origin ID[\"\"+input.LT(1).getLine()] )
                 {
                 Tree root_2 = (Tree)adaptor.nil();
                 root_2 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Origin, "Origin"), root_2);
@@ -3790,12 +3790,12 @@ public class GomLanguageParser extends Parser {
             }
             else // 181:3: -> ^( Hook ^( KindOperator ) $pointCut ^( HookKind $hookType) arglist LBRACE ^( Origin ID[\"\"+input.LT(1).getLine()] ) )
             {
-                // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:181:6: ^( Hook ^( KindOperator ) $pointCut ^( HookKind $hookType) arglist LBRACE ^( Origin ID[\"\"+input.LT(1).getLine()] ) )
+                // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:181:6: ^( Hook ^( KindOperator ) $pointCut ^( HookKind $hookType) arglist LBRACE ^( Origin ID[\"\"+input.LT(1).getLine()] ) )
                 {
                 Tree root_1 = (Tree)adaptor.nil();
                 root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Hook, "Hook"), root_1);
 
-                // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:181:13: ^( KindOperator )
+                // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:181:13: ^( KindOperator )
                 {
                 Tree root_2 = (Tree)adaptor.nil();
                 root_2 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(KindOperator, "KindOperator"), root_2);
@@ -3803,7 +3803,7 @@ public class GomLanguageParser extends Parser {
                 adaptor.addChild(root_1, root_2);
                 }
                 adaptor.addChild(root_1, stream_pointCut.nextNode());
-                // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:181:39: ^( HookKind $hookType)
+                // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:181:39: ^( HookKind $hookType)
                 {
                 Tree root_2 = (Tree)adaptor.nil();
                 root_2 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(HookKind, "HookKind"), root_2);
@@ -3814,7 +3814,7 @@ public class GomLanguageParser extends Parser {
                 }
                 adaptor.addChild(root_1, stream_arglist.nextTree());
                 adaptor.addChild(root_1, stream_LBRACE.nextNode());
-                // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:182:7: ^( Origin ID[\"\"+input.LT(1).getLine()] )
+                // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:182:7: ^( Origin ID[\"\"+input.LT(1).getLine()] )
                 {
                 Tree root_2 = (Tree)adaptor.nil();
                 root_2 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Origin, "Origin"), root_2);
@@ -3856,7 +3856,7 @@ public class GomLanguageParser extends Parser {
     };
 
     // $ANTLR start "hookScope"
-    // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:186:1: hookScope : ( SORT -> ^( KindSort ) | MODULE -> ^( KindModule ) | OPERATOR -> ^( KindOperator ) );
+    // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:186:1: hookScope : ( SORT -> ^( KindSort ) | MODULE -> ^( KindModule ) | OPERATOR -> ^( KindOperator ) );
     public final GomLanguageParser.hookScope_return hookScope() throws RecognitionException {
         GomLanguageParser.hookScope_return retval = new GomLanguageParser.hookScope_return();
         retval.start = input.LT(1);
@@ -3875,7 +3875,7 @@ public class GomLanguageParser extends Parser {
         RewriteRuleTokenStream stream_OPERATOR=new RewriteRuleTokenStream(adaptor,"token OPERATOR");
 
         try {
-            // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:186:11: ( SORT -> ^( KindSort ) | MODULE -> ^( KindModule ) | OPERATOR -> ^( KindOperator ) )
+            // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:186:11: ( SORT -> ^( KindSort ) | MODULE -> ^( KindModule ) | OPERATOR -> ^( KindOperator ) )
             int alt27=3;
             switch ( input.LA(1) ) {
             case SORT:
@@ -3902,7 +3902,7 @@ public class GomLanguageParser extends Parser {
 
             switch (alt27) {
                 case 1 :
-                    // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:187:3: SORT
+                    // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:187:3: SORT
                     {
                     SORT87=(Token)match(input,SORT,FOLLOW_SORT_in_hookScope1363);  
                     stream_SORT.add(SORT87);
@@ -3922,7 +3922,7 @@ public class GomLanguageParser extends Parser {
                     root_0 = (Tree)adaptor.nil();
                     // 187:8: -> ^( KindSort )
                     {
-                        // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:187:11: ^( KindSort )
+                        // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:187:11: ^( KindSort )
                         {
                         Tree root_1 = (Tree)adaptor.nil();
                         root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(KindSort, "KindSort"), root_1);
@@ -3936,7 +3936,7 @@ public class GomLanguageParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:188:5: MODULE
+                    // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:188:5: MODULE
                     {
                     MODULE88=(Token)match(input,MODULE,FOLLOW_MODULE_in_hookScope1375);  
                     stream_MODULE.add(MODULE88);
@@ -3956,7 +3956,7 @@ public class GomLanguageParser extends Parser {
                     root_0 = (Tree)adaptor.nil();
                     // 188:12: -> ^( KindModule )
                     {
-                        // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:188:15: ^( KindModule )
+                        // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:188:15: ^( KindModule )
                         {
                         Tree root_1 = (Tree)adaptor.nil();
                         root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(KindModule, "KindModule"), root_1);
@@ -3970,7 +3970,7 @@ public class GomLanguageParser extends Parser {
                     }
                     break;
                 case 3 :
-                    // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:189:5: OPERATOR
+                    // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:189:5: OPERATOR
                     {
                     OPERATOR89=(Token)match(input,OPERATOR,FOLLOW_OPERATOR_in_hookScope1387);  
                     stream_OPERATOR.add(OPERATOR89);
@@ -3990,7 +3990,7 @@ public class GomLanguageParser extends Parser {
                     root_0 = (Tree)adaptor.nil();
                     // 189:14: -> ^( KindOperator )
                     {
-                        // /Users/jcb/workspace/tom/src/tom/gom/parser/GomLanguage.g:189:17: ^( KindOperator )
+                        // /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g:189:17: ^( KindOperator )
                         {
                         Tree root_1 = (Tree)adaptor.nil();
                         root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(KindOperator, "KindOperator"), root_1);

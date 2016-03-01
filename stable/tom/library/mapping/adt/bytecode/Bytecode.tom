@@ -105,17 +105,17 @@
 
 }
 
-%typeterm InnerClassInfoList {
-  implement { tom.library.adt.bytecode.types.InnerClassInfoList }
-  is_sort(t) { ($t instanceof tom.library.adt.bytecode.types.InnerClassInfoList) }
+%typeterm Method {
+  implement { tom.library.adt.bytecode.types.Method }
+  is_sort(t) { ($t instanceof tom.library.adt.bytecode.types.Method) }
 
   equals(t1,t2) { ($t1==$t2) }
 
 }
 
-%typeterm Method {
-  implement { tom.library.adt.bytecode.types.Method }
-  is_sort(t) { ($t instanceof tom.library.adt.bytecode.types.Method) }
+%typeterm InnerClassInfoList {
+  implement { tom.library.adt.bytecode.types.InnerClassInfoList }
+  is_sort(t) { ($t instanceof tom.library.adt.bytecode.types.InnerClassInfoList) }
 
   equals(t1,t2) { ($t1==$t2) }
 
@@ -1742,6 +1742,44 @@
   make() { tom.library.adt.bytecode.types.typenode.VOID.make() }
 }
 
+%op Method VarMethod(labelMethod:String) {
+  is_fsym(t) { ($t instanceof tom.library.adt.bytecode.types.method.VarMethod) }
+  get_slot(labelMethod, t) { $t.getlabelMethod() }
+  make(t0) { tom.library.adt.bytecode.types.method.VarMethod.make($t0) }
+}
+
+%op Method EmptyPathMethod() {
+  is_fsym(t) { ($t instanceof tom.library.adt.bytecode.types.method.EmptyPathMethod) }
+  make() { tom.library.adt.bytecode.types.method.EmptyPathMethod.make() }
+}
+
+%op Method ConsPathMethod(HeadPathMethod:int, TailPathMethod:Method) {
+  is_fsym(t) { ($t instanceof tom.library.adt.bytecode.types.method.ConsPathMethod) }
+  get_slot(HeadPathMethod, t) { $t.getHeadPathMethod() }
+  get_slot(TailPathMethod, t) { $t.getTailPathMethod() }
+  make(t0, t1) { tom.library.adt.bytecode.types.method.ConsPathMethod.make($t0, $t1) }
+}
+
+%op Method RefMethod(labelMethod:String) {
+  is_fsym(t) { ($t instanceof tom.library.adt.bytecode.types.method.RefMethod) }
+  get_slot(labelMethod, t) { $t.getlabelMethod() }
+  make(t0) { tom.library.adt.bytecode.types.method.RefMethod.make($t0) }
+}
+
+%op Method LabMethod(labelMethod:String, termMethod:Method) {
+  is_fsym(t) { ($t instanceof tom.library.adt.bytecode.types.method.LabMethod) }
+  get_slot(labelMethod, t) { $t.getlabelMethod() }
+  get_slot(termMethod, t) { $t.gettermMethod() }
+  make(t0, t1) { tom.library.adt.bytecode.types.method.LabMethod.make($t0, $t1) }
+}
+
+%op Method Method(info:MethodInfo, code:MethodCode) {
+  is_fsym(t) { ($t instanceof tom.library.adt.bytecode.types.method.Method) }
+  get_slot(info, t) { $t.getinfo() }
+  get_slot(code, t) { $t.getcode() }
+  make(t0, t1) { tom.library.adt.bytecode.types.method.Method.make($t0, $t1) }
+}
+
 %op InnerClassInfoList VarInnerClassInfoList(labelInnerClassInfoList:String) {
   is_fsym(t) { ($t instanceof tom.library.adt.bytecode.types.innerclassinfolist.VarInnerClassInfoList) }
   get_slot(labelInnerClassInfoList, t) { $t.getlabelInnerClassInfoList() }
@@ -1783,44 +1821,6 @@
   get_slot(HeadInnerClassInfoList, t) { $t.getHeadInnerClassInfoList() }
   get_slot(TailInnerClassInfoList, t) { $t.getTailInnerClassInfoList() }
   make(t0, t1) { tom.library.adt.bytecode.types.innerclassinfolist.ConsInnerClassInfoList.make($t0, $t1) }
-}
-
-%op Method VarMethod(labelMethod:String) {
-  is_fsym(t) { ($t instanceof tom.library.adt.bytecode.types.method.VarMethod) }
-  get_slot(labelMethod, t) { $t.getlabelMethod() }
-  make(t0) { tom.library.adt.bytecode.types.method.VarMethod.make($t0) }
-}
-
-%op Method EmptyPathMethod() {
-  is_fsym(t) { ($t instanceof tom.library.adt.bytecode.types.method.EmptyPathMethod) }
-  make() { tom.library.adt.bytecode.types.method.EmptyPathMethod.make() }
-}
-
-%op Method ConsPathMethod(HeadPathMethod:int, TailPathMethod:Method) {
-  is_fsym(t) { ($t instanceof tom.library.adt.bytecode.types.method.ConsPathMethod) }
-  get_slot(HeadPathMethod, t) { $t.getHeadPathMethod() }
-  get_slot(TailPathMethod, t) { $t.getTailPathMethod() }
-  make(t0, t1) { tom.library.adt.bytecode.types.method.ConsPathMethod.make($t0, $t1) }
-}
-
-%op Method RefMethod(labelMethod:String) {
-  is_fsym(t) { ($t instanceof tom.library.adt.bytecode.types.method.RefMethod) }
-  get_slot(labelMethod, t) { $t.getlabelMethod() }
-  make(t0) { tom.library.adt.bytecode.types.method.RefMethod.make($t0) }
-}
-
-%op Method LabMethod(labelMethod:String, termMethod:Method) {
-  is_fsym(t) { ($t instanceof tom.library.adt.bytecode.types.method.LabMethod) }
-  get_slot(labelMethod, t) { $t.getlabelMethod() }
-  get_slot(termMethod, t) { $t.gettermMethod() }
-  make(t0, t1) { tom.library.adt.bytecode.types.method.LabMethod.make($t0, $t1) }
-}
-
-%op Method Method(info:MethodInfo, code:MethodCode) {
-  is_fsym(t) { ($t instanceof tom.library.adt.bytecode.types.method.Method) }
-  get_slot(info, t) { $t.getinfo() }
-  get_slot(code, t) { $t.getcode() }
-  make(t0, t1) { tom.library.adt.bytecode.types.method.Method.make($t0, $t1) }
 }
 
 %op Handler VarHandler(labelHandler:String) {
@@ -2763,6 +2763,15 @@
   is_empty(l) { $l.isEmptyPathTypeNode() }
 }
 
+%oplist Method PathMethod(int*) {
+  is_fsym(t) { (($t instanceof tom.library.adt.bytecode.types.method.ConsPathMethod) || ($t instanceof tom.library.adt.bytecode.types.method.EmptyPathMethod)) }
+  make_empty() { tom.library.adt.bytecode.types.method.EmptyPathMethod.make() }
+  make_insert(e,l) { tom.library.adt.bytecode.types.method.ConsPathMethod.make($e,$l) }
+  get_head(l) { $l.getHeadPathMethod() }
+  get_tail(l) { $l.getTailPathMethod() }
+  is_empty(l) { $l.isEmptyPathMethod() }
+}
+
 %oplist InnerClassInfoList PathInnerClassInfoList(int*) {
   is_fsym(t) { (($t instanceof tom.library.adt.bytecode.types.innerclassinfolist.ConsPathInnerClassInfoList) || ($t instanceof tom.library.adt.bytecode.types.innerclassinfolist.EmptyPathInnerClassInfoList)) }
   make_empty() { tom.library.adt.bytecode.types.innerclassinfolist.EmptyPathInnerClassInfoList.make() }
@@ -2779,15 +2788,6 @@
   get_head(l) { $l.getHeadInnerClassInfoList() }
   get_tail(l) { $l.getTailInnerClassInfoList() }
   is_empty(l) { $l.isEmptyInnerClassInfoList() }
-}
-
-%oplist Method PathMethod(int*) {
-  is_fsym(t) { (($t instanceof tom.library.adt.bytecode.types.method.ConsPathMethod) || ($t instanceof tom.library.adt.bytecode.types.method.EmptyPathMethod)) }
-  make_empty() { tom.library.adt.bytecode.types.method.EmptyPathMethod.make() }
-  make_insert(e,l) { tom.library.adt.bytecode.types.method.ConsPathMethod.make($e,$l) }
-  get_head(l) { $l.getHeadPathMethod() }
-  get_tail(l) { $l.getTailPathMethod() }
-  is_empty(l) { $l.isEmptyPathMethod() }
 }
 
 %oplist Handler PathHandler(int*) {

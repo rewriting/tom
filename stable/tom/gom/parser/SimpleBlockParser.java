@@ -1,4 +1,4 @@
-// $ANTLR 3.2 Sep 23, 2009 12:02:23 /Users/jcb/workspace/tom/src/tom/gom/parser/SimpleBlock.g 2013-03-21 14:06:53
+// $ANTLR 3.2 Sep 23, 2009 12:02:23 /Users/pem/github/tom/src/tom/gom/parser/SimpleBlock.g 2016-03-01 15:43:33
 
   package tom.gom.parser;
 
@@ -47,7 +47,7 @@ public class SimpleBlockParser extends Parser {
     }
 
     public String[] getTokenNames() { return SimpleBlockParser.tokenNames; }
-    public String getGrammarFileName() { return "/Users/jcb/workspace/tom/src/tom/gom/parser/SimpleBlock.g"; }
+    public String getGrammarFileName() { return "/Users/pem/github/tom/src/tom/gom/parser/SimpleBlock.g"; }
 
 
     public static class block_return extends ParserRuleReturnScope {
@@ -56,7 +56,7 @@ public class SimpleBlockParser extends Parser {
     };
 
     // $ANTLR start "block"
-    // /Users/jcb/workspace/tom/src/tom/gom/parser/SimpleBlock.g:42:1: block : rawblocklist ;
+    // /Users/pem/github/tom/src/tom/gom/parser/SimpleBlock.g:42:1: block : rawblocklist ;
     public final SimpleBlockParser.block_return block() throws RecognitionException {
         SimpleBlockParser.block_return retval = new SimpleBlockParser.block_return();
         retval.start = input.LT(1);
@@ -68,8 +68,8 @@ public class SimpleBlockParser extends Parser {
 
 
         try {
-            // /Users/jcb/workspace/tom/src/tom/gom/parser/SimpleBlock.g:42:7: ( rawblocklist )
-            // /Users/jcb/workspace/tom/src/tom/gom/parser/SimpleBlock.g:43:3: rawblocklist
+            // /Users/pem/github/tom/src/tom/gom/parser/SimpleBlock.g:42:7: ( rawblocklist )
+            // /Users/pem/github/tom/src/tom/gom/parser/SimpleBlock.g:43:3: rawblocklist
             {
             root_0 = (Object)adaptor.nil();
 
@@ -106,7 +106,7 @@ public class SimpleBlockParser extends Parser {
     };
 
     // $ANTLR start "rawblocklist"
-    // /Users/jcb/workspace/tom/src/tom/gom/parser/SimpleBlock.g:46:1: rawblocklist : ( STRING | LBRACE rawblocklist RBRACE )* ;
+    // /Users/pem/github/tom/src/tom/gom/parser/SimpleBlock.g:46:1: rawblocklist : ( STRING | LBRACE rawblocklist RBRACE )* ;
     public final SimpleBlockParser.rawblocklist_return rawblocklist() throws RecognitionException {
         SimpleBlockParser.rawblocklist_return retval = new SimpleBlockParser.rawblocklist_return();
         retval.start = input.LT(1);
@@ -124,12 +124,12 @@ public class SimpleBlockParser extends Parser {
         Object RBRACE5_tree=null;
 
         try {
-            // /Users/jcb/workspace/tom/src/tom/gom/parser/SimpleBlock.g:46:14: ( ( STRING | LBRACE rawblocklist RBRACE )* )
-            // /Users/jcb/workspace/tom/src/tom/gom/parser/SimpleBlock.g:47:3: ( STRING | LBRACE rawblocklist RBRACE )*
+            // /Users/pem/github/tom/src/tom/gom/parser/SimpleBlock.g:46:14: ( ( STRING | LBRACE rawblocklist RBRACE )* )
+            // /Users/pem/github/tom/src/tom/gom/parser/SimpleBlock.g:47:3: ( STRING | LBRACE rawblocklist RBRACE )*
             {
             root_0 = (Object)adaptor.nil();
 
-            // /Users/jcb/workspace/tom/src/tom/gom/parser/SimpleBlock.g:47:3: ( STRING | LBRACE rawblocklist RBRACE )*
+            // /Users/pem/github/tom/src/tom/gom/parser/SimpleBlock.g:47:3: ( STRING | LBRACE rawblocklist RBRACE )*
             loop1:
             do {
                 int alt1=3;
@@ -145,7 +145,7 @@ public class SimpleBlockParser extends Parser {
 
                 switch (alt1) {
             	case 1 :
-            	    // /Users/jcb/workspace/tom/src/tom/gom/parser/SimpleBlock.g:47:4: STRING
+            	    // /Users/pem/github/tom/src/tom/gom/parser/SimpleBlock.g:47:4: STRING
             	    {
             	    STRING2=(Token)match(input,STRING,FOLLOW_STRING_in_rawblocklist64); 
             	    STRING2_tree = (Object)adaptor.create(STRING2);
@@ -155,7 +155,7 @@ public class SimpleBlockParser extends Parser {
             	    }
             	    break;
             	case 2 :
-            	    // /Users/jcb/workspace/tom/src/tom/gom/parser/SimpleBlock.g:47:13: LBRACE rawblocklist RBRACE
+            	    // /Users/pem/github/tom/src/tom/gom/parser/SimpleBlock.g:47:13: LBRACE rawblocklist RBRACE
             	    {
             	    LBRACE3=(Token)match(input,LBRACE,FOLLOW_LBRACE_in_rawblocklist68); 
             	    LBRACE3_tree = (Object)adaptor.create(LBRACE3);

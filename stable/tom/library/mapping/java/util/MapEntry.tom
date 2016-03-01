@@ -1,6 +1,6 @@
 /*
  *
- * Copyright (c) 2006-2014, Universite de Lorraine, Inria
+ * Copyright (c) 2006-2016, Universite de Lorraine, Inria
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
@@ -50,7 +50,7 @@ static class MapEntry {
 %include { types/Object.tom }
 
 %op MapEntry mapEntry(key:Object, val:Object) {
-    is_fsym(e)       { ($e != null) && ($e instanceof MapEntry) }
+    is_fsym(e)       { ($e instanceof MapEntry) }
     get_slot(key,e)  { $e.getKey() }
     get_slot(val,e)  { $e.getVal() }
     make(key,val)    { new MapEntry($key,$val) }   

@@ -1,7 +1,7 @@
 /*
  * Gom
  *
- * Copyright (c) 2006-2014, Universite de Lorraine, Inria
+ * Copyright (c) 2006-2016, Universite de Lorraine, Inria
  * Nancy, France.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -134,7 +134,7 @@ public class AdapterGenerator {
     writer.write("\n"
 );
     }
-    writer.write("\npublic class "+filename()+"Adaptor {\n  public static shared.SharedObject getTerm(Tree tree) {\n    shared.SharedObject res = null;\n    if (tree.isNil()) {\n      throw new RuntimeException(\"nil term\");\n    }\n    if (tree.getType()==Token.INVALID_TOKEN_TYPE) {\n      throw new RuntimeException(\"bad type\");\n    }\n\n    switch (tree.getType()) {\n"
+    writer.write("\npublic class "+filename()+"Adaptor {\n  public static tom.library.sl.Visitable getTerm(Tree tree) {\n    tom.library.sl.Visitable res = null;\n    if (tree.isNil()) {\n      throw new RuntimeException(\"nil term\");\n    }\n    if (tree.getType()==Token.INVALID_TOKEN_TYPE) {\n      throw new RuntimeException(\"bad type\");\n    }\n\n    switch (tree.getType()) {\n"
 
 
 

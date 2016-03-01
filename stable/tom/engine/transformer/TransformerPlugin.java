@@ -2,7 +2,7 @@
  * 
  * TOM - To One Matching Compiler
  * 
- * Copyright (c) 2000-2014, Universite de Lorraine, Inria
+ * Copyright (c) 2000-2016, Universite de Lorraine, Inria
  * Nancy, France.
  * 
  * This program is free software; you can redistribute it and/or modify
@@ -107,6 +107,7 @@ public class TransformerPlugin extends TomGenericPlugin {
 
   private SymbolTable symbolTable;
   private int freshCounter = 0;
+  private boolean resolveFlag = false;
 
   public void setSymbolTable(SymbolTable symbolTable) {
     this.symbolTable = symbolTable;
@@ -177,12 +178,14 @@ public class TransformerPlugin extends TomGenericPlugin {
 
     HashSet<String> withNameSet = new HashSet<String>();
     HashSet<String> toNameSet = new HashSet<String>();
+
+    ElementaryTransformationList etl =  tom.engine.adt.tomsignature.types.elementarytransformationlist.EmptyconcElementaryTransformation.make() ;
     try {
       //This strategy call makes lots of side effects:
       //- on resolveNameSet
       //- on result (add created declarations)
       //- on withNameSet and on toNameSet
-      tom_make_TopDown(tom_make_GenResolveElement(this,resolveNameSet,result,withNameSet,toNameSet)).visitLight(elemTransfoList);
+      etl = tom_make_TopDown(tom_make_GenResolveElement(this,resolveNameSet,result,withNameSet,toNameSet)).visitLight(elemTransfoList);
     } catch (VisitFailure e) {
       throw new TomRuntimeException("TransformerPlugin.GenResolveElement: fail on " + transfo);
     }
@@ -191,7 +194,8 @@ public class TransformerPlugin extends TomGenericPlugin {
     String strTransfoName = transfoName.getString();
     TomSymbol transfoSymbol = getSymbolTable().getSymbolFromName(strTransfoName);
     //elementary strategies generation
-    {{if ( (elemTransfoList instanceof tom.engine.adt.tomsignature.types.ElementaryTransformationList) ) {if ( (((( tom.engine.adt.tomsignature.types.ElementaryTransformationList )(( tom.engine.adt.tomsignature.types.ElementaryTransformationList )elemTransfoList)) instanceof tom.engine.adt.tomsignature.types.elementarytransformationlist.ConsconcElementaryTransformation) || ((( tom.engine.adt.tomsignature.types.ElementaryTransformationList )(( tom.engine.adt.tomsignature.types.ElementaryTransformationList )elemTransfoList)) instanceof tom.engine.adt.tomsignature.types.elementarytransformationlist.EmptyconcElementaryTransformation)) ) { tom.engine.adt.tomsignature.types.ElementaryTransformationList  tomMatch356_end_4=(( tom.engine.adt.tomsignature.types.ElementaryTransformationList )elemTransfoList);do {{if (!( tomMatch356_end_4.isEmptyconcElementaryTransformation() )) { tom.engine.adt.tomsignature.types.ElementaryTransformation  tomMatch356_11= tomMatch356_end_4.getHeadconcElementaryTransformation() ;if ( (tomMatch356_11 instanceof tom.engine.adt.tomsignature.types.ElementaryTransformation) ) {if ( ((( tom.engine.adt.tomsignature.types.ElementaryTransformation )tomMatch356_11) instanceof tom.engine.adt.tomsignature.types.elementarytransformation.ElementaryTransformation) ) { tom.engine.adt.tomname.types.TomName  tomMatch356_7= tomMatch356_11.getETName() ; tom.engine.adt.tomoption.types.OptionList  tomMatch356_10= tomMatch356_11.getOptions() ;if ( (tomMatch356_7 instanceof tom.engine.adt.tomname.types.TomName) ) {if ( ((( tom.engine.adt.tomname.types.TomName )tomMatch356_7) instanceof tom.engine.adt.tomname.types.tomname.Name) ) { tom.engine.adt.tomname.types.TomName  tom_etName=tomMatch356_7; tom.engine.adt.code.types.BQTerm  tom_traversalStrat= tomMatch356_11.getTraversal() ;if ( (((( tom.engine.adt.tomoption.types.OptionList )tomMatch356_10) instanceof tom.engine.adt.tomoption.types.optionlist.ConsconcOption) || ((( tom.engine.adt.tomoption.types.OptionList )tomMatch356_10) instanceof tom.engine.adt.tomoption.types.optionlist.EmptyconcOption)) ) { tom.engine.adt.tomoption.types.OptionList  tomMatch356_end_19=tomMatch356_10;do {{if (!( tomMatch356_end_19.isEmptyconcOption() )) { tom.engine.adt.tomoption.types.Option  tomMatch356_25= tomMatch356_end_19.getHeadconcOption() ;if ( (tomMatch356_25 instanceof tom.engine.adt.tomoption.types.Option) ) {if ( ((( tom.engine.adt.tomoption.types.Option )tomMatch356_25) instanceof tom.engine.adt.tomoption.types.option.OriginTracking) ) { tom.engine.adt.tomoption.types.Option  tom_ot= tomMatch356_end_19.getHeadconcOption() ;
+    //%match(elemTransfoList) {
+    {{if ( (etl instanceof tom.engine.adt.tomsignature.types.ElementaryTransformationList) ) {if ( (((( tom.engine.adt.tomsignature.types.ElementaryTransformationList )(( tom.engine.adt.tomsignature.types.ElementaryTransformationList )etl)) instanceof tom.engine.adt.tomsignature.types.elementarytransformationlist.ConsconcElementaryTransformation) || ((( tom.engine.adt.tomsignature.types.ElementaryTransformationList )(( tom.engine.adt.tomsignature.types.ElementaryTransformationList )etl)) instanceof tom.engine.adt.tomsignature.types.elementarytransformationlist.EmptyconcElementaryTransformation)) ) { tom.engine.adt.tomsignature.types.ElementaryTransformationList  tomMatch356_end_4=(( tom.engine.adt.tomsignature.types.ElementaryTransformationList )etl);do {{if (!( tomMatch356_end_4.isEmptyconcElementaryTransformation() )) { tom.engine.adt.tomsignature.types.ElementaryTransformation  tomMatch356_11= tomMatch356_end_4.getHeadconcElementaryTransformation() ;if ( (tomMatch356_11 instanceof tom.engine.adt.tomsignature.types.ElementaryTransformation) ) {if ( ((( tom.engine.adt.tomsignature.types.ElementaryTransformation )tomMatch356_11) instanceof tom.engine.adt.tomsignature.types.elementarytransformation.ElementaryTransformation) ) { tom.engine.adt.tomname.types.TomName  tomMatch356_7= tomMatch356_11.getETName() ; tom.engine.adt.tomoption.types.OptionList  tomMatch356_10= tomMatch356_11.getOptions() ;if ( (tomMatch356_7 instanceof tom.engine.adt.tomname.types.TomName) ) {if ( ((( tom.engine.adt.tomname.types.TomName )tomMatch356_7) instanceof tom.engine.adt.tomname.types.tomname.Name) ) { tom.engine.adt.tomname.types.TomName  tom_etName=tomMatch356_7; tom.engine.adt.code.types.BQTerm  tom_traversalStrat= tomMatch356_11.getTraversal() ;if ( (((( tom.engine.adt.tomoption.types.OptionList )tomMatch356_10) instanceof tom.engine.adt.tomoption.types.optionlist.ConsconcOption) || ((( tom.engine.adt.tomoption.types.OptionList )tomMatch356_10) instanceof tom.engine.adt.tomoption.types.optionlist.EmptyconcOption)) ) { tom.engine.adt.tomoption.types.OptionList  tomMatch356_end_19=tomMatch356_10;do {{if (!( tomMatch356_end_19.isEmptyconcOption() )) { tom.engine.adt.tomoption.types.Option  tomMatch356_25= tomMatch356_end_19.getHeadconcOption() ;if ( (tomMatch356_25 instanceof tom.engine.adt.tomoption.types.Option) ) {if ( ((( tom.engine.adt.tomoption.types.Option )tomMatch356_25) instanceof tom.engine.adt.tomoption.types.option.OriginTracking) ) { tom.engine.adt.tomoption.types.Option  tom_ot= tomMatch356_end_19.getHeadconcOption() ;
 
         //generate elementary `Strategy, `ReferenceClass and `SymbolDecl
         result.addAll(genElementaryStrategy(tom_etName,tom_traversalStrat, tomMatch356_11.getAstRuleInstructionList() ,transfoSymbol,tom_ot));
@@ -201,9 +205,12 @@ public class TransformerPlugin extends TomGenericPlugin {
         getSymbolTable().putSymbol( tomMatch356_7.getString() ,astElemStratSymbol);
         //add the part of CompositeBQTerm transformer to bqlist
         bqlist.add(tom_traversalStrat);
-      }}}if ( tomMatch356_end_19.isEmptyconcOption() ) {tomMatch356_end_19=tomMatch356_10;} else {tomMatch356_end_19= tomMatch356_end_19.getTailconcOption() ;}}} while(!( (tomMatch356_end_19==tomMatch356_10) ));}}}}}}if ( tomMatch356_end_4.isEmptyconcElementaryTransformation() ) {tomMatch356_end_4=(( tom.engine.adt.tomsignature.types.ElementaryTransformationList )elemTransfoList);} else {tomMatch356_end_4= tomMatch356_end_4.getTailconcElementaryTransformation() ;}}} while(!( (tomMatch356_end_4==(( tom.engine.adt.tomsignature.types.ElementaryTransformationList )elemTransfoList)) ));}}}}
+      }}}if ( tomMatch356_end_19.isEmptyconcOption() ) {tomMatch356_end_19=tomMatch356_10;} else {tomMatch356_end_19= tomMatch356_end_19.getTailconcOption() ;}}} while(!( (tomMatch356_end_19==tomMatch356_10) ));}}}}}}if ( tomMatch356_end_4.isEmptyconcElementaryTransformation() ) {tomMatch356_end_4=(( tom.engine.adt.tomsignature.types.ElementaryTransformationList )etl);} else {tomMatch356_end_4= tomMatch356_end_4.getTailconcElementaryTransformation() ;}}} while(!( (tomMatch356_end_4==(( tom.engine.adt.tomsignature.types.ElementaryTransformationList )etl)) ));}}}}
 
-       
+     
+
+    if(resolveFlag) {
+
     //retrieve %transformation line number and current file name to forge
     //Resolve elements options
     int line = orgTrack.getLine();
@@ -248,6 +255,9 @@ public class TransformerPlugin extends TomGenericPlugin {
 ;
     //add it to DeclarationList
     result.add(resolveStratDecl);
+
+    }//end if(resolveFlag)
+
     //TODO: test hook
     //result.add(inverseLinks);
 
@@ -266,33 +276,29 @@ public class TransformerPlugin extends TomGenericPlugin {
     return ASTFactory.makeDeclarationList(result);
   }//processSubDecl
 
-
   /**
    * Generate the `Strategy corresponding to an `ElementaryTransformation
-   * @param strategyName the naem of the strategy (elementary transformation)
+   * @param strategyName the name of the strategy (elementary transformation)
    * @param traversal the traversal strategy which have been given to the
    * elementary transformation. It is used in the "transformer" strategy
    * composition.
    * @param riList the list of rules composing the elementary transformation
    * @param transfoSymbol the symbol of the transformation
    * @param orgTrack an option to track the construct
-   * @return DeclarationList containclieng the `Strategy, the `SymbolDecl and a
-   * `ReferenceClass
+   * @return DeclarationList containclieng the `Strategy, the `SymbolDecl 
+   * and a `ReferenceClass
    */
   private List<Declaration> genElementaryStrategy(TomName strategyName,
                                                   BQTerm traversal,
                                                   RuleInstructionList riList,
                                                   TomSymbol transfoSymbol,
                                                   Option orgTrack) {
-    String strName = strategyName.getString();
-    TomName refClassName =  tom.engine.adt.tomname.types.tomname.Name.make(TransformerPlugin.REFCLASS_PREFIX+strName) ;
-    Declaration symbol =  tom.engine.adt.tomdeclaration.types.declaration.SymbolDecl.make(strategyName) ;
-
     //build visitList
     List<ConstraintInstruction> ciList = new LinkedList<ConstraintInstruction>();
-    List<RefClassTracelinkInstruction> refclassTInstructionList = new LinkedList<RefClassTracelinkInstruction>();
-
+    List<RefClassTracelinkInstruction> refclassTInstructionList = new
+      LinkedList<RefClassTracelinkInstruction>();
     TomType vType = null;
+    List<Declaration> result = new LinkedList<Declaration>();
     {{if ( (riList instanceof tom.engine.adt.tominstruction.types.RuleInstructionList) ) {if ( (((( tom.engine.adt.tominstruction.types.RuleInstructionList )(( tom.engine.adt.tominstruction.types.RuleInstructionList )riList)) instanceof tom.engine.adt.tominstruction.types.ruleinstructionlist.ConsconcRuleInstruction) || ((( tom.engine.adt.tominstruction.types.RuleInstructionList )(( tom.engine.adt.tominstruction.types.RuleInstructionList )riList)) instanceof tom.engine.adt.tominstruction.types.ruleinstructionlist.EmptyconcRuleInstruction)) ) { tom.engine.adt.tominstruction.types.RuleInstructionList  tomMatch357_end_4=(( tom.engine.adt.tominstruction.types.RuleInstructionList )riList);do {{if (!( tomMatch357_end_4.isEmptyconcRuleInstruction() )) { tom.engine.adt.tominstruction.types.RuleInstruction  tomMatch357_11= tomMatch357_end_4.getHeadconcRuleInstruction() ;if ( (tomMatch357_11 instanceof tom.engine.adt.tominstruction.types.RuleInstruction) ) {if ( ((( tom.engine.adt.tominstruction.types.RuleInstruction )tomMatch357_11) instanceof tom.engine.adt.tominstruction.types.ruleinstruction.RuleInstruction) ) { tom.engine.adt.tomterm.types.TomTerm  tom_term= tomMatch357_11.getTerm() ; tom.engine.adt.tominstruction.types.InstructionList  tom_instr= tomMatch357_11.getAction() ;
 
         List<TomName> nameList = new LinkedList<TomName>();
@@ -306,23 +312,46 @@ public class TransformerPlugin extends TomGenericPlugin {
         //links to be set
         TomNameList tracedLinks = ASTFactory.makeNameList(nameList);
         BQTerm current = genTracelinkPopulateResolveCurrent(tom_term);
-        //TODO: change that
-        if(current==null){
-          throw new TomRuntimeException("TransformerPlugin.process: fail to generate tracelink backquote terme corresponding to "+tom_term);
-        } 
-        TomName firstArgument = TomBase.getSlotName(transfoSymbol,0);
-        TomType firstArgType = TomBase.getSlotType(transfoSymbol,firstArgument);
-        BQTerm link =  tom.engine.adt.code.types.bqterm.BQVariable.make( tom.engine.adt.tomoption.types.optionlist.EmptyconcOption.make() , firstArgument, firstArgType) ;
-        Instruction tracelinkPopResolveInstruction =  tom.engine.adt.tominstruction.types.instruction.TracelinkPopulateResolve.make(refClassName, tracedLinks, current, link) ;
-
+        /*cases:
+        !tracelink ^  resolve => err
+        !tracelink ^ !resolve => OK, but no need to execute this part of code
+         tracelink ^  resolve => OK
+         tracelink ^ !resolve => OK
+        */
+        InstructionList instrList =  tom.engine.adt.tominstruction.types.instructionlist.EmptyconcInstruction.make() ;
+        if(current==null) {
+          if(resolveFlag) {//if there is a resolve while no tracelink: err
+            throw new TomRuntimeException("TransformerPlugin.process: fail to generate tracelink backquote term corresponding to "+tom_term);
+          }
+          //in case there is no tracelink
+          instrList = tom_append_list_concInstruction(tom_instr, tom.engine.adt.tominstruction.types.instructionlist.EmptyconcInstruction.make() );
+        } else {//in case there is at least one tracelink
+          TomName firstArgument = TomBase.getSlotName(transfoSymbol,0);
+          TomType firstArgType = TomBase.getSlotType(transfoSymbol,
+                                                     firstArgument);
+          BQTerm link =  tom.engine.adt.code.types.bqterm.BQVariable.make( tom.engine.adt.tomoption.types.optionlist.EmptyconcOption.make() , firstArgument, firstArgType) ;
+          TomName refClassName =
+             tom.engine.adt.tomname.types.tomname.Name.make(TransformerPlugin.REFCLASS_PREFIX+strategyName.getString()) ;
+          Instruction tracelinkPopResolveInstruction =
+             tom.engine.adt.tominstruction.types.instruction.TracelinkPopulateResolve.make(refClassName, tracedLinks, current, link) ;
+          instrList = tom_append_list_concInstruction(tom_instr, tom.engine.adt.tominstruction.types.instructionlist.ConsconcInstruction.make(tracelinkPopResolveInstruction, tom.engine.adt.tominstruction.types.instructionlist.EmptyconcInstruction.make() ) );
+          RefClassTracelinkInstructionList refclassInstructions = ASTFactory.makeRefClassTracelinkInstructionList(refclassTInstructionList);
+        //TODO: use Class(AstName:TomName,ExtendsType:TomType,SuperTerm:BQTerm,Declaration:Declaration)
+        Declaration refClass =  tom.engine.adt.tomdeclaration.types.declaration.ReferenceClass.make(refClassName, refclassInstructions) ;
+        result.add(refClass);
+        }//case tracelink
         vType =  tom.engine.adt.tomtype.types.tomtype.Type.make( tom.engine.adt.tomtype.types.typeoptionlist.EmptyconcTypeOption.make() ,  tomMatch357_11.getTypeName() ,  tom.engine.adt.tomtype.types.targetlanguagetype.EmptyTargetLanguageType.make() ) ;
         //add a test on vType here: if(vType!=null && vType!=)
         BQTerm subject =  tom.engine.adt.code.types.bqterm.BQVariable.make( tom.engine.adt.tomoption.types.optionlist.EmptyconcOption.make() ,  tom.engine.adt.tomname.types.tomname.Name.make("tom__arg") , vType) 
 
 ;
-        Constraint constraint =  tom.engine.adt.tomconstraint.types.constraint.ConsAndConstraint.make( tom.engine.adt.tomconstraint.types.constraint.TrueConstraint.make() , tom.engine.adt.tomconstraint.types.constraint.ConsAndConstraint.make( tom.engine.adt.tomconstraint.types.constraint.MatchConstraint.make(tom_term, subject, vType) , tom.engine.adt.tomconstraint.types.constraint.EmptyAndConstraint.make() ) ) 
+        Constraint constraint =  tom.engine.adt.tomconstraint.types.constraint.ConsAndConstraint.make( tom.engine.adt.tomconstraint.types.constraint.TrueConstraint.make() , tom.engine.adt.tomconstraint.types.constraint.ConsAndConstraint.make( tom.engine.adt.tomconstraint.types.constraint.MatchConstraint.make(tom_term, subject, vType) 
+                                               , tom.engine.adt.tomconstraint.types.constraint.EmptyAndConstraint.make() ) ) 
+
+
+
 ;
-        ciList.add( tom.engine.adt.tominstruction.types.constraintinstruction.ConstraintInstruction.make(constraint,  tom.engine.adt.tominstruction.types.instruction.RawAction.make( tom.engine.adt.tominstruction.types.instruction.If.make( tom.engine.adt.tomexpression.types.expression.TrueTL.make() ,  tom.engine.adt.tominstruction.types.instruction.AbstractBlock.make(tom_append_list_concInstruction(tom_instr, tom.engine.adt.tominstruction.types.instructionlist.ConsconcInstruction.make(tracelinkPopResolveInstruction, tom.engine.adt.tominstruction.types.instructionlist.EmptyconcInstruction.make() ) )) ,  tom.engine.adt.tominstruction.types.instruction.Nop.make() ) ) ,  tomMatch357_11.getOptions() ) 
+        ciList.add( tom.engine.adt.tominstruction.types.constraintinstruction.ConstraintInstruction.make(constraint,  tom.engine.adt.tominstruction.types.instruction.RawAction.make( tom.engine.adt.tominstruction.types.instruction.If.make( tom.engine.adt.tomexpression.types.expression.TrueTL.make() ,  tom.engine.adt.tominstruction.types.instruction.AbstractBlock.make(instrList) ,  tom.engine.adt.tominstruction.types.instruction.Nop.make() ) ) ,  tomMatch357_11.getOptions() ) 
 
 
 
@@ -332,29 +361,28 @@ public class TransformerPlugin extends TomGenericPlugin {
                 );
       }}}if ( tomMatch357_end_4.isEmptyconcRuleInstruction() ) {tomMatch357_end_4=(( tom.engine.adt.tominstruction.types.RuleInstructionList )riList);} else {tomMatch357_end_4= tomMatch357_end_4.getTailconcRuleInstruction() ;}}} while(!( (tomMatch357_end_4==(( tom.engine.adt.tominstruction.types.RuleInstructionList )riList)) ));}}}}
 
-    RefClassTracelinkInstructionList refclassInstructions = ASTFactory.makeRefClassTracelinkInstructionList(refclassTInstructionList);
-
-    //TODO: use Class(AstName:TomName,ExtendsType:TomType,SuperTerm:BQTerm,Declaration:Declaration)
-    Declaration refClass =  tom.engine.adt.tomdeclaration.types.declaration.ReferenceClass.make(refClassName, refclassInstructions) ;
-
+    ConstraintInstructionList astCiList =
+      ASTFactory.makeConstraintInstructionList(ciList);
+    //build the strategy (elementary transformation)
     LinkedList<Option> list = new LinkedList<Option>();
     list.add(orgTrack);
     OptionList options = ASTFactory.makeOptionList(list);
-
-    ConstraintInstructionList astCiList = ASTFactory.makeConstraintInstructionList(ciList);
     List<TomVisit> visitList = new LinkedList<TomVisit>();
-
     visitList.add( tom.engine.adt.tomsignature.types.tomvisit.VisitTerm.make(vType, astCiList, options) );
     TomVisitList astVisitList = ASTFactory.makeTomVisitList(visitList);
 
-    BQTerm extendsTerm =  tom.engine.adt.code.types.bqterm.BQAppl.make( tom.engine.adt.tomoption.types.optionlist.ConsconcOption.make( tom.engine.adt.tomoption.types.option.OriginTracking.make(strategyName, orgTrack.getLine(), orgTrack.getFileName()) , tom.engine.adt.tomoption.types.optionlist.EmptyconcOption.make() ) ,  tom.engine.adt.tomname.types.tomname.Name.make("Identity") ,  tom.engine.adt.code.types.bqtermlist.EmptyconcBQTerm.make() ) ;
+    BQTerm extendsTerm =  tom.engine.adt.code.types.bqterm.BQAppl.make( tom.engine.adt.tomoption.types.optionlist.ConsconcOption.make( tom.engine.adt.tomoption.types.option.OriginTracking.make(strategyName, orgTrack.getLine(), orgTrack.getFileName()) , tom.engine.adt.tomoption.types.optionlist.EmptyconcOption.make() ) ,  tom.engine.adt.tomname.types.tomname.Name.make("Identity") ,  tom.engine.adt.code.types.bqtermlist.EmptyconcBQTerm.make() ) 
 
-    Declaration strategy =  tom.engine.adt.tomdeclaration.types.declaration.Strategy.make(strategyName, extendsTerm, astVisitList,  tom.engine.adt.tomdeclaration.types.declarationlist.EmptyconcDeclaration.make() , orgTrack) ;
 
-    List<Declaration> result = new LinkedList<Declaration>();
-    result.add(refClass);
+;
+    Declaration strategy =  tom.engine.adt.tomdeclaration.types.declaration.Strategy.make(strategyName, extendsTerm, astVisitList,  tom.engine.adt.tomdeclaration.types.declarationlist.EmptyconcDeclaration.make() , orgTrack) 
+
+
+
+;
+    //add forged strategy + symbol to the declarations list
     result.add(strategy);
-    result.add(symbol);
+    result.add( tom.engine.adt.tomdeclaration.types.declaration.SymbolDecl.make(strategyName) );
     return result;
   }//genElementaryStrategy
 
@@ -832,6 +860,9 @@ public class TransformerPlugin extends TomGenericPlugin {
   public static class GenResolveElement extends tom.library.sl.AbstractStrategyBasic {private  TransformerPlugin  transformer;private  java.util.HashSet  resolveNameSet;private  java.util.List  result;private  java.util.HashSet  withNameSet;private  java.util.HashSet  toNameSet;public GenResolveElement( TransformerPlugin  transformer,  java.util.HashSet  resolveNameSet,  java.util.List  result,  java.util.HashSet  withNameSet,  java.util.HashSet  toNameSet) {super(( new tom.library.sl.Identity() ));this.transformer=transformer;this.resolveNameSet=resolveNameSet;this.result=result;this.withNameSet=withNameSet;this.toNameSet=toNameSet;}public  TransformerPlugin  gettransformer() {return transformer;}public  java.util.HashSet  getresolveNameSet() {return resolveNameSet;}public  java.util.List  getresult() {return result;}public  java.util.HashSet  getwithNameSet() {return withNameSet;}public  java.util.HashSet  gettoNameSet() {return toNameSet;}public tom.library.sl.Visitable[] getChildren() {tom.library.sl.Visitable[] stratChildren = new tom.library.sl.Visitable[getChildCount()];stratChildren[0] = super.getChildAt(0);return stratChildren;}public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {super.setChildAt(0, children[0]);return this;}public int getChildCount() {return 1;}public tom.library.sl.Visitable getChildAt(int index) {switch (index) {case 0: return super.getChildAt(0);default: throw new IndexOutOfBoundsException();}}public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable child) {switch (index) {case 0: return super.setChildAt(0, child);default: throw new IndexOutOfBoundsException();}}@SuppressWarnings("unchecked")public <T> T visitLight(T v, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if ( (v instanceof tom.engine.adt.tominstruction.types.Instruction) ) {return ((T)visit_Instruction((( tom.engine.adt.tominstruction.types.Instruction )v),introspector));}if (!(( null  == environment))) {return ((T)any.visit(environment,introspector));} else {return any.visitLight(v,introspector);}}@SuppressWarnings("unchecked")public  tom.engine.adt.tominstruction.types.Instruction  _visit_Instruction( tom.engine.adt.tominstruction.types.Instruction  arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if (!(( null  == environment))) {return (( tom.engine.adt.tominstruction.types.Instruction )any.visit(environment,introspector));} else {return any.visitLight(arg,introspector);}}@SuppressWarnings("unchecked")public  tom.engine.adt.tominstruction.types.Instruction  visit_Instruction( tom.engine.adt.tominstruction.types.Instruction  tom__arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {{{if ( (tom__arg instanceof tom.engine.adt.tominstruction.types.Instruction) ) {if ( ((( tom.engine.adt.tominstruction.types.Instruction )tom__arg) instanceof tom.engine.adt.tominstruction.types.Instruction) ) {if ( ((( tom.engine.adt.tominstruction.types.Instruction )(( tom.engine.adt.tominstruction.types.Instruction )tom__arg)) instanceof tom.engine.adt.tominstruction.types.instruction.Resolve) ) { String  tom_sname= (( tom.engine.adt.tominstruction.types.Instruction )tom__arg).getSrc() ; String  tom_stypename= (( tom.engine.adt.tominstruction.types.Instruction )tom__arg).getSType() ; String  tom_ttypename= (( tom.engine.adt.tominstruction.types.Instruction )tom__arg).getTType() ; tom.engine.adt.tomoption.types.Option  tom_ot= (( tom.engine.adt.tominstruction.types.Instruction )tom__arg).getOrgTrack() ;
 
 
+        //try to say that a resolve node has been found
+        transformer.resolveFlag = true;
+
         String resolveStringName = transformer.RESOLVE_ELEMENT_PREFIX+tom_stypename+tom_ttypename;
         int line = tom_ot.getLine();
         String fileName = tom_ot.getFileName();
@@ -1002,7 +1033,7 @@ if(!resolveNameSet.contains(resolveStringName)) {
           Integer.valueOf(((OriginTracking)orgTrack).getLine()),
           ((OriginTracking)orgTrack).getFileName()});
     }
-    //weel, nothing better?
+    //well, nothing better?
     return null;
   }
 
