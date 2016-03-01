@@ -179,7 +179,7 @@ public class OptimizerPlugin extends TomGenericPlugin {
         return `ExpressionToBQTerm(GetSliceList(name,begin,end,BuildAppendList(name,tailSlice,tail)));
       }
     }
-
+    
     visit Instruction {
 
       /* only for generated variables */

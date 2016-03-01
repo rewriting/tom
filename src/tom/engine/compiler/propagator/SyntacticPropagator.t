@@ -178,6 +178,7 @@ public class SyntacticPropagator implements IBasePropagator {
         lastPart.add(0,l);
         lastPart.add(0,`MatchConstraint(TomBase.convertFromBQVarToVar(freshSubject),g,aType));
         lastPart.add(sp.getConstraintPropagator().performDetach(`m));
+
         return ASTFactory.makeAndConstraint(lastPart);
       }      
     }

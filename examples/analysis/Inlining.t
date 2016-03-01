@@ -289,9 +289,10 @@ public class Inlining {
     }
   }
 
-  public static String pretty(Object e) { return pretty(0,e); }
+  public static String pretty(Instruction e) { return pretty(0,e); }
+  public static String pretty(Expression e) { return pretty(0,e); }
 
-  public static String pretty(int indent, Object e) {
+  public static String pretty(int indent, Instruction e) {
     String w = "";
     for(int i=0;i<indent;i++) w+="  ";
     %match(e) { 
@@ -308,6 +309,12 @@ public class Inlining {
         return s;
       }
     }
+    return w+e.toString();
+  }
+
+  public static String pretty(int indent, Expression e) {
+    String w = "";
+    for(int i=0;i<indent;i++) w+="  ";
     %match(e) {
       Plus(e1,e2) -> { return "("+pretty(`e1)+" + "+pretty(`e2)+")"; }
       Mult(e1,e2) -> { return "("+pretty(`e1)+" * "+pretty(`e2)+")"; }

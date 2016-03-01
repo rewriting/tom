@@ -262,6 +262,23 @@ writer.write(%[
    */
   public abstract boolean deepEquals(Object o);
 
+
+]%);
+    }
+
+    if(maximalsharing) {
+      writer.write(%[
+  /**
+   * Checks if an object is equal
+   *
+   * @@param o object which is compared
+   * @@return true if objects are equal, false otherwise
+   */
+  @@Override
+  public boolean equals(Object o) { return this == o; }
+]%);
+    } else {
+      writer.write(%[
   /**
    * Checks if an object is equal
    *
@@ -270,7 +287,6 @@ writer.write(%[
    */
   @@Override
   public boolean equals(Object o) { return this.deepEquals(o); }
-
 ]%);
     }
 

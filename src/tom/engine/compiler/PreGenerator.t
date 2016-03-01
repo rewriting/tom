@@ -373,6 +373,10 @@ loop_j: for(int j=i+1 ; j<array.length ; j++) {
               modification |= swap(array,i,j);
               break block;
             }
+            MatchConstraint[Subject=sub],IsSortConstraint[BQTerm=sub] -> {
+              modification |= swap(array,i,j);
+              break block;
+            }
             IsSortConstraint[BQTerm=BQVariable[AstName=name]],MatchConstraint[Pattern=Variable[AstName=name]] -> {
               modification |= swap(array,i,j);
               break block;

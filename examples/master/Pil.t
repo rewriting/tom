@@ -82,7 +82,7 @@ class Pil {
     }
   }
 
-  public static String pretty(Object e) {
+  public static String pretty(Expr e) {
     %match(e) {
       Var(name) -> { 
         return `name; 
@@ -97,6 +97,10 @@ class Pil {
         return "if(" + pretty(`c) + ") " + pretty(`i1) + " else " + pretty(`i2) + " end";
       }
     }
+    return e.toString();
+  }
+
+  public static String pretty(Bool e) {
     %match(e) {
       Eq(e1,e2) -> {
         return pretty(`e1) + " = " + pretty(`e2);

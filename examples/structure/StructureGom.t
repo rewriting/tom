@@ -422,35 +422,50 @@ public class StructureGom {
 
   //private WeakHashMap lengthCache = new WeakHashMap();
   public static int length(StructuresAbstractType t) {
-
-    //if(lengthCache.containsKey(t)) {
-    //return ((Integer)lengthCache.get(t)).intValue();
-    //}
-
-    int res = 0;
-    block: {
-      %match(Struc t) {
-        Cop(l) -> { res =  length(`l); break block; }
-        Par(l) -> { res =  length(`l); break block; }
-        Seq(l) -> { res =  2+length(`l); break block; }
-        _      -> { res =  1; break block; }
-      }
-      %match(StrucPar t) {
-        ConcPar()           -> { res =  0; break block; }
-        ConcPar(head,tail*) -> { res =  length(`head) + length(`tail*); break block; }
-      }
-      %match(StrucCop t) {
-        ConcCop()           -> { res =  0; break block; }
-        ConcCop(head,tail*) -> { res =  length(`head) + length(`tail*); break block; }
-      }
-      %match(StrucSeq t) {
-        ConcSeq()           -> { res =  0; break block; }
-        ConcSeq(head,tail*) -> { res =  length(`head) + length(`tail*); break block; }
-      }
+    if(t instanceof Struc) { 
+      return length((Struc)t);
+    } else if(t instanceof StrucPar) { 
+      return length((StrucPar)t);
+    } else if(t instanceof StrucCop) { 
+      return length((StrucCop)t); 
+    } else if(t instanceof StrucSeq) { 
+      return length((StrucSeq)t);
     }
-    //lengthCache.put(t,new Integer(res));
+    return 0;
+  }
 
-    return res;
+  public static int length(Struc t) {
+    %match(t) {
+      Cop(l) -> { return  length(`l); }
+      Par(l) -> { return  length(`l); }
+      Seq(l) -> { return  2+length(`l); }
+    }
+    return 1;
+  }
+
+  public static int length(StrucPar t) {
+    %match(t) {
+      ConcPar()           -> { return 0; }
+      ConcPar(head,tail*) -> { return length(`head) + length(`tail*); }
+    }
+    return 0;
+  }
+
+  public static int length(StrucCop t) {
+    %match(t) {
+      ConcCop()           -> { return 0; }
+      ConcCop(head,tail*) -> { return length(`head) + length(`tail*); }
+    }
+
+    return 0;
+  }
+
+  public static int length(StrucSeq t) {
+    %match(t) {
+      ConcSeq()           -> { return 0; }
+      ConcSeq(head,tail*) -> { return length(`head) + length(`tail*); }
+    }
+    return 0;
   }
 
   private static WeakHashMap<StructuresAbstractType,Integer> weightMap =
@@ -597,8 +612,8 @@ public class StructureGom {
     return null;
   }
 
-  public String prettyPrint(StructuresAbstractType t) {
-    %match(Struc t) {
+  public String prettyPrint(Struc t) {
+    %match(t) {
       Neg(s)  -> { return "-" + prettyPrint(`s);}
       Par(l)  -> { return "[" + prettyPrint(`l) + "]";}
       Cop(l)  -> { return "(" + prettyPrint(`l) + ")";}
@@ -606,7 +621,11 @@ public class StructureGom {
       Atom(n) -> { return `n;}
       O()     -> { return "o";}
     }
-    %match(StrucCop t) {
+    return t.toString();
+  }
+
+  public String prettyPrint(StrucCop t) {
+    %match(t) {
       ConcCop(head) -> {
         return prettyPrint(`head);
       }
@@ -614,7 +633,11 @@ public class StructureGom {
         return prettyPrint(`head) + "," + prettyPrint(`tail*);
       }
     }
-    %match(StrucPar t) {
+    return t.toString();
+  }
+
+  public String prettyPrint(StrucPar t) {
+    %match(t) {
       ConcPar(head) -> {
         return prettyPrint(`head);
       }
@@ -622,6 +645,10 @@ public class StructureGom {
         return prettyPrint(`head) + "," + prettyPrint(`tail*);
       }
     }
+    return t.toString();
+  }
+
+  public String prettyPrint(StrucSeq t) {
     %match(StrucSeq t) {
       ConcSeq(head) -> {
         return prettyPrint(`head);
