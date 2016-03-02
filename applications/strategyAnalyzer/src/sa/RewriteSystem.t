@@ -115,7 +115,7 @@ public class RewriteSystem {
         rules = ruleCompiler.expandAt(rules);
         assert !Tools.containsAt(rules) : "check contain no AT";
 
-        // minimize the set of rules
+        // minimize (local) the set of rules
         startChrono = System.currentTimeMillis();
         rules = removeRedundantRule(rules,eSig);
         timeMinimize += (System.currentTimeMillis()-startChrono);
@@ -123,33 +123,6 @@ public class RewriteSystem {
 
       }
     }
-
-
-    if(Main.options.verbose) {
-      for(Rule rule:`res.getCollectionConcRule()) {
-        System.out.println(Pretty.toString(rule));
-      }
-      System.out.println("size = " + `res.length());
-    }
-
-
-    // new algo for minimizing 
-    /*
-    RuleList res2 = res;
-    %match(res) {
-      ConcRule(C1*,r,C2*) -> {
-        HashSet<Rule> bag = new HashSet<Rule>();
-        searchAbstraction(bag,`r,res,eSig);
-        for(Rule r:bag) {
-          res2 = `ConcRule(r,res2*);
-        }
-      }
-    }
-    System.out.println("#res2 = " + `res2.length());
-    */
-
-
-
 
     if(Main.options.verbose) {
       for(Rule rule:`res.getCollectionConcRule()) {
@@ -251,53 +224,6 @@ public class RewriteSystem {
       return t;
   }
 
-  /*
-   * remove redundant rules 
-   */
-  // TODO: remove variables only once (and no longer in canBeRemoved2) to speedup the process
-  private static RuleList removeRedundantRule(RuleList candidates, Signature eSig) {
-    RuleList kernel  = `ConcRule(); // rules which are not subsumed by the others
-    RuleList start  = `ConcRule();
-    %match(candidates) {
-      ConcRule(C1*,r@Rule(lhs,rhs),C2*) -> {
-        boolean b = canBeRemoved3(`r, `ConcRule(C1*,C2*), eSig);
-        if(!b) {
-          kernel = `ConcRule(r,kernel*);
-        } else {
-          start = `ConcRule(r,start*);
-        }
-      }
-    }
-
-    RuleList result = removeRedundantRuleAux(start,kernel,eSig);
-    return result;
-  }
-
-  private static RuleList removeRedundantRuleAux(RuleList candidates, RuleList kernel, Signature eSig) {
-    assert Property.isLhsLinear(candidates) : "check lhs-linear" ;
-    RuleList res = kernel;
-
-    %match( candidates ) {
-      ConcRule(head, tail*) -> {
-        // try with the head kept in kernel
-        RuleList branch1 = removeRedundantRuleAux(`tail, `ConcRule(kernel*,head), eSig);
-        res = branch1;
-
-        boolean b = canBeRemoved3(`head, `ConcRule(kernel*,tail*), eSig);
-        if(b) {
-          if(Main.options.verbose) {
-            System.out.println("REMOVE: " + Pretty.toString(`head));
-          }
-          // try with the head removed 
-          RuleList branch2 = removeRedundantRuleAux(`tail, kernel, eSig);
-          if(branch2.length() < branch1.length()) {
-            res = branch2;
-          }
-        }
-      }
-    }
-    return res;
-  }
 
   %strategy PropagateEmpty() extends Identity() {
     visit Term {
@@ -864,22 +790,72 @@ public class RewriteSystem {
   }
 
   /*
-   * simple but inefficient version
-   *
-  private static AddList simplifySubsumtion(AddList tl) {
-    %match(tl) {
-      ConcAdd(C1*,t1,C2*,t2,C3*) -> {
-        if(`match(t1,t2)) {
-          return simplifySubsumtion(`ConcAdd(t1,C1*,C2*,C3*));
-        } else if(`match(t2,t1)) {
-          return simplifySubsumtion(`ConcAdd(t2,C1*,C2*,C3*));
+   * --------------------------------------------------
+   * Syntactic matching
+   * --------------------------------------------------
+   */
+
+  /*
+   * Return TrueMatch() if t1 matches t2
+   *        Empty()     if t1 does not match t2
+   *        a constraint if no decision can be taken
+   */
+  private static Term matchConstraint(Term t1, Term t2) {
+    %match(t1,t2) {
+      // ElimAt (more efficient than removing AT before matching)
+      At(_,p1), p2 -> { return `matchConstraint(p1,p2); }
+      p1, At(_,p2) -> { return `matchConstraint(p1,p2); }
+
+      // Delete
+      Appl(name,TermList()),Appl(name,TermList()) -> { return `TrueMatch(); }
+      // Decompose
+      Appl(name,a1),Appl(name,a2) -> { return `propagateMatchConstraint(Appl(name,decomposeListConstraint(a1,a2,false))); }
+      // SymbolClash
+      Appl(name1,_),Appl(name2,_) && name1!=name2 -> { return `Empty(); }
+      // Match
+      Var[],(Var|Appl)[] -> { return `TrueMatch(); }
+    }
+    return `Match(t1,t2);
+  }
+  
+  private static Term propagateMatchConstraint(Term t) {
+    try {
+      Strategy S = `ChoiceId(PropagateEmpty(),PropagateTrueMatch());
+      return `InnermostId(S).visitLight(t);
+    } catch(VisitFailure e) {
+    }
+    return t;
+  }
+  
+  /*
+   * return a list of matching constraints
+   * TermList(Empty(),...,Empty()) when one of the constaint is Empty()
+   */
+  private static TermList decomposeListConstraint(TermList tl1, TermList tl2, boolean propagateEmpty) {
+    %match(tl1,tl2) {
+      TermList(), TermList() -> { return `TermList(); }
+      TermList(head1,tail1*), TermList(head2,tail2*) -> { 
+        if(propagateEmpty) {
+          //return `TermList(Empty()); // optim: can be removed
+          TermList tail = decomposeListConstraint(`tail1,`tail2,true);
+          return `TermList(Empty(),tail*);
         }
+
+        Term res = matchConstraint(`head1,`head2); 
+        if(res.isEmpty()) {
+          //return `TermList(Empty()); // optim: can be removed
+          TermList tail = decomposeListConstraint(`tail1,`tail2,true);
+          return `TermList(Empty(),tail*);
+        }
+
+        TermList tail = decomposeListConstraint(`tail1,`tail2,propagateEmpty);
+        return `TermList(res,tail*);
       }
     }
-    return tl;
+    assert false : "should not be there";
+    return null;
   }
-  */
-
+  
   /*
    * return true is t can be match by a term of al
    */
@@ -897,13 +873,6 @@ public class RewriteSystem {
     }
     return false;
   }
-
-  /*
-   * 2nd idea to remove redundant patterns
-   *
-   * introduce matching constraints inside patterns
-   */
-
 
   %strategy PropagateTrueMatch() extends Identity() {
     visit Term {
@@ -924,38 +893,6 @@ public class RewriteSystem {
     }
   }
   
-  // check abstraction
-  // a + b + g(_) + f(_) == signature ==> X
-  %strategy TryAbstraction(eSig:Signature) extends Identity() {
-    visit Term {
-      s@Add(al@ConcAdd(Appl(f,_),_*)) -> {
-        GomType codomain = eSig.getCodomain(`f);
-        if(codomain != null) {
-          Set<String> foundConstructors = new HashSet<String>();
-          for(Term t: `al.getCollectionConcAdd()) {
-            // check that t is composed of variables only
-            %match(t) {
-              Appl(opname,!TermList(_*,!Var[],_*)) -> {
-                // add f to set of names
-                foundConstructors.add(`opname);
-              }
-            }
-          }
-
-          if(foundConstructors.equals(eSig.getConstructors(codomain))) {
-            //System.out.println("OPS = " + ops + " al = " + `al);
-            Term res = `Var("_");
-            debug("abstraction",`s,res);
-            return res;
-          }
-        } else {
-          // do nothing
-          //System.out.println("f -> null " + `f);
-        }
-      }
-    }
-  }
-
   /*
    * returns True if rule lhs->rhs is subsumed by ruleList
    * i.e. if lhs \ (l1 + ... + ln) = Empty
@@ -986,6 +923,69 @@ public class RewriteSystem {
     return res;
   }
 
+  /*
+   * --------------------------------------------------
+   * Minimum (local) of a set of rules
+   * --------------------------------------------------
+   */
+
+  /*
+   * remove redundant rules 
+   */
+  // TODO: remove variables only once (and no longer in canBeRemoved2) to speedup the process
+  private static RuleList removeRedundantRule(RuleList candidates, Signature eSig) {
+    RuleList kernel  = `ConcRule(); // rules which are not subsumed by the others
+    RuleList start  = `ConcRule();
+    %match(candidates) {
+      ConcRule(C1*,r@Rule(lhs,rhs),C2*) -> {
+        boolean b = canBeRemoved3(`r, `ConcRule(C1*,C2*), eSig);
+        if(!b) {
+          kernel = `ConcRule(r,kernel*);
+        } else {
+          start = `ConcRule(r,start*);
+        }
+      }
+    }
+
+    RuleList result = removeRedundantRuleAux(start,kernel,eSig);
+    return result;
+  }
+
+  private static RuleList removeRedundantRuleAux(RuleList candidates, RuleList kernel, Signature eSig) {
+    assert Property.isLhsLinear(candidates) : "check lhs-linear" ;
+    RuleList res = kernel;
+
+    %match( candidates ) {
+      ConcRule(head, tail*) -> {
+        // try with the head kept in kernel
+        RuleList branch1 = removeRedundantRuleAux(`tail, `ConcRule(kernel*,head), eSig);
+        res = branch1;
+
+        boolean b = canBeRemoved3(`head, `ConcRule(kernel*,tail*), eSig);
+        if(b) {
+          if(Main.options.verbose) {
+            System.out.println("REMOVE: " + Pretty.toString(`head));
+          }
+          // try with the head removed 
+          RuleList branch2 = removeRedundantRuleAux(`tail, kernel, eSig);
+          if(branch2.length() < branch1.length()) {
+            res = branch2;
+          }
+        }
+      }
+    }
+    return res;
+  }
+
+  /*
+   * --------------------------------------------------
+   * Search abstractions to compute a minimum global
+   * --------------------------------------------------
+   */
+
+  /*
+   * given t1+...+tn, add all abstractions t' such that [t'] \subseteq [t1+...+tn]
+   */
   private static Term simplifyAbstraction(Term sum, Signature eSig) {
     System.out.println("simplifyAbstraction");
     HashSet<Term> bag = new HashSet<Term>();
@@ -1116,76 +1116,8 @@ public class RewriteSystem {
     }
   }
 
-/*
- * more efficient version of SimplifyMatch (factor 2!)
- */
 
-  /*
-   * Return TrueMatch() if t1 matches t2
-   *        Empty()     if t1 does not match t2
-   *        a constraint if no decision can be taken
-   */
-  // TODO: can be  used to replace both the function match(Term,Term) and the strategy SimplifyMatch()
-  private static boolean newVersion = true;
-  private static Term matchConstraint(Term t1, Term t2) {
-    if(!newVersion) {
-      return `Match(t1,t2);
-    }
 
-    %match(t1,t2) {
-      // ElimAt (more efficient than removing AT before matching)
-      At(_,p1), p2 -> { return `matchConstraint(p1,p2); }
-      p1, At(_,p2) -> { return `matchConstraint(p1,p2); }
-
-      // Delete
-      Appl(name,TermList()),Appl(name,TermList()) -> { return `TrueMatch(); }
-      // Decompose
-      Appl(name,a1),Appl(name,a2) -> { return `propagateMatchConstraint(Appl(name,decomposeListConstraint(a1,a2,false))); }
-      // SymbolClash
-      Appl(name1,_),Appl(name2,_) && name1!=name2 -> { return `Empty(); }
-      // Match
-      Var[],(Var|Appl)[] -> { return `TrueMatch(); }
-    }
-    return `Match(t1,t2);
-  }
-
-  private static Term propagateMatchConstraint(Term t) {
-    try {
-      Strategy S = `ChoiceId(PropagateEmpty(),PropagateTrueMatch());
-      return `InnermostId(S).visitLight(t);
-    } catch(VisitFailure e) {
-    }
-    return t;
-  }
-
-  /*
-   * return a list of matching constraints
-   * TermList(Empty(),...,Empty()) when one of the constaint is Empty()
-   */
-  private static TermList decomposeListConstraint(TermList tl1, TermList tl2, boolean propagateEmpty) {
-    %match(tl1,tl2) {
-      TermList(), TermList() -> { return `TermList(); }
-      TermList(head1,tail1*), TermList(head2,tail2*) -> { 
-        if(propagateEmpty) {
-          //return `TermList(Empty()); // optim: can be removed
-          TermList tail = decomposeListConstraint(`tail1,`tail2,true);
-          return `TermList(Empty(),tail*);
-        }
-
-        Term res = matchConstraint(`head1,`head2); 
-        if(res.isEmpty()) {
-          //return `TermList(Empty()); // optim: can be removed
-          TermList tail = decomposeListConstraint(`tail1,`tail2,true);
-          return `TermList(Empty(),tail*);
-        }
-
-        TermList tail = decomposeListConstraint(`tail1,`tail2,propagateEmpty);
-        return `TermList(res,tail*);
-      }
-    }
-    assert false : "should not be there";
-    return null;
-  }
 
   /*
    * Transform an ordered TRS with non-linear lhs rules into an ordered TRS with left-LINEAR rules
@@ -1274,8 +1206,4 @@ public class RewriteSystem {
     return ruleList;
   }
 
-
-
 }
-
-
