@@ -124,7 +124,7 @@ public class Compiler {
 
     RuleList ruleList = Tools.fromListOfRule(mutableList);
 
-    if(!Tools.isLhsLinear(ruleList) || Tools.containsEqAnd(ruleList)) {
+    if(!Property.isLhsLinear(ruleList) || Tools.containsEqAnd(ruleList)) {
       ruleList = generateEquality(ruleList);
     }
 

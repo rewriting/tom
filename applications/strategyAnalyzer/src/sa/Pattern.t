@@ -5,6 +5,10 @@ import tom.library.sl.*;
 import java.util.HashSet;
 import java.util.Set;
 
+/*
+ * file for testing purpose
+ * contains a main() function and some examples
+ */
 public class Pattern {
   %include { rule/Rule.tom }
   %include { sl.tom }
@@ -405,7 +409,7 @@ public class Pattern {
     %match(ruleList) {
       ConcRule(C1*,rule,C2*) -> {
         //RewriteSystem.canBeRemoved1(`rule, `ConcRule(C1*,C2*), eSig);
-        RewriteSystem.canBeRemoved2(`rule, `ConcRule(C1*,C2*), eSig);
+        RewriteSystem.canBeRemoved3(`rule, `ConcRule(C1*,C2*), eSig);
       }
     }
 

@@ -400,33 +400,7 @@ public class Tools {
     }
   }
 
-  public static boolean isLinear(Term t) {
-    HashMultiset<String> bag = collectVariableMultiplicity(t);
-    for(String name:bag.elementSet()) {
-      if(bag.count(name) > 1) {
-        return false;
-      }
-    }
-    return true;
-  }
 
-  public static boolean isLhsLinear(RuleList rules) {
-    boolean res = true;
-    for(Rule r: rules.getCollectionConcRule()) {
-      res &= isLinear(r.getlhs());
-    }
-    return res;
-  }
-  
-  public static boolean isLhsLinear(Trs trs) {
-    boolean res = true;
-    %match(trs) {
-      (Trs|Otrs)(list) -> {
-        res = isLhsLinear(`list);
-      }
-    }
-    return res;
-  }
   
   public static boolean containsNamedVar(tom.library.sl.Visitable t) {
     HashMultiset<String> bag = collectVariableMultiplicity(t);
@@ -497,30 +471,13 @@ public class Tools {
     }
   }
 
-  public static boolean containsSub(tom.library.sl.Visitable t) {
-    try {
-      `TopDown(ContainsSub()).visitLight(t);
-      return false;
-    } catch(VisitFailure e) {
-      return true;
-    }
-  }
-
-  %strategy ContainsSub() extends Identity() {
-    visit Term {
-      t@Sub(_,_) -> {
-        `Fail().visitLight(`t);
-      }
-
-    }
-  }
 
   /**
    * Returns a Map which associates to each variable name an integer
    * representing the number of occurences of the variable in the
    * (Visitable) Term
    */
-  private static HashMultiset<String> collectVariableMultiplicity(tom.library.sl.Visitable subject) {
+  public static HashMultiset<String> collectVariableMultiplicity(tom.library.sl.Visitable subject) {
     // collect variables
     HashMultiset<String> bag = HashMultiset.create();
     try {
