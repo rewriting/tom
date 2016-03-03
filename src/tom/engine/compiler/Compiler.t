@@ -36,12 +36,13 @@ import tom.engine.adt.code.types.*;
 import tom.engine.adt.code.types.bqterm.BQVariable;
 import tom.engine.adt.tomtype.types.*;
 import tom.engine.adt.tomterm.types.tomterm.*;
+import tom.engine.adt.tomconstraint.types.*;
+import tom.engine.adt.tomsignature.types.*;
 import tom.library.sl.*;
+import tom.engine.TomBase;
+import tom.engine.tools.ASTFactory;
 import tom.engine.tools.SymbolTable;
 import tom.engine.exception.TomRuntimeException;
-import tom.engine.adt.tomsignature.types.*;
-import tom.engine.TomBase;
-import tom.engine.adt.tomconstraint.types.*;
 import java.util.*;
 
 import tom.engine.tools.ASTFactory;
@@ -417,34 +418,26 @@ public class Compiler extends TomGenericPlugin {
 
   public BQTerm getFreshVariable(TomType type) {
     int n = getCompilerEnvironment().genFreshVarCounter();
-    return getVariableName("_"+n,type);
+    TomName newName = buildVariableName("_"+n);
+    return `BQVariable(concOption(),newName,type);
   }
 
   public BQTerm getFreshVariable(String name, TomType type) {
     int n = getCompilerEnvironment().genFreshVarCounter();
-    return getVariableName("_"+name+"_"+n,type);
-  }
-
-  private BQTerm getVariableName(String name, TomType type) {
-    TomNumberList path = getCompilerEnvironment().getRootpath();
-    TomName freshVarName = `PositionName(concTomNumber(path*,NameNumber(Name(name))));
-    return `BQVariable(concOption(),freshVarName,type);
+    TomName newName = buildVariableName("_"+name+"_"+n);
+    return `BQVariable(concOption(),newName,type);
   }
 
   public BQTerm getFreshVariableStar(TomType type) {
     int n = getCompilerEnvironment().genFreshVarCounter();
-    return getVariableStarName("_"+n,type);
+    TomName newName = buildVariableName("_"+n);
+    return `BQVariableStar(concOption(),newName,type);
   }
 
   public BQTerm getFreshVariableStar(String name, TomType type) {
     int n = getCompilerEnvironment().genFreshVarCounter();
-    return getVariableStarName("_"+name+"_"+n,type);
-  }
-
-  private BQTerm getVariableStarName(String name, TomType type) {
-    TomNumberList path = getCompilerEnvironment().getRootpath();
-    TomName freshVarName = `PositionName(concTomNumber(path*,NameNumber(Name(name))));
-    return `BQVariableStar(concOption(),freshVarName,type);
+    TomName newName = buildVariableName("_"+name+"_"+n);
+    return `BQVariableStar(concOption(),newName,type);
   }
 
   public BQTerm getBeginVariableStar(TomType type) {
@@ -455,14 +448,22 @@ public class Compiler extends TomGenericPlugin {
     return getFreshVariableStar(freshEndPrefix,type);
   }
 
+  private TomName buildVariableName(String name) {
+    TomNumberList path = getCompilerEnvironment().getRootpath();
+    TomName freshVarName = `PositionName(concTomNumber(path*,NameNumber(Name(name))));
+    return freshVarName;
+  }
+
   /*
    * add a prefix (tom_) to back-quoted variables which comes from the lhs
    */
+  private static int findRenameVariableCounter = 0;
   %strategy findRenameVariable(context:Collection) extends Identity() {
     visit BQTerm {
       var@(BQVariable|BQVariableStar)[AstName=astName@Name(name)] -> {
-        if(context.contains(`astName)) {          
-          return `var.setAstName(`Name(ASTFactory.makeTomVariableName(name)));
+        if(context.contains(`astName)) {
+          String prefix = "tom";
+          return `var.setAstName(`Name(ASTFactory.makeTomVariableName(prefix,name)));
         }
       }
     }

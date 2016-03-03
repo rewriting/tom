@@ -408,8 +408,18 @@ public class ASTFactory {
     return name;
   }
 
-  public static String makeTomVariableName(String name) {
-    return "tom_" + name;
+  public final static String TOM_VARIABLE_SEPARATOR = "___";
+  public static String makeTomVariableName(String prefix,String name) {
+    return prefix + TOM_VARIABLE_SEPARATOR + name;
+  }
+
+  public static String extractRealNameFromTomVariableName(String fullName) {
+    int index = fullName.lastIndexOf(TOM_VARIABLE_SEPARATOR);
+    if(index < 0) {
+      return fullName;
+    }
+
+    return fullName.substring(index + TOM_VARIABLE_SEPARATOR.length());
   }
 
   public static List<TomTerm> metaEncodeExplicitTermList(SymbolTable symbolTable, List<TomTerm> children) {

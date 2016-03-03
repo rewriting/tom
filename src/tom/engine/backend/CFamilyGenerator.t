@@ -216,7 +216,7 @@ public abstract class CFamilyGenerator extends GenericGenerator {
   }
 
   protected void buildUnamedBlock(int deep, InstructionList instList, String moduleName) throws IOException {
-    output.writeln(deep, "{");
+    output.writeln(deep, "{ /* unamed block */");
     generateInstructionList(deep+1,instList, moduleName);
     output.writeln(deep, "}");
   }

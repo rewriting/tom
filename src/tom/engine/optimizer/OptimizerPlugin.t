@@ -35,8 +35,6 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import tom.engine.TomBase;
-
 import tom.engine.adt.tomsignature.*;
 import tom.engine.adt.tomconstraint.types.*;
 import tom.engine.adt.tomdeclaration.types.*;
@@ -51,13 +49,15 @@ import tom.engine.adt.tomslot.types.*;
 import tom.engine.adt.tomtype.types.*;
 import tom.engine.adt.code.types.*;
 
-import tom.engine.exception.TomRuntimeException;
+import tom.engine.TomBase;
 import tom.engine.TomMessage;
+import tom.engine.tools.ASTFactory;
 import tom.engine.tools.TomGenericPlugin;
 import tom.engine.tools.PILFactory;
 import tom.engine.tools.Tools;
 import tom.platform.OptionParser;
 import tom.platform.adt.platformoption.types.PlatformOptionList;
+import tom.engine.exception.TomRuntimeException;
 
 import tom.library.sl.*;
 
@@ -110,7 +110,7 @@ public class OptimizerPlugin extends TomGenericPlugin {
   }
 
   public void run(Map informationTracker) {
-    //System.out.println("(debug) I'm in the Tom optimizer : TSM"+getStreamManager().toString());
+    //System.out.println("(debug) I'm in the Tom optimizer : TSM" + getStreamManager().toString());
     if(getOptionBooleanValue("optimize") || getOptionBooleanValue("optimize2")) {
       /* Initialize strategies */
       long startChrono = System.currentTimeMillis();
@@ -128,12 +128,12 @@ public class OptimizerPlugin extends TomGenericPlugin {
                 )
               );
 
-          System.out.println("opt2 input term = " + renamedTerm);
+          //System.out.println("opt2 input term = " + renamedTerm);
           renamedTerm = optStrategy2.visitLight(renamedTerm);
           renamedTerm = `BuiltinBottomUp(Inline(TrueConstraint(),this)).visit(renamedTerm);
           renamedTerm = `BottomUp(CastElim()).visitLight(renamedTerm);
           renamedTerm = optStrategy2.visitLight(renamedTerm);
-          System.out.println("opt2 renamedTerm = " + renamedTerm);
+          //System.out.println("opt2 renamedTerm = " + renamedTerm);
 
         } else if(getOptionBooleanValue("optimize")) {
           Strategy optStrategy = `Sequence(
@@ -170,14 +170,6 @@ public class OptimizerPlugin extends TomGenericPlugin {
     }
   }
 
-  private final static String PREFIX = "tom_";
-  private static String extractRealName(String name) {
-    if(name.startsWith(PREFIX)) {
-      return name.substring(PREFIX.length());
-    }
-    return name;
-  }
-
   %strategy Inline(context:Constraint,optimizer:OptimizerPlugin) extends Identity() {
     visit BQTerm {
       /* optimize the insertion of a slice into a list */
@@ -203,7 +195,7 @@ public class OptimizerPlugin extends TomGenericPlugin {
       Let(var@(BQVariable|BQVariableStar)[AstName=name],exp,body) -> {
         String varName = ""; // real name of the variable (i.e. without the tom_ prefix)
         %match(name) {
-          Name(tomName) -> { varName = `extractRealName(tomName); }
+          Name(tomName) -> { varName = ASTFactory.extractRealNameFromTomVariableName(`tomName); }
         }
 
         //System.out.println("varName = " + varName);
@@ -280,7 +272,7 @@ public class OptimizerPlugin extends TomGenericPlugin {
          */
         String varName = "";
         %match(name) {
-          Name(tomName) -> { varName = `extractRealName(tomName); }
+          Name(tomName) -> { varName = ASTFactory.extractRealNameFromTomVariableName(`tomName); }
         }
 
         InfoVariable info = new InfoVariable();
@@ -673,6 +665,14 @@ public class OptimizerPlugin extends TomGenericPlugin {
         TomMessage.info(logger,optimizer.getStreamManager().getInputFileName(),0,TomMessage.tomOptimizationType,"iffalse-elim");
         return `i;
       }
+
+
+      //UnamedBlock(concInstruction(i@(If|DoWhile|WhileDo)[])) -> {
+      //  return `i;
+      //}
+      //DoWhile(cond,UnamedBlock(list)) -> {
+      //  return `DoWhile(cond,AbstractBlock(list));
+      //}
 
     }
   }

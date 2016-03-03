@@ -23,6 +23,7 @@
       <classpath refid="tom.classpath"/>
     </antlr3>
     <tomcompile/>
+
     <javacompile/>
     <!-- copy resources -->
     <copy todir="${examples.build}/${example}">

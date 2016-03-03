@@ -164,29 +164,24 @@ public class Simulator {
 public Etat insertsenderdate(Sender s,Etat e){
   %match (Sender s,Etat e) { 
     C1@sender(eta,tatt,nbmess,cback,write),etat(t,x,concList(concSender(),concSender())) -> 
-      {
-       return `etat(t,x,concList( concSender(C1),concSender() ));}
+    {
+      return `etat(t,x,concList( concSender(C1),concSender() ));}
 
     C1@sender(eta1,tatt1,nbmess1,cback1,write1),
-    etat(t,x,concList(concSender(C2@sender(eta2,tatt2,nbmess2,cback2,write2)),concSender(C3*))) -> {
-      if((`tatt1 < `tatt2) && (`nbmess1>0) && (`nbmess2>0)) 
-        return `etat(t,x,concList(concSender(C1),concSender(C2,C3*)));}
+      etat(t,x,concList(concSender(C2@sender(eta2,tatt2,nbmess2,cback2,write2)),concSender(C3*))) -> {
+        if((`tatt1 < `tatt2) && (`nbmess1>0) && (`nbmess2>0)) 
+          return `etat(t,x,concList(concSender(C1),concSender(C2,C3*)));
+        if((`nbmess1==0) && (`nbmess2==0)) 
+          return `etat(t,x,concList(concSender(C1),concSender(C2,C3*)));
+        if((`tatt1 >= `tatt2) && (`nbmess1>0) && (`nbmess2>0))
+          return `etat(t,x,
+              concList(concSender(C2),
+                insertsenderdatelist(C1,C3*)
+                ));
+      }
+  }
+  return `etat(0,0,concList(concSender(),concSender()));
 
-    C1@sender(eta1,tatt1,nbmess1,cback1,write1),
-    etat(t,x,concList(concSender(C2@sender(eta2,tatt,nbmess2,cback2,write2)),concSender(C3*))) -> {
-      if((`nbmess1==0) && (`nbmess2==0)) 
-        return `etat(t,x,concList(concSender(C1),concSender(C2,C3*)));}
-
-    C1@sender(eta1,tatt1,nbmess1,cback1,write1),
-    etat(t,x,concList(concSender(C2@sender(eta2,tatt2,nbmess2,cback2,write2)),concSender(C3*))) ->{ 
-      if((`tatt1 >= `tatt2) && (`nbmess1>0) && (`nbmess2>0))
-            return `etat(t,x,
-                    concList(concSender(C2),
-                    insertsenderdatelist(C1,C3*)
-                    ));}
-        }
-    return `etat(0,0,concList(concSender(),concSender()));
-  
 }
 
   public List con(List x,List y) {
@@ -197,28 +192,20 @@ public Etat insertsenderdate(Sender s,Etat e){
   }
 
 //les methodes  
-  public List insertsenderdatelist(Sender s,List l) {
-    %match(Sender s,List l) {
-       C1@sender(eta,tatt,nbmess,cback,write),concSender() -> {return `concSender(C1);}
-    
-       C1@sender(eta1,tatt1,nbmess1,cback1,write1),concSender(C2@sender(eta2,tatt2,nbmess2,cback2,write2),C3*) ->
-          {if((`tatt1<`tatt2)&&(`nbmess1>0)&&(`nbmess2>0))     return `concSender(C1,C2,C3*); }
-    
+public List insertsenderdatelist(Sender s,List l) {
+  %match(Sender s,List l) {
+    C1@sender(eta,tatt,nbmess,cback,write),concSender() -> {return `concSender(C1);}
 
-       C1@sender(eta1,tatt1,nbmess1,cback1,write1),concSender(C2@sender(eta2,tatt2,nbmess2,cback2,write2),C3*) ->
-          {if((`tatt1>=`tatt2)&&(`nbmess1>0)&&(`nbmess2>0)) return `con(concSender(C2) ,insertsenderdatelist(C1,C3*)   );}
-       
-       C1@sender(eta1,tatt1,nbmess1,cback1,write1),concSender(C2@sender(eta2,tatt2,nbmess2,cback2,write2),C3*) ->{
-           if((`nbmess1>0)&&(`nbmess2==0))  return `concSender(C1,C2,C3*);}
-       
-       C1@sender(eta1,tatt1,nbmess1,cback1,write1),concSender(C2@sender(eta2,tatt2,nbmess2,cback2,write2),C3*) ->
-          {if((`nbmess1==0)&&(`nbmess2>0)) return `con(concSender(C2) ,insertsenderdatelist(C1,C3*));}
-
-       C1@sender(eta1,tatt1,nbmess1,cback1,write1),concSender(C2@sender(eta2,tatt2,nbmess2,cback2,write2),C3*) ->
-          {if((`nbmess1==0)&&(`nbmess2==0)) return   `concSender(C1,C2,C3*);}
+    C1@sender(eta1,tatt1,nbmess1,cback1,write1),concSender(C2@sender(eta2,tatt2,nbmess2,cback2,write2),C3*) -> {
+      if((`tatt1<`tatt2)&&(`nbmess1>0)&&(`nbmess2>0))     return `concSender(C1,C2,C3*); 
+      if((`tatt1>=`tatt2)&&(`nbmess1>0)&&(`nbmess2>0)) return `con(concSender(C2) ,insertsenderdatelist(C1,C3*)   );
+      if((`nbmess1>0)&&(`nbmess2==0))  return `concSender(C1,C2,C3*);
+      if((`nbmess1==0)&&(`nbmess2>0)) return `con(concSender(C2) ,insertsenderdatelist(C1,C3*));
+      if((`nbmess1==0)&&(`nbmess2==0)) return   `concSender(C1,C2,C3*);
+    }
+  }
+  return `concSender();
 }
-   return `concSender();
-   }
 
 //exemple teste
   public Etat simul (Etat e) {
@@ -235,8 +222,8 @@ public Etat insertsenderdate(Sender s,Etat e){
                                                    ) 
                                           )
                         )));
-         }
-       etat(t,x,concList(concSender(C1@sender(eta,tatt,nbmess,cback,write)),concSender(C2*))) -> {
+       //}
+       //etat(t,x,concList(concSender(C1@sender(eta,tatt,nbmess,cback,write)),concSender(C2*))) -> {
          if((`nbmess==0)||(`t==0))
            return `etat(t,x+tatt,
                         concList(concSender(C1),concSender(C2*)));
