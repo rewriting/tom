@@ -145,9 +145,9 @@ public class RewriteSystem {
     }
   }
 
-   /*
-    * Transform a term which contains Sub/Add into a term without Sub
-    */
+  /*
+   * Transform a term which contains Sub/Add into a term without Sub
+   */
   private static LRUCache<Term,Term> cache = new LRUCache<Term,Term>(1000);
   private static Term simplifySub(Term t, Signature eSig) {
     Term res = cache.get(t);
@@ -174,56 +174,12 @@ public class RewriteSystem {
     return res;
   }
 
+
   /*
-   * Transform a term which contains Sub/Add into a list (top-level Add) of (linear) terms without Sub/Add
-   * input may be non linear: X \ X for instance
-   * result may also be non linear: f(X) + g(X)
+   * --------------------------------------------------
+   * Rules for Add/Sub
+   * --------------------------------------------------
    */
-  private static Term reduce(Term t, Signature eSig) {
-    long startChrono; 
-    // DistributeAdd needed if we can start with terms like X \ f(a+b) or X \ (f(X)\f(f(_)))
-    startChrono = System.currentTimeMillis();
-    // pre-treatment: remove AP
-    t = expandAP(t);
-    t = simplifySub(t,eSig);
-    if(Main.options.verbose) {
-      System.out.println("NO SUB = " + Pretty.toString(t));
-    }
-
-    //startChrono = System.currentTimeMillis();
-    //Strategy S2 = `ChoiceId(CleanAdd(),PropagateEmpty(), VarAdd(), FactorizeAdd());
-    //t = `InnermostId(S2).visitLight(t); // can be replaced by DistributeAdd() in S1
-    //timeAddElim += (System.currentTimeMillis()-startChrono);
-    //if(Main.options.verbose) {
-    //  System.out.println("NO ADD = " + Pretty.toString(t));
-    //}
-
-    //startChrono = System.currentTimeMillis();
-    // note that expandAdd normalize variable's name
-    //t = expandAdd(t); // can be replaced by DistributeAdd() in S1
-    //timeExpand += (System.currentTimeMillis()-startChrono);
-    //if(Main.options.verbose) {
-    //  System.out.println("EXPAND = " + Pretty.toString(t));
-    //}
-
-    startChrono = System.currentTimeMillis();
-    t = simplifySubsumtion(t);
-    timeSubsumtion += (System.currentTimeMillis()-startChrono);
-    if(Main.options.verbose) {
-      System.out.println("REMOVE SUBSUMTION = " + Pretty.toString(t));
-    }
-
-    if(Main.options.minimize) {
-      // test new idea
-      // quite slow
-      t = simplifyAbstraction(t,eSig);
-      t = simplifySubsumtion(t);
-    }
-
-    assert Property.onlyTopLevelAdd(t) : "check only top-level Add";
-      return t;
-  }
-
 
   %strategy PropagateEmpty() extends Identity() {
     visit Term {
@@ -285,35 +241,6 @@ public class RewriteSystem {
     }
   }
 
-  %strategy FactorizeAdd() extends Identity() {
-    visit Term {
-      // f(t1,...,ti,...,tn) + f(t1,...,ti',...,tn) -> f(t1,..., ti + ti',...,tn)
-      // all but one ti, ti' should be identical
-      s@Add(ConcAdd(C1*, Appl(f,tl1), C2*, Appl(f, tl2), C3*)) -> {
-        TermList tl = `addUniqueTi(tl1,tl2);
-        if(tl != null) {
-          Term res = `Add(ConcAdd(Appl(f,tl), C1*, C2*, C3*));
-          debug("add merge",`s,res);
-          return res;
-        } else {
-          //System.out.println("add merge failed");
-        }
-      }
-
-    }
-  }
-
-  %strategy VarAdd() extends Identity() {
-    visit Term {
-      // a + x + b -> x
-      s@Add(ConcAdd(_*, x@Var[], _*)) -> {
-        Term res = `x;
-        debug("a + x + b -> x",`s,res);
-        return res;
-      }
-    }
-  }
-
   /*
    * Transforms !p into Z \ p in t
    */
@@ -366,42 +293,21 @@ public class RewriteSystem {
         return res;
       }
     
-      // X - t -> expand AP   ==>    t should be in TFX (only symbols from declared signature)
+      // X - t -> X@((a+b+g(_)+f(_,_)) \ t),  t should be in TFX (only symbols from declared signature)
       s@Sub(X@Var[], t@Appl(f,args_f)) -> {
-        if(false && Property.isPlainTerm(`t)) { // desactivate old version of X \ t
-          RuleCompiler ruleCompiler = new RuleCompiler(`eSig, `eSig); // gSig
-          RuleList rl = ruleCompiler.expandAntiPatterns(`ConcRule(Rule(Anti(t),Var("_"))));
-          //System.out.println("rl = " + Pretty.toString(rl));
-          AddList tl = `ConcAdd();
-          GomType codomain = eSig.getCodomain(`f);
-          %match(rl) {
-            ConcRule(_*,Rule(lhs@Appl(g,args_g),rhs),_*) -> {
-              tl = `ConcAdd(lhs,tl*); // order not preserved
-            }
-          }
-          Term res = `Add(tl);
-          res = eliminateIllTyped(res, codomain, `eSig);
-          debug("expand AP",`s,res);
-          // generate X@Add(tl)
-          res = `At(X,res);
-          return res;
-        } else {
-          // replace X \ t by X@((a+b+g(_)+f(_,_)) \ t)
-          // this version is as efficient as the previous one, but simpler
-          assert !Property.containsSub(`t) : `t;
-          AddList al = `ConcAdd();
-          GomType codomain = eSig.getCodomain(`f); // use codomain to generate well typed terms
-          for(String name: eSig.getConstructors(codomain)) {
-            int arity = eSig.getArity(name);
-            Term expand = Tools.genAbstractTerm(name,arity, Tools.getName("Z"));
-            al = `ConcAdd(expand,al*);
-          }
-          Term res = `Sub(Add(al),t);
-          debug("expand AP2", `s,res);
-          // generate X@Add(tl)
-          res = `At(X,res);
-          return res;
+        assert !Property.containsSub(`t) : `t;
+        AddList al = `ConcAdd();
+        GomType codomain = eSig.getCodomain(`f); // use codomain to generate well typed terms
+        for(String name: eSig.getConstructors(codomain)) {
+          int arity = eSig.getArity(name);
+          Term expand = Tools.genAbstractTerm(name,arity, Tools.getName("Z"));
+          al = `ConcAdd(expand,al*);
         }
+        Term res = `Sub(Add(al),t);
+        debug("expand AP2", `s,res);
+        // generate X@Add(tl)
+        res = `At(X,res);
+        return res;
       }
 
       // empty - f(t1,...,tn) -> empty
@@ -434,7 +340,6 @@ public class RewriteSystem {
       s@Sub(t1@Appl(f,tl1), t2@Appl(f, tl2)) -> {
         assert !Property.containsSub(`t1):`t1;
         assert !Property.containsSub(`t2):`t2;
-        //Term res = `sub(t1,t2);
         Term res = `subopt(t1,t2,eSig);
         debug("sub1",`s,res);
         return res;
@@ -462,51 +367,7 @@ public class RewriteSystem {
   }
 
   // f(a1,...,an) - f(b1,...,bn) -> f(a1-b1,..., an) + ... + f(a1,...,an-bn)
-  private static Term sub(Term t1,Term t2) {
-    %match(t1,t2) {
-      Appl(f,args1), Appl(f,args2) -> {
-        TermList tl1 = `args1;
-        TermList tl2 = `args2;
-        int len = tl1.length();
-        TermList args[] = new TermList[len];
-        for(int i=0 ; i<len ; i++) {
-          args[i] = `TermList();
-        }
-        int cpt = 0;
-        assert tl1.length() == tl2.length();
-        while(!tl1.isEmptyTermList()) {
-          Term h1 = tl1.getHeadTermList();
-          Term h2 = tl2.getHeadTermList();
-
-          for(int i=0 ; i<len ; i++) {
-            TermList tl = args[i]; // cannot use [] in `
-            if(i==cpt) {
-              tl = `TermList(tl*, Sub(h1,h2));
-            } else {
-              tl = `TermList(tl*, h1);
-            }
-            args[i] = tl;
-          }
-
-          tl1 = tl1.getTailTermList();
-          tl2 = tl2.getTailTermList();
-          cpt++;
-        }
-
-        AddList sum = `ConcAdd();
-        for(int i=0 ; i<len ; i++) {
-          TermList tl = args[i]; // cannot use [] in `
-          sum = `ConcAdd(Appl(f,tl),sum*);;
-        }
-
-        return `Add(sum);
-      }
-    }
-    System.out.println("cannot sub " + t1 + " and " + t2);
-    return null;
-  }
-
-  // f(a1,...,an) - f(b1,...,bn) -> f(a1-b1,..., an) + ... + f(a1,...,an-bn)
+  //                             -> f(a1,...,an) if ai\bi == ai
   private static Term subopt(Term t1,Term t2, Signature eSig) {
     %match(t1,t2) {
       Appl(f,args1), Appl(f,args2) -> {
@@ -522,8 +383,10 @@ public class RewriteSystem {
         while(!tl1.isEmptyTermList()) {
           Term h1 = tl1.getHeadTermList();
           Term h2 = tl2.getHeadTermList();
+          /*
+           * this is the optimization: returns f(a1,...,an) if ai\bi == ai
+           */
           Term sub = simplifySub(`Sub(h1,h2),eSig); // do not use reduce because variables are normalized
-
           if(sub.equals(h1)) {
             return t1;
           }
@@ -556,99 +419,6 @@ public class RewriteSystem {
     return null;
   }
 
-  // (a1,...,an) + (b1,...,bn) -> (a1,..., ai+bi,..., an)
-  // for the unique i such that ai != bi
-  private static TermList addUniqueTi(TermList l1,TermList l2) {
-    TermList tl1=l1;
-    TermList tl2=l2;
-    if(l1.equals(l2)) {
-      return l1;
-    }
-    TermList tl = `TermList();
-    int cpt = 0;
-    while(!tl1.isEmptyTermList() && cpt <= 1) {
-      Term h1 = tl1.getHeadTermList();
-      Term h2 = tl2.getHeadTermList();
-      // we have to compare modulo renaming and AT
-      if(h1.equals(h2)) {
-        tl = `TermList(tl*, h1);
-      } else if(matchConstraint(h1,h2).isTrueMatch() && matchConstraint(h2,h1).isTrueMatch()) {
-        // match(h1,h2) && match(h2,h1) is more efficient than removeVar(h1) == removeVar(h2)
-        // PEM: check that we can keep h1 only
-        tl = `TermList(tl*, h1);
-      } else {
-        tl = `TermList(tl*, Add(ConcAdd(h1,h2)));
-        cpt++;
-      }
-
-      tl1 = tl1.getTailTermList();
-      tl2 = tl2.getTailTermList();
-    }
-    if(cpt <= 1) {
-      return tl;
-    } else {
-      //System.out.println("cannot add " + l1 + " and " + l2);
-      return null;
-    }
-  }
-
-
-  /*
-   * given a term (which contains Add and Sub) and a type
-   * returns a term where badly typed terms are replaced by Empty()
-   */
-  private static Term eliminateIllTyped(Term t, GomType type, Signature eSig) {
-    //System.out.println(Pretty.toString(t) + ":" + type.getName());
-    %match(t) {
-      v@Var[] -> {
-        return `v;
-      }
-
-      Appl(f,args) -> {
-        if(eSig.getCodomain(`f).equals(type)) {
-          GomTypeList domain = eSig.getDomain(`f);
-          TermList tail = `args;
-          TermList new_args = `TermList();
-          while(!tail.isEmptyTermList()) {
-            Term head = tail.getHeadTermList();
-            GomType arg_type = domain.getHeadConcGomType();
-
-            Term new_arg = eliminateIllTyped(head,arg_type,eSig);
-            if(new_arg.isEmpty()) {
-              // propagate Empty for any term which contains Empty
-              return `Empty();
-            }
-
-            new_args = `TermList(new_args*, new_arg);
-            tail = tail.getTailTermList();
-            domain = domain.getTailConcGomType();
-          }
-          return `Appl(f,new_args);
-        } else {
-          return `Empty();
-        }
-      }
-
-      Sub(t1,t2) -> {
-        return `Sub(eliminateIllTyped(t1,type,eSig),eliminateIllTyped(t2,type,eSig));
-      }
-
-      Add(tl) -> {
-        AddList tail = `tl;
-        AddList res = `ConcAdd();
-        while(!tail.isEmptyConcAdd()) {
-          Term head = tail.getHeadConcAdd();
-          res = `ConcAdd(eliminateIllTyped(head,type,eSig),res*);
-          tail = tail.getTailConcAdd();
-        }
-        return `Add(res);
-      }
-
-    }
-
-    System.out.println("eliminateIllTyped Should not be there: " + `t);
-    return t;
-  }
 
   %strategy DistributeAdd() extends Identity() {
     visit Term {
@@ -665,18 +435,6 @@ public class RewriteSystem {
         Term res = `Add(ConcAdd(At(Z,head),At(Z,Add(tail))));
         return res;
       }
-
-      // Z@(t1+t2) -> Z@t1 + Z@t2
-      //s@At(Z,Add(tl)) -> {
-      //  AddList tail = `tl;
-      //  AddList res = `ConcAdd();
-      //  while(!tail.isEmptyConcAdd()) {
-      //    Term head = tail.getHeadConcAdd();
-      //    res = `ConcAdd(At(Z,head),res*);
-      //    tail = tail.getTailConcAdd();
-      //  }
-      //  return `Add(res);
-      // }
 
       // f(t1,..., ti + ti',...,tn)  ->  f(t1,...,tn) + f(t1',...,tn')
       s@Appl(f, TermList(C1*, Add(ConcAdd(u,v,A2*)), C2*)) -> {
