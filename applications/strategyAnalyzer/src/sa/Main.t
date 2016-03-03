@@ -9,9 +9,6 @@ import java.util.*;
 import java.io.*;
 import org.kohsuke.args4j.*;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Type;
-
 public class Main {
   %include { rule/Rule.tom }
   protected static Options options = new Options();
@@ -75,7 +72,7 @@ public class Main {
         
       //System.out.println("compileStrategy: generatedRules = " + Pretty.toString(generatedRules));
 
-      assert Tools.isLhsLinear(generatedRules);
+      assert Property.isLhsLinear(generatedRules);
       // transform the LINEAR TRS: compile Aps and remove ATs
       RuleCompiler ruleCompiler = new RuleCompiler(extractedSignature,generatedSignature);
       if(options.withAP == false) {
@@ -103,7 +100,7 @@ public class Main {
       /*
        * Post treatment
        */
-      if(Main.options.pattern && Main.options.ordered) { // && Main.options.withType) {
+      if(Main.options.pattern && Main.options.ordered) {
         System.out.println("after compilation");
         System.out.println("generatedRules = " + Pretty.toString(generatedRules));
         // run the Pattern transformation here

@@ -12,22 +12,22 @@ public class Options {
   @Option(name="-h",usage="print usage")
     public boolean h;
   
-  @Option(name="-verbose",usage="verbose")
+  @Option(name="-verbose",usage="print extra information during compilation")
     public boolean verbose = false;
 
-  @Option(name="-debug",usage="debug")
+  @Option(name="-debug",usage="trace each rule")
     public boolean debug = false;
 
-  @Option(name="-withAP",usage="generate rules with anti-patterns")
+  @Option(name="-withAP",usage="generate rules with anti-pattern notation")
     public boolean withAP = false;
 
   @Option(name="-withAT",usage="generate rules with at-annotations")
     public boolean withAT = false;
 
-  @Option(name="-aprove",usage="generate rules for Aprove")
+  @Option(name="-aprove",usage="generate rules in Aprove syntax")
     public boolean aprove = false;
 
-  @Option(name="-timbuk",usage="generate rules for Timbuk")
+  @Option(name="-timbuk",usage="generate rules in Timbuk syntax")
     public boolean timbuk = false;
 
   @Option(name="-metalevel",usage="use a metalevel encoding of strategies")
@@ -54,10 +54,10 @@ public class Options {
   @Option(name="-minimize", usage="compute the minimum global")
     public boolean minimize = false;
 
-  @Option(name="-ordered",usage="compilation produces a TRS which should be evaluated in the specified order")
+  @Option(name="-ordered",usage="compilation produces an OTRS which should be evaluated in the specified order")
     public boolean ordered = false;
   
-  @Option(name="-pattern",usage="use experimental ordered->trs direct translation")
+  @Option(name="-pattern",usage="use OTRS to TRS translation (should be combined with -ordered)")
     public boolean pattern = false;
 
   @Option(name="-d", usage="define directory in which to place output file")

@@ -199,5 +199,3 @@ MLCOMMENT :
   '/*' ~'*'.* '*/'
   {$channel=HIDDEN;}
   ;
-
-
