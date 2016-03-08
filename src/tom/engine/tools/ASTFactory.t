@@ -414,7 +414,7 @@ public class ASTFactory {
   }
 
   public static String extractRealNameFromTomVariableName(String fullName) {
-    int index = fullName.lastIndexOf(TOM_VARIABLE_SEPARATOR);
+    int index = fullName.indexOf(TOM_VARIABLE_SEPARATOR);
     if(index < 0) {
       return fullName;
     }

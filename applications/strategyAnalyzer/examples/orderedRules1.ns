@@ -12,7 +12,7 @@ r1() =  [
   add(x, Z()) -> x,
   add(x, S(y)) -> S(add(x,y)),
   add(Z(),x) -> x,
-  add(S(y),x) -> S(add(x,y)),
+  add(S(x),y) -> S(add(x,y)),
   add(x, y) -> Error()
 ]
 

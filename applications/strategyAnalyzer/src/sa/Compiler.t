@@ -265,7 +265,7 @@ public class Compiler {
    * @param strategyName the strategy name to generate (if not null)
    * @return the symbol to be used for the compiled strategy
    */
-  private String compileRuleList(RuleList ruleList, List<Rule> generatedRules, String strategyName) {
+  private String compileRuleList(Trs trs, List<Rule> generatedRules, String strategyName) {
     Signature gSig = getGeneratedSignature();
     Signature eSig = getExtractedSignature();
     boolean ordered = Main.options.ordered;
@@ -274,20 +274,18 @@ public class Compiler {
      * Pre-treatment: remove anti-patterns (expandGeneralAntiPatterns)
      * move into compileStrategy ?
      */
-    RuleList rList = ruleList;
+    RuleList ruleList = trs.getlist();
     if(Main.options.withAP == false) {
       RuleCompiler ruleCompiler = new RuleCompiler(eSig,gSig);
-      rList = ruleCompiler.expandGeneralAntiPatterns(rList,null);
+      ruleList = ruleCompiler.expandGeneralAntiPatterns(ruleList,null);
       
-      for(Rule rule: rList.getCollectionConcRule()) {
+      for(Rule rule: ruleList.getCollectionConcRule()) {
         System.out.println("EXPANDED AP RULE: " + Pretty.toString(rule) );
       }
     }
     
-    ruleList = rList;
-
     /*
-     * lhs -> rhs becomes
+     * lhs -> rhs (in an OTRS strategy) becomes
      * in the linear case:
      *   rule(lhs) -> rhs
      *   rule(X@!lhs) -> nextRule(X), could be Bottom(X) when it is the last rule
@@ -305,6 +303,11 @@ public class Compiler {
      *   rule(X@linear-lhs) -> rule'(X, true ^ constraint on non linear variables)
      *   rule'(linear-lhs, true) -> rhs
      *   rule(X) -> Bottom(X) after the last rule
+     *
+     * lhs -> rhs (in a TRS strategy) becomes
+     * in the linear case (not ordered): TODO
+     *   rule(lhs) -> rhs
+     *   rule(X@(Z \ lhs_1 + ... + lhs_n)) -> Bottom(X) after the last rule
      */
     
     Term X = Var(Tools.getName("X"));
@@ -339,14 +342,16 @@ public class Compiler {
         ConcRule(currentRule@Rule(lhs,rhs),A*) -> {
           // if it is a rule with anti-patterns we need a fresh symbol even if it is an ordered compilation
           String nextRuleSymbol = rule;
-          if(Tools.containsAP(`currentRule)) {
+          if(Property.containsAP(`currentRule)) {
             nextRuleSymbol = null;
           }
-          String nextRule = compileRuleList(`A*,generatedRules,nextRuleSymbol);
+
+          Trs toCompile = trs.isTrs()?`Trs(A):`Otrs(A);
+          String nextRule = compileRuleList(toCompile,generatedRules,nextRuleSymbol);
 
           if(Main.options.withAP == false) {
             RuleCompiler ruleCompiler = new RuleCompiler(eSig,gSig);
-            rList = ruleCompiler.expandGeneralAntiPatterns(`ConcRule(currentRule),nextRule);
+            RuleList rList = ruleCompiler.expandGeneralAntiPatterns(`ConcRule(currentRule),nextRule);
             
             for(Rule r: rList.getCollectionConcRule()) {
               System.out.println("CompileRuleList -> EXPANDED AP RULE: " + Pretty.toString(r) );
@@ -419,7 +424,8 @@ public class Compiler {
       %match(ruleList) {
         ConcRule(Rule(lhs,rhs),A*) -> {
 
-          String nextRule = compileRuleList(`A*,generatedRules,rule);
+          Trs toCompile = trs.isTrs()?`Trs(A):`Otrs(A);
+          String nextRule = compileRuleList(toCompile,generatedRules,rule);
 
           TermList result = Tools.linearize(`lhs, this.generatedSignature);
           Term mlhs = Tools.metaEncodeConsNil(`lhs,generatedSignature);
@@ -531,12 +537,7 @@ public class Compiler {
       Term Z3 = Var(Tools.getName("Z3"));
 
       %match(strat) {
-        // TODO: handle Set without an order
-        StratTrs(Trs(_)) -> {
-          throw new RuntimeException("Not Yet Implemented");
-        }
-
-        StratTrs(Otrs(rulelist)) -> {
+        StratTrs(trs@(Trs|Otrs)(rulelist)) -> {
 
           //if(Main.options.pattern) {
           //  System.out.println("pattern: " + `rulelist);
@@ -545,7 +546,7 @@ public class Compiler {
           //  RuleList res = Trs.trsRule(lin,eSig);
           //}
 
-          strategySymbol = this.compileRuleList(`rulelist,generatedRules,null);
+          strategySymbol = this.compileRuleList(`trs,generatedRules,null);
         }
 
         /*

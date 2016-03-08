@@ -136,7 +136,7 @@ public class RewriteSystem {
       System.out.println("subMinimize:   " + timeMinimize + " ms");
     }
 
-    assert !Tools.containsAP(res) : "check contain no AP";
+    assert !Property.containsAP(res) : "check contain no AP";
     assert Property.isLhsLinear(res) : "check lhs-linear";
     if(trs.isOtrs()) {
       return `Otrs(res);

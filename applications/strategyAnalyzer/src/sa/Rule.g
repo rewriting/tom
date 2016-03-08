@@ -103,8 +103,8 @@ strategy :
      -> {s3!=null}? ^(StratChoice $s1 $s3)
      -> $s1
 
-  | LBRACE (rule (COMMA rule)*)? RBRACE -> ^(StratTrs ^(Trs ^(ConcRule (rule)*)))
-  | LBRACKET (rule (COMMA rule)*)? RBRACKET -> ^(StratTrs ^(Otrs ^(ConcRule (rule)*)))
+  | LBRACE (rule (COMMA? rule)*) RBRACE -> ^(StratTrs ^(Trs ^(ConcRule (rule)*)))
+  | LBRACKET (rule (COMMA? rule)*) RBRACKET -> ^(StratTrs ^(Otrs ^(ConcRule (rule)*)))
 
   ;
 
