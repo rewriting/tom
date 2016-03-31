@@ -1046,6 +1046,13 @@ public class Compiler {
             generatedSignature.addFunctionSymbol(append,`ConcGomType(Signature.TYPE_METALIST,Signature.TYPE_METATERM),Signature.TYPE_METALIST);
             generatedSignature.addFunctionSymbol(reverse,`ConcGomType(Signature.TYPE_METALIST),Signature.TYPE_METALIST);
             generatedSignature.addFunctionSymbol(rconcat,`ConcGomType(Signature.TYPE_METALIST,Signature.TYPE_METALIST),Signature.TYPE_METALIST);
+
+            /*
+             * propagate Bottom  (otherwise not reduced and leads to bug in Sequence)
+             * one(Bot(X)) -> Bot(X)
+             */
+            generatedRules.add(Rule(_appl(one,Bottom(X)), Bottom(X)));
+
             /*
              * one(Appl(Z0,Z1)) -> one_1(Appl(Z0,one_2(Z1)))
              */

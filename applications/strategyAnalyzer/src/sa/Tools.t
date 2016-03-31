@@ -118,7 +118,7 @@ public class Tools {
   /**
    * Given a symbol name of the form 
    * - symbolName[AUX][_<number>]-operatorName[_<number>][_typeName]
-   * @returns operatorName
+   * @returns operatorName or null if there is no "-operatorName"
    */
   public static String getOperatorName(String symbol) {
     String aux = null;
