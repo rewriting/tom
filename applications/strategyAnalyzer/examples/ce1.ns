@@ -1,0 +1,21 @@
+
+
+abstract syntax
+T = a()
+  | b()
+  | f(T,T)
+
+U = u()
+
+strategies
+
+ra() = [ a() -> a() ]
+
+rb() = [ b() -> b() ]
+
+// mainStrat() = fail ; mu x.(identity ; x)
+
+// mainStrat() = identity <+ mu x.(identity ; x)
+
+mainStrat() =  ra() ;  mu x.(rb() ; x)
+
