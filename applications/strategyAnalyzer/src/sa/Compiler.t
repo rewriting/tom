@@ -867,18 +867,18 @@ public class Compiler {
           } else {
             // META-LEVEL
             gSig.addFunctionSymbol(all,`ConcGomType(Signature.TYPE_METATERM),Signature.TYPE_METATERM);
-            String all_1 = all+"_1";
             String all_2 = all+"_2";
             String all_3 = all+"_3";
             String append = "append";
             String reverse = "reverse";
             String rconcat = "rconcat";
-            generatedSignature.addFunctionSymbol(all_1,`ConcGomType(Signature.TYPE_METATERM),Signature.TYPE_METATERM);
+            String propag = "propag";
             generatedSignature.addFunctionSymbol(all_2,`ConcGomType(Signature.TYPE_METALIST),Signature.TYPE_METALIST);
             generatedSignature.addFunctionSymbol(all_3,`ConcGomType(Signature.TYPE_METATERM,Signature.TYPE_METALIST,Signature.TYPE_METALIST,Signature.TYPE_METALIST),Signature.TYPE_METALIST);
             generatedSignature.addFunctionSymbol(append,`ConcGomType(Signature.TYPE_METALIST,Signature.TYPE_METATERM),Signature.TYPE_METALIST);
             generatedSignature.addFunctionSymbol(reverse,`ConcGomType(Signature.TYPE_METALIST),Signature.TYPE_METALIST);
             generatedSignature.addFunctionSymbol(rconcat,`ConcGomType(Signature.TYPE_METALIST,Signature.TYPE_METALIST),Signature.TYPE_METALIST);
+            generatedSignature.addFunctionSymbol(propag,`ConcGomType(Signature.TYPE_METATERM),Signature.TYPE_METATERM);
 
             /*
              * propagate Bottom  (otherwise not reduced and leads to bug in Sequence)
@@ -887,10 +887,7 @@ public class Compiler {
             generatedRules.add(Rule(_appl(all,Bottom(X)), Bottom(X)));
 
             /*
-             * all(Appl(Z0,Z1)) -> all_1(Appl(Z0,all_2(Z1)))
-             * all_1(Appl(Z0, BottomList(Z))) -> Bottom(Appl(Z0,Z))
-             * all_1(Appl(Z0, Cons(Z1,Z2))) -> Appl(Z0,Cons(Z1,Z2))
-             * all_1(Appl(Z0, Nil)) -> Appl(Z0,Nil)
+             * all(Appl(Z0,Z1)) -> propag(Appl(Z0,all_2(Z1)))
              * all_2(Nil) -> Nil
              * all_2(Cons(Z1,Z2)) -> all_3(phi_s(Z1),Z2,Cons(Z1,Nil),Nil)
              * all_3(Bottom(X),todo,rargs,rs_args) -> BottomList(rconcat(rargs,todo))
@@ -898,10 +895,7 @@ public class Compiler {
              * all_3(Appl(X,Y), Cons(XX,YY), rargs, rs_args) -> 
              * all_3(phi_s(XX), YY, Cons(XX,rargs), Cons(Appl(X,Y),rs_args))
              */
-            generatedRules.add(Rule(_appl(all,Appl(Z0,Z1)), _appl(all_1,Appl(Z0,_appl(all_2,Z1)))));
-            generatedRules.add(Rule(_appl(all_1,Appl(Z0,BottomList(Z))), Bottom(Appl(Z0,Z))));
-            generatedRules.add(Rule(_appl(all_1,Appl(Z0,Cons(Z1,Z2))), Appl(Z0,Cons(Z1,Z2))));
-            generatedRules.add(Rule(_appl(all_1,Nil()), Appl(Z0,Nil())));
+            generatedRules.add(Rule(_appl(all,Appl(Z0,Z1)), _appl(propag,Appl(Z0,_appl(all_2,Z1)))));
             generatedRules.add(Rule(_appl(all_2,Nil()), Nil()));
             generatedRules.add(Rule(_appl(all_2,Cons(Z1,Z2)), _appl(all_3,_appl(phi_s,Z1),Z2,Cons(Z1,Nil()),Nil())));
 
@@ -919,6 +913,9 @@ public class Compiler {
                * reverse(Cons(X,Y)) -> append(reverse(Y),X)
                * rconcat(Nil,Z) -> Z
                * rconcat(Cons(X,Y),Z) -> rconcat(Y,Cons(X,Z))
+               * propag(Appl(Z0,BottomList(Z))) -> Bottom(Appl(Z0,Z))
+               * propag(Appl(Z0,Cons(Z1,Z2))) -> Appl(Z0,Cons(Z1,Z2))
+               * propag(Appl(Z0,Nil)) -> Appl(Z0,Nil)
                */
               generatedRules.add(Rule(_appl(append,Nil(),Z), Cons(Z,Nil())));
               generatedRules.add(Rule(_appl(append,Cons(X,Y),Z), Cons(X,_appl(append,Y,Z))));
@@ -926,6 +923,9 @@ public class Compiler {
               generatedRules.add(Rule(_appl(reverse,Cons(X,Y)), _appl(append,_appl(reverse,Y),X)));
               generatedRules.add(Rule(_appl(rconcat,Nil(),Z), Z));
               generatedRules.add(Rule(_appl(rconcat,Cons(X,Y),Z), _appl(rconcat,Y,Cons(X,Z))));
+              generatedRules.add(Rule(_appl(propag,Appl(Z0,BottomList(Z))), Bottom(Appl(Z0,Z))));
+              generatedRules.add(Rule(_appl(propag,Appl(Z0,Cons(Z1,Z2))), Appl(Z0,Cons(Z1,Z2))));
+              generatedRules.add(Rule(_appl(propag,Appl(Z0,Nil())), Appl(Z0,Nil())));
 
             }
           }
@@ -1034,18 +1034,18 @@ public class Compiler {
           } else {
             // META-LEVEL
             gSig.addFunctionSymbol(one,`ConcGomType(Signature.TYPE_METATERM),Signature.TYPE_METATERM);
-            String one_1 = one+"_1";
             String one_2 = one+"_2";
             String one_3 = one+"_3";
             String append = "append";
             String reverse = "reverse";
             String rconcat = "rconcat";
-            generatedSignature.addFunctionSymbol(one_1,`ConcGomType(Signature.TYPE_METATERM),Signature.TYPE_METATERM);
+            String propag = "propag";
             generatedSignature.addFunctionSymbol(one_2,`ConcGomType(Signature.TYPE_METALIST),Signature.TYPE_METALIST);
             generatedSignature.addFunctionSymbol(one_3,`ConcGomType(Signature.TYPE_METATERM,Signature.TYPE_METALIST,Signature.TYPE_METALIST),Signature.TYPE_METALIST);
             generatedSignature.addFunctionSymbol(append,`ConcGomType(Signature.TYPE_METALIST,Signature.TYPE_METATERM),Signature.TYPE_METALIST);
             generatedSignature.addFunctionSymbol(reverse,`ConcGomType(Signature.TYPE_METALIST),Signature.TYPE_METALIST);
             generatedSignature.addFunctionSymbol(rconcat,`ConcGomType(Signature.TYPE_METALIST,Signature.TYPE_METALIST),Signature.TYPE_METALIST);
+            generatedSignature.addFunctionSymbol(propag,`ConcGomType(Signature.TYPE_METATERM),Signature.TYPE_METATERM);
 
             /*
              * propagate Bottom  (otherwise not reduced and leads to bug in Sequence)
@@ -1054,15 +1054,9 @@ public class Compiler {
             generatedRules.add(Rule(_appl(one,Bottom(X)), Bottom(X)));
 
             /*
-             * one(Appl(Z0,Z1)) -> one_1(Appl(Z0,one_2(Z1)))
+             * one(Appl(Z0,Z1)) -> propag(Appl(Z0,one_2(Z1)))
              */
-            generatedRules.add(Rule(_appl(one,Appl(Z0,Z1)), _appl(one_1,Appl(Z0,_appl(one_2,Z1)))));
-            /*
-             * one_1(Appl(Z0,BottomList(Z))) -> Bottom(Appl(Z0,Z))
-             * one_1(Appl(Z0,Cons(Z1,Z2))) -> Appl(Z0,Cons(Z1,Z2))
-             */
-            generatedRules.add(Rule(_appl(one_1,Appl(Z0,BottomList(Z))), Bottom(Appl(Z0,Z))));
-            generatedRules.add(Rule(_appl(one_1,Appl(Z0,Cons(Z1,Z2))), Appl(Z0,Cons(Z1,Z2))));
+            generatedRules.add(Rule(_appl(one,Appl(Z0,Z1)), _appl(propag,Appl(Z0,_appl(one_2,Z1)))));
             /*
              * one_2(Nil) -> BottomList(Nil)
              * one_2(Cons(X,Y)) -> one_3(phi_s(X),Y,Cons(X,Nil))
@@ -1087,6 +1081,9 @@ public class Compiler {
                * reverse(Cons(X,Y)) -> append(reverse(Y),X)
                * rconcat(Nil,Z) -> Z
                * rconcat(Cons(X,Y),Z) -> rconcat(Y,Cons(X,Z))
+               * propag(Appl(Z0,BottomList(Z))) -> Bottom(Appl(Z0,Z))
+               * propag(Appl(Z0,Cons(Z1,Z2))) -> Appl(Z0,Cons(Z1,Z2))
+               * propag(Appl(Z0,Nil)) -> Appl(Z0,Nil)
                */
               generatedRules.add(Rule(_appl(append,Nil(),Z), Cons(Z,Nil())));
               generatedRules.add(Rule(_appl(append,Cons(X,Y),Z), Cons(X,_appl(append,Y,Z))));
@@ -1094,7 +1091,9 @@ public class Compiler {
               generatedRules.add(Rule(_appl(reverse,Cons(X,Y)), _appl(append,_appl(reverse,Y),X)));
               generatedRules.add(Rule(_appl(rconcat,Nil(),Z), Z));
               generatedRules.add(Rule(_appl(rconcat,Cons(X,Y),Z), _appl(rconcat,Y,Cons(X,Z))));
-
+              generatedRules.add(Rule(_appl(propag,Appl(Z0,BottomList(Z))), Bottom(Appl(Z0,Z))));
+              generatedRules.add(Rule(_appl(propag,Appl(Z0,Cons(Z1,Z2))), Appl(Z0,Cons(Z1,Z2))));
+              generatedRules.add(Rule(_appl(propag,Appl(Z0,Nil())), Appl(Z0,Nil())));
             }
           }
           strategySymbol = one;

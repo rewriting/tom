@@ -242,6 +242,10 @@ public class Tools {
       Anti(term) -> {
         return Anti(encodeConsNil(`term,signature));
       }
+
+      At(v@Var[],t2) -> {
+        return At(encodeConsNil(`v,signature),encodeConsNil(`t2,signature));
+      }
     }
     return null;
   }
