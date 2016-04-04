@@ -53,6 +53,11 @@ public class Compiler {
   private Map<Strat,List<Rule>> storedTRSs;
   private Map<Strat,String> strategySymbols;
 
+  private static String append = "append";
+  private static String reverse = "reverse";
+  private static String rconcat = "rconcat";
+  private static String propag = "propag";
+
   /**
    * initialize the TRS and set the (generated) symbol that should be
    * used to wrap the terms to reduce
@@ -869,16 +874,8 @@ public class Compiler {
             gSig.addFunctionSymbol(all,`ConcGomType(Signature.TYPE_METATERM),Signature.TYPE_METATERM);
             String all_2 = all+"_2";
             String all_3 = all+"_3";
-            String append = "append";
-            String reverse = "reverse";
-            String rconcat = "rconcat";
-            String propag = "propag";
             generatedSignature.addFunctionSymbol(all_2,`ConcGomType(Signature.TYPE_METALIST),Signature.TYPE_METALIST);
             generatedSignature.addFunctionSymbol(all_3,`ConcGomType(Signature.TYPE_METATERM,Signature.TYPE_METALIST,Signature.TYPE_METALIST,Signature.TYPE_METALIST),Signature.TYPE_METALIST);
-            generatedSignature.addFunctionSymbol(append,`ConcGomType(Signature.TYPE_METALIST,Signature.TYPE_METATERM),Signature.TYPE_METALIST);
-            generatedSignature.addFunctionSymbol(reverse,`ConcGomType(Signature.TYPE_METALIST),Signature.TYPE_METALIST);
-            generatedSignature.addFunctionSymbol(rconcat,`ConcGomType(Signature.TYPE_METALIST,Signature.TYPE_METALIST),Signature.TYPE_METALIST);
-            generatedSignature.addFunctionSymbol(propag,`ConcGomType(Signature.TYPE_METATERM),Signature.TYPE_METATERM);
 
             /*
              * propagate Bottom  (otherwise not reduced and leads to bug in Sequence)
@@ -906,27 +903,7 @@ public class Compiler {
 
             if(!generated_aux_functions) {
               generated_aux_functions = true;
-              /*
-               * append(Nil,Z) -> Cons(Z,Nil)
-               * append(Cons(X,Y),Z) -> Cons(X,append(Y,Z))
-               * reverse(Nil) -> Nil
-               * reverse(Cons(X,Y)) -> append(reverse(Y),X)
-               * rconcat(Nil,Z) -> Z
-               * rconcat(Cons(X,Y),Z) -> rconcat(Y,Cons(X,Z))
-               * propag(Appl(Z0,BottomList(Z))) -> Bottom(Appl(Z0,Z))
-               * propag(Appl(Z0,Cons(Z1,Z2))) -> Appl(Z0,Cons(Z1,Z2))
-               * propag(Appl(Z0,Nil)) -> Appl(Z0,Nil)
-               */
-              generatedRules.add(Rule(_appl(append,Nil(),Z), Cons(Z,Nil())));
-              generatedRules.add(Rule(_appl(append,Cons(X,Y),Z), Cons(X,_appl(append,Y,Z))));
-              generatedRules.add(Rule(_appl(reverse,Nil()), Nil()));
-              generatedRules.add(Rule(_appl(reverse,Cons(X,Y)), _appl(append,_appl(reverse,Y),X)));
-              generatedRules.add(Rule(_appl(rconcat,Nil(),Z), Z));
-              generatedRules.add(Rule(_appl(rconcat,Cons(X,Y),Z), _appl(rconcat,Y,Cons(X,Z))));
-              generatedRules.add(Rule(_appl(propag,Appl(Z0,BottomList(Z))), Bottom(Appl(Z0,Z))));
-              generatedRules.add(Rule(_appl(propag,Appl(Z0,Cons(Z1,Z2))), Appl(Z0,Cons(Z1,Z2))));
-              generatedRules.add(Rule(_appl(propag,Appl(Z0,Nil())), Appl(Z0,Nil())));
-
+              generateAuxFunctions(generatedRules, generatedSignature);
             }
           }
           strategySymbol = all;
@@ -1036,16 +1013,8 @@ public class Compiler {
             gSig.addFunctionSymbol(one,`ConcGomType(Signature.TYPE_METATERM),Signature.TYPE_METATERM);
             String one_2 = one+"_2";
             String one_3 = one+"_3";
-            String append = "append";
-            String reverse = "reverse";
-            String rconcat = "rconcat";
-            String propag = "propag";
             generatedSignature.addFunctionSymbol(one_2,`ConcGomType(Signature.TYPE_METALIST),Signature.TYPE_METALIST);
             generatedSignature.addFunctionSymbol(one_3,`ConcGomType(Signature.TYPE_METATERM,Signature.TYPE_METALIST,Signature.TYPE_METALIST),Signature.TYPE_METALIST);
-            generatedSignature.addFunctionSymbol(append,`ConcGomType(Signature.TYPE_METALIST,Signature.TYPE_METATERM),Signature.TYPE_METALIST);
-            generatedSignature.addFunctionSymbol(reverse,`ConcGomType(Signature.TYPE_METALIST),Signature.TYPE_METALIST);
-            generatedSignature.addFunctionSymbol(rconcat,`ConcGomType(Signature.TYPE_METALIST,Signature.TYPE_METALIST),Signature.TYPE_METALIST);
-            generatedSignature.addFunctionSymbol(propag,`ConcGomType(Signature.TYPE_METATERM),Signature.TYPE_METATERM);
 
             /*
              * propagate Bottom  (otherwise not reduced and leads to bug in Sequence)
@@ -1055,45 +1024,22 @@ public class Compiler {
 
             /*
              * one(Appl(Z0,Z1)) -> propag(Appl(Z0,one_2(Z1)))
-             */
-            generatedRules.add(Rule(_appl(one,Appl(Z0,Z1)), _appl(propag,Appl(Z0,_appl(one_2,Z1)))));
-            /*
              * one_2(Nil) -> BottomList(Nil)
              * one_2(Cons(X,Y)) -> one_3(phi_s(X),Y,Cons(X,Nil))
-             */
-            generatedRules.add(Rule(_appl(one_2,Nil()), BottomList(Nil())));
-            generatedRules.add(Rule(_appl(one_2,Cons(Z1,Z2)), _appl(one_3,_appl(phi_s,Z1),Z2,Cons(Z1,Nil()))));
-            /*
              * one_3(Bottom(X),Nil,rargs) -> BottomList(reverse(rargs))
              * one_3(Bottom(X),Cons(head,tail),rargs) -> one_3(phi_s(head), tail, Cons(head,rargs))
              * one_3(Appl(X,Y),todo,Cons(last,rargs)) -> rconcat(rargs,Cons(Appl(X,Y),todo))
              */
+            generatedRules.add(Rule(_appl(one,Appl(Z0,Z1)), _appl(propag,Appl(Z0,_appl(one_2,Z1)))));
+            generatedRules.add(Rule(_appl(one_2,Nil()), BottomList(Nil())));
+            generatedRules.add(Rule(_appl(one_2,Cons(Z1,Z2)), _appl(one_3,_appl(phi_s,Z1),Z2,Cons(Z1,Nil()))));
             generatedRules.add(Rule(_appl(one_3,Bottom(Z),Nil(),Z2), BottomList(_appl(reverse,Z2))));
             generatedRules.add(Rule(_appl(one_3,Bottom(Z),Cons(XX,YY),Z2), _appl(one_3,_appl(phi_s,XX),YY,Cons(XX,Z2))));
             generatedRules.add(Rule(_appl(one_3,Appl(X,Y),Z1,Cons(Z2,Z3)), _appl(rconcat,Z3,Cons(Appl(X,Y),Z1))));
 
             if(!generated_aux_functions) { 
               generated_aux_functions = true;
-              /*
-               * append(Nil,Z) -> Cons(Z,Nil)
-               * append(Cons(X,Y),Z) -> Cons(X,append(Y,Z))
-               * reverse(Nil) -> Nil
-               * reverse(Cons(X,Y)) -> append(reverse(Y),X)
-               * rconcat(Nil,Z) -> Z
-               * rconcat(Cons(X,Y),Z) -> rconcat(Y,Cons(X,Z))
-               * propag(Appl(Z0,BottomList(Z))) -> Bottom(Appl(Z0,Z))
-               * propag(Appl(Z0,Cons(Z1,Z2))) -> Appl(Z0,Cons(Z1,Z2))
-               * propag(Appl(Z0,Nil)) -> Appl(Z0,Nil)
-               */
-              generatedRules.add(Rule(_appl(append,Nil(),Z), Cons(Z,Nil())));
-              generatedRules.add(Rule(_appl(append,Cons(X,Y),Z), Cons(X,_appl(append,Y,Z))));
-              generatedRules.add(Rule(_appl(reverse,Nil()), Nil()));
-              generatedRules.add(Rule(_appl(reverse,Cons(X,Y)), _appl(append,_appl(reverse,Y),X)));
-              generatedRules.add(Rule(_appl(rconcat,Nil(),Z), Z));
-              generatedRules.add(Rule(_appl(rconcat,Cons(X,Y),Z), _appl(rconcat,Y,Cons(X,Z))));
-              generatedRules.add(Rule(_appl(propag,Appl(Z0,BottomList(Z))), Bottom(Appl(Z0,Z))));
-              generatedRules.add(Rule(_appl(propag,Appl(Z0,Cons(Z1,Z2))), Appl(Z0,Cons(Z1,Z2))));
-              generatedRules.add(Rule(_appl(propag,Appl(Z0,Nil())), Appl(Z0,Nil())));
+              generateAuxFunctions(generatedRules, generatedSignature);
             }
           }
           strategySymbol = one;
@@ -1110,6 +1056,36 @@ public class Compiler {
       }
     }
     return strategySymbol;
+  }
+
+  private static void generateAuxFunctions(List<Rule> generatedRules, Signature gSig) {
+    gSig.addFunctionSymbol(append,`ConcGomType(Signature.TYPE_METALIST,Signature.TYPE_METATERM),Signature.TYPE_METALIST);
+    gSig.addFunctionSymbol(reverse,`ConcGomType(Signature.TYPE_METALIST),Signature.TYPE_METALIST);
+    gSig.addFunctionSymbol(rconcat,`ConcGomType(Signature.TYPE_METALIST,Signature.TYPE_METALIST),Signature.TYPE_METALIST);
+    gSig.addFunctionSymbol(propag,`ConcGomType(Signature.TYPE_METATERM),Signature.TYPE_METATERM);
+    /*
+     * append(Nil,Z) -> Cons(Z,Nil)
+     * append(Cons(X,Y),Z) -> Cons(X,append(Y,Z))
+     * reverse(Nil) -> Nil
+     * reverse(Cons(X,Y)) -> append(reverse(Y),X)
+     * rconcat(Nil,Z) -> Z
+     * rconcat(Cons(X,Y),Z) -> rconcat(Y,Cons(X,Z))
+     * propag(Appl(X,BottomList(Y))) -> Bottom(Appl(X,Y))
+     * propag(Appl(X,Cons(Y,Z))) -> Appl(X,Cons(Y,Z))
+     * propag(Appl(X,Nil)) -> Appl(X,Nil)
+     */
+    Term X = Var(Tools.getName("X"));
+    Term Y = Var(Tools.getName("Y"));
+    Term Z = Var(Tools.getName("Z"));
+    generatedRules.add(Rule(_appl(append,Nil(),Z), Cons(Z,Nil())));
+    generatedRules.add(Rule(_appl(append,Cons(X,Y),Z), Cons(X,_appl(append,Y,Z))));
+    generatedRules.add(Rule(_appl(reverse,Nil()), Nil()));
+    generatedRules.add(Rule(_appl(reverse,Cons(X,Y)), _appl(append,_appl(reverse,Y),X)));
+    generatedRules.add(Rule(_appl(rconcat,Nil(),Z), Z));
+    generatedRules.add(Rule(_appl(rconcat,Cons(X,Y),Z), _appl(rconcat,Y,Cons(X,Z))));
+    generatedRules.add(Rule(_appl(propag,Appl(X,BottomList(Y))), Bottom(Appl(X,Y))));
+    generatedRules.add(Rule(_appl(propag,Appl(X,Cons(Y,Z))), Appl(X,Cons(Y,Z))));
+    generatedRules.add(Rule(_appl(propag,Appl(X,Nil())), Appl(X,Nil())));
   }
 
   %strategy ReplaceMuVar(name:String, appl:String) extends Identity() {
