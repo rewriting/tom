@@ -1,0 +1,15 @@
+
+abstract syntax
+T = Plus(T,T)
+  | Mult(T,T)
+  | Val(V)
+
+V = a() | b()
+
+strategies
+
+fact1() = [ Plus(Mult(x,y),Mult(x,z)) -> Mult(x,Plus(y,z)) ]
+
+rbu(s) = mu x.(all(x) ; ((s ; all(x)) <+ Identity))
+
+mainStrat() = rbu(fact1())

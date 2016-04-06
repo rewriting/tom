@@ -1,0 +1,14 @@
+
+abstract syntax
+T = Plus(T,T)
+  | Mult(T,T)
+  | Val(V)
+
+V = a() | b()
+
+strategies
+
+dist1() = [ Mult(x,Plus(y,z)) -> Plus(Mult(x,y),Mult(x,z)) ]
+td(s) = mu x.(s ; all(x))
+
+mainStrat() = td(dist1())
