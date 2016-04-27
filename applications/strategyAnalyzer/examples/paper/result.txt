@@ -11,8 +11,8 @@ innermost_dist1.ns   127     103   45
 innermost_fact1.ns   162     124   80
 repeat_td_dist1.ns   133     110   47
 
-repeat_obu_gfx.ns    91      91    47     456       800 ### bug
-innermost_gfx.ns     85      85    45     563       463
+repeat_obu_gfx.ns    91      91    47     399       671
+innermost_gfx.ns     85      85    45     648       458
 bu_hx.ns             51      51    31
 td_hx.ns             51      51    31
 propagate_gfx        73      73    41

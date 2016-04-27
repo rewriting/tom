@@ -9,6 +9,6 @@ strategies
 
 gfx() = [ g(f(x)) -> f(g(x)) ]
 obu(t) = mu x.(one(x) <+ t)
-repeat(s) = mu y.(s ; y) <+ Identity
+repeat(s) = mu y.((s ; y) <+ Identity)
 
 mainStrat() = repeat(obu(gfx()))
