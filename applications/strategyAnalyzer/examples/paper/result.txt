@@ -1,4 +1,4 @@
-#rules               aprove  typed meta   base (ms) meta (ms)
+#rules               aprove  typed meta
 repeat_dist1.ns      49      57    25
 repeat_fact1.ns      84      78    60
 repeat_dist_fact1.ns 110     107   77
@@ -6,15 +6,23 @@ td_dist1.ns          97      68    35
 obu_fact1.ns         102     83    70
 repeat_obu_fact1.ns  138     125   82
 rbu_fact1.ns         162     124   80
-td_dist_rbu_fact1.ns 272     206   110
-innermost_dist1.ns   127     103   45
+td_dist_rbu_fact1.ns 272     206   110  maybe avec -aprove ou -withType. proved avec -metalevel
+innermost_dist1.ns   127     103   45   proved. maybe withType. maybe metalevel
 innermost_fact1.ns   162     124   80
 repeat_td_dist1.ns   133     110   47
 
-repeat_obu_gfx.ns    91      91    47     399       671
-innermost_gfx.ns     85      85    45     648       458
+repeat_obu_gfx.ns    91      91    47 
+innermost_gfx.ns     85      85    45
 bu_hx.ns             51      51    31
 td_hx.ns             51      51    31
 propagate_gfx        73      73    41
 bup_gfx              127     127   58
 
+#ms
+fg1.input            tom    tom*  -tom      -tom-meta   -tom-ordered  -tom-meta-ordered (buggy)
+repeat_obu_gfx.ns    17414  163   364       671         215           618
+innermost_gfx.ns     2721   99    551       449         142           384
+
+fg2.input            tom    tom*  -tom      -tom-meta   -tom-ordered  -tom-meta-ordered
+repeat_obu_gfx.ns    23341  218   stack     stack       stack         stack
+innermost_gfx.ns     4101   102   569       562         199           509
