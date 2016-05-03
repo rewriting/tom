@@ -1,0 +1,13 @@
+
+abstract syntax
+T = a() | b()
+  | f(T)
+  | g(T)
+  | h(T)
+
+strategies
+
+hx() = [ h(x) -> g(h(x)) ]
+bu(s) = mu x.(all(x) ; s)
+
+mainStrat() = bu(hx())

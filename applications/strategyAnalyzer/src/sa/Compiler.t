@@ -842,8 +842,8 @@ public class Compiler {
                 for(int i=0 ; i<arity ; i++) {
                   Term X0 = `Var("X0");
                   a_llx[0] = (i==0)?Bottom(X0):X0;
-                  for(int j=1 ; i<arity ; i++) {
-                    Term Xj = `Var("X_" + i);
+                  for(int j=1 ; j<arity ; j++) {
+                    Term Xj = `Var("X_" + j);
                     if(j==i) {
                       a_llx[j] = Bottom(Xj);
                     } else {

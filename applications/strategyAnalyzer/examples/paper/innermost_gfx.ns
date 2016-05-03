@@ -1,0 +1,13 @@
+
+abstract syntax
+T = a() | b()
+  | f(T)
+  | g(T)
+  | h(T)
+
+strategies
+
+gfx() = [ g(f(x)) -> f(g(x)) ]
+innermost(s) = mu x.(all(x) ; ((s ; x) <+ Identity))
+
+mainStrat() = innermost(gfx())

@@ -16,7 +16,7 @@ r5() = [ Mult(x,e()) -> x ]
 r6() = [ x -> Mult(x,e()) ]
 
 try(s) = s <+ Identity
-repeat(s) = mu x.(s ; x) <+ Identity
+repeat(s) = mu x.((s ; x) <+ Identity)
 
 bu(s) = mu x.(all(x) ; s)
 td(s) = mu x.(s ; all(x))
