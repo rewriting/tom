@@ -1,5 +1,4 @@
 
-
 abstract syntax
 Ints = Z()
     | suc(Ints)
@@ -12,15 +11,9 @@ Bools = tt()
 
 strategies
 
-r1() =  [ Z() -> Z() ]
-// r2() =  [ b() -> b() ]
+r1() =  [ plus(Z(),x) -> x ]
 
-obu(s) = mu x.(one(x) <+ s)
-innermost(s) = obu(s)
-
-// mainStrat() = all(r1();r2())
-// mainStrat() = identity
-// mainStrat() = all(identity)
+// mainStrat() = all(r1() <+ identity)
 mainStrat() = all(r1())
 
 

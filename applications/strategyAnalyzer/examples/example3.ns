@@ -4,26 +4,26 @@ T = a()
 //   | b()
   | h(T)
   | f(T)
-	| i(U)
+// 	| i(U)
 
-U = g(T)
+// U = g(T)
 
 strategies
 
 // r1() =  [ h(x) -> f(h(f(x))) ]
 r1() =  [ h(x) -> f(h(x)) ]
 
-r2() =  [ g(x) -> g(i(g(x))) ]
+// r2() =  [ g(x) -> g(i(g(x))) ]
 
 try(s) = s <+ Identity
 
 bu(s) = mu x.(all(x) ; s)
 td(s) = mu x.(s ; all(x))
 
-obu(s) = mu x.(one(x) <+ s)
+// obu(s) = mu x.(one(x) <+ s)
 
 // mainStrat() = bu(try(r1()))
 // mainStrat() = td(try(r1()))
 
-mainStrat() = bu(try(r2()))
+mainStrat() = bu(try(r1()))
 // mainStrat() = td(try(r2()))
