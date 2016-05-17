@@ -10,6 +10,6 @@ strategies
 
 dist1() = [ Mult(x,Plus(y,z)) -> Plus(Mult(x,y),Mult(x,z)) ]
 fact1() = [ Plus(Mult(x,y),Mult(x,z)) -> Mult(x,Plus(y,z)) ]
-repeat(s) = mu x.(s ; x) <+ Identity
+repeat(s) = mu x.((s ; x) <+ Identity)
 
 mainStrat() = repeat(dist1() ; fact1())

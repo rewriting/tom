@@ -9,6 +9,6 @@ V = a() | b()
 strategies
 
 dist1() = [ Mult(x,Plus(y,z)) -> Plus(Mult(x,y),Mult(x,z)) ]
-repeat(s) = mu x.(s ; x) <+ Identity
+repeat(s) = mu x.((s ; x) <+ Identity)
 
 mainStrat() = repeat(dist1())

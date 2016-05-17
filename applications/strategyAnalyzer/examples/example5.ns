@@ -1,0 +1,28 @@
+
+
+abstract syntax
+Ints = Z()
+    | suc(Ints)
+    | plus(Ints,Ints)
+
+Bools = tt()
+     | ff()
+     | odd(Ints)
+     | even(Ints)
+
+strategies
+
+r1() =  [ Z() -> Z() ]
+// r2() =  [ b() -> b() ]
+
+obu(s) = mu x.(one(x) <+ s)
+innermost(s) = obu(s)
+
+// mainStrat() = all(r1();r2())
+// mainStrat() = identity
+// mainStrat() = all(identity)
+mainStrat() = all(r1())
+
+
+// plus(Z(),Z())
+// plus(Z(),plus(Z(),Z()))

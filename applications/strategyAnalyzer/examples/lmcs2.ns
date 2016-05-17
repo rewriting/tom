@@ -1,0 +1,21 @@
+
+abstract syntax
+Ints = Z()
+    | suc(Ints)
+    | plus(Ints,Ints)
+
+Bools = tt()
+     | ff()
+     | odd(Ints)
+     | even(Ints)
+
+strategies
+
+r1() =  [ plus(Z(),x) -> x ]
+
+// mainStrat() = all(r1() <+ identity)
+mainStrat() = all(r1())
+
+
+// plus(Z(),Z())
+// plus(Z(),plus(Z(),Z()))
