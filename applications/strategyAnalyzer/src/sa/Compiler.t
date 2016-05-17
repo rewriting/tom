@@ -284,8 +284,10 @@ public class Compiler {
       RuleCompiler ruleCompiler = new RuleCompiler(eSig,gSig);
       ruleList = ruleCompiler.expandGeneralAntiPatterns(ruleList,null);
       
-      for(Rule rule: ruleList.getCollectionConcRule()) {
-        System.out.println("EXPANDED AP RULE: " + Pretty.toString(rule) );
+      if(Main.options.verbose) {
+        for(Rule rule: ruleList.getCollectionConcRule()) {
+          System.out.println("EXPANDED AP RULE: " + Pretty.toString(rule) );
+        }
       }
     }
     
@@ -358,8 +360,10 @@ public class Compiler {
             RuleCompiler ruleCompiler = new RuleCompiler(eSig,gSig);
             RuleList rList = ruleCompiler.expandGeneralAntiPatterns(`ConcRule(currentRule),nextRule);
             
-            for(Rule r: rList.getCollectionConcRule()) {
-              System.out.println("CompileRuleList -> EXPANDED AP RULE: " + Pretty.toString(r) );
+            if(Main.options.verbose) {
+              for(Rule r: rList.getCollectionConcRule()) {
+                System.out.println("CompileRuleList -> EXPANDED AP RULE: " + Pretty.toString(r) );
+              }
             }
           }
 
