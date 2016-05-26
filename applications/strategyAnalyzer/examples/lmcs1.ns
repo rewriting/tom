@@ -15,6 +15,7 @@ strategies
 // r1() =  [ plus(Z(),Z()) -> Z() ]
 // r2() =  [ Z() -> Z() ]
 r3() =  [ plus(Z(),x) -> x ]
+// r4() =  [ plus(x,x) -> x ]
 
 obu(s) = mu x.(one(x) <+ s)
 innermost(s) = obu(s)
