@@ -24,6 +24,8 @@ innermost(s) = obu(s)
 // mainStrat() = identity
 // mainStrat() = all(identity)
 mainStrat() = all(r3())
+// mainStrat() = mu x.( r3() ; x) <+ identity
+// mainStrat() = r3()
 
 
 // plus(Z(),Z())
