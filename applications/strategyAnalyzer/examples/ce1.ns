@@ -9,6 +9,8 @@ U = u()
 
 strategies
 
+// rx() = [ f(x,x) -> x ]
+
 ra() = [ a() -> a() ]
 
 rb() = [ b() -> b() ]
@@ -17,5 +19,7 @@ rb() = [ b() -> b() ]
 
 // mainStrat() = identity <+ mu x.(identity ; x)
 
-mainStrat() =  ra() ;  mu x.(rb() ; x)
+// mainStrat() =  ra() ;  mu x.(rb() ; x)
+
+mainStrat() =  all(mu x.(rb() ; x))
 
