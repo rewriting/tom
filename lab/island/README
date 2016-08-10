@@ -1,0 +1,25 @@
+export CLASSPATH=".:${HOME}/antlr-4.5.3-complete.jar:$CLASSPATH"
+alias antlr4='java -jar ${HOME}/antlr-4.5.3-complete.jar'
+alias grun='java org.antlr.v4.gui.TestRig'
+
+% nested blocks with water
+antlr4 Island2.g4
+javac Island2*.java
+grun Island2 start -gui < example.island2 
+
+% match construct + explicit start_water/end_water 
+grun Island3 start -gui < example.island3 
+
+% match construct + implicit island or water
+grun Island4 start -gui < example1.island4
+grun Island4 start -gui < example2.island4
+
+
+antlr4 Island5Lexer.g4
+antlr4 Island5Parser.g4
+javac Island5*.java
+grun Island5 start -gui < examples/example2.island5
+
+rewrite parse tree : https://github.com/ftomassetti/python-ast/tree/master/src/main
+
+
