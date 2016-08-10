@@ -1,0 +1,12 @@
+class Foo
+
+method f {
+
+any text
+{ nested }
+
+"aa{bb}cc"
+
+}
+
+endclass
