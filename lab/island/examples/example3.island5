@@ -1,0 +1,8 @@
+code
+// comment 1
+%match(s1, s2) {
+  a, b -> { { return "foo"; } }
+  a, b && a<<b -> { return `f(a,1,b+1); }
+  y, f(x,b()) -> { /* } comment */ }
+}
+

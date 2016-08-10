@@ -1,7 +1,8 @@
 code
 // comment 1
-%match(T s) {
+%match(s) {
   a -> { { return "foo"; } }
   b -> { return `f(a,1,b+1); }
   f(x,b()) -> { /* } comment */ }
 }
+
