@@ -1,7 +1,7 @@
 parser grammar Island5Parser;
 options { tokenVocab=Island5Lexer; }
 
-start : (island|.)*? ;
+start : (island | .)*? ;
 
 island 
   : MATCH LPAREN (bqterm (COMMA bqterm)?)? RPAREN LBRACE actionRule* RBRACE 
@@ -109,19 +109,19 @@ typeterm
 
 operator
   : OP ID ID LPAREN slotList RPAREN LBRACE 
-    ( isFsym | make | getSlot | getDefault )*
+    (isFsym | make | getSlot | getDefault)*
     RBRACE
   ;
 
 oplist
   : OPARRAY ID ID LPAREN slotList RPAREN LBRACE 
-    ( isFsym | makeEmptyList | makeInsertList | getHead | getTail | isEmptyList )*
+    (isFsym | makeEmptyList | makeInsertList | getHead | getTail | isEmptyList)*
     RBRACE
   ;
 
 oparray
   : OPARRAY ID ID LPAREN slotList RPAREN LBRACE 
-    ( isFsym | makeEmptyArray | makeAppendArray | getElement | getSize )*
+    (isFsym | makeEmptyArray | makeAppendArray | getElement | getSize)*
     RBRACE
   ;
 
