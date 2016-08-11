@@ -6,7 +6,7 @@ start : (island|.)*? ;
 island 
   : MATCH LPAREN (bqterm (COMMA bqterm)?)? RPAREN LBRACE actionRule* RBRACE 
   | STRATEGY ID LPAREN slotList? RPAREN EXTENDS bqterm LBRACE visit* RBRACE
-  | INCLUDE LBRACE ID LBRACE
+  | includeStatement
   ;
 
 visit
@@ -34,19 +34,13 @@ slot
   ;
 
 patternlist
-  : pattern (COMMA pattern)* ((AND|OR) constraint)?
+  : pattern (COMMA pattern)* ((AND | OR) constraint)?
   ;
 
 constraint
-  : constraintAnd (OR constraintAnd)*
-  ;
-
-constraintAnd
-  : constraintAtom (AND constraintAtom)*
-  ;
-
-constraintAtom
-  : pattern MATCH_SYMBOL bqterm
+  : constraint AND constraint
+  | constraint OR constraint
+  | pattern MATCH_SYMBOL bqterm
   | bqterm GREATERTHAN bqterm
   | bqterm GREATEROREQ bqterm
   | bqterm LOWERTHAN bqterm
@@ -115,34 +109,19 @@ typeterm
 
 operator
   : OP ID ID LPAREN slotList RPAREN LBRACE 
-    ( isFsym
-    | make
-    | getSlot
-    | getDefault
-    )*
+    ( isFsym | make | getSlot | getDefault )*
     RBRACE
   ;
 
 oplist
   : OPARRAY ID ID LPAREN slotList RPAREN LBRACE 
-    ( isFsym
-    | makeEmptyList
-    | makeInsertList
-    | getHead
-    | getTail
-    | isEmptyList
-    )*
+    ( isFsym | makeEmptyList | makeInsertList | getHead | getTail | isEmptyList )*
     RBRACE
   ;
 
 oparray
   : OPARRAY ID ID LPAREN slotList RPAREN LBRACE 
-    ( isFsym
-    | makeEmptyArray
-    | makeAppendArray
-    | getElement
-    | getSize
-    )*
+    ( isFsym | makeEmptyArray | makeAppendArray | getElement | getSize )*
     RBRACE
   ;
 
@@ -210,3 +189,6 @@ getDefault
   : GET_DEFAULT LPAREN ID RPAREN block
   ;
 
+includeStatement
+  : INCLUDE LBRACE ID RBRACE 
+  ;
