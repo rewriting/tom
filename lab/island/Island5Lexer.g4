@@ -1,9 +1,33 @@
 lexer grammar Island5Lexer;
 
 MATCH : '%match' ;
+STRATEGY : '%strategy' ;
+EXTENDS : 'extends' ;
+VISIT : 'visit' ;
+INCLUDE : '%include' ;
+OP : '%op' ;
+OPARRAY : '%oparray' ;
+OPLIST : '%oplist' ;
+TYPETERM : '%typeterm' ;
+IS_FSYM : 'is_fsym' ;
+IS_SORT : 'is_sort' ;
+MAKE : 'make' ;
+MAKE_EMPTY : 'make_empty' ;
+MAKE_APPEND : 'make_append' ;
+MAKE_INSERT : 'make_insert' ;
+GET_SLOT : 'get_slot' ;
+GET_DEFAULT : 'get_default' ;
+GET_ELEMENT : 'get_element' ;
+GET_HEAD : 'get_head' ;
+GET_TAIL : 'get_tail' ;
+GET_SIZE : 'get_size' ;
+IS_EMPTY : 'is_empty' ;
+IMPLEMENT : 'implement' ;
+EQUALS : 'equals' ;
+
+
 MATCH_SYMBOL : '<<' ;
 EQUAL : '=' ;
-INCLUDE : '%include' ;
 LBRACE : '{' ;
 RBRACE : '}' ;
 LPAREN : '(' ;

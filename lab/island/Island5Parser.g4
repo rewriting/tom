@@ -4,48 +4,55 @@ options { tokenVocab=Island5Lexer; }
 start : (island|.)*? ;
 
 island 
-  : MATCH LPAREN (bqterm (COMMA bqterm)?)? RPAREN LBRACE (trule)* RBRACE 
+  : MATCH LPAREN (bqterm (COMMA bqterm)?)? RPAREN LBRACE actionRule* RBRACE 
+  | STRATEGY ID LPAREN slotList? RPAREN EXTENDS bqterm LBRACE visit* RBRACE
   | INCLUDE LBRACE ID LBRACE
   ;
 
-trule
+visit
+  : VISIT ID LBRACE actionRule* RBRACE
+  ;
+
+actionRule
   : patternlist ARROW block
+  | patternlist ARROW bqterm
   | constraint ARROW block
+  | constraint ARROW bqterm
   ;
 
 block 
   : LBRACE (island | block | .)*? RBRACE
   ;
 
+slotList
+  : slot (COMMA slot)*
+  ;
 
-/**
-- match constraints :   pattern << term
-- logical operations :  constraint ('&&'|'||') constraint
-- numeric constraints : term ('>'|'<'|'>='|'<='|'=='|'!=') term 
-
-priority in operators is :
-(from higher to lower)
- '<<'
- '>'|'<'|'>='|'<='|'=='|'!='
- '&&'
- '||'
-*/
+slot
+  : ID COLON ID
+  | ID ID
+  ;
 
 patternlist
   : pattern (COMMA pattern)* ((AND|OR) constraint)?
   ;
 
 constraint
-  : constraintAnd (or=OR constraintAnd)*
+  : constraintAnd (OR constraintAnd)*
   ;
 
 constraintAnd
-  : constraintAtom (and=AND constraintAtom)*
+  : constraintAtom (AND constraintAtom)*
   ;
 
 constraintAtom
   : pattern MATCH_SYMBOL bqterm
-  | bqterm ('>' | '>=' | '<' | '<=' | '==' | '!=') bqterm
+  | bqterm GREATERTHAN bqterm
+  | bqterm GREATEROREQ bqterm
+  | bqterm LOWERTHAN bqterm
+  | bqterm LOWEROREQ bqterm
+  | bqterm DOUBLEEQ bqterm
+  | bqterm DIFFERENT bqterm
   | LPAREN constraint RPAREN
   ;
 
@@ -55,6 +62,7 @@ term
   | constant
   ;
 
+// may be change this syntax: `term:sort
 bqterm
   : ID? BQUOTE? term
   ;
@@ -75,7 +83,8 @@ fsymbol
   ;
 
 headSymbol
-  : ID (QMARK | DQMARK)?
+  : ID QMARK?
+  | ID DQMARK?
   | constant
   ;
 
@@ -95,4 +104,109 @@ implicitArgs
   : LSQUAREBR (ID EQUAL pattern (COMMA ID EQUAL pattern)*)? RSQUAREBR 
   ;
 
+/*
+ * signature
+ */
+typeterm
+  : TYPETERM ID (EXTENDS ID)? LBRACE 
+    implement isSort? equalsTerm?
+    RBRACE
+  ;
+
+operator
+  : OP ID ID LPAREN slotList RPAREN LBRACE 
+    ( isFsym
+    | make
+    | getSlot
+    | getDefault
+    )*
+    RBRACE
+  ;
+
+oplist
+  : OPARRAY ID ID LPAREN slotList RPAREN LBRACE 
+    ( isFsym
+    | makeEmptyList
+    | makeInsertList
+    | getHead
+    | getTail
+    | isEmptyList
+    )*
+    RBRACE
+  ;
+
+oparray
+  : OPARRAY ID ID LPAREN slotList RPAREN LBRACE 
+    ( isFsym
+    | makeEmptyArray
+    | makeAppendArray
+    | getElement
+    | getSize
+    )*
+    RBRACE
+  ;
+
+implement
+  : IMPLEMENT block
+  ;
+
+equalsTerm
+  : EQUALS LPAREN ID COMMA ID RPAREN block
+  ;
+
+isSort
+  : IS_SORT LPAREN ID RPAREN block
+  ;
+
+isFsym
+  : IS_FSYM LPAREN ID RPAREN block
+  ;
+
+make
+  : MAKE LPAREN (ID (COMMA ID)*)? RPAREN block
+  ;
+
+makeEmptyList
+  : MAKE_EMPTY LPAREN RPAREN block
+  ;
+
+makeEmptyArray
+  : MAKE_EMPTY LPAREN ID RPAREN block
+  ;
+
+makeAppendArray
+  : MAKE_APPEND LPAREN ID COMMA ID RPAREN block
+  ;
+  
+makeInsertList
+  : MAKE_INSERT LPAREN ID COMMA ID RPAREN block
+  ;
+  
+getSlot
+  : GET_SLOT LPAREN ID COMMA ID RPAREN block
+  ;
+
+getHead
+  : GET_HEAD LPAREN ID RPAREN block
+  ;
+
+getTail
+  : GET_TAIL LPAREN ID RPAREN block
+  ;
+
+getElement
+  : GET_ELEMENT LPAREN ID COMMA ID RPAREN block
+  ;
+
+isEmptyList
+  : IS_EMPTY LPAREN RPAREN block
+  ;
+
+getSize
+  : GET_SIZE LPAREN ID RPAREN block
+  ;
+
+getDefault
+  : GET_DEFAULT LPAREN ID RPAREN block
+  ;
 
