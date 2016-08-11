@@ -4,4 +4,7 @@ code
   a << s -> { return "foo"; }
   b << s && b << s -> { return `f("foo"); }
 }
+...
+`foo();
+
 

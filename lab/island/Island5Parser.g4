@@ -4,9 +4,21 @@ options { tokenVocab=Island5Lexer; }
 start : (island | .)*? ;
 
 island 
-  : MATCH LPAREN (bqterm (COMMA bqterm)?)? RPAREN LBRACE actionRule* RBRACE 
-  | STRATEGY ID LPAREN slotList? RPAREN EXTENDS bqterm LBRACE visit* RBRACE
+  : matchStatement
+  | strategyStatement
   | includeStatement
+  ;
+
+matchStatement
+  : MATCH LPAREN (bqterm (COMMA bqterm)?)? RPAREN LBRACE actionRule* RBRACE 
+  ;
+
+strategyStatement
+  : STRATEGY ID LPAREN slotList? RPAREN EXTENDS bqterm LBRACE visit* RBRACE
+  ;
+
+includeStatement
+  : INCLUDE LBRACE ID RBRACE 
   ;
 
 visit
@@ -189,6 +201,3 @@ getDefault
   : GET_DEFAULT LPAREN ID RPAREN block
   ;
 
-includeStatement
-  : INCLUDE LBRACE ID RBRACE 
-  ;
