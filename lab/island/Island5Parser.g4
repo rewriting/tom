@@ -7,6 +7,10 @@ island
   : matchStatement
   | strategyStatement
   | includeStatement
+  | typeterm
+  | operator
+  | oplist
+  | oparray
   ;
 
 matchStatement
@@ -124,7 +128,7 @@ typeterm
   ;
 
 operator
-  : OP codomain=ID opname=ID LPAREN slotList RPAREN LBRACE 
+  : OP codomain=ID opname=ID LPAREN slotList? RPAREN LBRACE 
     //(isFsym | make | getSlot | getDefault)*
     isFsym? make? getSlot* getDefault*
     RBRACE
@@ -147,7 +151,7 @@ implement
   ;
 
 equalsTerm
-  : EQUALS LPAREN ID COMMA ID RPAREN block
+  : EQUALS LPAREN id1=ID COMMA id2=ID RPAREN block
   ;
 
 isSort
@@ -171,15 +175,15 @@ makeEmptyArray
   ;
 
 makeAppendArray
-  : MAKE_APPEND LPAREN ID COMMA ID RPAREN block
+  : MAKE_APPEND LPAREN id1=ID COMMA id2=ID RPAREN block
   ;
   
 makeInsertList
-  : MAKE_INSERT LPAREN ID COMMA ID RPAREN block
+  : MAKE_INSERT LPAREN id1=ID COMMA id2=ID RPAREN block
   ;
   
 getSlot
-  : GET_SLOT LPAREN ID COMMA ID RPAREN block
+  : GET_SLOT LPAREN id1=ID COMMA id2=ID RPAREN block
   ;
 
 getHead
@@ -191,11 +195,11 @@ getTail
   ;
 
 getElement
-  : GET_ELEMENT LPAREN ID COMMA ID RPAREN block
+  : GET_ELEMENT LPAREN id1=ID COMMA id2=ID RPAREN block
   ;
 
 isEmptyList
-  : IS_EMPTY LPAREN RPAREN block
+  : IS_EMPTY LPAREN ID RPAREN block
   ;
 
 getSize
