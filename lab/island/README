@@ -22,4 +22,5 @@ grun Island5 start -gui < examples/example2.island5
 
 rewrite parse tree : https://github.com/ftomassetti/python-ast/tree/master/src/main
 
+antlr4 Island5Lexer.g4 ; antlr4 Island5Parser.g4; tom Main.t; javac Island5*.java Main.java
 

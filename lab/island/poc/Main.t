@@ -16,6 +16,7 @@ public class Main {
     PtMethodName = PT_methodName_ID(stringValue:String)
     PtArglist = PT_concPtArg(PtArg*)
     PtArg = PT_arg(expr:PtExpr)
+    PtDecl = PT_decl(name:String,expr:PtExpr)
     PtExpr = PT_expr(add_expr:PtAddExpr)
     PtAddExpr = PT_add_expr(lhs:PtPrimaryExpr, rhs:PtAddOpPrimaryExprList)
     PtAddOpPrimaryExprList = PT_concPtAddOpPrimaryExpr(PtAddOpPrimaryExpr*)
@@ -54,16 +55,41 @@ public class Main {
       values.put(ctx, ctx.ID().getText());
     }
 
-    public void exitArglist(SimplangParser.ArglistContext ctx) {}
-    public void exitArg(SimplangParser.ArgContext ctx) {}
-    public void exitDecl(SimplangParser.DeclContext ctx) {}
-    public void exitVariableName(SimplangParser.VariableNameContext ctx) {}
+    public void exitArglist(SimplangParser.ArglistContext ctx) {
+      PtArglist res = `PT_concPtArg();
+      for(SimplangParser.ArgContext actx:ctx.arg()) {
+        PtArg e = (PtArg) values.get(actx);
+        res = `PT_concPtArg(res*,e);
+      }
+      values.put(ctx, res);
+      System.out.println("exitArgList: " + res);
+    }
+
+    public void exitArg(SimplangParser.ArgContext ctx) {
+      PtExpr expr = (PtExpr) values.get(ctx.expr());
+      values.put(ctx, `PT_arg(expr));
+      System.out.println("exitArg: " + `PT_arg(expr));
+    }
+
+    public void exitDecl(SimplangParser.DeclContext ctx) {
+      String name = (String) values.get(ctx.variableName());
+      PtExpr expr = (PtExpr) values.get(ctx.expr());
+      values.put(ctx, `PT_decl(name,expr));
+    }
+
+    public void exitVariableName(SimplangParser.VariableNameContext ctx) {
+      values.put(ctx, ctx.ID().getText());
+    }
+
     public void exitExpr(SimplangParser.ExprContext ctx) {
       PtAddExpr t = (PtAddExpr) values.get(ctx.add_expr());
       values.put(ctx, `PT_expr(t));
     }
 
     public void exitAdd_expr(SimplangParser.Add_exprContext ctx) {
+      System.out.println("#primary_expr = " + ctx.primary_expr().size());
+      System.out.println("#add_op       = " + ctx.add_op().size());
+
       PtPrimaryExpr lhs = (PtPrimaryExpr) values.get(ctx.lhs);
       PtAddOpPrimaryExprList list = `PT_concPtAddOpPrimaryExpr();
       values.put(ctx, `PT_add_expr(lhs, list));

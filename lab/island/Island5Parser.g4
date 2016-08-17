@@ -1,7 +1,7 @@
 parser grammar Island5Parser;
 options { tokenVocab=Island5Lexer; }
 
-start : (island | .)*? ;
+start : (island | water)*? ;
 
 island 
   : matchStatement
@@ -33,7 +33,11 @@ actionRule
   ;
 
 block 
-  : LBRACE (island | block | .)*? RBRACE
+  : LBRACE (island | block | water)*? RBRACE
+  ;
+
+water
+  : .
   ;
 
 slotList
@@ -120,8 +124,9 @@ typeterm
   ;
 
 operator
-  : OP ID ID LPAREN slotList RPAREN LBRACE 
-    (isFsym | make | getSlot | getDefault)*
+  : OP codomain=ID opname=ID LPAREN slotList RPAREN LBRACE 
+    //(isFsym | make | getSlot | getDefault)*
+    isFsym? make? getSlot* getDefault*
     RBRACE
   ;
 
