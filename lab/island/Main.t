@@ -4,6 +4,7 @@ import org.antlr.v4.runtime.tree.*;
 
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.util.List;
 
 import tom.engine.adt.tomsignature.types.*;
 import tom.engine.adt.tomconstraint.types.*;
@@ -23,12 +24,45 @@ import tom.engine.adt.cst.types.*;
 public class Main {
   %include { ../../src/gen/tom/engine/adt/tomsignature/TomSignature.tom }
 
+  public static CstOption extractOption(Token t) {
+    String newline = System.getProperty("line.separator");
+    String lines[] = t.getText().split(newline);
+
+    int firstCharLine = t.getLine();
+    int firstCharColumn = t.getCharPositionInLine()+1;
+    int lastCharLine = firstCharLine+lines.length-1;
+    int lastCharColumn;
+    if(lines.length==1) {
+      lastCharColumn = firstCharColumn + lines[0].length();
+    } else {
+      lastCharColumn = lines[lines.length-1].length();
+    }
+
+    return `Cst_OriginTracking(t.getInputStream().getSourceName(), firstCharLine, firstCharColumn, lastCharLine, lastCharColumn);  
+  }
+
+
   public static class Translator extends Island5ParserBaseListener {
     ParseTreeProperty<Object> values = new ParseTreeProperty<Object>();
     public void setValue(ParseTree node, Object value) { values.put(node, value); } 
     public Object getValue(ParseTree node) { return values.get(node); }
     public void setStringValue(ParseTree node, String value) { setValue(node, value); } 
     public String getStringValue(ParseTree node) { return (String) getValue(node); }
+
+    public CstOperatorList addCstOperator(CstOperatorList operatorList, ParserRuleContext ctx) {
+      if(ctx != null) {
+        operatorList = `ConcCstOperator(operatorList*, (CstOperator)getValue(ctx));
+      }
+      return operatorList;
+    }
+
+    public CstOperatorList addCstOperator(CstOperatorList operatorList, List<? extends ParserRuleContext> ctxList) {
+      for(ParserRuleContext e:ctxList) {
+        operatorList = addCstOperator(operatorList, e);
+      }
+      return operatorList;
+    }
+
 
 
     public void exitStart(Island5Parser.StartContext ctx) {
@@ -69,17 +103,7 @@ public class Main {
           bl = `ConcCstBlock(bl*,(CstBlock)getValue(child));
         } else if(child instanceof Island5Parser.WaterContext) {
           ParserRuleContext prc = (ParserRuleContext)child;
-          Token start = prc.getStart();
-          String filename = start.getInputStream().getSourceName();
-          int line = start.getLine();
-          int pos = start.getCharPositionInLine();
-          String text = child.getText();
-          int len = text.length();
-
-          //System.out.println(start);
-          //System.out.println(filename + ",line=" + line + ",pos=" + pos + "," + text + ",len=" + len );
-
-          CstOption ot = `Cst_OriginTracking(filename,line,pos,line,pos+len);
+          CstOption ot = extractOption(prc.getStart());
           bl = `ConcCstBlock(bl*,HOSTBLOCK(ConcCstOption(ot), getStringValue(child)));
         }
       }
@@ -90,9 +114,23 @@ public class Main {
     }
 
     public void exitSlotList(Island5Parser.SlotListContext ctx) {
+      CstSlotList res = `ConcCstSlot();
+      for(Island5Parser.SlotContext e:ctx.slot()) {
+        res = `ConcCstSlot((CstSlot)getValue(e),res*);
+      }
+      setValue(ctx,res);
+      System.out.println("exitSlotList: " + res);
     }
 
     public void exitSlot(Island5Parser.SlotContext ctx) {
+      CstSlot res = null;
+      if(ctx.COLON() != null) {
+        res = `Cst_Slot(Cst_Name(ctx.id1.getText()), Cst_Type(ctx.id2.getText()));
+      } else {
+        res = `Cst_Slot(Cst_Name(ctx.id2.getText()), Cst_Type(ctx.id1.getText()));
+      }
+      setValue(ctx,res);
+      System.out.println("exitSlot: " + res);
     }
 
     public void exitPatternlist(Island5Parser.PatternlistContext ctx) {
@@ -129,12 +167,58 @@ public class Main {
     }
 
     public void exitOperator(Island5Parser.OperatorContext ctx) {
+      CstOptionList optionList = `ConcCstOption(extractOption(ctx.getStart()));
+      CstType codomain = `Cst_Type(ctx.codomain.getText());
+      CstName ctorName = `Cst_Name(ctx.opname.getText());
+      CstSlotList argumentList = `ConcCstSlot();
+      CstOperatorList operatorList = `ConcCstOperator();
+      // if there are arguments
+      if(ctx.slotList() != null) {
+        argumentList = (CstSlotList) getValue(ctx.slotList());
+      }
+      // fill constructors
+      operatorList = addCstOperator(operatorList, ctx.isFsym());
+      operatorList = addCstOperator(operatorList, ctx.make());
+      operatorList = addCstOperator(operatorList, ctx.getSlot());
+      operatorList = addCstOperator(operatorList, ctx.getDefault());
+      CstBlock res = `Cst_OpConstruct(optionList,codomain,ctorName,argumentList,operatorList);
+      setValue(ctx,res);
+      System.out.println("exitOperator: " + res);
     }
 
     public void exitOplist(Island5Parser.OplistContext ctx) {
+      CstOptionList optionList = `ConcCstOption(extractOption(ctx.getStart()));
+      CstType codomain = `Cst_Type(ctx.codomain.getText());
+      CstName ctorName = `Cst_Name(ctx.opname.getText());
+      CstType domain = `Cst_Type(ctx.domain.getText());
+      CstOperatorList operatorList = `ConcCstOperator();
+      // fill constructors
+      operatorList = addCstOperator(operatorList, ctx.isFsym());
+      operatorList = addCstOperator(operatorList, ctx.makeEmptyList());
+      operatorList = addCstOperator(operatorList, ctx.makeInsertList());
+      operatorList = addCstOperator(operatorList, ctx.getHead());
+      operatorList = addCstOperator(operatorList, ctx.getTail());
+      operatorList = addCstOperator(operatorList, ctx.isEmptyList());
+      CstBlock res = `Cst_OpListConstruct(optionList,codomain,ctorName,domain,operatorList);
+      setValue(ctx,res);
+      System.out.println("exitOpList: " + res);
     }
 
     public void exitOparray(Island5Parser.OparrayContext ctx) {
+      CstOptionList optionList = `ConcCstOption(extractOption(ctx.getStart()));
+      CstType codomain = `Cst_Type(ctx.codomain.getText());
+      CstName ctorName = `Cst_Name(ctx.opname.getText());
+      CstType domain = `Cst_Type(ctx.domain.getText());
+      CstOperatorList operatorList = `ConcCstOperator();
+      // fill constructors
+      operatorList = addCstOperator(operatorList, ctx.isFsym());
+      operatorList = addCstOperator(operatorList, ctx.makeEmptyArray());
+      operatorList = addCstOperator(operatorList, ctx.makeAppendArray());
+      operatorList = addCstOperator(operatorList, ctx.getElement());
+      operatorList = addCstOperator(operatorList, ctx.getSize());
+      CstBlock res = `Cst_OpArrayConstruct(optionList,codomain,ctorName,domain,operatorList);
+      setValue(ctx,res);
+      System.out.println("exitOpArray: " + res);
     }
 
     public void exitImplement(Island5Parser.ImplementContext ctx) {
@@ -156,15 +240,19 @@ public class Main {
     }
 
     public void exitIsFsym(Island5Parser.IsFsymContext ctx) {
-      //String name = ctx.ID().getText();
-      //CstBlockList block = (CstBlockList) getValue(ctx.block());
-      //CstOperator res = `Cst_IsFsym(Cst_Name(name),block);
       CstOperator res = `Cst_IsFsym(Cst_Name(ctx.ID().getText()), (CstBlockList) getValue(ctx.block()));
       setValue(ctx,res);
       System.out.println("exitIsFsym: " + res);
     }
 
     public void exitMake(Island5Parser.MakeContext ctx) {
+      CstNameList nameList = `ConcCstName();
+      for(TerminalNode e:ctx.ID()) {
+        nameList = `ConcCstName(Cst_Name(e.getText()),nameList*);
+      }
+      CstOperator res = `Cst_Make(nameList,(CstBlockList) getValue(ctx.block()));
+      setValue(ctx,res);
+      System.out.println("exitMake: " + res);
     }
 
     public void exitMakeEmptyList(Island5Parser.MakeEmptyListContext ctx) {

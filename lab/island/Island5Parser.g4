@@ -49,8 +49,7 @@ slotList
   ;
 
 slot
-  : ID COLON ID
-  | ID ID
+  : id1=ID COLON? id2=ID
   ;
 
 patternlist
@@ -135,14 +134,16 @@ operator
   ;
 
 oplist
-  : OPARRAY ID ID LPAREN slotList RPAREN LBRACE 
-    (isFsym | makeEmptyList | makeInsertList | getHead | getTail | isEmptyList)*
+  : OPARRAY codomain=ID opname=ID LPAREN domain=ID STAR RPAREN LBRACE 
+    //(isFsym | makeEmptyList | makeInsertList | getHead | getTail | isEmptyList)*
+    isFsym? makeEmptyList? makeInsertList? getHead? getTail? isEmptyList?
     RBRACE
   ;
 
 oparray
-  : OPARRAY ID ID LPAREN slotList RPAREN LBRACE 
-    (isFsym | makeEmptyArray | makeAppendArray | getElement | getSize)*
+  : OPARRAY codomain=ID opname=ID LPAREN domain=ID STAR RPAREN LBRACE 
+    //(isFsym | makeEmptyArray | makeAppendArray | getElement | getSize)*
+    isFsym? makeEmptyArray? makeAppendArray? getElement? getSize?
     RBRACE
   ;
 
