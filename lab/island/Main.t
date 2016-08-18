@@ -44,7 +44,14 @@ public class Main {
 
   public static class Translator extends Island5ParserBaseListener {
     ParseTreeProperty<Object> values = new ParseTreeProperty<Object>();
-    public void setValue(ParseTree node, Object value) { values.put(node, value); } 
+    private void setValue(ParseTree node, Object value) { 
+      values.put(node, value);
+    } 
+    private void setValue(String debug, ParseTree node, Object value) { 
+      values.put(node, value);
+      System.out.println(debug + ": " + value);
+    } 
+
     public Object getValue(ParseTree node) { return values.get(node); }
     public void setStringValue(ParseTree node, String value) { setValue(node, value); } 
     public String getStringValue(ParseTree node) { return (String) getValue(node); }
@@ -70,7 +77,7 @@ public class Main {
 
     public void exitIsland(Island5Parser.IslandContext ctx) {
     }
- 
+
     public void exitWater(Island5Parser.WaterContext ctx) {
       //System.out.println("exitWater: '" + ctx.getText() + "'");
       setStringValue(ctx,ctx.getText());
@@ -118,8 +125,7 @@ public class Main {
       for(Island5Parser.SlotContext e:ctx.slot()) {
         res = `ConcCstSlot((CstSlot)getValue(e),res*);
       }
-      setValue(ctx,res);
-      System.out.println("exitSlotList: " + res);
+      setValue("exitSlotList", ctx,res);
     }
 
     public void exitSlot(Island5Parser.SlotContext ctx) {
@@ -129,8 +135,7 @@ public class Main {
       } else {
         res = `Cst_Slot(Cst_Name(ctx.id2.getText()), Cst_Type(ctx.id1.getText()));
       }
-      setValue(ctx,res);
-      System.out.println("exitSlot: " + res);
+      setValue("exitSlot",ctx,res);
     }
 
     public void exitPatternlist(Island5Parser.PatternlistContext ctx) {
@@ -181,9 +186,8 @@ public class Main {
       operatorList = addCstOperator(operatorList, ctx.make());
       operatorList = addCstOperator(operatorList, ctx.getSlot());
       operatorList = addCstOperator(operatorList, ctx.getDefault());
-      CstBlock res = `Cst_OpConstruct(optionList,codomain,ctorName,argumentList,operatorList);
-      setValue(ctx,res);
-      System.out.println("exitOperator: " + res);
+      setValue("exitOperator", ctx,
+          `Cst_OpConstruct(optionList,codomain,ctorName,argumentList,operatorList));
     }
 
     public void exitOplist(Island5Parser.OplistContext ctx) {
@@ -199,9 +203,8 @@ public class Main {
       operatorList = addCstOperator(operatorList, ctx.getHead());
       operatorList = addCstOperator(operatorList, ctx.getTail());
       operatorList = addCstOperator(operatorList, ctx.isEmptyList());
-      CstBlock res = `Cst_OpListConstruct(optionList,codomain,ctorName,domain,operatorList);
-      setValue(ctx,res);
-      System.out.println("exitOpList: " + res);
+      setValue("exitOpList", ctx,
+          `Cst_OpArrayConstruct(optionList,codomain,ctorName,domain,operatorList));
     }
 
     public void exitOparray(Island5Parser.OparrayContext ctx) {
@@ -216,33 +219,28 @@ public class Main {
       operatorList = addCstOperator(operatorList, ctx.makeAppendArray());
       operatorList = addCstOperator(operatorList, ctx.getElement());
       operatorList = addCstOperator(operatorList, ctx.getSize());
-      CstBlock res = `Cst_OpArrayConstruct(optionList,codomain,ctorName,domain,operatorList);
-      setValue(ctx,res);
-      System.out.println("exitOpArray: " + res);
+      setValue("exitOpArray", ctx,
+          `Cst_OpArrayConstruct(optionList,codomain,ctorName,domain,operatorList));
     }
 
     public void exitImplement(Island5Parser.ImplementContext ctx) {
-      CstOperator res = `Cst_Implement((CstBlockList) getValue(ctx.block()));
-      setValue(ctx,res);
-      System.out.println("exitImplement: " + res);
+      setValue("exitImplement", ctx,
+          `Cst_Implement((CstBlockList) getValue(ctx.block())));
     }
 
     public void exitEqualsTerm(Island5Parser.EqualsTermContext ctx) {
-      CstOperator res = `Cst_Equals(Cst_Name(ctx.id1.getText()), Cst_Name(ctx.id2.getText()), (CstBlockList) getValue(ctx.block()));
-      setValue(ctx,res);
-      System.out.println("exitEquals: " + res);
+      setValue("exitEquals", ctx,
+          `Cst_Equals(Cst_Name(ctx.id1.getText()), Cst_Name(ctx.id2.getText()), (CstBlockList) getValue(ctx.block())));
     }
 
     public void exitIsSort(Island5Parser.IsSortContext ctx) {
-      CstOperator res = `Cst_IsSort(Cst_Name(ctx.ID().getText()), (CstBlockList) getValue(ctx.block()));
-      setValue(ctx,res);
-      System.out.println("exitIsSort: " + res);
+      setValue("exitIsSort", ctx,
+          `Cst_IsSort(Cst_Name(ctx.ID().getText()), (CstBlockList) getValue(ctx.block())));
     }
 
     public void exitIsFsym(Island5Parser.IsFsymContext ctx) {
-      CstOperator res = `Cst_IsFsym(Cst_Name(ctx.ID().getText()), (CstBlockList) getValue(ctx.block()));
-      setValue(ctx,res);
-      System.out.println("exitIsFsym: " + res);
+      setValue("exitIsFsym", ctx,
+          `Cst_IsFsym(Cst_Name(ctx.ID().getText()), (CstBlockList) getValue(ctx.block())));
     }
 
     public void exitMake(Island5Parser.MakeContext ctx) {
@@ -250,75 +248,63 @@ public class Main {
       for(TerminalNode e:ctx.ID()) {
         nameList = `ConcCstName(Cst_Name(e.getText()),nameList*);
       }
-      CstOperator res = `Cst_Make(nameList,(CstBlockList) getValue(ctx.block()));
-      setValue(ctx,res);
-      System.out.println("exitMake: " + res);
+      setValue("exitMake", ctx,
+          `Cst_Make(nameList,(CstBlockList) getValue(ctx.block())));
     }
 
     public void exitMakeEmptyList(Island5Parser.MakeEmptyListContext ctx) {
-      CstOperator res = `Cst_MakeEmptyList((CstBlockList) getValue(ctx.block()));
-      setValue(ctx,res);
-      System.out.println("exitMakeEmptyList: " + res);
+      setValue("exitMakeEmptyList", ctx,
+          `Cst_MakeEmptyList((CstBlockList) getValue(ctx.block())));
     }
 
     public void exitMakeEmptyArray(Island5Parser.MakeEmptyArrayContext ctx) {
-      CstOperator res = `Cst_MakeEmptyArray(Cst_Name(ctx.ID().getText()), (CstBlockList) getValue(ctx.block()));
-      setValue(ctx,res);
-      System.out.println("exitMakeEmptyArray: " + res);
+      setValue("exitMakeEmptyArray", ctx,
+          `Cst_MakeEmptyArray(Cst_Name(ctx.ID().getText()), (CstBlockList) getValue(ctx.block())));
     }
 
     public void exitMakeAppendArray(Island5Parser.MakeAppendArrayContext ctx) {
-      CstOperator res = `Cst_MakeAppend(Cst_Name(ctx.id1.getText()), Cst_Name(ctx.id2.getText()), (CstBlockList) getValue(ctx.block()));
-      setValue(ctx,res);
-      System.out.println("exitMakeAppendArray: " + res);
+      setValue("exitMakeAppendArray", ctx,
+          `Cst_MakeAppend(Cst_Name(ctx.id1.getText()), Cst_Name(ctx.id2.getText()), (CstBlockList) getValue(ctx.block())));
     }
 
     public void exitMakeInsertList(Island5Parser.MakeInsertListContext ctx) {
-      CstOperator res = `Cst_MakeInsert(Cst_Name(ctx.id1.getText()), Cst_Name(ctx.id2.getText()), (CstBlockList) getValue(ctx.block()));
-      setValue(ctx,res);
-      System.out.println("exitMakeInsertList: " + res);
+      setValue("exitMakeInsertList", ctx,
+          `Cst_MakeInsert(Cst_Name(ctx.id1.getText()), Cst_Name(ctx.id2.getText()), (CstBlockList) getValue(ctx.block())));
     }
 
     public void exitGetSlot(Island5Parser.GetSlotContext ctx) {
-      CstOperator res = `Cst_GetSlot(Cst_Name(ctx.id1.getText()), Cst_Name(ctx.id2.getText()), (CstBlockList) getValue(ctx.block()));
-      setValue(ctx,res);
-      System.out.println("exitGetSlot: " + res);
+      setValue("exitGetSlot", ctx,
+          `Cst_GetSlot(Cst_Name(ctx.id1.getText()), Cst_Name(ctx.id2.getText()), (CstBlockList) getValue(ctx.block())));
     }
 
     public void exitGetHead(Island5Parser.GetHeadContext ctx) {
-      CstOperator res = `Cst_GetHead(Cst_Name(ctx.ID().getText()), (CstBlockList) getValue(ctx.block()));
-      setValue(ctx,res);
-      System.out.println("exitGetHead: " + res);
+      setValue("exitGetHead", ctx,
+          `Cst_GetHead(Cst_Name(ctx.ID().getText()), (CstBlockList) getValue(ctx.block())));
     }
 
     public void exitGetTail(Island5Parser.GetTailContext ctx) {
-      CstOperator res = `Cst_GetTail(Cst_Name(ctx.ID().getText()), (CstBlockList) getValue(ctx.block()));
-      setValue(ctx,res);
-      System.out.println("exitGetTail: " + res);
+      setValue("exitGetTail", ctx,
+          `Cst_GetTail(Cst_Name(ctx.ID().getText()), (CstBlockList) getValue(ctx.block())));
     }
 
     public void exitGetElement(Island5Parser.GetElementContext ctx) {
-      CstOperator res = `Cst_GetElement(Cst_Name(ctx.id1.getText()), Cst_Name(ctx.id2.getText()), (CstBlockList) getValue(ctx.block()));
-      setValue(ctx,res);
-      System.out.println("exitGetElement: " + res);
+      setValue("exitGetElement", ctx,
+          `Cst_GetElement(Cst_Name(ctx.id1.getText()), Cst_Name(ctx.id2.getText()), (CstBlockList) getValue(ctx.block())));
     }
 
     public void exitIsEmptyList(Island5Parser.IsEmptyListContext ctx) {
-      CstOperator res = `Cst_IsEmpty(Cst_Name(ctx.ID().getText()), (CstBlockList) getValue(ctx.block()));
-      setValue(ctx,res);
-      System.out.println("exitIsEmptyList: " + res);
+      setValue("exitIsEmptyList", ctx,
+          `Cst_IsEmpty(Cst_Name(ctx.ID().getText()), (CstBlockList) getValue(ctx.block())));
     }
 
     public void exitGetSize(Island5Parser.GetSizeContext ctx) {
-      CstOperator res = `Cst_GetSize(Cst_Name(ctx.ID().getText()), (CstBlockList) getValue(ctx.block()));
-      setValue(ctx,res);
-      System.out.println("exitGetSize: " + res);
+      setValue("exitGetSize", ctx,
+          `Cst_GetSize(Cst_Name(ctx.ID().getText()), (CstBlockList) getValue(ctx.block())));
     }
 
     public void exitGetDefault(Island5Parser.GetDefaultContext ctx) {
-      CstOperator res = `Cst_GetDefault(Cst_Name(ctx.ID().getText()), (CstBlockList) getValue(ctx.block()));
-      setValue(ctx,res);
-      System.out.println("exitGetDefault: " + res);
+      setValue("exitGetDefault", ctx,
+          `Cst_GetDefault(Cst_Name(ctx.ID().getText()), (CstBlockList) getValue(ctx.block())));
     }
 
 
