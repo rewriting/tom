@@ -44,17 +44,19 @@ public class Main {
 
   public static class Translator extends Island5ParserBaseListener {
     ParseTreeProperty<Object> values = new ParseTreeProperty<Object>();
-    private void setValue(ParseTree node, Object value) { 
-      values.put(node, value);
-    } 
+    private void setValue(ParseTree node, Object value) { values.put(node, value); } 
+    public Object getValue(ParseTree node) { return values.get(node); }
+    public void setStringValue(ParseTree node, String value) { setValue(node, value); } 
+    public String getStringValue(ParseTree node) { return (String) getValue(node); }
+
+    ParseTreeProperty<Object> values2 = new ParseTreeProperty<Object>();
+    private void setValue2(ParseTree node, Object value) { values2.put(node, value); } 
+    public Object getValue2(ParseTree node) { return values2.get(node); }
+
     private void setValue(String debug, ParseTree node, Object value) { 
       values.put(node, value);
       System.out.println(debug + ": " + value);
     } 
-
-    public Object getValue(ParseTree node) { return values.get(node); }
-    public void setStringValue(ParseTree node, String value) { setValue(node, value); } 
-    public String getStringValue(ParseTree node) { return (String) getValue(node); }
 
     public CstOperatorList addCstOperator(CstOperatorList operatorList, ParserRuleContext ctx) {
       if(ctx != null) {
@@ -70,12 +72,18 @@ public class Main {
       return operatorList;
     }
 
-
-
     public void exitStart(Island5Parser.StartContext ctx) {
+      CstBlockList blockList = `ConcCstBlock();
+      for(int i = 0 ; i<ctx.getChildCount() ; i++) {
+        ParseTree child = ctx.getChild(i);
+        blockList = `ConcCstBlock(blockList*, (CstBlock)getValue(child));
+      }
+      setValue("exitStart",ctx, `Cst_Program(blockList));
     }
 
     public void exitIsland(Island5Parser.IslandContext ctx) {
+      ParseTree child = ctx.getChild(0);
+      setValue("exitIsland",ctx,getValue(child));
     }
 
     public void exitWater(Island5Parser.WaterContext ctx) {
@@ -84,18 +92,82 @@ public class Main {
     }
 
     public void exitMatchStatement(Island5Parser.MatchStatementContext ctx) {
+      CstOptionList optionList = `ConcCstOption(extractOption(ctx.getStart()));
+      CstBQTermList subjectList = `ConcCstBQTerm();
+      if(ctx.bqterm() != null) {
+        for(ParserRuleContext e:ctx.bqterm()) {
+          subjectList = `ConcCstBQTerm(subjectList*, (CstBQTerm)getValue(e));
+        }
+      }
+
+      CstConstraintActionList constraintActionList = `ConcCstConstraintAction();
+      for(ParserRuleContext e:ctx.actionRule()) {
+        constraintActionList = `ConcCstConstraintAction(constraintActionList*, (CstConstraintAction)getValue(e));
+      }
+      CstBlock res = `Cst_MatchConstruct(optionList,subjectList,constraintActionList);
+      setValue("exitMatchStatement", ctx,res);
     }
 
     public void exitStrategyStatement(Island5Parser.StrategyStatementContext ctx) {
+      CstOptionList optionList = `ConcCstOption(extractOption(ctx.getStart()));
+
+      CstName name = `Cst_Name(ctx.ID().getText());
+      CstSlotList argumentList = `ConcCstSlot();
+      // if there are arguments
+      if(ctx.slotList() != null) {
+        argumentList = (CstSlotList) getValue(ctx.slotList());
+      }
+      CstVisitList visitList = `ConcCstVisit();
+      for(ParserRuleContext e:ctx.visit()) {
+        visitList = `ConcCstVisit(visitList*, (CstVisit)getValue(e));
+      }
+
+      CstBlock res = `Cst_StrategyConstruct(optionList,name,argumentList,(CstBQTerm)getValue(ctx.bqterm()),visitList);
+      setValue("exitStrategy", ctx,res);
     }
 
     public void exitIncludeStatement(Island5Parser.IncludeStatementContext ctx) {
+      CstOptionList optionList = `ConcCstOption(extractOption(ctx.getStart()));
+      String filename = "TODO";
+      setValue("exitIncludeStatement", ctx,`Cst_IncludeConstruct(optionList,filename));
     }
 
     public void exitVisit(Island5Parser.VisitContext ctx) {
+      CstOptionList optionList = `ConcCstOption(extractOption(ctx.getStart()));
+      CstConstraintActionList l = `ConcCstConstraintAction();
+      for(ParserRuleContext e:ctx.actionRule()) {
+        l = `ConcCstConstraintAction(l*, (CstConstraintAction)getValue(e));
+      }
+
+      CstVisit res = `Cst_VisitTerm( Cst_Type(ctx.ID().getText()), l, optionList);
+      setValue("exitVisit", ctx,res);
     }
 
     public void exitActionRule(Island5Parser.ActionRuleContext ctx) {
+      CstConstraintAction res = null;
+      CstOptionList optionList = `ConcCstOption(extractOption(ctx.getStart()));
+      CstBlockList action = null;
+      if(ctx.block() != null) {
+        action = (CstBlockList) getValue(ctx.block());
+      } else {
+        action = `ConcCstBlock(Cst_BQTermToBlock((CstBQTerm)getValue(ctx.bqterm())));
+      }
+      CstConstraint constraint = `Cst_AndConstraint();
+      if(ctx.c != null) {
+        constraint = (CstConstraint)getValue(ctx.c);
+      } else {
+        for(CstPattern p:((CstPatternList)getValue(ctx.patternlist())).getCollectionConcCstPattern()) {
+          constraint = `Cst_AndConstraint(constraint*, Cst_MatchArgumentConstraint(p));
+        }
+        if(ctx.AND() != null) {
+          constraint = `Cst_AndConstraint(constraint*,(CstConstraint)getValue(ctx.constraint()));
+        } else if(ctx.OR() != null) {
+          constraint = `Cst_OrConstraint(constraint*,(CstConstraint)getValue(ctx.constraint()));
+        }
+      }
+
+      res = `Cst_ConstraintAction(constraint,action,optionList);
+      setValue("exitActionRule", ctx,res);
     }
 
     public void exitBlock(Island5Parser.BlockContext ctx) {
@@ -115,15 +187,14 @@ public class Main {
         }
       }
 
-
       //System.out.println("exitBlock: " + bl);
       setValue(ctx,bl);
     }
 
     public void exitSlotList(Island5Parser.SlotListContext ctx) {
       CstSlotList res = `ConcCstSlot();
-      for(Island5Parser.SlotContext e:ctx.slot()) {
-        res = `ConcCstSlot((CstSlot)getValue(e),res*);
+      for(ParserRuleContext e:ctx.slot()) {
+        res = `ConcCstSlot(res*, (CstSlot)getValue(e));
       }
       setValue("exitSlotList", ctx,res);
     }
@@ -139,36 +210,174 @@ public class Main {
     }
 
     public void exitPatternlist(Island5Parser.PatternlistContext ctx) {
+      CstPatternList res = `ConcCstPattern();
+      for(ParserRuleContext e:ctx.pattern()) {
+        res = `ConcCstPattern(res*, (CstPattern)getValue(e));
+      }
+      setValue("exitPatternList", ctx,res);
     }
 
     public void exitConstraint(Island5Parser.ConstraintContext ctx) {
+      CstConstraint res = null;
+      if(ctx.AND() != null) {
+        res = `Cst_AndConstraint((CstConstraint)getValue(ctx.constraint(0)),(CstConstraint)getValue(ctx.constraint(1)));
+      } else if(ctx.OR() != null) {
+        res = `Cst_OrConstraint((CstConstraint)getValue(ctx.constraint(0)),(CstConstraint)getValue(ctx.constraint(1)));
+      } else if(ctx.MATCH_SYMBOL() != null) {
+        res = `Cst_MatchTermConstraint((CstPattern)getValue(ctx.pattern()),(CstBQTerm)getValue(ctx.bqterm()),
+            (CstType)getValue2(ctx.bqterm()));
+      } else if(ctx.LPAREN() != null && ctx.RPAREN() != null) {
+        res = (CstConstraint)getValue(ctx.c);
+      } else {
+        CstTerm lhs = (CstTerm)getValue(ctx.term(0));
+        CstTerm rhs = (CstTerm)getValue(ctx.term(1));
+        if(ctx.GREATERTHAN() != null) { res = `Cst_NumGreaterThan(lhs,rhs); }
+        else if(ctx.GREATEROREQ() != null) { res = `Cst_NumGreaterOrEqualTo(lhs,rhs); }
+        else if(ctx.LOWERTHAN() != null) { res = `Cst_NumLessThan(lhs,rhs); }
+        else if(ctx.LOWEROREQ() != null) { res = `Cst_NumLessOrEqualTo(lhs,rhs); }
+        else if(ctx.DOUBLEEQ() != null) { res = `Cst_NumEqualTo(lhs,rhs); }
+        else if(ctx.DIFFERENT() != null) { res = `Cst_NumDifferent(lhs,rhs); }
+
+      }
+
+
+      setValue("exitConstraint",ctx,res);
     }
 
     public void exitTerm(Island5Parser.TermContext ctx) {
+      CstTerm res = null;
+      if(ctx.var != null && ctx.STAR() == null) {
+        res = `Cst_TermVariable(ctx.var.getText());
+      } if(ctx.var != null && ctx.STAR() != null) {
+        res = `Cst_TermVariableStar(ctx.var.getText());
+      } if(ctx.fsym != null) {
+        CstTermList args = `ConcCstTerm();
+        for(ParserRuleContext e:ctx.term()) {
+          args = `ConcCstTerm(args*,(CstTerm)getValue(e));
+        }
+        res = `Cst_TermAppl(ctx.fsym.getText(),args);
+      }
+      setValue("exitTerm",ctx,res);
     }
 
     public void exitBqterm(Island5Parser.BqtermContext ctx) {
+      CstBQTerm res = null;
+      CstOptionList optionList = `ConcCstOption(extractOption(ctx.getStart()));
+      CstType type = (ctx.codomain != null)?`Cst_Type(ctx.codomain.getText()):`Cst_TypeUnknown();
+
+      if(ctx.fsym != null) {
+        CstBQTermList args = `ConcCstBQTerm();
+        for(ParserRuleContext e:ctx.bqterm()) {
+          args = `ConcCstBQTerm(args*,(CstBQTerm)getValue(e));
+        }
+        res = `Cst_BQAppl(optionList,ctx.fsym.getText(),args);
+      } if(ctx.var != null && ctx.STAR() == null) {
+        res = `Cst_BQVar(optionList,ctx.var.getText(),type);
+      } if(ctx.var != null && ctx.STAR() != null) {
+        res = `Cst_BQVarStar(optionList,ctx.var.getText(),type);
+      } if(ctx.constant() != null) {
+        res = `Cst_BQConstant(optionList,getStringValue(ctx.constant()));
+      }
+
+      setValue2(ctx,type);
+      setValue("exitBqterm",ctx,res);
     }
 
     public void exitPattern(Island5Parser.PatternContext ctx) {
+      CstPattern res = null;
+      if(ctx.AT() != null) {
+        res = `Cst_AnnotatedPattern((CstPattern)getValue(ctx.pattern()), ctx.ID().getText());
+      } if(ctx.ANTI() != null) {
+        res = `Cst_Anti((CstPattern)getValue(ctx.pattern()));
+      } if(ctx.explicitArgs() != null) {
+        res = `Cst_Appl((CstSymbolList)getValue(ctx.fsymbol()), (CstPatternList)getValue(ctx.explicitArgs()));
+      } if(ctx.implicitArgs() != null) {
+        res = `Cst_RecordAppl((CstSymbolList)getValue(ctx.fsymbol()), (CstPairPatternList)getValue(ctx.implicitArgs()));
+      } if(ctx.var != null && ctx.STAR() == null) {
+        res = `Cst_Variable(ctx.var.getText());
+      } if(ctx.var != null && ctx.STAR() != null) {
+        res = `Cst_VariableStar(ctx.var.getText());
+      } if(ctx.UNDERSCORE() != null && ctx.STAR() == null) {
+        res = `Cst_UnamedVariable();
+      } if(ctx.UNDERSCORE() != null && ctx.STAR() != null) {
+        res = `Cst_UnamedVariableStar();
+      } if(ctx.constant() != null && ctx.STAR() == null) {
+        res = `Cst_Constant(getStringValue(ctx.constant()));
+      } if(ctx.constant() != null && ctx.STAR() != null) {
+        res = `Cst_ConstantStar(getStringValue(ctx.constant()));
+      }
+      setValue("exitPattern",ctx,res);
     }
 
     public void exitFsymbol(Island5Parser.FsymbolContext ctx) {
+      CstSymbolList res = `ConcCstSymbol();
+      for(ParserRuleContext e:ctx.headSymbol()) {
+        res = `ConcCstSymbol(res*, (CstSymbol) getValue(e));
+      }
+      setValue("exitFsymbol",ctx,res);
     }
 
     public void exitHeadSymbol(Island5Parser.HeadSymbolContext ctx) {
+      CstSymbol res = null;
+      if(ctx.QMARK() != null) {
+        res = `Cst_Symbol(ctx.ID().getText(), Cst_TheoryAU());
+      } else if(ctx.DQMARK() != null) {
+        res = `Cst_Symbol(ctx.ID().getText(), Cst_TheoryAC());
+      } else if(ctx.ID() != null) {
+        res = `Cst_Symbol(ctx.ID().getText(), Cst_TheoryDEFAULT());
+      } else if(ctx.constant() != null) {
+        res = (CstSymbol) getValue(ctx.constant());
+      } 
+      setValue("exitHeadSymbol",ctx,res);
     }
 
     public void exitConstant(Island5Parser.ConstantContext ctx) {
+      CstSymbol res = null;
+      if(ctx.INTEGER() != null) {
+        res = `Cst_ConstantInt(ctx.INTEGER().getText());
+      } else if(ctx.LONG() != null) {
+        res = `Cst_ConstantLong(ctx.LONG().getText());
+      } else if(ctx.CHAR() != null) {
+        res = `Cst_ConstantChar(ctx.CHAR().getText());
+      } else if(ctx.DOUBLE() != null) {
+        res = `Cst_ConstantDouble(ctx.DOUBLE().getText());
+      } else if(ctx.STRING() != null) {
+        res = `Cst_ConstantString(ctx.STRING().getText());
+      }
+      setValue("exitConstant",ctx,res);
     }
 
     public void exitExplicitArgs(Island5Parser.ExplicitArgsContext ctx) {
+      int n = ctx.pattern().size();
+      CstPatternList res = `ConcCstPattern();
+      for(int i=0 ; i<n ; i++) {
+        res = `ConcCstPattern(res*, (CstPattern)getValue(ctx.pattern(i)));
+      }
+      setValue("exitExplicitArgs",ctx,res);
     }
 
     public void exitImplicitArgs(Island5Parser.ImplicitArgsContext ctx) {
+      int n = ctx.ID().size();
+      CstPairPatternList res = `ConcCstPairPattern();
+      for(int i=0 ; i<n ; i++) {
+        res = `ConcCstPairPattern(res*, Cst_PairPattern(ctx.ID(i).getText(), (CstPattern)getValue(ctx.pattern(i))));
+      }
+      setValue("exitImplicitArgs",ctx,res);
     }
 
     public void exitTypeterm(Island5Parser.TypetermContext ctx) {
+      CstOptionList optionList = `ConcCstOption(extractOption(ctx.getStart()));
+      CstType typeName = `Cst_Type(ctx.type.getText());
+      CstType extendsTypeName = `Cst_TypeUnknown();
+      if(ctx.supertype != null) {
+        extendsTypeName = `Cst_Type(ctx.supertype.getText());
+      }
+      CstOperatorList operatorList = `ConcCstOperator();
+      operatorList = addCstOperator(operatorList, ctx.implement());
+      operatorList = addCstOperator(operatorList, ctx.isSort());
+      operatorList = addCstOperator(operatorList, ctx.equalsTerm());
+      setValue("exitTypeterm", ctx,
+          `Cst_TypetermConstruct(optionList,typeName,extendsTypeName,operatorList));
     }
 
     public void exitOperator(Island5Parser.OperatorContext ctx) {
@@ -246,7 +455,7 @@ public class Main {
     public void exitMake(Island5Parser.MakeContext ctx) {
       CstNameList nameList = `ConcCstName();
       for(TerminalNode e:ctx.ID()) {
-        nameList = `ConcCstName(Cst_Name(e.getText()),nameList*);
+        nameList = `ConcCstName(nameList*, Cst_Name(e.getText()));
       }
       setValue("exitMake", ctx,
           `Cst_Make(nameList,(CstBlockList) getValue(ctx.block())));

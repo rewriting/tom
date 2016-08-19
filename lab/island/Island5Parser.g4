@@ -30,10 +30,10 @@ visit
   ;
 
 actionRule
-  : patternlist ARROW block
-  | patternlist ARROW bqterm
-  | constraint ARROW block
-  | constraint ARROW bqterm
+  : patternlist ((AND | OR) constraint)? ARROW block
+  | patternlist ((AND | OR) constraint)? ARROW bqterm
+  | c=constraint ARROW block
+  | c=constraint ARROW bqterm
   ;
 
 block 
@@ -53,31 +53,32 @@ slot
   ;
 
 patternlist
-  : pattern (COMMA pattern)* ((AND | OR) constraint)?
+  : pattern (COMMA pattern)* 
   ;
 
 constraint
   : constraint AND constraint
   | constraint OR constraint
   | pattern MATCH_SYMBOL bqterm
-  | bqterm GREATERTHAN bqterm
-  | bqterm GREATEROREQ bqterm
-  | bqterm LOWERTHAN bqterm
-  | bqterm LOWEROREQ bqterm
-  | bqterm DOUBLEEQ bqterm
-  | bqterm DIFFERENT bqterm
-  | LPAREN constraint RPAREN
+  | term GREATERTHAN term
+  | term GREATEROREQ term
+  | term LOWERTHAN term
+  | term LOWEROREQ term
+  | term DOUBLEEQ term
+  | term DIFFERENT term
+  | LPAREN c=constraint RPAREN
   ;
 
 term
-  : ID STAR?
-  | ID LPAREN (term (COMMA term)*)? RPAREN 
-  | constant
+  : var=ID STAR?
+  | fsym=ID LPAREN (term (COMMA term)*)? RPAREN 
   ;
 
 // may be change this syntax: `term:sort
 bqterm
-  : ID? BQUOTE? term
+  : codomain=ID? BQUOTE? fsym=ID LPAREN (bqterm (COMMA bqterm)*)? RPAREN 
+  | codomain=ID? BQUOTE? var=ID STAR?
+  | constant
   ;
 
 pattern
@@ -85,7 +86,7 @@ pattern
   | ANTI pattern
   | fsymbol explicitArgs
   | fsymbol implicitArgs
-  | ID STAR?
+  | var=ID STAR?
   | UNDERSCORE STAR?
   | constant STAR?
   ;
@@ -121,7 +122,7 @@ implicitArgs
  * signature
  */
 typeterm
-  : TYPETERM ID (EXTENDS ID)? LBRACE 
+  : TYPETERM type=ID (EXTENDS supertype=ID)? LBRACE 
     implement isSort? equalsTerm?
     RBRACE
   ;
