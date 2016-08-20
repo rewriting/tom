@@ -299,6 +299,24 @@ public class Main {
       setValue("exitBqcomposite",ctx,`Cst_BQTermToBlock((CstBQTerm)getValue(ctx.composite())));
     }
 
+    private CstBQTerm flattenComposite(CstBQTerm t) {
+      %match(t) {
+        Cst_BQComposite(option,ConcCstBQTerm(C1*,Cst_BQComposite(_,args),C2*)) -> { 
+          return `flattenComposite(Cst_BQComposite(option,ConcCstBQTerm(C1*,args*,C2*)));
+        }
+      }
+      return t;
+    }
+   /* 
+    private CstBQTermList removeComposite(CstBQTermList l) {
+      %match(l) {
+        ConcCstBQTerm(C1*,Cst_BQComposite(_,args),C2*) -> { 
+          return `removeComposite(ConcCstBQTerm(C1*,args*,C2*));
+        }
+      }
+      return l;
+    }
+*/
     public void exitComposite(Island5Parser.CompositeContext ctx) {
       CstOptionList optionList = `ConcCstOption(extractOption(ctx.getStart()));
       CstBQTerm res = null;
@@ -316,11 +334,19 @@ public class Main {
         }
          */
         
-          for(ParserRuleContext e:ctx.composite()) {
-          // retrieve list of elements separated by COMMA
-            args = `ConcCstBQTerm(args*,(CstBQTerm)getValue(e));
+        CstBQTermList accu = `ConcCstBQTerm();
+        for(ParserRuleContext e:ctx.composite()) {
+          CstBQTerm bq = (CstBQTerm)getValue(e);
+          if(bq.isCst_ITL() && bq.getcode() == ",") {
+            // put all elements of accu as a subterm
+            CstBQTerm newComposite = flattenComposite(`Cst_BQComposite(ConcCstOption(),accu));
+            args = `ConcCstBQTerm(args*,newComposite);
+            accu = `ConcCstBQTerm();
+          } else {
+            // retrieve elements separated by COMMA
+            accu = `ConcCstBQTerm(accu*,bq);
           }
-
+        }
 
         res = `Cst_BQAppl(optionList,ctx.fsym.getText(),args);
       } else if(ctx.LPAREN() != null && ctx.RPAREN() != null) {
