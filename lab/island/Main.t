@@ -76,7 +76,13 @@ public class Main {
       CstBlockList blockList = `ConcCstBlock();
       for(int i = 0 ; i<ctx.getChildCount() ; i++) {
         ParseTree child = ctx.getChild(i);
-        blockList = `ConcCstBlock(blockList*, (CstBlock)getValue(child));
+        if(child instanceof Island5Parser.IslandContext) {
+          blockList = `ConcCstBlock(blockList*,(CstBlock)getValue(child));
+        } else if(child instanceof Island5Parser.WaterContext) {
+          ParserRuleContext prc = (ParserRuleContext)child;
+          CstOption ot = extractOption(prc.getStart());
+          blockList = `ConcCstBlock(blockList*,HOSTBLOCK(ConcCstOption(ot), getStringValue(child)));
+        }
       }
       setValue("exitStart",ctx, `Cst_Program(blockList));
     }
@@ -87,7 +93,12 @@ public class Main {
     }
 
     public void exitWater(Island5Parser.WaterContext ctx) {
-      //System.out.println("exitWater: '" + ctx.getText() + "'");
+      System.out.println("exitWater: '" + ctx.getText() + "'");
+      setStringValue(ctx,ctx.getText());
+    }
+
+    public void exitWaterexceptparen(Island5Parser.WaterexceptparenContext ctx) {
+      System.out.println("exitWaterexceptparen: '" + ctx.getText() + "'");
       setStringValue(ctx,ctx.getText());
     }
 
@@ -276,11 +287,104 @@ public class Main {
       } if(ctx.var != null && ctx.STAR() != null) {
         res = `Cst_BQVarStar(optionList,ctx.var.getText(),type);
       } if(ctx.constant() != null) {
-        res = `Cst_BQConstant(optionList,getStringValue(ctx.constant()));
+        CstSymbol cst = (CstSymbol) getValue(ctx.constant());
+        res = `Cst_BQConstant(optionList,cst.getvalue());
       }
 
       setValue2(ctx,type);
       setValue("exitBqterm",ctx,res);
+    }
+
+    public void exitBqcomposite(Island5Parser.BqcompositeContext ctx) {
+      setValue("exitBqcomposite",ctx,`Cst_BQTermToBlock((CstBQTerm)getValue(ctx.composite())));
+    }
+
+    public void exitComposite(Island5Parser.CompositeContext ctx) {
+      CstOptionList optionList = `ConcCstOption(extractOption(ctx.getStart()));
+      CstBQTerm res = null;
+      CstType type = `Cst_TypeUnknown();
+
+      if(ctx.fsym != null) {
+        CstBQTermList args = `ConcCstBQTerm();
+        /*
+        if(ctx.compositeplus() != null) {
+          // retrieve list of elements separated by COMMA
+          CstBQTermList list = ((CstBQTerm)getValue(ctx.compositeplus())).getlist();
+          for(CstBQTerm elt:list.getCollectionConcCstBQTerm()) {
+            System.out.println("elt: " + elt);
+          }
+        }
+         */
+        
+          for(ParserRuleContext e:ctx.composite()) {
+          // retrieve list of elements separated by COMMA
+            args = `ConcCstBQTerm(args*,(CstBQTerm)getValue(e));
+          }
+
+
+        res = `Cst_BQAppl(optionList,ctx.fsym.getText(),args);
+      } else if(ctx.LPAREN() != null && ctx.RPAREN() != null) {
+        CstOptionList optionList1 = `ConcCstOption(extractOption(ctx.LPAREN().getSymbol()));
+        CstOptionList optionList2 = `ConcCstOption(extractOption(ctx.RPAREN().getSymbol()));
+
+        CstBQTermList args = `ConcCstBQTerm();
+        for(ParserRuleContext e:ctx.composite()) {
+          args = `ConcCstBQTerm(args*,(CstBQTerm)getValue(e));
+        }
+        res = `Cst_BQComposite(optionList, ConcCstBQTerm(
+             Cst_ITL(optionList1,ctx.LPAREN().getText()),
+             args*,
+             Cst_ITL(optionList2,ctx.RPAREN().getText())
+              ));
+
+/*
+        res = `Cst_BQComposite(optionList, ConcCstBQTerm(
+             Cst_ITL(optionList1,ctx.LPAREN().getText()),
+             (CstBQTerm)getValue(ctx.compositeplus()),
+             Cst_ITL(optionList2,ctx.RPAREN().getText())
+              ));
+              */
+      } else if(ctx.var != null && ctx.STAR() == null) {
+        res = `Cst_BQVar(optionList,ctx.var.getText(),type);
+      } else if(ctx.var != null && ctx.STAR() != null) {
+        res = `Cst_BQVarStar(optionList,ctx.var.getText(),type);
+      } else if(ctx.constant() != null) {
+        CstSymbol cst = (CstSymbol) getValue(ctx.constant());
+        res = `Cst_BQConstant(optionList,cst.getvalue());
+      } else if (ctx.waterexceptparen() != null) {
+        System.out.println("composite water");
+        res = `Cst_ITL(optionList, getStringValue(ctx.waterexceptparen()));
+
+        /*
+        System.out.println("#child: " + ctx.water().size());
+        if(ctx.water().size() == 1) {
+          CstOptionList optionList1 = `ConcCstOption(extractOption(ctx.getStart()));
+          String water = getStringValue(ctx.water(0));
+          res = `Cst_ITL(optionList1, water);
+        } else {
+          CstBQTermList list = `ConcCstBQTerm();
+          for(ParserRuleContext e:ctx.water()) {
+            String water = getStringValue(e);
+            CstOptionList optionList1 = `ConcCstOption(extractOption(e.getStart()));
+            list = `ConcCstBQTerm(list*, Cst_ITL(optionList1,  water));
+          }
+          res = `Cst_BQComposite(optionList,list);
+        }
+        */
+
+      }
+
+      setValue("exitComposite",ctx,res);
+    }
+
+    public void exitCompositeplus(Island5Parser.CompositeplusContext ctx) {
+      CstOptionList optionList = `ConcCstOption(extractOption(ctx.getStart()));
+      CstBQTermList list = `ConcCstBQTerm();
+      for(ParserRuleContext e:ctx.composite()) {
+        list = `ConcCstBQTerm(list*,(CstBQTerm)getValue(e));
+      }
+      CstBQTerm res = `Cst_BQComposite(optionList,list);
+      setValue("exitCompositeplus",ctx,res);
     }
 
     public void exitPattern(Island5Parser.PatternContext ctx) {
@@ -302,9 +406,11 @@ public class Main {
       } if(ctx.UNDERSCORE() != null && ctx.STAR() != null) {
         res = `Cst_UnamedVariableStar();
       } if(ctx.constant() != null && ctx.STAR() == null) {
-        res = `Cst_Constant(getStringValue(ctx.constant()));
+        CstSymbol cst = (CstSymbol) getValue(ctx.constant());
+        res = `Cst_Constant(cst.getvalue());
       } if(ctx.constant() != null && ctx.STAR() != null) {
-        res = `Cst_ConstantStar(getStringValue(ctx.constant()));
+        CstSymbol cst = (CstSymbol) getValue(ctx.constant());
+        res = `Cst_ConstantStar(cst.getvalue());
       }
       setValue("exitPattern",ctx,res);
     }

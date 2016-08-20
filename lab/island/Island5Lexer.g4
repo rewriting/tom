@@ -79,13 +79,14 @@ fragment ESC :
   ;
 
 BQUOTE : '`' ;
+/*
 BQTERM : '`' TERM ;
 fragment TERM : 
       LPAREN TERM RPAREN
     | ID (LPAREN TERM (COMMA TERM)* RPAREN)? 
     | .*?
     ;
-
+*/
 ACTION_ESCAPE :   '\\' .  ;
 ACTION_STRING_LITERAL :	'"' (ACTION_ESCAPE | ~["\\])* '"' ;
 MLCOMMENT : '/*' .*? '*/' ;

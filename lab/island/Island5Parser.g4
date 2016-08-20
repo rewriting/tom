@@ -11,10 +11,11 @@ island
   | operator
   | oplist
   | oparray
+  | bqcomposite
   ;
 
 matchStatement
-  : MATCH LPAREN (bqterm (COMMA bqterm)?)? RPAREN LBRACE actionRule* RBRACE 
+  : MATCH LPAREN (bqterm (COMMA bqterm)*)? RPAREN LBRACE actionRule* RBRACE 
   ;
 
 strategyStatement
@@ -79,6 +80,28 @@ bqterm
   : codomain=ID? BQUOTE? fsym=ID LPAREN (bqterm (COMMA bqterm)*)? RPAREN 
   | codomain=ID? BQUOTE? var=ID STAR?
   | constant
+  ;
+
+bqcomposite
+  : BQUOTE composite
+  ;
+
+composite
+  : fsym=ID LPAREN composite* RPAREN
+  | LPAREN composite* RPAREN
+  | var=ID STAR?
+  | constant
+  | waterexceptparen
+//  | .*?
+  ;
+
+waterexceptparen 
+  :
+  ~(LPAREN|RPAREN)+? 
+  ;
+
+compositeplus
+  : composite+
   ;
 
 pattern
