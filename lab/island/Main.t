@@ -299,24 +299,6 @@ public class Main {
       setValue("exitBqcomposite",ctx,`Cst_BQTermToBlock((CstBQTerm)getValue(ctx.composite())));
     }
 
-    private CstBQTerm flattenComposite(CstBQTerm t) {
-      %match(t) {
-        Cst_BQComposite(option,ConcCstBQTerm(C1*,Cst_BQComposite(_,args),C2*)) -> { 
-          return `flattenComposite(Cst_BQComposite(option,ConcCstBQTerm(C1*,args*,C2*)));
-        }
-      }
-      return t;
-    }
-   /* 
-    private CstBQTermList removeComposite(CstBQTermList l) {
-      %match(l) {
-        ConcCstBQTerm(C1*,Cst_BQComposite(_,args),C2*) -> { 
-          return `removeComposite(ConcCstBQTerm(C1*,args*,C2*));
-        }
-      }
-      return l;
-    }
-*/
     public void exitComposite(Island5Parser.CompositeContext ctx) {
       CstOptionList optionList = `ConcCstOption(extractOption(ctx.getStart()));
       CstBQTerm res = null;
@@ -325,21 +307,22 @@ public class Main {
       if(ctx.fsym != null) {
         CstBQTermList args = `ConcCstBQTerm();
         /*
-        if(ctx.compositeplus() != null) {
-          // retrieve list of elements separated by COMMA
-          CstBQTermList list = ((CstBQTerm)getValue(ctx.compositeplus())).getlist();
-          for(CstBQTerm elt:list.getCollectionConcCstBQTerm()) {
-            System.out.println("elt: " + elt);
-          }
+           if(ctx.compositeplus() != null) {
+        // retrieve list of elements separated by COMMA
+        CstBQTermList list = ((CstBQTerm)getValue(ctx.compositeplus())).getlist();
+        for(CstBQTerm elt:list.getCollectionConcCstBQTerm()) {
+        System.out.println("elt: " + elt);
+        }
         }
          */
-        
+
         CstBQTermList accu = `ConcCstBQTerm();
         for(ParserRuleContext e:ctx.composite()) {
           CstBQTerm bq = (CstBQTerm)getValue(e);
           if(bq.isCst_ITL() && bq.getcode() == ",") {
             // put all elements of accu as a subterm
             CstBQTerm newComposite = flattenComposite(`Cst_BQComposite(ConcCstOption(),accu));
+            newComposite = mergeITL(newComposite);
             args = `ConcCstBQTerm(args*,newComposite);
             accu = `ConcCstBQTerm();
           } else {
@@ -358,18 +341,19 @@ public class Main {
           args = `ConcCstBQTerm(args*,(CstBQTerm)getValue(e));
         }
         res = `Cst_BQComposite(optionList, ConcCstBQTerm(
-             Cst_ITL(optionList1,ctx.LPAREN().getText()),
-             args*,
-             Cst_ITL(optionList2,ctx.RPAREN().getText())
+              Cst_ITL(optionList1,ctx.LPAREN().getText()),
+              args*,
+              Cst_ITL(optionList2,ctx.RPAREN().getText())
               ));
 
-/*
-        res = `Cst_BQComposite(optionList, ConcCstBQTerm(
-             Cst_ITL(optionList1,ctx.LPAREN().getText()),
-             (CstBQTerm)getValue(ctx.compositeplus()),
-             Cst_ITL(optionList2,ctx.RPAREN().getText())
-              ));
-              */
+        res = mergeITL(res);
+        /*
+           res = `Cst_BQComposite(optionList, ConcCstBQTerm(
+           Cst_ITL(optionList1,ctx.LPAREN().getText()),
+           (CstBQTerm)getValue(ctx.compositeplus()),
+           Cst_ITL(optionList2,ctx.RPAREN().getText())
+           ));
+         */
       } else if(ctx.var != null && ctx.STAR() == null) {
         res = `Cst_BQVar(optionList,ctx.var.getText(),type);
       } else if(ctx.var != null && ctx.STAR() != null) {
@@ -382,21 +366,21 @@ public class Main {
         res = `Cst_ITL(optionList, getStringValue(ctx.waterexceptparen()));
 
         /*
-        System.out.println("#child: " + ctx.water().size());
-        if(ctx.water().size() == 1) {
-          CstOptionList optionList1 = `ConcCstOption(extractOption(ctx.getStart()));
-          String water = getStringValue(ctx.water(0));
-          res = `Cst_ITL(optionList1, water);
-        } else {
-          CstBQTermList list = `ConcCstBQTerm();
-          for(ParserRuleContext e:ctx.water()) {
-            String water = getStringValue(e);
-            CstOptionList optionList1 = `ConcCstOption(extractOption(e.getStart()));
-            list = `ConcCstBQTerm(list*, Cst_ITL(optionList1,  water));
-          }
-          res = `Cst_BQComposite(optionList,list);
-        }
-        */
+           System.out.println("#child: " + ctx.water().size());
+           if(ctx.water().size() == 1) {
+           CstOptionList optionList1 = `ConcCstOption(extractOption(ctx.getStart()));
+           String water = getStringValue(ctx.water(0));
+           res = `Cst_ITL(optionList1, water);
+           } else {
+           CstBQTermList list = `ConcCstBQTerm();
+           for(ParserRuleContext e:ctx.water()) {
+           String water = getStringValue(e);
+           CstOptionList optionList1 = `ConcCstOption(extractOption(e.getStart()));
+           list = `ConcCstBQTerm(list*, Cst_ITL(optionList1,  water));
+           }
+           res = `Cst_BQComposite(optionList,list);
+           }
+         */
 
       }
 
@@ -652,29 +636,119 @@ public class Main {
   }
 
 
-
-    public static void main(String[] args) throws Exception {
-        String inputFile = null;
-        if( args.length>0 ) {
-          inputFile = args[0];
-        }
-        InputStream is = System.in;
-        if( inputFile!=null ) {
-            is = new FileInputStream(inputFile);
-        }
-        ANTLRInputStream input = new ANTLRInputStream(is);
-        Island5Lexer lexer = new Island5Lexer(input);
-        CommonTokenStream tokens = new CommonTokenStream(lexer);
-        Island5Parser parser = new Island5Parser(tokens);
-        parser.setBuildParseTree(true);      // tell ANTLR to build a parse tree
-        ParseTree tree = parser.start(); // parse
-
-        // show tree in text form
-        System.out.println(tree.toStringTree(parser));
-
-        ParseTreeWalker walker = new ParseTreeWalker();
-        Translator translator = new Translator(); 
-        walker.walk(translator, tree);
-        System.out.println("ast = " + translator.values.get(tree));
+  // Composite(...Composite(x y z)...) -> Composite(... x y z ...)
+  // do not do the full traversal
+  public static CstBQTerm flattenComposite(CstBQTerm t) {
+    %match(t) {
+      Cst_BQComposite(option,ConcCstBQTerm(C1*,Cst_BQComposite(_,args),C2*)) -> { 
+        return `flattenComposite(Cst_BQComposite(option,ConcCstBQTerm(C1*,args*,C2*)));
+      }
     }
+    return t;
+  }
+
+  // ITL(...,"a") ITL(...,"b") -> ITL("a  b")
+  public static CstBQTerm mergeITL(CstBQTerm t) {
+    String newline = System.getProperty("line.separator");
+    CstBQTermList accu = `ConcCstBQTerm();
+    boolean activeITL = false;
+    String filename = "";
+    String s = "";
+    int lmin = 0;
+    int cmin = 0;
+    int lmax = 0;
+    int cmax = 0;
+
+    %match(t) {
+      Cst_BQComposite(optionList, args) -> {
+        for(CstBQTerm e:`args.getCollectionConcCstBQTerm()) {
+          if(e.isCst_ITL()) {
+            %match(e) {
+              Cst_ITL(ConcCstOption(Cst_OriginTracking(name,l1,c1,l2,c2)),text) -> {
+                if(activeITL == false) {
+                  s = `text;
+                  filename = `name;
+                  lmin = `l1;
+                  cmin = `c1;
+                  lmax = `l2;
+                  cmax = `c2;
+                  activeITL = true;
+                } else {
+                  if(lmax <= `l1 && cmax <= `c1 && filename == `name) {
+                    while(lmax < `l1) {
+                      s += newline;
+                      lmax++;
+                      cmax = 0;
+                    }
+                    while(cmax < `c1) {
+                      s += " ";
+                      cmax++;
+                    }
+                    s += `text;
+                  }
+                }
+              }
+            }
+          } else {
+            // e is not an ITL
+            if(activeITL == false) {
+              // no current ITL, just append e
+              accu = `ConcCstBQTerm(accu*,e);
+            } else {
+              // flush the current ITL and append e
+              accu = `ConcCstBQTerm(accu*,Cst_ITL(ConcCstOption(Cst_OriginTracking(filename,lmin,cmin,lmax,cmax)),s),e);
+              activeITL = false;
+              filename = "";
+              s = "";
+              lmin = 0;
+              cmin = 0;
+              lmax = 0;
+              cmax = 0;
+            }
+          }
+        }
+        if(activeITL) {
+          // flush the last accu
+            accu = `ConcCstBQTerm(accu*,Cst_ITL(ConcCstOption(Cst_OriginTracking(filename,lmin,cmin,lmax,cmax)),s));
+            activeITL = false;
+            filename = "";
+            s = "";
+            lmin = 0;
+            cmin = 0;
+            lmax = 0;
+            cmax = 0;
+        }
+
+
+        System.out.println("accu = " + accu);
+        return `Cst_BQComposite(optionList, accu);
+      }
+    }
+    return t;
+  }
+  
+  public static void main(String[] args) throws Exception {
+    String inputFile = null;
+    if( args.length>0 ) {
+      inputFile = args[0];
+    }
+    InputStream is = System.in;
+    if( inputFile!=null ) {
+      is = new FileInputStream(inputFile);
+    }
+    ANTLRInputStream input = new ANTLRInputStream(is);
+    Island5Lexer lexer = new Island5Lexer(input);
+    CommonTokenStream tokens = new CommonTokenStream(lexer);
+    Island5Parser parser = new Island5Parser(tokens);
+    parser.setBuildParseTree(true);      // tell ANTLR to build a parse tree
+    ParseTree tree = parser.start(); // parse
+
+    // show tree in text form
+    System.out.println(tree.toStringTree(parser));
+
+    ParseTreeWalker walker = new ParseTreeWalker();
+    Translator translator = new Translator(); 
+    walker.walk(translator, tree);
+    System.out.println("ast = " + translator.values.get(tree));
+  }
 }
