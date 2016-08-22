@@ -647,6 +647,7 @@ public class Main {
     return t;
   }
 
+  // merge consecutive ITL in a BQTerm
   // ITL(...,"a") ITL(...,"b") -> ITL("a  b")
   public static CstBQTerm mergeITL(CstBQTerm t) {
     String newline = System.getProperty("line.separator");
@@ -719,8 +720,7 @@ public class Main {
             cmax = 0;
         }
 
-
-        System.out.println("accu = " + accu);
+        //System.out.println("accu = " + accu);
         return `Cst_BQComposite(optionList, accu);
       }
     }
