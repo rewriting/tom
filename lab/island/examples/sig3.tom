@@ -1,0 +1,6 @@
+%op term zero() {
+  is_fsym(t) { ((ATermAppl)$t).getAFun() 
+               == fzero }
+  make() { factory.makeAppl(fzero) }
+}
+
