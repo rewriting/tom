@@ -177,22 +177,22 @@ typeterm
 
 operator
   : OP codomain=ID opname=ID LPAREN slotList? RPAREN LBRACE 
-    //(isFsym | make | getSlot | getDefault)*
-    isFsym? make? getSlot* getDefault*
+    (isFsym | make | getSlot | getDefault)*
+    //isFsym? make? getSlot* getDefault*
     RBRACE
   ;
 
 oplist
   : OPARRAY codomain=ID opname=ID LPAREN domain=ID STAR RPAREN LBRACE 
-    //(isFsym | makeEmptyList | makeInsertList | getHead | getTail | isEmptyList)*
-    isFsym? makeEmptyList? makeInsertList? getHead? getTail? isEmptyList?
+    (isFsym | makeEmptyList | makeInsertList | getHead | getTail | isEmptyList)*
+    //isFsym? makeEmptyList? makeInsertList? getHead? getTail? isEmptyList?
     RBRACE
   ;
 
 oparray
   : OPARRAY codomain=ID opname=ID LPAREN domain=ID STAR RPAREN LBRACE 
-    //(isFsym | makeEmptyArray | makeAppendArray | getElement | getSize)*
-    isFsym? makeEmptyArray? makeAppendArray? getElement? getSize?
+    (isFsym | makeEmptyArray | makeAppendArray | getElement | getSize)*
+    //isFsym? makeEmptyArray? makeAppendArray? getElement? getSize?
     RBRACE
   ;
 

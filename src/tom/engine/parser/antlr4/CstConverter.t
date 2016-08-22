@@ -1061,13 +1061,13 @@ public class CstConverter {
       CstOptionList optionList = `ConcCstOption(extractOption(ctx.getStart()));
       CstType codomain = `Cst_Type(ctx.codomain.getText());
       CstName ctorName = `Cst_Name(ctx.opname.getText());
+      // fill arguments
       CstSlotList argumentList = `ConcCstSlot();
-      CstOperatorList operatorList = `ConcCstOperator();
-      // if there are arguments
       if(ctx.slotList() != null) {
         argumentList = (CstSlotList) getValue(ctx.slotList());
       }
       // fill constructors
+      CstOperatorList operatorList = `ConcCstOperator();
       operatorList = addCstOperator(operatorList, ctx.isFsym());
       operatorList = addCstOperator(operatorList, ctx.make());
       operatorList = addCstOperator(operatorList, ctx.getSlot());
@@ -1081,8 +1081,8 @@ public class CstConverter {
       CstType codomain = `Cst_Type(ctx.codomain.getText());
       CstName ctorName = `Cst_Name(ctx.opname.getText());
       CstType domain = `Cst_Type(ctx.domain.getText());
-      CstOperatorList operatorList = `ConcCstOperator();
       // fill constructors
+      CstOperatorList operatorList = `ConcCstOperator();
       operatorList = addCstOperator(operatorList, ctx.isFsym());
       operatorList = addCstOperator(operatorList, ctx.makeEmptyList());
       operatorList = addCstOperator(operatorList, ctx.makeInsertList());
@@ -1098,8 +1098,8 @@ public class CstConverter {
       CstType codomain = `Cst_Type(ctx.codomain.getText());
       CstName ctorName = `Cst_Name(ctx.opname.getText());
       CstType domain = `Cst_Type(ctx.domain.getText());
-      CstOperatorList operatorList = `ConcCstOperator();
       // fill constructors
+      CstOperatorList operatorList = `ConcCstOperator();
       operatorList = addCstOperator(operatorList, ctx.isFsym());
       operatorList = addCstOperator(operatorList, ctx.makeEmptyArray());
       operatorList = addCstOperator(operatorList, ctx.makeAppendArray());
