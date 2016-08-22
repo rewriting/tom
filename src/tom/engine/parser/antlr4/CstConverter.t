@@ -19,6 +19,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
  * 
+ * Pierre-Etienne Moreau  e-mail: Pierre-Etienne.Moreau@loria.fr
+ *
  **/
 
 package tom.engine.parser.antlr4;
@@ -50,10 +52,10 @@ import tom.engine.exception.TomRuntimeException;
 import tom.engine.tools.SymbolTable;
 import tom.engine.tools.ASTFactory;
 
-import tom.library.sl.*;
+//import tom.library.sl.*;
 
 public class CstConverter {
-  %include { ../../../library/mapping/java/sl.tom}
+  // %include { ../../../library/mapping/java/sl.tom}
   %include { ../../adt/tomsignature/TomSignature.tom }
 
   private static Logger logger = Logger.getLogger("tom.engine.typer.CstConverter");
@@ -598,6 +600,7 @@ public class CstConverter {
 
   /*
    * CST builder
+   * traverse the ANTLR tree and generate a Gom Cst_Program, of sort CstProgram
    */
 
   public static class CstBuilder extends TomIslandParserBaseListener {
