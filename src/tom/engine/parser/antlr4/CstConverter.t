@@ -272,8 +272,8 @@ public class CstConverter {
 
     } // end %match
    
-    return `Tom(concCode());
-    //throw new TomRuntimeException("convert: strange term: " + cst);
+    //return `Tom(concCode());
+    throw new TomRuntimeException("convert: strange term: " + cst);
   }
 
   public BQTerm convert(CstBQTerm cst) {
@@ -434,8 +434,23 @@ public class CstConverter {
         ConstraintList constraintList = `concConstraint();
         return `RecordAppl(optionList,nameList,slotList,constraintList);
       }
-    }
 
+      Cst_AnnotatedPattern(cst_pattern,cst_alias) -> {
+        TomTerm pattern = convert(`cst_pattern);
+        int line = 0;
+        Constraint constraint =  ASTFactory.makeAliasTo(`Name(cst_alias), line, "unknown file");
+        %match(pattern) {
+          (TermAppl|RecordAppl|XMLAppl|Variable|VariableStar)[Constraints=constraints] -> {
+            return pattern.setConstraints(`concConstraint(constraint,constraints*));
+          }
+
+          AntiTerm(t) -> {
+            ConstraintList constraints = `t.getConstraints();
+            return `AntiTerm(t.setConstraints(concConstraint(constraint,constraints*)));
+          }
+        }
+      }
+    }
     throw new TomRuntimeException("convert: strange term: " + cst);
   }
 
@@ -583,6 +598,7 @@ public class CstConverter {
     }
     throw new TomRuntimeException("convert: strange term: " + cst);
   }
+
   /*
    * Utilities
    */

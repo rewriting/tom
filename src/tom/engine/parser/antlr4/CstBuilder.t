@@ -346,6 +346,20 @@ public class CstBuilder extends TomIslandParserBaseListener {
           accu = `ConcCstBQTerm(accu*,bq);
         }
       }
+      // flush the last accu
+      %match(accu) {
+        ConcCstBQTerm(bq) -> {
+          // single element
+          args = `ConcCstBQTerm(args*,bq);
+        }
+
+        ConcCstBQTerm(_,_,_*) -> {
+          // multiple elements: build a composite
+          CstBQTerm newComposite = flattenComposite(`Cst_BQComposite(ConcCstOption(),accu));
+          newComposite = mergeITL(newComposite);
+          args = `ConcCstBQTerm(args*,newComposite);
+        }
+      }
 
       res = `Cst_BQAppl(optionList,ctx.fsym.getText(),args);
     } else if(ctx.LPAREN() != null && ctx.RPAREN() != null) {
