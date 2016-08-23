@@ -1,6 +1,11 @@
-%op term zero() {
-  is_fsym(t) { ((ATermAppl)$t).getAFun() 
-               == fzero }
-  make() { factory.makeAppl(fzero) }
+ %op term suc(pred:term) {
+  is_fsym(t) { ((ATermAppl)$t).getAFun() == fsuc }
+  get_slot(pred,t) { ((ATermAppl)$t).getArgument(0)  }
+  make(t) { factory.makeAppl(fsuc,$t) }
+ }
+
+%op term plus1(s1:term,s2:term) {
+  make(t1,t2) { plus1($t1,$t2) }
 }
+
 

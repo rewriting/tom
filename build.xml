@@ -52,9 +52,6 @@
   <property name="src.lib"        location="${src.src}/lib"/>
   <property name="src.config"     location="${src.src}/config"/>
 
-  <!-- used for exclusion of islander during ./build.sh src.dist -->
-  <property name="src.islander"   location="${src.src}/tom/islander"/>
-
   <!-- for distribution: top, stable and src -->
   <property name="dist"              location="dist"/>
   <property name="stable.dist.bin"   location="${stable.dist}/bin"/>
@@ -285,7 +282,6 @@
 
       <exclude name="tom/gom/**/*.g.t"/>
       <exclude name="tom/engine/parser/**/*.g.t"/>
-      <exclude name="tom/islander/**/*.g.t"/>
     </tomcompile>
 
     <!-- Specific stuff for parser generation -->
@@ -357,32 +353,6 @@
       <classpath refid="stable.classpath"/>
     </antlr2>
 
-    <taskdef name="antlr3"
-             classname="org.apache.tools.ant.antlr.ANTLR3">
-      <classpath refid="stable.classpath"/>
-    </taskdef>
-
-
-    <!-- Tom parser antlr3 -->
-    <mkdir dir="${gen.destination}/tom/engine/parser/antlr3"/>
-    <antlr3 target="${src.src}/tom/engine/parser/antlr3/miniTom.g"
-      outputdirectory="${gen.destination}/tom/engine/parser/antlr3/"
-      libdirectory="${gen.destination}/tom/engine/adt/cst">
-      <classpath refid="stable.classpath"/>
-    </antlr3>
-
-    <antlr3 target="${src.src}/tom/engine/parser/antlr3/BQTermLexer.g"
-      outputdirectory="${gen.destination}/tom/engine/parser/antlr3/"
-      libdirectory="${gen.destination}/tom/engine/adt/cst">
-      <classpath refid="stable.classpath"/>
-    </antlr3>
-    
-    <antlr3 target="${src.src}/tom/engine/parser/antlr3/BQTerm.g"
-      outputdirectory="${gen.destination}/tom/engine/parser/antlr3/"
-      libdirectory="${gen.destination}/tom/engine/parser/antlr3">
-      <classpath refid="stable.classpath"/>
-    </antlr3>
-
     <!-- Tom parser antlr4 -->
     <mkdir dir="${gen.destination}/tom/engine/parser/antlr4"/>
 
@@ -404,10 +374,12 @@
       <arg line="-package tom.engine.parser.antlr4"/>
     </java>
 
-
-
     <!-- Gom parser -->
     <mkdir dir="${gen.destination}/tom/gom/parser"/>
+    <taskdef name="antlr3"
+             classname="org.apache.tools.ant.antlr.ANTLR3">
+      <classpath refid="stable.classpath"/>
+    </taskdef>
     <antlr3 target="${src.src}/tom/gom/parser/GomLanguage.g"
             outputdirectory="${gen.destination}/tom/gom/parser"
             libdirectory="${gen.destination}/tom/gom/adt/gom"
@@ -534,8 +506,6 @@
       <src path="${src.gen}"/>
       <classpath refid="src.classpath"/>
       <include name="tom/**/*.java"/>
-      <exclude name="tom/engine/newparser/**/*.java"/>
-      <exclude name="tom/islander/**/*.java"/>
     </tomjavac>
   </target>
 
@@ -1419,7 +1389,7 @@
         <include name="**/*.class"/>
         <exclude name="tom/engine/Tom.class"/>
         <exclude name="tom/engine/parser/antlr2/*.class"/>
-        <exclude name="tom/engine/parser/antlr3/*.class"/>
+        <exclude name="tom/engine/parser/antlr4/*.class"/>
         <exclude name="tom/gom/parser/*.class"/>
       </fileset>
       <!-- we don't want to check the parser generated files, never ever -->
@@ -1430,10 +1400,6 @@
         <include name="tom/engine/parser/antlr2/HostParser.class"/>
         <include name="tom/engine/parser/antlr2/BackQuoteLexer.class"/>
         <include name="tom/engine/parser/antlr2/BackQuoteParser.class"/>
-        <include name="tom/engine/parser/antlr3/miniTomLexer.class"/>
-        <include name="tom/engine/parser/antlr3/miniTomParser.class"/>
-        <include name="tom/engine/parser/antlr3/BQTermLexer.class"/>
-        <include name="tom/engine/parser/antlr3/BQTermParser.class"/>
         <include name="tom/gom/parser/GomParserPlugin.class"/>
       </fileset>
     </concat>
@@ -1442,7 +1408,7 @@
         <include name="**/*.class"/>
         <exclude name="tom/engine/Tom.class"/>
         <exclude name="tom/engine/parser/antlr2/*.class"/>
-        <exclude name="tom/engine/parser/antlr3/*.class"/>
+        <exclude name="tom/engine/parser/antlr4/*.class"/>
         <exclude name="tom/gom/parser/*.class"/>
       </fileset>
       <!-- we don't want to check the parser generated files, never ever -->
@@ -1453,10 +1419,6 @@
         <include name="tom/engine/parser/antlr2/HostParser.class"/>
         <include name="tom/engine/parser/antlr2/BackQuoteLexer.class"/>
         <include name="tom/engine/parser/antlr2/BackQuoteParser.class"/>
-        <include name="tom/engine/parser/antlr3/miniTomLexer.class"/>
-        <include name="tom/engine/parser/antlr3/miniTomParser.class"/>
-        <include name="tom/engine/parser/antlr3/BQTermLexer.class"/>
-        <include name="tom/engine/parser/antlr3/BQTermParser.class"/>
         <include name="tom/gom/parser/GomParserPlugin.class"/>
       </fileset>
     </concat>
@@ -1530,8 +1492,6 @@
       <src path="${destination}/gen"/>
       <classpath refid="src.classpath"/>
       <include name="tom/**/*.java"/>
-      <exclude name="tom/engine/newparser/**/*.java"/>
-      <exclude name="tom/islander/**/*.java"/>
     </tomjavac>
   </target>
 
@@ -1548,7 +1508,6 @@
         <exclude name="**/adt/**/*.java"/>
         <exclude name="**/bootcheck/**/*"/>
         <exclude name="**/bootstrap/**/*"/>
-        <exclude name="**/islander/**/*"/>
         <exclude name="**/gen/**/*"/>
       </fileset>
       <fileset dir="${src.gen}">

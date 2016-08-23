@@ -264,7 +264,7 @@ public class TomParserPlugin extends TomGenericPlugin {
           // System.out.println(tree.toStringTree(parser));
 
           ParseTreeWalker walker = new ParseTreeWalker();
-          tom.engine.parser.antlr4.CstConverter.CstBuilder cstBuilder = new tom.engine.parser.antlr4.CstConverter.CstBuilder(); 
+          tom.engine.parser.antlr4.CstBuilder cstBuilder = new tom.engine.parser.antlr4.CstBuilder(); 
           walker.walk(cstBuilder, tree);
           CstProgram cst = (CstProgram) cstBuilder.getValue(tree);
 

@@ -47,10 +47,10 @@ import tom.engine.exception.TomRuntimeException;
 import tom.engine.tools.SymbolTable;
 import tom.engine.tools.ASTFactory;
 
-import tom.library.sl.*;
+//import tom.library.sl.*;
 
 public class CstConverter {
-  %include { ../../../library/mapping/java/sl.tom}
+  //%include { ../../../library/mapping/java/sl.tom}
   %include { ../../adt/tomsignature/TomSignature.tom }
 
   private static Logger logger = Logger.getLogger("tom.engine.typer.CstConverter");
