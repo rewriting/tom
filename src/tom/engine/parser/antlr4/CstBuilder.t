@@ -48,8 +48,6 @@ import tom.engine.tools.ASTFactory;
    * traverse the ANTLR tree and generate a Gom Cst_Program, of sort CstProgram
    */
 public class CstBuilder extends TomIslandParserBaseListener {
-  // %include { ../../../library/mapping/java/sl.tom}
-  //%include { ../../adt/tomsignature/TomSignature.tom }
   %include { ../../adt/cst/CST.tom }
 
   private static Logger logger = Logger.getLogger("tom.engine.typer.CstConverter");
