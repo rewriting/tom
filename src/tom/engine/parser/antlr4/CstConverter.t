@@ -62,6 +62,13 @@ public class CstConverter {
 
   %strategy SimplifyCST() extends Identity() {
 
+    visit CstBlock {
+      Cst_IncludeConstruct(options,filename) -> {
+        System.out.println("include: " + `filename);
+      }
+
+    }
+
     visit CstBQTerm {
       Cst_BQComposite(option,ConcCstBQTerm(C1*,Cst_BQComposite(_,args),C2*)) -> { 
         /* flatten Cst_BQComposite */
