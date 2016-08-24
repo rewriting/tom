@@ -156,7 +156,12 @@ public class CstBuilder extends TomIslandParserBaseListener {
 
   public void exitIncludeStatement(TomIslandParser.IncludeStatementContext ctx) {
     CstOptionList optionList = `ConcCstOption(extractOption(ctx.getStart()));
-    String filename = "TODO";
+    String filename = "";
+    for(int i = 2 ; i<ctx.getChildCount()-1 ; i++) {
+      // skip %include {, and the last }
+      ParseTree child = ctx.getChild(i);
+      filename += child.getText();
+    }
     setValue("exitIncludeStatement", ctx,`Cst_IncludeConstruct(optionList,filename));
   }
 

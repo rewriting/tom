@@ -78,6 +78,8 @@ OR : '||';
 PIPE : '|';
 QMARK : '?';
 DQMARK : '??';
+SLASH : '/';
+BACKSLASH : '\\';
 
 ID : ('_')? LETTER (LETTER | DIGIT | '_' | '.' )*;
 

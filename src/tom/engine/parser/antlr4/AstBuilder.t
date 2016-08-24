@@ -54,18 +54,18 @@ import tom.engine.tools.ASTFactory;
 
 //import tom.library.sl.*;
 
-public class CstConverter {
+public class AstBuilder {
   // %include { ../../../library/mapping/java/sl.tom}
   %include { ../../adt/tomsignature/TomSignature.tom }
 
-  private static Logger logger = Logger.getLogger("tom.engine.typer.CstConverter");
+  private static Logger logger = Logger.getLogger("tom.engine.typer.AstBuilder");
   private Logger getLogger() {
     return Logger.getLogger(getClass().getName());
   }
 
   private SymbolTable symbolTable;
 
-  public CstConverter(SymbolTable st) {
+  public AstBuilder(SymbolTable st) {
     this.symbolTable = st;
   }
 

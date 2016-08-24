@@ -48,7 +48,7 @@ strategyStatement
   ;
 
 includeStatement
-  : INCLUDE LBRACE ID RBRACE 
+  : INCLUDE LBRACE ID ((SLASH|BACKSLASH) ID)*  RBRACE 
   ;
 
 visit
