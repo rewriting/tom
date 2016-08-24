@@ -151,6 +151,9 @@ public class ConstraintGenerator {
         TomType patternType = TomBase.getTermType(`v,symbolTable);
         TomType subjectType = TomBase.getTermType(`t,symbolTable);
 
+        //System.out.println("patternType =  " + patternType);
+        //System.out.println("subjectType =  " + subjectType);
+
         //if(patternType == null) {
         //  System.out.println("pattern     =  " + `v);
         //  System.out.println("patternType =  " + patternType);

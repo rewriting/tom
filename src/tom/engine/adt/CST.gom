@@ -2,10 +2,6 @@ module CST
 imports String int 
 abstract syntax
 
-// Node type for base types ==================================================
-NodeString = NodeString()
-NodeInt = NodeInt()
-
 // Program ===================================================================
 CstProgram = Cst_Program(blocks:CstBlockList)
 

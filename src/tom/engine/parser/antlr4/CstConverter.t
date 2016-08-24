@@ -72,28 +72,28 @@ public class CstConverter {
   public Code convert(CstProgram cst) {
     %match(cst) {
       Cst_Program(list) -> { 
-        return `Tom(convert(list));
+        return `Tom(convertToCodeList(list));
       }
     }
     throw new TomRuntimeException("convert: strange term: " + cst);
   }
 
-  public Code convert(CstBlock cst) {
+  public Instruction convert(CstBlock cst) {
     %match(cst) {
       HOSTBLOCK(optionList,content) -> {
         CstOption ot = getOriginTracking(`optionList);
-        return `TargetLanguageToCode(TL(content,
+        return `CodeToInstruction(TargetLanguageToCode(TL(content,
               TextPosition(ot.getstartLine(),ot.getstartColumn()),
-              TextPosition(ot.getendLine(),ot.getendColumn())));
+              TextPosition(ot.getendLine(),ot.getendColumn()))));
       }
 
       Cst_BQTermToBlock(bqterm) -> {
-        return `BQTermToCode(convert(bqterm));
+        return `BQTermToInstruction(convert(bqterm));
       }
 
       Cst_MatchConstruct(optionList, arguments, constraintActionList) -> {
         ConstraintInstructionList cil = convert(`constraintActionList,`arguments);
-          return `InstructionToCode(Match(cil,addDefaultModule(convert(optionList,"Match"))));
+          return `Match(cil,addDefaultModule(convert(optionList,"Match")));
       }
 
       Cst_TypetermConstruct(optionList, Cst_Type(typeName), extendsTypeName, operatorList) -> {
@@ -138,11 +138,11 @@ public class CstConverter {
           }
         }
 
-        return `DeclarationToCode(TypeTermDecl(
+        return `CodeToInstruction(DeclarationToCode(TypeTermDecl(
               Name(typeName),
               declarationList,
               OriginTracking(Name(typeName),ot.getstartLine(),ot.getfileName())
-              ));
+              )));
       }
 
       Cst_OpConstruct(optionList, Cst_Type(codomain), Cst_Name(opName), slotList, operatorList) -> {
@@ -267,7 +267,7 @@ public class CstConverter {
         }
         TomSymbol astSymbol = ASTFactory.makeSymbol(`opName, `Type(concTypeOption(),codomain,EmptyTargetLanguageType()), types, ASTFactory.makePairNameDeclList(pairNameDeclList), options);
         symbolTable.putSymbol(`opName,astSymbol);
-        return `DeclarationToCode(SymbolDecl(Name(opName)));
+        return `CodeToInstruction(DeclarationToCode(SymbolDecl(Name(opName))));
       }
 
     } // end %match
@@ -344,9 +344,12 @@ public class CstConverter {
         int currentIndex = 0; // index of the current subject of subjectList
         OptionList newoptionList = convert(`optionList,"ConstraintAction");
         //newoptionList = `concOption(newoptionList*);
+        //CodeList codeList = convert(`action);
+        InstructionList instructionList = convert(`action);
+
         return `ConstraintInstruction(
             convert(constraint,subjectList,currentIndex), 
-            CodeToInstruction(Tom(convert(action))), 
+            RawAction(If(TrueTL(),AbstractBlock(instructionList),Nop())),
             newoptionList);
       }
     }
@@ -357,7 +360,7 @@ public class CstConverter {
     %match(cst) {
       Cst_MatchArgumentConstraint(pattern) -> {
         CstBQTermList l = `subjectList;
-        if (0 > subjectIndex || subjectIndex > subjectList.length()) {
+        if (subjectIndex < 0 || subjectIndex > subjectList.length()) {
           throw new IllegalArgumentException("illegal list index: " + subjectIndex);
         }
         for (int i = 0; i < subjectIndex; i++) {
@@ -365,6 +368,12 @@ public class CstConverter {
         }
         BQTerm currentSubject = convert(l.getHeadConcCstBQTerm());
         TomType type = getTomType(currentSubject);
+
+        //System.out.println("pattern = " + `pattern);
+        //System.out.println("subjectIndex = " + subjectIndex);
+        //System.out.println("currentSubject = " + currentSubject);
+        //System.out.println("type = " + type);
+
         return `MatchConstraint(convert(pattern), currentSubject, type);
       }
 
@@ -389,7 +398,7 @@ public class CstConverter {
 
       Cst_AndConstraint(head,tail*) -> {
         Constraint chead = convert(`head,subjectList,subjectIndex);
-        Constraint ctail = convert(`tail,subjectList,subjectIndex);
+        Constraint ctail = convert(`tail,subjectList,subjectIndex+1);
         return `AndConstraint(chead,ctail); 
       }
 
@@ -501,13 +510,25 @@ public class CstConverter {
    * List conversion
    */
 
-  public CodeList convert(CstBlockList cst) {
+  public CodeList convertToCodeList(CstBlockList cst) {
     %match(cst) {
       ConcCstBlock() -> { 
         return `concCode();
       }
       ConcCstBlock(head,tail*) -> {
-        return `concCode(convert(head),convert*(tail));
+        return `concCode(InstructionToCode(convert(head)),convertToCodeList*(tail));
+      }
+    }
+    throw new TomRuntimeException("convert: strange term: " + cst);
+  }
+ 
+  public InstructionList convert(CstBlockList cst) {
+    %match(cst) {
+      ConcCstBlock() -> { 
+        return `concInstruction();
+      }
+      ConcCstBlock(head,tail*) -> {
+        return `concInstruction(convert(head),convert*(tail));
       }
     }
     throw new TomRuntimeException("convert: strange term: " + cst);

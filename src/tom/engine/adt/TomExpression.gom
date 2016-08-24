@@ -83,6 +83,16 @@ Expression = BQTermToExpression(AstTerm:BQTerm)
            | Code(Code:String)
 
 module TomExpression:rules() {
-  BQTermToExpression(ExpressionToBQTerm(t)) -> t
-  ExpressionToBQTerm(BQTermToExpression(t)) -> t
+  InstructionToCode(CodeToInstruction(t)) -> t
+  CodeToInstruction(InstructionToCode(t)) -> t
+}
+
+
+// for debugging
+Cast:make(type,exp) {
+  %match(type) {
+    Type(concTypeOption(),"unknown type",EmptyTargetLanguageType()) -> {
+      throw new RuntimeException("bad cast");
+    }
+  }
 }

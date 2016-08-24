@@ -278,6 +278,8 @@ public class TomParserPlugin extends TomGenericPlugin {
           Code code = converter.convert(cst);
           setWorkingTerm(code);
 
+          System.out.println("ast = " + code);
+
           Iterator it = symbolTable.keySymbolIterator();
           while(it.hasNext()) {
             String tomName = (String)it.next();
