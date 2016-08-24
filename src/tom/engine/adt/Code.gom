@@ -101,7 +101,8 @@ BQTerm = BQAppl(Options:OptionList,AstName:TomName,Args:BQTermList)
   	| ListTail(Opname:TomName,Variable:BQTerm)  		   
 
 module Code:rules() {
-  BQTermToExpression(ExpressionToBQTerm(t)) -> t
-  ExpressionToBQTerm(BQTermToExpression(t)) -> t
+  InstructionToCode(CodeToInstruction(t)) -> t
+  CodeToInstruction(InstructionToCode(t)) -> t
 }
+
 

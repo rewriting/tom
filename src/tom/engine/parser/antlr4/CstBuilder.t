@@ -87,18 +87,21 @@ public class CstBuilder extends TomIslandParserBaseListener {
   }
 
   public void exitStart(TomIslandParser.StartContext ctx) {
-    CstBlockList blockList = `ConcCstBlock();
+    CstBlockList bl = `ConcCstBlock();
     for(int i = 0 ; i<ctx.getChildCount() ; i++) {
       ParseTree child = ctx.getChild(i);
       if(child instanceof TomIslandParser.IslandContext) {
-        blockList = `ConcCstBlock(blockList*,(CstBlock)getValue(child));
+        bl = `ConcCstBlock(bl*,(CstBlock)getValue(child));
       } else if(child instanceof TomIslandParser.WaterContext) {
         ParserRuleContext prc = (ParserRuleContext)child;
         CstOption ot = extractOption(prc.getStart());
-        blockList = `ConcCstBlock(blockList*,HOSTBLOCK(ConcCstOption(ot), getStringValue(child)));
+        bl = `ConcCstBlock(bl*,HOSTBLOCK(ConcCstOption(ot), getStringValue(child)));
       }
     }
-    setValue("exitStart",ctx, `Cst_Program(blockList));
+    //System.out.println("exitStart bl1: " + bl);
+    bl = mergeHOSTBLOCK(bl);
+    //System.out.println("exitStart bl2: " + bl);
+    setValue("exitStart",ctx, `Cst_Program(bl));
   }
 
   public void exitIsland(TomIslandParser.IslandContext ctx) {
@@ -205,7 +208,7 @@ public class CstBuilder extends TomIslandParserBaseListener {
         bl = `ConcCstBlock(bl*,(CstBlock)getValue(child));
       } else if(child instanceof TomIslandParser.BlockContext) {
         CstBlockList cbl = (CstBlockList)getValue(child);
-        System.out.println("exitBlock cbl: " + cbl);
+        //System.out.println("exitBlock cbl: " + cbl);
         bl = `ConcCstBlock(bl*,cbl*);
       } else if(child instanceof TomIslandParser.WaterContext) {
         ParserRuleContext prc = (ParserRuleContext)child;
@@ -213,7 +216,9 @@ public class CstBuilder extends TomIslandParserBaseListener {
         bl = `ConcCstBlock(bl*,HOSTBLOCK(ConcCstOption(ot), getStringValue(child)));
       }
     }
-
+    //System.out.println("exitBlock bl1: " + bl);
+    bl = mergeHOSTBLOCK(bl);
+    //System.out.println("exitBlock bl2: " + bl);
     //System.out.println("exitBlock: " + bl);
     setValue(ctx,bl);
   }
@@ -684,10 +689,10 @@ public class CstBuilder extends TomIslandParserBaseListener {
     boolean activeITL = false;
     String filename = "";
     String s = "";
-    int lmin = 0;
-    int cmin = 0;
-    int lmax = 0;
-    int cmax = 0;
+    int lmin = 1;
+    int cmin = 1;
+    int lmax = 1;
+    int cmax = 1;
 
     %match(t) {
       Cst_BQComposite(optionList, args) -> {
@@ -704,18 +709,18 @@ public class CstBuilder extends TomIslandParserBaseListener {
                   cmax = `c2;
                   activeITL = true;
                 } else {
-                  if(lmax <= `l1 && cmax <= `c1 && filename == `name) {
-                    while(lmax < `l1) {
-                      s += newline;
-                      lmax++;
-                      cmax = 0;
-                    }
-                    while(cmax < `c1) {
-                      s += " ";
-                      cmax++;
-                    }
-                    s += `text;
+                  while(lmax < `l1) {
+                    s += newline;
+                    lmax++;
+                    cmax = 1;
                   }
+                  while(cmax < `c1) {
+                    s += " ";
+                    cmax++;
+                  }
+                  s += `text;
+                  lmax = `l2;
+                  cmax = `c2;
                 }
               }
             }
@@ -730,10 +735,10 @@ public class CstBuilder extends TomIslandParserBaseListener {
               activeITL = false;
               filename = "";
               s = "";
-              lmin = 0;
-              cmin = 0;
-              lmax = 0;
-              cmax = 0;
+              lmin = 1;
+              cmin = 1;
+              lmax = 1;
+              cmax = 1;
             }
           }
         }
@@ -743,10 +748,10 @@ public class CstBuilder extends TomIslandParserBaseListener {
           activeITL = false;
           filename = "";
           s = "";
-          lmin = 0;
-          cmin = 0;
-          lmax = 0;
-          cmax = 0;
+          lmin = 1;
+          cmin = 1;
+          lmax = 1;
+          cmax = 1;
         }
 
         //System.out.println("accu = " + accu);
@@ -773,6 +778,84 @@ public class CstBuilder extends TomIslandParserBaseListener {
     return `Cst_OriginTracking(t.getInputStream().getSourceName(), firstCharLine, firstCharColumn, lastCharLine, lastCharColumn);  
   }
 
+  // merge consecutive HOSTBLOCK
+  // HOSTBLOCK(...,"a") HOSTBLOCK(...,"b") -> HOSTBLOCK("a  b")
+  private static CstBlockList mergeHOSTBLOCK(CstBlockList t) {
+    String newline = System.getProperty("line.separator");
+    CstBlockList accu = `ConcCstBlock();
+    boolean active = false;
+    String filename = "";
+    String s = "";
+    int lmin = 1;
+    int cmin = 1;
+    int lmax = 1;
+    int cmax = 1;
+
+    for(CstBlock e:t.getCollectionConcCstBlock()) {
+          if(e.isHOSTBLOCK()) {
+            %match(e) {
+              HOSTBLOCK(ConcCstOption(Cst_OriginTracking(name,l1,c1,l2,c2)),text) -> {
+                if(active == false) {
+                  s = `text;
+                  filename = `name;
+                  lmin = `l1;
+                  cmin = `c1;
+                  lmax = `l2;
+                  cmax = `c2; // c2 excluded
+                  active = true;
+                } else {
+                  while(lmax < `l1) {
+                    s += newline;
+                    lmax++;
+                    cmax = 1;
+                  }
+                  while(cmax < `c1) {
+                    s += " ";
+                    cmax++;
+                  }
+                  s += `text;
+                  lmax = `l2;
+                  cmax = `c2;
+                }
+              }
+            }
+          } else {
+            // e is not a HOSTBLOCK
+            if(active == false) {
+              // no current HOSTBLOCK, just append e
+              accu = `ConcCstBlock(accu*,e);
+            } else {
+              // add a space (which could have been eaten by the parseur)
+              s += " ";
+              cmax++;
+              // and flush the current HOSTBLOCK and append e
+              accu = `ConcCstBlock(accu*,HOSTBLOCK(ConcCstOption(Cst_OriginTracking(filename,lmin,cmin,lmax,cmax)),s),e);
+              active = false;
+              filename = "";
+              s = "";
+              lmin = 1;
+              cmin = 1;
+              lmax = 1;
+              cmax = 1;
+            }
+          }
+        }
+
+        if(active) {
+          // flush the last accu
+          accu = `ConcCstBlock(accu*,HOSTBLOCK(ConcCstOption(Cst_OriginTracking(filename,lmin,cmin,lmax,cmax)),s));
+          active = false;
+          filename = "";
+          s = "";
+          lmin = 1;
+          cmin = 1;
+          lmax = 1;
+          cmax = 1;
+        }
+
+        //System.out.println("accu = " + accu);
+        return accu;
+  }
 
 }
 
