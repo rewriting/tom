@@ -97,7 +97,7 @@ public class CstBuilder extends TomIslandParserBaseListener {
       }
     }
     //System.out.println("exitStart bl1: " + bl);
-    bl = mergeHOSTBLOCK(bl);
+    //bl = mergeHOSTBLOCK(bl);
     //System.out.println("exitStart bl2: " + bl);
     setValue("exitStart",ctx, `Cst_Program(bl));
   }
@@ -220,7 +220,7 @@ public class CstBuilder extends TomIslandParserBaseListener {
       }
     }
     //System.out.println("exitBlock bl1: " + bl);
-    bl = mergeHOSTBLOCK(bl);
+    //bl = mergeHOSTBLOCK(bl);
     //System.out.println("exitBlock bl2: " + bl);
     //System.out.println("exitBlock: " + bl);
     setValue(ctx,bl);
@@ -346,7 +346,7 @@ public class CstBuilder extends TomIslandParserBaseListener {
         if(bq.isCst_ITL() && bq.getcode() == ",") {
           // put all elements of accu as a subterm
           CstBQTerm newComposite = flattenComposite(`Cst_BQComposite(ConcCstOption(),accu));
-          newComposite = mergeITL(newComposite);
+          //newComposite = mergeITL(newComposite);
           args = `ConcCstBQTerm(args*,newComposite);
           accu = `ConcCstBQTerm();
         } else {
@@ -364,7 +364,7 @@ public class CstBuilder extends TomIslandParserBaseListener {
         ConcCstBQTerm(_,_,_*) -> {
           // multiple elements: build a composite
           CstBQTerm newComposite = flattenComposite(`Cst_BQComposite(ConcCstOption(),accu));
-          newComposite = mergeITL(newComposite);
+          //newComposite = mergeITL(newComposite);
           args = `ConcCstBQTerm(args*,newComposite);
         }
       }
@@ -384,14 +384,7 @@ public class CstBuilder extends TomIslandParserBaseListener {
             Cst_ITL(optionList2,ctx.RPAREN().getText())
             ));
 
-      res = mergeITL(res);
-      /*
-         res = `Cst_BQComposite(optionList, ConcCstBQTerm(
-         Cst_ITL(optionList1,ctx.LPAREN().getText()),
-         (CstBQTerm)getValue(ctx.compositeplus()),
-         Cst_ITL(optionList2,ctx.RPAREN().getText())
-         ));
-       */
+      //res = mergeITL(res);
     } else if(ctx.var != null && ctx.STAR() == null) {
       res = `Cst_BQVar(optionList,ctx.var.getText(),type);
     } else if(ctx.var != null && ctx.STAR() != null) {
@@ -671,19 +664,40 @@ public class CstBuilder extends TomIslandParserBaseListener {
   }
 
 
+  private static CstOption extractOption(Token t) {
+    String newline = System.getProperty("line.separator");
+    String lines[] = t.getText().split(newline);
+
+    int firstCharLine = t.getLine();
+    int firstCharColumn = t.getCharPositionInLine()+1;
+    int lastCharLine = firstCharLine+lines.length-1;
+    int lastCharColumn;
+    if(lines.length==1) {
+      lastCharColumn = firstCharColumn + lines[0].length();
+    } else {
+      lastCharColumn = lines[lines.length-1].length();
+    }
+
+    return `Cst_OriginTracking(t.getInputStream().getSourceName(), firstCharLine, firstCharColumn, lastCharLine, lastCharColumn);  
+  }
 
 
   // Composite(...Composite(x y z)...) -> Composite(... x y z ...)
   // do not do the full traversal
   private static CstBQTerm flattenComposite(CstBQTerm t) {
+    /*
+       * no longer needed: done in Cstconverter
     %match(t) {
       Cst_BQComposite(option,ConcCstBQTerm(C1*,Cst_BQComposite(_,args),C2*)) -> { 
         return `flattenComposite(Cst_BQComposite(option,ConcCstBQTerm(C1*,args*,C2*)));
       }
     }
+    */
     return t;
   }
 
+    /*
+       * no longer needed: done in Cstconverter
   // merge consecutive ITL in a BQTerm
   // ITL(...,"a") ITL(...,"b") -> ITL("a  b")
   private static CstBQTerm mergeITL(CstBQTerm t) {
@@ -764,22 +778,6 @@ public class CstBuilder extends TomIslandParserBaseListener {
     return t;
   }
 
-  private static CstOption extractOption(Token t) {
-    String newline = System.getProperty("line.separator");
-    String lines[] = t.getText().split(newline);
-
-    int firstCharLine = t.getLine();
-    int firstCharColumn = t.getCharPositionInLine()+1;
-    int lastCharLine = firstCharLine+lines.length-1;
-    int lastCharColumn;
-    if(lines.length==1) {
-      lastCharColumn = firstCharColumn + lines[0].length();
-    } else {
-      lastCharColumn = lines[lines.length-1].length();
-    }
-
-    return `Cst_OriginTracking(t.getInputStream().getSourceName(), firstCharLine, firstCharColumn, lastCharLine, lastCharColumn);  
-  }
 
   // merge consecutive HOSTBLOCK
   // HOSTBLOCK(...,"a") HOSTBLOCK(...,"b") -> HOSTBLOCK("a  b")
@@ -859,6 +857,7 @@ public class CstBuilder extends TomIslandParserBaseListener {
         //System.out.println("accu = " + accu);
         return accu;
   }
+  */
 
 }
 

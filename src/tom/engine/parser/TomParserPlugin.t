@@ -274,8 +274,13 @@ public class TomParserPlugin extends TomGenericPlugin {
             printTree(cst);
           }
 
-          tom.engine.parser.antlr4.CstConverter converter = new tom.engine.parser.antlr4.CstConverter(symbolTable);
-          Code code = converter.convert(cst);
+          tom.engine.parser.antlr4.CstConverter cstConverter = new tom.engine.parser.antlr4.CstConverter();
+          cst = cstConverter.convert(cst);
+
+          System.out.println("simplified cst = " + cst);
+
+          tom.engine.parser.antlr4.AstBuilder astBuilder = new tom.engine.parser.antlr4.AstBuilder(symbolTable);
+          Code code = astBuilder.convert(cst);
           setWorkingTerm(code);
 
           System.out.println("ast = " + code);
