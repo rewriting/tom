@@ -70,19 +70,6 @@ public class CstBuilder extends TomIslandParserBaseListener {
     System.out.println(debug + ": " + value);
   } 
 
-  public CstOperatorList addCstOperator(CstOperatorList operatorList, ParserRuleContext ctx) {
-    if(ctx != null) {
-      operatorList = `ConcCstOperator(operatorList*, (CstOperator)getValue(ctx));
-    }
-    return operatorList;
-  }
-
-  public CstOperatorList addCstOperator(CstOperatorList operatorList, List<? extends ParserRuleContext> ctxList) {
-    for(ParserRuleContext e:ctxList) {
-      operatorList = addCstOperator(operatorList, e);
-    }
-    return operatorList;
-  }
 
   /*
    * start : (island | water)*? ;
@@ -128,7 +115,6 @@ public class CstBuilder extends TomIslandParserBaseListener {
    *   ;
    */
   public void exitWater(TomIslandParser.WaterContext ctx) {
-    //System.out.println("exitWater: '" + ctx.getText() + "'");
     setStringValue(ctx,ctx.getText());
   }
 
@@ -139,7 +125,6 @@ public class CstBuilder extends TomIslandParserBaseListener {
    *   ;
    */
   public void exitWaterexceptparen(TomIslandParser.WaterexceptparenContext ctx) {
-    System.out.println("exitWaterexceptparen: '" + ctx.getText() + "'");
     setStringValue(ctx,ctx.getText());
   }
 
@@ -150,17 +135,8 @@ public class CstBuilder extends TomIslandParserBaseListener {
    */
   public void exitMatchStatement(TomIslandParser.MatchStatementContext ctx) {
     CstOptionList optionList = `ConcCstOption(extractOption(ctx.getStart()));
-    CstBQTermList subjectList = `ConcCstBQTerm();
-    if(ctx.bqterm() != null) {
-      for(ParserRuleContext e:ctx.bqterm()) {
-        subjectList = `ConcCstBQTerm(subjectList*, (CstBQTerm)getValue(e));
-      }
-    }
-
-    CstConstraintActionList constraintActionList = `ConcCstConstraintAction();
-    for(ParserRuleContext e:ctx.actionRule()) {
-      constraintActionList = `ConcCstConstraintAction(constraintActionList*, (CstConstraintAction)getValue(e));
-    }
+    CstBQTermList subjectList = buildCstBQTermList(ctx.bqterm());
+    CstConstraintActionList constraintActionList = buildCstConstraintActionList(ctx.actionRule());
     CstBlock res = `Cst_MatchConstruct(optionList,subjectList,constraintActionList);
     setValue("exitMatchStatement", ctx,res);
   }
@@ -172,17 +148,13 @@ public class CstBuilder extends TomIslandParserBaseListener {
    */
   public void exitStrategyStatement(TomIslandParser.StrategyStatementContext ctx) {
     CstOptionList optionList = `ConcCstOption(extractOption(ctx.getStart()));
-
     CstName name = `Cst_Name(ctx.ID().getText());
     CstSlotList argumentList = `ConcCstSlot();
     // if there are arguments
     if(ctx.slotList() != null) {
       argumentList = (CstSlotList) getValue(ctx.slotList());
     }
-    CstVisitList visitList = `ConcCstVisit();
-    for(ParserRuleContext e:ctx.visit()) {
-      visitList = `ConcCstVisit(visitList*, (CstVisit)getValue(e));
-    }
+    CstVisitList visitList = buildCstVisitList(ctx.visit());
 
     CstBlock res = `Cst_StrategyConstruct(optionList,name,argumentList,(CstBQTerm)getValue(ctx.bqterm()),visitList);
     setValue("exitStrategy", ctx,res);
@@ -203,6 +175,7 @@ public class CstBuilder extends TomIslandParserBaseListener {
     }
     setValue("exitIncludeStatement", ctx,`Cst_IncludeConstruct(optionList,filename));
   }
+
   /*
    * visit
    *   : VISIT ID LBRACE actionRule* RBRACE
@@ -210,14 +183,11 @@ public class CstBuilder extends TomIslandParserBaseListener {
    */
   public void exitVisit(TomIslandParser.VisitContext ctx) {
     CstOptionList optionList = `ConcCstOption(extractOption(ctx.getStart()));
-    CstConstraintActionList l = `ConcCstConstraintAction();
-    for(ParserRuleContext e:ctx.actionRule()) {
-      l = `ConcCstConstraintAction(l*, (CstConstraintAction)getValue(e));
-    }
-
+    CstConstraintActionList l = buildCstConstraintActionList(ctx.actionRule());
     CstVisit res = `Cst_VisitTerm( Cst_Type(ctx.ID().getText()), l, optionList);
     setValue("exitVisit", ctx,res);
   }
+
   /*
    * actionRule
    *   : patternlist ((AND | OR) constraint)? ARROW block
@@ -232,7 +202,7 @@ public class CstBuilder extends TomIslandParserBaseListener {
     CstBlockList action = null;
     if(ctx.block() != null) {
       action = (CstBlockList) getValue(ctx.block());
-    } else {
+    } else if(ctx.bqterm() != null) {
       action = `ConcCstBlock(Cst_BQTermToBlock((CstBQTerm)getValue(ctx.bqterm())));
     }
     CstConstraint constraint = `Cst_AndConstraint();
@@ -252,6 +222,7 @@ public class CstBuilder extends TomIslandParserBaseListener {
     res = `Cst_ConstraintAction(constraint,action,optionList);
     setValue("exitActionRule", ctx,res);
   }
+
   /*
    * block 
    *   : LBRACE (island | block | water)*? RBRACE
@@ -281,18 +252,17 @@ public class CstBuilder extends TomIslandParserBaseListener {
     //System.out.println("exitBlock: " + bl);
     setValue(ctx,bl);
   }
+
   /*
    * slotList
    *   : slot (COMMA slot)*
    *   ;
    */
   public void exitSlotList(TomIslandParser.SlotListContext ctx) {
-    CstSlotList res = `ConcCstSlot();
-    for(ParserRuleContext e:ctx.slot()) {
-      res = `ConcCstSlot(res*, (CstSlot)getValue(e));
-    }
+    CstSlotList res = buildCstSlotList(ctx.slot());
     setValue("exitSlotList", ctx,res);
   }
+
   /*
    * slot
    *   : id1=ID COLON? id2=ID
@@ -307,18 +277,17 @@ public class CstBuilder extends TomIslandParserBaseListener {
     }
     setValue("exitSlot",ctx,res);
   }
+
   /*
    * patternlist
    *   : pattern (COMMA pattern)* 
    *   ;
    */
   public void exitPatternlist(TomIslandParser.PatternlistContext ctx) {
-    CstPatternList res = `ConcCstPattern();
-    for(ParserRuleContext e:ctx.pattern()) {
-      res = `ConcCstPattern(res*, (CstPattern)getValue(e));
-    }
+    CstPatternList res = buildCstPatternList(ctx.pattern());
     setValue("exitPatternList", ctx,res);
   }
+
   /*
    * constraint
    *   : constraint AND constraint
@@ -358,6 +327,7 @@ public class CstBuilder extends TomIslandParserBaseListener {
 
     setValue("exitConstraint",ctx,res);
   }
+
   /*
    * term
    *   : var=ID STAR?
@@ -371,14 +341,12 @@ public class CstBuilder extends TomIslandParserBaseListener {
     } if(ctx.var != null && ctx.STAR() != null) {
       res = `Cst_TermVariableStar(ctx.var.getText());
     } if(ctx.fsym != null) {
-      CstTermList args = `ConcCstTerm();
-      for(ParserRuleContext e:ctx.term()) {
-        args = `ConcCstTerm(args*,(CstTerm)getValue(e));
-      }
+      CstTermList args = buildCstTermList(ctx.term());
       res = `Cst_TermAppl(ctx.fsym.getText(),args);
     }
     setValue("exitTerm",ctx,res);
   }
+
   /*
    * bqterm
    *   : codomain=ID? BQUOTE? fsym=ID LPAREN (bqterm (COMMA bqterm)*)? RPAREN 
@@ -392,10 +360,7 @@ public class CstBuilder extends TomIslandParserBaseListener {
     CstType type = (ctx.codomain != null)?`Cst_Type(ctx.codomain.getText()):`Cst_TypeUnknown();
 
     if(ctx.fsym != null) {
-      CstBQTermList args = `ConcCstBQTerm();
-      for(ParserRuleContext e:ctx.bqterm()) {
-        args = `ConcCstBQTerm(args*,(CstBQTerm)getValue(e));
-      }
+      CstBQTermList args = buildCstBQTermList(ctx.bqterm());
       res = `Cst_BQAppl(optionList,ctx.fsym.getText(),args);
     } if(ctx.var != null && ctx.STAR() == null) {
       res = `Cst_BQVar(optionList,ctx.var.getText(),type);
@@ -409,6 +374,7 @@ public class CstBuilder extends TomIslandParserBaseListener {
     setValue2(ctx,type);
     setValue("exitBqterm",ctx,res);
   }
+
   /*
    * bqcomposite
    *   : BQUOTE composite
@@ -417,6 +383,7 @@ public class CstBuilder extends TomIslandParserBaseListener {
   public void exitBqcomposite(TomIslandParser.BqcompositeContext ctx) {
     setValue("exitBqcomposite",ctx,`Cst_BQTermToBlock((CstBQTerm)getValue(ctx.composite())));
   }
+
   /*
    * composite
    *   : fsym=ID LPAREN composite* RPAREN
@@ -476,11 +443,7 @@ public class CstBuilder extends TomIslandParserBaseListener {
     } else if(ctx.LPAREN() != null && ctx.RPAREN() != null) {
       CstOptionList optionList1 = `ConcCstOption(extractOption(ctx.LPAREN().getSymbol()));
       CstOptionList optionList2 = `ConcCstOption(extractOption(ctx.RPAREN().getSymbol()));
-
-      CstBQTermList args = `ConcCstBQTerm();
-      for(ParserRuleContext e:ctx.composite()) {
-        args = `ConcCstBQTerm(args*,(CstBQTerm)getValue(e));
-      }
+      CstBQTermList args = buildCstBQTermList(ctx.composite());
       res = `Cst_BQComposite(optionList, ConcCstBQTerm(
             Cst_ITL(optionList1,ctx.LPAREN().getText()),
             args*,
@@ -520,6 +483,7 @@ public class CstBuilder extends TomIslandParserBaseListener {
 
     setValue("exitComposite",ctx,res);
   }
+
   /*
    * pattern
    *   : ID AT pattern 
@@ -558,6 +522,7 @@ public class CstBuilder extends TomIslandParserBaseListener {
     }
     setValue("exitPattern",ctx,res);
   }
+
   /*
    * fsymbol 
    *   : headSymbol
@@ -565,12 +530,10 @@ public class CstBuilder extends TomIslandParserBaseListener {
    *   ;
    */
   public void exitFsymbol(TomIslandParser.FsymbolContext ctx) {
-    CstSymbolList res = `ConcCstSymbol();
-    for(ParserRuleContext e:ctx.headSymbol()) {
-      res = `ConcCstSymbol(res*, (CstSymbol) getValue(e));
-    }
+    CstSymbolList res = buildCstSymbolList(ctx.headSymbol());
     setValue("exitFsymbol",ctx,res);
   }
+
   /*
    * headSymbol
    *   : ID QMARK?
@@ -591,6 +554,7 @@ public class CstBuilder extends TomIslandParserBaseListener {
     } 
     setValue("exitHeadSymbol",ctx,res);
   }
+
   /*
    * constant
    *   : INTEGER
@@ -615,6 +579,7 @@ public class CstBuilder extends TomIslandParserBaseListener {
     }
     setValue("exitConstant",ctx,res);
   }
+
   /*
    * explicitArgs
    *   : LPAREN (pattern (COMMA pattern)*)? RPAREN
@@ -628,6 +593,7 @@ public class CstBuilder extends TomIslandParserBaseListener {
     }
     setValue("exitExplicitArgs",ctx,res);
   }
+
   /*
    * implicitArgs
    *   : LSQUAREBR (ID EQUAL pattern (COMMA ID EQUAL pattern)*)? RSQUAREBR 
@@ -641,6 +607,7 @@ public class CstBuilder extends TomIslandParserBaseListener {
     }
     setValue("exitImplicitArgs",ctx,res);
   }
+
   /*
    * typeterm
    *   : TYPETERM type=ID (EXTENDS supertype=ID)? LBRACE 
@@ -662,6 +629,7 @@ public class CstBuilder extends TomIslandParserBaseListener {
     setValue("exitTypeterm", ctx,
         `Cst_TypetermConstruct(optionList,typeName,extendsTypeName,operatorList));
   }
+
   /*
    * operator
    *   : OP codomain=ID opname=ID LPAREN slotList? RPAREN LBRACE 
@@ -687,6 +655,7 @@ public class CstBuilder extends TomIslandParserBaseListener {
     setValue("exitOperator", ctx,
         `Cst_OpConstruct(optionList,codomain,ctorName,argumentList,operatorList));
   }
+
   /*
    * oplist
    *   : OPARRAY codomain=ID opname=ID LPAREN domain=ID STAR RPAREN LBRACE 
@@ -710,6 +679,7 @@ public class CstBuilder extends TomIslandParserBaseListener {
     setValue("exitOpList", ctx,
         `Cst_OpArrayConstruct(optionList,codomain,ctorName,domain,operatorList));
   }
+
   /*
    * oparray
    *   : OPARRAY codomain=ID opname=ID LPAREN domain=ID STAR RPAREN LBRACE 
@@ -732,6 +702,7 @@ public class CstBuilder extends TomIslandParserBaseListener {
     setValue("exitOpArray", ctx,
         `Cst_OpArrayConstruct(optionList,codomain,ctorName,domain,operatorList));
   }
+
   /*
    * implement
    *   : IMPLEMENT block
@@ -741,6 +712,7 @@ public class CstBuilder extends TomIslandParserBaseListener {
     setValue("exitImplement", ctx,
         `Cst_Implement((CstBlockList) getValue(ctx.block())));
   }
+
   /*
    * equalsTerm
    *   : EQUALS LPAREN id1=ID COMMA id2=ID RPAREN block
@@ -750,6 +722,7 @@ public class CstBuilder extends TomIslandParserBaseListener {
     setValue("exitEquals", ctx,
         `Cst_Equals(Cst_Name(ctx.id1.getText()), Cst_Name(ctx.id2.getText()), (CstBlockList) getValue(ctx.block())));
   }
+
   /*
    * isSort
    *   : IS_SORT LPAREN ID RPAREN block
@@ -759,6 +732,7 @@ public class CstBuilder extends TomIslandParserBaseListener {
     setValue("exitIsSort", ctx,
         `Cst_IsSort(Cst_Name(ctx.ID().getText()), (CstBlockList) getValue(ctx.block())));
   }
+
   /*
    * isFsym
    *   : IS_FSYM LPAREN ID RPAREN block
@@ -768,6 +742,7 @@ public class CstBuilder extends TomIslandParserBaseListener {
     setValue("exitIsFsym", ctx,
         `Cst_IsFsym(Cst_Name(ctx.ID().getText()), (CstBlockList) getValue(ctx.block())));
   }
+
   /*
    * make
    *   : MAKE LPAREN (ID (COMMA ID)*)? RPAREN block
@@ -781,6 +756,7 @@ public class CstBuilder extends TomIslandParserBaseListener {
     setValue("exitMake", ctx,
         `Cst_Make(nameList,(CstBlockList) getValue(ctx.block())));
   }
+
   /*
    * makeEmptyList
    *   : MAKE_EMPTY LPAREN RPAREN block
@@ -790,6 +766,7 @@ public class CstBuilder extends TomIslandParserBaseListener {
     setValue("exitMakeEmptyList", ctx,
         `Cst_MakeEmptyList((CstBlockList) getValue(ctx.block())));
   }
+
   /*
    * makeEmptyArray
    *   : MAKE_EMPTY LPAREN ID RPAREN block
@@ -799,6 +776,7 @@ public class CstBuilder extends TomIslandParserBaseListener {
     setValue("exitMakeEmptyArray", ctx,
         `Cst_MakeEmptyArray(Cst_Name(ctx.ID().getText()), (CstBlockList) getValue(ctx.block())));
   }
+
   /*
    * makeAppendArray
    *   : MAKE_APPEND LPAREN id1=ID COMMA id2=ID RPAREN block
@@ -808,6 +786,7 @@ public class CstBuilder extends TomIslandParserBaseListener {
     setValue("exitMakeAppendArray", ctx,
         `Cst_MakeAppend(Cst_Name(ctx.id1.getText()), Cst_Name(ctx.id2.getText()), (CstBlockList) getValue(ctx.block())));
   }
+
   /*
    * makeInsertList
    *   : MAKE_INSERT LPAREN id1=ID COMMA id2=ID RPAREN block
@@ -817,6 +796,7 @@ public class CstBuilder extends TomIslandParserBaseListener {
     setValue("exitMakeInsertList", ctx,
         `Cst_MakeInsert(Cst_Name(ctx.id1.getText()), Cst_Name(ctx.id2.getText()), (CstBlockList) getValue(ctx.block())));
   }
+
   /*
    * getSlot
    *   : GET_SLOT LPAREN id1=ID COMMA id2=ID RPAREN block
@@ -826,6 +806,7 @@ public class CstBuilder extends TomIslandParserBaseListener {
     setValue("exitGetSlot", ctx,
         `Cst_GetSlot(Cst_Name(ctx.id1.getText()), Cst_Name(ctx.id2.getText()), (CstBlockList) getValue(ctx.block())));
   }
+
   /*
    * getHead
    *   : GET_HEAD LPAREN ID RPAREN block
@@ -835,6 +816,7 @@ public class CstBuilder extends TomIslandParserBaseListener {
     setValue("exitGetHead", ctx,
         `Cst_GetHead(Cst_Name(ctx.ID().getText()), (CstBlockList) getValue(ctx.block())));
   }
+
   /*
    * getTail
    *   : GET_TAIL LPAREN ID RPAREN block
@@ -844,6 +826,7 @@ public class CstBuilder extends TomIslandParserBaseListener {
     setValue("exitGetTail", ctx,
         `Cst_GetTail(Cst_Name(ctx.ID().getText()), (CstBlockList) getValue(ctx.block())));
   }
+
   /*
    * getElement
    *   : GET_ELEMENT LPAREN id1=ID COMMA id2=ID RPAREN block
@@ -853,6 +836,7 @@ public class CstBuilder extends TomIslandParserBaseListener {
     setValue("exitGetElement", ctx,
         `Cst_GetElement(Cst_Name(ctx.id1.getText()), Cst_Name(ctx.id2.getText()), (CstBlockList) getValue(ctx.block())));
   }
+
   /*
    * isEmptyList
    *   : IS_EMPTY LPAREN ID RPAREN block
@@ -862,6 +846,7 @@ public class CstBuilder extends TomIslandParserBaseListener {
     setValue("exitIsEmptyList", ctx,
         `Cst_IsEmpty(Cst_Name(ctx.ID().getText()), (CstBlockList) getValue(ctx.block())));
   }
+
   /*
    * getSize
    *   : GET_SIZE LPAREN ID RPAREN block
@@ -871,6 +856,7 @@ public class CstBuilder extends TomIslandParserBaseListener {
     setValue("exitGetSize", ctx,
         `Cst_GetSize(Cst_Name(ctx.ID().getText()), (CstBlockList) getValue(ctx.block())));
   }
+
   /*
    * getDefault
    *   : GET_DEFAULT LPAREN ID RPAREN block
@@ -914,168 +900,92 @@ public class CstBuilder extends TomIslandParserBaseListener {
     return t;
   }
 
+  public CstOperatorList addCstOperator(CstOperatorList operatorList, ParserRuleContext ctx) {
+    if(ctx != null) {
+      operatorList = `ConcCstOperator(operatorList*, (CstOperator)getValue(ctx));
+    }
+    return operatorList;
+  }
+
+  public CstOperatorList addCstOperator(CstOperatorList operatorList, List<? extends ParserRuleContext> ctxList) {
+    for(ParserRuleContext e:ctxList) {
+      operatorList = addCstOperator(operatorList, e);
+    }
+    return operatorList;
+  }
+
   /*
-   * no longer needed: done in Cstconverter
-  // merge consecutive ITL in a BQTerm
-  // ITL(...,"a") ITL(...,"b") -> ITL("a  b")
-  private static CstBQTerm mergeITL(CstBQTerm t) {
-  String newline = System.getProperty("line.separator");
-  CstBQTermList accu = `ConcCstBQTerm();
-  boolean activeITL = false;
-  String filename = "";
-  String s = "";
-  int lmin = 1;
-  int cmin = 1;
-  int lmax = 1;
-  int cmax = 1;
-
-  %match(t) {
-  Cst_BQComposite(optionList, args) -> {
-  for(CstBQTerm e:`args.getCollectionConcCstBQTerm()) {
-  if(e.isCst_ITL()) {
-  %match(e) {
-  Cst_ITL(ConcCstOption(Cst_OriginTracking(name,l1,c1,l2,c2)),text) -> {
-  if(activeITL == false) {
-  s = `text;
-  filename = `name;
-  lmin = `l1;
-  cmin = `c1;
-  lmax = `l2;
-  cmax = `c2;
-  activeITL = true;
-  } else {
-  while(lmax < `l1) {
-  s += newline;
-  lmax++;
-  cmax = 1;
-  }
-  while(cmax < `c1) {
-  s += " ";
-  cmax++;
-  }
-  s += `text;
-  lmax = `l2;
-  cmax = `c2;
-  }
-  }
-  }
-  } else {
-// e is not an ITL
-if(activeITL == false) {
-// no current ITL, just append e
-accu = `ConcCstBQTerm(accu*,e);
-} else {
-  // flush the current ITL and append e
-  accu = `ConcCstBQTerm(accu*,Cst_ITL(ConcCstOption(Cst_OriginTracking(filename,lmin,cmin,lmax,cmax)),s),e);
-  activeITL = false;
-  filename = "";
-  s = "";
-  lmin = 1;
-  cmin = 1;
-  lmax = 1;
-  cmax = 1;
-  }
-  }
-  }
-  if(activeITL) {
-// flush the last accu
-accu = `ConcCstBQTerm(accu*,Cst_ITL(ConcCstOption(Cst_OriginTracking(filename,lmin,cmin,lmax,cmax)),s));
-activeITL = false;
-filename = "";
-s = "";
-lmin = 1;
-cmin = 1;
-lmax = 1;
-cmax = 1;
-}
-
-//System.out.println("accu = " + accu);
-return `Cst_BQComposite(optionList, accu);
-}
-}
-return t;
-}
-
-
-// merge consecutive HOSTBLOCK
-// HOSTBLOCK(...,"a") HOSTBLOCK(...,"b") -> HOSTBLOCK("a  b")
-private static CstBlockList mergeHOSTBLOCK(CstBlockList t) {
-  String newline = System.getProperty("line.separator");
-  CstBlockList accu = `ConcCstBlock();
-  boolean active = false;
-  String filename = "";
-  String s = "";
-  int lmin = 1;
-  int cmin = 1;
-  int lmax = 1;
-  int cmax = 1;
-
-  for(CstBlock e:t.getCollectionConcCstBlock()) {
-    if(e.isHOSTBLOCK()) {
-      %match(e) {
-        HOSTBLOCK(ConcCstOption(Cst_OriginTracking(name,l1,c1,l2,c2)),text) -> {
-          if(active == false) {
-            s = `text;
-            filename = `name;
-            lmin = `l1;
-            cmin = `c1;
-            lmax = `l2;
-            cmax = `c2; // c2 excluded
-            active = true;
-          } else {
-            while(lmax < `l1) {
-              s += newline;
-              lmax++;
-              cmax = 1;
-            }
-            while(cmax < `c1) {
-              s += " ";
-              cmax++;
-            }
-            s += `text;
-            lmax = `l2;
-            cmax = `c2;
-          }
-        }
-      }
-    } else {
-      // e is not a HOSTBLOCK
-      if(active == false) {
-        // no current HOSTBLOCK, just append e
-        accu = `ConcCstBlock(accu*,e);
-      } else {
-        // add a space (which could have been eaten by the parseur)
-        s += " ";
-        cmax++;
-        // and flush the current HOSTBLOCK and append e
-        accu = `ConcCstBlock(accu*,HOSTBLOCK(ConcCstOption(Cst_OriginTracking(filename,lmin,cmin,lmax,cmax)),s),e);
-        active = false;
-        filename = "";
-        s = "";
-        lmin = 1;
-        cmin = 1;
-        lmax = 1;
-        cmax = 1;
+   * convert list of context into CstList 
+   */
+  private CstBQTermList buildCstBQTermList(List<? extends ParserRuleContext> ctx) {
+    CstBQTermList res = `ConcCstBQTerm();
+    if(ctx != null) {
+      for(ParserRuleContext e:ctx) {
+        res = `ConcCstBQTerm(res*, (CstBQTerm)getValue(e));
       }
     }
+    return res;
   }
 
-  if(active) {
-    // flush the last accu
-    accu = `ConcCstBlock(accu*,HOSTBLOCK(ConcCstOption(Cst_OriginTracking(filename,lmin,cmin,lmax,cmax)),s));
-    active = false;
-    filename = "";
-    s = "";
-    lmin = 1;
-    cmin = 1;
-    lmax = 1;
-    cmax = 1;
+  private CstConstraintActionList buildCstConstraintActionList(List<? extends ParserRuleContext> ctx) {
+    CstConstraintActionList res = `ConcCstConstraintAction();
+    if(ctx != null) {
+      for(ParserRuleContext e:ctx) {
+        res = `ConcCstConstraintAction(res*, (CstConstraintAction)getValue(e));
+      }
+    }
+    return res;
   }
 
-  //System.out.println("accu = " + accu);
-  return accu;
-}
-*/
+  private CstVisitList buildCstVisitList(List<? extends ParserRuleContext> ctx) {
+    CstVisitList res = `ConcCstVisit();
+    if(ctx != null) {
+      for(ParserRuleContext e:ctx) {
+        res = `ConcCstVisit(res*, (CstVisit)getValue(e));
+      }
+    }
+    return res;
+  }
+
+  private CstSlotList buildCstSlotList(List<? extends ParserRuleContext> ctx) {
+    CstSlotList res = `ConcCstSlot();
+    if(ctx != null) {
+      for(ParserRuleContext e:ctx) {
+        res = `ConcCstSlot(res*, (CstSlot)getValue(e));
+      }
+    }
+    return res;
+  }
+
+  private CstPatternList buildCstPatternList(List<? extends ParserRuleContext> ctx) {
+    CstPatternList res = `ConcCstPattern();
+    if(ctx != null) {
+      for(ParserRuleContext e:ctx) {
+        res = `ConcCstPattern(res*, (CstPattern)getValue(e));
+      }
+    }
+    return res;
+  }
+
+  private CstTermList buildCstTermList(List<? extends ParserRuleContext> ctx) {
+    CstTermList res = `ConcCstTerm();
+    if(ctx != null) {
+      for(ParserRuleContext e:ctx) {
+        res = `ConcCstTerm(res*, (CstTerm)getValue(e));
+      }
+    }
+    return res;
+  }
+
+  private CstSymbolList buildCstSymbolList(List<? extends ParserRuleContext> ctx) {
+    CstSymbolList res = `ConcCstSymbol();
+    if(ctx != null) {
+      for(ParserRuleContext e:ctx) {
+        res = `ConcCstSymbol(res*, (CstSymbol)getValue(e));
+      }
+    }
+    return res;
+  }
 
 }
 
