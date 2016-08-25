@@ -220,7 +220,7 @@ public class CstConverter {
 
 
   private static String mergeString(String s1, String s2, int lmax1, int cmax1, int lmin2, int cmin2) {
-    System.out.println("mergeString: " + s1 + " --- " + s2);
+    //System.out.println("mergeString: " + s1 + " --- " + s2);
     String newline = System.getProperty("line.separator");
     while(lmax1 < lmin2) {
       s1 += newline;

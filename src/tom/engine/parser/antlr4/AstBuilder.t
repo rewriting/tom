@@ -270,6 +270,12 @@ public class AstBuilder {
         return `CodeToInstruction(DeclarationToCode(SymbolDecl(Name(opName))));
       }
 
+      // TODO
+      //Cst_OpArrayConstruct
+      //Cst_OpListConstruct
+      //Cst_MetaQuoteConstruct
+      //Cst_StrategyConstruct
+
       Cst_AbstractBlock(blocks) -> {
         return `AbstractBlock(convert(blocks));
       }
@@ -306,6 +312,14 @@ public class AstBuilder {
       Cst_BQVarStar(ol,name,Cst_TypeUnknown()) -> {
         return `BQVariableStar(addDefaultModule(convert(ol,name)),Name(name),SymbolTable.TYPE_UNKNOWN);
       }
+
+      Cst_BQConstant(ol, name) -> {
+        return `Composite(CompositeTL(ITL(name)));
+      }
+      
+      //Cst_ITL(ol, code) -> {
+      //  return `Composite(CompositeTL(ITL(code)));
+      //}
 
       Cst_BQComposite(ol,argList) -> {
         BQTerm composite = `Composite();
@@ -422,14 +436,35 @@ public class AstBuilder {
       Cst_Variable(name) -> {
         return `Variable(concOption(),Name(name),SymbolTable.TYPE_UNKNOWN,concConstraint());
       }
+
       Cst_VariableStar(name) -> {
         return `VariableStar(concOption(),Name(name),SymbolTable.TYPE_UNKNOWN,concConstraint());
       }
+
       Cst_UnamedVariable() -> {
         return `Variable(concOption(),EmptyName(),SymbolTable.TYPE_UNKNOWN,concConstraint());
       }
+
       Cst_UnamedVariableStar() -> {
         return `VariableStar(concOption(),EmptyName(),SymbolTable.TYPE_UNKNOWN,concConstraint());
+      }
+
+      Cst_Constant(name) -> {
+        /*
+         * !!! a constant is represented by a Variable !!!
+         */
+        OptionList optionList = `concOption();
+        //TomNameList nameList = `concTomName(`Name(string));
+        //TomList argList = `concTomTerm();
+        ConstraintList constraintList = `concConstraint();
+        return `Variable(concOption(),Name(name),SymbolTable.TYPE_UNKNOWN,concConstraint());
+        //return `TermAppl(optionList,nameList,argList,constraintList);
+      }
+      
+      Cst_ConstantStar(name) -> {
+        OptionList optionList = `concOption();
+        ConstraintList constraintList = `concConstraint();
+        return `VariableStar(concOption(),Name(name),SymbolTable.TYPE_UNKNOWN,concConstraint());
       }
 
       Cst_Appl(symbolList, patternList) -> {

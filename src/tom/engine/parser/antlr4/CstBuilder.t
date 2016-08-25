@@ -67,7 +67,7 @@ public class CstBuilder extends TomIslandParserBaseListener {
 
   private void setValue(String debug, ParseTree node, Object value) { 
     values.put(node, value);
-    System.out.println(debug + ": " + value);
+    //System.out.println(debug + ": " + value);
   } 
 
 
@@ -415,7 +415,8 @@ public class CstBuilder extends TomIslandParserBaseListener {
         CstBQTerm bq = (CstBQTerm)getValue(e);
         if(bq.isCst_ITL() && bq.getcode() == ",") {
           // put all elements of accu as a subterm
-          CstBQTerm newComposite = flattenComposite(`Cst_BQComposite(ConcCstOption(),accu));
+          CstBQTerm newComposite = `Cst_BQComposite(ConcCstOption(),accu);
+          //CstBQTerm newComposite = flattenComposite(`Cst_BQComposite(ConcCstOption(),accu));
           //newComposite = mergeITL(newComposite);
           args = `ConcCstBQTerm(args*,newComposite);
           accu = `ConcCstBQTerm();
@@ -433,7 +434,8 @@ public class CstBuilder extends TomIslandParserBaseListener {
 
         ConcCstBQTerm(_,_,_*) -> {
           // multiple elements: build a composite
-          CstBQTerm newComposite = flattenComposite(`Cst_BQComposite(ConcCstOption(),accu));
+          //CstBQTerm newComposite = flattenComposite(`Cst_BQComposite(ConcCstOption(),accu));
+          CstBQTerm newComposite = `Cst_BQComposite(ConcCstOption(),accu);
           //newComposite = mergeITL(newComposite);
           args = `ConcCstBQTerm(args*,newComposite);
         }
@@ -459,26 +461,8 @@ public class CstBuilder extends TomIslandParserBaseListener {
       CstSymbol cst = (CstSymbol) getValue(ctx.constant());
       res = `Cst_BQConstant(optionList,cst.getvalue());
     } else if (ctx.waterexceptparen() != null) {
-      System.out.println("composite water");
+      //System.out.println("composite water");
       res = `Cst_ITL(optionList, getStringValue(ctx.waterexceptparen()));
-
-      /*
-         System.out.println("#child: " + ctx.water().size());
-         if(ctx.water().size() == 1) {
-         CstOptionList optionList1 = `ConcCstOption(extractOption(ctx.getStart()));
-         String water = getStringValue(ctx.water(0));
-         res = `Cst_ITL(optionList1, water);
-         } else {
-         CstBQTermList list = `ConcCstBQTerm();
-         for(ParserRuleContext e:ctx.water()) {
-         String water = getStringValue(e);
-         CstOptionList optionList1 = `ConcCstOption(extractOption(e.getStart()));
-         list = `ConcCstBQTerm(list*, Cst_ITL(optionList1,  water));
-         }
-         res = `Cst_BQComposite(optionList,list);
-         }
-       */
-
     }
 
     setValue("exitComposite",ctx,res);
@@ -658,7 +642,7 @@ public class CstBuilder extends TomIslandParserBaseListener {
 
   /*
    * oplist
-   *   : OPARRAY codomain=ID opname=ID LPAREN domain=ID STAR RPAREN LBRACE 
+   *   : OPLIST codomain=ID opname=ID LPAREN domain=ID STAR RPAREN LBRACE 
    *     (isFsym | makeEmptyList | makeInsertList | getHead | getTail | isEmptyList)*
    *     RBRACE
    *   ;
@@ -677,7 +661,7 @@ public class CstBuilder extends TomIslandParserBaseListener {
     operatorList = addCstOperator(operatorList, ctx.getTail());
     operatorList = addCstOperator(operatorList, ctx.isEmptyList());
     setValue("exitOpList", ctx,
-        `Cst_OpArrayConstruct(optionList,codomain,ctorName,domain,operatorList));
+        `Cst_OpListConstruct(optionList,codomain,ctorName,domain,operatorList));
   }
 
   /*
@@ -867,6 +851,9 @@ public class CstBuilder extends TomIslandParserBaseListener {
         `Cst_GetDefault(Cst_Name(ctx.ID().getText()), (CstBlockList) getValue(ctx.block())));
   }
 
+  /*
+   * End of grammar
+   */
 
   private static CstOption extractOption(Token t) {
     String newline = System.getProperty("line.separator");
@@ -885,20 +872,6 @@ public class CstBuilder extends TomIslandParserBaseListener {
     return `Cst_OriginTracking(t.getInputStream().getSourceName(), firstCharLine, firstCharColumn, lastCharLine, lastCharColumn);  
   }
 
-
-  // Composite(...Composite(x y z)...) -> Composite(... x y z ...)
-  // do not do the full traversal
-  private static CstBQTerm flattenComposite(CstBQTerm t) {
-    /*
-     * no longer needed: done in Cstconverter
-     %match(t) {
-     Cst_BQComposite(option,ConcCstBQTerm(C1*,Cst_BQComposite(_,args),C2*)) -> { 
-     return `flattenComposite(Cst_BQComposite(option,ConcCstBQTerm(C1*,args*,C2*)));
-     }
-     }
-     */
-    return t;
-  }
 
   public CstOperatorList addCstOperator(CstOperatorList operatorList, ParserRuleContext ctx) {
     if(ctx != null) {
