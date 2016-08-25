@@ -568,7 +568,7 @@ public class NewKernelTyper {
    * empty <code>varPatternList</code>, <code>varList</code>,
    * <code>equationConstraints</code>, <code>subtypeConstraints</code> and <code>substitutions</code>
    */
-  private void init() {
+  public void init() {
     freshTypeVarCounter = limTVarSymbolTable;
     varPatternList = `concTomTerm();
     varList = `concBQTerm();
@@ -632,6 +632,7 @@ public class NewKernelTyper {
    */
   public <T extends tom.library.sl.Visitable> T inferAllTypes(T term, TomType contextType) {
     try {
+      //System.out.println("inferAllTypes: " + term + " --- " + contextType);
       return `TopDownStopOnSuccess(inferTypes(contextType,this)).visitLight(term); 
     } catch(tom.library.sl.VisitFailure e) {
       throw new TomRuntimeException("inferAllTypes: failure on " + term);
@@ -942,19 +943,17 @@ public class NewKernelTyper {
    */
   private CodeList inferCodeList(CodeList cList) {
     CodeList newCList = `concCode();
-    for (Code code : cList.getCollectionconcCode()) {
-      init();
+    for(Code code : cList.getCollectionconcCode()) {
+      //init(); // should not be called here when Tom(...) constructs are nested
       code =  collectKnownTypesFromCode(`code);
-      //DEBUG System.out.println("------------- Code typed with typeVar:\n code = " +
-      //DEBUG    `code);
+      //System.out.println("------------- Code typed with typeVar:\n code = " + `code);
       code = inferAllTypes(code,`EmptyType());
       //DEBUG printGeneratedConstraints(subtypeConstraints);
-      //DEBUG printGeneratedConstraints(equationConstraints);
+      //printGeneratedConstraints(equationConstraints);
       solveConstraints();
-      //DEBUG System.out.println("substitutions = " + substitutions);
+      //System.out.println("substitutions = " + substitutions);
       code = replaceInCode(code);
-      //DEBUG System.out.println("------------- Code typed with substitutions:\n code = " +
-      //DEBUG `code);
+      //System.out.println("------------- Code typed with substitutions:\n code = " + `code);
       replaceInSymbolTable();
       newCList = `concCode(code,newCList*);
     }
@@ -1056,7 +1055,7 @@ public class NewKernelTyper {
   private Constraint inferConstraint(Constraint constraint) {
     %match(constraint) {
       MatchConstraint[Pattern=pattern,Subject=subject,AstType=aType] -> { 
-        //DEBUG System.out.println("inferConstraint l1 -- subject = " + `subject);
+        //System.out.println("inferConstraint l1 -- subject = " + `subject);
         TomType tPattern = getType(`pattern);
         TomType tSubject = getType(`subject);
         if (tPattern == null || tPattern == `EmptyType()) {
@@ -1065,8 +1064,7 @@ public class NewKernelTyper {
         if (tSubject == null || tSubject == `EmptyType()) {
           tSubject = getUnknownFreshTypeVar();
         }
-        //DEBUG System.out.println("inferConstraint: match -- constraint " +
-        //DEBUG     tPattern + " = " + tSubject);
+        //System.out.println("inferConstraint: match -- constraint " + tPattern + " = " + tSubject);
         %match(aType) {
           (Type|TypeVar)[] -> {
             /* T_pattern = T_cast and T_cast <: T_subject */
@@ -1077,6 +1075,7 @@ public class NewKernelTyper {
         }
         TomTerm newPattern = `inferAllTypes(pattern,tPattern);
         BQTerm newSubject = `inferAllTypes(subject,tSubject);
+        //System.out.println("inferConstraint: newPattern: " + newPattern);
         return `MatchConstraint(newPattern,newSubject,aType);
       }
 

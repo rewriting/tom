@@ -99,3 +99,10 @@ BQTerm = BQAppl(Options:OptionList,AstName:TomName,Args:BQTermList)
    * @param Variable the list from which to extract the head / tail
    */
   	| ListTail(Opname:TomName,Variable:BQTerm)  		   
+
+module Code:rules() {
+  InstructionToCode(CodeToInstruction(t)) -> t
+  CodeToInstruction(InstructionToCode(t)) -> t
+}
+
+

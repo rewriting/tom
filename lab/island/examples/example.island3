@@ -1,0 +1,13 @@
+%start_water...%end_water
+%match() {
+  p1 -> { %start_water...%end_water }
+  p2 -> { 
+    %start_water...%end_water 
+    %match() {
+      p3 -> {%start_water action 3 %end_water}
+    }
+    %start_water...%end_water 
+  }
+}
+%start_water...%end_water
+

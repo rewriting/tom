@@ -152,7 +152,7 @@ public class Peano {
   public int peano2int(ATerm N) {
     %match(term N) {
       zero() -> { return 0; }
-      suc(x) -> {return 1+peano2int(`x); }
+      suc(x) -> {return 1 +peano2int(`x); }
     }
     return 0;
   }

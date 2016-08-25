@@ -1,27 +1,22 @@
 module CST
-imports String Code 
+imports String int 
 abstract syntax
-
-// Node type for base types ==================================================
-NodeString = NodeString()
-NodeInt = NodeInt()
 
 // Program ===================================================================
 CstProgram = Cst_Program(blocks:CstBlockList)
 
 CstBlockList = ConcCstBlock(CstBlock*)
 
-CstBlock =
- HOSTBLOCK(optionList:CstOptionList, content:String)
-| Cst_MatchConstruct(optionList:CstOptionList, subjectList:CstBQTermList , constraintActionList:CstConstraintActionList)
-| Cst_OpConstruct       (optionList:CstOptionList, codomain:CstType, ctorName:CstName, argumentList:CstSlotList, operatorList:CstOperatorList)
-| Cst_OpArrayConstruct  (optionList:CstOptionList, codomain:CstType, ctorName:CstName, domain:CstType, operatorList:CstOperatorList)
-| Cst_OpListConstruct   (optionList:CstOptionList, codomain:CstType, ctorName:CstName, domain:CstType, operatorList:CstOperatorList)
-| Cst_TypetermConstruct (optionList:CstOptionList, typeName:CstType, extendsTypeName:CstType, operatorList:CstOperatorList)
-| Cst_MetaQuoteConstruct(optionList:CstOptionList, content:String)
-| Cst_IncludeConstruct  (optionList:CstOptionList, filename:String)
-| Cst_BQTermToBlock     (bqterm:CstBQTerm)
-| Cst_StrategyConstruct(optionList:CstOptionList, stratName:CstName, stratArgs:CstSlotList, extendsTerm:CstBQTerm, visitList:CstVisitList)
+CstBlock = HOSTBLOCK(optionList:CstOptionList, content:String)
+         | Cst_MatchConstruct(optionList:CstOptionList, subjectList:CstBQTermList , constraintActionList:CstConstraintActionList)
+         | Cst_OpConstruct(optionList:CstOptionList, codomain:CstType, ctorName:CstName, argumentList:CstSlotList, operatorList:CstOperatorList)
+         | Cst_OpArrayConstruct(optionList:CstOptionList, codomain:CstType, ctorName:CstName, domain:CstType, operatorList:CstOperatorList)
+         | Cst_OpListConstruct(optionList:CstOptionList, codomain:CstType, ctorName:CstName, domain:CstType, operatorList:CstOperatorList)
+         | Cst_TypetermConstruct(optionList:CstOptionList, typeName:CstType, extendsTypeName:CstType, operatorList:CstOperatorList)
+         | Cst_MetaQuoteConstruct(optionList:CstOptionList, content:String)
+         | Cst_IncludeConstruct(optionList:CstOptionList, filename:String)
+         | Cst_BQTermToBlock(bqterm:CstBQTerm)
+         | Cst_StrategyConstruct(optionList:CstOptionList, stratName:CstName, stratArgs:CstSlotList, extendsTerm:CstBQTerm, visitList:CstVisitList)
 
 CstConstraintAction = Cst_ConstraintAction(constraint:CstConstraint , action:CstBlockList, optionList:CstOptionList)
 //                    | Cst_ConstraintActionReturn(constraint:CstConstraint , term:CstBQTerm, optionList:CstOptionList) 
@@ -30,15 +25,15 @@ CstConstraintAction = Cst_ConstraintAction(constraint:CstConstraint , action:Cst
 CstConstraintActionList = ConcCstConstraintAction(CstConstraintAction*)
 
 CstConstraint  = Cst_MatchTermConstraint(pattern:CstPattern, subject:CstBQTerm, type:CstType)
-              | Cst_MatchArgumentConstraint(pattern:CstPattern)
-              | Cst_AndConstraint(CstConstraint*)
-              | Cst_OrConstraint(CstConstraint*)
-              | Cst_NumLessThan         (lefthand:CstTerm, righthand:CstTerm)
-              | Cst_NumLessOrEqualTo    (lefthand:CstTerm, righthand:CstTerm)
-              | Cst_NumGreaterThan      (lefthand:CstTerm, righthand:CstTerm)
-              | Cst_NumGreaterOrEqualTo (lefthand:CstTerm, righthand:CstTerm)
-              | Cst_NumEqualTo          (lefthand:CstTerm, righthand:CstTerm)
-              | Cst_NumDifferent        (lefthand:CstTerm, righthand:CstTerm)
+               | Cst_MatchArgumentConstraint(pattern:CstPattern)
+               | Cst_AndConstraint(CstConstraint*)
+               | Cst_OrConstraint(CstConstraint*)
+               | Cst_NumLessThan         (lefthand:CstTerm, righthand:CstTerm)
+               | Cst_NumLessOrEqualTo    (lefthand:CstTerm, righthand:CstTerm)
+               | Cst_NumGreaterThan      (lefthand:CstTerm, righthand:CstTerm)
+               | Cst_NumGreaterOrEqualTo (lefthand:CstTerm, righthand:CstTerm)
+               | Cst_NumEqualTo          (lefthand:CstTerm, righthand:CstTerm)
+               | Cst_NumDifferent        (lefthand:CstTerm, righthand:CstTerm)
               
 CstConstraintList = ConcCstConstraint(CstConstraint*)
 
@@ -54,17 +49,16 @@ CstType = Cst_Type(type:String)
         | Cst_TypeUnknown()
 
 // CstPattern in CST context is "equivalent" to TomTerm in AST context
-CstPattern = 
-  Cst_Anti(pattern:CstPattern)
-| Cst_AnnotatedPattern(pattern:CstPattern,annotation:String)
-| Cst_Variable        (name:String) 
-| Cst_VariableStar    (name:String)
-| Cst_Constant        (value:String)
-| Cst_ConstantStar    (value:String)
-| Cst_UnamedVariable    ()
-| Cst_UnamedVariableStar()
-| Cst_Appl(headSymbolList:CstSymbolList, patternList:CstPatternList)
-| Cst_RecordAppl(headSymbolList:CstSymbolList, pairPatternList:CstPairPatternList)
+CstPattern = Cst_Anti(pattern:CstPattern)
+           | Cst_AnnotatedPattern(pattern:CstPattern,annotation:String)
+           | Cst_Variable        (name:String) 
+           | Cst_VariableStar    (name:String)
+           | Cst_Constant        (value:String)
+           | Cst_ConstantStar    (value:String)
+           | Cst_UnamedVariable    ()
+           | Cst_UnamedVariableStar()
+           | Cst_Appl(headSymbolList:CstSymbolList, patternList:CstPatternList)
+           | Cst_RecordAppl(headSymbolList:CstSymbolList, pairPatternList:CstPairPatternList)
 
 CstSymbolList = ConcCstSymbol(CstSymbol*)
 CstSymbol = Cst_Symbol(name:String, theory:CstTheory)
@@ -86,23 +80,22 @@ CstPairPattern = Cst_PairPattern(slotName:String, pattern:CstPattern)
 // CsOp*Construct ============================================================
 CstOperatorList = ConcCstOperator(CstOperator*)
 
-CstOperator =
- | Cst_IsFsym         (argName:CstName, block:CstBlockList)
- | Cst_GetHead        (argName:CstName, block:CstBlockList)
- | Cst_IsEmpty        (argName:CstName, block:CstBlockList)
- | Cst_MakeEmptyArray (argName:CstName, block:CstBlockList)
- | Cst_GetSize        (argName:CstName, block:CstBlockList)
- | Cst_GetTail        (argName:CstName, block:CstBlockList)
- | Cst_GetDefault     (argName:CstName, block:CstBlockList)
- | Cst_GetSlot   (argName1:CstName, argName2:CstName, block:CstBlockList)
- | Cst_MakeInsert(argName1:CstName, argName2:CstName, block:CstBlockList)
- | Cst_GetElement(argName1:CstName, argName2:CstName, block:CstBlockList)
- | Cst_MakeAppend(argName1:CstName, argName2:CstName, block:CstBlockList)
- | Cst_Make   (nameList:CstNameList, block:CstBlockList)
- | Cst_MakeEmptyList(block:CstBlockList)
- | Cst_Implement(block:CstBlockList)
- | Cst_IsSort (argName:CstName, block:CstBlockList)
- | Cst_Equals (argName1:CstName, argName2:CstName, block:CstBlockList)
+CstOperator = Cst_IsFsym(argName:CstName, block:CstBlockList)
+            | Cst_GetHead(argName:CstName, block:CstBlockList)
+            | Cst_IsEmpty(argName:CstName, block:CstBlockList)
+            | Cst_MakeEmptyArray(argName:CstName, block:CstBlockList)
+            | Cst_GetSize(argName:CstName, block:CstBlockList)
+            | Cst_GetTail(argName:CstName, block:CstBlockList)
+            | Cst_GetDefault(argName:CstName, block:CstBlockList)
+            | Cst_GetSlot(argName1:CstName, argName2:CstName, block:CstBlockList)
+            | Cst_MakeInsert(argName1:CstName, argName2:CstName, block:CstBlockList)
+            | Cst_GetElement(argName1:CstName, argName2:CstName, block:CstBlockList)
+            | Cst_MakeAppend(argName1:CstName, argName2:CstName, block:CstBlockList)
+            | Cst_Make(nameList:CstNameList, block:CstBlockList)
+            | Cst_MakeEmptyList(block:CstBlockList)
+            | Cst_Implement(block:CstBlockList)
+            | Cst_IsSort(argName:CstName, block:CstBlockList)
+            | Cst_Equals(argName1:CstName, argName2:CstName, block:CstBlockList)
 
 CstSlotList = ConcCstSlot(CstSlot*)
 
@@ -125,7 +118,6 @@ CstPairSlotBQTermList = ConcCstPairSlotBQTerm(CstPairSlotBQTerm*)
 
 // Names
 CstName = Cst_Name(name:String)
-        | Cst_EmptyName()
 
 CstNameList = ConcCstName(CstName*)
 

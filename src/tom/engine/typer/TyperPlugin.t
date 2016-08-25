@@ -81,7 +81,7 @@ public class TyperPlugin extends TomGenericPlugin {
   /** the declared options string */
   public static final String DECLARED_OPTIONS =
     "<options>" +
-    "<boolean name='type' altName='' description='TyperPlugin (deactivated since Tom-2.10)' value='false'/>" +
+    "<boolean name='oldtyper' altName='ot' description='Old TyperPlugin (deactivated since Tom-2.10)' value='false'/>" +
     "<boolean name='newtyper' altName='nt' description='New TyperPlugin (activated by default since Tom-2.10)' value='true'/>" +
     "</options>";
 
@@ -109,6 +109,7 @@ public class TyperPlugin extends TomGenericPlugin {
   public void run(Map informationTracker) {
     long startChrono = System.currentTimeMillis();
     boolean intermediate = getOptionBooleanValue("intermediate");
+    boolean oldtyper = getOptionBooleanValue("oldtyper");
     boolean newtyper = getOptionBooleanValue("newtyper");
 
     kernelTyper.setSymbolTable(getStreamManager().getSymbolTable());
@@ -118,18 +119,18 @@ public class TyperPlugin extends TomGenericPlugin {
     Code typedCode = (Code)getWorkingTerm();
     //System.out.println("before: " + typedCode);
 
-    if(newtyper==false) {
+    if(oldtyper) {
       try {
 
         System.out.println("\nOld typer activated!: " + getStreamManager().getInputFileName());
 
         updateSymbolTable();
-        //System.out.println("\nCode before type inference = \n" + getWorkingTerm());
 
+        //System.out.println("\nCode before type inference = \n" + typedCode);
         typedCode = (Code) kernelTyper.typeVariable(`EmptyType(), typedCode);
 
         typedCode = kernelTyper.propagateVariablesTypes(typedCode);
-        //DEBUG System.out.println("\nCode after type inference before desugarString = \n" + typedCode);
+        //System.out.println("\nCode after type inference before desugarString = \n" + typedCode);
 
         // replace 'abc' by concString('a','b','c')
         typedCode = `TopDownIdStopOnSuccess(desugarString(this)).visitLight(typedCode);
@@ -149,7 +150,7 @@ public class TyperPlugin extends TomGenericPlugin {
         e.printStackTrace();
         return;
       }
-    } else {
+    } else if(newtyper) {
       //System.out.println("\nNew typer activated!: " + getStreamManager().getInputFileName());
  
       try {
@@ -162,8 +163,12 @@ public class TyperPlugin extends TomGenericPlugin {
         /**
          * Start by typing variables with fresh type variables
          * Perform type inference over patterns 
-         */
+         */ 
+        // pem: should use a stack of environment and call init for each Tom construct
+        newKernelTyper.init();
+        //System.out.println("\nCode before type inference = \n" + typedCode);
         typedCode = newKernelTyper.inferAllTypes(typedCode,`EmptyType());
+        //System.out.println("\nCode after type inference before desugarString = \n" + typedCode);
 
         /**
          * Replace all remains of type variables by
@@ -197,6 +202,8 @@ public class TyperPlugin extends TomGenericPlugin {
         return;
       }
       /* Add a suffix for the compilation option --intermediate during typing phase*/
+    } else {
+      System.out.println("Sorry no typer!!!");
     }
 
     if(intermediate) {

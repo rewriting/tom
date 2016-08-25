@@ -1,0 +1,4 @@
+antlr4 Simplang.g4 ; tom Main.t; javac Simplang*.java Main.java
+java Main p1.txt
+
+

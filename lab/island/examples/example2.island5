@@ -1,0 +1,10 @@
+code
+// comment 1
+%match() {
+  a << s -> { return "foo"; }
+  b << s && b << s -> { return `f("foo"); }
+}
+...
+`foo();
+
+

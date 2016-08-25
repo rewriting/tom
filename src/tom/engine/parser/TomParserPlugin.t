@@ -58,6 +58,11 @@ import antlr.TokenStreamSelector;
 import org.antlr.runtime.ANTLRReaderStream;
 import org.antlr.runtime.CharStream;
 import org.antlr.runtime.tree.Tree;
+
+import org.antlr.v4.runtime.*;
+import org.antlr.v4.runtime.tree.*;
+
+
 /**
  * The TomParser "plugin"
  * The responsability of the plugin is to parse the input file and create the
@@ -237,25 +242,48 @@ public class TomParserPlugin extends TomGenericPlugin {
     } else {
       try {
         if(!currentFileName.equals("-")) {
-          tom.engine.parser.antlr3.HostParser parser = 
-            new tom.engine.parser.antlr3.HostParser(getStreamManager(), getOptionManager());
-          ANTLRReaderStream input = new ANTLRReaderStream(currentReader);
+          //tom.engine.parser.antlr3.HostParser parser = 
+          //  new tom.engine.parser.antlr3.HostParser(getStreamManager(), getOptionManager());
+          //ANTLRReaderStream input = new ANTLRReaderStream(currentReader);
+          ANTLRInputStream input = new ANTLRInputStream(currentReader);
+          tom.engine.parser.antlr4.TomIslandLexer lexer = 
+            new tom.engine.parser.antlr4.TomIslandLexer(input);
+          CommonTokenStream tokens = new CommonTokenStream(lexer);
+          tom.engine.parser.antlr4.TomIslandParser parser = 
+            new tom.engine.parser.antlr4.TomIslandParser(tokens);
+          parser.setBuildParseTree(true);      // tell ANTLR to build a parse tree
+
           input.name = currentFileName;
-          System.out.println("CurrentFileName : "+currentFileName);
+          System.out.println("CurrentFileName : " + currentFileName);
 
           long start = System.currentTimeMillis();
-          Tree programAsAntrlTree = parser.parseProgram(input);
-          System.out.println("parsing antlr3 = " + (System.currentTimeMillis()-start) + " ms");
+          ParseTree tree = parser.start(); // parse
+          System.out.println("parsing antlr4 = " + (System.currentTimeMillis()-start) + " ms");
 
-          CstProgram cst = (CstProgram)CSTAdaptor.getTerm(programAsAntrlTree);
+          // show tree in text form
+          // System.out.println(tree.toStringTree(parser));
+
+          ParseTreeWalker walker = new ParseTreeWalker();
+          tom.engine.parser.antlr4.CstBuilder cstBuilder = new tom.engine.parser.antlr4.CstBuilder(); 
+          walker.walk(cstBuilder, tree);
+          CstProgram cst = (CstProgram) cstBuilder.getValue(tree);
+
+          //CstProgram cst = (CstProgram)CSTAdaptor.getTerm(programAsAntrlTree);
 
           if(printcst) {
             printTree(cst);
           }
 
-          tom.engine.parser.antlr3.CstConverter converter = new tom.engine.parser.antlr3.CstConverter(symbolTable);
-          Code code = converter.convert(cst);
+          tom.engine.parser.antlr4.CstConverter cstConverter = new tom.engine.parser.antlr4.CstConverter();
+          cst = cstConverter.convert(cst);
+
+          System.out.println("simplified cst = " + cst);
+
+          tom.engine.parser.antlr4.AstBuilder astBuilder = new tom.engine.parser.antlr4.AstBuilder(symbolTable);
+          Code code = astBuilder.convert(cst);
           setWorkingTerm(code);
+
+          System.out.println("ast = " + code);
 
           Iterator it = symbolTable.keySymbolIterator();
           while(it.hasNext()) {
