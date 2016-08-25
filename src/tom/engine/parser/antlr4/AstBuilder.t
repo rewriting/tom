@@ -270,6 +270,10 @@ public class AstBuilder {
         return `CodeToInstruction(DeclarationToCode(SymbolDecl(Name(opName))));
       }
 
+      Cst_AbstractBlock(blocks) -> {
+        return `AbstractBlock(convert(blocks));
+      }
+
     } // end %match
    
     //return `Tom(concCode());

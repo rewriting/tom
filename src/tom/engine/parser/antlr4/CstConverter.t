@@ -27,46 +27,122 @@ package tom.engine.parser.antlr4;
 
 import java.util.logging.Logger;
 import java.util.*;
+import java.io.*;
 
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.*;
 
 import tom.engine.adt.cst.types.*;
+import tom.engine.adt.code.types.*;
 
 import tom.engine.TomBase;
 import tom.engine.TomMessage;
 import tom.engine.exception.TomRuntimeException;
+import tom.engine.exception.TomIncludeException;
+import tom.engine.exception.TomException;
 
 import tom.engine.tools.SymbolTable;
 import tom.engine.tools.ASTFactory;
+import tom.engine.TomStreamManager;
 
 import tom.library.sl.*;
 
 public class CstConverter {
   %include { ../../../library/mapping/java/sl.tom}
   %include { ../../adt/cst/CST.tom }
+  %typeterm CstConverter { implement { CstConverter }}
 
   private static Logger logger = Logger.getLogger("tom.engine.typer.CstConverter");
   private Logger getLogger() {
     return Logger.getLogger(getClass().getName());
   }
 
+  private TomStreamManager streamManager;
+
+  public CstConverter(TomStreamManager streamManager) {
+    this.streamManager = streamManager;
+  }
+
+  public TomStreamManager getStreamManager() {
+    return this.streamManager;
+  }
+
   public CstProgram convert(CstProgram t) {
     try {
-      t = `BottomUp(SimplifyCST()).visitLight(t);
+      t = `BottomUp(SimplifyCST(this)).visitLight(t);
     } catch(VisitFailure e) {
       // do nothing
     }
     return t;
   }
 
-  %strategy SimplifyCST() extends Identity() {
+  private CstBlock includeFile(String filename, int lineNumber) throws TomIncludeException {
+    System.out.println("include: " + `filename);
+    String currentFileName = getStreamManager().getInputFileName();  
 
-    visit CstBlock {
-      Cst_IncludeConstruct(options,filename) -> {
-        System.out.println("include: " + `filename);
+    String includeName = `filename.trim();
+    includeName = includeName.replace('/',File.separatorChar);
+    includeName = includeName.replace('\\',File.separatorChar);
+    if(includeName.equals("")) {
+      throw new TomIncludeException(TomMessage.missingIncludedFile,
+        new Object[]{currentFileName, lineNumber});
+    }
+
+    File file = new File(includeName);
+    if(file.isAbsolute()) {
+      try {
+        file = file.getCanonicalFile();
+      } catch (IOException e) {
+        System.out.println("IO Exception when computing included file");
+        e.printStackTrace();
       }
 
+      if(!file.exists()) {
+        file = null;
+      }
+    } else {
+      /* StreamManager shall find it */
+      file = getStreamManager().findFile(new File(currentFileName).getParentFile(), includeName);
+    }
+    if(file == null) {
+      throw new TomIncludeException(TomMessage.includedFileNotFound,
+          new Object[]{
+            filename, 
+            currentFileName, 
+            lineNumber,
+            currentFileName});
+    }
+
+    // parse the file
+    ANTLRFileStream tomInput;
+    try {
+      tomInput = new ANTLRFileStream(file.getCanonicalPath());
+      tom.engine.parser.antlr4.TomParser parser = new tom.engine.parser.antlr4.TomParser(filename, getStreamManager(), getStreamManager().getSymbolTable());
+
+      CstProgram include = parser.parse(tomInput);
+      %match(include) {
+        Cst_Program(blocks) -> { 
+          return `Cst_AbstractBlock(blocks);
+        }
+      }
+
+    } catch (Exception e) {
+      throw new RuntimeException(e); //XXX
+    }
+
+    return `Cst_AbstractBlock(ConcCstBlock());
+  }
+
+  %strategy SimplifyCST(cc:CstConverter) extends Identity() {
+
+    visit CstBlock {
+      Cst_IncludeConstruct(ConcCstOption(Cst_OriginTracking(_,l1,c1,l2,c2)),filename) -> {
+        try {
+          return cc.includeFile(`filename,`l1);
+        } catch(TomIncludeException e) {
+          e.printStackTrace();
+        }
+      }
     }
 
     visit CstBQTerm {

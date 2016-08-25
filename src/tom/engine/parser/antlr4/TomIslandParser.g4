@@ -125,10 +125,6 @@ waterexceptparen
   ~(LPAREN|RPAREN)+? 
   ;
 
-compositeplus
-  : composite+
-  ;
-
 pattern
   : ID AT pattern 
   | ANTI pattern
