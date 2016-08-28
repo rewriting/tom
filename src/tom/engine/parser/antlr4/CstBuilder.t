@@ -499,10 +499,10 @@ public class CstBuilder extends TomIslandParserBaseListener {
       res = `Cst_UnamedVariableStar();
     } if(ctx.constant() != null && ctx.STAR() == null) {
       CstSymbol cst = (CstSymbol) getValue(ctx.constant());
-      res = `Cst_Constant(cst.getvalue());
+      res = `Cst_Constant(cst);
     } if(ctx.constant() != null && ctx.STAR() != null) {
       CstSymbol cst = (CstSymbol) getValue(ctx.constant());
-      res = `Cst_ConstantStar(cst.getvalue());
+      res = `Cst_ConstantStar(cst);
     }
     setValue("exitPattern",ctx,res);
   }
@@ -551,15 +551,15 @@ public class CstBuilder extends TomIslandParserBaseListener {
   public void exitConstant(TomIslandParser.ConstantContext ctx) {
     CstSymbol res = null;
     if(ctx.INTEGER() != null) {
-      res = `Cst_ConstantInt(ctx.INTEGER().getText());
+      res = `Cst_SymbolInt(ctx.INTEGER().getText());
     } else if(ctx.LONG() != null) {
-      res = `Cst_ConstantLong(ctx.LONG().getText());
+      res = `Cst_SymbolLong(ctx.LONG().getText());
     } else if(ctx.CHAR() != null) {
-      res = `Cst_ConstantChar(ctx.CHAR().getText());
+      res = `Cst_SymbolChar(ctx.CHAR().getText());
     } else if(ctx.DOUBLE() != null) {
-      res = `Cst_ConstantDouble(ctx.DOUBLE().getText());
+      res = `Cst_SymbolDouble(ctx.DOUBLE().getText());
     } else if(ctx.STRING() != null) {
-      res = `Cst_ConstantString(ctx.STRING().getText());
+      res = `Cst_SymbolString(ctx.STRING().getText());
     }
     setValue("exitConstant",ctx,res);
   }

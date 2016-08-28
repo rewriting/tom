@@ -147,7 +147,6 @@ public class AstBuilder {
 
       Cst_OpConstruct(optionList, Cst_Type(codomain), Cst_Name(opName), slotList, operatorList) -> {
         CstOption ot = getOriginTracking(`optionList);
-        DeclarationList declarationList = `concDeclaration();
         List<PairNameDecl> pairNameDeclList = new LinkedList<PairNameDecl>();
         List<TomName> slotNameList = new LinkedList<TomName>();
         List<Option> options = new LinkedList<Option>();
@@ -180,7 +179,6 @@ public class AstBuilder {
         %match(operatorList) {
           ConcCstOperator(_*,operator,_*) -> {
             %match(operator) {
-
               Cst_IsFsym(Cst_Name(name),ConcCstBlock(HOSTBLOCK(optionList2,content))) -> {
                 CstOption ot2 = getOriginTracking(`optionList2);
                 String code = ASTFactory.abstractCode(`content,`name);
@@ -260,7 +258,6 @@ public class AstBuilder {
 
                 options.add(`DeclarationToOption(attribute)); 
               }
-               
 
             }
           }
@@ -270,11 +267,237 @@ public class AstBuilder {
         return `CodeToInstruction(DeclarationToCode(SymbolDecl(Name(opName))));
       }
 
+      Cst_OpArrayConstruct(optionList, Cst_Type(codomain), Cst_Name(opName), Cst_Type(domain), operatorList) -> {
+        CstOption ot = getOriginTracking(`optionList);
+        List<Option> options = new LinkedList<Option>();
+        TomTypeList types = `concTomType(Type(concTypeOption(),domain,EmptyTargetLanguageType()));
+        options.add(`OriginTracking(Name(opName),ot.getstartLine(),ot.getfileName()));
+
+        %match(operatorList) {
+          ConcCstOperator(_*,operator,_*) -> {
+            %match(operator) {
+              Cst_IsFsym(Cst_Name(name),ConcCstBlock(HOSTBLOCK(optionList2,content))) -> {
+                CstOption ot2 = getOriginTracking(`optionList2);
+                String code = ASTFactory.abstractCode(`content,`name);
+                Declaration attribute = `IsFsymDecl(
+                    Name(opName),
+                    makeBQVariableFromName(name,codomain,optionList2),
+                    Code(code), 
+                    OriginTracking(Name(opName),ot2.getstartLine(),ot2.getfileName())
+                    );
+                options.add(`DeclarationToOption(attribute)); 
+              }
+
+
+              Cst_MakeEmptyArray(Cst_Name(name),ConcCstBlock(HOSTBLOCK(optionList2,content))) -> {
+                CstOption ot2 = getOriginTracking(`optionList2);
+
+                Option listInfo = `OriginTracking(Name(name),ot2.getstartLine(),ot2.getfileName());
+                OptionList listOption = `concOption(listInfo);
+
+                String code = ASTFactory.abstractCode(`content, `name);
+                Instruction instruction = `ExpressionToInstruction(Code(code));
+
+                Declaration attribute = `MakeEmptyArray(
+                    Name(opName),
+                    BQVariable(listOption,Name(name),Type(concTypeOption(),codomain,EmptyTargetLanguageType())),
+                    instruction,
+                    OriginTracking(Name(opName),ot2.getstartLine(),ot2.getfileName()));
+
+                options.add(`DeclarationToOption(attribute)); 
+              }
+
+              Cst_MakeAppend(Cst_Name(name1),Cst_Name(name2),ConcCstBlock(HOSTBLOCK(optionList2,content))) -> {
+                CstOption ot2 = getOriginTracking(`optionList2);
+
+                Option elementInfo = `OriginTracking(Name(name1),ot2.getstartLine(),ot2.getfileName());
+                OptionList elementOption = `concOption(elementInfo);
+                Option listInfo = `OriginTracking(Name(name2),ot2.getstartLine(),ot2.getfileName());
+                OptionList listOption = `concOption(listInfo);
+
+                String code = ASTFactory.abstractCode(`content, `name1, `name2);
+                Instruction instruction = `ExpressionToInstruction(Code(code));
+
+                Declaration attribute = `MakeAddArray(
+                    Name(opName),
+                    BQVariable(listOption,Name(name1),Type(concTypeOption(),domain,EmptyTargetLanguageType())),
+                    BQVariable(listOption,Name(name2),Type(concTypeOption(),codomain,EmptyTargetLanguageType())),
+                    instruction,
+                    OriginTracking(Name(opName),ot2.getstartLine(),ot2.getfileName()));
+
+                options.add(`DeclarationToOption(attribute)); 
+              }
+
+              Cst_GetSize(Cst_Name(name),ConcCstBlock(HOSTBLOCK(optionList2,content))) -> {
+                CstOption ot2 = getOriginTracking(`optionList2);
+
+                Option listInfo = `OriginTracking(Name(name),ot2.getstartLine(),ot2.getfileName());
+                OptionList listOption = `concOption(listInfo);
+
+                String code = ASTFactory.abstractCode(`content, `name);
+
+                Declaration attribute = `GetSizeDecl(
+                    Name(opName),
+                    BQVariable(listOption,Name(name),Type(concTypeOption(),codomain,EmptyTargetLanguageType())),
+                    Code(code),
+                    OriginTracking(Name(opName),ot2.getstartLine(),ot2.getfileName()));
+
+                options.add(`DeclarationToOption(attribute)); 
+              }
+
+              Cst_GetElement(Cst_Name(name1),Cst_Name(name2),ConcCstBlock(HOSTBLOCK(optionList2,content))) -> {
+                CstOption ot2 = getOriginTracking(`optionList2);
+
+                Option elementInfo = `OriginTracking(Name(name1),ot2.getstartLine(),ot2.getfileName());
+                OptionList elementOption = `concOption(elementInfo);
+                Option listInfo = `OriginTracking(Name(name2),ot2.getstartLine(),ot2.getfileName());
+                OptionList listOption = `concOption(listInfo);
+
+                String code = ASTFactory.abstractCode(`content, `name1, `name2);
+
+                Declaration attribute = `GetElementDecl(
+                    Name(opName),
+                    BQVariable(listOption,Name(name1),Type(concTypeOption(),codomain,EmptyTargetLanguageType())),
+                    BQVariable(listOption,Name(name2),Type(concTypeOption(),"int",EmptyTargetLanguageType())),
+                    Code(code),
+                    OriginTracking(Name(opName),ot2.getstartLine(),ot2.getfileName()));
+
+                options.add(`DeclarationToOption(attribute)); 
+              }
+            }
+          }
+        }
+
+        PairNameDeclList pairNameDeclList = `concPairNameDecl(PairNameDecl(EmptyName(), EmptyDeclaration()));
+        TomSymbol astSymbol = ASTFactory.makeSymbol(`opName, `Type(concTypeOption(),codomain,EmptyTargetLanguageType()), types, pairNameDeclList, options);
+        symbolTable.putSymbol(`opName,astSymbol);
+        return `CodeToInstruction(DeclarationToCode(ArraySymbolDecl(Name(opName))));
+      }
+
+      Cst_OpListConstruct(optionList, Cst_Type(codomain), Cst_Name(opName), Cst_Type(domain), operatorList) -> {
+        CstOption ot = getOriginTracking(`optionList);
+        List<Option> options = new LinkedList<Option>();
+        TomTypeList types = `concTomType(Type(concTypeOption(),domain,EmptyTargetLanguageType()));
+        options.add(`OriginTracking(Name(opName),ot.getstartLine(),ot.getfileName()));
+
+        %match(operatorList) {
+          ConcCstOperator(_*,operator,_*) -> {
+            %match(operator) {
+              Cst_IsFsym(Cst_Name(name),ConcCstBlock(HOSTBLOCK(optionList2,content))) -> {
+                CstOption ot2 = getOriginTracking(`optionList2);
+                String code = ASTFactory.abstractCode(`content,`name);
+                Declaration attribute = `IsFsymDecl(
+                    Name(opName),
+                    makeBQVariableFromName(name,codomain,optionList2),
+                    Code(code), 
+                    OriginTracking(Name(opName),ot2.getstartLine(),ot2.getfileName())
+                    );
+                options.add(`DeclarationToOption(attribute)); 
+              }
+
+
+              Cst_MakeEmptyList(ConcCstBlock(HOSTBLOCK(optionList2,content))) -> {
+                CstOption ot2 = getOriginTracking(`optionList2);
+
+                String code = `content;
+                Instruction instruction = `ExpressionToInstruction(Code(code));
+
+                Declaration attribute = `MakeEmptyList(
+                    Name(opName),
+                    instruction,
+                    OriginTracking(Name(opName),ot2.getstartLine(),ot2.getfileName()));
+
+                options.add(`DeclarationToOption(attribute)); 
+              }
+
+              Cst_MakeInsert(Cst_Name(name1),Cst_Name(name2),ConcCstBlock(HOSTBLOCK(optionList2,content))) -> {
+                CstOption ot2 = getOriginTracking(`optionList2);
+
+                Option elementInfo = `OriginTracking(Name(name1),ot2.getstartLine(),ot2.getfileName());
+                OptionList elementOption = `concOption(elementInfo);
+                Option listInfo = `OriginTracking(Name(name2),ot2.getstartLine(),ot2.getfileName());
+                OptionList listOption = `concOption(listInfo);
+
+                String code = ASTFactory.abstractCode(`content, `name1, `name2);
+                Instruction instruction = `ExpressionToInstruction(Code(code));
+
+                Declaration attribute = `MakeAddList(
+                    Name(opName),
+                    BQVariable(listOption,Name(name1),Type(concTypeOption(),domain,EmptyTargetLanguageType())),
+                    BQVariable(listOption,Name(name2),Type(concTypeOption(),codomain,EmptyTargetLanguageType())),
+                    instruction,
+                    OriginTracking(Name(opName),ot2.getstartLine(),ot2.getfileName()));
+
+                options.add(`DeclarationToOption(attribute)); 
+              }
+
+              Cst_GetHead(Cst_Name(name),ConcCstBlock(HOSTBLOCK(optionList2,content))) -> {
+                CstOption ot2 = getOriginTracking(`optionList2);
+
+                Option listInfo = `OriginTracking(Name(name),ot2.getstartLine(),ot2.getfileName());
+                OptionList listOption = `concOption(listInfo);
+
+                String code = ASTFactory.abstractCode(`content, `name);
+
+                Declaration attribute = `GetHeadDecl(
+                    Name(opName),
+                    symbolTable.getUniversalType(),
+                    BQVariable(listOption,Name(name),Type(concTypeOption(),codomain,EmptyTargetLanguageType())),
+                    Code(code),
+                    OriginTracking(Name(opName),ot2.getstartLine(),ot2.getfileName()));
+
+                options.add(`DeclarationToOption(attribute)); 
+              }
+
+              Cst_GetTail(Cst_Name(name),ConcCstBlock(HOSTBLOCK(optionList2,content))) -> {
+                CstOption ot2 = getOriginTracking(`optionList2);
+
+                Option listInfo = `OriginTracking(Name(name),ot2.getstartLine(),ot2.getfileName());
+                OptionList listOption = `concOption(listInfo);
+
+                String code = ASTFactory.abstractCode(`content, `name);
+
+                Declaration attribute = `GetTailDecl(
+                    Name(opName),
+                    BQVariable(listOption,Name(name),Type(concTypeOption(),codomain,EmptyTargetLanguageType())),
+                    Code(code),
+                    OriginTracking(Name(opName),ot2.getstartLine(),ot2.getfileName()));
+
+                options.add(`DeclarationToOption(attribute)); 
+              }   
+              
+              Cst_IsEmpty(Cst_Name(name),ConcCstBlock(HOSTBLOCK(optionList2,content))) -> {
+                CstOption ot2 = getOriginTracking(`optionList2);
+
+                Option listInfo = `OriginTracking(Name(name),ot2.getstartLine(),ot2.getfileName());
+                OptionList listOption = `concOption(listInfo);
+
+                String code = ASTFactory.abstractCode(`content, `name);
+
+                Declaration attribute = `IsEmptyDecl(
+                    Name(opName),
+                    BQVariable(listOption,Name(name),Type(concTypeOption(),codomain,EmptyTargetLanguageType())),
+                    Code(code),
+                    OriginTracking(Name(opName),ot2.getstartLine(),ot2.getfileName()));
+
+                options.add(`DeclarationToOption(attribute)); 
+              }
+
+            }
+          }
+        }
+
+        PairNameDeclList pairNameDeclList = `concPairNameDecl(PairNameDecl(EmptyName(), EmptyDeclaration()));
+        TomSymbol astSymbol = ASTFactory.makeSymbol(`opName, `Type(concTypeOption(),codomain,EmptyTargetLanguageType()), types, pairNameDeclList, options);
+        symbolTable.putSymbol(`opName,astSymbol);
+        return `CodeToInstruction(DeclarationToCode(ListSymbolDecl(Name(opName))));
+      }
+
+
       // TODO
-      //Cst_OpArrayConstruct
-      //Cst_OpListConstruct
       //Cst_MetaQuoteConstruct
       //Cst_StrategyConstruct
+      // Gom construct
 
       Cst_AbstractBlock(blocks) -> {
         return `AbstractBlock(convert(blocks));
@@ -449,22 +672,20 @@ public class AstBuilder {
         return `VariableStar(concOption(),EmptyName(),SymbolTable.TYPE_UNKNOWN,concConstraint());
       }
 
-      Cst_Constant(name) -> {
-        /*
-         * !!! a constant is represented by a Variable !!!
-         */
+      Cst_Constant(symbol) -> {
         OptionList optionList = `concOption();
-        //TomNameList nameList = `concTomName(`Name(string));
-        //TomList argList = `concTomTerm();
         ConstraintList constraintList = `concConstraint();
-        return `Variable(concOption(),Name(name),SymbolTable.TYPE_UNKNOWN,concConstraint());
-        //return `TermAppl(optionList,nameList,argList,constraintList);
+        //return `Variable(concOption(),Name(name),SymbolTable.TYPE_UNKNOWN,concConstraint());
+        //return `RecordAppl(concOption(),concTomName(Name(name)),concSlot(),concConstraint());
+        TomName name = convert(`symbol); // add symbol to symbolTable
+        return `TermAppl(concOption(),concTomName(name),concTomTerm(),concConstraint());
       }
       
-      Cst_ConstantStar(name) -> {
+      Cst_ConstantStar(symbol) -> {
         OptionList optionList = `concOption();
         ConstraintList constraintList = `concConstraint();
-        return `VariableStar(concOption(),Name(name),SymbolTable.TYPE_UNKNOWN,concConstraint());
+        TomName name = convert(`symbol); // add symbol to symbolTable
+        return `VariableStar(concOption(),name,SymbolTable.TYPE_UNKNOWN,concConstraint());
       }
 
       Cst_Appl(symbolList, patternList) -> {
@@ -518,23 +739,23 @@ public class AstBuilder {
         return `Name(name);
       }
 
-      Cst_ConstantInt(name) -> {
+      Cst_SymbolInt(name) -> {
         ASTFactory.makeIntegerSymbol(symbolTable,`name,optionList);
         return `Name(name);
       }
-      Cst_ConstantLong(name) -> {
+      Cst_SymbolLong(name) -> {
         ASTFactory.makeLongSymbol(symbolTable,`name,optionList);
         return `Name(name);
       }
-      Cst_ConstantChar(name) -> {
+      Cst_SymbolChar(name) -> {
         ASTFactory.makeCharSymbol(symbolTable,`name,optionList);
         return `Name(name);
       }
-      Cst_ConstantDouble(name) -> {
+      Cst_SymbolDouble(name) -> {
         ASTFactory.makeDoubleSymbol(symbolTable,`name,optionList);
         return `Name(name);
       }
-      Cst_ConstantString(name) -> {
+      Cst_SymbolString(name) -> {
         ASTFactory.makeStringSymbol(symbolTable,`name,optionList);
         return `Name(name);
       }
