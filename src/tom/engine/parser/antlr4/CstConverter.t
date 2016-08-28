@@ -77,7 +77,7 @@ public class CstConverter {
   }
 
   private CstBlock includeFile(String filename, int lineNumber) throws TomIncludeException {
-    System.out.println("include: " + `filename);
+    //System.out.println("include: " + `filename);
     String currentFileName = getStreamManager().getInputFileName();  
 
     String includeName = `filename.trim();

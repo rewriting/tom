@@ -254,10 +254,12 @@ public class TomParserPlugin extends TomGenericPlugin {
             printTree(cst);
           }
 
+          long start = System.currentTimeMillis();
           tom.engine.parser.antlr4.AstBuilder astBuilder = new tom.engine.parser.antlr4.AstBuilder(symbolTable);
           Code code = astBuilder.convert(cst);
+          System.out.println("\tbuilding ast:" + (System.currentTimeMillis()-start) + " ms");
 
-          System.out.println("ast = " + code);
+          //System.out.println("ast = " + code);
 
 
           setWorkingTerm(code);

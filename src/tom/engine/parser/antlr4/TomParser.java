@@ -71,31 +71,35 @@ public class TomParser {
   public CstProgram parse(ANTLRInputStream input) throws IOException {
     long startChrono = System.currentTimeMillis();
 
-    System.out.println("CurrentFileName : " + getFilename());
+    System.out.print("antlr4: " + getFilename());
     tom.engine.parser.antlr4.TomIslandLexer lexer = new tom.engine.parser.antlr4.TomIslandLexer(input);
     CommonTokenStream tokens = new CommonTokenStream(lexer);
     tom.engine.parser.antlr4.TomIslandParser parser = new tom.engine.parser.antlr4.TomIslandParser(tokens);
     parser.setBuildParseTree(true);      // tell ANTLR to build a parse tree
 
-
     long start = System.currentTimeMillis();
     ParseTree tree = parser.start(); // parse
-    System.out.println("parsing antlr4 = " + (System.currentTimeMillis()-start) + " ms");
+    System.out.print("\tparsing:" + (System.currentTimeMillis()-start) + " ms");
 
     // show tree in text form
     // System.out.println(tree.toStringTree(parser));
 
+    start = System.currentTimeMillis();
     ParseTreeWalker walker = new ParseTreeWalker();
     tom.engine.parser.antlr4.CstBuilder cstBuilder = new tom.engine.parser.antlr4.CstBuilder(); 
     walker.walk(cstBuilder, tree);
     CstProgram cst = (CstProgram) cstBuilder.getValue(tree);
+    System.out.println("\tbuilding cst:" + (System.currentTimeMillis()-start) + " ms");
 
     //CstProgram cst = (CstProgram)CSTAdaptor.getTerm(programAsAntrlTree);
 
+    start = System.currentTimeMillis();
     tom.engine.parser.antlr4.CstConverter cstConverter = new tom.engine.parser.antlr4.CstConverter(getStreamManager());
     cst = cstConverter.convert(cst);
+    //System.out.println("\tconverting cst:" + (System.currentTimeMillis()-start) + " ms");
+    //System.out.println();
 
-    System.out.println("simplified cst = " + cst);
+    //System.out.println("simplified cst = " + cst);
 
     return cst;
 
