@@ -2,7 +2,7 @@
  *
  * TOM - To One Matching Compiler
  * 
- * Copyright (c) 2000-2016, Universite de Lorraine, Inria
+ * Copyright (c) 2016-2016, Universite de Lorraine
  * Nancy, France.
  * 
  * This program is free software; you can redistribute it and/or modify
@@ -177,6 +177,17 @@ public class CstBuilder extends TomIslandParserBaseListener {
   }
 
   /*
+   * gomStatement
+   *   : GOM block
+   *   ;
+   */
+  public void exitGomStatement(TomIslandParser.GomStatementContext ctx) {
+    CstOptionList optionList = `ConcCstOption(extractOption(ctx.getStart()));
+    CstBlockList body = (CstBlockList) getValue(ctx.block());
+    setValue("exitGomStatement", ctx,`Cst_GomConstruct(optionList,body));
+  }
+
+  /*
    * visit
    *   : VISIT ID LBRACE actionRule* RBRACE
    *   ;
@@ -304,13 +315,15 @@ public class CstBuilder extends TomIslandParserBaseListener {
    */
   public void exitConstraint(TomIslandParser.ConstraintContext ctx) {
     CstConstraint res = null;
-    if(ctx.AND() != null) {
-      res = `Cst_AndConstraint((CstConstraint)getValue(ctx.constraint(0)),(CstConstraint)getValue(ctx.constraint(1)));
-    } else if(ctx.OR() != null) {
-      res = `Cst_OrConstraint((CstConstraint)getValue(ctx.constraint(0)),(CstConstraint)getValue(ctx.constraint(1)));
+    if(ctx.AND() != null || ctx.OR() != null) {
+      CstConstraint lhs = (CstConstraint)getValue(ctx.constraint(0));
+      CstConstraint rhs = (CstConstraint)getValue(ctx.constraint(1));
+      res = (ctx.AND() != null)?`Cst_AndConstraint(lhs,rhs):`Cst_OrConstraint(lhs,rhs);
     } else if(ctx.MATCH_SYMBOL() != null) {
-      res = `Cst_MatchTermConstraint((CstPattern)getValue(ctx.pattern()),(CstBQTerm)getValue(ctx.bqterm()),
-          (CstType)getValue2(ctx.bqterm()));
+      CstPattern lhs = (CstPattern)getValue(ctx.pattern());
+      CstBQTerm rhs = (CstBQTerm)getValue(ctx.bqterm());
+      CstType rhs_type = (CstType)getValue2(ctx.bqterm());
+      res = `Cst_MatchTermConstraint(lhs,rhs,rhs_type);
     } else if(ctx.LPAREN() != null && ctx.RPAREN() != null) {
       res = (CstConstraint)getValue(ctx.c);
     } else {
@@ -322,7 +335,6 @@ public class CstBuilder extends TomIslandParserBaseListener {
       else if(ctx.LOWEROREQ() != null) { res = `Cst_NumLessOrEqualTo(lhs,rhs); }
       else if(ctx.DOUBLEEQ() != null) { res = `Cst_NumEqualTo(lhs,rhs); }
       else if(ctx.DIFFERENT() != null) { res = `Cst_NumDifferent(lhs,rhs); }
-
     }
 
     setValue("exitConstraint",ctx,res);
