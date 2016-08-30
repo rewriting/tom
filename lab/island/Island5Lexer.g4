@@ -5,6 +5,7 @@ STRATEGY : '%strategy' ;
 EXTENDS : 'extends' ;
 VISIT : 'visit' ;
 INCLUDE : '%include' ;
+GOM : '%gom' ;
 OP : '%op' ;
 OPARRAY : '%oparray' ;
 OPLIST : '%oplist' ;
@@ -53,6 +54,8 @@ OR : '||';
 PIPE : '|';
 QMARK : '?';
 DQMARK : '??';
+SLASH : '/';
+BACKSLASH : '\\';
 
 ID : ('_')? LETTER (LETTER | DIGIT | '_' | '.' )*;
 
@@ -94,3 +97,4 @@ SLCOMMENT : '//' ~[\r\n]* ;
 
 WS : [ \r\t\n]+ -> skip ;
 ANY : . ; 
+
