@@ -94,23 +94,25 @@ public class TomParserPlugin extends TomGenericPlugin {
   private tom.engine.parser.antlr2.HostParser parser = null;
   
   /** Constructor */
-  public TomParserPlugin(){
+  public TomParserPlugin() {
     super("TomParserPlugin");
   }
   
   //creating a new Host parser
-  public static tom.engine.parser.antlr2.HostParser newParser(Reader reader, String fileName,
+  /*
+  public static tom.engine.parser.antlr2.HostParser newParser(Reader reader, String filename,
                                         OptionManager optionManager,
                                         TomStreamManager tomStreamManager)
     throws FileNotFoundException,IOException {
     HashSet<String> includedFiles = new HashSet<String>();
     HashSet<String> alreadyParsedFiles = new HashSet<String>();
-    return newParser(reader,fileName,
+    return newParser(reader,filename,
                      includedFiles,alreadyParsedFiles,
                      optionManager, tomStreamManager);
   }
-  
-  public static tom.engine.parser.antlr2.HostParser newParser(Reader reader,String fileName,
+  */
+
+  public static tom.engine.parser.antlr2.HostParser newParser(Reader reader,String filename,
                                         HashSet<String> includedFiles,
                                         HashSet<String> alreadyParsedFiles,
                                         OptionManager optionManager,
@@ -131,7 +133,7 @@ public class TomParserPlugin extends TomGenericPlugin {
     selector.select("targetlexer");
     // create the parser for target mode
     // also create tom parser and backquote parser
-    return new tom.engine.parser.antlr2.HostParser(selector, fileName,
+    return new tom.engine.parser.antlr2.HostParser(selector, filename,
         includedFiles, alreadyParsedFiles,
         optionManager, tomStreamManager);
   }
@@ -147,7 +149,7 @@ public class TomParserPlugin extends TomGenericPlugin {
       currentFileName = getStreamManager().getInputFileName();  
       currentReader = getStreamManager().getInputReader();
     } else {
-      System.out.println("(DEBUG) erreur old parser");
+      System.out.println("(DEBUG) error old parser");
       TomMessage.error(getLogger(), null, 0, TomMessage.invalidPluginArgument,
           "TomParserPlugin", "[TomStreamManager]", getArgumentArrayString(arg));
     }
@@ -155,7 +157,7 @@ public class TomParserPlugin extends TomGenericPlugin {
 
   /**
    * inherited from plugin interface
-   * Parse the input ans set the "Working" TomTerm to be compiled.
+   * Parse the input and set the "Working" TomTerm to be compiled.
    */
   public synchronized void run(Map informationTracker) {
     long startChrono = System.currentTimeMillis();
@@ -184,7 +186,9 @@ public class TomParserPlugin extends TomGenericPlugin {
         }
 
         // getting a parser 
-        parser = newParser(currentReader, currentFileName, getOptionManager(), getStreamManager());
+        HashSet<String> includedFiles = new HashSet<String>();
+        HashSet<String> alreadyParsedFiles = new HashSet<String>();
+        parser = newParser(currentReader, currentFileName,includedFiles, alreadyParsedFiles, getOptionManager(), getStreamManager());
         // parsing
 
         setWorkingTerm(parser.input());
@@ -237,58 +241,38 @@ public class TomParserPlugin extends TomGenericPlugin {
         String outputFileName = getStreamManager().getInputParentFile()+
           File.separator + "."+
           getStreamManager().getRawFileName()+ PARSED_TABLE_SUFFIX;
-        Tools.generateOutput(outputFileName, getStreamManager().getSymbolTable().toTerm().toATerm());
+        Tools.generateOutput(outputFileName, symbolTable.toTerm().toATerm());
       }
     } else {
       try {
         if(!currentFileName.equals("-")) {
-          //tom.engine.parser.antlr3.HostParser parser = 
-          //  new tom.engine.parser.antlr3.HostParser(getStreamManager(), getOptionManager());
-          //ANTLRReaderStream input = new ANTLRReaderStream(currentReader);
+
+          tom.engine.parser.antlr4.TomParser parser = new tom.engine.parser.antlr4.TomParser(currentFileName, getStreamManager(), symbolTable);
           ANTLRInputStream input = new ANTLRInputStream(currentReader);
-          tom.engine.parser.antlr4.TomIslandLexer lexer = 
-            new tom.engine.parser.antlr4.TomIslandLexer(input);
-          CommonTokenStream tokens = new CommonTokenStream(lexer);
-          tom.engine.parser.antlr4.TomIslandParser parser = 
-            new tom.engine.parser.antlr4.TomIslandParser(tokens);
-          parser.setBuildParseTree(true);      // tell ANTLR to build a parse tree
-
-          input.name = currentFileName;
-          System.out.println("CurrentFileName : " + currentFileName);
-
-          long start = System.currentTimeMillis();
-          ParseTree tree = parser.start(); // parse
-          System.out.println("parsing antlr4 = " + (System.currentTimeMillis()-start) + " ms");
-
-          // show tree in text form
-          // System.out.println(tree.toStringTree(parser));
-
-          ParseTreeWalker walker = new ParseTreeWalker();
-          tom.engine.parser.antlr4.CstBuilder cstBuilder = new tom.engine.parser.antlr4.CstBuilder(); 
-          walker.walk(cstBuilder, tree);
-          CstProgram cst = (CstProgram) cstBuilder.getValue(tree);
-
-          //CstProgram cst = (CstProgram)CSTAdaptor.getTerm(programAsAntrlTree);
-
+          CstProgram cst = parser.parse(input);
           if(printcst) {
             printTree(cst);
           }
 
-          tom.engine.parser.antlr4.CstConverter cstConverter = new tom.engine.parser.antlr4.CstConverter();
-          cst = cstConverter.convert(cst);
-
-          System.out.println("simplified cst = " + cst);
-
+          long start = System.currentTimeMillis();
           tom.engine.parser.antlr4.AstBuilder astBuilder = new tom.engine.parser.antlr4.AstBuilder(symbolTable);
           Code code = astBuilder.convert(cst);
+          System.out.println("\tbuilding ast:" + (System.currentTimeMillis()-start) + " ms");
+
+          //System.out.println("ast = " + code);
+
+
           setWorkingTerm(code);
-
-          System.out.println("ast = " + code);
-
+          /*
+           * we update codomains which are constrained by a symbolName
+           * (come from the %strategy operator)
+           */
           Iterator it = symbolTable.keySymbolIterator();
           while(it.hasNext()) {
             String tomName = (String)it.next();
             TomSymbol tomSymbol = getSymbolFromName(tomName);
+            //tomSymbol = symbolTable.updateConstrainedSymbolCodomain(tomSymbol, symbolTable);
+
             if(printast) {
               printTree(tomSymbol);
             }
@@ -298,26 +282,27 @@ public class TomParserPlugin extends TomGenericPlugin {
             printTree((Visitable)getWorkingTerm());
           }
         }
-
         // verbose
         TomMessage.info(getLogger(), currentFileName, getLineFromTomParser(),
             TomMessage.tomParsingPhase,
             Integer.valueOf((int)(System.currentTimeMillis()-startChrono)));
       } catch(IOException e) {
-         TomMessage.error(getLogger(), currentFileName, -1,
-             TomMessage.fileNotFound, e.getMessage());// TODO custom ErrMessage
-       }
+        TomMessage.error(getLogger(), currentFileName, -1,
+            TomMessage.fileNotFound, e.getMessage());// TODO custom ErrMessage
+      }
     }
 
     if(intermediate) {
       Tools.generateOutput(getStreamManager().getOutputFileName() 
           + PARSED_SUFFIX, (tom.library.sl.Visitable)getWorkingTerm());
       Tools.generateOutput(getStreamManager().getOutputFileName() 
-          + PARSED_TABLE_SUFFIX, getStreamManager().getSymbolTable().toTerm().toATerm());
+          + PARSED_TABLE_SUFFIX, symbolTable.toTerm().toATerm());
     }
 
   }
-  
+ 
+
+
   /**
    * inherited from OptionOwner interface (plugin) 
    */

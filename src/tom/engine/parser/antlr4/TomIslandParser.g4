@@ -2,7 +2,7 @@
  *
  * TOM - To One Matching Compiler
  * 
- * Copyright (c) 2000-2016, Universite de Lorraine, Inria
+ * Copyright (c) 2016-2016, Universite de Lorraine
  * Nancy, France.
  * 
  * This program is free software; you can redistribute it and/or modify
@@ -49,6 +49,10 @@ strategyStatement
 
 includeStatement
   : INCLUDE LBRACE ID ((SLASH|BACKSLASH) ID)*  RBRACE 
+  ;
+
+gomStatement
+  : GOM block
   ;
 
 visit
@@ -125,10 +129,6 @@ waterexceptparen
   ~(LPAREN|RPAREN)+? 
   ;
 
-compositeplus
-  : composite+
-  ;
-
 pattern
   : ID AT pattern 
   | ANTI pattern
@@ -178,21 +178,18 @@ typeterm
 operator
   : OP codomain=ID opname=ID LPAREN slotList? RPAREN LBRACE 
     (isFsym | make | getSlot | getDefault)*
-    //isFsym? make? getSlot* getDefault*
     RBRACE
   ;
 
 oplist
-  : OPARRAY codomain=ID opname=ID LPAREN domain=ID STAR RPAREN LBRACE 
+  : OPLIST codomain=ID opname=ID LPAREN domain=ID STAR RPAREN LBRACE 
     (isFsym | makeEmptyList | makeInsertList | getHead | getTail | isEmptyList)*
-    //isFsym? makeEmptyList? makeInsertList? getHead? getTail? isEmptyList?
     RBRACE
   ;
 
 oparray
   : OPARRAY codomain=ID opname=ID LPAREN domain=ID STAR RPAREN LBRACE 
     (isFsym | makeEmptyArray | makeAppendArray | getElement | getSize)*
-    //isFsym? makeEmptyArray? makeAppendArray? getElement? getSize?
     RBRACE
   ;
 

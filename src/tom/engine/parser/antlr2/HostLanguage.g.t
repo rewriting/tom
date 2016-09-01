@@ -329,8 +329,11 @@ options{
           //  parser = NewParserPlugin.newParser(codeReader,getCurrentFile(),
           //      getOptionManager(), getStreamManager());
           //} else {
-            parser = tom.engine.parser.TomParserPlugin.newParser(codeReader,getCurrentFile(),
-                getOptionManager(), getStreamManager());
+          HashSet<String> includedFiles = new HashSet<String>();
+          HashSet<String> alreadyParsedFiles = new HashSet<String>();
+          parser = tom.engine.parser.TomParserPlugin.newParser(codeReader,getCurrentFile(),
+              includedFiles, alreadyParsedFiles,
+              getOptionManager(), getStreamManager());
           //}
           Code astTom = parser.input();
           %match(astTom) {
