@@ -109,6 +109,7 @@ options{
 
     testIncludedFile(currentFile, includedFileSet);
     // then create the Tom mode parser
+
     tomparser = new TomLanguage(getInputState(),this, parserTool.getOptionManager());
     bqparser = tomparser.bqparser;
   }
@@ -833,7 +834,7 @@ options {
     // the target parser
     private HostParser parser = null;
 
-    public void setParser(HostParser parser){
+    public void setParser(HostParser parser) {
         this.parser = parser;
     }
 

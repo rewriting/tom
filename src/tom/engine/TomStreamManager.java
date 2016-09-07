@@ -85,7 +85,7 @@ public class TomStreamManager {
   /** list of non managed imported file */
   private Collection<String> importsToDiscard;
 
-  public TomStreamManager(){
+  public TomStreamManager() {
     symbolTable = new SymbolTable();
     importsToDiscard = new HashSet<String>();
     //importsToDiscard.add("boolean.tom");

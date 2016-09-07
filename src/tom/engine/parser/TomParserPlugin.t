@@ -97,9 +97,6 @@ public class TomParserPlugin extends TomGenericPlugin {
   }
 
   private TomParserTool getParserTool() {
-    if(this.parserTool == null) {
-      this.parserTool = new TomParserTool(getStreamManager(),getOptionManager());
-    }
     return this.parserTool;
   }
   
@@ -138,6 +135,7 @@ public class TomParserPlugin extends TomGenericPlugin {
       setStreamManager((TomStreamManager)arg[0]);
       currentFileName = getStreamManager().getInputFileName();  
       currentReader = getStreamManager().getInputReader();
+      //System.out.println("(debug) I'm in the TomParserPlugin: file "+currentFileName+" / "+getStreamManager().toString());
     } else {
       System.out.println("(DEBUG) error old parser");
       TomMessage.error(getLogger(), null, 0, TomMessage.invalidPluginArgument,
@@ -160,6 +158,9 @@ public class TomParserPlugin extends TomGenericPlugin {
 
     SymbolTable symbolTable = getStreamManager().getSymbolTable();
     if(newparser==false) {
+      /*
+       * ANTLR2
+       */
       try {
         // looking for java package
         if(java && (!currentFileName.equals("-"))) {
@@ -174,6 +175,9 @@ public class TomParserPlugin extends TomGenericPlugin {
           // Update streamManager to take into account package information
           getStreamManager().setPackagePath(packageName);
         }
+
+        // creating TomParserTool
+        this.parserTool = new TomParserTool(getStreamManager(),getOptionManager());
 
         // getting a parser 
         HashSet<String> includedFiles = new HashSet<String>();
@@ -234,8 +238,13 @@ public class TomParserPlugin extends TomGenericPlugin {
         Tools.generateOutput(outputFileName, symbolTable.toTerm().toATerm());
       }
     } else {
+      /*
+       * ANTLR4
+       */
       try {
         if(!currentFileName.equals("-")) {
+          // creating TomParserTool
+          this.parserTool = new TomParserTool(getStreamManager(),getOptionManager());
 
           tom.engine.parser.antlr4.TomParser parser = new tom.engine.parser.antlr4.TomParser(currentFileName, getParserTool(), symbolTable);
           ANTLRInputStream input = new ANTLRInputStream(currentReader);

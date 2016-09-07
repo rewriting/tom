@@ -43,7 +43,7 @@ public class StarterPlugin extends TomGenericPlugin {
   /** Saved information during setArgs */
   private String fileName;
   
-  /** Constructor*/
+  /** Constructor */
   public StarterPlugin() {
     super("StarterPlugin");
   }
