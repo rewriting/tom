@@ -29,6 +29,8 @@ import java.util.logging.Logger;
 import java.util.*;
 import java.io.*;
 
+import java.lang.reflect.InvocationTargetException;
+
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.*;
 
@@ -40,10 +42,12 @@ import tom.engine.TomMessage;
 import tom.engine.exception.TomRuntimeException;
 import tom.engine.exception.TomIncludeException;
 import tom.engine.exception.TomException;
+import tom.engine.parser.TomParserTool;
 
 import tom.engine.tools.SymbolTable;
 import tom.engine.tools.ASTFactory;
 import tom.engine.TomStreamManager;
+import tom.platform.OptionManager;
 
 import tom.library.sl.*;
 
@@ -52,19 +56,23 @@ public class CstConverter {
   %include { ../../adt/cst/CST.tom }
   %typeterm CstConverter { implement { CstConverter }}
 
-  private static Logger logger = Logger.getLogger("tom.engine.typer.CstConverter");
+  private static Logger logger = Logger.getLogger("tom.engine.parser.CstConverter");
   private Logger getLogger() {
     return Logger.getLogger(getClass().getName());
   }
 
-  private TomStreamManager streamManager;
+  private TomParserTool parserTool;
 
-  public CstConverter(TomStreamManager streamManager) {
-    this.streamManager = streamManager;
+  public CstConverter(TomParserTool parserTool) {
+    this.parserTool = parserTool;
+  }
+
+  public TomParserTool getParserTool() {
+    return this.parserTool;
   }
 
   public TomStreamManager getStreamManager() {
-    return this.streamManager;
+    return this.getParserTool().getStreamManager();
   }
 
   public CstProgram convert(CstProgram t) {
@@ -76,8 +84,10 @@ public class CstConverter {
     return t;
   }
 
-  private CstBlock includeFile(String filename, int lineNumber) throws TomIncludeException {
+  private CstBlock includeFile(String currentFileName, String filename, int lineNumber) throws TomIncludeException {
     //System.out.println("include: " + `filename);
+
+    /*
     String currentFileName = getStreamManager().getInputFileName();  
 
     String includeName = `filename.trim();
@@ -101,7 +111,7 @@ public class CstConverter {
         file = null;
       }
     } else {
-      /* StreamManager shall find it */
+      // StreamManager shall find it
       file = getStreamManager().findFile(new File(currentFileName).getParentFile(), includeName);
     }
     if(file == null) {
@@ -112,12 +122,15 @@ public class CstConverter {
             lineNumber,
             currentFileName});
     }
+    */
+
+    String canonicalPath = getParserTool().searchIncludeFile(currentFileName, filename,lineNumber);
 
     // parse the file
     ANTLRFileStream tomInput;
     try {
-      tomInput = new ANTLRFileStream(file.getCanonicalPath());
-      tom.engine.parser.antlr4.TomParser parser = new tom.engine.parser.antlr4.TomParser(filename, getStreamManager(), getStreamManager().getSymbolTable());
+      tomInput = new ANTLRFileStream(canonicalPath);
+      tom.engine.parser.antlr4.TomParser parser = new tom.engine.parser.antlr4.TomParser(filename, getParserTool(), getStreamManager().getSymbolTable());
 
       CstProgram include = parser.parse(tomInput);
       %match(include) {
@@ -133,12 +146,33 @@ public class CstConverter {
     return `Cst_AbstractBlock(ConcCstBlock());
   }
 
+  /*
+   * parse a Gom construct
+   */
+  private CstBlock gomFile(String currentFileName, String gomCode, int initialGomLine) throws TomIncludeException {
+    //System.out.println("gomCode: " + gomCode);
+    String[] userOpts = new String[0];
+    String generatedMapping = getParserTool().parseGomFile(gomCode,initialGomLine, userOpts);
+    if(generatedMapping != null && generatedMapping.length() > 0) {
+      return includeFile(currentFileName, generatedMapping, initialGomLine);
+    }
+    return `Cst_AbstractBlock(ConcCstBlock());
+  }
+
   %strategy SimplifyCST(cc:CstConverter) extends Identity() {
 
     visit CstBlock {
-      Cst_IncludeConstruct(ConcCstOption(Cst_OriginTracking(_,l1,c1,l2,c2)),filename) -> {
+      Cst_IncludeConstruct(ConcCstOption(Cst_OriginTracking(currentFileName,l1,c1,l2,c2)),filename) -> {
         try {
-          return cc.includeFile(`filename,`l1);
+          return cc.includeFile(`currentFileName,`filename,`l1);
+        } catch(TomIncludeException e) {
+          e.printStackTrace();
+        }
+      }
+
+      Cst_GomConstruct(ConcCstOption(Cst_OriginTracking(currentFileName,l1,c1,l2,c2)),ConcCstBlock(HOSTBLOCK(options,text))) -> {
+        try {
+          return cc.gomFile(`currentFileName,`text,`l1);
         } catch(TomIncludeException e) {
           e.printStackTrace();
         }
@@ -165,7 +199,6 @@ public class CstConverter {
         return simplifyCstBQTermList(`s);
       }
     }
-
 
   }
 

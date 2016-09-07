@@ -97,6 +97,7 @@ public class CstBuilder extends TomIslandParserBaseListener {
    *   : matchStatement
    *   | strategyStatement
    *   | includeStatement
+   *   | gomStatement
    *   | typeterm
    *   | operator
    *   | oplist

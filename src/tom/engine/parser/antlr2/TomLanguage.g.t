@@ -59,7 +59,7 @@ import tom.platform.PlatformLogRecord;
 import aterm.*;
 import antlr.TokenStreamSelector;
 }
-class TomParser extends Parser;
+class TomLanguage extends Parser;
 
 options{
     k=1; // the lookahead value during parsing
@@ -93,7 +93,7 @@ options{
 
     private HashMap<String,String> usedSlots = new HashMap<String,String>();
 
-    public TomParser(ParserSharedInputState state, HostParser target,
+    public TomLanguage(ParserSharedInputState state, HostParser target,
                      OptionManager optionManager) {
         this(state);
         this.targetparser = target;

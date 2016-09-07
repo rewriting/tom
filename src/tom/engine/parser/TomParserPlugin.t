@@ -25,31 +25,29 @@
 
 package tom.engine.parser;
 
-import java.io.Reader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.Map;
-import java.util.HashSet;
-import java.util.Iterator;
+import java.io.*;
+import java.util.*;
+import java.lang.reflect.InvocationTargetException;
+import java.util.logging.Logger;
 
 import tom.engine.TomMessage;
 import tom.engine.TomStreamManager;
 import tom.engine.exception.TomException;
+import tom.engine.exception.TomIncludeException;
 import tom.engine.tools.TomGenericPlugin;
 import tom.engine.tools.Tools;
 import tom.engine.tools.SymbolTable;
 import tom.platform.OptionManager;
 import tom.platform.OptionParser;
 import tom.platform.adt.platformoption.types.PlatformOptionList;
-import tom.engine.adt.tomsignature.types.TomSymbol;
-import tom.engine.adt.code.types.*;
-import tom.engine.adt.cst.types.*;
+import tom.engine.parser.TomParserTool;
 
-import tom.engine.adt.cst.CSTAdaptor;
+import tom.engine.adt.tomsignature.types.TomSymbol;
+import tom.engine.adt.cst.types.*;
+import tom.engine.adt.code.types.*;
 
 import aterm.ATerm;
-import tom.library.sl.*;
+import tom.library.sl.Visitable;
 
 import antlr.RecognitionException;
 import antlr.TokenStreamException;
@@ -70,8 +68,6 @@ import org.antlr.v4.runtime.tree.*;
  * It get the input file from the TomStreamManger and parse it
  */
 public class TomParserPlugin extends TomGenericPlugin {
-  %include {sl.tom}
-  %include {../adt/tomsignature/TomSignature.tom}
   
   /** some output suffixes */
   public static final String PARSED_SUFFIX = ".tfix.parsed";
@@ -92,31 +88,26 @@ public class TomParserPlugin extends TomGenericPlugin {
   
   /** the main HostParser */
   private tom.engine.parser.antlr2.HostParser parser = null;
+
+  private TomParserTool parserTool = null;
   
   /** Constructor */
   public TomParserPlugin() {
     super("TomParserPlugin");
   }
+
+  private TomParserTool getParserTool() {
+    if(this.parserTool == null) {
+      this.parserTool = new TomParserTool(getStreamManager(),getOptionManager());
+    }
+    return this.parserTool;
+  }
   
   //creating a new Host parser
-  /*
-  public static tom.engine.parser.antlr2.HostParser newParser(Reader reader, String filename,
-                                        OptionManager optionManager,
-                                        TomStreamManager tomStreamManager)
-    throws FileNotFoundException,IOException {
-    HashSet<String> includedFiles = new HashSet<String>();
-    HashSet<String> alreadyParsedFiles = new HashSet<String>();
-    return newParser(reader,filename,
-                     includedFiles,alreadyParsedFiles,
-                     optionManager, tomStreamManager);
-  }
-  */
-
-  public static tom.engine.parser.antlr2.HostParser newParser(Reader reader,String filename,
+  public static tom.engine.parser.antlr2.HostParser createHostParser(Reader reader,String filename,
                                         HashSet<String> includedFiles,
                                         HashSet<String> alreadyParsedFiles,
-                                        OptionManager optionManager,
-                                        TomStreamManager tomStreamManager)
+                                        TomParserTool parserTool)
     throws FileNotFoundException,IOException {
     // a selector to choose the lexer to use
     TokenStreamSelector selector = new TokenStreamSelector();
@@ -135,15 +126,14 @@ public class TomParserPlugin extends TomGenericPlugin {
     // also create tom parser and backquote parser
     return new tom.engine.parser.antlr2.HostParser(selector, filename,
         includedFiles, alreadyParsedFiles,
-        optionManager, tomStreamManager);
+        parserTool);
   }
 
   /**
    * inherited from plugin interface
    * arg[0] should contain the StreamManager from which we can get the input
    */
-  public void setArgs(Object[] arg){
-    //System.out.println("(DEBUG) Old parser");
+  public void setArgs(Object[] arg) {
     if (arg[0] instanceof TomStreamManager) {
       setStreamManager((TomStreamManager)arg[0]);
       currentFileName = getStreamManager().getInputFileName();  
@@ -188,7 +178,7 @@ public class TomParserPlugin extends TomGenericPlugin {
         // getting a parser 
         HashSet<String> includedFiles = new HashSet<String>();
         HashSet<String> alreadyParsedFiles = new HashSet<String>();
-        parser = newParser(currentReader, currentFileName,includedFiles, alreadyParsedFiles, getOptionManager(), getStreamManager());
+        parser = createHostParser(currentReader, currentFileName,includedFiles, alreadyParsedFiles, getParserTool());
         // parsing
 
         setWorkingTerm(parser.input());
@@ -203,13 +193,13 @@ public class TomParserPlugin extends TomGenericPlugin {
           tomSymbol = symbolTable.updateConstrainedSymbolCodomain(tomSymbol, symbolTable);
 
           if(printast) {
-            printTree(tomSymbol);
+            getParserTool().printTree(tomSymbol);
           }
         }
 
-          if(printast) {
-            printTree((Visitable)getWorkingTerm());
-          }
+        if(printast) {
+          getParserTool().printTree((Visitable)getWorkingTerm());
+        }
 
         // verbose
         TomMessage.info(getLogger(), currentFileName, getLineFromTomParser(), TomMessage.tomParsingPhase,
@@ -247,11 +237,11 @@ public class TomParserPlugin extends TomGenericPlugin {
       try {
         if(!currentFileName.equals("-")) {
 
-          tom.engine.parser.antlr4.TomParser parser = new tom.engine.parser.antlr4.TomParser(currentFileName, getStreamManager(), symbolTable);
+          tom.engine.parser.antlr4.TomParser parser = new tom.engine.parser.antlr4.TomParser(currentFileName, getParserTool(), symbolTable);
           ANTLRInputStream input = new ANTLRInputStream(currentReader);
           CstProgram cst = parser.parse(input);
           if(printcst) {
-            printTree(cst);
+            getParserTool().printTree(cst);
           }
 
           long start = System.currentTimeMillis();
@@ -274,12 +264,12 @@ public class TomParserPlugin extends TomGenericPlugin {
             //tomSymbol = symbolTable.updateConstrainedSymbolCodomain(tomSymbol, symbolTable);
 
             if(printast) {
-              printTree(tomSymbol);
+              getParserTool().printTree(tomSymbol);
             }
           }
 
           if(printast) {
-            printTree((Visitable)getWorkingTerm());
+            getParserTool().printTree((Visitable)getWorkingTerm());
           }
         }
         // verbose
@@ -301,8 +291,6 @@ public class TomParserPlugin extends TomGenericPlugin {
 
   }
  
-
-
   /**
    * inherited from OptionOwner interface (plugin) 
    */
@@ -318,55 +306,6 @@ public class TomParserPlugin extends TomGenericPlugin {
       return TomMessage.DEFAULT_ERROR_LINE_NUMBER;
     } 
     return parser.getLine();
-  }
-
-  private void printTree(Visitable tree) {
-    if(tree!=null) {
-      try {
-        tree = `BottomUp(ToSingleLineTargetLanguage()).visit(tree);
-        tom.library.utils.Viewer.toTree(tree);
-      } catch (tom.library.sl.VisitFailure e) {
-        System.err.println("VisitFailure Exception"); //XXX handle cleanly
-      }
-    } else {
-      System.out.println("Nothing to print (tree is null)");
-    }
-  }
-
-  /**
-   * Change every hostCode block so it's on a single line.
-   * Make printed tree more easily readable.
-   */
-  %strategy ToSingleLineTargetLanguage() extends Identity() {
-    visit TargetLanguage {
-      TL[Code=code, Start=start, End=end] -> {
-        return `TL(formatTargetLanguageString(code), start, end);
-      }
-      ITL[Code=code] -> {
-        return `ITL(formatTargetLanguageString(code));
-      }
-      Comment[Code=code] -> {
-        return `Comment(formatTargetLanguageString(code));
-      }
-    }
-  /*
-    visit CstBlock {
-      HOSTBLOCK(e, x, y) -> {
-        return `HOSTBLOCK(formatTargetLanguageString(code), x, y);
-      }
-    }
-  */
-  }
-
-  /**
-   * Usefull to print every hostCode on a single line in tree.
-   * Improve readability.
-   */
-  private static String formatTargetLanguageString(String s) {
-    s = s.replaceAll("\n", "\\\\n");
-    s = s.replaceAll("\r", "\\\\r");
-    s = s.replaceAll("\t", "\\\\t");
-    return "["+s+"]";
   }
 
 } //class TomParserPlugin

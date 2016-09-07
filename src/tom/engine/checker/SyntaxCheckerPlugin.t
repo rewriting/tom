@@ -400,6 +400,7 @@ matchblock:{
   // ///////////////////////////////
   private void verifySymbol(String symbolType, TomSymbol tomSymbol){
     int domainLength;
+
     String symbStrName = tomSymbol.getAstName().getString();
 
     OptionList optionList = tomSymbol.getOptions();

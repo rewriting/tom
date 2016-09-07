@@ -1395,7 +1395,7 @@
       <!-- we don't want to check the parser generated files, never ever -->
       <fileset dir="${bootstrap.dir}/build">
         <include name="tom/engine/parser/antlr2/TomLexer.class"/>
-        <include name="tom/engine/parser/antlr2/TomParser.class"/>
+        <include name="tom/engine/parser/antlr2/TomLanguage.class"/>
         <include name="tom/engine/parser/antlr2/HostLexer.class"/>
         <include name="tom/engine/parser/antlr2/HostParser.class"/>
         <include name="tom/engine/parser/antlr2/BackQuoteLexer.class"/>
@@ -1414,7 +1414,7 @@
       <!-- we don't want to check the parser generated files, never ever -->
       <fileset dir="${src.build}">
         <include name="tom/engine/parser/antlr2/TomLexer.class"/>
-        <include name="tom/engine/parser/antlr2/TomParser.class"/>
+        <include name="tom/engine/parser/antlr2/TomLanguage.class"/>
         <include name="tom/engine/parser/antlr2/HostLexer.class"/>
         <include name="tom/engine/parser/antlr2/HostParser.class"/>
         <include name="tom/engine/parser/antlr2/BackQuoteLexer.class"/>

@@ -37,6 +37,7 @@ import tom.engine.TomStreamManager;
 import tom.engine.TomMessage;
 import tom.engine.exception.*;
 import tom.engine.tools.SymbolTable;
+import tom.engine.parser.TomParserTool;
 
 import tom.engine.adt.tomsignature.*;
 import tom.engine.adt.tomconstraint.types.*;
@@ -79,16 +80,14 @@ options{
   //private static final Object lock = new Object();// verrou pour l'exec de Gom
 
   // the parser for tom constructs
-  TomParser tomparser;
+  TomLanguage tomparser;
 
   // the lexer for target language
   HostLexer targetlexer = null;
 
   BackQuoteParser bqparser;
 
-  OptionManager optionManager;
-
-  TomStreamManager streamManager;
+  TomParserTool parserTool;
 
   // locations of target language blocks
   private int currentLine = 1;
@@ -98,12 +97,11 @@ options{
 
   public HostParser(TokenStreamSelector selector, String currentFile,
                     HashSet<String> includedFiles, HashSet<String> alreadyParsedFiles,
-                    OptionManager optionManager, TomStreamManager streamManager){
+                    TomParserTool parserTool) {
     this(selector);
     this.selector = selector;
     this.currentFile = currentFile;
-    this.optionManager = optionManager;
-    this.streamManager = streamManager;
+    this.parserTool = parserTool;
     this.targetlexer = (HostLexer) selector.getStream("targetlexer");
     targetlexer.setParser(this);
     this.includedFileSet = new HashSet<String>(includedFiles);
@@ -111,7 +109,7 @@ options{
 
     testIncludedFile(currentFile, includedFileSet);
     // then create the Tom mode parser
-    tomparser = new TomParser(getInputState(),this, optionManager);
+    tomparser = new TomLanguage(getInputState(),this, parserTool.getOptionManager());
     bqparser = tomparser.bqparser;
   }
 
@@ -122,23 +120,23 @@ options{
     return skipComment;
 	}
 
-  private synchronized OptionManager getOptionManager() {
-    return optionManager;
+  private synchronized TomParserTool getParserTool() {
+    return parserTool;
   }
 
   private synchronized TomStreamManager getStreamManager() {
-    return streamManager;
+    return getParserTool().getStreamManager();
   }
 
-  public synchronized TokenStreamSelector getSelector(){
+  public synchronized TokenStreamSelector getSelector() {
     return selector;
   }
 
-  public synchronized String getCurrentFile(){
+  public synchronized String getCurrentFile() {
     return currentFile;
   }
 
-  public synchronized void updatePosition(){
+  public synchronized void updatePosition() {
     updatePosition(getLine(),getColumn());
   }
 
@@ -146,7 +144,7 @@ options{
     return getStreamManager().getSymbolTable();
   }
 
-  public void updatePosition(int i, int j){
+  public void updatePosition(int i, int j) {
     currentLine = i;
     currentColumn = j;
   }
@@ -204,9 +202,10 @@ options{
     Code astTom;
     InputStream input;
     byte inputBuffer[];
-    //  TomParser tomParser;
     HostParser parser = null;
     File file;
+
+    /*
     String fileCanonicalName = "";
     fileName = fileName.trim();
     fileName = fileName.replace('/',File.separatorChar);
@@ -235,15 +234,16 @@ options{
     if(file == null) {
       throw new TomIncludeException(TomMessage.includedFileNotFound,new Object[]{fileName, currentFile, Integer.valueOf(getLine()), currentFile});
     }
+     */
+
+    String fileCanonicalName = getParserTool().searchIncludeFile(currentFile, fileName,Integer.valueOf(getLine()));
+
     try {
-      fileCanonicalName = file.getCanonicalPath();
-      //if(testIncludedFile(fileCanonicalName, includedFileSet)) {
-        //throw new TomIncludeException(TomMessage.includedFileCycle,new Object[]{fileName, Integer.valueOf(getLine()), currentFile});
-      //}
+      //fileCanonicalName = file.getCanonicalPath();
 
       // if trying to include a file twice, or if in a cycle: discard
       if(testIncludedFile(fileCanonicalName, alreadyParsedFileSet) ||
-	  testIncludedFile(fileCanonicalName, includedFileSet)) {
+         testIncludedFile(fileCanonicalName, includedFileSet)) {
         if(!getStreamManager().isSilentDiscardImport(fileName)) {
           TomMessage.info(logger, currentFile, getLine(), TomMessage.includedFileAlreadyParsed,fileName);
         }
@@ -251,15 +251,9 @@ options{
       }
       Reader fileReader = new BufferedReader(new FileReader(fileCanonicalName));
 
-      //if ((Boolean)optionManager.getOptionValue("newparser")) {
-      //  parser = NewParserPlugin.newParser(fileReader,fileCanonicalName,
-      //      includedFileSet,alreadyParsedFileSet,
-      //      getOptionManager(), getStreamManager());
-      //} else {
-        parser = tom.engine.parser.TomParserPlugin.newParser(fileReader,fileCanonicalName,
-            includedFileSet,alreadyParsedFileSet,
-            getOptionManager(), getStreamManager());
-      //}
+      parser = tom.engine.parser.TomParserPlugin.createHostParser(fileReader,fileCanonicalName,
+          includedFileSet,alreadyParsedFileSet,
+          getParserTool());
       parser.setSkipComment();
       astTom = parser.input();
       astTom = `TomInclude(astTom.getCodeList());
@@ -325,16 +319,11 @@ options{
         try {
           Reader codeReader = new BufferedReader(new StringReader(code));
           HostParser parser;
-          //if (((Boolean)optionManager.getOptionValue("newparser"))) {
-          //  parser = NewParserPlugin.newParser(codeReader,getCurrentFile(),
-          //      getOptionManager(), getStreamManager());
-          //} else {
           HashSet<String> includedFiles = new HashSet<String>();
           HashSet<String> alreadyParsedFiles = new HashSet<String>();
-          parser = tom.engine.parser.TomParserPlugin.newParser(codeReader,getCurrentFile(),
+          parser = tom.engine.parser.TomParserPlugin.createHostParser(codeReader,getCurrentFile(),
               includedFiles, alreadyParsedFiles,
-              getOptionManager(), getStreamManager());
-          //}
+              getParserTool());
           Code astTom = parser.input();
           %match(astTom) {
             Tom(concCode(_*,c,_*)) -> {
@@ -586,152 +575,19 @@ gomsignature [List<Code> list] throws TomException
   }
   {
     synchronized(Tom.getLock()) {
-    BlockParser blockparser =
-      BlockParser.makeBlockParser(targetlexer.getInputState());
+    BlockParser blockparser = BlockParser.makeBlockParser(targetlexer.getInputState());
     gomCode = cleanCode(blockparser.block().trim());
 
-    File config_xml = null;
-    ArrayList<String> parameters = new ArrayList<String>();
-    try {
-      String tom_home = System.getProperty("tom.home");
-      if(tom_home != null) {
-        config_xml = new File(tom_home,"Gom.xml");
-      } else {
-        // for the eclipse plugin for example
-        String tom_xml_filename =
-          ((String)getOptionManager().getOptionValue("X"));
-        config_xml =
-          new File(new File(tom_xml_filename).getParentFile(),"Gom.xml");
-        // pass all the received parameters to gom in the case that it will call tom
-        java.util.List<File> imp = getStreamManager().getUserImportList();
-        for(File f:imp){
-          parameters.add("--import");
-          parameters.add(f.getCanonicalPath());
-        }
-      }
-      config_xml = config_xml.getCanonicalFile();
-    } catch (IOException e) {
-      TomMessage.finer(logger, null, 0, TomMessage.failGetCanonicalPath,config_xml.getPath());
-    }
-
-    String destDir = getStreamManager().getDestDir().getPath();
-    String packageName = getStreamManager().getPackagePath().replace(File.separatorChar, '.');
-    String inputFileNameWithoutExtension = getStreamManager().getRawFileName().toLowerCase();
-    String subPackageName = "";
-    if (packageName.equals("")) {
-      subPackageName = inputFileNameWithoutExtension;
-    } else {
-      subPackageName = packageName + "." + inputFileNameWithoutExtension;
-    }
-
-    parameters.add("-X");
-    parameters.add(config_xml.getPath());
-    parameters.add("--destdir");
-    parameters.add(destDir);
-    parameters.add("--package");
-    parameters.add(subPackageName);
-    if(getOptionManager().getOptionValue("wall")==Boolean.TRUE) {
-      parameters.add("--wall");
-    }
-    if(getOptionManager().getOptionValue("intermediate")==Boolean.TRUE) {
-      parameters.add("--intermediate");
-    }
-    if(Boolean.TRUE == getOptionManager().getOptionValue("optimize")) {
-      parameters.add("--optimize");
-    }
-    if(Boolean.TRUE == getOptionManager().getOptionValue("optimize2")) {
-      parameters.add("--optimize2");
-    }
-    if(Boolean.TRUE == getOptionManager().getOptionValue("newtyper")) {
-      parameters.add("--newtyper");
-    }
-    if(Boolean.TRUE == getOptionManager().getOptionValue("newparser")) {
-      parameters.add("--newparser");
-    }
-    parameters.add("--intermediateName");
-    parameters.add(getStreamManager().getRawFileName()+".t.gom");
-    if(getOptionManager().getOptionValue("verbose")==Boolean.TRUE) {
-      parameters.add("--verbose");
-    }
     /* treat user supplied options */
+    String[] userOpts = new String[0];
     textCode = t.getText();
     if(textCode.length() > 6) {
-      String[] userOpts = textCode.substring(5,textCode.length()-1).split("\\s+");
-      for(int i=0; i < userOpts.length; i++) {
-        parameters.add(userOpts[i]);
-      }
+      userOpts = textCode.substring(5,textCode.length()-1).split("\\s+");
     }
 
-    final File tmpFile;
-    try {
-      tmpFile = File.createTempFile("tmp", ".gom", null).getCanonicalFile();
-      parameters.add(tmpFile.getPath());
-    } catch (IOException e) {
-      TomMessage.error(logger, null, 0, TomMessage.ioExceptionTempGom,e.getMessage());
-      e.printStackTrace();
-      return;
-    }
+    String generatedMapping = getParserTool().parseGomFile(gomCode, initialGomLine, userOpts);
+    includeFile(generatedMapping, list);
 
-    TomMessage.fine(logger, null, 0, TomMessage.writingExceptionTempGom,tmpFile.getPath());
-
-    try {
-      Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(tmpFile)));
-      writer.write(new String(gomCode.getBytes("UTF-8")));
-      writer.flush();
-      writer.close();
-    } catch (IOException e) {
-      TomMessage.error(logger, null, 0, TomMessage.writingFailureTempGom,e.getMessage());
-      return;
-    }
-
-    /* Prepare arguments */
-    Object[] preparams = parameters.toArray();
-    String[] params = new String[preparams.length];
-    for (int i = 0; i < preparams.length; i++) {
-      params[i] = (String)preparams[i];
-    }
-
-    int res = 1;
-    Map<String,String> informationTracker = new HashMap<String,String>();
-    informationTracker.put(tom.engine.tools.TomGenericPlugin.KEY_LAST_GEN_MAPPING,null);
-
-    informationTracker.put("gomBegin",""+initialGomLine);
-    informationTracker.put("inputFileName",getStreamManager().getInputFileName());
-
-    //5 tom.platform.PluginPlatformFactory.getInstance().getInformationTracker().put(java.lang.Thread.currentThread().getId(),null);
-    try {
-    // Call tom.gom.Gom.exec(params,informationTracker) using reflexivity, to
-    // avoid a build time dempendency between tom and gom
-    res = ((Integer) Class.forName("tom.gom.Gom")
-        .getMethod("exec", new Class[] {params.getClass(), Map.class})
-        .invoke(null, new Object[] {params, informationTracker}))
-        .intValue();
-    } catch (ClassNotFoundException cnfe) {
-      TomMessage.error(logger, currentFile, initialGomLine, TomMessage.gomInitFailure,currentFile,Integer.valueOf(initialGomLine), cnfe);
-    } catch (NoSuchMethodException nsme) {
-      TomMessage.error(logger, currentFile, initialGomLine, TomMessage.gomInitFailure,currentFile,Integer.valueOf(initialGomLine), nsme);
-    } catch (InvocationTargetException ite) {
-      TomMessage.error(logger, currentFile, initialGomLine, TomMessage.gomInitFailure,currentFile,Integer.valueOf(initialGomLine), ite);
-    } catch (IllegalAccessException iae) {
-      TomMessage.error(logger, currentFile, initialGomLine, TomMessage.gomInitFailure,currentFile,Integer.valueOf(initialGomLine), iae);
-    }
-    tmpFile.deleteOnExit();
-    if(res != 0) {
-      TomMessage.error(logger, currentFile, initialGomLine, TomMessage.gomFailure,currentFile,Integer.valueOf(initialGomLine));
-      return;
-    }
-    String generatedMapping = (String)informationTracker.get(tom.engine.tools.TomGenericPlugin.KEY_LAST_GEN_MAPPING);
-
-    // Simulate the inclusion of generated Tom file
-    /*
-     * We shall not need to test the validity of the generatedMapping file name
-     * as gom returned <> 0 if it is not valid
-     *
-     * Anyway, for an empty gom signature, no files are generated
-     */
-    if (generatedMapping != null) {
-    	includeFile(generatedMapping, list);
-    }
     updatePosition();
     } //synchronized
   }

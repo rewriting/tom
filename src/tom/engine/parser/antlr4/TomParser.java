@@ -35,28 +35,26 @@ import org.antlr.v4.runtime.misc.ParseCancellationException;
 
 import tom.engine.TomMessage;
 import tom.engine.TomStreamManager;
+import tom.platform.OptionManager;
 import tom.engine.exception.TomException;
-//import tom.engine.tools.TomGenericPlugin;
-//import tom.engine.tools.Tools;
 import tom.engine.tools.SymbolTable;
-//import tom.platform.OptionParser;
-//import tom.platform.adt.platformoption.types.PlatformOptionList;
+import tom.engine.parser.TomParserTool;
 
 import tom.engine.adt.code.types.*;
 import tom.engine.adt.cst.types.*;
 
 public class TomParser {
   private String filename;
-  private TomStreamManager tomStreamManager;
+  private TomParserTool parserTool;
   private SymbolTable symbolTable;
   private HashSet<String> includedFiles = new HashSet<String>();
   private HashSet<String> alreadyParsedFiles = new HashSet<String>();
 
   public TomParser(String filename, 
-      TomStreamManager tomStreamManager,
+      TomParserTool parserTool,
       SymbolTable symbolTable) {
     this.filename = filename;
-    this.tomStreamManager = tomStreamManager;
+    this.parserTool = parserTool;
     this.symbolTable = symbolTable;
     this.includedFiles = new HashSet<String>();
     this.alreadyParsedFiles = new HashSet<String>();
@@ -65,10 +63,10 @@ public class TomParser {
   public String getFilename() {
     return this.filename;
   }
-  public TomStreamManager getStreamManager() {
-    return this.tomStreamManager;
-  }
 
+  public TomParserTool getParserTool() {
+    return this.parserTool;
+  }
 
   public CstProgram parse(ANTLRInputStream input) throws IOException {
     long startChrono = System.currentTimeMillis();
@@ -115,7 +113,7 @@ public class TomParser {
     //CstProgram cst = (CstProgram)CSTAdaptor.getTerm(programAsAntrlTree);
 
     start = System.currentTimeMillis();
-    tom.engine.parser.antlr4.CstConverter cstConverter = new tom.engine.parser.antlr4.CstConverter(getStreamManager());
+    tom.engine.parser.antlr4.CstConverter cstConverter = new tom.engine.parser.antlr4.CstConverter(getParserTool());
     cst = cstConverter.convert(cst);
     //System.out.println("\tconverting cst:" + (System.currentTimeMillis()-start) + " ms");
     //System.out.println();

@@ -72,7 +72,7 @@ options{
     BackQuoteLexer bqlexer = null;
 
     // the parser for tom language
-    TomParser tomparser = null;
+    TomLanguage tomparser = null;
 
     // the current file's name
     String currentFile(){
@@ -80,7 +80,7 @@ options{
     }
 
     //constructor
-    public BackQuoteParser(ParserSharedInputState state, TomParser tomparser){
+    public BackQuoteParser(ParserSharedInputState state, TomLanguage tomparser){
       this(state);
       this.tomparser = tomparser;
       bqlexer = (BackQuoteLexer) selector().getStream("bqlexer");

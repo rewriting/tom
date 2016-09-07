@@ -32,6 +32,7 @@ island
   : matchStatement
   | strategyStatement
   | includeStatement
+  | gomStatement
   | typeterm
   | operator
   | oplist
