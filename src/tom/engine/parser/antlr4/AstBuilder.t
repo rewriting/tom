@@ -434,6 +434,7 @@ public class AstBuilder {
         TomTypeList types = `concTomType(makeType(domain));
         TomSymbol astSymbol = ASTFactory.makeSymbol(`opName, `makeType(codomain), types, pairNameDeclList, options);
         symbolTable.putSymbol(`opName,astSymbol);
+
         return `CodeToInstruction(DeclarationToCode(ListSymbolDecl(Name(opName))));
       }
 

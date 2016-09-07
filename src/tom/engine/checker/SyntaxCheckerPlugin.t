@@ -304,6 +304,7 @@ public class SyntaxCheckerPlugin extends TomGenericPlugin {
     // verify Macro functions
     List<String> verifyList = new ArrayList<String>(SyntaxCheckerPlugin.TypeTermSignature);
 
+
     %match(DeclarationList listOfDeclaration) {
       concDeclaration(_*, d, _*) -> { // for each Declaration
 matchblock:{
@@ -339,6 +340,7 @@ matchblock:{
            }
       }
     }
+
     // remove non mandatory functions
     if(verifyList.contains(SyntaxCheckerPlugin.EQUALS)) {
       verifyList.remove(verifyList.indexOf(SyntaxCheckerPlugin.EQUALS));
@@ -499,6 +501,7 @@ matchblock:{
       verifyList.add(SyntaxCheckerPlugin.MAKE_INSERT);
     }
 
+
     %match(OptionList option) {
       concOption(_*, DeclarationToOption(d), _*) -> { // for each Declaration
 matchblock:{
@@ -522,7 +525,7 @@ matchblock:{
                  break matchblock;
                }
                // for a symbol
-               debug@MakeDecl[Args=makeArgsList, OrgTrack=og@OriginTracking[FileName=fileName,Line=line]] -> {
+               MakeDecl[Args=makeArgsList, OrgTrack=og@OriginTracking[FileName=fileName,Line=line]] -> {
                  if(!foundOpMake) {
                    foundOpMake = true;
                    `verifyMakeDeclArgs(makeArgsList, domainLength, og, symbolType);
