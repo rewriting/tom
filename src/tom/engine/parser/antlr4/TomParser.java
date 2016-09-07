@@ -30,6 +30,8 @@ import java.util.*;
 
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.*;
+import org.antlr.v4.runtime.atn.PredictionMode;
+import org.antlr.v4.runtime.misc.ParseCancellationException;
 
 import tom.engine.TomMessage;
 import tom.engine.TomStreamManager;
@@ -78,7 +80,26 @@ public class TomParser {
     parser.setBuildParseTree(true);      // tell ANTLR to build a parse tree
 
     long start = System.currentTimeMillis();
-    ParseTree tree = parser.start(); // parse
+    ParseTree tree = null; //parser.start(); // parse
+
+    // try with simpler/faster SLL(*)
+    parser.getInterpreter().setPredictionMode(PredictionMode.SLL);
+    // we don't want error messages or recovery during first try
+    parser.removeErrorListeners(); parser.setErrorHandler(new BailErrorStrategy());
+    try {
+      tree = parser.start();
+      // if we get here, there was no syntax error and SLL(*) was enough;
+      // there is no need to try full LL(*)
+    } catch (ParseCancellationException ex) { // thrown by BailErrorStrategy
+      tokens.reset(); // rewind input stream
+      parser.reset();
+      // back to standard listeners/handlers 
+      parser.addErrorListener(ConsoleErrorListener.INSTANCE);
+      parser.setErrorHandler(new DefaultErrorStrategy());
+      // full now with full LL(*)
+      parser.getInterpreter().setPredictionMode(PredictionMode.LL);
+      tree = parser.start();
+    }
     System.out.print("\tparsing:" + (System.currentTimeMillis()-start) + " ms");
 
     // show tree in text form

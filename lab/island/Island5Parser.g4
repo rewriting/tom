@@ -1,6 +1,5 @@
 parser grammar Island5Parser;
 options { tokenVocab=Island5Lexer; }
-
 start : (island | water)*? ;
 
 island 
@@ -23,7 +22,11 @@ strategyStatement
   ;
 
 includeStatement
-  : INCLUDE LBRACE ID RBRACE 
+  : INCLUDE LBRACE ID ((SLASH|BACKSLASH) ID)*  RBRACE 
+  ;
+
+gomStatement
+  : GOM block
   ;
 
 visit
@@ -31,10 +34,8 @@ visit
   ;
 
 actionRule
-  : patternlist ((AND | OR) constraint)? ARROW block
-  | patternlist ((AND | OR) constraint)? ARROW bqterm
-  | c=constraint ARROW block
-  | c=constraint ARROW bqterm
+  : patternlist ((AND | OR) constraint)? ARROW (block | bqterm)
+  | c=constraint ARROW (block | bqterm)
   ;
 
 block 
@@ -58,9 +59,15 @@ patternlist
   ;
 
 constraint
-  : constraint AND constraint
-  | constraint OR constraint
-  | pattern MATCH_SYMBOL bqterm
+  : constraintOR (AND constraintOR)*
+  ;
+
+constraintOR
+  : constraintAtom (OR constraintAtom)*
+  ;
+
+constraintAtom
+  : pattern MATCH_SYMBOL bqterm
   | term GREATERTHAN term
   | term GREATEROREQ term
   | term LOWERTHAN term
@@ -77,8 +84,7 @@ term
 
 // may be change this syntax: `term:sort
 bqterm
-  : codomain=ID? BQUOTE? fsym=ID LPAREN (bqterm (COMMA bqterm)*)? RPAREN 
-  | codomain=ID? BQUOTE? var=ID STAR?
+  : codomain=ID? BQUOTE? fsym=ID (STAR? | LPAREN (bqterm (COMMA bqterm)*)? RPAREN)
   | constant
   ;
 
@@ -87,9 +93,8 @@ bqcomposite
   ;
 
 composite
-  : fsym=ID LPAREN composite* RPAREN
+  : fsym=ID (STAR? | LPAREN composite* RPAREN)
   | LPAREN composite* RPAREN
-  | var=ID STAR?
   | constant
   | waterexceptparen
 //  | .*?
@@ -98,10 +103,6 @@ composite
 waterexceptparen 
   :
   ~(LPAREN|RPAREN)+? 
-  ;
-
-compositeplus
-  : composite+
   ;
 
 pattern
@@ -152,22 +153,19 @@ typeterm
 
 operator
   : OP codomain=ID opname=ID LPAREN slotList? RPAREN LBRACE 
-    //(isFsym | make | getSlot | getDefault)*
-    isFsym? make? getSlot* getDefault*
+    (isFsym | make | getSlot | getDefault)*
     RBRACE
   ;
 
 oplist
-  : OPARRAY codomain=ID opname=ID LPAREN domain=ID STAR RPAREN LBRACE 
-    //(isFsym | makeEmptyList | makeInsertList | getHead | getTail | isEmptyList)*
-    isFsym? makeEmptyList? makeInsertList? getHead? getTail? isEmptyList?
+  : OPLIST codomain=ID opname=ID LPAREN domain=ID STAR RPAREN LBRACE 
+    (isFsym | makeEmptyList | makeInsertList | getHead | getTail | isEmptyList)*
     RBRACE
   ;
 
 oparray
   : OPARRAY codomain=ID opname=ID LPAREN domain=ID STAR RPAREN LBRACE 
-    //(isFsym | makeEmptyArray | makeAppendArray | getElement | getSize)*
-    isFsym? makeEmptyArray? makeAppendArray? getElement? getSize?
+    (isFsym | makeEmptyArray | makeAppendArray | getElement | getSize)*
     RBRACE
   ;
 
