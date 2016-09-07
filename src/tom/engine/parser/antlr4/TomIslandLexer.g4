@@ -82,7 +82,7 @@ DQMARK : '??';
 SLASH : '/';
 BACKSLASH : '\\';
 
-ID : ('_')? LETTER (LETTER | DIGIT | '_' | '.' )*;
+ID : ('_')? LETTER (LETTER | DIGIT | '_' )*;
 
 INTEGER : ('-')? (DIGIT)+;
 DOUBLE  : ('-')? UNSIGNED_DOUBLE;

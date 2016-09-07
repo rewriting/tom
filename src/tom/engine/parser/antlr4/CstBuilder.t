@@ -351,9 +351,9 @@ public class CstBuilder extends TomIslandParserBaseListener {
     CstTerm res = null;
     if(ctx.var != null && ctx.STAR() == null) {
       res = `Cst_TermVariable(ctx.var.getText());
-    } if(ctx.var != null && ctx.STAR() != null) {
+    } else if(ctx.var != null && ctx.STAR() != null) {
       res = `Cst_TermVariableStar(ctx.var.getText());
-    } if(ctx.fsym != null) {
+    } else if(ctx.fsym != null) {
       CstTermList args = buildCstTermList(ctx.term());
       res = `Cst_TermAppl(ctx.fsym.getText(),args);
     }
@@ -375,11 +375,11 @@ public class CstBuilder extends TomIslandParserBaseListener {
     if(ctx.fsym != null) {
       CstBQTermList args = buildCstBQTermList(ctx.bqterm());
       res = `Cst_BQAppl(optionList,ctx.fsym.getText(),args);
-    } if(ctx.var != null && ctx.STAR() == null) {
+    } else if(ctx.var != null && ctx.STAR() == null) {
       res = `Cst_BQVar(optionList,ctx.var.getText(),type);
-    } if(ctx.var != null && ctx.STAR() != null) {
+    } else if(ctx.var != null && ctx.STAR() != null) {
       res = `Cst_BQVarStar(optionList,ctx.var.getText(),type);
-    } if(ctx.constant() != null) {
+    } else if(ctx.constant() != null) {
       CstSymbol cst = (CstSymbol) getValue(ctx.constant());
       res = `Cst_BQConstant(optionList,cst.getvalue());
     }
@@ -413,15 +413,6 @@ public class CstBuilder extends TomIslandParserBaseListener {
 
     if(ctx.fsym != null) {
       CstBQTermList args = `ConcCstBQTerm();
-      /*
-         if(ctx.compositeplus() != null) {
-      // retrieve list of elements separated by COMMA
-      CstBQTermList list = ((CstBQTerm)getValue(ctx.compositeplus())).getlist();
-      for(CstBQTerm elt:list.getCollectionConcCstBQTerm()) {
-      System.out.println("elt: " + elt);
-      }
-      }
-       */
 
       CstBQTermList accu = `ConcCstBQTerm();
       for(ParserRuleContext e:ctx.composite()) {
@@ -496,24 +487,24 @@ public class CstBuilder extends TomIslandParserBaseListener {
     CstPattern res = null;
     if(ctx.AT() != null) {
       res = `Cst_AnnotatedPattern((CstPattern)getValue(ctx.pattern()), ctx.ID().getText());
-    } if(ctx.ANTI() != null) {
+    } else if(ctx.ANTI() != null) {
       res = `Cst_Anti((CstPattern)getValue(ctx.pattern()));
-    } if(ctx.explicitArgs() != null) {
+    } else if(ctx.explicitArgs() != null) {
       res = `Cst_Appl((CstSymbolList)getValue(ctx.fsymbol()), (CstPatternList)getValue(ctx.explicitArgs()));
-    } if(ctx.implicitArgs() != null) {
+    } else if(ctx.implicitArgs() != null) {
       res = `Cst_RecordAppl((CstSymbolList)getValue(ctx.fsymbol()), (CstPairPatternList)getValue(ctx.implicitArgs()));
-    } if(ctx.var != null && ctx.STAR() == null) {
+    } else if(ctx.var != null && ctx.STAR() == null) {
       res = `Cst_Variable(ctx.var.getText());
-    } if(ctx.var != null && ctx.STAR() != null) {
+    } else if(ctx.var != null && ctx.STAR() != null) {
       res = `Cst_VariableStar(ctx.var.getText());
-    } if(ctx.UNDERSCORE() != null && ctx.STAR() == null) {
+    } else if(ctx.UNDERSCORE() != null && ctx.STAR() == null) {
       res = `Cst_UnamedVariable();
-    } if(ctx.UNDERSCORE() != null && ctx.STAR() != null) {
+    } else if(ctx.UNDERSCORE() != null && ctx.STAR() != null) {
       res = `Cst_UnamedVariableStar();
-    } if(ctx.constant() != null && ctx.STAR() == null) {
+    } else if(ctx.constant() != null && ctx.STAR() == null) {
       CstSymbol cst = (CstSymbol) getValue(ctx.constant());
       res = `Cst_Constant(cst);
-    } if(ctx.constant() != null && ctx.STAR() != null) {
+    } else if(ctx.constant() != null && ctx.STAR() != null) {
       CstSymbol cst = (CstSymbol) getValue(ctx.constant());
       res = `Cst_ConstantStar(cst);
     }

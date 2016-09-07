@@ -442,7 +442,6 @@ public class AstBuilder {
       // TODO
       //Cst_MetaQuoteConstruct
       //Cst_StrategyConstruct
-      // Gom construct
 
       Cst_AbstractBlock(blocks) -> {
         return `AbstractBlock(convert(blocks));
