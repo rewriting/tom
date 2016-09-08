@@ -84,81 +84,14 @@ public class CstConverter {
     return t;
   }
 
-  private CstBlock includeFile(String currentFileName, String filename, int lineNumber) throws TomIncludeException {
-    //System.out.println("include: " + `filename);
-
-    /*
-    String currentFileName = getStreamManager().getInputFileName();  
-
-    String includeName = `filename.trim();
-    includeName = includeName.replace('/',File.separatorChar);
-    includeName = includeName.replace('\\',File.separatorChar);
-    if(includeName.equals("")) {
-      throw new TomIncludeException(TomMessage.missingIncludedFile,
-        new Object[]{currentFileName, lineNumber});
-    }
-
-    File file = new File(includeName);
-    if(file.isAbsolute()) {
-      try {
-        file = file.getCanonicalFile();
-      } catch (IOException e) {
-        System.out.println("IO Exception when computing included file");
-        e.printStackTrace();
-      }
-
-      if(!file.exists()) {
-        file = null;
-      }
-    } else {
-      // StreamManager shall find it
-      file = getStreamManager().findFile(new File(currentFileName).getParentFile(), includeName);
-    }
-    if(file == null) {
-      throw new TomIncludeException(TomMessage.includedFileNotFound,
-          new Object[]{
-            filename, 
-            currentFileName, 
-            lineNumber,
-            currentFileName});
-    }
-    */
-
-    String canonicalPath = getParserTool().searchIncludeFile(currentFileName, filename,lineNumber);
-
-    // parse the file
-    ANTLRFileStream tomInput;
-    try {
-      tomInput = new ANTLRFileStream(canonicalPath);
-      tom.engine.parser.antlr4.TomParser parser = new tom.engine.parser.antlr4.TomParser(filename, getParserTool(), getStreamManager().getSymbolTable());
-
-      CstProgram include = parser.parse(tomInput);
-      %match(include) {
-        Cst_Program(blocks) -> { 
-          return `Cst_AbstractBlock(blocks);
-        }
-      }
-
-    } catch (Exception e) {
-      throw new RuntimeException(e); //XXX
-    }
-
-    return `Cst_AbstractBlock(ConcCstBlock());
-  }
-
   /*
-   * parse a Gom construct
+   * transform IncludeConstruct
+   * transform GomConstruct
+   * flatten BQComposite
+   * merge HOSTBLOCK
+   * merge ITL
+   * generate declarations for a strategy
    */
-  private CstBlock gomFile(String currentFileName, String gomCode, int initialGomLine) throws TomIncludeException {
-    //System.out.println("gomCode: " + gomCode);
-    String[] userOpts = new String[0];
-    String generatedMapping = getParserTool().parseGomFile(gomCode,initialGomLine, userOpts);
-    if(generatedMapping != null && generatedMapping.length() > 0) {
-      return includeFile(currentFileName, generatedMapping, initialGomLine);
-    }
-    return `Cst_AbstractBlock(ConcCstBlock());
-  }
-
   %strategy SimplifyCST(cc:CstConverter) extends Identity() {
 
     visit CstBlock {
@@ -177,6 +110,20 @@ public class CstConverter {
           e.printStackTrace();
         }
       }
+
+      Cst_StrategyConstruct(optionList, stratName, stratArgs, extendsTerm, visitList) -> {
+        String op = %[
+%op Strategy S(a:T1,b:T2) {
+  is_fsym(t) { ($t instanceof S) }
+  get_slot(t,a) { ((S)$t).geta() }
+  get_slot(t,b) { ((S)$t).geta() }
+  make(t1,t2) { new S(t1,t2) }
+}
+          ]%;
+
+      }
+
+
     }
 
     visit CstBQTerm {
@@ -201,7 +148,49 @@ public class CstConverter {
     }
 
   }
+  /*
+   * include a file and return the corresponding CST
+   */
+  private CstBlock includeFile(String currentFileName, String filename, int lineNumber) throws TomIncludeException {
+    //System.out.println("include: " + `filename);
+    String canonicalPath = getParserTool().searchIncludeFile(currentFileName, filename,lineNumber);
 
+    // parse the file
+    ANTLRFileStream tomInput;
+    try {
+      tomInput = new ANTLRFileStream(canonicalPath);
+      tom.engine.parser.antlr4.TomParser parser = new tom.engine.parser.antlr4.TomParser(filename, getParserTool(), getStreamManager().getSymbolTable());
+
+      CstProgram include = parser.parse(tomInput);
+      %match(include) {
+        Cst_Program(blocks) -> { 
+          return `Cst_AbstractBlock(blocks);
+        }
+      }
+
+    } catch (Exception e) {
+      throw new RuntimeException(e); //XXX
+    }
+
+    return `Cst_AbstractBlock(ConcCstBlock());
+  }
+
+  /*
+   * parse a Gom construct, include the resulting *.tom file, and return the corresponding CST
+   */
+  private CstBlock gomFile(String currentFileName, String gomCode, int initialGomLine) throws TomIncludeException {
+    //System.out.println("gomCode: " + gomCode);
+    String[] userOpts = new String[0];
+    String generatedMapping = getParserTool().parseGomFile(gomCode,initialGomLine, userOpts);
+    if(generatedMapping != null && generatedMapping.length() > 0) {
+      return includeFile(currentFileName, generatedMapping, initialGomLine);
+    }
+    return `Cst_AbstractBlock(ConcCstBlock());
+  }
+
+  /*
+   * merge HOSTBLOCK
+   */
   private static CstBlockList simplifyCstBlockList(CstBlockList l) {
     %match(l) {
       ConcCstBlock(
@@ -218,6 +207,9 @@ public class CstConverter {
     return l;
   }
 
+  /*
+   * add a space between each HOSTBLOCK (which could has been lost by the parser)
+   */
   private static CstBlockList addSpace(CstBlockList l) {
     %match(l) {
       ConcCstBlock(HOSTBLOCK(ConcCstOption(Cst_OriginTracking(name,lmin,cmin,lmax,cmax)),text),tail*) -> {
@@ -234,7 +226,9 @@ public class CstConverter {
     return l;
   }
 
-
+  /*
+   * merge ITL
+   */
   private static CstBQTermList simplifyCstBQTermList(CstBQTermList l) {
     %match(l) {
       ConcCstBQTerm(
@@ -251,7 +245,9 @@ public class CstConverter {
     return l;
   }
 
-
+  /*
+   * add missing spaces/newlines between two strings
+   */
   private static String mergeString(String s1, String s2, int lmax1, int cmax1, int lmin2, int cmin2) {
     //System.out.println("mergeString: " + s1 + " --- " + s2);
     String newline = System.getProperty("line.separator");

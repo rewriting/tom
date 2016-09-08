@@ -93,7 +93,19 @@ public class AstBuilder {
 
       Cst_MatchConstruct(optionList, arguments, constraintActionList) -> {
         ConstraintInstructionList cil = convert(`constraintActionList,`arguments);
-          return `Match(cil,addDefaultModule(convert(optionList,"Match")));
+        return `Match(cil,addDefaultModule(convert(optionList,"Match")));
+      }
+
+      Cst_StrategyConstruct(optionList, Cst_Name(name), arguments, extendsTerm, visitList) -> {
+        TomName strategyName = `Name(name);
+        CstOption ot = getOriginTracking(`optionList);
+        BQTerm extendsBQTerm = convert(`extendsTerm);
+        TomVisitList astVisitList = convert(`visitList);
+        Declaration strategyDecl = `Strategy(strategyName,extendsBQTerm,astVisitList,concDeclaration(),convert(ot,name));
+        Declaration symbolDecl = `SymbolDecl(strategyName);
+        return `AbstractBlock(concInstruction(
+              CodeToInstruction(DeclarationToCode(strategyDecl)),
+              CodeToInstruction(DeclarationToCode(symbolDecl))));
       }
 
       Cst_TypetermConstruct(optionList, Cst_Type(typeName), extendsTypeName, operatorList) -> {
@@ -675,6 +687,16 @@ public class AstBuilder {
     throw new TomRuntimeException("convert: strange term: " + cst);
   }
 
+  public TomVisit convert(CstVisit cst) {
+    %match(cst) {
+      Cst_VisitTerm(type@Cst_Type(typename), constraintActionList, ol) -> {
+        //TomType matchType = getOptionBooleanValue("newtyper"?SymbolTable.TYPE_UNKNOWN:type);
+        CstBQTermList arguments = `ConcCstBQTerm(Cst_BQVar(ConcCstOption(),"tom_arg",type));
+        return `VisitTerm(makeType(typename), convert(constraintActionList,arguments), convert(ol, "VisitTerm"));
+      }
+    }
+    throw new TomRuntimeException("convert: strange term: " + cst);
+  }
   /*
    * get the value of a constant
    * and add the constant into the SymbolTable
@@ -827,6 +849,17 @@ public class AstBuilder {
     throw new TomRuntimeException("convert: strange term: " + cst);
   }
 
+  public TomVisitList convert(CstVisitList cst) {
+    %match(cst) {
+      ConcCstVisit() -> { 
+        return `concTomVisit();
+      }
+      ConcCstVisit(head,tail*) -> {
+        return `concTomVisit(convert(head),convert*(tail));
+      }
+    }
+    throw new TomRuntimeException("convert: strange term: " + cst);
+  }
   /*
    * Utilities
    */
