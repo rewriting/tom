@@ -398,7 +398,7 @@ matchblock:{
   // ///////////////////////////////
   // SYMBOL DECLARATION CONCERNS //
   // ///////////////////////////////
-  private void verifySymbol(String symbolType, TomSymbol tomSymbol){
+  private void verifySymbol(String symbolType, TomSymbol tomSymbol) {
     int domainLength;
 
     String symbStrName = tomSymbol.getAstName().getString();

@@ -111,19 +111,41 @@ public class CstConverter {
         }
       }
 
-      Cst_StrategyConstruct(optionList, stratName, stratArgs, extendsTerm, visitList) -> {
-        String op = %[
-%op Strategy S(a:T1,b:T2) {
-  is_fsym(t) { ($t instanceof S) }
-  get_slot(t,a) { ((S)$t).geta() }
-  get_slot(t,b) { ((S)$t).geta() }
-  make(t1,t2) { new S(t1,t2) }
-}
-          ]%;
+      s@Cst_StrategyConstruct(ConcCstOption(Cst_OriginTracking(currentFileName,l1,c1,l2,c2)), Cst_Name(stratName), stratArgs, extendsTerm, visitList) -> {
+        String opargs = "";
+        String getslots = "";
+        String makeargs = "";
+        String newargs = "";
+        int index = 1;
+        %match(stratArgs) {
+          ConcCstSlot(_*,Cst_Slot(Cst_Name(name),Cst_Type(type)),_*) -> {
+            opargs += (`name + ":" + `type + ",");
+            makeargs += ("t" + index + ",");
+            newargs += ("$t" + index + ",");
+            index++;
+            getslots += %[get_slot(@`name@,t) { ((@`stratName@)$t).get@`name@() }]%;
+          }
+        }
+        index = opargs.lastIndexOf(',');
+        if(index > 0) { opargs = opargs.substring(0,index); }
+        index = makeargs.lastIndexOf(',');
+        if(index > 0) { makeargs = makeargs.substring(0,index); }
+        index = newargs.lastIndexOf(',');
+        if(index > 0) { newargs = newargs.substring(0,index); }
 
+        String opdecl = %[
+          %op Strategy @`stratName@(@opargs@) {
+            is_fsym(t) { ($t instanceof @`stratName@) }
+            @getslots@
+            make(@makeargs@) { new @`stratName@(@newargs@) }
+          }
+        ]%;
+
+        /* call the parser to build the corresponding CST */
+        ANTLRInputStream tomInput = new ANTLRInputStream(opdecl);
+        CstBlock block = cc.parseStream(tomInput,`currentFileName);
+        return `Cst_AbstractBlock(ConcCstBlock(s,block));
       }
-
-
     }
 
     visit CstBQTerm {
@@ -148,6 +170,8 @@ public class CstConverter {
     }
 
   }
+
+
   /*
    * include a file and return the corresponding CST
    */
@@ -156,24 +180,33 @@ public class CstConverter {
     String canonicalPath = getParserTool().searchIncludeFile(currentFileName, filename,lineNumber);
 
     // parse the file
-    ANTLRFileStream tomInput;
     try {
-      tomInput = new ANTLRFileStream(canonicalPath);
-      tom.engine.parser.antlr4.TomParser parser = new tom.engine.parser.antlr4.TomParser(filename, getParserTool(), getStreamManager().getSymbolTable());
+      ANTLRInputStream tomInput = new ANTLRFileStream(canonicalPath);
+      return parseStream(tomInput,filename);
+    } catch (IOException e) {
+      throw new RuntimeException(e); //XXX
+    }
 
+    //return `Cst_AbstractBlock(ConcCstBlock());
+  }
+
+  private CstBlock parseStream(ANTLRInputStream tomInput, String filename) {
+    // parse the file
+    try {
+      tom.engine.parser.antlr4.TomParser parser = new tom.engine.parser.antlr4.TomParser(filename, getParserTool(), getStreamManager().getSymbolTable());
       CstProgram include = parser.parse(tomInput);
       %match(include) {
         Cst_Program(blocks) -> { 
           return `Cst_AbstractBlock(blocks);
         }
       }
-
     } catch (Exception e) {
       throw new RuntimeException(e); //XXX
     }
 
     return `Cst_AbstractBlock(ConcCstBlock());
   }
+
 
   /*
    * parse a Gom construct, include the resulting *.tom file, and return the corresponding CST

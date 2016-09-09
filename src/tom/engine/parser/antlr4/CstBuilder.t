@@ -50,18 +50,23 @@ import tom.engine.tools.ASTFactory;
 public class CstBuilder extends TomIslandParserBaseListener {
   %include { ../../adt/cst/CST.tom }
 
+  private String filename;
+  public CstBuilder(String filename) {
+    this.filename = filename;
+  }
+
   private static Logger logger = Logger.getLogger("tom.engine.typer.CstConverter");
   private Logger getLogger() {
     return Logger.getLogger(getClass().getName());
   }
 
-  ParseTreeProperty<Object> values = new ParseTreeProperty<Object>();
+  private ParseTreeProperty<Object> values = new ParseTreeProperty<Object>();
   private void setValue(ParseTree node, Object value) { values.put(node, value); } 
   public Object getValue(ParseTree node) { return values.get(node); }
   public void setStringValue(ParseTree node, String value) { setValue(node, value); } 
   public String getStringValue(ParseTree node) { return (String) getValue(node); }
 
-  ParseTreeProperty<Object> values2 = new ParseTreeProperty<Object>();
+  private ParseTreeProperty<Object> values2 = new ParseTreeProperty<Object>();
   private void setValue2(ParseTree node, Object value) { values2.put(node, value); } 
   public Object getValue2(ParseTree node) { return values2.get(node); }
 
@@ -859,7 +864,7 @@ public class CstBuilder extends TomIslandParserBaseListener {
    * End of grammar
    */
 
-  private static CstOption extractOption(Token t) {
+  private CstOption extractOption(Token t) {
     String newline = System.getProperty("line.separator");
     String lines[] = t.getText().split(newline);
 
@@ -873,7 +878,11 @@ public class CstBuilder extends TomIslandParserBaseListener {
       lastCharColumn = lines[lines.length-1].length();
     }
 
-    return `Cst_OriginTracking(t.getInputStream().getSourceName(), firstCharLine, firstCharColumn, lastCharLine, lastCharColumn);  
+    String source = t.getTokenSource().getSourceName();
+    if(source == IntStream.UNKNOWN_SOURCE_NAME) {
+      source = this.filename;
+    }
+    return `Cst_OriginTracking(source, firstCharLine, firstCharColumn, lastCharLine, lastCharColumn);  
   }
 
 

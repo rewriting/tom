@@ -50,9 +50,7 @@ public class TomParser {
   private HashSet<String> includedFiles = new HashSet<String>();
   private HashSet<String> alreadyParsedFiles = new HashSet<String>();
 
-  public TomParser(String filename, 
-      TomParserTool parserTool,
-      SymbolTable symbolTable) {
+  public TomParser(String filename, TomParserTool parserTool, SymbolTable symbolTable) {
     this.filename = filename;
     this.parserTool = parserTool;
     this.symbolTable = symbolTable;
@@ -105,7 +103,7 @@ public class TomParser {
 
     start = System.currentTimeMillis();
     ParseTreeWalker walker = new ParseTreeWalker();
-    tom.engine.parser.antlr4.CstBuilder cstBuilder = new tom.engine.parser.antlr4.CstBuilder(); 
+    tom.engine.parser.antlr4.CstBuilder cstBuilder = new tom.engine.parser.antlr4.CstBuilder(getFilename()); 
     walker.walk(cstBuilder, tree);
     CstProgram cst = (CstProgram) cstBuilder.getValue(tree);
     System.out.println("\tbuilding cst:" + (System.currentTimeMillis()-start) + " ms");

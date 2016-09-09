@@ -102,10 +102,7 @@ public class AstBuilder {
         BQTerm extendsBQTerm = convert(`extendsTerm);
         TomVisitList astVisitList = convert(`visitList);
         Declaration strategyDecl = `Strategy(strategyName,extendsBQTerm,astVisitList,concDeclaration(),convert(ot,name));
-        Declaration symbolDecl = `SymbolDecl(strategyName);
-        return `AbstractBlock(concInstruction(
-              CodeToInstruction(DeclarationToCode(strategyDecl)),
-              CodeToInstruction(DeclarationToCode(symbolDecl))));
+        return `CodeToInstruction(DeclarationToCode(strategyDecl));
       }
 
       Cst_TypetermConstruct(optionList, Cst_Type(typeName), extendsTypeName, operatorList) -> {
@@ -453,7 +450,6 @@ public class AstBuilder {
 
       // TODO
       //Cst_MetaQuoteConstruct
-      //Cst_StrategyConstruct
 
       Cst_AbstractBlock(blocks) -> {
         return `AbstractBlock(convert(blocks));
