@@ -136,7 +136,7 @@ public class BackendPlugin extends TomGenericPlugin {
 
           Code pilCode = (Code) getWorkingTerm();
 
-System.out.println("pil: " + pilCode);
+          //System.out.println("pil: " + pilCode);
 
           markUsedConstructorDestructor(pilCode);
 

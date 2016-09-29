@@ -85,7 +85,7 @@ public class CstConverter {
   }
 
   /*
-   * replace IncludeConstruct by CstBlock corresponding to the content of the file
+   * replace IncludeFile by IncludeConstruct corresponding to the content of the file
    * parse text corresponding to GomConstruct and include the generated *.tom file
    * generate declarations for Cst_StrategyConstruct
    * flatten BQComposite(...,Cst_BQComposite(...),...) -> Cst_BQComposite(...)
@@ -95,7 +95,7 @@ public class CstConverter {
   %strategy SimplifyCST(cc:CstConverter) extends Identity() {
 
     visit CstBlock {
-      Cst_IncludeConstruct(ConcCstOption(Cst_OriginTracking(currentFileName,l1,c1,l2,c2)),filename) -> {
+      Cst_IncludeFile(ConcCstOption(Cst_OriginTracking(currentFileName,l1,c1,l2,c2)),filename) -> {
         try {
           return cc.includeFile(`currentFileName,`filename,`l1);
         } catch(TomIncludeException e) {
@@ -182,7 +182,8 @@ public class CstConverter {
     // parse the file
     try {
       ANTLRInputStream tomInput = new ANTLRFileStream(canonicalPath);
-      return parseStream(tomInput,filename);
+      CstBlock block = parseStream(tomInput,filename);
+      return `Cst_IncludeConstruct(ConcCstBlock(block));
     } catch (IOException e) {
       throw new RuntimeException(e); //XXX
     }

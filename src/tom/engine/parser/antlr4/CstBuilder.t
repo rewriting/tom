@@ -179,7 +179,7 @@ public class CstBuilder extends TomIslandParserBaseListener {
       ParseTree child = ctx.getChild(i);
       filename += child.getText();
     }
-    setValue("exitIncludeStatement", ctx,`Cst_IncludeConstruct(optionList,filename));
+    setValue("exitIncludeStatement", ctx,`Cst_IncludeFile(optionList,filename));
   }
 
   /*
@@ -866,20 +866,23 @@ public class CstBuilder extends TomIslandParserBaseListener {
 
   private CstOption extractOption(Token t) {
     String newline = System.getProperty("line.separator");
-    String lines[] = t.getText().split(newline);
+    String text = t.getText();
+    //System.out.println("text: '" + text + "'");
 
     int firstCharLine = t.getLine();
-    int firstCharColumn = t.getCharPositionInLine()+1;
-    int lastCharLine = firstCharLine+lines.length-1;
-    int lastCharColumn=0;
+    int firstCharColumn = t.getCharPositionInLine();
+    int lastCharLine;
+    int lastCharColumn;
 
-System.out.println(%[extractOption: (@firstCharLine@,@firstCharColumn@) -- (@lastCharLine@,@lastCharColumn@)]%);
-
-    if(lines.length==1) {
-      lastCharColumn = firstCharColumn + lines[0].length();
+    if(text.equals(newline)) {
+      lastCharColumn = 0;
+      lastCharLine = firstCharLine + 1;
     } else {
-      lastCharColumn = lines[lines.length-1].length();
+      lastCharColumn = firstCharColumn + text.length();
+      lastCharLine = firstCharLine;
     }
+
+    //System.out.println(%[extractOption: '@text@' (@firstCharLine@,@firstCharColumn@) -- (@lastCharLine@,@lastCharColumn@)]%);
 
     String source = t.getTokenSource().getSourceName();
     if(source == IntStream.UNKNOWN_SOURCE_NAME) {

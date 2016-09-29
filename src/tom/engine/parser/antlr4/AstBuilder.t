@@ -82,9 +82,15 @@ public class AstBuilder {
     %match(cst) {
       HOSTBLOCK(optionList,content) -> {
         CstOption ot = getOriginTracking(`optionList);
+        String newline = System.getProperty("line.separator");
+        return `CodeToInstruction(TargetLanguageToCode(TL(content + newline,
+              TextPosition(ot.getstartLine(),ot.getstartColumn()),
+              TextPosition(ot.getendLine()+1,0)))); // add a newline after TL
+        /* without extra newline
         return `CodeToInstruction(TargetLanguageToCode(TL(content,
               TextPosition(ot.getstartLine(),ot.getstartColumn()),
               TextPosition(ot.getendLine(),ot.getendColumn()))));
+              */
       }
 
       Cst_BQTermToBlock(bqterm) -> {
@@ -471,6 +477,10 @@ matchblock: {
 
       // TODO
       //Cst_MetaQuoteConstruct
+      Cst_IncludeConstruct(blocks) -> {
+        return `CodeToInstruction(TomInclude(convertToCodeList(blocks)));
+      }
+
 
       Cst_AbstractBlock(blocks) -> {
         return `AbstractBlock(convert(blocks));
