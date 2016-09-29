@@ -85,12 +85,12 @@ public class CstConverter {
   }
 
   /*
-   * transform IncludeConstruct
-   * transform GomConstruct
-   * flatten BQComposite
-   * merge HOSTBLOCK
-   * merge ITL
-   * generate declarations for a strategy
+   * replace IncludeConstruct by CstBlock corresponding to the content of the file
+   * parse text corresponding to GomConstruct and include the generated *.tom file
+   * generate declarations for Cst_StrategyConstruct
+   * flatten BQComposite(...,Cst_BQComposite(...),...) -> Cst_BQComposite(...)
+   * merge HOSTBLOCK: ConcCstBlock(...,HOSTBLOCK,HOSTBLOCK,...) ->  ConcCstBlock(...,HOSTBLOCK,...)
+   * merge ITL: ConcCstBQTerm(...,Cst_ITL,Cst_ITL,...) -> ConcCstBQTerm(...,Cst_ITL,...)
    */
   %strategy SimplifyCST(cc:CstConverter) extends Identity() {
 

@@ -238,7 +238,7 @@ public class AstBuilder {
                 }
               }
 
-              Cst_Make(nameList,ConcCstBlock(HOSTBLOCK(optionList2,content))) -> {
+              Cst_Make(nameList,blockList@ConcCstBlock(head,_*)) -> {
                 ArrayList<String> varnameList = new ArrayList<String>();
                 BQTermList args = `concBQTerm();
                 int index = 0;
@@ -251,16 +251,37 @@ public class AstBuilder {
                   }
                 }
 
-                String[] vars = new String[varnameList.size()]; // used only to give a type
-                String code = ASTFactory.abstractCode(`content,varnameList.toArray(vars));
+                Declaration attribute = `EmptyDeclaration();
+matchblock: {
+              %match(blockList) {
+                ConcCstBlock(HOSTBLOCK(optionList2,content)) -> {
+                  String[] vars = new String[varnameList.size()]; // used only to give a type
+                  String code = ASTFactory.abstractCode(`content,varnameList.toArray(vars));
+                  attribute = `MakeDecl(
+                      Name(opName),
+                      makeType(codomain),
+                      args,
+                      ExpressionToInstruction(Code(code)),
+                      makeOriginTracking(opName,optionList2)
+                      );
+                  break matchblock;
+                }
 
-                Declaration attribute = `MakeDecl(
-                    Name(opName),
-                    makeType(codomain),
-                    args,
-                    ExpressionToInstruction(Code(code)),
-                    makeOriginTracking(opName,optionList2)
-                    );
+                ConcCstBlock(head,_*) -> {
+                  InstructionList il = convert(`blockList);
+                  //System.out.println("il: " + il);
+                  attribute = `MakeDecl(
+                      Name(opName),
+                      makeType(codomain),
+                      args,
+                      AbstractBlock(il),
+                      makeOriginTracking(opName,optionList)
+                      );
+                  break matchblock;
+                }
+
+              }
+            }
 
                 options.add(`DeclarationToOption(attribute)); 
               }
@@ -687,7 +708,8 @@ public class AstBuilder {
     %match(cst) {
       Cst_VisitTerm(type@Cst_Type(typename), constraintActionList, ol) -> {
         //TomType matchType = getOptionBooleanValue("newtyper"?SymbolTable.TYPE_UNKNOWN:type);
-        CstBQTermList arguments = `ConcCstBQTerm(Cst_BQVar(ConcCstOption(),"tom_arg",type));
+        // !! the name tom__arg is fixed
+        CstBQTermList arguments = `ConcCstBQTerm(Cst_BQVar(ConcCstOption(),"tom__arg",type));
         return `VisitTerm(makeType(typename), convert(constraintActionList,arguments), convert(ol, "VisitTerm"));
       }
     }

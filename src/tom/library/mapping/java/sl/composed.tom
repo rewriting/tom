@@ -93,9 +93,9 @@
   make(v) {( `mu(MuVar("_x"),Sequence(All(MuVar("_x")),Try(Sequence(v,MuVar("_x"))))) )}
 }
 
-%op Strategy Outermost(s1:Strategy) {
   // the following optimized version is not correct
   //make(v) {( `mu(MuVar("_x"),Sequence(Try(Sequence(v,MuVar("_x"))),All(MuVar("_x")))) )}
+%op Strategy Outermost(s1:Strategy) {
   make(v) {( `Repeat(OnceTopDown(v)) )}
 }
 
