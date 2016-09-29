@@ -871,7 +871,10 @@ public class CstBuilder extends TomIslandParserBaseListener {
     int firstCharLine = t.getLine();
     int firstCharColumn = t.getCharPositionInLine()+1;
     int lastCharLine = firstCharLine+lines.length-1;
-    int lastCharColumn;
+    int lastCharColumn=0;
+
+System.out.println(%[extractOption: (@firstCharLine@,@firstCharColumn@) -- (@lastCharLine@,@lastCharColumn@)]%);
+
     if(lines.length==1) {
       lastCharColumn = firstCharColumn + lines[0].length();
     } else {

@@ -113,5 +113,6 @@ ACTION_STRING_LITERAL :	'"' (ACTION_ESCAPE | ~["\\])* '"' ;
 MLCOMMENT : '/*' .*? '*/' ;
 SLCOMMENT : '//' ~[\r\n]* ;
 
-WS : [ \r\t\n]+ -> skip ;
+WS : [ \r\t]+ -> skip ;
+NL : [\n]+ ;
 ANY : . ; 

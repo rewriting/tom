@@ -603,7 +603,8 @@ public abstract class AbstractGenerator {
   public void generateTargetLanguage(int deep, TargetLanguage subject, String moduleName) throws IOException {
     %match(subject) {
       TL(t,TextPosition[Line=startLine], TextPosition[Line=endLine]) -> {
-        output.write(deep, `t, `startLine, `endLine - `startLine);
+        int length =  `endLine - `startLine;
+        output.write(deep, `t, `startLine, length);
         return;
       }
       ITL(t) -> {

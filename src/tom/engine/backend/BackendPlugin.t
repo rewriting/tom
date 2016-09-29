@@ -136,6 +136,8 @@ public class BackendPlugin extends TomGenericPlugin {
 
           Code pilCode = (Code) getWorkingTerm();
 
+System.out.println("pil: " + pilCode);
+
           markUsedConstructorDestructor(pilCode);
 
           generator.generate(defaultDeep, pilCode,TomBase.DEFAULT_MODULE_NAME);
