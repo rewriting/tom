@@ -21,10 +21,9 @@ CstBlock = HOSTBLOCK(optionList:CstOptionList, content:String)
          | Cst_ReturnBQTerm(bqterm:CstBQTerm)
          | Cst_StrategyConstruct(optionList:CstOptionList, stratName:CstName, stratArgs:CstSlotList, extendsTerm:CstBQTerm, visitList:CstVisitList)
          | Cst_AbstractBlock(blocks:CstBlockList)
+         | Cst_UnamedBlock(blocks:CstBlockList)
 
 CstConstraintAction = Cst_ConstraintAction(constraint:CstConstraint , action:CstBlockList, optionList:CstOptionList)
-//                    | Cst_ConstraintActionReturn(constraint:CstConstraint , term:CstBQTerm, optionList:CstOptionList) 
-//                    | Cst_LabelledConstraintAction(constraint:CstConstraint , action:CstBlockList, label:CstName) 
 
 CstConstraintActionList = ConcCstConstraintAction(CstConstraintAction*)
 

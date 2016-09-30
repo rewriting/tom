@@ -187,8 +187,6 @@ public class CstConverter {
     } catch (IOException e) {
       throw new RuntimeException(e); //XXX
     }
-
-    //return `Cst_AbstractBlock(ConcCstBlock());
   }
 
   private CstBlock parseStream(ANTLRInputStream tomInput, String filename) {

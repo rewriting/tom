@@ -497,6 +497,10 @@ matchblock: {
         return `AbstractBlock(convert(blocks));
       }
 
+      Cst_UnamedBlock(blocks) -> {
+        return `UnamedBlock(convert(blocks));
+      }
+
     } // end %match
    
     throw new TomRuntimeException("convert: strange term: " + cst);

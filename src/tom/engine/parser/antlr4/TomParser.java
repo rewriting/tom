@@ -107,8 +107,7 @@ public class TomParser {
     walker.walk(cstBuilder, tree);
     CstProgram cst = (CstProgram) cstBuilder.getValue(tree);
     System.out.println("\tbuilding cst:" + (System.currentTimeMillis()-start) + " ms");
-
-    //CstProgram cst = (CstProgram)CSTAdaptor.getTerm(programAsAntrlTree);
+    //System.out.println("\tcst:" + cst);
 
     start = System.currentTimeMillis();
     tom.engine.parser.antlr4.CstConverter cstConverter = new tom.engine.parser.antlr4.CstConverter(getParserTool());
@@ -119,14 +118,6 @@ public class TomParser {
     //System.out.println("simplified cst = " + cst);
 
     return cst;
-
-    //tom.engine.parser.antlr4.AstBuilder astBuilder = new tom.engine.parser.antlr4.AstBuilder(symbolTable);
-    //Code code = astBuilder.convert(cst);
-
-    //System.out.println("ast = " + code);
-
-
-
   }
 
 
