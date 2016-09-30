@@ -731,6 +731,10 @@ matchblock: {
         return `VariableStar(concOption(),name,SymbolTable.TYPE_UNKNOWN,concConstraint());
       }
 
+      Cst_Anti(pattern) -> {
+        return `AntiTerm(convert(pattern));
+      }
+
       Cst_Appl(symbolList, patternList) -> {
         OptionList optionList = `concOption();
         Theory theory = extractTheory(`symbolList);

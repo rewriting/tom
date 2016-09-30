@@ -91,6 +91,7 @@ public class CstConverter {
    * flatten BQComposite(...,Cst_BQComposite(...),...) -> Cst_BQComposite(...)
    * merge HOSTBLOCK: ConcCstBlock(...,HOSTBLOCK,HOSTBLOCK,...) ->  ConcCstBlock(...,HOSTBLOCK,...)
    * merge ITL: ConcCstBQTerm(...,Cst_ITL,Cst_ITL,...) -> ConcCstBQTerm(...,Cst_ITL,...)
+   * Cst_Anti(Cst_Anti(t)) -> t
    */
   %strategy SimplifyCST(cc:CstConverter) extends Identity() {
 
@@ -153,6 +154,12 @@ public class CstConverter {
       Cst_BQComposite(option,ConcCstBQTerm(C1*,Cst_BQComposite(_,args),C2*)) -> { 
         /* flatten Cst_BQComposite */
         return `Cst_BQComposite(option,ConcCstBQTerm(C1*,args*,C2*));
+      }
+    }
+
+    visit CstPattern {
+      Cst_Anti(Cst_Anti(t)) -> { 
+        return `t; 
       }
     }
 
