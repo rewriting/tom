@@ -18,6 +18,7 @@ CstBlock = HOSTBLOCK(optionList:CstOptionList, content:String)
          | Cst_IncludeConstruct(blocks:CstBlockList)
          | Cst_GomConstruct(optionList:CstOptionList, blocks:CstBlockList)
          | Cst_BQTermToBlock(bqterm:CstBQTerm)
+         | Cst_ReturnBQTerm(bqterm:CstBQTerm)
          | Cst_StrategyConstruct(optionList:CstOptionList, stratName:CstName, stratArgs:CstSlotList, extendsTerm:CstBQTerm, visitList:CstVisitList)
          | Cst_AbstractBlock(blocks:CstBlockList)
 

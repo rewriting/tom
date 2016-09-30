@@ -220,7 +220,7 @@ public class CstBuilder extends TomIslandParserBaseListener {
     if(ctx.block() != null) {
       action = (CstBlockList) getValue(ctx.block());
     } else if(ctx.bqterm() != null) {
-      action = `ConcCstBlock(Cst_BQTermToBlock((CstBQTerm)getValue(ctx.bqterm())));
+      action = `ConcCstBlock(Cst_ReturnBQTerm((CstBQTerm)getValue(ctx.bqterm())));
     }
     CstConstraint constraint = `Cst_AndConstraint();
     if(ctx.c != null) {

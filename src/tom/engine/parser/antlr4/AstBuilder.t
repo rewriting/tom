@@ -83,10 +83,17 @@ public class AstBuilder {
       HOSTBLOCK(optionList,content) -> {
         CstOption ot = getOriginTracking(`optionList);
         String newline = System.getProperty("line.separator");
+        /*
+         * We suppose that TL is the last construct before a Tom construct
+         * since content does not contain the ending newline, Tom code will be 
+         * generated just after. This is a problem when content is a single
+         * line comment. This is why we add a newline after each TL
+         */
         return `CodeToInstruction(TargetLanguageToCode(TL(content + newline,
               TextPosition(ot.getstartLine(),ot.getstartColumn()),
               TextPosition(ot.getendLine()+1,0)))); // add a newline after TL
-        /* without extra newline
+        /* 
+         * code without extra newline
         return `CodeToInstruction(TargetLanguageToCode(TL(content,
               TextPosition(ot.getstartLine(),ot.getstartColumn()),
               TextPosition(ot.getendLine(),ot.getendColumn()))));
@@ -95,6 +102,10 @@ public class AstBuilder {
 
       Cst_BQTermToBlock(bqterm) -> {
         return `BQTermToInstruction(convert(bqterm));
+      }
+
+      Cst_ReturnBQTerm(bqterm) -> {
+        return `Return(convert(bqterm));
       }
 
       Cst_MatchConstruct(optionList, arguments, constraintActionList) -> {
