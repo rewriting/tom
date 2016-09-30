@@ -48,7 +48,7 @@ public class TestBackQuote {
 
   @Test
   public void test2() {
-    assertEquals(`conc(a(),b(),c()),`conc(abc()));
+    assertEquals(`conc(a(),b(),c()),`conc(abc*())); // was without *
   }
 
 }

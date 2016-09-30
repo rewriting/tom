@@ -549,6 +549,7 @@ public class Compiler extends TomGenericPlugin {
     CodeList l = `concCode();
     boolean generatedNextMinimalExtract = false;
     for(String op:bag) {
+
       TomSymbol opSymbol = getSymbolTable().getSymbolFromName(op);
       // gen all
       TomType opType = opSymbol.getTypesToType().getCodomain();        
@@ -584,6 +585,15 @@ public class Compiler extends TomGenericPlugin {
         %match(l) {
           concCode(Z*) -> { return `concCode(X*,Z*,d,Y*); }
         }         
+      }
+    }
+    visit InstructionList {
+      concInstruction(X*,d@CodeToInstruction(DeclarationToCode[]),Y*) -> {        
+        InstructionList il = `concInstruction();
+        %match(l) {
+          concCode(_*,z,_*) -> { il = `concInstruction(il*,CodeToInstruction(z)); }
+        }         
+        return `concInstruction(X*,il*,d,Y*);
       }
     }
   }

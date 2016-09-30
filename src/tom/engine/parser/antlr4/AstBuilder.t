@@ -43,6 +43,7 @@ import tom.engine.adt.tomtype.types.*;
 import tom.engine.adt.tomterm.types.*;
 import tom.engine.adt.code.types.*;
 import tom.engine.adt.typeconstraints.types.*;
+import tom.engine.adt.theory.types.*;
 import tom.engine.adt.cst.types.*;
 
 import tom.engine.TomBase;
@@ -719,8 +720,6 @@ matchblock: {
       Cst_Constant(symbol) -> {
         OptionList optionList = `concOption();
         ConstraintList constraintList = `concConstraint();
-        //return `Variable(concOption(),Name(name),SymbolTable.TYPE_UNKNOWN,concConstraint());
-        //return `RecordAppl(concOption(),concTomName(Name(name)),concSlot(),concConstraint());
         TomName name = convert(`symbol); // add symbol to symbolTable
         return `TermAppl(concOption(),concTomName(name),concTomTerm(),concConstraint());
       }
@@ -734,6 +733,10 @@ matchblock: {
 
       Cst_Appl(symbolList, patternList) -> {
         OptionList optionList = `concOption();
+        Theory theory = extractTheory(`symbolList);
+        if(theory.length() > 0) {
+          optionList = `concOption(optionList*,MatchingTheory(theory));
+        }
         TomNameList nameList = convert(`symbolList); 
         TomList argList = convert(`patternList); 
         ConstraintList constraintList = `concConstraint();
@@ -742,6 +745,10 @@ matchblock: {
 
       Cst_RecordAppl(symbolList, pairPatternList) -> {
         OptionList optionList = `concOption();
+        Theory theory = extractTheory(`symbolList);
+        if(theory.length() > 0) {
+          optionList = `concOption(optionList*,MatchingTheory(theory));
+        }
         TomNameList nameList = convert(`symbolList); 
         SlotList slotList = convert(`pairPatternList); 
         ConstraintList constraintList = `concConstraint();
@@ -787,6 +794,7 @@ matchblock: {
     }
     throw new TomRuntimeException("convert: strange term: " + cst);
   }
+
   /*
    * get the value of a constant
    * and add the constant into the SymbolTable
@@ -1017,6 +1025,24 @@ matchblock: {
 
     }
     return symbolTable.TYPE_UNKNOWN;
+  }
+
+  private Theory extractTheory(CstSymbolList symbolList) {
+    Theory res = `concElementaryTheory();
+    %match(symbolList) {
+      ConcCstSymbol(_*,x,_*) -> {
+        %match(x) {
+          Cst_Symbol(name,Cst_TheoryAC()) -> {
+            res = `concElementaryTheory(AC(),res*);
+          }
+          Cst_Symbol(name,Cst_TheoryAU()) -> {
+            res = `concElementaryTheory(AU(),res*);
+          }
+        }
+      }
+    }
+
+    return res;
   }
 
 }
