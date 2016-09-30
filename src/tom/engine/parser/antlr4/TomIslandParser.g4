@@ -38,6 +38,11 @@ island
   | oplist
   | oparray
   | bqcomposite
+  | metaquote
+  ;
+
+metaquote
+  : LMETAQUOTE (AT (composite | bqcomposite) AT | water)* RMETAQUOTE
   ;
 
 matchStatement
@@ -109,7 +114,7 @@ term
 bqterm
   : codomain=ID? BQUOTE? fsym=ID LPAREN (bqterm (COMMA bqterm)*)? RPAREN 
   | codomain=ID? BQUOTE? var=ID STAR?
-  | constant
+  | codomain=ID? constant
   ;
 
 bqcomposite
@@ -122,7 +127,6 @@ composite
   | var=ID STAR?
   | constant
   | waterexceptparen
-//  | .*?
   ;
 
 waterexceptparen 

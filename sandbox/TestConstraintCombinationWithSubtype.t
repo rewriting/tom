@@ -1,7 +1,7 @@
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-public class TestConstraintCombination{
+public class TestConstraintCombinationWithSubtype{
   /*
   %gom {
     module Example
@@ -20,6 +20,9 @@ public class TestConstraintCombination{
 
       tFloat = div(n1:tInt,n2:tInt)
              | fmult(n1:tInt,n2:tInt)
+
+      tNat <: tInt
+      tInt <: tFloat
   }
   */
   
@@ -74,7 +77,7 @@ static class tFloat {
     }
   }
 
-  static class tInt{
+  static class tInt extends tFloat{
     public String getOperator(){
       return "";
     }
@@ -122,7 +125,7 @@ static class tFloat {
     }
   } 
 
-  static class tNat{
+  static class tNat extends tInt{
     public String getOperator(){
       return "";
     }
@@ -283,7 +286,7 @@ static class tFloat {
 
   }
 
-  %typeterm tInt {
+  %typeterm tInt extends tFloat {
     implement { tInt }
     is_sort(t) { ($t instanceof tInt) }
 
@@ -291,7 +294,7 @@ static class tFloat {
 
   }
 
-  %typeterm tNat {
+  %typeterm tNat extends tInt {
     implement { tNat }
     is_sort(t) { ($t instanceof tNat) }
 
@@ -379,7 +382,7 @@ static class tFloat {
 
   //---------------------------------
   public static void main(String[] args) {
-    org.junit.runner.JUnitCore.main(TestConstraintCombination.class.getName());
+    org.junit.runner.JUnitCore.main(TestConstraintCombinationWithSubtype.class.getName());
   }
 
   @Test
@@ -390,24 +393,23 @@ static class tFloat {
       // Case 1: NumericConstraint(...) && OrConstraint(...)
       (zero() != x) && (x << suc(zero())|| x << suc(suc(zero()))) -> {
         nbCasesOK++;
-        System.out.println("Case #1: x = " + `x);
       } 
 
       // Case 2: MatchConstraint(...) && OrConstraint(...)
-//      suc(zero()) << x && (x << suc(zero())|| x << suc(suc(zero()))) -> {
-//        nbCasesOK++;
-//      }
+      suc(zero()) << x && (x << suc(zero())|| x << suc(suc(zero()))) -> {
+        nbCasesOK++;
+      }
 
       // Case 3: MatchConstraint(...) && OrConstraintDisjunction(...)
-//      uminus(zero()) << x && (div|fmult)[n1=x] << div(uminus(zero()),uminus(one())) -> {
-//        nbCasesOK++;
-//      }
+      zero() << x && (div|fmult)[n1=x] << div(zero(),one()) -> {
+        nbCasesOK++;
+      }
 
       // Case 4:  NumericConstraint(...) && OrConstraintDisjunction(...)
-//      (uminus(zero()) == x) && (div|fmult)[n1=x] << div(uminus(zero()),uminus(one())) -> {
-//        nbCasesOK++;
-//      }
+      (zero() == x) && (div|fmult)[n1=x] << div(zero(),one()) -> {
+        nbCasesOK++;
+      }
     }
-//    assertTrue("testCombinations",nbCasesOK==5);
+    assertTrue("testCombinations",nbCasesOK==5);
   }
 }

@@ -4,6 +4,8 @@ start : (island | water)*? ;
 
 island
   : BQUOTE composite
+  | LMETAQUOTE (AT (composite|bqcomposite) AT | water)* RMETAQUOTE
+//  | METAQUOTE
   ;
 
 water
@@ -19,15 +21,6 @@ bqterm
 bqcomposite
   : BQUOTE composite
   ;
-/*
-composite
-  : compositeappl
-  | compositeparen
-  | compositevar
-  | constant
-  | waterwithoutparen
-  ;
-*/
 
 composite
   : fsym=ID LPAREN composite* RPAREN
@@ -75,6 +68,10 @@ LONG    : ('-')? (DIGIT)+ LONG_SUFFIX;
 STRING  : '"'  ( ESC | ~('"' |'\\'|'\n'|'\r') )* '"';
 CHAR    : '\'' ( ESC | ~('\''|'\\'|'\n'|'\r') )+ '\'';
 
+LMETAQUOTE : '%[' ;
+RMETAQUOTE : ']%' ;
+ATAT : '@@' ;
+
 fragment UNSIGNED_DOUBLE : (DIGIT)+'.'(DIGIT)* | '.' (DIGIT)+;
 fragment LONG_SUFFIX : 'l'|'L' ; 
 
@@ -92,6 +89,7 @@ fragment ESC :
   ;
 
 BQUOTE : '`' ;
+
 /*
 BQTERM : '`' TERM ;
 fragment TERM : 
@@ -104,6 +102,7 @@ ACTION_ESCAPE :   '\\' .  ;
 ACTION_STRING_LITERAL :	'"' (ACTION_ESCAPE | ~["\\])* '"' ;
 MLCOMMENT : '/*' .*? '*/' ;
 SLCOMMENT : '//' ~[\r\n]* ;
+//METAQUOTE : '%[' .*? ']%' ;
 
 WS : [ \r\t\n]+ -> skip ;
 ANY : . ; 

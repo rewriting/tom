@@ -283,11 +283,11 @@ options{
 
   /*
    * this function receives a string that comes from %[ ... ]%
-   * @@ corresponds to the char '@', so they are encoded into ]% (which cannot
+   * @@ corresponds to the char '@', so it is encoded into ]% (which cannot
    * appear in the string)
    * then, the string is split around the delimiter @
    * alternatively, each string correspond either to a metaString, or a string
-   * to parse the @@ encoded by ]% is put back as a single '@' in the metaString
+   * to parse the @@ encoded by ]%, it is put back as a single '@' in the metaString
    */
   public String tomSplitter(String subject, List<Code> list) {
 
@@ -300,7 +300,7 @@ options{
     String split[] = subject.split(escapeChar);
     boolean last = subject.endsWith(escapeChar);
     int numSeparator = split.length + 1 + (last ? 1 : 0);
-    if (numSeparator%2==1) {
+    if(numSeparator%2==1) {
       TomMessage.error(logger, currentFile, getLine(), TomMessage.badNumberOfAt);
     }
     //System.out.println("split.length: " + split.length);
@@ -309,7 +309,7 @@ options{
     for(int i=0 ; i<split.length ; i++) {
       if(metaMode) {
         // put back escapeChar instead of metaChar
-        String code = metaEncodeCode(split[i].replace(metaChar,escapeChar));
+        String code = getParserTool().metaEncodeCode(split[i].replace(metaChar,escapeChar));
         metaMode = false;
         //System.out.println("metaString: '" + code + "'");
         list.add(`TargetLanguageToCode(ITL(code)));
@@ -343,47 +343,6 @@ options{
       list.add(`TargetLanguageToCode(ITL("\"\"")));
     }
     return res;
-  }
-
-  private static String metaEncodeCode(String code) {
-		/*
-			 System.out.println("before: '" + code + "'");
-			 for(int i=0 ; i<code.length() ; i++) {
-			 System.out.print((int)code.charAt(i));
-			 System.out.print(" ");
-			 }
-			 System.out.println();
-		 */
-		char bs = '\\';
-		StringBuilder sb = new StringBuilder((int)1.5*code.length());
-		for(int i=0 ; i<code.length() ; i++) {
-			char c = code.charAt(i);
-			switch(c) {
-				case '\n':
-					sb.append(bs);
-					sb.append('n');
-					break;
-				case '\r':
-					sb.append(bs);
-					sb.append('r');
-					break;
-				case '\t':
-					sb.append(bs);
-					sb.append('t');
-					break;
-				case '\"':
-				case '\\':
-					sb.append(bs);
-					sb.append(c);
-					break;
-				default:
-					sb.append(c);
-			}
-		}
-    //System.out.println("sb = '" + sb + "'");
-		sb.insert(0,'\"');
-		sb.append('\"');
-		return sb.toString();
   }
 
 }

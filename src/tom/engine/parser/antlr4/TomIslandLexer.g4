@@ -67,6 +67,9 @@ STAR : '*' ;
 UNDERSCORE : '_' ;
 ANTI : '!' ;
 AT : '@' ;
+LMETAQUOTE : '%[' ;
+RMETAQUOTE : ']%' ;
+ATAT : '@@' ;
 
 GREATEROREQ : '>=';
 LOWEROREQ : '<=';
@@ -111,7 +114,7 @@ fragment ESC :
 ACTION_ESCAPE :   '\\' .  ;
 ACTION_STRING_LITERAL :	'"' (ACTION_ESCAPE | ~["\\])* '"' ;
 MLCOMMENT : '/*' .*? '*/' ;
-SLCOMMENT : '//' ~[\r\n]* ;
+SLCOMMENT : '//' ~[\r\n]* -> skip;
 
 WS : [ \r\t\n]+ -> skip ;
 //NL : [\n]+ ;

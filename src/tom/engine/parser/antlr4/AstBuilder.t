@@ -89,15 +89,19 @@ public class AstBuilder {
          * generated just after. This is a problem when content is a single
          * line comment. This is why we add a newline after each TL
          */
+        /*
         return `CodeToInstruction(TargetLanguageToCode(TL(content + newline,
               TextPosition(ot.getstartLine(),ot.getstartColumn()),
               TextPosition(ot.getendLine()+1,0)))); // add a newline after TL
-        /* 
-         * code without extra newline
+              */
+         //* code without extra newline
         return `CodeToInstruction(TargetLanguageToCode(TL(content,
               TextPosition(ot.getstartLine(),ot.getstartColumn()),
               TextPosition(ot.getendLine(),ot.getendColumn()))));
-              */
+      }
+
+      Cst_Metaquote(optionList, blocks) -> {
+        return `AbstractBlock(convert(blocks));
       }
 
       Cst_BQTermToBlock(bqterm) -> {
@@ -485,13 +489,9 @@ matchblock: {
         return `CodeToInstruction(DeclarationToCode(ListSymbolDecl(Name(opName))));
       }
 
-
-      // TODO
-      //Cst_MetaQuoteConstruct
       Cst_IncludeConstruct(blocks) -> {
         return `CodeToInstruction(TomInclude(convertToCodeList(blocks)));
       }
-
 
       Cst_AbstractBlock(blocks) -> {
         return `AbstractBlock(convert(blocks));
@@ -534,7 +534,7 @@ matchblock: {
       }
 
       Cst_BQConstant(ol, name) -> {
-        return `Composite(CompositeTL(ITL(name)));
+        return `BuildConstant(Name(name));
       }
       
       //Cst_ITL(ol, code) -> {

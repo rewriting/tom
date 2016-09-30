@@ -109,6 +109,7 @@ public class CstBuilder extends TomIslandParserBaseListener {
    *   | oplist
    *   | oparray
    *   | bqcomposite
+   *   | metaquote
    *   ;
    */
   public void exitIsland(TomIslandParser.IslandContext ctx) {
@@ -133,6 +134,30 @@ public class CstBuilder extends TomIslandParserBaseListener {
    */
   public void exitWaterexceptparen(TomIslandParser.WaterexceptparenContext ctx) {
     setStringValue(ctx,ctx.getText());
+  }
+
+  /* 
+   * metaquote
+   *   : LMETAQUOTE (AT (composite | bqcomposite) AT | water)* RMETAQUOTE
+   *   ;
+   */
+  public void exitMetaquote(TomIslandParser.MetaquoteContext ctx) {
+    CstOptionList optionList = `ConcCstOption(extractOption(ctx.getStart()));
+    CstBlockList bl = `ConcCstBlock();
+    for(int i = 0 ; i<ctx.getChildCount() ; i++) {
+      ParseTree child = ctx.getChild(i);
+      if(child instanceof TomIslandParser.CompositeContext) {
+        bl = `ConcCstBlock(bl*,(CstBlock)getValue(child));
+      } else if(child instanceof TomIslandParser.BqcompositeContext) {
+        bl = `ConcCstBlock(bl*,(CstBlock)getValue(child));
+      } else if(child instanceof TomIslandParser.WaterContext) {
+        ParserRuleContext prc = (ParserRuleContext)child;
+        CstOption ot = extractOption(prc.getStart());
+        bl = `ConcCstBlock(bl*,HOSTBLOCK(ConcCstOption(ot), getStringValue(child)));
+      }
+    }
+
+    setValue("exitMetaquote", ctx,`Cst_Metaquote(optionList,bl));
   }
 
   /*
@@ -255,9 +280,7 @@ public class CstBuilder extends TomIslandParserBaseListener {
       if(child instanceof TomIslandParser.IslandContext) {
         bl = `ConcCstBlock(bl*,(CstBlock)getValue(child));
       } else if(child instanceof TomIslandParser.BlockContext) {
-        CstBlock cb = (CstBlock)getValue(child);
-        //System.out.println("exitBlock cb: " + cb);
-        bl = `ConcCstBlock(bl*,cb);
+        bl = `ConcCstBlock(bl*,(CstBlock)getValue(child));
       } else if(child instanceof TomIslandParser.WaterContext) {
         ParserRuleContext prc = (ParserRuleContext)child;
         CstOption ot = extractOption(prc.getStart());
@@ -367,7 +390,7 @@ public class CstBuilder extends TomIslandParserBaseListener {
    * bqterm
    *   : codomain=ID? BQUOTE? fsym=ID LPAREN (bqterm (COMMA bqterm)*)? RPAREN 
    *   | codomain=ID? BQUOTE? var=ID STAR?
-   *   | constant
+   *   | codomain=ID? constant
    *   ;
    */
   public void exitBqterm(TomIslandParser.BqtermContext ctx) {

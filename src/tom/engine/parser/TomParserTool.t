@@ -307,6 +307,48 @@ public class TomParserTool {
   }
 
 
+  public String metaEncodeCode(String code) {
+		/*
+			 System.out.println("before: '" + code + "'");
+			 for(int i=0 ; i<code.length() ; i++) {
+			 System.out.print((int)code.charAt(i));
+			 System.out.print(" ");
+			 }
+			 System.out.println();
+		 */
+		char bs = '\\';
+		StringBuilder sb = new StringBuilder((int)1.5*code.length());
+		for(int i=0 ; i<code.length() ; i++) {
+			char c = code.charAt(i);
+			switch(c) {
+				case '\n':
+					sb.append(bs);
+					sb.append('n');
+					break;
+				case '\r':
+					sb.append(bs);
+					sb.append('r');
+					break;
+				case '\t':
+					sb.append(bs);
+					sb.append('t');
+					break;
+				case '\"':
+				case '\\':
+					sb.append(bs);
+					sb.append(c);
+					break;
+				default:
+					sb.append(c);
+			}
+		}
+    //System.out.println("sb = '" + sb + "'");
+		sb.insert(0,'\"');
+		sb.append('\"');
+		return sb.toString();
+  }
+
+
 }
 
 

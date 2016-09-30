@@ -8,6 +8,7 @@ CstProgram = Cst_Program(blocks:CstBlockList)
 CstBlockList = ConcCstBlock(CstBlock*)
 
 CstBlock = HOSTBLOCK(optionList:CstOptionList, content:String)
+         | Cst_Metaquote(optionList:CstOptionList, blocks:CstBlockList)
          | Cst_MatchConstruct(optionList:CstOptionList, subjectList:CstBQTermList , constraintActionList:CstConstraintActionList)
          | Cst_OpConstruct(optionList:CstOptionList, codomain:CstType, ctorName:CstName, argumentList:CstSlotList, operatorList:CstOperatorList)
          | Cst_OpArrayConstruct(optionList:CstOptionList, codomain:CstType, ctorName:CstName, domain:CstType, operatorList:CstOperatorList)

@@ -130,7 +130,7 @@ public class NewKernelTyper {
         return getCodomain(tSymbol);
       }
     } 
-    throw new TomRuntimeException("getType(BQTerm): should not be here.");
+    throw new TomRuntimeException("getType(BQTerm): should not be here: " + bqTerm);
   }
 
   /**
