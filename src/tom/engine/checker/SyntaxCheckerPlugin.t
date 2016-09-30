@@ -788,54 +788,56 @@ matchLbl: %match(constr) {// TODO : add something to test the astType
     Collection<TomTerm> freeVarList2 = new HashSet<TomTerm>();
     %match(orConstraint) {
       OrConstraint(_*,x,_*) -> {
-        // we collect the free vars only from match constraints
-        // and we check these variables for numeric constraints also
-        // ex: 'y << a() || x > 3' should generate an error 
-        Strategy collect = `Sequence(
-            TopDownCollect(CollectAliasVar(freeVarList2)),
-            TopDownCollect(CollectFreeVar(freeVarList2)));
+        if(`x != `FalseConstraint()) {
+          // we collect the free vars only from match constraints
+          // and we check these variables for numeric constraints also
+          // ex: 'y << a() || x > 3' should generate an error 
+          Strategy collect = `Sequence(
+              TopDownCollect(CollectAliasVar(freeVarList2)),
+              TopDownCollect(CollectFreeVar(freeVarList2)));
 
-        %match(Constraint x) {
-          MatchConstraint(pattern,_,_) -> { 
-            collect.visitLight(`pattern);
-          }
-          AndConstraint(_*,MatchConstraint(pattern,_,_),_*) -> { 
-            collect.visitLight(`pattern);
-          }
-        }
-        //System.out.println("freeVar1 = " + freeVarList1);
-        //System.out.println("freeVar2 = " + freeVarList2);
-
-        if(!freeVarList1.isEmpty()) {
-          for(TomTerm term:freeVarList2) {
-            if(!containsVariable(term,freeVarList1)) {
-              if(containsVariable(term, action)) {              
-                String varName = term.getAstName().getString();
-                TomMessage.error(getLogger(),
-                    getCurrentTomStructureOrgTrack().getFileName(),
-                    getCurrentTomStructureOrgTrack().getLine(),
-                    TomMessage.freeVarNotPresentInOr,
-                    varName);
-                return false;
-              }
+          %match(Constraint x) {
+            MatchConstraint(pattern,_,_) -> { 
+              collect.visitLight(`pattern);
+            }
+            AndConstraint(_*,MatchConstraint(pattern,_,_),_*) -> { 
+              collect.visitLight(`pattern);
             }
           }
-          for(TomTerm term:freeVarList1) {
-            if(!containsVariable(term,freeVarList2)) {
-              if(containsVariable(term, action))  {
-                String varName = term.getAstName().getString();
-                TomMessage.error(getLogger(),
-                    getCurrentTomStructureOrgTrack().getFileName(),
-                    getCurrentTomStructureOrgTrack().getLine(),
-                    TomMessage.freeVarNotPresentInOr,
-                    varName);
-                return false;
+          //System.out.println("freeVar1 = " + freeVarList1);
+          //System.out.println("freeVar2 = " + freeVarList2);
+
+          if(!freeVarList1.isEmpty()) {
+            for(TomTerm term:freeVarList2) {
+              if(!containsVariable(term,freeVarList1)) {
+                if(containsVariable(term, action)) {              
+                  String varName = term.getAstName().getString();
+                  TomMessage.error(getLogger(),
+                      getCurrentTomStructureOrgTrack().getFileName(),
+                      getCurrentTomStructureOrgTrack().getLine(),
+                      TomMessage.freeVarNotPresentInOr,
+                      varName);
+                  return false;
+                }
               }
             }
-          }          
+            for(TomTerm term:freeVarList1) {
+              if(!containsVariable(term,freeVarList2)) {
+                if(containsVariable(term, action))  {
+                  String varName = term.getAstName().getString();
+                  TomMessage.error(getLogger(),
+                      getCurrentTomStructureOrgTrack().getFileName(),
+                      getCurrentTomStructureOrgTrack().getLine(),
+                      TomMessage.freeVarNotPresentInOr,
+                      varName);
+                  return false;
+                }
+              }
+            }          
+          }
+          freeVarList1 = new HashSet<TomTerm>(freeVarList2);
+          freeVarList2.clear();
         }
-        freeVarList1 = new HashSet<TomTerm>(freeVarList2);
-        freeVarList2.clear();
       }
     }
     return true;

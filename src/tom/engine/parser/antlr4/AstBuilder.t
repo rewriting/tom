@@ -558,6 +558,25 @@ matchblock: {
     throw new TomRuntimeException("convert: strange term: " + cst);
   }
 
+  public BQTerm convert(CstTerm cst) {
+    OptionList ol = `addDefaultModule(concOption());
+    %match(cst) {
+      Cst_TermAppl(name,argList) -> {
+        return `BQAppl(ol,Name(name),convert(argList));
+      }
+
+      Cst_TermVariable(name) -> {
+        return `BQVariable(ol,Name(name),SymbolTable.TYPE_UNKNOWN);
+      }
+
+      Cst_TermVariableStar(name) -> {
+        return `BQVariableStar(ol,Name(name),SymbolTable.TYPE_UNKNOWN);
+      }
+    }
+
+    throw new TomRuntimeException("convert: strange term: " + cst);
+  }
+
   public BQSlot convert(CstPairSlotBQTerm cst) {
     %match(cst) {
       Cst_PairSlotBQTerm(ol,Cst_Name(slotName),bqterm) -> {
@@ -640,10 +659,38 @@ matchblock: {
         return `AndConstraint(chead,ctail); 
       }
 
+      Cst_OrConstraint() -> {
+        return `FalseConstraint();
+      }
+
       Cst_OrConstraint(head,tail*) -> {
         Constraint chead = convert(`head,subjectList,subjectIndex);
         Constraint ctail = convert(`tail,subjectList,subjectIndex);
         return `OrConstraint(chead,ctail); 
+      }
+
+      Cst_NumLessThan(lhs,rhs) -> {
+        return `NumericConstraint(convert(lhs),convert(rhs),NumLessThan());
+      }
+
+      Cst_NumLessOrEqualThan(lhs,rhs) -> {
+        return `NumericConstraint(convert(lhs),convert(rhs),NumLessOrEqualThan());
+      }
+
+      Cst_NumGreaterThan(lhs,rhs) -> {
+        return `NumericConstraint(convert(lhs),convert(rhs),NumGreaterThan());
+      }
+
+      Cst_NumGreaterOrEqualThan(lhs,rhs) -> {
+        return `NumericConstraint(convert(lhs),convert(rhs),NumGreaterOrEqualThan());
+      }
+
+      Cst_EqualTo(lhs,rhs) -> {
+        return `NumericConstraint(convert(lhs),convert(rhs),NumEqual());
+      }
+
+      Cst_Different(lhs,rhs) -> {
+        return `NumericConstraint(convert(lhs),convert(rhs),NumDifferent());
       }
 
     }
@@ -812,6 +859,18 @@ matchblock: {
         return `concBQTerm();
       }
       ConcCstBQTerm(head,tail*) -> {
+        return `concBQTerm(convert(head),convert*(tail));
+      }
+    }
+    throw new TomRuntimeException("convert: strange term: " + cst);
+  }
+
+  public BQTermList convert(CstTermList cst) {
+    %match(cst) {
+      ConcCstTerm() -> { 
+        return `concBQTerm();
+      }
+      ConcCstTerm(head,tail*) -> {
         return `concBQTerm(convert(head),convert*(tail));
       }
     }

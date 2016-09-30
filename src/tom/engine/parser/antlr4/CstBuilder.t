@@ -137,7 +137,7 @@ public class CstBuilder extends TomIslandParserBaseListener {
 
   /*
    * matchStatement
-   *   : MATCH LPAREN (bqterm (COMMA bqterm)*)? RPAREN LBRACE actionRule* RBRACE 
+   *   : MATCH (LPAREN (bqterm (COMMA bqterm)*)? RPAREN)? LBRACE actionRule* RBRACE 
    *   ;
    */
   public void exitMatchStatement(TomIslandParser.MatchStatementContext ctx) {
@@ -334,11 +334,11 @@ public class CstBuilder extends TomIslandParserBaseListener {
       CstTerm lhs = (CstTerm)getValue(ctx.term(0));
       CstTerm rhs = (CstTerm)getValue(ctx.term(1));
       if(ctx.GREATERTHAN() != null) { res = `Cst_NumGreaterThan(lhs,rhs); }
-      else if(ctx.GREATEROREQ() != null) { res = `Cst_NumGreaterOrEqualTo(lhs,rhs); }
+      else if(ctx.GREATEROREQ() != null) { res = `Cst_NumGreaterOrEqualThan(lhs,rhs); }
       else if(ctx.LOWERTHAN() != null) { res = `Cst_NumLessThan(lhs,rhs); }
-      else if(ctx.LOWEROREQ() != null) { res = `Cst_NumLessOrEqualTo(lhs,rhs); }
-      else if(ctx.DOUBLEEQ() != null) { res = `Cst_NumEqualTo(lhs,rhs); }
-      else if(ctx.DIFFERENT() != null) { res = `Cst_NumDifferent(lhs,rhs); }
+      else if(ctx.LOWEROREQ() != null) { res = `Cst_NumLessOrEqualThan(lhs,rhs); }
+      else if(ctx.DOUBLEEQ() != null) { res = `Cst_EqualTo(lhs,rhs); }
+      else if(ctx.DIFFERENT() != null) { res = `Cst_Different(lhs,rhs); }
     }
 
     setValue("exitConstraint",ctx,res);

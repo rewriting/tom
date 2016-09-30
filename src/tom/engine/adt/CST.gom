@@ -31,12 +31,12 @@ CstConstraint  = Cst_MatchTermConstraint(pattern:CstPattern, subject:CstBQTerm, 
                | Cst_MatchArgumentConstraint(pattern:CstPattern)
                | Cst_AndConstraint(CstConstraint*)
                | Cst_OrConstraint(CstConstraint*)
-               | Cst_NumLessThan         (lefthand:CstTerm, righthand:CstTerm)
-               | Cst_NumLessOrEqualTo    (lefthand:CstTerm, righthand:CstTerm)
-               | Cst_NumGreaterThan      (lefthand:CstTerm, righthand:CstTerm)
-               | Cst_NumGreaterOrEqualTo (lefthand:CstTerm, righthand:CstTerm)
-               | Cst_NumEqualTo          (lefthand:CstTerm, righthand:CstTerm)
-               | Cst_NumDifferent        (lefthand:CstTerm, righthand:CstTerm)
+               | Cst_EqualTo(lefthand:CstTerm, righthand:CstTerm)
+               | Cst_Different(lefthand:CstTerm, righthand:CstTerm)
+               | Cst_NumLessThan(lefthand:CstTerm, righthand:CstTerm)
+               | Cst_NumLessOrEqualThan(lefthand:CstTerm, righthand:CstTerm)
+               | Cst_NumGreaterThan(lefthand:CstTerm, righthand:CstTerm)
+               | Cst_NumGreaterOrEqualThan(lefthand:CstTerm, righthand:CstTerm)
               
 CstConstraintList = ConcCstConstraint(CstConstraint*)
 

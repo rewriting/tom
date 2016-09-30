@@ -41,7 +41,7 @@ island
   ;
 
 matchStatement
-  : MATCH LPAREN (bqterm (COMMA bqterm)*)? RPAREN LBRACE actionRule* RBRACE 
+  : MATCH (LPAREN (bqterm (COMMA bqterm)*)? RPAREN)? LBRACE actionRule* RBRACE 
   ;
 
 strategyStatement

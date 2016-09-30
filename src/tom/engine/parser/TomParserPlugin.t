@@ -258,7 +258,7 @@ public class TomParserPlugin extends TomGenericPlugin {
           Code code = astBuilder.convert(cst);
           System.out.println("\tbuilding ast:" + (System.currentTimeMillis()-start) + " ms");
 
-//          System.out.println("ast = " + code);
+          // System.out.println("ast = " + code);
 
 
           setWorkingTerm(code);
