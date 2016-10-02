@@ -3,7 +3,7 @@ grammar BQParser;
 start : (island | water)*? ;
 
 island
-  : BQUOTE composite
+  : bqcomposite
   | LMETAQUOTE (AT (composite|bqcomposite) AT | water)* RMETAQUOTE
 //  | METAQUOTE
   ;
@@ -14,12 +14,18 @@ water
 
 bqterm
   : codomain=ID? BQUOTE? fsym=ID LPAREN (bqterm (COMMA bqterm)*)? RPAREN 
+  | codomain=ID? BQUOTE? fsym=ID LSQUAREBR (pairSlotBqterm (COMMA pairSlotBqterm)*)? RSQUAREBR 
   | codomain=ID? BQUOTE? var=ID STAR?
   | constant
   ;
 
+pairSlotBqterm
+  : ID EQUAL (bqterm | UNDERSCORE)
+  ;
+
 bqcomposite
-  : BQUOTE composite
+  : BQUOTE fsym=ID LSQUAREBR (pairSlotBqterm (COMMA pairSlotBqterm)*)? RSQUAREBR 
+  | BQUOTE composite
   ;
 
 composite

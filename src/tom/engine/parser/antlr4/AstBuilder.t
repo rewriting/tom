@@ -219,6 +219,35 @@ public class AstBuilder {
                 options.add(`DeclarationToOption(attribute)); 
               }
 
+              Cst_GetDefault(Cst_Name(slotName), blockList@ConcCstBlock(head,_*)) -> {
+                Declaration attribute = `EmptyDeclaration();
+matchblock: {
+                %match(blockList) {
+                  ConcCstBlock(HOSTBLOCK(optionList2,content)) -> {
+                    System.out.println("keywordGetDefault: " + `content);
+                    attribute = `GetDefaultDecl(
+                        Name(opName),
+                        Name(slotName),
+                        Code(content), 
+                        makeOriginTracking(opName,optionList2)
+                        );
+                    break matchblock;
+                  }
+                  ConcCstBlock(head,_*) -> {
+                    InstructionList il = convert(`blockList);
+                    attribute = `GetDefaultDecl(
+                        Name(opName),
+                        Name(slotName),
+                        TomInstructionToExpression(AbstractBlock(il)),
+                        makeOriginTracking(opName,optionList)
+                        );
+                    break matchblock;
+                  }
+                }
+            }
+            options.add(`DeclarationToOption(attribute)); 
+              }
+
               Cst_GetSlot(Cst_Name(slotName),Cst_Name(argName),ConcCstBlock(HOSTBLOCK(optionList2,content))) -> {
                 String code = ASTFactory.abstractCode(`content,`argName);
                 Declaration attribute = `GetSlotDecl(
@@ -541,6 +570,10 @@ matchblock: {
       //Cst_ITL(ol, code) -> {
       //  return `Composite(CompositeTL(ITL(code)));
       //}
+
+      Cst_BQUnderscore() -> {
+        return `BQDefault();
+      }
 
       Cst_BQComposite(ol,argList) -> {
         BQTerm composite = `Composite();

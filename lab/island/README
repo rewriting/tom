@@ -24,4 +24,7 @@ rewrite parse tree : https://github.com/ftomassetti/python-ast/tree/master/src/m
 
 antlr4 Island5Lexer.g4 ; antlr4 Island5Parser.g4; tom Main.t; javac Island5*.java Main.java
 
+antlr4 BQParser.g4; javac BQParser*.java
+grun BQParser start -gui < examples/bq1.tom 
+
 ~/github/tom/src/build > grun tom.engine.parser.antlr4.TomIsland start -gui < ../../test/TestMatch.t 

@@ -105,20 +105,32 @@ constraint
   | LPAREN c=constraint RPAREN
   ;
 
+//used in constraints 
 term
   : var=ID STAR?
   | fsym=ID LPAREN (term (COMMA term)*)? RPAREN 
   ;
 
 // may be change this syntax: `term:sort
+// retricted form of bqterm
+// used in rhs, match, strategy
 bqterm
   : codomain=ID? BQUOTE? fsym=ID LPAREN (bqterm (COMMA bqterm)*)? RPAREN 
+  | codomain=ID? BQUOTE? fsym=ID LSQUAREBR (pairSlotBqterm (COMMA pairSlotBqterm)*)? RSQUAREBR 
   | codomain=ID? BQUOTE? var=ID STAR?
   | codomain=ID? constant
+  | UNDERSCORE
   ;
 
+pairSlotBqterm
+  : ID EQUAL bqterm
+  ;
+
+// general form of bqterm
+// used as island nd in metaquote
 bqcomposite
-  : BQUOTE composite
+  : BQUOTE fsym=ID LSQUAREBR (pairSlotBqterm (COMMA pairSlotBqterm)*)? RSQUAREBR 
+  | BQUOTE composite
   ;
 
 composite
@@ -126,6 +138,7 @@ composite
   | LPAREN composite* RPAREN
   | var=ID STAR?
   | constant
+  | UNDERSCORE
   | waterexceptparen
   ;
 

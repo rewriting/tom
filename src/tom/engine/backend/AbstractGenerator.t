@@ -719,11 +719,11 @@ public abstract class AbstractGenerator {
       }
 
       GetDefaultDecl[AstName=Name(tomName), SlotName=slotName, Expr=code] -> {
-          if(getSymbolTable(moduleName).isUsedSymbolConstructor(`tomName)) {
-            `buildGetDefaultDecl(deep, tomName, code, slotName, moduleName);
-          }
-          return;
+        if(getSymbolTable(moduleName).isUsedSymbolConstructor(`tomName)) {
+          `buildGetDefaultDecl(deep, tomName, code, slotName, moduleName);
         }
+        return;
+      }
 
       EqualTermDecl(BQVariable[AstName=Name(name1), AstType=Type[TomType=type1]],
           BQVariable[AstName=Name(name2), AstType=Type[TomType=type2]],

@@ -114,6 +114,7 @@ CstBQTerm = Cst_BQAppl(optionList:CstOptionList, name:String, bqTermList:CstBQTe
           | Cst_BQComposite(optionList:CstOptionList, list:CstBQTermList)
           | Cst_ITL(optionList:CstOptionList, code:String)
           | Cst_BQConstant(optionList:CstOptionList, name:String)
+          | Cst_BQUnderscore()
 
 CstPairSlotBQTerm  = Cst_PairSlotBQTerm(optionList:CstOptionList, slotName:CstName, term:CstBQTerm)
 

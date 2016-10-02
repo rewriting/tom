@@ -398,16 +398,21 @@ public class CstBuilder extends TomIslandParserBaseListener {
     CstOptionList optionList = `ConcCstOption(extractOption(ctx.getStart()));
     CstType type = (ctx.codomain != null)?`Cst_Type(ctx.codomain.getText()):`Cst_TypeUnknown();
 
-    if(ctx.fsym != null) {
+    if(ctx.fsym != null && ctx.LPAREN() != null) {
       CstBQTermList args = buildCstBQTermList(ctx.bqterm());
       res = `Cst_BQAppl(optionList,ctx.fsym.getText(),args);
-    } else if(ctx.var != null && ctx.STAR() == null) {
-      res = `Cst_BQVar(optionList,ctx.var.getText(),type);
+    } else if(ctx.fsym != null && ctx.LSQUAREBR() != null) {
+      CstPairSlotBQTermList args = buildCstPairSlotBQTermList(ctx.pairSlotBqterm());
+      res = `Cst_BQRecordAppl(optionList,ctx.fsym.getText(),args);
     } else if(ctx.var != null && ctx.STAR() != null) {
       res = `Cst_BQVarStar(optionList,ctx.var.getText(),type);
+    } else if(ctx.var != null && ctx.STAR() == null) {
+      res = `Cst_BQVar(optionList,ctx.var.getText(),type);
     } else if(ctx.constant() != null) {
       CstSymbol cst = (CstSymbol) getValue(ctx.constant());
       res = `Cst_BQConstant(optionList,cst.getvalue());
+    } else if(ctx.UNDERSCORE() != null) {
+      res = `Cst_BQUnderscore();
     }
 
     setValue2(ctx,type);
@@ -415,12 +420,35 @@ public class CstBuilder extends TomIslandParserBaseListener {
   }
 
   /*
+   * pairSlotBqterm
+   *   : ID EQUAL bqterm
+   *   ;
+   */
+  public void exitPairSlotBqterm(TomIslandParser.PairSlotBqtermContext ctx) {
+    CstPairSlotBQTerm res = null;
+    CstOptionList optionList = `ConcCstOption(extractOption(ctx.getStart()));
+    CstName slotName = `Cst_Name(ctx.ID().getText());
+    CstBQTerm bqterm = (CstBQTerm) getValue(ctx.bqterm());
+    res = `Cst_PairSlotBQTerm(optionList,slotName,bqterm);
+    setValue("exitPairSlotBqterm",ctx,res);
+  }
+
+  /*
    * bqcomposite
    *   : BQUOTE composite
+   *   | BQUOTE fsym=ID LSQUAREBR (pairSlotBqterm (COMMA pairSlotBqterm)*)? RSQUAREBR 
    *   ;
    */
   public void exitBqcomposite(TomIslandParser.BqcompositeContext ctx) {
-    setValue("exitBqcomposite",ctx,`Cst_BQTermToBlock((CstBQTerm)getValue(ctx.composite())));
+    CstOptionList optionList = `ConcCstOption(extractOption(ctx.getStart()));
+    CstBlock res = null;
+    if(ctx.fsym != null && ctx.LSQUAREBR() != null) {
+      CstPairSlotBQTermList args = buildCstPairSlotBQTermList(ctx.pairSlotBqterm());
+      res = `Cst_BQTermToBlock(Cst_BQRecordAppl(optionList,ctx.fsym.getText(),args));
+    } else {
+      res = `Cst_BQTermToBlock((CstBQTerm)getValue(ctx.composite()));
+    }
+    setValue("exitBqcomposite",ctx,res);
   }
 
   /*
@@ -429,6 +457,7 @@ public class CstBuilder extends TomIslandParserBaseListener {
    *   | LPAREN composite* RPAREN
    *   | var=ID STAR?
    *   | constant
+   *   | UNDERSCORE
    *   | waterexceptparen
    *   ;
    */
@@ -490,6 +519,8 @@ public class CstBuilder extends TomIslandParserBaseListener {
     } else if(ctx.constant() != null) {
       CstSymbol cst = (CstSymbol) getValue(ctx.constant());
       res = `Cst_BQConstant(optionList,cst.getvalue());
+    } else if(ctx.UNDERSCORE() != null) {
+      res = `Cst_BQUnderscore();
     } else if (ctx.waterexceptparen() != null) {
       //System.out.println("composite water");
       res = `Cst_ITL(optionList, getStringValue(ctx.waterexceptparen()));
@@ -935,6 +966,16 @@ public class CstBuilder extends TomIslandParserBaseListener {
     if(ctx != null) {
       for(ParserRuleContext e:ctx) {
         res = `ConcCstBQTerm(res*, (CstBQTerm)getValue(e));
+      }
+    }
+    return res;
+  }
+  
+  private CstPairSlotBQTermList buildCstPairSlotBQTermList(List<? extends ParserRuleContext> ctx) {
+    CstPairSlotBQTermList res = `ConcCstPairSlotBQTerm();
+    if(ctx != null) {
+      for(ParserRuleContext e:ctx) {
+        res = `ConcCstPairSlotBQTerm(res*, (CstPairSlotBQTerm)getValue(e));
       }
     }
     return res;

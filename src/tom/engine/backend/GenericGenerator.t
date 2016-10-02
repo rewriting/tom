@@ -85,40 +85,49 @@ public abstract class GenericGenerator extends AbstractGenerator {
   protected void buildTerm(int deep, String opname, BQTermList argList, String moduleName) throws IOException {
 	deep = 0; //to avoid usless spaces inside the code
     String template = getSymbolTable(moduleName).getMake(opname);
-    if(instantiateTemplate(deep,template,opname,argList,moduleName) == false)
-    {// && !isResolveOp(opname, moduleName)) {
+    if(instantiateTemplate(deep,template,opname,argList,moduleName) == false) {
       String prefix = "tom_make_";
-        output.write(prefix+opname);
-        output.writeOpenBrace();
-        int index=0;
-        while(!argList.isEmptyconcBQTerm()) {
-          BQTerm bqt = argList.getHeadconcBQTerm();
-          //System.out.println("bqt = " + bqt);
-          boolean generatebqt = true;
-          %match(bqt) {
-            Composite(CompositeBQTerm(BQDefault()),_*) -> {
-              TomSymbol tomSymbol = getSymbolTable(moduleName).getSymbolFromName(opname);
-              //System.out.println("name = " + opname);
-              //System.out.println("symbol = " + tomSymbol);
-              TomName slotName = TomBase.getSlotName(tomSymbol,index);
-              //System.out.println("slotname = " + slotName);
-              buildExpGetDefault(deep, opname, slotName.getString(), moduleName);
-              generatebqt = false;
-            }
+      output.write(prefix+opname);
+      output.writeOpenBrace();
+      int index=0;
+      while(!argList.isEmptyconcBQTerm()) {
+        BQTerm bqt = argList.getHeadconcBQTerm();
+        //System.out.println("bqt = " + bqt);
+        boolean generatebqt = true;
+        %match(bqt) {
+          
+          BQDefault() -> {
+            // code for ast produced by antlr4 parser
+            TomSymbol tomSymbol = getSymbolTable(moduleName).getSymbolFromName(opname);
+            TomName slotName = TomBase.getSlotName(tomSymbol,index);
+            buildExpGetDefault(deep, opname, slotName.getString(), moduleName);
+            generatebqt = false;
           }
-
-          if(generatebqt) {
-            generateBQTerm(deep,bqt,moduleName);
+         
+          Composite(CompositeBQTerm(BQDefault()),_*) -> {
+            // code for ast produced by antlr2 parser
+            TomSymbol tomSymbol = getSymbolTable(moduleName).getSymbolFromName(opname);
+            //System.out.println("name = " + opname);
+            //System.out.println("symbol = " + tomSymbol);
+            TomName slotName = TomBase.getSlotName(tomSymbol,index);
+            //System.out.println("slotname = " + slotName);
+            buildExpGetDefault(deep, opname, slotName.getString(), moduleName);
+            generatebqt = false;
           }
-
-          argList = argList.getTailconcBQTerm();
-          if(!argList.isEmptyconcBQTerm()) {
-            output.writeComa();
-          }
-          index++;
         }
-        output.writeCloseBrace();
-      
+
+        if(generatebqt) {
+          generateBQTerm(deep,bqt,moduleName);
+        }
+
+        argList = argList.getTailconcBQTerm();
+        if(!argList.isEmptyconcBQTerm()) {
+          output.writeComa();
+        }
+        index++;
+      }
+      output.writeCloseBrace();
+
     }
   }
 
