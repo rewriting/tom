@@ -62,6 +62,8 @@ public class CstConverter {
   }
 
   private TomParserTool parserTool;
+  private static HashMap<TomStreamManager,List<String>> includedFiles = new HashMap<TomStreamManager,List<String>>();
+  //private static HashSet<String> includedFiles = new HashSet<String>();
 
   public CstConverter(TomParserTool parserTool) {
     this.parserTool = parserTool;
@@ -187,20 +189,52 @@ public class CstConverter {
     //System.out.println("include: " + `filename);
     String canonicalPath = getParserTool().searchIncludeFile(currentFileName, filename,lineNumber);
 
+    List<String> listOfIncludedFiles = includedFiles.get(getStreamManager());
+    if(listOfIncludedFiles == null) {
+      listOfIncludedFiles = new ArrayList<String>();
+      includedFiles.put(getStreamManager(),listOfIncludedFiles);
+    }
+
+    if(listOfIncludedFiles.contains(canonicalPath)) {
+      if(!getStreamManager().isSilentDiscardImport(filename)) {
+        TomMessage.info(logger, currentFileName, lineNumber, TomMessage.includedFileAlreadyParsed,filename);
+      }
+      return `Cst_IncludeConstruct(ConcCstBlock());
+    } else {
+      listOfIncludedFiles.add(canonicalPath);
+    }
+    
+    /*
+    if(includedFiles.contains(canonicalPath)) {
+      if(!getStreamManager().isSilentDiscardImport(filename)) {
+        TomMessage.info(logger, currentFileName, lineNumber, TomMessage.includedFileAlreadyParsed,filename);
+      }
+      return `Cst_IncludeConstruct(ConcCstBlock());
+    } else {
+      includedFiles.add(canonicalPath);
+    }
+*/
     // parse the file
     try {
       ANTLRInputStream tomInput = new ANTLRFileStream(canonicalPath);
-      CstBlock block = parseStream(tomInput,filename);
+      CstBlock block = parseStream(tomInput,canonicalPath);
       return `Cst_IncludeConstruct(ConcCstBlock(block));
     } catch (IOException e) {
       throw new RuntimeException(e); //XXX
     }
   }
 
-  private CstBlock parseStream(ANTLRInputStream tomInput, String filename) {
+  /*
+  private boolean testIncludedFile(String filename, HashSet<String> fileSet) {
+    // !(true) if the set did not already contain the specified element.
+    return !fileSet.add(filename);
+  }
+*/
+
+  private CstBlock parseStream(ANTLRInputStream tomInput, String canonicalPath) {
     // parse the file
     try {
-      tom.engine.parser.antlr4.TomParser parser = new tom.engine.parser.antlr4.TomParser(filename, getParserTool(), getStreamManager().getSymbolTable());
+      tom.engine.parser.antlr4.TomParser parser = new tom.engine.parser.antlr4.TomParser(canonicalPath, getParserTool(), getStreamManager().getSymbolTable());
       CstProgram include = parser.parse(tomInput);
       %match(include) {
         Cst_Program(blocks) -> { 

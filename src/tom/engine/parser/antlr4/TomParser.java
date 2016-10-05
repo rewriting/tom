@@ -47,15 +47,13 @@ public class TomParser {
   private String filename;
   private TomParserTool parserTool;
   private SymbolTable symbolTable;
-  private HashSet<String> includedFiles = new HashSet<String>();
-  private HashSet<String> alreadyParsedFiles = new HashSet<String>();
+
+  private static HashMap<String,CstProgram> parsedFiles = new HashMap<String,CstProgram>();
 
   public TomParser(String filename, TomParserTool parserTool, SymbolTable symbolTable) {
     this.filename = filename;
     this.parserTool = parserTool;
     this.symbolTable = symbolTable;
-    this.includedFiles = new HashSet<String>();
-    this.alreadyParsedFiles = new HashSet<String>();
   }
 
   public String getFilename() {
@@ -67,9 +65,13 @@ public class TomParser {
   }
 
   public CstProgram parse(ANTLRInputStream input) throws IOException {
-    long startChrono = System.currentTimeMillis();
-
     System.out.print("antlr4: " + getFilename());
+
+    if(parsedFiles.containsKey(getFilename())) {
+      System.out.println("\tin cache: 0ms");
+      return parsedFiles.get(getFilename());
+    }
+
     tom.engine.parser.antlr4.TomIslandLexer lexer = new tom.engine.parser.antlr4.TomIslandLexer(input);
     CommonTokenStream tokens = new CommonTokenStream(lexer);
     tom.engine.parser.antlr4.TomIslandParser parser = new tom.engine.parser.antlr4.TomIslandParser(tokens);
@@ -116,6 +118,8 @@ public class TomParser {
     //System.out.println();
 
     //System.out.println("simplified cst = " + cst);
+
+    parsedFiles.put(getFilename(),cst);
 
     return cst;
   }
