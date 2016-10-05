@@ -104,10 +104,10 @@ public class CstConverter {
         }
       }
 
-      Cst_GomConstruct(ConcCstOption(Cst_OriginTracking(currentFileName,l1,c1,l2,c2)),blocks) -> {
+      Cst_GomConstruct(ConcCstOption(ot@Cst_OriginTracking(currentFileName,l1,c1,l2,c2)),text) -> {
         try {
-          String text = cstBlockListToString(`blocks);
-          return cc.gomFile(`currentFileName,text,`l1);
+          /*System.out.println("GomConstruct: " + `text);*/
+          return cc.gomFile(`currentFileName,`text,`l1);
         } catch(TomIncludeException e) {
           e.printStackTrace();
         }
@@ -304,26 +304,5 @@ public class CstConverter {
     return s1;
   }
 
-  private static String cstBlockListToString(CstBlockList blocks) {
-    StringBuffer sb = new StringBuffer();
-    %match(blocks) {
-      ConcCstBlock(_*,x,_*) -> {
-        %match(x) {
-          HOSTBLOCK(options,text) -> {
-            sb.append(`text);
-          } 
-
-          Cst_UnamedBlock(bl) -> {
-            sb.append("{");
-            sb.append(cstBlockListToString(`bl));
-            sb.append("}");
-          }
-
-        }
-      }
-
-    }
-    return sb.toString();
-  }
 
 }

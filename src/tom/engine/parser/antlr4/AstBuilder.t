@@ -527,7 +527,7 @@ matchblock: {
         return `AbstractBlock(convert(blocks));
       }
 
-      Cst_UnamedBlock(blocks) -> {
+      Cst_UnamedBlock(options,blocks) -> {
         return `UnamedBlock(convert(blocks));
       }
 

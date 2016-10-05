@@ -30,7 +30,7 @@ import java.util.*;
 
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.*;
-
+import org.antlr.v4.runtime.misc.*;
 //import tom.engine.adt.code.types.*;
 import tom.engine.adt.cst.types.*;
 
@@ -215,8 +215,11 @@ public class CstBuilder extends TomIslandParserBaseListener {
    */
   public void exitGomStatement(TomIslandParser.GomStatementContext ctx) {
     CstOptionList optionList = `ConcCstOption(extractOption(ctx.getStart()));
-    CstBlockList body = getBlockListFromBlock(ctx.block());
-    setValue("exitGomStatement", ctx,`Cst_GomConstruct(optionList,body));
+    CstBlock block = (CstBlock) getValue(ctx.block());
+    String text = getText(block.getoptionList());
+    // remove starting '{' and ending '}'
+    text = text.substring(1,text.length()-1).trim();
+    setValue("exitGomStatement", ctx,`Cst_GomConstruct(optionList,text));
   }
 
   /*
@@ -288,7 +291,14 @@ public class CstBuilder extends TomIslandParserBaseListener {
       }
     }
 
-    setValue(ctx,`Cst_UnamedBlock(bl));
+    //CstOption ot1 = extractOption(ctx.LBRACE().getSymbol());
+    //CstOption ot2 = extractOption(ctx.RBRACE().getSymbol());
+    //CstOption ot  = `Cst_OriginTracking(ot1.getfileName(), ot1.getstartLine(), ot1.getstartColumn(), ot2.getendLine(), ot2.getendColumn());
+    CstOption otext  = extractText(ctx);
+    setValue(ctx,`Cst_UnamedBlock(ConcCstOption(otext),bl));
+
+    //System.out.println(ctx.getSourceInterval());
+    //System.out.println(ctx.LBRACE().getSymbol().getInputStream().getText(ctx.getSourceInterval()));
   }
 
   /*
@@ -915,6 +925,26 @@ public class CstBuilder extends TomIslandParserBaseListener {
   /*
    * End of grammar
    */
+
+  private String getText(CstOptionList ol) {
+    %match(ol) {
+      ConcCstOption(_*,Cst_OriginText(text),_*) -> {
+        return `text;
+      }
+    }
+    return "";
+  }
+
+  private CstOption extractText(ParserRuleContext ctx) {
+    int a = ctx.start.getStartIndex();
+    int b = ctx.stop.getStopIndex();
+    Interval interval = new Interval(a,b);
+    //System.out.println("interval1: " + interval1);
+    //System.out.println("interval2: " + interval2);
+    String text = ctx.getStart().getInputStream().getText(interval);
+    //System.out.println("text: " + text);
+    return `Cst_OriginText(text);
+  }
 
   private CstOption extractOption(Token t) {
     String newline = System.getProperty("line.separator");

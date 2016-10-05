@@ -17,12 +17,12 @@ CstBlock = HOSTBLOCK(optionList:CstOptionList, content:String)
          | Cst_MetaQuoteConstruct(optionList:CstOptionList, content:String)
          | Cst_IncludeFile(optionList:CstOptionList, filename:String)
          | Cst_IncludeConstruct(blocks:CstBlockList)
-         | Cst_GomConstruct(optionList:CstOptionList, blocks:CstBlockList)
+         | Cst_GomConstruct(optionList:CstOptionList, text:String)
          | Cst_BQTermToBlock(bqterm:CstBQTerm)
          | Cst_ReturnBQTerm(bqterm:CstBQTerm)
          | Cst_StrategyConstruct(optionList:CstOptionList, stratName:CstName, stratArgs:CstSlotList, extendsTerm:CstBQTerm, visitList:CstVisitList)
          | Cst_AbstractBlock(blocks:CstBlockList)
-         | Cst_UnamedBlock(blocks:CstBlockList)
+         | Cst_UnamedBlock(optionList:CstOptionList,blocks:CstBlockList)
 
 CstConstraintAction = Cst_ConstraintAction(constraint:CstConstraint , action:CstBlockList, optionList:CstOptionList)
 
@@ -131,6 +131,7 @@ CstOptionList = ConcCstOption(CstOption*)
 CstOption = 
           | Cst_Label(name:String)
           | Cst_OriginTracking(fileName:String, startLine:int, startColumn:int, endLine:int, endColumn:int)
+          | Cst_OriginText(text:String)
 
 // Strategy
 CstVisit = Cst_VisitTerm(type:CstType,constraintActionList:CstConstraintActionList,optionList:CstOptionList)
