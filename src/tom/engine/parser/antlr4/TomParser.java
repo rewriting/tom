@@ -120,6 +120,27 @@ public class TomParser {
     return cst;
   }
 
+  public String parseJavaPackage(ANTLRInputStream input) throws IOException {
+    tom.engine.parser.antlr4.TomJavaLexer lexer = new tom.engine.parser.antlr4.TomJavaLexer(input);
+    CommonTokenStream tokens = new CommonTokenStream(lexer);
+    tom.engine.parser.antlr4.TomJavaParser parser = new tom.engine.parser.antlr4.TomJavaParser(tokens);
+    parser.setBuildParseTree(true);      // tell ANTLR to build a parse tree
+    ParseTree tree = parser.start();
+    input.reset(); // rewind input stream
+    // show tree in text form
+    //System.out.println(tree.toStringTree(parser));
+    //System.out.println(tree.getText());
+
+    String res = tree.getText();
+    int len = res.length();
+    int plen = "package".length();
+    //remove keyword 'package' and trailing ';'
+    if(len > plen+1) {
+      res = res.substring(plen,len-1).trim();
+    }
+
+    return res;
+  }
 
 }
 

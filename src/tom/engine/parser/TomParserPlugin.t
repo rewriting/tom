@@ -242,12 +242,23 @@ public class TomParserPlugin extends TomGenericPlugin {
        * ANTLR4
        */
       try {
+
         if(!currentFileName.equals("-")) {
           // creating TomParserTool
           this.parserTool = new TomParserTool(getStreamManager(),getOptionManager());
 
           tom.engine.parser.antlr4.TomParser parser = new tom.engine.parser.antlr4.TomParser(currentFileName, getParserTool(), symbolTable);
           ANTLRInputStream input = new ANTLRInputStream(currentReader);
+
+          if(java) {
+            String packageName = parser.parseJavaPackage(input);
+            if(packageName.length() > 0) {
+              //System.out.println("set package: " + packageName);
+              // Update streamManager to take into account package information
+              getStreamManager().setPackagePath(packageName);
+            }
+          }
+
           CstProgram cst = parser.parse(input);
           if(printcst) {
             getParserTool().printTree(cst);

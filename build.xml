@@ -374,6 +374,14 @@
       <arg line="-package tom.engine.parser.antlr4"/>
     </java>
 
+    <java jar="${antlr4.dir}/antlr-4.5.3-complete.jar" fork="true">
+      <arg line="${src.src}/tom/engine/parser/antlr4/TomJava.g4"/>
+      <arg line="-o ${gen.destination}/tom/engine/parser/antlr4/"/>
+      <arg line="-lib ${gen.destination}/tom/engine/parser/antlr4/"/>
+      <arg line="-no-listener -no-visitor"/>
+      <arg line="-package tom.engine.parser.antlr4"/>
+    </java>
+
     <!-- Gom parser -->
     <mkdir dir="${gen.destination}/tom/gom/parser"/>
     <taskdef name="antlr3"

@@ -78,7 +78,7 @@ public class CstBuilder extends TomIslandParserBaseListener {
 
 
   /*
-   * start : (island | water)*? ;
+   * start : JAVA_PACKAGE? (island | water)*? ;
    */
   public void exitStart(TomIslandParser.StartContext ctx) {
     CstBlockList bl = `ConcCstBlock();
