@@ -78,7 +78,7 @@ public class CstBuilder extends TomIslandParserBaseListener {
 
 
   /*
-   * start : JAVA_PACKAGE? (island | water)*? ;
+   * start : (island | water)*? ;
    */
   public void exitStart(TomIslandParser.StartContext ctx) {
     CstBlockList bl = `ConcCstBlock();
@@ -92,9 +92,6 @@ public class CstBuilder extends TomIslandParserBaseListener {
         bl = `ConcCstBlock(bl*,HOSTBLOCK(ConcCstOption(ot), getStringValue(child)));
       }
     }
-    //System.out.println("exitStart bl1: " + bl);
-    //bl = mergeHOSTBLOCK(bl);
-    //System.out.println("exitStart bl2: " + bl);
     setValue("exitStart",ctx, `Cst_Program(bl));
   }
 
@@ -210,7 +207,7 @@ public class CstBuilder extends TomIslandParserBaseListener {
 
   /*
    * gomStatement
-   *   : GOM block
+   *   : GOM gomOptions? block
    *   ;
    */
   public void exitGomStatement(TomIslandParser.GomStatementContext ctx) {
@@ -219,7 +216,25 @@ public class CstBuilder extends TomIslandParserBaseListener {
     String text = getText(block.getoptionList());
     // remove starting '{' and ending '}'
     text = text.substring(1,text.length()-1).trim();
-    setValue("exitGomStatement", ctx,`Cst_GomConstruct(optionList,text));
+    CstNameList nameList = `ConcCstName();
+    if(ctx.gomOptions() != null) {
+      nameList = (CstNameList) getValue(ctx.gomOptions());
+    }
+
+    setValue("exitGomStatement", ctx,`Cst_GomConstruct(optionList,nameList,text));
+  }
+
+  /*
+   * gomOptions
+   *   : LPAREN DMINUSID (COMMA DMINUSID)* RPAREN
+   *   ;
+   */
+  public void exitGomOptions(TomIslandParser.GomOptionsContext ctx) {
+    CstNameList nameList = `ConcCstName();
+    for(TerminalNode e:ctx.DMINUSID()) {
+      nameList = `ConcCstName(nameList*, Cst_Name(e.getText()));
+    }
+    setValue("exitGomOptions", ctx, nameList);
   }
 
   /*

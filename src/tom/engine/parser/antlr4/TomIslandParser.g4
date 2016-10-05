@@ -58,7 +58,11 @@ includeStatement
   ;
 
 gomStatement
-  : GOM block
+  : GOM gomOptions? block
+  ;
+
+gomOptions
+  : LPAREN DMINUSID (COMMA DMINUSID)* RPAREN
   ;
 
 visit

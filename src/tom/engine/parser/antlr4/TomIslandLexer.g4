@@ -88,6 +88,7 @@ DOT : '.';
 BQUOTE : '`' ;
 
 ID : ('_')? LETTER (LETTER | DIGIT | '_' )*;
+DMINUSID : '--' LETTER* ;
 
 INTEGER : ('-')? (DIGIT)+;
 DOUBLE  : ('-')? UNSIGNED_DOUBLE;

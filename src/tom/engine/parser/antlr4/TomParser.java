@@ -68,8 +68,8 @@ public class TomParser {
     System.out.print("antlr4: " + getFilename());
 
     if(parsedFiles.containsKey(getFilename())) {
-      System.out.println("\tin cache: 0ms");
-      return parsedFiles.get(getFilename());
+      //System.out.println("\tin cache: 0ms");
+      //return parsedFiles.get(getFilename());
     }
 
     tom.engine.parser.antlr4.TomIslandLexer lexer = new tom.engine.parser.antlr4.TomIslandLexer(input);

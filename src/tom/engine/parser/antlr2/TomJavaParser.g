@@ -34,7 +34,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 }
-class TomJava extends Parser;
+class TomJavaParser extends Parser;
 
 options {
     defaultErrorHandler = false;

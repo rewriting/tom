@@ -62,8 +62,7 @@ public class CstConverter {
   }
 
   private TomParserTool parserTool;
-  private static HashMap<TomStreamManager,List<String>> includedFiles = new HashMap<TomStreamManager,List<String>>();
-  //private static HashSet<String> includedFiles = new HashSet<String>();
+  private static HashMap<String,List<String>> includedFiles = new HashMap<String,List<String>>();
 
   public CstConverter(TomParserTool parserTool) {
     this.parserTool = parserTool;
@@ -106,10 +105,10 @@ public class CstConverter {
         }
       }
 
-      Cst_GomConstruct(ConcCstOption(ot@Cst_OriginTracking(currentFileName,l1,c1,l2,c2)),text) -> {
+      Cst_GomConstruct(ConcCstOption(ot@Cst_OriginTracking(currentFileName,l1,c1,l2,c2)),nameList,text) -> {
         try {
           /*System.out.println("GomConstruct: " + `text);*/
-          return cc.gomFile(`currentFileName,`text,`l1);
+          return cc.gomFile(`currentFileName,`nameList,`text,`l1);
         } catch(TomIncludeException e) {
           e.printStackTrace();
         }
@@ -189,31 +188,26 @@ public class CstConverter {
     //System.out.println("include: " + `filename);
     String canonicalPath = getParserTool().searchIncludeFile(currentFileName, filename,lineNumber);
 
-    List<String> listOfIncludedFiles = includedFiles.get(getStreamManager());
+    List<String> listOfIncludedFiles = includedFiles.get(getStreamManager().getInputFileName());
     if(listOfIncludedFiles == null) {
       listOfIncludedFiles = new ArrayList<String>();
-      includedFiles.put(getStreamManager(),listOfIncludedFiles);
+      includedFiles.put(getStreamManager().getInputFileName(),listOfIncludedFiles);
     }
 
+    //System.out.println("*** Try include: " + canonicalPath);
+    //System.out.println("\tcurrentFileName: " + getStreamManager().getInputFileName());
+    //System.out.println("\tlistOfIncludedFiles: " + listOfIncludedFiles);
     if(listOfIncludedFiles.contains(canonicalPath)) {
+      //System.out.println("\tdo not include: " + canonicalPath);
       if(!getStreamManager().isSilentDiscardImport(filename)) {
         TomMessage.info(logger, currentFileName, lineNumber, TomMessage.includedFileAlreadyParsed,filename);
       }
       return `Cst_IncludeConstruct(ConcCstBlock());
     } else {
       listOfIncludedFiles.add(canonicalPath);
+      //System.out.println("\tdo include: " + canonicalPath);
     }
     
-    /*
-    if(includedFiles.contains(canonicalPath)) {
-      if(!getStreamManager().isSilentDiscardImport(filename)) {
-        TomMessage.info(logger, currentFileName, lineNumber, TomMessage.includedFileAlreadyParsed,filename);
-      }
-      return `Cst_IncludeConstruct(ConcCstBlock());
-    } else {
-      includedFiles.add(canonicalPath);
-    }
-*/
     // parse the file
     try {
       ANTLRInputStream tomInput = new ANTLRFileStream(canonicalPath);
@@ -223,13 +217,6 @@ public class CstConverter {
       throw new RuntimeException(e); //XXX
     }
   }
-
-  /*
-  private boolean testIncludedFile(String filename, HashSet<String> fileSet) {
-    // !(true) if the set did not already contain the specified element.
-    return !fileSet.add(filename);
-  }
-*/
 
   private CstBlock parseStream(ANTLRInputStream tomInput, String canonicalPath) {
     // parse the file
@@ -252,9 +239,17 @@ public class CstConverter {
   /*
    * parse a Gom construct, include the resulting *.tom file, and return the corresponding CST
    */
-  private CstBlock gomFile(String currentFileName, String gomCode, int initialGomLine) throws TomIncludeException {
+  private CstBlock gomFile(String currentFileName, CstNameList nameList, String gomCode, int initialGomLine) throws TomIncludeException {
     //System.out.println("gomCode: " + gomCode);
-    String[] userOpts = new String[0];
+    //System.out.println("gomCode: " + nameList);
+    int nbOpts = nameList.length();
+    String[] userOpts = new String[nbOpts];
+    int i = 0;
+    %match(nameList) {
+      ConcCstName(_*,Cst_Name(name),_*) -> {
+        userOpts[i++] = `name;
+      }
+    }
     String generatedMapping = getParserTool().parseGomFile(gomCode,initialGomLine, userOpts);
     if(generatedMapping != null && generatedMapping.length() > 0) {
       return includeFile(currentFileName, generatedMapping, initialGomLine);
