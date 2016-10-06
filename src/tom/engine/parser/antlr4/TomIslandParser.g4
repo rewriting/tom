@@ -113,6 +113,7 @@ constraint
 term
   : var=ID STAR?
   | fsym=ID LPAREN (term (COMMA term)*)? RPAREN 
+  | constant
   ;
 
 // may be change this syntax: `term:sort

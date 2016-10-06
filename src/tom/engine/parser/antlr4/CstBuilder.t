@@ -396,6 +396,7 @@ public class CstBuilder extends TomIslandParserBaseListener {
    * term
    *   : var=ID STAR?
    *   | fsym=ID LPAREN (term (COMMA term)*)? RPAREN 
+   *   | constant
    *   ;
    */
   public void exitTerm(TomIslandParser.TermContext ctx) {
@@ -407,7 +408,10 @@ public class CstBuilder extends TomIslandParserBaseListener {
     } else if(ctx.fsym != null) {
       CstTermList args = buildCstTermList(ctx.term());
       res = `Cst_TermAppl(ctx.fsym.getText(),args);
-    }
+    } else if(ctx.constant() != null) {
+      CstSymbol cst = (CstSymbol) getValue(ctx.constant());
+      res = `Cst_TermConstant(cst.getvalue());
+    } 
     setValue("exitTerm",ctx,res);
   }
 

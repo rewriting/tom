@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!ELEMENT data (datum*)>
-<!ATTLIST data type CDATA  #REQUIRED>
-<!ELEMENT datum (#PCDATA)>
-<!ATTLIST datum lang CDATA  #REQUIRED>

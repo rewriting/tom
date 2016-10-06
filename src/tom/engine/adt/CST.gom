@@ -46,6 +46,7 @@ CstConstraintList = ConcCstConstraint(CstConstraint*)
 CstTerm = Cst_TermVariable(name:String)
         | Cst_TermVariableStar(name:String)
         | Cst_TermAppl(name:String, termList:CstTermList)
+        | Cst_TermConstant(name:String)
 
 CstTermList = ConcCstTerm(CstTerm*)
 

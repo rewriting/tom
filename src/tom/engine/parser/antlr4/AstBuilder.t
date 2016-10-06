@@ -606,6 +606,10 @@ matchblock: {
       Cst_TermVariableStar(name) -> {
         return `BQVariableStar(ol,Name(name),SymbolTable.TYPE_UNKNOWN);
       }
+      
+      Cst_TermConstant(name) -> {
+        return `BuildConstant(Name(name));
+      }
     }
 
     throw new TomRuntimeException("convert: strange term: " + cst);
