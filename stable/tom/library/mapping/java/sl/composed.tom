@@ -76,6 +76,7 @@
   make(v) { (`mu(MuVar("x"),ChoiceId(v,All(MuVar("x"))))) }
 }
 
+/* BottomUp(s) = mu x. All(x) ; s */
 %op Strategy BottomUp(s1:Strategy) {
   make(v) {( `mu(MuVar("_x"),Sequence(All(MuVar("_x")),v)) )}
 }
@@ -92,9 +93,10 @@
   make(v) {( `mu(MuVar("_x"),Sequence(All(MuVar("_x")),Try(Sequence(v,MuVar("_x"))))) )}
 }
 
+  /* the following optimized version is not correct
+     make(v) {( `mu(MuVar("_x"),Sequence(Try(Sequence(v,MuVar("_x"))),All(MuVar("_x")))) )}
+     */
 %op Strategy Outermost(s1:Strategy) {
-  // the following optimized version is not correct
-  //make(v) {( `mu(MuVar("_x"),Sequence(Try(Sequence(v,MuVar("_x"))),All(MuVar("_x")))) )}
   make(v) {( `Repeat(OnceTopDown(v)) )}
 }
 

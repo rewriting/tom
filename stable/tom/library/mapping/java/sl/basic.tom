@@ -98,7 +98,6 @@
 %oplist Strategy Sequence(Strategy*) {
   is_fsym(t) {( $t instanceof tom.library.sl.Sequence )}
   make_empty() { null }
-  /*make_insert(head,tail) {( ($tail==null)?$head:tom.library.sl.Sequence.make($head,$tail) )}*/
   make_insert(head,tail) { tom.library.sl.Sequence.make($head,$tail) }
   get_head(t) {( (tom.library.sl.Strategy)$t.getChildAt(tom.library.sl.Sequence.FIRST) )}
   get_tail(t) {( (tom.library.sl.Strategy)$t.getChildAt(tom.library.sl.Sequence.THEN) )}
@@ -108,7 +107,6 @@
 %oplist Strategy Choice(Strategy*) {
   is_fsym(t) {( $t instanceof tom.library.sl.Choice )}
   make_empty() { null }
-  /*make_insert(head,tail) {( ($tail==null)?$head:new tom.library.sl.Choice($head,$tail) )}*/
   make_insert(head,tail) { tom.library.sl.Choice.make($head,$tail) }
   get_head(t) {( (tom.library.sl.Strategy)$t.getChildAt(tom.library.sl.Choice.FIRST) )}
   get_tail(t) {( (tom.library.sl.Strategy)$t.getChildAt(tom.library.sl.Choice.THEN) )}
@@ -118,7 +116,6 @@
 %oplist Strategy ChoiceUndet(Strategy*) {
   is_fsym(t) {( $t instanceof tom.library.sl.ChoiceUndet )}
   make_empty() { null }
-  //make_insert(head,tail) {( ($tail==null)?$head:new tom.library.sl.ChoiceUndet($head,$tail) )}
   make_insert(head,tail) { tom.library.sl.ChoiceUndet.make($head,$tail) }
   get_head(t) {( ((tom.library.sl.ChoiceUndet) $t).getHead() )}
   get_tail(t) {( ((tom.library.sl.ChoiceUndet) $t).getTail() )}
@@ -128,7 +125,6 @@
 %oplist Strategy SequenceId(Strategy*) {
   is_fsym(t) {( $t instanceof tom.library.sl.SequenceId )}
   make_empty() { null }
-  //make_insert(head,tail) {( ($tail==null)?$head:new tom.library.sl.SequenceId($head,$tail) )}
   make_insert(head,tail) { tom.library.sl.SequenceId.make($head,$tail) }
   get_head(t) {( (tom.library.sl.Strategy)$t.getChildAt(tom.library.sl.SequenceId.FIRST) )}
   get_tail(t) {( (tom.library.sl.Strategy)$t.getChildAt(tom.library.sl.SequenceId.THEN) )}
@@ -138,7 +134,6 @@
 %oplist Strategy ChoiceId(Strategy*) {
   is_fsym(t) {( $t instanceof tom.library.sl.ChoiceId )}
   make_empty() { null }
-  //make_insert(head,tail) {( ($tail==null)?$head:new tom.library.sl.ChoiceId($head,$tail) )}
   make_insert(head,tail) { tom.library.sl.ChoiceId.make($head,$tail) }
   get_head(t) {( (tom.library.sl.Strategy)$t.getChildAt(tom.library.sl.ChoiceId.FIRST) )}
   get_tail(t) {( (tom.library.sl.Strategy)$t.getChildAt(tom.library.sl.ChoiceId.THEN) )}

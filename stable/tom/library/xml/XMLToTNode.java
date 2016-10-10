@@ -316,19 +316,19 @@ public class XMLToTNode {
   }
 
   private TNodeList insertSortedAttribute(TNode elt, TNodeList list) {
-    {{if ( (elt instanceof tom.library.adt.tnode.types.TNode) ) {if ( ((( tom.library.adt.tnode.types.TNode )elt) instanceof tom.library.adt.tnode.types.TNode) ) {if ( ((( tom.library.adt.tnode.types.TNode )(( tom.library.adt.tnode.types.TNode )elt)) instanceof tom.library.adt.tnode.types.tnode.AttributeNode) ) {if ( (list instanceof tom.library.adt.tnode.types.TNodeList) ) {if ( (((( tom.library.adt.tnode.types.TNodeList )(( tom.library.adt.tnode.types.TNodeList )list)) instanceof tom.library.adt.tnode.types.tnodelist.ConsconcTNode) || ((( tom.library.adt.tnode.types.TNodeList )(( tom.library.adt.tnode.types.TNodeList )list)) instanceof tom.library.adt.tnode.types.tnodelist.EmptyconcTNode)) ) {if ( (( tom.library.adt.tnode.types.TNodeList )list).isEmptyconcTNode() ) {
+    { /* unamed block */{ /* unamed block */if ( (elt instanceof tom.library.adt.tnode.types.TNode) ) {if ( ((( tom.library.adt.tnode.types.TNode )elt) instanceof tom.library.adt.tnode.types.tnode.AttributeNode) ) {if ( (list instanceof tom.library.adt.tnode.types.TNodeList) ) {if ( (((( tom.library.adt.tnode.types.TNodeList )list) instanceof tom.library.adt.tnode.types.tnodelist.ConsconcTNode) || ((( tom.library.adt.tnode.types.TNodeList )list) instanceof tom.library.adt.tnode.types.tnodelist.EmptyconcTNode)) ) {if ( (( tom.library.adt.tnode.types.TNodeList )list).isEmptyconcTNode() ) {
 
         return  tom.library.adt.tnode.types.tnodelist.ConsconcTNode.make(elt,tom_append_list_concTNode(list, tom.library.adt.tnode.types.tnodelist.EmptyconcTNode.make() )) ;
-      }}}}}}}{if ( (elt instanceof tom.library.adt.tnode.types.TNode) ) {if ( ((( tom.library.adt.tnode.types.TNode )elt) instanceof tom.library.adt.tnode.types.TNode) ) {if ( ((( tom.library.adt.tnode.types.TNode )(( tom.library.adt.tnode.types.TNode )elt)) instanceof tom.library.adt.tnode.types.tnode.AttributeNode) ) {if ( (list instanceof tom.library.adt.tnode.types.TNodeList) ) {if ( (((( tom.library.adt.tnode.types.TNodeList )(( tom.library.adt.tnode.types.TNodeList )list)) instanceof tom.library.adt.tnode.types.tnodelist.ConsconcTNode) || ((( tom.library.adt.tnode.types.TNodeList )(( tom.library.adt.tnode.types.TNodeList )list)) instanceof tom.library.adt.tnode.types.tnodelist.EmptyconcTNode)) ) {if (!( (( tom.library.adt.tnode.types.TNodeList )list).isEmptyconcTNode() )) { tom.library.adt.tnode.types.TNode  tomMatch756_15= (( tom.library.adt.tnode.types.TNodeList )list).getHeadconcTNode() ;if ( (tomMatch756_15 instanceof tom.library.adt.tnode.types.TNode) ) {if ( ((( tom.library.adt.tnode.types.TNode )tomMatch756_15) instanceof tom.library.adt.tnode.types.tnode.AttributeNode) ) {
+      }}}}}}{ /* unamed block */if ( (elt instanceof tom.library.adt.tnode.types.TNode) ) {if ( ((( tom.library.adt.tnode.types.TNode )elt) instanceof tom.library.adt.tnode.types.tnode.AttributeNode) ) {if ( (list instanceof tom.library.adt.tnode.types.TNodeList) ) {if ( (((( tom.library.adt.tnode.types.TNodeList )list) instanceof tom.library.adt.tnode.types.tnodelist.ConsconcTNode) || ((( tom.library.adt.tnode.types.TNodeList )list) instanceof tom.library.adt.tnode.types.tnodelist.EmptyconcTNode)) ) {if (!( (( tom.library.adt.tnode.types.TNodeList )list).isEmptyconcTNode() )) { tom.library.adt.tnode.types.TNode  tomMatch787_15= (( tom.library.adt.tnode.types.TNodeList )list).getHeadconcTNode() ;if ( ((( tom.library.adt.tnode.types.TNode )tomMatch787_15) instanceof tom.library.adt.tnode.types.tnode.AttributeNode) ) {
 
 
-        if( (( tom.library.adt.tnode.types.TNode )elt).getName() .compareTo( tomMatch756_15.getName() ) >= 0) {
+        if( (( tom.library.adt.tnode.types.TNode )elt).getName() .compareTo( tomMatch787_15.getName() ) >= 0) {
           TNodeList tl = insertSortedAttribute(elt, (( tom.library.adt.tnode.types.TNodeList )list).getTailconcTNode() );
           return  tom.library.adt.tnode.types.tnodelist.ConsconcTNode.make( (( tom.library.adt.tnode.types.TNodeList )list).getHeadconcTNode() ,tom_append_list_concTNode(tl, tom.library.adt.tnode.types.tnodelist.EmptyconcTNode.make() )) ;
         } else {
           return  tom.library.adt.tnode.types.tnodelist.ConsconcTNode.make(elt,tom_append_list_concTNode(list, tom.library.adt.tnode.types.tnodelist.EmptyconcTNode.make() )) ;
         }
-      }}}}}}}}}}
+      }}}}}}}}
 
     System.err.println("insertSortedAttribute: Strange case");
     return list;

@@ -1,4 +1,4 @@
-// $ANTLR 2.7.7 (20060906): "TomLanguage.g" -> "TomParser.java"$
+// $ANTLR 2.7.7 (20060906): "TomLanguage.g" -> "TomLanguage.java"$
 
 /*
  *
@@ -28,7 +28,7 @@
 package tom.engine.parser.antlr2;
 
 
-public interface TomParserTokenTypes {
+public interface TomLanguageTokenTypes {
 	int EOF = 1;
 	int NULL_TREE_LOOKAHEAD = 3;
 	int LPAREN = 4;

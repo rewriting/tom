@@ -111,11 +111,7 @@ public class Tom {
     }
 
     // Retrieve the whole fileList that has to be compiled
-    List<String> wholeInputToCompileList =
-      initConfigurationManager.getOptionManager().getInputToCompileList();
-    //if(wholeInputToCompileList == null) {
-    //  return 1;
-    //}
+    List<String> wholeInputToCompileList = initConfigurationManager.getOptionManager().getInputToCompileList();
     // here will be the choice between mono and multi thread
     if(((Boolean)initConfigurationManager.getOptionManager().getOptionValue("multithread")).booleanValue()) {
       //multi thread

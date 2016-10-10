@@ -151,14 +151,14 @@ public class AdapterGenerator {
     for (Map.Entry<OperatorDecl,Integer> entry : operatormap.entrySet()) {
       OperatorDecl opDecl = entry.getKey();
       String opkey = entry.getValue().toString();
-      {{if ( (opDecl instanceof tom.gom.adt.gom.types.OperatorDecl) ) {if ( ((( tom.gom.adt.gom.types.OperatorDecl )opDecl) instanceof tom.gom.adt.gom.types.OperatorDecl) ) {if ( ((( tom.gom.adt.gom.types.OperatorDecl )(( tom.gom.adt.gom.types.OperatorDecl )opDecl)) instanceof tom.gom.adt.gom.types.operatordecl.OperatorDecl) ) { tom.gom.adt.gom.types.TypedProduction  tomMatch520_1= (( tom.gom.adt.gom.types.OperatorDecl )opDecl).getProd() ;if ( (tomMatch520_1 instanceof tom.gom.adt.gom.types.TypedProduction) ) {if ( ((( tom.gom.adt.gom.types.TypedProduction )tomMatch520_1) instanceof tom.gom.adt.gom.types.typedproduction.Variadic) ) { tom.gom.adt.gom.types.SortDecl  tom_domainSort= tomMatch520_1.getSort() ; tom.gom.adt.gom.types.OperatorDecl  tom_op=(( tom.gom.adt.gom.types.OperatorDecl )opDecl);
+      { /* unamed block */{ /* unamed block */if ( (opDecl instanceof tom.gom.adt.gom.types.OperatorDecl) ) {if ( ((( tom.gom.adt.gom.types.OperatorDecl )opDecl) instanceof tom.gom.adt.gom.types.operatordecl.OperatorDecl) ) { tom.gom.adt.gom.types.TypedProduction  tomMatch551_1= (( tom.gom.adt.gom.types.OperatorDecl )opDecl).getProd() ;if ( ((( tom.gom.adt.gom.types.TypedProduction )tomMatch551_1) instanceof tom.gom.adt.gom.types.typedproduction.Variadic) ) { tom.gom.adt.gom.types.SortDecl  tom___domainSort= tomMatch551_1.getSort() ; tom.gom.adt.gom.types.OperatorDecl  tom___op=(( tom.gom.adt.gom.types.OperatorDecl )opDecl);
 
 
-          Code cast = genGetTerm(tom_domainSort,"tree.getChild(i)");
+          Code cast = genGetTerm(tom___domainSort,"tree.getChild(i)");
           Code code =
              tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make("      case ") , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make(opkey) , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make(":\n") , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make("        {\n") , tom.gom.adt.code.types.code.ConsCodeList.make(/* createemptylist*/
-                 tom.gom.adt.code.types.code.Code.make("          res = ") , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Empty.make(tom_op) , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make(".make();\n") , tom.gom.adt.code.types.code.ConsCodeList.make(/* addelements*/
-                 tom.gom.adt.code.types.code.Code.make("          for(int i = 0; i < tree.getChildCount(); i++) {\n") , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make("            ") , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.FullSortClass.make(tom_domainSort) , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make(" elem = ") ,tom_append_list_CodeList(cast, tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make(";\n") , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make("            ") , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.FullOperatorClass.make(tom_op) , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make(" list = (") , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.FullOperatorClass.make(tom_op) , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make(") res;\n") , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make("            ") , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make("res = list.append(elem);\n") , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make("          }\n") , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make("          break;\n") , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make("        }\n") , tom.gom.adt.code.types.code.EmptyCodeList.make() ) ) ) ) ) ) ) ) ) ) ) )) ) ) ) ) ) ) ) ) ) ) 
+                 tom.gom.adt.code.types.code.Code.make("          res = ") , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Empty.make(tom___op) , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make(".make();\n") , tom.gom.adt.code.types.code.ConsCodeList.make(/* addelements*/
+                 tom.gom.adt.code.types.code.Code.make("          for(int i = 0; i < tree.getChildCount(); i++) {\n") , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make("            ") , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.FullSortClass.make(tom___domainSort) , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make(" elem = ") ,tom_append_list_CodeList(cast, tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make(";\n") , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make("            ") , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.FullOperatorClass.make(tom___op) , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make(" list = (") , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.FullOperatorClass.make(tom___op) , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make(") res;\n") , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make("            ") , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make("res = list.append(elem);\n") , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make("          }\n") , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make("          break;\n") , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make("        }\n") , tom.gom.adt.code.types.code.EmptyCodeList.make() ) ) ) ) ) ) ) ) ) ) ) )) ) ) ) ) ) ) ) ) ) ) 
 
 
 
@@ -185,7 +185,7 @@ public class AdapterGenerator {
 
 ;
           CodeGen.generateCode(code,writer);
-        }}}}}}{if ( (opDecl instanceof tom.gom.adt.gom.types.OperatorDecl) ) {if ( ((( tom.gom.adt.gom.types.OperatorDecl )opDecl) instanceof tom.gom.adt.gom.types.OperatorDecl) ) {if ( ((( tom.gom.adt.gom.types.OperatorDecl )(( tom.gom.adt.gom.types.OperatorDecl )opDecl)) instanceof tom.gom.adt.gom.types.operatordecl.OperatorDecl) ) { tom.gom.adt.gom.types.TypedProduction  tomMatch520_8= (( tom.gom.adt.gom.types.OperatorDecl )opDecl).getProd() ; tom.gom.adt.gom.types.TypedProduction  tom_prod=tomMatch520_8;boolean tomMatch520_14= false ;if ( (tomMatch520_8 instanceof tom.gom.adt.gom.types.TypedProduction) ) {if ( ((( tom.gom.adt.gom.types.TypedProduction )tomMatch520_8) instanceof tom.gom.adt.gom.types.typedproduction.Variadic) ) {if ( (tom_prod==tomMatch520_8) ) {tomMatch520_14= true ;}}}if (!(tomMatch520_14)) {
+        }}}}{ /* unamed block */if ( (opDecl instanceof tom.gom.adt.gom.types.OperatorDecl) ) {if ( ((( tom.gom.adt.gom.types.OperatorDecl )opDecl) instanceof tom.gom.adt.gom.types.operatordecl.OperatorDecl) ) { tom.gom.adt.gom.types.TypedProduction  tomMatch551_8= (( tom.gom.adt.gom.types.OperatorDecl )opDecl).getProd() ; tom.gom.adt.gom.types.TypedProduction  tom___prod=tomMatch551_8;boolean tomMatch551_14= false ;if ( ((( tom.gom.adt.gom.types.TypedProduction )tomMatch551_8) instanceof tom.gom.adt.gom.types.typedproduction.Variadic) ) {if ( (tom___prod==tomMatch551_8) ) {tomMatch551_14= true ;}}if (!(tomMatch551_14)) {
 
 
         Code code =
@@ -196,10 +196,10 @@ public class AdapterGenerator {
 
 
 ;
-        {{if ( (tom_prod instanceof tom.gom.adt.gom.types.TypedProduction) ) {if ( ((( tom.gom.adt.gom.types.TypedProduction )tom_prod) instanceof tom.gom.adt.gom.types.TypedProduction) ) {if ( ((( tom.gom.adt.gom.types.TypedProduction )(( tom.gom.adt.gom.types.TypedProduction )tom_prod)) instanceof tom.gom.adt.gom.types.typedproduction.Slots) ) { tom.gom.adt.gom.types.SlotList  tom_slotList= (( tom.gom.adt.gom.types.TypedProduction )tom_prod).getSlots() ;
+        { /* unamed block */{ /* unamed block */if ( (tom___prod instanceof tom.gom.adt.gom.types.TypedProduction) ) {if ( ((( tom.gom.adt.gom.types.TypedProduction )tom___prod) instanceof tom.gom.adt.gom.types.typedproduction.Slots) ) { tom.gom.adt.gom.types.SlotList  tom___slotList= (( tom.gom.adt.gom.types.TypedProduction )tom___prod).getSlots() ;
 
             int idx = 0;
-            SlotList sList = tom_slotList;
+            SlotList sList = tom___slotList;
             int length = sList.length();
             String sCode = "\n          if (tree.getChildCount()!="+length+") {\n            throw new RuntimeException(\"Node \" + tree + \": "+length+" child(s) expected, but \" + tree.getChildCount() + \" found\");\n          }\n"
 
@@ -222,7 +222,7 @@ public class AdapterGenerator {
 ;
               idx++;
             }
-            code =  tom.gom.adt.code.types.code.ConsCodeList.make(code, tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make("          res = ") , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.FullOperatorClass.make((( tom.gom.adt.gom.types.OperatorDecl )opDecl)) , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make(".make(") , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make(genArgsList(tom_slotList)) , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make(");\n") , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make("          break;\n") , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make("        }\n") 
+            code =  tom.gom.adt.code.types.code.ConsCodeList.make(code, tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make("          res = ") , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.FullOperatorClass.make((( tom.gom.adt.gom.types.OperatorDecl )opDecl)) , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make(".make(") , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make(genArgsList(tom___slotList)) , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make(");\n") , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make("          break;\n") , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make("        }\n") 
                 , tom.gom.adt.code.types.code.EmptyCodeList.make() ) ) ) ) ) ) ) ) 
 
 
@@ -232,11 +232,11 @@ public class AdapterGenerator {
 
 
 ;
-              }}}}}
+              }}}}
 
 
           CodeGen.generateCode(code,writer);
-        }}}}}}
+        }}}}}
 
 
     }
@@ -253,10 +253,10 @@ public class AdapterGenerator {
     throws java.io.IOException {
     for (Map.Entry<OperatorDecl,Integer> entry : operatormap.entrySet()) {
       final OperatorDecl decl = entry.getKey();
-      {{if ( (decl instanceof tom.gom.adt.gom.types.OperatorDecl) ) {if ( ((( tom.gom.adt.gom.types.OperatorDecl )decl) instanceof tom.gom.adt.gom.types.OperatorDecl) ) {if ( ((( tom.gom.adt.gom.types.OperatorDecl )(( tom.gom.adt.gom.types.OperatorDecl )decl)) instanceof tom.gom.adt.gom.types.operatordecl.OperatorDecl) ) {
+      { /* unamed block */{ /* unamed block */if ( (decl instanceof tom.gom.adt.gom.types.OperatorDecl) ) {if ( ((( tom.gom.adt.gom.types.OperatorDecl )decl) instanceof tom.gom.adt.gom.types.operatordecl.OperatorDecl) ) {
 
           writer.write( (( tom.gom.adt.gom.types.OperatorDecl )decl).getName() + "="+entry.getValue().intValue()+"\n");
-        }}}}}
+        }}}}
 
     }
   }
@@ -267,43 +267,43 @@ public class AdapterGenerator {
     }
     public int intValue;
   }
-  public static class CollectOperators extends tom.library.sl.AbstractStrategyBasic {private  Map<OperatorDecl,Integer>  bag;private  IntRef  intref;public CollectOperators( Map<OperatorDecl,Integer>  bag,  IntRef  intref) {super(( new tom.library.sl.Identity() ));this.bag=bag;this.intref=intref;}public  Map<OperatorDecl,Integer>  getbag() {return bag;}public  IntRef  getintref() {return intref;}public tom.library.sl.Visitable[] getChildren() {tom.library.sl.Visitable[] stratChildren = new tom.library.sl.Visitable[getChildCount()];stratChildren[0] = super.getChildAt(0);return stratChildren;}public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {super.setChildAt(0, children[0]);return this;}public int getChildCount() {return 1;}public tom.library.sl.Visitable getChildAt(int index) {switch (index) {case 0: return super.getChildAt(0);default: throw new IndexOutOfBoundsException();}}public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable child) {switch (index) {case 0: return super.setChildAt(0, child);default: throw new IndexOutOfBoundsException();}}@SuppressWarnings("unchecked")public <T> T visitLight(T v, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if ( (v instanceof tom.gom.adt.gom.types.OperatorDecl) ) {return ((T)visit_OperatorDecl((( tom.gom.adt.gom.types.OperatorDecl )v),introspector));}if (!(  null ==environment )) {return ((T)any.visit(environment,introspector));} else {return any.visitLight(v,introspector);}}@SuppressWarnings("unchecked")public  tom.gom.adt.gom.types.OperatorDecl  _visit_OperatorDecl( tom.gom.adt.gom.types.OperatorDecl  arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if (!(  null ==environment )) {return (( tom.gom.adt.gom.types.OperatorDecl )any.visit(environment,introspector));} else {return any.visitLight(arg,introspector);}}@SuppressWarnings("unchecked")public  tom.gom.adt.gom.types.OperatorDecl  visit_OperatorDecl( tom.gom.adt.gom.types.OperatorDecl  tom__arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {{{if ( (tom__arg instanceof tom.gom.adt.gom.types.OperatorDecl) ) {if ( ((( tom.gom.adt.gom.types.OperatorDecl )tom__arg) instanceof tom.gom.adt.gom.types.OperatorDecl) ) {if ( ((( tom.gom.adt.gom.types.OperatorDecl )(( tom.gom.adt.gom.types.OperatorDecl )tom__arg)) instanceof tom.gom.adt.gom.types.operatordecl.OperatorDecl) ) {
+  public static class CollectOperators extends tom.library.sl.AbstractStrategyBasic {private  Map<OperatorDecl,Integer>  bag;private  IntRef  intref;public CollectOperators( Map<OperatorDecl,Integer>  bag,  IntRef  intref) {super(( new tom.library.sl.Identity() ));this.bag=bag;this.intref=intref;}public  Map<OperatorDecl,Integer>  getbag() {return bag;}public  IntRef  getintref() {return intref;}public tom.library.sl.Visitable[] getChildren() {tom.library.sl.Visitable[] stratChildren = new tom.library.sl.Visitable[getChildCount()];stratChildren[0] = super.getChildAt(0);return stratChildren;}public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {super.setChildAt(0, children[0]);return this;}public int getChildCount() {return 1;}public tom.library.sl.Visitable getChildAt(int index) {switch (index) {case 0: return super.getChildAt(0);default: throw new IndexOutOfBoundsException();}}public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable child) {switch (index) {case 0: return super.setChildAt(0, child);default: throw new IndexOutOfBoundsException();}}@SuppressWarnings("unchecked")public <T> T visitLight(T v, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if ( (v instanceof tom.gom.adt.gom.types.OperatorDecl) ) {return ((T)visit_OperatorDecl((( tom.gom.adt.gom.types.OperatorDecl )v),introspector));}if (!(  null ==environment )) {return ((T)any.visit(environment,introspector));} else {return any.visitLight(v,introspector);}}@SuppressWarnings("unchecked")public  tom.gom.adt.gom.types.OperatorDecl  _visit_OperatorDecl( tom.gom.adt.gom.types.OperatorDecl  arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if (!(  null ==environment )) {return (( tom.gom.adt.gom.types.OperatorDecl )any.visit(environment,introspector));} else {return any.visitLight(arg,introspector);}}@SuppressWarnings("unchecked")public  tom.gom.adt.gom.types.OperatorDecl  visit_OperatorDecl( tom.gom.adt.gom.types.OperatorDecl  tom__arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {{ /* unamed block */{ /* unamed block */if ( (tom__arg instanceof tom.gom.adt.gom.types.OperatorDecl) ) {if ( ((( tom.gom.adt.gom.types.OperatorDecl )tom__arg) instanceof tom.gom.adt.gom.types.operatordecl.OperatorDecl) ) {
 
 
 
 
         bag.put((( tom.gom.adt.gom.types.OperatorDecl )tom__arg),Integer.valueOf(intref.intValue));
         intref.intValue++;
-      }}}}}return _visit_OperatorDecl(tom__arg,introspector);}}private static  tom.library.sl.Strategy  tom_make_CollectOperators( Map<OperatorDecl,Integer>  t0,  IntRef  t1) { return new CollectOperators(t0,t1);}
+      }}}}return _visit_OperatorDecl(tom__arg,introspector);}}private static  tom.library.sl.Strategy  tom_make_CollectOperators( Map<OperatorDecl,Integer>  t0,  IntRef  t1) { return new CollectOperators(t0,t1);}
 
 
 
   protected Code genGetTerm(SortDecl sort, String tree) {
     Code code =  tom.gom.adt.code.types.code.EmptyCodeList.make() ;
-    {{if ( (sort instanceof tom.gom.adt.gom.types.SortDecl) ) {if ( ((( tom.gom.adt.gom.types.SortDecl )sort) instanceof tom.gom.adt.gom.types.SortDecl) ) {if ( ((( tom.gom.adt.gom.types.SortDecl )(( tom.gom.adt.gom.types.SortDecl )sort)) instanceof tom.gom.adt.gom.types.sortdecl.SortDecl) ) {
+    { /* unamed block */{ /* unamed block */if ( (sort instanceof tom.gom.adt.gom.types.SortDecl) ) {if ( ((( tom.gom.adt.gom.types.SortDecl )sort) instanceof tom.gom.adt.gom.types.sortdecl.SortDecl) ) {
 
         code =  tom.gom.adt.code.types.code.ConsCodeList.make(code, tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make("(") , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.FullSortClass.make(sort) , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make(")" + filename() + "Adaptor.getTerm(" + tree+ ")") , tom.gom.adt.code.types.code.EmptyCodeList.make() ) ) ) ) 
 
 
 ;
-      }}}}{if ( (sort instanceof tom.gom.adt.gom.types.SortDecl) ) {if ( ((( tom.gom.adt.gom.types.SortDecl )sort) instanceof tom.gom.adt.gom.types.SortDecl) ) {if ( ((( tom.gom.adt.gom.types.SortDecl )(( tom.gom.adt.gom.types.SortDecl )sort)) instanceof tom.gom.adt.gom.types.sortdecl.BuiltinSortDecl) ) { String  tom_name= (( tom.gom.adt.gom.types.SortDecl )sort).getName() ;
+      }}}{ /* unamed block */if ( (sort instanceof tom.gom.adt.gom.types.SortDecl) ) {if ( ((( tom.gom.adt.gom.types.SortDecl )sort) instanceof tom.gom.adt.gom.types.sortdecl.BuiltinSortDecl) ) { String  tom___name= (( tom.gom.adt.gom.types.SortDecl )sort).getName() ;
 
-        if ("int".equals(tom_name)) {
+        if ("int".equals(tom___name)) {
           code =  tom.gom.adt.code.types.code.ConsCodeList.make(code, tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make("Integer.parseInt(" + tree+ ".getText())") , tom.gom.adt.code.types.code.EmptyCodeList.make() ) ) 
 ;
-        } else if ("long".equals(tom_name)) {
+        } else if ("long".equals(tom___name)) {
           code =  tom.gom.adt.code.types.code.ConsCodeList.make(code, tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make("Long.parseLong(" + tree+ ".getText())") , tom.gom.adt.code.types.code.EmptyCodeList.make() ) ) 
 ;
-        } else if ("String".equals(tom_name)) {
+        } else if ("String".equals(tom___name)) {
           code =  tom.gom.adt.code.types.code.ConsCodeList.make(code, tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make(tree+ ".getText()") , tom.gom.adt.code.types.code.EmptyCodeList.make() ) ) 
 ;
-        } else if ("boolean".equals(tom_name)) {
+        } else if ("boolean".equals(tom___name)) {
           code =  tom.gom.adt.code.types.code.ConsCodeList.make(code, tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make("Boolean.valueOf(" + tree+ ".getText())") , tom.gom.adt.code.types.code.EmptyCodeList.make() ) ) 
 ;
         } else {
-          throw new RuntimeException("Unsupported builtin "+tom_name);
+          throw new RuntimeException("Unsupported builtin "+tom___name);
         }
-      }}}}}
+      }}}}
 
     return code;
   }

@@ -62,7 +62,7 @@ public class HostLexer extends antlr.CharScanner implements HostParserTokenTypes
     // the target parser
     private HostParser parser = null;
 
-    public void setParser(HostParser parser){
+    public void setParser(HostParser parser) {
         this.parser = parser;
     }
 

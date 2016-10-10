@@ -52,7 +52,7 @@ import antlr.LexerSharedInputState;
 import antlr.collections.impl.BitSet;
 import antlr.SemanticException;
 
-public class TomLexer extends antlr.CharScanner implements TomParserTokenTypes, TokenStream
+public class TomLexer extends antlr.CharScanner implements TomLanguageTokenTypes, TokenStream
  {
 public TomLexer(InputStream in) {
 	this(new ByteBuffer(in));

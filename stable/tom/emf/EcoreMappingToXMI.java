@@ -91,7 +91,7 @@ public class EcoreMappingToXMI {
   
   public static String parse(EPackage eo, boolean subpackage) {
     StringBuffer sb=new StringBuffer();
-    {{if ( eo instanceof org.eclipse.emf.ecore.EPackage ) {if ( (( org.eclipse.emf.ecore.EPackage )eo) instanceof org.eclipse.emf.ecore.EPackage ) {if ( (( org.eclipse.emf.ecore.EPackage )(( org.eclipse.emf.ecore.EPackage )eo)) instanceof org.eclipse.emf.ecore.EPackage ) {
+    { /* unamed block */{ /* unamed block */if ( eo instanceof org.eclipse.emf.ecore.EPackage ) {if ( (( org.eclipse.emf.ecore.EPackage )eo) instanceof org.eclipse.emf.ecore.EPackage ) {
 
         sb.append("<"+(subpackage?"eSubpackages":"ecore:EPackage " +
             "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" " +
@@ -105,7 +105,7 @@ public class EcoreMappingToXMI {
         sb.append(parse( (org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EClassifier>)(( org.eclipse.emf.ecore.EPackage )eo).eGet((( org.eclipse.emf.ecore.EPackage )eo).eClass().getEStructuralFeature("eClassifiers")) ));
         sb.append(parse( (org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EPackage>)(( org.eclipse.emf.ecore.EPackage )eo).eGet((( org.eclipse.emf.ecore.EPackage )eo).eClass().getEStructuralFeature("eSubpackages")) ));
         sb.append("</ecore:EPackage>");
-      }}}}}
+      }}}}
 
     return sb.toString();
   }
@@ -118,19 +118,19 @@ public class EcoreMappingToXMI {
   
   public static String parse(EClass eo) {
     StringBuffer sb=new StringBuffer();
-    {{if ( eo instanceof org.eclipse.emf.ecore.EClass ) {if ( (( org.eclipse.emf.ecore.EClass )eo) instanceof org.eclipse.emf.ecore.EClass ) {if ( (( org.eclipse.emf.ecore.EClass )(( org.eclipse.emf.ecore.EClass )eo)) instanceof org.eclipse.emf.ecore.EClass ) { String  tom_instanceClassName= (java.lang.String)(( org.eclipse.emf.ecore.EClass )eo).eGet((( org.eclipse.emf.ecore.EClass )eo).eClass().getEStructuralFeature("instanceClassName")) ; String  tom_instanceTypeName= (java.lang.String)(( org.eclipse.emf.ecore.EClass )eo).eGet((( org.eclipse.emf.ecore.EClass )eo).eClass().getEStructuralFeature("instanceTypeName")) ; boolean  tom__abstract= (java.lang.Boolean)(( org.eclipse.emf.ecore.EClass )eo).eGet((( org.eclipse.emf.ecore.EClass )eo).eClass().getEStructuralFeature("abstract")) ; boolean  tom__interface= (java.lang.Boolean)(( org.eclipse.emf.ecore.EClass )eo).eGet((( org.eclipse.emf.ecore.EClass )eo).eClass().getEStructuralFeature("interface")) ; org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EClass>  tom_eSuperTypes= (org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EClass>)(( org.eclipse.emf.ecore.EClass )eo).eGet((( org.eclipse.emf.ecore.EClass )eo).eClass().getEStructuralFeature("eSuperTypes")) ; org.eclipse.emf.ecore.EClass  tom_c=(( org.eclipse.emf.ecore.EClass )eo);
+    { /* unamed block */{ /* unamed block */if ( eo instanceof org.eclipse.emf.ecore.EClass ) {if ( (( org.eclipse.emf.ecore.EClass )eo) instanceof org.eclipse.emf.ecore.EClass ) { String  tom___instanceClassName= (java.lang.String)(( org.eclipse.emf.ecore.EClass )eo).eGet((( org.eclipse.emf.ecore.EClass )eo).eClass().getEStructuralFeature("instanceClassName")) ; String  tom___instanceTypeName= (java.lang.String)(( org.eclipse.emf.ecore.EClass )eo).eGet((( org.eclipse.emf.ecore.EClass )eo).eClass().getEStructuralFeature("instanceTypeName")) ; boolean  tom____abstract= (java.lang.Boolean)(( org.eclipse.emf.ecore.EClass )eo).eGet((( org.eclipse.emf.ecore.EClass )eo).eClass().getEStructuralFeature("abstract")) ; boolean  tom____interface= (java.lang.Boolean)(( org.eclipse.emf.ecore.EClass )eo).eGet((( org.eclipse.emf.ecore.EClass )eo).eClass().getEStructuralFeature("interface")) ; org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EClass>  tom___eSuperTypes= (org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EClass>)(( org.eclipse.emf.ecore.EClass )eo).eGet((( org.eclipse.emf.ecore.EClass )eo).eClass().getEStructuralFeature("eSuperTypes")) ; org.eclipse.emf.ecore.EClass  tom___c=(( org.eclipse.emf.ecore.EClass )eo);
 
         StringBuffer sb2=new StringBuffer();
-        {{if ( tom_eSuperTypes instanceof org.eclipse.emf.common.util.EList<?> && (((org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EClass>)tom_eSuperTypes).size() == 0 || (((org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EClass>)tom_eSuperTypes).size()>0 && ((org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EClass>)tom_eSuperTypes).get(0) instanceof org.eclipse.emf.ecore.EClass)) ) {if ( (( org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EClass> )(( org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EClass> )tom_eSuperTypes)) instanceof org.eclipse.emf.common.util.EList<?> && ((( org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EClass> )(( org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EClass> )tom_eSuperTypes)).size() == 0 || ((( org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EClass> )(( org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EClass> )tom_eSuperTypes)).size()>0 && (( org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EClass> )(( org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EClass> )tom_eSuperTypes)).get(0) instanceof org.eclipse.emf.ecore.EClass)) ) {int tomMatch3_end_5=0;do {{if (!(tomMatch3_end_5 >=  (( org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EClass> )tom_eSuperTypes).size() )) { org.eclipse.emf.ecore.EClass  tomMatch3_19= (( org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EClass> )tom_eSuperTypes).get(tomMatch3_end_5) ;if ( tomMatch3_19 instanceof org.eclipse.emf.ecore.EClass ) {if ( (( org.eclipse.emf.ecore.EClass )tomMatch3_19) instanceof org.eclipse.emf.ecore.EClass ) {
- sb2.append("#//" +  (java.lang.String)tomMatch3_19.eGet(tomMatch3_19.eClass().getEStructuralFeature("name")) + " "); }}}tomMatch3_end_5=tomMatch3_end_5 + 1;}} while(!(tomMatch3_end_5 >  (( org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EClass> )tom_eSuperTypes).size() ));}}}}
+        { /* unamed block */{ /* unamed block */if ( tom___eSuperTypes instanceof org.eclipse.emf.common.util.EList<?> && (((org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EClass>)tom___eSuperTypes).size() == 0 || (((org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EClass>)tom___eSuperTypes).size()>0 && ((org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EClass>)tom___eSuperTypes).get(0) instanceof org.eclipse.emf.ecore.EClass)) ) {if ( (( org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EClass> )tom___eSuperTypes) instanceof org.eclipse.emf.common.util.EList<?> && ((( org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EClass> )tom___eSuperTypes).size() == 0 || ((( org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EClass> )tom___eSuperTypes).size()>0 && (( org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EClass> )tom___eSuperTypes).get(0) instanceof org.eclipse.emf.ecore.EClass)) ) {int tomMatch3_end_5=0;do {{ /* unamed block */if (!(tomMatch3_end_5 >=  (( org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EClass> )tom___eSuperTypes).size() )) { org.eclipse.emf.ecore.EClass  tomMatch3_19= (( org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EClass> )tom___eSuperTypes).get(tomMatch3_end_5) ;if ( (( org.eclipse.emf.ecore.EClass )tomMatch3_19) instanceof org.eclipse.emf.ecore.EClass ) {
+ sb2.append("#//" +  (java.lang.String)tomMatch3_19.eGet(tomMatch3_19.eClass().getEStructuralFeature("name")) + " "); }}tomMatch3_end_5=tomMatch3_end_5 + 1;}} while(!(tomMatch3_end_5 >  (( org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EClass> )tom___eSuperTypes).size() ));}}}}
 
         sb.append("<eClassifiers " +
             "xsi:type=\"ecore:EClass\" " +
             "name=\"" +  (java.lang.String)(( org.eclipse.emf.ecore.EClass )eo).eGet((( org.eclipse.emf.ecore.EClass )eo).eClass().getEStructuralFeature("name")) + "\" " + 
-            (! EObject.class.isAssignableFrom(tom_c.getInstanceClass()) ? "instanceClassName=\"" + tom_instanceClassName+ "\" " : "") + 
-            (!tom_instanceClassName.equals(tom_instanceTypeName) ? "instanceTypeName=\"" + tom_instanceTypeName+ "\" " : "") + 
-            ((Boolean)tom_c.eClass().getEStructuralFeature("abstract").getDefaultValue() != tom__abstract? "abstract=\"" + tom__abstract+ "\" " : "") + 
-            ((Boolean)tom_c.eClass().getEStructuralFeature("interface").getDefaultValue() != tom__interface? "interface=\"" + tom__interface+ "\" " : "") + 
+            (! EObject.class.isAssignableFrom(tom___c.getInstanceClass()) ? "instanceClassName=\"" + tom___instanceClassName+ "\" " : "") + 
+            (!tom___instanceClassName.equals(tom___instanceTypeName) ? "instanceTypeName=\"" + tom___instanceTypeName+ "\" " : "") + 
+            ((Boolean)tom___c.eClass().getEStructuralFeature("abstract").getDefaultValue() != tom____abstract? "abstract=\"" + tom____abstract+ "\" " : "") + 
+            ((Boolean)tom___c.eClass().getEStructuralFeature("interface").getDefaultValue() != tom____interface? "interface=\"" + tom____interface+ "\" " : "") + 
             (sb2.length() > 0 ? "eSuperTypes=\"" + sb2 + "\" " : "") + 
             ">");
         sb.append(parse( (org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EAnnotation>)(( org.eclipse.emf.ecore.EClass )eo).eGet((( org.eclipse.emf.ecore.EClass )eo).eClass().getEStructuralFeature("eAnnotations")) ));
@@ -138,7 +138,7 @@ public class EcoreMappingToXMI {
         sb.append(parse( (org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EOperation>)(( org.eclipse.emf.ecore.EClass )eo).eGet((( org.eclipse.emf.ecore.EClass )eo).eClass().getEStructuralFeature("eOperations")) ));
         sb.append(parse( (org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EStructuralFeature>)(( org.eclipse.emf.ecore.EClass )eo).eGet((( org.eclipse.emf.ecore.EClass )eo).eClass().getEStructuralFeature("eStructuralFeatures")) ));
         sb.append("</eClassifiers>");
-      }}}}}
+      }}}}
 
     return sb.toString();
   }
@@ -151,19 +151,19 @@ public class EcoreMappingToXMI {
   
   public static String parse(EDataType eo){
     StringBuffer sb=new StringBuffer();
-    {{if ( eo instanceof org.eclipse.emf.ecore.EDataType ) {if ( (( org.eclipse.emf.ecore.EDataType )eo) instanceof org.eclipse.emf.ecore.EDataType ) {if ( (( org.eclipse.emf.ecore.EDataType )(( org.eclipse.emf.ecore.EDataType )eo)) instanceof org.eclipse.emf.ecore.EDataType ) { String  tom_instanceClassName= (java.lang.String)(( org.eclipse.emf.ecore.EDataType )eo).eGet((( org.eclipse.emf.ecore.EDataType )eo).eClass().getEStructuralFeature("instanceClassName")) ; String  tom_instanceTypeName= (java.lang.String)(( org.eclipse.emf.ecore.EDataType )eo).eGet((( org.eclipse.emf.ecore.EDataType )eo).eClass().getEStructuralFeature("instanceTypeName")) ; boolean  tom_serializable= (java.lang.Boolean)(( org.eclipse.emf.ecore.EDataType )eo).eGet((( org.eclipse.emf.ecore.EDataType )eo).eClass().getEStructuralFeature("serializable")) ;
+    { /* unamed block */{ /* unamed block */if ( eo instanceof org.eclipse.emf.ecore.EDataType ) {if ( (( org.eclipse.emf.ecore.EDataType )eo) instanceof org.eclipse.emf.ecore.EDataType ) { String  tom___instanceClassName= (java.lang.String)(( org.eclipse.emf.ecore.EDataType )eo).eGet((( org.eclipse.emf.ecore.EDataType )eo).eClass().getEStructuralFeature("instanceClassName")) ; String  tom___instanceTypeName= (java.lang.String)(( org.eclipse.emf.ecore.EDataType )eo).eGet((( org.eclipse.emf.ecore.EDataType )eo).eClass().getEStructuralFeature("instanceTypeName")) ; boolean  tom___serializable= (java.lang.Boolean)(( org.eclipse.emf.ecore.EDataType )eo).eGet((( org.eclipse.emf.ecore.EDataType )eo).eClass().getEStructuralFeature("serializable")) ;
 
         sb.append("<eClassifiers " +
             "xsi:type=\"ecore:EDataType\" " +
             "name=\"" +  (java.lang.String)(( org.eclipse.emf.ecore.EDataType )eo).eGet((( org.eclipse.emf.ecore.EDataType )eo).eClass().getEStructuralFeature("name")) + "\" " +
-            "instanceClassName=\""+tom_instanceClassName+"\" " +
-            (!tom_instanceClassName.equals(tom_instanceTypeName)?"instanceTypeName=\"" + tom_instanceTypeName+ "\" ":"") + 
-            ((Boolean)(( org.eclipse.emf.ecore.EDataType )eo).eClass().getEStructuralFeature(EcoreMappingToXMI.SERIALIZABLE).getDefaultValue() != tom_serializable?"serializable=\"" + tom_serializable+ "\" ":"") + 
+            "instanceClassName=\""+tom___instanceClassName+"\" " +
+            (!tom___instanceClassName.equals(tom___instanceTypeName)?"instanceTypeName=\"" + tom___instanceTypeName+ "\" ":"") + 
+            ((Boolean)(( org.eclipse.emf.ecore.EDataType )eo).eClass().getEStructuralFeature(EcoreMappingToXMI.SERIALIZABLE).getDefaultValue() != tom___serializable?"serializable=\"" + tom___serializable+ "\" ":"") + 
             ">");
         sb.append(parse( (org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EAnnotation>)(( org.eclipse.emf.ecore.EDataType )eo).eGet((( org.eclipse.emf.ecore.EDataType )eo).eClass().getEStructuralFeature("eAnnotations")) ));
         sb.append(parse( (org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.ETypeParameter>)(( org.eclipse.emf.ecore.EDataType )eo).eGet((( org.eclipse.emf.ecore.EDataType )eo).eClass().getEStructuralFeature("eTypeParameters")) ));
         sb.append("</eClassifiers>");
-      }}}}}
+      }}}}
 
     return sb.toString();
   }
@@ -176,20 +176,20 @@ public class EcoreMappingToXMI {
   
   public static String parse(EEnum eo){
     StringBuffer sb=new StringBuffer();
-    {{if ( eo instanceof org.eclipse.emf.ecore.EEnum ) {if ( (( org.eclipse.emf.ecore.EEnum )eo) instanceof org.eclipse.emf.ecore.EEnum ) {if ( (( org.eclipse.emf.ecore.EEnum )(( org.eclipse.emf.ecore.EEnum )eo)) instanceof org.eclipse.emf.ecore.EEnum ) { String  tom_instanceClassName= (java.lang.String)(( org.eclipse.emf.ecore.EEnum )eo).eGet((( org.eclipse.emf.ecore.EEnum )eo).eClass().getEStructuralFeature("instanceClassName")) ; String  tom_instanceTypeName= (java.lang.String)(( org.eclipse.emf.ecore.EEnum )eo).eGet((( org.eclipse.emf.ecore.EEnum )eo).eClass().getEStructuralFeature("instanceTypeName")) ; boolean  tom_serializable= (java.lang.Boolean)(( org.eclipse.emf.ecore.EEnum )eo).eGet((( org.eclipse.emf.ecore.EEnum )eo).eClass().getEStructuralFeature("serializable")) ;
+    { /* unamed block */{ /* unamed block */if ( eo instanceof org.eclipse.emf.ecore.EEnum ) {if ( (( org.eclipse.emf.ecore.EEnum )eo) instanceof org.eclipse.emf.ecore.EEnum ) { String  tom___instanceClassName= (java.lang.String)(( org.eclipse.emf.ecore.EEnum )eo).eGet((( org.eclipse.emf.ecore.EEnum )eo).eClass().getEStructuralFeature("instanceClassName")) ; String  tom___instanceTypeName= (java.lang.String)(( org.eclipse.emf.ecore.EEnum )eo).eGet((( org.eclipse.emf.ecore.EEnum )eo).eClass().getEStructuralFeature("instanceTypeName")) ; boolean  tom___serializable= (java.lang.Boolean)(( org.eclipse.emf.ecore.EEnum )eo).eGet((( org.eclipse.emf.ecore.EEnum )eo).eClass().getEStructuralFeature("serializable")) ;
 
         sb.append("<eClassifiers " +
             "xsi:type=\"ecore:EEnum\" " +
             "name=\"" +  (java.lang.String)(( org.eclipse.emf.ecore.EEnum )eo).eGet((( org.eclipse.emf.ecore.EEnum )eo).eClass().getEStructuralFeature("name")) + "\" " +
-            "instanceClassName=\""+tom_instanceClassName+"\" " +
-            (!tom_instanceClassName.equals(tom_instanceTypeName)?"instanceTypeName=\"" + tom_instanceTypeName+ "\" ":"") + 
-            ((Boolean)(( org.eclipse.emf.ecore.EEnum )eo).eClass().getEStructuralFeature(EcoreMappingToXMI.SERIALIZABLE).getDefaultValue() != tom_serializable?"serializable=\"" + tom_serializable+ "\" ":"") + 
+            "instanceClassName=\""+tom___instanceClassName+"\" " +
+            (!tom___instanceClassName.equals(tom___instanceTypeName)?"instanceTypeName=\"" + tom___instanceTypeName+ "\" ":"") + 
+            ((Boolean)(( org.eclipse.emf.ecore.EEnum )eo).eClass().getEStructuralFeature(EcoreMappingToXMI.SERIALIZABLE).getDefaultValue() != tom___serializable?"serializable=\"" + tom___serializable+ "\" ":"") + 
             ">");
         sb.append(parse( (org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EAnnotation>)(( org.eclipse.emf.ecore.EEnum )eo).eGet((( org.eclipse.emf.ecore.EEnum )eo).eClass().getEStructuralFeature("eAnnotations")) ));
         sb.append(parse( (org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.ETypeParameter>)(( org.eclipse.emf.ecore.EEnum )eo).eGet((( org.eclipse.emf.ecore.EEnum )eo).eClass().getEStructuralFeature("eTypeParameters")) ));
         sb.append(parse( (org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EEnumLiteral>)(( org.eclipse.emf.ecore.EEnum )eo).eGet((( org.eclipse.emf.ecore.EEnum )eo).eClass().getEStructuralFeature("eLiterals")) ));
         sb.append("</eClassifiers>");
-      }}}}}
+      }}}}
 
     return sb.toString();
   }
@@ -202,13 +202,13 @@ public class EcoreMappingToXMI {
   
   public static String parse(EAnnotation eo){
     StringBuffer sb=new StringBuffer();
-    {{if ( eo instanceof org.eclipse.emf.ecore.EAnnotation ) {if ( (( org.eclipse.emf.ecore.EAnnotation )eo) instanceof org.eclipse.emf.ecore.EAnnotation ) {if ( (( org.eclipse.emf.ecore.EAnnotation )(( org.eclipse.emf.ecore.EAnnotation )eo)) instanceof org.eclipse.emf.ecore.EAnnotation ) { String  tom_source= (java.lang.String)(( org.eclipse.emf.ecore.EAnnotation )eo).eGet((( org.eclipse.emf.ecore.EAnnotation )eo).eClass().getEStructuralFeature("source")) ;
+    { /* unamed block */{ /* unamed block */if ( eo instanceof org.eclipse.emf.ecore.EAnnotation ) {if ( (( org.eclipse.emf.ecore.EAnnotation )eo) instanceof org.eclipse.emf.ecore.EAnnotation ) { String  tom___source= (java.lang.String)(( org.eclipse.emf.ecore.EAnnotation )eo).eGet((( org.eclipse.emf.ecore.EAnnotation )eo).eClass().getEStructuralFeature("source")) ;
 
-        sb.append("<eAnnotations" + (tom_source!= null?" source=\""+tom_source+"\"":"") + ">");
+        sb.append("<eAnnotations" + (tom___source!= null?" source=\""+tom___source+"\"":"") + ">");
         sb.append(parse( (org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EAnnotation>)(( org.eclipse.emf.ecore.EAnnotation )eo).eGet((( org.eclipse.emf.ecore.EAnnotation )eo).eClass().getEStructuralFeature("eAnnotations")) ));
         sb.append(parse( (org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EObject>)(( org.eclipse.emf.ecore.EAnnotation )eo).eGet((( org.eclipse.emf.ecore.EAnnotation )eo).eClass().getEStructuralFeature("details")) ));
         sb.append("</eAnnotations>");
-      }}}}}
+      }}}}
 
     return sb.toString();
   }
@@ -221,29 +221,29 @@ public class EcoreMappingToXMI {
   
   public static String parse(EAttribute eo){
     StringBuffer sb=new StringBuffer();
-    {{if ( eo instanceof org.eclipse.emf.ecore.EAttribute ) {if ( (( org.eclipse.emf.ecore.EAttribute )eo) instanceof org.eclipse.emf.ecore.EAttribute ) {if ( (( org.eclipse.emf.ecore.EAttribute )(( org.eclipse.emf.ecore.EAttribute )eo)) instanceof org.eclipse.emf.ecore.EAttribute ) { boolean  tom_ordered= (java.lang.Boolean)(( org.eclipse.emf.ecore.EAttribute )eo).eGet((( org.eclipse.emf.ecore.EAttribute )eo).eClass().getEStructuralFeature("ordered")) ; boolean  tom_unique= (java.lang.Boolean)(( org.eclipse.emf.ecore.EAttribute )eo).eGet((( org.eclipse.emf.ecore.EAttribute )eo).eClass().getEStructuralFeature("unique")) ; int  tom_lowerBound= (java.lang.Integer)(( org.eclipse.emf.ecore.EAttribute )eo).eGet((( org.eclipse.emf.ecore.EAttribute )eo).eClass().getEStructuralFeature("lowerBound")) ; int  tom_upperBound= (java.lang.Integer)(( org.eclipse.emf.ecore.EAttribute )eo).eGet((( org.eclipse.emf.ecore.EAttribute )eo).eClass().getEStructuralFeature("upperBound")) ; org.eclipse.emf.ecore.EClassifier  tom_eType= (org.eclipse.emf.ecore.EClassifier)(( org.eclipse.emf.ecore.EAttribute )eo).eGet((( org.eclipse.emf.ecore.EAttribute )eo).eClass().getEStructuralFeature("eType")) ; org.eclipse.emf.ecore.EGenericType  tom_eGenericType= (org.eclipse.emf.ecore.EGenericType)(( org.eclipse.emf.ecore.EAttribute )eo).eGet((( org.eclipse.emf.ecore.EAttribute )eo).eClass().getEStructuralFeature("eGenericType")) ; boolean  tom_changeable= (java.lang.Boolean)(( org.eclipse.emf.ecore.EAttribute )eo).eGet((( org.eclipse.emf.ecore.EAttribute )eo).eClass().getEStructuralFeature("changeable")) ; boolean  tom__volatile= (java.lang.Boolean)(( org.eclipse.emf.ecore.EAttribute )eo).eGet((( org.eclipse.emf.ecore.EAttribute )eo).eClass().getEStructuralFeature("volatile")) ; boolean  tom__transient= (java.lang.Boolean)(( org.eclipse.emf.ecore.EAttribute )eo).eGet((( org.eclipse.emf.ecore.EAttribute )eo).eClass().getEStructuralFeature("transient")) ; String  tom_defaultValueLiteral= (java.lang.String)(( org.eclipse.emf.ecore.EAttribute )eo).eGet((( org.eclipse.emf.ecore.EAttribute )eo).eClass().getEStructuralFeature("defaultValueLiteral")) ; boolean  tom_unsettable= (java.lang.Boolean)(( org.eclipse.emf.ecore.EAttribute )eo).eGet((( org.eclipse.emf.ecore.EAttribute )eo).eClass().getEStructuralFeature("unsettable")) ; boolean  tom_derived= (java.lang.Boolean)(( org.eclipse.emf.ecore.EAttribute )eo).eGet((( org.eclipse.emf.ecore.EAttribute )eo).eClass().getEStructuralFeature("derived")) ; boolean  tom_iD= (java.lang.Boolean)(( org.eclipse.emf.ecore.EAttribute )eo).eGet((( org.eclipse.emf.ecore.EAttribute )eo).eClass().getEStructuralFeature("iD")) ; org.eclipse.emf.ecore.EAttribute  tom_a=(( org.eclipse.emf.ecore.EAttribute )eo);
+    { /* unamed block */{ /* unamed block */if ( eo instanceof org.eclipse.emf.ecore.EAttribute ) {if ( (( org.eclipse.emf.ecore.EAttribute )eo) instanceof org.eclipse.emf.ecore.EAttribute ) { boolean  tom___ordered= (java.lang.Boolean)(( org.eclipse.emf.ecore.EAttribute )eo).eGet((( org.eclipse.emf.ecore.EAttribute )eo).eClass().getEStructuralFeature("ordered")) ; boolean  tom___unique= (java.lang.Boolean)(( org.eclipse.emf.ecore.EAttribute )eo).eGet((( org.eclipse.emf.ecore.EAttribute )eo).eClass().getEStructuralFeature("unique")) ; int  tom___lowerBound= (java.lang.Integer)(( org.eclipse.emf.ecore.EAttribute )eo).eGet((( org.eclipse.emf.ecore.EAttribute )eo).eClass().getEStructuralFeature("lowerBound")) ; int  tom___upperBound= (java.lang.Integer)(( org.eclipse.emf.ecore.EAttribute )eo).eGet((( org.eclipse.emf.ecore.EAttribute )eo).eClass().getEStructuralFeature("upperBound")) ; org.eclipse.emf.ecore.EClassifier  tom___eType= (org.eclipse.emf.ecore.EClassifier)(( org.eclipse.emf.ecore.EAttribute )eo).eGet((( org.eclipse.emf.ecore.EAttribute )eo).eClass().getEStructuralFeature("eType")) ; org.eclipse.emf.ecore.EGenericType  tom___eGenericType= (org.eclipse.emf.ecore.EGenericType)(( org.eclipse.emf.ecore.EAttribute )eo).eGet((( org.eclipse.emf.ecore.EAttribute )eo).eClass().getEStructuralFeature("eGenericType")) ; boolean  tom___changeable= (java.lang.Boolean)(( org.eclipse.emf.ecore.EAttribute )eo).eGet((( org.eclipse.emf.ecore.EAttribute )eo).eClass().getEStructuralFeature("changeable")) ; boolean  tom____volatile= (java.lang.Boolean)(( org.eclipse.emf.ecore.EAttribute )eo).eGet((( org.eclipse.emf.ecore.EAttribute )eo).eClass().getEStructuralFeature("volatile")) ; boolean  tom____transient= (java.lang.Boolean)(( org.eclipse.emf.ecore.EAttribute )eo).eGet((( org.eclipse.emf.ecore.EAttribute )eo).eClass().getEStructuralFeature("transient")) ; String  tom___defaultValueLiteral= (java.lang.String)(( org.eclipse.emf.ecore.EAttribute )eo).eGet((( org.eclipse.emf.ecore.EAttribute )eo).eClass().getEStructuralFeature("defaultValueLiteral")) ; boolean  tom___unsettable= (java.lang.Boolean)(( org.eclipse.emf.ecore.EAttribute )eo).eGet((( org.eclipse.emf.ecore.EAttribute )eo).eClass().getEStructuralFeature("unsettable")) ; boolean  tom___derived= (java.lang.Boolean)(( org.eclipse.emf.ecore.EAttribute )eo).eGet((( org.eclipse.emf.ecore.EAttribute )eo).eClass().getEStructuralFeature("derived")) ; boolean  tom___iD= (java.lang.Boolean)(( org.eclipse.emf.ecore.EAttribute )eo).eGet((( org.eclipse.emf.ecore.EAttribute )eo).eClass().getEStructuralFeature("iD")) ; org.eclipse.emf.ecore.EAttribute  tom___a=(( org.eclipse.emf.ecore.EAttribute )eo);
 
         sb.append("<eStructuralFeatures xsi:type=\"ecore:EAttribute\" " + 
             "name=\"" +  (java.lang.String)(( org.eclipse.emf.ecore.EAttribute )eo).eGet((( org.eclipse.emf.ecore.EAttribute )eo).eClass().getEStructuralFeature("name")) + "\" " + 
-            ((Boolean)tom_a.eClass().getEStructuralFeature(EcoreMappingToXMI.ORDERED).getDefaultValue() != tom_ordered?"ordered=\"" + tom_ordered+ "\" ":"") + 
-            ((Boolean)tom_a.eClass().getEStructuralFeature(EcoreMappingToXMI.UNIQUE).getDefaultValue() != tom_unique?"unique=\"" + tom_unique+ "\" ":"") + 
-            ((Integer)tom_a.eClass().getEStructuralFeature(EcoreMappingToXMI.LOWERBOUND).getDefaultValue() != tom_lowerBound?"lowerBound=\"" + tom_lowerBound+ "\" ":"") + 
-            ((Integer)tom_a.eClass().getEStructuralFeature(EcoreMappingToXMI.UPPERBOUND).getDefaultValue() != tom_upperBound?"upperBound=\"" + tom_upperBound+ "\" ":"") + 
-            (tom_eType!= null&&tom_eType.getETypeParameters().size() == 0?"eType=\"#//" + tom_eType.getName() + "\" ":"") +
-            ((Boolean)tom_a.eClass().getEStructuralFeature(EcoreMappingToXMI.CHANGEABLE).getDefaultValue() != tom_changeable?"changeable=\"" + tom_changeable+ "\" ":"") + 
-            ((Boolean)tom_a.eClass().getEStructuralFeature(EcoreMappingToXMI.VOLATILE).getDefaultValue() != tom__volatile?"volatile=\"" + tom__volatile+ "\" ":"") + 
-            ((Boolean)tom_a.eClass().getEStructuralFeature(EcoreMappingToXMI.TRANSIENT).getDefaultValue() != tom__transient?"transient=\"" + tom__transient+ "\" ":"") + 
-            (tom_defaultValueLiteral!= null?"defaultValueLiteral=\"" + tom_defaultValueLiteral+ "\" ":"") + 
-            ((Boolean)tom_a.eClass().getEStructuralFeature(EcoreMappingToXMI.UNSETTABLE).getDefaultValue() != tom_unsettable?"unsettable=\"" + tom_unsettable+ "\" ":"") + 
-            ((Boolean)tom_a.eClass().getEStructuralFeature(EcoreMappingToXMI.DERIVED).getDefaultValue() != tom_derived?"derived=\"" + tom_derived+ "\" ":"") + 
-            ((Boolean)tom_a.eClass().getEStructuralFeature("iD").getDefaultValue() != tom_iD?"iD=\"" + tom_iD+ "\" ":"") + 
+            ((Boolean)tom___a.eClass().getEStructuralFeature(EcoreMappingToXMI.ORDERED).getDefaultValue() != tom___ordered?"ordered=\"" + tom___ordered+ "\" ":"") + 
+            ((Boolean)tom___a.eClass().getEStructuralFeature(EcoreMappingToXMI.UNIQUE).getDefaultValue() != tom___unique?"unique=\"" + tom___unique+ "\" ":"") + 
+            ((Integer)tom___a.eClass().getEStructuralFeature(EcoreMappingToXMI.LOWERBOUND).getDefaultValue() != tom___lowerBound?"lowerBound=\"" + tom___lowerBound+ "\" ":"") + 
+            ((Integer)tom___a.eClass().getEStructuralFeature(EcoreMappingToXMI.UPPERBOUND).getDefaultValue() != tom___upperBound?"upperBound=\"" + tom___upperBound+ "\" ":"") + 
+            (tom___eType!= null&&tom___eType.getETypeParameters().size() == 0?"eType=\"#//" + tom___eType.getName() + "\" ":"") +
+            ((Boolean)tom___a.eClass().getEStructuralFeature(EcoreMappingToXMI.CHANGEABLE).getDefaultValue() != tom___changeable?"changeable=\"" + tom___changeable+ "\" ":"") + 
+            ((Boolean)tom___a.eClass().getEStructuralFeature(EcoreMappingToXMI.VOLATILE).getDefaultValue() != tom____volatile?"volatile=\"" + tom____volatile+ "\" ":"") + 
+            ((Boolean)tom___a.eClass().getEStructuralFeature(EcoreMappingToXMI.TRANSIENT).getDefaultValue() != tom____transient?"transient=\"" + tom____transient+ "\" ":"") + 
+            (tom___defaultValueLiteral!= null?"defaultValueLiteral=\"" + tom___defaultValueLiteral+ "\" ":"") + 
+            ((Boolean)tom___a.eClass().getEStructuralFeature(EcoreMappingToXMI.UNSETTABLE).getDefaultValue() != tom___unsettable?"unsettable=\"" + tom___unsettable+ "\" ":"") + 
+            ((Boolean)tom___a.eClass().getEStructuralFeature(EcoreMappingToXMI.DERIVED).getDefaultValue() != tom___derived?"derived=\"" + tom___derived+ "\" ":"") + 
+            ((Boolean)tom___a.eClass().getEStructuralFeature("iD").getDefaultValue() != tom___iD?"iD=\"" + tom___iD+ "\" ":"") + 
             ">");
         sb.append(parse( (org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EAnnotation>)(( org.eclipse.emf.ecore.EAttribute )eo).eGet((( org.eclipse.emf.ecore.EAttribute )eo).eClass().getEStructuralFeature("eAnnotations")) ));
-        if(tom_eGenericType!= null && (tom_eGenericType.getEClassifier() != tom_eType|| tom_eType.getETypeParameters().size() >0)){
-          sb.append(parse(tom_eGenericType, false));
+        if(tom___eGenericType!= null && (tom___eGenericType.getEClassifier() != tom___eType|| tom___eType.getETypeParameters().size() >0)){
+          sb.append(parse(tom___eGenericType, false));
         }
         sb.append("</eStructuralFeatures>");
-      }}}}}
+      }}}}
 
     return sb.toString();
   }
@@ -256,38 +256,38 @@ public class EcoreMappingToXMI {
   
   public static String parse(EReference eo){
     StringBuffer sb=new StringBuffer();
-    {{if ( eo instanceof org.eclipse.emf.ecore.EReference ) {if ( (( org.eclipse.emf.ecore.EReference )eo) instanceof org.eclipse.emf.ecore.EReference ) {if ( (( org.eclipse.emf.ecore.EReference )(( org.eclipse.emf.ecore.EReference )eo)) instanceof org.eclipse.emf.ecore.EReference ) { boolean  tom_ordered= (java.lang.Boolean)(( org.eclipse.emf.ecore.EReference )eo).eGet((( org.eclipse.emf.ecore.EReference )eo).eClass().getEStructuralFeature("ordered")) ; boolean  tom_unique= (java.lang.Boolean)(( org.eclipse.emf.ecore.EReference )eo).eGet((( org.eclipse.emf.ecore.EReference )eo).eClass().getEStructuralFeature("unique")) ; int  tom_lowerBound= (java.lang.Integer)(( org.eclipse.emf.ecore.EReference )eo).eGet((( org.eclipse.emf.ecore.EReference )eo).eClass().getEStructuralFeature("lowerBound")) ; int  tom_upperBound= (java.lang.Integer)(( org.eclipse.emf.ecore.EReference )eo).eGet((( org.eclipse.emf.ecore.EReference )eo).eClass().getEStructuralFeature("upperBound")) ; org.eclipse.emf.ecore.EClassifier  tom_eType= (org.eclipse.emf.ecore.EClassifier)(( org.eclipse.emf.ecore.EReference )eo).eGet((( org.eclipse.emf.ecore.EReference )eo).eClass().getEStructuralFeature("eType")) ; org.eclipse.emf.ecore.EGenericType  tom_eGenericType= (org.eclipse.emf.ecore.EGenericType)(( org.eclipse.emf.ecore.EReference )eo).eGet((( org.eclipse.emf.ecore.EReference )eo).eClass().getEStructuralFeature("eGenericType")) ; boolean  tom_changeable= (java.lang.Boolean)(( org.eclipse.emf.ecore.EReference )eo).eGet((( org.eclipse.emf.ecore.EReference )eo).eClass().getEStructuralFeature("changeable")) ; boolean  tom__volatile= (java.lang.Boolean)(( org.eclipse.emf.ecore.EReference )eo).eGet((( org.eclipse.emf.ecore.EReference )eo).eClass().getEStructuralFeature("volatile")) ; boolean  tom__transient= (java.lang.Boolean)(( org.eclipse.emf.ecore.EReference )eo).eGet((( org.eclipse.emf.ecore.EReference )eo).eClass().getEStructuralFeature("transient")) ; String  tom_defaultValueLiteral= (java.lang.String)(( org.eclipse.emf.ecore.EReference )eo).eGet((( org.eclipse.emf.ecore.EReference )eo).eClass().getEStructuralFeature("defaultValueLiteral")) ; boolean  tom_unsettable= (java.lang.Boolean)(( org.eclipse.emf.ecore.EReference )eo).eGet((( org.eclipse.emf.ecore.EReference )eo).eClass().getEStructuralFeature("unsettable")) ; boolean  tom_derived= (java.lang.Boolean)(( org.eclipse.emf.ecore.EReference )eo).eGet((( org.eclipse.emf.ecore.EReference )eo).eClass().getEStructuralFeature("derived")) ; boolean  tom_containment= (java.lang.Boolean)(( org.eclipse.emf.ecore.EReference )eo).eGet((( org.eclipse.emf.ecore.EReference )eo).eClass().getEStructuralFeature("containment")) ; boolean  tom_resolveProxies= (java.lang.Boolean)(( org.eclipse.emf.ecore.EReference )eo).eGet((( org.eclipse.emf.ecore.EReference )eo).eClass().getEStructuralFeature("resolveProxies")) ; org.eclipse.emf.ecore.EReference  tom_eOpposite= (org.eclipse.emf.ecore.EReference)(( org.eclipse.emf.ecore.EReference )eo).eGet((( org.eclipse.emf.ecore.EReference )eo).eClass().getEStructuralFeature("eOpposite")) ; org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EAttribute>  tom_eKeys= (org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EAttribute>)(( org.eclipse.emf.ecore.EReference )eo).eGet((( org.eclipse.emf.ecore.EReference )eo).eClass().getEStructuralFeature("eKeys")) ; org.eclipse.emf.ecore.EReference  tom_r=(( org.eclipse.emf.ecore.EReference )eo);
+    { /* unamed block */{ /* unamed block */if ( eo instanceof org.eclipse.emf.ecore.EReference ) {if ( (( org.eclipse.emf.ecore.EReference )eo) instanceof org.eclipse.emf.ecore.EReference ) { boolean  tom___ordered= (java.lang.Boolean)(( org.eclipse.emf.ecore.EReference )eo).eGet((( org.eclipse.emf.ecore.EReference )eo).eClass().getEStructuralFeature("ordered")) ; boolean  tom___unique= (java.lang.Boolean)(( org.eclipse.emf.ecore.EReference )eo).eGet((( org.eclipse.emf.ecore.EReference )eo).eClass().getEStructuralFeature("unique")) ; int  tom___lowerBound= (java.lang.Integer)(( org.eclipse.emf.ecore.EReference )eo).eGet((( org.eclipse.emf.ecore.EReference )eo).eClass().getEStructuralFeature("lowerBound")) ; int  tom___upperBound= (java.lang.Integer)(( org.eclipse.emf.ecore.EReference )eo).eGet((( org.eclipse.emf.ecore.EReference )eo).eClass().getEStructuralFeature("upperBound")) ; org.eclipse.emf.ecore.EClassifier  tom___eType= (org.eclipse.emf.ecore.EClassifier)(( org.eclipse.emf.ecore.EReference )eo).eGet((( org.eclipse.emf.ecore.EReference )eo).eClass().getEStructuralFeature("eType")) ; org.eclipse.emf.ecore.EGenericType  tom___eGenericType= (org.eclipse.emf.ecore.EGenericType)(( org.eclipse.emf.ecore.EReference )eo).eGet((( org.eclipse.emf.ecore.EReference )eo).eClass().getEStructuralFeature("eGenericType")) ; boolean  tom___changeable= (java.lang.Boolean)(( org.eclipse.emf.ecore.EReference )eo).eGet((( org.eclipse.emf.ecore.EReference )eo).eClass().getEStructuralFeature("changeable")) ; boolean  tom____volatile= (java.lang.Boolean)(( org.eclipse.emf.ecore.EReference )eo).eGet((( org.eclipse.emf.ecore.EReference )eo).eClass().getEStructuralFeature("volatile")) ; boolean  tom____transient= (java.lang.Boolean)(( org.eclipse.emf.ecore.EReference )eo).eGet((( org.eclipse.emf.ecore.EReference )eo).eClass().getEStructuralFeature("transient")) ; String  tom___defaultValueLiteral= (java.lang.String)(( org.eclipse.emf.ecore.EReference )eo).eGet((( org.eclipse.emf.ecore.EReference )eo).eClass().getEStructuralFeature("defaultValueLiteral")) ; boolean  tom___unsettable= (java.lang.Boolean)(( org.eclipse.emf.ecore.EReference )eo).eGet((( org.eclipse.emf.ecore.EReference )eo).eClass().getEStructuralFeature("unsettable")) ; boolean  tom___derived= (java.lang.Boolean)(( org.eclipse.emf.ecore.EReference )eo).eGet((( org.eclipse.emf.ecore.EReference )eo).eClass().getEStructuralFeature("derived")) ; boolean  tom___containment= (java.lang.Boolean)(( org.eclipse.emf.ecore.EReference )eo).eGet((( org.eclipse.emf.ecore.EReference )eo).eClass().getEStructuralFeature("containment")) ; boolean  tom___resolveProxies= (java.lang.Boolean)(( org.eclipse.emf.ecore.EReference )eo).eGet((( org.eclipse.emf.ecore.EReference )eo).eClass().getEStructuralFeature("resolveProxies")) ; org.eclipse.emf.ecore.EReference  tom___eOpposite= (org.eclipse.emf.ecore.EReference)(( org.eclipse.emf.ecore.EReference )eo).eGet((( org.eclipse.emf.ecore.EReference )eo).eClass().getEStructuralFeature("eOpposite")) ; org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EAttribute>  tom___eKeys= (org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EAttribute>)(( org.eclipse.emf.ecore.EReference )eo).eGet((( org.eclipse.emf.ecore.EReference )eo).eClass().getEStructuralFeature("eKeys")) ; org.eclipse.emf.ecore.EReference  tom___r=(( org.eclipse.emf.ecore.EReference )eo);
 
         StringBuffer sb2=new StringBuffer();
-      {{if ( tom_eKeys instanceof org.eclipse.emf.common.util.EList<?> && (((org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EAttribute>)tom_eKeys).size() == 0 || (((org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EAttribute>)tom_eKeys).size()>0 && ((org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EAttribute>)tom_eKeys).get(0) instanceof org.eclipse.emf.ecore.EAttribute)) ) {if ( (( org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EAttribute> )(( org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EAttribute> )tom_eKeys)) instanceof org.eclipse.emf.common.util.EList<?> && ((( org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EAttribute> )(( org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EAttribute> )tom_eKeys)).size() == 0 || ((( org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EAttribute> )(( org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EAttribute> )tom_eKeys)).size()>0 && (( org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EAttribute> )(( org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EAttribute> )tom_eKeys)).get(0) instanceof org.eclipse.emf.ecore.EAttribute)) ) {int tomMatch9_end_5=0;do {{if (!(tomMatch9_end_5 >=  (( org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EAttribute> )tom_eKeys).size() )) { org.eclipse.emf.ecore.EAttribute  tomMatch9_23= (( org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EAttribute> )tom_eKeys).get(tomMatch9_end_5) ;if ( tomMatch9_23 instanceof org.eclipse.emf.ecore.EAttribute ) {if ( (( org.eclipse.emf.ecore.EAttribute )tomMatch9_23) instanceof org.eclipse.emf.ecore.EAttribute ) {
+      { /* unamed block */{ /* unamed block */if ( tom___eKeys instanceof org.eclipse.emf.common.util.EList<?> && (((org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EAttribute>)tom___eKeys).size() == 0 || (((org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EAttribute>)tom___eKeys).size()>0 && ((org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EAttribute>)tom___eKeys).get(0) instanceof org.eclipse.emf.ecore.EAttribute)) ) {if ( (( org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EAttribute> )tom___eKeys) instanceof org.eclipse.emf.common.util.EList<?> && ((( org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EAttribute> )tom___eKeys).size() == 0 || ((( org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EAttribute> )tom___eKeys).size()>0 && (( org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EAttribute> )tom___eKeys).get(0) instanceof org.eclipse.emf.ecore.EAttribute)) ) {int tomMatch9_end_5=0;do {{ /* unamed block */if (!(tomMatch9_end_5 >=  (( org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EAttribute> )tom___eKeys).size() )) { org.eclipse.emf.ecore.EAttribute  tomMatch9_23= (( org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EAttribute> )tom___eKeys).get(tomMatch9_end_5) ;if ( (( org.eclipse.emf.ecore.EAttribute )tomMatch9_23) instanceof org.eclipse.emf.ecore.EAttribute ) {
 
         sb2.append("#//" + ( (org.eclipse.emf.ecore.EClassifier)tomMatch9_23.eGet(tomMatch9_23.eClass().getEStructuralFeature("eType")) ).getName() + "/" +  (java.lang.String)tomMatch9_23.eGet(tomMatch9_23.eClass().getEStructuralFeature("name")) + " ");
-        }}}tomMatch9_end_5=tomMatch9_end_5 + 1;}} while(!(tomMatch9_end_5 >  (( org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EAttribute> )tom_eKeys).size() ));}}}}
+        }}tomMatch9_end_5=tomMatch9_end_5 + 1;}} while(!(tomMatch9_end_5 >  (( org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EAttribute> )tom___eKeys).size() ));}}}}
 
       sb.append("<eStructuralFeatures xsi:type=\"ecore:EReference\" " + 
         "name=\"" +  (java.lang.String)(( org.eclipse.emf.ecore.EReference )eo).eGet((( org.eclipse.emf.ecore.EReference )eo).eClass().getEStructuralFeature("name")) + "\" " + 
-        ((Boolean)tom_r.eClass().getEStructuralFeature(EcoreMappingToXMI.ORDERED).getDefaultValue() != tom_ordered?"ordered=\"" + tom_ordered+ "\" ":"") + 
-        ((Boolean)tom_r.eClass().getEStructuralFeature(EcoreMappingToXMI.UNIQUE).getDefaultValue() != tom_unique?"unique=\"" + tom_unique+ "\" ":"") + 
-        ((Integer)tom_r.eClass().getEStructuralFeature(EcoreMappingToXMI.LOWERBOUND).getDefaultValue() != tom_lowerBound?"lowerBound=\"" + tom_lowerBound+ "\" ":"") + 
-        ((Integer)tom_r.eClass().getEStructuralFeature(EcoreMappingToXMI.UPPERBOUND).getDefaultValue() != tom_upperBound?"upperBound=\"" + tom_upperBound+ "\" ":"") + 
-        (tom_eType!= null&&tom_eType.getETypeParameters().size() == 0?"eType=\"#//" + tom_eType.getName() + "\" ":"") +
-        ((Boolean)tom_r.eClass().getEStructuralFeature(EcoreMappingToXMI.CHANGEABLE).getDefaultValue() != tom_changeable?"changeable=\"" + tom_changeable+ "\" ":"") + 
-        ((Boolean)tom_r.eClass().getEStructuralFeature(EcoreMappingToXMI.VOLATILE).getDefaultValue() != tom__volatile?"volatile=\"" + tom__volatile+ "\" ":"") + 
-        ((Boolean)tom_r.eClass().getEStructuralFeature(EcoreMappingToXMI.TRANSIENT).getDefaultValue() != tom__transient?"transient=\"" + tom__transient+ "\" ":"") + 
-        (tom_defaultValueLiteral!= null?"defaultValueLiteral=\""+tom_defaultValueLiteral+ "\" ":"") +
-        ((Boolean)tom_r.eClass().getEStructuralFeature(EcoreMappingToXMI.UNSETTABLE).getDefaultValue() != tom_unsettable?"unsettable=\"" + tom_unsettable+ "\" ":"") + 
-        ((Boolean)tom_r.eClass().getEStructuralFeature(EcoreMappingToXMI.DERIVED).getDefaultValue() != tom_derived?"derived=\"" + tom_derived+ "\" ":"") + 
-        ((Boolean)tom_r.eClass().getEStructuralFeature("containment").getDefaultValue() != tom_containment?"containment=\"" + tom_containment+ "\" ":"") + 
-        ((Boolean)tom_r.eClass().getEStructuralFeature("resolveProxies").getDefaultValue() != tom_resolveProxies?"resolveProxies=\"" + tom_resolveProxies+ "\" ":"") + 
-        (tom_eOpposite!= null?"eOpposite=\"#//" + tom_eType.getName() + "/" + tom_eOpposite.getName() + "\" ":"") + 
+        ((Boolean)tom___r.eClass().getEStructuralFeature(EcoreMappingToXMI.ORDERED).getDefaultValue() != tom___ordered?"ordered=\"" + tom___ordered+ "\" ":"") + 
+        ((Boolean)tom___r.eClass().getEStructuralFeature(EcoreMappingToXMI.UNIQUE).getDefaultValue() != tom___unique?"unique=\"" + tom___unique+ "\" ":"") + 
+        ((Integer)tom___r.eClass().getEStructuralFeature(EcoreMappingToXMI.LOWERBOUND).getDefaultValue() != tom___lowerBound?"lowerBound=\"" + tom___lowerBound+ "\" ":"") + 
+        ((Integer)tom___r.eClass().getEStructuralFeature(EcoreMappingToXMI.UPPERBOUND).getDefaultValue() != tom___upperBound?"upperBound=\"" + tom___upperBound+ "\" ":"") + 
+        (tom___eType!= null&&tom___eType.getETypeParameters().size() == 0?"eType=\"#//" + tom___eType.getName() + "\" ":"") +
+        ((Boolean)tom___r.eClass().getEStructuralFeature(EcoreMappingToXMI.CHANGEABLE).getDefaultValue() != tom___changeable?"changeable=\"" + tom___changeable+ "\" ":"") + 
+        ((Boolean)tom___r.eClass().getEStructuralFeature(EcoreMappingToXMI.VOLATILE).getDefaultValue() != tom____volatile?"volatile=\"" + tom____volatile+ "\" ":"") + 
+        ((Boolean)tom___r.eClass().getEStructuralFeature(EcoreMappingToXMI.TRANSIENT).getDefaultValue() != tom____transient?"transient=\"" + tom____transient+ "\" ":"") + 
+        (tom___defaultValueLiteral!= null?"defaultValueLiteral=\""+tom___defaultValueLiteral+ "\" ":"") +
+        ((Boolean)tom___r.eClass().getEStructuralFeature(EcoreMappingToXMI.UNSETTABLE).getDefaultValue() != tom___unsettable?"unsettable=\"" + tom___unsettable+ "\" ":"") + 
+        ((Boolean)tom___r.eClass().getEStructuralFeature(EcoreMappingToXMI.DERIVED).getDefaultValue() != tom___derived?"derived=\"" + tom___derived+ "\" ":"") + 
+        ((Boolean)tom___r.eClass().getEStructuralFeature("containment").getDefaultValue() != tom___containment?"containment=\"" + tom___containment+ "\" ":"") + 
+        ((Boolean)tom___r.eClass().getEStructuralFeature("resolveProxies").getDefaultValue() != tom___resolveProxies?"resolveProxies=\"" + tom___resolveProxies+ "\" ":"") + 
+        (tom___eOpposite!= null?"eOpposite=\"#//" + tom___eType.getName() + "/" + tom___eOpposite.getName() + "\" ":"") + 
         (sb2.length()>0?"eKeys=\"" + sb2 + "\" ":"") + 
         ">");
         sb.append(parse( (org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EAnnotation>)(( org.eclipse.emf.ecore.EReference )eo).eGet((( org.eclipse.emf.ecore.EReference )eo).eClass().getEStructuralFeature("eAnnotations")) ));
-        if(tom_eGenericType!= null && (tom_eGenericType.getEClassifier() != tom_eType|| tom_eType.getETypeParameters().size() >0)){
-          sb.append(parse(tom_eGenericType, false));
+        if(tom___eGenericType!= null && (tom___eGenericType.getEClassifier() != tom___eType|| tom___eType.getETypeParameters().size() >0)){
+          sb.append(parse(tom___eGenericType, false));
         }
         sb.append("</eStructuralFeatures>");
-      }}}}}
+      }}}}
 
     return sb.toString();
   }
@@ -301,17 +301,17 @@ public class EcoreMappingToXMI {
   
   public static String parse(EGenericType eo, boolean argument){
     StringBuffer sb=new StringBuffer();
-    {{if ( eo instanceof org.eclipse.emf.ecore.EGenericType ) {if ( (( org.eclipse.emf.ecore.EGenericType )eo) instanceof org.eclipse.emf.ecore.EGenericType ) {if ( (( org.eclipse.emf.ecore.EGenericType )(( org.eclipse.emf.ecore.EGenericType )eo)) instanceof org.eclipse.emf.ecore.EGenericType ) { org.eclipse.emf.ecore.EClassifier  tom_eClassifier= (org.eclipse.emf.ecore.EClassifier)(( org.eclipse.emf.ecore.EGenericType )eo).eGet((( org.eclipse.emf.ecore.EGenericType )eo).eClass().getEStructuralFeature("eClassifier")) ;
+    { /* unamed block */{ /* unamed block */if ( eo instanceof org.eclipse.emf.ecore.EGenericType ) {if ( (( org.eclipse.emf.ecore.EGenericType )eo) instanceof org.eclipse.emf.ecore.EGenericType ) { org.eclipse.emf.ecore.EClassifier  tom___eClassifier= (org.eclipse.emf.ecore.EClassifier)(( org.eclipse.emf.ecore.EGenericType )eo).eGet((( org.eclipse.emf.ecore.EGenericType )eo).eClass().getEStructuralFeature("eClassifier")) ;
 
         sb.append((!argument?"<eGenericType ":"<eTypeArguments ") + 
-            (tom_eClassifier!= null?"eClassifier=\"#//" + tom_eClassifier.getName() + "\"":"") + 
+            (tom___eClassifier!= null?"eClassifier=\"#//" + tom___eClassifier.getName() + "\"":"") + 
             ">");
         sb.append(parse( (org.eclipse.emf.ecore.EGenericType)(( org.eclipse.emf.ecore.EGenericType )eo).eGet((( org.eclipse.emf.ecore.EGenericType )eo).eClass().getEStructuralFeature("eUpperBound")) , false));
         sb.append(parse( (org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EGenericType>)(( org.eclipse.emf.ecore.EGenericType )eo).eGet((( org.eclipse.emf.ecore.EGenericType )eo).eClass().getEStructuralFeature("eTypeArguments")) ));
         sb.append(parse( (org.eclipse.emf.ecore.EGenericType)(( org.eclipse.emf.ecore.EGenericType )eo).eGet((( org.eclipse.emf.ecore.EGenericType )eo).eClass().getEStructuralFeature("eLowerBound")) , false));
         sb.append(parse( (org.eclipse.emf.ecore.ETypeParameter)(( org.eclipse.emf.ecore.EGenericType )eo).eGet((( org.eclipse.emf.ecore.EGenericType )eo).eClass().getEStructuralFeature("eTypeParameter")) ));
         sb.append(!argument?"</eGenericType>":"</eTypeArguments>");
-      }}}}}
+      }}}}
 
     return sb.toString();
   }
@@ -324,32 +324,32 @@ public class EcoreMappingToXMI {
   
   public static String parse(EOperation eo){
     StringBuffer sb=new StringBuffer();
-    {{if ( eo instanceof org.eclipse.emf.ecore.EOperation ) {if ( (( org.eclipse.emf.ecore.EOperation )eo) instanceof org.eclipse.emf.ecore.EOperation ) {if ( (( org.eclipse.emf.ecore.EOperation )(( org.eclipse.emf.ecore.EOperation )eo)) instanceof org.eclipse.emf.ecore.EOperation ) { boolean  tom_ordered= (java.lang.Boolean)(( org.eclipse.emf.ecore.EOperation )eo).eGet((( org.eclipse.emf.ecore.EOperation )eo).eClass().getEStructuralFeature("ordered")) ; boolean  tom_unique= (java.lang.Boolean)(( org.eclipse.emf.ecore.EOperation )eo).eGet((( org.eclipse.emf.ecore.EOperation )eo).eClass().getEStructuralFeature("unique")) ; int  tom_lowerBound= (java.lang.Integer)(( org.eclipse.emf.ecore.EOperation )eo).eGet((( org.eclipse.emf.ecore.EOperation )eo).eClass().getEStructuralFeature("lowerBound")) ; int  tom_upperBound= (java.lang.Integer)(( org.eclipse.emf.ecore.EOperation )eo).eGet((( org.eclipse.emf.ecore.EOperation )eo).eClass().getEStructuralFeature("upperBound")) ; org.eclipse.emf.ecore.EClassifier  tom_eType= (org.eclipse.emf.ecore.EClassifier)(( org.eclipse.emf.ecore.EOperation )eo).eGet((( org.eclipse.emf.ecore.EOperation )eo).eClass().getEStructuralFeature("eType")) ; org.eclipse.emf.ecore.EGenericType  tom_eGenericType= (org.eclipse.emf.ecore.EGenericType)(( org.eclipse.emf.ecore.EOperation )eo).eGet((( org.eclipse.emf.ecore.EOperation )eo).eClass().getEStructuralFeature("eGenericType")) ; org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EClassifier>  tom_eExceptions= (org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EClassifier>)(( org.eclipse.emf.ecore.EOperation )eo).eGet((( org.eclipse.emf.ecore.EOperation )eo).eClass().getEStructuralFeature("eExceptions")) ; org.eclipse.emf.ecore.EOperation  tom_o=(( org.eclipse.emf.ecore.EOperation )eo);
+    { /* unamed block */{ /* unamed block */if ( eo instanceof org.eclipse.emf.ecore.EOperation ) {if ( (( org.eclipse.emf.ecore.EOperation )eo) instanceof org.eclipse.emf.ecore.EOperation ) { boolean  tom___ordered= (java.lang.Boolean)(( org.eclipse.emf.ecore.EOperation )eo).eGet((( org.eclipse.emf.ecore.EOperation )eo).eClass().getEStructuralFeature("ordered")) ; boolean  tom___unique= (java.lang.Boolean)(( org.eclipse.emf.ecore.EOperation )eo).eGet((( org.eclipse.emf.ecore.EOperation )eo).eClass().getEStructuralFeature("unique")) ; int  tom___lowerBound= (java.lang.Integer)(( org.eclipse.emf.ecore.EOperation )eo).eGet((( org.eclipse.emf.ecore.EOperation )eo).eClass().getEStructuralFeature("lowerBound")) ; int  tom___upperBound= (java.lang.Integer)(( org.eclipse.emf.ecore.EOperation )eo).eGet((( org.eclipse.emf.ecore.EOperation )eo).eClass().getEStructuralFeature("upperBound")) ; org.eclipse.emf.ecore.EClassifier  tom___eType= (org.eclipse.emf.ecore.EClassifier)(( org.eclipse.emf.ecore.EOperation )eo).eGet((( org.eclipse.emf.ecore.EOperation )eo).eClass().getEStructuralFeature("eType")) ; org.eclipse.emf.ecore.EGenericType  tom___eGenericType= (org.eclipse.emf.ecore.EGenericType)(( org.eclipse.emf.ecore.EOperation )eo).eGet((( org.eclipse.emf.ecore.EOperation )eo).eClass().getEStructuralFeature("eGenericType")) ; org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EClassifier>  tom___eExceptions= (org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EClassifier>)(( org.eclipse.emf.ecore.EOperation )eo).eGet((( org.eclipse.emf.ecore.EOperation )eo).eClass().getEStructuralFeature("eExceptions")) ; org.eclipse.emf.ecore.EOperation  tom___o=(( org.eclipse.emf.ecore.EOperation )eo);
 
         StringBuffer sb2 = new StringBuffer();
-        {{if ( tom_eExceptions instanceof org.eclipse.emf.common.util.EList<?> && (((org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EClassifier>)tom_eExceptions).size() == 0 || (((org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EClassifier>)tom_eExceptions).size()>0 && ((org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EClassifier>)tom_eExceptions).get(0) instanceof org.eclipse.emf.ecore.EClassifier)) ) {if ( (( org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EClassifier> )(( org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EClassifier> )tom_eExceptions)) instanceof org.eclipse.emf.common.util.EList<?> && ((( org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EClassifier> )(( org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EClassifier> )tom_eExceptions)).size() == 0 || ((( org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EClassifier> )(( org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EClassifier> )tom_eExceptions)).size()>0 && (( org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EClassifier> )(( org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EClassifier> )tom_eExceptions)).get(0) instanceof org.eclipse.emf.ecore.EClassifier)) ) {int tomMatch12_end_5=0;do {{if (!(tomMatch12_end_5 >=  (( org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EClassifier> )tom_eExceptions).size() )) {
+        { /* unamed block */{ /* unamed block */if ( tom___eExceptions instanceof org.eclipse.emf.common.util.EList<?> && (((org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EClassifier>)tom___eExceptions).size() == 0 || (((org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EClassifier>)tom___eExceptions).size()>0 && ((org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EClassifier>)tom___eExceptions).get(0) instanceof org.eclipse.emf.ecore.EClassifier)) ) {if ( (( org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EClassifier> )tom___eExceptions) instanceof org.eclipse.emf.common.util.EList<?> && ((( org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EClassifier> )tom___eExceptions).size() == 0 || ((( org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EClassifier> )tom___eExceptions).size()>0 && (( org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EClassifier> )tom___eExceptions).get(0) instanceof org.eclipse.emf.ecore.EClassifier)) ) {int tomMatch12_end_5=0;do {{ /* unamed block */if (!(tomMatch12_end_5 >=  (( org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EClassifier> )tom___eExceptions).size() )) {
 
-              sb2.append("#//" +  (( org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EClassifier> )tom_eExceptions).get(tomMatch12_end_5) .getName() + " ");
-            }tomMatch12_end_5=tomMatch12_end_5 + 1;}} while(!(tomMatch12_end_5 >  (( org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EClassifier> )tom_eExceptions).size() ));}}}}
+              sb2.append("#//" +  (( org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EClassifier> )tom___eExceptions).get(tomMatch12_end_5) .getName() + " ");
+            }tomMatch12_end_5=tomMatch12_end_5 + 1;}} while(!(tomMatch12_end_5 >  (( org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EClassifier> )tom___eExceptions).size() ));}}}}
 
         sb.append("<eOperations " +
             "name=\"" +  (java.lang.String)(( org.eclipse.emf.ecore.EOperation )eo).eGet((( org.eclipse.emf.ecore.EOperation )eo).eClass().getEStructuralFeature("name")) + "\" " +
-            ((Boolean)tom_o.eClass().getEStructuralFeature(EcoreMappingToXMI.ORDERED).getDefaultValue() != tom_ordered?"ordered=\"" + tom_ordered+ "\" ":"") + 
-            ((Boolean)tom_o.eClass().getEStructuralFeature(EcoreMappingToXMI.UNIQUE).getDefaultValue() != tom_unique?"unique=\"" + tom_unique+ "\" ":"") + 
-            ((Integer)tom_o.eClass().getEStructuralFeature(EcoreMappingToXMI.LOWERBOUND).getDefaultValue() != tom_lowerBound?"lowerBound=\"" + tom_lowerBound+ "\" ":"") + 
-            ((Integer)tom_o.eClass().getEStructuralFeature(EcoreMappingToXMI.UPPERBOUND).getDefaultValue() != tom_upperBound?"upperBound=\"" + tom_upperBound+ "\" ":"") + 
-            (tom_eType!= null&&tom_eType.getETypeParameters().size() == 0?"eType=\"#//" + tom_eType.getName() + "\" ":"") +
+            ((Boolean)tom___o.eClass().getEStructuralFeature(EcoreMappingToXMI.ORDERED).getDefaultValue() != tom___ordered?"ordered=\"" + tom___ordered+ "\" ":"") + 
+            ((Boolean)tom___o.eClass().getEStructuralFeature(EcoreMappingToXMI.UNIQUE).getDefaultValue() != tom___unique?"unique=\"" + tom___unique+ "\" ":"") + 
+            ((Integer)tom___o.eClass().getEStructuralFeature(EcoreMappingToXMI.LOWERBOUND).getDefaultValue() != tom___lowerBound?"lowerBound=\"" + tom___lowerBound+ "\" ":"") + 
+            ((Integer)tom___o.eClass().getEStructuralFeature(EcoreMappingToXMI.UPPERBOUND).getDefaultValue() != tom___upperBound?"upperBound=\"" + tom___upperBound+ "\" ":"") + 
+            (tom___eType!= null&&tom___eType.getETypeParameters().size() == 0?"eType=\"#//" + tom___eType.getName() + "\" ":"") +
             (sb2.length() > 0?"eExceptions=\"" + sb2 + "\" ":"") + 
             ">");
         sb.append(parse( (org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EAnnotation>)(( org.eclipse.emf.ecore.EOperation )eo).eGet((( org.eclipse.emf.ecore.EOperation )eo).eClass().getEStructuralFeature("eAnnotations")) ));
-        if(tom_eGenericType!= null && (tom_eGenericType.getEClassifier() != tom_eType|| tom_eType.getETypeParameters().size() >0)){
-          sb.append(parse(tom_eGenericType, false));
+        if(tom___eGenericType!= null && (tom___eGenericType.getEClassifier() != tom___eType|| tom___eType.getETypeParameters().size() >0)){
+          sb.append(parse(tom___eGenericType, false));
         }
         sb.append(parse( (org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.ETypeParameter>)(( org.eclipse.emf.ecore.EOperation )eo).eGet((( org.eclipse.emf.ecore.EOperation )eo).eClass().getEStructuralFeature("eTypeParameters")) ));
         sb.append(parse( (org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EParameter>)(( org.eclipse.emf.ecore.EOperation )eo).eGet((( org.eclipse.emf.ecore.EOperation )eo).eClass().getEStructuralFeature("eParameters")) ));
         sb.append(parse( (org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EGenericType>)(( org.eclipse.emf.ecore.EOperation )eo).eGet((( org.eclipse.emf.ecore.EOperation )eo).eClass().getEStructuralFeature("eGenericExceptions")) ));
         sb.append("</eOperations>");
-      }}}}}
+      }}}}
 
     return sb.toString();
   }
@@ -362,21 +362,21 @@ public class EcoreMappingToXMI {
   
   public static String parse(EParameter eo){
     StringBuffer sb=new StringBuffer();
-    {{if ( eo instanceof org.eclipse.emf.ecore.EParameter ) {if ( (( org.eclipse.emf.ecore.EParameter )eo) instanceof org.eclipse.emf.ecore.EParameter ) {if ( (( org.eclipse.emf.ecore.EParameter )(( org.eclipse.emf.ecore.EParameter )eo)) instanceof org.eclipse.emf.ecore.EParameter ) { boolean  tom_ordered= (java.lang.Boolean)(( org.eclipse.emf.ecore.EParameter )eo).eGet((( org.eclipse.emf.ecore.EParameter )eo).eClass().getEStructuralFeature("ordered")) ; boolean  tom_unique= (java.lang.Boolean)(( org.eclipse.emf.ecore.EParameter )eo).eGet((( org.eclipse.emf.ecore.EParameter )eo).eClass().getEStructuralFeature("unique")) ; int  tom_lowerBound= (java.lang.Integer)(( org.eclipse.emf.ecore.EParameter )eo).eGet((( org.eclipse.emf.ecore.EParameter )eo).eClass().getEStructuralFeature("lowerBound")) ; int  tom_upperBound= (java.lang.Integer)(( org.eclipse.emf.ecore.EParameter )eo).eGet((( org.eclipse.emf.ecore.EParameter )eo).eClass().getEStructuralFeature("upperBound")) ; org.eclipse.emf.ecore.EClassifier  tom_eType= (org.eclipse.emf.ecore.EClassifier)(( org.eclipse.emf.ecore.EParameter )eo).eGet((( org.eclipse.emf.ecore.EParameter )eo).eClass().getEStructuralFeature("eType")) ; org.eclipse.emf.ecore.EGenericType  tom_eGenericType= (org.eclipse.emf.ecore.EGenericType)(( org.eclipse.emf.ecore.EParameter )eo).eGet((( org.eclipse.emf.ecore.EParameter )eo).eClass().getEStructuralFeature("eGenericType")) ; org.eclipse.emf.ecore.EParameter  tom_p=(( org.eclipse.emf.ecore.EParameter )eo);
+    { /* unamed block */{ /* unamed block */if ( eo instanceof org.eclipse.emf.ecore.EParameter ) {if ( (( org.eclipse.emf.ecore.EParameter )eo) instanceof org.eclipse.emf.ecore.EParameter ) { boolean  tom___ordered= (java.lang.Boolean)(( org.eclipse.emf.ecore.EParameter )eo).eGet((( org.eclipse.emf.ecore.EParameter )eo).eClass().getEStructuralFeature("ordered")) ; boolean  tom___unique= (java.lang.Boolean)(( org.eclipse.emf.ecore.EParameter )eo).eGet((( org.eclipse.emf.ecore.EParameter )eo).eClass().getEStructuralFeature("unique")) ; int  tom___lowerBound= (java.lang.Integer)(( org.eclipse.emf.ecore.EParameter )eo).eGet((( org.eclipse.emf.ecore.EParameter )eo).eClass().getEStructuralFeature("lowerBound")) ; int  tom___upperBound= (java.lang.Integer)(( org.eclipse.emf.ecore.EParameter )eo).eGet((( org.eclipse.emf.ecore.EParameter )eo).eClass().getEStructuralFeature("upperBound")) ; org.eclipse.emf.ecore.EClassifier  tom___eType= (org.eclipse.emf.ecore.EClassifier)(( org.eclipse.emf.ecore.EParameter )eo).eGet((( org.eclipse.emf.ecore.EParameter )eo).eClass().getEStructuralFeature("eType")) ; org.eclipse.emf.ecore.EGenericType  tom___eGenericType= (org.eclipse.emf.ecore.EGenericType)(( org.eclipse.emf.ecore.EParameter )eo).eGet((( org.eclipse.emf.ecore.EParameter )eo).eClass().getEStructuralFeature("eGenericType")) ; org.eclipse.emf.ecore.EParameter  tom___p=(( org.eclipse.emf.ecore.EParameter )eo);
 
         sb.append("<eParameters name=\"" +  (java.lang.String)(( org.eclipse.emf.ecore.EParameter )eo).eGet((( org.eclipse.emf.ecore.EParameter )eo).eClass().getEStructuralFeature("name")) + "\" "+
-            ((Boolean)tom_p.eClass().getEStructuralFeature(EcoreMappingToXMI.ORDERED).getDefaultValue() != tom_ordered?"ordered=\"" + tom_ordered+ "\" ":"") + 
-            ((Boolean)tom_p.eClass().getEStructuralFeature(EcoreMappingToXMI.UNIQUE).getDefaultValue() != tom_unique?"unique=\"" + tom_unique+ "\" ":"") + 
-            ((Integer)tom_p.eClass().getEStructuralFeature(EcoreMappingToXMI.LOWERBOUND).getDefaultValue() != tom_lowerBound?"lowerBound=\"" + tom_lowerBound+ "\" ":"") + 
-            ((Integer)tom_p.eClass().getEStructuralFeature(EcoreMappingToXMI.UPPERBOUND).getDefaultValue() != tom_upperBound?"upperBound=\"" + tom_upperBound+ "\" ":"") + 
-            (tom_eType!= null&&tom_eType.getETypeParameters().size() == 0?"eType=\"#//" + tom_eType.getName() + "\" ":"") +
+            ((Boolean)tom___p.eClass().getEStructuralFeature(EcoreMappingToXMI.ORDERED).getDefaultValue() != tom___ordered?"ordered=\"" + tom___ordered+ "\" ":"") + 
+            ((Boolean)tom___p.eClass().getEStructuralFeature(EcoreMappingToXMI.UNIQUE).getDefaultValue() != tom___unique?"unique=\"" + tom___unique+ "\" ":"") + 
+            ((Integer)tom___p.eClass().getEStructuralFeature(EcoreMappingToXMI.LOWERBOUND).getDefaultValue() != tom___lowerBound?"lowerBound=\"" + tom___lowerBound+ "\" ":"") + 
+            ((Integer)tom___p.eClass().getEStructuralFeature(EcoreMappingToXMI.UPPERBOUND).getDefaultValue() != tom___upperBound?"upperBound=\"" + tom___upperBound+ "\" ":"") + 
+            (tom___eType!= null&&tom___eType.getETypeParameters().size() == 0?"eType=\"#//" + tom___eType.getName() + "\" ":"") +
             ">");
         sb.append(parse( (org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EAnnotation>)(( org.eclipse.emf.ecore.EParameter )eo).eGet((( org.eclipse.emf.ecore.EParameter )eo).eClass().getEStructuralFeature("eAnnotations")) ));
-        if(tom_eGenericType!= null && (tom_eGenericType.getEClassifier() != tom_eType|| tom_eType.getETypeParameters().size() >0)){
-            sb.append(parse(tom_eGenericType, false));
+        if(tom___eGenericType!= null && (tom___eGenericType.getEClassifier() != tom___eType|| tom___eType.getETypeParameters().size() >0)){
+            sb.append(parse(tom___eGenericType, false));
           }
         sb.append("</eParameters>");
-      }}}}}
+      }}}}
 
     return sb.toString();
   }
@@ -389,13 +389,13 @@ public class EcoreMappingToXMI {
   
   public static String parse(ETypeParameter eo){
     StringBuffer sb=new StringBuffer();
-    {{if ( eo instanceof org.eclipse.emf.ecore.ETypeParameter ) {if ( (( org.eclipse.emf.ecore.ETypeParameter )eo) instanceof org.eclipse.emf.ecore.ETypeParameter ) {if ( (( org.eclipse.emf.ecore.ETypeParameter )(( org.eclipse.emf.ecore.ETypeParameter )eo)) instanceof org.eclipse.emf.ecore.ETypeParameter ) {
+    { /* unamed block */{ /* unamed block */if ( eo instanceof org.eclipse.emf.ecore.ETypeParameter ) {if ( (( org.eclipse.emf.ecore.ETypeParameter )eo) instanceof org.eclipse.emf.ecore.ETypeParameter ) {
 
         sb.append("<eTypeParameters name=\"" +  (java.lang.String)(( org.eclipse.emf.ecore.ETypeParameter )eo).eGet((( org.eclipse.emf.ecore.ETypeParameter )eo).eClass().getEStructuralFeature("name")) + "\">");
         sb.append(parse( (org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EAnnotation>)(( org.eclipse.emf.ecore.ETypeParameter )eo).eGet((( org.eclipse.emf.ecore.ETypeParameter )eo).eClass().getEStructuralFeature("eAnnotations")) ));
         sb.append(parse( (org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EGenericType>)(( org.eclipse.emf.ecore.ETypeParameter )eo).eGet((( org.eclipse.emf.ecore.ETypeParameter )eo).eClass().getEStructuralFeature("eBounds")) ));
         sb.append("</eTypeParameters>");
-      }}}}}
+      }}}}
 
     return sb.toString();
   }
@@ -408,16 +408,16 @@ public class EcoreMappingToXMI {
   
   public static String parse(EEnumLiteral eo){
     StringBuffer sb=new StringBuffer();
-    {{if ( eo instanceof org.eclipse.emf.ecore.EEnumLiteral ) {if ( (( org.eclipse.emf.ecore.EEnumLiteral )eo) instanceof org.eclipse.emf.ecore.EEnumLiteral ) {if ( (( org.eclipse.emf.ecore.EEnumLiteral )(( org.eclipse.emf.ecore.EEnumLiteral )eo)) instanceof org.eclipse.emf.ecore.EEnumLiteral ) { String  tom_name= (java.lang.String)(( org.eclipse.emf.ecore.EEnumLiteral )eo).eGet((( org.eclipse.emf.ecore.EEnumLiteral )eo).eClass().getEStructuralFeature("name")) ; int  tom_value= (java.lang.Integer)(( org.eclipse.emf.ecore.EEnumLiteral )eo).eGet((( org.eclipse.emf.ecore.EEnumLiteral )eo).eClass().getEStructuralFeature("value")) ; String  tom_literal= (java.lang.String)(( org.eclipse.emf.ecore.EEnumLiteral )eo).eGet((( org.eclipse.emf.ecore.EEnumLiteral )eo).eClass().getEStructuralFeature("literal")) ;
+    { /* unamed block */{ /* unamed block */if ( eo instanceof org.eclipse.emf.ecore.EEnumLiteral ) {if ( (( org.eclipse.emf.ecore.EEnumLiteral )eo) instanceof org.eclipse.emf.ecore.EEnumLiteral ) { String  tom___name= (java.lang.String)(( org.eclipse.emf.ecore.EEnumLiteral )eo).eGet((( org.eclipse.emf.ecore.EEnumLiteral )eo).eClass().getEStructuralFeature("name")) ; int  tom___value= (java.lang.Integer)(( org.eclipse.emf.ecore.EEnumLiteral )eo).eGet((( org.eclipse.emf.ecore.EEnumLiteral )eo).eClass().getEStructuralFeature("value")) ; String  tom___literal= (java.lang.String)(( org.eclipse.emf.ecore.EEnumLiteral )eo).eGet((( org.eclipse.emf.ecore.EEnumLiteral )eo).eClass().getEStructuralFeature("literal")) ;
 
         sb.append("<eLiterals " +
-            "name=\"" + tom_name+ "\" " +
-            ((Integer)(( org.eclipse.emf.ecore.EEnumLiteral )eo).eClass().getEStructuralFeature("value").getDefaultValue() != tom_value?"value=\"" + tom_value+ "\" " : "") +
-            (!tom_literal.equals(tom_name) ? "literal=\"" + tom_literal+ "\" " : "") +
+            "name=\"" + tom___name+ "\" " +
+            ((Integer)(( org.eclipse.emf.ecore.EEnumLiteral )eo).eClass().getEStructuralFeature("value").getDefaultValue() != tom___value?"value=\"" + tom___value+ "\" " : "") +
+            (!tom___literal.equals(tom___name) ? "literal=\"" + tom___literal+ "\" " : "") +
             ">");
         sb.append(parse( (org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EAnnotation>)(( org.eclipse.emf.ecore.EEnumLiteral )eo).eGet((( org.eclipse.emf.ecore.EEnumLiteral )eo).eClass().getEStructuralFeature("eAnnotations")) ));
         sb.append("</eLiterals>");
-      }}}}}
+      }}}}
 
     return sb.toString();
   }
@@ -430,10 +430,10 @@ public class EcoreMappingToXMI {
   
   public static String parse(java.util.Map.Entry<String, String> eo){
     StringBuffer sb=new StringBuffer();
-    {{if ( eo instanceof java.util.Map.Entry<?, ?> ) {if ( (( org.eclipse.emf.ecore.EObject )eo) instanceof java.util.Map.Entry<?, ?> ) {if ( (( org.eclipse.emf.ecore.EObject )(( org.eclipse.emf.ecore.EObject )eo)) instanceof java.util.Map.Entry<?, ?> ) {
+    { /* unamed block */{ /* unamed block */if ( eo instanceof java.util.Map.Entry<?, ?> ) {if ( (( org.eclipse.emf.ecore.EObject )eo) instanceof java.util.Map.Entry<?, ?> ) {
 
         sb.append("<details key=\"" +  (java.lang.String)(( org.eclipse.emf.ecore.EObject )eo).eGet((( org.eclipse.emf.ecore.EObject )eo).eClass().getEStructuralFeature("key")) + "\" value=\"" +  (java.lang.String)(( org.eclipse.emf.ecore.EObject )eo).eGet((( org.eclipse.emf.ecore.EObject )eo).eClass().getEStructuralFeature("value")) + "\"/>");
-      }}}}}
+      }}}}
 
     return sb.toString();
   }
@@ -464,33 +464,33 @@ public class EcoreMappingToXMI {
   
   public static String parse(EList<?> el){
     StringBuffer sb=new StringBuffer();
-    {{if ( el instanceof org.eclipse.emf.common.util.EList<?> && (((org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EObject>)el).size() == 0 || (((org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EObject>)el).size()>0 && ((org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EObject>)el).get(0) instanceof org.eclipse.emf.ecore.EObject)) ) {if ( (( org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EObject> )(( org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EObject> )el)) instanceof org.eclipse.emf.common.util.EList<?> && ((( org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EObject> )(( org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EObject> )el)).size() == 0 || ((( org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EObject> )(( org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EObject> )el)).size()>0 && (( org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EObject> )(( org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EObject> )el)).get(0) instanceof org.eclipse.emf.ecore.EObject)) ) {int tomMatch17_2=0;if (!(tomMatch17_2 >=  (( org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EObject> )el).size() )) { org.eclipse.emf.ecore.EObject  tom_o= (( org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EObject> )el).get(tomMatch17_2) ;
+    { /* unamed block */{ /* unamed block */if ( el instanceof org.eclipse.emf.common.util.EList<?> && (((org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EObject>)el).size() == 0 || (((org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EObject>)el).size()>0 && ((org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EObject>)el).get(0) instanceof org.eclipse.emf.ecore.EObject)) ) {if ( (( org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EObject> )el) instanceof org.eclipse.emf.common.util.EList<?> && ((( org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EObject> )el).size() == 0 || ((( org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EObject> )el).size()>0 && (( org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EObject> )el).get(0) instanceof org.eclipse.emf.ecore.EObject)) ) {int tomMatch17_2=0;if (!(tomMatch17_2 >=  (( org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EObject> )el).size() )) { org.eclipse.emf.ecore.EObject  tom___o= (( org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EObject> )el).get(tomMatch17_2) ;
 
 
-        if((tom_o) instanceof EClassifier){
-          sb.append(parse((EClassifier)tom_o));
-        }else if((tom_o) instanceof EAnnotation){
-          sb.append(parse((EAnnotation)tom_o));
-        }else if((tom_o) instanceof EAttribute){
-          sb.append(parse((EAttribute)tom_o));
-        }else if((tom_o) instanceof EReference){
-          sb.append(parse((EReference)tom_o));
-        }else if((tom_o) instanceof EOperation){
-          sb.append(parse((EOperation)tom_o));
-        }else if((tom_o) instanceof EParameter){
-          sb.append(parse((EParameter)tom_o));
-        }else if((tom_o) instanceof EGenericType){
-          sb.append(parse((EGenericType)tom_o, true));
-        }else if((tom_o) instanceof java.util.Map.Entry<?,?>){
-          sb.append(parse((java.util.Map.Entry<String,String>)tom_o));
-        }else if((tom_o) instanceof ETypeParameter){
-          sb.append(parse((ETypeParameter)tom_o));
-        }else if((tom_o) instanceof EPackage){
-          sb.append(parse((EPackage)tom_o,true));
-        }else if((tom_o) instanceof EEnumLiteral){
-          sb.append(parse((EEnumLiteral)tom_o));
+        if((tom___o) instanceof EClassifier){
+          sb.append(parse((EClassifier)tom___o));
+        }else if((tom___o) instanceof EAnnotation){
+          sb.append(parse((EAnnotation)tom___o));
+        }else if((tom___o) instanceof EAttribute){
+          sb.append(parse((EAttribute)tom___o));
+        }else if((tom___o) instanceof EReference){
+          sb.append(parse((EReference)tom___o));
+        }else if((tom___o) instanceof EOperation){
+          sb.append(parse((EOperation)tom___o));
+        }else if((tom___o) instanceof EParameter){
+          sb.append(parse((EParameter)tom___o));
+        }else if((tom___o) instanceof EGenericType){
+          sb.append(parse((EGenericType)tom___o, true));
+        }else if((tom___o) instanceof java.util.Map.Entry<?,?>){
+          sb.append(parse((java.util.Map.Entry<String,String>)tom___o));
+        }else if((tom___o) instanceof ETypeParameter){
+          sb.append(parse((ETypeParameter)tom___o));
+        }else if((tom___o) instanceof EPackage){
+          sb.append(parse((EPackage)tom___o,true));
+        }else if((tom___o) instanceof EEnumLiteral){
+          sb.append(parse((EEnumLiteral)tom___o));
         }else{
-          throw new IllegalArgumentException("Unknown list element type : \n"+tom_o.toString());
+          throw new IllegalArgumentException("Unknown list element type : \n"+tom___o.toString());
         }
         sb.append(parse(tom_get_slice_EObjectEList((( org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EObject> )el),tomMatch17_2 + 1, (( org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EObject> )el).size() )));
       }}}}}

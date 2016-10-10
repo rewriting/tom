@@ -93,60 +93,60 @@ public class HookCompiler {
       GomClassList classes,
       Map declToClassName) {
     /* for each hook, find the class, and attach the hook */
-    {{if ( (declList instanceof tom.gom.adt.gom.types.HookDeclList) ) {if ( (((( tom.gom.adt.gom.types.HookDeclList )(( tom.gom.adt.gom.types.HookDeclList )declList)) instanceof tom.gom.adt.gom.types.hookdecllist.ConsConcHookDecl) || ((( tom.gom.adt.gom.types.HookDeclList )(( tom.gom.adt.gom.types.HookDeclList )declList)) instanceof tom.gom.adt.gom.types.hookdecllist.EmptyConcHookDecl)) ) { tom.gom.adt.gom.types.HookDeclList  tomMatch624_end_4=(( tom.gom.adt.gom.types.HookDeclList )declList);do {{if (!( tomMatch624_end_4.isEmptyConcHookDecl() )) { tom.gom.adt.gom.types.HookDecl  tom_hook= tomMatch624_end_4.getHeadConcHookDecl() ;
+    { /* unamed block */{ /* unamed block */if ( (declList instanceof tom.gom.adt.gom.types.HookDeclList) ) {if ( (((( tom.gom.adt.gom.types.HookDeclList )declList) instanceof tom.gom.adt.gom.types.hookdecllist.ConsConcHookDecl) || ((( tom.gom.adt.gom.types.HookDeclList )declList) instanceof tom.gom.adt.gom.types.hookdecllist.EmptyConcHookDecl)) ) { tom.gom.adt.gom.types.HookDeclList  tomMatch655_end_4=(( tom.gom.adt.gom.types.HookDeclList )declList);do {{ /* unamed block */if (!( tomMatch655_end_4.isEmptyConcHookDecl() )) { tom.gom.adt.gom.types.HookDecl  tom___hook= tomMatch655_end_4.getHeadConcHookDecl() ;
 
-        Decl decl = tom_hook.getPointcut();
-        {{if ( (decl instanceof tom.gom.adt.gom.types.Decl) ) {if ( ((( tom.gom.adt.gom.types.Decl )decl) instanceof tom.gom.adt.gom.types.Decl) ) {if ( ((( tom.gom.adt.gom.types.Decl )(( tom.gom.adt.gom.types.Decl )decl)) instanceof tom.gom.adt.gom.types.decl.CutModule) ) {
+        Decl decl = tom___hook.getPointcut();
+        { /* unamed block */{ /* unamed block */if ( (decl instanceof tom.gom.adt.gom.types.Decl) ) {if ( ((( tom.gom.adt.gom.types.Decl )decl) instanceof tom.gom.adt.gom.types.decl.CutModule) ) {
 
             ClassName clsName = (ClassName) declToClassName.get( (( tom.gom.adt.gom.types.Decl )decl).getMDecl() );
             try {
-              classes = tom_make_TopDown(tom_make_AttachModuleHook(clsName,tom_hook,this)).visit(classes);
+              classes = tom_make_TopDown(tom_make_AttachModuleHook(clsName,tom___hook,this)).visit(classes);
                 //`TopDown(AttachModuleHook(clsName,hook)).visit(classes);
             } catch (tom.library.sl.VisitFailure e) {
               throw new GomRuntimeException(HookCompiler.UNEXPECTED_STRATEGY_FAILURE);
             }
-          }}}}{if ( (decl instanceof tom.gom.adt.gom.types.Decl) ) {if ( ((( tom.gom.adt.gom.types.Decl )decl) instanceof tom.gom.adt.gom.types.Decl) ) {if ( ((( tom.gom.adt.gom.types.Decl )(( tom.gom.adt.gom.types.Decl )decl)) instanceof tom.gom.adt.gom.types.decl.CutSort) ) {
+          }}}{ /* unamed block */if ( (decl instanceof tom.gom.adt.gom.types.Decl) ) {if ( ((( tom.gom.adt.gom.types.Decl )decl) instanceof tom.gom.adt.gom.types.decl.CutSort) ) {
 
             ClassName clsName = (ClassName) declToClassName.get( (( tom.gom.adt.gom.types.Decl )decl).getSort() );
             try {
-              classes = tom_make_TopDown(tom_make_AttachSortHook(clsName,tom_hook,this)).visit(classes);
+              classes = tom_make_TopDown(tom_make_AttachSortHook(clsName,tom___hook,this)).visit(classes);
                 //`TopDown(AttachSortHook(clsName,hook)).visit(classes);
             } catch (tom.library.sl.VisitFailure e) {
               throw new GomRuntimeException(HookCompiler.UNEXPECTED_STRATEGY_FAILURE);
             }
-          }}}}{if ( (decl instanceof tom.gom.adt.gom.types.Decl) ) {if ( ((( tom.gom.adt.gom.types.Decl )decl) instanceof tom.gom.adt.gom.types.Decl) ) {if ( ((( tom.gom.adt.gom.types.Decl )(( tom.gom.adt.gom.types.Decl )decl)) instanceof tom.gom.adt.gom.types.decl.CutOperator) ) {
+          }}}{ /* unamed block */if ( (decl instanceof tom.gom.adt.gom.types.Decl) ) {if ( ((( tom.gom.adt.gom.types.Decl )decl) instanceof tom.gom.adt.gom.types.decl.CutOperator) ) {
 
             ClassName clsName = (ClassName) declToClassName.get( (( tom.gom.adt.gom.types.Decl )decl).getODecl() );
             try {
-              classes = tom_make_TopDown(tom_make_AttachOperatorHook(clsName,tom_hook,this)).visit(classes);
+              classes = tom_make_TopDown(tom_make_AttachOperatorHook(clsName,tom___hook,this)).visit(classes);
                 //`TopDown(AttachOperatorHook(clsName,hook)).visit(classes);
             } catch (tom.library.sl.VisitFailure e) {
               throw new GomRuntimeException(HookCompiler.UNEXPECTED_STRATEGY_FAILURE);
             }
-          }}}}{if ( (decl instanceof tom.gom.adt.gom.types.Decl) ) {if ( ((( tom.gom.adt.gom.types.Decl )decl) instanceof tom.gom.adt.gom.types.Decl) ) {if ( ((( tom.gom.adt.gom.types.Decl )(( tom.gom.adt.gom.types.Decl )decl)) instanceof tom.gom.adt.gom.types.decl.CutFutureOperator) ) { tom.gom.adt.gom.types.Future  tom_consornil= (( tom.gom.adt.gom.types.Decl )decl).getConsOrNil() ;
+          }}}{ /* unamed block */if ( (decl instanceof tom.gom.adt.gom.types.Decl) ) {if ( ((( tom.gom.adt.gom.types.Decl )decl) instanceof tom.gom.adt.gom.types.decl.CutFutureOperator) ) { tom.gom.adt.gom.types.Future  tom___consornil= (( tom.gom.adt.gom.types.Decl )decl).getConsOrNil() ;
 
             ClassName clsName = (ClassName) declToClassName.get( (( tom.gom.adt.gom.types.Decl )decl).getODecl() );
             String prefix = "";
-            {{if ( (tom_consornil instanceof tom.gom.adt.gom.types.Future) ) {if ( ((( tom.gom.adt.gom.types.Future )tom_consornil) instanceof tom.gom.adt.gom.types.Future) ) {if ( ((( tom.gom.adt.gom.types.Future )(( tom.gom.adt.gom.types.Future )tom_consornil)) instanceof tom.gom.adt.gom.types.future.FutureNil) ) {
- prefix = "Empty"; }}}}{if ( (tom_consornil instanceof tom.gom.adt.gom.types.Future) ) {if ( ((( tom.gom.adt.gom.types.Future )tom_consornil) instanceof tom.gom.adt.gom.types.Future) ) {if ( ((( tom.gom.adt.gom.types.Future )(( tom.gom.adt.gom.types.Future )tom_consornil)) instanceof tom.gom.adt.gom.types.future.FutureCons) ) {
- prefix = "Cons"; }}}}}
+            { /* unamed block */{ /* unamed block */if ( (tom___consornil instanceof tom.gom.adt.gom.types.Future) ) {if ( ((( tom.gom.adt.gom.types.Future )tom___consornil) instanceof tom.gom.adt.gom.types.future.FutureNil) ) {
+ prefix = "Empty"; }}}{ /* unamed block */if ( (tom___consornil instanceof tom.gom.adt.gom.types.Future) ) {if ( ((( tom.gom.adt.gom.types.Future )tom___consornil) instanceof tom.gom.adt.gom.types.future.FutureCons) ) {
+ prefix = "Cons"; }}}}
 
             clsName = clsName.setName(prefix + clsName.getName());
             try {
-              classes = tom_make_TopDown(tom_make_AttachOperatorHook(clsName,tom_hook,this)).visit(classes);
+              classes = tom_make_TopDown(tom_make_AttachOperatorHook(clsName,tom___hook,this)).visit(classes);
                 //`TopDown(AttachOperatorHook(clsName,hook)).visit(classes);
             } catch (tom.library.sl.VisitFailure e) {
               throw new GomRuntimeException(HookCompiler.UNEXPECTED_STRATEGY_FAILURE);
             }
-          }}}}}
+          }}}}
 
-      }if ( tomMatch624_end_4.isEmptyConcHookDecl() ) {tomMatch624_end_4=(( tom.gom.adt.gom.types.HookDeclList )declList);} else {tomMatch624_end_4= tomMatch624_end_4.getTailConcHookDecl() ;}}} while(!( (tomMatch624_end_4==(( tom.gom.adt.gom.types.HookDeclList )declList)) ));}}}}
+      }if ( tomMatch655_end_4.isEmptyConcHookDecl() ) {tomMatch655_end_4=(( tom.gom.adt.gom.types.HookDeclList )declList);} else {tomMatch655_end_4= tomMatch655_end_4.getTailConcHookDecl() ;}}} while(!( (tomMatch655_end_4==(( tom.gom.adt.gom.types.HookDeclList )declList)) ));}}}}
 
     return classes;
   }
 
   //%strategy AttachModuleHook(cName:ClassName,hook:HookDecl)
-  public static class AttachModuleHook extends tom.library.sl.AbstractStrategyBasic {private  tom.gom.adt.objects.types.ClassName  cName;private  tom.gom.adt.gom.types.HookDecl  hook;private  tom.gom.compiler.HookCompiler  hc;public AttachModuleHook( tom.gom.adt.objects.types.ClassName  cName,  tom.gom.adt.gom.types.HookDecl  hook,  tom.gom.compiler.HookCompiler  hc) {super(( new tom.library.sl.Identity() ));this.cName=cName;this.hook=hook;this.hc=hc;}public  tom.gom.adt.objects.types.ClassName  getcName() {return cName;}public  tom.gom.adt.gom.types.HookDecl  gethook() {return hook;}public  tom.gom.compiler.HookCompiler  gethc() {return hc;}public tom.library.sl.Visitable[] getChildren() {tom.library.sl.Visitable[] stratChildren = new tom.library.sl.Visitable[getChildCount()];stratChildren[0] = super.getChildAt(0);return stratChildren;}public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {super.setChildAt(0, children[0]);return this;}public int getChildCount() {return 1;}public tom.library.sl.Visitable getChildAt(int index) {switch (index) {case 0: return super.getChildAt(0);default: throw new IndexOutOfBoundsException();}}public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable child) {switch (index) {case 0: return super.setChildAt(0, child);default: throw new IndexOutOfBoundsException();}}@SuppressWarnings("unchecked")public <T> T visitLight(T v, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if ( (v instanceof tom.gom.adt.objects.types.GomClass) ) {return ((T)visit_GomClass((( tom.gom.adt.objects.types.GomClass )v),introspector));}if (!(  null ==environment )) {return ((T)any.visit(environment,introspector));} else {return any.visitLight(v,introspector);}}@SuppressWarnings("unchecked")public  tom.gom.adt.objects.types.GomClass  _visit_GomClass( tom.gom.adt.objects.types.GomClass  arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if (!(  null ==environment )) {return (( tom.gom.adt.objects.types.GomClass )any.visit(environment,introspector));} else {return any.visitLight(arg,introspector);}}@SuppressWarnings("unchecked")public  tom.gom.adt.objects.types.GomClass  visit_GomClass( tom.gom.adt.objects.types.GomClass  tom__arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {{{if ( (tom__arg instanceof tom.gom.adt.objects.types.GomClass) ) {if ( ((( tom.gom.adt.objects.types.GomClass )tom__arg) instanceof tom.gom.adt.objects.types.GomClass) ) {if ( ((( tom.gom.adt.objects.types.GomClass )(( tom.gom.adt.objects.types.GomClass )tom__arg)) instanceof tom.gom.adt.objects.types.gomclass.AbstractTypeClass) ) {
+  public static class AttachModuleHook extends tom.library.sl.AbstractStrategyBasic {private  tom.gom.adt.objects.types.ClassName  cName;private  tom.gom.adt.gom.types.HookDecl  hook;private  tom.gom.compiler.HookCompiler  hc;public AttachModuleHook( tom.gom.adt.objects.types.ClassName  cName,  tom.gom.adt.gom.types.HookDecl  hook,  tom.gom.compiler.HookCompiler  hc) {super(( new tom.library.sl.Identity() ));this.cName=cName;this.hook=hook;this.hc=hc;}public  tom.gom.adt.objects.types.ClassName  getcName() {return cName;}public  tom.gom.adt.gom.types.HookDecl  gethook() {return hook;}public  tom.gom.compiler.HookCompiler  gethc() {return hc;}public tom.library.sl.Visitable[] getChildren() {tom.library.sl.Visitable[] stratChildren = new tom.library.sl.Visitable[getChildCount()];stratChildren[0] = super.getChildAt(0);return stratChildren;}public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {super.setChildAt(0, children[0]);return this;}public int getChildCount() {return 1;}public tom.library.sl.Visitable getChildAt(int index) {switch (index) {case 0: return super.getChildAt(0);default: throw new IndexOutOfBoundsException();}}public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable child) {switch (index) {case 0: return super.setChildAt(0, child);default: throw new IndexOutOfBoundsException();}}@SuppressWarnings("unchecked")public <T> T visitLight(T v, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if ( (v instanceof tom.gom.adt.objects.types.GomClass) ) {return ((T)visit_GomClass((( tom.gom.adt.objects.types.GomClass )v),introspector));}if (!(  null ==environment )) {return ((T)any.visit(environment,introspector));} else {return any.visitLight(v,introspector);}}@SuppressWarnings("unchecked")public  tom.gom.adt.objects.types.GomClass  _visit_GomClass( tom.gom.adt.objects.types.GomClass  arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if (!(  null ==environment )) {return (( tom.gom.adt.objects.types.GomClass )any.visit(environment,introspector));} else {return any.visitLight(arg,introspector);}}@SuppressWarnings("unchecked")public  tom.gom.adt.objects.types.GomClass  visit_GomClass( tom.gom.adt.objects.types.GomClass  tom__arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {{ /* unamed block */{ /* unamed block */if ( (tom__arg instanceof tom.gom.adt.objects.types.GomClass) ) {if ( ((( tom.gom.adt.objects.types.GomClass )tom__arg) instanceof tom.gom.adt.objects.types.gomclass.AbstractTypeClass) ) {
 
 
 
@@ -155,12 +155,12 @@ public class HookCompiler {
               (( tom.gom.adt.objects.types.GomClass )tom__arg).setHooks( tom.gom.adt.objects.types.hooklist.ConsConcHook.make(hc.makeHooksFromHookDecl(hook),tom_append_list_ConcHook( (( tom.gom.adt.objects.types.GomClass )tom__arg).getHooks() , tom.gom.adt.objects.types.hooklist.EmptyConcHook.make() )) );
               //`obj.setHooks(`ConcHook(makeHooksFromHookDecl(hook),oldHooks*));
           }
-        }}}}}return _visit_GomClass(tom__arg,introspector);}}private static  tom.library.sl.Strategy  tom_make_AttachModuleHook( tom.gom.adt.objects.types.ClassName  t0,  tom.gom.adt.gom.types.HookDecl  t1,  tom.gom.compiler.HookCompiler  t2) { return new AttachModuleHook(t0,t1,t2);}
+        }}}}return _visit_GomClass(tom__arg,introspector);}}private static  tom.library.sl.Strategy  tom_make_AttachModuleHook( tom.gom.adt.objects.types.ClassName  t0,  tom.gom.adt.gom.types.HookDecl  t1,  tom.gom.compiler.HookCompiler  t2) { return new AttachModuleHook(t0,t1,t2);}
 
 
 
   //%strategy AttachSortHook(cName:ClassName,hook:HookDecl)
-  public static class AttachSortHook extends tom.library.sl.AbstractStrategyBasic {private  tom.gom.adt.objects.types.ClassName  cName;private  tom.gom.adt.gom.types.HookDecl  hook;private  tom.gom.compiler.HookCompiler  hc;public AttachSortHook( tom.gom.adt.objects.types.ClassName  cName,  tom.gom.adt.gom.types.HookDecl  hook,  tom.gom.compiler.HookCompiler  hc) {super(( new tom.library.sl.Identity() ));this.cName=cName;this.hook=hook;this.hc=hc;}public  tom.gom.adt.objects.types.ClassName  getcName() {return cName;}public  tom.gom.adt.gom.types.HookDecl  gethook() {return hook;}public  tom.gom.compiler.HookCompiler  gethc() {return hc;}public tom.library.sl.Visitable[] getChildren() {tom.library.sl.Visitable[] stratChildren = new tom.library.sl.Visitable[getChildCount()];stratChildren[0] = super.getChildAt(0);return stratChildren;}public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {super.setChildAt(0, children[0]);return this;}public int getChildCount() {return 1;}public tom.library.sl.Visitable getChildAt(int index) {switch (index) {case 0: return super.getChildAt(0);default: throw new IndexOutOfBoundsException();}}public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable child) {switch (index) {case 0: return super.setChildAt(0, child);default: throw new IndexOutOfBoundsException();}}@SuppressWarnings("unchecked")public <T> T visitLight(T v, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if ( (v instanceof tom.gom.adt.objects.types.GomClass) ) {return ((T)visit_GomClass((( tom.gom.adt.objects.types.GomClass )v),introspector));}if (!(  null ==environment )) {return ((T)any.visit(environment,introspector));} else {return any.visitLight(v,introspector);}}@SuppressWarnings("unchecked")public  tom.gom.adt.objects.types.GomClass  _visit_GomClass( tom.gom.adt.objects.types.GomClass  arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if (!(  null ==environment )) {return (( tom.gom.adt.objects.types.GomClass )any.visit(environment,introspector));} else {return any.visitLight(arg,introspector);}}@SuppressWarnings("unchecked")public  tom.gom.adt.objects.types.GomClass  visit_GomClass( tom.gom.adt.objects.types.GomClass  tom__arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {{{if ( (tom__arg instanceof tom.gom.adt.objects.types.GomClass) ) {if ( ((( tom.gom.adt.objects.types.GomClass )tom__arg) instanceof tom.gom.adt.objects.types.GomClass) ) {if ( ((( tom.gom.adt.objects.types.GomClass )(( tom.gom.adt.objects.types.GomClass )tom__arg)) instanceof tom.gom.adt.objects.types.gomclass.SortClass) ) {
+  public static class AttachSortHook extends tom.library.sl.AbstractStrategyBasic {private  tom.gom.adt.objects.types.ClassName  cName;private  tom.gom.adt.gom.types.HookDecl  hook;private  tom.gom.compiler.HookCompiler  hc;public AttachSortHook( tom.gom.adt.objects.types.ClassName  cName,  tom.gom.adt.gom.types.HookDecl  hook,  tom.gom.compiler.HookCompiler  hc) {super(( new tom.library.sl.Identity() ));this.cName=cName;this.hook=hook;this.hc=hc;}public  tom.gom.adt.objects.types.ClassName  getcName() {return cName;}public  tom.gom.adt.gom.types.HookDecl  gethook() {return hook;}public  tom.gom.compiler.HookCompiler  gethc() {return hc;}public tom.library.sl.Visitable[] getChildren() {tom.library.sl.Visitable[] stratChildren = new tom.library.sl.Visitable[getChildCount()];stratChildren[0] = super.getChildAt(0);return stratChildren;}public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {super.setChildAt(0, children[0]);return this;}public int getChildCount() {return 1;}public tom.library.sl.Visitable getChildAt(int index) {switch (index) {case 0: return super.getChildAt(0);default: throw new IndexOutOfBoundsException();}}public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable child) {switch (index) {case 0: return super.setChildAt(0, child);default: throw new IndexOutOfBoundsException();}}@SuppressWarnings("unchecked")public <T> T visitLight(T v, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if ( (v instanceof tom.gom.adt.objects.types.GomClass) ) {return ((T)visit_GomClass((( tom.gom.adt.objects.types.GomClass )v),introspector));}if (!(  null ==environment )) {return ((T)any.visit(environment,introspector));} else {return any.visitLight(v,introspector);}}@SuppressWarnings("unchecked")public  tom.gom.adt.objects.types.GomClass  _visit_GomClass( tom.gom.adt.objects.types.GomClass  arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if (!(  null ==environment )) {return (( tom.gom.adt.objects.types.GomClass )any.visit(environment,introspector));} else {return any.visitLight(arg,introspector);}}@SuppressWarnings("unchecked")public  tom.gom.adt.objects.types.GomClass  visit_GomClass( tom.gom.adt.objects.types.GomClass  tom__arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {{ /* unamed block */{ /* unamed block */if ( (tom__arg instanceof tom.gom.adt.objects.types.GomClass) ) {if ( ((( tom.gom.adt.objects.types.GomClass )tom__arg) instanceof tom.gom.adt.objects.types.gomclass.SortClass) ) {
 
 
 
@@ -169,7 +169,7 @@ public class HookCompiler {
               (( tom.gom.adt.objects.types.GomClass )tom__arg).setHooks( tom.gom.adt.objects.types.hooklist.ConsConcHook.make(hc.makeHooksFromHookDecl(hook),tom_append_list_ConcHook( (( tom.gom.adt.objects.types.GomClass )tom__arg).getHooks() , tom.gom.adt.objects.types.hooklist.EmptyConcHook.make() )) );
               //`obj.setHooks(`ConcHook(makeHooksFromHookDecl(hook),oldHooks*));
           }
-        }}}}}return _visit_GomClass(tom__arg,introspector);}}private static  tom.library.sl.Strategy  tom_make_AttachSortHook( tom.gom.adt.objects.types.ClassName  t0,  tom.gom.adt.gom.types.HookDecl  t1,  tom.gom.compiler.HookCompiler  t2) { return new AttachSortHook(t0,t1,t2);}public static class AttachOperatorHook extends tom.library.sl.AbstractStrategyBasic {private  tom.gom.adt.objects.types.ClassName  cName;private  tom.gom.adt.gom.types.HookDecl  hook;private  tom.gom.compiler.HookCompiler  hc;public AttachOperatorHook( tom.gom.adt.objects.types.ClassName  cName,  tom.gom.adt.gom.types.HookDecl  hook,  tom.gom.compiler.HookCompiler  hc) {super(( new tom.library.sl.Identity() ));this.cName=cName;this.hook=hook;this.hc=hc;}public  tom.gom.adt.objects.types.ClassName  getcName() {return cName;}public  tom.gom.adt.gom.types.HookDecl  gethook() {return hook;}public  tom.gom.compiler.HookCompiler  gethc() {return hc;}public tom.library.sl.Visitable[] getChildren() {tom.library.sl.Visitable[] stratChildren = new tom.library.sl.Visitable[getChildCount()];stratChildren[0] = super.getChildAt(0);return stratChildren;}public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {super.setChildAt(0, children[0]);return this;}public int getChildCount() {return 1;}public tom.library.sl.Visitable getChildAt(int index) {switch (index) {case 0: return super.getChildAt(0);default: throw new IndexOutOfBoundsException();}}public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable child) {switch (index) {case 0: return super.setChildAt(0, child);default: throw new IndexOutOfBoundsException();}}@SuppressWarnings("unchecked")public <T> T visitLight(T v, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if ( (v instanceof tom.gom.adt.objects.types.GomClass) ) {return ((T)visit_GomClass((( tom.gom.adt.objects.types.GomClass )v),introspector));}if (!(  null ==environment )) {return ((T)any.visit(environment,introspector));} else {return any.visitLight(v,introspector);}}@SuppressWarnings("unchecked")public  tom.gom.adt.objects.types.GomClass  _visit_GomClass( tom.gom.adt.objects.types.GomClass  arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if (!(  null ==environment )) {return (( tom.gom.adt.objects.types.GomClass )any.visit(environment,introspector));} else {return any.visitLight(arg,introspector);}}@SuppressWarnings("unchecked")public  tom.gom.adt.objects.types.GomClass  visit_GomClass( tom.gom.adt.objects.types.GomClass  tom__arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {{{if ( (tom__arg instanceof tom.gom.adt.objects.types.GomClass) ) {if ( ((( tom.gom.adt.objects.types.GomClass )tom__arg) instanceof tom.gom.adt.objects.types.GomClass) ) {if ( ((( tom.gom.adt.objects.types.GomClass )(( tom.gom.adt.objects.types.GomClass )tom__arg)) instanceof tom.gom.adt.objects.types.gomclass.VariadicOperatorClass) ) { tom.gom.adt.objects.types.HookList  tom_oldHooks= (( tom.gom.adt.objects.types.GomClass )tom__arg).getHooks() ; tom.gom.adt.objects.types.GomClass  tom_emptyClass= (( tom.gom.adt.objects.types.GomClass )tom__arg).getEmpty() ; tom.gom.adt.objects.types.GomClass  tom_consClass= (( tom.gom.adt.objects.types.GomClass )tom__arg).getCons() ; tom.gom.adt.objects.types.GomClass  tom_obj=(( tom.gom.adt.objects.types.GomClass )tom__arg);
+        }}}}return _visit_GomClass(tom__arg,introspector);}}private static  tom.library.sl.Strategy  tom_make_AttachSortHook( tom.gom.adt.objects.types.ClassName  t0,  tom.gom.adt.gom.types.HookDecl  t1,  tom.gom.compiler.HookCompiler  t2) { return new AttachSortHook(t0,t1,t2);}public static class AttachOperatorHook extends tom.library.sl.AbstractStrategyBasic {private  tom.gom.adt.objects.types.ClassName  cName;private  tom.gom.adt.gom.types.HookDecl  hook;private  tom.gom.compiler.HookCompiler  hc;public AttachOperatorHook( tom.gom.adt.objects.types.ClassName  cName,  tom.gom.adt.gom.types.HookDecl  hook,  tom.gom.compiler.HookCompiler  hc) {super(( new tom.library.sl.Identity() ));this.cName=cName;this.hook=hook;this.hc=hc;}public  tom.gom.adt.objects.types.ClassName  getcName() {return cName;}public  tom.gom.adt.gom.types.HookDecl  gethook() {return hook;}public  tom.gom.compiler.HookCompiler  gethc() {return hc;}public tom.library.sl.Visitable[] getChildren() {tom.library.sl.Visitable[] stratChildren = new tom.library.sl.Visitable[getChildCount()];stratChildren[0] = super.getChildAt(0);return stratChildren;}public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {super.setChildAt(0, children[0]);return this;}public int getChildCount() {return 1;}public tom.library.sl.Visitable getChildAt(int index) {switch (index) {case 0: return super.getChildAt(0);default: throw new IndexOutOfBoundsException();}}public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable child) {switch (index) {case 0: return super.setChildAt(0, child);default: throw new IndexOutOfBoundsException();}}@SuppressWarnings("unchecked")public <T> T visitLight(T v, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if ( (v instanceof tom.gom.adt.objects.types.GomClass) ) {return ((T)visit_GomClass((( tom.gom.adt.objects.types.GomClass )v),introspector));}if (!(  null ==environment )) {return ((T)any.visit(environment,introspector));} else {return any.visitLight(v,introspector);}}@SuppressWarnings("unchecked")public  tom.gom.adt.objects.types.GomClass  _visit_GomClass( tom.gom.adt.objects.types.GomClass  arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if (!(  null ==environment )) {return (( tom.gom.adt.objects.types.GomClass )any.visit(environment,introspector));} else {return any.visitLight(arg,introspector);}}@SuppressWarnings("unchecked")public  tom.gom.adt.objects.types.GomClass  visit_GomClass( tom.gom.adt.objects.types.GomClass  tom__arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {{ /* unamed block */{ /* unamed block */if ( (tom__arg instanceof tom.gom.adt.objects.types.GomClass) ) {if ( ((( tom.gom.adt.objects.types.GomClass )tom__arg) instanceof tom.gom.adt.objects.types.gomclass.VariadicOperatorClass) ) { tom.gom.adt.objects.types.HookList  tom___oldHooks= (( tom.gom.adt.objects.types.GomClass )tom__arg).getHooks() ; tom.gom.adt.objects.types.GomClass  tom___emptyClass= (( tom.gom.adt.objects.types.GomClass )tom__arg).getEmpty() ; tom.gom.adt.objects.types.GomClass  tom___consClass= (( tom.gom.adt.objects.types.GomClass )tom__arg).getCons() ; tom.gom.adt.objects.types.GomClass  tom___obj=(( tom.gom.adt.objects.types.GomClass )tom__arg);
 
 
 
@@ -182,73 +182,73 @@ public class HookCompiler {
               /* We may want to attach the hook to the cons or empty */
               if (hook.isMakeHookDecl()) {
                 if (hook.getSlotArgs() !=  tom.gom.adt.gom.types.slotlist.EmptyConcSlot.make() ) {
-                  HookList oldConsHooks = tom_consClass.getHooks();
+                  HookList oldConsHooks = tom___consClass.getHooks();
                   GomClass newCons =
-                    tom_consClass.setHooks(
+                    tom___consClass.setHooks(
                          tom.gom.adt.objects.types.hooklist.ConsConcHook.make(hc.makeHooksFromHookDecl(hook),tom_append_list_ConcHook(oldConsHooks, tom.gom.adt.objects.types.hooklist.EmptyConcHook.make() )) );
                         //`ConcHook(makeHooksFromHookDecl(hook),oldConsHooks*));
-                  return tom_obj.setCons(newCons);
+                  return tom___obj.setCons(newCons);
                 } else if (hook.getSlotArgs() ==  tom.gom.adt.gom.types.slotlist.EmptyConcSlot.make() ) {
-                  HookList oldEmptyHooks = tom_emptyClass.getHooks();
+                  HookList oldEmptyHooks = tom___emptyClass.getHooks();
                   GomClass newEmpty =
-                    tom_emptyClass.setHooks(
+                    tom___emptyClass.setHooks(
                          tom.gom.adt.objects.types.hooklist.ConsConcHook.make(hc.makeHooksFromHookDecl(hook),tom_append_list_ConcHook(oldEmptyHooks, tom.gom.adt.objects.types.hooklist.EmptyConcHook.make() )) );
                         //`ConcHook(makeHooksFromHookDecl(hook),oldEmptyHooks*));
-                  return tom_obj.setEmpty(newEmpty);
+                  return tom___obj.setEmpty(newEmpty);
                 }
               } else if (hook.isImportHookDecl()) {
                 /* We will want to attach the hook directly to the 3 classes */
                 /* in case we use these imports for the corresponding Make hooks */
-                HookList oldConsHooks = tom_consClass.getHooks();
+                HookList oldConsHooks = tom___consClass.getHooks();
                 GomClass newCons =
-                  tom_consClass.setHooks(
+                  tom___consClass.setHooks(
                        tom.gom.adt.objects.types.hooklist.ConsConcHook.make(hc.makeHooksFromHookDecl(hook),tom_append_list_ConcHook(oldConsHooks, tom.gom.adt.objects.types.hooklist.EmptyConcHook.make() )) );
                       //`ConcHook(makeHooksFromHookDecl(hook),oldConsHooks*));
-                HookList oldEmptyHooks = tom_emptyClass.getHooks();
+                HookList oldEmptyHooks = tom___emptyClass.getHooks();
                 GomClass newEmpty =
-                  tom_emptyClass.setHooks(
+                  tom___emptyClass.setHooks(
                        tom.gom.adt.objects.types.hooklist.ConsConcHook.make(hc.makeHooksFromHookDecl(hook),tom_append_list_ConcHook(oldEmptyHooks, tom.gom.adt.objects.types.hooklist.EmptyConcHook.make() )) );
                       //`ConcHook(makeHooksFromHookDecl(hook),oldEmptyHooks*));
-                GomClass newobj = tom_obj.setEmpty(newEmpty);
+                GomClass newobj = tom___obj.setEmpty(newEmpty);
                 newobj = newobj.setCons(newCons);
-                return newobj.setHooks( tom.gom.adt.objects.types.hooklist.ConsConcHook.make(hc.makeHooksFromHookDecl(hook),tom_append_list_ConcHook(tom_oldHooks, tom.gom.adt.objects.types.hooklist.EmptyConcHook.make() )) );
+                return newobj.setHooks( tom.gom.adt.objects.types.hooklist.ConsConcHook.make(hc.makeHooksFromHookDecl(hook),tom_append_list_ConcHook(tom___oldHooks, tom.gom.adt.objects.types.hooklist.EmptyConcHook.make() )) );
                 //return `newobj.setHooks(`ConcHook(makeHooksFromHookDecl(hook),oldHooks*));
               } else {
                 return
-                  tom_obj.setHooks( tom.gom.adt.objects.types.hooklist.ConsConcHook.make(hc.makeHooksFromHookDecl(hook),tom_append_list_ConcHook(tom_oldHooks, tom.gom.adt.objects.types.hooklist.EmptyConcHook.make() )) );
+                  tom___obj.setHooks( tom.gom.adt.objects.types.hooklist.ConsConcHook.make(hc.makeHooksFromHookDecl(hook),tom_append_list_ConcHook(tom___oldHooks, tom.gom.adt.objects.types.hooklist.EmptyConcHook.make() )) );
                   //`obj.setHooks(`ConcHook(makeHooksFromHookDecl(hook),oldHooks*));
               }
             }
-          }}}}{if ( (tom__arg instanceof tom.gom.adt.objects.types.GomClass) ) {if ( ((( tom.gom.adt.objects.types.GomClass )tom__arg) instanceof tom.gom.adt.objects.types.GomClass) ) {if ( ((( tom.gom.adt.objects.types.GomClass )(( tom.gom.adt.objects.types.GomClass )tom__arg)) instanceof tom.gom.adt.objects.types.gomclass.OperatorClass) ) {
+          }}}{ /* unamed block */if ( (tom__arg instanceof tom.gom.adt.objects.types.GomClass) ) {if ( ((( tom.gom.adt.objects.types.GomClass )tom__arg) instanceof tom.gom.adt.objects.types.gomclass.OperatorClass) ) {
 
           if ( (( tom.gom.adt.objects.types.GomClass )tom__arg).getClassName() == cName) {
             return
               (( tom.gom.adt.objects.types.GomClass )tom__arg).setHooks( tom.gom.adt.objects.types.hooklist.ConsConcHook.make(hc.makeHooksFromHookDecl(hook),tom_append_list_ConcHook( (( tom.gom.adt.objects.types.GomClass )tom__arg).getHooks() , tom.gom.adt.objects.types.hooklist.EmptyConcHook.make() )) );
               //`obj.setHooks(`ConcHook(makeHooksFromHookDecl(hook),oldHooks*));
           }
-        }}}}}return _visit_GomClass(tom__arg,introspector);}}private static  tom.library.sl.Strategy  tom_make_AttachOperatorHook( tom.gom.adt.objects.types.ClassName  t0,  tom.gom.adt.gom.types.HookDecl  t1,  tom.gom.compiler.HookCompiler  t2) { return new AttachOperatorHook(t0,t1,t2);}
+        }}}}return _visit_GomClass(tom__arg,introspector);}}private static  tom.library.sl.Strategy  tom_make_AttachOperatorHook( tom.gom.adt.objects.types.ClassName  t0,  tom.gom.adt.gom.types.HookDecl  t1,  tom.gom.compiler.HookCompiler  t2) { return new AttachOperatorHook(t0,t1,t2);}
 
 
 
   // private static Hook makeHooksFromHookDecl(HookDecl hookDecl) {
   private Hook makeHooksFromHookDecl(HookDecl hookDecl) {
-    {{if ( (hookDecl instanceof tom.gom.adt.gom.types.HookDecl) ) {if ( ((( tom.gom.adt.gom.types.HookDecl )hookDecl) instanceof tom.gom.adt.gom.types.HookDecl) ) {if ( ((( tom.gom.adt.gom.types.HookDecl )(( tom.gom.adt.gom.types.HookDecl )hookDecl)) instanceof tom.gom.adt.gom.types.hookdecl.MakeHookDecl) ) {
+    { /* unamed block */{ /* unamed block */if ( (hookDecl instanceof tom.gom.adt.gom.types.HookDecl) ) {if ( ((( tom.gom.adt.gom.types.HookDecl )hookDecl) instanceof tom.gom.adt.gom.types.hookdecl.MakeHookDecl) ) {
 
         SlotFieldList newArgs = makeSlotFieldListFromSlotList( (( tom.gom.adt.gom.types.HookDecl )hookDecl).getSlotArgs() );
         return  tom.gom.adt.objects.types.hook.MakeHook.make(newArgs,  (( tom.gom.adt.gom.types.HookDecl )hookDecl).getCode() ,  (( tom.gom.adt.gom.types.HookDecl )hookDecl).getHasTomCode() ) ;
-      }}}}{if ( (hookDecl instanceof tom.gom.adt.gom.types.HookDecl) ) {if ( ((( tom.gom.adt.gom.types.HookDecl )hookDecl) instanceof tom.gom.adt.gom.types.HookDecl) ) {if ( ((( tom.gom.adt.gom.types.HookDecl )(( tom.gom.adt.gom.types.HookDecl )hookDecl)) instanceof tom.gom.adt.gom.types.hookdecl.BlockHookDecl) ) {
+      }}}{ /* unamed block */if ( (hookDecl instanceof tom.gom.adt.gom.types.HookDecl) ) {if ( ((( tom.gom.adt.gom.types.HookDecl )hookDecl) instanceof tom.gom.adt.gom.types.hookdecl.BlockHookDecl) ) {
 
         return  tom.gom.adt.objects.types.hook.BlockHook.make( (( tom.gom.adt.gom.types.HookDecl )hookDecl).getCode() ,  (( tom.gom.adt.gom.types.HookDecl )hookDecl).getHasTomCode() ) ;
-      }}}}{if ( (hookDecl instanceof tom.gom.adt.gom.types.HookDecl) ) {if ( ((( tom.gom.adt.gom.types.HookDecl )hookDecl) instanceof tom.gom.adt.gom.types.HookDecl) ) {if ( ((( tom.gom.adt.gom.types.HookDecl )(( tom.gom.adt.gom.types.HookDecl )hookDecl)) instanceof tom.gom.adt.gom.types.hookdecl.InterfaceHookDecl) ) {
+      }}}{ /* unamed block */if ( (hookDecl instanceof tom.gom.adt.gom.types.HookDecl) ) {if ( ((( tom.gom.adt.gom.types.HookDecl )hookDecl) instanceof tom.gom.adt.gom.types.hookdecl.InterfaceHookDecl) ) {
 
         return  tom.gom.adt.objects.types.hook.InterfaceHook.make( (( tom.gom.adt.gom.types.HookDecl )hookDecl).getCode() ) ;
-      }}}}{if ( (hookDecl instanceof tom.gom.adt.gom.types.HookDecl) ) {if ( ((( tom.gom.adt.gom.types.HookDecl )hookDecl) instanceof tom.gom.adt.gom.types.HookDecl) ) {if ( ((( tom.gom.adt.gom.types.HookDecl )(( tom.gom.adt.gom.types.HookDecl )hookDecl)) instanceof tom.gom.adt.gom.types.hookdecl.ImportHookDecl) ) {
+      }}}{ /* unamed block */if ( (hookDecl instanceof tom.gom.adt.gom.types.HookDecl) ) {if ( ((( tom.gom.adt.gom.types.HookDecl )hookDecl) instanceof tom.gom.adt.gom.types.hookdecl.ImportHookDecl) ) {
 
         return  tom.gom.adt.objects.types.hook.ImportHook.make( (( tom.gom.adt.gom.types.HookDecl )hookDecl).getCode() ) ;
-      }}}}{if ( (hookDecl instanceof tom.gom.adt.gom.types.HookDecl) ) {if ( ((( tom.gom.adt.gom.types.HookDecl )hookDecl) instanceof tom.gom.adt.gom.types.HookDecl) ) {if ( ((( tom.gom.adt.gom.types.HookDecl )(( tom.gom.adt.gom.types.HookDecl )hookDecl)) instanceof tom.gom.adt.gom.types.hookdecl.MappingHookDecl) ) {
+      }}}{ /* unamed block */if ( (hookDecl instanceof tom.gom.adt.gom.types.HookDecl) ) {if ( ((( tom.gom.adt.gom.types.HookDecl )hookDecl) instanceof tom.gom.adt.gom.types.hookdecl.MappingHookDecl) ) {
 
         return  tom.gom.adt.objects.types.hook.MappingHook.make( (( tom.gom.adt.gom.types.HookDecl )hookDecl).getCode() ) ;
-      }}}}}
+      }}}}
 
     throw new GomRuntimeException(
         "Hook declaration " + hookDecl+ " not processed");
@@ -260,13 +260,13 @@ public class HookCompiler {
     while(!args.isEmptyConcSlot()) {
       Slot arg = args.getHeadConcSlot();
       args = args.getTailConcSlot();
-      {{if ( (arg instanceof tom.gom.adt.gom.types.Slot) ) {if ( ((( tom.gom.adt.gom.types.Slot )arg) instanceof tom.gom.adt.gom.types.Slot) ) {if ( ((( tom.gom.adt.gom.types.Slot )(( tom.gom.adt.gom.types.Slot )arg)) instanceof tom.gom.adt.gom.types.slot.Slot) ) {
+      { /* unamed block */{ /* unamed block */if ( (arg instanceof tom.gom.adt.gom.types.Slot) ) {if ( ((( tom.gom.adt.gom.types.Slot )arg) instanceof tom.gom.adt.gom.types.slot.Slot) ) {
 
           ClassName slotClassName = (ClassName)
             // sortClassNameForSortDecl.get(`sortDecl);
             getSortClassNameForSortDecl().get( (( tom.gom.adt.gom.types.Slot )arg).getSort() );
           newArgs = tom_append_list_ConcSlotField(newArgs, tom.gom.adt.objects.types.slotfieldlist.ConsConcSlotField.make( tom.gom.adt.objects.types.slotfield.SlotField.make( (( tom.gom.adt.gom.types.Slot )arg).getName() , slotClassName) , tom.gom.adt.objects.types.slotfieldlist.EmptyConcSlotField.make() ) );
-        }}}}}
+        }}}}
 
     }
     return newArgs;

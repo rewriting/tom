@@ -931,6 +931,9 @@
     <jar jarfile="${src.dist.lib}/tom/PlatformAlert-${src.version}.jar">
       <fileset dir="${src.build}" includes="tom/platform/adt/platformalert/**/*.class"/>
     </jar>
+    <jar jarfile="${src.dist.lib}/tom/PlatformConfig-${src.version}.jar">
+      <fileset dir="${src.build}" includes="tom/platform/adt/platformconfig/**/*.class"/>
+    </jar>
     <jar jarfile="${src.dist.lib}/tom/plugin-platform-${src.version}.jar">
       <fileset dir="${src.build}"
         includes="tom/platform/**/*.class"
@@ -1542,6 +1545,9 @@
     </jar>
     <jar jarfile="${stable.lib}/tom/PlatformOption.jar">
       <fileset dir="${src.build}" includes="tom/platform/adt/platformoption/**/*.class"/>
+    </jar>
+    <jar jarfile="${stable.lib}/tom/PlatformConfig.jar">
+      <fileset dir="${src.build}" includes="tom/platform/adt/platformconfig/**/*.class"/>
     </jar>
     <jar jarfile="${stable.lib}/tom/PlatformAlert.jar">
       <fileset dir="${src.build}" includes="tom/platform/adt/platformalert/**/*.class"/>

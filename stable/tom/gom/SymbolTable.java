@@ -66,8 +66,8 @@ public class SymbolTable {
   }
 
   public void fill(GomModuleList gml) {
-    {{if ( (gml instanceof tom.gom.adt.gom.types.GomModuleList) ) {if ( (((( tom.gom.adt.gom.types.GomModuleList )(( tom.gom.adt.gom.types.GomModuleList )gml)) instanceof tom.gom.adt.gom.types.gommodulelist.ConsConcGomModule) || ((( tom.gom.adt.gom.types.GomModuleList )(( tom.gom.adt.gom.types.GomModuleList )gml)) instanceof tom.gom.adt.gom.types.gommodulelist.EmptyConcGomModule)) ) { tom.gom.adt.gom.types.GomModuleList  tomMatch474_end_4=(( tom.gom.adt.gom.types.GomModuleList )gml);do {{if (!( tomMatch474_end_4.isEmptyConcGomModule() )) {fillFromGomModule( tomMatch474_end_4.getHeadConcGomModule() )
-; }if ( tomMatch474_end_4.isEmptyConcGomModule() ) {tomMatch474_end_4=(( tom.gom.adt.gom.types.GomModuleList )gml);} else {tomMatch474_end_4= tomMatch474_end_4.getTailConcGomModule() ;}}} while(!( (tomMatch474_end_4==(( tom.gom.adt.gom.types.GomModuleList )gml)) ));}}}}
+    { /* unamed block */{ /* unamed block */if ( (gml instanceof tom.gom.adt.gom.types.GomModuleList) ) {if ( (((( tom.gom.adt.gom.types.GomModuleList )gml) instanceof tom.gom.adt.gom.types.gommodulelist.ConsConcGomModule) || ((( tom.gom.adt.gom.types.GomModuleList )gml) instanceof tom.gom.adt.gom.types.gommodulelist.EmptyConcGomModule)) ) { tom.gom.adt.gom.types.GomModuleList  tomMatch505_end_4=(( tom.gom.adt.gom.types.GomModuleList )gml);do {{ /* unamed block */if (!( tomMatch505_end_4.isEmptyConcGomModule() )) {fillFromGomModule( tomMatch505_end_4.getHeadConcGomModule() )
+; }if ( tomMatch505_end_4.isEmptyConcGomModule() ) {tomMatch505_end_4=(( tom.gom.adt.gom.types.GomModuleList )gml);} else {tomMatch505_end_4= tomMatch505_end_4.getTailConcGomModule() ;}}} while(!( (tomMatch505_end_4==(( tom.gom.adt.gom.types.GomModuleList )gml)) ));}}}}
 
     computeSortDependences();
     isolateFreshSorts();
@@ -128,12 +128,12 @@ public class SymbolTable {
           sort);
       return null;
     }
-    {{if ( (desc instanceof tom.gom.adt.symboltable.types.SortDescription) ) {if ( ((( tom.gom.adt.symboltable.types.SortDescription )desc) instanceof tom.gom.adt.symboltable.types.SortDescription) ) {if ( ((( tom.gom.adt.symboltable.types.SortDescription )(( tom.gom.adt.symboltable.types.SortDescription )desc)) instanceof tom.gom.adt.symboltable.types.sortdescription.SortDescription) ) { String  tom_m= (( tom.gom.adt.symboltable.types.SortDescription )desc).getModuleSymbol() ;
+    { /* unamed block */{ /* unamed block */if ( (desc instanceof tom.gom.adt.symboltable.types.SortDescription) ) {if ( ((( tom.gom.adt.symboltable.types.SortDescription )desc) instanceof tom.gom.adt.symboltable.types.sortdescription.SortDescription) ) { String  tom___m= (( tom.gom.adt.symboltable.types.SortDescription )desc).getModuleSymbol() ;
 
-        String packageName = gomEnvironment.getStreamManager().getPackagePath(tom_m);
+        String packageName = gomEnvironment.getStreamManager().getPackagePath(tom___m);
         return (packageName.equals("") ? "" : packageName + ".")
-          + tom_m.toLowerCase() + ".types." + sort;
-      }}}}}
+          + tom___m.toLowerCase() + ".types." + sort;
+      }}}}
 
     GomMessage.error(getLogger(),null,0,
         GomMessage.nonExhaustiveMatch);
@@ -147,13 +147,13 @@ public class SymbolTable {
           GomMessage.undeclaredConstructorException, cons);
       return null;
     }
-    {{if ( (desc instanceof tom.gom.adt.symboltable.types.ConstructorDescription) ) {if ( ((( tom.gom.adt.symboltable.types.ConstructorDescription )desc) instanceof tom.gom.adt.symboltable.types.ConstructorDescription) ) {if ( ((( tom.gom.adt.symboltable.types.ConstructorDescription )(( tom.gom.adt.symboltable.types.ConstructorDescription )desc)) instanceof tom.gom.adt.symboltable.types.constructordescription.ConstructorDescription) ) {
+    { /* unamed block */{ /* unamed block */if ( (desc instanceof tom.gom.adt.symboltable.types.ConstructorDescription) ) {if ( ((( tom.gom.adt.symboltable.types.ConstructorDescription )desc) instanceof tom.gom.adt.symboltable.types.constructordescription.ConstructorDescription) ) {
 
         return getFullSortClassName( (( tom.gom.adt.symboltable.types.ConstructorDescription )desc).getSortSymbol() ).toLowerCase() + "." + cons;
-      }}}}{if ( (desc instanceof tom.gom.adt.symboltable.types.ConstructorDescription) ) {if ( ((( tom.gom.adt.symboltable.types.ConstructorDescription )desc) instanceof tom.gom.adt.symboltable.types.ConstructorDescription) ) {if ( ((( tom.gom.adt.symboltable.types.ConstructorDescription )(( tom.gom.adt.symboltable.types.ConstructorDescription )desc)) instanceof tom.gom.adt.symboltable.types.constructordescription.VariadicConstructorDescription) ) {
+      }}}{ /* unamed block */if ( (desc instanceof tom.gom.adt.symboltable.types.ConstructorDescription) ) {if ( ((( tom.gom.adt.symboltable.types.ConstructorDescription )desc) instanceof tom.gom.adt.symboltable.types.constructordescription.VariadicConstructorDescription) ) {
 
         return getFullSortClassName( (( tom.gom.adt.symboltable.types.ConstructorDescription )desc).getSortSymbol() ).toLowerCase() + "." + cons;
-      }}}}}
+      }}}}
 
     GomMessage.error(getLogger(),null,0,
         GomMessage.nonExhaustiveMatch);
@@ -207,7 +207,7 @@ public class SymbolTable {
   public boolean isVariadic(String cons) {
     try {
       ConstructorDescription desc = constructors.get(cons);
-      {{if ( (desc instanceof tom.gom.adt.symboltable.types.ConstructorDescription) ) {if ( ((( tom.gom.adt.symboltable.types.ConstructorDescription )desc) instanceof tom.gom.adt.symboltable.types.ConstructorDescription) ) {if ( ((( tom.gom.adt.symboltable.types.ConstructorDescription )(( tom.gom.adt.symboltable.types.ConstructorDescription )desc)) instanceof tom.gom.adt.symboltable.types.constructordescription.VariadicConstructorDescription) ) { return true; }}}}}
+      { /* unamed block */{ /* unamed block */if ( (desc instanceof tom.gom.adt.symboltable.types.ConstructorDescription) ) {if ( ((( tom.gom.adt.symboltable.types.ConstructorDescription )desc) instanceof tom.gom.adt.symboltable.types.constructordescription.VariadicConstructorDescription) ) { return true; }}}}
       return false;
     } catch (NullPointerException e) {
       GomMessage.error(getLogger(),null,0,
@@ -220,10 +220,10 @@ public class SymbolTable {
   public boolean isGenerated(String cons) {
     try {
       ConstructorDescription desc = constructors.get(cons);
-      {{if ( (desc instanceof tom.gom.adt.symboltable.types.ConstructorDescription) ) {if ( ((( tom.gom.adt.symboltable.types.ConstructorDescription )desc) instanceof tom.gom.adt.symboltable.types.ConstructorDescription) ) {if ( ((( tom.gom.adt.symboltable.types.ConstructorDescription )(( tom.gom.adt.symboltable.types.ConstructorDescription )desc)) instanceof tom.gom.adt.symboltable.types.constructordescription.ConstructorDescription) ) { tom.gom.adt.symboltable.types.GenerationInfo  tomMatch478_1= (( tom.gom.adt.symboltable.types.ConstructorDescription )desc).getGenerated() ;boolean tomMatch478_6= false ;if ( (tomMatch478_1 instanceof tom.gom.adt.symboltable.types.GenerationInfo) ) {if ( ((( tom.gom.adt.symboltable.types.GenerationInfo )tomMatch478_1) instanceof tom.gom.adt.symboltable.types.generationinfo.No) ) {tomMatch478_6= true ;}}if (!(tomMatch478_6)) {
+      { /* unamed block */{ /* unamed block */if ( (desc instanceof tom.gom.adt.symboltable.types.ConstructorDescription) ) {if ( ((( tom.gom.adt.symboltable.types.ConstructorDescription )desc) instanceof tom.gom.adt.symboltable.types.constructordescription.ConstructorDescription) ) {boolean tomMatch509_6= false ;if ( ((( tom.gom.adt.symboltable.types.GenerationInfo ) (( tom.gom.adt.symboltable.types.ConstructorDescription )desc).getGenerated() ) instanceof tom.gom.adt.symboltable.types.generationinfo.No) ) {tomMatch509_6= true ;}if (!(tomMatch509_6)) {
 
           return true;
-        }}}}}}
+        }}}}}
 
       return false;
     } catch (NullPointerException e) {
@@ -237,10 +237,10 @@ public class SymbolTable {
   public boolean isGeneratedCons(String cons) {
     try {
       ConstructorDescription desc = constructors.get(cons);
-      {{if ( (desc instanceof tom.gom.adt.symboltable.types.ConstructorDescription) ) {if ( ((( tom.gom.adt.symboltable.types.ConstructorDescription )desc) instanceof tom.gom.adt.symboltable.types.ConstructorDescription) ) {if ( ((( tom.gom.adt.symboltable.types.ConstructorDescription )(( tom.gom.adt.symboltable.types.ConstructorDescription )desc)) instanceof tom.gom.adt.symboltable.types.constructordescription.ConstructorDescription) ) { tom.gom.adt.symboltable.types.GenerationInfo  tomMatch479_1= (( tom.gom.adt.symboltable.types.ConstructorDescription )desc).getGenerated() ;if ( (tomMatch479_1 instanceof tom.gom.adt.symboltable.types.GenerationInfo) ) {if ( ((( tom.gom.adt.symboltable.types.GenerationInfo )tomMatch479_1) instanceof tom.gom.adt.symboltable.types.generationinfo.GenCons) ) {
+      { /* unamed block */{ /* unamed block */if ( (desc instanceof tom.gom.adt.symboltable.types.ConstructorDescription) ) {if ( ((( tom.gom.adt.symboltable.types.ConstructorDescription )desc) instanceof tom.gom.adt.symboltable.types.constructordescription.ConstructorDescription) ) {if ( ((( tom.gom.adt.symboltable.types.GenerationInfo ) (( tom.gom.adt.symboltable.types.ConstructorDescription )desc).getGenerated() ) instanceof tom.gom.adt.symboltable.types.generationinfo.GenCons) ) {
 
           return true;
-        }}}}}}}
+        }}}}}
 
       return false;
     } catch (NullPointerException e) {
@@ -254,10 +254,10 @@ public class SymbolTable {
   public boolean isGeneratedNil(String cons) {
     try {
       ConstructorDescription desc = constructors.get(cons);
-      {{if ( (desc instanceof tom.gom.adt.symboltable.types.ConstructorDescription) ) {if ( ((( tom.gom.adt.symboltable.types.ConstructorDescription )desc) instanceof tom.gom.adt.symboltable.types.ConstructorDescription) ) {if ( ((( tom.gom.adt.symboltable.types.ConstructorDescription )(( tom.gom.adt.symboltable.types.ConstructorDescription )desc)) instanceof tom.gom.adt.symboltable.types.constructordescription.ConstructorDescription) ) { tom.gom.adt.symboltable.types.GenerationInfo  tomMatch480_1= (( tom.gom.adt.symboltable.types.ConstructorDescription )desc).getGenerated() ;if ( (tomMatch480_1 instanceof tom.gom.adt.symboltable.types.GenerationInfo) ) {if ( ((( tom.gom.adt.symboltable.types.GenerationInfo )tomMatch480_1) instanceof tom.gom.adt.symboltable.types.generationinfo.GenNil) ) {
+      { /* unamed block */{ /* unamed block */if ( (desc instanceof tom.gom.adt.symboltable.types.ConstructorDescription) ) {if ( ((( tom.gom.adt.symboltable.types.ConstructorDescription )desc) instanceof tom.gom.adt.symboltable.types.constructordescription.ConstructorDescription) ) {if ( ((( tom.gom.adt.symboltable.types.GenerationInfo ) (( tom.gom.adt.symboltable.types.ConstructorDescription )desc).getGenerated() ) instanceof tom.gom.adt.symboltable.types.generationinfo.GenNil) ) {
 
           return true;
-        }}}}}}}
+        }}}}}
 
       return false;
     } catch (NullPointerException e) {
@@ -291,20 +291,20 @@ public class SymbolTable {
   }
 
   private void fillFromGomModule(GomModule m) {
-    {{if ( (m instanceof tom.gom.adt.gom.types.GomModule) ) {if ( ((( tom.gom.adt.gom.types.GomModule )m) instanceof tom.gom.adt.gom.types.GomModule) ) {if ( ((( tom.gom.adt.gom.types.GomModule )(( tom.gom.adt.gom.types.GomModule )m)) instanceof tom.gom.adt.gom.types.gommodule.GomModule) ) { tom.gom.adt.gom.types.GomModuleName  tomMatch481_1= (( tom.gom.adt.gom.types.GomModule )m).getModuleName() ; tom.gom.adt.gom.types.SectionList  tomMatch481_2= (( tom.gom.adt.gom.types.GomModule )m).getSectionList() ;if ( (tomMatch481_1 instanceof tom.gom.adt.gom.types.GomModuleName) ) {if ( ((( tom.gom.adt.gom.types.GomModuleName )tomMatch481_1) instanceof tom.gom.adt.gom.types.gommodulename.GomModuleName) ) {if ( (((( tom.gom.adt.gom.types.SectionList )tomMatch481_2) instanceof tom.gom.adt.gom.types.sectionlist.ConsConcSection) || ((( tom.gom.adt.gom.types.SectionList )tomMatch481_2) instanceof tom.gom.adt.gom.types.sectionlist.EmptyConcSection)) ) { tom.gom.adt.gom.types.SectionList  tomMatch481_end_11=tomMatch481_2;do {{if (!( tomMatch481_end_11.isEmptyConcSection() )) { tom.gom.adt.gom.types.Section  tomMatch481_15= tomMatch481_end_11.getHeadConcSection() ;if ( (tomMatch481_15 instanceof tom.gom.adt.gom.types.Section) ) {if ( ((( tom.gom.adt.gom.types.Section )tomMatch481_15) instanceof tom.gom.adt.gom.types.section.Public) ) { tom.gom.adt.gom.types.ProductionList  tomMatch481_14= tomMatch481_15.getProductionList() ;if ( (((( tom.gom.adt.gom.types.ProductionList )tomMatch481_14) instanceof tom.gom.adt.gom.types.productionlist.ConsConcProduction) || ((( tom.gom.adt.gom.types.ProductionList )tomMatch481_14) instanceof tom.gom.adt.gom.types.productionlist.EmptyConcProduction)) ) { tom.gom.adt.gom.types.ProductionList  tomMatch481_end_20=tomMatch481_14;do {{if (!( tomMatch481_end_20.isEmptyConcProduction() )) {fillFromProduction( tomMatch481_1.getName() , tomMatch481_end_20.getHeadConcProduction() )
+    { /* unamed block */{ /* unamed block */if ( (m instanceof tom.gom.adt.gom.types.GomModule) ) {if ( ((( tom.gom.adt.gom.types.GomModule )m) instanceof tom.gom.adt.gom.types.gommodule.GomModule) ) { tom.gom.adt.gom.types.GomModuleName  tomMatch512_1= (( tom.gom.adt.gom.types.GomModule )m).getModuleName() ; tom.gom.adt.gom.types.SectionList  tomMatch512_2= (( tom.gom.adt.gom.types.GomModule )m).getSectionList() ;if ( ((( tom.gom.adt.gom.types.GomModuleName )tomMatch512_1) instanceof tom.gom.adt.gom.types.gommodulename.GomModuleName) ) {if ( (((( tom.gom.adt.gom.types.SectionList )tomMatch512_2) instanceof tom.gom.adt.gom.types.sectionlist.ConsConcSection) || ((( tom.gom.adt.gom.types.SectionList )tomMatch512_2) instanceof tom.gom.adt.gom.types.sectionlist.EmptyConcSection)) ) { tom.gom.adt.gom.types.SectionList  tomMatch512_end_11=tomMatch512_2;do {{ /* unamed block */if (!( tomMatch512_end_11.isEmptyConcSection() )) { tom.gom.adt.gom.types.Section  tomMatch512_15= tomMatch512_end_11.getHeadConcSection() ;if ( ((( tom.gom.adt.gom.types.Section )tomMatch512_15) instanceof tom.gom.adt.gom.types.section.Public) ) { tom.gom.adt.gom.types.ProductionList  tomMatch512_14= tomMatch512_15.getProductionList() ;if ( (((( tom.gom.adt.gom.types.ProductionList )tomMatch512_14) instanceof tom.gom.adt.gom.types.productionlist.ConsConcProduction) || ((( tom.gom.adt.gom.types.ProductionList )tomMatch512_14) instanceof tom.gom.adt.gom.types.productionlist.EmptyConcProduction)) ) { tom.gom.adt.gom.types.ProductionList  tomMatch512_end_20=tomMatch512_14;do {{ /* unamed block */if (!( tomMatch512_end_20.isEmptyConcProduction() )) {fillFromProduction( tomMatch512_1.getName() , tomMatch512_end_20.getHeadConcProduction() )
 
 
 ;
-        }if ( tomMatch481_end_20.isEmptyConcProduction() ) {tomMatch481_end_20=tomMatch481_14;} else {tomMatch481_end_20= tomMatch481_end_20.getTailConcProduction() ;}}} while(!( (tomMatch481_end_20==tomMatch481_14) ));}}}}if ( tomMatch481_end_11.isEmptyConcSection() ) {tomMatch481_end_11=tomMatch481_2;} else {tomMatch481_end_11= tomMatch481_end_11.getTailConcSection() ;}}} while(!( (tomMatch481_end_11==tomMatch481_2) ));}}}}}}}}
+        }if ( tomMatch512_end_20.isEmptyConcProduction() ) {tomMatch512_end_20=tomMatch512_14;} else {tomMatch512_end_20= tomMatch512_end_20.getTailConcProduction() ;}}} while(!( (tomMatch512_end_20==tomMatch512_14) ));}}}if ( tomMatch512_end_11.isEmptyConcSection() ) {tomMatch512_end_11=tomMatch512_2;} else {tomMatch512_end_11= tomMatch512_end_11.getTailConcSection() ;}}} while(!( (tomMatch512_end_11==tomMatch512_2) ));}}}}}}
 
   }
 
   private static StringList getConstructors(AlternativeList al) {
     StringList res =  tom.gom.adt.symboltable.types.stringlist.EmptyStringList.make() ;
-    {{if ( (al instanceof tom.gom.adt.gom.types.AlternativeList) ) {if ( (((( tom.gom.adt.gom.types.AlternativeList )(( tom.gom.adt.gom.types.AlternativeList )al)) instanceof tom.gom.adt.gom.types.alternativelist.ConsConcAlternative) || ((( tom.gom.adt.gom.types.AlternativeList )(( tom.gom.adt.gom.types.AlternativeList )al)) instanceof tom.gom.adt.gom.types.alternativelist.EmptyConcAlternative)) ) { tom.gom.adt.gom.types.AlternativeList  tomMatch482_end_4=(( tom.gom.adt.gom.types.AlternativeList )al);do {{if (!( tomMatch482_end_4.isEmptyConcAlternative() )) { tom.gom.adt.gom.types.Alternative  tomMatch482_8= tomMatch482_end_4.getHeadConcAlternative() ;if ( (tomMatch482_8 instanceof tom.gom.adt.gom.types.Alternative) ) {if ( ((( tom.gom.adt.gom.types.Alternative )tomMatch482_8) instanceof tom.gom.adt.gom.types.alternative.Alternative) ) {
+    { /* unamed block */{ /* unamed block */if ( (al instanceof tom.gom.adt.gom.types.AlternativeList) ) {if ( (((( tom.gom.adt.gom.types.AlternativeList )al) instanceof tom.gom.adt.gom.types.alternativelist.ConsConcAlternative) || ((( tom.gom.adt.gom.types.AlternativeList )al) instanceof tom.gom.adt.gom.types.alternativelist.EmptyConcAlternative)) ) { tom.gom.adt.gom.types.AlternativeList  tomMatch513_end_4=(( tom.gom.adt.gom.types.AlternativeList )al);do {{ /* unamed block */if (!( tomMatch513_end_4.isEmptyConcAlternative() )) { tom.gom.adt.gom.types.Alternative  tomMatch513_8= tomMatch513_end_4.getHeadConcAlternative() ;if ( ((( tom.gom.adt.gom.types.Alternative )tomMatch513_8) instanceof tom.gom.adt.gom.types.alternative.Alternative) ) {
 
-        res =  tom.gom.adt.symboltable.types.stringlist.ConsStringList.make( tomMatch482_8.getName() , res) ;
-      }}}if ( tomMatch482_end_4.isEmptyConcAlternative() ) {tomMatch482_end_4=(( tom.gom.adt.gom.types.AlternativeList )al);} else {tomMatch482_end_4= tomMatch482_end_4.getTailConcAlternative() ;}}} while(!( (tomMatch482_end_4==(( tom.gom.adt.gom.types.AlternativeList )al)) ));}}}}
+        res =  tom.gom.adt.symboltable.types.stringlist.ConsStringList.make( tomMatch513_8.getName() , res) ;
+      }}if ( tomMatch513_end_4.isEmptyConcAlternative() ) {tomMatch513_end_4=(( tom.gom.adt.gom.types.AlternativeList )al);} else {tomMatch513_end_4= tomMatch513_end_4.getTailConcAlternative() ;}}} while(!( (tomMatch513_end_4==(( tom.gom.adt.gom.types.AlternativeList )al)) ));}}}}
 
     return res;
   }
@@ -347,9 +347,9 @@ public class SymbolTable {
 
   public String rawCons(String c) {
     if (isGenerated(c)) {
-      {{ tom.gom.adt.symboltable.types.GenerationInfo  tomMatch483_0=getGenerated(c);if ( (tomMatch483_0 instanceof tom.gom.adt.symboltable.types.GenerationInfo) ) {if ( ((( tom.gom.adt.symboltable.types.GenerationInfo )tomMatch483_0) instanceof tom.gom.adt.symboltable.types.GenerationInfo) ) {if ( ((( tom.gom.adt.symboltable.types.GenerationInfo )(( tom.gom.adt.symboltable.types.GenerationInfo )tomMatch483_0)) instanceof tom.gom.adt.symboltable.types.generationinfo.GenCons) ) {
- return "ConsRaw" +  (( tom.gom.adt.symboltable.types.GenerationInfo )tomMatch483_0).getBaseName() ; }}}}{ tom.gom.adt.symboltable.types.GenerationInfo  tomMatch483_4=getGenerated(c);if ( (tomMatch483_4 instanceof tom.gom.adt.symboltable.types.GenerationInfo) ) {if ( ((( tom.gom.adt.symboltable.types.GenerationInfo )tomMatch483_4) instanceof tom.gom.adt.symboltable.types.GenerationInfo) ) {if ( ((( tom.gom.adt.symboltable.types.GenerationInfo )(( tom.gom.adt.symboltable.types.GenerationInfo )tomMatch483_4)) instanceof tom.gom.adt.symboltable.types.generationinfo.GenNil) ) {
- return "EmptyRaw" +  (( tom.gom.adt.symboltable.types.GenerationInfo )tomMatch483_4).getBaseName() ; }}}}}
+      { /* unamed block */{ /* unamed block */ tom.gom.adt.symboltable.types.GenerationInfo  tomMatch514_0=getGenerated(c);if ( (tomMatch514_0 instanceof tom.gom.adt.symboltable.types.GenerationInfo) ) {if ( ((( tom.gom.adt.symboltable.types.GenerationInfo )tomMatch514_0) instanceof tom.gom.adt.symboltable.types.generationinfo.GenCons) ) {
+ return "ConsRaw" +  (( tom.gom.adt.symboltable.types.GenerationInfo )tomMatch514_0).getBaseName() ; }}}{ /* unamed block */ tom.gom.adt.symboltable.types.GenerationInfo  tomMatch514_4=getGenerated(c);if ( (tomMatch514_4 instanceof tom.gom.adt.symboltable.types.GenerationInfo) ) {if ( ((( tom.gom.adt.symboltable.types.GenerationInfo )tomMatch514_4) instanceof tom.gom.adt.symboltable.types.generationinfo.GenNil) ) {
+ return "EmptyRaw" +  (( tom.gom.adt.symboltable.types.GenerationInfo )tomMatch514_4).getBaseName() ; }}}}
 
     }
     return "Raw" + c;
@@ -362,12 +362,12 @@ public class SymbolTable {
           GomMessage.undeclaredSortException, sort);
       return null;
     }
-    {{if ( (desc instanceof tom.gom.adt.symboltable.types.SortDescription) ) {if ( ((( tom.gom.adt.symboltable.types.SortDescription )desc) instanceof tom.gom.adt.symboltable.types.SortDescription) ) {if ( ((( tom.gom.adt.symboltable.types.SortDescription )(( tom.gom.adt.symboltable.types.SortDescription )desc)) instanceof tom.gom.adt.symboltable.types.sortdescription.SortDescription) ) { String  tom_m= (( tom.gom.adt.symboltable.types.SortDescription )desc).getModuleSymbol() ;
+    { /* unamed block */{ /* unamed block */if ( (desc instanceof tom.gom.adt.symboltable.types.SortDescription) ) {if ( ((( tom.gom.adt.symboltable.types.SortDescription )desc) instanceof tom.gom.adt.symboltable.types.sortdescription.SortDescription) ) { String  tom___m= (( tom.gom.adt.symboltable.types.SortDescription )desc).getModuleSymbol() ;
 
-        String packageName = gomEnvironment.getStreamManager().getPackagePath(tom_m);
+        String packageName = gomEnvironment.getStreamManager().getPackagePath(tom___m);
         return (packageName.equals("") ? "" : packageName + ".")
-          + tom_m.toLowerCase() + ".types." + rawSort(sort);
-      }}}}}
+          + tom___m.toLowerCase() + ".types." + rawSort(sort);
+      }}}}
 
     GomMessage.error(getLogger(),null,0,
         GomMessage.nonExhaustiveMatch);
@@ -381,10 +381,10 @@ public class SymbolTable {
           GomMessage.undeclaredConstructorException, cons);
       return null;
     }
-    {{if ( (desc instanceof tom.gom.adt.symboltable.types.ConstructorDescription) ) {if ( ((( tom.gom.adt.symboltable.types.ConstructorDescription )desc) instanceof tom.gom.adt.symboltable.types.ConstructorDescription) ) {if ( ((( tom.gom.adt.symboltable.types.ConstructorDescription )(( tom.gom.adt.symboltable.types.ConstructorDescription )desc)) instanceof tom.gom.adt.symboltable.types.constructordescription.ConstructorDescription) ) {
+    { /* unamed block */{ /* unamed block */if ( (desc instanceof tom.gom.adt.symboltable.types.ConstructorDescription) ) {if ( ((( tom.gom.adt.symboltable.types.ConstructorDescription )desc) instanceof tom.gom.adt.symboltable.types.constructordescription.ConstructorDescription) ) {
 
         return qualifiedRawSortId( (( tom.gom.adt.symboltable.types.ConstructorDescription )desc).getSortSymbol() ).toLowerCase() + "." + rawCons(cons);
-      }}}}}
+      }}}}
 
     GomMessage.error(getLogger(),null,0,
         GomMessage.nonExhaustiveMatch);
@@ -393,72 +393,72 @@ public class SymbolTable {
 
   private static StringList convertBoundAtoms(AtomList al) {
     StringList res =  tom.gom.adt.symboltable.types.stringlist.EmptyStringList.make() ;
-    {{if ( (al instanceof tom.gom.adt.gom.types.AtomList) ) {if ( (((( tom.gom.adt.gom.types.AtomList )(( tom.gom.adt.gom.types.AtomList )al)) instanceof tom.gom.adt.gom.types.atomlist.ConsConcAtom) || ((( tom.gom.adt.gom.types.AtomList )(( tom.gom.adt.gom.types.AtomList )al)) instanceof tom.gom.adt.gom.types.atomlist.EmptyConcAtom)) ) { tom.gom.adt.gom.types.AtomList  tomMatch486_end_4=(( tom.gom.adt.gom.types.AtomList )al);do {{if (!( tomMatch486_end_4.isEmptyConcAtom() )) {
- res =  tom.gom.adt.symboltable.types.stringlist.ConsStringList.make( tomMatch486_end_4.getHeadConcAtom() , res) ; }if ( tomMatch486_end_4.isEmptyConcAtom() ) {tomMatch486_end_4=(( tom.gom.adt.gom.types.AtomList )al);} else {tomMatch486_end_4= tomMatch486_end_4.getTailConcAtom() ;}}} while(!( (tomMatch486_end_4==(( tom.gom.adt.gom.types.AtomList )al)) ));}}}}
+    { /* unamed block */{ /* unamed block */if ( (al instanceof tom.gom.adt.gom.types.AtomList) ) {if ( (((( tom.gom.adt.gom.types.AtomList )al) instanceof tom.gom.adt.gom.types.atomlist.ConsConcAtom) || ((( tom.gom.adt.gom.types.AtomList )al) instanceof tom.gom.adt.gom.types.atomlist.EmptyConcAtom)) ) { tom.gom.adt.gom.types.AtomList  tomMatch517_end_4=(( tom.gom.adt.gom.types.AtomList )al);do {{ /* unamed block */if (!( tomMatch517_end_4.isEmptyConcAtom() )) {
+ res =  tom.gom.adt.symboltable.types.stringlist.ConsStringList.make( tomMatch517_end_4.getHeadConcAtom() , res) ; }if ( tomMatch517_end_4.isEmptyConcAtom() ) {tomMatch517_end_4=(( tom.gom.adt.gom.types.AtomList )al);} else {tomMatch517_end_4= tomMatch517_end_4.getTailConcAtom() ;}}} while(!( (tomMatch517_end_4==(( tom.gom.adt.gom.types.AtomList )al)) ));}}}}
 
     return res;
   }
 
   private void fillFromProduction(String moduleName, Production p) {
-    {{if ( (p instanceof tom.gom.adt.gom.types.Production) ) {if ( ((( tom.gom.adt.gom.types.Production )p) instanceof tom.gom.adt.gom.types.Production) ) {if ( ((( tom.gom.adt.gom.types.Production )(( tom.gom.adt.gom.types.Production )p)) instanceof tom.gom.adt.gom.types.production.SortType) ) { tom.gom.adt.gom.types.GomType  tomMatch487_1= (( tom.gom.adt.gom.types.Production )p).getType() ;if ( (tomMatch487_1 instanceof tom.gom.adt.gom.types.GomType) ) {if ( ((( tom.gom.adt.gom.types.GomType )tomMatch487_1) instanceof tom.gom.adt.gom.types.gomtype.GomType) ) { tom.gom.adt.gom.types.TypeSpec  tom_spe= tomMatch487_1.getSpecialization() ; String  tom_n= tomMatch487_1.getName() ; tom.gom.adt.gom.types.AlternativeList  tom_al= (( tom.gom.adt.gom.types.Production )p).getAlternativeList() ;
+    { /* unamed block */{ /* unamed block */if ( (p instanceof tom.gom.adt.gom.types.Production) ) {if ( ((( tom.gom.adt.gom.types.Production )p) instanceof tom.gom.adt.gom.types.production.SortType) ) { tom.gom.adt.gom.types.GomType  tomMatch518_1= (( tom.gom.adt.gom.types.Production )p).getType() ;if ( ((( tom.gom.adt.gom.types.GomType )tomMatch518_1) instanceof tom.gom.adt.gom.types.gomtype.GomType) ) { tom.gom.adt.gom.types.TypeSpec  tom___spe= tomMatch518_1.getSpecialization() ; String  tom___n= tomMatch518_1.getName() ; tom.gom.adt.gom.types.AlternativeList  tom___al= (( tom.gom.adt.gom.types.Production )p).getAlternativeList() ;
 
 
           // filling sorts (except AccessibleAtoms)
-          StringList cons = getConstructors(tom_al);
+          StringList cons = getConstructors(tom___al);
           StringList bound = convertBoundAtoms( (( tom.gom.adt.gom.types.Production )p).getBinds() );
           StringList empty =  tom.gom.adt.symboltable.types.stringlist.EmptyStringList.make() ;
           FreshSortInfo info = null;
-          {{if ( (tom_spe instanceof tom.gom.adt.gom.types.TypeSpec) ) {if ( ((( tom.gom.adt.gom.types.TypeSpec )tom_spe) instanceof tom.gom.adt.gom.types.TypeSpec) ) {if ( ((( tom.gom.adt.gom.types.TypeSpec )(( tom.gom.adt.gom.types.TypeSpec )tom_spe)) instanceof tom.gom.adt.gom.types.typespec.ExpressionType) ) {
- info =  tom.gom.adt.symboltable.types.freshsortinfo.ExpressionTypeInfo.make(empty) ; }}}}{if ( (tom_spe instanceof tom.gom.adt.gom.types.TypeSpec) ) {if ( ((( tom.gom.adt.gom.types.TypeSpec )tom_spe) instanceof tom.gom.adt.gom.types.TypeSpec) ) {if ( ((( tom.gom.adt.gom.types.TypeSpec )(( tom.gom.adt.gom.types.TypeSpec )tom_spe)) instanceof tom.gom.adt.gom.types.typespec.PatternType) ) {
- info =  tom.gom.adt.symboltable.types.freshsortinfo.PatternTypeInfo.make(bound, empty) ; }}}}{if ( (tom_spe instanceof tom.gom.adt.gom.types.TypeSpec) ) {if ( ((( tom.gom.adt.gom.types.TypeSpec )tom_spe) instanceof tom.gom.adt.gom.types.TypeSpec) ) {if ( ((( tom.gom.adt.gom.types.TypeSpec )(( tom.gom.adt.gom.types.TypeSpec )tom_spe)) instanceof tom.gom.adt.gom.types.typespec.AtomType) ) {
- info =  tom.gom.adt.symboltable.types.freshsortinfo.AtomTypeInfo.make() ; }}}}}
+          { /* unamed block */{ /* unamed block */if ( (tom___spe instanceof tom.gom.adt.gom.types.TypeSpec) ) {if ( ((( tom.gom.adt.gom.types.TypeSpec )tom___spe) instanceof tom.gom.adt.gom.types.typespec.ExpressionType) ) {
+ info =  tom.gom.adt.symboltable.types.freshsortinfo.ExpressionTypeInfo.make(empty) ; }}}{ /* unamed block */if ( (tom___spe instanceof tom.gom.adt.gom.types.TypeSpec) ) {if ( ((( tom.gom.adt.gom.types.TypeSpec )tom___spe) instanceof tom.gom.adt.gom.types.typespec.PatternType) ) {
+ info =  tom.gom.adt.symboltable.types.freshsortinfo.PatternTypeInfo.make(bound, empty) ; }}}{ /* unamed block */if ( (tom___spe instanceof tom.gom.adt.gom.types.TypeSpec) ) {if ( ((( tom.gom.adt.gom.types.TypeSpec )tom___spe) instanceof tom.gom.adt.gom.types.typespec.AtomType) ) {
+ info =  tom.gom.adt.symboltable.types.freshsortinfo.AtomTypeInfo.make() ; }}}}
 
-          sorts.put(tom_n, tom.gom.adt.symboltable.types.sortdescription.SortDescription.make(cons, moduleName, info) );
+          sorts.put(tom___n, tom.gom.adt.symboltable.types.sortdescription.SortDescription.make(cons, moduleName, info) );
           // filling constructors
-          {{if ( (tom_al instanceof tom.gom.adt.gom.types.AlternativeList) ) {if ( (((( tom.gom.adt.gom.types.AlternativeList )(( tom.gom.adt.gom.types.AlternativeList )tom_al)) instanceof tom.gom.adt.gom.types.alternativelist.ConsConcAlternative) || ((( tom.gom.adt.gom.types.AlternativeList )(( tom.gom.adt.gom.types.AlternativeList )tom_al)) instanceof tom.gom.adt.gom.types.alternativelist.EmptyConcAlternative)) ) { tom.gom.adt.gom.types.AlternativeList  tomMatch489_end_4=(( tom.gom.adt.gom.types.AlternativeList )tom_al);do {{if (!( tomMatch489_end_4.isEmptyConcAlternative() )) {fillCons(tom_n, tomMatch489_end_4.getHeadConcAlternative() )
-; }if ( tomMatch489_end_4.isEmptyConcAlternative() ) {tomMatch489_end_4=(( tom.gom.adt.gom.types.AlternativeList )tom_al);} else {tomMatch489_end_4= tomMatch489_end_4.getTailConcAlternative() ;}}} while(!( (tomMatch489_end_4==(( tom.gom.adt.gom.types.AlternativeList )tom_al)) ));}}}}
+          { /* unamed block */{ /* unamed block */if ( (tom___al instanceof tom.gom.adt.gom.types.AlternativeList) ) {if ( (((( tom.gom.adt.gom.types.AlternativeList )tom___al) instanceof tom.gom.adt.gom.types.alternativelist.ConsConcAlternative) || ((( tom.gom.adt.gom.types.AlternativeList )tom___al) instanceof tom.gom.adt.gom.types.alternativelist.EmptyConcAlternative)) ) { tom.gom.adt.gom.types.AlternativeList  tomMatch520_end_4=(( tom.gom.adt.gom.types.AlternativeList )tom___al);do {{ /* unamed block */if (!( tomMatch520_end_4.isEmptyConcAlternative() )) {fillCons(tom___n, tomMatch520_end_4.getHeadConcAlternative() )
+; }if ( tomMatch520_end_4.isEmptyConcAlternative() ) {tomMatch520_end_4=(( tom.gom.adt.gom.types.AlternativeList )tom___al);} else {tomMatch520_end_4= tomMatch520_end_4.getTailConcAlternative() ;}}} while(!( (tomMatch520_end_4==(( tom.gom.adt.gom.types.AlternativeList )tom___al)) ));}}}}
 
-        }}}}}}}
+        }}}}}
 
   }
 
   private void fillCons(String codom, Alternative p)  {
-    {{if ( (p instanceof tom.gom.adt.gom.types.Alternative) ) {if ( ((( tom.gom.adt.gom.types.Alternative )p) instanceof tom.gom.adt.gom.types.Alternative) ) {if ( ((( tom.gom.adt.gom.types.Alternative )(( tom.gom.adt.gom.types.Alternative )p)) instanceof tom.gom.adt.gom.types.alternative.Alternative) ) { String  tom_n= (( tom.gom.adt.gom.types.Alternative )p).getName() ; tom.gom.adt.gom.types.FieldList  tom_dl= (( tom.gom.adt.gom.types.Alternative )p).getDomainList() ;{{if ( (tom_dl instanceof tom.gom.adt.gom.types.FieldList) ) {if ( (((( tom.gom.adt.gom.types.FieldList )(( tom.gom.adt.gom.types.FieldList )tom_dl)) instanceof tom.gom.adt.gom.types.fieldlist.ConsConcField) || ((( tom.gom.adt.gom.types.FieldList )(( tom.gom.adt.gom.types.FieldList )tom_dl)) instanceof tom.gom.adt.gom.types.fieldlist.EmptyConcField)) ) {if (!( (( tom.gom.adt.gom.types.FieldList )tom_dl).isEmptyConcField() )) { tom.gom.adt.gom.types.Field  tomMatch491_5= (( tom.gom.adt.gom.types.FieldList )tom_dl).getHeadConcField() ;if ( (tomMatch491_5 instanceof tom.gom.adt.gom.types.Field) ) {if ( ((( tom.gom.adt.gom.types.Field )tomMatch491_5) instanceof tom.gom.adt.gom.types.field.StarredField) ) { tom.gom.adt.gom.types.GomType  tomMatch491_3= tomMatch491_5.getFieldType() ;if ( (tomMatch491_3 instanceof tom.gom.adt.gom.types.GomType) ) {if ( ((( tom.gom.adt.gom.types.GomType )tomMatch491_3) instanceof tom.gom.adt.gom.types.gomtype.GomType) ) {if (  (( tom.gom.adt.gom.types.FieldList )tom_dl).getTailConcField() .isEmptyConcField() ) {
+    { /* unamed block */{ /* unamed block */if ( (p instanceof tom.gom.adt.gom.types.Alternative) ) {if ( ((( tom.gom.adt.gom.types.Alternative )p) instanceof tom.gom.adt.gom.types.alternative.Alternative) ) { String  tom___n= (( tom.gom.adt.gom.types.Alternative )p).getName() ; tom.gom.adt.gom.types.FieldList  tom___dl= (( tom.gom.adt.gom.types.Alternative )p).getDomainList() ;{ /* unamed block */{ /* unamed block */if ( (tom___dl instanceof tom.gom.adt.gom.types.FieldList) ) {if ( (((( tom.gom.adt.gom.types.FieldList )tom___dl) instanceof tom.gom.adt.gom.types.fieldlist.ConsConcField) || ((( tom.gom.adt.gom.types.FieldList )tom___dl) instanceof tom.gom.adt.gom.types.fieldlist.EmptyConcField)) ) {if (!( (( tom.gom.adt.gom.types.FieldList )tom___dl).isEmptyConcField() )) { tom.gom.adt.gom.types.Field  tomMatch522_5= (( tom.gom.adt.gom.types.FieldList )tom___dl).getHeadConcField() ;if ( ((( tom.gom.adt.gom.types.Field )tomMatch522_5) instanceof tom.gom.adt.gom.types.field.StarredField) ) { tom.gom.adt.gom.types.GomType  tomMatch522_3= tomMatch522_5.getFieldType() ;if ( ((( tom.gom.adt.gom.types.GomType )tomMatch522_3) instanceof tom.gom.adt.gom.types.gomtype.GomType) ) {if (  (( tom.gom.adt.gom.types.FieldList )tom___dl).getTailConcField() .isEmptyConcField() ) {
 
 
 
 
 
-            constructors.put(tom_n,
-                 tom.gom.adt.symboltable.types.constructordescription.VariadicConstructorDescription.make(codom,  tomMatch491_3.getName() ,  tomMatch491_5.getSpecifier() .isRefresh()) );
+            constructors.put(tom___n,
+                 tom.gom.adt.symboltable.types.constructordescription.VariadicConstructorDescription.make(codom,  tomMatch522_3.getName() ,  tomMatch522_5.getSpecifier() .isRefresh()) );
             return;
-          }}}}}}}}}{if ( (tom_dl instanceof tom.gom.adt.gom.types.FieldList) ) {
+          }}}}}}}{ /* unamed block */if ( (tom___dl instanceof tom.gom.adt.gom.types.FieldList) ) {
 
-            FieldDescriptionList fl = getFieldList(codom,tom_dl);
-            constructors.put(tom_n, tom.gom.adt.symboltable.types.constructordescription.ConstructorDescription.make(codom, fl,  tom.gom.adt.symboltable.types.generationinfo.No.make() ) );
+            FieldDescriptionList fl = getFieldList(codom,tom___dl);
+            constructors.put(tom___n, tom.gom.adt.symboltable.types.constructordescription.ConstructorDescription.make(codom, fl,  tom.gom.adt.symboltable.types.generationinfo.No.make() ) );
           }}}
 
-      }}}}}
+      }}}}
 
   }
 
   private FieldDescriptionList getFieldList(String codom, FieldList dl) {
     FieldDescriptionList res =  tom.gom.adt.symboltable.types.fielddescriptionlist.EmptyconcFieldDescription.make() ;
-    {{if ( (dl instanceof tom.gom.adt.gom.types.FieldList) ) {if ( (((( tom.gom.adt.gom.types.FieldList )(( tom.gom.adt.gom.types.FieldList )dl)) instanceof tom.gom.adt.gom.types.fieldlist.ConsConcField) || ((( tom.gom.adt.gom.types.FieldList )(( tom.gom.adt.gom.types.FieldList )dl)) instanceof tom.gom.adt.gom.types.fieldlist.EmptyConcField)) ) { tom.gom.adt.gom.types.FieldList  tomMatch492_end_4=(( tom.gom.adt.gom.types.FieldList )dl);do {{if (!( tomMatch492_end_4.isEmptyConcField() )) { tom.gom.adt.gom.types.Field  tomMatch492_10= tomMatch492_end_4.getHeadConcField() ;if ( (tomMatch492_10 instanceof tom.gom.adt.gom.types.Field) ) {if ( ((( tom.gom.adt.gom.types.Field )tomMatch492_10) instanceof tom.gom.adt.gom.types.field.NamedField) ) { tom.gom.adt.gom.types.GomType  tomMatch492_9= tomMatch492_10.getFieldType() ; tom.gom.adt.gom.types.ScopeSpecifier  tom_spe= tomMatch492_10.getSpecifier() ;if ( (tomMatch492_9 instanceof tom.gom.adt.gom.types.GomType) ) {if ( ((( tom.gom.adt.gom.types.GomType )tomMatch492_9) instanceof tom.gom.adt.gom.types.gomtype.GomType) ) {
+    { /* unamed block */{ /* unamed block */if ( (dl instanceof tom.gom.adt.gom.types.FieldList) ) {if ( (((( tom.gom.adt.gom.types.FieldList )dl) instanceof tom.gom.adt.gom.types.fieldlist.ConsConcField) || ((( tom.gom.adt.gom.types.FieldList )dl) instanceof tom.gom.adt.gom.types.fieldlist.EmptyConcField)) ) { tom.gom.adt.gom.types.FieldList  tomMatch523_end_4=(( tom.gom.adt.gom.types.FieldList )dl);do {{ /* unamed block */if (!( tomMatch523_end_4.isEmptyConcField() )) { tom.gom.adt.gom.types.Field  tomMatch523_10= tomMatch523_end_4.getHeadConcField() ;if ( ((( tom.gom.adt.gom.types.Field )tomMatch523_10) instanceof tom.gom.adt.gom.types.field.NamedField) ) { tom.gom.adt.gom.types.GomType  tomMatch523_9= tomMatch523_10.getFieldType() ; tom.gom.adt.gom.types.ScopeSpecifier  tom___spe= tomMatch523_10.getSpecifier() ;if ( ((( tom.gom.adt.gom.types.GomType )tomMatch523_9) instanceof tom.gom.adt.gom.types.gomtype.GomType) ) {
 
 
 
         Status st = null;
-        {{if ( (tom_spe instanceof tom.gom.adt.gom.types.ScopeSpecifier) ) {if ( ((( tom.gom.adt.gom.types.ScopeSpecifier )tom_spe) instanceof tom.gom.adt.gom.types.ScopeSpecifier) ) {if ( ((( tom.gom.adt.gom.types.ScopeSpecifier )(( tom.gom.adt.gom.types.ScopeSpecifier )tom_spe)) instanceof tom.gom.adt.gom.types.scopespecifier.Outer) ) {
- st =  tom.gom.adt.symboltable.types.status.SOuter.make() ; }}}}{if ( (tom_spe instanceof tom.gom.adt.gom.types.ScopeSpecifier) ) {if ( ((( tom.gom.adt.gom.types.ScopeSpecifier )tom_spe) instanceof tom.gom.adt.gom.types.ScopeSpecifier) ) {if ( ((( tom.gom.adt.gom.types.ScopeSpecifier )(( tom.gom.adt.gom.types.ScopeSpecifier )tom_spe)) instanceof tom.gom.adt.gom.types.scopespecifier.Inner) ) {
- st =  tom.gom.adt.symboltable.types.status.SInner.make() ; }}}}{if ( (tom_spe instanceof tom.gom.adt.gom.types.ScopeSpecifier) ) {if ( ((( tom.gom.adt.gom.types.ScopeSpecifier )tom_spe) instanceof tom.gom.adt.gom.types.ScopeSpecifier) ) {if ( ((( tom.gom.adt.gom.types.ScopeSpecifier )(( tom.gom.adt.gom.types.ScopeSpecifier )tom_spe)) instanceof tom.gom.adt.gom.types.scopespecifier.Neutral) ) {
- st =  tom.gom.adt.symboltable.types.status.SNeutral.make() ; }}}}{if ( (tom_spe instanceof tom.gom.adt.gom.types.ScopeSpecifier) ) {if ( ((( tom.gom.adt.gom.types.ScopeSpecifier )tom_spe) instanceof tom.gom.adt.gom.types.ScopeSpecifier) ) {if ( ((( tom.gom.adt.gom.types.ScopeSpecifier )(( tom.gom.adt.gom.types.ScopeSpecifier )tom_spe)) instanceof tom.gom.adt.gom.types.scopespecifier.None) ) {
- st = isPatternType(codom) ?  tom.gom.adt.symboltable.types.status.SPattern.make()  :  tom.gom.adt.symboltable.types.status.SNone.make() ; }}}}{if ( (tom_spe instanceof tom.gom.adt.gom.types.ScopeSpecifier) ) {if ( ((( tom.gom.adt.gom.types.ScopeSpecifier )tom_spe) instanceof tom.gom.adt.gom.types.ScopeSpecifier) ) {if ( ((( tom.gom.adt.gom.types.ScopeSpecifier )(( tom.gom.adt.gom.types.ScopeSpecifier )tom_spe)) instanceof tom.gom.adt.gom.types.scopespecifier.Refresh) ) {
- st =  tom.gom.adt.symboltable.types.status.SRefreshPoint.make() ; }}}}}
+        { /* unamed block */{ /* unamed block */if ( (tom___spe instanceof tom.gom.adt.gom.types.ScopeSpecifier) ) {if ( ((( tom.gom.adt.gom.types.ScopeSpecifier )tom___spe) instanceof tom.gom.adt.gom.types.scopespecifier.Outer) ) {
+ st =  tom.gom.adt.symboltable.types.status.SOuter.make() ; }}}{ /* unamed block */if ( (tom___spe instanceof tom.gom.adt.gom.types.ScopeSpecifier) ) {if ( ((( tom.gom.adt.gom.types.ScopeSpecifier )tom___spe) instanceof tom.gom.adt.gom.types.scopespecifier.Inner) ) {
+ st =  tom.gom.adt.symboltable.types.status.SInner.make() ; }}}{ /* unamed block */if ( (tom___spe instanceof tom.gom.adt.gom.types.ScopeSpecifier) ) {if ( ((( tom.gom.adt.gom.types.ScopeSpecifier )tom___spe) instanceof tom.gom.adt.gom.types.scopespecifier.Neutral) ) {
+ st =  tom.gom.adt.symboltable.types.status.SNeutral.make() ; }}}{ /* unamed block */if ( (tom___spe instanceof tom.gom.adt.gom.types.ScopeSpecifier) ) {if ( ((( tom.gom.adt.gom.types.ScopeSpecifier )tom___spe) instanceof tom.gom.adt.gom.types.scopespecifier.None) ) {
+ st = isPatternType(codom) ?  tom.gom.adt.symboltable.types.status.SPattern.make()  :  tom.gom.adt.symboltable.types.status.SNone.make() ; }}}{ /* unamed block */if ( (tom___spe instanceof tom.gom.adt.gom.types.ScopeSpecifier) ) {if ( ((( tom.gom.adt.gom.types.ScopeSpecifier )tom___spe) instanceof tom.gom.adt.gom.types.scopespecifier.Refresh) ) {
+ st =  tom.gom.adt.symboltable.types.status.SRefreshPoint.make() ; }}}}
 
-        FieldDescription desc =  tom.gom.adt.symboltable.types.fielddescription.FieldDescription.make( tomMatch492_10.getName() ,  tomMatch492_9.getName() , st) ;
+        FieldDescription desc =  tom.gom.adt.symboltable.types.fielddescription.FieldDescription.make( tomMatch523_10.getName() ,  tomMatch523_9.getName() , st) ;
         res = tom_append_list_concFieldDescription(res, tom.gom.adt.symboltable.types.fielddescriptionlist.ConsconcFieldDescription.make(desc, tom.gom.adt.symboltable.types.fielddescriptionlist.EmptyconcFieldDescription.make() ) );
-      }}}}}if ( tomMatch492_end_4.isEmptyConcField() ) {tomMatch492_end_4=(( tom.gom.adt.gom.types.FieldList )dl);} else {tomMatch492_end_4= tomMatch492_end_4.getTailConcField() ;}}} while(!( (tomMatch492_end_4==(( tom.gom.adt.gom.types.FieldList )dl)) ));}}}}
+      }}}if ( tomMatch523_end_4.isEmptyConcField() ) {tomMatch523_end_4=(( tom.gom.adt.gom.types.FieldList )dl);} else {tomMatch523_end_4= tomMatch523_end_4.getTailConcField() ;}}} while(!( (tomMatch523_end_4==(( tom.gom.adt.gom.types.FieldList )dl)) ));}}}}
 
     return res;
   }
@@ -466,10 +466,10 @@ public class SymbolTable {
   private void setAccessibleAtoms(String sort, StringList atoms) {
     SortDescription desc = sorts.get(sort);
     SortDescription ndesc = null;
-    {{if ( (desc instanceof tom.gom.adt.symboltable.types.SortDescription) ) {if ( ((( tom.gom.adt.symboltable.types.SortDescription )desc) instanceof tom.gom.adt.symboltable.types.SortDescription) ) {if ( ((( tom.gom.adt.symboltable.types.SortDescription )(( tom.gom.adt.symboltable.types.SortDescription )desc)) instanceof tom.gom.adt.symboltable.types.sortdescription.SortDescription) ) {
+    { /* unamed block */{ /* unamed block */if ( (desc instanceof tom.gom.adt.symboltable.types.SortDescription) ) {if ( ((( tom.gom.adt.symboltable.types.SortDescription )desc) instanceof tom.gom.adt.symboltable.types.sortdescription.SortDescription) ) {
 
         ndesc = desc.setFreshInfo( (( tom.gom.adt.symboltable.types.SortDescription )desc).getFreshInfo() .setAccessibleAtoms(atoms));
-      }}}}}
+      }}}}
 
     sorts.put(sort,ndesc);
   }
@@ -497,7 +497,7 @@ public class SymbolTable {
     }
     try {
       FreshSortInfo i = sorts.get(sort).getFreshInfo();
-      {{if ( (i instanceof tom.gom.adt.symboltable.types.FreshSortInfo) ) {if ( ((( tom.gom.adt.symboltable.types.FreshSortInfo )i) instanceof tom.gom.adt.symboltable.types.FreshSortInfo) ) {if ( ((( tom.gom.adt.symboltable.types.FreshSortInfo )(( tom.gom.adt.symboltable.types.FreshSortInfo )i)) instanceof tom.gom.adt.symboltable.types.freshsortinfo.ExpressionTypeInfo) ) { return true; }}}}}
+      { /* unamed block */{ /* unamed block */if ( (i instanceof tom.gom.adt.symboltable.types.FreshSortInfo) ) {if ( ((( tom.gom.adt.symboltable.types.FreshSortInfo )i) instanceof tom.gom.adt.symboltable.types.freshsortinfo.ExpressionTypeInfo) ) { return true; }}}}
       return false;
     } catch (NullPointerException e) {
       GomMessage.error(getLogger(),null,0,
@@ -512,7 +512,7 @@ public class SymbolTable {
     }
     try {
       FreshSortInfo i = sorts.get(sort).getFreshInfo();
-      {{if ( (i instanceof tom.gom.adt.symboltable.types.FreshSortInfo) ) {if ( ((( tom.gom.adt.symboltable.types.FreshSortInfo )i) instanceof tom.gom.adt.symboltable.types.FreshSortInfo) ) {if ( ((( tom.gom.adt.symboltable.types.FreshSortInfo )(( tom.gom.adt.symboltable.types.FreshSortInfo )i)) instanceof tom.gom.adt.symboltable.types.freshsortinfo.PatternTypeInfo) ) { return true; }}}}}
+      { /* unamed block */{ /* unamed block */if ( (i instanceof tom.gom.adt.symboltable.types.FreshSortInfo) ) {if ( ((( tom.gom.adt.symboltable.types.FreshSortInfo )i) instanceof tom.gom.adt.symboltable.types.freshsortinfo.PatternTypeInfo) ) { return true; }}}}
       return false;
     } catch (NullPointerException e) {
       GomMessage.error(getLogger(),null,0,
@@ -527,7 +527,7 @@ public class SymbolTable {
     }
     try {
       FreshSortInfo i = sorts.get(sort).getFreshInfo();
-      {{if ( (i instanceof tom.gom.adt.symboltable.types.FreshSortInfo) ) {if ( ((( tom.gom.adt.symboltable.types.FreshSortInfo )i) instanceof tom.gom.adt.symboltable.types.FreshSortInfo) ) {if ( ((( tom.gom.adt.symboltable.types.FreshSortInfo )(( tom.gom.adt.symboltable.types.FreshSortInfo )i)) instanceof tom.gom.adt.symboltable.types.freshsortinfo.AtomTypeInfo) ) { return true; }}}}}
+      { /* unamed block */{ /* unamed block */if ( (i instanceof tom.gom.adt.symboltable.types.FreshSortInfo) ) {if ( ((( tom.gom.adt.symboltable.types.FreshSortInfo )i) instanceof tom.gom.adt.symboltable.types.freshsortinfo.AtomTypeInfo) ) { return true; }}}}
       return false;
     } catch (NullPointerException e) {
       GomMessage.error(getLogger(),null,0,
@@ -542,7 +542,7 @@ public class SymbolTable {
   public boolean isFreshType(String sort) {
     try {
       FreshSortInfo i = sorts.get(sort).getFreshInfo();
-      {{if ( (i instanceof tom.gom.adt.symboltable.types.FreshSortInfo) ) {boolean tomMatch498_3= false ;if ( ((( tom.gom.adt.symboltable.types.FreshSortInfo )i) instanceof tom.gom.adt.symboltable.types.FreshSortInfo) ) {if ( ((( tom.gom.adt.symboltable.types.FreshSortInfo )(( tom.gom.adt.symboltable.types.FreshSortInfo )i)) instanceof tom.gom.adt.symboltable.types.freshsortinfo.NoFreshSort) ) {tomMatch498_3= true ;}}if (!(tomMatch498_3)) { return true; }}}}
+      { /* unamed block */{ /* unamed block */if ( (i instanceof tom.gom.adt.symboltable.types.FreshSortInfo) ) {boolean tomMatch529_3= false ;if ( ((( tom.gom.adt.symboltable.types.FreshSortInfo )i) instanceof tom.gom.adt.symboltable.types.freshsortinfo.NoFreshSort) ) {tomMatch529_3= true ;}if (!(tomMatch529_3)) { return true; }}}}
       return false;
     } catch (NullPointerException e) {
       GomMessage.error(getLogger(),null,0,
@@ -551,7 +551,7 @@ public class SymbolTable {
     }
   }
 
-  public static class SetRefreshPoints extends tom.library.sl.AbstractStrategyBasic {private  tom.gom.SymbolTable  st;private  String  codom;public SetRefreshPoints( tom.gom.SymbolTable  st,  String  codom) {super(( new tom.library.sl.Identity() ));this.st=st;this.codom=codom;}public  tom.gom.SymbolTable  getst() {return st;}public  String  getcodom() {return codom;}public tom.library.sl.Visitable[] getChildren() {tom.library.sl.Visitable[] stratChildren = new tom.library.sl.Visitable[getChildCount()];stratChildren[0] = super.getChildAt(0);return stratChildren;}public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {super.setChildAt(0, children[0]);return this;}public int getChildCount() {return 1;}public tom.library.sl.Visitable getChildAt(int index) {switch (index) {case 0: return super.getChildAt(0);default: throw new IndexOutOfBoundsException();}}public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable child) {switch (index) {case 0: return super.setChildAt(0, child);default: throw new IndexOutOfBoundsException();}}@SuppressWarnings("unchecked")public <T> T visitLight(T v, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if ( (v instanceof tom.gom.adt.symboltable.types.ConstructorDescription) ) {return ((T)visit_ConstructorDescription((( tom.gom.adt.symboltable.types.ConstructorDescription )v),introspector));}if ( (v instanceof tom.gom.adt.symboltable.types.FieldDescription) ) {return ((T)visit_FieldDescription((( tom.gom.adt.symboltable.types.FieldDescription )v),introspector));}if (!(  null ==environment )) {return ((T)any.visit(environment,introspector));} else {return any.visitLight(v,introspector);}}@SuppressWarnings("unchecked")public  tom.gom.adt.symboltable.types.FieldDescription  _visit_FieldDescription( tom.gom.adt.symboltable.types.FieldDescription  arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if (!(  null ==environment )) {return (( tom.gom.adt.symboltable.types.FieldDescription )any.visit(environment,introspector));} else {return any.visitLight(arg,introspector);}}@SuppressWarnings("unchecked")public  tom.gom.adt.symboltable.types.ConstructorDescription  _visit_ConstructorDescription( tom.gom.adt.symboltable.types.ConstructorDescription  arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if (!(  null ==environment )) {return (( tom.gom.adt.symboltable.types.ConstructorDescription )any.visit(environment,introspector));} else {return any.visitLight(arg,introspector);}}@SuppressWarnings("unchecked")public  tom.gom.adt.symboltable.types.ConstructorDescription  visit_ConstructorDescription( tom.gom.adt.symboltable.types.ConstructorDescription  tom__arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {{{if ( (tom__arg instanceof tom.gom.adt.symboltable.types.ConstructorDescription) ) {if ( ((( tom.gom.adt.symboltable.types.ConstructorDescription )tom__arg) instanceof tom.gom.adt.symboltable.types.ConstructorDescription) ) {if ( ((( tom.gom.adt.symboltable.types.ConstructorDescription )(( tom.gom.adt.symboltable.types.ConstructorDescription )tom__arg)) instanceof tom.gom.adt.symboltable.types.constructordescription.VariadicConstructorDescription) ) {
+  public static class SetRefreshPoints extends tom.library.sl.AbstractStrategyBasic {private  tom.gom.SymbolTable  st;private  String  codom;public SetRefreshPoints( tom.gom.SymbolTable  st,  String  codom) {super(( new tom.library.sl.Identity() ));this.st=st;this.codom=codom;}public  tom.gom.SymbolTable  getst() {return st;}public  String  getcodom() {return codom;}public tom.library.sl.Visitable[] getChildren() {tom.library.sl.Visitable[] stratChildren = new tom.library.sl.Visitable[getChildCount()];stratChildren[0] = super.getChildAt(0);return stratChildren;}public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {super.setChildAt(0, children[0]);return this;}public int getChildCount() {return 1;}public tom.library.sl.Visitable getChildAt(int index) {switch (index) {case 0: return super.getChildAt(0);default: throw new IndexOutOfBoundsException();}}public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable child) {switch (index) {case 0: return super.setChildAt(0, child);default: throw new IndexOutOfBoundsException();}}@SuppressWarnings("unchecked")public <T> T visitLight(T v, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if ( (v instanceof tom.gom.adt.symboltable.types.ConstructorDescription) ) {return ((T)visit_ConstructorDescription((( tom.gom.adt.symboltable.types.ConstructorDescription )v),introspector));}if ( (v instanceof tom.gom.adt.symboltable.types.FieldDescription) ) {return ((T)visit_FieldDescription((( tom.gom.adt.symboltable.types.FieldDescription )v),introspector));}if (!(  null ==environment )) {return ((T)any.visit(environment,introspector));} else {return any.visitLight(v,introspector);}}@SuppressWarnings("unchecked")public  tom.gom.adt.symboltable.types.FieldDescription  _visit_FieldDescription( tom.gom.adt.symboltable.types.FieldDescription  arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if (!(  null ==environment )) {return (( tom.gom.adt.symboltable.types.FieldDescription )any.visit(environment,introspector));} else {return any.visitLight(arg,introspector);}}@SuppressWarnings("unchecked")public  tom.gom.adt.symboltable.types.ConstructorDescription  _visit_ConstructorDescription( tom.gom.adt.symboltable.types.ConstructorDescription  arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if (!(  null ==environment )) {return (( tom.gom.adt.symboltable.types.ConstructorDescription )any.visit(environment,introspector));} else {return any.visitLight(arg,introspector);}}@SuppressWarnings("unchecked")public  tom.gom.adt.symboltable.types.ConstructorDescription  visit_ConstructorDescription( tom.gom.adt.symboltable.types.ConstructorDescription  tom__arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {{ /* unamed block */{ /* unamed block */if ( (tom__arg instanceof tom.gom.adt.symboltable.types.ConstructorDescription) ) {if ( ((( tom.gom.adt.symboltable.types.ConstructorDescription )tom__arg) instanceof tom.gom.adt.symboltable.types.constructordescription.VariadicConstructorDescription) ) {
 
 
 
@@ -565,7 +565,7 @@ public class SymbolTable {
         if(st.isExpressionType(codom) && st.isPatternType( (( tom.gom.adt.symboltable.types.ConstructorDescription )tom__arg).getDomain() )) {
           return (( tom.gom.adt.symboltable.types.ConstructorDescription )tom__arg).setIsRefreshPoint(true);
         }
-      }}}}}return _visit_ConstructorDescription(tom__arg,introspector);}@SuppressWarnings("unchecked")public  tom.gom.adt.symboltable.types.FieldDescription  visit_FieldDescription( tom.gom.adt.symboltable.types.FieldDescription  tom__arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {{{if ( (tom__arg instanceof tom.gom.adt.symboltable.types.FieldDescription) ) {if ( ((( tom.gom.adt.symboltable.types.FieldDescription )tom__arg) instanceof tom.gom.adt.symboltable.types.FieldDescription) ) {if ( ((( tom.gom.adt.symboltable.types.FieldDescription )(( tom.gom.adt.symboltable.types.FieldDescription )tom__arg)) instanceof tom.gom.adt.symboltable.types.fielddescription.FieldDescription) ) {         if(st.isExpressionType(codom) && st.isPatternType( (( tom.gom.adt.symboltable.types.FieldDescription )tom__arg).getSort() )) {           return (( tom.gom.adt.symboltable.types.FieldDescription )tom__arg).setStatusValue( tom.gom.adt.symboltable.types.status.SRefreshPoint.make() );         }       }}}}}return _visit_FieldDescription(tom__arg,introspector);}}
+      }}}}return _visit_ConstructorDescription(tom__arg,introspector);}@SuppressWarnings("unchecked")public  tom.gom.adt.symboltable.types.FieldDescription  visit_FieldDescription( tom.gom.adt.symboltable.types.FieldDescription  tom__arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {{ /* unamed block */{ /* unamed block */if ( (tom__arg instanceof tom.gom.adt.symboltable.types.FieldDescription) ) {if ( ((( tom.gom.adt.symboltable.types.FieldDescription )tom__arg) instanceof tom.gom.adt.symboltable.types.fielddescription.FieldDescription) ) {         if(st.isExpressionType(codom) && st.isPatternType( (( tom.gom.adt.symboltable.types.FieldDescription )tom__arg).getSort() )) {           return (( tom.gom.adt.symboltable.types.FieldDescription )tom__arg).setStatusValue( tom.gom.adt.symboltable.types.status.SRefreshPoint.make() );         }       }}}}return _visit_FieldDescription(tom__arg,introspector);}}
 
 
 
@@ -590,18 +590,18 @@ public class SymbolTable {
       ConstructorDescription c = constructors.get(constructor);
       int count=1;
 
-      {{if ( (c instanceof tom.gom.adt.symboltable.types.ConstructorDescription) ) {if ( ((( tom.gom.adt.symboltable.types.ConstructorDescription )c) instanceof tom.gom.adt.symboltable.types.ConstructorDescription) ) {if ( ((( tom.gom.adt.symboltable.types.ConstructorDescription )(( tom.gom.adt.symboltable.types.ConstructorDescription )c)) instanceof tom.gom.adt.symboltable.types.constructordescription.VariadicConstructorDescription) ) {
+      { /* unamed block */{ /* unamed block */if ( (c instanceof tom.gom.adt.symboltable.types.ConstructorDescription) ) {if ( ((( tom.gom.adt.symboltable.types.ConstructorDescription )c) instanceof tom.gom.adt.symboltable.types.constructordescription.VariadicConstructorDescription) ) {
 
           return  (( tom.gom.adt.symboltable.types.ConstructorDescription )c).getDomain() ;
-        }}}}{if ( (c instanceof tom.gom.adt.symboltable.types.ConstructorDescription) ) {if ( ((( tom.gom.adt.symboltable.types.ConstructorDescription )c) instanceof tom.gom.adt.symboltable.types.ConstructorDescription) ) {if ( ((( tom.gom.adt.symboltable.types.ConstructorDescription )(( tom.gom.adt.symboltable.types.ConstructorDescription )c)) instanceof tom.gom.adt.symboltable.types.constructordescription.ConstructorDescription) ) { tom.gom.adt.symboltable.types.FieldDescriptionList  tomMatch501_5= (( tom.gom.adt.symboltable.types.ConstructorDescription )c).getFields() ;if ( (((( tom.gom.adt.symboltable.types.FieldDescriptionList )tomMatch501_5) instanceof tom.gom.adt.symboltable.types.fielddescriptionlist.ConsconcFieldDescription) || ((( tom.gom.adt.symboltable.types.FieldDescriptionList )tomMatch501_5) instanceof tom.gom.adt.symboltable.types.fielddescriptionlist.EmptyconcFieldDescription)) ) { tom.gom.adt.symboltable.types.FieldDescriptionList  tomMatch501_end_11=tomMatch501_5;do {{if (!( tomMatch501_end_11.isEmptyconcFieldDescription() )) { tom.gom.adt.symboltable.types.FieldDescription  tomMatch501_15= tomMatch501_end_11.getHeadconcFieldDescription() ;if ( (tomMatch501_15 instanceof tom.gom.adt.symboltable.types.FieldDescription) ) {if ( ((( tom.gom.adt.symboltable.types.FieldDescription )tomMatch501_15) instanceof tom.gom.adt.symboltable.types.fielddescription.FieldDescription) ) {
+        }}}{ /* unamed block */if ( (c instanceof tom.gom.adt.symboltable.types.ConstructorDescription) ) {if ( ((( tom.gom.adt.symboltable.types.ConstructorDescription )c) instanceof tom.gom.adt.symboltable.types.constructordescription.ConstructorDescription) ) { tom.gom.adt.symboltable.types.FieldDescriptionList  tomMatch532_5= (( tom.gom.adt.symboltable.types.ConstructorDescription )c).getFields() ;if ( (((( tom.gom.adt.symboltable.types.FieldDescriptionList )tomMatch532_5) instanceof tom.gom.adt.symboltable.types.fielddescriptionlist.ConsconcFieldDescription) || ((( tom.gom.adt.symboltable.types.FieldDescriptionList )tomMatch532_5) instanceof tom.gom.adt.symboltable.types.fielddescriptionlist.EmptyconcFieldDescription)) ) { tom.gom.adt.symboltable.types.FieldDescriptionList  tomMatch532_end_11=tomMatch532_5;do {{ /* unamed block */if (!( tomMatch532_end_11.isEmptyconcFieldDescription() )) { tom.gom.adt.symboltable.types.FieldDescription  tomMatch532_15= tomMatch532_end_11.getHeadconcFieldDescription() ;if ( ((( tom.gom.adt.symboltable.types.FieldDescription )tomMatch532_15) instanceof tom.gom.adt.symboltable.types.fielddescription.FieldDescription) ) {
 
 
           if (count==omega) {
-            return  tomMatch501_15.getSort() ;
+            return  tomMatch532_15.getSort() ;
           } else {
             count++;
           }
-        }}}if ( tomMatch501_end_11.isEmptyconcFieldDescription() ) {tomMatch501_end_11=tomMatch501_5;} else {tomMatch501_end_11= tomMatch501_end_11.getTailconcFieldDescription() ;}}} while(!( (tomMatch501_end_11==tomMatch501_5) ));}}}}}}
+        }}if ( tomMatch532_end_11.isEmptyconcFieldDescription() ) {tomMatch532_end_11=tomMatch532_5;} else {tomMatch532_end_11= tomMatch532_end_11.getTailconcFieldDescription() ;}}} while(!( (tomMatch532_end_11==tomMatch532_5) ));}}}}}
 
     } catch (NullPointerException e) {
       GomMessage.error(getLogger(),null,0,
@@ -639,10 +639,10 @@ public class SymbolTable {
   public List<String> getFields(String constructor) {
     ArrayList<String> result = new ArrayList<String>();
     FieldDescriptionList l = getFieldList(constructor);
-    {{if ( (l instanceof tom.gom.adt.symboltable.types.FieldDescriptionList) ) {if ( (((( tom.gom.adt.symboltable.types.FieldDescriptionList )(( tom.gom.adt.symboltable.types.FieldDescriptionList )l)) instanceof tom.gom.adt.symboltable.types.fielddescriptionlist.ConsconcFieldDescription) || ((( tom.gom.adt.symboltable.types.FieldDescriptionList )(( tom.gom.adt.symboltable.types.FieldDescriptionList )l)) instanceof tom.gom.adt.symboltable.types.fielddescriptionlist.EmptyconcFieldDescription)) ) { tom.gom.adt.symboltable.types.FieldDescriptionList  tomMatch502_end_4=(( tom.gom.adt.symboltable.types.FieldDescriptionList )l);do {{if (!( tomMatch502_end_4.isEmptyconcFieldDescription() )) { tom.gom.adt.symboltable.types.FieldDescription  tomMatch502_8= tomMatch502_end_4.getHeadconcFieldDescription() ;if ( (tomMatch502_8 instanceof tom.gom.adt.symboltable.types.FieldDescription) ) {if ( ((( tom.gom.adt.symboltable.types.FieldDescription )tomMatch502_8) instanceof tom.gom.adt.symboltable.types.fielddescription.FieldDescription) ) {
+    { /* unamed block */{ /* unamed block */if ( (l instanceof tom.gom.adt.symboltable.types.FieldDescriptionList) ) {if ( (((( tom.gom.adt.symboltable.types.FieldDescriptionList )l) instanceof tom.gom.adt.symboltable.types.fielddescriptionlist.ConsconcFieldDescription) || ((( tom.gom.adt.symboltable.types.FieldDescriptionList )l) instanceof tom.gom.adt.symboltable.types.fielddescriptionlist.EmptyconcFieldDescription)) ) { tom.gom.adt.symboltable.types.FieldDescriptionList  tomMatch533_end_4=(( tom.gom.adt.symboltable.types.FieldDescriptionList )l);do {{ /* unamed block */if (!( tomMatch533_end_4.isEmptyconcFieldDescription() )) { tom.gom.adt.symboltable.types.FieldDescription  tomMatch533_8= tomMatch533_end_4.getHeadconcFieldDescription() ;if ( ((( tom.gom.adt.symboltable.types.FieldDescription )tomMatch533_8) instanceof tom.gom.adt.symboltable.types.fielddescription.FieldDescription) ) {
 
-        result.add( tomMatch502_8.getFieldName() );
-      }}}if ( tomMatch502_end_4.isEmptyconcFieldDescription() ) {tomMatch502_end_4=(( tom.gom.adt.symboltable.types.FieldDescriptionList )l);} else {tomMatch502_end_4= tomMatch502_end_4.getTailconcFieldDescription() ;}}} while(!( (tomMatch502_end_4==(( tom.gom.adt.symboltable.types.FieldDescriptionList )l)) ));}}}}
+        result.add( tomMatch533_8.getFieldName() );
+      }}if ( tomMatch533_end_4.isEmptyconcFieldDescription() ) {tomMatch533_end_4=(( tom.gom.adt.symboltable.types.FieldDescriptionList )l);} else {tomMatch533_end_4= tomMatch533_end_4.getTailconcFieldDescription() ;}}} while(!( (tomMatch533_end_4==(( tom.gom.adt.symboltable.types.FieldDescriptionList )l)) ));}}}}
 
     return result;
   }
@@ -650,11 +650,11 @@ public class SymbolTable {
   public List<String> getNeutralFields(String constructor) {
     ArrayList<String> result = new ArrayList<String>();
     FieldDescriptionList l = getFieldList(constructor);
-    {{if ( (l instanceof tom.gom.adt.symboltable.types.FieldDescriptionList) ) {if ( (((( tom.gom.adt.symboltable.types.FieldDescriptionList )(( tom.gom.adt.symboltable.types.FieldDescriptionList )l)) instanceof tom.gom.adt.symboltable.types.fielddescriptionlist.ConsconcFieldDescription) || ((( tom.gom.adt.symboltable.types.FieldDescriptionList )(( tom.gom.adt.symboltable.types.FieldDescriptionList )l)) instanceof tom.gom.adt.symboltable.types.fielddescriptionlist.EmptyconcFieldDescription)) ) { tom.gom.adt.symboltable.types.FieldDescriptionList  tomMatch503_end_4=(( tom.gom.adt.symboltable.types.FieldDescriptionList )l);do {{if (!( tomMatch503_end_4.isEmptyconcFieldDescription() )) { tom.gom.adt.symboltable.types.FieldDescription  tomMatch503_9= tomMatch503_end_4.getHeadconcFieldDescription() ;if ( (tomMatch503_9 instanceof tom.gom.adt.symboltable.types.FieldDescription) ) {if ( ((( tom.gom.adt.symboltable.types.FieldDescription )tomMatch503_9) instanceof tom.gom.adt.symboltable.types.fielddescription.FieldDescription) ) { tom.gom.adt.symboltable.types.Status  tomMatch503_8= tomMatch503_9.getStatusValue() ;if ( (tomMatch503_8 instanceof tom.gom.adt.symboltable.types.Status) ) {if ( ((( tom.gom.adt.symboltable.types.Status )tomMatch503_8) instanceof tom.gom.adt.symboltable.types.status.SNeutral) ) {
+    { /* unamed block */{ /* unamed block */if ( (l instanceof tom.gom.adt.symboltable.types.FieldDescriptionList) ) {if ( (((( tom.gom.adt.symboltable.types.FieldDescriptionList )l) instanceof tom.gom.adt.symboltable.types.fielddescriptionlist.ConsconcFieldDescription) || ((( tom.gom.adt.symboltable.types.FieldDescriptionList )l) instanceof tom.gom.adt.symboltable.types.fielddescriptionlist.EmptyconcFieldDescription)) ) { tom.gom.adt.symboltable.types.FieldDescriptionList  tomMatch534_end_4=(( tom.gom.adt.symboltable.types.FieldDescriptionList )l);do {{ /* unamed block */if (!( tomMatch534_end_4.isEmptyconcFieldDescription() )) { tom.gom.adt.symboltable.types.FieldDescription  tomMatch534_9= tomMatch534_end_4.getHeadconcFieldDescription() ;if ( ((( tom.gom.adt.symboltable.types.FieldDescription )tomMatch534_9) instanceof tom.gom.adt.symboltable.types.fielddescription.FieldDescription) ) {if ( ((( tom.gom.adt.symboltable.types.Status ) tomMatch534_9.getStatusValue() ) instanceof tom.gom.adt.symboltable.types.status.SNeutral) ) {
 
 
-        result.add( tomMatch503_9.getFieldName() );
-      }}}}}if ( tomMatch503_end_4.isEmptyconcFieldDescription() ) {tomMatch503_end_4=(( tom.gom.adt.symboltable.types.FieldDescriptionList )l);} else {tomMatch503_end_4= tomMatch503_end_4.getTailconcFieldDescription() ;}}} while(!( (tomMatch503_end_4==(( tom.gom.adt.symboltable.types.FieldDescriptionList )l)) ));}}}}
+        result.add( tomMatch534_9.getFieldName() );
+      }}}if ( tomMatch534_end_4.isEmptyconcFieldDescription() ) {tomMatch534_end_4=(( tom.gom.adt.symboltable.types.FieldDescriptionList )l);} else {tomMatch534_end_4= tomMatch534_end_4.getTailconcFieldDescription() ;}}} while(!( (tomMatch534_end_4==(( tom.gom.adt.symboltable.types.FieldDescriptionList )l)) ));}}}}
 
     return result;
   }
@@ -662,11 +662,11 @@ public class SymbolTable {
   public List<String> getPatternFields(String constructor) {
     ArrayList<String> result = new ArrayList<String>();
     FieldDescriptionList l = getFieldList(constructor);
-    {{if ( (l instanceof tom.gom.adt.symboltable.types.FieldDescriptionList) ) {if ( (((( tom.gom.adt.symboltable.types.FieldDescriptionList )(( tom.gom.adt.symboltable.types.FieldDescriptionList )l)) instanceof tom.gom.adt.symboltable.types.fielddescriptionlist.ConsconcFieldDescription) || ((( tom.gom.adt.symboltable.types.FieldDescriptionList )(( tom.gom.adt.symboltable.types.FieldDescriptionList )l)) instanceof tom.gom.adt.symboltable.types.fielddescriptionlist.EmptyconcFieldDescription)) ) { tom.gom.adt.symboltable.types.FieldDescriptionList  tomMatch504_end_4=(( tom.gom.adt.symboltable.types.FieldDescriptionList )l);do {{if (!( tomMatch504_end_4.isEmptyconcFieldDescription() )) { tom.gom.adt.symboltable.types.FieldDescription  tomMatch504_9= tomMatch504_end_4.getHeadconcFieldDescription() ;if ( (tomMatch504_9 instanceof tom.gom.adt.symboltable.types.FieldDescription) ) {if ( ((( tom.gom.adt.symboltable.types.FieldDescription )tomMatch504_9) instanceof tom.gom.adt.symboltable.types.fielddescription.FieldDescription) ) { tom.gom.adt.symboltable.types.Status  tomMatch504_8= tomMatch504_9.getStatusValue() ;if ( (tomMatch504_8 instanceof tom.gom.adt.symboltable.types.Status) ) {if ( ((( tom.gom.adt.symboltable.types.Status )tomMatch504_8) instanceof tom.gom.adt.symboltable.types.status.SPattern) ) {
+    { /* unamed block */{ /* unamed block */if ( (l instanceof tom.gom.adt.symboltable.types.FieldDescriptionList) ) {if ( (((( tom.gom.adt.symboltable.types.FieldDescriptionList )l) instanceof tom.gom.adt.symboltable.types.fielddescriptionlist.ConsconcFieldDescription) || ((( tom.gom.adt.symboltable.types.FieldDescriptionList )l) instanceof tom.gom.adt.symboltable.types.fielddescriptionlist.EmptyconcFieldDescription)) ) { tom.gom.adt.symboltable.types.FieldDescriptionList  tomMatch535_end_4=(( tom.gom.adt.symboltable.types.FieldDescriptionList )l);do {{ /* unamed block */if (!( tomMatch535_end_4.isEmptyconcFieldDescription() )) { tom.gom.adt.symboltable.types.FieldDescription  tomMatch535_9= tomMatch535_end_4.getHeadconcFieldDescription() ;if ( ((( tom.gom.adt.symboltable.types.FieldDescription )tomMatch535_9) instanceof tom.gom.adt.symboltable.types.fielddescription.FieldDescription) ) {if ( ((( tom.gom.adt.symboltable.types.Status ) tomMatch535_9.getStatusValue() ) instanceof tom.gom.adt.symboltable.types.status.SPattern) ) {
 
 
-        result.add( tomMatch504_9.getFieldName() );
-      }}}}}if ( tomMatch504_end_4.isEmptyconcFieldDescription() ) {tomMatch504_end_4=(( tom.gom.adt.symboltable.types.FieldDescriptionList )l);} else {tomMatch504_end_4= tomMatch504_end_4.getTailconcFieldDescription() ;}}} while(!( (tomMatch504_end_4==(( tom.gom.adt.symboltable.types.FieldDescriptionList )l)) ));}}}}
+        result.add( tomMatch535_9.getFieldName() );
+      }}}if ( tomMatch535_end_4.isEmptyconcFieldDescription() ) {tomMatch535_end_4=(( tom.gom.adt.symboltable.types.FieldDescriptionList )l);} else {tomMatch535_end_4= tomMatch535_end_4.getTailconcFieldDescription() ;}}} while(!( (tomMatch535_end_4==(( tom.gom.adt.symboltable.types.FieldDescriptionList )l)) ));}}}}
 
     return result;
   }
@@ -690,11 +690,11 @@ public class SymbolTable {
   public List<String> getNonPatternFields(String constructor) {
     ArrayList<String> result = new ArrayList<String>();
     FieldDescriptionList l = getFieldList(constructor);
-    {{if ( (l instanceof tom.gom.adt.symboltable.types.FieldDescriptionList) ) {if ( (((( tom.gom.adt.symboltable.types.FieldDescriptionList )(( tom.gom.adt.symboltable.types.FieldDescriptionList )l)) instanceof tom.gom.adt.symboltable.types.fielddescriptionlist.ConsconcFieldDescription) || ((( tom.gom.adt.symboltable.types.FieldDescriptionList )(( tom.gom.adt.symboltable.types.FieldDescriptionList )l)) instanceof tom.gom.adt.symboltable.types.fielddescriptionlist.EmptyconcFieldDescription)) ) { tom.gom.adt.symboltable.types.FieldDescriptionList  tomMatch505_end_4=(( tom.gom.adt.symboltable.types.FieldDescriptionList )l);do {{if (!( tomMatch505_end_4.isEmptyconcFieldDescription() )) { tom.gom.adt.symboltable.types.FieldDescription  tomMatch505_9= tomMatch505_end_4.getHeadconcFieldDescription() ;if ( (tomMatch505_9 instanceof tom.gom.adt.symboltable.types.FieldDescription) ) {if ( ((( tom.gom.adt.symboltable.types.FieldDescription )tomMatch505_9) instanceof tom.gom.adt.symboltable.types.fielddescription.FieldDescription) ) { tom.gom.adt.symboltable.types.Status  tomMatch505_8= tomMatch505_9.getStatusValue() ;boolean tomMatch505_13= false ;if ( (tomMatch505_8 instanceof tom.gom.adt.symboltable.types.Status) ) {if ( ((( tom.gom.adt.symboltable.types.Status )tomMatch505_8) instanceof tom.gom.adt.symboltable.types.status.SPattern) ) {tomMatch505_13= true ;}}if (!(tomMatch505_13)) {
+    { /* unamed block */{ /* unamed block */if ( (l instanceof tom.gom.adt.symboltable.types.FieldDescriptionList) ) {if ( (((( tom.gom.adt.symboltable.types.FieldDescriptionList )l) instanceof tom.gom.adt.symboltable.types.fielddescriptionlist.ConsconcFieldDescription) || ((( tom.gom.adt.symboltable.types.FieldDescriptionList )l) instanceof tom.gom.adt.symboltable.types.fielddescriptionlist.EmptyconcFieldDescription)) ) { tom.gom.adt.symboltable.types.FieldDescriptionList  tomMatch536_end_4=(( tom.gom.adt.symboltable.types.FieldDescriptionList )l);do {{ /* unamed block */if (!( tomMatch536_end_4.isEmptyconcFieldDescription() )) { tom.gom.adt.symboltable.types.FieldDescription  tomMatch536_9= tomMatch536_end_4.getHeadconcFieldDescription() ;if ( ((( tom.gom.adt.symboltable.types.FieldDescription )tomMatch536_9) instanceof tom.gom.adt.symboltable.types.fielddescription.FieldDescription) ) {boolean tomMatch536_13= false ;if ( ((( tom.gom.adt.symboltable.types.Status ) tomMatch536_9.getStatusValue() ) instanceof tom.gom.adt.symboltable.types.status.SPattern) ) {tomMatch536_13= true ;}if (!(tomMatch536_13)) {
 
 
-        result.add( tomMatch505_9.getFieldName() );
-      }}}}if ( tomMatch505_end_4.isEmptyconcFieldDescription() ) {tomMatch505_end_4=(( tom.gom.adt.symboltable.types.FieldDescriptionList )l);} else {tomMatch505_end_4= tomMatch505_end_4.getTailconcFieldDescription() ;}}} while(!( (tomMatch505_end_4==(( tom.gom.adt.symboltable.types.FieldDescriptionList )l)) ));}}}}
+        result.add( tomMatch536_9.getFieldName() );
+      }}}if ( tomMatch536_end_4.isEmptyconcFieldDescription() ) {tomMatch536_end_4=(( tom.gom.adt.symboltable.types.FieldDescriptionList )l);} else {tomMatch536_end_4= tomMatch536_end_4.getTailconcFieldDescription() ;}}} while(!( (tomMatch536_end_4==(( tom.gom.adt.symboltable.types.FieldDescriptionList )l)) ));}}}}
 
     return result;
   }
@@ -702,11 +702,11 @@ public class SymbolTable {
   public List<String> getOuterFields(String constructor) {
     ArrayList<String> result = new ArrayList<String>();
     FieldDescriptionList l = getFieldList(constructor);
-    {{if ( (l instanceof tom.gom.adt.symboltable.types.FieldDescriptionList) ) {if ( (((( tom.gom.adt.symboltable.types.FieldDescriptionList )(( tom.gom.adt.symboltable.types.FieldDescriptionList )l)) instanceof tom.gom.adt.symboltable.types.fielddescriptionlist.ConsconcFieldDescription) || ((( tom.gom.adt.symboltable.types.FieldDescriptionList )(( tom.gom.adt.symboltable.types.FieldDescriptionList )l)) instanceof tom.gom.adt.symboltable.types.fielddescriptionlist.EmptyconcFieldDescription)) ) { tom.gom.adt.symboltable.types.FieldDescriptionList  tomMatch506_end_4=(( tom.gom.adt.symboltable.types.FieldDescriptionList )l);do {{if (!( tomMatch506_end_4.isEmptyconcFieldDescription() )) { tom.gom.adt.symboltable.types.FieldDescription  tomMatch506_9= tomMatch506_end_4.getHeadconcFieldDescription() ;if ( (tomMatch506_9 instanceof tom.gom.adt.symboltable.types.FieldDescription) ) {if ( ((( tom.gom.adt.symboltable.types.FieldDescription )tomMatch506_9) instanceof tom.gom.adt.symboltable.types.fielddescription.FieldDescription) ) { tom.gom.adt.symboltable.types.Status  tomMatch506_8= tomMatch506_9.getStatusValue() ;if ( (tomMatch506_8 instanceof tom.gom.adt.symboltable.types.Status) ) {if ( ((( tom.gom.adt.symboltable.types.Status )tomMatch506_8) instanceof tom.gom.adt.symboltable.types.status.SOuter) ) {
+    { /* unamed block */{ /* unamed block */if ( (l instanceof tom.gom.adt.symboltable.types.FieldDescriptionList) ) {if ( (((( tom.gom.adt.symboltable.types.FieldDescriptionList )l) instanceof tom.gom.adt.symboltable.types.fielddescriptionlist.ConsconcFieldDescription) || ((( tom.gom.adt.symboltable.types.FieldDescriptionList )l) instanceof tom.gom.adt.symboltable.types.fielddescriptionlist.EmptyconcFieldDescription)) ) { tom.gom.adt.symboltable.types.FieldDescriptionList  tomMatch537_end_4=(( tom.gom.adt.symboltable.types.FieldDescriptionList )l);do {{ /* unamed block */if (!( tomMatch537_end_4.isEmptyconcFieldDescription() )) { tom.gom.adt.symboltable.types.FieldDescription  tomMatch537_9= tomMatch537_end_4.getHeadconcFieldDescription() ;if ( ((( tom.gom.adt.symboltable.types.FieldDescription )tomMatch537_9) instanceof tom.gom.adt.symboltable.types.fielddescription.FieldDescription) ) {if ( ((( tom.gom.adt.symboltable.types.Status ) tomMatch537_9.getStatusValue() ) instanceof tom.gom.adt.symboltable.types.status.SOuter) ) {
 
 
-        result.add( tomMatch506_9.getFieldName() );
-      }}}}}if ( tomMatch506_end_4.isEmptyconcFieldDescription() ) {tomMatch506_end_4=(( tom.gom.adt.symboltable.types.FieldDescriptionList )l);} else {tomMatch506_end_4= tomMatch506_end_4.getTailconcFieldDescription() ;}}} while(!( (tomMatch506_end_4==(( tom.gom.adt.symboltable.types.FieldDescriptionList )l)) ));}}}}
+        result.add( tomMatch537_9.getFieldName() );
+      }}}if ( tomMatch537_end_4.isEmptyconcFieldDescription() ) {tomMatch537_end_4=(( tom.gom.adt.symboltable.types.FieldDescriptionList )l);} else {tomMatch537_end_4= tomMatch537_end_4.getTailconcFieldDescription() ;}}} while(!( (tomMatch537_end_4==(( tom.gom.adt.symboltable.types.FieldDescriptionList )l)) ));}}}}
 
     return result;
   }
@@ -714,21 +714,21 @@ public class SymbolTable {
   public List<String> getInnerFields(String constructor) {
     ArrayList<String> result = new ArrayList<String>();
     FieldDescriptionList l = getFieldList(constructor);
-    {{if ( (l instanceof tom.gom.adt.symboltable.types.FieldDescriptionList) ) {if ( (((( tom.gom.adt.symboltable.types.FieldDescriptionList )(( tom.gom.adt.symboltable.types.FieldDescriptionList )l)) instanceof tom.gom.adt.symboltable.types.fielddescriptionlist.ConsconcFieldDescription) || ((( tom.gom.adt.symboltable.types.FieldDescriptionList )(( tom.gom.adt.symboltable.types.FieldDescriptionList )l)) instanceof tom.gom.adt.symboltable.types.fielddescriptionlist.EmptyconcFieldDescription)) ) { tom.gom.adt.symboltable.types.FieldDescriptionList  tomMatch507_end_4=(( tom.gom.adt.symboltable.types.FieldDescriptionList )l);do {{if (!( tomMatch507_end_4.isEmptyconcFieldDescription() )) { tom.gom.adt.symboltable.types.FieldDescription  tomMatch507_9= tomMatch507_end_4.getHeadconcFieldDescription() ;if ( (tomMatch507_9 instanceof tom.gom.adt.symboltable.types.FieldDescription) ) {if ( ((( tom.gom.adt.symboltable.types.FieldDescription )tomMatch507_9) instanceof tom.gom.adt.symboltable.types.fielddescription.FieldDescription) ) { tom.gom.adt.symboltable.types.Status  tomMatch507_8= tomMatch507_9.getStatusValue() ;if ( (tomMatch507_8 instanceof tom.gom.adt.symboltable.types.Status) ) {if ( ((( tom.gom.adt.symboltable.types.Status )tomMatch507_8) instanceof tom.gom.adt.symboltable.types.status.SInner) ) {
+    { /* unamed block */{ /* unamed block */if ( (l instanceof tom.gom.adt.symboltable.types.FieldDescriptionList) ) {if ( (((( tom.gom.adt.symboltable.types.FieldDescriptionList )l) instanceof tom.gom.adt.symboltable.types.fielddescriptionlist.ConsconcFieldDescription) || ((( tom.gom.adt.symboltable.types.FieldDescriptionList )l) instanceof tom.gom.adt.symboltable.types.fielddescriptionlist.EmptyconcFieldDescription)) ) { tom.gom.adt.symboltable.types.FieldDescriptionList  tomMatch538_end_4=(( tom.gom.adt.symboltable.types.FieldDescriptionList )l);do {{ /* unamed block */if (!( tomMatch538_end_4.isEmptyconcFieldDescription() )) { tom.gom.adt.symboltable.types.FieldDescription  tomMatch538_9= tomMatch538_end_4.getHeadconcFieldDescription() ;if ( ((( tom.gom.adt.symboltable.types.FieldDescription )tomMatch538_9) instanceof tom.gom.adt.symboltable.types.fielddescription.FieldDescription) ) {if ( ((( tom.gom.adt.symboltable.types.Status ) tomMatch538_9.getStatusValue() ) instanceof tom.gom.adt.symboltable.types.status.SInner) ) {
 
 
-        result.add( tomMatch507_9.getFieldName() );
-      }}}}}if ( tomMatch507_end_4.isEmptyconcFieldDescription() ) {tomMatch507_end_4=(( tom.gom.adt.symboltable.types.FieldDescriptionList )l);} else {tomMatch507_end_4= tomMatch507_end_4.getTailconcFieldDescription() ;}}} while(!( (tomMatch507_end_4==(( tom.gom.adt.symboltable.types.FieldDescriptionList )l)) ));}}}}
+        result.add( tomMatch538_9.getFieldName() );
+      }}}if ( tomMatch538_end_4.isEmptyconcFieldDescription() ) {tomMatch538_end_4=(( tom.gom.adt.symboltable.types.FieldDescriptionList )l);} else {tomMatch538_end_4= tomMatch538_end_4.getTailconcFieldDescription() ;}}} while(!( (tomMatch538_end_4==(( tom.gom.adt.symboltable.types.FieldDescriptionList )l)) ));}}}}
 
     return result;
   }
 
   public String getSort(String cons, String field) {
     FieldDescriptionList l = getFieldList(cons);
-    {{if ( (l instanceof tom.gom.adt.symboltable.types.FieldDescriptionList) ) {if ( (((( tom.gom.adt.symboltable.types.FieldDescriptionList )(( tom.gom.adt.symboltable.types.FieldDescriptionList )l)) instanceof tom.gom.adt.symboltable.types.fielddescriptionlist.ConsconcFieldDescription) || ((( tom.gom.adt.symboltable.types.FieldDescriptionList )(( tom.gom.adt.symboltable.types.FieldDescriptionList )l)) instanceof tom.gom.adt.symboltable.types.fielddescriptionlist.EmptyconcFieldDescription)) ) { tom.gom.adt.symboltable.types.FieldDescriptionList  tomMatch508_end_4=(( tom.gom.adt.symboltable.types.FieldDescriptionList )l);do {{if (!( tomMatch508_end_4.isEmptyconcFieldDescription() )) { tom.gom.adt.symboltable.types.FieldDescription  tomMatch508_9= tomMatch508_end_4.getHeadconcFieldDescription() ;if ( (tomMatch508_9 instanceof tom.gom.adt.symboltable.types.FieldDescription) ) {if ( ((( tom.gom.adt.symboltable.types.FieldDescription )tomMatch508_9) instanceof tom.gom.adt.symboltable.types.fielddescription.FieldDescription) ) {
+    { /* unamed block */{ /* unamed block */if ( (l instanceof tom.gom.adt.symboltable.types.FieldDescriptionList) ) {if ( (((( tom.gom.adt.symboltable.types.FieldDescriptionList )l) instanceof tom.gom.adt.symboltable.types.fielddescriptionlist.ConsconcFieldDescription) || ((( tom.gom.adt.symboltable.types.FieldDescriptionList )l) instanceof tom.gom.adt.symboltable.types.fielddescriptionlist.EmptyconcFieldDescription)) ) { tom.gom.adt.symboltable.types.FieldDescriptionList  tomMatch539_end_4=(( tom.gom.adt.symboltable.types.FieldDescriptionList )l);do {{ /* unamed block */if (!( tomMatch539_end_4.isEmptyconcFieldDescription() )) { tom.gom.adt.symboltable.types.FieldDescription  tomMatch539_9= tomMatch539_end_4.getHeadconcFieldDescription() ;if ( ((( tom.gom.adt.symboltable.types.FieldDescription )tomMatch539_9) instanceof tom.gom.adt.symboltable.types.fielddescription.FieldDescription) ) {
 
-        if ( tomMatch508_9.getFieldName() .equals(field)) { return  tomMatch508_9.getSort() ; }
-      }}}if ( tomMatch508_end_4.isEmptyconcFieldDescription() ) {tomMatch508_end_4=(( tom.gom.adt.symboltable.types.FieldDescriptionList )l);} else {tomMatch508_end_4= tomMatch508_end_4.getTailconcFieldDescription() ;}}} while(!( (tomMatch508_end_4==(( tom.gom.adt.symboltable.types.FieldDescriptionList )l)) ));}}}}
+        if ( tomMatch539_9.getFieldName() .equals(field)) { return  tomMatch539_9.getSort() ; }
+      }}if ( tomMatch539_end_4.isEmptyconcFieldDescription() ) {tomMatch539_end_4=(( tom.gom.adt.symboltable.types.FieldDescriptionList )l);} else {tomMatch539_end_4= tomMatch539_end_4.getTailconcFieldDescription() ;}}} while(!( (tomMatch539_end_4==(( tom.gom.adt.symboltable.types.FieldDescriptionList )l)) ));}}}}
 
     GomMessage.error(getLogger(),null,0,
         GomMessage.shouldNeverHappen,
@@ -738,67 +738,67 @@ public class SymbolTable {
 
   public boolean containsRefreshPoint(String cons) {
     ConstructorDescription d = constructors.get(cons);
-    {{if ( (d instanceof tom.gom.adt.symboltable.types.ConstructorDescription) ) {if ( ((( tom.gom.adt.symboltable.types.ConstructorDescription )d) instanceof tom.gom.adt.symboltable.types.ConstructorDescription) ) {if ( ((( tom.gom.adt.symboltable.types.ConstructorDescription )(( tom.gom.adt.symboltable.types.ConstructorDescription )d)) instanceof tom.gom.adt.symboltable.types.constructordescription.VariadicConstructorDescription) ) {
+    { /* unamed block */{ /* unamed block */if ( (d instanceof tom.gom.adt.symboltable.types.ConstructorDescription) ) {if ( ((( tom.gom.adt.symboltable.types.ConstructorDescription )d) instanceof tom.gom.adt.symboltable.types.constructordescription.VariadicConstructorDescription) ) {
 
         return  (( tom.gom.adt.symboltable.types.ConstructorDescription )d).getIsRefreshPoint() ;
-      }}}}{if ( (d instanceof tom.gom.adt.symboltable.types.ConstructorDescription) ) {if ( ((( tom.gom.adt.symboltable.types.ConstructorDescription )d) instanceof tom.gom.adt.symboltable.types.ConstructorDescription) ) {if ( ((( tom.gom.adt.symboltable.types.ConstructorDescription )(( tom.gom.adt.symboltable.types.ConstructorDescription )d)) instanceof tom.gom.adt.symboltable.types.constructordescription.ConstructorDescription) ) { tom.gom.adt.symboltable.types.FieldDescriptionList  tomMatch509_5= (( tom.gom.adt.symboltable.types.ConstructorDescription )d).getFields() ;if ( (((( tom.gom.adt.symboltable.types.FieldDescriptionList )tomMatch509_5) instanceof tom.gom.adt.symboltable.types.fielddescriptionlist.ConsconcFieldDescription) || ((( tom.gom.adt.symboltable.types.FieldDescriptionList )tomMatch509_5) instanceof tom.gom.adt.symboltable.types.fielddescriptionlist.EmptyconcFieldDescription)) ) { tom.gom.adt.symboltable.types.FieldDescriptionList  tomMatch509_end_11=tomMatch509_5;do {{if (!( tomMatch509_end_11.isEmptyconcFieldDescription() )) { tom.gom.adt.symboltable.types.FieldDescription  tomMatch509_15= tomMatch509_end_11.getHeadconcFieldDescription() ;if ( (tomMatch509_15 instanceof tom.gom.adt.symboltable.types.FieldDescription) ) {if ( ((( tom.gom.adt.symboltable.types.FieldDescription )tomMatch509_15) instanceof tom.gom.adt.symboltable.types.fielddescription.FieldDescription) ) { tom.gom.adt.symboltable.types.Status  tomMatch509_14= tomMatch509_15.getStatusValue() ;if ( (tomMatch509_14 instanceof tom.gom.adt.symboltable.types.Status) ) {if ( ((( tom.gom.adt.symboltable.types.Status )tomMatch509_14) instanceof tom.gom.adt.symboltable.types.status.SRefreshPoint) ) {
+      }}}{ /* unamed block */if ( (d instanceof tom.gom.adt.symboltable.types.ConstructorDescription) ) {if ( ((( tom.gom.adt.symboltable.types.ConstructorDescription )d) instanceof tom.gom.adt.symboltable.types.constructordescription.ConstructorDescription) ) { tom.gom.adt.symboltable.types.FieldDescriptionList  tomMatch540_5= (( tom.gom.adt.symboltable.types.ConstructorDescription )d).getFields() ;if ( (((( tom.gom.adt.symboltable.types.FieldDescriptionList )tomMatch540_5) instanceof tom.gom.adt.symboltable.types.fielddescriptionlist.ConsconcFieldDescription) || ((( tom.gom.adt.symboltable.types.FieldDescriptionList )tomMatch540_5) instanceof tom.gom.adt.symboltable.types.fielddescriptionlist.EmptyconcFieldDescription)) ) { tom.gom.adt.symboltable.types.FieldDescriptionList  tomMatch540_end_11=tomMatch540_5;do {{ /* unamed block */if (!( tomMatch540_end_11.isEmptyconcFieldDescription() )) { tom.gom.adt.symboltable.types.FieldDescription  tomMatch540_15= tomMatch540_end_11.getHeadconcFieldDescription() ;if ( ((( tom.gom.adt.symboltable.types.FieldDescription )tomMatch540_15) instanceof tom.gom.adt.symboltable.types.fielddescription.FieldDescription) ) {if ( ((( tom.gom.adt.symboltable.types.Status ) tomMatch540_15.getStatusValue() ) instanceof tom.gom.adt.symboltable.types.status.SRefreshPoint) ) {
 
 
 
           return true;
-        }}}}}if ( tomMatch509_end_11.isEmptyconcFieldDescription() ) {tomMatch509_end_11=tomMatch509_5;} else {tomMatch509_end_11= tomMatch509_end_11.getTailconcFieldDescription() ;}}} while(!( (tomMatch509_end_11==tomMatch509_5) ));}}}}}}
+        }}}if ( tomMatch540_end_11.isEmptyconcFieldDescription() ) {tomMatch540_end_11=tomMatch540_5;} else {tomMatch540_end_11= tomMatch540_end_11.getTailconcFieldDescription() ;}}} while(!( (tomMatch540_end_11==tomMatch540_5) ));}}}}}
 
     return false;
   }
 
   public boolean isOuter(String cons, String field) {
     FieldDescriptionList l = getFieldList(cons);
-    {{if ( (l instanceof tom.gom.adt.symboltable.types.FieldDescriptionList) ) {if ( (((( tom.gom.adt.symboltable.types.FieldDescriptionList )(( tom.gom.adt.symboltable.types.FieldDescriptionList )l)) instanceof tom.gom.adt.symboltable.types.fielddescriptionlist.ConsconcFieldDescription) || ((( tom.gom.adt.symboltable.types.FieldDescriptionList )(( tom.gom.adt.symboltable.types.FieldDescriptionList )l)) instanceof tom.gom.adt.symboltable.types.fielddescriptionlist.EmptyconcFieldDescription)) ) { tom.gom.adt.symboltable.types.FieldDescriptionList  tomMatch510_end_4=(( tom.gom.adt.symboltable.types.FieldDescriptionList )l);do {{if (!( tomMatch510_end_4.isEmptyconcFieldDescription() )) { tom.gom.adt.symboltable.types.FieldDescription  tomMatch510_9= tomMatch510_end_4.getHeadconcFieldDescription() ;if ( (tomMatch510_9 instanceof tom.gom.adt.symboltable.types.FieldDescription) ) {if ( ((( tom.gom.adt.symboltable.types.FieldDescription )tomMatch510_9) instanceof tom.gom.adt.symboltable.types.fielddescription.FieldDescription) ) { tom.gom.adt.symboltable.types.Status  tomMatch510_8= tomMatch510_9.getStatusValue() ;if ( (tomMatch510_8 instanceof tom.gom.adt.symboltable.types.Status) ) {if ( ((( tom.gom.adt.symboltable.types.Status )tomMatch510_8) instanceof tom.gom.adt.symboltable.types.status.SOuter) ) {
+    { /* unamed block */{ /* unamed block */if ( (l instanceof tom.gom.adt.symboltable.types.FieldDescriptionList) ) {if ( (((( tom.gom.adt.symboltable.types.FieldDescriptionList )l) instanceof tom.gom.adt.symboltable.types.fielddescriptionlist.ConsconcFieldDescription) || ((( tom.gom.adt.symboltable.types.FieldDescriptionList )l) instanceof tom.gom.adt.symboltable.types.fielddescriptionlist.EmptyconcFieldDescription)) ) { tom.gom.adt.symboltable.types.FieldDescriptionList  tomMatch541_end_4=(( tom.gom.adt.symboltable.types.FieldDescriptionList )l);do {{ /* unamed block */if (!( tomMatch541_end_4.isEmptyconcFieldDescription() )) { tom.gom.adt.symboltable.types.FieldDescription  tomMatch541_9= tomMatch541_end_4.getHeadconcFieldDescription() ;if ( ((( tom.gom.adt.symboltable.types.FieldDescription )tomMatch541_9) instanceof tom.gom.adt.symboltable.types.fielddescription.FieldDescription) ) {if ( ((( tom.gom.adt.symboltable.types.Status ) tomMatch541_9.getStatusValue() ) instanceof tom.gom.adt.symboltable.types.status.SOuter) ) {
 
 
-        if ( tomMatch510_9.getFieldName() .equals(field)) {
+        if ( tomMatch541_9.getFieldName() .equals(field)) {
           return true;
         }
-      }}}}}if ( tomMatch510_end_4.isEmptyconcFieldDescription() ) {tomMatch510_end_4=(( tom.gom.adt.symboltable.types.FieldDescriptionList )l);} else {tomMatch510_end_4= tomMatch510_end_4.getTailconcFieldDescription() ;}}} while(!( (tomMatch510_end_4==(( tom.gom.adt.symboltable.types.FieldDescriptionList )l)) ));}}}}
+      }}}if ( tomMatch541_end_4.isEmptyconcFieldDescription() ) {tomMatch541_end_4=(( tom.gom.adt.symboltable.types.FieldDescriptionList )l);} else {tomMatch541_end_4= tomMatch541_end_4.getTailconcFieldDescription() ;}}} while(!( (tomMatch541_end_4==(( tom.gom.adt.symboltable.types.FieldDescriptionList )l)) ));}}}}
 
     return false;
   }
 
   public boolean isPattern(String cons, String field) {
     FieldDescriptionList l = getFieldList(cons);
-    {{if ( (l instanceof tom.gom.adt.symboltable.types.FieldDescriptionList) ) {if ( (((( tom.gom.adt.symboltable.types.FieldDescriptionList )(( tom.gom.adt.symboltable.types.FieldDescriptionList )l)) instanceof tom.gom.adt.symboltable.types.fielddescriptionlist.ConsconcFieldDescription) || ((( tom.gom.adt.symboltable.types.FieldDescriptionList )(( tom.gom.adt.symboltable.types.FieldDescriptionList )l)) instanceof tom.gom.adt.symboltable.types.fielddescriptionlist.EmptyconcFieldDescription)) ) { tom.gom.adt.symboltable.types.FieldDescriptionList  tomMatch511_end_4=(( tom.gom.adt.symboltable.types.FieldDescriptionList )l);do {{if (!( tomMatch511_end_4.isEmptyconcFieldDescription() )) { tom.gom.adt.symboltable.types.FieldDescription  tomMatch511_9= tomMatch511_end_4.getHeadconcFieldDescription() ;if ( (tomMatch511_9 instanceof tom.gom.adt.symboltable.types.FieldDescription) ) {if ( ((( tom.gom.adt.symboltable.types.FieldDescription )tomMatch511_9) instanceof tom.gom.adt.symboltable.types.fielddescription.FieldDescription) ) { tom.gom.adt.symboltable.types.Status  tomMatch511_8= tomMatch511_9.getStatusValue() ;if ( (tomMatch511_8 instanceof tom.gom.adt.symboltable.types.Status) ) {if ( ((( tom.gom.adt.symboltable.types.Status )tomMatch511_8) instanceof tom.gom.adt.symboltable.types.status.SPattern) ) {
+    { /* unamed block */{ /* unamed block */if ( (l instanceof tom.gom.adt.symboltable.types.FieldDescriptionList) ) {if ( (((( tom.gom.adt.symboltable.types.FieldDescriptionList )l) instanceof tom.gom.adt.symboltable.types.fielddescriptionlist.ConsconcFieldDescription) || ((( tom.gom.adt.symboltable.types.FieldDescriptionList )l) instanceof tom.gom.adt.symboltable.types.fielddescriptionlist.EmptyconcFieldDescription)) ) { tom.gom.adt.symboltable.types.FieldDescriptionList  tomMatch542_end_4=(( tom.gom.adt.symboltable.types.FieldDescriptionList )l);do {{ /* unamed block */if (!( tomMatch542_end_4.isEmptyconcFieldDescription() )) { tom.gom.adt.symboltable.types.FieldDescription  tomMatch542_9= tomMatch542_end_4.getHeadconcFieldDescription() ;if ( ((( tom.gom.adt.symboltable.types.FieldDescription )tomMatch542_9) instanceof tom.gom.adt.symboltable.types.fielddescription.FieldDescription) ) {if ( ((( tom.gom.adt.symboltable.types.Status ) tomMatch542_9.getStatusValue() ) instanceof tom.gom.adt.symboltable.types.status.SPattern) ) {
 
 
-        if ( tomMatch511_9.getFieldName() .equals(field)) {
+        if ( tomMatch542_9.getFieldName() .equals(field)) {
           return true;
         }
-      }}}}}if ( tomMatch511_end_4.isEmptyconcFieldDescription() ) {tomMatch511_end_4=(( tom.gom.adt.symboltable.types.FieldDescriptionList )l);} else {tomMatch511_end_4= tomMatch511_end_4.getTailconcFieldDescription() ;}}} while(!( (tomMatch511_end_4==(( tom.gom.adt.symboltable.types.FieldDescriptionList )l)) ));}}}}
+      }}}if ( tomMatch542_end_4.isEmptyconcFieldDescription() ) {tomMatch542_end_4=(( tom.gom.adt.symboltable.types.FieldDescriptionList )l);} else {tomMatch542_end_4= tomMatch542_end_4.getTailconcFieldDescription() ;}}} while(!( (tomMatch542_end_4==(( tom.gom.adt.symboltable.types.FieldDescriptionList )l)) ));}}}}
 
     return false;
   }
 
   public boolean isInner(String cons, String field) {
     FieldDescriptionList l = getFieldList(cons);
-    {{if ( (l instanceof tom.gom.adt.symboltable.types.FieldDescriptionList) ) {if ( (((( tom.gom.adt.symboltable.types.FieldDescriptionList )(( tom.gom.adt.symboltable.types.FieldDescriptionList )l)) instanceof tom.gom.adt.symboltable.types.fielddescriptionlist.ConsconcFieldDescription) || ((( tom.gom.adt.symboltable.types.FieldDescriptionList )(( tom.gom.adt.symboltable.types.FieldDescriptionList )l)) instanceof tom.gom.adt.symboltable.types.fielddescriptionlist.EmptyconcFieldDescription)) ) { tom.gom.adt.symboltable.types.FieldDescriptionList  tomMatch512_end_4=(( tom.gom.adt.symboltable.types.FieldDescriptionList )l);do {{if (!( tomMatch512_end_4.isEmptyconcFieldDescription() )) { tom.gom.adt.symboltable.types.FieldDescription  tomMatch512_9= tomMatch512_end_4.getHeadconcFieldDescription() ;if ( (tomMatch512_9 instanceof tom.gom.adt.symboltable.types.FieldDescription) ) {if ( ((( tom.gom.adt.symboltable.types.FieldDescription )tomMatch512_9) instanceof tom.gom.adt.symboltable.types.fielddescription.FieldDescription) ) { tom.gom.adt.symboltable.types.Status  tomMatch512_8= tomMatch512_9.getStatusValue() ;if ( (tomMatch512_8 instanceof tom.gom.adt.symboltable.types.Status) ) {if ( ((( tom.gom.adt.symboltable.types.Status )tomMatch512_8) instanceof tom.gom.adt.symboltable.types.status.SInner) ) {
+    { /* unamed block */{ /* unamed block */if ( (l instanceof tom.gom.adt.symboltable.types.FieldDescriptionList) ) {if ( (((( tom.gom.adt.symboltable.types.FieldDescriptionList )l) instanceof tom.gom.adt.symboltable.types.fielddescriptionlist.ConsconcFieldDescription) || ((( tom.gom.adt.symboltable.types.FieldDescriptionList )l) instanceof tom.gom.adt.symboltable.types.fielddescriptionlist.EmptyconcFieldDescription)) ) { tom.gom.adt.symboltable.types.FieldDescriptionList  tomMatch543_end_4=(( tom.gom.adt.symboltable.types.FieldDescriptionList )l);do {{ /* unamed block */if (!( tomMatch543_end_4.isEmptyconcFieldDescription() )) { tom.gom.adt.symboltable.types.FieldDescription  tomMatch543_9= tomMatch543_end_4.getHeadconcFieldDescription() ;if ( ((( tom.gom.adt.symboltable.types.FieldDescription )tomMatch543_9) instanceof tom.gom.adt.symboltable.types.fielddescription.FieldDescription) ) {if ( ((( tom.gom.adt.symboltable.types.Status ) tomMatch543_9.getStatusValue() ) instanceof tom.gom.adt.symboltable.types.status.SInner) ) {
 
 
-        if ( tomMatch512_9.getFieldName() .equals(field)) {
+        if ( tomMatch543_9.getFieldName() .equals(field)) {
           return true;
         }
-      }}}}}if ( tomMatch512_end_4.isEmptyconcFieldDescription() ) {tomMatch512_end_4=(( tom.gom.adt.symboltable.types.FieldDescriptionList )l);} else {tomMatch512_end_4= tomMatch512_end_4.getTailconcFieldDescription() ;}}} while(!( (tomMatch512_end_4==(( tom.gom.adt.symboltable.types.FieldDescriptionList )l)) ));}}}}
+      }}}if ( tomMatch543_end_4.isEmptyconcFieldDescription() ) {tomMatch543_end_4=(( tom.gom.adt.symboltable.types.FieldDescriptionList )l);} else {tomMatch543_end_4= tomMatch543_end_4.getTailconcFieldDescription() ;}}} while(!( (tomMatch543_end_4==(( tom.gom.adt.symboltable.types.FieldDescriptionList )l)) ));}}}}
 
     return false;
   }
 
   public boolean isNeutral(String cons, String field) {
     FieldDescriptionList l = getFieldList(cons);
-    {{if ( (l instanceof tom.gom.adt.symboltable.types.FieldDescriptionList) ) {if ( (((( tom.gom.adt.symboltable.types.FieldDescriptionList )(( tom.gom.adt.symboltable.types.FieldDescriptionList )l)) instanceof tom.gom.adt.symboltable.types.fielddescriptionlist.ConsconcFieldDescription) || ((( tom.gom.adt.symboltable.types.FieldDescriptionList )(( tom.gom.adt.symboltable.types.FieldDescriptionList )l)) instanceof tom.gom.adt.symboltable.types.fielddescriptionlist.EmptyconcFieldDescription)) ) { tom.gom.adt.symboltable.types.FieldDescriptionList  tomMatch513_end_4=(( tom.gom.adt.symboltable.types.FieldDescriptionList )l);do {{if (!( tomMatch513_end_4.isEmptyconcFieldDescription() )) { tom.gom.adt.symboltable.types.FieldDescription  tomMatch513_9= tomMatch513_end_4.getHeadconcFieldDescription() ;if ( (tomMatch513_9 instanceof tom.gom.adt.symboltable.types.FieldDescription) ) {if ( ((( tom.gom.adt.symboltable.types.FieldDescription )tomMatch513_9) instanceof tom.gom.adt.symboltable.types.fielddescription.FieldDescription) ) { tom.gom.adt.symboltable.types.Status  tomMatch513_8= tomMatch513_9.getStatusValue() ;if ( (tomMatch513_8 instanceof tom.gom.adt.symboltable.types.Status) ) {if ( ((( tom.gom.adt.symboltable.types.Status )tomMatch513_8) instanceof tom.gom.adt.symboltable.types.status.SNeutral) ) {
+    { /* unamed block */{ /* unamed block */if ( (l instanceof tom.gom.adt.symboltable.types.FieldDescriptionList) ) {if ( (((( tom.gom.adt.symboltable.types.FieldDescriptionList )l) instanceof tom.gom.adt.symboltable.types.fielddescriptionlist.ConsconcFieldDescription) || ((( tom.gom.adt.symboltable.types.FieldDescriptionList )l) instanceof tom.gom.adt.symboltable.types.fielddescriptionlist.EmptyconcFieldDescription)) ) { tom.gom.adt.symboltable.types.FieldDescriptionList  tomMatch544_end_4=(( tom.gom.adt.symboltable.types.FieldDescriptionList )l);do {{ /* unamed block */if (!( tomMatch544_end_4.isEmptyconcFieldDescription() )) { tom.gom.adt.symboltable.types.FieldDescription  tomMatch544_9= tomMatch544_end_4.getHeadconcFieldDescription() ;if ( ((( tom.gom.adt.symboltable.types.FieldDescription )tomMatch544_9) instanceof tom.gom.adt.symboltable.types.fielddescription.FieldDescription) ) {if ( ((( tom.gom.adt.symboltable.types.Status ) tomMatch544_9.getStatusValue() ) instanceof tom.gom.adt.symboltable.types.status.SNeutral) ) {
 
 
-        if( tomMatch513_9.getFieldName() .equals(field)) {
+        if( tomMatch544_9.getFieldName() .equals(field)) {
           return true;
         }
-      }}}}}if ( tomMatch513_end_4.isEmptyconcFieldDescription() ) {tomMatch513_end_4=(( tom.gom.adt.symboltable.types.FieldDescriptionList )l);} else {tomMatch513_end_4= tomMatch513_end_4.getTailconcFieldDescription() ;}}} while(!( (tomMatch513_end_4==(( tom.gom.adt.symboltable.types.FieldDescriptionList )l)) ));}}}}
+      }}}if ( tomMatch544_end_4.isEmptyconcFieldDescription() ) {tomMatch544_end_4=(( tom.gom.adt.symboltable.types.FieldDescriptionList )l);} else {tomMatch544_end_4= tomMatch544_end_4.getTailconcFieldDescription() ;}}} while(!( (tomMatch544_end_4==(( tom.gom.adt.symboltable.types.FieldDescriptionList )l)) ));}}}}
 
     return false;
   }
@@ -809,10 +809,10 @@ public class SymbolTable {
    */
   public boolean isRefreshPoint(String cons) {
     ConstructorDescription d = constructors.get(cons);
-    {{if ( (d instanceof tom.gom.adt.symboltable.types.ConstructorDescription) ) {if ( ((( tom.gom.adt.symboltable.types.ConstructorDescription )d) instanceof tom.gom.adt.symboltable.types.ConstructorDescription) ) {if ( ((( tom.gom.adt.symboltable.types.ConstructorDescription )(( tom.gom.adt.symboltable.types.ConstructorDescription )d)) instanceof tom.gom.adt.symboltable.types.constructordescription.VariadicConstructorDescription) ) {
+    { /* unamed block */{ /* unamed block */if ( (d instanceof tom.gom.adt.symboltable.types.ConstructorDescription) ) {if ( ((( tom.gom.adt.symboltable.types.ConstructorDescription )d) instanceof tom.gom.adt.symboltable.types.constructordescription.VariadicConstructorDescription) ) {
 
         return  (( tom.gom.adt.symboltable.types.ConstructorDescription )d).getIsRefreshPoint() ;
-      }}}}}
+      }}}}
 
     return false;
   }
@@ -822,8 +822,8 @@ public class SymbolTable {
    */
   public String getDomain(String cons) {
     ConstructorDescription d = constructors.get(cons);
-    {{if ( (d instanceof tom.gom.adt.symboltable.types.ConstructorDescription) ) {if ( ((( tom.gom.adt.symboltable.types.ConstructorDescription )d) instanceof tom.gom.adt.symboltable.types.ConstructorDescription) ) {if ( ((( tom.gom.adt.symboltable.types.ConstructorDescription )(( tom.gom.adt.symboltable.types.ConstructorDescription )d)) instanceof tom.gom.adt.symboltable.types.constructordescription.VariadicConstructorDescription) ) {
- return  (( tom.gom.adt.symboltable.types.ConstructorDescription )d).getDomain() ; }}}}}
+    { /* unamed block */{ /* unamed block */if ( (d instanceof tom.gom.adt.symboltable.types.ConstructorDescription) ) {if ( ((( tom.gom.adt.symboltable.types.ConstructorDescription )d) instanceof tom.gom.adt.symboltable.types.constructordescription.VariadicConstructorDescription) ) {
+ return  (( tom.gom.adt.symboltable.types.ConstructorDescription )d).getDomain() ; }}}}
 
     GomMessage.error(getLogger(),null,0,
         GomMessage.nonVariadicOperator);
@@ -835,8 +835,8 @@ public class SymbolTable {
    */
   public String getCoDomain(String cons) {
     ConstructorDescription d = constructors.get(cons);
-    {{if ( (d instanceof tom.gom.adt.symboltable.types.ConstructorDescription) ) {if ( ((( tom.gom.adt.symboltable.types.ConstructorDescription )d) instanceof tom.gom.adt.symboltable.types.ConstructorDescription) ) {if ( ((( tom.gom.adt.symboltable.types.ConstructorDescription )(( tom.gom.adt.symboltable.types.ConstructorDescription )d)) instanceof tom.gom.adt.symboltable.types.constructordescription.VariadicConstructorDescription) ) {
- return  (( tom.gom.adt.symboltable.types.ConstructorDescription )d).getSortSymbol() ; }}}}}
+    { /* unamed block */{ /* unamed block */if ( (d instanceof tom.gom.adt.symboltable.types.ConstructorDescription) ) {if ( ((( tom.gom.adt.symboltable.types.ConstructorDescription )d) instanceof tom.gom.adt.symboltable.types.constructordescription.VariadicConstructorDescription) ) {
+ return  (( tom.gom.adt.symboltable.types.ConstructorDescription )d).getSortSymbol() ; }}}}
 
     GomMessage.error(getLogger(),null,0,
         GomMessage.nonVariadicOperator);
@@ -846,13 +846,13 @@ public class SymbolTable {
 
   public boolean isRefreshPoint(String cons, String field) {
     FieldDescriptionList l = getFieldList(cons);
-    {{if ( (l instanceof tom.gom.adt.symboltable.types.FieldDescriptionList) ) {if ( (((( tom.gom.adt.symboltable.types.FieldDescriptionList )(( tom.gom.adt.symboltable.types.FieldDescriptionList )l)) instanceof tom.gom.adt.symboltable.types.fielddescriptionlist.ConsconcFieldDescription) || ((( tom.gom.adt.symboltable.types.FieldDescriptionList )(( tom.gom.adt.symboltable.types.FieldDescriptionList )l)) instanceof tom.gom.adt.symboltable.types.fielddescriptionlist.EmptyconcFieldDescription)) ) { tom.gom.adt.symboltable.types.FieldDescriptionList  tomMatch517_end_4=(( tom.gom.adt.symboltable.types.FieldDescriptionList )l);do {{if (!( tomMatch517_end_4.isEmptyconcFieldDescription() )) { tom.gom.adt.symboltable.types.FieldDescription  tomMatch517_9= tomMatch517_end_4.getHeadconcFieldDescription() ;if ( (tomMatch517_9 instanceof tom.gom.adt.symboltable.types.FieldDescription) ) {if ( ((( tom.gom.adt.symboltable.types.FieldDescription )tomMatch517_9) instanceof tom.gom.adt.symboltable.types.fielddescription.FieldDescription) ) { tom.gom.adt.symboltable.types.Status  tomMatch517_8= tomMatch517_9.getStatusValue() ;if ( (tomMatch517_8 instanceof tom.gom.adt.symboltable.types.Status) ) {if ( ((( tom.gom.adt.symboltable.types.Status )tomMatch517_8) instanceof tom.gom.adt.symboltable.types.status.SRefreshPoint) ) {
+    { /* unamed block */{ /* unamed block */if ( (l instanceof tom.gom.adt.symboltable.types.FieldDescriptionList) ) {if ( (((( tom.gom.adt.symboltable.types.FieldDescriptionList )l) instanceof tom.gom.adt.symboltable.types.fielddescriptionlist.ConsconcFieldDescription) || ((( tom.gom.adt.symboltable.types.FieldDescriptionList )l) instanceof tom.gom.adt.symboltable.types.fielddescriptionlist.EmptyconcFieldDescription)) ) { tom.gom.adt.symboltable.types.FieldDescriptionList  tomMatch548_end_4=(( tom.gom.adt.symboltable.types.FieldDescriptionList )l);do {{ /* unamed block */if (!( tomMatch548_end_4.isEmptyconcFieldDescription() )) { tom.gom.adt.symboltable.types.FieldDescription  tomMatch548_9= tomMatch548_end_4.getHeadconcFieldDescription() ;if ( ((( tom.gom.adt.symboltable.types.FieldDescription )tomMatch548_9) instanceof tom.gom.adt.symboltable.types.fielddescription.FieldDescription) ) {if ( ((( tom.gom.adt.symboltable.types.Status ) tomMatch548_9.getStatusValue() ) instanceof tom.gom.adt.symboltable.types.status.SRefreshPoint) ) {
 
 
-        if ( tomMatch517_9.getFieldName() .equals(field)) {
+        if ( tomMatch548_9.getFieldName() .equals(field)) {
           return true;
         }
-      }}}}}if ( tomMatch517_end_4.isEmptyconcFieldDescription() ) {tomMatch517_end_4=(( tom.gom.adt.symboltable.types.FieldDescriptionList )l);} else {tomMatch517_end_4= tomMatch517_end_4.getTailconcFieldDescription() ;}}} while(!( (tomMatch517_end_4==(( tom.gom.adt.symboltable.types.FieldDescriptionList )l)) ));}}}}
+      }}}if ( tomMatch548_end_4.isEmptyconcFieldDescription() ) {tomMatch548_end_4=(( tom.gom.adt.symboltable.types.FieldDescriptionList )l);} else {tomMatch548_end_4= tomMatch548_end_4.getTailconcFieldDescription() ;}}} while(!( (tomMatch548_end_4==(( tom.gom.adt.symboltable.types.FieldDescriptionList )l)) ));}}}}
 
     return false;
   }
@@ -886,16 +886,16 @@ public class SymbolTable {
       StringList res =  tom.gom.adt.symboltable.types.stringlist.EmptyStringList.make() ;
       for(String c: getConstructors(sort)) {
         ConstructorDescription cd = constructors.get(c);
-        {{if ( (cd instanceof tom.gom.adt.symboltable.types.ConstructorDescription) ) {if ( ((( tom.gom.adt.symboltable.types.ConstructorDescription )cd) instanceof tom.gom.adt.symboltable.types.ConstructorDescription) ) {if ( ((( tom.gom.adt.symboltable.types.ConstructorDescription )(( tom.gom.adt.symboltable.types.ConstructorDescription )cd)) instanceof tom.gom.adt.symboltable.types.constructordescription.VariadicConstructorDescription) ) {
+        { /* unamed block */{ /* unamed block */if ( (cd instanceof tom.gom.adt.symboltable.types.ConstructorDescription) ) {if ( ((( tom.gom.adt.symboltable.types.ConstructorDescription )cd) instanceof tom.gom.adt.symboltable.types.constructordescription.VariadicConstructorDescription) ) {
 
             StringList tyatoms = getAccessibleAtoms( (( tom.gom.adt.symboltable.types.ConstructorDescription )cd).getDomain() ,visited);
             res = tom_append_list_StringList(tyatoms,tom_append_list_StringList(res, tom.gom.adt.symboltable.types.stringlist.EmptyStringList.make() ));
-          }}}}{if ( (cd instanceof tom.gom.adt.symboltable.types.ConstructorDescription) ) {if ( ((( tom.gom.adt.symboltable.types.ConstructorDescription )cd) instanceof tom.gom.adt.symboltable.types.ConstructorDescription) ) {if ( ((( tom.gom.adt.symboltable.types.ConstructorDescription )(( tom.gom.adt.symboltable.types.ConstructorDescription )cd)) instanceof tom.gom.adt.symboltable.types.constructordescription.ConstructorDescription) ) { tom.gom.adt.symboltable.types.FieldDescriptionList  tomMatch518_5= (( tom.gom.adt.symboltable.types.ConstructorDescription )cd).getFields() ;if ( (((( tom.gom.adt.symboltable.types.FieldDescriptionList )tomMatch518_5) instanceof tom.gom.adt.symboltable.types.fielddescriptionlist.ConsconcFieldDescription) || ((( tom.gom.adt.symboltable.types.FieldDescriptionList )tomMatch518_5) instanceof tom.gom.adt.symboltable.types.fielddescriptionlist.EmptyconcFieldDescription)) ) { tom.gom.adt.symboltable.types.FieldDescriptionList  tomMatch518_end_11=tomMatch518_5;do {{if (!( tomMatch518_end_11.isEmptyconcFieldDescription() )) { tom.gom.adt.symboltable.types.FieldDescription  tomMatch518_15= tomMatch518_end_11.getHeadconcFieldDescription() ;if ( (tomMatch518_15 instanceof tom.gom.adt.symboltable.types.FieldDescription) ) {if ( ((( tom.gom.adt.symboltable.types.FieldDescription )tomMatch518_15) instanceof tom.gom.adt.symboltable.types.fielddescription.FieldDescription) ) {
+          }}}{ /* unamed block */if ( (cd instanceof tom.gom.adt.symboltable.types.ConstructorDescription) ) {if ( ((( tom.gom.adt.symboltable.types.ConstructorDescription )cd) instanceof tom.gom.adt.symboltable.types.constructordescription.ConstructorDescription) ) { tom.gom.adt.symboltable.types.FieldDescriptionList  tomMatch549_5= (( tom.gom.adt.symboltable.types.ConstructorDescription )cd).getFields() ;if ( (((( tom.gom.adt.symboltable.types.FieldDescriptionList )tomMatch549_5) instanceof tom.gom.adt.symboltable.types.fielddescriptionlist.ConsconcFieldDescription) || ((( tom.gom.adt.symboltable.types.FieldDescriptionList )tomMatch549_5) instanceof tom.gom.adt.symboltable.types.fielddescriptionlist.EmptyconcFieldDescription)) ) { tom.gom.adt.symboltable.types.FieldDescriptionList  tomMatch549_end_11=tomMatch549_5;do {{ /* unamed block */if (!( tomMatch549_end_11.isEmptyconcFieldDescription() )) { tom.gom.adt.symboltable.types.FieldDescription  tomMatch549_15= tomMatch549_end_11.getHeadconcFieldDescription() ;if ( ((( tom.gom.adt.symboltable.types.FieldDescription )tomMatch549_15) instanceof tom.gom.adt.symboltable.types.fielddescription.FieldDescription) ) {
 
 
-              StringList tyatoms = getAccessibleAtoms( tomMatch518_15.getSort() ,visited);
+              StringList tyatoms = getAccessibleAtoms( tomMatch549_15.getSort() ,visited);
               res = tom_append_list_StringList(tyatoms,tom_append_list_StringList(res, tom.gom.adt.symboltable.types.stringlist.EmptyStringList.make() ));
-            }}}if ( tomMatch518_end_11.isEmptyconcFieldDescription() ) {tomMatch518_end_11=tomMatch518_5;} else {tomMatch518_end_11= tomMatch518_end_11.getTailconcFieldDescription() ;}}} while(!( (tomMatch518_end_11==tomMatch518_5) ));}}}}}}
+            }}if ( tomMatch549_end_11.isEmptyconcFieldDescription() ) {tomMatch549_end_11=tomMatch549_5;} else {tomMatch549_end_11= tomMatch549_end_11.getTailconcFieldDescription() ;}}} while(!( (tomMatch549_end_11==tomMatch549_5) ));}}}}}
 
       }
       return res;
@@ -916,18 +916,18 @@ public class SymbolTable {
       if (getGomEnvironment().isBuiltin(sort)) { continue; }
       for(String c: getConstructors(sort)) {
         ConstructorDescription cd = constructors.get(c);
-        {{if ( (cd instanceof tom.gom.adt.symboltable.types.ConstructorDescription) ) {if ( ((( tom.gom.adt.symboltable.types.ConstructorDescription )cd) instanceof tom.gom.adt.symboltable.types.ConstructorDescription) ) {if ( ((( tom.gom.adt.symboltable.types.ConstructorDescription )(( tom.gom.adt.symboltable.types.ConstructorDescription )cd)) instanceof tom.gom.adt.symboltable.types.constructordescription.VariadicConstructorDescription) ) { String  tom_ty= (( tom.gom.adt.symboltable.types.ConstructorDescription )cd).getDomain() ;
+        { /* unamed block */{ /* unamed block */if ( (cd instanceof tom.gom.adt.symboltable.types.ConstructorDescription) ) {if ( ((( tom.gom.adt.symboltable.types.ConstructorDescription )cd) instanceof tom.gom.adt.symboltable.types.constructordescription.VariadicConstructorDescription) ) { String  tom___ty= (( tom.gom.adt.symboltable.types.ConstructorDescription )cd).getDomain() ;
 
-            if(!getGomEnvironment().isBuiltin(tom_ty)) {
-              sortDependences.addLink(sort,tom_ty);
+            if(!getGomEnvironment().isBuiltin(tom___ty)) {
+              sortDependences.addLink(sort,tom___ty);
             }
-          }}}}{if ( (cd instanceof tom.gom.adt.symboltable.types.ConstructorDescription) ) {if ( ((( tom.gom.adt.symboltable.types.ConstructorDescription )cd) instanceof tom.gom.adt.symboltable.types.ConstructorDescription) ) {if ( ((( tom.gom.adt.symboltable.types.ConstructorDescription )(( tom.gom.adt.symboltable.types.ConstructorDescription )cd)) instanceof tom.gom.adt.symboltable.types.constructordescription.ConstructorDescription) ) { tom.gom.adt.symboltable.types.FieldDescriptionList  tomMatch519_5= (( tom.gom.adt.symboltable.types.ConstructorDescription )cd).getFields() ;if ( (((( tom.gom.adt.symboltable.types.FieldDescriptionList )tomMatch519_5) instanceof tom.gom.adt.symboltable.types.fielddescriptionlist.ConsconcFieldDescription) || ((( tom.gom.adt.symboltable.types.FieldDescriptionList )tomMatch519_5) instanceof tom.gom.adt.symboltable.types.fielddescriptionlist.EmptyconcFieldDescription)) ) { tom.gom.adt.symboltable.types.FieldDescriptionList  tomMatch519_end_11=tomMatch519_5;do {{if (!( tomMatch519_end_11.isEmptyconcFieldDescription() )) { tom.gom.adt.symboltable.types.FieldDescription  tomMatch519_15= tomMatch519_end_11.getHeadconcFieldDescription() ;if ( (tomMatch519_15 instanceof tom.gom.adt.symboltable.types.FieldDescription) ) {if ( ((( tom.gom.adt.symboltable.types.FieldDescription )tomMatch519_15) instanceof tom.gom.adt.symboltable.types.fielddescription.FieldDescription) ) { String  tom_ty= tomMatch519_15.getSort() ;
+          }}}{ /* unamed block */if ( (cd instanceof tom.gom.adt.symboltable.types.ConstructorDescription) ) {if ( ((( tom.gom.adt.symboltable.types.ConstructorDescription )cd) instanceof tom.gom.adt.symboltable.types.constructordescription.ConstructorDescription) ) { tom.gom.adt.symboltable.types.FieldDescriptionList  tomMatch550_5= (( tom.gom.adt.symboltable.types.ConstructorDescription )cd).getFields() ;if ( (((( tom.gom.adt.symboltable.types.FieldDescriptionList )tomMatch550_5) instanceof tom.gom.adt.symboltable.types.fielddescriptionlist.ConsconcFieldDescription) || ((( tom.gom.adt.symboltable.types.FieldDescriptionList )tomMatch550_5) instanceof tom.gom.adt.symboltable.types.fielddescriptionlist.EmptyconcFieldDescription)) ) { tom.gom.adt.symboltable.types.FieldDescriptionList  tomMatch550_end_11=tomMatch550_5;do {{ /* unamed block */if (!( tomMatch550_end_11.isEmptyconcFieldDescription() )) { tom.gom.adt.symboltable.types.FieldDescription  tomMatch550_15= tomMatch550_end_11.getHeadconcFieldDescription() ;if ( ((( tom.gom.adt.symboltable.types.FieldDescription )tomMatch550_15) instanceof tom.gom.adt.symboltable.types.fielddescription.FieldDescription) ) { String  tom___ty= tomMatch550_15.getSort() ;
 
 
-              if(!getGomEnvironment().isBuiltin(tom_ty)) {
-                sortDependences.addLink(sort,tom_ty);
+              if(!getGomEnvironment().isBuiltin(tom___ty)) {
+                sortDependences.addLink(sort,tom___ty);
               }
-            }}}if ( tomMatch519_end_11.isEmptyconcFieldDescription() ) {tomMatch519_end_11=tomMatch519_5;} else {tomMatch519_end_11= tomMatch519_end_11.getTailconcFieldDescription() ;}}} while(!( (tomMatch519_end_11==tomMatch519_5) ));}}}}}}
+            }}if ( tomMatch550_end_11.isEmptyconcFieldDescription() ) {tomMatch550_end_11=tomMatch550_5;} else {tomMatch550_end_11= tomMatch550_end_11.getTailconcFieldDescription() ;}}} while(!( (tomMatch550_end_11==tomMatch550_5) ));}}}}}
 
       }
     }

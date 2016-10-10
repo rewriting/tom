@@ -258,13 +258,13 @@ public class Viewer {
    */
   private static void ATermToTree(aterm.ATerm term, Writer w, Stack<Integer> context, int deep)
     throws java.io.IOException {
-      {{if ( term instanceof aterm.ATerm ) {if ( (( aterm.ATerm )term) instanceof aterm.ATerm ) {if ( (( aterm.ATerm )(( aterm.ATerm )term)) instanceof aterm.ATermInt ) {
+      { /* unamed block */{ /* unamed block */if ( term instanceof aterm.ATerm ) {if ( (( aterm.ATerm )term) instanceof aterm.ATermInt ) {
 
           w.write("─"+ ((aterm.ATermInt)(( aterm.ATerm )term)).getInt() );
           return;
-        }}}}{if ( term instanceof aterm.ATerm ) {if ( (( aterm.ATerm )term) instanceof aterm.ATerm ) {if ( (( aterm.ATerm )(( aterm.ATerm )term)) instanceof aterm.ATermAppl ) { aterm.AFun  tomMatch751_5= ((aterm.ATermAppl)(( aterm.ATerm )term)).getAFun() ;if ( tomMatch751_5 instanceof aterm.AFun ) {if ( (( aterm.AFun )tomMatch751_5) instanceof aterm.AFun ) { String  tom_afunname= tomMatch751_5.getName() ; aterm.ATermList  tom_list= ((aterm.ATermAppl)(( aterm.ATerm )term)).getArguments() ;
+        }}}{ /* unamed block */if ( term instanceof aterm.ATerm ) {if ( (( aterm.ATerm )term) instanceof aterm.ATermAppl ) { aterm.AFun  tomMatch782_5= ((aterm.ATermAppl)(( aterm.ATerm )term)).getAFun() ;if ( (( aterm.AFun )tomMatch782_5) instanceof aterm.AFun ) { String  tom___afunname= tomMatch782_5.getName() ; aterm.ATermList  tom___list= ((aterm.ATermAppl)(( aterm.ATerm )term)).getArguments() ;
 
-          String name = ( tomMatch751_5.isQuoted() )?"\""+tom_afunname+"\"":tom_afunname;
+          String name = ( tomMatch782_5.isQuoted() )?"\""+tom___afunname+"\"":tom___afunname;
           aterm.ATermAppl a = (aterm.ATermAppl) term;
           if (a.getArity() == 0) {  // no child
             w.write("─"+name);
@@ -272,38 +272,38 @@ public class Viewer {
           } else if (a.getArity() == 1) {  // only one child
             w.write("─" + name + "──");
             deep = deep + name.length() + 3;
-            ATermToTree(tom_list.getFirst(),w,context,deep);
+            ATermToTree(tom___list.getFirst(),w,context,deep);
             return;
           } else {
             int ndeep = deep + name.length() + 3;
-            {{if ( tom_list instanceof aterm.ATermList ) {if ( (( aterm.ATermList )(( aterm.ATermList )tom_list)) instanceof aterm.ATermList ) {if (!( (( aterm.ATermList )tom_list).isEmpty() )) { aterm.ATermList  tomMatch752_2= (( aterm.ATermList )tom_list).getNext() ; aterm.ATermList  tomMatch752_end_5=tomMatch752_2;do {{ aterm.ATermList  tom_l=tom_get_slice_concATerm(tomMatch752_2,tomMatch752_end_5, aterm.pure.SingletonFactory.getInstance().makeList() );if (!( tomMatch752_end_5.isEmpty() )) {if (  tomMatch752_end_5.getNext() .isEmpty() ) {
+            { /* unamed block */{ /* unamed block */if ( tom___list instanceof aterm.ATermList ) {if ( (( aterm.ATermList )tom___list) instanceof aterm.ATermList ) {if (!( (( aterm.ATermList )tom___list).isEmpty() )) { aterm.ATermList  tomMatch783_2= (( aterm.ATermList )tom___list).getNext() ; aterm.ATermList  tomMatch783_end_5=tomMatch783_2;do {{ /* unamed block */ aterm.ATermList  tom___l=tom_get_slice_concATerm(tomMatch783_2,tomMatch783_end_5, aterm.pure.SingletonFactory.getInstance().makeList() );if (!( tomMatch783_end_5.isEmpty() )) {if (  tomMatch783_end_5.getNext() .isEmpty() ) {
 
                 // first child
                 w.write("─" + name + "─┬");
                 context.push(ndeep-1);
-                ATermToTree( (( aterm.ATermList )tom_list).getFirst() ,w,context,ndeep);
+                ATermToTree( (( aterm.ATermList )tom___list).getFirst() ,w,context,ndeep);
                 context.pop();
                 w.write('\n');
 
                 // 2 ... n-1
-                {{if ( tom_l instanceof aterm.ATermList ) {if ( (( aterm.ATermList )(( aterm.ATermList )tom_l)) instanceof aterm.ATermList ) { aterm.ATermList  tomMatch753_end_4=(( aterm.ATermList )tom_l);do {{if (!( tomMatch753_end_4.isEmpty() )) {
+                { /* unamed block */{ /* unamed block */if ( tom___l instanceof aterm.ATermList ) {if ( (( aterm.ATermList )(( aterm.ATermList )tom___l)) instanceof aterm.ATermList ) { aterm.ATermList  tomMatch784_end_4=(( aterm.ATermList )tom___l);do {{ /* unamed block */if (!( tomMatch784_end_4.isEmpty() )) {
 
                     writeContext(w,context,ndeep-1);
                     w.write("├");
                     context.push(ndeep-1);
-                    ATermToTree( tomMatch753_end_4.getFirst() ,w,context,ndeep);
+                    ATermToTree( tomMatch784_end_4.getFirst() ,w,context,ndeep);
                     context.pop();
                     w.write('\n');
-                  }if ( tomMatch753_end_4.isEmpty() ) {tomMatch753_end_4=(( aterm.ATermList )tom_l);} else {tomMatch753_end_4= tomMatch753_end_4.getNext() ;}}} while(!( tomMatch753_end_4 == (( aterm.ATermList )tom_l) ));}}}}
+                  }if ( tomMatch784_end_4.isEmpty() ) {tomMatch784_end_4=(( aterm.ATermList )tom___l);} else {tomMatch784_end_4= tomMatch784_end_4.getNext() ;}}} while(!( tomMatch784_end_4 == (( aterm.ATermList )tom___l) ));}}}}
 
                 // last child
                 writeContext(w,context,ndeep-1);
                 w.write("└");
-                ATermToTree( tomMatch752_end_5.getFirst() ,w,context,ndeep);
-              }}if ( tomMatch752_end_5.isEmpty() ) {tomMatch752_end_5=tomMatch752_2;} else {tomMatch752_end_5= tomMatch752_end_5.getNext() ;}}} while(!( tomMatch752_end_5 == tomMatch752_2 ));}}}}}
+                ATermToTree( tomMatch783_end_5.getFirst() ,w,context,ndeep);
+              }}if ( tomMatch783_end_5.isEmpty() ) {tomMatch783_end_5=tomMatch783_2;} else {tomMatch783_end_5= tomMatch783_end_5.getNext() ;}}} while(!( tomMatch783_end_5 == tomMatch783_2 ));}}}}}
 
           }
-        }}}}}}}
+        }}}}}
 
     }
 
@@ -324,11 +324,11 @@ public class Viewer {
     return s;
   }
 
-  public static class RemoveMu extends tom.library.sl.AbstractStrategyBasic {public RemoveMu() {super(( new tom.library.sl.Identity() ));}public tom.library.sl.Visitable[] getChildren() {tom.library.sl.Visitable[] stratChildren = new tom.library.sl.Visitable[getChildCount()];stratChildren[0] = super.getChildAt(0);return stratChildren;}public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {super.setChildAt(0, children[0]);return this;}public int getChildCount() {return 1;}public tom.library.sl.Visitable getChildAt(int index) {switch (index) {case 0: return super.getChildAt(0);default: throw new IndexOutOfBoundsException();}}public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable child) {switch (index) {case 0: return super.setChildAt(0, child);default: throw new IndexOutOfBoundsException();}}@SuppressWarnings("unchecked")public <T> T visitLight(T v, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if ( (v instanceof tom.library.sl.Strategy) ) {return ((T)visit_Strategy((( tom.library.sl.Strategy )v),introspector));}if (!(  null ==environment )) {return ((T)any.visit(environment,introspector));} else {return any.visitLight(v,introspector);}}@SuppressWarnings("unchecked")public  tom.library.sl.Strategy  _visit_Strategy( tom.library.sl.Strategy  arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if (!(  null ==environment )) {return (( tom.library.sl.Strategy )any.visit(environment,introspector));} else {return any.visitLight(arg,introspector);}}@SuppressWarnings("unchecked")public  tom.library.sl.Strategy  visit_Strategy( tom.library.sl.Strategy  tom__arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {{{if ( (tom__arg instanceof tom.library.sl.Strategy) ) {if ( ((( tom.library.sl.Strategy )tom__arg) instanceof tom.library.sl.Strategy) ) {if (( (( tom.library.sl.Strategy )(( tom.library.sl.Strategy )tom__arg)) instanceof tom.library.sl.Mu )) {
+  public static class RemoveMu extends tom.library.sl.AbstractStrategyBasic {public RemoveMu() {super(( new tom.library.sl.Identity() ));}public tom.library.sl.Visitable[] getChildren() {tom.library.sl.Visitable[] stratChildren = new tom.library.sl.Visitable[getChildCount()];stratChildren[0] = super.getChildAt(0);return stratChildren;}public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {super.setChildAt(0, children[0]);return this;}public int getChildCount() {return 1;}public tom.library.sl.Visitable getChildAt(int index) {switch (index) {case 0: return super.getChildAt(0);default: throw new IndexOutOfBoundsException();}}public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable child) {switch (index) {case 0: return super.setChildAt(0, child);default: throw new IndexOutOfBoundsException();}}@SuppressWarnings("unchecked")public <T> T visitLight(T v, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if ( (v instanceof tom.library.sl.Strategy) ) {return ((T)visit_Strategy((( tom.library.sl.Strategy )v),introspector));}if (!(  null ==environment )) {return ((T)any.visit(environment,introspector));} else {return any.visitLight(v,introspector);}}@SuppressWarnings("unchecked")public  tom.library.sl.Strategy  _visit_Strategy( tom.library.sl.Strategy  arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if (!(  null ==environment )) {return (( tom.library.sl.Strategy )any.visit(environment,introspector));} else {return any.visitLight(arg,introspector);}}@SuppressWarnings("unchecked")public  tom.library.sl.Strategy  visit_Strategy( tom.library.sl.Strategy  tom__arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {{ /* unamed block */{ /* unamed block */if ( (tom__arg instanceof tom.library.sl.Strategy) ) {if (( (( tom.library.sl.Strategy )tom__arg) instanceof tom.library.sl.Mu )) {
 
 
         return ( (tom.library.sl.Strategy)(( tom.library.sl.Strategy )tom__arg).getChildAt(tom.library.sl.Mu.V) );
-      }}}}{if ( (tom__arg instanceof tom.library.sl.Strategy) ) {
+      }}}{ /* unamed block */if ( (tom__arg instanceof tom.library.sl.Strategy) ) {
 
         if (getEnvironment().getCurrentStack().contains(getEnvironment().getSubject())) {
           //corresponds to a pointer due to MuVar

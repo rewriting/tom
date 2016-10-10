@@ -50,12 +50,9 @@ import java.io.IOException;
 public class TomJavaParser extends antlr.LLkParser       implements TomJavaParserTokenTypes
  {
 
-  public static TomJavaParser createParser(String fileName)
-	  throws FileNotFoundException,IOException {
+  public static TomJavaParser createParser(String fileName) throws FileNotFoundException,IOException {
     File file = new File(fileName);
-    TomJavaLexer lexer = new TomJavaLexer(
-		    new BufferedReader(
-			    new FileReader(file)));
+    TomJavaLexer lexer = new TomJavaLexer(new BufferedReader(new FileReader(file)));
     return new TomJavaParser(lexer);
   }
 
