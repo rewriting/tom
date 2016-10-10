@@ -56,7 +56,6 @@ import tom.engine.tools.SymbolTable;
 import tom.engine.tools.ASTFactory;
 import tom.engine.tools.TomGenericPlugin;
 import tom.engine.tools.Tools;
-import tom.platform.OptionParser;
 import tom.platform.adt.platformoption.types.PlatformOptionList;
 
 import tom.library.sl.*;
@@ -79,11 +78,6 @@ public class PrettyPrinterPlugin extends TomGenericPlugin {
   public static final String PRETTYPRINTER_SUFFIX = ".pretty";
 
   /** the declared options string */
-  public static final String DECLARED_OPTIONS = 
-    "<options>" +
-    "<boolean name='prettyTOM' altName='pit' description='Pretty print original Tom code (not activated by default)' value='false'/>" +
-    "</options>";
-
   public static final PlatformOptionList PLATFORM_OPTIONS =
      tom.platform.adt.platformoption.types.platformoptionlist.ConsconcPlatformOption.make( tom.platform.adt.platformoption.types.platformoption.PluginOption.make("prettyTOM", "pit", "Pretty print original Tom code (not activated by default)",  tom.platform.adt.platformoption.types.platformvalue.BooleanValue.make( tom.platform.adt.platformoption.types.platformboolean.False.make() ) , "") 
         , tom.platform.adt.platformoption.types.platformoptionlist.EmptyconcPlatformOption.make() ) 
@@ -116,47 +110,11 @@ public class PrettyPrinterPlugin extends TomGenericPlugin {
   }
 
   public PlatformOptionList getDeclaredOptionList() {
-    return OptionParser.xmlToOptionList(PrettyPrinterPlugin.DECLARED_OPTIONS);
-    //return PLATFORM_OPTIONS; 
+    return PLATFORM_OPTIONS; 
   }
 
   private void prettyPrinter(Code code) {
-//    %include { string.tom }
     System.out.println("PrettyPrinter active");
-/*
-    Map<Float,String> anOrganizer = new TreeMap<Float,String>();
-    try {
-      FileWriter log = new FileWriter("log.t");
-      FileWriter txt = new FileWriter("log.txt");
-      txt.write(code.toString());
-      txt.close();
-    
-      %match(code) {
-        Tom(concCode(_*,TargetLanguageToCode(TL(a,e,_)),_*))-> { anOrganizer.put(getPosition(`e),`a); }
-        Tom(concCode(_*,TargetLanguageToCode(TL(_,_,e)),BQTermToCode(Composite(CompositeBQTerm(BuildTerm(Name(a),_,_)))),_*))-> { anOrganizer.put(getPosition(`e),"`"+`a+"()"); }
-//          Tom(concCode(t*)) -> { System.out.println(`(t*)); }
-      }
-    for (Iterator<Float> i = anOrganizer.keySet().iterator() ; i.hasNext() ; ){
-      log.write(anOrganizer.get(i.next()));
-    }
-    
-    log.close();
-    }
-    catch(Exception e) {
-      System.out.println("little problem while writing the log file");
-    }
-*/
-    //System.out.println(intermediaryCode);
-    //System.out.println(codeToGive);
   }
  
-/* 
-  private float getPosition(TextPosition tp) {
-    float f;
-    %match(tp) {
-      TextPosition(line,column) -> { f = Float.parseFloat(`line+"."+`column); return f; }
-    }
-  return -1;
-  }
-*/
 }

@@ -22,9 +22,9 @@
   <property environment="env"/>
   <property name="tom.home"    value="${env.TOM_HOME}"/>
 
-  <property name="tomconfigfile"  location="${tom.home}/Tom.xml"/>
-  <property name="gomconfigfile"  location="${tom.home}/Gom.xml"/>
-  <property name="gomantlradapterconfigfile"  location="${tom.home}/GomAntlrAdaptor.xml"/>
+  <property name="tomconfigfile"  location="${tom.home}/Tom.config"/>
+  <property name="gomconfigfile"  location="${tom.home}/Gom.config"/>
+  <property name="gomantlradapterconfigfile"  location="${tom.home}/GomAntlrAdaptor.config"/>
 
   <path id="external.classpath">
     <fileset dir="${user.home}">

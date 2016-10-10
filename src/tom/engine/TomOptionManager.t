@@ -43,9 +43,6 @@ import tom.platform.adt.platformoption.types.PlatformBoolean;
 import tom.platform.adt.platformoption.types.PlatformOption;
 import tom.platform.adt.platformoption.types.PlatformOptionList;
 import tom.platform.adt.platformoption.types.PlatformValue;
-import aterm.ATerm;
-import aterm.ATermAppl;
-import aterm.ATermList;
 
 /**
  * The TomOptionManager manages options of each plugin in the platform.
@@ -209,7 +206,7 @@ public class TomOptionManager implements OptionManager, OptionOwner {
    */
   public PlatformOptionList getRequiredOptionList() {
     PlatformOptionList prerequisites = `concPlatformOption();
-/*
+
     // options destdir and output are incompatible
     if(!((String)getOptionValue("destdir")).equals(".")) {
       prerequisites = `concPlatformOption(PluginOption("output", "o", "", StringValue(""), "file"), prerequisites*);
@@ -221,7 +218,7 @@ public class TomOptionManager implements OptionManager, OptionOwner {
       // output is not set at its default value -> it has been changed
       // -> we want destdir at its default value
     }
-    */
+   
     return prerequisites;
   }
 

@@ -16,7 +16,7 @@
   <property name="build.sysclasspath" value="ignore" />
 
   <!-- current version of TOM -->
-  <property name="stable.version" value="2.10"/>
+  <property name="stable.version" value="3.0-dev"/>
   <tstamp/>
   <property name="src.version"    value="${DSTAMP}"/>
 
@@ -63,11 +63,11 @@
   <property name="src.dist.share"    location="${src.dist}/share"/>
 
   <!-- the configuration files -->
-  <property name="stable.configfile"    location="${stable.config}/Tom.xml"/>
+  <property name="stable.configfile"    location="${stable.config}/Tom.config"/>
   <property name="src.configfile"       location="${src.config}/Tom.config"/>
-  <property name="stable.gomconfigfile" location="${stable.config}/Gom.xml"/>
+  <property name="stable.gomconfigfile" location="${stable.config}/Gom.config"/>
   <property name="src.gomconfigfile"    location="${src.config}/Gom.config"/>
-  <property name="stable.adapterconfig" location="${stable.config}/GomAntlrAdaptor.xml"/>
+  <property name="stable.adapterconfig" location="${stable.config}/GomAntlrAdaptor.config"/>
   <property name="src.adapterconfig"    location="${src.config}/GomAntlrAdaptor.config"/>
 
   <!-- Aircube bundle -->
@@ -559,9 +559,9 @@
       <param name="dest" value="${stable.dist}"/>
     </antcall>
     <!-- Tom config file -->
-    <copy tofile="${stable.dist}/Tom.xml" file="${stable.configfile}"/>
-    <copy tofile="${stable.dist}/Gom.xml" file="${stable.gomconfigfile}"/>
-    <copy tofile="${stable.dist}/GomAntlrAdaptor.xml" file="${stable.adapterconfig}"/>
+    <copy tofile="${stable.dist}/Tom.config" file="${stable.configfile}"/>
+    <copy tofile="${stable.dist}/Gom.config" file="${stable.gomconfigfile}"/>
+    <copy tofile="${stable.dist}/GomAntlrAdaptor.config" file="${stable.adapterconfig}"/>
     <!-- "tom binary" -->
     <copy todir="${stable.dist.bin}" file="${utils}/javac-tom"/>
 
@@ -569,7 +569,7 @@
     <copy tofile="${stable.dist.bin}/tom.bat" file="${utils}/script.bat.in"/>
     <replace file="${stable.dist.bin}/tom.bat">
       <replaceFilter token="@MAIN_CLASS@" value="tom.engine.Tom"/>
-      <replaceFilter token="@CONFIG_FILE@" value="Tom.xml"/>
+      <replaceFilter token="@CONFIG_FILE@" value="Tom.config"/>
       <replaceFilter token="@BAT_FILE@" value="tom.bat"/>
     </replace>
 
@@ -577,7 +577,7 @@
     <copy tofile="${stable.dist.bin}/gom.bat" file="${utils}/script.bat.in"/>
     <replace file="${stable.dist.bin}/gom.bat">
       <replaceFilter token="@MAIN_CLASS@" value="tom.gom.Gom"/>
-      <replaceFilter token="@CONFIG_FILE@" value="Gom.xml"/>
+      <replaceFilter token="@CONFIG_FILE@" value="Gom.config"/>
       <replaceFilter token="@BAT_FILE@" value="gom.bat"/>
     </replace>
 
@@ -591,7 +591,7 @@
     <copy tofile="${stable.dist.bin}/tom-server" file="${utils}/tom-server/script.in"/>
     <replace file="${stable.dist.bin}/tom-server">
       <replaceFilter token="@TOM_HOME@" value="TOM_HOME"/>
-      <replaceFilter token="@CONFIG_FILE@" value="Tom.xml"/>
+      <replaceFilter token="@CONFIG_FILE@" value="Tom.config"/>
       <replaceFilter token="@INCLUDES_DIR@" value="share/tom"/>
     </replace>
 
@@ -599,7 +599,7 @@
     <replace file="${stable.dist.bin}/tom">
       <replaceFilter token="@TOM_HOME@" value="TOM_HOME"/>
       <replaceFilter token="@MAIN_CLASS@" value="tom.engine.Tom"/>
-      <replaceFilter token="@CONFIG_FILE@" value="Tom.xml"/>
+      <replaceFilter token="@CONFIG_FILE@" value="Tom.config"/>
       <replaceFilter token="@INCLUDES_DIR@" value="share/tom"/>
     </replace>
 
@@ -607,7 +607,7 @@
     <replace file="${stable.dist.bin}/gom">
       <replaceFilter token="@TOM_HOME@" value="TOM_HOME"/>
       <replaceFilter token="@MAIN_CLASS@" value="tom.gom.Gom"/>
-      <replaceFilter token="@CONFIG_FILE@" value="Gom.xml"/>
+      <replaceFilter token="@CONFIG_FILE@" value="Gom.config"/>
       <replaceFilter token="@INCLUDES_DIR@" value="share/gom"/>
     </replace>
 
@@ -615,7 +615,7 @@
     <replace file="${stable.dist.bin}/gomantlradaptor">
       <replaceFilter token="@TOM_HOME@" value="TOM_HOME"/>
       <replaceFilter token="@MAIN_CLASS@" value="tom.gom.Gom"/>
-      <replaceFilter token="@CONFIG_FILE@" value="GomAntlrAdaptor.xml"/>
+      <replaceFilter token="@CONFIG_FILE@" value="GomAntlrAdaptor.config"/>
       <replaceFilter token="@INCLUDES_DIR@" value="share/gom"/>
     </replace>
 
@@ -623,7 +623,7 @@
     <copy tofile="${stable.dist.bin}/gomantlradaptor.bat" file="${utils}/script.bat.in"/>
     <replace file="${stable.dist.bin}/gomantlradaptor.bat">
       <replaceFilter token="@MAIN_CLASS@" value="tom.gom.Gom"/>
-      <replaceFilter token="@CONFIG_FILE@" value="GomAntlrAdaptor.xml"/>
+      <replaceFilter token="@CONFIG_FILE@" value="GomAntlrAdaptor.config"/>
       <replaceFilter token="@BAT_FILE@" value="gomantlradaptor.bat"/>
     </replace>
 

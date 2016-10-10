@@ -90,8 +90,10 @@ public class PluginPlatformMessage implements PlatformMessage {
   // Platform messages
   public static final PluginPlatformMessage platformStopped =
     new PluginPlatformMessage("Platform stopped");
-  public static final PluginPlatformMessage configFileNotXML =
-    new PluginPlatformMessage("The configuration file {0} is not a valid XML file");
+  //v2 public static final PluginPlatformMessage configFileNotXML =
+  //v2   new PluginPlatformMessage("The configuration file {0} is not a valid XML file");
+  public static final PluginPlatformMessage configFileNotValid =
+    new PluginPlatformMessage("The configuration file {0} is not a valid file");
   public static final PluginPlatformMessage classNotAPlugin =
     new PluginPlatformMessage("Class {0} does not implement the tom.platform.Plugin interface as required");
   public static final PluginPlatformMessage classNotOptionManager=
