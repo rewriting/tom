@@ -56,9 +56,6 @@ import tom.engine.tools.TomGenericPlugin;
 import tom.engine.tools.Tools;
 import tom.engine.tools.SymbolTable;
 import tom.engine.xml.Constants;
-import tom.platform.OptionParser;
-import tom.platform.adt.platformoption.types.PlatformOptionList;
-import aterm.ATerm;
 
 import tom.library.sl.*;
 

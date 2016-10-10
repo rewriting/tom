@@ -37,8 +37,6 @@ import tom.engine.exception.TomIncludeException;
 import tom.engine.tools.TomGenericPlugin;
 import tom.engine.tools.Tools;
 import tom.engine.tools.SymbolTable;
-import tom.platform.OptionManager;
-import tom.platform.OptionParser;
 import tom.platform.adt.platformoption.types.PlatformOptionList;
 import tom.engine.parser.TomParserTool;
 
@@ -46,7 +44,6 @@ import tom.engine.adt.tomsignature.types.TomSymbol;
 import tom.engine.adt.cst.types.*;
 import tom.engine.adt.code.types.*;
 
-import aterm.ATerm;
 import tom.library.sl.Visitable;
 
 import antlr.RecognitionException;
@@ -75,20 +72,12 @@ public class TomParserPlugin extends TomGenericPlugin {
   public static final String PARSED_TABLE_SUFFIX = ".tfix.parsed.table";
 
   /** the declared options string*/
-  public static final String DECLARED_OPTIONS = 
-    "<options>" +
-    "<boolean name='parse' altName='' description='Parser (activated by default)' value='true'/>" +
-    "<boolean name='newparser' altName='np' description='New Parser (not activated by default)' value='false'/>" +
-    "<boolean name='printcst' altName='cst' description='print post-parsing cst (only with new parser)' value='false'/>" +
-    "<boolean name='printast' altName='ast' description='print post-parsing ast' value='false'/>" +
-    "</options>";
-  
   public static final PlatformOptionList PLATFORM_OPTIONS =
     `concPlatformOption(
         PluginOption("parse", "", "Parser (activated by default)", BooleanValue(True()), ""),
         PluginOption("newparser", "np", "New Parser (not activated by default)", BooleanValue(False()), ""),
-        PluginOption("prettycst", "cst", "print post-parsing cst (only with new parser)", BooleanValue(False()), ""),
-        PluginOption("prettyast", "ast", "print post-parsing ast", BooleanValue(False()), "")
+        PluginOption("printcst", "cst", "print post-parsing cst (only with new parser)", BooleanValue(False()), ""),
+        PluginOption("printast", "ast", "print post-parsing ast", BooleanValue(False()), "")
         );
   
   /** input file name and stream */
@@ -324,8 +313,7 @@ public class TomParserPlugin extends TomGenericPlugin {
    * inherited from OptionOwner interface (plugin) 
    */
   public PlatformOptionList getDeclaredOptionList() {
-    return OptionParser.xmlToOptionList(TomParserPlugin.DECLARED_OPTIONS);
-    //return PLATFORM_OPTIONS; 
+    return PLATFORM_OPTIONS; 
   }
 
   /**

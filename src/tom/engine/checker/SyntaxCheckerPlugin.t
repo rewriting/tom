@@ -36,9 +36,7 @@ import tom.engine.tools.TomGenericPlugin;
 import tom.engine.exception.TomRuntimeException;
 
 import tom.engine.xml.Constants;
-import tom.platform.OptionParser;
 import tom.platform.adt.platformoption.types.PlatformOptionList;
-import aterm.ATerm;
 import tom.engine.tools.ASTFactory;
 import tom.engine.tools.SymbolTable;
 import tom.engine.tools.TomConstraintPrettyPrinter;
@@ -91,11 +89,6 @@ public class SyntaxCheckerPlugin extends TomGenericPlugin {
   private Option currentTomStructureOrgTrack;
 
   /** the declared options string */
-  public static final String DECLARED_OPTIONS = 
-    "<options>" +
-    "<boolean name='noSyntaxCheck' altName='' description='Do not perform syntax checking' value='false'/>" +
-    "</options>";
-
   public static final PlatformOptionList PLATFORM_OPTIONS =
     `concPlatformOption(
         PluginOption("noSyntaxCheck", "", "Do not perform syntax checking", BooleanValue(False()), "")
@@ -152,8 +145,7 @@ public class SyntaxCheckerPlugin extends TomGenericPlugin {
    * inherited from OptionOwner interface (plugin)
    */
   public PlatformOptionList getDeclaredOptionList() {
-    return OptionParser.xmlToOptionList(SyntaxCheckerPlugin.DECLARED_OPTIONS);
-    //return PLATFORM_OPTIONS; 
+    return PLATFORM_OPTIONS; 
   }
 
   protected void reinit() {

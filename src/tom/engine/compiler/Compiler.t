@@ -47,7 +47,6 @@ import java.util.*;
 
 import tom.engine.tools.ASTFactory;
 import tom.platform.adt.platformoption.types.PlatformOptionList;
-import tom.platform.OptionParser;
 import tom.engine.tools.Tools;
 import java.util.logging.Level;
 import tom.engine.TomMessage;
@@ -165,10 +164,6 @@ public class Compiler extends TomGenericPlugin {
   public static final String COMPILED_SUFFIX = ".tfix.compiled";
 
   /** the declared options string*/
-  public static final String DECLARED_OPTIONS = "<options>" +
-    "<boolean name='compile' altName='' description='Compiler (activated by default)' value='true'/>" +
-    "</options>";
-  
   public static final PlatformOptionList PLATFORM_OPTIONS =
     `concPlatformOption(
         PluginOption("compile", "", "Compiler (activated by default)", BooleanValue(True()), "")
@@ -214,8 +209,7 @@ public class Compiler extends TomGenericPlugin {
   }
 
   public PlatformOptionList getDeclaredOptionList() {
-    return OptionParser.xmlToOptionList(Compiler.DECLARED_OPTIONS);
-    //return PLATFORM_OPTIONS; 
+    return PLATFORM_OPTIONS; 
   }
 
   // looks for a 'Match' instruction:

@@ -55,7 +55,6 @@ import tom.engine.tools.ASTFactory;
 import tom.engine.tools.TomGenericPlugin;
 import tom.engine.tools.PILFactory;
 import tom.engine.tools.Tools;
-import tom.platform.OptionParser;
 import tom.platform.adt.platformoption.types.PlatformOptionList;
 import tom.engine.exception.TomRuntimeException;
 
@@ -84,13 +83,6 @@ public class OptimizerPlugin extends TomGenericPlugin {
   private static final String OPTIMIZED_SUFFIX = ".tfix.optimized";
 
   /** the declared options string*/
-  private static final String DECLARED_OPTIONS =
-    "<options>" +
-    "<boolean name='optimize' altName='O' description='Optimize generated code: perform inlining' value='true'/>" +
-    "<boolean name='optimize2' altName='O2' description='Optimize generated code: discrimination tree' value='false'/>" +
-    "<boolean name='prettyPIL' altName='pil' description='PrettyPrint IL' value='false'/>" +
-    "</options>";
-
   public static final PlatformOptionList PLATFORM_OPTIONS =
     `concPlatformOption(
         PluginOption("optimize", "O", "Optimize generated code: perform inlining", BooleanValue(True()), ""),
@@ -99,8 +91,7 @@ public class OptimizerPlugin extends TomGenericPlugin {
         );
 
   public PlatformOptionList getDeclaredOptionList() {
-    return OptionParser.xmlToOptionList(OptimizerPlugin.DECLARED_OPTIONS);
-    //return PLATFORM_OPTIONS; 
+    return PLATFORM_OPTIONS; 
   }
 
   public void optionChanged(String optionName, Object optionValue) {

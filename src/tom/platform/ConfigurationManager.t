@@ -28,19 +28,13 @@ package tom.platform;
 import java.util.*;
 import java.util.logging.*;
 
-//import aterm.*;
-//import aterm.pure.*;
-
-//import tom.library.adt.tnode.*;
-//import tom.library.adt.tnode.types.*;
-//import tom.library.xml.*;
 import tom.platform.adt.platformoption.*;
 import tom.platform.adt.platformoption.types.*;
 import tom.platform.adt.platformconfig.*;
 import tom.platform.adt.platformconfig.types.*;
 
 /**
- * This class is a wrapper for the platform XML configuration files.
+ * This class is a wrapper for the platform configuration files.
  * It extracts the plugins information and create an ordered list of
  * of instances. Extracts the Option Management information and based
  * on it create and initialize the corresponding OptionManager.
@@ -49,12 +43,7 @@ import tom.platform.adt.platformconfig.types.*;
  *
  */
 public class ConfigurationManager {
-  
-  /** Used to analyse xml configuration file*/
-  //%include{ adt/tnode/TNode.tom }
-  
   %include{ adt/platformconfig/PlatformConfig.tom }
-  //%include{ adt/platformoption/PlatformOption.tom }
   
   /** configuration file name */
   private String configurationFileName;
@@ -76,7 +65,7 @@ public class ConfigurationManager {
   }
   
   /**
-   * initialize analyse the XML file and extract plugins and option management
+   * initialize analyse the file and extract plugins and option management
    *
    * @return  an error code :
    * <ul>
@@ -85,30 +74,15 @@ public class ConfigurationManager {
    * </ul>
    */
   public int initialize(String[] commandLine) {    
-    //v2 XmlTools xtools = new XmlTools();
-    //v2 TNode configurationNode = xtools.convertXMLToTNode(configurationFileName);
-
     PlatformConfig platformConfig = null;
     try {
+      //System.out.println("platformConfig filename = " + configurationFileName);
       java.io.InputStream stream = new java.io.FileInputStream(configurationFileName);
       platformConfig = PlatformConfig.fromStream(stream);
       //System.out.println("platformConfig = " + platformConfig);
     } catch(java.io.IOException e) {
       System.out.println("cannot read: " + configurationFileName);
     }
-
-
-    //v2 if(configurationNode == null) {
-    //v2   PluginPlatformMessage.error(logger, null, 0, 
-    //v2       PluginPlatformMessage.configFileNotXML, configurationFileName);
-    //v2   return 1;
-    //v2 }
-    //v2 if(createPlugins(configurationNode.getDocElem())==1) {
-    //v2   return 1;
-    //v2 }    
-    //v2 if(createOptionManager(configurationNode.getDocElem()) == 1) {     
-    //v2   return 1;
-    //v2 }
 
     if(platformConfig == null) {
       PluginPlatformMessage.error(logger, null, 0, 
@@ -140,7 +114,7 @@ public class ConfigurationManager {
   
   /** 
    * Initialize the plugins list based on information extracted
-   * from the XML conf file converted in TNode
+   * from the config file converted in TNode
    *
    * @return  an error code :
    * <ul>
@@ -148,45 +122,6 @@ public class ConfigurationManager {
    * <li>1 if something went wrong</li>
    * </ul>
    */
-  /*
-  private int createPlugins(TNode configurationNode) {
-    List<String> pluginsClassList = extractClassPaths(configurationNode);
-    // if empty list this means there is a problem somewhere
-    if(pluginsClassList.isEmpty()) {
-      PluginPlatformMessage.error(logger, null, 0, 
-          PluginPlatformMessage.noPluginFound, configurationFileName);
-      pluginsList = null;
-      return 1;
-    }
-    // creates an instance of each plugin
-    for (String pluginClass : pluginsClassList) {
-      try { 
-        Object pluginInstance = Class.forName(pluginClass).newInstance();
-        if(pluginInstance instanceof Plugin) {
-          pluginsList.add((Plugin)pluginInstance);
-        } else {
-          PluginPlatformMessage.error(logger, null, 0, 
-              PluginPlatformMessage.classNotAPlugin, pluginClass);
-          pluginsList = null;
-          return 1;
-        }
-      } catch(ClassNotFoundException cnfe) {
-        PluginPlatformMessage.warning(logger, null, 0, 
-            PluginPlatformMessage.classNotFound, pluginClass);
-        return 1;
-      } catch(Exception e) {
-        // adds the error message. this is too cryptic otherwise
-        e.printStackTrace();
-        PluginPlatformMessage.error(logger, null, 0, 
-            PluginPlatformMessage.instantiationError, pluginClass);
-        pluginsList = null;
-        return 1;
-      }
-    }
-    return 0;
-  }
-  */
-
   private int createPlugins(PlatformConfig configurationNode) {
     List<String> pluginsClassList = extractClassPaths(configurationNode);
     // if empty list this means there is a problem somewhere
@@ -224,26 +159,6 @@ public class ConfigurationManager {
     return 0;
   }
   
-  /**
-   * Extracts the plugins' class name from the XML configuration file.
-   * 
-   * @param node the node containing the XML document
-   * @return the List of plugins class path
-   */
-  /*
-  private List<String> extractClassPaths(TNode node) {
-    List<String> res = new ArrayList<String>();
-    %match(node) {
-      <platform><plugins><plugin [class=cp]/></plugins></platform> -> {
-         res.add(`cp);
-         PluginPlatformMessage.finer(logger, null, 0, 
-             PluginPlatformMessage.classPathRead, `cp);
-       }
-    }
-    return res;
-  }
-  */
-
   private List<String> extractClassPaths(PlatformConfig node) {
     List<String> res = new ArrayList<String>();
     %match(node) {
@@ -258,55 +173,15 @@ public class ConfigurationManager {
  
    /**
    * Initialize the option manager based on information extracted
-   * from the XML conf file converted in TNode
+   * from the config file
    * 
-   * @param node the node containing the XML file
-   * @return  an error code :
+   * @param node the node representing the config file
+   * @return an error code :
    * <ul>
    * <li>0 if no error was encountered</li>
    * <li>1 if something went wrong</li>
    * </ul>
    */
-  /*
-  private int createOptionManager(TNode node) {
-    %match(node) {
-      <platform><optionmanager class=omclass><options>(globalOptions*)</options></optionmanager></platform> -> {
-        try {
-          Object omInstance = Class.forName(`omclass).newInstance();
-          if(omInstance instanceof OptionManager) {
-            optionManager = (OptionManager)omInstance;
-          } else {
-            PluginPlatformMessage.error(logger, null, 0, 
-                PluginPlatformMessage.classNotOptionManager, `omclass);
-            return 1;
-          }
-        } catch(ClassNotFoundException cnfe) {
-          PluginPlatformMessage.error(logger, null, 0, 
-              PluginPlatformMessage.classNotFound, `omclass);
-          optionManager = null;
-          return 1;
-        } catch (Exception e) {
-          e.printStackTrace();
-          System.out.println(e.getMessage());
-          PluginPlatformMessage.error(logger, null, 0, 
-              PluginPlatformMessage.instantiationError, `omclass);
-          optionManager = null;
-          return 1;
-        }
-
-        TNode optionX = `xml(<string name="config" altName="X"
-                       description="Defines an alternate XML configuration file"
-                       value=configurationFileName
-                       attrName="file"/>);
-        TNode opt = `xml(<options>optionX globalOptions*</options>);
-        PlatformOptionList globalOptions = OptionParser.xmlNodeToOptionList(`opt);
-        optionManager.setGlobalOptionList(globalOptions);
-        return 0;
-      }
-    }
-    return 1;
-  }
-  */
 
   private int createOptionManager(PlatformConfig node) {
     %match(node) {
@@ -334,7 +209,7 @@ public class ConfigurationManager {
           return 1;
         }
 
-        PlatformOption optionX = `PluginOption("config","X", "Defines an alternate XML configuration file",
+        PlatformOption optionX = `PluginOption("config","X", "Defines an alternate configuration file",
             StringValue(configurationFileName), "");
         PlatformOptionList globalOptions = `concPlatformOption(optionX, options*);
         optionManager.setGlobalOptionList(globalOptions);

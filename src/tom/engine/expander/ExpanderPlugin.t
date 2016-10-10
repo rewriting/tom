@@ -55,7 +55,6 @@ import tom.engine.tools.SymbolTable;
 import tom.engine.tools.ASTFactory;
 import tom.engine.tools.TomGenericPlugin;
 import tom.engine.tools.Tools;
-import tom.platform.OptionParser;
 import tom.platform.adt.platformoption.types.PlatformOptionList;
 
 import tom.library.sl.*;
@@ -78,12 +77,6 @@ public class ExpanderPlugin extends TomGenericPlugin {
   public static final String EXPANDED_SUFFIX = ".tfix.expanded";
 
   /** the declared options string */
-  public static final String DECLARED_OPTIONS = 
-    "<options>" +
-    "<boolean name='expand' altName='' description='Expander (activated by default)' value='true'/>" +
-    "<boolean name='genIntrospector' altName='gi' description='Generate a class that implements Introspector to apply strategies on non visitable terms' value='false'/>" +
-    "</options>";
-  
   public static final PlatformOptionList PLATFORM_OPTIONS =
     `concPlatformOption(
         PluginOption("expand", "", "Expander (activated by default)", BooleanValue(True()), ""),
@@ -193,8 +186,7 @@ public class ExpanderPlugin extends TomGenericPlugin {
   }
 
   public PlatformOptionList getDeclaredOptionList() {
-    return OptionParser.xmlToOptionList(ExpanderPlugin.DECLARED_OPTIONS);
-    //return PLATFORM_OPTIONS; 
+    return PLATFORM_OPTIONS; 
   }
 
   private tom.library.sl.Visitable expand(tom.library.sl.Visitable subject) {

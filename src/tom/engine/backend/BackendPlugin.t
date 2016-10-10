@@ -51,7 +51,6 @@ import tom.engine.adt.code.types.*;
 
 import tom.engine.tools.*;
 import tom.engine.exception.TomRuntimeException;
-import tom.platform.OptionParser;
 import tom.platform.PluginPlatformMessage;
 import tom.platform.PlatformException;
 import tom.platform.adt.platformoption.types.PlatformOptionList;
@@ -75,18 +74,6 @@ public class BackendPlugin extends TomGenericPlugin {
   public final static int defaultDeep = 1;
 
   /** the declared options string */
-  public static final String DECLARED_OPTIONS = 
-    "<options>" +
-    "<boolean name='noOutput' altName=''  description='Do not generate code' value='false'/>" +
-    "<boolean name='aCode'    altName='a'  description='Generate Ada code' value='false'/>" +
-    "<boolean name='jCode'    altName='j' description='Generate Java code' value='true'/>" + 
-    "<boolean name='csCode'   altName=''  description='Generate C# code' value='false'/>" + 
-    "<boolean name='cCode'    altName='c' description='Generate C code' value='false'/>" +
-    "<boolean name='camlCode' altName=''  description='Generate Caml code' value='false'/>" + 
-    "<boolean name='pCode'    altName=''  description='Generate Python code' value='false'/>" + 
-    "<boolean name='inline'   altName=''  description='Inline mapping' value='false'/>" +
-    "<boolean name='inlineplus'   altName=''  description='Inline mapping' value='false'/>" +
-    "</options>";
 
   public static final PlatformOptionList PLATFORM_OPTIONS =
     `concPlatformOption(
@@ -223,8 +210,7 @@ public class BackendPlugin extends TomGenericPlugin {
    * inherited from OptionOwner interface (plugin) 
    */
   public PlatformOptionList getDeclaredOptionList() {
-    return OptionParser.xmlToOptionList(BackendPlugin.DECLARED_OPTIONS);
-    //return PLATFORM_OPTIONS; 
+    return PLATFORM_OPTIONS; 
   }
 
   private boolean isActivated() {

@@ -28,12 +28,10 @@ import java.util.Map;
 import java.io.File;
 import java.io.IOException;
 
-import tom.platform.OptionParser;
-import tom.platform.adt.platformoption.types.PlatformOptionList;
-
 import tom.gom.GomMessage;
 import tom.gom.tools.GomGenericPlugin;
 import tom.gom.tools.GomEnvironment;
+import tom.platform.adt.platformoption.types.PlatformOptionList;
 
 import tom.gom.adt.objects.types.*;
 
@@ -41,6 +39,7 @@ import tom.gom.adt.objects.types.*;
  * The BackendPlugin handle the code generation
  */
 public class BackendPlugin extends GomGenericPlugin {
+  %include { ../../platform/adt/platformoption/PlatformOption.tom }
 
   /** the list of compiled classes */
   private GomClassList classList;
@@ -53,26 +52,26 @@ public class BackendPlugin extends GomGenericPlugin {
   }
 
   /** the declared options string */
-  public static final String DECLARED_OPTIONS =
-    "<options>" +
-    "<string name='generator' altName='g' description='Select Generator. Possible value: \"shared\"' value='shared' attrName='type' />" +
-    "<boolean name='newtyper' altName='nt' description='New TyperPlugin (not activated by default)' value='true'/>" +
-    "<boolean name='newparser' altName='np' description='New parser plugin (not activated by default)' value='false'/>" +
-    "<boolean name='optimize' altName='O' description='Optimize generated code' value='false'/>" +
-    "<boolean name='optimize2' altName='O2' description='Optimize generated code' value='false'/>" +
-    "<boolean name='inlineplus' altName='' description='Make inlining active' value='false'/>" +
-    "<boolean name='withCongruenceStrategies' altName='wcs' description='Include the definition of congruence strategies in the generate file.tom file' value='false'/>" +
-    "<boolean name='withSeparateCongruenceStrategies' altName='wscs' description='Generate the definition of congruence strategies in _file.tom file' value='false'/>" +
-    "<boolean name='multithread' altName='mt' description='Generate code compatible with multi-threading' value='false'/>" +
-    "<boolean name='nosharing' altName='ns' description='Generate code without maximal sharing' value='false'/>" +
-    "<boolean name='jmicompatible' altName='jmi' description='Generate code whose syntax is compatible with JMI standards (capitalize getters and setters)' value='false'/>" +
-    "</options>";
+  public static final PlatformOptionList PLATFORM_OPTIONS =
+    `concPlatformOption(
+        PluginOption("generator", "g", "Select Generator. Possible value: \"shared\"", StringValue("shared"), "type"),
+        PluginOption("newtyper", "nt", "New TyperPlugin (activated by default since Tom-2.10)", BooleanValue(True()), ""),
+        PluginOption("newparser", "np", "New parser plugin (not activated by default)", BooleanValue(False()), ""),
+        PluginOption("optimize", "O", "Optimize generated code: perform inlining", BooleanValue(True()), ""),
+        PluginOption("optimize2", "O2", "Optimize generated code: discrimination tree", BooleanValue(False()), ""),
+        PluginOption("inlineplus", "", "Make inlining active", BooleanValue(False()), ""),
+        PluginOption("withCongruenceStrategies", "wcs", "Include the definition of congruence strategies in the generate file.tom file", BooleanValue(False()), ""),
+        PluginOption("withSeparateCongruenceStrategies", "wscs", "Generate the definition of congruence strategies in _file.tom file", BooleanValue(False()), ""),
+        PluginOption("multithread", "mt", "Generate code compatible with multi-threading", BooleanValue(False()), ""),
+        PluginOption("nosharing", "ns", "Generate code without maximal sharing", BooleanValue(False()), ""),
+        PluginOption("jmicompatible", "jmi", "Generate code whose syntax is compatible with JMI standards (capitalize getters and setters)", BooleanValue(False()), "")
+        );
 
   /**
    * inherited from OptionOwner interface (plugin)
    */
   public PlatformOptionList getDeclaredOptionList() {
-    return OptionParser.xmlToOptionList(BackendPlugin.DECLARED_OPTIONS);
+    return PLATFORM_OPTIONS;
   }
 
   /**
@@ -104,8 +103,8 @@ public class BackendPlugin extends GomGenericPlugin {
     String tomHome = System.getProperty("tom.home");
     try {
       if (null == tomHome) {
-        String xmlConfigFilename = getOptionStringValue("X");
-        tomHome = new File(xmlConfigFilename).getParent();
+        String configFilename = getOptionStringValue("X");
+        tomHome = new File(configFilename).getParent();
       }
       tomHomePath = new File(tomHome).getCanonicalFile();
     } catch (IOException e) {

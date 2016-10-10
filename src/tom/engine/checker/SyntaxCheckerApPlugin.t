@@ -44,9 +44,6 @@ import tom.engine.adt.tomslot.types.*;
 import tom.engine.adt.tomtype.types.*;
 import tom.engine.adt.tomconstraint.types.constraint.*;
 
-import tom.engine.xml.Constants;
-import tom.platform.OptionParser;
-import tom.platform.adt.platformoption.types.PlatformOptionList;
 import tom.engine.tools.ASTFactory;
 
 import tom.library.sl.*;

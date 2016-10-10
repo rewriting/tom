@@ -55,10 +55,7 @@ import tom.engine.tools.ASTFactory;
 import tom.engine.tools.TomGenericPlugin;
 import tom.engine.tools.Tools;
 import tom.engine.tools.SymbolTable;
-import tom.engine.xml.Constants;
-import tom.platform.OptionParser;
 import tom.platform.adt.platformoption.types.PlatformOptionList;
-import aterm.ATerm;
 
 import tom.library.sl.*;
 
@@ -80,12 +77,6 @@ public class TyperPlugin extends TomGenericPlugin {
   private static Logger logger = Logger.getLogger("tom.engine.typer.TyperPlugin");
 
   /** the declared options string */
-  public static final String DECLARED_OPTIONS =
-    "<options>" +
-    "<boolean name='oldtyper' altName='ot' description='Old TyperPlugin (deactivated since Tom-2.10)' value='false'/>" +
-    "<boolean name='newtyper' altName='nt' description='New TyperPlugin (activated by default since Tom-2.10)' value='true'/>" +
-    "</options>";
-  
   public static final PlatformOptionList PLATFORM_OPTIONS =
     `concPlatformOption(
         PluginOption("oldtyper", "ot", "Old TyperPlugin (deactivated since Tom-2.10)", BooleanValue(False()), ""),
@@ -96,8 +87,7 @@ public class TyperPlugin extends TomGenericPlugin {
    * inherited from OptionOwner interface (plugin)
    */
   public PlatformOptionList getDeclaredOptionList() {
-    return OptionParser.xmlToOptionList(TyperPlugin.DECLARED_OPTIONS);
-    //return PLATFORM_OPTIONS; 
+    return PLATFORM_OPTIONS; 
   }
 
   /** the kernel typer acting at very low level */

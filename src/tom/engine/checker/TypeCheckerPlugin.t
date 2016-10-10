@@ -35,10 +35,8 @@ import tom.engine.TomBase;
 import tom.engine.TomMessage;
 import tom.engine.tools.TomGenericPlugin;
 import tom.engine.exception.TomRuntimeException;
-import tom.platform.OptionParser;
 import tom.platform.PlatformLogRecord;
 
-import aterm.ATerm;
 import tom.library.sl.*;
 import tom.platform.adt.platformoption.types.PlatformOptionList;
 
@@ -81,11 +79,6 @@ public class TypeCheckerPlugin extends TomGenericPlugin {
   protected Option currentTomStructureOrgTrack;
 
   /** the declared options string */
-  public static final String DECLARED_OPTIONS = 
-    "<options>" +
-    "<boolean name='noTypeCheck' altName='' description='Do not perform type checking' value='false'/>" +
-    "</options>";
-  
   public static final PlatformOptionList PLATFORM_OPTIONS =
     `concPlatformOption(
         PluginOption("noTypeCheck", "", "Do not perform type checking", BooleanValue(False()), "")
@@ -100,8 +93,7 @@ public class TypeCheckerPlugin extends TomGenericPlugin {
    * inherited from OptionOwner interface (plugin) 
    */
   public PlatformOptionList getDeclaredOptionList() {
-    return OptionParser.xmlToOptionList(TypeCheckerPlugin.DECLARED_OPTIONS);
-    //return PLATFORM_OPTIONS; 
+    return PLATFORM_OPTIONS; 
   }
 
   protected void reinit() {
