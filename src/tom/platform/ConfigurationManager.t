@@ -28,14 +28,16 @@ package tom.platform;
 import java.util.*;
 import java.util.logging.*;
 
-import aterm.*;
-import aterm.pure.*;
+//import aterm.*;
+//import aterm.pure.*;
 
-import tom.library.adt.tnode.*;
-import tom.library.adt.tnode.types.*;
-import tom.library.xml.*;
+//import tom.library.adt.tnode.*;
+//import tom.library.adt.tnode.types.*;
+//import tom.library.xml.*;
 import tom.platform.adt.platformoption.*;
 import tom.platform.adt.platformoption.types.*;
+import tom.platform.adt.platformconfig.*;
+import tom.platform.adt.platformconfig.types.*;
 
 /**
  * This class is a wrapper for the platform XML configuration files.
@@ -49,10 +51,10 @@ import tom.platform.adt.platformoption.types.*;
 public class ConfigurationManager {
   
   /** Used to analyse xml configuration file*/
-  %include{ adt/tnode/TNode.tom }
+  //%include{ adt/tnode/TNode.tom }
   
-  //%include{ adt/platformoption/PlatformConfig.tom }
-  %include{ adt/platformoption/PlatformOption.tom }
+  %include{ adt/platformconfig/PlatformConfig.tom }
+  //%include{ adt/platformoption/PlatformOption.tom }
   
   /** configuration file name */
   private String configurationFileName;
@@ -83,19 +85,46 @@ public class ConfigurationManager {
    * </ul>
    */
   public int initialize(String[] commandLine) {    
-    XmlTools xtools = new XmlTools();
-    TNode configurationNode = xtools.convertXMLToTNode(configurationFileName);
-    if(configurationNode == null) {
+    //v2 XmlTools xtools = new XmlTools();
+    //v2 TNode configurationNode = xtools.convertXMLToTNode(configurationFileName);
+
+    PlatformConfig platformConfig = null;
+    try {
+      java.io.InputStream stream = new java.io.FileInputStream(configurationFileName);
+      platformConfig = PlatformConfig.fromStream(stream);
+      //System.out.println("platformConfig = " + platformConfig);
+    } catch(java.io.IOException e) {
+      System.out.println("cannot read: " + configurationFileName);
+    }
+
+
+    //v2 if(configurationNode == null) {
+    //v2   PluginPlatformMessage.error(logger, null, 0, 
+    //v2       PluginPlatformMessage.configFileNotXML, configurationFileName);
+    //v2   return 1;
+    //v2 }
+    //v2 if(createPlugins(configurationNode.getDocElem())==1) {
+    //v2   return 1;
+    //v2 }    
+    //v2 if(createOptionManager(configurationNode.getDocElem()) == 1) {     
+    //v2   return 1;
+    //v2 }
+
+    if(platformConfig == null) {
       PluginPlatformMessage.error(logger, null, 0, 
-          PluginPlatformMessage.configFileNotXML, configurationFileName);
+          PluginPlatformMessage.configFileNotValid, configurationFileName);
       return 1;
     }
-    if(createPlugins(configurationNode.getDocElem())==1) {
-      return 1;
-    }    
-    if(createOptionManager(configurationNode.getDocElem()) == 1) {     
-      return 1;
-    }
+
+   if(createPlugins(platformConfig)==1) {
+     return 1;
+   }    
+
+   if(createOptionManager(platformConfig) == 1) {     
+     return 1;
+   }
+
+
     return optionManager.initialize(this, commandLine);
   }
 
@@ -119,7 +148,46 @@ public class ConfigurationManager {
    * <li>1 if something went wrong</li>
    * </ul>
    */
+  /*
   private int createPlugins(TNode configurationNode) {
+    List<String> pluginsClassList = extractClassPaths(configurationNode);
+    // if empty list this means there is a problem somewhere
+    if(pluginsClassList.isEmpty()) {
+      PluginPlatformMessage.error(logger, null, 0, 
+          PluginPlatformMessage.noPluginFound, configurationFileName);
+      pluginsList = null;
+      return 1;
+    }
+    // creates an instance of each plugin
+    for (String pluginClass : pluginsClassList) {
+      try { 
+        Object pluginInstance = Class.forName(pluginClass).newInstance();
+        if(pluginInstance instanceof Plugin) {
+          pluginsList.add((Plugin)pluginInstance);
+        } else {
+          PluginPlatformMessage.error(logger, null, 0, 
+              PluginPlatformMessage.classNotAPlugin, pluginClass);
+          pluginsList = null;
+          return 1;
+        }
+      } catch(ClassNotFoundException cnfe) {
+        PluginPlatformMessage.warning(logger, null, 0, 
+            PluginPlatformMessage.classNotFound, pluginClass);
+        return 1;
+      } catch(Exception e) {
+        // adds the error message. this is too cryptic otherwise
+        e.printStackTrace();
+        PluginPlatformMessage.error(logger, null, 0, 
+            PluginPlatformMessage.instantiationError, pluginClass);
+        pluginsList = null;
+        return 1;
+      }
+    }
+    return 0;
+  }
+  */
+
+  private int createPlugins(PlatformConfig configurationNode) {
     List<String> pluginsClassList = extractClassPaths(configurationNode);
     // if empty list this means there is a problem somewhere
     if(pluginsClassList.isEmpty()) {
@@ -162,10 +230,24 @@ public class ConfigurationManager {
    * @param node the node containing the XML document
    * @return the List of plugins class path
    */
+  /*
   private List<String> extractClassPaths(TNode node) {
     List<String> res = new ArrayList<String>();
     %match(node) {
       <platform><plugins><plugin [class=cp]/></plugins></platform> -> {
+         res.add(`cp);
+         PluginPlatformMessage.finer(logger, null, 0, 
+             PluginPlatformMessage.classPathRead, `cp);
+       }
+    }
+    return res;
+  }
+  */
+
+  private List<String> extractClassPaths(PlatformConfig node) {
+    List<String> res = new ArrayList<String>();
+    %match(node) {
+      PlatformConfig(concPlugin(_*,Plugin(name,cp),_*),optionmanager) -> {
          res.add(`cp);
          PluginPlatformMessage.finer(logger, null, 0, 
              PluginPlatformMessage.classPathRead, `cp);
@@ -185,6 +267,7 @@ public class ConfigurationManager {
    * <li>1 if something went wrong</li>
    * </ul>
    */
+  /*
   private int createOptionManager(TNode node) {
     %match(node) {
       <platform><optionmanager class=omclass><options>(globalOptions*)</options></optionmanager></platform> -> {
@@ -223,8 +306,8 @@ public class ConfigurationManager {
     }
     return 1;
   }
+  */
 
-  /*
   private int createOptionManager(PlatformConfig node) {
     %match(node) {
       PlatformConfig(plugins,OptionManager(omclass,options)) -> {
@@ -251,7 +334,7 @@ public class ConfigurationManager {
           return 1;
         }
 
-        Platform optionX = `PluginOption("config","X", "Defines an alternate XML configuration file",
+        PlatformOption optionX = `PluginOption("config","X", "Defines an alternate XML configuration file",
             StringValue(configurationFileName), "");
         PlatformOptionList globalOptions = `concPlatformOption(optionX, options*);
         optionManager.setGlobalOptionList(globalOptions);
@@ -260,7 +343,6 @@ public class ConfigurationManager {
     }
     return 1;
   }
-  */
 
   /** logger accessor in case of logging needs*/
   private Logger getLogger() {

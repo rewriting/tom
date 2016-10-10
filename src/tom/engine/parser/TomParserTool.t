@@ -126,11 +126,11 @@ public class TomParserTool {
     try {
       String tom_home = System.getProperty("tom.home");
       if(tom_home != null) {
-        config_xml = new File(tom_home,"Gom.xml");
+        config_xml = new File(tom_home,"Gom.config");
       } else {
         // for the eclipse plugin for example
         String tom_xml_filename = ((String)getOptionManager().getOptionValue("X"));
-        config_xml = new File(new File(tom_xml_filename).getParentFile(),"Gom.xml");
+        config_xml = new File(new File(tom_xml_filename).getParentFile(),"Gom.config");
         // pass all the received parameters to gom in the case that it will call tom
         java.util.List<File> imp = getStreamManager().getUserImportList();
         for(File f:imp) {

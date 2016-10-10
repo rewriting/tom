@@ -209,18 +209,19 @@ public class TomOptionManager implements OptionManager, OptionOwner {
    */
   public PlatformOptionList getRequiredOptionList() {
     PlatformOptionList prerequisites = `concPlatformOption();
-
+/*
     // options destdir and output are incompatible
     if(!((String)getOptionValue("destdir")).equals(".")) {
-      prerequisites = `concPlatformOption(PluginOption("output", "", "", StringValue(""), ""), prerequisites*);
+      prerequisites = `concPlatformOption(PluginOption("output", "o", "", StringValue(""), "file"), prerequisites*);
       // destdir is not set at its default value -> it has been changed
       // -> we want output at its default value
     }
     if(!((String)getOptionValue("output")).equals("")) {
-      prerequisites = `concPlatformOption(PluginOption("destdir", "", "", StringValue("."), ""), prerequisites*);
+      prerequisites = `concPlatformOption(PluginOption("destdir", "d", "", StringValue("."), "dir"), prerequisites*);
       // output is not set at its default value -> it has been changed
       // -> we want destdir at its default value
     }
+    */
     return prerequisites;
   }
 
@@ -260,7 +261,7 @@ public class TomOptionManager implements OptionManager, OptionOwner {
    * @return 0 if there is no unfulfilled need, 1 otherwise
    */
   private int checkAllOptionsDepedencies(List<OptionOwner> optionOwnerList) {
-    for (OptionOwner plugin : optionOwnerList) {
+    for(OptionOwner plugin : optionOwnerList) {
       if(!checkOptionDependency(plugin.getRequiredOptionList())) {
         TomMessage.error(logger, null, 0, TomMessage.prerequisitesIssue, plugin.getClass().getName());
         return 1;
@@ -277,7 +278,9 @@ public class TomOptionManager implements OptionManager, OptionOwner {
   }
 
   private PlatformOption getOptionFromName(String name) {
+    //System.out.println("getOptionFromName: " + name);
     PlatformOption option = mapNameToOption.get(getCanonicalName(name));
+    //System.out.println("option: " + option);
     if(option == null) {
       TomMessage.error(logger, null, 0, TomMessage.optionNotFound, getCanonicalName(name));
       //throw new RuntimeException();
@@ -286,6 +289,7 @@ public class TomOptionManager implements OptionManager, OptionOwner {
   }
 
   private PlatformOption setOptionFromName(String name, PlatformOption option) {
+    //System.out.println("setOptionFromName: " + name);
     return mapNameToOption.put(getCanonicalName(name),option);
   }
 
@@ -305,10 +309,11 @@ public class TomOptionManager implements OptionManager, OptionOwner {
     PlatformOption option = getOptionFromName(name);
     if(option != null) {
       PlatformOption newOption = option.setValue(value);
-      Object replaced = setOptionFromName(name, newOption);
+      PlatformOption replaced = setOptionFromName(name, newOption);
       TomMessage.finer(logger, null, 0, TomMessage.setValue, 
           name,value,replaced);
     } else {
+      TomMessage.error(logger, null, 0, TomMessage.optionNotFound, getCanonicalName(name));
       throw new RuntimeException();
     }
   }
@@ -356,6 +361,8 @@ public class TomOptionManager implements OptionManager, OptionOwner {
    * @return true if every option was found with the right value
    */
   private boolean checkOptionDependency(PlatformOptionList requiredOptions) {
+
+    //System.out.println("requiredOptions: " + requiredOptions);
     %match(requiredOptions) {
       concPlatformOption() -> {
         return true;
@@ -377,6 +384,8 @@ public class TomOptionManager implements OptionManager, OptionOwner {
         }
       }
     }
+
+    System.out.println("strange term: " + requiredOptions);
     return false;
   }
 

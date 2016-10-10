@@ -143,13 +143,13 @@ public class PluginPlatformFactory {
    * @return a String containing the path to the configuration file to be used
    */
   public static String extractConfigFileName(String[] commandLine) {
-    String xmlConfigurationFile = null;
+    String configurationFile = null;
     int i=0;
     List<String> commandList = new ArrayList<String>();
     try {
       for (; i < commandLine.length; i++) {
         if (commandLine[i].equals("-X")) {
-          xmlConfigurationFile = commandLine[++i];
+          configurationFile = commandLine[++i];
         } else {
           commandList.add(commandLine[i]);
         }
@@ -161,11 +161,11 @@ public class PluginPlatformFactory {
     }
 
     try {
-      File file = new File(xmlConfigurationFile).getCanonicalFile();
+      File file = new File(configurationFile).getCanonicalFile();
       if (file.exists()) {
         // side effect on the commandLine since config information is no more needed
         commandLine = commandList.toArray(new String[0]);
-        return xmlConfigurationFile;
+        return configurationFile;
       }
     } catch(Exception e) {}
     PluginPlatformMessage.error(logger, null, 0, PluginPlatformMessage.configFileNotSpecified);

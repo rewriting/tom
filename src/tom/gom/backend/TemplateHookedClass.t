@@ -102,8 +102,9 @@ public abstract class TemplateHookedClass extends TemplateClass {
    */
   public int generateFile() {
     if (hooks.containsTomCode()) {
+      //System.out.println("Gom: prepare args for Tom call");
       /* We need to call Tom to generate the file */
-      File xmlFile = new File(tomHomePath,"Tom.xml");
+      File xmlFile = new File(tomHomePath,"Tom.config");
       if(!xmlFile.exists()) {
         GomMessage.finer(getLogger(),null,0,
             GomMessage.getCanonicalPathFailure, xmlFile.getPath());
@@ -169,11 +170,8 @@ public abstract class TemplateHookedClass extends TemplateClass {
         return 1;
       }
       tomParams.add(tmpFile.getPath());
-
-      //String[] params = {"-X",xmlFile.getPath(),"--optimize","--optimize2","--output",file_path,"-"};
-      //String[] params = {"-X",config_xml,"--output",file_path,"-"};
-
-      //System.out.println("params: " + tomParams);
+      
+      //System.out.println("Gom: args for Tom call ready");
 
       try {
         StringWriter gen = new StringWriter();
