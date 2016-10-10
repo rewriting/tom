@@ -63,6 +63,7 @@ import tom.engine.TomMessage;
 public class Compiler extends TomGenericPlugin {
 
   %include { ../adt/tomsignature/TomSignature.tom }
+  %include { ../../platform/adt/platformoption/PlatformOption.tom }
   %include { ../../library/mapping/java/sl.tom}
   %include { ../../library/mapping/java/util/types/ArrayList.tom}
   %include { ../../library/mapping/java/util/types/Collection.tom}
@@ -167,6 +168,11 @@ public class Compiler extends TomGenericPlugin {
   public static final String DECLARED_OPTIONS = "<options>" +
     "<boolean name='compile' altName='' description='Compiler (activated by default)' value='true'/>" +
     "</options>";
+  
+  public static final PlatformOptionList PLATFORM_OPTIONS =
+    `concPlatformOption(
+        PluginOption("compile", "", "Compiler (activated by default)", BooleanValue(True()), "")
+        );
 
   /** Constructor */
   public Compiler() {
@@ -209,6 +215,7 @@ public class Compiler extends TomGenericPlugin {
 
   public PlatformOptionList getDeclaredOptionList() {
     return OptionParser.xmlToOptionList(Compiler.DECLARED_OPTIONS);
+    //return PLATFORM_OPTIONS; 
   }
 
   // looks for a 'Match' instruction:

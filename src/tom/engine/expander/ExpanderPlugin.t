@@ -66,6 +66,7 @@ import tom.library.sl.*;
 public class ExpanderPlugin extends TomGenericPlugin {
 
   %include { ../adt/tomsignature/TomSignature.tom }
+  %include { ../../platform/adt/platformoption/PlatformOption.tom }
   %include { ../../library/mapping/java/sl.tom }
   %include { ../../library/mapping/java/util/types/Collection.tom}
   %include { ../../library/mapping/java/util/types/Map.tom}
@@ -82,6 +83,12 @@ public class ExpanderPlugin extends TomGenericPlugin {
     "<boolean name='expand' altName='' description='Expander (activated by default)' value='true'/>" +
     "<boolean name='genIntrospector' altName='gi' description='Generate a class that implements Introspector to apply strategies on non visitable terms' value='false'/>" +
     "</options>";
+  
+  public static final PlatformOptionList PLATFORM_OPTIONS =
+    `concPlatformOption(
+        PluginOption("expand", "", "Expander (activated by default)", BooleanValue(True()), ""),
+        PluginOption("genIntrospector", "gi", "Generate a class that implements Introspector to apply strategies on non visitable terms", BooleanValue(False()), "")
+        );
 
   private static TomType objectType;
   private static TomType genericType;
@@ -187,6 +194,7 @@ public class ExpanderPlugin extends TomGenericPlugin {
 
   public PlatformOptionList getDeclaredOptionList() {
     return OptionParser.xmlToOptionList(ExpanderPlugin.DECLARED_OPTIONS);
+    //return PLATFORM_OPTIONS; 
   }
 
   private tom.library.sl.Visitable expand(tom.library.sl.Visitable subject) {

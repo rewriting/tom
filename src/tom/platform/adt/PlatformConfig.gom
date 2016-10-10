@@ -1,0 +1,12 @@
+module PlatformConfig
+imports String PlatformOption
+
+abstract syntax
+
+PlatformConfig = PlatformConfig(plugins:PluginList, optionmanager:OptionManager)
+
+Plugin = Plugin(name:String, class:String)
+PluginList = concPlugin(Plugin*)
+
+OptionManager = OptionManager(class:String, options:PlatformOptionList)
+

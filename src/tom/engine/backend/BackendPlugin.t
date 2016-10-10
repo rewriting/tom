@@ -88,6 +88,19 @@ public class BackendPlugin extends TomGenericPlugin {
     "<boolean name='inlineplus'   altName=''  description='Inline mapping' value='false'/>" +
     "</options>";
 
+  public static final PlatformOptionList PLATFORM_OPTIONS =
+    `concPlatformOption(
+        PluginOption("noOutput", "", "Do not generate code", BooleanValue(False()), ""),
+        PluginOption("aCode", "a", "Generate Ada code", BooleanValue(False()), ""),
+        PluginOption("jCode", "j", "Generate Java code", BooleanValue(True()), ""),
+        PluginOption("csCode", "", "Generate C# code", BooleanValue(False()), ""),
+        PluginOption("cCode", "c", "Generate C code", BooleanValue(False()), ""),
+        PluginOption("camlCode", "", "Generate Caml code", BooleanValue(False()), ""),
+        PluginOption("pCode", "", "Generate Python code", BooleanValue(False()), ""),
+        PluginOption("inline", "", "Inline mapping", BooleanValue(False()), ""),
+        PluginOption("inlineplus", "", "Inline mapping", BooleanValue(False()), "")
+        );
+
   public static final String CCODE = "cCode"; 
   public static final String CAMLCODE = "camlCode"; 
   public static final String PCODE = "pCode"; 
@@ -211,6 +224,7 @@ public class BackendPlugin extends TomGenericPlugin {
    */
   public PlatformOptionList getDeclaredOptionList() {
     return OptionParser.xmlToOptionList(BackendPlugin.DECLARED_OPTIONS);
+    //return PLATFORM_OPTIONS; 
   }
 
   private boolean isActivated() {

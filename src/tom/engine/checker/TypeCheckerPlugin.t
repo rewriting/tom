@@ -61,6 +61,7 @@ import tom.engine.adt.code.types.*;
 public class TypeCheckerPlugin extends TomGenericPlugin {
 
   %include { ../adt/tomsignature/TomSignature.tom }
+  %include { ../../platform/adt/platformoption/PlatformOption.tom }
   %include { ../../library/mapping/java/sl.tom }
 
   %typeterm TypeCheckerPlugin { implement { TypeCheckerPlugin } }
@@ -84,6 +85,11 @@ public class TypeCheckerPlugin extends TomGenericPlugin {
     "<options>" +
     "<boolean name='noTypeCheck' altName='' description='Do not perform type checking' value='false'/>" +
     "</options>";
+  
+  public static final PlatformOptionList PLATFORM_OPTIONS =
+    `concPlatformOption(
+        PluginOption("noTypeCheck", "", "Do not perform type checking", BooleanValue(False()), "")
+        );
 
   /** Constructor */
   public TypeCheckerPlugin() {
@@ -95,6 +101,7 @@ public class TypeCheckerPlugin extends TomGenericPlugin {
    */
   public PlatformOptionList getDeclaredOptionList() {
     return OptionParser.xmlToOptionList(TypeCheckerPlugin.DECLARED_OPTIONS);
+    //return PLATFORM_OPTIONS; 
   }
 
   protected void reinit() {

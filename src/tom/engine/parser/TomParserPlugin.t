@@ -68,6 +68,7 @@ import org.antlr.v4.runtime.tree.*;
  * It get the input file from the TomStreamManger and parse it
  */
 public class TomParserPlugin extends TomGenericPlugin {
+  %include { ../../platform/adt/platformoption/PlatformOption.tom }
   
   /** some output suffixes */
   public static final String PARSED_SUFFIX = ".tfix.parsed";
@@ -81,6 +82,14 @@ public class TomParserPlugin extends TomGenericPlugin {
     "<boolean name='printcst' altName='cst' description='print post-parsing cst (only with new parser)' value='false'/>" +
     "<boolean name='printast' altName='ast' description='print post-parsing ast' value='false'/>" +
     "</options>";
+  
+  public static final PlatformOptionList PLATFORM_OPTIONS =
+    `concPlatformOption(
+        PluginOption("parse", "", "Parser (activated by default)", BooleanValue(True()), ""),
+        PluginOption("newparser", "np", "New Parser (not activated by default)", BooleanValue(False()), ""),
+        PluginOption("prettycst", "cst", "print post-parsing cst (only with new parser)", BooleanValue(False()), ""),
+        PluginOption("prettyast", "ast", "print post-parsing ast", BooleanValue(False()), "")
+        );
   
   /** input file name and stream */
   private String currentFileName;
@@ -316,6 +325,7 @@ public class TomParserPlugin extends TomGenericPlugin {
    */
   public PlatformOptionList getDeclaredOptionList() {
     return OptionParser.xmlToOptionList(TomParserPlugin.DECLARED_OPTIONS);
+    //return PLATFORM_OPTIONS; 
   }
 
   /**

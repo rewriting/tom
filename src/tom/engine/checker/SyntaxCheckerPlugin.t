@@ -69,6 +69,7 @@ import tom.library.sl.*;
 public class SyntaxCheckerPlugin extends TomGenericPlugin {
 
   %include { ../adt/tomsignature/TomSignature.tom }
+  %include { ../../platform/adt/platformoption/PlatformOption.tom }
   %include { ../../library/mapping/java/sl.tom }
   %include { ../../library/mapping/java/util/types/Collection.tom}
   %include { ../../library/mapping/java/util/types/List.tom}
@@ -95,6 +96,10 @@ public class SyntaxCheckerPlugin extends TomGenericPlugin {
     "<boolean name='noSyntaxCheck' altName='' description='Do not perform syntax checking' value='false'/>" +
     "</options>";
 
+  public static final PlatformOptionList PLATFORM_OPTIONS =
+    `concPlatformOption(
+        PluginOption("noSyntaxCheck", "", "Do not perform syntax checking", BooleanValue(False()), "")
+        );
   /** op and type declarator */
   private final static String OPERATOR    = "Operator";
   private final static String CONSTRUCTOR = "%op";
@@ -148,6 +153,7 @@ public class SyntaxCheckerPlugin extends TomGenericPlugin {
    */
   public PlatformOptionList getDeclaredOptionList() {
     return OptionParser.xmlToOptionList(SyntaxCheckerPlugin.DECLARED_OPTIONS);
+    //return PLATFORM_OPTIONS; 
   }
 
   protected void reinit() {

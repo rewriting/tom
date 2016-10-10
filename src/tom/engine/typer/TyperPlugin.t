@@ -69,6 +69,7 @@ import tom.library.sl.*;
 public class TyperPlugin extends TomGenericPlugin {
 
   %include { ../adt/tomsignature/TomSignature.tom }
+  %include { ../../platform/adt/platformoption/PlatformOption.tom }
   %include { ../../library/mapping/java/sl.tom }
 
   %typeterm TyperPlugin { implement { TyperPlugin } }
@@ -84,12 +85,19 @@ public class TyperPlugin extends TomGenericPlugin {
     "<boolean name='oldtyper' altName='ot' description='Old TyperPlugin (deactivated since Tom-2.10)' value='false'/>" +
     "<boolean name='newtyper' altName='nt' description='New TyperPlugin (activated by default since Tom-2.10)' value='true'/>" +
     "</options>";
+  
+  public static final PlatformOptionList PLATFORM_OPTIONS =
+    `concPlatformOption(
+        PluginOption("oldtyper", "ot", "Old TyperPlugin (deactivated since Tom-2.10)", BooleanValue(False()), ""),
+        PluginOption("newtyper", "nt", "New TyperPlugin (activated by default since Tom-2.10)", BooleanValue(True()), "")
+        );
 
   /**
    * inherited from OptionOwner interface (plugin)
    */
   public PlatformOptionList getDeclaredOptionList() {
     return OptionParser.xmlToOptionList(TyperPlugin.DECLARED_OPTIONS);
+    //return PLATFORM_OPTIONS; 
   }
 
   /** the kernel typer acting at very low level */

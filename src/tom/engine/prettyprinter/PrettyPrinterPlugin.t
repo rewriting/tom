@@ -67,6 +67,7 @@ import tom.library.sl.*;
 public class PrettyPrinterPlugin extends TomGenericPlugin {
 
   %include { ../adt/tomsignature/TomSignature.tom }
+  %include { ../../platform/adt/platformoption/PlatformOption.tom }
   %include { ../../library/mapping/java/sl.tom }
   %include { ../../library/mapping/java/util/types/Collection.tom}
   %include { ../../library/mapping/java/util/types/Map.tom}
@@ -82,6 +83,11 @@ public class PrettyPrinterPlugin extends TomGenericPlugin {
     "<options>" +
     "<boolean name='prettyTOM' altName='pit' description='Pretty print original Tom code (not activated by default)' value='false'/>" +
     "</options>";
+
+  public static final PlatformOptionList PLATFORM_OPTIONS =
+    `concPlatformOption(
+        PluginOption("prettyTOM", "pit", "Pretty print original Tom code (not activated by default)", BooleanValue(False()), "")
+        );
 
   /** Constructor */
   public PrettyPrinterPlugin() {
@@ -110,6 +116,7 @@ public class PrettyPrinterPlugin extends TomGenericPlugin {
 
   public PlatformOptionList getDeclaredOptionList() {
     return OptionParser.xmlToOptionList(PrettyPrinterPlugin.DECLARED_OPTIONS);
+    //return PLATFORM_OPTIONS; 
   }
 
   private void prettyPrinter(Code code) {

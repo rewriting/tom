@@ -68,6 +68,7 @@ public class OptimizerPlugin extends TomGenericPlugin {
 
   %include{ ../adt/tomsignature/TomSignature.tom }
   %include{ ../adt/tomsignature/_TomSignature.tom }
+  %include { ../../platform/adt/platformoption/PlatformOption.tom }
   %include{ ../../library/mapping/java/sl.tom }
   %include{ ../../library/mapping/java/util/ArrayList.tom }
   
@@ -90,8 +91,16 @@ public class OptimizerPlugin extends TomGenericPlugin {
     "<boolean name='prettyPIL' altName='pil' description='PrettyPrint IL' value='false'/>" +
     "</options>";
 
+  public static final PlatformOptionList PLATFORM_OPTIONS =
+    `concPlatformOption(
+        PluginOption("optimize", "O", "Optimize generated code: perform inlining", BooleanValue(True()), ""),
+        PluginOption("optimize2", "O2", "Optimize generated code: discrimination tree", BooleanValue(False()), ""),
+        PluginOption("prettyPIL", "pil", "PrettyPrint IL", BooleanValue(False()), "")
+        );
+
   public PlatformOptionList getDeclaredOptionList() {
     return OptionParser.xmlToOptionList(OptimizerPlugin.DECLARED_OPTIONS);
+    //return PLATFORM_OPTIONS; 
   }
 
   public void optionChanged(String optionName, Object optionValue) {
