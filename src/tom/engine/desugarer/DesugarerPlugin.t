@@ -55,7 +55,6 @@ import tom.engine.tools.ASTFactory;
 import tom.engine.tools.TomGenericPlugin;
 import tom.engine.tools.Tools;
 import tom.engine.tools.SymbolTable;
-import tom.engine.xml.Constants;
 
 import tom.library.sl.*;
 
@@ -65,7 +64,6 @@ import tom.library.sl.*;
  *
  * replaces  _  by a fresh variable _* by a fresh varstar 
  * replaces 'TermAppl' by its 'RecordAppl' form
- * replaces 'XMLAppl' by its 'RecordAppl' form
  *   when no slotName exits, the position becomes the slotName
  */
 public class DesugarerPlugin extends TomGenericPlugin {
@@ -110,8 +108,7 @@ public class DesugarerPlugin extends TomGenericPlugin {
       // replace underscores by fresh variables
       code = `TopDown(DesugarUnderscore(this)).visitLight(code);
 
-      // replace TermAppl and XmlAppl by RecordAppl
-      code = `TopDownIdStopOnSuccess(replaceXMLApplTomSyntax(this)).visitLight(code);
+      // replace TermAppl by RecordAppl
       code = `TopDownIdStopOnSuccess(replaceTermApplTomSyntax(this)).visitLight(code);
       // replace BQRecordAppl by BQTermAppl
       code = `TopDown(replaceBQRecordApplTomSyntax(this)).visitLight(code);
@@ -234,19 +231,6 @@ public class DesugarerPlugin extends TomGenericPlugin {
   }
 
   /**
-   * The 'replaceXMLApplTomSyntax' phase replaces:
-   * - each 'XMLAppl' by its typed record form:
-   */
-  %strategy replaceXMLApplTomSyntax(desugarer:DesugarerPlugin) extends Identity() {
-    visit TomTerm {
-      XMLAppl[Options=optionList,NameList=nameList,AttrList=list1,ChildList=list2,Constraints=constraints] -> {
-        //System.out.println("replaceXML in:\n" + `subject);
-        return desugarer.replaceXMLAppl(`optionList, `nameList, `list1, `list2,`constraints);
-      }
-    }
-  }
-  
-  /**
    * The 'replaceBQRecordApplTomSyntax' phase replaces:
    * - each 'BQRecordAppl' by its BQTermAppl form:
    *    BQDefault are added
@@ -316,158 +300,7 @@ public class DesugarerPlugin extends TomGenericPlugin {
     return `RecordAppl(option,nameList,slotList,constraints);
   }
 
-  /**
-   * Replace 'XMLAppl' by its 'RecordAppl' form
-   * when no slotName exits, the position becomes the slotName
-   */
-  protected TomTerm replaceXMLAppl(OptionList optionList, TomNameList nameList,
-      TomList attrList, TomList childList, ConstraintList constraints) {
-    boolean implicitAttribute = TomBase.hasImplicitXMLAttribut(optionList);
-    boolean implicitChild     = TomBase.hasImplicitXMLChild(optionList);
-
-    TomList newAttrList  = `concTomTerm();
-    TomList newChildList = `concTomTerm();
-
-    if(implicitAttribute) { newAttrList  = `concTomTerm(VariableStar(convertOriginTracking("_*",optionList),getFreshVariable(),getSymbolTable().TYPE_UNKNOWN,concConstraint()),newAttrList*); }
-    if(implicitChild)     { newChildList = `concTomTerm(VariableStar(convertOriginTracking("_*",optionList),getFreshVariable(),getSymbolTable().TYPE_UNKNOWN,concConstraint()),newChildList*); }
-
-    /*
-     * the list of attributes should not be typed before the sort
-     * the sortAttribute is extended to compare RecordAppl
-     */
-
-    attrList = sortAttributeList(attrList);
-
-    /*
-     * Attributes: go from implicit notation to explicit notation
-     */
-    Strategy typeStrategy = `TopDownIdStopOnSuccess(replaceXMLApplTomSyntax(this));
-    for(TomTerm attr:(concTomTerm)attrList) {
-      try {
-        TomTerm newPattern = typeStrategy.visitLight(attr);
-        newAttrList = `concTomTerm(newPattern,newAttrList*);
-        if(implicitAttribute) {
-          newAttrList = `concTomTerm(VariableStar(convertOriginTracking("_*",optionList),getFreshVariable(),getSymbolTable().TYPE_UNKNOWN,concConstraint()),newAttrList*);
-        }
-      } catch(tom.library.sl.VisitFailure e) {
-        System.out.println("should not be there");
-      }
-    }
-    newAttrList = newAttrList.reverse();
-
-    /*
-     * Children: go from implicit notation to explicit notation
-     */
-    for(TomTerm child:(concTomTerm)childList) {
-      try {
-        TomTerm newPattern = typeStrategy.visitLight(child);
-        newChildList = `concTomTerm(newPattern,newChildList*);
-        if(implicitChild) {
-          if(newPattern.isVariableStar()) {
-            // remove the previously inserted pattern
-            newChildList = newChildList.getTailconcTomTerm();
-            if(newChildList.getHeadconcTomTerm().isVariableStar()) {
-              // remove the previously inserted star
-              newChildList = newChildList.getTailconcTomTerm();
-            }
-            // re-insert the pattern
-            newChildList = `concTomTerm(newPattern,newChildList*);
-          } else {
-            newChildList = `concTomTerm(VariableStar(convertOriginTracking("_*",optionList),getFreshVariable(),getSymbolTable().TYPE_UNKNOWN,concConstraint()),newChildList*);
-          }
-        }
-      } catch(tom.library.sl.VisitFailure e) {
-        System.out.println("should not be there");
-      }
-    }
-    newChildList = newChildList.reverse();
-
-    /*
-     * encode the name and put it into the table of symbols
-     */
-    TomNameList newNameList = `concTomName();
-matchBlock: 
-    {
-      %match(nameList) {
-        concTomName(Name("_")) -> {
-          break matchBlock;
-        }
-
-        concTomName(_*,Name(name),_*) -> {
-          newNameList = `concTomName(newNameList*,Name(ASTFactory.encodeXMLString(getSymbolTable(),name)));
-        }
-      }
-    }
-
-    /*
-     * any XML node
-     */
-    TomTerm xmlHead;
-
-    if(newNameList.isEmptyconcTomName()) {
-      xmlHead = `Variable(concOption(),getFreshVariable(),getSymbolTable().TYPE_UNKNOWN,concConstraint());
-    } else {
-      xmlHead = `TermAppl(convertOriginTracking(newNameList.getHeadconcTomName().getString(),optionList),newNameList,concTomTerm(),concConstraint());
-    }
-    try {
-      SlotList newArgs = `concSlot(
-          PairSlotAppl(Name(Constants.SLOT_NAME),
-            typeStrategy.visitLight(xmlHead)),
-          PairSlotAppl(Name(Constants.SLOT_ATTRLIST),
-            typeStrategy.visitLight(TermAppl(convertOriginTracking("CONC_TNODE",optionList),concTomName(Name(Constants.CONC_TNODE)), newAttrList,concConstraint()))),
-          PairSlotAppl(Name(Constants.SLOT_CHILDLIST),
-            typeStrategy.visitLight(TermAppl(convertOriginTracking("CONC_TNODE",optionList),concTomName(Name(Constants.CONC_TNODE)), newChildList,concConstraint()))));
-
-      TomTerm result = `RecordAppl(optionList,concTomName(Name(Constants.ELEMENT_NODE)),newArgs,constraints);
-
-      //System.out.println("replaceXML out:\n" + result);
-      return result;
-    } catch(tom.library.sl.VisitFailure e) {
-      //must never be executed
-    TomTerm star = `VariableStar(convertOriginTracking("_*",optionList),getFreshVariable(),getSymbolTable().TYPE_UNKNOWN,concConstraint());
-      return star;
-    }
-  }
-
   /* auxilliary methods */
-
-  private TomList sortAttributeList(TomList attrList) {
-    %match(attrList) {
-      concTomTerm() -> { return attrList; }
-      concTomTerm(X1*,e1,X2*,e2,X3*) -> {
-        %match(e1, e2) {
-          TermAppl[Args=concTomTerm(RecordAppl[NameList=concTomName(Name(name1))],_*)],
-          TermAppl[Args=concTomTerm(RecordAppl[NameList=concTomName(Name(name2))],_*)] -> {
-              if(`name1.compareTo(`name2) > 0) {
-                return `sortAttributeList(concTomTerm(X1*,e2,X2*,e1,X3*));
-              }
-            }
-
-          TermAppl[Args=concTomTerm(TermAppl[NameList=concTomName(Name(name1))],_*)],
-          TermAppl[Args=concTomTerm(TermAppl[NameList=concTomName(Name(name2))],_*)] -> {
-              if(`name1.compareTo(`name2) > 0) {
-                return `sortAttributeList(concTomTerm(X1*,e2,X2*,e1,X3*));
-              }
-            }
-
-          RecordAppl[Slots=concSlot(PairSlotAppl(slotName,RecordAppl[NameList=concTomName(Name(name1))]),_*)],
-          RecordAppl[Slots=concSlot(PairSlotAppl(slotName,RecordAppl[NameList=concTomName(Name(name2))]),_*)] -> {
-              if(`name1.compareTo(`name2) > 0) {
-                return `sortAttributeList(concTomTerm(X1*,e2,X2*,e1,X3*));
-              }
-            }
-
-          RecordAppl[Slots=concSlot(PairSlotAppl(slotName,TermAppl[NameList=concTomName(Name(name1))]),_*)],
-          RecordAppl[Slots=concSlot(PairSlotAppl(slotName,TermAppl[NameList=concTomName(Name(name2))]),_*)] -> {
-              if(`name1.compareTo(`name2) > 0) {
-                return `sortAttributeList(concTomTerm(X1*,e2,X2*,e1,X3*));
-              }
-            }
-        }
-      }
-    }
-    return attrList;
-  }
 
   private OptionList convertOriginTracking(String name,OptionList optionList) {
     Option originTracking = TomBase.findOriginTracking(optionList);

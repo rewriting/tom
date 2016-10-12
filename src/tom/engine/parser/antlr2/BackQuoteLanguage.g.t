@@ -33,7 +33,6 @@ import java.util.LinkedList;
 import java.util.ArrayList;
 
 import tom.engine.TomBase;
-import tom.engine.xml.Constants;
 
 import tom.engine.adt.tomsignature.*;
 import tom.engine.adt.tomconstraint.types.*;
@@ -178,34 +177,6 @@ options{
       }
     }
 
-    // sorts attributes of xml term with lexicographical order
-    private BQTermList sortAttributeList(BQTermList list){
-      %match(list) {
-        concBQTerm() -> { return list; }
-        concBQTerm(X1*,e1,X2*,e2,X3*) -> {
-          %match(e1, e2) {
-            BQAppl[Args=concBQTerm((BuildConstant|BQAppl)[AstName=Name(name1)],_*)],
-            BQAppl[Args=concBQTerm((BuildConstant|BQAppl)[AstName=Name(name2)],_*)] -> {
-              if(`name1.compareTo(`name2) > 0) {
-                return `sortAttributeList(concBQTerm(X1*,e2,X2*,e1,X3*));
-              }
-            }
-          }
-        }
-      }
-      return list;
-    }
-    
-    // built a sorted BQTermList from a LinkedList
-    private BQTermList buildAttributeList(List<BQTerm> list) {
-      return sortAttributeList(ASTFactory.makeBQTermList(list));
-    }
-    
-    // add double quotes around a string
-    private String encodeName(String name) {
-      return "\"" + name + "\"";
-    }
-
 }
 
 /*
@@ -233,7 +204,7 @@ mainBqTerm [BQTermList context] returns [BQTerm result]
 }
    :
    (
-   // xml(...) or (...)
+   // (...)
      result = basicTerm[emptyContext]            
    | BQ_UNDERSCORE { result = `BQDefault(); }
    | id:BQ_ID
@@ -285,7 +256,6 @@ bqTerm [BQTermList context] returns [BQTerm result]
 {
     result = null;
     BQTerm term = null;
-    BQTermList xmlTermList = `concBQTerm();
 
     Token t = null;
     List<BQTerm> blockList = new LinkedList<BQTerm>();
@@ -293,7 +263,7 @@ bqTerm [BQTermList context] returns [BQTerm result]
     boolean arguments = false;
 }
     :
-         // xml(...) or (...)
+         // (...)
       result = basicTerm[context]
     | BQ_UNDERSCORE { result = `BQDefault(); }
     | id:BQ_ID
@@ -322,9 +292,6 @@ bqTerm [BQTermList context] returns [BQTerm result]
             { result = buildBqSlotTerm(id,slotList,term,arguments); }
         )
     |
-        // <...> ... </...>
-        (xmlTerm[null]) => result = xmlTerm[context]
-    |
         // x
         t = target
         {
@@ -335,8 +302,7 @@ bqTerm [BQTermList context] returns [BQTerm result]
 
 
 /*
- *    xml(c1,...,cn,t)
- * or (t1 ... tn) 
+ * (t1 ... tn) 
  */
 basicTerm [BQTermList context] returns [BQTerm result]
 {
@@ -348,15 +314,7 @@ basicTerm [BQTermList context] returns [BQTerm result]
 }
     :
         (
-            XML ws BQ_LPAREN ws 
-            ( 
-             (bqTerm[null] BQ_COMMA) => term = bqTerm[context] BQ_COMMA ws
-             { blockList.add(term); } 
-             )* 
-            { localContext = ASTFactory.makeBQTermList(blockList); }
-            result = bqTerm[localContext]
-            BQ_RPAREN
-        | BQ_LPAREN ws ( termList[blockList,context] )? BQ_RPAREN
+            BQ_LPAREN ws ( termList[blockList,context] )? BQ_RPAREN
             {
               Composite compositeList = ASTFactory.makeComposite(blockList);
                 result = `Composite(
@@ -396,23 +354,6 @@ termSlotList [List<BQSlot> list, BQTermList context]
         )*
     ;
 
-xmlAttributeStringOrBQVariable returns [BQTerm result]
-  { result = null; } : 
-  (
-     id:BQ_ID 
-		 {
-       String name = id.getText();
-       OptionList ol = `concOption(OriginTracking(Name(name), id.getLine(), currentFile()), ModuleName(DEFAULT_MODULE_NAME));
-       result = `BQVariable(ol,Name(name),SymbolTable.TYPE_UNKNOWN);
-		   //result = `Composite(CompositeTL(ITL(id.getText()))); 
-		 }
-   | string:BQ_STRING
-	   {
-		   result = `Composite(CompositeTL(ITL(string.getText())));
-		 }
-  )
-    ;
-
 ws  :  ( options{ greedy = true; }: BQ_WS )*
     ;
  
@@ -428,9 +369,7 @@ target returns [Token result]
     |   w:BQ_WS {result = w;}
     |   d:BQ_DOT {result = d;} 
     |   dq:DOUBLE_QUOTE {result = dq;}
-    |   xs:XML_START {result = xs;}
     |   xe:EQUAL {result = xe;}
-    |   xc:XML_CLOSE  {result = xc;}
     |   a:ANY {result = a;}
     ;
 
@@ -444,179 +383,12 @@ targetCode returns [Token result]
     |   i:BQ_ID {result = i;} 
     |   r:BQ_RPAREN {result = r;}
     |   rb:BQ_RBRACKET {result = rb;}
-    |   t:XML_START_ENDING    {result = t;}
-    |   xcs:XML_CLOSE_SINGLETON {result = xcs;}
-    |   xt:XML_TEXT {result = xt;}
-    |   xc:XML_COMMENT {result = xc;}
-    |   xp:XML_PROC {result = xp;}
-    ;
-
-/*
- * XML
- */
-
-xmlAttribute [BQTermList context] returns [BQTerm result]
-{
-    result = null;
-    BQTerm value = null;
-}
-    :
-        (
-            id:BQ_ID
-            (
-                ws EQUAL ws value = xmlAttributeStringOrBQVariable
-                {
-                    String encodedName = encodeName(id.getText());
-                    String encodedTrue = "\"true\"";
-                    ASTFactory.makeStringSymbol(tomparser.getSymbolTable(),encodedName,new LinkedList<Option>());
-                    ASTFactory.makeStringSymbol(tomparser.getSymbolTable(),encodedTrue,new LinkedList<Option>());
-/*
-                        BQAppl(
-                            concOption(Constant(),ModuleName(TNODE_MODULE_NAME)),
-                            Name(encodeName(id.getText())),
-                            concBQTerm()
-                        ),
-                        BQAppl(
-                            concOption(Constant(),ModuleName(TNODE_MODULE_NAME)),
-                            Name("\"true\""),
-                            concBQTerm()
-                        ),
-                        */
-
-                    BQTermList args = `concBQTerm(
-                      BuildConstant(Name(encodedName)),
-                      BuildConstant(Name(encodedTrue)),
-                      value
-                    );
-		    if(context != null) {
-		      args = `concBQTerm(context*,args*);
-		    }
-		    result = `BQAppl(
-		      concOption(ModuleName(TNODE_MODULE_NAME)),
-		      Name(Constants.ATTRIBUTE_NODE),
-		      args);
-                }
-            | BQ_STAR
-              {
-		result = `BQVariableStar(
-		    concOption(),
-		    Name(id.getText()),
-		    SymbolTable.TYPE_UNKNOWN);
-              }
-            )
-        )
-    ;
-
-xmlAttributeList [List<BQTerm> attributeList, BQTermList context]
-{
-    BQTerm term = null;
-}
-    :
-        (
-            term = xmlAttribute[context] ws
-            {
-                attributeList.add(term);
-            }
-        )*
-    ;
-
-xmlChildren[List<BQTerm> children, BQTermList context]
-{
-    BQTerm term = null;
-}
-    :
-        (
-            {LA(1) != XML_START_ENDING && LA(1) != XML_CLOSE}? 
-            term = bqTerm[context]
-            {children.add(term);}
-        )*
-    ;
-
-xmlTerm[BQTermList context] returns [BQTerm result]
-{
-    result = null;
-    BQTermList attributeBQTermList = `concBQTerm();
-    BQTermList childrenBQTermList = `concBQTerm();
-    BQTerm term = null;
-
-    List<BQTerm> attributes = new LinkedList<BQTerm>();
-    List<BQTerm> children = new LinkedList<BQTerm>();
-}
-    :
-        (
-            XML_START ws id:BQ_ID ws xmlAttributeList[attributes,context]
-            {
-                attributeBQTermList = buildAttributeList(attributes);
-            }
-                
-                ( 
-                    XML_CLOSE_SINGLETON ws
-                |   XML_CLOSE
-                    ws xmlChildren[children,context]
-                {
-                  childrenBQTermList = ASTFactory.makeBQTermList(children);
-                }
-                    XML_START_ENDING ws BQ_ID ws XML_CLOSE ws
-                )
-                {
-                    String encodedName = encodeName(id.getText());
-                    ASTFactory.makeStringSymbol(tomparser.getSymbolTable(),encodedName,new LinkedList<Option>());
-                      /*
-                        BQAppl(
-                            concOption(Constant(),ModuleName(TNODE_MODULE_NAME)),
-                            Name(encodeName(id.getText())),
-                            concBQTerm()
-                        ),
-                        */
-                    BQTermList args = `concBQTerm(
-                      BuildConstant(Name(encodedName)),
-                        BQAppl(
-                            concOption(ModuleName(TNODE_MODULE_NAME)),
-                            Name(Constants.CONC_TNODE),
-                            attributeBQTermList
-                        ),
-                        BQAppl(
-                            concOption(ModuleName(TNODE_MODULE_NAME)),
-                            Name(Constants.CONC_TNODE),
-                            childrenBQTermList
-                        )
-                    );
-                    
-                    if(context == null){
-                        result = `BQAppl(
-                            concOption(ModuleName(TNODE_MODULE_NAME)),
-                            Name(Constants.ELEMENT_NODE),
-                            args
-                        );
-                    } else {
-											result = `BQAppl(
-													concOption(ModuleName(TNODE_MODULE_NAME)),
-													Name(Constants.ELEMENT_NODE),
-													concBQTerm( context*, args*)
-                        );
-                    }
-
-                }
-
-        |   XML_TEXT BQ_LPAREN term = bqTerm[context] BQ_RPAREN
-            {
-                result = `BQAppl(
-										concOption(ModuleName(TNODE_MODULE_NAME)),
-                    Name(Constants.TEXT_NODE),
-                    concBQTerm( context*, term)
-                );
-            }
-        )
     ;
 
 class BackQuoteLexer extends Lexer;
 options {
     charVocabulary = '\u0000'..'\uffff'; // each character can be read
     k=2;
-}
-
-tokens {
-    XML = "xml";
 }
 
 {
@@ -636,17 +408,8 @@ BQ_STAR        :    '*'   ;
 BQ_BACKQUOTE   :    "`"   ;
 BQ_MINUS       :    '-'   ;
 BQ_UNDERSCORE  : {!Character.isJavaIdentifierPart(LA(2))}? '_' ;
-
-//XML Tokens
 EQUAL   :   '=' ;
-XML_START_ENDING    : "</" ;
-XML_CLOSE_SINGLETON : "/>" ;  
-XML_START   :   '<';
-XML_CLOSE   :   '>' ;
 DOUBLE_QUOTE:   '\"';
-XML_TEXT    :   "#TEXT";
-XML_COMMENT :   "#COMMENT";
-XML_PROC    :   "#PROCESSING-INSTRUCTION";
 
 BQ_DOT    :    '.'   ;
 
@@ -661,14 +424,6 @@ BQ_WS : ( ' '
       )
       { newline(); }
     )
-    ;
-
-XML_SKIP
-    :
-        "<?" ( ~('>') )* '>'
-        {
-            $setType(Token.SKIP);
-        }
     ;
 
 BQ_INTEGER :   ( BQ_MINUS )? ( BQ_DIGIT )+     ;

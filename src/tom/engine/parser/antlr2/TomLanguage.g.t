@@ -53,7 +53,6 @@ import tom.engine.adt.code.types.*;
 
 import tom.engine.tools.SymbolTable;
 import tom.engine.tools.ASTFactory;
-import tom.engine.xml.Constants;
 import tom.platform.OptionManager;
 import tom.platform.PlatformLogRecord;
 import aterm.*;
@@ -560,13 +559,13 @@ numericConstraint returns [Constraint result] throws TomException
       BQTerm right = matchRhsList.get(0);
 
     switch(consType) {
-        case XML_START : {
+        case LESSTHAN : {
           return `NumericConstraint(left,right, NumLessThan());
         }
         case LESSOREQUAL_CONSTRAINT : {
           return `NumericConstraint(left,right, NumLessOrEqualThan());
         }
-        case XML_CLOSE : {
+        case GREATERTHAN : {
           return `NumericConstraint(left,right, NumGreaterThan());
         }
         case GREATEROREQUAL_CONSTRAINT : {
@@ -589,9 +588,9 @@ numconstraintType returns [int result]
   result = -1;
 }
 :   (
-      XML_START             { result = XML_START; }
+      LESSTHAN             { result = LESSTHAN; }
       | LESSOREQUAL_CONSTRAINT      { result = LESSOREQUAL_CONSTRAINT; }
-      | XML_CLOSE          { result = XML_CLOSE; }
+      | GREATERTHAN          { result = GREATERTHAN; }
       | GREATEROREQUAL_CONSTRAINT   { result = GREATEROREQUAL_CONSTRAINT; }
       | DOUBLEEQ                    { result = DOUBLEEQ; }
       | DIFFERENT_CONSTRAINT        { result = DIFFERENT_CONSTRAINT; }
@@ -1145,13 +1144,7 @@ plainTerm [TomName astLabeledName, TomName astAnnotedName, int line] returns [To
 }
     :
       (a:ANTI_SYM {anti = !anti;} )*
-        ( // xml term
-          result = xmlTerm[optionList, constraintList]
-          {
-            if(anti) { result = `AntiTerm(result); }
-          }
-
-        | // var* or _*
+        (  // var* or _*
           {!anti}? // do not allow anti symbols on var* or _*
           (variableStar[null,null]) => result = variableStar[optionList,constraintList]
 
@@ -1286,322 +1279,6 @@ plainBQTerm  returns [BQTerm result]
     //| name = headConstant[optionList] { result = `BuildConstant(name); }
 ;
 
-xmlTerm [List<Option> optionList, List<Constraint> constraintList] returns [TomTerm result] throws TomException
-{
-  result = null;
-  TomTerm arg1, arg2;
-  List<Slot> pairSlotList = new LinkedList<Slot>();
-  List attributeList = new LinkedList();
-  List children = new LinkedList();
-  String keyword = null;
-  boolean implicit;
-  TomNameList nameList, closingNameList;
-  OptionList option = null;
-  ConstraintList constraint;
-}
-    :
-        (
-            // < NODE attributes [ /> | > children </NODE> ]
-            XML_START {text.append("<");}
-            nameList = xmlNameList[optionList, true]
-            implicit = xmlAttributeList[attributeList]
-            {
-                if(implicit) { optionList.add(`ImplicitXMLAttribut()); }
-            }
-            (   // case: />
-                XML_CLOSE_SINGLETON
-                {
-                    text.append("\\>");
-                    option =  ASTFactory.makeOptionList(optionList);
-                }
-            |   // case: > children  </NODE>
-                XML_CLOSE  {text.append(">");}
-
-                implicit = xmlChildren[children]
-
-                XML_START_ENDING {text.append("</"); }
-                closingNameList = xmlNameList[optionList, false]
-                t:XML_CLOSE  {text.append(">");}
-                {
-                    if(!nameList.equals(closingNameList)) {
-                        StringBuilder found = new StringBuilder();
-                        StringBuilder expected = new StringBuilder();
-                        while(!nameList.isEmptyconcTomName()) {
-                            expected.append("|"+nameList.getHeadconcTomName().getString());
-                            nameList = nameList.getTailconcTomName();
-                        }
-                        while(!closingNameList.isEmptyconcTomName()) {
-                            found.append("|"+closingNameList.getHeadconcTomName().getString());
-                            closingNameList = closingNameList.getTailconcTomName();
-                        }
-                        // TODO find the orgTrack of the match
-                        throw new TomException(TomMessage.malformedXMLTerm,
-                            new Object[]{currentFile(), Integer.valueOf(getLine()),
-                            "match", expected.substring(1), found.substring(1)});
-                    }
-                    if(implicit) {
-                      //System.out.println("implicit");
-                      //System.out.println("children = " + children);
-                      optionList.add(`ImplicitXMLChild());
-                    } else {
-                      //System.out.println("explicit");
-                      //System.out.println("children1 = " + children);
-                      children = ASTFactory.metaEncodeExplicitTermList(symbolTable, children);
-                      //System.out.println("children2 = " + children);
-                    }
-                    option = ASTFactory.makeOptionList(optionList);
-                }
-            ) // end choice
-            {
-                result = `XMLAppl(
-                    option,
-                    nameList,
-                    ASTFactory.makeTomList((List<TomTerm>)attributeList),
-                    ASTFactory.makeTomList((List<TomTerm>)children),
-                    ASTFactory.makeConstraintList(constraintList));
-            }
-
-        | // #TEXT(...)
-            XML_TEXT LPAREN arg1 = annotatedTerm[true] RPAREN
-            {
-                keyword = Constants.TEXT_NODE;
-                pairSlotList.add(`PairSlotAppl(Name(Constants.SLOT_DATA),arg1));
-
-                optionList.add(`OriginTracking(Name(keyword),getLine(),currentFile()));
-                option = ASTFactory.makeOptionList(optionList);
-                constraint = ASTFactory.makeConstraintList(constraintList);
-                nameList = `concTomName(Name(keyword));
-                result = `RecordAppl(option,
-                    nameList,
-                    ASTFactory.makeSlotList(pairSlotList),
-                    constraint);
-            }
-        | // #COMMENT(...)
-            XML_COMMENT LPAREN arg1 = termStringIdentifier[null] RPAREN
-            {
-                keyword = Constants.COMMENT_NODE;
-                pairSlotList.add(`PairSlotAppl(Name(Constants.SLOT_DATA),arg1));
-
-                optionList.add(`OriginTracking(Name(keyword),getLine(),currentFile()));
-                option = ASTFactory.makeOptionList(optionList);
-                constraint = ASTFactory.makeConstraintList(constraintList);
-                nameList = `concTomName(Name(keyword));
-                result = `RecordAppl(option,
-                    nameList,
-                    ASTFactory.makeSlotList(pairSlotList),
-                    constraint);
-            }
-        | // #PROCESSING-INSTRUCTION(... , ...)
-            XML_PROC LPAREN
-            arg1 = termStringIdentifier[null] COMMA arg2 = termStringIdentifier[null]
-            RPAREN
-            {
-                keyword = Constants.PROCESSING_INSTRUCTION_NODE;
-                pairSlotList.add(`PairSlotAppl(Name(Constants.SLOT_TARGET),arg1));
-                pairSlotList.add(`PairSlotAppl(Name(Constants.SLOT_DATA),arg2));
-
-                optionList.add(`OriginTracking(Name(keyword),getLine(),currentFile()));
-                option = ASTFactory.makeOptionList(optionList);
-                constraint = ASTFactory.makeConstraintList(constraintList);
-                nameList = `concTomName(Name(keyword));
-                result = `RecordAppl(option,
-                    nameList,
-                    ASTFactory.makeSlotList(pairSlotList),
-                    constraint);
-            }
-        )
-    ;
-
-
-xmlAttributeList [List<TomTerm> list] returns [boolean result] throws TomException
-{
-    result = false;
-    TomTerm term;
-}
-    :
-        (
-            LBRACKET {text.append("[");}
-            (
-                term = xmlAttribute {list.add(term);}
-                (
-                    COMMA {text.append("(");}
-                    term = xmlAttribute {list.add(term);}
-                )*
-            )?
-            RBRACKET
-            {
-                text.append("]");
-                result = true;
-            }
-        |
-            LPAREN {text.append("(");}
-            (
-                term = xmlAttribute {list.add(term);}
-                (
-                    COMMA {text.append(",");}
-                    term = xmlAttribute {list.add(term);}
-                )*
-            )?
-            RPAREN
-            {
-                text.append(")");
-                result = false;
-            }
-        |
-            (
-               {LA(1) != XML_CLOSE}? term = xmlAttribute {list.add(term);}
-            )*
-            {result = true;}
-        )
-    ;
-
-xmlAttribute returns [TomTerm result] throws TomException
-{
-    result = null;
-    List<Slot> slotList = new LinkedList<Slot>();
-    TomTerm term = null;
-    TomTerm termName = null;
-    String name;
-    OptionList option = null;
-    ConstraintList constraint;
-    List<Option> optionList = new LinkedList<Option>();
-    List<Constraint> constraintList = new LinkedList<Constraint>();
-    List anno1ConstraintList = new LinkedList();
-    List anno2ConstraintList = new LinkedList();
-    List<Option> optionListAnno2 = new LinkedList<Option>();
-    TomNameList nameList;
-    boolean varStar = false;
-    boolean anti = false;
-}
-    :
-        (
-            // _* | X*
-            {LA(2) == STAR}?
-            result = variableStar[optionList,constraintList] {varStar = true;}
-        |   // name = [anno2@](_|String|Identifier)
-            {LA(2) == EQUAL}?  id:ALL_ID EQUAL {text.append(id.getText()+"=");}
-            (
-                {LA(2) == AT}? anno2:ALL_ID AT
-                {
-                    text.append(anno2.getText()+"@");
-                    anno2ConstraintList.add(ASTFactory.makeAliasTo(`Name(anno2.getText()), getLine(), currentFile()));
-                }
-            )?
-            (a:ANTI_SYM {anti = !anti;} )*
-            term = unamedVariableOrTermStringIdentifier[optionListAnno2,anno2ConstraintList]
-            {
-                name = ASTFactory.encodeXMLString(symbolTable,id.getText());
-                nameList = `concTomName(Name(name));
-                termName = `TermAppl(concOption(),nameList,concTomTerm(),concConstraint());
-            }
-        | // [anno1@]_ = [anno2@](_|String|Identifier)
-            (
-                anno1:ALL_ID AT
-                {
-                    text.append(anno1.getText()+"@");
-                    anno1ConstraintList.add(ASTFactory.makeAliasTo(`Name(anno1.getText()), getLine(), currentFile()));
-                }
-            )?
-            termName = unamedVariable[optionList,anno1ConstraintList]
-            e:EQUAL {text.append("=");}
-            (
-                {LA(2) == AT}? anno3:ALL_ID AT
-                {
-                    text.append(anno3.getText()+"@");
-                    anno2ConstraintList.add(ASTFactory.makeAliasTo(`Name(anno3.getText()), getLine(), currentFile()));
-                }
-            )?
-            (b:ANTI_SYM {anti = !anti;} )*
-            term = unamedVariableOrTermStringIdentifier[optionListAnno2,anno2ConstraintList]
-        )
-        {
-            if (!varStar) {
-              if (anti) {
-                term = `AntiTerm(term);
-              }
-
-                slotList.add(`PairSlotAppl(Name(Constants.SLOT_NAME),termName));
-                // we add the specif value : _
-                optionList.add(`OriginTracking(Name("_"),getLine(),currentFile()));
-                option = ASTFactory.makeOptionList(optionList);
-                constraint = ASTFactory.makeConstraintList(constraintList);
-                slotList.add(`PairSlotAppl(Name(Constants.SLOT_SPECIFIED),Variable(option,EmptyName(),SymbolTable.TYPE_UNKNOWN,constraint)));
-                // no longer necessary ot metaEncode Strings in attributes
-                slotList.add(`PairSlotAppl(Name(Constants.SLOT_VALUE),term));
-                optionList.add(`OriginTracking(Name(Constants.ATTRIBUTE_NODE),getLine(),currentFile()));
-                option = ASTFactory.makeOptionList(optionList);
-                constraint = ASTFactory.makeConstraintList(constraintList);
-
-                nameList = `concTomName(Name(Constants.ATTRIBUTE_NODE));
-                result = `RecordAppl(option,
-                    nameList,
-                    ASTFactory.makeSlotList(slotList),
-                    constraint);
-            }
-        }
-    ;
-
-xmlNameList [List<Option> optionList, boolean needOrgTrack] returns [TomNameList result] throws TomException
-{
-    result = `concTomName();
-    StringBuilder xmlName = new StringBuilder();
-    int decLine = 0;
-    boolean anti = false;
-}
-    :
-        (
-         (a:ANTI_SYM {anti = !anti;} )*
-            name:ALL_ID
-            {
-                text.append(name.getText());
-                xmlName.append(name.getText());
-                decLine = name.getLine();
-                if (anti) {
-                  result =  `concTomName(AntiName(Name(name.getText())));
-                } else {
-                  result = `concTomName(Name(name.getText()));
-                }
-            }
-        |   name2:UNDERSCORE
-            {
-                text.append(name2.getText());
-                xmlName.append(name2.getText());
-                decLine = name2.getLine();
-                result = `concTomName(Name(name2.getText()));
-            }
-        |   LPAREN (b:ANTI_SYM {anti = !anti;} )* name3:ALL_ID
-            {
-                text.append(name3.getText());
-                xmlName.append(name3.getText());
-                decLine = name3.getLine();
-                if (anti) {
-                  result =  `concTomName(AntiName(Name(name3.getText())));
-                } else {
-                  result = `concTomName(Name(name3.getText()));
-                }
-
-            }
-            (
-                ALTERNATIVE (c:ANTI_SYM {anti = !anti;} )* name4:ALL_ID
-                {
-                    text.append("|"+name4.getText());
-                    xmlName.append("|"+name4.getText());
-                    if (anti) {
-                      result = `concTomName(result*,AntiName(Name(name4.getText())));
-                    } else {
-                      result = `concTomName(result*,Name(name4.getText()));
-                    }
-                }
-            )*
-            RPAREN
-        )
-        {
-            if(needOrgTrack) {
-                optionList.add(`OriginTracking(Name(xmlName.toString()), decLine, currentFile()));
-            }
-        }
-    ;
-
 termStringIdentifier [List<Option> options] returns [TomTerm result] throws TomException
 {
   result = null;
@@ -1662,35 +1339,6 @@ unamedVariableOrTermStringIdentifier [List<Option> options, List<Constraint> con
                 nameList = `concTomName(Name(nameString.getText()));
                 constraints = ASTFactory.makeConstraintList(constraintList);
                 result = `TermAppl(option,nameList,concTomTerm(),constraints);
-            }
-        )
-    ;
-
-// returns true is implicit notation
-xmlChildren [List<TomTerm> list] returns [boolean result] throws TomException
-{
-  result = false;
-  TomTerm term;
-}
-    :
-        (
-            LBRACKET { text.append("["); }
-            ( termList[list] )?
-            RBRACKET
-            {
-                text.append("]");
-                result=true;
-            }
-        |   LPAREN { text.append("("); }
-            ( termList[list] )?
-            RPAREN
-            {
-                text.append(")");
-                result=false;
-            }
-        |   ( term = annotatedTerm[true] {list.add(ASTFactory.metaEncodeXMLAppl(symbolTable,term));} )*
-            {
-              result = true;
             }
         )
     ;
@@ -2841,16 +2489,9 @@ UNDERSCORE  :   {!Character.isJavaIdentifierPart(LA(2))}? '_' ;
 BACKQUOTE   :   "`" ;
 POUNDSIGN   :   "##" ;
 
-//XML Tokens
-
-XML_START   :   '<';
-XML_CLOSE   :   '>' ;
+LESSTHAN   :   '<';
+GREATERTHAN   :   '>' ;
 DOUBLE_QUOTE:   '\"';
-XML_TEXT    :   "#TEXT";
-XML_COMMENT :   "#COMMENT";
-XML_PROC    :   "#PROCESSING-INSTRUCTION";
-XML_START_ENDING    : "</" ;
-XML_CLOSE_SINGLETON : "/>" ;
 
 // tokens to skip : white spaces
 WS  : ( ' '

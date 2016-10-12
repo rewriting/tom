@@ -104,10 +104,10 @@ public abstract class TemplateHookedClass extends TemplateClass {
     if (hooks.containsTomCode()) {
       //System.out.println("Gom: prepare args for Tom call");
       /* We need to call Tom to generate the file */
-      File xmlFile = new File(tomHomePath,"Tom.config");
-      if(!xmlFile.exists()) {
+      File configFile = new File(tomHomePath,"Tom.config");
+      if(!configFile.exists()) {
         GomMessage.finer(getLogger(),null,0,
-            GomMessage.getCanonicalPathFailure, xmlFile.getPath());
+            GomMessage.getCanonicalPathFailure, configFile.getPath());
       }
       String file_path = null;
       try {
@@ -133,7 +133,7 @@ public abstract class TemplateHookedClass extends TemplateClass {
       }
 
       tomParams.add("-X");
-      tomParams.add(xmlFile.getPath());
+      tomParams.add(configFile.getPath());
       if(Boolean.TRUE == optionManager.getOptionValue("newtyper")) {
         tomParams.add("--newtyper");
       }

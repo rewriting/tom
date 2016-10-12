@@ -21,16 +21,6 @@ TomTerm =
    * @param Constraints a list of constraints
    */
     | RecordAppl(Options:OptionList,NameList:TomNameList,Slots:SlotList,Constraints:ConstraintList)
-  /**
-   * <code>XMLAppl</code> application of a xml-symbol to a list of attributes and a list of subterms
-   *
-   * @param Options a list of options
-   * @param NameList a list of head symbol names
-   * @param Args a list of subterms
-   * @param Slots a list of pairs (slot,subterm)
-   * @param Constraints a list of constraints
-   */
-    | XMLAppl(Options:OptionList,NameList:TomNameList,AttrList:TomList,ChildList:TomList,Constraints:ConstraintList)
   /** 
    * <code>Variable</code> a variable
    *

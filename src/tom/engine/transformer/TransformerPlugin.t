@@ -68,7 +68,6 @@ import tom.engine.tools.ASTFactory;
 import tom.engine.tools.TomGenericPlugin;
 import tom.engine.tools.Tools;
 import tom.engine.tools.SymbolTable;
-import tom.engine.xml.Constants;
 
 import tom.library.sl.*;
 

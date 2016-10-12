@@ -121,16 +121,16 @@ public class TomParserTool {
     //System.out.println("gomCode: " + gomCode);
     String currentFileName = getStreamManager().getInputFileName();
 
-    File config_xml = null;
+    File configFile = null;
     ArrayList<String> parameters = new ArrayList<String>();
     try {
       String tom_home = System.getProperty("tom.home");
       if(tom_home != null) {
-        config_xml = new File(tom_home,"Gom.config");
+        configFile = new File(tom_home,"Gom.config");
       } else {
         // for the eclipse plugin for example
-        String tom_xml_filename = ((String)getOptionManager().getOptionValue("X"));
-        config_xml = new File(new File(tom_xml_filename).getParentFile(),"Gom.config");
+        String tom_config_filename = ((String)getOptionManager().getOptionValue("X"));
+        configFile = new File(new File(tom_config_filename).getParentFile(),"Gom.config");
         // pass all the received parameters to gom in the case that it will call tom
         java.util.List<File> imp = getStreamManager().getUserImportList();
         for(File f:imp) {
@@ -138,9 +138,9 @@ public class TomParserTool {
           parameters.add(f.getCanonicalPath());
         }
       }
-      config_xml = config_xml.getCanonicalFile();
+      configFile = configFile.getCanonicalFile();
     } catch (IOException e) {
-      TomMessage.finer(getLogger(), null, 0, TomMessage.failGetCanonicalPath,config_xml.getPath());
+      TomMessage.finer(getLogger(), null, 0, TomMessage.failGetCanonicalPath,configFile.getPath());
     }
 
     String destDir = getStreamManager().getDestDir().getPath();
@@ -154,7 +154,7 @@ public class TomParserTool {
     }
 
     parameters.add("-X");
-    parameters.add(config_xml.getPath());
+    parameters.add(configFile.getPath());
     parameters.add("--destdir");
     parameters.add(destDir);
     parameters.add("--package");

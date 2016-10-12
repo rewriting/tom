@@ -32,7 +32,7 @@ import aterm.pure.*;
 import tom.library.adt.tnode.*;
 
 /**
- * The PluginPlatform manages plugins defined in an xml configuration file.
+ * The PluginPlatform manages plugins defined in an configuration file.
  * (which plugins are used and how they are ordered) with the intermediate
  * of a ConfigurationManager objet
  * Its main role is to run the plugins in the specified order and make some
@@ -46,7 +46,7 @@ public class PluginPlatform extends PluginPlatformBase implements Runnable {
   public final static String LOG_FILE =
     "tom.platform.error.logfile";
  
-  /** Used to analyse xml configuration file */
+  /** Used to analyse configuration file */
   %include{ adt/tnode/TNode.tom }
 
   /** The List of reference to plugins. */

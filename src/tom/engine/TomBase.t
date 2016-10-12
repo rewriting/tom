@@ -406,20 +406,6 @@ public final class TomBase {
     return false;
   }
 
-  public static boolean hasImplicitXMLAttribut(OptionList optionList) {
-    %match(optionList) {
-      concOption(_*,ImplicitXMLAttribut(),_*) -> { return true; }
-    }
-    return false;
-  }
-
-  public static boolean hasImplicitXMLChild(OptionList optionList) {
-    %match(optionList) {
-      concOption(_*,ImplicitXMLChild(),_*) -> { return true; }
-    }
-    return false;
-  }
-
   public static TomName getSlotName(TomSymbol symbol, int number) {
     PairNameDeclList pairNameDeclList = symbol.getPairNameDeclList();
     for(int index = 0; !pairNameDeclList.isEmptyconcPairNameDecl() && index<number ; index++) {

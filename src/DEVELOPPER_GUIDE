@@ -156,8 +156,8 @@ the mapInliner.
 * How the platform is run
   starting point:  Tom.java.in
   PluginPlatformFactory.getInstance().extractConfigFileName(args);
-  new ConfigurationManager(configFileName); // config XML file
-    - parse XML file
+  new ConfigurationManager(configFileName);
+    - parse Gom term
     - create plugins
     - create option manager (using reflexivity)
     - collect global options

@@ -801,7 +801,7 @@ matchblock: {
         int line = 0;
         Constraint constraint =  ASTFactory.makeAliasTo(`Name(cst_alias), line, "unknown file");
         %match(pattern) {
-          (TermAppl|RecordAppl|XMLAppl|Variable|VariableStar)[Constraints=constraints] -> {
+          (TermAppl|RecordAppl|Variable|VariableStar)[Constraints=constraints] -> {
             return pattern.setConstraints(`concConstraint(constraint,constraints*));
           }
 

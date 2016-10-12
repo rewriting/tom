@@ -35,7 +35,6 @@ import tom.engine.TomMessage;
 import tom.engine.tools.TomGenericPlugin;
 import tom.engine.exception.TomRuntimeException;
 
-import tom.engine.xml.Constants;
 import tom.platform.adt.platformoption.types.PlatformOptionList;
 import tom.engine.tools.ASTFactory;
 import tom.engine.tools.SymbolTable;
@@ -80,7 +79,6 @@ public class SyntaxCheckerPlugin extends TomGenericPlugin {
   protected final static int APPL_DISJUNCTION        = 2;
   protected final static int RECORD_APPL             = 3;
   protected final static int RECORD_APPL_DISJUNCTION = 4;
-  protected final static int XML_APPL                = 5;
   protected final static int VARIABLE_STAR           = 6;
   protected final static int VARIABLE                = 7;
   protected final static int UNAMED_VARIABLE         = 8;
@@ -984,13 +982,8 @@ matchLbl: %match(constr) {// TODO : add something to test the astType
       AntiTerm(p) -> { pattern = `p; }
     }
     %match(pattern) {
-      (TermAppl|RecordAppl|XMLAppl)[NameList=concTomName(Name(name),_*)] -> {        
-        TomSymbol symbol = null;
-        if(`pattern.isXMLAppl()) {
-          symbol = getSymbolFromName(Constants.ELEMENT_NODE);
-        } else {
-          symbol = getSymbolFromName(`name);
-        }                
+      (TermAppl|RecordAppl)[NameList=concTomName(Name(name),_*)] -> {        
+        TomSymbol symbol = getSymbolFromName(`name);
         if(symbol!=null) {
           TomType type = TomBase.getSymbolCodomain(symbol);
           // System.out.println("type = " + type);            
@@ -1253,32 +1246,6 @@ matchblock:{
           headName = ((AntiName)headName).getName();
         }
         termName = headName.getString();
-        break matchblock;
-      }
-
-      XMLAppl[Options=options, NameList=concTomName(_*, Name(_), _*), ChildList=childList] -> {
-        // TODO: can we do it
-        // ensureValidDisjunction(symbolNameList); ??????????
-        termClass = XML_APPL;
-        fileName = findOriginTrackingFileName(`options);
-        decLine = findOriginTrackingLine(`options);
-        type = TomBase.getSymbolCodomain(getSymbolFromName(Constants.ELEMENT_NODE));
-        termName = Constants.ELEMENT_NODE;
-
-        TomList args = `childList;
-        /*
-         * we cannot use the following expression TomType TNodeType =
-         * getSymbolTable().getType(Constants.TNODE); because TNodeType should be
-         * a TomTypeAlone and not an expanded type
-         */
-        TomType TNodeType = TomBase.getSymbolCodomain(getSymbolTable().getSymbolFromName(Constants.ELEMENT_NODE));
-        // System.out.println("TNodeType = " + TNodeType);
-        while(!args.isEmptyconcTomTerm()) {
-          // repeat analyse with associated expected type and control arity
-          validateTerm(args.getHeadconcTomTerm(), TNodeType, true, false);
-          args = args.getTailconcTomTerm();
-        }
-
         break matchblock;
       }
 
@@ -1605,7 +1572,7 @@ whileBlock: {
 
   public void validateListOperatorArgs(TomList args, TomType expectedType, TomType parentListCodomain) {
     %match(args) {
-      concTomTerm(_*,arg@(TermAppl|RecordAppl|XMLAppl)[],_*) -> {
+      concTomTerm(_*,arg@(TermAppl|RecordAppl)[],_*) -> {
         TomSymbol argSymbol = getSymbolFromName(getName(`arg));
         // if we have a sublist 
         if(TomBase.isListOperator(argSymbol)) {
@@ -1714,16 +1681,6 @@ whileBlock: {
       }
       RecordAppl[NameList=concTomName(Name(name))] -> { return `name;}
       RecordAppl[NameList=nameList] -> {
-        String dijunctionName = `nameList.getHeadconcTomName().getString();
-        while(!`nameList.isEmptyconcTomName()) {
-          String head = `nameList.getHeadconcTomName().getString();
-          dijunctionName = ( dijunctionName.compareTo(head) > 0)?dijunctionName:head;
-          `nameList = `nameList.getTailconcTomName();
-        }
-        return dijunctionName;
-      }
-      XMLAppl[NameList=concTomName(Name(name), _*)] ->{ return `name;}
-      XMLAppl[NameList=nameList] -> {
         String dijunctionName = `nameList.getHeadconcTomName().getString();
         while(!`nameList.isEmptyconcTomName()) {
           String head = `nameList.getHeadconcTomName().getString();

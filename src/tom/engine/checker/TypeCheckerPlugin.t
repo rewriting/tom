@@ -70,7 +70,6 @@ public class TypeCheckerPlugin extends TomGenericPlugin {
   protected final static int APPL_DISJUNCTION        = 2;
   protected final static int RECORD_APPL             = 3;
   protected final static int RECORD_APPL_DISJUNCTION = 4;
-  protected final static int XML_APPL                = 5;
   protected final static int VARIABLE_STAR           = 6;
   protected final static int UNAMED_VARIABLE_STAR    = 7;
   protected final static int UNAMED_VARIABLE         = 8;
@@ -105,7 +104,6 @@ public class TypeCheckerPlugin extends TomGenericPlugin {
       /* TermAppl does not exists after Desugarer phase */
       RecordAppl[NameList=concTomName(Name(_))] -> { return RECORD_APPL;}
       RecordAppl[NameList=concTomName(Name(_), _*)] -> { return RECORD_APPL_DISJUNCTION;}
-      XMLAppl[] -> { return XML_APPL;}
       VariableStar[] -> { return VARIABLE_STAR;}
       Variable[] -> { return VARIABLE;}
     }
@@ -118,17 +116,6 @@ public class TypeCheckerPlugin extends TomGenericPlugin {
       /* TermAppl does not exists after Desugarer phase */
       RecordAppl[NameList=concTomName(Name(name))] -> { return `name;}
       RecordAppl[NameList=nameList] -> {
-        String head;
-        dijunctionName = `nameList.getHeadconcTomName().getString();
-        while(!`nameList.isEmptyconcTomName()) {
-          head = `nameList.getHeadconcTomName().getString();
-          dijunctionName = ( dijunctionName.compareTo(head) > 0)?dijunctionName:head;
-          `nameList = `nameList.getTailconcTomName();
-        }
-        return dijunctionName;
-      }
-      XMLAppl[NameList=concTomName(Name(name), _*)] ->{ return `name;}
-      XMLAppl[NameList=nameList] -> {
         String head;
         dijunctionName = `nameList.getHeadconcTomName().getString();
         while(!`nameList.isEmptyconcTomName()) {

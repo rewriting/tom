@@ -426,7 +426,7 @@ matchL:  %match(subject,s) {
            AntiTerm(p) -> { patt = `p; }
          }
          %match(patt) {
-           (TermAppl|RecordAppl|XMLAppl)[NameList=concTomName(Name(name),_*)] -> {        
+           (TermAppl|RecordAppl)[NameList=concTomName(Name(name),_*)] -> {        
              TomSymbol symbol = getSymbolFromName(`name);
              if(symbol != null) {
                return TomBase.getSymbolCodomain(symbol);

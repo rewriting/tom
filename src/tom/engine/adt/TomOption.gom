@@ -12,8 +12,6 @@ Option =
   | Label(AstName:TomName)
   | Debug(AstName:TomName)
   | ModuleName(String:String)
-  | ImplicitXMLAttribut()
-  | ImplicitXMLChild()
   | ACSymbol()
   | noOption()
 // TODO : remove

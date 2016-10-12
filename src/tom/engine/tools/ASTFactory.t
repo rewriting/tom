@@ -29,7 +29,6 @@ import java.util.*;
 
 import tom.engine.TomBase;
 import tom.engine.adt.tomterm.*;
-import tom.engine.xml.Constants;
 
 import tom.engine.adt.tomsignature.*;
 import tom.engine.adt.tomconstraint.types.*;
@@ -402,12 +401,6 @@ public class ASTFactory {
     }
   }
 
-  public static String encodeXMLString(SymbolTable symbolTable, String name) {
-    name = "\"" + name + "\"";
-    makeStringSymbol(symbolTable,name, new LinkedList());
-    return name;
-  }
-
   public final static String TOM_VARIABLE_SEPARATOR = "___";
   public static String makeTomVariableName(String prefix,String name) {
     return prefix + TOM_VARIABLE_SEPARATOR + name;
@@ -420,67 +413,6 @@ public class ASTFactory {
     }
 
     return fullName.substring(index + TOM_VARIABLE_SEPARATOR.length());
-  }
-
-  public static List<TomTerm> metaEncodeExplicitTermList(SymbolTable symbolTable, List<TomTerm> children) {
-    LinkedList<TomTerm> res = new LinkedList<TomTerm>();
-    for(TomTerm term:children) {
-      res.add(metaEncodeXMLAppl(symbolTable,term));
-    }
-    return res;
-  }
-
-  public static TomList metaEncodeTermList(SymbolTable symbolTable,TomList list) {
-    %match(list) {
-      concTomTerm() -> { return `concTomTerm();}
-      concTomTerm(head,tail*) -> {
-        TomList tl = metaEncodeTermList(symbolTable,`tail);
-        return `concTomTerm(metaEncodeXMLAppl(symbolTable,head),tl*);
-      }
-    }
-    return list;
-  }
-
-  public static TomTerm encodeXMLAppl(SymbolTable symbolTable, TomTerm term) {
-      /*
-       * encode a String into a quoted-string
-       * Appl(...,Name("string"),...) becomes
-       * Appl(...,Name("\"string\""),...)
-       */
-    TomNameList newNameList = `concTomName();
-    %match(term) {
-      RecordAppl[NameList=concTomName(_*,Name(name),_*)] -> {
-        newNameList = `concTomName(newNameList*,Name(encodeXMLString(symbolTable,name)));
-      }
-    }
-    term = term.setNameList(newNameList);
-      //System.out.println("encodeXMLAppl = " + term);
-    return term;
-  }
-
-  public static TomTerm metaEncodeXMLAppl(SymbolTable symbolTable, TomTerm term) {
-      /*
-       * meta-encode a String into a TextNode
-       * Appl(...,Name("\"string\""),...) becomes
-       * Appl(...,Name("TextNode"),[Appl(...,Name("\"string\""),...)],...)
-       */
-      //System.out.println("metaEncode: " + term);
-    %match(term) {
-      RecordAppl[NameList=concTomName(Name(tomName))] -> {
-          //System.out.println("tomName = " + tomName);
-        TomSymbol tomSymbol = symbolTable.getSymbolFromName(`tomName);
-        if(tomSymbol != null) {
-          if(symbolTable.isStringType(TomBase.getTomType(TomBase.getSymbolCodomain(tomSymbol)))) {
-            Option info = `OriginTracking(Name(Constants.TEXT_NODE),-1,"unknown filename");
-            term = `RecordAppl(ASTFactory.makeOption(info),
-                               concTomName(Name(Constants.TEXT_NODE)),concSlot(PairSlotAppl(Name(Constants.SLOT_DATA),term)),
-                          concConstraint());
-              //System.out.println("metaEncodeXmlAppl = " + term);
-          }
-        }
-      }
-    }
-    return term;
   }
 
   public static BQTerm buildList(TomName name, BQTermList args, SymbolTable symbolTable) {
