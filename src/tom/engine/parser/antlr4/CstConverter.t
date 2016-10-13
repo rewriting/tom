@@ -186,7 +186,7 @@ public class CstConverter {
    */
   private CstBlock includeFile(String currentFileName, String filename, int lineNumber) throws TomIncludeException {
     //System.out.println("include: " + `filename);
-    String canonicalPath = getParserTool().searchIncludeFile(currentFileName, filename,lineNumber);
+    String canonicalPath = getParserTool().searchIncludeFile(currentFileName,filename,lineNumber);
 
     List<String> listOfIncludedFiles = includedFiles.get(getStreamManager().getInputFileName());
     if(listOfIncludedFiles == null) {

@@ -54,7 +54,7 @@ strategyStatement
   ;
 
 includeStatement
-  : INCLUDE LBRACE ID ((SLASH|BACKSLASH) ID)* (DOT ID)?  RBRACE 
+  : INCLUDE LBRACE (DOT|SLASH|BACKSLASH|ID)* RBRACE 
   ;
 
 gomStatement

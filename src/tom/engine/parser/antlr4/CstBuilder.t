@@ -144,7 +144,7 @@ public class CstBuilder extends TomIslandParserBaseListener {
     for(int i = 0 ; i<ctx.getChildCount() ; i++) {
       ParseTree child = ctx.getChild(i);
       if(child instanceof TomIslandParser.CompositeContext) {
-        bl = `ConcCstBlock(bl*,(CstBlock)getValue(child));
+        bl = `ConcCstBlock(bl*,Cst_BQTermToBlock((CstBQTerm)getValue(child)));
       } else if(child instanceof TomIslandParser.BqcompositeContext) {
         bl = `ConcCstBlock(bl*,(CstBlock)getValue(child));
       } else if(child instanceof TomIslandParser.WaterContext) {

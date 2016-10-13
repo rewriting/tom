@@ -25,7 +25,7 @@
 
 grammar TomJava;
 
-start : JAVA_PACKAGE? ANY*
+start : JAVA_PACKAGE? .* EOF
       ;
 
 JAVA_PACKAGE: 'package' (~';')* ';' ;

@@ -610,6 +610,11 @@ matchblock: {
       Cst_TermConstant(name) -> {
         return `BuildConstant(Name(name));
       }
+      
+      //Cst_ITL(option,string) -> {
+      //  return `ITL(string);
+      //}
+
     }
 
     throw new TomRuntimeException("convert: strange term: " + cst);
