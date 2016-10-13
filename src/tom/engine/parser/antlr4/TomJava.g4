@@ -25,10 +25,14 @@
 
 grammar TomJava;
 
-start : JAVA_PACKAGE? .* EOF
+start : (PACKAGE QID ';')?
+//.* EOF
       ;
 
-JAVA_PACKAGE: 'package' (~';')* ';' ;
+PACKAGE : 'package' ;
+QID : ID ('.' ID)* ;
+fragment ID : [a-zA-Z]([a-zA-Z0-9])* ;
+
 MLCOMMENT : '/*' .*? '*/' -> skip;
 SLCOMMENT : '//' ~[\r\n]* -> skip;
 WS : [ \r\t\n]+ -> skip ;

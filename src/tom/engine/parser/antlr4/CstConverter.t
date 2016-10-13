@@ -258,14 +258,46 @@ public class CstConverter {
   }
 
   /*
-   * merge HOSTBLOCK
+   * merge HOSTBLOCK: iterative version to avoid stack overflow
    */
   private static CstBlockList simplifyCstBlockList(CstBlockList l) {
+    CstBlockList res = `ConcCstBlock(); 
+    CstBlock last = null;
+    while(!l.isEmptyConcCstBlock()) {
+      CstBlock head = l.getHeadConcCstBlock();
+      if(!head.isHOSTBLOCK()) {
+        if(last != null) {
+          res = `ConcCstBlock(res*, last);
+          last = null;
+        }
+        res = `ConcCstBlock(res*, head);
+      } else {
+        if(last == null) {
+          last = head;
+        } else {
+          %match(last,head) {
+            HOSTBLOCK(ConcCstOption(Cst_OriginTracking(name,lmin1,cmin1,lmax1,cmax1)),text1),
+            HOSTBLOCK(ConcCstOption(Cst_OriginTracking(name,lmin2,cmin2,lmax2,cmax2)),text2) -> {
+              String s = `mergeString(text1,text2,lmax1,cmax1,lmin2,cmin2);
+              last = `HOSTBLOCK(ConcCstOption(Cst_OriginTracking(name,lmin1,cmin1,lmax2,cmax2)),s);
+            }
+          }
+        }
+      }
+      l = l.getTailConcCstBlock();
+    }
+    if(last != null) {
+      res = `ConcCstBlock(res*, last);
+      last = null;
+    }
+    return res;
+/*
     %match(l) {
       ConcCstBlock(
           head*,
           HOSTBLOCK(ConcCstOption(Cst_OriginTracking(name,lmin1,cmin1,lmax1,cmax1)),text1),
           HOSTBLOCK(ConcCstOption(Cst_OriginTracking(name,lmin2,cmin2,lmax2,cmax2)),text2),tail*) -> {
+        //System.out.println("length: " + l.length());
         String s = `mergeString(text1,text2,lmax1,cmax1,lmin2,cmin2);
         if(s != null) {
           return `simplifyCstBlockList(ConcCstBlock(head*,HOSTBLOCK(ConcCstOption(Cst_OriginTracking(name,lmin1,cmin1,lmax2,cmax2)),s),tail*));
@@ -274,6 +306,7 @@ public class CstConverter {
       }
     }
     return l;
+    */
   }
 
   /*

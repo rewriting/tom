@@ -224,7 +224,7 @@ public class AstBuilder {
 matchblock: {
                 %match(blockList) {
                   ConcCstBlock(HOSTBLOCK(optionList2,content)) -> {
-                    System.out.println("keywordGetDefault: " + `content);
+                    //System.out.println("keywordGetDefault: " + `content);
                     attribute = `GetDefaultDecl(
                         Name(opName),
                         Name(slotName),
@@ -567,9 +567,9 @@ matchblock: {
         return `BuildConstant(Name(name));
       }
       
-      //Cst_ITL(ol, code) -> {
-      //  return `Composite(CompositeTL(ITL(code)));
-      //}
+      Cst_ITL(ol, code) -> {
+        return `Composite(CompositeTL(ITL(code)));
+      }
 
       Cst_BQUnderscore() -> {
         return `BQDefault();

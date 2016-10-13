@@ -65,7 +65,7 @@ public class TomParser {
   }
 
   public CstProgram parse(ANTLRInputStream input) throws IOException {
-    System.out.print("antlr4: " + getFilename());
+    //System.out.print("antlr4: " + getFilename());
 
     if(parsedFiles.containsKey(getFilename())) {
       //System.out.println("\tin cache: 0ms");
@@ -98,7 +98,7 @@ public class TomParser {
       parser.getInterpreter().setPredictionMode(PredictionMode.LL);
       tree = parser.start();
     }
-    System.out.print("\tparsing:" + (System.currentTimeMillis()-start) + " ms");
+    //System.out.print("\tparsing:" + (System.currentTimeMillis()-start) + " ms");
 
     // show tree in text form
     // System.out.println(tree.toStringTree(parser));
@@ -108,7 +108,7 @@ public class TomParser {
     tom.engine.parser.antlr4.CstBuilder cstBuilder = new tom.engine.parser.antlr4.CstBuilder(getFilename()); 
     walker.walk(cstBuilder, tree);
     CstProgram cst = (CstProgram) cstBuilder.getValue(tree);
-    System.out.println("\tbuilding cst:" + (System.currentTimeMillis()-start) + " ms");
+    //System.out.println("\tbuilding cst:" + (System.currentTimeMillis()-start) + " ms");
     //System.out.println("\tcst:" + cst);
 
     start = System.currentTimeMillis();
@@ -143,6 +143,7 @@ public class TomParser {
       res = res.substring(plen,len-1).trim();
     }
 
+    //System.out.println("package: " + res);
     return res;
   }
 
