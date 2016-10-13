@@ -223,7 +223,7 @@ public class Bdd {
       concSolution(concAssignment()) -> { return `concSolution(concAssignment(Assignment(x,v))); }
       concSolution(head,tail*) -> { 
         SolutionList s = `addAssignment(x,v,tail*);
-        return `concSolution(concAssignment(Assignment(x,v),head),s*);
+        return `concSolution(concAssignment(Assignment(x,v),head*),s*);
       }
     }
     return `concSolution();

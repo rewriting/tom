@@ -38,12 +38,12 @@ public class ACTest {
   
   private void run() {
       Nat t = `f(a(),a(),b(),b(),b()); 
-      %match(t) {
         /**
           f(b(),T1*,T2*) -> { 
               System.out.println("T1=" + `T1 + " T2=" + `T2);
           }
           */
+      %match(t) {
           // f??(T1*,T2*) -> { 
           f?(T1*,T2*) -> { // to replace by previous line when TomAC will be merged (+ bootstrap)
               System.out.println("T1=" + `T1 + " T2=" + `T2);

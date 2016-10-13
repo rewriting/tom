@@ -74,7 +74,7 @@ public class PathFinder {
   public int doubleBwhen(String s) {
     int count = 0;
     %match(String s) {
-      concString(_*,x,_*,x,_*)  /*when equalsChar(x)*/ -> {
+      concString(_*,x,_*,x,_*)   -> {/*when equalsChar(x)*/
         count++; 
       }
     }
@@ -85,7 +85,6 @@ public class PathFinder {
   public String f2(String s) {
     String res = "";
     %match(String s) {
-      //(X1*,"ab",X2*,"b",X3*,"b",X4*,"b",X5*,"b",X6*,"b",X7*) -> {
       concString(X1*,'b',X2*,'b',X3*,'b',X4*,'b',X5*,'b',X6*,'b',X7*) -> {
         res += `X1 + " " + `X2 + " " + `X3 + " " + `X4 + " " + `X5 + " " + `X6 + " " + `X7;
         res += "\n";
@@ -115,14 +114,14 @@ public class PathFinder {
     System.out.println("Using 'b' : "+(System.currentTimeMillis()-startChrono)+ " ms)");
     startChrono = System.currentTimeMillis();
     %match(String s) {
-      concString(X1*,x,X2*,x,X3*,x,X4*,x,X5*,x,X6*,x,X7*) /*when equalsChar(x)*/ -> {
+      concString(X1*,x,X2*,x,X3*,x,X4*,x,X5*,x,X6*,x,X7*)  -> {/*when equalsChar(x)*/
         //System.out.println(`X1 + " " + `X2 + " " + `X3 + " " + `X4 + " " + `X5 + " " + `X6 + " " + `X7);
       }
     }
     System.out.println("Using when equalsChar : "+(System.currentTimeMillis()-startChrono)+ " ms)");
     startChrono = System.currentTimeMillis();
     %match(String s) {
-      concString(X1*,a,X2*,b,X3*,c,X4*,d,X5*,e,X6*,f,X7*) /*when equalsChar(a),equalsVar(a,b),equalsVar(b,c),equalsVar(c,d),equalsVar(d,e),equalsVar(e,f)*/ -> {
+      concString(X1*,a,X2*,b,X3*,c,X4*,d,X5*,e,X6*,f,X7*)  -> {/*when equalsChar(a),equalsVar(a,b),equalsVar(b,c),equalsVar(c,d),equalsVar(d,e),equalsVar(e,f)*/
         //System.out.println(`X1 + " " + `X2 + " " + `X3 + " " + `X4 + " " + `X5 + " " + `X6 + " " + `X7);
       }
     }
@@ -142,14 +141,14 @@ public class PathFinder {
     System.out.println("Using 'b' : "+(System.currentTimeMillis()-startChrono)+ " ms)");
     startChrono = System.currentTimeMillis();
     %match(String s) {
-      concString(X1*,x,X2*,x,X3*,x,X4*,x,X5*,x,X6*,x,X7*) /*when equalsChar(x)*/ -> {
+      concString(X1*,x,X2*,x,X3*,x,X4*,x,X5*,x,X6*,x,X7*)  -> {/*when equalsChar(x)*/
         //System.out.println(`X1 + " " + `X2 + " " + `X3 + " " + `X4 + " " + `X5 + " " + `X6 + " " + `X7);
       }
     }
     System.out.println("Using when equalsChar : "+(System.currentTimeMillis()-startChrono)+ " ms)");
     startChrono = System.currentTimeMillis();
     %match(String s) {
-      concString(X1*,a,X2*,b,X3*,c,X4*,d,X5*,e,X6*,f,X7*) /*when equalsChar(a),equalsVar(a,b),equalsVar(b,c),equalsVar(c,d),equalsVar(d,e),equalsVar(e,f)*/ -> {
+      concString(X1*,a,X2*,b,X3*,c,X4*,d,X5*,e,X6*,f,X7*)  -> {/*when equalsChar(a),equalsVar(a,b),equalsVar(b,c),equalsVar(c,d),equalsVar(d,e),equalsVar(e,f)*/
         //System.out.println(`X1 + " " + `X2 + " " + `X3 + " " + `X4 + " " + `X5 + " " + `X6 + " " + `X7);
       }
     }

@@ -1,5 +1,5 @@
 #!/bin/sh
-DIRLIST="acmatching addressbook analysis antipattern appletxml bdd boulderdash
+DIRLIST="acmatching addressbook analysis antipattern bdd boulderdash
 caml cell cps csmaca debugger deepmatch dom
 freshgom gasel gom gomoku integerc labyrinth
 lambdacalculi lazyml list master matching meta mgs 
@@ -15,7 +15,7 @@ DIRLIST2="bpel builtin  bytecode expression  miniml  modeltrans strategycompiler
 
 for f in $DIRLIST; do
 	cd $f
-	ant -Dnewtyper=true >> ../resultTest.log
+	ant -Dnewparser=true >> ../resultTest.log
 	cd ..
 done
 
