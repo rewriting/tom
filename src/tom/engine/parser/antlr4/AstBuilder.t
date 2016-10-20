@@ -49,6 +49,7 @@ import tom.engine.adt.cst.types.*;
 import tom.engine.TomBase;
 import tom.engine.TomMessage;
 import tom.engine.exception.TomRuntimeException;
+import tom.engine.parser.TomParserTool;
 
 import tom.engine.tools.SymbolTable;
 import tom.engine.tools.ASTFactory;
@@ -65,9 +66,15 @@ public class AstBuilder {
   }
 
   private SymbolTable symbolTable;
+  private TomParserTool parserTool;
 
-  public AstBuilder(SymbolTable st) {
+  public AstBuilder(TomParserTool parserTool,SymbolTable st) {
+    this.parserTool = parserTool;
     this.symbolTable = st;
+  }
+  
+  public TomParserTool getParserTool() {
+    return this.parserTool;
   }
 
   public Code convert(CstProgram cst) {
@@ -102,7 +109,23 @@ public class AstBuilder {
       }
 
       Cst_Metaquote(optionList, blocks) -> {
-        return `AbstractBlock(convert(blocks));
+        //return `AbstractBlock(convert(blocks));
+        Instruction iEmptyString = `CodeToInstruction(TargetLanguageToCode(ITL("\"\"")));
+        InstructionList res = `concInstruction(iEmptyString);
+        CstBlockList l = `blocks;
+        while(!l.isEmptyConcCstBlock()) {
+          CstBlock head = l.getHeadConcCstBlock();
+          if(head.isHOSTBLOCK()) {
+            String s = getParserTool().metaEncodeCode(head.getcontent());
+            Instruction i = `CodeToInstruction(TargetLanguageToCode(ITL("+"+s+"+")));
+            res = `concInstruction(res*,i);
+          } else {
+            res = `concInstruction(res*,convert(head));
+          }
+          l = l.getTailConcCstBlock();
+        } 
+        res = `concInstruction(res*,iEmptyString);
+        return `AbstractBlock(res);
       }
 
       Cst_BQTermToBlock(bqterm) -> {

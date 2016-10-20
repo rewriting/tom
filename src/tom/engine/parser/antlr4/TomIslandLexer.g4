@@ -24,6 +24,11 @@
  **/
 
 lexer grammar TomIslandLexer;
+@members {
+public static final int WHITESPACE = 1; 
+public static final int COMMENTS = 2;
+}
+
 
 MATCH : '%match' ;
 STRATEGY : '%strategy' ;
@@ -112,11 +117,12 @@ fragment ESC :
     )
   ;
 
+
 ACTION_ESCAPE :   '\\' .  ;
 ACTION_STRING_LITERAL :	'"' (ACTION_ESCAPE | ~["\\])* '"' ;
 MLCOMMENT : '/*' .*? '*/' ;
 SLCOMMENT : '//' ~[\r\n]* -> skip;
 
-WS : [ \r\t\n]+ -> skip ;
+WS : [ \r\t\n]+ -> channel(HIDDEN) ;
 //NL : [\n]+ ;
 ANY : . ; 

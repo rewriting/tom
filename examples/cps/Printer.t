@@ -43,7 +43,8 @@ public class Printer {
         return %[(let @`x@ = @`pretty(u)@ in @`pretty(v)@)]%; }
       RawCallCC(v) -> { return %[(callcc @`pretty(v)@)]%; }
       RawThrow(a,b) -> { return %[(throw @`pretty(a)@ @`pretty(b)@)]%; }
-      RawPrint(x) -> { return %[(print @`pretty(x)@)]%; }
+      RawPrint(x) -> { return %[( 
+          print @`pretty(x)@)]%; }
       RawUnit() -> { return "()"; }
     }
     return null;

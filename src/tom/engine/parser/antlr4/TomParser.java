@@ -105,7 +105,7 @@ public class TomParser {
 
     start = System.currentTimeMillis();
     ParseTreeWalker walker = new ParseTreeWalker();
-    tom.engine.parser.antlr4.CstBuilder cstBuilder = new tom.engine.parser.antlr4.CstBuilder(getFilename()); 
+    tom.engine.parser.antlr4.CstBuilder cstBuilder = new tom.engine.parser.antlr4.CstBuilder(getFilename(),tokens); 
     walker.walk(cstBuilder, tree);
     CstProgram cst = (CstProgram) cstBuilder.getValue(tree);
     //System.out.println("\tbuilding cst:" + (System.currentTimeMillis()-start) + " ms");

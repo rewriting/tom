@@ -42,7 +42,7 @@ island
   ;
 
 metaquote
-  : LMETAQUOTE (AT (composite | bqcomposite) AT | water)* RMETAQUOTE
+  : LMETAQUOTE (AT (bqcomposite | composite) AT | water)*? RMETAQUOTE
   ;
 
 matchStatement
@@ -139,17 +139,12 @@ bqcomposite
   ;
 
 composite
-  : fsym=ID LPAREN composite* RPAREN
-  | LPAREN composite* RPAREN
+  : fsym=ID LPAREN composite*? RPAREN
+  | LPAREN composite*? RPAREN
   | var=ID STAR?
   | constant
   | UNDERSCORE
-  | waterexceptparen
-  ;
-
-waterexceptparen 
-  :
-  ~(LPAREN|RPAREN)+? 
+  | water
   ;
 
 pattern
