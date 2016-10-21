@@ -123,6 +123,6 @@ ACTION_STRING_LITERAL :	'"' (ACTION_ESCAPE | ~["\\])* '"' ;
 MLCOMMENT : '/*' .*? '*/' ;
 SLCOMMENT : '//' ~[\r\n]* -> skip;
 
-WS : [ \r\t\n]+ -> channel(HIDDEN) ;
-//NL : [\n]+ ;
+WS : [ \r\t]+ -> channel(HIDDEN) ;
+NL : [\n]+  -> channel(HIDDEN) ;
 ANY : . ; 

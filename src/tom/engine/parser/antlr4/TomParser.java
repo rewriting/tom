@@ -108,6 +108,7 @@ public class TomParser {
     tom.engine.parser.antlr4.CstBuilder cstBuilder = new tom.engine.parser.antlr4.CstBuilder(getFilename(),tokens); 
     walker.walk(cstBuilder, tree);
     CstProgram cst = (CstProgram) cstBuilder.getValue(tree);
+    cstBuilder.cleanUsedToken(); // release memory
     //System.out.println("\tbuilding cst:" + (System.currentTimeMillis()-start) + " ms");
     //System.out.println("\tcst:" + cst);
 

@@ -167,7 +167,8 @@ public class CstConverter {
     visit CstBlockList {
       s@ConcCstBlock(_*) -> {
         /* merge HOSTBLOCK */
-        return addSpace(simplifyCstBlockList(`s));
+        /*return addSpace(simplifyCstBlockList(`s));*/
+        return simplifyCstBlockList(`s);
       }
     }
 
@@ -291,22 +292,6 @@ public class CstConverter {
       last = null;
     }
     return res;
-/*
-    %match(l) {
-      ConcCstBlock(
-          head*,
-          HOSTBLOCK(ConcCstOption(Cst_OriginTracking(name,lmin1,cmin1,lmax1,cmax1)),text1),
-          HOSTBLOCK(ConcCstOption(Cst_OriginTracking(name,lmin2,cmin2,lmax2,cmax2)),text2),tail*) -> {
-        //System.out.println("length: " + l.length());
-        String s = `mergeString(text1,text2,lmax1,cmax1,lmin2,cmin2);
-        if(s != null) {
-          return `simplifyCstBlockList(ConcCstBlock(head*,HOSTBLOCK(ConcCstOption(Cst_OriginTracking(name,lmin1,cmin1,lmax2,cmax2)),s),tail*));
-        }
-
-      }
-    }
-    return l;
-    */
   }
 
   /*
@@ -351,12 +336,19 @@ public class CstConverter {
    * add missing spaces/newlines between two strings
    */
   private static String mergeString(String s1, String s2, int lmax1, int cmax1, int lmin2, int cmin2) {
-    //System.out.println("mergeString: " + s1 + " --- " + s2);
     String newline = System.getProperty("line.separator");
+    if(lmax1 < lmin2) {
+      //System.out.println("mergeString: '" + s1 + "' --- '" + s2 + "'");
+      //System.out.println("lmax1 = " + lmax1 + " lmin2 = " + lmin2);
+    }
     while(lmax1 < lmin2) {
       s1 += newline;
       lmax1++;
       cmax1 = 1;
+    }
+    if(cmax1 < cmin2) {
+      //System.out.println("mergeString: '" + s1 + "' --- '" + s2 + "'");
+      //System.out.println("cmax1 = " + cmax1 + " cmin2 = " + cmin2);
     }
     while(cmax1 < cmin2) {
       s1 += " ";

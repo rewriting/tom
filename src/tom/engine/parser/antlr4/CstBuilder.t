@@ -51,11 +51,17 @@ public class CstBuilder extends TomIslandParserBaseListener {
   %include { ../../adt/cst/CST.tom }
 
   private String filename;
-  BufferedTokenStream tokens;
+  private BufferedTokenStream tokens;
+  private Set<Token> usedToken; // used to add spaces before of after a given token
 
   public CstBuilder(String filename, BufferedTokenStream tokens) {
     this.filename = filename;
     this.tokens = tokens;
+    this.usedToken = new HashSet<Token>();
+  }
+
+  public void cleanUsedToken() {
+    this.usedToken = new HashSet<Token>();
   }
 
   private static Logger logger = Logger.getLogger("tom.engine.typer.CstConverter");
@@ -90,9 +96,10 @@ public class CstBuilder extends TomIslandParserBaseListener {
       if(child instanceof TomIslandParser.IslandContext) {
         bl = `ConcCstBlock(bl*,(CstBlock)getValue(child));
       } else if(child instanceof TomIslandParser.WaterContext) {
-        ParserRuleContext prc = (ParserRuleContext)child;
-        CstOption ot = extractOption(prc.getStart());
-        bl = `ConcCstBlock(bl*,HOSTBLOCK(ConcCstOption(ot), getStringValue(child)));
+        //ParserRuleContext prc = (ParserRuleContext)child;
+        //CstOption ot = extractOption(prc.getStart());
+        //bl = `ConcCstBlock(bl*,HOSTBLOCK(ConcCstOption(ot), getStringValue(child)));
+        bl = `ConcCstBlock(bl*,buildHostblock((ParserRuleContext)child));
       }
     }
     setValue("exitStart",ctx, `Cst_Program(bl));
@@ -142,6 +149,9 @@ public class CstBuilder extends TomIslandParserBaseListener {
         bl = `ConcCstBlock(bl*,(CstBlock)getValue(child));
       } else if(child instanceof TomIslandParser.WaterContext) {
         bl = `ConcCstBlock(bl*,buildHostblock((ParserRuleContext)child));
+      } else {
+        System.out.println("child: " + child.getClass());
+        System.out.println("child: '" + child.getText() + "'");
       }
     }
 
@@ -291,9 +301,10 @@ public class CstBuilder extends TomIslandParserBaseListener {
       } else if(child instanceof TomIslandParser.BlockContext) {
         bl = `ConcCstBlock(bl*,(CstBlock)getValue(child));
       } else if(child instanceof TomIslandParser.WaterContext) {
-        ParserRuleContext prc = (ParserRuleContext)child;
-        CstOption ot = extractOption(prc.getStart());
-        bl = `ConcCstBlock(bl*,HOSTBLOCK(ConcCstOption(ot), getStringValue(child)));
+        //ParserRuleContext prc = (ParserRuleContext)child;
+        //CstOption ot = extractOption(prc.getStart());
+        //bl = `ConcCstBlock(bl*,HOSTBLOCK(ConcCstOption(ot), getStringValue(child)));
+        bl = `ConcCstBlock(bl*,buildHostblock((ParserRuleContext)child));
       }
     }
 
@@ -944,7 +955,7 @@ public class CstBuilder extends TomIslandParserBaseListener {
 
     Token token = ctx.getStart();
     int firstCharLine = token.getLine();
-    int firstCharColumn = token.getCharPositionInLine();
+    int firstCharColumn = token.getCharPositionInLine()+1;
     int lastCharLine = firstCharLine;
     int lastCharColumn = firstCharColumn + token.getText().length();
 
@@ -954,28 +965,41 @@ public class CstBuilder extends TomIslandParserBaseListener {
     String sleft = "";
     String sright = "";
     if(left != null) {
-      for(Token space:left) {
-        sleft += space.getText();
-      }
       Token firstToken = left.get(0);
-      firstCharLine = firstToken.getLine();
-      firstCharColumn = firstToken.getCharPositionInLine();
+      if(!usedToken.contains(firstToken)) {
+        firstCharLine = firstToken.getLine();
+        firstCharColumn = firstToken.getCharPositionInLine()+1;
+      }
+
+      for(Token space:left) {
+        if(!usedToken.contains(space)) {
+          sleft += space.getText();
+          usedToken.add(space);
+        }
+      }
     }
 
     if(right != null) {
-      for(Token space:right) {
-        sright += space.getText();
-      }
-
       String newline = System.getProperty("line.separator");
       Token lastToken = right.get(right.size()-1);
-      if(lastToken.getText().equals(newline)) {
-        lastCharColumn = 0;
-        lastCharLine = firstCharLine + 1;
-      } else {
-        lastCharLine = lastToken.getLine();
-        lastCharColumn = lastToken.getCharPositionInLine() + lastToken.getText().length();
+      //System.out.println("lastToken: " + lastToken);
+      if(!usedToken.contains(lastToken)) {
+        if(lastToken.getText().equals(newline)) {
+          lastCharColumn = 1;
+          lastCharLine = firstCharLine + 1;
+        } else {
+          lastCharLine = lastToken.getLine();
+          lastCharColumn = lastToken.getCharPositionInLine()+1 + lastToken.getText().length();
+        }
       }
+
+      for(Token space:right) {
+        if(!usedToken.contains(space)) {
+          sright += space.getText();
+          usedToken.add(space);
+        }
+      }
+
     }
     s = sleft + s + sright;
 
@@ -986,7 +1010,7 @@ public class CstBuilder extends TomIslandParserBaseListener {
     }
     CstOption ot = `Cst_OriginTracking(source, firstCharLine, firstCharColumn, lastCharLine, lastCharColumn);  
     //System.out.println("ot: " + ot);
-    System.out.println("hb: " + `HOSTBLOCK(ConcCstOption(ot), s));
+    //System.out.println("hb: " + `HOSTBLOCK(ConcCstOption(ot), s));
     return `HOSTBLOCK(ConcCstOption(ot), s);
   }
 
@@ -1012,12 +1036,12 @@ public class CstBuilder extends TomIslandParserBaseListener {
     //System.out.println("text: '" + text + "'");
 
     int firstCharLine = t.getLine();
-    int firstCharColumn = t.getCharPositionInLine();
+    int firstCharColumn = t.getCharPositionInLine()+1;
     int lastCharLine;
     int lastCharColumn;
 
     if(text.equals(newline)) {
-      lastCharColumn = 0;
+      lastCharColumn = 1;
       lastCharLine = firstCharLine + 1;
     } else {
       lastCharColumn = firstCharColumn + text.length();
