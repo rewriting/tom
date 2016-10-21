@@ -135,23 +135,34 @@ public class CstBuilder extends TomIslandParserBaseListener {
 
   /* 
    * metaquote
-   *   : LMETAQUOTE (AT (composite | bqcomposite) AT | water)*? RMETAQUOTE
+   *   : LMETAQUOTE (AT (bqcomposite | composite) AT | water)*? RMETAQUOTE
    *   ;
    */
   public void exitMetaquote(TomIslandParser.MetaquoteContext ctx) {
     CstOptionList optionList = `ConcCstOption(extractOption(ctx.getStart()));
     CstBlockList bl = `ConcCstBlock();
+    Token previousToken = null;
     for(int i = 0 ; i<ctx.getChildCount() ; i++) {
       ParseTree child = ctx.getChild(i);
       if(child instanceof TomIslandParser.CompositeContext) {
         bl = `ConcCstBlock(bl*,Cst_BQTermToBlock((CstBQTerm)getValue(child)));
+        previousToken = null;
       } else if(child instanceof TomIslandParser.BqcompositeContext) {
         bl = `ConcCstBlock(bl*,(CstBlock)getValue(child));
+        previousToken = null;
       } else if(child instanceof TomIslandParser.WaterContext) {
         bl = `ConcCstBlock(bl*,buildHostblock((ParserRuleContext)child));
-      } else {
-        System.out.println("child: " + child.getClass());
-        System.out.println("child: '" + child.getText() + "'");
+        previousToken = null;
+      } else if(child instanceof TerminalNodeImpl) {
+        if(previousToken != null) {
+          // this means that there no water, nor composite between the two tokens
+          // there is only layout
+          Token currentToken = ((TerminalNodeImpl)child).getSymbol();
+          //System.out.println("between = '" + betweenToken(previousToken,currentToken) + "'");
+          CstOption ot = extractOption(currentToken);
+          bl = `ConcCstBlock(bl*,HOSTBLOCK(ConcCstOption(ot),betweenToken(previousToken,currentToken)));
+        }
+        previousToken = ((TerminalNodeImpl)child).getSymbol();
       }
     }
 
@@ -950,6 +961,11 @@ public class CstBuilder extends TomIslandParserBaseListener {
     return "";
   }
 
+  /*
+   * given a context corresponding to water token
+   * search spaces and layouts in hidden channels to
+   * build a HOSTBLOCK with spaces and layout
+   */
   private CstBlock buildHostblock(ParserRuleContext ctx) {
     String s = getStringValue(ctx);
 
@@ -967,6 +983,7 @@ public class CstBuilder extends TomIslandParserBaseListener {
     if(left != null) {
       Token firstToken = left.get(0);
       if(!usedToken.contains(firstToken)) {
+        // a given token should be used only once
         firstCharLine = firstToken.getLine();
         firstCharColumn = firstToken.getCharPositionInLine()+1;
       }
@@ -1155,5 +1172,24 @@ public class CstBuilder extends TomIslandParserBaseListener {
     return res;
   }
 
+  /*
+   * add missing spaces/newlines between two tokens
+   */
+  private static String betweenToken(Token t1, Token t2) {
+    String newline = System.getProperty("line.separator");
+    int l = t1.getLine();
+    int c = t1.	getCharPositionInLine()+1;
+    String res = "";
+    while(l < t2.getLine()) {
+      res += newline;
+      l++;
+      c = 1;
+    }
+    while(c < t2.	getCharPositionInLine()) {
+      res += " ";
+      c++;
+    }
+    return res;
+  }
 }
 
