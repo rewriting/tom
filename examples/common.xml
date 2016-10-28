@@ -39,7 +39,9 @@
     <macrodef name="tomcompile">
       <sequential>
         <tom.preset srcdir="${examples.dir}"
-                    destdir="${examples.gen}">          
+          destdir="${examples.gen}"
+          options="--newparser"
+          >          
           <include name="${example}/**/*.t"/>
           <exclude name="${example}/**/*.g.t"/>
         </tom.preset>

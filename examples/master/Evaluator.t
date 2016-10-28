@@ -41,8 +41,8 @@ class Evaluator {
 
   public static Expr eval(Expr expr) {
     %match(Expr expr) {	
-      Plus(Cst(v1),Cst(v2)) -> { return `Cst(v1 + v2); }
-      Mult(Cst(v1),Cst(v2)) -> { return `Cst(v1 * v2); }
+      Plus(Cst(v1),Cst(v2)) -> { return `Cst((v1)+(v2)); }
+      Mult(Cst(v1),Cst(v2)) -> { return `Cst((v1)*(v2)); }
 
       Plus(e1,e2) -> { return `eval(Plus(eval(e1),eval(e2))); }
       Mult(e1,e2) -> { return `eval(Mult(eval(e1),eval(e2))); }

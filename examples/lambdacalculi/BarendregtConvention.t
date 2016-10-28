@@ -86,7 +86,7 @@ class BarendregtConvention {
         public String toString() {
           %match(this) {
             lappl(t1,t2) -> { return %[(@`t1@ @`t2@)]%; }
-            lambda(x,t) -> { return %[\@`x@.@`t@]%; }
+            lambda(x,t) -> { return %[\\@`x@.@`t@]%; }
             var(x) -> { return `x; }
           }
           throw new RuntimeException();

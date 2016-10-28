@@ -132,9 +132,9 @@ class Pico1 {
 	public Expr evalExpr(Map env,Expr expr) {
 		%match(Expr expr) {	
 			Var(n) -> { return (Expr)env.get(`n); }
-			Plus(Cst(v1),Cst(v2)) -> { return `Cst(v1 + v2); }
-			Mult(Cst(v1),Cst(v2)) -> { return `Cst(v1 * v2); }
-			Mod(Cst(v1),Cst(v2)) -> { return `Cst(v1 % v2); }
+			Plus(Cst(v1),Cst(v2)) -> { return `Cst((v1) + (v2)); }
+			Mult(Cst(v1),Cst(v2)) -> { return `Cst((v1) * (v2)); }
+			Mod(Cst(v1),Cst(v2)) -> { return `Cst((v1) % (v2)); }
 			
 			Plus(e1,e2) -> { return `evalExpr(env,Plus(evalExpr(env,e1),evalExpr(env,e2))); }
 			Mult(e1,e2) -> { return `evalExpr(env,Mult(evalExpr(env,e1),evalExpr(env,e2))); }

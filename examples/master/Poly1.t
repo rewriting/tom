@@ -46,7 +46,7 @@ public class Poly1 {
       m(_,"X",0) -> { return `m(0,"X",0); }
       m(c,"X",n) -> {
         if(`n>0) {
-          return `m(c * n,"X",n-1);
+          return `m((c) * (n),"X",n-1);
         }
       }
 

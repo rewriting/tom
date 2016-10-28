@@ -255,7 +255,7 @@ public class Eval {
         return `Number(x + y);
       }
       Mult(Number(x),Number(y)) -> {
-        return `Number(x * y);
+        return `Number((x) * (y));
       }
       Max(Number(x),Number(y)) -> {
         return (`x>`y)?(`Number(x)):(`Number(y));

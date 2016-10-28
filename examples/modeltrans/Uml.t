@@ -84,7 +84,7 @@ public class Uml {
 
         ModelElement newend2 = `ModelElement(n_end2, List(), AssociationEnd(Mult("0"),Mult("1"), LabModelElement("l2", c_end2.setconstraints(List(ModelElement("c2", List(), ConstraintElt(RefModelElement("l2"), Constraint(c1))))))));
 
-        ModelElement end3 = `ModelElement(name.toLowerCase(), List(), AssociationEnd(Mult("0"),Mult("1"),LabModelElement("l3",ModelElement(name, List(ModelElement("c3", List(), ConstraintElt(RefModelElement("l3"),Constraint(c3)))), Class(List(X1,X2,X3))))));
+        ModelElement end3 = `ModelElement(name.toLowerCase(), List(), AssociationEnd(Mult("0"),Mult("1"),LabModelElement("l3",ModelElement(name, List(ModelElement("c3", List(), ConstraintElt(RefModelElement("l3"),Constraint(c3)))), Class(List(X1*,X2*,X3*))))));
 
         return `ModelElement("R"+name, List(), Association(List(newend1,newend2,end3)));
 
