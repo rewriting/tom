@@ -79,13 +79,13 @@ public class Backend {
     Set<MappingTemplateClass> mappingSet = new HashSet<MappingTemplateClass>();
     final Map<ClassName,TemplateClass> generators = new HashMap<ClassName,TemplateClass>();
     // prepare stuff for the mappings
-    { /* unamed block */{ /* unamed block */if ( (classList instanceof tom.gom.adt.objects.types.GomClassList) ) {if ( (((( tom.gom.adt.objects.types.GomClassList )classList) instanceof tom.gom.adt.objects.types.gomclasslist.ConsConcGomClass) || ((( tom.gom.adt.objects.types.GomClassList )classList) instanceof tom.gom.adt.objects.types.gomclasslist.EmptyConcGomClass)) ) { tom.gom.adt.objects.types.GomClassList  tomMatch556_end_4=(( tom.gom.adt.objects.types.GomClassList )classList);do {{ /* unamed block */if (!( tomMatch556_end_4.isEmptyConcGomClass() )) { tom.gom.adt.objects.types.GomClass  tomMatch556_8= tomMatch556_end_4.getHeadConcGomClass() ;if ( ((( tom.gom.adt.objects.types.GomClass )tomMatch556_8) instanceof tom.gom.adt.objects.types.gomclass.TomMapping) ) { tom.gom.adt.objects.types.ClassName  tomMatch556_7= tomMatch556_8.getClassName() ;if ( ((( tom.gom.adt.objects.types.ClassName )tomMatch556_7) instanceof tom.gom.adt.objects.types.classname.ClassName) ) { tom.gom.adt.objects.types.GomClass  tom___gomclass= tomMatch556_end_4.getHeadConcGomClass() ;
+    { /* unamed block */{ /* unamed block */if ( (classList instanceof tom.gom.adt.objects.types.GomClassList) ) {if ( (((( tom.gom.adt.objects.types.GomClassList )classList) instanceof tom.gom.adt.objects.types.gomclasslist.ConsConcGomClass) || ((( tom.gom.adt.objects.types.GomClassList )classList) instanceof tom.gom.adt.objects.types.gomclasslist.EmptyConcGomClass)) ) { tom.gom.adt.objects.types.GomClassList  tomMatch547_end_4=(( tom.gom.adt.objects.types.GomClassList )classList);do {{ /* unamed block */if (!( tomMatch547_end_4.isEmptyConcGomClass() )) { tom.gom.adt.objects.types.GomClass  tomMatch547_8= tomMatch547_end_4.getHeadConcGomClass() ;if ( ((( tom.gom.adt.objects.types.GomClass )tomMatch547_8) instanceof tom.gom.adt.objects.types.gomclass.TomMapping) ) { tom.gom.adt.objects.types.ClassName  tomMatch547_7= tomMatch547_8.getClassName() ;if ( ((( tom.gom.adt.objects.types.ClassName )tomMatch547_7) instanceof tom.gom.adt.objects.types.classname.ClassName) ) { tom.gom.adt.objects.types.GomClass  tom___gomclass= tomMatch547_end_4.getHeadConcGomClass() ;
 
 
 
         MappingTemplateClass mapping = null;
         if (generateStratMapping > 0) { // generate congruence strategies
-          ClassName smappingclass =  tom.gom.adt.objects.types.classname.ClassName.make( tomMatch556_7.getPkg() , "_"+ tomMatch556_7.getName() ) ;
+          ClassName smappingclass =  tom.gom.adt.objects.types.classname.ClassName.make( tomMatch547_7.getPkg() , "_"+ tomMatch547_7.getName() ) ;
           GomClass nGomClass = tom___gomclass.setClassName(smappingclass);
           TemplateClass stratMapping = new tom.gom.backend.strategy.StratMappingTemplate(nGomClass,getGomEnvironment(),generateStratMapping);
           if (1 == generateStratMapping) {
@@ -101,8 +101,8 @@ public class Backend {
           mapping = templatefactory.makeTomMappingTemplate(tom___gomclass,null,getGomEnvironment());
         }
         mappingSet.add(mapping);
-        generators.put(tomMatch556_7,mapping);
-      }}}if ( tomMatch556_end_4.isEmptyConcGomClass() ) {tomMatch556_end_4=(( tom.gom.adt.objects.types.GomClassList )classList);} else {tomMatch556_end_4= tomMatch556_end_4.getTailConcGomClass() ;}}} while(!( (tomMatch556_end_4==(( tom.gom.adt.objects.types.GomClassList )classList)) ));}}}}
+        generators.put(tomMatch547_7,mapping);
+      }}}if ( tomMatch547_end_4.isEmptyConcGomClass() ) {tomMatch547_end_4=(( tom.gom.adt.objects.types.GomClassList )classList);} else {tomMatch547_end_4= tomMatch547_end_4.getTailConcGomClass() ;}}} while(!( (tomMatch547_end_4==(( tom.gom.adt.objects.types.GomClassList )classList)) ));}}}}
 
     // generate a class for each element of the list
     if (multithread) {

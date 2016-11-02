@@ -17,7 +17,7 @@ public class TomJavaParser extends Parser {
 	protected static final PredictionContextCache _sharedContextCache =
 		new PredictionContextCache();
 	public static final int
-		JAVA_PACKAGE=1, MLCOMMENT=2, SLCOMMENT=3, WS=4, ANY=5;
+		T__0=1, PACKAGE=2, QID=3, MLCOMMENT=4, SLCOMMENT=5, WS=6, ANY=7;
 	public static final int
 		RULE_start = 0;
 	public static final String[] ruleNames = {
@@ -25,9 +25,10 @@ public class TomJavaParser extends Parser {
 	};
 
 	private static final String[] _LITERAL_NAMES = {
+		null, "';'", "'package'"
 	};
 	private static final String[] _SYMBOLIC_NAMES = {
-		null, "JAVA_PACKAGE", "MLCOMMENT", "SLCOMMENT", "WS", "ANY"
+		null, null, "PACKAGE", "QID", "MLCOMMENT", "SLCOMMENT", "WS", "ANY"
 	};
 	public static final Vocabulary VOCABULARY = new VocabularyImpl(_LITERAL_NAMES, _SYMBOLIC_NAMES);
 
@@ -79,11 +80,8 @@ public class TomJavaParser extends Parser {
 		_interp = new ParserATNSimulator(this,_ATN,_decisionToDFA,_sharedContextCache);
 	}
 	public static class StartContext extends ParserRuleContext {
-		public TerminalNode JAVA_PACKAGE() { return getToken(TomJavaParser.JAVA_PACKAGE, 0); }
-		public List<TerminalNode> ANY() { return getTokens(TomJavaParser.ANY); }
-		public TerminalNode ANY(int i) {
-			return getToken(TomJavaParser.ANY, i);
-		}
+		public TerminalNode PACKAGE() { return getToken(TomJavaParser.PACKAGE, 0); }
+		public TerminalNode QID() { return getToken(TomJavaParser.QID, 0); }
 		public StartContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -97,29 +95,19 @@ public class TomJavaParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(3);
+			setState(5);
 			_la = _input.LA(1);
-			if (_la==JAVA_PACKAGE) {
+			if (_la==PACKAGE) {
 				{
 				setState(2);
-				match(JAVA_PACKAGE);
+				match(PACKAGE);
+				setState(3);
+				match(QID);
+				setState(4);
+				match(T__0);
 				}
 			}
 
-			setState(8);
-			_errHandler.sync(this);
-			_la = _input.LA(1);
-			while (_la==ANY) {
-				{
-				{
-				setState(5);
-				match(ANY);
-				}
-				}
-				setState(10);
-				_errHandler.sync(this);
-				_la = _input.LA(1);
-			}
 			}
 		}
 		catch (RecognitionException re) {
@@ -134,11 +122,9 @@ public class TomJavaParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\3\u0430\ud6d1\u8206\uad2d\u4417\uaef1\u8d80\uaadd\3\7\16\4\2\t\2\3\2"+
-		"\5\2\6\n\2\3\2\7\2\t\n\2\f\2\16\2\f\13\2\3\2\2\2\3\2\2\2\16\2\5\3\2\2"+
-		"\2\4\6\7\3\2\2\5\4\3\2\2\2\5\6\3\2\2\2\6\n\3\2\2\2\7\t\7\7\2\2\b\7\3\2"+
-		"\2\2\t\f\3\2\2\2\n\b\3\2\2\2\n\13\3\2\2\2\13\3\3\2\2\2\f\n\3\2\2\2\4\5"+
-		"\n";
+		"\3\u0430\ud6d1\u8206\uad2d\u4417\uaef1\u8d80\uaadd\3\t\n\4\2\t\2\3\2\3"+
+		"\2\3\2\5\2\b\n\2\3\2\2\2\3\2\2\2\t\2\7\3\2\2\2\4\5\7\4\2\2\5\6\7\5\2\2"+
+		"\6\b\7\3\2\2\7\4\3\2\2\2\7\b\3\2\2\2\b\3\3\2\2\2\3\7";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {

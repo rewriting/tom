@@ -249,6 +249,8 @@ public class TomParserPlugin extends TomGenericPlugin {
           tom.engine.parser.antlr4.TomParser parser = new tom.engine.parser.antlr4.TomParser(currentFileName, getParserTool(), symbolTable);
           ANTLRInputStream input = new ANTLRInputStream(currentReader);
 
+          System.out.print("antlr4: " + currentFileName);
+          long start = System.currentTimeMillis();
           if(java) {
             String packageName = parser.parseJavaPackage(input);
             if(packageName.length() > 0) {
@@ -262,9 +264,10 @@ public class TomParserPlugin extends TomGenericPlugin {
           if(printcst) {
             getParserTool().printTree(cst);
           }
+          System.out.print("\tparsing + building cst:" + (System.currentTimeMillis()-start) + " ms");
 
-          long start = System.currentTimeMillis();
-          tom.engine.parser.antlr4.AstBuilder astBuilder = new tom.engine.parser.antlr4.AstBuilder(symbolTable);
+          start = System.currentTimeMillis();
+          tom.engine.parser.antlr4.AstBuilder astBuilder = new tom.engine.parser.antlr4.AstBuilder(getParserTool(),symbolTable);
           Code code = astBuilder.convert(cst);
           System.out.println("\tbuilding ast:" + (System.currentTimeMillis()-start) + " ms");
 

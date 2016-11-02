@@ -260,9 +260,9 @@ public abstract class CFamilyGenerator extends GenericGenerator {
     output.writeln(s);
     
     String returnValue = getSymbolTable(moduleName).isVoidType(returnType)?tlCode.getCode():"return " + tlCode.getCode();
-    { /* unamed block */{ /* unamed block */if ( (tlCode instanceof tom.engine.adt.code.types.TargetLanguage) ) {if ( ((( tom.engine.adt.code.types.TargetLanguage )tlCode) instanceof tom.engine.adt.code.types.targetlanguage.TL) ) { tom.engine.adt.tomsignature.types.TextPosition  tomMatch88_2= (( tom.engine.adt.code.types.TargetLanguage )tlCode).getStart() ; tom.engine.adt.tomsignature.types.TextPosition  tomMatch88_3= (( tom.engine.adt.code.types.TargetLanguage )tlCode).getEnd() ;if ( ((( tom.engine.adt.tomsignature.types.TextPosition )tomMatch88_2) instanceof tom.engine.adt.tomsignature.types.textposition.TextPosition) ) { int  tom___startLine= tomMatch88_2.getLine() ;if ( ((( tom.engine.adt.tomsignature.types.TextPosition )tomMatch88_3) instanceof tom.engine.adt.tomsignature.types.textposition.TextPosition) ) {
+    { /* unamed block */{ /* unamed block */if ( (tlCode instanceof tom.engine.adt.code.types.TargetLanguage) ) {if ( ((( tom.engine.adt.code.types.TargetLanguage )tlCode) instanceof tom.engine.adt.code.types.targetlanguage.TL) ) { tom.engine.adt.tomsignature.types.TextPosition  tomMatch86_2= (( tom.engine.adt.code.types.TargetLanguage )tlCode).getStart() ; tom.engine.adt.tomsignature.types.TextPosition  tomMatch86_3= (( tom.engine.adt.code.types.TargetLanguage )tlCode).getEnd() ;if ( ((( tom.engine.adt.tomsignature.types.TextPosition )tomMatch86_2) instanceof tom.engine.adt.tomsignature.types.textposition.TextPosition) ) { int  tom___startLine= tomMatch86_2.getLine() ;if ( ((( tom.engine.adt.tomsignature.types.TextPosition )tomMatch86_3) instanceof tom.engine.adt.tomsignature.types.textposition.TextPosition) ) {
 
-        output.write(0,returnValue, tom___startLine,  tomMatch88_3.getLine() - tom___startLine);
+        output.write(0,returnValue, tom___startLine,  tomMatch86_3.getLine() - tom___startLine);
         return;
       }}}}}{ /* unamed block */if ( (tlCode instanceof tom.engine.adt.code.types.TargetLanguage) ) {if ( ((( tom.engine.adt.code.types.TargetLanguage )tlCode) instanceof tom.engine.adt.code.types.targetlanguage.ITL) ) {
 
@@ -483,17 +483,17 @@ s = "\n  "+modifier+" "+utype+" tom_append_list_"+name+"("+utype+"l1, "+utype+" 
 
     boolean inlined = inlineplus;
     boolean isCode = false;
-    { /* unamed block */{ /* unamed block */if ( (instr instanceof tom.engine.adt.tominstruction.types.Instruction) ) {if ( ((( tom.engine.adt.tominstruction.types.Instruction )instr) instanceof tom.engine.adt.tominstruction.types.instruction.ExpressionToInstruction) ) { tom.engine.adt.tomexpression.types.Expression  tomMatch89_1= (( tom.engine.adt.tominstruction.types.Instruction )instr).getExpr() ;if ( ((( tom.engine.adt.tomexpression.types.Expression )tomMatch89_1) instanceof tom.engine.adt.tomexpression.types.expression.Code) ) { String  tom___code= tomMatch89_1.getCode() ;
+    { /* unamed block */{ /* unamed block */if ( (instr instanceof tom.engine.adt.tominstruction.types.Instruction) ) {if ( ((( tom.engine.adt.tominstruction.types.Instruction )instr) instanceof tom.engine.adt.tominstruction.types.instruction.ExpressionToInstruction) ) { tom.engine.adt.tomexpression.types.Expression  tomMatch87_1= (( tom.engine.adt.tominstruction.types.Instruction )instr).getExpr() ;if ( ((( tom.engine.adt.tomexpression.types.Expression )tomMatch87_1) instanceof tom.engine.adt.tomexpression.types.expression.Code) ) { String  tom___code= tomMatch87_1.getCode() ;
 
         isCode = true;
         // perform the instantiation
         String ncode = tom___code;
         int index = 0;
-        { /* unamed block */{ /* unamed block */if ( (argList instanceof tom.engine.adt.code.types.BQTermList) ) {if ( (((( tom.engine.adt.code.types.BQTermList )argList) instanceof tom.engine.adt.code.types.bqtermlist.ConsconcBQTerm) || ((( tom.engine.adt.code.types.BQTermList )argList) instanceof tom.engine.adt.code.types.bqtermlist.EmptyconcBQTerm)) ) { tom.engine.adt.code.types.BQTermList  tomMatch90_end_4=(( tom.engine.adt.code.types.BQTermList )argList);do {{ /* unamed block */if (!( tomMatch90_end_4.isEmptyconcBQTerm() )) { tom.engine.adt.code.types.BQTerm  tomMatch90_8= tomMatch90_end_4.getHeadconcBQTerm() ;if ( ((( tom.engine.adt.code.types.BQTerm )tomMatch90_8) instanceof tom.engine.adt.code.types.bqterm.BQVariable) ) { tom.engine.adt.tomname.types.TomName  tomMatch90_7= tomMatch90_8.getAstName() ;if ( ((( tom.engine.adt.tomname.types.TomName )tomMatch90_7) instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
+        { /* unamed block */{ /* unamed block */if ( (argList instanceof tom.engine.adt.code.types.BQTermList) ) {if ( (((( tom.engine.adt.code.types.BQTermList )argList) instanceof tom.engine.adt.code.types.bqtermlist.ConsconcBQTerm) || ((( tom.engine.adt.code.types.BQTermList )argList) instanceof tom.engine.adt.code.types.bqtermlist.EmptyconcBQTerm)) ) { tom.engine.adt.code.types.BQTermList  tomMatch88_end_4=(( tom.engine.adt.code.types.BQTermList )argList);do {{ /* unamed block */if (!( tomMatch88_end_4.isEmptyconcBQTerm() )) { tom.engine.adt.code.types.BQTerm  tomMatch88_8= tomMatch88_end_4.getHeadconcBQTerm() ;if ( ((( tom.engine.adt.code.types.BQTerm )tomMatch88_8) instanceof tom.engine.adt.code.types.bqterm.BQVariable) ) { tom.engine.adt.tomname.types.TomName  tomMatch88_7= tomMatch88_8.getAstName() ;if ( ((( tom.engine.adt.tomname.types.TomName )tomMatch88_7) instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
 
-            ncode = ncode.replace("{"+index+"}", tomMatch90_7.getString() );
+            ncode = ncode.replace("{"+index+"}", tomMatch88_7.getString() );
             index++;
-          }}}if ( tomMatch90_end_4.isEmptyconcBQTerm() ) {tomMatch90_end_4=(( tom.engine.adt.code.types.BQTermList )argList);} else {tomMatch90_end_4= tomMatch90_end_4.getTailconcBQTerm() ;}}} while(!( (tomMatch90_end_4==(( tom.engine.adt.code.types.BQTermList )argList)) ));}}}}
+          }}}if ( tomMatch88_end_4.isEmptyconcBQTerm() ) {tomMatch88_end_4=(( tom.engine.adt.code.types.BQTermList )argList);} else {tomMatch88_end_4= tomMatch88_end_4.getTailconcBQTerm() ;}}} while(!( (tomMatch88_end_4==(( tom.engine.adt.code.types.BQTermList )argList)) ));}}}}
 
 
         if(!ncode.equals(tom___code)) {
@@ -508,9 +508,9 @@ s = "\n  "+modifier+" "+utype+" tom_append_list_"+name+"("+utype+"l1, "+utype+" 
       while(!argList.isEmptyconcBQTerm()) {
         BQTerm arg = argList.getHeadconcBQTerm();
 matchBlock: {
-              { /* unamed block */{ /* unamed block */if ( (arg instanceof tom.engine.adt.code.types.BQTerm) ) {if ( ((( tom.engine.adt.code.types.BQTerm )arg) instanceof tom.engine.adt.code.types.bqterm.BQVariable) ) { tom.engine.adt.tomname.types.TomName  tomMatch91_1= (( tom.engine.adt.code.types.BQTerm )arg).getAstName() ; tom.engine.adt.tomtype.types.TomType  tomMatch91_2= (( tom.engine.adt.code.types.BQTerm )arg).getAstType() ;if ( ((( tom.engine.adt.tomname.types.TomName )tomMatch91_1) instanceof tom.engine.adt.tomname.types.tomname.Name) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )tomMatch91_2) instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) { tom.engine.adt.tomtype.types.TargetLanguageType  tomMatch91_8= tomMatch91_2.getTlType() ;if ( ((( tom.engine.adt.tomtype.types.TargetLanguageType )tomMatch91_8) instanceof tom.engine.adt.tomtype.types.targetlanguagetype.TLType) ) {
+              { /* unamed block */{ /* unamed block */if ( (arg instanceof tom.engine.adt.code.types.BQTerm) ) {if ( ((( tom.engine.adt.code.types.BQTerm )arg) instanceof tom.engine.adt.code.types.bqterm.BQVariable) ) { tom.engine.adt.tomname.types.TomName  tomMatch89_1= (( tom.engine.adt.code.types.BQTerm )arg).getAstName() ; tom.engine.adt.tomtype.types.TomType  tomMatch89_2= (( tom.engine.adt.code.types.BQTerm )arg).getAstType() ;if ( ((( tom.engine.adt.tomname.types.TomName )tomMatch89_1) instanceof tom.engine.adt.tomname.types.tomname.Name) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )tomMatch89_2) instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) { tom.engine.adt.tomtype.types.TargetLanguageType  tomMatch89_8= tomMatch89_2.getTlType() ;if ( ((( tom.engine.adt.tomtype.types.TargetLanguageType )tomMatch89_8) instanceof tom.engine.adt.tomtype.types.targetlanguagetype.TLType) ) {
 
-                  s.append(TomBase.getTLCode(tomMatch91_8) + " " +  tomMatch91_1.getString() );
+                  s.append(TomBase.getTLCode(tomMatch89_8) + " " +  tomMatch89_1.getString() );
                   break matchBlock;
                 }}}}}}{ /* unamed block */if ( (arg instanceof tom.engine.adt.code.types.BQTerm) ) {
 

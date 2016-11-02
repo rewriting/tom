@@ -111,7 +111,7 @@ if(maximalsharing) {
 ); 
     if(variadicconstructor) {
       /* get the domain type of the constructor */
-      { /* unamed block */{ /* unamed block */if ( (slotList instanceof tom.gom.adt.objects.types.SlotFieldList) ) {if ( (((( tom.gom.adt.objects.types.SlotFieldList )slotList) instanceof tom.gom.adt.objects.types.slotfieldlist.ConsConcSlotField) || ((( tom.gom.adt.objects.types.SlotFieldList )slotList) instanceof tom.gom.adt.objects.types.slotfieldlist.EmptyConcSlotField)) ) {if (!( (( tom.gom.adt.objects.types.SlotFieldList )slotList).isEmptyConcSlotField() )) { tom.gom.adt.objects.types.SlotField  tomMatch586_5= (( tom.gom.adt.objects.types.SlotFieldList )slotList).getHeadConcSlotField() ;if ( ((( tom.gom.adt.objects.types.SlotField )tomMatch586_5) instanceof tom.gom.adt.objects.types.slotfield.SlotField) ) { tom.gom.adt.objects.types.ClassName  tom___domainclass= tomMatch586_5.getDomain() ;
+      { /* unamed block */{ /* unamed block */if ( (slotList instanceof tom.gom.adt.objects.types.SlotFieldList) ) {if ( (((( tom.gom.adt.objects.types.SlotFieldList )slotList) instanceof tom.gom.adt.objects.types.slotfieldlist.ConsConcSlotField) || ((( tom.gom.adt.objects.types.SlotFieldList )slotList) instanceof tom.gom.adt.objects.types.slotfieldlist.EmptyConcSlotField)) ) {if (!( (( tom.gom.adt.objects.types.SlotFieldList )slotList).isEmptyConcSlotField() )) { tom.gom.adt.objects.types.SlotField  tomMatch577_5= (( tom.gom.adt.objects.types.SlotFieldList )slotList).getHeadConcSlotField() ;if ( ((( tom.gom.adt.objects.types.SlotField )tomMatch577_5) instanceof tom.gom.adt.objects.types.slotfield.SlotField) ) { tom.gom.adt.objects.types.ClassName  tom___domainclass= tomMatch577_5.getDomain() ;
 
           if(!getGomEnvironment().isBuiltinClass(tom___domainclass)) {
             writer.write("\n   private "+fullClassName(tom___domainclass)+"[] children;\n                "
@@ -143,7 +143,7 @@ if(maximalsharing) {
 );
     if(variadicconstructor) {
       /* get the domain type of the constructor */
-      { /* unamed block */{ /* unamed block */if ( (slotList instanceof tom.gom.adt.objects.types.SlotFieldList) ) {if ( (((( tom.gom.adt.objects.types.SlotFieldList )slotList) instanceof tom.gom.adt.objects.types.slotfieldlist.ConsConcSlotField) || ((( tom.gom.adt.objects.types.SlotFieldList )slotList) instanceof tom.gom.adt.objects.types.slotfieldlist.EmptyConcSlotField)) ) {if (!( (( tom.gom.adt.objects.types.SlotFieldList )slotList).isEmptyConcSlotField() )) { tom.gom.adt.objects.types.SlotField  tomMatch587_5= (( tom.gom.adt.objects.types.SlotFieldList )slotList).getHeadConcSlotField() ;if ( ((( tom.gom.adt.objects.types.SlotField )tomMatch587_5) instanceof tom.gom.adt.objects.types.slotfield.SlotField) ) { tom.gom.adt.objects.types.ClassName  tom___domainclass= tomMatch587_5.getDomain() ;
+      { /* unamed block */{ /* unamed block */if ( (slotList instanceof tom.gom.adt.objects.types.SlotFieldList) ) {if ( (((( tom.gom.adt.objects.types.SlotFieldList )slotList) instanceof tom.gom.adt.objects.types.slotfieldlist.ConsConcSlotField) || ((( tom.gom.adt.objects.types.SlotFieldList )slotList) instanceof tom.gom.adt.objects.types.slotfieldlist.EmptyConcSlotField)) ) {if (!( (( tom.gom.adt.objects.types.SlotFieldList )slotList).isEmptyConcSlotField() )) { tom.gom.adt.objects.types.SlotField  tomMatch578_5= (( tom.gom.adt.objects.types.SlotFieldList )slotList).getHeadConcSlotField() ;if ( ((( tom.gom.adt.objects.types.SlotField )tomMatch578_5) instanceof tom.gom.adt.objects.types.slotfield.SlotField) ) { tom.gom.adt.objects.types.ClassName  tom___domainclass= tomMatch578_5.getDomain() ;
 
        if(!getGomEnvironment().isBuiltinClass(tom___domainclass)) {
           writer.write("\n   private "+fullClassName(tom___domainclass)+"[] children;\n          "
@@ -883,19 +883,19 @@ private void generateEnum(java.io.Writer writer) throws java.io.IOException {
   }
 
   private void generateMembers(java.io.Writer writer) throws java.io.IOException {
-    { /* unamed block */{ /* unamed block */if ( (slotList instanceof tom.gom.adt.objects.types.SlotFieldList) ) {if ( (((( tom.gom.adt.objects.types.SlotFieldList )slotList) instanceof tom.gom.adt.objects.types.slotfieldlist.ConsConcSlotField) || ((( tom.gom.adt.objects.types.SlotFieldList )slotList) instanceof tom.gom.adt.objects.types.slotfieldlist.EmptyConcSlotField)) ) { tom.gom.adt.objects.types.SlotFieldList  tomMatch588_end_4=(( tom.gom.adt.objects.types.SlotFieldList )slotList);do {{ /* unamed block */if (!( tomMatch588_end_4.isEmptyConcSlotField() )) { tom.gom.adt.objects.types.SlotField  tomMatch588_9= tomMatch588_end_4.getHeadConcSlotField() ;if ( ((( tom.gom.adt.objects.types.SlotField )tomMatch588_9) instanceof tom.gom.adt.objects.types.slotfield.SlotField) ) {
+    { /* unamed block */{ /* unamed block */if ( (slotList instanceof tom.gom.adt.objects.types.SlotFieldList) ) {if ( (((( tom.gom.adt.objects.types.SlotFieldList )slotList) instanceof tom.gom.adt.objects.types.slotfieldlist.ConsConcSlotField) || ((( tom.gom.adt.objects.types.SlotFieldList )slotList) instanceof tom.gom.adt.objects.types.slotfieldlist.EmptyConcSlotField)) ) { tom.gom.adt.objects.types.SlotFieldList  tomMatch579_end_4=(( tom.gom.adt.objects.types.SlotFieldList )slotList);do {{ /* unamed block */if (!( tomMatch579_end_4.isEmptyConcSlotField() )) { tom.gom.adt.objects.types.SlotField  tomMatch579_9= tomMatch579_end_4.getHeadConcSlotField() ;if ( ((( tom.gom.adt.objects.types.SlotField )tomMatch579_9) instanceof tom.gom.adt.objects.types.slotfield.SlotField) ) {
 
         writer.write("  private ");
-        writer.write(fullClassName( tomMatch588_9.getDomain() ));
+        writer.write(fullClassName( tomMatch579_9.getDomain() ));
         writer.write(" ");
-        writer.write(fieldName( tomMatch588_9.getName() ));
+        writer.write(fieldName( tomMatch579_9.getName() ));
         writer.write(";\n");
-      }}if ( tomMatch588_end_4.isEmptyConcSlotField() ) {tomMatch588_end_4=(( tom.gom.adt.objects.types.SlotFieldList )slotList);} else {tomMatch588_end_4= tomMatch588_end_4.getTailConcSlotField() ;}}} while(!( (tomMatch588_end_4==(( tom.gom.adt.objects.types.SlotFieldList )slotList)) ));}}}}
+      }}if ( tomMatch579_end_4.isEmptyConcSlotField() ) {tomMatch579_end_4=(( tom.gom.adt.objects.types.SlotFieldList )slotList);} else {tomMatch579_end_4= tomMatch579_end_4.getTailConcSlotField() ;}}} while(!( (tomMatch579_end_4==(( tom.gom.adt.objects.types.SlotFieldList )slotList)) ));}}}}
 
   }
 
   private void generateMembersInit(java.io.Writer writer) throws java.io.IOException {
-    { /* unamed block */{ /* unamed block */if ( (slotList instanceof tom.gom.adt.objects.types.SlotFieldList) ) {if ( (((( tom.gom.adt.objects.types.SlotFieldList )slotList) instanceof tom.gom.adt.objects.types.slotfieldlist.ConsConcSlotField) || ((( tom.gom.adt.objects.types.SlotFieldList )slotList) instanceof tom.gom.adt.objects.types.slotfieldlist.EmptyConcSlotField)) ) { tom.gom.adt.objects.types.SlotFieldList  tomMatch589_end_4=(( tom.gom.adt.objects.types.SlotFieldList )slotList);do {{ /* unamed block */if (!( tomMatch589_end_4.isEmptyConcSlotField() )) { tom.gom.adt.objects.types.SlotField  tomMatch589_9= tomMatch589_end_4.getHeadConcSlotField() ;if ( ((( tom.gom.adt.objects.types.SlotField )tomMatch589_9) instanceof tom.gom.adt.objects.types.slotfield.SlotField) ) { String  tom___fieldName= tomMatch589_9.getName() ; tom.gom.adt.objects.types.ClassName  tom___domain= tomMatch589_9.getDomain() ;
+    { /* unamed block */{ /* unamed block */if ( (slotList instanceof tom.gom.adt.objects.types.SlotFieldList) ) {if ( (((( tom.gom.adt.objects.types.SlotFieldList )slotList) instanceof tom.gom.adt.objects.types.slotfieldlist.ConsConcSlotField) || ((( tom.gom.adt.objects.types.SlotFieldList )slotList) instanceof tom.gom.adt.objects.types.slotfieldlist.EmptyConcSlotField)) ) { tom.gom.adt.objects.types.SlotFieldList  tomMatch580_end_4=(( tom.gom.adt.objects.types.SlotFieldList )slotList);do {{ /* unamed block */if (!( tomMatch580_end_4.isEmptyConcSlotField() )) { tom.gom.adt.objects.types.SlotField  tomMatch580_9= tomMatch580_end_4.getHeadConcSlotField() ;if ( ((( tom.gom.adt.objects.types.SlotField )tomMatch580_9) instanceof tom.gom.adt.objects.types.slotfield.SlotField) ) { String  tom___fieldName= tomMatch580_9.getName() ; tom.gom.adt.objects.types.ClassName  tom___domain= tomMatch580_9.getDomain() ;
 
         writer.write("    this.");
         writer.write(fieldName(tom___fieldName));
@@ -905,7 +905,7 @@ private void generateEnum(java.io.Writer writer) throws java.io.IOException {
           writer.write(".intern()");
         }
         writer.write(";\n");
-      }}if ( tomMatch589_end_4.isEmptyConcSlotField() ) {tomMatch589_end_4=(( tom.gom.adt.objects.types.SlotFieldList )slotList);} else {tomMatch589_end_4= tomMatch589_end_4.getTailConcSlotField() ;}}} while(!( (tomMatch589_end_4==(( tom.gom.adt.objects.types.SlotFieldList )slotList)) ));}}}}
+      }}if ( tomMatch580_end_4.isEmptyConcSlotField() ) {tomMatch580_end_4=(( tom.gom.adt.objects.types.SlotFieldList )slotList);} else {tomMatch580_end_4= tomMatch580_end_4.getTailConcSlotField() ;}}} while(!( (tomMatch580_end_4==(( tom.gom.adt.objects.types.SlotFieldList )slotList)) ));}}}}
 
   }
 
@@ -1091,7 +1091,7 @@ private void generateEnum(java.io.Writer writer) throws java.io.IOException {
     }
     res.append("\n      return "
 );
-    { /* unamed block */{ /* unamed block */if ( (slotList instanceof tom.gom.adt.objects.types.SlotFieldList) ) {if ( (((( tom.gom.adt.objects.types.SlotFieldList )slotList) instanceof tom.gom.adt.objects.types.slotfieldlist.ConsConcSlotField) || ((( tom.gom.adt.objects.types.SlotFieldList )slotList) instanceof tom.gom.adt.objects.types.slotfieldlist.EmptyConcSlotField)) ) { tom.gom.adt.objects.types.SlotFieldList  tomMatch594_end_4=(( tom.gom.adt.objects.types.SlotFieldList )slotList);do {{ /* unamed block */if (!( tomMatch594_end_4.isEmptyConcSlotField() )) { tom.gom.adt.objects.types.SlotField  tomMatch594_8= tomMatch594_end_4.getHeadConcSlotField() ;if ( ((( tom.gom.adt.objects.types.SlotField )tomMatch594_8) instanceof tom.gom.adt.objects.types.slotfield.SlotField) ) { String  tom___fieldName= tomMatch594_8.getName() ;
+    { /* unamed block */{ /* unamed block */if ( (slotList instanceof tom.gom.adt.objects.types.SlotFieldList) ) {if ( (((( tom.gom.adt.objects.types.SlotFieldList )slotList) instanceof tom.gom.adt.objects.types.slotfieldlist.ConsConcSlotField) || ((( tom.gom.adt.objects.types.SlotFieldList )slotList) instanceof tom.gom.adt.objects.types.slotfieldlist.EmptyConcSlotField)) ) { tom.gom.adt.objects.types.SlotFieldList  tomMatch585_end_4=(( tom.gom.adt.objects.types.SlotFieldList )slotList);do {{ /* unamed block */if (!( tomMatch585_end_4.isEmptyConcSlotField() )) { tom.gom.adt.objects.types.SlotField  tomMatch585_8= tomMatch585_end_4.getHeadConcSlotField() ;if ( ((( tom.gom.adt.objects.types.SlotField )tomMatch585_8) instanceof tom.gom.adt.objects.types.slotfield.SlotField) ) { String  tom___fieldName= tomMatch585_8.getName() ;
 
         res.append(fieldName(tom___fieldName));
         res.append("==");
@@ -1099,7 +1099,7 @@ private void generateEnum(java.io.Writer writer) throws java.io.IOException {
         res.append(".");
         res.append(fieldName(tom___fieldName));
         res.append(" && ");
-      }}if ( tomMatch594_end_4.isEmptyConcSlotField() ) {tomMatch594_end_4=(( tom.gom.adt.objects.types.SlotFieldList )slotList);} else {tomMatch594_end_4= tomMatch594_end_4.getTailConcSlotField() ;}}} while(!( (tomMatch594_end_4==(( tom.gom.adt.objects.types.SlotFieldList )slotList)) ));}}}}
+      }}if ( tomMatch585_end_4.isEmptyConcSlotField() ) {tomMatch585_end_4=(( tom.gom.adt.objects.types.SlotFieldList )slotList);} else {tomMatch585_end_4= tomMatch585_end_4.getTailConcSlotField() ;}}} while(!( (tomMatch585_end_4==(( tom.gom.adt.objects.types.SlotFieldList )slotList)) ));}}}}
 
     res.append("true;"); // to handle the "no children" case
     return res.toString();
@@ -1112,7 +1112,7 @@ private void generateEnum(java.io.Writer writer) throws java.io.IOException {
     } else {
       StringBuilder res = new StringBuilder("    switch(index) {\n");
       int index = 0;
-      { /* unamed block */{ /* unamed block */if ( (slotList instanceof tom.gom.adt.objects.types.SlotFieldList) ) {if ( (((( tom.gom.adt.objects.types.SlotFieldList )slotList) instanceof tom.gom.adt.objects.types.slotfieldlist.ConsConcSlotField) || ((( tom.gom.adt.objects.types.SlotFieldList )slotList) instanceof tom.gom.adt.objects.types.slotfieldlist.EmptyConcSlotField)) ) { tom.gom.adt.objects.types.SlotFieldList  tomMatch595_end_4=(( tom.gom.adt.objects.types.SlotFieldList )slotList);do {{ /* unamed block */if (!( tomMatch595_end_4.isEmptyConcSlotField() )) { tom.gom.adt.objects.types.SlotField  tomMatch595_9= tomMatch595_end_4.getHeadConcSlotField() ;if ( ((( tom.gom.adt.objects.types.SlotField )tomMatch595_9) instanceof tom.gom.adt.objects.types.slotfield.SlotField) ) { String  tom___fieldName= tomMatch595_9.getName() ; tom.gom.adt.objects.types.ClassName  tom___domain= tomMatch595_9.getDomain() ;
+      { /* unamed block */{ /* unamed block */if ( (slotList instanceof tom.gom.adt.objects.types.SlotFieldList) ) {if ( (((( tom.gom.adt.objects.types.SlotFieldList )slotList) instanceof tom.gom.adt.objects.types.slotfieldlist.ConsConcSlotField) || ((( tom.gom.adt.objects.types.SlotFieldList )slotList) instanceof tom.gom.adt.objects.types.slotfieldlist.EmptyConcSlotField)) ) { tom.gom.adt.objects.types.SlotFieldList  tomMatch586_end_4=(( tom.gom.adt.objects.types.SlotFieldList )slotList);do {{ /* unamed block */if (!( tomMatch586_end_4.isEmptyConcSlotField() )) { tom.gom.adt.objects.types.SlotField  tomMatch586_9= tomMatch586_end_4.getHeadConcSlotField() ;if ( ((( tom.gom.adt.objects.types.SlotField )tomMatch586_9) instanceof tom.gom.adt.objects.types.slotfield.SlotField) ) { String  tom___fieldName= tomMatch586_9.getName() ; tom.gom.adt.objects.types.ClassName  tom___domain= tomMatch586_9.getDomain() ;
 
           if(!getGomEnvironment().isBuiltinClass(tom___domain)) {
             res.append("      case ");
@@ -1131,7 +1131,7 @@ private void generateEnum(java.io.Writer writer) throws java.io.IOException {
             res.append(");\n");
             index++;
           }
-        }}if ( tomMatch595_end_4.isEmptyConcSlotField() ) {tomMatch595_end_4=(( tom.gom.adt.objects.types.SlotFieldList )slotList);} else {tomMatch595_end_4= tomMatch595_end_4.getTailConcSlotField() ;}}} while(!( (tomMatch595_end_4==(( tom.gom.adt.objects.types.SlotFieldList )slotList)) ));}}}}
+        }}if ( tomMatch586_end_4.isEmptyConcSlotField() ) {tomMatch586_end_4=(( tom.gom.adt.objects.types.SlotFieldList )slotList);} else {tomMatch586_end_4= tomMatch586_end_4.getTailConcSlotField() ;}}} while(!( (tomMatch586_end_4==(( tom.gom.adt.objects.types.SlotFieldList )slotList)) ));}}}}
 
       res.append("      default: throw new IndexOutOfBoundsException();\n }");
       return res.toString();
@@ -1142,7 +1142,7 @@ private void generateEnum(java.io.Writer writer) throws java.io.IOException {
     if(variadicconstructor) {
       // use the methods of the Collection interface
       if(className.getName().startsWith("Cons")) {
-        { /* unamed block */{ /* unamed block */if ( (slotList instanceof tom.gom.adt.objects.types.SlotFieldList) ) {if ( (((( tom.gom.adt.objects.types.SlotFieldList )slotList) instanceof tom.gom.adt.objects.types.slotfieldlist.ConsConcSlotField) || ((( tom.gom.adt.objects.types.SlotFieldList )slotList) instanceof tom.gom.adt.objects.types.slotfieldlist.EmptyConcSlotField)) ) {if (!( (( tom.gom.adt.objects.types.SlotFieldList )slotList).isEmptyConcSlotField() )) { tom.gom.adt.objects.types.SlotField  tomMatch596_5= (( tom.gom.adt.objects.types.SlotFieldList )slotList).getHeadConcSlotField() ;if ( ((( tom.gom.adt.objects.types.SlotField )tomMatch596_5) instanceof tom.gom.adt.objects.types.slotfield.SlotField) ) { tom.gom.adt.objects.types.ClassName  tom___domainclass= tomMatch596_5.getDomain() ;
+        { /* unamed block */{ /* unamed block */if ( (slotList instanceof tom.gom.adt.objects.types.SlotFieldList) ) {if ( (((( tom.gom.adt.objects.types.SlotFieldList )slotList) instanceof tom.gom.adt.objects.types.slotfieldlist.ConsConcSlotField) || ((( tom.gom.adt.objects.types.SlotFieldList )slotList) instanceof tom.gom.adt.objects.types.slotfieldlist.EmptyConcSlotField)) ) {if (!( (( tom.gom.adt.objects.types.SlotFieldList )slotList).isEmptyConcSlotField() )) { tom.gom.adt.objects.types.SlotField  tomMatch587_5= (( tom.gom.adt.objects.types.SlotFieldList )slotList).getHeadConcSlotField() ;if ( ((( tom.gom.adt.objects.types.SlotField )tomMatch587_5) instanceof tom.gom.adt.objects.types.slotfield.SlotField) ) { tom.gom.adt.objects.types.ClassName  tom___domainclass= tomMatch587_5.getDomain() ;
 
             if(!getGomEnvironment().isBuiltinClass(tom___domainclass)) {
               return "\n        if(children == null) {\n          children = toArray(new "+fullClassName(tom___domainclass)+"[]{});\n        }\n        return java.util.Arrays.copyOf(children,children.length);\n      "
@@ -1218,7 +1218,7 @@ private void generateEnum(java.io.Writer writer) throws java.io.IOException {
     if(variadicconstructor) {
       if(className.getName().startsWith("Cons")) {
         /* get the domain type of the constructor */
-        { /* unamed block */{ /* unamed block */if ( (slotList instanceof tom.gom.adt.objects.types.SlotFieldList) ) {if ( (((( tom.gom.adt.objects.types.SlotFieldList )slotList) instanceof tom.gom.adt.objects.types.slotfieldlist.ConsConcSlotField) || ((( tom.gom.adt.objects.types.SlotFieldList )slotList) instanceof tom.gom.adt.objects.types.slotfieldlist.EmptyConcSlotField)) ) {if (!( (( tom.gom.adt.objects.types.SlotFieldList )slotList).isEmptyConcSlotField() )) { tom.gom.adt.objects.types.SlotField  tomMatch598_5= (( tom.gom.adt.objects.types.SlotFieldList )slotList).getHeadConcSlotField() ;if ( ((( tom.gom.adt.objects.types.SlotField )tomMatch598_5) instanceof tom.gom.adt.objects.types.slotfield.SlotField) ) { tom.gom.adt.objects.types.ClassName  tom___domainclass= tomMatch598_5.getDomain() ;
+        { /* unamed block */{ /* unamed block */if ( (slotList instanceof tom.gom.adt.objects.types.SlotFieldList) ) {if ( (((( tom.gom.adt.objects.types.SlotFieldList )slotList) instanceof tom.gom.adt.objects.types.slotfieldlist.ConsConcSlotField) || ((( tom.gom.adt.objects.types.SlotFieldList )slotList) instanceof tom.gom.adt.objects.types.slotfieldlist.EmptyConcSlotField)) ) {if (!( (( tom.gom.adt.objects.types.SlotFieldList )slotList).isEmptyConcSlotField() )) { tom.gom.adt.objects.types.SlotField  tomMatch589_5= (( tom.gom.adt.objects.types.SlotFieldList )slotList).getHeadConcSlotField() ;if ( ((( tom.gom.adt.objects.types.SlotField )tomMatch589_5) instanceof tom.gom.adt.objects.types.slotfield.SlotField) ) { tom.gom.adt.objects.types.ClassName  tom___domainclass= tomMatch589_5.getDomain() ;
 
             if(!getGomEnvironment().isBuiltinClass(tom___domainclass)) {
               return "\n               "+fullClassName(tom___domainclass)+"[] typed_children = new "+fullClassName(tom___domainclass)+"[children.length];\n              for (int i=0; i<children.length; i++) {\n                typed_children[i] = ("+fullClassName(tom___domainclass)+") children[i]; \n              }\n              return fromArray(typed_children);\n              "
@@ -1246,7 +1246,7 @@ private void generateEnum(java.io.Writer writer) throws java.io.IOException {
     } else { 
       StringBuilder res = new StringBuilder("return make(");
       int index = 0;
-      { /* unamed block */{ /* unamed block */if ( (slotList instanceof tom.gom.adt.objects.types.SlotFieldList) ) {if ( (((( tom.gom.adt.objects.types.SlotFieldList )slotList) instanceof tom.gom.adt.objects.types.slotfieldlist.ConsConcSlotField) || ((( tom.gom.adt.objects.types.SlotFieldList )slotList) instanceof tom.gom.adt.objects.types.slotfieldlist.EmptyConcSlotField)) ) { tom.gom.adt.objects.types.SlotFieldList  tomMatch599_end_4=(( tom.gom.adt.objects.types.SlotFieldList )slotList);do {{ /* unamed block */if (!( tomMatch599_end_4.isEmptyConcSlotField() )) { tom.gom.adt.objects.types.SlotField  tomMatch599_8= tomMatch599_end_4.getHeadConcSlotField() ;if ( ((( tom.gom.adt.objects.types.SlotField )tomMatch599_8) instanceof tom.gom.adt.objects.types.slotfield.SlotField) ) { tom.gom.adt.objects.types.ClassName  tom___domain= tomMatch599_8.getDomain() ;
+      { /* unamed block */{ /* unamed block */if ( (slotList instanceof tom.gom.adt.objects.types.SlotFieldList) ) {if ( (((( tom.gom.adt.objects.types.SlotFieldList )slotList) instanceof tom.gom.adt.objects.types.slotfieldlist.ConsConcSlotField) || ((( tom.gom.adt.objects.types.SlotFieldList )slotList) instanceof tom.gom.adt.objects.types.slotfieldlist.EmptyConcSlotField)) ) { tom.gom.adt.objects.types.SlotFieldList  tomMatch590_end_4=(( tom.gom.adt.objects.types.SlotFieldList )slotList);do {{ /* unamed block */if (!( tomMatch590_end_4.isEmptyConcSlotField() )) { tom.gom.adt.objects.types.SlotField  tomMatch590_8= tomMatch590_end_4.getHeadConcSlotField() ;if ( ((( tom.gom.adt.objects.types.SlotField )tomMatch590_8) instanceof tom.gom.adt.objects.types.slotfield.SlotField) ) { tom.gom.adt.objects.types.ClassName  tom___domain= tomMatch590_8.getDomain() ;
 
           if(index>0) { res.append(", "); }
           if(!getGomEnvironment().isBuiltinClass(tom___domain)) {
@@ -1268,7 +1268,7 @@ private void generateEnum(java.io.Writer writer) throws java.io.IOException {
             res.append(".getBuiltin()");
           }
           index++;
-        }}if ( tomMatch599_end_4.isEmptyConcSlotField() ) {tomMatch599_end_4=(( tom.gom.adt.objects.types.SlotFieldList )slotList);} else {tomMatch599_end_4= tomMatch599_end_4.getTailConcSlotField() ;}}} while(!( (tomMatch599_end_4==(( tom.gom.adt.objects.types.SlotFieldList )slotList)) ));}}}}
+        }}if ( tomMatch590_end_4.isEmptyConcSlotField() ) {tomMatch590_end_4=(( tom.gom.adt.objects.types.SlotFieldList )slotList);} else {tomMatch590_end_4= tomMatch590_end_4.getTailConcSlotField() ;}}} while(!( (tomMatch590_end_4==(( tom.gom.adt.objects.types.SlotFieldList )slotList)) ));}}}}
 
       res.append(");");
       return res.toString();
@@ -1294,7 +1294,7 @@ private void generateEnum(java.io.Writer writer) throws java.io.IOException {
       }
     } else {
       int index = 0;
-      { /* unamed block */{ /* unamed block */if ( (slotList instanceof tom.gom.adt.objects.types.SlotFieldList) ) {if ( (((( tom.gom.adt.objects.types.SlotFieldList )slotList) instanceof tom.gom.adt.objects.types.slotfieldlist.ConsConcSlotField) || ((( tom.gom.adt.objects.types.SlotFieldList )slotList) instanceof tom.gom.adt.objects.types.slotfieldlist.EmptyConcSlotField)) ) { tom.gom.adt.objects.types.SlotFieldList  tomMatch601_end_4=(( tom.gom.adt.objects.types.SlotFieldList )slotList);do {{ /* unamed block */if (!( tomMatch601_end_4.isEmptyConcSlotField() )) { tom.gom.adt.objects.types.SlotField  tomMatch601_8= tomMatch601_end_4.getHeadConcSlotField() ;if ( ((( tom.gom.adt.objects.types.SlotField )tomMatch601_8) instanceof tom.gom.adt.objects.types.slotfield.SlotField) ) { tom.gom.adt.objects.types.ClassName  tom___domain= tomMatch601_8.getDomain() ;
+      { /* unamed block */{ /* unamed block */if ( (slotList instanceof tom.gom.adt.objects.types.SlotFieldList) ) {if ( (((( tom.gom.adt.objects.types.SlotFieldList )slotList) instanceof tom.gom.adt.objects.types.slotfieldlist.ConsConcSlotField) || ((( tom.gom.adt.objects.types.SlotFieldList )slotList) instanceof tom.gom.adt.objects.types.slotfieldlist.EmptyConcSlotField)) ) { tom.gom.adt.objects.types.SlotFieldList  tomMatch592_end_4=(( tom.gom.adt.objects.types.SlotFieldList )slotList);do {{ /* unamed block */if (!( tomMatch592_end_4.isEmptyConcSlotField() )) { tom.gom.adt.objects.types.SlotField  tomMatch592_8= tomMatch592_end_4.getHeadConcSlotField() ;if ( ((( tom.gom.adt.objects.types.SlotField )tomMatch592_8) instanceof tom.gom.adt.objects.types.slotfield.SlotField) ) { tom.gom.adt.objects.types.ClassName  tom___domain= tomMatch592_8.getDomain() ;
 
           if(!getGomEnvironment().isBuiltinClass(tom___domain)) {
             res.append(" && "+arrayName+"["+index+"] instanceof "+fullClassName(tom___domain)+"");
@@ -1302,7 +1302,7 @@ private void generateEnum(java.io.Writer writer) throws java.io.IOException {
             res.append(" && "+arrayName+"["+index+"] instanceof tom.library.sl.VisitableBuiltin");
           }
           index++;
-        }}if ( tomMatch601_end_4.isEmptyConcSlotField() ) {tomMatch601_end_4=(( tom.gom.adt.objects.types.SlotFieldList )slotList);} else {tomMatch601_end_4= tomMatch601_end_4.getTailConcSlotField() ;}}} while(!( (tomMatch601_end_4==(( tom.gom.adt.objects.types.SlotFieldList )slotList)) ));}}}}
+        }}if ( tomMatch592_end_4.isEmptyConcSlotField() ) {tomMatch592_end_4=(( tom.gom.adt.objects.types.SlotFieldList )slotList);} else {tomMatch592_end_4= tomMatch592_end_4.getTailConcSlotField() ;}}} while(!( (tomMatch592_end_4==(( tom.gom.adt.objects.types.SlotFieldList )slotList)) ));}}}}
 
     }
     return res.toString();
@@ -1312,7 +1312,7 @@ private String setchildat(String argName) {
   if(variadicconstructor) {
     if(className.getName().startsWith("Cons")) {
     /* get the domain type of the constructor */
-     { /* unamed block */{ /* unamed block */if ( (slotList instanceof tom.gom.adt.objects.types.SlotFieldList) ) {if ( (((( tom.gom.adt.objects.types.SlotFieldList )slotList) instanceof tom.gom.adt.objects.types.slotfieldlist.ConsConcSlotField) || ((( tom.gom.adt.objects.types.SlotFieldList )slotList) instanceof tom.gom.adt.objects.types.slotfieldlist.EmptyConcSlotField)) ) {if (!( (( tom.gom.adt.objects.types.SlotFieldList )slotList).isEmptyConcSlotField() )) { tom.gom.adt.objects.types.SlotField  tomMatch602_5= (( tom.gom.adt.objects.types.SlotFieldList )slotList).getHeadConcSlotField() ;if ( ((( tom.gom.adt.objects.types.SlotField )tomMatch602_5) instanceof tom.gom.adt.objects.types.slotfield.SlotField) ) { tom.gom.adt.objects.types.ClassName  tom___domainclass= tomMatch602_5.getDomain() ;
+     { /* unamed block */{ /* unamed block */if ( (slotList instanceof tom.gom.adt.objects.types.SlotFieldList) ) {if ( (((( tom.gom.adt.objects.types.SlotFieldList )slotList) instanceof tom.gom.adt.objects.types.slotfieldlist.ConsConcSlotField) || ((( tom.gom.adt.objects.types.SlotFieldList )slotList) instanceof tom.gom.adt.objects.types.slotfieldlist.EmptyConcSlotField)) ) {if (!( (( tom.gom.adt.objects.types.SlotFieldList )slotList).isEmptyConcSlotField() )) { tom.gom.adt.objects.types.SlotField  tomMatch593_5= (( tom.gom.adt.objects.types.SlotFieldList )slotList).getHeadConcSlotField() ;if ( ((( tom.gom.adt.objects.types.SlotField )tomMatch593_5) instanceof tom.gom.adt.objects.types.slotfield.SlotField) ) { tom.gom.adt.objects.types.ClassName  tom___domainclass= tomMatch593_5.getDomain() ;
 
         String domain = fullClassName(tom___domainclass); 
         StringBuilder res = new StringBuilder();
@@ -1347,11 +1347,11 @@ private String setchildat(String argName) {
   } else {
     StringBuilder res = new StringBuilder("    switch(index) {\n");
     int index = 0;
-    { /* unamed block */{ /* unamed block */if ( (slotList instanceof tom.gom.adt.objects.types.SlotFieldList) ) {if ( (((( tom.gom.adt.objects.types.SlotFieldList )slotList) instanceof tom.gom.adt.objects.types.slotfieldlist.ConsConcSlotField) || ((( tom.gom.adt.objects.types.SlotFieldList )slotList) instanceof tom.gom.adt.objects.types.slotfieldlist.EmptyConcSlotField)) ) { tom.gom.adt.objects.types.SlotFieldList  tomMatch603_end_4=(( tom.gom.adt.objects.types.SlotFieldList )slotList);do {{ /* unamed block */if (!( tomMatch603_end_4.isEmptyConcSlotField() )) {if ( ((( tom.gom.adt.objects.types.SlotField ) tomMatch603_end_4.getHeadConcSlotField() ) instanceof tom.gom.adt.objects.types.slotfield.SlotField) ) {
+    { /* unamed block */{ /* unamed block */if ( (slotList instanceof tom.gom.adt.objects.types.SlotFieldList) ) {if ( (((( tom.gom.adt.objects.types.SlotFieldList )slotList) instanceof tom.gom.adt.objects.types.slotfieldlist.ConsConcSlotField) || ((( tom.gom.adt.objects.types.SlotFieldList )slotList) instanceof tom.gom.adt.objects.types.slotfieldlist.EmptyConcSlotField)) ) { tom.gom.adt.objects.types.SlotFieldList  tomMatch594_end_4=(( tom.gom.adt.objects.types.SlotFieldList )slotList);do {{ /* unamed block */if (!( tomMatch594_end_4.isEmptyConcSlotField() )) {if ( ((( tom.gom.adt.objects.types.SlotField ) tomMatch594_end_4.getHeadConcSlotField() ) instanceof tom.gom.adt.objects.types.slotfield.SlotField) ) {
 
         res.append("      case "+index+": return make("+generateMakeArgsFor(index, argName)+");\n");
         index++;
-      }}if ( tomMatch603_end_4.isEmptyConcSlotField() ) {tomMatch603_end_4=(( tom.gom.adt.objects.types.SlotFieldList )slotList);} else {tomMatch603_end_4= tomMatch603_end_4.getTailConcSlotField() ;}}} while(!( (tomMatch603_end_4==(( tom.gom.adt.objects.types.SlotFieldList )slotList)) ));}}}}
+      }}if ( tomMatch594_end_4.isEmptyConcSlotField() ) {tomMatch594_end_4=(( tom.gom.adt.objects.types.SlotFieldList )slotList);} else {tomMatch594_end_4= tomMatch594_end_4.getTailConcSlotField() ;}}} while(!( (tomMatch594_end_4==(( tom.gom.adt.objects.types.SlotFieldList )slotList)) ));}}}}
 
     res.append("      default: throw new IndexOutOfBoundsException();\n }");
     return res.toString();
@@ -1361,15 +1361,15 @@ private String setchildat(String argName) {
 private String generateMakeArgsFor(int argIndex, String argName) {
   StringBuilder res = new StringBuilder();
   int index = 0;
-  { /* unamed block */{ /* unamed block */if ( (slotList instanceof tom.gom.adt.objects.types.SlotFieldList) ) {if ( (((( tom.gom.adt.objects.types.SlotFieldList )slotList) instanceof tom.gom.adt.objects.types.slotfieldlist.ConsConcSlotField) || ((( tom.gom.adt.objects.types.SlotFieldList )slotList) instanceof tom.gom.adt.objects.types.slotfieldlist.EmptyConcSlotField)) ) { tom.gom.adt.objects.types.SlotFieldList  tomMatch604_end_4=(( tom.gom.adt.objects.types.SlotFieldList )slotList);do {{ /* unamed block */if (!( tomMatch604_end_4.isEmptyConcSlotField() )) { tom.gom.adt.objects.types.SlotField  tomMatch604_9= tomMatch604_end_4.getHeadConcSlotField() ;if ( ((( tom.gom.adt.objects.types.SlotField )tomMatch604_9) instanceof tom.gom.adt.objects.types.slotfield.SlotField) ) { tom.gom.adt.objects.types.ClassName  tom___domain= tomMatch604_9.getDomain() ;
+  { /* unamed block */{ /* unamed block */if ( (slotList instanceof tom.gom.adt.objects.types.SlotFieldList) ) {if ( (((( tom.gom.adt.objects.types.SlotFieldList )slotList) instanceof tom.gom.adt.objects.types.slotfieldlist.ConsConcSlotField) || ((( tom.gom.adt.objects.types.SlotFieldList )slotList) instanceof tom.gom.adt.objects.types.slotfieldlist.EmptyConcSlotField)) ) { tom.gom.adt.objects.types.SlotFieldList  tomMatch595_end_4=(( tom.gom.adt.objects.types.SlotFieldList )slotList);do {{ /* unamed block */if (!( tomMatch595_end_4.isEmptyConcSlotField() )) { tom.gom.adt.objects.types.SlotField  tomMatch595_9= tomMatch595_end_4.getHeadConcSlotField() ;if ( ((( tom.gom.adt.objects.types.SlotField )tomMatch595_9) instanceof tom.gom.adt.objects.types.slotfield.SlotField) ) { tom.gom.adt.objects.types.ClassName  tom___domain= tomMatch595_9.getDomain() ;
 
       if(index>0) { res.append(", "); }
       if(getGomEnvironment().isBuiltinClass(tom___domain)) {
-        res.append(getMethod( tomMatch604_end_4.getHeadConcSlotField() ));
+        res.append(getMethod( tomMatch595_end_4.getHeadConcSlotField() ));
         res.append("()");
       } else {
         if(index != argIndex) {
-          res.append(fieldName( tomMatch604_9.getName() ));
+          res.append(fieldName( tomMatch595_9.getName() ));
         } else {
           res.append("(");
           res.append(fullClassName(tom___domain));
@@ -1378,23 +1378,23 @@ private String generateMakeArgsFor(int argIndex, String argName) {
         }
       }
       index++;
-    }}if ( tomMatch604_end_4.isEmptyConcSlotField() ) {tomMatch604_end_4=(( tom.gom.adt.objects.types.SlotFieldList )slotList);} else {tomMatch604_end_4= tomMatch604_end_4.getTailConcSlotField() ;}}} while(!( (tomMatch604_end_4==(( tom.gom.adt.objects.types.SlotFieldList )slotList)) ));}}}}
+    }}if ( tomMatch595_end_4.isEmptyConcSlotField() ) {tomMatch595_end_4=(( tom.gom.adt.objects.types.SlotFieldList )slotList);} else {tomMatch595_end_4= tomMatch595_end_4.getTailConcSlotField() ;}}} while(!( (tomMatch595_end_4==(( tom.gom.adt.objects.types.SlotFieldList )slotList)) ));}}}}
 
   return res.toString();
 }
 private String generateMakeArgsFor(SlotField slot, String argName) {
   StringBuilder res = new StringBuilder();
   int fullindex = 0;
-  { /* unamed block */{ /* unamed block */if ( (slotList instanceof tom.gom.adt.objects.types.SlotFieldList) ) {if ( (((( tom.gom.adt.objects.types.SlotFieldList )slotList) instanceof tom.gom.adt.objects.types.slotfieldlist.ConsConcSlotField) || ((( tom.gom.adt.objects.types.SlotFieldList )slotList) instanceof tom.gom.adt.objects.types.slotfieldlist.EmptyConcSlotField)) ) { tom.gom.adt.objects.types.SlotFieldList  tomMatch605_end_4=(( tom.gom.adt.objects.types.SlotFieldList )slotList);do {{ /* unamed block */if (!( tomMatch605_end_4.isEmptyConcSlotField() )) { tom.gom.adt.objects.types.SlotField  tomMatch605_8= tomMatch605_end_4.getHeadConcSlotField() ;if ( ((( tom.gom.adt.objects.types.SlotField )tomMatch605_8) instanceof tom.gom.adt.objects.types.slotfield.SlotField) ) {
+  { /* unamed block */{ /* unamed block */if ( (slotList instanceof tom.gom.adt.objects.types.SlotFieldList) ) {if ( (((( tom.gom.adt.objects.types.SlotFieldList )slotList) instanceof tom.gom.adt.objects.types.slotfieldlist.ConsConcSlotField) || ((( tom.gom.adt.objects.types.SlotFieldList )slotList) instanceof tom.gom.adt.objects.types.slotfieldlist.EmptyConcSlotField)) ) { tom.gom.adt.objects.types.SlotFieldList  tomMatch596_end_4=(( tom.gom.adt.objects.types.SlotFieldList )slotList);do {{ /* unamed block */if (!( tomMatch596_end_4.isEmptyConcSlotField() )) { tom.gom.adt.objects.types.SlotField  tomMatch596_8= tomMatch596_end_4.getHeadConcSlotField() ;if ( ((( tom.gom.adt.objects.types.SlotField )tomMatch596_8) instanceof tom.gom.adt.objects.types.slotfield.SlotField) ) {
 
       if(fullindex>0) { res.append(", "); }
-      if( tomMatch605_end_4.getHeadConcSlotField() == slot) {
+      if( tomMatch596_end_4.getHeadConcSlotField() == slot) {
         res.append(argName);
       } else {
-        res.append(fieldName( tomMatch605_8.getName() ));
+        res.append(fieldName( tomMatch596_8.getName() ));
       }
       fullindex++;
-    }}if ( tomMatch605_end_4.isEmptyConcSlotField() ) {tomMatch605_end_4=(( tom.gom.adt.objects.types.SlotFieldList )slotList);} else {tomMatch605_end_4= tomMatch605_end_4.getTailConcSlotField() ;}}} while(!( (tomMatch605_end_4==(( tom.gom.adt.objects.types.SlotFieldList )slotList)) ));}}}}
+    }}if ( tomMatch596_end_4.isEmptyConcSlotField() ) {tomMatch596_end_4=(( tom.gom.adt.objects.types.SlotFieldList )slotList);} else {tomMatch596_end_4= tomMatch596_end_4.getTailConcSlotField() ;}}} while(!( (tomMatch596_end_4==(( tom.gom.adt.objects.types.SlotFieldList )slotList)) ));}}}}
 
   return res.toString();
 }
@@ -1423,7 +1423,7 @@ private String generateMakeArgsFor(SlotField slot, String argName) {
     if(!slotList.isEmptyConcSlotField()) {
     res.append(""+className()+" "+other+" = ("+className()+") "+oldOther+";");
     }
-    { /* unamed block */{ /* unamed block */if ( (slotList instanceof tom.gom.adt.objects.types.SlotFieldList) ) {if ( (((( tom.gom.adt.objects.types.SlotFieldList )slotList) instanceof tom.gom.adt.objects.types.slotfieldlist.ConsConcSlotField) || ((( tom.gom.adt.objects.types.SlotFieldList )slotList) instanceof tom.gom.adt.objects.types.slotfieldlist.EmptyConcSlotField)) ) { tom.gom.adt.objects.types.SlotFieldList  tomMatch606_end_4=(( tom.gom.adt.objects.types.SlotFieldList )slotList);do {{ /* unamed block */if (!( tomMatch606_end_4.isEmptyConcSlotField() )) { tom.gom.adt.objects.types.SlotField  tomMatch606_9= tomMatch606_end_4.getHeadConcSlotField() ;if ( ((( tom.gom.adt.objects.types.SlotField )tomMatch606_9) instanceof tom.gom.adt.objects.types.slotfield.SlotField) ) { String  tom___slotName= tomMatch606_9.getName() ; tom.gom.adt.objects.types.ClassName  tom___domain= tomMatch606_9.getDomain() ;
+    { /* unamed block */{ /* unamed block */if ( (slotList instanceof tom.gom.adt.objects.types.SlotFieldList) ) {if ( (((( tom.gom.adt.objects.types.SlotFieldList )slotList) instanceof tom.gom.adt.objects.types.slotfieldlist.ConsConcSlotField) || ((( tom.gom.adt.objects.types.SlotFieldList )slotList) instanceof tom.gom.adt.objects.types.slotfieldlist.EmptyConcSlotField)) ) { tom.gom.adt.objects.types.SlotFieldList  tomMatch597_end_4=(( tom.gom.adt.objects.types.SlotFieldList )slotList);do {{ /* unamed block */if (!( tomMatch597_end_4.isEmptyConcSlotField() )) { tom.gom.adt.objects.types.SlotField  tomMatch597_9= tomMatch597_end_4.getHeadConcSlotField() ;if ( ((( tom.gom.adt.objects.types.SlotField )tomMatch597_9) instanceof tom.gom.adt.objects.types.slotfield.SlotField) ) { String  tom___slotName= tomMatch597_9.getName() ; tom.gom.adt.objects.types.ClassName  tom___domain= tomMatch597_9.getDomain() ;
 
         if(getGomEnvironment().isBuiltinClass(tom___domain)) {
          if(tom___domain.equals( tom.gom.adt.objects.types.classname.ClassName.make("", "int") )
@@ -1470,14 +1470,14 @@ private String generateMakeArgsFor(SlotField slot, String argName) {
 
 );
         }
-      }}if ( tomMatch606_end_4.isEmptyConcSlotField() ) {tomMatch606_end_4=(( tom.gom.adt.objects.types.SlotFieldList )slotList);} else {tomMatch606_end_4= tomMatch606_end_4.getTailConcSlotField() ;}}} while(!( (tomMatch606_end_4==(( tom.gom.adt.objects.types.SlotFieldList )slotList)) ));}}}}
+      }}if ( tomMatch597_end_4.isEmptyConcSlotField() ) {tomMatch597_end_4=(( tom.gom.adt.objects.types.SlotFieldList )slotList);} else {tomMatch597_end_4= tomMatch597_end_4.getTailConcSlotField() ;}}} while(!( (tomMatch597_end_4==(( tom.gom.adt.objects.types.SlotFieldList )slotList)) ));}}}}
 
     return res.toString();
   }
 
   private void generateHashArgs(java.io.Writer writer) throws java.io.IOException {
     int index = slotList.length() - 1;
-    { /* unamed block */{ /* unamed block */if ( (slotList instanceof tom.gom.adt.objects.types.SlotFieldList) ) {if ( (((( tom.gom.adt.objects.types.SlotFieldList )slotList) instanceof tom.gom.adt.objects.types.slotfieldlist.ConsConcSlotField) || ((( tom.gom.adt.objects.types.SlotFieldList )slotList) instanceof tom.gom.adt.objects.types.slotfieldlist.EmptyConcSlotField)) ) { tom.gom.adt.objects.types.SlotFieldList  tomMatch607_end_4=(( tom.gom.adt.objects.types.SlotFieldList )slotList);do {{ /* unamed block */if (!( tomMatch607_end_4.isEmptyConcSlotField() )) { tom.gom.adt.objects.types.SlotField  tomMatch607_9= tomMatch607_end_4.getHeadConcSlotField() ;if ( ((( tom.gom.adt.objects.types.SlotField )tomMatch607_9) instanceof tom.gom.adt.objects.types.slotfield.SlotField) ) { String  tom___slotName= tomMatch607_9.getName() ; tom.gom.adt.objects.types.ClassName  tom___domain= tomMatch607_9.getDomain() ;
+    { /* unamed block */{ /* unamed block */if ( (slotList instanceof tom.gom.adt.objects.types.SlotFieldList) ) {if ( (((( tom.gom.adt.objects.types.SlotFieldList )slotList) instanceof tom.gom.adt.objects.types.slotfieldlist.ConsConcSlotField) || ((( tom.gom.adt.objects.types.SlotFieldList )slotList) instanceof tom.gom.adt.objects.types.slotfieldlist.EmptyConcSlotField)) ) { tom.gom.adt.objects.types.SlotFieldList  tomMatch598_end_4=(( tom.gom.adt.objects.types.SlotFieldList )slotList);do {{ /* unamed block */if (!( tomMatch598_end_4.isEmptyConcSlotField() )) { tom.gom.adt.objects.types.SlotField  tomMatch598_9= tomMatch598_end_4.getHeadConcSlotField() ;if ( ((( tom.gom.adt.objects.types.SlotField )tomMatch598_9) instanceof tom.gom.adt.objects.types.slotfield.SlotField) ) { String  tom___slotName= tomMatch598_9.getName() ; tom.gom.adt.objects.types.ClassName  tom___domain= tomMatch598_9.getDomain() ;
 
         int shift = (index % 4) * 8;
         String accum = ""+"aaaabbbbcccc".toCharArray()[index % 12];
@@ -1512,14 +1512,14 @@ private String generateMakeArgsFor(SlotField slot, String argName) {
         if(shift!=0) { writer.write(" << "+(shift)); }
         writer.write(");\n");
         index--;
-      }}if ( tomMatch607_end_4.isEmptyConcSlotField() ) {tomMatch607_end_4=(( tom.gom.adt.objects.types.SlotFieldList )slotList);} else {tomMatch607_end_4= tomMatch607_end_4.getTailConcSlotField() ;}}} while(!( (tomMatch607_end_4==(( tom.gom.adt.objects.types.SlotFieldList )slotList)) ));}}}}
+      }}if ( tomMatch598_end_4.isEmptyConcSlotField() ) {tomMatch598_end_4=(( tom.gom.adt.objects.types.SlotFieldList )slotList);} else {tomMatch598_end_4= tomMatch598_end_4.getTailConcSlotField() ;}}} while(!( (tomMatch598_end_4==(( tom.gom.adt.objects.types.SlotFieldList )slotList)) ));}}}}
 
   }
 
   private void generateHashArgsLookup3(java.io.Writer writer) throws java.io.IOException {
     int k=0;
     int index = slotList.length() - 1;
-    { /* unamed block */{ /* unamed block */if ( (slotList instanceof tom.gom.adt.objects.types.SlotFieldList) ) {if ( (((( tom.gom.adt.objects.types.SlotFieldList )slotList) instanceof tom.gom.adt.objects.types.slotfieldlist.ConsConcSlotField) || ((( tom.gom.adt.objects.types.SlotFieldList )slotList) instanceof tom.gom.adt.objects.types.slotfieldlist.EmptyConcSlotField)) ) { tom.gom.adt.objects.types.SlotFieldList  tomMatch608_end_4=(( tom.gom.adt.objects.types.SlotFieldList )slotList);do {{ /* unamed block */if (!( tomMatch608_end_4.isEmptyConcSlotField() )) { tom.gom.adt.objects.types.SlotField  tomMatch608_9= tomMatch608_end_4.getHeadConcSlotField() ;if ( ((( tom.gom.adt.objects.types.SlotField )tomMatch608_9) instanceof tom.gom.adt.objects.types.slotfield.SlotField) ) { String  tom___slotName= tomMatch608_9.getName() ; tom.gom.adt.objects.types.ClassName  tom___domain= tomMatch608_9.getDomain() ;
+    { /* unamed block */{ /* unamed block */if ( (slotList instanceof tom.gom.adt.objects.types.SlotFieldList) ) {if ( (((( tom.gom.adt.objects.types.SlotFieldList )slotList) instanceof tom.gom.adt.objects.types.slotfieldlist.ConsConcSlotField) || ((( tom.gom.adt.objects.types.SlotFieldList )slotList) instanceof tom.gom.adt.objects.types.slotfieldlist.EmptyConcSlotField)) ) { tom.gom.adt.objects.types.SlotFieldList  tomMatch599_end_4=(( tom.gom.adt.objects.types.SlotFieldList )slotList);do {{ /* unamed block */if (!( tomMatch599_end_4.isEmptyConcSlotField() )) { tom.gom.adt.objects.types.SlotField  tomMatch599_9= tomMatch599_end_4.getHeadConcSlotField() ;if ( ((( tom.gom.adt.objects.types.SlotField )tomMatch599_9) instanceof tom.gom.adt.objects.types.slotfield.SlotField) ) { String  tom___slotName= tomMatch599_9.getName() ; tom.gom.adt.objects.types.ClassName  tom___domain= tomMatch599_9.getDomain() ;
 
         k++;
         switch(k % 3) {
@@ -1568,17 +1568,17 @@ private String generateMakeArgsFor(SlotField slot, String argName) {
 );
         }
         index--;
-      }}if ( tomMatch608_end_4.isEmptyConcSlotField() ) {tomMatch608_end_4=(( tom.gom.adt.objects.types.SlotFieldList )slotList);} else {tomMatch608_end_4= tomMatch608_end_4.getTailConcSlotField() ;}}} while(!( (tomMatch608_end_4==(( tom.gom.adt.objects.types.SlotFieldList )slotList)) ));}}}}
+      }}if ( tomMatch599_end_4.isEmptyConcSlotField() ) {tomMatch599_end_4=(( tom.gom.adt.objects.types.SlotFieldList )slotList);} else {tomMatch599_end_4= tomMatch599_end_4.getTailConcSlotField() ;}}} while(!( (tomMatch599_end_4==(( tom.gom.adt.objects.types.SlotFieldList )slotList)) ));}}}}
 
   }
 
   public void generateConstructor(java.io.Writer writer) throws java.io.IOException {
     boolean hasHooks = false;
-    { /* unamed block */{ /* unamed block */lbl: {if ( (hooks instanceof tom.gom.adt.objects.types.HookList) ) {if ( (((( tom.gom.adt.objects.types.HookList )hooks) instanceof tom.gom.adt.objects.types.hooklist.ConsConcHook) || ((( tom.gom.adt.objects.types.HookList )hooks) instanceof tom.gom.adt.objects.types.hooklist.EmptyConcHook)) ) { tom.gom.adt.objects.types.HookList  tomMatch609_end_4=(( tom.gom.adt.objects.types.HookList )hooks);do {{ /* unamed block */if (!( tomMatch609_end_4.isEmptyConcHook() )) { tom.gom.adt.objects.types.Hook  tomMatch609_8= tomMatch609_end_4.getHeadConcHook() ;if ( ((( tom.gom.adt.objects.types.Hook )tomMatch609_8) instanceof tom.gom.adt.objects.types.hook.MakeHook) ) {
+    { /* unamed block */{ /* unamed block */lbl: {if ( (hooks instanceof tom.gom.adt.objects.types.HookList) ) {if ( (((( tom.gom.adt.objects.types.HookList )hooks) instanceof tom.gom.adt.objects.types.hooklist.ConsConcHook) || ((( tom.gom.adt.objects.types.HookList )hooks) instanceof tom.gom.adt.objects.types.hooklist.EmptyConcHook)) ) { tom.gom.adt.objects.types.HookList  tomMatch600_end_4=(( tom.gom.adt.objects.types.HookList )hooks);do {{ /* unamed block */if (!( tomMatch600_end_4.isEmptyConcHook() )) { tom.gom.adt.objects.types.Hook  tomMatch600_8= tomMatch600_end_4.getHeadConcHook() ;if ( ((( tom.gom.adt.objects.types.Hook )tomMatch600_8) instanceof tom.gom.adt.objects.types.hook.MakeHook) ) {
 
 
       hasHooks = true;
-      writer.write("\n    public static "+fullClassName(sortName)+" make("+unprotectedChildListWithType( tomMatch609_8.getHookArguments() )+") {\n  "
+      writer.write("\n    public static "+fullClassName(sortName)+" make("+unprotectedChildListWithType( tomMatch600_8.getHookArguments() )+") {\n  "
 
 );
         SlotFieldList bargs = generateMakeHooks(hooks,null,writer);
@@ -1587,7 +1587,7 @@ private String generateMakeArgsFor(SlotField slot, String argName) {
 
 );
         break lbl;
-      }}if ( tomMatch609_end_4.isEmptyConcHook() ) {tomMatch609_end_4=(( tom.gom.adt.objects.types.HookList )hooks);} else {tomMatch609_end_4= tomMatch609_end_4.getTailConcHook() ;}}} while(!( (tomMatch609_end_4==(( tom.gom.adt.objects.types.HookList )hooks)) ));}}}}}
+      }}if ( tomMatch600_end_4.isEmptyConcHook() ) {tomMatch600_end_4=(( tom.gom.adt.objects.types.HookList )hooks);} else {tomMatch600_end_4= tomMatch600_end_4.getTailConcHook() ;}}} while(!( (tomMatch600_end_4==(( tom.gom.adt.objects.types.HookList )hooks)) ));}}}}}
 
 
     String makeName = "make";
@@ -1639,11 +1639,11 @@ private String generateMakeArgsFor(SlotField slot, String argName) {
       SlotFieldList oArgs, /* will be null if it is the first hook */
       java.io.Writer writer)
     throws java.io.IOException {
-    { /* unamed block */{ /* unamed block */if ( (other instanceof tom.gom.adt.objects.types.HookList) ) {if ( (((( tom.gom.adt.objects.types.HookList )other) instanceof tom.gom.adt.objects.types.hooklist.ConsConcHook) || ((( tom.gom.adt.objects.types.HookList )other) instanceof tom.gom.adt.objects.types.hooklist.EmptyConcHook)) ) {if (!( (( tom.gom.adt.objects.types.HookList )other).isEmptyConcHook() )) {boolean tomMatch610_6= false ;if ( ((( tom.gom.adt.objects.types.Hook ) (( tom.gom.adt.objects.types.HookList )other).getHeadConcHook() ) instanceof tom.gom.adt.objects.types.hook.MakeHook) ) {tomMatch610_6= true ;}if (!(tomMatch610_6)) {
+    { /* unamed block */{ /* unamed block */if ( (other instanceof tom.gom.adt.objects.types.HookList) ) {if ( (((( tom.gom.adt.objects.types.HookList )other) instanceof tom.gom.adt.objects.types.hooklist.ConsConcHook) || ((( tom.gom.adt.objects.types.HookList )other) instanceof tom.gom.adt.objects.types.hooklist.EmptyConcHook)) ) {if (!( (( tom.gom.adt.objects.types.HookList )other).isEmptyConcHook() )) {boolean tomMatch601_6= false ;if ( ((( tom.gom.adt.objects.types.Hook ) (( tom.gom.adt.objects.types.HookList )other).getHeadConcHook() ) instanceof tom.gom.adt.objects.types.hook.MakeHook) ) {tomMatch601_6= true ;}if (!(tomMatch601_6)) {
 
         /* skip non Make hooks */
         return generateMakeHooks( (( tom.gom.adt.objects.types.HookList )other).getTailConcHook() , oArgs, writer);
-      }}}}}{ /* unamed block */if ( (other instanceof tom.gom.adt.objects.types.HookList) ) {if ( (((( tom.gom.adt.objects.types.HookList )other) instanceof tom.gom.adt.objects.types.hooklist.ConsConcHook) || ((( tom.gom.adt.objects.types.HookList )other) instanceof tom.gom.adt.objects.types.hooklist.EmptyConcHook)) ) {if (!( (( tom.gom.adt.objects.types.HookList )other).isEmptyConcHook() )) { tom.gom.adt.objects.types.Hook  tomMatch610_13= (( tom.gom.adt.objects.types.HookList )other).getHeadConcHook() ;if ( ((( tom.gom.adt.objects.types.Hook )tomMatch610_13) instanceof tom.gom.adt.objects.types.hook.MakeHook) ) { tom.gom.adt.objects.types.SlotFieldList  tom___args= tomMatch610_13.getHookArguments() ;
+      }}}}}{ /* unamed block */if ( (other instanceof tom.gom.adt.objects.types.HookList) ) {if ( (((( tom.gom.adt.objects.types.HookList )other) instanceof tom.gom.adt.objects.types.hooklist.ConsConcHook) || ((( tom.gom.adt.objects.types.HookList )other) instanceof tom.gom.adt.objects.types.hooklist.EmptyConcHook)) ) {if (!( (( tom.gom.adt.objects.types.HookList )other).isEmptyConcHook() )) { tom.gom.adt.objects.types.Hook  tomMatch601_13= (( tom.gom.adt.objects.types.HookList )other).getHeadConcHook() ;if ( ((( tom.gom.adt.objects.types.Hook )tomMatch601_13) instanceof tom.gom.adt.objects.types.hook.MakeHook) ) { tom.gom.adt.objects.types.SlotFieldList  tom___args= tomMatch601_13.getHookArguments() ;
 
         /* Rename the previous arguments according to new, if needed */
         if(oArgs != null && oArgs != tom___args) {
@@ -1651,7 +1651,7 @@ private String generateMakeArgsFor(SlotField slot, String argName) {
         }
         /* Make sure we defeat java dead code detection */
         writer.write("if(true) {");
-        CodeGen.generateCode( tomMatch610_13.getCode() ,writer);
+        CodeGen.generateCode( tomMatch601_13.getCode() ,writer);
         writer.write("}");
         return generateMakeHooks( (( tom.gom.adt.objects.types.HookList )other).getTailConcHook() , tom___args, writer);
       }}}}}}
@@ -1667,10 +1667,10 @@ private String generateMakeArgsFor(SlotField slot, String argName) {
     { /* unamed block */{ /* unamed block */if ( (oargs instanceof tom.gom.adt.objects.types.SlotFieldList) ) {if ( (((( tom.gom.adt.objects.types.SlotFieldList )oargs) instanceof tom.gom.adt.objects.types.slotfieldlist.ConsConcSlotField) || ((( tom.gom.adt.objects.types.SlotFieldList )oargs) instanceof tom.gom.adt.objects.types.slotfieldlist.EmptyConcSlotField)) ) {if ( (( tom.gom.adt.objects.types.SlotFieldList )oargs).isEmptyConcSlotField() ) {if ( (nargs instanceof tom.gom.adt.objects.types.SlotFieldList) ) {if ( (((( tom.gom.adt.objects.types.SlotFieldList )nargs) instanceof tom.gom.adt.objects.types.slotfieldlist.ConsConcSlotField) || ((( tom.gom.adt.objects.types.SlotFieldList )nargs) instanceof tom.gom.adt.objects.types.slotfieldlist.EmptyConcSlotField)) ) {if ( (( tom.gom.adt.objects.types.SlotFieldList )nargs).isEmptyConcSlotField() ) {
 
         return ;
-      }}}}}}}{ /* unamed block */if ( (oargs instanceof tom.gom.adt.objects.types.SlotFieldList) ) {if ( (((( tom.gom.adt.objects.types.SlotFieldList )oargs) instanceof tom.gom.adt.objects.types.slotfieldlist.ConsConcSlotField) || ((( tom.gom.adt.objects.types.SlotFieldList )oargs) instanceof tom.gom.adt.objects.types.slotfieldlist.EmptyConcSlotField)) ) {if (!( (( tom.gom.adt.objects.types.SlotFieldList )oargs).isEmptyConcSlotField() )) { tom.gom.adt.objects.types.SlotField  tomMatch611_14= (( tom.gom.adt.objects.types.SlotFieldList )oargs).getHeadConcSlotField() ;if ( ((( tom.gom.adt.objects.types.SlotField )tomMatch611_14) instanceof tom.gom.adt.objects.types.slotfield.SlotField) ) { String  tom___oargName= tomMatch611_14.getName() ;if ( (nargs instanceof tom.gom.adt.objects.types.SlotFieldList) ) {if ( (((( tom.gom.adt.objects.types.SlotFieldList )nargs) instanceof tom.gom.adt.objects.types.slotfieldlist.ConsConcSlotField) || ((( tom.gom.adt.objects.types.SlotFieldList )nargs) instanceof tom.gom.adt.objects.types.slotfieldlist.EmptyConcSlotField)) ) {if (!( (( tom.gom.adt.objects.types.SlotFieldList )nargs).isEmptyConcSlotField() )) { tom.gom.adt.objects.types.SlotField  tomMatch611_18= (( tom.gom.adt.objects.types.SlotFieldList )nargs).getHeadConcSlotField() ;if ( ((( tom.gom.adt.objects.types.SlotField )tomMatch611_18) instanceof tom.gom.adt.objects.types.slotfield.SlotField) ) { String  tom___nargName= tomMatch611_18.getName() ; tom.gom.adt.objects.types.ClassName  tom___ndomain= tomMatch611_18.getDomain() ;
+      }}}}}}}{ /* unamed block */if ( (oargs instanceof tom.gom.adt.objects.types.SlotFieldList) ) {if ( (((( tom.gom.adt.objects.types.SlotFieldList )oargs) instanceof tom.gom.adt.objects.types.slotfieldlist.ConsConcSlotField) || ((( tom.gom.adt.objects.types.SlotFieldList )oargs) instanceof tom.gom.adt.objects.types.slotfieldlist.EmptyConcSlotField)) ) {if (!( (( tom.gom.adt.objects.types.SlotFieldList )oargs).isEmptyConcSlotField() )) { tom.gom.adt.objects.types.SlotField  tomMatch602_14= (( tom.gom.adt.objects.types.SlotFieldList )oargs).getHeadConcSlotField() ;if ( ((( tom.gom.adt.objects.types.SlotField )tomMatch602_14) instanceof tom.gom.adt.objects.types.slotfield.SlotField) ) { String  tom___oargName= tomMatch602_14.getName() ;if ( (nargs instanceof tom.gom.adt.objects.types.SlotFieldList) ) {if ( (((( tom.gom.adt.objects.types.SlotFieldList )nargs) instanceof tom.gom.adt.objects.types.slotfieldlist.ConsConcSlotField) || ((( tom.gom.adt.objects.types.SlotFieldList )nargs) instanceof tom.gom.adt.objects.types.slotfieldlist.EmptyConcSlotField)) ) {if (!( (( tom.gom.adt.objects.types.SlotFieldList )nargs).isEmptyConcSlotField() )) { tom.gom.adt.objects.types.SlotField  tomMatch602_18= (( tom.gom.adt.objects.types.SlotFieldList )nargs).getHeadConcSlotField() ;if ( ((( tom.gom.adt.objects.types.SlotField )tomMatch602_18) instanceof tom.gom.adt.objects.types.slotfield.SlotField) ) { String  tom___nargName= tomMatch602_18.getName() ; tom.gom.adt.objects.types.ClassName  tom___ndomain= tomMatch602_18.getDomain() ;
 
 
-        if(!( tomMatch611_14.getDomain() ==tom___ndomain)) {
+        if(!( tomMatch602_14.getDomain() ==tom___ndomain)) {
           throw new GomRuntimeException(
               "OperatorTemplate: incompatible args "+
               "should be rejected by typechecker");
@@ -1691,17 +1691,17 @@ private String generateMakeArgsFor(SlotField slot, String argName) {
 
   public void generateTomMapping(Writer writer)
       throws java.io.IOException {
-    { /* unamed block */{ /* unamed block */if ( (hooks instanceof tom.gom.adt.objects.types.HookList) ) {boolean tomMatch612_9= false ;if ( (((( tom.gom.adt.objects.types.HookList )hooks) instanceof tom.gom.adt.objects.types.hooklist.ConsConcHook) || ((( tom.gom.adt.objects.types.HookList )hooks) instanceof tom.gom.adt.objects.types.hooklist.EmptyConcHook)) ) { tom.gom.adt.objects.types.HookList  tomMatch612_end_4=(( tom.gom.adt.objects.types.HookList )hooks);do {{ /* unamed block */if (!( tomMatch612_end_4.isEmptyConcHook() )) {if ( ((( tom.gom.adt.objects.types.Hook ) tomMatch612_end_4.getHeadConcHook() ) instanceof tom.gom.adt.objects.types.hook.MappingHook) ) {tomMatch612_9= true ;}}if ( tomMatch612_end_4.isEmptyConcHook() ) {tomMatch612_end_4=(( tom.gom.adt.objects.types.HookList )hooks);} else {tomMatch612_end_4= tomMatch612_end_4.getTailConcHook() ;}}} while(!( (tomMatch612_end_4==(( tom.gom.adt.objects.types.HookList )hooks)) ));}if (!(tomMatch612_9)) {
+    { /* unamed block */{ /* unamed block */if ( (hooks instanceof tom.gom.adt.objects.types.HookList) ) {boolean tomMatch603_9= false ;if ( (((( tom.gom.adt.objects.types.HookList )hooks) instanceof tom.gom.adt.objects.types.hooklist.ConsConcHook) || ((( tom.gom.adt.objects.types.HookList )hooks) instanceof tom.gom.adt.objects.types.hooklist.EmptyConcHook)) ) { tom.gom.adt.objects.types.HookList  tomMatch603_end_4=(( tom.gom.adt.objects.types.HookList )hooks);do {{ /* unamed block */if (!( tomMatch603_end_4.isEmptyConcHook() )) {if ( ((( tom.gom.adt.objects.types.Hook ) tomMatch603_end_4.getHeadConcHook() ) instanceof tom.gom.adt.objects.types.hook.MappingHook) ) {tomMatch603_9= true ;}}if ( tomMatch603_end_4.isEmptyConcHook() ) {tomMatch603_end_4=(( tom.gom.adt.objects.types.HookList )hooks);} else {tomMatch603_end_4= tomMatch603_end_4.getTailConcHook() ;}}} while(!( (tomMatch603_end_4==(( tom.gom.adt.objects.types.HookList )hooks)) ));}if (!(tomMatch603_9)) {
 
         writer.write("%op "+className(sortName)+" "+className()+"(");
         slotDecl(writer,slotList);
         writer.write(") {\n");
         writer.write("  is_fsym(t) { ($t instanceof "+fullClassName()+") }\n");
-        { /* unamed block */{ /* unamed block */if ( (slotList instanceof tom.gom.adt.objects.types.SlotFieldList) ) {if ( (((( tom.gom.adt.objects.types.SlotFieldList )slotList) instanceof tom.gom.adt.objects.types.slotfieldlist.ConsConcSlotField) || ((( tom.gom.adt.objects.types.SlotFieldList )slotList) instanceof tom.gom.adt.objects.types.slotfieldlist.EmptyConcSlotField)) ) { tom.gom.adt.objects.types.SlotFieldList  tomMatch613_end_4=(( tom.gom.adt.objects.types.SlotFieldList )slotList);do {{ /* unamed block */if (!( tomMatch613_end_4.isEmptyConcSlotField() )) { tom.gom.adt.objects.types.SlotField  tomMatch613_8= tomMatch613_end_4.getHeadConcSlotField() ;if ( ((( tom.gom.adt.objects.types.SlotField )tomMatch613_8) instanceof tom.gom.adt.objects.types.slotfield.SlotField) ) {
+        { /* unamed block */{ /* unamed block */if ( (slotList instanceof tom.gom.adt.objects.types.SlotFieldList) ) {if ( (((( tom.gom.adt.objects.types.SlotFieldList )slotList) instanceof tom.gom.adt.objects.types.slotfieldlist.ConsConcSlotField) || ((( tom.gom.adt.objects.types.SlotFieldList )slotList) instanceof tom.gom.adt.objects.types.slotfieldlist.EmptyConcSlotField)) ) { tom.gom.adt.objects.types.SlotFieldList  tomMatch604_end_4=(( tom.gom.adt.objects.types.SlotFieldList )slotList);do {{ /* unamed block */if (!( tomMatch604_end_4.isEmptyConcSlotField() )) { tom.gom.adt.objects.types.SlotField  tomMatch604_8= tomMatch604_end_4.getHeadConcSlotField() ;if ( ((( tom.gom.adt.objects.types.SlotField )tomMatch604_8) instanceof tom.gom.adt.objects.types.slotfield.SlotField) ) {
 
-            writer.write("  get_slot("+ tomMatch613_8.getName() +", t) ");
-            writer.write("{ $t."+getMethod( tomMatch613_end_4.getHeadConcSlotField() )+"() }\n");
-          }}if ( tomMatch613_end_4.isEmptyConcSlotField() ) {tomMatch613_end_4=(( tom.gom.adt.objects.types.SlotFieldList )slotList);} else {tomMatch613_end_4= tomMatch613_end_4.getTailConcSlotField() ;}}} while(!( (tomMatch613_end_4==(( tom.gom.adt.objects.types.SlotFieldList )slotList)) ));}}}}
+            writer.write("  get_slot("+ tomMatch604_8.getName() +", t) ");
+            writer.write("{ $t."+getMethod( tomMatch604_end_4.getHeadConcSlotField() )+"() }\n");
+          }}if ( tomMatch604_end_4.isEmptyConcSlotField() ) {tomMatch604_end_4=(( tom.gom.adt.objects.types.SlotFieldList )slotList);} else {tomMatch604_end_4= tomMatch604_end_4.getTailConcSlotField() ;}}} while(!( (tomMatch604_end_4==(( tom.gom.adt.objects.types.SlotFieldList )slotList)) ));}}}}
 
         writer.write("  make(");
         slotArgs(writer,slotList);
@@ -1713,10 +1713,10 @@ private String generateMakeArgsFor(SlotField slot, String argName) {
         writer.write("}\n");
         writer.write("\n");
         return;
-      }}}{ /* unamed block */if ( (hooks instanceof tom.gom.adt.objects.types.HookList) ) {if ( (((( tom.gom.adt.objects.types.HookList )hooks) instanceof tom.gom.adt.objects.types.hooklist.ConsConcHook) || ((( tom.gom.adt.objects.types.HookList )hooks) instanceof tom.gom.adt.objects.types.hooklist.EmptyConcHook)) ) { tom.gom.adt.objects.types.HookList  tomMatch612_end_14=(( tom.gom.adt.objects.types.HookList )hooks);do {{ /* unamed block */if (!( tomMatch612_end_14.isEmptyConcHook() )) { tom.gom.adt.objects.types.Hook  tomMatch612_18= tomMatch612_end_14.getHeadConcHook() ;if ( ((( tom.gom.adt.objects.types.Hook )tomMatch612_18) instanceof tom.gom.adt.objects.types.hook.MappingHook) ) {
+      }}}{ /* unamed block */if ( (hooks instanceof tom.gom.adt.objects.types.HookList) ) {if ( (((( tom.gom.adt.objects.types.HookList )hooks) instanceof tom.gom.adt.objects.types.hooklist.ConsConcHook) || ((( tom.gom.adt.objects.types.HookList )hooks) instanceof tom.gom.adt.objects.types.hooklist.EmptyConcHook)) ) { tom.gom.adt.objects.types.HookList  tomMatch603_end_14=(( tom.gom.adt.objects.types.HookList )hooks);do {{ /* unamed block */if (!( tomMatch603_end_14.isEmptyConcHook() )) { tom.gom.adt.objects.types.Hook  tomMatch603_18= tomMatch603_end_14.getHeadConcHook() ;if ( ((( tom.gom.adt.objects.types.Hook )tomMatch603_18) instanceof tom.gom.adt.objects.types.hook.MappingHook) ) {
 
-        CodeGen.generateCode( tomMatch612_18.getCode() ,writer);
-      }}if ( tomMatch612_end_14.isEmptyConcHook() ) {tomMatch612_end_14=(( tom.gom.adt.objects.types.HookList )hooks);} else {tomMatch612_end_14= tomMatch612_end_14.getTailConcHook() ;}}} while(!( (tomMatch612_end_14==(( tom.gom.adt.objects.types.HookList )hooks)) ));}}}}
+        CodeGen.generateCode( tomMatch603_18.getCode() ,writer);
+      }}if ( tomMatch603_end_14.isEmptyConcHook() ) {tomMatch603_end_14=(( tom.gom.adt.objects.types.HookList )hooks);} else {tomMatch603_end_14= tomMatch603_end_14.getTailConcHook() ;}}} while(!( (tomMatch603_end_14==(( tom.gom.adt.objects.types.HookList )hooks)) ));}}}}
 
     return;
   }

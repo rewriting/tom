@@ -120,7 +120,7 @@ fragment ESC :
 
 ACTION_ESCAPE :   '\\' .  ;
 ACTION_STRING_LITERAL :	'"' (ACTION_ESCAPE | ~["\\])* '"' ;
-MLCOMMENT : '/*' .*? '*/' ;
+MLCOMMENT : '/*' .*? '*/' -> skip ;
 SLCOMMENT : '//' ~[\r\n]* -> skip;
 
 WS : [ \r\t]+ -> channel(HIDDEN) ;

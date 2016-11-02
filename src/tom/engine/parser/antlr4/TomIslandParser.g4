@@ -29,7 +29,8 @@ options { tokenVocab=TomIslandLexer; }
 start : (island | water)*? ;
 
 island 
-  : matchStatement
+  :
+//  : matchStatement
   | strategyStatement
   | includeStatement
   | gomStatement
@@ -41,6 +42,9 @@ island
   | metaquote
   ;
 
+  /*
+   * this rule makes the parser very very slow
+   */
 metaquote
   : LMETAQUOTE (AT (bqcomposite | composite) AT | water)*? RMETAQUOTE
   ;

@@ -51,8 +51,17 @@ public class CstBuilder extends TomIslandParserBaseListener {
         private static   tom.engine.adt.cst.types.CstConstraint  tom_append_list_Cst_AndConstraint( tom.engine.adt.cst.types.CstConstraint  l1,  tom.engine.adt.cst.types.CstConstraint  l2) {     if( l1.isEmptyCst_AndConstraint() ) {       return l2;     } else if( l2.isEmptyCst_AndConstraint() ) {       return l1;     } else if( ((l1 instanceof tom.engine.adt.cst.types.cstconstraint.ConsCst_AndConstraint) || (l1 instanceof tom.engine.adt.cst.types.cstconstraint.EmptyCst_AndConstraint)) ) {       if(  l1.getTailCst_AndConstraint() .isEmptyCst_AndConstraint() ) {         return  tom.engine.adt.cst.types.cstconstraint.ConsCst_AndConstraint.make( l1.getHeadCst_AndConstraint() ,l2) ;       } else {         return  tom.engine.adt.cst.types.cstconstraint.ConsCst_AndConstraint.make( l1.getHeadCst_AndConstraint() ,tom_append_list_Cst_AndConstraint( l1.getTailCst_AndConstraint() ,l2)) ;       }     } else {       return  tom.engine.adt.cst.types.cstconstraint.ConsCst_AndConstraint.make(l1,l2) ;     }   }   private static   tom.engine.adt.cst.types.CstConstraint  tom_get_slice_Cst_AndConstraint( tom.engine.adt.cst.types.CstConstraint  begin,  tom.engine.adt.cst.types.CstConstraint  end, tom.engine.adt.cst.types.CstConstraint  tail) {     if( (begin==end) ) {       return tail;     } else if( (end==tail)  && ( end.isEmptyCst_AndConstraint()  ||  (end== tom.engine.adt.cst.types.cstconstraint.EmptyCst_AndConstraint.make() ) )) {       /* code to avoid a call to make, and thus to avoid looping during list-matching */       return begin;     }     return  tom.engine.adt.cst.types.cstconstraint.ConsCst_AndConstraint.make((( ((begin instanceof tom.engine.adt.cst.types.cstconstraint.ConsCst_AndConstraint) || (begin instanceof tom.engine.adt.cst.types.cstconstraint.EmptyCst_AndConstraint)) )? begin.getHeadCst_AndConstraint() :begin),( tom.engine.adt.cst.types.CstConstraint )tom_get_slice_Cst_AndConstraint((( ((begin instanceof tom.engine.adt.cst.types.cstconstraint.ConsCst_AndConstraint) || (begin instanceof tom.engine.adt.cst.types.cstconstraint.EmptyCst_AndConstraint)) )? begin.getTailCst_AndConstraint() : tom.engine.adt.cst.types.cstconstraint.EmptyCst_AndConstraint.make() ),end,tail)) ;   }      private static   tom.engine.adt.cst.types.CstConstraint  tom_append_list_Cst_OrConstraint( tom.engine.adt.cst.types.CstConstraint  l1,  tom.engine.adt.cst.types.CstConstraint  l2) {     if( l1.isEmptyCst_OrConstraint() ) {       return l2;     } else if( l2.isEmptyCst_OrConstraint() ) {       return l1;     } else if( ((l1 instanceof tom.engine.adt.cst.types.cstconstraint.ConsCst_OrConstraint) || (l1 instanceof tom.engine.adt.cst.types.cstconstraint.EmptyCst_OrConstraint)) ) {       if(  l1.getTailCst_OrConstraint() .isEmptyCst_OrConstraint() ) {         return  tom.engine.adt.cst.types.cstconstraint.ConsCst_OrConstraint.make( l1.getHeadCst_OrConstraint() ,l2) ;       } else {         return  tom.engine.adt.cst.types.cstconstraint.ConsCst_OrConstraint.make( l1.getHeadCst_OrConstraint() ,tom_append_list_Cst_OrConstraint( l1.getTailCst_OrConstraint() ,l2)) ;       }     } else {       return  tom.engine.adt.cst.types.cstconstraint.ConsCst_OrConstraint.make(l1,l2) ;     }   }   private static   tom.engine.adt.cst.types.CstConstraint  tom_get_slice_Cst_OrConstraint( tom.engine.adt.cst.types.CstConstraint  begin,  tom.engine.adt.cst.types.CstConstraint  end, tom.engine.adt.cst.types.CstConstraint  tail) {     if( (begin==end) ) {       return tail;     } else if( (end==tail)  && ( end.isEmptyCst_OrConstraint()  ||  (end== tom.engine.adt.cst.types.cstconstraint.EmptyCst_OrConstraint.make() ) )) {       /* code to avoid a call to make, and thus to avoid looping during list-matching */       return begin;     }     return  tom.engine.adt.cst.types.cstconstraint.ConsCst_OrConstraint.make((( ((begin instanceof tom.engine.adt.cst.types.cstconstraint.ConsCst_OrConstraint) || (begin instanceof tom.engine.adt.cst.types.cstconstraint.EmptyCst_OrConstraint)) )? begin.getHeadCst_OrConstraint() :begin),( tom.engine.adt.cst.types.CstConstraint )tom_get_slice_Cst_OrConstraint((( ((begin instanceof tom.engine.adt.cst.types.cstconstraint.ConsCst_OrConstraint) || (begin instanceof tom.engine.adt.cst.types.cstconstraint.EmptyCst_OrConstraint)) )? begin.getTailCst_OrConstraint() : tom.engine.adt.cst.types.cstconstraint.EmptyCst_OrConstraint.make() ),end,tail)) ;   }      private static   tom.engine.adt.cst.types.CstSlotList  tom_append_list_ConcCstSlot( tom.engine.adt.cst.types.CstSlotList l1,  tom.engine.adt.cst.types.CstSlotList  l2) {     if( l1.isEmptyConcCstSlot() ) {       return l2;     } else if( l2.isEmptyConcCstSlot() ) {       return l1;     } else if(  l1.getTailConcCstSlot() .isEmptyConcCstSlot() ) {       return  tom.engine.adt.cst.types.cstslotlist.ConsConcCstSlot.make( l1.getHeadConcCstSlot() ,l2) ;     } else {       return  tom.engine.adt.cst.types.cstslotlist.ConsConcCstSlot.make( l1.getHeadConcCstSlot() ,tom_append_list_ConcCstSlot( l1.getTailConcCstSlot() ,l2)) ;     }   }   private static   tom.engine.adt.cst.types.CstSlotList  tom_get_slice_ConcCstSlot( tom.engine.adt.cst.types.CstSlotList  begin,  tom.engine.adt.cst.types.CstSlotList  end, tom.engine.adt.cst.types.CstSlotList  tail) {     if( (begin==end) ) {       return tail;     } else if( (end==tail)  && ( end.isEmptyConcCstSlot()  ||  (end== tom.engine.adt.cst.types.cstslotlist.EmptyConcCstSlot.make() ) )) {       /* code to avoid a call to make, and thus to avoid looping during list-matching */       return begin;     }     return  tom.engine.adt.cst.types.cstslotlist.ConsConcCstSlot.make( begin.getHeadConcCstSlot() ,( tom.engine.adt.cst.types.CstSlotList )tom_get_slice_ConcCstSlot( begin.getTailConcCstSlot() ,end,tail)) ;   }      private static   tom.engine.adt.cst.types.CstBlockList  tom_append_list_ConcCstBlock( tom.engine.adt.cst.types.CstBlockList l1,  tom.engine.adt.cst.types.CstBlockList  l2) {     if( l1.isEmptyConcCstBlock() ) {       return l2;     } else if( l2.isEmptyConcCstBlock() ) {       return l1;     } else if(  l1.getTailConcCstBlock() .isEmptyConcCstBlock() ) {       return  tom.engine.adt.cst.types.cstblocklist.ConsConcCstBlock.make( l1.getHeadConcCstBlock() ,l2) ;     } else {       return  tom.engine.adt.cst.types.cstblocklist.ConsConcCstBlock.make( l1.getHeadConcCstBlock() ,tom_append_list_ConcCstBlock( l1.getTailConcCstBlock() ,l2)) ;     }   }   private static   tom.engine.adt.cst.types.CstBlockList  tom_get_slice_ConcCstBlock( tom.engine.adt.cst.types.CstBlockList  begin,  tom.engine.adt.cst.types.CstBlockList  end, tom.engine.adt.cst.types.CstBlockList  tail) {     if( (begin==end) ) {       return tail;     } else if( (end==tail)  && ( end.isEmptyConcCstBlock()  ||  (end== tom.engine.adt.cst.types.cstblocklist.EmptyConcCstBlock.make() ) )) {       /* code to avoid a call to make, and thus to avoid looping during list-matching */       return begin;     }     return  tom.engine.adt.cst.types.cstblocklist.ConsConcCstBlock.make( begin.getHeadConcCstBlock() ,( tom.engine.adt.cst.types.CstBlockList )tom_get_slice_ConcCstBlock( begin.getTailConcCstBlock() ,end,tail)) ;   }      private static   tom.engine.adt.cst.types.CstPairSlotBQTermList  tom_append_list_ConcCstPairSlotBQTerm( tom.engine.adt.cst.types.CstPairSlotBQTermList l1,  tom.engine.adt.cst.types.CstPairSlotBQTermList  l2) {     if( l1.isEmptyConcCstPairSlotBQTerm() ) {       return l2;     } else if( l2.isEmptyConcCstPairSlotBQTerm() ) {       return l1;     } else if(  l1.getTailConcCstPairSlotBQTerm() .isEmptyConcCstPairSlotBQTerm() ) {       return  tom.engine.adt.cst.types.cstpairslotbqtermlist.ConsConcCstPairSlotBQTerm.make( l1.getHeadConcCstPairSlotBQTerm() ,l2) ;     } else {       return  tom.engine.adt.cst.types.cstpairslotbqtermlist.ConsConcCstPairSlotBQTerm.make( l1.getHeadConcCstPairSlotBQTerm() ,tom_append_list_ConcCstPairSlotBQTerm( l1.getTailConcCstPairSlotBQTerm() ,l2)) ;     }   }   private static   tom.engine.adt.cst.types.CstPairSlotBQTermList  tom_get_slice_ConcCstPairSlotBQTerm( tom.engine.adt.cst.types.CstPairSlotBQTermList  begin,  tom.engine.adt.cst.types.CstPairSlotBQTermList  end, tom.engine.adt.cst.types.CstPairSlotBQTermList  tail) {     if( (begin==end) ) {       return tail;     } else if( (end==tail)  && ( end.isEmptyConcCstPairSlotBQTerm()  ||  (end== tom.engine.adt.cst.types.cstpairslotbqtermlist.EmptyConcCstPairSlotBQTerm.make() ) )) {       /* code to avoid a call to make, and thus to avoid looping during list-matching */       return begin;     }     return  tom.engine.adt.cst.types.cstpairslotbqtermlist.ConsConcCstPairSlotBQTerm.make( begin.getHeadConcCstPairSlotBQTerm() ,( tom.engine.adt.cst.types.CstPairSlotBQTermList )tom_get_slice_ConcCstPairSlotBQTerm( begin.getTailConcCstPairSlotBQTerm() ,end,tail)) ;   }      private static   tom.engine.adt.cst.types.CstOptionList  tom_append_list_ConcCstOption( tom.engine.adt.cst.types.CstOptionList l1,  tom.engine.adt.cst.types.CstOptionList  l2) {     if( l1.isEmptyConcCstOption() ) {       return l2;     } else if( l2.isEmptyConcCstOption() ) {       return l1;     } else if(  l1.getTailConcCstOption() .isEmptyConcCstOption() ) {       return  tom.engine.adt.cst.types.cstoptionlist.ConsConcCstOption.make( l1.getHeadConcCstOption() ,l2) ;     } else {       return  tom.engine.adt.cst.types.cstoptionlist.ConsConcCstOption.make( l1.getHeadConcCstOption() ,tom_append_list_ConcCstOption( l1.getTailConcCstOption() ,l2)) ;     }   }   private static   tom.engine.adt.cst.types.CstOptionList  tom_get_slice_ConcCstOption( tom.engine.adt.cst.types.CstOptionList  begin,  tom.engine.adt.cst.types.CstOptionList  end, tom.engine.adt.cst.types.CstOptionList  tail) {     if( (begin==end) ) {       return tail;     } else if( (end==tail)  && ( end.isEmptyConcCstOption()  ||  (end== tom.engine.adt.cst.types.cstoptionlist.EmptyConcCstOption.make() ) )) {       /* code to avoid a call to make, and thus to avoid looping during list-matching */       return begin;     }     return  tom.engine.adt.cst.types.cstoptionlist.ConsConcCstOption.make( begin.getHeadConcCstOption() ,( tom.engine.adt.cst.types.CstOptionList )tom_get_slice_ConcCstOption( begin.getTailConcCstOption() ,end,tail)) ;   }      private static   tom.engine.adt.cst.types.CstPatternList  tom_append_list_ConcCstPattern( tom.engine.adt.cst.types.CstPatternList l1,  tom.engine.adt.cst.types.CstPatternList  l2) {     if( l1.isEmptyConcCstPattern() ) {       return l2;     } else if( l2.isEmptyConcCstPattern() ) {       return l1;     } else if(  l1.getTailConcCstPattern() .isEmptyConcCstPattern() ) {       return  tom.engine.adt.cst.types.cstpatternlist.ConsConcCstPattern.make( l1.getHeadConcCstPattern() ,l2) ;     } else {       return  tom.engine.adt.cst.types.cstpatternlist.ConsConcCstPattern.make( l1.getHeadConcCstPattern() ,tom_append_list_ConcCstPattern( l1.getTailConcCstPattern() ,l2)) ;     }   }   private static   tom.engine.adt.cst.types.CstPatternList  tom_get_slice_ConcCstPattern( tom.engine.adt.cst.types.CstPatternList  begin,  tom.engine.adt.cst.types.CstPatternList  end, tom.engine.adt.cst.types.CstPatternList  tail) {     if( (begin==end) ) {       return tail;     } else if( (end==tail)  && ( end.isEmptyConcCstPattern()  ||  (end== tom.engine.adt.cst.types.cstpatternlist.EmptyConcCstPattern.make() ) )) {       /* code to avoid a call to make, and thus to avoid looping during list-matching */       return begin;     }     return  tom.engine.adt.cst.types.cstpatternlist.ConsConcCstPattern.make( begin.getHeadConcCstPattern() ,( tom.engine.adt.cst.types.CstPatternList )tom_get_slice_ConcCstPattern( begin.getTailConcCstPattern() ,end,tail)) ;   }      private static   tom.engine.adt.cst.types.CstNameList  tom_append_list_ConcCstName( tom.engine.adt.cst.types.CstNameList l1,  tom.engine.adt.cst.types.CstNameList  l2) {     if( l1.isEmptyConcCstName() ) {       return l2;     } else if( l2.isEmptyConcCstName() ) {       return l1;     } else if(  l1.getTailConcCstName() .isEmptyConcCstName() ) {       return  tom.engine.adt.cst.types.cstnamelist.ConsConcCstName.make( l1.getHeadConcCstName() ,l2) ;     } else {       return  tom.engine.adt.cst.types.cstnamelist.ConsConcCstName.make( l1.getHeadConcCstName() ,tom_append_list_ConcCstName( l1.getTailConcCstName() ,l2)) ;     }   }   private static   tom.engine.adt.cst.types.CstNameList  tom_get_slice_ConcCstName( tom.engine.adt.cst.types.CstNameList  begin,  tom.engine.adt.cst.types.CstNameList  end, tom.engine.adt.cst.types.CstNameList  tail) {     if( (begin==end) ) {       return tail;     } else if( (end==tail)  && ( end.isEmptyConcCstName()  ||  (end== tom.engine.adt.cst.types.cstnamelist.EmptyConcCstName.make() ) )) {       /* code to avoid a call to make, and thus to avoid looping during list-matching */       return begin;     }     return  tom.engine.adt.cst.types.cstnamelist.ConsConcCstName.make( begin.getHeadConcCstName() ,( tom.engine.adt.cst.types.CstNameList )tom_get_slice_ConcCstName( begin.getTailConcCstName() ,end,tail)) ;   }      private static   tom.engine.adt.cst.types.CstOperatorList  tom_append_list_ConcCstOperator( tom.engine.adt.cst.types.CstOperatorList l1,  tom.engine.adt.cst.types.CstOperatorList  l2) {     if( l1.isEmptyConcCstOperator() ) {       return l2;     } else if( l2.isEmptyConcCstOperator() ) {       return l1;     } else if(  l1.getTailConcCstOperator() .isEmptyConcCstOperator() ) {       return  tom.engine.adt.cst.types.cstoperatorlist.ConsConcCstOperator.make( l1.getHeadConcCstOperator() ,l2) ;     } else {       return  tom.engine.adt.cst.types.cstoperatorlist.ConsConcCstOperator.make( l1.getHeadConcCstOperator() ,tom_append_list_ConcCstOperator( l1.getTailConcCstOperator() ,l2)) ;     }   }   private static   tom.engine.adt.cst.types.CstOperatorList  tom_get_slice_ConcCstOperator( tom.engine.adt.cst.types.CstOperatorList  begin,  tom.engine.adt.cst.types.CstOperatorList  end, tom.engine.adt.cst.types.CstOperatorList  tail) {     if( (begin==end) ) {       return tail;     } else if( (end==tail)  && ( end.isEmptyConcCstOperator()  ||  (end== tom.engine.adt.cst.types.cstoperatorlist.EmptyConcCstOperator.make() ) )) {       /* code to avoid a call to make, and thus to avoid looping during list-matching */       return begin;     }     return  tom.engine.adt.cst.types.cstoperatorlist.ConsConcCstOperator.make( begin.getHeadConcCstOperator() ,( tom.engine.adt.cst.types.CstOperatorList )tom_get_slice_ConcCstOperator( begin.getTailConcCstOperator() ,end,tail)) ;   }      private static   tom.engine.adt.cst.types.CstTermList  tom_append_list_ConcCstTerm( tom.engine.adt.cst.types.CstTermList l1,  tom.engine.adt.cst.types.CstTermList  l2) {     if( l1.isEmptyConcCstTerm() ) {       return l2;     } else if( l2.isEmptyConcCstTerm() ) {       return l1;     } else if(  l1.getTailConcCstTerm() .isEmptyConcCstTerm() ) {       return  tom.engine.adt.cst.types.csttermlist.ConsConcCstTerm.make( l1.getHeadConcCstTerm() ,l2) ;     } else {       return  tom.engine.adt.cst.types.csttermlist.ConsConcCstTerm.make( l1.getHeadConcCstTerm() ,tom_append_list_ConcCstTerm( l1.getTailConcCstTerm() ,l2)) ;     }   }   private static   tom.engine.adt.cst.types.CstTermList  tom_get_slice_ConcCstTerm( tom.engine.adt.cst.types.CstTermList  begin,  tom.engine.adt.cst.types.CstTermList  end, tom.engine.adt.cst.types.CstTermList  tail) {     if( (begin==end) ) {       return tail;     } else if( (end==tail)  && ( end.isEmptyConcCstTerm()  ||  (end== tom.engine.adt.cst.types.csttermlist.EmptyConcCstTerm.make() ) )) {       /* code to avoid a call to make, and thus to avoid looping during list-matching */       return begin;     }     return  tom.engine.adt.cst.types.csttermlist.ConsConcCstTerm.make( begin.getHeadConcCstTerm() ,( tom.engine.adt.cst.types.CstTermList )tom_get_slice_ConcCstTerm( begin.getTailConcCstTerm() ,end,tail)) ;   }      private static   tom.engine.adt.cst.types.CstBQTermList  tom_append_list_ConcCstBQTerm( tom.engine.adt.cst.types.CstBQTermList l1,  tom.engine.adt.cst.types.CstBQTermList  l2) {     if( l1.isEmptyConcCstBQTerm() ) {       return l2;     } else if( l2.isEmptyConcCstBQTerm() ) {       return l1;     } else if(  l1.getTailConcCstBQTerm() .isEmptyConcCstBQTerm() ) {       return  tom.engine.adt.cst.types.cstbqtermlist.ConsConcCstBQTerm.make( l1.getHeadConcCstBQTerm() ,l2) ;     } else {       return  tom.engine.adt.cst.types.cstbqtermlist.ConsConcCstBQTerm.make( l1.getHeadConcCstBQTerm() ,tom_append_list_ConcCstBQTerm( l1.getTailConcCstBQTerm() ,l2)) ;     }   }   private static   tom.engine.adt.cst.types.CstBQTermList  tom_get_slice_ConcCstBQTerm( tom.engine.adt.cst.types.CstBQTermList  begin,  tom.engine.adt.cst.types.CstBQTermList  end, tom.engine.adt.cst.types.CstBQTermList  tail) {     if( (begin==end) ) {       return tail;     } else if( (end==tail)  && ( end.isEmptyConcCstBQTerm()  ||  (end== tom.engine.adt.cst.types.cstbqtermlist.EmptyConcCstBQTerm.make() ) )) {       /* code to avoid a call to make, and thus to avoid looping during list-matching */       return begin;     }     return  tom.engine.adt.cst.types.cstbqtermlist.ConsConcCstBQTerm.make( begin.getHeadConcCstBQTerm() ,( tom.engine.adt.cst.types.CstBQTermList )tom_get_slice_ConcCstBQTerm( begin.getTailConcCstBQTerm() ,end,tail)) ;   }      private static   tom.engine.adt.cst.types.CstConstraintActionList  tom_append_list_ConcCstConstraintAction( tom.engine.adt.cst.types.CstConstraintActionList l1,  tom.engine.adt.cst.types.CstConstraintActionList  l2) {     if( l1.isEmptyConcCstConstraintAction() ) {       return l2;     } else if( l2.isEmptyConcCstConstraintAction() ) {       return l1;     } else if(  l1.getTailConcCstConstraintAction() .isEmptyConcCstConstraintAction() ) {       return  tom.engine.adt.cst.types.cstconstraintactionlist.ConsConcCstConstraintAction.make( l1.getHeadConcCstConstraintAction() ,l2) ;     } else {       return  tom.engine.adt.cst.types.cstconstraintactionlist.ConsConcCstConstraintAction.make( l1.getHeadConcCstConstraintAction() ,tom_append_list_ConcCstConstraintAction( l1.getTailConcCstConstraintAction() ,l2)) ;     }   }   private static   tom.engine.adt.cst.types.CstConstraintActionList  tom_get_slice_ConcCstConstraintAction( tom.engine.adt.cst.types.CstConstraintActionList  begin,  tom.engine.adt.cst.types.CstConstraintActionList  end, tom.engine.adt.cst.types.CstConstraintActionList  tail) {     if( (begin==end) ) {       return tail;     } else if( (end==tail)  && ( end.isEmptyConcCstConstraintAction()  ||  (end== tom.engine.adt.cst.types.cstconstraintactionlist.EmptyConcCstConstraintAction.make() ) )) {       /* code to avoid a call to make, and thus to avoid looping during list-matching */       return begin;     }     return  tom.engine.adt.cst.types.cstconstraintactionlist.ConsConcCstConstraintAction.make( begin.getHeadConcCstConstraintAction() ,( tom.engine.adt.cst.types.CstConstraintActionList )tom_get_slice_ConcCstConstraintAction( begin.getTailConcCstConstraintAction() ,end,tail)) ;   }      private static   tom.engine.adt.cst.types.CstVisitList  tom_append_list_ConcCstVisit( tom.engine.adt.cst.types.CstVisitList l1,  tom.engine.adt.cst.types.CstVisitList  l2) {     if( l1.isEmptyConcCstVisit() ) {       return l2;     } else if( l2.isEmptyConcCstVisit() ) {       return l1;     } else if(  l1.getTailConcCstVisit() .isEmptyConcCstVisit() ) {       return  tom.engine.adt.cst.types.cstvisitlist.ConsConcCstVisit.make( l1.getHeadConcCstVisit() ,l2) ;     } else {       return  tom.engine.adt.cst.types.cstvisitlist.ConsConcCstVisit.make( l1.getHeadConcCstVisit() ,tom_append_list_ConcCstVisit( l1.getTailConcCstVisit() ,l2)) ;     }   }   private static   tom.engine.adt.cst.types.CstVisitList  tom_get_slice_ConcCstVisit( tom.engine.adt.cst.types.CstVisitList  begin,  tom.engine.adt.cst.types.CstVisitList  end, tom.engine.adt.cst.types.CstVisitList  tail) {     if( (begin==end) ) {       return tail;     } else if( (end==tail)  && ( end.isEmptyConcCstVisit()  ||  (end== tom.engine.adt.cst.types.cstvisitlist.EmptyConcCstVisit.make() ) )) {       /* code to avoid a call to make, and thus to avoid looping during list-matching */       return begin;     }     return  tom.engine.adt.cst.types.cstvisitlist.ConsConcCstVisit.make( begin.getHeadConcCstVisit() ,( tom.engine.adt.cst.types.CstVisitList )tom_get_slice_ConcCstVisit( begin.getTailConcCstVisit() ,end,tail)) ;   }      private static   tom.engine.adt.cst.types.CstPairPatternList  tom_append_list_ConcCstPairPattern( tom.engine.adt.cst.types.CstPairPatternList l1,  tom.engine.adt.cst.types.CstPairPatternList  l2) {     if( l1.isEmptyConcCstPairPattern() ) {       return l2;     } else if( l2.isEmptyConcCstPairPattern() ) {       return l1;     } else if(  l1.getTailConcCstPairPattern() .isEmptyConcCstPairPattern() ) {       return  tom.engine.adt.cst.types.cstpairpatternlist.ConsConcCstPairPattern.make( l1.getHeadConcCstPairPattern() ,l2) ;     } else {       return  tom.engine.adt.cst.types.cstpairpatternlist.ConsConcCstPairPattern.make( l1.getHeadConcCstPairPattern() ,tom_append_list_ConcCstPairPattern( l1.getTailConcCstPairPattern() ,l2)) ;     }   }   private static   tom.engine.adt.cst.types.CstPairPatternList  tom_get_slice_ConcCstPairPattern( tom.engine.adt.cst.types.CstPairPatternList  begin,  tom.engine.adt.cst.types.CstPairPatternList  end, tom.engine.adt.cst.types.CstPairPatternList  tail) {     if( (begin==end) ) {       return tail;     } else if( (end==tail)  && ( end.isEmptyConcCstPairPattern()  ||  (end== tom.engine.adt.cst.types.cstpairpatternlist.EmptyConcCstPairPattern.make() ) )) {       /* code to avoid a call to make, and thus to avoid looping during list-matching */       return begin;     }     return  tom.engine.adt.cst.types.cstpairpatternlist.ConsConcCstPairPattern.make( begin.getHeadConcCstPairPattern() ,( tom.engine.adt.cst.types.CstPairPatternList )tom_get_slice_ConcCstPairPattern( begin.getTailConcCstPairPattern() ,end,tail)) ;   }      private static   tom.engine.adt.cst.types.CstSymbolList  tom_append_list_ConcCstSymbol( tom.engine.adt.cst.types.CstSymbolList l1,  tom.engine.adt.cst.types.CstSymbolList  l2) {     if( l1.isEmptyConcCstSymbol() ) {       return l2;     } else if( l2.isEmptyConcCstSymbol() ) {       return l1;     } else if(  l1.getTailConcCstSymbol() .isEmptyConcCstSymbol() ) {       return  tom.engine.adt.cst.types.cstsymbollist.ConsConcCstSymbol.make( l1.getHeadConcCstSymbol() ,l2) ;     } else {       return  tom.engine.adt.cst.types.cstsymbollist.ConsConcCstSymbol.make( l1.getHeadConcCstSymbol() ,tom_append_list_ConcCstSymbol( l1.getTailConcCstSymbol() ,l2)) ;     }   }   private static   tom.engine.adt.cst.types.CstSymbolList  tom_get_slice_ConcCstSymbol( tom.engine.adt.cst.types.CstSymbolList  begin,  tom.engine.adt.cst.types.CstSymbolList  end, tom.engine.adt.cst.types.CstSymbolList  tail) {     if( (begin==end) ) {       return tail;     } else if( (end==tail)  && ( end.isEmptyConcCstSymbol()  ||  (end== tom.engine.adt.cst.types.cstsymbollist.EmptyConcCstSymbol.make() ) )) {       /* code to avoid a call to make, and thus to avoid looping during list-matching */       return begin;     }     return  tom.engine.adt.cst.types.cstsymbollist.ConsConcCstSymbol.make( begin.getHeadConcCstSymbol() ,( tom.engine.adt.cst.types.CstSymbolList )tom_get_slice_ConcCstSymbol( begin.getTailConcCstSymbol() ,end,tail)) ;   }    
 
   private String filename;
-  public CstBuilder(String filename) {
+  private BufferedTokenStream tokens;
+  private Set<Token> usedToken; // used to add spaces before of after a given token
+
+  public CstBuilder(String filename, BufferedTokenStream tokens) {
     this.filename = filename;
+    this.tokens = tokens;
+    this.usedToken = new HashSet<Token>();
+  }
+
+  public void cleanUsedToken() {
+    this.usedToken = new HashSet<Token>();
   }
 
   private static Logger logger = Logger.getLogger("tom.engine.typer.CstConverter");
@@ -87,9 +96,10 @@ public class CstBuilder extends TomIslandParserBaseListener {
       if(child instanceof TomIslandParser.IslandContext) {
         bl = tom_append_list_ConcCstBlock(bl, tom.engine.adt.cst.types.cstblocklist.ConsConcCstBlock.make((CstBlock)getValue(child), tom.engine.adt.cst.types.cstblocklist.EmptyConcCstBlock.make() ) );
       } else if(child instanceof TomIslandParser.WaterContext) {
-        ParserRuleContext prc = (ParserRuleContext)child;
-        CstOption ot = extractOption(prc.getStart());
-        bl = tom_append_list_ConcCstBlock(bl, tom.engine.adt.cst.types.cstblocklist.ConsConcCstBlock.make( tom.engine.adt.cst.types.cstblock.HOSTBLOCK.make( tom.engine.adt.cst.types.cstoptionlist.ConsConcCstOption.make(ot, tom.engine.adt.cst.types.cstoptionlist.EmptyConcCstOption.make() ) , getStringValue(child)) , tom.engine.adt.cst.types.cstblocklist.EmptyConcCstBlock.make() ) );
+        //ParserRuleContext prc = (ParserRuleContext)child;
+        //CstOption ot = extractOption(prc.getStart());
+        //bl = `ConcCstBlock(bl*,HOSTBLOCK(ConcCstOption(ot), getStringValue(child)));
+        bl = tom_append_list_ConcCstBlock(bl, tom.engine.adt.cst.types.cstblocklist.ConsConcCstBlock.make(buildHostblock((ParserRuleContext)child), tom.engine.adt.cst.types.cstblocklist.EmptyConcCstBlock.make() ) );
       }
     }
     setValue("exitStart",ctx,  tom.engine.adt.cst.types.cstprogram.Cst_Program.make(bl) );
@@ -123,34 +133,36 @@ public class CstBuilder extends TomIslandParserBaseListener {
     setStringValue(ctx,ctx.getText());
   }
 
-  /*
-   * waterexceptparen 
-   *   :
-   *   ~(LPAREN|RPAREN)+? 
-   *   ;
-   */
-  public void exitWaterexceptparen(TomIslandParser.WaterexceptparenContext ctx) {
-    setStringValue(ctx,ctx.getText());
-  }
-
   /* 
    * metaquote
-   *   : LMETAQUOTE (AT (composite | bqcomposite) AT | water)* RMETAQUOTE
+   *   : LMETAQUOTE (AT (bqcomposite | composite) AT | water)*? RMETAQUOTE
    *   ;
    */
   public void exitMetaquote(TomIslandParser.MetaquoteContext ctx) {
     CstOptionList optionList =  tom.engine.adt.cst.types.cstoptionlist.ConsConcCstOption.make(extractOption(ctx.getStart()), tom.engine.adt.cst.types.cstoptionlist.EmptyConcCstOption.make() ) ;
     CstBlockList bl =  tom.engine.adt.cst.types.cstblocklist.EmptyConcCstBlock.make() ;
+    Token previousToken = null;
     for(int i = 0 ; i<ctx.getChildCount() ; i++) {
       ParseTree child = ctx.getChild(i);
       if(child instanceof TomIslandParser.CompositeContext) {
-        bl = tom_append_list_ConcCstBlock(bl, tom.engine.adt.cst.types.cstblocklist.ConsConcCstBlock.make((CstBlock)getValue(child), tom.engine.adt.cst.types.cstblocklist.EmptyConcCstBlock.make() ) );
+        bl = tom_append_list_ConcCstBlock(bl, tom.engine.adt.cst.types.cstblocklist.ConsConcCstBlock.make( tom.engine.adt.cst.types.cstblock.Cst_BQTermToBlock.make((CstBQTerm)getValue(child)) , tom.engine.adt.cst.types.cstblocklist.EmptyConcCstBlock.make() ) );
+        previousToken = null;
       } else if(child instanceof TomIslandParser.BqcompositeContext) {
         bl = tom_append_list_ConcCstBlock(bl, tom.engine.adt.cst.types.cstblocklist.ConsConcCstBlock.make((CstBlock)getValue(child), tom.engine.adt.cst.types.cstblocklist.EmptyConcCstBlock.make() ) );
+        previousToken = null;
       } else if(child instanceof TomIslandParser.WaterContext) {
-        ParserRuleContext prc = (ParserRuleContext)child;
-        CstOption ot = extractOption(prc.getStart());
-        bl = tom_append_list_ConcCstBlock(bl, tom.engine.adt.cst.types.cstblocklist.ConsConcCstBlock.make( tom.engine.adt.cst.types.cstblock.HOSTBLOCK.make( tom.engine.adt.cst.types.cstoptionlist.ConsConcCstOption.make(ot, tom.engine.adt.cst.types.cstoptionlist.EmptyConcCstOption.make() ) , getStringValue(child)) , tom.engine.adt.cst.types.cstblocklist.EmptyConcCstBlock.make() ) );
+        bl = tom_append_list_ConcCstBlock(bl, tom.engine.adt.cst.types.cstblocklist.ConsConcCstBlock.make(buildHostblock((ParserRuleContext)child), tom.engine.adt.cst.types.cstblocklist.EmptyConcCstBlock.make() ) );
+        previousToken = null;
+      } else if(child instanceof TerminalNodeImpl) {
+        if(previousToken != null) {
+          // this means that there no water, nor composite between the two tokens
+          // there is only layout
+          Token currentToken = ((TerminalNodeImpl)child).getSymbol();
+          //System.out.println("between = '" + betweenToken(previousToken,currentToken) + "'");
+          CstOption ot = extractOption(currentToken);
+          bl = tom_append_list_ConcCstBlock(bl, tom.engine.adt.cst.types.cstblocklist.ConsConcCstBlock.make( tom.engine.adt.cst.types.cstblock.HOSTBLOCK.make( tom.engine.adt.cst.types.cstoptionlist.ConsConcCstOption.make(ot, tom.engine.adt.cst.types.cstoptionlist.EmptyConcCstOption.make() ) , betweenToken(previousToken,currentToken)) , tom.engine.adt.cst.types.cstblocklist.EmptyConcCstBlock.make() ) );
+        }
+        previousToken = ((TerminalNodeImpl)child).getSymbol();
       }
     }
 
@@ -300,20 +312,15 @@ public class CstBuilder extends TomIslandParserBaseListener {
       } else if(child instanceof TomIslandParser.BlockContext) {
         bl = tom_append_list_ConcCstBlock(bl, tom.engine.adt.cst.types.cstblocklist.ConsConcCstBlock.make((CstBlock)getValue(child), tom.engine.adt.cst.types.cstblocklist.EmptyConcCstBlock.make() ) );
       } else if(child instanceof TomIslandParser.WaterContext) {
-        ParserRuleContext prc = (ParserRuleContext)child;
-        CstOption ot = extractOption(prc.getStart());
-        bl = tom_append_list_ConcCstBlock(bl, tom.engine.adt.cst.types.cstblocklist.ConsConcCstBlock.make( tom.engine.adt.cst.types.cstblock.HOSTBLOCK.make( tom.engine.adt.cst.types.cstoptionlist.ConsConcCstOption.make(ot, tom.engine.adt.cst.types.cstoptionlist.EmptyConcCstOption.make() ) , getStringValue(child)) , tom.engine.adt.cst.types.cstblocklist.EmptyConcCstBlock.make() ) );
+        //ParserRuleContext prc = (ParserRuleContext)child;
+        //CstOption ot = extractOption(prc.getStart());
+        //bl = `ConcCstBlock(bl*,HOSTBLOCK(ConcCstOption(ot), getStringValue(child)));
+        bl = tom_append_list_ConcCstBlock(bl, tom.engine.adt.cst.types.cstblocklist.ConsConcCstBlock.make(buildHostblock((ParserRuleContext)child), tom.engine.adt.cst.types.cstblocklist.EmptyConcCstBlock.make() ) );
       }
     }
 
-    //CstOption ot1 = extractOption(ctx.LBRACE().getSymbol());
-    //CstOption ot2 = extractOption(ctx.RBRACE().getSymbol());
-    //CstOption ot  = `Cst_OriginTracking(ot1.getfileName(), ot1.getstartLine(), ot1.getstartColumn(), ot2.getendLine(), ot2.getendColumn());
     CstOption otext  = extractText(ctx);
     setValue(ctx, tom.engine.adt.cst.types.cstblock.Cst_UnamedBlock.make( tom.engine.adt.cst.types.cstoptionlist.ConsConcCstOption.make(otext, tom.engine.adt.cst.types.cstoptionlist.EmptyConcCstOption.make() ) , bl) );
-
-    //System.out.println(ctx.getSourceInterval());
-    //System.out.println(ctx.LBRACE().getSymbol().getInputStream().getText(ctx.getSourceInterval()));
   }
 
   /*
@@ -482,12 +489,12 @@ public class CstBuilder extends TomIslandParserBaseListener {
 
   /*
    * composite
-   *   : fsym=ID LPAREN composite* RPAREN
-   *   | LPAREN composite* RPAREN
+   *   : fsym=ID LPAREN composite*? RPAREN
+   *   | LPAREN composite*? RPAREN
    *   | var=ID STAR?
    *   | constant
    *   | UNDERSCORE
-   *   | waterexceptparen
+   *   | water
    *   ;
    */
   public void exitComposite(TomIslandParser.CompositeContext ctx) {
@@ -551,9 +558,9 @@ public class CstBuilder extends TomIslandParserBaseListener {
       res =  tom.engine.adt.cst.types.cstbqterm.Cst_BQConstant.make(optionList, cst.getvalue()) ;
     } else if(ctx.UNDERSCORE() != null) {
       res =  tom.engine.adt.cst.types.cstbqterm.Cst_BQUnderscore.make() ;
-    } else if (ctx.waterexceptparen() != null) {
+    } else if (ctx.water() != null) {
       //System.out.println("composite water");
-      res =  tom.engine.adt.cst.types.cstbqterm.Cst_ITL.make(optionList, getStringValue(ctx.waterexceptparen())) ;
+      res =  tom.engine.adt.cst.types.cstbqterm.Cst_ITL.make(optionList, getStringValue(ctx.water())) ;
     }
 
     setValue("exitComposite",ctx,res);
@@ -947,14 +954,89 @@ public class CstBuilder extends TomIslandParserBaseListener {
    */
 
   private String getText(CstOptionList ol) {
-    { /* unamed block */{ /* unamed block */if ( (ol instanceof tom.engine.adt.cst.types.CstOptionList) ) {if ( (((( tom.engine.adt.cst.types.CstOptionList )ol) instanceof tom.engine.adt.cst.types.cstoptionlist.ConsConcCstOption) || ((( tom.engine.adt.cst.types.CstOptionList )ol) instanceof tom.engine.adt.cst.types.cstoptionlist.EmptyConcCstOption)) ) { tom.engine.adt.cst.types.CstOptionList  tomMatch336_end_4=(( tom.engine.adt.cst.types.CstOptionList )ol);do {{ /* unamed block */if (!( tomMatch336_end_4.isEmptyConcCstOption() )) { tom.engine.adt.cst.types.CstOption  tomMatch336_8= tomMatch336_end_4.getHeadConcCstOption() ;if ( ((( tom.engine.adt.cst.types.CstOption )tomMatch336_8) instanceof tom.engine.adt.cst.types.cstoption.Cst_OriginText) ) {
+    { /* unamed block */{ /* unamed block */if ( (ol instanceof tom.engine.adt.cst.types.CstOptionList) ) {if ( (((( tom.engine.adt.cst.types.CstOptionList )ol) instanceof tom.engine.adt.cst.types.cstoptionlist.ConsConcCstOption) || ((( tom.engine.adt.cst.types.CstOptionList )ol) instanceof tom.engine.adt.cst.types.cstoptionlist.EmptyConcCstOption)) ) { tom.engine.adt.cst.types.CstOptionList  tomMatch2_end_4=(( tom.engine.adt.cst.types.CstOptionList )ol);do {{ /* unamed block */if (!( tomMatch2_end_4.isEmptyConcCstOption() )) { tom.engine.adt.cst.types.CstOption  tomMatch2_8= tomMatch2_end_4.getHeadConcCstOption() ;if ( ((( tom.engine.adt.cst.types.CstOption )tomMatch2_8) instanceof tom.engine.adt.cst.types.cstoption.Cst_OriginText) ) {
 
-        return  tomMatch336_8.gettext() ;
-      }}if ( tomMatch336_end_4.isEmptyConcCstOption() ) {tomMatch336_end_4=(( tom.engine.adt.cst.types.CstOptionList )ol);} else {tomMatch336_end_4= tomMatch336_end_4.getTailConcCstOption() ;}}} while(!( (tomMatch336_end_4==(( tom.engine.adt.cst.types.CstOptionList )ol)) ));}}}}
+        return  tomMatch2_8.gettext() ;
+      }}if ( tomMatch2_end_4.isEmptyConcCstOption() ) {tomMatch2_end_4=(( tom.engine.adt.cst.types.CstOptionList )ol);} else {tomMatch2_end_4= tomMatch2_end_4.getTailConcCstOption() ;}}} while(!( (tomMatch2_end_4==(( tom.engine.adt.cst.types.CstOptionList )ol)) ));}}}}
 
     return "";
   }
 
+  /*
+   * given a context corresponding to water token
+   * search spaces and layouts in hidden channels to
+   * build a HOSTBLOCK with spaces and layout
+   */
+  private CstBlock buildHostblock(ParserRuleContext ctx) {
+    String s = getStringValue(ctx);
+
+    Token token = ctx.getStart();
+    int firstCharLine = token.getLine();
+    int firstCharColumn = token.getCharPositionInLine()+1;
+    int lastCharLine = firstCharLine;
+    int lastCharColumn = firstCharColumn + token.getText().length();
+
+    List<Token> left = tokens.getHiddenTokensToLeft(token.getTokenIndex());
+    List<Token> right = tokens.getHiddenTokensToRight(token.getTokenIndex());
+
+    String sleft = "";
+    String sright = "";
+    if(left != null) {
+      Token firstToken = left.get(0);
+      if(!usedToken.contains(firstToken)) {
+        // a given token should be used only once
+        firstCharLine = firstToken.getLine();
+        firstCharColumn = firstToken.getCharPositionInLine()+1;
+      }
+
+      for(Token space:left) {
+        if(!usedToken.contains(space)) {
+          sleft += space.getText();
+          usedToken.add(space);
+        }
+      }
+    }
+
+    if(right != null) {
+      String newline = System.getProperty("line.separator");
+      Token lastToken = right.get(right.size()-1);
+      //System.out.println("lastToken: " + lastToken);
+      if(!usedToken.contains(lastToken)) {
+        if(lastToken.getText().equals(newline)) {
+          lastCharColumn = 1;
+          lastCharLine = firstCharLine + 1;
+        } else {
+          lastCharLine = lastToken.getLine();
+          lastCharColumn = lastToken.getCharPositionInLine()+1 + lastToken.getText().length();
+        }
+      }
+
+      for(Token space:right) {
+        if(!usedToken.contains(space)) {
+          sright += space.getText();
+          usedToken.add(space);
+        }
+      }
+
+    }
+    s = sleft + s + sright;
+
+
+    String source = token.getTokenSource().getSourceName();
+    if(source == IntStream.UNKNOWN_SOURCE_NAME) {
+      source = this.filename;
+    }
+    CstOption ot =  tom.engine.adt.cst.types.cstoption.Cst_OriginTracking.make(source, firstCharLine, firstCharColumn, lastCharLine, lastCharColumn) ;  
+    //System.out.println("ot: " + ot);
+    //System.out.println("hb: " + `HOSTBLOCK(ConcCstOption(ot), s));
+    return  tom.engine.adt.cst.types.cstblock.HOSTBLOCK.make( tom.engine.adt.cst.types.cstoptionlist.ConsConcCstOption.make(ot, tom.engine.adt.cst.types.cstoptionlist.EmptyConcCstOption.make() ) , s) ;
+  }
+
+  /*
+   * given a context
+   * returns the string corresponding to the parsed source code
+   * (including spaces and layout)
+   */
   private CstOption extractText(ParserRuleContext ctx) {
     int a = ctx.start.getStartIndex();
     int b = ctx.stop.getStopIndex();
@@ -972,12 +1054,12 @@ public class CstBuilder extends TomIslandParserBaseListener {
     //System.out.println("text: '" + text + "'");
 
     int firstCharLine = t.getLine();
-    int firstCharColumn = t.getCharPositionInLine();
+    int firstCharColumn = t.getCharPositionInLine()+1;
     int lastCharLine;
     int lastCharColumn;
 
     if(text.equals(newline)) {
-      lastCharColumn = 0;
+      lastCharColumn = 1;
       lastCharLine = firstCharLine + 1;
     } else {
       lastCharColumn = firstCharColumn + text.length();
@@ -1091,5 +1173,24 @@ public class CstBuilder extends TomIslandParserBaseListener {
     return res;
   }
 
+  /*
+   * add missing spaces/newlines between two tokens
+   */
+  private static String betweenToken(Token t1, Token t2) {
+    String newline = System.getProperty("line.separator");
+    int l = t1.getLine();
+    int c = t1.	getCharPositionInLine()+1;
+    String res = "";
+    while(l < t2.getLine()) {
+      res += newline;
+      l++;
+      c = 1;
+    }
+    while(c < t2.	getCharPositionInLine()) {
+      res += " ";
+      c++;
+    }
+    return res;
+  }
 }
 

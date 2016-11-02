@@ -98,7 +98,7 @@ public class TomParser {
       parser.getInterpreter().setPredictionMode(PredictionMode.LL);
       tree = parser.start();
     }
-    //System.out.print("\tparsing:" + (System.currentTimeMillis()-start) + " ms");
+    System.out.println("\tparsing:" + (System.currentTimeMillis()-start) + " ms");
 
     // show tree in text form
     // System.out.println(tree.toStringTree(parser));

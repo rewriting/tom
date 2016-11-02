@@ -218,16 +218,6 @@ public interface TomIslandParserListener extends ParseTreeListener {
 	 */
 	void exitComposite(TomIslandParser.CompositeContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link TomIslandParser#waterexceptparen}.
-	 * @param ctx the parse tree
-	 */
-	void enterWaterexceptparen(TomIslandParser.WaterexceptparenContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link TomIslandParser#waterexceptparen}.
-	 * @param ctx the parse tree
-	 */
-	void exitWaterexceptparen(TomIslandParser.WaterexceptparenContext ctx);
-	/**
 	 * Enter a parse tree produced by {@link TomIslandParser#pattern}.
 	 * @param ctx the parse tree
 	 */

@@ -71,7 +71,6 @@ public BackQuoteLexer(LexerSharedInputState state) {
 	caseSensitiveLiterals = true;
 	setCaseSensitive(true);
 	literals = new Hashtable();
-	literals.put(new ANTLRHashString("xml", this), new Integer(15));
 }
 
 public Token nextToken() throws TokenStreamException {
@@ -83,31 +82,7 @@ tryAgain:
 		resetText();
 		try {   // for char stream error handling
 			try {   // for lexical error handling
-				if ((LA(1)=='<') && (LA(2)=='/')) {
-					mXML_START_ENDING(true);
-					theRetToken=_returnToken;
-				}
-				else if ((LA(1)=='/') && (LA(2)=='>')) {
-					mXML_CLOSE_SINGLETON(true);
-					theRetToken=_returnToken;
-				}
-				else if ((LA(1)=='#') && (LA(2)=='T')) {
-					mXML_TEXT(true);
-					theRetToken=_returnToken;
-				}
-				else if ((LA(1)=='#') && (LA(2)=='C')) {
-					mXML_COMMENT(true);
-					theRetToken=_returnToken;
-				}
-				else if ((LA(1)=='#') && (LA(2)=='P')) {
-					mXML_PROC(true);
-					theRetToken=_returnToken;
-				}
-				else if ((LA(1)=='<') && (LA(2)=='?')) {
-					mXML_SKIP(true);
-					theRetToken=_returnToken;
-				}
-				else if ((LA(1)=='"') && (_tokenSet_0.member(LA(2)))) {
+				if ((LA(1)=='"') && (_tokenSet_0.member(LA(2)))) {
 					mBQ_STRING(true);
 					theRetToken=_returnToken;
 				}
@@ -157,14 +132,6 @@ tryAgain:
 				}
 				else if ((LA(1)=='=') && (true)) {
 					mEQUAL(true);
-					theRetToken=_returnToken;
-				}
-				else if ((LA(1)=='<') && (true)) {
-					mXML_START(true);
-					theRetToken=_returnToken;
-				}
-				else if ((LA(1)=='>') && (true)) {
-					mXML_CLOSE(true);
 					theRetToken=_returnToken;
 				}
 				else if ((LA(1)=='"') && (true)) {
@@ -375,103 +342,12 @@ tryAgain:
 		_returnToken = _token;
 	}
 	
-	public final void mXML_START_ENDING(boolean _createToken) throws RecognitionException, CharStreamException, TokenStreamException {
-		int _ttype; Token _token=null; int _begin=text.length();
-		_ttype = XML_START_ENDING;
-		int _saveIndex;
-		
-		match("</");
-		if ( _createToken && _token==null && _ttype!=Token.SKIP ) {
-			_token = makeToken(_ttype);
-			_token.setText(new String(text.getBuffer(), _begin, text.length()-_begin));
-		}
-		_returnToken = _token;
-	}
-	
-	public final void mXML_CLOSE_SINGLETON(boolean _createToken) throws RecognitionException, CharStreamException, TokenStreamException {
-		int _ttype; Token _token=null; int _begin=text.length();
-		_ttype = XML_CLOSE_SINGLETON;
-		int _saveIndex;
-		
-		match("/>");
-		if ( _createToken && _token==null && _ttype!=Token.SKIP ) {
-			_token = makeToken(_ttype);
-			_token.setText(new String(text.getBuffer(), _begin, text.length()-_begin));
-		}
-		_returnToken = _token;
-	}
-	
-	public final void mXML_START(boolean _createToken) throws RecognitionException, CharStreamException, TokenStreamException {
-		int _ttype; Token _token=null; int _begin=text.length();
-		_ttype = XML_START;
-		int _saveIndex;
-		
-		match('<');
-		if ( _createToken && _token==null && _ttype!=Token.SKIP ) {
-			_token = makeToken(_ttype);
-			_token.setText(new String(text.getBuffer(), _begin, text.length()-_begin));
-		}
-		_returnToken = _token;
-	}
-	
-	public final void mXML_CLOSE(boolean _createToken) throws RecognitionException, CharStreamException, TokenStreamException {
-		int _ttype; Token _token=null; int _begin=text.length();
-		_ttype = XML_CLOSE;
-		int _saveIndex;
-		
-		match('>');
-		if ( _createToken && _token==null && _ttype!=Token.SKIP ) {
-			_token = makeToken(_ttype);
-			_token.setText(new String(text.getBuffer(), _begin, text.length()-_begin));
-		}
-		_returnToken = _token;
-	}
-	
 	public final void mDOUBLE_QUOTE(boolean _createToken) throws RecognitionException, CharStreamException, TokenStreamException {
 		int _ttype; Token _token=null; int _begin=text.length();
 		_ttype = DOUBLE_QUOTE;
 		int _saveIndex;
 		
 		match('\"');
-		if ( _createToken && _token==null && _ttype!=Token.SKIP ) {
-			_token = makeToken(_ttype);
-			_token.setText(new String(text.getBuffer(), _begin, text.length()-_begin));
-		}
-		_returnToken = _token;
-	}
-	
-	public final void mXML_TEXT(boolean _createToken) throws RecognitionException, CharStreamException, TokenStreamException {
-		int _ttype; Token _token=null; int _begin=text.length();
-		_ttype = XML_TEXT;
-		int _saveIndex;
-		
-		match("#TEXT");
-		if ( _createToken && _token==null && _ttype!=Token.SKIP ) {
-			_token = makeToken(_ttype);
-			_token.setText(new String(text.getBuffer(), _begin, text.length()-_begin));
-		}
-		_returnToken = _token;
-	}
-	
-	public final void mXML_COMMENT(boolean _createToken) throws RecognitionException, CharStreamException, TokenStreamException {
-		int _ttype; Token _token=null; int _begin=text.length();
-		_ttype = XML_COMMENT;
-		int _saveIndex;
-		
-		match("#COMMENT");
-		if ( _createToken && _token==null && _ttype!=Token.SKIP ) {
-			_token = makeToken(_ttype);
-			_token.setText(new String(text.getBuffer(), _begin, text.length()-_begin));
-		}
-		_returnToken = _token;
-	}
-	
-	public final void mXML_PROC(boolean _createToken) throws RecognitionException, CharStreamException, TokenStreamException {
-		int _ttype; Token _token=null; int _begin=text.length();
-		_ttype = XML_PROC;
-		int _saveIndex;
-		
-		match("#PROCESSING-INSTRUCTION");
 		if ( _createToken && _token==null && _ttype!=Token.SKIP ) {
 			_token = makeToken(_ttype);
 			_token.setText(new String(text.getBuffer(), _begin, text.length()-_begin));
@@ -549,39 +425,6 @@ tryAgain:
 		_returnToken = _token;
 	}
 	
-	public final void mXML_SKIP(boolean _createToken) throws RecognitionException, CharStreamException, TokenStreamException {
-		int _ttype; Token _token=null; int _begin=text.length();
-		_ttype = XML_SKIP;
-		int _saveIndex;
-		
-		match("<?");
-		{
-		_loop84:
-		do {
-			if ((_tokenSet_4.member(LA(1)))) {
-				{
-				match(_tokenSet_4);
-				}
-			}
-			else {
-				break _loop84;
-			}
-			
-		} while (true);
-		}
-		match('>');
-		if ( inputState.guessing==0 ) {
-			
-			_ttype = Token.SKIP;
-			
-		}
-		if ( _createToken && _token==null && _ttype!=Token.SKIP ) {
-			_token = makeToken(_ttype);
-			_token.setText(new String(text.getBuffer(), _begin, text.length()-_begin));
-		}
-		_returnToken = _token;
-	}
-	
 	public final void mBQ_INTEGER(boolean _createToken) throws RecognitionException, CharStreamException, TokenStreamException {
 		int _ttype; Token _token=null; int _begin=text.length();
 		_ttype = BQ_INTEGER;
@@ -607,17 +450,17 @@ tryAgain:
 		}
 		}
 		{
-		int _cnt88=0;
-		_loop88:
+		int _cnt57=0;
+		_loop57:
 		do {
 			if (((LA(1) >= '0' && LA(1) <= '9'))) {
 				mBQ_DIGIT(false);
 			}
 			else {
-				if ( _cnt88>=1 ) { break _loop88; } else {throw new NoViableAltForCharException((char)LA(1), getFilename(), getLine(), getColumn());}
+				if ( _cnt57>=1 ) { break _loop57; } else {throw new NoViableAltForCharException((char)LA(1), getFilename(), getLine(), getColumn());}
 			}
 			
-			_cnt88++;
+			_cnt57++;
 		} while (true);
 		}
 		if ( _createToken && _token==null && _ttype!=Token.SKIP ) {
@@ -649,18 +492,18 @@ tryAgain:
 		
 		match('"');
 		{
-		_loop92:
+		_loop61:
 		do {
 			if ((LA(1)=='\\')) {
 				mBQ_ESC(false);
 			}
-			else if ((_tokenSet_5.member(LA(1)))) {
+			else if ((_tokenSet_4.member(LA(1)))) {
 				{
-				match(_tokenSet_5);
+				match(_tokenSet_4);
 				}
 			}
 			else {
-				break _loop92;
+				break _loop61;
 			}
 			
 		} while (true);
@@ -724,17 +567,17 @@ tryAgain:
 		case 'u':
 		{
 			{
-			int _cnt113=0;
-			_loop113:
+			int _cnt82=0;
+			_loop82:
 			do {
 				if ((LA(1)=='u')) {
 					match('u');
 				}
 				else {
-					if ( _cnt113>=1 ) { break _loop113; } else {throw new NoViableAltForCharException((char)LA(1), getFilename(), getLine(), getColumn());}
+					if ( _cnt82>=1 ) { break _loop82; } else {throw new NoViableAltForCharException((char)LA(1), getFilename(), getLine(), getColumn());}
 				}
 				
-				_cnt113++;
+				_cnt82++;
 			} while (true);
 			}
 			mBQ_HEX_DIGIT(false);
@@ -805,10 +648,10 @@ tryAgain:
 		int _saveIndex;
 		
 		{
-		boolean synPredMatched96 = false;
-		if (((_tokenSet_3.member(LA(1))) && (_tokenSet_6.member(LA(2))))) {
-			int _m96 = mark();
-			synPredMatched96 = true;
+		boolean synPredMatched65 = false;
+		if (((_tokenSet_3.member(LA(1))) && (_tokenSet_5.member(LA(2))))) {
+			int _m65 = mark();
+			synPredMatched65 = true;
 			inputState.guessing++;
 			try {
 				{
@@ -816,12 +659,12 @@ tryAgain:
 				}
 			}
 			catch (RecognitionException pe) {
-				synPredMatched96 = false;
+				synPredMatched65 = false;
 			}
-			rewind(_m96);
+			rewind(_m65);
 inputState.guessing--;
 		}
-		if ( synPredMatched96 ) {
+		if ( synPredMatched65 ) {
 			mBQ_MINUS_ID(false);
 		}
 		else if ((_tokenSet_3.member(LA(1))) && (true)) {
@@ -928,7 +771,7 @@ inputState.guessing--;
 		}
 		}
 		{
-		_loop102:
+		_loop71:
 		do {
 			switch ( LA(1)) {
 			case 'A':  case 'B':  case 'C':  case 'D':
@@ -992,7 +835,7 @@ inputState.guessing--;
 			}
 			default:
 			{
-				break _loop102;
+				break _loop71;
 			}
 			}
 		} while (true);
@@ -1011,18 +854,18 @@ inputState.guessing--;
 		int _saveIndex;
 		
 		{
-		int _cnt107=0;
-		_loop107:
+		int _cnt76=0;
+		_loop76:
 		do {
 			if ((LA(1)=='-')) {
 				mBQ_MINUS(false);
 				mBQ_SIMPLE_ID(false);
 			}
 			else {
-				if ( _cnt107>=1 ) { break _loop107; } else {throw new NoViableAltForCharException((char)LA(1), getFilename(), getLine(), getColumn());}
+				if ( _cnt76>=1 ) { break _loop76; } else {throw new NoViableAltForCharException((char)LA(1), getFilename(), getLine(), getColumn());}
 			}
 			
-			_cnt107++;
+			_cnt76++;
 		} while (true);
 		}
 		if ( _createToken && _token==null && _ttype!=Token.SKIP ) {
@@ -1113,25 +956,18 @@ inputState.guessing--;
 	public static final BitSet _tokenSet_3 = new BitSet(mk_tokenSet_3());
 	private static final long[] mk_tokenSet_4() {
 		long[] data = new long[2048];
-		data[0]=-4611686018427387905L;
-		for (int i = 1; i<=1023; i++) { data[i]=-1L; }
-		return data;
-	}
-	public static final BitSet _tokenSet_4 = new BitSet(mk_tokenSet_4());
-	private static final long[] mk_tokenSet_5() {
-		long[] data = new long[2048];
 		data[0]=-17179878401L;
 		data[1]=-268435457L;
 		for (int i = 2; i<=1023; i++) { data[i]=-1L; }
 		return data;
 	}
-	public static final BitSet _tokenSet_5 = new BitSet(mk_tokenSet_5());
-	private static final long[] mk_tokenSet_6() {
+	public static final BitSet _tokenSet_4 = new BitSet(mk_tokenSet_4());
+	private static final long[] mk_tokenSet_5() {
 		long[] data = new long[1025];
 		data[0]=287984085547089920L;
 		data[1]=576460745995190270L;
 		return data;
 	}
-	public static final BitSet _tokenSet_6 = new BitSet(mk_tokenSet_6());
+	public static final BitSet _tokenSet_5 = new BitSet(mk_tokenSet_5());
 	
 	}
