@@ -72,8 +72,9 @@ STAR : '*' ;
 UNDERSCORE : '_' ;
 ANTI : '!' ;
 AT : '@' ;
-LMETAQUOTE : '%[' ;
-RMETAQUOTE : ']%' ;
+METAQUOTE : '%[' .*? ']%';
+//LMETAQUOTE : '%[' ;
+//RMETAQUOTE : ']%' ;
 ATAT : '@@' ;
 
 GREATEROREQ : '>=';

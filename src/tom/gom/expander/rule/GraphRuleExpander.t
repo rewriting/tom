@@ -153,12 +153,12 @@ static class SharedLabel {
   }
 }
 
-%op tom_@abstractType.getName()@ Subst(global:tom_@abstractType.getName()@,subst:tom_@abstractType.getName()@) {
+%op tom_@(abstractType.getName())@ Subst(global:tom_@(abstractType.getName())@,subst:tom_@(abstractType.getName())@) {
   is_fsym(t) {( $t instanceof Subst )}
   make(t1,t2) {( new Subst($t1,$t2) )}
 }
 
-%typeterm tom_@abstractType.getName()@ {
+%typeterm tom_@(abstractType.getName())@ {
   implement { @fullClassName(abstractType)@ }
   is_sort(t) {( $t instanceof @fullClassName(abstractType)@ )}
 }
@@ -378,7 +378,7 @@ import @prefix@.types.@`name.toLowerCase()@.Path@`name@;
             //TODO: verify that the lhs of the rules are of the good sort
             //TODO: verify the linearity of lhs and rhs
             output.append(%[
-                @genTerm(`lhs)@ -> {
+                @`genTerm(lhs)@ -> {
 
                 /* 1. set needed positions */
                 Position omega = getEnvironment().getPosition();
@@ -391,8 +391,8 @@ import @prefix@.types.@`name.toLowerCase()@.Path@`name@;
                 @fullClassName(abstractType)@ subject = (@fullClassName(abstractType)@) getEnvironment().getSubject();
 
                 /* 2. construct at compile-time the lhs and rhs */
-                @fullClassName(abstractType)@ labelledLhs = `@genTermWithExplicitVar(`lhs,"root",0)@.normalizeWithLabels();
-                @fullClassName(abstractType)@ labelledRhs = `@genTermWithExplicitVar(`rhs,"root",0)@.normalizeWithLabels();
+                @fullClassName(abstractType)@ labelledLhs = `@`genTermWithExplicitVar(lhs,"root",0)@.normalizeWithLabels();
+                @fullClassName(abstractType)@ labelledRhs = `@`genTermWithExplicitVar(rhs,"root",0)@.normalizeWithLabels();
 
                /* 3. construct t = SubstTerm(subject',r') */
                 @fullClassName(abstractType)@ rhs = labelledRhs.label2path();
@@ -484,7 +484,7 @@ import @prefix@.types.@`name.toLowerCase()@.Path@`name@;
     %match(list) {
       TermList() -> { return ""; }
       TermList(h,t*) -> {
-        output.append(genTerm(`h));
+        output.append(`genTerm(h));
         if (!`t.isEmptyTermList()) {
           output.append(", ");
         }
@@ -502,7 +502,7 @@ import @prefix@.types.@`name.toLowerCase()@.Path@`name@;
         output.append("(");
         output.append("\""+`label+"\"");
         output.append(",");
-        output.append(genTermWithExplicitVar(`term,fathersymbol,omega));
+        output.append(`genTermWithExplicitVar(term,fathersymbol,omega));
         output.append(")");
       }
       RefTerm(label) -> {
@@ -545,7 +545,7 @@ import @prefix@.types.@`name.toLowerCase()@.Path@`name@;
     %match(list) {
       TermList() -> { return ""; }
       TermList(_*,h,t*) -> {
-        output.append(genTermWithExplicitVar(`h,fathersymbol,omega));
+        output.append(`genTermWithExplicitVar(h,fathersymbol,omega));
         omega++;
         if (!`t.isEmptyTermList()) {
           output.append(", ");

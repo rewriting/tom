@@ -101,7 +101,7 @@ public class CFGViewer {
   %strategy PrintDotNode(out:Writer) extends Identity() {
     visit InstructionList {
       c@ConsInstructionList(ins, _) -> {
-        String id = getDotId(`c);
+        String id = `getDotId(c);
         printDotInstruction(`ins, id, out);
       }
     }
@@ -217,7 +217,7 @@ public class CFGViewer {
     visit InstructionList {
       c@ConsInstructionList[] -> {
         try {
-          out.write(%[@getDotId(parent.ins)@ -> @getDotId(`c)@;
+          out.write(%[@getDotId(parent.ins)@ -> @`getDotId(c)@;
               ]%);
         } catch(IOException e) {
           e.printStackTrace();

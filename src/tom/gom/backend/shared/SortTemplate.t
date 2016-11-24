@@ -439,7 +439,7 @@ private String generateSum() {
   //System.out.println("variadicOperatorList = " + variadicOperatorList);
 
   %match(operatorClasses) {
-    ConcGomClass(_*,OperatorClass[ClassName=className, SortName=ClassName[Name=sortName], SlotFields=slotList],_*) && className()==`sortName -> {
+    ConcGomClass(_*,OperatorClass[ClassName=className, SortName=ClassName[Name=sortName], SlotFields=slotList],_*) && className()==sortName -> {
       String exp = fullClassName(`className) + ".funMake()";
       %match(slotList) { 
         ConcSlotField() -> {
@@ -462,7 +462,7 @@ private String generateSum() {
     ConcGomClass(_*,VariadicOperatorClass[ClassName=className, SortName=ClassName[Name=sortName], 
         Empty=OperatorClass[ClassName=emptyClassName, SortName=ClassName[Name=emptySortName], SlotFields=emptySlotList], 
         Cons=OperatorClass[ClassName=consClassName, SortName=ClassName[Name=consSortName], SlotFields=consSlotList]
-        ],_*) && className()==`sortName -> {
+        ],_*) && className()==sortName -> {
       String exp = fullClassName(`emptyClassName) + ".funMake().apply(" + fullClassName() + ".tmpenum" + className() + ")";
       res = (res==null)?exp:res+"\n        .plus(" + exp + ")";
       

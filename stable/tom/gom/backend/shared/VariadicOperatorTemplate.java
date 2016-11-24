@@ -96,7 +96,19 @@ writer.write("\n}\n"
   private void generateBody(java.io.Writer writer) throws java.io.IOException {
     String domainClassName = fullClassName(
         cons.getSlotFields().getHeadConcSlotField().getDomain());
-    writer.write("\n  /**\n   * Returns the number of arguments of the variadic operator\n   *\n   * @return the number of arguments of the variadic operator\n   */\n  @Override\n  public int length() {\n    if(this instanceof "+fullClassName(cons.getClassName())+") {\n      "+fullClassName(sortName)+" tl = this.getTail"+className()+"();\n      if (tl instanceof "+className()+") {\n        return 1+(("+className()+")tl).length();\n      } else {\n        return 2;\n      }\n    } else {\n      return 0;\n    }\n  }\n\n  public static "+fullClassName(sortName)+" fromArray("+domainClassName+"[] array) {\n    "+fullClassName(sortName)+" res = "+fullClassName(empty.getClassName())+".make();\n    for(int i = array.length; i>0;) {\n      res = "+fullClassName(cons.getClassName())+".make(array[--i],res);\n    }\n    return res;\n  }\n\n  /**\n   * Inverses the term if it is a list\n   *\n   * @return the inverted term if it is a list, otherwise the term itself\n   */\n  @Override\n  public "+fullClassName(sortName)+" reverse() {\n    if(this instanceof "+fullClassName(cons.getClassName())+") {\n      "+fullClassName(sortName)+" cur = this;\n      "+fullClassName(sortName)+" rev = "+fullClassName(empty.getClassName())+".make();\n      while(cur instanceof "+fullClassName(cons.getClassName())+") {\n        rev = "+fullClassName(cons.getClassName())+".make(cur.getHead"+className()+"(),rev);\n        cur = cur.getTail"+className()+"();\n      }\n"
+    writer.write("\n  /**\n   * Returns the number of arguments of the variadic operator\n   *\n   * @return the number of arguments of the variadic operator\n   */\n  @Override\n  public int length() {\n    int res = 0;\n    "+fullClassName(sortName)+" tl = this;\n    while(tl instanceof "+fullClassName(cons.getClassName())+") {\n      res += 1;\n      tl = tl.getTail"+className()+"();\n      if(tl instanceof "+className()+" == false) {\n        res += 1;\n      }\n    }\n    return res;\n/*\n    if(this instanceof "+fullClassName(cons.getClassName())+") {\n      "+fullClassName(sortName)+" tl = this.getTail"+className()+"();\n      if (tl instanceof "+className()+") {\n        return 1+(("+className()+")tl).length();\n      } else {\n        return 2;\n      }\n    } else {\n      return 0;\n    }\n    */\n  }\n\n  public static "+fullClassName(sortName)+" fromArray("+domainClassName+"[] array) {\n    "+fullClassName(sortName)+" res = "+fullClassName(empty.getClassName())+".make();\n    for(int i = array.length; i>0;) {\n      res = "+fullClassName(cons.getClassName())+".make(array[--i],res);\n    }\n    return res;\n  }\n\n  /**\n   * Inverses the term if it is a list\n   *\n   * @return the inverted term if it is a list, otherwise the term itself\n   */\n  @Override\n  public "+fullClassName(sortName)+" reverse() {\n    if(this instanceof "+fullClassName(cons.getClassName())+") {\n      "+fullClassName(sortName)+" cur = this;\n      "+fullClassName(sortName)+" rev = "+fullClassName(empty.getClassName())+".make();\n      while(cur instanceof "+fullClassName(cons.getClassName())+") {\n        rev = "+fullClassName(cons.getClassName())+".make(cur.getHead"+className()+"(),rev);\n        cur = cur.getTail"+className()+"();\n      }\n"
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -633,13 +645,13 @@ writer.write("\n}\n"
   public void generateTomMapping(Writer writer)
       throws java.io.IOException {
     boolean hasHook = false;
-    { /* unamed block */{ /* unamed block */if ( (hooks instanceof tom.gom.adt.objects.types.HookList) ) {if ( (((( tom.gom.adt.objects.types.HookList )hooks) instanceof tom.gom.adt.objects.types.hooklist.ConsConcHook) || ((( tom.gom.adt.objects.types.HookList )hooks) instanceof tom.gom.adt.objects.types.hooklist.EmptyConcHook)) ) { tom.gom.adt.objects.types.HookList  tomMatch610_end_4=(( tom.gom.adt.objects.types.HookList )hooks);do {{ /* unamed block */if (!( tomMatch610_end_4.isEmptyConcHook() )) { tom.gom.adt.objects.types.Hook  tomMatch610_8= tomMatch610_end_4.getHeadConcHook() ;if ( ((( tom.gom.adt.objects.types.Hook )tomMatch610_8) instanceof tom.gom.adt.objects.types.hook.MappingHook) ) {
+    { /* unamed block */{ /* unamed block */if ( (hooks instanceof tom.gom.adt.objects.types.HookList) ) {if ( (((( tom.gom.adt.objects.types.HookList )hooks) instanceof tom.gom.adt.objects.types.hooklist.ConsConcHook) || ((( tom.gom.adt.objects.types.HookList )hooks) instanceof tom.gom.adt.objects.types.hooklist.EmptyConcHook)) ) { tom.gom.adt.objects.types.HookList  tomMatch159_end_4=(( tom.gom.adt.objects.types.HookList )hooks);do {{ /* unamed block */if (!( tomMatch159_end_4.isEmptyConcHook() )) { tom.gom.adt.objects.types.Hook  tomMatch159_8= tomMatch159_end_4.getHeadConcHook() ;if ( ((( tom.gom.adt.objects.types.Hook )tomMatch159_8) instanceof tom.gom.adt.objects.types.hook.MappingHook) ) {
 
-        CodeGen.generateCode( tomMatch610_8.getCode() ,writer);
+        CodeGen.generateCode( tomMatch159_8.getCode() ,writer);
         hasHook = true;
         // if there is a mapping hook we stop here
         return;
-      }}if ( tomMatch610_end_4.isEmptyConcHook() ) {tomMatch610_end_4=(( tom.gom.adt.objects.types.HookList )hooks);} else {tomMatch610_end_4= tomMatch610_end_4.getTailConcHook() ;}}} while(!( (tomMatch610_end_4==(( tom.gom.adt.objects.types.HookList )hooks)) ));}}}}{ /* unamed block */{ /* unamed block */if ( (cons instanceof tom.gom.adt.objects.types.GomClass) ) {if ( ((( tom.gom.adt.objects.types.GomClass )cons) instanceof tom.gom.adt.objects.types.gomclass.OperatorClass) ) { tom.gom.adt.objects.types.SlotFieldList  tomMatch611_1= (( tom.gom.adt.objects.types.GomClass )cons).getSlotFields() ;if ( (((( tom.gom.adt.objects.types.SlotFieldList )tomMatch611_1) instanceof tom.gom.adt.objects.types.slotfieldlist.ConsConcSlotField) || ((( tom.gom.adt.objects.types.SlotFieldList )tomMatch611_1) instanceof tom.gom.adt.objects.types.slotfieldlist.EmptyConcSlotField)) ) {if (!( tomMatch611_1.isEmptyConcSlotField() )) { tom.gom.adt.objects.types.SlotField  tomMatch611_8= tomMatch611_1.getHeadConcSlotField() ;if ( ((( tom.gom.adt.objects.types.SlotField )tomMatch611_8) instanceof tom.gom.adt.objects.types.slotfield.SlotField) ) { tom.gom.adt.objects.types.SlotFieldList  tomMatch611_5= tomMatch611_1.getTailConcSlotField() ;if (!( tomMatch611_5.isEmptyConcSlotField() )) {if (  tomMatch611_5.getTailConcSlotField() .isEmptyConcSlotField() ) {
+      }}if ( tomMatch159_end_4.isEmptyConcHook() ) {tomMatch159_end_4=(( tom.gom.adt.objects.types.HookList )hooks);} else {tomMatch159_end_4= tomMatch159_end_4.getTailConcHook() ;}}} while(!( (tomMatch159_end_4==(( tom.gom.adt.objects.types.HookList )hooks)) ));}}}}{ /* unamed block */{ /* unamed block */if ( (cons instanceof tom.gom.adt.objects.types.GomClass) ) {if ( ((( tom.gom.adt.objects.types.GomClass )cons) instanceof tom.gom.adt.objects.types.gomclass.OperatorClass) ) { tom.gom.adt.objects.types.SlotFieldList  tomMatch160_1= (( tom.gom.adt.objects.types.GomClass )cons).getSlotFields() ;if ( (((( tom.gom.adt.objects.types.SlotFieldList )tomMatch160_1) instanceof tom.gom.adt.objects.types.slotfieldlist.ConsConcSlotField) || ((( tom.gom.adt.objects.types.SlotFieldList )tomMatch160_1) instanceof tom.gom.adt.objects.types.slotfieldlist.EmptyConcSlotField)) ) {if (!( tomMatch160_1.isEmptyConcSlotField() )) { tom.gom.adt.objects.types.SlotField  tomMatch160_8= tomMatch160_1.getHeadConcSlotField() ;if ( ((( tom.gom.adt.objects.types.SlotField )tomMatch160_8) instanceof tom.gom.adt.objects.types.slotfield.SlotField) ) { tom.gom.adt.objects.types.SlotFieldList  tomMatch160_5= tomMatch160_1.getTailConcSlotField() ;if (!( tomMatch160_5.isEmptyConcSlotField() )) {if (  tomMatch160_5.getTailConcSlotField() .isEmptyConcSlotField() ) {
 
 
 
@@ -648,7 +660,7 @@ writer.write("\n}\n"
 
     ClassName emptyClass = empty.getClassName();
     ClassName consClass = cons.getClassName();
-    writer.write("\n%oplist "+className(sortName)+" "+className()+"("+className( tomMatch611_8.getDomain() )+"*) {\n  is_fsym(t) { (($t instanceof "+fullClassName(consClass)+") || ($t instanceof "+fullClassName(emptyClass)+")) }\n  make_empty() { "+fullClassName(emptyClass)+".make() }\n  make_insert(e,l) { "+fullClassName(consClass)+".make($e,$l) }\n  get_head(l) { $l."+getMethod( tomMatch611_1.getHeadConcSlotField() )+"() }\n  get_tail(l) { $l."+getMethod( tomMatch611_5.getHeadConcSlotField() )+"() }\n  is_empty(l) { $l."+isOperatorMethod(emptyClass)+"() }\n}\n"
+    writer.write("\n%oplist "+className(sortName)+" "+className()+"("+className( tomMatch160_8.getDomain() )+"*) {\n  is_fsym(t) { (($t instanceof "+fullClassName(consClass)+") || ($t instanceof "+fullClassName(emptyClass)+")) }\n  make_empty() { "+fullClassName(emptyClass)+".make() }\n  make_insert(e,l) { "+fullClassName(consClass)+".make($e,$l) }\n  get_head(l) { $l."+getMethod( tomMatch160_1.getHeadConcSlotField() )+"() }\n  get_tail(l) { $l."+getMethod( tomMatch160_5.getHeadConcSlotField() )+"() }\n  is_empty(l) { $l."+isOperatorMethod(emptyClass)+"() }\n}\n"
 
 
 

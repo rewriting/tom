@@ -198,7 +198,7 @@ generateConstructor(writer);
 if(slotList.length()>0) {
 
 if(maximalsharing) {
-writer.write("\n  /**\n   * Initializes attributes and hashcode of the class\n   *\n   * @param "+childListOnePerLine(slotList)+"\n   * @param hashCode hashCode of "+className()+"\n   */\n  private void init("+childListWithType(slotList) + (slotList.isEmptyConcSlotField()?"":", ") +"int hashCode) {\n"
+writer.write("\n  /**\n   * Initializes attributes and hashcode of the class\n   *\n   * @param "+childListOnePerLine(slotList)+"\n   * @param hashCode hashCode of "+className()+"\n   */\n  private void init("+(childListWithType(slotList) + (slotList.isEmptyConcSlotField()?"":", "))+"int hashCode) {\n"
 
 
 
@@ -265,7 +265,7 @@ if(multithread) {
 
 );
 } else {
-  writer.write("\n  public shared.SharedObject duplicate() {\n    "+className()+" clone = new "+className()+"();\n    clone.init("+childList(slotList) + (slotList.isEmptyConcSlotField()?"":", ") +"hashCode);\n    return clone;\n  }\n  "
+  writer.write("\n  public shared.SharedObject duplicate() {\n    "+className()+" clone = new "+className()+"();\n    clone.init("+(childList(slotList) + (slotList.isEmptyConcSlotField()?"":", "))+"hashCode);\n    return clone;\n  }\n  "
 
 
 

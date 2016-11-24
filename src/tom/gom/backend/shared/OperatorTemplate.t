@@ -115,11 +115,11 @@ public final class @className()@ extends @fullClassName(extendsType)@ implements
         ConcSlotField(SlotField[Domain=domainclass],_*) -> {
           if(!getGomEnvironment().isBuiltinClass(`domainclass)) {
             writer.write(%[
-   private @fullClassName(`domainclass)@[] children;
+   private @`fullClassName(domainclass)@[] children;
                 ]%);
           } else {
             writer.write(%[
-   private tom.library.sl.VisitableBuiltin<@primitiveToReferenceType(fullClassName(`domainclass))@>[] children;
+   private tom.library.sl.VisitableBuiltin<@`primitiveToReferenceType(fullClassName(domainclass))@>[] children;
    ]%);
           }
         }
@@ -147,11 +147,11 @@ public final class @className()@ extends @fullClassName(extendsType)@ implements
         ConcSlotField(SlotField[Domain=domainclass],_*) -> {
        if(!getGomEnvironment().isBuiltinClass(`domainclass)) {
           writer.write(%[
-   private @fullClassName(`domainclass)@[] children;
+   private @`fullClassName(domainclass)@[] children;
           ]%);
         } else {
           writer.write(%[
-   private tom.library.sl.VisitableBuiltin<@primitiveToReferenceType(fullClassName(`domainclass))@>[] children;
+   private tom.library.sl.VisitableBuiltin<@`primitiveToReferenceType(fullClassName(domainclass))@>[] children;
           ]%);
         }
         }
@@ -205,7 +205,7 @@ writer.write(%[
    * @@param @childListOnePerLine(slotList)@
    * @@param hashCode hashCode of @className()@
    */
-  private void init(@childListWithType(slotList) + (slotList.isEmptyConcSlotField()?"":", ") @int hashCode) {
+  private void init(@(childListWithType(slotList) + (slotList.isEmptyConcSlotField()?"":", "))@int hashCode) {
 ]%);
 generateMembersInit(writer);
 writer.write(%[
@@ -268,7 +268,7 @@ if(multithread) {
   writer.write(%[
   public shared.SharedObject duplicate() {
     @className()@ clone = new @className()@();
-    clone.init(@childList(slotList) + (slotList.isEmptyConcSlotField()?"":", ") @hashCode);
+    clone.init(@(childList(slotList) + (slotList.isEmptyConcSlotField()?"":", "))@hashCode);
     return clone;
   }
   ]%);
@@ -640,7 +640,7 @@ generateGetters(writer);
    * @@return an array of children which just were set
    * @@throws IndexOutOfBoundsException if length of "children" is different than @slotList.length()@
    */
-  @@SuppressWarnings("unchecked")
+  //@@SuppressWarnings("unchecked")
   public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {
     if(children.length == getChildCount() @arrayCheck("children")@) {
       @arrayMake("children")@
@@ -886,9 +886,9 @@ private void generateEnum(java.io.Writer writer) throws java.io.IOException {
     %match(slotList) {
       ConcSlotField(_*,SlotField[Name=fieldName,Domain=domainClass],_*) -> {
         writer.write("  private ");
-        writer.write(fullClassName(`domainClass));
+        writer.write(`fullClassName(domainClass));
         writer.write(" ");
-        writer.write(fieldName(`fieldName));
+        writer.write(`fieldName(fieldName));
         writer.write(";\n");
       }
     }
@@ -898,9 +898,9 @@ private void generateEnum(java.io.Writer writer) throws java.io.IOException {
     %match(slotList) {
       ConcSlotField(_*,SlotField[Name=fieldName,Domain=domain],_*) -> {
         writer.write("    this.");
-        writer.write(fieldName(`fieldName));
+        writer.write(`fieldName(fieldName));
         writer.write(" = ");
-        writer.write(fieldName(`fieldName));
+        writer.write(`fieldName(fieldName));
         if(getGomEnvironment().isBuiltinClass(`domain) && `domain.equals(`ClassName("","String"))) {
           writer.write(".intern()");
         }
@@ -1023,9 +1023,9 @@ private void generateEnum(java.io.Writer writer) throws java.io.IOException {
           if(res.length()!=0) {
             res.append(", ");
           }
-          res.append(fullClassName(`domain));
+          res.append(`fullClassName(domain));
           res.append(" ");
-          res.append(fieldName(`name));
+          res.append(`fieldName(name));
         }
       }
     }
@@ -1041,7 +1041,7 @@ private void generateEnum(java.io.Writer writer) throws java.io.IOException {
           if(res.length()!=0) {
             res.append(", ");
           }
-          res.append(fullClassName(`domain));
+          res.append(`fullClassName(domain));
           res.append(" ");
           res.append(`name);
         }
@@ -1060,7 +1060,7 @@ private void generateEnum(java.io.Writer writer) throws java.io.IOException {
             res.append(", ");
           }
           res.append(" ");
-          res.append(fieldName(`name));
+          res.append(`fieldName(name));
         }
       }
     }
@@ -1093,11 +1093,11 @@ private void generateEnum(java.io.Writer writer) throws java.io.IOException {
       return ]%);
     %match(slotList) {
       ConcSlotField(_*,SlotField[Name=fieldName],_*) -> {
-        res.append(fieldName(`fieldName));
+        res.append(`fieldName(fieldName));
         res.append("==");
         res.append(peer);
         res.append(".");
-        res.append(fieldName(`fieldName));
+        res.append(`fieldName(fieldName));
         res.append(" && ");
       }
     }
@@ -1118,16 +1118,16 @@ private void generateEnum(java.io.Writer writer) throws java.io.IOException {
             res.append("      case ");
             res.append(index);
             res.append(": return ");
-            res.append(fieldName(`fieldName));
+            res.append(`fieldName(fieldName));
             res.append(";\n");
             index++;
           } else {
             res.append("      case ");
             res.append(index);
             res.append(": return new tom.library.sl.VisitableBuiltin<");
-            res.append(primitiveToReferenceType(fullClassName(`domain)));
+            res.append(`primitiveToReferenceType(fullClassName(domain)));
             res.append(">(");
-            res.append(fieldName(`fieldName));
+            res.append(`fieldName(fieldName));
             res.append(");\n");
             index++;
           }
@@ -1147,12 +1147,12 @@ private void generateEnum(java.io.Writer writer) throws java.io.IOException {
             if(!getGomEnvironment().isBuiltinClass(`domainclass)) {
               return %[
         if(children == null) {
-          children = toArray(new @fullClassName(`domainclass)@[]{});
+          children = toArray(new @`fullClassName(domainclass)@[]{});
         }
         return java.util.Arrays.copyOf(children,children.length);
       ]%;
             } else {
-              String reference_type = primitiveToReferenceType(fullClassName(`domainclass));
+              String reference_type = `primitiveToReferenceType(fullClassName(domainclass));
               return %[
         if(children == null) {
           @reference_type@[] object_children = toArray(new @reference_type@[]{});
@@ -1187,12 +1187,12 @@ private void generateEnum(java.io.Writer writer) throws java.io.IOException {
             }
             res.append(" ");
             if(!getGomEnvironment().isBuiltinClass(`domain)) {
-              res.append(fieldName(`name));
+              res.append(`fieldName(name));
             } else {
               res.append("new tom.library.sl.VisitableBuiltin<");
-              res.append(primitiveToReferenceType(fullClassName(`domain)));
+              res.append(`primitiveToReferenceType(fullClassName(domain)));
               res.append(">(");
-              res.append(fieldName(`name));
+              res.append(`fieldName(name));
               res.append(")");
             }
           }
@@ -1222,14 +1222,14 @@ private void generateEnum(java.io.Writer writer) throws java.io.IOException {
           ConcSlotField(SlotField[Domain=domainclass],_*) -> {
             if(!getGomEnvironment().isBuiltinClass(`domainclass)) {
               return %[
-               @fullClassName(`domainclass)@[] typed_children = new @fullClassName(`domainclass)@[children.length];
+               @`fullClassName(domainclass)@[] typed_children = new @`fullClassName(domainclass)@[children.length];
               for (int i=0; i<children.length; i++) {
-                typed_children[i] = (@fullClassName(`domainclass)@) children[i]; 
+                typed_children[i] = (@`fullClassName(domainclass)@) children[i]; 
               }
               return fromArray(typed_children);
               ]%;
             } else {
-              String builtin_type = fullClassName(`domainclass);
+              String builtin_type = `fullClassName(domainclass);
               return %[
                @builtin_type@[] builtin_children = new @builtin_type@[children.length];
                for (int i=0; i<children.length; i++) {
@@ -1251,7 +1251,7 @@ private void generateEnum(java.io.Writer writer) throws java.io.IOException {
           if(index>0) { res.append(", "); }
           if(!getGomEnvironment().isBuiltinClass(`domain)) {
             res.append("(");
-            res.append(fullClassName(`domain));
+            res.append(`fullClassName(domain));
             res.append(") ");
             res.append(arrayName);
             res.append("[");
@@ -1259,7 +1259,7 @@ private void generateEnum(java.io.Writer writer) throws java.io.IOException {
             res.append("]");
           } else {
             res.append("((tom.library.sl.VisitableBuiltin<");
-            res.append(primitiveToReferenceType(fullClassName(`domain)));
+            res.append(`primitiveToReferenceType(fullClassName(domain)));
             res.append(">)");
             res.append(arrayName);
             res.append("[");
@@ -1297,7 +1297,7 @@ private void generateEnum(java.io.Writer writer) throws java.io.IOException {
       %match(slotList) {
         ConcSlotField(_*,SlotField[Domain=domain],_*) -> {
           if(!getGomEnvironment().isBuiltinClass(`domain)) {
-            res.append(%[ && @arrayName@[@index@] instanceof @fullClassName(`domain)@]%);
+            res.append(%[ && @arrayName@[@index@] instanceof @`fullClassName(domain)@]%);
           } else {
             res.append(%[ && @arrayName@[@index@] instanceof tom.library.sl.VisitableBuiltin]%);
           }
@@ -1314,9 +1314,9 @@ private String setchildat(String argName) {
     /* get the domain type of the constructor */
      %match(slotList) {
       ConcSlotField(SlotField[Domain=domainclass],_*) -> {
-        String domain = fullClassName(`domainclass); 
+        String domain = `fullClassName(domainclass); 
         StringBuilder res = new StringBuilder();
-        String class_name = fullClassName(`domainclass);
+        String class_name = `fullClassName(domainclass);
             if(!getGomEnvironment().isBuiltinClass(`domainclass)) {
               res.append(%[
       tom.library.sl.Visitable[] children = getChildren();
@@ -1369,10 +1369,10 @@ private String generateMakeArgsFor(int argIndex, String argName) {
         res.append("()");
       } else {
         if(index != argIndex) {
-          res.append(fieldName(`fieldName));
+          res.append(`fieldName(fieldName));
         } else {
           res.append("(");
-          res.append(fullClassName(`domain));
+          res.append(`fullClassName(domain));
           res.append(") ");
           res.append(argName);
         }
@@ -1391,7 +1391,7 @@ private String generateMakeArgsFor(SlotField slot, String argName) {
       if(`itslot == slot) {
         res.append(argName);
       } else {
-        res.append(fieldName(`fieldName));
+        res.append(`fieldName(fieldName));
       }
       fullindex++;
     }
@@ -1432,21 +1432,21 @@ private String generateMakeArgsFor(SlotField slot, String argName) {
              || `domain.equals(`ClassName("","float"))
              || `domain.equals(`ClassName("","char"))) {
            res.append(%[
-    if( this.@fieldName(`slotName)@ != @other@.@fieldName(`slotName)@) {
-      return (this.@fieldName(`slotName)@ < @other@.@fieldName(`slotName)@)?-1:1;
+    if( this.@`fieldName(slotName)@ != @other@.@`fieldName(slotName)@) {
+      return (this.@`fieldName(slotName)@ < @other@.@`fieldName(slotName)@)?-1:1;
     }
 ]%);
          } else if(`domain.equals(`ClassName("","boolean"))) {
            res.append(%[
-    if( this.@fieldName(`slotName)@ != @other@.@fieldName(`slotName)@) {
-      return (!this.@fieldName(`slotName)@ && @other@.@fieldName(`slotName)@)?-1:1;
+    if( this.@`fieldName(slotName)@ != @other@.@`fieldName(slotName)@) {
+      return (!this.@`fieldName(slotName)@ && @other@.@`fieldName(slotName)@)?-1:1;
     }
 ]%);
          } else if(`domain.equals(`ClassName("","String"))) {
            res.append(%[
-    int @fieldName(`slotName)@Cmp = (this.@fieldName(`slotName)@).compareTo(@other@.@fieldName(`slotName)@);
-    if(@fieldName(`slotName)@Cmp != 0) {
-      return @fieldName(`slotName)@Cmp;
+    int @`fieldName(slotName)@Cmp = (this.@`fieldName(slotName)@).compareTo(@other@.@`fieldName(slotName)@);
+    if(@`fieldName(slotName)@Cmp != 0) {
+      return @`fieldName(slotName)@Cmp;
     }
 
 ]%);
@@ -1454,9 +1454,9 @@ private String generateMakeArgsFor(SlotField slot, String argName) {
              ||`domain.equals(`ClassName("aterm","ATermList"))) {
            res.append(%[
     /* Inefficient total order on ATerm */
-    int @fieldName(`slotName)@Cmp = ((this.@fieldName(`slotName)@).toString()).compareTo((@other@.@fieldName(`slotName)@).toString());
-    if(@fieldName(`slotName)@Cmp != 0) {
-      return @fieldName(`slotName)@Cmp;
+    int @`fieldName(slotName)@Cmp = ((this.@`fieldName(slotName)@).toString()).compareTo((@other@.@`fieldName(slotName)@).toString());
+    if(@`fieldName(slotName)@Cmp != 0) {
+      return @`fieldName(slotName)@Cmp;
     }
 ]%);
          } else {
@@ -1464,9 +1464,9 @@ private String generateMakeArgsFor(SlotField slot, String argName) {
          }
         } else {
           res.append(%[
-    int @fieldName(`slotName)@Cmp = (this.@fieldName(`slotName)@).@compareFun@(@other@.@fieldName(`slotName)@);
-    if(@fieldName(`slotName)@Cmp != 0) {
-      return @fieldName(`slotName)@Cmp;
+    int @`fieldName(slotName)@Cmp = (this.@`fieldName(slotName)@).@compareFun@(@other@.@`fieldName(slotName)@);
+    if(@`fieldName(slotName)@Cmp != 0) {
+      return @`fieldName(slotName)@Cmp;
     }
 ]%);
         }
@@ -1483,28 +1483,28 @@ private String generateMakeArgsFor(SlotField slot, String argName) {
         String accum = ""+"aaaabbbbcccc".toCharArray()[index % 12];
         writer.write("    "+accum+" += (");
         if(!getGomEnvironment().isBuiltinClass(`domain)) {
-          writer.write(fieldName(`slotName)+".hashCode()");
+          writer.write(`fieldName(slotName)+".hashCode()");
         } else {
           if(`domain.equals(`ClassName("","int"))
               || `domain.equals(`ClassName("","long"))
               || `domain.equals(`ClassName("","float"))
               || `domain.equals(`ClassName("","char"))) {
-            writer.write(fieldName(`slotName));
+            writer.write(`fieldName(slotName));
           } else if(`domain.equals(`ClassName("","boolean"))) {
-            writer.write("("+fieldName(`slotName)+"?1:0)");
+            writer.write("("+`fieldName(slotName)+"?1:0)");
           } else if(`domain.equals(`ClassName("","String"))) {
             // Use the string hashFunction for Strings, and pass index as arity
-            writer.write("shared.HashFunctions.stringHashFunction("+fieldName(`slotName)+", "+index+")");
+            writer.write("shared.HashFunctions.stringHashFunction("+`fieldName(slotName)+", "+index+")");
           } else if(`domain.equals(`ClassName("","double"))) {
             writer.write("(int)(java.lang.Double.doubleToLongBits(");
-            writer.write(fieldName(`slotName));
+            writer.write(`fieldName(slotName));
             writer.write(")^(java.lang.Double.doubleToLongBits(");
-            writer.write(fieldName(`slotName));
+            writer.write(`fieldName(slotName));
             writer.write(")>>>32");
             writer.write("))");
           } else if(`domain.equals(`ClassName("aterm","ATerm"))||`domain.equals(`ClassName("aterm","ATermList"))) {
             // Use the string hashFunction for Strings, and pass index as arity
-            writer.write(fieldName(`slotName)+".hashCode()");
+            writer.write(`fieldName(slotName)+".hashCode()");
           }  else {
             throw new GomRuntimeException("generateHashArgs: Builtin " + `domain + " not supported");
           }
@@ -1529,28 +1529,28 @@ private String generateMakeArgsFor(SlotField slot, String argName) {
           default:
         }
         if(!getGomEnvironment().isBuiltinClass(`domain)) {
-          writer.write(fieldName(`slotName)+".hashCode()");
+          writer.write(`fieldName(slotName)+".hashCode()");
         } else {
           if(`domain.equals(`ClassName("","int"))
               || `domain.equals(`ClassName("","long"))
               || `domain.equals(`ClassName("","float"))
               || `domain.equals(`ClassName("","char"))) {
-            writer.write(fieldName(`slotName));
+            writer.write(`fieldName(slotName));
           } else if(`domain.equals(`ClassName("","boolean"))) {
-            writer.write("("+fieldName(`slotName)+"?1:0)");
+            writer.write("("+`fieldName(slotName)+"?1:0)");
           } else if(`domain.equals(`ClassName("","String"))) {
             // Use the string hashFunction for Strings, and pass index as arity
-            writer.write("shared.HashFunctions.stringHashFunction("+fieldName(`slotName)+", "+index+")");
+            writer.write("shared.HashFunctions.stringHashFunction("+`fieldName(slotName)+", "+index+")");
           } else if(`domain.equals(`ClassName("","double"))) {
             writer.write("(int)(java.lang.Double.doubleToLongBits(");
-            writer.write(fieldName(`slotName));
+            writer.write(`fieldName(slotName));
             writer.write(")^(java.lang.Double.doubleToLongBits(");
-            writer.write(fieldName(`slotName));
+            writer.write(`fieldName(slotName));
             writer.write(")>>>32");
             writer.write("))");
           } else if(`domain.equals(`ClassName("aterm","ATerm"))||`domain.equals(`ClassName("aterm","ATermList"))) {
             // Use the string hashFunction for Strings, and pass index as arity
-            writer.write(fieldName(`slotName)+".hashCode()");
+            writer.write(`fieldName(slotName)+".hashCode()");
           }  else {
             throw new GomRuntimeException("generateHashArgs: Builtin " + `domain + " not supported");
           }
@@ -1574,12 +1574,13 @@ private String generateMakeArgsFor(SlotField slot, String argName) {
 
   public void generateConstructor(java.io.Writer writer) throws java.io.IOException {
     boolean hasHooks = false;
+lbl: {
     %match(hooks) {
       /* If there is at least one MakeHook */
-lbl:ConcHook(_*,MakeHook[HookArguments=args],_*) -> {
+      ConcHook(_*,MakeHook[HookArguments=args],_*) -> {
       hasHooks = true;
       writer.write(%[
-    public static @fullClassName(sortName)@ make(@unprotectedChildListWithType(`args)@) {
+    public static @fullClassName(sortName)@ make(@`unprotectedChildListWithType(args)@) {
   ]%);
         SlotFieldList bargs = generateMakeHooks(hooks,null,writer);
         writer.write(%[
@@ -1589,6 +1590,7 @@ lbl:ConcHook(_*,MakeHook[HookArguments=args],_*) -> {
         break lbl;
       }
     }
+     }
 
     String makeName = "make";
     String visibility = "public";
@@ -1678,7 +1680,7 @@ lbl:ConcHook(_*,MakeHook[HookArguments=args],_*) -> {
           /* XXX: the declaration should be omitted if nargName was previously
            * used */
           writer.write(%[
-    @fullClassName(`ndomain)@ @`nargName@ = @`oargName@;
+    @`fullClassName(ndomain)@ @`nargName@ = @`oargName@;
 ]%);
         } /* else nothing to rename */
         recVarNameRemap(`to,`tn, writer);

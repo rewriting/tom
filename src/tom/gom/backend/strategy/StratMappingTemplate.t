@@ -78,10 +78,10 @@ public class StratMappingTemplate extends MappingTemplateClass {
           Cons=OperatorClass[ClassName=cons]],
           _*)-> {
         writer.write(%[
-  %op Strategy _@className(`vopName)@(sub:Strategy) {
+  %op Strategy _@`className(vopName)@(sub:Strategy) {
     is_fsym(t) { false }
     make(sub)  {
-    `Choice(When_@className(`cons)@(All(sub)),When_@className(`empty)@(Identity())) }
+    `Choice(When_@`className(cons)@(All(sub)),When_@`className(empty)@(Identity())) }
   }
   ]%);
       }

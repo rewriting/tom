@@ -326,10 +326,12 @@ public class TomMappingFromEcore {
         //already been generated
       } else {
         String[] decl = getClassDeclarations(eclf); // [canonical name, anonymous generic, generic type]
+        String implementBody = (eclf instanceof EClass && !EObject.class.isAssignableFrom(c))? "org.eclipse.emf.ecore.EObject" : decl[0] + decl[2];
+
         writer.write(%[
 
 %typeterm @prefix+n@ @(useNewTyper?genSubtype(eclf):"")@ {
-  implement { @(eclf instanceof EClass && !EObject.class.isAssignableFrom(c) ? "org.eclipse.emf.ecore.EObject" : decl[0] + decl[2])@ }
+  implement { @implementBody@ }
   is_sort(t) { @(c.isPrimitive() ? "true" : "$t instanceof " + decl[0] + decl[1])@ }
   equals(l1,l2) { @(c.isPrimitive() ? "$l1 == $l2" : "$l1.equals($l2)")@ }
 }]%);
@@ -1035,13 +1037,13 @@ private static <O> org.eclipse.emf.common.util.EList<O> append@name@(O e,org.ecl
             } else {
               writer.write(%[
 
-%op @prefix+ecl.getInstanceClass().getSimpleName()@ @prefix+cr@(@s_types@) {
+%op @(prefix+ecl.getInstanceClass().getSimpleName())@ @(prefix+cr)@(@s_types@) {
   is_fsym(t) { $t instanceof @(decl[0]+decl[1])@ }@s_gets@ @s_defaults@
-  make(@(s.length() <= 2 ? "" : s.substring(2))@) { construct@prefix+cr@((@(EObject.class.isAssignableFrom(ecl.getInstanceClass()) ? ecl.getInstanceClass().getCanonicalName() : "org.eclipse.emf.ecore.EObject")@)@o1@.eINSTANCE.create((EClass)@o2@.eINSTANCE.getEClassifier("@ecl.getName()@")), new Object[]{ @(s2.length() <= 2 ? "" : s2.substring(2))@ }) }
+  make(@(s.length() <= 2 ? "" : s.substring(2))@) { construct@(prefix+cr)@((@(EObject.class.isAssignableFrom(ecl.getInstanceClass()) ? ecl.getInstanceClass().getCanonicalName() : "org.eclipse.emf.ecore.EObject")@)@o1@.eINSTANCE.create((EClass)@o2@.eINSTANCE.getEClassifier("@ecl.getName()@")), new Object[]{ @(s2.length() <= 2 ? "" : s2.substring(2))@ }) }
   implement() { @genOpImplementContent(ecl.getInstanceClassName(), cr)@ }
 }
 
-public static <O extends org.eclipse.emf.ecore.EObject> O construct@prefix+cr@(O o, Object[] objs) {
+public static <O extends org.eclipse.emf.ecore.EObject> O construct@(prefix+cr)@(O o, Object[] objs) {
   int i=0;
   EList<EStructuralFeature> sfes = o.eClass().getEAllStructuralFeatures();
   for(EStructuralFeature esf : sfes) {
@@ -1075,7 +1077,7 @@ public static <O extends org.eclipse.emf.ecore.EObject> O construct@prefix+cr@(O
             String operatorName = cr+literalname.replaceAll(" ","");
             writer.write(%[
 
-%op @prefix+cr@ @prefix+operatorName@() {
+%op @(prefix+cr)@ @(prefix+operatorName)@() {
   is_fsym(t) { t == @(decl[0]+decl[1])@.get("@literalname@") }
   make() { (@(decl[0]+decl[2])@)@o1@.eINSTANCE.createFromString((EDataType)@o2@.eINSTANCE.get@toUpperName(cr)@(), "@literalname@") }
 }]%);

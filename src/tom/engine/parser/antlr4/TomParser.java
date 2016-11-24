@@ -83,12 +83,15 @@ public class TomParser {
     // try with simpler/faster SLL(*)
     parser.getInterpreter().setPredictionMode(PredictionMode.SLL);
     // we don't want error messages or recovery during first try
-    parser.removeErrorListeners(); parser.setErrorHandler(new BailErrorStrategy());
+    parser.removeErrorListeners();
+    parser.setErrorHandler(new BailErrorStrategy());
     try {
       tree = parser.start();
       // if we get here, there was no syntax error and SLL(*) was enough;
       // there is no need to try full LL(*)
     } catch (ParseCancellationException ex) { // thrown by BailErrorStrategy
+      System.out.println("\n*** SLL parsing failed on: " + ex + "\n");
+
       tokens.reset(); // rewind input stream
       parser.reset();
       // back to standard listeners/handlers 
@@ -98,7 +101,7 @@ public class TomParser {
       parser.getInterpreter().setPredictionMode(PredictionMode.LL);
       tree = parser.start();
     }
-    System.out.println("\tparsing:" + (System.currentTimeMillis()-start) + " ms");
+    //System.out.println("\tparsing:" + (System.currentTimeMillis()-start) + " ms");
 
     // show tree in text form
     // System.out.println(tree.toStringTree(parser));

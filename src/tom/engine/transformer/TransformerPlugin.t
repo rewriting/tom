@@ -923,7 +923,8 @@ if(!resolveNameSet.contains(resolveStringName)) {
         String extendsName = null;
         TomSymbol symb = transformer.getSymbolTable().getSymbolFromName(`ttypename);
         //retrieve classimpl
-        %match(symb.getOptions()) {
+        OptionList ol = symb.getOptions();
+        %match(ol) {
           concOption(_*,DeclarationToOption(ImplementDecl[Expr=code]),_*) -> {
             extendsName = `code.getCode();
           }

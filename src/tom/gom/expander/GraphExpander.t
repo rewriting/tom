@@ -158,7 +158,7 @@ public class GraphExpander {
     String sortName = sort.getName();
     String prefixPkg = getStreamManager().getPackagePath(moduleName);
     String codeImport =%[
-    import @((prefixPkg=="")?"":prefixPkg+".")+moduleName.toLowerCase()@.types.*;
+    import @(((prefixPkg=="")?"":prefixPkg+".")+moduleName.toLowerCase())@.types.*;
     import tom.library.sl.*;
     ]%;
 

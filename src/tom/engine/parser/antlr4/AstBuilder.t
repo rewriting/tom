@@ -109,7 +109,8 @@ public class AstBuilder {
       }
 
       Cst_Metaquote(optionList, blocks) -> {
-        //return `AbstractBlock(convert(blocks));
+        return `AbstractBlock(convert(blocks));
+        /*
         Instruction iEmptyString = `CodeToInstruction(TargetLanguageToCode(ITL("\"\"")));
         InstructionList res = `concInstruction(iEmptyString);
         CstBlockList l = `blocks;
@@ -126,6 +127,7 @@ public class AstBuilder {
         } 
         res = `concInstruction(res*,iEmptyString);
         return `AbstractBlock(res);
+        */
       }
 
       Cst_BQTermToBlock(bqterm) -> {
@@ -789,12 +791,20 @@ matchblock: {
         return `TermAppl(concOption(),concTomName(name),concTomTerm(),concConstraint());
       }
       
+      Cst_ConstantOr(symbolList) -> {
+        OptionList optionList = `concOption();
+        TomNameList nameList = convert(`symbolList); 
+        return `TermAppl(optionList,nameList,concTomTerm(),concConstraint());
+      }
+
+      /*
       Cst_ConstantStar(symbol) -> {
         OptionList optionList = `concOption();
         ConstraintList constraintList = `concConstraint();
         TomName name = convert(`symbol); // add symbol to symbolTable
         return `VariableStar(concOption(),name,SymbolTable.TYPE_UNKNOWN,concConstraint());
       }
+       */
 
       Cst_Anti(pattern) -> {
         return `AntiTerm(convert(pattern));

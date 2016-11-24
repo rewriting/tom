@@ -783,14 +783,14 @@ public class OptimizerPlugin extends TomGenericPlugin {
 
   %strategy NormExpr(optimizer:OptimizerPlugin) extends Identity() {
     visit Expression {
-      Or(_,TrueTL()) -> TrueTL()
-      Or(TrueTL(),_) -> TrueTL()
-      Or(t1,FalseTL()) -> t1
-      Or(FalseTL(),t1) -> t1
-      And(TrueTL(),t1) -> t1
-      And(t1,TrueTL()) -> t1
-      And(FalseTL(),_) -> FalseTL()
-      And(TrueTL(),_) -> FalseTL()
+      Or(_,TrueTL()) -> { return `TrueTL(); }
+      Or(TrueTL(),_) -> { return `TrueTL(); }
+      Or(t1,FalseTL()) -> { return `t1; }
+      Or(FalseTL(),t1) -> { return `t1; }
+      And(TrueTL(),t1) -> { return `t1; }
+      And(t1,TrueTL()) -> { return `t1; }
+      And(FalseTL(),_) -> { return `FalseTL(); }
+      And(TrueTL(),_) -> { return `FalseTL(); }
 
       ref@EqualTerm(_,kid1,kid2) -> {
         //System.out.println("kid1 = " + `kid1);

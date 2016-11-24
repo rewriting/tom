@@ -1,4 +1,4 @@
-// $ANTLR 3.2 Sep 23, 2009 12:02:23 /Users/pem/github/tom/src/tom/gom/expander/rule/Rule.g 2016-10-13 08:14:27
+// $ANTLR 3.2 Sep 23, 2009 12:02:23 /Users/pem/github/tom/src/tom/gom/expander/rule/Rule.g 2016-11-10 15:30:38
 
 package tom.gom.expander.rule;
 
@@ -280,7 +280,7 @@ public class RuleParser extends Parser {
 
 
             // AST REWRITE
-            // elements: term, term, cond, pattern, pattern
+            // elements: term, term, pattern, pattern, cond
             // token labels: 
             // rule labels: retval, cond
             // token list labels: 
@@ -528,7 +528,7 @@ public class RuleParser extends Parser {
 
 
             // AST REWRITE
-            // elements: rhs, lhs, rhs, cond, lhs
+            // elements: rhs, lhs, rhs, lhs, cond
             // token labels: 
             // rule labels: retval, rhs, cond, lhs
             // token list labels: 
@@ -660,7 +660,7 @@ public class RuleParser extends Parser {
 
 
             // AST REWRITE
-            // elements: cond, andcondition
+            // elements: andcondition, cond
             // token labels: 
             // rule labels: retval, cond
             // token list labels: 
@@ -1085,7 +1085,7 @@ public class RuleParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: p3, p7, p1, p1, p1, p5, p2, p1, p4, p6, p1, p1, p1, p8
+                    // elements: p1, p1, p1, p1, p1, p1, p2, p5, p3, p8, p7, p1, p6, p4
                     // token labels: 
                     // rule labels: p7, p6, retval, p5, p4, p3, p2, p1, p8
                     // token list labels: 
@@ -1449,7 +1449,7 @@ public class RuleParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: ID, term
+                    // elements: term, ID
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -1579,7 +1579,7 @@ public class RuleParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: term, funname, varname
+                    // elements: term, varname, funname
                     // token labels: funname, varname
                     // rule labels: retval
                     // token list labels: 
@@ -2083,7 +2083,7 @@ public class RuleParser extends Parser {
 
 
             // AST REWRITE
-            // elements: p, namelabel, p
+            // elements: namelabel, p, p
             // token labels: namelabel
             // rule labels: retval, p
             // token list labels: 
@@ -2567,7 +2567,7 @@ public class RuleParser extends Parser {
 
 
             // AST REWRITE
-            // elements: labelledpattern, ID
+            // elements: ID, labelledpattern
             // token labels: 
             // rule labels: retval
             // token list labels: 

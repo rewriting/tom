@@ -1,4 +1,3 @@
-
 <project name="Ant for TOM" default="stable" basedir=".">
   <description>
     Build script using Ant offering checks, dists,
@@ -38,6 +37,15 @@
   <property name="stable.doc"     location="${stable.src}/doc"/>
   <property name="stable.lib"     location="${stable.src}/lib"/>
   <property name="stable.config"  location="${stable.src}/config"/>
+
+  <property name="stable2.src"     location="/Users/pem/github/tom2/stable"/>
+  <property name="stable2.gen"     location="${stable2.src}/gen"/>
+  <property name="stable2.mapping" location="${stable2.src}/tom/library/mapping"/>
+  <property name="stable2.build"   location="${stable2.src}/build"/>
+  <property name="stable2.dist"    location="${stable2.src}/dist"/>
+  <property name="stable2.doc"     location="${stable2.src}/doc"/>
+  <property name="stable2.lib"     location="${stable2.src}/lib"/>
+  <property name="stable2.config"  location="${stable2.src}/config"/>
 
   <!--some used directory location  for devel -->
   <property name="src.src"        location="src"/>
@@ -1562,6 +1570,68 @@
       <fileset dir="${src.build}" includes="tom/library/adt/bytecode/**/*.class"/>
     </jar>
     <jar jarfile="${stable.lib}/runtime/emf.jar">
+      <fileset dir="${src.build}" includes="tom/emf/**/*.class"/>
+      <fileset dir="${src.src}" includes="tom/emf/**/*.properties"/>
+    </jar>
+    <antcall target="clean.bootstrap"/>
+  </target>
+
+  <target name="bootinstall2"
+    description="Install src tree into stable tree">
+    <copy todir="${stable2.src}" overwrite="true">
+      <fileset dir="${src.src}">
+        <include name="tom/**/*.java.in"/>
+        <include name="tom/**/*.java"/>
+        <include name="tom/**/*.properties"/>
+        <include name="lib/**/*.jar"/>
+        <include name="lib/**/*.xml"/>
+        <exclude name="**/Tom.java"/>
+        <exclude name="**/adt/**/*.java"/>
+        <exclude name="**/bootcheck/**/*"/>
+        <exclude name="**/bootstrap/**/*"/>
+        <exclude name="**/gen/**/*"/>
+      </fileset>
+      <fileset dir="${src.gen}">
+        <include name="**/*.java"/>
+        <exclude name="**/Tom.java"/>
+        <exclude name="**/adt/**/*.java"/>
+      </fileset>
+    </copy>
+    <copy todir="${stable2.mapping}" overwrite="true">
+      <fileset dir="${src.mapping}" includes="**/*.tom"/>
+    </copy>
+    <copy todir="${stable2.mapping}" overwrite="true">
+      <fileset dir="${src.gen}/tom/library/">
+        <include name="adt/bytecode/**/*.tom"/>
+        <include name="adt/tnode/**/*.tom"/>
+      </fileset>
+    </copy>
+    <copy todir="${stable2.config}" overwrite="true">
+      <fileset dir="${src.config}" includes="*.xml"/>
+    </copy>
+
+    <jar jarfile="${stable2.lib}/tom/TomSignature.jar">
+      <fileset dir="${src.build}" includes="tom/engine/adt/**/*.class"/>
+    </jar>
+    <jar jarfile="${stable2.lib}/tom/PlatformOption.jar">
+      <fileset dir="${src.build}" includes="tom/platform/adt/platformoption/**/*.class"/>
+    </jar>
+    <jar jarfile="${stable2.lib}/tom/PlatformConfig.jar">
+      <fileset dir="${src.build}" includes="tom/platform/adt/platformconfig/**/*.class"/>
+    </jar>
+    <jar jarfile="${stable2.lib}/tom/PlatformAlert.jar">
+      <fileset dir="${src.build}" includes="tom/platform/adt/platformalert/**/*.class"/>
+    </jar>
+    <jar jarfile="${stable2.lib}/tom/GomADT.jar">
+      <fileset dir="${src.build}" includes="tom/gom/adt/**/*.class"/>
+    </jar>
+    <jar jarfile="${stable2.lib}/runtime/TNode.jar">
+      <fileset dir="${src.build}" includes="tom/library/adt/tnode/**/*.class"/>
+    </jar>
+    <jar jarfile="${stable2.lib}/runtime/Bytecode.jar">
+      <fileset dir="${src.build}" includes="tom/library/adt/bytecode/**/*.class"/>
+    </jar>
+    <jar jarfile="${stable2.lib}/runtime/emf.jar">
       <fileset dir="${src.build}" includes="tom/emf/**/*.class"/>
       <fileset dir="${src.src}" includes="tom/emf/**/*.properties"/>
     </jar>

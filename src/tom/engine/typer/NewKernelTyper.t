@@ -1437,13 +1437,14 @@ public class NewKernelTyper {
    */
   private void checkAllPatterns() {
     for (TomType pType : inputTVarList.getCollectionconcTomType()) {
+      TomType sType = substitutions.get(pType);
       %match {
-        tVar@TypeVar[] << substitutions.get(pType) &&
+        tVar@TypeVar[] << sType &&
           concTypeConstraint(_*,Equation[Type1=tVar,Info=info],_*) << equationConstraints -> {
             `printErrorGuessMatch(info);
           } 
 
-        tVar@TypeVar[] << substitutions.get(pType) &&
+        tVar@TypeVar[] << sType &&
           concTypeConstraint(_*,Equation[Type2=tVar,Info=info],_*) << equationConstraints -> {
             `printErrorGuessMatch(info);
           } 

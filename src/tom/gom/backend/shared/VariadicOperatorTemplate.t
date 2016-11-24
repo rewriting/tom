@@ -104,6 +104,17 @@ writer.write(%[
    */
   @@Override
   public int length() {
+    int res = 0;
+    @fullClassName(sortName)@ tl = this;
+    while(tl instanceof @fullClassName(cons.getClassName())@) {
+      res += 1;
+      tl = tl.getTail@className()@();
+      if(tl instanceof @className()@ == false) {
+        res += 1;
+      }
+    }
+    return res;
+/*
     if(this instanceof @fullClassName(cons.getClassName())@) {
       @fullClassName(sortName)@ tl = this.getTail@className()@();
       if (tl instanceof @className()@) {
@@ -114,6 +125,7 @@ writer.write(%[
     } else {
       return 0;
     }
+    */
   }
 
   public static @fullClassName(sortName)@ fromArray(@domainClassName@[] array) {
@@ -649,12 +661,12 @@ writer.write(%[
     ClassName emptyClass = empty.getClassName();
     ClassName consClass = cons.getClassName();
     writer.write(%[
-%oplist @className(sortName)@ @className()@(@className(`headDomain)@*) {
+%oplist @className(sortName)@ @className()@(@`className(headDomain)@*) {
   is_fsym(t) { (($t instanceof @fullClassName(consClass)@) || ($t instanceof @fullClassName(emptyClass)@)) }
   make_empty() { @fullClassName(emptyClass)@.make() }
   make_insert(e,l) { @fullClassName(consClass)@.make($e,$l) }
-  get_head(l) { $l.@getMethod(`head)@() }
-  get_tail(l) { $l.@getMethod(`tail)@() }
+  get_head(l) { $l.@`getMethod(head)@() }
+  get_tail(l) { $l.@`getMethod(tail)@() }
   is_empty(l) { $l.@isOperatorMethod(emptyClass)@() }
 }
 ]%);

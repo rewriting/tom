@@ -1,4 +1,4 @@
-// $ANTLR 3.2 Sep 23, 2009 12:02:23 /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g 2016-10-13 08:14:25
+// $ANTLR 3.2 Sep 23, 2009 12:02:23 /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g 2016-11-10 15:30:35
 
 package tom.gom.parser;
 import tom.gom.GomStreamManager;
@@ -252,7 +252,7 @@ public class GomLanguageParser extends Parser {
 
 
             // AST REWRITE
-            // elements: modulename, modulename, section, imports, section
+            // elements: section, modulename, imports, modulename, section
             // token labels: 
             // rule labels: retval
             // token list labels: 
@@ -971,7 +971,7 @@ public class GomLanguageParser extends Parser {
 
 
             // AST REWRITE
-            // elements: gr2, gr1, gr3
+            // elements: gr3, gr1, gr2
             // token labels: 
             // rule labels: retval
             // token list labels: 
@@ -1196,7 +1196,7 @@ public class GomLanguageParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: typename, alts
+                    // elements: alts, typename
                     // token labels: typename
                     // rule labels: retval, alts
                     // token list labels: 
@@ -1275,7 +1275,7 @@ public class GomLanguageParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: ptypename, palts, b
+                    // elements: b, ptypename, palts
                     // token labels: ptypename
                     // rule labels: retval, b, palts
                     // token list labels: 
@@ -2017,7 +2017,7 @@ public class GomLanguageParser extends Parser {
 
 
             // AST REWRITE
-            // elements: ID, ID, ID, ID, fieldlist, fieldlist, ID, ID, ID
+            // elements: fieldlist, ID, fieldlist, ID, ID, ID, ID, ID, ID
             // token labels: 
             // rule labels: retval
             // token list labels: 
@@ -2180,7 +2180,7 @@ public class GomLanguageParser extends Parser {
 
 
             // AST REWRITE
-            // elements: ID, pattern_fieldlist, ID, ID
+            // elements: ID, ID, pattern_fieldlist, ID
             // token labels: 
             // rule labels: retval
             // token list labels: 
@@ -2979,7 +2979,7 @@ public class GomLanguageParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: ID, pattern_type
+                    // elements: pattern_type, ID
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -3261,7 +3261,7 @@ public class GomLanguageParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: type, ID
+                    // elements: ID, type
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -3317,7 +3317,7 @@ public class GomLanguageParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: type, ID
+                    // elements: ID, type
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -3370,7 +3370,7 @@ public class GomLanguageParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: pattern_type, ID
+                    // elements: ID, pattern_type
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -3741,7 +3741,7 @@ public class GomLanguageParser extends Parser {
 
 
             // AST REWRITE
-            // elements: pointCut, hookType, ID, LBRACE, ID, arglist, LBRACE, pointCut, hookType, hscope, arglist
+            // elements: arglist, hookType, arglist, pointCut, pointCut, hscope, ID, LBRACE, hookType, ID, LBRACE
             // token labels: hookType, pointCut
             // rule labels: retval, hscope
             // token list labels: 

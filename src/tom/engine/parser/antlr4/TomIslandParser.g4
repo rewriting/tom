@@ -29,8 +29,7 @@ options { tokenVocab=TomIslandLexer; }
 start : (island | water)*? ;
 
 island 
-  :
-//  : matchStatement
+  : matchStatement
   | strategyStatement
   | includeStatement
   | gomStatement
@@ -46,7 +45,8 @@ island
    * this rule makes the parser very very slow
    */
 metaquote
-  : LMETAQUOTE (AT (bqcomposite | composite) AT | water)*? RMETAQUOTE
+  : METAQUOTE
+//  | LMETAQUOTE (AT (bqcomposite | composite) AT | water)*? RMETAQUOTE
   ;
 
 matchStatement
@@ -158,12 +158,12 @@ pattern
   | fsymbol implicitArgs
   | var=ID STAR?
   | UNDERSCORE STAR?
-  | constant STAR?
+  | constant (PIPE constant)* 
   ;
 
 fsymbol 
   : headSymbol
-  | LPAREN headSymbol (PIPE headSymbol)* RPAREN
+  | LPAREN headSymbol (PIPE headSymbol)+ RPAREN
   ;
 
 headSymbol

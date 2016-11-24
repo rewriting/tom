@@ -94,15 +94,15 @@ public class CstBuilder extends TomIslandParserBaseListener {
     for(int i = 0 ; i<ctx.getChildCount() ; i++) {
       ParseTree child = ctx.getChild(i);
       if(child instanceof TomIslandParser.IslandContext) {
-        bl = `ConcCstBlock(bl*,(CstBlock)getValue(child));
+        bl = `ConcCstBlock((CstBlock)getValue(child), bl*);
       } else if(child instanceof TomIslandParser.WaterContext) {
         //ParserRuleContext prc = (ParserRuleContext)child;
         //CstOption ot = extractOption(prc.getStart());
         //bl = `ConcCstBlock(bl*,HOSTBLOCK(ConcCstOption(ot), getStringValue(child)));
-        bl = `ConcCstBlock(bl*,buildHostblock((ParserRuleContext)child));
+        bl = `ConcCstBlock(buildHostblock((ParserRuleContext)child),bl*);
       }
     }
-    setValue("exitStart",ctx, `Cst_Program(bl));
+    setValue("exitStart",ctx, `Cst_Program(bl.reverse()));
   }
 
   /*
@@ -135,38 +135,45 @@ public class CstBuilder extends TomIslandParserBaseListener {
 
   /* 
    * metaquote
-   *   : LMETAQUOTE (AT (bqcomposite | composite) AT | water)*? RMETAQUOTE
+   *   : METAQUOTE
+   *   | LMETAQUOTE (AT (bqcomposite | composite) AT | water)*? RMETAQUOTE
    *   ;
    */
   public void exitMetaquote(TomIslandParser.MetaquoteContext ctx) {
     CstOptionList optionList = `ConcCstOption(extractOption(ctx.getStart()));
     CstBlockList bl = `ConcCstBlock();
-    Token previousToken = null;
-    for(int i = 0 ; i<ctx.getChildCount() ; i++) {
-      ParseTree child = ctx.getChild(i);
-      if(child instanceof TomIslandParser.CompositeContext) {
-        bl = `ConcCstBlock(bl*,Cst_BQTermToBlock((CstBQTerm)getValue(child)));
-        previousToken = null;
-      } else if(child instanceof TomIslandParser.BqcompositeContext) {
-        bl = `ConcCstBlock(bl*,(CstBlock)getValue(child));
-        previousToken = null;
-      } else if(child instanceof TomIslandParser.WaterContext) {
-        bl = `ConcCstBlock(bl*,buildHostblock((ParserRuleContext)child));
-        previousToken = null;
-      } else if(child instanceof TerminalNodeImpl) {
-        if(previousToken != null) {
-          // this means that there no water, nor composite between the two tokens
-          // there is only layout
-          Token currentToken = ((TerminalNodeImpl)child).getSymbol();
-          //System.out.println("between = '" + betweenToken(previousToken,currentToken) + "'");
-          CstOption ot = extractOption(currentToken);
-          bl = `ConcCstBlock(bl*,HOSTBLOCK(ConcCstOption(ot),betweenToken(previousToken,currentToken)));
+    if(ctx.METAQUOTE() != null) {
+      String code = ctx.METAQUOTE().getText();
+      //System.out.println("METAQUOTE: '" + code + "'");
+      bl = `ConcCstBlock(HOSTBLOCK(optionList, code),bl*);
+    } else {
+      Token previousToken = null;
+      for(int i = 0 ; i<ctx.getChildCount() ; i++) {
+        ParseTree child = ctx.getChild(i);
+        if(child instanceof TomIslandParser.CompositeContext) {
+          bl = `ConcCstBlock(Cst_BQTermToBlock((CstBQTerm)getValue(child)),bl*);
+          previousToken = null;
+        } else if(child instanceof TomIslandParser.BqcompositeContext) {
+          bl = `ConcCstBlock((CstBlock)getValue(child),bl*);
+          previousToken = null;
+        } else if(child instanceof TomIslandParser.WaterContext) {
+          bl = `ConcCstBlock(buildHostblock((ParserRuleContext)child),bl*);
+          previousToken = null;
+        } else if(child instanceof TerminalNodeImpl) {
+          if(previousToken != null) {
+            // this means that there no water, nor composite between the two tokens
+            // there is only layout
+            Token currentToken = ((TerminalNodeImpl)child).getSymbol();
+            //System.out.println("between = '" + betweenToken(previousToken,currentToken) + "'");
+            CstOption ot = extractOption(currentToken);
+            bl = `ConcCstBlock(HOSTBLOCK(ConcCstOption(ot),betweenToken(previousToken,currentToken)),bl*);
+          }
+          previousToken = ((TerminalNodeImpl)child).getSymbol();
         }
-        previousToken = ((TerminalNodeImpl)child).getSymbol();
       }
     }
 
-    setValue("exitMetaquote", ctx,`Cst_Metaquote(optionList,bl));
+    setValue("exitMetaquote", ctx,`Cst_Metaquote(optionList,bl.reverse()));
   }
 
   /*
@@ -308,19 +315,19 @@ public class CstBuilder extends TomIslandParserBaseListener {
       ParseTree child = ctx.getChild(i);
 
       if(child instanceof TomIslandParser.IslandContext) {
-        bl = `ConcCstBlock(bl*,(CstBlock)getValue(child));
+        bl = `ConcCstBlock((CstBlock)getValue(child),bl*);
       } else if(child instanceof TomIslandParser.BlockContext) {
-        bl = `ConcCstBlock(bl*,(CstBlock)getValue(child));
+        bl = `ConcCstBlock((CstBlock)getValue(child),bl*);
       } else if(child instanceof TomIslandParser.WaterContext) {
         //ParserRuleContext prc = (ParserRuleContext)child;
         //CstOption ot = extractOption(prc.getStart());
         //bl = `ConcCstBlock(bl*,HOSTBLOCK(ConcCstOption(ot), getStringValue(child)));
-        bl = `ConcCstBlock(bl*,buildHostblock((ParserRuleContext)child));
+        bl = `ConcCstBlock(buildHostblock((ParserRuleContext)child),bl*);
       }
     }
 
     CstOption otext  = extractText(ctx);
-    setValue(ctx,`Cst_UnamedBlock(ConcCstOption(otext),bl));
+    setValue(ctx,`Cst_UnamedBlock(ConcCstOption(otext),bl.reverse()));
   }
 
   /*
@@ -594,13 +601,18 @@ public class CstBuilder extends TomIslandParserBaseListener {
       res = `Cst_UnamedVariable();
     } else if(ctx.UNDERSCORE() != null && ctx.STAR() != null) {
       res = `Cst_UnamedVariableStar();
-    } else if(ctx.constant() != null && ctx.STAR() == null) {
-      CstSymbol cst = (CstSymbol) getValue(ctx.constant());
-      res = `Cst_Constant(cst);
+    } else if(ctx.constant() != null) {
+      CstSymbolList symbolList = buildCstSymbolList(ctx.constant());
+      res = `Cst_ConstantOr(symbolList);
+      //CstSymbol cst = (CstSymbol) getValue(ctx.constant());
+      //res = `Cst_Constant(cst);
+    }
+    /*
     } else if(ctx.constant() != null && ctx.STAR() != null) {
       CstSymbol cst = (CstSymbol) getValue(ctx.constant());
       res = `Cst_ConstantStar(cst);
     }
+    */
     setValue("exitPattern",ctx,res);
   }
 

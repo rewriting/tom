@@ -341,7 +341,8 @@ public class Utils {
 				return Typer.`assoc(c,x);
 			}
 			FConstr(f,tys,_) -> {
-				%match(Typer.assoc(c,f)) {
+        Range subject = Typer.assoc(c,`f);
+				%match(subject) {
 				  Range(Ra(_,_,a@Atom[])) -> { 
 						return `a;
 					}

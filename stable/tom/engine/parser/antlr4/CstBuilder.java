@@ -94,15 +94,15 @@ public class CstBuilder extends TomIslandParserBaseListener {
     for(int i = 0 ; i<ctx.getChildCount() ; i++) {
       ParseTree child = ctx.getChild(i);
       if(child instanceof TomIslandParser.IslandContext) {
-        bl = tom_append_list_ConcCstBlock(bl, tom.engine.adt.cst.types.cstblocklist.ConsConcCstBlock.make((CstBlock)getValue(child), tom.engine.adt.cst.types.cstblocklist.EmptyConcCstBlock.make() ) );
+        bl =  tom.engine.adt.cst.types.cstblocklist.ConsConcCstBlock.make((CstBlock)getValue(child),tom_append_list_ConcCstBlock(bl, tom.engine.adt.cst.types.cstblocklist.EmptyConcCstBlock.make() )) ;
       } else if(child instanceof TomIslandParser.WaterContext) {
         //ParserRuleContext prc = (ParserRuleContext)child;
         //CstOption ot = extractOption(prc.getStart());
         //bl = `ConcCstBlock(bl*,HOSTBLOCK(ConcCstOption(ot), getStringValue(child)));
-        bl = tom_append_list_ConcCstBlock(bl, tom.engine.adt.cst.types.cstblocklist.ConsConcCstBlock.make(buildHostblock((ParserRuleContext)child), tom.engine.adt.cst.types.cstblocklist.EmptyConcCstBlock.make() ) );
+        bl =  tom.engine.adt.cst.types.cstblocklist.ConsConcCstBlock.make(buildHostblock((ParserRuleContext)child),tom_append_list_ConcCstBlock(bl, tom.engine.adt.cst.types.cstblocklist.EmptyConcCstBlock.make() )) ;
       }
     }
-    setValue("exitStart",ctx,  tom.engine.adt.cst.types.cstprogram.Cst_Program.make(bl) );
+    setValue("exitStart",ctx,  tom.engine.adt.cst.types.cstprogram.Cst_Program.make(bl.reverse()) );
   }
 
   /*
@@ -145,13 +145,13 @@ public class CstBuilder extends TomIslandParserBaseListener {
     for(int i = 0 ; i<ctx.getChildCount() ; i++) {
       ParseTree child = ctx.getChild(i);
       if(child instanceof TomIslandParser.CompositeContext) {
-        bl = tom_append_list_ConcCstBlock(bl, tom.engine.adt.cst.types.cstblocklist.ConsConcCstBlock.make( tom.engine.adt.cst.types.cstblock.Cst_BQTermToBlock.make((CstBQTerm)getValue(child)) , tom.engine.adt.cst.types.cstblocklist.EmptyConcCstBlock.make() ) );
+        bl =  tom.engine.adt.cst.types.cstblocklist.ConsConcCstBlock.make( tom.engine.adt.cst.types.cstblock.Cst_BQTermToBlock.make((CstBQTerm)getValue(child)) ,tom_append_list_ConcCstBlock(bl, tom.engine.adt.cst.types.cstblocklist.EmptyConcCstBlock.make() )) ;
         previousToken = null;
       } else if(child instanceof TomIslandParser.BqcompositeContext) {
-        bl = tom_append_list_ConcCstBlock(bl, tom.engine.adt.cst.types.cstblocklist.ConsConcCstBlock.make((CstBlock)getValue(child), tom.engine.adt.cst.types.cstblocklist.EmptyConcCstBlock.make() ) );
+        bl =  tom.engine.adt.cst.types.cstblocklist.ConsConcCstBlock.make((CstBlock)getValue(child),tom_append_list_ConcCstBlock(bl, tom.engine.adt.cst.types.cstblocklist.EmptyConcCstBlock.make() )) ;
         previousToken = null;
       } else if(child instanceof TomIslandParser.WaterContext) {
-        bl = tom_append_list_ConcCstBlock(bl, tom.engine.adt.cst.types.cstblocklist.ConsConcCstBlock.make(buildHostblock((ParserRuleContext)child), tom.engine.adt.cst.types.cstblocklist.EmptyConcCstBlock.make() ) );
+        bl =  tom.engine.adt.cst.types.cstblocklist.ConsConcCstBlock.make(buildHostblock((ParserRuleContext)child),tom_append_list_ConcCstBlock(bl, tom.engine.adt.cst.types.cstblocklist.EmptyConcCstBlock.make() )) ;
         previousToken = null;
       } else if(child instanceof TerminalNodeImpl) {
         if(previousToken != null) {
@@ -160,13 +160,13 @@ public class CstBuilder extends TomIslandParserBaseListener {
           Token currentToken = ((TerminalNodeImpl)child).getSymbol();
           //System.out.println("between = '" + betweenToken(previousToken,currentToken) + "'");
           CstOption ot = extractOption(currentToken);
-          bl = tom_append_list_ConcCstBlock(bl, tom.engine.adt.cst.types.cstblocklist.ConsConcCstBlock.make( tom.engine.adt.cst.types.cstblock.HOSTBLOCK.make( tom.engine.adt.cst.types.cstoptionlist.ConsConcCstOption.make(ot, tom.engine.adt.cst.types.cstoptionlist.EmptyConcCstOption.make() ) , betweenToken(previousToken,currentToken)) , tom.engine.adt.cst.types.cstblocklist.EmptyConcCstBlock.make() ) );
+          bl =  tom.engine.adt.cst.types.cstblocklist.ConsConcCstBlock.make( tom.engine.adt.cst.types.cstblock.HOSTBLOCK.make( tom.engine.adt.cst.types.cstoptionlist.ConsConcCstOption.make(ot, tom.engine.adt.cst.types.cstoptionlist.EmptyConcCstOption.make() ) , betweenToken(previousToken,currentToken)) ,tom_append_list_ConcCstBlock(bl, tom.engine.adt.cst.types.cstblocklist.EmptyConcCstBlock.make() )) ;
         }
         previousToken = ((TerminalNodeImpl)child).getSymbol();
       }
     }
 
-    setValue("exitMetaquote", ctx, tom.engine.adt.cst.types.cstblock.Cst_Metaquote.make(optionList, bl) );
+    setValue("exitMetaquote", ctx, tom.engine.adt.cst.types.cstblock.Cst_Metaquote.make(optionList, bl.reverse()) );
   }
 
   /*
@@ -308,19 +308,19 @@ public class CstBuilder extends TomIslandParserBaseListener {
       ParseTree child = ctx.getChild(i);
 
       if(child instanceof TomIslandParser.IslandContext) {
-        bl = tom_append_list_ConcCstBlock(bl, tom.engine.adt.cst.types.cstblocklist.ConsConcCstBlock.make((CstBlock)getValue(child), tom.engine.adt.cst.types.cstblocklist.EmptyConcCstBlock.make() ) );
+        bl =  tom.engine.adt.cst.types.cstblocklist.ConsConcCstBlock.make((CstBlock)getValue(child),tom_append_list_ConcCstBlock(bl, tom.engine.adt.cst.types.cstblocklist.EmptyConcCstBlock.make() )) ;
       } else if(child instanceof TomIslandParser.BlockContext) {
-        bl = tom_append_list_ConcCstBlock(bl, tom.engine.adt.cst.types.cstblocklist.ConsConcCstBlock.make((CstBlock)getValue(child), tom.engine.adt.cst.types.cstblocklist.EmptyConcCstBlock.make() ) );
+        bl =  tom.engine.adt.cst.types.cstblocklist.ConsConcCstBlock.make((CstBlock)getValue(child),tom_append_list_ConcCstBlock(bl, tom.engine.adt.cst.types.cstblocklist.EmptyConcCstBlock.make() )) ;
       } else if(child instanceof TomIslandParser.WaterContext) {
         //ParserRuleContext prc = (ParserRuleContext)child;
         //CstOption ot = extractOption(prc.getStart());
         //bl = `ConcCstBlock(bl*,HOSTBLOCK(ConcCstOption(ot), getStringValue(child)));
-        bl = tom_append_list_ConcCstBlock(bl, tom.engine.adt.cst.types.cstblocklist.ConsConcCstBlock.make(buildHostblock((ParserRuleContext)child), tom.engine.adt.cst.types.cstblocklist.EmptyConcCstBlock.make() ) );
+        bl =  tom.engine.adt.cst.types.cstblocklist.ConsConcCstBlock.make(buildHostblock((ParserRuleContext)child),tom_append_list_ConcCstBlock(bl, tom.engine.adt.cst.types.cstblocklist.EmptyConcCstBlock.make() )) ;
       }
     }
 
     CstOption otext  = extractText(ctx);
-    setValue(ctx, tom.engine.adt.cst.types.cstblock.Cst_UnamedBlock.make( tom.engine.adt.cst.types.cstoptionlist.ConsConcCstOption.make(otext, tom.engine.adt.cst.types.cstoptionlist.EmptyConcCstOption.make() ) , bl) );
+    setValue(ctx, tom.engine.adt.cst.types.cstblock.Cst_UnamedBlock.make( tom.engine.adt.cst.types.cstoptionlist.ConsConcCstOption.make(otext, tom.engine.adt.cst.types.cstoptionlist.EmptyConcCstOption.make() ) , bl.reverse()) );
   }
 
   /*

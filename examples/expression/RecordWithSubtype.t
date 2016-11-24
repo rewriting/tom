@@ -221,7 +221,7 @@ public class RecordWithSubtype {
       }
 
       Mult[first=IntExp(v1), second=IntExp(v2)] -> {
-        return new IntExp(`(v1 * v2));
+        return new IntExp(`(v1) * `(v2));
       }
       
       Mult[first=e1, second=IntExp(1)] -> { return `e1; }

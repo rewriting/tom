@@ -1033,7 +1033,7 @@ public class TomMappingFromEcore {
               }
             //otherwise we generate the mapping
             } else {
-              writer.write("\n\n%op "+prefix+ecl.getInstanceClass().getSimpleName()+" "+prefix+cr+"("+s_types+") {\n  is_fsym(t) { $t instanceof "+(decl[0]+decl[1])+" }"+s_gets+" "+s_defaults+"\n  make("+(s.length() <= 2 ? "" : s.substring(2))+") { construct"+prefix+cr+"(("+(EObject.class.isAssignableFrom(ecl.getInstanceClass()) ? ecl.getInstanceClass().getCanonicalName() : "org.eclipse.emf.ecore.EObject")+")"+o1+".eINSTANCE.create((EClass)"+o2+".eINSTANCE.getEClassifier(\""+ecl.getName()+"\")), new Object[]{ "+(s2.length() <= 2 ? "" : s2.substring(2))+" }) }\n  implement() { "+genOpImplementContent(ecl.getInstanceClassName(), cr)+" }\n}\n\npublic static <O extends org.eclipse.emf.ecore.EObject> O construct"+prefix+cr+"(O o, Object[] objs) {\n  int i=0;\n  EList<EStructuralFeature> sfes = o.eClass().getEAllStructuralFeatures();\n  for(EStructuralFeature esf : sfes) {\n    if(esf.isChangeable()) {\n      o.eSet(esf, objs[i]);\n      i++;\n    }\n  }\n  return o;\n}"
+              writer.write("\n\n%op "+(prefix+ecl.getInstanceClass().getSimpleName())+" "+(prefix+cr)+"("+s_types+") {\n  is_fsym(t) { $t instanceof "+(decl[0]+decl[1])+" }"+s_gets+" "+s_defaults+"\n  make("+(s.length() <= 2 ? "" : s.substring(2))+") { construct"+(prefix+cr)+"(("+(EObject.class.isAssignableFrom(ecl.getInstanceClass()) ? ecl.getInstanceClass().getCanonicalName() : "org.eclipse.emf.ecore.EObject")+")"+o1+".eINSTANCE.create((EClass)"+o2+".eINSTANCE.getEClassifier(\""+ecl.getName()+"\")), new Object[]{ "+(s2.length() <= 2 ? "" : s2.substring(2))+" }) }\n  implement() { "+genOpImplementContent(ecl.getInstanceClassName(), cr)+" }\n}\n\npublic static <O extends org.eclipse.emf.ecore.EObject> O construct"+(prefix+cr)+"(O o, Object[] objs) {\n  int i=0;\n  EList<EStructuralFeature> sfes = o.eClass().getEAllStructuralFeatures();\n  for(EStructuralFeature esf : sfes) {\n    if(esf.isChangeable()) {\n      o.eSet(esf, objs[i]);\n      i++;\n    }\n  }\n  return o;\n}"
 
 
 
@@ -1073,7 +1073,7 @@ public class TomMappingFromEcore {
             //String literal = lit.getLiteral();
             String literalname = lit.getName();
             String operatorName = cr+literalname.replaceAll(" ","");
-            writer.write("\n\n%op "+prefix+cr+" "+prefix+operatorName+"() {\n  is_fsym(t) { t == "+(decl[0]+decl[1])+".get(\""+literalname+"\") }\n  make() { ("+(decl[0]+decl[2])+")"+o1+".eINSTANCE.createFromString((EDataType)"+o2+".eINSTANCE.get"+toUpperName(cr)+"(), \""+literalname+"\") }\n}"
+            writer.write("\n\n%op "+(prefix+cr)+" "+(prefix+operatorName)+"() {\n  is_fsym(t) { t == "+(decl[0]+decl[1])+".get(\""+literalname+"\") }\n  make() { ("+(decl[0]+decl[2])+")"+o1+".eINSTANCE.createFromString((EDataType)"+o2+".eINSTANCE.get"+toUpperName(cr)+"(), \""+literalname+"\") }\n}"
 
 
 
