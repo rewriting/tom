@@ -1,0 +1,50 @@
+
+abstract syntax
+Tree = E() | T(Color,Tree,Nat,Tree) | balance(Tree) | ins(Nat,Tree) | insAux(Nat,Tree,Cmp)
+Color = R() | B()
+Nat = Z() | S(Nat)
+Cmp = lt() | gt() | eq() | cmp(Nat,Nat)
+
+strategies
+
+// Functional Pearls. Okasaki 1993
+// alternative balance implementation
+// color flips
+b1() = [ balance(T(B(),T(R(),T(R(),a1,a2,a3),x,b),y,T(R(),c,z,d))) -> T(R(),T(B(),T(R(),a1,a2,a3),x,b),y,T(B(),c,z,d)) ]
+b2() = [ balance(T(B(),T(R(),a,x,T(R(),b1,b2,b3)),y,T(R(),c,z,d))) -> T(R(),T(B(),a,x,T(R(),b1,b2,b3)),y,T(B(),c,z,d)) ]
+b3() = [ balance(T(B(),T(R(),a,x,b),y,T(R(),T(R(),c1,c2,c3),z,d))) -> T(R(),T(B(),a,x,b),y,T(B(),T(R(),c1,c2,c3),z,d)) ]
+b4() = [ balance(T(B(),T(R(),a,x,b),y,T(R(),c,z,T(R(),d1,d2,d3)))) -> T(R(),T(B(),a,x,b),y,T(B(),c,z,T(R(),d1,d2,d3))) ]
+
+// single rotations
+b5() = [ balance(T(B(),T(R(),T(R(),a1,a2,a3),x,b),y,c)) -> T(B(),T(R(),a1,a2,a3),x,T(B(),b,y,c)) ]
+b6() = [ balance(T(B(),a,x,T(R(),b,y,T(R(),c1,c2,c3)))) -> T(B(),T(R(),a,x,b),y,T(R(),c1,c2,c3)) ]
+
+// double rotations
+b7() = [ balance(T(B(),T(R(),a,x,T(R(),b,y,c)),z,d)) -> T(B(),T(R(),a,x,b),y,T(R(),c,z,d)) ]
+b8() = [ balance(T(B(),a,x,T(R(),T(R(),b,y,c),z,d))) -> T(B(),T(R(),a,x,b),y,T(R(),c,z,d)) ]
+
+// no balancing necessary
+b9() = [ balance(t) -> t ]
+
+i1() = [ ins(x,E()) -> T(R(),E(),x,E()) ]
+i2() = [ ins(x,T(c,l,y,r)) -> insAux(x,T(c,l,y,r),cmp(x,y)) ]
+
+i3() = [ insAux(x,T(c,l,y,r),lt()) -> balance(T(c,ins(x,l),y,r)) ]
+i4() = [ insAux(x,T(c,l,y,r),gt()) -> balance(T(c,l,y,ins(x,r))) ]
+i5() = [ insAux(x,T(c,l,y,r),eq()) -> T(c,l,y,r) ]
+
+c1() = [ cmp(Z(),S(x)) -> lt() ]
+c2() = [ cmp(S(x),Z()) -> gt() ]
+c3() = [ cmp(Z(),Z())  -> eq() ]
+c4() = [ cmp(S(x),S(y)) -> cmp(x,y) ]
+
+balance() = b1() <+ b2() <+ b3() <+ b4() <+ b5() <+ b6() <+ b7() <+ b8() <+ b9()
+insert()  = i1() <+ i2() <+ i3() <+ i4() <+ i5()
+compare() = c1() <+ c2() <+ c3() <+ c4()
+
+innermost(s) = mu x.(all(x) ; ((s ; x) <+ Identity))
+
+//mainStrat() = innermost(b1())
+mainStrat() = innermost(balance() <+ insert() <+ compare())
+
+
