@@ -76,13 +76,17 @@ public class RuleCompiler {
    * @returns a (ordered) list of rules
    */
   public RuleList expandAntiPatternsAux(RuleList rules, boolean postTreatment) {
-    RuleList newRules = `ConcRule();
+    //RuleList newRules = `ConcRule();
+    ArrayList<Rule> newRules = new ArrayList<Rule>(); // use java list since it can be huge
+    int cpt = 0;
     for(Rule rule:rules.getCollectionConcRule()) {
+      //System.out.println("expandAntiPatternsAux - rule #" + (++cpt) + " newRules.size = " + newRules.size());
       RuleList genRules = this.expandAntiPatternInRule(`rule, postTreatment);
       // add the generated rules for rule to the result (list of rule)
-      newRules = `ConcRule(newRules*,genRules*);
+      //newRules = `ConcRule(newRules*,genRules*);
+      newRules.addAll(Tools.toListOfRule(genRules));
     }
-    return newRules;
+    return Tools.fromListOfRule(newRules);
   }  
   
   /**
