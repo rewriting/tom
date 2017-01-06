@@ -41,12 +41,8 @@ island
   | metaquote
   ;
 
-  /*
-   * this rule makes the parser very very slow
-   */
 metaquote
   : METAQUOTE
-//  | LMETAQUOTE (AT (bqcomposite | composite) AT | water)*? RMETAQUOTE
   ;
 
 matchStatement

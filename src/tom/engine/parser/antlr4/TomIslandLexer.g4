@@ -73,9 +73,6 @@ UNDERSCORE : '_' ;
 ANTI : '!' ;
 AT : '@' ;
 METAQUOTE : '%[' .*? ']%';
-//LMETAQUOTE : '%[' ;
-//RMETAQUOTE : ']%' ;
-ATAT : '@@' ;
 
 GREATEROREQ : '>=';
 LOWEROREQ : '<=';

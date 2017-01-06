@@ -116,13 +116,7 @@ public class CstConverter {
 
       Cst_Metaquote(ol@ConcCstOption(ot@Cst_OriginTracking(currentFileName,l1,c1,l2,c2)), ConcCstBlock(HOSTBLOCK(optionList, code))) -> {
         String metacode = `code.substring(2,`code.length()-2);
-        List<CstBlock> list = new ArrayList<CstBlock>();
-        cc.tomSplitter(`optionList, metacode, list);
-        CstBlockList bl = `ConcCstBlock();
-        for(CstBlock b:list) {
-          bl = `ConcCstBlock(b,bl*);
-        }
-        bl = bl.reverse();
+        CstBlockList bl = cc.tomSplitter(`optionList, metacode);
         return `Cst_Metaquote(ol,bl);
       }
 
@@ -386,8 +380,9 @@ public class CstConverter {
    * to parse the @@ encoded by ]%, it is put back as a single '@' in the metaString
    */
   
-  private String tomSplitter(CstOptionList optionList,String subject, List<CstBlock> list) {
+  private CstBlockList tomSplitter(CstOptionList optionList,String subject) {
 
+    CstBlockList bl = `ConcCstBlock();
     String metaChar = "]%";
     String escapeChar = "@";
 
@@ -402,7 +397,6 @@ public class CstConverter {
     }
     //System.out.println("split.length: " + split.length);
     boolean metaMode = true;
-    String res = "";
     for(int i=0 ; i<split.length ; i++) {
       if(metaMode) {
         // put back escapeChar instead of metaChar
@@ -410,7 +404,7 @@ public class CstConverter {
         metaMode = false;
         //System.out.println("metaString: '" + code + "'");
 
-        list.add(`HOSTBLOCK(optionList,code));
+        bl = `ConcCstBlock(HOSTBLOCK(optionList,code),bl*);
       } else {
         String code = "+"+split[i]+"+";
         //String code = split[i];
@@ -420,7 +414,7 @@ public class CstConverter {
           ANTLRInputStream tomInput = new ANTLRInputStream(code.toCharArray(), code.length());
           CstBlock block = parseStream(tomInput,"");
           //System.out.println("block: " + block);
-          list.add(block);
+          bl = `ConcCstBlock(block,bl*);
         } catch (Exception e) {
           throw new TomRuntimeException("Exception catched in tomSplitter");
         }
@@ -428,9 +422,9 @@ public class CstConverter {
     }
     if(subject.endsWith(escapeChar)) {
       // add an empty string when %[...@...@]%
-      list.add(`HOSTBLOCK(optionList,"\"\""));
+      bl = `ConcCstBlock(HOSTBLOCK(optionList,"\"\""),bl*);
     }
-    return res;
+    return bl.reverse();
   }
  
 }

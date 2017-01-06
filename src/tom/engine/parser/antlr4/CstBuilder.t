@@ -136,44 +136,14 @@ public class CstBuilder extends TomIslandParserBaseListener {
   /* 
    * metaquote
    *   : METAQUOTE
-   *   | LMETAQUOTE (AT (bqcomposite | composite) AT | water)*? RMETAQUOTE
    *   ;
    */
   public void exitMetaquote(TomIslandParser.MetaquoteContext ctx) {
     CstOptionList optionList = `ConcCstOption(extractOption(ctx.getStart()));
-    CstBlockList bl = `ConcCstBlock();
-    if(ctx.METAQUOTE() != null) {
-      String code = ctx.METAQUOTE().getText();
-      //System.out.println("METAQUOTE: '" + code + "'");
-      bl = `ConcCstBlock(HOSTBLOCK(optionList, code),bl*);
-    } else {
-      Token previousToken = null;
-      for(int i = 0 ; i<ctx.getChildCount() ; i++) {
-        ParseTree child = ctx.getChild(i);
-        if(child instanceof TomIslandParser.CompositeContext) {
-          bl = `ConcCstBlock(Cst_BQTermToBlock((CstBQTerm)getValue(child)),bl*);
-          previousToken = null;
-        } else if(child instanceof TomIslandParser.BqcompositeContext) {
-          bl = `ConcCstBlock((CstBlock)getValue(child),bl*);
-          previousToken = null;
-        } else if(child instanceof TomIslandParser.WaterContext) {
-          bl = `ConcCstBlock(buildHostblock((ParserRuleContext)child),bl*);
-          previousToken = null;
-        } else if(child instanceof TerminalNodeImpl) {
-          if(previousToken != null) {
-            // this means that there no water, nor composite between the two tokens
-            // there is only layout
-            Token currentToken = ((TerminalNodeImpl)child).getSymbol();
-            //System.out.println("between = '" + betweenToken(previousToken,currentToken) + "'");
-            CstOption ot = extractOption(currentToken);
-            bl = `ConcCstBlock(HOSTBLOCK(ConcCstOption(ot),betweenToken(previousToken,currentToken)),bl*);
-          }
-          previousToken = ((TerminalNodeImpl)child).getSymbol();
-        }
-      }
-    }
+    String code = ctx.METAQUOTE().getText();
+    CstBlockList bl = `ConcCstBlock(HOSTBLOCK(optionList, code));
 
-    setValue("exitMetaquote", ctx,`Cst_Metaquote(optionList,bl.reverse()));
+    setValue("exitMetaquote", ctx,`Cst_Metaquote(optionList,bl));
   }
 
   /*

@@ -110,24 +110,6 @@ public class AstBuilder {
 
       Cst_Metaquote(optionList, blocks) -> {
         return `AbstractBlock(convert(blocks));
-        /*
-        Instruction iEmptyString = `CodeToInstruction(TargetLanguageToCode(ITL("\"\"")));
-        InstructionList res = `concInstruction(iEmptyString);
-        CstBlockList l = `blocks;
-        while(!l.isEmptyConcCstBlock()) {
-          CstBlock head = l.getHeadConcCstBlock();
-          if(head.isHOSTBLOCK()) {
-            String s = getParserTool().metaEncodeCode(head.getcontent());
-            Instruction i = `CodeToInstruction(TargetLanguageToCode(ITL("+"+s+"+")));
-            res = `concInstruction(res*,i);
-          } else {
-            res = `concInstruction(res*,convert(head));
-          }
-          l = l.getTailConcCstBlock();
-        } 
-        res = `concInstruction(res*,iEmptyString);
-        return `AbstractBlock(res);
-        */
       }
 
       Cst_BQTermToBlock(bqterm) -> {

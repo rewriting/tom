@@ -135,38 +135,15 @@ public class CstBuilder extends TomIslandParserBaseListener {
 
   /* 
    * metaquote
-   *   : LMETAQUOTE (AT (bqcomposite | composite) AT | water)*? RMETAQUOTE
+   *   : METAQUOTE
    *   ;
    */
   public void exitMetaquote(TomIslandParser.MetaquoteContext ctx) {
     CstOptionList optionList =  tom.engine.adt.cst.types.cstoptionlist.ConsConcCstOption.make(extractOption(ctx.getStart()), tom.engine.adt.cst.types.cstoptionlist.EmptyConcCstOption.make() ) ;
-    CstBlockList bl =  tom.engine.adt.cst.types.cstblocklist.EmptyConcCstBlock.make() ;
-    Token previousToken = null;
-    for(int i = 0 ; i<ctx.getChildCount() ; i++) {
-      ParseTree child = ctx.getChild(i);
-      if(child instanceof TomIslandParser.CompositeContext) {
-        bl =  tom.engine.adt.cst.types.cstblocklist.ConsConcCstBlock.make( tom.engine.adt.cst.types.cstblock.Cst_BQTermToBlock.make((CstBQTerm)getValue(child)) ,tom_append_list_ConcCstBlock(bl, tom.engine.adt.cst.types.cstblocklist.EmptyConcCstBlock.make() )) ;
-        previousToken = null;
-      } else if(child instanceof TomIslandParser.BqcompositeContext) {
-        bl =  tom.engine.adt.cst.types.cstblocklist.ConsConcCstBlock.make((CstBlock)getValue(child),tom_append_list_ConcCstBlock(bl, tom.engine.adt.cst.types.cstblocklist.EmptyConcCstBlock.make() )) ;
-        previousToken = null;
-      } else if(child instanceof TomIslandParser.WaterContext) {
-        bl =  tom.engine.adt.cst.types.cstblocklist.ConsConcCstBlock.make(buildHostblock((ParserRuleContext)child),tom_append_list_ConcCstBlock(bl, tom.engine.adt.cst.types.cstblocklist.EmptyConcCstBlock.make() )) ;
-        previousToken = null;
-      } else if(child instanceof TerminalNodeImpl) {
-        if(previousToken != null) {
-          // this means that there no water, nor composite between the two tokens
-          // there is only layout
-          Token currentToken = ((TerminalNodeImpl)child).getSymbol();
-          //System.out.println("between = '" + betweenToken(previousToken,currentToken) + "'");
-          CstOption ot = extractOption(currentToken);
-          bl =  tom.engine.adt.cst.types.cstblocklist.ConsConcCstBlock.make( tom.engine.adt.cst.types.cstblock.HOSTBLOCK.make( tom.engine.adt.cst.types.cstoptionlist.ConsConcCstOption.make(ot, tom.engine.adt.cst.types.cstoptionlist.EmptyConcCstOption.make() ) , betweenToken(previousToken,currentToken)) ,tom_append_list_ConcCstBlock(bl, tom.engine.adt.cst.types.cstblocklist.EmptyConcCstBlock.make() )) ;
-        }
-        previousToken = ((TerminalNodeImpl)child).getSymbol();
-      }
-    }
+    String code = ctx.METAQUOTE().getText();
+    CstBlockList bl =  tom.engine.adt.cst.types.cstblocklist.ConsConcCstBlock.make( tom.engine.adt.cst.types.cstblock.HOSTBLOCK.make(optionList, code) , tom.engine.adt.cst.types.cstblocklist.EmptyConcCstBlock.make() ) ;
 
-    setValue("exitMetaquote", ctx, tom.engine.adt.cst.types.cstblock.Cst_Metaquote.make(optionList, bl.reverse()) );
+    setValue("exitMetaquote", ctx, tom.engine.adt.cst.types.cstblock.Cst_Metaquote.make(optionList, bl) );
   }
 
   /*
@@ -595,13 +572,18 @@ public class CstBuilder extends TomIslandParserBaseListener {
       res =  tom.engine.adt.cst.types.cstpattern.Cst_UnamedVariable.make() ;
     } else if(ctx.UNDERSCORE() != null && ctx.STAR() != null) {
       res =  tom.engine.adt.cst.types.cstpattern.Cst_UnamedVariableStar.make() ;
-    } else if(ctx.constant() != null && ctx.STAR() == null) {
-      CstSymbol cst = (CstSymbol) getValue(ctx.constant());
-      res =  tom.engine.adt.cst.types.cstpattern.Cst_Constant.make(cst) ;
+    } else if(ctx.constant() != null) {
+      CstSymbolList symbolList = buildCstSymbolList(ctx.constant());
+      res =  tom.engine.adt.cst.types.cstpattern.Cst_ConstantOr.make(symbolList) ;
+      //CstSymbol cst = (CstSymbol) getValue(ctx.constant());
+      //res = `Cst_Constant(cst);
+    }
+    /*
     } else if(ctx.constant() != null && ctx.STAR() != null) {
       CstSymbol cst = (CstSymbol) getValue(ctx.constant());
-      res =  tom.engine.adt.cst.types.cstpattern.Cst_ConstantStar.make(cst) ;
+      res = `Cst_ConstantStar(cst);
     }
+    */
     setValue("exitPattern",ctx,res);
   }
 
@@ -954,10 +936,10 @@ public class CstBuilder extends TomIslandParserBaseListener {
    */
 
   private String getText(CstOptionList ol) {
-    { /* unamed block */{ /* unamed block */if ( (ol instanceof tom.engine.adt.cst.types.CstOptionList) ) {if ( (((( tom.engine.adt.cst.types.CstOptionList )ol) instanceof tom.engine.adt.cst.types.cstoptionlist.ConsConcCstOption) || ((( tom.engine.adt.cst.types.CstOptionList )ol) instanceof tom.engine.adt.cst.types.cstoptionlist.EmptyConcCstOption)) ) { tom.engine.adt.cst.types.CstOptionList  tomMatch2_end_4=(( tom.engine.adt.cst.types.CstOptionList )ol);do {{ /* unamed block */if (!( tomMatch2_end_4.isEmptyConcCstOption() )) { tom.engine.adt.cst.types.CstOption  tomMatch2_8= tomMatch2_end_4.getHeadConcCstOption() ;if ( ((( tom.engine.adt.cst.types.CstOption )tomMatch2_8) instanceof tom.engine.adt.cst.types.cstoption.Cst_OriginText) ) {
+    { /* unamed block */{ /* unamed block */if ( (ol instanceof tom.engine.adt.cst.types.CstOptionList) ) {if ( (((( tom.engine.adt.cst.types.CstOptionList )ol) instanceof tom.engine.adt.cst.types.cstoptionlist.ConsConcCstOption) || ((( tom.engine.adt.cst.types.CstOptionList )ol) instanceof tom.engine.adt.cst.types.cstoptionlist.EmptyConcCstOption)) ) { tom.engine.adt.cst.types.CstOptionList  tomMatch330_end_4=(( tom.engine.adt.cst.types.CstOptionList )ol);do {{ /* unamed block */if (!( tomMatch330_end_4.isEmptyConcCstOption() )) { tom.engine.adt.cst.types.CstOption  tomMatch330_8= tomMatch330_end_4.getHeadConcCstOption() ;if ( ((( tom.engine.adt.cst.types.CstOption )tomMatch330_8) instanceof tom.engine.adt.cst.types.cstoption.Cst_OriginText) ) {
 
-        return  tomMatch2_8.gettext() ;
-      }}if ( tomMatch2_end_4.isEmptyConcCstOption() ) {tomMatch2_end_4=(( tom.engine.adt.cst.types.CstOptionList )ol);} else {tomMatch2_end_4= tomMatch2_end_4.getTailConcCstOption() ;}}} while(!( (tomMatch2_end_4==(( tom.engine.adt.cst.types.CstOptionList )ol)) ));}}}}
+        return  tomMatch330_8.gettext() ;
+      }}if ( tomMatch330_end_4.isEmptyConcCstOption() ) {tomMatch330_end_4=(( tom.engine.adt.cst.types.CstOptionList )ol);} else {tomMatch330_end_4= tomMatch330_end_4.getTailConcCstOption() ;}}} while(!( (tomMatch330_end_4==(( tom.engine.adt.cst.types.CstOptionList )ol)) ));}}}}
 
     return "";
   }
