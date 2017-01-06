@@ -109,23 +109,25 @@ public class AstBuilder {
       }}}{ /* unamed block */if ( (cst instanceof tom.engine.adt.cst.types.CstBlock) ) {if ( ((( tom.engine.adt.cst.types.CstBlock )cst) instanceof tom.engine.adt.cst.types.cstblock.Cst_Metaquote) ) {
 
 
-        //return `AbstractBlock(convert(blocks));
-        Instruction iEmptyString =  tom.engine.adt.tominstruction.types.instruction.CodeToInstruction.make( tom.engine.adt.code.types.code.TargetLanguageToCode.make( tom.engine.adt.code.types.targetlanguage.ITL.make("\"\"") ) ) ;
-        InstructionList res =  tom.engine.adt.tominstruction.types.instructionlist.ConsconcInstruction.make(iEmptyString, tom.engine.adt.tominstruction.types.instructionlist.EmptyconcInstruction.make() ) ;
-        CstBlockList l =  (( tom.engine.adt.cst.types.CstBlock )cst).getblocks() ;
+        return  tom.engine.adt.tominstruction.types.instruction.AbstractBlock.make(convert( (( tom.engine.adt.cst.types.CstBlock )cst).getblocks() )) ;
+        /*
+        Instruction iEmptyString = `CodeToInstruction(TargetLanguageToCode(ITL("\"\"")));
+        InstructionList res = `concInstruction(iEmptyString);
+        CstBlockList l = `blocks;
         while(!l.isEmptyConcCstBlock()) {
           CstBlock head = l.getHeadConcCstBlock();
           if(head.isHOSTBLOCK()) {
             String s = getParserTool().metaEncodeCode(head.getcontent());
-            Instruction i =  tom.engine.adt.tominstruction.types.instruction.CodeToInstruction.make( tom.engine.adt.code.types.code.TargetLanguageToCode.make( tom.engine.adt.code.types.targetlanguage.ITL.make("+"+s+"+") ) ) ;
-            res = tom_append_list_concInstruction(res, tom.engine.adt.tominstruction.types.instructionlist.ConsconcInstruction.make(i, tom.engine.adt.tominstruction.types.instructionlist.EmptyconcInstruction.make() ) );
+            Instruction i = `CodeToInstruction(TargetLanguageToCode(ITL("+"+s+"+")));
+            res = `concInstruction(res*,i);
           } else {
-            res = tom_append_list_concInstruction(res, tom.engine.adt.tominstruction.types.instructionlist.ConsconcInstruction.make(convert(head), tom.engine.adt.tominstruction.types.instructionlist.EmptyconcInstruction.make() ) );
+            res = `concInstruction(res*,convert(head));
           }
           l = l.getTailConcCstBlock();
         } 
-        res = tom_append_list_concInstruction(res, tom.engine.adt.tominstruction.types.instructionlist.ConsconcInstruction.make(iEmptyString, tom.engine.adt.tominstruction.types.instructionlist.EmptyconcInstruction.make() ) );
-        return  tom.engine.adt.tominstruction.types.instruction.AbstractBlock.make(res) ;
+        res = `concInstruction(res*,iEmptyString);
+        return `AbstractBlock(res);
+        */
       }}}{ /* unamed block */if ( (cst instanceof tom.engine.adt.cst.types.CstBlock) ) {if ( ((( tom.engine.adt.cst.types.CstBlock )cst) instanceof tom.engine.adt.cst.types.cstblock.Cst_BQTermToBlock) ) {
 
 
@@ -807,14 +809,22 @@ matchblock: {
         ConstraintList constraintList =  tom.engine.adt.tomconstraint.types.constraintlist.EmptyconcConstraint.make() ;
         TomName name = convert( (( tom.engine.adt.cst.types.CstPattern )cst).getsymbol() ); // add symbol to symbolTable
         return  tom.engine.adt.tomterm.types.tomterm.TermAppl.make( tom.engine.adt.tomoption.types.optionlist.EmptyconcOption.make() ,  tom.engine.adt.tomname.types.tomnamelist.ConsconcTomName.make(name, tom.engine.adt.tomname.types.tomnamelist.EmptyconcTomName.make() ) ,  tom.engine.adt.tomterm.types.tomlist.EmptyconcTomTerm.make() ,  tom.engine.adt.tomconstraint.types.constraintlist.EmptyconcConstraint.make() ) ;
-      }}}{ /* unamed block */if ( (cst instanceof tom.engine.adt.cst.types.CstPattern) ) {if ( ((( tom.engine.adt.cst.types.CstPattern )cst) instanceof tom.engine.adt.cst.types.cstpattern.Cst_ConstantStar) ) {
+      }}}{ /* unamed block */if ( (cst instanceof tom.engine.adt.cst.types.CstPattern) ) {if ( ((( tom.engine.adt.cst.types.CstPattern )cst) instanceof tom.engine.adt.cst.types.cstpattern.Cst_ConstantOr) ) {
 
 
         OptionList optionList =  tom.engine.adt.tomoption.types.optionlist.EmptyconcOption.make() ;
-        ConstraintList constraintList =  tom.engine.adt.tomconstraint.types.constraintlist.EmptyconcConstraint.make() ;
-        TomName name = convert( (( tom.engine.adt.cst.types.CstPattern )cst).getsymbol() ); // add symbol to symbolTable
-        return  tom.engine.adt.tomterm.types.tomterm.VariableStar.make( tom.engine.adt.tomoption.types.optionlist.EmptyconcOption.make() , name, SymbolTable.TYPE_UNKNOWN,  tom.engine.adt.tomconstraint.types.constraintlist.EmptyconcConstraint.make() ) ;
+        TomNameList nameList = convert( (( tom.engine.adt.cst.types.CstPattern )cst).getsymbolList() ); 
+        return  tom.engine.adt.tomterm.types.tomterm.TermAppl.make(optionList, nameList,  tom.engine.adt.tomterm.types.tomlist.EmptyconcTomTerm.make() ,  tom.engine.adt.tomconstraint.types.constraintlist.EmptyconcConstraint.make() ) ;
       }}}{ /* unamed block */if ( (cst instanceof tom.engine.adt.cst.types.CstPattern) ) {if ( ((( tom.engine.adt.cst.types.CstPattern )cst) instanceof tom.engine.adt.cst.types.cstpattern.Cst_Anti) ) {
+
+
+
+
+
+
+
+
+
 
 
         return  tom.engine.adt.tomterm.types.tomterm.AntiTerm.make(convert( (( tom.engine.adt.cst.types.CstPattern )cst).getpattern() )) ;

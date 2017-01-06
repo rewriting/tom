@@ -326,7 +326,9 @@ public class TomMappingFromEcore {
         //already been generated
       } else {
         String[] decl = getClassDeclarations(eclf); // [canonical name, anonymous generic, generic type]
-        writer.write("\n\n%typeterm "+prefix+n+" "+(useNewTyper?genSubtype(eclf):"")+" {\n  implement { "+(eclf instanceof EClass && !EObject.class.isAssignableFrom(c) ? "org.eclipse.emf.ecore.EObject" : decl[0] + decl[2])+" }\n  is_sort(t) { "+(c.isPrimitive() ? "true" : "$t instanceof " + decl[0] + decl[1])+" }\n  equals(l1,l2) { "+(c.isPrimitive() ? "$l1 == $l2" : "$l1.equals($l2)")+" }\n}"
+        String implementBody = (eclf instanceof EClass && !EObject.class.isAssignableFrom(c))? "org.eclipse.emf.ecore.EObject" : decl[0] + decl[2];
+
+        writer.write("\n\n%typeterm "+prefix+n+" "+(useNewTyper?genSubtype(eclf):"")+" {\n  implement { "+implementBody+" }\n  is_sort(t) { "+(c.isPrimitive() ? "true" : "$t instanceof " + decl[0] + decl[1])+" }\n  equals(l1,l2) { "+(c.isPrimitive() ? "$l1 == $l2" : "$l1.equals($l2)")+" }\n}"
 
 
 
