@@ -1,5 +1,17 @@
 abstract syntax
-Code = Match(TermList) | Assign(Name,Exp) | If(Exp,Code,Code) | Nop()
+Code = Match(TermList) 
+     | Assign(Name,Exp) 
+     | If(Exp,Code,Code) 
+     | WhileDo(Exp,Code)
+     | Nop() 
+
+Exp = Or(Exp,Exp)
+    | And(Exp,Exp)
+    | IsFsym(Name,Term)
+    | EqualTerm(Term,Term)
+    | TrueTL()
+    | FalseTL()
+
 TermList = ConsTerm(Term,TermList) | NilTerm()
 Term = VarTerm(Name) | ApplTerm(Name,TermList)
 Nat = Z() | S(Nat)
@@ -16,4 +28,5 @@ topdownstoponsucces(s) = mu x.(s <+ all(x))
 //innermost(s) = mu x.(all(x) ; ((s ; x) <+ Identity))
 
 mainStrat() = topdown(compile()) ; topdownstoponsucces(rename())
+
 
