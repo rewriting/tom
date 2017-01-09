@@ -1,6 +1,6 @@
 // $ANTLR 3.2 Sep 23, 2009 12:02:23 /Users/pem/github/tom/src/tom/gom/parser/SimpleBlock.g 2016-11-30 19:06:58
 
-  package tom.gom.parser;
+package tom.gom.parser;
 
 
 import org.antlr.runtime.*;

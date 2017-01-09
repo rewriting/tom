@@ -1,7 +1,7 @@
 /*
  * Gom
  *
- * Copyright (c) 2007-2016, Universite de Lorraine, Inria
+ * Copyright (c) 2007-2017, Universite de Lorraine, Inria
  * Nancy, France.
  *
  * This program is free software; you can redistribute it and/or modify
