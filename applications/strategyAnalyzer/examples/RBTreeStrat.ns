@@ -3,7 +3,7 @@ abstract syntax
 Tree = E() | T(Color,Tree,Nat,Tree) | balance(Tree) | ins(Nat,Tree) | insAux(Nat,Tree,Cmp)
 Color = R() | B()
 Nat = Z() | S(Nat)
-Cmp = lt() | gt() | eq() | cmp(Nat,Nat)
+Cmp = lt() | gt() | eq0() | cmp(Nat,Nat)
 
 strategies
 
@@ -31,20 +31,20 @@ i2() = [ ins(x,T(c,l,y,r)) -> insAux(x,T(c,l,y,r),cmp(x,y)) ]
 
 i3() = [ insAux(x,T(c,l,y,r),lt()) -> balance(T(c,ins(x,l),y,r)) ]
 i4() = [ insAux(x,T(c,l,y,r),gt()) -> balance(T(c,l,y,ins(x,r))) ]
-i5() = [ insAux(x,T(c,l,y,r),eq()) -> T(c,l,y,r) ]
+i5() = [ insAux(x,T(c,l,y,r),eq0()) -> T(c,l,y,r) ]
 
 c1() = [ cmp(Z(),S(x)) -> lt() ]
 c2() = [ cmp(S(x),Z()) -> gt() ]
-c3() = [ cmp(Z(),Z())  -> eq() ]
+c3() = [ cmp(Z(),Z())  -> eq0() ]
 c4() = [ cmp(S(x),S(y)) -> cmp(x,y) ]
 
-balance() = b1() <+ b2() <+ b3() <+ b4() <+ b5() <+ b6() <+ b7() <+ b8() <+ b9()
-insert()  = i1() <+ i2() <+ i3() <+ i4() <+ i5()
-compare() = c1() <+ c2() <+ c3() <+ c4()
+balanceR() = b1() <+ b2() <+ b3() <+ b4() <+ b5() <+ b6() <+ b7() <+ b8() <+ b9()
+insertR()  = i1() <+ i2() <+ i3() <+ i4() <+ i5()
+compareR() = c1() <+ c2() <+ c3() <+ c4()
 
 innermost(s) = mu x.(all(x) ; ((s ; x) <+ Identity))
 
 //mainStrat() = innermost(b1())
-mainStrat() = innermost(balance() <+ insert() <+ compare())
+mainStrat() = innermost(balanceR() <+ insertR() <+ compareR())
 
 

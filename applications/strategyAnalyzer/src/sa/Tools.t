@@ -511,6 +511,16 @@ public class Tools {
     }
     return res.reverse();
   }
+  
+  public static List<Rule> toListOfRule(RuleList l) {
+    ArrayList<Rule> res = new ArrayList<Rule>();
+    while(!l.isEmptyConcRule()) {
+      Rule head = l.getHeadConcRule();
+      res.add(head);
+      l = l.getTailConcRule();
+    }
+    return res;
+  }
 
   /*
    * rename variables into x1,...,xn (using a topdown traversal)
