@@ -1,4 +1,7 @@
 abstract syntax
+CodeList = NilCode()
+         | ConsCode(Code,CodeList)
+
 Code = Match(TermList) 
      | Assign(Name,Exp) 
      | If(Exp,Code,Code) 
@@ -19,14 +22,33 @@ Name = Name(Nat)
 
 strategies
 
-compile() = [ Match(l) -> Nop() ]
-rename() = [ Var(Name(n)) -> Var(Name(S(n))) ]
+normexp() = [ 
+  Or(x,TrueTL()) -> TrueTL(),
+  Or(TrueTL(),x) -> TrueTL(),
+  Or(x,FalseTL()) -> x,
+  Or(FalseTL(),x) -> x,
+  And(x,TrueTL()) -> x,
+  And(TrueTL(),x) -> x,
+  And(x,FalseTL()) -> FalseTL(),
+  And(FalseTL(),x) -> FalseTL(),
+  EqualTerm(x,x) -> TrueTL(),
+  And(IsFsym(n,x),IsFsym(n,x)) -> IsFsym(n,x)
+]
+
+normexp2() = [ And(IsFsym(n1,x),IsFsym(n2,x)) -> FalseTL() ]
+
+//ifswapping() = [ ConsCode(If(cond1,then1,Nop()),ConsCode(If(cond2,then2,Nop()),tail)) -> ConsCode(If(cond2,then2,Nop()),ConsCode(If(cond1,then1,Nop()),tail)) ]
+
 
 topdown(s) = mu x.(s ; all(x))
-topdownstoponsucces(s) = mu x.(s <+ all(x))
+//topdownstoponsucces(s) = mu x.(s <+ all(x))
 
-//innermost(s) = mu x.(all(x) ; ((s ; x) <+ Identity))
+repeat(s) = mu x.((s ; x) <+ Identity)
+obu(s) = mu x.(one(x) <+ s)
+innermost(s) = mu x.(all(x) ; ((s ; x) <+ Identity))
 
-mainStrat() = topdown(compile()) ; topdownstoponsucces(rename())
-
+//mainStrat() = innermost(normexp() <+ normexp2())
+//mainStrat() = innermost(normexp())
+mainStrat() = repeat(obu(normexp()))
+ 
 

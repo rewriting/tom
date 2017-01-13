@@ -29,3 +29,22 @@ innermost_gfx.ns     2721   99    551       449         142           384
 fg2.input            tom    tom*  -tom      -tom-meta   -tom-ordered  -tom-meta-ordered
 repeat_obu_gfx.ns    23341  218   stack     stack       stack         stack
 innermost_gfx.ns     4101   102   569       562         199           509
+
+RBTreeStrat
+basic: 1442 rules,  aprove: no result
+withType: 720 rules,  aprove: maybe
+metalevel: 1154 rules, aprove: no result
+
+CompilerStrat
+basic: 23690 rules,  aprove: no result
+withType: 985 rules,  aprove: proven
+metalevel: 108 rules, aprove: proven
+
+OptimizerStrat
+basic: 1600 rules,  aprove: no result
+withType: 862 rules,  aprove: no result
+metalevel: 910 rules, aprove: no result
+
+
+
+
