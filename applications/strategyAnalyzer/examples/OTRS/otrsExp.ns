@@ -1,0 +1,17 @@
+abstract syntax
+
+T = a()	 
+		| b()				
+		| c() 			
+
+functions
+	T = foo(T,T,T,T)
+
+
+trs
+[
+  foo(a(),x,y,z) -> a()
+  foo(x,a(),y,z) -> a()
+  foo(x,y,a(),z) -> a()
+  foo(x,y,z,a()) -> a()
+]

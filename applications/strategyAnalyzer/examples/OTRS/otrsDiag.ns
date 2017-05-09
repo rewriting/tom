@@ -1,0 +1,19 @@
+abstract syntax
+
+Nat = zero()
+		| two()
+		| three() 
+
+Bool = T()
+		 | F() 
+
+functions
+	Nat = diag(Bool,Bool,Bool)
+
+
+trs
+[
+  diag(T(),T(),x) -> zero()
+  diag(F(),x,T()) -> two()
+  diag(x,F(),F()) -> three()
+]
