@@ -10,7 +10,7 @@ functions
 
 trs
 [
-  foo(a(),x,y,z) -> a()
+  foo(!a(),x,y,z) -> a()
   foo(x,a(),y,z) -> a()
   foo(x,y,a(),z) -> a()
   foo(x,y,z,a()) -> a()

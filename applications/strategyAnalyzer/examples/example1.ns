@@ -12,25 +12,25 @@ U = u()
 
 strategies
 
-r1() =  [ f(x,x) -> x ]
+r1() =  [ f(x,a()) -> x ]
 
-r2() =  [ h(x,x,x) -> x ]
+// r2() =  [ h(x,x,x) -> x ]
 
-r3() =  [ g(a()) -> b(), g(x) -> x ]
+// r3() =  [ g(a()) -> b(), g(x) -> x ]
 
-r4() =  [ ! f(x,y) -> a() , f(a(),b()) -> c() ]
+// r4() =  [ ! f(x,y) -> a() , f(a(),b()) -> c() ]
 
-obu(s) = mu x.(one(x) <+ s)
-innermost(s) = obu(s)
+// obu(s) = mu x.(one(x) <+ s)
+// innermost(s) = obu(s)
 
 // mainStrat() = innermost(r2());innermost(r2())
 
 // mainStrat() = r1();r1()
 
-mainStrat() = r3()
+mainStrat() = r1()
 
-rule1() = r1()
-in1() = innermost(r1())
+// rule1() = r1()
+// in1() = innermost(r1())
 
 // mainStrat() = r3()
 

@@ -1,0 +1,18 @@
+abstract syntax
+
+E = a()	 
+		| b()				
+
+L	= nil()
+		| cons(E,L) 			
+
+functions
+	L = sep(E,L)
+		| sepa(L)
+
+
+trs
+[
+   sep(a(),cons(x,cons(y,ys))) -> cons(x,cons(a(),sep(y,ys)))
+   sep(a(),xs) -> xs
+]
