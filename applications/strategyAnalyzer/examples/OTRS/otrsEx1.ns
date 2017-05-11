@@ -1,0 +1,25 @@
+abstract syntax
+
+T = a()	 
+		| b()				
+		| f(T,T) 			
+
+functions
+	T = foo(T)
+
+
+trs
+// [
+//   foo(f(z,a())) -> a()
+//   foo(f(x,y)) -> a()
+// ]
+[
+  foo(f(b(),y)) -> a()
+  foo(f(a(),b())) -> a()
+  foo(f(f(x,y),z)) -> a()
+  foo(f(x,b())) -> a()
+]
+// [
+//   foo(f(z,a())) -> a()
+//   foo(f(x,y)) -> a()
+// ]
