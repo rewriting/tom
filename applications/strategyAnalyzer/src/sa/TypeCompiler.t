@@ -254,8 +254,11 @@ public class TypeCompiler {
           typedName = Tools.addTypeName(`name,type.getName()); // add type information to symbol name
         }
 
-        // add info into typed signature
-        typedSignature.addFunctionSymbol(typedName,domain,type);
+        // add info into typed signature (only if is not already a constructor)
+        // might have to adjust it if eSig will contain the functions
+        if( !eSig.isConstructor(typedName) ){
+          typedSignature.addFunctionSymbol(typedName,domain,type);
+        }
 
         typedTerm = `Appl(typedName,newTypedArgs);
       }

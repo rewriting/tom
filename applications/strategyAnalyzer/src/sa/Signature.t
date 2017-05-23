@@ -288,7 +288,15 @@ public class Signature {
     return res;
   }
 
+  /** Check if a symbol is a constructor (independently of its type)
+   * @name the name of the symbol
+   * @return true it it is a constructor; false if not
+   */
+  public boolean isConstructor(String name) {
+    return getConstructors().contains(name);
+  }
+
   public String toString() {
-    return "" + this.table;
+    return "" + this.table + "\nFunctions: " + this.functions  + "\nInternals: " + this.internals;
   }
 }

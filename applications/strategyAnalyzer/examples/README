@@ -7,6 +7,9 @@ javac Main.java
 java Main
   <enter input term>
 
+// for OTRS use  -pattern -ordered
+java sa/Main -aprove -i ../examples/OTRS/otrsSep.ns   -withType
+
 SYNTAX OF A NS FILE:
 
 abstract syntax
