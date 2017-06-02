@@ -9,7 +9,7 @@ functions
 
 
 trs
-// Example 1 in paper
+// Example 1 (and 3) in paper
 // [
 //   foo(f(z,a())) -> b()
 //   foo(f(x,y)) -> a()
@@ -21,13 +21,13 @@ trs
 // ]
 
 // Example 2 in paper
-[
-  foo(b(),y) -> a()
-  foo(a(),b())		 -> a()
-  foo(f(x,y),z) -> a()
-	//   foo(x,b()) -> b()
-  foo(x,y) -> b()
-]
+// [
+//   foo(b(),y) -> a()
+//   foo(a(),b())		 -> a()
+//   foo(f(x,y),z) -> a()
+// 	//   foo(x,b()) -> b()
+//   foo(x,y) -> b()
+// ]
 
 
 // [
@@ -37,12 +37,36 @@ trs
 // [
 //   foo(!f(z,!a())) -> a()
 // ]
+
+// Example 4
 // [
 //   foo(f(b(),a())) -> b()
 //   foo(f(x,!a())) -> a()
 // ]
 
+// Example 4
+[
+  foo(f(x,!a())) -> a()
+//   foo(f(a()+b(),y)) -> b()
+//   foo(f(x,y)) -> a()
+]
+
 
 
 // Execute 
 // java sa/Main -aprove -i ../examples/OTRS/otrsEx1.ns   -withType
+
+// CONSTRUCTORS
+
+// a : T
+// b : T
+// f : T * T -> T
+
+// FUNCTIONS
+
+// foo : T * T -> T
+
+// RULES
+
+// foo( x, !a() ) -> a()
+// foo( a() + b(), y ) -> b()
