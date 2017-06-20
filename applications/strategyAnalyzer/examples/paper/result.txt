@@ -45,6 +45,11 @@ basic: 1600 rules,  aprove: no result
 withType: 862 rules,  aprove: no result
 metalevel: 910 rules, aprove: no result
 
+PropStrat - cnf
+basic: 600 rules,  aprove: no result
+withType: 600 rules,  aprove: no result
+metalevel: 200 rules, aprove: no result
+
 
 
 
