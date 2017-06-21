@@ -17,9 +17,12 @@ class Strategy {
   }
  
   public final static void main(String[] args) {
-    T t = `f(a(),g(a()));
+    T t = `f(g(a()),f(g(b()),g(a())));
+    Collection bag = new HashSet();
+
     try {
-      T result = (T) `Repeat(OnceBottomUp(ReplaceAB())).visit(t);
+      T result = (T) `TopDown(Collect(bag)).visit(t);
+      System.out.println("bag = " + bag);
       System.out.println("result = " + result);
     } catch(VisitFailure e) {
       System.out.println("failure on " + t);
@@ -34,6 +37,11 @@ class Strategy {
     }
   }
 
+  %strategy Collect(c:Collection) extends Identity() {
+    visit T {
+      g(x) -> { c.add(`x); }
+    }
+  }
 
 
 
@@ -49,9 +57,4 @@ class Strategy {
     }
   }
  
-  %strategy Collect(c:Collection) extends Identity() {
-    visit T {
-      g(x) -> { c.add(`x); }
-    }
-  }
 }

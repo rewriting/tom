@@ -10,7 +10,6 @@ strategies
 // Functional Pearls. Okasaki 1993
 // alternative balance implementation
 // color flips
-/*
 b1() = [ balance(T(B(),T(R(),T(R(),a1,a2,a3),x,b),y,T(R(),c,z,d))) -> T(R(),T(B(),T(R(),a1,a2,a3),x,b),y,T(B(),c,z,d)) ]
 b2() = [ balance(T(B(),T(R(),a,x,T(R(),b1,b2,b3)),y,T(R(),c,z,d))) -> T(R(),T(B(),a,x,T(R(),b1,b2,b3)),y,T(B(),c,z,d)) ]
 b3() = [ balance(T(B(),T(R(),a,x,b),y,T(R(),T(R(),c1,c2,c3),z,d))) -> T(R(),T(B(),a,x,b),y,T(B(),T(R(),c1,c2,c3),z,d)) ]
@@ -40,8 +39,8 @@ c2() = [ cmp(S(x),Z()) -> gt() ]
 c3() = [ cmp(Z(),Z())  -> eq0() ]
 c4() = [ cmp(S(x),S(y)) -> cmp(x,y) ]
 compareR() = c1() <+ c2() <+ c3() <+ c4()
-*/
 
+/*
 rules() = [
 balance(T(B(),T(R(),T(R(),a1,a2,a3),x,b),y,T(R(),c,z,d))) -> T(R(),T(B(),T(R(),a1,a2,a3),x,b),y,T(B(),c,z,d)) 
 balance(T(B(),T(R(),a,x,T(R(),b1,b2,b3)),y,T(R(),c,z,d))) -> T(R(),T(B(),a,x,T(R(),b1,b2,b3)),y,T(B(),c,z,d))
@@ -65,14 +64,15 @@ cmp(S(x),Z()) -> gt()
 cmp(Z(),Z())  -> eq0()
 cmp(S(x),S(y)) -> cmp(x,y)
 ]
-
+*/
 
 repeat(s) = mu x.((s ; x) <+ Identity)
 obu(s) = mu x.(one(x) <+ s)
 innermost(s) = mu x.(all(x) ; ((s ; x) <+ Identity))
 
-mainStrat() = repeat(obu(rules()))
+//mainStrat() = repeat(obu(rules()))
 //mainStrat() = innermost(rules())
+mainStrat() = repeat(obu(balanceR() <+ insertR() <+ compareR()))
 //mainStrat() = innermost(balanceR() <+ insertR() <+ compareR())
 
 
