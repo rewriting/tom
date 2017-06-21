@@ -656,7 +656,7 @@ public class Compiler {
                */
               generatedRules.add(Rule(_appl(fail,Bottom(X)), Bottom(X)));
               Term lhs = Main.options.ordered ? _appl(fail,X) : _appl(fail,At(X,Anti(Bottom(Y))));
-              generatedRules.add(Rule(lhs, X));
+              generatedRules.add(Rule(lhs, Bottom(X)));
             } else { // TODO: remove APPROX branch?
               /*
                * fail(X) -> Bot(X)

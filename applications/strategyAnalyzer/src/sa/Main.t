@@ -70,7 +70,8 @@ public class Main {
       Signature extractedSignature = compiler.getExtractedSignature();
       Signature generatedSignature = compiler.getGeneratedSignature();
         
-      //System.out.println("compileStrategy: generatedRules = " + Pretty.toString(generatedRules));
+      // System.out.println("compileStrategy: generatedRules = " + Pretty.toString(generatedRules));
+      // System.out.println("Extracted SIG = " + extractedSignature);
 
       assert Property.isLhsLinear(generatedRules);
       // transform the LINEAR TRS: compile Aps and remove ATs
