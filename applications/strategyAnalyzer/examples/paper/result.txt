@@ -59,6 +59,11 @@ metalevel: 145 rules, aprove: proven
 100xcompile          tom    tom*  -tom      -tom-meta   -tom-type    -tom-ordered  -tom-meta-ordered (buggy)
 renaming             218    115   ***       571         802          154
 
+PropStrat - cnf
+basic: 600 rules,  aprove: no result
+withType: 600 rules,  aprove: no result
+metalevel: 200 rules, aprove: no result
+
 #ms
 RBTree               tom    tom*  -tom      -tom-meta   -tom-type    -tom-ordered  -tom-meta-ordered (buggy)
 ins4                 11404  77    2070       2211                    650           stack
