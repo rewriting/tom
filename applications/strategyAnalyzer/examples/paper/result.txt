@@ -30,10 +30,15 @@ fg2.input            tom    tom*  -tom      -tom-meta   -tom-ordered  -tom-meta-
 repeat_obu_gfx.ns    23341  218   stack     stack       stack         stack
 innermost_gfx.ns     4101   102   569       562         199           509
 
-RBTreeStrat
+RBTreeStrat - rules
 basic: 1442 rules,  aprove: no result
 withType: 720 rules,  aprove: maybe
 metalevel: 1154 rules, aprove: no result
+
+RBTreeStrat - b1<+...<+b9
+basic: 1956 rules,  aprove: no result
+withType: 1449 rules,  aprove: maybe
+metalevel: 1260 rules, aprove: no result
 
 CompilerStrat
 basic: 23690 rules,  aprove: no result
@@ -45,6 +50,17 @@ basic: 1600 rules,  aprove: no result
 withType: 862 rules,  aprove: no result
 metalevel: 910 rules, aprove: no result
 
+Renaming
+basic: 63065 rules,  aprove: no result
+withType: 2350 rules,  aprove: proven
+metalevel: 145 rules, aprove: proven
 
+#ms
+100xcompile          tom    tom*  -tom      -tom-meta   -tom-type    -tom-ordered  -tom-meta-ordered (buggy)
+renaming             218    115   ***       571         802          154
+
+#ms
+RBTree               tom    tom*  -tom      -tom-meta   -tom-type    -tom-ordered  -tom-meta-ordered (buggy)
+ins4                 11404  77    2070       2211                    650           stack
 
 

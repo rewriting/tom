@@ -4,6 +4,7 @@ CodeList = NilCode()
          | ConsCode(Code,CodeList)
 
 Code = Match(TermList) 
+     | CMatch(TermList) 
      | Assign(Name,Exp) 
      | If(Exp,Code,Code) 
      | WhileDo(Exp,Code)
@@ -17,18 +18,20 @@ Exp = Or(Exp,Exp)
     | FalseTL()
 
 TermList = ConsTerm(Term,TermList) | NilTerm()
-Term = VarTerm(Name) | ApplTerm(Name,TermList)
+Term = VarTerm(Name) | ApplTerm(Name,TermList) | RenamedTerm(Term,Term)
 Nat = Z() | S(Nat)
 Name = Name(Nat)
 
 strategies
-compile() = [ Match(l) -> Nop() ]
-rename() = [ VarTerm(Name(n)) -> VarTerm(Name(S(n))) ]
+compile() = [ Match(l) -> CMatch(l) ]
+rename() = [ VarTerm(Name(n)) -> RenamedTerm(VarTerm(Name(S(n))), VarTerm(Name(n))) ]
 
+try(s) = s <+ Identity
 topdown(s) = mu x.(s ; all(x))
 topdownstoponsucces(s) = mu x.(s <+ all(x))
 
-//innermost(s) = mu x.(all(x) ; ((s ; x) <+ Identity))
+s1() = topdown(try(compile()))
+s2() = topdownstoponsucces(rename())
+mainStrat() = s1() ; s2()
 
-mainStrat() = topdown(compile()) ; topdownstoponsucces(rename())
 

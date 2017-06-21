@@ -1,6 +1,10 @@
 import term.term.types.*;
-public class Term {
+import java.util.*;
 
+public class Term {
+%include { string.tom }
+
+/*
   %gom {
     module Term
     imports String int
@@ -11,30 +15,27 @@ public class Term {
         | c()
         | f(x1:T, x2:T) 
         | g(x1:T)
-        | zero()
-        | s(x1:T)
-
+        | h(v:int)
+     
      L = conc( T* )
-
+     M = somme( int* )
   }
-
-  public static T plus(T a1, T a2) {
-    %match(T a1,a2) {
-      x, zero() -> { return `x; }
-      x, s(y)   -> { return `s(plus(x,y)); }
-    }
-      return null;
-  }
-
-
+*/
   public final static void main(String[] args) {
-    String t = "abcab";
-    
-    System.out.println("t = " + t);
+    String t = "abcabc";
 
+    List l = new ArrayList();
+  
     %match(t) {
-      concString(C1*,x,_*,x,_*) -> { System.out.println("x = " + `x);  }
+      concString(_*,x,_*,x,_*) -> { 
+        if(`x != 'a') {
+          l.add(`x); 
+        }
+      }
     }
+ 
+    System.out.println("t = " + t);
+    System.out.println("l = " + l);
 
   }
 
