@@ -9,7 +9,7 @@ import java.util.Set;
  * file for testing purpose
  * contains a main() function and some examples
  */
-public class Pattern {
+public class MainTest {
   %include { rule/Rule.tom }
   %include { sl.tom }
   %include { java/util/types/HashSet.tom }
