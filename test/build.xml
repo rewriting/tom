@@ -122,7 +122,7 @@
     <tom.preset srcdir="${test.src}"
                 multithread="${multithread}"
                 destdir="${test.gen}"
-                options="--newparser">
+                options="--tomjava">
       <!-- Exclude tests written in C -->
       <exclude name="cfib1.t"/>
       <exclude name="loulou.t"/>

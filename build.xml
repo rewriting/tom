@@ -389,6 +389,35 @@
       <arg line="-no-listener -no-visitor"/>
       <arg line="-package tom.engine.parser.antlr4"/>
     </java>
+    
+    <!-- TomJava parser -->
+    <mkdir dir="${gen.destination}/tom/engine/parser/tomjava"/>
+
+    <property name="tomjava.dir" location="${stable.lib}/tools"/>
+
+    <java jar="${tomjava.dir}/antlr-4.5.3-complete.jar" fork="true">
+      <arg line="${src.src}/tom/engine/parser/tomjava/TomIslandLexer.g4"/>
+      <arg line="-o ${gen.destination}/tom/engine/parser/tomjava/"/>
+      <arg line="-lib ${gen.destination}/tom/engine/parser/tomjava/"/>
+      <arg line="-listener -no-visitor"/>
+      <arg line="-package tom.engine.parser.tomjava"/>
+    </java>
+
+    <java jar="${tomjava.dir}/antlr-4.5.3-complete.jar" fork="true">
+      <arg line="${src.src}/tom/engine/parser/tomjava/TomIslandParser.g4"/>
+      <arg line="-o ${gen.destination}/tom/engine/parser/tomjava/"/>
+      <arg line="-lib ${gen.destination}/tom/engine/parser/tomjava/"/>
+      <arg line="-listener -no-visitor"/>
+      <arg line="-package tom.engine.parser.tomjava"/>
+    </java>
+
+    <java jar="${tomjava.dir}/antlr-4.5.3-complete.jar" fork="true">
+      <arg line="${src.src}/tom/engine/parser/tomjava/TomJava.g4"/>
+      <arg line="-o ${gen.destination}/tom/engine/parser/tomjava/"/>
+      <arg line="-lib ${gen.destination}/tom/engine/parser/tomjava/"/>
+      <arg line="-no-listener -no-visitor"/>
+      <arg line="-package tom.engine.parser.tomjava"/>
+    </java>
 
     <!-- Gom parser -->
     <mkdir dir="${gen.destination}/tom/gom/parser"/>
