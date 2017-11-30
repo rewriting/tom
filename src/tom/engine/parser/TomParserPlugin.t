@@ -313,7 +313,7 @@ public class TomParserPlugin extends TomGenericPlugin {
           // creating TomParserTool
           this.parserTool = new TomParserTool(getStreamManager(),getOptionManager());
 
-          tom.engine.parser.antlr4.TomParser parser = new tom.engine.parser.antlr4.TomParser(currentFileName, getParserTool(), symbolTable);
+          tom.engine.parser.tomjava.TomParser parser = new tom.engine.parser.tomjava.TomParser(currentFileName, getParserTool(), symbolTable);
           ANTLRInputStream input = new ANTLRInputStream(currentReader);
 
           System.out.print("tomjava antlr4: " + currentFileName);
@@ -334,7 +334,7 @@ public class TomParserPlugin extends TomGenericPlugin {
           System.out.print("\tparsing + building cst:" + (System.currentTimeMillis()-start) + " ms");
 
           start = System.currentTimeMillis();
-          tom.engine.parser.antlr4.AstBuilder astBuilder = new tom.engine.parser.antlr4.AstBuilder(getParserTool(),symbolTable);
+          tom.engine.parser.tomjava.AstBuilder astBuilder = new tom.engine.parser.tomjava.AstBuilder(getParserTool(),symbolTable);
           Code code = astBuilder.convert(cst);
           System.out.println("\tbuilding ast:" + (System.currentTimeMillis()-start) + " ms");
 

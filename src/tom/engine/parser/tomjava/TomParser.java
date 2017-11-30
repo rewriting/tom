@@ -23,7 +23,7 @@
  *
  **/
 
-package tom.engine.parser.antlr4;
+package tom.engine.parser.tomjava;
 
 import java.io.*;
 import java.util.*;
@@ -72,9 +72,9 @@ public class TomParser {
       //return parsedFiles.get(getFilename());
     }
 
-    tom.engine.parser.antlr4.TomIslandLexer lexer = new tom.engine.parser.antlr4.TomIslandLexer(input);
+    tom.engine.parser.tomjava.TomJavaLexer lexer = new tom.engine.parser.tomjava.TomJavaLexer(input);
     CommonTokenStream tokens = new CommonTokenStream(lexer);
-    tom.engine.parser.antlr4.TomIslandParser parser = new tom.engine.parser.antlr4.TomIslandParser(tokens);
+    tom.engine.parser.tomjava.TomJavaParser parser = new tom.engine.parser.tomjava.TomJavaParser(tokens);
     parser.setBuildParseTree(true);      // tell ANTLR to build a parse tree
 
     long start = System.currentTimeMillis();
@@ -86,7 +86,7 @@ public class TomParser {
     parser.removeErrorListeners();
     parser.setErrorHandler(new BailErrorStrategy());
     try {
-      tree = parser.start();
+      tree = parser.compilationUnit();
       // if we get here, there was no syntax error and SLL(*) was enough;
       // there is no need to try full LL(*)
     } catch (ParseCancellationException ex) { // thrown by BailErrorStrategy
@@ -99,7 +99,7 @@ public class TomParser {
       parser.setErrorHandler(new DefaultErrorStrategy());
       // full now with full LL(*)
       parser.getInterpreter().setPredictionMode(PredictionMode.LL);
-      tree = parser.start();
+      tree = parser.compilationUnit();
     }
     //System.out.println("\tparsing:" + (System.currentTimeMillis()-start) + " ms");
 
@@ -108,7 +108,7 @@ public class TomParser {
 
     start = System.currentTimeMillis();
     ParseTreeWalker walker = new ParseTreeWalker();
-    tom.engine.parser.antlr4.CstBuilder cstBuilder = new tom.engine.parser.antlr4.CstBuilder(getFilename(),tokens); 
+    tom.engine.parser.tomjava.CstBuilder cstBuilder = new tom.engine.parser.tomjava.CstBuilder(getFilename(),tokens); 
     walker.walk(cstBuilder, tree);
     CstProgram cst = (CstProgram) cstBuilder.getValue(tree);
     cstBuilder.cleanUsedToken(); // release memory
@@ -116,7 +116,7 @@ public class TomParser {
     //System.out.println("\tcst:" + cst);
 
     start = System.currentTimeMillis();
-    tom.engine.parser.antlr4.CstConverter cstConverter = new tom.engine.parser.antlr4.CstConverter(getParserTool());
+    tom.engine.parser.tomjava.CstConverter cstConverter = new tom.engine.parser.tomjava.CstConverter(getParserTool());
     cst = cstConverter.convert(cst);
     //System.out.println("\tconverting cst:" + (System.currentTimeMillis()-start) + " ms");
     //System.out.println();

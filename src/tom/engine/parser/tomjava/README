@@ -1,7 +1,6 @@
-to test the parser :
+Failing tests:
+- gom/* (Java compiling: "cannot find symbol", "Double" should be "tom_make_Double")
+- sl/TestRef.t (Building: "Multiple definition of" error)
+- sl/TestGetSubterm.t (Test run error, parsing error?)
 
-cd ~/github/tom/src/build
-
-grun tom.engine.parser.antlr4.TomIsland start -gui < ~/github/tom/test/Peano.t 
-
-
+SLL parsing fails on multiple tests (LL passes)
