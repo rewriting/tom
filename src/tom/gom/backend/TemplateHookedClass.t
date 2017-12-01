@@ -140,6 +140,9 @@ public abstract class TemplateHookedClass extends TemplateClass {
       if(Boolean.TRUE == optionManager.getOptionValue("newparser")) {
         tomParams.add("--newparser");
       }
+      if(Boolean.TRUE == optionManager.getOptionValue("tomjava")) {
+        tomParams.add("--tomjava");
+      }
       if(Boolean.TRUE == optionManager.getOptionValue("optimize")) {
         tomParams.add("--optimize");
       }
