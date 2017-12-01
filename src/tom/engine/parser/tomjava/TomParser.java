@@ -49,6 +49,9 @@ public class TomParser {
   private SymbolTable symbolTable;
 
   private static HashMap<String,CstProgram> parsedFiles = new HashMap<String,CstProgram>();
+  
+  public static int javaTopLevel = 0;
+  public static int javaDeclarationsLevel = 1;
 
   public TomParser(String filename, TomParserTool parserTool, SymbolTable symbolTable) {
     this.filename = filename;
@@ -64,7 +67,7 @@ public class TomParser {
     return this.parserTool;
   }
 
-  public CstProgram parse(ANTLRInputStream input) throws IOException {
+  public CstProgram parse(ANTLRInputStream input, int level) throws IOException {
     //System.out.print("antlr4: " + getFilename());
 
     if(parsedFiles.containsKey(getFilename())) {
@@ -86,7 +89,11 @@ public class TomParser {
     parser.removeErrorListeners();
     parser.setErrorHandler(new BailErrorStrategy());
     try {
-      tree = parser.compilationUnit();
+    	if(level == javaDeclarationsLevel) {
+    		tree = parser.declarations();
+    	} else { //javaTopLevel
+    	  tree = parser.compilationUnit();
+    	}
       // if we get here, there was no syntax error and SLL(*) was enough;
       // there is no need to try full LL(*)
     } catch (ParseCancellationException ex) { // thrown by BailErrorStrategy
@@ -99,7 +106,11 @@ public class TomParser {
       parser.setErrorHandler(new DefaultErrorStrategy());
       // full now with full LL(*)
       parser.getInterpreter().setPredictionMode(PredictionMode.LL);
-      tree = parser.compilationUnit();
+      if(level == javaDeclarationsLevel) {
+    		tree = parser.declarations();
+    	} else { //javaTopLevel
+    	  tree = parser.compilationUnit();
+    	}
     }
     //System.out.println("\tparsing:" + (System.currentTimeMillis()-start) + " ms");
 

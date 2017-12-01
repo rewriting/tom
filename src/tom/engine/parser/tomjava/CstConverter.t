@@ -229,7 +229,7 @@ public class CstConverter {
     // parse the file
     try {
       tom.engine.parser.tomjava.TomParser parser = new tom.engine.parser.tomjava.TomParser(canonicalPath, getParserTool(), getStreamManager().getSymbolTable());
-      CstProgram include = parser.parse(tomInput);
+      CstProgram include = parser.parse(tomInput, tom.engine.parser.tomjava.TomParser.javaDeclarationsLevel);
       %match(include) {
         Cst_Program(blocks) -> { 
           return `Cst_AbstractBlock(blocks);

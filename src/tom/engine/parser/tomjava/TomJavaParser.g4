@@ -35,6 +35,10 @@ compilationUnit
     : packageDeclaration? importDeclaration* typeDeclaration* EOF
     ;
 
+declarations
+    : classBodyDeclaration* EOF
+    ;
+
 packageDeclaration
     : annotation* PACKAGE qualifiedName ';'
     ;
@@ -680,11 +684,6 @@ tomTerm
   | metaquote
   ;
 
-java
-  : blockStatement
-  | expression
-  ;
-
 metaquote
   : METAQUOTE
   ;
@@ -698,7 +697,7 @@ strategyStatement
   ;
 
 includeStatement
-  : INCLUDE LBRACE tomIdentifier ((DOT|SLASH|BACKSLASH) tomIdentifier)* RBRACE 
+  : INCLUDE LBRACE (DOT* SLASH)? tomIdentifier ((DOT|SLASH|BACKSLASH) tomIdentifier)* RBRACE 
   ;
 
 //GOM grammar? TODO FIX
@@ -730,9 +729,8 @@ actionRule
   | c=constraint ARROW bqterm
   ;
 
-//TODO Declare this more precisely depending on the statement
 tomBlock 
-  : LBRACE (tomBlock | java)*? RBRACE
+  : LBRACE (tomBlock | blockStatement)*? RBRACE
   ;
 
 slotList
@@ -796,7 +794,7 @@ composite
   | var=tomIdentifier STAR?
   | constant
   | UNDERSCORE
-//  | java //Do we really want that?
+  | expression //java
   ;
 
 pattern
@@ -863,68 +861,72 @@ oparray
     RBRACE
   ;
 
+termBlock
+  : LBRACE expression RBRACE
+  ;
+
 implement
-  : IMPLEMENT tomBlock
+  : IMPLEMENT LBRACE typeType RBRACE
   ;
 
 equalsTerm
-  : EQUALS LPAREN id1=tomIdentifier COMMA id2=tomIdentifier RPAREN tomBlock
+  : EQUALS LPAREN id1=tomIdentifier COMMA id2=tomIdentifier RPAREN termBlock
   ;
 
 isSort
-  : IS_SORT LPAREN tomIdentifier RPAREN tomBlock
+  : IS_SORT LPAREN tomIdentifier RPAREN termBlock
   ;
 
 isFsym
-  : IS_FSYM LPAREN tomIdentifier RPAREN tomBlock
+  : IS_FSYM LPAREN tomIdentifier RPAREN termBlock
   ;
 
 make
-  : MAKE LPAREN (tomIdentifier (COMMA tomIdentifier)*)? RPAREN tomBlock
+  : MAKE LPAREN (tomIdentifier (COMMA tomIdentifier)*)? RPAREN termBlock
   ;
 
 makeEmptyList
-  : MAKE_EMPTY LPAREN RPAREN tomBlock
+  : MAKE_EMPTY LPAREN RPAREN termBlock
   ;
 
 makeEmptyArray
-  : MAKE_EMPTY LPAREN tomIdentifier RPAREN tomBlock
+  : MAKE_EMPTY LPAREN tomIdentifier RPAREN termBlock
   ;
 
 makeAppendArray
-  : MAKE_APPEND LPAREN id1=tomIdentifier COMMA id2=tomIdentifier RPAREN tomBlock
+  : MAKE_APPEND LPAREN id1=tomIdentifier COMMA id2=tomIdentifier RPAREN termBlock
   ;
   
 makeInsertList
-  : MAKE_INSERT LPAREN id1=tomIdentifier COMMA id2=tomIdentifier RPAREN tomBlock
+  : MAKE_INSERT LPAREN id1=tomIdentifier COMMA id2=tomIdentifier RPAREN termBlock
   ;
   
 getSlot
-  : GET_SLOT LPAREN id1=tomIdentifier COMMA id2=tomIdentifier RPAREN tomBlock
+  : GET_SLOT LPAREN id1=tomIdentifier COMMA id2=tomIdentifier RPAREN termBlock
   ;
 
 getHead
-  : GET_HEAD LPAREN tomIdentifier RPAREN tomBlock
+  : GET_HEAD LPAREN tomIdentifier RPAREN termBlock
   ;
 
 getTail
-  : GET_TAIL LPAREN tomIdentifier RPAREN tomBlock
+  : GET_TAIL LPAREN tomIdentifier RPAREN termBlock
   ;
 
 getElement
-  : GET_ELEMENT LPAREN id1=tomIdentifier COMMA id2=tomIdentifier RPAREN tomBlock
+  : GET_ELEMENT LPAREN id1=tomIdentifier COMMA id2=tomIdentifier RPAREN termBlock
   ;
 
 isEmptyList
-  : IS_EMPTY LPAREN tomIdentifier RPAREN tomBlock
+  : IS_EMPTY LPAREN tomIdentifier RPAREN termBlock
   ;
 
 getSize
-  : GET_SIZE LPAREN tomIdentifier RPAREN tomBlock
+  : GET_SIZE LPAREN tomIdentifier RPAREN termBlock
   ;
 
 getDefault
-  : GET_DEFAULT LPAREN tomIdentifier RPAREN tomBlock
+  : GET_DEFAULT LPAREN tomIdentifier RPAREN termBlock
   ;
 
 //IDENTIFIER or a Java Keyword

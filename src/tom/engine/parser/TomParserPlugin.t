@@ -327,7 +327,7 @@ public class TomParserPlugin extends TomGenericPlugin {
             }
           }
 
-          CstProgram cst = parser.parse(input);
+          CstProgram cst = parser.parse(input, tom.engine.parser.tomjava.TomParser.javaTopLevel);
           if(printcst) {
             getParserTool().printTree(cst);
           }

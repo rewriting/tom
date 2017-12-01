@@ -81,420 +81,424 @@ public class CstBuilder extends TomJavaParserBaseListener {
   public Object getValue2(ParseTree node) { return values2.get(node); }
 
   private void setValue(String debug, ParseTree node, Object value) { 
-  	values.put(node, value);
-  	//System.out.println(debug + ": " + value);
+    values.put(node, value);
+    //System.out.println(debug + ": " + value);
   } 
 
   public void exitCompilationUnit(TomJavaParser.CompilationUnitContext ctx) {
-  	setValue("exitCompilationUnit", ctx, `Cst_Program(buildBlockList(ctx)));
+    setValue("exitCompilationUnit", ctx, `Cst_Program(buildBlockList(ctx)));
+  }
+  
+  public void exitDeclarations(TomJavaParser.DeclarationsContext ctx) {
+    setValue("exitDeclarations", ctx, `Cst_Program(buildBlockList(ctx)));
   }
 
   public void exitPackageDeclaration(TomJavaParser.PackageDeclarationContext ctx) {
-  	setValue("exitPackageDeclaration", ctx, buildBlockList(ctx));
+    setValue("exitPackageDeclaration", ctx, buildBlockList(ctx));
   }
 
   public void exitImportDeclaration(TomJavaParser.ImportDeclarationContext ctx) {
-  	setValue("exitImportDeclaration", ctx, buildBlockList(ctx));
+    setValue("exitImportDeclaration", ctx, buildBlockList(ctx));
   }
 
   public void exitTypeDeclaration(TomJavaParser.TypeDeclarationContext ctx) {
-  	setValue("exitTypeDeclaration", ctx, buildBlockList(ctx));
+    setValue("exitTypeDeclaration", ctx, buildBlockList(ctx));
   }
 
   public void exitModifier(TomJavaParser.ModifierContext ctx) {
-  	setValue("exitModifier", ctx, buildBlockList(ctx));
+    setValue("exitModifier", ctx, buildBlockList(ctx));
   }
 
   public void exitClassOrInterfaceModifier(TomJavaParser.ClassOrInterfaceModifierContext ctx) {
-  	setValue("exitClassOrInterfaceModifier", ctx, buildBlockList(ctx));
+    setValue("exitClassOrInterfaceModifier", ctx, buildBlockList(ctx));
   }
 
   public void exitVariableModifier(TomJavaParser.VariableModifierContext ctx) {
-  	setValue("exitVariableModifier", ctx, buildBlockList(ctx));
+    setValue("exitVariableModifier", ctx, buildBlockList(ctx));
   }
 
   public void exitClassDeclaration(TomJavaParser.ClassDeclarationContext ctx) {
-  	setValue("exitClassDeclaration", ctx, buildBlockList(ctx));
+    setValue("exitClassDeclaration", ctx, buildBlockList(ctx));
   }
 
   public void exitTypeParameters(TomJavaParser.TypeParametersContext ctx) {
-  	setValue("exitTypeParameters", ctx, buildBlockList(ctx));
+    setValue("exitTypeParameters", ctx, buildBlockList(ctx));
   }
 
   public void exitTypeParameter(TomJavaParser.TypeParameterContext ctx) {
-  	setValue("exitTypeParameter", ctx, buildBlockList(ctx));
+    setValue("exitTypeParameter", ctx, buildBlockList(ctx));
   }
 
   public void exitTypeBound(TomJavaParser.TypeBoundContext ctx) {
-  	setValue("exitTypeBound", ctx, buildBlockList(ctx));
+    setValue("exitTypeBound", ctx, buildBlockList(ctx));
   }
 
   public void exitEnumDeclaration(TomJavaParser.EnumDeclarationContext ctx) {
-  	setValue("exitEnumDeclaration", ctx, buildBlockList(ctx));
+    setValue("exitEnumDeclaration", ctx, buildBlockList(ctx));
   }
 
   public void exitEnumConstants(TomJavaParser.EnumConstantsContext ctx) {
-  	setValue("exitEnumConstants", ctx, buildBlockList(ctx));
+    setValue("exitEnumConstants", ctx, buildBlockList(ctx));
   }
 
   public void exitEnumConstant(TomJavaParser.EnumConstantContext ctx) {
-  	setValue("exitEnumConstant", ctx, buildBlockList(ctx));
+    setValue("exitEnumConstant", ctx, buildBlockList(ctx));
   }
 
   public void exitEnumBodyDeclarations(TomJavaParser.EnumBodyDeclarationsContext ctx) {
-  	setValue("exitEnumBodyDeclarations", ctx, buildBlockList(ctx));
+    setValue("exitEnumBodyDeclarations", ctx, buildBlockList(ctx));
   }
 
   public void exitInterfaceDeclaration(TomJavaParser.InterfaceDeclarationContext ctx) {
-  	setValue("exitInterfaceDeclaration", ctx, buildBlockList(ctx));
+    setValue("exitInterfaceDeclaration", ctx, buildBlockList(ctx));
   }
 
   public void exitClassBody(TomJavaParser.ClassBodyContext ctx) {
-  	setValue("exitClassBody", ctx, buildBlockList(ctx));
+    setValue("exitClassBody", ctx, buildBlockList(ctx));
   }
 
   public void exitInterfaceBody(TomJavaParser.InterfaceBodyContext ctx) {
-  	setValue("exitInterfaceBody", ctx, buildBlockList(ctx));
+    setValue("exitInterfaceBody", ctx, buildBlockList(ctx));
   }
 
   public void exitClassBodyDeclaration(TomJavaParser.ClassBodyDeclarationContext ctx) {
-  	setValue("exitClassBodyDeclaration", ctx, buildBlockList(ctx));
+    setValue("exitClassBodyDeclaration", ctx, buildBlockList(ctx));
   }
 
   public void exitMemberDeclaration(TomJavaParser.MemberDeclarationContext ctx) {
-  	setValue("exitMemberDeclaration", ctx, buildBlockList(ctx));
+    setValue("exitMemberDeclaration", ctx, buildBlockList(ctx));
   }
 
   public void exitMethodDeclaration(TomJavaParser.MethodDeclarationContext ctx) {
-  	setValue("exitMethodDeclaration", ctx, buildBlockList(ctx));
+    setValue("exitMethodDeclaration", ctx, buildBlockList(ctx));
   }
 
   public void exitMethodBody(TomJavaParser.MethodBodyContext ctx) {
-  	setValue("exitMethodBody", ctx, buildBlockList(ctx));
+    setValue("exitMethodBody", ctx, buildBlockList(ctx));
   }
 
   public void exitTypeTypeOrVoid(TomJavaParser.TypeTypeOrVoidContext ctx) {
-  	setValue("exitTypeTypeOrVoid", ctx, buildBlockList(ctx));
+    setValue("exitTypeTypeOrVoid", ctx, buildBlockList(ctx));
   }
 
   public void exitGenericMethodDeclaration(TomJavaParser.GenericMethodDeclarationContext ctx) {
-  	setValue("exitGenericMethodDeclaration", ctx, buildBlockList(ctx));
+    setValue("exitGenericMethodDeclaration", ctx, buildBlockList(ctx));
   }
 
   public void exitGenericConstructorDeclaration(TomJavaParser.GenericConstructorDeclarationContext ctx) {
-  	setValue("exitGenericConstructorDeclaration", ctx, buildBlockList(ctx));
+    setValue("exitGenericConstructorDeclaration", ctx, buildBlockList(ctx));
   }
 
   public void exitConstructorDeclaration(TomJavaParser.ConstructorDeclarationContext ctx) {
-  	setValue("exitConstructorDeclaration", ctx, buildBlockList(ctx));
+    setValue("exitConstructorDeclaration", ctx, buildBlockList(ctx));
   }
 
   public void exitFieldDeclaration(TomJavaParser.FieldDeclarationContext ctx) {
-  	setValue("exitFieldDeclaration", ctx, buildBlockList(ctx));
+    setValue("exitFieldDeclaration", ctx, buildBlockList(ctx));
   }
 
   public void exitInterfaceBodyDeclaration(TomJavaParser.InterfaceBodyDeclarationContext ctx) {
-  	setValue("exitInterfaceBodyDeclaration", ctx, buildBlockList(ctx));
+    setValue("exitInterfaceBodyDeclaration", ctx, buildBlockList(ctx));
   }
 
   public void exitInterfaceMemberDeclaration(TomJavaParser.InterfaceMemberDeclarationContext ctx) {
-  	setValue("exitInterfaceMemberDeclaration", ctx, buildBlockList(ctx));
+    setValue("exitInterfaceMemberDeclaration", ctx, buildBlockList(ctx));
   }
 
   public void exitConstDeclaration(TomJavaParser.ConstDeclarationContext ctx) {
-  	setValue("exitConstDeclaration", ctx, buildBlockList(ctx));
+    setValue("exitConstDeclaration", ctx, buildBlockList(ctx));
   }
 
   public void exitConstantDeclarator(TomJavaParser.ConstantDeclaratorContext ctx) {
-  	setValue("exitConstantDeclarator", ctx, buildBlockList(ctx));
+    setValue("exitConstantDeclarator", ctx, buildBlockList(ctx));
   }
 
   public void exitInterfaceMethodDeclaration(TomJavaParser.InterfaceMethodDeclarationContext ctx) {
-  	setValue("exitInterfaceMethodDeclaration", ctx, buildBlockList(ctx));
+    setValue("exitInterfaceMethodDeclaration", ctx, buildBlockList(ctx));
   }
 
   public void exitInterfaceMethodModifier(TomJavaParser.InterfaceMethodModifierContext ctx) {
-  	setValue("exitInterfaceMethodModifier", ctx, buildBlockList(ctx));
+    setValue("exitInterfaceMethodModifier", ctx, buildBlockList(ctx));
   }
 
   public void exitGenericInterfaceMethodDeclaration(TomJavaParser.GenericInterfaceMethodDeclarationContext ctx) {
-  	setValue("exitGenericInterfaceMethodDeclaration", ctx, buildBlockList(ctx));
+    setValue("exitGenericInterfaceMethodDeclaration", ctx, buildBlockList(ctx));
   }
 
   public void exitVariableDeclarators(TomJavaParser.VariableDeclaratorsContext ctx) {
-  	setValue("exitVariableDeclarators", ctx, buildBlockList(ctx));
+    setValue("exitVariableDeclarators", ctx, buildBlockList(ctx));
   }
 
   public void exitVariableDeclarator(TomJavaParser.VariableDeclaratorContext ctx) {
-  	setValue("exitVariableDeclarator", ctx, buildBlockList(ctx));
+    setValue("exitVariableDeclarator", ctx, buildBlockList(ctx));
   }
 
   public void exitVariableDeclaratorId(TomJavaParser.VariableDeclaratorIdContext ctx) {
-  	setValue("exitVariableDeclaratorId", ctx, buildBlockList(ctx));
+    setValue("exitVariableDeclaratorId", ctx, buildBlockList(ctx));
   }
 
   public void exitVariableInitializer(TomJavaParser.VariableInitializerContext ctx) {
-  	setValue("exitVariableInitializer", ctx, buildBlockList(ctx));
+    setValue("exitVariableInitializer", ctx, buildBlockList(ctx));
   }
 
   public void exitArrayInitializer(TomJavaParser.ArrayInitializerContext ctx) {
-  	setValue("exitArrayInitializer", ctx, buildBlockList(ctx));
+    setValue("exitArrayInitializer", ctx, buildBlockList(ctx));
   }
 
   public void exitClassOrInterfaceType(TomJavaParser.ClassOrInterfaceTypeContext ctx) {
-  	setValue("exitClassOrInterfaceType", ctx, buildBlockList(ctx));
+    setValue("exitClassOrInterfaceType", ctx, buildBlockList(ctx));
   }
 
   public void exitTypeArgument(TomJavaParser.TypeArgumentContext ctx) {
-  	setValue("exitTypeArgument", ctx, buildBlockList(ctx));
+    setValue("exitTypeArgument", ctx, buildBlockList(ctx));
   }
 
   public void exitQualifiedNameList(TomJavaParser.QualifiedNameListContext ctx) {
-  	setValue("exitQualifiedNameList", ctx, buildBlockList(ctx));
+    setValue("exitQualifiedNameList", ctx, buildBlockList(ctx));
   }
 
   public void exitFormalParameters(TomJavaParser.FormalParametersContext ctx) {
-  	setValue("exitFormalParameters", ctx, buildBlockList(ctx));
+    setValue("exitFormalParameters", ctx, buildBlockList(ctx));
   }
 
   public void exitFormalParameterList(TomJavaParser.FormalParameterListContext ctx) {
-  	setValue("exitFormalParameterList", ctx, buildBlockList(ctx));
+    setValue("exitFormalParameterList", ctx, buildBlockList(ctx));
   }
 
   public void exitFormalParameter(TomJavaParser.FormalParameterContext ctx) {
-  	setValue("exitFormalParameter", ctx, buildBlockList(ctx));
+    setValue("exitFormalParameter", ctx, buildBlockList(ctx));
   }
 
   public void exitLastFormalParameter(TomJavaParser.LastFormalParameterContext ctx) {
-  	setValue("exitLastFormalParameter", ctx, buildBlockList(ctx));
+    setValue("exitLastFormalParameter", ctx, buildBlockList(ctx));
   }
 
   public void exitQualifiedName(TomJavaParser.QualifiedNameContext ctx) {
-  	setValue("exitQualifiedName", ctx, buildBlockList(ctx));
+    setValue("exitQualifiedName", ctx, buildBlockList(ctx));
   }
 
   public void exitLiteral(TomJavaParser.LiteralContext ctx) {
-  	setValue("exitLiteral", ctx, buildBlockList(ctx));
+    setValue("exitLiteral", ctx, buildBlockList(ctx));
   }
 
   public void exitIntegerLiteral(TomJavaParser.IntegerLiteralContext ctx) {
-  	setValue("exitIntegerLiteral", ctx, buildBlockList(ctx));
+    setValue("exitIntegerLiteral", ctx, buildBlockList(ctx));
   }
 
   public void exitFloatLiteral(TomJavaParser.FloatLiteralContext ctx) {
-  	setValue("exitFloatLiteral", ctx, buildBlockList(ctx));
+    setValue("exitFloatLiteral", ctx, buildBlockList(ctx));
   }
 
   public void exitAnnotation(TomJavaParser.AnnotationContext ctx) {
-  	setValue("exitAnnotation", ctx, buildBlockList(ctx));
+    setValue("exitAnnotation", ctx, buildBlockList(ctx));
   }
 
   public void exitElementValuePairs(TomJavaParser.ElementValuePairsContext ctx) {
-  	setValue("exitElementValuePairs", ctx, buildBlockList(ctx));
+    setValue("exitElementValuePairs", ctx, buildBlockList(ctx));
   }
 
   public void exitElementValuePair(TomJavaParser.ElementValuePairContext ctx) {
-  	setValue("exitElementValuePair", ctx, buildBlockList(ctx));
+    setValue("exitElementValuePair", ctx, buildBlockList(ctx));
   }
 
   public void exitElementValue(TomJavaParser.ElementValueContext ctx) {
-  	setValue("exitElementValue", ctx, buildBlockList(ctx));
+    setValue("exitElementValue", ctx, buildBlockList(ctx));
   }
 
   public void exitElementValueArrayInitializer(TomJavaParser.ElementValueArrayInitializerContext ctx) {
-  	setValue("exitElementValueArrayInitializer", ctx, buildBlockList(ctx));
+    setValue("exitElementValueArrayInitializer", ctx, buildBlockList(ctx));
   }
 
   public void exitAnnotationTypeDeclaration(TomJavaParser.AnnotationTypeDeclarationContext ctx) {
-  	setValue("exitAnnotationTypeDeclaration", ctx, buildBlockList(ctx));
+    setValue("exitAnnotationTypeDeclaration", ctx, buildBlockList(ctx));
   }
 
   public void exitAnnotationTypeBody(TomJavaParser.AnnotationTypeBodyContext ctx) {
-  	setValue("exitAnnotationTypeBody", ctx, buildBlockList(ctx));
+    setValue("exitAnnotationTypeBody", ctx, buildBlockList(ctx));
   }
 
   public void exitAnnotationTypeElementDeclaration(TomJavaParser.AnnotationTypeElementDeclarationContext ctx) {
-  	setValue("exitAnnotationTypeElementDeclaration", ctx, buildBlockList(ctx));
+    setValue("exitAnnotationTypeElementDeclaration", ctx, buildBlockList(ctx));
   }
 
   public void exitAnnotationTypeElementRest(TomJavaParser.AnnotationTypeElementRestContext ctx) {
-  	setValue("exitAnnotationTypeElementRest", ctx, buildBlockList(ctx));
+    setValue("exitAnnotationTypeElementRest", ctx, buildBlockList(ctx));
   }
 
   public void exitAnnotationMethodOrConstantRest(TomJavaParser.AnnotationMethodOrConstantRestContext ctx) {
-  	setValue("exitAnnotationMethodOrConstantRest", ctx, buildBlockList(ctx));
+    setValue("exitAnnotationMethodOrConstantRest", ctx, buildBlockList(ctx));
   }
 
   public void exitAnnotationMethodRest(TomJavaParser.AnnotationMethodRestContext ctx) {
-  	setValue("exitAnnotationMethodRest", ctx, buildBlockList(ctx));
+    setValue("exitAnnotationMethodRest", ctx, buildBlockList(ctx));
   }
 
   public void exitAnnotationConstantRest(TomJavaParser.AnnotationConstantRestContext ctx) {
-  	setValue("exitAnnotationConstantRest", ctx, buildBlockList(ctx));
+    setValue("exitAnnotationConstantRest", ctx, buildBlockList(ctx));
   }
 
   public void exitDefaultValue(TomJavaParser.DefaultValueContext ctx) {
-  	setValue("exitDefaultValue", ctx, buildBlockList(ctx));
+    setValue("exitDefaultValue", ctx, buildBlockList(ctx));
   }
 
   public void exitBlock(TomJavaParser.BlockContext ctx) {
-  	setValue("exitBlock", ctx, buildBlockList(ctx));
+    setValue("exitBlock", ctx, buildBlockList(ctx));
   }
 
   public void exitBlockStatement(TomJavaParser.BlockStatementContext ctx) {
-  	setValue("exitBlockStatement", ctx, buildBlockList(ctx));
+    setValue("exitBlockStatement", ctx, buildBlockList(ctx));
   }
 
   public void exitLocalVariableDeclaration(TomJavaParser.LocalVariableDeclarationContext ctx) {
-  	setValue("exitLocalVariableDeclaration", ctx, buildBlockList(ctx));
+    setValue("exitLocalVariableDeclaration", ctx, buildBlockList(ctx));
   }
 
   public void exitLocalTypeDeclaration(TomJavaParser.LocalTypeDeclarationContext ctx) {
-  	setValue("exitLocalTypeDeclaration", ctx, buildBlockList(ctx));
+    setValue("exitLocalTypeDeclaration", ctx, buildBlockList(ctx));
   }
 
   public void exitStatement(TomJavaParser.StatementContext ctx) {
-  	setValue("exitStatement", ctx, buildBlockList(ctx));
+    setValue("exitStatement", ctx, buildBlockList(ctx));
   }
 
   public void exitCatchClause(TomJavaParser.CatchClauseContext ctx) {
-  	setValue("exitCatchClause", ctx, buildBlockList(ctx));
+    setValue("exitCatchClause", ctx, buildBlockList(ctx));
   }
 
   public void exitCatchType(TomJavaParser.CatchTypeContext ctx) {
-  	setValue("exitCatchType", ctx, buildBlockList(ctx));
+    setValue("exitCatchType", ctx, buildBlockList(ctx));
   }
 
   public void exitFinallyBlock(TomJavaParser.FinallyBlockContext ctx) {
-  	setValue("exitFinallyBlock", ctx, buildBlockList(ctx));
+    setValue("exitFinallyBlock", ctx, buildBlockList(ctx));
   }
 
   public void exitResourceSpecification(TomJavaParser.ResourceSpecificationContext ctx) {
-  	setValue("exitResourceSpecification", ctx, buildBlockList(ctx));
+    setValue("exitResourceSpecification", ctx, buildBlockList(ctx));
   }
 
   public void exitResources(TomJavaParser.ResourcesContext ctx) {
-  	setValue("exitResources", ctx, buildBlockList(ctx));
+    setValue("exitResources", ctx, buildBlockList(ctx));
   }
 
   public void exitResource(TomJavaParser.ResourceContext ctx) {
-  	setValue("exitResource", ctx, buildBlockList(ctx));
+    setValue("exitResource", ctx, buildBlockList(ctx));
   }
 
   public void exitSwitchBlockStatementGroup(TomJavaParser.SwitchBlockStatementGroupContext ctx) {
-  	setValue("exitSwitchBlockStatementGroup", ctx, buildBlockList(ctx));
+    setValue("exitSwitchBlockStatementGroup", ctx, buildBlockList(ctx));
   }
 
   public void exitSwitchLabel(TomJavaParser.SwitchLabelContext ctx) {
-  	setValue("exitSwitchLabel", ctx, buildBlockList(ctx));
+    setValue("exitSwitchLabel", ctx, buildBlockList(ctx));
   }
 
   public void exitForControl(TomJavaParser.ForControlContext ctx) {
-  	setValue("exitForControl", ctx, buildBlockList(ctx));
+    setValue("exitForControl", ctx, buildBlockList(ctx));
   }
 
   public void exitForInit(TomJavaParser.ForInitContext ctx) {
-  	setValue("exitForInit", ctx, buildBlockList(ctx));
+    setValue("exitForInit", ctx, buildBlockList(ctx));
   }
 
   public void exitEnhancedForControl(TomJavaParser.EnhancedForControlContext ctx) {
-  	setValue("exitEnhancedForControl", ctx, buildBlockList(ctx));
+    setValue("exitEnhancedForControl", ctx, buildBlockList(ctx));
   }
 
   public void exitParExpression(TomJavaParser.ParExpressionContext ctx) {
-  	setValue("exitParExpression", ctx, buildBlockList(ctx));
+    setValue("exitParExpression", ctx, buildBlockList(ctx));
   }
 
   public void exitExpressionList(TomJavaParser.ExpressionListContext ctx) {
-  	setValue("exitExpressionList", ctx, buildBlockList(ctx));
+    setValue("exitExpressionList", ctx, buildBlockList(ctx));
   }
 
   public void exitExpression(TomJavaParser.ExpressionContext ctx) {
-  	setValue("exitExpression", ctx, buildBlockList(ctx));
+    setValue("exitExpression", ctx, buildBlockList(ctx));
   }
 
   public void exitLambdaExpression(TomJavaParser.LambdaExpressionContext ctx) {
-  	setValue("exitLambdaExpression", ctx, buildBlockList(ctx));
+    setValue("exitLambdaExpression", ctx, buildBlockList(ctx));
   }
 
   public void exitLambdaParameters(TomJavaParser.LambdaParametersContext ctx) {
-  	setValue("exitLambdaParameters", ctx, buildBlockList(ctx));
+    setValue("exitLambdaParameters", ctx, buildBlockList(ctx));
   }
 
   public void exitLambdaBody(TomJavaParser.LambdaBodyContext ctx) {
-  	setValue("exitLambdaBody", ctx, buildBlockList(ctx));
+    setValue("exitLambdaBody", ctx, buildBlockList(ctx));
   }
 
   public void exitPrimary(TomJavaParser.PrimaryContext ctx) {
-  	setValue("exitPrimary", ctx, buildBlockList(ctx));
+    setValue("exitPrimary", ctx, buildBlockList(ctx));
   }
 
   public void exitClassType(TomJavaParser.ClassTypeContext ctx) {
-  	setValue("exitClassType", ctx, buildBlockList(ctx));
+    setValue("exitClassType", ctx, buildBlockList(ctx));
   }
 
   public void exitCreator(TomJavaParser.CreatorContext ctx) {
-  	setValue("exitCreator", ctx, buildBlockList(ctx));
+    setValue("exitCreator", ctx, buildBlockList(ctx));
   }
 
   public void exitCreatedName(TomJavaParser.CreatedNameContext ctx) {
-  	setValue("exitCreatedName", ctx, buildBlockList(ctx));
+    setValue("exitCreatedName", ctx, buildBlockList(ctx));
   }
 
   public void exitInnerCreator(TomJavaParser.InnerCreatorContext ctx) {
-  	setValue("exitInnerCreator", ctx, buildBlockList(ctx));
+    setValue("exitInnerCreator", ctx, buildBlockList(ctx));
   }
 
   public void exitArrayCreatorRest(TomJavaParser.ArrayCreatorRestContext ctx) {
-  	setValue("exitArrayCreatorRest", ctx, buildBlockList(ctx));
+    setValue("exitArrayCreatorRest", ctx, buildBlockList(ctx));
   }
 
   public void exitClassCreatorRest(TomJavaParser.ClassCreatorRestContext ctx) {
-  	setValue("exitClassCreatorRest", ctx, buildBlockList(ctx));
+    setValue("exitClassCreatorRest", ctx, buildBlockList(ctx));
   }
 
   public void exitExplicitGenericInvocation(TomJavaParser.ExplicitGenericInvocationContext ctx) {
-  	setValue("exitExplicitGenericInvocation", ctx, buildBlockList(ctx));
+    setValue("exitExplicitGenericInvocation", ctx, buildBlockList(ctx));
   }
 
   public void exitTypeArgumentsOrDiamond(TomJavaParser.TypeArgumentsOrDiamondContext ctx) {
-  	setValue("exitTypeArgumentsOrDiamond", ctx, buildBlockList(ctx));
+    setValue("exitTypeArgumentsOrDiamond", ctx, buildBlockList(ctx));
   }
 
   public void exitNonWildcardTypeArgumentsOrDiamond(TomJavaParser.NonWildcardTypeArgumentsOrDiamondContext ctx) {
-  	setValue("exitNonWildcardTypeArgumentsOrDiamond", ctx, buildBlockList(ctx));
+    setValue("exitNonWildcardTypeArgumentsOrDiamond", ctx, buildBlockList(ctx));
   }
 
   public void exitNonWildcardTypeArguments(TomJavaParser.NonWildcardTypeArgumentsContext ctx) {
-  	setValue("exitNonWildcardTypeArguments", ctx, buildBlockList(ctx));
+    setValue("exitNonWildcardTypeArguments", ctx, buildBlockList(ctx));
   }
 
   public void exitTypeList(TomJavaParser.TypeListContext ctx) {
-  	setValue("exitTypeList", ctx, buildBlockList(ctx));
+    setValue("exitTypeList", ctx, buildBlockList(ctx));
   }
 
   public void exitTypeType(TomJavaParser.TypeTypeContext ctx) {
-  	setValue("exitTypeType", ctx, buildBlockList(ctx));
+    setValue("exitTypeType", ctx, buildBlockList(ctx));
   }
 
   public void exitPrimitiveType(TomJavaParser.PrimitiveTypeContext ctx) {
-  	setValue("exitPrimitiveType", ctx, buildBlockList(ctx));
+    setValue("exitPrimitiveType", ctx, buildBlockList(ctx));
   }
 
   public void exitTypeArguments(TomJavaParser.TypeArgumentsContext ctx) {
-  	setValue("exitTypeArguments", ctx, buildBlockList(ctx));
+    setValue("exitTypeArguments", ctx, buildBlockList(ctx));
   }
 
   public void exitSuperSuffix(TomJavaParser.SuperSuffixContext ctx) {
-  	setValue("exitSuperSuffix", ctx, buildBlockList(ctx));
+    setValue("exitSuperSuffix", ctx, buildBlockList(ctx));
   }
 
   public void exitExplicitGenericInvocationSuffix(TomJavaParser.ExplicitGenericInvocationSuffixContext ctx) {
-  	setValue("exitExplicitGenericInvocationSuffix", ctx, buildBlockList(ctx));
+    setValue("exitExplicitGenericInvocationSuffix", ctx, buildBlockList(ctx));
   }
 
   public void exitArguments(TomJavaParser.ArgumentsContext ctx) {
-  	setValue("exitArguments", ctx, buildBlockList(ctx));
+    setValue("exitArguments", ctx, buildBlockList(ctx));
   }
 
 //************************************TOM**************************************
@@ -533,16 +537,6 @@ public class CstBuilder extends TomJavaParserBaseListener {
    */
   public void exitTomTerm(TomJavaParser.TomTermContext ctx) {
     setValue("exitTomTerm", ctx, getValue(ctx.getChild(0)));
-  }
-	
-  /*
-   * java
-   *  : blockStatement
-   *  | expression
-   *  ;
-   */
-  public void exitJava(TomJavaParser.JavaContext ctx) {
-    setValue("exitJava", ctx, getValue(ctx.getChild(0)));
   }
 
   /* 
@@ -592,7 +586,7 @@ public class CstBuilder extends TomJavaParserBaseListener {
 
   /*
    * includeStatement
-   *   : INCLUDE LBRACE tomIdentifier ((DOT|SLASH|BACKSLASH) tomIdentifier)*  RBRACE 
+   *   : INCLUDE LBRACE (DOT* SLASH)? tomIdentifier ((DOT|SLASH|BACKSLASH) tomIdentifier)*  RBRACE 
    *   ;
    */
   public void exitIncludeStatement(TomJavaParser.IncludeStatementContext ctx) {
@@ -631,7 +625,7 @@ public class CstBuilder extends TomJavaParserBaseListener {
    *  ;
    */
   public void exitRuleStatement(TomJavaParser.RuleStatementContext ctx) {
-  	
+    
   }
   
   /*
@@ -723,42 +717,42 @@ public class CstBuilder extends TomJavaParserBaseListener {
 
   /*
    * tomBlock 
-   *   : LBRACE (tomBlock | java)*? RBRACE
+   *   : LBRACE (tomBlock | blockStatement)*? RBRACE
    *   ;
    */
   public void exitTomBlock(TomJavaParser.TomBlockContext ctx) {
-  	CstBlockList blocks = `ConcCstBlock();
+    CstBlockList blocks = `ConcCstBlock();
     CstBlock current = null;
 
     for(int i = 1; i < ctx.getChildCount() - 1; i++) {
-    	ParserRuleContext child = (ParserRuleContext) ctx.getChild(i);
+      ParserRuleContext child = (ParserRuleContext) ctx.getChild(i);
 
-    	if(child instanceof TomJavaParser.TomBlockContext) {
-    		if(current != null) {
-    			blocks = `ConcCstBlock(current,blocks*);
-    			current = null;
-    		}
-    		blocks = `ConcCstBlock((CstBlock)getValue(child),blocks*);
-    	} else {
-    		for(CstBlock block:((CstBlockList)getValue(child)).getCollectionConcCstBlock()) {
-    			boolean isHostBlock = false;
+      if(child instanceof TomJavaParser.TomBlockContext) {
+        if(current != null) {
+          blocks = `ConcCstBlock(current,blocks*);
+          current = null;
+        }
+        blocks = `ConcCstBlock((CstBlock)getValue(child),blocks*);
+      } else {
+        for(CstBlock block:((CstBlockList)getValue(child)).getCollectionConcCstBlock()) {
+          boolean isHostBlock = false;
 
-    			%match(block) {
+          %match(block) {
             HOSTBLOCK(_, _) -> {
               current = merge(current, block);
               isHostBlock = true;
             }
           }
 
-    			if(!isHostBlock) {
-    				if(current != null) {
-    					blocks = `ConcCstBlock(current,blocks*);
-    					current = null;
-    				}
-    				blocks = `ConcCstBlock(block,blocks*);
-    			}
-    		}
-    	}
+          if(!isHostBlock) {
+            if(current != null) {
+              blocks = `ConcCstBlock(current,blocks*);
+              current = null;
+            }
+            blocks = `ConcCstBlock(block,blocks*);
+          }
+        }
+      }
     }
     if (current != null)
     {
@@ -942,6 +936,7 @@ public class CstBuilder extends TomJavaParserBaseListener {
    *   | var=tomIdentifier STAR?
    *   | constant
    *   | UNDERSCORE
+   *   | expression //java
    *   ;
    */
   public void exitComposite(TomJavaParser.CompositeContext ctx) {
@@ -954,12 +949,12 @@ public class CstBuilder extends TomJavaParserBaseListener {
 
       CstBQTermList accu = `ConcCstBQTerm();
       for(int i = 2; i < ctx.getChildCount()-1; i++) {
-      	if(ctx.getChild(i) instanceof TomJavaParser.CompositeContext){
+        if(ctx.getChild(i) instanceof TomJavaParser.CompositeContext){
           // retrieve elements separated by COMMA
-        	CstBQTerm bq = (CstBQTerm)getValue(ctx.getChild(i));
+          CstBQTerm bq = (CstBQTerm)getValue(ctx.getChild(i));
           accu = `ConcCstBQTerm(accu*,bq);
         } else if(ctx.getChild(i).getText().equals(",")) {
-      	  // put all elements of accu as a subterm
+          // put all elements of accu as a subterm
           CstBQTerm newComposite = `Cst_BQComposite(ConcCstOption(),accu);
           //CstBQTerm newComposite = flattenComposite(`Cst_BQComposite(ConcCstOption(),accu));
           //newComposite = mergeITL(newComposite);
@@ -1004,10 +999,10 @@ public class CstBuilder extends TomJavaParserBaseListener {
       res = `Cst_BQConstant(optionList,cst.getvalue());
     } else if(ctx.UNDERSCORE() != null) {
       res = `Cst_BQUnderscore();
-    }/* else if (ctx.water() != null) {
+    }else if (ctx.expression() != null) {
       //System.out.println("composite water");
-      res = `Cst_ITL(optionList, getStringValue(ctx.water()));
-    }*/
+      res = `Cst_ITL(optionList, ctx.expression().getText());
+    }
 
     setValue("exitComposite",ctx,res);
   }
@@ -1100,11 +1095,11 @@ public class CstBuilder extends TomJavaParserBaseListener {
   public void exitConstant(TomJavaParser.ConstantContext ctx) {
     CstSymbol res = null;
     if(ctx.DECIMAL_LITERAL() != null) {
-    	if(ctx.DECIMAL_LITERAL().getText().toLowerCase().endsWith("l")) {
-    		res = `Cst_SymbolLong(((ctx.SUB() == null)?"":"-") + ctx.DECIMAL_LITERAL().getText());
-    	} else {
-    		res = `Cst_SymbolInt(((ctx.SUB() == null)?"":"-") + ctx.DECIMAL_LITERAL().getText());
-    	}
+      if(ctx.DECIMAL_LITERAL().getText().toLowerCase().endsWith("l")) {
+        res = `Cst_SymbolLong(((ctx.SUB() == null)?"":"-") + ctx.DECIMAL_LITERAL().getText());
+      } else {
+        res = `Cst_SymbolInt(((ctx.SUB() == null)?"":"-") + ctx.DECIMAL_LITERAL().getText());
+      }
     } else if(ctx.FLOAT_LITERAL() != null) {
       res = `Cst_SymbolDouble(((ctx.SUB() == null)?"":"-") + ctx.FLOAT_LITERAL().getText());
     } else if(ctx.CHAR_LITERAL() != null) {
@@ -1239,50 +1234,86 @@ public class CstBuilder extends TomJavaParserBaseListener {
     setValue("exitOpArray", ctx,
         `Cst_OpArrayConstruct(optionList,codomain,ctorName,domain,operatorList));
   }
+  
+  /*
+   * termBlock 
+   *   : LBRACE expression RBRACE
+   *   ;
+   */
+  public void exitTermBlock(TomJavaParser.TermBlockContext ctx) {
+    CstBlockList blocks = `ConcCstBlock();
+    CstBlock current = null;
+
+    for(CstBlock block:((CstBlockList)getValue(ctx.expression())).getCollectionConcCstBlock()) {
+      boolean isHostBlock = false;
+
+      %match(block) {
+        HOSTBLOCK(_, _) -> {
+          current = merge(current, block);
+          isHostBlock = true;
+        }
+      }
+
+      if(!isHostBlock) {
+        if(current != null) {
+          blocks = `ConcCstBlock(current,blocks*);
+          current = null;
+        }
+        blocks = `ConcCstBlock(block,blocks*);
+      }
+    }
+    if (current != null)
+    {
+      blocks = `ConcCstBlock(current,blocks*);
+    }
+
+    CstOption otext  = extractText(ctx);
+    setValue(ctx,`Cst_UnamedBlock(ConcCstOption(otext),blocks.reverse()));
+  }
 
   /*
    * implement
-   *   : IMPLEMENT tomBlock
+   *   : IMPLEMENT LBRACE typeType RBRACE
    *   ;
    */
   public void exitImplement(TomJavaParser.ImplementContext ctx) {
     setValue("exitImplement", ctx,
-        `Cst_Implement(getBlockListFromBlock(ctx.tomBlock())));
+        `Cst_Implement((CstBlockList)getValue(ctx.typeType())));
   }
 
   /*
    * equalsTerm
-   *   : EQUALS LPAREN id1=tomIdentifier COMMA id2=tomIdentifier RPAREN tomBlock
+   *   : EQUALS LPAREN id1=tomIdentifier COMMA id2=tomIdentifier RPAREN termBlock
    *   ;
    */
   public void exitEqualsTerm(TomJavaParser.EqualsTermContext ctx) {
     setValue("exitEquals", ctx,
-        `Cst_Equals(Cst_Name(ctx.id1.getText()), Cst_Name(ctx.id2.getText()), getBlockListFromBlock(ctx.tomBlock())));
+        `Cst_Equals(Cst_Name(ctx.id1.getText()), Cst_Name(ctx.id2.getText()), getBlockListFromBlock(ctx.termBlock())));
   }
 
   /*
    * isSort
-   *   : IS_SORT LPAREN tomIdentifier RPAREN tomBlock
+   *   : IS_SORT LPAREN tomIdentifier RPAREN termBlock
    *   ;
    */
   public void exitIsSort(TomJavaParser.IsSortContext ctx) {
     setValue("exitIsSort", ctx,
-        `Cst_IsSort(Cst_Name(ctx.tomIdentifier().getText()), getBlockListFromBlock(ctx.tomBlock())));
+        `Cst_IsSort(Cst_Name(ctx.tomIdentifier().getText()), getBlockListFromBlock(ctx.termBlock())));
   }
 
   /*
    * isFsym
-   *   : IS_FSYM LPAREN tomIdentifier RPAREN tomBlock
+   *   : IS_FSYM LPAREN tomIdentifier RPAREN termBlock
    *   ;
    */
   public void exitIsFsym(TomJavaParser.IsFsymContext ctx) {
     setValue("exitIsFsym", ctx,
-        `Cst_IsFsym(Cst_Name(ctx.tomIdentifier().getText()), getBlockListFromBlock(ctx.tomBlock())));
+        `Cst_IsFsym(Cst_Name(ctx.tomIdentifier().getText()), getBlockListFromBlock(ctx.termBlock())));
   }
 
   /*
    * make
-   *   : MAKE LPAREN (tomIdentifier (COMMA tomIdentifier)*)? RPAREN tomBlock
+   *   : MAKE LPAREN (tomIdentifier (COMMA tomIdentifier)*)? RPAREN termBlock
    *   ;
    */
   public void exitMake(TomJavaParser.MakeContext ctx) {
@@ -1291,117 +1322,117 @@ public class CstBuilder extends TomJavaParserBaseListener {
       nameList = `ConcCstName(nameList*, Cst_Name(e.getText()));
     }
     setValue("exitMake", ctx,
-        `Cst_Make(nameList, getBlockListFromBlock(ctx.tomBlock())));
+        `Cst_Make(nameList, getBlockListFromBlock(ctx.termBlock())));
   }
 
   /*
    * makeEmptyList
-   *   : MAKE_EMPTY LPAREN RPAREN tomBlock
+   *   : MAKE_EMPTY LPAREN RPAREN termBlock
    *   ;
    */
   public void exitMakeEmptyList(TomJavaParser.MakeEmptyListContext ctx) {
     setValue("exitMakeEmptyList", ctx,
-        `Cst_MakeEmptyList(getBlockListFromBlock(ctx.tomBlock())));
+        `Cst_MakeEmptyList(getBlockListFromBlock(ctx.termBlock())));
   }
 
   /*
    * makeEmptyArray
-   *   : MAKE_EMPTY LPAREN tomIdentifier RPAREN tomBlock
+   *   : MAKE_EMPTY LPAREN tomIdentifier RPAREN termBlock
    *   ;
    */
   public void exitMakeEmptyArray(TomJavaParser.MakeEmptyArrayContext ctx) {
     setValue("exitMakeEmptyArray", ctx,
-        `Cst_MakeEmptyArray(Cst_Name(ctx.tomIdentifier().getText()), getBlockListFromBlock(ctx.tomBlock())));
+        `Cst_MakeEmptyArray(Cst_Name(ctx.tomIdentifier().getText()), getBlockListFromBlock(ctx.termBlock())));
   }
 
   /*
    * makeAppendArray
-   *   : MAKE_APPEND LPAREN id1=tomIdentifier COMMA id2=tomIdentifier RPAREN tomBlock
+   *   : MAKE_APPEND LPAREN id1=tomIdentifier COMMA id2=tomIdentifier RPAREN termBlock
    *   ;
    */
   public void exitMakeAppendArray(TomJavaParser.MakeAppendArrayContext ctx) {
     setValue("exitMakeAppendArray", ctx,
-        `Cst_MakeAppend(Cst_Name(ctx.id1.getText()), Cst_Name(ctx.id2.getText()), getBlockListFromBlock(ctx.tomBlock())));
+        `Cst_MakeAppend(Cst_Name(ctx.id1.getText()), Cst_Name(ctx.id2.getText()), getBlockListFromBlock(ctx.termBlock())));
   }
 
   /*
    * makeInsertList
-   *   : MAKE_INSERT LPAREN id1=tomIdentifier COMMA id2=tomIdentifier RPAREN tomBlock
+   *   : MAKE_INSERT LPAREN id1=tomIdentifier COMMA id2=tomIdentifier RPAREN termBlock
    *   ;
    */
   public void exitMakeInsertList(TomJavaParser.MakeInsertListContext ctx) {
     setValue("exitMakeInsertList", ctx,
-        `Cst_MakeInsert(Cst_Name(ctx.id1.getText()), Cst_Name(ctx.id2.getText()), getBlockListFromBlock(ctx.tomBlock())));
+        `Cst_MakeInsert(Cst_Name(ctx.id1.getText()), Cst_Name(ctx.id2.getText()), getBlockListFromBlock(ctx.termBlock())));
   }
 
   /*
    * getSlot
-   *   : GET_SLOT LPAREN id1=tomIdentifier COMMA id2=tomIdentifier RPAREN tomBlock
+   *   : GET_SLOT LPAREN id1=tomIdentifier COMMA id2=tomIdentifier RPAREN termBlock
    *   ;
    */
   public void exitGetSlot(TomJavaParser.GetSlotContext ctx) {
     setValue("exitGetSlot", ctx,
-        `Cst_GetSlot(Cst_Name(ctx.id1.getText()), Cst_Name(ctx.id2.getText()), getBlockListFromBlock(ctx.tomBlock())));
+        `Cst_GetSlot(Cst_Name(ctx.id1.getText()), Cst_Name(ctx.id2.getText()), getBlockListFromBlock(ctx.termBlock())));
   }
 
   /*
    * getHead
-   *   : GET_HEAD LPAREN tomIdentifier RPAREN tomBlock
+   *   : GET_HEAD LPAREN tomIdentifier RPAREN termBlock
    *   ;
    */
   public void exitGetHead(TomJavaParser.GetHeadContext ctx) {
     setValue("exitGetHead", ctx,
-        `Cst_GetHead(Cst_Name(ctx.tomIdentifier().getText()), getBlockListFromBlock(ctx.tomBlock())));
+        `Cst_GetHead(Cst_Name(ctx.tomIdentifier().getText()), getBlockListFromBlock(ctx.termBlock())));
   }
 
   /*
    * getTail
-   *   : GET_TAIL LPAREN tomIdentifier RPAREN tomBlock
+   *   : GET_TAIL LPAREN tomIdentifier RPAREN termBlock
    *   ;
    */
   public void exitGetTail(TomJavaParser.GetTailContext ctx) {
     setValue("exitGetTail", ctx,
-        `Cst_GetTail(Cst_Name(ctx.tomIdentifier().getText()), getBlockListFromBlock(ctx.tomBlock())));
+        `Cst_GetTail(Cst_Name(ctx.tomIdentifier().getText()), getBlockListFromBlock(ctx.termBlock())));
   }
 
   /*
    * getElement
-   *   : GET_ELEMENT LPAREN id1=tomIdentifier COMMA id2=tomIdentifier RPAREN tomBlock
+   *   : GET_ELEMENT LPAREN id1=tomIdentifier COMMA id2=tomIdentifier RPAREN termBlock
    *   ;
    */
   public void exitGetElement(TomJavaParser.GetElementContext ctx) {
     setValue("exitGetElement", ctx,
-        `Cst_GetElement(Cst_Name(ctx.id1.getText()), Cst_Name(ctx.id2.getText()), getBlockListFromBlock(ctx.tomBlock())));
+        `Cst_GetElement(Cst_Name(ctx.id1.getText()), Cst_Name(ctx.id2.getText()), getBlockListFromBlock(ctx.termBlock())));
   }
 
   /*
    * isEmptyList
-   *   : IS_EMPTY LPAREN tomIdentifier RPAREN tomBlock
+   *   : IS_EMPTY LPAREN tomIdentifier RPAREN termBlock
    *   ;
    */
   public void exitIsEmptyList(TomJavaParser.IsEmptyListContext ctx) {
     setValue("exitIsEmptyList", ctx,
-        `Cst_IsEmpty(Cst_Name(ctx.tomIdentifier().getText()), getBlockListFromBlock(ctx.tomBlock())));
+        `Cst_IsEmpty(Cst_Name(ctx.tomIdentifier().getText()), getBlockListFromBlock(ctx.termBlock())));
   }
 
   /*
    * getSize
-   *   : GET_SIZE LPAREN tomIdentifier RPAREN tomBlock
+   *   : GET_SIZE LPAREN tomIdentifier RPAREN termBlock
    *   ;
    */
   public void exitGetSize(TomJavaParser.GetSizeContext ctx) {
     setValue("exitGetSize", ctx,
-        `Cst_GetSize(Cst_Name(ctx.tomIdentifier().getText()), getBlockListFromBlock(ctx.tomBlock())));
+        `Cst_GetSize(Cst_Name(ctx.tomIdentifier().getText()), getBlockListFromBlock(ctx.termBlock())));
   }
 
   /*
    * getDefault
-   *   : GET_DEFAULT LPAREN tomIdentifier RPAREN tomBlock
+   *   : GET_DEFAULT LPAREN tomIdentifier RPAREN termBlock
    *   ;
    */
   public void exitGetDefault(TomJavaParser.GetDefaultContext ctx) {
     setValue("exitGetDefault", ctx,
-        `Cst_GetDefault(Cst_Name(ctx.tomIdentifier().getText()), getBlockListFromBlock(ctx.tomBlock())));
+        `Cst_GetDefault(Cst_Name(ctx.tomIdentifier().getText()), getBlockListFromBlock(ctx.termBlock())));
   }
 
   /*
@@ -1423,14 +1454,14 @@ public class CstBuilder extends TomJavaParserBaseListener {
     
     for(int i = 0; i < ctx.getChildCount(); i++) {
       if(ctx.getChild(i).getPayload() instanceof Token) {
-      	if(!ctx.getChild(i).getText().equals("<EOF>")) {
-      		Token token = (Token) ctx.getChild(i).getPayload();
-      		current = merge(current, token);
-      	}
+        if(!ctx.getChild(i).getText().equals("<EOF>")) {
+          Token token = (Token) ctx.getChild(i).getPayload();
+          current = merge(current, token);
+        }
       } else {
-      	ParserRuleContext child = (ParserRuleContext) ctx.getChild(i);
-      	
-      	if(child instanceof TomJavaParser.JavaIdentifierContext) {
+        ParserRuleContext child = (ParserRuleContext) ctx.getChild(i);
+        
+        if(child instanceof TomJavaParser.JavaIdentifierContext) {
           current = merge(current, child.getStart());
         } else if(isTom(child)) {
           if(current != null) {
@@ -1440,8 +1471,8 @@ public class CstBuilder extends TomJavaParserBaseListener {
           blocks = `ConcCstBlock((CstBlock)getValue(child),blocks*);
         } else {
           for(CstBlock block:((CstBlockList)getValue(child)).getCollectionConcCstBlock()) {
-          	boolean isHostBlock = false;
-          	
+            boolean isHostBlock = false;
+            
             %match(block) {
               HOSTBLOCK(_, _) -> {
                 current = merge(current, block);
@@ -1450,7 +1481,7 @@ public class CstBuilder extends TomJavaParserBaseListener {
             }
             
             if(!isHostBlock) {
-            	if(current != null) {
+              if(current != null) {
                 blocks = `ConcCstBlock(current,blocks*);
                 current = null;
               }
@@ -1470,23 +1501,18 @@ public class CstBuilder extends TomJavaParserBaseListener {
   
   private CstBlock merge(CstBlock hostblock, Token token)
   {
-  	CstBlock block = buildHostblock(token);
-  	if(hostblock == null)
-  	{
-  	  return block;
-  	} else {
-  		return merge(hostblock, block);
-  	}
+    CstBlock block = buildHostblock(token);
+    return merge(hostblock, block);
   }
   
   private CstBlock merge(CstBlock firstBlock, CstBlock lastBlock)
   {
-  	if(firstBlock == null)
-  	{
-  	  return lastBlock;
-  	} else {
-  		String merge = new String();
-  		CstOption ot = null;
+    if(firstBlock == null)
+    {
+      return lastBlock;
+    } else {
+      String merge = new String();
+      CstOption ot = null;
       %match(firstBlock, lastBlock) {
         HOSTBLOCK(ConcCstOption(Cst_OriginTracking(source, firstLine, firstColumn, _, _)), code1),
         HOSTBLOCK(ConcCstOption(Cst_OriginTracking(source, _, _, lastLine, lastColumn)), code2) -> {
@@ -1495,7 +1521,7 @@ public class CstBuilder extends TomJavaParserBaseListener {
         }
       }
       return `HOSTBLOCK(ConcCstOption(ot), merge);
-  	}
+    }
   }
   
   private boolean isTom(Object o) {
@@ -1720,14 +1746,14 @@ public class CstBuilder extends TomJavaParserBaseListener {
   private static String betweenToken(Token t1, Token t2) {
     String newline = System.getProperty("line.separator");
     int l = t1.getLine();
-    int c = t1.	getCharPositionInLine()+1;
+    int c = t1.getCharPositionInLine()+1;
     String res = "";
     while(l < t2.getLine()) {
       res += newline;
       l++;
       c = 1;
     }
-    while(c < t2.	getCharPositionInLine()) {
+    while(c < t2.getCharPositionInLine()) {
       res += " ";
       c++;
     }
