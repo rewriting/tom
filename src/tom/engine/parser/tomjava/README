@@ -1,5 +1,7 @@
 Failing tests:
-- gom/* (Java compiling: "cannot find symbol", "Double" should be "tom_make_Double")
+- gom/TestBuiltin.t (Java compiling: "cannot find symbol", "Double" should be "tom_make_Double")
+- gom/TestFromMethods.t (Java compiling: "cannot find symbol", "Int" should be "tom_make_Int")
+- gom/TestTermgraph.t (Java compiling: "cannot find symbol", "TopDown" should be "tom_make_TopDown")
 - sl/TestRef.t (Building: "Multiple definition of" error)
 - sl/TestGetSubterm.t (Test run error, parsing error?)
 
