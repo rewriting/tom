@@ -802,7 +802,7 @@ public class CstBuilder extends TomJavaParserBaseListener {
    * constraint
    *   : constraint AND constraint
    *   | constraint OR constraint
-   *   | pattern MATCH_SYMBOL bqterm
+   *   | pattern match_symbol='<' '<' bqterm
    *   | term GT term
    *   | term GE term
    *   | term LT term
@@ -818,7 +818,7 @@ public class CstBuilder extends TomJavaParserBaseListener {
       CstConstraint lhs = (CstConstraint)getValue(ctx.constraint(0));
       CstConstraint rhs = (CstConstraint)getValue(ctx.constraint(1));
       res = (ctx.AND() != null)?`Cst_AndConstraint(lhs,rhs):`Cst_OrConstraint(lhs,rhs);
-    } else if(ctx.MATCH_SYMBOL() != null) {
+    } else if(ctx.match_symbol != null) {
       CstPattern lhs = (CstPattern)getValue(ctx.pattern());
       CstBQTerm rhs = (CstBQTerm)getValue(ctx.bqterm());
       CstType rhs_type = (CstType)getValue2(ctx.bqterm());

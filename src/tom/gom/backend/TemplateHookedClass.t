@@ -181,7 +181,9 @@ public abstract class TemplateHookedClass extends TemplateClass {
         generate(gen);
 
         Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(tmpFile)));
-        writer.write(new String(gen.toString().getBytes("UTF-8"))); 
+        String s = new String(gen.toString().getBytes("UTF-8"));
+        //System.out.println("generateFile: " + s);
+        writer.write(s); 
         writer.flush();
         writer.close();
 

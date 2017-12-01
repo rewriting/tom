@@ -749,7 +749,7 @@ patternlist
 constraint
   : constraint AND constraint
   | constraint OR constraint
-  | pattern MATCH_SYMBOL bqterm
+  | pattern match_symbol='<' '<' bqterm
   | term GT term
   | term GE term
   | term LT term

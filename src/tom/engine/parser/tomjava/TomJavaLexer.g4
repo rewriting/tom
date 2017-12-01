@@ -215,7 +215,7 @@ URSHIFT_ASSIGN:     '>>>=';
 
 //TOM Operators
 
-MATCH_SYMBOL : '<<' ;
+//MATCH_SYMBOL : '<<' ;
 STAR : '*' ; //JAVA->MUL
 UNDERSCORE : '_' ;
 ANTI : '!' ; //JAVA->BANG
