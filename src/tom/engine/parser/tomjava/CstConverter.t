@@ -228,7 +228,7 @@ public class CstConverter {
   private CstBlock parseStream(ANTLRInputStream tomInput, String canonicalPath) {
     // parse the file
     try {
-      tom.engine.parser.antlr4.TomParser parser = new tom.engine.parser.antlr4.TomParser(canonicalPath, getParserTool(), getStreamManager().getSymbolTable());
+      tom.engine.parser.tomjava.TomParser parser = new tom.engine.parser.tomjava.TomParser(canonicalPath, getParserTool(), getStreamManager().getSymbolTable());
       CstProgram include = parser.parse(tomInput);
       %match(include) {
         Cst_Program(blocks) -> { 
