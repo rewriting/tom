@@ -219,9 +219,9 @@ URSHIFT_ASSIGN:     '>>>=';
 STAR : '*' ; //JAVA->MUL
 UNDERSCORE : '_' ;
 ANTI : '!' ; //JAVA->BANG
-LMETAQUOTE : '%[' ;
-RMETAQUOTE : ']%' ;
-ATAT : '@@' ;
+//LMETAQUOTE : '%[' ;
+//RMETAQUOTE : ']%' ;
+//ATAT : '@@' ;
 
 PIPE : '|'; //JAVA->BITOR
 QMARK : '?'; //JAVA->QUESTION

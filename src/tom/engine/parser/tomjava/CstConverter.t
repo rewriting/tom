@@ -76,7 +76,7 @@ public class CstConverter {
     return this.getParserTool().getStreamManager();
   }
 
-  public CstProgram convert(CstProgram t) {
+  public CstBlockList convert(CstBlockList t) {
     try {
       t = `BottomUp(SimplifyCST(this)).visitLight(t);
     } catch(VisitFailure e) {
@@ -116,7 +116,9 @@ public class CstConverter {
 
       Cst_Metaquote(ol@ConcCstOption(ot@Cst_OriginTracking(currentFileName,l1,c1,l2,c2)), ConcCstBlock(HOSTBLOCK(optionList, code))) -> {
         String metacode = `code.substring(2,`code.length()-2);
+        /*System.out.println("CstConverter1: " + metacode);*/
         CstBlockList bl = cc.tomSplitter(`optionList, metacode);
+        /*System.out.println("CstConverter2: " + `Cst_Metaquote(ol,bl));*/
         return `Cst_Metaquote(ol,bl);
       }
 
@@ -152,7 +154,7 @@ public class CstConverter {
 
         /* call the parser to build the corresponding CST */
         ANTLRInputStream tomInput = new ANTLRInputStream(opdecl);
-        CstBlock block = cc.parseStream(tomInput,`currentFileName);
+        CstBlock block = cc.parseStream(tomInput,`currentFileName, tom.engine.parser.tomjava.TomParser.JAVA_DECLARATIONS_LEVEL);
         return `Cst_AbstractBlock(ConcCstBlock(s,block));
       }
     }
@@ -218,28 +220,24 @@ public class CstConverter {
     // parse the file
     try {
       ANTLRInputStream tomInput = new ANTLRFileStream(canonicalPath);
-      CstBlock block = parseStream(tomInput,canonicalPath);
+      CstBlock block = parseStream(tomInput,canonicalPath,tom.engine.parser.tomjava.TomParser.JAVA_DECLARATIONS_LEVEL);
       return `Cst_IncludeConstruct(ConcCstBlock(block));
     } catch (IOException e) {
       throw new RuntimeException(e); //XXX
     }
   }
 
-  private CstBlock parseStream(ANTLRInputStream tomInput, String canonicalPath) {
+  private CstBlock parseStream(ANTLRInputStream tomInput, String canonicalPath, int parseLevel) {
     // parse the file
     try {
       tom.engine.parser.tomjava.TomParser parser = new tom.engine.parser.tomjava.TomParser(canonicalPath, getParserTool(), getStreamManager().getSymbolTable());
-      CstProgram include = parser.parse(tomInput, tom.engine.parser.tomjava.TomParser.javaDeclarationsLevel);
-      %match(include) {
-        Cst_Program(blocks) -> { 
-          return `Cst_AbstractBlock(blocks);
-        }
-      }
+      CstBlockList include = parser.parse(tomInput, parseLevel);
+      return `Cst_AbstractBlock(include);
     } catch (Exception e) {
       throw new RuntimeException(e); //XXX
     }
 
-    return `Cst_AbstractBlock(ConcCstBlock());
+    //return `Cst_AbstractBlock(ConcCstBlock());
   }
 
 
@@ -406,17 +404,18 @@ public class CstConverter {
 
         bl = `ConcCstBlock(HOSTBLOCK(optionList,code),bl*);
       } else {
-        String code = "+"+split[i]+"+";
-        //String code = split[i];
+        String code = split[i];
         metaMode = true;
         //System.out.println("prg to parse: '" + code + "'");
         try {
           ANTLRInputStream tomInput = new ANTLRInputStream(code.toCharArray(), code.length());
-          CstBlock block = parseStream(tomInput,"");
+          CstBlock block = parseStream(tomInput,"",tom.engine.parser.tomjava.TomParser.JAVA_EXPRESSION_LEVEL);
           //System.out.println("block: " + block);
-          bl = `ConcCstBlock(block,bl*);
+          CstBlock bPlus = `HOSTBLOCK(optionList,"+");
+          bl = `ConcCstBlock(bPlus,block,bPlus,bl*);
+          //System.out.println("bl: " + bl);
         } catch (Exception e) {
-          throw new TomRuntimeException("Exception catched in tomSplitter");
+          throw new TomRuntimeException("Exception catched in tomSplitter: " + e);
         }
       }
     }

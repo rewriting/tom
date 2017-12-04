@@ -86,11 +86,11 @@ public class CstBuilder extends TomJavaParserBaseListener {
   } 
 
   public void exitCompilationUnit(TomJavaParser.CompilationUnitContext ctx) {
-    setValue("exitCompilationUnit", ctx, `Cst_Program(buildBlockList(ctx)));
+    setValue("exitCompilationUnit", ctx, buildBlockList(ctx));
   }
   
   public void exitDeclarations(TomJavaParser.DeclarationsContext ctx) {
-    setValue("exitDeclarations", ctx, `Cst_Program(buildBlockList(ctx)));
+    setValue("exitDeclarations", ctx, buildBlockList(ctx));
   }
 
   public void exitPackageDeclaration(TomJavaParser.PackageDeclarationContext ctx) {

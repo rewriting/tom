@@ -66,6 +66,7 @@ import org.antlr.v4.runtime.tree.*;
  */
 public class TomParserPlugin extends TomGenericPlugin {
   %include { ../../platform/adt/platformoption/PlatformOption.tom }
+  %include { ../adt/cst/CST.tom }
   
   /** some output suffixes */
   public static final String PARSED_SUFFIX = ".tfix.parsed";
@@ -327,7 +328,7 @@ public class TomParserPlugin extends TomGenericPlugin {
             }
           }
 
-          CstProgram cst = parser.parse(input, tom.engine.parser.tomjava.TomParser.javaTopLevel);
+          CstBlockList cst = parser.parse(input, tom.engine.parser.tomjava.TomParser.JAVA_TOP_LEVEL);
           if(printcst) {
             getParserTool().printTree(cst);
           }
@@ -335,7 +336,7 @@ public class TomParserPlugin extends TomGenericPlugin {
 
           start = System.currentTimeMillis();
           tom.engine.parser.tomjava.AstBuilder astBuilder = new tom.engine.parser.tomjava.AstBuilder(getParserTool(),symbolTable);
-          Code code = astBuilder.convert(cst);
+          Code code = astBuilder.convert( `Cst_Program(cst) );
           System.out.println("\tbuilding ast:" + (System.currentTimeMillis()-start) + " ms");
 
           // System.out.println("ast = " + code);

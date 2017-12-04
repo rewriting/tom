@@ -48,10 +48,11 @@ public class TomParser {
   private TomParserTool parserTool;
   private SymbolTable symbolTable;
 
-  private static HashMap<String,CstProgram> parsedFiles = new HashMap<String,CstProgram>();
+  private static HashMap<String,CstBlockList> parsedFiles = new HashMap<String,CstBlockList>();
   
-  public static int javaTopLevel = 0;
-  public static int javaDeclarationsLevel = 1;
+  public final static int JAVA_TOP_LEVEL = 0;
+  public final static int JAVA_DECLARATIONS_LEVEL = 1;
+  public final static int JAVA_EXPRESSION_LEVEL = 2;
 
   public TomParser(String filename, TomParserTool parserTool, SymbolTable symbolTable) {
     this.filename = filename;
@@ -67,8 +68,8 @@ public class TomParser {
     return this.parserTool;
   }
 
-  public CstProgram parse(ANTLRInputStream input, int level) throws IOException {
-    //System.out.print("antlr4: " + getFilename());
+  public CstBlockList parse(ANTLRInputStream input, int parseLevel) throws IOException {
+    //System.out.print("antlr4 tomjava: " + getFilename());
 
     if(parsedFiles.containsKey(getFilename())) {
       //System.out.println("\tin cache: 0ms");
@@ -88,16 +89,16 @@ public class TomParser {
     // we don't want error messages or recovery during first try
     parser.removeErrorListeners();
     parser.setErrorHandler(new BailErrorStrategy());
-    try {
-    	if(level == javaDeclarationsLevel) {
-    		tree = parser.declarations();
-    	} else { //javaTopLevel
-    	  tree = parser.compilationUnit();
-    	}
+    //try {
+    //	if(parseLevel == JAVA_DECLARATIONS_LEVEL) {
+    //		tree = parser.declarations();
+    //	} else { //JAVA_TOP_LEVEL
+    //	  tree = parser.compilationUnit();
+    //	}
       // if we get here, there was no syntax error and SLL(*) was enough;
       // there is no need to try full LL(*)
-    } catch (ParseCancellationException ex) { // thrown by BailErrorStrategy
-      System.out.println("\n*** SLL parsing failed on: " + ex + "\n");
+    //} catch (ParseCancellationException ex) { // thrown by BailErrorStrategy
+      //System.out.println("\n*** SLL parsing failed on: " + ex + "\n");
 
       tokens.reset(); // rewind input stream
       parser.reset();
@@ -106,12 +107,22 @@ public class TomParser {
       parser.setErrorHandler(new DefaultErrorStrategy());
       // full now with full LL(*)
       parser.getInterpreter().setPredictionMode(PredictionMode.LL);
-      if(level == javaDeclarationsLevel) {
-    		tree = parser.declarations();
-    	} else { //javaTopLevel
-    	  tree = parser.compilationUnit();
-    	}
-    }
+      switch(parseLevel) {
+        case JAVA_DECLARATIONS_LEVEL:
+          //System.out.println("\nparse declarations: " + getFilename());
+          tree = parser.declarations();
+          break;
+        case JAVA_EXPRESSION_LEVEL:
+          //System.out.println("\nparse expression: " + getFilename());
+          tree = parser.expression();
+          break;
+        case JAVA_TOP_LEVEL:
+          //System.out.println("\nparse compilationUnit: " + getFilename());
+          tree = parser.compilationUnit();
+          break;
+      }
+
+    //}
     //System.out.println("\tparsing:" + (System.currentTimeMillis()-start) + " ms");
 
     // show tree in text form
@@ -121,7 +132,7 @@ public class TomParser {
     ParseTreeWalker walker = new ParseTreeWalker();
     tom.engine.parser.tomjava.CstBuilder cstBuilder = new tom.engine.parser.tomjava.CstBuilder(getFilename(),tokens); 
     walker.walk(cstBuilder, tree);
-    CstProgram cst = (CstProgram) cstBuilder.getValue(tree);
+    CstBlockList cst = (CstBlockList) cstBuilder.getValue(tree);
     cstBuilder.cleanUsedToken(); // release memory
     //System.out.println("\tbuilding cst:" + (System.currentTimeMillis()-start) + " ms");
     //System.out.println("\tcst:" + cst);
