@@ -238,7 +238,7 @@ public class TomParserPlugin extends TomGenericPlugin {
           getStreamManager().getRawFileName()+ PARSED_TABLE_SUFFIX;
         Tools.generateOutput(outputFileName, symbolTable.toTerm().toATerm());
       }
-    } else if(newparser==true && tomjava==false) {
+    } else if(newparser==true) { // && tomjava==false) {
       /*
        * ANTLR4
        */
@@ -304,7 +304,7 @@ public class TomParserPlugin extends TomGenericPlugin {
         TomMessage.error(getLogger(), currentFileName, -1,
             TomMessage.fileNotFound, e.getMessage());// TODO custom ErrMessage
       }
-    } else {
+    } else if(newparser==false && tomjava==true) {
       /*
        * ANTLR4 + JAVA GRAMMAR
        */
@@ -371,6 +371,8 @@ public class TomParserPlugin extends TomGenericPlugin {
             TomMessage.fileNotFound, e.getMessage());// TODO custom ErrMessage
       }
 
+    } else {
+      System.out.println("no active parser");
     }
 
     if(intermediate) {

@@ -295,17 +295,20 @@
     <!-- Specific stuff for parser generation -->
     <tomcompile fork="no"
       srcdir="${src.src}"
+      options="--newparser"
       outputfile="${gen.destination}/tom/engine/parser/antlr2/TomLanguage.g"
       import="${src.gen}/tom/engine/adt">
       <include name="tom/engine/parser/antlr2/TomLanguage.g.t"/>
     </tomcompile>
 
     <tomcompile srcdir="${src.src}"
+      options="--newparser"
       outputfile="${gen.destination}/tom/engine/parser/antlr2/HostLanguage.g"
       import="${src.gen}/tom/engine/adt">
       <include name="tom/engine/parser/antlr2/HostLanguage.g.t"/>
     </tomcompile>
     <tomcompile srcdir="${src.src}"
+      options="--newparser"
       outputfile="${gen.destination}/tom/engine/parser/antlr2/BackQuoteLanguage.g"
       import="${src.gen}/tom/engine/adt">
       <include name="tom/engine/parser/antlr2/BackQuoteLanguage.g.t"/>

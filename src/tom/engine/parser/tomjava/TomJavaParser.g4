@@ -374,7 +374,7 @@ blockStatement
     : localVariableDeclaration ';'
     | statement
     | localTypeDeclaration
-    | tomStatement
+    | tomDeclaration
     ;
 
 localVariableDeclaration
@@ -405,6 +405,7 @@ statement
     | SEMI
     | statementExpression=expression ';'
     | identifierLabel=javaIdentifier ':' statement
+    | tomStatement
     ;
 
 catchClause
@@ -675,8 +676,7 @@ tomDeclaration
   ;
 
 tomStatement
-  : tomDeclaration
-  | matchStatement
+  : matchStatement
   ;
 
 tomTerm
@@ -697,7 +697,7 @@ strategyStatement
   ;
 
 includeStatement
-  : INCLUDE LBRACE (DOT* SLASH)? tomIdentifier ((DOT|SLASH|BACKSLASH) tomIdentifier)* RBRACE 
+  : INCLUDE LBRACE (DOT* SLASH)* tomIdentifier ((DOT|SLASH|BACKSLASH) tomIdentifier)* RBRACE 
   ;
 
 //GOM grammar? TODO FIX

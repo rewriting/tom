@@ -231,6 +231,7 @@ public class CstConverter {
     // parse the file
     try {
       tom.engine.parser.tomjava.TomParser parser = new tom.engine.parser.tomjava.TomParser(canonicalPath, getParserTool(), getStreamManager().getSymbolTable());
+    System.out.println("\tCstConverter.parseStream: " + canonicalPath);
       CstBlockList include = parser.parse(tomInput, parseLevel);
       return `Cst_AbstractBlock(include);
     } catch (Exception e) {
@@ -409,7 +410,7 @@ public class CstConverter {
         //System.out.println("prg to parse: '" + code + "'");
         try {
           ANTLRInputStream tomInput = new ANTLRInputStream(code.toCharArray(), code.length());
-          CstBlock block = parseStream(tomInput,"",tom.engine.parser.tomjava.TomParser.JAVA_EXPRESSION_LEVEL);
+          CstBlock block = parseStream(tomInput,"metaquote",tom.engine.parser.tomjava.TomParser.JAVA_EXPRESSION_LEVEL);
           //System.out.println("block: " + block);
           CstBlock bPlus = `HOSTBLOCK(optionList,"+");
           bl = `ConcCstBlock(bPlus,block,bPlus,bl*);

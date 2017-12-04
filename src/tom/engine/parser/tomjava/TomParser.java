@@ -69,7 +69,7 @@ public class TomParser {
   }
 
   public CstBlockList parse(ANTLRInputStream input, int parseLevel) throws IOException {
-    //System.out.print("antlr4 tomjava: " + getFilename());
+    System.out.println("\tTomParser.parse: " + getFilename());
 
     if(parsedFiles.containsKey(getFilename())) {
       //System.out.println("\tin cache: 0ms");
@@ -153,6 +153,7 @@ public class TomParser {
   public String parseJavaPackage(ANTLRInputStream input) throws IOException {
     tom.engine.parser.antlr4.TomJavaLexer lexer = new tom.engine.parser.antlr4.TomJavaLexer(input);
     CommonTokenStream tokens = new CommonTokenStream(lexer);
+    System.out.println("\tTomParser.parseJavaPackage: " + getFilename());
     tom.engine.parser.antlr4.TomJavaParser parser = new tom.engine.parser.antlr4.TomJavaParser(tokens);
     parser.setBuildParseTree(true);      // tell ANTLR to build a parse tree
     ParseTree tree = parser.start();

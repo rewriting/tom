@@ -1807,8 +1807,7 @@ tryBlock:
       /* PHASE 1 */
       tcl@concTypeConstraint(tcl1*,Subtype[Type1=t1,Type2=t2,Info=info],tcl2*,Subtype[Type1=t2,Type2=t1],tcl3*) -> {
         nkt.solveEquationConstraints(`concTypeConstraint(Equation(t1,t2,info)));
-        return
-          nkt.`concTypeConstraint(tcl1*,tcl2*,tcl3*);
+        return `concTypeConstraint(tcl1*,tcl2*,tcl3*);
       }
 
       /*
@@ -1820,13 +1819,13 @@ tryBlock:
         && !concTypeConstraint(_*,Subtype[Type1=t1,Type2=t2],_*) << tcl -> {
           //DEBUG System.out.println("\nsolve2a: tcl =" + `tcl);
           return
-            nkt.`addConstraintSlow(Subtype(t1,t2,info),tcl);
+            nkt.addConstraintSlow(`Subtype(t1,t2,info),`tcl);
         }
       tcl@concTypeConstraint(_*,Subtype[Type1=tVar@TypeVar[],Type2=t2,Info=info],_*,Subtype[Type1=t1,Type2=tVar],_*)
         && !concTypeConstraint(_*,Subtype[Type1=t1,Type2=t2],_*) << tcl -> {
           //DEBUG System.out.println("\nsolve2b: tcl = " + `tcl);
           return
-            nkt.`addConstraintSlow(Subtype(t1,t2,info),tcl);
+            nkt.addConstraintSlow(`Subtype(t1,t2,info),`tcl);
         }
     }
   }
@@ -2049,25 +2048,25 @@ block: {
         %match(c1,c2) {
           Subtype[Type1=tVar@TypeVar[],Type2=t1@!TypeVar[],Info=info], Subtype[Type1=tVar,Type2=t2@!TypeVar[]] -> {
 
-            TomType lowerType = nkt.`minType(t1,t2);
+            TomType lowerType = nkt.minType(`t1,`t2);
 
             if (lowerType == `EmptyType()) {
               nkt.printErrorIncompatibility(`Subtype(t1,t2,info));
               return `concTypeConstraint(FalseTypeConstraint(),tcl1*,tcl2*,tcl3*); 
             }
 
-            return nkt.`addConstraintSlow(Subtype(tVar,lowerType,info),concTypeConstraint(tcl1*,tcl2*,tcl3*));
+            return nkt.addConstraintSlow(`Subtype(tVar,lowerType,info),`concTypeConstraint(tcl1*,tcl2*,tcl3*));
           }
 
           Subtype[Type1=t1@!TypeVar[],Type2=tVar@TypeVar[],Info=info], Subtype[Type1=t2@!TypeVar[],Type2=tVar] -> {
-            TomType supType = nkt.`supType(t1,t2);
+            TomType supType = nkt.supType(`t1,`t2);
 
             if (supType == `EmptyType()) {
               nkt.printErrorIncompatibility(`Subtype(t1,t2,info));
               return `concTypeConstraint(FalseTypeConstraint(),tcl1*,tcl2*,tcl3*); 
             }
 
-            return nkt.`addConstraintSlow(Subtype(supType,tVar,info),concTypeConstraint(tcl1*,tcl2*,tcl3*));
+            return nkt.addConstraintSlow(`Subtype(supType,tVar,info),`concTypeConstraint(tcl1*,tcl2*,tcl3*));
           }
         }
       }
