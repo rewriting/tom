@@ -252,8 +252,6 @@ LINE_COMMENT:       '//' ~[\r\n]*    -> channel(HIDDEN);
 
 IDENTIFIER:         Letter LetterOrDigit*;
 
-DMINUSID : '--' [A-Za-z]* ;
-
 // Fragment rules
 
 fragment ExponentPart

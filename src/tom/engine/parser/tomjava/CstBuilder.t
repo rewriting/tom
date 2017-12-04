@@ -657,12 +657,12 @@ public class CstBuilder extends TomJavaParserBaseListener {
 
   /*
    * gomOptions
-   *   : LPAREN DMINUSID (COMMA DMINUSID)* RPAREN
+   *   : LPAREN gomOption (COMMA gomOption)* RPAREN
    *   ;
    */
   public void exitGomOptions(TomJavaParser.GomOptionsContext ctx) {
     CstNameList nameList = `ConcCstName();
-    for(TerminalNode e:ctx.DMINUSID()) {
+    for(TomJavaParser.GomOptionContext e:ctx.gomOption()) {
       nameList = `ConcCstName(nameList*, Cst_Name(e.getText()));
     }
     setValue("exitGomOptions", ctx, nameList);

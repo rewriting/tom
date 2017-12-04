@@ -715,7 +715,11 @@ unknownBlock
   ;
 
 gomOptions
-  : LPAREN DMINUSID (COMMA DMINUSID)* RPAREN
+  : LPAREN gomOption (COMMA gomOption)* RPAREN
+  ;
+  
+gomOption
+  : '--' tomIdentifier
   ;
 
 visit
