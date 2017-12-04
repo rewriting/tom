@@ -23,7 +23,28 @@ public enum StrategyOperator{
 
   public static StrategyOperator getStrategyOperator(String name) {
     StrategyOperator op=NONE;
-    switch (name){
+    if(name == "id") {
+      op = IDENTITY;
+    } else if(name == "fail") {
+      op = FAIL;
+    } else if(name == "rule") {
+      op = RULE;
+    } else if(name == "seq") {
+      op = SEQ;
+    } else if(name == "choice") {
+      op = CHOICE;
+    } else if(name == "mu") {
+      op = MU;
+    } else if(name == "all") {
+      op = ALL;
+    } else if(name == "one") {
+      op = ONE;
+    } else {
+      op = NONE;
+    }
+    return op;
+    /*
+    switch(name) {
       case "id":
         op = IDENTITY;
         break;
@@ -53,6 +74,7 @@ public enum StrategyOperator{
         break;
       }
     return op;
+    */
   }
 
 }

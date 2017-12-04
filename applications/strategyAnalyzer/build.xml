@@ -66,7 +66,7 @@
   </target>
 
   <target name="javac" depends="tom, antlr">
-    <javac.preset source="1.7"  target="1.7"  debug="true" destdir="${sa.build}" includeantruntime="false">
+    <javac.preset source="1.6"  target="1.6"  debug="true" destdir="${sa.build}" includeantruntime="false">
       <src path="${sa.gen}"/>
       <src path="${sa.src}"/>
       <include name="**/*.java"/>
