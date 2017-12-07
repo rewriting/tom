@@ -89,8 +89,12 @@ public class CstBuilder extends TomJavaParserBaseListener {
     setValue("exitCompilationUnit", ctx, buildBlockList(ctx));
   }
   
-  public void exitDeclarations(TomJavaParser.DeclarationsContext ctx) {
-    setValue("exitDeclarations", ctx, buildBlockList(ctx));
+  public void exitDeclarationsUnit(TomJavaParser.DeclarationsUnitContext ctx) {
+    setValue("exitDeclarationsUnit", ctx, buildBlockList(ctx));
+  }
+  
+  public void exitExpressionUnit(TomJavaParser.ExpressionUnitContext ctx) {
+    setValue("exitExpressionUnit", ctx, buildBlockList(ctx));
   }
 
   public void exitPackageDeclaration(TomJavaParser.PackageDeclarationContext ctx) {
@@ -416,6 +420,10 @@ public class CstBuilder extends TomJavaParserBaseListener {
   public void exitExpression(TomJavaParser.ExpressionContext ctx) {
     setValue("exitExpression", ctx, buildBlockList(ctx));
   }
+  
+  public void exitFunTerm(TomJavaParser.FunTermContext ctx) {
+    setValue("exitFunTerm", ctx, buildBlockList(ctx));
+  }
 
   public void exitLambdaExpression(TomJavaParser.LambdaExpressionContext ctx) {
     setValue("exitLambdaExpression", ctx, buildBlockList(ctx));
@@ -657,12 +665,12 @@ public class CstBuilder extends TomJavaParserBaseListener {
 
   /*
    * gomOptions
-   *   : LPAREN gomOption (COMMA gomOption)* RPAREN
+   *   : OPTIONSTART DMINUSID (COMMA DMINUSID)* OPTIONEND
    *   ;
    */
   public void exitGomOptions(TomJavaParser.GomOptionsContext ctx) {
     CstNameList nameList = `ConcCstName();
-    for(TomJavaParser.GomOptionContext e:ctx.gomOption()) {
+    for(TerminalNode e:ctx.DMINUSID()) {
       nameList = `ConcCstName(nameList*, Cst_Name(e.getText()));
     }
     setValue("exitGomOptions", ctx, nameList);
@@ -931,12 +939,12 @@ public class CstBuilder extends TomJavaParserBaseListener {
 
   /*
    * composite
-   *   : fsym=tomIdentifier LPAREN (composite (COMMA? composite)*)? RPAREN
-   *   | LPAREN composite*? RPAREN
-   *   | var=tomIdentifier STAR?
+   *   : fsym=tomJavaIdentifier STAR? LPAREN (composite (COMMA composite)*)? RPAREN
+   *   | LPAREN sub=composite RPAREN
+   *   | var=tomJavaIdentifier STAR?
    *   | constant
    *   | UNDERSCORE
-   *   | expression //java
+   *   | [...]
    *   ;
    */
   public void exitComposite(TomJavaParser.CompositeContext ctx) {
@@ -945,51 +953,43 @@ public class CstBuilder extends TomJavaParserBaseListener {
     CstType type = `Cst_TypeUnknown();
 
     if(ctx.fsym != null) {
-      CstBQTermList args = `ConcCstBQTerm();
-
-      CstBQTermList accu = `ConcCstBQTerm();
-      for(int i = 2; i < ctx.getChildCount()-1; i++) {
-        if(ctx.getChild(i) instanceof TomJavaParser.CompositeContext){
-          // retrieve elements separated by COMMA
-          CstBQTerm bq = (CstBQTerm)getValue(ctx.getChild(i));
-          accu = `ConcCstBQTerm(accu*,bq);
-        } else if(ctx.getChild(i).getText().equals(",")) {
-          // put all elements of accu as a subterm
-          CstBQTerm newComposite = `Cst_BQComposite(ConcCstOption(),accu);
-          //CstBQTerm newComposite = flattenComposite(`Cst_BQComposite(ConcCstOption(),accu));
-          //newComposite = mergeITL(newComposite);
-          args = `ConcCstBQTerm(args*,newComposite);
-          accu = `ConcCstBQTerm();
-        }
-      }
-      // flush the last accu
-      %match(accu) {
-        ConcCstBQTerm(bq) -> {
-          // single element
-          args = `ConcCstBQTerm(args*,bq);
-        }
-
-        ConcCstBQTerm(_,_,_*) -> {
-          // multiple elements: build a composite
-          //CstBQTerm newComposite = flattenComposite(`Cst_BQComposite(ConcCstOption(),accu));
-          CstBQTerm newComposite = `Cst_BQComposite(ConcCstOption(),accu);
-          //newComposite = mergeITL(newComposite);
-          args = `ConcCstBQTerm(args*,newComposite);
-        }
-      }
-
-      res = `Cst_BQAppl(optionList,ctx.fsym.getText(),args);
-    } else if(ctx.LPAREN() != null && ctx.RPAREN() != null) {
-      CstOptionList optionList1 = `ConcCstOption(extractOption(ctx.LPAREN().getSymbol()));
-      CstOptionList optionList2 = `ConcCstOption(extractOption(ctx.RPAREN().getSymbol()));
       CstBQTermList args = buildCstBQTermList(ctx.composite());
-      res = `Cst_BQComposite(optionList, ConcCstBQTerm(
+      if(ctx.STAR() == null) {
+        res = `Cst_BQAppl(optionList,ctx.fsym.getText(),args);
+      } else {
+        CstOptionList optionList1 = `ConcCstOption(extractOption(ctx.LPAREN().getSymbol()));
+        CstOptionList optionList2 = `ConcCstOption(extractOption(ctx.RPAREN().getSymbol()));
+        
+        res = `Cst_BQComposite(optionList, ConcCstBQTerm(
+            Cst_BQVarStar(optionList,ctx.fsym.getText(),type),
             Cst_ITL(optionList1,ctx.LPAREN().getText()),
             args*,
             Cst_ITL(optionList2,ctx.RPAREN().getText())
             ));
-
-      //res = mergeITL(res);
+      }
+    } else if(ctx.sub != null) {
+      CstOptionList optionList1 = `ConcCstOption(extractOption(ctx.LPAREN().getSymbol()));
+      CstOptionList optionList2 = `ConcCstOption(extractOption(ctx.RPAREN().getSymbol()));
+      CstBQTerm sub = (CstBQTerm)getValue(ctx.sub);
+      
+      boolean isSubComposite = false;
+      %match(sub) {
+        Cst_BQComposite(_,subList) -> {
+          isSubComposite = true;
+          res = `Cst_BQComposite(optionList, ConcCstBQTerm(
+              Cst_ITL(optionList1,ctx.LPAREN().getText()),
+              subList*,
+              Cst_ITL(optionList2,ctx.RPAREN().getText())
+              ));
+        }
+      }
+      if(!isSubComposite) {
+        res = `Cst_BQComposite(optionList, ConcCstBQTerm(
+            Cst_ITL(optionList1,ctx.LPAREN().getText()),
+            sub,
+            Cst_ITL(optionList2,ctx.RPAREN().getText())
+            ));
+      }
     } else if(ctx.var != null && ctx.STAR() == null) {
       res = `Cst_BQVar(optionList,ctx.var.getText(),type);
     } else if(ctx.var != null && ctx.STAR() != null) {
@@ -999,9 +999,35 @@ public class CstBuilder extends TomJavaParserBaseListener {
       res = `Cst_BQConstant(optionList,cst.getvalue());
     } else if(ctx.UNDERSCORE() != null) {
       res = `Cst_BQUnderscore();
-    }else if (ctx.expression() != null) {
-      //System.out.println("composite water");
-      res = `Cst_ITL(optionList, ctx.expression().getText());
+    } else {
+      CstBQTermList bqList = `ConcCstBQTerm();
+      
+      for(int i = 0; i < ctx.getChildCount(); i++) {
+        if(ctx.getChild(i) instanceof TomJavaParser.CompositeContext) {
+          CstBQTerm child = (CstBQTerm)getValue(ctx.getChild(i));
+
+          boolean isChildComposite = false;
+          %match(child) {
+            Cst_BQComposite(_,childList) -> {
+              isChildComposite = true;
+              bqList = `ConcCstBQTerm(bqList*, childList*);
+            }
+          }
+          if(!isChildComposite) {
+            bqList = `ConcCstBQTerm(bqList*, child);
+          }
+        } else if(ctx.getChild(i).getPayload() instanceof Token) {
+          Token token = (Token) ctx.getChild(i).getPayload();
+          CstOptionList tokenOptionList = `ConcCstOption(extractOption(token));
+          bqList = `ConcCstBQTerm(bqList*, Cst_ITL(tokenOptionList, token.getText()));
+        } else {
+          ParserRuleContext child = (ParserRuleContext) ctx.getChild(i);
+          CstOptionList childOptionList = `ConcCstOption(extractOption(child.getStart()));
+          bqList = `ConcCstBQTerm(bqList*, Cst_ITL(childOptionList, child.getText()));
+        }
+      }
+      
+      res = `Cst_BQComposite(optionList, bqList*);
     }
 
     setValue("exitComposite",ctx,res);

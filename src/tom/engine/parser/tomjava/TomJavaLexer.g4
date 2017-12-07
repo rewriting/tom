@@ -112,12 +112,12 @@ WHILE:              'while';
 MATCH : '%match' ;
 STRATEGY : '%strategy' ;
 INCLUDE : '%include' ;
-GOM : '%gom' ;
+GOM : '%gom' -> pushMode(UNKNOWNBLOCK) ;
 OP : '%op' ;
 OPARRAY : '%oparray' ;
 OPLIST : '%oplist' ;
 TYPETERM : '%typeterm' ;
-RULE : '%rule' ;
+RULE : '%rule' -> pushMode(UNKNOWNBLOCK) ;
 
 VISIT : 'visit' ;
 IS_FSYM : 'is_fsym' ;
@@ -286,3 +286,38 @@ fragment Letter
     | ~[\u0000-\u007F\uD800-\uDBFF] // covers all characters above 0x7F which are not a surrogate
     | [\uD800-\uDBFF] [\uDC00-\uDFFF] // covers UTF-16 surrogate pairs encodings for U+10000 to U+10FFFF
     ;
+
+mode UNKNOWNBLOCK;
+
+BLOCKSTART : '{' -> pushMode(INSIDE) ;
+
+OPTIONSTART : '(' ;
+OPTIONEND : ')';
+
+DMINUSID : '--' Letter* ;
+
+UNKNOWNBLOCK_WS:                 [ \t\r\n\u000C]+ -> channel(HIDDEN);
+UNKNOWNBLOCK_COMMENT:            '/*' .*? '*/'    -> channel(HIDDEN);
+UNKNOWNBLOCK_LINE_COMMENT:       '//' ~[\r\n]*    -> channel(HIDDEN);
+
+mode INSIDE;
+
+SUBBLOCKSTART : '{' -> pushMode(SUBBLOCK) ;
+BLOCKEND : '}' -> popMode, popMode ;
+
+INSIDE_WS:                 [ \t\r\n\u000C]+ -> channel(HIDDEN);
+INSIDE_COMMENT:            '/*' .*? '*/'    -> channel(HIDDEN);
+INSIDE_LINE_COMMENT:       '//' ~[\r\n]*    -> channel(HIDDEN);
+
+ANY : . ; 
+
+mode SUBBLOCK;
+
+SUBSUBBLOCKSTART : '{' -> pushMode(SUBBLOCK) ;
+SUBBLOCKEND : '}' -> popMode ;
+
+SUB_WS:                 [ \t\r\n\u000C]+ -> channel(HIDDEN);
+SUB_COMMENT:            '/*' .*? '*/'    -> channel(HIDDEN);
+SUB_LINE_COMMENT:       '//' ~[\r\n]*    -> channel(HIDDEN);
+
+SUB_ANY : . ; 

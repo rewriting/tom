@@ -110,11 +110,11 @@ public class TomParser {
       switch(parseLevel) {
         case JAVA_DECLARATIONS_LEVEL:
           //System.out.println("\nparse declarations: " + getFilename());
-          tree = parser.declarations();
+          tree = parser.declarationsUnit();
           break;
         case JAVA_EXPRESSION_LEVEL:
           //System.out.println("\nparse expression: " + getFilename());
-          tree = parser.expression();
+          tree = parser.expressionUnit();
           break;
         case JAVA_TOP_LEVEL:
           //System.out.println("\nparse compilationUnit: " + getFilename());

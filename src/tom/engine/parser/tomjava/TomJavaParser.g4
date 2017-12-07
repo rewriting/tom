@@ -35,8 +35,12 @@ compilationUnit
     : packageDeclaration? importDeclaration* typeDeclaration* EOF
     ;
 
-declarations
+declarationsUnit
     : classBodyDeclaration* EOF
+    ;
+
+expressionUnit
+    : expression EOF
     ;
 
 packageDeclaration
@@ -97,7 +101,7 @@ typeBound
     ;
 
 enumDeclaration
-    : ENUM javaIdentifier (IMPLEMENTS typeList)? '{' enumConstants? ','? enumBodyDeclarations? '}'
+    : ENUM javaIdentifier (IMPLEMENTS typeList)? LBRACE enumConstants? ','? enumBodyDeclarations? RBRACE
     ;
 
 enumConstants
@@ -117,11 +121,11 @@ interfaceDeclaration
     ;
 
 classBody
-    : '{' classBodyDeclaration* '}'
+    : LBRACE classBodyDeclaration* RBRACE
     ;
 
 interfaceBody
-    : '{' interfaceBodyDeclaration* '}'
+    : LBRACE interfaceBodyDeclaration* RBRACE
     ;
 
 classBodyDeclaration
@@ -243,7 +247,7 @@ variableInitializer
     ;
 
 arrayInitializer
-    : '{' (variableInitializer (',' variableInitializer)* (',')? )? '}'
+    : LBRACE (variableInitializer (',' variableInitializer)* (',')? )? RBRACE
     ;
 
 classOrInterfaceType
@@ -260,7 +264,7 @@ qualifiedNameList
     ;
 
 formalParameters
-    : '(' formalParameterList? ')'
+    : LPAREN formalParameterList? RPAREN
     ;
 
 formalParameterList
@@ -304,7 +308,7 @@ floatLiteral
 // ANNOTATIONS
 
 annotation
-    : '@' qualifiedName ('(' ( elementValuePairs | elementValue )? ')')?
+    : '@' qualifiedName (LPAREN ( elementValuePairs | elementValue )? RPAREN)?
     ;
 
 elementValuePairs
@@ -322,7 +326,7 @@ elementValue
     ;
 
 elementValueArrayInitializer
-    : '{' (elementValue (',' elementValue)*)? (',')? '}'
+    : LBRACE (elementValue (',' elementValue)*)? (',')? RBRACE
     ;
 
 annotationTypeDeclaration
@@ -330,7 +334,7 @@ annotationTypeDeclaration
     ;
 
 annotationTypeBody
-    : '{' (annotationTypeElementDeclaration)* '}'
+    : LBRACE (annotationTypeElementDeclaration)* RBRACE
     ;
 
 annotationTypeElementDeclaration
@@ -353,7 +357,7 @@ annotationMethodOrConstantRest
     ;
 
 annotationMethodRest
-    : javaIdentifier '(' ')' defaultValue?
+    : javaIdentifier LPAREN RPAREN defaultValue?
     ;
 
 annotationConstantRest
@@ -367,7 +371,7 @@ defaultValue
 // STATEMENTS / BLOCKS
 
 block
-    : '{' blockStatement* '}'
+    : LBRACE blockStatement* RBRACE
     ;
 
 blockStatement
@@ -391,12 +395,12 @@ statement
     : blockLabel=block
     | ASSERT expression (':' expression)? ';'
     | IF parExpression statement (ELSE statement)?
-    | FOR '(' forControl ')' statement
+    | FOR LPAREN forControl RPAREN statement
     | WHILE parExpression statement
     | DO statement WHILE parExpression ';'
     | TRY block (catchClause+ finallyBlock? | finallyBlock)
     | TRY resourceSpecification block catchClause* finallyBlock?
-    | SWITCH parExpression '{' switchBlockStatementGroup* switchLabel* '}'
+    | SWITCH parExpression LBRACE switchBlockStatementGroup* switchLabel* RBRACE
     | SYNCHRONIZED parExpression block
     | RETURN expression? ';'
     | THROW expression ';'
@@ -409,7 +413,7 @@ statement
     ;
 
 catchClause
-    : CATCH '(' variableModifier* catchType javaIdentifier ')' block
+    : CATCH LPAREN variableModifier* catchType javaIdentifier RPAREN block
     ;
 
 catchType
@@ -421,7 +425,7 @@ finallyBlock
     ;
 
 resourceSpecification
-    : '(' resources ';'? ')'
+    : LPAREN resources ';'? RPAREN
     ;
 
 resources
@@ -461,7 +465,7 @@ enhancedForControl
 // EXPRESSIONS
 
 parExpression
-    : '(' expression ')'
+    : LPAREN expression RPAREN
     ;
 
 expressionList
@@ -476,11 +480,12 @@ expression
       | NEW nonWildcardTypeArguments? innerCreator
       | SUPER superSuffix
       | explicitGenericInvocation
+      | funTerm LPAREN expressionList? RPAREN
       )
     | expression '[' expression ']'
-    | expression '(' expressionList? ')'
+    | funTerm LPAREN expressionList? RPAREN
     | NEW creator
-    | '(' typeType ')' expression
+    | LPAREN typeType RPAREN expression
     | expression postfix=('++' | '--')
     | prefix=('+'|'-'|'++'|'--') expression
     | prefix=('~'|'!') expression
@@ -502,11 +507,28 @@ expression
     | lambdaExpression // Java8
 
     // Java 8 methodReference
-    | expression '::' typeArguments? javaIdentifier
+    | expression '::' typeArguments? javaIdentifier ( LPAREN expressionList? RPAREN )?
     | typeType '::' (typeArguments? javaIdentifier | NEW)
     | classType '::' typeArguments? NEW
     | tomTerm
     ;
+
+funTerm
+    : THIS
+    | SUPER
+    | javaIdentifier
+    | nonWildcardTypeArguments (explicitGenericInvocationSuffix | THIS arguments)
+    | funTerm '[' expression ']'
+    | funTerm LPAREN expressionList? RPAREN
+    | funTerm postfix=('++' | '--')
+    | NEW creator
+    | lambdaExpression // Java8
+
+    // Java 8 methodReference
+    | typeType '::' (typeArguments? javaIdentifier | NEW)
+    | classType '::' typeArguments? NEW
+    ;
+
 
 // Java8
 lambdaExpression
@@ -516,8 +538,8 @@ lambdaExpression
 // Java8
 lambdaParameters
     : javaIdentifier
-    | '(' formalParameterList? ')'
-    | '(' javaIdentifier (',' javaIdentifier)* ')'
+    | LPAREN formalParameterList? RPAREN
+    | LPAREN javaIdentifier (',' javaIdentifier)* RPAREN
     ;
 
 // Java8
@@ -527,7 +549,7 @@ lambdaBody
     ;
 
 primary
-    : '(' expression ')'
+    : LPAREN expression RPAREN
     | THIS
     | SUPER
     | literal
@@ -614,7 +636,7 @@ explicitGenericInvocationSuffix
     ;
 
 arguments
-    : '(' expressionList? ')'
+    : LPAREN expressionList? RPAREN
     ;
 
 //IDENTIFIER or a Tom Keyword
@@ -711,15 +733,12 @@ ruleStatement
   ;
 
 unknownBlock
-  : LBRACE (tomBlock | unknownBlock | .)*? RBRACE
+  : BLOCKSTART (unknownBlock | ANY )*? BLOCKEND
+  | (SUBBLOCKSTART | SUBSUBBLOCKSTART) (unknownBlock | SUB_ANY)*? SUBBLOCKEND
   ;
 
 gomOptions
-  : LPAREN gomOption (COMMA gomOption)* RPAREN
-  ;
-  
-gomOption
-  : '--' tomIdentifier
+  : OPTIONSTART DMINUSID (COMMA DMINUSID)* OPTIONEND
   ;
 
 visit
@@ -748,6 +767,7 @@ slot
 //TODO FIX when?
 patternlist
   : pattern (COMMA pattern)* (WHEN term (COMMA term)*)?
+  | LPAREN pattern (COMMA pattern)* RPAREN (WHEN LPAREN term (COMMA term)* RPAREN)?
   ;
 
 constraint
@@ -793,13 +813,48 @@ bqcomposite
   ;
 
 composite
-  : fsym=tomIdentifier LPAREN (composite (COMMA? composite)*)? RPAREN
-  | LPAREN composite* RPAREN
-  | var=tomIdentifier STAR?
-  | constant
-  | UNDERSCORE
-  | expression //java
-  ;
+    : fsym=tomJavaIdentifier STAR? LPAREN (composite (COMMA composite)*)? RPAREN
+    | LPAREN sub=composite RPAREN
+    | var=tomJavaIdentifier STAR?
+    | constant
+    | UNDERSCORE
+    | composite bop='.'
+      (/*javaIdentifier
+      | THIS
+      | NEW nonWildcardTypeArguments? innerCreator
+      | SUPER superSuffix*/
+      composite
+      | explicitGenericInvocation
+      )
+    | composite '[' composite ']'
+    | NEW creator
+    | LPAREN typeType RPAREN composite
+    | composite postfix=('++' | '--')
+    | prefix=('+'|'-'|'++'|'--') composite
+    | prefix=('~'|'!') composite
+    | composite bop=('*'|'/'|'%') composite
+    | composite bop=('+'|'-') composite
+    | composite ('<' '<' | '>' '>' '>' | '>' '>') composite
+    | composite bop=('<=' | '>=' | '>' | '<') composite
+    | composite bop=INSTANCEOF typeType
+    | composite bop=('==' | '!=') composite
+    | composite bop='&' composite
+    | composite bop='^' composite
+    | composite bop='|' composite
+    | composite bop='&&' composite
+    | composite bop='||' composite
+    | composite bop='?' composite ':' composite
+    | <assoc=right> composite
+      bop=('=' | '+=' | '-=' | '*=' | '/=' | '&=' | '|=' | '^=' | '>>=' | '>>>=' | '<<=' | '%=')
+      composite
+    | lambdaExpression // Java8 TODO: lambdaComposite?
+
+    // Java 8 methodReference
+    | composite '::' typeArguments? javaIdentifier
+    | typeType '::' (typeArguments? javaIdentifier | NEW)
+    | classType '::' typeArguments? NEW
+    ;
+
 
 pattern
   : tomIdentifier AT pattern 
@@ -985,5 +1040,78 @@ tomIdentifier
   | VOLATILE
   | WHILE
   | BOOL_LITERAL
+  | NULL_LITERAL
+  | IDENTIFIER
+  ;
+
+tomJavaIdentifier
+  : IS_FSYM
+  | IS_SORT
+  | MAKE
+  | MAKE_EMPTY
+  | MAKE_APPEND
+  | MAKE_INSERT
+  | GET_SLOT
+  | GET_DEFAULT
+  | GET_ELEMENT
+  | GET_HEAD
+  | GET_TAIL
+  | GET_SIZE
+  | IS_EMPTY
+  | IMPLEMENT
+  | EQUALS
+  | VISIT
+  | WHEN
+  | ABSTRACT
+  | ASSERT
+  | BOOLEAN
+  | BREAK
+  | BYTE
+  | CASE
+  | CATCH
+  | CHAR
+  | CLASS
+  | CONST
+  | CONTINUE
+  | DEFAULT
+  | DO
+  | DOUBLE
+  | ELSE
+  | ENUM
+  | FINAL
+  | FINALLY
+  | FLOAT
+  | FOR
+  | IF
+  | GOTO
+  | IMPLEMENTS
+  | IMPORT
+  | INSTANCEOF
+  | INT
+  | INTERFACE
+  | LONG
+  | NATIVE
+  | NEW
+  | PACKAGE
+  | PRIVATE
+  | PROTECTED
+  | PUBLIC
+  | RETURN
+  | SHORT
+  | STATIC
+  | STRICTFP
+  | SUPER
+  | SWITCH
+  | SYNCHRONIZED
+  | THIS
+  | THROW
+  | THROWS
+  | TRANSIENT
+  | TRY
+  | VOID
+  | VOLATILE
+  | WHILE
+  | BOOL_LITERAL
+  | NULL_LITERAL
   | IDENTIFIER
   ;
