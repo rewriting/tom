@@ -921,9 +921,11 @@ public class CstBuilder extends TomJavaParserBaseListener {
 
   /*
    * bqcomposite
-   *   BQUOTE fsym=tomIdentifier LBRACK (pairSlotBqterm (COMMA pairSlotBqterm)*)? RBRACK 
-   *  | BQUOTE composite
-   *  ;
+   *   : BQUOTE fsym=tomIdentifier LBRACK (pairSlotBqterm (COMMA pairSlotBqterm)*)? RBRACK 
+   *   | BQUOTE fsym=tomIdentifier LPAREN (composite (COMMA composite)*)? RPAREN
+   *   | BQUOTE LPAREN sub=composite RPAREN
+   *   | BQUOTE var=tomIdentifier STAR?
+   *   ;
    */
   public void exitBqcomposite(TomJavaParser.BqcompositeContext ctx) {
     CstOptionList optionList = `ConcCstOption(extractOption(ctx.getStart()));
@@ -931,17 +933,24 @@ public class CstBuilder extends TomJavaParserBaseListener {
     if(ctx.fsym != null && ctx.LBRACK() != null) {
       CstPairSlotBQTermList args = buildCstPairSlotBQTermList(ctx.pairSlotBqterm());
       res = `Cst_BQTermToBlock(Cst_BQRecordAppl(optionList,ctx.fsym.getText(),args));
-    } else {
-      res = `Cst_BQTermToBlock((CstBQTerm)getValue(ctx.composite()));
+    } else if(ctx.fsym != null && ctx.LPAREN() != null) {
+      CstBQTermList args = buildCstBQTermList(ctx.composite());
+      res = `Cst_BQTermToBlock(Cst_BQAppl(optionList,ctx.fsym.getText(),args));
+    } else if(ctx.var != null && ctx.STAR() == null) {
+      res = `Cst_BQTermToBlock(Cst_BQVar(optionList,ctx.var.getText(),Cst_TypeUnknown()));
+    } else if(ctx.var != null && ctx.STAR() != null) {
+      res = `Cst_BQTermToBlock(Cst_BQVarStar(optionList,ctx.var.getText(),Cst_TypeUnknown()));
+    } else if (ctx.sub != null){
+      res = `Cst_BQTermToBlock((CstBQTerm)getValue(ctx.sub));
     }
     setValue("exitBqcomposite",ctx,res);
   }
 
   /*
    * composite
-   *   : fsym=tomJavaIdentifier STAR? LPAREN (composite (COMMA composite)*)? RPAREN
+   *   : fsym=composite LPAREN (args+=composite (COMMA args+=composite)*)? RPAREN
    *   | LPAREN sub=composite RPAREN
-   *   | var=tomJavaIdentifier STAR?
+   *   | var=tomIdentifier STAR?
    *   | constant
    *   | UNDERSCORE
    *   | [...]
@@ -953,15 +962,19 @@ public class CstBuilder extends TomJavaParserBaseListener {
     CstType type = `Cst_TypeUnknown();
 
     if(ctx.fsym != null) {
-      CstBQTermList args = buildCstBQTermList(ctx.composite());
-      if(ctx.STAR() == null) {
-        res = `Cst_BQAppl(optionList,ctx.fsym.getText(),args);
-      } else {
+      CstBQTerm fsym = (CstBQTerm)getValue(ctx.fsym);
+      CstBQTermList args = buildCstBQTermList(ctx.args);
+      %match(fsym) {
+        Cst_BQVar(varOptionList,var,_) -> {
+          res = `Cst_BQAppl(varOptionList,var,args);
+        }
+      }
+      if(res == null) {
         CstOptionList optionList1 = `ConcCstOption(extractOption(ctx.LPAREN().getSymbol()));
         CstOptionList optionList2 = `ConcCstOption(extractOption(ctx.RPAREN().getSymbol()));
         
         res = `Cst_BQComposite(optionList, ConcCstBQTerm(
-            Cst_BQVarStar(optionList,ctx.fsym.getText(),type),
+            fsym,
             Cst_ITL(optionList1,ctx.LPAREN().getText()),
             args*,
             Cst_ITL(optionList2,ctx.RPAREN().getText())
@@ -971,25 +984,12 @@ public class CstBuilder extends TomJavaParserBaseListener {
       CstOptionList optionList1 = `ConcCstOption(extractOption(ctx.LPAREN().getSymbol()));
       CstOptionList optionList2 = `ConcCstOption(extractOption(ctx.RPAREN().getSymbol()));
       CstBQTerm sub = (CstBQTerm)getValue(ctx.sub);
-      
-      boolean isSubComposite = false;
-      %match(sub) {
-        Cst_BQComposite(_,subList) -> {
-          isSubComposite = true;
-          res = `Cst_BQComposite(optionList, ConcCstBQTerm(
-              Cst_ITL(optionList1,ctx.LPAREN().getText()),
-              subList*,
-              Cst_ITL(optionList2,ctx.RPAREN().getText())
-              ));
-        }
-      }
-      if(!isSubComposite) {
-        res = `Cst_BQComposite(optionList, ConcCstBQTerm(
-            Cst_ITL(optionList1,ctx.LPAREN().getText()),
-            sub,
-            Cst_ITL(optionList2,ctx.RPAREN().getText())
-            ));
-      }
+
+      res = `Cst_BQComposite(optionList, ConcCstBQTerm(
+          Cst_ITL(optionList1,ctx.LPAREN().getText()),
+          sub,
+          Cst_ITL(optionList2,ctx.RPAREN().getText())
+          ));
     } else if(ctx.var != null && ctx.STAR() == null) {
       res = `Cst_BQVar(optionList,ctx.var.getText(),type);
     } else if(ctx.var != null && ctx.STAR() != null) {
@@ -1001,21 +1001,11 @@ public class CstBuilder extends TomJavaParserBaseListener {
       res = `Cst_BQUnderscore();
     } else {
       CstBQTermList bqList = `ConcCstBQTerm();
-      
+
       for(int i = 0; i < ctx.getChildCount(); i++) {
         if(ctx.getChild(i) instanceof TomJavaParser.CompositeContext) {
           CstBQTerm child = (CstBQTerm)getValue(ctx.getChild(i));
-
-          boolean isChildComposite = false;
-          %match(child) {
-            Cst_BQComposite(_,childList) -> {
-              isChildComposite = true;
-              bqList = `ConcCstBQTerm(bqList*, childList*);
-            }
-          }
-          if(!isChildComposite) {
-            bqList = `ConcCstBQTerm(bqList*, child);
-          }
+          bqList = `ConcCstBQTerm(bqList*, child);
         } else if(ctx.getChild(i).getPayload() instanceof Token) {
           Token token = (Token) ctx.getChild(i).getPayload();
           CstOptionList tokenOptionList = `ConcCstOption(extractOption(token));

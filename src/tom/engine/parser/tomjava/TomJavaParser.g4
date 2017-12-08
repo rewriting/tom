@@ -809,21 +809,23 @@ pairSlotBqterm
 // used as island nd in metaquote
 bqcomposite
   : BQUOTE fsym=tomIdentifier LBRACK (pairSlotBqterm (COMMA pairSlotBqterm)*)? RBRACK 
-  | BQUOTE composite
+  | BQUOTE fsym=tomIdentifier LPAREN (composite (COMMA composite)*)? RPAREN
+  | BQUOTE LPAREN sub=composite RPAREN
+  | BQUOTE var=tomIdentifier STAR?
   ;
 
 composite
-    : fsym=tomJavaIdentifier STAR? LPAREN (composite (COMMA composite)*)? RPAREN
+    : fsym=composite LPAREN (args+=composite (COMMA args+=composite)*)? RPAREN
     | LPAREN sub=composite RPAREN
-    | var=tomJavaIdentifier STAR?
+    | var=tomIdentifier STAR?
     | constant
     | UNDERSCORE
+    | javaIdentifier
     | composite bop='.'
-      (/*javaIdentifier
+      (javaIdentifier
       | THIS
       | NEW nonWildcardTypeArguments? innerCreator
-      | SUPER superSuffix*/
-      composite
+      | SUPER superSuffix
       | explicitGenericInvocation
       )
     | composite '[' composite ']'
@@ -991,78 +993,6 @@ getDefault
 //IDENTIFIER or a Java Keyword
 tomIdentifier
   : ABSTRACT
-  | ASSERT
-  | BOOLEAN
-  | BREAK
-  | BYTE
-  | CASE
-  | CATCH
-  | CHAR
-  | CLASS
-  | CONST
-  | CONTINUE
-  | DEFAULT
-  | DO
-  | DOUBLE
-  | ELSE
-  | ENUM
-  | FINAL
-  | FINALLY
-  | FLOAT
-  | FOR
-  | IF
-  | GOTO
-  | IMPLEMENTS
-  | IMPORT
-  | INSTANCEOF
-  | INT
-  | INTERFACE
-  | LONG
-  | NATIVE
-  | NEW
-  | PACKAGE
-  | PRIVATE
-  | PROTECTED
-  | PUBLIC
-  | RETURN
-  | SHORT
-  | STATIC
-  | STRICTFP
-  | SUPER
-  | SWITCH
-  | SYNCHRONIZED
-  | THIS
-  | THROW
-  | THROWS
-  | TRANSIENT
-  | TRY
-  | VOID
-  | VOLATILE
-  | WHILE
-  | BOOL_LITERAL
-  | NULL_LITERAL
-  | IDENTIFIER
-  ;
-
-tomJavaIdentifier
-  : IS_FSYM
-  | IS_SORT
-  | MAKE
-  | MAKE_EMPTY
-  | MAKE_APPEND
-  | MAKE_INSERT
-  | GET_SLOT
-  | GET_DEFAULT
-  | GET_ELEMENT
-  | GET_HEAD
-  | GET_TAIL
-  | GET_SIZE
-  | IS_EMPTY
-  | IMPLEMENT
-  | EQUALS
-  | VISIT
-  | WHEN
-  | ABSTRACT
   | ASSERT
   | BOOLEAN
   | BREAK
