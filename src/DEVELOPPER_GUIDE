@@ -18,6 +18,8 @@ The compiler is composed of several plugins, which are executed in the following
   verify some syntactic properties an raise an error message when an error is
   detected
 
+- Transformer
+
 - Desugarer
   update the SymbolTable. For each symbol:
     add default IsFsym and default Make to symbols
@@ -28,8 +30,6 @@ The compiler is composed of several plugins, which are executed in the following
     replaces 'TermAppl' by its 'RecordAppl' form
     replaces 'XMLAppl' by its 'RecordAppl' form
     replaces 'BQRecordAppl' by its 'BQAppl' form
-
-- Transformer
 
 - Typer
   update the SymbolTable. For each symbol and for the input term:
@@ -104,8 +104,6 @@ The compiler is composed of several plugins, which are executed in the following
   - use abstraction to compile non-linear variables
   - transform AC matching into A matching when the pattern is reduced to 
     an empty-list or a single variable
-
-
 
 - Optimizer
 

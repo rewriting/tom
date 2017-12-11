@@ -1855,10 +1855,11 @@ matchBlock :
             errorFound = (errorFound || detectFail(`tConstraint));
             break matchBlock;
           }
-          _ << tConstraint -> {
+          /*_ << tConstraint -> {
             simplifiedtCList = `concTypeConstraint(tConstraint,simplifiedtCList*);
-          }
+          }*/
         }
+        simplifiedtCList = `concTypeConstraint(tConstraint,simplifiedtCList*);
       }
     }
     if (errorFound) { 

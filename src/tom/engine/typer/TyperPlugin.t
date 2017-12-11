@@ -94,6 +94,8 @@ public class TyperPlugin extends TomGenericPlugin {
   private KernelTyper kernelTyper;
   private NewKernelTyper newKernelTyper;
 
+  private boolean tomjavaParser;
+
   /** Constructor*/
   public TyperPlugin() {
     super("TyperPlugin");
@@ -109,6 +111,8 @@ public class TyperPlugin extends TomGenericPlugin {
     boolean intermediate = getOptionBooleanValue("intermediate");
     boolean oldtyper = getOptionBooleanValue("oldtyper");
     boolean newtyper = getOptionBooleanValue("newtyper");
+    
+    this.tomjavaParser = getOptionBooleanValue("tomjava");
 
     kernelTyper.setSymbolTable(getStreamManager().getSymbolTable());
     newKernelTyper.setSymbolTable(getStreamManager().getSymbolTable()); 
@@ -334,13 +338,18 @@ public class TyperPlugin extends TomGenericPlugin {
                 SlotList newArgs = `concSlot();
                 String substring = `tomName.substring(1,`tomName.length()-1);
                 //System.out.println("bingo -> " + substring);
-                substring = substring.replace("\\'","'"); // replace backslash-quote by quote
-                substring = substring.replace("\\\\","\\"); // replace backslash-backslash by backslash
+                  substring = substring.replace("\\'","'"); // replace backslash-quote by quote
+                  substring = substring.replace("\\\\","\\"); // replace backslash-backslash by backslash
                 //System.out.println("after encoding -> " + substring);
 
                 for(int i=substring.length()-1 ; i>=0 ;  i--) {
-                  char c = substring.charAt(i);
-                  String newName = "'" + c + "'";
+                  String sc = substring.substring(i,i+1);
+                  if(tomjavaParser) {
+                    // the order is important
+                    sc = sc.replace("\\","\\\\"); // replace backslash by backslash-backslash
+                    sc = sc.replace("'","\\'"); // replace quote by backslash-quote
+                  }
+                  String newName = "'" + sc + "'";
                   TomSymbol newSymbol = stringSymbol.setAstName(`Name(newName));
                   getSymbolTable().putSymbol(newName,newSymbol);
 

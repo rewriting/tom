@@ -146,6 +146,11 @@ public class TestMatch {
 				match1(factory.parse(TEST[i].question)),
 				factory.parse(TEST[i].answer)
 				);
+			assertSame(
+				"TestMatch1 expected "+TEST[i].answer+" for match1bis("+TEST[i].question+")",
+				match1bis(factory.parse(TEST[i].question)),
+				factory.parse(TEST[i].answer)
+				);
 		}
   }
 
@@ -156,6 +161,18 @@ public class TestMatch {
       h(f(x),f(x))      -> { return pattern2; }
       h(f(f(x)),g(_y,x)) -> { return pattern3; }
       h(x,g(x,x))       -> { return pattern4; }
+    }
+    return res;
+  }
+
+  public ATerm match1bis(ATerm t) {
+    ATerm res = fail;
+    %match {
+      g(x,x) << t             -> { return pattern1; }
+      h(f(x),f(x)) << t       -> { return pattern2; }
+      h(f(f(x)),g(_y,x)) << t -> { return pattern3; }
+      h(x,g(x,x)) << t        -> { return pattern4; }
+      _ << t                  -> { return res; }
     }
     return res;
   }
