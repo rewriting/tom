@@ -948,7 +948,7 @@ public class CstBuilder extends TomJavaParserBaseListener {
 
   /*
    * composite
-   *   : fsym=composite LPAREN (args+=composite (COMMA args+=composite)*)? RPAREN
+   *   : fsym=tomIdentifier LPAREN (composite (COMMA composite)*)? RPAREN
    *   | LPAREN sub=composite RPAREN
    *   | var=tomIdentifier STAR?
    *   | constant
@@ -962,24 +962,8 @@ public class CstBuilder extends TomJavaParserBaseListener {
     CstType type = `Cst_TypeUnknown();
 
     if(ctx.fsym != null) {
-      CstBQTerm fsym = (CstBQTerm)getValue(ctx.fsym);
-      CstBQTermList args = buildCstBQTermList(ctx.args);
-      %match(fsym) {
-        Cst_BQVar(varOptionList,var,_) -> {
-          res = `Cst_BQAppl(varOptionList,var,args);
-        }
-      }
-      if(res == null) {
-        CstOptionList optionList1 = `ConcCstOption(extractOption(ctx.LPAREN().getSymbol()));
-        CstOptionList optionList2 = `ConcCstOption(extractOption(ctx.RPAREN().getSymbol()));
-        
-        res = `Cst_BQComposite(optionList, ConcCstBQTerm(
-            fsym,
-            Cst_ITL(optionList1,ctx.LPAREN().getText()),
-            args*,
-            Cst_ITL(optionList2,ctx.RPAREN().getText())
-            ));
-      }
+      CstBQTermList args = buildCstBQTermList(ctx.composite());
+      res = `Cst_BQAppl(optionList,ctx.fsym.getText(),args);
     } else if(ctx.sub != null) {
       CstOptionList optionList1 = `ConcCstOption(extractOption(ctx.LPAREN().getSymbol()));
       CstOptionList optionList2 = `ConcCstOption(extractOption(ctx.RPAREN().getSymbol()));

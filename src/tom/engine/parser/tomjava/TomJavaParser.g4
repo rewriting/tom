@@ -815,12 +815,13 @@ bqcomposite
   ;
 
 composite
-    : fsym=composite LPAREN (args+=composite (COMMA args+=composite)*)? RPAREN
+    : fsym=tomIdentifier LPAREN (composite (COMMA composite)*)? RPAREN
     | LPAREN sub=composite RPAREN
     | var=tomIdentifier STAR?
     | constant
     | UNDERSCORE
     | javaIdentifier
+    | composite LPAREN (composite (COMMA composite)*)? RPAREN
     | composite bop='.'
       (javaIdentifier
       | THIS
