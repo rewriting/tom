@@ -55,7 +55,6 @@ public abstract class AbstractGenerator {
   protected OptionManager optionManager;
   protected SymbolTable symbolTable;
   protected boolean prettyMode;
-  protected boolean tomjavaParser;
 
   public AbstractGenerator(OutputCode output, OptionManager optionManager,
                               SymbolTable symbolTable) {
@@ -63,7 +62,6 @@ public abstract class AbstractGenerator {
     this.optionManager = optionManager;
     this.output = output;
     this.prettyMode = ((Boolean)optionManager.getOptionValue("pretty")).booleanValue();
-    this.tomjavaParser = ((Boolean)optionManager.getOptionValue("tomjava")).booleanValue();
   }
 
   protected SymbolTable getSymbolTable(String moduleName) {
@@ -168,19 +166,6 @@ public abstract class AbstractGenerator {
   protected void generateBQTerm(int deep, BQTerm subject, String moduleName) throws IOException {
     %match (subject) {
       BuildConstant[AstName=Name(name)] -> {
-
-        if(`name.charAt(0)=='\'' && `name.charAt(`name.length()-1)=='\'') {
-          String substring = `name.substring(1,`name.length()-1);
-          //System.out.println("BuildConstant: " + substring);
-	  if(!tomjavaParser) {
-	    // the order is important
-	    substring = substring.replace("\\","\\\\"); // replace backslash by backslash-backslash
-	    substring = substring.replace("'","\\'"); // replace quote by backslash-quote
-	  }
-          output.write("'" + substring + "'");
-          return;
-        }
-
         output.write(`name);
         return;
       }

@@ -94,8 +94,6 @@ public class TyperPlugin extends TomGenericPlugin {
   private KernelTyper kernelTyper;
   private NewKernelTyper newKernelTyper;
 
-  private boolean tomjavaParser;
-
   /** Constructor*/
   public TyperPlugin() {
     super("TyperPlugin");
@@ -112,8 +110,6 @@ public class TyperPlugin extends TomGenericPlugin {
     boolean oldtyper = getOptionBooleanValue("oldtyper");
     boolean newtyper = getOptionBooleanValue("newtyper");
     
-    this.tomjavaParser = getOptionBooleanValue("tomjava");
-
     kernelTyper.setSymbolTable(getStreamManager().getSymbolTable());
     newKernelTyper.setSymbolTable(getStreamManager().getSymbolTable()); 
     newKernelTyper.setCurrentInputFileName(getStreamManager().getInputFileName()); 
@@ -337,19 +333,11 @@ public class TyperPlugin extends TomGenericPlugin {
               if(`tomName.charAt(0)=='\'' && `tomName.charAt(`tomName.length()-1)=='\'') {
                 SlotList newArgs = `concSlot();
                 String substring = `tomName.substring(1,`tomName.length()-1);
-                //System.out.println("bingo -> " + substring);
-                  substring = substring.replace("\\'","'"); // replace backslash-quote by quote
-                  substring = substring.replace("\\\\","\\"); // replace backslash-backslash by backslash
-                //System.out.println("after encoding -> " + substring);
+                
+                ArrayList<String> charList = buildCharList(substring);
 
-                for(int i=substring.length()-1 ; i>=0 ;  i--) {
-                  String sc = substring.substring(i,i+1);
-                  if(tomjavaParser) {
-                    // the order is important
-                    sc = sc.replace("\\","\\\\"); // replace backslash by backslash-backslash
-                    sc = sc.replace("'","\\'"); // replace quote by backslash-quote
-                  }
-                  String newName = "'" + sc + "'";
+                for(int i=charList.size()-1 ; i>=0 ;  i--) {
+                  String newName = charList.get(i);
                   TomSymbol newSymbol = stringSymbol.setAstName(`Name(newName));
                   getSymbolTable().putSymbol(newName,newSymbol);
 
@@ -378,6 +366,69 @@ public class TyperPlugin extends TomGenericPlugin {
         }
         return `concSlot(head,tail*);
       }
+    }
+    
+    /*
+     * Separate characters from the content of an ill-formed char: 'abc'
+     * taking into account escape sequences
+     */
+    private ArrayList<String> buildCharList(String substring) {
+      String cs = null;
+      boolean isEscapeSequence = false;
+      ArrayList<String> charList = new ArrayList<String>();
+      for(int i = 0; i < substring.length(); i++) {
+        char c = substring.charAt(i);
+        if(isEscapeSequence) {
+          if(cs.length() < 3) {
+            cs += c;
+            if(c == 'b' || c == 't' || c == 'n' || c == 'f' || c== 'r' || c == '\'' || c == '\\') {
+              cs += '\'';
+              charList.add(cs);
+              isEscapeSequence = false;
+            }
+          } else {
+            char escapeChar = cs.charAt(2);
+            if(escapeChar == 'u') {
+              cs += c;
+              if(cs.length() == 7) {
+                cs += '\'';
+                charList.add(cs);
+                isEscapeSequence = false;
+              }
+            }
+            else if(escapeChar >= '0' && escapeChar <= '7') {
+              if(c >= '0' && c <= '7') {
+                cs += c;
+                if(escapeChar <= '3' ? cs.length() == 5 : cs.length() == 4) {
+                  cs += '\'';
+                  charList.add(cs);
+                  isEscapeSequence = false;
+                }
+              } else {
+                cs += '\'';
+                charList.add(cs);
+                isEscapeSequence = false;
+                charList.add("'" + c + '\'');
+              }
+            }
+          }
+        } else {
+          cs = "'" + c;
+          if(c == '\\') {
+            isEscapeSequence = true;
+          } else {
+            cs += '\'';
+            charList.add(cs);
+          }
+        }
+      }
+      if(isEscapeSequence) {
+        //In case there's still an unfinished escape sequence in contruction
+        cs += '\'';
+        charList.add(cs);
+      }
+      
+      return charList;
     }
 
     /* utilities for new typer */
