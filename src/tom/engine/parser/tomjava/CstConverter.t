@@ -162,7 +162,7 @@ public class CstConverter {
     visit CstBQTerm {
       Cst_BQComposite(option,ConcCstBQTerm(C1*,Cst_BQComposite(_,args),C2*)) -> { 
         /* flatten Cst_BQComposite */
-        return `Cst_BQComposite(option,ConcCstBQTerm(C1*,args*,C2*));
+        return `Cst_BQComposite(option,simplifyCstBQTermList(ConcCstBQTerm(C1*,args*,C2*)));
       }
     }
 
@@ -337,7 +337,6 @@ public class CstConverter {
         if(s != null) {
           return `simplifyCstBQTermList(ConcCstBQTerm(head*,Cst_ITL(ConcCstOption(Cst_OriginTracking(name,lmin1,cmin1,lmax2,cmax2)),s),tail*));
         }
-
       }
     }
     return l;
