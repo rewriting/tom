@@ -231,7 +231,7 @@ public class CstConverter {
     // parse the file
     try {
       tom.engine.parser.tomjava.TomParser parser = new tom.engine.parser.tomjava.TomParser(canonicalPath, getParserTool(), getStreamManager().getSymbolTable());
-    System.out.println("\tCstConverter.parseStream: " + canonicalPath);
+      //System.out.println("\tCstConverter.parseStream: " + canonicalPath);
       CstBlockList include = parser.parse(tomInput, parseLevel);
       return `Cst_AbstractBlock(include);
     } catch (Exception e) {
@@ -247,7 +247,16 @@ public class CstConverter {
    */
   private CstBlock gomFile(String currentFileName, CstNameList nameList, String gomCode, int initialGomLine) throws TomIncludeException {
     //System.out.println("gomCode: " + gomCode);
+    //System.out.println("initialGomLine: " + initialGomLine);
     //System.out.println("gomCode: " + nameList);
+
+    // add blank lines to synchronize line numbers
+    String newline = System.getProperty("line.separator");
+    for(int i=0 ; i< initialGomLine ; i++) {
+      gomCode = newline + gomCode;
+    }
+
+
     int nbOpts = nameList.length();
     String[] userOpts = new String[nbOpts];
     int i = 0;
