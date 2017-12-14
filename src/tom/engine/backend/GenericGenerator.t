@@ -218,6 +218,13 @@ public abstract class GenericGenerator extends AbstractGenerator {
         //System.out.println("bqt = " + bqt);
         boolean generatebqt = true;
         %match(bqt) {
+          BQDefault() -> {
+            // code for ast produced by antlr4 parser
+            TomSymbol tomSymbol = getSymbolTable(moduleName).getSymbolFromName(opname);
+            TomName slotName = TomBase.getSlotName(tomSymbol,index);
+            buildExpGetDefault(deep, opname, slotName.getString(), moduleName);
+            generatebqt = false;
+          }
           Composite(CompositeBQTerm(BQDefault()),_*) -> {
             TomSymbol tomSymbol = getSymbolTable(moduleName).getSymbolFromName(opname);
             TomName slotName = TomBase.getSlotName(tomSymbol,index);
