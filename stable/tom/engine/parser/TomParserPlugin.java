@@ -65,7 +65,9 @@ import org.antlr.v4.runtime.tree.*;
  * It get the input file from the TomStreamManger and parse it
  */
 public class TomParserPlugin extends TomGenericPlugin {
-        private static   tom.platform.adt.platformoption.types.PlatformOptionList  tom_append_list_concPlatformOption( tom.platform.adt.platformoption.types.PlatformOptionList l1,  tom.platform.adt.platformoption.types.PlatformOptionList  l2) {     if( l1.isEmptyconcPlatformOption() ) {       return l2;     } else if( l2.isEmptyconcPlatformOption() ) {       return l1;     } else if(  l1.getTailconcPlatformOption() .isEmptyconcPlatformOption() ) {       return  tom.platform.adt.platformoption.types.platformoptionlist.ConsconcPlatformOption.make( l1.getHeadconcPlatformOption() ,l2) ;     } else {       return  tom.platform.adt.platformoption.types.platformoptionlist.ConsconcPlatformOption.make( l1.getHeadconcPlatformOption() ,tom_append_list_concPlatformOption( l1.getTailconcPlatformOption() ,l2)) ;     }   }   private static   tom.platform.adt.platformoption.types.PlatformOptionList  tom_get_slice_concPlatformOption( tom.platform.adt.platformoption.types.PlatformOptionList  begin,  tom.platform.adt.platformoption.types.PlatformOptionList  end, tom.platform.adt.platformoption.types.PlatformOptionList  tail) {     if( (begin==end) ) {       return tail;     } else if( (end==tail)  && ( end.isEmptyconcPlatformOption()  ||  (end== tom.platform.adt.platformoption.types.platformoptionlist.EmptyconcPlatformOption.make() ) )) {       /* code to avoid a call to make, and thus to avoid looping during list-matching */       return begin;     }     return  tom.platform.adt.platformoption.types.platformoptionlist.ConsconcPlatformOption.make( begin.getHeadconcPlatformOption() ,( tom.platform.adt.platformoption.types.PlatformOptionList )tom_get_slice_concPlatformOption( begin.getTailconcPlatformOption() ,end,tail)) ;   }    
+     private static   tom.platform.adt.platformoption.types.PlatformOptionList  tom_append_list_concPlatformOption( tom.platform.adt.platformoption.types.PlatformOptionList l1,  tom.platform.adt.platformoption.types.PlatformOptionList  l2) {     if( l1.isEmptyconcPlatformOption() ) {       return l2;     } else if( l2.isEmptyconcPlatformOption() ) {       return l1;     } else if(  l1.getTailconcPlatformOption() .isEmptyconcPlatformOption() ) {       return  tom.platform.adt.platformoption.types.platformoptionlist.ConsconcPlatformOption.make( l1.getHeadconcPlatformOption() ,l2) ;     } else {       return  tom.platform.adt.platformoption.types.platformoptionlist.ConsconcPlatformOption.make( l1.getHeadconcPlatformOption() ,tom_append_list_concPlatformOption( l1.getTailconcPlatformOption() ,l2)) ;     }   }   private static   tom.platform.adt.platformoption.types.PlatformOptionList  tom_get_slice_concPlatformOption( tom.platform.adt.platformoption.types.PlatformOptionList  begin,  tom.platform.adt.platformoption.types.PlatformOptionList  end, tom.platform.adt.platformoption.types.PlatformOptionList  tail) {     if( (begin==end) ) {       return tail;     } else if( (end==tail)  && ( end.isEmptyconcPlatformOption()  ||  (end== tom.platform.adt.platformoption.types.platformoptionlist.EmptyconcPlatformOption.make() ) )) {       /* code to avoid a call to make, and thus to avoid looping during list-matching */       return begin;     }     return  tom.platform.adt.platformoption.types.platformoptionlist.ConsconcPlatformOption.make( begin.getHeadconcPlatformOption() ,( tom.platform.adt.platformoption.types.PlatformOptionList )tom_get_slice_concPlatformOption( begin.getTailconcPlatformOption() ,end,tail)) ;   }   
+
+
   
   /** some output suffixes */
   public static final String PARSED_SUFFIX = ".tfix.parsed";
@@ -73,8 +75,9 @@ public class TomParserPlugin extends TomGenericPlugin {
 
   /** the declared options string*/
   public static final PlatformOptionList PLATFORM_OPTIONS =
-     tom.platform.adt.platformoption.types.platformoptionlist.ConsconcPlatformOption.make( tom.platform.adt.platformoption.types.platformoption.PluginOption.make("parse", "", "Parser (activated by default)",  tom.platform.adt.platformoption.types.platformvalue.BooleanValue.make( tom.platform.adt.platformoption.types.platformboolean.True.make() ) , "") , tom.platform.adt.platformoption.types.platformoptionlist.ConsconcPlatformOption.make( tom.platform.adt.platformoption.types.platformoption.PluginOption.make("newparser", "np", "New Parser (not activated by default)",  tom.platform.adt.platformoption.types.platformvalue.BooleanValue.make( tom.platform.adt.platformoption.types.platformboolean.False.make() ) , "") , tom.platform.adt.platformoption.types.platformoptionlist.ConsconcPlatformOption.make( tom.platform.adt.platformoption.types.platformoption.PluginOption.make("printcst", "cst", "print post-parsing cst (only with new parser)",  tom.platform.adt.platformoption.types.platformvalue.BooleanValue.make( tom.platform.adt.platformoption.types.platformboolean.False.make() ) , "") , tom.platform.adt.platformoption.types.platformoptionlist.ConsconcPlatformOption.make( tom.platform.adt.platformoption.types.platformoption.PluginOption.make("printast", "ast", "print post-parsing ast",  tom.platform.adt.platformoption.types.platformvalue.BooleanValue.make( tom.platform.adt.platformoption.types.platformboolean.False.make() ) , "") 
-        , tom.platform.adt.platformoption.types.platformoptionlist.EmptyconcPlatformOption.make() ) ) ) ) 
+     tom.platform.adt.platformoption.types.platformoptionlist.ConsconcPlatformOption.make( tom.platform.adt.platformoption.types.platformoption.PluginOption.make("parse", "", "Parser (not activated by default)",  tom.platform.adt.platformoption.types.platformvalue.BooleanValue.make( tom.platform.adt.platformoption.types.platformboolean.True.make() ) , "") , tom.platform.adt.platformoption.types.platformoptionlist.ConsconcPlatformOption.make( tom.platform.adt.platformoption.types.platformoption.PluginOption.make("newparser", "np", "New Parser (not activated by default)",  tom.platform.adt.platformoption.types.platformvalue.BooleanValue.make( tom.platform.adt.platformoption.types.platformboolean.False.make() ) , "") , tom.platform.adt.platformoption.types.platformoptionlist.ConsconcPlatformOption.make( tom.platform.adt.platformoption.types.platformoption.PluginOption.make("tomjava", "tj", "Parser tailored for Tom+Java (activated by default)",  tom.platform.adt.platformoption.types.platformvalue.BooleanValue.make( tom.platform.adt.platformoption.types.platformboolean.False.make() ) , "") , tom.platform.adt.platformoption.types.platformoptionlist.ConsconcPlatformOption.make( tom.platform.adt.platformoption.types.platformoption.PluginOption.make("printcst", "cst", "print post-parsing cst (only with new parser)",  tom.platform.adt.platformoption.types.platformvalue.BooleanValue.make( tom.platform.adt.platformoption.types.platformboolean.False.make() ) , "") , tom.platform.adt.platformoption.types.platformoptionlist.ConsconcPlatformOption.make( tom.platform.adt.platformoption.types.platformoption.PluginOption.make("printast", "ast", "print post-parsing ast",  tom.platform.adt.platformoption.types.platformvalue.BooleanValue.make( tom.platform.adt.platformoption.types.platformboolean.False.make() ) , "") , tom.platform.adt.platformoption.types.platformoptionlist.EmptyconcPlatformOption.make() ) ) ) ) ) 
+
+
 
 
 
@@ -152,11 +155,12 @@ public class TomParserPlugin extends TomGenericPlugin {
     boolean java         = ((Boolean)getOptionManager().getOptionValue("jCode")).booleanValue();
     boolean eclipse      = ((Boolean)getOptionManager().getOptionValue("eclipse")).booleanValue();
     boolean newparser    = ((Boolean)getOptionManager().getOptionValue("newparser")).booleanValue();
+    boolean tomjava      = ((Boolean)getOptionManager().getOptionValue("tomjava")).booleanValue();
     boolean printcst     = ((Boolean)getOptionManager().getOptionValue("printcst")).booleanValue();
     boolean printast     = ((Boolean)getOptionManager().getOptionValue("printast")).booleanValue();
 
     SymbolTable symbolTable = getStreamManager().getSymbolTable();
-    if(newparser==false) {
+    if(newparser==false && tomjava==false) {
       /*
        * ANTLR2
        */
@@ -236,7 +240,7 @@ public class TomParserPlugin extends TomGenericPlugin {
           getStreamManager().getRawFileName()+ PARSED_TABLE_SUFFIX;
         Tools.generateOutput(outputFileName, symbolTable.toTerm().toATerm());
       }
-    } else {
+    } else if(newparser==true) { // && tomjava==false) {
       /*
        * ANTLR4
        */
@@ -302,6 +306,75 @@ public class TomParserPlugin extends TomGenericPlugin {
         TomMessage.error(getLogger(), currentFileName, -1,
             TomMessage.fileNotFound, e.getMessage());// TODO custom ErrMessage
       }
+    } else if(newparser==false && tomjava==true) {
+      /*
+       * ANTLR4 + JAVA GRAMMAR
+       */
+      try {
+
+        if(!currentFileName.equals("-")) {
+          // creating TomParserTool
+          this.parserTool = new TomParserTool(getStreamManager(),getOptionManager());
+
+          tom.engine.parser.tomjava.TomParser parser = new tom.engine.parser.tomjava.TomParser(currentFileName, getParserTool(), symbolTable);
+          ANTLRInputStream input = new ANTLRInputStream(currentReader);
+
+          System.out.print("tomjava antlr4: " + currentFileName);
+          long start = System.currentTimeMillis();
+          if(java) {
+            String packageName = parser.parseJavaPackage(input);
+            if(packageName.length() > 0) {
+              //System.out.println("set package: " + packageName);
+              // Update streamManager to take into account package information
+              getStreamManager().setPackagePath(packageName);
+            }
+          }
+
+          CstBlockList cst = parser.parse(input, tom.engine.parser.tomjava.TomParser.JAVA_TOP_LEVEL);
+          if(printcst) {
+            getParserTool().printTree(cst);
+          }
+          System.out.print("\tparsing + building cst:" + (System.currentTimeMillis()-start) + " ms");
+
+          start = System.currentTimeMillis();
+          tom.engine.parser.tomjava.AstBuilder astBuilder = new tom.engine.parser.tomjava.AstBuilder(getParserTool(),symbolTable);
+          Code code = astBuilder.convert(  tom.engine.adt.cst.types.cstprogram.Cst_Program.make(cst)  );
+          System.out.println("\tbuilding ast:" + (System.currentTimeMillis()-start) + " ms");
+
+          // System.out.println("ast = " + code);
+
+
+          setWorkingTerm(code);
+          /*
+           * we update codomains which are constrained by a symbolName
+           * (come from the %strategy operator)
+           */
+          Iterator it = symbolTable.keySymbolIterator();
+          while(it.hasNext()) {
+            String tomName = (String)it.next();
+            TomSymbol tomSymbol = getSymbolFromName(tomName);
+            //tomSymbol = symbolTable.updateConstrainedSymbolCodomain(tomSymbol, symbolTable);
+
+            if(printast) {
+              getParserTool().printTree(tomSymbol);
+            }
+          }
+
+          if(printast) {
+            getParserTool().printTree((Visitable)getWorkingTerm());
+          }
+        }
+        // verbose
+        TomMessage.info(getLogger(), currentFileName, getLineFromTomParser(),
+            TomMessage.tomParsingPhase,
+            Integer.valueOf((int)(System.currentTimeMillis()-startChrono)));
+      } catch(IOException e) {
+        TomMessage.error(getLogger(), currentFileName, -1,
+            TomMessage.fileNotFound, e.getMessage());// TODO custom ErrMessage
+      }
+
+    } else {
+      System.out.println("no active parser");
     }
 
     if(intermediate) {

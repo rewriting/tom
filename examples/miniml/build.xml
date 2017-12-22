@@ -11,7 +11,8 @@
     </taskdef>
     <tom.preset outputfile="${examples.gen}/${example}/Lambda.g"
                 import="${examples.gen}/${example}"
-                srcdir="${examples.dir}"> 
+                srcdir="${examples.dir}"
+                options="--newparser"> 
                 <include name="${example}/**/Lambda.g.t"/>
     </tom.preset>
     <antlr3 target="${examples.gen}/${example}/Lambda.g"

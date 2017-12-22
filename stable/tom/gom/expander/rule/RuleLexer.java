@@ -1,4 +1,4 @@
-// $ANTLR 3.2 Sep 23, 2009 12:02:23 /Users/pem/github/tom/src/tom/gom/expander/rule/Rule.g 2017-01-06 08:52:38
+// $ANTLR 3.2 Sep 23, 2009 12:02:23 /Users/pem/github/tom/src/tom/gom/expander/rule/Rule.g 2017-12-22 11:02:13
 
 package tom.gom.expander.rule;
 

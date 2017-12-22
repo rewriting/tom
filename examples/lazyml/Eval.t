@@ -132,13 +132,13 @@ public class Eval {
       RawLTerm rt = parser.lterm();
       LTerm crt = rt.convert();
       crt = PreProc.unfoldCases(crt);
-      RawTypeOfResult res = Typer.`typeOf(ctx,crt).export();
+      RawTypeOfResult res = Typer.typeOf(ctx,crt).export();
       %match(res) {
         RawPair(rawft,rawty) -> {
           System.out.println("\nparsed: " + 
-              Printer.`pretty(rawft) + " : " + Printer.`pretty(rawty));
+              Printer.pretty(`rawft) + " : " + Printer.pretty(`rawty));
           System.out.println("\njava translation :\n" + 
-              LazyCompiler.`compile(rawft));
+              LazyCompiler.compile(`rawft));
         }
       }
       System.out.println("\nnormal form : " + 

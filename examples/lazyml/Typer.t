@@ -16,7 +16,7 @@ public class Typer {
     %match(ty) {
       Atom(a) -> { return `Atom(a); }
       Arrow(a,b) -> { return `Arrow(replaceFreeTVars(a,free),replaceFreeTVars(b,free)); }
-      TypeVar(X) -> { if (((Collection)free).`contains(X)) return `TypeVar(X);
+      TypeVar(X) -> { if (((Collection)free).contains(`X)) return `TypeVar(X);
         else return `Atom("Foo");
       }
       Forall(Fa(X,a)) -> { return `Forall(Fa(X,replaceFreeTVars(a,TVarList(X,free*)))); }

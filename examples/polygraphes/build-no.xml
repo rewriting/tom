@@ -7,7 +7,8 @@
     <gomcompile/>
     <!-- build tom -->
     <tom.preset srcdir="${examples.dir}"
-                destdir="${examples.gen}">
+      destdir="${examples.gen}"
+      options="--newparser">
       <!-- stamp not yet ready for apigen list -->
       <include name="${example}/**/*.t"/>
       <exclude name="${example}/**/PolygraphesParser.g.t"/>

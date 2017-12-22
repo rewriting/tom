@@ -164,6 +164,7 @@ public abstract class AbstractGenerator {
    * 		The distance from the right side (allows the computation of the column number)
    */
   protected void generateBQTerm(int deep, BQTerm subject, String moduleName) throws IOException {
+    //System.out.println("subject = " + subject);
     %match (subject) {
       BuildConstant[AstName=Name(name)] -> {
         output.write(`name);

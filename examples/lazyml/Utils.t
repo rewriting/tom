@@ -18,7 +18,7 @@ public class Utils {
         return `TVarList(fa*,fb*);
       }
       TypeVar(X) -> { 
-        if (((Collection)free).`contains(X)) return `TVarList();
+        if (((Collection)free).contains(`X)) return `TVarList();
         else return `TVarList(X);
       }
       Forall(Fa(X,a)) -> { 
@@ -315,7 +315,7 @@ public class Utils {
 			FTApp(u,ty) -> {
 				%match(getType(c,u)) {
 					Forall(Fa(X,T)) -> {
-						return Typer.`substType(X,ty,T);
+						return Typer.substType(`X,`ty,`T);
 					}
 				}
 			}
@@ -338,7 +338,7 @@ public class Utils {
 				return `getType(Context(Jugement(x,ty1),c*),u);
 			} 
 			FVar(x) -> {
-				return Typer.`assoc(c,x);
+				return Typer.assoc(`c,`x);
 			}
 			FConstr(f,tys,_) -> {
         Range subject = Typer.assoc(c,`f);
@@ -364,7 +364,7 @@ public class Utils {
 				return `Atom("Character");
 			} 
 			FPrimFun(f,_) -> {
-				return Typer.`assoc(c,f).getra().getcodom();
+				return Typer.assoc(`c,`f).getra().getcodom();
 			}
 			FError(_) -> {
 				return null;

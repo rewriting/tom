@@ -540,8 +540,8 @@ public final class TomBase {
 
     }
     //System.out.println("getTermType error on term: " + t);
-    //throw new TomRuntimeException("getTermType error on term: " + t);
-    return `EmptyType();
+    throw new TomRuntimeException("getTermType error on term: " + t);
+    //return `EmptyType();
   }
 
   public static TomType getTermType(BQTerm t, SymbolTable symbolTable) {
@@ -563,7 +563,7 @@ public final class TomBase {
         return getSlotType(tomSymbol, `slotName);
       }
 
-      (BuildConstant|BuildTerm|BuildEmptyList|BuildConsList|BuildAppendList|BuildEmptyArray|BuildConsArray|BuildAppendArray)[AstName=Name(name)]
+      (BQAppl|BuildConstant|BuildTerm|BuildEmptyList|BuildConsList|BuildAppendList|BuildEmptyArray|BuildConsArray|BuildAppendArray)[AstName=Name(name)]
         -> {
           TomSymbol tomSymbol = symbolTable.getSymbolFromName(`name); 
           if(tomSymbol!=null) {
@@ -574,8 +574,8 @@ public final class TomBase {
         }
    }
     //System.out.println("getTermType error on term: " + t);
-    //throw new TomRuntimeException("getTermType error on term: " + t);
-    return `EmptyType();
+    throw new TomRuntimeException("getTermType error on term: " + t);
+    //return `EmptyType();
   }
 
   public static TomType getTermType(Expression t, SymbolTable symbolTable) {

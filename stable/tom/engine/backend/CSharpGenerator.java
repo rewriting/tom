@@ -70,7 +70,8 @@ public class CSharpGenerator extends CFamilyGenerator {
   }
 
 // ------------------------------------------------------------
-      
+  
+
 // ------------------------------------------------------------
 
   protected void buildExpBottom(int deep, TomType type, String moduleName) throws IOException {
@@ -124,8 +125,10 @@ public class CSharpGenerator extends CFamilyGenerator {
       // test if the argument is a Strategy
       { /* unamed block */{ /* unamed block */if ( (type instanceof tom.engine.adt.tomtype.types.TomType) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )type) instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) {if ( "Strategy".equals( (( tom.engine.adt.tomtype.types.TomType )type).getTomType() ) ) {
 
+
           stratChild.add(Integer.valueOf(index));
         }}}}}
+
 
 
 	    tomTypes = tomTypes.getTailconcTomType();
@@ -135,8 +138,10 @@ public class CSharpGenerator extends CFamilyGenerator {
     //write extends
 		{ /* unamed block */{ /* unamed block */if ( (extendsType instanceof tom.engine.adt.tomtype.types.TomType) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )extendsType) instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) {if ( ((( tom.engine.adt.tomtype.types.TargetLanguageType ) (( tom.engine.adt.tomtype.types.TomType )extendsType).getTlType() ) instanceof tom.engine.adt.tomtype.types.targetlanguagetype.EmptyTargetLanguageType) ) {
 
+
 				output.write(deep," : " +  (( tom.engine.adt.tomtype.types.TomType )extendsType).getTomType() );
 			}}}}}
+
 
     output.write(deep," {");
     int args = names.size();
@@ -238,14 +243,17 @@ public class CSharpGenerator extends CFamilyGenerator {
       matchBlock: {
         { /* unamed block */{ /* unamed block */if ( (localVar instanceof tom.engine.adt.code.types.BQTerm) ) {if ( ((( tom.engine.adt.code.types.BQTerm )localVar) instanceof tom.engine.adt.code.types.bqterm.BQVariable) ) {
 
+
             output.write(deep,TomBase.getTLType( (( tom.engine.adt.code.types.BQTerm )localVar).getAstType() ) + " ");
             generateBQTerm(deep,(( tom.engine.adt.code.types.BQTerm )localVar),moduleName);
             break matchBlock;
           }}}{ /* unamed block */if ( (localVar instanceof tom.engine.adt.code.types.BQTerm) ) {
 
+
             System.out.println("MakeFunction: strange term: " + localVar);
             throw new TomRuntimeException("MakeFunction: strange term: " + localVar);
           }}}
+
 
       }
       varList = varList.getTailconcBQTerm();

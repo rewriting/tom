@@ -38,7 +38,7 @@
       if(getEnvironment().getStatus() == Environment.SUCCESS) {
         getEnvironment().followPath(current.sub(p));
       } else {
-        //do not take in account the changes 
+        /* do not take in account the changes */
         getEnvironment().followPathLocal(current.sub(p));
       }
       return (InstructionList) getEnvironment().getSubject();
@@ -55,7 +55,7 @@
         getEnvironment().followPath(current.sub(p));
         return (InstructionList) getEnvironment().getSubject();
       } else {
-        //do not take in account the changes 
+        /* do not take in account the changes */
         getEnvironment().followPathLocal(current.sub(p));
       }
     }
@@ -72,7 +72,7 @@
             getEnvironment().followPath(current.sub(p));
             return (InstructionList) getEnvironment().getSubject();
           } else {
-            //do not take in account the changes 
+            /* do not take in account the changes */
             getEnvironment().followPathLocal(current.sub(p));
           }
         }
@@ -85,14 +85,14 @@
         getEnvironment().followPath(current.sub(p));
         return (InstructionList) getEnvironment().getSubject();
       } else {
-        //do not take in account the changes 
+        /* do not take in account the changes */
         getEnvironment().followPathLocal(current.sub(p));
       }
 
     }
 
-    // Visit the next instruction.
-    //only if the tail of the list is not empty
+    /* Visit the next instruction.
+       only if the tail of the list is not empty */
     ConsInstructionList(_,!InstructionList()) -> {
       getEnvironment().down(2);
       s.visit(getEnvironment());
@@ -123,7 +123,7 @@
       if(getEnvironment().getStatus() == Environment.SUCCESS) {
         getEnvironment().followPath(current.sub(p));
       } else {
-        //do not take in account the changes 
+        /* do not take in account the changes */
         getEnvironment().followPathLocal(current.sub(p));
       }         
       return (InstructionList) getEnvironment().getSubject();
@@ -139,7 +139,7 @@
       if(getEnvironment().getStatus() == Environment.SUCCESS) {
         getEnvironment().followPath(current.sub(p));
       } else {
-        //do not take in account the changes 
+        /* do not take in account the changes */
         getEnvironment().followPathLocal(current.sub(p));
       }         
     }
@@ -155,7 +155,7 @@
           if(getEnvironment().getStatus() == Environment.SUCCESS) {
             getEnvironment().followPath(current.sub(p));
           } else {
-            //do not take in account the changes 
+            /* do not take in account the changes */
             getEnvironment().followPathLocal(current.sub(p));
           }     
         }         
@@ -167,13 +167,13 @@
       if(getEnvironment().getStatus() == Environment.SUCCESS) {
         getEnvironment().followPath(current.sub(p));
       } else {
-        //do not take in account the changes 
+        /* do not take in account the changes */
         getEnvironment().followPathLocal(current.sub(p));
       }
     }
 
-    // Visit the next instruction.
-    //only if the tail of the list is not empty
+    /* Visit the next instruction.
+       only if the tail of the list is not empty */
     ConsInstructionList(_,!InstructionList()) -> {
       getEnvironment().down(2);
       s.visit(getEnvironment());

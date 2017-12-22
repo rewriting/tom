@@ -12,8 +12,10 @@
                                   
     <tom.preset outputfile="${examples.gen}/${example}/LambdaTermParser.g"
                 import="${examples.gen}/${example}"
-                srcdir="${examples.dir}"> 
+                srcdir="${examples.dir}" 
+                options="--newparser">
                 <include name="${example}/**/LambdaTermParser.g.t"/>
+                
     </tom.preset>
     <mkdir dir="${examples.gen}/${example}"/>
     <tomantlr target="${examples.gen}/${example}/LambdaTermParser.g"

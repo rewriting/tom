@@ -31,12 +31,12 @@ public class Main {
       crt = PreProc.unfoldCases(crt);
       //crt = PreProc.deforest(crt);
       //System.err.println("after deforestation:\n" + Printer.pretty(crt.export()));
-      TypeOfResult res = Typer.`typeOf(ctx,crt);
+      TypeOfResult res = Typer.typeOf(ctx,crt);
       %match(res) {
         Pair(ft,ty) -> {
-          System.err.println(Printer.`pretty(ty.export()));
-          //System.err.println(Printer.`pretty(ft.export()));
-          System.out.println(lazy ? LazyCompiler.`compile(ft.export()) : Compiler.`compile(ft.export()));
+          System.err.println(Printer.pretty(`ty.export()));
+          //System.err.println(Printer.pretty(ft.export()));
+          System.out.println(lazy ? LazyCompiler.compile(`ft.export()) : Compiler.compile(`ft.export()));
         }
       }
     } catch(Exception e) {

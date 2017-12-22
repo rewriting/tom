@@ -75,9 +75,9 @@ public class TomParserPlugin extends TomGenericPlugin {
   /** the declared options string*/
   public static final PlatformOptionList PLATFORM_OPTIONS =
     `concPlatformOption(
-        PluginOption("parse", "", "Parser (not activated by default)", BooleanValue(False()), ""),
+        PluginOption("parse", "", "Parser (not activated by default)", BooleanValue(True()), ""),
         PluginOption("newparser", "np", "New Parser (not activated by default)", BooleanValue(False()), ""),
-        PluginOption("tomjava", "tj", "Parser tailored for Tom+Java (activated by default)", BooleanValue(True()), ""),
+        PluginOption("tomjava", "tj", "Parser tailored for Tom+Java (activated by default)", BooleanValue(False()), ""),
         PluginOption("printcst", "cst", "print post-parsing cst (only with new parser)", BooleanValue(False()), ""),
         PluginOption("printast", "ast", "print post-parsing ast", BooleanValue(False()), "")
         );

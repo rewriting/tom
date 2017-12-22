@@ -36,14 +36,18 @@ grammar Lambda;
   }
 
   private RawLTerm convertInt(int i) {
-    if (i==0) return `RawConstr("O",EmptyRawLTList());
-    else return `RawConstr("S",
-        ConsRawLTList(convertInt(i-1),EmptyRawLTList()));
+    if (i==0) {
+      return `RawConstr("O",EmptyRawLTList());
+    } else { 
+      int n = i-1;
+      return `RawConstr("S", ConsRawLTList(convertInt(n),EmptyRawLTList()));
+    }
   }
 
   private int counter = 0;
   private RawLType freshTypeVar() {
-    return `RawTypeVar(counter++);
+    int n = counter++;
+    return `RawTypeVar(n);
   }
 }
 

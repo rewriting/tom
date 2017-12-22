@@ -243,11 +243,11 @@ public class PreProc {
       Let(letin(x@LVar(_,n),u@!Fix[],t)) -> { 
         if (`candidate(u) && (!`n.equals("foldr")) && (!`n.equals("build"))) {
           System.err.println("inlining " + `n);
-          return Eval.`substitute(t,x,u);
+          return Eval.substitute(`t,`x,`u);
         }
       }
-      App(Abs(lam(x,t)),u) -> { return Eval.`substitute(t,x,u); }
-      Case(t,r) -> { try {return Eval.`caseof(t,r);} catch (Exception e){} }
+      App(Abs(lam(x,t)),u) -> { return Eval.substitute(`t,`x,`u); }
+      Case(t,r) -> { try {return Eval.caseof(`t,`r);} catch (Exception e){} }
     }
   }
 
@@ -256,11 +256,11 @@ public class PreProc {
       Let(letin(x@LVar(_,n),u,t)) -> { 
         if (`n.equals("foldr") || `n.equals("build")) {
           System.err.println("inlining " + `n);
-          return Eval.`substitute(t,x,u); 
+          return Eval.substitute(`t,`x,`u); 
         }
       }
-      App(Abs(lam(x,t)),u) -> { return Eval.`substitute(t,x,u); }
-      Case(t,r) -> { try{return Eval.`caseof(t,r);} catch (Exception e){} }
+      App(Abs(lam(x,t)),u) -> { return Eval.substitute(`t,`x,`u); }
+      Case(t,r) -> { try{return Eval.caseof(`t,`r);} catch (Exception e){} }
     }
   }
 

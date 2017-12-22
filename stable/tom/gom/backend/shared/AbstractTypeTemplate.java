@@ -37,7 +37,9 @@ import tom.platform.OptionManager;
 public class AbstractTypeTemplate extends TemplateHookedClass {
   ClassNameList sortList;
 
-       
+  
+
+
   boolean maximalsharing;
 
   public AbstractTypeTemplate(File tomHomePath,
@@ -51,9 +53,11 @@ public class AbstractTypeTemplate extends TemplateHookedClass {
     this.maximalsharing = maximalsharing;
     { /* unamed block */{ /* unamed block */if ( (gomClass instanceof tom.gom.adt.objects.types.GomClass) ) {if ( ((( tom.gom.adt.objects.types.GomClass )gomClass) instanceof tom.gom.adt.objects.types.gomclass.AbstractTypeClass) ) {
 
+
         this.sortList =  (( tom.gom.adt.objects.types.GomClass )gomClass).getSortList() ;
         return;
       }}}}
+
 
     throw new GomRuntimeException(
         "Bad argument for AbstractTypeTemplate: " + gomClass);

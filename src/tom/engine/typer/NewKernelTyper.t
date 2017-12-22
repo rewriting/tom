@@ -122,6 +122,7 @@ public class NewKernelTyper {
    * @param bqTerm  the BQTerm requesting a type
    * @return        the type of the BQTerm
    */
+/*
   protected TomType getType(BQTerm bqTerm) {
     %match(bqTerm) {
       (BQVariable|BQVariableStar|FunctionCall)[AstType=aType] -> { return `aType; }
@@ -132,6 +133,7 @@ public class NewKernelTyper {
     } 
     throw new TomRuntimeException("getType(BQTerm): should not be here: " + bqTerm);
   }
+*/
 
   /**
    * The method <code>getType</code> gets the type of a term by consulting the
@@ -139,6 +141,7 @@ public class NewKernelTyper {
    * @param tTerm the TomTerm requesting a type
    * @return      the type of the TomTerm
    */
+/*
   protected TomType getType(TomTerm tTerm) {
     %match(tTerm) {
       AntiTerm[TomTerm=atomicTerm] -> { return getType(`atomicTerm); }
@@ -150,6 +153,7 @@ public class NewKernelTyper {
     } 
     throw new TomRuntimeException("getType(TomTerm): should not be here.");
   }
+*/
 
   /**
    * The method <code>getInfoFromTomTerm</code> creates a pair
@@ -167,7 +171,8 @@ public class NewKernelTyper {
         return `PairNameOptions(aName,optionList); 
       }
     } 
-    return `PairNameOptions(Name(""),concOption()); 
+    throw new TomRuntimeException("getInfoFromTomTerm: should not be here: " + tTerm);
+    //return `PairNameOptions(Name(""),concOption()); 
   }
 
   /**
@@ -185,8 +190,13 @@ public class NewKernelTyper {
       Composite(_*,CompositeBQTerm[term=cBQTerm],_*) -> {
         return getInfoFromBQTerm(`cBQTerm);
       }
+
+      (BuildConstant|BuildTerm|BuildEmptyList|BuildConsList|BuildAppendList|BuildEmptyArray|BuildConsArray|BuildAppendArray)[AstName=aName] -> {
+        return `PairNameOptions(aName,concOption()); 
+      }
     } 
-    return `PairNameOptions(Name(""),concOption()); 
+    throw new TomRuntimeException("getInfoFromTomBQTerm: should not be here: " + bqTerm);
+    //return `PairNameOptions(Name(""),concOption()); 
   }
 
   /**
@@ -328,7 +338,6 @@ public class NewKernelTyper {
    */
   protected TypeConstraintList addConstraint(TypeConstraint tConstraint, TypeConstraintList tCList) {
     TypeConstraint constraint = null;
-    TypeConstraint symmetryConstraint = constraint;
     TypeOptionList emptyOptionList = `concTypeOption();
     TargetLanguageType emptyTargetLanguageType = `EmptyTargetLanguageType();
     Info emptyInfo = `PairNameOptions(EmptyName(),concOption());
@@ -336,103 +345,61 @@ public class NewKernelTyper {
     %match(tConstraint) {
       Equation[Type1=type1,Type2=type2] -> {
         constraint         = `Equation(type1,type2,emptyInfo);
-        symmetryConstraint = `Equation(type2,type1,emptyInfo);
       }
       Equation[Type1=tVar@TypeVar[],Type2=Type[TomType=tType]] -> {
         constraint         = `Equation(tVar,Type(emptyOptionList,tType,emptyTargetLanguageType),emptyInfo);
-        symmetryConstraint = `Equation(Type(emptyOptionList,tType,emptyTargetLanguageType),tVar,emptyInfo);
       }
       Equation[Type1=Type[TomType=tType],Type2=tVar@TypeVar[]] -> {
         constraint         = `Equation(Type(emptyOptionList,tType,emptyTargetLanguageType),tVar,emptyInfo);
-        symmetryConstraint = `Equation(tVar,Type(emptyOptionList,tType,emptyTargetLanguageType),emptyInfo);
       }
 
       Equation[Type1=Type[TypeOptions=ol1,TomType=tType1],Type2=Type[TypeOptions=ol2,TomType=tType2]] -> {
         constraint         = `Equation(Type(ol1,tType1,emptyTargetLanguageType),
                                        Type(ol2,tType2,emptyTargetLanguageType),emptyInfo);
-        symmetryConstraint = `Equation(Type(ol2,tType2,emptyTargetLanguageType),
-                                       Type(ol1,tType1,emptyTargetLanguageType),emptyInfo);
       }
 
       Subtype[Type1=type1,Type2=type2] -> {
         constraint         = `Subtype(type1,type2,emptyInfo);
-        symmetryConstraint = constraint;
       }
       Subtype[Type1=type,Type2=Type[TypeOptions=ol,TomType=tType]] -> {
         constraint         = `Subtype(type,Type(ol,tType,emptyTargetLanguageType),emptyInfo);
-        symmetryConstraint = constraint;
       }
       Subtype[Type1=Type[TypeOptions=ol,TomType=tType],Type2=type] -> {
         constraint         = `Subtype(Type(ol,tType,emptyTargetLanguageType),type,emptyInfo);
-        symmetryConstraint = constraint;
       }
       Subtype[Type1=Type[TypeOptions=ol1,TomType=tType1],Type2=Type[TypeOptions=ol2,TomType=tType2]] -> {
         constraint         = `Subtype(Type(ol1,tType1,emptyTargetLanguageType),
                                       Type(ol2,tType2,emptyTargetLanguageType),emptyInfo);
-        symmetryConstraint = constraint;
       }
 
       (Equation|Subtype)[Type1=type,Type2=type] -> {
         // do not add tautology
         constraint         = null;
-        symmetryConstraint = constraint;
       }
       (Equation|Subtype)[Type1=EmptyType[],Type2=type2] -> {
         // do not add tautology
         constraint         = null;
-        symmetryConstraint = constraint;
       }
       (Equation|Subtype)[Type1=type1,Type2=EmptyType[]] -> {
         // do not add tautology
         constraint         = null;
-        symmetryConstraint = constraint;
       }
 
     }
 
-    if(constraint == null) {
-      //System.out.println("tConstraint = " + tConstraint);
-      //System.out.println("constraint = null");
-    }
-
-
-    TypeConstraintList result1 = null;
-    TypeConstraintList result2 = null;
-
-    
     if(constraint == null || constraintBag.contains(constraint)) {
-      result1 = tCList;
+      return tCList;
     } else {
       constraintBag.add(constraint);
-      constraintBag.add(symmetryConstraint);
-      result1 = `concTypeConstraint(tConstraint,tCList*);
+      %match(constraint) {
+        Equation(type1,type2,emptyInfo) -> {
+          constraintBag.add(`Equation(type2,type1,emptyInfo));
+        }
+      }
+
+      return `concTypeConstraint(tConstraint,tCList*);
     }
    
-    //----------------
-    /*
-    result2 = tCList;
-    if (!containsConstraint(tConstraint,tCList)) {
-      %match(tConstraint) {
-        (Equation|Subtype)[Type1=t1@!EmptyType(),Type2=t2@!EmptyType()] && (t1 != t2) -> { 
-            result2 = `concTypeConstraint(tConstraint,tCList*);
-          }
-      }
-    }
-
-    if(result1 != result2) {
-      System.out.println("***");
-      System.out.println("tConstraint = " + tConstraint);
-      System.out.println("constraint = " + constraint);
-      System.out.println("tCList = " + tCList);
-      System.out.println("bag = " + constraintBag);
-      System.out.println("result1 = " + result1);
-      System.out.println("result2 = " + result2);
-    }
-    */
-    //----------------
-
-    return result1;
-     
   }
 
 
@@ -553,7 +520,9 @@ public class NewKernelTyper {
   protected void resetVarList(TomList globalVarPatternList) {
     for(TomTerm tTerm: varPatternList.getCollectionconcTomTerm()) {
       %match(tTerm,globalVarPatternList,varList) {
-        test@(Variable|VariableStar)[AstName=aName],!concTomTerm(_*,test,_*),concBQTerm(x*,(BQVariable|BQVariableStar)[AstName=aName],y*)
+        test@(Variable|VariableStar)[AstName=aName],
+        !concTomTerm(_*,test,_*),
+        concBQTerm(x*,(BQVariable|BQVariableStar)[AstName=aName],y*)
           -> {
             //System.out.println("*** resetVarList remove: " + `aName);
             varList = `concBQTerm(x*,y*);
@@ -716,18 +685,18 @@ public class NewKernelTyper {
 
     visit Instruction {
       Match[ConstraintInstructionList=ciList,Options=optionList] -> {
-        BQTermList BQTList = nkt.varList;
+        /*BQTermList BQTList = nkt.varList;*/
         ConstraintInstructionList newCIList = nkt.inferConstraintInstructionList(`ciList);
-        nkt.varList = BQTList;
+        /*nkt.varList = BQTList;*/
         return `Match(newCIList,optionList);
       }      
     }
 
     visit TomVisit {
       VisitTerm[VNode=vNode,AstConstraintInstructionList=ciList,Options=optionList] -> {
-        BQTermList BQTList = nkt.varList;
+        /*BQTermList BQTList = nkt.varList;*/
         ConstraintInstructionList newCIList = nkt.inferConstraintInstructionList(`ciList);
-        nkt.varList = BQTList;
+        /*nkt.varList = BQTList;*/
         return `VisitTerm(vNode,newCIList,optionList);
       }
     }
@@ -746,7 +715,7 @@ public class NewKernelTyper {
           /* How many "AliasTo" constructors can concConstraint have? */
           concConstraint(AliasTo(boundTerm)) -> {
             nkt.equationConstraints =
-              nkt.addConstraint(`Equation(nkt.getType(boundTerm),aType,nkt.getInfoFromTomTerm(boundTerm)),nkt.equationConstraints); 
+              nkt.addConstraint(`Equation(TomBase.getTermType(boundTerm,nkt.symbolTable),aType,nkt.getInfoFromTomTerm(boundTerm)),nkt.equationConstraints); 
           }
         }
         return `var.setConstraints(`cList);
@@ -760,7 +729,7 @@ public class NewKernelTyper {
           /* How many "AliasTo" constructors can concConstraint have? */
           concConstraint(AliasTo(boundTerm)) -> {
             nkt.equationConstraints =
-              nkt.addConstraint(`Equation(nkt.getType(boundTerm),aType,nkt.getInfoFromTomTerm(boundTerm)),nkt.equationConstraints); 
+              nkt.addConstraint(`Equation(TomBase.getTermType(boundTerm,nkt.symbolTable),aType,nkt.getInfoFromTomTerm(boundTerm)),nkt.equationConstraints); 
           }
         }
         return `varStar.setConstraints(`cList);
@@ -797,7 +766,7 @@ public class NewKernelTyper {
           /* How many "AliasTo" constructors can concConstraint have? */
           concConstraint(AliasTo(boundTerm)) -> {
             nkt.equationConstraints =
-              nkt.addConstraint(`Equation(nkt.getType(boundTerm),codomain,nkt.getInfoFromTomTerm(boundTerm)),nkt.equationConstraints); 
+              nkt.addConstraint(`Equation(TomBase.getTermType(boundTerm,nkt.symbolTable),codomain,nkt.getInfoFromTomTerm(boundTerm)),nkt.equationConstraints); 
           }
         }
 
@@ -915,6 +884,19 @@ public class NewKernelTyper {
          ||
          concTomTerm(_*,(Variable|VariableStar)[AstName=aName,AstType=aType2@!aType1],_*) << varPatternList
         ) -> {
+          /* 
+           * this is a hack for the new parser which add more types in the AST 
+           */
+          %match(aType1, aType2) {
+            Type[], Type[] -> {
+              TomType newType = getUnknownFreshTypeVar();
+              subtypeConstraints =
+                addConstraint(`Subtype(aType1,newType,PairNameOptions(aName,optionList)),subtypeConstraints); 
+              subtypeConstraints =
+                addConstraint(`Subtype(aType2,newType,PairNameOptions(aName,optionList)),subtypeConstraints); 
+              return;
+            }
+          }
           equationConstraints =
             addConstraint(`Equation(aType1,aType2,PairNameOptions(aName,optionList)),equationConstraints); 
         }
@@ -981,6 +963,7 @@ public class NewKernelTyper {
    */
   private ConstraintInstructionList inferConstraintInstructionList(ConstraintInstructionList ciList) {
     ConstraintInstructionList newCIList = `concConstraintInstruction();
+    BQTermList BQTList = varList;
     for(ConstraintInstruction cInst:ciList.getCollectionconcConstraintInstruction()) {
       try {
         %match(cInst) {
@@ -1006,6 +989,7 @@ public class NewKernelTyper {
         throw new TomRuntimeException("inferConstraintInstructionList: failure on " + `cInst);
       }
     }
+    varList = BQTList;
     return newCIList.reverse();
   }
 
@@ -1056,8 +1040,8 @@ public class NewKernelTyper {
     %match(constraint) {
       MatchConstraint[Pattern=pattern,Subject=subject,AstType=aType] -> { 
         //System.out.println("inferConstraint l1 -- subject = " + `subject);
-        TomType tPattern = getType(`pattern);
-        TomType tSubject = getType(`subject);
+        TomType tPattern = TomBase.getTermType(`pattern,symbolTable);
+        TomType tSubject = TomBase.getTermType(`subject,symbolTable);
         if (tPattern == null || tPattern == `EmptyType()) {
           tPattern = getUnknownFreshTypeVar();
         }
@@ -1080,8 +1064,8 @@ public class NewKernelTyper {
       }
 
       NumericConstraint(left,right,kind) -> {
-        TomType tLeft = getType(`left);
-        TomType tRight = getType(`right);
+        TomType tLeft = TomBase.getTermType(`left,symbolTable);
+        TomType tRight = TomBase.getTermType(`right,symbolTable);
         if (tLeft == null || tLeft == `EmptyType()) {
           tLeft = getUnknownFreshTypeVar();
         }
@@ -1388,8 +1372,9 @@ public class NewKernelTyper {
                *        CompositeBQTerm(BQVariable(concOption(...),Name("n"),TypeVar("unknown type",0))),
                *        CompositeTL(ITL(".")),
                *        CompositeBQTerm(Composite(CompositeBQTerm(BQAppl(concOption(...),Name("getvalue"),concBQTerm())))))))
+              * PEM 19/12/2017: Composite(_*,_,_*,_,_*) -> { argType = `EmptyType(); }
                */
-              Composite(_*,_,_*,_,_*) -> { argType = `EmptyType(); }
+              Composite(_,_,_*) -> { argType = `EmptyType(); }
             }
             argTerm = `inferAllTypes(argTerm,argType);
             newBQTList = `concBQTerm(argTerm,newBQTList*);
@@ -1446,6 +1431,8 @@ public class NewKernelTyper {
 
         tVar@TypeVar[] << sType &&
           concTypeConstraint(_*,Equation[Type2=tVar,Info=info],_*) << equationConstraints -> {
+//System.out.println("checkAllPatterns tvar = " + `tVar);
+//System.out.println("checkAllPatterns eq = " + equationConstraints);
             `printErrorGuessMatch(info);
           } 
       }

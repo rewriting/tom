@@ -1,4 +1,4 @@
-// $ANTLR 3.2 Sep 23, 2009 12:02:23 /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g 2017-01-06 08:52:35
+// $ANTLR 3.2 Sep 23, 2009 12:02:23 /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g 2017-12-22 11:02:10
 
 package tom.gom.parser;
 
@@ -22,7 +22,7 @@ public class GomLanguageLexer extends Lexer {
     public static final int ExpressionType=91;
     public static final int SLCOMMENT=133;
     public static final int EQUALS=111;
-    public static final int Inner=53;
+    public static final int Inner=52;
     public static final int PatternType=92;
     public static final int Slot=80;
     public static final int ATOM=110;
@@ -33,11 +33,11 @@ public class GomLanguageLexer extends Lexer {
     public static final int FullOperatorClass=95;
     public static final int BINDS=112;
     public static final int ConcImportedModule=82;
-    public static final int ModuleDecl=49;
+    public static final int ModuleDecl=54;
     public static final int ImportHook=12;
     public static final int RPAREN=118;
     public static final int ConcArg=88;
-    public static final int Neutral=51;
+    public static final int Neutral=50;
     public static final int SortClass=22;
     public static final int StarredField=48;
     public static final int ConcHookDecl=74;
@@ -48,13 +48,13 @@ public class GomLanguageLexer extends Lexer {
     public static final int ConcSection=64;
     public static final int Details=43;
     public static final int RBRACE=131;
-    public static final int PRIVATE=129;
     public static final int CodeList=93;
+    public static final int PRIVATE=129;
     public static final int Compare=94;
     public static final int Code=102;
     public static final int BlockHookDecl=78;
     public static final int NEUTRAL=125;
-    public static final int None=54;
+    public static final int None=53;
     public static final int SlotField=17;
     public static final int ConcHook=26;
     public static final int ConcSlot=58;
@@ -63,7 +63,7 @@ public class GomLanguageLexer extends Lexer {
     public static final int BlockHook=14;
     public static final int IsEmpty=101;
     public static final int AtomType=90;
-    public static final int Outer=52;
+    public static final int Outer=51;
     public static final int IMPORTS=106;
     public static final int ConcField=35;
     public static final int ShortSortClass=96;
@@ -127,7 +127,7 @@ public class GomLanguageLexer extends Lexer {
     public static final int MappingHookDecl=75;
     public static final int COLON=122;
     public static final int VariadicOperatorClass=20;
-    public static final int Refresh=50;
+    public static final int Refresh=49;
     public static final int Slots=30;
     public static final int SortType=66;
     public static final int HookKind=34;

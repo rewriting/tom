@@ -1,4 +1,4 @@
-// $ANTLR 3.2 Sep 23, 2009 12:02:23 /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g 2017-01-06 08:52:34
+// $ANTLR 3.2 Sep 23, 2009 12:02:23 /Users/pem/github/tom/src/tom/gom/parser/GomLanguage.g 2017-12-22 11:02:10
 
 package tom.gom.parser;
 import tom.gom.GomStreamManager;
@@ -14,7 +14,7 @@ import org.antlr.runtime.tree.*;
 
 public class GomLanguageParser extends Parser {
     public static final String[] tokenNames = new String[] {
-        "<invalid>", "<EOR>", "<DOWN>", "<UP>", "ConcClassName", "MappingHook", "ImportHook", "InterfaceHook", "BlockHook", "MakeBeforeHook", "MakeHook", "SlotField", "ConcSlotField", "TomMapping", "VariadicOperatorClass", "OperatorClass", "SortClass", "AbstractTypeClass", "ClassName", "ConcGomClass", "ConcHook", "Sort", "ConcSort", "Variadic", "Slots", "ConcAtom", "FutureCons", "FutureNil", "HookKind", "ConcField", "ModHookPair", "KindFutureOperator", "KindOperator", "KindSort", "KindModule", "ConcOperator", "ConcModuleDecl", "Details", "HasTomCode", "OptionList", "Origin", "NamedField", "StarredField", "ModuleDecl", "Refresh", "Neutral", "Outer", "Inner", "None", "ConcSortDecl", "Alternative", "GomModuleName", "ConcSlot", "CutFutureOperator", "CutOperator", "CutSort", "CutModule", "Arg", "ConcSection", "AtomDecl", "SortType", "Hook", "ConcGomModule", "OperatorDecl", "BuiltinSortDecl", "SortDecl", "ConcProduction", "ConcGomType", "ConcHookDecl", "MappingHookDecl", "ImportHookDecl", "InterfaceHookDecl", "BlockHookDecl", "MakeHookDecl", "Slot", "GomType", "ConcImportedModule", "Public", "Imports", "ConcModule", "GomModule", "ConcAlternative", "ConcArg", "Module", "AtomType", "ExpressionType", "PatternType", "CodeList", "Compare", "FullOperatorClass", "ShortSortClass", "FullSortClass", "Cons", "Empty", "IsCons", "IsEmpty", "Code", "MODULE", "ID", "DOT", "IMPORTS", "PUBLIC", "ABSTRACT", "SYNTAX", "ATOM", "EQUALS", "BINDS", "JAVADOC", "ALT", "SEMI", "LPAREN", "COMMA", "RPAREN", "STAR", "LDIPLE", "RDIPLE", "COLON", "INNER", "OUTER", "NEUTRAL", "LBRACE", "SORT", "OPERATOR", "PRIVATE", "ARROW", "RBRACE", "WS", "SLCOMMENT", "MLCOMMENT"
+        "<invalid>", "<EOR>", "<DOWN>", "<UP>", "ConcClassName", "MappingHook", "ImportHook", "InterfaceHook", "BlockHook", "MakeBeforeHook", "MakeHook", "SlotField", "ConcSlotField", "TomMapping", "VariadicOperatorClass", "OperatorClass", "SortClass", "AbstractTypeClass", "ClassName", "ConcGomClass", "ConcHook", "Sort", "ConcSort", "Variadic", "Slots", "ConcAtom", "FutureCons", "FutureNil", "HookKind", "ConcField", "ModHookPair", "KindFutureOperator", "KindOperator", "KindSort", "KindModule", "ConcOperator", "ConcModuleDecl", "Details", "HasTomCode", "OptionList", "Origin", "NamedField", "StarredField", "Refresh", "Neutral", "Outer", "Inner", "None", "ModuleDecl", "ConcSortDecl", "Alternative", "GomModuleName", "ConcSlot", "CutFutureOperator", "CutOperator", "CutSort", "CutModule", "Arg", "ConcSection", "AtomDecl", "SortType", "Hook", "ConcGomModule", "OperatorDecl", "BuiltinSortDecl", "SortDecl", "ConcProduction", "ConcGomType", "ConcHookDecl", "MappingHookDecl", "ImportHookDecl", "InterfaceHookDecl", "BlockHookDecl", "MakeHookDecl", "Slot", "GomType", "ConcImportedModule", "Public", "Imports", "ConcModule", "GomModule", "ConcAlternative", "ConcArg", "Module", "AtomType", "ExpressionType", "PatternType", "CodeList", "Compare", "FullOperatorClass", "ShortSortClass", "FullSortClass", "Cons", "Empty", "IsCons", "IsEmpty", "Code", "MODULE", "ID", "DOT", "IMPORTS", "PUBLIC", "ABSTRACT", "SYNTAX", "ATOM", "EQUALS", "BINDS", "JAVADOC", "ALT", "SEMI", "LPAREN", "COMMA", "RPAREN", "STAR", "LDIPLE", "RDIPLE", "COLON", "INNER", "OUTER", "NEUTRAL", "LBRACE", "SORT", "OPERATOR", "PRIVATE", "ARROW", "RBRACE", "WS", "SLCOMMENT", "MLCOMMENT"
     };
     public static final int Arg=63;
     public static final int STAR=119;
@@ -29,7 +29,7 @@ public class GomLanguageParser extends Parser {
     public static final int ExpressionType=91;
     public static final int SLCOMMENT=133;
     public static final int EQUALS=111;
-    public static final int Inner=53;
+    public static final int Inner=52;
     public static final int PatternType=92;
     public static final int ATOM=110;
     public static final int Slot=80;
@@ -40,11 +40,11 @@ public class GomLanguageParser extends Parser {
     public static final int BINDS=112;
     public static final int FullOperatorClass=95;
     public static final int ConcImportedModule=82;
-    public static final int ModuleDecl=49;
+    public static final int ModuleDecl=54;
     public static final int RPAREN=118;
     public static final int ImportHook=12;
     public static final int ConcArg=88;
-    public static final int Neutral=51;
+    public static final int Neutral=50;
     public static final int SortClass=22;
     public static final int StarredField=48;
     public static final int ConcHookDecl=74;
@@ -61,7 +61,7 @@ public class GomLanguageParser extends Parser {
     public static final int Code=102;
     public static final int BlockHookDecl=78;
     public static final int NEUTRAL=125;
-    public static final int None=54;
+    public static final int None=53;
     public static final int SlotField=17;
     public static final int ConcHook=26;
     public static final int ConcSlot=58;
@@ -70,7 +70,7 @@ public class GomLanguageParser extends Parser {
     public static final int BlockHook=14;
     public static final int IsEmpty=101;
     public static final int AtomType=90;
-    public static final int Outer=52;
+    public static final int Outer=51;
     public static final int IMPORTS=106;
     public static final int ConcField=35;
     public static final int ShortSortClass=96;
@@ -134,7 +134,7 @@ public class GomLanguageParser extends Parser {
     public static final int MappingHookDecl=75;
     public static final int MakeBeforeHook=15;
     public static final int VariadicOperatorClass=20;
-    public static final int Refresh=50;
+    public static final int Refresh=49;
     public static final int Slots=30;
     public static final int HookKind=34;
     public static final int SortType=66;
@@ -252,7 +252,7 @@ public class GomLanguageParser extends Parser {
 
 
             // AST REWRITE
-            // elements: modulename, section, modulename, imports, section
+            // elements: section, modulename, modulename, imports, section
             // token labels: 
             // rule labels: retval
             // token list labels: 
@@ -971,7 +971,7 @@ public class GomLanguageParser extends Parser {
 
 
             // AST REWRITE
-            // elements: gr2, gr1, gr3
+            // elements: gr2, gr3, gr1
             // token labels: 
             // rule labels: retval
             // token list labels: 
@@ -1196,7 +1196,7 @@ public class GomLanguageParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: typename, alts
+                    // elements: alts, typename
                     // token labels: typename
                     // rule labels: retval, alts
                     // token list labels: 
@@ -2017,7 +2017,7 @@ public class GomLanguageParser extends Parser {
 
 
             // AST REWRITE
-            // elements: ID, ID, ID, ID, ID, fieldlist, ID, ID, fieldlist
+            // elements: ID, ID, fieldlist, ID, ID, ID, ID, ID, fieldlist
             // token labels: 
             // rule labels: retval
             // token list labels: 
@@ -2979,7 +2979,7 @@ public class GomLanguageParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: ID, pattern_type
+                    // elements: pattern_type, ID
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -3205,7 +3205,7 @@ public class GomLanguageParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: type, ID
+                    // elements: ID, type
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -3317,7 +3317,7 @@ public class GomLanguageParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: ID, type
+                    // elements: type, ID
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -3370,7 +3370,7 @@ public class GomLanguageParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: pattern_type, ID
+                    // elements: ID, pattern_type
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -3741,7 +3741,7 @@ public class GomLanguageParser extends Parser {
 
 
             // AST REWRITE
-            // elements: hookType, pointCut, hookType, hscope, ID, LBRACE, arglist, pointCut, LBRACE, arglist, ID
+            // elements: hookType, ID, hscope, LBRACE, hookType, arglist, LBRACE, ID, pointCut, pointCut, arglist
             // token labels: hookType, pointCut
             // rule labels: retval, hscope
             // token list labels: 

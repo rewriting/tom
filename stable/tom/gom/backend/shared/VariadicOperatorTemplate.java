@@ -42,7 +42,9 @@ public class VariadicOperatorTemplate extends TemplateHookedClass {
   GomClass cons;
   String comments;
 
-         private static   tom.gom.adt.objects.types.HookList  tom_append_list_ConcHook( tom.gom.adt.objects.types.HookList l1,  tom.gom.adt.objects.types.HookList  l2) {     if( l1.isEmptyConcHook() ) {       return l2;     } else if( l2.isEmptyConcHook() ) {       return l1;     } else if(  l1.getTailConcHook() .isEmptyConcHook() ) {       return  tom.gom.adt.objects.types.hooklist.ConsConcHook.make( l1.getHeadConcHook() ,l2) ;     } else {       return  tom.gom.adt.objects.types.hooklist.ConsConcHook.make( l1.getHeadConcHook() ,tom_append_list_ConcHook( l1.getTailConcHook() ,l2)) ;     }   }   private static   tom.gom.adt.objects.types.HookList  tom_get_slice_ConcHook( tom.gom.adt.objects.types.HookList  begin,  tom.gom.adt.objects.types.HookList  end, tom.gom.adt.objects.types.HookList  tail) {     if( (begin==end) ) {       return tail;     } else if( (end==tail)  && ( end.isEmptyConcHook()  ||  (end== tom.gom.adt.objects.types.hooklist.EmptyConcHook.make() ) )) {       /* code to avoid a call to make, and thus to avoid looping during list-matching */       return begin;     }     return  tom.gom.adt.objects.types.hooklist.ConsConcHook.make( begin.getHeadConcHook() ,( tom.gom.adt.objects.types.HookList )tom_get_slice_ConcHook( begin.getTailConcHook() ,end,tail)) ;   }      private static   tom.gom.adt.objects.types.SlotFieldList  tom_append_list_ConcSlotField( tom.gom.adt.objects.types.SlotFieldList l1,  tom.gom.adt.objects.types.SlotFieldList  l2) {     if( l1.isEmptyConcSlotField() ) {       return l2;     } else if( l2.isEmptyConcSlotField() ) {       return l1;     } else if(  l1.getTailConcSlotField() .isEmptyConcSlotField() ) {       return  tom.gom.adt.objects.types.slotfieldlist.ConsConcSlotField.make( l1.getHeadConcSlotField() ,l2) ;     } else {       return  tom.gom.adt.objects.types.slotfieldlist.ConsConcSlotField.make( l1.getHeadConcSlotField() ,tom_append_list_ConcSlotField( l1.getTailConcSlotField() ,l2)) ;     }   }   private static   tom.gom.adt.objects.types.SlotFieldList  tom_get_slice_ConcSlotField( tom.gom.adt.objects.types.SlotFieldList  begin,  tom.gom.adt.objects.types.SlotFieldList  end, tom.gom.adt.objects.types.SlotFieldList  tail) {     if( (begin==end) ) {       return tail;     } else if( (end==tail)  && ( end.isEmptyConcSlotField()  ||  (end== tom.gom.adt.objects.types.slotfieldlist.EmptyConcSlotField.make() ) )) {       /* code to avoid a call to make, and thus to avoid looping during list-matching */       return begin;     }     return  tom.gom.adt.objects.types.slotfieldlist.ConsConcSlotField.make( begin.getHeadConcSlotField() ,( tom.gom.adt.objects.types.SlotFieldList )tom_get_slice_ConcSlotField( begin.getTailConcSlotField() ,end,tail)) ;   }    
+     private static   tom.gom.adt.objects.types.HookList  tom_append_list_ConcHook( tom.gom.adt.objects.types.HookList l1,  tom.gom.adt.objects.types.HookList  l2) {     if( l1.isEmptyConcHook() ) {       return l2;     } else if( l2.isEmptyConcHook() ) {       return l1;     } else if(  l1.getTailConcHook() .isEmptyConcHook() ) {       return  tom.gom.adt.objects.types.hooklist.ConsConcHook.make( l1.getHeadConcHook() ,l2) ;     } else {       return  tom.gom.adt.objects.types.hooklist.ConsConcHook.make( l1.getHeadConcHook() ,tom_append_list_ConcHook( l1.getTailConcHook() ,l2)) ;     }   }   private static   tom.gom.adt.objects.types.HookList  tom_get_slice_ConcHook( tom.gom.adt.objects.types.HookList  begin,  tom.gom.adt.objects.types.HookList  end, tom.gom.adt.objects.types.HookList  tail) {     if( (begin==end) ) {       return tail;     } else if( (end==tail)  && ( end.isEmptyConcHook()  ||  (end== tom.gom.adt.objects.types.hooklist.EmptyConcHook.make() ) )) {       /* code to avoid a call to make, and thus to avoid looping during list-matching */       return begin;     }     return  tom.gom.adt.objects.types.hooklist.ConsConcHook.make( begin.getHeadConcHook() ,( tom.gom.adt.objects.types.HookList )tom_get_slice_ConcHook( begin.getTailConcHook() ,end,tail)) ;   }      private static   tom.gom.adt.objects.types.SlotFieldList  tom_append_list_ConcSlotField( tom.gom.adt.objects.types.SlotFieldList l1,  tom.gom.adt.objects.types.SlotFieldList  l2) {     if( l1.isEmptyConcSlotField() ) {       return l2;     } else if( l2.isEmptyConcSlotField() ) {       return l1;     } else if(  l1.getTailConcSlotField() .isEmptyConcSlotField() ) {       return  tom.gom.adt.objects.types.slotfieldlist.ConsConcSlotField.make( l1.getHeadConcSlotField() ,l2) ;     } else {       return  tom.gom.adt.objects.types.slotfieldlist.ConsConcSlotField.make( l1.getHeadConcSlotField() ,tom_append_list_ConcSlotField( l1.getTailConcSlotField() ,l2)) ;     }   }   private static   tom.gom.adt.objects.types.SlotFieldList  tom_get_slice_ConcSlotField( tom.gom.adt.objects.types.SlotFieldList  begin,  tom.gom.adt.objects.types.SlotFieldList  end, tom.gom.adt.objects.types.SlotFieldList  tail) {     if( (begin==end) ) {       return tail;     } else if( (end==tail)  && ( end.isEmptyConcSlotField()  ||  (end== tom.gom.adt.objects.types.slotfieldlist.EmptyConcSlotField.make() ) )) {       /* code to avoid a call to make, and thus to avoid looping during list-matching */       return begin;     }     return  tom.gom.adt.objects.types.slotfieldlist.ConsConcSlotField.make( begin.getHeadConcSlotField() ,( tom.gom.adt.objects.types.SlotFieldList )tom_get_slice_ConcSlotField( begin.getTailConcSlotField() ,end,tail)) ;   }   
+
+
 
   public VariadicOperatorTemplate(File tomHomePath,
                                   OptionManager manager,
@@ -57,6 +59,7 @@ public class VariadicOperatorTemplate extends TemplateHookedClass {
 
 
 
+
         this.abstractType =  (( tom.gom.adt.objects.types.GomClass )gomClass).getAbstractType() ;
         this.sortName =  (( tom.gom.adt.objects.types.GomClass )gomClass).getSortName() ;
         this.empty =  (( tom.gom.adt.objects.types.GomClass )gomClass).getEmpty() ;
@@ -64,6 +67,7 @@ public class VariadicOperatorTemplate extends TemplateHookedClass {
         this.comments =  (( tom.gom.adt.objects.types.GomClass )gomClass).getComments() ;
         return;
       }}}}
+
 
     throw new GomRuntimeException(
         "Wrong argument for VariadicOperatorTemplate: " + gomClass);
@@ -89,7 +93,8 @@ writer.write("\n}\n"
     String domainClassName = fullClassName(
         cons.getSlotFields().getHeadConcSlotField().getDomain());
     return
-      "implements java.util.Collection<"+primitiveToReferenceType(domainClassName)+"> "+super.generateInterface()+"";
+      
+"implements java.util.Collection<"+primitiveToReferenceType(domainClassName)+"> "+super.generateInterface()+"";
   }
 
 
@@ -645,13 +650,15 @@ writer.write("\n}\n"
   public void generateTomMapping(Writer writer)
       throws java.io.IOException {
     boolean hasHook = false;
-    { /* unamed block */{ /* unamed block */if ( (hooks instanceof tom.gom.adt.objects.types.HookList) ) {if ( (((( tom.gom.adt.objects.types.HookList )hooks) instanceof tom.gom.adt.objects.types.hooklist.ConsConcHook) || ((( tom.gom.adt.objects.types.HookList )hooks) instanceof tom.gom.adt.objects.types.hooklist.EmptyConcHook)) ) { tom.gom.adt.objects.types.HookList  tomMatch609_end_4=(( tom.gom.adt.objects.types.HookList )hooks);do {{ /* unamed block */if (!( tomMatch609_end_4.isEmptyConcHook() )) { tom.gom.adt.objects.types.Hook  tomMatch609_8= tomMatch609_end_4.getHeadConcHook() ;if ( ((( tom.gom.adt.objects.types.Hook )tomMatch609_8) instanceof tom.gom.adt.objects.types.hook.MappingHook) ) {
+    { /* unamed block */{ /* unamed block */if ( (hooks instanceof tom.gom.adt.objects.types.HookList) ) {if ( (((( tom.gom.adt.objects.types.HookList )hooks) instanceof tom.gom.adt.objects.types.hooklist.ConsConcHook) || ((( tom.gom.adt.objects.types.HookList )hooks) instanceof tom.gom.adt.objects.types.hooklist.EmptyConcHook)) ) { tom.gom.adt.objects.types.HookList  tomMatch669_end_4=(( tom.gom.adt.objects.types.HookList )hooks);do {{ /* unamed block */if (!( tomMatch669_end_4.isEmptyConcHook() )) { tom.gom.adt.objects.types.Hook  tomMatch669_8= tomMatch669_end_4.getHeadConcHook() ;if ( ((( tom.gom.adt.objects.types.Hook )tomMatch669_8) instanceof tom.gom.adt.objects.types.hook.MappingHook) ) {
 
-        CodeGen.generateCode( tomMatch609_8.getCode() ,writer);
+
+        CodeGen.generateCode( tomMatch669_8.getCode() ,writer);
         hasHook = true;
         // if there is a mapping hook we stop here
         return;
-      }}if ( tomMatch609_end_4.isEmptyConcHook() ) {tomMatch609_end_4=(( tom.gom.adt.objects.types.HookList )hooks);} else {tomMatch609_end_4= tomMatch609_end_4.getTailConcHook() ;}}} while(!( (tomMatch609_end_4==(( tom.gom.adt.objects.types.HookList )hooks)) ));}}}}{ /* unamed block */{ /* unamed block */if ( (cons instanceof tom.gom.adt.objects.types.GomClass) ) {if ( ((( tom.gom.adt.objects.types.GomClass )cons) instanceof tom.gom.adt.objects.types.gomclass.OperatorClass) ) { tom.gom.adt.objects.types.SlotFieldList  tomMatch610_1= (( tom.gom.adt.objects.types.GomClass )cons).getSlotFields() ;if ( (((( tom.gom.adt.objects.types.SlotFieldList )tomMatch610_1) instanceof tom.gom.adt.objects.types.slotfieldlist.ConsConcSlotField) || ((( tom.gom.adt.objects.types.SlotFieldList )tomMatch610_1) instanceof tom.gom.adt.objects.types.slotfieldlist.EmptyConcSlotField)) ) {if (!( tomMatch610_1.isEmptyConcSlotField() )) { tom.gom.adt.objects.types.SlotField  tomMatch610_8= tomMatch610_1.getHeadConcSlotField() ;if ( ((( tom.gom.adt.objects.types.SlotField )tomMatch610_8) instanceof tom.gom.adt.objects.types.slotfield.SlotField) ) { tom.gom.adt.objects.types.SlotFieldList  tomMatch610_5= tomMatch610_1.getTailConcSlotField() ;if (!( tomMatch610_5.isEmptyConcSlotField() )) {if (  tomMatch610_5.getTailConcSlotField() .isEmptyConcSlotField() ) {
+      }}if ( tomMatch669_end_4.isEmptyConcHook() ) {tomMatch669_end_4=(( tom.gom.adt.objects.types.HookList )hooks);} else {tomMatch669_end_4= tomMatch669_end_4.getTailConcHook() ;}}} while(!( (tomMatch669_end_4==(( tom.gom.adt.objects.types.HookList )hooks)) ));}}}}{ /* unamed block */{ /* unamed block */if ( (cons instanceof tom.gom.adt.objects.types.GomClass) ) {if ( ((( tom.gom.adt.objects.types.GomClass )cons) instanceof tom.gom.adt.objects.types.gomclass.OperatorClass) ) { tom.gom.adt.objects.types.SlotFieldList  tomMatch670_1= (( tom.gom.adt.objects.types.GomClass )cons).getSlotFields() ;if ( (((( tom.gom.adt.objects.types.SlotFieldList )tomMatch670_1) instanceof tom.gom.adt.objects.types.slotfieldlist.ConsConcSlotField) || ((( tom.gom.adt.objects.types.SlotFieldList )tomMatch670_1) instanceof tom.gom.adt.objects.types.slotfieldlist.EmptyConcSlotField)) ) {if (!( tomMatch670_1.isEmptyConcSlotField() )) { tom.gom.adt.objects.types.SlotField  tomMatch670_8= tomMatch670_1.getHeadConcSlotField() ;if ( ((( tom.gom.adt.objects.types.SlotField )tomMatch670_8) instanceof tom.gom.adt.objects.types.slotfield.SlotField) ) { tom.gom.adt.objects.types.SlotFieldList  tomMatch670_5= tomMatch670_1.getTailConcSlotField() ;if (!( tomMatch670_5.isEmptyConcSlotField() )) {if (  tomMatch670_5.getTailConcSlotField() .isEmptyConcSlotField() ) {
+
 
 
 
@@ -660,7 +667,7 @@ writer.write("\n}\n"
 
     ClassName emptyClass = empty.getClassName();
     ClassName consClass = cons.getClassName();
-    writer.write("\n%oplist "+className(sortName)+" "+className()+"("+className( tomMatch610_8.getDomain() )+"*) {\n  is_fsym(t) { (($t instanceof "+fullClassName(consClass)+") || ($t instanceof "+fullClassName(emptyClass)+")) }\n  make_empty() { "+fullClassName(emptyClass)+".make() }\n  make_insert(e,l) { "+fullClassName(consClass)+".make($e,$l) }\n  get_head(l) { $l."+getMethod( tomMatch610_1.getHeadConcSlotField() )+"() }\n  get_tail(l) { $l."+getMethod( tomMatch610_5.getHeadConcSlotField() )+"() }\n  is_empty(l) { $l."+isOperatorMethod(emptyClass)+"() }\n}\n"
+    writer.write("\n%oplist "+className(sortName)+" "+className()+"("+className( tomMatch670_8.getDomain() )+"*) {\n  is_fsym(t) { (($t instanceof "+fullClassName(consClass)+") || ($t instanceof "+fullClassName(emptyClass)+")) }\n  make_empty() { "+fullClassName(emptyClass)+".make() }\n  make_insert(e,l) { "+fullClassName(consClass)+".make($e,$l) }\n  get_head(l) { $l."+getMethod( tomMatch670_1.getHeadConcSlotField() )+"() }\n  get_tail(l) { $l."+getMethod( tomMatch670_5.getHeadConcSlotField() )+"() }\n  is_empty(l) { $l."+isOperatorMethod(emptyClass)+"() }\n}\n"
 
 
 
@@ -671,6 +678,7 @@ writer.write("\n}\n"
 
 );
       }}}}}}}}}
+
 
     return;
   }
