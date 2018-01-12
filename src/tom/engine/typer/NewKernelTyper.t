@@ -875,6 +875,7 @@ public class NewKernelTyper {
    * @param bqvar the variable to have the linearity checked
    */
   private void checkNonLinearityOfBQVariables(BQTerm bqvar) {
+    TomType newType = null;
     %match(bqvar) {
       // If the backquote variable already exists in varPatternList 
       // (in the case of a inner match) or in varList
@@ -887,18 +888,21 @@ public class NewKernelTyper {
           /* 
            * this is a hack for the new parser which add more types in the AST 
            */
-          %match(aType1, aType2) {
-            Type[], Type[] -> {
-              TomType newType = getUnknownFreshTypeVar();
+          %match() {
+            (Type[] << aType1 || Type[] << aType2) -> {
+              if(newType == null) {
+                newType = getUnknownFreshTypeVar();
+              }
               subtypeConstraints =
                 addConstraint(`Subtype(aType1,newType,PairNameOptions(aName,optionList)),subtypeConstraints); 
               subtypeConstraints =
                 addConstraint(`Subtype(aType2,newType,PairNameOptions(aName,optionList)),subtypeConstraints); 
-              return;
+            }
+            (!Type[] << aType1 && !Type[] << aType2) -> {
+              equationConstraints =
+                  addConstraint(`Equation(aType1,aType2,PairNameOptions(aName,optionList)),equationConstraints); 
             }
           }
-          equationConstraints =
-            addConstraint(`Equation(aType1,aType2,PairNameOptions(aName,optionList)),equationConstraints); 
         }
     }
   }
