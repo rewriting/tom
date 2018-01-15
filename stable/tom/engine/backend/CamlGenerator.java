@@ -58,8 +58,7 @@ public class CamlGenerator extends GenericGenerator {
   }
   
   // ------------------------------------------------------------
-  
-
+      
   // ------------------------------------------------------------
   
   /*
@@ -293,18 +292,14 @@ public class CamlGenerator extends GenericGenerator {
 
     { /* unamed block */{ /* unamed block */if ( (tlCode instanceof tom.engine.adt.code.types.TargetLanguage) ) {if ( ((( tom.engine.adt.code.types.TargetLanguage )tlCode) instanceof tom.engine.adt.code.types.targetlanguage.TL) ) { tom.engine.adt.tomsignature.types.TextPosition  tomMatch93_2= (( tom.engine.adt.code.types.TargetLanguage )tlCode).getStart() ; tom.engine.adt.tomsignature.types.TextPosition  tomMatch93_3= (( tom.engine.adt.code.types.TargetLanguage )tlCode).getEnd() ;if ( ((( tom.engine.adt.tomsignature.types.TextPosition )tomMatch93_2) instanceof tom.engine.adt.tomsignature.types.textposition.TextPosition) ) { int  tom___startLine= tomMatch93_2.getLine() ;if ( ((( tom.engine.adt.tomsignature.types.TextPosition )tomMatch93_3) instanceof tom.engine.adt.tomsignature.types.textposition.TextPosition) ) {
 
-
-
-        output.write(0,s, tom___startLine,  tomMatch93_3.getLine()  - tom___startLine);
+        output.write(0,s, tom___startLine,  tomMatch93_3.getLine() - tom___startLine);
         return;
       }}}}}{ /* unamed block */if ( (tlCode instanceof tom.engine.adt.code.types.TargetLanguage) ) {if ( ((( tom.engine.adt.code.types.TargetLanguage )tlCode) instanceof tom.engine.adt.code.types.targetlanguage.ITL) ) {
-
 
 
         output.write(s);
         return;
       }}}}
-
 
   }
 
@@ -321,17 +316,14 @@ public class CamlGenerator extends GenericGenerator {
         { /* unamed block */{ /* unamed block */if ( (arg instanceof tom.engine.adt.code.types.BQTerm) ) {if ( ((( tom.engine.adt.code.types.BQTerm )arg) instanceof tom.engine.adt.code.types.bqterm.BQVariable) ) { tom.engine.adt.tomname.types.TomName  tomMatch94_1= (( tom.engine.adt.code.types.BQTerm )arg).getAstName() ;if ( ((( tom.engine.adt.tomname.types.TomName )tomMatch94_1) instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
 
 
-
             s.append( tomMatch94_1.getString() );
             break matchBlock;
           }}}}{ /* unamed block */if ( (arg instanceof tom.engine.adt.code.types.BQTerm) ) {
 
 
-
             System.out.println("genDeclMake: strange term: " + arg);
             throw new TomRuntimeException("genDeclMake: strange term: " + arg);
           }}}
-
 
       }
       argList = argList.getTailconcBQTerm();
@@ -452,16 +444,13 @@ public class CamlGenerator extends GenericGenerator {
     { /* unamed block */{ /* unamed block */if ( (subject instanceof tom.engine.adt.tominstruction.types.Instruction) ) {if ( ((( tom.engine.adt.tominstruction.types.Instruction )subject) instanceof tom.engine.adt.tominstruction.types.instruction.Nop) ) {buildNop()
 
 
-
 ;
         return;
       }}}{ /* unamed block */if ( (subject instanceof tom.engine.adt.tominstruction.types.Instruction) ) {
 
 
-
         super.generateInstruction(deep, subject, moduleName);
       }}}
-
 
   }
 

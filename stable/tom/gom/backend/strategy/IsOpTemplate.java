@@ -35,9 +35,7 @@ public class IsOpTemplate extends TemplateClass {
   ClassName operator;
   SlotFieldList slotList;
 
-  
-
-
+       
 
   /*
    * The argument is an operator class, and this template generates the
@@ -48,7 +46,6 @@ public class IsOpTemplate extends TemplateClass {
     ClassName clsName = this.className;
     { /* unamed block */{ /* unamed block */if ( (clsName instanceof tom.gom.adt.objects.types.ClassName) ) {if ( ((( tom.gom.adt.objects.types.ClassName )clsName) instanceof tom.gom.adt.objects.types.classname.ClassName) ) {
 
-
         String newpkg =  (( tom.gom.adt.objects.types.ClassName )clsName).getPkg() .replaceFirst(".types.",".strategy.");
         String newname = "Is_"+ (( tom.gom.adt.objects.types.ClassName )clsName).getName() ;
         this.className =  tom.gom.adt.objects.types.classname.ClassName.make(newpkg, newname) ;
@@ -56,12 +53,10 @@ public class IsOpTemplate extends TemplateClass {
 
 
 
-
         this.operator =  (( tom.gom.adt.objects.types.GomClass )gomClass).getClassName() ;
         this.slotList =  (( tom.gom.adt.objects.types.GomClass )gomClass).getSlotFields() ;
         return;
       }}}}
-
 
     throw new GomRuntimeException(
         "Wrong argument for IsOpTemplate: " + gomClass);

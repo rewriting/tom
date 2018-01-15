@@ -47,8 +47,7 @@ public class PluginPlatform extends PluginPlatformBase implements Runnable {
     "tom.platform.error.logfile";
  
   /** Used to analyse configuration file */
-  
-
+     
 
   /** The List of reference to plugins. */
   private List<Plugin> pluginsList;
@@ -179,7 +178,7 @@ public class PluginPlatform extends PluginPlatformBase implements Runnable {
           if(statusHandler.hasError()) {
             PluginPlatformMessage.info(getLogger(), null, 0, PluginPlatformMessage.settingArgError);
             success = false;globalSuccess
- = false;
+= false;
             globalNbOfErrors += statusHandler.nbOfErrors();
             globalNbOfWarnings += statusHandler.nbOfWarnings();
             break;

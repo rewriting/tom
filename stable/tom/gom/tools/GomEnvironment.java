@@ -33,9 +33,7 @@ import java.util.*;
 
 public class GomEnvironment {
 
-  
-
-
+       
 
   private GomStreamManager streamManager;
   private String lastGeneratedMapping;

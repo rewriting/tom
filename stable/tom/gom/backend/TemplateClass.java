@@ -49,9 +49,7 @@ public abstract class TemplateClass {
     return this.gomEnvironment;
   }
 
-  
-
-
+       
 
   public abstract void generate(Writer writer) throws java.io.IOException;
 
@@ -62,10 +60,8 @@ public abstract class TemplateClass {
   public String className(ClassName clsName) {
     { /* unamed block */{ /* unamed block */if ( (clsName instanceof tom.gom.adt.objects.types.ClassName) ) {if ( ((( tom.gom.adt.objects.types.ClassName )clsName) instanceof tom.gom.adt.objects.types.classname.ClassName) ) {
 
-
         return  (( tom.gom.adt.objects.types.ClassName )clsName).getName() ;
       }}}}
-
 
     throw new GomRuntimeException(
         "TemplateClass:className got a strange ClassName "+clsName);
@@ -78,14 +74,12 @@ public abstract class TemplateClass {
   public static String fullClassName(ClassName clsName) {
     { /* unamed block */{ /* unamed block */if ( (clsName instanceof tom.gom.adt.objects.types.ClassName) ) {if ( ((( tom.gom.adt.objects.types.ClassName )clsName) instanceof tom.gom.adt.objects.types.classname.ClassName) ) { String  tom___pkgPrefix= (( tom.gom.adt.objects.types.ClassName )clsName).getPkg() ; String  tom___name= (( tom.gom.adt.objects.types.ClassName )clsName).getName() ;
 
-
         if(tom___pkgPrefix.length()==0) {
           return tom___name;
         } else {
           return tom___pkgPrefix+"."+tom___name;
         }
       }}}}
-
 
     throw new GomRuntimeException(
         "TemplateClass:fullClassName got a strange ClassName "+clsName);
@@ -98,10 +92,8 @@ public abstract class TemplateClass {
   public String getPackage(ClassName clsName) {
     { /* unamed block */{ /* unamed block */if ( (clsName instanceof tom.gom.adt.objects.types.ClassName) ) {if ( ((( tom.gom.adt.objects.types.ClassName )clsName) instanceof tom.gom.adt.objects.types.classname.ClassName) ) {
 
-
         return  (( tom.gom.adt.objects.types.ClassName )clsName).getPkg() ;
       }}}}
-
 
     throw new GomRuntimeException(
         "TemplateClass:getPackage got a strange ClassName "+clsName);
@@ -110,10 +102,8 @@ public abstract class TemplateClass {
   public String hasMethod(SlotField slot) {
     { /* unamed block */{ /* unamed block */if ( (slot instanceof tom.gom.adt.objects.types.SlotField) ) {if ( ((( tom.gom.adt.objects.types.SlotField )slot) instanceof tom.gom.adt.objects.types.slotfield.SlotField) ) {
 
-
         return "has"+ (( tom.gom.adt.objects.types.SlotField )slot).getName() ;
       }}}}
-
 
     throw new GomRuntimeException(
         "TemplateClass:hasMethod got a strange SlotField "+slot);
@@ -134,14 +124,12 @@ public abstract class TemplateClass {
   public String getMethod(SlotField slot,boolean jmi) {
     { /* unamed block */{ /* unamed block */if ( (slot instanceof tom.gom.adt.objects.types.SlotField) ) {if ( ((( tom.gom.adt.objects.types.SlotField )slot) instanceof tom.gom.adt.objects.types.slotfield.SlotField) ) { String  tom___name= (( tom.gom.adt.objects.types.SlotField )slot).getName() ;
 
-
         if(jmi) {
           return "get"+jmize(tom___name);
         } else {
           return "get"+tom___name;
         }
       }}}}
-
 
     throw new GomRuntimeException(
         "TemplateClass:getMethod got a strange SlotField "+slot);
@@ -154,14 +142,12 @@ public abstract class TemplateClass {
   public String setMethod(SlotField slot,boolean jmi) {
     { /* unamed block */{ /* unamed block */if ( (slot instanceof tom.gom.adt.objects.types.SlotField) ) {if ( ((( tom.gom.adt.objects.types.SlotField )slot) instanceof tom.gom.adt.objects.types.slotfield.SlotField) ) { String  tom___name= (( tom.gom.adt.objects.types.SlotField )slot).getName() ;
 
-
         if(jmi) {
           return "set"+jmize(tom___name);
         } else {
           return "set"+tom___name;
         }
       }}}}
-
 
     throw new GomRuntimeException(
         "TemplateClass:setMethod got a strange SlotField "+slot);
@@ -175,10 +161,8 @@ public abstract class TemplateClass {
   public String index(SlotField slot) {
     { /* unamed block */{ /* unamed block */if ( (slot instanceof tom.gom.adt.objects.types.SlotField) ) {if ( ((( tom.gom.adt.objects.types.SlotField )slot) instanceof tom.gom.adt.objects.types.slotfield.SlotField) ) {
 
-
         return "index_"+ (( tom.gom.adt.objects.types.SlotField )slot).getName() ;
       }}}}
-
 
     throw new GomRuntimeException(
         "TemplateClass:index got a strange SlotField "+slot);
@@ -187,10 +171,8 @@ public abstract class TemplateClass {
   public String slotDomain(SlotField slot) {
     { /* unamed block */{ /* unamed block */if ( (slot instanceof tom.gom.adt.objects.types.SlotField) ) {if ( ((( tom.gom.adt.objects.types.SlotField )slot) instanceof tom.gom.adt.objects.types.slotfield.SlotField) ) {
 
-
         return fullClassName( (( tom.gom.adt.objects.types.SlotField )slot).getDomain() );
       }}}}
-
 
     throw new GomRuntimeException(
         "TemplateClass:slotDomain got a strange SlotField "+slot);
@@ -203,10 +185,8 @@ public abstract class TemplateClass {
   public String classFieldName(ClassName clsName) {
     { /* unamed block */{ /* unamed block */if ( (clsName instanceof tom.gom.adt.objects.types.ClassName) ) {if ( ((( tom.gom.adt.objects.types.ClassName )clsName) instanceof tom.gom.adt.objects.types.classname.ClassName) ) {
 
-
         return  (( tom.gom.adt.objects.types.ClassName )clsName).getName() .toLowerCase();
       }}}}
-
 
     throw new GomRuntimeException(
         "TemplateClass:classFieldName got a strange ClassName "+clsName);
@@ -215,7 +195,6 @@ public abstract class TemplateClass {
   public void toStringSlotField(StringBuilder res, SlotField slot,
                                 String element, String buffer) {
     { /* unamed block */{ /* unamed block */if ( (slot instanceof tom.gom.adt.objects.types.SlotField) ) {if ( ((( tom.gom.adt.objects.types.SlotField )slot) instanceof tom.gom.adt.objects.types.slotfield.SlotField) ) { tom.gom.adt.objects.types.ClassName  tom___domain= (( tom.gom.adt.objects.types.SlotField )slot).getDomain() ;
-
 
         if(!getGomEnvironment().isBuiltinClass(tom___domain)) {
           res.append(""+element+".toStringBuilder("+buffer+");\n"
@@ -325,17 +304,15 @@ public abstract class TemplateClass {
             res.append(""+buffer+".append("+element+".toString());\n"
 );
           } else {
-            throw new GomRuntimeException("Builtin " + tom___domain + " not supported");
+            throw new GomRuntimeException("Builtin " + tom___domain+ " not supported");
           }
         }
       }}}}
-
 
   }
 
   public void toATermSlotField(StringBuilder res, SlotField slot) {
     { /* unamed block */{ /* unamed block */if ( (slot instanceof tom.gom.adt.objects.types.SlotField) ) {if ( ((( tom.gom.adt.objects.types.SlotField )slot) instanceof tom.gom.adt.objects.types.slotfield.SlotField) ) { tom.gom.adt.objects.types.ClassName  tom___domain= (( tom.gom.adt.objects.types.SlotField )slot).getDomain() ;
-
 
         if(!getGomEnvironment().isBuiltinClass(tom___domain)) {
           res.append(getMethod(slot));
@@ -374,17 +351,15 @@ public abstract class TemplateClass {
             res.append(getMethod(slot));
             res.append("()");
           } else {
-            throw new GomRuntimeException("Builtin " + tom___domain + " not supported");
+            throw new GomRuntimeException("Builtin " + tom___domain+ " not supported");
           }
         }
       }}}}
-
 
   }
 
   public void fromATermSlotField(StringBuilder buffer, SlotField slot, String appl, String atConv) {
     { /* unamed block */{ /* unamed block */if ( (slot instanceof tom.gom.adt.objects.types.SlotField) ) {if ( ((( tom.gom.adt.objects.types.SlotField )slot) instanceof tom.gom.adt.objects.types.slotfield.SlotField) ) { tom.gom.adt.objects.types.ClassName  tom___domain= (( tom.gom.adt.objects.types.SlotField )slot).getDomain() ;
-
 
         if(!getGomEnvironment().isBuiltinClass(tom___domain)) {
           buffer.append(fullClassName(tom___domain));
@@ -411,17 +386,15 @@ public abstract class TemplateClass {
           } else if (tom___domain.equals( tom.gom.adt.objects.types.classname.ClassName.make("aterm", "ATerm") ) || tom___domain.equals( tom.gom.adt.objects.types.classname.ClassName.make("aterm", "ATermList") ) ){
             buffer.append(appl);
           } else {
-            throw new GomRuntimeException("Builtin " + tom___domain + " not supported");
+            throw new GomRuntimeException("Builtin " + tom___domain+ " not supported");
           }
         }
       }}}}
-
 
   }
 
   protected String primitiveToReferenceType(String classname) {
     { /* unamed block */{ /* unamed block */if ( true ) {if ( "byte".equals((( String )classname)) ) {
-
  return "java.lang.Byte"; }}}{ /* unamed block */if ( true ) {if ( "short".equals((( String )classname)) ) {
  return "java.lang.Short"; }}}{ /* unamed block */if ( true ) {if ( "int".equals((( String )classname)) ) {
  return "java.lang.Integer"; }}}{ /* unamed block */if ( true ) {if ( "long".equals((( String )classname)) ) {
@@ -486,13 +459,11 @@ public abstract class TemplateClass {
       if (index>0) { writer.write(", "); }
       { /* unamed block */{ /* unamed block */if ( (slot instanceof tom.gom.adt.objects.types.SlotField) ) {if ( ((( tom.gom.adt.objects.types.SlotField )slot) instanceof tom.gom.adt.objects.types.slotfield.SlotField) ) { tom.gom.adt.objects.types.ClassName  tomMatch626_2= (( tom.gom.adt.objects.types.SlotField )slot).getDomain() ;if ( ((( tom.gom.adt.objects.types.ClassName )tomMatch626_2) instanceof tom.gom.adt.objects.types.classname.ClassName) ) {
 
-
           writer.write( (( tom.gom.adt.objects.types.SlotField )slot).getName() );
           writer.write(":");
           writer.write( tomMatch626_2.getName() );
           index++;
         }}}}}
-
 
     }
   }
