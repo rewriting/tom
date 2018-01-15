@@ -1,34 +1,40 @@
-/*
- *   
- * TOM - To One Matching Compiler
- * 
- * Copyright (c) 2000-2017, Universite de Lorraine, Inria
- * Nancy, France.
- * 
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
- * 
- * Pierre-Etienne Moreau  e-mail: Pierre-Etienne.Moreau@loria.fr
- 
- **/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 package tom.engine.backend;
 
+
+
 import java.io.IOException;
+
+
 
 import tom.engine.TomBase;
 import tom.engine.exception.TomRuntimeException;
+
+
 
 import tom.engine.adt.tomsignature.*;
 import tom.engine.adt.code.types.*;
@@ -44,16 +50,20 @@ import tom.engine.adt.tomterm.types.*;
 import tom.engine.adt.tomslot.types.*;
 import tom.engine.adt.tomtype.types.*;
 
+
+
 import tom.engine.tools.OutputCode;
 import tom.engine.tools.SymbolTable;
 import tom.engine.tools.ASTFactory;
 import tom.platform.OptionManager;
 
+
+
 public class PythonGenerator extends GenericGenerator {
 
-  // ------------------------------------------------------------
-      
-  // ------------------------------------------------------------
+  
+  
+  
 
 
   public PythonGenerator(OutputCode output, OptionManager optionManager,
@@ -61,19 +71,10 @@ public class PythonGenerator extends GenericGenerator {
     super(output, optionManager, symbolTable);
   }
 
-  /*
-  public void generateInstructionList(int deep, InstructionList subject, String moduleName)
-    throws IOException {
-    while(!subject.isEmptyconcInstruction()) {
-      generateInstruction(deep,subject.getHeadconcInstruction(), moduleName);
-      subject = subject.getTailconcInstruction();
-    }
-    output.writeln();
-  }
-  */
+  
 
   protected void buildAssign(int deep, BQTerm var, OptionList optionList, Expression exp, String moduleName) throws IOException {
-    //output.indent(deep);
+    
     generateBQTerm(deep,var,moduleName);
     output.write("=");
     generateExpression(deep,exp,moduleName);
@@ -81,7 +82,7 @@ public class PythonGenerator extends GenericGenerator {
   } 
 
   protected void buildComment(int deep, String text) throws IOException {
-    //output.writeln("#" + text.replace("\n","\n#"));
+    
   }
  
   protected void buildDoWhile(int deep, Instruction succes, Expression exp, String moduleName) throws IOException {
@@ -195,7 +196,7 @@ public class PythonGenerator extends GenericGenerator {
     generateBQTerm(deep,exp,moduleName);
   }
 
-  /* FIXME */
+  
   protected void buildUnamedBlock(int deep, InstructionList instList, String moduleName) throws IOException {
     generateInstructionList(deep+1,instList, moduleName);
   }
@@ -246,9 +247,9 @@ public class PythonGenerator extends GenericGenerator {
 
     String tomType = TomBase.getTomType(listType);
     String glType = TomBase.getTLType(listType);
-    //String tlEltType = getTLType(eltType);
+    
 
-    //String utype = glType;
+    
     
     String is_empty = "tom_is_empty_" + name + "_" + tomType;
     String equal_term = "tom_equal_term_" + tomType;
@@ -280,8 +281,8 @@ public class PythonGenerator extends GenericGenerator {
     s+= "# end if\n";
     s+= "# end def tom_get_slice_" + name;
     s+= "\n";
-    //If necessary we remove \n code depending on pretty option
-    //String res  = ASTFactory.makeSingleLineCode(s, prettyMode);
+    
+    
     output.write(s);
   }
 
@@ -323,11 +324,11 @@ matchBlock: {
     output.write("\n # end def " + prefix+funName + "\n");
   }
 
-  // FIXME
+  
   protected void buildNamedBlock(int deep, String blockName, InstructionList instList, String moduleName) throws IOException {
-    //output.writeln(blockName + ": {");
+    
     generateInstructionList(deep+1,instList,moduleName);
-    //output.writeln("}");
+    
   }
 
   protected void buildExpTrue(int deep) throws IOException {
@@ -369,7 +370,7 @@ matchBlock: {
 matchBlock: {
               { /* unamed block */{ /* unamed block */if ( (localVar instanceof tom.engine.adt.code.types.BQTerm) ) {if ( ((( tom.engine.adt.code.types.BQTerm )localVar) instanceof tom.engine.adt.code.types.bqterm.BQVariable) ) {
 
-                  //output.write(deep,getTLType(`type2) + " ");
+                  
                   generateBQTerm(deep,(( tom.engine.adt.code.types.BQTerm )localVar),moduleName);
                   break matchBlock;
                 }}}{ /* unamed block */if ( (localVar instanceof tom.engine.adt.code.types.BQTerm) ) {
@@ -423,29 +424,29 @@ matchBlock: {
 
   protected void buildAssignArrayVar(int deep, BQTerm var, OptionList optionList, BQTerm index, 
       Expression exp, String moduleName) throws IOException {    
-    //output.indent(deep);
+    
     generateArray(deep,var,index,moduleName);
     output.write("=");
     generateExpression(deep,exp,moduleName);
     output.write(";\n");
   } 
 
-  //FIXME
-  //TODO: to implement
+  
+  
   protected String genResolveIsSortCode(String varName, String
       resolveStringName) throws IOException {
     throw new TomRuntimeException("%transformation (ResolveIsSort) not yet supported in Python");
-    //return "";
+    
   }
 
   protected String genResolveIsFsymCode(String tomName, String varname) throws IOException {
     throw new TomRuntimeException("%transformation (ResolveIsFsym) not yet supported in Python");
-    //return "";
+    
   }
 
   protected String genResolveGetSlotCode(String tomName, String varname, String slotName) throws IOException {
     throw new TomRuntimeException("%transformation (ResolveGetSlot) not yet supported in Python");
-    //return "";
+    
   }
   
   protected void buildResolveClass(String wName, String tName, String extendsName, String moduleName) throws IOException {
@@ -476,9 +477,11 @@ matchBlock: {
     throw new TomRuntimeException("%transformation (TracelinkPopulateResolve instruction) not yet supported in Python");
   }
 
-  //tmp
+  
   protected void buildResolve(int deep, BQTerm bqterm, String moduleName) throws IOException {
     throw new TomRuntimeException("%transformation (Resolve2 instruction) not yet supported in Python");
   }
+
+
 
 }

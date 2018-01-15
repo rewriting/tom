@@ -1,28 +1,30 @@
-/*
- * Gom
- *
- * Copyright (c) 2006-2017, Universite de Lorraine, Inria
- * Nancy, France.
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
- *
- * Antoine Reilles  e-mail: Antoine.Reilles@loria.fr
- *
- **/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 package tom.gom.backend.strategy;
+
+
 
 import java.io.*;
 import java.util.logging.*;
@@ -31,16 +33,15 @@ import tom.gom.tools.GomEnvironment;
 import tom.gom.tools.error.GomRuntimeException;
 import tom.gom.adt.objects.types.*;
 
+
+
 public class IsOpTemplate extends TemplateClass {
   ClassName operator;
   SlotFieldList slotList;
 
-       
+  
 
-  /*
-   * The argument is an operator class, and this template generates the
-   * assotiated _Op strategy
-   */
+  
   public IsOpTemplate(GomClass gomClass, GomEnvironment gomEnvironment) {
     super(gomClass,gomEnvironment);
     ClassName clsName = this.className;
@@ -106,6 +107,8 @@ writer.write("\npackage "+getPackage()+";\n\npublic class "+className()+" extend
 );
 }
 
+
+
 public String generateMapping() {
 
   String whenName = className().replaceFirst("Is_","When_");
@@ -120,7 +123,9 @@ public String generateMapping() {
 ;
 }
 
-/** the class logger instance*/
+
+
+
 private Logger getLogger() {
   return Logger.getLogger(getClass().getName());
 }

@@ -1,35 +1,41 @@
-/*
- *
- * TOM - To One Matching Compiler
- *
- * Copyright (c) 2000-2017, Universite de Lorraine, Inria
- * Nancy, France.
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
- *
- * Pierre-Etienne Moreau  e-mail: Pierre-Etienne.Moreau@loria.fr
- *
- **/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 package tom.engine.backend;
+
+
 
 import java.io.IOException;
 import java.util.ArrayList;
 
+
+
 import tom.engine.TomBase;
 import tom.engine.tools.OutputCode;
+
+
 
 import tom.engine.adt.tomsignature.*;
 import tom.engine.adt.tomconstraint.types.*;
@@ -44,9 +50,13 @@ import tom.engine.adt.tomslot.types.*;
 import tom.engine.adt.tomtype.types.*;
 import tom.engine.adt.code.types.*;
 
+
+
 import tom.engine.tools.SymbolTable;
 import tom.platform.OptionManager;
 import tom.engine.exception.TomRuntimeException;
+
+
 
 public class CSharpGenerator extends CFamilyGenerator {
   
@@ -55,8 +65,7 @@ public class CSharpGenerator extends CFamilyGenerator {
   public CSharpGenerator(OutputCode output, OptionManager optionManager,
                        SymbolTable symbolTable) {
     super(output, optionManager, symbolTable);
-    /* Even if this field is not used here, we /must/ initialize it correctly,
-     * as it is used by ImperativeGenerator */
+    
     if( ((Boolean)optionManager.getOptionValue("protected")).booleanValue() ) {
       this.stratmodifier += "protected " ;
     } else {
@@ -69,9 +78,9 @@ public class CSharpGenerator extends CFamilyGenerator {
     }
   }
 
-// ------------------------------------------------------------
-      
-// ------------------------------------------------------------
+
+  
+
 
   protected void buildExpBottom(int deep, TomType type, String moduleName) throws IOException {
     String typeName = TomBase.getTomType(type);
@@ -99,7 +108,7 @@ public class CSharpGenerator extends CFamilyGenerator {
     output.write(" false ");
   }
 
-  //FIXME !
+  
   protected void buildNamedBlock(int deep, String blockName, InstructionList instList, String moduleName) throws IOException {
     output.writeln(blockName + ": {");
     generateInstructionList(deep+1,instList,moduleName);
@@ -111,9 +120,9 @@ public class CSharpGenerator extends CFamilyGenerator {
     TomTypeList tomTypes = TomBase.getSymbolDomain(tomSymbol);
     ArrayList<String> names = new ArrayList<String>();
     ArrayList<String> types = new ArrayList<String>();
-    ArrayList<Integer> stratChild = new ArrayList<Integer>(); // child of type Strategy.
+    ArrayList<Integer> stratChild = new ArrayList<Integer>(); 
 
-    //initialize arrayList with argument names
+    
     int index = 0;
     while(!tomTypes.isEmptyconcTomType()) {
 	    TomType type = tomTypes.getHeadconcTomType();
@@ -121,7 +130,7 @@ public class CSharpGenerator extends CFamilyGenerator {
       String name = TomBase.getSlotName(tomSymbol, index).getString();
       names.add(name);
 
-      // test if the argument is a Strategy
+      
       { /* unamed block */{ /* unamed block */if ( (type instanceof tom.engine.adt.tomtype.types.TomType) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )type) instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) {if ( "Strategy".equals( (( tom.engine.adt.tomtype.types.TomType )type).getTomType() ) ) {
 
           stratChild.add(Integer.valueOf(index));
@@ -132,7 +141,7 @@ public class CSharpGenerator extends CFamilyGenerator {
 	    index++;
     }
     output.write(deep, modifier + "class " + tomName);
-    //write extends
+    
 		{ /* unamed block */{ /* unamed block */if ( (extendsType instanceof tom.engine.adt.tomtype.types.TomType) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )extendsType) instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) {if ( ((( tom.engine.adt.tomtype.types.TargetLanguageType ) (( tom.engine.adt.tomtype.types.TomType )extendsType).getTlType() ) instanceof tom.engine.adt.tomtype.types.targetlanguagetype.EmptyTargetLanguageType) ) {
 
 				output.write(deep," : " +  (( tom.engine.adt.tomtype.types.TomType )extendsType).getTomType() );
@@ -140,63 +149,63 @@ public class CSharpGenerator extends CFamilyGenerator {
 
     output.write(deep," {");
     int args = names.size();
-    //write Declarations
+    
     for (int i = 0 ; i < args ; i++) {
 	    output.write(deep, "private " + types.get(i) + " " + names.get(i) + "; ");
     }
 
-    //write constructor
+    
     output.write(deep, "public " + tomName + "(");
-    //write constructor parameters
+    
     for (int i = 0 ; i < args ; i++){
 	    output.write(deep,types.get(i) + " " + names.get(i));
-	    if (i+1<args) {//if many parameters
+	    if (i+1<args) {
 		    output.write(deep,", ");
 	    }
     }
 
-    //write constructor initialization
+    
     output.write(deep,") : base(");
     generateBQTerm(deep,superTerm,moduleName);
     output.write(deep,") {");
 
-    //here index represents the parameter number
+    
     for (int i = 0 ; i < args ; i++) {
 	    String param = names.get(i);
 	    output.write(deep, "this." + param + "=" + param + ";");
     }
     output.write(deep,"}");
 
-    // write getters
+    
     for (int i = 0 ; i < args ; i++) {
       output.write(deep, "public " + types.get(i) + " get" + names.get(i) + "() { return " + names.get(i) + ";}");
     }
 
-    // write getChildCount (= 1 + stratChildCount because of the %strategy `extends' which is the first child)
+    
     int stratChildCount = stratChild.size();
 
     output.write(deep, "override public tom.library.sl.Visitable[] getChildren() {");
     output.write(deep, "tom.library.sl.Visitable[] stratChildren = new tom.library.sl.Visitable[getChildCount()];");
     output.write(deep, "for (int i = 0; i < getChildCount(); i++) {");
     output.write(deep, "stratChildren[i]=getChildAt(i);}");
-    //for (int i = 0; i < stratChildCount; i++) {
-    //  int j = (stratChild.get(i)).intValue();
-    //  output.write(deep, "stratChildren[" + i + "] = get" + names.get(j) + "();");
-    //}
+    
+    
+    
+    
     output.write(deep, "return stratChildren;}");
 
     output.write(deep, "override public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {");
     output.write(deep, "for (int i = 0; i < getChildCount(); i++) {");
     output.write(deep, "setChildAt(i,children[i]);}");
-    //for (int i = 0; i < stratChildCount; i++) {
-    //  int j = (stratChild.get(i)).intValue();
-    //  output.write(deep, names.get(j) + " = (" + types.get(j) + ") children[" + i + "];");
-    //}
+    
+    
+    
+    
     output.write(deep, "return this;}");
 
     output.write(deep, "override public int getChildCount() { return " + (stratChildCount + 1) + "; }");
 
-    // write getChildAt
+    
     output.write(deep, "override public tom.library.sl.Visitable getChildAt(int index) {");
     output.write(deep, "switch (index) {");
     output.write(deep, "case 0: return base.getChildAt(0);");
@@ -207,7 +216,7 @@ public class CSharpGenerator extends CFamilyGenerator {
     output.write(deep, "default: throw new IndexOutOfRangeException();");
     output.write(deep, "}}");
 
-    // write setChildAt
+    
     output.write(deep, "override public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable child) {");
     output.write(deep, "switch (index) {");
     output.write(deep, "case 0: return base.setChildAt(0, child);");
@@ -271,12 +280,12 @@ public class CSharpGenerator extends CFamilyGenerator {
 
   protected String genResolveIsFsymCode(String tomName, String varname) throws IOException {
     throw new TomRuntimeException("%transformation (ResolveIsFsym) not yet supported in CSharp");
-    //return "";
+    
   }
 
   protected String genResolveGetSlotCode(String tomName, String varname, String slotName) throws IOException {
     throw new TomRuntimeException("%transformation (ResolveGetSlot) not yet supported in CSharp");
-    //return "";
+    
   }
   
   protected void buildResolveClass(String wName, String tName, String extendsName, String moduleName) throws IOException {
@@ -299,7 +308,7 @@ public class CSharpGenerator extends CFamilyGenerator {
     throw new TomRuntimeException("%transformation (TracelinkPopulateResolve instruction) not yet supported in CSharp");
   }
 
-  //tmp
+  
   protected void buildResolve(int deep, BQTerm bqterm, String moduleName) throws IOException {
     throw new TomRuntimeException("%transformation (Resolve2 instruction) not yet supported in CSharp");
   }

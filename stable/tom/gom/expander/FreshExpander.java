@@ -1,28 +1,30 @@
-/*
- * Gom
- *
- * Copyright (c) 2000-2017, Universite de Lorraine, Inria
- * Nancy, France.
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
- *
- * Antoine Reilles    e-mail: Antoine.Reilles@loria.fr
- *
- **/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 package tom.gom.expander;
+
+
 
 import java.util.logging.Level;
 import tom.gom.GomStreamManager;
@@ -35,9 +37,11 @@ import tom.gom.SymbolTable.*;
 import tom.gom.exception.*;
 import tom.gom.tools.GomEnvironment;
 
+
+
 public class FreshExpander {
 
-         private static   tom.gom.adt.gom.types.ArgList  tom_append_list_ConcArg( tom.gom.adt.gom.types.ArgList l1,  tom.gom.adt.gom.types.ArgList  l2) {     if( l1.isEmptyConcArg() ) {       return l2;     } else if( l2.isEmptyConcArg() ) {       return l1;     } else if(  l1.getTailConcArg() .isEmptyConcArg() ) {       return  tom.gom.adt.gom.types.arglist.ConsConcArg.make( l1.getHeadConcArg() ,l2) ;     } else {       return  tom.gom.adt.gom.types.arglist.ConsConcArg.make( l1.getHeadConcArg() ,tom_append_list_ConcArg( l1.getTailConcArg() ,l2)) ;     }   }   private static   tom.gom.adt.gom.types.ArgList  tom_get_slice_ConcArg( tom.gom.adt.gom.types.ArgList  begin,  tom.gom.adt.gom.types.ArgList  end, tom.gom.adt.gom.types.ArgList  tail) {     if( (begin==end) ) {       return tail;     } else if( (end==tail)  && ( end.isEmptyConcArg()  ||  (end== tom.gom.adt.gom.types.arglist.EmptyConcArg.make() ) )) {       /* code to avoid a call to make, and thus to avoid looping during list-matching */       return begin;     }     return  tom.gom.adt.gom.types.arglist.ConsConcArg.make( begin.getHeadConcArg() ,( tom.gom.adt.gom.types.ArgList )tom_get_slice_ConcArg( begin.getTailConcArg() ,end,tail)) ;   }      private static   tom.gom.adt.gom.types.AlternativeList  tom_append_list_ConcAlternative( tom.gom.adt.gom.types.AlternativeList l1,  tom.gom.adt.gom.types.AlternativeList  l2) {     if( l1.isEmptyConcAlternative() ) {       return l2;     } else if( l2.isEmptyConcAlternative() ) {       return l1;     } else if(  l1.getTailConcAlternative() .isEmptyConcAlternative() ) {       return  tom.gom.adt.gom.types.alternativelist.ConsConcAlternative.make( l1.getHeadConcAlternative() ,l2) ;     } else {       return  tom.gom.adt.gom.types.alternativelist.ConsConcAlternative.make( l1.getHeadConcAlternative() ,tom_append_list_ConcAlternative( l1.getTailConcAlternative() ,l2)) ;     }   }   private static   tom.gom.adt.gom.types.AlternativeList  tom_get_slice_ConcAlternative( tom.gom.adt.gom.types.AlternativeList  begin,  tom.gom.adt.gom.types.AlternativeList  end, tom.gom.adt.gom.types.AlternativeList  tail) {     if( (begin==end) ) {       return tail;     } else if( (end==tail)  && ( end.isEmptyConcAlternative()  ||  (end== tom.gom.adt.gom.types.alternativelist.EmptyConcAlternative.make() ) )) {       /* code to avoid a call to make, and thus to avoid looping during list-matching */       return begin;     }     return  tom.gom.adt.gom.types.alternativelist.ConsConcAlternative.make( begin.getHeadConcAlternative() ,( tom.gom.adt.gom.types.AlternativeList )tom_get_slice_ConcAlternative( begin.getTailConcAlternative() ,end,tail)) ;   }      private static   tom.gom.adt.gom.types.ProductionList  tom_append_list_ConcProduction( tom.gom.adt.gom.types.ProductionList l1,  tom.gom.adt.gom.types.ProductionList  l2) {     if( l1.isEmptyConcProduction() ) {       return l2;     } else if( l2.isEmptyConcProduction() ) {       return l1;     } else if(  l1.getTailConcProduction() .isEmptyConcProduction() ) {       return  tom.gom.adt.gom.types.productionlist.ConsConcProduction.make( l1.getHeadConcProduction() ,l2) ;     } else {       return  tom.gom.adt.gom.types.productionlist.ConsConcProduction.make( l1.getHeadConcProduction() ,tom_append_list_ConcProduction( l1.getTailConcProduction() ,l2)) ;     }   }   private static   tom.gom.adt.gom.types.ProductionList  tom_get_slice_ConcProduction( tom.gom.adt.gom.types.ProductionList  begin,  tom.gom.adt.gom.types.ProductionList  end, tom.gom.adt.gom.types.ProductionList  tail) {     if( (begin==end) ) {       return tail;     } else if( (end==tail)  && ( end.isEmptyConcProduction()  ||  (end== tom.gom.adt.gom.types.productionlist.EmptyConcProduction.make() ) )) {       /* code to avoid a call to make, and thus to avoid looping during list-matching */       return begin;     }     return  tom.gom.adt.gom.types.productionlist.ConsConcProduction.make( begin.getHeadConcProduction() ,( tom.gom.adt.gom.types.ProductionList )tom_get_slice_ConcProduction( begin.getTailConcProduction() ,end,tail)) ;   }      private static   tom.gom.adt.gom.types.Option  tom_append_list_OptionList( tom.gom.adt.gom.types.Option  l1,  tom.gom.adt.gom.types.Option  l2) {     if( l1.isEmptyOptionList() ) {       return l2;     } else if( l2.isEmptyOptionList() ) {       return l1;     } else if( ((l1 instanceof tom.gom.adt.gom.types.option.ConsOptionList) || (l1 instanceof tom.gom.adt.gom.types.option.EmptyOptionList)) ) {       if(  l1.getTailOptionList() .isEmptyOptionList() ) {         return  tom.gom.adt.gom.types.option.ConsOptionList.make( l1.getHeadOptionList() ,l2) ;       } else {         return  tom.gom.adt.gom.types.option.ConsOptionList.make( l1.getHeadOptionList() ,tom_append_list_OptionList( l1.getTailOptionList() ,l2)) ;       }     } else {       return  tom.gom.adt.gom.types.option.ConsOptionList.make(l1,l2) ;     }   }   private static   tom.gom.adt.gom.types.Option  tom_get_slice_OptionList( tom.gom.adt.gom.types.Option  begin,  tom.gom.adt.gom.types.Option  end, tom.gom.adt.gom.types.Option  tail) {     if( (begin==end) ) {       return tail;     } else if( (end==tail)  && ( end.isEmptyOptionList()  ||  (end== tom.gom.adt.gom.types.option.EmptyOptionList.make() ) )) {       /* code to avoid a call to make, and thus to avoid looping during list-matching */       return begin;     }     return  tom.gom.adt.gom.types.option.ConsOptionList.make((( ((begin instanceof tom.gom.adt.gom.types.option.ConsOptionList) || (begin instanceof tom.gom.adt.gom.types.option.EmptyOptionList)) )? begin.getHeadOptionList() :begin),( tom.gom.adt.gom.types.Option )tom_get_slice_OptionList((( ((begin instanceof tom.gom.adt.gom.types.option.ConsOptionList) || (begin instanceof tom.gom.adt.gom.types.option.EmptyOptionList)) )? begin.getTailOptionList() : tom.gom.adt.gom.types.option.EmptyOptionList.make() ),end,tail)) ;   }      private static   tom.gom.adt.gom.types.FieldList  tom_append_list_ConcField( tom.gom.adt.gom.types.FieldList l1,  tom.gom.adt.gom.types.FieldList  l2) {     if( l1.isEmptyConcField() ) {       return l2;     } else if( l2.isEmptyConcField() ) {       return l1;     } else if(  l1.getTailConcField() .isEmptyConcField() ) {       return  tom.gom.adt.gom.types.fieldlist.ConsConcField.make( l1.getHeadConcField() ,l2) ;     } else {       return  tom.gom.adt.gom.types.fieldlist.ConsConcField.make( l1.getHeadConcField() ,tom_append_list_ConcField( l1.getTailConcField() ,l2)) ;     }   }   private static   tom.gom.adt.gom.types.FieldList  tom_get_slice_ConcField( tom.gom.adt.gom.types.FieldList  begin,  tom.gom.adt.gom.types.FieldList  end, tom.gom.adt.gom.types.FieldList  tail) {     if( (begin==end) ) {       return tail;     } else if( (end==tail)  && ( end.isEmptyConcField()  ||  (end== tom.gom.adt.gom.types.fieldlist.EmptyConcField.make() ) )) {       /* code to avoid a call to make, and thus to avoid looping during list-matching */       return begin;     }     return  tom.gom.adt.gom.types.fieldlist.ConsConcField.make( begin.getHeadConcField() ,( tom.gom.adt.gom.types.FieldList )tom_get_slice_ConcField( begin.getTailConcField() ,end,tail)) ;   }      private static   tom.gom.adt.gom.types.AtomList  tom_append_list_ConcAtom( tom.gom.adt.gom.types.AtomList l1,  tom.gom.adt.gom.types.AtomList  l2) {     if( l1.isEmptyConcAtom() ) {       return l2;     } else if( l2.isEmptyConcAtom() ) {       return l1;     } else if(  l1.getTailConcAtom() .isEmptyConcAtom() ) {       return  tom.gom.adt.gom.types.atomlist.ConsConcAtom.make( l1.getHeadConcAtom() ,l2) ;     } else {       return  tom.gom.adt.gom.types.atomlist.ConsConcAtom.make( l1.getHeadConcAtom() ,tom_append_list_ConcAtom( l1.getTailConcAtom() ,l2)) ;     }   }   private static   tom.gom.adt.gom.types.AtomList  tom_get_slice_ConcAtom( tom.gom.adt.gom.types.AtomList  begin,  tom.gom.adt.gom.types.AtomList  end, tom.gom.adt.gom.types.AtomList  tail) {     if( (begin==end) ) {       return tail;     } else if( (end==tail)  && ( end.isEmptyConcAtom()  ||  (end== tom.gom.adt.gom.types.atomlist.EmptyConcAtom.make() ) )) {       /* code to avoid a call to make, and thus to avoid looping during list-matching */       return begin;     }     return  tom.gom.adt.gom.types.atomlist.ConsConcAtom.make( begin.getHeadConcAtom() ,( tom.gom.adt.gom.types.AtomList )tom_get_slice_ConcAtom( begin.getTailConcAtom() ,end,tail)) ;   }        @SuppressWarnings("unchecked") private static java.util.ArrayList concArrayListAppend(Object o, java.util.ArrayList l) {   java.util.ArrayList res = (java.util.ArrayList)l.clone();   res.add(o);   return res; }      private static   tom.library.sl.Strategy  tom_append_list_Sequence( tom.library.sl.Strategy  l1,  tom.library.sl.Strategy  l2) {     if(( l1 == null )) {       return l2;     } else if(( l2 == null )) {       return l1;     } else if(( l1 instanceof tom.library.sl.Sequence )) {       if(( ( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.Sequence.THEN) ) == null )) {         return  tom.library.sl.Sequence.make(( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.Sequence.FIRST) ),l2) ;       } else {         return  tom.library.sl.Sequence.make(( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.Sequence.FIRST) ),tom_append_list_Sequence(( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.Sequence.THEN) ),l2)) ;       }     } else {       return  tom.library.sl.Sequence.make(l1,l2) ;     }   }   private static   tom.library.sl.Strategy  tom_get_slice_Sequence( tom.library.sl.Strategy  begin,  tom.library.sl.Strategy  end, tom.library.sl.Strategy  tail) {     if( (begin.equals(end)) ) {       return tail;     } else if( (end.equals(tail))  && (( end == null ) ||  (end.equals( null )) )) {       /* code to avoid a call to make, and thus to avoid looping during list-matching */       return begin;     }     return  tom.library.sl.Sequence.make(((( begin instanceof tom.library.sl.Sequence ))?( (tom.library.sl.Strategy)begin.getChildAt(tom.library.sl.Sequence.FIRST) ):begin),( tom.library.sl.Strategy )tom_get_slice_Sequence(((( begin instanceof tom.library.sl.Sequence ))?( (tom.library.sl.Strategy)begin.getChildAt(tom.library.sl.Sequence.THEN) ): null ),end,tail)) ;   }      private static   tom.library.sl.Strategy  tom_append_list_Choice( tom.library.sl.Strategy  l1,  tom.library.sl.Strategy  l2) {     if(( l1 ==null )) {       return l2;     } else if(( l2 ==null )) {       return l1;     } else if(( l1 instanceof tom.library.sl.Choice )) {       if(( ( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.Choice.THEN) ) ==null )) {         return  tom.library.sl.Choice.make(( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.Choice.FIRST) ),l2) ;       } else {         return  tom.library.sl.Choice.make(( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.Choice.FIRST) ),tom_append_list_Choice(( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.Choice.THEN) ),l2)) ;       }     } else {       return  tom.library.sl.Choice.make(l1,l2) ;     }   }   private static   tom.library.sl.Strategy  tom_get_slice_Choice( tom.library.sl.Strategy  begin,  tom.library.sl.Strategy  end, tom.library.sl.Strategy  tail) {     if( (begin.equals(end)) ) {       return tail;     } else if( (end.equals(tail))  && (( end ==null ) ||  (end.equals( null )) )) {       /* code to avoid a call to make, and thus to avoid looping during list-matching */       return begin;     }     return  tom.library.sl.Choice.make(((( begin instanceof tom.library.sl.Choice ))?( (tom.library.sl.Strategy)begin.getChildAt(tom.library.sl.Choice.FIRST) ):begin),( tom.library.sl.Strategy )tom_get_slice_Choice(((( begin instanceof tom.library.sl.Choice ))?( (tom.library.sl.Strategy)begin.getChildAt(tom.library.sl.Choice.THEN) ): null ),end,tail)) ;   }      private static   tom.library.sl.Strategy  tom_append_list_SequenceId( tom.library.sl.Strategy  l1,  tom.library.sl.Strategy  l2) {     if(( l1 == null )) {       return l2;     } else if(( l2 == null )) {       return l1;     } else if(( l1 instanceof tom.library.sl.SequenceId )) {       if(( ( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.SequenceId.THEN) ) == null )) {         return  tom.library.sl.SequenceId.make(( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.SequenceId.FIRST) ),l2) ;       } else {         return  tom.library.sl.SequenceId.make(( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.SequenceId.FIRST) ),tom_append_list_SequenceId(( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.SequenceId.THEN) ),l2)) ;       }     } else {       return  tom.library.sl.SequenceId.make(l1,l2) ;     }   }   private static   tom.library.sl.Strategy  tom_get_slice_SequenceId( tom.library.sl.Strategy  begin,  tom.library.sl.Strategy  end, tom.library.sl.Strategy  tail) {     if( (begin.equals(end)) ) {       return tail;     } else if( (end.equals(tail))  && (( end == null ) ||  (end.equals( null )) )) {       /* code to avoid a call to make, and thus to avoid looping during list-matching */       return begin;     }     return  tom.library.sl.SequenceId.make(((( begin instanceof tom.library.sl.SequenceId ))?( (tom.library.sl.Strategy)begin.getChildAt(tom.library.sl.SequenceId.FIRST) ):begin),( tom.library.sl.Strategy )tom_get_slice_SequenceId(((( begin instanceof tom.library.sl.SequenceId ))?( (tom.library.sl.Strategy)begin.getChildAt(tom.library.sl.SequenceId.THEN) ): null ),end,tail)) ;   }      private static   tom.library.sl.Strategy  tom_append_list_ChoiceId( tom.library.sl.Strategy  l1,  tom.library.sl.Strategy  l2) {     if(( l1 ==null )) {       return l2;     } else if(( l2 ==null )) {       return l1;     } else if(( l1 instanceof tom.library.sl.ChoiceId )) {       if(( ( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.ChoiceId.THEN) ) ==null )) {         return  tom.library.sl.ChoiceId.make(( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.ChoiceId.FIRST) ),l2) ;       } else {         return  tom.library.sl.ChoiceId.make(( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.ChoiceId.FIRST) ),tom_append_list_ChoiceId(( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.ChoiceId.THEN) ),l2)) ;       }     } else {       return  tom.library.sl.ChoiceId.make(l1,l2) ;     }   }   private static   tom.library.sl.Strategy  tom_get_slice_ChoiceId( tom.library.sl.Strategy  begin,  tom.library.sl.Strategy  end, tom.library.sl.Strategy  tail) {     if( (begin.equals(end)) ) {       return tail;     } else if( (end.equals(tail))  && (( end ==null ) ||  (end.equals( null )) )) {       /* code to avoid a call to make, and thus to avoid looping during list-matching */       return begin;     }     return  tom.library.sl.ChoiceId.make(((( begin instanceof tom.library.sl.ChoiceId ))?( (tom.library.sl.Strategy)begin.getChildAt(tom.library.sl.ChoiceId.FIRST) ):begin),( tom.library.sl.Strategy )tom_get_slice_ChoiceId(((( begin instanceof tom.library.sl.ChoiceId ))?( (tom.library.sl.Strategy)begin.getChildAt(tom.library.sl.ChoiceId.THEN) ): null ),end,tail)) ;   }      private static  tom.library.sl.Strategy  tom_make_AUCtl( tom.library.sl.Strategy  s1,  tom.library.sl.Strategy  s2) { return ( ( new tom.library.sl.Mu(( new tom.library.sl.MuVar("x") ), tom.library.sl.Choice.make(s2, tom.library.sl.Choice.make( tom.library.sl.Sequence.make( tom.library.sl.Sequence.make(s1, tom.library.sl.Sequence.make(( new tom.library.sl.All(( new tom.library.sl.MuVar("x") )) ), null ) ) , tom.library.sl.Sequence.make(( new tom.library.sl.One(( new tom.library.sl.Identity() )) ), null ) ) , null ) ) ) ) );}private static  tom.library.sl.Strategy  tom_make_EUCtl( tom.library.sl.Strategy  s1,  tom.library.sl.Strategy  s2) { return ( ( new tom.library.sl.Mu(( new tom.library.sl.MuVar("x") ), tom.library.sl.Choice.make(s2, tom.library.sl.Choice.make( tom.library.sl.Sequence.make(s1, tom.library.sl.Sequence.make(( new tom.library.sl.One(( new tom.library.sl.MuVar("x") )) ), null ) ) , null ) ) ) ));} private static  tom.library.sl.Strategy  tom_make_Try( tom.library.sl.Strategy  s) { return (  tom.library.sl.Choice.make(s, tom.library.sl.Choice.make(( new tom.library.sl.Identity() ), null ) )  );}private static  tom.library.sl.Strategy  tom_make_Repeat( tom.library.sl.Strategy  s) { return ( ( new tom.library.sl.Mu(( new tom.library.sl.MuVar("_x") ), tom.library.sl.Choice.make( tom.library.sl.Sequence.make(s, tom.library.sl.Sequence.make(( new tom.library.sl.MuVar("_x") ), null ) ) , tom.library.sl.Choice.make(( new tom.library.sl.Identity() ), null ) ) ) ) );}private static  tom.library.sl.Strategy  tom_make_TopDown( tom.library.sl.Strategy  v) { return ( ( new tom.library.sl.Mu(( new tom.library.sl.MuVar("_x") ), tom.library.sl.Sequence.make(v, tom.library.sl.Sequence.make(( new tom.library.sl.All(( new tom.library.sl.MuVar("_x") )) ), null ) ) ) ) );}private static  tom.library.sl.Strategy  tom_make_OnceTopDown( tom.library.sl.Strategy  v) { return ( ( new tom.library.sl.Mu(( new tom.library.sl.MuVar("_x") ), tom.library.sl.Choice.make(v, tom.library.sl.Choice.make(( new tom.library.sl.One(( new tom.library.sl.MuVar("_x") )) ), null ) ) ) ) );}private static  tom.library.sl.Strategy  tom_make_RepeatId( tom.library.sl.Strategy  v) { return ( ( new tom.library.sl.Mu(( new tom.library.sl.MuVar("_x") ), tom.library.sl.SequenceId.make(v, tom.library.sl.SequenceId.make(( new tom.library.sl.MuVar("_x") ), null ) ) ) ) );}private static  tom.library.sl.Strategy  tom_make_OnceTopDownId( tom.library.sl.Strategy  v) { return ( ( new tom.library.sl.Mu(( new tom.library.sl.MuVar("_x") ), tom.library.sl.ChoiceId.make(v, tom.library.sl.ChoiceId.make(( new tom.library.sl.OneId(( new tom.library.sl.MuVar("_x") )) ), null ) ) ) ) );}   
+     private static   tom.gom.adt.gom.types.ArgList  tom_append_list_ConcArg( tom.gom.adt.gom.types.ArgList l1,  tom.gom.adt.gom.types.ArgList  l2) {     if( l1.isEmptyConcArg() ) {       return l2;     } else if( l2.isEmptyConcArg() ) {       return l1;     } else if(  l1.getTailConcArg() .isEmptyConcArg() ) {       return  tom.gom.adt.gom.types.arglist.ConsConcArg.make( l1.getHeadConcArg() ,l2) ;     } else {       return  tom.gom.adt.gom.types.arglist.ConsConcArg.make( l1.getHeadConcArg() ,tom_append_list_ConcArg( l1.getTailConcArg() ,l2)) ;     }   }   private static   tom.gom.adt.gom.types.ArgList  tom_get_slice_ConcArg( tom.gom.adt.gom.types.ArgList  begin,  tom.gom.adt.gom.types.ArgList  end, tom.gom.adt.gom.types.ArgList  tail) {     if( (begin==end) ) {       return tail;     } else if( (end==tail)  && ( end.isEmptyConcArg()  ||  (end== tom.gom.adt.gom.types.arglist.EmptyConcArg.make() ) )) {       /* code to avoid a call to make, and thus to avoid looping during list-matching */       return begin;     }     return  tom.gom.adt.gom.types.arglist.ConsConcArg.make( begin.getHeadConcArg() ,( tom.gom.adt.gom.types.ArgList )tom_get_slice_ConcArg( begin.getTailConcArg() ,end,tail)) ;   }      private static   tom.gom.adt.gom.types.AlternativeList  tom_append_list_ConcAlternative( tom.gom.adt.gom.types.AlternativeList l1,  tom.gom.adt.gom.types.AlternativeList  l2) {     if( l1.isEmptyConcAlternative() ) {       return l2;     } else if( l2.isEmptyConcAlternative() ) {       return l1;     } else if(  l1.getTailConcAlternative() .isEmptyConcAlternative() ) {       return  tom.gom.adt.gom.types.alternativelist.ConsConcAlternative.make( l1.getHeadConcAlternative() ,l2) ;     } else {       return  tom.gom.adt.gom.types.alternativelist.ConsConcAlternative.make( l1.getHeadConcAlternative() ,tom_append_list_ConcAlternative( l1.getTailConcAlternative() ,l2)) ;     }   }   private static   tom.gom.adt.gom.types.AlternativeList  tom_get_slice_ConcAlternative( tom.gom.adt.gom.types.AlternativeList  begin,  tom.gom.adt.gom.types.AlternativeList  end, tom.gom.adt.gom.types.AlternativeList  tail) {     if( (begin==end) ) {       return tail;     } else if( (end==tail)  && ( end.isEmptyConcAlternative()  ||  (end== tom.gom.adt.gom.types.alternativelist.EmptyConcAlternative.make() ) )) {       /* code to avoid a call to make, and thus to avoid looping during list-matching */       return begin;     }     return  tom.gom.adt.gom.types.alternativelist.ConsConcAlternative.make( begin.getHeadConcAlternative() ,( tom.gom.adt.gom.types.AlternativeList )tom_get_slice_ConcAlternative( begin.getTailConcAlternative() ,end,tail)) ;   }      private static   tom.gom.adt.gom.types.ProductionList  tom_append_list_ConcProduction( tom.gom.adt.gom.types.ProductionList l1,  tom.gom.adt.gom.types.ProductionList  l2) {     if( l1.isEmptyConcProduction() ) {       return l2;     } else if( l2.isEmptyConcProduction() ) {       return l1;     } else if(  l1.getTailConcProduction() .isEmptyConcProduction() ) {       return  tom.gom.adt.gom.types.productionlist.ConsConcProduction.make( l1.getHeadConcProduction() ,l2) ;     } else {       return  tom.gom.adt.gom.types.productionlist.ConsConcProduction.make( l1.getHeadConcProduction() ,tom_append_list_ConcProduction( l1.getTailConcProduction() ,l2)) ;     }   }   private static   tom.gom.adt.gom.types.ProductionList  tom_get_slice_ConcProduction( tom.gom.adt.gom.types.ProductionList  begin,  tom.gom.adt.gom.types.ProductionList  end, tom.gom.adt.gom.types.ProductionList  tail) {     if( (begin==end) ) {       return tail;     } else if( (end==tail)  && ( end.isEmptyConcProduction()  ||  (end== tom.gom.adt.gom.types.productionlist.EmptyConcProduction.make() ) )) {       /* code to avoid a call to make, and thus to avoid looping during list-matching */       return begin;     }     return  tom.gom.adt.gom.types.productionlist.ConsConcProduction.make( begin.getHeadConcProduction() ,( tom.gom.adt.gom.types.ProductionList )tom_get_slice_ConcProduction( begin.getTailConcProduction() ,end,tail)) ;   }      private static   tom.gom.adt.gom.types.Option  tom_append_list_OptionList( tom.gom.adt.gom.types.Option  l1,  tom.gom.adt.gom.types.Option  l2) {     if( l1.isEmptyOptionList() ) {       return l2;     } else if( l2.isEmptyOptionList() ) {       return l1;     } else if( ((l1 instanceof tom.gom.adt.gom.types.option.ConsOptionList) || (l1 instanceof tom.gom.adt.gom.types.option.EmptyOptionList)) ) {       if(  l1.getTailOptionList() .isEmptyOptionList() ) {         return  tom.gom.adt.gom.types.option.ConsOptionList.make( l1.getHeadOptionList() ,l2) ;       } else {         return  tom.gom.adt.gom.types.option.ConsOptionList.make( l1.getHeadOptionList() ,tom_append_list_OptionList( l1.getTailOptionList() ,l2)) ;       }     } else {       return  tom.gom.adt.gom.types.option.ConsOptionList.make(l1,l2) ;     }   }   private static   tom.gom.adt.gom.types.Option  tom_get_slice_OptionList( tom.gom.adt.gom.types.Option  begin,  tom.gom.adt.gom.types.Option  end, tom.gom.adt.gom.types.Option  tail) {     if( (begin==end) ) {       return tail;     } else if( (end==tail)  && ( end.isEmptyOptionList()  ||  (end== tom.gom.adt.gom.types.option.EmptyOptionList.make() ) )) {       /* code to avoid a call to make, and thus to avoid looping during list-matching */       return begin;     }     return  tom.gom.adt.gom.types.option.ConsOptionList.make((( ((begin instanceof tom.gom.adt.gom.types.option.ConsOptionList) || (begin instanceof tom.gom.adt.gom.types.option.EmptyOptionList)) )? begin.getHeadOptionList() :begin),( tom.gom.adt.gom.types.Option )tom_get_slice_OptionList((( ((begin instanceof tom.gom.adt.gom.types.option.ConsOptionList) || (begin instanceof tom.gom.adt.gom.types.option.EmptyOptionList)) )? begin.getTailOptionList() : tom.gom.adt.gom.types.option.EmptyOptionList.make() ),end,tail)) ;   }      private static   tom.gom.adt.gom.types.FieldList  tom_append_list_ConcField( tom.gom.adt.gom.types.FieldList l1,  tom.gom.adt.gom.types.FieldList  l2) {     if( l1.isEmptyConcField() ) {       return l2;     } else if( l2.isEmptyConcField() ) {       return l1;     } else if(  l1.getTailConcField() .isEmptyConcField() ) {       return  tom.gom.adt.gom.types.fieldlist.ConsConcField.make( l1.getHeadConcField() ,l2) ;     } else {       return  tom.gom.adt.gom.types.fieldlist.ConsConcField.make( l1.getHeadConcField() ,tom_append_list_ConcField( l1.getTailConcField() ,l2)) ;     }   }   private static   tom.gom.adt.gom.types.FieldList  tom_get_slice_ConcField( tom.gom.adt.gom.types.FieldList  begin,  tom.gom.adt.gom.types.FieldList  end, tom.gom.adt.gom.types.FieldList  tail) {     if( (begin==end) ) {       return tail;     } else if( (end==tail)  && ( end.isEmptyConcField()  ||  (end== tom.gom.adt.gom.types.fieldlist.EmptyConcField.make() ) )) {       /* code to avoid a call to make, and thus to avoid looping during list-matching */       return begin;     }     return  tom.gom.adt.gom.types.fieldlist.ConsConcField.make( begin.getHeadConcField() ,( tom.gom.adt.gom.types.FieldList )tom_get_slice_ConcField( begin.getTailConcField() ,end,tail)) ;   }      private static   tom.gom.adt.gom.types.AtomList  tom_append_list_ConcAtom( tom.gom.adt.gom.types.AtomList l1,  tom.gom.adt.gom.types.AtomList  l2) {     if( l1.isEmptyConcAtom() ) {       return l2;     } else if( l2.isEmptyConcAtom() ) {       return l1;     } else if(  l1.getTailConcAtom() .isEmptyConcAtom() ) {       return  tom.gom.adt.gom.types.atomlist.ConsConcAtom.make( l1.getHeadConcAtom() ,l2) ;     } else {       return  tom.gom.adt.gom.types.atomlist.ConsConcAtom.make( l1.getHeadConcAtom() ,tom_append_list_ConcAtom( l1.getTailConcAtom() ,l2)) ;     }   }   private static   tom.gom.adt.gom.types.AtomList  tom_get_slice_ConcAtom( tom.gom.adt.gom.types.AtomList  begin,  tom.gom.adt.gom.types.AtomList  end, tom.gom.adt.gom.types.AtomList  tail) {     if( (begin==end) ) {       return tail;     } else if( (end==tail)  && ( end.isEmptyConcAtom()  ||  (end== tom.gom.adt.gom.types.atomlist.EmptyConcAtom.make() ) )) {       /* code to avoid a call to make, and thus to avoid looping during list-matching */       return begin;     }     return  tom.gom.adt.gom.types.atomlist.ConsConcAtom.make( begin.getHeadConcAtom() ,( tom.gom.adt.gom.types.AtomList )tom_get_slice_ConcAtom( begin.getTailConcAtom() ,end,tail)) ;   }     @SuppressWarnings("unchecked") private static java.util.ArrayList concArrayListAppend(Object o, java.util.ArrayList l) {   java.util.ArrayList res = (java.util.ArrayList)l.clone();   res.add(o);   return res; }    private static   tom.library.sl.Strategy  tom_append_list_Sequence( tom.library.sl.Strategy  l1,  tom.library.sl.Strategy  l2) {     if(( l1 == null )) {       return l2;     } else if(( l2 == null )) {       return l1;     } else if(( l1 instanceof tom.library.sl.Sequence )) {       if(( ( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.Sequence.THEN) ) == null )) {         return  tom.library.sl.Sequence.make(( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.Sequence.FIRST) ),l2) ;       } else {         return  tom.library.sl.Sequence.make(( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.Sequence.FIRST) ),tom_append_list_Sequence(( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.Sequence.THEN) ),l2)) ;       }     } else {       return  tom.library.sl.Sequence.make(l1,l2) ;     }   }   private static   tom.library.sl.Strategy  tom_get_slice_Sequence( tom.library.sl.Strategy  begin,  tom.library.sl.Strategy  end, tom.library.sl.Strategy  tail) {     if( (begin.equals(end)) ) {       return tail;     } else if( (end.equals(tail))  && (( end == null ) ||  (end.equals( null )) )) {       /* code to avoid a call to make, and thus to avoid looping during list-matching */       return begin;     }     return  tom.library.sl.Sequence.make(((( begin instanceof tom.library.sl.Sequence ))?( (tom.library.sl.Strategy)begin.getChildAt(tom.library.sl.Sequence.FIRST) ):begin),( tom.library.sl.Strategy )tom_get_slice_Sequence(((( begin instanceof tom.library.sl.Sequence ))?( (tom.library.sl.Strategy)begin.getChildAt(tom.library.sl.Sequence.THEN) ): null ),end,tail)) ;   }      private static   tom.library.sl.Strategy  tom_append_list_Choice( tom.library.sl.Strategy  l1,  tom.library.sl.Strategy  l2) {     if(( l1 ==null )) {       return l2;     } else if(( l2 ==null )) {       return l1;     } else if(( l1 instanceof tom.library.sl.Choice )) {       if(( ( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.Choice.THEN) ) ==null )) {         return  tom.library.sl.Choice.make(( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.Choice.FIRST) ),l2) ;       } else {         return  tom.library.sl.Choice.make(( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.Choice.FIRST) ),tom_append_list_Choice(( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.Choice.THEN) ),l2)) ;       }     } else {       return  tom.library.sl.Choice.make(l1,l2) ;     }   }   private static   tom.library.sl.Strategy  tom_get_slice_Choice( tom.library.sl.Strategy  begin,  tom.library.sl.Strategy  end, tom.library.sl.Strategy  tail) {     if( (begin.equals(end)) ) {       return tail;     } else if( (end.equals(tail))  && (( end ==null ) ||  (end.equals( null )) )) {       /* code to avoid a call to make, and thus to avoid looping during list-matching */       return begin;     }     return  tom.library.sl.Choice.make(((( begin instanceof tom.library.sl.Choice ))?( (tom.library.sl.Strategy)begin.getChildAt(tom.library.sl.Choice.FIRST) ):begin),( tom.library.sl.Strategy )tom_get_slice_Choice(((( begin instanceof tom.library.sl.Choice ))?( (tom.library.sl.Strategy)begin.getChildAt(tom.library.sl.Choice.THEN) ): null ),end,tail)) ;   }      private static   tom.library.sl.Strategy  tom_append_list_SequenceId( tom.library.sl.Strategy  l1,  tom.library.sl.Strategy  l2) {     if(( l1 == null )) {       return l2;     } else if(( l2 == null )) {       return l1;     } else if(( l1 instanceof tom.library.sl.SequenceId )) {       if(( ( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.SequenceId.THEN) ) == null )) {         return  tom.library.sl.SequenceId.make(( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.SequenceId.FIRST) ),l2) ;       } else {         return  tom.library.sl.SequenceId.make(( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.SequenceId.FIRST) ),tom_append_list_SequenceId(( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.SequenceId.THEN) ),l2)) ;       }     } else {       return  tom.library.sl.SequenceId.make(l1,l2) ;     }   }   private static   tom.library.sl.Strategy  tom_get_slice_SequenceId( tom.library.sl.Strategy  begin,  tom.library.sl.Strategy  end, tom.library.sl.Strategy  tail) {     if( (begin.equals(end)) ) {       return tail;     } else if( (end.equals(tail))  && (( end == null ) ||  (end.equals( null )) )) {       /* code to avoid a call to make, and thus to avoid looping during list-matching */       return begin;     }     return  tom.library.sl.SequenceId.make(((( begin instanceof tom.library.sl.SequenceId ))?( (tom.library.sl.Strategy)begin.getChildAt(tom.library.sl.SequenceId.FIRST) ):begin),( tom.library.sl.Strategy )tom_get_slice_SequenceId(((( begin instanceof tom.library.sl.SequenceId ))?( (tom.library.sl.Strategy)begin.getChildAt(tom.library.sl.SequenceId.THEN) ): null ),end,tail)) ;   }      private static   tom.library.sl.Strategy  tom_append_list_ChoiceId( tom.library.sl.Strategy  l1,  tom.library.sl.Strategy  l2) {     if(( l1 ==null )) {       return l2;     } else if(( l2 ==null )) {       return l1;     } else if(( l1 instanceof tom.library.sl.ChoiceId )) {       if(( ( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.ChoiceId.THEN) ) ==null )) {         return  tom.library.sl.ChoiceId.make(( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.ChoiceId.FIRST) ),l2) ;       } else {         return  tom.library.sl.ChoiceId.make(( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.ChoiceId.FIRST) ),tom_append_list_ChoiceId(( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.ChoiceId.THEN) ),l2)) ;       }     } else {       return  tom.library.sl.ChoiceId.make(l1,l2) ;     }   }   private static   tom.library.sl.Strategy  tom_get_slice_ChoiceId( tom.library.sl.Strategy  begin,  tom.library.sl.Strategy  end, tom.library.sl.Strategy  tail) {     if( (begin.equals(end)) ) {       return tail;     } else if( (end.equals(tail))  && (( end ==null ) ||  (end.equals( null )) )) {       /* code to avoid a call to make, and thus to avoid looping during list-matching */       return begin;     }     return  tom.library.sl.ChoiceId.make(((( begin instanceof tom.library.sl.ChoiceId ))?( (tom.library.sl.Strategy)begin.getChildAt(tom.library.sl.ChoiceId.FIRST) ):begin),( tom.library.sl.Strategy )tom_get_slice_ChoiceId(((( begin instanceof tom.library.sl.ChoiceId ))?( (tom.library.sl.Strategy)begin.getChildAt(tom.library.sl.ChoiceId.THEN) ): null ),end,tail)) ;   }   private static  tom.library.sl.Strategy  tom_make_AUCtl( tom.library.sl.Strategy  s1,  tom.library.sl.Strategy  s2) { return ( ( new tom.library.sl.Mu(( new tom.library.sl.MuVar("x") ), tom.library.sl.Choice.make(s2, tom.library.sl.Choice.make( tom.library.sl.Sequence.make( tom.library.sl.Sequence.make(s1, tom.library.sl.Sequence.make(( new tom.library.sl.All(( new tom.library.sl.MuVar("x") )) ), null ) ) , tom.library.sl.Sequence.make(( new tom.library.sl.One(( new tom.library.sl.Identity() )) ), null ) ) , null ) ) ) ) );}private static  tom.library.sl.Strategy  tom_make_EUCtl( tom.library.sl.Strategy  s1,  tom.library.sl.Strategy  s2) { return ( ( new tom.library.sl.Mu(( new tom.library.sl.MuVar("x") ), tom.library.sl.Choice.make(s2, tom.library.sl.Choice.make( tom.library.sl.Sequence.make(s1, tom.library.sl.Sequence.make(( new tom.library.sl.One(( new tom.library.sl.MuVar("x") )) ), null ) ) , null ) ) ) ));}private static  tom.library.sl.Strategy  tom_make_Try( tom.library.sl.Strategy  s) { return (  tom.library.sl.Choice.make(s, tom.library.sl.Choice.make(( new tom.library.sl.Identity() ), null ) )  );}private static  tom.library.sl.Strategy  tom_make_Repeat( tom.library.sl.Strategy  s) { return ( ( new tom.library.sl.Mu(( new tom.library.sl.MuVar("_x") ), tom.library.sl.Choice.make( tom.library.sl.Sequence.make(s, tom.library.sl.Sequence.make(( new tom.library.sl.MuVar("_x") ), null ) ) , tom.library.sl.Choice.make(( new tom.library.sl.Identity() ), null ) ) ) ) );}private static  tom.library.sl.Strategy  tom_make_TopDown( tom.library.sl.Strategy  v) { return ( ( new tom.library.sl.Mu(( new tom.library.sl.MuVar("_x") ), tom.library.sl.Sequence.make(v, tom.library.sl.Sequence.make(( new tom.library.sl.All(( new tom.library.sl.MuVar("_x") )) ), null ) ) ) ) );}private static  tom.library.sl.Strategy  tom_make_OnceTopDown( tom.library.sl.Strategy  v) { return ( ( new tom.library.sl.Mu(( new tom.library.sl.MuVar("_x") ), tom.library.sl.Choice.make(v, tom.library.sl.Choice.make(( new tom.library.sl.One(( new tom.library.sl.MuVar("_x") )) ), null ) ) ) ) );}private static  tom.library.sl.Strategy  tom_make_RepeatId( tom.library.sl.Strategy  v) { return ( ( new tom.library.sl.Mu(( new tom.library.sl.MuVar("_x") ), tom.library.sl.SequenceId.make(v, tom.library.sl.SequenceId.make(( new tom.library.sl.MuVar("_x") ), null ) ) ) ) );}private static  tom.library.sl.Strategy  tom_make_OnceTopDownId( tom.library.sl.Strategy  v) { return ( ( new tom.library.sl.Mu(( new tom.library.sl.MuVar("_x") ), tom.library.sl.ChoiceId.make(v, tom.library.sl.ChoiceId.make(( new tom.library.sl.OneId(( new tom.library.sl.MuVar("_x") )) ), null ) ) ) ) );}
 
 
 
@@ -66,7 +70,7 @@ public class FreshExpander {
     try {
       ArrayList list = new ArrayList();
       GomModuleList res =
-         tom.library.sl.Sequence.make(tom_make_TopDown(tom_make_ExpandAtoms(list)), tom.library.sl.Sequence.make(tom_make_TopDown(tom_make_UpdateSpecialization(list)), null ) ) 
+         tom.library.sl.Sequence.make(tom_make_TopDown( new ExpandAtoms(list) ), tom.library.sl.Sequence.make(tom_make_TopDown( new UpdateSpecialization(list) ), null ) ) 
 
 .visitLight(m);
       st.fill(res);
@@ -91,7 +95,7 @@ public class FreshExpander {
     }
   }
 
-  /* -- export, convert and alpha maps argument lists -- */
+  
 
   private String alphamapArgList(String sort) {
     StringBuffer buf = new StringBuffer();
@@ -207,7 +211,7 @@ public class FreshExpander {
     return buf.toString();
   }
 
-  /* call to expression field inside expression type */
+  
   private String alphaRecCall1(String sort) {
     StringBuffer buf = new StringBuffer();
     for(String a: st.getAccessibleAtoms(sort)) {
@@ -216,7 +220,7 @@ public class FreshExpander {
     return buf.toString();
   }
 
-  /* call to pattern field inside expression type */
+  
   private String alphaRecCall2(String sort) {
     StringBuffer buf = new StringBuffer();
     for(String a: st.getAccessibleAtoms(sort)) {
@@ -228,7 +232,7 @@ public class FreshExpander {
     return buf.toString();
   }
 
-  /* call to inner field inside pattern type */
+  
   private String alphaRecCall3(String tosort, String fromsort) {
     StringBuffer buf = new StringBuffer();
     for(String a: st.getAccessibleAtoms(tosort)) {
@@ -241,7 +245,7 @@ public class FreshExpander {
     return buf.toString();
   }
 
-  /* call to outer field inside pattern type */
+  
   private String alphaRecCall4(String tosort, String fromsort) {
     StringBuffer buf = new StringBuffer();
     for(String a: st.getAccessibleAtoms(tosort)) {
@@ -254,7 +258,7 @@ public class FreshExpander {
     return buf.toString();
   }
 
-  /* call to neutral field inside pattern type */
+  
   private String alphaRecCall5(String sort) {
     StringBuffer buf = new StringBuffer();
     for(String a: st.getAccessibleAtoms(sort)) {
@@ -263,11 +267,11 @@ public class FreshExpander {
     return buf.toString();
   }
 
-  /* call to pattern field inside pattern type */
+  
   private String alphaRecCall6(String tosort) {
     StringBuffer buf = new StringBuffer();
     for(String a: st.getAccessibleAtoms(tosort)) {
-      // bound atoms have to be the same
+      
       if(st.getBoundAtoms(tosort).contains(a)) {
         buf.append(","+a+"OuterMap");
         buf.append(","+a+"InnerMap");
@@ -279,7 +283,7 @@ public class FreshExpander {
   }
 
 
-  /* call to expression field inside expression type */
+  
   private String recCall1(String sort) {
     StringBuffer buf = new StringBuffer();
     boolean first = true;
@@ -294,7 +298,7 @@ public class FreshExpander {
     return buf.toString();
   }
 
-  /* call to pattern field inside expression type */
+  
   private String recCall2(String sort) {
     StringBuffer buf = new StringBuffer();
     boolean first = true;
@@ -312,7 +316,7 @@ public class FreshExpander {
     return buf.toString();
   }
 
-  /* call to inner field inside pattern type */
+  
   private String recCall3(String tosort, String fromsort) {
     StringBuffer buf = new StringBuffer();
     boolean first = true;
@@ -331,7 +335,7 @@ public class FreshExpander {
     return buf.toString();
   }
 
-  /* call to outer field inside pattern type */
+  
   private String recCall4(String tosort, String fromsort) {
     StringBuffer buf = new StringBuffer();
     boolean first = true;
@@ -350,7 +354,7 @@ public class FreshExpander {
     return buf.toString();
   }
 
-  /* call to neutral field inside pattern type */
+  
   private String recCall5(String sort) {
     StringBuffer buf = new StringBuffer();
     boolean first = true;
@@ -365,7 +369,7 @@ public class FreshExpander {
     return buf.toString();
   }
 
-  /* call to pattern field inside pattern type */
+  
   private String recCall6(String tosort) {
     StringBuffer buf = new StringBuffer();
     boolean first = true;
@@ -375,7 +379,7 @@ public class FreshExpander {
       } else {
         first = false;
       }
-      // bound atoms have to be the same
+      
       if(st.getBoundAtoms(tosort).contains(a)) {
         buf.append(""+a+"OuterMap");
         buf.append(","+a+"InnerMap");
@@ -384,7 +388,7 @@ public class FreshExpander {
     return buf.toString();
   }
 
-  /* hashTables for 'refresh' methods" */
+  
   private String hashtableArgList(String sort) {
     StringBuffer buf = new StringBuffer();
     boolean first = true;
@@ -400,7 +404,7 @@ public class FreshExpander {
     return buf.toString();
   }
 
-  /* hashTables for 'refresh' methods" */
+  
   private String newHashtableList(String sort) {
     StringBuffer buf = new StringBuffer();
     boolean first = true;
@@ -416,7 +420,7 @@ public class FreshExpander {
     return buf.toString();
   }
 
-  /* generates "A1Map,A2Map,...,AnMap" */
+  
   private String hashtableRecursiveCall(String sort) {
     StringBuffer buf = new StringBuffer();
     boolean first = true;
@@ -431,8 +435,7 @@ public class FreshExpander {
     return buf.toString();
   }
 
-  /* generates "raw_f1,raw_f2,...,raw_fn" for fields of cons
-   except for builtins where no new is added */
+  
   private String rawArgList(String cons) {
     String sort = st.getSort(cons);
     StringBuffer buf = new StringBuffer();
@@ -448,8 +451,7 @@ public class FreshExpander {
     return buf.toString();
   }
 
-  /* generates "f1,f2,...,fn" for fields of cons
-   except for builtins where no new is added */
+  
   private String convertArgList(String cons) {
     String sort = st.getSort(cons);
     StringBuffer buf = new StringBuffer();
@@ -466,38 +468,38 @@ public class FreshExpander {
   }
 
 
-  /* -- hooks utilities -- */
+  
 
   public static class AddHook extends tom.library.sl.AbstractStrategyBasic {private  String  sort;private  tom.gom.adt.gom.types.Production  hook;public AddHook( String  sort,  tom.gom.adt.gom.types.Production  hook) {super(( new tom.library.sl.Fail() ));this.sort=sort;this.hook=hook;}public  String  getsort() {return sort;}public  tom.gom.adt.gom.types.Production  gethook() {return hook;}public tom.library.sl.Visitable[] getChildren() {tom.library.sl.Visitable[] stratChildren = new tom.library.sl.Visitable[getChildCount()];stratChildren[0] = super.getChildAt(0);return stratChildren;}public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {super.setChildAt(0, children[0]);return this;}public int getChildCount() {return 1;}public tom.library.sl.Visitable getChildAt(int index) {switch (index) {case 0: return super.getChildAt(0);default: throw new IndexOutOfBoundsException();}}public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable child) {switch (index) {case 0: return super.setChildAt(0, child);default: throw new IndexOutOfBoundsException();}}@SuppressWarnings("unchecked")public <T> T visitLight(T v, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if ( (v instanceof tom.gom.adt.gom.types.ProductionList) ) {return ((T)visit_ProductionList((( tom.gom.adt.gom.types.ProductionList )v),introspector));}if (!(  null ==environment )) {return ((T)any.visit(environment,introspector));} else {return any.visitLight(v,introspector);}}@SuppressWarnings("unchecked")public  tom.gom.adt.gom.types.ProductionList  _visit_ProductionList( tom.gom.adt.gom.types.ProductionList  arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if (!(  null ==environment )) {return (( tom.gom.adt.gom.types.ProductionList )any.visit(environment,introspector));} else {return any.visitLight(arg,introspector);}}@SuppressWarnings("unchecked")public  tom.gom.adt.gom.types.ProductionList  visit_ProductionList( tom.gom.adt.gom.types.ProductionList  tom__arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {{ /* unamed block */{ /* unamed block */if ( (tom__arg instanceof tom.gom.adt.gom.types.ProductionList) ) {if ( (((( tom.gom.adt.gom.types.ProductionList )tom__arg) instanceof tom.gom.adt.gom.types.productionlist.ConsConcProduction) || ((( tom.gom.adt.gom.types.ProductionList )tom__arg) instanceof tom.gom.adt.gom.types.productionlist.EmptyConcProduction)) ) { tom.gom.adt.gom.types.ProductionList  tomMatch714_end_4=(( tom.gom.adt.gom.types.ProductionList )tom__arg);do {{ /* unamed block */if (!( tomMatch714_end_4.isEmptyConcProduction() )) { tom.gom.adt.gom.types.Production  tomMatch714_8= tomMatch714_end_4.getHeadConcProduction() ;if ( ((( tom.gom.adt.gom.types.Production )tomMatch714_8) instanceof tom.gom.adt.gom.types.production.SortType) ) { tom.gom.adt.gom.types.GomType  tomMatch714_7= tomMatch714_8.getType() ;if ( ((( tom.gom.adt.gom.types.GomType )tomMatch714_7) instanceof tom.gom.adt.gom.types.gomtype.GomType) ) {
 
 
-        if( tomMatch714_7.getName() .equals(sort)) {
+        if( tomMatch714_7.getName() .equals(sort)) { /* unamed block */
           return tom_append_list_ConcProduction(tom_get_slice_ConcProduction((( tom.gom.adt.gom.types.ProductionList )tom__arg),tomMatch714_end_4, tom.gom.adt.gom.types.productionlist.EmptyConcProduction.make() ), tom.gom.adt.gom.types.productionlist.ConsConcProduction.make( tomMatch714_end_4.getHeadConcProduction() , tom.gom.adt.gom.types.productionlist.ConsConcProduction.make(hook,tom_append_list_ConcProduction( tomMatch714_end_4.getTailConcProduction() , tom.gom.adt.gom.types.productionlist.EmptyConcProduction.make() )) ) );
-        }
-      }}}if ( tomMatch714_end_4.isEmptyConcProduction() ) {tomMatch714_end_4=(( tom.gom.adt.gom.types.ProductionList )tom__arg);} else {tomMatch714_end_4= tomMatch714_end_4.getTailConcProduction() ;}}} while(!( (tomMatch714_end_4==(( tom.gom.adt.gom.types.ProductionList )tom__arg)) ));}}}}return _visit_ProductionList(tom__arg,introspector);}}private static  tom.library.sl.Strategy  tom_make_AddHook( String  t0,  tom.gom.adt.gom.types.Production  t1) { return new AddHook(t0,t1);}
+        }}}}if ( tomMatch714_end_4.isEmptyConcProduction() ) {tomMatch714_end_4=(( tom.gom.adt.gom.types.ProductionList )tom__arg);} else {tomMatch714_end_4= tomMatch714_end_4.getTailConcProduction() ;}}} while(!( (tomMatch714_end_4==(( tom.gom.adt.gom.types.ProductionList )tom__arg)) ));}}}}return _visit_ProductionList(tom__arg,introspector);}}
 
 
 
-  /* add the hook next to sort declaration */
+
+  
   private GomModuleList addSortBlockHook
     (GomModuleList ml, String sort, String code) {
       Production hook =
          tom.gom.adt.gom.types.production.Hook.make( tom.gom.adt.gom.types.idkind.KindSort.make() , sort,  tom.gom.adt.gom.types.hookkind.HookKind.make("javablock") ,  tom.gom.adt.gom.types.arglist.EmptyConcArg.make() , code,  tom.gom.adt.gom.types.option.EmptyOptionList.make() ) 
 ;
       try {
-        return tom_make_OnceTopDown(tom_make_AddHook(sort,hook)).visitLight(ml);
+        return tom_make_OnceTopDown( new AddHook(sort,hook) ).visitLight(ml);
       }
       catch (VisitFailure e) {
         throw new GomRuntimeException(FreshExpander.SHOULD_NEVER_HAPPEN_MSG);
       }
     }
 
-  /* add the hook next to the declaration of the constructor's sort */
+  
   private GomModuleList addConstructorBlockHook
     (GomModuleList ml, String cons, String code) {
       String sort = st.getSort(cons);
       IdKind kind =  tom.gom.adt.gom.types.idkind.KindOperator.make() ;
-      // if the constructor is a generated cons or nil, add a 'future' hook
+      
       if(st.isGeneratedCons(cons)) {
         kind =  tom.gom.adt.gom.types.idkind.KindFutureOperator.make( tom.gom.adt.gom.types.future.FutureCons.make() ) ;
         cons = st.getBaseName(cons);
@@ -508,18 +510,18 @@ public class FreshExpander {
       Production hook =  tom.gom.adt.gom.types.production.Hook.make(kind, cons,  tom.gom.adt.gom.types.hookkind.HookKind.make("javablock") ,  tom.gom.adt.gom.types.arglist.EmptyConcArg.make() , code,  tom.gom.adt.gom.types.option.EmptyOptionList.make() ) 
 ;
       try {
-        return tom_make_OnceTopDown(tom_make_AddHook(sort,hook)).visitLight(ml);
+        return tom_make_OnceTopDown( new AddHook(sort,hook) ).visitLight(ml);
       } catch (VisitFailure e) {
         throw new GomRuntimeException(FreshExpander.SHOULD_NEVER_HAPPEN_MSG);
       }
     }
 
-  /* add the hook next to the declaration of the constructor's sort */
+  
   private GomModuleList addRawConstructorBlockHook
     (GomModuleList ml, String cons, String code) {
       String sort = st.getSort(cons);
       IdKind kind =  tom.gom.adt.gom.types.idkind.KindOperator.make() ;
-      // if the constructor is a generated cons or nil, add a 'future' hook
+      
       if(st.isGeneratedCons(cons)) {
         kind =  tom.gom.adt.gom.types.idkind.KindFutureOperator.make( tom.gom.adt.gom.types.future.FutureCons.make() ) ;
         cons = st.getBaseName(cons);
@@ -531,33 +533,33 @@ public class FreshExpander {
          tom.gom.adt.gom.types.production.Hook.make(kind, st.rawCons(cons),  tom.gom.adt.gom.types.hookkind.HookKind.make("javablock") ,  tom.gom.adt.gom.types.arglist.EmptyConcArg.make() , code,  tom.gom.adt.gom.types.option.EmptyOptionList.make() ) 
 ;
       try {
-        return tom_make_OnceTopDown(tom_make_AddHook(st.rawCons(sort),hook)).visitLight(ml);
+        return tom_make_OnceTopDown( new AddHook(st.rawCons(sort),hook) ).visitLight(ml);
       }
       catch (VisitFailure e) {
         throw new GomRuntimeException(FreshExpander.SHOULD_NEVER_HAPPEN_MSG);
       }
     }
 
-  /* add the hook next to the sort declaration */
+  
   private GomModuleList addSortInterfaceHook
     (GomModuleList ml, String sort, String code) {
       Production hook =
          tom.gom.adt.gom.types.production.Hook.make( tom.gom.adt.gom.types.idkind.KindSort.make() , sort,  tom.gom.adt.gom.types.hookkind.HookKind.make("interface") ,  tom.gom.adt.gom.types.arglist.EmptyConcArg.make() , code,  tom.gom.adt.gom.types.option.EmptyOptionList.make() ) 
 ;
       try {
-        return tom_make_OnceTopDown(tom_make_AddHook(sort,hook)).visitLight(ml);
+        return tom_make_OnceTopDown( new AddHook(sort,hook) ).visitLight(ml);
       }
       catch (VisitFailure e) {
         throw new GomRuntimeException(FreshExpander.SHOULD_NEVER_HAPPEN_MSG);
       }
     }
 
-  /* add the hook next to the declaration of the constructor's sort */
+  
   private GomModuleList addConstructorMappingHook
     (GomModuleList ml, String cons, String code) {
       String sort = st.getSort(cons);
       IdKind kind =  tom.gom.adt.gom.types.idkind.KindOperator.make() ;
-      // if the constructor is a generated cons or nil, add a 'future' hook
+      
       if(st.isGeneratedCons(cons)) {
         kind =  tom.gom.adt.gom.types.idkind.KindFutureOperator.make( tom.gom.adt.gom.types.future.FutureCons.make() ) ;
         cons = st.getBaseName(cons);
@@ -568,13 +570,13 @@ public class FreshExpander {
       Production hook =  tom.gom.adt.gom.types.production.Hook.make(kind, cons,  tom.gom.adt.gom.types.hookkind.HookKind.make("mapping") ,  tom.gom.adt.gom.types.arglist.EmptyConcArg.make() , code,  tom.gom.adt.gom.types.option.EmptyOptionList.make() ) 
 ;
       try {
-        return tom_make_OnceTopDown(tom_make_AddHook(sort,hook)).visitLight(ml);
+        return tom_make_OnceTopDown( new AddHook(sort,hook) ).visitLight(ml);
       } catch (VisitFailure e) {
         throw new GomRuntimeException(FreshExpander.SHOULD_NEVER_HAPPEN_MSG);
       }
     }
 
-  /* -- sort hooks -- */
+  
 
   private GomModuleList addSortHooks(GomModuleList ml) {
     for(String s: st.getSorts()) {
@@ -661,7 +663,7 @@ public class FreshExpander {
     return res + "}";
   }
 
-  /* -- raw sort hooks -- */
+  
 
   private GomModuleList addRawSortHooks(GomModuleList ml) {
     for(String s: st.getSorts()) {
@@ -708,7 +710,7 @@ public class FreshExpander {
     return res + "}";
   }
 
-  /* -- non variadic constructor hooks -- */
+  
 
   private GomModuleList addConstructorHooks(GomModuleList ml) {
     for(String s: st.getSorts()) {
@@ -787,8 +789,7 @@ public class FreshExpander {
     String sort = st.getSort(c);
     String sortid = st.getFullSortClassName(sort);
     String res = "";
-    /* if c is a constructor in expression position
-       the args are of the form atomsort1Map, atomsort2Map .. */
+    
     if(st.isExpressionType(sort)) {
       for(String f: st.getFields(c)) {
         String fsort = st.getSort(c,f);
@@ -828,9 +829,7 @@ public class FreshExpander {
           }
         }
       }
-    /* if c is a constructor in pattern position --
-       the args are of the form
-        as1OuterMap, as1InnerMap, as2Map, as3OuterMap, as3InnerMap .. */
+    
     } else if(st.isPatternType(sort)) {
       for(String f: st.getFields(c)) {
         String fsort = st.getSort(c,f);
@@ -854,13 +853,13 @@ public class FreshExpander {
 
 ;
             }
-          } else if (st.isInner(c,f)) /* must be expression type */ {
+          } else if (st.isInner(c,f))  {
             res += "get"+f+"().alpha(o.get"+f+"() "+alphaRecCall3(fsort,sort)+");";
-          } else if (st.isOuter(c,f)) /* must be expression type */ {
+          } else if (st.isOuter(c,f))  {
             res += "get"+f+"().alpha(o.get"+f+"() "+alphaRecCall4(fsort,sort)+");";
-          } else if (st.isNeutral(c,f)) /* must be expression type */ {
+          } else if (st.isNeutral(c,f))  {
             res += "get"+f+"().alpha(o.get"+f+"() "+alphaRecCall5(fsort)+");";
-          } else /* must be pattern type */ {
+          } else  {
             res += "get"+f+"().alpha(o.get"+f+"() "+alphaRecCall6(fsort)+");";
           }
         }
@@ -873,8 +872,7 @@ public class FreshExpander {
     String sort = st.getSort(c);
     String sortid = st.getFullSortClassName(sort);
     String res = "";
-    /* if c is a constructor in expression position
-       the args are of the form atomsort1Map, atomsort2Map .. */
+    
     if(st.isExpressionType(sort)) {
       for(String f: st.getFields(c)) {
         String fsort = st.getSort(c,f);
@@ -904,9 +902,7 @@ public class FreshExpander {
           res += "}";
         }
       }
-    /* if c is a constructor in pattern position --
-       the args are of the form
-        as1OuterMap, as1InnerMap, as2Map, as3OuterMap, as3InnerMap .. */
+    
     } else if(st.isPatternType(sort)) {
       for(String f: st.getFields(c)) {
         String fsort = st.getSort(c,f);
@@ -919,16 +915,16 @@ public class FreshExpander {
           } else {
             res += "String raw_"+f+" = "+fsort+"Map.get(get"+f+"());";
           }
-        } else if (st.isInner(c,f)) /* must be expression type */ {
+        } else if (st.isInner(c,f))  {
           res += ""+rawfsortid+" raw_"+f+"\n            = get"+f+"()._export("+recCall3(fsort,sort)+");"
 ;
-        } else if (st.isOuter(c,f)) /* must be expression type */ {
+        } else if (st.isOuter(c,f))  {
           res += ""+rawfsortid+" raw_"+f+"\n            = get"+f+"()._export("+recCall4(fsort,sort)+");"
 ;
-        } else if (st.isNeutral(c,f)) /* must be expression type */ {
+        } else if (st.isNeutral(c,f))  {
           res += ""+rawfsortid+" raw_"+f+"\n            = get"+f+"()._export("+recCall5(fsort)+");"
 ;
-        } else /* must be pattern type */ {
+        } else  {
           res += ""+rawfsortid+" raw_"+f+"\n            = get"+f+"()._export("+recCall6(fsort)+");"
 ;
         }
@@ -1041,7 +1037,7 @@ public class FreshExpander {
     return res + "}";
   }
 
-  /* -- non variadic raw constructor hooks -- */
+  
 
   private GomModuleList addRawConstructorHooks(GomModuleList ml) {
     for(String s: st.getSorts()) {
@@ -1084,8 +1080,7 @@ public class FreshExpander {
     String sortid = st.getFullSortClassName(sort);
     String opid = st.getFullConstructorClassName(c);
     String res = "";
-    /* if c is a constructor in expression position
-       the args are of the form atomsort1Map, atomsort2Map .. */
+    
     if(st.isExpressionType(sort)) {
       for(String f: st.getFields(c)) {
         String fsort = st.getSort(c,f);
@@ -1117,9 +1112,7 @@ public class FreshExpander {
           res += "}";
         }
       }
-    /* if c is a constructor in pattern position --
-       the args are of the form
-        as1OuterMap, as1InnerMap, as2Map, as3OuterMap, as3InnerMap .. */
+    
     } else if(st.isPatternType(sort)) {
       for(String f: st.getFields(c)) {
         String fsort = st.getSort(c,f);
@@ -1131,16 +1124,16 @@ public class FreshExpander {
           } else {
             res += ""+fsortid+" "+f+" = "+fsort+"Map.get("+st.rawGetter(c,f)+");";
           }
-        } else if (st.isInner(c,f)) /* must be expression type */ {
+        } else if (st.isInner(c,f))  {
           res += ""+fsortid+" "+f+"\n            = "+st.rawGetter(c,f)+"._convert("+recCall3(fsort,sort)+");"
 ;
-        } else if (st.isOuter(c,f)) /* must be expression type */ {
+        } else if (st.isOuter(c,f))  {
           res += ""+fsortid+" "+f+"\n            = "+st.rawGetter(c,f)+"._convert("+recCall4(fsort,sort)+");"
 ;
-        } else if (st.isNeutral(c,f)) /* must be expression type */ {
+        } else if (st.isNeutral(c,f))  {
           res += ""+fsortid+" "+f+"\n            = "+st.rawGetter(c,f)+"._convert("+recCall5(fsort)+");"
 ;
-        } else /* must be pattern type */ {
+        } else  {
           res += ""+fsortid+" "+f+"\n            = "+st.rawGetter(c,f)+"._convert("+recCall6(fsort)+");"
 ;
         }
@@ -1178,7 +1171,7 @@ public class FreshExpander {
     return res + "}";
   }
 
-  /* -- atom hooks -- */
+  
 
   private GomModuleList addAtomHooks(GomModuleList ml) {
     for(String s: st.getAtoms()) {
@@ -1216,10 +1209,10 @@ public class FreshExpander {
   private static final String atomInterfaceHookString
     = "{ tom.library.freshgom.Atom }";
 
-  /* -- rawification -- */
+  
 
   private GomModuleList addRawSortsAndConstructors(GomModuleList res) {
-    try { return tom_make_TopDown(tom_make_AddRaw(st,this)).visitLight(res); }
+    try { return tom_make_TopDown( new AddRaw(st,this) ).visitLight(res); }
     catch(VisitFailure e) {
       throw new GomRuntimeException(FreshExpander.SHOULD_NEVER_HAPPEN_MSG);
     }
@@ -1229,27 +1222,21 @@ public class FreshExpander {
 
 
         return (( tom.gom.adt.gom.types.Section )tom__arg).setProductionList(fe.addRaw(st, (( tom.gom.adt.gom.types.Section )tom__arg).getProductionList() ));
-      }}}}return _visit_Section(tom__arg,introspector);}}private static  tom.library.sl.Strategy  tom_make_AddRaw( tom.gom.SymbolTable  t0,  tom.gom.expander.FreshExpander  t1) { return new AddRaw(t0,t1);}
+      }}}}return _visit_Section(tom__arg,introspector);}}
 
 
 
-  /**
-   * match pl with
-   *  | p::ps -> if fresh p && (not atom p)
-   *             then p::(rawify p)::(addraw pl)
-   *             else p::(addraw pl)
-   *  | [] -> []
-   **/
+  
   private ProductionList addRaw(SymbolTable st, ProductionList pl) {
     { /* unamed block */{ /* unamed block */if ( (pl instanceof tom.gom.adt.gom.types.ProductionList) ) {if ( ((( tom.gom.adt.gom.types.ProductionList )pl) instanceof tom.gom.adt.gom.types.productionlist.ConsConcProduction) ) { tom.gom.adt.gom.types.Production  tom___p= (( tom.gom.adt.gom.types.ProductionList )pl).getHeadConcProduction() ;
 
         ProductionList nps = addRaw(st, (( tom.gom.adt.gom.types.ProductionList )pl).getTailConcProduction() );
         { /* unamed block */{ /* unamed block */if ( (tom___p instanceof tom.gom.adt.gom.types.Production) ) {if ( ((( tom.gom.adt.gom.types.Production )tom___p) instanceof tom.gom.adt.gom.types.production.SortType) ) { tom.gom.adt.gom.types.GomType  tomMatch717_1= (( tom.gom.adt.gom.types.Production )tom___p).getType() ;if ( ((( tom.gom.adt.gom.types.GomType )tomMatch717_1) instanceof tom.gom.adt.gom.types.gomtype.GomType) ) { String  tom___n= tomMatch717_1.getName() ;
 
-            if (st.isFreshType(tom___n) && !st.isAtomType(tom___n)) {
+            if (st.isFreshType(tom___n) && !st.isAtomType(tom___n)) { /* unamed block */
               return  tom.gom.adt.gom.types.productionlist.ConsConcProduction.make(tom___p, tom.gom.adt.gom.types.productionlist.ConsConcProduction.make(rawify(tom___p,st),tom_append_list_ConcProduction(nps, tom.gom.adt.gom.types.productionlist.EmptyConcProduction.make() )) ) ;
-            }
-          }}}}}
+            }}}}}}
+
 
         return  tom.gom.adt.gom.types.productionlist.ConsConcProduction.make(tom___p,tom_append_list_ConcProduction(nps, tom.gom.adt.gom.types.productionlist.EmptyConcProduction.make() )) ;
       }}}{ /* unamed block */if ( (pl instanceof tom.gom.adt.gom.types.ProductionList) ) {if ( ((( tom.gom.adt.gom.types.ProductionList )pl) instanceof tom.gom.adt.gom.types.productionlist.EmptyConcProduction) ) {
@@ -1266,18 +1253,18 @@ public class FreshExpander {
 
 
 
- return (( tom.gom.adt.gom.types.Alternative )tom__arg).setName(st.rawCons( (( tom.gom.adt.gom.types.Alternative )tom__arg).getName() )); }}}}return _visit_Alternative(tom__arg,introspector);}@SuppressWarnings("unchecked")public  tom.gom.adt.gom.types.GomType  visit_GomType( tom.gom.adt.gom.types.GomType  tom__arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {{ /* unamed block */{ /* unamed block */if ( (tom__arg instanceof tom.gom.adt.gom.types.GomType) ) {if ( ((( tom.gom.adt.gom.types.GomType )tom__arg) instanceof tom.gom.adt.gom.types.gomtype.GomType) ) { String  tom___n= (( tom.gom.adt.gom.types.GomType )tom__arg).getName() ; tom.gom.adt.gom.types.GomType  tom___gt=(( tom.gom.adt.gom.types.GomType )tom__arg);         if (st.isAtomType(tom___n)) { return tom___gt.setName("String"); }         else if (!fe.getGomEnvironment().isBuiltin(tom___n)) { return tom___gt.setName(st.rawSort(tom___n)); }       }}}}return _visit_GomType(tom__arg,introspector);}}private static  tom.library.sl.Strategy  tom_make_Rawify( tom.gom.SymbolTable  t0,  tom.gom.expander.FreshExpander  t1) { return new Rawify(t0,t1);}
+ return (( tom.gom.adt.gom.types.Alternative )tom__arg).setName(st.rawCons( (( tom.gom.adt.gom.types.Alternative )tom__arg).getName() )); }}}}return _visit_Alternative(tom__arg,introspector);}@SuppressWarnings("unchecked")public  tom.gom.adt.gom.types.GomType  visit_GomType( tom.gom.adt.gom.types.GomType  tom__arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {{ /* unamed block */{ /* unamed block */if ( (tom__arg instanceof tom.gom.adt.gom.types.GomType) ) {if ( ((( tom.gom.adt.gom.types.GomType )tom__arg) instanceof tom.gom.adt.gom.types.gomtype.GomType) ) { String  tom___n= (( tom.gom.adt.gom.types.GomType )tom__arg).getName() ; tom.gom.adt.gom.types.GomType  tom___gt=(( tom.gom.adt.gom.types.GomType )tom__arg);         if (st.isAtomType(tom___n)) { /* unamed block */ return tom___gt.setName("String"); }         else if (!fe.getGomEnvironment().isBuiltin(tom___n)) { /* unamed block */ return tom___gt.setName(st.rawSort(tom___n)); }}}}}return _visit_GomType(tom__arg,introspector);}}
 
 
 
   private Production rawify(Production p, SymbolTable st) {
-    try { return tom_make_TopDown(tom_make_Rawify(st,this)).visitLight(p); }
+    try { return tom_make_TopDown( new Rawify(st,this) ).visitLight(p); }
     catch(VisitFailure f) {
       throw new GomRuntimeException(FreshExpander.SHOULD_NEVER_HAPPEN_MSG);
     }
   }
 
-  /* -- tweaked mappings generation */
+  
 
   private GomModuleList addMappingHooks(GomModuleList ml) {
     for(String c: st.getFreshConstructors()) {
@@ -1289,9 +1276,7 @@ public class FreshExpander {
   }
 
 
-  /**
-  * generates "x:A,y:B" for f(x:A,y:B)
-  **/
+  
   private String typedConsArgList(String c) {
     StringBuffer buf = new StringBuffer();
     boolean first=true;
@@ -1306,9 +1291,7 @@ public class FreshExpander {
     return buf.toString();
   }
 
-  /**
-  * generates "x,y" for f(x:A,y:B)
-  **/
+  
   private String consArgList(String c) {
     StringBuffer buf = new StringBuffer();
     boolean first=true;
@@ -1323,9 +1306,7 @@ public class FreshExpander {
     return buf.toString();
   }
 
-  /**
-  * generates "$x,$y" for f(x:A,y:B)
-  **/
+  
   private String dollarConsArgList(String c) {
     StringBuffer buf = new StringBuffer();
     boolean first=true;
@@ -1340,11 +1321,7 @@ public class FreshExpander {
     return buf.toString();
   }
 
-  /**
-  * generates "get_slot(x,t) { $t.getx() }
-  *            get_slot(y,t) { $t.gety() }"
-  * for f(x:A,y:B)
-  **/
+  
   private String slotDescriptions(String c) {
     StringBuffer buf = new StringBuffer();
     boolean first=true;
@@ -1393,7 +1370,7 @@ public class FreshExpander {
     }
   }
 
-  /* -- atom expansion --**/
+  
 
   public static class ExpandAtoms extends tom.library.sl.AbstractStrategyBasic {private  java.util.ArrayList  list;public ExpandAtoms( java.util.ArrayList  list) {super(( new tom.library.sl.Identity() ));this.list=list;}public  java.util.ArrayList  getlist() {return list;}public tom.library.sl.Visitable[] getChildren() {tom.library.sl.Visitable[] stratChildren = new tom.library.sl.Visitable[getChildCount()];stratChildren[0] = super.getChildAt(0);return stratChildren;}public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {super.setChildAt(0, children[0]);return this;}public int getChildCount() {return 1;}public tom.library.sl.Visitable getChildAt(int index) {switch (index) {case 0: return super.getChildAt(0);default: throw new IndexOutOfBoundsException();}}public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable child) {switch (index) {case 0: return super.setChildAt(0, child);default: throw new IndexOutOfBoundsException();}}@SuppressWarnings("unchecked")public <T> T visitLight(T v, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if ( (v instanceof tom.gom.adt.gom.types.Production) ) {return ((T)visit_Production((( tom.gom.adt.gom.types.Production )v),introspector));}if (!(  null ==environment )) {return ((T)any.visit(environment,introspector));} else {return any.visitLight(v,introspector);}}@SuppressWarnings("unchecked")public  tom.gom.adt.gom.types.Production  _visit_Production( tom.gom.adt.gom.types.Production  arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if (!(  null ==environment )) {return (( tom.gom.adt.gom.types.Production )any.visit(environment,introspector));} else {return any.visitLight(arg,introspector);}}@SuppressWarnings("unchecked")public  tom.gom.adt.gom.types.Production  visit_Production( tom.gom.adt.gom.types.Production  tom__arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {{ /* unamed block */{ /* unamed block */if ( (tom__arg instanceof tom.gom.adt.gom.types.Production) ) {if ( ((( tom.gom.adt.gom.types.Production )tom__arg) instanceof tom.gom.adt.gom.types.production.AtomDecl) ) { String  tom___name= (( tom.gom.adt.gom.types.Production )tom__arg).getName() ;
 
@@ -1408,19 +1385,19 @@ public class FreshExpander {
 
 
 ;
-      }}}}return _visit_Production(tom__arg,introspector);}}private static  tom.library.sl.Strategy  tom_make_ExpandAtoms( java.util.ArrayList  t0) { return new ExpandAtoms(t0);}
+      }}}}return _visit_Production(tom__arg,introspector);}}public static class UpdateSpecialization extends tom.library.sl.AbstractStrategyBasic {private  java.util.ArrayList  list;public UpdateSpecialization( java.util.ArrayList  list) {super(( new tom.library.sl.Identity() ));this.list=list;}public  java.util.ArrayList  getlist() {return list;}public tom.library.sl.Visitable[] getChildren() {tom.library.sl.Visitable[] stratChildren = new tom.library.sl.Visitable[getChildCount()];stratChildren[0] = super.getChildAt(0);return stratChildren;}public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {super.setChildAt(0, children[0]);return this;}public int getChildCount() {return 1;}public tom.library.sl.Visitable getChildAt(int index) {switch (index) {case 0: return super.getChildAt(0);default: throw new IndexOutOfBoundsException();}}public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable child) {switch (index) {case 0: return super.setChildAt(0, child);default: throw new IndexOutOfBoundsException();}}@SuppressWarnings("unchecked")public <T> T visitLight(T v, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if ( (v instanceof tom.gom.adt.gom.types.GomType) ) {return ((T)visit_GomType((( tom.gom.adt.gom.types.GomType )v),introspector));}if (!(  null ==environment )) {return ((T)any.visit(environment,introspector));} else {return any.visitLight(v,introspector);}}@SuppressWarnings("unchecked")public  tom.gom.adt.gom.types.GomType  _visit_GomType( tom.gom.adt.gom.types.GomType  arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if (!(  null ==environment )) {return (( tom.gom.adt.gom.types.GomType )any.visit(environment,introspector));} else {return any.visitLight(arg,introspector);}}@SuppressWarnings("unchecked")public  tom.gom.adt.gom.types.GomType  visit_GomType( tom.gom.adt.gom.types.GomType  tom__arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {{ /* unamed block */{ /* unamed block */if ( (tom__arg instanceof tom.gom.adt.gom.types.GomType) ) {if ( ((( tom.gom.adt.gom.types.GomType )tom__arg) instanceof tom.gom.adt.gom.types.gomtype.GomType) ) {
 
 
 
-  /* -- update expressiontype -> atomtype for atom sorts --**/
-
-  public static class UpdateSpecialization extends tom.library.sl.AbstractStrategyBasic {private  java.util.ArrayList  list;public UpdateSpecialization( java.util.ArrayList  list) {super(( new tom.library.sl.Identity() ));this.list=list;}public  java.util.ArrayList  getlist() {return list;}public tom.library.sl.Visitable[] getChildren() {tom.library.sl.Visitable[] stratChildren = new tom.library.sl.Visitable[getChildCount()];stratChildren[0] = super.getChildAt(0);return stratChildren;}public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {super.setChildAt(0, children[0]);return this;}public int getChildCount() {return 1;}public tom.library.sl.Visitable getChildAt(int index) {switch (index) {case 0: return super.getChildAt(0);default: throw new IndexOutOfBoundsException();}}public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable child) {switch (index) {case 0: return super.setChildAt(0, child);default: throw new IndexOutOfBoundsException();}}@SuppressWarnings("unchecked")public <T> T visitLight(T v, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if ( (v instanceof tom.gom.adt.gom.types.GomType) ) {return ((T)visit_GomType((( tom.gom.adt.gom.types.GomType )v),introspector));}if (!(  null ==environment )) {return ((T)any.visit(environment,introspector));} else {return any.visitLight(v,introspector);}}@SuppressWarnings("unchecked")public  tom.gom.adt.gom.types.GomType  _visit_GomType( tom.gom.adt.gom.types.GomType  arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if (!(  null ==environment )) {return (( tom.gom.adt.gom.types.GomType )any.visit(environment,introspector));} else {return any.visitLight(arg,introspector);}}@SuppressWarnings("unchecked")public  tom.gom.adt.gom.types.GomType  visit_GomType( tom.gom.adt.gom.types.GomType  tom__arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {{ /* unamed block */{ /* unamed block */if ( (tom__arg instanceof tom.gom.adt.gom.types.GomType) ) {if ( ((( tom.gom.adt.gom.types.GomType )tom__arg) instanceof tom.gom.adt.gom.types.gomtype.GomType) ) {
 
 
-        if (list.contains( (( tom.gom.adt.gom.types.GomType )tom__arg).getName() )) {
+
+
+
+        if (list.contains( (( tom.gom.adt.gom.types.GomType )tom__arg).getName() )) { /* unamed block */
           return (( tom.gom.adt.gom.types.GomType )tom__arg).setSpecialization( tom.gom.adt.gom.types.typespec.AtomType.make() );
-        }
-      }}}}return _visit_GomType(tom__arg,introspector);}}private static  tom.library.sl.Strategy  tom_make_UpdateSpecialization( java.util.ArrayList  t0) { return new UpdateSpecialization(t0);}
+        }}}}}return _visit_GomType(tom__arg,introspector);}}
+
 
 
 }

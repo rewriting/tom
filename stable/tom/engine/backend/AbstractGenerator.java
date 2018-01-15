@@ -1,34 +1,40 @@
-/*
- *
- * TOM - To One Matching Compiler
- * 
- * Copyright (c) 2000-2017, Universite de Lorraine, Inria
- * Nancy, France.
- * 
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
- * 
- * Pierre-Etienne Moreau  e-mail: Pierre-Etienne.Moreau@loria.fr
- *
- **/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 package tom.engine.backend;
 
+
+
 import java.io.IOException;
+
+
 
 import tom.engine.TomBase;
 import tom.engine.exception.TomRuntimeException;
+
+
 
 import tom.engine.adt.tomsignature.*;
 import tom.engine.adt.tomconstraint.types.*;
@@ -43,11 +49,17 @@ import tom.engine.adt.tomterm.types.*;
 import tom.engine.adt.tomslot.types.*;
 import tom.engine.adt.tomtype.types.*;
 
+
+
 import tom.engine.tools.OutputCode;
 import tom.engine.tools.SymbolTable;
 import tom.platform.OptionManager;
 
+
+
 import aterm.*;
+
+
 
 public abstract class AbstractGenerator {
 
@@ -65,9 +77,9 @@ public abstract class AbstractGenerator {
   }
 
   protected SymbolTable getSymbolTable(String moduleName) {
-    //TODO//
-    //Using of the moduleName
-    ////////
+    
+    
+    
     return symbolTable;
   }
 
@@ -91,16 +103,11 @@ public abstract class AbstractGenerator {
     return TomBase.getSymbolCodomain(tSymbol);
   }
 
-// ------------------------------------------------------------
-        private static   tom.engine.adt.code.types.BQTermList  tom_append_list_concBQTerm( tom.engine.adt.code.types.BQTermList l1,  tom.engine.adt.code.types.BQTermList  l2) {     if( l1.isEmptyconcBQTerm() ) {       return l2;     } else if( l2.isEmptyconcBQTerm() ) {       return l1;     } else if(  l1.getTailconcBQTerm() .isEmptyconcBQTerm() ) {       return  tom.engine.adt.code.types.bqtermlist.ConsconcBQTerm.make( l1.getHeadconcBQTerm() ,l2) ;     } else {       return  tom.engine.adt.code.types.bqtermlist.ConsconcBQTerm.make( l1.getHeadconcBQTerm() ,tom_append_list_concBQTerm( l1.getTailconcBQTerm() ,l2)) ;     }   }   private static   tom.engine.adt.code.types.BQTermList  tom_get_slice_concBQTerm( tom.engine.adt.code.types.BQTermList  begin,  tom.engine.adt.code.types.BQTermList  end, tom.engine.adt.code.types.BQTermList  tail) {     if( (begin==end) ) {       return tail;     } else if( (end==tail)  && ( end.isEmptyconcBQTerm()  ||  (end== tom.engine.adt.code.types.bqtermlist.EmptyconcBQTerm.make() ) )) {       /* code to avoid a call to make, and thus to avoid looping during list-matching */       return begin;     }     return  tom.engine.adt.code.types.bqtermlist.ConsconcBQTerm.make( begin.getHeadconcBQTerm() ,( tom.engine.adt.code.types.BQTermList )tom_get_slice_concBQTerm( begin.getTailconcBQTerm() ,end,tail)) ;   }      private static   tom.engine.adt.code.types.BQTerm  tom_append_list_Composite( tom.engine.adt.code.types.BQTerm l1,  tom.engine.adt.code.types.BQTerm  l2) {     if( l1.isEmptyComposite() ) {       return l2;     } else if( l2.isEmptyComposite() ) {       return l1;     } else if(  l1.getTailComposite() .isEmptyComposite() ) {       return  tom.engine.adt.code.types.bqterm.ConsComposite.make( l1.getHeadComposite() ,l2) ;     } else {       return  tom.engine.adt.code.types.bqterm.ConsComposite.make( l1.getHeadComposite() ,tom_append_list_Composite( l1.getTailComposite() ,l2)) ;     }   }   private static   tom.engine.adt.code.types.BQTerm  tom_get_slice_Composite( tom.engine.adt.code.types.BQTerm  begin,  tom.engine.adt.code.types.BQTerm  end, tom.engine.adt.code.types.BQTerm  tail) {     if( (begin==end) ) {       return tail;     } else if( (end==tail)  && ( end.isEmptyComposite()  ||  (end== tom.engine.adt.code.types.bqterm.EmptyComposite.make() ) )) {       /* code to avoid a call to make, and thus to avoid looping during list-matching */       return begin;     }     return  tom.engine.adt.code.types.bqterm.ConsComposite.make( begin.getHeadComposite() ,( tom.engine.adt.code.types.BQTerm )tom_get_slice_Composite( begin.getTailComposite() ,end,tail)) ;   }    
-// ------------------------------------------------------------
 
-  /**
-   * Generate the goal language
-   * 
-   * @param deep 
-   * 		The distance from the right side (allows the computation of the column number)
-   */
+     private static   tom.engine.adt.code.types.BQTermList  tom_append_list_concBQTerm( tom.engine.adt.code.types.BQTermList l1,  tom.engine.adt.code.types.BQTermList  l2) {     if( l1.isEmptyconcBQTerm() ) {       return l2;     } else if( l2.isEmptyconcBQTerm() ) {       return l1;     } else if(  l1.getTailconcBQTerm() .isEmptyconcBQTerm() ) {       return  tom.engine.adt.code.types.bqtermlist.ConsconcBQTerm.make( l1.getHeadconcBQTerm() ,l2) ;     } else {       return  tom.engine.adt.code.types.bqtermlist.ConsconcBQTerm.make( l1.getHeadconcBQTerm() ,tom_append_list_concBQTerm( l1.getTailconcBQTerm() ,l2)) ;     }   }   private static   tom.engine.adt.code.types.BQTermList  tom_get_slice_concBQTerm( tom.engine.adt.code.types.BQTermList  begin,  tom.engine.adt.code.types.BQTermList  end, tom.engine.adt.code.types.BQTermList  tail) {     if( (begin==end) ) {       return tail;     } else if( (end==tail)  && ( end.isEmptyconcBQTerm()  ||  (end== tom.engine.adt.code.types.bqtermlist.EmptyconcBQTerm.make() ) )) {       /* code to avoid a call to make, and thus to avoid looping during list-matching */       return begin;     }     return  tom.engine.adt.code.types.bqtermlist.ConsconcBQTerm.make( begin.getHeadconcBQTerm() ,( tom.engine.adt.code.types.BQTermList )tom_get_slice_concBQTerm( begin.getTailconcBQTerm() ,end,tail)) ;   }      private static   tom.engine.adt.code.types.BQTerm  tom_append_list_Composite( tom.engine.adt.code.types.BQTerm l1,  tom.engine.adt.code.types.BQTerm  l2) {     if( l1.isEmptyComposite() ) {       return l2;     } else if( l2.isEmptyComposite() ) {       return l1;     } else if(  l1.getTailComposite() .isEmptyComposite() ) {       return  tom.engine.adt.code.types.bqterm.ConsComposite.make( l1.getHeadComposite() ,l2) ;     } else {       return  tom.engine.adt.code.types.bqterm.ConsComposite.make( l1.getHeadComposite() ,tom_append_list_Composite( l1.getTailComposite() ,l2)) ;     }   }   private static   tom.engine.adt.code.types.BQTerm  tom_get_slice_Composite( tom.engine.adt.code.types.BQTerm  begin,  tom.engine.adt.code.types.BQTerm  end, tom.engine.adt.code.types.BQTerm  tail) {     if( (begin==end) ) {       return tail;     } else if( (end==tail)  && ( end.isEmptyComposite()  ||  (end== tom.engine.adt.code.types.bqterm.EmptyComposite.make() ) )) {       /* code to avoid a call to make, and thus to avoid looping during list-matching */       return begin;     }     return  tom.engine.adt.code.types.bqterm.ConsComposite.make( begin.getHeadComposite() ,( tom.engine.adt.code.types.BQTerm )tom_get_slice_Composite( begin.getTailComposite() ,end,tail)) ;   }   
+
+
+  
   protected void generate(int deep, Code subject, String moduleName) throws IOException {
     { /* unamed block */{ /* unamed block */if ( (subject instanceof tom.engine.adt.code.types.Code) ) {if ( ((( tom.engine.adt.code.types.Code )subject) instanceof tom.engine.adt.code.types.code.Tom) ) {
 
@@ -141,14 +148,9 @@ public abstract class AbstractGenerator {
 
   }
   
-  /**
-   * Generate the goal language
-   * 
-   * @param deep 
-   * 		The distance from the right side (allows the computation of the column number)
-   */
+  
   protected void generateTomTerm(int deep, TomTerm subject, String moduleName) throws IOException {
-    //TODO: complete with each constructor used in the baclend input term
+    
     { /* unamed block */{ /* unamed block */if ( (subject instanceof tom.engine.adt.tomterm.types.TomTerm) ) {boolean tomMatch59_4= false ; tom.engine.adt.tomterm.types.TomTerm  tomMatch59_2= null ; tom.engine.adt.tomterm.types.TomTerm  tomMatch59_3= null ;if ( ((( tom.engine.adt.tomterm.types.TomTerm )subject) instanceof tom.engine.adt.tomterm.types.tomterm.Variable) ) {{ /* unamed block */tomMatch59_4= true ;tomMatch59_2=(( tom.engine.adt.tomterm.types.TomTerm )subject);}} else {if ( ((( tom.engine.adt.tomterm.types.TomTerm )subject) instanceof tom.engine.adt.tomterm.types.tomterm.VariableStar) ) {{ /* unamed block */tomMatch59_4= true ;tomMatch59_3=(( tom.engine.adt.tomterm.types.TomTerm )subject);}}}if (tomMatch59_4) {
 
         output.write(deep,getVariableName((( tom.engine.adt.tomterm.types.TomTerm )subject)));
@@ -157,14 +159,9 @@ public abstract class AbstractGenerator {
  
   }
 
-  /**
-   * Generate the goal language
-   * 
-   * @param deep 
-   * 		The distance from the right side (allows the computation of the column number)
-   */
+  
   protected void generateBQTerm(int deep, BQTerm subject, String moduleName) throws IOException {
-    //System.out.println("subject = " + subject);
+    
     { /* unamed block */{ /* unamed block */if ( (subject instanceof tom.engine.adt.code.types.BQTerm) ) {if ( ((( tom.engine.adt.code.types.BQTerm )subject) instanceof tom.engine.adt.code.types.bqterm.BuildConstant) ) { tom.engine.adt.tomname.types.TomName  tomMatch60_1= (( tom.engine.adt.code.types.BQTerm )subject).getAstName() ;if ( ((( tom.engine.adt.tomname.types.TomName )tomMatch60_1) instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
 
         output.write( tomMatch60_1.getString() );
@@ -203,9 +200,9 @@ public abstract class AbstractGenerator {
           }}}{ /* unamed block */if ( (tom___t instanceof tom.engine.adt.code.types.CompositeMember) ) {if ( ((( tom.engine.adt.code.types.CompositeMember )tom___t) instanceof tom.engine.adt.code.types.compositemember.CompositeBQTerm) ) {
 
             generateBQTerm(deep, (( tom.engine.adt.code.types.CompositeMember )tom___t).getterm() , moduleName);
-          }}}}
+          }}}}}if ( tomMatch60_end_46.isEmptyComposite() ) {tomMatch60_end_46=(( tom.engine.adt.code.types.BQTerm )subject);} else {tomMatch60_end_46= tomMatch60_end_46.getTailComposite() ;}}} while(!( (tomMatch60_end_46==(( tom.engine.adt.code.types.BQTerm )subject)) ));}}}{ /* unamed block */if ( (subject instanceof tom.engine.adt.code.types.BQTerm) ) { tom.engine.adt.code.types.BQTerm  tom___t=(( tom.engine.adt.code.types.BQTerm )subject);boolean tomMatch60_53= false ;if ( (((( tom.engine.adt.code.types.BQTerm )subject) instanceof tom.engine.adt.code.types.bqterm.ConsComposite) || ((( tom.engine.adt.code.types.BQTerm )subject) instanceof tom.engine.adt.code.types.bqterm.EmptyComposite)) ) {if ( (tom___t==(( tom.engine.adt.code.types.BQTerm )subject)) ) {tomMatch60_53= true ;}}if (!(tomMatch60_53)) {
 
-      }if ( tomMatch60_end_46.isEmptyComposite() ) {tomMatch60_end_46=(( tom.engine.adt.code.types.BQTerm )subject);} else {tomMatch60_end_46= tomMatch60_end_46.getTailComposite() ;}}} while(!( (tomMatch60_end_46==(( tom.engine.adt.code.types.BQTerm )subject)) ));}}}{ /* unamed block */if ( (subject instanceof tom.engine.adt.code.types.BQTerm) ) { tom.engine.adt.code.types.BQTerm  tom___t=(( tom.engine.adt.code.types.BQTerm )subject);boolean tomMatch60_53= false ;if ( (((( tom.engine.adt.code.types.BQTerm )subject) instanceof tom.engine.adt.code.types.bqterm.ConsComposite) || ((( tom.engine.adt.code.types.BQTerm )subject) instanceof tom.engine.adt.code.types.bqterm.EmptyComposite)) ) {if ( (tom___t==(( tom.engine.adt.code.types.BQTerm )subject)) ) {tomMatch60_53= true ;}}if (!(tomMatch60_53)) {
+
 
 
         throw new TomRuntimeException("Cannot generate code for bqterm "+tom___t);
@@ -427,9 +424,7 @@ public abstract class AbstractGenerator {
 
   }
 
-  /**
-   * generates var[index] 
-   */
+  
   protected void generateArray(int deep, BQTerm subject, BQTerm index, String moduleName) throws IOException {
     { /* unamed block */{ /* unamed block */if ( (subject instanceof tom.engine.adt.code.types.BQTerm) ) {if ( ((( tom.engine.adt.code.types.BQTerm )subject) instanceof tom.engine.adt.code.types.bqterm.BQVariable) ) { tom.engine.adt.tomname.types.TomName  tomMatch65_1= (( tom.engine.adt.code.types.BQTerm )subject).getAstName() ;if ( ((( tom.engine.adt.tomname.types.TomName )tomMatch65_1) instanceof tom.engine.adt.tomname.types.tomname.PositionName) ) {
         
@@ -498,11 +493,11 @@ public abstract class AbstractGenerator {
 
 ;
         return;
-      }}}}}{ /* unamed block */if ( (subject instanceof tom.engine.adt.tominstruction.types.Instruction) ) {if ( ((( tom.engine.adt.tominstruction.types.Instruction )subject) instanceof tom.engine.adt.tominstruction.types.instruction.AbstractBlock) ) {
+      }}}}}{ /* unamed block */if ( (subject instanceof tom.engine.adt.tominstruction.types.Instruction) ) {if ( ((( tom.engine.adt.tominstruction.types.Instruction )subject) instanceof tom.engine.adt.tominstruction.types.instruction.AbstractBlock) ) {buildInstructionSequence(deep, (( tom.engine.adt.tominstruction.types.Instruction )subject).getInstList() ,moduleName)
 
 
-        //`generateInstructionList(deep, instList);
-        buildInstructionSequence(deep, (( tom.engine.adt.tominstruction.types.Instruction )subject).getInstList() ,moduleName);
+
+;
         return;
       }}}{ /* unamed block */if ( (subject instanceof tom.engine.adt.tominstruction.types.Instruction) ) {if ( ((( tom.engine.adt.tominstruction.types.Instruction )subject) instanceof tom.engine.adt.tominstruction.types.instruction.UnamedBlock) ) {buildUnamedBlock(deep, (( tom.engine.adt.tominstruction.types.Instruction )subject).getInstList() ,moduleName)
 
@@ -554,11 +549,11 @@ public abstract class AbstractGenerator {
 
 ;
         return;
-      }}}{ /* unamed block */if ( (subject instanceof tom.engine.adt.tominstruction.types.Instruction) ) {if ( ((( tom.engine.adt.tominstruction.types.Instruction )subject) instanceof tom.engine.adt.tominstruction.types.instruction.CompiledMatch) ) {
+      }}}{ /* unamed block */if ( (subject instanceof tom.engine.adt.tominstruction.types.Instruction) ) {if ( ((( tom.engine.adt.tominstruction.types.Instruction )subject) instanceof tom.engine.adt.tominstruction.types.instruction.CompiledMatch) ) {generateInstruction(deep, (( tom.engine.adt.tominstruction.types.Instruction )subject).getAutomataInst() ,moduleName)
 
 
-        //TODO moduleName
-        generateInstruction(deep, (( tom.engine.adt.tominstruction.types.Instruction )subject).getAutomataInst() ,moduleName);
+
+;
         return;
       }}}{ /* unamed block */if ( (subject instanceof tom.engine.adt.tominstruction.types.Instruction) ) {if ( ((( tom.engine.adt.tominstruction.types.Instruction )subject) instanceof tom.engine.adt.tominstruction.types.instruction.CompiledPattern) ) {generateInstruction(deep, (( tom.engine.adt.tominstruction.types.Instruction )subject).getAutomataInst() ,moduleName)
 
@@ -580,8 +575,8 @@ public abstract class AbstractGenerator {
 
 
 
-        //why?
-        //buildResolve(deep, `bqterm, moduleName);
+        
+        
         generateBQTerm(deep,  (( tom.engine.adt.tominstruction.types.Instruction )subject).getResolveBQTerm() , moduleName);
         return;
       }}}{ /* unamed block */if ( (subject instanceof tom.engine.adt.tominstruction.types.Instruction) ) { tom.engine.adt.tominstruction.types.Instruction  tom___t=(( tom.engine.adt.tominstruction.types.Instruction )subject);
@@ -596,7 +591,7 @@ public abstract class AbstractGenerator {
   public void generateTargetLanguage(int deep, TargetLanguage subject, String moduleName) throws IOException {
     { /* unamed block */{ /* unamed block */if ( (subject instanceof tom.engine.adt.code.types.TargetLanguage) ) {if ( ((( tom.engine.adt.code.types.TargetLanguage )subject) instanceof tom.engine.adt.code.types.targetlanguage.TL) ) { tom.engine.adt.tomsignature.types.TextPosition  tomMatch68_2= (( tom.engine.adt.code.types.TargetLanguage )subject).getStart() ; tom.engine.adt.tomsignature.types.TextPosition  tomMatch68_3= (( tom.engine.adt.code.types.TargetLanguage )subject).getEnd() ;if ( ((( tom.engine.adt.tomsignature.types.TextPosition )tomMatch68_2) instanceof tom.engine.adt.tomsignature.types.textposition.TextPosition) ) { int  tom___startLine= tomMatch68_2.getLine() ;if ( ((( tom.engine.adt.tomsignature.types.TextPosition )tomMatch68_3) instanceof tom.engine.adt.tomsignature.types.textposition.TextPosition) ) {
 
-        int length =   tomMatch68_3.getLine() - tom___startLine;
+        int length =   tomMatch68_3.getLine()  - tom___startLine;
         output.write(deep,  (( tom.engine.adt.code.types.TargetLanguage )subject).getCode() , tom___startLine, length);
         return;
       }}}}}{ /* unamed block */if ( (subject instanceof tom.engine.adt.code.types.TargetLanguage) ) {if ( ((( tom.engine.adt.code.types.TargetLanguage )subject) instanceof tom.engine.adt.code.types.targetlanguage.ITL) ) {
@@ -623,7 +618,7 @@ public abstract class AbstractGenerator {
       }}}{ /* unamed block */if ( (subject instanceof tom.engine.adt.tomoption.types.Option) ) {if ( ((( tom.engine.adt.tomoption.types.Option )subject) instanceof tom.engine.adt.tomoption.types.option.OriginTracking) ) {
  return; }}}{ /* unamed block */if ( (subject instanceof tom.engine.adt.tomoption.types.Option) ) {if ( ((( tom.engine.adt.tomoption.types.Option )subject) instanceof tom.engine.adt.tomoption.types.option.ACSymbol) ) {
 
-        // TODO RK: here add the declarations for intarray
+        
         return; 
       }}}{ /* unamed block */if ( (subject instanceof tom.engine.adt.tomoption.types.Option) ) {
 
@@ -636,11 +631,11 @@ public abstract class AbstractGenerator {
     { /* unamed block */{ /* unamed block */if ( (subject instanceof tom.engine.adt.tomdeclaration.types.Declaration) ) {if ( ((( tom.engine.adt.tomdeclaration.types.Declaration )subject) instanceof tom.engine.adt.tomdeclaration.types.declaration.EmptyDeclaration) ) {
 
         return;
-      }}}{ /* unamed block */if ( (subject instanceof tom.engine.adt.tomdeclaration.types.Declaration) ) {if ( ((( tom.engine.adt.tomdeclaration.types.Declaration )subject) instanceof tom.engine.adt.tomdeclaration.types.declaration.AbstractDecl) ) {
+      }}}{ /* unamed block */if ( (subject instanceof tom.engine.adt.tomdeclaration.types.Declaration) ) {if ( ((( tom.engine.adt.tomdeclaration.types.Declaration )subject) instanceof tom.engine.adt.tomdeclaration.types.declaration.AbstractDecl) ) {generateDeclarationList(deep, (( tom.engine.adt.tomdeclaration.types.Declaration )subject).getDeclList() ,moduleName)
 
 
-        //`generateInstructionList(deep, instList);
-        generateDeclarationList(deep, (( tom.engine.adt.tomdeclaration.types.Declaration )subject).getDeclList() ,moduleName);
+
+;
         return;
       }}}{ /* unamed block */if ( (subject instanceof tom.engine.adt.tomdeclaration.types.Declaration) ) {if ( ((( tom.engine.adt.tomdeclaration.types.Declaration )subject) instanceof tom.engine.adt.tomdeclaration.types.declaration.FunctionDef) ) { tom.engine.adt.tomname.types.TomName  tomMatch70_8= (( tom.engine.adt.tomdeclaration.types.Declaration )subject).getAstName() ;if ( ((( tom.engine.adt.tomname.types.TomName )tomMatch70_8) instanceof tom.engine.adt.tomname.types.tomname.Name) ) {buildFunctionDef(deep, tomMatch70_8.getString() , (( tom.engine.adt.tomdeclaration.types.Declaration )subject).getArgumentList() , (( tom.engine.adt.tomdeclaration.types.Declaration )subject).getCodomain() , (( tom.engine.adt.tomdeclaration.types.Declaration )subject).getThrowsType() , (( tom.engine.adt.tomdeclaration.types.Declaration )subject).getInstruction() ,moduleName)
 
@@ -671,8 +666,8 @@ public abstract class AbstractGenerator {
 
 
         if(getSymbolTable(moduleName).isUsedSymbolConstructor(tom___tomName) 
-            ||getSymbolTable(moduleName).isUsedSymbolDestructor(tom___tomName)) {
-          buildSymbolDecl(deep,tom___tomName,moduleName);
+            ||getSymbolTable(moduleName).isUsedSymbolDestructor(tom___tomName)) { /* unamed block */buildSymbolDecl(deep,tom___tomName,moduleName)
+;
           genDeclArray(tom___tomName,moduleName);
         }
         return ;
@@ -680,8 +675,8 @@ public abstract class AbstractGenerator {
 
 
         if(getSymbolTable(moduleName).isUsedSymbolConstructor(tom___tomName) 
-            ||getSymbolTable(moduleName).isUsedSymbolDestructor(tom___tomName)) {
-          buildSymbolDecl(deep,tom___tomName,moduleName);
+            ||getSymbolTable(moduleName).isUsedSymbolDestructor(tom___tomName)) { /* unamed block */buildSymbolDecl(deep,tom___tomName,moduleName)
+;
           genDeclList(tom___tomName,moduleName);
         }
         return ;
@@ -689,8 +684,8 @@ public abstract class AbstractGenerator {
 
 
 
-        if(getSymbolTable(moduleName).isUsedSymbolDestructor(tom___tomName)) {
-          buildIsFsymDecl(deep,tom___tomName, tomMatch70_80.getString() ,tomMatch70_87, (( tom.engine.adt.tomdeclaration.types.Declaration )subject).getExpr() ,moduleName);
+        if(getSymbolTable(moduleName).isUsedSymbolDestructor(tom___tomName)) { /* unamed block */buildIsFsymDecl(deep,tom___tomName, tomMatch70_80.getString() ,tomMatch70_87, (( tom.engine.adt.tomdeclaration.types.Declaration )subject).getExpr() ,moduleName)
+;
         }
         return;
       }}}}}}}}{ /* unamed block */if ( (subject instanceof tom.engine.adt.tomdeclaration.types.Declaration) ) {if ( ((( tom.engine.adt.tomdeclaration.types.Declaration )subject) instanceof tom.engine.adt.tomdeclaration.types.declaration.GetSlotDecl) ) { tom.engine.adt.tomname.types.TomName  tomMatch70_93= (( tom.engine.adt.tomdeclaration.types.Declaration )subject).getAstName() ; tom.engine.adt.code.types.BQTerm  tomMatch70_95= (( tom.engine.adt.tomdeclaration.types.Declaration )subject).getVariable() ;if ( ((( tom.engine.adt.tomname.types.TomName )tomMatch70_93) instanceof tom.engine.adt.tomname.types.tomname.Name) ) { String  tom___tomName= tomMatch70_93.getString() ;if ( ((( tom.engine.adt.code.types.BQTerm )tomMatch70_95) instanceof tom.engine.adt.code.types.bqterm.BQVariable) ) { tom.engine.adt.tomname.types.TomName  tomMatch70_102= tomMatch70_95.getAstName() ; tom.engine.adt.tomtype.types.TomType  tomMatch70_103= tomMatch70_95.getAstType() ;if ( ((( tom.engine.adt.tomname.types.TomName )tomMatch70_102) instanceof tom.engine.adt.tomname.types.tomname.Name) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )tomMatch70_103) instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) { tom.engine.adt.tomtype.types.TargetLanguageType  tomMatch70_109= tomMatch70_103.getTlType() ;if ( ((( tom.engine.adt.tomtype.types.TargetLanguageType )tomMatch70_109) instanceof tom.engine.adt.tomtype.types.targetlanguagetype.TLType) ) {
@@ -699,21 +694,21 @@ public abstract class AbstractGenerator {
 
 
 
-          if(getSymbolTable(moduleName).isUsedSymbolDestructor(tom___tomName)) {
-            buildGetSlotDecl(deep,tom___tomName, tomMatch70_102.getString() ,tomMatch70_109, (( tom.engine.adt.tomdeclaration.types.Declaration )subject).getExpr() , (( tom.engine.adt.tomdeclaration.types.Declaration )subject).getSlotName() ,moduleName);
+          if(getSymbolTable(moduleName).isUsedSymbolDestructor(tom___tomName)) { /* unamed block */buildGetSlotDecl(deep,tom___tomName, tomMatch70_102.getString() ,tomMatch70_109, (( tom.engine.adt.tomdeclaration.types.Declaration )subject).getExpr() , (( tom.engine.adt.tomdeclaration.types.Declaration )subject).getSlotName() ,moduleName)
+;
           }
           return;
         }}}}}}}}{ /* unamed block */if ( (subject instanceof tom.engine.adt.tomdeclaration.types.Declaration) ) {if ( ((( tom.engine.adt.tomdeclaration.types.Declaration )subject) instanceof tom.engine.adt.tomdeclaration.types.declaration.ImplementDecl) ) {if ( ((( tom.engine.adt.tomname.types.TomName ) (( tom.engine.adt.tomdeclaration.types.Declaration )subject).getAstName() ) instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
 
 
 
-        //nothing for the moment
+        
         return;
       }}}}{ /* unamed block */if ( (subject instanceof tom.engine.adt.tomdeclaration.types.Declaration) ) {if ( ((( tom.engine.adt.tomdeclaration.types.Declaration )subject) instanceof tom.engine.adt.tomdeclaration.types.declaration.GetDefaultDecl) ) { tom.engine.adt.tomname.types.TomName  tomMatch70_123= (( tom.engine.adt.tomdeclaration.types.Declaration )subject).getAstName() ;if ( ((( tom.engine.adt.tomname.types.TomName )tomMatch70_123) instanceof tom.engine.adt.tomname.types.tomname.Name) ) { String  tom___tomName= tomMatch70_123.getString() ;
 
 
-        if(getSymbolTable(moduleName).isUsedSymbolConstructor(tom___tomName)) {
-          buildGetDefaultDecl(deep,tom___tomName, (( tom.engine.adt.tomdeclaration.types.Declaration )subject).getExpr() , (( tom.engine.adt.tomdeclaration.types.Declaration )subject).getSlotName() ,moduleName);
+        if(getSymbolTable(moduleName).isUsedSymbolConstructor(tom___tomName)) { /* unamed block */buildGetDefaultDecl(deep,tom___tomName, (( tom.engine.adt.tomdeclaration.types.Declaration )subject).getExpr() , (( tom.engine.adt.tomdeclaration.types.Declaration )subject).getSlotName() ,moduleName)
+;
         }
         return;
       }}}}{ /* unamed block */if ( (subject instanceof tom.engine.adt.tomdeclaration.types.Declaration) ) {if ( ((( tom.engine.adt.tomdeclaration.types.Declaration )subject) instanceof tom.engine.adt.tomdeclaration.types.declaration.EqualTermDecl) ) { tom.engine.adt.code.types.BQTerm  tomMatch70_132= (( tom.engine.adt.tomdeclaration.types.Declaration )subject).getTermArg1() ; tom.engine.adt.code.types.BQTerm  tomMatch70_133= (( tom.engine.adt.tomdeclaration.types.Declaration )subject).getTermArg2() ;if ( ((( tom.engine.adt.code.types.BQTerm )tomMatch70_132) instanceof tom.engine.adt.code.types.bqterm.BQVariable) ) { tom.engine.adt.tomname.types.TomName  tomMatch70_138= tomMatch70_132.getAstName() ; tom.engine.adt.tomtype.types.TomType  tomMatch70_139= tomMatch70_132.getAstType() ;if ( ((( tom.engine.adt.tomname.types.TomName )tomMatch70_138) instanceof tom.engine.adt.tomname.types.tomname.Name) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )tomMatch70_139) instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) { String  tom___type1= tomMatch70_139.getTomType() ;if ( ((( tom.engine.adt.code.types.BQTerm )tomMatch70_133) instanceof tom.engine.adt.code.types.bqterm.BQVariable) ) { tom.engine.adt.tomname.types.TomName  tomMatch70_148= tomMatch70_133.getAstName() ; tom.engine.adt.tomtype.types.TomType  tomMatch70_149= tomMatch70_133.getAstType() ;if ( ((( tom.engine.adt.tomname.types.TomName )tomMatch70_148) instanceof tom.engine.adt.tomname.types.tomname.Name) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )tomMatch70_149) instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) {
@@ -721,15 +716,15 @@ public abstract class AbstractGenerator {
 
 
 
-        if(getSymbolTable(moduleName).isUsedType(tom___type1)) {
-          buildEqualTermDecl(deep, tomMatch70_138.getString() , tomMatch70_148.getString() ,tom___type1, tomMatch70_149.getTomType() , (( tom.engine.adt.tomdeclaration.types.Declaration )subject).getExpr() ,moduleName);
+        if(getSymbolTable(moduleName).isUsedType(tom___type1)) { /* unamed block */buildEqualTermDecl(deep, tomMatch70_138.getString() , tomMatch70_148.getString() ,tom___type1, tomMatch70_149.getTomType() , (( tom.engine.adt.tomdeclaration.types.Declaration )subject).getExpr() ,moduleName)
+;
         }
         return;
       }}}}}}}}}{ /* unamed block */if ( (subject instanceof tom.engine.adt.tomdeclaration.types.Declaration) ) {if ( ((( tom.engine.adt.tomdeclaration.types.Declaration )subject) instanceof tom.engine.adt.tomdeclaration.types.declaration.IsSortDecl) ) { tom.engine.adt.code.types.BQTerm  tomMatch70_159= (( tom.engine.adt.tomdeclaration.types.Declaration )subject).getTermArg() ;if ( ((( tom.engine.adt.code.types.BQTerm )tomMatch70_159) instanceof tom.engine.adt.code.types.bqterm.BQVariable) ) { tom.engine.adt.tomname.types.TomName  tomMatch70_164= tomMatch70_159.getAstName() ; tom.engine.adt.tomtype.types.TomType  tomMatch70_165= tomMatch70_159.getAstType() ;if ( ((( tom.engine.adt.tomname.types.TomName )tomMatch70_164) instanceof tom.engine.adt.tomname.types.tomname.Name) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )tomMatch70_165) instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) { String  tom___type= tomMatch70_165.getTomType() ;
 
 
-        if(getSymbolTable(moduleName).isUsedType(tom___type)) {
-          buildIsSortDecl(deep, tomMatch70_164.getString() ,tom___type, (( tom.engine.adt.tomdeclaration.types.Declaration )subject).getExpr() ,moduleName);
+        if(getSymbolTable(moduleName).isUsedType(tom___type)) { /* unamed block */buildIsSortDecl(deep, tomMatch70_164.getString() ,tom___type, (( tom.engine.adt.tomdeclaration.types.Declaration )subject).getExpr() ,moduleName)
+;
         }
         return;
       }}}}}}{ /* unamed block */if ( (subject instanceof tom.engine.adt.tomdeclaration.types.Declaration) ) {if ( ((( tom.engine.adt.tomdeclaration.types.Declaration )subject) instanceof tom.engine.adt.tomdeclaration.types.declaration.BQTermToDeclaration) ) {
@@ -742,8 +737,8 @@ public abstract class AbstractGenerator {
 
 
 
-        if(getSymbolTable(moduleName).isUsedSymbolDestructor(tom___tomName)) {
-          buildResolveIsFsymDecl(deep,tom___tomName, tomMatch70_187.getString() ,tomMatch70_194,moduleName);
+        if(getSymbolTable(moduleName).isUsedSymbolDestructor(tom___tomName)) { /* unamed block */buildResolveIsFsymDecl(deep,tom___tomName, tomMatch70_187.getString() ,tomMatch70_194,moduleName)
+;
         }
         return;
       }}}}}}}}{ /* unamed block */if ( (subject instanceof tom.engine.adt.tomdeclaration.types.Declaration) ) {if ( ((( tom.engine.adt.tomdeclaration.types.Declaration )subject) instanceof tom.engine.adt.tomdeclaration.types.declaration.ResolveGetSlotDecl) ) { tom.engine.adt.tomname.types.TomName  tomMatch70_200= (( tom.engine.adt.tomdeclaration.types.Declaration )subject).getAstName() ; tom.engine.adt.code.types.BQTerm  tomMatch70_202= (( tom.engine.adt.tomdeclaration.types.Declaration )subject).getVariable() ;if ( ((( tom.engine.adt.tomname.types.TomName )tomMatch70_200) instanceof tom.engine.adt.tomname.types.tomname.Name) ) { String  tom___tomName= tomMatch70_200.getString() ;if ( ((( tom.engine.adt.code.types.BQTerm )tomMatch70_202) instanceof tom.engine.adt.code.types.bqterm.BQVariable) ) { tom.engine.adt.tomname.types.TomName  tomMatch70_208= tomMatch70_202.getAstName() ; tom.engine.adt.tomtype.types.TomType  tomMatch70_209= tomMatch70_202.getAstType() ;if ( ((( tom.engine.adt.tomname.types.TomName )tomMatch70_208) instanceof tom.engine.adt.tomname.types.tomname.Name) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )tomMatch70_209) instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) { tom.engine.adt.tomtype.types.TargetLanguageType  tomMatch70_215= tomMatch70_209.getTlType() ;if ( ((( tom.engine.adt.tomtype.types.TargetLanguageType )tomMatch70_215) instanceof tom.engine.adt.tomtype.types.targetlanguagetype.TLType) ) {
@@ -751,16 +746,16 @@ public abstract class AbstractGenerator {
 
 
 
-          if(getSymbolTable(moduleName).isUsedSymbolDestructor(tom___tomName)) {
-            buildResolveGetSlotDecl(deep,tom___tomName, tomMatch70_208.getString() ,tomMatch70_215, (( tom.engine.adt.tomdeclaration.types.Declaration )subject).getSlotName() ,moduleName);
+          if(getSymbolTable(moduleName).isUsedSymbolDestructor(tom___tomName)) { /* unamed block */buildResolveGetSlotDecl(deep,tom___tomName, tomMatch70_208.getString() ,tomMatch70_215, (( tom.engine.adt.tomdeclaration.types.Declaration )subject).getSlotName() ,moduleName)
+;
           }
           return;
         }}}}}}}}{ /* unamed block */if ( (subject instanceof tom.engine.adt.tomdeclaration.types.Declaration) ) {if ( ((( tom.engine.adt.tomdeclaration.types.Declaration )subject) instanceof tom.engine.adt.tomdeclaration.types.declaration.ResolveMakeDecl) ) { tom.engine.adt.tomname.types.TomName  tomMatch70_221= (( tom.engine.adt.tomdeclaration.types.Declaration )subject).getAstName() ;if ( ((( tom.engine.adt.tomname.types.TomName )tomMatch70_221) instanceof tom.engine.adt.tomname.types.tomname.Name) ) { String  tom___opname= tomMatch70_221.getString() ;
 
 
 
-        if(getSymbolTable(moduleName).isUsedSymbolConstructor(tom___opname)) {
-          genResolveDeclMake("tom_make_",tom___opname, (( tom.engine.adt.tomdeclaration.types.Declaration )subject).getAstType() , (( tom.engine.adt.tomdeclaration.types.Declaration )subject).getArgs() ,moduleName);
+        if(getSymbolTable(moduleName).isUsedSymbolConstructor(tom___opname)) { /* unamed block */genResolveDeclMake("tom_make_",tom___opname, (( tom.engine.adt.tomdeclaration.types.Declaration )subject).getAstType() , (( tom.engine.adt.tomdeclaration.types.Declaration )subject).getArgs() ,moduleName)
+;
         }
         return;
       }}}}{ /* unamed block */if ( (subject instanceof tom.engine.adt.tomdeclaration.types.Declaration) ) {if ( ((( tom.engine.adt.tomdeclaration.types.Declaration )subject) instanceof tom.engine.adt.tomdeclaration.types.declaration.ResolveClassDecl) ) {buildResolveClass( (( tom.engine.adt.tomdeclaration.types.Declaration )subject).getWithName() , (( tom.engine.adt.tomdeclaration.types.Declaration )subject).getToName() , (( tom.engine.adt.tomdeclaration.types.Declaration )subject).getExtends() ,moduleName)
@@ -773,16 +768,16 @@ public abstract class AbstractGenerator {
 
 ;
         return;
-      }}}{ /* unamed block */if ( (subject instanceof tom.engine.adt.tomdeclaration.types.Declaration) ) {if ( ((( tom.engine.adt.tomdeclaration.types.Declaration )subject) instanceof tom.engine.adt.tomdeclaration.types.declaration.ReferenceClass) ) { tom.engine.adt.tomname.types.TomName  tomMatch70_243= (( tom.engine.adt.tomdeclaration.types.Declaration )subject).getRefName() ;if ( ((( tom.engine.adt.tomname.types.TomName )tomMatch70_243) instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
+      }}}{ /* unamed block */if ( (subject instanceof tom.engine.adt.tomdeclaration.types.Declaration) ) {if ( ((( tom.engine.adt.tomdeclaration.types.Declaration )subject) instanceof tom.engine.adt.tomdeclaration.types.declaration.ReferenceClass) ) { tom.engine.adt.tomname.types.TomName  tomMatch70_243= (( tom.engine.adt.tomdeclaration.types.Declaration )subject).getRefName() ;if ( ((( tom.engine.adt.tomname.types.TomName )tomMatch70_243) instanceof tom.engine.adt.tomname.types.tomname.Name) ) {buildReferenceClass(deep, tomMatch70_243.getString() , (( tom.engine.adt.tomdeclaration.types.Declaration )subject).getFields() ,moduleName)
 
 
 
 
-        //no test in order to generate the skeletton even if the class is not
-        //populated
-        //if(!`refclassTInstructions.isEmptyconcRefClassTracelinkInstruction()) {
-        buildReferenceClass(deep, tomMatch70_243.getString() , (( tom.engine.adt.tomdeclaration.types.Declaration )subject).getFields() ,moduleName);
-        //}
+
+
+
+;
+        
         return;
       }}}}{ /* unamed block */if ( (subject instanceof tom.engine.adt.tomdeclaration.types.Declaration) ) {if ( ((( tom.engine.adt.tomdeclaration.types.Declaration )subject) instanceof tom.engine.adt.tomdeclaration.types.declaration.GetHeadDecl) ) { tom.engine.adt.tomname.types.TomName  tomMatch70_251= (( tom.engine.adt.tomdeclaration.types.Declaration )subject).getOpname() ; tom.engine.adt.tomtype.types.TomType  tomMatch70_252= (( tom.engine.adt.tomdeclaration.types.Declaration )subject).getCodomain() ; tom.engine.adt.code.types.BQTerm  tomMatch70_253= (( tom.engine.adt.tomdeclaration.types.Declaration )subject).getVariable() ;if ( ((( tom.engine.adt.tomname.types.TomName )tomMatch70_251) instanceof tom.engine.adt.tomname.types.tomname.Name) ) { String  tom___opname= tomMatch70_251.getString() ;if ( ((( tom.engine.adt.tomtype.types.TomType )tomMatch70_252) instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) {if ( ((( tom.engine.adt.code.types.BQTerm )tomMatch70_253) instanceof tom.engine.adt.code.types.bqterm.BQVariable) ) { tom.engine.adt.tomname.types.TomName  tomMatch70_263= tomMatch70_253.getAstName() ; tom.engine.adt.tomtype.types.TomType  tomMatch70_264= tomMatch70_253.getAstType() ;if ( ((( tom.engine.adt.tomname.types.TomName )tomMatch70_263) instanceof tom.engine.adt.tomname.types.tomname.Name) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )tomMatch70_264) instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) { tom.engine.adt.tomtype.types.TargetLanguageType  tomMatch70_271= tomMatch70_264.getTlType() ;if ( ((( tom.engine.adt.tomtype.types.TargetLanguageType )tomMatch70_271) instanceof tom.engine.adt.tomtype.types.targetlanguagetype.TLType) ) {
 
@@ -794,8 +789,8 @@ public abstract class AbstractGenerator {
 
 
           if(getSymbolTable(moduleName).isUsedSymbolConstructor(tom___opname) 
-           ||getSymbolTable(moduleName).isUsedSymbolDestructor(tom___opname)) {
-            buildGetHeadDecl(deep,tomMatch70_251, tomMatch70_263.getString() , tomMatch70_264.getTomType() ,tomMatch70_271, tomMatch70_252.getTlType() , (( tom.engine.adt.tomdeclaration.types.Declaration )subject).getExpr() ,moduleName);
+           ||getSymbolTable(moduleName).isUsedSymbolDestructor(tom___opname)) { /* unamed block */buildGetHeadDecl(deep,tomMatch70_251, tomMatch70_263.getString() , tomMatch70_264.getTomType() ,tomMatch70_271, tomMatch70_252.getTlType() , (( tom.engine.adt.tomdeclaration.types.Declaration )subject).getExpr() ,moduleName)
+;
           }
           return;
         }}}}}}}}}{ /* unamed block */if ( (subject instanceof tom.engine.adt.tomdeclaration.types.Declaration) ) {if ( ((( tom.engine.adt.tomdeclaration.types.Declaration )subject) instanceof tom.engine.adt.tomdeclaration.types.declaration.GetTailDecl) ) { tom.engine.adt.tomname.types.TomName  tomMatch70_277= (( tom.engine.adt.tomdeclaration.types.Declaration )subject).getOpname() ; tom.engine.adt.code.types.BQTerm  tomMatch70_278= (( tom.engine.adt.tomdeclaration.types.Declaration )subject).getVariable() ;if ( ((( tom.engine.adt.tomname.types.TomName )tomMatch70_277) instanceof tom.engine.adt.tomname.types.tomname.Name) ) { String  tom___opname= tomMatch70_277.getString() ;if ( ((( tom.engine.adt.code.types.BQTerm )tomMatch70_278) instanceof tom.engine.adt.code.types.bqterm.BQVariable) ) { tom.engine.adt.tomname.types.TomName  tomMatch70_285= tomMatch70_278.getAstName() ; tom.engine.adt.tomtype.types.TomType  tomMatch70_286= tomMatch70_278.getAstType() ;if ( ((( tom.engine.adt.tomname.types.TomName )tomMatch70_285) instanceof tom.engine.adt.tomname.types.tomname.Name) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )tomMatch70_286) instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) { tom.engine.adt.tomtype.types.TargetLanguageType  tomMatch70_293= tomMatch70_286.getTlType() ;if ( ((( tom.engine.adt.tomtype.types.TargetLanguageType )tomMatch70_293) instanceof tom.engine.adt.tomtype.types.targetlanguagetype.TLType) ) {
@@ -805,8 +800,8 @@ public abstract class AbstractGenerator {
 
 
           if(getSymbolTable(moduleName).isUsedSymbolConstructor(tom___opname) 
-              ||getSymbolTable(moduleName).isUsedSymbolDestructor(tom___opname)) {
-            buildGetTailDecl(deep,tomMatch70_277, tomMatch70_285.getString() , tomMatch70_286.getTomType() ,tomMatch70_293, (( tom.engine.adt.tomdeclaration.types.Declaration )subject).getExpr() ,moduleName);
+              ||getSymbolTable(moduleName).isUsedSymbolDestructor(tom___opname)) { /* unamed block */buildGetTailDecl(deep,tomMatch70_277, tomMatch70_285.getString() , tomMatch70_286.getTomType() ,tomMatch70_293, (( tom.engine.adt.tomdeclaration.types.Declaration )subject).getExpr() ,moduleName)
+;
           }
           return;
         }}}}}}}}{ /* unamed block */if ( (subject instanceof tom.engine.adt.tomdeclaration.types.Declaration) ) {if ( ((( tom.engine.adt.tomdeclaration.types.Declaration )subject) instanceof tom.engine.adt.tomdeclaration.types.declaration.IsEmptyDecl) ) { tom.engine.adt.tomname.types.TomName  tomMatch70_299= (( tom.engine.adt.tomdeclaration.types.Declaration )subject).getOpname() ; tom.engine.adt.code.types.BQTerm  tomMatch70_300= (( tom.engine.adt.tomdeclaration.types.Declaration )subject).getVariable() ;if ( ((( tom.engine.adt.tomname.types.TomName )tomMatch70_299) instanceof tom.engine.adt.tomname.types.tomname.Name) ) { String  tom___opname= tomMatch70_299.getString() ;if ( ((( tom.engine.adt.code.types.BQTerm )tomMatch70_300) instanceof tom.engine.adt.code.types.bqterm.BQVariable) ) { tom.engine.adt.tomname.types.TomName  tomMatch70_307= tomMatch70_300.getAstName() ; tom.engine.adt.tomtype.types.TomType  tomMatch70_308= tomMatch70_300.getAstType() ;if ( ((( tom.engine.adt.tomname.types.TomName )tomMatch70_307) instanceof tom.engine.adt.tomname.types.tomname.Name) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )tomMatch70_308) instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) { tom.engine.adt.tomtype.types.TargetLanguageType  tomMatch70_315= tomMatch70_308.getTlType() ;if ( ((( tom.engine.adt.tomtype.types.TargetLanguageType )tomMatch70_315) instanceof tom.engine.adt.tomtype.types.targetlanguagetype.TLType) ) {
@@ -816,8 +811,8 @@ public abstract class AbstractGenerator {
 
 
           if(getSymbolTable(moduleName).isUsedSymbolConstructor(tom___opname) 
-              ||getSymbolTable(moduleName).isUsedSymbolDestructor(tom___opname)) {
-            buildIsEmptyDecl(deep,tomMatch70_299, tomMatch70_307.getString() , tomMatch70_308.getTomType() ,tomMatch70_315, (( tom.engine.adt.tomdeclaration.types.Declaration )subject).getExpr() ,moduleName);
+              ||getSymbolTable(moduleName).isUsedSymbolDestructor(tom___opname)) { /* unamed block */buildIsEmptyDecl(deep,tomMatch70_299, tomMatch70_307.getString() , tomMatch70_308.getTomType() ,tomMatch70_315, (( tom.engine.adt.tomdeclaration.types.Declaration )subject).getExpr() ,moduleName)
+;
           }
           return;
         }}}}}}}}{ /* unamed block */if ( (subject instanceof tom.engine.adt.tomdeclaration.types.Declaration) ) {if ( ((( tom.engine.adt.tomdeclaration.types.Declaration )subject) instanceof tom.engine.adt.tomdeclaration.types.declaration.MakeEmptyList) ) { tom.engine.adt.tomname.types.TomName  tomMatch70_321= (( tom.engine.adt.tomdeclaration.types.Declaration )subject).getAstName() ;if ( ((( tom.engine.adt.tomname.types.TomName )tomMatch70_321) instanceof tom.engine.adt.tomname.types.tomname.Name) ) { String  tom___opname= tomMatch70_321.getString() ;
@@ -825,8 +820,8 @@ public abstract class AbstractGenerator {
 
         TomType returnType = TomBase.getSymbolCodomain(getSymbolFromName(tom___opname));
         if(getSymbolTable(moduleName).isUsedSymbolConstructor(tom___opname) 
-            || getSymbolTable(moduleName).isUsedSymbolDestructor(tom___opname)) {
-          genDeclMake("tom_empty_list_",tom___opname,returnType, tom.engine.adt.code.types.bqtermlist.EmptyconcBQTerm.make() , (( tom.engine.adt.tomdeclaration.types.Declaration )subject).getInstr() ,moduleName);
+            || getSymbolTable(moduleName).isUsedSymbolDestructor(tom___opname)) { /* unamed block */genDeclMake("tom_empty_list_",tom___opname,returnType, tom.engine.adt.code.types.bqtermlist.EmptyconcBQTerm.make() , (( tom.engine.adt.tomdeclaration.types.Declaration )subject).getInstr() ,moduleName)
+;
         }
         return;
       }}}}{ /* unamed block */if ( (subject instanceof tom.engine.adt.tomdeclaration.types.Declaration) ) {if ( ((( tom.engine.adt.tomdeclaration.types.Declaration )subject) instanceof tom.engine.adt.tomdeclaration.types.declaration.MakeAddList) ) { tom.engine.adt.tomname.types.TomName  tomMatch70_330= (( tom.engine.adt.tomdeclaration.types.Declaration )subject).getAstName() ; tom.engine.adt.code.types.BQTerm  tomMatch70_331= (( tom.engine.adt.tomdeclaration.types.Declaration )subject).getVarElt() ; tom.engine.adt.code.types.BQTerm  tomMatch70_332= (( tom.engine.adt.tomdeclaration.types.Declaration )subject).getVarList() ;if ( ((( tom.engine.adt.tomname.types.TomName )tomMatch70_330) instanceof tom.engine.adt.tomname.types.tomname.Name) ) { String  tom___opname= tomMatch70_330.getString() ;if ( ((( tom.engine.adt.code.types.BQTerm )tomMatch70_331) instanceof tom.engine.adt.code.types.bqterm.BQVariable) ) { tom.engine.adt.tomtype.types.TomType  tomMatch70_340= tomMatch70_331.getAstType() ;if ( ((( tom.engine.adt.tomtype.types.TomType )tomMatch70_340) instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) {if ( ((( tom.engine.adt.tomtype.types.TargetLanguageType ) tomMatch70_340.getTlType() ) instanceof tom.engine.adt.tomtype.types.targetlanguagetype.TLType) ) {if ( ((( tom.engine.adt.code.types.BQTerm )tomMatch70_332) instanceof tom.engine.adt.code.types.bqterm.BQVariable) ) { tom.engine.adt.tomtype.types.TomType  tomMatch70_348= tomMatch70_332.getAstType() ;if ( ((( tom.engine.adt.tomtype.types.TomType )tomMatch70_348) instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) {if ( ((( tom.engine.adt.tomtype.types.TargetLanguageType ) tomMatch70_348.getTlType() ) instanceof tom.engine.adt.tomtype.types.targetlanguagetype.TLType) ) {
@@ -837,8 +832,8 @@ public abstract class AbstractGenerator {
 
         TomType returnType = tomMatch70_348;
         if(getSymbolTable(moduleName).isUsedSymbolConstructor(tom___opname) 
-            ||getSymbolTable(moduleName).isUsedSymbolDestructor(tom___opname)) {
-          genDeclMake("tom_cons_list_",tom___opname,returnType, tom.engine.adt.code.types.bqtermlist.ConsconcBQTerm.make(tomMatch70_331, tom.engine.adt.code.types.bqtermlist.ConsconcBQTerm.make(tomMatch70_332, tom.engine.adt.code.types.bqtermlist.EmptyconcBQTerm.make() ) ) , (( tom.engine.adt.tomdeclaration.types.Declaration )subject).getInstr() ,moduleName);
+            ||getSymbolTable(moduleName).isUsedSymbolDestructor(tom___opname)) { /* unamed block */genDeclMake("tom_cons_list_",tom___opname,returnType, tom.engine.adt.code.types.bqtermlist.ConsconcBQTerm.make(tomMatch70_331, tom.engine.adt.code.types.bqtermlist.ConsconcBQTerm.make(tomMatch70_332, tom.engine.adt.code.types.bqtermlist.EmptyconcBQTerm.make() ) ) , (( tom.engine.adt.tomdeclaration.types.Declaration )subject).getInstr() ,moduleName)
+;
         }
         return;
       }}}}}}}}}}{ /* unamed block */if ( (subject instanceof tom.engine.adt.tomdeclaration.types.Declaration) ) {if ( ((( tom.engine.adt.tomdeclaration.types.Declaration )subject) instanceof tom.engine.adt.tomdeclaration.types.declaration.GetElementDecl) ) { tom.engine.adt.tomname.types.TomName  tomMatch70_357= (( tom.engine.adt.tomdeclaration.types.Declaration )subject).getOpname() ; tom.engine.adt.code.types.BQTerm  tomMatch70_358= (( tom.engine.adt.tomdeclaration.types.Declaration )subject).getVariable() ; tom.engine.adt.code.types.BQTerm  tomMatch70_359= (( tom.engine.adt.tomdeclaration.types.Declaration )subject).getIndex() ;if ( ((( tom.engine.adt.tomname.types.TomName )tomMatch70_357) instanceof tom.engine.adt.tomname.types.tomname.Name) ) {if ( ((( tom.engine.adt.code.types.BQTerm )tomMatch70_358) instanceof tom.engine.adt.code.types.bqterm.BQVariable) ) { tom.engine.adt.tomname.types.TomName  tomMatch70_366= tomMatch70_358.getAstName() ; tom.engine.adt.tomtype.types.TomType  tomMatch70_367= tomMatch70_358.getAstType() ;if ( ((( tom.engine.adt.tomname.types.TomName )tomMatch70_366) instanceof tom.engine.adt.tomname.types.tomname.Name) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )tomMatch70_367) instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) {if ( ((( tom.engine.adt.tomtype.types.TargetLanguageType ) tomMatch70_367.getTlType() ) instanceof tom.engine.adt.tomtype.types.targetlanguagetype.TLType) ) {if ( ((( tom.engine.adt.code.types.BQTerm )tomMatch70_359) instanceof tom.engine.adt.code.types.bqterm.BQVariable) ) { tom.engine.adt.tomname.types.TomName  tomMatch70_379= tomMatch70_359.getAstName() ;if ( ((( tom.engine.adt.tomname.types.TomName )tomMatch70_379) instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
@@ -847,8 +842,8 @@ public abstract class AbstractGenerator {
 
 
 
-          if(getSymbolTable(moduleName).isUsedSymbolDestructor( tomMatch70_357.getString() )) {
-            buildGetElementDecl(deep,tomMatch70_357, tomMatch70_366.getString() , tomMatch70_379.getString() , tomMatch70_367.getTomType() , (( tom.engine.adt.tomdeclaration.types.Declaration )subject).getExpr() ,moduleName);
+          if(getSymbolTable(moduleName).isUsedSymbolDestructor( tomMatch70_357.getString() )) { /* unamed block */buildGetElementDecl(deep,tomMatch70_357, tomMatch70_366.getString() , tomMatch70_379.getString() , tomMatch70_367.getTomType() , (( tom.engine.adt.tomdeclaration.types.Declaration )subject).getExpr() ,moduleName)
+;
           }
           return;
         }}}}}}}}}}{ /* unamed block */if ( (subject instanceof tom.engine.adt.tomdeclaration.types.Declaration) ) {if ( ((( tom.engine.adt.tomdeclaration.types.Declaration )subject) instanceof tom.engine.adt.tomdeclaration.types.declaration.GetSizeDecl) ) { tom.engine.adt.tomname.types.TomName  tomMatch70_386= (( tom.engine.adt.tomdeclaration.types.Declaration )subject).getOpname() ; tom.engine.adt.code.types.BQTerm  tomMatch70_387= (( tom.engine.adt.tomdeclaration.types.Declaration )subject).getVariable() ;if ( ((( tom.engine.adt.tomname.types.TomName )tomMatch70_386) instanceof tom.engine.adt.tomname.types.tomname.Name) ) {if ( ((( tom.engine.adt.code.types.BQTerm )tomMatch70_387) instanceof tom.engine.adt.code.types.bqterm.BQVariable) ) { tom.engine.adt.tomname.types.TomName  tomMatch70_394= tomMatch70_387.getAstName() ; tom.engine.adt.tomtype.types.TomType  tomMatch70_395= tomMatch70_387.getAstType() ;if ( ((( tom.engine.adt.tomname.types.TomName )tomMatch70_394) instanceof tom.engine.adt.tomname.types.tomname.Name) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )tomMatch70_395) instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) {if ( ((( tom.engine.adt.tomtype.types.TargetLanguageType ) tomMatch70_395.getTlType() ) instanceof tom.engine.adt.tomtype.types.targetlanguagetype.TLType) ) {
@@ -857,8 +852,8 @@ public abstract class AbstractGenerator {
 
 
 
-          if(getSymbolTable(moduleName).isUsedSymbolDestructor( tomMatch70_386.getString() )) {
-            buildGetSizeDecl(deep,tomMatch70_386, tomMatch70_394.getString() , tomMatch70_395.getTomType() , (( tom.engine.adt.tomdeclaration.types.Declaration )subject).getExpr() ,moduleName);
+          if(getSymbolTable(moduleName).isUsedSymbolDestructor( tomMatch70_386.getString() )) { /* unamed block */buildGetSizeDecl(deep,tomMatch70_386, tomMatch70_394.getString() , tomMatch70_395.getTomType() , (( tom.engine.adt.tomdeclaration.types.Declaration )subject).getExpr() ,moduleName)
+;
           }
           return;
         }}}}}}}}{ /* unamed block */if ( (subject instanceof tom.engine.adt.tomdeclaration.types.Declaration) ) {if ( ((( tom.engine.adt.tomdeclaration.types.Declaration )subject) instanceof tom.engine.adt.tomdeclaration.types.declaration.MakeEmptyArray) ) { tom.engine.adt.tomname.types.TomName  tomMatch70_408= (( tom.engine.adt.tomdeclaration.types.Declaration )subject).getAstName() ; tom.engine.adt.code.types.BQTerm  tomMatch70_409= (( tom.engine.adt.tomdeclaration.types.Declaration )subject).getVarSize() ;if ( ((( tom.engine.adt.tomname.types.TomName )tomMatch70_408) instanceof tom.engine.adt.tomname.types.tomname.Name) ) { String  tom___opname= tomMatch70_408.getString() ;if ( ((( tom.engine.adt.code.types.BQTerm )tomMatch70_409) instanceof tom.engine.adt.code.types.bqterm.BQVariable) ) {
@@ -868,8 +863,8 @@ public abstract class AbstractGenerator {
 
         TomType returnType = TomBase.getSymbolCodomain(getSymbolFromName(tom___opname));
         BQTerm newVar =  tom.engine.adt.code.types.bqterm.BQVariable.make( tomMatch70_409.getOptions() ,  tomMatch70_409.getAstName() , getSymbolTable(moduleName).getIntType()) ;
-        if(getSymbolTable(moduleName).isUsedSymbolConstructor(tom___opname)) {
-          genDeclMake("tom_empty_array_",tom___opname,returnType, tom.engine.adt.code.types.bqtermlist.ConsconcBQTerm.make(newVar, tom.engine.adt.code.types.bqtermlist.EmptyconcBQTerm.make() ) , (( tom.engine.adt.tomdeclaration.types.Declaration )subject).getInstr() ,moduleName);
+        if(getSymbolTable(moduleName).isUsedSymbolConstructor(tom___opname)) { /* unamed block */genDeclMake("tom_empty_array_",tom___opname,returnType, tom.engine.adt.code.types.bqtermlist.ConsconcBQTerm.make(newVar, tom.engine.adt.code.types.bqtermlist.EmptyconcBQTerm.make() ) , (( tom.engine.adt.tomdeclaration.types.Declaration )subject).getInstr() ,moduleName)
+;
         }
         return;
       }}}}}{ /* unamed block */if ( (subject instanceof tom.engine.adt.tomdeclaration.types.Declaration) ) {if ( ((( tom.engine.adt.tomdeclaration.types.Declaration )subject) instanceof tom.engine.adt.tomdeclaration.types.declaration.MakeAddArray) ) { tom.engine.adt.tomname.types.TomName  tomMatch70_422= (( tom.engine.adt.tomdeclaration.types.Declaration )subject).getAstName() ; tom.engine.adt.code.types.BQTerm  tomMatch70_423= (( tom.engine.adt.tomdeclaration.types.Declaration )subject).getVarElt() ; tom.engine.adt.code.types.BQTerm  tomMatch70_424= (( tom.engine.adt.tomdeclaration.types.Declaration )subject).getVarList() ;if ( ((( tom.engine.adt.tomname.types.TomName )tomMatch70_422) instanceof tom.engine.adt.tomname.types.tomname.Name) ) { String  tom___opname= tomMatch70_422.getString() ;if ( ((( tom.engine.adt.code.types.BQTerm )tomMatch70_423) instanceof tom.engine.adt.code.types.bqterm.BQVariable) ) { tom.engine.adt.tomtype.types.TomType  tomMatch70_432= tomMatch70_423.getAstType() ;if ( ((( tom.engine.adt.tomtype.types.TomType )tomMatch70_432) instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) {if ( ((( tom.engine.adt.tomtype.types.TargetLanguageType ) tomMatch70_432.getTlType() ) instanceof tom.engine.adt.tomtype.types.targetlanguagetype.TLType) ) {if ( ((( tom.engine.adt.code.types.BQTerm )tomMatch70_424) instanceof tom.engine.adt.code.types.bqterm.BQVariable) ) { tom.engine.adt.tomtype.types.TomType  tomMatch70_440= tomMatch70_424.getAstType() ;if ( ((( tom.engine.adt.tomtype.types.TomType )tomMatch70_440) instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) {if ( ((( tom.engine.adt.tomtype.types.TargetLanguageType ) tomMatch70_440.getTlType() ) instanceof tom.engine.adt.tomtype.types.targetlanguagetype.TLType) ) {
@@ -879,21 +874,21 @@ public abstract class AbstractGenerator {
 
 
         TomType returnType = tomMatch70_440;
-        if(getSymbolTable(moduleName).isUsedSymbolConstructor(tom___opname)) {
-          genDeclMake("tom_cons_array_",tom___opname,returnType, tom.engine.adt.code.types.bqtermlist.ConsconcBQTerm.make(tomMatch70_423, tom.engine.adt.code.types.bqtermlist.ConsconcBQTerm.make(tomMatch70_424, tom.engine.adt.code.types.bqtermlist.EmptyconcBQTerm.make() ) ) , (( tom.engine.adt.tomdeclaration.types.Declaration )subject).getInstr() ,moduleName);
+        if(getSymbolTable(moduleName).isUsedSymbolConstructor(tom___opname)) { /* unamed block */genDeclMake("tom_cons_array_",tom___opname,returnType, tom.engine.adt.code.types.bqtermlist.ConsconcBQTerm.make(tomMatch70_423, tom.engine.adt.code.types.bqtermlist.ConsconcBQTerm.make(tomMatch70_424, tom.engine.adt.code.types.bqtermlist.EmptyconcBQTerm.make() ) ) , (( tom.engine.adt.tomdeclaration.types.Declaration )subject).getInstr() ,moduleName)
+;
         }
         return;
       }}}}}}}}}}{ /* unamed block */if ( (subject instanceof tom.engine.adt.tomdeclaration.types.Declaration) ) {if ( ((( tom.engine.adt.tomdeclaration.types.Declaration )subject) instanceof tom.engine.adt.tomdeclaration.types.declaration.MakeDecl) ) { tom.engine.adt.tomname.types.TomName  tomMatch70_449= (( tom.engine.adt.tomdeclaration.types.Declaration )subject).getAstName() ;if ( ((( tom.engine.adt.tomname.types.TomName )tomMatch70_449) instanceof tom.engine.adt.tomname.types.tomname.Name) ) { String  tom___opname= tomMatch70_449.getString() ;
 
 
-        if(getSymbolTable(moduleName).isUsedSymbolConstructor(tom___opname)) {
-          genDeclMake("tom_make_",tom___opname, (( tom.engine.adt.tomdeclaration.types.Declaration )subject).getAstType() , (( tom.engine.adt.tomdeclaration.types.Declaration )subject).getArgs() , (( tom.engine.adt.tomdeclaration.types.Declaration )subject).getInstr() ,moduleName);
+        if(getSymbolTable(moduleName).isUsedSymbolConstructor(tom___opname)) { /* unamed block */genDeclMake("tom_make_",tom___opname, (( tom.engine.adt.tomdeclaration.types.Declaration )subject).getAstType() , (( tom.engine.adt.tomdeclaration.types.Declaration )subject).getArgs() , (( tom.engine.adt.tomdeclaration.types.Declaration )subject).getInstr() ,moduleName)
+;
         }
         return;
       }}}}{ /* unamed block */if ( (subject instanceof tom.engine.adt.tomdeclaration.types.Declaration) ) {if ( ((( tom.engine.adt.tomdeclaration.types.Declaration )subject) instanceof tom.engine.adt.tomdeclaration.types.declaration.TypeTermDecl) ) {
 
 
-        //FIXME: consequences of a %op_implement? 
+        
         generateDeclarationList(deep,  (( tom.engine.adt.tomdeclaration.types.Declaration )subject).getDeclarations() , moduleName);
         return;
       }}}{ /* unamed block */if ( (subject instanceof tom.engine.adt.tomdeclaration.types.Declaration) ) { tom.engine.adt.tomdeclaration.types.Declaration  tom___t=(( tom.engine.adt.tomdeclaration.types.Declaration )subject);
@@ -933,10 +928,7 @@ public abstract class AbstractGenerator {
         generateInstruction(deep,subject.getHeadconcInstruction(), moduleName);
         subject = subject.getTailconcInstruction();
       }
-      /* this is not pretty ! there is a ";" right after the new line
-      if(prettyMode) {
-        output.writeln();
-      }*/
+      
     }
 
   public void generateDeclarationList(int deep, DeclarationList subject, String moduleName)
@@ -955,7 +947,7 @@ public abstract class AbstractGenerator {
       }
     }
 
-  // ------------------------------------------------------------
+  
 
   protected abstract void genDecl(String returnType,
       String declName,
@@ -979,7 +971,7 @@ public abstract class AbstractGenerator {
 
   protected abstract void genDeclArray(String name, String moduleName) throws IOException;
 
-  // ------------------------------------------------------------
+  
 
   protected abstract void buildInstructionSequence(int deep, InstructionList instructionList, String moduleName) throws IOException;
   protected abstract void buildComment(int deep, String text) throws IOException;
@@ -992,16 +984,12 @@ public abstract class AbstractGenerator {
     throw new TomRuntimeException("Backend "+getClass()+" does not support Methods");
   }
 
-  /*buildClass is not abstract since only Java backend supports class
-    only backends that supports Class should overload buildClass
-   */
+  
   protected void buildClass(int deep, String tomName, TomType extendsType, BQTerm superTerm, Declaration declaration, String moduleName) throws IOException {
     throw new TomRuntimeException("Backend does not support Class");
   }
 
-  /*buildIntrospectorClass is not abstract since only Java backend supports class
-    only backends that supports Class should overload buildIntrospectorClass
-   */
+  
   protected void buildIntrospectorClass(int deep, String tomName, Declaration declaration, String moduleName) throws IOException {
     throw new TomRuntimeException("Backend does not support Class");
   }
@@ -1066,7 +1054,7 @@ public abstract class AbstractGenerator {
   protected abstract void buildGetSizeDecl(int deep, TomName opNameAST, String name1, String type, Expression code, String moduleName) throws IOException;
 
   
-  //TODO: Resolve*
+  
   protected abstract void buildResolveIsFsymDecl(int deep, String tomName, String name1, TargetLanguageType tlType, String moduleName) throws IOException;
   protected abstract void buildResolveGetSlotDecl(int deep, String tomName, String name1, TargetLanguageType tlType, TomName slotName, String moduleName) throws IOException;
   protected abstract void buildResolveClass(String wName, String tName, String extendsName, String moduleName) throws IOException;
@@ -1079,5 +1067,7 @@ public abstract class AbstractGenerator {
   protected abstract String genResolveMakeCode(String funName, BQTermList argList) throws IOException;
   protected abstract String genResolveIsFsymCode(String tomName, String varname) throws IOException;
   protected abstract String genResolveGetSlotCode(String tomName, String varname, String slotName) throws IOException;
+
+
 
 }

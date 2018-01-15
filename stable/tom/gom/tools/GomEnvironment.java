@@ -1,28 +1,30 @@
-/*
- * Gom
- *
- * Copyright (c) 2000-2017, Universite de Lorraine, Inria
- * Nancy, France.
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
- *
- * Antoine Reilles      e-mail: Antoine.Reilles@loria.fr
- *
- **/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 package tom.gom.tools;
+
+
 
 import tom.gom.GomStreamManager;
 import tom.gom.adt.gom.types.*;
@@ -31,14 +33,16 @@ import tom.gom.tools.error.GomRuntimeException;
 import tom.gom.SymbolTable;
 import java.util.*;
 
+
+
 public class GomEnvironment {
 
-       
+  
 
   private GomStreamManager streamManager;
   private String lastGeneratedMapping;
   private SymbolTable symbolTable;
-  // this map is filled by the GomTypeExpander
+  
   private Map<ModuleDecl,ModuleDeclList> importedModules;
   private Map<String,ClassName> usedBuiltinSorts;
 
@@ -57,9 +61,7 @@ public class GomEnvironment {
     builtinSorts = Collections.unmodifiableMap(localBuiltinSorts);
   }
 
-  /**
-   * A private constructor method to defeat instantiation
-   */
+  
   public GomEnvironment() {
     streamManager = new GomStreamManager();
     importedModules = new HashMap<ModuleDecl,ModuleDeclList>();
@@ -89,11 +91,7 @@ public class GomEnvironment {
     return streamManager;
   }
 
-  /**
-   * Check if the argument is a builtin module name
-   * Those are not parsed, since they only declare
-   * operators for the tom signature, with no support
-   */
+  
   public void markUsedBuiltin(String moduleName) {
     if (builtinSorts.containsKey(moduleName)) {
       usedBuiltinSorts.put(moduleName,builtinSorts.get(moduleName));
@@ -126,11 +124,7 @@ public class GomEnvironment {
     return sortClass;
   }
 
-  /**
-   * Keep track of the file name (full canonical path) of the last Tom mapping
-   * Gom generated. This is used to allow Tom to include this mapping when
-   * using %gom
-   */
+  
   public String getLastGeneratedMapping() {
     return lastGeneratedMapping;
   }

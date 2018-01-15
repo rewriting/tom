@@ -1,34 +1,40 @@
-/*
- *   
- * TOM - To One Matching Compiler
- * 
- * Copyright (c) 2000-2017, Universite de Lorraine, Inria
- * Nancy, France.
- * 
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
- * 
- * Pierre-Etienne Moreau  e-mail: Pierre-Etienne.Moreau@loria.fr
- *
- **/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 package tom.engine.backend;
 
+
+
 import java.io.IOException;
+
+
 
 import tom.engine.TomBase;
 import tom.engine.tools.OutputCode;
+
+
 
 import tom.engine.adt.tomsignature.*;
 import tom.engine.adt.tomconstraint.types.*;
@@ -43,9 +49,13 @@ import tom.engine.adt.tomslot.types.*;
 import tom.engine.adt.tomtype.types.*;
 import tom.engine.adt.code.types.*;
 
+
+
 import tom.engine.exception.TomRuntimeException;
 import tom.engine.tools.SymbolTable;
 import tom.platform.OptionManager;
+
+
 
 public class CGenerator extends CFamilyGenerator {
 
@@ -54,9 +64,9 @@ public class CGenerator extends CFamilyGenerator {
     super(output, optionManager, symbolTable);
   }
   
-  // ------------------------------------------------------------
-      
-  // ------------------------------------------------------------
+  
+  
+  
 
   protected void buildExpBottom(int deep, TomType type, String moduleName) throws IOException {
     output.write(" NULL ");
@@ -88,9 +98,9 @@ public class CGenerator extends CFamilyGenerator {
     TomType type1 = TomBase.getSymbolCodomain(tomSymbol);
     String name1 = tomSymbol.getAstName().getString();
     
-    // inspect the optionList
+    
     generateOptionList(deep, optionList, moduleName);
-    // inspect the slotlist
+    
     generatePairNameDeclList(deep, pairNameDeclList, moduleName);
   }
 
@@ -103,7 +113,7 @@ public class CGenerator extends CFamilyGenerator {
     TomType type1 = TomBase.getSymbolCodomain(tomSymbol);
     String name1 = tomSymbol.getAstName().getString();
     
-    // TODO: build an abstract declaration
+    
     int argno=1;
     output.indent(deep);
     if(!l.isEmptyconcTomType()) {
@@ -128,9 +138,9 @@ public class CGenerator extends CFamilyGenerator {
     }
     output.writeln();
     
-    // inspect the optionList
+    
     generateOptionList(deep, optionList, moduleName);
-    // inspect the slotlist
+    
     generatePairNameDeclList(deep, pairNameDeclList, moduleName);
   }
 
@@ -142,7 +152,7 @@ public class CGenerator extends CFamilyGenerator {
     TomTypeList l = TomBase.getSymbolDomain(tomSymbol);
     TomType type1 = TomBase.getSymbolCodomain(tomSymbol);
     String name1 = tomSymbol.getAstName().getString();
-    // TODO: build an abstract declaration
+    
     int argno=1;
     output.indent(deep);
     if(!l.isEmptyconcTomType()) {
@@ -167,9 +177,9 @@ public class CGenerator extends CFamilyGenerator {
     }
     output.writeln();
     
-    // inspect the optionList
+    
     generateOptionList(deep, optionList, moduleName);
-    // inspect the slotlist
+    
     generatePairNameDeclList(deep, pairNameDeclList, moduleName);
   }
 
@@ -187,12 +197,12 @@ public class CGenerator extends CFamilyGenerator {
 
   protected String genResolveIsFsymCode(String tomName, String varname) throws IOException {
     throw new TomRuntimeException("%transformation (ResolveIsFsym) not yet supported in C");
-    //return "";
+    
   }
 
   protected String genResolveGetSlotCode(String tomName, String varname, String slotName) throws IOException {
     throw new TomRuntimeException("%transformation (ResolveGetSlot) not yet supported in C");
-    //return "";
+    
   }
  
   protected void buildResolveClass(String wName, String tName, String extendsName, String moduleName) throws IOException {
@@ -215,7 +225,7 @@ public class CGenerator extends CFamilyGenerator {
     throw new TomRuntimeException("%transformation (TracelinkPopulateResolve instruction) not yet supported in C");
   }
 
-  //tmp
+  
   protected void buildResolve(int deep, BQTerm bqterm, String moduleName) throws IOException {
     throw new TomRuntimeException("%transformation (Resolve2 instruction) not yet supported in C");
   }
