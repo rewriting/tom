@@ -37,7 +37,12 @@ import tom.gom.tools.GomEnvironment;
 
 import org.antlr.runtime.*;
 import org.antlr.runtime.tree.*;
+
+import org.antlr.v4.runtime.ANTLRInputStream;
+
 import tom.gom.adt.gom.GomAdaptor;
+
+import tom.engine.parser.tomjava.*;
 
 /**
  * The responsability of the GomParser plugin is to parse the input Gom file
@@ -86,31 +91,52 @@ public class GomParserPlugin extends GomGenericPlugin {
     if (null == inputReader) {
       return;
     }
-    CharStream input = null;
+    
+    Lexer lexer = null;
+    
     try {
-      input = new ANTLRReaderStream(inputReader);
-    } catch (java.io.IOException e) {
-      GomMessage.error(getLogger(),null,0,
-          GomMessage.unableToUseReaderMessage);
-      // Invalid input stream
-      return;
-    }
-		GomLanguageLexer lex = new GomLanguageLexer(input);
-		CommonTokenStream tokens = new CommonTokenStream(lex);
-		GomLanguageParser parser = new GomLanguageParser(tokens,getStreamManager());
-    try {
-      // Parse the input expression
-      Tree tree = (Tree) parser.module().getTree();
-      module = (GomModule) GomAdaptor.getTerm(tree);
+      if(getOptionBooleanValue("tomjava")) {
+        ANTLRInputStream input = null;
+        try {
+          input = new ANTLRInputStream(inputReader);
+        } catch (java.io.IOException e) {
+          GomMessage.error(getLogger(),null,0,
+              GomMessage.unableToUseReaderMessage);
+          // Invalid input stream
+          return;
+        }
+        
+        tom.engine.parser.tomjava.TomParser parser = new tom.engine.parser.tomjava.TomParser(inputFileName);
+        module = parser.parseGom(input, getStreamManager());        
+      } else {
+        CharStream input = null;
+        try {
+          input = new ANTLRReaderStream(inputReader);
+        } catch (java.io.IOException e) {
+          GomMessage.error(getLogger(),null,0,
+              GomMessage.unableToUseReaderMessage);
+          // Invalid input stream
+          return;
+        }
+        
+        lexer = new GomLanguageLexer(input);
+        CommonTokenStream tokens = new CommonTokenStream(lexer);
+        GomLanguageParser parser = new GomLanguageParser(tokens,getStreamManager());
+        
+        // Parse the input expression
+        Tree tree = (Tree) parser.module().getTree();
+        module = (GomModule) GomAdaptor.getTerm(tree);
+      }
+      
       java.io.StringWriter swriter = new java.io.StringWriter();
       tom.library.utils.Viewer.toTree(module,swriter);
       GomMessage.fine(getLogger(), inputFileName, 0, GomMessage.parsedModules, swriter);
       if (null == module) {
-        GomMessage.error(getLogger(),inputFileName, lex.getLine(),GomMessage.detailedParseException);
+        GomMessage.error(getLogger(),inputFileName, lexer.getLine(),GomMessage.detailedParseException);
         return;
       }
     } catch (RecognitionException re) {
-        GomMessage.error(getLogger(),inputFileName, lex.getLine(),GomMessage.detailedParseException,re.toString());
+        GomMessage.error(getLogger(),inputFileName, lexer.getLine(),GomMessage.detailedParseException,re.toString());
       return;
     } catch (Exception e) {
       StringWriter stringwriter = new StringWriter();

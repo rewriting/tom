@@ -314,7 +314,7 @@ public class TomParserPlugin extends TomGenericPlugin {
           // creating TomParserTool
           this.parserTool = new TomParserTool(getStreamManager(),getOptionManager());
 
-          tom.engine.parser.tomjava.TomParser parser = new tom.engine.parser.tomjava.TomParser(currentFileName, getParserTool(), symbolTable);
+          tom.engine.parser.tomjava.TomParser parser = new tom.engine.parser.tomjava.TomParser(currentFileName);
           ANTLRInputStream input = new ANTLRInputStream(currentReader);
 
           System.out.print("tomjava antlr4: " + currentFileName);
@@ -328,7 +328,7 @@ public class TomParserPlugin extends TomGenericPlugin {
             }
           }
 
-          CstBlockList cst = parser.parse(input, tom.engine.parser.tomjava.TomParser.JAVA_TOP_LEVEL);
+          CstBlockList cst = parser.parse(input, tom.engine.parser.tomjava.TomParser.JAVA_TOP_LEVEL, getParserTool());
           if(printcst) {
             getParserTool().printTree(cst);
           }

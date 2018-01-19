@@ -42,13 +42,17 @@ declarationsUnit
 expressionUnit
     : expression EOF
     ;
+    
+gomUnit
+    : module EOF
+    ;
 
 packageDeclaration
     : annotation* PACKAGE qualifiedName ';'
     ;
 
 importDeclaration
-    : IMPORT STATIC? qualifiedName ('.' '*')? ';'
+    : IMPORT STATIC? qualifiedName (DOT STAR)? ';'
     ;
 
 typeDeclaration
@@ -89,7 +93,7 @@ classDeclaration
     ;
 
 typeParameters
-    : '<' typeParameter (',' typeParameter)* '>'
+    : LT typeParameter (COMMA typeParameter)* GT
     ;
 
 typeParameter
@@ -101,11 +105,11 @@ typeBound
     ;
 
 enumDeclaration
-    : ENUM javaIdentifier (IMPLEMENTS typeList)? LBRACE enumConstants? ','? enumBodyDeclarations? RBRACE
+    : ENUM javaIdentifier (IMPLEMENTS typeList)? LBRACE enumConstants? COMMA? enumBodyDeclarations? RBRACE
     ;
 
 enumConstants
-    : enumConstant (',' enumConstant)*
+    : enumConstant (COMMA enumConstant)*
     ;
 
 enumConstant
@@ -201,11 +205,11 @@ interfaceMemberDeclaration
     ;
 
 constDeclaration
-    : typeType constantDeclarator (',' constantDeclarator)* ';'
+    : typeType constantDeclarator (COMMA constantDeclarator)* ';'
     ;
 
 constantDeclarator
-    : javaIdentifier ('[' ']')* '=' variableInitializer
+    : javaIdentifier ('[' ']')* ASSIGN variableInitializer
     ;
 
 // see matching of [] comment in methodDeclaratorRest
@@ -230,11 +234,11 @@ genericInterfaceMethodDeclaration
     ;
 
 variableDeclarators
-    : variableDeclarator (',' variableDeclarator)*
+    : variableDeclarator (COMMA variableDeclarator)*
     ;
 
 variableDeclarator
-    : variableDeclaratorId ('=' variableInitializer)?
+    : variableDeclaratorId (ASSIGN variableInitializer)?
     ;
 
 variableDeclaratorId
@@ -247,11 +251,11 @@ variableInitializer
     ;
 
 arrayInitializer
-    : LBRACE (variableInitializer (',' variableInitializer)* (',')? )? RBRACE
+    : LBRACE (variableInitializer (COMMA variableInitializer)* (COMMA)? )? RBRACE
     ;
 
 classOrInterfaceType
-    : javaIdentifier typeArguments? ('.' javaIdentifier typeArguments?)*
+    : javaIdentifier typeArguments? (DOT javaIdentifier typeArguments?)*
     ;
 
 typeArgument
@@ -260,7 +264,7 @@ typeArgument
     ;
 
 qualifiedNameList
-    : qualifiedName (',' qualifiedName)*
+    : qualifiedName (COMMA qualifiedName)*
     ;
 
 formalParameters
@@ -268,7 +272,7 @@ formalParameters
     ;
 
 formalParameterList
-    : formalParameter (',' formalParameter)* (',' lastFormalParameter)?
+    : formalParameter (COMMA formalParameter)* (COMMA lastFormalParameter)?
     | lastFormalParameter
     ;
 
@@ -281,7 +285,7 @@ lastFormalParameter
     ;
 
 qualifiedName
-    : javaIdentifier ('.' javaIdentifier)*
+    : javaIdentifier (DOT javaIdentifier)*
     ;
 
 literal
@@ -312,11 +316,11 @@ annotation
     ;
 
 elementValuePairs
-    : elementValuePair (',' elementValuePair)*
+    : elementValuePair (COMMA elementValuePair)*
     ;
 
 elementValuePair
-    : javaIdentifier '=' elementValue
+    : javaIdentifier ASSIGN elementValue
     ;
 
 elementValue
@@ -326,7 +330,7 @@ elementValue
     ;
 
 elementValueArrayInitializer
-    : LBRACE (elementValue (',' elementValue)*)? (',')? RBRACE
+    : LBRACE (elementValue (COMMA elementValue)*)? (COMMA)? RBRACE
     ;
 
 annotationTypeDeclaration
@@ -393,7 +397,7 @@ localTypeDeclaration
 
 statement
     : blockLabel=block
-    | ASSERT expression (':' expression)? ';'
+    | ASSERT expression (COLON expression)? ';'
     | IF parExpression statement (ELSE statement)?
     | FOR LPAREN forControl RPAREN statement
     | WHILE parExpression statement
@@ -408,7 +412,7 @@ statement
     | CONTINUE javaIdentifier? ';'
     | SEMI
     | statementExpression=expression ';'
-    | identifierLabel=javaIdentifier ':' statement
+    | identifierLabel=javaIdentifier COLON statement
     | tomStatement
     ;
 
@@ -417,7 +421,7 @@ catchClause
     ;
 
 catchType
-    : qualifiedName ('|' qualifiedName)*
+    : qualifiedName (PIPE qualifiedName)*
     ;
 
 finallyBlock
@@ -433,7 +437,7 @@ resources
     ;
 
 resource
-    : variableModifier* classOrInterfaceType variableDeclaratorId '=' expression
+    : variableModifier* classOrInterfaceType variableDeclaratorId ASSIGN expression
     ;
 
 /** Matches cases then statements, both of which are mandatory.
@@ -444,8 +448,8 @@ switchBlockStatementGroup
     ;
 
 switchLabel
-    : CASE (constantExpression=expression | enumConstantName=javaIdentifier) ':'
-    | DEFAULT ':'
+    : CASE (constantExpression=expression | enumConstantName=javaIdentifier) COLON
+    | DEFAULT COLON
     ;
 
 forControl
@@ -459,7 +463,7 @@ forInit
     ;
 
 enhancedForControl
-    : variableModifier* typeType variableDeclaratorId ':' expression
+    : variableModifier* typeType variableDeclaratorId COLON expression
     ;
 
 // EXPRESSIONS
@@ -469,12 +473,12 @@ parExpression
     ;
 
 expressionList
-    : expression (',' expression)*
+    : expression (COMMA expression)*
     ;
 
 expression
     : primary
-    | expression bop='.'
+    | expression bop=DOT
       (javaIdentifier
       | THIS
       | NEW nonWildcardTypeArguments? innerCreator
@@ -489,20 +493,20 @@ expression
     | expression postfix=('++' | '--')
     | prefix=('+'|'-'|'++'|'--') expression
     | prefix=('~'|'!') expression
-    | expression bop=('*'|'/'|'%') expression
+    | expression bop=(STAR|'/'|'%') expression
     | expression bop=('+'|'-') expression
-    | expression ('<' '<' | '>' '>' '>' | '>' '>') expression
-    | expression bop=('<=' | '>=' | '>' | '<') expression
+    | expression (LSHIFT | GT GT GT | GT GT) expression
+    | expression bop=('<=' | '>=' | GT | LT) expression
     | expression bop=INSTANCEOF typeType
     | expression bop=('==' | '!=') expression
     | expression bop='&' expression
     | expression bop='^' expression
-    | expression bop='|' expression
+    | expression bop=PIPE expression
     | expression bop='&&' expression
     | expression bop='||' expression
-    | expression bop='?' expression ':' expression
+    | expression bop='?' expression COLON expression
     | <assoc=right> expression
-      bop=('=' | '+=' | '-=' | '*=' | '/=' | '&=' | '|=' | '^=' | '>>=' | '>>>=' | '<<=' | '%=')
+      bop=(ASSIGN | '+=' | '-=' | '*=' | '/=' | '&=' | '|=' | '^=' | '>>=' | '>>>=' | '<<=' | '%=')
       expression
     | lambdaExpression // Java8
 
@@ -539,7 +543,7 @@ lambdaExpression
 lambdaParameters
     : javaIdentifier
     | LPAREN formalParameterList? RPAREN
-    | LPAREN javaIdentifier (',' javaIdentifier)* RPAREN
+    | LPAREN javaIdentifier (COMMA javaIdentifier)* RPAREN
     ;
 
 // Java8
@@ -554,12 +558,12 @@ primary
     | SUPER
     | literal
     | javaIdentifier
-    | typeTypeOrVoid '.' CLASS
+    | typeTypeOrVoid DOT CLASS
     | nonWildcardTypeArguments (explicitGenericInvocationSuffix | THIS arguments)
     ;
 
 classType
-    : (classOrInterfaceType '.')? annotation* javaIdentifier typeArguments?
+    : (classOrInterfaceType DOT)? annotation* javaIdentifier typeArguments?
     ;
 
 creator
@@ -568,7 +572,7 @@ creator
     ;
 
 createdName
-    : javaIdentifier typeArgumentsOrDiamond? ('.' javaIdentifier typeArgumentsOrDiamond?)*
+    : javaIdentifier typeArgumentsOrDiamond? (DOT javaIdentifier typeArgumentsOrDiamond?)*
     | primitiveType
     ;
 
@@ -589,21 +593,21 @@ explicitGenericInvocation
     ;
 
 typeArgumentsOrDiamond
-    : '<' '>'
+    : LT GT
     | typeArguments
     ;
 
 nonWildcardTypeArgumentsOrDiamond
-    : '<' '>'
+    : LT GT
     | nonWildcardTypeArguments
     ;
 
 nonWildcardTypeArguments
-    : '<' typeList '>'
+    : LT typeList GT
     ;
 
 typeList
-    : typeType (',' typeType)*
+    : typeType (COMMA typeType)*
     ;
 
 typeType
@@ -622,12 +626,12 @@ primitiveType
     ;
 
 typeArguments
-    : '<' typeArgument (',' typeArgument)* '>'
+    : LT typeArgument (COMMA typeArgument)* GT
     ;
 
 superSuffix
     : arguments
-    | '.' javaIdentifier arguments?
+    | DOT javaIdentifier arguments?
     ;
 
 explicitGenericInvocationSuffix
@@ -722,10 +726,17 @@ includeStatement
   : INCLUDE LBRACE (DOT* SLASH)* tomIdentifier ((DOT|SLASH|BACKSLASH) tomIdentifier)* RBRACE 
   ;
 
-//GOM grammar? TODO FIX
 gomStatement
   : GOM gomOptions? unknownBlock
   ;
+ 
+gomOptions
+  : OPTIONSTART DMINUSID (COMMA DMINUSID)* OPTIONEND
+  ;
+ 
+gomBlock
+   : GOMSTART module GOMEND
+   ;
 
 //TODO %rule
 ruleStatement
@@ -735,10 +746,6 @@ ruleStatement
 unknownBlock
   : BLOCKSTART (unknownBlock | ANY )*? BLOCKEND
   | (SUBBLOCKSTART | SUBSUBBLOCKSTART) (unknownBlock | SUB_ANY)*? SUBBLOCKEND
-  ;
-
-gomOptions
-  : OPTIONSTART DMINUSID (COMMA DMINUSID)* OPTIONEND
   ;
 
 visit
@@ -773,7 +780,7 @@ patternlist
 constraint
   : constraint AND constraint
   | constraint OR constraint
-  | pattern match_symbol='<' '<' bqterm
+  | pattern match_symbol=LSHIFT bqterm
   | term GT term
   | term GE term
   | term LT term
@@ -822,7 +829,7 @@ composite
     | UNDERSCORE
     | javaIdentifier
     | composite LPAREN (composite (COMMA composite)*)? RPAREN
-    | composite bop='.'
+    | composite bop=DOT
       (javaIdentifier
       | THIS
       | NEW nonWildcardTypeArguments? innerCreator
@@ -835,20 +842,20 @@ composite
     | composite postfix=('++' | '--')
     | prefix=('+'|'-'|'++'|'--') composite
     | prefix=('~'|'!') composite
-    | composite bop=('*'|'/'|'%') composite
+    | composite bop=(STAR|'/'|'%') composite
     | composite bop=('+'|'-') composite
-    | composite ('<' '<' | '>' '>' '>' | '>' '>') composite
-    | composite bop=('<=' | '>=' | '>' | '<') composite
+    | composite (LSHIFT | GT GT GT | GT GT) composite
+    | composite bop=('<=' | '>=' | GT | LT) composite
     | composite bop=INSTANCEOF typeType
     | composite bop=('==' | '!=') composite
     | composite bop='&' composite
     | composite bop='^' composite
-    | composite bop='|' composite
+    | composite bop=PIPE composite
     | composite bop='&&' composite
     | composite bop='||' composite
-    | composite bop='?' composite ':' composite
+    | composite bop='?' composite COLON composite
     | <assoc=right> composite
-      bop=('=' | '+=' | '-=' | '*=' | '/=' | '&=' | '|=' | '^=' | '>>=' | '>>>=' | '<<=' | '%=')
+      bop=(ASSIGN | '+=' | '-=' | '*=' | '/=' | '&=' | '|=' | '^=' | '>>=' | '>>>=' | '<<=' | '%=')
       composite
     | lambdaExpression // Java8 TODO: lambdaComposite?
 
@@ -1045,4 +1052,106 @@ tomIdentifier
   | BOOL_LITERAL
   | NULL_LITERAL
   | IDENTIFIER
+  ;
+  
+  
+  /***********************************GOM**************************************/
+  
+module:
+  MODULE modulename (imports)? section
+  ;
+
+modulename:
+  (prefixes+=ID GOM_DOT)* moduleName=ID
+  ;
+
+imports :
+  IMPORTS ID*
+  ;
+
+section :
+  (GOM_PUBLIC)? adtgrammar
+  ;
+
+adtgrammar :
+  syntax*
+  ;
+
+syntax :
+  (GOM_ABSTRACT SYNTAX) (hookConstruct | typedecl | atomdecl)*
+  ;
+
+atomdecl :
+  ATOM ID
+  ;
+
+typedecl :
+    typename=ID GOM_EQUAL alternatives
+  |  ptypename=ID BINDS (atoms+=ID) GOM_EQUAL pattern_alternatives
+  ;
+
+alternatives :
+  ((jd+=JAVADOC ALT) | (ALT jd+=JAVADOC) | jd+=JAVADOC | {$jd.add(null);} (ALT)?) opdecl
+  (
+   ((jd+=JAVADOC ALT) | (ALT jd+=JAVADOC) | {$jd.add(null);} ALT) opdecl
+  )* (GOM_SEMI)?
+  ;
+
+/* Used by Freshgom, as all rules beginning by "pattern" */
+pattern_alternatives :
+  (ALT)? pattern_opdecl (ALT pattern_opdecl)* (GOM_SEMI)?
+  ;
+
+opdecl :
+  ID fieldlist
+  ;
+
+/* Used by Freshgom, as all rules beginning by "pattern" */
+pattern_opdecl :
+  ID pattern_fieldlist
+  ;
+
+fieldlist :
+  GOM_LPAREN (field (GOM_COMMA field)* )? GOM_RPAREN
+  ;
+
+/* Used by Freshgom, as all rules beginning by "pattern" */
+pattern_fieldlist :
+  GOM_LPAREN (pattern_field (GOM_COMMA pattern_field)* )? GOM_RPAREN
+  ;
+
+field:
+    type=ID GOM_STAR
+  | LDIPLE type=ID RDIPLE GOM_STAR
+  | name=ID GOM_COLON type=ID
+  | name=ID GOM_COLON LDIPLE type=ID RDIPLE
+  ;
+
+/* Used by Freshgom, as all rules beginning by "pattern" */
+pattern_field:
+    type=ID GOM_STAR
+  | INNER name=ID GOM_COLON type=ID
+  | OUTER name=ID GOM_COLON type=ID
+  | NEUTRAL name=ID GOM_COLON type=ID
+  | name=ID GOM_COLON type=ID
+  ;
+
+arglist:
+  (GOM_LPAREN (ID (GOM_COMMA ID)* )? GOM_RPAREN)?
+  ;
+
+hookConstruct :
+  (hookScope)? pointCut=ID GOM_COLON hookType=ID arglist
+  hookBlock
+  ;
+
+//TODO define proper hookblock based on hookType?
+hookBlock
+  : HOOKSTART (unknownBlock | SUB_ANY )*? SUBBLOCKEND
+  ;
+
+hookScope :
+  SORT
+  | MODULE
+  | OPERATOR
   ;

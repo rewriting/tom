@@ -230,9 +230,9 @@ public class CstConverter {
   private CstBlock parseStream(ANTLRInputStream tomInput, String canonicalPath, int parseLevel) {
     // parse the file
     try {
-      tom.engine.parser.tomjava.TomParser parser = new tom.engine.parser.tomjava.TomParser(canonicalPath, getParserTool(), getStreamManager().getSymbolTable());
+      tom.engine.parser.tomjava.TomParser parser = new tom.engine.parser.tomjava.TomParser(canonicalPath);
       //System.out.println("\tCstConverter.parseStream: " + canonicalPath);
-      CstBlockList include = parser.parse(tomInput, parseLevel);
+      CstBlockList include = parser.parse(tomInput, parseLevel, getParserTool());
       return `Cst_AbstractBlock(include);
     } catch (Exception e) {
       throw new RuntimeException(e); //XXX

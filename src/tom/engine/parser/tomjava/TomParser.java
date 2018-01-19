@@ -43,10 +43,12 @@ import tom.engine.parser.TomParserTool;
 import tom.engine.adt.code.types.*;
 import tom.engine.adt.cst.types.*;
 
+import tom.gom.GomStreamManager;
+import tom.gom.adt.gom.types.*;
+
 public class TomParser {
   private String filename;
   private TomParserTool parserTool;
-  private SymbolTable symbolTable;
 
   private static HashMap<String,CstBlockList> parsedFiles = new HashMap<String,CstBlockList>();
   
@@ -54,21 +56,15 @@ public class TomParser {
   public final static int JAVA_DECLARATIONS_LEVEL = 1;
   public final static int JAVA_EXPRESSION_LEVEL = 2;
 
-  public TomParser(String filename, TomParserTool parserTool, SymbolTable symbolTable) {
+  public TomParser(String filename) {
     this.filename = filename;
-    this.parserTool = parserTool;
-    this.symbolTable = symbolTable;
   }
 
   public String getFilename() {
     return this.filename;
   }
 
-  public TomParserTool getParserTool() {
-    return this.parserTool;
-  }
-
-  public CstBlockList parse(ANTLRInputStream input, int parseLevel) throws IOException {
+  public CstBlockList parse(ANTLRInputStream input, int parseLevel, TomParserTool parserTool) throws IOException {
     //System.out.println("\tTomParser.parse: " + getFilename());
 
     if(parsedFiles.containsKey(getFilename())) {
@@ -138,7 +134,7 @@ public class TomParser {
     //System.out.println("\tcst:" + cst);
 
     start = System.currentTimeMillis();
-    tom.engine.parser.tomjava.CstConverter cstConverter = new tom.engine.parser.tomjava.CstConverter(getParserTool());
+    tom.engine.parser.tomjava.CstConverter cstConverter = new tom.engine.parser.tomjava.CstConverter(parserTool);
     cst = cstConverter.convert(cst);
     //System.out.println("\tconverting cst:" + (System.currentTimeMillis()-start) + " ms");
     //System.out.println();
@@ -172,6 +168,30 @@ public class TomParser {
 
     //System.out.println("package: " + res);
     return res;
+  }
+  
+  public GomModule parseGom(ANTLRInputStream input, GomStreamManager streamManager) throws IOException {
+    //System.out.println("\tTomParser.parse: " + getFilename());
+
+    tom.engine.parser.tomjava.TomJavaLexer lexer = new tom.engine.parser.tomjava.TomJavaLexer(input);
+    lexer.mode(lexer.GOM_INSIDE);
+    CommonTokenStream tokens = new CommonTokenStream(lexer);
+    tom.engine.parser.tomjava.TomJavaParser parser = new tom.engine.parser.tomjava.TomJavaParser(tokens);
+    parser.setBuildParseTree(true);      // tell ANTLR to build a parse tree
+
+    long start = System.currentTimeMillis();
+    ParseTree tree = parser.gomUnit();
+
+    start = System.currentTimeMillis();
+    ParseTreeWalker walker = new ParseTreeWalker();
+    tom.engine.parser.tomjava.CstBuilder cstBuilder = new tom.engine.parser.tomjava.CstBuilder(getFilename(),tokens, streamManager); 
+    walker.walk(cstBuilder, tree);
+    GomModule module = (GomModule) cstBuilder.getValue(tree);
+    cstBuilder.cleanUsedToken(); // release memory
+    //System.out.println("\tbuilding cst:" + (System.currentTimeMillis()-start) + " ms");
+    //System.out.println("\tcst:" + cst);
+
+    return module;
   }
 
 }

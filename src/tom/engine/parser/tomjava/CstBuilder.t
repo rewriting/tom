@@ -41,6 +41,8 @@ import tom.engine.exception.TomRuntimeException;
 import tom.engine.tools.SymbolTable;
 import tom.engine.tools.ASTFactory;
 
+import tom.gom.GomStreamManager;
+import tom.gom.adt.gom.types.*;
 //import tom.library.sl.*;
 
 /*
@@ -49,15 +51,24 @@ import tom.engine.tools.ASTFactory;
  */
 public class CstBuilder extends TomJavaParserBaseListener {
   %include { ../../adt/cst/CST.tom }
+  %include { ../../../gom/adt/gom/Gom.tom }
 
   private String filename;
   private BufferedTokenStream tokens;
   private Set<Token> usedToken; // used to add spaces before of after a given token
+  private GomStreamManager streamManager;
 
   public CstBuilder(String filename, BufferedTokenStream tokens) {
     this.filename = filename;
     this.tokens = tokens;
     this.usedToken = new HashSet<Token>();
+  }
+  
+  public CstBuilder(String filename, BufferedTokenStream tokens, GomStreamManager streamManager) {
+    this.filename = filename;
+    this.tokens = tokens;
+    this.usedToken = new HashSet<Token>();
+    this.streamManager = streamManager;
   }
 
   public void cleanUsedToken() {
@@ -95,6 +106,15 @@ public class CstBuilder extends TomJavaParserBaseListener {
   
   public void exitExpressionUnit(TomJavaParser.ExpressionUnitContext ctx) {
     setValue("exitExpressionUnit", ctx, buildBlockList(ctx));
+  }
+  
+  /*
+   * gomUnit
+   *   : module EOF
+   *   ;
+   */
+  public void exitGomUnit(TomJavaParser.GomUnitContext ctx) {
+    setValue("exitGomUnit", ctx, getValue(ctx.module()));
   }
 
   public void exitPackageDeclaration(TomJavaParser.PackageDeclarationContext ctx) {
@@ -615,8 +635,7 @@ public class CstBuilder extends TomJavaParserBaseListener {
    */
   public void exitGomStatement(TomJavaParser.GomStatementContext ctx) {
     CstOptionList optionList = `ConcCstOption(extractOption(ctx.getStart()));
-    CstBlock block = (CstBlock) getValue(ctx.unknownBlock());
-    String text = getText(block.getoptionList());
+    String text = ctx.unknownBlock().getText();
     // remove starting '{' and ending '}'
     text = text.substring(1,text.length()-1).trim();
     CstNameList nameList = `ConcCstName();
@@ -625,6 +644,28 @@ public class CstBuilder extends TomJavaParserBaseListener {
     }
 
     setValue("exitGomStatement", ctx,`Cst_GomConstruct(optionList,nameList,text));
+  }
+  
+  /*
+   * gomOptions
+   *   : OPTIONSTART DMINUSID (COMMA DMINUSID)* OPTIONEND
+   *   ;
+   */
+  public void exitGomOptions(TomJavaParser.GomOptionsContext ctx) {
+    CstNameList nameList = `ConcCstName();
+    for(TerminalNode e:ctx.DMINUSID()) {
+      nameList = `ConcCstName(nameList*, Cst_Name(e.getText()));
+    }
+    setValue("exitGomOptions", ctx, nameList);
+  }
+  
+  /*
+   * gomBlock
+   *   : GOMSTART module GOMEND
+   *   ;
+   */
+  public void exitGomBlock(TomJavaParser.GomBlockContext ctx) {
+    setValue("exitGomBlock", ctx, getValue(ctx.module()));
   }
 
   /*
@@ -642,14 +683,13 @@ public class CstBuilder extends TomJavaParserBaseListener {
    *  ;
    */
   public void exitUnknownBlock(TomJavaParser.UnknownBlockContext ctx) {
+    /*
     CstBlockList bl = `ConcCstBlock();
-
+    
     for(int i = 0 ; i<ctx.getChildCount() ; i++) {
       ParseTree child = ctx.getChild(i);
 
       if(child instanceof TomJavaParser.UnknownBlockContext) {
-        bl = `ConcCstBlock((CstBlock)getValue(child),bl*);
-      } else if(child instanceof TomJavaParser.TomBlockContext) {
         bl = `ConcCstBlock((CstBlock)getValue(child),bl*);
       } else {
         //ParserRuleContext prc = (ParserRuleContext)child;
@@ -660,20 +700,7 @@ public class CstBuilder extends TomJavaParserBaseListener {
     }
 
     CstOption otext  = extractText(ctx);
-    setValue(ctx,`Cst_UnamedBlock(ConcCstOption(otext),bl.reverse()));
-  }
-
-  /*
-   * gomOptions
-   *   : OPTIONSTART DMINUSID (COMMA DMINUSID)* OPTIONEND
-   *   ;
-   */
-  public void exitGomOptions(TomJavaParser.GomOptionsContext ctx) {
-    CstNameList nameList = `ConcCstName();
-    for(TerminalNode e:ctx.DMINUSID()) {
-      nameList = `ConcCstName(nameList*, Cst_Name(e.getText()));
-    }
-    setValue("exitGomOptions", ctx, nameList);
+    setValue(ctx,`Cst_UnamedBlock(ConcCstOption(otext),bl.reverse()));*/
   }
 
   /*
@@ -1434,7 +1461,359 @@ public class CstBuilder extends TomJavaParserBaseListener {
     setValue("exitGetDefault", ctx,
         `Cst_GetDefault(Cst_Name(ctx.tomIdentifier().getText()), getBlockListFromBlock(ctx.termBlock())));
   }
+  
+  //*****************************************************GOM************************************************************
+  
+  /*
+   * module:
+   *   MODULE modulename (imports)? section
+   *   ;
+   */
+  public void exitModule(TomJavaParser.ModuleContext ctx) {
+    SectionList sections = `ConcSection((Section)getValue(ctx.section()));
+    
+    if(ctx.imports()!=null) {
+      sections = `ConcSection((Section)getValue(ctx.imports()),sections*);
+    }
+    
+    setValue("exitModule", ctx, `GomModule((GomModuleName)getValue(ctx.modulename()), sections));
+  }
+  
+  /*
+   * modulename:
+   *   (prefixes+=ID GOM_DOT)* moduleName=ID
+   *   ;
+   */
+  public void exitModulename(TomJavaParser.ModulenameContext ctx) {
+    String packagePrefix = new String();
+    for(Token n : ctx.prefixes) {
+      if(!packagePrefix.isEmpty()) {
+        packagePrefix += '.';
+      }
+      packagePrefix += n.getText();
+    }
+    
+    if (streamManager!=null) {
+      streamManager.associatePackagePath(ctx.moduleName.getText(),packagePrefix);
+    }
+    
+    setValue("exitModulename", ctx, `GomModuleName(ctx.moduleName.getText()));
+  }
+  
+  /*
+   * imports :
+   *   IMPORTS ID*
+   *   ;
+   */
+  public void exitImports(TomJavaParser.ImportsContext ctx) {
+    ImportList imports = `ConcImportedModule();
+    
+    for(TerminalNode n : ctx.ID()) {
+      imports = `ConcImportedModule(GomModuleName(n.getText()), imports*);
+    }
+    
+    setValue("exitImports", ctx, `Imports(imports.reverse()));
+  }
 
+  /*
+   * section :
+   *   (GOM_PUBLIC)? adtgrammar
+   *   ;
+   */
+  public void exitSection(TomJavaParser.SectionContext ctx) {
+    setValue("exitSection", ctx, `Public((ProductionList)getValue(ctx.adtgrammar())));
+  }
+  
+  /*
+   * adtgrammar :
+   *   syntax*
+   *   ;
+   */
+  public void exitAdtgrammar(TomJavaParser.AdtgrammarContext ctx) {
+    ProductionList productions = `ConcProduction();
+    
+    for(TomJavaParser.SyntaxContext e : ctx.syntax()) {
+      ProductionList syntax = (ProductionList)getValue(e);
+      productions = `ConcProduction(syntax*, productions*);
+    }
+    setValue("exitAdtgrammar", ctx, productions.reverse());
+  }
+  
+  /*
+   * syntax :
+   *   (GOM_ABSTRACT SYNTAX) (hookConstruct | typedecl | atomdecl)*
+   *   ;
+   */
+  public void exitSyntax(TomJavaParser.SyntaxContext ctx) {
+    ProductionList productions = `ConcProduction();
+    
+    for(TomJavaParser.AtomdeclContext e : ctx.atomdecl()) {
+      Production atomdecl = (Production)getValue(e);
+      productions = `ConcProduction(atomdecl, productions*);
+    }
+    for(TomJavaParser.TypedeclContext e : ctx.typedecl()) {
+      Production sortType = (Production)getValue(e);
+      productions = `ConcProduction(sortType, productions*);
+    }
+    for(TomJavaParser.HookConstructContext e : ctx.hookConstruct()) {
+      Production hook = (Production)getValue(e);
+      productions = `ConcProduction(hook, productions*);
+    }
+    
+    setValue("exitSyntax", ctx, productions);
+  }
+  
+  /*
+   * atomdecl :
+   *   ATOM ID
+   *   ;
+   */
+  public void exitAtomdecl(TomJavaParser.AtomdeclContext ctx) {
+    setValue("exitAtomdecl", ctx, `AtomDecl(ctx.ID().getText()));
+  }
+  
+  /*
+   * typedecl :
+   *   typename=ID GOM_EQUAL alternatives
+   *   | ptypename=ID BINDS (atoms+=ID) GOM_EQUAL pattern_alternatives
+   *   ;
+   */
+  public void enterTypedecl(TomJavaParser.TypedeclContext ctx) {
+    if(ctx.typename!=null) {
+      setValue2(ctx, ctx.typename.getText());
+    } else {
+      setValue2(ctx, ctx.ptypename.getText());
+    }
+  }
+  
+  public void exitTypedecl(TomJavaParser.TypedeclContext ctx) {
+    GomType type = null;
+    AtomList atoms = `ConcAtom();
+    AlternativeList alternatives = null;
+    
+    if(ctx.typename!=null) {
+      type = `GomType(ExpressionType(), ctx.typename.getText());
+      alternatives = (AlternativeList)getValue(ctx.alternatives());
+    } else if(ctx.ptypename!=null) {
+      for(Token n : ctx.atoms) {
+        atoms = `ConcAtom(n.getText(), atoms*);
+      }
+      type = `GomType(PatternType(), ctx.ptypename.getText());
+      alternatives = (AlternativeList)getValue(ctx.pattern_alternatives());
+    }
+    setValue("exitTypedecl", ctx, `SortType(type, atoms.reverse(), alternatives));
+  }
+ 
+  /*
+   * alternatives :
+   *  ((jd+=JAVADOC ALT) | (ALT jd+=JAVADOC) | jd+=JAVADOC | {$jd.add(null);} (ALT)?) opdecl
+   *  (
+   *   ((jd+=JAVADOC ALT) | (ALT jd+=JAVADOC) | {$jd.add(null);} ALT) opdecl
+   *  )* (GOM_SEMI)?
+   *  ;
+   */
+  public void enterAlternatives(TomJavaParser.AlternativesContext ctx) {
+    String type = (String)getValue2(ctx.getParent());
+    setValue2(ctx, type);
+    
+    for(int i=0; i<ctx.opdecl().size(); i++) {
+      setValue2(ctx.opdecl().get(i), ctx.jd.get(i));
+    }
+  }
+  
+  public void exitAlternatives(TomJavaParser.AlternativesContext ctx) {
+    AlternativeList alternatives = `ConcAlternative();
+    
+    for(TomJavaParser.OpdeclContext e : ctx.opdecl()) {
+      alternatives = `ConcAlternative((Alternative)getValue(e), alternatives*);
+    }
+    setValue("exitAlternatives", ctx, alternatives.reverse());
+  }
+  
+  /*
+   * pattern_alternatives :
+   *   (ALT)? pattern_opdecl (ALT pattern_opdecl)* (GOM_SEMI)?
+   *   ;
+   */
+  public void enterPattern_alternatives(TomJavaParser.Pattern_alternativesContext ctx) {
+    String type = (String)getValue2(ctx.getParent());
+    setValue2(ctx, type);
+  }
+  
+  public void exitPattern_alternatives(TomJavaParser.Pattern_alternativesContext ctx) {
+    AlternativeList alternatives = `ConcAlternative();
+    
+    for(TomJavaParser.Pattern_opdeclContext e : ctx.pattern_opdecl()) {
+      alternatives = `ConcAlternative((Alternative)getValue(e), alternatives*);
+    }
+    setValue("exitPattern_alternatives", ctx, alternatives.reverse());
+  }
+  
+  /*
+   * opdecl :
+   *   ID fieldlist
+   *   ;
+   */
+  public void exitOpdecl(TomJavaParser.OpdeclContext ctx) {
+    Option option = `Origin(ctx.getStart().getLine());
+    Token javadoc = (Token)getValue2(ctx);
+    if(javadoc!=null) {
+      option = `OptionList(option, Details(javadoc.getText()));
+    }
+    
+    GomType type = `GomType(ExpressionType(), (String)getValue2(ctx.getParent()));
+    setValue("exitOpdecl", ctx, `Alternative(ctx.ID().getText(), (FieldList)getValue(ctx.fieldlist()), type, option));
+  }
+  
+  /*
+   * pattern_opdecl :
+   *   ID pattern_fieldlist
+   *   ;
+   */
+  public void exitPattern_opdecl(TomJavaParser.Pattern_opdeclContext ctx) {
+    Option option = `Origin(ctx.getStart().getLine());
+    GomType type = `GomType(PatternType(), (String)getValue2(ctx.getParent()));
+    setValue("exitPattern_opdecl", ctx, `Alternative(ctx.ID().getText(), (FieldList)getValue(ctx.pattern_fieldlist()), type, option));
+  }
+  
+  /*
+   * fieldlist :
+   *   GOM_LPAREN (field (GOM_COMMA field)* )? GOM_RPAREN
+   *   ;
+   */
+  public void exitFieldlist(TomJavaParser.FieldlistContext ctx) {
+    FieldList fields = `ConcField();
+    
+    for(TomJavaParser.FieldContext e : ctx.field()) {
+      fields = `ConcField((Field)getValue(e), fields*);
+    }
+    setValue("exitFieldlist", ctx, fields.reverse());
+  }
+  
+  /*
+   * pattern_fieldlist :
+   *   GOM_LPAREN (pattern_field (GOM_COMMA pattern_field)* )? GOM_RPAREN
+   *   ;
+   */
+  public void exitPattern_fieldlist(TomJavaParser.Pattern_fieldlistContext ctx) {
+    FieldList fields = `ConcField();
+    
+    for(TomJavaParser.Pattern_fieldContext e : ctx.pattern_field()) {
+      fields = `ConcField((Field)getValue(e), fields*);
+    }
+    setValue("exitPattern_fieldlist", ctx, fields.reverse());
+  }
+  
+  /*
+   * field:
+   *    type=ID GOM_STAR
+   *  | LDIPLE type=ID RDIPLE GOM_STAR
+   *  | name=ID GOM_COLON type=ID
+   *  | name=ID GOM_COLON LDIPLE type=ID RDIPLE
+   *  ;
+   */
+  public void exitField(TomJavaParser.FieldContext ctx) {
+    GomType type = null;
+    ScopeSpecifier scope = `None();
+    if(ctx.LDIPLE()==null) {
+      type = `GomType(ExpressionType(), ctx.type.getText());
+    } else {
+      scope = `Refresh();
+      type = `GomType(PatternType(), ctx.type.getText());
+    }
+    
+    if(ctx.GOM_STAR()!=null) {
+      setValue("exitField", ctx, `StarredField(type, scope));
+    } else if(ctx.name!=null) {
+      setValue("exitField", ctx, `NamedField(ctx.name.getText(), type, scope));
+    }
+  }
+  
+  /*
+   * pattern_field:
+   *    type=ID GOM_STAR
+   *  | INNER name=ID GOM_COLON type=ID
+   *  | OUTER name=ID GOM_COLON type=ID
+   *  | NEUTRAL name=ID GOM_COLON type=ID
+   *  | name=ID GOM_COLON type=ID
+   *  ;
+   */
+  public void exitPattern_field(TomJavaParser.Pattern_fieldContext ctx) {
+    GomType type = null;
+    ScopeSpecifier scope = `None();
+    if(ctx.GOM_STAR()!=null) {
+      type = `GomType(PatternType(), ctx.type.getText());
+    } else if (ctx.INNER()!=null) {
+      scope = `Inner();
+      type = `GomType(ExpressionType(), ctx.type.getText());
+    } else if (ctx.OUTER()!=null) {
+      scope = `Outer();
+      type = `GomType(ExpressionType(), ctx.type.getText());
+    } else if (ctx.NEUTRAL()!=null) {
+      scope = `Neutral();
+      type = `GomType(ExpressionType(), ctx.type.getText());
+    } else {
+      type = `GomType(PatternType(), ctx.type.getText());
+    }
+    
+    if(ctx.GOM_STAR()!=null) {
+      setValue("exitPattern_field", ctx, `StarredField(type, scope));
+    } else if(ctx.name!=null) {
+      setValue("exitPattern_field", ctx, `NamedField(ctx.name.getText(), type, scope));
+    }
+  }
+  
+  /*
+   * arglist:
+   *  (GOM_LPAREN (ID (GOM_COMMA ID)* )? GOM_RPAREN)?
+   *  ;
+   */
+  public void exitArglist(TomJavaParser.ArglistContext ctx) {
+    ArgList args = `ConcArg();
+    
+    for(TerminalNode n : ctx.ID()) {
+      args = `ConcArg(Arg(n.getText()), args*);
+    }
+    setValue("exitArglist", ctx, args.reverse());
+  }
+  
+  /*
+   * hookConstruct :
+   *  (hookScope)? pointCut=ID GOM_COLON hookType=ID arglist
+   *  hookBlock
+   *  ;
+   */
+  public void exitHookConstruct(TomJavaParser.HookConstructContext ctx) {
+    IdKind scope = `KindOperator();
+    
+    if(ctx.hookScope()!=null) {
+      scope = (IdKind)getValue(ctx.hookScope());
+    }
+    HookKind kind = `HookKind(ctx.hookType.getText());
+    ArgList args = (ArgList)getValue(ctx.arglist());
+    Option option = `Origin(ctx.getStart().getLine());
+    setValue("exitHookConstruct", ctx,
+        `Hook(scope, ctx.pointCut.getText(), kind, args, ctx.hookBlock().getText(), option));
+  }
+  
+  /*
+   * hookScope :
+   *   SORT
+   *   | MODULE
+   *   | OPERATOR
+   *   ;
+   */
+  public void exitHookScope(TomJavaParser.HookScopeContext ctx) {
+    if(ctx.SORT()!=null) {
+      setValue("exitHookScope", ctx, `KindSort());
+    } else if(ctx.MODULE()!=null) {
+      setValue("exitHookScope", ctx, `KindModule());
+    } else if(ctx.OPERATOR()!=null) {
+      setValue("exitHookScope", ctx, `KindOperator());
+    }
+  }
+  
+  
   /*
    * End of grammar
    */

@@ -167,8 +167,8 @@ NULL_LITERAL:       'null';
 
 LPAREN:             '(';
 RPAREN:             ')';
-LBRACE:             '{';
-RBRACE:             '}';
+LBRACE:             '{' -> pushMode(DEFAULT_MODE) ;
+RBRACE:             '}' -> popMode ;
 LBRACK:             '[';
 RBRACK:             ']';
 SEMI:               ';';
@@ -215,7 +215,7 @@ URSHIFT_ASSIGN:     '>>>=';
 
 //TOM Operators
 
-//MATCH_SYMBOL : '<<' ;
+LSHIFT : '<<' ;
 STAR : '*' ; //JAVA->MUL
 UNDERSCORE : '_' ;
 ANTI : '!' ; //JAVA->BANG
@@ -286,6 +286,59 @@ fragment Letter
     | ~[\u0000-\u007F\uD800-\uDBFF] // covers all characters above 0x7F which are not a surrogate
     | [\uD800-\uDBFF] [\uDC00-\uDFFF] // covers UTF-16 surrogate pairs encodings for U+10000 to U+10FFFF
     ;
+    
+mode GOM_MODE;
+
+GOMSTART : '{' -> pushMode(GOM_INSIDE) ;
+
+GOM_WS:                 [ \t\r\n\u000C]+ -> channel(HIDDEN);
+GOM_COMMENT:            '/*' .*? '*/'    -> channel(HIDDEN);
+GOM_LINE_COMMENT:       '//' ~[\r\n]*    -> channel(HIDDEN);
+
+mode GOM_INSIDE;
+
+HOOKSTART : '{' -> pushMode(SUBBLOCK) ;
+GOMEND : '}' -> popMode, popMode ;
+
+MODULE   : 'module';
+IMPORTS  : 'imports';
+GOM_PUBLIC   : 'public';
+GOM_ABSTRACT : 'abstract';
+SYNTAX   : 'syntax';
+SORT     : 'sort';
+OPERATOR : 'operator';
+ATOM     : 'atom';
+INNER    : 'inner';
+OUTER    : 'outer';
+NEUTRAL  : 'neutral';
+BINDS    : 'binds';
+
+GOM_COLON    : ':';
+GOM_COMMA    : ',';
+GOM_DOT      : '.';
+GOM_LPAREN   : '(';
+GOM_RPAREN   : ')';
+GOM_STAR     : '*';
+GOM_EQUAL   : '=';
+ALT      : '|';
+GOM_SEMI     : ';;';
+LDIPLE   : '<';
+RDIPLE   : '>';
+
+GOM_INSIDE_WS:                 [ \t\r\n\u000C]+ -> channel(HIDDEN);
+GOM_INSIDE_COMMENT:            '/*' .*? '*/'    -> channel(HIDDEN);
+GOM_INSIDE_LINE_COMMENT:       '//' ~[\r\n]*    -> channel(HIDDEN);
+
+JAVADOC :
+  '/**' .*? '*/'
+  ;
+
+ID : ('a'..'z' | 'A'..'Z')
+     ('a'..'z' | 'A'..'Z' | '0'..'9' | '_' | '-')* ;
+
+
+
+
 
 mode UNKNOWNBLOCK;
 
@@ -305,19 +358,11 @@ mode INSIDE;
 SUBBLOCKSTART : '{' -> pushMode(SUBBLOCK) ;
 BLOCKEND : '}' -> popMode, popMode ;
 
-INSIDE_WS:                 [ \t\r\n\u000C]+ -> channel(HIDDEN);
-INSIDE_COMMENT:            '/*' .*? '*/'    -> channel(HIDDEN);
-INSIDE_LINE_COMMENT:       '//' ~[\r\n]*    -> channel(HIDDEN);
-
 ANY : . ; 
 
 mode SUBBLOCK;
 
 SUBSUBBLOCKSTART : '{' -> pushMode(SUBBLOCK) ;
 SUBBLOCKEND : '}' -> popMode ;
-
-SUB_WS:                 [ \t\r\n\u000C]+ -> channel(HIDDEN);
-SUB_COMMENT:            '/*' .*? '*/'    -> channel(HIDDEN);
-SUB_LINE_COMMENT:       '//' ~[\r\n]*    -> channel(HIDDEN);
 
 SUB_ANY : . ; 
