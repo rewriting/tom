@@ -325,19 +325,84 @@ GOM_SEMI     : ';;';
 LDIPLE   : '<';
 RDIPLE   : '>';
 
-GOM_INSIDE_WS:                 [ \t\r\n\u000C]+ -> channel(HIDDEN);
-GOM_INSIDE_COMMENT:            '/*' .*? '*/'    -> channel(HIDDEN);
-GOM_INSIDE_LINE_COMMENT:       '//' ~[\r\n]*    -> channel(HIDDEN);
-
 JAVADOC :
   '/**' .*? '*/'
   ;
 
+// hookTypes:
+RULES : 'rules' -> pushMode(RULE_MODE);
+GRAPHRULES : 'graphrules' -> pushMode(RULE_MODE);
+AC : 'AC';
+ACU : 'ACU';
+AU : 'AU';
+FL : 'FL';
+FREE : 'Free';
+HOOK_MAKE : 'make';
+HOOK_MAKE_INSERT : 'make_insert';
+HOOK_MAKE_EMPTY : 'make_empty';
+HOOK_IMPORT : 'import';
+HOOK_INTERFACE : 'interface';
+BLOCK : 'block';
+MAPPING : 'mapping';
+
 ID : ('a'..'z' | 'A'..'Z')
      ('a'..'z' | 'A'..'Z' | '0'..'9' | '_' | '-')* ;
+     
+GOM_INSIDE_WS:                 [ \t\r\n\u000C]+ -> channel(HIDDEN);
+GOM_INSIDE_COMMENT:            '/*' .*? '*/'    -> channel(HIDDEN);
+GOM_INSIDE_LINE_COMMENT:       '//' ~[\r\n]*    -> channel(HIDDEN);
 
+mode RULE_MODE;
 
+IDENTITY : 'Identity';
+FAIL : 'Fail';
 
+RULE_ARG : ('a'..'z' | 'A'..'Z')
+           ('a'..'z' | 'A'..'Z' | '0'..'9' | '_' | '-')* ;
+          
+ARG_COMMA    : ',';
+RULE_LPAREN   : '(';
+RULE_RPAREN   : ')';
+
+RULESTART : '{' -> pushMode(RULE_INSIDE) ;
+
+RULE_WS:                 [ \t\r\n\u000C]+ -> channel(HIDDEN);
+RULE_COMMENT:            '/*' .*? '*/'    -> channel(HIDDEN);
+RULE_LINE_COMMENT:       '//' ~[\r\n]*    -> channel(HIDDEN);
+
+mode RULE_INSIDE;
+
+RULEEND : '}' -> popMode, popMode ;
+
+RULE_ARROW : '->';
+AMPERSAND : '&';
+RULE_UNDERSCORE : '_';
+RULE_STAR : '*';
+RULE_AT : '@';
+RULE_COLON : ':';
+LPAR : '(';
+RPAR : ')';
+RULE_COMMA : ',';
+RULE_AND : '&&';
+RULE_OR : '||';
+NOT : '!';
+RULE_EQUALS : '==';
+NOTEQUALS : '!=';
+LEQ : '<=';
+MATCH_SYMBOL : '<<';
+RULE_LT : '<';
+GEQ : '>=';
+RULE_GT : '>';
+RULE_IF : 'if' ;
+
+INTEGER:    ('0' | [1-9] (Digits? | '_'+ Digits)) [lL]?;
+STRING : '"' (~["\\\r\n] | EscapeSequence)* '"';
+
+RULE_ID : ('a'..'z'|'A'..'Z'|'_') ('a'..'z'|'A'..'Z'|'_'|'0'..'9')*;
+
+RULE_INSIDE_WS:                 [ \t\r\n\u000C]+ -> channel(HIDDEN);
+RULE_INSIDE_COMMENT:            '/*' .*? '*/'    -> channel(HIDDEN);
+RULE_INSIDE_LINE_COMMENT:       '//' ~[\r\n]*    -> channel(HIDDEN);
 
 
 mode UNKNOWNBLOCK;

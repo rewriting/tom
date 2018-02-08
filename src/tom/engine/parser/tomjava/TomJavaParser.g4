@@ -101,7 +101,7 @@ typeParameter
     ;
 
 typeBound
-    : typeType ('&' typeType)*
+    : typeType (BITAND typeType)*
     ;
 
 enumDeclaration
@@ -312,7 +312,7 @@ floatLiteral
 // ANNOTATIONS
 
 annotation
-    : '@' qualifiedName (LPAREN ( elementValuePairs | elementValue )? RPAREN)?
+    : AT qualifiedName (LPAREN ( elementValuePairs | elementValue )? RPAREN)?
     ;
 
 elementValuePairs
@@ -334,7 +334,7 @@ elementValueArrayInitializer
     ;
 
 annotationTypeDeclaration
-    : '@' INTERFACE javaIdentifier annotationTypeBody
+    : AT INTERFACE javaIdentifier annotationTypeBody
     ;
 
 annotationTypeBody
@@ -492,18 +492,18 @@ expression
     | LPAREN typeType RPAREN expression
     | expression postfix=('++' | '--')
     | prefix=('+'|'-'|'++'|'--') expression
-    | prefix=('~'|'!') expression
+    | prefix=('~'|ANTI) expression
     | expression bop=(STAR|'/'|'%') expression
     | expression bop=('+'|'-') expression
     | expression (LSHIFT | GT GT GT | GT GT) expression
-    | expression bop=('<=' | '>=' | GT | LT) expression
+    | expression bop=(LE | GE | GT | LT) expression
     | expression bop=INSTANCEOF typeType
-    | expression bop=('==' | '!=') expression
-    | expression bop='&' expression
+    | expression bop=(EQUAL | NOTEQUAL) expression
+    | expression bop=BITAND expression
     | expression bop='^' expression
     | expression bop=PIPE expression
-    | expression bop='&&' expression
-    | expression bop='||' expression
+    | expression bop=AND expression
+    | expression bop=OR expression
     | expression bop='?' expression COLON expression
     | <assoc=right> expression
       bop=(ASSIGN | '+=' | '-=' | '*=' | '/=' | '&=' | '|=' | '^=' | '>>=' | '>>>=' | '<<=' | '%=')
@@ -536,7 +536,7 @@ funTerm
 
 // Java8
 lambdaExpression
-    : lambdaParameters '->' lambdaBody
+    : lambdaParameters ARROW lambdaBody
     ;
 
 // Java8
@@ -841,18 +841,18 @@ composite
     | LPAREN typeType RPAREN composite
     | composite postfix=('++' | '--')
     | prefix=('+'|'-'|'++'|'--') composite
-    | prefix=('~'|'!') composite
+    | prefix=('~'|ANTI) composite
     | composite bop=(STAR|'/'|'%') composite
     | composite bop=('+'|'-') composite
     | composite (LSHIFT | GT GT GT | GT GT) composite
-    | composite bop=('<=' | '>=' | GT | LT) composite
+    | composite bop=(LE | GE | GT | LT) composite
     | composite bop=INSTANCEOF typeType
-    | composite bop=('==' | '!=') composite
-    | composite bop='&' composite
+    | composite bop=(EQUAL | NOTEQUAL) composite
+    | composite bop=BITAND composite
     | composite bop='^' composite
     | composite bop=PIPE composite
-    | composite bop='&&' composite
-    | composite bop='||' composite
+    | composite bop=AND composite
+    | composite bop=OR composite
     | composite bop='?' composite COLON composite
     | <assoc=right> composite
       bop=(ASSIGN | '+=' | '-=' | '*=' | '/=' | '&=' | '|=' | '^=' | '>>=' | '>>>=' | '<<=' | '%=')
@@ -1062,11 +1062,11 @@ module:
   ;
 
 modulename:
-  (prefixes+=ID GOM_DOT)* moduleName=ID
+  (prefixes+=gomIdentifier GOM_DOT)* moduleName=gomIdentifier
   ;
 
 imports :
-  IMPORTS ID*
+  IMPORTS gomIdentifier*
   ;
 
 section :
@@ -1082,12 +1082,12 @@ syntax :
   ;
 
 atomdecl :
-  ATOM ID
+  ATOM gomIdentifier
   ;
 
 typedecl :
-    typename=ID GOM_EQUAL alternatives
-  |  ptypename=ID BINDS (atoms+=ID) GOM_EQUAL pattern_alternatives
+    typename=gomIdentifier GOM_EQUAL alternatives
+  |  ptypename=gomIdentifier BINDS (atoms+=gomIdentifier) GOM_EQUAL pattern_alternatives
   ;
 
 alternatives :
@@ -1103,12 +1103,12 @@ pattern_alternatives :
   ;
 
 opdecl :
-  ID fieldlist
+  gomIdentifier fieldlist
   ;
 
 /* Used by Freshgom, as all rules beginning by "pattern" */
 pattern_opdecl :
-  ID pattern_fieldlist
+  gomIdentifier pattern_fieldlist
   ;
 
 fieldlist :
@@ -1121,33 +1121,47 @@ pattern_fieldlist :
   ;
 
 field:
-    type=ID GOM_STAR
-  | LDIPLE type=ID RDIPLE GOM_STAR
-  | name=ID GOM_COLON type=ID
-  | name=ID GOM_COLON LDIPLE type=ID RDIPLE
+    type=gomIdentifier GOM_STAR
+  | LDIPLE type=gomIdentifier RDIPLE GOM_STAR
+  | name=gomIdentifier GOM_COLON type=gomIdentifier
+  | name=gomIdentifier GOM_COLON LDIPLE type=gomIdentifier RDIPLE
   ;
 
 /* Used by Freshgom, as all rules beginning by "pattern" */
 pattern_field:
-    type=ID GOM_STAR
-  | INNER name=ID GOM_COLON type=ID
-  | OUTER name=ID GOM_COLON type=ID
-  | NEUTRAL name=ID GOM_COLON type=ID
-  | name=ID GOM_COLON type=ID
+    type=gomIdentifier GOM_STAR
+  | INNER name=gomIdentifier GOM_COLON type=gomIdentifier
+  | OUTER name=gomIdentifier GOM_COLON type=gomIdentifier
+  | NEUTRAL name=gomIdentifier GOM_COLON type=gomIdentifier
+  | name=gomIdentifier GOM_COLON type=gomIdentifier
   ;
 
 arglist:
-  (GOM_LPAREN (ID (GOM_COMMA ID)* )? GOM_RPAREN)?
+  (GOM_LPAREN (gomIdentifier (GOM_COMMA gomIdentifier)* )? GOM_RPAREN)?
   ;
 
 hookConstruct :
-  (hookScope)? pointCut=ID GOM_COLON hookType=ID arglist
-  hookBlock
+  (hookScope)? pointCut=gomIdentifier GOM_COLON 
+    ( hookType=RULES (RULE_LPAREN RULE_RPAREN)?
+      RULESTART ruleset RULEEND
+    | hookType=GRAPHRULES RULE_LPAREN RULE_ARG ARG_COMMA (IDENTITY | FAIL) RULE_RPAREN
+      RULESTART graphruleset RULEEND
+    | hookType=(AC | FL | FREE) (GOM_LPAREN GOM_RPAREN)? hookBlock
+    | hookType=(ACU | AU) (GOM_LPAREN GOM_RPAREN)? hookBlock
+    | hookType=(HOOK_MAKE | HOOK_MAKE_INSERT | HOOK_MAKE_EMPTY) arglist hookBlock
+    | hookType=HOOK_IMPORT (GOM_LPAREN GOM_RPAREN)? hookBlock
+    | hookType=HOOK_INTERFACE (GOM_LPAREN GOM_RPAREN)? hookBlock
+    | hookType=(BLOCK | MAPPING) (GOM_LPAREN GOM_RPAREN)? hookBlock
+    )
   ;
 
 //TODO define proper hookblock based on hookType?
 hookBlock
   : HOOKSTART (unknownBlock | SUB_ANY )*? SUBBLOCKEND
+  ;
+  
+ruleBlock
+  : 
   ;
 
 hookScope :
@@ -1155,3 +1169,101 @@ hookScope :
   | MODULE
   | OPERATOR
   ;
+  
+gomIdentifier
+  : ID
+  | AC
+  | FL
+  | FREE
+  | ACU
+  | AU
+  | HOOK_MAKE
+  | HOOK_MAKE_INSERT
+  | HOOK_MAKE_EMPTY
+  | HOOK_IMPORT
+  | HOOK_INTERFACE
+  | BLOCK
+  | MAPPING
+  ;
+  
+ 
+  /***********************************RULE*************************************/
+  
+ruleset:
+  (termrule)*
+;
+  
+termrule:
+  rule_pattern RULE_ARROW rule_term (RULE_IF condition)?
+;
+
+graphruleset:
+  (graphrule)*
+;
+
+graphrule:
+  lhs=labelledpattern RULE_ARROW rhs=labelledpattern (RULE_IF condition)?
+;
+
+condition:
+  cond=andcondition (RULE_OR andcondition)*
+;
+
+andcondition:
+  cond=simplecondition (RULE_AND simplecondition)*
+;
+
+simplecondition:
+  lterm=rule_term (
+    RULE_EQUALS
+    | NOTEQUALS
+    | LEQ
+    | RULE_LT
+    | GEQ
+    | RULE_GT
+    | MATCH_SYMBOL
+    ) rterm=rule_term
+  | LPAR condition RPAR
+;
+
+rule_pattern:
+  funname=RULE_ID LPAR (rule_term (RULE_COMMA rule_term)*)? RPAR
+  | (varname=RULE_ID) RULE_AT (funname=RULE_ID) LPAR (rule_term (RULE_COMMA rule_term)*)? RPAR
+  | RULE_UNDERSCORE RULE_STAR?
+  | NOT rule_pattern
+;
+
+rule_term:
+  rule_pattern
+  | variable
+  | builtin
+;
+
+builtin:
+  INTEGER
+  | STRING
+;
+
+labelledpattern:
+  (RULE_ID RULE_COLON)? graphpattern
+;
+
+graphpattern:
+  constructor
+  | variable
+  | builtin
+  | ref
+;
+
+variable:
+  RULE_ID (RULE_STAR)?
+;
+
+ref:
+  AMPERSAND RULE_ID
+;
+
+constructor:
+  RULE_ID LPAR (labelledpattern (RULE_COMMA labelledpattern)*)? RPAR
+;
+  

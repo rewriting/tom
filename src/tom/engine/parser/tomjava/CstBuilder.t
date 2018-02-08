@@ -43,6 +43,7 @@ import tom.engine.tools.ASTFactory;
 
 import tom.gom.GomStreamManager;
 import tom.gom.adt.gom.types.*;
+import tom.gom.adt.rule.types.*;
 //import tom.library.sl.*;
 
 /*
@@ -1481,12 +1482,12 @@ public class CstBuilder extends TomJavaParserBaseListener {
   
   /*
    * modulename:
-   *   (prefixes+=ID GOM_DOT)* moduleName=ID
+   *   (prefixes+=gomIdentifier GOM_DOT)* moduleName=gomIdentifier
    *   ;
    */
   public void exitModulename(TomJavaParser.ModulenameContext ctx) {
     String packagePrefix = new String();
-    for(Token n : ctx.prefixes) {
+    for(TomJavaParser.GomIdentifierContext n : ctx.prefixes) {
       if(!packagePrefix.isEmpty()) {
         packagePrefix += '.';
       }
@@ -1502,13 +1503,13 @@ public class CstBuilder extends TomJavaParserBaseListener {
   
   /*
    * imports :
-   *   IMPORTS ID*
+   *   IMPORTS gomIdentifier*
    *   ;
    */
   public void exitImports(TomJavaParser.ImportsContext ctx) {
     ImportList imports = `ConcImportedModule();
     
-    for(TerminalNode n : ctx.ID()) {
+    for(TomJavaParser.GomIdentifierContext n : ctx.gomIdentifier()) {
       imports = `ConcImportedModule(GomModuleName(n.getText()), imports*);
     }
     
@@ -1565,17 +1566,17 @@ public class CstBuilder extends TomJavaParserBaseListener {
   
   /*
    * atomdecl :
-   *   ATOM ID
+   *   ATOM gomIdentifier
    *   ;
    */
   public void exitAtomdecl(TomJavaParser.AtomdeclContext ctx) {
-    setValue("exitAtomdecl", ctx, `AtomDecl(ctx.ID().getText()));
+    setValue("exitAtomdecl", ctx, `AtomDecl(ctx.gomIdentifier().getText()));
   }
   
   /*
    * typedecl :
-   *   typename=ID GOM_EQUAL alternatives
-   *   | ptypename=ID BINDS (atoms+=ID) GOM_EQUAL pattern_alternatives
+   *   typename=gomIdentifier GOM_EQUAL alternatives
+   *   | ptypename=gomIdentifier BINDS (atoms+=gomIdentifier) GOM_EQUAL pattern_alternatives
    *   ;
    */
   public void enterTypedecl(TomJavaParser.TypedeclContext ctx) {
@@ -1595,7 +1596,7 @@ public class CstBuilder extends TomJavaParserBaseListener {
       type = `GomType(ExpressionType(), ctx.typename.getText());
       alternatives = (AlternativeList)getValue(ctx.alternatives());
     } else if(ctx.ptypename!=null) {
-      for(Token n : ctx.atoms) {
+      for(TomJavaParser.GomIdentifierContext n : ctx.atoms) {
         atoms = `ConcAtom(n.getText(), atoms*);
       }
       type = `GomType(PatternType(), ctx.ptypename.getText());
@@ -1651,7 +1652,7 @@ public class CstBuilder extends TomJavaParserBaseListener {
   
   /*
    * opdecl :
-   *   ID fieldlist
+   *   gomIdentifier fieldlist
    *   ;
    */
   public void exitOpdecl(TomJavaParser.OpdeclContext ctx) {
@@ -1662,18 +1663,18 @@ public class CstBuilder extends TomJavaParserBaseListener {
     }
     
     GomType type = `GomType(ExpressionType(), (String)getValue2(ctx.getParent()));
-    setValue("exitOpdecl", ctx, `Alternative(ctx.ID().getText(), (FieldList)getValue(ctx.fieldlist()), type, option));
+    setValue("exitOpdecl", ctx, `Alternative(ctx.gomIdentifier().getText(), (FieldList)getValue(ctx.fieldlist()), type, option));
   }
   
   /*
    * pattern_opdecl :
-   *   ID pattern_fieldlist
+   *   gomIdentifier pattern_fieldlist
    *   ;
    */
   public void exitPattern_opdecl(TomJavaParser.Pattern_opdeclContext ctx) {
     Option option = `Origin(ctx.getStart().getLine());
     GomType type = `GomType(PatternType(), (String)getValue2(ctx.getParent()));
-    setValue("exitPattern_opdecl", ctx, `Alternative(ctx.ID().getText(), (FieldList)getValue(ctx.pattern_fieldlist()), type, option));
+    setValue("exitPattern_opdecl", ctx, `Alternative(ctx.gomIdentifier().getText(), (FieldList)getValue(ctx.pattern_fieldlist()), type, option));
   }
   
   /*
@@ -1706,10 +1707,10 @@ public class CstBuilder extends TomJavaParserBaseListener {
   
   /*
    * field:
-   *    type=ID GOM_STAR
+   *    type=gomIdentifier GOM_STAR
    *  | LDIPLE type=ID RDIPLE GOM_STAR
-   *  | name=ID GOM_COLON type=ID
-   *  | name=ID GOM_COLON LDIPLE type=ID RDIPLE
+   *  | name=gomIdentifier GOM_COLON type=gomIdentifier
+   *  | name=gomIdentifier GOM_COLON LDIPLE type=gomIdentifier RDIPLE
    *  ;
    */
   public void exitField(TomJavaParser.FieldContext ctx) {
@@ -1731,11 +1732,11 @@ public class CstBuilder extends TomJavaParserBaseListener {
   
   /*
    * pattern_field:
-   *    type=ID GOM_STAR
-   *  | INNER name=ID GOM_COLON type=ID
-   *  | OUTER name=ID GOM_COLON type=ID
-   *  | NEUTRAL name=ID GOM_COLON type=ID
-   *  | name=ID GOM_COLON type=ID
+   *    type=gomIdentifier GOM_STAR
+   *  | INNER name=gomIdentifier GOM_COLON type=gomIdentifier
+   *  | OUTER name=gomIdentifier GOM_COLON type=gomIdentifier
+   *  | NEUTRAL name=gomIdentifier GOM_COLON type=gomIdentifier
+   *  | name=gomIdentifier GOM_COLON type=gomIdentifier
    *  ;
    */
   public void exitPattern_field(TomJavaParser.Pattern_fieldContext ctx) {
@@ -1765,13 +1766,13 @@ public class CstBuilder extends TomJavaParserBaseListener {
   
   /*
    * arglist:
-   *  (GOM_LPAREN (ID (GOM_COMMA ID)* )? GOM_RPAREN)?
+   *  (GOM_LPAREN (gomIdentifier (GOM_COMMA gomIdentifier)* )? GOM_RPAREN)?
    *  ;
    */
   public void exitArglist(TomJavaParser.ArglistContext ctx) {
     ArgList args = `ConcArg();
     
-    for(TerminalNode n : ctx.ID()) {
+    for(TomJavaParser.GomIdentifierContext n : ctx.gomIdentifier()) {
       args = `ConcArg(Arg(n.getText()), args*);
     }
     setValue("exitArglist", ctx, args.reverse());
@@ -1779,8 +1780,18 @@ public class CstBuilder extends TomJavaParserBaseListener {
   
   /*
    * hookConstruct :
-   *  (hookScope)? pointCut=ID GOM_COLON hookType=ID arglist
-   *  hookBlock
+   *  (hookScope)? pointCut=gomIdentifier GOM_COLON 
+   *    ( hookType=RULES RULE_LPAREN RULE_RPAREN
+   *      RULESTART ruleset RULEEND
+   *    | hookType=GRAPHRULES RULE_LPAREN RULE_ARG ARG_COMMA (IDENTITY | FAIL) RULE_RPAREN
+   *      RULESTART graphruleset RULEEND
+   *    | hookType=(AC | FL | FREE) GOM_LPAREN GOM_RPAREN hookBlock
+   *    | hookType=(ACU | AU) GOM_LPAREN GOM_RPAREN hookBlock
+   *    | hookType=(HOOK_MAKE | HOOK_MAKE_INSERT | HOOK_MAKE_EMPTY) arglist hookBlock
+   *    | hookType=HOOK_IMPORT GOM_LPAREN GOM_RPAREN hookBlock
+   *    | hookType=HOOK_INTERFACE GOM_LPAREN GOM_RPAREN hookBlock
+   *    | hookType=(BLOCK | MAPPING) GOM_LPAREN GOM_RPAREN hookBlock
+   *    )
    *  ;
    */
   public void exitHookConstruct(TomJavaParser.HookConstructContext ctx) {
@@ -1790,10 +1801,28 @@ public class CstBuilder extends TomJavaParserBaseListener {
       scope = (IdKind)getValue(ctx.hookScope());
     }
     HookKind kind = `HookKind(ctx.hookType.getText());
-    ArgList args = (ArgList)getValue(ctx.arglist());
     Option option = `Origin(ctx.getStart().getLine());
+    ArgList args = null;
+    HookContent hook = null;
+    if(ctx.RULES()!=null) {
+      args = `ConcArg();
+      hook =`HookRules((RuleList)getValue(ctx.ruleset()));
+    } else if(ctx.GRAPHRULES()!=null) {
+      if(ctx.IDENTITY()!=null) {
+        args = `ConcArg(Arg(ctx.RULE_ARG().getText()), Arg("Identity"));
+      } else if(ctx.FAIL()!=null) {
+        args = `ConcArg(Arg(ctx.RULE_ARG().getText()), Arg("Fail"));
+      }
+      hook =`HookRules((RuleList)getValue(ctx.graphruleset()));
+    } else if(ctx.HOOK_MAKE()!=null || ctx.HOOK_MAKE_INSERT()!=null || ctx.HOOK_MAKE_EMPTY()!=null) {
+      args = (ArgList)getValue(ctx.arglist());
+      hook =`HookCode(ctx.hookBlock().getText());
+    } else {
+      args = `ConcArg();
+      hook =`HookCode(ctx.hookBlock().getText());
+    }
     setValue("exitHookConstruct", ctx,
-        `Hook(scope, ctx.pointCut.getText(), kind, args, ctx.hookBlock().getText(), option));
+        `Hook(scope, ctx.pointCut.getText(), kind, args, hook, option));
   }
   
   /*
@@ -1812,6 +1841,271 @@ public class CstBuilder extends TomJavaParserBaseListener {
       setValue("exitHookScope", ctx, `KindOperator());
     }
   }
+  
+  //******************************************************RULE**********************************************************
+  
+  /*
+   * ruleset:
+   *   (termrule)*
+   * ;
+   */
+  public void exitRuleset(TomJavaParser.RulesetContext ctx) {
+    RuleList rules = `RuleList();
+    for(TomJavaParser.TermruleContext e : ctx.termrule()) {
+      rules = `RuleList((Rule)getValue(e), rules*);
+    }
+    setValue("exitRuleset", ctx, rules.reverse());
+  }
+  
+  /*
+   * termrule :
+   *   rule_pattern RULE_ARROW rule_term (RULE_IF condition)?
+   *   ;
+   */
+  public void exitTermrule(TomJavaParser.TermruleContext ctx) {
+    Term pattern = (Term)getValue(ctx.rule_pattern());
+    Term term = (Term)getValue(ctx.rule_term());
+    if(ctx.condition()==null) {
+      setValue("exitTermrule", ctx, `Rule(pattern, term));
+    } else {
+      Condition cond = (Condition)getValue(ctx.condition());
+      setValue("exitTermrule", ctx, `ConditionalRule(pattern, term, cond));
+    }
+  }
+  
+  /*
+   * grahruleset:
+   *   (graphrule)*
+   * ;
+   */
+  public void exitGraphruleset(TomJavaParser.GraphrulesetContext ctx) {
+    RuleList rules = `RuleList();
+    for(TomJavaParser.GraphruleContext e : ctx.graphrule()) {
+      rules = `RuleList((Rule)getValue(e), rules*);
+    }
+    setValue("exitGraphruleset", ctx, rules.reverse());
+  }
+  
+  /*
+   * graphrule :
+   *   lhs=labelledpattern RULE_ARROW rhs=labelledpattern (RULE_IF condition)?
+   *   ;
+   */
+  public void exitGraphrule(TomJavaParser.GraphruleContext ctx) {
+    Term lhs = (Term)getValue(ctx.lhs);
+    Term rhs = (Term)getValue(ctx.rhs);
+    if(ctx.condition()==null) {
+      setValue("exitGraphrule", ctx, `Rule(lhs, rhs));
+    } else {
+      Condition cond = (Condition)getValue(ctx.condition());
+      setValue("exitGraphrule", ctx, `ConditionalRule(lhs, rhs, cond));
+    }
+  }
+  
+  /*
+   * condition :
+   *   cond=andcondition (RULE_OR andcondition)*
+   *   ;
+   */
+  public void exitCondition(TomJavaParser.ConditionContext ctx) {
+    if(ctx.RULE_OR()==null) {
+      setValue("exitCondition", ctx, getValue(ctx.cond));
+    } else {
+      Condition cond = `CondOr();
+      for(TomJavaParser.AndconditionContext e : ctx.andcondition()) {
+        cond = `CondOr((Condition)getValue(e), cond*);
+      }
+      setValue("exitCondition", ctx, cond.reverse());
+    }
+  }
+  
+  /*
+   * andcondition :
+   *   cond=simplecondition (RULE_AND simplecondition)*
+   *   ;
+   */
+  public void exitAndcondition(TomJavaParser.AndconditionContext ctx) {
+    if(ctx.RULE_AND()==null) {
+      setValue("exitAndcondition", ctx, getValue(ctx.cond));
+    } else {
+      Condition cond = `CondAnd();
+      for(TomJavaParser.SimpleconditionContext e : ctx.simplecondition()) {
+        cond = `CondAnd((Condition)getValue(e), cond*);
+      }
+      setValue("exitAndcondition", ctx, cond.reverse());
+    }
+  }
+  
+  /*
+   * simplecondition :
+   *   lterm=rule_term (
+   *     RULE_EQUALS
+   *     | NOTEQUALS
+   *     | LEQ
+   *     | RULE_LT
+   *     | GEQ
+   *     | RULE_GT
+   *     | MATCH_SYMBOL
+   *     ) rterm=rule_term
+   *   | LPAR condition RPAR
+   *   ;
+   */
+  public void exitSimplecondition(TomJavaParser.SimpleconditionContext ctx) {
+    if(ctx.condition()!=null) {
+      setValue("exitSimplecondition", ctx, getValue(ctx.condition()));
+    } else {
+      Term lterm = (Term)getValue(ctx.lterm);
+      Term rterm = (Term)getValue(ctx.rterm);
+      if(ctx.RULE_EQUALS()!=null) {
+        setValue("exitSimplecondition", ctx, `CondEquals(lterm, rterm));
+      } else if(ctx.NOTEQUALS()!=null) {
+        setValue("exitSimplecondition", ctx, `CondNotEquals(lterm, rterm));
+      } else if(ctx.LEQ()!=null) {
+        setValue("exitSimplecondition", ctx, `CondLessEquals(lterm, rterm));
+      } else if(ctx.RULE_LT()!=null) {
+        setValue("exitSimplecondition", ctx, `CondLessThan(lterm, rterm));
+      } else if(ctx.GEQ()!=null) {
+        setValue("exitSimplecondition", ctx, `CondGreaterEquals(lterm, rterm));
+      } else if(ctx.RULE_GT()!=null) {
+        setValue("exitSimplecondition", ctx, `CondGreaterThan(lterm, rterm));
+      } else if(ctx.MATCH_SYMBOL()!=null) {
+        setValue("exitSimplecondition", ctx, `CondMatch(lterm, rterm));
+      }
+    }
+  }
+  
+  /*
+   * rule_pattern:
+   *   funname=RULE_ID LPAR (rule_term (RULE_COMMA rule_term)*)? RPAR
+   *   | (varname=RULE_ID) RULE_AT (funname=RULE_ID) LPAR (rule_term (RULE_COMMA rule_term)*)? RPAR
+   *   | RULE_UNDERSCORE RULE_STAR?
+   *   | NOT rule_pattern
+   * ;
+   */
+  public void exitRule_pattern(TomJavaParser.Rule_patternContext ctx) {
+    if(ctx.funname!=null) {
+      TermList args = `TermList();
+      for(TomJavaParser.Rule_termContext e : ctx.rule_term()) {
+        args = `TermList((Term)getValue(e), args*);
+      }
+      
+      Term appl = `Appl(ctx.funname.getText(), args.reverse());
+      if(ctx.varname==null) {
+        setValue("exitRule_pattern", ctx, appl);
+      } else {
+        setValue("exitRule_pattern", ctx, `At(ctx.varname.getText(), appl));
+      }
+    } else if(ctx.RULE_UNDERSCORE()!=null) {
+      if(ctx.RULE_STAR()==null) {
+        setValue("exitRule_pattern", ctx, `UnnamedVar());
+      } else {
+        setValue("exitRule_pattern", ctx, `UnnamedVarStar());
+      }
+    } else if(ctx.rule_pattern()!=null) {
+      setValue("exitRule_pattern", ctx, `Anti((Term)getValue(ctx.rule_pattern())));
+    }
+  }
+  
+  /*
+   * rule_term:
+   *   rule_pattern
+   *   | variable
+   *   | builtin
+   * ;
+   */
+  public void exitRule_term(TomJavaParser.Rule_termContext ctx) {
+    if(ctx.rule_pattern()!=null) {
+      setValue("exitRule_term", ctx, getValue(ctx.rule_pattern()));
+    } else if(ctx.variable()!=null) {
+      setValue("exitRule_term", ctx, getValue(ctx.variable()));
+    } else if(ctx.builtin()!=null) {
+      setValue("exitRule_term", ctx, getValue(ctx.builtin()));
+    }
+  }
+  
+  /*
+   * builtin:
+   *   INTEGER
+   *   | STRING
+   * ;
+   */
+  public void exitBuiltin(TomJavaParser.BuiltinContext ctx) {
+    if(ctx.INTEGER()!=null) {
+      setValue("exitBuiltin", ctx, `BuiltinInt(Integer.parseInt(ctx.INTEGER().getText())));
+    } else if(ctx.STRING()!=null) {
+      setValue("exitBuiltin", ctx, `BuiltinString(ctx.STRING().getText()));
+    }
+  }
+  
+  /*
+   * labelledpattern :
+   *   (RULE_ID RULE_COLON)? graphpattern
+   *   ;
+   */
+  public void exitLabelledpattern(TomJavaParser.LabelledpatternContext ctx) {
+    Term pattern = (Term)getValue(ctx.graphpattern());
+    if(ctx.RULE_ID()==null) {
+      setValue("exitLabelledpattern", ctx, pattern);
+    } else {
+      setValue("exitLabelledpattern", ctx, `LabTerm(ctx.RULE_ID().getText(), pattern));
+    }
+  }
+  
+  /*
+   * graphpattern:
+   *   constructor
+   *   | variable
+   *   | builtin
+   *   | ref
+   * ;
+   */
+  public void exitGraphpattern(TomJavaParser.GraphpatternContext ctx) {
+    if(ctx.constructor()!=null) {
+      setValue("exitGraphpattern", ctx, getValue(ctx.constructor()));
+    } else if(ctx.variable()!=null) {
+      setValue("exitGraphpattern", ctx, getValue(ctx.variable()));
+    } else if(ctx.builtin()!=null) {
+      setValue("exitGraphpattern", ctx, getValue(ctx.builtin()));
+    } else if(ctx.ref()!=null) {
+      setValue("exitGraphpattern", ctx, getValue(ctx.ref()));
+    }
+  }
+  
+  /*
+   * variable:
+   *   RULE_ID (RULE_STAR)?
+   * ;
+   */
+  public void exitVariable(TomJavaParser.VariableContext ctx) {
+    if(ctx.RULE_STAR()==null) {
+      setValue("exitVariable", ctx, `Var(ctx.RULE_ID().getText()));
+    } else {
+      setValue("exitVariable", ctx, `VarStar(ctx.RULE_ID().getText()));
+    }
+  }
+  
+  /*
+   * ref:
+   *   AMPERSAND RULE_ID
+   * ;
+   */
+  public void exitRef(TomJavaParser.RefContext ctx) {
+    setValue("exitRef", ctx, `RefTerm(ctx.RULE_ID().getText()));
+  }
+  
+  /*
+   * constructor:
+   *   RULE_ID LPAR (labelledpattern (RULE_COMMA labelledpattern)*)? RPAR
+   * ;
+   */
+  public void exitConstructor(TomJavaParser.ConstructorContext ctx) {
+    TermList args = `TermList();
+    for(TomJavaParser.LabelledpatternContext e : ctx.labelledpattern()) {
+      args = `TermList((Term)getValue(e), args*);
+    }
+    setValue("exitConstructor", ctx, `Appl(ctx.RULE_ID().getText(), args.reverse()));
+  }
+  
   
   
   /*

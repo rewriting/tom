@@ -25,9 +25,6 @@
 
 package tom.gom.expander.rule;
 
-import org.antlr.runtime.CommonTokenStream;
-import org.antlr.runtime.ANTLRStringStream;
-import org.antlr.runtime.tree.Tree;
 
 import java.util.Map;
 import java.util.HashMap;
@@ -39,7 +36,6 @@ import tom.gom.SymbolTable;
 import tom.gom.GomMessage;
 
 import tom.gom.adt.gom.types.*;
-import tom.gom.adt.rule.RuleAdaptor;
 import tom.gom.adt.rule.types.*;
 import tom.gom.adt.rule.types.term.*;
 import tom.gom.adt.objects.types.ClassName;
@@ -49,7 +45,6 @@ import tom.library.sl.*;
 public class GraphRuleExpander {
 
   %include { ../../adt/gom/Gom.tom}
-  %include { ../../adt/rule/Rule.tom }
   %include { ../../../library/mapping/java/sl.tom}
   %include { ../../../library/mapping/java/util/HashMap.tom}
 
@@ -86,7 +81,7 @@ public class GraphRuleExpander {
         "GomReferenceExpander:fullClassName got a strange ClassName "+clsName);
   }
 
-  public HookDeclList expandGraphRules(String sortname, String stratname, String defaultstrat, String ruleCode, Decl sdecl) {
+  public HookDeclList expandGraphRules(String sortname, String stratname, String defaultstrat, RuleList rules, Decl sdecl) {
     this.sortname = sortname;
     %match(sdecl) {
       CutSort[Sort=SortDecl[ModuleDecl=ModuleDecl(GomModuleName(moduleName),pkgName)]] -> {
@@ -95,22 +90,11 @@ public class GraphRuleExpander {
       }
     }
 
-    RuleLexer lexer = new RuleLexer(new ANTLRStringStream(ruleCode));
-    CommonTokenStream tokens = new CommonTokenStream(lexer);
-    RuleParser parser = new RuleParser(tokens);
-    RuleList rulelist = `RuleList();
-    try {
-      Tree ast = (Tree)parser.graphruleset().getTree();
-      rulelist = (RuleList) RuleAdaptor.getTerm(ast);
-    } catch (org.antlr.runtime.RecognitionException e) {
-      GomMessage.error(getLogger(), null, 0, GomMessage.rulesParsingFailure);
-      return `ConcHookDecl();
-    }
-    return expand(rulelist,stratname,defaultstrat,sdecl);
+    return expand(rules,stratname,defaultstrat,sdecl);
   }
 
-  public HookDeclList expandFirstGraphRules(String sortname, String stratname, String defaultstrat, String ruleCode, Decl sdecl) {
-    HookDeclList expandedrules = expandGraphRules(sortname,stratname,defaultstrat,ruleCode, sdecl);
+  public HookDeclList expandFirstGraphRules(String sortname, String stratname, String defaultstrat, RuleList rules, Decl sdecl) {
+    HookDeclList expandedrules = expandGraphRules(sortname,stratname,defaultstrat,rules, sdecl);
     HookDeclList commonpart = expandFirst(sdecl);
     return `ConcHookDecl(commonpart*,expandedrules*);
   }

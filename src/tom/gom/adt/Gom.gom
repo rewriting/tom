@@ -1,5 +1,5 @@
 module Gom
-imports String Code int boolean
+imports String Code Rule int boolean
 abstract syntax
 
 Option = Origin(Line:int)
@@ -15,7 +15,7 @@ Section = Imports(ImportList:ImportList)
 SectionList = ConcSection(Section*)
 ImportList = ConcImportedModule(GomModuleName*)
 Production = Hook(NameType:IdKind, Name:String, HookType:HookKind,
-                  Args:ArgList, StringCode:String,Option:Option)
+                  Args:ArgList, HookContent:HookContent, Option:Option)
            | SortType(Type:GomType,Binds:AtomList,AlternativeList:AlternativeList)
            | AtomDecl(Name:String)
 ProductionList = ConcProduction(Production*)
@@ -71,6 +71,9 @@ HookDecl = MakeHookDecl(Pointcut:Decl,SlotArgs:SlotList,Code:Code,HookType:HookK
          | ImportHookDecl(Pointcut:Decl,Code:Code)
          | MappingHookDecl(Pointcut:Decl,Code:Code)
 HookDeclList = ConcHookDecl(HookDecl*)
+
+HookContent = HookCode(StringCode:String)
+            | HookRules(Rules:RuleList)
 
 /* Helper constructors */
 Pair = ModHookPair(Modules:ModuleList,HookDecls:HookDeclList)

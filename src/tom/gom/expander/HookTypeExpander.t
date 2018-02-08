@@ -33,6 +33,7 @@ import tom.gom.GomMessage;
 import tom.gom.GomStreamManager;
 import tom.gom.adt.gom.*;
 import tom.gom.adt.gom.types.*;
+import tom.gom.adt.rule.types.*;
 import tom.gom.tools.error.GomRuntimeException;
 import tom.gom.tools.GomEnvironment;
 import tom.gom.expander.rule.RuleExpander;
@@ -143,7 +144,7 @@ public class HookTypeExpander {
       /* check there is no other MakeHook attached to this operator */
       !ConcHookDecl(_*, MakeHookDecl[Pointcut=CutOperator[ODecl=OperatorDecl[Name=opName]]], _*) -> {
         /* generate a FL hook for list-operators without other hook */
-        String emptyCode = "{}";
+        HookContent emptyCode = `HookCode("{}");
         Production hook = `Hook(KindOperator(),opName,HookKind("FL"),ConcArg(),emptyCode,OptionList());
         OperatorDecl odecl = getOperatorDecl(`opName,`moduleName,moduleList);
         if (odecl!=null) {
@@ -177,9 +178,9 @@ public class HookTypeExpander {
   private HookDeclList makeHookDeclList(Production hook, Decl mdecl) {
     %match(hook) {
       Hook[HookType=hkind,
-        Name=hName,
-        Args=hookArgs,
-        StringCode=scode] -> {
+           Name=hName,
+           Args=hookArgs,
+           HookContent=HookCode(scode)] -> {
           HookDeclList newHookList = `ConcHookDecl();
           %match(hkind) {
             HookKind("block") -> {
@@ -231,17 +232,6 @@ public class HookTypeExpander {
             HookKind("ACU") -> {
               return `makeACUHookList(hName,mdecl,scode);
             }
-            HookKind("rules") -> {
-              return `makeRulesHookList(hName,mdecl,scode);
-            }
-            HookKind("graphrules") -> {
-              //TODO: verify if the option termgraph is on
-              if(`hookArgs.length()!=2) {
-                throw new GomRuntimeException(
-                    "GomTypeExpander:graphrules hooks need two parameters: the name of the generated strategy and its default behaviour");
-              }
-              return `makeGraphRulesHookList(hName,hookArgs,mdecl,scode);
-            }
           }
           if (newHookList == `ConcHookDecl()) {
             GomMessage.error(getLogger(),null,0,
@@ -249,6 +239,26 @@ public class HookTypeExpander {
           }
           return newHookList;
         }
+      Hook[HookType=hkind,
+           Name=hName,
+           Args=hookArgs,
+           HookContent=HookRules(rules)] -> {
+        HookDeclList newHookList = `ConcHookDecl();
+        %match(hkind) {
+          HookKind("rules") -> {
+            return `makeRulesHookList(hName,mdecl,rules);
+          }
+          HookKind("graphrules") -> {
+            //TODO: verify if the option termgraph is on
+            return `makeGraphRulesHookList(hName,hookArgs,mdecl,rules);
+          }
+        }
+        if (newHookList == `ConcHookDecl()) {
+          GomMessage.error(getLogger(),null,0,
+              GomMessage.unknownHookKind, `(hkind));
+        }
+        return newHookList;
+      }
     }
     throw new GomRuntimeException("HookTypeExpander: this hook is not a hook: "+ `hook );
   }
@@ -456,15 +466,15 @@ public class HookTypeExpander {
   /*
    * generate hooks for normalizing rules
    */
-  private HookDeclList makeRulesHookList(String opName, Decl mdecl, String scode) {
+  private HookDeclList makeRulesHookList(String opName, Decl mdecl, RuleList rules) {
     RuleExpander rexpander = new RuleExpander(moduleList);
-    return rexpander.expandRules(trimBracket(scode));
+    return rexpander.expandRules(rules);
   }
 
   /*
    * generate hooks for term-graph rules
    */
-  private HookDeclList makeGraphRulesHookList(String sortname, ArgList args, Decl sdecl, String scode) {
+  private HookDeclList makeGraphRulesHookList(String sortname, ArgList args, Decl sdecl, RuleList rules) {
     %match(args) {
       ConcArg(Arg[Name=stratname],Arg[Name=defaultstrat]) -> {
         if (!`defaultstrat.equals("Fail") && !`defaultstrat.equals("Identity")) {
@@ -472,10 +482,10 @@ public class HookTypeExpander {
         }
         GraphRuleExpander rexpander = new GraphRuleExpander(moduleList,getGomEnvironment());
         if (sortsWithGraphrules.contains(sdecl)) {
-          return rexpander.expandGraphRules(sortname,`stratname,`defaultstrat,trimBracket(scode),sdecl);
+          return rexpander.expandGraphRules(sortname,`stratname,`defaultstrat,rules,sdecl);
         } else {
           sortsWithGraphrules.add(sdecl);
-          return rexpander.expandFirstGraphRules(sortname,`stratname,`defaultstrat,trimBracket(scode),sdecl);
+          return rexpander.expandFirstGraphRules(sortname,`stratname,`defaultstrat,rules,sdecl);
         }
       }
     }

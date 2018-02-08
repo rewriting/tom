@@ -483,7 +483,7 @@ public class FreshExpander {
     (GomModuleList ml, String sort, String code) {
       Production hook =
         `Hook(KindSort(),sort,HookKind("javablock"),
-            ConcArg(),code,OptionList());
+            ConcArg(),HookCode(code),OptionList());
       try {
         return `OnceTopDown(AddHook(sort,hook)).visitLight(ml);
       }
@@ -506,7 +506,7 @@ public class FreshExpander {
         cons = st.getBaseName(cons);
       }
       Production hook = `Hook(kind,cons,HookKind("javablock"),
-          ConcArg(),code,OptionList());
+          ConcArg(),HookCode(code),OptionList());
       try {
         return `OnceTopDown(AddHook(sort,hook)).visitLight(ml);
       } catch (VisitFailure e) {
@@ -529,7 +529,7 @@ public class FreshExpander {
       }
       Production hook =
         `Hook(kind,st.rawCons(cons),HookKind("javablock"),
-            ConcArg(),code,OptionList());
+            ConcArg(),HookCode(code),OptionList());
       try {
         return `OnceTopDown(AddHook(st.rawCons(sort),hook)).visitLight(ml);
       }
@@ -543,7 +543,7 @@ public class FreshExpander {
     (GomModuleList ml, String sort, String code) {
       Production hook =
         `Hook(KindSort(),sort,HookKind("interface"),
-            ConcArg(),code,OptionList());
+            ConcArg(),HookCode(code),OptionList());
       try {
         return `OnceTopDown(AddHook(sort,hook)).visitLight(ml);
       }
@@ -566,7 +566,7 @@ public class FreshExpander {
         cons = st.getBaseName(cons);
       }
       Production hook = `Hook(kind,cons,HookKind("mapping"),
-          ConcArg(),code,OptionList());
+          ConcArg(),HookCode(code),OptionList());
       try {
         return `OnceTopDown(AddHook(sort,hook)).visitLight(ml);
       } catch (VisitFailure e) {

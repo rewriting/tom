@@ -25,10 +25,6 @@
 
 package tom.gom.expander.rule;
 
-import org.antlr.runtime.CommonTokenStream;
-import org.antlr.runtime.ANTLRStringStream;
-import org.antlr.runtime.tree.Tree;
-import tom.gom.adt.rule.RuleAdaptor;
 import java.util.logging.Level;
 import java.util.Map;
 import java.util.HashMap;
@@ -42,7 +38,6 @@ import tom.gom.tools.error.GomRuntimeException;
 public class RuleExpander {
 
   %include { ../../adt/gom/Gom.tom}
-  %include { ../../adt/rule/Rule.tom }
   %include { ../../../library/mapping/java/sl.tom}
 
   private ModuleList moduleList;
@@ -51,22 +46,7 @@ public class RuleExpander {
     this.moduleList = data;
   }
 
-  public HookDeclList expandRules(String ruleCode) {
-    RuleLexer lexer = new RuleLexer(new ANTLRStringStream(ruleCode));
-    CommonTokenStream tokens = new CommonTokenStream(lexer);
-    RuleParser parser = new RuleParser(tokens);
-    RuleList rulelist = `RuleList();
-    try {
-      Tree ast = (Tree) parser.ruleset().getTree();
-      rulelist = (RuleList) RuleAdaptor.getTerm(ast);
-    } catch (org.antlr.runtime.RecognitionException e) {
-      GomMessage.error(getLogger(), null, 0, GomMessage.rulesParsingFailure);
-      return `ConcHookDecl();
-    }
-    return expand(rulelist);
-  }
-
-  protected HookDeclList expand(RuleList rulelist) {
+  public HookDeclList expandRules(RuleList rulelist) {
     HookDeclList hookList = `ConcHookDecl();
     /* collect all rules for a given symbol */
     Map<OperatorDecl,RuleList> rulesForOperator =

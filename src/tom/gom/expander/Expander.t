@@ -37,12 +37,9 @@ import tom.gom.tools.GomEnvironment;
 import tom.gom.adt.gom.*;
 import tom.gom.adt.gom.types.*;
 
-import org.antlr.runtime.*;
-import org.antlr.runtime.tree.*;
+import org.antlr.v4.runtime.ANTLRInputStream;
 
-import tom.gom.parser.GomLanguageLexer;
-import tom.gom.parser.GomLanguageParser;
-import tom.gom.adt.gom.GomAdaptor;
+import tom.engine.parser.tomjava.*;
 
 public class Expander {
   %include { ../adt/gom/Gom.tom }
@@ -121,9 +118,9 @@ public class Expander {
           GomMessage.moduleNotFound);
       return null;
     }
-    final CharStream inputStream;
+    final ANTLRInputStream inputStream;
     try {
-      inputStream = new ANTLRReaderStream(new FileReader(importedModuleFile));
+      inputStream = new ANTLRInputStream(new FileReader(importedModuleFile));
     } catch (FileNotFoundException e) {
       GomMessage.error(getLogger(),moduleName+".gom",0,
           GomMessage.fileNotFound);
@@ -133,19 +130,9 @@ public class Expander {
           GomMessage.fileNotFound);
       return null;
     }
-		GomLanguageLexer lexer = new GomLanguageLexer(inputStream);
-		CommonTokenStream tokens = new CommonTokenStream(lexer);
-		GomLanguageParser parser = new GomLanguageParser(tokens,getStreamManager());
-    final GomModule result;
-    try {
-      Tree tree = (Tree) parser.module().getTree();
-      result = (GomModule) GomAdaptor.getTerm(tree);
-    } catch (RecognitionException re) {
-      GomMessage.error(getLogger(),moduleName+".gom", lexer.getLine(),
-          GomMessage.detailedParseException,
-          re.getMessage());
-      return null;
-    }
+    
+    tom.engine.parser.tomjava.TomParser parser = new tom.engine.parser.tomjava.TomParser(importedModuleFile.getName(), getLogger());
+    final GomModule result = parser.parseGom(inputStream, getStreamManager());
     return result;
   }
 

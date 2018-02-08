@@ -289,30 +289,8 @@
       <include name="tom/gom/**/*.t"/>
 
       <exclude name="tom/gom/**/*.g.t"/>
-      <exclude name="tom/engine/parser/**/*.g.t"/>
     </tomcompile>
 
-    <!-- Specific stuff for parser generation -->
-    <tomcompile fork="no"
-      srcdir="${src.src}"
-      options="--newparser"
-      outputfile="${gen.destination}/tom/engine/parser/antlr2/TomLanguage.g"
-      import="${src.gen}/tom/engine/adt">
-      <include name="tom/engine/parser/antlr2/TomLanguage.g.t"/>
-    </tomcompile>
-
-    <tomcompile srcdir="${src.src}"
-      options="--newparser"
-      outputfile="${gen.destination}/tom/engine/parser/antlr2/HostLanguage.g"
-      import="${src.gen}/tom/engine/adt">
-      <include name="tom/engine/parser/antlr2/HostLanguage.g.t"/>
-    </tomcompile>
-    <tomcompile srcdir="${src.src}"
-      options="--newparser"
-      outputfile="${gen.destination}/tom/engine/parser/antlr2/BackQuoteLanguage.g"
-      import="${src.gen}/tom/engine/adt">
-      <include name="tom/engine/parser/antlr2/BackQuoteLanguage.g.t"/>
-    </tomcompile>
   </target>
 
   <!-- compile tom files in src.src with tom.stable -->
@@ -336,33 +314,6 @@
   <target name="buildparser.common"
           if="gen.destination">
     <mkdir dir="${gen.destination}/tom/engine/parser"/>
-
-    <taskdef name="antlr2"
-             classname="org.apache.tools.ant.taskdefs.optional.ANTLR">
-      <classpath refid="stable.classpath"/>
-    </taskdef>
-    <antlr2 target="${src.src}/tom/engine/parser/antlr2/TomJavaParser.g"
-      outputdirectory="${gen.destination}/tom/engine/parser/antlr2">
-      <classpath refid="stable.classpath"/>
-    </antlr2>
-
-    <antlr2 target="${gen.destination}/tom/engine/parser/antlr2/TomLanguage.g"
-      outputdirectory="${gen.destination}/tom/engine/parser/antlr2">
-      <classpath refid="stable.classpath"/>
-    </antlr2>
-    <antlr2 target="${gen.destination}/tom/engine/parser/antlr2/HostLanguage.g"
-      outputdirectory="${gen.destination}/tom/engine/parser/antlr2">
-      <classpath refid="stable.classpath"/>
-    </antlr2>
-    <antlr2 target="${gen.destination}/tom/engine/parser/antlr2/BackQuoteLanguage.g"
-      outputdirectory="${gen.destination}/tom/engine/parser/antlr2">
-      <classpath refid="stable.classpath"/>
-    </antlr2>
-
-    <antlr2 target="${src.src}/tom/engine/parser/antlr2/BlockParser.g"
-      outputdirectory="${gen.destination}/tom/engine/parser/antlr2">
-      <classpath refid="stable.classpath"/>
-    </antlr2>
 
     <!-- Tom parser antlr4 -->
     <mkdir dir="${gen.destination}/tom/engine/parser/antlr4"/>
@@ -414,32 +365,6 @@
       <arg line="-package tom.engine.parser.tomjava"/>
     </java>
 
-    <!-- Gom parser -->
-    <mkdir dir="${gen.destination}/tom/gom/parser"/>
-    <taskdef name="antlr3"
-             classname="org.apache.tools.ant.antlr.ANTLR3">
-      <classpath refid="stable.classpath"/>
-    </taskdef>
-    <antlr3 target="${src.src}/tom/gom/parser/GomLanguage.g"
-            outputdirectory="${gen.destination}/tom/gom/parser"
-            libdirectory="${gen.destination}/tom/gom/adt/gom"
-            multithreaded="true">
-      <classpath refid="stable.classpath"/>
-    </antlr3>
-    <antlr3 target="${src.src}/tom/gom/parser/SimpleBlock.g"
-            outputdirectory="${gen.destination}/tom/gom/parser"
-            libdirectory="${gen.destination}/tom/gom/parser"
-            multithreaded="true">
-      <classpath refid="stable.classpath"/>
-    </antlr3>
-
-    <mkdir dir="${gen.destination}/tom/gom/expander/rule"/>
-    <antlr3 target="${src.src}/tom/gom/expander/rule/Rule.g"
-            outputdirectory="${gen.destination}/tom/gom/expander/rule"
-            libdirectory="${gen.destination}/tom/gom/adt/rule"
-            multithreaded="true">
-      <classpath refid="stable.classpath"/>
-    </antlr3>
   </target>
 
   <target name="touchgom"
