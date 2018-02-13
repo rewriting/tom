@@ -310,7 +310,9 @@ public class ExpanderPlugin extends TomGenericPlugin {
                           //default case (used for builtins too)                     
                           Instruction return_emptyArray = `CodeToInstruction(TargetLanguageToCode(ITL("return new Object[]{};")));
                           Instruction inst = `If(IsFsym(symbolName,var),If(IsEmptyList(symbolName,var),return_emptyArray,return_array),Nop());
-                          instructionsForSort = `concInstruction(instructionsForSort*,inst);
+                          // WARNING: list operator should be tested before other operators
+                          // they a inserted in front of the list
+                          instructionsForSort = `concInstruction(inst,instructionsForSort*);
                         } else if(TomBase.isArrayOperator(symbol)) {
                           // we consider that the children of an array are all its elements
                           BQTerm emptyArray = `Composite(CompositeTL(ITL("new Object[]{}")));
@@ -337,8 +339,9 @@ public class ExpanderPlugin extends TomGenericPlugin {
                                           ))))
                                   ), 
                                 Nop());
-                          instructionsForSort = `concInstruction(instructionsForSort*,inst);
-
+                          // WARNING: array operator should be tested before other operators
+                          // they a inserted in front of the list
+                          instructionsForSort = `concInstruction(inst,instructionsForSort*);
                         } else {
                           int arity = TomBase.getArity(symbol);
                           BQTerm composite = `Composite(CompositeTL(ITL("return new Object[]{")));
@@ -366,6 +369,8 @@ public class ExpanderPlugin extends TomGenericPlugin {
                           }
                           composite = `Composite(composite*,CompositeTL(ITL("};")));
                           Instruction inst = `If(IsFsym(symbolName,var),CodeToInstruction(BQTermToCode(composite)),Nop());
+                          // WARNING: free operator should be tested after other list operators
+                          // they a inserted at the end of the list
                           instructionsForSort = `concInstruction(instructionsForSort*,inst);
                         }
                       } 
@@ -420,7 +425,9 @@ public class ExpanderPlugin extends TomGenericPlugin {
                                                     ))),
                                               Return(res)))))),
                                     Nop());
-                              instructionsForSort = `concInstruction(instructionsForSort*,inst);
+                              // WARNING: list operator should be tested before other operators
+                              // they a inserted in front of the list
+                              instructionsForSort = `concInstruction(inst,instructionsForSort*);
                             }
                           }
                         } else if(TomBase.isArrayOperator(symbol)) {
@@ -447,10 +454,11 @@ public class ExpanderPlugin extends TomGenericPlugin {
                                                     ))),
                                               Return(res)))))),
                                     Nop());
-                              instructionsForSort = `concInstruction(instructionsForSort*,inst);
+                              // WARNING: list operator should be tested before other operators
+                              // they a inserted in front of the list
+                              instructionsForSort = `concInstruction(inst,instructionsForSort*);
                             }
                           }
-
                         } else {
                           int arity = TomBase.getArity(symbol);
                           BQTermList slots = `concBQTerm();

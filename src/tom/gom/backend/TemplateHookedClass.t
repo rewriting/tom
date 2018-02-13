@@ -161,6 +161,9 @@ public abstract class TemplateHookedClass extends TemplateClass {
       if(optionManager.getOptionValue("verbose")==Boolean.TRUE) {
         tomParams.add("--verbose");
       }
+      if(optionManager.getOptionValue("pretty")==Boolean.TRUE) {
+        tomParams.add("--pretty");
+      }
       tomParams.add("--output");
       tomParams.add(file_path);
     

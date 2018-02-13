@@ -63,9 +63,9 @@ public class SymbolTable {
   public final static TomType TYPE_UNKNOWN = `Type(concTypeOption(),"unknown type",EmptyTargetLanguageType());
 
   /** associate a symbol to a name */
-  private Map<String,TomSymbol> mapSymbolName = null;
+  private SortedMap<String,TomSymbol> mapSymbolName = null;
   /** associate a type to a name */
-  private Map<String,TomType> mapTypeName = null;
+  private SortedMap<String,TomType> mapTypeName = null;
   /** store symbols and types that are used */ 
   private Set<KeyEntry> usedKeyEntry = null;
 
@@ -76,8 +76,8 @@ public class SymbolTable {
   private boolean aCode = false;
 
   public void init(OptionManager optionManager) {
-    mapSymbolName = new HashMap<String,TomSymbol>();
-    mapTypeName = new HashMap<String,TomType>();
+    mapSymbolName = new TreeMap<String,TomSymbol>();
+    mapTypeName = new TreeMap<String,TomType>();
     usedKeyEntry = new HashSet<KeyEntry>();
     mapInliner = new HashMap<String,String>();
 
@@ -131,6 +131,15 @@ public class SymbolTable {
 
   public Collection<TomType> getUsedTypes() {
     return mapTypeName.values();
+    /*
+    List<TomType> res = new ArrayList<TomType>();
+    SortedSet<String> orderedKeys = new TreeSet<String>(mapTypeName.keySet());
+    for (String key : orderedKeys) { 
+      TomType value = mapTypeName.get(key);
+      res.add(value);
+    }
+    return res;
+    */
   }
 
   public TomType getType(String name) {

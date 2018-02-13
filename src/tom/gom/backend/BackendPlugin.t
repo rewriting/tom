@@ -58,6 +58,7 @@ public class BackendPlugin extends GomGenericPlugin {
         PluginOption("newtyper", "nt", "New TyperPlugin (activated by default since Tom-2.10)", BooleanValue(True()), ""),
         PluginOption("newparser", "np", "New parser plugin (not activated by default)", BooleanValue(False()), ""),
         PluginOption("tomjava", "tj", "Parser tailored for Tom+Java (activated by default)", BooleanValue(True()), ""),
+        PluginOption("pretty", "p", "Generate readable code", BooleanValue(False()), ""),
         PluginOption("optimize", "O", "Optimize generated code: perform inlining", BooleanValue(True()), ""),
         PluginOption("optimize2", "O2", "Optimize generated code: discrimination tree", BooleanValue(False()), ""),
         PluginOption("inlineplus", "", "Make inlining active", BooleanValue(False()), ""),
