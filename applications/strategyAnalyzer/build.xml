@@ -23,10 +23,12 @@
     </fileset>
   </path>
 
+  <!--
   <taskdef name="antlr3"
     classname="org.apache.tools.ant.antlr.ANTLR3">
     <classpath refid="tom.classpath"/>
   </taskdef>
+-->
 
   <target name="init" depends="tom.init">
     <mkdir dir="${sa.build}"/>
@@ -58,11 +60,24 @@
     </gom.preset>
   </target>
 
+  <property name="antlr4.dir" location="${tom.home}/lib/tools"/>
+
   <target name="antlr" depends="gomantlradapter">
+    <java jar="${antlr4.dir}/antlr-4.5.3-complete.jar" fork="true">
+      <arg line="${sa.src}/${sa.package}/ProgramSyntax.g4"/>
+      <arg line="-o ${sa.gen}/${sa.package}"/>
+      <arg line="-lib ${sa.gen}/${sa.package}/rule"/>
+      <arg line="-listener -no-visitor"/>
+      <arg line="-package sa"/>
+    </java>
+
+    <!--
     <antlr3 target="${sa.src}/${sa.grammar}.g"
-            libdirectory="${sa.gen}/${sa.package}/rule"
-            outputdirectory="${sa.gen}/${sa.package}"
-            />
+      libdirectory="${sa.gen}/${sa.package}/rule"
+      outputdirectory="${sa.gen}/${sa.package}"
+      />
+-->
+
   </target>
 
   <target name="javac" depends="tom, antlr">

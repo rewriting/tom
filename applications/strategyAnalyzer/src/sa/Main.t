@@ -1,9 +1,12 @@
 package sa;
 
-import org.antlr.runtime.CommonTokenStream;
-import org.antlr.runtime.ANTLRInputStream;
-import org.antlr.runtime.tree.Tree;
-import sa.rule.RuleAdaptor;
+//import org.antlr.runtime.CommonTokenStream;
+//import org.antlr.runtime.ANTLRInputStream;
+//import org.antlr.runtime.tree.Tree;
+//import sa.rule.RuleAdaptor;
+
+import org.antlr.v4.runtime.*;
+import org.antlr.v4.runtime.tree.*;                                                                                                    
 import sa.rule.types.*;
 import java.util.*;
 import java.io.*;
@@ -49,11 +52,27 @@ public class Main {
         fileinput = new FileInputStream(options.in);
       }
 
+      // ANTLR4
+      ANTLRInputStream input = new ANTLRInputStream(fileinput);
+      sa.ProgramSyntaxLexer lexer = new sa.ProgramSyntaxLexer(input);
+      CommonTokenStream tokens = new CommonTokenStream(lexer);
+      sa.ProgramSyntaxParser parser = new sa.ProgramSyntaxParser(tokens);
+      parser.setBuildParseTree(true); // tell ANTLR to build a parse tree
+      ParseTree tree = parser.program(); // parse
+
+      ParseTreeWalker walker = new ParseTreeWalker();
+      sa.AstBuilder astBuilder = new sa.AstBuilder(); 
+      walker.walk(astBuilder, tree);
+      Program program = (Program) astBuilder.getValue(tree);
+
+      // ANTLR3
+      /*
       RuleLexer lexer = new RuleLexer(new ANTLRInputStream(fileinput));
       CommonTokenStream tokens = new CommonTokenStream(lexer);
       RuleParser ruleParser = new RuleParser(tokens);
       Tree tree = (Tree) ruleParser.program().getTree();
       Program program = (Program) RuleAdaptor.getTerm(tree);
+      */
 
       /*
        * Compilation of the strategy section
