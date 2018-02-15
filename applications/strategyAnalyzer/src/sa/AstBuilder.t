@@ -5,6 +5,7 @@ import org.antlr.v4.runtime.tree.*;
 import org.antlr.v4.runtime.misc.*;
 
 import sa.rule.types.*;
+import java.util.*;
 
 /**
  * This class provides an empty implementation of {@link RuleListener},
@@ -36,42 +37,18 @@ public class AstBuilder extends ProgramSyntaxBaseListener {
     setValue(ctx,`Program(as,f,s,t));
   }
   
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterAbstractsyntax(ProgramSyntaxParser.AbstractsyntaxContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitAbstractsyntax(ProgramSyntaxParser.AbstractsyntaxContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterFunctions(ProgramSyntaxParser.FunctionsContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitFunctions(ProgramSyntaxParser.FunctionsContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterStrategies(ProgramSyntaxParser.StrategiesContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitStrategies(ProgramSyntaxParser.StrategiesContext ctx) { }
+	@Override public void exitAbstractsyntax(ProgramSyntaxParser.AbstractsyntaxContext ctx) {
+    setValue(ctx,buildProductionList(ctx.typedecl()));
+  }
+
+	@Override public void exitFunctions(ProgramSyntaxParser.FunctionsContext ctx) { 
+    setValue(ctx,buildProductionList(ctx.typedecl()));
+  }
+	
+  @Override public void exitStrategies(ProgramSyntaxParser.StrategiesContext ctx) { 
+    setValue(ctx,buildStratDeclList(ctx.stratdecl()));
+  }
+
 	/**
 	 * {@inheritDoc}
 	 *
@@ -313,4 +290,25 @@ public class AstBuilder extends ProgramSyntaxBaseListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void visitErrorNode(ErrorNode node) { }
+
+  private ProductionList buildProductionList(List<? extends ParserRuleContext> ctx) { 
+    ProductionList res = `ConcProduction(); 
+    if(ctx != null) { 
+      for(ParserRuleContext e:ctx) { 
+        res = `ConcProduction(res*, (Production)getValue(e)); 
+      } 
+    } 
+    return res; 
+  } 
+  
+  private StratDeclList buildStratDeclList(List<? extends ParserRuleContext> ctx) { 
+    StratDeclList res = `ConcStratDecl(); 
+    if(ctx != null) { 
+      for(ParserRuleContext e:ctx) { 
+        res = `ConcStratDecl(res*, (StratDecl)getValue(e)); 
+      } 
+    } 
+    return res; 
+  } 
+  
 }
