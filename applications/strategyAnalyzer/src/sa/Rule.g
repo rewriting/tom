@@ -50,9 +50,9 @@ trs :
 ;
 
 stratdecl :
-    stratname=ID paramlist  EQUALS strategy
-      -> ^(StratDecl $stratname paramlist strategy)
-  ;
+  stratname=ID paramlist EQUALS strategy
+    -> ^(StratDecl $stratname paramlist strategy)
+;
 
 paramlist :
   LPAR (param (COMMA param)* )? RPAR

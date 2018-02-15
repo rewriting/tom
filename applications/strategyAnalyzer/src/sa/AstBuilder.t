@@ -18,7 +18,13 @@ public class AstBuilder extends ProgramSyntaxBaseListener {
   private ParseTreeProperty<Object> values = new ParseTreeProperty<Object>();
   private void setValue(ParseTree node, Object value) { values.put(node, value); } 
   public Object getValue(ParseTree node) { return values.get(node); }
+  public String getStringValue(ParseTree node) { return (String) getValue(node); }
 
+  /*
+   * program
+   *  : abstractsyntax (functions)? (strategies)? (trs)? EOF
+   *  ;
+   */
 	@Override public void exitProgram(ProgramSyntaxParser.ProgramContext ctx) { 
     ProductionList as = (ProductionList) getValue(ctx.abstractsyntax()); 
     ProductionList f = `ConcProduction();
@@ -36,260 +42,201 @@ public class AstBuilder extends ProgramSyntaxBaseListener {
     } 
     setValue(ctx,`Program(as,f,s,t));
   }
-  
+
+  /*
+   * abstractsyntax
+   *   : (ABSTRACT SYNTAX) (typedecl)*
+   *   ;
+   */
 	@Override public void exitAbstractsyntax(ProgramSyntaxParser.AbstractsyntaxContext ctx) {
     setValue(ctx,buildProductionList(ctx.typedecl()));
   }
 
+  /*
+   * functions
+   *   : (FUNCTIONS) (typedecl)*
+   *   ;
+   */
 	@Override public void exitFunctions(ProgramSyntaxParser.FunctionsContext ctx) { 
     setValue(ctx,buildProductionList(ctx.typedecl()));
   }
 	
+  /*
+   * strategies
+   *   : STRATEGIES (stratdecl)*
+   *   ;
+   */
   @Override public void exitStrategies(ProgramSyntaxParser.StrategiesContext ctx) { 
     setValue(ctx,buildStratDeclList(ctx.stratdecl()));
   }
 
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
+  /*
+   * trs 
+   *   : TRS LBRACKET (rwrule (COMMA? rwrule)*) RBRACKET
+   *   | TRS (rwrule (COMMA? rwrule)*) 
+   *   ;
+   */
+	@Override public void exitTrs(ProgramSyntaxParser.TrsContext ctx) { 
+    RuleList rl = buildRuleList(ctx.rwrule());
+    if(ctx.LBRACKET() != null) {
+      setValue(ctx,`Otrs(rl));
+    } else {
+      setValue(ctx,`Trs(rl));
+    }
+  }
+
+  /*
+   * stratdecl
+   *   : ID paramlist EQUALS strategy
+   *   ;
+   */
+	@Override public void exitStratdecl(ProgramSyntaxParser.StratdeclContext ctx) {
+    String n = getStringValue(ctx.ID());
+    ParamList pl = (ParamList) getValue(ctx.paramlist());
+    Strat s = (Strat) getValue(ctx.strategy());
+    setValue(ctx,`StratDecl(n,pl,s));
+  }
+
+	/*
+	 * paramlist
+   *   : LPAR (param (COMMA param)* )? RPAR
+   *   ;
 	 */
-	@Override public void enterTrs(ProgramSyntaxParser.TrsContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
+	@Override public void exitParamlist(ProgramSyntaxParser.ParamlistContext ctx) { 
+    setValue(ctx,buildParamList(ctx.param()));
+  }
+
+	/*
+	 * param
+   *   : ID
+   *   ;
 	 */
-	@Override public void exitTrs(ProgramSyntaxParser.TrsContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterStratdecl(ProgramSyntaxParser.StratdeclContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitStratdecl(ProgramSyntaxParser.StratdeclContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterParamlist(ProgramSyntaxParser.ParamlistContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitParamlist(ProgramSyntaxParser.ParamlistContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterParam(ProgramSyntaxParser.ParamContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitParam(ProgramSyntaxParser.ParamContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterTypedecl(ProgramSyntaxParser.TypedeclContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitTypedecl(ProgramSyntaxParser.TypedeclContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterAlternatives(ProgramSyntaxParser.AlternativesContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitAlternatives(ProgramSyntaxParser.AlternativesContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterOpdecl(ProgramSyntaxParser.OpdeclContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitOpdecl(ProgramSyntaxParser.OpdeclContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterFieldlist(ProgramSyntaxParser.FieldlistContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
+	@Override public void exitParam(ProgramSyntaxParser.ParamContext ctx) {
+    String p = getStringValue(ctx.ID());
+    setValue(ctx,`Param(p));
+  }
+
+  /*
+   * typedecl
+   *   : typename=id equals alts=alternatives
+   *   ;
+   */
+	@Override public void exitTypedecl(ProgramSyntaxParser.TypedeclContext ctx) { 
+  }
+
+  /*
+   * alternatives
+   *   : (alt)? opdecl (alt opdecl)* 
+   *   ;
+   */
+	@Override public void exitAlternatives(ProgramSyntaxParser.AlternativesContext ctx) { 
+  }
+
+  /*
+   * opdecl
+   *   : id fieldlist
+   *   ;
+   */
+	@Override public void exitOpdecl(ProgramSyntaxParser.OpdeclContext ctx) { 
+  }
+
+  /*
+   * fieldlist
+   *   : lpar (field (comma field)* )? rpar 
+   *   ;
+   */
 	@Override public void exitFieldlist(ProgramSyntaxParser.FieldlistContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterField(ProgramSyntaxParser.FieldContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
+
+  /*
+   * field
+   *   : type 
+   *   ;
+   */
 	@Override public void exitField(ProgramSyntaxParser.FieldContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterType(ProgramSyntaxParser.TypeContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
+
+  /*
+   * type
+   *   : id 
+   *   ;
+   */
 	@Override public void exitType(ProgramSyntaxParser.TypeContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterStrategy(ProgramSyntaxParser.StrategyContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
+
+  /*
+   * strategy
+   *   : s1=elementarystrategy (
+   *        semicolon s2=strategy
+   *      | choice s3=strategy
+   *      )?
+   *   | lbrace (rwrule (comma? rwrule)*) rbrace 
+   *   | lbracket (rwrule (comma? rwrule)*) rbraCKET 
+   *   ;
+   */
 	@Override public void exitStrategy(ProgramSyntaxParser.StrategyContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterElementarystrategy(ProgramSyntaxParser.ElementarystrategyContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
+
+  /*
+   * elementarystrategy
+   *   : identity 
+   *   | fail 
+   *   | lpar strategy rpar 
+   *   | all lpar strategy rpar 
+   *   | one lpar strategy rpar 
+   *   | mu id dot lpar strategy rpar 
+   *   | id lpar (strategy (comma strategy)*)? rPAR
+   *   | id 
+   *   ;
+   */
 	@Override public void exitElementarystrategy(ProgramSyntaxParser.ElementarystrategyContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterRwrule(ProgramSyntaxParser.RwruleContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
+
+  /*
+   * rwrule
+   *   : pattern arrow term (if cond=condition)?
+   *   | id arrow term (if cond=condition)?
+   *   ;
+   */
 	@Override public void exitRwrule(ProgramSyntaxParser.RwruleContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterCondition(ProgramSyntaxParser.ConditionContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
+
+  /*
+   * condition
+   *   : p1=term doubleequals p2=term
+   *   ;
+   */
 	@Override public void exitCondition(ProgramSyntaxParser.ConditionContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterPattern(ProgramSyntaxParser.PatternContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
+
+  /*
+   * pattern
+   *   : id lpar (term (comma term)*)? rpar 
+   *   | '!' term 
+   *   ;
+   */
 	@Override public void exitPattern(ProgramSyntaxParser.PatternContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterTerm(ProgramSyntaxParser.TermContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
+
+  /*
+   * term
+   *   : pattern
+   *   | id 
+   *   | builtin
+   *   ;
+   */
 	@Override public void exitTerm(ProgramSyntaxParser.TermContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterBuiltin(ProgramSyntaxParser.BuiltinContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
+
+  /*
+   * builtin
+   *   : int 
+   *   ;
+   */
 	@Override public void exitBuiltin(ProgramSyntaxParser.BuiltinContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterSymbol(ProgramSyntaxParser.SymbolContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
+
+  /*
+   * symbol
+   *   : id colon int 
+   *   ;
+   */
 	@Override public void exitSymbol(ProgramSyntaxParser.SymbolContext ctx) { }
 
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterEveryRule(ParserRuleContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitEveryRule(ParserRuleContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void visitTerminal(TerminalNode node) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void visitErrorNode(ErrorNode node) { }
+
+	//@Override public void exiteveryrule(parserRuleContext ctx) { }
+	//@Override public void visitterminal(terminalNode node) { }
+	//@Override public void visiterrornode(errorNode node) { }
 
   private ProductionList buildProductionList(List<? extends ParserRuleContext> ctx) { 
     ProductionList res = `ConcProduction(); 
@@ -310,5 +257,24 @@ public class AstBuilder extends ProgramSyntaxBaseListener {
     } 
     return res; 
   } 
+
+  private RuleList buildRuleList(List<? extends ParserRuleContext> ctx) { 
+    RuleList res = `ConcRule(); 
+    if(ctx != null) { 
+      for(ParserRuleContext e:ctx) { 
+        res = `ConcRule(res*, (Rule)getValue(e)); 
+      } 
+    } 
+    return res; 
+  } 
   
+  private ParamList buildParamList(List<? extends ParserRuleContext> ctx) { 
+    ParamList res = `ConcParam(); 
+    if(ctx != null) { 
+      for(ParserRuleContext e:ctx) { 
+        res = `ConcParam(res*, (Param)getValue(e)); 
+      } 
+    } 
+    return res; 
+  } 
 }

@@ -2,75 +2,75 @@
 grammar ProgramSyntax;
 
 // new syntax
-program :
-  abstractsyntax (f=functions)? (s=strategies)? (t=trs)? EOF
-;
+program
+  : abstractsyntax (functions)? (strategies)? (trs)? EOF
+  ;
 
-abstractsyntax :
-  (ABSTRACT SYNTAX) (typedecl)*
-;
+abstractsyntax
+  : (ABSTRACT SYNTAX) (typedecl)*
+  ;
 
-functions :
-  (FUNCTIONS) (typedecl)*
-;
+functions
+  : (FUNCTIONS) (typedecl)*
+  ;
 
-strategies :
-  STRATEGIES (stratdecl)*
-;
+strategies
+  : STRATEGIES (stratdecl)*
+  ;
 
-trs :
-  TRS LBRACKET (rwrule (COMMA? rwrule)*) RBRACKET
-| TRS (rwrule (COMMA? rwrule)*) 
-;
+trs 
+  : TRS LBRACKET (rwrule (COMMA? rwrule)*) RBRACKET
+  | TRS (rwrule (COMMA? rwrule)*) 
+  ;
 
-stratdecl :
-  stratname=ID paramlist EQUALS strategy
-;
+stratdecl
+  : ID paramlist EQUALS strategy
+  ;
 
-paramlist :
-  LPAR (param (COMMA param)* )? RPAR
-;
+paramlist
+  : LPAR (param (COMMA param)* )? RPAR
+  ;
 
-param:
-  ID
-;
+param
+  : ID
+  ;
 
 //----------------------------
-typedecl :
-  typename=ID EQUALS alts=alternatives
-;
+typedecl
+  : typename=ID EQUALS alts=alternatives
+  ;
 
-alternatives :
-  (ALT)? opdecl (ALT opdecl)* 
-;
+alternatives
+  : (ALT)? opdecl (ALT opdecl)* 
+  ;
 
-opdecl :
-  ID fieldlist
-;
+opdecl
+  : ID fieldlist
+  ;
 
-fieldlist :
-  LPAR (field (COMMA field)* )? RPAR 
-;
+fieldlist
+  : LPAR (field (COMMA field)* )? RPAR 
+  ;
 
-field:
-  type 
-;
+field
+  : type 
+  ;
 
-type:
-  ID 
-;
+type
+  : ID 
+  ;
 
-strategy :
-  s1=elementarystrategy (
+strategy
+  : s1=elementarystrategy (
        SEMICOLON s2=strategy
      | CHOICE s3=strategy
      )?
   | LBRACE (rwrule (COMMA? rwrule)*) RBRACE 
   | LBRACKET (rwrule (COMMA? rwrule)*) RBRACKET 
-;
+  ;
 
-elementarystrategy :
-    IDENTITY 
+elementarystrategy
+  : IDENTITY 
   | FAIL 
   | LPAR strategy RPAR 
   | ALL LPAR strategy RPAR 
@@ -78,41 +78,41 @@ elementarystrategy :
   | MU ID DOT LPAR strategy RPAR 
   | ID LPAR (strategy (COMMA strategy)*)? RPAR
   | ID 
-;
+  ;
 
-rwrule :
-  pattern ARROW term (IF cond=condition)?
-| ID ARROW term (IF cond=condition)?
-;
+rwrule
+  : pattern ARROW term (IF cond=condition)?
+  | ID ARROW term (IF cond=condition)?
+  ;
 
-condition :
-  p1=term DOUBLEEQUALS p2=term
-;
+condition
+  : p1=term DOUBLEEQUALS p2=term
+  ;
 
-pattern :
-  ID LPAR (term (COMMA term)*)? RPAR 
-| '!' term 
-;
-term :
-    pattern
+pattern
+  : ID LPAR (term (COMMA term)*)? RPAR 
+  | '!' term 
+  ;
+
+term
+  : pattern
   | ID 
   | builtin
-;
+  ;
 
-builtin :
-  INT 
-;
+builtin
+  : INT 
+  ;
 
-symbol :
-  ID COLON INT 
-;
+symbol
+  : ID COLON INT 
+  ;
 
 ABSTRACT : 'abstract';
 SYNTAX   : 'syntax';
 STRATEGIES   : 'strategies';
 FUNCTIONS : 'functions';
 TRS : 'trs';
-
 
 ARROW : '->' ;
 AMPERCENT : '&' ;
