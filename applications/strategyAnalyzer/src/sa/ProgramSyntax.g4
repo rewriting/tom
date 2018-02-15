@@ -37,7 +37,7 @@ param
 
 //----------------------------
 typedecl
-  : typename=ID EQUALS alts=alternatives
+  : ID EQUALS alternatives
   ;
 
 alternatives
@@ -72,17 +72,17 @@ strategy
 elementarystrategy
   : IDENTITY 
   | FAIL 
-  | LPAR strategy RPAR 
-  | ALL LPAR strategy RPAR 
-  | ONE LPAR strategy RPAR 
-  | MU ID DOT LPAR strategy RPAR 
+  | LPAR s=strategy RPAR 
+  | ALL LPAR all=strategy RPAR 
+  | ONE LPAR one=strategy RPAR 
+  | MU ID DOT LPAR mu=strategy RPAR 
   | ID LPAR (strategy (COMMA strategy)*)? RPAR
-  | ID 
+  | name=ID 
   ;
 
 rwrule
-  : pattern ARROW term (IF cond=condition)?
-  | ID ARROW term (IF cond=condition)?
+  : pattern ARROW term (IF condition)?
+  | ID ARROW term (IF condition)?
   ;
 
 condition
@@ -91,7 +91,7 @@ condition
 
 pattern
   : ID LPAR (term (COMMA term)*)? RPAR 
-  | '!' term 
+  | '!' anti=term 
   ;
 
 term
