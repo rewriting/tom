@@ -65,6 +65,7 @@ public class Main {
       walker.walk(astBuilder, tree);
       Program program = (Program) astBuilder.getValue(tree);
 
+      System.out.println("program: " + program);
       // ANTLR3
       /*
       RuleLexer lexer = new RuleLexer(new ANTLRInputStream(fileinput));

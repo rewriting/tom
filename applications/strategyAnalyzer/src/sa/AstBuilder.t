@@ -214,9 +214,9 @@ public class AstBuilder extends ProgramSyntaxBaseListener {
     } else {
       RuleList rl = buildRuleList(ctx.rwrule());
       if(ctx.LBRACKET() != null) {
-        setValue(ctx,`Otrs(rl));
+        setValue(ctx,`StratTrs(Otrs(rl)));
       } else {
-        setValue(ctx,`Trs(rl));
+        setValue(ctx,`StratTrs(Trs(rl)));
       }
     }
   }
@@ -346,6 +346,7 @@ public class AstBuilder extends ProgramSyntaxBaseListener {
 	@Override public void exitSymbol(ProgramSyntaxParser.SymbolContext ctx) { 
     setValue(ctx, `Symbol(ctx.ID().getText(),Integer.parseInt(ctx.INT().getText())));
   }
+
 
 
   private ProductionList buildProductionList(List<? extends ParserRuleContext> ctx) { 
