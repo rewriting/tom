@@ -20,7 +20,6 @@ public class AstBuilder extends ProgramSyntaxBaseListener {
   public Object getValue(ParseTree node) { 
     return (node==null)?null:values.get(node); 
   }
-  public String getStringValue(ParseTree node) { return (String) getValue(node); }
 
   private ParseTreeProperty<Object> values2 = new ParseTreeProperty<Object>();
   private void setValue2(ParseTree node, Object value) { values2.put(node, value); } 
@@ -353,49 +352,49 @@ public class AstBuilder extends ProgramSyntaxBaseListener {
     ProductionList res = `ConcProduction(); 
     if(ctx != null) { 
       for(ParserRuleContext e:ctx) { 
-        res = `ConcProduction(res*, (Production)getValue(e)); 
+        res = `ConcProduction((Production)getValue(e), res*);
       } 
     } 
-    return res; 
+    return res.reverse(); 
   } 
   
   private StratDeclList buildStratDeclList(List<? extends ParserRuleContext> ctx) { 
     StratDeclList res = `ConcStratDecl(); 
     if(ctx != null) { 
       for(ParserRuleContext e:ctx) { 
-        res = `ConcStratDecl(res*, (StratDecl)getValue(e)); 
+        res = `ConcStratDecl((StratDecl)getValue(e),res*);
       } 
     } 
-    return res; 
+    return res.reverse(); 
   } 
 
   private RuleList buildRuleList(List<? extends ParserRuleContext> ctx) { 
     RuleList res = `ConcRule(); 
     if(ctx != null) { 
       for(ParserRuleContext e:ctx) { 
-        res = `ConcRule(res*, (Rule)getValue(e)); 
+        res = `ConcRule((Rule)getValue(e),res*);
       } 
     } 
-    return res; 
+    return res.reverse(); 
   } 
   
   private ParamList buildParamList(List<? extends ParserRuleContext> ctx) { 
     ParamList res = `ConcParam(); 
     if(ctx != null) { 
       for(ParserRuleContext e:ctx) { 
-        res = `ConcParam(res*, (Param)getValue(e)); 
+        res = `ConcParam((Param)getValue(e),res*);
       } 
     } 
-    return res; 
+    return res.reverse(); 
   } 
 
   private AlternativeList buildAlternativeList(List<? extends ParserRuleContext> ctx) { 
     AlternativeList res = `ConcAlternative(); 
     if(ctx != null) { 
       for(ParserRuleContext e:ctx) { 
-        res = `ConcAlternative(res*, (Alternative)getValue(e)); 
+        res = `ConcAlternative((Alternative)getValue(e),res*);
       } 
     } 
-    return res; 
+    return res.reverse(); 
   } 
 }

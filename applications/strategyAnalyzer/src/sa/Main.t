@@ -1,10 +1,5 @@
 package sa;
 
-//import org.antlr.runtime.CommonTokenStream;
-//import org.antlr.runtime.ANTLRInputStream;
-//import org.antlr.runtime.tree.Tree;
-//import sa.rule.RuleAdaptor;
-
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.*;                                                                                                    
 import sa.rule.types.*;
@@ -17,8 +12,6 @@ public class Main {
   protected static Options options = new Options();
 
   public static void main(String[] args) {
-    Pretty pretty = new Pretty();
-
     CmdLineParser optionParser = new CmdLineParser(options);
     optionParser.setUsageWidth(80);
     try {
@@ -65,15 +58,7 @@ public class Main {
       walker.walk(astBuilder, tree);
       Program program = (Program) astBuilder.getValue(tree);
 
-      System.out.println("program: " + program);
-      // ANTLR3
-      /*
-      RuleLexer lexer = new RuleLexer(new ANTLRInputStream(fileinput));
-      CommonTokenStream tokens = new CommonTokenStream(lexer);
-      RuleParser ruleParser = new RuleParser(tokens);
-      Tree tree = (Tree) ruleParser.program().getTree();
-      Program program = (Program) RuleAdaptor.getTerm(tree);
-      */
+      //System.out.println("program: " + program);
 
       /*
        * Compilation of the strategy section

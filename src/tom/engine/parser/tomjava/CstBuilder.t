@@ -655,9 +655,9 @@ public class CstBuilder extends TomJavaParserBaseListener {
   public void exitGomOptions(TomJavaParser.GomOptionsContext ctx) {
     CstNameList nameList = `ConcCstName();
     for(TerminalNode e:ctx.DMINUSID()) {
-      nameList = `ConcCstName(nameList*, Cst_Name(e.getText()));
+      nameList = `ConcCstName(Cst_Name(e.getText()),nameList*);
     }
-    setValue("exitGomOptions", ctx, nameList);
+    setValue("exitGomOptions", ctx, nameList.reverse());
   }
   
   /*
@@ -1017,19 +1017,19 @@ public class CstBuilder extends TomJavaParserBaseListener {
       for(int i = 0; i < ctx.getChildCount(); i++) {
         if(ctx.getChild(i) instanceof TomJavaParser.CompositeContext) {
           CstBQTerm child = (CstBQTerm)getValue(ctx.getChild(i));
-          bqList = `ConcCstBQTerm(bqList*, child);
+          bqList = `ConcCstBQTerm(child, bqList*);
         } else if(ctx.getChild(i).getPayload() instanceof Token) {
           Token token = (Token) ctx.getChild(i).getPayload();
           CstOptionList tokenOptionList = `ConcCstOption(extractOption(token));
-          bqList = `ConcCstBQTerm(bqList*, Cst_ITL(tokenOptionList, token.getText()));
+          bqList = `ConcCstBQTerm(Cst_ITL(tokenOptionList, token.getText()), bqList*);
         } else {
           ParserRuleContext child = (ParserRuleContext) ctx.getChild(i);
           CstOptionList childOptionList = `ConcCstOption(extractOption(child.getStart()));
-          bqList = `ConcCstBQTerm(bqList*, Cst_ITL(childOptionList, child.getText()));
+          bqList = `ConcCstBQTerm(Cst_ITL(childOptionList, child.getText()), bqList*);
         }
       }
       
-      res = `Cst_BQComposite(optionList, bqList*);
+      res = `Cst_BQComposite(optionList, bqList.reverse());
     }
 
     setValue("exitComposite",ctx,res);
@@ -1149,9 +1149,9 @@ public class CstBuilder extends TomJavaParserBaseListener {
     int n = ctx.pattern().size();
     CstPatternList res = `ConcCstPattern();
     for(int i=0 ; i<n ; i++) {
-      res = `ConcCstPattern(res*, (CstPattern)getValue(ctx.pattern(i)));
+      res = `ConcCstPattern((CstPattern)getValue(ctx.pattern(i)), res*);
     }
-    setValue("exitExplicitArgs",ctx,res);
+    setValue("exitExplicitArgs",ctx,res.reverse());
   }
 
   /*
@@ -1163,9 +1163,9 @@ public class CstBuilder extends TomJavaParserBaseListener {
     int n = ctx.tomIdentifier().size();
     CstPairPatternList res = `ConcCstPairPattern();
     for(int i=0 ; i<n ; i++) {
-      res = `ConcCstPairPattern(res*, Cst_PairPattern(ctx.tomIdentifier(i).getText(), (CstPattern)getValue(ctx.pattern(i))));
+      res = `ConcCstPairPattern(Cst_PairPattern(ctx.tomIdentifier(i).getText(), (CstPattern)getValue(ctx.pattern(i))), res*);
     }
-    setValue("exitImplicitArgs",ctx,res);
+    setValue("exitImplicitArgs",ctx,res.reverse());
   }
 
   /*
@@ -1347,10 +1347,10 @@ public class CstBuilder extends TomJavaParserBaseListener {
   public void exitMake(TomJavaParser.MakeContext ctx) {
     CstNameList nameList = `ConcCstName();
     for(TomJavaParser.TomIdentifierContext e:ctx.tomIdentifier()) {
-      nameList = `ConcCstName(nameList*, Cst_Name(e.getText()));
+      nameList = `ConcCstName(Cst_Name(e.getText()), nameList*);
     }
     setValue("exitMake", ctx,
-        `Cst_Make(nameList, getBlockListFromBlock(ctx.termBlock())));
+        `Cst_Make(nameList.reverse(), getBlockListFromBlock(ctx.termBlock())));
   }
 
   /*
@@ -2337,80 +2337,80 @@ public class CstBuilder extends TomJavaParserBaseListener {
     CstBQTermList res = `ConcCstBQTerm();
     if(ctx != null) {
       for(ParserRuleContext e:ctx) {
-        res = `ConcCstBQTerm(res*, (CstBQTerm)getValue(e));
+        res = `ConcCstBQTerm((CstBQTerm)getValue(e), res*);
       }
     }
-    return res;
+    return res.reverse();
   }
   
   private CstPairSlotBQTermList buildCstPairSlotBQTermList(List<? extends ParserRuleContext> ctx) {
     CstPairSlotBQTermList res = `ConcCstPairSlotBQTerm();
     if(ctx != null) {
       for(ParserRuleContext e:ctx) {
-        res = `ConcCstPairSlotBQTerm(res*, (CstPairSlotBQTerm)getValue(e));
+        res = `ConcCstPairSlotBQTerm((CstPairSlotBQTerm)getValue(e), res*);
       }
     }
-    return res;
+    return res.reverse();
   }
 
   private CstConstraintActionList buildCstConstraintActionList(List<? extends ParserRuleContext> ctx) {
     CstConstraintActionList res = `ConcCstConstraintAction();
     if(ctx != null) {
       for(ParserRuleContext e:ctx) {
-        res = `ConcCstConstraintAction(res*, (CstConstraintAction)getValue(e));
+        res = `ConcCstConstraintAction((CstConstraintAction)getValue(e), res*);
       }
     }
-    return res;
+    return res.reverse();
   }
 
   private CstVisitList buildCstVisitList(List<? extends ParserRuleContext> ctx) {
     CstVisitList res = `ConcCstVisit();
     if(ctx != null) {
       for(ParserRuleContext e:ctx) {
-        res = `ConcCstVisit(res*, (CstVisit)getValue(e));
+        res = `ConcCstVisit((CstVisit)getValue(e), res*);
       }
     }
-    return res;
+    return res.reverse();
   }
 
   private CstSlotList buildCstSlotList(List<? extends ParserRuleContext> ctx) {
     CstSlotList res = `ConcCstSlot();
     if(ctx != null) {
       for(ParserRuleContext e:ctx) {
-        res = `ConcCstSlot(res*, (CstSlot)getValue(e));
+        res = `ConcCstSlot((CstSlot)getValue(e), res*);
       }
     }
-    return res;
+    return res.reverse();
   }
 
   private CstPatternList buildCstPatternList(List<? extends ParserRuleContext> ctx) {
     CstPatternList res = `ConcCstPattern();
     if(ctx != null) {
       for(ParserRuleContext e:ctx) {
-        res = `ConcCstPattern(res*, (CstPattern)getValue(e));
+        res = `ConcCstPattern((CstPattern)getValue(e), res*);
       }
     }
-    return res;
+    return res.reverse();
   }
 
   private CstTermList buildCstTermList(List<? extends ParserRuleContext> ctx) {
     CstTermList res = `ConcCstTerm();
     if(ctx != null) {
       for(ParserRuleContext e:ctx) {
-        res = `ConcCstTerm(res*, (CstTerm)getValue(e));
+        res = `ConcCstTerm((CstTerm)getValue(e), res*);
       }
     }
-    return res;
+    return res.reverse();
   }
 
   private CstSymbolList buildCstSymbolList(List<? extends ParserRuleContext> ctx) {
     CstSymbolList res = `ConcCstSymbol();
     if(ctx != null) {
       for(ParserRuleContext e:ctx) {
-        res = `ConcCstSymbol(res*, (CstSymbol)getValue(e));
+        res = `ConcCstSymbol((CstSymbol)getValue(e), res*);
       }
     }
-    return res;
+    return res.reverse();
   }
 
   /*
