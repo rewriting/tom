@@ -1,50 +1,41 @@
----
-title: Documentation:Tom
-permalink: /Documentation:Tom/
----
+# Tom
+## Notations
 
-Notations
-=========
+The syntax of the language is given in BNF-like notation. Terminal and non-terminal symbols are set in typewriter font (`'like this'`). Square brackets \[...\] denote optional components. Parentheses with a trailing star sign (...)\* denotes zero, one or several repetitions of the enclosed components. Parentheses with a trailing plus sign (...)+ denote one or several repetitions of the enclosed components. Parentheses (...) denote grouping.
 
-The syntax of the language is given in BNF-like notation. Terminal symbols are set in typewriter font (). Non-terminal symbols are set in italic font (). Square brackets \[...\] denote optional components. Parentheses with a trailing star sign (...)\* denotes zero, one or several repetitions of the enclosed components. Parentheses with a trailing plus sign (...)+ denote one or several repetitions of the enclosed components. Parentheses (...) denote grouping.
+### Lexical conventions
 
-Lexical conventions
--------------------
-```python
-Identifier	::=	Letter ( Letter ∣ Digit ∣ '_' ∣ '-' )*
-Integer	::=	(Digit )+
-Double	::=	(Digit)+ ['.'] (Digit)* ∣ '.' (Digit)+
-String	::=	'"' (Letter ∣ ('\' ('n' ∣ 't' ∣ 'b' ∣ 'r' ∣ 'f' ∣ '\' ∣ '’' ∣ '"') ) )* '"'
-Letter	::=	'A' ... 'Z' ∣ 'a' ... 'z'
-Digit	::=	'0' ... '9'
-Char	::=	'’' (Letter ∣Digit) '’'
+```java
+Identifier ::=	Letter ( Letter ∣ Digit ∣ '_' ∣ '-' )*
+Integer    ::=	(Digit )+
+Double     ::=	(Digit)+ ['.'] (Digit)* ∣ '.' (Digit)+
+String     ::=	'"' (Letter ∣ ('\' ('n' ∣ 't' ∣ 'b' ∣ 'r' ∣ 'f' ∣ '\' ∣ '’' ∣ '"') ) )* '"'
+Letter     ::=	'A' ... 'Z' ∣ 'a' ... 'z'
+Digit      ::=	'0' ... '9'
+Char       ::=	'’' (Letter ∣Digit) '’'
 ```
 
-Names
------
-```python
-SubjectName. ::= Identifier
-Type.        ::= Identifier
-SlotName.    ::= Identifier
-HeadSymbol   ::= Identifier
-             ∣  Integer
-             |  Double
-             ∣  String
-             ∣  Char
-VariableName ::=	Identifier
-AnnotedName  ::=	Identifier
+### Names
+```java
+SubjectName   ::=	Identifier
+Type          ::=	Identifier
+SlotName      ::=	Identifier
+HeadSymbol    ::=	Identifier
+              ∣		Integer
+              |		Double
+              ∣		String
+              ∣		Char
+VariableName  ::=	Identifier
+AnnotedName   ::=	Identifier
 LabelName     ::=	Identifier
 FileName      ::=	Identifier
 AttributeName ::=	Identifier
 XMLName       ::=	Identifier
 Name          ::=	Identifier
 ```
- constructs
-===========
+## Tom constructs
 
-A program is a host language program (namely , , or ) extended by several new constructs such as `%match`, `%strategy`, `%include`, `%gom`, or `backquote`. is a multi-language compiler, and therefore its syntax depends on the host language syntax. But for simplicity, we only present the syntax of its constructs and explain how they can be integrated into the host language.
-
-Using as a *host-language*, the following program is correct:
+A Tom program is a Java extended by several new constructs such as `%match`, `%strategy`, `%include`, `%gom`, or `backquote`. For example, the following Tom program is correct:
 
 ```java
 public class HelloWorld {
@@ -59,48 +50,44 @@ public class HelloWorld {
 }
 ```
 
- program
---------
+### Tom program
 
-A program is a list of blocks, where each block is either a construct, or a sequence of characters (host language code). When compiling a program, the constructs are transformed into host language code, and the result is a valid host language program. For instance, in the previous example, `%include` and `%match` constructs are replaced by function definitions and instructions, making the resulting program a correct program.
+A Tom program is a list of blocks, where each block is either a construct, or a sequence of characters (host language code). When compiling a program, the constructs are transformed into host language code, and the result is a valid host language program. For instance, in the previous example, `%include` and `%match` constructs are replaced by function definitions and instructions, making the resulting program a correct program.
 
 Syntax of a program:
 
-<div class="center">
-|     |     |     |
-|:----|:---:|:----|
-|     | ::= |     |
-|     | ::= |
-|     |  (  |     |
-|     |  ∣  |     |
-|     |  ∣  |     |
-|     |  ∣  |     |
-|     |  ∣  |     |
-|     |  ∣  |     |
-|     |  ∣  |     |
-|     |  ∣  |     |
-|     |  ∣  |     |
-|     |  ∣  |     |
-|     |  ∣  |     |
-|     | )\* |
+```java
+Tom       ::= BlockList
+BlockList ::=
+			(	MatchConstruct
+			∣	StrategyConstruct
+			∣	BackQuoteTerm
+			∣	IncludeConstruct
+			∣	GomConstruct
+			∣	TransformationConstruct
+			∣	TypeTerm
+			∣	Operator
+			∣	OperatorList
+			∣	OperatorArray
+			∣	'{' BlockList '}'
+			)*
+```
 
-</div>
--   is translated into a list of instructions. This construct may appear anywhere a list of instructions is valid in the host language.
+- `MatchConstruct` is translated into a list of instructions. This construct may appear anywhere a list of instructions is valid in a Java program.
 
--   is translated into a class definition. Since it is translated into a class, this construct is valid only for <font color="purple">Java</font>. For a more detailed documentation concerning strategies, please refer to [this page](/Documentation:Strategies "wikilink").
+- `StrategyConstruct` is translated into a class definition. For a more detailed documentation concerning strategies, please refer to Chapter [Strategie](Strategies.md).
 
--   is translated into a function call.
+- `BackQuoteTerm` is translated into a function call.
 
--   is replaced by the content of the file referenced by the construct. looks for include files in: `./packageName/`, `$TOM_HOME/share/jtom/` and <path>, where <path> is specified by option: `--import `<path>. If the file contains some constructs, they are expanded.
+- `IncludeConstruct` is replaced by the content of the file referenced by the construct. looks for include files in: `./packageName/`, `$TOM_HOME/share/jtom/` and <path>, where <path> is specified by option: `--import `<path>. If the file contains some constructs, they are expanded.
 
--   allows to define a grammar. This construct is replaced by the content of the generated mapping. See Section [Gom Construct](/Documentation:Tom#Gom_construct "wikilink") and Chapter [Documentation:Gom](/Documentation:Gom "wikilink") for more details.
+- `GomConstruct` allows to define a grammar. This construct is replaced by the content of the generated mapping. See Section [Gom construct](#gom-construct) and Chapter [Gom](Gom.md) for more details.
 
--   allows to write easily models transformations. It is compiled as a complex strategy which is called as every classical ones. For the moment, only <font color="purple">Java</font> and <font color="purple">EMF</font> are supported. Note that this construct is new and only available as an alpha version.
+- `TransformationConstruct` allows to write easily models transformations. It is compiled as a complex strategy which is called as every classical ones. For the moment, only Java and EMF are supported. Note that this construct is new and only available as an alpha version.
 
--   , as well as , , and are replaced by some functions definitions.
+- `TypeTerm`, as well as `Operator`, `OperatorList`, and `OperatorArray` are replaced by some functions definitions.
 
-Match construct
----------------
+### Match construct
 
 The `%match` construct () is one of the main contributions of . This construct can be seen as an extension of the construct in <font color="purple">C</font> or <font color="purple">Java</font>, except that patterns are no longer restricted to constants (chars or integers). Given an object (the subject) and a list of patterns, our goal is to find the first pattern that *matches* the subjects (i.e. that has a *compatible shape*). As in the construct, in a the type of each pattern is expected to be either the same or a subtype of that of the subject. More formally, a pattern is a term built over variables and constructors. The latter ones describe the *shape* of the pattern, whereas the variables are *holes* that can be instantiated to capture a value. When we consider the term *f*(*a*(),*g*(*b*())), it has to be viewed as a tree based data-structure with *f* as a root and *a*() the first child. Similarly, *b*() is the unique child of *g*, which is the second child of the root *f* . We say that the pattern *f*(*x*,*y*) matches this term (called subject), because we can give values to *x* and *y* such that the pattern and the subject become equal: we just have to assign *a*() to *x* and *g*(*b*()) to *y*. Finding this assignment is called matching and instantiating. This is exactly what is supposed to do. A pattern may of course contain subterms. Therefore, *f*(*x*,*g*(*b*())) or *f*(*a*(),*g*(*y*)) are valid patterns which match against the subject.
 
@@ -116,23 +103,21 @@ Assuming that `s` is a <font color="purple">Java</font> variable, referencing a 
 
 The `%match` construct is defined as follows:
 
-<div class="center">
-|     |     |                                 |
-|:----|:---:|:--------------------------------|
-|     | ::= |  ( )\*                          |
-|     |  ∣  |  ( )\*                          |
-|     | ::= | \[\] ( \[\] )\*                 |
-|     | ::= | \[\]                            |
-|     | ::= | ( )\* \[ ( ∣{{Terminal|<nowiki> |
-|     | ::= |                                 |
-|     | ::= |  \[\]                           |
-|     |  ∣  |                                 |
-|     |  ∣  | {{Terminal|<nowiki>             |
-|     |  ∣  |                                 |
-|     |  ∣  |                                 |
-|     | ::= | ∣ ∣ ∣ ∣ ∣                       |
+```java
+MatchConstruct	::=	'%match' '(' MatchArguments ')' '{' ( PatternAction )* '}'
+∣	'%match' '{' ( ConstraintAction )* '}'
+MatchArguments	::=	[Type] Term ( ',' [Type] Term )*
+PatternAction	::=	[LabelName':'] PatternList '->' '{' BlockList '}'
+PatternList	::=	Pattern( ',' Pattern )* [ ('&&' ∣'||') Constraint ]
+ConstraintAction	::=	Constraint '->' '{' BlockList '}'
+Constraint	::=	Pattern '<<' [Type] Term
+∣	Constraint '&&' Constraint
+∣	Constraint '||' Constraint
+∣	'(' Constraint ')'
+∣	Term Operator Term
+Operator	::=	'>' ∣'>=' ∣'<' ∣'<=' ∣'==' ∣'!='
+```
 
-</div>
 A is composed of two parts:
 
 -   a list of *subjects* (the arguments of `%match`). They can be declared with their respective types, for instance `Exp s` where `Exp` corresponds to the exact type or to a subtype of `s` in case of a downcast.
@@ -183,8 +168,7 @@ When using the new syntax based on constraints, there are several restrictions t
 -   no circular references among variables are allowed. For instance, something like `x << x` will generate an error. This verification works even when the cycles are less evident, like for instance for the following constraint: `f(g(x),a()) << y && f(b(),y) << z && g(f(z,c())) << x`.
 -   when using disjunctions, all the variables that are used in the action have to be found in each member of the disjunction (for ensuring that no non-instantiated variable is used in the action). For instance, using the following generates an error: `x << s1 || y << s2 -> { /* code that uses y */ }`
 
- pattern
---------
+### Tom pattern
 
 As we can imagine, the behavior of a `%match` construct strongly depends on the patterns which are involved. The formalism which defines the syntax of a pattern is also an essential component of . But because there exist several ways to define patterns with equivalent behavior, its formal definition is not so simple. Although, the different shortcuts help the programmer to simplify the definitions of patterns.
 
@@ -194,25 +178,23 @@ When identical actions have to be performed for a set of patterns which share a 
 
 More formally, a pattern and a term has the following syntax:
 
-<div class="center">
-|     |     |            |
-|:----|:---:|:-----------|
-|     | ::= | \[\]       |
-|     |  ∣  | \[ ( )\*\] |
-|     | ::= | \[ \]      |
-|     | ::= | \[\] \[ \] |
-|     |  ∣  | \[\] ( ∣ ) |
-|     |  ∣  |            |
-|     |  ∣  |            |
-|     |  ∣  |            |
-|     |  ∣  |            |
-|     | ::= | \[ \]      |
-|     |  ∣  |  ( )+      |
-|     | ::= | \[ ( )\*\] |
-|     | ::= | \[ ( )\*\] |
-|     | ::= |            |
+```java
+Term	::=	VariableName['*']
+∣	Name '('[Term ( ',' Term )*]')'
+Pattern	::=	[ AnnotedName '@' ] PlainPattern
+PlainPattern	::=	['!']VariableName [ '*' ]
+∣	['!'] HeadSymbolList (ExplicitTermList ∣ ImplicitPairList)
+∣	ExplicitTermList
+∣	'_'
+∣	'_*'
+∣	XMLTerm
+HeadSymbolList	::=	HeadSymbol [ '?' ]
+∣	'(' HeadSymbol ( '∣' HeadSymbol )+ ')'
+ExplicitTermList	::=	'(' [ Pattern ( ',' Pattern )*] ')'
+ImplicitPairList	::=	'[' [ PairPattern ( ',' PairPattern )*] ']'
+PairPattern	::=	SlotName '=' Pattern
+```
 
-</div>
 Concerning the syntax, both and host-language variables can be used and can be either a function symbol declared in or the name of a method from the host language.
 
 A pattern is a term which could contain variables. When matching a pattern against a subject (a ground term), these variables are instantiated by the matching procedure (generated by ). In , the variables do not have to be declared: their type is inferred automatically, depending on the context in which they appear.
@@ -238,38 +220,32 @@ L l = `a();
 
 Note that without the use of , the subject *must* start with a `conc` in order to have a match.
 
- anti-pattern
--------------
+### Tom anti-pattern
 
 The notion of anti-pattern offers more expressive power by allowing complement constructs: a pattern can describe what *should not* be in the matched subject.
 
 The notion of complement is introduced by the symbol , as illustrated by the following grammar fragment:
 
-<div class="center">
-|     |     |            |
-|:----|:---:|:-----------|
-|     | ::= | \[\]       |
-|     |  ∣  | \[\] ( ∣ ) |
-|     |  ∣  | ...        |
+```java
+PlainPattern	::=	['!'] VariableName
+∣	['!'] HeadSymbolList ( ExplicitTermList ∣ ImplicitPairList )
+∣	...
+```
 
-</div>
 The semantics of anti-patterns can be best understood when regarding them as complements. For example, a pattern like `car[color=blue()]` will match all the blue cars. If we add an symbol, the anti-pattern `!car[color=blue()]` will match everything that is not a blue car, i.e all objects that are not cars or the cars that have a color different from blue. The grammar allows also `car[color=!blue()]` - matches all cars that are not blue, or `!car[color=!blue()]` - either everything that is not a car, or a blue car.
 
 Using the non-linearity combined with anti-patterns allows to express interesting searches also. For example, `car[interiorColor=x,exteriorColor=x]` will match the cars that have the same interior and exterior color. By using the anti-pattern `car[interiorColor=x,exteriorColor=!x]`, the result is as one would expect: it will match all the cars with different interior - exterior colors.
 
 It is also possible to use the anti-patterns in list constructions. Please refer to the tutorial for more examples.
 
-Backquote construct
--------------------
+### Backquote construct
 
 Backquote construct (`` ` ``) can be used to build an algebraic term or to retrieve the value of a variable (a variable instantiated by pattern-matching).
 
-<div class="center">
-|     |     |      |
-|:----|:---:|:-----|
-|     | ::= | \[\] |
+```java
+BackQuoteTerm	::=	['`'] CompositeTerm
+```
 
-</div>
 The syntax of is not fixed since it depends on the underlying language.
 
 However, should be of the following form:
@@ -289,8 +265,7 @@ To simplify the interaction with the host-language, it is also possible to use �
 
 Backquote construct can use default values if they have been defined in the mapping (`get_default` construct). Assuming that *f*, *a* and *b* are Tom operators of sort *T*, and *f* has two fields *x* and *y* of sort *T*, where a default value for *x* is set to *a*. Two notations are available to build a *f* by using default value: the explicit one (`` `f[y=b()] ``) and the implicit one (`` `f(_,b()) ``). Both notations will return the term `` `f(a(),b()) ``.
 
-*Meta-quote* construct
-----------------------
+### *Meta-quote* construct
 
 provides the construct … that allows to build formatted strings without the need to encode special characters such as tabulations and carriage returns as it is usually done in <font color="purple">Java</font>. For example, to build a string containing the `HelloWorld` program, one can simply write:
 
@@ -319,8 +294,7 @@ String hello2=%[
 
 Even if the contents of the *meta-quote* construct is a formatted string, it is required that this string contains correctly balanced curly braces.
 
-Transformation construct
-------------------------
+### Transformation construct
 
 Transformation construct is a high level construct dedicated to EMF Ecore models transformations.
 
@@ -363,11 +337,9 @@ Here is the `%resolve` grammar:
 </div>
 <span style="color: red">Work in progress</span>
 
- signature constructs (**\***)
-==============================
+## Tom signature constructs (**\***)
 
-Sort and subsort definition constructs
---------------------------------------
+### Sort and subsort definition constructs
 
 To define the mapping between the algebraic constructors and their concrete implementation, provides a signature-mapping mechanism composed of several constructs. In addition to predefined mapping for usual builtin sorts (`int`, `long`, `double`, `boolean`, `string`, and `char`), all other algebraic sorts have to be declared using the `%typeterm` construct. Their name have to be different from the predefined builtin sorts names.
 
@@ -405,22 +377,19 @@ Note that multiple inheritance is not allowed in since a given algebraic sort ca
 
 The grammar is the following:
 
-<div class="center">
-|     |     |                                                                                                                   |
-|:----|:---:|:------------------------------------------------------------------------------------------------------------------|
-|     | ::= |                                                                                                                   |
-|     | ::= |                                                                                                                   |
-|     | ::= |  \[ \]                                                                                                            |
-|     |     | \[\] \[\]                                                                                                         |
-|     |     |                                                                                                                   |
-|     | ::= |                                                                                                                   |
-|     | ::= |                                                                                                                   |
-|     | ::= |                                                                                                                   |
-|     | ::= | | | ... (see [Gom tool](/Documentation:Using_Gom#Command_line_tool "wikilink") for the list of available options) |
+```java
+IncludeConstruct	::=	'%include' '{' FileName '}'
+GoalLanguageBlock	::=	'{' BlockList '}'
+TypeTerm	::=	'%typeterm' Type ['extends' Type] '{'
+KeywordImplement [KeywordIsSort] [KeywordEquals]
+'}'
+KeywordImplement	::=	'implement' GoalLanguageBlock
+KeywordIsSort	::=	'is_sort' GoalLanguageSortCheck
+KeywordEquals	::=	'equals' '(' Name ',' Name ')' GoalLanguageBlock
+OptionString	::=	'--fresh' | '--termgraph' | ... (see Gom tool for the list of available options)
+```
 
-</div>
-Constructor definition constructs
----------------------------------
+### Constructor definition constructs
 
 Once algebraic sorts are declared (using ), provides a mechanism to define signatures for constructors of these sorts using , or constructs. When defining a new symbol with the construct, the user should specify the name of the operator, its codomain, and its domain. The later one is defined by a list of pairs (slot-name, sort).
 
@@ -503,91 +472,42 @@ An auxiliary function `myAdd` is used since the `make_append` construct should r
 
 The grammar for the mapping constructs is the following:
 
-<div class="center">
-|     |     |              |
-|:----|:---:|:-------------|
-|     | ::= |  \[ ( )\* \] |
-|     |     | ( | ∣ ∣ )\*  |
-|     | ::= |              |
-|     |     |  (           |
-|     |     | ∣ ∣          |
-|     |     | ∣ ∣ )\*      |
-|     | ::= |              |
-|     |     |  ( ∣         |
-|     |     | ∣            |
-|     |     | ∣ )\*        |
-|     | ::= |              |
-|     | ::= |              |
-|     | ::= |              |
-|     | ::= | \[ ( )\* \]  |
-|     | ::= |              |
-|     | ::= |              |
-|     | ::= |              |
-|     | ::= | \[ \]        |
-|     | ::= |              |
-|     | ::= |              |
-|     | ::= |              |
-|     | ::= |              |
-|     | ::= |              |
+```java
+Operator	::=	'%op' Type Name'(' [ SlotName ':' Type ( ',' SlotName ':' Type )* ] ')'
+'{' ( KeywordIsFsym | KeywordMake ∣ KeywordGetSlot ∣ KeywordGetDefault )* '}'
+OperatorList	::=	'%oplist' Type Name '(' Type '*' ')'
+'{' KeywordIsFsym ( KeywordMakeEmptyList
+∣ KeywordMakeInsert ∣ KeywordGetHead
+∣ KeywordGetTail ∣ KeywordIsEmpty )* '}'
+OperatorArray	::=	'%oparray' Type Name '(' Type '*' ')'
+'{' KeywordIsFsym ( KeywordMakeEmptyArray ∣
+KeywordMakeAppend ∣ KeywordElement
+∣ KeywordGetSize )* '}'
+KeywordIsFsym	::=	'is_fsym' '(' Name ')' GoalLanguageBlock
+KeywordGetSlot	::=	'get_slot' '(' Name ',' Name ')' GoalLanguageBlock
+KeywordGetDefault	::=	'get_default' '(' Name ')' GoalLanguageBlock
+KeywordMake	::=	'make' [ '(' Name ( ',' Name )* ')' ] GoalLanguageBlock
+KeywordGetHead	::=	'get_head' '(' Name ')' GoalLanguageBlock
+KeywordGetTail	::=	'get_tail' '(' Name ')' GoalLanguageBlock
+KeywordIsEmpty	::=	'is_empty' '(' Name ')' GoalLanguageBlock
+KeywordMakeEmptyList	::=	'make_empty' [ '(' ')' ] GoalLanguageBlock
+KeywordMakeInsert	::=	'make_insert' '(' Name ',' Name ')' GoalLanguageBlock
+KeywordGetElement	::=	'get_element' '(' Name ',' Name ')' GoalLanguageBlock
+KeywordGetSize	::=	'get_size' '(' Name ')' GoalLanguageBlock
+KeywordMakeEmptyArray	::=	'make_empty' '(' Name ')' GoalLanguageBlock
+KeywordMakeAppend	::=	'make_append' '(' Name ',' Name ')' GoalLanguageBlock
+```
 
-</div>
-Predefined sorts and operators
-------------------------------
+### Predefined sorts and operators
 
 See Section [Predefined mappings](/Documentation:Runtime_Library#Predefined_mappings "wikilink") in the Runtime Library Chapter.
 
- construct
-----------
+### Gom construct
 
 The grammar for the construct is as follows:
 
-<div class="center">
-|     |     |       |
-|:----|:---:|:------|
-|     | ::= | \[ \] |
+```java
+GomConstruct	::=	'%gom' ['(' OptionString ')'] '{' GomGrammar '}'
+```
 
-</div>
 It allows to define a signature (for more details about see Chapter [Gom](/Documentation:Gom "wikilink")). The compiler is called on the , and the construct is replaced by the produced mapping. The is composed by a list of command line options to pass to the underlying compiler, as described in Section [Using Gom](/Documentation:Using_Gom#Command_line_tool "wikilink").
-
-XML pattern
-===========
-
-To deal with XML documents, the XML notation can be used (<A><B attribute="name"/></A> for example).
-
-When manipulating XML documents, we distinguish two main kinds of operations: retrieving information and transforming a document. provides three different XML notations that ought to simplify the definition of patterns: the “standard ” and the “implicit” XML notations are used to define compact (but incomplete) patterns. This notation is well suited to retrieve information. The “explicit” XML notation is used to precisely describe an XML pattern and all the variables that have to be instantiated. This notation is particularly well suited to perform XML transformation since it allows the programmer to precisely describe how variables have to be instantiated.
-
-To make the XML notation understandable, we have to explain how XML documents are handled by . To each XML document corresponds a DOM (Document Object Model) representation. In , we have defined a mapping from DOM sorts to abstract algebraic sorts: `TNode` and `TNodeList`, which correspond respectively to `Node` and `NodeList`, defined by the <font color="purple">Java</font> DOM implementation.
-
-Thus, a `Node` object becomes a ternary operator `Element` whose first subterm is the name of the XML node, the second subterm is a list of attributes and the third subterm is a list of subterms (which correspond to XML sub-elements). The second and the third elements are terms of sort `TNodeList` (because they are implemented by `NodeList` objects in DOM).
-
-Thus, when considering the <A></A> XML document, the corresponding algebraic term is `Element(`“`A`”`,[],[])`, where `[]` denotes the empty list. Similarly, <A><B attribute="name"/></A> is encoded into `Element(`“`A`”`,[],[Element(`“`B`”`,[Attribute(`“`attribute`”`,`“`name`”`)],[])])`.
-
-When defining an XML pattern, the user has to introduce extra list-variables to precisely describe the XML pattern and capture the different contexts. Suppose that we are interested in finding a node <B></B> which is a subterm of a node <A></A> (but not necessary the first subterm). The algebraic pattern should be `Element(`“`A`”`,[_*],[_*,Element(`“`B`”`,[_*],[_*]),_*])`. Using the XML notation, this pattern should be expressed as follows: <A(_*)>`(_*,`<B(_*)>`(_*)`</B>`,_*)`</A>. This notation (called explicit) is precise but error prone. This is why we have introduced the explicit notation, where all context variable can be removed (and `()` are replaced by `[]`): <A[]><B[]>`[]`</B></A>. The last notation (called standard XML notation) allows the user to remove the `[]` and replace the list-separator (`,`) by spaces. The previous pattern can be written: <A><B></B></A>.
-
-These three different notations allow the user to choose the level of control he wants to have on the XML pattern matching algorithm.
-
-The formal description of the syntax is the following:
-
-<div class="center">
-|     |     |                   |
-|:----|:---:|:------------------|
-|     | ::= |                   |
-|     |  ∣  |                   |
-|     |  ∣  |  ∣                |
-|     |  ∣  |  ∣                |
-|     |  ∣  |                   |
-|     |     | ( ∣ ) ( ∣ )       |
-|     | ::= |                   |
-|     |  ∣  |  ( )\*            |
-|     | ::= | \[ ( )\* \]       |
-|     |  ∣  | \[ ( )\* \]       |
-|     |  ∣  | ( )\*             |
-|     | ::= |                   |
-|     |  ∣  |                   |
-|     |  ∣  |  \[ \] ( ∣ )      |
-|     |  ∣  | \[ \] \[ \] ( ∣ ) |
-|     | ::= | ( )\*             |
-|     |  ∣  |  ( )\*            |
-
-</div>
-[Category:Documentation](/Category:Documentation "wikilink")
