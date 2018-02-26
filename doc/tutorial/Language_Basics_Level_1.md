@@ -1,16 +1,12 @@
----
-title: Documentation:Language Basics – Level 1
-permalink: /Documentation:Language_Basics_–_Level_1/
----
+# Language Basics – Level 1
 
 In this first part, we introduce the basic notions provided by Tom: the *definition* of a data-type, the *construction* of data (i.e. trees), and the *transformation* of such data using pattern-matching.
 
-Defining a data-structure
-=========================
+## Defining a data-structure
 
 One of the most simple Tom programs is the following. It defines a data-type to represent Peano integers and builds the integers 0=zero and 1=suc(zero):
 
-``` tom
+```java
 import main.peano.types.*;
   public class Main {
   %gom {
@@ -31,12 +27,11 @@ import main.peano.types.*;
 
 The `%gom {...}` construct defines a data-structure, also called signature or algebraic data-type. This data-structure declares a sort (`Nat`) that has three operators (`zero`, `suc`, and `plus`). These operators are called constructors, because they are used to construct the data-structure. `zero` is a constant (arity 0), whereas the arities of `suc` and `plus` are respectively 1 and 2. Note that a name has to be given for each slot (`pred` for suc, and `x1`, `x2` for plus).
 
-Retrieving information in a data-structure
-==========================================
+## Retrieving information in a data-structure
 
 In addition to `%gom` and `` ` ``, Tom provides a third construct: `%match`. Using the same program, we add a method `evaluate(Nat n)` and we modify the method `run()`:
 
-``` tom
+```java
 import main.peano.types.*;
   public class Main {
   %gom {
@@ -70,29 +65,28 @@ The method `evaluate` defines the addition of two integers represented by Peano 
 
 When executing the program we obtain:
 
-`plus(suc(zero()),suc(zero()))`
-`suc(plus(suc(zero()),zero()))`
+```
+plus(suc(zero()),suc(zero()))
+suc(plus(suc(zero()),zero()))
+```
 
-Using rules to simplify expressions
-===================================
+## Using rules to simplify expressions
 
 In this section, we will show how to use the notion of *rules* to simplify expressions. Suppose that we want to simplify boolean expressions. It is frequent to define the relations between expressions using a set of simplification rules like the following:
 
-|                                                                                         |
-|-----------------------------------------------------------------------------------------|
-| |                        |     |                                                      |
- |:-----------------------|:---:|:-----------------------------------------------------|
- | *Not*(*a*)             |  →  | *Nand*(*a*,*a*)                                      |
- | *Or*(*a*, *b*)         |  →  | *Nand*(*Not*(*a*), *Not*(*b*))                       |
- | *And*(*a*, *b*)        |  →  | *Not*(*Nand*(*a*, *b*))                              |
- | *Xor*(*a*, *b*)        |  →  | *Or*(*And*(*a*, *Not*(*b*)), *And*(*Not*(*a*), *b*)) |
- | *Nand*(*False*, *b*)   |  →  | *True*                                               |
- | *Nand*(*a*, *False*)   |  →  | *True*                                               |
- | *Nand*(*True*, *True*) |  →  | *False*                                              |  |
+```
+Not(a)				→	Nand(a,a)
+Or(a, b)			→	Nand(Not(a), Not(b))
+And(a, b)			→	Not(Nand(a, b))
+Xor(a, b)			→	Or(And(a, Not(b)), And(Not(a), b))
+Nand(False, b)		→	True
+Nand(a, False)		→	True
+Nand(True, True)	→	False
+```
 
 To encode such a simplification system, we have to implement a function that simplifies an expression until no more reduction can be performed. This can of course be done using functions defined in <font color="purple">Java</font>, combined with the `%match` constructs, but it is more convenient to use an algebraic construct that ensures that a rule is applied whenever a reduction is possible. For this purpose, the `%gom` construct provides a `rule()` construct where the left and the right-hand sides are terms. The previous simplification system can be defined as follows:
 
-``` tom
+```java
 import gates.logic.types.*;
   public class Gates {
     %gom {
@@ -127,12 +121,11 @@ import gates.logic.types.*;
 
 When using the `module Logic:rules() { ... }` constructs, the simplification rules are integrated into the data-structure. This means that the rules are applied any time it is possible to do a reduction. The user does not have any control on them, and thus cannot prevent from applying a rule. Of course, the simplification system should be terminating, otherwise, infinite reductions may occur. When compiling and executing the previous program, we obtain `b = True()`.
 
-Separating Gom from Tom (**\***)
-================================
+## Separating Gom from Tom (*)
 
 When programming large applications, it may be more convenient to introduce several classes that share a common data-structure. In that case, the `%gom {...}` construct could be avoided and a Gom file (`Logic.gom` for example) could be used instead:
 
-``` tom
+```java
 module Logic
 imports int
 abstract syntax
@@ -158,13 +151,13 @@ module Logic:rules() {
 
 This file can by compiled as follows:
 
-``` tom
+```sh
 $ gom Logic.gom
 ```
 
 This generates several <font color="purple">Java</font> classes, among them a particular file called `Logic.tom` which explains to Tom how the data-structure is implemented. This process is hidden when using the `%gom {...}` construct:
 
-``` tom
+```sh
 $ ls logic
 _Logic.tom              Logic.tom               LogicAbstractType.java
 strategy                types
@@ -172,7 +165,7 @@ strategy                types
 
 One of the simplest Tom program that uses the defined data-structure is the following:
 
-``` tom
+```java
 import logic.types.*;
 public class Main {
   %include{ logic/Logic.tom }
@@ -183,8 +176,7 @@ public class Main {
 }
 ```
 
-Programming in Tom
-==================
+## Programming in Tom
 
 In this section we present how Tom can be used to describe the abstract syntax and to implement an interpreter for a given language. We also give some tips and more information about the generated code.
 
@@ -194,7 +186,7 @@ Even if the generated API offers getters and setters for each defined slot (`Boo
 
 In Tom, it is quite easy to quickly develop applications which manipulates trees. As an example, let us consider a tiny language composed of boolean expressions (`True`, `False`, `And`, `Or`, and `Not`), expressions (`constant`, `variable`, `Plus`, `Mult`, and `Mod`), and instructions (`Skip`, `Print`, `;`, `If`, and `While`). The abstract syntax of this language can be described as follows:
 
-``` tom
+```java
 import pico1.term.types.*;
 import java.util.*;
   class Pico1 {
@@ -226,7 +218,7 @@ import java.util.*;
 
 Assume that we want to write an interpreter for this language, we need a notion of *environment* to store the value assigned to a variable. A simple solution is to use a `Map` which associate an expression (of sort `Expr`) to a name of variable (of sort `String`). Given this environment, the evaluation of an expression can be implemented as follows:
 
-``` tom
+```java
 public static Expr evalExpr(Map env,Expr expr) {
   %match(expr) {
     Var(n)                -> { return (Expr)env.get(`n); }
@@ -245,7 +237,7 @@ public static Expr evalExpr(Map env,Expr expr) {
 
 Similarly, the evaluation of boolean expressions can be implemented as follows:
 
-``` tom
+```java
 public static Bool evalBool(Map env,Bool bool) {
   %match(bool) {
     Not(True())     -> { return `False(); }
@@ -274,7 +266,7 @@ public static Bool evalBool(Map env,Bool bool) {
 
 Once defined the methods `evalExpr` and `evalBool`, it becomes easy to define the interpreter:
 
-``` tom
+```java
 public static void eval(Map env, Inst inst) {
   %match(inst) {
     Skip() -> {
@@ -316,7 +308,7 @@ public static void eval(Map env, Inst inst) {
 
 To play with the `Pico` language, we just have to initialize the environment (`env`), create programs (`p1` and `p2`), and evaluate them (`eval`):
 
-``` tom
+```java
 public final static void main(String[] args) {
   Map env = new HashMap();
   Inst p1 = `Seq(Assign("a",Cst(1)) , Print(Var("a")));
@@ -331,8 +323,4 @@ public final static void main(String[] args) {
 }
 ```
 
-<div class="note">
 **Exercise:** write a Pico program that computes prime numbers up to 100.
-
-</div>
-[Category:Documentation](/Category:Documentation "wikilink")
