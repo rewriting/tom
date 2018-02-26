@@ -3,10 +3,10 @@ Documentation
 
 Tom documentation is divided into four chapters.
 
-- The Guided Tour provides cut-and-paste standalone code snippets each of them illustrating one aspect of Tom
-- The Tutorial progressively introduces the reader to the language's features by developing an example
-- The Language Reference chapter exposes the language's grammar, semantics, etc.
-- The Tools chapter deals with the installation and environment setting issues
+- The [Guided Tour](#guided-tour) provides cut-and-paste standalone code snippets each of them illustrating one aspect of Tom
+- The [Tutorial](#tutorial) progressively introduces the reader to the language's features by developing an example
+- The [Language Reference](#language-reference) chapter exposes the language's grammar, semantics, etc.
+- The [Tools](#tools) chapter deals with the installation and environment setting issues
 
 Appart from the documentation, you may want to consult the FAQ which answers commonly asked questions.
 
