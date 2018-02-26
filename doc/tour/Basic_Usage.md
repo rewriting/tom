@@ -1,14 +1,10 @@
----
-title: Documentation:Basic Usage
-permalink: /Documentation:Basic_Usage/
----
+# Basic usage
 
 We provide here cut and paste examples, each of them illustrates one particular aspect of the tom language. Every code snippet comes with the command line to compile and execute it along with the associated program output.
 
-Algebraic terms in Java -- %gom
-===============================
+## Algebraic terms in Java -- %gom
 
-``` tom
+```java
 // import class.module.types.*  whith lower case names
 import algebraic.logic.types.*;
 
@@ -44,14 +40,15 @@ public class Algebraic {
 }
 ```
 
-**`tomuser@huggy$`**` tom Algebraic.t && javac Algebraic.java && java Algebraic`
-`implies(P(plus(nat(1),nat(2))),Q(var(`“`x`”`)))`
-`true`
+```
+$ tom Algebraic.t && javac Algebraic.java && java Algebraic
+implies(P(plus(nat(1),nat(2))),Q(var("x")))
+true
+```
 
-A pretty printer -- %match
-==========================
+## A pretty printer -- %match
 
-``` tom
+```java
 import matching.logic.types.*;
 
 public class Matching {
@@ -102,14 +99,15 @@ public class Matching {
 }
 ```
 
-**`tomuser@huggy$`**` tom Matching.t && javac Matching.java && java Matching`
-`I was here !`
-`(P(1 + 2) => Q(x))`
+```
+$ tom Matching.t && javac Matching.java && java Matching
+I was here !
+(P(1 + 2) => Q(x))
+```
 
-Antipatterns
-============
+## Antipatterns
 
-``` tom
+```java
 import anti.cars.types.*;
 
 public class Anti {
@@ -167,19 +165,20 @@ public class Anti {
 }
 ```
 
-**`tomuser@huggy$`**` tom Anti.t && javac Anti.java && java Anti`
-`- Not a car, or car with different colors: bike()`
-`- Not a car, or car with different colors: car(red(),green(),ecological())`
-`- Ecological car and that has the same interior`
-`  and exterior colors, but different from green: car(red(),red(),ecological())`
-`- Not a car, or car with different colors: car(green(),red(),polluting())`
-`- Car that is not ecological and that does not`
-`  have the same interior and exterior colors: car(green(),red(),polluting())`
+```
+$ tom Anti.t && javac Anti.java && java Anti
+- Not a car, or car with different colors: bike()
+- Not a car, or car with different colors: car(red(),green(),ecological())
+- Ecological car and that has the same interior
+  and exterior colors, but different from green: car(red(),red(),ecological())
+- Not a car, or car with different colors: car(green(),red(),polluting())
+- Car that is not ecological and that does not
+  have the same interior and exterior colors: car(green(),red(),polluting())
+```
 
-Computing a fixpoint -- %strategy, RepeatId
-===========================================
+## Computing a fixpoint -- %strategy, RepeatId
 
-``` tom
+```java
 import rmdoubles.mylist.types.*;
 import tom.library.sl.*; // imports the runtime strategy library
 
@@ -216,14 +215,15 @@ public class RmDoubles {
 }
 ```
 
-**`tomuser@huggy$`**` tom RmDoubles.t && javac RmDoubles.java && java RmDoubles`
-`strlist(`“`framboisier`”`,`“`eric`”`,`“`framboisier`”`,`“`remi`”`,`“`remi`”`,`“`framboisier`”`,`“`rene`”`,`“`bernard`”`)`
-`strlist(`“`framboisier`”`,`“`eric`”`,`“`remi`”`,`“`rene`”`,`“`bernard`”`)`
+```
+$ tom RmDoubles.t && javac RmDoubles.java && java RmDoubles
+strlist("framboisier","eric","framboisier","remi","remi","framboisier","rene","bernard")
+strlist("framboisier","eric","remi","rene","bernard")
+```
 
-An expression evaluator -- %strategy, InnerMostId
-=================================================
+## An expression evaluator -- %strategy, InnerMostId
 
-``` tom
+```java
 import eval.mydsl.types.*;
 import tom.library.sl.*;
 
@@ -268,14 +268,15 @@ public class Eval {
 }
 ```
 
-**`tomuser@huggy$`**` tom Eval.t && javac Eval.java && java Eval`
-`plus(val(2),var(`“`x`”`),mult(val(3),val(4)),var(`“`y`”`),val(5))`
-`plus(var(`“`x`”`),var(`“`y`”`),val(19))`
+```
+$ tom Eval.t && javac Eval.java && java Eval
+plus(val(2),var("x"),mult(val(3),val(4)),var("y"),val(5))
+plus(var("x"),var("y"),val(19))
+```
 
-Variable Collector -- %strategy with mutable parameters
-=======================================================
+## Variable Collector -- %strategy with mutable parameters
 
-``` tom
+```java
 import collect.logic.types.*;
 import tom.library.sl.*;
 import java.util.LinkedList;
@@ -322,13 +323,14 @@ public class Collect {
 }
 ```
 
-**`tomuser@huggy$`**` tom Collect.t && javac Collect.java && java Collect`
-`vars: [var(`“`x`”`), var(`“`y`”`)]`
+```
+$ tom Collect.t && javac Collect.java && java Collect
+vars: [var("x"), var("y")]
+```
 
-Collecting free variables -- mu operator, composed strategies
-=============================================================
+## Collecting free variables -- mu operator, composed strategies
 
-``` tom
+```java
 import advanced.logic.types.*;
 import tom.library.sl.*;
 import java.util.LinkedList;
@@ -381,8 +383,8 @@ public class Advanced {
 }
 ```
 
-**`tomuser@huggy$`**` tom Advanced.t && javac Advanced.java && java Advanced`
-`free occurences of x: []`
-`free occurences of y: [[/2,_1,_2,_1],_[2,_2,_1,_1|2, 1, 2, 1], [2, 2, 1, 1]]`
-
-[Category:Documentation](/Category:Documentation "wikilink")
+```
+$ tom Advanced.t && javac Advanced.java && java Advanced
+free occurences of x: []
+free occurences of y: [[2, 1, 2, 1], [2, 2, 1, 1]]
+```

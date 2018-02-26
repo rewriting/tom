@@ -1,11 +1,8 @@
----
-title: Documentation:Using subtypes
-permalink: /Documentation:Using_subtypes/
----
+# Using subtypes
 
 Using the option `--newtyper`, it is possible to define and treat a type hierarchy between sorts by declaring a with the keyword . The user must declare a java hierarchy (classes and subclasses) and its respective mapping preserving the subtype relation between sorts. Then patterns having a given sort *B* became able to match a term of the same sort *B* or another sort *A*, where *A* is a supersort of *B*.
 
-``` tom
+```java
 public class Subtype {
 
   static class A {
@@ -103,8 +100,8 @@ public class Subtype {
 }
 ```
 
-**`tomuser@huggy$`**` tom Subtype.t && javac Subtype.java && java Subtype`
-`Term = f(a)`
-`Term = g(b)`
-
-[Category:Documentation](/Category:Documentation "wikilink")
+```
+$ tom Subtype.t && javac Subtype.java && java Subtype
+Term = f(a)
+Term = g(b)
+```

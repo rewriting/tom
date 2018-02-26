@@ -1,12 +1,8 @@
----
-title: Documentation:Seeing Java Objects as Terms
-permalink: /Documentation:Seeing_Java_Objects_as_Terms/
----
+# Seeing Java Objects as Terms
 
-Matching java.util.LinkedList -- standard mappings
-==================================================
+## Matching java.util.LinkedList -- standard mappings
 
-``` tom
+```java
 import java.util.Arrays;
 import java.util.LinkedList;
 
@@ -35,30 +31,31 @@ public class Mapping {
 }
 ```
 
-**`tomuser@huggy$`**` tom Mapping.t && javac Mapping.java && java Mapping`
-`list = [1, 2, 3, 1, 4, 3, 1, 1]`
-`iterate: 1`
-`iterate: 2`
-`iterate: 3`
-`iterate: 1`
-`iterate: 4`
-`iterate: 3`
-`iterate: 1`
-`iterate: 1`
-`appears twice: 1`
-`appears twice: 1`
-`appears twice: 1`
-`appears twice: 3`
-`appears twice: 1`
-`appears twice: 1`
-`appears twice: 1`
-`appears only once: 2`
-`appears only once: 4`
+```
+$ tom Mapping.t && javac Mapping.java && java Mapping
+list = [1, 2, 3, 1, 4, 3, 1, 1]
+iterate: 1
+iterate: 2
+iterate: 3
+iterate: 1
+iterate: 4
+iterate: 3
+iterate: 1
+iterate: 1
+appears twice: 1
+appears twice: 1
+appears twice: 1
+appears twice: 3
+appears twice: 1
+appears twice: 1
+appears twice: 1
+appears only once: 2
+appears only once: 4
+```
 
-Matching cars -- Handwritten Mappings
-=====================================
+## Matching cars -- Handwritten Mappings
 
-``` tom
+```java
 public class HandMapping {
 
   /* We need to include the standard mappings for
@@ -142,9 +139,9 @@ public class HandMapping {
 }
 ```
 
-**`tomuser@huggy$`**` tom HandMapping.t && javac HandMapping.java && java HandMapping`
-`this red car has 6 seats`
-`c1 and c3 have the same blue color`
-`This is the same blue car with 4 seats`
-
-[Category:Documentation](/Category:Documentation "wikilink")
+```
+$ tom HandMapping.t && javac HandMapping.java && java HandMapping
+this red car has 6 seats
+c1 and c3 have the same blue color
+This is the same blue car with 4 seats
+```

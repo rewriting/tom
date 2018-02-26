@@ -1,14 +1,11 @@
----
-title: Documentation:Data Structure Invariants
-permalink: /Documentation:Data_Structure_Invariants/
----
+# Data Structure Invariants
 
-In , data structure invariants are achieved via the Hook mechanism.
 
-Sorted list -- maintaining invariants with rule-based hooks
-===========================================================
+In Gom, data structure invariants are achieved via the Hook mechanism.
 
-``` tom
+## Sorted list -- maintaining invariants with rule-based hooks
+
+```java
 import rules.sortedlist.types.*;
 
 public class Rules {
@@ -41,15 +38,16 @@ public class Rules {
 }
 ```
 
-**`tomuser@huggy$`**` tom Rules.t && javac Rules.java && java Rules`
-`sorted(1,3,5,7,9)`
-`sorted(0,2,4,6,8)`
-`sorted(0,1,2,3,4,5,6,7,8,9,10)`
+```
+$ tom Rules.t && javac Rules.java && java Rules
+sorted(1,3,5,7,9)
+sorted(0,2,4,6,8)
+sorted(0,1,2,3,4,5,6,7,8,9,10)
+```
 
-Sorted list revisited -- advanced hooks
-=======================================
+## Sorted list revisited -- advanced hooks
 
-``` tom
+```java
 import sort.sortedlist.types.*;
 
 public class Sort {
@@ -86,13 +84,13 @@ public class Sort {
 }
 ```
 
-**`tomuser@huggy$`**` tom Sort.t && javac Sort.java && java Sort`
-`3 is greater than the head of sorted(9)`
-`5 is greater than the head of sorted(3,9)`
-`5 is greater than the head of sorted(9)`
-`7 is greater than the head of sorted(3,5,9)`
-`7 is greater than the head of sorted(5,9)`
-`7 is greater than the head of sorted(9)`
-`sorted(1,3,5,7,9)`
-
-[Category:Documentation](/Category:Documentation "wikilink")
+```
+$ tom Sort.t && javac Sort.java && java Sort
+3 is greater than the head of sorted(9)
+5 is greater than the head of sorted(3,9)
+5 is greater than the head of sorted(9)
+7 is greater than the head of sorted(3,5,9)
+7 is greater than the head of sorted(5,9)
+7 is greater than the head of sorted(9)
+sorted(1,3,5,7,9)
+```

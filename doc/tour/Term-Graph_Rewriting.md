@@ -1,11 +1,8 @@
----
-title: Documentation:Term-Graph Rewriting
-permalink: /Documentation:Term-Graph_Rewriting/
----
+# Term-Graph Rewriting
 
 Using the option `--termgraph`, it is possible to automatically generate from a signature the extended version for term-graphs. As the terms are implemented with maximal sharing, so are the term-graphs. Term-graphs can be specified using label constructors.
 
-``` tom
+```java
 import testlist.m.types.*;
 import testlist.m.*;
 import tom.library.sl.*;
@@ -54,5 +51,3 @@ public class TestList {
 ```
 
 Users can define a system of term-graph rules and it is automatically compiled in a basic strategy. These term-graph rewriting rules can then be integrated in a more complex strategy using strategy combinators. As a consequence, all features are available for term-graphs.
-
-[Category:Documentation](/Category:Documentation "wikilink")
