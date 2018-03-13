@@ -403,8 +403,7 @@ public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable v
 public tom.library.sl.Visitable setChilds(tom.library.sl.Visitable[] childs) { ... }
 ```
 
-Hooks to alter the generated API
---------------------------------
+## Hooks to alter the generated API
 
 There exist four other hooks , , and that offer possibilities to enrich the generated API. Contrary to and , these hooks have no parameters. Moreover, they can be associated not only to an operator but also to a module or a sort.
 

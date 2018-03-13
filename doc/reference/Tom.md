@@ -125,7 +125,7 @@ A is composed of two parts:
 
 Since version 2.6 of the language, an additional syntax, based on *constraints*, is proposed. In this case, the can be simply seen as a list of pairs (constraint,action) corresponding to from the above syntax. For instance, the example we presented before can now be written:
 
-``` tom
+```java
 %match {
   f(a(),g(y)) << s -> { /* action 1 : code that uses y */ }
   f(x,g(b())) << s -> { /* action 2 : code that uses x */ }
@@ -137,7 +137,7 @@ The two versions are semantically equivalent. The expression `p << s` denotes a 
 
 The two syntaxes are compatible. For instance the following construct is valid:
 
-``` tom
+```java
 %match(s) {
   f(a(),g(y)) && ( y << a() || y << b() ) -> { /* action 1 : code that uses y */ }
   f(x,g(b())) -> { /* action 2 : code that uses x */ }
@@ -180,7 +180,7 @@ More formally, a pattern and a term has the following syntax:
 
 ```java
 Term	::=	VariableName['*']
-∣	Name '('[Term ( ',' Term )*]')'
+     ∣	Name '('[Term ( ',' Term )*]')'
 Pattern	::=	[ AnnotedName '@' ] PlainPattern
 PlainPattern	::=	['!']VariableName [ '*' ]
 ∣	['!'] HeadSymbolList (ExplicitTermList ∣ ImplicitPairList)
