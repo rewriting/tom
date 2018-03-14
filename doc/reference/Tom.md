@@ -52,9 +52,9 @@ public class HelloWorld {
 
 ### Tom program
 
-A Tom program is a list of blocks, where each block is either a construct, or a sequence of characters (host language code). When compiling a program, the constructs are transformed into host language code, and the result is a valid host language program. For instance, in the previous example, `%include` and `%match` constructs are replaced by function definitions and instructions, making the resulting program a correct program.
+A Tom program is a list of blocks, where each block is either a construct, or a sequence of characters (host language code). When compiling a Tom program, the Tom constructs are transformed into host language code, and the result is a valid host language program. For instance, in the previous example, `%include` and `%match` constructs are replaced by function definitions and instructions, making the resulting program a correct program.
 
-Syntax of a program:
+Syntax of a Tom program:
 
 ```java
 Tom       ::= BlockList
@@ -79,7 +79,7 @@ BlockList ::=
 
 - `BackQuoteTerm` is translated into a function call.
 
-- `IncludeConstruct` is replaced by the content of the file referenced by the construct. looks for include files in: `./packageName/`, `$TOM_HOME/share/jtom/` and <path>, where <path> is specified by option: `--import `<path>. If the file contains some constructs, they are expanded.
+- `IncludeConstruct` is replaced by the content of the file referenced by the construct. Tom looks for include files in: `./packageName/`, `$TOM_HOME/share/jtom/` and <path>, where <path> is specified by option: `--import `<path>. If the file contains some Tom constructs, they are expanded.
 
 - `GomConstruct` allows to define a grammar. This construct is replaced by the content of the generated mapping. See Section [Gom construct](#gom-construct) and Chapter [Gom](Gom.md) for more details.
 
@@ -89,9 +89,9 @@ BlockList ::=
 
 ### Match construct
 
-The `%match` construct () is one of the main contributions of . This construct can be seen as an extension of the construct in <font color="purple">C</font> or <font color="purple">Java</font>, except that patterns are no longer restricted to constants (chars or integers). Given an object (the subject) and a list of patterns, our goal is to find the first pattern that *matches* the subjects (i.e. that has a *compatible shape*). As in the construct, in a the type of each pattern is expected to be either the same or a subtype of that of the subject. More formally, a pattern is a term built over variables and constructors. The latter ones describe the *shape* of the pattern, whereas the variables are *holes* that can be instantiated to capture a value. When we consider the term *f*(*a*(),*g*(*b*())), it has to be viewed as a tree based data-structure with *f* as a root and *a*() the first child. Similarly, *b*() is the unique child of *g*, which is the second child of the root *f* . We say that the pattern *f*(*x*,*y*) matches this term (called subject), because we can give values to *x* and *y* such that the pattern and the subject become equal: we just have to assign *a*() to *x* and *g*(*b*()) to *y*. Finding this assignment is called matching and instantiating. This is exactly what is supposed to do. A pattern may of course contain subterms. Therefore, *f*(*x*,*g*(*b*())) or *f*(*a*(),*g*(*y*)) are valid patterns which match against the subject.
+The `%match` construct () is one of the main contributions of Tom. This construct can be seen as an extension of the construct in <font color="purple">C</font> or <font color="purple">Java</font>, except that patterns are no longer restricted to constants (chars or integers). Given an object (the subject) and a list of patterns, our goal is to find the first pattern that *matches* the subjects (i.e. that has a *compatible shape*). As in the construct, in a the type of each pattern is expected to be either the same or a subtype of that of the subject. More formally, a pattern is a term built over variables and constructors. The latter ones describe the *shape* of the pattern, whereas the variables are *holes* that can be instantiated to capture a value. When we consider the term *f*(*a*(),*g*(*b*())), it has to be viewed as a tree based data-structure with *f* as a root and *a*() the first child. Similarly, *b*() is the unique child of *g*, which is the second child of the root *f* . We say that the pattern *f*(*x*,*y*) matches this term (called subject), because we can give values to *x* and *y* such that the pattern and the subject become equal: we just have to assign *a*() to *x* and *g*(*b*()) to *y*. Finding this assignment is called matching and instantiating. This is exactly what Tom is supposed to do. A pattern may of course contain subterms. Therefore, *f*(*x*,*g*(*b*())) or *f*(*a*(),*g*(*y*)) are valid patterns which match against the subject.
 
-Assuming that `s` is a <font color="purple">Java</font> variable, referencing a term (the tree based object *f*(*a*(),*g*(*b*())) for example), the following construct is valid:
+Assuming that `s` is a <font color="purple">Java</font> variable, referencing a term (the tree based object *f*(*a*(),*g*(*b*())) for example), the following Tom construct is valid:
 
 ``` tom
 %match(s) {
@@ -152,7 +152,7 @@ For expository reasons, we consider that a `%match` construct is evaluated in th
 -   if the execution control is transferred outside the `%match` instruction (by a `goto`, `break` or `return` for example), the matching process is finished. Otherwise, the execution control is transferred to the next whose patterns match the list of ground terms (respectively to the next whose evaluates to true).
 -   when there is no more whose patterns match the list of subjects (respectively no more whose evaluates to true), the `%match` instruction is finished, and the execution control is transferred to the next instruction.
 
-The semantics of a match construct may remind the switch/case construct. However, there is a big difference. For instance, in we can have patterns (list-patterns) that can match in several ways a subject. Informally, when considering the subject *conc*(*a*(),*b*(),*c*()), and the pattern *conc*(_<sup>\*</sup>,*x*,_<sup>\*</sup>), there are three possible match for this problem: either *x*=*a*(), either *x*=*b*(), either *x*=*c*(). Note that _<sup>\*</sup> is a special *hole* which can capture any sublist of *conc*(…). The list-matching is also known as associative matching. Besides this, some other matching theories are supported in .
+The semantics of a match construct may remind the switch/case construct. However, there is a big difference. For instance, in Tom we can have patterns (list-patterns) that can match in several ways a subject. Informally, when considering the subject *conc*(*a*(),*b*(),*c*()), and the pattern *conc*(_<sup>\*</sup>,*x*,_<sup>\*</sup>), there are three possible match for this problem: either *x*=*a*(), either *x*=*b*(), either *x*=*c*(). Note that _<sup>\*</sup> is a special *hole* which can capture any sublist of *conc*(…). The list-matching is also known as associative matching. Besides this, some other matching theories are supported in Tom.
 
 When taking this new possibility into account, the evaluation of a `%match` construct gets a little bit more complex:
 
@@ -170,13 +170,13 @@ When using the new syntax based on constraints, there are several restrictions t
 
 ### Tom pattern
 
-As we can imagine, the behavior of a `%match` construct strongly depends on the patterns which are involved. The formalism which defines the syntax of a pattern is also an essential component of . But because there exist several ways to define patterns with equivalent behavior, its formal definition is not so simple. Although, the different shortcuts help the programmer to simplify the definitions of patterns.
+As we can imagine, the behavior of a `%match` construct strongly depends on the patterns which are involved. The formalism which defines the syntax of a pattern is also an essential component of Tom. But because there exist several ways to define patterns with equivalent behavior, its formal definition is not so simple. Although, the different shortcuts help the programmer to simplify the definitions of patterns.
 
 Informally, a pattern is a term built with constructors and variables (please note that `x` denotes a variable, whereas `a()` is a constructor). A variable can also be anonymous, and it is denoted by `_`. Let’s look at some examples of patterns: `x`, `a()`, `f(a())`, `g(a(),x)`, or `h(a(),_,x)`. When a pattern matches a subject, it may be useful to keep a reference to a matched subterm. The annotation mechanism (`z@g(y)` for example) can be used for this purpose. Thus, considering the matching between the pattern `f(x,z@g(y))` and the subject `f(a(),g(h(b())))`, `y` is instantiated by `h(b())`, and `z` is instantiated by `g(h(b()))`. This can be useful in <font color="purple">C</font>, to free the memory for example.
 
 When identical actions have to be performed for a set of patterns which share a common structure, the *disjunction of symbols* may be used: pattern `(f∣g)(a())` is equivalent to the set `{f(a()), g(a())}`. The disjunction of symbols may also be used in subterms, like in `h( (f∣g)(x) )`.
 
-More formally, a pattern and a term has the following syntax:
+More formally, a Tom pattern and a Tom term has the following syntax:
 
 ```java
 Term	::=	VariableName['*']
@@ -195,19 +195,19 @@ ImplicitPairList	::=	'[' [ PairPattern ( ',' PairPattern )*] ']'
 PairPattern	::=	SlotName '=' Pattern
 ```
 
-Concerning the syntax, both and host-language variables can be used and can be either a function symbol declared in or the name of a method from the host language.
+Concerning the syntax, both Tom and host-language variables can be used and can be either a function symbol declared in Tom or the name of a method from the host language.
 
-A pattern is a term which could contain variables. When matching a pattern against a subject (a ground term), these variables are instantiated by the matching procedure (generated by ). In , the variables do not have to be declared: their type is inferred automatically, depending on the context in which they appear.
+A pattern is a term which could contain variables. When matching a pattern against a subject (a ground term), these variables are instantiated by the matching procedure (generated by Tom). In Tom, the variables do not have to be declared: their type is inferred automatically, depending on the context in which they appear.
 
-As described previously, offers several mechanisms to simplify the definition of a pattern:
+As described previously, Tom offers several mechanisms to simplify the definition of a pattern:
 
--   standard notation: a pattern can be defined using a classical prefix term notation. To make a distinction between variables and constants, the latter have to be written with explicit parentheses, like `x()`. In this case, the corresponding operator (`%op x()`) should have been declared. When omitting parentheses, like `x`, this denotes a variable.
+-   standard notation: a pattern can be defined using a classical prefix term notation. To make a distinction between variables and constants, the latter have to be written with explicit parentheses, like `x()`. In this case, the corresponding Tom operator (`%op x()`) should have been declared. When omitting parentheses, like `x`, this denotes a variable.
 -   unnamed variables: the `_` notation denotes an anonymous variable. It can be used everywhere a variable name can be used. It is useful when the instance of the variable does not need to be used. Similarly, the `_*` notation can be used to denote an anonymous list-variable. This last notation can improve the efficiency of list-matching because the instances of anonymous list-variables do not need to be built.
 -   annotated variable: the `@` operator allows to give a variable name to a subterm. In `f(x@g(_))` for example, `x` is a variable that will be instantiated by the instance of the subterm `g(_)`. The variable `x` can then be used as any other variable.
 -   implicit notation: as explained below, the `%op` operator forces to give name to arguments. Assuming that the operator `f` has two arguments, named `arg1` and `arg2`, then we can write the pattern `f[arg1=a()]` which is equivalent to `f(a(),_)`. This notation is interesting mostly when using constructors with many subterms. Besides that, using this notation can avoid changing the patterns when the signature slightly changes (the order of the arguments, adding a new argument etc).
 -   symbol disjunction notation: to factorize the definition of pattern which have common subterms, it is possible to describe a family of patterns using a disjunction of symbols. The pattern `(f∣g)(a(),b())` corresponds to the disjunction `f(a(),b())` or `g(a(),b())`. To be allowed in a disjunction (in standard notation), the constructors should have the same signature (arity, domain and codomain). Thus the disjunction of list operators is not allowed since these operators do not have fixed arities and can not be compared.
 
-In practice, it is usually better to use the disjunction notation with the explicit notation offers: (`(f∣g)[arg1=a()]`). In that case, the signatures of symbols do not have to be identical: only involved slots have to be common (same names and types). Thus, the pattern `(f∣g)[arg1=a()]` is correct, even if `g` has more slots than `f`: it only has to have the slot `arg1`, with the same sort.
+In practice, it is usually better to use the disjunction notation with the explicit notation Tom offers: (`(f∣g)[arg1=a()]`). In that case, the signatures of symbols do not have to be identical: only involved slots have to be common (same names and types). Thus, the pattern `(f∣g)[arg1=a()]` is correct, even if `g` has more slots than `f`: it only has to have the slot `arg1`, with the same sort.
 
 The use of after a list operator enables real associative with neutral elements (AU) matchings. By using `conc?` for example, we simply specify that the subject may not start with a `conc` symbol. For instance, the following code would produce the output `matched`, because `x` and respectively `y` can be instantiated with the neutral element of `conc` (please see the documentation on for further details about specifying symbols’ type and their neutral elements).
 
@@ -240,7 +240,7 @@ It is also possible to use the anti-patterns in list constructions. Please refer
 
 ### Backquote construct
 
-Backquote construct (`` ` ``) can be used to build an algebraic term or to retrieve the value of a variable (a variable instantiated by pattern-matching).
+Backquote construct (`` ` ``) can be used to build an algebraic term or to retrieve the value of a Tom variable (a variable instantiated by pattern-matching).
 
 ```java
 BackQuoteTerm	::=	['`'] CompositeTerm
@@ -250,9 +250,9 @@ The syntax of is not fixed since it depends on the underlying language.
 
 However, should be of the following form:
 
--   : to denote a {{tom}} variable
+-   : to denote a Tom variable
 
--   : to denote a {{tom}} list-variable
+-   : to denote a Tom list-variable
 
 -   `(` ... `)`: to build a prefix term
 
