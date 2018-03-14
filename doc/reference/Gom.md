@@ -14,7 +14,7 @@ Gom provides a syntax to concisely define abstract syntax tree. Each Gom file co
 
 The syntax of Gom is quite simple and can be used to define many-sorted abstract-datatypes. The `module` section defines the name of the signature. The `imports` section defines the name of the imported signatures. The `abstract syntax` part defines the operators with their signature. For each argument, a sort and a name (called slot-name) has to be given.
 
-```java
+``` java
 module Expressions
 imports String int
 abstract syntax
@@ -131,7 +131,7 @@ A first solution to combine Gom with Tom is to use Gom as a standalone tool, usi
 
 In that case, the module name of the Gom specification and the `package` option determine where the files are generated. To make things correct, it is sufficient to import the generated Java classes, as well as the generated Tom file. In the case of a Gom module called `Module`, all files are generated in a directory named `module` and the Tom program should do the following:
 
-```java
+``` java
 import module.*;
 import module.types.*;
 class MyClass {
@@ -143,7 +143,7 @@ class MyClass {
 
 A second possibility to combine Gom with Tom is to use the [`%gom`](Tom.md#gom-construct) construct offered by Tom. In that case, the Gom module can be directly included into the Tom file, using the `%gom` instruction:
 
-```java
+``` java
 package myPackage;
 import myPackage.myclass.expressions.*;
 import myPackage.myclass.expressions.types.*;
@@ -172,7 +172,7 @@ Algebraic rules
 
 The rules hook defines a set of conditional rewrite rules over the current module signature. Those rules are applied systematically using a leftmost-innermost reduction strategy. Thus, the only terms that can be produced and manipulated in the Tom program are normal with respect to the defined system.
 
-```java
+``` java
 module Expressions
 imports String int
 abstract syntax
@@ -204,7 +204,7 @@ Then the body of the hook definition is composed of <font color="purple">Java</f
 
 Using the `expression` example introduced [above](Gom.md#example-of-signature), we can add *hooks* to implement the computation of `Add` and `Mul` when both arguments are known integers (i.e. when they are `Nat(x)`)
 
-```java
+``` java
 module Expressions
 imports String int
 abstract syntax
@@ -271,7 +271,7 @@ For each Module, the Gom compiler generates an API specific of this module, poss
 
 -   an abstract class named ModuleName`AbstractType` is generated. This class is the generic type for all nodes whose type is declared in this module. It declares generic functions for all tree nodes: a `toATerm()` method returning a `aterm.ATerm` representation of the tree; a `symbolName()` method returning a `String` representation for the function symbol of the tree root; the `toString()` method, which returns a string representation.
 
-```java
+``` java
 public aterm.ATerm toATerm();
 public String symbolName();
 public int compareTo(Object o);
@@ -281,7 +281,7 @@ public void toStringBuilder(java.lang.StringBuilder buffer);
 
 -   in a subpackage `types`, Gom generates one class for each sort defined in the module, whose name corresponds to the sort name. Each sort class extends ModuleName`AbstractType` for the module, and declares a `boolean` method `is`OperatorName`()` for each operator in the module (`false` by default). It declares getters (methods named `get`SlotName`()`) for each slot used in any operator of the sort (throwing an exception by default). A method `SlotName fromTerm(aterm.ATerm trm)` is generated, allowing to use ATerm as an exchange format. The methods `SlotName fromString(String s)` and `SlotName fromStream(InputStream stream)` allow the use of an ATerm representation in String or stream form, to store terms in file and read them back.
 
-```java
+``` java
 public boolean is<op>();
 public <SlotType> get<slotName>();
 public <SortName> set<slotName>(<SlotType>);
@@ -294,7 +294,7 @@ public <SortName> reverse();
 
 -   given a sort (SortName), generate a class (in a package `types.`SortName) for each operator. This class extends the class generated for the corresponding sort. It provides getters for the slots of the operator, and the `is`OperatorName`()` method is overridden to return `true`. Those classes implement the `tom.library.sl.Visitable` interface. It is worth noting that builtin fields are not accessible from the `Visitable`, and thus will not be visited by strategies. The operator class also implements a static `make` method, building a new instance of the operator. This `make` method is the only way to obtain a new instance.
 
-```java
+``` java
 public static <op> make(arg1,...,argn);
 ```
 
@@ -306,7 +306,7 @@ Example of generated API
 
 We show elements of the generated API for a very simple example, featuring variadic operator. It defines natural numbers as `Zero()` and `Suc(n)`, and lists of natural numbers.
 
-```java
+``` java
 module Mod
 abstract syntax
 Nat = Zero()
@@ -329,7 +329,7 @@ Using the command `gom Mod.gom`, the list of generated files is:
 
 The `ModAbstractType` class declares generic methods shared by all operators in the `Mod` module:
 
-```java
+``` java
 public aterm.ATerm toATerm()
 public String symbolName()
 public String toString()
@@ -337,7 +337,7 @@ public String toString()
 
 The `mod/types/Nat.java` class provides an abstract class for all operators in the `Nat` sort, implementing the `ModAbstractType` and contains the following methods. First, the methods for checking the root operator, returning `false` by default:
 
-```java
+``` java
 public boolean isConsList()
 public boolean isEmptyList()
 public boolean isPlus()
@@ -347,7 +347,7 @@ public boolean isZero()
 
 Then getter methods, throwing an `UnsupportedOperationException` by default, as the slot may not be present in all operators. This is convenient since at the user level, we usually manipulate objects of sort `Nat`, without casting them to more specific types.
 
-```java
+``` java
 public mod.types.Nat getpred()
 public mod.types.Nat getlhs()
 public mod.types.Nat getHeadList()
@@ -360,7 +360,7 @@ The `fromTerm` static method allows Gom data structure to be interoperable with 
 
 The operator implementations redefine all or some getters for the operator to return its subterms. It also provides a static `make` method to build a new tree rooted by this operator, and implements the `tom.library.sl.Visitable` interface. For instance, in the case of the `Plus` operator, the interface is:
 
-```java
+``` java
 public static Plus make(mod.types.Nat lhs, mod.types.Nat rhs)
 public int getChildCount()
 public tom.library.sl.Visitable getChildAt(int index)
@@ -371,7 +371,7 @@ completed with the methods from the `Nat` class and the `ModAbstractType`.
 
 The operators implementing the variadic operator both extend the `List` class, which provides list related methods, such as `length`, `fromArray`, `getCollection` and `reverse`. The `getCollection` method produces a collection of objects of the codomain type corresponding to the list elements, while the `reverse` method returns the list with all elements in reverse order. The static `fromArray` method produces a list from an array of objects of the codomain type. The `List` class for our example then contains:
 
-```java
+``` java
 public int length()
 public mod.types.Nat reverse()
 public java.util.Collection<mod.types.Nat> getCollection()
@@ -380,7 +380,7 @@ public static mod.types.Nat fromArray(mod.types.Nat[] array)
 
 The `List` class implements also the `java.util.Collection` interface:
 
-```java
+``` java
 public int size()
 public boolean containsAll(java.util.Collection c)
 public boolean contains(Object o)
@@ -394,7 +394,7 @@ Note that all the methods of the `java.util.Collection` that make the list mutab
 
 For the `ConsList` class, we obtain:
 
-```java
+``` java
 /* the constructor */
 public static ConsList make(mod.types.Nat _HeadList, mod.types.Nat _TailList) { ... }
 public String symbolName() { ... }
@@ -446,7 +446,7 @@ The code given in the hook is just added at the correct position in the correspo
 
 In the case of mapping hooks, the corresponding code is added to the mapping generated for the signature.
 
-```java
+``` java
 module Expressions
 imports String int
 abstract syntax
@@ -503,7 +503,7 @@ SLCOMMENT : '//' (~('\n'|'\r'))* ('\n'|'\r'('\n')?)? { $channel=HIDDEN; } ;
 
 Our idea is to use the “rewrite rule” mechanism provided by Antlr to build an AST. Therefore, we consider the following signature (i.e. the node of the AST):
 
-```java
+``` java
 module parser.Rule
 abstract syntax
 
@@ -596,7 +596,7 @@ Congruence strategies
 
 The congruence strategies are generated for each operator in the Gom module. For a module containing a sort
 
-```java
+``` java
 Term = a()
      | f(lt:Term,rt:Term)
      | l(Term*)
@@ -618,19 +618,19 @@ Thus, congruence strategies allows to discriminate terms based on how they are b
 
 Congruence strategies are commonly used to implement a specific behavior depending on the context (thus, it behaves like a complement to pattern matching). For instance, to print all first children of an operator `f`, it is possible to use a generic `Print()` strategy under a congruence operator.
 
-```java
+``` java
 Strategy specPrint1 = `TopDown(_f(Print(),Identity()));
 ```
 
 When applied to variadic operators, a congruence strategy acts over all theirs elements. So, the strategy `Print()` is applied under a congruence operator printing all elements of a variadic operator `l`.
 
-```java
+``` java
 Strategy specPrint2 = `TopDown(_l(Print()));
 ```
 
 Also, congruence strategies are used to implement `map` like strategies on tree structures. Consider a signature with `List = Cons(e:Element,t:List) | Empty()`, then we can define a `map` strategy as:
 
-```java
+``` java
  Strategy map(Strategy arg) {
   return `mu(MuVar("x"),
     Choice(_Empty(),_Cons(arg,MuVar("x")))
@@ -657,7 +657,7 @@ We can note that as the sub-strategies for `Make_f` are applied to the `null` te
 
 These construction strategies, combined with congruence strategies can be used to implement rewrite rules as strategies. For instance, a rule *f*(*a*,*b*) → *g*(*a*,*b*) can be implemented by the strategy:
 
-```java
+``` java
 Strategy rule = `Sequence(
   _f(_a(),_b()),
   _Make_g(_Make_a(),_Make_b())
@@ -668,7 +668,7 @@ Strategy rule = `Sequence(
 
 Fresh Gom is an extension of Gom which adds capabilities very similar to that of [AlphaCaml](http://cristal.inria.fr/~fpottier/alphaCaml/) developed by François Pottier for the AlphaCaml programming language. In short, it extends the syntax of Gom in order to allow the specification of binding information (like : “this constructor field is in fact a variable bound in these other fields”) and generates all the boring machinery to deal with fresh variables, alpha-conversion, etc. Moreover, it integrates smoothly with Tom by generating mappings which ensure that every time a constructor is matched, its concerned variables are refreshed. As an example, assume we have defined the grammar of lambda expressions using Fresh Gom. Then, when the following match instruction is run,
 
-```java
+``` java
 %match( `Lambda(abs(x,u)) ) {
   Lambda(abs(y,v)) -> { ... }
 }
@@ -704,13 +704,13 @@ As mentioned, Fresh Gom extends the Gom grammar exposed above.
 
 For each atom declared, Fresh Gom generates a class and a Tom sort of the same name. For example, a Gom module containing the line
 
-```java
+``` java
 atom LambdaVar
 ```
 
 will generate a class `LambdaVar` along with the declaration of a tom sort
 
-```java
+``` java
 %typeterm LambdaVar { implements LambdaVar }
 ```
 
@@ -718,7 +718,7 @@ at the usual places. Everything is as it were an usual Gom sort for which no con
 
 The implementation of these atoms remains opaque to the user. The unique way to create an atom of name `AtomName` is to use the following generated static method which creates a fresh identifier.
 
-```java
+``` java
 public abstract class AtomName {
   public static AtomName freshAtomName() { ... }
 }
@@ -733,7 +733,7 @@ Each sort concerned by Fresh Gom (i.e. connected to an atom in the sort dependen
 
 As an example, everything is as the following declarations
 
-```java
+``` java
 atom EVar
 
 Expr = Plus(e1:Expr,e2:Expr)
@@ -743,7 +743,7 @@ Expr = Plus(e1:Expr,e2:Expr)
 
 were replaced by the code below.
 
-```java
+``` java
 EVar = /* non legit gom */
 
 Expr = Plus(e1:Expr,e2:Expr)
@@ -759,7 +759,7 @@ The “raw” sorts are meant to be used at parse and pretty-printing time and d
 
 Conversion methods for converting one format into the other are generated in the classes representing the sorts.
 
-```java
+``` java
 public abstract class SortName {
   public RawSortName export() { ... }
 }
@@ -771,7 +771,7 @@ public abstract class RawSortName {
 
 While `export()` always succeeds, a call to `convert()` may miserably fail (`RuntimeException` for the current release) if the subject contains free variables. If one wishes to provide a dictionary from the free variables to objects of “normal” sort in order to convert a non-closed term, specialized `_convert(...)` versions of `convert()` are also generated. Their signature depends on the involved atoms. For example, the following method is generated for the signature above.
 
-```java
+``` java
 public abstract class RawExpr {
   public abstract Expr _convert(tom.library.freshgom.ConvertMap<EVar> EVarMap);
 }
@@ -788,7 +788,7 @@ As in Cαml, the sorts defined in a Fresh Gom module are of two distinct kinds:
 
 When pattern sorts are mentioned in an expression sort constructor, they must be placed inside brackets &lt; &gt;. This indicates a *refresh point*, i.e. a field that will be refreshed whenever the enclosing constructor is deconstructed (using match). For example, consider this excerpt of a module defining a simply typed lambda-calculus:
 
-```java
+``` java
 atom LVar
 
 Type  = Atomic(p:String)
@@ -803,7 +803,7 @@ Abs binds LVar = abs(x:LVar, neutral ty:Type, inner u:LTerm)
 
 Since the pattern sort `Lam` is declared to bind the atoms of sort `LVar`, every time the constructor `Lam` is deconstructed, the atoms of sort `LVar` in the field `a` are refreshed. The canonical way to deconstruct such a constructor is thus to use a nested pattern as follows.
 
-```java
+``` java
 %match(t) {
   App(u,v)            -> { /* nothing special happens */ }
   Lambda(abs(x,ty,u)) -> { /* x is fresh */ }
@@ -840,7 +840,7 @@ Formal presentations of the system usually go on with
 
 We will represent these three kind of abstraction using three pattern sorts: `TermTermAbs`, `TypeTermAbs` and `TypeTypeAbs`. The previous three points will be expressed using the inner keyword. Note that in `λx:A.t`, the question of wether the term variable `x` is bound in the type `A` is irrelevant. We will express this fact using the neutral keyword. The remaining of the grammar is standard Gom code.
 
-```java
+``` java
 module SystemF
 imports String int
 abstract syntax
@@ -868,7 +868,7 @@ TypeTypeAbs binds TypeVar = abs3(X:TypeVar, inner A:Type)
 
 Let us now write a pretty-printer for the lambda-terms. Since pretty-print needs to manipulate raw variable names (strings), we will work in raw mode.
 
-```java
+``` java
 import systemf.types.*;
 
 public class Pretty {
@@ -926,7 +926,7 @@ Let us now write an interpreter. The reduction rules of System F are the term-le
 
 The key point is the reduction system `HeadBeta`. Thanks to the mapping generated by Fresh Gom, every time an abstraction is matched, the variable are refreshed so that we avoid their potential capture. This time, we have to convert the raw term into a “normal” one to benefit of this feature.
 
-```java
+``` java
 import systemf.types.*;
 import tom.library.sl.*;
 
@@ -1006,7 +1006,7 @@ It is worth noticing that by changing `Outermost` to `Innermost` we obtain a cal
 
 The full example can be found in the Tom distribution. We focus here on how to encode `(case .. of ..)` expressions with the help of Fresh Gom.
 
-```java
+``` java
 module lambda
 imports int String
 abstract syntax
@@ -1055,14 +1055,14 @@ Term-Graph Data-Structures
 
 When defining a Gom algebraic signature, it is possible to construct term-graphs on these signature using the option `termgraph`. In this case, the signature is automatically extended to manage labels. For every sort, `Term` for instance, two new constructors are added:
 
-```java
+``` java
 LabTerm(label:String,term:Term)
 RefTerm(label:String)
 ```
 
 With these two new constructors, users can define term-graphs as labelled terms:
 
-```java
+``` java
 Term cyclicTerm = `LabTerm("l",f(RefTerm("l")));
 Term termWithSharing = `g(RefTerm("a"),LabTerm("a",a()));
 ```
@@ -1073,7 +1073,7 @@ From this labelled term, users can obtain the term-graph representation with pat
 
 Using the hook `graphrules`, it is possible to define a set of term-graph rules. The first parameter (MyGraphStrat) is the name of the strategy associated to the set of rules. The second parameter is the default strategy (Identity in the following example). The left-hand and right-hand sides of these rules are term-graphs. A set of rules can only be associated to a given sort.
 
-```java
+``` java
 sort Term: graphrules(MyGraphStrat,Identity) {
   g(l:a(),&l) -> f(b())
   f(g(g(a(),&l),l:x)) -> g(ll:b(),&ll) if b()<<x
@@ -1084,7 +1084,7 @@ In the rules, sharings and cycles are not represented by the constructor `LabTer
 
 Contrary to classical term-graph rewriting, it is possible to reuse a label from the left-hand side in the right-hand side in order to obtain side effects. This feature is inspired from Rachid Echahed’s [formalism](http://hal.archives-ouvertes.fr/ccsd-00004558).
 
-```java
+``` java
 sort Term: graphrules(SideEffect,Identity) {
   f(l:a()) -> g(&l,l:b())
 }
@@ -1092,7 +1092,7 @@ sort Term: graphrules(SideEffect,Identity) {
 
 This set of rules is translated into a Tom `%strategy` that can be used in a Tom program:
 
-```java
+``` java
 Term t = (Term) `g(RefTerm("a"),LabTerm("a",a())).expand();
 `TopDown(Term.MyGraphStrat()).visit(t)
 ```
