@@ -224,12 +224,12 @@ public class AstBuilder extends ProgramSyntaxBaseListener {
    * elementarystrategy
    *   : IDENTITY 
    *   | FAIL 
-   *   | LPAR strategy RPAR 
-   *   | ALL LPAR strategy RPAR 
-   *   | ONE LPAR strategy RPAR 
-   *   | MU ID DOT LPAR strategy RPAR 
+   *   | LPAR s=strategy RPAR 
+   *   | ALL LPAR all=strategy RPAR 
+   *   | ONE LPAR one=strategy RPAR 
+   *   | MU ID DOT LPAR mu=strategy RPAR 
    *   | ID LPAR (strategy (COMMA strategy)*)? RPAR
-   *   | ID 
+   *   | name=ID 
    *   ;
    */
   @Override public void exitElementarystrategy(ProgramSyntaxParser.ElementarystrategyContext ctx) { 
