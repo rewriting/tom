@@ -68,12 +68,15 @@ public class Signature {
 
   /**
    * Add the symbols defined for a given type in the corresponding
-   * entry in the signature Map. 
+   * entry in the signature Map.  
+   * If a symbol is defined in the Functions section then add it in
+   * the corresponding entry in the signature Map and in the set of
+   * functions of the signature.
    * @param program the AST of the program containing the signature
    */
   public void setSignature(Program program) {
     %match(program) {
-      Program[productionList=ConcProduction(_*,SortType(codomain,ConcAlternative(_*,Alternative(name,args,codomain),_*)),_*),functionList=functionList] -> {
+      Program[productionList=ConcProduction(_*,SortType(codomain,ConcAlternative(_*,Alternative(name,args,codomain),_*)),_*)] -> {
         GomTypeList domain = `ConcGomType();
         %match(args) {
           ConcField(_*,UnamedField(argType),_*) -> {
@@ -81,16 +84,41 @@ public class Signature {
           }
         }
         addSymbol(`name,domain,`codomain);
-
-        %match(functionList) {
-          ConcProduction(_*,SortType(codomain2,ConcAlternative(_*,Alternative(name2,args2,codomain2),_*)),_*) -> {
-            if(`name2.equals(`name) && `codomain.equals(`codomain2)) {
-              setFunction(`name);
-            }
-          }
-        }
       }
     }
+
+    %match(program) {
+      Program[functionList=ConcProduction(_*,SortType(codomain,ConcAlternative(_*,Alternative(name,args,codomain),_*)),_*)] -> {
+        GomTypeList domain = `ConcGomType();
+        %match(args) {
+          ConcField(_*,UnamedField(argType),_*) -> {
+            domain = `ConcGomType(domain*,argType);
+          }
+        }
+        addFunctionSymbol(`name,domain,`codomain);
+      }
+    }
+
+//     %match(program) {
+//       Program[productionList=ConcProduction(_*,SortType(codomain,ConcAlternative(_*,Alternative(name,args,codomain),_*)),_*),functionList=functionList] -> {
+//         GomTypeList domain = `ConcGomType();
+//         %match(args) {
+//           ConcField(_*,UnamedField(argType),_*) -> {
+//             domain = `ConcGomType(domain*,argType);
+//           }
+//         }
+//         addSymbol(`name,domain,`codomain);
+
+//         %match(functionList) {
+//           ConcProduction(_*,SortType(codomain2,ConcAlternative(_*,Alternative(name2,args2,codomain2),_*)),_*) -> {
+//             if(`name2.equals(`name) && `codomain.equals(`codomain2)) {
+//               setFunction(`name);
+//             }
+//           }
+//         }
+//       }
+//     }
+
   }
   
   /**

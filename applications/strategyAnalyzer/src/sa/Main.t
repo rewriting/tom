@@ -47,16 +47,13 @@ public class Main {
 
       // ANTLR4
       ANTLRInputStream input = new ANTLRInputStream(fileinput);
-      //       sa.ProgramSyntaxLexer lexer = new sa.ProgramSyntaxLexer(input);
       ProgramSyntaxLexer lexer = new ProgramSyntaxLexer(input);
       CommonTokenStream tokens = new CommonTokenStream(lexer);
-      //       sa.ProgramSyntaxParser parser = new sa.ProgramSyntaxParser(tokens);
       ProgramSyntaxParser parser = new ProgramSyntaxParser(tokens);
       parser.setBuildParseTree(true); // tell ANTLR to build a parse tree
       ParseTree tree = parser.program(); // parse
 
       ParseTreeWalker walker = new ParseTreeWalker();
-      //       sa.AstBuilder astBuilder = new sa.AstBuilder(); 
       AstBuilder astBuilder = new AstBuilder(); 
       walker.walk(astBuilder, tree);
       Program program = (Program) astBuilder.getValue(tree);
