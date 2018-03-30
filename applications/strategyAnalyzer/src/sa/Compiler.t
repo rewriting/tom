@@ -1,6 +1,7 @@
 package sa;
 
 import sa.rule.types.*;
+import java.util.Collection;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Set;
@@ -48,9 +49,10 @@ public class Compiler {
   private Signature generatedSignature;
 
   // names of strategies already compiled
-  private Set<String> generatedStrategy;
-
+  //   private Set<String> generatedStrategy;
+  // stores the set of rules corresponding to compiled strategy
   private Map<Strat,List<Rule>> storedTRSs;
+  // stores the symbol triggering the rules corresponding to compiled strategy 
   private Map<Strat,String> strategySymbols;
 
   private static String append = "append";
@@ -64,7 +66,7 @@ public class Compiler {
    * 
    */
   private Compiler() {
-    this.generatedStrategy = new HashSet<String>();
+    //     this.generatedStrategy = new HashSet<String>();
     this.storedTRSs = new HashMap<Strat,List<Rule>>();;
     this.strategySymbols = new HashMap<Strat,String>();;
   }
@@ -84,8 +86,9 @@ public class Compiler {
    * get the names of the compiled strategies
    * @return the names of the compiled strategies
    */
-  public List<String> getStrategyNames() {
-    return new ArrayList(generatedStrategy);
+  public Collection<String> getStrategyNames() {
+    return strategySymbols.values();
+    //     return new ArrayList(generatedStrategy);
   }
 
   public void setProgram(Program program) throws TypeMismatchException {
@@ -117,11 +120,12 @@ public class Compiler {
       Strat strategy = this.expandStrategy(strategyName);
       assert strategy != null;
 
-      if(!generatedStrategy.contains(strategyName)) {
+      //       if(!generatedStrategy.contains(strategyName)) {
+      if(!getStrategyNames().contains(strategyName)) {
         // if not generated yet
         String strategySymbol = this.compileStrat(strategy,mutableList);
         generateTriggerRule(strategyName,strategySymbol,mutableList);
-        generatedStrategy.add(strategyName);
+        //         generatedStrategy.add(strategyName);
       } else {
         // do nothing
       }
