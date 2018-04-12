@@ -45,9 +45,6 @@ public class Options {
   @Option(name="-l",usage="anti-pattern level",metaVar="LEVEL")
     public int level = 100;
 
-  @Option(name="-approx",usage="compilation does not respects the reduction in the original system")
-    public boolean approx = false;
-
   @Option(name="-withType", usage="specify that a typed signature will be used")
     public boolean withType = false;
   

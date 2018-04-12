@@ -551,20 +551,15 @@ public class Compiler {
 
       %match(strat) {
         StratTrs(trs@(Trs|Otrs)(rulelist)) -> {
-
           //if(Main.options.pattern) {
           //  System.out.println("pattern: " + `rulelist);
           //  RuleList lin = this.transformNLOTRSintoLOTRS(`rulelist, gSig);
           //  System.out.println("linear otrs: " + lin);
           //  RuleList res = Trs.trsRule(lin,eSig);
           //}
-
           strategySymbol = this.compileRuleList(`trs,generatedRules,null);
         }
 
-        /*
-         * TODO: fix non confluence here
-         */
         StratMu(name,s) -> {
           try {
             String mu = Tools.getName(StrategyOperator.MU.getName());
@@ -576,8 +571,8 @@ public class Compiler {
                * mu(Bot(X)) -> Bot(X)
                * mu(X@!Bot(Y)) -> phi_s(X)
                */
-              generatedRules.add(Rule(_appl(mu,Bottom(X)), Bottom(X)));
-              Term lhs = Main.options.ordered ? _appl(mu,X) : _appl(mu,At(X,Anti(Bottom(Y))));
+              generatedRules.add(Rule(_appl(mu,Bottom(X)), Bottom(X))); 
+              Term lhs = Main.options.ordered ? _appl(mu,X) : _appl(mu,At(X,Anti(Bottom(Y)))); // mu(X) -> phi_s(X)   if ordered TRS is generated; mu(X@!Bot(Y)) -> phi_s(X) otherwise
               generatedRules.add(Rule(lhs, _appl(phi_s,X)));
             } else {
               // META-LEVEL
@@ -597,6 +592,10 @@ public class Compiler {
         }
 
         // mu fix point: transform the stratname into a function call
+        /* equivalent to (because of the replacement of name in mu name.S by mu) 
+         * name(Bot(X)) -> Bot(X)
+         * name(X@!Bot(Y)) -> phi_s(X)
+         */
         StratName(name) -> {
           strategySymbol = `name;
         }
@@ -605,46 +604,26 @@ public class Compiler {
           String id = Tools.getName(StrategyOperator.IDENTITY.getName());
           if(!Main.options.metalevel) {
             gSig.addFunctionSymbol(id,`ConcGomType(Signature.TYPE_TERM),Signature.TYPE_TERM);
-            if( !Main.options.approx ) {
-              /*
-               * the rule cannot be applied on arguments containing fresh
-               * variables but only on terms from the signature or Bottom
-               * normally it will follow reduction in original TRS
-               * id(Bot(X)) -> Bot(X)
-               * id(X@!Bot(Y)) -> X
-               */
-              generatedRules.add(Rule(_appl(id,Bottom(X)), Bottom(X)));
-              Term lhs = Main.options.ordered ? _appl(id,X) : _appl(id,At(X,Anti(Bottom(Y))));
-              generatedRules.add(Rule(lhs, X));
-            } else { // TODO: remove APPROX branch?
-              /*
-               * Bottom of Bottom is Bottom
-               * this is not necessary if exact reduction - in this case Bottom is propagated immediately 
-               * id(X) -> X
-               * Bot(Bot(X)) -> Bot(X)
-               */
-              generatedRules.add(Rule(_appl(id,X), X));
-              generatedRules.add(Rule(Bottom(Bottom(X)), Bottom(X)));
-            }
+            /*
+             * the rule cannot be applied on arguments containing fresh
+             * variables but only on terms from the signature or Bottom
+             * normally it will follow reduction in original TRS
+             * id(Bot(X)) -> Bot(X)
+             * id(X@!Bot(Y)) -> X
+             */
+            generatedRules.add(Rule(_appl(id,Bottom(X)), Bottom(X)));
+            Term lhs = Main.options.ordered ? _appl(id,X) : _appl(id,At(X,Anti(Bottom(Y))));
+            generatedRules.add(Rule(lhs, X));
           } else { 
             // Meta-LEVEL
             gSig.addFunctionSymbol(id,`ConcGomType(Signature.TYPE_METATERM),Signature.TYPE_METATERM);
-            if( !Main.options.approx ) {
-              /*
-               * id(Bot(X)) -> Bot(X)
-               * id(Appl(X,Y)) -> Appl(X,Y)
-               */
-              generatedRules.add(Rule(_appl(id,Bottom(X)), Bottom(X)));
-              // could use X instead of Appl(X,Y) but it wouldn't change too much (thanks to metalevel)
-              generatedRules.add(Rule(_appl(id,Appl(X,Y)), Appl(X,Y)));
-            } else {  // TODO: remove APPROX branch?
-              /*
-               * id(X) -> X
-               * Bot(Bot(X)) -> Bot(X)
-               */
-              generatedRules.add(Rule(_appl(id,X), X));
-              generatedRules.add(Rule(Bottom(Bottom(X)), Bottom(X)));
-            }
+            /*
+             * id(Bot(X)) -> Bot(X)
+             * id(Appl(X,Y)) -> Appl(X,Y)
+             */
+            generatedRules.add(Rule(_appl(id,Bottom(X)), Bottom(X)));
+            // could use X instead of Appl(X,Y) but it wouldn't change too much (thanks to metalevel)
+            generatedRules.add(Rule(_appl(id,Appl(X,Y)), Appl(X,Y)));
           }
           strategySymbol = id;
         }
@@ -653,42 +632,23 @@ public class Compiler {
           String fail = Tools.getName(StrategyOperator.FAIL.getName());
           if( !Main.options.metalevel ) {
             gSig.addFunctionSymbol(fail,`ConcGomType(Signature.TYPE_TERM),Signature.TYPE_TERM);
-            if( !Main.options.approx ) {
-              /*
-               * fail(Bot(X)) -> Bot(X)
-               * fail(X@!Bot(Y)) -> Bot(X)
-               */
-              generatedRules.add(Rule(_appl(fail,Bottom(X)), Bottom(X)));
-              Term lhs = Main.options.ordered ? _appl(fail,X) : _appl(fail,At(X,Anti(Bottom(Y))));
-              generatedRules.add(Rule(lhs, Bottom(X)));
-            } else { // TODO: remove APPROX branch?
-              /*
-               * fail(X) -> Bot(X)
-               * Bot(Bot(X)) -> Bot(X)
-               */
-              generatedRules.add(Rule(_appl(fail,X), Bottom(X)));
-              generatedRules.add(Rule(Bottom(Bottom(X)), Bottom(X)));
-            }
+            /*
+             * fail(Bot(X)) -> Bot(X)
+             * fail(X@!Bot(Y)) -> Bot(X)
+             */
+            generatedRules.add(Rule(_appl(fail,Bottom(X)), Bottom(X)));
+            Term lhs = Main.options.ordered ? _appl(fail,X) : _appl(fail,At(X,Anti(Bottom(Y))));
+            generatedRules.add(Rule(lhs, Bottom(X)));
           } else {
             // META-LEVEL
             gSig.addFunctionSymbol(fail,`ConcGomType(Signature.TYPE_METATERM),Signature.TYPE_METATERM);
-            if( !Main.options.approx ) {
-              /*
-               * fail(Bot(X)) -> Bot(X)
-               * fail(Appl(X,Y)) -> Bot(Appl(X,Y))
-               */
-              generatedRules.add(Rule(_appl(fail,Bottom(X)), Bottom(X)));
-              // could use X instead of Appl(X,Y) but it wouldn't change too much (thanks to metalevel)
-              generatedRules.add(Rule(_appl(fail,Appl(X,Y)), Bottom(Appl(X,Y))));
-            } else { // TODO: remove APPROX branch?
-              /*
-               * fail(X) -> Bot(X)
-               * Bot(Bot(X)) -> Bot(X)
-               */
-              generatedRules.add(Rule(_appl(fail,X), Bottom(X)));
-              generatedRules.add(Rule(Bottom(Bottom(X)), Bottom(X)));
-            }
-
+            /*
+             * fail(Bot(X)) -> Bot(X)
+             * fail(Appl(X,Y)) -> Bot(Appl(X,Y))
+             */
+            generatedRules.add(Rule(_appl(fail,Bottom(X)), Bottom(X)));
+            // could use X instead of Appl(X,Y) but it wouldn't change too much (thanks to metalevel)
+            generatedRules.add(Rule(_appl(fail,Appl(X,Y)), Bottom(Appl(X,Y))));
           }
           strategySymbol = fail;
         }
@@ -701,58 +661,36 @@ public class Compiler {
           if( !Main.options.metalevel ) {
             gSig.addFunctionSymbol(seq,`ConcGomType(Signature.TYPE_TERM),Signature.TYPE_TERM);
             gSig.addFunctionSymbol(seq2,`ConcGomType(Signature.TYPE_TERM,Signature.TYPE_TERM),Signature.TYPE_TERM);
-            if( !Main.options.approx ) {
-              /*
-               * the rule cannot be applied on arguments containing fresh variables but only on terms from the signature or Bottom
-               * normally it will follow reduction in original TRS
-               * seq(Bot(X)) -> Bot(X)
-               * seq(X@!Bot(Y)) -> seq2(n2(n1(X)),X)
-               * seq2(Bot(Y),X) -> Bot(X)
-               * seq2(X@!Bot(Y),Z) -> X
-               */
-              generatedRules.add(Rule(_appl(seq,Bottom(X)), Bottom(X)));
-              Term lhs = Main.options.ordered ? _appl(seq,X) : _appl(seq,At(X,Anti(Bottom(Y))));
-              generatedRules.add(Rule(lhs, _appl(seq2,_appl(n2,_appl(n1,X)),X)));
-              generatedRules.add(Rule(_appl(seq2,Bottom(Y),X), Bottom(X)));
-              Term nlhs = Main.options.ordered ? _appl(seq2,X,Z) : _appl(seq2,At(X,Anti(Bottom(Y))),Z);
-              generatedRules.add(Rule(nlhs,X));
-            } else { // TODO: remove APPROX branch?
-              /*
-               * seq(X) -> seq2(n2(n1(X)),X)
-               * Bot(Bot(X)) -> Bot(X)
-               * seq2(X@!Bot(Y),Z) -> X
-               * seq2(Bot(Y),X) -> Bot(X)
-               */
-              generatedRules.add(Rule(_appl(seq,X), _appl(seq2,_appl(n2,_appl(n1,X)),X)));
-              generatedRules.add(Rule(Bottom(Bottom(X)), Bottom(X)));
-              generatedRules.add(Rule(_appl(seq2,At(X,Anti(Bottom(Y))),Z), X));
-              generatedRules.add(Rule(_appl(seq2,Bottom(Y),X), Bottom(X)));
-            }
+            /*
+             * the rule cannot be applied on arguments containing fresh variables but only on terms from the signature or Bottom
+             * normally it will follow reduction in original TRS
+             * seq(Bot(X)) -> Bot(X)
+             * seq(X@!Bot(Y)) -> seq2(n2(n1(X)),X)
+             * seq2(Bot(Y),X) -> Bot(X)
+             * seq2(X@!Bot(Y),Z) -> X
+             */
+            generatedRules.add(Rule(_appl(seq,Bottom(X)), Bottom(X)));
+            Term lhs = Main.options.ordered ? _appl(seq,X) : _appl(seq,At(X,Anti(Bottom(Y))));
+            generatedRules.add(Rule(lhs, _appl(seq2,_appl(n2,_appl(n1,X)),X)));
+            generatedRules.add(Rule(_appl(seq2,Bottom(Y),X), Bottom(X)));
+            Term nlhs = Main.options.ordered ? _appl(seq2,X,Z) : _appl(seq2,At(X,Anti(Bottom(Y))),Z);
+            generatedRules.add(Rule(nlhs,X));
           } else { 
             // META-LEVEL
             gSig.addFunctionSymbol(seq,`ConcGomType(Signature.TYPE_METATERM),Signature.TYPE_METATERM);
             gSig.addFunctionSymbol(seq2,`ConcGomType(Signature.TYPE_METATERM,Signature.TYPE_METATERM),Signature.TYPE_METATERM);
-            if( !Main.options.approx ) {
-              /*
-               * seq(Bot(X)) -> Bot(X)
-               * seq(Appl(X,Y)) -> seq2(n2(n1(Appl(X,Y))),Appl(X,Y))
-               * seq2(Bot(Y),X) -> Bot(X)
-               * seq2(Appl(X,Y),Z) -> Appl(X,Y)
-               */
-              generatedRules.add(Rule(_appl(seq,Bottom(X)), Bottom(X)));
-              // could use X instead of Appl(X,Y) but it wouldn't change too much (thanks to metalevel)
-              generatedRules.add(Rule(_appl(seq,Appl(X,Y)), _appl(seq2,_appl(n2,_appl(n1,Appl(X,Y))),Appl(X,Y))));
-              generatedRules.add(Rule(_appl(seq2,Bottom(Y),X), Bottom(X)));
-              // could use X instead of Appl(X,Y) but it wouldn't change too much (thanks to metalevel)
-              generatedRules.add(Rule(_appl(seq2,Appl(X,Y),Z), Appl(X,Y)));
-            } else { // TODO: remove APPROX branch?
-              /*
-               * CHECK HERE
-               * seq(X) -> n2(n1(X))
-               */
-              generatedRules.add(Rule(X, _appl(n2,_appl(n1,X))));
-            }
-
+            /*
+             * seq(Bot(X)) -> Bot(X)
+             * seq(Appl(X,Y)) -> seq2(n2(n1(Appl(X,Y))),Appl(X,Y))
+             * seq2(Bot(Y),X) -> Bot(X)
+             * seq2(Appl(X,Y),Z) -> Appl(X,Y)
+             */
+            generatedRules.add(Rule(_appl(seq,Bottom(X)), Bottom(X)));
+            // could use X instead of Appl(X,Y) but it wouldn't change too much (thanks to metalevel)
+            generatedRules.add(Rule(_appl(seq,Appl(X,Y)), _appl(seq2,_appl(n2,_appl(n1,Appl(X,Y))),Appl(X,Y))));
+            generatedRules.add(Rule(_appl(seq2,Bottom(Y),X), Bottom(X)));
+            // could use X instead of Appl(X,Y) but it wouldn't change too much (thanks to metalevel)
+            generatedRules.add(Rule(_appl(seq2,Appl(X,Y),Z), Appl(X,Y)));
           }
           strategySymbol = seq;
         }
@@ -766,7 +704,6 @@ public class Compiler {
             gSig.addFunctionSymbol(choice,`ConcGomType(Signature.TYPE_TERM),Signature.TYPE_TERM);
             gSig.addFunctionSymbol(choice2,`ConcGomType(Signature.TYPE_TERM),Signature.TYPE_TERM);
             /*
-             * TODO [20/01/2015]: see if not exact is interesting
              * choice(Bot(X)) -> Bot(X)
              * choice(X@!Bot(Y)) -> choice2(n1(X))
              * choice2(Bot(X)) -> n2(X)
@@ -782,20 +719,18 @@ public class Compiler {
             // META-LEVEL
             gSig.addFunctionSymbol(choice,`ConcGomType(Signature.TYPE_METATERM),Signature.TYPE_METATERM);
             gSig.addFunctionSymbol(choice2,`ConcGomType(Signature.TYPE_METATERM),Signature.TYPE_METATERM);
-            if( !Main.options.approx ) {
-              /*
-               * choice(Bot(X)) -> Bot(X)
-               * choice(Appl(X,Y)) -> choice2(n1(Appl(X,Y)))
-               * choice2(Bot(X)) -> n2(X)
-               * choice2(Appl(X,Y) -> Appl(X,Y)
-               */
-              generatedRules.add(Rule(_appl(choice,Bottom(X)), Bottom(X)));
-              // could use X instead of Appl(X,Y) but it wouldn't change too much (thanks to metalevel)
-              generatedRules.add(Rule(_appl(choice,Appl(X,Y)), _appl(choice2,_appl(n1,Appl(X,Y)))));
-              generatedRules.add(Rule(_appl(choice2,Bottom(X)), _appl(n2,X)));
-              // could use X instead of Appl(X,Y) but it wouldn't change too much (thanks to metalevel)
-              generatedRules.add(Rule(_appl(choice2,Appl(X,Y)), Appl(X,Y)));
-            }
+            /*
+             * choice(Bot(X)) -> Bot(X)
+             * choice(Appl(X,Y)) -> choice2(n1(Appl(X,Y)))
+             * choice2(Bot(X)) -> n2(X)
+             * choice2(Appl(X,Y) -> Appl(X,Y)
+             */
+            generatedRules.add(Rule(_appl(choice,Bottom(X)), Bottom(X)));
+            // could use X instead of Appl(X,Y) but it wouldn't change too much (thanks to metalevel)
+            generatedRules.add(Rule(_appl(choice,Appl(X,Y)), _appl(choice2,_appl(n1,Appl(X,Y)))));
+            generatedRules.add(Rule(_appl(choice2,Bottom(X)), _appl(n2,X)));
+            // could use X instead of Appl(X,Y) but it wouldn't change too much (thanks to metalevel)
+            generatedRules.add(Rule(_appl(choice2,Appl(X,Y)), Appl(X,Y)));
           }
           strategySymbol = choice;
         }
@@ -805,7 +740,6 @@ public class Compiler {
           String all = Tools.getName(StrategyOperator.ALL.getName());
           if( !Main.options.metalevel ) {
             gSig.addFunctionSymbol(all,`ConcGomType(Signature.TYPE_TERM),Signature.TYPE_TERM);
-
             /*
              * propagate Bottom  (otherwise not reduced and leads to bug in Sequence)
              * all(Bot(X)) -> Bot(X)
@@ -884,7 +818,6 @@ public class Compiler {
             String all_3 = all+"_3";
             generatedSignature.addFunctionSymbol(all_2,`ConcGomType(Signature.TYPE_METALIST),Signature.TYPE_METALIST);
             generatedSignature.addFunctionSymbol(all_3,`ConcGomType(Signature.TYPE_METATERM,Signature.TYPE_METALIST,Signature.TYPE_METALIST,Signature.TYPE_METALIST),Signature.TYPE_METALIST);
-
             /*
              * propagate Bottom  (otherwise not reduced and leads to bug in Sequence)
              * all(Bot(X)) -> Bot(X)
@@ -922,7 +855,6 @@ public class Compiler {
           String one = Tools.getName(StrategyOperator.ONE.getName());
           if( !Main.options.metalevel ) {
             gSig.addFunctionSymbol(one,`ConcGomType(Signature.TYPE_TERM),Signature.TYPE_TERM);
-
             /*
              * propagate Bottom  (otherwise not reduced and leads to bug in Sequence)
              * one(Bottom(X)) -> Bottom(X)
