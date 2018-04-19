@@ -61,6 +61,29 @@ public class RuleCompiler {
    */
   public RuleList expandGeneralAntiPatterns(RuleList rules, String nextRuleSymbol) {
     rules = expandAntiPatternsAux(rules, false);
+
+    if(Main.options.verbose) {
+      for(Rule r: rules.getCollectionConcRule()) {
+        System.out.println("Expand General with "+nextRuleSymbol+" -> EXPANDED AP RULE: " + Pretty.toString(r) );
+      }
+    }
+
+    rules = expandBottom2(rules,nextRuleSymbol);
+    //     Can't do the replacement here because we might not know the nextRuleSymbol
+    //     if(nextRuleSymbol == null) { //if we don't know what to do with the Bottom2 (than change to Bottom)
+    //       rules = eliminateBottom2(rules);
+    //     }else{ // chain to the next call
+    //       rules = changeBottom2(rules,nextRuleSymbol);      
+    //     }
+    return rules;
+  }
+  
+  /*
+   * Replace acordingly the Bottom2 resulting from anti-pattern expansion
+   * @param rules the list of rules to expand
+   * @param nextRuleSymbol the symbol to chain the rules application with 
+   */
+  public RuleList expandBottom2(RuleList rules, String nextRuleSymbol) {
     if(nextRuleSymbol == null) { //if we don't know what to do with the Bottom2 (than change to Bottom)
       rules = eliminateBottom2(rules);
     }else{ // chain to the next call
@@ -68,6 +91,7 @@ public class RuleCompiler {
     }
     return rules;
   }
+
 
   /*
    * Remove nested anti-patterns
@@ -271,10 +295,23 @@ public class RuleCompiler {
   }
 
   /*
-   * replace Bottom2 by Bottom
+   * replace Bottom2 by Bottom in a list of Rule
    */
   public RuleList eliminateBottom2(RuleList subject) {
     RuleList res = subject;
+    try {
+      res = `TopDown(EliminateBottom2()).visitLight(subject);
+    } catch(VisitFailure e) {
+      throw new RuntimeException("Should not be there");
+    }
+    return res;
+  }
+
+  /*
+   * replace Bottom2 by Bottom in Rule
+   */
+  public Rule eliminateBottom2inRule(Rule subject) {
+    Rule res = subject;
     try {
       res = `TopDown(EliminateBottom2()).visitLight(subject);
     } catch(VisitFailure e) {
@@ -294,10 +331,23 @@ public class RuleCompiler {
   }
 
   /*
-   * replace Bottom2(x,_) by nextRuleSymbol(x)
+   * replace Bottom2(x,_) by nextRuleSymbol(x) in a list of Rule
    */
   public RuleList changeBottom2(RuleList subject, String nextRuleSymbol) {
     RuleList res = subject;
+    try {
+      res = `TopDown(ChangeBottom2(nextRuleSymbol)).visitLight(subject);
+    } catch(VisitFailure e) {
+      throw new RuntimeException("Should not be there");
+    }
+    return res;
+  }
+
+  /*
+   * replace Bottom2(x,_) by nextRuleSymbol(x) in one Rule
+   */
+  public Rule changeBottom2inRule(Rule subject, String nextRuleSymbol) {
+    Rule res = subject;
     try {
       res = `TopDown(ChangeBottom2(nextRuleSymbol)).visitLight(subject);
     } catch(VisitFailure e) {

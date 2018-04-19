@@ -268,6 +268,7 @@ public class Compiler {
 
   /**
    * compile a (ordered) list of rules
+   * The rules should have at most one level of APs but can be non-linear
    * return the name of the top symbol (phi) introduced
    * @param ruleList the ordered list of rules to compile
    * @param generatedRules the (possibily ordered) list of rewrite rules generated 
@@ -280,8 +281,7 @@ public class Compiler {
     boolean ordered = Main.options.ordered;
 
     /*
-     * Pre-treatment: remove anti-patterns (expandGeneralAntiPatterns)
-     * move into compileStrategy ?
+     * Pre-treatment: remove anti-patterns (expandGeneralAntiPatterns) 
      */
     RuleList ruleList = trs.getlist();
     if(Main.options.withAP == false) {
@@ -351,6 +351,10 @@ public class Compiler {
         }
 
         ConcRule(currentRule@Rule(lhs,rhs),A*) -> {
+          if(Main.options.verbose) {
+            System.out.println("COMPILE: " + Pretty.toString(`currentRule) );
+          }
+
           // if it is a rule with anti-patterns we need a fresh symbol even if it is an ordered compilation
           String nextRuleSymbol = rule;
           if(Property.containsAP(`currentRule)) {
@@ -363,8 +367,9 @@ public class Compiler {
           if(Main.options.withAP == false) {
             RuleCompiler ruleCompiler = new RuleCompiler(eSig,gSig);
             RuleList rList = ruleCompiler.expandGeneralAntiPatterns(`ConcRule(currentRule),nextRule);
-            
+            //             rList = ruleCompiler.expandBottom2(rList,nextRule);
             if(Main.options.verbose) {
+              System.out.println("Next SET: " + nextRule );
               for(Rule r: rList.getCollectionConcRule()) {
                 System.out.println("CompileRuleList -> EXPANDED AP RULE: " + Pretty.toString(r) );
               }
