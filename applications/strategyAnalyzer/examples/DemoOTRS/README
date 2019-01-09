@@ -1,0 +1,2 @@
+java sa/Main -aprove -i ../examples/RBTreeOTRS.ns -withType
+

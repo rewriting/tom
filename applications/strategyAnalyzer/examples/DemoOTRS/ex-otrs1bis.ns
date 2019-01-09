@@ -1,0 +1,24 @@
+// is it complete ?
+// any useless rules ?
+// what if we add c() ?
+abstract syntax
+T = a()
+	| b()
+	| c()
+	| h(T,T)
+
+U = f(T,T)
+
+functions
+U = f(T,T)
+
+trs
+[  
+  f(x,b()) ->  b(),
+  f(a(),x) ->  a(),
+  f(h(a(),y),b())   ->  y
+  f(z,h(b(),y))   ->  y
+	f(x,y) -> c()
+]
+
+

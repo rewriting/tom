@@ -1,0 +1,21 @@
+// is it complete ?
+// any useless rules ?
+// what if we add c() ?
+// what if we have variables in the RHS ?
+abstract syntax
+T = a()
+	| b()
+
+U = f(T,T)
+
+functions
+U = f(T,T)
+
+trs
+[  
+  f(a(),x) ->  a(),
+  f(b(),x) ->  a(),
+  f(x,y)   ->  b()
+]
+
+

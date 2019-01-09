@@ -1,0 +1,18 @@
+abstract syntax
+Bool = True() | False() | not(Bool) | or(Bool,Bool) | and(Bool,Bool)
+
+functions
+Bool = not(Bool) | or(Bool,Bool) | and(Bool,Bool)
+
+trs
+[
+  not(True())    -> False()
+  not(False())   -> True()
+
+  and(True(),True())  -> True()
+  and(x,y)   -> False()
+
+	or(False(),x) -> x
+	or(x,False()) -> x
+  or(x,y) -> True()
+]
