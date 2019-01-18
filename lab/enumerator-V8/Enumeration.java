@@ -1,20 +1,16 @@
 package tom.library.enumerator;
 
 import java.math.BigInteger;
-import java.util.List;
+import static java.math.BigInteger.ZERO;
+import static java.math.BigInteger.ONE;
 
 public class Enumeration<A> {
 
     private LazyList<Finite<A>> cacheParts;
     public P1<LazyList<Finite<A>>> p1;
 
-    public Enumeration(final LazyList<Finite<A>> p) {
+    public Enumeration(LazyList<Finite<A>> p) {
         this.cacheParts = p;
-        this.p1 = new P1<LazyList<Finite<A>>>() {
-    		public LazyList<Finite<A>> _1() {
-    			return p;
-    		}
-    	};
     }
 
     public Enumeration(P1<LazyList<Finite<A>>> p1) {
@@ -37,7 +33,7 @@ public class Enumeration<A> {
     }
 
     public A get(BigInteger i) {
-    	return index(parts(), i);
+        return index(parts(), i);
     }
 
     public Enumeration<A> plus(final Enumeration<A> other) {
@@ -59,26 +55,26 @@ public class Enumeration<A> {
             if (i.compareTo(card) < 0) {
                 return head.get(i);
             } else {
-            	ps = ps.tail();
-            	i = i.subtract(card);
+                ps = ps.tail();
+                i = i.subtract(card);
             }
         }
         throw new RuntimeException("index " + i + " out of range");
     }
     
-    /*
-     * zipPlus([f1,f2,f3], [g1,g2]) = [f1+g1, f2+g2] 
-     */
     private static <A> LazyList<Finite<A>> zipPlus(final LazyList<Finite<A>> xs, final LazyList<Finite<A>> ys) {
-    	if (xs.isEmpty() || ys.isEmpty()) {
-    		return xs.append(ys);
-    	}
-    	P1<LazyList<Finite<A>>> p = new P1<LazyList<Finite<A>>>() {
-    		public LazyList<Finite<A>> _1() {
-    			return zipPlus(xs.tail(), ys.tail());
-    		}
-    	};
-    	return LazyList.cons(xs.head().plus(ys.head()),p);
+        if (xs.isEmpty() || ys.isEmpty()) {
+            return xs.append(ys);
+        }
+        return LazyList.fromPair(new P2<Finite<A>, LazyList<Finite<A>>>() {
+            public Finite<A> _1() {
+                return xs.head().plus(ys.head());
+            }
+
+            public LazyList<Finite<A>> _2() {
+                return zipPlus(xs.tail(), ys.tail());
+            }
+        });
     }
 
     public <B> Enumeration<B> map(final F<A, B> f) {
@@ -99,28 +95,23 @@ public class Enumeration<A> {
         return new Enumeration<A>(
                 new P1<LazyList<Finite<A>>>() {
                     public LazyList<Finite<A>> _1() {
-                    	return LazyList.cons(Finite.<A>empty(), p1);
+                        return LazyList.<Finite<A>>fromPair(
+                                new P2<Finite<A>, LazyList<Finite<A>>>() {
+
+                                    public Finite<A> _1() {
+                                        return Finite.<A>empty();
+                                    }
+
+                                    public LazyList<Finite<A>> _2() {
+                                        return Enumeration.this.parts();
+                                    }
+                                });
                     }
                 });
     }
 
-    public Enumeration<A> pay(final int n) {
-    	return new Enumeration<A>(
-    			new P1<LazyList<Finite<A>>>() {
-    				public LazyList<Finite<A>> _1() {
-    					LazyList<Finite<A>> res = LazyList.cons(Finite.<A>empty(), p1);
-    					for(int i=1 ; i<n ; i++) {
-    						final LazyList<Finite<A>> tail = res;
-    						res = LazyList.cons(Finite.<A>empty(), new P1<LazyList<Finite<A>>>() {
-    							public LazyList<Finite<A>> _1() { return tail; };
-    						});
-    					}
-    					return res;
-    				}
-    			});
-    }
-    
     public <B> Enumeration<P2<A, B>> times(final Enumeration<B> other) {
+        //return new Enumeration<P2<A,B>>(prod(this.parts, other.parts.reversals()));
         return new Enumeration<P2<A, B>>(
                 new P1<LazyList<Finite<P2<A, B>>>>() {
                     public LazyList<Finite<P2<A, B>>> _1() {
@@ -132,27 +123,29 @@ public class Enumeration<A> {
     /**
      * tools for LazyList
      */
-    
-    
-    
-    private static <A, B> LazyList<Finite<P2<A, B>>> prod(LazyList<Finite<A>> xs, final LazyList<LazyList<Finite<B>>> rys) {
-        if (xs.isEmpty() || rys.isEmpty()) {
+    private static <A, B> LazyList<Finite<P2<A, B>>> prod(LazyList<Finite<A>> xs, final LazyList<LazyList<Finite<B>>> ys) {
+        if (xs.isEmpty() || ys.isEmpty()) {
             return LazyList.nil();
         }
-        return goY(xs, rys);
+        return goY(xs, ys);
     }
 
     private static <A, B> LazyList<Finite<P2<A, B>>> goY(final LazyList<Finite<A>> xs, final LazyList<LazyList<Finite<B>>> rys) {
-    	P1<LazyList<Finite<P2<A, B>>>> p = new P1<LazyList<Finite<P2<A, B>>>>() {
-    		public LazyList<Finite<P2<A, B>>> _1() {
-    			return (rys.tail().isEmpty()) ? goX(xs, rys.head()) : goY(xs, rys.tail());
-    		}
-    	};
-    	return LazyList.cons(conv(xs, rys.head()), p);
+        return LazyList.fromPair(new P2<Finite<P2<A, B>>, LazyList<Finite<P2<A, B>>>>() {
+
+            public Finite<P2<A, B>> _1() {
+                return conv(xs, rys.head());
+            }
+
+            public LazyList<Finite<P2<A, B>>> _2() {
+                return (rys.tail().isEmpty()) ? goX(xs, rys.head()) : goY(xs, rys.tail());
+            }
+        });
     }
 
     private static <A, B> LazyList<Finite<P2<A, B>>> goX(final LazyList<Finite<A>> xs, final LazyList<Finite<B>> ry) {
         F<LazyList<Finite<A>>, Finite<P2<A, B>>> fs = new F<LazyList<Finite<A>>, Finite<P2<A, B>>>() {
+
             public Finite<P2<A, B>> apply(LazyList<Finite<A>> x) {
                 return conv(x, ry);
             }
@@ -160,20 +153,67 @@ public class Enumeration<A> {
         return xs.tail().tails().map(fs);
     }
 
-    private static <A, B> Finite<P2<A, B>> conv(LazyList<Finite<A>> xs, LazyList<Finite<B>> ys) {
-    	Finite<P2<A,B>> result = Finite.empty();
-		if(ys.isEmpty()) { return result; }
-    	while(true) {
-    		if(xs.isEmpty()) { return result; }
-    		result = result.plus(xs.head().times(ys.head()));
-    		ys = ys.tail();
-    		if(ys.isEmpty()) { return result; }
-    		xs = xs.tail();
-    	}
+    private static <A, B> Finite<P2<A, B>> conv(final LazyList<Finite<A>> xs, final LazyList<Finite<B>> ys) {
+        F<Finite<A>, BigInteger> cardA = new F<Finite<A>, BigInteger>() {
+
+            public BigInteger apply(Finite<A> x) {
+                return x.getCard();
+            }
+        };
+        F<Finite<B>, BigInteger> cardB = new F<Finite<B>, BigInteger>() {
+
+            public BigInteger apply(Finite<B> x) {
+                return x.getCard();
+            }
+        };
+        LazyList<BigInteger> xsCards = xs.map(cardA);
+        LazyList<BigInteger> ysCards = ys.map(cardB);
+        F2<BigInteger, BigInteger, BigInteger> multiply =
+                new F2<BigInteger, BigInteger, BigInteger>() {
+
+                    public BigInteger apply(BigInteger a, BigInteger b) {
+                        return a.multiply(b);
+                    }
+                };
+        F2<BigInteger, BigInteger, BigInteger> add =
+                new F2<BigInteger, BigInteger, BigInteger>() {
+
+                    public BigInteger apply(BigInteger a, BigInteger b) {
+                        return a.add(b);
+                    }
+                };
+
+        final F2<Finite<P2<A, B>>, Finite<P2<A, B>>, Finite<P2<A, B>>> finitePlus =
+                new F2<Finite<P2<A, B>>, Finite<P2<A, B>>, Finite<P2<A, B>>>() {
+
+                    public Finite<P2<A, B>> apply(Finite<P2<A, B>> x, Finite<P2<A, B>> y) {
+                        return x.plus(y);
+                    }
+                };
+        final F2<Finite<A>, Finite<B>, Finite<P2<A, B>>> finiteTimes =
+                new F2<Finite<A>, Finite<B>, Finite<P2<A, B>>>() {
+
+                    public Finite<P2<A, B>> apply(Finite<A> x, Finite<B> y) {
+                        return x.times(y);
+                    }
+                };
+
+        LazyList<BigInteger> cardsProducts = xsCards.zipWith(ysCards, multiply.curry());
+        BigInteger newCard = cardsProducts.foldLeft(ZERO, add.curry());
+        F<BigInteger, P2<A, B>> newIndexer = new F<BigInteger, P2<A, B>>() {
+
+            public P2<A, B> apply(BigInteger i) {
+                Finite<P2<A, B>> unionOfProducts = xs.zipWith(ys, finiteTimes).foldLeft(Finite.<P2<A, B>>empty(), finitePlus);
+                return unionOfProducts.get(i);
+            }
+        };
+
+        return new Finite<P2<A, B>>(newCard, newIndexer);
     }
 
     public static <A, B> Enumeration<B> apply(final Enumeration<F<A, B>> subject, final Enumeration<A> other) {
         F<P2<F<A, B>, A>, B> pair = new F<P2<F<A, B>, A>, B>() {
+
             public B apply(P2<F<A, B>, A> p) {
                 return p._1().apply(p._2());
             }
@@ -230,37 +270,4 @@ public class Enumeration<A> {
 
         return resA;
     }
-    
-    public List<List<A>> toList() {
-    	F<Finite<A>,List<A>> f = new F<Finite<A>,List<A>>() {
-    		public List<A> apply(Finite<A> arg) {
-    			return arg.toList();
-    		}
-    	};
-    	return parts().map(f).toList();
-    }
-    
-    public static <A> Enumeration<A> fromList(List<List<A>> l) {
-    	LazyList<List<A>> res = LazyList.fromList(l);
-    	F<List<A>,Finite<A>> f = new F<List<A>,Finite<A>>() {
-    		public Finite<A> apply(List<A> arg) {
-    			return Finite.fromList(arg);
-    		}
-    	};
-    	return new Enumeration<A>(res.map(f));
-    }
-    
-	@Override
-	public boolean equals(Object obj) {
-		if (obj instanceof Enumeration) {
-			return this.toList().equals(((Enumeration<?>) obj).toList());
-		}
-		return super.equals(obj);
-	}
-
-    
-    public String toString() {
-		return toList().toString();
-    }
-    
 }
