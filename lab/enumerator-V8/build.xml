@@ -1,0 +1,59 @@
+<!-- <project default="compile"> -->
+<!--   <target name="compile"> -->
+<!--       <javac srcdir="." /> -->
+<!--   </target> -->
+<!-- </project> -->
+
+<project name="enumerator" basedir="." default="build">
+   <property name="src.dir.tom"     value="src/tom"/>
+   <property name="build.dir"   value="build"/>
+   <property name="class.dir"   value="${build.dir}/classes"/>
+   <property name="jar.dir"     value="${build.dir}/jar"/>
+
+   <property name="src.dir.ex"     value="src/examples"/>
+   <property name="main-class"     value="examples/DemoTree"/>
+
+   <path id="classpath">
+        <fileset dir="${jar.dir}" includes="**/*.jar"/>
+   </path>
+
+   <target name="compile">
+        <mkdir dir="${class.dir}"/>
+        <javac srcdir="${src.dir.tom}" destdir="${class.dir}"/>
+   </target>
+
+   <target name="examples" depends="build">
+        <javac srcdir="${src.dir.ex}" destdir="${class.dir}"/>
+   </target>
+
+	 <target name="run" depends="examples">
+	 		<java fork="true" classname="${main-class}">
+            <classpath>
+                <path refid="classpath"/>
+                <path location="${class.dir}"/>
+            </classpath>
+        </java>
+	 </target>
+
+   <target name="build" depends="compile">
+      <mkdir dir="${jar.dir}"/>
+      <jar destfile="${jar.dir}/${ant.project.name}.jar" basedir="${class.dir}"/>
+   </target>
+
+  <target name="clean">
+       <delete dir="${build.dir}"/>
+  </target>
+
+  <target name="clean-jar">
+    <delete file="${jar.dir}/${ant.project.name}.jar" />
+  </target>
+
+  <target name="clean-compile">
+    <delete>
+      <fileset dir="${class.dir}" includes="**/*.class" />
+    </delete> 
+  </target>
+
+  <target name="clean-build" depends="clean,build"/>
+
+</project>
