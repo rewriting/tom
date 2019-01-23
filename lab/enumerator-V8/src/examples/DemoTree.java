@@ -25,13 +25,12 @@ public class DemoTree {
 
 		F<Enumeration<TTree>, Enumeration<TTree>> f = new F<Enumeration<TTree>, Enumeration<TTree>>() {
 			public Enumeration<TTree> apply(final Enumeration<TTree> e) {
-				return leafEnum(getLeafFunction(), AEnum).plus(nodeEnum(getNodeFunction(), StringEnum, e).pay());
+        return leafEnum(getLeafFunction(), AEnum).plus(nodeEnum(getNodeFunction(), StringEnum, e).pay());
 			}
 		};
 
 		Enumeration<TTree> treeEnum = Enumeration.fix(f);
 
-		//listEnum.pay();
 		System.out.println("Enumerator for " + "TTree");
 		for (int i = 0; i < 20; i++) {
 			System.out.println("Get " + i + "th term: " + treeEnum.get(BigInteger.valueOf(i)));

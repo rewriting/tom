@@ -11,7 +11,7 @@
    <property name="jar.dir"     value="${build.dir}/jar"/>
 
    <property name="src.dir.ex"     value="src/examples"/>
-   <property name="main-class"     value="examples/DemoTree"/>
+   <property name="main-class"     value="examples/DemoList"/>
 
    <path id="classpath">
         <fileset dir="${jar.dir}" includes="**/*.jar"/>
