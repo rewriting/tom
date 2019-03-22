@@ -304,21 +304,26 @@ public class AstBuilder extends ProgramSyntaxBaseListener {
     Term anti = (Term) getValue(ctx.anti);
     Term p1 = (Term) getValue(ctx.p1);
     Term p2 = (Term) getValue(ctx.p2);
+    Term pa = (Term) getValue(ctx.pa);
 
+    // constructor pattern or aliased pattern
     if(ctx.ID() != null) {
-      TermList l = `TermList();
-      for(ParserRuleContext e : ctx.term()) {
-        l = `TermList((Term)getValue(e), l*);
+      if(pa != null){
+        setValue(ctx,`At(Var(ctx.ID().getText()),pa));
+      }else{
+        TermList l = `TermList();
+        for(ParserRuleContext e : ctx.term()) {
+          l = `TermList((Term)getValue(e), l*);
+        }
+        setValue(ctx,`Appl(ctx.ID().getText(),l.reverse()));
       }
-      setValue(ctx,`Appl(ctx.ID().getText(),l.reverse()));
-    } else {
+    } else { // anti-pattern or sum pattern
       if(anti != null){
-        //         setValue(ctx,`Anti((Term)getValue(ctx.anti)));
         setValue(ctx,`Anti(anti));
       }else{
         AddList plus = `ConcAdd();
-        plus = `ConcAdd(p1,plus*);
         plus = `ConcAdd(p2,plus*);
+        plus = `ConcAdd(p1,plus*);
         setValue(ctx,`Add(plus));
       }
     }

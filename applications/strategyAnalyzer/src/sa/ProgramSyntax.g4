@@ -93,6 +93,7 @@ pattern
   : ID LPAR (term (COMMA term)*)? RPAR 
   | '!' anti=term 
  	| p1=pattern '+' p2=pattern 
+ 	| ID '@' pa=pattern 
   ;
 
 term
