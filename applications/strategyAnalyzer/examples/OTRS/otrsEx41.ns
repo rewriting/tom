@@ -22,10 +22,20 @@ trs
 //   foo(a()+b(),y) -> y
 //   foo(f(x),y) -> x
 // ]
+// [
+//   foo(x,y@!a()) -> y
+//   foo(a()+b(),y) -> y
+//   foo(f(x,y),z) -> x
+//   foo(c(),a()) -> c()
+//   foo(x,y) -> a()
+// ]
 [
   foo(x,y@!a()) -> y
   foo(a()+b(),y) -> y
-  foo(f(x),y) -> x
+  foo(f(x,y),z) -> x
+//   foo(f(x,a()),z) -> x
+//   foo(f(a,b),a) -> a()
+  foo(x,y) -> a()
 ]
 
 
