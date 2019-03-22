@@ -297,9 +297,14 @@ public class AstBuilder extends ProgramSyntaxBaseListener {
    * pattern
    *   : ID LPAR (term (COMMA term)*)? RPAR 
    *   | '!' anti=term 
+   *   | p1=pattern '+' p2=pattern 
    *   ;
    */
   @Override public void exitPattern(ProgramSyntaxParser.PatternContext ctx) { 
+    Term anti = (Term) getValue(ctx.anti);
+    Term p1 = (Term) getValue(ctx.p1);
+    Term p2 = (Term) getValue(ctx.p2);
+
     if(ctx.ID() != null) {
       TermList l = `TermList();
       for(ParserRuleContext e : ctx.term()) {
@@ -307,7 +312,15 @@ public class AstBuilder extends ProgramSyntaxBaseListener {
       }
       setValue(ctx,`Appl(ctx.ID().getText(),l.reverse()));
     } else {
-      setValue(ctx,`Anti((Term)getValue(ctx.anti)));
+      if(anti != null){
+        //         setValue(ctx,`Anti((Term)getValue(ctx.anti)));
+        setValue(ctx,`Anti(anti));
+      }else{
+        AddList plus = `ConcAdd();
+        plus = `ConcAdd(p1,plus*);
+        plus = `ConcAdd(p2,plus*);
+        setValue(ctx,`Add(plus));
+      }
     }
   }
 

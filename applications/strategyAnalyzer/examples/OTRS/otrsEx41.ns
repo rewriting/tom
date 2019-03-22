@@ -11,10 +11,17 @@ functions
 trs
 
 // Example 4.2, 4.3
+// [
+//   foo(x,!a()) -> b()
+//   foo(a(),y) -> y
+//   foo(b(),y) -> y
+//   foo(f(x),y) -> x
+// ]
+
+// Example 4.2, 4.3
 [
   foo(x,!a()) -> b()
-  foo(a(),y) -> y
-  foo(b(),y) -> y
+  foo(a()+b(),y) -> y
   foo(f(x),y) -> x
 ]
 
