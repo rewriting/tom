@@ -1,0 +1,24 @@
+abstract syntax
+
+T = a()	 
+		| b()				
+		| f(T,T) 			
+
+functions
+	T = foo(T,T)
+
+
+trs
+
+// Example 4.2, 4.3
+[
+  foo(x,!a()) -> b()
+  foo(a(),y) -> y
+  foo(b(),y) -> y
+  foo(f(x),y) -> x
+]
+
+
+
+// Execute 
+// java sa/Main -aprove -i ../examples/OTRS/otrsEx41.ns   -withType

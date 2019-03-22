@@ -68,7 +68,8 @@ public class RuleCompiler {
       }
     }
 
-    rules = expandBottom2(rules,nextRuleSymbol);
+    // rules = expandBottom2(rules,nextRuleSymbol);
+    
     //     Can't do the replacement here because we might not know the nextRuleSymbol
     //     if(nextRuleSymbol == null) { //if we don't know what to do with the Bottom2 (than change to Bottom)
     //       rules = eliminateBottom2(rules);

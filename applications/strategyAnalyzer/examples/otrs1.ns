@@ -3,7 +3,7 @@ abstract syntax
 T = 
 	| a()
 	| b()
-// 	| c()
+	| c()
   | f(T,T)
 
 functions

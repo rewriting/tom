@@ -9,11 +9,11 @@ functions
 
 
 trs
-// Example 2.1 (and 2.3) in paper
-// [
-//   foo(f(z,a())) -> b()
-//   foo(f(x,y)) -> a()
-// ]
+// Example 2.1 (and 2.3) (and 4.1) in paper
+[
+  foo(f(z,a())) -> b()
+  foo(f(x,y)) -> a()
+]
 
 // [
 //   foo(a(),b()) -> b()
@@ -39,12 +39,12 @@ trs
 // ]
 
 // Example 3.1
-[
-  foo(f(b(),a())) -> a()
-  foo(f(x,!a())) -> a()
-]
+// [
+  // foo(f(b(),a())) -> a()
+  // foo(f(x,!a())) -> a()
+// ]
 
-// Example EXTRA
+// Example 4.2, 4.3
 // [
 //   foo(f(x,!a())) -> a()
 //   foo(f(a()+b(),y)) -> b()

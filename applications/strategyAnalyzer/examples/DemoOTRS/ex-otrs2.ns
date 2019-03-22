@@ -30,6 +30,33 @@ functions
 trs
 [
   paint(car(electric(),!suv())) -> blue()
-  paint(car(!diesel(),!suv())) -> white()
+  paint(car(!diesel(),!coupe())) -> white()
   paint(x)  ->  red()
 ]
+
+
+paint(car(electric,suv)) -> white
+paint(car(electric,sedan)) -> blue
+paint(car(electric,minivan)) -> blue
+paint(car(electric,coupe)) -> blue
+
+paint(car(diesel,Z)) -> red
+
+paint(car(hybrid,suv)) -> white
+
+paint(car(hybrid,sedan)) -> white
+
+paint(car(hybrid,minivan)) -> white
+
+paint(car(gas,suv)) -> white
+
+paint(car(gas,sedan)) -> white
+
+paint(car(gas,minivan)) -> white
+
+
+
+paint(car(hybrid,coupe)) -> red
+
+paint(car(gas,coupe)) -> red
+

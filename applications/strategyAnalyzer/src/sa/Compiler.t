@@ -280,46 +280,7 @@ public class Compiler {
     Signature eSig = getExtractedSignature();
     boolean ordered = Main.options.ordered;
 
-    /*
-     * Pre-treatment: remove anti-patterns (expandGeneralAntiPatterns) 
-     */
     RuleList ruleList = trs.getlist();
-    if(Main.options.withAP == false) {
-      RuleCompiler ruleCompiler = new RuleCompiler(eSig,gSig);
-      ruleList = ruleCompiler.expandGeneralAntiPatterns(ruleList,null);
-      
-      if(Main.options.verbose) {
-        for(Rule rule: ruleList.getCollectionConcRule()) {
-          System.out.println("EXPANDED AP RULE: " + Pretty.toString(rule) );
-        }
-      }
-    }
-    
-    /*
-     * lhs -> rhs (in an OTRS strategy) becomes
-     * in the linear case:
-     *   rule(lhs) -> rhs
-     *   rule(X@!lhs) -> nextRule(X), could be Bottom(X) when it is the last rule
-     * in the non-linear case:
-     *   rule(X@linear-lhs) -> rule'(X, true ^ constraint on non linear variables)
-     *   rule(X@!linear-lhs) -> nextRule(X), could be Bottom(X) when it is the last rule
-     *   rule'(linear-lhs, true) -> rhs
-     *   rule'(X@linear-lhs, false) -> nextRule(X), could be Bottom(X) when it is the last rule
-     *
-     * in the ordered case
-     * in the linear case:
-     *   rule(lhs) -> rhs
-     *   rule(X) -> Bottom(X) after the last rule
-     * in the non-linear case:
-     *   rule(X@linear-lhs) -> rule'(X, true ^ constraint on non linear variables)
-     *   rule'(linear-lhs, true) -> rhs
-     *   rule(X) -> Bottom(X) after the last rule
-     *
-     * lhs -> rhs (in a TRS strategy) becomes
-     * in the linear case (not ordered): TODO
-     *   rule(lhs) -> rhs
-     *   rule(X@(Z \ lhs_1 + ... + lhs_n)) -> Bottom(X) after the last rule
-     */
     
     Term X = Var(Tools.getName("X"));
     String rule = strategyName;
@@ -351,10 +312,6 @@ public class Compiler {
         }
 
         ConcRule(currentRule@Rule(lhs,rhs),A*) -> {
-          if(Main.options.verbose) {
-            System.out.println("COMPILE: " + Pretty.toString(`currentRule) );
-          }
-
           // if it is a rule with anti-patterns we need a fresh symbol even if it is an ordered compilation
           String nextRuleSymbol = rule;
           if(Property.containsAP(`currentRule)) {
@@ -363,18 +320,23 @@ public class Compiler {
 
           Trs toCompile = trs.isTrs()?`Trs(A):`Otrs(A);
           String nextRule = compileRuleList(toCompile,generatedRules,nextRuleSymbol);
-
-          if(Main.options.withAP == false) {
-            RuleCompiler ruleCompiler = new RuleCompiler(eSig,gSig);
-            RuleList rList = ruleCompiler.expandGeneralAntiPatterns(`ConcRule(currentRule),nextRule);
-            //             rList = ruleCompiler.expandBottom2(rList,nextRule);
-            if(Main.options.verbose) {
-              System.out.println("Next SET: " + nextRule );
-              for(Rule r: rList.getCollectionConcRule()) {
-                System.out.println("CompileRuleList -> EXPANDED AP RULE: " + Pretty.toString(r) );
-              }
-            }
+            
+          if(Main.options.verbose) {
+            System.out.println("COMPILE: " + Pretty.toString(`currentRule) );
+            System.out.println("NEXT rule symbol: " + nextRule );
           }
+
+          // if(Main.options.withAP == false) {
+            // RuleCompiler ruleCompiler = new RuleCompiler(eSig,gSig);
+
+            // RuleList rList = ruleCompiler.expandGeneralAntiPatterns(`ConcRule(currentRule),nextRule);
+            // //             rList = ruleCompiler.expandBottom2(rList,nextRule);
+            // if(Main.options.verbose) {
+              // for(Rule r: rList.getCollectionConcRule()) {
+                // System.out.println("CompileRuleList -> EXPANDED AP RULE: " + Pretty.toString(r) );
+              // }
+            // }
+          // }
 
           TermList result = Tools.linearize(`lhs, this.generatedSignature );
 
@@ -399,6 +361,12 @@ public class Compiler {
                 localRules.add(Rule(_appl(rule,At(X,Anti(`lhs))), _appl(nextRule,X)) );
               } else {
                 localRules.add(Rule(_appl(rule,At(X,`lhs)), `rhs));
+              }
+              
+              if(Main.options.verbose) {
+                for(Rule r: localRules) {
+                  System.out.println("RULEs generated: " + Pretty.toString(r) );
+                }
               }
             }
 
@@ -429,6 +397,13 @@ public class Compiler {
                 localRules.add(Rule(_appl(rule,At(X,`linearlhs)), _appl(cr, X, `cond)));
                 localRules.add(Rule(_appl(cr,`linearlhs, True()), `rhs));
               }
+                            
+              if(Main.options.verbose) {
+                for(Rule r: localRules) {
+                  System.out.println("RULEs generated: " + Pretty.toString(r) );
+                }
+              }
+
             }
           }
         }
@@ -509,7 +484,7 @@ public class Compiler {
         gSig.addSymbol("symb_"+name,`ConcGomType(),Signature.TYPE_METASYMBOL);
       }
     }
-    
+
     // put the locally generated rules at the beginning
     // efficient for LinkedLists but not for ArrayLists
     generatedRules.addAll(0,localRules);
