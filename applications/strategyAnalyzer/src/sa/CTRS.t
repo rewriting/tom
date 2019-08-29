@@ -12,13 +12,13 @@ public class CTRS {
   protected static Options options = new Options();
 
   public static void main(String[] args) {
-    CmdLineParser optionParser = new CmdLineParser(options);
+    CmdLineParser optionParser = new CmdLineParser(Main.options);
     optionParser.setUsageWidth(80);
     try {
       // parse the arguments.
       optionParser.parseArgument(args);
-      //if( options.arguments.isEmpty() ) {
-      if( options.help || options.h ) {
+      //if( Main.options.arguments.isEmpty() ) {
+      if( Main.options.help || Main.options.h ) {
         throw new CmdLineException("Help");
       }
     } catch( CmdLineException e ) {
@@ -41,8 +41,8 @@ public class CTRS {
 
     try {
       InputStream fileinput = System.in;
-      if(options.in != null) {
-        fileinput = new FileInputStream(options.in);
+      if(Main.options.in != null) {
+        fileinput = new FileInputStream(Main.options.in);
       }
 
       // ANTLR4
@@ -66,9 +66,6 @@ public class CTRS {
       Compiler compiler = Compiler.getInstance();
       compiler.setProgram(program);
 
-      System.out.println("Extracted signature: " + compiler.getExtractedSignature());
-      System.out.println("Generated signature: " + compiler.getGeneratedSignature());
-
       // Transforms the strategy into a rewrite system
       //   get the TRS for the strategy named strategyName
       Set<String> strategyNames = compiler.collectConstantStrategyName(program);
@@ -78,51 +75,18 @@ public class CTRS {
       RuleList generatedRules = `ConcRule();
       Signature extractedSignature = compiler.getExtractedSignature();
       Signature generatedSignature = compiler.getGeneratedSignature();
-      // System.out.println("Extracted SIG = " + extractedSignature);
-        
+      if(Main.options.debug) {
+        System.out.println("Extracted SIG = " + extractedSignature);
+        System.out.println("Generated SIG = " + generatedSignature);
+      }
 
-      /////  STRATEGIES should be handeled here ///////
+      /////  STRATEGIES could be handeled here ///////
 
+      if(Main.options.withType) {
+        TypeCompiler typeCompiler = new TypeCompiler(extractedSignature);
+        generatedSignature = typeCompiler.getTypedSignature();
+      }
 
-//       assert Property.isLhsLinear(generatedRules);
-//       // transform the LINEAR TRS: compile Aps and remove ATs
-//       RuleCompiler ruleCompiler = new RuleCompiler(extractedSignature,generatedSignature);
-//       if(options.withAP == false) {
-//         generatedRules = ruleCompiler.expandAntiPatterns(generatedRules);
-//         //System.out.println("expandAntiPatterns: generatedRules = " + Pretty.toString(generatedRules));
-//       }
-//       // if we don't expand the anti-patterns then we should keep the at-annotations as well
-//       // otherwise output is strange
-//       if(options.withAT == false && options.withAP == false) {
-//         generatedRules = ruleCompiler.expandAt(generatedRules);
-//         //System.out.println("expandAt: generatedRules = " + Pretty.toString(generatedRules));
-//       }
-//       // refresh the signatures (presently no modifications)
-//       extractedSignature = ruleCompiler.getExtractedSignature();
-//       generatedSignature = ruleCompiler.getGeneratedSignature();
-
-//       if(options.withType) {
-//         //System.out.println("before typing: generatedRules = " + Pretty.toString(generatedRules));
-//         TypeCompiler typeCompiler = new TypeCompiler(extractedSignature);
-//         typeCompiler.typeRules(generatedRules);
-//         generatedRules = typeCompiler.getGeneratedRules();
-//         generatedSignature = typeCompiler.getTypedSignature();
-//       }
-
-//       /*
-//        * Post treatment
-//        */
-//       if(Main.options.pattern && Main.options.ordered) {
-//         System.out.println("after compilation");
-//         System.out.println("generatedRules = " + Pretty.toString(generatedRules));
-//         // run the Pattern transformation here
-//         //for(String name:generatedSignature.getSymbols()) {
-//           //System.out.println("symbol: " + name + " function: " + generatedSignature.isFunction(name) + " internal: " + generatedSignature.isInternal(name));
-//         //}
-      
-//         Trs otrs = RewriteSystem.trsRule(`Otrs(generatedRules),generatedSignature);
-//         generatedRules = otrs.getlist();
-//       }
 
       /*
        * Handle the TRS part of a specification
@@ -140,31 +104,31 @@ public class CTRS {
        * Generate output
        */
       PrintStream outputfile = System.out;
-      if(options.out != null) {
-        if(options.directory != null) {
-          outputfile = new PrintStream(options.directory + "/" + options.out);
+      if(Main.options.out != null) {
+        if(Main.options.directory != null) {
+          outputfile = new PrintStream(Main.options.directory + "/" + Main.options.out);
         } else {
-          outputfile = new PrintStream(options.out);
+          outputfile = new PrintStream(Main.options.out);
         }
       }
       PrintStream tomoutputfile = System.out;
-      if(options.classname != null) {
-        if(options.directory != null) {
-          tomoutputfile = new PrintStream(options.directory + "/" + options.classname + ".t");
+      if(Main.options.classname != null) {
+        if(Main.options.directory != null) {
+          tomoutputfile = new PrintStream(Main.options.directory + "/" + Main.options.classname + ".t");
         } else {
-          tomoutputfile = new PrintStream(options.classname + ".t");
+          tomoutputfile = new PrintStream(Main.options.classname + ".t");
         }
       }
 
-      if(options.classname != null) {
+      if(Main.options.classname != null) {
         tomoutputfile.println( Pretty.generateTom(strategyNames, generatedRules, extractedSignature, generatedSignature) );
       } 
 
-      if(options.aprove) {
+      if(Main.options.aprove) {
         boolean innermost = false;
         outputfile.println( Pretty.generateAprove(generatedRules,innermost) );
       }
-      if(options.timbuk) {
+      if(Main.options.timbuk) {
         outputfile.println( Pretty.generateTimbuk(generatedRules,generatedSignature) );
       }
     } catch (Exception e) {
