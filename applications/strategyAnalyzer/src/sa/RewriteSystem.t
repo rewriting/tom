@@ -259,7 +259,7 @@ public class RewriteSystem {
       s@Anti(t) -> {
         Term Z = `Var(Tools.getName("Z"));
         Term res = `Sub(Z,t);
-        debugVerbose("AP",`s,res);
+        debug("AP",`s,res);
         return res;
       }
     }
