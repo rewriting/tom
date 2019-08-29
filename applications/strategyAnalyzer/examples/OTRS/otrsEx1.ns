@@ -10,10 +10,10 @@ functions
 
 trs
 // Example 2.1 (and 2.3) (and 4.1) in paper
-[
-  foo(f(z,a())) -> b()
-  foo(f(x,y)) -> a()
-]
+// [
+//   foo(f(z,a())) -> b()
+//   foo(f(x,y)) -> a()
+// ]
 
 // [
 //   foo(a(),b()) -> b()
@@ -50,6 +50,13 @@ trs
 //   foo(f(a()+b(),y)) -> b()
 //   foo(f(x,y)) -> a()
 // ]
+
+
+// Example slides PPDP
+[
+  foo(f(x,y@!a())) -> y
+  foo(f(a()+b(),y)) -> y
+]
 
 
 

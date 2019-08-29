@@ -42,3 +42,4 @@ trs
   paint(x)  ->  red()
 ]
 
+// java sa/Main -aprove -i ../examples/OTRS/otrsCars.ns  -withType
