@@ -1,0 +1,13 @@
+# Transient artefacts emitted by the equivalence-test harness
+# (internal/equivtest). The .txt stdout snapshots are kept under git
+# because they are short, human-readable proofs; the generated Go and
+# Java sources, classfiles and intermediate .tom files are bulky and
+# can be re-built on demand.
+reports/equiv-*/go/
+reports/equiv-*/go-main/
+reports/equiv-*/java-src/
+reports/equiv-*/java-classes/
+
+# Go build output
+*.test
+*.out

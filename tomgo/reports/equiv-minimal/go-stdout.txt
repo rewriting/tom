@@ -1,0 +1,8 @@
+t1=EmptyNop()
+t2=UnaryNop(EmptyNop())
+t3=BinaryNop(EmptyNop(),UnaryNop(EmptyNop()))
+shared-emptynop=true
+shared-binarynop=true
+different-terms=true
+binarynop-ls=EmptyNop()
+binarynop-rs=UnaryNop(EmptyNop())
