@@ -69,6 +69,7 @@ func TestGoParserAgainstJava(t *testing.T) {
 		"oplist_oparray",   // Phase 4.E.4 — %oplist / %oparray
 		"include_local",    // Phase 4.E.5 — %include
 		"water_multi",      // Phase 4.F.0 — water with several visibles between islands (validates ANTLR-fidèle tokeniser)
+		"match0b",          // Phase 4.F.1 — %match minimal (_ → { } with one subject)
 	}
 	for _, name := range fixtures {
 		t.Run(name, func(t *testing.T) {

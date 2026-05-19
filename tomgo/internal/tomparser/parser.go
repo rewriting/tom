@@ -4,17 +4,21 @@
 // (host code, opaque) interleaved with TOM "islands" (%typeterm, %op, %match,
 // %strategy, %include, %gom, backquote terms, metaquote).
 //
-// Phase 4.D — current coverage:
+// Phase 4.D / 4.E / 4.F — current coverage:
 //
-//   start    : (water | islandStmt)* EOF
-//   islandStmt : typeterm | op | oplist | oparray | include
-//   typeterm : '%typeterm' ID ('extends' ID)? '{' BALANCED '}'
-//   op       : '%op' ID ID '(' slotList? ')' '{' BALANCED '}'
-//   oplist   : '%oplist'  ID ID '(' ID '*' ')' '{' BALANCED '}'
-//   oparray  : '%oparray' ID ID '(' ID '*' ')' '{' BALANCED '}'
-//   include  : '%include' '{' includePath '}'
-//   slotList : slot (',' slot)*
-//   slot     : ID ':' ID
+//   start      : (water | islandStmt)* EOF
+//   islandStmt : typeterm | op | oplist | oparray | include | match
+//   typeterm   : '%typeterm' ID ('extends' ID)? '{' BALANCED '}'
+//   op         : '%op' ID ID '(' slotList? ')' '{' BALANCED '}'
+//   oplist     : '%oplist'  ID ID '(' ID '*' ')' '{' BALANCED '}'
+//   oparray    : '%oparray' ID ID '(' ID '*' ')' '{' BALANCED '}'
+//   include    : '%include' '{' includePath '}'
+//   match      : '%match' '(' subject (',' subject)* ')' '{' actionRule* '}'
+//   subject    : ID                                    (BQVariable only for now)
+//   actionRule : pattern '->' '{' BALANCED '}'
+//   pattern    : '_'                                   (anonymous Variable only)
+//   slotList   : slot (',' slot)*
+//   slot       : ID ':' ID
 //   includePath : (ID | '.' | '/' | '\\')+
 //
 // `BALANCED` means: read everything up to and including the matching '}'.
@@ -146,6 +150,10 @@ func (p *parser) parseProgram() (tomast.Code, error) {
 			if err := p.parseInclude(); err != nil {
 				return nil, err
 			}
+		case p.lookAheadKeyword("%match"):
+			if err := p.parseMatch(); err != nil {
+				return nil, err
+			}
 		default:
 			if err := p.parseWater(); err != nil {
 				return nil, err
@@ -162,7 +170,8 @@ func (p *parser) isIslandStart() bool {
 		p.lookAheadKeyword("%oplist") ||
 		p.lookAheadKeyword("%oparray") ||
 		p.lookAheadKeyword("%op") ||
-		p.lookAheadKeyword("%include")
+		p.lookAheadKeyword("%include") ||
+		p.lookAheadKeyword("%match")
 }
 
 // parseWater consumes raw host source up to the next island start (or EOF)
@@ -403,6 +412,167 @@ func (p *parser) parseInclude() error {
 	include := tomast.MakeTomInclude(tomast.MakeConcCode(codeIn))
 	p.codes = append(p.codes, include)
 	return nil
+}
+
+// parseMatch handles `%match(subject1, subject2, …) { actionRule* }`. Each
+// action rule is `pattern -> { … }`. Current coverage: one subject (a bare
+// ID, lowered to BQVariable with "unknown type"), and the anonymous wildcard
+// pattern `_` (lowered to a Variable with EmptyName). Action bodies are
+// consumed verbatim (`consumeBalancedBlock`) and lowered to
+// `RawAction(If(TrueTL(), AbstractBlock(concInstruction()), Nop()))` — the
+// shape the Java parser produces when the body is empty. Non-empty bodies
+// would require a recursive sub-parser; left as a TODO for the next pass.
+func (p *parser) parseMatch() error {
+	startLine := p.cur.line
+	if !p.matchKeyword("%match") {
+		return fmt.Errorf("expected %%match at %s", p.cur)
+	}
+	p.skipBlankInline()
+	if p.atEnd() || p.peek(0) != '(' {
+		return fmt.Errorf("expected '(' after %%match at %s", p.cur)
+	}
+	p.advance() // '('
+	subjects, err := p.parseSubjectList()
+	if err != nil {
+		return err
+	}
+	if p.atEnd() || p.peek(0) != ')' {
+		return fmt.Errorf("expected ')' to close %%match subjects at %s", p.cur)
+	}
+	p.advance() // ')'
+	p.skipBlankInline()
+	if p.atEnd() || p.peek(0) != '{' {
+		return fmt.Errorf("expected '{' to open %%match body at %s", p.cur)
+	}
+	p.advance() // '{'
+
+	var rules []tomast.ConstraintInstruction
+	for {
+		p.skipBlankInline()
+		if p.atEnd() {
+			return fmt.Errorf("unterminated %%match body from %s", p.cur)
+		}
+		if p.peek(0) == '}' {
+			break
+		}
+		rule, err := p.parseActionRule(subjects)
+		if err != nil {
+			return err
+		}
+		rules = append(rules, rule)
+	}
+	p.advance() // '}'
+
+	options := tomast.MakeConcOption(
+		tomast.MakeOriginTracking(tomast.MakeName("Match"), int64(startLine), p.filename),
+		tomast.MakeModuleName("default"),
+	)
+	match := tomast.MakeMatch(
+		tomast.MakeConcConstraintInstruction(rules...),
+		options,
+	)
+	p.codes = append(p.codes, tomast.MakeInstructionToCode(match))
+	return nil
+}
+
+// parseSubjectList consumes `subject (',' subject)*` between '(' and ')'.
+func (p *parser) parseSubjectList() ([]tomast.BQTerm, error) {
+	var subjects []tomast.BQTerm
+	p.skipBlankInline()
+	if !p.atEnd() && p.peek(0) == ')' {
+		return subjects, nil
+	}
+	for {
+		subj, err := p.parseSubject()
+		if err != nil {
+			return nil, err
+		}
+		subjects = append(subjects, subj)
+		p.skipBlankInline()
+		if p.atEnd() || p.peek(0) != ',' {
+			return subjects, nil
+		}
+		p.advance() // ','
+		p.skipBlankInline()
+	}
+}
+
+// parseSubject parses one subject of a %match. Current coverage: a bare ID,
+// lowered to BQVariable(opts, Name(id), unknownType()) where opts carries the
+// OriginTracking and the default ModuleName, matching the Java reference.
+func (p *parser) parseSubject() (tomast.BQTerm, error) {
+	subjLine := p.cur.line
+	name, err := p.readIdent()
+	if err != nil {
+		return nil, err
+	}
+	options := tomast.MakeConcOption(
+		tomast.MakeOriginTracking(tomast.MakeName(name), int64(subjLine), p.filename),
+		tomast.MakeModuleName("default"),
+	)
+	return tomast.MakeBQVariable(options, tomast.MakeName(name), unknownType()), nil
+}
+
+// parseActionRule handles `pattern '->' '{' BALANCED '}'`. The action
+// body is consumed via the brace-counter; for our first fixture (an empty
+// body) the lowering produces
+// `RawAction(If(TrueTL(), AbstractBlock(concInstruction()), Nop()))`.
+func (p *parser) parseActionRule(subjects []tomast.BQTerm) (tomast.ConstraintInstruction, error) {
+	if len(subjects) == 0 {
+		return nil, fmt.Errorf("action rule without %%match subject at %s", p.cur)
+	}
+	ruleLine := p.cur.line
+	pattern, err := p.parsePattern()
+	if err != nil {
+		return nil, err
+	}
+	p.skipBlankInline()
+	if p.atEnd() || p.peek(0) != '-' || p.peek(1) != '>' {
+		return nil, fmt.Errorf("expected '->' in action rule at %s", p.cur)
+	}
+	p.advance() // '-'
+	p.advance() // '>'
+	p.skipBlankInline()
+	if err := p.consumeBalancedBlock(); err != nil {
+		return nil, err
+	}
+	action := tomast.MakeRawAction(tomast.MakeIf(
+		tomast.MakeTrueTL(),
+		tomast.MakeAbstractBlock(tomast.MakeConcInstruction()),
+		tomast.MakeNop(),
+	))
+	constraint := tomast.MakeMatchConstraint(pattern, subjects[0], unknownType())
+	options := tomast.MakeConcOption(
+		tomast.MakeOriginTracking(tomast.MakeName("ConstraintAction"), int64(ruleLine), p.filename),
+	)
+	return tomast.MakeConstraintInstruction(constraint, action, options), nil
+}
+
+// parsePattern is the (currently tiny) pattern parser. Only `_` is supported:
+// it lowers to `Variable(concOption(), EmptyName(), unknownType, concConstraint())`,
+// matching the Java reference's representation of the anonymous wildcard.
+func (p *parser) parsePattern() (tomast.TomTerm, error) {
+	if p.atEnd() || p.peek(0) != '_' || isIdentChar(p.peek(1)) {
+		return nil, fmt.Errorf("only '_' pattern supported yet at %s", p.cur)
+	}
+	p.advance() // '_'
+	return tomast.MakeVariable(
+		tomast.MakeConcOption(),
+		tomast.MakeEmptyName(),
+		unknownType(),
+		tomast.MakeConcConstraint(),
+	), nil
+}
+
+// unknownType returns the canonical placeholder `Type(concTypeOption(),
+// "unknown type", EmptyTargetLanguageType())` that the Java parser uses
+// before the typer phase runs.
+func unknownType() tomast.TomType {
+	return tomast.MakeType(
+		tomast.MakeConcTypeOption(),
+		"unknown type",
+		tomast.MakeEmptyTargetLanguageType(),
+	)
 }
 
 // skipSlotList consumes `(slot (',' slot)*)?` after the opening '(' but
