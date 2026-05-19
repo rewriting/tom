@@ -11,3 +11,7 @@ reports/equiv-*/java-classes/
 # Go build output
 *.test
 *.out
+
+# Compiled bytecode for the tomparseq Java mini-runner — rebuilt on
+# demand by tomparseq.JavaToolchain.EnsureCompiled.
+internal/tomparseq/java/*.class

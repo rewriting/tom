@@ -1,0 +1,117 @@
+package tomparseq
+
+import (
+	"fmt"
+	"os"
+	"testing"
+
+	"tom/tomgo/internal/tomast"
+	"tom/tomgo/internal/tomparser"
+)
+
+// skeletonGoString builds, by hand, the same AST that the Java parser yields
+// for testdata/parse/skeleton/scenario.t. The OriginTracking filename is left
+// as "__INPUT__" so the cross-language harness can substitute the actual path
+// at comparison time.
+func skeletonGoString() string {
+	tl1 := tomast.MakeTargetLanguageToCode(tomast.MakeTL(
+		"public class Skeleton {\n  ",
+		tomast.MakeTextPosition(1, 1),
+		tomast.MakeTextPosition(2, 3),
+	))
+	decl := tomast.MakeDeclarationToCode(tomast.MakeTypeTermDecl(
+		tomast.MakeName("Foo"),
+		tomast.MakeConcDeclaration(),
+		tomast.MakeOriginTracking(
+			tomast.MakeName("Foo"),
+			2,
+			"__INPUT__",
+		),
+	))
+	tl2 := tomast.MakeTargetLanguageToCode(tomast.MakeTL(
+		"\n}\n",
+		tomast.MakeTextPosition(4, 4),
+		tomast.MakeTextPosition(5, 1),
+	))
+	return fmt.Sprintf("%v", tomast.MakeTom(tomast.MakeConcCode(tl1, decl, tl2)))
+}
+
+// TestSkeletonGoDump is a sanity check on hand-built Go AST construction.
+// Always runs (no JDK required).
+func TestSkeletonGoDump(t *testing.T) {
+	got := skeletonGoString()
+	if got == "" {
+		t.Fatal("skeletonGoString returned empty")
+	}
+	t.Logf("Go-side skeleton AST:\n%s", got)
+}
+
+// TestSkeletonAgainstJava — hand-built Go AST ⇄ Java parser, sanity-checks the
+// equivalence harness (Phase 4.C). Skipped without JDK / stable/dist/lib.
+func TestSkeletonAgainstJava(t *testing.T) {
+	tc, inputAbs := resolveOrSkip(t, "skeleton")
+	if err := tc.AssertParityWithGo(inputAbs, skeletonGoString()); err != nil {
+		t.Fatal(err)
+	}
+}
+
+// TestGoParserAgainstJava is the real end-to-end equivalence test for the
+// Go parser (Phase 4.D+): for each fixture under testdata/parse/<name>/, it
+// parses with the Go parser and asserts that the resulting Code term is
+// byte-identical to what the Java reference parser produces on the same file.
+// Skipped without JDK / stable/dist/lib.
+func TestGoParserAgainstJava(t *testing.T) {
+	fixtures := []string{
+		"skeleton",         // Phase 4.D MVP
+		"op_noargs",        // Phase 4.E.1 — %op without slots
+		"op_slots",         // Phase 4.E.2 — %op with slots
+		"typeterm_extends", // Phase 4.E.3 — %typeterm X extends Y
+		"oplist_oparray",   // Phase 4.E.4 — %oplist / %oparray
+		"include_local",    // Phase 4.E.5 — %include
+	}
+	for _, name := range fixtures {
+		t.Run(name, func(t *testing.T) {
+			tc, inputAbs := resolveOrSkip(t, name)
+			src, err := os.ReadFile(inputAbs)
+			if err != nil {
+				t.Fatal(err)
+			}
+			// Pass the absolute path as the filename so the Go parser can
+			// resolve %include directives relative to the input. The
+			// AssertParityWithGo normaliser strips the absolute path back to
+			// __INPUT__ / __DIR__ placeholders before comparison.
+			code, err := tomparser.Parse(string(src), inputAbs)
+			if err != nil {
+				t.Fatalf("Go parser: %v", err)
+			}
+			goSide := fmt.Sprintf("%v", code)
+			if err := tc.AssertParityWithGo(inputAbs, goSide); err != nil {
+				t.Fatal(err)
+			}
+		})
+	}
+}
+
+// resolveOrSkip locates the Java toolchain, the repo root and the absolute
+// path of the given fixture's scenario.t. It skips the test cleanly when the
+// toolchain is unavailable (no JDK or no stable/dist/lib).
+func resolveOrSkip(t *testing.T, fixtureName string) (JavaToolchain, string) {
+	t.Helper()
+	cwd, err := os.Getwd()
+	if err != nil {
+		t.Fatal(err)
+	}
+	repoRoot, err := FindRepoRoot(cwd)
+	if err != nil {
+		t.Skipf("tomparseq: %v", err)
+	}
+	tc, err := Resolve(repoRoot)
+	if err != nil {
+		t.Skipf("tomparseq: %v", err)
+	}
+	inputAbs := repoRoot + "/tomgo/testdata/parse/" + fixtureName + "/scenario.t"
+	if _, err := os.Stat(inputAbs); err != nil {
+		t.Fatalf("fixture missing: %s (%v)", inputAbs, err)
+	}
+	return tc, inputAbs
+}
