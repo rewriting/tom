@@ -68,6 +68,7 @@ func TestGoParserAgainstJava(t *testing.T) {
 		"typeterm_extends", // Phase 4.E.3 — %typeterm X extends Y
 		"oplist_oparray",   // Phase 4.E.4 — %oplist / %oparray
 		"include_local",    // Phase 4.E.5 — %include
+		"water_multi",      // Phase 4.F.0 — water with several visibles between islands (validates ANTLR-fidèle tokeniser)
 	}
 	for _, name := range fixtures {
 		t.Run(name, func(t *testing.T) {

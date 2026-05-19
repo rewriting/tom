@@ -165,125 +165,42 @@ func (p *parser) isIslandStart() bool {
 		p.lookAheadKeyword("%include")
 }
 
-// parseWater consumes raw host source up to the next island start (or EOF) and
-// emits a TargetLanguageToCode(TL(content, start, end)) — but ONLY if the
-// chunk contains at least one "visible" (ANTLR-sense: non-whitespace,
-// non-newline) byte. Whitespace-only water between two islands does NOT
-// produce a HOSTBLOCK on the Java side (the lexer's NL and WS rules are
-// `-> channel(HIDDEN)`), so we mirror that by silently dropping it.
+// parseWater consumes raw host source up to the next island start (or EOF)
+// and emits a TargetLanguageToCode(TL(content, start, end)) — but ONLY if
+// the chunk contains at least one "visible" (ANTLR-sense) byte.
+// Whitespace-only water between two islands produces no HOSTBLOCK on the
+// Java side (the lexer's NL and WS rules are `-> channel(HIDDEN)`), so we
+// mirror that by dropping such chunks silently.
 //
-// The end position follows the convention extracted from
-// `stable/tom/engine/parser/antlr4/CstBuilder.java::buildHostblock`:
+// The position calculation is delegated to a faithful Java-side simulation:
 //
-//   - if the chunk ends with a `[\n]+` run (an ANTLR `NL` hidden token),
-//     end = (firstLineOfLastHostblock + 1, 1);
-//   - else end = position immediately after the last consumed byte (the
-//     normal line/col tracking).
+//   1. raw bytes → tokenizeWater     (water.go)
+//   2. tokens    → buildHostblocks   (mirrors CstBuilder.buildHostblock)
+//   3. hostblocks → mergeHostblocks  (mirrors CstConverter.simplifyCstBlockList + mergeString)
 //
-// "firstLineOfLastHostblock" is the line where the dominant HOSTBLOCK in the
-// merged chain begins: when the chunk has multiple visible tokens, ANTLR
-// attributes the leading hidden tokens to whichever visible token came
-// before, so the last HOSTBLOCK's first line is the line of the last visible
-// token itself. When the chunk has only one visible token, the leading hidden
-// tokens go to that visible token's left, so firstLine = the water's start
-// line.
+// The merged hostblock's start/end and content are what the Java parser
+// would have produced for the same `.t` file.
 func (p *parser) parseWater() error {
 	start := p.cur
-	var sb strings.Builder
-	// Track positions for the end-position calculation.
-	visibleCount := 0      // number of "visible runs" we've seen
-	lastVisibleLine := 0   // line at which the last visible run starts
-	endAfterLastVisible := start // (line, col) just after the last visible byte was consumed
-	endAfterAllWS := start       // (line, col) just after the very last consumed byte
-	trailingHiddenKind := 0      // 0=none, 1=NL (last byte was \n in the trailing hidden run), 2=WS
-
+	startIdx := p.idx
 	for !p.atEnd() && !p.isIslandStart() {
-		c := p.peek(0)
-		if c == '\n' || c == ' ' || c == '\t' || c == '\r' {
-			// Trailing hidden run (NL or WS).
-			before := p.cur
-			sb.WriteByte(p.advance())
-			endAfterAllWS = p.cur
-			if c == '\n' {
-				trailingHiddenKind = 1
-				// Subsequent \n keep us in NL mode.
-				for !p.atEnd() && p.peek(0) == '\n' {
-					sb.WriteByte(p.advance())
-					endAfterAllWS = p.cur
-				}
-				continue
-			}
-			// WS run.
-			trailingHiddenKind = 2
-			_ = before
-			for !p.atEnd() {
-				n := p.peek(0)
-				if n == ' ' || n == '\t' || n == '\r' {
-					sb.WriteByte(p.advance())
-					endAfterAllWS = p.cur
-					continue
-				}
-				break
-			}
-			continue
-		}
-		// Visible byte: start (or continue) a visible run.
-		if trailingHiddenKind == 0 || visibleCount == 0 {
-			// Fresh visible run.
-			if visibleCount == 0 {
-				// First visible run in the water: the leading hidden tokens
-				// (everything before this) attach to it, so the dominant
-				// HOSTBLOCK starts at the water's start line.
-				lastVisibleLine = start.line
-			} else {
-				lastVisibleLine = p.cur.line
-			}
-			visibleCount++
-		} else {
-			// We had trailing hidden, now we see a new visible run — the
-			// previous trailing hidden was actually between two visibles, so
-			// it attaches to the previous one. Record the new visible run.
-			lastVisibleLine = p.cur.line
-			visibleCount++
-		}
-		trailingHiddenKind = 0
-		sb.WriteByte(p.advance())
-		// Consume the rest of the visible run (anything that isn't whitespace
-		// and isn't an island start).
-		for !p.atEnd() && !p.isIslandStart() {
-			n := p.peek(0)
-			if n == '\n' || n == ' ' || n == '\t' || n == '\r' {
-				break
-			}
-			sb.WriteByte(p.advance())
-		}
-		endAfterLastVisible = p.cur
-		endAfterAllWS = p.cur
+		p.advance()
 	}
-
-	if sb.Len() == 0 {
+	if p.idx == startIdx {
 		return nil
 	}
-	if visibleCount == 0 {
-		// Whitespace-only water: ANTLR's lexer marks NL and WS as HIDDEN, so
-		// the parser's `water : .` rule never fires. No HOSTBLOCK.
+	content := p.src[startIdx:p.idx]
+	tokens := tokenizeWater(content, start)
+	blocks := buildHostblocks(tokens)
+	if len(blocks) == 0 {
+		// Whitespace-only water: no HOSTBLOCK, matches Java.
 		return nil
 	}
-
-	var end position
-	switch trailingHiddenKind {
-	case 0: // last byte was visible — no trailing hidden run.
-		end = endAfterLastVisible
-	case 1: // last hidden run was NL.
-		end = position{line: lastVisibleLine + 1, col: 1}
-	case 2: // last hidden run was WS.
-		end = endAfterAllWS
-	}
-
+	merged := mergeHostblocks(blocks)
 	p.codes = append(p.codes, tomast.MakeTargetLanguageToCode(tomast.MakeTL(
-		sb.String(),
-		tomast.MakeTextPosition(int64(start.line), int64(start.col)),
-		tomast.MakeTextPosition(int64(end.line), int64(end.col)),
+		merged.content,
+		tomast.MakeTextPosition(int64(merged.startLine), int64(merged.startCol)),
+		tomast.MakeTextPosition(int64(merged.endLine), int64(merged.endCol)),
 	)))
 	return nil
 }

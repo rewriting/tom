@@ -80,3 +80,11 @@ func TestParseIncludeLocal(t *testing.T) {
 		t.Errorf("AST mismatch on include_local.t\n--- expected ---\n%s\n--- got ---\n%s\n", expected, got)
 	}
 }
+
+func TestParseWaterMulti(t *testing.T) {
+	const expected = `Tom(concCode(DeclarationToCode(TypeTermDecl(Name("A"),concDeclaration(),OriginTracking(Name("A"),1,"__INPUT__"))),TargetLanguageToCode(TL("\nb\n\nc\n\n\n\nd\n",TextPosition(3,2),TextPosition(8,1))),DeclarationToCode(TypeTermDecl(Name("E"),concDeclaration(),OriginTracking(Name("E"),8,"__INPUT__")))))`
+	got := parseFixture(t, "water_multi")
+	if got != expected {
+		t.Errorf("AST mismatch on water_multi.t\n--- expected ---\n%s\n--- got ---\n%s\n", expected, got)
+	}
+}
