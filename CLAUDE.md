@@ -178,6 +178,18 @@ matérialiser au moment voulu) :
 - 5 fichiers `src/tom/gom/adt/*.gom` (63 sorts, 1 hook) compilent et
   passent leurs tests Go. Détails : `tomgo/reports/adt.md`.
 
+**Phase 3 — Auto-amorce de l'AST Gom** (`internal/gomast/`) :
+- `internal/gomast/` est **généré par tomgo** à partir des 5 .gom de
+  `src/tom/gom/adt/` (Code, Gom, Objects, Rule, SymbolTable).
+- Le parser de `internal/gom/parser.go` construit directement des
+  `gomast.*` (plus de structs hand-written), le backend les traverse
+  nativement. `ast.go` et le bridge V1↔V2 transitoire ont été supprimés.
+- `TestSelfBootstrap` vérifie que le nouveau tomgo regénère
+  `internal/gomast/` **byte-identique** au commit — preuve forte de
+  stabilité de l'auto-amorce. Plus 60+ sous-tests préservés ou ajoutés
+  pour la conservation comportementale.
+- Détails : `tomgo/reports/phase3.md`.
+
 ### Phases 3 → 6 — *différées*
 
 Parser TOM+Go ; pipeline compilateur ; portage des `.jar` restants ;

@@ -4,7 +4,35 @@ import (
 	"path/filepath"
 	"strings"
 	"testing"
+
+	"tom/tomgo/internal/gomast"
 )
+
+// firstSort returns the first SortType production carried by m. It
+// fails the test if the module has none.
+func firstSort(t *testing.T, m gomast.GomModule) *gomast.SortTypeProduction {
+	t.Helper()
+	ss := Sorts(m)
+	if len(ss) == 0 {
+		t.Fatalf("module has no SortType production")
+	}
+	return ss[0]
+}
+
+// altsOf returns the alternatives of a SortType production.
+func altsOf(prod *gomast.SortTypeProduction) []*gomast.AlternativeAlternative {
+	altList := prod.AlternativeList.(*gomast.ConcAlternativeAlternativeList)
+	out := make([]*gomast.AlternativeAlternative, 0, len(altList.Slots))
+	for _, a := range altList.Slots {
+		out = append(out, a.(*gomast.AlternativeAlternative))
+	}
+	return out
+}
+
+// fieldsOf returns the fields of an alternative.
+func fieldsOf(alt *gomast.AlternativeAlternative) []gomast.Field {
+	return alt.DomainList.(*gomast.ConcFieldFieldList).Slots
+}
 
 func TestParse_Minimal(t *testing.T) {
 	src := `module Minimal
@@ -18,27 +46,36 @@ Nop = EmptyNop()
 	if err != nil {
 		t.Fatal(err)
 	}
-	if mod.QualifiedName() != "Minimal" {
-		t.Fatalf("module name = %q", mod.QualifiedName())
+	if QualifiedName(mod) != "Minimal" {
+		t.Fatalf("module name = %q", QualifiedName(mod))
 	}
-	if len(mod.Sorts) != 1 || mod.Sorts[0].Name != "Nop" {
-		t.Fatalf("expected one sort Nop, got %+v", mod.Sorts)
+	if CountSorts(mod) != 1 || SortName(firstSort(t, mod)) != "Nop" {
+		t.Fatalf("expected one sort Nop")
 	}
-	alts := mod.Sorts[0].Alternatives
+	alts := altsOf(firstSort(t, mod))
 	if len(alts) != 4 {
 		t.Fatalf("expected 4 alternatives, got %d", len(alts))
 	}
-	if alts[0].Op != "EmptyNop" || len(alts[0].Args) != 0 {
-		t.Errorf("EmptyNop: %+v", alts[0])
+	if alts[0].Name != "EmptyNop" || len(fieldsOf(alts[0])) != 0 {
+		t.Errorf("EmptyNop: name=%q fields=%d", alts[0].Name, len(fieldsOf(alts[0])))
 	}
-	if alts[2].Op != "BinaryNop" || len(alts[2].Args) != 2 {
-		t.Errorf("BinaryNop should have 2 slots: %+v", alts[2])
+	if alts[2].Name != "BinaryNop" || len(fieldsOf(alts[2])) != 2 {
+		t.Errorf("BinaryNop should have 2 slots: name=%q fields=%d", alts[2].Name, len(fieldsOf(alts[2])))
 	}
-	if alts[2].Args[0] != (Arg{Name: "ls", Type: "Nop"}) {
-		t.Errorf("BinaryNop arg[0] = %+v", alts[2].Args[0])
+	ls := fieldsOf(alts[2])[0].(*gomast.NamedFieldField)
+	if ls.Name != "ls" || ls.FieldType.(*gomast.GomTypeGomType).Name != "Nop" {
+		t.Errorf("BinaryNop arg[0] = name=%q type=%q", ls.Name, ls.FieldType.(*gomast.GomTypeGomType).Name)
 	}
-	if !alts[3].Variadic || len(alts[3].Args) != 1 || alts[3].Args[0].Type != "Nop" {
-		t.Errorf("Vary should be variadic with one Nop arg: %+v", alts[3])
+	// Vary(Nop*): the single field is StarredField, no Name, type Nop.
+	if len(fieldsOf(alts[3])) != 1 {
+		t.Fatalf("Vary should have 1 field, got %d", len(fieldsOf(alts[3])))
+	}
+	sf, ok := fieldsOf(alts[3])[0].(*gomast.StarredFieldField)
+	if !ok {
+		t.Fatalf("Vary's field should be StarredField, got %T", fieldsOf(alts[3])[0])
+	}
+	if sf.FieldType.(*gomast.GomTypeGomType).Name != "Nop" {
+		t.Errorf("Vary star type = %q", sf.FieldType.(*gomast.GomTypeGomType).Name)
 	}
 }
 
@@ -53,16 +90,18 @@ W = Int(i:int)
 		t.Fatal(err)
 	}
 	want := []string{"gom", "b", "u", "i", "l", "t", "i", "n", "Builtin"}
-	if mod.QualifiedName() != "gom.b.u.i.l.t.i.n.Builtin" {
-		t.Errorf("qualified name = %q", mod.QualifiedName())
+	if QualifiedName(mod) != "gom.b.u.i.l.t.i.n.Builtin" {
+		t.Errorf("qualified name = %q", QualifiedName(mod))
 	}
+	parts := NameParts(mod)
 	for i, w := range want {
-		if mod.Name[i] != w {
-			t.Errorf("name[%d] = %q want %q", i, mod.Name[i], w)
+		if parts[i] != w {
+			t.Errorf("name[%d] = %q want %q", i, parts[i], w)
 		}
 	}
-	if len(mod.Imports) != 3 || mod.Imports[0] != "int" || mod.Imports[2] != "String" {
-		t.Errorf("imports = %v", mod.Imports)
+	imps := Imports(mod)
+	if len(imps) != 3 || imps[0] != "int" || imps[2] != "String" {
+		t.Errorf("imports = %v", imps)
 	}
 }
 
@@ -76,7 +115,7 @@ Wrapper = | Int(i:int)
 	if err != nil {
 		t.Fatal(err)
 	}
-	if got := len(mod.Sorts[0].Alternatives); got != 2 {
+	if got := len(altsOf(firstSort(t, mod))); got != 2 {
 		t.Fatalf("want 2 alternatives, got %d", got)
 	}
 }
@@ -92,11 +131,13 @@ Pair = pair(l:List,r:List)
 	if err != nil {
 		t.Fatal(err)
 	}
-	if len(mod.Sorts) != 2 {
-		t.Fatalf("want 2 sorts, got %d", len(mod.Sorts))
+	if CountSorts(mod) != 2 {
+		t.Fatalf("want 2 sorts, got %d", CountSorts(mod))
 	}
-	if !mod.Sorts[0].Alternatives[0].Variadic {
-		t.Errorf("conc(int*) should be variadic")
+	listSort := Sorts(mod)[0]
+	concAlt := altsOf(listSort)[0]
+	if _, ok := fieldsOf(concAlt)[0].(*gomast.StarredFieldField); !ok {
+		t.Errorf("conc(int*) should be variadic, got %T", fieldsOf(concAlt)[0])
 	}
 }
 
@@ -112,18 +153,20 @@ Foo:make() {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if len(mod.Hooks) != 1 {
-		t.Fatalf("expected 1 hook, got %d", len(mod.Hooks))
+	hooks := Hooks(mod)
+	if len(hooks) != 1 {
+		t.Fatalf("expected 1 hook, got %d", len(hooks))
 	}
-	h := mod.Hooks[0]
-	if h.PointCut != "Foo" || h.Kind != "make" {
-		t.Errorf("unexpected hook header: %+v", h)
+	h := hooks[0]
+	if h.Name != "Foo" || HookKind(h) != "make" {
+		t.Errorf("unexpected hook header: name=%q kind=%q", h.Name, HookKind(h))
 	}
-	if h.Scope != "" {
-		t.Errorf("expected empty scope, got %q", h.Scope)
+	// Default scope on unscoped hooks is "operator" per the ANTLR grammar.
+	if HookScope(h) != "operator" {
+		t.Errorf("expected operator scope, got %q", HookScope(h))
 	}
-	if !strings.Contains(h.Body, "return null") {
-		t.Errorf("body did not capture content: %q", h.Body)
+	if !strings.Contains(HookBody(h), "return null") {
+		t.Errorf("body did not capture content: %q", HookBody(h))
 	}
 }
 
@@ -140,21 +183,23 @@ Bar = C()
 	if err != nil {
 		t.Fatal(err)
 	}
-	if len(mod.Hooks) != 1 {
-		t.Fatalf("expected 1 hook, got %d", len(mod.Hooks))
+	hooks := Hooks(mod)
+	if len(hooks) != 1 {
+		t.Fatalf("expected 1 hook, got %d", len(hooks))
 	}
-	h := mod.Hooks[0]
-	if h.Scope != "sort" || h.PointCut != "Foo" || h.Kind != "block" {
-		t.Errorf("unexpected hook: %+v", h)
+	h := hooks[0]
+	if HookScope(h) != "sort" || h.Name != "Foo" || HookKind(h) != "block" {
+		t.Errorf("unexpected hook: scope=%q name=%q kind=%q", HookScope(h), h.Name, HookKind(h))
 	}
 	// Parsing must continue past the hook: Bar = C() should be picked
 	// up as a regular sort declaration.
-	if len(mod.Sorts) != 2 || mod.Sorts[1].Name != "Bar" {
-		t.Errorf("post-hook sort decl missed: %+v", mod.Sorts)
+	sorts := Sorts(mod)
+	if len(sorts) != 2 || SortName(sorts[1]) != "Bar" {
+		t.Errorf("post-hook sort decl missed")
 	}
 	// Body must contain the nested braces from `return 42; }`.
-	if !strings.Contains(h.Body, "return 42") {
-		t.Errorf("body lost nested content: %q", h.Body)
+	if !strings.Contains(HookBody(h), "return 42") {
+		t.Errorf("body lost nested content: %q", HookBody(h))
 	}
 }
 
@@ -168,8 +213,13 @@ Foo:make(x,y) {}
 	if err != nil {
 		t.Fatal(err)
 	}
-	if len(mod.Hooks[0].Args) != 2 || mod.Hooks[0].Args[0] != "x" || mod.Hooks[0].Args[1] != "y" {
-		t.Errorf("args = %+v", mod.Hooks[0].Args)
+	h := Hooks(mod)[0]
+	argList := h.Args.(*gomast.ConcArgArgList)
+	if len(argList.Slots) != 2 {
+		t.Fatalf("want 2 args, got %d", len(argList.Slots))
+	}
+	if argList.Slots[0].(*gomast.ArgArg).Name != "x" || argList.Slots[1].(*gomast.ArgArg).Name != "y" {
+		t.Errorf("args = %v", argList.Slots)
 	}
 }
 
@@ -180,20 +230,22 @@ func TestParse_ObjectsGomReal(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if len(mod.Hooks) != 1 {
-		t.Fatalf("expected 1 hook, got %d", len(mod.Hooks))
+	hooks := Hooks(mod)
+	if len(hooks) != 1 {
+		t.Fatalf("expected 1 hook, got %d", len(hooks))
 	}
-	h := mod.Hooks[0]
-	if h.Scope != "sort" || h.PointCut != "HookList" || h.Kind != "block" {
-		t.Errorf("Objects hook header = %+v", h)
+	h := hooks[0]
+	if HookScope(h) != "sort" || h.Name != "HookList" || HookKind(h) != "block" {
+		t.Errorf("Objects hook header: scope=%q name=%q kind=%q", HookScope(h), h.Name, HookKind(h))
 	}
-	if !strings.Contains(h.Body, "containsTomCode") || !strings.Contains(h.Body, "HasTomCode") {
-		t.Errorf("body did not capture expected tokens: %q", h.Body)
+	if !strings.Contains(HookBody(h), "containsTomCode") || !strings.Contains(HookBody(h), "HasTomCode") {
+		t.Errorf("body did not capture expected tokens: %q", HookBody(h))
 	}
 }
 
 func TestParse_Corpus(t *testing.T) {
-	// Each file in the corpus must parse cleanly.
+	// Each file in the corpus must parse cleanly to a gomast.GomModule
+	// carrying at least one SortType production.
 	for _, name := range []string{
 		"Builtin.gom",
 		"Dotted.gom",
@@ -212,9 +264,37 @@ func TestParse_Corpus(t *testing.T) {
 			if err != nil {
 				t.Fatal(err)
 			}
-			if len(mod.Sorts) == 0 {
+			if CountSorts(mod) == 0 {
 				t.Fatal("no sorts parsed")
 			}
 		})
+	}
+}
+
+// TestParse_SharingAcrossFiles asserts that two equal GomType
+// sub-terms built by parsing two different inputs end up sharing the
+// same canonical instance — this is the auto-bootstrap pay-off: the
+// parser itself benefits from hash-consing.
+func TestParse_SharingAcrossFiles(t *testing.T) {
+	srcA := `module A
+abstract syntax
+Foo = X()
+`
+	srcB := `module B
+abstract syntax
+Foo = X()
+`
+	a, err := ParseBytes([]byte(srcA))
+	if err != nil {
+		t.Fatal(err)
+	}
+	b, err := ParseBytes([]byte(srcB))
+	if err != nil {
+		t.Fatal(err)
+	}
+	fooTypeA := Sorts(a)[0].Type
+	fooTypeB := Sorts(b)[0].Type
+	if fooTypeA != fooTypeB {
+		t.Fatal("GomType('Foo') built from two different modules should be the same shared instance")
 	}
 }

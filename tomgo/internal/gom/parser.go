@@ -4,19 +4,22 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"strings"
+
+	"tom/tomgo/internal/gomast"
 )
 
-// Parse reads a Gom module source from r and returns its AST.
+// Parse reads a Gom module source from r and returns its AST as a
+// gomast.GomModule — the canonical V2 AST produced by tomgo itself
+// when applied to src/tom/gom/adt/Gom.gom. The parser builds the
+// gomast terms directly through their `Make*` constructors so that
+// every sub-term is hash-consed inside the gomast factory.
 //
-// The parser supports the subset of Gom needed for hook-free signature
-// files (Phase 2 scope): a module declaration, optional imports, the
-// `abstract syntax` keyword, and one or more sort declarations with
-// named-slot or variadic alternatives.
-//
-// Encountering a hook construct or any other unsupported feature is an
-// error — callers should pre-filter `.gom` files with `HasHookContent`
-// when they want to skip hooked sources.
-func Parse(r io.Reader) (*Module, error) {
+// Hook constructs are recognised — their kind/point-cut/arglist and a
+// raw (brace-balanced) body are stored in a `Hook` production. The
+// body itself is NOT interpreted at parse time; lowering it to Go is
+// the backend's job (see knownHookTable in internal/backend).
+func Parse(r io.Reader) (gomast.GomModule, error) {
 	src, err := io.ReadAll(r)
 	if err != nil {
 		return nil, err
@@ -25,7 +28,7 @@ func Parse(r io.Reader) (*Module, error) {
 }
 
 // ParseFile is a convenience wrapper around Parse for a file path.
-func ParseFile(path string) (*Module, error) {
+func ParseFile(path string) (gomast.GomModule, error) {
 	f, err := os.Open(path)
 	if err != nil {
 		return nil, err
@@ -39,7 +42,7 @@ func ParseFile(path string) (*Module, error) {
 }
 
 // ParseBytes parses Gom source from an in-memory byte slice.
-func ParseBytes(src []byte) (*Module, error) {
+func ParseBytes(src []byte) (gomast.GomModule, error) {
 	p := &parser{lex: newLexer(string(src))}
 	if err := p.advance(); err != nil {
 		return nil, err
@@ -65,8 +68,8 @@ func (p *parser) errf(format string, args ...any) error {
 	return fmt.Errorf("line %d col %d: %s", p.tok.line, p.tok.col, fmt.Sprintf(format, args...))
 }
 
-// expectID consumes the current token if it is an ID with the given text
-// (a contextual keyword). Returns the line where it appeared.
+// expectKeyword consumes the current token if it is an ID with the
+// given text (a contextual keyword). Returns the line where it appeared.
 func (p *parser) expectKeyword(kw string) (int, error) {
 	if p.tok.kind != tokID || p.tok.text != kw {
 		return 0, p.errf("expected %q, got %s %q", kw, p.tok.kind, p.tok.text)
@@ -103,27 +106,37 @@ func (p *parser) expect(k tokKind) error {
 //	"module" qualifiedName
 //	("imports" ID+)?
 //	"abstract" "syntax"
-//	sortDecl+
-func (p *parser) parseModule() (*Module, error) {
+//	(sortDecl | hookConstruct)+
+//
+// The result is a gomast.GomModule wrapping an optional Imports
+// section and a Public section that aggregates all SortType and Hook
+// productions.
+func (p *parser) parseModule() (gomast.GomModule, error) {
 	if _, err := p.expectKeyword("module"); err != nil {
 		return nil, err
 	}
-	name, err := p.parseQualifiedName()
+	nameParts, err := p.parseQualifiedName()
 	if err != nil {
 		return nil, err
 	}
-	mod := &Module{Name: name}
+	moduleName := gomast.MakeGomModuleName(strings.Join(nameParts, "."))
 
-	// Optional "imports" list.
+	var sections []gomast.Section
+
+	// Optional `imports` list.
 	if p.tok.kind == tokID && p.tok.text == "imports" {
 		if err := p.advance(); err != nil {
 			return nil, err
 		}
+		var imports []gomast.GomModuleName
 		for p.tok.kind == tokID && p.tok.text != "abstract" {
-			mod.Imports = append(mod.Imports, p.tok.text)
+			imports = append(imports, gomast.MakeGomModuleName(p.tok.text))
 			if err := p.advance(); err != nil {
 				return nil, err
 			}
+		}
+		if len(imports) > 0 {
+			sections = append(sections, gomast.MakeImports(gomast.MakeConcImportedModule(imports...)))
 		}
 	}
 
@@ -134,7 +147,8 @@ func (p *parser) parseModule() (*Module, error) {
 		return nil, err
 	}
 
-	// Loop on top-level productions: sort declarations and hooks.
+	var prods []gomast.Production
+	hasSort := false
 	for p.tok.kind != tokEOF {
 		var scope string
 		if p.tok.kind == tokID && isScopeKeyword(p.tok.text) {
@@ -154,24 +168,26 @@ func (p *parser) parseModule() (*Module, error) {
 			if err != nil {
 				return nil, err
 			}
-			mod.Hooks = append(mod.Hooks, *h)
+			prods = append(prods, h)
 		case tokEquals:
 			if scope != "" {
 				return nil, p.errf("scope keyword %q cannot precede a sort declaration", scope)
 			}
-			s, err := p.parseSortDeclBody(first, line)
+			s, err := p.parseSortTypeProductionBody(first, line)
 			if err != nil {
 				return nil, err
 			}
-			mod.Sorts = append(mod.Sorts, *s)
+			prods = append(prods, s)
+			hasSort = true
 		default:
 			return nil, p.errf("expected '=' (sort decl) or ':' (hook) after %q, got %s", first, p.tok.kind)
 		}
 	}
-	if len(mod.Sorts) == 0 {
-		return nil, fmt.Errorf("module %s has no sort declaration", mod.QualifiedName())
+	if !hasSort {
+		return nil, fmt.Errorf("module %s has no sort declaration", strings.Join(nameParts, "."))
 	}
-	return mod, nil
+	sections = append(sections, gomast.MakePublic(gomast.MakeConcProduction(prods...)))
+	return gomast.MakeGomModule(moduleName, gomast.MakeConcSection(sections...)), nil
 }
 
 func isScopeKeyword(s string) bool {
@@ -198,35 +214,30 @@ func (p *parser) parseQualifiedName() ([]string, error) {
 	return parts, nil
 }
 
-// parseSortDeclBody parses the body of a sort declaration, starting
-// from "=":
+// parseSortTypeProductionBody parses the tail of a sort declaration,
+// starting from "=":
 //
 //	"=" ("|"? alt) ("|" alt)*
 //
-// The optional leading "|" lets sources be aligned vertically:
-//
-//	Wrapper = | Int(i:int)
-//	          | IntBis(i:int)
-//
-// The caller already consumed the leading SortName identifier and
-// passes it in as `name`.
-func (p *parser) parseSortDeclBody(name string, line int) (*SortDecl, error) {
+// The optional leading "|" lets sources be aligned vertically. The
+// returned production is `SortType(Type, ConcAtom(), AlternativeList)`.
+func (p *parser) parseSortTypeProductionBody(name string, line int) (gomast.Production, error) {
 	if err := p.expect(tokEquals); err != nil {
 		return nil, err
 	}
-	// Optional leading "|".
 	if p.tok.kind == tokAlt {
 		if err := p.advance(); err != nil {
 			return nil, err
 		}
 	}
-	sort := &SortDecl{Name: name, Line: line}
+	sortType := gomast.MakeGomType(gomast.MakeExpressionType(), name)
+	var alts []gomast.Alternative
 	for {
-		alt, err := p.parseAlternative()
+		alt, err := p.parseAlternative(sortType)
 		if err != nil {
 			return nil, err
 		}
-		sort.Alternatives = append(sort.Alternatives, *alt)
+		alts = append(alts, alt)
 		if p.tok.kind != tokAlt {
 			break
 		}
@@ -234,35 +245,37 @@ func (p *parser) parseSortDeclBody(name string, line int) (*SortDecl, error) {
 			return nil, err
 		}
 	}
-	return sort, nil
+	_ = line // Future: encode line as Option on the SortType when the
+	// gomast layer grows an Option slot for it. Today it has none.
+	return gomast.MakeSortType(sortType, gomast.MakeConcAtom(), gomast.MakeConcAlternative(alts...)), nil
 }
 
 // parseHookAfterPointCut consumes a hook construct, starting from the
 // `:` token (the caller already consumed an optional scope keyword and
 // the pointCut identifier). On success the next significant token
 // (next sort/hook or EOF) is in p.tok.
-func (p *parser) parseHookAfterPointCut(scope, pointCut string, line int) (*GomHook, error) {
+func (p *parser) parseHookAfterPointCut(scope, pointCut string, line int) (gomast.Production, error) {
 	if p.tok.kind != tokColon {
 		return nil, p.errf("expected ':' after hook point-cut %q", pointCut)
 	}
 	if err := p.advance(); err != nil {
 		return nil, err
 	}
-	kind, err := p.consumeID()
+	kindStr, err := p.consumeID()
 	if err != nil {
 		return nil, err
 	}
 	if err := p.expect(tokLParen); err != nil {
 		return nil, err
 	}
-	var args []string
+	var args []gomast.Arg
 	if p.tok.kind != tokRParen {
 		for {
 			a, err := p.consumeID()
 			if err != nil {
 				return nil, err
 			}
-			args = append(args, a)
+			args = append(args, gomast.MakeArg(a))
 			if p.tok.kind != tokComma {
 				break
 			}
@@ -284,14 +297,14 @@ func (p *parser) parseHookAfterPointCut(scope, pointCut string, line int) (*GomH
 	if err := p.advance(); err != nil {
 		return nil, err
 	}
-	return &GomHook{
-		Scope:    scope,
-		PointCut: pointCut,
-		Kind:     kind,
-		Args:     args,
-		Body:     body,
-		Line:     line,
-	}, nil
+	return gomast.MakeHook(
+		scopeToIdKind(scope),
+		pointCut,
+		gomast.MakeHookKind(kindStr),
+		gomast.MakeConcArg(args...),
+		gomast.MakeHookCode(body),
+		gomast.MakeOptionList(gomast.MakeOrigin(int64(line))),
+	), nil
 }
 
 // parseAlternative parses:
@@ -300,7 +313,9 @@ func (p *parser) parseHookAfterPointCut(scope, pointCut string, line int) (*GomH
 //
 // where arg is either `slot:Type` (named slot) or `Type*` (variadic).
 // An alternative containing a variadic arg must contain ONLY that arg.
-func (p *parser) parseAlternative() (*Alternative, error) {
+// The codomain of the produced Alternative is `sortType`, the GomType
+// of the enclosing sort.
+func (p *parser) parseAlternative(sortType gomast.GomType) (gomast.Alternative, error) {
 	line := p.tok.line
 	op, err := p.consumeID()
 	if err != nil {
@@ -309,62 +324,90 @@ func (p *parser) parseAlternative() (*Alternative, error) {
 	if err := p.expect(tokLParen); err != nil {
 		return nil, err
 	}
-	alt := &Alternative{Op: op, Line: line}
-	if p.tok.kind == tokRParen {
-		if err := p.advance(); err != nil {
-			return nil, err
-		}
-		return alt, nil
-	}
-	for {
-		arg, err := p.parseArg()
-		if err != nil {
-			return nil, err
-		}
-		alt.Args = append(alt.Args, arg)
-		if arg.Variadic {
-			alt.Variadic = true
-		}
-		if p.tok.kind != tokComma {
-			break
-		}
-		if err := p.advance(); err != nil {
-			return nil, err
+	var fields []gomast.Field
+	variadic := false
+	if p.tok.kind != tokRParen {
+		for {
+			fld, isVariadic, err := p.parseArg()
+			if err != nil {
+				return nil, err
+			}
+			fields = append(fields, fld)
+			if isVariadic {
+				variadic = true
+			}
+			if p.tok.kind != tokComma {
+				break
+			}
+			if err := p.advance(); err != nil {
+				return nil, err
+			}
 		}
 	}
-	if alt.Variadic && len(alt.Args) != 1 {
+	if variadic && len(fields) != 1 {
 		return nil, fmt.Errorf("line %d: alternative %s has a variadic arg mixed with other args", line, op)
 	}
 	if err := p.expect(tokRParen); err != nil {
 		return nil, err
 	}
-	return alt, nil
+	return gomast.MakeAlternative(
+		op,
+		gomast.MakeConcField(fields...),
+		sortType,
+		gomast.MakeOptionList(gomast.MakeOrigin(int64(line))),
+	), nil
 }
 
 // parseArg parses one of:
 //
 //	ID ":" ID         (named slot)
 //	ID "*"            (anonymous variadic type)
-func (p *parser) parseArg() (Arg, error) {
+//
+// Returns the produced Field plus a boolean flagging the variadic
+// case so parseAlternative can enforce the "alone in its arg list"
+// invariant before building the gomast term.
+func (p *parser) parseArg() (gomast.Field, bool, error) {
 	first, err := p.consumeID()
 	if err != nil {
-		return Arg{}, err
+		return nil, false, err
 	}
 	switch p.tok.kind {
 	case tokColon:
 		if err := p.advance(); err != nil {
-			return Arg{}, err
+			return nil, false, err
 		}
 		typ, err := p.consumeID()
 		if err != nil {
-			return Arg{}, err
+			return nil, false, err
 		}
-		return Arg{Name: first, Type: typ}, nil
+		fld := gomast.MakeNamedField(first,
+			gomast.MakeGomType(gomast.MakeExpressionType(), typ),
+			gomast.MakeNone())
+		return fld, false, nil
 	case tokStar:
 		if err := p.advance(); err != nil {
-			return Arg{}, err
+			return nil, false, err
 		}
-		return Arg{Type: first, Variadic: true}, nil
+		fld := gomast.MakeStarredField(
+			gomast.MakeGomType(gomast.MakeExpressionType(), first),
+			gomast.MakeNone())
+		return fld, true, nil
 	}
-	return Arg{}, p.errf("expected ':' or '*' after argument identifier %q, got %s", first, p.tok.kind)
+	return nil, false, p.errf("expected ':' or '*' after argument identifier %q, got %s", first, p.tok.kind)
+}
+
+// scopeToIdKind maps the source-level scope keyword to the V2 IdKind
+// term. The empty (unscoped) hook defaults to KindOperator, matching
+// the ANTLR rule
+//
+//	hookConstruct : (hookScope)? pointCut=ID … -> ^( Hook ^( KindOperator ) … )
+func scopeToIdKind(scope string) gomast.IdKind {
+	switch scope {
+	case "sort":
+		return gomast.MakeKindSort()
+	case "module":
+		return gomast.MakeKindModule()
+	default:
+		return gomast.MakeKindOperator()
+	}
 }

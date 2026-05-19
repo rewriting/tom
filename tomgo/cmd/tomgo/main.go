@@ -13,6 +13,7 @@ import (
 
 	"tom/tomgo/internal/backend"
 	"tom/tomgo/internal/gom"
+	"tom/tomgo/internal/gomast"
 )
 
 const usage = `tomgo — Go port of the TOM compiler (work in progress)
@@ -117,7 +118,7 @@ func runGom(args []string) error {
 	if err != nil {
 		return err
 	}
-	fmt.Printf("wrote %s/ (%d sort(s) from %s)\n", dir, len(mod.Sorts), mod.QualifiedName())
+	fmt.Printf("wrote %s/ (%d sort(s) from %s)\n", dir, gom.CountSorts(mod), gom.QualifiedName(mod))
 	return nil
 }
 
@@ -132,7 +133,7 @@ func runGomBatch(args []string) error {
 	if out == "" || pkg == "" || fs.NArg() == 0 {
 		return fmt.Errorf("usage: tomgo gom-batch -o <out-dir> --pkg <name> <file1.gom> <file2.gom> ...")
 	}
-	var modules []*gom.Module
+	var modules []gomast.GomModule
 	for _, f := range fs.Args() {
 		m, err := gom.ParseFile(f)
 		if err != nil {
@@ -147,8 +148,8 @@ func runGomBatch(args []string) error {
 	totalSorts := 0
 	totalHooks := 0
 	for _, m := range modules {
-		totalSorts += len(m.Sorts)
-		totalHooks += len(m.Hooks)
+		totalSorts += gom.CountSorts(m)
+		totalHooks += gom.CountHooks(m)
 	}
 	fmt.Printf("wrote %s/ (%d module(s), %d sort(s), %d hook(s))\n",
 		dir, len(modules), totalSorts, totalHooks)

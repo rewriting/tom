@@ -158,7 +158,7 @@ func CompareTarget(
 	}
 	// Read the module name out of go/go.mod so the replace directive
 	// matches whatever the backend chose for this .gom.
-	pkgModule := "tomgen/" + mod.QualifiedName() // fallback
+	pkgModule := "tomgen/" + gom.QualifiedName(mod) // fallback
 	if data, err := os.ReadFile(filepath.Join(goPkgDir, "go.mod")); err == nil {
 		for _, line := range strings.Split(string(data), "\n") {
 			if strings.HasPrefix(line, "module ") {

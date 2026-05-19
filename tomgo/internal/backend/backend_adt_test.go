@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"tom/tomgo/internal/gom"
+	"tom/tomgo/internal/gomast"
 )
 
 // TestGenerate_ADT verifies that the batch-mode backend can lower the
@@ -24,7 +25,7 @@ func TestGenerate_ADT(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	var modules []*gom.Module
+	var modules []gomast.GomModule
 	for _, e := range entries {
 		if filepath.Ext(e.Name()) != ".gom" {
 			continue

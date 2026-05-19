@@ -1,11 +1,16 @@
-// Package backend turns a parsed Gom module (see package gom) into a
-// self-contained Go package whose term constructors run through the
+// Package backend turns a parsed Gom module (a gomast.GomModule) into
+// a self-contained Go package whose term constructors run through the
 // shared-objects runtime (see package library/sharedobjects).
 //
-// Scope (Phase 2c): only hook-free modules. Cross-module references
-// (e.g. `imports Leaf` then a slot typed `l:Leaf`) are rendered as Go
-// `any` because each module is generated as an isolated package. A
-// later phase will wire cross-package types.
+// Phase 3 of the porting plan replaced the hand-written V1 AST in
+// internal/gom/ast.go with the canonical gomast AST. The backend now
+// traverses gomast directly; no V1 types remain.
+//
+// Cross-module references (e.g. `imports Leaf` then a slot typed
+// `l:Leaf`) are rendered as Go `any` in single-module mode because
+// each module is generated as an isolated package. The batch mode
+// (GenerateBatchToDir) tracks the union of sort names across modules
+// and resolves slot types to local Go interfaces.
 package backend
 
 import (
@@ -19,7 +24,7 @@ import (
 	"strings"
 	"unicode"
 
-	"tom/tomgo/internal/gom"
+	"tom/tomgo/internal/gomast"
 )
 
 // Options controls code generation. Only the Go package name has a
@@ -29,15 +34,173 @@ type Options struct {
 	PackageName string // overrides the auto-derived package name
 }
 
+// ---------------------------------------------------------------------------
+// gomast accessors
+// ---------------------------------------------------------------------------
+
+// moduleQualifiedName returns the dotted module name carried by g.
+func moduleQualifiedName(g gomast.GomModule) string {
+	gm := g.(*gomast.GomModuleGomModule)
+	return gm.ModuleName.(*gomast.GomModuleNameGomModuleName).Name
+}
+
+// moduleNameParts splits the qualified name on dots.
+func moduleNameParts(g gomast.GomModule) []string {
+	return strings.Split(moduleQualifiedName(g), ".")
+}
+
+// moduleSorts returns the SortType productions of g in declaration order.
+func moduleSorts(g gomast.GomModule) []*gomast.SortTypeProduction {
+	var out []*gomast.SortTypeProduction
+	walkProductions(g, func(p gomast.Production) {
+		if s, ok := p.(*gomast.SortTypeProduction); ok {
+			out = append(out, s)
+		}
+	})
+	return out
+}
+
+// moduleHooks returns the Hook productions of g in declaration order.
+func moduleHooks(g gomast.GomModule) []*gomast.HookProduction {
+	var out []*gomast.HookProduction
+	walkProductions(g, func(p gomast.Production) {
+		if h, ok := p.(*gomast.HookProduction); ok {
+			out = append(out, h)
+		}
+	})
+	return out
+}
+
+func walkProductions(g gomast.GomModule, fn func(gomast.Production)) {
+	gm := g.(*gomast.GomModuleGomModule)
+	sectionList := gm.SectionList.(*gomast.ConcSectionSectionList)
+	for _, sec := range sectionList.Slots {
+		pub, ok := sec.(*gomast.PublicSection)
+		if !ok {
+			continue
+		}
+		prodList := pub.ProductionList.(*gomast.ConcProductionProductionList)
+		for _, p := range prodList.Slots {
+			fn(p)
+		}
+	}
+}
+
+// sortName returns the name of the sort declared by a SortType production.
+func sortName(prod *gomast.SortTypeProduction) string {
+	return prod.Type.(*gomast.GomTypeGomType).Name
+}
+
+// sortAlternatives returns the alternatives of a SortType production
+// in declaration order.
+func sortAlternatives(prod *gomast.SortTypeProduction) []*gomast.AlternativeAlternative {
+	altList := prod.AlternativeList.(*gomast.ConcAlternativeAlternativeList)
+	out := make([]*gomast.AlternativeAlternative, 0, len(altList.Slots))
+	for _, a := range altList.Slots {
+		out = append(out, a.(*gomast.AlternativeAlternative))
+	}
+	return out
+}
+
+// alternativeFields returns the fields of an alternative.
+func alternativeFields(alt *gomast.AlternativeAlternative) []gomast.Field {
+	return alt.DomainList.(*gomast.ConcFieldFieldList).Slots
+}
+
+// fieldTypeName returns the GomType name carried by a Field — works
+// for both named and variadic fields.
+func fieldTypeName(f gomast.Field) string {
+	switch fld := f.(type) {
+	case *gomast.NamedFieldField:
+		return fld.FieldType.(*gomast.GomTypeGomType).Name
+	case *gomast.StarredFieldField:
+		return fld.FieldType.(*gomast.GomTypeGomType).Name
+	}
+	return ""
+}
+
+// alternativeIsVariadic reports whether the alternative is variadic
+// (its single field is a StarredField).
+func alternativeIsVariadic(alt *gomast.AlternativeAlternative) bool {
+	fields := alternativeFields(alt)
+	if len(fields) != 1 {
+		return false
+	}
+	_, ok := fields[0].(*gomast.StarredFieldField)
+	return ok
+}
+
+// hookScopeName returns "sort"/"module"/"operator" depending on the
+// HookProduction.NameType.
+func hookScopeName(h *gomast.HookProduction) string {
+	switch h.NameType.(type) {
+	case *gomast.KindSortIdKind:
+		return "sort"
+	case *gomast.KindModuleIdKind:
+		return "module"
+	case *gomast.KindOperatorIdKind:
+		return "operator"
+	}
+	return ""
+}
+
+// hookKindName returns the kind ("block", "make", …) of a HookProduction.
+func hookKindName(h *gomast.HookProduction) string {
+	return h.HookType.(*gomast.HookKindHookKind).Kind
+}
+
+// hookBody returns the hook's source body (the textual code between the
+// outer braces) when the hook content is the HookCode variant.
+func hookBody(h *gomast.HookProduction) string {
+	if hc, ok := h.HookContent.(*gomast.HookCodeHookContent); ok {
+		return hc.StringCode
+	}
+	return ""
+}
+
+// ---------------------------------------------------------------------------
+// public entry points
+// ---------------------------------------------------------------------------
+
 // Generate writes the Go source for module mod to out. The output is
 // already gofmt'd.
-func Generate(mod *gom.Module, opts Options, out io.Writer) error {
+func Generate(mod gomast.GomModule, opts Options, out io.Writer) error {
 	src, err := generateBytes(mod, opts)
 	if err != nil {
 		return err
 	}
 	_, err = out.Write(src)
 	return err
+}
+
+// GenerateToDir creates dir if needed, writes go.mod and a single
+// `<pkg>.go` source file, and returns the absolute package directory.
+// Each generated module is a standalone Go module so it can be built
+// and tested in isolation.
+func GenerateToDir(mod gomast.GomModule, opts Options, dir string) (string, error) {
+	if err := os.MkdirAll(dir, 0o755); err != nil {
+		return "", err
+	}
+	if opts.PackageName == "" {
+		opts.PackageName = defaultPackageName(mod)
+	}
+	src, err := generateBytes(mod, opts)
+	if err != nil {
+		return "", err
+	}
+	abs, err := filepath.Abs(dir)
+	if err != nil {
+		return "", err
+	}
+	if err := os.WriteFile(filepath.Join(abs, opts.PackageName+".go"), src, 0o644); err != nil {
+		return "", err
+	}
+	goMod := fmt.Sprintf("module tomgen/%s\n\ngo 1.22\n\nrequire tom/tomgo v0.0.0\nreplace tom/tomgo => %s\n",
+		opts.PackageName, locateTomgoRoot())
+	if err := os.WriteFile(filepath.Join(abs, "go.mod"), []byte(goMod), 0o644); err != nil {
+		return "", err
+	}
+	return abs, nil
 }
 
 // GenerateBatchToDir compiles several Gom modules into a single Go
@@ -48,7 +211,7 @@ func Generate(mod *gom.Module, opts Options, out io.Writer) error {
 // This is the mode used to compile the real ADT in
 // `src/tom/gom/adt/*.gom`, where every file imports symbols defined
 // in the others.
-func GenerateBatchToDir(modules []*gom.Module, opts Options, dir string) (string, error) {
+func GenerateBatchToDir(modules []gomast.GomModule, opts Options, dir string) (string, error) {
 	if len(modules) == 0 {
 		return "", fmt.Errorf("GenerateBatchToDir: empty module list")
 	}
@@ -68,13 +231,14 @@ func GenerateBatchToDir(modules []*gom.Module, opts Options, dir string) (string
 	allSorts := map[string]bool{}
 	owner := map[string]string{}
 	for _, m := range modules {
-		for _, s := range m.Sorts {
-			if prev, dup := owner[s.Name]; dup {
-				return "", fmt.Errorf("sort %q is defined in both %s and %s",
-					s.Name, prev, m.QualifiedName())
+		qname := moduleQualifiedName(m)
+		for _, s := range moduleSorts(m) {
+			name := sortName(s)
+			if prev, dup := owner[name]; dup {
+				return "", fmt.Errorf("sort %q is defined in both %s and %s", name, prev, qname)
 			}
-			owner[s.Name] = m.QualifiedName()
-			allSorts[s.Name] = true
+			owner[name] = qname
+			allSorts[name] = true
 		}
 	}
 
@@ -84,9 +248,9 @@ func GenerateBatchToDir(modules []*gom.Module, opts Options, dir string) (string
 	for i, m := range modules {
 		src, err := generateBatchBytes(m, allSorts, opts.PackageName, i == 0)
 		if err != nil {
-			return "", fmt.Errorf("generating %s: %w", m.QualifiedName(), err)
+			return "", fmt.Errorf("generating %s: %w", moduleQualifiedName(m), err)
 		}
-		name := strings.ToLower(safeFileName(m.QualifiedName())) + ".go"
+		name := strings.ToLower(safeFileName(moduleQualifiedName(m))) + ".go"
 		if err := os.WriteFile(filepath.Join(abs, name), src, 0o644); err != nil {
 			return "", err
 		}
@@ -114,11 +278,7 @@ func safeFileName(qualName string) string {
 	return string(out)
 }
 
-// generateBatchBytes is the batch-mode counterpart of generateBytes.
-// It uses a pre-computed cross-module sort registry rather than the
-// per-module ownSort map, so a slot typed `Code` from Objects.gom
-// resolves to the Go interface generated from Code.gom.
-func generateBatchBytes(mod *gom.Module, allSorts map[string]bool, pkgName string, emitFactory bool) ([]byte, error) {
+func generateBatchBytes(mod gomast.GomModule, allSorts map[string]bool, pkgName string, emitFactory bool) ([]byte, error) {
 	g := &gen{
 		mod:     mod,
 		ownSort: allSorts,
@@ -128,44 +288,14 @@ func generateBatchBytes(mod *gom.Module, allSorts map[string]bool, pkgName strin
 	if emitFactory {
 		g.emitFactory()
 	}
-	for _, s := range mod.Sorts {
+	for _, s := range moduleSorts(mod) {
 		g.emitSort(s)
 	}
 	formatted, err := format.Source(g.buf.Bytes())
 	if err != nil {
-		return g.buf.Bytes(), fmt.Errorf("gofmt failed for %s: %w", mod.QualifiedName(), err)
+		return g.buf.Bytes(), fmt.Errorf("gofmt failed for %s: %w", moduleQualifiedName(mod), err)
 	}
 	return formatted, nil
-}
-
-// GenerateToDir creates dir if needed, writes go.mod and a single
-// `<pkg>.go` source file, and returns the absolute package directory.
-// Each generated module is a standalone Go module so it can be built
-// and tested in isolation.
-func GenerateToDir(mod *gom.Module, opts Options, dir string) (string, error) {
-	if err := os.MkdirAll(dir, 0o755); err != nil {
-		return "", err
-	}
-	if opts.PackageName == "" {
-		opts.PackageName = defaultPackageName(mod)
-	}
-	src, err := generateBytes(mod, opts)
-	if err != nil {
-		return "", err
-	}
-	abs, err := filepath.Abs(dir)
-	if err != nil {
-		return "", err
-	}
-	if err := os.WriteFile(filepath.Join(abs, opts.PackageName+".go"), src, 0o644); err != nil {
-		return "", err
-	}
-	goMod := fmt.Sprintf("module tomgen/%s\n\ngo 1.22\n\nrequire tom/tomgo v0.0.0\nreplace tom/tomgo => %s\n",
-		opts.PackageName, locateTomgoRoot())
-	if err := os.WriteFile(filepath.Join(abs, "go.mod"), []byte(goMod), 0o644); err != nil {
-		return "", err
-	}
-	return abs, nil
 }
 
 // locateTomgoRoot returns the absolute path to the tomgo/ module root,
@@ -192,10 +322,11 @@ func locateTomgoRoot() string {
 	}
 }
 
-func defaultPackageName(mod *gom.Module) string {
+func defaultPackageName(mod gomast.GomModule) string {
+	parts := moduleNameParts(mod)
 	last := ""
-	if n := len(mod.Name); n > 0 {
-		last = mod.Name[n-1]
+	if n := len(parts); n > 0 {
+		last = parts[n-1]
 	}
 	var b strings.Builder
 	for _, r := range last {
@@ -210,7 +341,7 @@ func defaultPackageName(mod *gom.Module) string {
 	return out
 }
 
-func generateBytes(mod *gom.Module, opts Options) ([]byte, error) {
+func generateBytes(mod gomast.GomModule, opts Options) ([]byte, error) {
 	if opts.PackageName == "" {
 		opts.PackageName = defaultPackageName(mod)
 	}
@@ -219,12 +350,12 @@ func generateBytes(mod *gom.Module, opts Options) ([]byte, error) {
 		ownSort: map[string]bool{},
 		pkgName: opts.PackageName,
 	}
-	for _, s := range mod.Sorts {
-		g.ownSort[s.Name] = true
+	for _, s := range moduleSorts(mod) {
+		g.ownSort[sortName(s)] = true
 	}
 	g.emitHeader()
 	g.emitFactory()
-	for _, s := range mod.Sorts {
+	for _, s := range moduleSorts(mod) {
 		g.emitSort(s)
 	}
 	formatted, err := format.Source(g.buf.Bytes())
@@ -235,15 +366,19 @@ func generateBytes(mod *gom.Module, opts Options) ([]byte, error) {
 	return formatted, nil
 }
 
+// ---------------------------------------------------------------------------
+// generator state and emission
+// ---------------------------------------------------------------------------
+
 type gen struct {
-	mod     *gom.Module
+	mod     gomast.GomModule
 	ownSort map[string]bool
 	pkgName string
 	buf     bytes.Buffer
 }
 
 func (g *gen) emitHeader() {
-	fmt.Fprintf(&g.buf, "// Code generated by tom/tomgo backend from %s. DO NOT EDIT.\n", g.mod.QualifiedName())
+	fmt.Fprintf(&g.buf, "// Code generated by tom/tomgo backend from %s. DO NOT EDIT.\n", moduleQualifiedName(g.mod))
 	fmt.Fprintf(&g.buf, "package %s\n\n", g.pkgName)
 	fmt.Fprintln(&g.buf, "import (")
 	fmt.Fprintln(&g.buf, `	"fmt"`)
@@ -267,16 +402,14 @@ func (g *gen) emitFactory() {
 	fmt.Fprintln(&g.buf)
 }
 
-func (g *gen) emitSort(s gom.SortDecl) {
-	// Collect sort-scoped hooks targeting this sort. They contribute
-	// both interface-level method declarations and per-alternative
-	// implementations.
-	sortHooks := g.sortScopedHooks(s.Name)
+func (g *gen) emitSort(prod *gomast.SortTypeProduction) {
+	name := sortName(prod)
+	sortHooks := g.sortScopedHooks(name)
 
-	fmt.Fprintf(&g.buf, "// %s is the Go interface backing the Gom sort %s.\n", s.Name, s.Name)
-	fmt.Fprintf(&g.buf, "type %s interface {\n", s.Name)
+	fmt.Fprintf(&g.buf, "// %s is the Go interface backing the Gom sort %s.\n", name, name)
+	fmt.Fprintf(&g.buf, "type %s interface {\n", name)
 	fmt.Fprintln(&g.buf, "	sharedobjects.Term")
-	fmt.Fprintf(&g.buf, "	is%s()\n", s.Name)
+	fmt.Fprintf(&g.buf, "	is%s()\n", name)
 	for _, h := range sortHooks {
 		if decl := interfaceDeclForHook(h); decl != "" {
 			fmt.Fprintf(&g.buf, "\t%s\n", decl)
@@ -284,23 +417,20 @@ func (g *gen) emitSort(s gom.SortDecl) {
 	}
 	fmt.Fprintln(&g.buf, "}")
 	fmt.Fprintln(&g.buf)
-	for _, alt := range s.Alternatives {
-		g.emitAlternative(s.Name, alt)
+	for _, alt := range sortAlternatives(prod) {
+		g.emitAlternative(name, alt)
 		for _, h := range sortHooks {
-			g.emitHookImplOnAlt(s, alt, h)
+			g.emitHookImplOnAlt(prod, alt, h)
 		}
 	}
 }
 
-// sortScopedHooks returns all module-level hooks whose pointcut is this
-// sort and whose scope is "sort".
-func (g *gen) sortScopedHooks(sort string) []gom.GomHook {
-	if g.mod == nil {
-		return nil
-	}
-	var out []gom.GomHook
-	for _, h := range g.mod.Hooks {
-		if h.Scope == "sort" && h.PointCut == sort {
+// sortScopedHooks returns module-level hooks whose scope is "sort"
+// and whose pointcut is the given sort name.
+func (g *gen) sortScopedHooks(sortNm string) []*gomast.HookProduction {
+	var out []*gomast.HookProduction
+	for _, h := range moduleHooks(g.mod) {
+		if hookScopeName(h) == "sort" && h.Name == sortNm {
 			out = append(out, h)
 		}
 	}
@@ -311,7 +441,7 @@ func (g *gen) sortScopedHooks(sort string) []gom.GomHook {
 // known sort-scoped hook (e.g. `ContainsTomCode() bool`). Unknown hooks
 // contribute nothing — the body Tom code is dropped and a `// unknown
 // hook` marker is left in the impl section instead.
-func interfaceDeclForHook(h gom.GomHook) string {
+func interfaceDeclForHook(h *gomast.HookProduction) string {
 	if k := recognisedKnownHook(h); k != nil {
 		return k.interfaceDecl
 	}
@@ -319,17 +449,17 @@ func interfaceDeclForHook(h gom.GomHook) string {
 }
 
 // emitHookImplOnAlt emits the body of the method contributed by hook
-// `h` on the struct generated for alt of sort s. Unknown hooks emit a
-// short comment so the gap is visible in the generated source.
-func (g *gen) emitHookImplOnAlt(s gom.SortDecl, alt gom.Alternative, h gom.GomHook) {
+// `h` on the struct generated for alt of sort prod. Unknown hooks emit
+// a short comment so the gap is visible in the generated source.
+func (g *gen) emitHookImplOnAlt(prod *gomast.SortTypeProduction, alt *gomast.AlternativeAlternative, h *gomast.HookProduction) {
 	k := recognisedKnownHook(h)
 	if k == nil {
 		fmt.Fprintf(&g.buf, "// unsupported hook for sort %s alt %s: %s:%s (body dropped)\n\n",
-			s.Name, alt.Op, h.PointCut, h.Kind)
+			sortName(prod), alt.Name, h.Name, hookKindName(h))
 		return
 	}
-	structName := exportedField(alt.Op) + s.Name
-	k.emitImpl(&g.buf, g, s, alt, structName)
+	structName := exportedField(alt.Name) + sortName(prod)
+	k.emitImpl(&g.buf, g, prod, alt, structName)
 }
 
 // knownHook bundles the metadata and emission routines for one
@@ -341,16 +471,18 @@ type knownHook struct {
 	pointCut      string // sort name (for sort scope), …
 	kind          string // "block", "make", …
 	interfaceDecl string // method signature for the sort interface
-	emitImpl      func(buf *bytes.Buffer, g *gen, s gom.SortDecl, alt gom.Alternative, structName string)
+	emitImpl      func(buf *bytes.Buffer, g *gen, prod *gomast.SortTypeProduction, alt *gomast.AlternativeAlternative, structName string)
 }
 
 // recognisedKnownHook returns the entry from knownHookTable matching
 // the hook, or nil. The module is taken from g.mod when available; for
 // the V1 table we keep the match generous (module name is optional).
-func recognisedKnownHook(h gom.GomHook) *knownHook {
+func recognisedKnownHook(h *gomast.HookProduction) *knownHook {
+	scope := hookScopeName(h)
+	kind := hookKindName(h)
 	for i := range knownHookTable {
 		k := &knownHookTable[i]
-		if k.scope == h.Scope && k.pointCut == h.PointCut && k.kind == h.Kind {
+		if k.scope == scope && k.pointCut == h.Name && k.kind == kind {
 			return k
 		}
 	}
@@ -373,12 +505,12 @@ var knownHookTable = []knownHook{
 		pointCut:      "HookList",
 		kind:          "block",
 		interfaceDecl: "ContainsTomCode() bool",
-		emitImpl: func(buf *bytes.Buffer, g *gen, s gom.SortDecl, alt gom.Alternative, structName string) {
+		emitImpl: func(buf *bytes.Buffer, g *gen, prod *gomast.SortTypeProduction, alt *gomast.AlternativeAlternative, structName string) {
 			fmt.Fprintf(buf, "// ContainsTomCode reports whether any child hook is a\n")
 			fmt.Fprintf(buf, "// MakeHook/MakeBeforeHook/BlockHook flagged HasTomCode=true.\n")
 			fmt.Fprintf(buf, "// Lowered from `sort HookList:block()` in Objects.gom.\n")
 			fmt.Fprintf(buf, "func (t *%s) ContainsTomCode() bool {\n", structName)
-			if alt.Variadic {
+			if alternativeIsVariadic(alt) {
 				fmt.Fprintf(buf, "\tfor _, h := range t.Slots {\n")
 				fmt.Fprintf(buf, "\t\tswitch ht := h.(type) {\n")
 				for _, target := range []string{"MakeHook", "MakeBeforeHook", "BlockHook"} {
@@ -405,26 +537,39 @@ var knownHookTable = []knownHook{
 // constructors are exported. The original spelling is preserved in the
 // hash input and in the String() output so canonicalization and
 // pretty-printing remain faithful to the source.
-func (g *gen) emitAlternative(sortName string, alt gom.Alternative) {
-	opGo := exportedField(alt.Op)
+func (g *gen) emitAlternative(sortNm string, alt *gomast.AlternativeAlternative) {
+	opGo := exportedField(alt.Name)
 	if opGo == "" {
 		opGo = "Op"
 	}
-	structName := opGo + sortName
-	// Build the slot list.
+	structName := opGo + sortNm
+	opName := alt.Name
+
+	// Lower the gomast Fields into a flat slot list that the rest of
+	// this function manipulates directly. This shape keeps the emit
+	// code straightforward and matches what the V1 backend used to
+	// produce, by design.
 	type slot struct {
-		Name     string
-		GoType   string
-		IsVar    bool
+		Name   string
+		GoType string
+		IsVar  bool
 	}
 	var slots []slot
-	if alt.Variadic {
-		a := alt.Args[0]
-		slots = append(slots, slot{Name: "Slots", GoType: g.goType(a.Type, false), IsVar: true})
+	isVariadic := alternativeIsVariadic(alt)
+	fields := alternativeFields(alt)
+	if isVariadic {
+		typeName := fieldTypeName(fields[0])
+		slots = append(slots, slot{Name: "Slots", GoType: g.goType(typeName, false), IsVar: true})
 	} else {
 		seen := map[string]int{}
-		for i, a := range alt.Args {
-			name := exportedField(a.Name)
+		for i, f := range fields {
+			nf, ok := f.(*gomast.NamedFieldField)
+			if !ok {
+				// In a non-variadic alternative every field must be
+				// named — anything else is a parser bug.
+				continue
+			}
+			name := exportedField(nf.Name)
 			if name == "" {
 				name = fmt.Sprintf("Slot%d", i)
 			}
@@ -432,14 +577,14 @@ func (g *gen) emitAlternative(sortName string, alt gom.Alternative) {
 				name = fmt.Sprintf("%s%d", name, c+1)
 			}
 			seen[name]++
-			slots = append(slots, slot{Name: name, GoType: g.goType(a.Type, false)})
+			slots = append(slots, slot{Name: name, GoType: g.goType(fieldTypeName(f), false)})
 		}
 	}
 
 	// Struct definition.
-	fmt.Fprintf(&g.buf, "// %s is the term type for the alternative `%s(...)` of sort %s.\n", structName, alt.Op, sortName)
+	fmt.Fprintf(&g.buf, "// %s is the term type for the alternative `%s(...)` of sort %s.\n", structName, opName, sortNm)
 	fmt.Fprintf(&g.buf, "type %s struct {\n", structName)
-	if alt.Variadic {
+	if isVariadic {
 		fmt.Fprintf(&g.buf, "\t%s []%s\n", slots[0].Name, slots[0].GoType)
 	} else {
 		for _, s := range slots {
@@ -451,7 +596,7 @@ func (g *gen) emitAlternative(sortName string, alt gom.Alternative) {
 	fmt.Fprintln(&g.buf)
 
 	// Marker interface method.
-	fmt.Fprintf(&g.buf, "func (*%s) is%s() {}\n\n", structName, sortName)
+	fmt.Fprintf(&g.buf, "func (*%s) is%s() {}\n\n", structName, sortNm)
 
 	// Hash method.
 	fmt.Fprintf(&g.buf, "func (t *%s) Hash() uint32 { return t.hash }\n\n", structName)
@@ -459,30 +604,24 @@ func (g *gen) emitAlternative(sortName string, alt gom.Alternative) {
 	// Equivalent. When the alternative has no slot, we don't bind `o`
 	// (Go would refuse the unused identifier).
 	fmt.Fprintf(&g.buf, "func (t *%s) Equivalent(other sharedobjects.Term) bool {\n", structName)
-	if !alt.Variadic && len(slots) == 0 {
+	if !isVariadic && len(slots) == 0 {
 		fmt.Fprintf(&g.buf, "\t_, ok := other.(*%s)\n", structName)
 		fmt.Fprintln(&g.buf, "\treturn ok")
 		fmt.Fprintln(&g.buf, "}")
 		fmt.Fprintln(&g.buf)
-		// Skip the rest of the Equivalent body emission.
 		goto afterEquivalent
 	}
 	fmt.Fprintf(&g.buf, "\to, ok := other.(*%s)\n", structName)
 	fmt.Fprintln(&g.buf, "\tif !ok {")
 	fmt.Fprintln(&g.buf, "\t\treturn false")
 	fmt.Fprintln(&g.buf, "\t}")
-	if alt.Variadic {
-		varType := slots[0].GoType
+	if isVariadic {
 		varName := slots[0].Name
 		fmt.Fprintf(&g.buf, "\tif len(t.%s) != len(o.%s) {\n", varName, varName)
 		fmt.Fprintln(&g.buf, "\t\treturn false")
 		fmt.Fprintln(&g.buf, "\t}")
 		fmt.Fprintf(&g.buf, "\tfor i := range t.%s {\n", varName)
-		if g.isShared(varType) {
-			fmt.Fprintf(&g.buf, "\t\tif t.%s[i] != o.%s[i] { return false }\n", varName, varName)
-		} else {
-			fmt.Fprintf(&g.buf, "\t\tif t.%s[i] != o.%s[i] { return false }\n", varName, varName)
-		}
+		fmt.Fprintf(&g.buf, "\t\tif t.%s[i] != o.%s[i] { return false }\n", varName, varName)
 		fmt.Fprintln(&g.buf, "\t}")
 	} else {
 		for _, s := range slots {
@@ -496,7 +635,7 @@ afterEquivalent:
 
 	// Duplicate.
 	fmt.Fprintf(&g.buf, "func (t *%s) Duplicate() sharedobjects.Term {\n", structName)
-	if alt.Variadic {
+	if isVariadic {
 		fmt.Fprintf(&g.buf, "\tcp := append([]%s(nil), t.%s...)\n", slots[0].GoType, slots[0].Name)
 		fmt.Fprintf(&g.buf, "\treturn &%s{%s: cp, hash: t.hash}\n", structName, slots[0].Name)
 	} else {
@@ -519,21 +658,21 @@ afterEquivalent:
 		return "%v"
 	}
 	fmt.Fprintf(&g.buf, "func (t *%s) String() string {\n", structName)
-	if alt.Variadic {
+	if isVariadic {
 		v := verbFor(slots[0].GoType)
 		fmt.Fprintf(&g.buf, "\tparts := make([]string, len(t.%s))\n", slots[0].Name)
 		fmt.Fprintf(&g.buf, "\tfor i, v := range t.%s {\n", slots[0].Name)
 		fmt.Fprintf(&g.buf, "\t\tparts[i] = fmt.Sprintf(%q, v)\n", v)
 		fmt.Fprintln(&g.buf, "\t}")
-		fmt.Fprintf(&g.buf, "\treturn %q + \"(\" + strings.Join(parts, \",\") + \")\"\n", alt.Op)
+		fmt.Fprintf(&g.buf, "\treturn %q + \"(\" + strings.Join(parts, \",\") + \")\"\n", opName)
 	} else if len(slots) == 0 {
-		fmt.Fprintf(&g.buf, "\treturn %q + \"()\"\n", alt.Op)
+		fmt.Fprintf(&g.buf, "\treturn %q + \"()\"\n", opName)
 	} else {
 		var verbs []string
 		for _, s := range slots {
 			verbs = append(verbs, verbFor(s.GoType))
 		}
-		format := alt.Op + "(" + strings.Join(verbs, ",") + ")"
+		format := opName + "(" + strings.Join(verbs, ",") + ")"
 		fmt.Fprintf(&g.buf, "\treturn fmt.Sprintf(%q", format)
 		for _, s := range slots {
 			fmt.Fprintf(&g.buf, ", t.%s", s.Name)
@@ -546,9 +685,9 @@ afterEquivalent:
 	// Smart constructor. The Go-side function name is exported (Pascal
 	// case); the canonical symbol passed to the hash mixer keeps the
 	// original spelling so sharing stays correct.
-	fmt.Fprintf(&g.buf, "// Make%s builds the canonical (shared) %s term.\n", opGo, alt.Op)
-	if alt.Variadic {
-		fmt.Fprintf(&g.buf, "func Make%s(args ...%s) %s {\n", opGo, slots[0].GoType, sortName)
+	fmt.Fprintf(&g.buf, "// Make%s builds the canonical (shared) %s term.\n", opGo, opName)
+	if isVariadic {
+		fmt.Fprintf(&g.buf, "func Make%s(args ...%s) %s {\n", opGo, slots[0].GoType, sortNm)
 		fmt.Fprintf(&g.buf, "\thashes := make([]uint32, 0, len(args))\n")
 		fmt.Fprintf(&g.buf, "\tfor _, a := range args {\n")
 		if g.isShared(slots[0].GoType) {
@@ -558,16 +697,15 @@ afterEquivalent:
 		}
 		fmt.Fprintln(&g.buf, "\t}")
 		fmt.Fprintf(&g.buf, "\tproto := &%s{%s: args, hash: sharedobjects.MixSymbol(sharedobjects.StringHash(%q), hashes)}\n",
-			structName, slots[0].Name, alt.Op)
+			structName, slots[0].Name, opName)
 		fmt.Fprintf(&g.buf, "\treturn factory.Build(proto).(*%s)\n", structName)
 		fmt.Fprintln(&g.buf, "}")
 	} else {
-		// Build the typed parameter list.
 		var params []string
 		for _, s := range slots {
 			params = append(params, fmt.Sprintf("%s %s", unexported(s.Name), s.GoType))
 		}
-		fmt.Fprintf(&g.buf, "func Make%s(%s) %s {\n", opGo, strings.Join(params, ", "), sortName)
+		fmt.Fprintf(&g.buf, "func Make%s(%s) %s {\n", opGo, strings.Join(params, ", "), sortNm)
 		fmt.Fprintf(&g.buf, "\thashes := []uint32{")
 		first := true
 		for _, s := range slots {
@@ -582,7 +720,7 @@ afterEquivalent:
 			}
 		}
 		fmt.Fprintln(&g.buf, "}")
-		fmt.Fprintf(&g.buf, "\tproto := &%s{hash: sharedobjects.MixSymbol(sharedobjects.StringHash(%q), hashes)", structName, alt.Op)
+		fmt.Fprintf(&g.buf, "\tproto := &%s{hash: sharedobjects.MixSymbol(sharedobjects.StringHash(%q), hashes)", structName, opName)
 		for _, s := range slots {
 			fmt.Fprintf(&g.buf, ", %s: %s", s.Name, unexported(s.Name))
 		}
@@ -661,10 +799,11 @@ func unexported(name string) string {
 
 // SortedSortNames is a tiny helper used by tests when they want to
 // iterate sorts deterministically.
-func SortedSortNames(mod *gom.Module) []string {
-	names := make([]string, 0, len(mod.Sorts))
-	for _, s := range mod.Sorts {
-		names = append(names, s.Name)
+func SortedSortNames(mod gomast.GomModule) []string {
+	sorts := moduleSorts(mod)
+	names := make([]string, 0, len(sorts))
+	for _, s := range sorts {
+		names = append(names, sortName(s))
 	}
 	sort.Strings(names)
 	return names
