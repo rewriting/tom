@@ -230,6 +230,10 @@ func GenerateBatchToDir(modules []gomast.GomModule, opts Options, dir string) (s
 	// resolution boils down to local Go-interface resolution.
 	allSorts := map[string]bool{}
 	owner := map[string]string{}
+	// opSorts tracks the set of sorts each exported op name appears in.
+	// If the same op (e.g. `Subterm`) is an alt of BOTH BQTerm and Term,
+	// emitting Make<Op> without a sort suffix would collide.
+	opSorts := map[string]map[string]bool{}
 	for _, m := range modules {
 		qname := moduleQualifiedName(m)
 		for _, s := range moduleSorts(m) {
@@ -239,6 +243,22 @@ func GenerateBatchToDir(modules []gomast.GomModule, opts Options, dir string) (s
 			}
 			owner[name] = qname
 			allSorts[name] = true
+			for _, alt := range sortAlternatives(s) {
+				op := exportedField(alt.Name)
+				if op == "" {
+					op = "Op"
+				}
+				if opSorts[op] == nil {
+					opSorts[op] = map[string]bool{}
+				}
+				opSorts[op][name] = true
+			}
+		}
+	}
+	makeCollides := map[string]bool{}
+	for op, sorts := range opSorts {
+		if len(sorts) > 1 {
+			makeCollides[op] = true
 		}
 	}
 
@@ -246,13 +266,16 @@ func GenerateBatchToDir(modules []gomast.GomModule, opts Options, dir string) (s
 	// see which module produced what. The first file (lex order on
 	// filename) carries the shared factory; the rest are pure types.
 	for i, m := range modules {
-		src, err := generateBatchBytes(m, allSorts, opts.PackageName, i == 0)
-		if err != nil {
-			return "", fmt.Errorf("generating %s: %w", moduleQualifiedName(m), err)
-		}
+		src, gofmtErr := generateBatchBytes(m, allSorts, makeCollides, opts.PackageName, i == 0)
+		// generateBatchBytes returns the unformatted source AND an error
+		// when gofmt fails. Write the file regardless so the bug is
+		// diagnosable, then propagate the error.
 		name := strings.ToLower(safeFileName(moduleQualifiedName(m))) + ".go"
 		if err := os.WriteFile(filepath.Join(abs, name), src, 0o644); err != nil {
 			return "", err
+		}
+		if gofmtErr != nil {
+			return "", fmt.Errorf("generating %s: %w", moduleQualifiedName(m), gofmtErr)
 		}
 	}
 	goMod := fmt.Sprintf("module tomgen/%s\n\ngo 1.22\n\nrequire tom/tomgo v0.0.0\nreplace tom/tomgo => %s\n",
@@ -278,11 +301,12 @@ func safeFileName(qualName string) string {
 	return string(out)
 }
 
-func generateBatchBytes(mod gomast.GomModule, allSorts map[string]bool, pkgName string, emitFactory bool) ([]byte, error) {
+func generateBatchBytes(mod gomast.GomModule, allSorts map[string]bool, makeCollides map[string]bool, pkgName string, emitFactory bool) ([]byte, error) {
 	g := &gen{
-		mod:     mod,
-		ownSort: allSorts,
-		pkgName: pkgName,
+		mod:          mod,
+		ownSort:      allSorts,
+		pkgName:      pkgName,
+		makeCollides: makeCollides,
 	}
 	g.emitHeader()
 	if emitFactory {
@@ -375,6 +399,26 @@ type gen struct {
 	ownSort map[string]bool
 	pkgName string
 	buf     bytes.Buffer
+
+	// makeCollides reports whether the alt's exported op name appears
+	// in more than one sort across the whole batch. When true, the
+	// generator suffixes `Make<Op>` with `<Sort>` to disambiguate.
+	// Computed once by GenerateBatchToDir and propagated into every
+	// per-module gen. Nil ⇒ collision check disabled (single-file mode
+	// where no batch-wide collision can arise anyway).
+	makeCollides map[string]bool
+}
+
+// reservedFieldName is the set of method names emitted on every alt
+// struct (Hash, Equivalent, Duplicate, String). A Gom slot whose
+// exported name collides with one of these would create a Go
+// "field and method with the same name" error. We append "_" to the
+// field name in that case.
+var reservedFieldName = map[string]bool{
+	"String":     true,
+	"Hash":       true,
+	"Equivalent": true,
+	"Duplicate":  true,
 }
 
 func (g *gen) emitHeader() {
@@ -465,13 +509,38 @@ func (g *gen) emitHookImplOnAlt(prod *gomast.SortTypeProduction, alt *gomast.Alt
 // knownHook bundles the metadata and emission routines for one
 // recognised hook idiom. The table `knownHookTable` is the registry —
 // extend it as more hooks become necessary.
+//
+// Two injection points are supported:
+//
+//  1. emitImpl     — adds an extra method on every alt struct of the
+//                    point-cut sort. Used by sort-scope `block` hooks
+//                    such as Objects/HookList:block which contributes
+//                    `ContainsTomCode() bool`.
+//  2. emitMakePrologue — injects Go code at the top of the alt's smart
+//                    constructor (before the standard hash-cons body).
+//                    The prologue may early-return, panic, or rebind
+//                    `args` / parameters to a normalised form. Used by
+//                    operator-scope `AU` / `make` / `make_insert` hooks
+//                    and by rewritten module-scope `rules` hooks.
+//
+// hookSlot is the projection of the local `slot` struct used inside
+// emitAlternative; it is passed to emitMakePrologue so the prologue
+// can reason about the alt's shape without depending on package internals.
 type knownHook struct {
 	module        string // module the hook lives in, e.g. "Objects"
 	scope         string // "sort"|"module"|"operator"
-	pointCut      string // sort name (for sort scope), …
-	kind          string // "block", "make", …
-	interfaceDecl string // method signature for the sort interface
+	pointCut      string // sort name (for sort scope) or alt name (for operator scope)
+	kind          string // "block", "AU", "make", "make_insert", "rules", …
+	interfaceDecl string // method signature for the sort interface (block hooks only)
 	emitImpl      func(buf *bytes.Buffer, g *gen, prod *gomast.SortTypeProduction, alt *gomast.AlternativeAlternative, structName string)
+	emitMakePrologue func(buf *bytes.Buffer, g *gen, alt *gomast.AlternativeAlternative, sortName, structName string, slots []hookSlot, isVariadic bool)
+}
+
+// hookSlot mirrors the local slot struct used by emitAlternative.
+type hookSlot struct {
+	Name   string // exported Go field name
+	GoType string
+	IsVar  bool
 }
 
 // recognisedKnownHook returns the entry from knownHookTable matching
@@ -489,9 +558,46 @@ func recognisedKnownHook(h *gomast.HookProduction) *knownHook {
 	return nil
 }
 
+// makeProloguesForAlt returns every knownHookTable entry whose
+// emitMakePrologue applies to the given alt. The match is by
+// (module, pointCut) — module is matched against the current
+// module's qualified name to keep entries from different ADTs from
+// stepping on each other's toes.
+func (g *gen) makeProloguesForAlt(alt *gomast.AlternativeAlternative) []*knownHook {
+	modName := moduleQualifiedName(g.mod)
+	var out []*knownHook
+	for i := range knownHookTable {
+		k := &knownHookTable[i]
+		if k.emitMakePrologue == nil {
+			continue
+		}
+		if k.module != "" && k.module != modName {
+			continue
+		}
+		if k.pointCut != alt.Name {
+			continue
+		}
+		out = append(out, k)
+	}
+	return out
+}
+
 // knownHookTable maps the (scope,pointCut,kind) triples this backend
 // can lower to Go. The body Tom code is NOT parsed — we trust the
 // table to describe what the Java reference would do.
+//
+// Entries fall in two groups:
+//
+//  - emitImpl          adds a method on every alt of the point-cut
+//                      sort (sort-scope `block` hooks).
+//  - emitMakePrologue  injects code at the top of the alt's smart
+//                      constructor (operator-scope AU/make/make_insert,
+//                      and module-scope `rules` hooks rewritten to
+//                      per-operator prologues).
+//
+// The module-scope `rules` hooks in src/tom/engine/adt/{Code,TomExpression}.gom
+// each compile to TWO entries (one per rewrite rule), because they're
+// dispatched on the LHS root operator name.
 var knownHookTable = []knownHook{
 	{
 		// `sort HookList:block()` from src/tom/gom/adt/Objects.gom adds
@@ -527,6 +633,284 @@ var knownHookTable = []knownHook{
 			fmt.Fprintln(buf)
 		},
 	},
+
+	// --------------------------------------------------------------------
+	// src/tom/engine/adt/TomConstraint.gom — AU hooks
+	// --------------------------------------------------------------------
+	{
+		// AndConstraint:AU() { `TrueConstraint() }  — associative,
+		// unit = TrueConstraint().
+		module:           "TomConstraint",
+		scope:            "operator",
+		pointCut:         "AndConstraint",
+		kind:             "AU",
+		emitMakePrologue: emitAUPrologue("AndConstraint", "Constraint", "TrueConstraint"),
+	},
+	{
+		// OrConstraint:AU() { `FalseConstraint() }  — associative,
+		// unit = FalseConstraint().
+		module:           "TomConstraint",
+		scope:            "operator",
+		pointCut:         "OrConstraint",
+		kind:             "AU",
+		emitMakePrologue: emitAUPrologue("OrConstraint", "Constraint", "FalseConstraint"),
+	},
+	{
+		// OrConstraintDisjunction:AU() { }  — associative, NO unit.
+		module:           "TomConstraint",
+		scope:            "operator",
+		pointCut:         "OrConstraintDisjunction",
+		kind:             "AU",
+		emitMakePrologue: emitAUPrologue("OrConstraintDisjunction", "Constraint", ""),
+	},
+
+	// --------------------------------------------------------------------
+	// src/tom/engine/adt/Code.gom — module:rules() rewrites, split into
+	// per-LHS-operator prologues.
+	// --------------------------------------------------------------------
+	{
+		// InstructionToCode(CodeToInstruction(t)) -> t
+		module:           "Code",
+		scope:            "operator",
+		pointCut:         "InstructionToCode",
+		kind:             "rules-rewrite",
+		emitMakePrologue: emitInversePairPrologue(
+			"InstructionToCode", "AstInstruction",
+			"CodeToInstruction", "Instruction", "Code",
+		),
+	},
+	{
+		// CodeToInstruction(InstructionToCode(t)) -> t
+		// NB: the rule is declared in Code.gom (`module Code:rules()`),
+		// but the LHS operator CodeToInstruction is an alt of
+		// Instruction (defined in TomInstruction.gom). The module field
+		// here is the operator's owning module so the prologue actually
+		// fires when generating TomInstruction.gom.
+		module:           "TomInstruction",
+		scope:            "operator",
+		pointCut:         "CodeToInstruction",
+		kind:             "rules-rewrite",
+		emitMakePrologue: emitInversePairPrologue(
+			"CodeToInstruction", "Code",
+			"InstructionToCode", "Code", "AstInstruction",
+		),
+	},
+
+	// --------------------------------------------------------------------
+	// src/tom/engine/adt/TomExpression.gom — similar rewrite pair.
+	// --------------------------------------------------------------------
+	{
+		// BQTermToExpression(ExpressionToBQTerm(t)) -> t
+		module:           "TomExpression",
+		scope:            "operator",
+		pointCut:         "BQTermToExpression",
+		kind:             "rules-rewrite",
+		emitMakePrologue: emitInversePairPrologue(
+			"BQTermToExpression", "AstTerm",
+			"ExpressionToBQTerm", "BQTerm", "Exp",
+		),
+	},
+	{
+		// ExpressionToBQTerm(BQTermToExpression(t)) -> t
+		// Like the previous entry: declared in TomExpression.gom, but
+		// the operator ExpressionToBQTerm is an alt of BQTerm (defined
+		// in Code.gom), so the module filter points to Code.
+		module:           "Code",
+		scope:            "operator",
+		pointCut:         "ExpressionToBQTerm",
+		kind:             "rules-rewrite",
+		emitMakePrologue: emitInversePairPrologue(
+			"ExpressionToBQTerm", "Exp",
+			"BQTermToExpression", "Expression", "AstTerm",
+		),
+	},
+
+	// --------------------------------------------------------------------
+	// src/tom/engine/adt/TomExpression.gom — Cast:make rejects "unknown type".
+	// --------------------------------------------------------------------
+	{
+		module:   "TomExpression",
+		scope:    "operator",
+		pointCut: "Cast",
+		kind:     "make",
+		emitMakePrologue: func(buf *bytes.Buffer, g *gen, alt *gomast.AlternativeAlternative, sortName, structName string, slots []hookSlot, isVariadic bool) {
+			if !g.ownSort["TomType"] {
+				fmt.Fprintf(buf, "\t// Cast:make hook skipped: sort TomType not in this package.\n")
+				return
+			}
+			fmt.Fprintf(buf, "\t// Cast:make hook (TomExpression.gom): reject Type(_,\"unknown type\",_)\n")
+			fmt.Fprintf(buf, "\t// with empty TypeOptions and EmptyTargetLanguageType.\n")
+			fmt.Fprintf(buf, "\tif t, ok := astType.(*TypeTomType); ok {\n")
+			fmt.Fprintf(buf, "\t\tif opts, ok := t.TypeOptions.(*ConcTypeOptionTypeOptionList); ok && len(opts.Slots) == 0 {\n")
+			fmt.Fprintf(buf, "\t\t\tif _, ok := t.TlType.(*EmptyTargetLanguageTypeTargetLanguageType); ok {\n")
+			fmt.Fprintf(buf, "\t\t\t\tif t.TomType == \"unknown type\" {\n")
+			fmt.Fprintf(buf, "\t\t\t\t\tpanic(\"bad cast\")\n")
+			fmt.Fprintf(buf, "\t\t\t\t}\n")
+			fmt.Fprintf(buf, "\t\t\t}\n")
+			fmt.Fprintf(buf, "\t\t}\n")
+			fmt.Fprintf(buf, "\t}\n")
+		},
+	},
+
+	// --------------------------------------------------------------------
+	// src/tom/engine/adt/TomInstruction.gom — concInstruction make_insert
+	// flattens AbstractBlock(InstList) into the surrounding list.
+	// --------------------------------------------------------------------
+	{
+		module:   "TomInstruction",
+		scope:    "operator",
+		pointCut: "concInstruction",
+		kind:     "make_insert",
+		emitMakePrologue: func(buf *bytes.Buffer, g *gen, alt *gomast.AlternativeAlternative, sortName, structName string, slots []hookSlot, isVariadic bool) {
+			if !g.ownSort["Instruction"] {
+				fmt.Fprintf(buf, "\t// concInstruction:make_insert hook skipped: Instruction not in package.\n")
+				return
+			}
+			fmt.Fprintf(buf, "\t// concInstruction:make_insert hook (TomInstruction.gom): splice the\n")
+			fmt.Fprintf(buf, "\t// children of any AbstractBlock arg into the surrounding list.\n")
+			fmt.Fprintf(buf, "\t{\n")
+			fmt.Fprintf(buf, "\t\tvar flat []Instruction\n")
+			fmt.Fprintf(buf, "\t\tfor _, e := range args {\n")
+			fmt.Fprintf(buf, "\t\t\tif ab, ok := e.(*AbstractBlockInstruction); ok {\n")
+			fmt.Fprintf(buf, "\t\t\t\tif inner, ok := ab.InstList.(*ConcInstructionInstructionList); ok {\n")
+			fmt.Fprintf(buf, "\t\t\t\t\tflat = append(flat, inner.Slots...)\n")
+			fmt.Fprintf(buf, "\t\t\t\t\tcontinue\n")
+			fmt.Fprintf(buf, "\t\t\t\t}\n")
+			fmt.Fprintf(buf, "\t\t\t}\n")
+			fmt.Fprintf(buf, "\t\t\tflat = append(flat, e)\n")
+			fmt.Fprintf(buf, "\t\t}\n")
+			fmt.Fprintf(buf, "\t\targs = flat\n")
+			fmt.Fprintf(buf, "\t}\n")
+		},
+	},
+
+	// --------------------------------------------------------------------
+	// src/tom/engine/adt/TomName.gom — NameNumber:make simplifies
+	// NameNumber(PositionName(concTomNumber([Position(_)]))) → Position(_).
+	// --------------------------------------------------------------------
+	{
+		module:   "TomName",
+		scope:    "operator",
+		pointCut: "NameNumber",
+		kind:     "make",
+		emitMakePrologue: func(buf *bytes.Buffer, g *gen, alt *gomast.AlternativeAlternative, sortName, structName string, slots []hookSlot, isVariadic bool) {
+			if !g.ownSort["TomName"] || !g.ownSort["TomNumber"] {
+				fmt.Fprintf(buf, "\t// NameNumber:make hook skipped: TomName/TomNumber not in package.\n")
+				return
+			}
+			fmt.Fprintf(buf, "\t// NameNumber:make hook (TomName.gom): when astName is\n")
+			fmt.Fprintf(buf, "\t// PositionName(concTomNumber(p@Position[])), return p.\n")
+			fmt.Fprintf(buf, "\tif pn, ok := astName.(*PositionNameTomName); ok {\n")
+			fmt.Fprintf(buf, "\t\tif list, ok := pn.NumberList.(*ConcTomNumberTomNumberList); ok && len(list.Slots) == 1 {\n")
+			fmt.Fprintf(buf, "\t\t\tif _, ok := list.Slots[0].(*PositionTomNumber); ok {\n")
+			fmt.Fprintf(buf, "\t\t\t\treturn list.Slots[0]\n")
+			fmt.Fprintf(buf, "\t\t\t}\n")
+			fmt.Fprintf(buf, "\t\t}\n")
+			fmt.Fprintf(buf, "\t}\n")
+		},
+	},
+
+	// --------------------------------------------------------------------
+	// src/tom/engine/adt/TomName.gom — concTomNumber:make_insert splices
+	// NameNumber(PositionName(concTomNumber(p*))) into the list.
+	// --------------------------------------------------------------------
+	{
+		module:   "TomName",
+		scope:    "operator",
+		pointCut: "concTomNumber",
+		kind:     "make_insert",
+		emitMakePrologue: func(buf *bytes.Buffer, g *gen, alt *gomast.AlternativeAlternative, sortName, structName string, slots []hookSlot, isVariadic bool) {
+			if !g.ownSort["TomNumber"] || !g.ownSort["TomName"] {
+				fmt.Fprintf(buf, "\t// concTomNumber:make_insert hook skipped: types not in package.\n")
+				return
+			}
+			fmt.Fprintf(buf, "\t// concTomNumber:make_insert hook (TomName.gom): splice the children of\n")
+			fmt.Fprintf(buf, "\t// NameNumber(PositionName(concTomNumber(p*))) into the surrounding list.\n")
+			fmt.Fprintf(buf, "\t{\n")
+			fmt.Fprintf(buf, "\t\tvar flat []TomNumber\n")
+			fmt.Fprintf(buf, "\t\tfor _, e := range args {\n")
+			fmt.Fprintf(buf, "\t\t\tif nn, ok := e.(*NameNumberTomNumber); ok {\n")
+			fmt.Fprintf(buf, "\t\t\t\tif pn, ok := nn.AstName.(*PositionNameTomName); ok {\n")
+			fmt.Fprintf(buf, "\t\t\t\t\tif inner, ok := pn.NumberList.(*ConcTomNumberTomNumberList); ok {\n")
+			fmt.Fprintf(buf, "\t\t\t\t\t\tflat = append(flat, inner.Slots...)\n")
+			fmt.Fprintf(buf, "\t\t\t\t\t\tcontinue\n")
+			fmt.Fprintf(buf, "\t\t\t\t\t}\n")
+			fmt.Fprintf(buf, "\t\t\t\t}\n")
+			fmt.Fprintf(buf, "\t\t\t}\n")
+			fmt.Fprintf(buf, "\t\t\tflat = append(flat, e)\n")
+			fmt.Fprintf(buf, "\t\t}\n")
+			fmt.Fprintf(buf, "\t\targs = flat\n")
+			fmt.Fprintf(buf, "\t}\n")
+		},
+	},
+}
+
+// emitAUPrologue builds the make-prologue for `Op:AU() { unit }` hooks.
+// op       = the variadic operator name (e.g. "AndConstraint").
+// sort     = the sort name (e.g. "Constraint").
+// unit     = the smart-constructor to call for an empty arg list
+//            (e.g. "TrueConstraint"), or "" if there is no unit and the
+//            empty case stays empty.
+//
+// The emitted prologue always flattens nested `op` arguments
+// (associativity), and additionally short-circuits the zero-arg case
+// to the unit when one is supplied.
+func emitAUPrologue(op, sort, unit string) func(buf *bytes.Buffer, g *gen, alt *gomast.AlternativeAlternative, sortName, structName string, slots []hookSlot, isVariadic bool) {
+	return func(buf *bytes.Buffer, g *gen, alt *gomast.AlternativeAlternative, sortName, structName string, slots []hookSlot, isVariadic bool) {
+		if !g.ownSort[sort] {
+			fmt.Fprintf(buf, "\t// %s:AU hook skipped: sort %s not in package.\n", op, sort)
+			return
+		}
+		structForOp := op + sort
+		fmt.Fprintf(buf, "\t// %s:AU hook (TomConstraint.gom): flatten nested %s arguments", op, op)
+		if unit != "" {
+			fmt.Fprintf(buf, ", unit = %s().\n", unit)
+		} else {
+			fmt.Fprintf(buf, " (no unit).\n")
+		}
+		fmt.Fprintf(buf, "\t{\n")
+		fmt.Fprintf(buf, "\t\tvar flat []%s\n", sort)
+		fmt.Fprintf(buf, "\t\tfor _, a := range args {\n")
+		fmt.Fprintf(buf, "\t\t\tif nested, ok := a.(*%s); ok {\n", structForOp)
+		fmt.Fprintf(buf, "\t\t\t\tflat = append(flat, nested.Slots...)\n")
+		fmt.Fprintf(buf, "\t\t\t} else {\n")
+		fmt.Fprintf(buf, "\t\t\t\tflat = append(flat, a)\n")
+		fmt.Fprintf(buf, "\t\t\t}\n")
+		fmt.Fprintf(buf, "\t\t}\n")
+		if unit != "" {
+			fmt.Fprintf(buf, "\t\tif len(flat) == 0 {\n")
+			fmt.Fprintf(buf, "\t\t\treturn Make%s()\n", unit)
+			fmt.Fprintf(buf, "\t\t}\n")
+		}
+		fmt.Fprintf(buf, "\t\targs = flat\n")
+		fmt.Fprintf(buf, "\t}\n")
+	}
+}
+
+// emitInversePairPrologue builds the prologue for one rewrite of the
+// form `LhsRoot(LhsInner(t)) -> t`, where:
+//   lhsRoot       = name of the alt being constructed (e.g. "InstructionToCode")
+//   lhsRootParam  = name of the single slot on lhsRoot (e.g. "AstInstruction")
+//                   (this is the Go parameter name in the generated Make;
+//                   we unexport it below)
+//   lhsInner      = name of the inner alt (e.g. "CodeToInstruction")
+//   lhsInnerSort  = sort name of lhsInner (e.g. "Instruction") — used to
+//                   compose the struct type `<lhsInner><lhsInnerSort>`
+//   innerSlot     = exported name of the slot on lhsInner that carries
+//                   the t we want to return (e.g. "Code")
+func emitInversePairPrologue(lhsRoot, lhsRootParam, lhsInner, lhsInnerSort, innerSlot string) func(buf *bytes.Buffer, g *gen, alt *gomast.AlternativeAlternative, sortName, structName string, slots []hookSlot, isVariadic bool) {
+	return func(buf *bytes.Buffer, g *gen, alt *gomast.AlternativeAlternative, sortName, structName string, slots []hookSlot, isVariadic bool) {
+		if !g.ownSort[lhsInnerSort] {
+			fmt.Fprintf(buf, "\t// %s rewrite-rule hook skipped: sort %s not in package.\n", lhsRoot, lhsInnerSort)
+			return
+		}
+		paramName := unexported(lhsRootParam)
+		innerStruct := lhsInner + lhsInnerSort
+		fmt.Fprintf(buf, "\t// Rewrite rule (module:rules()): %s(%s(t)) -> t.\n", lhsRoot, lhsInner)
+		fmt.Fprintf(buf, "\tif inner, ok := %s.(*%s); ok {\n", paramName, innerStruct)
+		fmt.Fprintf(buf, "\t\treturn inner.%s\n", innerSlot)
+		fmt.Fprintf(buf, "\t}\n")
+	}
 }
 
 // emitAlternative emits the struct, hash/equiv/duplicate/string methods,
@@ -544,6 +928,15 @@ func (g *gen) emitAlternative(sortNm string, alt *gomast.AlternativeAlternative)
 	}
 	structName := opGo + sortNm
 	opName := alt.Name
+	// Disambiguate `Make<Op>` across sorts when the same Op appears in
+	// multiple sorts (e.g. `Subterm` is an alt of both BQTerm and Term
+	// in the TOM engine ADT). The unique struct name `<Op><Sort>` is
+	// already correct; we just need to lift the suffix into the Make
+	// function name too.
+	makeName := "Make" + opGo
+	if g.makeCollides != nil && g.makeCollides[opGo] {
+		makeName = "Make" + opGo + sortNm
+	}
 
 	// Lower the gomast Fields into a flat slot list that the rest of
 	// this function manipulates directly. This shape keeps the emit
@@ -572,6 +965,13 @@ func (g *gen) emitAlternative(sortNm string, alt *gomast.AlternativeAlternative)
 			name := exportedField(nf.Name)
 			if name == "" {
 				name = fmt.Sprintf("Slot%d", i)
+			}
+			// Avoid colliding with the struct's own methods (String,
+			// Hash, Equivalent, Duplicate). A Gom slot literally named
+			// `String:String` (as in TomName.Name) would otherwise
+			// produce `field and method with the same name`.
+			if reservedFieldName[name] {
+				name = name + "_"
 			}
 			if c := seen[name]; c > 0 {
 				name = fmt.Sprintf("%s%d", name, c+1)
@@ -685,9 +1085,19 @@ afterEquivalent:
 	// Smart constructor. The Go-side function name is exported (Pascal
 	// case); the canonical symbol passed to the hash mixer keeps the
 	// original spelling so sharing stays correct.
-	fmt.Fprintf(&g.buf, "// Make%s builds the canonical (shared) %s term.\n", opGo, opName)
+	fmt.Fprintf(&g.buf, "// %s builds the canonical (shared) %s term.\n", makeName, opName)
+	// Convert slots to the exported hookSlot shape so prologues can
+	// reason about the alt's structure.
+	prologueSlots := make([]hookSlot, 0, len(slots))
+	for _, s := range slots {
+		prologueSlots = append(prologueSlots, hookSlot{Name: s.Name, GoType: s.GoType, IsVar: s.IsVar})
+	}
+	prologues := g.makeProloguesForAlt(alt)
 	if isVariadic {
-		fmt.Fprintf(&g.buf, "func Make%s(args ...%s) %s {\n", opGo, slots[0].GoType, sortNm)
+		fmt.Fprintf(&g.buf, "func %s(args ...%s) %s {\n", makeName, slots[0].GoType, sortNm)
+		for _, p := range prologues {
+			p.emitMakePrologue(&g.buf, g, alt, sortNm, structName, prologueSlots, isVariadic)
+		}
 		fmt.Fprintf(&g.buf, "\thashes := make([]uint32, 0, len(args))\n")
 		fmt.Fprintf(&g.buf, "\tfor _, a := range args {\n")
 		if g.isShared(slots[0].GoType) {
@@ -705,7 +1115,10 @@ afterEquivalent:
 		for _, s := range slots {
 			params = append(params, fmt.Sprintf("%s %s", unexported(s.Name), s.GoType))
 		}
-		fmt.Fprintf(&g.buf, "func Make%s(%s) %s {\n", opGo, strings.Join(params, ", "), sortNm)
+		fmt.Fprintf(&g.buf, "func %s(%s) %s {\n", makeName, strings.Join(params, ", "), sortNm)
+		for _, p := range prologues {
+			p.emitMakePrologue(&g.buf, g, alt, sortNm, structName, prologueSlots, isVariadic)
+		}
 		fmt.Fprintf(&g.buf, "\thashes := []uint32{")
 		first := true
 		for _, s := range slots {
@@ -787,14 +1200,26 @@ func unexported(name string) string {
 	runes := []rune(name)
 	runes[0] = unicode.ToLower(runes[0])
 	out := string(runes)
-	// Avoid Go keyword collisions for the few that can occur as slot names.
-	switch out {
-	case "type", "func", "range", "var", "select", "default", "case", "chan",
-		"const", "for", "go", "if", "import", "interface", "map", "package",
-		"return", "struct", "switch":
+	// Avoid Go keyword collisions. The full list is the Go spec's
+	// reserved words; any of these as a Gom slot name (e.g. `else` in
+	// Conditional(cond:Expression, then:Expression, else:Expression))
+	// must be renamed to `<keyword>_` for the smart constructor's
+	// parameter list to be syntactically valid Go.
+	if isGoKeyword(out) {
 		return out + "_"
 	}
 	return out
+}
+
+func isGoKeyword(s string) bool {
+	switch s {
+	case "break", "case", "chan", "const", "continue", "default", "defer",
+		"else", "fallthrough", "for", "func", "go", "goto", "if", "import",
+		"interface", "map", "package", "range", "return", "select", "struct",
+		"switch", "type", "var":
+		return true
+	}
+	return false
 }
 
 // SortedSortNames is a tiny helper used by tests when they want to
