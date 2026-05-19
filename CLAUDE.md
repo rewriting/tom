@@ -175,26 +175,31 @@ byte-portable en Phase 2 pour Gom).
 - Pipe Java : `java -cp <classpath> tom.engine.Tom --parse-only -dump-ast t.t`
   (à confirmer après 4.B).
 
-### 4.D — Parser TOM en Go — **deux options à trancher**
+### 4.D — Parser TOM en Go — **hand-roll 100 % Go natif**
 
-  **Option A — Hand-roll incrémental**
-  - Écrire un lexer + descente récursive en Go natif (style `internal/gom/`).
-  - On commence par un sous-ensemble minimal (skeleton de classe host
-    + `%typeterm` + `%op`).
-  - Avantage : 100 % Go natif, pas de dépendance ANTLR.
-  - Coût : code volumineux, à grossir prudemment.
+Décision utilisateur : on n'utilise pas ANTLR. Lexer + descente récursive
+hand-rolled, dans le style de `internal/gom/`. Bénéfices : 100 % Go,
+zéro dépendance externe, contrôle total de l'AST produit (et donc de
+l'équivalence avec la version Java).
 
-  **Option B — Réutilisation de la grammaire ANTLR4 via `antlr4-go-runtime`**
-  - Réutiliser les `.g4` existants (`stable/tom/engine/parser/antlr4/*.g4`
-    si présents, sinon les regénérer depuis le source `src/`).
-  - Générer les fichiers Go via la cible Go d'ANTLR4.
-  - Construire l'`AstBuilder` Go qui consomme le CST ANTLR et produit
-    des `tomast.*`.
-  - Avantage : couvre tout TOM sans gros effort de parsing.
-  - Coût : nouvelle dépendance ANTLR Go, build pipeline avec génération
-    de code.
+Approche :
 
-  **À trancher en début de Phase 4.**
+- **Lexer** : tokenise un mélange host (Java) + TOM. Une stratégie
+  d'« île » à la TomIslandParser : par défaut on consomme du *water*
+  (texte hôte opaque) ; les marqueurs `%match`, `%op`, `%typeterm`,
+  `%include`, backquote `` ` ``, etc. enclenchent un mode TOM avec ses
+  propres règles.
+- **Parser** : descente récursive, produit directement des `tomast.*`
+  via les `Make*` constructeurs.
+- **Construction incrémentale** : on n'écrit que le sous-ensemble
+  nécessaire pour la première cible (`%typeterm` + `%op` simple), on
+  prouve l'équivalence AST avec Java sur cette cible, puis on étend
+  pour la suivante (`%match`, backquote, etc.).
+- **Référence Java pour la sémantique** :
+  `src/tom/engine/parser/antlr4/TomIslandParser.g4` + le code généré
+  dans `stable/tom/engine/parser/antlr4/{TomIslandParser,CstBuilder,
+  AstBuilder,CstConverter}.java`. On lit ces fichiers comme spec, on
+  ne les exécute pas — sauf via le harnais 4.C pour valider.
 
 ### 4.E — Corpus initial de validation
 - 3 à 5 `.t` minimaux **synthétisés à la main** ou **choisis dans `test/`**
