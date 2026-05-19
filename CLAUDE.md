@@ -7,197 +7,217 @@ et les conventions de travail. Il est lu en début de session.
 
 ## 1. Objectif
 
-**Itération en cours** : produire un **outil Go autonome** capable de :
+**Trajectoire long terme** : porter le compilateur TOM (actuellement en
+Java dans `stable/`) vers Go, puis le réécrire en Tom+Go et l'auto-compiler
+avec l'amorce.
 
-- lire un fichier `.gom` (signature algébrique, sans hooks),
-- générer un **package Go** correspondant,
-- reposant sur un **portage Go de shared-objects** (hash-consing, partage
-  maximum des structures de données).
+**État actuel** : Phases 0 → 3 livrées. tomgo est un outil Go autonome qui :
 
-Ce jalon couvre les **phases 0, 1 et 2** du plan global ci-dessous.
-**Les phases 3 à 6 sont différées** et ne doivent pas être touchées sans
-validation explicite.
+- lit un fichier `.gom` (avec ou sans hooks),
+- génère un package Go reposant sur un portage Go de **shared-objects**
+  (hash-consing, partage maximum des structures de données),
+- supporte le mode **batch** : N `.gom` qui s'importent mutuellement
+  compilent en un seul package Go,
+- **utilise son propre AST généré** (`internal/gomast/` produit par
+  tomgo lui-même à partir de `src/tom/gom/adt/*.gom`) — auto-amorce.
+
+**Itération en cours (Phase 4)** : porter le **compilateur TOM** phase
+par phase (parser → checker → typer → …), à partir de la référence Java
+`stable/tom/engine/`. Chaque phase Go doit produire le même AST que la
+version Java sur les mêmes entrées — comparable via le print du term.
 
 > Le code Java de référence est `stable/` (compilateur déjà bootstrappé,
 > généré à partir des sources Tom+Java de `src/`). C'est cette implémentation
 > Java qui sert de spécification exécutable pour le portage.
 
-Trajectoire long terme (visibilité, hors scope immédiat) : porter
-l'ensemble du pipeline TOM en Go, puis réécrire le compilateur en Tom+Go
-et l'auto-compiler avec l'amorce.
-
 ---
 
-## 2. Cartographie du dépôt (état observé)
+## 2. Cartographie du dépôt
 
 | Chemin                  | Contenu                                                         |
 | ----------------------- | --------------------------------------------------------------- |
 | `src/`                  | Sources Tom+Java du compilateur (nécessite un TOM existant)     |
-| `stable/`               | Compilateur Java **généré** (251 fichiers `.java`) — référence  |
+| `src/tom/gom/adt/`      | 5 `.gom` décrivant l'AST de Gom (Code, Gom, Objects, Rule, SymbolTable) |
+| `src/tom/engine/adt/`   | **15 `.gom` décrivant l'AST de TOM** (TomTerm, TomInstruction, TomSignature, TomOption, TomName, TomType, TomConstraint, TomDeclaration, TomExpression, TomSlot, CST, Code, Il, Theory, TypeConstraints) |
+| `src/tom/engine/parser/` | Sources Tom+Java du parser TOM (ANTLR4) — référence pour Phase 4 |
+| `stable/`               | Compilateur Java **généré** (251 fichiers `.java`) — spec exécutable |
 | `stable/tom/engine/`    | Phases : starter → parser → checker → typer → desugarer → transformer → expander → compiler → optimizer → backend → prettyprinter |
+| `stable/tom/engine/parser/` | TomParserPlugin, TomParserTool, sous-dossiers antlr2/antlr4/tomjava |
 | `stable/tom/gom/`       | Compilateur Gom (signatures algébriques) en Java                |
 | `stable/tom/library/`   | Runtime/bibliothèques (sl, mapping, bytecode, …)                |
 | `stable/tom/platform/`  | Plateforme/plugin manager                                       |
-| `stable/lib/runtime/`   | `.jar` runtime : `TNode.jar`, `jjtraveler.jar`, shared-objects  |
+| `stable/lib/runtime/`   | `.jar` runtime : `TNode.jar`, `jjtraveler.jar`, shared-objects, aterm  |
 | `stable/lib/tools/`     | `.jar` outils : antlr 2/3/4, asm, emf, args4j, …                |
-| `test/gom/`             | 16 `.gom` (10 sans hooks → corpus Phase 1)                      |
-| `test/` (autres)        | 121 `.t` — **hors scope cette itération**                       |
-| `examples/`             | 402 `.t`, 51 `.gom` — **hors scope cette itération**            |
+| `applications/prototype3D/lib/` | `tom-compiler-full.jar`, `tom-runtime-full.jar` — pré-builts |
+| `test/`                 | 121 `.t` + 18 `.gom` (corpus de tests des compilateurs TOM)     |
+| `examples/`             | 402 `.t` + 51 `.gom`                                            |
 | `share/`                | Mappings prédéfinis (`$TOM_HOME/share/tom`)                     |
-
-### Inventaire `.gom` (preuve : `tomgo/internal/gom/hookscanner.go` + `tomgo/reports/phase1-inventory.md`)
-
-- **176** fichiers `.gom` dans le dépôt (hors `tomgo/` lui-même, et hors `.git/build/bin/dist`).
-- **128 sans hooks** (corpus exploitable immédiatement).
-- **48 avec hooks** (reportés à une sous-phase 2b ultérieure).
-
-Hook détecté par la règle ANTLR :
-`(sort|module|operator)? ID ':' ID '(' arglist ')' '{'` au début d'une ligne.
-
-### Mots-clés Gom rencontrés
-`module`, `imports`, `abstract syntax`, `*` (variadique), built-in types
-(`int`, `boolean`, `String`, `long`, `char`, `float`, `double`, `ATerm`,
-`ATermList`).
-
-### Pipeline Java (référence — partiellement utilisée cette itération)
-```
-starter → parser → syntax-checker → desugarer → typer
-        → type-checker → expander → compiler → optimizer
-        → backend → prettyprinter
-```
-Gom suit un pipeline parallèle : `starter → parser → expander → compiler → backend`.
-**Cette itération ne touche QUE le pipeline Gom**, et seulement parser + backend.
 
 ---
 
-## 3. Disposition du code Go
+## 3. État livré (Phases 0 → 3) — résumé
 
-Module Go : `tom/tomgo` (local, renommable).
+### Phase 0 — Bootstrap du dépôt Go ✅
+
+Arborescence `tomgo/` minimale, `go.mod`, CLI squelette.
+
+### Phase 1 — Corpus `.gom` sans hooks ✅
+
+Outil `tomgo scan-hooks <dir>` ; copie des 10 `test/gom/*.gom` sans hooks
+dans `testdata/corpus/gom-nohooks/`. Rapports `phase1-inventory.md`,
+`phase1.md`. Inventaire dépôt : **176 `.gom` total, 128 sans hooks, 48 avec**.
+
+### Phase 2 — `.gom → .go` reposant sur shared-objects ✅
+
+- **2.a** `library/sharedobjects/` : interface `Term`, factory `Build`,
+  hash-cons thread-safe, mixers `OneAtATime` / `MixSymbol` / `StringHash`.
+- **2.b** `internal/gom/` : lexer + parser descente récursive.
+- **2.c** `internal/backend/` : génération d'un package Go par module
+  ou plusieurs modules → un seul package (mode batch).
+- **Hooks** : table `knownHookTable` mappe `(scope, pointcut, kind)` vers
+  une lowering Go. Une entrée à ce jour : `sort HookList:block()` d'Objects.gom
+  → `ContainsTomCode() bool`. Hooks inconnus → commentaire « unsupported »,
+  corps perdu.
+- **Validation** : 10/10 corpus `go build` ; preuve de partage exécutée
+  sur code généré.
+- **Équivalence Go ⇄ Java** (`internal/equivtest/`) : 3 cibles
+  (minimal/leaf/list) produisent un stdout **byte-identique** au
+  compilateur Gom Java de référence (`tom.gom.Gom` invoqué via
+  `applications/prototype3D/lib/tom-compiler-full.jar`).
+- **ADT** : les 5 `src/tom/gom/adt/*.gom` (63 sorts, 1 hook) compilent
+  en un seul package + 5 tests `ContainsTomCode`.
+
+Rapports : `phase2a-sharedobjects-survey.md`, `phase2.md`, `equiv.md`,
+`adt.md`.
+
+### Phase 3 — Auto-amorce de l'AST Gom ✅
+
+- **`internal/gomast/` est généré par tomgo** à partir des 5 `.gom` de
+  `src/tom/gom/adt/`. ~6 273 lignes Go, 63 sorts.
+- Le parser construit directement des `gomast.*` (plus aucun struct
+  Go hand-written). Le backend traverse `gomast.GomModule` nativement
+  via type assertions.
+- `internal/gom/ast.go`, `bridge.go`, `bridge_test.go`,
+  `cross_v1v2_test.go` **supprimés**.
+- **`TestSelfBootstrap`** : le nouveau tomgo regénère
+  `internal/gomast/` **byte-identique** au commit → preuve forte de
+  stabilité de l'auto-amorce.
+- ~60 sous-tests verts pour la conservation comportementale.
+
+Rapport : `phase3.md`.
+
+---
+
+## 4. Disposition actuelle du code Go
+
+Module Go : `tom/tomgo` (local).
 
 ```
 tomgo/
   cmd/
-    tomgo/                       # CLI principal (tomgo gom, tomgo scan-hooks)
+    tomgo/                       # CLI : scan-hooks, gom, gom-batch
   internal/
-    gom/                         # parser .gom + AST Gom + hookscanner (phase 1+2b)
-    backend/                     # générateur .gom → .go (phase 2c)
+    gom/                         # parser .gom + accesseurs gomast + hookscanner
+    gomast/                      # AST Gom GÉNÉRÉ par tomgo (auto-amorce)
+    backend/                     # générateur .gom → .go (V2 natif gomast)
+    equivtest/                   # harnais d'équivalence Go ⇄ Java
   library/
-    sharedobjects/               # runtime public — hash-consing / max sharing (phase 2a)
-                                 # public car importé par le code généré
+    sharedobjects/               # runtime public — hash-cons / max sharing
   testdata/
-    corpus/
-      gom-nohooks/               # 10 .gom de test/gom/ sans hooks
-  reports/
-    phase1-inventory.md          # 129/177 sans hooks, groupés par sous-arbo
-    phase1.md                    # campagne phase 1
-    phase2a-sharedobjects-survey.md   # cartographie des .jar
-    phase2.md                    # campagne finale
-  tools/
-    scan-hooks/                  # détecteur de hooks en Go
+    corpus/gom-nohooks/          # 10 .gom de test/gom/ sans hooks
+    equiv/{minimal,leaf,list}/   # scénarios paired Go/Java pour equivtest
+  reports/                       # 6 rapports (phase1, phase2, phase2a, equiv, adt, phase3)
   README.md
   go.mod
 ```
 
-Packages encore non créés cette itération (laissés pour phases 3-6, à
-matérialiser au moment voulu) :
-- `internal/parser/` (parser TOM+Go),
-- `internal/engine/{starter,checker,typer,desugarer,expander,compiler,optimizer}/`,
-- `internal/library/{sl,mapping}/`,
-- `internal/runtime/`.
+Packages encore à matérialiser pour les phases suivantes :
+- `internal/tomast/` (Phase 4.A — AST TOM généré depuis `src/tom/engine/adt/`),
+- `internal/tomparser/` (Phase 4.D — parser TOM en Go),
+- `internal/tomengine/` (Phases 4.F+ — checker, typer, desugarer, …),
+- `internal/library/sl/` (stratégies, jjtraveler-like, plus tard).
 
 ---
 
-## 4. Plan de portage — 6 phases (3-6 différées)
+## 5. Phase 4 — Auto-amorce du parser TOM (itération suivante)
 
-> Discipline stricte : on ne déclare une phase « terminée » qu'avec une
-> preuve exécutable (commande, métrique, extrait avant/après).
+**Stratégie générale** : porter le compilateur Java de `stable/tom/engine/`
+phase par phase, en commençant par le parser. À chaque phase, vérifier
+que le pipeline Go produit le même AST `tomast.*` que la référence Java
+sur les mêmes entrées. Comparaison via print du term (déjà prouvée
+byte-portable en Phase 2 pour Gom).
 
-### Phase 0 — Bootstrap du dépôt Go
-- Arborescence `tomgo/` minimale (cf. §3), `go.mod`, CLI squelette.
-- **Critère** : `cd tomgo && go build ./... && go test ./... && ./tomgo --help` OK.
+### 4.A — Auto-amorce de l'AST TOM
+- `tomgo gom-batch --pkg tomast -o internal/tomast ../src/tom/engine/adt/*.gom`.
+- 15 modules, ~150-200 sorts attendus, 9 hooks à analyser.
+- Certains hooks vont demander d'étendre `knownHookTable` ; les autres
+  produiront un commentaire et compileront sans leur logique (acceptable
+  tant que le code Go généré reste utilisable comme AST passif).
+- Critère : `internal/tomast/` compile, smoke test (construction d'un
+  `TermAppl` simple, sharing OK).
 
-### Phase 1 — Corpus `.gom` sans hooks
-- Outil Go `tomgo scan-hooks <dir>` reproduit l'inventaire (129/177).
-- Copie des **10 `test/gom/*.gom` sans hooks** dans `testdata/corpus/gom-nohooks/`.
-- Rapports : `reports/phase1-inventory.md`, `reports/phase1.md`.
+### 4.B — Survey du parser Java
+- Lire `stable/tom/engine/parser/TomParserPlugin.java`, `TomParserTool.java`
+  pour l'entrée.
+- Inspecter `stable/tom/engine/parser/antlr4/` :
+  `TomIslandLexer`/`TomIslandParser` (l'« île » TOM dans le host),
+  `TomJavaLexer`/`TomJavaParser` (host Java),
+  `CstBuilder` → CST, `AstBuilder`/`CstConverter` → AST TomTerm.
+- Trouver comment invoquer côté Java un dump du term parsé (option
+  `--parse-only` ou équivalent), ou écrire un petit driver Java qui
+  affiche l'AST sous forme `Op(arg1,arg2)`.
+- Documenter dans `reports/phase4a-parser-survey.md`.
 
-**Liste des 10 fichiers du corpus Phase 1** :
+### 4.C — Harnais de comparaison AST
+- `internal/parsereq/` (ou extension d'`equivtest/`) : pour chaque `.t`
+  cible, faire tourner le parser Java de référence et le parser Go,
+  imprimer les ASTs et `diff`.
+- Pipe Java : `java -cp <classpath> tom.engine.Tom --parse-only -dump-ast t.t`
+  (à confirmer après 4.B).
 
-| Sans hooks (10)         | Avec hooks (6, exclus)   |
-| ----------------------- | ------------------------ |
-| Builtin.gom             | Bool.gom                 |
-| Dotted.gom              | JavaHook.gom             |
-| Imported.gom            | ML.gom                   |
-| Importing.gom           | MultiHook.gom            |
-| Leaf.gom                | RuleBool.gom             |
-| List.gom                | RuleList.gom             |
-| Minimal.gom             |                          |
-| Yang.gom                |                          |
-| Ying.gom                |                          |
-| fromterm/foo.gom        |                          |
+### 4.D — Parser TOM en Go — **deux options à trancher**
 
-### Phase 2 — Outil `.gom` → `.go` reposant sur shared-objects (**JALON FINAL**)
+  **Option A — Hand-roll incrémental**
+  - Écrire un lexer + descente récursive en Go natif (style `internal/gom/`).
+  - On commence par un sous-ensemble minimal (skeleton de classe host
+    + `%typeterm` + `%op`).
+  - Avantage : 100 % Go natif, pas de dépendance ANTLR.
+  - Coût : code volumineux, à grossir prudemment.
 
-**2.a — Portage Go de shared-objects** (fondation) :
-- `internal/library/sharedobjects/` : interface `Term`, factory `Make`,
-  hash-consing, égalité par identité après partage, stats.
-- Survey préalable des `.jar` de `stable/lib/runtime/` documenté dans
-  `reports/phase2a-sharedobjects-survey.md`.
+  **Option B — Réutilisation de la grammaire ANTLR4 via `antlr4-go-runtime`**
+  - Réutiliser les `.g4` existants (`stable/tom/engine/parser/antlr4/*.g4`
+    si présents, sinon les regénérer depuis le source `src/`).
+  - Générer les fichiers Go via la cible Go d'ANTLR4.
+  - Construire l'`AstBuilder` Go qui consomme le CST ANTLR et produit
+    des `tomast.*`.
+  - Avantage : couvre tout TOM sans gros effort de parsing.
+  - Coût : nouvelle dépendance ANTLR Go, build pipeline avec génération
+    de code.
 
-**2.b — Parser Gom en Go** (descente récursive, sans support hook) :
-- `internal/gom/` : tokeniser + parser.
-- AST Gom Go codé à la main, inspiré de `src/tom/gom/adt/Gom.gom`.
+  **À trancher en début de Phase 4.**
 
-**2.c — Backend `.gom` → `.go`** :
-- `internal/backend/` : pour chaque sort un type Go ; pour chaque opérateur
-  un constructeur `Make…` passant par la factory sharedobjects ; accesseurs,
-  `Equals`, `Hash`, `String`.
+### 4.E — Corpus initial de validation
+- 3 à 5 `.t` minimaux **synthétisés à la main** ou **choisis dans `test/`**
+  pour exercer progressivement les constructions : skeleton de classe,
+  `%typeterm`, `%op`, puis `%match`, backquote, etc.
+- Pour chaque cible : print AST côté Java ≡ print AST côté Go.
 
-**Validation Phase 2** :
-- `tomgo gom <file.gom> -o out/` produit un package Go.
-- `go build ./...` et `go test ./...` dans `out/` réussissent.
-- Test généré : deux termes structurellement égaux pointent vers la même
-  instance (preuve de partage).
-- **Critère** : 10/10 du corpus Phase 1 passent la chaîne.
+### 4.F → 4.Z — Phases compilateur suivantes
+Après le parser, on porte phase par phase, dans cet ordre (calque du
+pipeline Java) :
 
-**Équivalence Go ⇄ Java de référence** (`internal/equivtest/`) :
-- Pour 3 cibles (Minimal, Leaf, List), on tourne la même séquence
-  d'opérations côté Go (généré par `tomgo`) et côté Java (généré par
-  `tom.gom.Gom`), puis on `diff` stdout — **identique byte-à-byte**.
-- Skip propre si pas de JDK. Détails et preuves : `tomgo/reports/equiv.md`.
+`starter → syntax-checker → desugarer → typer → type-checker → expander
+→ compiler → optimizer → backend → prettyprinter`
 
-**Mode batch + hooks** (extensions Phase 2'+ pour compiler le vrai ADT) :
-- `tomgo gom-batch -o <dir> --pkg <name> <f1.gom> <f2.gom> …` compile N
-  `.gom` qui s'importent mutuellement dans **un seul package Go**.
-- Parser : tolère les hooks (`[scope] PointCut:Kind(args) { body }`) ;
-  corps stocké en texte brut.
-- Backend : table `knownHookTable` qui mappe `(scope, pointcut, kind)`
-  vers une lowering Go. V1 : `("sort","HookList","block")` →
-  `ContainsTomCode() bool` (boucle + switch-type sur les variantes
-  `MakeHook|MakeBeforeHook|BlockHook` dont `HasTomCode=true`).
-- 5 fichiers `src/tom/gom/adt/*.gom` (63 sorts, 1 hook) compilent et
-  passent leurs tests Go. Détails : `tomgo/reports/adt.md`.
-
-**Phase 3 — Auto-amorce de l'AST Gom** (`internal/gomast/`) :
-- `internal/gomast/` est **généré par tomgo** à partir des 5 .gom de
-  `src/tom/gom/adt/` (Code, Gom, Objects, Rule, SymbolTable).
-- Le parser de `internal/gom/parser.go` construit directement des
-  `gomast.*` (plus de structs hand-written), le backend les traverse
-  nativement. `ast.go` et le bridge V1↔V2 transitoire ont été supprimés.
-- `TestSelfBootstrap` vérifie que le nouveau tomgo regénère
-  `internal/gomast/` **byte-identique** au commit — preuve forte de
-  stabilité de l'auto-amorce. Plus 60+ sous-tests préservés ou ajoutés
-  pour la conservation comportementale.
-- Détails : `tomgo/reports/phase3.md`.
-
-### Phases 3 → 6 — *différées*
-
-Parser TOM+Go ; pipeline compilateur ; portage des `.jar` restants ;
-amorce CLI complète. **Ne pas exécuter sans validation explicite.**
+Pour chaque phase :
+- AST en entrée et en sortie typés en `tomast.*` (l'auto-amorce
+  garantit la même structure que côté Java).
+- Comparaison Go ⇄ Java sur le print du term à la sortie de la phase.
+- Tests sur le corpus 4.E.
 
 ---
 
-## 5. Exigences de qualité et transparence
+## 6. Exigences de qualité et transparence
 
 1. **Transparence stricte** :
    - Ne jamais déclarer « terminé » si la sémantique n'est pas couverte.
@@ -206,16 +226,18 @@ amorce CLI complète. **Ne pas exécuter sans validation explicite.**
    extraits avant/après, métriques (total / OK / KO), limites.
 3. **Code Go idiomatique** : `gofmt`, `go vet`, packages courts, pas de
    sur-abstraction prématurée.
-4. **Tests automatiques** : `go test ./...` doit passer.
-5. **Documentation** : `tomgo/README.md` à jour + rapports par phase.
+4. **Tests automatiques** : `go test ./...` doit passer ; les tests Java
+   externes (equivtest) skippent proprement si le JDK est absent.
+5. **Documentation** : `tomgo/README.md` à jour + un rapport par sous-phase
+   (`reports/phaseN<...>.md`).
 
 ---
 
-## 6. Conventions de travail
+## 7. Conventions de travail
 
 - **Branche de travail** : `tom-go` (worktree), main = `v3` non touché.
 - **Commits** : un commit par sous-étape vérifiable. Messages :
-  `tomgo phase<N>: <verbe> <objet>` (ex. `tomgo phase1: copy hook-free corpus`).
-- **Rapports** : `tomgo/reports/phaseN.md`, format markdown stable.
-- **Non-objectifs (cette itération)** : tout `.t`, performance,
-  optimisations avancées, parité 100 % des options Java, backends C/Java/Caml/Ada.
+  `tomgo phase<N>: <verbe> <objet>`.
+- **Rapports** : `tomgo/reports/phase<N>.md`, format markdown stable.
+- **Non-objectifs (jusqu'à nouvel ordre)** : performance, optimisations
+  avancées, parité 100 % des options Java, backends C/Caml/Ada.
