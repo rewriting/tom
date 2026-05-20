@@ -24,12 +24,14 @@ water ANTLR-fidèle + simulation `buildHostblock`/`mergeString`),
 4.F.3 (`%match` avec application nullaire — `Foo() -> { }`),
 4.F.4 (`%match` avec application + sous-patterns —
 `Foo(x, Bar()) -> { }`), 4.F.5 (`%match` multi-sujets —
-`(a, b) { x, y -> { } }`, dépend de 4.A.1) et 4.F.6 (`%match` avec
-plusieurs rules — `{ _ → {} x → {} }`) livrées.
+`(a, b) { x, y -> { } }`, dépend de 4.A.1), 4.F.6 (`%match` avec
+plusieurs rules — `{ _ → {} x → {} }`) et 4.F.7 (`%match` avec body
+non-vide — `_ -> { doSomething(); }`, body lowered via la pipeline
+water 4.F.0) livrées.
 La phase **4.A.1** corrige le hook AU généré par `emitAUPrologue`
 pour absorber l'unité (`AndConstraint(MC, TrueConstraint()) → MC`),
 en accord avec `HookTypeExpander.java:569`.
-**13 fixtures** sous `tomgo/testdata/parse/` valident byte-pour-byte
+**14 fixtures** sous `tomgo/testdata/parse/` valident byte-pour-byte
 l'AST Go contre la référence Java. tomgo est un outil Go autonome qui :
 
 - lit un fichier `.gom` (avec ou sans hooks),
@@ -115,16 +117,16 @@ Packages livrés cette itération :
 - `internal/tomparser/` — parser TOM hand-rolled (descente récursive
   100 % Go, pas d'ANTLR). Couvre `%typeterm` (+`extends`), `%op` (+slots),
   `%oplist`, `%oparray`, `%include`, `%match` avec un ou plusieurs sujets,
-  body vide, patterns `_`, variable nommée, ou application
-  `Foo(p1, …, pN)` (sous-patterns parsés récursivement). `water.go`
-  contient le tokeniseur ANTLR-fidèle + `buildHostblocks` +
-  `mergeHostblocks`.
+  body vide ou non-vide (host-code → `TL` via pipeline water), patterns
+  `_`, variable nommée, ou application `Foo(p1, …, pN)` (sous-patterns
+  parsés récursivement). `water.go` contient le tokeniseur
+  ANTLR-fidèle + `buildHostblocks` + `mergeHostblocks`.
 - `internal/tomparseq/` — harnais d'équivalence AST Go ⇄ Java :
   mini-runner `java/TomParseDump.java` qui instancie `TomParserPlugin`
   directement (sans `tom.engine.Tom`/`Tom.config`), `tomparseq.go`
   pour la résolution JDK et la normalisation des paths
   (`__INPUT__`/`__DIR__`).
-- `testdata/parse/<name>/scenario.t` — 13 fixtures actuellement.
+- `testdata/parse/<name>/scenario.t` — 14 fixtures actuellement.
 
 Packages encore à matérialiser :
 - `internal/tomengine/` (phases compilateur suivantes — checker,
@@ -339,8 +341,22 @@ Rapport : `phase4cd-parser.md`.
 - Fixture `match0g_rules` exerce `_ → {} x → {}` ; chaque
   `ConstraintInstruction` porte son OriginTracking propre (ligne 4
   pour le `_`, ligne 5 pour le `x`).
-- 13 fixtures total.
 - Rapport : `phase4f6-match-multi-rules.md`.
+
+### Phase 4.F.7 — `%match` avec body non-vide ✅
+- Nouvelle méthode `captureBalancedBlock` qui retourne le contenu
+  entre `{` et `}` + la position post-`{` ; nouveau helper
+  `lowerActionBody(content, start)` qui réutilise la pipeline water
+  de 4.F.0 (`tokenizeWater` → `buildHostblocks` → `mergeHostblocks`)
+  pour produire `CodeToInstruction(TargetLanguageToCode(TL(…)))`.
+- `parseActionRule` consomme désormais le body via ces helpers.
+- Body purement whitespace → zéro hostblock → `concInstruction()`
+  vide (compatibilité 4.F.1–4.F.6 préservée). Body avec visibles
+  → un `CodeToInstruction(…)` dans `concInstruction(…)`.
+- Limites : pas d'îlots TOM imbriqués dans le body (lever en
+  4.F.8+) ; pas de string-literal/comment awareness.
+- Fixture `match0h_body` (14 fixtures total).
+- Rapport : `phase4f7-match-body.md`.
 
 ---
 
@@ -352,13 +368,13 @@ que le pipeline Go produit le même AST `tomast.*` que la référence Java
 sur les mêmes entrées. Comparaison via le print du term (déjà prouvée
 byte-portable en Phase 2 pour Gom).
 
-### 4.E + 4.F.0 + 4.F.1 + 4.F.2 + 4.F.3 + 4.F.4 + 4.F.5 + 4.F.6 (livrés) — Constructeurs `%typeterm`/`%op`/`%oplist`/`%oparray`/`%include`/`%match` (`_` + variable nommée + applications + multi-sujets + multi-rules) + water ANTLR-fidèle
+### 4.E + 4.F.0 + 4.F.1 + 4.F.2 + 4.F.3 + 4.F.4 + 4.F.5 + 4.F.6 + 4.F.7 (livrés) — Constructeurs `%typeterm`/`%op`/`%oplist`/`%oparray`/`%include`/`%match` (`_` + variable nommée + applications + multi-sujets + multi-rules + body non-vide) + water ANTLR-fidèle
 
-Voir §4 ci-dessus. **13 fixtures** validées contre Java :
+Voir §4 ci-dessus. **14 fixtures** validées contre Java :
 `skeleton`, `op_noargs`, `op_slots`, `typeterm_extends`,
 `oplist_oparray`, `include_local`, `water_multi`, `match0b`,
 `match0c_named`, `match0d_appl`, `match0e_appl_args`, `match0f_multi`,
-`match0g_rules`. Pattern à réutiliser pour chaque nouveau constructeur :
+`match0g_rules`, `match0h_body`. Pattern à réutiliser pour chaque nouveau constructeur :
 
 1. un `.t` minimal dans `testdata/parse/<nom>/`,
 2. 1 ligne dans la slice `fixtures` de `TestGoParserAgainstJava`
@@ -386,6 +402,11 @@ Cibles, par ordre d'effort croissant :
 5. ~~**Plusieurs rules** dans un même `%match`~~ ✅ livré en 4.F.6 —
    la boucle de `parseMatch` était déjà en place ; fixture
    `match0g_rules` ajoutée pour prouver l'invariant byte-pour-byte.
+6. ~~**Body non vide** dans l'action rule~~ ✅ livré en 4.F.7 —
+   nouveau `captureBalancedBlock` + `lowerActionBody` qui réutilise
+   la pipeline water 4.F.0 pour produire un `CodeToInstruction(
+   TargetLanguageToCode(TL(content, start, end)))`. Limites :
+   pas d'îlots TOM imbriqués dans le body, pas de string-awareness.
 4. **Body non vide** dans l'action rule (instructions Java consommées
    en `TL`/`ITL`).
 5. **Multi-subjects** `%match(a, b) { p1, p2 -> { … } }`.

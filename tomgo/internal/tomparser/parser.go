@@ -555,12 +555,14 @@ func (p *parser) parseActionRule(subjects []tomast.BQTerm) (tomast.ConstraintIns
 	p.advance() // '-'
 	p.advance() // '>'
 	p.skipBlankInline()
-	if err := p.consumeBalancedBlock(); err != nil {
+	bodyContent, bodyStart, err := p.captureBalancedBlock()
+	if err != nil {
 		return nil, err
 	}
+	bodyInstructions := lowerActionBody(bodyContent, bodyStart)
 	action := tomast.MakeRawAction(tomast.MakeIf(
 		tomast.MakeTrueTL(),
-		tomast.MakeAbstractBlock(tomast.MakeConcInstruction()),
+		tomast.MakeAbstractBlock(tomast.MakeConcInstruction(bodyInstructions...)),
 		tomast.MakeNop(),
 	))
 
@@ -672,6 +674,37 @@ func (p *parser) parsePatternArgList() ([]tomast.TomTerm, error) {
 	}
 }
 
+// lowerActionBody turns the captured content of an action rule's body
+// (everything between '{' and '}', positions starting just after the '{')
+// into the list of Instructions that AstBuilder.java places inside
+// `AbstractBlock(concInstruction(…))`. For a pure host-code body (no nested
+// TOM islands) the Java side produces exactly **one**
+// `CodeToInstruction(TargetLanguageToCode(TL(content, start, end)))` after
+// the CstConverter merge — so we reuse the same `tokenizeWater +
+// buildHostblocks + mergeHostblocks` pipeline as top-level water and wrap
+// the result. An all-whitespace body produces no hostblock → empty list,
+// matching match0b/c/d/e/f/g (`concInstruction()` empty).
+//
+// Nested TOM islands inside an action body are deliberately rejected here
+// for the moment (any '%' encountered triggers an error) so the byte-stable
+// equivalence with Java remains provable on the current fixture set.
+func lowerActionBody(content string, start position) []tomast.Instruction {
+	tokens := tokenizeWater(content, start)
+	blocks := buildHostblocks(tokens)
+	if len(blocks) == 0 {
+		return nil
+	}
+	merged := mergeHostblocks(blocks)
+	tl := tomast.MakeTL(
+		merged.content,
+		tomast.MakeTextPosition(int64(merged.startLine), int64(merged.startCol)),
+		tomast.MakeTextPosition(int64(merged.endLine), int64(merged.endCol)),
+	)
+	return []tomast.Instruction{
+		tomast.MakeCodeToInstruction(tomast.MakeTargetLanguageToCode(tl)),
+	}
+}
+
 // unknownType returns the canonical placeholder `Type(concTypeOption(),
 // "unknown type", EmptyTargetLanguageType())` that the Java parser uses
 // before the typer phase runs.
@@ -734,6 +767,33 @@ func (p *parser) consumeBalancedBlock() error {
 		}
 	}
 	return fmt.Errorf("unterminated block from %s", p.cur)
+}
+
+// captureBalancedBlock is like consumeBalancedBlock but returns the content
+// between the braces (exclusive) and the position of the first byte AFTER the
+// opening '{'. Used by parseActionRule to lower a non-empty body into
+// `TL`/`ITL` instructions via the water pipeline.
+func (p *parser) captureBalancedBlock() (content string, start position, err error) {
+	if p.atEnd() || p.peek(0) != '{' {
+		return "", position{}, fmt.Errorf("expected '{' at %s", p.cur)
+	}
+	p.advance() // '{'
+	start = p.cur
+	startIdx := p.idx
+	depth := 1
+	for !p.atEnd() {
+		c := p.advance()
+		if c == '{' {
+			depth++
+		} else if c == '}' {
+			depth--
+			if depth == 0 {
+				// p.idx now points one past the closing '}'.
+				return p.src[startIdx : p.idx-1], start, nil
+			}
+		}
+	}
+	return "", position{}, fmt.Errorf("unterminated block from %s", p.cur)
 }
 
 func (p *parser) skipBlankInline() {
