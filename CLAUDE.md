@@ -30,12 +30,13 @@ non-vide — `_ -> { doSomething(); }`, body lowered via la pipeline
 water 4.F.0), 4.F.8 (`%match` avec sujet explicite —
 `Foo() << t -> { }`, RHS bare ID), 4.F.9 (variable-star `x*`/`_*`
 sur patterns), 4.F.10 (annotation `pat@name` → contrainte
-`AliasTo`) et 4.F.11 (anti-pattern `!pat` → `AntiTerm(pat)`)
-livrées.
+`AliasTo`), 4.F.11 (anti-pattern `!pat` → `AntiTerm(pat)`) et
+4.F.12 (OR-pattern `(Foo|Bar)(args)` → `TermAppl` avec multi-name
+list) livrées.
 La phase **4.A.1** corrige le hook AU généré par `emitAUPrologue`
 pour absorber l'unité (`AndConstraint(MC, TrueConstraint()) → MC`),
 en accord avec `HookTypeExpander.java:569`.
-**18 fixtures** sous `tomgo/testdata/parse/` valident byte-pour-byte
+**19 fixtures** sous `tomgo/testdata/parse/` valident byte-pour-byte
 l'AST Go contre la référence Java. tomgo est un outil Go autonome qui :
 
 - lit un fichier `.gom` (avec ou sans hooks),
@@ -130,7 +131,7 @@ Packages livrés cette itération :
   directement (sans `tom.engine.Tom`/`Tom.config`), `tomparseq.go`
   pour la résolution JDK et la normalisation des paths
   (`__INPUT__`/`__DIR__`).
-- `testdata/parse/<name>/scenario.t` — 18 fixtures actuellement.
+- `testdata/parse/<name>/scenario.t` — 19 fixtures actuellement.
 
 Packages encore à matérialiser :
 - `internal/tomengine/` (phases compilateur suivantes — checker,
@@ -404,8 +405,19 @@ Rapport : `phase4cd-parser.md`.
   concTomTerm(), concConstraint()))` (cf. `AstBuilder.java:780-792`).
 - La récursion via `parsePattern` (et non `parseBasePattern`) permet
   les combinaisons `!!pat`, `!pat@name`, etc.
-- Fixture `match0l_anti` (18 fixtures total).
+- Fixture `match0l_anti`.
 - Rapport : `phase4f11-match-anti-pattern.md`.
+
+### Phase 4.F.12 — OR-pattern `(Foo|Bar)(args)` ✅
+- `parseBasePattern` reconnaît un `(` initial comme tête de pattern
+  disjoncté : `(F1|F2|…)`, suivi d'une arg-list explicite.
+- `(Foo|Bar)()` → `TermAppl(concOption(), concTomName(Name("Foo"),
+  Name("Bar")), concTomTerm(), concConstraint())` (multi-name list,
+  cf. `AstBuilder.java:793-804` via `Cst_Appl`).
+- Limites : `(Foo|Bar)` SANS args (Cst_ConstantOr) non supporté ;
+  symboles à théorie `?`/`??` non parsés (pas de `MatchingTheory`).
+- Fixture `match0m_or` (19 fixtures total).
+- Rapport : `phase4f12-match-or-pattern.md`.
 
 ---
 
@@ -417,14 +429,14 @@ que le pipeline Go produit le même AST `tomast.*` que la référence Java
 sur les mêmes entrées. Comparaison via le print du term (déjà prouvée
 byte-portable en Phase 2 pour Gom).
 
-### 4.E + 4.F.0 + 4.F.1 + 4.F.2 + 4.F.3 + 4.F.4 + 4.F.5 + 4.F.6 + 4.F.7 + 4.F.8 + 4.F.9 + 4.F.10 + 4.F.11 (livrés) — Constructeurs `%typeterm`/`%op`/`%oplist`/`%oparray`/`%include`/`%match` (`_`/`x`/`Foo(...)`/`x*`/`_*`/`pat@name`/`!pat` + multi-sujets + multi-rules + body non-vide + sujet explicite `<<`) + water ANTLR-fidèle
+### 4.E + 4.F.0 + … + 4.F.12 (livrés) — Constructeurs `%typeterm`/`%op`/`%oplist`/`%oparray`/`%include`/`%match` (`_`/`x`/`Foo(...)`/`(Foo|Bar)(...)`/`x*`/`_*`/`pat@name`/`!pat` + multi-sujets + multi-rules + body non-vide + sujet explicite `<<`) + water ANTLR-fidèle
 
-Voir §4 ci-dessus. **18 fixtures** validées contre Java :
+Voir §4 ci-dessus. **19 fixtures** validées contre Java :
 `skeleton`, `op_noargs`, `op_slots`, `typeterm_extends`,
 `oplist_oparray`, `include_local`, `water_multi`, `match0b`,
 `match0c_named`, `match0d_appl`, `match0e_appl_args`, `match0f_multi`,
 `match0g_rules`, `match0h_body`, `match0i_explicit`, `match0j_star`,
-`match0k_annot`, `match0l_anti`. Pattern à réutiliser pour chaque nouveau constructeur :
+`match0k_annot`, `match0l_anti`, `match0m_or`. Pattern à réutiliser pour chaque nouveau constructeur :
 
 1. un `.t` minimal dans `testdata/parse/<nom>/`,
 2. 1 ligne dans la slice `fixtures` de `TestGoParserAgainstJava`
@@ -467,6 +479,9 @@ Cibles, par ordre d'effort croissant :
    une `AliasTo(Variable(...Name(name)...))` constraint au pattern.
 10. ~~**Pattern anti `!pat`**~~ ✅ livré en 4.F.11 — `parsePattern`
     consomme `!` puis rappelle récursivement, wrappe dans `AntiTerm`.
+11. ~~**OR-pattern `(F1|F2)(args)`**~~ ✅ livré en 4.F.12 —
+    `parseBasePattern` accepte une tête parenthésée multi-nommée,
+    produit `TermAppl` avec `concTomName(Name(F1), Name(F2), …)`.
 4. **Body non vide** dans l'action rule (instructions Java consommées
    en `TL`/`ITL`).
 5. **Multi-subjects** `%match(a, b) { p1, p2 -> { … } }`.

@@ -80,6 +80,7 @@ func TestGoParserAgainstJava(t *testing.T) {
 		"match0j_star",      // Phase 4.F.9 — variable-star patterns (x*, _* → { })
 		"match0k_annot",     // Phase 4.F.10 — annotated patterns (Foo(x@a) → { })
 		"match0l_anti",      // Phase 4.F.11 — anti-pattern (!Foo() → { })
+		"match0m_or",        // Phase 4.F.12 — OR-pattern ((Foo|Bar)() → { })
 	}
 	for _, name := range fixtures {
 		t.Run(name, func(t *testing.T) {

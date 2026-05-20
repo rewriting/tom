@@ -19,6 +19,7 @@
 //   ruleSlot   : pattern ('<<' bqterm)?
 //   pattern    : '!' pattern | basePattern ('@' ID)?
 //   basePattern: '_' '*'? | ID '*'? | ID '(' (pattern (',' pattern)*)? ')'
+//              | '(' ID ('|' ID)* ')' '(' (pattern (',' pattern)*)? ')'
 //                                                       (Variable/VariableStar or TermAppl, anti-prefix and `@` annotation optional)
 //   slotList   : slot (',' slot)*
 //   slot       : ID ':' ID
@@ -681,6 +682,56 @@ func (p *parser) parsePattern() (tomast.TomTerm, error) {
 func (p *parser) parseBasePattern() (tomast.TomTerm, error) {
 	if p.atEnd() {
 		return nil, fmt.Errorf("expected pattern at %s", p.cur)
+	}
+	// OR-pattern head: '(' ID ('|' ID)* ')' followed by an explicit arg list.
+	// CstBuilder.java:445-471 routes such a pattern through Cst_Appl with a
+	// multi-element CstSymbolList; AstBuilder.java:793-804 then emits a
+	// TermAppl whose nameList contains the N candidates. A single-element
+	// `(Foo)(args)` is also accepted (degenerate OR, same encoding).
+	if p.peek(0) == '(' {
+		p.advance() // '('
+		p.skipBlankInline()
+		var names []tomast.TomName
+		for {
+			id, err := p.readIdent()
+			if err != nil {
+				return nil, fmt.Errorf("in OR-pattern head: %w", err)
+			}
+			names = append(names, tomast.MakeName(id))
+			p.skipBlankInline()
+			if p.atEnd() {
+				return nil, fmt.Errorf("unterminated OR-pattern head at %s", p.cur)
+			}
+			if p.peek(0) == '|' {
+				p.advance() // '|'
+				p.skipBlankInline()
+				continue
+			}
+			break
+		}
+		if p.atEnd() || p.peek(0) != ')' {
+			return nil, fmt.Errorf("expected ')' to close OR-pattern head at %s", p.cur)
+		}
+		p.advance() // ')'
+		p.skipBlankInline()
+		if p.atEnd() || p.peek(0) != '(' {
+			return nil, fmt.Errorf("OR-pattern must be followed by '(' arg list at %s", p.cur)
+		}
+		p.advance() // '('
+		args, err := p.parsePatternArgList()
+		if err != nil {
+			return nil, err
+		}
+		if p.atEnd() || p.peek(0) != ')' {
+			return nil, fmt.Errorf("expected ')' to close OR-pattern arg list at %s", p.cur)
+		}
+		p.advance() // ')'
+		return tomast.MakeTermAppl(
+			tomast.MakeConcOption(),
+			tomast.MakeConcTomName(names...),
+			tomast.MakeConcTomTerm(args...),
+			tomast.MakeConcConstraint(),
+		), nil
 	}
 	// Anonymous wildcard or wildcard-star: '_' not followed by another
 	// ident char, optionally followed by '*'.
