@@ -41,6 +41,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	"tom/tomgo/stable/library/sharedobjects"
 	"tom/tomgo/stable/library/tomast"
 )
 
@@ -171,6 +172,10 @@ func (p *parser) parseProgram() (tomast.Code, error) {
 			if err := p.parseStrategy(); err != nil {
 				return nil, err
 			}
+		case p.idx+1 < len(p.src) && p.peek(0) == '%' && p.peek(1) == '[':
+			if err := p.parseMetaquote(); err != nil {
+				return nil, err
+			}
 		default:
 			if err := p.parseWater(); err != nil {
 				return nil, err
@@ -189,7 +194,50 @@ func (p *parser) isIslandStart() bool {
 		p.lookAheadKeyword("%op") ||
 		p.lookAheadKeyword("%include") ||
 		p.lookAheadKeyword("%match") ||
-		p.lookAheadKeyword("%strategy")
+		p.lookAheadKeyword("%strategy") ||
+		(p.peek(0) == '%' && p.peek(1) == '[')
+}
+
+// parseMetaquote handles `%[ ... ]%`. Per CstBuilder.java's exitMetaquote
+// + CstConverter.simplifyCstBlockList (Cst_Metaquote branch), the body
+// content (everything between `%[` and `]%`) is transformed into a
+// Java-string-literal — wrapped in double quotes and with special chars
+// (newline, tab, `"`, `\`, etc.) escaped per Java/AT format. The literal
+// is then emitted as a single `CodeToInstruction(TargetLanguageToCode(
+// TL(<literal>, start, end)))`, wrapped in
+// `InstructionToCode(AbstractBlock(concInstruction(...)))` to align with
+// AstBuilder.java:115 (Cst_Metaquote→AbstractBlock).
+//
+// Positions: TL.start = position of the `%` of `%[`, TL.end =
+// (start.line, start.col + len(<literal>)). Java reports a single-line
+// span regardless of how many lines the source metaquote covered — the
+// width is the length of the synthesised literal, not the source.
+func (p *parser) parseMetaquote() error {
+	if p.peek(0) != '%' || p.peek(1) != '[' {
+		return fmt.Errorf("expected %%[ at %s", p.cur)
+	}
+	startPos := p.cur
+	p.advance() // '%'
+	p.advance() // '['
+	var body strings.Builder
+	for !p.atEnd() {
+		if p.peek(0) == ']' && p.peek(1) == '%' {
+			p.advance() // ']'
+			p.advance() // '%'
+			literal := sharedobjects.JavaEscape(body.String())
+			tl := tomast.MakeTL(
+				literal,
+				tomast.MakeTextPosition(int64(startPos.line), int64(startPos.col)),
+				tomast.MakeTextPosition(int64(startPos.line), int64(startPos.col+len(literal))),
+			)
+			inner := tomast.MakeCodeToInstruction(tomast.MakeTargetLanguageToCode(tl))
+			block := tomast.MakeAbstractBlock(tomast.MakeConcInstruction(inner))
+			p.codes = append(p.codes, tomast.MakeInstructionToCode(block))
+			return nil
+		}
+		body.WriteByte(p.advance())
+	}
+	return fmt.Errorf("unterminated %%[ at %s", startPos)
 }
 
 // parseVisit handles

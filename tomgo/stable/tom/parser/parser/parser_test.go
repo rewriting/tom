@@ -241,6 +241,14 @@ func TestParseStrategy1Visit(t *testing.T) {
 	}
 }
 
+func TestParseMeta0Minimal(t *testing.T) {
+	const expected = `Tom(concCode(TargetLanguageToCode(TL("public class Meta0 {\n  String s = ",TextPosition(1,1),TextPosition(2,14))),InstructionToCode(AbstractBlock(concInstruction(CodeToInstruction(TargetLanguageToCode(TL("\"\\n    hello\\n  \"",TextPosition(2,14),TextPosition(2,31))))))),TargetLanguageToCode(TL(";\n}\n",TextPosition(4,5),TextPosition(6,1)))))`
+	got := parseFixture(t, "meta0_minimal")
+	if got != expected {
+		t.Errorf("AST mismatch on meta0_minimal.t\n--- expected ---\n%s\n--- got ---\n%s\n", expected, got)
+	}
+}
+
 func TestParseStrategy2VisitBody(t *testing.T) {
 	const expected = `Tom(concCode(TargetLanguageToCode(TL("public class Strat2 {\n  ",TextPosition(1,1),TextPosition(2,3))),InstructionToCode(AbstractBlock(concInstruction(CodeToInstruction(DeclarationToCode(Strategy(Name("Walk"),BQAppl(concOption(OriginTracking(Name("Identity"),2,"__INPUT__"),ModuleName("default")),Name("Identity"),concBQTerm()),concTomVisit(VisitTerm(Type(concTypeOption(),"Term",EmptyTargetLanguageType()),concConstraintInstruction(ConstraintInstruction(MatchConstraint(Variable(concOption(),Name("x"),Type(concTypeOption(),"unknown type",EmptyTargetLanguageType()),concConstraint()),BQVariable(concOption(ModuleName("default")),Name("tom__arg"),Type(concTypeOption(),"Term",EmptyTargetLanguageType())),Type(concTypeOption(),"Term",EmptyTargetLanguageType())),RawAction(If(TrueTL(),AbstractBlock(concInstruction(CodeToInstruction(TargetLanguageToCode(TL(" return ",TextPosition(4,13),TextPosition(4,21)))),BQTermToInstruction(BQAppl(concOption(OriginTracking(Name("f"),4,"__INPUT__"),ModuleName("default")),Name("f"),concBQTerm(BQVariable(concOption(OriginTracking(Name("x"),4,"__INPUT__"),ModuleName("default")),Name("x"),Type(concTypeOption(),"unknown type",EmptyTargetLanguageType()))))),CodeToInstruction(TargetLanguageToCode(TL("; ",TextPosition(4,26),TextPosition(4,28)))))),Nop())),concOption(OriginTracking(Name("ConstraintAction"),4,"__INPUT__")))),concOption(OriginTracking(Name("VisitTerm"),3,"__INPUT__")))),concDeclaration(),OriginTracking(Name("Walk"),2,"__INPUT__")))),CodeToInstruction(DeclarationToCode(SymbolDecl(Name("Walk"))))))),TargetLanguageToCode(TL("\n}\n",TextPosition(6,4),TextPosition(7,1)))))`
 	got := parseFixture(t, "strategy2_visit_body")
