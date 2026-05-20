@@ -83,6 +83,7 @@ func TestGoParserAgainstJava(t *testing.T) {
 		"match0m_or",        // Phase 4.F.12 — OR-pattern ((Foo|Bar)() → { })
 		"match0n_bqappl",    // Phase 4.F.13 — backquote constant on << RHS (x << `Foo() → { })
 		"match0o_bqbody",    // Phase 4.F.14 — backquote variable in action body (x → { `x })
+		"match0p_bqbody_water", // Phase 4.F.15 — backquote with surrounding host-code water ({ return `x; })
 	}
 	for _, name := range fixtures {
 		t.Run(name, func(t *testing.T) {

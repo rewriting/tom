@@ -33,14 +33,16 @@ sur patterns), 4.F.10 (annotation `pat@name` → contrainte
 `AliasTo`), 4.F.11 (anti-pattern `!pat` → `AntiTerm(pat)`),
 4.F.12 (OR-pattern `(Foo|Bar)(args)` → `TermAppl` avec multi-name
 list), 4.F.13 (backquote constant `\`Foo()` sur RHS de `<<` —
-premier pas sur les bqterms, contexte contenu) et 4.F.14 (backquote
+premier pas sur les bqterms, contexte contenu), 4.F.14 (backquote
 variable dans le body d'une action rule — switch en mode-island via
-sub-parser, `BQTermToInstruction(bqterm)` dans `AbstractBlock`)
-livrées.
+sub-parser, `BQTermToInstruction(bqterm)` dans `AbstractBlock`) et
+4.F.15 (water entourant un backquote dans le body : `{ return \`x; }`
+→ 3 instructions TL / BQTermToInstruction / TL avec positions
+correctes) livrées.
 La phase **4.A.1** corrige le hook AU généré par `emitAUPrologue`
 pour absorber l'unité (`AndConstraint(MC, TrueConstraint()) → MC`),
 en accord avec `HookTypeExpander.java:569`.
-**21 fixtures** sous `tomgo/testdata/parse/` valident byte-pour-byte
+**22 fixtures** sous `tomgo/testdata/parse/` valident byte-pour-byte
 l'AST Go contre la référence Java. tomgo est un outil Go autonome qui :
 
 - lit un fichier `.gom` (avec ou sans hooks),
@@ -147,7 +149,7 @@ Packages livrés cette itération :
   directement (sans `tom.engine.Tom`/`Tom.config`), `tomparseq.go`
   pour la résolution JDK et la normalisation des paths
   (`__INPUT__`/`__DIR__`).
-- `testdata/parse/<name>/scenario.t` — 21 fixtures actuellement.
+- `testdata/parse/<name>/scenario.t` — 22 fixtures actuellement.
 
 Packages encore à matérialiser :
 - `internal/tomengine/` (phases compilateur suivantes — checker,
@@ -469,7 +471,9 @@ Rapport : `phase4cd-parser.md`.
   et le `flushWater` final émet exactement le même TL qu'avant.
 - Limites : nested `%match` etc. dans le body restent traités comme
   water opaque ; pas de scope étendu via parenthèses (`\`(...)`).
-- Fixture `match0o_bqbody`.
+- Fixtures `match0o_bqbody` (water purement whitespace) et
+  `match0p_bqbody_water` (water non-trivial `{ return \`x; }` → 3
+  instructions TL / BQTermToInstruction / TL).
 - Rapport : `phase4f14-match-bqbody.md`.
 
 ---
@@ -490,7 +494,7 @@ Voir §4 ci-dessus. **21 fixtures** validées contre Java :
 `match0c_named`, `match0d_appl`, `match0e_appl_args`, `match0f_multi`,
 `match0g_rules`, `match0h_body`, `match0i_explicit`, `match0j_star`,
 `match0k_annot`, `match0l_anti`, `match0m_or`, `match0n_bqappl`,
-`match0o_bqbody`.
+`match0o_bqbody`, `match0p_bqbody_water`.
 Pattern à réutiliser pour chaque nouveau constructeur :
 
 1. un `.t` minimal dans `testdata/parse/<nom>/`,
