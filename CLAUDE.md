@@ -48,7 +48,7 @@ pour aligner le print des strings sur la convention AT/aterm) livrées.
 La phase **4.A.1** corrige le hook AU généré par `emitAUPrologue`
 pour absorber l'unité (`AndConstraint(MC, TrueConstraint()) → MC`),
 en accord avec `HookTypeExpander.java:569`.
-**24 fixtures** sous `tomgo/testdata/parse/` valident byte-pour-byte
+**25 fixtures** sous `tomgo/testdata/parse/` valident byte-pour-byte
 l'AST Go contre la référence Java. tomgo est un outil Go autonome qui :
 
 - lit un fichier `.gom` (avec ou sans hooks),
@@ -155,7 +155,7 @@ Packages livrés cette itération :
   directement (sans `tom.engine.Tom`/`Tom.config`), `tomparseq.go`
   pour la résolution JDK et la normalisation des paths
   (`__INPUT__`/`__DIR__`).
-- `testdata/parse/<name>/scenario.t` — 24 fixtures actuellement.
+- `testdata/parse/<name>/scenario.t` — 25 fixtures actuellement.
 
 Packages encore à matérialiser :
 - `internal/tomengine/` (phases compilateur suivantes — checker,
@@ -507,7 +507,7 @@ Voir §4 ci-dessus. **21 fixtures** validées contre Java :
 `match0g_rules`, `match0h_body`, `match0i_explicit`, `match0j_star`,
 `match0k_annot`, `match0l_anti`, `match0m_or`, `match0n_bqappl`,
 `match0o_bqbody`, `match0p_bqbody_water`, `match0q_bqappl_body`,
-`match0r_bq_multi`.
+`match0r_bq_multi`, `match0s_bqstar`.
 Pattern à réutiliser pour chaque nouveau constructeur :
 
 1. un `.t` minimal dans `testdata/parse/<nom>/`,

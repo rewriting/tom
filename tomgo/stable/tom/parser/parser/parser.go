@@ -584,6 +584,10 @@ func (p *parser) parseBQTerm(composite bool) (tomast.BQTerm, error) {
 		p.advance() // ')'
 		return tomast.MakeBQAppl(options, tomast.MakeName(name), tomast.MakeConcBQTerm(args...)), nil
 	}
+	if !p.atEnd() && p.peek(0) == '*' {
+		p.advance() // '*'
+		return tomast.MakeBQVariableStar(options, tomast.MakeName(name), unknownType()), nil
+	}
 	p.idx = save
 	p.cur = saveCur
 	return tomast.MakeBQVariable(options, tomast.MakeName(name), unknownType()), nil
