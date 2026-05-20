@@ -698,14 +698,62 @@ func (p *parser) parseActionRule(subjects []tomast.BQTerm) (tomast.ConstraintIns
 	return tomast.MakeConstraintInstruction(constraint, action, options), nil
 }
 
-// parsePattern parses one pattern, optionally prefixed by `!` (anti-pattern)
-// and/or suffixed by `@ ID` (annotation). The leading `!` lowers to
-// `AntiTerm(pat)` (cf. AstBuilder.java:780-792 — Cst_Anti) and is consumed
-// before the recursive call, so `!pat` and `!pat@name` are both supported
-// (the latter producing `AntiTerm(annotated_pat)`). The `p.peek(1) != '='`
-// guard avoids confusing `!=` (eventual numerical constraint operator) with
-// the anti prefix.
+// parsePattern parses one pattern. Three optional outer wrappings are
+// recognised, in this priority order:
+//
+//   - `ID '@' pattern`  → annotation. The grammar (TomIslandParser.g4:151)
+//     puts the annotation name BEFORE `@` and the actual sub-pattern
+//     AFTER. The result is the inner pattern with an `AliasTo(Variable(
+//     Name(annotationName)))` added to its constraint list (cf.
+//     AstBuilder.java:817-825 — Cst_AnnotatedPattern). For `x@a`, `x` is
+//     the alias name and `a` is the sub-pattern.
+//
+//   - `'!' pattern`     → anti pattern, lowered to `AntiTerm(inner)`
+//     (cf. AstBuilder.java:780-792 — Cst_Anti). The peek(1) != '='
+//     guard avoids capturing `!=` (eventual numerical comparator).
+//
+//   - basePattern         → see parseBasePattern.
 func (p *parser) parsePattern() (tomast.TomTerm, error) {
+	// `ID '@' pattern` form — must be detected by lookahead (the leading ID
+	// would otherwise be eaten by parseBasePattern as a Variable).
+	if isIdentStart(p.peek(0)) {
+		save := p.idx
+		saveCur := p.cur
+		annot, err := p.readIdent()
+		if err == nil {
+			p.skipBlankInline()
+			if !p.atEnd() && p.peek(0) == '@' {
+				p.advance() // '@'
+				p.skipBlankInline()
+				inner, err := p.parsePattern()
+				if err != nil {
+					return nil, fmt.Errorf("after '@': %w", err)
+				}
+				// AliasTo(Variable(concOption(OT(Name(annot),0,"unknown file")),
+				//                  Name(annot), unknownType, concConstraint()))
+				// Line=0 and file="unknown file" are the placeholders the Java
+				// parser emits (ASTFactory.java:285); the typer fills them in.
+				aliasVar := tomast.MakeVariable(
+					tomast.MakeConcOption(tomast.MakeOriginTracking(
+						tomast.MakeName(annot), 0, "unknown file",
+					)),
+					tomast.MakeName(annot),
+					unknownType(),
+					tomast.MakeConcConstraint(),
+				)
+				alias := tomast.MakeAliasTo(aliasVar)
+				annotated, err := addPatternConstraint(inner, alias)
+				if err != nil {
+					return nil, fmt.Errorf("'@' annotation: %w", err)
+				}
+				return annotated, nil
+			}
+		}
+		// Not an annotation — rewind and fall through to the base parser.
+		p.idx = save
+		p.cur = saveCur
+	}
+
 	if !p.atEnd() && p.peek(0) == '!' && p.peek(1) != '=' {
 		p.advance() // '!'
 		p.skipBlankInline()
@@ -715,45 +763,7 @@ func (p *parser) parsePattern() (tomast.TomTerm, error) {
 		}
 		return tomast.MakeAntiTerm(inner), nil
 	}
-	base, err := p.parseBasePattern()
-	if err != nil {
-		return nil, err
-	}
-	// Optional `@ ID` annotation. Lookahead skips inline whitespace; on
-	// mismatch we rewind so the caller observes the cursor right after the
-	// base pattern.
-	save := p.idx
-	saveCur := p.cur
-	p.skipBlankInline()
-	if p.atEnd() || p.peek(0) != '@' {
-		p.idx = save
-		p.cur = saveCur
-		return base, nil
-	}
-	p.advance() // '@'
-	p.skipBlankInline()
-	name, err := p.readIdent()
-	if err != nil {
-		return nil, fmt.Errorf("after '@': %w", err)
-	}
-	// AliasTo(Variable(concOption(OT(Name(name),0,"unknown file")),
-	//                  Name(name), unknownType, concConstraint()))
-	// Line=0 and file="unknown file" are the placeholders the Java parser
-	// emits (ASTFactory.java:285); they get filled in later by the typer.
-	aliasVar := tomast.MakeVariable(
-		tomast.MakeConcOption(tomast.MakeOriginTracking(
-			tomast.MakeName(name), 0, "unknown file",
-		)),
-		tomast.MakeName(name),
-		unknownType(),
-		tomast.MakeConcConstraint(),
-	)
-	alias := tomast.MakeAliasTo(aliasVar)
-	annotated, err := addPatternConstraint(base, alias)
-	if err != nil {
-		return nil, fmt.Errorf("'@' annotation: %w", err)
-	}
-	return annotated, nil
+	return p.parseBasePattern()
 }
 
 // parseBasePattern is the (currently tiny) pattern parser. Five shapes

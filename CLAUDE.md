@@ -29,7 +29,7 @@ plusieurs rules — `{ _ → {} x → {} }`), 4.F.7 (`%match` avec body
 non-vide — `_ -> { doSomething(); }`, body lowered via la pipeline
 water 4.F.0), 4.F.8 (`%match` avec sujet explicite —
 `Foo() << t -> { }`, RHS bare ID), 4.F.9 (variable-star `x*`/`_*`
-sur patterns), 4.F.10 (annotation `pat@name` → contrainte
+sur patterns), 4.F.10 (annotation `name@pat` → contrainte
 `AliasTo`), 4.F.11 (anti-pattern `!pat` → `AntiTerm(pat)`),
 4.F.12 (OR-pattern `(Foo|Bar)(args)` → `TermAppl` avec multi-name
 list), 4.F.13 (backquote constant `\`Foo()` sur RHS de `<<` —
@@ -400,9 +400,15 @@ Rapport : `phase4cd-parser.md`.
 - Fixture `match0j_star`.
 - Rapport : `phase4f9-match-variable-star.md`.
 
-### Phase 4.F.10 — annotated patterns `pat@name` ✅
-- Refactor : `parsePattern` = `parseBasePattern` + `'@' ID` optionnel.
-- `pat @ name` → `pat` avec `concConstraint(AliasTo(Variable(
+### Phase 4.F.10 — annotated patterns `name@pat` ✅
+- Grammaire (`TomIslandParser.g4:151`) : `pattern : ID '@' pattern` —
+  le **nom d'annotation est AVANT le `@`**, le sous-pattern AVRES.
+  Pour `x@a` : `x` = nom d'alias, `a` = sous-pattern. *Première
+  livraison de la 4.F.10 avait inversé cette priorité ; corrigé après
+  cross-validation Java.*
+- `parsePattern` détecte par lookahead un `ID '@'` au début, consomme
+  les deux et rappelle récursivement pour le sous-pattern.
+- `name @ pat` → `pat` avec `concConstraint(AliasTo(Variable(
   concOption(OT(Name(name), 0, "unknown file")), Name(name),
   unknownType, concConstraint())))`. Les valeurs `0` / `"unknown file"`
   sont les placeholders du Java (`ASTFactory.java:285`), remplacés
@@ -410,9 +416,9 @@ Rapport : `phase4cd-parser.md`.
 - Helper `addPatternConstraint` qui reconstruit le pattern via type
   assertion (Variable / VariableStar / TermAppl) ; ne préserve pas
   encore les contraintes pré-existantes (à étendre quand on aura
-  des cas `pat@a@b`).
+  des cas `a@b@pat`).
 - Fixture `match0k_annot` exerce une annotation sur sous-position
-  `Foo(x@a)`.
+  `Foo(x@a)` (= `x` alias pour le sous-pattern `a`).
 - Rapport : `phase4f10-match-annotated-pattern.md`.
 
 ### Phase 4.F.11 — anti-pattern `!pat` ✅
@@ -422,7 +428,7 @@ Rapport : `phase4cd-parser.md`.
 - `!Foo()` → `AntiTerm(TermAppl(concOption(), concTomName(Name("Foo")),
   concTomTerm(), concConstraint()))` (cf. `AstBuilder.java:780-792`).
 - La récursion via `parsePattern` (et non `parseBasePattern`) permet
-  les combinaisons `!!pat`, `!pat@name`, etc.
+  les combinaisons `!!pat`, `!(name@pat)`, etc.
 - Fixture `match0l_anti`.
 - Rapport : `phase4f11-match-anti-pattern.md`.
 
@@ -486,7 +492,7 @@ que le pipeline Go produit le même AST `tomast.*` que la référence Java
 sur les mêmes entrées. Comparaison via le print du term (déjà prouvée
 byte-portable en Phase 2 pour Gom).
 
-### 4.E + 4.F.0 + … + 4.F.14 (livrés) — Constructeurs `%typeterm`/`%op`/`%oplist`/`%oparray`/`%include`/`%match` (`_`/`x`/`Foo(...)`/`(Foo|Bar)(...)`/`x*`/`_*`/`pat@name`/`!pat` + multi-sujets + multi-rules + body non-vide avec bqterm interne + sujet explicite `<<` avec RHS bqterm) + water ANTLR-fidèle
+### 4.E + 4.F.0 + … + 4.F.14 (livrés) — Constructeurs `%typeterm`/`%op`/`%oplist`/`%oparray`/`%include`/`%match` (`_`/`x`/`Foo(...)`/`(Foo|Bar)(...)`/`x*`/`_*`/`name@pat`/`!pat` + multi-sujets + multi-rules + body non-vide avec bqterm interne + sujet explicite `<<` avec RHS bqterm) + water ANTLR-fidèle
 
 Voir §4 ci-dessus. **21 fixtures** validées contre Java :
 `skeleton`, `op_noargs`, `op_slots`, `typeterm_extends`,
@@ -534,7 +540,7 @@ Cibles, par ordre d'effort croissant :
    pour ce premier jet (`BQVariable(...,Name(id),...)`).
 8. ~~**Variable-star `x*` / `_*`**~~ ✅ livré en 4.F.9 — suffixe `*`
    après `_` ou un `ID` → `VariableStar(...)` au lieu de `Variable(...)`.
-9. ~~**Pattern annoté `pat @ name`**~~ ✅ livré en 4.F.10 — ajoute
+9. ~~**Pattern annoté `name @ pat`**~~ ✅ livré en 4.F.10 — ajoute
    une `AliasTo(Variable(...Name(name)...))` constraint au pattern.
 10. ~~**Pattern anti `!pat`**~~ ✅ livré en 4.F.11 — `parsePattern`
     consomme `!` puis rappelle récursivement, wrappe dans `AntiTerm`.
@@ -740,10 +746,18 @@ TOMGO_STABLE_DIST_LIB=/path/to/main/stable/dist/lib \
 **Outillage externe attendu sur la machine** (sinon les tests
 correspondants skippent) :
 - Go 1.22+ (`go version` ⇒ 1.26.3 testé).
-- OpenJDK pour les tests d'équivalence Java — chemin par défaut
-  `/opt/homebrew/opt/openjdk` (`brew install openjdk` sur macOS).
-  Variables détectées : `$JAVA_HOME` puis `/opt/homebrew/opt/openjdk`
+- `mage` 1.17+ pour l'orchestration (`go install github.com/magefile/mage@latest`).
+- OpenJDK pour les tests d'équivalence Java — JDK 25 testé via
+  `brew install openjdk`. Variables détectées : `$JAVA_HOME` puis
+  `/opt/homebrew/opt/openjdk` (qui pointe sur la Cellar courante)
   puis `java` dans `$PATH`.
+- `stable/dist/lib/` doit exister avec les jars Java construits :
+  `cd /tom && ./build.sh stable` (~5 s).
+
+Quand ces trois éléments sont en place, `mage equivJava` valide
+**byte-pour-byte** les 22 fixtures contre le parser Java de référence.
+Sans JDK ou `stable/dist/lib/`, le harnais skip proprement et seuls
+les tests Go-vs-Go (parser_test.go) tournent comme pin de non-régression.
 
 ---
 
