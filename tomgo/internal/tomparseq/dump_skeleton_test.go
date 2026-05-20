@@ -76,6 +76,7 @@ func TestGoParserAgainstJava(t *testing.T) {
 		"match0f_multi",     // Phase 4.F.5 — multi-subject %match with N patterns (x, y → { } over %match(a, b))
 		"match0g_rules",     // Phase 4.F.6 — multiple rules in one %match (_ → {} x → {})
 		"match0h_body",      // Phase 4.F.7 — non-empty action body (_ → { doSomething(); })
+		"match0i_explicit",  // Phase 4.F.8 — explicit-subject constraint (Foo() << t → { })
 	}
 	for _, name := range fixtures {
 		t.Run(name, func(t *testing.T) {

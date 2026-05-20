@@ -25,13 +25,14 @@ water ANTLR-fidèle + simulation `buildHostblock`/`mergeString`),
 4.F.4 (`%match` avec application + sous-patterns —
 `Foo(x, Bar()) -> { }`), 4.F.5 (`%match` multi-sujets —
 `(a, b) { x, y -> { } }`, dépend de 4.A.1), 4.F.6 (`%match` avec
-plusieurs rules — `{ _ → {} x → {} }`) et 4.F.7 (`%match` avec body
+plusieurs rules — `{ _ → {} x → {} }`), 4.F.7 (`%match` avec body
 non-vide — `_ -> { doSomething(); }`, body lowered via la pipeline
-water 4.F.0) livrées.
+water 4.F.0) et 4.F.8 (`%match` avec sujet explicite —
+`Foo() << t -> { }`, RHS bare ID) livrées.
 La phase **4.A.1** corrige le hook AU généré par `emitAUPrologue`
 pour absorber l'unité (`AndConstraint(MC, TrueConstraint()) → MC`),
 en accord avec `HookTypeExpander.java:569`.
-**14 fixtures** sous `tomgo/testdata/parse/` valident byte-pour-byte
+**15 fixtures** sous `tomgo/testdata/parse/` valident byte-pour-byte
 l'AST Go contre la référence Java. tomgo est un outil Go autonome qui :
 
 - lit un fichier `.gom` (avec ou sans hooks),
@@ -126,7 +127,7 @@ Packages livrés cette itération :
   directement (sans `tom.engine.Tom`/`Tom.config`), `tomparseq.go`
   pour la résolution JDK et la normalisation des paths
   (`__INPUT__`/`__DIR__`).
-- `testdata/parse/<name>/scenario.t` — 14 fixtures actuellement.
+- `testdata/parse/<name>/scenario.t` — 15 fixtures actuellement.
 
 Packages encore à matérialiser :
 - `internal/tomengine/` (phases compilateur suivantes — checker,
@@ -353,10 +354,20 @@ Rapport : `phase4cd-parser.md`.
 - Body purement whitespace → zéro hostblock → `concInstruction()`
   vide (compatibilité 4.F.1–4.F.6 préservée). Body avec visibles
   → un `CodeToInstruction(…)` dans `concInstruction(…)`.
-- Limites : pas d'îlots TOM imbriqués dans le body (lever en
-  4.F.8+) ; pas de string-literal/comment awareness.
-- Fixture `match0h_body` (14 fixtures total).
+- Limites : pas d'îlots TOM imbriqués dans le body ; pas de
+  string-literal/comment awareness.
+- Fixture `match0h_body`.
 - Rapport : `phase4f7-match-body.md`.
+
+### Phase 4.F.8 — `%match` avec sujet explicite (`<<`) ✅
+- `parseActionRule` reconnaît `pattern '<<' bqterm` après chaque
+  pattern de la liste séparée par `,`. Le bqterm RHS **remplace**
+  le sujet implicite venant des parenthèses du `%match(…)` pour
+  cette position-là (cf. `AstBuilder.java:683-698`).
+- RHS bqterm limité à un bare ID (`BQVariable(..., Name(id), ...)`)
+  pour ce premier jet ; pas de type annotation, pas d'application.
+- Fixture `match0i_explicit` (15 fixtures total).
+- Rapport : `phase4f8-match-explicit-subject.md`.
 
 ---
 
@@ -368,13 +379,13 @@ que le pipeline Go produit le même AST `tomast.*` que la référence Java
 sur les mêmes entrées. Comparaison via le print du term (déjà prouvée
 byte-portable en Phase 2 pour Gom).
 
-### 4.E + 4.F.0 + 4.F.1 + 4.F.2 + 4.F.3 + 4.F.4 + 4.F.5 + 4.F.6 + 4.F.7 (livrés) — Constructeurs `%typeterm`/`%op`/`%oplist`/`%oparray`/`%include`/`%match` (`_` + variable nommée + applications + multi-sujets + multi-rules + body non-vide) + water ANTLR-fidèle
+### 4.E + 4.F.0 + 4.F.1 + 4.F.2 + 4.F.3 + 4.F.4 + 4.F.5 + 4.F.6 + 4.F.7 + 4.F.8 (livrés) — Constructeurs `%typeterm`/`%op`/`%oplist`/`%oparray`/`%include`/`%match` (`_` + variable nommée + applications + multi-sujets + multi-rules + body non-vide + sujet explicite `<<`) + water ANTLR-fidèle
 
-Voir §4 ci-dessus. **14 fixtures** validées contre Java :
+Voir §4 ci-dessus. **15 fixtures** validées contre Java :
 `skeleton`, `op_noargs`, `op_slots`, `typeterm_extends`,
 `oplist_oparray`, `include_local`, `water_multi`, `match0b`,
 `match0c_named`, `match0d_appl`, `match0e_appl_args`, `match0f_multi`,
-`match0g_rules`, `match0h_body`. Pattern à réutiliser pour chaque nouveau constructeur :
+`match0g_rules`, `match0h_body`, `match0i_explicit`. Pattern à réutiliser pour chaque nouveau constructeur :
 
 1. un `.t` minimal dans `testdata/parse/<nom>/`,
 2. 1 ligne dans la slice `fixtures` de `TestGoParserAgainstJava`
@@ -407,6 +418,10 @@ Cibles, par ordre d'effort croissant :
    la pipeline water 4.F.0 pour produire un `CodeToInstruction(
    TargetLanguageToCode(TL(content, start, end)))`. Limites :
    pas d'îlots TOM imbriqués dans le body, pas de string-awareness.
+7. ~~**Sujet explicite `pattern << bqterm`**~~ ✅ livré en 4.F.8 —
+   chaque slot d'une rule peut porter une override `<< bqterm` qui
+   remplace le sujet implicite des parens. RHS bqterm = bare ID
+   pour ce premier jet (`BQVariable(...,Name(id),...)`).
 4. **Body non vide** dans l'action rule (instructions Java consommées
    en `TL`/`ITL`).
 5. **Multi-subjects** `%match(a, b) { p1, p2 -> { … } }`.

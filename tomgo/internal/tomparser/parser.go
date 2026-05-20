@@ -15,7 +15,8 @@
 //   include    : '%include' '{' includePath '}'
 //   match      : '%match' '(' subject (',' subject)* ')' '{' actionRule* '}'
 //   subject    : ID                                    (BQVariable only for now)
-//   actionRule : pattern (',' pattern)* '->' '{' BALANCED '}'
+//   actionRule : ruleSlot (',' ruleSlot)* '->' '{' BALANCED '}'
+//   ruleSlot   : pattern ('<<' bqterm)?
 //   pattern    : '_' | ID | ID '(' (pattern (',' pattern)*)? ')'
 //                                                       (Variable or TermAppl)
 //   slotList   : slot (',' slot)*
@@ -527,14 +528,34 @@ func (p *parser) parseActionRule(subjects []tomast.BQTerm) (tomast.ConstraintIns
 	}
 	ruleLine := p.cur.line
 
-	patterns := make([]tomast.TomTerm, 0, len(subjects))
+	// Each entry of `patterns` may carry an optional explicit subject from a
+	// `pattern '<<' bqterm` form. If present, it overrides the i-th implicit
+	// subject from the %match parens (cf. AstBuilder.java:683-698 —
+	// Cst_MatchTermConstraint vs Cst_MatchArgumentConstraint).
+	type ruleSlot struct {
+		pat            tomast.TomTerm
+		explicit       tomast.BQTerm // nil if implicit
+	}
+	var slots []ruleSlot
 	for {
 		pat, err := p.parsePattern()
 		if err != nil {
 			return nil, err
 		}
-		patterns = append(patterns, pat)
+		slot := ruleSlot{pat: pat}
 		p.skipBlankInline()
+		if !p.atEnd() && p.peek(0) == '<' && p.peek(1) == '<' {
+			p.advance() // '<'
+			p.advance() // '<'
+			p.skipBlankInline()
+			bq, err := p.parseSubject() // bqterm — bare ID for now
+			if err != nil {
+				return nil, fmt.Errorf("after '<<': %w", err)
+			}
+			slot.explicit = bq
+			p.skipBlankInline()
+		}
+		slots = append(slots, slot)
 		if p.atEnd() {
 			return nil, fmt.Errorf("unterminated action rule at %s", p.cur)
 		}
@@ -545,8 +566,8 @@ func (p *parser) parseActionRule(subjects []tomast.BQTerm) (tomast.ConstraintIns
 		}
 		break
 	}
-	if len(patterns) != len(subjects) {
-		return nil, fmt.Errorf("action rule has %d patterns but %%match has %d subjects at %s", len(patterns), len(subjects), p.cur)
+	if len(slots) != len(subjects) {
+		return nil, fmt.Errorf("action rule has %d patterns but %%match has %d subjects at %s", len(slots), len(subjects), p.cur)
 	}
 
 	if p.atEnd() || p.peek(0) != '-' || p.peek(1) != '>' {
@@ -566,9 +587,13 @@ func (p *parser) parseActionRule(subjects []tomast.BQTerm) (tomast.ConstraintIns
 		tomast.MakeNop(),
 	))
 
-	matchConstraints := make([]tomast.Constraint, len(patterns))
-	for i, pat := range patterns {
-		matchConstraints[i] = tomast.MakeMatchConstraint(pat, subjects[i], unknownType())
+	matchConstraints := make([]tomast.Constraint, len(slots))
+	for i, slot := range slots {
+		subj := subjects[i]
+		if slot.explicit != nil {
+			subj = slot.explicit
+		}
+		matchConstraints[i] = tomast.MakeMatchConstraint(slot.pat, subj, unknownType())
 	}
 	// MakeAndConstraint with 1 arg returns the bare MatchConstraint (AU
 	// hook); with >=2 args returns AndConstraint(MC1, MC2, …). Matches
