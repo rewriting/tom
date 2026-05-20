@@ -683,19 +683,24 @@ func (p *parser) parseMatch() error {
 		return fmt.Errorf("expected %%match at %s", p.cur)
 	}
 	p.skipBlankInline()
-	if p.atEnd() || p.peek(0) != '(' {
-		return fmt.Errorf("expected '(' after %%match at %s", p.cur)
+	// `%match` accepts an optional parens-delimited subject list. When
+	// absent (the constraint-action form, TomIslandParser.g4:49), all
+	// rule constraints must be explicit (`pat << bqterm`) — the
+	// per-slot count check in parseActionRule is then skipped.
+	var subjects []tomast.BQTerm
+	if !p.atEnd() && p.peek(0) == '(' {
+		p.advance() // '('
+		var err error
+		subjects, err = p.parseSubjectList()
+		if err != nil {
+			return err
+		}
+		if p.atEnd() || p.peek(0) != ')' {
+			return fmt.Errorf("expected ')' to close %%match subjects at %s", p.cur)
+		}
+		p.advance() // ')'
+		p.skipBlankInline()
 	}
-	p.advance() // '('
-	subjects, err := p.parseSubjectList()
-	if err != nil {
-		return err
-	}
-	if p.atEnd() || p.peek(0) != ')' {
-		return fmt.Errorf("expected ')' to close %%match subjects at %s", p.cur)
-	}
-	p.advance() // ')'
-	p.skipBlankInline()
 	if p.atEnd() || p.peek(0) != '{' {
 		return fmt.Errorf("expected '{' to open %%match body at %s", p.cur)
 	}
@@ -881,9 +886,9 @@ func (p *parser) parseBQTermArgList(composite bool) ([]tomast.BQTerm, error) {
 // via the brace counter and lowered to
 // `RawAction(If(TrueTL(), AbstractBlock(concInstruction()), Nop()))`.
 func (p *parser) parseActionRule(subjects []tomast.BQTerm) (tomast.ConstraintInstruction, error) {
-	if len(subjects) == 0 {
-		return nil, fmt.Errorf("action rule without %%match subject at %s", p.cur)
-	}
+	// subjects may be empty when %match has no parens (constraint-action
+	// form, TomIslandParser.g4:49). In that case every slot must carry
+	// an explicit '<<' subject — the count check after the loop enforces.
 	ruleLine := p.cur.line
 
 	// Each entry of `patterns` may carry an optional explicit subject from a
@@ -922,9 +927,26 @@ func (p *parser) parseActionRule(subjects []tomast.BQTerm) (tomast.ConstraintIns
 			p.skipBlankInline()
 			continue
 		}
+		if p.peek(0) == '&' && p.peek(1) == '&' {
+			p.advance() // '&'
+			p.advance() // '&'
+			p.skipBlankInline()
+			continue
+		}
 		break
 	}
-	if len(slots) != len(subjects) {
+	// Count check only when the %match has implicit subjects (parens
+	// form). For the constraint-action form (no parens, all slots use
+	// explicit `<<` constraints), we skip the check — Java's grammar
+	// allows any number of constraints there.
+	allExplicit := true
+	for _, s := range slots {
+		if s.explicit == nil {
+			allExplicit = false
+			break
+		}
+	}
+	if !allExplicit && len(slots) != len(subjects) {
 		return nil, fmt.Errorf("action rule has %d patterns but %%match has %d subjects at %s", len(slots), len(subjects), p.cur)
 	}
 
@@ -950,9 +972,14 @@ func (p *parser) parseActionRule(subjects []tomast.BQTerm) (tomast.ConstraintIns
 
 	matchConstraints := make([]tomast.Constraint, len(slots))
 	for i, slot := range slots {
-		subj := subjects[i]
-		if slot.explicit != nil {
+		var subj tomast.BQTerm
+		switch {
+		case slot.explicit != nil:
 			subj = slot.explicit
+		case i < len(subjects):
+			subj = subjects[i]
+		default:
+			return nil, fmt.Errorf("action-rule slot %d has neither implicit subject nor explicit '<<' at %s", i, p.cur)
 		}
 		matchConstraints[i] = tomast.MakeMatchConstraint(slot.pat, subj, unknownType())
 	}

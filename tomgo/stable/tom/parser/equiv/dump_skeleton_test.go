@@ -91,6 +91,7 @@ func TestGoParserAgainstJava(t *testing.T) {
 		"strategy1_visit",      // Phase 4.G.1 — visit block with wildcard rule
 		"strategy2_visit_body", // Phase 4.G.2 — visit rule with non-empty body containing backquote
 		"meta0_minimal",        // Phase 4.H — metaquote %[ ... ]%
+		"match0t_and",          // Phase 4.F.19 — AND constraint chain in %match (constraint-action form)
 	}
 	for _, name := range fixtures {
 		t.Run(name, func(t *testing.T) {
