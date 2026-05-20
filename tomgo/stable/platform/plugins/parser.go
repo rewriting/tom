@@ -52,9 +52,8 @@ func (Parser) Run(in platform.State) (platform.State, error) {
 	if err != nil {
 		return in, fmt.Errorf("Parser: parse %s: %w", in.Filename, err)
 	}
-	return platform.State{
-		Filename: in.Filename,
-		Source:   src,
-		Code:     code,
-	}, nil
+	out := in
+	out.Source = src
+	out.Code = code
+	return out, nil
 }

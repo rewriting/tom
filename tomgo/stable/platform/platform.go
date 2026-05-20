@@ -26,6 +26,31 @@ import (
 	"tom/tomgo/stable/library/tomast"
 )
 
+// SymbolTable holds the global signature data (sorts, operators, …)
+// the engine accumulates as the AST flows down the pipeline. It is
+// the Go analogue of Java's tom.engine.tools.SymbolTable (held by
+// TomStreamManager).
+//
+// Phase 5 puts a placeholder in place; the typer / type-checker phases
+// will populate Sorts and Symbols with the parsed `%typeterm` and `%op`
+// declarations. Lookups happen by raw name string.
+type SymbolTable struct {
+	// Sorts maps sort name → its declaring TypeTermDecl term.
+	Sorts map[string]tomast.Declaration
+
+	// Symbols maps operator name → its SymbolDecl / ListSymbolDecl /
+	// ArraySymbolDecl term.
+	Symbols map[string]tomast.Declaration
+}
+
+// NewSymbolTable returns an empty SymbolTable with both maps initialised.
+func NewSymbolTable() *SymbolTable {
+	return &SymbolTable{
+		Sorts:   make(map[string]tomast.Declaration),
+		Symbols: make(map[string]tomast.Declaration),
+	}
+}
+
 // State is the snapshot threaded through the plugin chain. A plugin is
 // expected to copy the State, mutate the relevant field(s), and return
 // the new value.
@@ -33,6 +58,12 @@ type State struct {
 	Filename string
 	Source   []byte
 	Code     tomast.Code
+
+	// Symbols accumulates sort / operator declarations as the pipeline
+	// progresses. Starter creates a fresh one; later plugins read and
+	// write to it. Plugins receive the State by value but the embedded
+	// pointer makes the table itself shared.
+	Symbols *SymbolTable
 }
 
 // Plugin is the contract every compilation stage implements.

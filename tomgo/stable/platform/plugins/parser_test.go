@@ -80,3 +80,39 @@ func TestPlatformParser_MissingFile(t *testing.T) {
 		t.Errorf("expected 'plugin Parser:' prefix in error, got: %v", err)
 	}
 }
+
+// TestDefaultPipeline_PreservesParserAST runs the full canonical
+// 11-plugin pipeline on a fixture and asserts the resulting AST is
+// byte-identical to the Parser-only run. This is the safety net
+// proving that the Phase-5 stubs (Transformer / SyntaxChecker /
+// Desugarer / Typer / TypeChecker / Expander / Compiler / Optimizer /
+// Backend) are truly pass-through and don't accidentally drop
+// information. As each phase gets a real implementation, the
+// expected AST will evolve — at that point this test moves with it.
+func TestDefaultPipeline_PreservesParserAST(t *testing.T) {
+	cwd, err := os.Getwd()
+	if err != nil {
+		t.Fatal(err)
+	}
+	abs, err := filepath.Abs(filepath.Join(cwd, "..", "..", "..", "testdata", "parse", "match0b", "scenario.t"))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	parserOnly, err := platform.New(plugins.Parser{}).Run(platform.State{Filename: abs})
+	if err != nil {
+		t.Fatalf("parser-only: %v", err)
+	}
+	full, err := plugins.Default().Run(platform.State{Filename: abs})
+	if err != nil {
+		t.Fatalf("default: %v", err)
+	}
+	parserStr := fmt.Sprintf("%v", parserOnly.Code)
+	fullStr := fmt.Sprintf("%v", full.Code)
+	if parserStr != fullStr {
+		t.Errorf("Default pipeline diverged from Parser-only AST.\nparser-only:\n%s\ndefault:\n%s\n", parserStr, fullStr)
+	}
+	if full.Symbols == nil {
+		t.Error("Starter should have allocated State.Symbols")
+	}
+}
