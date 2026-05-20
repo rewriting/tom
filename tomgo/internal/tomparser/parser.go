@@ -17,8 +17,8 @@
 //   subject    : ID                                    (BQVariable only for now)
 //   actionRule : ruleSlot (',' ruleSlot)* '->' '{' BALANCED '}'
 //   ruleSlot   : pattern ('<<' bqterm)?
-//   pattern    : '_' | ID | ID '(' (pattern (',' pattern)*)? ')'
-//                                                       (Variable or TermAppl)
+//   pattern    : '_' '*'? | ID '*'? | ID '(' (pattern (',' pattern)*)? ')'
+//                                                       (Variable/VariableStar or TermAppl)
 //   slotList   : slot (',' slot)*
 //   slot       : ID ':' ID
 //   includePath : (ID | '.' | '/' | '\\')+
@@ -605,23 +605,36 @@ func (p *parser) parseActionRule(subjects []tomast.BQTerm) (tomast.ConstraintIns
 	return tomast.MakeConstraintInstruction(constraint, action, options), nil
 }
 
-// parsePattern is the (currently tiny) pattern parser. Three shapes supported:
-//   - `_`             → `Variable(concOption(), EmptyName(),               unknownType,          concConstraint())`
-//   - `x`             → `Variable(concOption(), Name("x"),                 unknownType,          concConstraint())`
-//   - `Foo(p1, ..., pN)` → `TermAppl(concOption(), concTomName(Name("Foo")), concTomTerm(p1...), concConstraint())`
+// parsePattern is the (currently tiny) pattern parser. Five shapes supported:
+//   - `_`             → `Variable(concOption(),     EmptyName(),                       unknownType,          concConstraint())`
+//   - `_*`            → `VariableStar(concOption(), EmptyName(),                       unknownType,          concConstraint())`
+//   - `x`             → `Variable(concOption(),     Name("x"),                         unknownType,          concConstraint())`
+//   - `x*`            → `VariableStar(concOption(), Name("x"),                         unknownType,          concConstraint())`
+//   - `Foo(p1, ..., pN)` → `TermAppl(concOption(), concTomName(Name("Foo")), concTomTerm(p1...),             concConstraint())`
 //
-// The two Variable shapes follow AstBuilder.java:752-766; applications
+// Variable / VariableStar follow AstBuilder.java:752-766; applications
 // (nullary or with sub-patterns) follow the Cst_Appl branch
 // (CstBuilder.java:452-453 + AstBuilder.java:793-804). Sub-patterns are
 // parsed recursively, so `Foo(x, Bar())` nests a Variable and a nullary
-// TermAppl in the arg list.
+// TermAppl in the arg list. Applications cannot carry a `*` suffix in
+// the source grammar.
 func (p *parser) parsePattern() (tomast.TomTerm, error) {
 	if p.atEnd() {
 		return nil, fmt.Errorf("expected pattern at %s", p.cur)
 	}
-	// Anonymous wildcard: '_' not followed by another ident char.
+	// Anonymous wildcard or wildcard-star: '_' not followed by another
+	// ident char, optionally followed by '*'.
 	if p.peek(0) == '_' && !isIdentChar(p.peek(1)) {
 		p.advance() // '_'
+		if !p.atEnd() && p.peek(0) == '*' {
+			p.advance() // '*'
+			return tomast.MakeVariableStar(
+				tomast.MakeConcOption(),
+				tomast.MakeEmptyName(),
+				unknownType(),
+				tomast.MakeConcConstraint(),
+			), nil
+		}
 		return tomast.MakeVariable(
 			tomast.MakeConcOption(),
 			tomast.MakeEmptyName(),
@@ -636,9 +649,11 @@ func (p *parser) parsePattern() (tomast.TomTerm, error) {
 	if err != nil {
 		return nil, err
 	}
-	// Check for `(` (allowing blanks/newlines between the ident and the open
-	// paren, mirroring ANTLR's whitespace tolerance). On a mismatch we rewind
-	// so the named-variable path observes the original cursor.
+	// After the ID we look for one of: '(' (application), '*'
+	// (VariableStar), or anything else (plain Variable). The check tolerates
+	// optional whitespace between the ident and '(' or '*' — same convention
+	// as ANTLR's hidden-channel whitespace. On a mismatch we rewind so the
+	// caller sees the original cursor.
 	save := p.idx
 	saveCur := p.cur
 	p.skipBlankInline()
@@ -656,6 +671,15 @@ func (p *parser) parsePattern() (tomast.TomTerm, error) {
 			tomast.MakeConcOption(),
 			tomast.MakeConcTomName(tomast.MakeName(name)),
 			tomast.MakeConcTomTerm(args...),
+			tomast.MakeConcConstraint(),
+		), nil
+	}
+	if !p.atEnd() && p.peek(0) == '*' {
+		p.advance() // '*'
+		return tomast.MakeVariableStar(
+			tomast.MakeConcOption(),
+			tomast.MakeName(name),
+			unknownType(),
 			tomast.MakeConcConstraint(),
 		), nil
 	}
