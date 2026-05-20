@@ -627,14 +627,51 @@ Go ⇄ Java sur le print du term en sortie, tests sur le corpus 4.E.
 
 ## 8. Cookbook — commandes utiles pour reprendre rapidement
 
-Toutes les commandes se lancent depuis le dossier `tomgo/` sauf mention.
+L'orchestrateur est **`mage`** (installation : `go install
+github.com/magefile/mage@latest`). Toutes les commandes se lancent
+depuis le dossier `tomgo/`.
 
 ```bash
-# Build + tests + vet
 cd tomgo
-go vet ./...
-go test ./...
 
+# Aide : lister les cibles
+mage -l
+
+# Build + tests + vet (la chaîne complète + self-bootstrap)
+mage all
+
+# Tests / build / vet individuels
+mage test
+mage build
+mage vet
+
+# Régénérer src/library/{gomast,tomast}/ et vérifier que ça compile.
+# stable/library/ n'est PAS touché — c'est le rail de sécurité demandé :
+# on régénère d'abord en zone scratch, on inspecte, on promote ensuite.
+mage regen
+
+# Inspecter la différence avec le bootstrap actuel
+diff -r src/library/gomast stable/library/gomast
+diff -r src/library/tomast stable/library/tomast
+
+# Promouvoir le résultat dans stable/library/ (lance regen d'abord, puis
+# copie src/library/* → stable/library/*, puis fait tourner les tests).
+# doc.go et *_test.go de stable/library/<pkg>/ sont préservés.
+mage promote
+
+# Self-bootstrap (byte-stabilité de stable/library/{gomast,tomast})
+mage selfBootstrap
+
+# Harnais d'équivalence Go ⇄ Java (Gom + TOM parser) ; skip si pas de JDK
+mage equivJava
+
+# Nettoyage du scratch
+mage clean
+```
+
+Cibles bas niveau (en dessous de mage) si besoin :
+
+```bash
 # Recensement des hooks .gom du dépôt
 go run ./cmd/tomgo scan-hooks ..
 
@@ -646,54 +683,14 @@ go run ./cmd/tomgo gom -o /tmp/out testdata/corpus/gom-nohooks/Minimal.gom
 go run ./cmd/tomgo gom-batch --pkg adt -o /tmp/adt src/gom/adt/*.gom
 (cd /tmp/adt && go build ./...)
 
-# Régénérer stable/library/gomast/ (AST Gom auto-amorcé depuis tomgo/src/)
-find stable/library/gomast -name '*.go' -not -name 'doc.go' -delete
-go run ./cmd/tomgo gom-batch --pkg gomast -o stable/library/gomast \
-    src/gom/adt/Code.gom \
-    src/gom/adt/Gom.gom \
-    src/gom/adt/Objects.gom \
-    src/gom/adt/Rule.gom \
-    src/gom/adt/SymbolTable.gom
-rm -f stable/library/gomast/go.mod
-go test ./cmd/... ./stable/...
-
-# Régénérer stable/library/tomast/ (AST TOM auto-amorcé depuis tomgo/src/, Phase 4.A)
-find stable/library/tomast -name '*.go' -not -name 'doc.go' -delete
-go run ./cmd/tomgo gom-batch --pkg tomast -o stable/library/tomast \
-    src/engine/adt/CST.gom \
-    src/engine/adt/Code.gom \
-    src/engine/adt/Il.gom \
-    src/engine/adt/Theory.gom \
-    src/engine/adt/TomConstraint.gom \
-    src/engine/adt/TomDeclaration.gom \
-    src/engine/adt/TomExpression.gom \
-    src/engine/adt/TomInstruction.gom \
-    src/engine/adt/TomName.gom \
-    src/engine/adt/TomOption.gom \
-    src/engine/adt/TomSignature.gom \
-    src/engine/adt/TomSlot.gom \
-    src/engine/adt/TomTerm.gom \
-    src/engine/adt/TomType.gom \
-    src/engine/adt/TypeConstraints.gom
-rm -f stable/library/tomast/go.mod
-go test ./cmd/... ./stable/...
-
-# Vérifier l'équivalence Go ⇄ Java (3 cibles ; nécessite JDK + jars)
-go test ./stable/gom/equiv/... -v -run TestEquivalence
-
 # Vérifier que les 9 hooks de l'ADT engine produisent les bons termes
 go test ./stable/gom/backend/... -v -run TestHook
-
-# Self-bootstrap (gomast et tomast doivent être byte-stables)
-go test ./stable/gom/backend/... -v -run TestSelfBootstrap
 
 # Parser Go hand-rolled (Phases 4.D + 4.E + 4.F.0…4.F.13)
 go test ./stable/tom/parser/parser/...
 
-# Harnais d'équivalence Go ⇄ Java (Phase 4.C+)
-# Depuis le worktree principal (qui contient stable/dist/ après ./build.sh stable) :
-go test ./stable/tom/parser/equiv/...
-# Depuis un autre worktree (stable/dist/ est gitignored) :
+# Harnais d'équivalence parser TOM Java depuis un autre worktree
+# (stable/dist/ est gitignored) :
 TOMGO_STABLE_DIST_LIB=/path/to/main/stable/dist/lib \
     go test ./stable/tom/parser/equiv/...
 
