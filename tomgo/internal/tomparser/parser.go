@@ -517,6 +517,85 @@ func (p *parser) parseSubject() (tomast.BQTerm, error) {
 	return tomast.MakeBQVariable(options, tomast.MakeName(name), unknownType()), nil
 }
 
+// parseBQTerm parses one backquote term. The grammar (from
+// TomIslandParser.g4:122-128) accepts an optional leading `` ` `` followed by
+// either:
+//   - `ID '(' (bqterm (',' bqterm)*)? ')'`  → `BQAppl(opts, Name(ID), bqList)`
+//   - `ID '*'?`                             → `BQVariable(opts, Name(ID), unknownType)`
+//                                             (or `BQVariableStar` if `*` — TODO)
+//
+// Per `AstBuilder.java:551-570`, the option list carries an `OriginTracking`
+// for the symbol/variable name plus the default `ModuleName("default")` —
+// same shape as the parens-subject of `%match(...)`.
+//
+// Limits for this first jet: no codomain `ID:Type` prefix, no implicit-args
+// records `Foo[a=b]`, no ITL composite, no BQVariableStar `x*`, no nested
+// backquote scope semantics.
+func (p *parser) parseBQTerm() (tomast.BQTerm, error) {
+	startLine := p.cur.line
+	if !p.atEnd() && p.peek(0) == '`' {
+		p.advance() // '`'
+		p.skipBlankInline()
+	}
+	if p.atEnd() || !isIdentStart(p.peek(0)) {
+		return nil, fmt.Errorf("expected bqterm identifier at %s", p.cur)
+	}
+	name, err := p.readIdent()
+	if err != nil {
+		return nil, err
+	}
+	options := tomast.MakeConcOption(
+		tomast.MakeOriginTracking(tomast.MakeName(name), int64(startLine), p.filename),
+		tomast.MakeModuleName("default"),
+	)
+	save := p.idx
+	saveCur := p.cur
+	p.skipBlankInline()
+	if !p.atEnd() && p.peek(0) == '(' {
+		p.advance() // '('
+		args, err := p.parseBQTermArgList()
+		if err != nil {
+			return nil, err
+		}
+		if p.atEnd() || p.peek(0) != ')' {
+			return nil, fmt.Errorf("expected ')' to close bqterm application at %s", p.cur)
+		}
+		p.advance() // ')'
+		return tomast.MakeBQAppl(options, tomast.MakeName(name), tomast.MakeConcBQTerm(args...)), nil
+	}
+	p.idx = save
+	p.cur = saveCur
+	return tomast.MakeBQVariable(options, tomast.MakeName(name), unknownType()), nil
+}
+
+// parseBQTermArgList consumes `bqterm (',' bqterm)*` between '(' and ')'.
+func (p *parser) parseBQTermArgList() ([]tomast.BQTerm, error) {
+	var args []tomast.BQTerm
+	p.skipBlankInline()
+	if !p.atEnd() && p.peek(0) == ')' {
+		return args, nil
+	}
+	for {
+		bq, err := p.parseBQTerm()
+		if err != nil {
+			return nil, err
+		}
+		args = append(args, bq)
+		p.skipBlankInline()
+		if p.atEnd() {
+			return nil, fmt.Errorf("unterminated bqterm arg list at %s", p.cur)
+		}
+		if p.peek(0) == ')' {
+			return args, nil
+		}
+		if p.peek(0) != ',' {
+			return nil, fmt.Errorf("expected ',' or ')' in bqterm arg list at %s", p.cur)
+		}
+		p.advance() // ','
+		p.skipBlankInline()
+	}
+}
+
 // parseActionRule handles `pattern (',' pattern)* '->' '{' BALANCED '}'`.
 // The number of patterns must match the number of %match subjects; the
 // resulting constraint is the AndConstraint of the N MatchConstraints
@@ -550,7 +629,7 @@ func (p *parser) parseActionRule(subjects []tomast.BQTerm) (tomast.ConstraintIns
 			p.advance() // '<'
 			p.advance() // '<'
 			p.skipBlankInline()
-			bq, err := p.parseSubject() // bqterm — bare ID for now
+			bq, err := p.parseBQTerm()
 			if err != nil {
 				return nil, fmt.Errorf("after '<<': %w", err)
 			}

@@ -30,13 +30,14 @@ non-vide — `_ -> { doSomething(); }`, body lowered via la pipeline
 water 4.F.0), 4.F.8 (`%match` avec sujet explicite —
 `Foo() << t -> { }`, RHS bare ID), 4.F.9 (variable-star `x*`/`_*`
 sur patterns), 4.F.10 (annotation `pat@name` → contrainte
-`AliasTo`), 4.F.11 (anti-pattern `!pat` → `AntiTerm(pat)`) et
+`AliasTo`), 4.F.11 (anti-pattern `!pat` → `AntiTerm(pat)`),
 4.F.12 (OR-pattern `(Foo|Bar)(args)` → `TermAppl` avec multi-name
-list) livrées.
+list) et 4.F.13 (backquote constant `\`Foo()` sur RHS de `<<` —
+premier pas sur les bqterms, contexte contenu) livrées.
 La phase **4.A.1** corrige le hook AU généré par `emitAUPrologue`
 pour absorber l'unité (`AndConstraint(MC, TrueConstraint()) → MC`),
 en accord avec `HookTypeExpander.java:569`.
-**19 fixtures** sous `tomgo/testdata/parse/` valident byte-pour-byte
+**20 fixtures** sous `tomgo/testdata/parse/` valident byte-pour-byte
 l'AST Go contre la référence Java. tomgo est un outil Go autonome qui :
 
 - lit un fichier `.gom` (avec ou sans hooks),
@@ -131,7 +132,7 @@ Packages livrés cette itération :
   directement (sans `tom.engine.Tom`/`Tom.config`), `tomparseq.go`
   pour la résolution JDK et la normalisation des paths
   (`__INPUT__`/`__DIR__`).
-- `testdata/parse/<name>/scenario.t` — 19 fixtures actuellement.
+- `testdata/parse/<name>/scenario.t` — 20 fixtures actuellement.
 
 Packages encore à matérialiser :
 - `internal/tomengine/` (phases compilateur suivantes — checker,
@@ -416,8 +417,24 @@ Rapport : `phase4cd-parser.md`.
   cf. `AstBuilder.java:793-804` via `Cst_Appl`).
 - Limites : `(Foo|Bar)` SANS args (Cst_ConstantOr) non supporté ;
   symboles à théorie `?`/`??` non parsés (pas de `MatchingTheory`).
-- Fixture `match0m_or` (19 fixtures total).
+- Fixture `match0m_or`.
 - Rapport : `phase4f12-match-or-pattern.md`.
+
+### Phase 4.F.13 — backquote constant sur RHS de `<<` ✅
+- Premier pas sur les **backquote terms**. Nouveau `parseBQTerm` :
+  consomme un `` ` `` optionnel, lit un ID, dispatch sur `(` (BQAppl)
+  ou rien (BQVariable). Sub-args parsés récursivement via
+  `parseBQTermArgList`.
+- `parseActionRule` route le RHS de `<<` vers `parseBQTerm` à la
+  place de `parseSubject`. `parseSubject` reste utilisé pour les
+  sujets parens-implicites de `%match(...)`.
+- `` `Foo() `` → `BQAppl(concOption(OT(Name("Foo"), <line>, file),
+  ModuleName("default")), Name("Foo"), concBQTerm())` (cf.
+  `AstBuilder.java:551-554`).
+- Limites : pas de records `Foo[a=v]`, pas de `BQVariableStar`, pas
+  de type annotation, pas de backquote dans le body d'action.
+- Fixture `match0n_bqappl` (20 fixtures total).
+- Rapport : `phase4f13-bqterm-constant.md`.
 
 ---
 
@@ -429,14 +446,15 @@ que le pipeline Go produit le même AST `tomast.*` que la référence Java
 sur les mêmes entrées. Comparaison via le print du term (déjà prouvée
 byte-portable en Phase 2 pour Gom).
 
-### 4.E + 4.F.0 + … + 4.F.12 (livrés) — Constructeurs `%typeterm`/`%op`/`%oplist`/`%oparray`/`%include`/`%match` (`_`/`x`/`Foo(...)`/`(Foo|Bar)(...)`/`x*`/`_*`/`pat@name`/`!pat` + multi-sujets + multi-rules + body non-vide + sujet explicite `<<`) + water ANTLR-fidèle
+### 4.E + 4.F.0 + … + 4.F.13 (livrés) — Constructeurs `%typeterm`/`%op`/`%oplist`/`%oparray`/`%include`/`%match` (`_`/`x`/`Foo(...)`/`(Foo|Bar)(...)`/`x*`/`_*`/`pat@name`/`!pat` + multi-sujets + multi-rules + body non-vide + sujet explicite `<<` avec RHS bqterm `\`Foo(...)`) + water ANTLR-fidèle
 
-Voir §4 ci-dessus. **19 fixtures** validées contre Java :
+Voir §4 ci-dessus. **20 fixtures** validées contre Java :
 `skeleton`, `op_noargs`, `op_slots`, `typeterm_extends`,
 `oplist_oparray`, `include_local`, `water_multi`, `match0b`,
 `match0c_named`, `match0d_appl`, `match0e_appl_args`, `match0f_multi`,
 `match0g_rules`, `match0h_body`, `match0i_explicit`, `match0j_star`,
-`match0k_annot`, `match0l_anti`, `match0m_or`. Pattern à réutiliser pour chaque nouveau constructeur :
+`match0k_annot`, `match0l_anti`, `match0m_or`, `match0n_bqappl`.
+Pattern à réutiliser pour chaque nouveau constructeur :
 
 1. un `.t` minimal dans `testdata/parse/<nom>/`,
 2. 1 ligne dans la slice `fixtures` de `TestGoParserAgainstJava`
@@ -482,6 +500,10 @@ Cibles, par ordre d'effort croissant :
 11. ~~**OR-pattern `(F1|F2)(args)`**~~ ✅ livré en 4.F.12 —
     `parseBasePattern` accepte une tête parenthésée multi-nommée,
     produit `TermAppl` avec `concTomName(Name(F1), Name(F2), …)`.
+12. ~~**Backquote constant `\`Foo()` sur RHS de `<<`**~~ ✅ livré
+    en 4.F.13 — nouveau `parseBQTerm` (récursif) qui produit `BQAppl`
+    ou `BQVariable` selon présence de `(`. Premier pas sur les
+    bqterms, limité au RHS d'un constraint explicite.
 4. **Body non vide** dans l'action rule (instructions Java consommées
    en `TL`/`ITL`).
 5. **Multi-subjects** `%match(a, b) { p1, p2 -> { … } }`.

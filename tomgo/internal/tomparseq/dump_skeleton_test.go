@@ -81,6 +81,7 @@ func TestGoParserAgainstJava(t *testing.T) {
 		"match0k_annot",     // Phase 4.F.10 — annotated patterns (Foo(x@a) → { })
 		"match0l_anti",      // Phase 4.F.11 — anti-pattern (!Foo() → { })
 		"match0m_or",        // Phase 4.F.12 — OR-pattern ((Foo|Bar)() → { })
+		"match0n_bqappl",    // Phase 4.F.13 — backquote constant on << RHS (x << `Foo() → { })
 	}
 	for _, name := range fixtures {
 		t.Run(name, func(t *testing.T) {
