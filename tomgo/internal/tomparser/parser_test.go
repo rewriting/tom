@@ -104,3 +104,11 @@ func TestParseMatch0cNamed(t *testing.T) {
 		t.Errorf("AST mismatch on match0c_named.t\n--- expected ---\n%s\n--- got ---\n%s\n", expected, got)
 	}
 }
+
+func TestParseMatch0dAppl(t *testing.T) {
+	const expected = `Tom(concCode(TargetLanguageToCode(TL("public class Match0d {\n  public void f(Object t) {\n    ",TextPosition(1,1),TextPosition(3,5))),InstructionToCode(Match(concConstraintInstruction(ConstraintInstruction(MatchConstraint(TermAppl(concOption(),concTomName(Name("Foo")),concTomTerm(),concConstraint()),BQVariable(concOption(OriginTracking(Name("t"),3,"__INPUT__"),ModuleName("default")),Name("t"),Type(concTypeOption(),"unknown type",EmptyTargetLanguageType())),Type(concTypeOption(),"unknown type",EmptyTargetLanguageType())),RawAction(If(TrueTL(),AbstractBlock(concInstruction()),Nop())),concOption(OriginTracking(Name("ConstraintAction"),4,"__INPUT__")))),concOption(OriginTracking(Name("Match"),3,"__INPUT__"),ModuleName("default")))),TargetLanguageToCode(TL("\n  }\n\n}\n",TextPosition(5,6),TextPosition(8,1)))))`
+	got := parseFixture(t, "match0d_appl")
+	if got != expected {
+		t.Errorf("AST mismatch on match0d_appl.t\n--- expected ---\n%s\n--- got ---\n%s\n", expected, got)
+	}
+}

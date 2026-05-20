@@ -16,7 +16,7 @@
 //   match      : '%match' '(' subject (',' subject)* ')' '{' actionRule* '}'
 //   subject    : ID                                    (BQVariable only for now)
 //   actionRule : pattern '->' '{' BALANCED '}'
-//   pattern    : '_' | ID                              (anonymous or named Variable)
+//   pattern    : '_' | ID | ID '(' ')'                  (Variable or nullary TermAppl)
 //   slotList   : slot (',' slot)*
 //   slot       : ID ':' ID
 //   includePath : (ID | '.' | '/' | '\\')+
@@ -548,11 +548,14 @@ func (p *parser) parseActionRule(subjects []tomast.BQTerm) (tomast.ConstraintIns
 	return tomast.MakeConstraintInstruction(constraint, action, options), nil
 }
 
-// parsePattern is the (currently tiny) pattern parser. Two shapes supported:
-//   - `_` → `Variable(concOption(), EmptyName(),  unknownType, concConstraint())`
-//   - `x` → `Variable(concOption(), Name("x"),    unknownType, concConstraint())`
-// Both match the Java reference (AstBuilder.java lines 752-766): no
-// OriginTracking is attached on the pattern's option list.
+// parsePattern is the (currently tiny) pattern parser. Three shapes supported:
+//   - `_`     → `Variable(concOption(), EmptyName(),               unknownType,         concConstraint())`
+//   - `x`     → `Variable(concOption(), Name("x"),                 unknownType,         concConstraint())`
+//   - `Foo()` → `TermAppl(concOption(), concTomName(Name("Foo")),  concTomTerm(),       concConstraint())`
+// The two Variable shapes follow AstBuilder.java:752-766; the nullary
+// application follows the Cst_Appl branch (AstBuilder.java:793-804), which is
+// also the path CstBuilder takes for `ID '(' ')'` with an empty explicitArgs
+// list (CstBuilder.java:452-453).
 func (p *parser) parsePattern() (tomast.TomTerm, error) {
 	if p.atEnd() {
 		return nil, fmt.Errorf("expected pattern at %s", p.cur)
@@ -574,6 +577,29 @@ func (p *parser) parsePattern() (tomast.TomTerm, error) {
 	if err != nil {
 		return nil, err
 	}
+	// Check for `(` immediately (allowing blanks/newlines between the ident
+	// and the open paren, mirroring ANTLR's whitespace tolerance).
+	save := p.idx
+	saveCur := p.cur
+	p.skipBlankInline()
+	if !p.atEnd() && p.peek(0) == '(' {
+		p.advance() // '('
+		p.skipBlankInline()
+		if p.atEnd() || p.peek(0) != ')' {
+			return nil, fmt.Errorf("only empty arg list supported in pattern application yet at %s", p.cur)
+		}
+		p.advance() // ')'
+		return tomast.MakeTermAppl(
+			tomast.MakeConcOption(),
+			tomast.MakeConcTomName(tomast.MakeName(name)),
+			tomast.MakeConcTomTerm(),
+			tomast.MakeConcConstraint(),
+		), nil
+	}
+	// Not an application: rewind the whitespace skip so the caller sees the
+	// original cursor (the named-variable path doesn't need that whitespace).
+	p.idx = save
+	p.cur = saveCur
 	return tomast.MakeVariable(
 		tomast.MakeConcOption(),
 		tomast.MakeName(name),
