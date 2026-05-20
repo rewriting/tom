@@ -216,3 +216,11 @@ func TestParseMatch0qBqApplBody(t *testing.T) {
 		t.Errorf("AST mismatch on match0q_bqappl_body.t\n--- expected ---\n%s\n--- got ---\n%s\n", expected, got)
 	}
 }
+
+func TestParseMatch0rBqMulti(t *testing.T) {
+	const expected = `Tom(concCode(TargetLanguageToCode(TL("public class Match0r {\n  public void f(Object t) {\n    ",TextPosition(1,1),TextPosition(3,5))),InstructionToCode(Match(concConstraintInstruction(ConstraintInstruction(MatchConstraint(Variable(concOption(),Name("x"),Type(concTypeOption(),"unknown type",EmptyTargetLanguageType()),concConstraint()),BQVariable(concOption(OriginTracking(Name("t"),3,"__INPUT__"),ModuleName("default")),Name("t"),Type(concTypeOption(),"unknown type",EmptyTargetLanguageType())),Type(concTypeOption(),"unknown type",EmptyTargetLanguageType())),RawAction(If(TrueTL(),AbstractBlock(concInstruction(CodeToInstruction(TargetLanguageToCode(TL(" return ",TextPosition(4,13),TextPosition(4,21)))),BQTermToInstruction(BQAppl(concOption(OriginTracking(Name("Foo"),4,"__INPUT__"),ModuleName("default")),Name("Foo"),concBQTerm(Composite(CompositeTL(ITL("\140")),CompositeBQTerm(BQVariable(concOption(OriginTracking(Name("a"),4,"__INPUT__"),ModuleName("default")),Name("a"),Type(concTypeOption(),"unknown type",EmptyTargetLanguageType())))),Composite(CompositeTL(ITL("\140")),CompositeBQTerm(BQVariable(concOption(OriginTracking(Name("b"),4,"__INPUT__"),ModuleName("default")),Name("b"),Type(concTypeOption(),"unknown type",EmptyTargetLanguageType()))))))),CodeToInstruction(TargetLanguageToCode(TL("; ",TextPosition(4,33),TextPosition(4,35)))))),Nop())),concOption(OriginTracking(Name("ConstraintAction"),4,"__INPUT__")))),concOption(OriginTracking(Name("Match"),3,"__INPUT__"),ModuleName("default")))),TargetLanguageToCode(TL("\n  }\n\n}\n",TextPosition(5,6),TextPosition(8,1)))))`
+	got := parseFixture(t, "match0r_bq_multi")
+	if got != expected {
+		t.Errorf("AST mismatch on match0r_bq_multi.t\n--- expected ---\n%s\n--- got ---\n%s\n", expected, got)
+	}
+}

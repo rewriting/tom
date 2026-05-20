@@ -153,7 +153,7 @@ func (t *HOSTBLOCKCstBlock) Duplicate() sharedobjects.Term {
 }
 
 func (t *HOSTBLOCKCstBlock) String() string {
-	return fmt.Sprintf("HOSTBLOCK(%v,%q)", t.OptionList, t.Content)
+	return fmt.Sprintf("HOSTBLOCK(%v,%s)", t.OptionList, sharedobjects.JavaEscape(t.Content))
 }
 
 // MakeHOSTBLOCK builds the canonical (shared) HOSTBLOCK term.
@@ -488,7 +488,7 @@ func (t *Cst_MetaQuoteConstructCstBlock) Duplicate() sharedobjects.Term {
 }
 
 func (t *Cst_MetaQuoteConstructCstBlock) String() string {
-	return fmt.Sprintf("Cst_MetaQuoteConstruct(%v,%q)", t.OptionList, t.Content)
+	return fmt.Sprintf("Cst_MetaQuoteConstruct(%v,%s)", t.OptionList, sharedobjects.JavaEscape(t.Content))
 }
 
 // MakeCst_MetaQuoteConstruct builds the canonical (shared) Cst_MetaQuoteConstruct term.
@@ -529,7 +529,7 @@ func (t *Cst_IncludeFileCstBlock) Duplicate() sharedobjects.Term {
 }
 
 func (t *Cst_IncludeFileCstBlock) String() string {
-	return fmt.Sprintf("Cst_IncludeFile(%v,%q)", t.OptionList, t.Filename)
+	return fmt.Sprintf("Cst_IncludeFile(%v,%s)", t.OptionList, sharedobjects.JavaEscape(t.Filename))
 }
 
 // MakeCst_IncludeFile builds the canonical (shared) Cst_IncludeFile term.
@@ -611,7 +611,7 @@ func (t *Cst_GomConstructCstBlock) Duplicate() sharedobjects.Term {
 }
 
 func (t *Cst_GomConstructCstBlock) String() string {
-	return fmt.Sprintf("Cst_GomConstruct(%v,%v,%q)", t.OptionList, t.NameList, t.Text)
+	return fmt.Sprintf("Cst_GomConstruct(%v,%v,%s)", t.OptionList, t.NameList, sharedobjects.JavaEscape(t.Text))
 }
 
 // MakeCst_GomConstruct builds the canonical (shared) Cst_GomConstruct term.
@@ -1452,7 +1452,7 @@ func (t *Cst_TermVariableCstTerm) Duplicate() sharedobjects.Term {
 }
 
 func (t *Cst_TermVariableCstTerm) String() string {
-	return fmt.Sprintf("Cst_TermVariable(%q)", t.Name)
+	return fmt.Sprintf("Cst_TermVariable(%s)", sharedobjects.JavaEscape(t.Name))
 }
 
 // MakeCst_TermVariable builds the canonical (shared) Cst_TermVariable term.
@@ -1489,7 +1489,7 @@ func (t *Cst_TermVariableStarCstTerm) Duplicate() sharedobjects.Term {
 }
 
 func (t *Cst_TermVariableStarCstTerm) String() string {
-	return fmt.Sprintf("Cst_TermVariableStar(%q)", t.Name)
+	return fmt.Sprintf("Cst_TermVariableStar(%s)", sharedobjects.JavaEscape(t.Name))
 }
 
 // MakeCst_TermVariableStar builds the canonical (shared) Cst_TermVariableStar term.
@@ -1530,7 +1530,7 @@ func (t *Cst_TermApplCstTerm) Duplicate() sharedobjects.Term {
 }
 
 func (t *Cst_TermApplCstTerm) String() string {
-	return fmt.Sprintf("Cst_TermAppl(%q,%v)", t.Name, t.TermList)
+	return fmt.Sprintf("Cst_TermAppl(%s,%v)", sharedobjects.JavaEscape(t.Name), t.TermList)
 }
 
 // MakeCst_TermAppl builds the canonical (shared) Cst_TermAppl term.
@@ -1567,7 +1567,7 @@ func (t *Cst_TermConstantCstTerm) Duplicate() sharedobjects.Term {
 }
 
 func (t *Cst_TermConstantCstTerm) String() string {
-	return fmt.Sprintf("Cst_TermConstant(%q)", t.Name)
+	return fmt.Sprintf("Cst_TermConstant(%s)", sharedobjects.JavaEscape(t.Name))
 }
 
 // MakeCst_TermConstant builds the canonical (shared) Cst_TermConstant term.
@@ -1665,7 +1665,7 @@ func (t *Cst_TypeCstType) Duplicate() sharedobjects.Term {
 }
 
 func (t *Cst_TypeCstType) String() string {
-	return fmt.Sprintf("Cst_Type(%q)", t.Type)
+	return fmt.Sprintf("Cst_Type(%s)", sharedobjects.JavaEscape(t.Type))
 }
 
 // MakeCst_Type builds the canonical (shared) Cst_Type term.
@@ -1779,7 +1779,7 @@ func (t *Cst_AnnotatedPatternCstPattern) Duplicate() sharedobjects.Term {
 }
 
 func (t *Cst_AnnotatedPatternCstPattern) String() string {
-	return fmt.Sprintf("Cst_AnnotatedPattern(%v,%q)", t.Pattern, t.Annotation)
+	return fmt.Sprintf("Cst_AnnotatedPattern(%v,%s)", t.Pattern, sharedobjects.JavaEscape(t.Annotation))
 }
 
 // MakeCst_AnnotatedPattern builds the canonical (shared) Cst_AnnotatedPattern term.
@@ -1816,7 +1816,7 @@ func (t *Cst_VariableCstPattern) Duplicate() sharedobjects.Term {
 }
 
 func (t *Cst_VariableCstPattern) String() string {
-	return fmt.Sprintf("Cst_Variable(%q)", t.Name)
+	return fmt.Sprintf("Cst_Variable(%s)", sharedobjects.JavaEscape(t.Name))
 }
 
 // MakeCst_Variable builds the canonical (shared) Cst_Variable term.
@@ -1853,7 +1853,7 @@ func (t *Cst_VariableStarCstPattern) Duplicate() sharedobjects.Term {
 }
 
 func (t *Cst_VariableStarCstPattern) String() string {
-	return fmt.Sprintf("Cst_VariableStar(%q)", t.Name)
+	return fmt.Sprintf("Cst_VariableStar(%s)", sharedobjects.JavaEscape(t.Name))
 }
 
 // MakeCst_VariableStar builds the canonical (shared) Cst_VariableStar term.
@@ -2208,7 +2208,7 @@ func (t *Cst_SymbolCstSymbol) Duplicate() sharedobjects.Term {
 }
 
 func (t *Cst_SymbolCstSymbol) String() string {
-	return fmt.Sprintf("Cst_Symbol(%q,%v)", t.Name, t.Theory)
+	return fmt.Sprintf("Cst_Symbol(%s,%v)", sharedobjects.JavaEscape(t.Name), t.Theory)
 }
 
 // MakeCst_Symbol builds the canonical (shared) Cst_Symbol term.
@@ -2245,7 +2245,7 @@ func (t *Cst_SymbolIntCstSymbol) Duplicate() sharedobjects.Term {
 }
 
 func (t *Cst_SymbolIntCstSymbol) String() string {
-	return fmt.Sprintf("Cst_SymbolInt(%q)", t.Value)
+	return fmt.Sprintf("Cst_SymbolInt(%s)", sharedobjects.JavaEscape(t.Value))
 }
 
 // MakeCst_SymbolInt builds the canonical (shared) Cst_SymbolInt term.
@@ -2282,7 +2282,7 @@ func (t *Cst_SymbolLongCstSymbol) Duplicate() sharedobjects.Term {
 }
 
 func (t *Cst_SymbolLongCstSymbol) String() string {
-	return fmt.Sprintf("Cst_SymbolLong(%q)", t.Value)
+	return fmt.Sprintf("Cst_SymbolLong(%s)", sharedobjects.JavaEscape(t.Value))
 }
 
 // MakeCst_SymbolLong builds the canonical (shared) Cst_SymbolLong term.
@@ -2319,7 +2319,7 @@ func (t *Cst_SymbolCharCstSymbol) Duplicate() sharedobjects.Term {
 }
 
 func (t *Cst_SymbolCharCstSymbol) String() string {
-	return fmt.Sprintf("Cst_SymbolChar(%q)", t.Value)
+	return fmt.Sprintf("Cst_SymbolChar(%s)", sharedobjects.JavaEscape(t.Value))
 }
 
 // MakeCst_SymbolChar builds the canonical (shared) Cst_SymbolChar term.
@@ -2356,7 +2356,7 @@ func (t *Cst_SymbolDoubleCstSymbol) Duplicate() sharedobjects.Term {
 }
 
 func (t *Cst_SymbolDoubleCstSymbol) String() string {
-	return fmt.Sprintf("Cst_SymbolDouble(%q)", t.Value)
+	return fmt.Sprintf("Cst_SymbolDouble(%s)", sharedobjects.JavaEscape(t.Value))
 }
 
 // MakeCst_SymbolDouble builds the canonical (shared) Cst_SymbolDouble term.
@@ -2393,7 +2393,7 @@ func (t *Cst_SymbolStringCstSymbol) Duplicate() sharedobjects.Term {
 }
 
 func (t *Cst_SymbolStringCstSymbol) String() string {
-	return fmt.Sprintf("Cst_SymbolString(%q)", t.Value)
+	return fmt.Sprintf("Cst_SymbolString(%s)", sharedobjects.JavaEscape(t.Value))
 }
 
 // MakeCst_SymbolString builds the canonical (shared) Cst_SymbolString term.
@@ -2646,7 +2646,7 @@ func (t *Cst_PairPatternCstPairPattern) Duplicate() sharedobjects.Term {
 }
 
 func (t *Cst_PairPatternCstPairPattern) String() string {
-	return fmt.Sprintf("Cst_PairPattern(%q,%v)", t.SlotName, t.Pattern)
+	return fmt.Sprintf("Cst_PairPattern(%s,%v)", sharedobjects.JavaEscape(t.SlotName), t.Pattern)
 }
 
 // MakeCst_PairPattern builds the canonical (shared) Cst_PairPattern term.
@@ -3528,7 +3528,7 @@ func (t *Cst_BQApplCstBQTerm) Duplicate() sharedobjects.Term {
 }
 
 func (t *Cst_BQApplCstBQTerm) String() string {
-	return fmt.Sprintf("Cst_BQAppl(%v,%q,%v)", t.OptionList, t.Name, t.BqTermList)
+	return fmt.Sprintf("Cst_BQAppl(%v,%s,%v)", t.OptionList, sharedobjects.JavaEscape(t.Name), t.BqTermList)
 }
 
 // MakeCst_BQAppl builds the canonical (shared) Cst_BQAppl term.
@@ -3573,7 +3573,7 @@ func (t *Cst_BQRecordApplCstBQTerm) Duplicate() sharedobjects.Term {
 }
 
 func (t *Cst_BQRecordApplCstBQTerm) String() string {
-	return fmt.Sprintf("Cst_BQRecordAppl(%v,%q,%v)", t.OptionList, t.Name, t.SlotList)
+	return fmt.Sprintf("Cst_BQRecordAppl(%v,%s,%v)", t.OptionList, sharedobjects.JavaEscape(t.Name), t.SlotList)
 }
 
 // MakeCst_BQRecordAppl builds the canonical (shared) Cst_BQRecordAppl term.
@@ -3618,7 +3618,7 @@ func (t *Cst_BQVarCstBQTerm) Duplicate() sharedobjects.Term {
 }
 
 func (t *Cst_BQVarCstBQTerm) String() string {
-	return fmt.Sprintf("Cst_BQVar(%v,%q,%v)", t.OptionList, t.Name, t.Type)
+	return fmt.Sprintf("Cst_BQVar(%v,%s,%v)", t.OptionList, sharedobjects.JavaEscape(t.Name), t.Type)
 }
 
 // MakeCst_BQVar builds the canonical (shared) Cst_BQVar term.
@@ -3663,7 +3663,7 @@ func (t *Cst_BQVarStarCstBQTerm) Duplicate() sharedobjects.Term {
 }
 
 func (t *Cst_BQVarStarCstBQTerm) String() string {
-	return fmt.Sprintf("Cst_BQVarStar(%v,%q,%v)", t.OptionList, t.Name, t.Type)
+	return fmt.Sprintf("Cst_BQVarStar(%v,%s,%v)", t.OptionList, sharedobjects.JavaEscape(t.Name), t.Type)
 }
 
 // MakeCst_BQVarStar builds the canonical (shared) Cst_BQVarStar term.
@@ -3782,7 +3782,7 @@ func (t *Cst_ITLCstBQTerm) Duplicate() sharedobjects.Term {
 }
 
 func (t *Cst_ITLCstBQTerm) String() string {
-	return fmt.Sprintf("Cst_ITL(%v,%q)", t.OptionList, t.Code)
+	return fmt.Sprintf("Cst_ITL(%v,%s)", t.OptionList, sharedobjects.JavaEscape(t.Code))
 }
 
 // MakeCst_ITL builds the canonical (shared) Cst_ITL term.
@@ -3823,7 +3823,7 @@ func (t *Cst_BQConstantCstBQTerm) Duplicate() sharedobjects.Term {
 }
 
 func (t *Cst_BQConstantCstBQTerm) String() string {
-	return fmt.Sprintf("Cst_BQConstant(%v,%q)", t.OptionList, t.Name)
+	return fmt.Sprintf("Cst_BQConstant(%v,%s)", t.OptionList, sharedobjects.JavaEscape(t.Name))
 }
 
 // MakeCst_BQConstant builds the canonical (shared) Cst_BQConstant term.
@@ -4057,7 +4057,7 @@ func (t *Cst_NameCstName) Duplicate() sharedobjects.Term {
 }
 
 func (t *Cst_NameCstName) String() string {
-	return fmt.Sprintf("Cst_Name(%q)", t.Name)
+	return fmt.Sprintf("Cst_Name(%s)", sharedobjects.JavaEscape(t.Name))
 }
 
 // MakeCst_Name builds the canonical (shared) Cst_Name term.
@@ -4210,7 +4210,7 @@ func (t *Cst_LabelCstOption) Duplicate() sharedobjects.Term {
 }
 
 func (t *Cst_LabelCstOption) String() string {
-	return fmt.Sprintf("Cst_Label(%q)", t.Name)
+	return fmt.Sprintf("Cst_Label(%s)", sharedobjects.JavaEscape(t.Name))
 }
 
 // MakeCst_Label builds the canonical (shared) Cst_Label term.
@@ -4263,7 +4263,7 @@ func (t *Cst_OriginTrackingCstOption) Duplicate() sharedobjects.Term {
 }
 
 func (t *Cst_OriginTrackingCstOption) String() string {
-	return fmt.Sprintf("Cst_OriginTracking(%q,%v,%v,%v,%v)", t.FileName, t.StartLine, t.StartColumn, t.EndLine, t.EndColumn)
+	return fmt.Sprintf("Cst_OriginTracking(%s,%v,%v,%v,%v)", sharedobjects.JavaEscape(t.FileName), t.StartLine, t.StartColumn, t.EndLine, t.EndColumn)
 }
 
 // MakeCst_OriginTracking builds the canonical (shared) Cst_OriginTracking term.
@@ -4300,7 +4300,7 @@ func (t *Cst_OriginTextCstOption) Duplicate() sharedobjects.Term {
 }
 
 func (t *Cst_OriginTextCstOption) String() string {
-	return fmt.Sprintf("Cst_OriginText(%q)", t.Text)
+	return fmt.Sprintf("Cst_OriginText(%s)", sharedobjects.JavaEscape(t.Text))
 }
 
 // MakeCst_OriginText builds the canonical (shared) Cst_OriginText term.

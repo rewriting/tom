@@ -1065,22 +1065,34 @@ afterEquivalent:
 
 	// String. The format specifier per slot mirrors what the reference
 	// Gom Java backend's toStringBuilder emits:
-	//   - String → "%q"   (quoted, Java-like escapes)
-	//   - char   → "%q"   (single char in quotes — close enough to Java)
-	//   - else   → "%v"
+	//   - string → %s + sharedobjects.JavaEscape  (AT-format escapes;
+	//              backtick goes to \140 etc., matches Java aterm output)
+	//   - rune   → %q (close enough to Java's single-char quote)
+	//   - else   → %v
 	verbFor := func(goType string) string {
 		switch goType {
-		case "string", "rune":
+		case "string":
+			return "%s"
+		case "rune":
 			return "%q"
 		}
 		return "%v"
+	}
+	// argExpr returns the Go expression that should be passed to Sprintf
+	// for a given slot. String slots go through sharedobjects.JavaEscape
+	// so the output is byte-identical to Java's aterm.AFunImpl.toString().
+	argExpr := func(name, goType string) string {
+		if goType == "string" {
+			return "sharedobjects.JavaEscape(" + name + ")"
+		}
+		return name
 	}
 	fmt.Fprintf(&g.buf, "func (t *%s) String() string {\n", structName)
 	if isVariadic {
 		v := verbFor(slots[0].GoType)
 		fmt.Fprintf(&g.buf, "\tparts := make([]string, len(t.%s))\n", slots[0].Name)
 		fmt.Fprintf(&g.buf, "\tfor i, v := range t.%s {\n", slots[0].Name)
-		fmt.Fprintf(&g.buf, "\t\tparts[i] = fmt.Sprintf(%q, v)\n", v)
+		fmt.Fprintf(&g.buf, "\t\tparts[i] = fmt.Sprintf(%q, %s)\n", v, argExpr("v", slots[0].GoType))
 		fmt.Fprintln(&g.buf, "\t}")
 		fmt.Fprintf(&g.buf, "\treturn %q + \"(\" + strings.Join(parts, \",\") + \")\"\n", opName)
 	} else if len(slots) == 0 {
@@ -1093,7 +1105,7 @@ afterEquivalent:
 		format := opName + "(" + strings.Join(verbs, ",") + ")"
 		fmt.Fprintf(&g.buf, "\treturn fmt.Sprintf(%q", format)
 		for _, s := range slots {
-			fmt.Fprintf(&g.buf, ", t.%s", s.Name)
+			fmt.Fprintf(&g.buf, ", %s", argExpr("t."+s.Name, s.GoType))
 		}
 		fmt.Fprintln(&g.buf, ")")
 	}

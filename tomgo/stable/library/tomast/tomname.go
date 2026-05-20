@@ -45,7 +45,7 @@ func (t *NameTomName) Duplicate() sharedobjects.Term {
 }
 
 func (t *NameTomName) String() string {
-	return fmt.Sprintf("Name(%q)", t.String_)
+	return fmt.Sprintf("Name(%s)", sharedobjects.JavaEscape(t.String_))
 }
 
 // MakeName builds the canonical (shared) Name term.

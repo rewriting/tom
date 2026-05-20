@@ -53,7 +53,7 @@ func (t *TypeTomType) Duplicate() sharedobjects.Term {
 }
 
 func (t *TypeTomType) String() string {
-	return fmt.Sprintf("Type(%v,%q,%v)", t.TypeOptions, t.TomType, t.TlType)
+	return fmt.Sprintf("Type(%v,%s,%v)", t.TypeOptions, sharedobjects.JavaEscape(t.TomType), t.TlType)
 }
 
 // MakeType builds the canonical (shared) Type term.
@@ -90,7 +90,7 @@ func (t *CodomainTomType) Duplicate() sharedobjects.Term {
 }
 
 func (t *CodomainTomType) String() string {
-	return fmt.Sprintf("Codomain(%q)", t.AstName)
+	return fmt.Sprintf("Codomain(%s)", sharedobjects.JavaEscape(t.AstName))
 }
 
 // MakeCodomain builds the canonical (shared) Codomain term.
@@ -202,7 +202,7 @@ func (t *TypeVarTomType) Duplicate() sharedobjects.Term {
 }
 
 func (t *TypeVarTomType) String() string {
-	return fmt.Sprintf("TypeVar(%q,%v)", t.TomType, t.Index)
+	return fmt.Sprintf("TypeVar(%s,%v)", sharedobjects.JavaEscape(t.TomType), t.Index)
 }
 
 // MakeTypeVar builds the canonical (shared) TypeVar term.
@@ -282,7 +282,7 @@ func (t *SubtypeDeclTypeOption) Duplicate() sharedobjects.Term {
 }
 
 func (t *SubtypeDeclTypeOption) String() string {
-	return fmt.Sprintf("SubtypeDecl(%q)", t.TomType)
+	return fmt.Sprintf("SubtypeDecl(%s)", sharedobjects.JavaEscape(t.TomType))
 }
 
 // MakeSubtypeDecl builds the canonical (shared) SubtypeDecl term.
@@ -380,7 +380,7 @@ func (t *TLTypeTargetLanguageType) Duplicate() sharedobjects.Term {
 }
 
 func (t *TLTypeTargetLanguageType) String() string {
-	return fmt.Sprintf("TLType(%q)", t.String_)
+	return fmt.Sprintf("TLType(%s)", sharedobjects.JavaEscape(t.String_))
 }
 
 // MakeTLType builds the canonical (shared) TLType term.

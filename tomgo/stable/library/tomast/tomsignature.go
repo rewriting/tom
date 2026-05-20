@@ -147,7 +147,7 @@ func (t *ResolveStratElementResolveStratElement) Duplicate() sharedobjects.Term 
 }
 
 func (t *ResolveStratElementResolveStratElement) String() string {
-	return fmt.Sprintf("ResolveStratElement(%q,%v)", t.WithName, t.ResolveOrgTrack)
+	return fmt.Sprintf("ResolveStratElement(%s,%v)", sharedobjects.JavaEscape(t.WithName), t.ResolveOrgTrack)
 }
 
 // MakeResolveStratElement builds the canonical (shared) ResolveStratElement term.
@@ -249,7 +249,7 @@ func (t *ResolveStratBlockResolveStratBlock) Duplicate() sharedobjects.Term {
 }
 
 func (t *ResolveStratBlockResolveStratBlock) String() string {
-	return fmt.Sprintf("ResolveStratBlock(%q,%v)", t.ToName, t.ResolveStratElementList)
+	return fmt.Sprintf("ResolveStratBlock(%s,%v)", sharedobjects.JavaEscape(t.ToName), t.ResolveStratElementList)
 }
 
 // MakeResolveStratBlock builds the canonical (shared) ResolveStratBlock term.
@@ -589,7 +589,7 @@ func (t *EntryTomEntry) Duplicate() sharedobjects.Term {
 }
 
 func (t *EntryTomEntry) String() string {
-	return fmt.Sprintf("Entry(%q,%v)", t.StrName, t.AstSymbol)
+	return fmt.Sprintf("Entry(%s,%v)", sharedobjects.JavaEscape(t.StrName), t.AstSymbol)
 }
 
 // MakeEntry builds the canonical (shared) Entry term.
@@ -1002,7 +1002,7 @@ func (t *TransfoStratInfoTransfoStratInfo) Duplicate() sharedobjects.Term {
 }
 
 func (t *TransfoStratInfoTransfoStratInfo) String() string {
-	return fmt.Sprintf("TransfoStratInfo(%q,%v,%v)", t.Name, t.TraversalStrategy, t.OrgTrack)
+	return fmt.Sprintf("TransfoStratInfo(%s,%v,%v)", sharedobjects.JavaEscape(t.Name), t.TraversalStrategy, t.OrgTrack)
 }
 
 // MakeTransfoStratInfo builds the canonical (shared) TransfoStratInfo term.

@@ -168,7 +168,7 @@ func (t *DetailsOption) Duplicate() sharedobjects.Term {
 }
 
 func (t *DetailsOption) String() string {
-	return fmt.Sprintf("Details(%q)", t.Comments)
+	return fmt.Sprintf("Details(%s)", sharedobjects.JavaEscape(t.Comments))
 }
 
 // MakeDetails builds the canonical (shared) Details term.
@@ -523,7 +523,7 @@ func (t *HookProduction) Duplicate() sharedobjects.Term {
 }
 
 func (t *HookProduction) String() string {
-	return fmt.Sprintf("Hook(%v,%q,%v,%v,%v,%v)", t.NameType, t.Name, t.HookType, t.Args, t.HookContent, t.Option)
+	return fmt.Sprintf("Hook(%v,%s,%v,%v,%v,%v)", t.NameType, sharedobjects.JavaEscape(t.Name), t.HookType, t.Args, t.HookContent, t.Option)
 }
 
 // MakeHook builds the canonical (shared) Hook term.
@@ -605,7 +605,7 @@ func (t *AtomDeclProduction) Duplicate() sharedobjects.Term {
 }
 
 func (t *AtomDeclProduction) String() string {
-	return fmt.Sprintf("AtomDecl(%q)", t.Name)
+	return fmt.Sprintf("AtomDecl(%s)", sharedobjects.JavaEscape(t.Name))
 }
 
 // MakeAtomDecl builds the canonical (shared) AtomDecl term.
@@ -770,7 +770,7 @@ func (t *AlternativeAlternative) Duplicate() sharedobjects.Term {
 }
 
 func (t *AlternativeAlternative) String() string {
-	return fmt.Sprintf("Alternative(%q,%v,%v,%v)", t.Name, t.DomainList, t.Codomain, t.Option)
+	return fmt.Sprintf("Alternative(%s,%v,%v,%v)", sharedobjects.JavaEscape(t.Name), t.DomainList, t.Codomain, t.Option)
 }
 
 // MakeAlternative builds the canonical (shared) Alternative term.
@@ -813,7 +813,7 @@ func (t *HookKindHookKind) Duplicate() sharedobjects.Term {
 }
 
 func (t *HookKindHookKind) String() string {
-	return fmt.Sprintf("HookKind(%q)", t.Kind)
+	return fmt.Sprintf("HookKind(%s)", sharedobjects.JavaEscape(t.Kind))
 }
 
 // MakeHookKind builds the canonical (shared) HookKind term.
@@ -989,7 +989,7 @@ func (t *ArgArg) Duplicate() sharedobjects.Term {
 }
 
 func (t *ArgArg) String() string {
-	return fmt.Sprintf("Arg(%q)", t.Name)
+	return fmt.Sprintf("Arg(%s)", sharedobjects.JavaEscape(t.Name))
 }
 
 // MakeArg builds the canonical (shared) Arg term.
@@ -1292,7 +1292,7 @@ func (t *NamedFieldField) Duplicate() sharedobjects.Term {
 }
 
 func (t *NamedFieldField) String() string {
-	return fmt.Sprintf("NamedField(%q,%v,%v)", t.Name, t.FieldType, t.Specifier)
+	return fmt.Sprintf("NamedField(%s,%v,%v)", sharedobjects.JavaEscape(t.Name), t.FieldType, t.Specifier)
 }
 
 // MakeNamedField builds the canonical (shared) NamedField term.
@@ -1390,7 +1390,7 @@ func (t *GomModuleNameGomModuleName) Duplicate() sharedobjects.Term {
 }
 
 func (t *GomModuleNameGomModuleName) String() string {
-	return fmt.Sprintf("GomModuleName(%q)", t.Name)
+	return fmt.Sprintf("GomModuleName(%s)", sharedobjects.JavaEscape(t.Name))
 }
 
 // MakeGomModuleName builds the canonical (shared) GomModuleName term.
@@ -1533,7 +1533,7 @@ func (t *GomTypeGomType) Duplicate() sharedobjects.Term {
 }
 
 func (t *GomTypeGomType) String() string {
-	return fmt.Sprintf("GomType(%v,%q)", t.Specialization, t.Name)
+	return fmt.Sprintf("GomType(%v,%s)", t.Specialization, sharedobjects.JavaEscape(t.Name))
 }
 
 // MakeGomType builds the canonical (shared) GomType term.
@@ -1638,7 +1638,7 @@ func (t *ConcAtomAtomList) Duplicate() sharedobjects.Term {
 func (t *ConcAtomAtomList) String() string {
 	parts := make([]string, len(t.Slots))
 	for i, v := range t.Slots {
-		parts[i] = fmt.Sprintf("%q", v)
+		parts[i] = fmt.Sprintf("%s", sharedobjects.JavaEscape(v))
 	}
 	return "ConcAtom" + "(" + strings.Join(parts, ",") + ")"
 }
@@ -1792,7 +1792,7 @@ func (t *ModuleDeclModuleDecl) Duplicate() sharedobjects.Term {
 }
 
 func (t *ModuleDeclModuleDecl) String() string {
-	return fmt.Sprintf("ModuleDecl(%v,%q)", t.ModuleName, t.Pkg)
+	return fmt.Sprintf("ModuleDecl(%v,%s)", t.ModuleName, sharedobjects.JavaEscape(t.Pkg))
 }
 
 // MakeModuleDecl builds the canonical (shared) ModuleDecl term.
@@ -1894,7 +1894,7 @@ func (t *SortDeclSortDecl) Duplicate() sharedobjects.Term {
 }
 
 func (t *SortDeclSortDecl) String() string {
-	return fmt.Sprintf("SortDecl(%q,%v)", t.Name, t.ModuleDecl)
+	return fmt.Sprintf("SortDecl(%s,%v)", sharedobjects.JavaEscape(t.Name), t.ModuleDecl)
 }
 
 // MakeSortDecl builds the canonical (shared) SortDecl term.
@@ -1931,7 +1931,7 @@ func (t *BuiltinSortDeclSortDecl) Duplicate() sharedobjects.Term {
 }
 
 func (t *BuiltinSortDeclSortDecl) String() string {
-	return fmt.Sprintf("BuiltinSortDecl(%q)", t.Name)
+	return fmt.Sprintf("BuiltinSortDecl(%s)", sharedobjects.JavaEscape(t.Name))
 }
 
 // MakeBuiltinSortDecl builds the canonical (shared) BuiltinSortDecl term.
@@ -2041,7 +2041,7 @@ func (t *OperatorDeclOperatorDecl) Duplicate() sharedobjects.Term {
 }
 
 func (t *OperatorDeclOperatorDecl) String() string {
-	return fmt.Sprintf("OperatorDecl(%q,%v,%v,%v)", t.Name, t.Sort, t.Prod, t.Option)
+	return fmt.Sprintf("OperatorDecl(%s,%v,%v,%v)", sharedobjects.JavaEscape(t.Name), t.Sort, t.Prod, t.Option)
 }
 
 // MakeOperatorDecl builds the canonical (shared) OperatorDecl term.
@@ -2223,7 +2223,7 @@ func (t *SlotSlot) Duplicate() sharedobjects.Term {
 }
 
 func (t *SlotSlot) String() string {
-	return fmt.Sprintf("Slot(%q,%v)", t.Name, t.Sort)
+	return fmt.Sprintf("Slot(%s,%v)", sharedobjects.JavaEscape(t.Name), t.Sort)
 }
 
 // MakeSlot builds the canonical (shared) Slot term.
@@ -2929,7 +2929,7 @@ func (t *HookCodeHookContent) Duplicate() sharedobjects.Term {
 }
 
 func (t *HookCodeHookContent) String() string {
-	return fmt.Sprintf("HookCode(%q)", t.StringCode)
+	return fmt.Sprintf("HookCode(%s)", sharedobjects.JavaEscape(t.StringCode))
 }
 
 // MakeHookCode builds the canonical (shared) HookCode term.

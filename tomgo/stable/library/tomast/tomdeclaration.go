@@ -959,7 +959,7 @@ func (t *TransformationDeclaration) Duplicate() sharedobjects.Term {
 }
 
 func (t *TransformationDeclaration) String() string {
-	return fmt.Sprintf("Transformation(%v,%v,%v,%q,%q,%v)", t.TName, t.Domain, t.ElementaryTList, t.FileFrom, t.FileTo, t.OrgTrack)
+	return fmt.Sprintf("Transformation(%v,%v,%v,%s,%s,%v)", t.TName, t.Domain, t.ElementaryTList, sharedobjects.JavaEscape(t.FileFrom), sharedobjects.JavaEscape(t.FileTo), t.OrgTrack)
 }
 
 // MakeTransformation builds the canonical (shared) Transformation term.
@@ -1008,7 +1008,7 @@ func (t *ResolveStratDeclDeclaration) Duplicate() sharedobjects.Term {
 }
 
 func (t *ResolveStratDeclDeclaration) String() string {
-	return fmt.Sprintf("ResolveStratDecl(%q,%v,%v,%v)", t.TransfoName, t.ResList, t.ResolveNameList, t.OriginTracking)
+	return fmt.Sprintf("ResolveStratDecl(%s,%v,%v,%v)", sharedobjects.JavaEscape(t.TransfoName), t.ResList, t.ResolveNameList, t.OriginTracking)
 }
 
 // MakeResolveStratDecl builds the canonical (shared) ResolveStratDecl term.
@@ -1053,7 +1053,7 @@ func (t *ResolveInverseLinksDeclDeclaration) Duplicate() sharedobjects.Term {
 }
 
 func (t *ResolveInverseLinksDeclDeclaration) String() string {
-	return fmt.Sprintf("ResolveInverseLinksDecl(%v,%q,%q)", t.ResolveNameList, t.FileFrom, t.FileTo)
+	return fmt.Sprintf("ResolveInverseLinksDecl(%v,%s,%s)", t.ResolveNameList, sharedobjects.JavaEscape(t.FileFrom), sharedobjects.JavaEscape(t.FileTo))
 }
 
 // MakeResolveInverseLinksDecl builds the canonical (shared) ResolveInverseLinksDecl term.
@@ -1102,7 +1102,7 @@ func (t *ResolveClassDeclDeclaration) Duplicate() sharedobjects.Term {
 }
 
 func (t *ResolveClassDeclDeclaration) String() string {
-	return fmt.Sprintf("ResolveClassDecl(%v,%q,%q,%q)", t.AstName, t.WithName, t.ToName, t.Extends)
+	return fmt.Sprintf("ResolveClassDecl(%v,%s,%s,%s)", t.AstName, sharedobjects.JavaEscape(t.WithName), sharedobjects.JavaEscape(t.ToName), sharedobjects.JavaEscape(t.Extends))
 }
 
 // MakeResolveClassDecl builds the canonical (shared) ResolveClassDecl term.

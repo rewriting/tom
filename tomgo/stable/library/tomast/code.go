@@ -53,7 +53,7 @@ func (t *TLTargetLanguage) Duplicate() sharedobjects.Term {
 }
 
 func (t *TLTargetLanguage) String() string {
-	return fmt.Sprintf("TL(%q,%v,%v)", t.Code, t.Start, t.End)
+	return fmt.Sprintf("TL(%s,%v,%v)", sharedobjects.JavaEscape(t.Code), t.Start, t.End)
 }
 
 // MakeTL builds the canonical (shared) TL term.
@@ -90,7 +90,7 @@ func (t *ITLTargetLanguage) Duplicate() sharedobjects.Term {
 }
 
 func (t *ITLTargetLanguage) String() string {
-	return fmt.Sprintf("ITL(%q)", t.Code)
+	return fmt.Sprintf("ITL(%s)", sharedobjects.JavaEscape(t.Code))
 }
 
 // MakeITL builds the canonical (shared) ITL term.
@@ -127,7 +127,7 @@ func (t *CommentTargetLanguage) Duplicate() sharedobjects.Term {
 }
 
 func (t *CommentTargetLanguage) String() string {
-	return fmt.Sprintf("Comment(%q)", t.Code)
+	return fmt.Sprintf("Comment(%s)", sharedobjects.JavaEscape(t.Code))
 }
 
 // MakeComment builds the canonical (shared) Comment term.
@@ -893,7 +893,7 @@ func (t *ReferencerBQTermBQTerm) Duplicate() sharedobjects.Term {
 }
 
 func (t *ReferencerBQTermBQTerm) String() string {
-	return fmt.Sprintf("ReferencerBQTerm(%v,%v,%q,%v)", t.Options, t.AstName, t.Type, t.Term)
+	return fmt.Sprintf("ReferencerBQTerm(%v,%v,%s,%v)", t.Options, t.AstName, sharedobjects.JavaEscape(t.Type), t.Term)
 }
 
 // MakeReferencerBQTerm builds the canonical (shared) ReferencerBQTerm term.
@@ -1020,7 +1020,7 @@ func (t *BuildTermBQTerm) Duplicate() sharedobjects.Term {
 }
 
 func (t *BuildTermBQTerm) String() string {
-	return fmt.Sprintf("BuildTerm(%v,%v,%q)", t.AstName, t.Args, t.ModuleName)
+	return fmt.Sprintf("BuildTerm(%v,%v,%s)", t.AstName, t.Args, sharedobjects.JavaEscape(t.ModuleName))
 }
 
 // MakeBuildTerm builds the canonical (shared) BuildTerm term.

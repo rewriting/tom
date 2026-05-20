@@ -874,7 +874,7 @@ func (t *GetSlotExpression) Duplicate() sharedobjects.Term {
 }
 
 func (t *GetSlotExpression) String() string {
-	return fmt.Sprintf("GetSlot(%v,%v,%q,%v)", t.Codomain, t.AstName, t.SlotNameString, t.Variable)
+	return fmt.Sprintf("GetSlot(%v,%v,%s,%v)", t.Codomain, t.AstName, sharedobjects.JavaEscape(t.SlotNameString), t.Variable)
 }
 
 // MakeGetSlot builds the canonical (shared) GetSlot term.
@@ -1480,7 +1480,7 @@ func (t *ACMatchLoopExpression) Duplicate() sharedobjects.Term {
 }
 
 func (t *ACMatchLoopExpression) String() string {
-	return fmt.Sprintf("ACMatchLoop(%q,%v,%v,%v,%v)", t.SymbolName, t.VariableX, t.VariableY, t.MultiplicityY, t.Subject)
+	return fmt.Sprintf("ACMatchLoop(%s,%v,%v,%v,%v)", sharedobjects.JavaEscape(t.SymbolName), t.VariableX, t.VariableY, t.MultiplicityY, t.Subject)
 }
 
 // MakeACMatchLoop builds the canonical (shared) ACMatchLoop term.
@@ -1599,7 +1599,7 @@ func (t *CodeExpression) Duplicate() sharedobjects.Term {
 }
 
 func (t *CodeExpression) String() string {
-	return fmt.Sprintf("Code(%q)", t.Code)
+	return fmt.Sprintf("Code(%s)", sharedobjects.JavaEscape(t.Code))
 }
 
 // MakeCode builds the canonical (shared) Code term.

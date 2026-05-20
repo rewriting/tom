@@ -45,7 +45,7 @@ func (t *FsymbolSymbol) Duplicate() sharedobjects.Term {
 }
 
 func (t *FsymbolSymbol) String() string {
-	return fmt.Sprintf("fsymbol(%q)", t.Name)
+	return fmt.Sprintf("fsymbol(%s)", sharedobjects.JavaEscape(t.Name))
 }
 
 // MakeFsymbol builds the canonical (shared) fsymbol term.
@@ -88,7 +88,7 @@ func (t *VarVariable) Duplicate() sharedobjects.Term {
 }
 
 func (t *VarVariable) String() string {
-	return fmt.Sprintf("var(%q)", t.Name)
+	return fmt.Sprintf("var(%s)", sharedobjects.JavaEscape(t.Name))
 }
 
 // MakeVar builds the canonical (shared) var term.
@@ -221,7 +221,7 @@ func (t *SlAbsTerm) Duplicate() sharedobjects.Term {
 }
 
 func (t *SlAbsTerm) String() string {
-	return fmt.Sprintf("sl(%v,%v,%q)", t.Symbol, t.Abst, t.Name)
+	return fmt.Sprintf("sl(%v,%v,%s)", t.Symbol, t.Abst, sharedobjects.JavaEscape(t.Name))
 }
 
 // MakeSl builds the canonical (shared) sl term.
@@ -301,7 +301,7 @@ func (t *ReprTerm) Duplicate() sharedobjects.Term {
 }
 
 func (t *ReprTerm) String() string {
-	return fmt.Sprintf("repr(%q)", t.Term)
+	return fmt.Sprintf("repr(%s)", sharedobjects.JavaEscape(t.Term))
 }
 
 // MakeRepr builds the canonical (shared) repr term.
@@ -391,7 +391,7 @@ func (t *SlotTerm) Duplicate() sharedobjects.Term {
 }
 
 func (t *SlotTerm) String() string {
-	return fmt.Sprintf("slot(%v,%v,%q)", t.Symbol, t.T, t.Name)
+	return fmt.Sprintf("slot(%v,%v,%s)", t.Symbol, t.T, sharedobjects.JavaEscape(t.Name))
 }
 
 // MakeSlot builds the canonical (shared) slot term.
@@ -1619,7 +1619,7 @@ func (t *DerivruleDerivTree) Duplicate() sharedobjects.Term {
 }
 
 func (t *DerivruleDerivTree) String() string {
-	return fmt.Sprintf("derivrule(%q,%v,%v,%v)", t.Name, t.Post, t.Pre, t.Cond)
+	return fmt.Sprintf("derivrule(%s,%v,%v,%v)", sharedobjects.JavaEscape(t.Name), t.Post, t.Pre, t.Cond)
 }
 
 // MakeDerivrule builds the canonical (shared) derivrule term.
@@ -1672,7 +1672,7 @@ func (t *Derivrule2DerivTree) Duplicate() sharedobjects.Term {
 }
 
 func (t *Derivrule2DerivTree) String() string {
-	return fmt.Sprintf("derivrule2(%q,%v,%v,%v,%v)", t.Name, t.Post, t.Pre, t.Pre2, t.Cond)
+	return fmt.Sprintf("derivrule2(%s,%v,%v,%v,%v)", sharedobjects.JavaEscape(t.Name), t.Post, t.Pre, t.Pre2, t.Cond)
 }
 
 // MakeDerivrule2 builds the canonical (shared) derivrule2 term.

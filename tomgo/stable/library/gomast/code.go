@@ -51,7 +51,7 @@ func (t *CodeCode) Duplicate() sharedobjects.Term {
 }
 
 func (t *CodeCode) String() string {
-	return fmt.Sprintf("Code(%q)", t.Prog)
+	return fmt.Sprintf("Code(%s)", sharedobjects.JavaEscape(t.Prog))
 }
 
 // MakeCode builds the canonical (shared) Code term.
@@ -92,7 +92,7 @@ func (t *IsEmptyCode) Duplicate() sharedobjects.Term {
 }
 
 func (t *IsEmptyCode) String() string {
-	return fmt.Sprintf("IsEmpty(%q,%v)", t.Var, t.Operator)
+	return fmt.Sprintf("IsEmpty(%s,%v)", sharedobjects.JavaEscape(t.Var), t.Operator)
 }
 
 // MakeIsEmpty builds the canonical (shared) IsEmpty term.
@@ -133,7 +133,7 @@ func (t *IsConsCode) Duplicate() sharedobjects.Term {
 }
 
 func (t *IsConsCode) String() string {
-	return fmt.Sprintf("IsCons(%q,%v)", t.Var, t.Operator)
+	return fmt.Sprintf("IsCons(%s,%v)", sharedobjects.JavaEscape(t.Var), t.Operator)
 }
 
 // MakeIsCons builds the canonical (shared) IsCons term.

@@ -49,7 +49,7 @@ func (t *ApplTerm) Duplicate() sharedobjects.Term {
 }
 
 func (t *ApplTerm) String() string {
-	return fmt.Sprintf("Appl(%q,%v)", t.Symbol, t.Args)
+	return fmt.Sprintf("Appl(%s,%v)", sharedobjects.JavaEscape(t.Symbol), t.Args)
 }
 
 // MakeAppl builds the canonical (shared) Appl term.
@@ -86,7 +86,7 @@ func (t *VarTerm) Duplicate() sharedobjects.Term {
 }
 
 func (t *VarTerm) String() string {
-	return fmt.Sprintf("Var(%q)", t.Name)
+	return fmt.Sprintf("Var(%s)", sharedobjects.JavaEscape(t.Name))
 }
 
 // MakeVar builds the canonical (shared) Var term.
@@ -123,7 +123,7 @@ func (t *VarStarTerm) Duplicate() sharedobjects.Term {
 }
 
 func (t *VarStarTerm) String() string {
-	return fmt.Sprintf("VarStar(%q)", t.Name)
+	return fmt.Sprintf("VarStar(%s)", sharedobjects.JavaEscape(t.Name))
 }
 
 // MakeVarStar builds the canonical (shared) VarStar term.
@@ -224,7 +224,7 @@ func (t *AtTerm) Duplicate() sharedobjects.Term {
 }
 
 func (t *AtTerm) String() string {
-	return fmt.Sprintf("At(%q,%v)", t.Name, t.Term)
+	return fmt.Sprintf("At(%s,%v)", sharedobjects.JavaEscape(t.Name), t.Term)
 }
 
 // MakeAt builds the canonical (shared) At term.
@@ -335,7 +335,7 @@ func (t *BuiltinStringTerm) Duplicate() sharedobjects.Term {
 }
 
 func (t *BuiltinStringTerm) String() string {
-	return fmt.Sprintf("BuiltinString(%q)", t.S)
+	return fmt.Sprintf("BuiltinString(%s)", sharedobjects.JavaEscape(t.S))
 }
 
 // MakeBuiltinString builds the canonical (shared) BuiltinString term.
@@ -376,7 +376,7 @@ func (t *LabTermTerm) Duplicate() sharedobjects.Term {
 }
 
 func (t *LabTermTerm) String() string {
-	return fmt.Sprintf("LabTerm(%q,%v)", t.L, t.T)
+	return fmt.Sprintf("LabTerm(%s,%v)", sharedobjects.JavaEscape(t.L), t.T)
 }
 
 // MakeLabTerm builds the canonical (shared) LabTerm term.
@@ -413,7 +413,7 @@ func (t *RefTermTerm) Duplicate() sharedobjects.Term {
 }
 
 func (t *RefTermTerm) String() string {
-	return fmt.Sprintf("RefTerm(%q)", t.L)
+	return fmt.Sprintf("RefTerm(%s)", sharedobjects.JavaEscape(t.L))
 }
 
 // MakeRefTerm builds the canonical (shared) RefTerm term.

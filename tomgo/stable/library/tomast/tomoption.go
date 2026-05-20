@@ -194,7 +194,7 @@ func (t *OriginTrackingOption) Duplicate() sharedobjects.Term {
 }
 
 func (t *OriginTrackingOption) String() string {
-	return fmt.Sprintf("OriginTracking(%v,%v,%q)", t.AstName, t.Line, t.FileName)
+	return fmt.Sprintf("OriginTracking(%v,%v,%s)", t.AstName, t.Line, sharedobjects.JavaEscape(t.FileName))
 }
 
 // MakeOriginTracking builds the canonical (shared) OriginTracking term.
@@ -379,7 +379,7 @@ func (t *ModuleNameOption) Duplicate() sharedobjects.Term {
 }
 
 func (t *ModuleNameOption) String() string {
-	return fmt.Sprintf("ModuleName(%q)", t.String_)
+	return fmt.Sprintf("ModuleName(%s)", sharedobjects.JavaEscape(t.String_))
 }
 
 // MakeModuleName builds the canonical (shared) ModuleName term.
@@ -506,7 +506,7 @@ func (t *TypeForVariableOption) Duplicate() sharedobjects.Term {
 }
 
 func (t *TypeForVariableOption) String() string {
-	return fmt.Sprintf("TypeForVariable(%q)", t.String_)
+	return fmt.Sprintf("TypeForVariable(%s)", sharedobjects.JavaEscape(t.String_))
 }
 
 // MakeTypeForVariable builds the canonical (shared) TypeForVariable term.

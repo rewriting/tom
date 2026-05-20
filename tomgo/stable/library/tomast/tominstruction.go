@@ -608,7 +608,7 @@ func (t *NamedBlockInstruction) Duplicate() sharedobjects.Term {
 }
 
 func (t *NamedBlockInstruction) String() string {
-	return fmt.Sprintf("NamedBlock(%q,%v)", t.BlockName, t.InstList)
+	return fmt.Sprintf("NamedBlock(%s,%v)", sharedobjects.JavaEscape(t.BlockName), t.InstList)
 }
 
 // MakeNamedBlock builds the canonical (shared) NamedBlock term.
@@ -927,7 +927,7 @@ func (t *ResolveInstruction) Duplicate() sharedobjects.Term {
 }
 
 func (t *ResolveInstruction) String() string {
-	return fmt.Sprintf("Resolve(%v,%q,%q,%q,%q,%v)", t.ResolveBQTerm, t.Src, t.SType, t.Target, t.TType, t.OrgTrack)
+	return fmt.Sprintf("Resolve(%v,%s,%s,%s,%s,%v)", t.ResolveBQTerm, sharedobjects.JavaEscape(t.Src), sharedobjects.JavaEscape(t.SType), sharedobjects.JavaEscape(t.Target), sharedobjects.JavaEscape(t.TType), t.OrgTrack)
 }
 
 // MakeResolve builds the canonical (shared) Resolve term.
@@ -1138,7 +1138,7 @@ func (t *RuleInstructionRuleInstruction) Duplicate() sharedobjects.Term {
 }
 
 func (t *RuleInstructionRuleInstruction) String() string {
-	return fmt.Sprintf("RuleInstruction(%q,%v,%v,%v)", t.TypeName, t.Term, t.Action, t.Options)
+	return fmt.Sprintf("RuleInstruction(%s,%v,%v,%v)", sharedobjects.JavaEscape(t.TypeName), t.Term, t.Action, t.Options)
 }
 
 // MakeRuleInstruction builds the canonical (shared) RuleInstruction term.

@@ -187,7 +187,7 @@ func (t *OperatorClassGomClass) Duplicate() sharedobjects.Term {
 }
 
 func (t *OperatorClassGomClass) String() string {
-	return fmt.Sprintf("OperatorClass(%v,%v,%v,%v,%v,%v,%v,%q)", t.ClassName, t.AbstractType, t.ExtendsType, t.Mapping, t.SortName, t.SlotFields, t.Hooks, t.Comments)
+	return fmt.Sprintf("OperatorClass(%v,%v,%v,%v,%v,%v,%v,%s)", t.ClassName, t.AbstractType, t.ExtendsType, t.Mapping, t.SortName, t.SlotFields, t.Hooks, sharedobjects.JavaEscape(t.Comments))
 }
 
 // MakeOperatorClass builds the canonical (shared) OperatorClass term.
@@ -252,7 +252,7 @@ func (t *VariadicOperatorClassGomClass) Duplicate() sharedobjects.Term {
 }
 
 func (t *VariadicOperatorClassGomClass) String() string {
-	return fmt.Sprintf("VariadicOperatorClass(%v,%v,%v,%v,%v,%v,%v,%q)", t.ClassName, t.AbstractType, t.Mapping, t.SortName, t.Empty, t.Cons, t.Hooks, t.Comments)
+	return fmt.Sprintf("VariadicOperatorClass(%v,%v,%v,%v,%v,%v,%v,%s)", t.ClassName, t.AbstractType, t.Mapping, t.SortName, t.Empty, t.Cons, t.Hooks, sharedobjects.JavaEscape(t.Comments))
 }
 
 // MakeVariadicOperatorClass builds the canonical (shared) VariadicOperatorClass term.
@@ -399,7 +399,7 @@ func (t *ClassNameClassName) Duplicate() sharedobjects.Term {
 }
 
 func (t *ClassNameClassName) String() string {
-	return fmt.Sprintf("ClassName(%q,%q)", t.Pkg, t.Name)
+	return fmt.Sprintf("ClassName(%s,%s)", sharedobjects.JavaEscape(t.Pkg), sharedobjects.JavaEscape(t.Name))
 }
 
 // MakeClassName builds the canonical (shared) ClassName term.
@@ -501,7 +501,7 @@ func (t *SlotFieldSlotField) Duplicate() sharedobjects.Term {
 }
 
 func (t *SlotFieldSlotField) String() string {
-	return fmt.Sprintf("SlotField(%q,%v)", t.Name, t.Domain)
+	return fmt.Sprintf("SlotField(%s,%v)", sharedobjects.JavaEscape(t.Name), t.Domain)
 }
 
 // MakeSlotField builds the canonical (shared) SlotField term.

@@ -53,7 +53,7 @@ func (t *SortDescriptionSortDescription) Duplicate() sharedobjects.Term {
 }
 
 func (t *SortDescriptionSortDescription) String() string {
-	return fmt.Sprintf("SortDescription(%v,%q,%v)", t.Constructors, t.ModuleSymbol, t.FreshInfo)
+	return fmt.Sprintf("SortDescription(%v,%s,%v)", t.Constructors, sharedobjects.JavaEscape(t.ModuleSymbol), t.FreshInfo)
 }
 
 // MakeSortDescription builds the canonical (shared) SortDescription term.
@@ -248,7 +248,7 @@ func (t *ConstructorDescriptionConstructorDescription) Duplicate() sharedobjects
 }
 
 func (t *ConstructorDescriptionConstructorDescription) String() string {
-	return fmt.Sprintf("ConstructorDescription(%q,%v,%v)", t.SortSymbol, t.Fields, t.Generated)
+	return fmt.Sprintf("ConstructorDescription(%s,%v,%v)", sharedobjects.JavaEscape(t.SortSymbol), t.Fields, t.Generated)
 }
 
 // MakeConstructorDescription builds the canonical (shared) ConstructorDescription term.
@@ -293,7 +293,7 @@ func (t *VariadicConstructorDescriptionConstructorDescription) Duplicate() share
 }
 
 func (t *VariadicConstructorDescriptionConstructorDescription) String() string {
-	return fmt.Sprintf("VariadicConstructorDescription(%q,%q,%v)", t.SortSymbol, t.Domain, t.IsRefreshPoint)
+	return fmt.Sprintf("VariadicConstructorDescription(%s,%s,%v)", sharedobjects.JavaEscape(t.SortSymbol), sharedobjects.JavaEscape(t.Domain), t.IsRefreshPoint)
 }
 
 // MakeVariadicConstructorDescription builds the canonical (shared) VariadicConstructorDescription term.
@@ -366,7 +366,7 @@ func (t *GenConsGenerationInfo) Duplicate() sharedobjects.Term {
 }
 
 func (t *GenConsGenerationInfo) String() string {
-	return fmt.Sprintf("GenCons(%q)", t.BaseName)
+	return fmt.Sprintf("GenCons(%s)", sharedobjects.JavaEscape(t.BaseName))
 }
 
 // MakeGenCons builds the canonical (shared) GenCons term.
@@ -403,7 +403,7 @@ func (t *GenNilGenerationInfo) Duplicate() sharedobjects.Term {
 }
 
 func (t *GenNilGenerationInfo) String() string {
-	return fmt.Sprintf("GenNil(%q)", t.BaseName)
+	return fmt.Sprintf("GenNil(%s)", sharedobjects.JavaEscape(t.BaseName))
 }
 
 // MakeGenNil builds the canonical (shared) GenNil term.
@@ -509,7 +509,7 @@ func (t *FieldDescriptionFieldDescription) Duplicate() sharedobjects.Term {
 }
 
 func (t *FieldDescriptionFieldDescription) String() string {
-	return fmt.Sprintf("FieldDescription(%q,%q,%v)", t.FieldName, t.Sort, t.StatusValue)
+	return fmt.Sprintf("FieldDescription(%s,%s,%v)", sharedobjects.JavaEscape(t.FieldName), sharedobjects.JavaEscape(t.Sort), t.StatusValue)
 }
 
 // MakeFieldDescription builds the canonical (shared) FieldDescription term.
@@ -745,7 +745,7 @@ func (t *StringListStringList) Duplicate() sharedobjects.Term {
 func (t *StringListStringList) String() string {
 	parts := make([]string, len(t.Slots))
 	for i, v := range t.Slots {
-		parts[i] = fmt.Sprintf("%q", v)
+		parts[i] = fmt.Sprintf("%s", sharedobjects.JavaEscape(v))
 	}
 	return "StringList" + "(" + strings.Join(parts, ",") + ")"
 }

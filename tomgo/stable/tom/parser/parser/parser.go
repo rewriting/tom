@@ -526,21 +526,33 @@ func (p *parser) parseSubject() (tomast.BQTerm, error) {
 	return tomast.MakeBQVariable(options, tomast.MakeName(name), unknownType()), nil
 }
 
-// parseBQTerm parses one backquote term. The grammar (from
-// TomIslandParser.g4:122-128) accepts an optional leading `` ` `` followed by
-// either:
+// parseBQTerm parses one backquote term. The grammar (TomIslandParser.g4:122-
+// 128 for the plain `bqterm` form) accepts an optional leading `` ` `` followed
+// by either:
 //   - `ID '(' (bqterm (',' bqterm)*)? ')'`  → `BQAppl(opts, Name(ID), bqList)`
 //   - `ID '*'?`                             → `BQVariable(opts, Name(ID), unknownType)`
 //                                             (or `BQVariableStar` if `*` — TODO)
 //
-// Per `AstBuilder.java:551-570`, the option list carries an `OriginTracking`
+// The `composite` flag toggles between the two grammars Java distinguishes
+// (`bqterm` for `<<` RHS / `%match(...)` subjects vs `bqcomposite` / `composite`
+// for action-body backquotes):
+//
+//   - composite=false : plain bqterm — args of an inner application stay as
+//                       BQVariable/BQAppl regardless of explicit `` ` `` on
+//                       them. Used in `<<` RHS (4.F.13).
+//   - composite=true  : an arg starting with `` ` `` is wrapped in
+//                       `Composite(CompositeTL(ITL("` `")), CompositeBQTerm(<term>))`,
+//                       mirroring Java's exitComposite (CstBuilder.java:386-
+//                       399) → Cst_BQComposite → AstBuilder.java:583-595.
+//                       Used in action bodies (4.F.14+).
+//
+// Per AstBuilder.java:551-570, the option list carries an `OriginTracking`
 // for the symbol/variable name plus the default `ModuleName("default")` —
 // same shape as the parens-subject of `%match(...)`.
 //
-// Limits for this first jet: no codomain `ID:Type` prefix, no implicit-args
-// records `Foo[a=b]`, no ITL composite, no BQVariableStar `x*`, no nested
-// backquote scope semantics.
-func (p *parser) parseBQTerm() (tomast.BQTerm, error) {
+// Limits for this jet: no codomain `ID:Type` prefix, no implicit-args records
+// `Foo[a=b]`, no `BQVariableStar`.
+func (p *parser) parseBQTerm(composite bool) (tomast.BQTerm, error) {
 	startLine := p.cur.line
 	if !p.atEnd() && p.peek(0) == '`' {
 		p.advance() // '`'
@@ -562,7 +574,7 @@ func (p *parser) parseBQTerm() (tomast.BQTerm, error) {
 	p.skipBlankInline()
 	if !p.atEnd() && p.peek(0) == '(' {
 		p.advance() // '('
-		args, err := p.parseBQTermArgList()
+		args, err := p.parseBQTermArgList(composite)
 		if err != nil {
 			return nil, err
 		}
@@ -578,16 +590,26 @@ func (p *parser) parseBQTerm() (tomast.BQTerm, error) {
 }
 
 // parseBQTermArgList consumes `bqterm (',' bqterm)*` between '(' and ')'.
-func (p *parser) parseBQTermArgList() ([]tomast.BQTerm, error) {
+// When composite=true, each arg starting with `` ` `` is wrapped in a
+// Composite(CompositeTL(ITL("` `")), CompositeBQTerm(<term>)) — see
+// parseBQTerm's docstring.
+func (p *parser) parseBQTermArgList(composite bool) ([]tomast.BQTerm, error) {
 	var args []tomast.BQTerm
 	p.skipBlankInline()
 	if !p.atEnd() && p.peek(0) == ')' {
 		return args, nil
 	}
 	for {
-		bq, err := p.parseBQTerm()
+		hadBackquote := composite && !p.atEnd() && p.peek(0) == '`'
+		bq, err := p.parseBQTerm(composite)
 		if err != nil {
 			return nil, err
+		}
+		if hadBackquote {
+			bq = tomast.MakeComposite(
+				tomast.MakeCompositeTL(tomast.MakeITL("`")),
+				tomast.MakeCompositeBQTerm(bq),
+			)
 		}
 		args = append(args, bq)
 		p.skipBlankInline()
@@ -638,7 +660,7 @@ func (p *parser) parseActionRule(subjects []tomast.BQTerm) (tomast.ConstraintIns
 			p.advance() // '<'
 			p.advance() // '<'
 			p.skipBlankInline()
-			bq, err := p.parseBQTerm()
+			bq, err := p.parseBQTerm(false)
 			if err != nil {
 				return nil, fmt.Errorf("after '<<': %w", err)
 			}
@@ -1009,7 +1031,7 @@ func lowerActionBody(content string, start position, filename string) ([]tomast.
 	for !sub.atEnd() {
 		if sub.peek(0) == '`' {
 			flushWater(sub.idx, sub.cur)
-			bq, err := sub.parseBQTerm()
+			bq, err := sub.parseBQTerm(true)
 			if err != nil {
 				return nil, fmt.Errorf("at %s: %w", sub.cur, err)
 			}
