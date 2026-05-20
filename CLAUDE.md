@@ -23,12 +23,13 @@ water ANTLR-fidèle + simulation `buildHostblock`/`mergeString`),
 4.F.2 (`%match` avec pattern variable nommée — `x -> { }`),
 4.F.3 (`%match` avec application nullaire — `Foo() -> { }`),
 4.F.4 (`%match` avec application + sous-patterns —
-`Foo(x, Bar()) -> { }`) et 4.F.5 (`%match` multi-sujets —
-`(a, b) { x, y -> { } }`, dépend de 4.A.1) livrées.
+`Foo(x, Bar()) -> { }`), 4.F.5 (`%match` multi-sujets —
+`(a, b) { x, y -> { } }`, dépend de 4.A.1) et 4.F.6 (`%match` avec
+plusieurs rules — `{ _ → {} x → {} }`) livrées.
 La phase **4.A.1** corrige le hook AU généré par `emitAUPrologue`
 pour absorber l'unité (`AndConstraint(MC, TrueConstraint()) → MC`),
 en accord avec `HookTypeExpander.java:569`.
-**12 fixtures** sous `tomgo/testdata/parse/` valident byte-pour-byte
+**13 fixtures** sous `tomgo/testdata/parse/` valident byte-pour-byte
 l'AST Go contre la référence Java. tomgo est un outil Go autonome qui :
 
 - lit un fichier `.gom` (avec ou sans hooks),
@@ -123,7 +124,7 @@ Packages livrés cette itération :
   directement (sans `tom.engine.Tom`/`Tom.config`), `tomparseq.go`
   pour la résolution JDK et la normalisation des paths
   (`__INPUT__`/`__DIR__`).
-- `testdata/parse/<name>/scenario.t` — 12 fixtures actuellement.
+- `testdata/parse/<name>/scenario.t` — 13 fixtures actuellement.
 
 Packages encore à matérialiser :
 - `internal/tomengine/` (phases compilateur suivantes — checker,
@@ -328,8 +329,18 @@ Rapport : `phase4cd-parser.md`.
   '{' BALANCED '}'` ; valide que `len(patterns) == len(subjects)`.
 - Pour N sujets : `MakeAndConstraint(MC1, …, MCN)` ; pour N==1 le
   hook AU corrigé renvoie le bare MC (compat 4.F.1–4.F.4 préservée).
-- Fixture `match0f_multi` (12 fixtures total).
+- Fixture `match0f_multi`.
 - Rapport : `phase4f5-match-multi-subject.md`.
+
+### Phase 4.F.6 — `%match` avec plusieurs rules ✅
+- Aucun code parser à modifier : la boucle de `parseMatch` consommait
+  déjà N action-rules — il manquait juste la fixture pour le prouver
+  byte-pour-byte.
+- Fixture `match0g_rules` exerce `_ → {} x → {}` ; chaque
+  `ConstraintInstruction` porte son OriginTracking propre (ligne 4
+  pour le `_`, ligne 5 pour le `x`).
+- 13 fixtures total.
+- Rapport : `phase4f6-match-multi-rules.md`.
 
 ---
 
@@ -341,13 +352,13 @@ que le pipeline Go produit le même AST `tomast.*` que la référence Java
 sur les mêmes entrées. Comparaison via le print du term (déjà prouvée
 byte-portable en Phase 2 pour Gom).
 
-### 4.E + 4.F.0 + 4.F.1 + 4.F.2 + 4.F.3 + 4.F.4 + 4.F.5 (livrés) — Constructeurs `%typeterm`/`%op`/`%oplist`/`%oparray`/`%include`/`%match` (`_` + variable nommée + applications + multi-sujets) + water ANTLR-fidèle
+### 4.E + 4.F.0 + 4.F.1 + 4.F.2 + 4.F.3 + 4.F.4 + 4.F.5 + 4.F.6 (livrés) — Constructeurs `%typeterm`/`%op`/`%oplist`/`%oparray`/`%include`/`%match` (`_` + variable nommée + applications + multi-sujets + multi-rules) + water ANTLR-fidèle
 
-Voir §4 ci-dessus. **12 fixtures** validées contre Java :
+Voir §4 ci-dessus. **13 fixtures** validées contre Java :
 `skeleton`, `op_noargs`, `op_slots`, `typeterm_extends`,
 `oplist_oparray`, `include_local`, `water_multi`, `match0b`,
-`match0c_named`, `match0d_appl`, `match0e_appl_args`, `match0f_multi`.
-Pattern à réutiliser pour chaque nouveau constructeur :
+`match0c_named`, `match0d_appl`, `match0e_appl_args`, `match0f_multi`,
+`match0g_rules`. Pattern à réutiliser pour chaque nouveau constructeur :
 
 1. un `.t` minimal dans `testdata/parse/<nom>/`,
 2. 1 ligne dans la slice `fixtures` de `TestGoParserAgainstJava`
@@ -372,6 +383,9 @@ Cibles, par ordre d'effort croissant :
    en 4.F.5 → `parseActionRule` consomme N patterns ; combinés par
    `MakeAndConstraint` (hook AU corrigé en 4.A.1 → N==1 ⇒ bare MC,
    N≥2 ⇒ `AndConstraint(MC1, …, MCN)`).
+5. ~~**Plusieurs rules** dans un même `%match`~~ ✅ livré en 4.F.6 —
+   la boucle de `parseMatch` était déjà en place ; fixture
+   `match0g_rules` ajoutée pour prouver l'invariant byte-pour-byte.
 4. **Body non vide** dans l'action rule (instructions Java consommées
    en `TL`/`ITL`).
 5. **Multi-subjects** `%match(a, b) { p1, p2 -> { … } }`.

@@ -74,6 +74,7 @@ func TestGoParserAgainstJava(t *testing.T) {
 		"match0d_appl",     // Phase 4.F.3 — %match with nullary pattern application (Foo() → { })
 		"match0e_appl_args", // Phase 4.F.4 — %match with pattern application + sub-patterns (Foo(x, Bar()) → { })
 		"match0f_multi",     // Phase 4.F.5 — multi-subject %match with N patterns (x, y → { } over %match(a, b))
+		"match0g_rules",     // Phase 4.F.6 — multiple rules in one %match (_ → {} x → {})
 	}
 	for _, name := range fixtures {
 		t.Run(name, func(t *testing.T) {

@@ -128,3 +128,11 @@ func TestParseMatch0fMulti(t *testing.T) {
 		t.Errorf("AST mismatch on match0f_multi.t\n--- expected ---\n%s\n--- got ---\n%s\n", expected, got)
 	}
 }
+
+func TestParseMatch0gRules(t *testing.T) {
+	const expected = `Tom(concCode(TargetLanguageToCode(TL("public class Match0g {\n  public void f(Object t) {\n    ",TextPosition(1,1),TextPosition(3,5))),InstructionToCode(Match(concConstraintInstruction(ConstraintInstruction(MatchConstraint(Variable(concOption(),EmptyName(),Type(concTypeOption(),"unknown type",EmptyTargetLanguageType()),concConstraint()),BQVariable(concOption(OriginTracking(Name("t"),3,"__INPUT__"),ModuleName("default")),Name("t"),Type(concTypeOption(),"unknown type",EmptyTargetLanguageType())),Type(concTypeOption(),"unknown type",EmptyTargetLanguageType())),RawAction(If(TrueTL(),AbstractBlock(concInstruction()),Nop())),concOption(OriginTracking(Name("ConstraintAction"),4,"__INPUT__"))),ConstraintInstruction(MatchConstraint(Variable(concOption(),Name("x"),Type(concTypeOption(),"unknown type",EmptyTargetLanguageType()),concConstraint()),BQVariable(concOption(OriginTracking(Name("t"),3,"__INPUT__"),ModuleName("default")),Name("t"),Type(concTypeOption(),"unknown type",EmptyTargetLanguageType())),Type(concTypeOption(),"unknown type",EmptyTargetLanguageType())),RawAction(If(TrueTL(),AbstractBlock(concInstruction()),Nop())),concOption(OriginTracking(Name("ConstraintAction"),5,"__INPUT__")))),concOption(OriginTracking(Name("Match"),3,"__INPUT__"),ModuleName("default")))),TargetLanguageToCode(TL("\n  }\n\n}\n",TextPosition(6,6),TextPosition(9,1)))))`
+	got := parseFixture(t, "match0g_rules")
+	if got != expected {
+		t.Errorf("AST mismatch on match0g_rules.t\n--- expected ---\n%s\n--- got ---\n%s\n", expected, got)
+	}
+}
