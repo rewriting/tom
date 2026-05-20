@@ -15,10 +15,13 @@ avec l'amorce.
 
 **État actuel** : Phases 0 → 3 livrées ; Phases 4.A (auto-amorce
 tomast + 9 hooks engine), 4.B (survey parser Java), 4.C (harnais
-d'équivalence AST Go ⇄ Java) et 4.D + 4.E.1–4.E.5 (parser TOM Go
+d'équivalence AST Go ⇄ Java), 4.D + 4.E.1–4.E.5 (parser TOM Go
 hand-rolled couvrant `%typeterm`, `%typeterm extends`, `%op` avec ou
-sans slots, `%oplist`, `%oparray`, `%include`) livrées. tomgo est un
-outil Go autonome qui :
+sans slots, `%oplist`, `%oparray`, `%include`), 4.F.0 (tokeniseur
+water ANTLR-fidèle + simulation `buildHostblock`/`mergeString`) et
+4.F.1 (`%match` minimal — un sujet, pattern `_`, body vide) livrées.
+**8 fixtures** sous `tomgo/testdata/parse/` valident byte-pour-byte
+l'AST Go contre la référence Java. tomgo est un outil Go autonome qui :
 
 - lit un fichier `.gom` (avec ou sans hooks),
 - génère un package Go reposant sur un portage Go de **shared-objects**
@@ -100,12 +103,21 @@ tomgo/
 ```
 
 Packages livrés cette itération :
-- `internal/tomparser/` (Phase 4.D — parser TOM hand-rolled, MVP `%typeterm`),
-- `internal/tomparseq/` (Phase 4.C — harnais d'équivalence AST Go ⇄ Java,
-  mini-runner `java/TomParseDump.java` qui instancie TomParserPlugin directement).
+- `internal/tomparser/` — parser TOM hand-rolled (descente récursive
+  100 % Go, pas d'ANTLR). Couvre `%typeterm` (+`extends`), `%op` (+slots),
+  `%oplist`, `%oparray`, `%include`, `%match` minimal. `water.go`
+  contient le tokeniseur ANTLR-fidèle + `buildHostblocks` +
+  `mergeHostblocks`.
+- `internal/tomparseq/` — harnais d'équivalence AST Go ⇄ Java :
+  mini-runner `java/TomParseDump.java` qui instancie `TomParserPlugin`
+  directement (sans `tom.engine.Tom`/`Tom.config`), `tomparseq.go`
+  pour la résolution JDK et la normalisation des paths
+  (`__INPUT__`/`__DIR__`).
+- `testdata/parse/<name>/scenario.t` — 8 fixtures actuellement.
 
 Packages encore à matérialiser :
-- `internal/tomengine/` (Phases 4.F+ — checker, typer, desugarer, …),
+- `internal/tomengine/` (phases compilateur suivantes — checker,
+  typer, desugarer, …),
 - `internal/library/sl/` (stratégies type jjtraveler, plus tard).
 
 ---
@@ -214,17 +226,10 @@ Rapport : `phase4a-tom-hooks-survey.md`.
 ### Phase 4.D + 4.E.1–4.E.5 — Parser TOM Go hand-rolled ✅
 - `internal/tomparser/parser.go` : descente récursive 100% Go,
   pas d'ANTLR. Couvre `%typeterm` (avec/sans `extends`), `%op` (avec/sans
-  slots), `%oplist`, `%oparray`, `%include`. Body `{ … }` consommé via
-  compteur de braces, contenu non encodé (conforme Java : codomain,
-  slots, options et hooks vont dans la SymbolTable).
-- **6 fixtures** testées via `TestGoParserAgainstJava/<name>` :
-  skeleton, op_noargs, op_slots, typeterm_extends, oplist_oparray,
-  include_local. Toutes byte-identiques au parser Java.
-- Quirk reproduit : Java émet end-position d'un water selon le
-  *dernier hidden token* d'ANTLR — si c'est un `NL`,
-  end = `(firstLineDuDernierHostblock + 1, 1)` ; si c'est un WS, end
-  est calculé normalement. Water purement whitespace+`\n` → **aucun
-  HOSTBLOCK émis** (les rules `NL`/`WS` du lexer sont `-> channel(HIDDEN)`).
+  slots), `%oplist`, `%oparray`, `%include`, `%match` minimal (cf. 4.F.1).
+  Body `{ … }` consommé via compteur de braces, contenu non encodé
+  (conforme Java : codomain, slots, options et hooks vont dans la
+  SymbolTable).
 - `%include` : path résolu via `filepath.Abs(filepath.Join(dir(filename), path))`,
   fichier re-parsé récursivement, wrapping
   `TomInclude(concCode(InstructionToCode(AbstractBlock(concInstruction(
@@ -234,6 +239,37 @@ Rapport : `phase4a-tom-hooks-survey.md`.
   vers un fichier voisin de matcher byte-pour-byte sans absoluty-leak).
 
 Rapport : `phase4cd-parser.md`.
+
+### Phase 4.F.0 — Tokeniseur water ANTLR-fidèle ✅
+- `internal/tomparser/water.go` : tokenise un water en `NL`/`WS`/visible
+  à la `TomIslandLexer`, construit les `HOSTBLOCK` à la `CstBuilder.
+  buildHostblock` (avec attribution left-to-right des hidden tokens
+  via `usedToken`), puis fusionne avec padding à la
+  `CstConverter.simplifyCstBlockList` + `mergeString`.
+- Fixture `water_multi/` valide la convention sur un water à 3
+  visibles séparés par 1/2/1 `\n` (`start (3,2)`, content reporté
+  `\nb\n\nc\n\n\n\nd\n` avec 4 `\n` synthétiques de padding, end
+  `(8,1)`).
+- Water purement whitespace+`\n` → **aucun HOSTBLOCK émis** (rules
+  `NL`/`WS` du lexer sont `-> channel(HIDDEN)`).
+
+### Phase 4.F.1 — `%match` minimal ✅
+- `internal/tomparser/parser.go` étendu avec `parseMatch`,
+  `parseSubjectList`, `parseSubject`, `parseActionRule`,
+  `parsePattern`, `unknownType()`.
+- Couvre exactement `%match(t) { _ -> { } }` sur la fixture `match0b` :
+  - subject `t` → `BQVariable(concOption(OT, ModuleName("default")),
+    Name("t"), unknownType)`
+  - pattern `_` → `Variable(concOption(), EmptyName(), unknownType,
+    concConstraint())`
+  - body `{ }` → `RawAction(If(TrueTL(), AbstractBlock(concInstruction()),
+    Nop()))`
+  - rule opts → `concOption(OT(Name("ConstraintAction"), ruleLine, file))`
+  - Match opts → `concOption(OT(Name("Match"), matchLine, file),
+    ModuleName("default"))`
+- Extensions naturelles à venir : pattern variable nommée, pattern
+  application `Foo(args)`, action body non vide, multi-subjects,
+  contraintes `pattern << bqterm` (AND/OR), …
 
 ---
 
@@ -245,24 +281,35 @@ que le pipeline Go produit le même AST `tomast.*` que la référence Java
 sur les mêmes entrées. Comparaison via le print du term (déjà prouvée
 byte-portable en Phase 2 pour Gom).
 
-### 4.E (livré) — Constructeurs `%typeterm`/`%op`/`%oplist`/`%oparray`/`%include`
+### 4.E + 4.F.0 + 4.F.1 (livrés) — Constructeurs `%typeterm`/`%op`/`%oplist`/`%oparray`/`%include`/`%match` minimal + water ANTLR-fidèle
 
-Voir §4 Phase 4.D + 4.E.1–4.E.5 ci-dessus. 6 fixtures validées
-contre Java. Pattern à réutiliser pour chaque nouveau constructeur :
-un `.t` minimal dans `testdata/parse/<nom>/` + 1 ligne dans la slice
-`fixtures` de `TestGoParserAgainstJava` + (optionnel) un `TestParse<Nom>`
-direct dans `tomparser/parser_test.go` avec la chaîne attendue.
+Voir §4 ci-dessus. **8 fixtures** validées contre Java :
+`skeleton`, `op_noargs`, `op_slots`, `typeterm_extends`,
+`oplist_oparray`, `include_local`, `water_multi`, `match0b`. Pattern
+à réutiliser pour chaque nouveau constructeur :
 
-### 4.F (prochain pas) — Constructeurs TOM restants
+1. un `.t` minimal dans `testdata/parse/<nom>/`,
+2. 1 ligne dans la slice `fixtures` de `TestGoParserAgainstJava`
+   (`internal/tomparseq/dump_skeleton_test.go`),
+3. (optionnel) un `TestParse<Nom>` direct dans
+   `tomparser/parser_test.go` avec la chaîne attendue.
+
+### 4.F (prochaines extensions de `%match`)
 
 Cibles, par ordre d'effort croissant :
 
-1. **`%match(t) { … }`** — gros morceau (patterns, contraintes, actionRule).
-   C'est ce qui justifie l'existence de TOM.
-2. **`%strategy ... extends ...`** + `visit` blocks.
-3. **`%gom`** — gom directives inline.
-4. **Backquote terms** (`` `Op(args) ``).
-5. **Metaquote** `%[ … ]%`.
+1. **Pattern variable nommée `x`** → `Variable(opts, Name("x"),
+   unknownType, concConstraint())` au lieu de `EmptyName()`.
+2. **Pattern application `Foo()`** → `RecordAppl(...)` ou similaire.
+3. **Pattern application `Foo(x, y)`** avec sous-patterns.
+4. **Body non vide** dans l'action rule (instructions Java consommées
+   en `TL`/`ITL`).
+5. **Multi-subjects** `%match(a, b) { p1, p2 -> { … } }`.
+6. **Contraintes `pattern << bqterm`** (AND/OR).
+7. **`%strategy ... extends ...`** + `visit` blocks.
+8. **`%gom`** — gom directives inline.
+9. **Backquote terms** (`` `Op(args) ``).
+10. **Metaquote** `%[ … ]%`.
 
 ### 4.B — Survey du parser Java *(historique)*
 
@@ -426,15 +473,23 @@ go test ./internal/backend/... -v -run TestHook
 # Self-bootstrap (gomast et tomast doivent être byte-stables)
 go test ./internal/backend/... -v -run TestSelfBootstrap
 
-# Parser Go hand-rolled (Phase 4.D MVP)
+# Parser Go hand-rolled (Phases 4.D + 4.E + 4.F.0 + 4.F.1)
 go test ./internal/tomparser/...
 
-# Harnais d'équivalence Go ⇄ Java (Phase 4.C — Phase 4.D MVP)
-# Depuis le worktree principal :
+# Harnais d'équivalence Go ⇄ Java (Phase 4.C+)
+# Depuis le worktree principal (qui contient stable/dist/ après ./build.sh stable) :
 go test ./internal/tomparseq/...
-# Depuis un autre worktree (stable/dist/ n'est pas suivi par git) :
+# Depuis un autre worktree (stable/dist/ est gitignored) :
 TOMGO_STABLE_DIST_LIB=/path/to/main/stable/dist/lib \
     go test ./internal/tomparseq/...
+
+# Ajouter une fixture (nouveau constructeur) :
+#   1) tomgo/testdata/parse/<nom>/scenario.t  — minimal .t qui exerce le constructeur
+#   2) tomgo/internal/tomparseq/dump_skeleton_test.go  — ajouter "<nom>" à la slice `fixtures`
+#   3) (optionnel) tomgo/internal/tomparser/parser_test.go  — un TestParse<Nom> direct
+#   4) lancer Java pour récupérer l'AST de référence :
+#      java -cp $(find /path/to/stable/dist/lib -name '*.jar' | paste -sd: -):tomgo/internal/tomparseq/java \
+#           TomParseDump tomgo/testdata/parse/<nom>/scenario.t
 ```
 
 **Outillage externe attendu sur la machine** (sinon les tests
