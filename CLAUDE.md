@@ -45,8 +45,8 @@ l'AST Go contre la référence Java. tomgo est un outil Go autonome qui :
   (hash-consing, partage maximum des structures de données),
 - supporte le mode **batch** : N `.gom` qui s'importent mutuellement
   compilent en un seul package Go,
-- **utilise ses propres AST générés** (`internal/gomast/` pour le sous-
-  langage Gom, `internal/tomast/` pour le langage TOM) — auto-amorce.
+- **utilise ses propres AST générés** (`stable/library/gomast/` pour le sous-
+  langage Gom, `stable/library/tomast/` pour le langage TOM) — auto-amorce.
 
 **Itération en cours (Phase 4)** : porter le **compilateur TOM** phase
 par phase (parser → checker → typer → …), à partir de la référence Java
@@ -64,8 +64,8 @@ version Java sur les mêmes entrées — comparable via le print du term.
 | Chemin                          | Contenu                                                         |
 | ------------------------------- | --------------------------------------------------------------- |
 | `src/`                          | Sources Tom+Java du compilateur (nécessite un TOM existant)     |
-| `src/tom/gom/adt/`              | 5 `.gom` décrivant l'AST de Gom (Code, Gom, Objects, Rule, SymbolTable) |
-| `src/tom/engine/adt/`           | 15 `.gom` décrivant l'AST de TOM (TomTerm, TomInstruction, TomSignature, TomOption, TomName, TomType, TomConstraint, TomDeclaration, TomExpression, TomSlot, CST, Code, Il, Theory, TypeConstraints) |
+| `tomgo/src/gom/adt/`              | 5 `.gom` décrivant l'AST de Gom (Code, Gom, Objects, Rule, SymbolTable) |
+| `tomgo/src/engine/adt/`           | 15 `.gom` décrivant l'AST de TOM (TomTerm, TomInstruction, TomSignature, TomOption, TomName, TomType, TomConstraint, TomDeclaration, TomExpression, TomSlot, CST, Code, Il, Theory, TypeConstraints) |
 | `src/tom/engine/parser/`        | Sources Tom+Java du parser TOM + grammaire ANTLR4 (lecture seule, sert de spec pour 4.D) |
 | `stable/`                       | Compilateur Java **généré** (251 fichiers `.java`) — spec exécutable |
 | `stable/tom/engine/`            | Phases : starter → parser → checker → typer → desugarer → transformer → expander → compiler → optimizer → backend → prettyprinter |
@@ -91,43 +91,55 @@ Module Go : `tom/tomgo` (local, branche `tom-go`).
 tomgo/
   cmd/
     tomgo/                       # CLI : scan-hooks, gom, gom-batch
-  internal/
-    gom/                         # parser .gom (descente récursive) +
+  src/                           # sources haut-niveau (.gom, plus tard .t)
+    gom/adt/                     # 5 .gom AST Gom (Code, Gom, Objects,
+                                 #   Rule, SymbolTable) — copie depuis
+                                 #   /src/tom/gom/adt/
+    engine/adt/                  # 15 .gom AST TOM engine — copie depuis
+                                 #   /src/tom/engine/adt/
+  stable/                        # bootstrap Go (100 % Go), généré ou
+                                 # auto-amorcé depuis src/
+    gom/
+      parser/                    # parser .gom (descente récursive) +
                                  #   accesseurs gomast + hookscanner
-                                 #   inspect.go : QualifiedName, Sorts,
-                                 #     Hooks, NameParts, Imports…
-    gomast/                      # AST Gom GÉNÉRÉ depuis src/tom/gom/adt/
-                                 # (auto-amorce, byte-stable via
-                                 #  TestSelfBootstrap)
-    tomast/                      # AST TOM GÉNÉRÉ depuis
-                                 # src/tom/engine/adt/ (Phase 4.A,
-                                 # byte-stable via TestSelfBootstrap_Tomast)
-    backend/                     # générateur .gom → .go natif gomast
-                                 # + knownHookTable (10 entrées : 1 pour
-                                 #   Gom HookList:block + 9 pour TOM ADT)
-    equivtest/                   # harnais d'équivalence Go ⇄ Java
-                                 # (3 cibles : minimal/leaf/list)
-  library/
-    sharedobjects/               # runtime public — hash-cons + max-sharing
-                                 # (interface Term, Factory.Build,
-                                 #  mixers OneAtATime/MixSymbol/StringHash)
+      backend/                   # générateur .gom → .go natif gomast
+                                 #   + knownHookTable (10 entrées)
+      equiv/                     # harnais d'équivalence Gom Go ⇄ Java
+                                 #   (3 cibles : minimal/leaf/list)
+    tom/parser/
+      parser/                    # parser TOM hand-rolled (Phases 4.D+)
+                                 #   + water tokeniseur ANTLR-fidèle
+      equiv/                     # harnais d'équivalence parser TOM Go ⇄ Java
+                                 #   (TomParseDump.java mini-runner)
+    library/
+      sharedobjects/             # runtime public — hash-cons + max-sharing
+                                 #   (interface Term, Factory.Build, mixers)
+      gomast/                    # AST Gom GÉNÉRÉ depuis tomgo/src/gom/adt/
+                                 #   (auto-amorce, byte-stable via TestSelfBootstrap)
+      tomast/                    # AST TOM GÉNÉRÉ depuis tomgo/src/engine/adt/
+                                 #   (Phase 4.A, byte-stable via TestSelfBootstrap_Tomast)
   testdata/
     corpus/gom-nohooks/          # 10 .gom de test/gom/ sans hooks
-    equiv/{minimal,leaf,list}/   # scénarios paired Go/Java pour equivtest
+    equiv/{minimal,leaf,list}/   # scénarios paired Go/Java pour stable/gom/equiv
+    parse/                       # fixtures .t du parser TOM (Phases 4.D+)
   reports/                       # rapports par phase
   README.md
   go.mod                         # module tom/tomgo, Go 1.22
 ```
 
+> Idée générale : `src/` = développement (langages de haut niveau —
+> .gom, .t, .go) ; `stable/` = amorce bootstrap, 100 % Go, généré
+> depuis `src/` puis copié.
+
 Packages livrés cette itération :
-- `internal/tomparser/` — parser TOM hand-rolled (descente récursive
+- `stable/tom/parser/parser/` — parser TOM hand-rolled (descente récursive
   100 % Go, pas d'ANTLR). Couvre `%typeterm` (+`extends`), `%op` (+slots),
   `%oplist`, `%oparray`, `%include`, `%match` avec un ou plusieurs sujets,
   body vide ou non-vide (host-code → `TL` via pipeline water), patterns
   `_`, variable nommée, ou application `Foo(p1, …, pN)` (sous-patterns
   parsés récursivement). `water.go` contient le tokeniseur
   ANTLR-fidèle + `buildHostblocks` + `mergeHostblocks`.
-- `internal/tomparseq/` — harnais d'équivalence AST Go ⇄ Java :
+- `stable/tom/parser/equiv/` — harnais d'équivalence AST Go ⇄ Java :
   mini-runner `java/TomParseDump.java` qui instancie `TomParserPlugin`
   directement (sans `tom.engine.Tom`/`Tom.config`), `tomparseq.go`
   pour la résolution JDK et la normalisation des paths
@@ -155,41 +167,41 @@ Arborescence `tomgo/`, `go.mod`, CLI squelette.
 - Rapports : `phase1-inventory.md`, `phase1.md`.
 
 ### Phase 2 — `.gom → .go` avec shared-objects ✅
-- **2.a** `library/sharedobjects/` : interface `Term`, `Factory.Build`,
+- **2.a** `stable/library/sharedobjects/` : interface `Term`, `Factory.Build`,
   hash-cons thread-safe (`sync.RWMutex`), mixers `OneAtATime` /
   `MixSymbol` / `StringHash`.
-- **2.b** `internal/gom/` : lexer + parser descente récursive.
-- **2.c** `internal/backend/` : un fichier `.go` par module Gom dans le
+- **2.b** `stable/gom/parser/` : lexer + parser descente récursive.
+- **2.c** `stable/gom/backend/` : un fichier `.go` par module Gom dans le
   package cible. Mode batch (`gom-batch`) → un seul package Go partagé.
 - **Hooks** : table `knownHookTable` mappe `(scope, pointcut, kind)` →
   émission Go. Phase 2 livre l'entrée `sort HookList:block()` (Objects.gom)
   → méthode `ContainsTomCode() bool` sur l'interface + chaque alt.
-- **Équivalence Go ⇄ Java** (`internal/equivtest/`) : 3 cibles
+- **Équivalence Go ⇄ Java** (`stable/gom/equiv/`) : 3 cibles
   (minimal/leaf/list) produisent un stdout **byte-identique** au
   compilateur Gom Java de référence (`tom.gom.Gom` invoqué via
   `applications/prototype3D/lib/tom-compiler-full.jar`).
-- **ADT Gom** : les 5 `src/tom/gom/adt/*.gom` (63 sorts, 1 hook)
+- **ADT Gom** : les 5 `tomgo/src/gom/adt/*.gom` (63 sorts, 1 hook)
   compilent ensemble + 5 tests `ContainsTomCode`.
 
 Rapports : `phase2a-sharedobjects-survey.md`, `phase2.md`, `equiv.md`,
 `adt.md`.
 
 ### Phase 3 — Auto-amorce de l'AST Gom ✅
-- **`internal/gomast/`** est généré par tomgo depuis les 5 `.gom` de
-  `src/tom/gom/adt/`. ~6 273 lignes, 63 sorts.
+- **`stable/library/gomast/`** est généré par tomgo depuis les 5 `.gom` de
+  `tomgo/src/gom/adt/`. ~6 273 lignes, 63 sorts.
 - Le parser construit directement des `gomast.*` (plus de struct V1
   hand-written). Le backend traverse `gomast.GomModule` nativement via
   type assertions. `internal/gom/ast.go`, `bridge.go`, etc. **supprimés**.
-- **`TestSelfBootstrap`** : tomgo regénère `internal/gomast/`
+- **`TestSelfBootstrap`** : tomgo regénère `stable/library/gomast/`
   **byte-identique** au commit — preuve de stabilité de l'auto-amorce.
 
 Rapport : `phase3.md`.
 
 ### Phase 4.A — Auto-amorce de l'AST TOM + 9 hooks engine ✅
-- **`internal/tomast/`** généré par tomgo depuis les 15 `.gom` de
-  `src/tom/engine/adt/`. **107 sorts, ~17 400 lignes**.
+- **`stable/library/tomast/`** généré par tomgo depuis les 15 `.gom` de
+  `tomgo/src/engine/adt/`. **107 sorts, ~17 400 lignes**.
 - **9 hooks de l'ADT engine** implémentés directement en Go via le
-  nouveau mécanisme `emitMakePrologue` (`internal/backend/backend.go`) :
+  nouveau mécanisme `emitMakePrologue` (`stable/gom/backend/backend.go`) :
 
   | Catégorie | Pointcut | Fichier source | Effet Go |
   |---|---|---|---|
@@ -205,16 +217,16 @@ Rapport : `phase3.md`.
   | make_insert-splice | `concInstruction` | TomInstruction.gom | splice `AbstractBlock(l1)` dans la liste |
   | make_insert-splice | `concTomNumber` | TomName.gom | splice `NameNumber(PositionName(concTomNumber(p*)))` |
 
-- **3 fixes structurels du backend** nécessaires pour que `internal/tomast/`
+- **3 fixes structurels du backend** nécessaires pour que `stable/library/tomast/`
   compile :
   - keyword `else` ajouté à `isGoKeyword` (slot `else` dans `Conditional`),
   - collision `MakeSubterm` détectée pré-emit, suffixée en
     `MakeSubterm<Sort>` (`Subterm` est alt de BQTerm ET de Term),
   - slots `String:String` / `Hash:…` renommés en `<Name>_` pour ne pas
     masquer les méthodes `String()` / `Hash()` du struct.
-- **`TestSelfBootstrap_Tomast`** : tomgo regénère `internal/tomast/`
+- **`TestSelfBootstrap_Tomast`** : tomgo regénère `stable/library/tomast/`
   **byte-identique** au commit.
-- **14 hook smoke tests** dans `internal/backend/tomast_hooks_test.go`
+- **14 hook smoke tests** dans `stable/gom/backend/tomast_hooks_test.go`
   qui épinglent l'effet observable de chacun des 9 hooks.
 
 Rapport : `phase4a-tom-hooks-survey.md`.
@@ -230,11 +242,11 @@ Rapport : `phase4a-tom-hooks-survey.md`.
   écarté au profit du print direct).
 
 ### Phase 4.C — Harnais d'équivalence AST Go ⇄ Java ✅
-- `internal/tomparseq/java/TomParseDump.java` : mini-runner Java qui
+- `stable/tom/parser/equiv/java/TomParseDump.java` : mini-runner Java qui
   contourne `tom.engine.Tom` (et donc `Tom.config`/optimize2 et toutes
   les options inter-plugins) via une `OptionManager` minimaliste
   (HashMap).
-- `internal/tomparseq/tomparseq.go` : détection JDK, compilation
+- `stable/tom/parser/equiv/tomparseq.go` : détection JDK, compilation
   paresseuse du runner, exécution, normalisation des paths absolus en
   `__INPUT__`, diff byte-pour-byte.
 - Variable `TOMGO_STABLE_DIST_LIB` pour pointer vers le build du
@@ -243,7 +255,7 @@ Rapport : `phase4a-tom-hooks-survey.md`.
   `TestSkeletonGoParserAgainstJava` (parser Go ↔ Java).
 
 ### Phase 4.D + 4.E.1–4.E.5 — Parser TOM Go hand-rolled ✅
-- `internal/tomparser/parser.go` : descente récursive 100% Go,
+- `stable/tom/parser/parser/parser.go` : descente récursive 100% Go,
   pas d'ANTLR. Couvre `%typeterm` (avec/sans `extends`), `%op` (avec/sans
   slots), `%oplist`, `%oparray`, `%include`, `%match` minimal (cf. 4.F.1).
   Body `{ … }` consommé via compteur de braces, contenu non encodé
@@ -260,7 +272,7 @@ Rapport : `phase4a-tom-hooks-survey.md`.
 Rapport : `phase4cd-parser.md`.
 
 ### Phase 4.F.0 — Tokeniseur water ANTLR-fidèle ✅
-- `internal/tomparser/water.go` : tokenise un water en `NL`/`WS`/visible
+- `stable/tom/parser/parser/water.go` : tokenise un water en `NL`/`WS`/visible
   à la `TomIslandLexer`, construit les `HOSTBLOCK` à la `CstBuilder.
   buildHostblock` (avec attribution left-to-right des hidden tokens
   via `usedToken`), puis fusionne avec padding à la
@@ -273,7 +285,7 @@ Rapport : `phase4cd-parser.md`.
   `NL`/`WS` du lexer sont `-> channel(HIDDEN)`).
 
 ### Phase 4.F.1 — `%match` minimal ✅
-- `internal/tomparser/parser.go` étendu avec `parseMatch`,
+- `stable/tom/parser/parser/parser.go` étendu avec `parseMatch`,
   `parseSubjectList`, `parseSubject`, `parseActionRule`,
   `parsePattern`, `unknownType()`.
 - Couvre exactement `%match(t) { _ -> { } }` sur la fixture `match0b` :
@@ -318,7 +330,7 @@ Rapport : `phase4cd-parser.md`.
 - Rapport : `phase4f4-match-appl-args.md`.
 
 ### Phase 4.A.1 — correction du hook AU (absorption de l'unité) ✅
-- `emitAUPrologue` (`internal/backend/backend.go`) émet maintenant un
+- `emitAUPrologue` (`stable/gom/backend/backend.go`) émet maintenant un
   filtre qui supprime les éléments égaux à l'unité après aplatissement,
   puis short-circuit sur 0 args (→ unit) ou 1 arg (→ bare element).
 - Mirroir du comportement Java cons-time (`HookTypeExpander.java:569` :
@@ -458,7 +470,7 @@ Pattern à réutiliser pour chaque nouveau constructeur :
 
 1. un `.t` minimal dans `testdata/parse/<nom>/`,
 2. 1 ligne dans la slice `fixtures` de `TestGoParserAgainstJava`
-   (`internal/tomparseq/dump_skeleton_test.go`),
+   (`stable/tom/parser/equiv/dump_skeleton_test.go`),
 3. (optionnel) un `TestParse<Nom>` direct dans
    `tomparser/parser_test.go` avec la chaîne attendue.
 
@@ -534,7 +546,7 @@ exemple d'invocation byte-comparable.
 
 ### 4.C — Harnais de comparaison AST
 
-Extension d'`internal/equivtest/` (ou nouveau `internal/parsereq/`) :
+Extension d'`stable/gom/equiv/` (ou nouveau `internal/parsereq/`) :
 
 ```
 .t source ─┬─ parser Java de référence  → print AST (TomTerm + cie)
@@ -549,7 +561,7 @@ Skip propre si JDK absent. Pipe Java attendu :
 ### 4.D — Parser TOM en Go — hand-rolled 100 % Go natif
 
 **Décision verrouillée** : pas d'ANTLR. Lexer + descente récursive
-hand-rolled dans le style de `internal/gom/`. Bénéfices : 100 % Go,
+hand-rolled dans le style de `stable/gom/parser/`. Bénéfices : 100 % Go,
 zéro dépendance externe, contrôle total de l'AST produit.
 
 Approche :
@@ -631,66 +643,66 @@ go run ./cmd/tomgo gom -o /tmp/out testdata/corpus/gom-nohooks/Minimal.gom
 (cd /tmp/out && go build ./... && go test ./...)
 
 # Compiler plusieurs .gom cross-importants en UN SEUL package Go (batch)
-go run ./cmd/tomgo gom-batch --pkg adt -o /tmp/adt ../src/tom/gom/adt/*.gom
+go run ./cmd/tomgo gom-batch --pkg adt -o /tmp/adt src/gom/adt/*.gom
 (cd /tmp/adt && go build ./...)
 
-# Régénérer internal/gomast/ (AST Gom auto-amorcé)
-find internal/gomast -name '*.go' -not -name 'doc.go' -delete
-go run ./cmd/tomgo gom-batch --pkg gomast -o internal/gomast \
-    ../src/tom/gom/adt/Code.gom \
-    ../src/tom/gom/adt/Gom.gom \
-    ../src/tom/gom/adt/Objects.gom \
-    ../src/tom/gom/adt/Rule.gom \
-    ../src/tom/gom/adt/SymbolTable.gom
-rm internal/gomast/go.mod
-go test ./...
+# Régénérer stable/library/gomast/ (AST Gom auto-amorcé depuis tomgo/src/)
+find stable/library/gomast -name '*.go' -not -name 'doc.go' -delete
+go run ./cmd/tomgo gom-batch --pkg gomast -o stable/library/gomast \
+    src/gom/adt/Code.gom \
+    src/gom/adt/Gom.gom \
+    src/gom/adt/Objects.gom \
+    src/gom/adt/Rule.gom \
+    src/gom/adt/SymbolTable.gom
+rm -f stable/library/gomast/go.mod
+go test ./cmd/... ./stable/...
 
-# Régénérer internal/tomast/ (AST TOM auto-amorcé, Phase 4.A)
-find internal/tomast -name '*.go' -not -name 'doc.go' -delete
-go run ./cmd/tomgo gom-batch --pkg tomast -o internal/tomast \
-    ../src/tom/engine/adt/CST.gom \
-    ../src/tom/engine/adt/Code.gom \
-    ../src/tom/engine/adt/Il.gom \
-    ../src/tom/engine/adt/Theory.gom \
-    ../src/tom/engine/adt/TomConstraint.gom \
-    ../src/tom/engine/adt/TomDeclaration.gom \
-    ../src/tom/engine/adt/TomExpression.gom \
-    ../src/tom/engine/adt/TomInstruction.gom \
-    ../src/tom/engine/adt/TomName.gom \
-    ../src/tom/engine/adt/TomOption.gom \
-    ../src/tom/engine/adt/TomSignature.gom \
-    ../src/tom/engine/adt/TomSlot.gom \
-    ../src/tom/engine/adt/TomTerm.gom \
-    ../src/tom/engine/adt/TomType.gom \
-    ../src/tom/engine/adt/TypeConstraints.gom
-rm internal/tomast/go.mod
-go test ./...
+# Régénérer stable/library/tomast/ (AST TOM auto-amorcé depuis tomgo/src/, Phase 4.A)
+find stable/library/tomast -name '*.go' -not -name 'doc.go' -delete
+go run ./cmd/tomgo gom-batch --pkg tomast -o stable/library/tomast \
+    src/engine/adt/CST.gom \
+    src/engine/adt/Code.gom \
+    src/engine/adt/Il.gom \
+    src/engine/adt/Theory.gom \
+    src/engine/adt/TomConstraint.gom \
+    src/engine/adt/TomDeclaration.gom \
+    src/engine/adt/TomExpression.gom \
+    src/engine/adt/TomInstruction.gom \
+    src/engine/adt/TomName.gom \
+    src/engine/adt/TomOption.gom \
+    src/engine/adt/TomSignature.gom \
+    src/engine/adt/TomSlot.gom \
+    src/engine/adt/TomTerm.gom \
+    src/engine/adt/TomType.gom \
+    src/engine/adt/TypeConstraints.gom
+rm -f stable/library/tomast/go.mod
+go test ./cmd/... ./stable/...
 
 # Vérifier l'équivalence Go ⇄ Java (3 cibles ; nécessite JDK + jars)
-go test ./internal/equivtest/... -v -run TestEquivalence
+go test ./stable/gom/equiv/... -v -run TestEquivalence
 
 # Vérifier que les 9 hooks de l'ADT engine produisent les bons termes
-go test ./internal/backend/... -v -run TestHook
+go test ./stable/gom/backend/... -v -run TestHook
 
 # Self-bootstrap (gomast et tomast doivent être byte-stables)
-go test ./internal/backend/... -v -run TestSelfBootstrap
+go test ./stable/gom/backend/... -v -run TestSelfBootstrap
 
-# Parser Go hand-rolled (Phases 4.D + 4.E + 4.F.0 + 4.F.1)
-go test ./internal/tomparser/...
+# Parser Go hand-rolled (Phases 4.D + 4.E + 4.F.0…4.F.13)
+go test ./stable/tom/parser/parser/...
 
 # Harnais d'équivalence Go ⇄ Java (Phase 4.C+)
 # Depuis le worktree principal (qui contient stable/dist/ après ./build.sh stable) :
-go test ./internal/tomparseq/...
+go test ./stable/tom/parser/equiv/...
 # Depuis un autre worktree (stable/dist/ est gitignored) :
 TOMGO_STABLE_DIST_LIB=/path/to/main/stable/dist/lib \
-    go test ./internal/tomparseq/...
+    go test ./stable/tom/parser/equiv/...
 
 # Ajouter une fixture (nouveau constructeur) :
 #   1) tomgo/testdata/parse/<nom>/scenario.t  — minimal .t qui exerce le constructeur
-#   2) tomgo/internal/tomparseq/dump_skeleton_test.go  — ajouter "<nom>" à la slice `fixtures`
-#   3) (optionnel) tomgo/internal/tomparser/parser_test.go  — un TestParse<Nom> direct
+#   2) tomgo/stable/tom/parser/equiv/dump_skeleton_test.go  — ajouter "<nom>" à la slice `fixtures`
+#   3) (optionnel) tomgo/stable/tom/parser/parser/parser_test.go  — un TestParse<Nom> direct
 #   4) lancer Java pour récupérer l'AST de référence :
-#      java -cp $(find /path/to/stable/dist/lib -name '*.jar' | paste -sd: -):tomgo/internal/tomparseq/java \
+#      java -cp $(find /path/to/stable/dist/lib -name '*.jar' | paste -sd: -):tomgo/stable/tom/parser/equiv/java \
 #           TomParseDump tomgo/testdata/parse/<nom>/scenario.t
 ```
 

@@ -1,0 +1,69 @@
+module TomTerm
+imports TomSignature TomName int
+abstract syntax
+
+TomTerm =
+  /**
+   * <code>TermAppl</code> application of a symbol to a list of subterms
+   *
+   * @param Options a list of options
+   * @param NameList a list of head symbol names (more than one in case of a disjunction)
+   * @param Args a list of subterms
+   * @param Constraints a list of constraints
+   */
+    | TermAppl(Options:OptionList,NameList:TomNameList,Args:TomList,Constraints:ConstraintList)
+  /**
+   * <code>RecordAppl</code> application of a symbol to a list of pairs (slot,subterm)
+   *
+   * @param Options a list of options
+   * @param NameList a list of head symbol names
+   * @param Slots a list of pairs (slot,subterm)
+   * @param Constraints a list of constraints
+   */
+    | RecordAppl(Options:OptionList,NameList:TomNameList,Slots:SlotList,Constraints:ConstraintList)
+  /** 
+   * <code>Variable</code> a variable
+   *
+   * @param Options a list of options
+   * @param AstName the name of the variable
+   * @param AstType the type of the variable
+   * @param Constraints a list of constraints
+   */
+    | Variable(Options:OptionList,AstName:TomName,AstType:TomType,Constraints:ConstraintList)
+  /** 
+   * <code>VariableStar</code> a list-variable
+   *
+   * @param Options a list of options
+   * @param AstName the name of the variable
+   * @param AstType the type of the variable
+   * @param Constraints a list of constraints
+   */
+    | VariableStar(Options:OptionList,AstName:TomName,AstType:TomType,Constraints:ConstraintList)
+  /**
+   * <code>...ToTomTerm</code> wrappers to convert a type into TomTerm
+   */
+    | TomSymbolToTomTerm(AstSymbol:TomSymbol)
+    //| OptionsToTomTerm(Options:OptionList)
+    //| DeclarationToTomTerm(AstDeclaration:Declaration)
+    //| TargetLanguageToTomTerm(Tl:TargetLanguage)
+    //| InstructionToTomTerm(AstInstruction:Instruction)
+
+    | AntiTerm(TomTerm:TomTerm)
+
+    | Automata(Options:OptionList,Constraint:Constraint,NumberList:TomNumberList,Inst:Instruction)
+
+  /**
+   * <code>TestVar</code> instead of generating an assignment, this generates an equality test
+   *
+   * @param Variable the current variable
+   */
+    | TestVar(Variable:TomTerm)
+
+  /** 
+   * add builtin constucts for patterns 
+   * */
+    | TruePattern()
+    | FalsePattern()
+    | IntegerPattern(value:int)
+
+TomList = concTomTerm(TomTerm*)

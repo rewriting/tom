@@ -1,0 +1,33 @@
+module Rule
+imports String int
+abstract syntax
+
+Term = Appl(symbol:String,args:TermList)
+     | Var(name:String)
+     | VarStar(name:String)
+     | UnnamedVar()
+     | UnnamedVarStar()
+     | At(name:String,term:Term)
+     | Anti(term:Term)
+     | BuiltinInt(i:int)
+     | BuiltinString(s:String)
+     | LabTerm(l:String,t:Term)
+     | RefTerm(l:String)
+     | PathTerm(int*)
+
+TermList = TermList(Term*)
+
+Rule = Rule(lhs:Term,rhs:Term)
+     | ConditionalRule(lhs:Term,rhs:Term,cond:Condition)
+
+Condition = CondEquals(t1:Term,t2:Term)
+          | CondNotEquals(t1:Term,t2:Term)
+          | CondLessEquals(t1:Term,t2:Term)
+          | CondLessThan(t1:Term,t2:Term)
+          | CondGreaterEquals(t1:Term,t2:Term)
+          | CondGreaterThan(t1:Term,t2:Term)
+          | CondAnd(Condition*)
+          | CondOr(Condition*)
+          | CondMatch(t1:Term,t2:Term)
+
+RuleList = RuleList(Rule*)

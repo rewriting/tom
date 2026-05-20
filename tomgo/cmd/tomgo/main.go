@@ -11,9 +11,9 @@ import (
 	"fmt"
 	"os"
 
-	"tom/tomgo/internal/backend"
-	"tom/tomgo/internal/gom"
-	"tom/tomgo/internal/gomast"
+	"tom/tomgo/stable/gom/backend"
+	"tom/tomgo/stable/gom/parser"
+	"tom/tomgo/stable/library/gomast"
 )
 
 const usage = `tomgo — Go port of the TOM compiler (work in progress)

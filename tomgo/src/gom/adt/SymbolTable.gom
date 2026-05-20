@@ -1,0 +1,30 @@
+module SymbolTable
+imports String int boolean
+abstract syntax
+
+SortDescription = SortDescription(Constructors:StringList, ModuleSymbol:String, FreshInfo:FreshSortInfo)
+
+FreshSortInfo = ExpressionTypeInfo(AccessibleAtoms:StringList)
+              | PatternTypeInfo(BoundAtoms:StringList, AccessibleAtoms:StringList)
+              | AtomTypeInfo()
+              | NoFreshSort()
+
+ConstructorDescription = ConstructorDescription(SortSymbol:String, Fields:FieldDescriptionList,Generated:GenerationInfo)
+                       | VariadicConstructorDescription(SortSymbol:String, Domain:String, IsRefreshPoint:boolean)
+
+GenerationInfo = No()
+               | GenCons(BaseName:String)
+               | GenNil(BaseName:String)
+
+FieldDescriptionList = concFieldDescription(FieldDescription*)
+
+FieldDescription = FieldDescription(FieldName:String, Sort:String, StatusValue:Status)
+
+Status = SRefreshPoint()
+       | SInner()
+       | SOuter()
+       | SNeutral()
+       | SPattern()
+       | SNone()
+
+StringList = StringList(String*)

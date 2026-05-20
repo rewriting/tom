@@ -1,0 +1,81 @@
+module Gom
+imports String Code Rule int boolean
+abstract syntax
+
+Option = Origin(Line:int)
+       | OptionList(Option*)
+       | HasTomCode(Value:boolean)
+       | Details(Comments:String)
+
+/* Output from the parser */
+GomModule = GomModule(ModuleName:GomModuleName, SectionList:SectionList)
+GomModuleList = ConcGomModule(GomModule*)
+Section = Imports(ImportList:ImportList)
+        | Public(ProductionList:ProductionList)
+SectionList = ConcSection(Section*)
+ImportList = ConcImportedModule(GomModuleName*)
+Production = Hook(NameType:IdKind, Name:String, HookType:HookKind,
+                  Args:ArgList, HookContent:HookContent, Option:Option)
+           | SortType(Type:GomType,Binds:AtomList,AlternativeList:AlternativeList)
+           | AtomDecl(Name:String)
+ProductionList = ConcProduction(Production*)
+AlternativeList = ConcAlternative(Alternative*)
+Alternative = Alternative(Name:String, DomainList:FieldList,
+                        Codomain:GomType, Option:Option)
+HookKind = HookKind(kind:String)
+IdKind = KindModule()
+       | KindSort()
+       | KindOperator()
+       | KindFutureOperator(ConsOrNil:Future)
+Arg = Arg(Name:String)
+ArgList = ConcArg(Arg*)
+ScopeSpecifier = None()
+               | Inner()
+               | Outer()
+               | Neutral()
+               | Refresh()
+Field = StarredField(FieldType:GomType,Specifier:ScopeSpecifier)
+      | NamedField(Name:String,FieldType:GomType,Specifier:ScopeSpecifier)
+FieldList = ConcField(Field*)
+GomModuleName = GomModuleName(Name:String)
+TypeSpec = PatternType() | ExpressionType() | AtomType()
+GomType = GomType(Specialization:TypeSpec,Name:String)
+GomTypeList = ConcGomType(GomType*)
+AtomList = ConcAtom(String*)
+
+Module = Module(MDecl:ModuleDecl,Sorts:SortList)
+ModuleList = ConcModule(Module*)
+ModuleDecl = ModuleDecl(ModuleName:GomModuleName,Pkg:String)
+ModuleDeclList = ConcModuleDecl(ModuleDecl*)
+SortDecl = SortDecl(Name:String,ModuleDecl:ModuleDecl)
+         | BuiltinSortDecl(Name:String)
+SortDeclList = ConcSortDecl(SortDecl*)
+OperatorDecl = OperatorDecl(Name:String,Sort:SortDecl,
+                            Prod:TypedProduction,Option:Option)
+OperatorDeclList = ConcOperator(OperatorDecl*)
+TypedProduction = Slots(Slots:SlotList)
+                | Variadic(Sort:SortDecl)
+Slot = Slot(Name:String,Sort:SortDecl)
+SlotList = ConcSlot(Slot*)
+Sort = Sort(Decl:SortDecl,OperatorDecls:OperatorDeclList)
+SortList = ConcSort(Sort*)
+Decl = CutModule(MDecl:ModuleDecl)
+     | CutSort(Sort:SortDecl)
+     | CutOperator(ODecl:OperatorDecl)
+     | CutFutureOperator(ODecl:OperatorDecl,ConsOrNil:Future)
+Future = FutureNil()
+       | FutureCons()
+HookDecl = MakeHookDecl(Pointcut:Decl,SlotArgs:SlotList,Code:Code,HookType:HookKind,HasTomCode:boolean)
+         | BlockHookDecl(Pointcut:Decl,Code:Code,HasTomCode:boolean)
+         | InterfaceHookDecl(Pointcut:Decl,Code:Code)
+         | ImportHookDecl(Pointcut:Decl,Code:Code)
+         | MappingHookDecl(Pointcut:Decl,Code:Code)
+HookDeclList = ConcHookDecl(HookDecl*)
+
+HookContent = HookCode(StringCode:String)
+            | HookRules(Rules:RuleList)
+
+/* Helper constructors */
+Pair = ModHookPair(Modules:ModuleList,HookDecls:HookDeclList)
+
+
