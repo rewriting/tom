@@ -16,7 +16,8 @@
 //   match      : '%match' '(' subject (',' subject)* ')' '{' actionRule* '}'
 //   subject    : ID                                    (BQVariable only for now)
 //   actionRule : pattern '->' '{' BALANCED '}'
-//   pattern    : '_' | ID | ID '(' ')'                  (Variable or nullary TermAppl)
+//   pattern    : '_' | ID | ID '(' (pattern (',' pattern)*)? ')'
+//                                                       (Variable or TermAppl)
 //   slotList   : slot (',' slot)*
 //   slot       : ID ':' ID
 //   includePath : (ID | '.' | '/' | '\\')+
@@ -549,13 +550,15 @@ func (p *parser) parseActionRule(subjects []tomast.BQTerm) (tomast.ConstraintIns
 }
 
 // parsePattern is the (currently tiny) pattern parser. Three shapes supported:
-//   - `_`     → `Variable(concOption(), EmptyName(),               unknownType,         concConstraint())`
-//   - `x`     → `Variable(concOption(), Name("x"),                 unknownType,         concConstraint())`
-//   - `Foo()` → `TermAppl(concOption(), concTomName(Name("Foo")),  concTomTerm(),       concConstraint())`
-// The two Variable shapes follow AstBuilder.java:752-766; the nullary
-// application follows the Cst_Appl branch (AstBuilder.java:793-804), which is
-// also the path CstBuilder takes for `ID '(' ')'` with an empty explicitArgs
-// list (CstBuilder.java:452-453).
+//   - `_`             → `Variable(concOption(), EmptyName(),               unknownType,          concConstraint())`
+//   - `x`             → `Variable(concOption(), Name("x"),                 unknownType,          concConstraint())`
+//   - `Foo(p1, ..., pN)` → `TermAppl(concOption(), concTomName(Name("Foo")), concTomTerm(p1...), concConstraint())`
+//
+// The two Variable shapes follow AstBuilder.java:752-766; applications
+// (nullary or with sub-patterns) follow the Cst_Appl branch
+// (CstBuilder.java:452-453 + AstBuilder.java:793-804). Sub-patterns are
+// parsed recursively, so `Foo(x, Bar())` nests a Variable and a nullary
+// TermAppl in the arg list.
 func (p *parser) parsePattern() (tomast.TomTerm, error) {
 	if p.atEnd() {
 		return nil, fmt.Errorf("expected pattern at %s", p.cur)
@@ -577,27 +580,29 @@ func (p *parser) parsePattern() (tomast.TomTerm, error) {
 	if err != nil {
 		return nil, err
 	}
-	// Check for `(` immediately (allowing blanks/newlines between the ident
-	// and the open paren, mirroring ANTLR's whitespace tolerance).
+	// Check for `(` (allowing blanks/newlines between the ident and the open
+	// paren, mirroring ANTLR's whitespace tolerance). On a mismatch we rewind
+	// so the named-variable path observes the original cursor.
 	save := p.idx
 	saveCur := p.cur
 	p.skipBlankInline()
 	if !p.atEnd() && p.peek(0) == '(' {
 		p.advance() // '('
-		p.skipBlankInline()
+		args, err := p.parsePatternArgList()
+		if err != nil {
+			return nil, err
+		}
 		if p.atEnd() || p.peek(0) != ')' {
-			return nil, fmt.Errorf("only empty arg list supported in pattern application yet at %s", p.cur)
+			return nil, fmt.Errorf("expected ')' to close pattern application at %s", p.cur)
 		}
 		p.advance() // ')'
 		return tomast.MakeTermAppl(
 			tomast.MakeConcOption(),
 			tomast.MakeConcTomName(tomast.MakeName(name)),
-			tomast.MakeConcTomTerm(),
+			tomast.MakeConcTomTerm(args...),
 			tomast.MakeConcConstraint(),
 		), nil
 	}
-	// Not an application: rewind the whitespace skip so the caller sees the
-	// original cursor (the named-variable path doesn't need that whitespace).
 	p.idx = save
 	p.cur = saveCur
 	return tomast.MakeVariable(
@@ -606,6 +611,36 @@ func (p *parser) parsePattern() (tomast.TomTerm, error) {
 		unknownType(),
 		tomast.MakeConcConstraint(),
 	), nil
+}
+
+// parsePatternArgList consumes `(pattern (',' pattern)*)?` after the
+// opening `(` but before the closing `)`. Recursively delegates to
+// parsePattern for each sub-pattern.
+func (p *parser) parsePatternArgList() ([]tomast.TomTerm, error) {
+	var args []tomast.TomTerm
+	p.skipBlankInline()
+	if !p.atEnd() && p.peek(0) == ')' {
+		return args, nil
+	}
+	for {
+		sub, err := p.parsePattern()
+		if err != nil {
+			return nil, err
+		}
+		args = append(args, sub)
+		p.skipBlankInline()
+		if p.atEnd() {
+			return nil, fmt.Errorf("unterminated pattern arg list at %s", p.cur)
+		}
+		if p.peek(0) == ')' {
+			return args, nil
+		}
+		if p.peek(0) != ',' {
+			return nil, fmt.Errorf("expected ',' or ')' in pattern arg list at %s", p.cur)
+		}
+		p.advance() // ','
+		p.skipBlankInline()
+	}
 }
 
 // unknownType returns the canonical placeholder `Type(concTypeOption(),

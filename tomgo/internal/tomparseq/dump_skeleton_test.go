@@ -72,6 +72,7 @@ func TestGoParserAgainstJava(t *testing.T) {
 		"match0b",          // Phase 4.F.1 — %match minimal (_ → { } with one subject)
 		"match0c_named",    // Phase 4.F.2 — %match with named pattern variable (x → { })
 		"match0d_appl",     // Phase 4.F.3 — %match with nullary pattern application (Foo() → { })
+		"match0e_appl_args", // Phase 4.F.4 — %match with pattern application + sub-patterns (Foo(x, Bar()) → { })
 	}
 	for _, name := range fixtures {
 		t.Run(name, func(t *testing.T) {

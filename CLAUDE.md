@@ -20,9 +20,11 @@ hand-rolled couvrant `%typeterm`, `%typeterm extends`, `%op` avec ou
 sans slots, `%oplist`, `%oparray`, `%include`), 4.F.0 (tokeniseur
 water ANTLR-fidèle + simulation `buildHostblock`/`mergeString`),
 4.F.1 (`%match` minimal — un sujet, pattern `_`, body vide),
-4.F.2 (`%match` avec pattern variable nommée — `x -> { }`) et
-4.F.3 (`%match` avec application nullaire — `Foo() -> { }`) livrées.
-**10 fixtures** sous `tomgo/testdata/parse/` valident byte-pour-byte
+4.F.2 (`%match` avec pattern variable nommée — `x -> { }`),
+4.F.3 (`%match` avec application nullaire — `Foo() -> { }`) et
+4.F.4 (`%match` avec application + sous-patterns —
+`Foo(x, Bar()) -> { }`) livrées.
+**11 fixtures** sous `tomgo/testdata/parse/` valident byte-pour-byte
 l'AST Go contre la référence Java. tomgo est un outil Go autonome qui :
 
 - lit un fichier `.gom` (avec ou sans hooks),
@@ -108,15 +110,15 @@ Packages livrés cette itération :
 - `internal/tomparser/` — parser TOM hand-rolled (descente récursive
   100 % Go, pas d'ANTLR). Couvre `%typeterm` (+`extends`), `%op` (+slots),
   `%oplist`, `%oparray`, `%include`, `%match` minimal avec pattern
-  `_`, variable nommée ou application nullaire `Foo()`. `water.go`
-  contient le tokeniseur ANTLR-fidèle + `buildHostblocks` +
-  `mergeHostblocks`.
+  `_`, variable nommée, ou application `Foo(p1, …, pN)` (sous-patterns
+  parsés récursivement). `water.go` contient le tokeniseur
+  ANTLR-fidèle + `buildHostblocks` + `mergeHostblocks`.
 - `internal/tomparseq/` — harnais d'équivalence AST Go ⇄ Java :
   mini-runner `java/TomParseDump.java` qui instancie `TomParserPlugin`
   directement (sans `tom.engine.Tom`/`Tom.config`), `tomparseq.go`
   pour la résolution JDK et la normalisation des paths
   (`__INPUT__`/`__DIR__`).
-- `testdata/parse/<name>/scenario.t` — 10 fixtures actuellement.
+- `testdata/parse/<name>/scenario.t` — 11 fixtures actuellement.
 
 Packages encore à matérialiser :
 - `internal/tomengine/` (phases compilateur suivantes — checker,
@@ -286,10 +288,20 @@ Rapport : `phase4cd-parser.md`.
 - Suit le chemin `Cst_Appl` du parser Java (`CstBuilder.java:452-453`
   + `AstBuilder.java:793-804`) avec `extractTheory` vide pour les
   symboles sans marqueur `?`/`??`.
-- Une application avec arguments non vides est explicitement rejetée
-  (à lever en 4.F.4).
-- Fixture `match0d_appl` (10 fixtures total).
+- Fixture `match0d_appl`.
 - Rapport : `phase4f3-match-appl-nullary.md`.
+
+### Phase 4.F.4 — `%match` avec application + sous-patterns ✅
+- Nouvelle fonction `parsePatternArgList` qui consomme une liste
+  `pattern (',' pattern)*` entre `(` et `)`, par récursion sur
+  `parsePattern`.
+- `Foo(x, Bar())` →
+  `TermAppl(concOption(), concTomName(Name("Foo")),
+  concTomTerm(Variable(...,Name("x"),...), TermAppl(...,Name("Bar"),...)),
+  concConstraint())`.
+- Couvre gratuitement n'importe quelle imbrication (`Foo(_, Bar(x, _))`).
+- Fixture `match0e_appl_args` (11 fixtures total).
+- Rapport : `phase4f4-match-appl-args.md`.
 
 ---
 
@@ -301,12 +313,12 @@ que le pipeline Go produit le même AST `tomast.*` que la référence Java
 sur les mêmes entrées. Comparaison via le print du term (déjà prouvée
 byte-portable en Phase 2 pour Gom).
 
-### 4.E + 4.F.0 + 4.F.1 + 4.F.2 + 4.F.3 (livrés) — Constructeurs `%typeterm`/`%op`/`%oplist`/`%oparray`/`%include`/`%match` (`_` + variable nommée + appl nullaire) + water ANTLR-fidèle
+### 4.E + 4.F.0 + 4.F.1 + 4.F.2 + 4.F.3 + 4.F.4 (livrés) — Constructeurs `%typeterm`/`%op`/`%oplist`/`%oparray`/`%include`/`%match` (`_` + variable nommée + applications) + water ANTLR-fidèle
 
-Voir §4 ci-dessus. **10 fixtures** validées contre Java :
+Voir §4 ci-dessus. **11 fixtures** validées contre Java :
 `skeleton`, `op_noargs`, `op_slots`, `typeterm_extends`,
 `oplist_oparray`, `include_local`, `water_multi`, `match0b`,
-`match0c_named`, `match0d_appl`. Pattern à réutiliser pour chaque nouveau constructeur :
+`match0c_named`, `match0d_appl`, `match0e_appl_args`. Pattern à réutiliser pour chaque nouveau constructeur :
 
 1. un `.t` minimal dans `testdata/parse/<nom>/`,
 2. 1 ligne dans la slice `fixtures` de `TestGoParserAgainstJava`
@@ -325,8 +337,8 @@ Cibles, par ordre d'effort croissant :
    `TermAppl(concOption(), concTomName(Name("Foo")), concTomTerm(),
    concConstraint())` (chemin `Cst_Appl`, pas `Cst_Constant` —
    cf. `CstBuilder.java:452-453` + `AstBuilder.java:793-804`).
-3. **Pattern application `Foo(x, y)`** avec sous-patterns
-   (`argList` non vide).
+3. ~~**Pattern application `Foo(x, y)`** avec sous-patterns~~ ✅
+   livré en 4.F.4 → `parsePatternArgList` récursif, argList non vide.
 4. **Body non vide** dans l'action rule (instructions Java consommées
    en `TL`/`ITL`).
 5. **Multi-subjects** `%match(a, b) { p1, p2 -> { … } }`.
