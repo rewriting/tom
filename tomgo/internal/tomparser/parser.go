@@ -15,7 +15,7 @@
 //   include    : '%include' '{' includePath '}'
 //   match      : '%match' '(' subject (',' subject)* ')' '{' actionRule* '}'
 //   subject    : ID                                    (BQVariable only for now)
-//   actionRule : pattern '->' '{' BALANCED '}'
+//   actionRule : pattern (',' pattern)* '->' '{' BALANCED '}'
 //   pattern    : '_' | ID | ID '(' (pattern (',' pattern)*)? ')'
 //                                                       (Variable or TermAppl)
 //   slotList   : slot (',' slot)*
@@ -514,20 +514,41 @@ func (p *parser) parseSubject() (tomast.BQTerm, error) {
 	return tomast.MakeBQVariable(options, tomast.MakeName(name), unknownType()), nil
 }
 
-// parseActionRule handles `pattern '->' '{' BALANCED '}'`. The action
-// body is consumed via the brace-counter; for our first fixture (an empty
-// body) the lowering produces
+// parseActionRule handles `pattern (',' pattern)* '->' '{' BALANCED '}'`.
+// The number of patterns must match the number of %match subjects; the
+// resulting constraint is the AndConstraint of the N MatchConstraints
+// (with N==1 collapsing to a bare MatchConstraint via the AU hook's
+// 1-element short-circuit). Action bodies are still consumed verbatim
+// via the brace counter and lowered to
 // `RawAction(If(TrueTL(), AbstractBlock(concInstruction()), Nop()))`.
 func (p *parser) parseActionRule(subjects []tomast.BQTerm) (tomast.ConstraintInstruction, error) {
 	if len(subjects) == 0 {
 		return nil, fmt.Errorf("action rule without %%match subject at %s", p.cur)
 	}
 	ruleLine := p.cur.line
-	pattern, err := p.parsePattern()
-	if err != nil {
-		return nil, err
+
+	patterns := make([]tomast.TomTerm, 0, len(subjects))
+	for {
+		pat, err := p.parsePattern()
+		if err != nil {
+			return nil, err
+		}
+		patterns = append(patterns, pat)
+		p.skipBlankInline()
+		if p.atEnd() {
+			return nil, fmt.Errorf("unterminated action rule at %s", p.cur)
+		}
+		if p.peek(0) == ',' {
+			p.advance() // ','
+			p.skipBlankInline()
+			continue
+		}
+		break
 	}
-	p.skipBlankInline()
+	if len(patterns) != len(subjects) {
+		return nil, fmt.Errorf("action rule has %d patterns but %%match has %d subjects at %s", len(patterns), len(subjects), p.cur)
+	}
+
 	if p.atEnd() || p.peek(0) != '-' || p.peek(1) != '>' {
 		return nil, fmt.Errorf("expected '->' in action rule at %s", p.cur)
 	}
@@ -542,7 +563,15 @@ func (p *parser) parseActionRule(subjects []tomast.BQTerm) (tomast.ConstraintIns
 		tomast.MakeAbstractBlock(tomast.MakeConcInstruction()),
 		tomast.MakeNop(),
 	))
-	constraint := tomast.MakeMatchConstraint(pattern, subjects[0], unknownType())
+
+	matchConstraints := make([]tomast.Constraint, len(patterns))
+	for i, pat := range patterns {
+		matchConstraints[i] = tomast.MakeMatchConstraint(pat, subjects[i], unknownType())
+	}
+	// MakeAndConstraint with 1 arg returns the bare MatchConstraint (AU
+	// hook); with >=2 args returns AndConstraint(MC1, MC2, …). Matches
+	// Java's cons-reduced shape (HookTypeExpander.java:569 absorption).
+	constraint := tomast.MakeAndConstraint(matchConstraints...)
 	options := tomast.MakeConcOption(
 		tomast.MakeOriginTracking(tomast.MakeName("ConstraintAction"), int64(ruleLine), p.filename),
 	)
