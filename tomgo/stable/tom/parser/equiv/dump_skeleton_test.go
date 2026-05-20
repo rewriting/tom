@@ -87,6 +87,7 @@ func TestGoParserAgainstJava(t *testing.T) {
 		"match0q_bqappl_body",  // Phase 4.F.16 — backquote application in body ({ return `Foo(x); })
 		"match0r_bq_multi",     // Phase 4.F.17 — multiple backquotes in body ({ return `Foo(`a, `b); })
 		"match0s_bqstar",       // Phase 4.F.18 — bqterm variable-star `x*
+		"strategy0_minimal",    // Phase 4.G — %strategy minimal (empty visits)
 	}
 	for _, name := range fixtures {
 		t.Run(name, func(t *testing.T) {

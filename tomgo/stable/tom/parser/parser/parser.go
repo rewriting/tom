@@ -167,6 +167,10 @@ func (p *parser) parseProgram() (tomast.Code, error) {
 			if err := p.parseMatch(); err != nil {
 				return nil, err
 			}
+		case p.lookAheadKeyword("%strategy"):
+			if err := p.parseStrategy(); err != nil {
+				return nil, err
+			}
 		default:
 			if err := p.parseWater(); err != nil {
 				return nil, err
@@ -184,7 +188,95 @@ func (p *parser) isIslandStart() bool {
 		p.lookAheadKeyword("%oparray") ||
 		p.lookAheadKeyword("%op") ||
 		p.lookAheadKeyword("%include") ||
-		p.lookAheadKeyword("%match")
+		p.lookAheadKeyword("%match") ||
+		p.lookAheadKeyword("%strategy")
+}
+
+// parseStrategy handles
+//
+//	'%strategy' ID '(' slotList? ')' 'extends' bqterm '{' visit* '}'
+//
+// (TomIslandParser.g4:52-54). Lowers to
+//
+//	DeclarationToCode(Strategy(Name(id), extends_bqterm, visitList,
+//	                           concDeclaration(), concOption(OT(Name(id),line,file))))
+//
+// per AstBuilder.java:129-137 — the convert() returns CodeToInstruction
+// (DeclarationToCode(Strategy(...))) but the top-level emit goes
+// through the InstructionToCode/CodeToInstruction inverse-pair hook
+// (4.A) which cancels the wrapping, leaving DeclarationToCode at the
+// outermost code list.
+//
+// Current limits: slotList is consumed but discarded (like %op); visit
+// blocks are not parsed yet (visitList is always empty).
+func (p *parser) parseStrategy() error {
+	startLine := p.cur.line
+	if !p.matchKeyword("%strategy") {
+		return fmt.Errorf("expected %%strategy at %s", p.cur)
+	}
+	p.skipBlankInline()
+	name, err := p.readIdent()
+	if err != nil {
+		return err
+	}
+	p.skipBlankInline()
+	if p.atEnd() || p.peek(0) != '(' {
+		return fmt.Errorf("expected '(' after %%strategy %s at %s", name, p.cur)
+	}
+	p.advance() // '('
+	if err := p.skipSlotList(); err != nil {
+		return err
+	}
+	if p.atEnd() || p.peek(0) != ')' {
+		return fmt.Errorf("expected ')' to close %%strategy slot list at %s", p.cur)
+	}
+	p.advance() // ')'
+	p.skipBlankInline()
+	if !p.matchKeyword("extends") {
+		return fmt.Errorf("expected 'extends' after %%strategy slot list at %s", p.cur)
+	}
+	p.skipBlankInline()
+	extendsBq, err := p.parseBQTerm(false)
+	if err != nil {
+		return fmt.Errorf("after 'extends': %w", err)
+	}
+	p.skipBlankInline()
+	if p.atEnd() || p.peek(0) != '{' {
+		return fmt.Errorf("expected '{' to open %%strategy body at %s", p.cur)
+	}
+	// For now visit blocks are skipped — consume the balanced braces.
+	if err := p.consumeBalancedBlock(); err != nil {
+		return err
+	}
+	strat := tomast.MakeStrategy(
+		tomast.MakeName(name),
+		extendsBq,
+		tomast.MakeConcTomVisit(),
+		tomast.MakeConcDeclaration(),
+		tomast.MakeOriginTracking(tomast.MakeName(name), int64(startLine), p.filename),
+	)
+	// Java's CstConverter simplification (CstConverter.java, near
+	// Cst_StrategyConstruct handling) wraps the strategy in an
+	// Cst_AbstractBlock alongside a synthetic `%op Strategy <name>(...)`
+	// declaration. The AstBuilder then lowers that AbstractBlock into
+	//
+	//   InstructionToCode(AbstractBlock(concInstruction(
+	//     CodeToInstruction(DeclarationToCode(Strategy(...))),
+	//     CodeToInstruction(DeclarationToCode(SymbolDecl(Name(stratName))))
+	//   )))
+	//
+	// We reproduce that shape directly: emit the two CodeToInstruction
+	// children and wrap in InstructionToCode(AbstractBlock(...)) for the
+	// top-level code list. The synthetic `%op` body (is_fsym/make/get_slot
+	// fragments) is dropped — only the SymbolDecl carries through the
+	// AST, which is what the engine expects.
+	stratCi := tomast.MakeCodeToInstruction(tomast.MakeDeclarationToCode(strat))
+	symbolCi := tomast.MakeCodeToInstruction(tomast.MakeDeclarationToCode(
+		tomast.MakeSymbolDecl(tomast.MakeName(name)),
+	))
+	block := tomast.MakeAbstractBlock(tomast.MakeConcInstruction(stratCi, symbolCi))
+	p.codes = append(p.codes, tomast.MakeInstructionToCode(block))
+	return nil
 }
 
 // parseWater consumes raw host source up to the next island start (or EOF)
