@@ -17,7 +17,8 @@
 //   subject    : ID                                    (BQVariable only for now)
 //   actionRule : ruleSlot (',' ruleSlot)* '->' '{' BALANCED '}'
 //   ruleSlot   : pattern ('<<' bqterm)?
-//   pattern    : '_' '*'? | ID '*'? | ID '(' (pattern (',' pattern)*)? ')'
+//   pattern    : basePattern ('@' ID)?
+//   basePattern: '_' '*'? | ID '*'? | ID '(' (pattern (',' pattern)*)? ')'
 //                                                       (Variable/VariableStar or TermAppl)
 //   slotList   : slot (',' slot)*
 //   slot       : ID ':' ID
@@ -605,7 +606,54 @@ func (p *parser) parseActionRule(subjects []tomast.BQTerm) (tomast.ConstraintIns
 	return tomast.MakeConstraintInstruction(constraint, action, options), nil
 }
 
-// parsePattern is the (currently tiny) pattern parser. Five shapes supported:
+// parsePattern parses one pattern, then optionally an `@ ID` annotation
+// that wraps the pattern with an `AliasTo` constraint
+// (cf. AstBuilder.java:817-830 — Cst_AnnotatedPattern). The base pattern
+// is built by parseBasePattern; supported shapes are listed there.
+func (p *parser) parsePattern() (tomast.TomTerm, error) {
+	base, err := p.parseBasePattern()
+	if err != nil {
+		return nil, err
+	}
+	// Optional `@ ID` annotation. Lookahead skips inline whitespace; on
+	// mismatch we rewind so the caller observes the cursor right after the
+	// base pattern.
+	save := p.idx
+	saveCur := p.cur
+	p.skipBlankInline()
+	if p.atEnd() || p.peek(0) != '@' {
+		p.idx = save
+		p.cur = saveCur
+		return base, nil
+	}
+	p.advance() // '@'
+	p.skipBlankInline()
+	name, err := p.readIdent()
+	if err != nil {
+		return nil, fmt.Errorf("after '@': %w", err)
+	}
+	// AliasTo(Variable(concOption(OT(Name(name),0,"unknown file")),
+	//                  Name(name), unknownType, concConstraint()))
+	// Line=0 and file="unknown file" are the placeholders the Java parser
+	// emits (ASTFactory.java:285); they get filled in later by the typer.
+	aliasVar := tomast.MakeVariable(
+		tomast.MakeConcOption(tomast.MakeOriginTracking(
+			tomast.MakeName(name), 0, "unknown file",
+		)),
+		tomast.MakeName(name),
+		unknownType(),
+		tomast.MakeConcConstraint(),
+	)
+	alias := tomast.MakeAliasTo(aliasVar)
+	annotated, err := addPatternConstraint(base, alias)
+	if err != nil {
+		return nil, fmt.Errorf("'@' annotation: %w", err)
+	}
+	return annotated, nil
+}
+
+// parseBasePattern is the (currently tiny) pattern parser. Five shapes
+// supported (any of which can carry an `@` annotation in parsePattern):
 //   - `_`             → `Variable(concOption(),     EmptyName(),                       unknownType,          concConstraint())`
 //   - `_*`            → `VariableStar(concOption(), EmptyName(),                       unknownType,          concConstraint())`
 //   - `x`             → `Variable(concOption(),     Name("x"),                         unknownType,          concConstraint())`
@@ -618,7 +666,7 @@ func (p *parser) parseActionRule(subjects []tomast.BQTerm) (tomast.ConstraintIns
 // parsed recursively, so `Foo(x, Bar())` nests a Variable and a nullary
 // TermAppl in the arg list. Applications cannot carry a `*` suffix in
 // the source grammar.
-func (p *parser) parsePattern() (tomast.TomTerm, error) {
+func (p *parser) parseBasePattern() (tomast.TomTerm, error) {
 	if p.atEnd() {
 		return nil, fmt.Errorf("expected pattern at %s", p.cur)
 	}
@@ -691,6 +739,27 @@ func (p *parser) parsePattern() (tomast.TomTerm, error) {
 		unknownType(),
 		tomast.MakeConcConstraint(),
 	), nil
+}
+
+// addPatternConstraint returns a copy of `pat` with `c` added as its
+// (only) constraint. Used by parsePattern to lower the `pat @ name` form:
+// the Java reference (AstBuilder.java:823-825) prepends the AliasTo to
+// the pattern's existing constraint list and re-emits the pattern via
+// `pattern.setConstraints(...)`. Since our parser always starts with an
+// empty `concConstraint()`, "prepend to empty list" reduces to
+// "single-element list with this constraint".
+func addPatternConstraint(pat tomast.TomTerm, c tomast.Constraint) (tomast.TomTerm, error) {
+	cl := tomast.MakeConcConstraint(c)
+	switch v := pat.(type) {
+	case *tomast.VariableTomTerm:
+		return tomast.MakeVariable(v.Options, v.AstName, v.AstType, cl), nil
+	case *tomast.VariableStarTomTerm:
+		return tomast.MakeVariableStar(v.Options, v.AstName, v.AstType, cl), nil
+	case *tomast.TermApplTomTerm:
+		return tomast.MakeTermAppl(v.Options, v.NameList, v.Args, cl), nil
+	default:
+		return nil, fmt.Errorf("cannot attach '@' annotation to %T", pat)
+	}
 }
 
 // parsePatternArgList consumes `(pattern (',' pattern)*)?` after the

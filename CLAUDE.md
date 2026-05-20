@@ -28,12 +28,13 @@ water ANTLR-fidèle + simulation `buildHostblock`/`mergeString`),
 plusieurs rules — `{ _ → {} x → {} }`), 4.F.7 (`%match` avec body
 non-vide — `_ -> { doSomething(); }`, body lowered via la pipeline
 water 4.F.0), 4.F.8 (`%match` avec sujet explicite —
-`Foo() << t -> { }`, RHS bare ID) et 4.F.9 (variable-star `x*`/`_*`
-sur patterns) livrées.
+`Foo() << t -> { }`, RHS bare ID), 4.F.9 (variable-star `x*`/`_*`
+sur patterns) et 4.F.10 (annotation `pat@name` → contrainte
+`AliasTo`) livrées.
 La phase **4.A.1** corrige le hook AU généré par `emitAUPrologue`
 pour absorber l'unité (`AndConstraint(MC, TrueConstraint()) → MC`),
 en accord avec `HookTypeExpander.java:569`.
-**16 fixtures** sous `tomgo/testdata/parse/` valident byte-pour-byte
+**17 fixtures** sous `tomgo/testdata/parse/` valident byte-pour-byte
 l'AST Go contre la référence Java. tomgo est un outil Go autonome qui :
 
 - lit un fichier `.gom` (avec ou sans hooks),
@@ -128,7 +129,7 @@ Packages livrés cette itération :
   directement (sans `tom.engine.Tom`/`Tom.config`), `tomparseq.go`
   pour la résolution JDK et la normalisation des paths
   (`__INPUT__`/`__DIR__`).
-- `testdata/parse/<name>/scenario.t` — 16 fixtures actuellement.
+- `testdata/parse/<name>/scenario.t` — 17 fixtures actuellement.
 
 Packages encore à matérialiser :
 - `internal/tomengine/` (phases compilateur suivantes — checker,
@@ -376,9 +377,23 @@ Rapport : `phase4cd-parser.md`.
   concConstraint())` au lieu de `Variable(...)`.
 - Suffixe `*` interdit sur les applications `Foo(...)` (conforme à
   la grammaire ANTLR).
-- Fixture `match0j_star` exerce `x*, _*` en multi-sujets (16 fixtures
-  total).
+- Fixture `match0j_star`.
 - Rapport : `phase4f9-match-variable-star.md`.
+
+### Phase 4.F.10 — annotated patterns `pat@name` ✅
+- Refactor : `parsePattern` = `parseBasePattern` + `'@' ID` optionnel.
+- `pat @ name` → `pat` avec `concConstraint(AliasTo(Variable(
+  concOption(OT(Name(name), 0, "unknown file")), Name(name),
+  unknownType, concConstraint())))`. Les valeurs `0` / `"unknown file"`
+  sont les placeholders du Java (`ASTFactory.java:285`), remplacés
+  ultérieurement par le typer.
+- Helper `addPatternConstraint` qui reconstruit le pattern via type
+  assertion (Variable / VariableStar / TermAppl) ; ne préserve pas
+  encore les contraintes pré-existantes (à étendre quand on aura
+  des cas `pat@a@b`).
+- Fixture `match0k_annot` exerce une annotation sur sous-position
+  `Foo(x@a)` (17 fixtures total).
+- Rapport : `phase4f10-match-annotated-pattern.md`.
 
 ---
 
@@ -390,14 +405,14 @@ que le pipeline Go produit le même AST `tomast.*` que la référence Java
 sur les mêmes entrées. Comparaison via le print du term (déjà prouvée
 byte-portable en Phase 2 pour Gom).
 
-### 4.E + 4.F.0 + 4.F.1 + 4.F.2 + 4.F.3 + 4.F.4 + 4.F.5 + 4.F.6 + 4.F.7 + 4.F.8 + 4.F.9 (livrés) — Constructeurs `%typeterm`/`%op`/`%oplist`/`%oparray`/`%include`/`%match` (`_`/`x`/`Foo(...)`/`x*`/`_*` + multi-sujets + multi-rules + body non-vide + sujet explicite `<<`) + water ANTLR-fidèle
+### 4.E + 4.F.0 + 4.F.1 + 4.F.2 + 4.F.3 + 4.F.4 + 4.F.5 + 4.F.6 + 4.F.7 + 4.F.8 + 4.F.9 + 4.F.10 (livrés) — Constructeurs `%typeterm`/`%op`/`%oplist`/`%oparray`/`%include`/`%match` (`_`/`x`/`Foo(...)`/`x*`/`_*`/`pat@name` + multi-sujets + multi-rules + body non-vide + sujet explicite `<<`) + water ANTLR-fidèle
 
-Voir §4 ci-dessus. **16 fixtures** validées contre Java :
+Voir §4 ci-dessus. **17 fixtures** validées contre Java :
 `skeleton`, `op_noargs`, `op_slots`, `typeterm_extends`,
 `oplist_oparray`, `include_local`, `water_multi`, `match0b`,
 `match0c_named`, `match0d_appl`, `match0e_appl_args`, `match0f_multi`,
-`match0g_rules`, `match0h_body`, `match0i_explicit`, `match0j_star`.
-Pattern à réutiliser pour chaque nouveau constructeur :
+`match0g_rules`, `match0h_body`, `match0i_explicit`, `match0j_star`,
+`match0k_annot`. Pattern à réutiliser pour chaque nouveau constructeur :
 
 1. un `.t` minimal dans `testdata/parse/<nom>/`,
 2. 1 ligne dans la slice `fixtures` de `TestGoParserAgainstJava`
@@ -436,6 +451,8 @@ Cibles, par ordre d'effort croissant :
    pour ce premier jet (`BQVariable(...,Name(id),...)`).
 8. ~~**Variable-star `x*` / `_*`**~~ ✅ livré en 4.F.9 — suffixe `*`
    après `_` ou un `ID` → `VariableStar(...)` au lieu de `Variable(...)`.
+9. ~~**Pattern annoté `pat @ name`**~~ ✅ livré en 4.F.10 — ajoute
+   une `AliasTo(Variable(...Name(name)...))` constraint au pattern.
 4. **Body non vide** dans l'action rule (instructions Java consommées
    en `TL`/`ITL`).
 5. **Multi-subjects** `%match(a, b) { p1, p2 -> { … } }`.
