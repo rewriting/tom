@@ -16,7 +16,7 @@
 //   match      : '%match' '(' subject (',' subject)* ')' '{' actionRule* '}'
 //   subject    : ID                                    (BQVariable only for now)
 //   actionRule : pattern '->' '{' BALANCED '}'
-//   pattern    : '_'                                   (anonymous Variable only)
+//   pattern    : '_' | ID                              (anonymous or named Variable)
 //   slotList   : slot (',' slot)*
 //   slot       : ID ':' ID
 //   includePath : (ID | '.' | '/' | '\\')+
@@ -548,17 +548,35 @@ func (p *parser) parseActionRule(subjects []tomast.BQTerm) (tomast.ConstraintIns
 	return tomast.MakeConstraintInstruction(constraint, action, options), nil
 }
 
-// parsePattern is the (currently tiny) pattern parser. Only `_` is supported:
-// it lowers to `Variable(concOption(), EmptyName(), unknownType, concConstraint())`,
-// matching the Java reference's representation of the anonymous wildcard.
+// parsePattern is the (currently tiny) pattern parser. Two shapes supported:
+//   - `_` → `Variable(concOption(), EmptyName(),  unknownType, concConstraint())`
+//   - `x` → `Variable(concOption(), Name("x"),    unknownType, concConstraint())`
+// Both match the Java reference (AstBuilder.java lines 752-766): no
+// OriginTracking is attached on the pattern's option list.
 func (p *parser) parsePattern() (tomast.TomTerm, error) {
-	if p.atEnd() || p.peek(0) != '_' || isIdentChar(p.peek(1)) {
-		return nil, fmt.Errorf("only '_' pattern supported yet at %s", p.cur)
+	if p.atEnd() {
+		return nil, fmt.Errorf("expected pattern at %s", p.cur)
 	}
-	p.advance() // '_'
+	// Anonymous wildcard: '_' not followed by another ident char.
+	if p.peek(0) == '_' && !isIdentChar(p.peek(1)) {
+		p.advance() // '_'
+		return tomast.MakeVariable(
+			tomast.MakeConcOption(),
+			tomast.MakeEmptyName(),
+			unknownType(),
+			tomast.MakeConcConstraint(),
+		), nil
+	}
+	if !isIdentStart(p.peek(0)) {
+		return nil, fmt.Errorf("expected pattern variable at %s", p.cur)
+	}
+	name, err := p.readIdent()
+	if err != nil {
+		return nil, err
+	}
 	return tomast.MakeVariable(
 		tomast.MakeConcOption(),
-		tomast.MakeEmptyName(),
+		tomast.MakeName(name),
 		unknownType(),
 		tomast.MakeConcConstraint(),
 	), nil

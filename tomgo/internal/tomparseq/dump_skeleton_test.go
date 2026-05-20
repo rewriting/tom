@@ -70,6 +70,7 @@ func TestGoParserAgainstJava(t *testing.T) {
 		"include_local",    // Phase 4.E.5 — %include
 		"water_multi",      // Phase 4.F.0 — water with several visibles between islands (validates ANTLR-fidèle tokeniser)
 		"match0b",          // Phase 4.F.1 — %match minimal (_ → { } with one subject)
+		"match0c_named",    // Phase 4.F.2 — %match with named pattern variable (x → { })
 	}
 	for _, name := range fixtures {
 		t.Run(name, func(t *testing.T) {

@@ -18,9 +18,10 @@ tomast + 9 hooks engine), 4.B (survey parser Java), 4.C (harnais
 d'équivalence AST Go ⇄ Java), 4.D + 4.E.1–4.E.5 (parser TOM Go
 hand-rolled couvrant `%typeterm`, `%typeterm extends`, `%op` avec ou
 sans slots, `%oplist`, `%oparray`, `%include`), 4.F.0 (tokeniseur
-water ANTLR-fidèle + simulation `buildHostblock`/`mergeString`) et
-4.F.1 (`%match` minimal — un sujet, pattern `_`, body vide) livrées.
-**8 fixtures** sous `tomgo/testdata/parse/` valident byte-pour-byte
+water ANTLR-fidèle + simulation `buildHostblock`/`mergeString`),
+4.F.1 (`%match` minimal — un sujet, pattern `_`, body vide) et
+4.F.2 (`%match` avec pattern variable nommée — `x -> { }`) livrées.
+**9 fixtures** sous `tomgo/testdata/parse/` valident byte-pour-byte
 l'AST Go contre la référence Java. tomgo est un outil Go autonome qui :
 
 - lit un fichier `.gom` (avec ou sans hooks),
@@ -105,15 +106,15 @@ tomgo/
 Packages livrés cette itération :
 - `internal/tomparser/` — parser TOM hand-rolled (descente récursive
   100 % Go, pas d'ANTLR). Couvre `%typeterm` (+`extends`), `%op` (+slots),
-  `%oplist`, `%oparray`, `%include`, `%match` minimal. `water.go`
-  contient le tokeniseur ANTLR-fidèle + `buildHostblocks` +
-  `mergeHostblocks`.
+  `%oplist`, `%oparray`, `%include`, `%match` minimal avec pattern
+  `_` ou variable nommée. `water.go` contient le tokeniseur
+  ANTLR-fidèle + `buildHostblocks` + `mergeHostblocks`.
 - `internal/tomparseq/` — harnais d'équivalence AST Go ⇄ Java :
   mini-runner `java/TomParseDump.java` qui instancie `TomParserPlugin`
   directement (sans `tom.engine.Tom`/`Tom.config`), `tomparseq.go`
   pour la résolution JDK et la normalisation des paths
   (`__INPUT__`/`__DIR__`).
-- `testdata/parse/<name>/scenario.t` — 8 fixtures actuellement.
+- `testdata/parse/<name>/scenario.t` — 9 fixtures actuellement.
 
 Packages encore à matérialiser :
 - `internal/tomengine/` (phases compilateur suivantes — checker,
@@ -267,9 +268,14 @@ Rapport : `phase4cd-parser.md`.
   - rule opts → `concOption(OT(Name("ConstraintAction"), ruleLine, file))`
   - Match opts → `concOption(OT(Name("Match"), matchLine, file),
     ModuleName("default"))`
-- Extensions naturelles à venir : pattern variable nommée, pattern
-  application `Foo(args)`, action body non vide, multi-subjects,
-  contraintes `pattern << bqterm` (AND/OR), …
+
+### Phase 4.F.2 — `%match` avec pattern variable nommée ✅
+- `parsePattern` accepte désormais aussi `ID` en plus de `_` :
+  `x` → `Variable(concOption(), Name("x"), unknownType,
+  concConstraint())` (pas d'OriginTracking, identique à
+  `AstBuilder.java:752-766`).
+- Fixture `match0c_named` (1 ajoutée → **9 fixtures** au total).
+- Rapport : `phase4f2-match-named.md`.
 
 ---
 
@@ -281,12 +287,12 @@ que le pipeline Go produit le même AST `tomast.*` que la référence Java
 sur les mêmes entrées. Comparaison via le print du term (déjà prouvée
 byte-portable en Phase 2 pour Gom).
 
-### 4.E + 4.F.0 + 4.F.1 (livrés) — Constructeurs `%typeterm`/`%op`/`%oplist`/`%oparray`/`%include`/`%match` minimal + water ANTLR-fidèle
+### 4.E + 4.F.0 + 4.F.1 + 4.F.2 (livrés) — Constructeurs `%typeterm`/`%op`/`%oplist`/`%oparray`/`%include`/`%match` (`_` + variable nommée) + water ANTLR-fidèle
 
-Voir §4 ci-dessus. **8 fixtures** validées contre Java :
+Voir §4 ci-dessus. **9 fixtures** validées contre Java :
 `skeleton`, `op_noargs`, `op_slots`, `typeterm_extends`,
-`oplist_oparray`, `include_local`, `water_multi`, `match0b`. Pattern
-à réutiliser pour chaque nouveau constructeur :
+`oplist_oparray`, `include_local`, `water_multi`, `match0b`,
+`match0c_named`. Pattern à réutiliser pour chaque nouveau constructeur :
 
 1. un `.t` minimal dans `testdata/parse/<nom>/`,
 2. 1 ligne dans la slice `fixtures` de `TestGoParserAgainstJava`
@@ -298,8 +304,9 @@ Voir §4 ci-dessus. **8 fixtures** validées contre Java :
 
 Cibles, par ordre d'effort croissant :
 
-1. **Pattern variable nommée `x`** → `Variable(opts, Name("x"),
-   unknownType, concConstraint())` au lieu de `EmptyName()`.
+1. ~~**Pattern variable nommée `x`**~~ ✅ livré en 4.F.2 →
+   `Variable(concOption(), Name("x"), unknownType, concConstraint())`,
+   sans OriginTracking (`AstBuilder.java:752-766`).
 2. **Pattern application `Foo()`** → `RecordAppl(...)` ou similaire.
 3. **Pattern application `Foo(x, y)`** avec sous-patterns.
 4. **Body non vide** dans l'action rule (instructions Java consommées
