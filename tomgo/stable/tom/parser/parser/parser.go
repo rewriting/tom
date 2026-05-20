@@ -76,6 +76,15 @@ func newParser(src, filename string) *parser {
 	return &parser{src: src, filename: filename, cur: position{line: 1, col: 1}}
 }
 
+// newSubParser returns a parser scoped to `src` (typically the captured
+// content of an action-rule body) whose position counter starts at
+// `start`. It does NOT mutate or share state with any outer parser.
+// Used by lowerActionBody to recover positional metadata when consuming
+// backquote islands inside a host-code body.
+func newSubParser(src, filename string, start position) *parser {
+	return &parser{src: src, filename: filename, cur: start}
+}
+
 func (p *parser) atEnd() bool { return p.idx >= len(p.src) }
 
 // peek returns the byte at offset `off` from the current position, or 0 if
@@ -661,7 +670,10 @@ func (p *parser) parseActionRule(subjects []tomast.BQTerm) (tomast.ConstraintIns
 	if err != nil {
 		return nil, err
 	}
-	bodyInstructions := lowerActionBody(bodyContent, bodyStart)
+	bodyInstructions, err := lowerActionBody(bodyContent, bodyStart, p.filename)
+	if err != nil {
+		return nil, fmt.Errorf("action body: %w", err)
+	}
 	action := tomast.MakeRawAction(tomast.MakeIf(
 		tomast.MakeTrueTL(),
 		tomast.MakeAbstractBlock(tomast.MakeConcInstruction(bodyInstructions...)),
@@ -937,32 +949,69 @@ func (p *parser) parsePatternArgList() ([]tomast.TomTerm, error) {
 // lowerActionBody turns the captured content of an action rule's body
 // (everything between '{' and '}', positions starting just after the '{')
 // into the list of Instructions that AstBuilder.java places inside
-// `AbstractBlock(concInstruction(…))`. For a pure host-code body (no nested
-// TOM islands) the Java side produces exactly **one**
-// `CodeToInstruction(TargetLanguageToCode(TL(content, start, end)))` after
-// the CstConverter merge — so we reuse the same `tokenizeWater +
-// buildHostblocks + mergeHostblocks` pipeline as top-level water and wrap
-// the result. An all-whitespace body produces no hostblock → empty list,
-// matching match0b/c/d/e/f/g (`concInstruction()` empty).
+// `AbstractBlock(concInstruction(…))`.
 //
-// Nested TOM islands inside an action body are deliberately rejected here
-// for the moment (any '%' encountered triggers an error) so the byte-stable
-// equivalence with Java remains provable on the current fixture set.
-func lowerActionBody(content string, start position) []tomast.Instruction {
-	tokens := tokenizeWater(content, start)
-	blocks := buildHostblocks(tokens)
-	if len(blocks) == 0 {
-		return nil
+// The body is a mixture of *water* (host-code chunks) and *backquote
+// islands* (`` `bqterm ``). The reference Java parser (CstBuilder.exitBlock
+// at lines 236-256, AstBuilder.convert(CstBlock) at lines 101-544) walks
+// the children of the block context, emitting either a HOSTBLOCK or a
+// Cst_BQTermToBlock per chunk. The latter lowers to a
+// `BQTermToInstruction(BQTerm)` (AstBuilder line 119). Each HOSTBLOCK
+// becomes one `CodeToInstruction(TargetLanguageToCode(TL(content, start,
+// end)))` after the merge.
+//
+// We replay that two-pass behaviour with a sub-parser:
+//   1. Walk `content` byte by byte from `start`.
+//   2. On a `` ` ``, flush any accumulated water through the water pipeline
+//      (water-only chunks emit no hostblock → match4b/c/d/e/f/g body
+//      semantics), then delegate to `parseBQTerm` for the island. The
+//      returned BQTerm is wrapped in `BQTermToInstruction`.
+//   3. At EOF, flush remaining water.
+//
+// Other host-language islands (nested `%match`, `%strategy`, …) inside
+// the body are deliberately treated as opaque water for now — the byte
+// of `%` is not a switch trigger. To be lifted when those islands are
+// supported in body context.
+func lowerActionBody(content string, start position, filename string) ([]tomast.Instruction, error) {
+	sub := newSubParser(content, filename, start)
+	var insts []tomast.Instruction
+	waterStartIdx := 0
+	waterStartPos := start
+	flushWater := func(endIdx int, endPos position) {
+		_ = endPos // only used to keep the position bookkeeping documented
+		if endIdx <= waterStartIdx {
+			return
+		}
+		chunk := content[waterStartIdx:endIdx]
+		tokens := tokenizeWater(chunk, waterStartPos)
+		blocks := buildHostblocks(tokens)
+		if len(blocks) == 0 {
+			return
+		}
+		merged := mergeHostblocks(blocks)
+		tl := tomast.MakeTL(
+			merged.content,
+			tomast.MakeTextPosition(int64(merged.startLine), int64(merged.startCol)),
+			tomast.MakeTextPosition(int64(merged.endLine), int64(merged.endCol)),
+		)
+		insts = append(insts, tomast.MakeCodeToInstruction(tomast.MakeTargetLanguageToCode(tl)))
 	}
-	merged := mergeHostblocks(blocks)
-	tl := tomast.MakeTL(
-		merged.content,
-		tomast.MakeTextPosition(int64(merged.startLine), int64(merged.startCol)),
-		tomast.MakeTextPosition(int64(merged.endLine), int64(merged.endCol)),
-	)
-	return []tomast.Instruction{
-		tomast.MakeCodeToInstruction(tomast.MakeTargetLanguageToCode(tl)),
+	for !sub.atEnd() {
+		if sub.peek(0) == '`' {
+			flushWater(sub.idx, sub.cur)
+			bq, err := sub.parseBQTerm()
+			if err != nil {
+				return nil, fmt.Errorf("at %s: %w", sub.cur, err)
+			}
+			insts = append(insts, tomast.MakeBQTermToInstruction(bq))
+			waterStartIdx = sub.idx
+			waterStartPos = sub.cur
+			continue
+		}
+		sub.advance()
 	}
+	flushWater(sub.idx, sub.cur)
+	return insts, nil
 }
 
 // unknownType returns the canonical placeholder `Type(concTypeOption(),
