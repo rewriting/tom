@@ -29,12 +29,13 @@ plusieurs rules — `{ _ → {} x → {} }`), 4.F.7 (`%match` avec body
 non-vide — `_ -> { doSomething(); }`, body lowered via la pipeline
 water 4.F.0), 4.F.8 (`%match` avec sujet explicite —
 `Foo() << t -> { }`, RHS bare ID), 4.F.9 (variable-star `x*`/`_*`
-sur patterns) et 4.F.10 (annotation `pat@name` → contrainte
-`AliasTo`) livrées.
+sur patterns), 4.F.10 (annotation `pat@name` → contrainte
+`AliasTo`) et 4.F.11 (anti-pattern `!pat` → `AntiTerm(pat)`)
+livrées.
 La phase **4.A.1** corrige le hook AU généré par `emitAUPrologue`
 pour absorber l'unité (`AndConstraint(MC, TrueConstraint()) → MC`),
 en accord avec `HookTypeExpander.java:569`.
-**17 fixtures** sous `tomgo/testdata/parse/` valident byte-pour-byte
+**18 fixtures** sous `tomgo/testdata/parse/` valident byte-pour-byte
 l'AST Go contre la référence Java. tomgo est un outil Go autonome qui :
 
 - lit un fichier `.gom` (avec ou sans hooks),
@@ -129,7 +130,7 @@ Packages livrés cette itération :
   directement (sans `tom.engine.Tom`/`Tom.config`), `tomparseq.go`
   pour la résolution JDK et la normalisation des paths
   (`__INPUT__`/`__DIR__`).
-- `testdata/parse/<name>/scenario.t` — 17 fixtures actuellement.
+- `testdata/parse/<name>/scenario.t` — 18 fixtures actuellement.
 
 Packages encore à matérialiser :
 - `internal/tomengine/` (phases compilateur suivantes — checker,
@@ -392,8 +393,19 @@ Rapport : `phase4cd-parser.md`.
   encore les contraintes pré-existantes (à étendre quand on aura
   des cas `pat@a@b`).
 - Fixture `match0k_annot` exerce une annotation sur sous-position
-  `Foo(x@a)` (17 fixtures total).
+  `Foo(x@a)`.
 - Rapport : `phase4f10-match-annotated-pattern.md`.
+
+### Phase 4.F.11 — anti-pattern `!pat` ✅
+- `parsePattern` reconnaît un préfixe `!` (avec garde `peek(1) != '='`
+  pour ne pas capturer `!=`), consomme et rappelle `parsePattern`
+  récursivement, puis wrappe le résultat dans `AntiTerm(...)`.
+- `!Foo()` → `AntiTerm(TermAppl(concOption(), concTomName(Name("Foo")),
+  concTomTerm(), concConstraint()))` (cf. `AstBuilder.java:780-792`).
+- La récursion via `parsePattern` (et non `parseBasePattern`) permet
+  les combinaisons `!!pat`, `!pat@name`, etc.
+- Fixture `match0l_anti` (18 fixtures total).
+- Rapport : `phase4f11-match-anti-pattern.md`.
 
 ---
 
@@ -405,14 +417,14 @@ que le pipeline Go produit le même AST `tomast.*` que la référence Java
 sur les mêmes entrées. Comparaison via le print du term (déjà prouvée
 byte-portable en Phase 2 pour Gom).
 
-### 4.E + 4.F.0 + 4.F.1 + 4.F.2 + 4.F.3 + 4.F.4 + 4.F.5 + 4.F.6 + 4.F.7 + 4.F.8 + 4.F.9 + 4.F.10 (livrés) — Constructeurs `%typeterm`/`%op`/`%oplist`/`%oparray`/`%include`/`%match` (`_`/`x`/`Foo(...)`/`x*`/`_*`/`pat@name` + multi-sujets + multi-rules + body non-vide + sujet explicite `<<`) + water ANTLR-fidèle
+### 4.E + 4.F.0 + 4.F.1 + 4.F.2 + 4.F.3 + 4.F.4 + 4.F.5 + 4.F.6 + 4.F.7 + 4.F.8 + 4.F.9 + 4.F.10 + 4.F.11 (livrés) — Constructeurs `%typeterm`/`%op`/`%oplist`/`%oparray`/`%include`/`%match` (`_`/`x`/`Foo(...)`/`x*`/`_*`/`pat@name`/`!pat` + multi-sujets + multi-rules + body non-vide + sujet explicite `<<`) + water ANTLR-fidèle
 
-Voir §4 ci-dessus. **17 fixtures** validées contre Java :
+Voir §4 ci-dessus. **18 fixtures** validées contre Java :
 `skeleton`, `op_noargs`, `op_slots`, `typeterm_extends`,
 `oplist_oparray`, `include_local`, `water_multi`, `match0b`,
 `match0c_named`, `match0d_appl`, `match0e_appl_args`, `match0f_multi`,
 `match0g_rules`, `match0h_body`, `match0i_explicit`, `match0j_star`,
-`match0k_annot`. Pattern à réutiliser pour chaque nouveau constructeur :
+`match0k_annot`, `match0l_anti`. Pattern à réutiliser pour chaque nouveau constructeur :
 
 1. un `.t` minimal dans `testdata/parse/<nom>/`,
 2. 1 ligne dans la slice `fixtures` de `TestGoParserAgainstJava`
@@ -453,6 +465,8 @@ Cibles, par ordre d'effort croissant :
    après `_` ou un `ID` → `VariableStar(...)` au lieu de `Variable(...)`.
 9. ~~**Pattern annoté `pat @ name`**~~ ✅ livré en 4.F.10 — ajoute
    une `AliasTo(Variable(...Name(name)...))` constraint au pattern.
+10. ~~**Pattern anti `!pat`**~~ ✅ livré en 4.F.11 — `parsePattern`
+    consomme `!` puis rappelle récursivement, wrappe dans `AntiTerm`.
 4. **Body non vide** dans l'action rule (instructions Java consommées
    en `TL`/`ITL`).
 5. **Multi-subjects** `%match(a, b) { p1, p2 -> { … } }`.

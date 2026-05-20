@@ -17,9 +17,9 @@
 //   subject    : ID                                    (BQVariable only for now)
 //   actionRule : ruleSlot (',' ruleSlot)* '->' '{' BALANCED '}'
 //   ruleSlot   : pattern ('<<' bqterm)?
-//   pattern    : basePattern ('@' ID)?
+//   pattern    : '!' pattern | basePattern ('@' ID)?
 //   basePattern: '_' '*'? | ID '*'? | ID '(' (pattern (',' pattern)*)? ')'
-//                                                       (Variable/VariableStar or TermAppl)
+//                                                       (Variable/VariableStar or TermAppl, anti-prefix and `@` annotation optional)
 //   slotList   : slot (',' slot)*
 //   slot       : ID ':' ID
 //   includePath : (ID | '.' | '/' | '\\')+
@@ -606,11 +606,23 @@ func (p *parser) parseActionRule(subjects []tomast.BQTerm) (tomast.ConstraintIns
 	return tomast.MakeConstraintInstruction(constraint, action, options), nil
 }
 
-// parsePattern parses one pattern, then optionally an `@ ID` annotation
-// that wraps the pattern with an `AliasTo` constraint
-// (cf. AstBuilder.java:817-830 — Cst_AnnotatedPattern). The base pattern
-// is built by parseBasePattern; supported shapes are listed there.
+// parsePattern parses one pattern, optionally prefixed by `!` (anti-pattern)
+// and/or suffixed by `@ ID` (annotation). The leading `!` lowers to
+// `AntiTerm(pat)` (cf. AstBuilder.java:780-792 — Cst_Anti) and is consumed
+// before the recursive call, so `!pat` and `!pat@name` are both supported
+// (the latter producing `AntiTerm(annotated_pat)`). The `p.peek(1) != '='`
+// guard avoids confusing `!=` (eventual numerical constraint operator) with
+// the anti prefix.
 func (p *parser) parsePattern() (tomast.TomTerm, error) {
+	if !p.atEnd() && p.peek(0) == '!' && p.peek(1) != '=' {
+		p.advance() // '!'
+		p.skipBlankInline()
+		inner, err := p.parsePattern()
+		if err != nil {
+			return nil, fmt.Errorf("after '!': %w", err)
+		}
+		return tomast.MakeAntiTerm(inner), nil
+	}
 	base, err := p.parseBasePattern()
 	if err != nil {
 		return nil, err
