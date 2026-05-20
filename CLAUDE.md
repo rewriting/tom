@@ -122,6 +122,10 @@ tomgo/
                                  #   + water tokeniseur ANTLR-fidèle
       equiv/                     # harnais d'équivalence parser TOM Go ⇄ Java
                                  #   (TomParseDump.java mini-runner)
+    platform/                    # Plugin interface + chain runner
+                                 #   (Phase 5 — analogue de tom.platform.PluginPlatform)
+      plugins/                   # 1 fichier par plugin (Phase 5+)
+                                 #   parser.go = wrapper du parser TOM
     library/
       sharedobjects/             # runtime public — hash-cons + max-sharing
                                  #   (interface Term, Factory.Build, mixers)
@@ -767,6 +771,47 @@ Quand ces trois éléments sont en place, `mage equivJava` valide
 **byte-pour-byte** les 22 fixtures contre le parser Java de référence.
 Sans JDK ou `stable/dist/lib/`, le harnais skip proprement et seuls
 les tests Go-vs-Go (parser_test.go) tournent comme pin de non-régression.
+
+---
+
+## 8.bis. Pipeline Platform (Phase 5+)
+
+Le compilateur Tom Java enchaîne 11 plugins via `tom.platform.PluginPlatform`.
+L'ordre canonique (de `BootstrapPluginsList.java`) est :
+
+  1. **Starter**      — pré-traitement, gestion des includes
+  2. **Parser**       — `.t`/`.tom` → CST → AST (livré côté Go en Phase 4)
+  3. **Transformer**  — re-écriture du code (avant typage)
+  4. **SyntaxChecker** — vérifications syntaxiques (constraints, sorts)
+  5. **Desugarer**    — abaisse les sucre syntaxiques
+  6. **Typer**        — résout les `unknown type`, remplit la SymbolTable
+  7. **TypeChecker**  — vérifications de types
+  8. **Expander**     — expansion des `%match` en `If`/`Switch`
+  9. **Compiler**     — génère le code de matching
+ 10. **Optimizer**    — opt. du code généré
+ 11. **Backend**      — émission du code Java/Go cible
+
+Le Go reproduit cette architecture via `stable/platform/` :
+
+```go
+type Plugin interface {
+    Name() string
+    Run(in State) (State, error)
+}
+```
+
+Chaque plugin transforme une `State{Filename, Source, Code}` (à
+enrichir au fil des phases). La `Platform` les chaîne dans l'ordre.
+
+État (Phase 5) :
+- ✅ Platform infrastructure (`stable/platform/platform.go`).
+- ✅ Plugin **Parser** (`stable/platform/plugins/parser.go`) — wrappe
+  `stable/tom/parser/parser.Parse` ; le test smoke `parser_test.go`
+  prouve qu'un Platform à 1 plugin produit l'AST attendu.
+- ☐ Starter / Transformer / SyntaxChecker / Desugarer / Typer /
+  TypeChecker / Expander / Compiler / Optimizer / Backend — à porter
+  l'un après l'autre, chacun avec son jeu de tests d'équivalence
+  Java contre le pipeline officiel.
 
 ---
 
