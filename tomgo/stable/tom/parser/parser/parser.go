@@ -192,6 +192,95 @@ func (p *parser) isIslandStart() bool {
 		p.lookAheadKeyword("%strategy")
 }
 
+// parseVisit handles
+//
+//	'visit' ID '{' actionRule* '}'
+//
+// (per the strategy grammar in TomIslandParser.g4). The `ID` names the
+// algebraic sort to walk over; each action rule lowers to a
+// ConstraintInstruction whose subject is the SYNTHETIC `tom__arg`
+// BQVariable typed with the sort. Per AstBuilder.java:847-853
+// (Cst_VisitTerm), `tom__arg` carries options
+// `concOption(ModuleName("default"))` — no OriginTracking — and the
+// type appears both on the subject and on the MatchConstraint.
+//
+// VisitTerm-level options carry an OriginTracking labelled "VisitTerm"
+// at the line where the `visit` keyword sits.
+func (p *parser) parseVisit() (tomast.TomVisit, error) {
+	visitLine := p.cur.line
+	if !p.matchKeyword("visit") {
+		return nil, fmt.Errorf("expected 'visit' at %s", p.cur)
+	}
+	p.skipBlankInline()
+	sortName, err := p.readIdent()
+	if err != nil {
+		return nil, fmt.Errorf("after 'visit': %w", err)
+	}
+	p.skipBlankInline()
+	if p.atEnd() || p.peek(0) != '{' {
+		return nil, fmt.Errorf("expected '{' after visit %s at %s", sortName, p.cur)
+	}
+	p.advance() // '{'
+
+	sortType := tomast.MakeType(
+		tomast.MakeConcTypeOption(),
+		sortName,
+		tomast.MakeEmptyTargetLanguageType(),
+	)
+	tomArg := tomast.MakeBQVariable(
+		tomast.MakeConcOption(tomast.MakeModuleName("default")),
+		tomast.MakeName("tom__arg"),
+		sortType,
+	)
+
+	var rules []tomast.ConstraintInstruction
+	for {
+		p.skipBlankInline()
+		if p.atEnd() {
+			return nil, fmt.Errorf("unterminated visit body at %s", p.cur)
+		}
+		if p.peek(0) == '}' {
+			break
+		}
+		ruleLine := p.cur.line
+		pat, err := p.parsePattern()
+		if err != nil {
+			return nil, err
+		}
+		p.skipBlankInline()
+		if p.atEnd() || p.peek(0) != '-' || p.peek(1) != '>' {
+			return nil, fmt.Errorf("expected '->' in visit rule at %s", p.cur)
+		}
+		p.advance() // '-'
+		p.advance() // '>'
+		p.skipBlankInline()
+		bodyContent, bodyStart, err := p.captureBalancedBlock()
+		if err != nil {
+			return nil, err
+		}
+		bodyInsts, err := lowerActionBody(bodyContent, bodyStart, p.filename)
+		if err != nil {
+			return nil, fmt.Errorf("visit body: %w", err)
+		}
+		action := tomast.MakeRawAction(tomast.MakeIf(
+			tomast.MakeTrueTL(),
+			tomast.MakeAbstractBlock(tomast.MakeConcInstruction(bodyInsts...)),
+			tomast.MakeNop(),
+		))
+		mc := tomast.MakeMatchConstraint(pat, tomArg, sortType)
+		ruleOpts := tomast.MakeConcOption(
+			tomast.MakeOriginTracking(tomast.MakeName("ConstraintAction"), int64(ruleLine), p.filename),
+		)
+		rules = append(rules, tomast.MakeConstraintInstruction(mc, action, ruleOpts))
+	}
+	p.advance() // '}'
+
+	visitOpts := tomast.MakeConcOption(
+		tomast.MakeOriginTracking(tomast.MakeName("VisitTerm"), int64(visitLine), p.filename),
+	)
+	return tomast.MakeVisitTerm(sortType, tomast.MakeConcConstraintInstruction(rules...), visitOpts), nil
+}
+
 // parseStrategy handles
 //
 //	'%strategy' ID '(' slotList? ')' 'extends' bqterm '{' visit* '}'
@@ -244,14 +333,27 @@ func (p *parser) parseStrategy() error {
 	if p.atEnd() || p.peek(0) != '{' {
 		return fmt.Errorf("expected '{' to open %%strategy body at %s", p.cur)
 	}
-	// For now visit blocks are skipped — consume the balanced braces.
-	if err := p.consumeBalancedBlock(); err != nil {
-		return err
+	p.advance() // '{'
+	var visits []tomast.TomVisit
+	for {
+		p.skipBlankInline()
+		if p.atEnd() {
+			return fmt.Errorf("unterminated %%strategy body at %s", p.cur)
+		}
+		if p.peek(0) == '}' {
+			break
+		}
+		v, err := p.parseVisit()
+		if err != nil {
+			return err
+		}
+		visits = append(visits, v)
 	}
+	p.advance() // '}'
 	strat := tomast.MakeStrategy(
 		tomast.MakeName(name),
 		extendsBq,
-		tomast.MakeConcTomVisit(),
+		tomast.MakeConcTomVisit(visits...),
 		tomast.MakeConcDeclaration(),
 		tomast.MakeOriginTracking(tomast.MakeName(name), int64(startLine), p.filename),
 	)

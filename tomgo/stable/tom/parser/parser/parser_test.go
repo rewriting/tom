@@ -233,6 +233,14 @@ func TestParseStrategy0Minimal(t *testing.T) {
 	}
 }
 
+func TestParseStrategy1Visit(t *testing.T) {
+	const expected = `Tom(concCode(TargetLanguageToCode(TL("public class Strat1 {\n  ",TextPosition(1,1),TextPosition(2,3))),InstructionToCode(AbstractBlock(concInstruction(CodeToInstruction(DeclarationToCode(Strategy(Name("MyStrat"),BQAppl(concOption(OriginTracking(Name("Identity"),2,"__INPUT__"),ModuleName("default")),Name("Identity"),concBQTerm()),concTomVisit(VisitTerm(Type(concTypeOption(),"Sort",EmptyTargetLanguageType()),concConstraintInstruction(ConstraintInstruction(MatchConstraint(Variable(concOption(),EmptyName(),Type(concTypeOption(),"unknown type",EmptyTargetLanguageType()),concConstraint()),BQVariable(concOption(ModuleName("default")),Name("tom__arg"),Type(concTypeOption(),"Sort",EmptyTargetLanguageType())),Type(concTypeOption(),"Sort",EmptyTargetLanguageType())),RawAction(If(TrueTL(),AbstractBlock(concInstruction()),Nop())),concOption(OriginTracking(Name("ConstraintAction"),4,"__INPUT__")))),concOption(OriginTracking(Name("VisitTerm"),3,"__INPUT__")))),concDeclaration(),OriginTracking(Name("MyStrat"),2,"__INPUT__")))),CodeToInstruction(DeclarationToCode(SymbolDecl(Name("MyStrat"))))))),TargetLanguageToCode(TL("\n}\n",TextPosition(6,4),TextPosition(7,1)))))`
+	got := parseFixture(t, "strategy1_visit")
+	if got != expected {
+		t.Errorf("AST mismatch on strategy1_visit.t\n--- expected ---\n%s\n--- got ---\n%s\n", expected, got)
+	}
+}
+
 func TestParseMatch0sBqStar(t *testing.T) {
 	const expected = `Tom(concCode(TargetLanguageToCode(TL("public class Match0s {\n  public void f(Object t) {\n    ",TextPosition(1,1),TextPosition(3,5))),InstructionToCode(Match(concConstraintInstruction(ConstraintInstruction(MatchConstraint(Variable(concOption(),Name("x"),Type(concTypeOption(),"unknown type",EmptyTargetLanguageType()),concConstraint()),BQVariable(concOption(OriginTracking(Name("t"),3,"__INPUT__"),ModuleName("default")),Name("t"),Type(concTypeOption(),"unknown type",EmptyTargetLanguageType())),Type(concTypeOption(),"unknown type",EmptyTargetLanguageType())),RawAction(If(TrueTL(),AbstractBlock(concInstruction(CodeToInstruction(TargetLanguageToCode(TL(" return ",TextPosition(4,13),TextPosition(4,21)))),BQTermToInstruction(BQAppl(concOption(OriginTracking(Name("Foo"),4,"__INPUT__"),ModuleName("default")),Name("Foo"),concBQTerm(Composite(CompositeTL(ITL("\140")),CompositeBQTerm(BQVariableStar(concOption(OriginTracking(Name("x"),4,"__INPUT__"),ModuleName("default")),Name("x"),Type(concTypeOption(),"unknown type",EmptyTargetLanguageType()))))))),CodeToInstruction(TargetLanguageToCode(TL("; ",TextPosition(4,30),TextPosition(4,32)))))),Nop())),concOption(OriginTracking(Name("ConstraintAction"),4,"__INPUT__")))),concOption(OriginTracking(Name("Match"),3,"__INPUT__"),ModuleName("default")))),TargetLanguageToCode(TL("\n  }\n\n}\n",TextPosition(5,6),TextPosition(8,1)))))`
 	got := parseFixture(t, "match0s_bqstar")
