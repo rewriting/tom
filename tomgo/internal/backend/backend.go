@@ -878,8 +878,26 @@ func emitAUPrologue(op, sort, unit string) func(buf *bytes.Buffer, g *gen, alt *
 		fmt.Fprintf(buf, "\t\t\t}\n")
 		fmt.Fprintf(buf, "\t\t}\n")
 		if unit != "" {
+			// Drop unit elements after flattening. Java's AU hook
+			// (HookTypeExpander.java:569) applies this at each
+			// Cons*.make: "if (head == userNeutral) return tail;
+			// if (tail == userNeutral) return head;" — i.e. each
+			// unit-equal element is absorbed. Mirror that at the
+			// variadic level so AndConstraint(MC, TrueConstraint())
+			// → MC, AndConstraint() → TrueConstraint(), etc.
+			fmt.Fprintf(buf, "\t\tunit := Make%s()\n", unit)
+			fmt.Fprintf(buf, "\t\tfiltered := flat[:0]\n")
+			fmt.Fprintf(buf, "\t\tfor _, a := range flat {\n")
+			fmt.Fprintf(buf, "\t\t\tif a != unit {\n")
+			fmt.Fprintf(buf, "\t\t\t\tfiltered = append(filtered, a)\n")
+			fmt.Fprintf(buf, "\t\t\t}\n")
+			fmt.Fprintf(buf, "\t\t}\n")
+			fmt.Fprintf(buf, "\t\tflat = filtered\n")
 			fmt.Fprintf(buf, "\t\tif len(flat) == 0 {\n")
-			fmt.Fprintf(buf, "\t\t\treturn Make%s()\n", unit)
+			fmt.Fprintf(buf, "\t\t\treturn unit\n")
+			fmt.Fprintf(buf, "\t\t}\n")
+			fmt.Fprintf(buf, "\t\tif len(flat) == 1 {\n")
+			fmt.Fprintf(buf, "\t\t\treturn flat[0]\n")
 			fmt.Fprintf(buf, "\t\t}\n")
 		}
 		fmt.Fprintf(buf, "\t\targs = flat\n")

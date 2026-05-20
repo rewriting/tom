@@ -26,15 +26,59 @@ func TestHook_AndConstraint_EmptyReturnsTrueConstraint(t *testing.T) {
 }
 
 func TestHook_AndConstraint_AssociativityFlattens(t *testing.T) {
-	a := tomast.MakeTrueConstraint()
+	// Use FalseConstraint as the test payload — TrueConstraint is the unit
+	// of AndConstraint and would be absorbed (cf. unit-absorption test below).
 	b := tomast.MakeFalseConstraint()
-	inner := tomast.MakeAndConstraint(a, b)
-	outer := tomast.MakeAndConstraint(inner, a)
-	// AndConstraint(AndConstraint(a,b), a) flattens to
-	// AndConstraint(a, b, a).
-	flat := tomast.MakeAndConstraint(a, b, a)
+	inner := tomast.MakeAndConstraint(b, b)
+	outer := tomast.MakeAndConstraint(inner, b)
+	// AndConstraint(AndConstraint(b,b), b) flattens to AndConstraint(b, b, b).
+	flat := tomast.MakeAndConstraint(b, b, b)
 	if outer != flat {
-		t.Fatalf("AndConstraint(AndConstraint(a,b), a) did not flatten:\n  got=%v\n  want=%v", outer, flat)
+		t.Fatalf("AndConstraint(AndConstraint(b,b), b) did not flatten:\n  got=%v\n  want=%v", outer, flat)
+	}
+}
+
+// AU hooks absorb the unit element at make-time, matching Java's
+// HookTypeExpander behaviour ("if (head == userNeutral) return tail;
+// if (tail == userNeutral) return head;"). After absorption a 0-element
+// list collapses to the unit, and a 1-element list collapses to the
+// bare element.
+func TestHook_AndConstraint_AbsorbsTrueConstraintUnit(t *testing.T) {
+	u := tomast.MakeTrueConstraint()
+	b := tomast.MakeFalseConstraint()
+	if tomast.MakeAndConstraint(b, u) != b {
+		t.Fatalf("AndConstraint(b, unit) must collapse to b")
+	}
+	if tomast.MakeAndConstraint(u, b) != b {
+		t.Fatalf("AndConstraint(unit, b) must collapse to b")
+	}
+	if tomast.MakeAndConstraint(u, u, u) != u {
+		t.Fatalf("AndConstraint(unit, unit, unit) must collapse to the unit")
+	}
+	// 2-element AC with a unit dropped → 1-element → bare element.
+	if tomast.MakeAndConstraint(u, b, u) != b {
+		t.Fatalf("AndConstraint(unit, b, unit) must collapse to b")
+	}
+	// 3-element AC, two distinct non-units → preserved.
+	threeNonUnit := tomast.MakeAndConstraint(b, b, b)
+	asAndCons, ok := threeNonUnit.(interface{ String() string })
+	if !ok {
+		t.Fatalf("3-element AC has unexpected concrete type %T", threeNonUnit)
+	}
+	want := "AndConstraint(FalseConstraint(),FalseConstraint(),FalseConstraint())"
+	if got := asAndCons.String(); got != want {
+		t.Fatalf("3-element AC: got %q want %q", got, want)
+	}
+}
+
+func TestHook_OrConstraint_AbsorbsFalseConstraintUnit(t *testing.T) {
+	u := tomast.MakeFalseConstraint()
+	b := tomast.MakeTrueConstraint()
+	if tomast.MakeOrConstraint(b, u) != b {
+		t.Fatalf("OrConstraint(b, unit) must collapse to b")
+	}
+	if tomast.MakeOrConstraint(u, b) != b {
+		t.Fatalf("OrConstraint(unit, b) must collapse to b")
 	}
 }
 

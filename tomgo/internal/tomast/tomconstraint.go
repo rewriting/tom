@@ -281,8 +281,19 @@ func MakeAndConstraint(args ...Constraint) Constraint {
 				flat = append(flat, a)
 			}
 		}
+		unit := MakeTrueConstraint()
+		filtered := flat[:0]
+		for _, a := range flat {
+			if a != unit {
+				filtered = append(filtered, a)
+			}
+		}
+		flat = filtered
 		if len(flat) == 0 {
-			return MakeTrueConstraint()
+			return unit
+		}
+		if len(flat) == 1 {
+			return flat[0]
 		}
 		args = flat
 	}
@@ -345,8 +356,19 @@ func MakeOrConstraint(args ...Constraint) Constraint {
 				flat = append(flat, a)
 			}
 		}
+		unit := MakeFalseConstraint()
+		filtered := flat[:0]
+		for _, a := range flat {
+			if a != unit {
+				filtered = append(filtered, a)
+			}
+		}
+		flat = filtered
 		if len(flat) == 0 {
-			return MakeFalseConstraint()
+			return unit
+		}
+		if len(flat) == 1 {
+			return flat[0]
 		}
 		args = flat
 	}
