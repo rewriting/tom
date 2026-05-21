@@ -21,14 +21,13 @@
 // (BuildEmptyArray, BuildConsArray, BuildAppendArray) are lowered
 // too, since the variadic-aware Compiler will emit them.
 
-package backend
+package backend_java
 
 import (
 	"fmt"
 	"strings"
 
 	"tom/tomgo/stable/library/tomast"
-	"tom/tomgo/stable/tom"
 )
 
 // emitIRInstruction adds rendering for the new IR-shape instructions
@@ -503,163 +502,6 @@ func (e *emitter) emitBQTermArgList(l tomast.BQTermList) {
 	}
 }
 
-// ---------------------------------------------------------------------------
-// Name / type rendering helpers
-// ---------------------------------------------------------------------------
-
-// renderTomName converts a TomName to its host-identifier form.
-//
-//	Name(s)               → s
-//	EmptyName             → ""
-//	PositionName(numbers) → concatenation of each TomNumber's render
-//
-// Examples (from Peano's .tfix.compiled):
-//
-//	Name("tom___x")                                      → "tom___x"
-//	PositionName(concTomNumber(MatchNumber(1),
-//	             NameNumber(Name("_0"))))                → "tomMatch1_0"
-//	PositionName(concTomNumber(MatchNumber(1),
-//	             NameNumber(Name("_freshSubject_0"))))   → "tomMatch1_freshSubject_0"
-func renderTomName(n tomast.TomName) string {
-	switch x := n.(type) {
-	case *tomast.NameTomName:
-		return x.String_
-	case *tomast.EmptyNameTomName:
-		return ""
-	case *tomast.PositionNameTomName:
-		var sb strings.Builder
-		if list, ok := x.NumberList.(*tomast.ConcTomNumberTomNumberList); ok {
-			for _, num := range list.Slots {
-				sb.WriteString(renderTomNumber(num))
-			}
-		}
-		return sb.String()
-	case *tomast.AntiNameTomName:
-		return "!" + renderTomName(x.Name)
-	}
-	return ""
-}
-
-// renderTomNumber renders one TomNumber to its host-identifier
-// fragment. The shapes used by Compiler.t live here.
-func renderTomNumber(n tomast.TomNumber) string {
-	switch x := n.(type) {
-	case *tomast.MatchNumberTomNumber:
-		return fmt.Sprintf("tomMatch%d", x.Integer)
-	case *tomast.PatternNumberTomNumber:
-		return fmt.Sprintf("_pattern%d", x.Integer)
-	case *tomast.NameNumberTomNumber:
-		return renderTomName(x.AstName)
-	case *tomast.IndexNumberTomNumber:
-		return fmt.Sprintf("_%d", x.Integer)
-	case *tomast.ListNumberTomNumber:
-		return fmt.Sprintf("_list%d", x.Integer)
-	case *tomast.BeginTomNumber:
-		return fmt.Sprintf("_begin_%d", x.Integer)
-	case *tomast.EndTomNumber:
-		return fmt.Sprintf("_end_%d", x.Integer)
-	case *tomast.SaveTomNumber:
-		return fmt.Sprintf("_save_%d", x.Integer)
-	case *tomast.PositionTomNumber:
-		return fmt.Sprintf("_pos_%d", x.Integer)
-	case *tomast.AbsVarTomNumber:
-		return fmt.Sprintf("_absvar%d", x.Integer)
-	case *tomast.RenamedVarTomNumber:
-		return renderTomName(x.AstName)
-	}
-	return ""
-}
-
-// bqTermName extracts the AstName from any BQTerm shape that carries
-// one. Returns EmptyName for shapes that don't (FunctionCall, BuildEmptyList,
-// etc. all do — most BQTerms expose a name in their first slot).
-func bqTermName(t tomast.BQTerm) tomast.TomName {
-	switch x := t.(type) {
-	case *tomast.BQVariableBQTerm:
-		return x.AstName
-	case *tomast.BQVariableStarBQTerm:
-		return x.AstName
-	case *tomast.FunctionCallBQTerm:
-		return x.AstName
-	case *tomast.BuildTermBQTerm:
-		return x.AstName
-	case *tomast.BuildConstantBQTerm:
-		return x.AstName
-	}
-	return tomast.MakeEmptyName()
-}
-
-// tlTypeOfBQTerm extracts the TL of a BQVariable / BQVariableStar's
-// declared AstType. Falls back to the SymbolTable's sort→TL map when
-// the embedded TLType is empty. Returns "Object" as a safe default.
-func tlTypeOfBQTerm(t tomast.BQTerm, st *tom.SymbolTable) string {
-	var ttype tomast.TomType
-	switch x := t.(type) {
-	case *tomast.BQVariableBQTerm:
-		ttype = x.AstType
-	case *tomast.BQVariableStarBQTerm:
-		ttype = x.AstType
-	default:
-		return "Object"
-	}
-	return tomTypeTL(ttype, st)
-}
-
-// tomTypeTL — convert a TomType (sort + optional TLType + options)
-// into its host TL string. If the embedded TLType has content, use
-// it; otherwise look up the sort name in the symbol table.
-func tomTypeTL(t tomast.TomType, st *tom.SymbolTable) string {
-	tt, ok := t.(*tomast.TypeTomType)
-	if !ok {
-		return "Object"
-	}
-	if tl, ok := tt.TlType.(*tomast.TLTypeTargetLanguageType); ok {
-		if body := strings.TrimSpace(tl.String_); body != "" {
-			return body
-		}
-	}
-	if st != nil {
-		if body, ok := st.Sorts[tt.TomType]; ok && strings.TrimSpace(body) != "" {
-			return strings.TrimSpace(body)
-		}
-	}
-	return "Object"
-}
-
-// tomTypeSortName returns the bare sort name from a TomType (e.g.
-// "term", "appl", "L"). Used by the IsSort renderer.
-func tomTypeSortName(t tomast.TomType) string {
-	if tt, ok := t.(*tomast.TypeTomType); ok {
-		return tt.TomType
-	}
-	return ""
-}
-
-// codomainSortFor looks up an operator's codomain sort name (e.g.
-// "L" for `conc`). Used to disambiguate variadic helper names like
-// `tom_get_size_conc_L`.
-func codomainSortFor(st *tom.SymbolTable, opName string) string {
-	if st == nil {
-		return ""
-	}
-	sym, ok := st.Symbols[opName]
-	if !ok {
-		return ""
-	}
-	s, ok := sym.(*tomast.SymbolTomSymbol)
-	if !ok {
-		return ""
-	}
-	tt, ok := s.TypesToType.(*tomast.TypesToTypeTomType)
-	if !ok {
-		return ""
-	}
-	cod, ok := tt.Codomain.(*tomast.TypeTomType)
-	if !ok {
-		return ""
-	}
-	return cod.TomType
-}
 
 // bqTermAsText renders a BQTerm to a plain string (used when we
 // need the text form for inline composition with raw expressions

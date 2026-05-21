@@ -25,7 +25,7 @@ import (
 	"strings"
 
 	"tom/tomgo/stable/tom"
-	"tom/tomgo/stable/tom/backend"
+	"tom/tomgo/stable/tom/backend_java"
 	"tom/tomgo/stable/tom/compiler"
 	"tom/tomgo/stable/tom/desugarer"
 	"tom/tomgo/stable/tom/expander"
@@ -57,7 +57,7 @@ var pipeline = []phase{
 	{"expander", expander.Run},
 	{"compiler", compiler.Run},
 	{"optimizer", optimizer.Run},
-	{"backend", backend.Run},
+	{"backend", backend_java.Run},
 }
 
 func main() {

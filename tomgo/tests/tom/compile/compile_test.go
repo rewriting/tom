@@ -23,7 +23,7 @@ import (
 	"testing"
 
 	"tom/tomgo/stable/tom"
-	"tom/tomgo/stable/tom/backend"
+	"tom/tomgo/stable/tom/backend_java"
 	"tom/tomgo/stable/tom/backend_go"
 	"tom/tomgo/stable/tom/compiler"
 	"tom/tomgo/stable/tom/desugarer"
@@ -364,7 +364,7 @@ func runGoPipeline(src, dst string) error {
 		desugarer.Run,
 		typer.Run,
 		compiler.Run,
-		backend.Run,
+		backend_java.Run,
 	)
 	if err != nil {
 		return err

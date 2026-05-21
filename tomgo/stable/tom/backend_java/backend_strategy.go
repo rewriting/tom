@@ -27,7 +27,7 @@
 // `%match` blocks. Mirrors Java's tom.engine.expander.StrategyExpander
 // + tom.engine.backend.GenericGenerator (~400 LOC combined).
 
-package backend
+package backend_java
 
 import (
 	"fmt"
