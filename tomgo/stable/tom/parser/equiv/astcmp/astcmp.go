@@ -27,6 +27,8 @@ package astcmp
 import (
 	"fmt"
 	"strings"
+
+	"tom/tomgo/stable/library/tomast"
 )
 
 // Node is one element of the parsed dump: either an operator call
@@ -65,10 +67,10 @@ func Parse(s string) (*Node, error) {
 	return n, nil
 }
 
-// Equal reports whether two trees are structurally identical after
-// [Simplify] is applied to each. Use this from tests in lieu of a
-// raw `strings.Compare` so the artefacts encoded as rules in
-// [defaultRules] are folded out before the comparison.
+// Equal reports whether two term strings are structurally
+// equivalent. Currently uses the Simplify-based comparator with
+// the rewrite rules in [DefaultRules]. Use [EqualStrict] when you
+// want pointer-identity via [tomast.FromString].
 func Equal(a, b string) (bool, error) {
 	na, err := Parse(a)
 	if err != nil {
@@ -79,6 +81,23 @@ func Equal(a, b string) (bool, error) {
 		return false, fmt.Errorf("astcmp: parse b: %w", err)
 	}
 	return EqualNodes(Simplify(na), Simplify(nb)), nil
+}
+
+// EqualStrict reports whether two term strings parse to the exact
+// same hash-consed TomAST term via [tomast.FromString]. Thanks to
+// hash-consing in stable/library/sharedobjects, two terms with
+// identical shape share the same Go pointer — so strict equality
+// reduces to `pa == pb`.
+func EqualStrict(a, b string) (bool, error) {
+	pa, err := tomast.FromString(a)
+	if err != nil {
+		return false, fmt.Errorf("astcmp: parse a: %w", err)
+	}
+	pb, err := tomast.FromString(b)
+	if err != nil {
+		return false, fmt.Errorf("astcmp: parse b: %w", err)
+	}
+	return pa == pb, nil
 }
 
 // EqualNodes performs the structural comparison: same Op + same arg
