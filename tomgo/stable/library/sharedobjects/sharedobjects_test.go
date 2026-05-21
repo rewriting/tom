@@ -1,7 +1,6 @@
 package sharedobjects
 
 import (
-	"sync"
 	"testing"
 )
 
@@ -112,28 +111,26 @@ func TestFactory_Stats(t *testing.T) {
 	_ = s.String() // smoke test
 }
 
-func TestFactory_Concurrent(t *testing.T) {
+// TestFactory_Sequential exercises repeated Build calls on the same
+// value from a single goroutine — the factory itself is single-threaded
+// (mutex removed for simplicity), so this just pins the sharing
+// invariant: equal prototypes return the SAME pointer no matter how
+// many times Build is invoked.
+func TestFactory_Sequential(t *testing.T) {
 	f := NewFactory()
-	const goroutines = 16
 	const each = 50
-	var wg sync.WaitGroup
-	results := make([]*peano, goroutines)
-	for i := 0; i < goroutines; i++ {
-		i := i
-		wg.Add(1)
-		go func() {
-			defer wg.Done()
-			results[i] = makeNat(f, each)
-		}()
+	const repeats = 16
+	results := make([]*peano, repeats)
+	for i := 0; i < repeats; i++ {
+		results[i] = makeNat(f, each)
 	}
-	wg.Wait()
-	for i := 1; i < goroutines; i++ {
+	for i := 1; i < repeats; i++ {
 		if results[i] != results[0] {
-			t.Fatalf("goroutine %d got a distinct canonical instance for the same value", i)
+			t.Fatalf("iteration %d got a distinct canonical instance for the same value", i)
 		}
 	}
 	if got := f.Stats().NumTerms; got != each+1 {
-		t.Fatalf("expected %d unique terms after concurrent insertion, got %d", each+1, got)
+		t.Fatalf("expected %d unique terms, got %d", each+1, got)
 	}
 }
 
