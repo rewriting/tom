@@ -499,9 +499,13 @@ func expandGomBlock(body, filename, javaPkg string, includeChain []string, alrea
 	if err := os.WriteFile(gomFile, []byte(body), 0o644); err != nil {
 		return nil, err
 	}
-	gomBin, tomHome := locateGomBin()
-	if gomBin == "" {
-		return nil, fmt.Errorf("gom CLI not found (set TOM_HOME)")
+	libDir, classpath, gomConfig := locateBundledGom()
+	if libDir == "" {
+		return nil, fmt.Errorf("gom bundled jars not found under tomgo/stable/lib")
+	}
+	javaBin, err := locateJava()
+	if err != nil {
+		return nil, err
 	}
 	// Output the generated .tom alongside the .t (mimicking Java's
 	// behaviour where the test build uses destdir=test/gen). For
@@ -516,9 +520,14 @@ func expandGomBlock(body, filename, javaPkg string, includeChain []string, alrea
 	if err := os.MkdirAll(outDir, 0o755); err != nil {
 		return nil, err
 	}
-	args := []string{"-d", outDir, "--package", pkg, gomFile}
-	cmd := exec.Command(gomBin, args...)
-	cmd.Env = append(os.Environ(), "TOM_HOME="+tomHome)
+	args := []string{
+		"-cp", classpath,
+		"-Dtom.home=" + filepath.Dir(libDir),
+		"tom.gom.Gom",
+		"-X", gomConfig,
+		"-d", outDir, "--package", pkg, gomFile,
+	}
+	cmd := exec.Command(javaBin, args...)
 	if out, err := cmd.CombinedOutput(); err != nil {
 		return nil, fmt.Errorf("gom %s failed: %w\n%s", gomFile, err, out)
 	}
@@ -663,24 +672,60 @@ func parseGomModuleName(body string) string {
 	return ""
 }
 
-// locateGomBin returns (gomBinPath, tomHome). Tries $TOM_HOME first,
-// then walks up from the current binary location looking for a
-// src/dist/bin/gom. Returns empty strings if not found.
-func locateGomBin() (string, string) {
-	if home := os.Getenv("TOM_HOME"); home != "" {
-		if p := filepath.Join(home, "bin", "gom"); fileExists(p) {
-			return p, home
+// locateBundledGom finds tomgo's own bundled gom jars and returns
+// (libDir, classpath, configPath). libDir is the absolute path to
+// `tomgo/stable/lib`; classpath is a `:`-joined list of all jars
+// under runtime/, tom/, tools/, compiletime/; configPath is the
+// Gom.config aterm-encoded plugin pipeline.
+//
+// Walks up from the current working directory until it finds the
+// `stable/lib/tom/gom.jar` marker — that's the autonomy contract:
+// no `$TOM_HOME`, no external dependency, everything tomgo needs
+// to run gom is inside its own tree.
+func locateBundledGom() (libDir, classpath, gomConfig string) {
+	cwd, _ := os.Getwd()
+	for dir := cwd; ; {
+		p := filepath.Join(dir, "stable", "lib", "tom", "gom.jar")
+		if _, err := os.Stat(p); err == nil {
+			libDir = filepath.Join(dir, "stable", "lib")
+			break
+		}
+		parent := filepath.Dir(dir)
+		if parent == dir {
+			return "", "", ""
+		}
+		dir = parent
+	}
+	var jars []string
+	for _, sub := range []string{"runtime", "tom", "tools", "compiletime"} {
+		entries, err := os.ReadDir(filepath.Join(libDir, sub))
+		if err != nil {
+			continue
+		}
+		for _, e := range entries {
+			if strings.HasSuffix(e.Name(), ".jar") {
+				jars = append(jars, filepath.Join(libDir, sub, e.Name()))
+			}
 		}
 	}
-	// Common dev paths (this codebase lives at /Users/pem/github/tom/).
-	for _, home := range []string{
-		"/Users/pem/github/tom/src/dist",
-	} {
-		if p := filepath.Join(home, "bin", "gom"); fileExists(p) {
-			return p, home
+	classpath = strings.Join(jars, string(os.PathListSeparator))
+	gomConfig = filepath.Join(libDir, "config", "Gom.config")
+	return libDir, classpath, gomConfig
+}
+
+// locateJava resolves the `java` binary, preferring `$JAVA_HOME/bin/java`
+// then `java` on `$PATH`. Returns an error if neither is available.
+func locateJava() (string, error) {
+	if home := os.Getenv("JAVA_HOME"); home != "" {
+		if p := filepath.Join(home, "bin", "java"); fileExists(p) {
+			return p, nil
 		}
 	}
-	return "", ""
+	p, err := exec.LookPath("java")
+	if err != nil {
+		return "", fmt.Errorf("java binary not found: %w", err)
+	}
+	return p, nil
 }
 
 func fileExists(p string) bool {

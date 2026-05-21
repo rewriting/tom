@@ -10,6 +10,9 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"os/exec"
+	"path/filepath"
+	"strings"
 
 	"tom/tomgo/stable/gom/backend"
 	"tom/tomgo/stable/gom/parser"
@@ -98,28 +101,107 @@ func runScanHooks(args []string) error {
 
 func runGom(args []string) error {
 	fs := flag.NewFlagSet("gom", flag.ContinueOnError)
-	var out, pkg string
-	fs.StringVar(&out, "o", "", "output directory for the generated Go package (required)")
-	fs.StringVar(&pkg, "pkg", "", "override the generated Go package name (default: derived from the module name)")
+	var out, pkg, target string
+	fs.StringVar(&out, "o", "", "output directory for the generated package (required)")
+	fs.StringVar(&pkg, "pkg", "", "override the generated package name (default: derived from the module name)")
+	fs.StringVar(&target, "target", "go", "output language: 'go' (in-process backend) or 'java' (bundled gom.jar)")
 	if err := fs.Parse(args); err != nil {
 		return err
 	}
 	if fs.NArg() != 1 {
-		return fmt.Errorf("usage: tomgo gom -o <out-dir> [--pkg <name>] <file.gom>")
+		return fmt.Errorf("usage: tomgo gom -o <out-dir> [--pkg <name>] [--target go|java] <file.gom>")
 	}
 	if out == "" {
 		return fmt.Errorf("missing -o <out-dir>")
 	}
-	mod, err := gom.ParseFile(fs.Arg(0))
-	if err != nil {
-		return err
+	switch target {
+	case "go", "":
+		mod, err := gom.ParseFile(fs.Arg(0))
+		if err != nil {
+			return err
+		}
+		dir, err := backend.GenerateToDir(mod, backend.Options{PackageName: pkg}, out)
+		if err != nil {
+			return err
+		}
+		fmt.Printf("wrote %s/ (%d sort(s) from %s) [target=go]\n", dir, gom.CountSorts(mod), gom.QualifiedName(mod))
+		return nil
+	case "java":
+		return runGomJava(fs.Arg(0), out, pkg)
+	default:
+		return fmt.Errorf("unknown --target %q (want 'go' or 'java')", target)
 	}
-	dir, err := backend.GenerateToDir(mod, backend.Options{PackageName: pkg}, out)
-	if err != nil {
-		return err
+}
+
+// runGomJava invokes tomgo's bundled gom.jar (the Java tom.gom.Gom)
+// to emit a Java AST package. This is tomgo's wrapper around the
+// legacy Java emitter — same output the Tom Java compiler produces
+// today, just driven from inside the tomgo tree (no external
+// $TOM_HOME, no `/tom/stable/dist` reliance).
+func runGomJava(input, outDir, pkg string) error {
+	libDir, classpath, gomConfig := locateBundledGom()
+	if libDir == "" {
+		return fmt.Errorf("tomgo bundled gom jars not found (looked for stable/lib/tom/gom.jar)")
 	}
-	fmt.Printf("wrote %s/ (%d sort(s) from %s)\n", dir, gom.CountSorts(mod), gom.QualifiedName(mod))
-	return nil
+	javaBin, err := exec.LookPath("java")
+	if err != nil {
+		if home := os.Getenv("JAVA_HOME"); home != "" {
+			javaBin = filepath.Join(home, "bin", "java")
+		} else {
+			return fmt.Errorf("java binary not found in PATH or JAVA_HOME")
+		}
+	}
+	args := []string{
+		"-cp", classpath,
+		"-Dtom.home=" + filepath.Dir(libDir),
+		"tom.gom.Gom",
+		"-X", gomConfig,
+		"-d", outDir,
+	}
+	if pkg != "" {
+		args = append(args, "--package", pkg)
+	}
+	args = append(args, input)
+	cmd := exec.Command(javaBin, args...)
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	return cmd.Run()
+}
+
+// locateBundledGom walks up from CWD until it finds the marker
+// `stable/lib/tom/gom.jar`, then builds the classpath + locates the
+// Gom.config aterm-encoded plugin pipeline. Identical to the parser
+// package's helper — duplicated to avoid pulling the parser into
+// the CLI for one small lookup.
+func locateBundledGom() (libDir, classpath, gomConfig string) {
+	cwd, _ := os.Getwd()
+	for dir := cwd; ; {
+		p := filepath.Join(dir, "stable", "lib", "tom", "gom.jar")
+		if _, err := os.Stat(p); err == nil {
+			libDir = filepath.Join(dir, "stable", "lib")
+			break
+		}
+		parent := filepath.Dir(dir)
+		if parent == dir {
+			return "", "", ""
+		}
+		dir = parent
+	}
+	var jars []string
+	for _, sub := range []string{"runtime", "tom", "tools", "compiletime"} {
+		entries, err := os.ReadDir(filepath.Join(libDir, sub))
+		if err != nil {
+			continue
+		}
+		for _, e := range entries {
+			if filepath.Ext(e.Name()) == ".jar" {
+				jars = append(jars, filepath.Join(libDir, sub, e.Name()))
+			}
+		}
+	}
+	classpath = strings.Join(jars, string(os.PathListSeparator))
+	gomConfig = filepath.Join(libDir, "config", "Gom.config")
+	return libDir, classpath, gomConfig
 }
 
 func runGomBatch(args []string) error {

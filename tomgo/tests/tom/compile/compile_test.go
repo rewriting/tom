@@ -575,26 +575,19 @@ func resolveResources(t *testing.T) (resources, bool) {
 		t.Skip("repo root not found above " + cwd)
 		return r, false
 	}
-	distLib := filepath.Join(repoRoot, "stable", "dist", "lib")
-	jars, err := collectJars(filepath.Join(distLib, "runtime"))
+	// Tomgo is autonomous: all jars it needs (runtime + tools +
+	// junit) live under tomgo/stable/lib/. No more reliance on
+	// /tom/stable/dist/lib paths outside this repo.
+	tomgoLib := filepath.Join(repoRoot, "tomgo", "stable", "lib")
+	jars, err := collectJars(filepath.Join(tomgoLib, "runtime"))
 	if err != nil || len(jars) == 0 {
-		t.Skipf("aterm runtime jars missing under %s", distLib)
+		t.Skipf("tomgo runtime jars missing under %s", tomgoLib)
 		return r, false
 	}
 	r.jars = jars
-	r.junitJar = filepath.Join(distLib, "compiletime", "junit.jar")
-	// hamcrest lives in lab/ historically — match what cmd/tom users
-	// already do at the shell. If absent, JUnit fixtures will still
-	// run their assertions (hamcrest is only needed for richer
-	// matchers we don't use).
-	for _, p := range []string{
-		filepath.Join(repoRoot, "lab", "enumerator", "lib", "hamcrest-all-1.3.jar"),
-		filepath.Join(repoRoot, "stable", "lib", "tools", "hamcrest.jar"),
-	} {
-		if _, err := os.Stat(p); err == nil {
-			r.hamcrestJar = p
-			break
-		}
+	r.junitJar = filepath.Join(tomgoLib, "compiletime", "junit.jar")
+	if _, err := os.Stat(filepath.Join(tomgoLib, "tools", "hamcrest.jar")); err == nil {
+		r.hamcrestJar = filepath.Join(tomgoLib, "tools", "hamcrest.jar")
 	}
 	r.fixturesDir = filepath.Join(cwd, "fixtures")
 	r.repoRoot = filepath.Join(repoRoot, "tomgo")
