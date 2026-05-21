@@ -153,6 +153,28 @@ var fixtures = []fixture{
 		},
 	},
 	{
+		// TestNonVarSubjects.t — `%match(list(a()))` with a backquote-
+		// term subject (not just a bare variable). The compiler
+		// hoists the non-variable subject into a fresh local before
+		// running the compiled match (see compiler/renamesubjects.go's
+		// wrapWithHoist). Exercises:
+		//   - inline %gom with a 6-alt sort (Term) including variadic
+		//     `list(Term*)` and named-slot alts `f(l:TermList) g(t:Term)`;
+		//   - subject expression `list(a())` (BuildTermBQTerm) instead
+		//     of a BQVariable. Our renamer only currently handles bare
+		//     BQVariables; this fixture confirms the upstream Java path
+		//     works even though the renamer-passthrough emits a
+		//     different shape than the Java reference would.
+		name:         "TestNonVarSubjects",
+		useJUnit:     true,
+		needsMapping: true,
+		hasInlineGom: true,
+		expected: []string{
+			"JUnit version 4.10",
+			"OK (1 test)",
+		},
+	},
+	{
 		// TestAlgebraic.t — uses %strategy + %gom + %include of sl.
 		// Exercises:
 		//   - inline gom expansion (generates testalgebraic.sig
@@ -345,6 +367,19 @@ var goFixtures = []struct {
 			"=== RUN   TestEmptyEmpty",
 			"=== RUN   TestSingletonSingleton",
 			"=== RUN   TestMismatch",
+			"PASS",
+		},
+	},
+	{
+		// TestNonVarSubjects.t — Go counterpart. Same `%match(list(a()))`
+		// with backquote-term subject; just one rule with `_x` wildcard.
+		name:         "TestNonVarSubjects",
+		useGoTest:    true,
+		useSlLib:     true,
+		hasInlineGom: true,
+		goPackage:    "testnonvarsubjects",
+		expected: []string{
+			"=== RUN   TestNonVarSubject",
 			"PASS",
 		},
 	},
