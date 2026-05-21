@@ -227,6 +227,23 @@ var goFixtures = []struct {
 			"Array test has successfully terminated.",
 		},
 	},
+	{
+		// TestArray.t — JUnit-style 7-test suite ported to Go's
+		// testing package. Exercises sort1/sort2, double1/2/4/5
+		// (incl. `x@a()` alias + 2-rule pattern), and a
+		// VariableStar split-count test (`conc(X1*, X2*, X3*)`
+		// on [a, b] → 6 ways).
+		name:      "TestArray",
+		useGoTest: true,
+		expected: []string{
+			"=== RUN   TestSort1",
+			"=== RUN   TestSort2",
+			"=== RUN   TestDouble1",
+			"=== RUN   TestDouble5",
+			"=== RUN   TestVariableStar1",
+			"PASS",
+		},
+	},
 }
 
 // TestCompileGoFixtures is the Go-target counterpart of

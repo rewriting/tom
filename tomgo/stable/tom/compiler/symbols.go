@@ -107,11 +107,35 @@ func (env *compilerEnv) termTypeOfBQTerm(t tomast.BQTerm) tomast.TomType {
 	case *tomast.SymbolOfBQTerm:
 		// SymbolOf(t) has the inner term's type.
 		r = env.termTypeOfBQTerm(x.GroundTerm)
+	case *tomast.ExpressionToBQTermBQTerm:
+		r = env.termTypeOfExpression(x.Exp)
+	case *tomast.SubtermBQTerm:
+		// Subterm(name, slotName, _) has the slot's type.
+		r = env.slotTypeFor(nameString(x.AstName), nameString(x.SlotName))
 	}
 	if r == nil {
 		r = tomast.MakeEmptyType()
 	}
 	return r
+}
+
+// termTypeOfExpression returns the result type of an Expression
+// used as the source of a constraint (typically wrapped in
+// `ExpressionToBQTerm`). Handles the IR shapes whose codomain is
+// explicit in the node — GetElement, GetHead, Cast — so the typer
+// can propagate concrete types down to fresh hoist variables.
+func (env *compilerEnv) termTypeOfExpression(e tomast.Expression) tomast.TomType {
+	switch x := e.(type) {
+	case *tomast.CastExpression:
+		return x.AstType
+	case *tomast.GetElementExpression:
+		return x.Codomain
+	case *tomast.GetHeadExpression:
+		return x.Codomain
+	case *tomast.BQTermToExpressionExpression:
+		return env.termTypeOfBQTerm(x.AstTerm)
+	}
+	return nil
 }
 
 // termTypeOfTomTerm returns the AstType of a TomTerm (the pattern
