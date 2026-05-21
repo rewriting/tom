@@ -185,17 +185,32 @@ func TestCompileFixtures(t *testing.T) {
 }
 
 // goFixtures lists the Tom→Go fixtures. Each maps to a `.t` source
-// under `fixtures/go/` that emits a single `.go` file the harness
-// then builds + runs via `go run`.
+// under `fixtures/go/`. When `useGoTest` is true the harness wraps
+// the emitted file as `<name>_test.go`, drops a tiny `go.mod`
+// alongside it, and runs `go test -v .`; otherwise it runs `go run`
+// on the file directly (single-file mode).
 var goFixtures = []struct {
-	name     string
-	expected []string
+	name      string
+	expected  []string
+	useGoTest bool
 }{
 	{
 		name: "Peano",
 		expected: []string{
 			"First loop has successfully terminated.",
 			"Peano test has successfully terminated.",
+		},
+	},
+	{
+		name:      "TestPeano",
+		useGoTest: true,
+		expected: []string{
+			"=== RUN   TestPlus1",
+			"=== RUN   TestPlus2",
+			"=== RUN   TestFib3",
+			"=== RUN   TestInt2p",
+			"=== RUN   TestPeano2int",
+			"PASS",
 		},
 	},
 }
@@ -217,27 +232,42 @@ func TestCompileGoFixtures(t *testing.T) {
 		t.Run(f.name, func(t *testing.T) {
 			workDir := t.TempDir()
 			sourcePath := filepath.Join(resources.fixturesDir, "go", f.name+".t")
-			goPath := filepath.Join(workDir, f.name+".go")
+
+			// Test files must end in `_test.go` for `go test` to
+			// pick them up. `go run` can use any name.
+			fname := f.name + ".go"
+			if f.useGoTest {
+				fname = f.name + "_test.go"
+			}
+			goPath := filepath.Join(workDir, fname)
 			if err := runGoPipelineToGo(sourcePath, goPath); err != nil {
 				t.Fatalf("pipeline failed: %v", err)
 			}
-			// `go run <file>` — needs the file to be in a directory
-			// that has a `go.mod` or in module mode with GOPATH. The
-			// simplest robust approach is `go run` directly on the
-			// file (single-file mode).
-			cmd := exec.Command(goBin, "run", goPath)
+
+			var cmd *exec.Cmd
+			if f.useGoTest {
+				// `go test` needs a module — drop a tiny go.mod
+				// alongside the generated _test.go.
+				modContent := []byte("module peano_test_fixture\n\ngo 1.22\n")
+				if err := os.WriteFile(filepath.Join(workDir, "go.mod"), modContent, 0o644); err != nil {
+					t.Fatalf("write go.mod: %v", err)
+				}
+				cmd = exec.Command(goBin, "test", "-v", ".")
+			} else {
+				cmd = exec.Command(goBin, "run", goPath)
+			}
 			cmd.Dir = workDir
 			var stdout, stderr bytes.Buffer
 			cmd.Stdout = &stdout
 			cmd.Stderr = &stderr
 			if err := cmd.Run(); err != nil {
-				t.Fatalf("go run failed: %v\nstderr=%s\nstdout=%s\nsource=%s",
+				t.Fatalf("go failed: %v\nstderr=%s\nstdout=%s\nsource=%s",
 					err, stderr.String(), stdout.String(), goPath)
 			}
-			out := stdout.String()
+			out := stdout.String() + stderr.String()
 			for _, want := range f.expected {
 				if !strings.Contains(out, want) {
-					t.Errorf("expected substring %q not in stdout:\n%s", want, out)
+					t.Errorf("expected substring %q not in output:\n%s", want, out)
 				}
 			}
 		})
