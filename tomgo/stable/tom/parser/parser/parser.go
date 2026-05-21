@@ -504,13 +504,15 @@ func expandGomBlock(body, filename, javaPkg string, includeChain []string, alrea
 		return nil, fmt.Errorf("gom %s failed: %w\n%s", gomFile, err, out)
 	}
 	// With --package <pkg>, gom writes
-	// <outDir>/<pkg-segments>/<module-lower>/<module-lower>.tom.
-	// Compute the exact path rather than walking — outDir may be
-	// shared with other fixtures' previous output.
+	// <outDir>/<pkg-segments>/<module-lower>/<ModuleName>.tom.
+	// Note: the DIRECTORY uses the lowercase module name, but the
+	// FILE keeps the original casing (e.g. `Example.tom`). Java's
+	// gom emits the same shape — matching it is required for the
+	// OriginTracking paths in the .tom to align byte-for-byte.
 	modLower := strings.ToLower(moduleName)
 	pkgSegs := strings.Split(pkg, ".")
 	parts := append([]string{outDir}, pkgSegs...)
-	parts = append(parts, modLower, modLower+".tom")
+	parts = append(parts, modLower, moduleName+".tom")
 	tomFile := filepath.Join(parts...)
 	if _, err := os.Stat(tomFile); err != nil {
 		return nil, fmt.Errorf("gom produced no .tom at %s: %w", tomFile, err)

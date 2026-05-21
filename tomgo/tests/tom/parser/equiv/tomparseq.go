@@ -17,6 +17,7 @@
 package tomparseq
 
 import (
+	"regexp"
 	"errors"
 	"fmt"
 	"os"
@@ -143,19 +144,32 @@ func (tc JavaToolchain) DumpJava(inputFile string) (string, error) {
 }
 
 // normalizeAST is the path-rewrite applied to *both* the Java and Go sides
-// before byte-comparison. Two substitutions, in order:
+// before byte-comparison.
 //
 //	absInput              → __INPUT__   (the main .t file)
 //	dirname(absInput)     → __DIR__     (its containing directory, used for
 //	                                     any %include'd files alongside it)
+//	`<tmp>/tomint-NNN/X`  → __DIR__/gen/X (cmd/javacache runs `tom` in a
+//	                                       per-fixture scratch dir; the
+//	                                       resulting .tfix files carry
+//	                                       those absolute scratch paths in
+//	                                       every OriginTracking. Map them
+//	                                       to the same `__DIR__/gen/...`
+//	                                       form the Go side emits.)
 //
 // Order matters: replacing the directory first would also rewrite absInput
 // (since absInput starts with its own directory).
 func normalizeAST(s, absInput string) string {
 	s = strings.ReplaceAll(s, absInput, "__INPUT__")
 	s = strings.ReplaceAll(s, filepath.Dir(absInput), "__DIR__")
+	s = scratchPathRE.ReplaceAllString(s, "__DIR__/gen/")
 	return s
 }
+
+// scratchPathRE matches the `<tmp>/tomint-NNN/` prefix javacache wraps
+// around each fixture's `tom --intermediate` invocation. On macOS the
+// tmp dir starts with `/private/var/folders/`, on Linux it's `/tmp/`.
+var scratchPathRE = regexp.MustCompile(`(?:/private)?/(?:tmp|var/folders/[^/]+/[^/]+/T)/tomint-\d+/`)
 
 // stripParserChatter removes the "antlr4: ..." progress line printed by
 // TomParserPlugin (it goes to stdout, sigh) so only the AST term remains.
