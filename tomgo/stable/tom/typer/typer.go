@@ -105,6 +105,17 @@ func (n *newKernelTyper) inferAllTypes(subject any, contextType tomast.TomType) 
 				tomast.MakeEmptyTargetLanguageType(),
 			)
 		}
+		// Codomain propagation: if aType is still "unknown" and the
+		// subject is a constructor call (BQAppl with a head whose
+		// symbol has a known codomain), Java's constraint solver
+		// resolves aType to that codomain via Subtype(codomain, aType)
+		// constraints. We approximate that here without the full
+		// solver — direct lookup in the SymbolTable.
+		if isUnknownType(aType) {
+			if cod := n.subjectCodomain(s.Subject); cod != nil {
+				aType = cod
+			}
+		}
 		// Register subjects in varTypes so backquote variables in
 		// the rule's body or downstream constraints can pick up the
 		// concrete type (regress/UnknownSymbol1's `\`tt` after a
@@ -547,4 +558,35 @@ func headSymbolName(nameList tomast.TomNameList) string {
 		}
 	}
 	return ""
+}
+
+// subjectCodomain returns the codomain TomType for a BQAppl whose
+// head symbol exists in the SymbolTable, or nil otherwise. Used by
+// MatchConstraint typing to fill in `aType` when the parser left
+// it as `"unknown type"` and the subject's constructor pins it.
+func (n *newKernelTyper) subjectCodomain(subject tomast.BQTerm) tomast.TomType {
+	if n.symbols == nil {
+		return nil
+	}
+	appl, ok := subject.(*tomast.BQApplBQTerm)
+	if !ok {
+		return nil
+	}
+	nm, ok := appl.AstName.(*tomast.NameTomName)
+	if !ok {
+		return nil
+	}
+	sym, ok := n.symbols.Symbols[nm.String_]
+	if !ok {
+		return nil
+	}
+	s, ok := sym.(*tomast.SymbolTomSymbol)
+	if !ok {
+		return nil
+	}
+	tt, ok := s.TypesToType.(*tomast.TypesToTypeTomType)
+	if !ok {
+		return nil
+	}
+	return tt.Codomain
 }
