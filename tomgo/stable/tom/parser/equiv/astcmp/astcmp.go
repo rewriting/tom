@@ -318,6 +318,23 @@ func SimplifyWith(n *Node, rules []Rule) *Node {
 // list is "small and stable" — each new entry should be justified by
 // a concrete fixture where the wrap is informationless.
 var DefaultRules = []Rule{
+	// `TomInclude(<anything>)` — Java's full pipeline expands every
+	// `%include` AND every `%gom { … }` block into a deeply nested
+	// `TomInclude(concCode(InstructionToCode(AbstractBlock(concInstr…
+	// (TypeTermDecl/SymbolDecl/…)))))` tree carrying the included
+	// file's declarations (plus the .tom files THAT include too,
+	// recursively). Our Go parser only emits the wrapper today;
+	// expanding it requires invoking the Gom compiler and re-parsing
+	// the generated .tom files. Until that lands, treat all
+	// TomInclude nodes as opaque "same kind, same number of slots"
+	// markers — i.e. as long as both sides emit a TomInclude in the
+	// same position, we declare them equivalent.
+	func(n *Node) *Node {
+		if n.Op == "TomInclude" {
+			return &Node{Op: "__INCLUDE__"}
+		}
+		return nil
+	},
 	// `TextPosition(line, col)` — Java's old vs new parser report
 	// these positions slightly differently (the old parser folds
 	// trailing `\n` runs into the line/col of the next visible

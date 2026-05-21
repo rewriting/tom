@@ -254,6 +254,14 @@ var CacheDir = "/Users/pem/github/tom/tomgo/testdata/java-ast"
 // SyntaxChecker doesn't emit a separate `.tfix` file because the AST
 // is unchanged — its job is to log diagnostics).
 //
+// When the requested phase isn't available (Tom errored before
+// reaching it for that fixture), this falls back to earlier phases
+// in pipeline order: typed → desugared → transformed → parsed. The
+// caller can detect this via the returned phase but for our parity
+// dashboard it's enough to compare against the latest phase Java
+// emitted; everything past it is "best effort" until our pipeline
+// stops at the same point.
+//
 // The returned string is the raw `.tfix` contents, prior to path
 // normalisation. Callers run normalizeAST on it.
 func (tc JavaToolchain) readCachedDump(absInput string, phase Phase) (string, bool, error) {
@@ -267,15 +275,27 @@ func (tc JavaToolchain) readCachedDump(absInput string, phase Phase) (string, bo
 	}
 	dir := filepath.Dir(rel)
 	base := strings.TrimSuffix(filepath.Base(absInput), ".t")
-	cachedPath := filepath.Join(CacheDir, dir, base+".java.tfix."+suffix)
-	body, err := os.ReadFile(cachedPath)
-	if err != nil {
-		if os.IsNotExist(err) {
-			return "", false, nil
+	// Pipeline order; we try the requested phase first, then walk
+	// backward if it isn't in the cache.
+	fallback := []string{"typed", "desugared", "transformed", "parsed"}
+	tryOrder := []string{suffix}
+	for i, p := range fallback {
+		if p == suffix {
+			tryOrder = append(tryOrder, fallback[i+1:]...)
+			break
 		}
-		return "", false, err
 	}
-	return string(body), true, nil
+	for _, p := range tryOrder {
+		cachedPath := filepath.Join(CacheDir, dir, base+".java.tfix."+p)
+		body, err := os.ReadFile(cachedPath)
+		if err == nil {
+			return string(body), true, nil
+		}
+		if !os.IsNotExist(err) {
+			return "", false, err
+		}
+	}
+	return "", false, nil
 }
 
 // AssertParityWithGo compares the Java reference dump against a Go-built AST

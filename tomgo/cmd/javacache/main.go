@@ -104,10 +104,18 @@ func main() {
 		if err != nil {
 			fail("scratch:", err)
 		}
-		// NOTE: no `--newparser` — we want the same default (old)
-		// parser path that `test/build.sh build` uses, so the
-		// cached AST is consistent with the rest of the harvest.
-		cmd := exec.Command(tomBin, "--intermediate", "-d", scratch, input)
+		// Default: no `--newparser`, matching `test/build.sh build`'s
+		// behaviour. Some fixtures (rule/*, antipatterns/*) use
+		// newer syntax (`%rule`, etc.) that only the new parser
+		// accepts. We auto-detect them by looking at the source for
+		// the relevant island keywords.
+		srcBytes, _ := os.ReadFile(input)
+		args := []string{"--intermediate"}
+		if needsNewParser(string(srcBytes)) {
+			args = append(args, "--newparser")
+		}
+		args = append(args, "-d", scratch, input)
+		cmd := exec.Command(tomBin, args...)
 		cmd.Env = append(os.Environ(), "TOM_HOME="+tomHome)
 		out, err := cmd.CombinedOutput()
 		if err != nil {
@@ -218,6 +226,15 @@ func moveTfix(scratch, dst, base string) (int, error) {
 		return nil
 	})
 	return moved, err
+}
+
+// needsNewParser reports whether the source uses an island
+// construct only the `--newparser` (ANTLR4 island) parser
+// understands. The old (TomJava) parser barfs on `%rule { … }`
+// among other things; presence of the keyword in the source is a
+// strong signal we need to fall back to --newparser.
+func needsNewParser(src string) bool {
+	return strings.Contains(src, "%rule")
 }
 
 // lastLines returns the last n newline-separated lines of s, useful
