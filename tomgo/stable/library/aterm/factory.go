@@ -57,13 +57,24 @@ func (f *Factory) MakeAFun(name string, arity int, isQuoted bool) *AFun {
 
 // MakeAppl builds an ATermAppl with `fun` applied to args. The args
 // length must match fun.arity, except for AFuns of arity 0 (where
-// args must be empty).
+// args must be empty). The returned appl carries no annotations —
+// use SetAnnotation or makeApplAnno for those.
 func (f *Factory) MakeAppl(fun *AFun, args ...ATerm) *ATermAppl {
+	return f.makeApplAnno(fun, args, nil)
+}
+
+// makeApplAnno is the underlying constructor that lets the caller
+// preserve an annotation list. Internal callers reach for this
+// directly when copying a term (e.g. SetArgument).
+func (f *Factory) makeApplAnno(fun *AFun, args []ATerm, annos *ATermList) *ATermAppl {
 	if len(args) != fun.arity {
 		panic("aterm: makeAppl arity mismatch")
 	}
-	proto := &ATermAppl{fun: fun, args: args, factory: f}
-	proto.hash = hashAppl(fun, args)
+	if annos != nil && annos.IsEmpty() {
+		annos = nil
+	}
+	proto := &ATermAppl{fun: fun, args: args, annos: annos, factory: f}
+	proto.hash = hashAppl(fun, args, annos)
 	return f.store.Build(proto).(*ATermAppl)
 }
 
@@ -188,11 +199,14 @@ func hashAFun(name string, arity int, quoted bool) uint32 {
 	return sharedobjects.MixSymbol(h, []uint32{uint32(arity), q})
 }
 
-func hashAppl(fun *AFun, args []ATerm) uint32 {
-	hashes := make([]uint32, 0, len(args)+1)
+func hashAppl(fun *AFun, args []ATerm, annos *ATermList) uint32 {
+	hashes := make([]uint32, 0, len(args)+2)
 	hashes = append(hashes, fun.Hash())
 	for _, a := range args {
 		hashes = append(hashes, a.Hash())
+	}
+	if annos != nil && !annos.IsEmpty() {
+		hashes = append(hashes, annos.Hash())
 	}
 	return sharedobjects.MixSymbol(sharedobjects.StringHash("appl"), hashes)
 }

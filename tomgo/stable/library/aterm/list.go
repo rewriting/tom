@@ -126,6 +126,106 @@ func (l *ATermList) ElementAt(i int) ATerm {
 	return cur.head
 }
 
+// RemoveElementAt returns a new list with the element at position i
+// dropped. Out-of-range positions return the list unchanged (matching
+// Java's lenient behaviour in pure.ATermListImpl).
+func (l *ATermList) RemoveElementAt(i int) *ATermList {
+	if l.IsEmpty() {
+		return l
+	}
+	if i == 0 {
+		return l.tail
+	}
+	return l.factory.MakeList(l.head, l.tail.RemoveElementAt(i-1))
+}
+
+// Reverse returns the list with elements in reverse order — useful
+// for algorithms that prepend repeatedly and then flip for the final
+// answer (one-pass O(n)).
+func (l *ATermList) Reverse() *ATermList {
+	out := l.factory.emptyList
+	for cur := l; !cur.IsEmpty(); cur = cur.tail {
+		out = l.factory.MakeList(cur.head, out)
+	}
+	return out
+}
+
+// Remove returns the list with the first occurrence of `element`
+// dropped. Returns the list unchanged if the element is absent.
+func (l *ATermList) Remove(element ATerm) *ATermList {
+	if l.IsEmpty() {
+		return l
+	}
+	if l.head == element {
+		return l.tail
+	}
+	return l.factory.MakeList(l.head, l.tail.Remove(element))
+}
+
+// Replace returns a copy of the list with position i set to
+// `element`. Out-of-range positions are an error (panics).
+func (l *ATermList) Replace(element ATerm, i int) *ATermList {
+	if l.IsEmpty() {
+		panic("aterm: Replace: index out of range")
+	}
+	if i == 0 {
+		return l.factory.MakeList(element, l.tail)
+	}
+	return l.factory.MakeList(l.head, l.tail.Replace(element, i-1))
+}
+
+// DictPut treats the list as a list of `[key, value]` pairs and
+// returns a list with the pair for `key` set to `value` — replacing
+// any prior pair for the same key (key equality is by hash-cons
+// pointer identity).
+func (l *ATermList) DictPut(key, value ATerm) *ATermList { return dictPut(l, key, value) }
+
+// DictGet looks up `key` in a `[key, value]` pair list, returning
+// the value or nil if the key isn't present.
+func (l *ATermList) DictGet(key ATerm) ATerm { return dictGet(l, key) }
+
+// DictRemove drops the pair for `key`, returning the list unchanged
+// when no such pair exists.
+func (l *ATermList) DictRemove(key ATerm) *ATermList { return dictRemove(l, key) }
+
+// ---------------------------------------------------------------------------
+// dict helpers — operate on a list of [key, value] pairs.
+// ---------------------------------------------------------------------------
+
+func dictPut(l *ATermList, key, value ATerm) *ATermList {
+	f := l.factory
+	pair := f.MakeList(key, f.MakeList(value, f.emptyList))
+	if l.IsEmpty() {
+		return f.MakeList(pair, f.emptyList)
+	}
+	cur := l.head.(*ATermList)
+	if cur.head == key {
+		return f.MakeList(pair, l.tail)
+	}
+	return f.MakeList(l.head, dictPut(l.tail, key, value))
+}
+
+func dictGet(l *ATermList, key ATerm) ATerm {
+	for cur := l; !cur.IsEmpty(); cur = cur.tail {
+		pair := cur.head.(*ATermList)
+		if pair.head == key {
+			return pair.tail.head
+		}
+	}
+	return nil
+}
+
+func dictRemove(l *ATermList, key ATerm) *ATermList {
+	if l.IsEmpty() {
+		return l
+	}
+	cur := l.head.(*ATermList)
+	if cur.head == key {
+		return l.tail
+	}
+	return l.factory.MakeList(l.head, dictRemove(l.tail, key))
+}
+
 func (l *ATermList) Equivalent(other sharedobjects.Term) bool {
 	o, ok := other.(*ATermList)
 	if !ok {

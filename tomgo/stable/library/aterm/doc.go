@@ -21,11 +21,20 @@
 // What this port covers vs. the Java original:
 //
 //   - parse(...) / make(pattern, args) / match(pattern) on text inputs
-//   - canonical textual writer (Term.String())
-//   - annotations are NOT implemented (every aterm method that touches
-//     them returns the term unchanged, and the empty-annotations list
-//     is a singleton). Test1's annotation assertions are deliberately
-//     trivial — they go through.
-//   - binary serialisation (BAF) and the streaming/blob types are
-//     omitted.
+//   - canonical textual writer (Term.String()) + ReadFromTextFile /
+//     WriteToTextFile for IO round-trips
+//   - annotations are fully implemented on ATermAppl
+//     (SetAnnotation / GetAnnotation / RemoveAnnotation) and exposed
+//     through the parser's trailing `{...}` syntax. Other term
+//     types still return an empty annotation list — Test1 / Test2
+//     only exercise annotations on appls
+//   - list mutators (Remove / Replace / DictPut / DictGet /
+//     DictRemove / RemoveElementAt / Reverse)
+//
+// Out of scope by design:
+//
+//   - binary serialisation (BAF / .taf) — Java parses these via
+//     aterm.pure.binary; we use TRM text format only
+//   - the streaming/blob types (ATermBlob, stream/*) and the
+//     Visitor / Visitable infrastructure
 package aterm

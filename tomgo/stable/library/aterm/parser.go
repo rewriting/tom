@@ -71,8 +71,23 @@ func (p *textParser) consume(c byte) {
 }
 
 // parseTerm parses one term — appl / list / placeholder / number /
-// quoted string.
+// quoted string — and applies any trailing `{annos}` annotation
+// block (which only attaches to appls in our port; the Java
+// reference accepts them on every term type but we only need appls
+// for Test2 parity).
 func (p *textParser) parseTerm() ATerm {
+	t := p.parseTermBare()
+	p.skipWhite()
+	if p.peek() == '{' {
+		annos := p.parseAnnoBlock()
+		if appl, ok := t.(*ATermAppl); ok {
+			return appl.SetAnnotations(annos)
+		}
+	}
+	return t
+}
+
+func (p *textParser) parseTermBare() ATerm {
 	p.skipWhite()
 	switch c := p.peek(); {
 	case c == '[':
@@ -94,6 +109,35 @@ func (p *textParser) parseTerm() ATerm {
 		name := p.parseIdent()
 		return p.parseApplAfterName(name, false)
 	}
+}
+
+// parseAnnoBlock reads `{ term (',' term)* }` after a term, returning
+// the parsed annotations as an ATermList.
+func (p *textParser) parseAnnoBlock() *ATermList {
+	p.consume('{')
+	p.skipWhite()
+	var elems []ATerm
+	if p.peek() != '}' {
+		for {
+			elems = append(elems, p.parseTerm())
+			p.skipWhite()
+			if p.peek() == ',' {
+				p.pos++
+				p.skipWhite()
+				continue
+			}
+			if p.peek() == '}' {
+				break
+			}
+			panic(&ParseError{p.pos, "expected ',' or '}' in annotation block"})
+		}
+	}
+	p.consume('}')
+	out := p.factory.emptyList
+	for i := len(elems) - 1; i >= 0; i-- {
+		out = p.factory.MakeList(elems[i], out)
+	}
+	return out
 }
 
 func (p *textParser) parseList() ATerm {
