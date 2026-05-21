@@ -1,0 +1,23 @@
+/*
+ * Tom Go mapping — boolean primitive.
+ *
+ * Tom calls the sort `boolean` for portability (the same name across
+ * Java/C/Caml/…); the Go implementation maps it to native `bool`.
+ * `true()` / `false()` nullary constructors round-trip Tom's
+ * `is_fsym` / `make` hooks onto Go's `true` / `false` literals.
+ */
+%typeterm boolean {
+  implement { bool }
+  is_sort(t) { true }
+  equals(t1,t2) { $t1 == $t2 }
+}
+
+%op boolean true() {
+  is_fsym(t) { $t == true }
+  make() { true }
+}
+
+%op boolean false() {
+  is_fsym(t) { $t == false }
+  make() { false }
+}

@@ -1,0 +1,70 @@
+/*
+ * Tom Go mapping — composed strategies.
+ *
+ * Mirrors mapping/java/sl/composed.tom. Each composed combinator is
+ * defined as a `make(...)` hook that *backquote-expands* into the
+ * primitive combinators of sl/basic.tom. The Tom compiler expands
+ * those backquote calls (`mu`, `MuVar`, `Sequence`, `All`, …) into
+ * the corresponding Go runtime calls (`sl.NewMu`, `sl.NewMuVar`,
+ * `sl.NewSequence`, …) at compile time — the user just writes
+ * `RepeatId(BottomUp(R()))` and gets the full strategy graph.
+ *
+ * The set ported here is intentionally tight: only what the current
+ * TestAlgebraic fixture needs (RepeatId, BottomUp, TopDown, Try)
+ * plus the most common siblings. Add more from java/sl/composed.tom
+ * as fixtures demand them.
+ */
+
+%op Strategy Try(s1:Strategy) {
+  make(s) { `Choice(s, Identity()) }
+}
+
+/*
+ * Repeat(s) = mu x.((s ; x) <+ id)
+ */
+%op Strategy Repeat(s1:Strategy) {
+  make(s) { `mu(MuVar("_x"), Choice(Sequence(s, MuVar("_x")), Identity())) }
+}
+
+/*
+ * RepeatId — identity-aware Repeat (used by TestAlgebraic).
+ */
+%op Strategy RepeatId(s1:Strategy) {
+  make(v) { `mu(MuVar("_x"), SequenceId(v, MuVar("_x"))) }
+}
+
+/*
+ * TopDown(v) = mu x.(v ; All(x)) — pre-order traversal.
+ */
+%op Strategy TopDown(s1:Strategy) {
+  make(v) { `mu(MuVar("_x"), Sequence(v, All(MuVar("_x")))) }
+}
+
+/*
+ * BottomUp(v) = mu x.(All(x) ; v) — post-order traversal.
+ * Used by TestAlgebraic.
+ */
+%op Strategy BottomUp(s1:Strategy) {
+  make(v) { `mu(MuVar("_x"), Sequence(All(MuVar("_x")), v)) }
+}
+
+/*
+ * TopDownIdStopOnSuccess — top-down, stops descending under a node
+ * once `v` changes the subject. The workhorse of the generated
+ * %strategy rewrite walks (cf. stable/library/sl/builtins.go).
+ */
+%op Strategy TopDownIdStopOnSuccess(s1:Strategy) {
+  make(v) { `mu(MuVar("x"), ChoiceId(v, All(MuVar("x")))) }
+}
+
+%op Strategy OnceTopDown(s1:Strategy) {
+  make(v) { `mu(MuVar("_x"), Choice(v, One(MuVar("_x")))) }
+}
+
+%op Strategy OnceTopDownId(s1:Strategy) {
+  make(v) { `mu(MuVar("_x"), ChoiceId(v, OneId(MuVar("_x")))) }
+}
+
+%op Strategy Innermost(s1:Strategy) {
+  make(v) { `mu(MuVar("_x"), Sequence(All(MuVar("_x")), Try(Sequence(v, MuVar("_x"))))) }
+}

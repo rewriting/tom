@@ -1,0 +1,11 @@
+/*
+ * Tom Go mapping — string primitive.
+ *
+ * Tom's `String` sort maps to Go's native `string`. Equality is a
+ * direct `==` comparison.
+ */
+%typeterm String {
+  implement { string }
+  is_sort(t) { true }
+  equals(t1,t2) { $t1 == $t2 }
+}
