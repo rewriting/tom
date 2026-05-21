@@ -47,8 +47,11 @@ func (e *emitter) emitIRInstruction(i tomast.Instruction) (bool, error) {
 		return true, e.emitInstruction(x.AstInstruction)
 
 	case *tomast.AssignInstruction:
+		// Leading newline ensures the assignment is its own
+		// statement when it follows a closing `}` (Go's
+		// auto-`;` insertion needs end-of-line after `}`).
 		varName := renderTomName(bqTermName(x.Variable))
-		fmt.Fprintf(&e.buf, "%s = ", varName)
+		fmt.Fprintf(&e.buf, "\n%s = ", varName)
 		e.emitExpression(x.Source)
 		e.buf.WriteString(";")
 		return true, nil
@@ -67,6 +70,39 @@ func (e *emitter) emitIRInstruction(i tomast.Instruction) (bool, error) {
 
 	case *tomast.RawActionInstruction:
 		return true, e.emitInstruction(x.AstInstruction)
+
+	case *tomast.DoWhileInstruction:
+		// Go has no do/while — use `for { body; if !cond { break } }`.
+		// Mirrors `do { body } while(cond);` semantics: body runs at
+		// least once, condition checked at end of each iteration.
+		e.buf.WriteString("for {")
+		if err := e.emitInstruction(x.DoInst); err != nil {
+			return true, err
+		}
+		e.buf.WriteString(" if !(")
+		e.emitExpression(x.Condition)
+		e.buf.WriteString(") { break }}\n")
+		return true, nil
+
+	case *tomast.WhileDoInstruction:
+		e.buf.WriteString("for ")
+		e.emitExpression(x.Condition)
+		e.buf.WriteString(" {")
+		if err := e.emitInstruction(x.DoInst); err != nil {
+			return true, err
+		}
+		e.buf.WriteString("}\n")
+		return true, nil
+
+	case *tomast.AssignArrayInstruction:
+		// `var[idx] = expr` — Go syntax matches Java.
+		varName := renderTomName(bqTermName(x.Variable))
+		fmt.Fprintf(&e.buf, "%s[", varName)
+		e.emitBQTerm(x.Index)
+		e.buf.WriteString("] = ")
+		e.emitExpression(x.Source)
+		e.buf.WriteString(";")
+		return true, nil
 	}
 	return false, nil
 }
@@ -145,6 +181,66 @@ func (e *emitter) emitExpression(expr tomast.Expression) {
 		fmt.Fprintf(&e.buf, "tom_get_slot_%s_%s(", opName, x.SlotNameString)
 		e.emitBQTerm(x.Variable)
 		e.buf.WriteString(")")
+	case *tomast.IntegerExpression:
+		fmt.Fprintf(&e.buf, "%d", x.Value)
+	case *tomast.AddOneExpression:
+		e.emitBQTerm(x.Variable)
+		e.buf.WriteString(" + 1")
+	case *tomast.GetSizeExpression:
+		opName := renderTomName(x.Opname)
+		codomainSort := codomainSortFor(e.symbols, opName)
+		fmt.Fprintf(&e.buf, "tom_get_size_%s_%s(", opName, codomainSort)
+		e.emitBQTerm(x.Variable)
+		e.buf.WriteString(")")
+	case *tomast.GetElementExpression:
+		opName := renderTomName(x.Opname)
+		codomainSort := codomainSortFor(e.symbols, opName)
+		fmt.Fprintf(&e.buf, "tom_get_element_%s_%s(", opName, codomainSort)
+		e.emitBQTerm(x.Variable)
+		e.buf.WriteString(",")
+		e.emitBQTerm(x.Index)
+		e.buf.WriteString(")")
+	case *tomast.GetSliceArrayExpression:
+		opName := renderTomName(x.AstName)
+		fmt.Fprintf(&e.buf, "tom_get_slice_%s(", opName)
+		e.emitBQTerm(x.SubjectListName)
+		e.buf.WriteString(",")
+		e.emitBQTerm(x.VariableBeginAST)
+		e.buf.WriteString(",")
+		e.emitBQTerm(x.VariableEndAST)
+		e.buf.WriteString(")")
+	case *tomast.IsEmptyArrayExpression:
+		opName := renderTomName(x.Opname)
+		codomainSort := codomainSortFor(e.symbols, opName)
+		fmt.Fprintf(&e.buf, "(")
+		e.emitBQTerm(x.Index)
+		fmt.Fprintf(&e.buf, " >= tom_get_size_%s_%s(", opName, codomainSort)
+		e.emitBQTerm(x.Variable)
+		e.buf.WriteString("))")
+	case *tomast.GreaterThanExpression:
+		e.buf.WriteString("(")
+		e.emitExpression(x.Arg1)
+		e.buf.WriteString(" > ")
+		e.emitExpression(x.Arg2)
+		e.buf.WriteString(")")
+	case *tomast.GreaterOrEqualThanExpression:
+		e.buf.WriteString("(")
+		e.emitExpression(x.Arg1)
+		e.buf.WriteString(" >= ")
+		e.emitExpression(x.Arg2)
+		e.buf.WriteString(")")
+	case *tomast.LessThanExpression:
+		e.buf.WriteString("(")
+		e.emitExpression(x.Arg1)
+		e.buf.WriteString(" < ")
+		e.emitExpression(x.Arg2)
+		e.buf.WriteString(")")
+	case *tomast.LessOrEqualThanExpression:
+		e.buf.WriteString("(")
+		e.emitExpression(x.Arg1)
+		e.buf.WriteString(" <= ")
+		e.emitExpression(x.Arg2)
+		e.buf.WriteString(")")
 	default:
 		fmt.Fprintf(&e.buf, "/* backend_go: unsupported expression %T */", x)
 	}
@@ -164,6 +260,36 @@ func (e *emitter) emitBQTerm(t tomast.BQTerm) {
 	case *tomast.BuildTermBQTerm:
 		fmt.Fprintf(&e.buf, "tom_make_%s(", renderTomName(x.AstName))
 		e.emitBQTermArgList(x.Args)
+		e.buf.WriteString(")")
+	case *tomast.BuildEmptyArrayBQTerm:
+		fmt.Fprintf(&e.buf, "tom_empty_array_%s(", renderTomName(x.AstName))
+		e.emitBQTerm(x.Size)
+		e.buf.WriteString(")")
+	case *tomast.BuildConsArrayBQTerm:
+		fmt.Fprintf(&e.buf, "tom_cons_array_%s(", renderTomName(x.AstName))
+		e.emitBQTerm(x.HeadTerm)
+		e.buf.WriteString(",")
+		e.emitBQTerm(x.TailTerm)
+		e.buf.WriteString(")")
+	case *tomast.BuildAppendArrayBQTerm:
+		fmt.Fprintf(&e.buf, "tom_append_array_%s(", renderTomName(x.AstName))
+		e.emitBQTerm(x.HeadTerm)
+		e.buf.WriteString(",")
+		e.emitBQTerm(x.TailTerm)
+		e.buf.WriteString(")")
+	case *tomast.BuildEmptyListBQTerm:
+		fmt.Fprintf(&e.buf, "tom_empty_list_%s()", renderTomName(x.AstName))
+	case *tomast.BuildConsListBQTerm:
+		fmt.Fprintf(&e.buf, "tom_cons_list_%s(", renderTomName(x.AstName))
+		e.emitBQTerm(x.HeadTerm)
+		e.buf.WriteString(",")
+		e.emitBQTerm(x.TailTerm)
+		e.buf.WriteString(")")
+	case *tomast.BuildAppendListBQTerm:
+		fmt.Fprintf(&e.buf, "tom_append_list_%s(", renderTomName(x.AstName))
+		e.emitBQTerm(x.HeadTerm)
+		e.buf.WriteString(",")
+		e.emitBQTerm(x.TailTerm)
 		e.buf.WriteString(")")
 	case *tomast.BQApplBQTerm:
 		// Pre-typer raw shape — fall back to a direct call if

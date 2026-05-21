@@ -220,6 +220,87 @@ func renderTomName(n tomast.TomName) string {
 	return ""
 }
 
+// codomainSortFor returns the sort name (not the TL) of an
+// operator's codomain. Used to suffix variadic helper names like
+// `tom_get_size_conc_L`, `tom_get_element_conc_L`.
+func codomainSortFor(st *tom.SymbolTable, opName string) string {
+	if st == nil {
+		return ""
+	}
+	sym, ok := st.Symbols[opName]
+	if !ok {
+		return ""
+	}
+	s, ok := sym.(*tomast.SymbolTomSymbol)
+	if !ok {
+		return ""
+	}
+	tt, ok := s.TypesToType.(*tomast.TypesToTypeTomType)
+	if !ok {
+		return ""
+	}
+	cod, ok := tt.Codomain.(*tomast.TypeTomType)
+	if !ok {
+		return ""
+	}
+	return cod.TomType
+}
+
+// elemTLFor returns the TL of an `%oparray` / `%oplist` operator's
+// single element-sort entry. Falls back to the codomain TL when
+// unresolvable. Used to type the element parameter of helpers like
+// `tom_cons_array_conc`.
+func elemTLFor(s *tomast.SymbolTomSymbol, st *tom.SymbolTable) string {
+	tt, ok := s.TypesToType.(*tomast.TypesToTypeTomType)
+	if !ok {
+		return tlTypeFor(s, st)
+	}
+	domain, ok := tt.Domain.(*tomast.ConcTomTypeTomTypeList)
+	if !ok || len(domain.Slots) == 0 {
+		return tlTypeFor(s, st)
+	}
+	t, ok := domain.Slots[0].(*tomast.TypeTomType)
+	if !ok {
+		return tlTypeFor(s, st)
+	}
+	if tl, ok := t.TlType.(*tomast.TLTypeTargetLanguageType); ok && strings.TrimSpace(tl.String_) != "" {
+		return strings.TrimSpace(tl.String_)
+	}
+	if st != nil {
+		if body, ok := st.Sorts[t.TomType]; ok && strings.TrimSpace(body) != "" {
+			return strings.TrimSpace(body)
+		}
+	}
+	return tlTypeFor(s, st)
+}
+
+// codomainSortName returns the codomain sort name of `s`. Same as
+// codomainSortFor but takes a *SymbolTomSymbol directly.
+func codomainSortName(s *tomast.SymbolTomSymbol) string {
+	tt, ok := s.TypesToType.(*tomast.TypesToTypeTomType)
+	if !ok {
+		return ""
+	}
+	cod, ok := tt.Codomain.(*tomast.TypeTomType)
+	if !ok {
+		return ""
+	}
+	return cod.TomType
+}
+
+// bqVarName extracts the variable name from a BQVariable /
+// BQVariableStar passed as a `%op` hook parameter. Returns "" for
+// unexpected shapes.
+func bqVarName(t tomast.BQTerm) string {
+	if v, ok := t.(*tomast.BQVariableBQTerm); ok {
+		return nameString(v.AstName)
+	}
+	if v, ok := t.(*tomast.BQVariableStarBQTerm); ok {
+		return nameString(v.AstName)
+	}
+	return ""
+}
+
 func renderTomNumber(n tomast.TomNumber) string {
 	switch x := n.(type) {
 	case *tomast.MatchNumberTomNumber:

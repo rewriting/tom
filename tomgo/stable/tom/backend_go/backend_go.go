@@ -160,6 +160,18 @@ func (e *emitter) emitSymbolHelpers(name tomast.TomName) error {
 		return nil
 	}
 	codomainTL := tlTypeFor(s, e.symbols)
+	// Raw bodies captured during the loop — re-used when emitting
+	// the generic tom_get_slice / tom_append_array helpers.
+	var (
+		emptyArrayRaw string
+		addArrayRaw   string
+		getElemRaw    string
+		getSizeRaw    string
+		haveEmptyArr  bool
+		haveAddArr    bool
+		haveGetElem   bool
+		haveGetSize   bool
+	)
 	for _, opt := range opts.Slots {
 		declOpt, ok := opt.(*tomast.DeclarationToOptionOption)
 		if !ok {
@@ -191,9 +203,86 @@ func (e *emitter) emitSymbolHelpers(name tomast.TomName) error {
 			}
 			fmt.Fprintf(&e.buf, "\nfunc tom_get_slot_%s_%s(t %s) %s { return %s }\n",
 				opName, slotName, codomainTL, slotTL, body)
+		case *tomast.MakeEmptyArrayDeclaration:
+			emptyArrayRaw = codeBodyFromInstruction(decl.Instr)
+			haveEmptyArr = true
+			sizeName := bqVarName(decl.VarSize)
+			if sizeName == "" {
+				sizeName = "n"
+			}
+			body := substituteDollarVars(emptyArrayRaw, []string{sizeName})
+			fmt.Fprintf(&e.buf, "\nfunc tom_empty_array_%s(%s int) %s { return %s }\n",
+				opName, sizeName, codomainTL, body)
+		case *tomast.MakeAddArrayDeclaration:
+			addArrayRaw = codeBodyFromInstruction(decl.Instr)
+			haveAddArr = true
+			eltName := bqVarName(decl.VarElt)
+			listName := bqVarName(decl.VarList)
+			body := substituteDollarVars(addArrayRaw, []string{eltName, listName})
+			elemTL := elemTLFor(s, e.symbols)
+			fmt.Fprintf(&e.buf, "\nfunc tom_cons_array_%s(%s %s, %s %s) %s { return %s }\n",
+				opName, eltName, elemTL, listName, codomainTL, codomainTL, body)
+		case *tomast.GetElementDeclDeclaration:
+			getElemRaw = codeBodyFromExpr(decl.Expr)
+			haveGetElem = true
+			listName := bqVarName(decl.Variable)
+			indexName := bqVarName(decl.Index)
+			body := substituteDollarVars(getElemRaw, []string{listName, indexName})
+			elemTL := elemTLFor(s, e.symbols)
+			codomainSort := codomainSortName(s)
+			fmt.Fprintf(&e.buf, "\nfunc tom_get_element_%s_%s(%s %s, %s int) %s { return %s }\n",
+				opName, codomainSort, listName, codomainTL, indexName, elemTL, body)
+		case *tomast.GetSizeDeclDeclaration:
+			getSizeRaw = codeBodyFromExpr(decl.Expr)
+			haveGetSize = true
+			listName := bqVarName(decl.Variable)
+			body := substituteDollarVars(getSizeRaw, []string{listName})
+			codomainSort := codomainSortName(s)
+			fmt.Fprintf(&e.buf, "\nfunc tom_get_size_%s_%s(%s %s) int { return %s }\n",
+				opName, codomainSort, listName, codomainTL, body)
 		}
 	}
+
+	// Variadic-array generic helpers: tom_get_slice_<op> and
+	// tom_append_array_<op>. Mirrors the Java backend — inlines the
+	// operator's make_empty / make_append / get_element / get_size
+	// bodies with re-named placeholders. The raw bodies were
+	// captured during the loop above; substitute positionally
+	// since the parser's `abstractCode` converted user-given names
+	// to `{0}` / `{1}` placeholders.
+	if haveEmptyArr && haveAddArr && haveGetElem && haveGetSize {
+		// tom_get_slice_<op>(subject, begin, end):
+		emptySliceBody := substitutePositional(emptyArrayRaw, []string{"end-begin"})
+		sliceGetElem := substitutePositional(getElemRaw, []string{"subject", "begin"})
+		sliceAddBody := substitutePositional(addArrayRaw, []string{sliceGetElem, "result"})
+		fmt.Fprintf(&e.buf,
+			"\nfunc tom_get_slice_%s(subject %s, begin int, end int) %s { var result %s = %s; for begin != end { result = %s; begin++ }; return result }\n",
+			opName, codomainTL, codomainTL, codomainTL, emptySliceBody, sliceAddBody)
+
+		// tom_append_array_<op>(l1, l2): copy l1 then l2 into a fresh
+		// slice. Builds via the same make_empty + cons pipeline.
+		appSize1 := substitutePositional(getSizeRaw, []string{"l1"})
+		appSize2 := substitutePositional(getSizeRaw, []string{"l2"})
+		appEmpty := substitutePositional(emptyArrayRaw, []string{"size1+size2"})
+		appGetElemL1 := substitutePositional(getElemRaw, []string{"l1", "size1-index"})
+		appAddL1 := substitutePositional(addArrayRaw, []string{appGetElemL1, "result"})
+		appGetElemL2 := substitutePositional(getElemRaw, []string{"l2", "size2-index"})
+		appAddL2 := substitutePositional(addArrayRaw, []string{appGetElemL2, "result"})
+		fmt.Fprintf(&e.buf,
+			"\nfunc tom_append_array_%s(l2 %s, l1 %s) %s { size1 := %s; size2 := %s; var result %s = %s; index := size1; for index > 0 { result = %s; index-- }; index = size2; for index > 0 { result = %s; index-- }; return result }\n",
+			opName, codomainTL, codomainTL, codomainTL, appSize1, appSize2, codomainTL, appEmpty, appAddL1, appAddL2)
+	}
 	return nil
+}
+
+// substitutePositional substitutes `{N}` placeholders with the
+// matching slot value. Mirrors the Java backend's helper used for
+// the same purpose.
+func substitutePositional(text string, vals []string) string {
+	for i, v := range vals {
+		text = strings.ReplaceAll(text, fmt.Sprintf("{%d}", i), v)
+	}
+	return text
 }
 
 // emitInstruction dispatches on the post-compile instruction shapes.

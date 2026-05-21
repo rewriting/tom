@@ -75,6 +75,36 @@ func collectUsedSymbols(list *tomast.ConcCodeCodeList) map[string]bool {
 		case *tomast.GetSlotExpression:
 			used[renderTomName(x.AstName)] = true
 			walkBQ(x.Variable)
+		case *tomast.GetSizeExpression:
+			used[renderTomName(x.Opname)] = true
+			walkBQ(x.Variable)
+		case *tomast.GetElementExpression:
+			used[renderTomName(x.Opname)] = true
+			walkBQ(x.Variable)
+			walkBQ(x.Index)
+		case *tomast.GetSliceArrayExpression:
+			used[renderTomName(x.AstName)] = true
+			walkBQ(x.SubjectListName)
+			walkBQ(x.VariableBeginAST)
+			walkBQ(x.VariableEndAST)
+		case *tomast.IsEmptyArrayExpression:
+			used[renderTomName(x.Opname)] = true
+			walkBQ(x.Variable)
+			walkBQ(x.Index)
+		case *tomast.AddOneExpression:
+			walkBQ(x.Variable)
+		case *tomast.GreaterThanExpression:
+			walkExpr(x.Arg1)
+			walkExpr(x.Arg2)
+		case *tomast.LessThanExpression:
+			walkExpr(x.Arg1)
+			walkExpr(x.Arg2)
+		case *tomast.GreaterOrEqualThanExpression:
+			walkExpr(x.Arg1)
+			walkExpr(x.Arg2)
+		case *tomast.LessOrEqualThanExpression:
+			walkExpr(x.Arg1)
+			walkExpr(x.Arg2)
 		}
 	}
 	walkCode = func(c tomast.Code) {
@@ -133,6 +163,14 @@ func collectUsedSymbols(list *tomast.ConcCodeCodeList) map[string]bool {
 			walkBQ(x.Tom)
 		case *tomast.RawActionInstruction:
 			walkInstr(x.AstInstruction)
+		case *tomast.DoWhileInstruction:
+			walkInstr(x.DoInst)
+			walkExpr(x.Condition)
+		case *tomast.WhileDoInstruction:
+			walkExpr(x.Condition)
+			walkInstr(x.DoInst)
+		case *tomast.AssignArrayInstruction:
+			walkExpr(x.Source)
 		}
 	}
 	for _, c := range list.Slots {
@@ -148,9 +186,15 @@ func scanReferences(text string, used map[string]bool) {
 	plainPrefixes := []string{
 		"tom_is_fun_sym_",
 		"tom_make_",
+		"tom_empty_array_",
+		"tom_cons_array_",
+		"tom_get_slice_",
+		"tom_append_array_",
 	}
 	suffixedPrefixes := []string{
 		"tom_get_slot_",
+		"tom_get_element_",
+		"tom_get_size_",
 	}
 	scan := func(prefix string, strip bool) {
 		i := 0

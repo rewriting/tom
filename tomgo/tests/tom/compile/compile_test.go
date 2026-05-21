@@ -213,6 +213,20 @@ var goFixtures = []struct {
 			"PASS",
 		},
 	},
+	{
+		// Array.t — `%oparray L conc(E*)` with variadic patterns
+		// (`conc(X1*, x, X2*, y, X3*)`) + non-linear pattern
+		// (double1's `conc(X1*, x, X2*, x, X3*)`). Exercises the
+		// Go backend's array IR lowering: tom_empty_array_conc,
+		// tom_cons_array_conc, tom_get_element_conc_L,
+		// tom_get_size_conc_L, plus generic tom_get_slice_conc /
+		// tom_append_array_conc, and the do/while loop as a Go
+		// `for { body; if !cond { break } }`.
+		name: "Array",
+		expected: []string{
+			"Array test has successfully terminated.",
+		},
+	},
 }
 
 // TestCompileGoFixtures is the Go-target counterpart of
