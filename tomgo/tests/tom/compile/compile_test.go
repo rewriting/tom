@@ -131,6 +131,27 @@ var fixtures = []fixture{
 		},
 	},
 	{
+		// TestVarVarStar.t — non-linearity across positions in a
+		// product pattern. The `%match(a) { a(l, conc(l*)) -> ... }`
+		// rule binds `l` to the whole first BList slot (s1), then
+		// `l*` inside conc(...) means "splat l's elements into the
+		// matching slot of s2". The rule fires iff s2 equals s1
+		// element-wise. Exercises:
+		//   - inline %gom with multi-sort signature (A, B, BList);
+		//   - cross-arg non-linearity, where the same variable appears
+		//     as a plain BList AND as a starred element in a conc;
+		//   - the GeneralPurposePropagator's duplicate-variable merge
+		//     across product positions.
+		name:         "TestVarVarStar",
+		useJUnit:     true,
+		needsMapping: true,
+		hasInlineGom: true,
+		expected: []string{
+			"JUnit version 4.10",
+			"OK (3 tests)",
+		},
+	},
+	{
 		// TestAlgebraic.t — uses %strategy + %gom + %include of sl.
 		// Exercises:
 		//   - inline gom expansion (generates testalgebraic.sig
@@ -300,6 +321,21 @@ var goFixtures = []struct {
 		expected: []string{
 			"=== RUN   TestRoundTrip",
 			"=== RUN   TestAbcDirect",
+			"PASS",
+		},
+	},
+	{
+		// TestVarVarStar.t — Go counterpart of fixtures/java/TestVarVarStar.t.
+		// Same non-linearity-across-positions test: `a(l, conc(l*))`
+		// binds l to s1 (a BList) and then matches s2 element-wise
+		// against l. Three sub-tests (empty/empty, singleton/singleton
+		// match; singleton/pair doesn't).
+		name:      "TestVarVarStar",
+		useGoTest: true,
+		expected: []string{
+			"=== RUN   TestEmptyEmpty",
+			"=== RUN   TestSingletonSingleton",
+			"=== RUN   TestMismatch",
 			"PASS",
 		},
 	},
