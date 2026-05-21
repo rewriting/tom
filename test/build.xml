@@ -12,8 +12,8 @@
   <!-- <property name="optimize" value="off"/> -->
   <!-- <property name="verbose" value="on"/> -->
 
-  <property name="javacSource"    value="1.5"/>
-  <property name="javacTarget"    value="1.5"/>
+  <property name="javacSource"    value="1.8"/>
+  <property name="javacTarget"    value="1.8"/>
   <property environment="env"/>
   <property name="tom.home"        value="${env.TOM_HOME}"/>
   <property name="tom.common.path" value="${tom.home}/lib"/>
@@ -122,7 +122,7 @@
     <tom.preset srcdir="${test.src}"
                 multithread="${multithread}"
                 destdir="${test.gen}"
-                options="--tomjava">
+                options="--tomjava --intermediate">
       <!-- Exclude tests written in C -->
       <exclude name="cfib1.t"/>
       <exclude name="loulou.t"/>
@@ -159,12 +159,12 @@
 
     <tom.preset srcdir="${test.src}"
                 destdir="${test.gen}"
-                options="--optimize">
+                options="--optimize --intermediate">
     	<include name="TestOptimizer.t"/>
     </tom.preset>
     <tom.preset srcdir="${test.src}"
       destdir="${test.gen}"
-      options="--genIntrospector">
+      options="--genIntrospector --intermediate">
       <include name="sl/TestHandWrittenMapping.t"/>
       <include name="sl/IntrospectorBehaviour.t"/>
     </tom.preset>
@@ -182,6 +182,31 @@
         <include name="*/*.dtd"/>
       </fileset>
     </copy>
+  </target>
+
+  <!-- intermediate-extras: compile the fixtures that the main `build`
+       target deliberately excludes (regress/, rule/, Record.t, …) just
+       to harvest their .tfix.* AST dumps as reference for the Go port.
+       Uses <tom> directly (instead of tom.preset) so we can set
+       failonerror=false — tom keeps going past expected semantic
+       errors and the .tfix.* files still land in test/gen/. -->
+  <target name="intermediate-extras" depends="init,prepare">
+    <tom srcdir="${test.src}"
+         destdir="${test.gen}"
+         config="${tomconfigfile}"
+         newparser="${newparser}"
+         newtyper="${newtyper}"
+         multithread="${multithread}"
+         fork="${tomfork}"
+         failonerror="false"
+         options="--tomjava --intermediate">
+      <classpath refid="tom.classpath"/>
+      <include name="**/regress/**/*.t"/>
+      <include name="**/rule/**/*.t"/>
+      <include name="Record.t"/>
+      <include name="TestRecord.t"/>
+      <include name="TestConstraintCombination.t"/>
+    </tom>
   </target>
 
   <target name="junit" description="Runs junit acceptance tests"

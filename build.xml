@@ -277,7 +277,7 @@
           if="gen.destination"
           depends="-withstable,-withsrc">
           <!--  compile in standard mode -->
-    <tomcompile fork="no"
+    <tomcompile fork="yes"
          srcdir="${src.src}"
          destdir="${gen.destination}"
          multithread="${multithread}"
@@ -374,7 +374,7 @@
 
   <!-- compile adt's -->
   <target name="buildadt" depends="-withstable,-withsrc">
-    <gomcompile fork="no"
+    <gomcompile fork="yes"
       multithread="${gommultithread}"
       srcdir="${src.src}"
       package="tom.library.adt"
@@ -382,7 +382,7 @@
       <include name="tom/library/adt/*.gom"/>
       <exclude name="tom/library/adt/Bytecode.gom"/>
     </gomcompile>
-    <gomcompile fork="no"
+    <gomcompile fork="yes"
       multithread="${gommultithread}"
       termgraph="on"
       srcdir="${src.src}"
@@ -390,7 +390,7 @@
       destdir="${src.gen}">
       <include name="tom/library/adt/Bytecode.gom"/>
     </gomcompile>
-    <gomcompile fork="no"
+    <gomcompile fork="yes"
       multithread="${gommultithread}"
       srcdir="${src.src}"
       package="tom.platform.adt"
@@ -407,7 +407,7 @@
       options="-withSeparateCongruenceStrategies"
       -->
 
-    <gomcompile srcdir="${src.src}"
+    <gomcompile fork="yes" srcdir="${src.src}"
       multithread="${gommultithread}"
       withSeparateCongruenceStrategies="true"
       package="tom.engine.adt"
@@ -415,39 +415,39 @@
       <include name="tom/engine/adt/TomSignature.gom"/>
     </gomcompile>
 
-    <gomcompile srcdir="${src.src}"
+    <gomcompile fork="yes" srcdir="${src.src}"
       multithread="${gommultithread}"
       package="tom.engine.adt"
       destdir="${src.gen}">
       <include name="tom/engine/adt/Il.gom"/>
     </gomcompile>
 
-    <gomcompile srcdir="${src.src}"
+    <gomcompile fork="yes" srcdir="${src.src}"
       multithread="${gommultithread}"
       package="tom.engine.adt"
       destdir="${src.gen}">
       <include name="tom/engine/adt/Zenon.gom"/>
     </gomcompile>
 
-    <gomantlradaptercompile srcdir="${src.src}"
+    <gomantlradaptercompile fork="yes" srcdir="${src.src}"
       package="tom.engine.adt"
       destdir="${src.gen}">
       <include name="tom/engine/adt/CST.gom"/>
     </gomantlradaptercompile>
 
     <!-- adt for gom -->
-    <gomcompile srcdir="${src.src}"
+    <gomcompile fork="yes" srcdir="${src.src}"
       multithread="${gommultithread}"
       package="tom.gom.adt"
       destdir="${src.gen}">
       <include name="tom/gom/adt/*.gom"/>
     </gomcompile>
-    <gomantlradaptercompile srcdir="${src.src}"
+    <gomantlradaptercompile fork="yes" srcdir="${src.src}"
       package="tom.gom.adt"
       destdir="${src.gen}">
       <include name="tom/gom/adt/Gom.gom"/>
     </gomantlradaptercompile>
-    <gomantlradaptercompile srcdir="${src.src}"
+    <gomantlradaptercompile fork="yes" srcdir="${src.src}"
       package="tom.gom.adt"
       destdir="${src.gen}">
       <include name="tom/gom/adt/Rule.gom"/>

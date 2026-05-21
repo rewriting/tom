@@ -88,13 +88,13 @@
     </presetdef>
 
     <presetdef name="gom.preset">
-      <gom config="${gomconfigfile}">
+      <gom config="${gomconfigfile}" fork="${tomfork}">
         <classpath refid="tom.classpath"/>
       </gom>
     </presetdef>
 
     <presetdef name="gomantlradapter.preset">
-      <gomantlradapter config="${gomantlradapterconfigfile}">
+      <gomantlradapter config="${gomantlradapterconfigfile}" fork="${tomfork}">
         <classpath refid="tom.classpath"/>
       </gomantlradapter>
     </presetdef>
