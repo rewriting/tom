@@ -887,10 +887,13 @@ func (p *parser) tryIslandOrWater(island func() error, kind string) error {
 // would have produced for the same `.t` file.
 func (p *parser) parseWater() error {
 	start := p.cur
-	// Build the content piece by piece, skipping over comments so
-	// they don't end up in the emitted TL. Java's lexer routes
-	// `//…\n` and `/* … */` comments to a hidden channel, so the
-	// produced TL is comment-free. We do the same inline.
+	// Whether comments end up in the emitted TL depends on the file
+	// kind. Java's lexer routes `//…\n` and `/* … */` comments to
+	// a hidden channel for `.tom` files (included via `%include`)
+	// but keeps them in the TL stream for `.t` host-language files.
+	// We mirror that — `stripComments` is true when the current
+	// parser is consuming a recursively-included `.tom` file.
+	stripComments := strings.HasSuffix(p.filename, ".tom")
 	var sb strings.Builder
 	var firstNonWS *position
 	var lastNonWSEnd position
@@ -900,23 +903,30 @@ func (p *parser) parseWater() error {
 		}
 	}
 	chunkStart := p.idx
-	updateNonWS := func() {
-		// Scan the newly accumulated bytes from chunkStart up to p.idx
-		// for first / last non-whitespace position. Tracked in source
-		// coordinates so we can emit the TL's TextPosition pair.
-	}
-	_ = updateNonWS
 	for !p.atEnd() && !p.isIslandStart() {
+		// Comments are always SCANNED opaquely so an embedded
+		// `%include` / `\`...` doesn't trigger an island dispatch
+		// (matters for `// %include {…}` lines in host source).
+		// Whether the comment bytes end up in the emitted TL
+		// depends on stripComments — Java's lexer routes comments
+		// to a hidden channel for `.tom` files but keeps them as
+		// host text for `.t` files.
 		if p.peek(0) == '/' && p.peek(1) == '/' {
-			flush(chunkStart, p.idx)
+			if stripComments {
+				flush(chunkStart, p.idx)
+			}
 			for !p.atEnd() && p.peek(0) != '\n' {
 				p.advance()
 			}
-			chunkStart = p.idx
+			if stripComments {
+				chunkStart = p.idx
+			}
 			continue
 		}
 		if p.peek(0) == '/' && p.peek(1) == '*' {
-			flush(chunkStart, p.idx)
+			if stripComments {
+				flush(chunkStart, p.idx)
+			}
 			p.advance()
 			p.advance()
 			for !p.atEnd() && !(p.peek(0) == '*' && p.peek(1) == '/') {
@@ -926,7 +936,9 @@ func (p *parser) parseWater() error {
 				p.advance()
 				p.advance()
 			}
-			chunkStart = p.idx
+			if stripComments {
+				chunkStart = p.idx
+			}
 			continue
 		}
 		if p.peek(0) == '"' || p.peek(0) == '\'' {
@@ -1849,8 +1861,21 @@ func resolveIncludePath(includePath, sourceDir string) (string, error) {
 		candidates = append(candidates, includePath)
 	} else {
 		candidates = append(candidates, filepath.Join(sourceDir, includePath))
+		// Java's TomStreamManager.getImportList prepends the
+		// `<destdir>/<source-Java-package>` location so includes
+		// produced by Gom land where the surrounding .t expects
+		// them. We mirror that heuristically: for each
+		// IncludeSearchPath entry, also try appending the source
+		// dir's last segment (typically the Java package, e.g.
+		// `gom` for `test/gom/TestBool.t`) BEFORE the include path
+		// so `%include { bool/Bool.tom }` resolves to
+		// `test/gen/gom/bool/Bool.tom`.
+		pkgGuess := filepath.Base(sourceDir)
 		for _, dir := range IncludeSearchPath {
-			candidates = append(candidates, filepath.Join(dir, includePath))
+			candidates = append(candidates,
+				filepath.Join(dir, pkgGuess, includePath),
+				filepath.Join(dir, includePath),
+			)
 		}
 		if extra := os.Getenv("TOMGO_TOM_INCLUDE"); extra != "" {
 			for _, dir := range strings.Split(extra, string(os.PathListSeparator)) {

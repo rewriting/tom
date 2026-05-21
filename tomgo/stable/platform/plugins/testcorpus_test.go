@@ -35,6 +35,12 @@ func TestCorpus_ParityWithJava(t *testing.T) {
 	// `$TOM_HOME/share/tom/<lang>` first; match that order so the
 	// OriginTracking paths in the AST come out identical.
 	tomparser.IncludeSearchPath = []string{
+		// Java's tom CLI configures user-import-list to include
+		// destdir first (where Gom drops its generated .tom files).
+		// Mirror that so `%include { bool/Bool.tom }` resolves to
+		// the test-build output before falling back to the dev
+		// share/tom mappings.
+		filepath.Join(repoRoot, "test", "gen"),
 		filepath.Join(repoRoot, "src", "dist", "share", "tom", "java"),
 		filepath.Join(repoRoot, "src", "dist", "share", "tom"),
 		filepath.Join(repoRoot, "utils", "eclipse-plugin", "plugin", "include", "java"),
