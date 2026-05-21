@@ -6,13 +6,7 @@
 // Identity stub for now.
 package optimizer
 
-import "tom/tomgo/stable/platform"
-
-// Plugin implements [platform.Plugin] for the Optimizer phase.
-type Plugin struct{}
-
-// Name implements [platform.Plugin].
-func (Plugin) Name() string { return "Optimizer" }
+import "tom/tomgo/stable/tom"
 
 // Run is currently identity; see package doc.
-func (Plugin) Run(in platform.State) (platform.State, error) { return in, nil }
+func Run(in tom.State) (tom.State, error) { return in, nil }

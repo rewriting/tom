@@ -7,7 +7,7 @@ import (
 	"strings"
 	"testing"
 
-	"tom/tomgo/stable/platform"
+	"tom/tomgo/stable/tom"
 	tomparseq "tom/tomgo/tests/tom/parser/equiv"
 	"tom/tomgo/stable/tom/starter"
 	"tom/tomgo/stable/tom/parser"
@@ -44,12 +44,7 @@ func TestTyper_ParityWithJava(t *testing.T) {
 			if err != nil {
 				t.Fatalf("java: %v", err)
 			}
-			goState, err := platform.New(
-				starter.Plugin{},
-				parser.Plugin{},
-				desugarer.Plugin{},
-				typer.Plugin{},
-			).Run(platform.State{Filename: input})
+			goState, err := tom.Run(tom.State{Filename: input}, starter.Run, parser.Run, desugarer.Run, typer.Run)
 			if err != nil {
 				t.Fatalf("go: %v", err)
 			}

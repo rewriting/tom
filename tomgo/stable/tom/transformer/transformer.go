@@ -5,7 +5,7 @@ import (
 
 	"tom/tomgo/stable/library/sl"
 	"tom/tomgo/stable/library/tomast"
-	"tom/tomgo/stable/platform"
+	"tom/tomgo/stable/tom"
 )
 
 // Transformer is the Go port of Java's
@@ -25,15 +25,9 @@ import (
 // future fixture that introduces `Transformation(...)` declarations
 // will hit our `transformationFound` guard and surface a clear
 // "needs porting" error.
-type Plugin struct{}
-
-// Name implements [platform.Plugin].
-func (Plugin) Name() string { return "Transformer" }
-
-// Run implements [platform.Plugin]. Walks the AST top-down looking
 // for `Transformation(...)` declarations; on our corpus none are
 // present so the walker returns the input unchanged.
-func (Plugin) Run(in platform.State) (platform.State, error) {
+func Run(in tom.State) (tom.State, error) {
 	if in.Code == nil {
 		return in, nil
 	}

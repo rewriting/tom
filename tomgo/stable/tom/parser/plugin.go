@@ -1,5 +1,5 @@
 // Package parser wraps the hand-rolled Tom parser engine
-// (stable/tom/parser/parser) as a pipeline [platform.Plugin]. It is
+// (stable/tom/parser/parser) as a pipeline [tom pipeline phase]. It is
 // phase 2 of the Tom engine, matching Java's
 // tom.engine.parser.TomParserPlugin.
 //
@@ -15,11 +15,11 @@ import (
 	"os"
 	"strings"
 
-	"tom/tomgo/stable/platform"
+	"tom/tomgo/stable/tom"
 	tomparser "tom/tomgo/stable/tom/parser/parser"
 )
 
-// Parser is the [platform.Plugin] that turns a source filename into the
+// Parser is the [tom pipeline phase] that turns a source filename into the
 // initial [tomast.Code] AST. It corresponds to Java's
 // tom.engine.parser.TomParserPlugin.
 //
@@ -30,19 +30,13 @@ import (
 //     Filename and Source are preserved for downstream plugins that
 //     may want to look back at the input (e.g. for error messages
 //     locating into the raw bytes).
-type Plugin struct{}
-
-// Name implements [platform.Plugin].
-func (Plugin) Name() string { return "Parser" }
-
-// Run implements [platform.Plugin]. Uses [tomparser.ParseAll] so the
 // signature data gathered from `%typeterm` / `%op` declarations gets
 // merged into State.Symbols — the downstream plugins (Desugarer,
 // Typer, …) read those entries to resolve slot names, codomain
 // types, and target-language type bodies. If the caller didn't
 // pre-allocate State.Symbols (e.g. by running the Starter first), one
 // is created on the fly.
-func (Plugin) Run(in platform.State) (platform.State, error) {
+func Run(in tom.State) (tom.State, error) {
 	if in.Filename == "" {
 		return in, fmt.Errorf("Parser: empty Filename")
 	}
@@ -62,7 +56,7 @@ func (Plugin) Run(in platform.State) (platform.State, error) {
 	out.Source = src
 	out.Code = result.Code
 	if out.Symbols == nil {
-		out.Symbols = platform.NewSymbolTable()
+		out.Symbols = tom.NewSymbolTable()
 	}
 	for k, v := range result.Sorts {
 		out.Symbols.Sorts[k] = v

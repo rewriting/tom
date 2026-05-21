@@ -13,7 +13,7 @@ import (
 	"sort"
 	"strings"
 
-	"tom/tomgo/stable/platform"
+	"tom/tomgo/stable/tom"
 	tomparseq "tom/tomgo/tests/tom/parser/equiv"
 	"tom/tomgo/tests/tom/parser/equiv/astcmp"
 	tomparser "tom/tomgo/stable/tom/parser/parser"
@@ -76,14 +76,7 @@ func main() {
 		if err != nil {
 			continue
 		}
-		state, err := platform.New(
-			starter.Plugin{},
-			parser.Plugin{},
-			transformer.Plugin{},
-			syntaxchecker.Plugin{},
-			desugarer.Plugin{},
-			typer.Plugin{},
-		).Run(platform.State{Filename: input})
+		state, err := tom.Run(tom.State{Filename: input}, starter.Run, parser.Run, transformer.Run, syntaxchecker.Run, desugarer.Run, typer.Run)
 		if err != nil {
 			results = append(results, result{rel, -2})
 			continue

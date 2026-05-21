@@ -5,7 +5,7 @@ import (
 
 	"tom/tomgo/stable/library/sl"
 	"tom/tomgo/stable/library/tomast"
-	"tom/tomgo/stable/platform"
+	"tom/tomgo/stable/tom"
 )
 
 // Desugarer is the Go port of Java's
@@ -25,12 +25,6 @@ import (
 // in desugarer_test.go: for every fixture the Java pipeline
 // transforms past parse-time, the Go Desugarer must produce a Code
 // whose Stringer output matches Java's [PhaseDesugared] dump.
-type Plugin struct{}
-
-// Name implements [platform.Plugin].
-func (Plugin) Name() string { return "Desugarer" }
-
-// Run implements [platform.Plugin]. The plugin is stateless: each run
 // creates fresh visitor instances so any internal counters restart
 // from 1 every time (matching Java's per-DesugarerPlugin-instance
 // state — TomParserPlugin spawns a new DesugarerPlugin per file).
@@ -44,7 +38,7 @@ func (Plugin) Name() string { return "Desugarer" }
 //
 // Phase 6.6 currently ports passes #1 and #2. Pass #3 will be added
 // when fixtures with `` `Foo[a=v] `` records appear.
-func (Plugin) Run(in platform.State) (platform.State, error) {
+func Run(in tom.State) (tom.State, error) {
 	if in.Code == nil {
 		return in, nil
 	}
@@ -135,10 +129,10 @@ func (d *desugarUnderscore) VisitLight(subject any, intro sl.Introspector) (any,
 // faithfully mirroring DesugarerPlugin.replaceTermAppl:240-244.
 type replaceTermApplTomSyntax struct {
 	*sl.AbstractStrategyBasic
-	symbols *platform.SymbolTable
+	symbols *tom.SymbolTable
 }
 
-func newReplaceTermApplTomSyntax(symbols *platform.SymbolTable) *replaceTermApplTomSyntax {
+func newReplaceTermApplTomSyntax(symbols *tom.SymbolTable) *replaceTermApplTomSyntax {
 	return &replaceTermApplTomSyntax{
 		AbstractStrategyBasic: sl.NewAbstractStrategyBasic(sl.NewIdentity()),
 		symbols:               symbols,

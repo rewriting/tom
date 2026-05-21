@@ -22,7 +22,7 @@ import (
 	"sort"
 	"strings"
 
-	"tom/tomgo/stable/platform"
+	"tom/tomgo/stable/tom"
 	tomparseq "tom/tomgo/tests/tom/parser/equiv"
 	"tom/tomgo/tests/tom/parser/equiv/astcmp"
 	tomparser "tom/tomgo/stable/tom/parser/parser"
@@ -134,13 +134,7 @@ func main() {
 		r.synchecked = stubize(check(input, goParsed, tomparseq.PhaseSynchecked))
 
 		// Desugarer.
-		desState, err := platform.New(
-			starter.Plugin{},
-			parser.Plugin{},
-			transformer.Plugin{},
-			syntaxchecker.Plugin{},
-			desugarer.Plugin{},
-		).Run(platform.State{Filename: input})
+		desState, err := tom.Run(tom.State{Filename: input}, starter.Run, parser.Run, transformer.Run, syntaxchecker.Run, desugarer.Run)
 		if err == nil {
 			goDesugared := fmt.Sprintf("%v", desState.Code)
 			r.desugarer = check(input, goDesugared, tomparseq.PhaseDesugared)
@@ -149,14 +143,7 @@ func main() {
 		}
 
 		// Typer.
-		tState, err := platform.New(
-			starter.Plugin{},
-			parser.Plugin{},
-			transformer.Plugin{},
-			syntaxchecker.Plugin{},
-			desugarer.Plugin{},
-			typer.Plugin{},
-		).Run(platform.State{Filename: input})
+		tState, err := tom.Run(tom.State{Filename: input}, starter.Run, parser.Run, transformer.Run, syntaxchecker.Run, desugarer.Run, typer.Run)
 		if err == nil {
 			goTyped := fmt.Sprintf("%v", tState.Code)
 			r.typer = check(input, goTyped, tomparseq.PhaseTyped)

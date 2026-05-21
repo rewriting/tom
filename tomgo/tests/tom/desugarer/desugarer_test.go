@@ -7,7 +7,7 @@ import (
 	"strings"
 	"testing"
 
-	"tom/tomgo/stable/platform"
+	"tom/tomgo/stable/tom"
 	tomparseq "tom/tomgo/tests/tom/parser/equiv"
 	"tom/tomgo/stable/tom/starter"
 	"tom/tomgo/stable/tom/parser"
@@ -23,12 +23,12 @@ import (
 func TestDesugarer_FreshVariableRewrite(t *testing.T) {
 	cwd, _ := os.Getwd()
 	abs, _ := filepath.Abs(filepath.Join(cwd, "..", "..", "..", "tests", "testdata", "parse", "match0b", "scenario.t"))
-	parserState, err := platform.New(parser.Plugin{}).Run(platform.State{Filename: abs})
+	parserState, err := tom.Run(tom.State{Filename: abs}, parser.Run)
 	if err != nil {
 		t.Fatalf("parse: %v", err)
 	}
 
-	state, err := desugarer.Plugin{}.Run(platform.State{Code: parserState.Code})
+	state, err := desugarer.Run(tom.State{Code: parserState.Code})
 	if err != nil {
 		t.Fatalf("desugarer: %v", err)
 	}
@@ -47,16 +47,16 @@ func TestDesugarer_FreshVariableRewrite(t *testing.T) {
 func TestDesugarer_CounterResetsPerRun(t *testing.T) {
 	cwd, _ := os.Getwd()
 	abs, _ := filepath.Abs(filepath.Join(cwd, "..", "..", "..", "tests", "testdata", "parse", "match0b", "scenario.t"))
-	parserState, err := platform.New(parser.Plugin{}).Run(platform.State{Filename: abs})
+	parserState, err := tom.Run(tom.State{Filename: abs}, parser.Run)
 	if err != nil {
 		t.Fatalf("parse: %v", err)
 	}
 
-	first, err := desugarer.Plugin{}.Run(platform.State{Code: parserState.Code})
+	first, err := desugarer.Run(tom.State{Code: parserState.Code})
 	if err != nil {
 		t.Fatal(err)
 	}
-	second, err := desugarer.Plugin{}.Run(platform.State{Code: parserState.Code})
+	second, err := desugarer.Run(tom.State{Code: parserState.Code})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -102,11 +102,7 @@ func TestDesugarer_ParityWithJava(t *testing.T) {
 				t.Fatalf("java: %v", err)
 			}
 			// Go: Platform(Starter, Parser, Desugarer) on the same input.
-			goState, err := platform.New(
-				starter.Plugin{},
-				parser.Plugin{},
-				desugarer.Plugin{},
-			).Run(platform.State{Filename: input})
+			goState, err := tom.Run(tom.State{Filename: input}, starter.Run, parser.Run, desugarer.Run)
 			if err != nil {
 				t.Fatalf("go: %v", err)
 			}

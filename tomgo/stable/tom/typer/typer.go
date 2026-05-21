@@ -5,7 +5,7 @@ import (
 
 	"tom/tomgo/stable/library/sl"
 	"tom/tomgo/stable/library/tomast"
-	"tom/tomgo/stable/platform"
+	"tom/tomgo/stable/tom"
 )
 
 // Typer is the Go port of Java's [tom.engine.typer.TyperPlugin]
@@ -30,15 +30,9 @@ import (
 // The full constraint-solver port (NewKernelTyper.java, 1700+ LOC)
 // is deferred until fixtures appear that exercise it (multi-symbol
 // constraints, polymorphism, …).
-type Plugin struct{}
-
-// Name implements [platform.Plugin].
-func (Plugin) Name() string { return "Typer" }
-
-// Run implements [platform.Plugin]. Each Run creates a fresh
 // per-file typer state — variable-type registrations don't leak
 // between compilation units.
-func (Plugin) Run(in platform.State) (platform.State, error) {
+func Run(in tom.State) (tom.State, error) {
 	if in.Code == nil {
 		return in, nil
 	}
@@ -71,10 +65,10 @@ func (Plugin) Run(in platform.State) (platform.State, error) {
 // growing list of generated type equations.
 type newKernelTyper struct {
 	varTypes map[string]tomast.TomType
-	symbols  *platform.SymbolTable
+	symbols  *tom.SymbolTable
 	// typerAbort indicates that Java's typer would have aborted on
 	// this input (we proxy that via parser.HasInlineGom — see
-	// platform.State for the rationale). When set, we skip the
+	// tom.State for the rationale). When set, we skip the
 	// BQAppl→FunctionCall rewrite so the resulting AST shape matches
 	// Java's aborted-typer output.
 	typerAbort bool

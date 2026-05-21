@@ -7,9 +7,9 @@ import (
 	"strings"
 	"testing"
 
-	"tom/tomgo/stable/platform"
 	"tom/tomgo/stable/tom"
 	"tom/tomgo/stable/tom/parser"
+	"tom/tomgo/stable/tom/starter"
 )
 
 // TestPlatformParser drives the Parser plugin through the Platform on a
@@ -30,10 +30,9 @@ func TestPlatformParser_Match0b(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	p := platform.New(parser.Plugin{})
-	final, err := p.Run(platform.State{Filename: abs})
+	final, err := parser.Run(tom.State{Filename: abs})
 	if err != nil {
-		t.Fatalf("platform: %v", err)
+		t.Fatalf("parser: %v", err)
 	}
 	if final.Code == nil {
 		t.Fatal("Parser produced nil Code")
@@ -53,10 +52,10 @@ func TestPlatformParser_Match0b(t *testing.T) {
 // future plugins that synthesise sources in memory.
 func TestPlatformParser_Source(t *testing.T) {
 	src := []byte(`public class X { %typeterm Foo {} }`)
-	final, err := platform.New(parser.Plugin{}).Run(platform.State{
+	final, err := tom.Run(tom.State{
 		Filename: "in-memory",
 		Source:   src,
-	})
+	}, parser.Run)
 	if err != nil {
 		t.Fatalf("platform: %v", err)
 	}
@@ -71,24 +70,21 @@ func TestPlatformParser_Source(t *testing.T) {
 // TestPlatformParser_MissingFile asserts that a non-existent input
 // surfaces as a clean error wrapped with the plugin's Name.
 func TestPlatformParser_MissingFile(t *testing.T) {
-	_, err := platform.New(parser.Plugin{}).Run(platform.State{
+	_, err := tom.Run(tom.State{
 		Filename: "/path/that/does/not/exist.t",
-	})
+	}, parser.Run)
 	if err == nil {
 		t.Fatal("expected error on missing file, got nil")
 	}
-	if !strings.Contains(err.Error(), "plugin Parser:") {
-		t.Errorf("expected 'plugin Parser:' prefix in error, got: %v", err)
+	if !strings.Contains(err.Error(), "Parser:") {
+		t.Errorf("expected 'Parser:' prefix in error, got: %v", err)
 	}
 }
 
-// TestDefaultPipeline_StarterAllocatesSymbols asserts the canonical
-// pipeline allocates an empty SymbolTable via Starter and produces a
-// non-nil Code via Parser. Byte-equivalence vs the Java pipeline is
-// per-plugin and lives in each plugin's *_test.go (e.g.
-// desugarer_test.go's TestDesugarer_ParityWithJava). We no longer
-// assert "Default == Parser-only" here because Desugarer (Phase 6.6)
-// actively mutates fixtures carrying `_` patterns.
+// TestDefaultPipeline_StarterAllocatesSymbols asserts the minimal
+// Starter → Parser chain allocates an empty SymbolTable via Starter
+// and produces a non-nil Code via Parser. Byte-equivalence vs Java
+// is per-plugin and lives in each plugin's *_test.go.
 func TestDefaultPipeline_StarterAllocatesSymbols(t *testing.T) {
 	cwd, err := os.Getwd()
 	if err != nil {
@@ -98,12 +94,12 @@ func TestDefaultPipeline_StarterAllocatesSymbols(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	full, err := tom.Default().Run(platform.State{Filename: abs})
+	full, err := tom.Run(tom.State{Filename: abs}, starter.Run, parser.Run)
 	if err != nil {
-		t.Fatalf("default: %v", err)
+		t.Fatalf("run: %v", err)
 	}
 	if full.Code == nil {
-		t.Error("default pipeline produced nil Code")
+		t.Error("pipeline produced nil Code")
 	}
 	if full.Symbols == nil {
 		t.Error("Starter should have allocated State.Symbols")

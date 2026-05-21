@@ -6,13 +6,7 @@
 // Identity stub for now.
 package compiler
 
-import "tom/tomgo/stable/platform"
-
-// Plugin implements [platform.Plugin] for the Compiler phase.
-type Plugin struct{}
-
-// Name implements [platform.Plugin].
-func (Plugin) Name() string { return "Compiler" }
+import "tom/tomgo/stable/tom"
 
 // Run is currently identity; see package doc.
-func (Plugin) Run(in platform.State) (platform.State, error) { return in, nil }
+func Run(in tom.State) (tom.State, error) { return in, nil }

@@ -7,7 +7,7 @@ import (
 	"strings"
 	"testing"
 
-	"tom/tomgo/stable/platform"
+	"tom/tomgo/stable/tom"
 	tomparseq "tom/tomgo/tests/tom/parser/equiv"
 	"tom/tomgo/tests/tom/parser/equiv/astcmp"
 	tomparser "tom/tomgo/stable/tom/parser/parser"
@@ -108,14 +108,7 @@ func TestCorpus_ParityWithJava(t *testing.T) {
 			javaFail = append(javaFail, name)
 			continue
 		}
-		goState, err := platform.New(
-			starter.Plugin{},
-			parser.Plugin{},
-			transformer.Plugin{},
-			syntaxchecker.Plugin{},
-			desugarer.Plugin{},
-			typer.Plugin{},
-		).Run(platform.State{Filename: input})
+		goState, err := tom.Run(tom.State{Filename: input}, starter.Run, parser.Run, transformer.Run, syntaxchecker.Run, desugarer.Run, typer.Run)
 		if err != nil {
 			parityDiff = append(parityDiff, name)
 			continue
