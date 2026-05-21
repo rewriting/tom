@@ -1,27 +1,24 @@
 // Package backend emits Java source code from the typed Tom AST.
 //
-// This is a focused, single-target implementation aimed at compiling
-// Peano.t end-to-end. It walks the Code list and turns each element
-// into Java text:
+// Single-target implementation aimed at compiling Peano.t end-to-end.
+// Walks the Code list and produces Java text:
 //
-//   - TargetLanguageToCode(TL(text,...))  → emitted verbatim
-//   - DeclarationToCode(TypeTermDecl(...)) → tom_is_sort_<sort> +
-//                                             tom_equal_term_<sort>
-//                                             static helpers
-//   - DeclarationToCode(SymbolDecl(name))  → look up the symbol in
-//                                             SymbolTable and emit
-//                                             tom_is_fun_sym_<op>,
-//                                             tom_make_<op>,
-//                                             tom_get_slot_<op>_<slot>
-//   - InstructionToCode(Match(...))        → naive nested-if expansion
-//                                             of the constraint tree
-//                                             with the host action body
-//
-// The output is intentionally not byte-equivalent to Java's Tom
-// compiler output — Java threads its constraints through a shared
-// `tomMatch<N>_<M>` variable scheme that we ignore. The emitted code
-// IS semantically equivalent: every action fires under the same
-// pattern conditions.
+//   - TargetLanguageToCode(TL(...))         verbatim
+//   - DeclarationToCode(TypeTermDecl(...))  tom_is_sort_<sort>,
+//                                            tom_equal_term_<sort>
+//   - DeclarationToCode(SymbolDecl(name))   tom_is_fun_sym_<op>,
+//                                            tom_make_<op>,
+//                                            tom_get_slot_<op>_<slot>
+//                                            (only for symbols USED
+//                                            in patterns or backquotes —
+//                                            mirrors Java's reference
+//                                            which omits dead helpers)
+//   - InstructionToCode(Match(...))         nested-if cascade over
+//                                            constraints, with each
+//                                            pattern variable bound
+//                                            to a `cast/slot-call`
+//                                            expression and inlined
+//                                            into the action body
 package backend
 
 import (
@@ -33,7 +30,7 @@ import (
 )
 
 // Run consumes the typed Tom AST in `in.Code` and replaces State.Source
-// with the generated Java source. Filename and SymbolTable are preserved.
+// with the generated Java source.
 func Run(in tom.State) (tom.State, error) {
 	if in.Code == nil {
 		return in, nil
@@ -46,7 +43,8 @@ func Run(in tom.State) (tom.State, error) {
 	if !ok {
 		return in, fmt.Errorf("backend: expected ConcCode list")
 	}
-	e := &emitter{symbols: in.Symbols}
+	usedSymbols := collectUsedSymbols(list)
+	e := &emitter{symbols: in.Symbols, usedSymbols: usedSymbols, bindings: map[string]string{}}
 	for _, c := range list.Slots {
 		if err := e.emitCode(c); err != nil {
 			return in, err
@@ -58,8 +56,15 @@ func Run(in tom.State) (tom.State, error) {
 }
 
 type emitter struct {
-	buf     strings.Builder
-	symbols *tom.SymbolTable
+	buf         strings.Builder
+	symbols     *tom.SymbolTable
+	usedSymbols map[string]bool
+	// bindings maps a pattern-variable name (e.g. "x", "y") to the
+	// Java expression that produces its matched value (e.g.
+	// "(( ATerm )t1)" or "tom_get_slot_suc_pred((( ATerm )t2))").
+	// Populated as a Match-rule's pattern tree is walked; consulted
+	// when the rule's action body emits a BQVariable.
+	bindings map[string]string
 }
 
 func (e *emitter) emitCode(c tomast.Code) error {
@@ -119,13 +124,21 @@ func (e *emitter) emitTypeTermHelpers(t *tomast.TypeTermDeclDeclaration) error {
 	return nil
 }
 
-// emitSymbolHelpers looks up `name` in the SymbolTable and emits
-// the hook helpers (is_fun_sym, make, get_slot).
+// emitSymbolHelpers writes the per-operator helper methods. To match
+// Java's reference, only symbols actually USED by the rest of the
+// compiled code get helpers — others (like `plus1`/`plus2`/`term2appl`
+// in Peano, which are declared but never referenced in patterns or
+// backquotes) are skipped to avoid emitting dead code whose body
+// would also cause Java compile errors (e.g. a static helper calling
+// an instance method).
 func (e *emitter) emitSymbolHelpers(name tomast.TomName) error {
 	if e.symbols == nil {
 		return nil
 	}
 	opName := nameString(name)
+	if !e.usedSymbols[opName] {
+		return nil
+	}
 	sym, ok := e.symbols.Symbols[opName]
 	if !ok {
 		return nil
@@ -134,51 +147,39 @@ func (e *emitter) emitSymbolHelpers(name tomast.TomName) error {
 	if !ok {
 		return nil
 	}
-	// 1. GetSlotDecl per slot, from PairNameDeclList.
-	if pairs, ok := s.PairNameDeclList.(*tomast.ConcPairNameDeclPairNameDeclList); ok {
-		for _, p := range pairs.Slots {
-			pair, ok := p.(*tomast.PairNameDeclPairNameDecl)
-			if !ok {
-				continue
-			}
-			if getSlot, ok := pair.SlotDecl.(*tomast.GetSlotDeclDeclaration); ok {
-				body := codeBodyFromExpr(getSlot.Expr)
-				body = substitutePlaceholders(body, []string{"t"})
-				codomainTL := tlTypeFor(s, e.symbols)
-				fmt.Fprintf(&e.buf, "private static %s tom_get_slot_%s_%s(%s t) {return %s;}",
-					codomainTL, opName, nameString(pair.SlotName), codomainTL, body)
-			}
-		}
+	// All hooks live in Options (the Go parser doesn't populate
+	// PairNameDecl.SlotDecl). Iterate and emit one helper per
+	// recognised declaration variant.
+	opts, ok := s.Options.(*tomast.ConcOptionOptionList)
+	if !ok {
+		return nil
 	}
-	// 2. IsFsymDecl / MakeDecl from Options.
-	if opts, ok := s.Options.(*tomast.ConcOptionOptionList); ok {
-		for _, opt := range opts.Slots {
-			declOpt, ok := opt.(*tomast.DeclarationToOptionOption)
-			if !ok {
-				continue
-			}
-			switch decl := declOpt.AstDeclaration.(type) {
-			case *tomast.IsFsymDeclDeclaration:
-				body := codeBodyFromExpr(decl.Expr)
-				body = substitutePlaceholders(body, []string{"t"})
-				codomainTL := tlTypeFor(s, e.symbols)
-				fmt.Fprintf(&e.buf, "private static boolean tom_is_fun_sym_%s(%s t) {return %s;}",
-					opName, codomainTL, body)
-			case *tomast.MakeDeclDeclaration:
-				body := codeBodyFromInstruction(decl.Instr)
-				codomainTL := tlTypeFor(s, e.symbols)
-				params, names := makeDeclParams(decl, e.symbols)
-				body = substitutePlaceholders(body, names)
-				fmt.Fprintf(&e.buf, "private static %s tom_make_%s(%s) { return %s;}",
-					codomainTL, opName, params, body)
-			case *tomast.GetSlotDeclDeclaration:
-				body := codeBodyFromExpr(decl.Expr)
-				body = substitutePlaceholders(body, []string{"t"})
-				codomainTL := tlTypeFor(s, e.symbols)
-				slotName := nameString(decl.SlotName)
-				fmt.Fprintf(&e.buf, "private static %s tom_get_slot_%s_%s(%s t) {return %s;}",
-					codomainTL, opName, slotName, codomainTL, body)
-			}
+	for _, opt := range opts.Slots {
+		declOpt, ok := opt.(*tomast.DeclarationToOptionOption)
+		if !ok {
+			continue
+		}
+		switch decl := declOpt.AstDeclaration.(type) {
+		case *tomast.IsFsymDeclDeclaration:
+			body := codeBodyFromExpr(decl.Expr)
+			body = substitutePlaceholders(body, []string{"t"})
+			codomainTL := tlTypeFor(s, e.symbols)
+			fmt.Fprintf(&e.buf, "private static boolean tom_is_fun_sym_%s(%s t) {return %s;}",
+				opName, codomainTL, body)
+		case *tomast.MakeDeclDeclaration:
+			body := codeBodyFromInstruction(decl.Instr)
+			codomainTL := tlTypeFor(s, e.symbols)
+			params, names := makeDeclParams(decl, e.symbols)
+			body = substitutePlaceholders(body, names)
+			fmt.Fprintf(&e.buf, "private static %s tom_make_%s(%s) { return %s;}",
+				codomainTL, opName, params, body)
+		case *tomast.GetSlotDeclDeclaration:
+			body := codeBodyFromExpr(decl.Expr)
+			body = substitutePlaceholders(body, []string{"t"})
+			codomainTL := tlTypeFor(s, e.symbols)
+			slotName := nameString(decl.SlotName)
+			fmt.Fprintf(&e.buf, "private static %s tom_get_slot_%s_%s(%s t) {return %s;}",
+				codomainTL, opName, slotName, codomainTL, body)
 		}
 	}
 	return nil
@@ -201,12 +202,8 @@ func (e *emitter) emitInstruction(i tomast.Instruction) error {
 	case *tomast.BQTermToInstructionInstruction:
 		return e.emitBQTerm(x.Tom)
 	case *tomast.RawActionInstruction:
-		// Tom wraps every rule body in RawAction(If(TrueTL, then, Nop)).
-		// We emit the then-branch verbatim.
 		return e.emitInstruction(x.AstInstruction)
 	case *tomast.IfInstruction:
-		// For Peano the condition is always TrueTL, so the then-
-		// branch unconditionally runs.
 		return e.emitInstruction(x.SuccesInst)
 	case *tomast.NopInstruction:
 	}
@@ -237,8 +234,9 @@ func (e *emitter) emitIncluded(cl tomast.CodeList) error {
 	return nil
 }
 
-// emitMatch turns a Match instruction into a sequence of nested-if
-// blocks, one per ConstraintInstruction. Naive: each rule independent.
+// emitMatch turns a Match instruction into independent rules: each
+// ConstraintInstruction expands into its own if-cascade, so a rule
+// that doesn't fire falls through to the next one.
 func (e *emitter) emitMatch(m *tomast.MatchInstruction) error {
 	list, ok := m.ConstraintInstructionList.(*tomast.ConcConstraintInstructionConstraintInstructionList)
 	if !ok {
@@ -257,6 +255,9 @@ func (e *emitter) emitMatch(m *tomast.MatchInstruction) error {
 }
 
 func (e *emitter) emitConstraintInstruction(row *tomast.ConstraintInstructionConstraintInstruction) {
+	// Fresh binding scope per rule — `x` from rule N must not leak
+	// into rule N+1.
+	e.bindings = map[string]string{}
 	depth := e.emitConstraint(row.Constraint)
 	e.emitAction(row.Action)
 	for i := 0; i < depth; i++ {
@@ -278,41 +279,224 @@ func (e *emitter) emitConstraint(c tomast.Constraint) int {
 	return 0
 }
 
+// emitMatchConstraint handles `pattern << subject`. It opens
+// `if (tom_is_sort_<type>(subject)) { ... }` then recurses on the
+// pattern via emitPattern.
 func (e *emitter) emitMatchConstraint(m *tomast.MatchConstraintConstraint) int {
-	mc := matchConstraintShape(m)
-	if mc == nil {
+	bq, ok := m.Subject.(*tomast.BQVariableBQTerm)
+	if !ok {
 		return 0
 	}
+	subjectName := nameString(bq.AstName)
+	subjectTypeName := ""
+	subjectTypeTL := "Object"
+	if t, ok := bq.AstType.(*tomast.TypeTomType); ok {
+		subjectTypeName = t.TomType
+		if tl, ok := t.TlType.(*tomast.TLTypeTargetLanguageType); ok && strings.TrimSpace(tl.String_) != "" {
+			subjectTypeTL = strings.TrimSpace(tl.String_)
+		}
+	}
 	depth := 0
-	// Sort check on the subject — every if-clause opens its own
-	// braces so we can close them uniformly at the end of the rule.
-	if mc.subjectTypeName != "" {
-		fmt.Fprintf(&e.buf, "if (tom_is_sort_%s(%s)) {", mc.subjectTypeName, mc.subjectExpr)
+	if subjectTypeName != "" {
+		fmt.Fprintf(&e.buf, "if (tom_is_sort_%s(%s)) {", subjectTypeName, subjectName)
 		depth++
 	}
-	switch p := m.Pattern.(type) {
-	case *tomast.VariableTomTerm:
-		_ = p
-		e.buf.WriteString("{")
-		depth++
-	case *tomast.TermApplTomTerm:
-		applName := headApplName(p.NameList)
-		if applName == "" {
-			return depth
-		}
-		fmt.Fprintf(&e.buf, "if (tom_is_fun_sym_%s((( %s )%s))) {",
-			applName, mc.subjectTypeTL, mc.subjectExpr)
-		depth++
-	case *tomast.RecordApplTomTerm:
-		applName := headApplName(p.NameList)
-		if applName == "" {
-			return depth
-		}
-		fmt.Fprintf(&e.buf, "if (tom_is_fun_sym_%s((( %s )%s))) {",
-			applName, mc.subjectTypeTL, mc.subjectExpr)
-		depth++
-	}
+	// The subject expression as used in pattern checks is the
+	// cast form `(( <TL> )<subject>)` — Java's reference uses this
+	// idiom everywhere it consumes the subject.
+	subjectExpr := fmt.Sprintf("(( %s )%s)", subjectTypeTL, subjectName)
+	depth += e.emitPattern(m.Pattern, subjectExpr, subjectTypeTL)
 	return depth
+}
+
+// emitPattern walks one pattern. For each `if`-style check it opens
+// a `{` and returns +1 to the depth count so the caller can close
+// the right number of braces. Variable bindings are recorded in
+// e.bindings so the rule's action body can substitute them inline.
+func (e *emitter) emitPattern(p tomast.TomTerm, subjectExpr, subjectTypeTL string) int {
+	switch pat := p.(type) {
+	case *tomast.VariableTomTerm:
+		return e.bindVariable(pat, subjectExpr)
+	case *tomast.VariableStarTomTerm:
+		// Star patterns (`x*`) don't show up in plain `%match` over
+		// non-variadic ops. Treat like Variable for now.
+		name := nameString(pat.AstName)
+		if name != "" && !isFreshOrEmpty(name) {
+			e.bindings[name] = subjectExpr
+		}
+		return 0
+	case *tomast.TermApplTomTerm:
+		applName := headApplName(pat.NameList)
+		if applName == "" {
+			return 0
+		}
+		fmt.Fprintf(&e.buf, "if (tom_is_fun_sym_%s(%s)) {", applName, subjectExpr)
+		depth := 1
+		// Positional args — slot names come from the SymbolTable.
+		if args, ok := pat.Args.(*tomast.ConcTomTermTomList); ok && len(args.Slots) > 0 {
+			slotNames := e.slotNamesFor(applName)
+			for i, arg := range args.Slots {
+				if i >= len(slotNames) {
+					break
+				}
+				inner := fmt.Sprintf("tom_get_slot_%s_%s(%s)", applName, slotNames[i], subjectExpr)
+				// The inner subject's TL type is the slot's
+				// declared type. For Peano all slots are `term`
+				// (TL `ATerm`), and a downstream
+				// tom_is_fun_sym_<X>(inner) re-checks the head.
+				innerTL := e.slotTLType(applName, slotNames[i])
+				if innerTL == "" {
+					innerTL = subjectTypeTL
+				}
+				depth += e.emitPattern(arg, inner, innerTL)
+			}
+		}
+		// Top-level annotation: `x@<pat>` carries x as an AliasTo
+		// constraint on the OUTER pattern. Bind x to the WHOLE
+		// matched subject (not the inner).
+		e.applyAliasConstraints(pat.Constraints, subjectExpr)
+		return depth
+	case *tomast.RecordApplTomTerm:
+		applName := headApplName(pat.NameList)
+		if applName == "" {
+			return 0
+		}
+		fmt.Fprintf(&e.buf, "if (tom_is_fun_sym_%s(%s)) {", applName, subjectExpr)
+		depth := 1
+		if slots, ok := pat.Slots.(*tomast.ConcSlotSlotList); ok {
+			for _, sl := range slots.Slots {
+				pair, ok := sl.(*tomast.PairSlotApplSlot)
+				if !ok {
+					continue
+				}
+				slotName := nameString(pair.SlotName)
+				inner := fmt.Sprintf("tom_get_slot_%s_%s(%s)", applName, slotName, subjectExpr)
+				innerTL := e.slotTLType(applName, slotName)
+				if innerTL == "" {
+					innerTL = subjectTypeTL
+				}
+				if appl, ok := pair.Appl.(tomast.TomTerm); ok {
+					depth += e.emitPattern(appl, inner, innerTL)
+				}
+			}
+		}
+		e.applyAliasConstraints(pat.Constraints, subjectExpr)
+		return depth
+	}
+	return 0
+}
+
+// bindVariable handles a leaf Variable pattern. Variable's name may
+// be a parser-emitted placeholder (Empty / _f_r_e_s_h_v_a_r_N from the
+// desugarer) — in that case we look at its AliasTo constraint to find
+// the source-level alias name `x` and bind THAT instead.
+func (e *emitter) bindVariable(v *tomast.VariableTomTerm, subjectExpr string) int {
+	name := nameString(v.AstName)
+	if name != "" && !isFreshOrEmpty(name) {
+		e.bindings[name] = subjectExpr
+	}
+	// Apply AliasTo constraints: `x@_` after desugar becomes
+	// `Variable(_fresh_var_N, AliasTo(Variable(x)))`. Record x as
+	// bound to the same subject so the action sees it.
+	e.applyAliasConstraints(v.Constraints, subjectExpr)
+	return 0
+}
+
+// applyAliasConstraints walks a Variable/TermAppl/RecordAppl's
+// Constraints list looking for `AliasTo(Variable(name))` entries and
+// binds `name` to the supplied expression.
+func (e *emitter) applyAliasConstraints(cs tomast.ConstraintList, subjectExpr string) {
+	c, ok := cs.(*tomast.ConcConstraintConstraintList)
+	if !ok {
+		return
+	}
+	for _, item := range c.Slots {
+		alias, ok := item.(*tomast.AliasToConstraint)
+		if !ok {
+			continue
+		}
+		if v, ok := alias.Var.(*tomast.VariableTomTerm); ok {
+			name := nameString(v.AstName)
+			if name != "" && !isFreshOrEmpty(name) {
+				e.bindings[name] = subjectExpr
+			}
+		}
+	}
+}
+
+// slotNamesFor returns the slot names of op `name` in declaration
+// order, from the SymbolTable. Empty if the op is unknown or has no
+// pair-name list.
+func (e *emitter) slotNamesFor(opName string) []string {
+	if e.symbols == nil {
+		return nil
+	}
+	sym, ok := e.symbols.Symbols[opName]
+	if !ok {
+		return nil
+	}
+	s, ok := sym.(*tomast.SymbolTomSymbol)
+	if !ok {
+		return nil
+	}
+	pairs, ok := s.PairNameDeclList.(*tomast.ConcPairNameDeclPairNameDeclList)
+	if !ok {
+		return nil
+	}
+	var out []string
+	for _, p := range pairs.Slots {
+		pair, ok := p.(*tomast.PairNameDeclPairNameDecl)
+		if !ok {
+			continue
+		}
+		out = append(out, nameString(pair.SlotName))
+	}
+	return out
+}
+
+// slotTLType returns the target-language type of slot `slotName` on
+// op `opName`. Used to inherit the correct cast type into nested
+// patterns.
+func (e *emitter) slotTLType(opName, slotName string) string {
+	if e.symbols == nil {
+		return ""
+	}
+	sym, ok := e.symbols.Symbols[opName]
+	if !ok {
+		return ""
+	}
+	s, ok := sym.(*tomast.SymbolTomSymbol)
+	if !ok {
+		return ""
+	}
+	tt, ok := s.TypesToType.(*tomast.TypesToTypeTomType)
+	if !ok {
+		return ""
+	}
+	domain, ok := tt.Domain.(*tomast.ConcTomTypeTomTypeList)
+	if !ok {
+		return ""
+	}
+	names := e.slotNamesFor(opName)
+	for i, n := range names {
+		if n != slotName {
+			continue
+		}
+		if i >= len(domain.Slots) {
+			break
+		}
+		if t, ok := domain.Slots[i].(*tomast.TypeTomType); ok {
+			if tl, ok := t.TlType.(*tomast.TLTypeTargetLanguageType); ok && strings.TrimSpace(tl.String_) != "" {
+				return strings.TrimSpace(tl.String_)
+			}
+			if e.symbols != nil {
+				if body, ok := e.symbols.Sorts[t.TomType]; ok && strings.TrimSpace(body) != "" {
+					return strings.TrimSpace(body)
+				}
+			}
+		}
+	}
+	return ""
 }
 
 func (e *emitter) emitAction(a tomast.Instruction) {
@@ -320,18 +504,41 @@ func (e *emitter) emitAction(a tomast.Instruction) {
 	case *tomast.RawActionInstruction:
 		e.emitInstruction(x.AstInstruction)
 	case *tomast.IfInstruction:
-		// Tom wraps the action in If(TrueTL(), then, else). Just
-		// emit the then-branch for Peano (TrueTL has no condition).
 		e.emitInstruction(x.SuccesInst)
 	case *tomast.NopInstruction:
 	}
 }
 
+// emitBQTerm renders a backquote term — used inside RawAction bodies
+// to substitute pattern variables and synthesise calls to
+// `tom_make_<op>` helpers.
 func (e *emitter) emitBQTerm(t tomast.BQTerm) error {
 	switch x := t.(type) {
 	case *tomast.BQVariableBQTerm:
-		e.buf.WriteString(nameString(x.AstName))
+		name := nameString(x.AstName)
+		if bound, ok := e.bindings[name]; ok {
+			e.buf.WriteString(bound)
+			return nil
+		}
+		e.buf.WriteString(name)
 	case *tomast.BQApplBQTerm:
+		applName := nameString(x.AstName)
+		fmt.Fprintf(&e.buf, "tom_make_%s(", applName)
+		if args, ok := x.Args.(*tomast.ConcBQTermBQTermList); ok {
+			for i, a := range args.Slots {
+				if i > 0 {
+					e.buf.WriteString(",")
+				}
+				if err := e.emitBQTerm(a); err != nil {
+					return err
+				}
+			}
+		}
+		e.buf.WriteString(")")
+	case *tomast.BuildTermBQTerm:
+		// After Typer / Desugarer, backquoted constructors become
+		// BuildTerm(Name(op), args, "moduleName"). Emit the same
+		// `tom_make_<op>(args)` shape.
 		applName := nameString(x.AstName)
 		fmt.Fprintf(&e.buf, "tom_make_%s(", applName)
 		if args, ok := x.Args.(*tomast.ConcBQTermBQTermList); ok {
@@ -350,29 +557,125 @@ func (e *emitter) emitBQTerm(t tomast.BQTerm) error {
 }
 
 // ---------------------------------------------------------------------------
-// Helpers
+// Pre-pass: which symbols does the compiled output actually reference?
 // ---------------------------------------------------------------------------
 
-type matchShape struct {
-	subjectExpr     string
-	subjectTypeName string
-	subjectTypeTL   string
-}
-
-func matchConstraintShape(m *tomast.MatchConstraintConstraint) *matchShape {
-	bq, ok := m.Subject.(*tomast.BQVariableBQTerm)
-	if !ok {
-		return nil
-	}
-	mc := &matchShape{subjectExpr: nameString(bq.AstName)}
-	if t, ok := bq.AstType.(*tomast.TypeTomType); ok {
-		mc.subjectTypeName = t.TomType
-		if tl, ok := t.TlType.(*tomast.TLTypeTargetLanguageType); ok {
-			mc.subjectTypeTL = strings.TrimSpace(tl.String_)
+// collectUsedSymbols walks the AST once before code emission, recording
+// every symbol name that appears as the head of a pattern application
+// (TermAppl / RecordAppl) or a backquoted constructor (BQAppl /
+// BuildTerm). Symbols not in this set are declared but never used,
+// and emitting their helpers risks Java compile errors (e.g. when
+// the body of `make()` calls a non-static method that's only legal
+// in the surrounding class's instance methods). Java's reference
+// compiler does the same dead-code elimination.
+func collectUsedSymbols(list *tomast.ConcCodeCodeList) map[string]bool {
+	used := map[string]bool{}
+	var walk func(any)
+	walk = func(n any) {
+		if n == nil {
+			return
+		}
+		switch x := n.(type) {
+		case *tomast.TermApplTomTerm:
+			used[headApplName(x.NameList)] = true
+			if args, ok := x.Args.(*tomast.ConcTomTermTomList); ok {
+				for _, a := range args.Slots {
+					walk(a)
+				}
+			}
+			walkConstraintList(x.Constraints, walk)
+		case *tomast.RecordApplTomTerm:
+			used[headApplName(x.NameList)] = true
+			if slots, ok := x.Slots.(*tomast.ConcSlotSlotList); ok {
+				for _, sl := range slots.Slots {
+					if pair, ok := sl.(*tomast.PairSlotApplSlot); ok {
+						walk(pair.Appl)
+					}
+				}
+			}
+			walkConstraintList(x.Constraints, walk)
+		case *tomast.VariableTomTerm:
+			walkConstraintList(x.Constraints, walk)
+		case *tomast.BQApplBQTerm:
+			used[nameString(x.AstName)] = true
+			walkBQList(x.Args, walk)
+		case *tomast.BuildTermBQTerm:
+			used[nameString(x.AstName)] = true
+			walkBQList(x.Args, walk)
+		case *tomast.BQVariableBQTerm:
+		case *tomast.MatchConstraintConstraint:
+			walk(x.Pattern)
+			walk(x.Subject)
+		case *tomast.AndConstraintConstraint:
+			for _, c := range x.Slots {
+				walk(c)
+			}
+		case *tomast.MatchInstruction:
+			if cl, ok := x.ConstraintInstructionList.(*tomast.ConcConstraintInstructionConstraintInstructionList); ok {
+				for _, ci := range cl.Slots {
+					if row, ok := ci.(*tomast.ConstraintInstructionConstraintInstruction); ok {
+						walk(row.Constraint)
+						walk(row.Action)
+					}
+				}
+			}
+		case *tomast.AbstractBlockInstruction:
+			if il, ok := x.InstList.(*tomast.ConcInstructionInstructionList); ok {
+				for _, inst := range il.Slots {
+					walk(inst)
+				}
+			}
+		case *tomast.CodeToInstructionInstruction:
+			walk(x.Code)
+		case *tomast.BQTermToInstructionInstruction:
+			walk(x.Tom)
+		case *tomast.RawActionInstruction:
+			walk(x.AstInstruction)
+		case *tomast.IfInstruction:
+			walk(x.SuccesInst)
+			walk(x.FailureInst)
+		case *tomast.TargetLanguageToCodeCode:
+		case *tomast.DeclarationToCodeCode:
+		case *tomast.InstructionToCodeCode:
+			walk(x.AstInstruction)
+		case *tomast.TomIncludeCode:
+			if cl, ok := x.CodeList.(*tomast.ConcCodeCodeList); ok {
+				for _, c := range cl.Slots {
+					walk(c)
+				}
+			}
 		}
 	}
-	return mc
+	for _, c := range list.Slots {
+		walk(c)
+	}
+	delete(used, "")
+	return used
 }
+
+func walkConstraintList(cl tomast.ConstraintList, walk func(any)) {
+	c, ok := cl.(*tomast.ConcConstraintConstraintList)
+	if !ok {
+		return
+	}
+	for _, item := range c.Slots {
+		walk(item)
+	}
+}
+
+func walkBQList(l tomast.BQTermList, walk func(any)) {
+	c, ok := l.(*tomast.ConcBQTermBQTermList)
+	if !ok {
+		return
+	}
+	for _, b := range c.Slots {
+		walk(b)
+	}
+}
+
+// ---------------------------------------------------------------------------
+// Helpers
+// ---------------------------------------------------------------------------
 
 func flattenDeclList(d tomast.DeclarationList) []tomast.Declaration {
 	c, ok := d.(*tomast.ConcDeclarationDeclarationList)
@@ -465,4 +768,15 @@ func makeDeclParams(d *tomast.MakeDeclDeclaration, st *tom.SymbolTable) (string,
 		parts = append(parts, tl+" "+nm)
 	}
 	return strings.Join(parts, ","), names
+}
+
+// isFreshOrEmpty reports whether a Variable name is one of the
+// synthetic placeholders the parser/desugarer introduces (`_`,
+// `_f_r_e_s_h_v_a_r_<N>`, …) — those should never become user-
+// visible bindings.
+func isFreshOrEmpty(name string) bool {
+	if name == "" || name == "_" {
+		return true
+	}
+	return strings.HasPrefix(name, "_f_r_e_s_h_v_a_r_")
 }
