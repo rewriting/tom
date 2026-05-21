@@ -99,6 +99,40 @@ func tokenizeWater(content string, start position) []wtoken {
 			out = append(out, wtoken{kind: tokWS, text: content[i:j], line: ts.line, col: ts.col})
 			i = j
 		default:
+			// `//` line comment: skip to end-of-line (newline is left
+			// for the next iteration to consume as tokNL). Java lexer
+			// rule: SLCOMMENT : '//' ~[\r\n]* -> skip.
+			if c == '/' && i+1 < len(content) && content[i+1] == '/' {
+				j := i
+				for j < len(content) && content[j] != '\n' {
+					j++
+					cur.col++
+				}
+				i = j
+				continue
+			}
+			// `/* … */` block comment: skip the whole span, advancing
+			// line/col through every byte. Java: MLCOMMENT : '/*' .*?
+			// '*/' -> skip.
+			if c == '/' && i+1 < len(content) && content[i+1] == '*' {
+				j := i + 2
+				cur.col += 2
+				for j+1 < len(content) && !(content[j] == '*' && content[j+1] == '/') {
+					if content[j] == '\n' {
+						cur.line++
+						cur.col = 1
+					} else {
+						cur.col++
+					}
+					j++
+				}
+				if j+1 < len(content) {
+					j += 2 // consume `*/`
+					cur.col += 2
+				}
+				i = j
+				continue
+			}
 			out = append(out, wtoken{kind: tokVisible, text: string(c), line: ts.line, col: ts.col})
 			i++
 			cur.col++

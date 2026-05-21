@@ -81,15 +81,14 @@ func TestPlatformParser_MissingFile(t *testing.T) {
 	}
 }
 
-// TestDefaultPipeline_PreservesParserAST runs the full canonical
-// 11-plugin pipeline on a fixture and asserts the resulting AST is
-// byte-identical to the Parser-only run. This is the safety net
-// proving that the Phase-5 stubs (Transformer / SyntaxChecker /
-// Desugarer / Typer / TypeChecker / Expander / Compiler / Optimizer /
-// Backend) are truly pass-through and don't accidentally drop
-// information. As each phase gets a real implementation, the
-// expected AST will evolve — at that point this test moves with it.
-func TestDefaultPipeline_PreservesParserAST(t *testing.T) {
+// TestDefaultPipeline_StarterAllocatesSymbols asserts the canonical
+// pipeline allocates an empty SymbolTable via Starter and produces a
+// non-nil Code via Parser. Byte-equivalence vs the Java pipeline is
+// per-plugin and lives in each plugin's *_test.go (e.g.
+// desugarer_test.go's TestDesugarer_ParityWithJava). We no longer
+// assert "Default == Parser-only" here because Desugarer (Phase 6.6)
+// actively mutates fixtures carrying `_` patterns.
+func TestDefaultPipeline_StarterAllocatesSymbols(t *testing.T) {
 	cwd, err := os.Getwd()
 	if err != nil {
 		t.Fatal(err)
@@ -98,19 +97,12 @@ func TestDefaultPipeline_PreservesParserAST(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-
-	parserOnly, err := platform.New(plugins.Parser{}).Run(platform.State{Filename: abs})
-	if err != nil {
-		t.Fatalf("parser-only: %v", err)
-	}
 	full, err := plugins.Default().Run(platform.State{Filename: abs})
 	if err != nil {
 		t.Fatalf("default: %v", err)
 	}
-	parserStr := fmt.Sprintf("%v", parserOnly.Code)
-	fullStr := fmt.Sprintf("%v", full.Code)
-	if parserStr != fullStr {
-		t.Errorf("Default pipeline diverged from Parser-only AST.\nparser-only:\n%s\ndefault:\n%s\n", parserStr, fullStr)
+	if full.Code == nil {
+		t.Error("default pipeline produced nil Code")
 	}
 	if full.Symbols == nil {
 		t.Error("Starter should have allocated State.Symbols")

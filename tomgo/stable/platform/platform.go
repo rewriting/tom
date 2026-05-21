@@ -31,23 +31,29 @@ import (
 // the Go analogue of Java's tom.engine.tools.SymbolTable (held by
 // TomStreamManager).
 //
-// Phase 5 puts a placeholder in place; the typer / type-checker phases
-// will populate Sorts and Symbols with the parsed `%typeterm` and `%op`
-// declarations. Lookups happen by raw name string.
+// The Parser plugin populates it from `%typeterm` and `%op`
+// declarations; downstream plugins (Desugarer, Typer, Compiler) read
+// it to resolve slot names, codomain types, and target-language
+// type implementations.
 type SymbolTable struct {
-	// Sorts maps sort name → its declaring TypeTermDecl term.
-	Sorts map[string]tomast.Declaration
+	// Sorts maps each declared sort name to the body of its
+	// `implement { ... }` hook (the target-language type
+	// representation). Sorts without an `implement` hook map to the
+	// empty string.
+	Sorts map[string]string
 
-	// Symbols maps operator name → its SymbolDecl / ListSymbolDecl /
-	// ArraySymbolDecl term.
-	Symbols map[string]tomast.Declaration
+	// Symbols maps each declared operator name to the canonical
+	// [tomast.TomSymbol] term encoding its codomain, domain, slot
+	// names and option list. Built by buildTomSymbol() in the parser
+	// from the `%op codomain ctor(slots) { … }` declaration.
+	Symbols map[string]tomast.TomSymbol
 }
 
 // NewSymbolTable returns an empty SymbolTable with both maps initialised.
 func NewSymbolTable() *SymbolTable {
 	return &SymbolTable{
-		Sorts:   make(map[string]tomast.Declaration),
-		Symbols: make(map[string]tomast.Declaration),
+		Sorts:   make(map[string]string),
+		Symbols: make(map[string]tomast.TomSymbol),
 	}
 }
 
@@ -64,6 +70,15 @@ type State struct {
 	// write to it. Plugins receive the State by value but the embedded
 	// pointer makes the table itself shared.
 	Symbols *SymbolTable
+
+	// HasInlineGom is set by the Parser when the source contained a
+	// `%gom { ... }` block. Java's TomParserTool relies on `tom.home`
+	// + Tom.xml to expand such a block into a TomInclude; without
+	// that, the typer hits "Unknown symbol" / "Unknown type" errors
+	// and aborts before running TransformBQAppl. Our typer mirrors
+	// that behaviour by skipping BQAppl→FunctionCall rewriting when
+	// this flag is set, so AST shapes stay parity-compatible.
+	HasInlineGom bool
 }
 
 // Plugin is the contract every compilation stage implements.

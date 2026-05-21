@@ -23,38 +23,9 @@ import "tom/tomgo/stable/platform"
 //  10. Optimizer       (stub)
 //  11. Backend         (stub)
 
-// Transformer is a Phase-5 stub. Java's tom.engine.transformer.
-// TransformerPlugin re-writes `Transformation` declarations (a 2.10+
-// feature for EMF model transformations). Our minimal fixtures
-// contain no such decls so the pass-through is byte-exact for them.
-type Transformer struct{}
+// Transformer is now a real plugin — see transformer.go.
 
-func (Transformer) Name() string                               { return "Transformer" }
-func (Transformer) Run(in platform.State) (platform.State, error) { return in, nil }
-
-// SyntaxChecker validates terms against declared types, rejects
-// annotations inside anti-patterns, etc. The stub does no checks;
-// the real plugin will report errors (returned, not panicked).
-type SyntaxChecker struct{}
-
-func (SyntaxChecker) Name() string                                 { return "SyntaxChecker" }
-func (SyntaxChecker) Run(in platform.State) (platform.State, error) { return in, nil }
-
-// Desugarer lowers syntactic sugar (e.g. `pattern << bqterm` to
-// canonical match constraints, anti-patterns to AntiTerm, …). The
-// stub leaves the AST untouched.
-type Desugarer struct{}
-
-func (Desugarer) Name() string                                 { return "Desugarer" }
-func (Desugarer) Run(in platform.State) (platform.State, error) { return in, nil }
-
-// Typer resolves the `unknown type` placeholders the parser left in
-// every variable / subject / pattern by looking up the SymbolTable.
-// Critical phase for any non-trivial test against the Java pipeline.
-type Typer struct{}
-
-func (Typer) Name() string                                 { return "Typer" }
-func (Typer) Run(in platform.State) (platform.State, error) { return in, nil }
+// SyntaxChecker is now a real plugin — see syntaxchecker.go.
 
 // TypeChecker validates the type-resolved AST: every subterm sits in
 // its operator's declared domain, every constraint is well-typed.
