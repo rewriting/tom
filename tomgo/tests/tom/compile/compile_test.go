@@ -244,6 +244,25 @@ var goFixtures = []struct {
 			"PASS",
 		},
 	},
+	{
+		// TestList.t — `%oplist L conc(E*)` with head/tail/is_empty
+		// hooks (slice-based: l[0], l[1:], len(l)==0). Exercises
+		// VariadicPropagator / VariadicGenerator and the Go
+		// backend's list IR shapes (tom_get_head, tom_get_tail,
+		// tom_is_empty, tom_get_slice_list).
+		name:      "TestList",
+		useGoTest: true,
+		expected: []string{
+			"=== RUN   TestEmpty",
+			"=== RUN   TestSingletonFA",
+			"=== RUN   TestEndsFA",
+			"=== RUN   TestFAthenFB",
+			"=== RUN   TestStartsFBthenFB",
+			"=== RUN   TestFirstHead",
+			"=== RUN   TestCount",
+			"PASS",
+		},
+	},
 }
 
 // TestCompileGoFixtures is the Go-target counterpart of

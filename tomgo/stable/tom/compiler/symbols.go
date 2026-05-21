@@ -112,6 +112,18 @@ func (env *compilerEnv) termTypeOfBQTerm(t tomast.BQTerm) tomast.TomType {
 	case *tomast.SubtermBQTerm:
 		// Subterm(name, slotName, _) has the slot's type.
 		r = env.slotTypeFor(nameString(x.AstName), nameString(x.SlotName))
+	case *tomast.ListHeadBQTerm:
+		// ListHead(op, codomain, v) has the slot (element) type
+		// stored in `Codomain`. Used by VariadicPropagator before
+		// `replaceListHeadTail` rewrites it to GetHead.
+		r = x.Codomain
+	case *tomast.ListTailBQTerm:
+		// ListTail(op, v) has the list type (= op's codomain).
+		r = env.codomainOf(nameString(x.Opname))
+	case *tomast.VariableHeadListBQTerm:
+		r = env.codomainOf(nameString(x.Opname))
+	case *tomast.VariableHeadArrayBQTerm:
+		r = env.codomainOf(nameString(x.Opname))
 	}
 	if r == nil {
 		r = tomast.MakeEmptyType()

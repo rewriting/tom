@@ -40,6 +40,18 @@ func collectUsedSymbols(list *tomast.ConcCodeCodeList) map[string]bool {
 			used[renderTomName(x.AstName)] = true
 		case *tomast.ExpressionToBQTermBQTerm:
 			walkExpr(x.Exp)
+		case *tomast.ListHeadBQTerm:
+			used[renderTomName(x.Opname)] = true
+			walkBQ(x.Variable)
+		case *tomast.ListTailBQTerm:
+			used[renderTomName(x.Opname)] = true
+			walkBQ(x.Variable)
+		case *tomast.VariableHeadListBQTerm:
+			used[renderTomName(x.Opname)] = true
+			walkBQ(x.Begin)
+			walkBQ(x.End)
+		case *tomast.SymbolOfBQTerm:
+			walkBQ(x.GroundTerm)
 		case *tomast.CompositeBQTerm:
 			for _, m := range x.Slots {
 				if bm, ok := m.(*tomast.CompositeBQTermCompositeMember); ok {
@@ -91,6 +103,20 @@ func collectUsedSymbols(list *tomast.ConcCodeCodeList) map[string]bool {
 			used[renderTomName(x.Opname)] = true
 			walkBQ(x.Variable)
 			walkBQ(x.Index)
+		case *tomast.IsEmptyListExpression:
+			used[renderTomName(x.Opname)] = true
+			walkBQ(x.Variable)
+		case *tomast.GetHeadExpression:
+			used[renderTomName(x.Opname)] = true
+			walkBQ(x.Variable)
+		case *tomast.GetTailExpression:
+			used[renderTomName(x.Opname)] = true
+			walkBQ(x.Variable)
+		case *tomast.GetSliceListExpression:
+			used[renderTomName(x.AstName)] = true
+			walkBQ(x.VariableBeginAST)
+			walkBQ(x.VariableEndAST)
+			walkBQ(x.Tail)
 		case *tomast.AddOneExpression:
 			walkBQ(x.Variable)
 		case *tomast.GreaterThanExpression:
@@ -190,11 +216,17 @@ func scanReferences(text string, used map[string]bool) {
 		"tom_cons_array_",
 		"tom_get_slice_",
 		"tom_append_array_",
+		"tom_empty_list_",
+		"tom_cons_list_",
+		"tom_append_list_",
 	}
 	suffixedPrefixes := []string{
 		"tom_get_slot_",
 		"tom_get_element_",
 		"tom_get_size_",
+		"tom_get_head_",
+		"tom_get_tail_",
+		"tom_is_empty_",
 	}
 	scan := func(prefix string, strip bool) {
 		i := 0

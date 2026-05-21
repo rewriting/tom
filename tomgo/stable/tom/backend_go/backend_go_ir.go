@@ -217,6 +217,33 @@ func (e *emitter) emitExpression(expr tomast.Expression) {
 		fmt.Fprintf(&e.buf, " >= tom_get_size_%s_%s(", opName, codomainSort)
 		e.emitBQTerm(x.Variable)
 		e.buf.WriteString("))")
+	case *tomast.IsEmptyListExpression:
+		opName := renderTomName(x.Opname)
+		codomainSort := codomainSortFor(e.symbols, opName)
+		fmt.Fprintf(&e.buf, "tom_is_empty_%s_%s(", opName, codomainSort)
+		e.emitBQTerm(x.Variable)
+		e.buf.WriteString(")")
+	case *tomast.GetHeadExpression:
+		opName := renderTomName(x.Opname)
+		codomainSort := codomainSortFor(e.symbols, opName)
+		fmt.Fprintf(&e.buf, "tom_get_head_%s_%s(", opName, codomainSort)
+		e.emitBQTerm(x.Variable)
+		e.buf.WriteString(")")
+	case *tomast.GetTailExpression:
+		opName := renderTomName(x.Opname)
+		codomainSort := codomainSortFor(e.symbols, opName)
+		fmt.Fprintf(&e.buf, "tom_get_tail_%s_%s(", opName, codomainSort)
+		e.emitBQTerm(x.Variable)
+		e.buf.WriteString(")")
+	case *tomast.GetSliceListExpression:
+		opName := renderTomName(x.AstName)
+		fmt.Fprintf(&e.buf, "tom_get_slice_%s(", opName)
+		e.emitBQTerm(x.VariableBeginAST)
+		e.buf.WriteString(",")
+		e.emitBQTerm(x.VariableEndAST)
+		e.buf.WriteString(",")
+		e.emitBQTerm(x.Tail)
+		e.buf.WriteString(")")
 	case *tomast.GreaterThanExpression:
 		e.buf.WriteString("(")
 		e.emitExpression(x.Arg1)

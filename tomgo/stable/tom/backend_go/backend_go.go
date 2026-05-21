@@ -161,16 +161,27 @@ func (e *emitter) emitSymbolHelpers(name tomast.TomName) error {
 	}
 	codomainTL := tlTypeFor(s, e.symbols)
 	// Raw bodies captured during the loop — re-used when emitting
-	// the generic tom_get_slice / tom_append_array helpers.
+	// the generic tom_get_slice / tom_append_array / tom_append_list
+	// helpers.
 	var (
-		emptyArrayRaw string
-		addArrayRaw   string
-		getElemRaw    string
-		getSizeRaw    string
-		haveEmptyArr  bool
-		haveAddArr    bool
-		haveGetElem   bool
-		haveGetSize   bool
+		emptyArrayRaw   string
+		addArrayRaw     string
+		getElemRaw      string
+		getSizeRaw      string
+		haveEmptyArr    bool
+		haveAddArr      bool
+		haveGetElem     bool
+		haveGetSize     bool
+		emptyListRaw    string
+		addListRaw      string
+		getHeadRaw      string
+		getTailRaw      string
+		isEmptyRaw      string
+		haveEmptyList   bool
+		haveAddList     bool
+		haveGetHead     bool
+		haveGetTail     bool
+		haveIsEmptyList bool
 	)
 	for _, opt := range opts.Slots {
 		declOpt, ok := opt.(*tomast.DeclarationToOptionOption)
@@ -240,6 +251,47 @@ func (e *emitter) emitSymbolHelpers(name tomast.TomName) error {
 			codomainSort := codomainSortName(s)
 			fmt.Fprintf(&e.buf, "\nfunc tom_get_size_%s_%s(%s %s) int { return %s }\n",
 				opName, codomainSort, listName, codomainTL, body)
+		case *tomast.MakeEmptyListDeclaration:
+			emptyListRaw = codeBodyFromInstruction(decl.Instr)
+			haveEmptyList = true
+			if strings.TrimSpace(emptyListRaw) != "" {
+				fmt.Fprintf(&e.buf, "\nfunc tom_empty_list_%s() %s { return %s }\n",
+					opName, codomainTL, emptyListRaw)
+			}
+		case *tomast.MakeAddListDeclaration:
+			addListRaw = codeBodyFromInstruction(decl.Instr)
+			haveAddList = true
+			eltName := bqVarName(decl.VarElt)
+			listName := bqVarName(decl.VarList)
+			body := substituteDollarVars(addListRaw, []string{eltName, listName})
+			elemTL := elemTLFor(s, e.symbols)
+			fmt.Fprintf(&e.buf, "\nfunc tom_cons_list_%s(%s %s, %s %s) %s { return %s }\n",
+				opName, eltName, elemTL, listName, codomainTL, codomainTL, body)
+		case *tomast.GetHeadDeclDeclaration:
+			getHeadRaw = codeBodyFromExpr(decl.Expr)
+			haveGetHead = true
+			listName := bqVarName(decl.Variable)
+			body := substituteDollarVars(getHeadRaw, []string{listName})
+			elemTL := elemTLFor(s, e.symbols)
+			codomainSort := codomainSortName(s)
+			fmt.Fprintf(&e.buf, "\nfunc tom_get_head_%s_%s(%s %s) %s { return %s }\n",
+				opName, codomainSort, listName, codomainTL, elemTL, body)
+		case *tomast.GetTailDeclDeclaration:
+			getTailRaw = codeBodyFromExpr(decl.Expr)
+			haveGetTail = true
+			listName := bqVarName(decl.Variable)
+			body := substituteDollarVars(getTailRaw, []string{listName})
+			codomainSort := codomainSortName(s)
+			fmt.Fprintf(&e.buf, "\nfunc tom_get_tail_%s_%s(%s %s) %s { return %s }\n",
+				opName, codomainSort, listName, codomainTL, codomainTL, body)
+		case *tomast.IsEmptyDeclDeclaration:
+			isEmptyRaw = codeBodyFromExpr(decl.Expr)
+			haveIsEmptyList = true
+			listName := bqVarName(decl.Variable)
+			body := substituteDollarVars(isEmptyRaw, []string{listName})
+			codomainSort := codomainSortName(s)
+			fmt.Fprintf(&e.buf, "\nfunc tom_is_empty_%s_%s(%s %s) bool { return %s }\n",
+				opName, codomainSort, listName, codomainTL, body)
 		}
 	}
 
@@ -271,6 +323,49 @@ func (e *emitter) emitSymbolHelpers(name tomast.TomName) error {
 		fmt.Fprintf(&e.buf,
 			"\nfunc tom_append_array_%s(l2 %s, l1 %s) %s { size1 := %s; size2 := %s; var result %s = %s; index := size1; for index > 0 { result = %s; index-- }; index = size2; for index > 0 { result = %s; index-- }; return result }\n",
 			opName, codomainTL, codomainTL, codomainTL, appSize1, appSize2, codomainTL, appEmpty, appAddL1, appAddL2)
+	}
+
+	// Variadic-list generic helpers: tom_append_list_<op> and
+	// tom_get_slice_<op>. Mirrors the Java backend's emission.
+	// Same algorithm: inline make_empty/make_insert/get_head/
+	// get_tail/is_empty bodies into Go expressions.
+	if haveEmptyList && haveAddList && haveGetHead && haveGetTail && haveIsEmptyList {
+		// is_empty body refers to its arg by positional `{0}` (it
+		// has only one). Inline-substitute below as needed.
+		isEmptyL1 := substitutePositional(isEmptyRaw, []string{"l1"})
+		isEmptyL2 := substitutePositional(isEmptyRaw, []string{"l2"})
+		getTailL1 := substitutePositional(getTailRaw, []string{"l1"})
+		isEmptyTailL1 := substitutePositional(isEmptyRaw, []string{getTailL1})
+		isEmptyEnd := substitutePositional(isEmptyRaw, []string{"end"})
+		getHeadL1 := substitutePositional(getHeadRaw, []string{"l1"})
+		getHeadBegin := substitutePositional(getHeadRaw, []string{"begin"})
+		getTailBegin := substitutePositional(getTailRaw, []string{"begin"})
+		consHeadOntoL2 := substitutePositional(addListRaw, []string{getHeadL1, "l2"})
+		consAppendRec := substitutePositional(addListRaw, []string{
+			getHeadL1, "tom_append_list_" + opName + "(" + getTailL1 + ",l2)",
+		})
+		consHeadOntoRec := substitutePositional(addListRaw, []string{
+			getHeadBegin, "tom_get_slice_" + opName + "(" + getTailBegin + ",end,tail)",
+		})
+		fmt.Fprintf(&e.buf,
+			"\nfunc tom_append_list_%s(l1 %s, l2 %s) %s { if %s { return l2 } else if %s { return l1 } else if %s { return %s } else { return %s } }\n",
+			opName, codomainTL, codomainTL, codomainTL,
+			isEmptyL1, isEmptyL2, isEmptyTailL1,
+			consHeadOntoL2, consAppendRec,
+		)
+		// tom_get_slice(begin, end, tail) — see Java reference. The
+		// `begin == end || (end == tail && (isEmpty(end) || end == empty()))`
+		// guard short-circuits common edge cases. Uses the
+		// typeterm's `tom_equal_term_<sort>` helper for equality
+		// so the comparison stays portable across L
+		// representations.
+		emptyBody := emptyListRaw
+		codomainSort := codomainSortName(s)
+		fmt.Fprintf(&e.buf,
+			"\nfunc tom_get_slice_%s(begin, end, tail %s) %s { if tom_equal_term_%s(begin, end) { return tail } else if tom_equal_term_%s(end, tail) && (%s || tom_equal_term_%s(end, %s)) { return begin } else { return %s } }\n",
+			opName, codomainTL, codomainTL,
+			codomainSort, codomainSort, isEmptyEnd, codomainSort, emptyBody, consHeadOntoRec,
+		)
 	}
 	return nil
 }
@@ -317,7 +412,9 @@ func (e *emitter) emitInstruction(i tomast.Instruction) error {
 		return e.emitCode(x.Code)
 	case *tomast.IfInstruction:
 		// Go's `if cond { … }` — no parens around the condition.
-		e.buf.WriteString("if ")
+		// The leading `\n` keeps Go's auto-`;` insertion happy when
+		// the previous instruction ended on `}`.
+		e.buf.WriteString("\nif ")
 		e.emitExpression(x.Condition)
 		e.buf.WriteString(" {")
 		if err := e.emitInstruction(x.SuccesInst); err != nil {
