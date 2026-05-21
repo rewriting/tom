@@ -65,4 +65,11 @@ type State struct {
 	// that behaviour by skipping BQAppl→FunctionCall rewriting when
 	// this flag is set, so AST shapes stay parity-compatible.
 	HasInlineGom bool
+
+	// Target picks the backend language for code emission. The
+	// upstream phases (parser → optimizer) are language-agnostic;
+	// only the backend reads this. Valid values: "java" (default)
+	// or "go". cmd/tom and the test harness set it; everything
+	// downstream stays language-blind.
+	Target string
 }

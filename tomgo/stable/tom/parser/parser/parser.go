@@ -1583,28 +1583,30 @@ func (p *parser) parseOpHooks(opName, codomain string, slots []opSlot, isVariadi
 					makeTomType(slots[i].Type),
 				)
 			}
-			// Parse the body via `lowerActionBody` so any `` ` ``
-			// terms (e.g. `mu(MuVar("_x"), Sequence(...))` in sl's
-			// strategy combinators) become structured BQTerm nodes
-			// that the typer rewrites into `BuildTerm` /
-			// `BuildConsList` / etc. The Backend then renders the
-			// result with the expected `tom_make_X(...)` calls.
+			// Parse the body via `lowerActionBody` ONLY when it
+			// contains a backquote — that's the only reason we need
+			// the structured shape (BQTerm nodes the typer can
+			// rewrite). Without backquotes we keep the body as raw
+			// text: `lowerActionBody` treats every `{` as a nested
+			// block, which collides with Go's struct-literal syntax
+			// (`&Term{Name: "zero"}`) and host blocks that may
+			// appear anywhere.
 			//
-			// Note: we DO NOT run `abstractCode` here — that
-			// converts `$var` → `{N}` whose curly braces would
-			// collide with `lowerActionBody`'s block grammar. The
-			// substitution happens at backend emit time on each TL
-			// chunk via `$<varName>` → `<argName>` direct lookup
-			// driven by the MakeDecl's recorded arg list.
-			bodyInsts, err := lowerActionBody(body, bodyStart, p.filename)
-			if err != nil {
-				return nil, fmt.Errorf("make body at line %d: %w", hookLine, err)
-			}
+			// `$var` placeholders survive in either case — the
+			// Backend substitutes them at emit time.
 			var makeInstr tomast.Instruction
-			if len(bodyInsts) == 0 {
-				makeInstr = tomast.MakeExpressionToInstruction(tomast.MakeCode(body))
+			if strings.ContainsRune(body, '`') {
+				bodyInsts, err := lowerActionBody(body, bodyStart, p.filename)
+				if err != nil {
+					return nil, fmt.Errorf("make body at line %d: %w", hookLine, err)
+				}
+				if len(bodyInsts) == 0 {
+					makeInstr = tomast.MakeExpressionToInstruction(tomast.MakeCode(body))
+				} else {
+					makeInstr = tomast.MakeAbstractBlock(tomast.MakeConcInstruction(bodyInsts...))
+				}
 			} else {
-				makeInstr = tomast.MakeAbstractBlock(tomast.MakeConcInstruction(bodyInsts...))
+				makeInstr = tomast.MakeExpressionToInstruction(tomast.MakeCode(body))
 			}
 			hooks = append(hooks, tomast.MakeMakeDecl(
 				tomast.MakeName(opName),

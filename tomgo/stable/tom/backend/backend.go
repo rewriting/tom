@@ -257,18 +257,18 @@ func (e *emitter) emitSymbolHelpers(name tomast.TomName) error {
 			codomainTL := tlTypeFor(s, e.symbols)
 			params, names := makeDeclParams(decl, e.symbols)
 			// Two body shapes coexist:
-			//   - Legacy: ExpressionToInstruction(Code(rawText))
-			//     emitted by the early parser. Render the raw text
-			//     with `{N}` placeholder substitution.
+			//   - Raw: ExpressionToInstruction(Code(rawText)) — the
+			//     parser keeps the body verbatim when it contains
+			//     no backquote. We substitute `$<argname>` at emit.
 			//   - Structured: AbstractBlock(TL + BQTermToInstruction
-			//     chunks) emitted by the new parser path so the
-			//     typer can rewrite embedded `` ` `` terms into
-			//     BuildTerm / BuildConsList / etc.
+			//     chunks) emitted when the body has at least one
+			//     `` ` `` so the typer can rewrite the embedded
+			//     terms (e.g. sl's strategy combinators) into
+			//     BuildTerm / BuildConsList.
 			fmt.Fprintf(&e.buf, "private static %s tom_make_%s(%s) { return ",
 				codomainTL, opName, params)
 			if body := codeBodyFromInstruction(decl.Instr); body != "" {
-				body = substitutePlaceholders(body, names)
-				e.buf.WriteString(body)
+				e.buf.WriteString(substituteDollarVars(body, names))
 			} else {
 				e.emitMakeBody(decl.Instr, names)
 			}

@@ -24,6 +24,7 @@ import (
 
 	"tom/tomgo/stable/tom"
 	"tom/tomgo/stable/tom/backend"
+	"tom/tomgo/stable/tom/backend_go"
 	"tom/tomgo/stable/tom/compiler"
 	"tom/tomgo/stable/tom/desugarer"
 	"tom/tomgo/stable/tom/parser"
@@ -151,17 +152,17 @@ func TestCompileFixtures(t *testing.T) {
 				defer os.Setenv("TOMGO_TOM_INCLUDE", prev)
 			}
 
-			sourcePath := filepath.Join(resources.fixturesDir, f.name+".t")
+			sourcePath := filepath.Join(resources.fixturesDir, "java", f.name+".t")
 			jarPath := filepath.Join(workDir, f.name+".java")
 			if err := runGoPipeline(sourcePath, jarPath); err != nil {
 				t.Fatalf("pipeline failed: %v", err)
 			}
 
 			// Fixtures with inline %gom drop generated AST classes
-			// under fixtures/gen/. Compile those into the work dir
-			// before the main .java so its imports resolve.
+			// under fixtures/java/gen/. Compile those into the work
+			// dir before the main .java so its imports resolve.
 			if f.hasInlineGom {
-				genDir := filepath.Join(resources.fixturesDir, "gen")
+				genDir := filepath.Join(resources.fixturesDir, "java", "gen")
 				if err := javacGen(resources, workDir, genDir, f.useJUnit); err != nil {
 					t.Fatalf("javac gen/ failed: %v", err)
 				}
@@ -174,6 +175,66 @@ func TestCompileFixtures(t *testing.T) {
 			if err != nil {
 				t.Fatalf("java run failed: %v\nstdout=%s", err, out)
 			}
+			for _, want := range f.expected {
+				if !strings.Contains(out, want) {
+					t.Errorf("expected substring %q not in stdout:\n%s", want, out)
+				}
+			}
+		})
+	}
+}
+
+// goFixtures lists the Tom→Go fixtures. Each maps to a `.t` source
+// under `fixtures/go/` that emits a single `.go` file the harness
+// then builds + runs via `go run`.
+var goFixtures = []struct {
+	name     string
+	expected []string
+}{
+	{
+		name: "Peano",
+		expected: []string{
+			"First loop has successfully terminated.",
+			"Peano test has successfully terminated.",
+		},
+	},
+}
+
+// TestCompileGoFixtures is the Go-target counterpart of
+// TestCompileFixtures. Each fixture is the same Tom source format
+// (`%typeterm`, `%op`, `%match`, …) but the host syntax inside TL
+// chunks is Go, and the Tom pipeline finishes with backend_go.Run.
+func TestCompileGoFixtures(t *testing.T) {
+	resources, ok := resolveResources(t)
+	if !ok {
+		return
+	}
+	goBin, err := exec.LookPath("go")
+	if err != nil {
+		t.Skipf("`go` binary not found in PATH: %v", err)
+	}
+	for _, f := range goFixtures {
+		t.Run(f.name, func(t *testing.T) {
+			workDir := t.TempDir()
+			sourcePath := filepath.Join(resources.fixturesDir, "go", f.name+".t")
+			goPath := filepath.Join(workDir, f.name+".go")
+			if err := runGoPipelineToGo(sourcePath, goPath); err != nil {
+				t.Fatalf("pipeline failed: %v", err)
+			}
+			// `go run <file>` — needs the file to be in a directory
+			// that has a `go.mod` or in module mode with GOPATH. The
+			// simplest robust approach is `go run` directly on the
+			// file (single-file mode).
+			cmd := exec.Command(goBin, "run", goPath)
+			cmd.Dir = workDir
+			var stdout, stderr bytes.Buffer
+			cmd.Stdout = &stdout
+			cmd.Stderr = &stderr
+			if err := cmd.Run(); err != nil {
+				t.Fatalf("go run failed: %v\nstderr=%s\nstdout=%s\nsource=%s",
+					err, stderr.String(), stdout.String(), goPath)
+			}
+			out := stdout.String()
 			for _, want := range f.expected {
 				if !strings.Contains(out, want) {
 					t.Errorf("expected substring %q not in stdout:\n%s", want, out)
@@ -212,7 +273,7 @@ func javacGen(r resources, workDir, genDir string, useJUnit bool) error {
 }
 
 // runGoPipeline runs the same chain cmd/tom uses, then writes the
-// generated Java source to `dst`.
+// generated Java source to `dst`. Used by the Java-target tests.
 func runGoPipeline(src, dst string) error {
 	state := tom.State{Filename: src}
 	state, err := tom.Run(state,
@@ -224,6 +285,27 @@ func runGoPipeline(src, dst string) error {
 		typer.Run,
 		compiler.Run,
 		backend.Run,
+	)
+	if err != nil {
+		return err
+	}
+	return os.WriteFile(dst, state.Source, 0o644)
+}
+
+// runGoPipelineToGo runs the same upstream phases as runGoPipeline
+// but uses the Go-target backend at the end. Used by the Go-target
+// fixture tests under `fixtures/go/`.
+func runGoPipelineToGo(src, dst string) error {
+	state := tom.State{Filename: src, Target: "go"}
+	state, err := tom.Run(state,
+		starter.Run,
+		parser.Run,
+		transformer.Run,
+		syntaxchecker.Run,
+		desugarer.Run,
+		typer.Run,
+		compiler.Run,
+		backend_go.Run,
 	)
 	if err != nil {
 		return err

@@ -175,19 +175,15 @@ func (e *emitter) emitMakeBody(i tomast.Instruction, names []string) {
 	}
 }
 
-// substituteDollarVars replaces each `$<argname>` in `text` with the
-// corresponding arg name. For `%op term suc(pred:term) { make(t)
-// { factory.makeAppl(fsuc, $t) } }` the body has `$t` which becomes
-// `t` (Java's `t` arg). Java's reference uses identical text
-// substitution at parse time via `abstractCode` + positional
-// `{0}` etc.; we keep the `$` form so embedded `{...}` in the body
-// doesn't confuse `lowerActionBody`'s block grammar.
+// substituteDollarVars replaces both `$<argname>` and `{N}` in
+// `text` with the corresponding arg name. The parser uses one OR
+// the other depending on the hook kind (make hooks now keep `$var`
+// raw to avoid confusing `lowerActionBody`'s block grammar; older
+// callsites still apply `abstractCode` → `{N}`). Handles both.
 func substituteDollarVars(text string, names []string) string {
-	if len(names) == 0 || !strings.Contains(text, "$") {
-		return text
-	}
-	for _, name := range names {
+	for i, name := range names {
 		text = strings.ReplaceAll(text, "$"+name, name)
+		text = strings.ReplaceAll(text, fmt.Sprintf("{%d}", i), name)
 	}
 	return text
 }
