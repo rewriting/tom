@@ -47,6 +47,52 @@ func Run(in tom.State) (tom.State, error) {
 		return in, fmt.Errorf("backend_go: expected ConcCode list")
 	}
 	used := collectUsedSymbols(list)
+	// Also pick up symbols referenced by Strategy declarations (their
+	// `extends` term + visit-rule actions reach `tom_make_Identity`,
+	// `tom_make_b`, … that the structural walk can't see).
+	collectStrategySymbols(list, used)
+	// Transitive closure on SymbolTable `make` hook bodies: composed
+	// combinators like `RepeatId` / `BottomUp` reference `mu` /
+	// `MuVar` / `Sequence` / `All` via their backquote expansion,
+	// which only becomes visible when we walk those bodies. Same
+	// fixed-point loop as backend_java.
+	if in.Symbols != nil {
+		for {
+			added := false
+			for name := range used {
+				sym, ok := in.Symbols.Symbols[name]
+				if !ok {
+					continue
+				}
+				s, ok := sym.(*tomast.SymbolTomSymbol)
+				if !ok {
+					continue
+				}
+				opts, ok := s.Options.(*tomast.ConcOptionOptionList)
+				if !ok {
+					continue
+				}
+				for _, opt := range opts.Slots {
+					declOpt, ok := opt.(*tomast.DeclarationToOptionOption)
+					if !ok {
+						continue
+					}
+					mkd, ok := declOpt.AstDeclaration.(*tomast.MakeDeclDeclaration)
+					if !ok {
+						continue
+					}
+					before := len(used)
+					scanInstrForUsedSymbols(mkd.Instr, used)
+					if len(used) > before {
+						added = true
+					}
+				}
+			}
+			if !added {
+				break
+			}
+		}
+	}
 	e := &emitter{symbols: in.Symbols, usedSymbols: used}
 	for _, c := range list.Slots {
 		if err := e.emitCode(c); err != nil {
@@ -105,6 +151,8 @@ func (e *emitter) emitDecl(d tomast.Declaration) error {
 		return e.emitSymbolHelpers(x.AstName)
 	case *tomast.ArraySymbolDeclDeclaration:
 		return e.emitSymbolHelpers(x.AstName)
+	case *tomast.StrategyDeclaration:
+		return e.emitStrategy(x)
 	}
 	return nil
 }

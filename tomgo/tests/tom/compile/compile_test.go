@@ -190,9 +190,11 @@ func TestCompileFixtures(t *testing.T) {
 // alongside it, and runs `go test -v .`; otherwise it runs `go run`
 // on the file directly (single-file mode).
 var goFixtures = []struct {
-	name      string
-	expected  []string
-	useGoTest bool
+	name         string
+	expected     []string
+	useGoTest    bool
+	needsMapping bool // set TOMGO_TOM_INCLUDE before running the pipeline
+	useSlLib     bool // require tom/tomgo + replace in the generated go.mod
 }{
 	{
 		name: "Peano",
@@ -263,6 +265,30 @@ var goFixtures = []struct {
 			"PASS",
 		},
 	},
+	{
+		// TestAlgebraic.t — first Go fixture using %strategy. Includes
+		// sl.tom from the Go mapping (Strategy / mu / MuVar / All /
+		// Sequence / SequenceId + composed RepeatId / BottomUp), and
+		// imports the runtime sl package for the introspector +
+		// strategy interface. Exercises:
+		//   - StrategyDeclaration emission in backend_go (R struct +
+		//     tom_make_R factory + visit_T1 / _visit_T1 methods);
+		//   - the transitive-closure walk over SymbolTable make
+		//     hook bodies so `RepeatId`'s body pulls in `mu`/`MuVar`/
+		//     `SequenceId`'s helpers;
+		//   - the strategy-symbol collect pass so the visit body's
+		//     `b()` action emits `tom_make_b` even though it never
+		//     appears outside the strategy.
+		name:         "TestAlgebraic",
+		useGoTest:    true,
+		needsMapping: true,
+		useSlLib:     true,
+		expected: []string{
+			"=== RUN   TestAlgebraic",
+			"--- PASS: TestAlgebraic",
+			"PASS",
+		},
+	},
 }
 
 // TestCompileGoFixtures is the Go-target counterpart of
@@ -283,6 +309,15 @@ func TestCompileGoFixtures(t *testing.T) {
 			workDir := t.TempDir()
 			sourcePath := filepath.Join(resources.fixturesDir, "go", f.name+".t")
 
+			// Mapping include path: fixtures using `%include { sl.tom }`
+			// (e.g. TestAlgebraic) need TOMGO_TOM_INCLUDE pointed at
+			// the Go mapping tree before the parser resolves imports.
+			if f.needsMapping {
+				mapDir := filepath.Join(resources.repoRoot, "stable", "tom", "library", "mapping")
+				t.Setenv("TOMGO_TOM_INCLUDE",
+					filepath.Join(mapDir, "go")+string(os.PathListSeparator)+mapDir)
+			}
+
 			// Test files must end in `_test.go` for `go test` to
 			// pick them up. `go run` can use any name.
 			fname := f.name + ".go"
@@ -297,10 +332,28 @@ func TestCompileGoFixtures(t *testing.T) {
 			var cmd *exec.Cmd
 			if f.useGoTest {
 				// `go test` needs a module — drop a tiny go.mod
-				// alongside the generated _test.go.
-				modContent := []byte("module peano_test_fixture\n\ngo 1.22\n")
-				if err := os.WriteFile(filepath.Join(workDir, "go.mod"), modContent, 0o644); err != nil {
+				// alongside the generated _test.go. Fixtures
+				// importing `tom/tomgo/stable/library/sl` need a
+				// `replace` line pointing at the repo root.
+				modBody := "module peano_test_fixture\n\ngo 1.22\n"
+				if f.useSlLib {
+					modBody += "\nrequire tom/tomgo v0.0.0\n"
+					modBody += "replace tom/tomgo => " + resources.repoRoot + "\n"
+				}
+				if err := os.WriteFile(filepath.Join(workDir, "go.mod"), []byte(modBody), 0o644); err != nil {
 					t.Fatalf("write go.mod: %v", err)
+				}
+				if f.useSlLib {
+					// `go test` needs a tidy module before it runs;
+					// otherwise it complains about the missing
+					// require entry even with the replace in place.
+					tidy := exec.Command(goBin, "mod", "tidy")
+					tidy.Dir = workDir
+					var tidyErr bytes.Buffer
+					tidy.Stderr = &tidyErr
+					if err := tidy.Run(); err != nil {
+						t.Fatalf("go mod tidy failed: %v\nstderr=%s", err, tidyErr.String())
+					}
 				}
 				cmd = exec.Command(goBin, "test", "-v", ".")
 			} else {

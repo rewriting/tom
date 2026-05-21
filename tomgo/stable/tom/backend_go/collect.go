@@ -14,3 +14,11 @@ import (
 func collectUsedSymbols(list *tomast.ConcCodeCodeList) map[string]bool {
 	return backend_shared.CollectUsedSymbols(list, backend_shared.DefaultHelperPrefixes())
 }
+
+func collectStrategySymbols(list *tomast.ConcCodeCodeList, used map[string]bool) {
+	backend_shared.CollectStrategySymbols(list, used, backend_shared.DefaultHelperPrefixes())
+}
+
+func scanInstrForUsedSymbols(i tomast.Instruction, used map[string]bool) {
+	backend_shared.ScanInstrForUsedSymbols(i, used, backend_shared.DefaultHelperPrefixes())
+}

@@ -24,12 +24,12 @@
 %include { string.tom }
 
 %op Strategy mu(s1:Strategy, s2:Strategy) {
-  make(var,v) { sl.NewMu($var, $v) }
+  make(name,v) { sl.NewMu(($name).(*sl.MuVar), $v) }
 }
 
 %op Strategy Mu(s1:Strategy, s2:Strategy) {
   is_fsym(t) { sl.IsMu($t) }
-  make(var,v) { sl.NewMu($var, $v) }
+  make(name,v) { sl.NewMu(($name).(*sl.MuVar), $v) }
 }
 
 %op Strategy MuVar(var:String) {
