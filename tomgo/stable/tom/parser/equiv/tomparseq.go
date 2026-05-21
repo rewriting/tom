@@ -32,7 +32,23 @@ type JavaToolchain struct {
 	Jars        []string // every jar from stable/dist/lib/ that's needed at runtime
 	RunnerSrc   string   // path to TomParseDump.java
 	RunnerClass string   // directory where TomParseDump.class lives after compile
+	// PipelineSrc points at TomPipelineDump.java — a sibling runner that
+	// chains plugins past the parser (Transformer, SyntaxChecker, Desugarer,
+	// Typer) and dumps the AST after the requested phase. Same .class output
+	// directory as the parser runner.
+	PipelineSrc string
 }
+
+// Phase enumerates the AST-dump points supported by TomPipelineDump.
+type Phase string
+
+const (
+	PhaseParsed      Phase = "parsed"
+	PhaseTransformed Phase = "transformed"
+	PhaseSynchecked  Phase = "synchecked"
+	PhaseDesugared   Phase = "desugared"
+	PhaseTyped       Phase = "typed"
+)
 
 // SkipIfNoJava marks the test as skipped (not failed) when the JDK or the
 // reference stable/dist/lib are missing. Mirrors equivtest.SkipIfNoJava so
@@ -74,6 +90,11 @@ func Resolve(repoRoot string) (JavaToolchain, error) {
 	}
 	tc.RunnerSrc = runnerSrc
 	tc.RunnerClass = filepath.Dir(runnerSrc)
+
+	pipelineSrc := filepath.Join(filepath.Dir(runnerSrc), "TomPipelineDump.java")
+	if _, err := os.Stat(pipelineSrc); err == nil {
+		tc.PipelineSrc = pipelineSrc
+	}
 	return tc, nil
 }
 
@@ -146,6 +167,115 @@ func stripParserChatter(s string) string {
 	}
 	// Fallback: if there's no leading chatter, return as-is.
 	return s
+}
+
+// EnsurePipelineCompiled is the TomPipelineDump.java analogue of
+// EnsureCompiled. Skips silently if PipelineSrc is empty (caller didn't
+// drop the source in place); errors if it exists but javac fails.
+func (tc JavaToolchain) EnsurePipelineCompiled() error {
+	if tc.PipelineSrc == "" {
+		return fmt.Errorf("TomPipelineDump.java not present at %s",
+			filepath.Join(tc.RunnerClass, "TomPipelineDump.java"))
+	}
+	classFile := filepath.Join(tc.RunnerClass, "TomPipelineDump.class")
+	srcInfo, err := os.Stat(tc.PipelineSrc)
+	if err != nil {
+		return err
+	}
+	if classInfo, err := os.Stat(classFile); err == nil && !classInfo.ModTime().Before(srcInfo.ModTime()) {
+		return nil
+	}
+	cp := strings.Join(tc.Jars, string(os.PathListSeparator))
+	out, err := exec.Command(tc.Javac, "-d", tc.RunnerClass, "-cp", cp, tc.PipelineSrc).CombinedOutput()
+	if err != nil {
+		return fmt.Errorf("javac TomPipelineDump.java failed: %w\n%s", err, out)
+	}
+	return nil
+}
+
+// DumpJavaPhase returns Java's AST dump for `inputFile` after the
+// given phase, normalised to the comparison form (paths replaced by
+// `__INPUT__`/`__DIR__`). The lookup order:
+//
+//  1. The pre-computed cache under `tomgo/testdata/javacache/<rel>/`
+//     populated by `go run ./cmd/javacache` (instant, hundreds of
+//     fixtures pre-built from a single full `tom --intermediate`
+//     sweep).
+//  2. A live `TomPipelineDump` invocation (slow, one JVM startup per
+//     call) as a fallback for fixtures or phases not in the cache.
+//
+// The cache stores raw `tom --intermediate` `.tfix.<phase>` files,
+// produced by the official `src/dist/bin/tom` CLI against the .t
+// alone — i.e. the same compiler users invoke, with %gom / Tom.xml
+// fully wired up. This is what gives us a "100 % functional" Java
+// reference (cf. README); per-fixture call-outs to TomPipelineDump
+// (which short-circuited Tom.xml) become an obsolete fallback.
+func (tc JavaToolchain) DumpJavaPhase(inputFile string, phase Phase) (string, error) {
+	absInput, err := filepath.Abs(inputFile)
+	if err != nil {
+		return "", err
+	}
+	if cached, ok, err := tc.readCachedDump(absInput, phase); err != nil {
+		return "", err
+	} else if ok {
+		return normalizeAST(cached, absInput), nil
+	}
+	if err := tc.EnsurePipelineCompiled(); err != nil {
+		return "", err
+	}
+	cp := strings.Join(append([]string{tc.RunnerClass}, tc.Jars...), string(os.PathListSeparator))
+	cmd := exec.Command(tc.Java, "-cp", cp, "TomPipelineDump", absInput, string(phase))
+	var stdout strings.Builder
+	cmd.Stdout = &stdout
+	cmd.Stderr = os.Stderr
+	if err := cmd.Run(); err != nil {
+		return "", fmt.Errorf("TomPipelineDump on %s (phase %s) failed: %w", inputFile, phase, err)
+	}
+	return normalizeAST(stdout.String(), absInput), nil
+}
+
+// CacheDir is the on-disk root of the Java reference cache. We
+// reuse the output of `test/build.sh build` (with `--intermediate`
+// added to the relevant tom.presets in test/build.xml) so the
+// reference matches Tom's full pipeline — Tom.config + %gom
+// expansion + per-fixture options (--optimize, --genIntrospector,
+// --lazyType, …) exactly as the user runs it.
+//
+// Layout under CacheDir:
+//
+//	CacheDir/<dir>/<basename>.java.tfix.<phase>
+//
+// where <dir>/<basename>.t is the fixture path relative to
+// /Users/pem/github/tom/test. Tests/tools can override CacheDir.
+var CacheDir = "/Users/pem/github/tom/tomgo/testdata/java-ast"
+
+// readCachedDump returns the cached AST string for `(absInput, phase)`
+// if available. Phase `synchecked` falls back to `transformed` (Java's
+// SyntaxChecker doesn't emit a separate `.tfix` file because the AST
+// is unchanged — its job is to log diagnostics).
+//
+// The returned string is the raw `.tfix` contents, prior to path
+// normalisation. Callers run normalizeAST on it.
+func (tc JavaToolchain) readCachedDump(absInput string, phase Phase) (string, bool, error) {
+	suffix := string(phase)
+	if phase == PhaseSynchecked {
+		suffix = "transformed" // SyntaxChecker is identity on the AST
+	}
+	rel, err := filepath.Rel("/Users/pem/github/tom/test", absInput)
+	if err != nil || strings.HasPrefix(rel, "..") {
+		return "", false, nil
+	}
+	dir := filepath.Dir(rel)
+	base := strings.TrimSuffix(filepath.Base(absInput), ".t")
+	cachedPath := filepath.Join(CacheDir, dir, base+".java.tfix."+suffix)
+	body, err := os.ReadFile(cachedPath)
+	if err != nil {
+		if os.IsNotExist(err) {
+			return "", false, nil
+		}
+		return "", false, err
+	}
+	return string(body), true, nil
 }
 
 // AssertParityWithGo compares the Java reference dump against a Go-built AST
