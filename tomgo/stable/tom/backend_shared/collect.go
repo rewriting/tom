@@ -318,3 +318,243 @@ func ScanReferences(text string, used map[string]bool, prefixes HelperPrefixes) 
 func isIdentByte(c byte) bool {
 	return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9') || c == '_'
 }
+
+// ---------------------------------------------------------------------------
+// Strategy / pattern symbol collection
+// ---------------------------------------------------------------------------
+//
+// CollectStrategySymbols walks every `StrategyDeclaration` reachable
+// from the top-level Code list and marks the symbols its emission
+// will reference. The visit-rule patterns and action bodies live
+// outside the main IR walk, so without this pass they'd get a dead
+// `tom_make_X` / `tom_is_fun_sym_X` skipped from the helper section
+// even though the strategy uses them.
+//
+// Structural-only (no language-specific knowledge), so shared
+// between Java and Go targets.
+
+// CollectStrategySymbols extends `used` with every operator name
+// referenced by a `StrategyDeclaration` reachable from `list`.
+func CollectStrategySymbols(list *tomast.ConcCodeCodeList, used map[string]bool, prefixes HelperPrefixes) {
+	var walkCode func(tomast.Code)
+	var walkInstr func(tomast.Instruction)
+	walkCode = func(c tomast.Code) {
+		switch x := c.(type) {
+		case *tomast.DeclarationToCodeCode:
+			if strat, ok := x.AstDeclaration.(*tomast.StrategyDeclaration); ok {
+				ProcessStrategy(strat, used, prefixes)
+			}
+		case *tomast.InstructionToCodeCode:
+			walkInstr(x.AstInstruction)
+		case *tomast.TomIncludeCode:
+			if cl, ok := x.CodeList.(*tomast.ConcCodeCodeList); ok {
+				for _, c2 := range cl.Slots {
+					walkCode(c2)
+				}
+			}
+		}
+	}
+	walkInstr = func(i tomast.Instruction) {
+		switch x := i.(type) {
+		case *tomast.AbstractBlockInstruction:
+			if l, ok := x.InstList.(*tomast.ConcInstructionInstructionList); ok {
+				for _, s := range l.Slots {
+					walkInstr(s)
+				}
+			}
+		case *tomast.UnamedBlockInstruction:
+			if l, ok := x.InstList.(*tomast.ConcInstructionInstructionList); ok {
+				for _, s := range l.Slots {
+					walkInstr(s)
+				}
+			}
+		case *tomast.CodeToInstructionInstruction:
+			walkCode(x.Code)
+		}
+	}
+	for _, c := range list.Slots {
+		walkCode(c)
+	}
+}
+
+// ProcessStrategy marks all symbols a strategy declaration's emit
+// will reference. The `ExtendsTerm` head becomes a `tom_make_<X>()`
+// call; every visit rule's action body may use `tom_is_fun_sym_<X>`,
+// `tom_make_<X>`, etc.
+func ProcessStrategy(strat *tomast.StrategyDeclaration, used map[string]bool, prefixes HelperPrefixes) {
+	ScanBQTerm(strat.ExtendsTerm, used, prefixes)
+	vl, ok := strat.VisitList.(*tomast.ConcTomVisitTomVisitList)
+	if !ok {
+		return
+	}
+	for _, v := range vl.Slots {
+		vt, ok := v.(*tomast.VisitTermTomVisit)
+		if !ok {
+			continue
+		}
+		cil, ok := vt.AstConstraintInstructionList.(*tomast.ConcConstraintInstructionConstraintInstructionList)
+		if !ok {
+			continue
+		}
+		for _, ci := range cil.Slots {
+			inst, ok := ci.(*tomast.ConstraintInstructionConstraintInstruction)
+			if !ok {
+				continue
+			}
+			ScanConstraint(inst.Constraint, used)
+			ScanInstrForUsedSymbols(inst.Action, used, prefixes)
+		}
+	}
+}
+
+// ScanBQTerm marks the head op of any BQAppl/BuildTerm/… as used.
+// Implemented as a wrap into a BQTermToInstruction so the full
+// ScanInstrForUsedSymbols walker handles all BQTerm shapes.
+func ScanBQTerm(b tomast.BQTerm, used map[string]bool, prefixes HelperPrefixes) {
+	ScanInstrForUsedSymbols(tomast.MakeBQTermToInstruction(b), used, prefixes)
+}
+
+// ScanConstraint scans a constraint's pattern for op references.
+func ScanConstraint(c tomast.Constraint, used map[string]bool) {
+	switch x := c.(type) {
+	case *tomast.MatchConstraintConstraint:
+		ScanPattern(x.Pattern, used)
+	case *tomast.AndConstraintConstraint:
+		for _, s := range x.Slots {
+			ScanConstraint(s, used)
+		}
+	case *tomast.OrConstraintConstraint:
+		for _, s := range x.Slots {
+			ScanConstraint(s, used)
+		}
+	}
+}
+
+// ScanPattern adds every RecordAppl / TermAppl head name to `used`.
+// Recurses into sub-patterns (record slots, application args).
+func ScanPattern(p tomast.TomTerm, used map[string]bool) {
+	switch x := p.(type) {
+	case *tomast.RecordApplTomTerm:
+		if nl, ok := x.NameList.(*tomast.ConcTomNameTomNameList); ok {
+			for _, n := range nl.Slots {
+				used[RenderTomName(n)] = true
+			}
+		}
+		if sl, ok := x.Slots.(*tomast.ConcSlotSlotList); ok {
+			for _, s := range sl.Slots {
+				if pair, ok := s.(*tomast.PairSlotApplSlot); ok {
+					ScanPattern(pair.Appl, used)
+				}
+			}
+		}
+	case *tomast.TermApplTomTerm:
+		if nl, ok := x.NameList.(*tomast.ConcTomNameTomNameList); ok {
+			for _, n := range nl.Slots {
+				used[RenderTomName(n)] = true
+			}
+		}
+		if a, ok := x.Args.(*tomast.ConcTomTermTomList); ok {
+			for _, s := range a.Slots {
+				ScanPattern(s, used)
+			}
+		}
+	}
+}
+
+// ScanInstrForUsedSymbols walks an Instruction (used to scan
+// MakeDecl bodies stored in the SymbolTable) and adds every
+// referenced operator name to `used`. A standalone driver:
+// `CollectUsedSymbols`'s closure-style walkers aren't reachable
+// from this scope.
+func ScanInstrForUsedSymbols(i tomast.Instruction, used map[string]bool, prefixes HelperPrefixes) {
+	var walkInstr func(tomast.Instruction)
+	var walkExpr func(tomast.Expression)
+	var walkBQ func(tomast.BQTerm)
+	walkBQ = func(b tomast.BQTerm) {
+		switch x := b.(type) {
+		case *tomast.BuildTermBQTerm:
+			used[RenderTomName(x.AstName)] = true
+			if a, ok := x.Args.(*tomast.ConcBQTermBQTermList); ok {
+				for _, arg := range a.Slots {
+					walkBQ(arg)
+				}
+			}
+		case *tomast.FunctionCallBQTerm:
+			used[RenderTomName(x.AstName)] = true
+			if a, ok := x.Args.(*tomast.ConcBQTermBQTermList); ok {
+				for _, arg := range a.Slots {
+					walkBQ(arg)
+				}
+			}
+		case *tomast.BuildConstantBQTerm:
+			used[RenderTomName(x.AstName)] = true
+		case *tomast.BuildEmptyListBQTerm:
+			used[RenderTomName(x.AstName)] = true
+		case *tomast.BuildEmptyArrayBQTerm:
+			used[RenderTomName(x.AstName)] = true
+			walkBQ(x.Size)
+		case *tomast.BuildConsListBQTerm:
+			used[RenderTomName(x.AstName)] = true
+			walkBQ(x.HeadTerm)
+			walkBQ(x.TailTerm)
+		case *tomast.BuildConsArrayBQTerm:
+			used[RenderTomName(x.AstName)] = true
+			walkBQ(x.HeadTerm)
+			walkBQ(x.TailTerm)
+		case *tomast.BuildAppendListBQTerm:
+			used[RenderTomName(x.AstName)] = true
+			walkBQ(x.HeadTerm)
+			walkBQ(x.TailTerm)
+		case *tomast.BuildAppendArrayBQTerm:
+			used[RenderTomName(x.AstName)] = true
+			walkBQ(x.HeadTerm)
+			walkBQ(x.TailTerm)
+		case *tomast.ExpressionToBQTermBQTerm:
+			walkExpr(x.Exp)
+		case *tomast.CompositeBQTerm:
+			for _, m := range x.Slots {
+				if bm, ok := m.(*tomast.CompositeBQTermCompositeMember); ok {
+					walkBQ(bm.Term)
+				}
+			}
+		}
+	}
+	walkExpr = func(expr tomast.Expression) {
+		switch x := expr.(type) {
+		case *tomast.CodeExpression:
+			ScanReferences(x.Code, used, prefixes)
+		case *tomast.BQTermToExpressionExpression:
+			walkBQ(x.AstTerm)
+		}
+	}
+	walkInstr = func(in tomast.Instruction) {
+		switch x := in.(type) {
+		case *tomast.AbstractBlockInstruction:
+			if list, ok := x.InstList.(*tomast.ConcInstructionInstructionList); ok {
+				for _, inner := range list.Slots {
+					walkInstr(inner)
+				}
+			}
+		case *tomast.UnamedBlockInstruction:
+			if list, ok := x.InstList.(*tomast.ConcInstructionInstructionList); ok {
+				for _, inner := range list.Slots {
+					walkInstr(inner)
+				}
+			}
+		case *tomast.CodeToInstructionInstruction:
+			if tl, ok := x.Code.(*tomast.TargetLanguageToCodeCode); ok {
+				switch t := tl.Tl.(type) {
+				case *tomast.TLTargetLanguage:
+					ScanReferences(t.Code, used, prefixes)
+				case *tomast.ITLTargetLanguage:
+					ScanReferences(t.Code, used, prefixes)
+				}
+			}
+		case *tomast.BQTermToInstructionInstruction:
+			walkBQ(x.Tom)
+		case *tomast.ExpressionToInstructionInstruction:
+			walkExpr(x.Expr)
+		}
+	}
+	walkInstr(i)
+}
