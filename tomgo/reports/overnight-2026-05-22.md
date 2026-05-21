@@ -85,6 +85,34 @@ Proper fix: scan the host-language water before the match for
 `<Sort> <name> = ...;` patterns, build a local-name → sort map,
 and seed `MatchConstraint.AstType` from it.
 
+## Phase C — numeric constraints (parser + backend)
+
+Commit `e4dd4db54`. Unlocked TestNumericConditions (Java + Go,
+6 tests each).
+
+Three small parser/backend additions:
+
+1. **Integer literals in BQAppl args** — `parseBQTermConstantWith`
+   was emitting `BQAppl(name="6")` for a bare `6` arg, producing
+   spurious `tom_make_6()` callsites. Now emits `BuildConstant(
+   Name("6"))` which the backends render as the bare literal.
+
+2. **NumericConstraint inside ConstraintToExpression** — both
+   backends gain a case in `emitExpression` for
+   `ConstraintToExpressionExpression` plus a new
+   `emitConstraintExpr` helper that renders
+   `NumericConstraint(lhs, rhs, op)` as `(lhs <op> rhs)` and
+   AndConstraint / OrConstraint for chained constraints.
+
+3. **`int.tom` Go mapping** — `implement { int }` →
+   `implement { int64 }`. Aligns with the gom backend's
+   `goType("int") = "int64"`. Without this, slot accessor signatures
+   diverged between the .tom mapping (saying `int`) and the
+   generated struct field type (`int64`), breaking type inference
+   on extracted slot values.
+
+12 Java + 12 Go fixtures now (TestNumericConditions added).
+
 ## What to look at next
 
 In order of utility:
