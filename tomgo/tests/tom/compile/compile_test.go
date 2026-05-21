@@ -111,6 +111,26 @@ var fixtures = []fixture{
 		},
 	},
 	{
+		// TestBackQuote.t — inline %gom (`L = conc(E*); E = a()|b()|c()|d()`),
+		// `%match` with multi-star pattern `conc(x*, b(), y*, a(), z*)`
+		// and reconstruction backquote `\`conc(x*, b(), y*, a(), z*)`,
+		// plus the splice case `\`conc(abc*())` where `abc()` is a
+		// private static method returning an L that gets spliced into
+		// the outer conc's arg list. Exercises:
+		//   - star-var splicing in BQAppl args (not just patterns);
+		//   - `%op L abc() {}` — operator declared with no hooks
+		//     (just a signature) so the splice path can resolve;
+		//   - inline %gom expansion + JUnit assertEquals.
+		name:         "TestBackQuote",
+		useJUnit:     true,
+		needsMapping: true,
+		hasInlineGom: true,
+		expected: []string{
+			"JUnit version 4.10",
+			"OK (2 tests)",
+		},
+	},
+	{
 		// TestAlgebraic.t — uses %strategy + %gom + %include of sl.
 		// Exercises:
 		//   - inline gom expansion (generates testalgebraic.sig
