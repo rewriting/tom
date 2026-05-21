@@ -38,6 +38,7 @@ package tomparser
 import (
 	"fmt"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"strings"
 
@@ -306,22 +307,25 @@ func (p *parser) isIslandStart() bool {
 		(p.peek(0) == '`' && p.idx+1 < len(p.src) && (isIdentStart(p.peek(1)) || p.peek(1) == '('))
 }
 
-// parseGom handles `%gom (options)? { body }`. The body is the Gom
-// source code (a separate language driving the algebraic-signature
-// generator), parsed by a downstream tool — TomParserTool.parseGomFile.
-// In the AST the inline Gom block is materialised as
-// `InstructionToCode(AbstractBlock(concInstruction()))` — an empty
-// instruction block — same shape Java's CstConverter emits when the
-// pipeline runs in parser-only mode (the actual Gom code is processed
-// later by the gom-engine, not by this parser).
+// parseGom handles `%gom (options)? { body }`. Mirrors Java's
+// TomParserTool.parseGomFile behaviour: the body is sent to the
+// Gom compiler, which generates a `.tom` file containing
+// `%typeterm` and `%op` declarations for every Gom sort and
+// operator. That generated `.tom` is then parsed as if it had been
+// `%include`'d at this point — its top-level codes are wrapped in
+// `TomInclude(concCode(InstructionToCode(AbstractBlock(
+// concInstruction(CodeToInstruction(c1), …)))))`.
 //
-// Options like `%gom(--xxx)` are accepted but ignored.
+// Tom-side options like `%gom(--xxx)` are accepted but ignored.
+//
+// If the Gom CLI isn't available (no TOM_HOME / gom binary missing)
+// or fails on the body, the block degrades to the empty `TomInclude`
+// shape — matching Java's fall-through on empty bodies.
 func (p *parser) parseGom() error {
 	if !p.matchKeyword("%gom") {
 		return fmt.Errorf("expected %%gom at %s", p.cur)
 	}
 	p.skipBlankInline()
-	// Optional `(...)` options list.
 	if !p.atEnd() && p.peek(0) == '(' {
 		depth := 0
 		for !p.atEnd() {
@@ -341,6 +345,7 @@ func (p *parser) parseGom() error {
 		return fmt.Errorf("expected '{' after %%gom at %s", p.cur)
 	}
 	p.advance() // '{'
+	bodyStartIdx := p.idx
 	depth := 1
 	for !p.atEnd() && depth > 0 {
 		c := p.advance()
@@ -353,28 +358,172 @@ func (p *parser) parseGom() error {
 	if depth != 0 {
 		return fmt.Errorf("unterminated %%gom body at %s", p.cur)
 	}
-	// Java's TomParserTool.parseGomFile invokes the Gom compiler on
-	// the block content, gets back a generated `.tom` file with
-	// TypeTermDecl / SymbolDecl declarations for each Gom sort and
-	// operator, and reparses that as if it had been `%include`'d.
-	// The CST node becomes a `Cst_Gom(blocks)` which AstBuilder
-	// lowers to `TomInclude(concCode(<inner code list>))`.
-	//
-	// Lowering the body fully is a substantial port. For now we
-	// emit the wrapper shape (`TomInclude(concCode(
-	// InstructionToCode(AbstractBlock(concInstruction()))))`) which
-	// matches Java byte-for-byte on *empty* `%gom { }` blocks
-	// (test/Test.t). For non-empty blocks the inner declarations
-	// stay missing — that diff is closed in a later pass once the
-	// Gom → TomInclude generator is wired up. The wrapper is
-	// emitted unconditionally because Java's full pipeline always
-	// produces the TomInclude — fixtures using the short-circuited
-	// TomPipelineDump fallback now diverge here, but those are
-	// captured in their cached counterparts going forward.
-	emptyBlock := tomast.MakeAbstractBlock(tomast.MakeConcInstruction())
-	inner := tomast.MakeInstructionToCode(emptyBlock)
-	p.codes = append(p.codes, tomast.MakeTomInclude(tomast.MakeConcCode(inner)))
+	// The body text is everything between `{` and the matching `}` —
+	// the closing `}` was consumed by p.advance() so we slice off
+	// the trailing brace.
+	bodyEndIdx := p.idx - 1
+	body := p.src[bodyStartIdx:bodyEndIdx]
+
+	innerCodes, err := expandGomBlock(body, p.filename, p.includeChain)
+	if err != nil || len(innerCodes) == 0 {
+		// Fall back to the empty-wrapper shape so the structural
+		// shape still matches Java's output for empty %gom blocks.
+		emptyBlock := tomast.MakeAbstractBlock(tomast.MakeConcInstruction())
+		inner := tomast.MakeInstructionToCode(emptyBlock)
+		p.codes = append(p.codes, tomast.MakeTomInclude(tomast.MakeConcCode(inner)))
+		return nil
+	}
+	// Merge the sub-parser's signature data so subsequent fixtures
+	// can resolve the Gom-generated sorts/operators.
+	// (Sub-parser already populated subResult.Sorts/Symbols inside
+	// expandGomBlock; we don't currently surface those back to `p`
+	// because TomInclude is supposed to keep its symbols inside its
+	// own scope. To revisit if needed.)
+	instructions := make([]tomast.Instruction, len(innerCodes))
+	for i, c := range innerCodes {
+		instructions[i] = tomast.MakeCodeToInstruction(c)
+	}
+	instList := tomast.MakeConcInstruction(instructions...)
+	ab := tomast.MakeAbstractBlock(instList)
+	codeIn := tomast.MakeInstructionToCode(ab)
+	p.codes = append(p.codes, tomast.MakeTomInclude(tomast.MakeConcCode(codeIn)))
 	return nil
+}
+
+// GomDestDir, when non-empty, overrides where parseGom directs the
+// generated .tom file. Defaults to `<dir-of-source>/gen` to match
+// Java's `tom --intermediate -d test/gen` behaviour for fixtures
+// under test/. Tests can override for hermetic harnesses.
+var GomDestDir = ""
+
+// expandGomBlock writes `body` to a temp `.gom` file, runs the Gom
+// compiler against it, parses the generated `.tom` output, and
+// returns the resulting code list. Mirrors Java's
+// TomParserTool.parseGomFile: gom is a textual preprocessor at
+// parse time.
+//
+// Java's parseGomFile passes `--package <lowercase-input-basename>`
+// to gom; the package controls (a) the qualified Java class names
+// gom generates and (b) — empirically — the order of typeterm
+// declarations in the emitted `.tom`. We mirror it here so the
+// resulting TomInclude tree matches byte-for-byte.
+//
+// Returns (nil, nil) for an empty/whitespace-only body.
+func expandGomBlock(body, filename string, includeChain []string) ([]tomast.Code, error) {
+	trimmed := strings.TrimSpace(body)
+	if trimmed == "" {
+		return nil, nil
+	}
+	moduleName := parseGomModuleName(body)
+	if moduleName == "" {
+		moduleName = "M"
+	}
+	// Package: lowercase of the input .t filename (without .t),
+	// mirroring TomParserTool.parseGomFile:152-157.
+	inputBase := strings.TrimSuffix(filepath.Base(filename), ".t")
+	pkg := strings.ToLower(inputBase)
+
+	tmpDir, err := os.MkdirTemp("", "tomgom-")
+	if err != nil {
+		return nil, err
+	}
+	defer os.RemoveAll(tmpDir)
+	gomFile := filepath.Join(tmpDir, moduleName+".gom")
+	if err := os.WriteFile(gomFile, []byte(body), 0o644); err != nil {
+		return nil, err
+	}
+	gomBin, tomHome := locateGomBin()
+	if gomBin == "" {
+		return nil, fmt.Errorf("gom CLI not found (set TOM_HOME)")
+	}
+	// Output the generated .tom alongside the .t (mimicking Java's
+	// behaviour where the test build uses destdir=test/gen). For
+	// `<dir>/foo.t`, the gom output lands at `<dir>/gen/<pkg>/<mod>/
+	// <mod>.tom`, so OriginTracking paths in the included .tom match
+	// the Java reference. If GomDestDir is set explicitly, use it
+	// instead (preferred for tests that want a hermetic location).
+	outDir := GomDestDir
+	if outDir == "" {
+		outDir = filepath.Join(filepath.Dir(filename), "gen")
+	}
+	if err := os.MkdirAll(outDir, 0o755); err != nil {
+		return nil, err
+	}
+	args := []string{"-d", outDir, "--package", pkg, gomFile}
+	cmd := exec.Command(gomBin, args...)
+	cmd.Env = append(os.Environ(), "TOM_HOME="+tomHome)
+	if out, err := cmd.CombinedOutput(); err != nil {
+		return nil, fmt.Errorf("gom %s failed: %w\n%s", gomFile, err, out)
+	}
+	// With --package <pkg>, gom writes
+	// <outDir>/<pkg-segments>/<module-lower>/<module-lower>.tom.
+	// Compute the exact path rather than walking — outDir may be
+	// shared with other fixtures' previous output.
+	modLower := strings.ToLower(moduleName)
+	pkgSegs := strings.Split(pkg, ".")
+	parts := append([]string{outDir}, pkgSegs...)
+	parts = append(parts, modLower, modLower+".tom")
+	tomFile := filepath.Join(parts...)
+	if _, err := os.Stat(tomFile); err != nil {
+		return nil, fmt.Errorf("gom produced no .tom at %s: %w", tomFile, err)
+	}
+	src, err := os.ReadFile(tomFile)
+	if err != nil {
+		return nil, err
+	}
+	chain := append(append([]string(nil), includeChain...), filename)
+	sub, err := parseAllWithChain(string(src), tomFile, chain)
+	if err != nil {
+		return nil, err
+	}
+	tom, ok := sub.Code.(*tomast.TomCode)
+	if !ok {
+		return nil, fmt.Errorf("gom output produced unexpected AST root: %T", sub.Code)
+	}
+	cl, ok := tom.CodeList.(*tomast.ConcCodeCodeList)
+	if !ok {
+		return nil, fmt.Errorf("gom output codeList not concCode: %T", tom.CodeList)
+	}
+	return cl.Slots, nil
+}
+
+// parseGomModuleName extracts the value after `module` from a Gom
+// body. Empty string if no `module` keyword is found.
+func parseGomModuleName(body string) string {
+	for _, line := range strings.Split(body, "\n") {
+		trim := strings.TrimSpace(line)
+		if rest, ok := strings.CutPrefix(trim, "module "); ok {
+			return strings.TrimSpace(rest)
+		}
+	}
+	return ""
+}
+
+// locateGomBin returns (gomBinPath, tomHome). Tries $TOM_HOME first,
+// then walks up from the current binary location looking for a
+// src/dist/bin/gom. Returns empty strings if not found.
+func locateGomBin() (string, string) {
+	if home := os.Getenv("TOM_HOME"); home != "" {
+		if p := filepath.Join(home, "bin", "gom"); fileExists(p) {
+			return p, home
+		}
+	}
+	// Common dev paths (this codebase lives at /Users/pem/github/tom/).
+	for _, home := range []string{
+		"/Users/pem/github/tom/src/dist",
+	} {
+		if p := filepath.Join(home, "bin", "gom"); fileExists(p) {
+			return p, home
+		}
+	}
+	return "", ""
+}
+
+func fileExists(p string) bool {
+	if _, err := os.Stat(p); err == nil {
+		return true
+	}
+	return false
 }
 
 // parseMetaquote handles `%[ ... ]%`. Per CstBuilder.java's exitMetaquote
@@ -738,20 +887,36 @@ func (p *parser) tryIslandOrWater(island func() error, kind string) error {
 // would have produced for the same `.t` file.
 func (p *parser) parseWater() error {
 	start := p.cur
-	startIdx := p.idx
+	// Build the content piece by piece, skipping over comments so
+	// they don't end up in the emitted TL. Java's lexer routes
+	// `//…\n` and `/* … */` comments to a hidden channel, so the
+	// produced TL is comment-free. We do the same inline.
+	var sb strings.Builder
+	var firstNonWS *position
+	var lastNonWSEnd position
+	flush := func(from int, to int) {
+		if to > from {
+			sb.WriteString(p.src[from:to])
+		}
+	}
+	chunkStart := p.idx
+	updateNonWS := func() {
+		// Scan the newly accumulated bytes from chunkStart up to p.idx
+		// for first / last non-whitespace position. Tracked in source
+		// coordinates so we can emit the TL's TextPosition pair.
+	}
+	_ = updateNonWS
 	for !p.atEnd() && !p.isIslandStart() {
-		// Inside `//…\n` or `/* … */` comments, treat the body as
-		// opaque water — even if it textually contains `%include`
-		// or another island keyword. Mirrors Java's lexer which
-		// routes comments to a `-> skip` channel before the parser
-		// ever sees them.
 		if p.peek(0) == '/' && p.peek(1) == '/' {
+			flush(chunkStart, p.idx)
 			for !p.atEnd() && p.peek(0) != '\n' {
 				p.advance()
 			}
+			chunkStart = p.idx
 			continue
 		}
 		if p.peek(0) == '/' && p.peek(1) == '*' {
+			flush(chunkStart, p.idx)
 			p.advance()
 			p.advance()
 			for !p.atEnd() && !(p.peek(0) == '*' && p.peek(1) == '/') {
@@ -761,56 +926,66 @@ func (p *parser) parseWater() error {
 				p.advance()
 				p.advance()
 			}
+			chunkStart = p.idx
 			continue
 		}
-		// String and char literals: consume opaquely so an embedded
-		// `\`` doesn't trick the dispatcher into entering a backquote
-		// island. Java's lexer routes string/char tokens to the host
-		// channel before the island start-set is even consulted.
 		if p.peek(0) == '"' || p.peek(0) == '\'' {
 			quote := p.peek(0)
+			startQ := p.cur
 			p.advance()
 			for !p.atEnd() && p.peek(0) != quote {
 				if p.peek(0) == '\\' && !p.atEnd() {
-					p.advance() // backslash
+					p.advance()
 					if !p.atEnd() {
-						p.advance() // escaped char
+						p.advance()
 					}
 					continue
 				}
 				if p.peek(0) == '\n' {
-					break // unterminated: don't run off
+					break
 				}
 				p.advance()
 			}
 			if !p.atEnd() && p.peek(0) == quote {
 				p.advance()
 			}
+			if firstNonWS == nil {
+				v := startQ
+				firstNonWS = &v
+			}
+			lastNonWSEnd = p.cur
 			continue
 		}
+		c := p.peek(0)
+		if c != ' ' && c != '\t' && c != '\n' && c != '\r' {
+			if firstNonWS == nil {
+				v := p.cur
+				firstNonWS = &v
+			}
+		}
 		p.advance()
+		if c != ' ' && c != '\t' && c != '\n' && c != '\r' {
+			lastNonWSEnd = p.cur
+		}
 	}
-	if p.idx == startIdx {
+	flush(chunkStart, p.idx)
+	if firstNonWS == nil {
+		// Pure whitespace / comments only — no TL emitted (Java's
+		// behaviour).
 		return nil
 	}
-	content := p.src[startIdx:p.idx]
-	// Whitespace-only water emits no HOSTBLOCK in Java's reference
-	// parser.
-	if isAllWhitespace(content) {
-		return nil
-	}
-	// Java's reference parser (the default, "old parser") emits the
-	// verbatim source bytes as the TL content. Start = position of
-	// the first non-WS byte; end = position-after-content (i.e.
-	// p.cur, the parser's current position right after consuming
-	// the water). This matches the `tom --intermediate` reference
-	// dumps in testdata/java-ast.
-	tlStart, _ := trimWhitespaceRange(content, start)
+	content := sb.String()
+	// Java's TL preserves leading whitespace verbatim — it's what
+	// separates the previous island from this visible's first byte
+	// in the host code stream. The start position points to the
+	// first non-WS byte; the content starts where the parser cursor
+	// was when this run of water began.
 	p.codes = append(p.codes, tomast.MakeTargetLanguageToCode(tomast.MakeTL(
 		content,
-		tomast.MakeTextPosition(int64(tlStart.line), int64(tlStart.col)),
-		tomast.MakeTextPosition(int64(p.cur.line), int64(p.cur.col)),
+		tomast.MakeTextPosition(int64(firstNonWS.line), int64(firstNonWS.col)),
+		tomast.MakeTextPosition(int64(lastNonWSEnd.line), int64(lastNonWSEnd.col)),
 	)))
+	_ = start
 	return nil
 }
 
