@@ -6,11 +6,13 @@ import (
 	"strings"
 
 	"tom/tomgo/stable/library/sharedobjects"
+	sl "tom/tomgo/stable/library/sl"
 )
 
 // underscore-prevent: tolerate unused imports if a module has no slots of these types.
 var _ = fmt.Sprintf
 var _ = strings.Join
+var _ sl.Strategy = nil
 
 // TextPosition is the Go interface backing the Gom sort TextPosition.
 type TextPosition interface {
@@ -52,12 +54,102 @@ func (t *TextPositionTextPosition) String() string {
 	return fmt.Sprintf("TextPosition(%v,%v)", t.Line, t.Column)
 }
 
+func (t *TextPositionTextPosition) ChildCount() int { return 2 }
+
+func (t *TextPositionTextPosition) ChildAt(i int) any {
+	switch i {
+	case 0:
+		return t.Line
+	case 1:
+		return t.Column
+	}
+	panic(fmt.Sprintf("TextPositionTextPosition.ChildAt: index %d out of range", i))
+}
+
+func (t *TextPositionTextPosition) SetChildAt(i int, child any) any {
+	switch i {
+	case 0:
+		return MakeTextPosition(child.(int64), t.Column)
+	case 1:
+		return MakeTextPosition(t.Line, child.(int64))
+	}
+	panic(fmt.Sprintf("TextPositionTextPosition.SetChildAt: index %d out of range", i))
+}
+
+func (t *TextPositionTextPosition) Children() []any {
+	return []any{t.Line, t.Column}
+}
+
+func (t *TextPositionTextPosition) SetChildren(children []any) any {
+	return MakeTextPosition(children[0].(int64), children[1].(int64))
+}
+
 // MakeTextPosition builds the canonical (shared) TextPosition term.
 func MakeTextPosition(line int64, column int64) TextPosition {
 	hashes := []uint32{sharedobjects.StringHash(fmt.Sprintf("%v", line)), sharedobjects.StringHash(fmt.Sprintf("%v", column))}
 	proto := &TextPositionTextPosition{hash: sharedobjects.MixSymbol(sharedobjects.StringHash("TextPosition"), hashes), Line: line, Column: column}
 	return factory.Build(proto).(*TextPositionTextPosition)
 }
+
+// IsTextPosition is the `Is_TextPosition` predicate strategy: succeeds (returns subject
+// unchanged) when subject has the `TextPosition` shape, otherwise fails with
+// sl.ErrVisitFailure.
+type IsTextPosition struct{}
+
+func (IsTextPosition) VisitLight(subject any, _ sl.Introspector) (any, error) {
+	if _, ok := subject.(*TextPositionTextPosition); ok {
+		return subject, nil
+	}
+	return subject, sl.ErrVisitFailure
+}
+func (IsTextPosition) ChildCount() int             { return 0 }
+func (IsTextPosition) ChildAt(int) sl.Strategy     { panic("IsTextPosition: no children") }
+func (IsTextPosition) SetChildAt(int, sl.Strategy) { panic("IsTextPosition: no children") }
+
+// VisitTextPosition is the `_TextPosition` slot-visit strategy: when subject is `TextPosition`,
+// applies each constituent strategy to the matching child slot and
+// rebuilds the term iff at least one child changed. Fails with
+// sl.ErrVisitFailure when subject isn't `TextPosition`.
+type VisitTextPosition struct {
+	args []sl.Strategy
+}
+
+// NewVisitTextPosition builds the slot-visit strategy with the supplied per-slot
+// sub-strategies.
+func NewVisitTextPosition(args ...sl.Strategy) *VisitTextPosition {
+	return &VisitTextPosition{args: args}
+}
+
+func (s *VisitTextPosition) VisitLight(subject any, intro sl.Introspector) (any, error) {
+	if _, ok := subject.(*TextPositionTextPosition); !ok {
+		return subject, sl.ErrVisitFailure
+	}
+	if len(s.args) != 2 {
+		return subject, sl.ErrVisitFailure
+	}
+	var newChildren []any
+	for i := 0; i < 2; i++ {
+		oldChild := intro.GetChildAt(subject, i)
+		newChild, err := s.args[i].VisitLight(oldChild, intro)
+		if err != nil {
+			return subject, err
+		}
+		if newChildren != nil {
+			newChildren[i] = newChild
+		} else if newChild != oldChild {
+			newChildren = intro.GetChildren(subject)
+			newChildren[i] = newChild
+		}
+	}
+	if newChildren != nil {
+		return intro.SetChildren(subject, newChildren), nil
+	}
+	return subject, nil
+}
+
+func (s *VisitTextPosition) ChildCount() int                 { return len(s.args) }
+func (s *VisitTextPosition) ChildAt(i int) sl.Strategy       { return s.args[i] }
+func (s *VisitTextPosition) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
 
 // TomVisit is the Go interface backing the Gom sort TomVisit.
 type TomVisit interface {
@@ -103,12 +195,106 @@ func (t *VisitTermTomVisit) String() string {
 	return fmt.Sprintf("VisitTerm(%v,%v,%v)", t.VNode, t.AstConstraintInstructionList, t.Options)
 }
 
+func (t *VisitTermTomVisit) ChildCount() int { return 3 }
+
+func (t *VisitTermTomVisit) ChildAt(i int) any {
+	switch i {
+	case 0:
+		return t.VNode
+	case 1:
+		return t.AstConstraintInstructionList
+	case 2:
+		return t.Options
+	}
+	panic(fmt.Sprintf("VisitTermTomVisit.ChildAt: index %d out of range", i))
+}
+
+func (t *VisitTermTomVisit) SetChildAt(i int, child any) any {
+	switch i {
+	case 0:
+		return MakeVisitTerm(child.(TomType), t.AstConstraintInstructionList, t.Options)
+	case 1:
+		return MakeVisitTerm(t.VNode, child.(ConstraintInstructionList), t.Options)
+	case 2:
+		return MakeVisitTerm(t.VNode, t.AstConstraintInstructionList, child.(OptionList))
+	}
+	panic(fmt.Sprintf("VisitTermTomVisit.SetChildAt: index %d out of range", i))
+}
+
+func (t *VisitTermTomVisit) Children() []any {
+	return []any{t.VNode, t.AstConstraintInstructionList, t.Options}
+}
+
+func (t *VisitTermTomVisit) SetChildren(children []any) any {
+	return MakeVisitTerm(children[0].(TomType), children[1].(ConstraintInstructionList), children[2].(OptionList))
+}
+
 // MakeVisitTerm builds the canonical (shared) VisitTerm term.
 func MakeVisitTerm(vNode TomType, astConstraintInstructionList ConstraintInstructionList, options OptionList) TomVisit {
 	hashes := []uint32{vNode.Hash(), astConstraintInstructionList.Hash(), options.Hash()}
 	proto := &VisitTermTomVisit{hash: sharedobjects.MixSymbol(sharedobjects.StringHash("VisitTerm"), hashes), VNode: vNode, AstConstraintInstructionList: astConstraintInstructionList, Options: options}
 	return factory.Build(proto).(*VisitTermTomVisit)
 }
+
+// IsVisitTerm is the `Is_VisitTerm` predicate strategy: succeeds (returns subject
+// unchanged) when subject has the `VisitTerm` shape, otherwise fails with
+// sl.ErrVisitFailure.
+type IsVisitTerm struct{}
+
+func (IsVisitTerm) VisitLight(subject any, _ sl.Introspector) (any, error) {
+	if _, ok := subject.(*VisitTermTomVisit); ok {
+		return subject, nil
+	}
+	return subject, sl.ErrVisitFailure
+}
+func (IsVisitTerm) ChildCount() int             { return 0 }
+func (IsVisitTerm) ChildAt(int) sl.Strategy     { panic("IsVisitTerm: no children") }
+func (IsVisitTerm) SetChildAt(int, sl.Strategy) { panic("IsVisitTerm: no children") }
+
+// VisitVisitTerm is the `_VisitTerm` slot-visit strategy: when subject is `VisitTerm`,
+// applies each constituent strategy to the matching child slot and
+// rebuilds the term iff at least one child changed. Fails with
+// sl.ErrVisitFailure when subject isn't `VisitTerm`.
+type VisitVisitTerm struct {
+	args []sl.Strategy
+}
+
+// NewVisitVisitTerm builds the slot-visit strategy with the supplied per-slot
+// sub-strategies.
+func NewVisitVisitTerm(args ...sl.Strategy) *VisitVisitTerm {
+	return &VisitVisitTerm{args: args}
+}
+
+func (s *VisitVisitTerm) VisitLight(subject any, intro sl.Introspector) (any, error) {
+	if _, ok := subject.(*VisitTermTomVisit); !ok {
+		return subject, sl.ErrVisitFailure
+	}
+	if len(s.args) != 3 {
+		return subject, sl.ErrVisitFailure
+	}
+	var newChildren []any
+	for i := 0; i < 3; i++ {
+		oldChild := intro.GetChildAt(subject, i)
+		newChild, err := s.args[i].VisitLight(oldChild, intro)
+		if err != nil {
+			return subject, err
+		}
+		if newChildren != nil {
+			newChildren[i] = newChild
+		} else if newChild != oldChild {
+			newChildren = intro.GetChildren(subject)
+			newChildren[i] = newChild
+		}
+	}
+	if newChildren != nil {
+		return intro.SetChildren(subject, newChildren), nil
+	}
+	return subject, nil
+}
+
+func (s *VisitVisitTerm) ChildCount() int                 { return len(s.args) }
+func (s *VisitVisitTerm) ChildAt(i int) sl.Strategy       { return s.args[i] }
+func (s *VisitVisitTerm) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
 
 // ResolveStratElement is the Go interface backing the Gom sort ResolveStratElement.
 type ResolveStratElement interface {
@@ -150,12 +336,104 @@ func (t *ResolveStratElementResolveStratElement) String() string {
 	return fmt.Sprintf("ResolveStratElement(%s,%v)", sharedobjects.JavaEscape(t.WithName), t.ResolveOrgTrack)
 }
 
+func (t *ResolveStratElementResolveStratElement) ChildCount() int { return 2 }
+
+func (t *ResolveStratElementResolveStratElement) ChildAt(i int) any {
+	switch i {
+	case 0:
+		return t.WithName
+	case 1:
+		return t.ResolveOrgTrack
+	}
+	panic(fmt.Sprintf("ResolveStratElementResolveStratElement.ChildAt: index %d out of range", i))
+}
+
+func (t *ResolveStratElementResolveStratElement) SetChildAt(i int, child any) any {
+	switch i {
+	case 0:
+		return MakeResolveStratElement(child.(string), t.ResolveOrgTrack)
+	case 1:
+		return MakeResolveStratElement(t.WithName, child.(Option))
+	}
+	panic(fmt.Sprintf("ResolveStratElementResolveStratElement.SetChildAt: index %d out of range", i))
+}
+
+func (t *ResolveStratElementResolveStratElement) Children() []any {
+	return []any{t.WithName, t.ResolveOrgTrack}
+}
+
+func (t *ResolveStratElementResolveStratElement) SetChildren(children []any) any {
+	return MakeResolveStratElement(children[0].(string), children[1].(Option))
+}
+
 // MakeResolveStratElement builds the canonical (shared) ResolveStratElement term.
 func MakeResolveStratElement(withName string, resolveOrgTrack Option) ResolveStratElement {
 	hashes := []uint32{sharedobjects.StringHash(fmt.Sprintf("%v", withName)), resolveOrgTrack.Hash()}
 	proto := &ResolveStratElementResolveStratElement{hash: sharedobjects.MixSymbol(sharedobjects.StringHash("ResolveStratElement"), hashes), WithName: withName, ResolveOrgTrack: resolveOrgTrack}
 	return factory.Build(proto).(*ResolveStratElementResolveStratElement)
 }
+
+// IsResolveStratElement is the `Is_ResolveStratElement` predicate strategy: succeeds (returns subject
+// unchanged) when subject has the `ResolveStratElement` shape, otherwise fails with
+// sl.ErrVisitFailure.
+type IsResolveStratElement struct{}
+
+func (IsResolveStratElement) VisitLight(subject any, _ sl.Introspector) (any, error) {
+	if _, ok := subject.(*ResolveStratElementResolveStratElement); ok {
+		return subject, nil
+	}
+	return subject, sl.ErrVisitFailure
+}
+func (IsResolveStratElement) ChildCount() int         { return 0 }
+func (IsResolveStratElement) ChildAt(int) sl.Strategy { panic("IsResolveStratElement: no children") }
+func (IsResolveStratElement) SetChildAt(int, sl.Strategy) {
+	panic("IsResolveStratElement: no children")
+}
+
+// VisitResolveStratElement is the `_ResolveStratElement` slot-visit strategy: when subject is `ResolveStratElement`,
+// applies each constituent strategy to the matching child slot and
+// rebuilds the term iff at least one child changed. Fails with
+// sl.ErrVisitFailure when subject isn't `ResolveStratElement`.
+type VisitResolveStratElement struct {
+	args []sl.Strategy
+}
+
+// NewVisitResolveStratElement builds the slot-visit strategy with the supplied per-slot
+// sub-strategies.
+func NewVisitResolveStratElement(args ...sl.Strategy) *VisitResolveStratElement {
+	return &VisitResolveStratElement{args: args}
+}
+
+func (s *VisitResolveStratElement) VisitLight(subject any, intro sl.Introspector) (any, error) {
+	if _, ok := subject.(*ResolveStratElementResolveStratElement); !ok {
+		return subject, sl.ErrVisitFailure
+	}
+	if len(s.args) != 2 {
+		return subject, sl.ErrVisitFailure
+	}
+	var newChildren []any
+	for i := 0; i < 2; i++ {
+		oldChild := intro.GetChildAt(subject, i)
+		newChild, err := s.args[i].VisitLight(oldChild, intro)
+		if err != nil {
+			return subject, err
+		}
+		if newChildren != nil {
+			newChildren[i] = newChild
+		} else if newChild != oldChild {
+			newChildren = intro.GetChildren(subject)
+			newChildren[i] = newChild
+		}
+	}
+	if newChildren != nil {
+		return intro.SetChildren(subject, newChildren), nil
+	}
+	return subject, nil
+}
+
+func (s *VisitResolveStratElement) ChildCount() int                 { return len(s.args) }
+func (s *VisitResolveStratElement) ChildAt(i int) sl.Strategy       { return s.args[i] }
+func (s *VisitResolveStratElement) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
 
 // ResolveStratElementList is the Go interface backing the Gom sort ResolveStratElementList.
 type ResolveStratElementList interface {
@@ -202,6 +480,32 @@ func (t *ConcResolveStratElementResolveStratElementList) String() string {
 	return "concResolveStratElement" + "(" + strings.Join(parts, ",") + ")"
 }
 
+func (t *ConcResolveStratElementResolveStratElementList) ChildCount() int { return len(t.Slots) }
+
+func (t *ConcResolveStratElementResolveStratElementList) ChildAt(i int) any { return t.Slots[i] }
+
+func (t *ConcResolveStratElementResolveStratElementList) SetChildAt(i int, child any) any {
+	dup := append([]ResolveStratElement(nil), t.Slots...)
+	dup[i] = child.(ResolveStratElement)
+	return MakeConcResolveStratElement(dup...)
+}
+
+func (t *ConcResolveStratElementResolveStratElementList) Children() []any {
+	out := make([]any, len(t.Slots))
+	for i, v := range t.Slots {
+		out[i] = v
+	}
+	return out
+}
+
+func (t *ConcResolveStratElementResolveStratElementList) SetChildren(children []any) any {
+	args := make([]ResolveStratElement, len(children))
+	for i, c := range children {
+		args[i] = c.(ResolveStratElement)
+	}
+	return MakeConcResolveStratElement(args...)
+}
+
 // MakeConcResolveStratElement builds the canonical (shared) concResolveStratElement term.
 func MakeConcResolveStratElement(args ...ResolveStratElement) ResolveStratElementList {
 	hashes := make([]uint32, 0, len(args))
@@ -211,6 +515,73 @@ func MakeConcResolveStratElement(args ...ResolveStratElement) ResolveStratElemen
 	proto := &ConcResolveStratElementResolveStratElementList{Slots: args, hash: sharedobjects.MixSymbol(sharedobjects.StringHash("concResolveStratElement"), hashes)}
 	return factory.Build(proto).(*ConcResolveStratElementResolveStratElementList)
 }
+
+// IsConcResolveStratElement is the `Is_concResolveStratElement` predicate strategy: succeeds (returns subject
+// unchanged) when subject has the `concResolveStratElement` shape, otherwise fails with
+// sl.ErrVisitFailure.
+type IsConcResolveStratElement struct{}
+
+func (IsConcResolveStratElement) VisitLight(subject any, _ sl.Introspector) (any, error) {
+	if _, ok := subject.(*ConcResolveStratElementResolveStratElementList); ok {
+		return subject, nil
+	}
+	return subject, sl.ErrVisitFailure
+}
+func (IsConcResolveStratElement) ChildCount() int { return 0 }
+func (IsConcResolveStratElement) ChildAt(int) sl.Strategy {
+	panic("IsConcResolveStratElement: no children")
+}
+func (IsConcResolveStratElement) SetChildAt(int, sl.Strategy) {
+	panic("IsConcResolveStratElement: no children")
+}
+
+// VisitConcResolveStratElement is the `_concResolveStratElement` slot-visit strategy: when subject is `concResolveStratElement`,
+// applies each constituent strategy to the matching child slot and
+// rebuilds the term iff at least one child changed. Fails with
+// sl.ErrVisitFailure when subject isn't `concResolveStratElement`.
+type VisitConcResolveStratElement struct {
+	args []sl.Strategy
+}
+
+// NewVisitConcResolveStratElement builds the slot-visit strategy with the supplied per-slot
+// sub-strategies.
+func NewVisitConcResolveStratElement(args ...sl.Strategy) *VisitConcResolveStratElement {
+	return &VisitConcResolveStratElement{args: args}
+}
+
+func (s *VisitConcResolveStratElement) VisitLight(subject any, intro sl.Introspector) (any, error) {
+	if _, ok := subject.(*ConcResolveStratElementResolveStratElementList); !ok {
+		return subject, sl.ErrVisitFailure
+	}
+	// Variadic alt: visit every element with args[0] (Java's
+	// `_concX` invokes the sub-strategy on each list element).
+	if len(s.args) == 0 {
+		return subject, nil
+	}
+	count := intro.GetChildCount(subject)
+	var newChildren []any
+	for i := 0; i < count; i++ {
+		oldChild := intro.GetChildAt(subject, i)
+		newChild, err := s.args[0].VisitLight(oldChild, intro)
+		if err != nil {
+			return subject, err
+		}
+		if newChildren != nil {
+			newChildren[i] = newChild
+		} else if newChild != oldChild {
+			newChildren = intro.GetChildren(subject)
+			newChildren[i] = newChild
+		}
+	}
+	if newChildren != nil {
+		return intro.SetChildren(subject, newChildren), nil
+	}
+	return subject, nil
+}
+
+func (s *VisitConcResolveStratElement) ChildCount() int                 { return len(s.args) }
+func (s *VisitConcResolveStratElement) ChildAt(i int) sl.Strategy       { return s.args[i] }
+func (s *VisitConcResolveStratElement) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
 
 // ResolveStratBlock is the Go interface backing the Gom sort ResolveStratBlock.
 type ResolveStratBlock interface {
@@ -252,12 +623,102 @@ func (t *ResolveStratBlockResolveStratBlock) String() string {
 	return fmt.Sprintf("ResolveStratBlock(%s,%v)", sharedobjects.JavaEscape(t.ToName), t.ResolveStratElementList)
 }
 
+func (t *ResolveStratBlockResolveStratBlock) ChildCount() int { return 2 }
+
+func (t *ResolveStratBlockResolveStratBlock) ChildAt(i int) any {
+	switch i {
+	case 0:
+		return t.ToName
+	case 1:
+		return t.ResolveStratElementList
+	}
+	panic(fmt.Sprintf("ResolveStratBlockResolveStratBlock.ChildAt: index %d out of range", i))
+}
+
+func (t *ResolveStratBlockResolveStratBlock) SetChildAt(i int, child any) any {
+	switch i {
+	case 0:
+		return MakeResolveStratBlock(child.(string), t.ResolveStratElementList)
+	case 1:
+		return MakeResolveStratBlock(t.ToName, child.(ResolveStratElementList))
+	}
+	panic(fmt.Sprintf("ResolveStratBlockResolveStratBlock.SetChildAt: index %d out of range", i))
+}
+
+func (t *ResolveStratBlockResolveStratBlock) Children() []any {
+	return []any{t.ToName, t.ResolveStratElementList}
+}
+
+func (t *ResolveStratBlockResolveStratBlock) SetChildren(children []any) any {
+	return MakeResolveStratBlock(children[0].(string), children[1].(ResolveStratElementList))
+}
+
 // MakeResolveStratBlock builds the canonical (shared) ResolveStratBlock term.
 func MakeResolveStratBlock(toName string, resolveStratElementList ResolveStratElementList) ResolveStratBlock {
 	hashes := []uint32{sharedobjects.StringHash(fmt.Sprintf("%v", toName)), resolveStratElementList.Hash()}
 	proto := &ResolveStratBlockResolveStratBlock{hash: sharedobjects.MixSymbol(sharedobjects.StringHash("ResolveStratBlock"), hashes), ToName: toName, ResolveStratElementList: resolveStratElementList}
 	return factory.Build(proto).(*ResolveStratBlockResolveStratBlock)
 }
+
+// IsResolveStratBlock is the `Is_ResolveStratBlock` predicate strategy: succeeds (returns subject
+// unchanged) when subject has the `ResolveStratBlock` shape, otherwise fails with
+// sl.ErrVisitFailure.
+type IsResolveStratBlock struct{}
+
+func (IsResolveStratBlock) VisitLight(subject any, _ sl.Introspector) (any, error) {
+	if _, ok := subject.(*ResolveStratBlockResolveStratBlock); ok {
+		return subject, nil
+	}
+	return subject, sl.ErrVisitFailure
+}
+func (IsResolveStratBlock) ChildCount() int             { return 0 }
+func (IsResolveStratBlock) ChildAt(int) sl.Strategy     { panic("IsResolveStratBlock: no children") }
+func (IsResolveStratBlock) SetChildAt(int, sl.Strategy) { panic("IsResolveStratBlock: no children") }
+
+// VisitResolveStratBlock is the `_ResolveStratBlock` slot-visit strategy: when subject is `ResolveStratBlock`,
+// applies each constituent strategy to the matching child slot and
+// rebuilds the term iff at least one child changed. Fails with
+// sl.ErrVisitFailure when subject isn't `ResolveStratBlock`.
+type VisitResolveStratBlock struct {
+	args []sl.Strategy
+}
+
+// NewVisitResolveStratBlock builds the slot-visit strategy with the supplied per-slot
+// sub-strategies.
+func NewVisitResolveStratBlock(args ...sl.Strategy) *VisitResolveStratBlock {
+	return &VisitResolveStratBlock{args: args}
+}
+
+func (s *VisitResolveStratBlock) VisitLight(subject any, intro sl.Introspector) (any, error) {
+	if _, ok := subject.(*ResolveStratBlockResolveStratBlock); !ok {
+		return subject, sl.ErrVisitFailure
+	}
+	if len(s.args) != 2 {
+		return subject, sl.ErrVisitFailure
+	}
+	var newChildren []any
+	for i := 0; i < 2; i++ {
+		oldChild := intro.GetChildAt(subject, i)
+		newChild, err := s.args[i].VisitLight(oldChild, intro)
+		if err != nil {
+			return subject, err
+		}
+		if newChildren != nil {
+			newChildren[i] = newChild
+		} else if newChild != oldChild {
+			newChildren = intro.GetChildren(subject)
+			newChildren[i] = newChild
+		}
+	}
+	if newChildren != nil {
+		return intro.SetChildren(subject, newChildren), nil
+	}
+	return subject, nil
+}
+
+func (s *VisitResolveStratBlock) ChildCount() int                 { return len(s.args) }
+func (s *VisitResolveStratBlock) ChildAt(i int) sl.Strategy       { return s.args[i] }
+func (s *VisitResolveStratBlock) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
 
 // ResolveStratBlockList is the Go interface backing the Gom sort ResolveStratBlockList.
 type ResolveStratBlockList interface {
@@ -304,6 +765,32 @@ func (t *ConcResolveStratBlockResolveStratBlockList) String() string {
 	return "concResolveStratBlock" + "(" + strings.Join(parts, ",") + ")"
 }
 
+func (t *ConcResolveStratBlockResolveStratBlockList) ChildCount() int { return len(t.Slots) }
+
+func (t *ConcResolveStratBlockResolveStratBlockList) ChildAt(i int) any { return t.Slots[i] }
+
+func (t *ConcResolveStratBlockResolveStratBlockList) SetChildAt(i int, child any) any {
+	dup := append([]ResolveStratBlock(nil), t.Slots...)
+	dup[i] = child.(ResolveStratBlock)
+	return MakeConcResolveStratBlock(dup...)
+}
+
+func (t *ConcResolveStratBlockResolveStratBlockList) Children() []any {
+	out := make([]any, len(t.Slots))
+	for i, v := range t.Slots {
+		out[i] = v
+	}
+	return out
+}
+
+func (t *ConcResolveStratBlockResolveStratBlockList) SetChildren(children []any) any {
+	args := make([]ResolveStratBlock, len(children))
+	for i, c := range children {
+		args[i] = c.(ResolveStratBlock)
+	}
+	return MakeConcResolveStratBlock(args...)
+}
+
 // MakeConcResolveStratBlock builds the canonical (shared) concResolveStratBlock term.
 func MakeConcResolveStratBlock(args ...ResolveStratBlock) ResolveStratBlockList {
 	hashes := make([]uint32, 0, len(args))
@@ -313,6 +800,73 @@ func MakeConcResolveStratBlock(args ...ResolveStratBlock) ResolveStratBlockList 
 	proto := &ConcResolveStratBlockResolveStratBlockList{Slots: args, hash: sharedobjects.MixSymbol(sharedobjects.StringHash("concResolveStratBlock"), hashes)}
 	return factory.Build(proto).(*ConcResolveStratBlockResolveStratBlockList)
 }
+
+// IsConcResolveStratBlock is the `Is_concResolveStratBlock` predicate strategy: succeeds (returns subject
+// unchanged) when subject has the `concResolveStratBlock` shape, otherwise fails with
+// sl.ErrVisitFailure.
+type IsConcResolveStratBlock struct{}
+
+func (IsConcResolveStratBlock) VisitLight(subject any, _ sl.Introspector) (any, error) {
+	if _, ok := subject.(*ConcResolveStratBlockResolveStratBlockList); ok {
+		return subject, nil
+	}
+	return subject, sl.ErrVisitFailure
+}
+func (IsConcResolveStratBlock) ChildCount() int { return 0 }
+func (IsConcResolveStratBlock) ChildAt(int) sl.Strategy {
+	panic("IsConcResolveStratBlock: no children")
+}
+func (IsConcResolveStratBlock) SetChildAt(int, sl.Strategy) {
+	panic("IsConcResolveStratBlock: no children")
+}
+
+// VisitConcResolveStratBlock is the `_concResolveStratBlock` slot-visit strategy: when subject is `concResolveStratBlock`,
+// applies each constituent strategy to the matching child slot and
+// rebuilds the term iff at least one child changed. Fails with
+// sl.ErrVisitFailure when subject isn't `concResolveStratBlock`.
+type VisitConcResolveStratBlock struct {
+	args []sl.Strategy
+}
+
+// NewVisitConcResolveStratBlock builds the slot-visit strategy with the supplied per-slot
+// sub-strategies.
+func NewVisitConcResolveStratBlock(args ...sl.Strategy) *VisitConcResolveStratBlock {
+	return &VisitConcResolveStratBlock{args: args}
+}
+
+func (s *VisitConcResolveStratBlock) VisitLight(subject any, intro sl.Introspector) (any, error) {
+	if _, ok := subject.(*ConcResolveStratBlockResolveStratBlockList); !ok {
+		return subject, sl.ErrVisitFailure
+	}
+	// Variadic alt: visit every element with args[0] (Java's
+	// `_concX` invokes the sub-strategy on each list element).
+	if len(s.args) == 0 {
+		return subject, nil
+	}
+	count := intro.GetChildCount(subject)
+	var newChildren []any
+	for i := 0; i < count; i++ {
+		oldChild := intro.GetChildAt(subject, i)
+		newChild, err := s.args[0].VisitLight(oldChild, intro)
+		if err != nil {
+			return subject, err
+		}
+		if newChildren != nil {
+			newChildren[i] = newChild
+		} else if newChild != oldChild {
+			newChildren = intro.GetChildren(subject)
+			newChildren[i] = newChild
+		}
+	}
+	if newChildren != nil {
+		return intro.SetChildren(subject, newChildren), nil
+	}
+	return subject, nil
+}
+
+func (s *VisitConcResolveStratBlock) ChildCount() int                 { return len(s.args) }
+func (s *VisitConcResolveStratBlock) ChildAt(i int) sl.Strategy       { return s.args[i] }
+func (s *VisitConcResolveStratBlock) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
 
 // ElementaryTransformation is the Go interface backing the Gom sort ElementaryTransformation.
 type ElementaryTransformation interface {
@@ -362,12 +916,114 @@ func (t *ElementaryTransformationElementaryTransformation) String() string {
 	return fmt.Sprintf("ElementaryTransformation(%v,%v,%v,%v)", t.ETName, t.Traversal, t.AstRuleInstructionList, t.Options)
 }
 
+func (t *ElementaryTransformationElementaryTransformation) ChildCount() int { return 4 }
+
+func (t *ElementaryTransformationElementaryTransformation) ChildAt(i int) any {
+	switch i {
+	case 0:
+		return t.ETName
+	case 1:
+		return t.Traversal
+	case 2:
+		return t.AstRuleInstructionList
+	case 3:
+		return t.Options
+	}
+	panic(fmt.Sprintf("ElementaryTransformationElementaryTransformation.ChildAt: index %d out of range", i))
+}
+
+func (t *ElementaryTransformationElementaryTransformation) SetChildAt(i int, child any) any {
+	switch i {
+	case 0:
+		return MakeElementaryTransformation(child.(TomName), t.Traversal, t.AstRuleInstructionList, t.Options)
+	case 1:
+		return MakeElementaryTransformation(t.ETName, child.(BQTerm), t.AstRuleInstructionList, t.Options)
+	case 2:
+		return MakeElementaryTransformation(t.ETName, t.Traversal, child.(RuleInstructionList), t.Options)
+	case 3:
+		return MakeElementaryTransformation(t.ETName, t.Traversal, t.AstRuleInstructionList, child.(OptionList))
+	}
+	panic(fmt.Sprintf("ElementaryTransformationElementaryTransformation.SetChildAt: index %d out of range", i))
+}
+
+func (t *ElementaryTransformationElementaryTransformation) Children() []any {
+	return []any{t.ETName, t.Traversal, t.AstRuleInstructionList, t.Options}
+}
+
+func (t *ElementaryTransformationElementaryTransformation) SetChildren(children []any) any {
+	return MakeElementaryTransformation(children[0].(TomName), children[1].(BQTerm), children[2].(RuleInstructionList), children[3].(OptionList))
+}
+
 // MakeElementaryTransformation builds the canonical (shared) ElementaryTransformation term.
 func MakeElementaryTransformation(eTName TomName, traversal BQTerm, astRuleInstructionList RuleInstructionList, options OptionList) ElementaryTransformation {
 	hashes := []uint32{eTName.Hash(), traversal.Hash(), astRuleInstructionList.Hash(), options.Hash()}
 	proto := &ElementaryTransformationElementaryTransformation{hash: sharedobjects.MixSymbol(sharedobjects.StringHash("ElementaryTransformation"), hashes), ETName: eTName, Traversal: traversal, AstRuleInstructionList: astRuleInstructionList, Options: options}
 	return factory.Build(proto).(*ElementaryTransformationElementaryTransformation)
 }
+
+// IsElementaryTransformation is the `Is_ElementaryTransformation` predicate strategy: succeeds (returns subject
+// unchanged) when subject has the `ElementaryTransformation` shape, otherwise fails with
+// sl.ErrVisitFailure.
+type IsElementaryTransformation struct{}
+
+func (IsElementaryTransformation) VisitLight(subject any, _ sl.Introspector) (any, error) {
+	if _, ok := subject.(*ElementaryTransformationElementaryTransformation); ok {
+		return subject, nil
+	}
+	return subject, sl.ErrVisitFailure
+}
+func (IsElementaryTransformation) ChildCount() int { return 0 }
+func (IsElementaryTransformation) ChildAt(int) sl.Strategy {
+	panic("IsElementaryTransformation: no children")
+}
+func (IsElementaryTransformation) SetChildAt(int, sl.Strategy) {
+	panic("IsElementaryTransformation: no children")
+}
+
+// VisitElementaryTransformation is the `_ElementaryTransformation` slot-visit strategy: when subject is `ElementaryTransformation`,
+// applies each constituent strategy to the matching child slot and
+// rebuilds the term iff at least one child changed. Fails with
+// sl.ErrVisitFailure when subject isn't `ElementaryTransformation`.
+type VisitElementaryTransformation struct {
+	args []sl.Strategy
+}
+
+// NewVisitElementaryTransformation builds the slot-visit strategy with the supplied per-slot
+// sub-strategies.
+func NewVisitElementaryTransformation(args ...sl.Strategy) *VisitElementaryTransformation {
+	return &VisitElementaryTransformation{args: args}
+}
+
+func (s *VisitElementaryTransformation) VisitLight(subject any, intro sl.Introspector) (any, error) {
+	if _, ok := subject.(*ElementaryTransformationElementaryTransformation); !ok {
+		return subject, sl.ErrVisitFailure
+	}
+	if len(s.args) != 4 {
+		return subject, sl.ErrVisitFailure
+	}
+	var newChildren []any
+	for i := 0; i < 4; i++ {
+		oldChild := intro.GetChildAt(subject, i)
+		newChild, err := s.args[i].VisitLight(oldChild, intro)
+		if err != nil {
+			return subject, err
+		}
+		if newChildren != nil {
+			newChildren[i] = newChild
+		} else if newChild != oldChild {
+			newChildren = intro.GetChildren(subject)
+			newChildren[i] = newChild
+		}
+	}
+	if newChildren != nil {
+		return intro.SetChildren(subject, newChildren), nil
+	}
+	return subject, nil
+}
+
+func (s *VisitElementaryTransformation) ChildCount() int                 { return len(s.args) }
+func (s *VisitElementaryTransformation) ChildAt(i int) sl.Strategy       { return s.args[i] }
+func (s *VisitElementaryTransformation) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
 
 // ElementaryTransformationList is the Go interface backing the Gom sort ElementaryTransformationList.
 type ElementaryTransformationList interface {
@@ -414,6 +1070,36 @@ func (t *ConcElementaryTransformationElementaryTransformationList) String() stri
 	return "concElementaryTransformation" + "(" + strings.Join(parts, ",") + ")"
 }
 
+func (t *ConcElementaryTransformationElementaryTransformationList) ChildCount() int {
+	return len(t.Slots)
+}
+
+func (t *ConcElementaryTransformationElementaryTransformationList) ChildAt(i int) any {
+	return t.Slots[i]
+}
+
+func (t *ConcElementaryTransformationElementaryTransformationList) SetChildAt(i int, child any) any {
+	dup := append([]ElementaryTransformation(nil), t.Slots...)
+	dup[i] = child.(ElementaryTransformation)
+	return MakeConcElementaryTransformation(dup...)
+}
+
+func (t *ConcElementaryTransformationElementaryTransformationList) Children() []any {
+	out := make([]any, len(t.Slots))
+	for i, v := range t.Slots {
+		out[i] = v
+	}
+	return out
+}
+
+func (t *ConcElementaryTransformationElementaryTransformationList) SetChildren(children []any) any {
+	args := make([]ElementaryTransformation, len(children))
+	for i, c := range children {
+		args[i] = c.(ElementaryTransformation)
+	}
+	return MakeConcElementaryTransformation(args...)
+}
+
 // MakeConcElementaryTransformation builds the canonical (shared) concElementaryTransformation term.
 func MakeConcElementaryTransformation(args ...ElementaryTransformation) ElementaryTransformationList {
 	hashes := make([]uint32, 0, len(args))
@@ -423,6 +1109,73 @@ func MakeConcElementaryTransformation(args ...ElementaryTransformation) Elementa
 	proto := &ConcElementaryTransformationElementaryTransformationList{Slots: args, hash: sharedobjects.MixSymbol(sharedobjects.StringHash("concElementaryTransformation"), hashes)}
 	return factory.Build(proto).(*ConcElementaryTransformationElementaryTransformationList)
 }
+
+// IsConcElementaryTransformation is the `Is_concElementaryTransformation` predicate strategy: succeeds (returns subject
+// unchanged) when subject has the `concElementaryTransformation` shape, otherwise fails with
+// sl.ErrVisitFailure.
+type IsConcElementaryTransformation struct{}
+
+func (IsConcElementaryTransformation) VisitLight(subject any, _ sl.Introspector) (any, error) {
+	if _, ok := subject.(*ConcElementaryTransformationElementaryTransformationList); ok {
+		return subject, nil
+	}
+	return subject, sl.ErrVisitFailure
+}
+func (IsConcElementaryTransformation) ChildCount() int { return 0 }
+func (IsConcElementaryTransformation) ChildAt(int) sl.Strategy {
+	panic("IsConcElementaryTransformation: no children")
+}
+func (IsConcElementaryTransformation) SetChildAt(int, sl.Strategy) {
+	panic("IsConcElementaryTransformation: no children")
+}
+
+// VisitConcElementaryTransformation is the `_concElementaryTransformation` slot-visit strategy: when subject is `concElementaryTransformation`,
+// applies each constituent strategy to the matching child slot and
+// rebuilds the term iff at least one child changed. Fails with
+// sl.ErrVisitFailure when subject isn't `concElementaryTransformation`.
+type VisitConcElementaryTransformation struct {
+	args []sl.Strategy
+}
+
+// NewVisitConcElementaryTransformation builds the slot-visit strategy with the supplied per-slot
+// sub-strategies.
+func NewVisitConcElementaryTransformation(args ...sl.Strategy) *VisitConcElementaryTransformation {
+	return &VisitConcElementaryTransformation{args: args}
+}
+
+func (s *VisitConcElementaryTransformation) VisitLight(subject any, intro sl.Introspector) (any, error) {
+	if _, ok := subject.(*ConcElementaryTransformationElementaryTransformationList); !ok {
+		return subject, sl.ErrVisitFailure
+	}
+	// Variadic alt: visit every element with args[0] (Java's
+	// `_concX` invokes the sub-strategy on each list element).
+	if len(s.args) == 0 {
+		return subject, nil
+	}
+	count := intro.GetChildCount(subject)
+	var newChildren []any
+	for i := 0; i < count; i++ {
+		oldChild := intro.GetChildAt(subject, i)
+		newChild, err := s.args[0].VisitLight(oldChild, intro)
+		if err != nil {
+			return subject, err
+		}
+		if newChildren != nil {
+			newChildren[i] = newChild
+		} else if newChild != oldChild {
+			newChildren = intro.GetChildren(subject)
+			newChildren[i] = newChild
+		}
+	}
+	if newChildren != nil {
+		return intro.SetChildren(subject, newChildren), nil
+	}
+	return subject, nil
+}
+
+func (s *VisitConcElementaryTransformation) ChildCount() int                 { return len(s.args) }
+func (s *VisitConcElementaryTransformation) ChildAt(i int) sl.Strategy       { return s.args[i] }
+func (s *VisitConcElementaryTransformation) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
 
 // TomSymbol is the Go interface backing the Gom sort TomSymbol.
 type TomSymbol interface {
@@ -453,12 +1206,67 @@ func (t *EmptySymbolTomSymbol) String() string {
 	return "EmptySymbol" + "()"
 }
 
+func (t *EmptySymbolTomSymbol) ChildCount() int { return 0 }
+
+func (t *EmptySymbolTomSymbol) ChildAt(i int) any {
+	panic(fmt.Sprintf("EmptySymbolTomSymbol.ChildAt: index %d out of [0,0)", i))
+}
+
+func (t *EmptySymbolTomSymbol) SetChildAt(i int, child any) any {
+	panic(fmt.Sprintf("EmptySymbolTomSymbol.SetChildAt: index %d out of [0,0)", i))
+}
+
+func (t *EmptySymbolTomSymbol) Children() []any { return nil }
+
+func (t *EmptySymbolTomSymbol) SetChildren(children []any) any { return t }
+
 // MakeEmptySymbol builds the canonical (shared) EmptySymbol term.
 func MakeEmptySymbol() TomSymbol {
 	hashes := []uint32{}
 	proto := &EmptySymbolTomSymbol{hash: sharedobjects.MixSymbol(sharedobjects.StringHash("EmptySymbol"), hashes)}
 	return factory.Build(proto).(*EmptySymbolTomSymbol)
 }
+
+// IsEmptySymbol is the `Is_EmptySymbol` predicate strategy: succeeds (returns subject
+// unchanged) when subject has the `EmptySymbol` shape, otherwise fails with
+// sl.ErrVisitFailure.
+type IsEmptySymbol struct{}
+
+func (IsEmptySymbol) VisitLight(subject any, _ sl.Introspector) (any, error) {
+	if _, ok := subject.(*EmptySymbolTomSymbol); ok {
+		return subject, nil
+	}
+	return subject, sl.ErrVisitFailure
+}
+func (IsEmptySymbol) ChildCount() int             { return 0 }
+func (IsEmptySymbol) ChildAt(int) sl.Strategy     { panic("IsEmptySymbol: no children") }
+func (IsEmptySymbol) SetChildAt(int, sl.Strategy) { panic("IsEmptySymbol: no children") }
+
+// VisitEmptySymbol is the `_EmptySymbol` slot-visit strategy: when subject is `EmptySymbol`,
+// applies each constituent strategy to the matching child slot and
+// rebuilds the term iff at least one child changed. Fails with
+// sl.ErrVisitFailure when subject isn't `EmptySymbol`.
+type VisitEmptySymbol struct {
+	args []sl.Strategy
+}
+
+// NewVisitEmptySymbol builds the slot-visit strategy with the supplied per-slot
+// sub-strategies.
+func NewVisitEmptySymbol(args ...sl.Strategy) *VisitEmptySymbol {
+	return &VisitEmptySymbol{args: args}
+}
+
+func (s *VisitEmptySymbol) VisitLight(subject any, intro sl.Introspector) (any, error) {
+	if _, ok := subject.(*EmptySymbolTomSymbol); !ok {
+		return subject, sl.ErrVisitFailure
+	}
+	// Nullary alt: no children to visit.
+	return subject, nil
+}
+
+func (s *VisitEmptySymbol) ChildCount() int                 { return len(s.args) }
+func (s *VisitEmptySymbol) ChildAt(i int) sl.Strategy       { return s.args[i] }
+func (s *VisitEmptySymbol) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
 
 // SymbolTomSymbol is the term type for the alternative `Symbol(...)` of sort TomSymbol.
 type SymbolTomSymbol struct {
@@ -502,12 +1310,110 @@ func (t *SymbolTomSymbol) String() string {
 	return fmt.Sprintf("Symbol(%v,%v,%v,%v)", t.AstName, t.TypesToType, t.PairNameDeclList, t.Options)
 }
 
+func (t *SymbolTomSymbol) ChildCount() int { return 4 }
+
+func (t *SymbolTomSymbol) ChildAt(i int) any {
+	switch i {
+	case 0:
+		return t.AstName
+	case 1:
+		return t.TypesToType
+	case 2:
+		return t.PairNameDeclList
+	case 3:
+		return t.Options
+	}
+	panic(fmt.Sprintf("SymbolTomSymbol.ChildAt: index %d out of range", i))
+}
+
+func (t *SymbolTomSymbol) SetChildAt(i int, child any) any {
+	switch i {
+	case 0:
+		return MakeSymbol(child.(TomName), t.TypesToType, t.PairNameDeclList, t.Options)
+	case 1:
+		return MakeSymbol(t.AstName, child.(TomType), t.PairNameDeclList, t.Options)
+	case 2:
+		return MakeSymbol(t.AstName, t.TypesToType, child.(PairNameDeclList), t.Options)
+	case 3:
+		return MakeSymbol(t.AstName, t.TypesToType, t.PairNameDeclList, child.(OptionList))
+	}
+	panic(fmt.Sprintf("SymbolTomSymbol.SetChildAt: index %d out of range", i))
+}
+
+func (t *SymbolTomSymbol) Children() []any {
+	return []any{t.AstName, t.TypesToType, t.PairNameDeclList, t.Options}
+}
+
+func (t *SymbolTomSymbol) SetChildren(children []any) any {
+	return MakeSymbol(children[0].(TomName), children[1].(TomType), children[2].(PairNameDeclList), children[3].(OptionList))
+}
+
 // MakeSymbol builds the canonical (shared) Symbol term.
 func MakeSymbol(astName TomName, typesToType TomType, pairNameDeclList PairNameDeclList, options OptionList) TomSymbol {
 	hashes := []uint32{astName.Hash(), typesToType.Hash(), pairNameDeclList.Hash(), options.Hash()}
 	proto := &SymbolTomSymbol{hash: sharedobjects.MixSymbol(sharedobjects.StringHash("Symbol"), hashes), AstName: astName, TypesToType: typesToType, PairNameDeclList: pairNameDeclList, Options: options}
 	return factory.Build(proto).(*SymbolTomSymbol)
 }
+
+// IsSymbol is the `Is_Symbol` predicate strategy: succeeds (returns subject
+// unchanged) when subject has the `Symbol` shape, otherwise fails with
+// sl.ErrVisitFailure.
+type IsSymbol struct{}
+
+func (IsSymbol) VisitLight(subject any, _ sl.Introspector) (any, error) {
+	if _, ok := subject.(*SymbolTomSymbol); ok {
+		return subject, nil
+	}
+	return subject, sl.ErrVisitFailure
+}
+func (IsSymbol) ChildCount() int             { return 0 }
+func (IsSymbol) ChildAt(int) sl.Strategy     { panic("IsSymbol: no children") }
+func (IsSymbol) SetChildAt(int, sl.Strategy) { panic("IsSymbol: no children") }
+
+// VisitSymbol is the `_Symbol` slot-visit strategy: when subject is `Symbol`,
+// applies each constituent strategy to the matching child slot and
+// rebuilds the term iff at least one child changed. Fails with
+// sl.ErrVisitFailure when subject isn't `Symbol`.
+type VisitSymbol struct {
+	args []sl.Strategy
+}
+
+// NewVisitSymbol builds the slot-visit strategy with the supplied per-slot
+// sub-strategies.
+func NewVisitSymbol(args ...sl.Strategy) *VisitSymbol {
+	return &VisitSymbol{args: args}
+}
+
+func (s *VisitSymbol) VisitLight(subject any, intro sl.Introspector) (any, error) {
+	if _, ok := subject.(*SymbolTomSymbol); !ok {
+		return subject, sl.ErrVisitFailure
+	}
+	if len(s.args) != 4 {
+		return subject, sl.ErrVisitFailure
+	}
+	var newChildren []any
+	for i := 0; i < 4; i++ {
+		oldChild := intro.GetChildAt(subject, i)
+		newChild, err := s.args[i].VisitLight(oldChild, intro)
+		if err != nil {
+			return subject, err
+		}
+		if newChildren != nil {
+			newChildren[i] = newChild
+		} else if newChild != oldChild {
+			newChildren = intro.GetChildren(subject)
+			newChildren[i] = newChild
+		}
+	}
+	if newChildren != nil {
+		return intro.SetChildren(subject, newChildren), nil
+	}
+	return subject, nil
+}
+
+func (s *VisitSymbol) ChildCount() int                 { return len(s.args) }
+func (s *VisitSymbol) ChildAt(i int) sl.Strategy       { return s.args[i] }
+func (s *VisitSymbol) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
 
 // TomSymbolTable is the Go interface backing the Gom sort TomSymbolTable.
 type TomSymbolTable interface {
@@ -545,12 +1451,98 @@ func (t *TableTomSymbolTable) String() string {
 	return fmt.Sprintf("Table(%v)", t.EntryList)
 }
 
+func (t *TableTomSymbolTable) ChildCount() int { return 1 }
+
+func (t *TableTomSymbolTable) ChildAt(i int) any {
+	switch i {
+	case 0:
+		return t.EntryList
+	}
+	panic(fmt.Sprintf("TableTomSymbolTable.ChildAt: index %d out of range", i))
+}
+
+func (t *TableTomSymbolTable) SetChildAt(i int, child any) any {
+	switch i {
+	case 0:
+		return MakeTable(child.(TomEntryList))
+	}
+	panic(fmt.Sprintf("TableTomSymbolTable.SetChildAt: index %d out of range", i))
+}
+
+func (t *TableTomSymbolTable) Children() []any {
+	return []any{t.EntryList}
+}
+
+func (t *TableTomSymbolTable) SetChildren(children []any) any {
+	return MakeTable(children[0].(TomEntryList))
+}
+
 // MakeTable builds the canonical (shared) Table term.
 func MakeTable(entryList TomEntryList) TomSymbolTable {
 	hashes := []uint32{entryList.Hash()}
 	proto := &TableTomSymbolTable{hash: sharedobjects.MixSymbol(sharedobjects.StringHash("Table"), hashes), EntryList: entryList}
 	return factory.Build(proto).(*TableTomSymbolTable)
 }
+
+// IsTable is the `Is_Table` predicate strategy: succeeds (returns subject
+// unchanged) when subject has the `Table` shape, otherwise fails with
+// sl.ErrVisitFailure.
+type IsTable struct{}
+
+func (IsTable) VisitLight(subject any, _ sl.Introspector) (any, error) {
+	if _, ok := subject.(*TableTomSymbolTable); ok {
+		return subject, nil
+	}
+	return subject, sl.ErrVisitFailure
+}
+func (IsTable) ChildCount() int             { return 0 }
+func (IsTable) ChildAt(int) sl.Strategy     { panic("IsTable: no children") }
+func (IsTable) SetChildAt(int, sl.Strategy) { panic("IsTable: no children") }
+
+// VisitTable is the `_Table` slot-visit strategy: when subject is `Table`,
+// applies each constituent strategy to the matching child slot and
+// rebuilds the term iff at least one child changed. Fails with
+// sl.ErrVisitFailure when subject isn't `Table`.
+type VisitTable struct {
+	args []sl.Strategy
+}
+
+// NewVisitTable builds the slot-visit strategy with the supplied per-slot
+// sub-strategies.
+func NewVisitTable(args ...sl.Strategy) *VisitTable {
+	return &VisitTable{args: args}
+}
+
+func (s *VisitTable) VisitLight(subject any, intro sl.Introspector) (any, error) {
+	if _, ok := subject.(*TableTomSymbolTable); !ok {
+		return subject, sl.ErrVisitFailure
+	}
+	if len(s.args) != 1 {
+		return subject, sl.ErrVisitFailure
+	}
+	var newChildren []any
+	for i := 0; i < 1; i++ {
+		oldChild := intro.GetChildAt(subject, i)
+		newChild, err := s.args[i].VisitLight(oldChild, intro)
+		if err != nil {
+			return subject, err
+		}
+		if newChildren != nil {
+			newChildren[i] = newChild
+		} else if newChild != oldChild {
+			newChildren = intro.GetChildren(subject)
+			newChildren[i] = newChild
+		}
+	}
+	if newChildren != nil {
+		return intro.SetChildren(subject, newChildren), nil
+	}
+	return subject, nil
+}
+
+func (s *VisitTable) ChildCount() int                 { return len(s.args) }
+func (s *VisitTable) ChildAt(i int) sl.Strategy       { return s.args[i] }
+func (s *VisitTable) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
 
 // TomEntry is the Go interface backing the Gom sort TomEntry.
 type TomEntry interface {
@@ -592,12 +1584,102 @@ func (t *EntryTomEntry) String() string {
 	return fmt.Sprintf("Entry(%s,%v)", sharedobjects.JavaEscape(t.StrName), t.AstSymbol)
 }
 
+func (t *EntryTomEntry) ChildCount() int { return 2 }
+
+func (t *EntryTomEntry) ChildAt(i int) any {
+	switch i {
+	case 0:
+		return t.StrName
+	case 1:
+		return t.AstSymbol
+	}
+	panic(fmt.Sprintf("EntryTomEntry.ChildAt: index %d out of range", i))
+}
+
+func (t *EntryTomEntry) SetChildAt(i int, child any) any {
+	switch i {
+	case 0:
+		return MakeEntry(child.(string), t.AstSymbol)
+	case 1:
+		return MakeEntry(t.StrName, child.(TomSymbol))
+	}
+	panic(fmt.Sprintf("EntryTomEntry.SetChildAt: index %d out of range", i))
+}
+
+func (t *EntryTomEntry) Children() []any {
+	return []any{t.StrName, t.AstSymbol}
+}
+
+func (t *EntryTomEntry) SetChildren(children []any) any {
+	return MakeEntry(children[0].(string), children[1].(TomSymbol))
+}
+
 // MakeEntry builds the canonical (shared) Entry term.
 func MakeEntry(strName string, astSymbol TomSymbol) TomEntry {
 	hashes := []uint32{sharedobjects.StringHash(fmt.Sprintf("%v", strName)), astSymbol.Hash()}
 	proto := &EntryTomEntry{hash: sharedobjects.MixSymbol(sharedobjects.StringHash("Entry"), hashes), StrName: strName, AstSymbol: astSymbol}
 	return factory.Build(proto).(*EntryTomEntry)
 }
+
+// IsEntry is the `Is_Entry` predicate strategy: succeeds (returns subject
+// unchanged) when subject has the `Entry` shape, otherwise fails with
+// sl.ErrVisitFailure.
+type IsEntry struct{}
+
+func (IsEntry) VisitLight(subject any, _ sl.Introspector) (any, error) {
+	if _, ok := subject.(*EntryTomEntry); ok {
+		return subject, nil
+	}
+	return subject, sl.ErrVisitFailure
+}
+func (IsEntry) ChildCount() int             { return 0 }
+func (IsEntry) ChildAt(int) sl.Strategy     { panic("IsEntry: no children") }
+func (IsEntry) SetChildAt(int, sl.Strategy) { panic("IsEntry: no children") }
+
+// VisitEntry is the `_Entry` slot-visit strategy: when subject is `Entry`,
+// applies each constituent strategy to the matching child slot and
+// rebuilds the term iff at least one child changed. Fails with
+// sl.ErrVisitFailure when subject isn't `Entry`.
+type VisitEntry struct {
+	args []sl.Strategy
+}
+
+// NewVisitEntry builds the slot-visit strategy with the supplied per-slot
+// sub-strategies.
+func NewVisitEntry(args ...sl.Strategy) *VisitEntry {
+	return &VisitEntry{args: args}
+}
+
+func (s *VisitEntry) VisitLight(subject any, intro sl.Introspector) (any, error) {
+	if _, ok := subject.(*EntryTomEntry); !ok {
+		return subject, sl.ErrVisitFailure
+	}
+	if len(s.args) != 2 {
+		return subject, sl.ErrVisitFailure
+	}
+	var newChildren []any
+	for i := 0; i < 2; i++ {
+		oldChild := intro.GetChildAt(subject, i)
+		newChild, err := s.args[i].VisitLight(oldChild, intro)
+		if err != nil {
+			return subject, err
+		}
+		if newChildren != nil {
+			newChildren[i] = newChild
+		} else if newChild != oldChild {
+			newChildren = intro.GetChildren(subject)
+			newChildren[i] = newChild
+		}
+	}
+	if newChildren != nil {
+		return intro.SetChildren(subject, newChildren), nil
+	}
+	return subject, nil
+}
+
+func (s *VisitEntry) ChildCount() int                 { return len(s.args) }
+func (s *VisitEntry) ChildAt(i int) sl.Strategy       { return s.args[i] }
+func (s *VisitEntry) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
 
 // TomStructureTable is the Go interface backing the Gom sort TomStructureTable.
 type TomStructureTable interface {
@@ -635,12 +1717,98 @@ func (t *StructTableTomStructureTable) String() string {
 	return fmt.Sprintf("StructTable(%v)", t.StructList)
 }
 
+func (t *StructTableTomStructureTable) ChildCount() int { return 1 }
+
+func (t *StructTableTomStructureTable) ChildAt(i int) any {
+	switch i {
+	case 0:
+		return t.StructList
+	}
+	panic(fmt.Sprintf("StructTableTomStructureTable.ChildAt: index %d out of range", i))
+}
+
+func (t *StructTableTomStructureTable) SetChildAt(i int, child any) any {
+	switch i {
+	case 0:
+		return MakeStructTable(child.(TomList))
+	}
+	panic(fmt.Sprintf("StructTableTomStructureTable.SetChildAt: index %d out of range", i))
+}
+
+func (t *StructTableTomStructureTable) Children() []any {
+	return []any{t.StructList}
+}
+
+func (t *StructTableTomStructureTable) SetChildren(children []any) any {
+	return MakeStructTable(children[0].(TomList))
+}
+
 // MakeStructTable builds the canonical (shared) StructTable term.
 func MakeStructTable(structList TomList) TomStructureTable {
 	hashes := []uint32{structList.Hash()}
 	proto := &StructTableTomStructureTable{hash: sharedobjects.MixSymbol(sharedobjects.StringHash("StructTable"), hashes), StructList: structList}
 	return factory.Build(proto).(*StructTableTomStructureTable)
 }
+
+// IsStructTable is the `Is_StructTable` predicate strategy: succeeds (returns subject
+// unchanged) when subject has the `StructTable` shape, otherwise fails with
+// sl.ErrVisitFailure.
+type IsStructTable struct{}
+
+func (IsStructTable) VisitLight(subject any, _ sl.Introspector) (any, error) {
+	if _, ok := subject.(*StructTableTomStructureTable); ok {
+		return subject, nil
+	}
+	return subject, sl.ErrVisitFailure
+}
+func (IsStructTable) ChildCount() int             { return 0 }
+func (IsStructTable) ChildAt(int) sl.Strategy     { panic("IsStructTable: no children") }
+func (IsStructTable) SetChildAt(int, sl.Strategy) { panic("IsStructTable: no children") }
+
+// VisitStructTable is the `_StructTable` slot-visit strategy: when subject is `StructTable`,
+// applies each constituent strategy to the matching child slot and
+// rebuilds the term iff at least one child changed. Fails with
+// sl.ErrVisitFailure when subject isn't `StructTable`.
+type VisitStructTable struct {
+	args []sl.Strategy
+}
+
+// NewVisitStructTable builds the slot-visit strategy with the supplied per-slot
+// sub-strategies.
+func NewVisitStructTable(args ...sl.Strategy) *VisitStructTable {
+	return &VisitStructTable{args: args}
+}
+
+func (s *VisitStructTable) VisitLight(subject any, intro sl.Introspector) (any, error) {
+	if _, ok := subject.(*StructTableTomStructureTable); !ok {
+		return subject, sl.ErrVisitFailure
+	}
+	if len(s.args) != 1 {
+		return subject, sl.ErrVisitFailure
+	}
+	var newChildren []any
+	for i := 0; i < 1; i++ {
+		oldChild := intro.GetChildAt(subject, i)
+		newChild, err := s.args[i].VisitLight(oldChild, intro)
+		if err != nil {
+			return subject, err
+		}
+		if newChildren != nil {
+			newChildren[i] = newChild
+		} else if newChild != oldChild {
+			newChildren = intro.GetChildren(subject)
+			newChildren[i] = newChild
+		}
+	}
+	if newChildren != nil {
+		return intro.SetChildren(subject, newChildren), nil
+	}
+	return subject, nil
+}
+
+func (s *VisitStructTable) ChildCount() int                 { return len(s.args) }
+func (s *VisitStructTable) ChildAt(i int) sl.Strategy       { return s.args[i] }
+func (s *VisitStructTable) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
 
 // TomVisitList is the Go interface backing the Gom sort TomVisitList.
 type TomVisitList interface {
@@ -687,6 +1855,32 @@ func (t *ConcTomVisitTomVisitList) String() string {
 	return "concTomVisit" + "(" + strings.Join(parts, ",") + ")"
 }
 
+func (t *ConcTomVisitTomVisitList) ChildCount() int { return len(t.Slots) }
+
+func (t *ConcTomVisitTomVisitList) ChildAt(i int) any { return t.Slots[i] }
+
+func (t *ConcTomVisitTomVisitList) SetChildAt(i int, child any) any {
+	dup := append([]TomVisit(nil), t.Slots...)
+	dup[i] = child.(TomVisit)
+	return MakeConcTomVisit(dup...)
+}
+
+func (t *ConcTomVisitTomVisitList) Children() []any {
+	out := make([]any, len(t.Slots))
+	for i, v := range t.Slots {
+		out[i] = v
+	}
+	return out
+}
+
+func (t *ConcTomVisitTomVisitList) SetChildren(children []any) any {
+	args := make([]TomVisit, len(children))
+	for i, c := range children {
+		args[i] = c.(TomVisit)
+	}
+	return MakeConcTomVisit(args...)
+}
+
 // MakeConcTomVisit builds the canonical (shared) concTomVisit term.
 func MakeConcTomVisit(args ...TomVisit) TomVisitList {
 	hashes := make([]uint32, 0, len(args))
@@ -696,6 +1890,69 @@ func MakeConcTomVisit(args ...TomVisit) TomVisitList {
 	proto := &ConcTomVisitTomVisitList{Slots: args, hash: sharedobjects.MixSymbol(sharedobjects.StringHash("concTomVisit"), hashes)}
 	return factory.Build(proto).(*ConcTomVisitTomVisitList)
 }
+
+// IsConcTomVisit is the `Is_concTomVisit` predicate strategy: succeeds (returns subject
+// unchanged) when subject has the `concTomVisit` shape, otherwise fails with
+// sl.ErrVisitFailure.
+type IsConcTomVisit struct{}
+
+func (IsConcTomVisit) VisitLight(subject any, _ sl.Introspector) (any, error) {
+	if _, ok := subject.(*ConcTomVisitTomVisitList); ok {
+		return subject, nil
+	}
+	return subject, sl.ErrVisitFailure
+}
+func (IsConcTomVisit) ChildCount() int             { return 0 }
+func (IsConcTomVisit) ChildAt(int) sl.Strategy     { panic("IsConcTomVisit: no children") }
+func (IsConcTomVisit) SetChildAt(int, sl.Strategy) { panic("IsConcTomVisit: no children") }
+
+// VisitConcTomVisit is the `_concTomVisit` slot-visit strategy: when subject is `concTomVisit`,
+// applies each constituent strategy to the matching child slot and
+// rebuilds the term iff at least one child changed. Fails with
+// sl.ErrVisitFailure when subject isn't `concTomVisit`.
+type VisitConcTomVisit struct {
+	args []sl.Strategy
+}
+
+// NewVisitConcTomVisit builds the slot-visit strategy with the supplied per-slot
+// sub-strategies.
+func NewVisitConcTomVisit(args ...sl.Strategy) *VisitConcTomVisit {
+	return &VisitConcTomVisit{args: args}
+}
+
+func (s *VisitConcTomVisit) VisitLight(subject any, intro sl.Introspector) (any, error) {
+	if _, ok := subject.(*ConcTomVisitTomVisitList); !ok {
+		return subject, sl.ErrVisitFailure
+	}
+	// Variadic alt: visit every element with args[0] (Java's
+	// `_concX` invokes the sub-strategy on each list element).
+	if len(s.args) == 0 {
+		return subject, nil
+	}
+	count := intro.GetChildCount(subject)
+	var newChildren []any
+	for i := 0; i < count; i++ {
+		oldChild := intro.GetChildAt(subject, i)
+		newChild, err := s.args[0].VisitLight(oldChild, intro)
+		if err != nil {
+			return subject, err
+		}
+		if newChildren != nil {
+			newChildren[i] = newChild
+		} else if newChild != oldChild {
+			newChildren = intro.GetChildren(subject)
+			newChildren[i] = newChild
+		}
+	}
+	if newChildren != nil {
+		return intro.SetChildren(subject, newChildren), nil
+	}
+	return subject, nil
+}
+
+func (s *VisitConcTomVisit) ChildCount() int                 { return len(s.args) }
+func (s *VisitConcTomVisit) ChildAt(i int) sl.Strategy       { return s.args[i] }
+func (s *VisitConcTomVisit) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
 
 // TomEntryList is the Go interface backing the Gom sort TomEntryList.
 type TomEntryList interface {
@@ -742,6 +1999,32 @@ func (t *ConcTomEntryTomEntryList) String() string {
 	return "concTomEntry" + "(" + strings.Join(parts, ",") + ")"
 }
 
+func (t *ConcTomEntryTomEntryList) ChildCount() int { return len(t.Slots) }
+
+func (t *ConcTomEntryTomEntryList) ChildAt(i int) any { return t.Slots[i] }
+
+func (t *ConcTomEntryTomEntryList) SetChildAt(i int, child any) any {
+	dup := append([]TomEntry(nil), t.Slots...)
+	dup[i] = child.(TomEntry)
+	return MakeConcTomEntry(dup...)
+}
+
+func (t *ConcTomEntryTomEntryList) Children() []any {
+	out := make([]any, len(t.Slots))
+	for i, v := range t.Slots {
+		out[i] = v
+	}
+	return out
+}
+
+func (t *ConcTomEntryTomEntryList) SetChildren(children []any) any {
+	args := make([]TomEntry, len(children))
+	for i, c := range children {
+		args[i] = c.(TomEntry)
+	}
+	return MakeConcTomEntry(args...)
+}
+
 // MakeConcTomEntry builds the canonical (shared) concTomEntry term.
 func MakeConcTomEntry(args ...TomEntry) TomEntryList {
 	hashes := make([]uint32, 0, len(args))
@@ -751,6 +2034,69 @@ func MakeConcTomEntry(args ...TomEntry) TomEntryList {
 	proto := &ConcTomEntryTomEntryList{Slots: args, hash: sharedobjects.MixSymbol(sharedobjects.StringHash("concTomEntry"), hashes)}
 	return factory.Build(proto).(*ConcTomEntryTomEntryList)
 }
+
+// IsConcTomEntry is the `Is_concTomEntry` predicate strategy: succeeds (returns subject
+// unchanged) when subject has the `concTomEntry` shape, otherwise fails with
+// sl.ErrVisitFailure.
+type IsConcTomEntry struct{}
+
+func (IsConcTomEntry) VisitLight(subject any, _ sl.Introspector) (any, error) {
+	if _, ok := subject.(*ConcTomEntryTomEntryList); ok {
+		return subject, nil
+	}
+	return subject, sl.ErrVisitFailure
+}
+func (IsConcTomEntry) ChildCount() int             { return 0 }
+func (IsConcTomEntry) ChildAt(int) sl.Strategy     { panic("IsConcTomEntry: no children") }
+func (IsConcTomEntry) SetChildAt(int, sl.Strategy) { panic("IsConcTomEntry: no children") }
+
+// VisitConcTomEntry is the `_concTomEntry` slot-visit strategy: when subject is `concTomEntry`,
+// applies each constituent strategy to the matching child slot and
+// rebuilds the term iff at least one child changed. Fails with
+// sl.ErrVisitFailure when subject isn't `concTomEntry`.
+type VisitConcTomEntry struct {
+	args []sl.Strategy
+}
+
+// NewVisitConcTomEntry builds the slot-visit strategy with the supplied per-slot
+// sub-strategies.
+func NewVisitConcTomEntry(args ...sl.Strategy) *VisitConcTomEntry {
+	return &VisitConcTomEntry{args: args}
+}
+
+func (s *VisitConcTomEntry) VisitLight(subject any, intro sl.Introspector) (any, error) {
+	if _, ok := subject.(*ConcTomEntryTomEntryList); !ok {
+		return subject, sl.ErrVisitFailure
+	}
+	// Variadic alt: visit every element with args[0] (Java's
+	// `_concX` invokes the sub-strategy on each list element).
+	if len(s.args) == 0 {
+		return subject, nil
+	}
+	count := intro.GetChildCount(subject)
+	var newChildren []any
+	for i := 0; i < count; i++ {
+		oldChild := intro.GetChildAt(subject, i)
+		newChild, err := s.args[0].VisitLight(oldChild, intro)
+		if err != nil {
+			return subject, err
+		}
+		if newChildren != nil {
+			newChildren[i] = newChild
+		} else if newChild != oldChild {
+			newChildren = intro.GetChildren(subject)
+			newChildren[i] = newChild
+		}
+	}
+	if newChildren != nil {
+		return intro.SetChildren(subject, newChildren), nil
+	}
+	return subject, nil
+}
+
+func (s *VisitConcTomEntry) ChildCount() int                 { return len(s.args) }
+func (s *VisitConcTomEntry) ChildAt(i int) sl.Strategy       { return s.args[i] }
+func (s *VisitConcTomEntry) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
 
 // TomSymbolList is the Go interface backing the Gom sort TomSymbolList.
 type TomSymbolList interface {
@@ -797,6 +2143,32 @@ func (t *ConcTomSymbolTomSymbolList) String() string {
 	return "concTomSymbol" + "(" + strings.Join(parts, ",") + ")"
 }
 
+func (t *ConcTomSymbolTomSymbolList) ChildCount() int { return len(t.Slots) }
+
+func (t *ConcTomSymbolTomSymbolList) ChildAt(i int) any { return t.Slots[i] }
+
+func (t *ConcTomSymbolTomSymbolList) SetChildAt(i int, child any) any {
+	dup := append([]TomSymbol(nil), t.Slots...)
+	dup[i] = child.(TomSymbol)
+	return MakeConcTomSymbol(dup...)
+}
+
+func (t *ConcTomSymbolTomSymbolList) Children() []any {
+	out := make([]any, len(t.Slots))
+	for i, v := range t.Slots {
+		out[i] = v
+	}
+	return out
+}
+
+func (t *ConcTomSymbolTomSymbolList) SetChildren(children []any) any {
+	args := make([]TomSymbol, len(children))
+	for i, c := range children {
+		args[i] = c.(TomSymbol)
+	}
+	return MakeConcTomSymbol(args...)
+}
+
 // MakeConcTomSymbol builds the canonical (shared) concTomSymbol term.
 func MakeConcTomSymbol(args ...TomSymbol) TomSymbolList {
 	hashes := make([]uint32, 0, len(args))
@@ -806,6 +2178,69 @@ func MakeConcTomSymbol(args ...TomSymbol) TomSymbolList {
 	proto := &ConcTomSymbolTomSymbolList{Slots: args, hash: sharedobjects.MixSymbol(sharedobjects.StringHash("concTomSymbol"), hashes)}
 	return factory.Build(proto).(*ConcTomSymbolTomSymbolList)
 }
+
+// IsConcTomSymbol is the `Is_concTomSymbol` predicate strategy: succeeds (returns subject
+// unchanged) when subject has the `concTomSymbol` shape, otherwise fails with
+// sl.ErrVisitFailure.
+type IsConcTomSymbol struct{}
+
+func (IsConcTomSymbol) VisitLight(subject any, _ sl.Introspector) (any, error) {
+	if _, ok := subject.(*ConcTomSymbolTomSymbolList); ok {
+		return subject, nil
+	}
+	return subject, sl.ErrVisitFailure
+}
+func (IsConcTomSymbol) ChildCount() int             { return 0 }
+func (IsConcTomSymbol) ChildAt(int) sl.Strategy     { panic("IsConcTomSymbol: no children") }
+func (IsConcTomSymbol) SetChildAt(int, sl.Strategy) { panic("IsConcTomSymbol: no children") }
+
+// VisitConcTomSymbol is the `_concTomSymbol` slot-visit strategy: when subject is `concTomSymbol`,
+// applies each constituent strategy to the matching child slot and
+// rebuilds the term iff at least one child changed. Fails with
+// sl.ErrVisitFailure when subject isn't `concTomSymbol`.
+type VisitConcTomSymbol struct {
+	args []sl.Strategy
+}
+
+// NewVisitConcTomSymbol builds the slot-visit strategy with the supplied per-slot
+// sub-strategies.
+func NewVisitConcTomSymbol(args ...sl.Strategy) *VisitConcTomSymbol {
+	return &VisitConcTomSymbol{args: args}
+}
+
+func (s *VisitConcTomSymbol) VisitLight(subject any, intro sl.Introspector) (any, error) {
+	if _, ok := subject.(*ConcTomSymbolTomSymbolList); !ok {
+		return subject, sl.ErrVisitFailure
+	}
+	// Variadic alt: visit every element with args[0] (Java's
+	// `_concX` invokes the sub-strategy on each list element).
+	if len(s.args) == 0 {
+		return subject, nil
+	}
+	count := intro.GetChildCount(subject)
+	var newChildren []any
+	for i := 0; i < count; i++ {
+		oldChild := intro.GetChildAt(subject, i)
+		newChild, err := s.args[0].VisitLight(oldChild, intro)
+		if err != nil {
+			return subject, err
+		}
+		if newChildren != nil {
+			newChildren[i] = newChild
+		} else if newChild != oldChild {
+			newChildren = intro.GetChildren(subject)
+			newChildren[i] = newChild
+		}
+	}
+	if newChildren != nil {
+		return intro.SetChildren(subject, newChildren), nil
+	}
+	return subject, nil
+}
+
+func (s *VisitConcTomSymbol) ChildCount() int                 { return len(s.args) }
+func (s *VisitConcTomSymbol) ChildAt(i int) sl.Strategy       { return s.args[i] }
+func (s *VisitConcTomSymbol) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
 
 // KeyEntry is the Go interface backing the Gom sort KeyEntry.
 type KeyEntry interface {
@@ -843,12 +2278,102 @@ func (t *UsedSymbolConstructorKeyEntry) String() string {
 	return fmt.Sprintf("UsedSymbolConstructor(%v)", t.Symbol)
 }
 
+func (t *UsedSymbolConstructorKeyEntry) ChildCount() int { return 1 }
+
+func (t *UsedSymbolConstructorKeyEntry) ChildAt(i int) any {
+	switch i {
+	case 0:
+		return t.Symbol
+	}
+	panic(fmt.Sprintf("UsedSymbolConstructorKeyEntry.ChildAt: index %d out of range", i))
+}
+
+func (t *UsedSymbolConstructorKeyEntry) SetChildAt(i int, child any) any {
+	switch i {
+	case 0:
+		return MakeUsedSymbolConstructor(child.(TomSymbol))
+	}
+	panic(fmt.Sprintf("UsedSymbolConstructorKeyEntry.SetChildAt: index %d out of range", i))
+}
+
+func (t *UsedSymbolConstructorKeyEntry) Children() []any {
+	return []any{t.Symbol}
+}
+
+func (t *UsedSymbolConstructorKeyEntry) SetChildren(children []any) any {
+	return MakeUsedSymbolConstructor(children[0].(TomSymbol))
+}
+
 // MakeUsedSymbolConstructor builds the canonical (shared) UsedSymbolConstructor term.
 func MakeUsedSymbolConstructor(symbol TomSymbol) KeyEntry {
 	hashes := []uint32{symbol.Hash()}
 	proto := &UsedSymbolConstructorKeyEntry{hash: sharedobjects.MixSymbol(sharedobjects.StringHash("UsedSymbolConstructor"), hashes), Symbol: symbol}
 	return factory.Build(proto).(*UsedSymbolConstructorKeyEntry)
 }
+
+// IsUsedSymbolConstructor is the `Is_UsedSymbolConstructor` predicate strategy: succeeds (returns subject
+// unchanged) when subject has the `UsedSymbolConstructor` shape, otherwise fails with
+// sl.ErrVisitFailure.
+type IsUsedSymbolConstructor struct{}
+
+func (IsUsedSymbolConstructor) VisitLight(subject any, _ sl.Introspector) (any, error) {
+	if _, ok := subject.(*UsedSymbolConstructorKeyEntry); ok {
+		return subject, nil
+	}
+	return subject, sl.ErrVisitFailure
+}
+func (IsUsedSymbolConstructor) ChildCount() int { return 0 }
+func (IsUsedSymbolConstructor) ChildAt(int) sl.Strategy {
+	panic("IsUsedSymbolConstructor: no children")
+}
+func (IsUsedSymbolConstructor) SetChildAt(int, sl.Strategy) {
+	panic("IsUsedSymbolConstructor: no children")
+}
+
+// VisitUsedSymbolConstructor is the `_UsedSymbolConstructor` slot-visit strategy: when subject is `UsedSymbolConstructor`,
+// applies each constituent strategy to the matching child slot and
+// rebuilds the term iff at least one child changed. Fails with
+// sl.ErrVisitFailure when subject isn't `UsedSymbolConstructor`.
+type VisitUsedSymbolConstructor struct {
+	args []sl.Strategy
+}
+
+// NewVisitUsedSymbolConstructor builds the slot-visit strategy with the supplied per-slot
+// sub-strategies.
+func NewVisitUsedSymbolConstructor(args ...sl.Strategy) *VisitUsedSymbolConstructor {
+	return &VisitUsedSymbolConstructor{args: args}
+}
+
+func (s *VisitUsedSymbolConstructor) VisitLight(subject any, intro sl.Introspector) (any, error) {
+	if _, ok := subject.(*UsedSymbolConstructorKeyEntry); !ok {
+		return subject, sl.ErrVisitFailure
+	}
+	if len(s.args) != 1 {
+		return subject, sl.ErrVisitFailure
+	}
+	var newChildren []any
+	for i := 0; i < 1; i++ {
+		oldChild := intro.GetChildAt(subject, i)
+		newChild, err := s.args[i].VisitLight(oldChild, intro)
+		if err != nil {
+			return subject, err
+		}
+		if newChildren != nil {
+			newChildren[i] = newChild
+		} else if newChild != oldChild {
+			newChildren = intro.GetChildren(subject)
+			newChildren[i] = newChild
+		}
+	}
+	if newChildren != nil {
+		return intro.SetChildren(subject, newChildren), nil
+	}
+	return subject, nil
+}
+
+func (s *VisitUsedSymbolConstructor) ChildCount() int                 { return len(s.args) }
+func (s *VisitUsedSymbolConstructor) ChildAt(i int) sl.Strategy       { return s.args[i] }
+func (s *VisitUsedSymbolConstructor) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
 
 // UsedSymbolDestructorKeyEntry is the term type for the alternative `UsedSymbolDestructor(...)` of sort KeyEntry.
 type UsedSymbolDestructorKeyEntry struct {
@@ -880,12 +2405,100 @@ func (t *UsedSymbolDestructorKeyEntry) String() string {
 	return fmt.Sprintf("UsedSymbolDestructor(%v)", t.Symbol)
 }
 
+func (t *UsedSymbolDestructorKeyEntry) ChildCount() int { return 1 }
+
+func (t *UsedSymbolDestructorKeyEntry) ChildAt(i int) any {
+	switch i {
+	case 0:
+		return t.Symbol
+	}
+	panic(fmt.Sprintf("UsedSymbolDestructorKeyEntry.ChildAt: index %d out of range", i))
+}
+
+func (t *UsedSymbolDestructorKeyEntry) SetChildAt(i int, child any) any {
+	switch i {
+	case 0:
+		return MakeUsedSymbolDestructor(child.(TomSymbol))
+	}
+	panic(fmt.Sprintf("UsedSymbolDestructorKeyEntry.SetChildAt: index %d out of range", i))
+}
+
+func (t *UsedSymbolDestructorKeyEntry) Children() []any {
+	return []any{t.Symbol}
+}
+
+func (t *UsedSymbolDestructorKeyEntry) SetChildren(children []any) any {
+	return MakeUsedSymbolDestructor(children[0].(TomSymbol))
+}
+
 // MakeUsedSymbolDestructor builds the canonical (shared) UsedSymbolDestructor term.
 func MakeUsedSymbolDestructor(symbol TomSymbol) KeyEntry {
 	hashes := []uint32{symbol.Hash()}
 	proto := &UsedSymbolDestructorKeyEntry{hash: sharedobjects.MixSymbol(sharedobjects.StringHash("UsedSymbolDestructor"), hashes), Symbol: symbol}
 	return factory.Build(proto).(*UsedSymbolDestructorKeyEntry)
 }
+
+// IsUsedSymbolDestructor is the `Is_UsedSymbolDestructor` predicate strategy: succeeds (returns subject
+// unchanged) when subject has the `UsedSymbolDestructor` shape, otherwise fails with
+// sl.ErrVisitFailure.
+type IsUsedSymbolDestructor struct{}
+
+func (IsUsedSymbolDestructor) VisitLight(subject any, _ sl.Introspector) (any, error) {
+	if _, ok := subject.(*UsedSymbolDestructorKeyEntry); ok {
+		return subject, nil
+	}
+	return subject, sl.ErrVisitFailure
+}
+func (IsUsedSymbolDestructor) ChildCount() int         { return 0 }
+func (IsUsedSymbolDestructor) ChildAt(int) sl.Strategy { panic("IsUsedSymbolDestructor: no children") }
+func (IsUsedSymbolDestructor) SetChildAt(int, sl.Strategy) {
+	panic("IsUsedSymbolDestructor: no children")
+}
+
+// VisitUsedSymbolDestructor is the `_UsedSymbolDestructor` slot-visit strategy: when subject is `UsedSymbolDestructor`,
+// applies each constituent strategy to the matching child slot and
+// rebuilds the term iff at least one child changed. Fails with
+// sl.ErrVisitFailure when subject isn't `UsedSymbolDestructor`.
+type VisitUsedSymbolDestructor struct {
+	args []sl.Strategy
+}
+
+// NewVisitUsedSymbolDestructor builds the slot-visit strategy with the supplied per-slot
+// sub-strategies.
+func NewVisitUsedSymbolDestructor(args ...sl.Strategy) *VisitUsedSymbolDestructor {
+	return &VisitUsedSymbolDestructor{args: args}
+}
+
+func (s *VisitUsedSymbolDestructor) VisitLight(subject any, intro sl.Introspector) (any, error) {
+	if _, ok := subject.(*UsedSymbolDestructorKeyEntry); !ok {
+		return subject, sl.ErrVisitFailure
+	}
+	if len(s.args) != 1 {
+		return subject, sl.ErrVisitFailure
+	}
+	var newChildren []any
+	for i := 0; i < 1; i++ {
+		oldChild := intro.GetChildAt(subject, i)
+		newChild, err := s.args[i].VisitLight(oldChild, intro)
+		if err != nil {
+			return subject, err
+		}
+		if newChildren != nil {
+			newChildren[i] = newChild
+		} else if newChild != oldChild {
+			newChildren = intro.GetChildren(subject)
+			newChildren[i] = newChild
+		}
+	}
+	if newChildren != nil {
+		return intro.SetChildren(subject, newChildren), nil
+	}
+	return subject, nil
+}
+
+func (s *VisitUsedSymbolDestructor) ChildCount() int                 { return len(s.args) }
+func (s *VisitUsedSymbolDestructor) ChildAt(i int) sl.Strategy       { return s.args[i] }
+func (s *VisitUsedSymbolDestructor) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
 
 // UsedSymbolACKeyEntry is the term type for the alternative `UsedSymbolAC(...)` of sort KeyEntry.
 type UsedSymbolACKeyEntry struct {
@@ -917,12 +2530,98 @@ func (t *UsedSymbolACKeyEntry) String() string {
 	return fmt.Sprintf("UsedSymbolAC(%v)", t.Symbol)
 }
 
+func (t *UsedSymbolACKeyEntry) ChildCount() int { return 1 }
+
+func (t *UsedSymbolACKeyEntry) ChildAt(i int) any {
+	switch i {
+	case 0:
+		return t.Symbol
+	}
+	panic(fmt.Sprintf("UsedSymbolACKeyEntry.ChildAt: index %d out of range", i))
+}
+
+func (t *UsedSymbolACKeyEntry) SetChildAt(i int, child any) any {
+	switch i {
+	case 0:
+		return MakeUsedSymbolAC(child.(TomSymbol))
+	}
+	panic(fmt.Sprintf("UsedSymbolACKeyEntry.SetChildAt: index %d out of range", i))
+}
+
+func (t *UsedSymbolACKeyEntry) Children() []any {
+	return []any{t.Symbol}
+}
+
+func (t *UsedSymbolACKeyEntry) SetChildren(children []any) any {
+	return MakeUsedSymbolAC(children[0].(TomSymbol))
+}
+
 // MakeUsedSymbolAC builds the canonical (shared) UsedSymbolAC term.
 func MakeUsedSymbolAC(symbol TomSymbol) KeyEntry {
 	hashes := []uint32{symbol.Hash()}
 	proto := &UsedSymbolACKeyEntry{hash: sharedobjects.MixSymbol(sharedobjects.StringHash("UsedSymbolAC"), hashes), Symbol: symbol}
 	return factory.Build(proto).(*UsedSymbolACKeyEntry)
 }
+
+// IsUsedSymbolAC is the `Is_UsedSymbolAC` predicate strategy: succeeds (returns subject
+// unchanged) when subject has the `UsedSymbolAC` shape, otherwise fails with
+// sl.ErrVisitFailure.
+type IsUsedSymbolAC struct{}
+
+func (IsUsedSymbolAC) VisitLight(subject any, _ sl.Introspector) (any, error) {
+	if _, ok := subject.(*UsedSymbolACKeyEntry); ok {
+		return subject, nil
+	}
+	return subject, sl.ErrVisitFailure
+}
+func (IsUsedSymbolAC) ChildCount() int             { return 0 }
+func (IsUsedSymbolAC) ChildAt(int) sl.Strategy     { panic("IsUsedSymbolAC: no children") }
+func (IsUsedSymbolAC) SetChildAt(int, sl.Strategy) { panic("IsUsedSymbolAC: no children") }
+
+// VisitUsedSymbolAC is the `_UsedSymbolAC` slot-visit strategy: when subject is `UsedSymbolAC`,
+// applies each constituent strategy to the matching child slot and
+// rebuilds the term iff at least one child changed. Fails with
+// sl.ErrVisitFailure when subject isn't `UsedSymbolAC`.
+type VisitUsedSymbolAC struct {
+	args []sl.Strategy
+}
+
+// NewVisitUsedSymbolAC builds the slot-visit strategy with the supplied per-slot
+// sub-strategies.
+func NewVisitUsedSymbolAC(args ...sl.Strategy) *VisitUsedSymbolAC {
+	return &VisitUsedSymbolAC{args: args}
+}
+
+func (s *VisitUsedSymbolAC) VisitLight(subject any, intro sl.Introspector) (any, error) {
+	if _, ok := subject.(*UsedSymbolACKeyEntry); !ok {
+		return subject, sl.ErrVisitFailure
+	}
+	if len(s.args) != 1 {
+		return subject, sl.ErrVisitFailure
+	}
+	var newChildren []any
+	for i := 0; i < 1; i++ {
+		oldChild := intro.GetChildAt(subject, i)
+		newChild, err := s.args[i].VisitLight(oldChild, intro)
+		if err != nil {
+			return subject, err
+		}
+		if newChildren != nil {
+			newChildren[i] = newChild
+		} else if newChild != oldChild {
+			newChildren = intro.GetChildren(subject)
+			newChildren[i] = newChild
+		}
+	}
+	if newChildren != nil {
+		return intro.SetChildren(subject, newChildren), nil
+	}
+	return subject, nil
+}
+
+func (s *VisitUsedSymbolAC) ChildCount() int                 { return len(s.args) }
+func (s *VisitUsedSymbolAC) ChildAt(i int) sl.Strategy       { return s.args[i] }
+func (s *VisitUsedSymbolAC) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
 
 // UsedTypeKeyEntry is the term type for the alternative `UsedType(...)` of sort KeyEntry.
 type UsedTypeKeyEntry struct {
@@ -954,12 +2653,98 @@ func (t *UsedTypeKeyEntry) String() string {
 	return fmt.Sprintf("UsedType(%v)", t.Typedef)
 }
 
+func (t *UsedTypeKeyEntry) ChildCount() int { return 1 }
+
+func (t *UsedTypeKeyEntry) ChildAt(i int) any {
+	switch i {
+	case 0:
+		return t.Typedef
+	}
+	panic(fmt.Sprintf("UsedTypeKeyEntry.ChildAt: index %d out of range", i))
+}
+
+func (t *UsedTypeKeyEntry) SetChildAt(i int, child any) any {
+	switch i {
+	case 0:
+		return MakeUsedType(child.(TomType))
+	}
+	panic(fmt.Sprintf("UsedTypeKeyEntry.SetChildAt: index %d out of range", i))
+}
+
+func (t *UsedTypeKeyEntry) Children() []any {
+	return []any{t.Typedef}
+}
+
+func (t *UsedTypeKeyEntry) SetChildren(children []any) any {
+	return MakeUsedType(children[0].(TomType))
+}
+
 // MakeUsedType builds the canonical (shared) UsedType term.
 func MakeUsedType(typedef TomType) KeyEntry {
 	hashes := []uint32{typedef.Hash()}
 	proto := &UsedTypeKeyEntry{hash: sharedobjects.MixSymbol(sharedobjects.StringHash("UsedType"), hashes), Typedef: typedef}
 	return factory.Build(proto).(*UsedTypeKeyEntry)
 }
+
+// IsUsedType is the `Is_UsedType` predicate strategy: succeeds (returns subject
+// unchanged) when subject has the `UsedType` shape, otherwise fails with
+// sl.ErrVisitFailure.
+type IsUsedType struct{}
+
+func (IsUsedType) VisitLight(subject any, _ sl.Introspector) (any, error) {
+	if _, ok := subject.(*UsedTypeKeyEntry); ok {
+		return subject, nil
+	}
+	return subject, sl.ErrVisitFailure
+}
+func (IsUsedType) ChildCount() int             { return 0 }
+func (IsUsedType) ChildAt(int) sl.Strategy     { panic("IsUsedType: no children") }
+func (IsUsedType) SetChildAt(int, sl.Strategy) { panic("IsUsedType: no children") }
+
+// VisitUsedType is the `_UsedType` slot-visit strategy: when subject is `UsedType`,
+// applies each constituent strategy to the matching child slot and
+// rebuilds the term iff at least one child changed. Fails with
+// sl.ErrVisitFailure when subject isn't `UsedType`.
+type VisitUsedType struct {
+	args []sl.Strategy
+}
+
+// NewVisitUsedType builds the slot-visit strategy with the supplied per-slot
+// sub-strategies.
+func NewVisitUsedType(args ...sl.Strategy) *VisitUsedType {
+	return &VisitUsedType{args: args}
+}
+
+func (s *VisitUsedType) VisitLight(subject any, intro sl.Introspector) (any, error) {
+	if _, ok := subject.(*UsedTypeKeyEntry); !ok {
+		return subject, sl.ErrVisitFailure
+	}
+	if len(s.args) != 1 {
+		return subject, sl.ErrVisitFailure
+	}
+	var newChildren []any
+	for i := 0; i < 1; i++ {
+		oldChild := intro.GetChildAt(subject, i)
+		newChild, err := s.args[i].VisitLight(oldChild, intro)
+		if err != nil {
+			return subject, err
+		}
+		if newChildren != nil {
+			newChildren[i] = newChild
+		} else if newChild != oldChild {
+			newChildren = intro.GetChildren(subject)
+			newChildren[i] = newChild
+		}
+	}
+	if newChildren != nil {
+		return intro.SetChildren(subject, newChildren), nil
+	}
+	return subject, nil
+}
+
+func (s *VisitUsedType) ChildCount() int                 { return len(s.args) }
+func (s *VisitUsedType) ChildAt(i int) sl.Strategy       { return s.args[i] }
+func (s *VisitUsedType) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
 
 // TransfoStratInfo is the Go interface backing the Gom sort TransfoStratInfo.
 type TransfoStratInfo interface {
@@ -1005,9 +2790,103 @@ func (t *TransfoStratInfoTransfoStratInfo) String() string {
 	return fmt.Sprintf("TransfoStratInfo(%s,%v,%v)", sharedobjects.JavaEscape(t.Name), t.TraversalStrategy, t.OrgTrack)
 }
 
+func (t *TransfoStratInfoTransfoStratInfo) ChildCount() int { return 3 }
+
+func (t *TransfoStratInfoTransfoStratInfo) ChildAt(i int) any {
+	switch i {
+	case 0:
+		return t.Name
+	case 1:
+		return t.TraversalStrategy
+	case 2:
+		return t.OrgTrack
+	}
+	panic(fmt.Sprintf("TransfoStratInfoTransfoStratInfo.ChildAt: index %d out of range", i))
+}
+
+func (t *TransfoStratInfoTransfoStratInfo) SetChildAt(i int, child any) any {
+	switch i {
+	case 0:
+		return MakeTransfoStratInfo(child.(string), t.TraversalStrategy, t.OrgTrack)
+	case 1:
+		return MakeTransfoStratInfo(t.Name, child.(BQTerm), t.OrgTrack)
+	case 2:
+		return MakeTransfoStratInfo(t.Name, t.TraversalStrategy, child.(Option))
+	}
+	panic(fmt.Sprintf("TransfoStratInfoTransfoStratInfo.SetChildAt: index %d out of range", i))
+}
+
+func (t *TransfoStratInfoTransfoStratInfo) Children() []any {
+	return []any{t.Name, t.TraversalStrategy, t.OrgTrack}
+}
+
+func (t *TransfoStratInfoTransfoStratInfo) SetChildren(children []any) any {
+	return MakeTransfoStratInfo(children[0].(string), children[1].(BQTerm), children[2].(Option))
+}
+
 // MakeTransfoStratInfo builds the canonical (shared) TransfoStratInfo term.
 func MakeTransfoStratInfo(name string, traversalStrategy BQTerm, orgTrack Option) TransfoStratInfo {
 	hashes := []uint32{sharedobjects.StringHash(fmt.Sprintf("%v", name)), traversalStrategy.Hash(), orgTrack.Hash()}
 	proto := &TransfoStratInfoTransfoStratInfo{hash: sharedobjects.MixSymbol(sharedobjects.StringHash("TransfoStratInfo"), hashes), Name: name, TraversalStrategy: traversalStrategy, OrgTrack: orgTrack}
 	return factory.Build(proto).(*TransfoStratInfoTransfoStratInfo)
 }
+
+// IsTransfoStratInfo is the `Is_TransfoStratInfo` predicate strategy: succeeds (returns subject
+// unchanged) when subject has the `TransfoStratInfo` shape, otherwise fails with
+// sl.ErrVisitFailure.
+type IsTransfoStratInfo struct{}
+
+func (IsTransfoStratInfo) VisitLight(subject any, _ sl.Introspector) (any, error) {
+	if _, ok := subject.(*TransfoStratInfoTransfoStratInfo); ok {
+		return subject, nil
+	}
+	return subject, sl.ErrVisitFailure
+}
+func (IsTransfoStratInfo) ChildCount() int             { return 0 }
+func (IsTransfoStratInfo) ChildAt(int) sl.Strategy     { panic("IsTransfoStratInfo: no children") }
+func (IsTransfoStratInfo) SetChildAt(int, sl.Strategy) { panic("IsTransfoStratInfo: no children") }
+
+// VisitTransfoStratInfo is the `_TransfoStratInfo` slot-visit strategy: when subject is `TransfoStratInfo`,
+// applies each constituent strategy to the matching child slot and
+// rebuilds the term iff at least one child changed. Fails with
+// sl.ErrVisitFailure when subject isn't `TransfoStratInfo`.
+type VisitTransfoStratInfo struct {
+	args []sl.Strategy
+}
+
+// NewVisitTransfoStratInfo builds the slot-visit strategy with the supplied per-slot
+// sub-strategies.
+func NewVisitTransfoStratInfo(args ...sl.Strategy) *VisitTransfoStratInfo {
+	return &VisitTransfoStratInfo{args: args}
+}
+
+func (s *VisitTransfoStratInfo) VisitLight(subject any, intro sl.Introspector) (any, error) {
+	if _, ok := subject.(*TransfoStratInfoTransfoStratInfo); !ok {
+		return subject, sl.ErrVisitFailure
+	}
+	if len(s.args) != 3 {
+		return subject, sl.ErrVisitFailure
+	}
+	var newChildren []any
+	for i := 0; i < 3; i++ {
+		oldChild := intro.GetChildAt(subject, i)
+		newChild, err := s.args[i].VisitLight(oldChild, intro)
+		if err != nil {
+			return subject, err
+		}
+		if newChildren != nil {
+			newChildren[i] = newChild
+		} else if newChild != oldChild {
+			newChildren = intro.GetChildren(subject)
+			newChildren[i] = newChild
+		}
+	}
+	if newChildren != nil {
+		return intro.SetChildren(subject, newChildren), nil
+	}
+	return subject, nil
+}
+
+func (s *VisitTransfoStratInfo) ChildCount() int                 { return len(s.args) }
+func (s *VisitTransfoStratInfo) ChildAt(i int) sl.Strategy       { return s.args[i] }
+func (s *VisitTransfoStratInfo) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }

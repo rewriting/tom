@@ -172,6 +172,14 @@ func promotePackage(pkg string) error {
 		if name == "doc.go" || strings.HasSuffix(name, "_test.go") {
 			continue
 		}
+		// Preserve hand-written FromString machinery (parse.go) and
+		// its companion generated dispatch table (registry_gen.go).
+		// Both live in stable/ rather than src/ because they are not
+		// regenerated from .gom files — they're side-products of an
+		// out-of-band introspection pass over the AST package itself.
+		if name == "parse.go" || name == "registry_gen.go" {
+			continue
+		}
 		if err := os.Remove(filepath.Join(dstDir, name)); err != nil {
 			return err
 		}

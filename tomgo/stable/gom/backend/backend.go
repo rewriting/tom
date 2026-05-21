@@ -38,6 +38,13 @@ type Options struct {
 // gomast accessors
 // ---------------------------------------------------------------------------
 
+// QualifiedName is the exported alias for [moduleQualifiedName] —
+// useful to scripts and tools (cmd/gentom) that need the module's
+// dotted name without re-deriving from gomast.
+func QualifiedName(g gomast.GomModule) string {
+	return moduleQualifiedName(g)
+}
+
 // moduleQualifiedName returns the dotted module name carried by g.
 func moduleQualifiedName(g gomast.GomModule) string {
 	gm := g.(*gomast.GomModuleGomModule)
@@ -195,12 +202,99 @@ func GenerateToDir(mod gomast.GomModule, opts Options, dir string) (string, erro
 	if err := os.WriteFile(filepath.Join(abs, opts.PackageName+".go"), src, 0o644); err != nil {
 		return "", err
 	}
-	goMod := fmt.Sprintf("module tomgen/%s\n\ngo 1.22\n\nrequire tom/tomgo v0.0.0\nreplace tom/tomgo => %s\n",
+	goMod := fmt.Sprintf("module tomgen/%s\n\ngo 1.26\n\nrequire tom/tomgo v0.0.0\nreplace tom/tomgo => %s\n",
 		opts.PackageName, locateTomgoRoot())
 	if err := os.WriteFile(filepath.Join(abs, "go.mod"), []byte(goMod), 0o644); err != nil {
 		return "", err
 	}
+	// Tom mapping (.tom) — other .t fixtures `%include` it to pick up
+	// the sort/operator declarations defined by this Gom module.
+	tomFile := EmitTomMapping(mod, opts)
+	if err := os.WriteFile(filepath.Join(abs, opts.PackageName+".tom"), tomFile, 0o644); err != nil {
+		return "", err
+	}
 	return abs, nil
+}
+
+// EmitTomMapping returns the Tom-mapping (.tom) source corresponding
+// to a single Gom module. Other .t files import this via
+// `%include { <pkg>.tom }` to learn about the module's sorts and
+// operators. Per the Java gom reference, each sort gets one
+// `%typeterm` declaration with implement/is_sort/equals hooks, each
+// non-variadic alternative gets one `%op` with is_fsym/get_slot/make
+// hooks, and each variadic alternative gets one `%oplist` with
+// is_fsym/make_empty/make_insert/get_head/get_tail/is_empty hooks.
+//
+// The hook bodies reference Java types via the qualified path
+// `<pkg>.types.<Sort>` (matching what `tom.gom.Gom` emits when
+// compiling the same .gom file to Java). The Tom compiler later
+// reads those bodies as opaque host-language code; only the
+// signatures matter for type-checking client .t files.
+func EmitTomMapping(mod gomast.GomModule, opts Options) []byte {
+	if opts.PackageName == "" {
+		opts.PackageName = defaultPackageName(mod)
+	}
+	pkg := opts.PackageName
+	var buf bytes.Buffer
+	for _, prod := range moduleSorts(mod) {
+		sortNm := sortName(prod)
+		jClass := pkg + ".types." + sortNm
+		fmt.Fprintf(&buf, "%%typeterm %s {\n", sortNm)
+		fmt.Fprintf(&buf, "  implement      { %s }\n", jClass)
+		fmt.Fprintf(&buf, "  is_sort(t)     { ($t instanceof %s) }\n", jClass)
+		fmt.Fprintf(&buf, "  equals(t1,t2)  { ($t1.equals($t2)) }\n")
+		fmt.Fprintf(&buf, "}\n\n")
+	}
+	for _, prod := range moduleSorts(mod) {
+		sortNm := sortName(prod)
+		jSortClass := pkg + ".types." + sortNm
+		for _, alt := range sortAlternatives(prod) {
+			altNm := alt.Name
+			jAltClass := pkg + ".types." + strings.ToLower(sortNm) + "." + altNm
+			if alternativeIsVariadic(alt) {
+				typeName := fieldTypeName(alternativeFields(alt)[0])
+				fmt.Fprintf(&buf, "%%oplist %s %s( %s* ) {\n", sortNm, altNm, typeName)
+				fmt.Fprintf(&buf, "  is_fsym(t)       { ($t instanceof %s) }\n", jSortClass)
+				fmt.Fprintf(&buf, "  make_empty()     { new %s.Empty%s() }\n", jSortClass, altNm)
+				fmt.Fprintf(&buf, "  make_insert(e,l) { new %s.Cons%s($e, $l) }\n", jSortClass, altNm)
+				fmt.Fprintf(&buf, "  get_head(l)      { ((%s.Cons%s)$l).getHead%s() }\n", jSortClass, altNm, altNm)
+				fmt.Fprintf(&buf, "  get_tail(l)      { ((%s.Cons%s)$l).getTail%s() }\n", jSortClass, altNm, altNm)
+				fmt.Fprintf(&buf, "  is_empty(l)      { ($l instanceof %s.Empty%s) }\n", jSortClass, altNm)
+				fmt.Fprintf(&buf, "}\n\n")
+				continue
+			}
+			fields := alternativeFields(alt)
+			slotsParts := make([]string, 0, len(fields))
+			slotNames := make([]string, 0, len(fields))
+			slotTypes := make([]string, 0, len(fields))
+			for i, f := range fields {
+				nf, ok := f.(*gomast.NamedFieldField)
+				if !ok {
+					continue
+				}
+				typeName := fieldTypeName(f)
+				slotsParts = append(slotsParts, fmt.Sprintf("%s:%s", nf.Name, typeName))
+				slotNames = append(slotNames, nf.Name)
+				slotTypes = append(slotTypes, typeName)
+				_ = i
+			}
+			fmt.Fprintf(&buf, "%%op %s %s(%s) {\n", sortNm, altNm, strings.Join(slotsParts, ", "))
+			fmt.Fprintf(&buf, "  is_fsym(t)     { ($t != null) && ($t instanceof %s) }\n", jAltClass)
+			for _, sn := range slotNames {
+				fmt.Fprintf(&buf, "  get_slot(%s,t) { ((%s)$t).get%s() }\n", sn, jAltClass, exportedField(sn))
+			}
+			makeArgs := make([]string, len(slotNames))
+			for i, sn := range slotNames {
+				makeArgs[i] = "$" + sn
+				_ = i
+			}
+			fmt.Fprintf(&buf, "  make(%s)       { new %s(%s) }\n",
+				strings.Join(slotNames, ","),
+				jAltClass, strings.Join(makeArgs, ","))
+			fmt.Fprintf(&buf, "}\n\n")
+		}
+	}
+	return buf.Bytes()
 }
 
 // GenerateBatchToDir compiles several Gom modules into a single Go
@@ -265,8 +359,9 @@ func GenerateBatchToDir(modules []gomast.GomModule, opts Options, dir string) (s
 	// Emit one .go file per module so that humans (and `git diff`) can
 	// see which module produced what. The first file (lex order on
 	// filename) carries the shared factory; the rest are pure types.
+	var allRegistry []registryEntry
 	for i, m := range modules {
-		src, gofmtErr := generateBatchBytes(m, allSorts, makeCollides, opts.PackageName, i == 0)
+		src, registry, gofmtErr := generateBatchBytes(m, allSorts, makeCollides, opts.PackageName, i == 0)
 		// generateBatchBytes returns the unformatted source AND an error
 		// when gofmt fails. Write the file regardless so the bug is
 		// diagnosable, then propagate the error.
@@ -277,13 +372,52 @@ func GenerateBatchToDir(modules []gomast.GomModule, opts Options, dir string) (s
 		if gofmtErr != nil {
 			return "", fmt.Errorf("generating %s: %w", moduleQualifiedName(m), gofmtErr)
 		}
+		allRegistry = append(allRegistry, registry...)
 	}
-	goMod := fmt.Sprintf("module tomgen/%s\n\ngo 1.22\n\nrequire tom/tomgo v0.0.0\nreplace tom/tomgo => %s\n",
+	if regBytes, err := emitRegistryGo(opts.PackageName, allRegistry); err != nil {
+		return "", err
+	} else if err := os.WriteFile(filepath.Join(abs, "registry_gen.go"), regBytes, 0o644); err != nil {
+		return "", err
+	}
+	goMod := fmt.Sprintf("module tomgen/%s\n\ngo 1.26\n\nrequire tom/tomgo v0.0.0\nreplace tom/tomgo => %s\n",
 		opts.PackageName, locateTomgoRoot())
 	if err := os.WriteFile(filepath.Join(abs, "go.mod"), []byte(goMod), 0o644); err != nil {
 		return "", err
 	}
 	return abs, nil
+}
+
+// emitRegistryGo writes the makeRegistry table that FromString uses to
+// dispatch a printed op name to its Make<X> constructor. The result is
+// gofmt'd; printed op names are sorted alphabetically for byte-stable
+// output. Duplicate entries (same op name → same constructor) are
+// silently de-duplicated.
+func emitRegistryGo(pkgName string, entries []registryEntry) ([]byte, error) {
+	seen := map[string]string{}
+	for _, e := range entries {
+		if prev, dup := seen[e.OpName]; dup && prev != e.MakeFn {
+			return nil, fmt.Errorf("registry collision for op %q: %s vs %s", e.OpName, prev, e.MakeFn)
+		}
+		seen[e.OpName] = e.MakeFn
+	}
+	keys := make([]string, 0, len(seen))
+	for k := range seen {
+		keys = append(keys, k)
+	}
+	sort.Strings(keys)
+
+	var buf bytes.Buffer
+	fmt.Fprintln(&buf, "// Code generated by tom/tomgo backend. DO NOT EDIT.")
+	fmt.Fprintln(&buf, "// Maps a term's printed operator name (the head of String()'s output)")
+	fmt.Fprintln(&buf, "// to its Make<X> constructor. Used by FromString to rebuild a typed")
+	fmt.Fprintln(&buf, "// term from its textual form.")
+	fmt.Fprintf(&buf, "package %s\n\n", pkgName)
+	fmt.Fprintln(&buf, "var makeRegistry = map[string]any{")
+	for _, k := range keys {
+		fmt.Fprintf(&buf, "\t%q: %s,\n", k, seen[k])
+	}
+	fmt.Fprintln(&buf, "}")
+	return format.Source(buf.Bytes())
 }
 
 func safeFileName(qualName string) string {
@@ -301,7 +435,7 @@ func safeFileName(qualName string) string {
 	return string(out)
 }
 
-func generateBatchBytes(mod gomast.GomModule, allSorts map[string]bool, makeCollides map[string]bool, pkgName string, emitFactory bool) ([]byte, error) {
+func generateBatchBytes(mod gomast.GomModule, allSorts map[string]bool, makeCollides map[string]bool, pkgName string, emitFactory bool) ([]byte, []registryEntry, error) {
 	g := &gen{
 		mod:          mod,
 		ownSort:      allSorts,
@@ -317,9 +451,9 @@ func generateBatchBytes(mod gomast.GomModule, allSorts map[string]bool, makeColl
 	}
 	formatted, err := format.Source(g.buf.Bytes())
 	if err != nil {
-		return g.buf.Bytes(), fmt.Errorf("gofmt failed for %s: %w", moduleQualifiedName(mod), err)
+		return g.buf.Bytes(), g.registry, fmt.Errorf("gofmt failed for %s: %w", moduleQualifiedName(mod), err)
 	}
-	return formatted, nil
+	return formatted, g.registry, nil
 }
 
 // locateTomgoRoot returns the absolute path to the tomgo/ module root,
@@ -407,6 +541,17 @@ type gen struct {
 	// per-module gen. Nil ⇒ collision check disabled (single-file mode
 	// where no batch-wide collision can arise anyway).
 	makeCollides map[string]bool
+
+	// registry collects (printedOpName → MakeFn) entries seen during
+	// alternative emission. Used by GenerateBatchToDir to write a
+	// companion registry_gen.go that powers FromString.
+	registry []registryEntry
+}
+
+// registryEntry describes one row of the makeRegistry table.
+type registryEntry struct {
+	OpName string // printed name appearing in Term.String() output
+	MakeFn string // identifier of the Make<X> constructor in this package
 }
 
 // reservedFieldName is the set of method names emitted on every alt
@@ -429,11 +574,13 @@ func (g *gen) emitHeader() {
 	fmt.Fprintln(&g.buf, `	"strings"`)
 	fmt.Fprintln(&g.buf, "")
 	fmt.Fprintln(&g.buf, `	"tom/tomgo/stable/library/sharedobjects"`)
+	fmt.Fprintln(&g.buf, `	sl "tom/tomgo/stable/library/sl"`)
 	fmt.Fprintln(&g.buf, ")")
 	fmt.Fprintln(&g.buf)
 	fmt.Fprintln(&g.buf, "// underscore-prevent: tolerate unused imports if a module has no slots of these types.")
 	fmt.Fprintln(&g.buf, "var _ = fmt.Sprintf")
 	fmt.Fprintln(&g.buf, "var _ = strings.Join")
+	fmt.Fprintln(&g.buf, "var _ sl.Strategy = nil")
 	fmt.Fprintln(&g.buf)
 }
 
@@ -955,6 +1102,9 @@ func (g *gen) emitAlternative(sortNm string, alt *gomast.AlternativeAlternative)
 	if g.makeCollides != nil && g.makeCollides[opGo] {
 		makeName = "Make" + opGo + sortNm
 	}
+	// Record the (printed op name → constructor) mapping so the package's
+	// FromString helper can look up the right Make<X> at parse time.
+	g.registry = append(g.registry, registryEntry{OpName: opName, MakeFn: makeName})
 
 	// Lower the gomast Fields into a flat slot list that the rest of
 	// this function manipulates directly. This shape keeps the emit
@@ -1112,6 +1262,24 @@ afterEquivalent:
 	fmt.Fprintln(&g.buf, "}")
 	fmt.Fprintln(&g.buf)
 
+	// Visitable methods (Phase 6.5). Emit Children/SetChildren/
+	// ChildCount/ChildAt/SetChildAt so this struct can be walked by
+	// strategies in stable/library/sl. The shape mirrors what Java's
+	// Gom backend emits on the corresponding *.java files: every slot
+	// is a child, primitives are returned as-is (Go's `any` already
+	// accommodates them — no VisitableBuiltin boxing needed).
+	//
+	// SetChildAt / SetChildren rebuild the term via the smart
+	// constructor so canonical sharing (hash-cons) is preserved.
+	// Callers must supply children whose concrete types match the
+	// slot signatures, exactly as Java's reflective Visitable contract
+	// requires.
+	visitableSlots := make([]hookSlot, 0, len(slots))
+	for _, s := range slots {
+		visitableSlots = append(visitableSlots, hookSlot{Name: s.Name, GoType: s.GoType, IsVar: s.IsVar})
+	}
+	g.emitVisitableMethods(structName, makeName, visitableSlots, isVariadic)
+
 	// Smart constructor. The Go-side function name is exported (Pascal
 	// case); the canonical symbol passed to the hash mixer keeps the
 	// original spelling so sharing stays correct.
@@ -1171,6 +1339,271 @@ afterEquivalent:
 		fmt.Fprintf(&g.buf, "\treturn factory.Build(proto).(*%s)\n", structName)
 		fmt.Fprintln(&g.buf, "}")
 	}
+	fmt.Fprintln(&g.buf)
+	g.emitStrategyClasses(sortNm, opGo, opName, structName, len(slots), isVariadic)
+}
+
+// emitStrategyClasses writes two `sl.Strategy` implementations per
+// alternative, mirroring Gom's Java backend output (the
+// `_<Alt>.java` and `Is_<Alt>.java` files under .../adt/<sort>/strategy/).
+//
+//   - `Is<Alt>` is the predicate strategy: VisitLight returns the
+//     subject unchanged if it has the `<Alt>` shape, ErrVisitFailure
+//     otherwise. Useful for `Sequence(IsFoo{}, ...)` guards.
+//
+//   - `Visit<Alt>(s1, ..., sN)` is the slot-visit strategy: VisitLight
+//     applies each substrategy to the corresponding child slot and
+//     rebuilds the term iff a child changed. Returns ErrVisitFailure
+//     when subject isn't `<Alt>`. Java calls this `_<Alt>`.
+//
+// For variadic alternatives (`concX(...)`) the slot-visit strategy
+// takes a single sub-strategy applied to every element of the slot
+// list — matching Java's Cons/Empty cons-cell traversal.
+func (g *gen) emitStrategyClasses(sortNm, opGo, opName, structName string, slotCount int, isVariadic bool) {
+	isName := "Is" + opGo
+	visitName := "Visit" + opGo
+	if g.makeCollides != nil && g.makeCollides[opGo] {
+		isName = "Is" + opGo + sortNm
+		visitName = "Visit" + opGo + sortNm
+	}
+
+	// Is<Alt>: predicate strategy.
+	fmt.Fprintf(&g.buf, "// %s is the `Is_%s` predicate strategy: succeeds (returns subject\n", isName, opName)
+	fmt.Fprintf(&g.buf, "// unchanged) when subject has the `%s` shape, otherwise fails with\n", opName)
+	fmt.Fprintln(&g.buf, "// sl.ErrVisitFailure.")
+	fmt.Fprintf(&g.buf, "type %s struct{}\n\n", isName)
+	fmt.Fprintf(&g.buf, "func (%s) VisitLight(subject any, _ sl.Introspector) (any, error) {\n", isName)
+	fmt.Fprintf(&g.buf, "\tif _, ok := subject.(*%s); ok {\n", structName)
+	fmt.Fprintln(&g.buf, "\t\treturn subject, nil")
+	fmt.Fprintln(&g.buf, "\t}")
+	fmt.Fprintln(&g.buf, "\treturn subject, sl.ErrVisitFailure")
+	fmt.Fprintln(&g.buf, "}")
+	fmt.Fprintf(&g.buf, "func (%s) ChildCount() int                  { return 0 }\n", isName)
+	fmt.Fprintf(&g.buf, "func (%s) ChildAt(int) sl.Strategy          { panic(\"%s: no children\") }\n", isName, isName)
+	fmt.Fprintf(&g.buf, "func (%s) SetChildAt(int, sl.Strategy)      { panic(\"%s: no children\") }\n", isName, isName)
+	fmt.Fprintln(&g.buf)
+
+	// Visit<Alt>: slot-visit strategy.
+	fmt.Fprintf(&g.buf, "// %s is the `_%s` slot-visit strategy: when subject is `%s`,\n", visitName, opName, opName)
+	fmt.Fprintf(&g.buf, "// applies each constituent strategy to the matching child slot and\n")
+	fmt.Fprintf(&g.buf, "// rebuilds the term iff at least one child changed. Fails with\n")
+	fmt.Fprintf(&g.buf, "// sl.ErrVisitFailure when subject isn't `%s`.\n", opName)
+	fmt.Fprintf(&g.buf, "type %s struct {\n", visitName)
+	fmt.Fprintln(&g.buf, "\targs []sl.Strategy")
+	fmt.Fprintln(&g.buf, "}")
+	fmt.Fprintln(&g.buf)
+
+	// Constructor New<VisitName>(args ...sl.Strategy)
+	fmt.Fprintf(&g.buf, "// New%s builds the slot-visit strategy with the supplied per-slot\n", visitName)
+	fmt.Fprintln(&g.buf, "// sub-strategies.")
+	fmt.Fprintf(&g.buf, "func New%s(args ...sl.Strategy) *%s {\n", visitName, visitName)
+	fmt.Fprintf(&g.buf, "\treturn &%s{args: args}\n", visitName)
+	fmt.Fprintln(&g.buf, "}")
+	fmt.Fprintln(&g.buf)
+
+	// VisitLight implementation.
+	fmt.Fprintf(&g.buf, "func (s *%s) VisitLight(subject any, intro sl.Introspector) (any, error) {\n", visitName)
+	fmt.Fprintf(&g.buf, "\tif _, ok := subject.(*%s); !ok {\n", structName)
+	fmt.Fprintln(&g.buf, "\t\treturn subject, sl.ErrVisitFailure")
+	fmt.Fprintln(&g.buf, "\t}")
+	if isVariadic {
+		fmt.Fprintln(&g.buf, "\t// Variadic alt: visit every element with args[0] (Java's")
+		fmt.Fprintln(&g.buf, "\t// `_concX` invokes the sub-strategy on each list element).")
+		fmt.Fprintln(&g.buf, "\tif len(s.args) == 0 {")
+		fmt.Fprintln(&g.buf, "\t\treturn subject, nil")
+		fmt.Fprintln(&g.buf, "\t}")
+		fmt.Fprintln(&g.buf, "\tcount := intro.GetChildCount(subject)")
+		fmt.Fprintln(&g.buf, "\tvar newChildren []any")
+		fmt.Fprintln(&g.buf, "\tfor i := 0; i < count; i++ {")
+		fmt.Fprintln(&g.buf, "\t\toldChild := intro.GetChildAt(subject, i)")
+		fmt.Fprintln(&g.buf, "\t\tnewChild, err := s.args[0].VisitLight(oldChild, intro)")
+		fmt.Fprintln(&g.buf, "\t\tif err != nil {")
+		fmt.Fprintln(&g.buf, "\t\t\treturn subject, err")
+		fmt.Fprintln(&g.buf, "\t\t}")
+		fmt.Fprintln(&g.buf, "\t\tif newChildren != nil {")
+		fmt.Fprintln(&g.buf, "\t\t\tnewChildren[i] = newChild")
+		fmt.Fprintln(&g.buf, "\t\t} else if newChild != oldChild {")
+		fmt.Fprintln(&g.buf, "\t\t\tnewChildren = intro.GetChildren(subject)")
+		fmt.Fprintln(&g.buf, "\t\t\tnewChildren[i] = newChild")
+		fmt.Fprintln(&g.buf, "\t\t}")
+		fmt.Fprintln(&g.buf, "\t}")
+		fmt.Fprintln(&g.buf, "\tif newChildren != nil {")
+		fmt.Fprintln(&g.buf, "\t\treturn intro.SetChildren(subject, newChildren), nil")
+		fmt.Fprintln(&g.buf, "\t}")
+		fmt.Fprintln(&g.buf, "\treturn subject, nil")
+	} else if slotCount == 0 {
+		fmt.Fprintln(&g.buf, "\t// Nullary alt: no children to visit.")
+		fmt.Fprintln(&g.buf, "\treturn subject, nil")
+	} else {
+		fmt.Fprintf(&g.buf, "\tif len(s.args) != %d {\n", slotCount)
+		fmt.Fprintf(&g.buf, "\t\treturn subject, sl.ErrVisitFailure\n")
+		fmt.Fprintln(&g.buf, "\t}")
+		fmt.Fprintln(&g.buf, "\tvar newChildren []any")
+		fmt.Fprintf(&g.buf, "\tfor i := 0; i < %d; i++ {\n", slotCount)
+		fmt.Fprintln(&g.buf, "\t\toldChild := intro.GetChildAt(subject, i)")
+		fmt.Fprintln(&g.buf, "\t\tnewChild, err := s.args[i].VisitLight(oldChild, intro)")
+		fmt.Fprintln(&g.buf, "\t\tif err != nil {")
+		fmt.Fprintln(&g.buf, "\t\t\treturn subject, err")
+		fmt.Fprintln(&g.buf, "\t\t}")
+		fmt.Fprintln(&g.buf, "\t\tif newChildren != nil {")
+		fmt.Fprintln(&g.buf, "\t\t\tnewChildren[i] = newChild")
+		fmt.Fprintln(&g.buf, "\t\t} else if newChild != oldChild {")
+		fmt.Fprintln(&g.buf, "\t\t\tnewChildren = intro.GetChildren(subject)")
+		fmt.Fprintln(&g.buf, "\t\t\tnewChildren[i] = newChild")
+		fmt.Fprintln(&g.buf, "\t\t}")
+		fmt.Fprintln(&g.buf, "\t}")
+		fmt.Fprintln(&g.buf, "\tif newChildren != nil {")
+		fmt.Fprintln(&g.buf, "\t\treturn intro.SetChildren(subject, newChildren), nil")
+		fmt.Fprintln(&g.buf, "\t}")
+		fmt.Fprintln(&g.buf, "\treturn subject, nil")
+	}
+	fmt.Fprintln(&g.buf, "}")
+	fmt.Fprintln(&g.buf)
+
+	// Tree-introspection plumbing (ChildCount/ChildAt/SetChildAt).
+	fmt.Fprintf(&g.buf, "func (s *%s) ChildCount() int                { return len(s.args) }\n", visitName)
+	fmt.Fprintf(&g.buf, "func (s *%s) ChildAt(i int) sl.Strategy      { return s.args[i] }\n", visitName)
+	fmt.Fprintf(&g.buf, "func (s *%s) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }\n", visitName)
+	fmt.Fprintln(&g.buf)
+}
+
+// emitVisitableMethods writes Children/SetChildren/ChildCount/
+// ChildAt/SetChildAt onto the struct identified by structName.
+// makeName is the smart-constructor function used by SetChildAt and
+// SetChildren to rebuild a canonical (hash-consed) instance.
+//
+// Slot semantics:
+//
+//   - Non-variadic alts: one child per declared slot, in source order.
+//     Slot Go types may be a generated sort interface (e.g. TomTerm),
+//     a primitive (string, int64, …), or `any` for cross-module
+//     references. Setters cast back from `any` to the slot type;
+//     callers passing the wrong concrete type get a Go type-assertion
+//     panic (mirroring Java's ClassCastException on setChildAt).
+//   - Variadic alts: one child per element of the underlying slice.
+//     ChildCount equals `len(t.Slots)`.
+//
+// The methods are emitted unconditionally — even on zero-slot
+// constants — so every term has a uniform Visitable surface.
+func (g *gen) emitVisitableMethods(structName, makeName string, slots []hookSlot, isVariadic bool) {
+	// castExpr returns the Go expression to cast a `child any` to the
+	// slot's static type. `any` slots need no cast.
+	castExpr := func(name, goType string) string {
+		if goType == "any" {
+			return name
+		}
+		return fmt.Sprintf("%s.(%s)", name, goType)
+	}
+
+	if isVariadic {
+		varName := slots[0].Name
+		elemType := slots[0].GoType
+
+		fmt.Fprintf(&g.buf, "func (t *%s) ChildCount() int { return len(t.%s) }\n\n", structName, varName)
+
+		fmt.Fprintf(&g.buf, "func (t *%s) ChildAt(i int) any { return t.%s[i] }\n\n", structName, varName)
+
+		fmt.Fprintf(&g.buf, "func (t *%s) SetChildAt(i int, child any) any {\n", structName)
+		fmt.Fprintf(&g.buf, "\tdup := append([]%s(nil), t.%s...)\n", elemType, varName)
+		fmt.Fprintf(&g.buf, "\tdup[i] = %s\n", castExpr("child", elemType))
+		fmt.Fprintf(&g.buf, "\treturn %s(dup...)\n", makeName)
+		fmt.Fprintln(&g.buf, "}")
+		fmt.Fprintln(&g.buf)
+
+		fmt.Fprintf(&g.buf, "func (t *%s) Children() []any {\n", structName)
+		fmt.Fprintf(&g.buf, "\tout := make([]any, len(t.%s))\n", varName)
+		fmt.Fprintf(&g.buf, "\tfor i, v := range t.%s {\n", varName)
+		fmt.Fprintln(&g.buf, "\t\tout[i] = v")
+		fmt.Fprintln(&g.buf, "\t}")
+		fmt.Fprintln(&g.buf, "\treturn out")
+		fmt.Fprintln(&g.buf, "}")
+		fmt.Fprintln(&g.buf)
+
+		fmt.Fprintf(&g.buf, "func (t *%s) SetChildren(children []any) any {\n", structName)
+		fmt.Fprintf(&g.buf, "\targs := make([]%s, len(children))\n", elemType)
+		fmt.Fprintln(&g.buf, "\tfor i, c := range children {")
+		fmt.Fprintf(&g.buf, "\t\targs[i] = %s\n", castExpr("c", elemType))
+		fmt.Fprintln(&g.buf, "\t}")
+		fmt.Fprintf(&g.buf, "\treturn %s(args...)\n", makeName)
+		fmt.Fprintln(&g.buf, "}")
+		fmt.Fprintln(&g.buf)
+		return
+	}
+
+	// Non-variadic: child count is fixed at compile time.
+	fmt.Fprintf(&g.buf, "func (t *%s) ChildCount() int { return %d }\n\n", structName, len(slots))
+
+	if len(slots) == 0 {
+		// Zero-slot alts (constants like EmptyName, TrueTL) get
+		// degenerate ChildAt/SetChildAt that always panic, and trivial
+		// Children/SetChildren. Strategies use ChildCount first, so
+		// the panic paths only fire on misuse.
+		fmt.Fprintf(&g.buf, "func (t *%s) ChildAt(i int) any {\n", structName)
+		fmt.Fprintf(&g.buf, "\tpanic(fmt.Sprintf(%q, i))\n", structName+".ChildAt: index %d out of [0,0)")
+		fmt.Fprintln(&g.buf, "}")
+		fmt.Fprintln(&g.buf)
+
+		fmt.Fprintf(&g.buf, "func (t *%s) SetChildAt(i int, child any) any {\n", structName)
+		fmt.Fprintf(&g.buf, "\tpanic(fmt.Sprintf(%q, i))\n", structName+".SetChildAt: index %d out of [0,0)")
+		fmt.Fprintln(&g.buf, "}")
+		fmt.Fprintln(&g.buf)
+
+		fmt.Fprintf(&g.buf, "func (t *%s) Children() []any { return nil }\n\n", structName)
+
+		fmt.Fprintf(&g.buf, "func (t *%s) SetChildren(children []any) any { return t }\n\n", structName)
+		return
+	}
+
+	// ChildAt: switch on the index.
+	fmt.Fprintf(&g.buf, "func (t *%s) ChildAt(i int) any {\n", structName)
+	fmt.Fprintln(&g.buf, "\tswitch i {")
+	for i, s := range slots {
+		fmt.Fprintf(&g.buf, "\tcase %d: return t.%s\n", i, s.Name)
+	}
+	fmt.Fprintln(&g.buf, "\t}")
+	fmt.Fprintf(&g.buf, "\tpanic(fmt.Sprintf(%q, i))\n", structName+".ChildAt: index %d out of range")
+	fmt.Fprintln(&g.buf, "}")
+	fmt.Fprintln(&g.buf)
+
+	// SetChildAt: switch on the index, rebuild via Make<Op>.
+	fmt.Fprintf(&g.buf, "func (t *%s) SetChildAt(i int, child any) any {\n", structName)
+	fmt.Fprintln(&g.buf, "\tswitch i {")
+	for i := range slots {
+		// Build the argument list to Make<Op>: t.<slot> for every
+		// slot except `i`, which receives the cast `child`.
+		var args []string
+		for j, sj := range slots {
+			if j == i {
+				args = append(args, castExpr("child", sj.GoType))
+			} else {
+				args = append(args, "t."+sj.Name)
+			}
+		}
+		fmt.Fprintf(&g.buf, "\tcase %d: return %s(%s)\n", i, makeName, strings.Join(args, ", "))
+	}
+	fmt.Fprintln(&g.buf, "\t}")
+	fmt.Fprintf(&g.buf, "\tpanic(fmt.Sprintf(%q, i))\n", structName+".SetChildAt: index %d out of range")
+	fmt.Fprintln(&g.buf, "}")
+	fmt.Fprintln(&g.buf)
+
+	// Children: return all slots as []any.
+	fmt.Fprintf(&g.buf, "func (t *%s) Children() []any {\n", structName)
+	parts := make([]string, len(slots))
+	for i, s := range slots {
+		parts[i] = "t." + s.Name
+	}
+	fmt.Fprintf(&g.buf, "\treturn []any{%s}\n", strings.Join(parts, ", "))
+	fmt.Fprintln(&g.buf, "}")
+	fmt.Fprintln(&g.buf)
+
+	// SetChildren: rebuild via Make<Op> from a uniform []any.
+	fmt.Fprintf(&g.buf, "func (t *%s) SetChildren(children []any) any {\n", structName)
+	args := make([]string, len(slots))
+	for i, s := range slots {
+		args[i] = castExpr(fmt.Sprintf("children[%d]", i), s.GoType)
+	}
+	fmt.Fprintf(&g.buf, "\treturn %s(%s)\n", makeName, strings.Join(args, ", "))
+	fmt.Fprintln(&g.buf, "}")
 	fmt.Fprintln(&g.buf)
 }
 

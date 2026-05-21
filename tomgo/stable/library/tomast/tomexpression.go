@@ -6,11 +6,13 @@ import (
 	"strings"
 
 	"tom/tomgo/stable/library/sharedobjects"
+	sl "tom/tomgo/stable/library/sl"
 )
 
 // underscore-prevent: tolerate unused imports if a module has no slots of these types.
 var _ = fmt.Sprintf
 var _ = strings.Join
+var _ sl.Strategy = nil
 
 // Expression is the Go interface backing the Gom sort Expression.
 type Expression interface {
@@ -48,6 +50,32 @@ func (t *BQTermToExpressionExpression) String() string {
 	return fmt.Sprintf("BQTermToExpression(%v)", t.AstTerm)
 }
 
+func (t *BQTermToExpressionExpression) ChildCount() int { return 1 }
+
+func (t *BQTermToExpressionExpression) ChildAt(i int) any {
+	switch i {
+	case 0:
+		return t.AstTerm
+	}
+	panic(fmt.Sprintf("BQTermToExpressionExpression.ChildAt: index %d out of range", i))
+}
+
+func (t *BQTermToExpressionExpression) SetChildAt(i int, child any) any {
+	switch i {
+	case 0:
+		return MakeBQTermToExpression(child.(BQTerm))
+	}
+	panic(fmt.Sprintf("BQTermToExpressionExpression.SetChildAt: index %d out of range", i))
+}
+
+func (t *BQTermToExpressionExpression) Children() []any {
+	return []any{t.AstTerm}
+}
+
+func (t *BQTermToExpressionExpression) SetChildren(children []any) any {
+	return MakeBQTermToExpression(children[0].(BQTerm))
+}
+
 // MakeBQTermToExpression builds the canonical (shared) BQTermToExpression term.
 func MakeBQTermToExpression(astTerm BQTerm) Expression {
 	// Rewrite rule (module:rules()): BQTermToExpression(ExpressionToBQTerm(t)) -> t.
@@ -58,6 +86,66 @@ func MakeBQTermToExpression(astTerm BQTerm) Expression {
 	proto := &BQTermToExpressionExpression{hash: sharedobjects.MixSymbol(sharedobjects.StringHash("BQTermToExpression"), hashes), AstTerm: astTerm}
 	return factory.Build(proto).(*BQTermToExpressionExpression)
 }
+
+// IsBQTermToExpression is the `Is_BQTermToExpression` predicate strategy: succeeds (returns subject
+// unchanged) when subject has the `BQTermToExpression` shape, otherwise fails with
+// sl.ErrVisitFailure.
+type IsBQTermToExpression struct{}
+
+func (IsBQTermToExpression) VisitLight(subject any, _ sl.Introspector) (any, error) {
+	if _, ok := subject.(*BQTermToExpressionExpression); ok {
+		return subject, nil
+	}
+	return subject, sl.ErrVisitFailure
+}
+func (IsBQTermToExpression) ChildCount() int             { return 0 }
+func (IsBQTermToExpression) ChildAt(int) sl.Strategy     { panic("IsBQTermToExpression: no children") }
+func (IsBQTermToExpression) SetChildAt(int, sl.Strategy) { panic("IsBQTermToExpression: no children") }
+
+// VisitBQTermToExpression is the `_BQTermToExpression` slot-visit strategy: when subject is `BQTermToExpression`,
+// applies each constituent strategy to the matching child slot and
+// rebuilds the term iff at least one child changed. Fails with
+// sl.ErrVisitFailure when subject isn't `BQTermToExpression`.
+type VisitBQTermToExpression struct {
+	args []sl.Strategy
+}
+
+// NewVisitBQTermToExpression builds the slot-visit strategy with the supplied per-slot
+// sub-strategies.
+func NewVisitBQTermToExpression(args ...sl.Strategy) *VisitBQTermToExpression {
+	return &VisitBQTermToExpression{args: args}
+}
+
+func (s *VisitBQTermToExpression) VisitLight(subject any, intro sl.Introspector) (any, error) {
+	if _, ok := subject.(*BQTermToExpressionExpression); !ok {
+		return subject, sl.ErrVisitFailure
+	}
+	if len(s.args) != 1 {
+		return subject, sl.ErrVisitFailure
+	}
+	var newChildren []any
+	for i := 0; i < 1; i++ {
+		oldChild := intro.GetChildAt(subject, i)
+		newChild, err := s.args[i].VisitLight(oldChild, intro)
+		if err != nil {
+			return subject, err
+		}
+		if newChildren != nil {
+			newChildren[i] = newChild
+		} else if newChild != oldChild {
+			newChildren = intro.GetChildren(subject)
+			newChildren[i] = newChild
+		}
+	}
+	if newChildren != nil {
+		return intro.SetChildren(subject, newChildren), nil
+	}
+	return subject, nil
+}
+
+func (s *VisitBQTermToExpression) ChildCount() int                 { return len(s.args) }
+func (s *VisitBQTermToExpression) ChildAt(i int) sl.Strategy       { return s.args[i] }
+func (s *VisitBQTermToExpression) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
 
 // TomInstructionToExpressionExpression is the term type for the alternative `TomInstructionToExpression(...)` of sort Expression.
 type TomInstructionToExpressionExpression struct {
@@ -89,12 +177,102 @@ func (t *TomInstructionToExpressionExpression) String() string {
 	return fmt.Sprintf("TomInstructionToExpression(%v)", t.Instruction)
 }
 
+func (t *TomInstructionToExpressionExpression) ChildCount() int { return 1 }
+
+func (t *TomInstructionToExpressionExpression) ChildAt(i int) any {
+	switch i {
+	case 0:
+		return t.Instruction
+	}
+	panic(fmt.Sprintf("TomInstructionToExpressionExpression.ChildAt: index %d out of range", i))
+}
+
+func (t *TomInstructionToExpressionExpression) SetChildAt(i int, child any) any {
+	switch i {
+	case 0:
+		return MakeTomInstructionToExpression(child.(Instruction))
+	}
+	panic(fmt.Sprintf("TomInstructionToExpressionExpression.SetChildAt: index %d out of range", i))
+}
+
+func (t *TomInstructionToExpressionExpression) Children() []any {
+	return []any{t.Instruction}
+}
+
+func (t *TomInstructionToExpressionExpression) SetChildren(children []any) any {
+	return MakeTomInstructionToExpression(children[0].(Instruction))
+}
+
 // MakeTomInstructionToExpression builds the canonical (shared) TomInstructionToExpression term.
 func MakeTomInstructionToExpression(instruction Instruction) Expression {
 	hashes := []uint32{instruction.Hash()}
 	proto := &TomInstructionToExpressionExpression{hash: sharedobjects.MixSymbol(sharedobjects.StringHash("TomInstructionToExpression"), hashes), Instruction: instruction}
 	return factory.Build(proto).(*TomInstructionToExpressionExpression)
 }
+
+// IsTomInstructionToExpression is the `Is_TomInstructionToExpression` predicate strategy: succeeds (returns subject
+// unchanged) when subject has the `TomInstructionToExpression` shape, otherwise fails with
+// sl.ErrVisitFailure.
+type IsTomInstructionToExpression struct{}
+
+func (IsTomInstructionToExpression) VisitLight(subject any, _ sl.Introspector) (any, error) {
+	if _, ok := subject.(*TomInstructionToExpressionExpression); ok {
+		return subject, nil
+	}
+	return subject, sl.ErrVisitFailure
+}
+func (IsTomInstructionToExpression) ChildCount() int { return 0 }
+func (IsTomInstructionToExpression) ChildAt(int) sl.Strategy {
+	panic("IsTomInstructionToExpression: no children")
+}
+func (IsTomInstructionToExpression) SetChildAt(int, sl.Strategy) {
+	panic("IsTomInstructionToExpression: no children")
+}
+
+// VisitTomInstructionToExpression is the `_TomInstructionToExpression` slot-visit strategy: when subject is `TomInstructionToExpression`,
+// applies each constituent strategy to the matching child slot and
+// rebuilds the term iff at least one child changed. Fails with
+// sl.ErrVisitFailure when subject isn't `TomInstructionToExpression`.
+type VisitTomInstructionToExpression struct {
+	args []sl.Strategy
+}
+
+// NewVisitTomInstructionToExpression builds the slot-visit strategy with the supplied per-slot
+// sub-strategies.
+func NewVisitTomInstructionToExpression(args ...sl.Strategy) *VisitTomInstructionToExpression {
+	return &VisitTomInstructionToExpression{args: args}
+}
+
+func (s *VisitTomInstructionToExpression) VisitLight(subject any, intro sl.Introspector) (any, error) {
+	if _, ok := subject.(*TomInstructionToExpressionExpression); !ok {
+		return subject, sl.ErrVisitFailure
+	}
+	if len(s.args) != 1 {
+		return subject, sl.ErrVisitFailure
+	}
+	var newChildren []any
+	for i := 0; i < 1; i++ {
+		oldChild := intro.GetChildAt(subject, i)
+		newChild, err := s.args[i].VisitLight(oldChild, intro)
+		if err != nil {
+			return subject, err
+		}
+		if newChildren != nil {
+			newChildren[i] = newChild
+		} else if newChild != oldChild {
+			newChildren = intro.GetChildren(subject)
+			newChildren[i] = newChild
+		}
+	}
+	if newChildren != nil {
+		return intro.SetChildren(subject, newChildren), nil
+	}
+	return subject, nil
+}
+
+func (s *VisitTomInstructionToExpression) ChildCount() int                 { return len(s.args) }
+func (s *VisitTomInstructionToExpression) ChildAt(i int) sl.Strategy       { return s.args[i] }
+func (s *VisitTomInstructionToExpression) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
 
 // BottomExpression is the term type for the alternative `Bottom(...)` of sort Expression.
 type BottomExpression struct {
@@ -126,12 +304,98 @@ func (t *BottomExpression) String() string {
 	return fmt.Sprintf("Bottom(%v)", t.TomType)
 }
 
+func (t *BottomExpression) ChildCount() int { return 1 }
+
+func (t *BottomExpression) ChildAt(i int) any {
+	switch i {
+	case 0:
+		return t.TomType
+	}
+	panic(fmt.Sprintf("BottomExpression.ChildAt: index %d out of range", i))
+}
+
+func (t *BottomExpression) SetChildAt(i int, child any) any {
+	switch i {
+	case 0:
+		return MakeBottom(child.(TomType))
+	}
+	panic(fmt.Sprintf("BottomExpression.SetChildAt: index %d out of range", i))
+}
+
+func (t *BottomExpression) Children() []any {
+	return []any{t.TomType}
+}
+
+func (t *BottomExpression) SetChildren(children []any) any {
+	return MakeBottom(children[0].(TomType))
+}
+
 // MakeBottom builds the canonical (shared) Bottom term.
 func MakeBottom(tomType TomType) Expression {
 	hashes := []uint32{tomType.Hash()}
 	proto := &BottomExpression{hash: sharedobjects.MixSymbol(sharedobjects.StringHash("Bottom"), hashes), TomType: tomType}
 	return factory.Build(proto).(*BottomExpression)
 }
+
+// IsBottom is the `Is_Bottom` predicate strategy: succeeds (returns subject
+// unchanged) when subject has the `Bottom` shape, otherwise fails with
+// sl.ErrVisitFailure.
+type IsBottom struct{}
+
+func (IsBottom) VisitLight(subject any, _ sl.Introspector) (any, error) {
+	if _, ok := subject.(*BottomExpression); ok {
+		return subject, nil
+	}
+	return subject, sl.ErrVisitFailure
+}
+func (IsBottom) ChildCount() int             { return 0 }
+func (IsBottom) ChildAt(int) sl.Strategy     { panic("IsBottom: no children") }
+func (IsBottom) SetChildAt(int, sl.Strategy) { panic("IsBottom: no children") }
+
+// VisitBottom is the `_Bottom` slot-visit strategy: when subject is `Bottom`,
+// applies each constituent strategy to the matching child slot and
+// rebuilds the term iff at least one child changed. Fails with
+// sl.ErrVisitFailure when subject isn't `Bottom`.
+type VisitBottom struct {
+	args []sl.Strategy
+}
+
+// NewVisitBottom builds the slot-visit strategy with the supplied per-slot
+// sub-strategies.
+func NewVisitBottom(args ...sl.Strategy) *VisitBottom {
+	return &VisitBottom{args: args}
+}
+
+func (s *VisitBottom) VisitLight(subject any, intro sl.Introspector) (any, error) {
+	if _, ok := subject.(*BottomExpression); !ok {
+		return subject, sl.ErrVisitFailure
+	}
+	if len(s.args) != 1 {
+		return subject, sl.ErrVisitFailure
+	}
+	var newChildren []any
+	for i := 0; i < 1; i++ {
+		oldChild := intro.GetChildAt(subject, i)
+		newChild, err := s.args[i].VisitLight(oldChild, intro)
+		if err != nil {
+			return subject, err
+		}
+		if newChildren != nil {
+			newChildren[i] = newChild
+		} else if newChild != oldChild {
+			newChildren = intro.GetChildren(subject)
+			newChildren[i] = newChild
+		}
+	}
+	if newChildren != nil {
+		return intro.SetChildren(subject, newChildren), nil
+	}
+	return subject, nil
+}
+
+func (s *VisitBottom) ChildCount() int                 { return len(s.args) }
+func (s *VisitBottom) ChildAt(i int) sl.Strategy       { return s.args[i] }
+func (s *VisitBottom) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
 
 // NegationExpression is the term type for the alternative `Negation(...)` of sort Expression.
 type NegationExpression struct {
@@ -163,12 +427,98 @@ func (t *NegationExpression) String() string {
 	return fmt.Sprintf("Negation(%v)", t.Arg)
 }
 
+func (t *NegationExpression) ChildCount() int { return 1 }
+
+func (t *NegationExpression) ChildAt(i int) any {
+	switch i {
+	case 0:
+		return t.Arg
+	}
+	panic(fmt.Sprintf("NegationExpression.ChildAt: index %d out of range", i))
+}
+
+func (t *NegationExpression) SetChildAt(i int, child any) any {
+	switch i {
+	case 0:
+		return MakeNegation(child.(Expression))
+	}
+	panic(fmt.Sprintf("NegationExpression.SetChildAt: index %d out of range", i))
+}
+
+func (t *NegationExpression) Children() []any {
+	return []any{t.Arg}
+}
+
+func (t *NegationExpression) SetChildren(children []any) any {
+	return MakeNegation(children[0].(Expression))
+}
+
 // MakeNegation builds the canonical (shared) Negation term.
 func MakeNegation(arg Expression) Expression {
 	hashes := []uint32{arg.Hash()}
 	proto := &NegationExpression{hash: sharedobjects.MixSymbol(sharedobjects.StringHash("Negation"), hashes), Arg: arg}
 	return factory.Build(proto).(*NegationExpression)
 }
+
+// IsNegation is the `Is_Negation` predicate strategy: succeeds (returns subject
+// unchanged) when subject has the `Negation` shape, otherwise fails with
+// sl.ErrVisitFailure.
+type IsNegation struct{}
+
+func (IsNegation) VisitLight(subject any, _ sl.Introspector) (any, error) {
+	if _, ok := subject.(*NegationExpression); ok {
+		return subject, nil
+	}
+	return subject, sl.ErrVisitFailure
+}
+func (IsNegation) ChildCount() int             { return 0 }
+func (IsNegation) ChildAt(int) sl.Strategy     { panic("IsNegation: no children") }
+func (IsNegation) SetChildAt(int, sl.Strategy) { panic("IsNegation: no children") }
+
+// VisitNegation is the `_Negation` slot-visit strategy: when subject is `Negation`,
+// applies each constituent strategy to the matching child slot and
+// rebuilds the term iff at least one child changed. Fails with
+// sl.ErrVisitFailure when subject isn't `Negation`.
+type VisitNegation struct {
+	args []sl.Strategy
+}
+
+// NewVisitNegation builds the slot-visit strategy with the supplied per-slot
+// sub-strategies.
+func NewVisitNegation(args ...sl.Strategy) *VisitNegation {
+	return &VisitNegation{args: args}
+}
+
+func (s *VisitNegation) VisitLight(subject any, intro sl.Introspector) (any, error) {
+	if _, ok := subject.(*NegationExpression); !ok {
+		return subject, sl.ErrVisitFailure
+	}
+	if len(s.args) != 1 {
+		return subject, sl.ErrVisitFailure
+	}
+	var newChildren []any
+	for i := 0; i < 1; i++ {
+		oldChild := intro.GetChildAt(subject, i)
+		newChild, err := s.args[i].VisitLight(oldChild, intro)
+		if err != nil {
+			return subject, err
+		}
+		if newChildren != nil {
+			newChildren[i] = newChild
+		} else if newChild != oldChild {
+			newChildren = intro.GetChildren(subject)
+			newChildren[i] = newChild
+		}
+	}
+	if newChildren != nil {
+		return intro.SetChildren(subject, newChildren), nil
+	}
+	return subject, nil
+}
+
+func (s *VisitNegation) ChildCount() int                 { return len(s.args) }
+func (s *VisitNegation) ChildAt(i int) sl.Strategy       { return s.args[i] }
+func (s *VisitNegation) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
 
 // AndExpression is the term type for the alternative `And(...)` of sort Expression.
 type AndExpression struct {
@@ -204,12 +554,102 @@ func (t *AndExpression) String() string {
 	return fmt.Sprintf("And(%v,%v)", t.Arg1, t.Arg2)
 }
 
+func (t *AndExpression) ChildCount() int { return 2 }
+
+func (t *AndExpression) ChildAt(i int) any {
+	switch i {
+	case 0:
+		return t.Arg1
+	case 1:
+		return t.Arg2
+	}
+	panic(fmt.Sprintf("AndExpression.ChildAt: index %d out of range", i))
+}
+
+func (t *AndExpression) SetChildAt(i int, child any) any {
+	switch i {
+	case 0:
+		return MakeAnd(child.(Expression), t.Arg2)
+	case 1:
+		return MakeAnd(t.Arg1, child.(Expression))
+	}
+	panic(fmt.Sprintf("AndExpression.SetChildAt: index %d out of range", i))
+}
+
+func (t *AndExpression) Children() []any {
+	return []any{t.Arg1, t.Arg2}
+}
+
+func (t *AndExpression) SetChildren(children []any) any {
+	return MakeAnd(children[0].(Expression), children[1].(Expression))
+}
+
 // MakeAnd builds the canonical (shared) And term.
 func MakeAnd(arg1 Expression, arg2 Expression) Expression {
 	hashes := []uint32{arg1.Hash(), arg2.Hash()}
 	proto := &AndExpression{hash: sharedobjects.MixSymbol(sharedobjects.StringHash("And"), hashes), Arg1: arg1, Arg2: arg2}
 	return factory.Build(proto).(*AndExpression)
 }
+
+// IsAnd is the `Is_And` predicate strategy: succeeds (returns subject
+// unchanged) when subject has the `And` shape, otherwise fails with
+// sl.ErrVisitFailure.
+type IsAnd struct{}
+
+func (IsAnd) VisitLight(subject any, _ sl.Introspector) (any, error) {
+	if _, ok := subject.(*AndExpression); ok {
+		return subject, nil
+	}
+	return subject, sl.ErrVisitFailure
+}
+func (IsAnd) ChildCount() int             { return 0 }
+func (IsAnd) ChildAt(int) sl.Strategy     { panic("IsAnd: no children") }
+func (IsAnd) SetChildAt(int, sl.Strategy) { panic("IsAnd: no children") }
+
+// VisitAnd is the `_And` slot-visit strategy: when subject is `And`,
+// applies each constituent strategy to the matching child slot and
+// rebuilds the term iff at least one child changed. Fails with
+// sl.ErrVisitFailure when subject isn't `And`.
+type VisitAnd struct {
+	args []sl.Strategy
+}
+
+// NewVisitAnd builds the slot-visit strategy with the supplied per-slot
+// sub-strategies.
+func NewVisitAnd(args ...sl.Strategy) *VisitAnd {
+	return &VisitAnd{args: args}
+}
+
+func (s *VisitAnd) VisitLight(subject any, intro sl.Introspector) (any, error) {
+	if _, ok := subject.(*AndExpression); !ok {
+		return subject, sl.ErrVisitFailure
+	}
+	if len(s.args) != 2 {
+		return subject, sl.ErrVisitFailure
+	}
+	var newChildren []any
+	for i := 0; i < 2; i++ {
+		oldChild := intro.GetChildAt(subject, i)
+		newChild, err := s.args[i].VisitLight(oldChild, intro)
+		if err != nil {
+			return subject, err
+		}
+		if newChildren != nil {
+			newChildren[i] = newChild
+		} else if newChild != oldChild {
+			newChildren = intro.GetChildren(subject)
+			newChildren[i] = newChild
+		}
+	}
+	if newChildren != nil {
+		return intro.SetChildren(subject, newChildren), nil
+	}
+	return subject, nil
+}
+
+func (s *VisitAnd) ChildCount() int                 { return len(s.args) }
+func (s *VisitAnd) ChildAt(i int) sl.Strategy       { return s.args[i] }
+func (s *VisitAnd) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
 
 // OrExpression is the term type for the alternative `Or(...)` of sort Expression.
 type OrExpression struct {
@@ -245,12 +685,102 @@ func (t *OrExpression) String() string {
 	return fmt.Sprintf("Or(%v,%v)", t.Arg1, t.Arg2)
 }
 
+func (t *OrExpression) ChildCount() int { return 2 }
+
+func (t *OrExpression) ChildAt(i int) any {
+	switch i {
+	case 0:
+		return t.Arg1
+	case 1:
+		return t.Arg2
+	}
+	panic(fmt.Sprintf("OrExpression.ChildAt: index %d out of range", i))
+}
+
+func (t *OrExpression) SetChildAt(i int, child any) any {
+	switch i {
+	case 0:
+		return MakeOr(child.(Expression), t.Arg2)
+	case 1:
+		return MakeOr(t.Arg1, child.(Expression))
+	}
+	panic(fmt.Sprintf("OrExpression.SetChildAt: index %d out of range", i))
+}
+
+func (t *OrExpression) Children() []any {
+	return []any{t.Arg1, t.Arg2}
+}
+
+func (t *OrExpression) SetChildren(children []any) any {
+	return MakeOr(children[0].(Expression), children[1].(Expression))
+}
+
 // MakeOr builds the canonical (shared) Or term.
 func MakeOr(arg1 Expression, arg2 Expression) Expression {
 	hashes := []uint32{arg1.Hash(), arg2.Hash()}
 	proto := &OrExpression{hash: sharedobjects.MixSymbol(sharedobjects.StringHash("Or"), hashes), Arg1: arg1, Arg2: arg2}
 	return factory.Build(proto).(*OrExpression)
 }
+
+// IsOr is the `Is_Or` predicate strategy: succeeds (returns subject
+// unchanged) when subject has the `Or` shape, otherwise fails with
+// sl.ErrVisitFailure.
+type IsOr struct{}
+
+func (IsOr) VisitLight(subject any, _ sl.Introspector) (any, error) {
+	if _, ok := subject.(*OrExpression); ok {
+		return subject, nil
+	}
+	return subject, sl.ErrVisitFailure
+}
+func (IsOr) ChildCount() int             { return 0 }
+func (IsOr) ChildAt(int) sl.Strategy     { panic("IsOr: no children") }
+func (IsOr) SetChildAt(int, sl.Strategy) { panic("IsOr: no children") }
+
+// VisitOr is the `_Or` slot-visit strategy: when subject is `Or`,
+// applies each constituent strategy to the matching child slot and
+// rebuilds the term iff at least one child changed. Fails with
+// sl.ErrVisitFailure when subject isn't `Or`.
+type VisitOr struct {
+	args []sl.Strategy
+}
+
+// NewVisitOr builds the slot-visit strategy with the supplied per-slot
+// sub-strategies.
+func NewVisitOr(args ...sl.Strategy) *VisitOr {
+	return &VisitOr{args: args}
+}
+
+func (s *VisitOr) VisitLight(subject any, intro sl.Introspector) (any, error) {
+	if _, ok := subject.(*OrExpression); !ok {
+		return subject, sl.ErrVisitFailure
+	}
+	if len(s.args) != 2 {
+		return subject, sl.ErrVisitFailure
+	}
+	var newChildren []any
+	for i := 0; i < 2; i++ {
+		oldChild := intro.GetChildAt(subject, i)
+		newChild, err := s.args[i].VisitLight(oldChild, intro)
+		if err != nil {
+			return subject, err
+		}
+		if newChildren != nil {
+			newChildren[i] = newChild
+		} else if newChild != oldChild {
+			newChildren = intro.GetChildren(subject)
+			newChildren[i] = newChild
+		}
+	}
+	if newChildren != nil {
+		return intro.SetChildren(subject, newChildren), nil
+	}
+	return subject, nil
+}
+
+func (s *VisitOr) ChildCount() int                 { return len(s.args) }
+func (s *VisitOr) ChildAt(i int) sl.Strategy       { return s.args[i] }
+func (s *VisitOr) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
 
 // OrExpressionDisjunctionExpression is the term type for the alternative `OrExpressionDisjunction(...)` of sort Expression.
 type OrExpressionDisjunctionExpression struct {
@@ -291,6 +821,32 @@ func (t *OrExpressionDisjunctionExpression) String() string {
 	return "OrExpressionDisjunction" + "(" + strings.Join(parts, ",") + ")"
 }
 
+func (t *OrExpressionDisjunctionExpression) ChildCount() int { return len(t.Slots) }
+
+func (t *OrExpressionDisjunctionExpression) ChildAt(i int) any { return t.Slots[i] }
+
+func (t *OrExpressionDisjunctionExpression) SetChildAt(i int, child any) any {
+	dup := append([]Expression(nil), t.Slots...)
+	dup[i] = child.(Expression)
+	return MakeOrExpressionDisjunction(dup...)
+}
+
+func (t *OrExpressionDisjunctionExpression) Children() []any {
+	out := make([]any, len(t.Slots))
+	for i, v := range t.Slots {
+		out[i] = v
+	}
+	return out
+}
+
+func (t *OrExpressionDisjunctionExpression) SetChildren(children []any) any {
+	args := make([]Expression, len(children))
+	for i, c := range children {
+		args[i] = c.(Expression)
+	}
+	return MakeOrExpressionDisjunction(args...)
+}
+
 // MakeOrExpressionDisjunction builds the canonical (shared) OrExpressionDisjunction term.
 func MakeOrExpressionDisjunction(args ...Expression) Expression {
 	hashes := make([]uint32, 0, len(args))
@@ -300,6 +856,73 @@ func MakeOrExpressionDisjunction(args ...Expression) Expression {
 	proto := &OrExpressionDisjunctionExpression{Slots: args, hash: sharedobjects.MixSymbol(sharedobjects.StringHash("OrExpressionDisjunction"), hashes)}
 	return factory.Build(proto).(*OrExpressionDisjunctionExpression)
 }
+
+// IsOrExpressionDisjunction is the `Is_OrExpressionDisjunction` predicate strategy: succeeds (returns subject
+// unchanged) when subject has the `OrExpressionDisjunction` shape, otherwise fails with
+// sl.ErrVisitFailure.
+type IsOrExpressionDisjunction struct{}
+
+func (IsOrExpressionDisjunction) VisitLight(subject any, _ sl.Introspector) (any, error) {
+	if _, ok := subject.(*OrExpressionDisjunctionExpression); ok {
+		return subject, nil
+	}
+	return subject, sl.ErrVisitFailure
+}
+func (IsOrExpressionDisjunction) ChildCount() int { return 0 }
+func (IsOrExpressionDisjunction) ChildAt(int) sl.Strategy {
+	panic("IsOrExpressionDisjunction: no children")
+}
+func (IsOrExpressionDisjunction) SetChildAt(int, sl.Strategy) {
+	panic("IsOrExpressionDisjunction: no children")
+}
+
+// VisitOrExpressionDisjunction is the `_OrExpressionDisjunction` slot-visit strategy: when subject is `OrExpressionDisjunction`,
+// applies each constituent strategy to the matching child slot and
+// rebuilds the term iff at least one child changed. Fails with
+// sl.ErrVisitFailure when subject isn't `OrExpressionDisjunction`.
+type VisitOrExpressionDisjunction struct {
+	args []sl.Strategy
+}
+
+// NewVisitOrExpressionDisjunction builds the slot-visit strategy with the supplied per-slot
+// sub-strategies.
+func NewVisitOrExpressionDisjunction(args ...sl.Strategy) *VisitOrExpressionDisjunction {
+	return &VisitOrExpressionDisjunction{args: args}
+}
+
+func (s *VisitOrExpressionDisjunction) VisitLight(subject any, intro sl.Introspector) (any, error) {
+	if _, ok := subject.(*OrExpressionDisjunctionExpression); !ok {
+		return subject, sl.ErrVisitFailure
+	}
+	// Variadic alt: visit every element with args[0] (Java's
+	// `_concX` invokes the sub-strategy on each list element).
+	if len(s.args) == 0 {
+		return subject, nil
+	}
+	count := intro.GetChildCount(subject)
+	var newChildren []any
+	for i := 0; i < count; i++ {
+		oldChild := intro.GetChildAt(subject, i)
+		newChild, err := s.args[0].VisitLight(oldChild, intro)
+		if err != nil {
+			return subject, err
+		}
+		if newChildren != nil {
+			newChildren[i] = newChild
+		} else if newChild != oldChild {
+			newChildren = intro.GetChildren(subject)
+			newChildren[i] = newChild
+		}
+	}
+	if newChildren != nil {
+		return intro.SetChildren(subject, newChildren), nil
+	}
+	return subject, nil
+}
+
+func (s *VisitOrExpressionDisjunction) ChildCount() int                 { return len(s.args) }
+func (s *VisitOrExpressionDisjunction) ChildAt(i int) sl.Strategy       { return s.args[i] }
+func (s *VisitOrExpressionDisjunction) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
 
 // OrConnectorExpression is the term type for the alternative `OrConnector(...)` of sort Expression.
 type OrConnectorExpression struct {
@@ -340,6 +963,32 @@ func (t *OrConnectorExpression) String() string {
 	return "OrConnector" + "(" + strings.Join(parts, ",") + ")"
 }
 
+func (t *OrConnectorExpression) ChildCount() int { return len(t.Slots) }
+
+func (t *OrConnectorExpression) ChildAt(i int) any { return t.Slots[i] }
+
+func (t *OrConnectorExpression) SetChildAt(i int, child any) any {
+	dup := append([]Expression(nil), t.Slots...)
+	dup[i] = child.(Expression)
+	return MakeOrConnector(dup...)
+}
+
+func (t *OrConnectorExpression) Children() []any {
+	out := make([]any, len(t.Slots))
+	for i, v := range t.Slots {
+		out[i] = v
+	}
+	return out
+}
+
+func (t *OrConnectorExpression) SetChildren(children []any) any {
+	args := make([]Expression, len(children))
+	for i, c := range children {
+		args[i] = c.(Expression)
+	}
+	return MakeOrConnector(args...)
+}
+
 // MakeOrConnector builds the canonical (shared) OrConnector term.
 func MakeOrConnector(args ...Expression) Expression {
 	hashes := make([]uint32, 0, len(args))
@@ -349,6 +998,69 @@ func MakeOrConnector(args ...Expression) Expression {
 	proto := &OrConnectorExpression{Slots: args, hash: sharedobjects.MixSymbol(sharedobjects.StringHash("OrConnector"), hashes)}
 	return factory.Build(proto).(*OrConnectorExpression)
 }
+
+// IsOrConnector is the `Is_OrConnector` predicate strategy: succeeds (returns subject
+// unchanged) when subject has the `OrConnector` shape, otherwise fails with
+// sl.ErrVisitFailure.
+type IsOrConnector struct{}
+
+func (IsOrConnector) VisitLight(subject any, _ sl.Introspector) (any, error) {
+	if _, ok := subject.(*OrConnectorExpression); ok {
+		return subject, nil
+	}
+	return subject, sl.ErrVisitFailure
+}
+func (IsOrConnector) ChildCount() int             { return 0 }
+func (IsOrConnector) ChildAt(int) sl.Strategy     { panic("IsOrConnector: no children") }
+func (IsOrConnector) SetChildAt(int, sl.Strategy) { panic("IsOrConnector: no children") }
+
+// VisitOrConnector is the `_OrConnector` slot-visit strategy: when subject is `OrConnector`,
+// applies each constituent strategy to the matching child slot and
+// rebuilds the term iff at least one child changed. Fails with
+// sl.ErrVisitFailure when subject isn't `OrConnector`.
+type VisitOrConnector struct {
+	args []sl.Strategy
+}
+
+// NewVisitOrConnector builds the slot-visit strategy with the supplied per-slot
+// sub-strategies.
+func NewVisitOrConnector(args ...sl.Strategy) *VisitOrConnector {
+	return &VisitOrConnector{args: args}
+}
+
+func (s *VisitOrConnector) VisitLight(subject any, intro sl.Introspector) (any, error) {
+	if _, ok := subject.(*OrConnectorExpression); !ok {
+		return subject, sl.ErrVisitFailure
+	}
+	// Variadic alt: visit every element with args[0] (Java's
+	// `_concX` invokes the sub-strategy on each list element).
+	if len(s.args) == 0 {
+		return subject, nil
+	}
+	count := intro.GetChildCount(subject)
+	var newChildren []any
+	for i := 0; i < count; i++ {
+		oldChild := intro.GetChildAt(subject, i)
+		newChild, err := s.args[0].VisitLight(oldChild, intro)
+		if err != nil {
+			return subject, err
+		}
+		if newChildren != nil {
+			newChildren[i] = newChild
+		} else if newChild != oldChild {
+			newChildren = intro.GetChildren(subject)
+			newChildren[i] = newChild
+		}
+	}
+	if newChildren != nil {
+		return intro.SetChildren(subject, newChildren), nil
+	}
+	return subject, nil
+}
+
+func (s *VisitOrConnector) ChildCount() int                 { return len(s.args) }
+func (s *VisitOrConnector) ChildAt(i int) sl.Strategy       { return s.args[i] }
+func (s *VisitOrConnector) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
 
 // GreaterThanExpression is the term type for the alternative `GreaterThan(...)` of sort Expression.
 type GreaterThanExpression struct {
@@ -384,12 +1096,102 @@ func (t *GreaterThanExpression) String() string {
 	return fmt.Sprintf("GreaterThan(%v,%v)", t.Arg1, t.Arg2)
 }
 
+func (t *GreaterThanExpression) ChildCount() int { return 2 }
+
+func (t *GreaterThanExpression) ChildAt(i int) any {
+	switch i {
+	case 0:
+		return t.Arg1
+	case 1:
+		return t.Arg2
+	}
+	panic(fmt.Sprintf("GreaterThanExpression.ChildAt: index %d out of range", i))
+}
+
+func (t *GreaterThanExpression) SetChildAt(i int, child any) any {
+	switch i {
+	case 0:
+		return MakeGreaterThan(child.(Expression), t.Arg2)
+	case 1:
+		return MakeGreaterThan(t.Arg1, child.(Expression))
+	}
+	panic(fmt.Sprintf("GreaterThanExpression.SetChildAt: index %d out of range", i))
+}
+
+func (t *GreaterThanExpression) Children() []any {
+	return []any{t.Arg1, t.Arg2}
+}
+
+func (t *GreaterThanExpression) SetChildren(children []any) any {
+	return MakeGreaterThan(children[0].(Expression), children[1].(Expression))
+}
+
 // MakeGreaterThan builds the canonical (shared) GreaterThan term.
 func MakeGreaterThan(arg1 Expression, arg2 Expression) Expression {
 	hashes := []uint32{arg1.Hash(), arg2.Hash()}
 	proto := &GreaterThanExpression{hash: sharedobjects.MixSymbol(sharedobjects.StringHash("GreaterThan"), hashes), Arg1: arg1, Arg2: arg2}
 	return factory.Build(proto).(*GreaterThanExpression)
 }
+
+// IsGreaterThan is the `Is_GreaterThan` predicate strategy: succeeds (returns subject
+// unchanged) when subject has the `GreaterThan` shape, otherwise fails with
+// sl.ErrVisitFailure.
+type IsGreaterThan struct{}
+
+func (IsGreaterThan) VisitLight(subject any, _ sl.Introspector) (any, error) {
+	if _, ok := subject.(*GreaterThanExpression); ok {
+		return subject, nil
+	}
+	return subject, sl.ErrVisitFailure
+}
+func (IsGreaterThan) ChildCount() int             { return 0 }
+func (IsGreaterThan) ChildAt(int) sl.Strategy     { panic("IsGreaterThan: no children") }
+func (IsGreaterThan) SetChildAt(int, sl.Strategy) { panic("IsGreaterThan: no children") }
+
+// VisitGreaterThan is the `_GreaterThan` slot-visit strategy: when subject is `GreaterThan`,
+// applies each constituent strategy to the matching child slot and
+// rebuilds the term iff at least one child changed. Fails with
+// sl.ErrVisitFailure when subject isn't `GreaterThan`.
+type VisitGreaterThan struct {
+	args []sl.Strategy
+}
+
+// NewVisitGreaterThan builds the slot-visit strategy with the supplied per-slot
+// sub-strategies.
+func NewVisitGreaterThan(args ...sl.Strategy) *VisitGreaterThan {
+	return &VisitGreaterThan{args: args}
+}
+
+func (s *VisitGreaterThan) VisitLight(subject any, intro sl.Introspector) (any, error) {
+	if _, ok := subject.(*GreaterThanExpression); !ok {
+		return subject, sl.ErrVisitFailure
+	}
+	if len(s.args) != 2 {
+		return subject, sl.ErrVisitFailure
+	}
+	var newChildren []any
+	for i := 0; i < 2; i++ {
+		oldChild := intro.GetChildAt(subject, i)
+		newChild, err := s.args[i].VisitLight(oldChild, intro)
+		if err != nil {
+			return subject, err
+		}
+		if newChildren != nil {
+			newChildren[i] = newChild
+		} else if newChild != oldChild {
+			newChildren = intro.GetChildren(subject)
+			newChildren[i] = newChild
+		}
+	}
+	if newChildren != nil {
+		return intro.SetChildren(subject, newChildren), nil
+	}
+	return subject, nil
+}
+
+func (s *VisitGreaterThan) ChildCount() int                 { return len(s.args) }
+func (s *VisitGreaterThan) ChildAt(i int) sl.Strategy       { return s.args[i] }
+func (s *VisitGreaterThan) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
 
 // GreaterOrEqualThanExpression is the term type for the alternative `GreaterOrEqualThan(...)` of sort Expression.
 type GreaterOrEqualThanExpression struct {
@@ -425,12 +1227,102 @@ func (t *GreaterOrEqualThanExpression) String() string {
 	return fmt.Sprintf("GreaterOrEqualThan(%v,%v)", t.Arg1, t.Arg2)
 }
 
+func (t *GreaterOrEqualThanExpression) ChildCount() int { return 2 }
+
+func (t *GreaterOrEqualThanExpression) ChildAt(i int) any {
+	switch i {
+	case 0:
+		return t.Arg1
+	case 1:
+		return t.Arg2
+	}
+	panic(fmt.Sprintf("GreaterOrEqualThanExpression.ChildAt: index %d out of range", i))
+}
+
+func (t *GreaterOrEqualThanExpression) SetChildAt(i int, child any) any {
+	switch i {
+	case 0:
+		return MakeGreaterOrEqualThan(child.(Expression), t.Arg2)
+	case 1:
+		return MakeGreaterOrEqualThan(t.Arg1, child.(Expression))
+	}
+	panic(fmt.Sprintf("GreaterOrEqualThanExpression.SetChildAt: index %d out of range", i))
+}
+
+func (t *GreaterOrEqualThanExpression) Children() []any {
+	return []any{t.Arg1, t.Arg2}
+}
+
+func (t *GreaterOrEqualThanExpression) SetChildren(children []any) any {
+	return MakeGreaterOrEqualThan(children[0].(Expression), children[1].(Expression))
+}
+
 // MakeGreaterOrEqualThan builds the canonical (shared) GreaterOrEqualThan term.
 func MakeGreaterOrEqualThan(arg1 Expression, arg2 Expression) Expression {
 	hashes := []uint32{arg1.Hash(), arg2.Hash()}
 	proto := &GreaterOrEqualThanExpression{hash: sharedobjects.MixSymbol(sharedobjects.StringHash("GreaterOrEqualThan"), hashes), Arg1: arg1, Arg2: arg2}
 	return factory.Build(proto).(*GreaterOrEqualThanExpression)
 }
+
+// IsGreaterOrEqualThan is the `Is_GreaterOrEqualThan` predicate strategy: succeeds (returns subject
+// unchanged) when subject has the `GreaterOrEqualThan` shape, otherwise fails with
+// sl.ErrVisitFailure.
+type IsGreaterOrEqualThan struct{}
+
+func (IsGreaterOrEqualThan) VisitLight(subject any, _ sl.Introspector) (any, error) {
+	if _, ok := subject.(*GreaterOrEqualThanExpression); ok {
+		return subject, nil
+	}
+	return subject, sl.ErrVisitFailure
+}
+func (IsGreaterOrEqualThan) ChildCount() int             { return 0 }
+func (IsGreaterOrEqualThan) ChildAt(int) sl.Strategy     { panic("IsGreaterOrEqualThan: no children") }
+func (IsGreaterOrEqualThan) SetChildAt(int, sl.Strategy) { panic("IsGreaterOrEqualThan: no children") }
+
+// VisitGreaterOrEqualThan is the `_GreaterOrEqualThan` slot-visit strategy: when subject is `GreaterOrEqualThan`,
+// applies each constituent strategy to the matching child slot and
+// rebuilds the term iff at least one child changed. Fails with
+// sl.ErrVisitFailure when subject isn't `GreaterOrEqualThan`.
+type VisitGreaterOrEqualThan struct {
+	args []sl.Strategy
+}
+
+// NewVisitGreaterOrEqualThan builds the slot-visit strategy with the supplied per-slot
+// sub-strategies.
+func NewVisitGreaterOrEqualThan(args ...sl.Strategy) *VisitGreaterOrEqualThan {
+	return &VisitGreaterOrEqualThan{args: args}
+}
+
+func (s *VisitGreaterOrEqualThan) VisitLight(subject any, intro sl.Introspector) (any, error) {
+	if _, ok := subject.(*GreaterOrEqualThanExpression); !ok {
+		return subject, sl.ErrVisitFailure
+	}
+	if len(s.args) != 2 {
+		return subject, sl.ErrVisitFailure
+	}
+	var newChildren []any
+	for i := 0; i < 2; i++ {
+		oldChild := intro.GetChildAt(subject, i)
+		newChild, err := s.args[i].VisitLight(oldChild, intro)
+		if err != nil {
+			return subject, err
+		}
+		if newChildren != nil {
+			newChildren[i] = newChild
+		} else if newChild != oldChild {
+			newChildren = intro.GetChildren(subject)
+			newChildren[i] = newChild
+		}
+	}
+	if newChildren != nil {
+		return intro.SetChildren(subject, newChildren), nil
+	}
+	return subject, nil
+}
+
+func (s *VisitGreaterOrEqualThan) ChildCount() int                 { return len(s.args) }
+func (s *VisitGreaterOrEqualThan) ChildAt(i int) sl.Strategy       { return s.args[i] }
+func (s *VisitGreaterOrEqualThan) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
 
 // LessThanExpression is the term type for the alternative `LessThan(...)` of sort Expression.
 type LessThanExpression struct {
@@ -466,12 +1358,102 @@ func (t *LessThanExpression) String() string {
 	return fmt.Sprintf("LessThan(%v,%v)", t.Arg1, t.Arg2)
 }
 
+func (t *LessThanExpression) ChildCount() int { return 2 }
+
+func (t *LessThanExpression) ChildAt(i int) any {
+	switch i {
+	case 0:
+		return t.Arg1
+	case 1:
+		return t.Arg2
+	}
+	panic(fmt.Sprintf("LessThanExpression.ChildAt: index %d out of range", i))
+}
+
+func (t *LessThanExpression) SetChildAt(i int, child any) any {
+	switch i {
+	case 0:
+		return MakeLessThan(child.(Expression), t.Arg2)
+	case 1:
+		return MakeLessThan(t.Arg1, child.(Expression))
+	}
+	panic(fmt.Sprintf("LessThanExpression.SetChildAt: index %d out of range", i))
+}
+
+func (t *LessThanExpression) Children() []any {
+	return []any{t.Arg1, t.Arg2}
+}
+
+func (t *LessThanExpression) SetChildren(children []any) any {
+	return MakeLessThan(children[0].(Expression), children[1].(Expression))
+}
+
 // MakeLessThan builds the canonical (shared) LessThan term.
 func MakeLessThan(arg1 Expression, arg2 Expression) Expression {
 	hashes := []uint32{arg1.Hash(), arg2.Hash()}
 	proto := &LessThanExpression{hash: sharedobjects.MixSymbol(sharedobjects.StringHash("LessThan"), hashes), Arg1: arg1, Arg2: arg2}
 	return factory.Build(proto).(*LessThanExpression)
 }
+
+// IsLessThan is the `Is_LessThan` predicate strategy: succeeds (returns subject
+// unchanged) when subject has the `LessThan` shape, otherwise fails with
+// sl.ErrVisitFailure.
+type IsLessThan struct{}
+
+func (IsLessThan) VisitLight(subject any, _ sl.Introspector) (any, error) {
+	if _, ok := subject.(*LessThanExpression); ok {
+		return subject, nil
+	}
+	return subject, sl.ErrVisitFailure
+}
+func (IsLessThan) ChildCount() int             { return 0 }
+func (IsLessThan) ChildAt(int) sl.Strategy     { panic("IsLessThan: no children") }
+func (IsLessThan) SetChildAt(int, sl.Strategy) { panic("IsLessThan: no children") }
+
+// VisitLessThan is the `_LessThan` slot-visit strategy: when subject is `LessThan`,
+// applies each constituent strategy to the matching child slot and
+// rebuilds the term iff at least one child changed. Fails with
+// sl.ErrVisitFailure when subject isn't `LessThan`.
+type VisitLessThan struct {
+	args []sl.Strategy
+}
+
+// NewVisitLessThan builds the slot-visit strategy with the supplied per-slot
+// sub-strategies.
+func NewVisitLessThan(args ...sl.Strategy) *VisitLessThan {
+	return &VisitLessThan{args: args}
+}
+
+func (s *VisitLessThan) VisitLight(subject any, intro sl.Introspector) (any, error) {
+	if _, ok := subject.(*LessThanExpression); !ok {
+		return subject, sl.ErrVisitFailure
+	}
+	if len(s.args) != 2 {
+		return subject, sl.ErrVisitFailure
+	}
+	var newChildren []any
+	for i := 0; i < 2; i++ {
+		oldChild := intro.GetChildAt(subject, i)
+		newChild, err := s.args[i].VisitLight(oldChild, intro)
+		if err != nil {
+			return subject, err
+		}
+		if newChildren != nil {
+			newChildren[i] = newChild
+		} else if newChild != oldChild {
+			newChildren = intro.GetChildren(subject)
+			newChildren[i] = newChild
+		}
+	}
+	if newChildren != nil {
+		return intro.SetChildren(subject, newChildren), nil
+	}
+	return subject, nil
+}
+
+func (s *VisitLessThan) ChildCount() int                 { return len(s.args) }
+func (s *VisitLessThan) ChildAt(i int) sl.Strategy       { return s.args[i] }
+func (s *VisitLessThan) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
 
 // LessOrEqualThanExpression is the term type for the alternative `LessOrEqualThan(...)` of sort Expression.
 type LessOrEqualThanExpression struct {
@@ -507,12 +1489,102 @@ func (t *LessOrEqualThanExpression) String() string {
 	return fmt.Sprintf("LessOrEqualThan(%v,%v)", t.Arg1, t.Arg2)
 }
 
+func (t *LessOrEqualThanExpression) ChildCount() int { return 2 }
+
+func (t *LessOrEqualThanExpression) ChildAt(i int) any {
+	switch i {
+	case 0:
+		return t.Arg1
+	case 1:
+		return t.Arg2
+	}
+	panic(fmt.Sprintf("LessOrEqualThanExpression.ChildAt: index %d out of range", i))
+}
+
+func (t *LessOrEqualThanExpression) SetChildAt(i int, child any) any {
+	switch i {
+	case 0:
+		return MakeLessOrEqualThan(child.(Expression), t.Arg2)
+	case 1:
+		return MakeLessOrEqualThan(t.Arg1, child.(Expression))
+	}
+	panic(fmt.Sprintf("LessOrEqualThanExpression.SetChildAt: index %d out of range", i))
+}
+
+func (t *LessOrEqualThanExpression) Children() []any {
+	return []any{t.Arg1, t.Arg2}
+}
+
+func (t *LessOrEqualThanExpression) SetChildren(children []any) any {
+	return MakeLessOrEqualThan(children[0].(Expression), children[1].(Expression))
+}
+
 // MakeLessOrEqualThan builds the canonical (shared) LessOrEqualThan term.
 func MakeLessOrEqualThan(arg1 Expression, arg2 Expression) Expression {
 	hashes := []uint32{arg1.Hash(), arg2.Hash()}
 	proto := &LessOrEqualThanExpression{hash: sharedobjects.MixSymbol(sharedobjects.StringHash("LessOrEqualThan"), hashes), Arg1: arg1, Arg2: arg2}
 	return factory.Build(proto).(*LessOrEqualThanExpression)
 }
+
+// IsLessOrEqualThan is the `Is_LessOrEqualThan` predicate strategy: succeeds (returns subject
+// unchanged) when subject has the `LessOrEqualThan` shape, otherwise fails with
+// sl.ErrVisitFailure.
+type IsLessOrEqualThan struct{}
+
+func (IsLessOrEqualThan) VisitLight(subject any, _ sl.Introspector) (any, error) {
+	if _, ok := subject.(*LessOrEqualThanExpression); ok {
+		return subject, nil
+	}
+	return subject, sl.ErrVisitFailure
+}
+func (IsLessOrEqualThan) ChildCount() int             { return 0 }
+func (IsLessOrEqualThan) ChildAt(int) sl.Strategy     { panic("IsLessOrEqualThan: no children") }
+func (IsLessOrEqualThan) SetChildAt(int, sl.Strategy) { panic("IsLessOrEqualThan: no children") }
+
+// VisitLessOrEqualThan is the `_LessOrEqualThan` slot-visit strategy: when subject is `LessOrEqualThan`,
+// applies each constituent strategy to the matching child slot and
+// rebuilds the term iff at least one child changed. Fails with
+// sl.ErrVisitFailure when subject isn't `LessOrEqualThan`.
+type VisitLessOrEqualThan struct {
+	args []sl.Strategy
+}
+
+// NewVisitLessOrEqualThan builds the slot-visit strategy with the supplied per-slot
+// sub-strategies.
+func NewVisitLessOrEqualThan(args ...sl.Strategy) *VisitLessOrEqualThan {
+	return &VisitLessOrEqualThan{args: args}
+}
+
+func (s *VisitLessOrEqualThan) VisitLight(subject any, intro sl.Introspector) (any, error) {
+	if _, ok := subject.(*LessOrEqualThanExpression); !ok {
+		return subject, sl.ErrVisitFailure
+	}
+	if len(s.args) != 2 {
+		return subject, sl.ErrVisitFailure
+	}
+	var newChildren []any
+	for i := 0; i < 2; i++ {
+		oldChild := intro.GetChildAt(subject, i)
+		newChild, err := s.args[i].VisitLight(oldChild, intro)
+		if err != nil {
+			return subject, err
+		}
+		if newChildren != nil {
+			newChildren[i] = newChild
+		} else if newChild != oldChild {
+			newChildren = intro.GetChildren(subject)
+			newChildren[i] = newChild
+		}
+	}
+	if newChildren != nil {
+		return intro.SetChildren(subject, newChildren), nil
+	}
+	return subject, nil
+}
+
+func (s *VisitLessOrEqualThan) ChildCount() int                 { return len(s.args) }
+func (s *VisitLessOrEqualThan) ChildAt(i int) sl.Strategy       { return s.args[i] }
+func (s *VisitLessOrEqualThan) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
 
 // AntiMatchExpressionExpression is the term type for the alternative `AntiMatchExpression(...)` of sort Expression.
 type AntiMatchExpressionExpression struct {
@@ -544,12 +1616,100 @@ func (t *AntiMatchExpressionExpression) String() string {
 	return fmt.Sprintf("AntiMatchExpression(%v)", t.Expression)
 }
 
+func (t *AntiMatchExpressionExpression) ChildCount() int { return 1 }
+
+func (t *AntiMatchExpressionExpression) ChildAt(i int) any {
+	switch i {
+	case 0:
+		return t.Expression
+	}
+	panic(fmt.Sprintf("AntiMatchExpressionExpression.ChildAt: index %d out of range", i))
+}
+
+func (t *AntiMatchExpressionExpression) SetChildAt(i int, child any) any {
+	switch i {
+	case 0:
+		return MakeAntiMatchExpression(child.(Expression))
+	}
+	panic(fmt.Sprintf("AntiMatchExpressionExpression.SetChildAt: index %d out of range", i))
+}
+
+func (t *AntiMatchExpressionExpression) Children() []any {
+	return []any{t.Expression}
+}
+
+func (t *AntiMatchExpressionExpression) SetChildren(children []any) any {
+	return MakeAntiMatchExpression(children[0].(Expression))
+}
+
 // MakeAntiMatchExpression builds the canonical (shared) AntiMatchExpression term.
 func MakeAntiMatchExpression(expression Expression) Expression {
 	hashes := []uint32{expression.Hash()}
 	proto := &AntiMatchExpressionExpression{hash: sharedobjects.MixSymbol(sharedobjects.StringHash("AntiMatchExpression"), hashes), Expression: expression}
 	return factory.Build(proto).(*AntiMatchExpressionExpression)
 }
+
+// IsAntiMatchExpression is the `Is_AntiMatchExpression` predicate strategy: succeeds (returns subject
+// unchanged) when subject has the `AntiMatchExpression` shape, otherwise fails with
+// sl.ErrVisitFailure.
+type IsAntiMatchExpression struct{}
+
+func (IsAntiMatchExpression) VisitLight(subject any, _ sl.Introspector) (any, error) {
+	if _, ok := subject.(*AntiMatchExpressionExpression); ok {
+		return subject, nil
+	}
+	return subject, sl.ErrVisitFailure
+}
+func (IsAntiMatchExpression) ChildCount() int         { return 0 }
+func (IsAntiMatchExpression) ChildAt(int) sl.Strategy { panic("IsAntiMatchExpression: no children") }
+func (IsAntiMatchExpression) SetChildAt(int, sl.Strategy) {
+	panic("IsAntiMatchExpression: no children")
+}
+
+// VisitAntiMatchExpression is the `_AntiMatchExpression` slot-visit strategy: when subject is `AntiMatchExpression`,
+// applies each constituent strategy to the matching child slot and
+// rebuilds the term iff at least one child changed. Fails with
+// sl.ErrVisitFailure when subject isn't `AntiMatchExpression`.
+type VisitAntiMatchExpression struct {
+	args []sl.Strategy
+}
+
+// NewVisitAntiMatchExpression builds the slot-visit strategy with the supplied per-slot
+// sub-strategies.
+func NewVisitAntiMatchExpression(args ...sl.Strategy) *VisitAntiMatchExpression {
+	return &VisitAntiMatchExpression{args: args}
+}
+
+func (s *VisitAntiMatchExpression) VisitLight(subject any, intro sl.Introspector) (any, error) {
+	if _, ok := subject.(*AntiMatchExpressionExpression); !ok {
+		return subject, sl.ErrVisitFailure
+	}
+	if len(s.args) != 1 {
+		return subject, sl.ErrVisitFailure
+	}
+	var newChildren []any
+	for i := 0; i < 1; i++ {
+		oldChild := intro.GetChildAt(subject, i)
+		newChild, err := s.args[i].VisitLight(oldChild, intro)
+		if err != nil {
+			return subject, err
+		}
+		if newChildren != nil {
+			newChildren[i] = newChild
+		} else if newChild != oldChild {
+			newChildren = intro.GetChildren(subject)
+			newChildren[i] = newChild
+		}
+	}
+	if newChildren != nil {
+		return intro.SetChildren(subject, newChildren), nil
+	}
+	return subject, nil
+}
+
+func (s *VisitAntiMatchExpression) ChildCount() int                 { return len(s.args) }
+func (s *VisitAntiMatchExpression) ChildAt(i int) sl.Strategy       { return s.args[i] }
+func (s *VisitAntiMatchExpression) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
 
 // ConditionalExpression is the term type for the alternative `Conditional(...)` of sort Expression.
 type ConditionalExpression struct {
@@ -589,12 +1749,106 @@ func (t *ConditionalExpression) String() string {
 	return fmt.Sprintf("Conditional(%v,%v,%v)", t.Cond, t.Then, t.Else)
 }
 
+func (t *ConditionalExpression) ChildCount() int { return 3 }
+
+func (t *ConditionalExpression) ChildAt(i int) any {
+	switch i {
+	case 0:
+		return t.Cond
+	case 1:
+		return t.Then
+	case 2:
+		return t.Else
+	}
+	panic(fmt.Sprintf("ConditionalExpression.ChildAt: index %d out of range", i))
+}
+
+func (t *ConditionalExpression) SetChildAt(i int, child any) any {
+	switch i {
+	case 0:
+		return MakeConditional(child.(Expression), t.Then, t.Else)
+	case 1:
+		return MakeConditional(t.Cond, child.(Expression), t.Else)
+	case 2:
+		return MakeConditional(t.Cond, t.Then, child.(Expression))
+	}
+	panic(fmt.Sprintf("ConditionalExpression.SetChildAt: index %d out of range", i))
+}
+
+func (t *ConditionalExpression) Children() []any {
+	return []any{t.Cond, t.Then, t.Else}
+}
+
+func (t *ConditionalExpression) SetChildren(children []any) any {
+	return MakeConditional(children[0].(Expression), children[1].(Expression), children[2].(Expression))
+}
+
 // MakeConditional builds the canonical (shared) Conditional term.
 func MakeConditional(cond Expression, then Expression, else_ Expression) Expression {
 	hashes := []uint32{cond.Hash(), then.Hash(), else_.Hash()}
 	proto := &ConditionalExpression{hash: sharedobjects.MixSymbol(sharedobjects.StringHash("Conditional"), hashes), Cond: cond, Then: then, Else: else_}
 	return factory.Build(proto).(*ConditionalExpression)
 }
+
+// IsConditional is the `Is_Conditional` predicate strategy: succeeds (returns subject
+// unchanged) when subject has the `Conditional` shape, otherwise fails with
+// sl.ErrVisitFailure.
+type IsConditional struct{}
+
+func (IsConditional) VisitLight(subject any, _ sl.Introspector) (any, error) {
+	if _, ok := subject.(*ConditionalExpression); ok {
+		return subject, nil
+	}
+	return subject, sl.ErrVisitFailure
+}
+func (IsConditional) ChildCount() int             { return 0 }
+func (IsConditional) ChildAt(int) sl.Strategy     { panic("IsConditional: no children") }
+func (IsConditional) SetChildAt(int, sl.Strategy) { panic("IsConditional: no children") }
+
+// VisitConditional is the `_Conditional` slot-visit strategy: when subject is `Conditional`,
+// applies each constituent strategy to the matching child slot and
+// rebuilds the term iff at least one child changed. Fails with
+// sl.ErrVisitFailure when subject isn't `Conditional`.
+type VisitConditional struct {
+	args []sl.Strategy
+}
+
+// NewVisitConditional builds the slot-visit strategy with the supplied per-slot
+// sub-strategies.
+func NewVisitConditional(args ...sl.Strategy) *VisitConditional {
+	return &VisitConditional{args: args}
+}
+
+func (s *VisitConditional) VisitLight(subject any, intro sl.Introspector) (any, error) {
+	if _, ok := subject.(*ConditionalExpression); !ok {
+		return subject, sl.ErrVisitFailure
+	}
+	if len(s.args) != 3 {
+		return subject, sl.ErrVisitFailure
+	}
+	var newChildren []any
+	for i := 0; i < 3; i++ {
+		oldChild := intro.GetChildAt(subject, i)
+		newChild, err := s.args[i].VisitLight(oldChild, intro)
+		if err != nil {
+			return subject, err
+		}
+		if newChildren != nil {
+			newChildren[i] = newChild
+		} else if newChild != oldChild {
+			newChildren = intro.GetChildren(subject)
+			newChildren[i] = newChild
+		}
+	}
+	if newChildren != nil {
+		return intro.SetChildren(subject, newChildren), nil
+	}
+	return subject, nil
+}
+
+func (s *VisitConditional) ChildCount() int                 { return len(s.args) }
+func (s *VisitConditional) ChildAt(i int) sl.Strategy       { return s.args[i] }
+func (s *VisitConditional) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
 
 // TrueTLExpression is the term type for the alternative `TrueTL(...)` of sort Expression.
 type TrueTLExpression struct {
@@ -619,12 +1873,67 @@ func (t *TrueTLExpression) String() string {
 	return "TrueTL" + "()"
 }
 
+func (t *TrueTLExpression) ChildCount() int { return 0 }
+
+func (t *TrueTLExpression) ChildAt(i int) any {
+	panic(fmt.Sprintf("TrueTLExpression.ChildAt: index %d out of [0,0)", i))
+}
+
+func (t *TrueTLExpression) SetChildAt(i int, child any) any {
+	panic(fmt.Sprintf("TrueTLExpression.SetChildAt: index %d out of [0,0)", i))
+}
+
+func (t *TrueTLExpression) Children() []any { return nil }
+
+func (t *TrueTLExpression) SetChildren(children []any) any { return t }
+
 // MakeTrueTL builds the canonical (shared) TrueTL term.
 func MakeTrueTL() Expression {
 	hashes := []uint32{}
 	proto := &TrueTLExpression{hash: sharedobjects.MixSymbol(sharedobjects.StringHash("TrueTL"), hashes)}
 	return factory.Build(proto).(*TrueTLExpression)
 }
+
+// IsTrueTL is the `Is_TrueTL` predicate strategy: succeeds (returns subject
+// unchanged) when subject has the `TrueTL` shape, otherwise fails with
+// sl.ErrVisitFailure.
+type IsTrueTL struct{}
+
+func (IsTrueTL) VisitLight(subject any, _ sl.Introspector) (any, error) {
+	if _, ok := subject.(*TrueTLExpression); ok {
+		return subject, nil
+	}
+	return subject, sl.ErrVisitFailure
+}
+func (IsTrueTL) ChildCount() int             { return 0 }
+func (IsTrueTL) ChildAt(int) sl.Strategy     { panic("IsTrueTL: no children") }
+func (IsTrueTL) SetChildAt(int, sl.Strategy) { panic("IsTrueTL: no children") }
+
+// VisitTrueTL is the `_TrueTL` slot-visit strategy: when subject is `TrueTL`,
+// applies each constituent strategy to the matching child slot and
+// rebuilds the term iff at least one child changed. Fails with
+// sl.ErrVisitFailure when subject isn't `TrueTL`.
+type VisitTrueTL struct {
+	args []sl.Strategy
+}
+
+// NewVisitTrueTL builds the slot-visit strategy with the supplied per-slot
+// sub-strategies.
+func NewVisitTrueTL(args ...sl.Strategy) *VisitTrueTL {
+	return &VisitTrueTL{args: args}
+}
+
+func (s *VisitTrueTL) VisitLight(subject any, intro sl.Introspector) (any, error) {
+	if _, ok := subject.(*TrueTLExpression); !ok {
+		return subject, sl.ErrVisitFailure
+	}
+	// Nullary alt: no children to visit.
+	return subject, nil
+}
+
+func (s *VisitTrueTL) ChildCount() int                 { return len(s.args) }
+func (s *VisitTrueTL) ChildAt(i int) sl.Strategy       { return s.args[i] }
+func (s *VisitTrueTL) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
 
 // FalseTLExpression is the term type for the alternative `FalseTL(...)` of sort Expression.
 type FalseTLExpression struct {
@@ -649,12 +1958,67 @@ func (t *FalseTLExpression) String() string {
 	return "FalseTL" + "()"
 }
 
+func (t *FalseTLExpression) ChildCount() int { return 0 }
+
+func (t *FalseTLExpression) ChildAt(i int) any {
+	panic(fmt.Sprintf("FalseTLExpression.ChildAt: index %d out of [0,0)", i))
+}
+
+func (t *FalseTLExpression) SetChildAt(i int, child any) any {
+	panic(fmt.Sprintf("FalseTLExpression.SetChildAt: index %d out of [0,0)", i))
+}
+
+func (t *FalseTLExpression) Children() []any { return nil }
+
+func (t *FalseTLExpression) SetChildren(children []any) any { return t }
+
 // MakeFalseTL builds the canonical (shared) FalseTL term.
 func MakeFalseTL() Expression {
 	hashes := []uint32{}
 	proto := &FalseTLExpression{hash: sharedobjects.MixSymbol(sharedobjects.StringHash("FalseTL"), hashes)}
 	return factory.Build(proto).(*FalseTLExpression)
 }
+
+// IsFalseTL is the `Is_FalseTL` predicate strategy: succeeds (returns subject
+// unchanged) when subject has the `FalseTL` shape, otherwise fails with
+// sl.ErrVisitFailure.
+type IsFalseTL struct{}
+
+func (IsFalseTL) VisitLight(subject any, _ sl.Introspector) (any, error) {
+	if _, ok := subject.(*FalseTLExpression); ok {
+		return subject, nil
+	}
+	return subject, sl.ErrVisitFailure
+}
+func (IsFalseTL) ChildCount() int             { return 0 }
+func (IsFalseTL) ChildAt(int) sl.Strategy     { panic("IsFalseTL: no children") }
+func (IsFalseTL) SetChildAt(int, sl.Strategy) { panic("IsFalseTL: no children") }
+
+// VisitFalseTL is the `_FalseTL` slot-visit strategy: when subject is `FalseTL`,
+// applies each constituent strategy to the matching child slot and
+// rebuilds the term iff at least one child changed. Fails with
+// sl.ErrVisitFailure when subject isn't `FalseTL`.
+type VisitFalseTL struct {
+	args []sl.Strategy
+}
+
+// NewVisitFalseTL builds the slot-visit strategy with the supplied per-slot
+// sub-strategies.
+func NewVisitFalseTL(args ...sl.Strategy) *VisitFalseTL {
+	return &VisitFalseTL{args: args}
+}
+
+func (s *VisitFalseTL) VisitLight(subject any, intro sl.Introspector) (any, error) {
+	if _, ok := subject.(*FalseTLExpression); !ok {
+		return subject, sl.ErrVisitFailure
+	}
+	// Nullary alt: no children to visit.
+	return subject, nil
+}
+
+func (s *VisitFalseTL) ChildCount() int                 { return len(s.args) }
+func (s *VisitFalseTL) ChildAt(i int) sl.Strategy       { return s.args[i] }
+func (s *VisitFalseTL) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
 
 // IntegerExpression is the term type for the alternative `Integer(...)` of sort Expression.
 type IntegerExpression struct {
@@ -686,12 +2050,98 @@ func (t *IntegerExpression) String() string {
 	return fmt.Sprintf("Integer(%v)", t.Value)
 }
 
+func (t *IntegerExpression) ChildCount() int { return 1 }
+
+func (t *IntegerExpression) ChildAt(i int) any {
+	switch i {
+	case 0:
+		return t.Value
+	}
+	panic(fmt.Sprintf("IntegerExpression.ChildAt: index %d out of range", i))
+}
+
+func (t *IntegerExpression) SetChildAt(i int, child any) any {
+	switch i {
+	case 0:
+		return MakeInteger(child.(int64))
+	}
+	panic(fmt.Sprintf("IntegerExpression.SetChildAt: index %d out of range", i))
+}
+
+func (t *IntegerExpression) Children() []any {
+	return []any{t.Value}
+}
+
+func (t *IntegerExpression) SetChildren(children []any) any {
+	return MakeInteger(children[0].(int64))
+}
+
 // MakeInteger builds the canonical (shared) Integer term.
 func MakeInteger(value int64) Expression {
 	hashes := []uint32{sharedobjects.StringHash(fmt.Sprintf("%v", value))}
 	proto := &IntegerExpression{hash: sharedobjects.MixSymbol(sharedobjects.StringHash("Integer"), hashes), Value: value}
 	return factory.Build(proto).(*IntegerExpression)
 }
+
+// IsInteger is the `Is_Integer` predicate strategy: succeeds (returns subject
+// unchanged) when subject has the `Integer` shape, otherwise fails with
+// sl.ErrVisitFailure.
+type IsInteger struct{}
+
+func (IsInteger) VisitLight(subject any, _ sl.Introspector) (any, error) {
+	if _, ok := subject.(*IntegerExpression); ok {
+		return subject, nil
+	}
+	return subject, sl.ErrVisitFailure
+}
+func (IsInteger) ChildCount() int             { return 0 }
+func (IsInteger) ChildAt(int) sl.Strategy     { panic("IsInteger: no children") }
+func (IsInteger) SetChildAt(int, sl.Strategy) { panic("IsInteger: no children") }
+
+// VisitInteger is the `_Integer` slot-visit strategy: when subject is `Integer`,
+// applies each constituent strategy to the matching child slot and
+// rebuilds the term iff at least one child changed. Fails with
+// sl.ErrVisitFailure when subject isn't `Integer`.
+type VisitInteger struct {
+	args []sl.Strategy
+}
+
+// NewVisitInteger builds the slot-visit strategy with the supplied per-slot
+// sub-strategies.
+func NewVisitInteger(args ...sl.Strategy) *VisitInteger {
+	return &VisitInteger{args: args}
+}
+
+func (s *VisitInteger) VisitLight(subject any, intro sl.Introspector) (any, error) {
+	if _, ok := subject.(*IntegerExpression); !ok {
+		return subject, sl.ErrVisitFailure
+	}
+	if len(s.args) != 1 {
+		return subject, sl.ErrVisitFailure
+	}
+	var newChildren []any
+	for i := 0; i < 1; i++ {
+		oldChild := intro.GetChildAt(subject, i)
+		newChild, err := s.args[i].VisitLight(oldChild, intro)
+		if err != nil {
+			return subject, err
+		}
+		if newChildren != nil {
+			newChildren[i] = newChild
+		} else if newChild != oldChild {
+			newChildren = intro.GetChildren(subject)
+			newChildren[i] = newChild
+		}
+	}
+	if newChildren != nil {
+		return intro.SetChildren(subject, newChildren), nil
+	}
+	return subject, nil
+}
+
+func (s *VisitInteger) ChildCount() int                 { return len(s.args) }
+func (s *VisitInteger) ChildAt(i int) sl.Strategy       { return s.args[i] }
+func (s *VisitInteger) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
 
 // EqualTermExpression is the term type for the alternative `EqualTerm(...)` of sort Expression.
 type EqualTermExpression struct {
@@ -731,12 +2181,106 @@ func (t *EqualTermExpression) String() string {
 	return fmt.Sprintf("EqualTerm(%v,%v,%v)", t.TomType, t.Kid1, t.Kid2)
 }
 
+func (t *EqualTermExpression) ChildCount() int { return 3 }
+
+func (t *EqualTermExpression) ChildAt(i int) any {
+	switch i {
+	case 0:
+		return t.TomType
+	case 1:
+		return t.Kid1
+	case 2:
+		return t.Kid2
+	}
+	panic(fmt.Sprintf("EqualTermExpression.ChildAt: index %d out of range", i))
+}
+
+func (t *EqualTermExpression) SetChildAt(i int, child any) any {
+	switch i {
+	case 0:
+		return MakeEqualTerm(child.(TomType), t.Kid1, t.Kid2)
+	case 1:
+		return MakeEqualTerm(t.TomType, child.(BQTerm), t.Kid2)
+	case 2:
+		return MakeEqualTerm(t.TomType, t.Kid1, child.(TomTerm))
+	}
+	panic(fmt.Sprintf("EqualTermExpression.SetChildAt: index %d out of range", i))
+}
+
+func (t *EqualTermExpression) Children() []any {
+	return []any{t.TomType, t.Kid1, t.Kid2}
+}
+
+func (t *EqualTermExpression) SetChildren(children []any) any {
+	return MakeEqualTerm(children[0].(TomType), children[1].(BQTerm), children[2].(TomTerm))
+}
+
 // MakeEqualTerm builds the canonical (shared) EqualTerm term.
 func MakeEqualTerm(tomType TomType, kid1 BQTerm, kid2 TomTerm) Expression {
 	hashes := []uint32{tomType.Hash(), kid1.Hash(), kid2.Hash()}
 	proto := &EqualTermExpression{hash: sharedobjects.MixSymbol(sharedobjects.StringHash("EqualTerm"), hashes), TomType: tomType, Kid1: kid1, Kid2: kid2}
 	return factory.Build(proto).(*EqualTermExpression)
 }
+
+// IsEqualTerm is the `Is_EqualTerm` predicate strategy: succeeds (returns subject
+// unchanged) when subject has the `EqualTerm` shape, otherwise fails with
+// sl.ErrVisitFailure.
+type IsEqualTerm struct{}
+
+func (IsEqualTerm) VisitLight(subject any, _ sl.Introspector) (any, error) {
+	if _, ok := subject.(*EqualTermExpression); ok {
+		return subject, nil
+	}
+	return subject, sl.ErrVisitFailure
+}
+func (IsEqualTerm) ChildCount() int             { return 0 }
+func (IsEqualTerm) ChildAt(int) sl.Strategy     { panic("IsEqualTerm: no children") }
+func (IsEqualTerm) SetChildAt(int, sl.Strategy) { panic("IsEqualTerm: no children") }
+
+// VisitEqualTerm is the `_EqualTerm` slot-visit strategy: when subject is `EqualTerm`,
+// applies each constituent strategy to the matching child slot and
+// rebuilds the term iff at least one child changed. Fails with
+// sl.ErrVisitFailure when subject isn't `EqualTerm`.
+type VisitEqualTerm struct {
+	args []sl.Strategy
+}
+
+// NewVisitEqualTerm builds the slot-visit strategy with the supplied per-slot
+// sub-strategies.
+func NewVisitEqualTerm(args ...sl.Strategy) *VisitEqualTerm {
+	return &VisitEqualTerm{args: args}
+}
+
+func (s *VisitEqualTerm) VisitLight(subject any, intro sl.Introspector) (any, error) {
+	if _, ok := subject.(*EqualTermExpression); !ok {
+		return subject, sl.ErrVisitFailure
+	}
+	if len(s.args) != 3 {
+		return subject, sl.ErrVisitFailure
+	}
+	var newChildren []any
+	for i := 0; i < 3; i++ {
+		oldChild := intro.GetChildAt(subject, i)
+		newChild, err := s.args[i].VisitLight(oldChild, intro)
+		if err != nil {
+			return subject, err
+		}
+		if newChildren != nil {
+			newChildren[i] = newChild
+		} else if newChild != oldChild {
+			newChildren = intro.GetChildren(subject)
+			newChildren[i] = newChild
+		}
+	}
+	if newChildren != nil {
+		return intro.SetChildren(subject, newChildren), nil
+	}
+	return subject, nil
+}
+
+func (s *VisitEqualTerm) ChildCount() int                 { return len(s.args) }
+func (s *VisitEqualTerm) ChildAt(i int) sl.Strategy       { return s.args[i] }
+func (s *VisitEqualTerm) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
 
 // EqualBQTermExpression is the term type for the alternative `EqualBQTerm(...)` of sort Expression.
 type EqualBQTermExpression struct {
@@ -776,12 +2320,106 @@ func (t *EqualBQTermExpression) String() string {
 	return fmt.Sprintf("EqualBQTerm(%v,%v,%v)", t.TomType, t.T1, t.T2)
 }
 
+func (t *EqualBQTermExpression) ChildCount() int { return 3 }
+
+func (t *EqualBQTermExpression) ChildAt(i int) any {
+	switch i {
+	case 0:
+		return t.TomType
+	case 1:
+		return t.T1
+	case 2:
+		return t.T2
+	}
+	panic(fmt.Sprintf("EqualBQTermExpression.ChildAt: index %d out of range", i))
+}
+
+func (t *EqualBQTermExpression) SetChildAt(i int, child any) any {
+	switch i {
+	case 0:
+		return MakeEqualBQTerm(child.(TomType), t.T1, t.T2)
+	case 1:
+		return MakeEqualBQTerm(t.TomType, child.(BQTerm), t.T2)
+	case 2:
+		return MakeEqualBQTerm(t.TomType, t.T1, child.(BQTerm))
+	}
+	panic(fmt.Sprintf("EqualBQTermExpression.SetChildAt: index %d out of range", i))
+}
+
+func (t *EqualBQTermExpression) Children() []any {
+	return []any{t.TomType, t.T1, t.T2}
+}
+
+func (t *EqualBQTermExpression) SetChildren(children []any) any {
+	return MakeEqualBQTerm(children[0].(TomType), children[1].(BQTerm), children[2].(BQTerm))
+}
+
 // MakeEqualBQTerm builds the canonical (shared) EqualBQTerm term.
 func MakeEqualBQTerm(tomType TomType, t1 BQTerm, t2 BQTerm) Expression {
 	hashes := []uint32{tomType.Hash(), t1.Hash(), t2.Hash()}
 	proto := &EqualBQTermExpression{hash: sharedobjects.MixSymbol(sharedobjects.StringHash("EqualBQTerm"), hashes), TomType: tomType, T1: t1, T2: t2}
 	return factory.Build(proto).(*EqualBQTermExpression)
 }
+
+// IsEqualBQTerm is the `Is_EqualBQTerm` predicate strategy: succeeds (returns subject
+// unchanged) when subject has the `EqualBQTerm` shape, otherwise fails with
+// sl.ErrVisitFailure.
+type IsEqualBQTerm struct{}
+
+func (IsEqualBQTerm) VisitLight(subject any, _ sl.Introspector) (any, error) {
+	if _, ok := subject.(*EqualBQTermExpression); ok {
+		return subject, nil
+	}
+	return subject, sl.ErrVisitFailure
+}
+func (IsEqualBQTerm) ChildCount() int             { return 0 }
+func (IsEqualBQTerm) ChildAt(int) sl.Strategy     { panic("IsEqualBQTerm: no children") }
+func (IsEqualBQTerm) SetChildAt(int, sl.Strategy) { panic("IsEqualBQTerm: no children") }
+
+// VisitEqualBQTerm is the `_EqualBQTerm` slot-visit strategy: when subject is `EqualBQTerm`,
+// applies each constituent strategy to the matching child slot and
+// rebuilds the term iff at least one child changed. Fails with
+// sl.ErrVisitFailure when subject isn't `EqualBQTerm`.
+type VisitEqualBQTerm struct {
+	args []sl.Strategy
+}
+
+// NewVisitEqualBQTerm builds the slot-visit strategy with the supplied per-slot
+// sub-strategies.
+func NewVisitEqualBQTerm(args ...sl.Strategy) *VisitEqualBQTerm {
+	return &VisitEqualBQTerm{args: args}
+}
+
+func (s *VisitEqualBQTerm) VisitLight(subject any, intro sl.Introspector) (any, error) {
+	if _, ok := subject.(*EqualBQTermExpression); !ok {
+		return subject, sl.ErrVisitFailure
+	}
+	if len(s.args) != 3 {
+		return subject, sl.ErrVisitFailure
+	}
+	var newChildren []any
+	for i := 0; i < 3; i++ {
+		oldChild := intro.GetChildAt(subject, i)
+		newChild, err := s.args[i].VisitLight(oldChild, intro)
+		if err != nil {
+			return subject, err
+		}
+		if newChildren != nil {
+			newChildren[i] = newChild
+		} else if newChild != oldChild {
+			newChildren = intro.GetChildren(subject)
+			newChildren[i] = newChild
+		}
+	}
+	if newChildren != nil {
+		return intro.SetChildren(subject, newChildren), nil
+	}
+	return subject, nil
+}
+
+func (s *VisitEqualBQTerm) ChildCount() int                 { return len(s.args) }
+func (s *VisitEqualBQTerm) ChildAt(i int) sl.Strategy       { return s.args[i] }
+func (s *VisitEqualBQTerm) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
 
 // CastExpression is the term type for the alternative `Cast(...)` of sort Expression.
 type CastExpression struct {
@@ -817,6 +2455,36 @@ func (t *CastExpression) String() string {
 	return fmt.Sprintf("Cast(%v,%v)", t.AstType, t.Source)
 }
 
+func (t *CastExpression) ChildCount() int { return 2 }
+
+func (t *CastExpression) ChildAt(i int) any {
+	switch i {
+	case 0:
+		return t.AstType
+	case 1:
+		return t.Source
+	}
+	panic(fmt.Sprintf("CastExpression.ChildAt: index %d out of range", i))
+}
+
+func (t *CastExpression) SetChildAt(i int, child any) any {
+	switch i {
+	case 0:
+		return MakeCast(child.(TomType), t.Source)
+	case 1:
+		return MakeCast(t.AstType, child.(Expression))
+	}
+	panic(fmt.Sprintf("CastExpression.SetChildAt: index %d out of range", i))
+}
+
+func (t *CastExpression) Children() []any {
+	return []any{t.AstType, t.Source}
+}
+
+func (t *CastExpression) SetChildren(children []any) any {
+	return MakeCast(children[0].(TomType), children[1].(Expression))
+}
+
 // MakeCast builds the canonical (shared) Cast term.
 func MakeCast(astType TomType, source Expression) Expression {
 	// Cast:make hook (TomExpression.gom): reject Type(_,"unknown type",_)
@@ -834,6 +2502,66 @@ func MakeCast(astType TomType, source Expression) Expression {
 	proto := &CastExpression{hash: sharedobjects.MixSymbol(sharedobjects.StringHash("Cast"), hashes), AstType: astType, Source: source}
 	return factory.Build(proto).(*CastExpression)
 }
+
+// IsCast is the `Is_Cast` predicate strategy: succeeds (returns subject
+// unchanged) when subject has the `Cast` shape, otherwise fails with
+// sl.ErrVisitFailure.
+type IsCast struct{}
+
+func (IsCast) VisitLight(subject any, _ sl.Introspector) (any, error) {
+	if _, ok := subject.(*CastExpression); ok {
+		return subject, nil
+	}
+	return subject, sl.ErrVisitFailure
+}
+func (IsCast) ChildCount() int             { return 0 }
+func (IsCast) ChildAt(int) sl.Strategy     { panic("IsCast: no children") }
+func (IsCast) SetChildAt(int, sl.Strategy) { panic("IsCast: no children") }
+
+// VisitCast is the `_Cast` slot-visit strategy: when subject is `Cast`,
+// applies each constituent strategy to the matching child slot and
+// rebuilds the term iff at least one child changed. Fails with
+// sl.ErrVisitFailure when subject isn't `Cast`.
+type VisitCast struct {
+	args []sl.Strategy
+}
+
+// NewVisitCast builds the slot-visit strategy with the supplied per-slot
+// sub-strategies.
+func NewVisitCast(args ...sl.Strategy) *VisitCast {
+	return &VisitCast{args: args}
+}
+
+func (s *VisitCast) VisitLight(subject any, intro sl.Introspector) (any, error) {
+	if _, ok := subject.(*CastExpression); !ok {
+		return subject, sl.ErrVisitFailure
+	}
+	if len(s.args) != 2 {
+		return subject, sl.ErrVisitFailure
+	}
+	var newChildren []any
+	for i := 0; i < 2; i++ {
+		oldChild := intro.GetChildAt(subject, i)
+		newChild, err := s.args[i].VisitLight(oldChild, intro)
+		if err != nil {
+			return subject, err
+		}
+		if newChildren != nil {
+			newChildren[i] = newChild
+		} else if newChild != oldChild {
+			newChildren = intro.GetChildren(subject)
+			newChildren[i] = newChild
+		}
+	}
+	if newChildren != nil {
+		return intro.SetChildren(subject, newChildren), nil
+	}
+	return subject, nil
+}
+
+func (s *VisitCast) ChildCount() int                 { return len(s.args) }
+func (s *VisitCast) ChildAt(i int) sl.Strategy       { return s.args[i] }
+func (s *VisitCast) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
 
 // GetSlotExpression is the term type for the alternative `GetSlot(...)` of sort Expression.
 type GetSlotExpression struct {
@@ -877,12 +2605,110 @@ func (t *GetSlotExpression) String() string {
 	return fmt.Sprintf("GetSlot(%v,%v,%s,%v)", t.Codomain, t.AstName, sharedobjects.JavaEscape(t.SlotNameString), t.Variable)
 }
 
+func (t *GetSlotExpression) ChildCount() int { return 4 }
+
+func (t *GetSlotExpression) ChildAt(i int) any {
+	switch i {
+	case 0:
+		return t.Codomain
+	case 1:
+		return t.AstName
+	case 2:
+		return t.SlotNameString
+	case 3:
+		return t.Variable
+	}
+	panic(fmt.Sprintf("GetSlotExpression.ChildAt: index %d out of range", i))
+}
+
+func (t *GetSlotExpression) SetChildAt(i int, child any) any {
+	switch i {
+	case 0:
+		return MakeGetSlot(child.(TomType), t.AstName, t.SlotNameString, t.Variable)
+	case 1:
+		return MakeGetSlot(t.Codomain, child.(TomName), t.SlotNameString, t.Variable)
+	case 2:
+		return MakeGetSlot(t.Codomain, t.AstName, child.(string), t.Variable)
+	case 3:
+		return MakeGetSlot(t.Codomain, t.AstName, t.SlotNameString, child.(BQTerm))
+	}
+	panic(fmt.Sprintf("GetSlotExpression.SetChildAt: index %d out of range", i))
+}
+
+func (t *GetSlotExpression) Children() []any {
+	return []any{t.Codomain, t.AstName, t.SlotNameString, t.Variable}
+}
+
+func (t *GetSlotExpression) SetChildren(children []any) any {
+	return MakeGetSlot(children[0].(TomType), children[1].(TomName), children[2].(string), children[3].(BQTerm))
+}
+
 // MakeGetSlot builds the canonical (shared) GetSlot term.
 func MakeGetSlot(codomain TomType, astName TomName, slotNameString string, variable BQTerm) Expression {
 	hashes := []uint32{codomain.Hash(), astName.Hash(), sharedobjects.StringHash(fmt.Sprintf("%v", slotNameString)), variable.Hash()}
 	proto := &GetSlotExpression{hash: sharedobjects.MixSymbol(sharedobjects.StringHash("GetSlot"), hashes), Codomain: codomain, AstName: astName, SlotNameString: slotNameString, Variable: variable}
 	return factory.Build(proto).(*GetSlotExpression)
 }
+
+// IsGetSlot is the `Is_GetSlot` predicate strategy: succeeds (returns subject
+// unchanged) when subject has the `GetSlot` shape, otherwise fails with
+// sl.ErrVisitFailure.
+type IsGetSlot struct{}
+
+func (IsGetSlot) VisitLight(subject any, _ sl.Introspector) (any, error) {
+	if _, ok := subject.(*GetSlotExpression); ok {
+		return subject, nil
+	}
+	return subject, sl.ErrVisitFailure
+}
+func (IsGetSlot) ChildCount() int             { return 0 }
+func (IsGetSlot) ChildAt(int) sl.Strategy     { panic("IsGetSlot: no children") }
+func (IsGetSlot) SetChildAt(int, sl.Strategy) { panic("IsGetSlot: no children") }
+
+// VisitGetSlot is the `_GetSlot` slot-visit strategy: when subject is `GetSlot`,
+// applies each constituent strategy to the matching child slot and
+// rebuilds the term iff at least one child changed. Fails with
+// sl.ErrVisitFailure when subject isn't `GetSlot`.
+type VisitGetSlot struct {
+	args []sl.Strategy
+}
+
+// NewVisitGetSlot builds the slot-visit strategy with the supplied per-slot
+// sub-strategies.
+func NewVisitGetSlot(args ...sl.Strategy) *VisitGetSlot {
+	return &VisitGetSlot{args: args}
+}
+
+func (s *VisitGetSlot) VisitLight(subject any, intro sl.Introspector) (any, error) {
+	if _, ok := subject.(*GetSlotExpression); !ok {
+		return subject, sl.ErrVisitFailure
+	}
+	if len(s.args) != 4 {
+		return subject, sl.ErrVisitFailure
+	}
+	var newChildren []any
+	for i := 0; i < 4; i++ {
+		oldChild := intro.GetChildAt(subject, i)
+		newChild, err := s.args[i].VisitLight(oldChild, intro)
+		if err != nil {
+			return subject, err
+		}
+		if newChildren != nil {
+			newChildren[i] = newChild
+		} else if newChild != oldChild {
+			newChildren = intro.GetChildren(subject)
+			newChildren[i] = newChild
+		}
+	}
+	if newChildren != nil {
+		return intro.SetChildren(subject, newChildren), nil
+	}
+	return subject, nil
+}
+
+func (s *VisitGetSlot) ChildCount() int                 { return len(s.args) }
+func (s *VisitGetSlot) ChildAt(i int) sl.Strategy       { return s.args[i] }
+func (s *VisitGetSlot) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
 
 // IsFsymExpression is the term type for the alternative `IsFsym(...)` of sort Expression.
 type IsFsymExpression struct {
@@ -918,12 +2744,102 @@ func (t *IsFsymExpression) String() string {
 	return fmt.Sprintf("IsFsym(%v,%v)", t.AstName, t.Variable)
 }
 
+func (t *IsFsymExpression) ChildCount() int { return 2 }
+
+func (t *IsFsymExpression) ChildAt(i int) any {
+	switch i {
+	case 0:
+		return t.AstName
+	case 1:
+		return t.Variable
+	}
+	panic(fmt.Sprintf("IsFsymExpression.ChildAt: index %d out of range", i))
+}
+
+func (t *IsFsymExpression) SetChildAt(i int, child any) any {
+	switch i {
+	case 0:
+		return MakeIsFsym(child.(TomName), t.Variable)
+	case 1:
+		return MakeIsFsym(t.AstName, child.(BQTerm))
+	}
+	panic(fmt.Sprintf("IsFsymExpression.SetChildAt: index %d out of range", i))
+}
+
+func (t *IsFsymExpression) Children() []any {
+	return []any{t.AstName, t.Variable}
+}
+
+func (t *IsFsymExpression) SetChildren(children []any) any {
+	return MakeIsFsym(children[0].(TomName), children[1].(BQTerm))
+}
+
 // MakeIsFsym builds the canonical (shared) IsFsym term.
 func MakeIsFsym(astName TomName, variable BQTerm) Expression {
 	hashes := []uint32{astName.Hash(), variable.Hash()}
 	proto := &IsFsymExpression{hash: sharedobjects.MixSymbol(sharedobjects.StringHash("IsFsym"), hashes), AstName: astName, Variable: variable}
 	return factory.Build(proto).(*IsFsymExpression)
 }
+
+// IsIsFsym is the `Is_IsFsym` predicate strategy: succeeds (returns subject
+// unchanged) when subject has the `IsFsym` shape, otherwise fails with
+// sl.ErrVisitFailure.
+type IsIsFsym struct{}
+
+func (IsIsFsym) VisitLight(subject any, _ sl.Introspector) (any, error) {
+	if _, ok := subject.(*IsFsymExpression); ok {
+		return subject, nil
+	}
+	return subject, sl.ErrVisitFailure
+}
+func (IsIsFsym) ChildCount() int             { return 0 }
+func (IsIsFsym) ChildAt(int) sl.Strategy     { panic("IsIsFsym: no children") }
+func (IsIsFsym) SetChildAt(int, sl.Strategy) { panic("IsIsFsym: no children") }
+
+// VisitIsFsym is the `_IsFsym` slot-visit strategy: when subject is `IsFsym`,
+// applies each constituent strategy to the matching child slot and
+// rebuilds the term iff at least one child changed. Fails with
+// sl.ErrVisitFailure when subject isn't `IsFsym`.
+type VisitIsFsym struct {
+	args []sl.Strategy
+}
+
+// NewVisitIsFsym builds the slot-visit strategy with the supplied per-slot
+// sub-strategies.
+func NewVisitIsFsym(args ...sl.Strategy) *VisitIsFsym {
+	return &VisitIsFsym{args: args}
+}
+
+func (s *VisitIsFsym) VisitLight(subject any, intro sl.Introspector) (any, error) {
+	if _, ok := subject.(*IsFsymExpression); !ok {
+		return subject, sl.ErrVisitFailure
+	}
+	if len(s.args) != 2 {
+		return subject, sl.ErrVisitFailure
+	}
+	var newChildren []any
+	for i := 0; i < 2; i++ {
+		oldChild := intro.GetChildAt(subject, i)
+		newChild, err := s.args[i].VisitLight(oldChild, intro)
+		if err != nil {
+			return subject, err
+		}
+		if newChildren != nil {
+			newChildren[i] = newChild
+		} else if newChild != oldChild {
+			newChildren = intro.GetChildren(subject)
+			newChildren[i] = newChild
+		}
+	}
+	if newChildren != nil {
+		return intro.SetChildren(subject, newChildren), nil
+	}
+	return subject, nil
+}
+
+func (s *VisitIsFsym) ChildCount() int                 { return len(s.args) }
+func (s *VisitIsFsym) ChildAt(i int) sl.Strategy       { return s.args[i] }
+func (s *VisitIsFsym) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
 
 // GetHeadExpression is the term type for the alternative `GetHead(...)` of sort Expression.
 type GetHeadExpression struct {
@@ -963,12 +2879,106 @@ func (t *GetHeadExpression) String() string {
 	return fmt.Sprintf("GetHead(%v,%v,%v)", t.Opname, t.Codomain, t.Variable)
 }
 
+func (t *GetHeadExpression) ChildCount() int { return 3 }
+
+func (t *GetHeadExpression) ChildAt(i int) any {
+	switch i {
+	case 0:
+		return t.Opname
+	case 1:
+		return t.Codomain
+	case 2:
+		return t.Variable
+	}
+	panic(fmt.Sprintf("GetHeadExpression.ChildAt: index %d out of range", i))
+}
+
+func (t *GetHeadExpression) SetChildAt(i int, child any) any {
+	switch i {
+	case 0:
+		return MakeGetHead(child.(TomName), t.Codomain, t.Variable)
+	case 1:
+		return MakeGetHead(t.Opname, child.(TomType), t.Variable)
+	case 2:
+		return MakeGetHead(t.Opname, t.Codomain, child.(BQTerm))
+	}
+	panic(fmt.Sprintf("GetHeadExpression.SetChildAt: index %d out of range", i))
+}
+
+func (t *GetHeadExpression) Children() []any {
+	return []any{t.Opname, t.Codomain, t.Variable}
+}
+
+func (t *GetHeadExpression) SetChildren(children []any) any {
+	return MakeGetHead(children[0].(TomName), children[1].(TomType), children[2].(BQTerm))
+}
+
 // MakeGetHead builds the canonical (shared) GetHead term.
 func MakeGetHead(opname TomName, codomain TomType, variable BQTerm) Expression {
 	hashes := []uint32{opname.Hash(), codomain.Hash(), variable.Hash()}
 	proto := &GetHeadExpression{hash: sharedobjects.MixSymbol(sharedobjects.StringHash("GetHead"), hashes), Opname: opname, Codomain: codomain, Variable: variable}
 	return factory.Build(proto).(*GetHeadExpression)
 }
+
+// IsGetHead is the `Is_GetHead` predicate strategy: succeeds (returns subject
+// unchanged) when subject has the `GetHead` shape, otherwise fails with
+// sl.ErrVisitFailure.
+type IsGetHead struct{}
+
+func (IsGetHead) VisitLight(subject any, _ sl.Introspector) (any, error) {
+	if _, ok := subject.(*GetHeadExpression); ok {
+		return subject, nil
+	}
+	return subject, sl.ErrVisitFailure
+}
+func (IsGetHead) ChildCount() int             { return 0 }
+func (IsGetHead) ChildAt(int) sl.Strategy     { panic("IsGetHead: no children") }
+func (IsGetHead) SetChildAt(int, sl.Strategy) { panic("IsGetHead: no children") }
+
+// VisitGetHead is the `_GetHead` slot-visit strategy: when subject is `GetHead`,
+// applies each constituent strategy to the matching child slot and
+// rebuilds the term iff at least one child changed. Fails with
+// sl.ErrVisitFailure when subject isn't `GetHead`.
+type VisitGetHead struct {
+	args []sl.Strategy
+}
+
+// NewVisitGetHead builds the slot-visit strategy with the supplied per-slot
+// sub-strategies.
+func NewVisitGetHead(args ...sl.Strategy) *VisitGetHead {
+	return &VisitGetHead{args: args}
+}
+
+func (s *VisitGetHead) VisitLight(subject any, intro sl.Introspector) (any, error) {
+	if _, ok := subject.(*GetHeadExpression); !ok {
+		return subject, sl.ErrVisitFailure
+	}
+	if len(s.args) != 3 {
+		return subject, sl.ErrVisitFailure
+	}
+	var newChildren []any
+	for i := 0; i < 3; i++ {
+		oldChild := intro.GetChildAt(subject, i)
+		newChild, err := s.args[i].VisitLight(oldChild, intro)
+		if err != nil {
+			return subject, err
+		}
+		if newChildren != nil {
+			newChildren[i] = newChild
+		} else if newChild != oldChild {
+			newChildren = intro.GetChildren(subject)
+			newChildren[i] = newChild
+		}
+	}
+	if newChildren != nil {
+		return intro.SetChildren(subject, newChildren), nil
+	}
+	return subject, nil
+}
+
+func (s *VisitGetHead) ChildCount() int                 { return len(s.args) }
+func (s *VisitGetHead) ChildAt(i int) sl.Strategy       { return s.args[i] }
+func (s *VisitGetHead) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
 
 // GetTailExpression is the term type for the alternative `GetTail(...)` of sort Expression.
 type GetTailExpression struct {
@@ -1004,12 +3014,102 @@ func (t *GetTailExpression) String() string {
 	return fmt.Sprintf("GetTail(%v,%v)", t.Opname, t.Variable)
 }
 
+func (t *GetTailExpression) ChildCount() int { return 2 }
+
+func (t *GetTailExpression) ChildAt(i int) any {
+	switch i {
+	case 0:
+		return t.Opname
+	case 1:
+		return t.Variable
+	}
+	panic(fmt.Sprintf("GetTailExpression.ChildAt: index %d out of range", i))
+}
+
+func (t *GetTailExpression) SetChildAt(i int, child any) any {
+	switch i {
+	case 0:
+		return MakeGetTail(child.(TomName), t.Variable)
+	case 1:
+		return MakeGetTail(t.Opname, child.(BQTerm))
+	}
+	panic(fmt.Sprintf("GetTailExpression.SetChildAt: index %d out of range", i))
+}
+
+func (t *GetTailExpression) Children() []any {
+	return []any{t.Opname, t.Variable}
+}
+
+func (t *GetTailExpression) SetChildren(children []any) any {
+	return MakeGetTail(children[0].(TomName), children[1].(BQTerm))
+}
+
 // MakeGetTail builds the canonical (shared) GetTail term.
 func MakeGetTail(opname TomName, variable BQTerm) Expression {
 	hashes := []uint32{opname.Hash(), variable.Hash()}
 	proto := &GetTailExpression{hash: sharedobjects.MixSymbol(sharedobjects.StringHash("GetTail"), hashes), Opname: opname, Variable: variable}
 	return factory.Build(proto).(*GetTailExpression)
 }
+
+// IsGetTail is the `Is_GetTail` predicate strategy: succeeds (returns subject
+// unchanged) when subject has the `GetTail` shape, otherwise fails with
+// sl.ErrVisitFailure.
+type IsGetTail struct{}
+
+func (IsGetTail) VisitLight(subject any, _ sl.Introspector) (any, error) {
+	if _, ok := subject.(*GetTailExpression); ok {
+		return subject, nil
+	}
+	return subject, sl.ErrVisitFailure
+}
+func (IsGetTail) ChildCount() int             { return 0 }
+func (IsGetTail) ChildAt(int) sl.Strategy     { panic("IsGetTail: no children") }
+func (IsGetTail) SetChildAt(int, sl.Strategy) { panic("IsGetTail: no children") }
+
+// VisitGetTail is the `_GetTail` slot-visit strategy: when subject is `GetTail`,
+// applies each constituent strategy to the matching child slot and
+// rebuilds the term iff at least one child changed. Fails with
+// sl.ErrVisitFailure when subject isn't `GetTail`.
+type VisitGetTail struct {
+	args []sl.Strategy
+}
+
+// NewVisitGetTail builds the slot-visit strategy with the supplied per-slot
+// sub-strategies.
+func NewVisitGetTail(args ...sl.Strategy) *VisitGetTail {
+	return &VisitGetTail{args: args}
+}
+
+func (s *VisitGetTail) VisitLight(subject any, intro sl.Introspector) (any, error) {
+	if _, ok := subject.(*GetTailExpression); !ok {
+		return subject, sl.ErrVisitFailure
+	}
+	if len(s.args) != 2 {
+		return subject, sl.ErrVisitFailure
+	}
+	var newChildren []any
+	for i := 0; i < 2; i++ {
+		oldChild := intro.GetChildAt(subject, i)
+		newChild, err := s.args[i].VisitLight(oldChild, intro)
+		if err != nil {
+			return subject, err
+		}
+		if newChildren != nil {
+			newChildren[i] = newChild
+		} else if newChild != oldChild {
+			newChildren = intro.GetChildren(subject)
+			newChildren[i] = newChild
+		}
+	}
+	if newChildren != nil {
+		return intro.SetChildren(subject, newChildren), nil
+	}
+	return subject, nil
+}
+
+func (s *VisitGetTail) ChildCount() int                 { return len(s.args) }
+func (s *VisitGetTail) ChildAt(i int) sl.Strategy       { return s.args[i] }
+func (s *VisitGetTail) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
 
 // IsEmptyListExpression is the term type for the alternative `IsEmptyList(...)` of sort Expression.
 type IsEmptyListExpression struct {
@@ -1045,12 +3145,102 @@ func (t *IsEmptyListExpression) String() string {
 	return fmt.Sprintf("IsEmptyList(%v,%v)", t.Opname, t.Variable)
 }
 
+func (t *IsEmptyListExpression) ChildCount() int { return 2 }
+
+func (t *IsEmptyListExpression) ChildAt(i int) any {
+	switch i {
+	case 0:
+		return t.Opname
+	case 1:
+		return t.Variable
+	}
+	panic(fmt.Sprintf("IsEmptyListExpression.ChildAt: index %d out of range", i))
+}
+
+func (t *IsEmptyListExpression) SetChildAt(i int, child any) any {
+	switch i {
+	case 0:
+		return MakeIsEmptyList(child.(TomName), t.Variable)
+	case 1:
+		return MakeIsEmptyList(t.Opname, child.(BQTerm))
+	}
+	panic(fmt.Sprintf("IsEmptyListExpression.SetChildAt: index %d out of range", i))
+}
+
+func (t *IsEmptyListExpression) Children() []any {
+	return []any{t.Opname, t.Variable}
+}
+
+func (t *IsEmptyListExpression) SetChildren(children []any) any {
+	return MakeIsEmptyList(children[0].(TomName), children[1].(BQTerm))
+}
+
 // MakeIsEmptyList builds the canonical (shared) IsEmptyList term.
 func MakeIsEmptyList(opname TomName, variable BQTerm) Expression {
 	hashes := []uint32{opname.Hash(), variable.Hash()}
 	proto := &IsEmptyListExpression{hash: sharedobjects.MixSymbol(sharedobjects.StringHash("IsEmptyList"), hashes), Opname: opname, Variable: variable}
 	return factory.Build(proto).(*IsEmptyListExpression)
 }
+
+// IsIsEmptyList is the `Is_IsEmptyList` predicate strategy: succeeds (returns subject
+// unchanged) when subject has the `IsEmptyList` shape, otherwise fails with
+// sl.ErrVisitFailure.
+type IsIsEmptyList struct{}
+
+func (IsIsEmptyList) VisitLight(subject any, _ sl.Introspector) (any, error) {
+	if _, ok := subject.(*IsEmptyListExpression); ok {
+		return subject, nil
+	}
+	return subject, sl.ErrVisitFailure
+}
+func (IsIsEmptyList) ChildCount() int             { return 0 }
+func (IsIsEmptyList) ChildAt(int) sl.Strategy     { panic("IsIsEmptyList: no children") }
+func (IsIsEmptyList) SetChildAt(int, sl.Strategy) { panic("IsIsEmptyList: no children") }
+
+// VisitIsEmptyList is the `_IsEmptyList` slot-visit strategy: when subject is `IsEmptyList`,
+// applies each constituent strategy to the matching child slot and
+// rebuilds the term iff at least one child changed. Fails with
+// sl.ErrVisitFailure when subject isn't `IsEmptyList`.
+type VisitIsEmptyList struct {
+	args []sl.Strategy
+}
+
+// NewVisitIsEmptyList builds the slot-visit strategy with the supplied per-slot
+// sub-strategies.
+func NewVisitIsEmptyList(args ...sl.Strategy) *VisitIsEmptyList {
+	return &VisitIsEmptyList{args: args}
+}
+
+func (s *VisitIsEmptyList) VisitLight(subject any, intro sl.Introspector) (any, error) {
+	if _, ok := subject.(*IsEmptyListExpression); !ok {
+		return subject, sl.ErrVisitFailure
+	}
+	if len(s.args) != 2 {
+		return subject, sl.ErrVisitFailure
+	}
+	var newChildren []any
+	for i := 0; i < 2; i++ {
+		oldChild := intro.GetChildAt(subject, i)
+		newChild, err := s.args[i].VisitLight(oldChild, intro)
+		if err != nil {
+			return subject, err
+		}
+		if newChildren != nil {
+			newChildren[i] = newChild
+		} else if newChild != oldChild {
+			newChildren = intro.GetChildren(subject)
+			newChildren[i] = newChild
+		}
+	}
+	if newChildren != nil {
+		return intro.SetChildren(subject, newChildren), nil
+	}
+	return subject, nil
+}
+
+func (s *VisitIsEmptyList) ChildCount() int                 { return len(s.args) }
+func (s *VisitIsEmptyList) ChildAt(i int) sl.Strategy       { return s.args[i] }
+func (s *VisitIsEmptyList) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
 
 // IsEmptyArrayExpression is the term type for the alternative `IsEmptyArray(...)` of sort Expression.
 type IsEmptyArrayExpression struct {
@@ -1090,12 +3280,106 @@ func (t *IsEmptyArrayExpression) String() string {
 	return fmt.Sprintf("IsEmptyArray(%v,%v,%v)", t.Opname, t.Variable, t.Index)
 }
 
+func (t *IsEmptyArrayExpression) ChildCount() int { return 3 }
+
+func (t *IsEmptyArrayExpression) ChildAt(i int) any {
+	switch i {
+	case 0:
+		return t.Opname
+	case 1:
+		return t.Variable
+	case 2:
+		return t.Index
+	}
+	panic(fmt.Sprintf("IsEmptyArrayExpression.ChildAt: index %d out of range", i))
+}
+
+func (t *IsEmptyArrayExpression) SetChildAt(i int, child any) any {
+	switch i {
+	case 0:
+		return MakeIsEmptyArray(child.(TomName), t.Variable, t.Index)
+	case 1:
+		return MakeIsEmptyArray(t.Opname, child.(BQTerm), t.Index)
+	case 2:
+		return MakeIsEmptyArray(t.Opname, t.Variable, child.(BQTerm))
+	}
+	panic(fmt.Sprintf("IsEmptyArrayExpression.SetChildAt: index %d out of range", i))
+}
+
+func (t *IsEmptyArrayExpression) Children() []any {
+	return []any{t.Opname, t.Variable, t.Index}
+}
+
+func (t *IsEmptyArrayExpression) SetChildren(children []any) any {
+	return MakeIsEmptyArray(children[0].(TomName), children[1].(BQTerm), children[2].(BQTerm))
+}
+
 // MakeIsEmptyArray builds the canonical (shared) IsEmptyArray term.
 func MakeIsEmptyArray(opname TomName, variable BQTerm, index BQTerm) Expression {
 	hashes := []uint32{opname.Hash(), variable.Hash(), index.Hash()}
 	proto := &IsEmptyArrayExpression{hash: sharedobjects.MixSymbol(sharedobjects.StringHash("IsEmptyArray"), hashes), Opname: opname, Variable: variable, Index: index}
 	return factory.Build(proto).(*IsEmptyArrayExpression)
 }
+
+// IsIsEmptyArray is the `Is_IsEmptyArray` predicate strategy: succeeds (returns subject
+// unchanged) when subject has the `IsEmptyArray` shape, otherwise fails with
+// sl.ErrVisitFailure.
+type IsIsEmptyArray struct{}
+
+func (IsIsEmptyArray) VisitLight(subject any, _ sl.Introspector) (any, error) {
+	if _, ok := subject.(*IsEmptyArrayExpression); ok {
+		return subject, nil
+	}
+	return subject, sl.ErrVisitFailure
+}
+func (IsIsEmptyArray) ChildCount() int             { return 0 }
+func (IsIsEmptyArray) ChildAt(int) sl.Strategy     { panic("IsIsEmptyArray: no children") }
+func (IsIsEmptyArray) SetChildAt(int, sl.Strategy) { panic("IsIsEmptyArray: no children") }
+
+// VisitIsEmptyArray is the `_IsEmptyArray` slot-visit strategy: when subject is `IsEmptyArray`,
+// applies each constituent strategy to the matching child slot and
+// rebuilds the term iff at least one child changed. Fails with
+// sl.ErrVisitFailure when subject isn't `IsEmptyArray`.
+type VisitIsEmptyArray struct {
+	args []sl.Strategy
+}
+
+// NewVisitIsEmptyArray builds the slot-visit strategy with the supplied per-slot
+// sub-strategies.
+func NewVisitIsEmptyArray(args ...sl.Strategy) *VisitIsEmptyArray {
+	return &VisitIsEmptyArray{args: args}
+}
+
+func (s *VisitIsEmptyArray) VisitLight(subject any, intro sl.Introspector) (any, error) {
+	if _, ok := subject.(*IsEmptyArrayExpression); !ok {
+		return subject, sl.ErrVisitFailure
+	}
+	if len(s.args) != 3 {
+		return subject, sl.ErrVisitFailure
+	}
+	var newChildren []any
+	for i := 0; i < 3; i++ {
+		oldChild := intro.GetChildAt(subject, i)
+		newChild, err := s.args[i].VisitLight(oldChild, intro)
+		if err != nil {
+			return subject, err
+		}
+		if newChildren != nil {
+			newChildren[i] = newChild
+		} else if newChild != oldChild {
+			newChildren = intro.GetChildren(subject)
+			newChildren[i] = newChild
+		}
+	}
+	if newChildren != nil {
+		return intro.SetChildren(subject, newChildren), nil
+	}
+	return subject, nil
+}
+
+func (s *VisitIsEmptyArray) ChildCount() int                 { return len(s.args) }
+func (s *VisitIsEmptyArray) ChildAt(i int) sl.Strategy       { return s.args[i] }
+func (s *VisitIsEmptyArray) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
 
 // AddOneExpression is the term type for the alternative `AddOne(...)` of sort Expression.
 type AddOneExpression struct {
@@ -1127,12 +3411,98 @@ func (t *AddOneExpression) String() string {
 	return fmt.Sprintf("AddOne(%v)", t.Variable)
 }
 
+func (t *AddOneExpression) ChildCount() int { return 1 }
+
+func (t *AddOneExpression) ChildAt(i int) any {
+	switch i {
+	case 0:
+		return t.Variable
+	}
+	panic(fmt.Sprintf("AddOneExpression.ChildAt: index %d out of range", i))
+}
+
+func (t *AddOneExpression) SetChildAt(i int, child any) any {
+	switch i {
+	case 0:
+		return MakeAddOne(child.(BQTerm))
+	}
+	panic(fmt.Sprintf("AddOneExpression.SetChildAt: index %d out of range", i))
+}
+
+func (t *AddOneExpression) Children() []any {
+	return []any{t.Variable}
+}
+
+func (t *AddOneExpression) SetChildren(children []any) any {
+	return MakeAddOne(children[0].(BQTerm))
+}
+
 // MakeAddOne builds the canonical (shared) AddOne term.
 func MakeAddOne(variable BQTerm) Expression {
 	hashes := []uint32{variable.Hash()}
 	proto := &AddOneExpression{hash: sharedobjects.MixSymbol(sharedobjects.StringHash("AddOne"), hashes), Variable: variable}
 	return factory.Build(proto).(*AddOneExpression)
 }
+
+// IsAddOne is the `Is_AddOne` predicate strategy: succeeds (returns subject
+// unchanged) when subject has the `AddOne` shape, otherwise fails with
+// sl.ErrVisitFailure.
+type IsAddOne struct{}
+
+func (IsAddOne) VisitLight(subject any, _ sl.Introspector) (any, error) {
+	if _, ok := subject.(*AddOneExpression); ok {
+		return subject, nil
+	}
+	return subject, sl.ErrVisitFailure
+}
+func (IsAddOne) ChildCount() int             { return 0 }
+func (IsAddOne) ChildAt(int) sl.Strategy     { panic("IsAddOne: no children") }
+func (IsAddOne) SetChildAt(int, sl.Strategy) { panic("IsAddOne: no children") }
+
+// VisitAddOne is the `_AddOne` slot-visit strategy: when subject is `AddOne`,
+// applies each constituent strategy to the matching child slot and
+// rebuilds the term iff at least one child changed. Fails with
+// sl.ErrVisitFailure when subject isn't `AddOne`.
+type VisitAddOne struct {
+	args []sl.Strategy
+}
+
+// NewVisitAddOne builds the slot-visit strategy with the supplied per-slot
+// sub-strategies.
+func NewVisitAddOne(args ...sl.Strategy) *VisitAddOne {
+	return &VisitAddOne{args: args}
+}
+
+func (s *VisitAddOne) VisitLight(subject any, intro sl.Introspector) (any, error) {
+	if _, ok := subject.(*AddOneExpression); !ok {
+		return subject, sl.ErrVisitFailure
+	}
+	if len(s.args) != 1 {
+		return subject, sl.ErrVisitFailure
+	}
+	var newChildren []any
+	for i := 0; i < 1; i++ {
+		oldChild := intro.GetChildAt(subject, i)
+		newChild, err := s.args[i].VisitLight(oldChild, intro)
+		if err != nil {
+			return subject, err
+		}
+		if newChildren != nil {
+			newChildren[i] = newChild
+		} else if newChild != oldChild {
+			newChildren = intro.GetChildren(subject)
+			newChildren[i] = newChild
+		}
+	}
+	if newChildren != nil {
+		return intro.SetChildren(subject, newChildren), nil
+	}
+	return subject, nil
+}
+
+func (s *VisitAddOne) ChildCount() int                 { return len(s.args) }
+func (s *VisitAddOne) ChildAt(i int) sl.Strategy       { return s.args[i] }
+func (s *VisitAddOne) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
 
 // SubstractOneExpression is the term type for the alternative `SubstractOne(...)` of sort Expression.
 type SubstractOneExpression struct {
@@ -1164,12 +3534,98 @@ func (t *SubstractOneExpression) String() string {
 	return fmt.Sprintf("SubstractOne(%v)", t.Variable)
 }
 
+func (t *SubstractOneExpression) ChildCount() int { return 1 }
+
+func (t *SubstractOneExpression) ChildAt(i int) any {
+	switch i {
+	case 0:
+		return t.Variable
+	}
+	panic(fmt.Sprintf("SubstractOneExpression.ChildAt: index %d out of range", i))
+}
+
+func (t *SubstractOneExpression) SetChildAt(i int, child any) any {
+	switch i {
+	case 0:
+		return MakeSubstractOne(child.(BQTerm))
+	}
+	panic(fmt.Sprintf("SubstractOneExpression.SetChildAt: index %d out of range", i))
+}
+
+func (t *SubstractOneExpression) Children() []any {
+	return []any{t.Variable}
+}
+
+func (t *SubstractOneExpression) SetChildren(children []any) any {
+	return MakeSubstractOne(children[0].(BQTerm))
+}
+
 // MakeSubstractOne builds the canonical (shared) SubstractOne term.
 func MakeSubstractOne(variable BQTerm) Expression {
 	hashes := []uint32{variable.Hash()}
 	proto := &SubstractOneExpression{hash: sharedobjects.MixSymbol(sharedobjects.StringHash("SubstractOne"), hashes), Variable: variable}
 	return factory.Build(proto).(*SubstractOneExpression)
 }
+
+// IsSubstractOne is the `Is_SubstractOne` predicate strategy: succeeds (returns subject
+// unchanged) when subject has the `SubstractOne` shape, otherwise fails with
+// sl.ErrVisitFailure.
+type IsSubstractOne struct{}
+
+func (IsSubstractOne) VisitLight(subject any, _ sl.Introspector) (any, error) {
+	if _, ok := subject.(*SubstractOneExpression); ok {
+		return subject, nil
+	}
+	return subject, sl.ErrVisitFailure
+}
+func (IsSubstractOne) ChildCount() int             { return 0 }
+func (IsSubstractOne) ChildAt(int) sl.Strategy     { panic("IsSubstractOne: no children") }
+func (IsSubstractOne) SetChildAt(int, sl.Strategy) { panic("IsSubstractOne: no children") }
+
+// VisitSubstractOne is the `_SubstractOne` slot-visit strategy: when subject is `SubstractOne`,
+// applies each constituent strategy to the matching child slot and
+// rebuilds the term iff at least one child changed. Fails with
+// sl.ErrVisitFailure when subject isn't `SubstractOne`.
+type VisitSubstractOne struct {
+	args []sl.Strategy
+}
+
+// NewVisitSubstractOne builds the slot-visit strategy with the supplied per-slot
+// sub-strategies.
+func NewVisitSubstractOne(args ...sl.Strategy) *VisitSubstractOne {
+	return &VisitSubstractOne{args: args}
+}
+
+func (s *VisitSubstractOne) VisitLight(subject any, intro sl.Introspector) (any, error) {
+	if _, ok := subject.(*SubstractOneExpression); !ok {
+		return subject, sl.ErrVisitFailure
+	}
+	if len(s.args) != 1 {
+		return subject, sl.ErrVisitFailure
+	}
+	var newChildren []any
+	for i := 0; i < 1; i++ {
+		oldChild := intro.GetChildAt(subject, i)
+		newChild, err := s.args[i].VisitLight(oldChild, intro)
+		if err != nil {
+			return subject, err
+		}
+		if newChildren != nil {
+			newChildren[i] = newChild
+		} else if newChild != oldChild {
+			newChildren = intro.GetChildren(subject)
+			newChildren[i] = newChild
+		}
+	}
+	if newChildren != nil {
+		return intro.SetChildren(subject, newChildren), nil
+	}
+	return subject, nil
+}
+
+func (s *VisitSubstractOne) ChildCount() int                 { return len(s.args) }
+func (s *VisitSubstractOne) ChildAt(i int) sl.Strategy       { return s.args[i] }
+func (s *VisitSubstractOne) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
 
 // SubstractExpression is the term type for the alternative `Substract(...)` of sort Expression.
 type SubstractExpression struct {
@@ -1205,12 +3661,102 @@ func (t *SubstractExpression) String() string {
 	return fmt.Sprintf("Substract(%v,%v)", t.Term1, t.Term2)
 }
 
+func (t *SubstractExpression) ChildCount() int { return 2 }
+
+func (t *SubstractExpression) ChildAt(i int) any {
+	switch i {
+	case 0:
+		return t.Term1
+	case 1:
+		return t.Term2
+	}
+	panic(fmt.Sprintf("SubstractExpression.ChildAt: index %d out of range", i))
+}
+
+func (t *SubstractExpression) SetChildAt(i int, child any) any {
+	switch i {
+	case 0:
+		return MakeSubstract(child.(BQTerm), t.Term2)
+	case 1:
+		return MakeSubstract(t.Term1, child.(BQTerm))
+	}
+	panic(fmt.Sprintf("SubstractExpression.SetChildAt: index %d out of range", i))
+}
+
+func (t *SubstractExpression) Children() []any {
+	return []any{t.Term1, t.Term2}
+}
+
+func (t *SubstractExpression) SetChildren(children []any) any {
+	return MakeSubstract(children[0].(BQTerm), children[1].(BQTerm))
+}
+
 // MakeSubstract builds the canonical (shared) Substract term.
 func MakeSubstract(term1 BQTerm, term2 BQTerm) Expression {
 	hashes := []uint32{term1.Hash(), term2.Hash()}
 	proto := &SubstractExpression{hash: sharedobjects.MixSymbol(sharedobjects.StringHash("Substract"), hashes), Term1: term1, Term2: term2}
 	return factory.Build(proto).(*SubstractExpression)
 }
+
+// IsSubstract is the `Is_Substract` predicate strategy: succeeds (returns subject
+// unchanged) when subject has the `Substract` shape, otherwise fails with
+// sl.ErrVisitFailure.
+type IsSubstract struct{}
+
+func (IsSubstract) VisitLight(subject any, _ sl.Introspector) (any, error) {
+	if _, ok := subject.(*SubstractExpression); ok {
+		return subject, nil
+	}
+	return subject, sl.ErrVisitFailure
+}
+func (IsSubstract) ChildCount() int             { return 0 }
+func (IsSubstract) ChildAt(int) sl.Strategy     { panic("IsSubstract: no children") }
+func (IsSubstract) SetChildAt(int, sl.Strategy) { panic("IsSubstract: no children") }
+
+// VisitSubstract is the `_Substract` slot-visit strategy: when subject is `Substract`,
+// applies each constituent strategy to the matching child slot and
+// rebuilds the term iff at least one child changed. Fails with
+// sl.ErrVisitFailure when subject isn't `Substract`.
+type VisitSubstract struct {
+	args []sl.Strategy
+}
+
+// NewVisitSubstract builds the slot-visit strategy with the supplied per-slot
+// sub-strategies.
+func NewVisitSubstract(args ...sl.Strategy) *VisitSubstract {
+	return &VisitSubstract{args: args}
+}
+
+func (s *VisitSubstract) VisitLight(subject any, intro sl.Introspector) (any, error) {
+	if _, ok := subject.(*SubstractExpression); !ok {
+		return subject, sl.ErrVisitFailure
+	}
+	if len(s.args) != 2 {
+		return subject, sl.ErrVisitFailure
+	}
+	var newChildren []any
+	for i := 0; i < 2; i++ {
+		oldChild := intro.GetChildAt(subject, i)
+		newChild, err := s.args[i].VisitLight(oldChild, intro)
+		if err != nil {
+			return subject, err
+		}
+		if newChildren != nil {
+			newChildren[i] = newChild
+		} else if newChild != oldChild {
+			newChildren = intro.GetChildren(subject)
+			newChildren[i] = newChild
+		}
+	}
+	if newChildren != nil {
+		return intro.SetChildren(subject, newChildren), nil
+	}
+	return subject, nil
+}
+
+func (s *VisitSubstract) ChildCount() int                 { return len(s.args) }
+func (s *VisitSubstract) ChildAt(i int) sl.Strategy       { return s.args[i] }
+func (s *VisitSubstract) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
 
 // GetSizeExpression is the term type for the alternative `GetSize(...)` of sort Expression.
 type GetSizeExpression struct {
@@ -1246,12 +3792,102 @@ func (t *GetSizeExpression) String() string {
 	return fmt.Sprintf("GetSize(%v,%v)", t.Opname, t.Variable)
 }
 
+func (t *GetSizeExpression) ChildCount() int { return 2 }
+
+func (t *GetSizeExpression) ChildAt(i int) any {
+	switch i {
+	case 0:
+		return t.Opname
+	case 1:
+		return t.Variable
+	}
+	panic(fmt.Sprintf("GetSizeExpression.ChildAt: index %d out of range", i))
+}
+
+func (t *GetSizeExpression) SetChildAt(i int, child any) any {
+	switch i {
+	case 0:
+		return MakeGetSize(child.(TomName), t.Variable)
+	case 1:
+		return MakeGetSize(t.Opname, child.(BQTerm))
+	}
+	panic(fmt.Sprintf("GetSizeExpression.SetChildAt: index %d out of range", i))
+}
+
+func (t *GetSizeExpression) Children() []any {
+	return []any{t.Opname, t.Variable}
+}
+
+func (t *GetSizeExpression) SetChildren(children []any) any {
+	return MakeGetSize(children[0].(TomName), children[1].(BQTerm))
+}
+
 // MakeGetSize builds the canonical (shared) GetSize term.
 func MakeGetSize(opname TomName, variable BQTerm) Expression {
 	hashes := []uint32{opname.Hash(), variable.Hash()}
 	proto := &GetSizeExpression{hash: sharedobjects.MixSymbol(sharedobjects.StringHash("GetSize"), hashes), Opname: opname, Variable: variable}
 	return factory.Build(proto).(*GetSizeExpression)
 }
+
+// IsGetSize is the `Is_GetSize` predicate strategy: succeeds (returns subject
+// unchanged) when subject has the `GetSize` shape, otherwise fails with
+// sl.ErrVisitFailure.
+type IsGetSize struct{}
+
+func (IsGetSize) VisitLight(subject any, _ sl.Introspector) (any, error) {
+	if _, ok := subject.(*GetSizeExpression); ok {
+		return subject, nil
+	}
+	return subject, sl.ErrVisitFailure
+}
+func (IsGetSize) ChildCount() int             { return 0 }
+func (IsGetSize) ChildAt(int) sl.Strategy     { panic("IsGetSize: no children") }
+func (IsGetSize) SetChildAt(int, sl.Strategy) { panic("IsGetSize: no children") }
+
+// VisitGetSize is the `_GetSize` slot-visit strategy: when subject is `GetSize`,
+// applies each constituent strategy to the matching child slot and
+// rebuilds the term iff at least one child changed. Fails with
+// sl.ErrVisitFailure when subject isn't `GetSize`.
+type VisitGetSize struct {
+	args []sl.Strategy
+}
+
+// NewVisitGetSize builds the slot-visit strategy with the supplied per-slot
+// sub-strategies.
+func NewVisitGetSize(args ...sl.Strategy) *VisitGetSize {
+	return &VisitGetSize{args: args}
+}
+
+func (s *VisitGetSize) VisitLight(subject any, intro sl.Introspector) (any, error) {
+	if _, ok := subject.(*GetSizeExpression); !ok {
+		return subject, sl.ErrVisitFailure
+	}
+	if len(s.args) != 2 {
+		return subject, sl.ErrVisitFailure
+	}
+	var newChildren []any
+	for i := 0; i < 2; i++ {
+		oldChild := intro.GetChildAt(subject, i)
+		newChild, err := s.args[i].VisitLight(oldChild, intro)
+		if err != nil {
+			return subject, err
+		}
+		if newChildren != nil {
+			newChildren[i] = newChild
+		} else if newChild != oldChild {
+			newChildren = intro.GetChildren(subject)
+			newChildren[i] = newChild
+		}
+	}
+	if newChildren != nil {
+		return intro.SetChildren(subject, newChildren), nil
+	}
+	return subject, nil
+}
+
+func (s *VisitGetSize) ChildCount() int                 { return len(s.args) }
+func (s *VisitGetSize) ChildAt(i int) sl.Strategy       { return s.args[i] }
+func (s *VisitGetSize) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
 
 // GetElementExpression is the term type for the alternative `GetElement(...)` of sort Expression.
 type GetElementExpression struct {
@@ -1295,12 +3931,110 @@ func (t *GetElementExpression) String() string {
 	return fmt.Sprintf("GetElement(%v,%v,%v,%v)", t.Opname, t.Codomain, t.Variable, t.Index)
 }
 
+func (t *GetElementExpression) ChildCount() int { return 4 }
+
+func (t *GetElementExpression) ChildAt(i int) any {
+	switch i {
+	case 0:
+		return t.Opname
+	case 1:
+		return t.Codomain
+	case 2:
+		return t.Variable
+	case 3:
+		return t.Index
+	}
+	panic(fmt.Sprintf("GetElementExpression.ChildAt: index %d out of range", i))
+}
+
+func (t *GetElementExpression) SetChildAt(i int, child any) any {
+	switch i {
+	case 0:
+		return MakeGetElement(child.(TomName), t.Codomain, t.Variable, t.Index)
+	case 1:
+		return MakeGetElement(t.Opname, child.(TomType), t.Variable, t.Index)
+	case 2:
+		return MakeGetElement(t.Opname, t.Codomain, child.(BQTerm), t.Index)
+	case 3:
+		return MakeGetElement(t.Opname, t.Codomain, t.Variable, child.(BQTerm))
+	}
+	panic(fmt.Sprintf("GetElementExpression.SetChildAt: index %d out of range", i))
+}
+
+func (t *GetElementExpression) Children() []any {
+	return []any{t.Opname, t.Codomain, t.Variable, t.Index}
+}
+
+func (t *GetElementExpression) SetChildren(children []any) any {
+	return MakeGetElement(children[0].(TomName), children[1].(TomType), children[2].(BQTerm), children[3].(BQTerm))
+}
+
 // MakeGetElement builds the canonical (shared) GetElement term.
 func MakeGetElement(opname TomName, codomain TomType, variable BQTerm, index BQTerm) Expression {
 	hashes := []uint32{opname.Hash(), codomain.Hash(), variable.Hash(), index.Hash()}
 	proto := &GetElementExpression{hash: sharedobjects.MixSymbol(sharedobjects.StringHash("GetElement"), hashes), Opname: opname, Codomain: codomain, Variable: variable, Index: index}
 	return factory.Build(proto).(*GetElementExpression)
 }
+
+// IsGetElement is the `Is_GetElement` predicate strategy: succeeds (returns subject
+// unchanged) when subject has the `GetElement` shape, otherwise fails with
+// sl.ErrVisitFailure.
+type IsGetElement struct{}
+
+func (IsGetElement) VisitLight(subject any, _ sl.Introspector) (any, error) {
+	if _, ok := subject.(*GetElementExpression); ok {
+		return subject, nil
+	}
+	return subject, sl.ErrVisitFailure
+}
+func (IsGetElement) ChildCount() int             { return 0 }
+func (IsGetElement) ChildAt(int) sl.Strategy     { panic("IsGetElement: no children") }
+func (IsGetElement) SetChildAt(int, sl.Strategy) { panic("IsGetElement: no children") }
+
+// VisitGetElement is the `_GetElement` slot-visit strategy: when subject is `GetElement`,
+// applies each constituent strategy to the matching child slot and
+// rebuilds the term iff at least one child changed. Fails with
+// sl.ErrVisitFailure when subject isn't `GetElement`.
+type VisitGetElement struct {
+	args []sl.Strategy
+}
+
+// NewVisitGetElement builds the slot-visit strategy with the supplied per-slot
+// sub-strategies.
+func NewVisitGetElement(args ...sl.Strategy) *VisitGetElement {
+	return &VisitGetElement{args: args}
+}
+
+func (s *VisitGetElement) VisitLight(subject any, intro sl.Introspector) (any, error) {
+	if _, ok := subject.(*GetElementExpression); !ok {
+		return subject, sl.ErrVisitFailure
+	}
+	if len(s.args) != 4 {
+		return subject, sl.ErrVisitFailure
+	}
+	var newChildren []any
+	for i := 0; i < 4; i++ {
+		oldChild := intro.GetChildAt(subject, i)
+		newChild, err := s.args[i].VisitLight(oldChild, intro)
+		if err != nil {
+			return subject, err
+		}
+		if newChildren != nil {
+			newChildren[i] = newChild
+		} else if newChild != oldChild {
+			newChildren = intro.GetChildren(subject)
+			newChildren[i] = newChild
+		}
+	}
+	if newChildren != nil {
+		return intro.SetChildren(subject, newChildren), nil
+	}
+	return subject, nil
+}
+
+func (s *VisitGetElement) ChildCount() int                 { return len(s.args) }
+func (s *VisitGetElement) ChildAt(i int) sl.Strategy       { return s.args[i] }
+func (s *VisitGetElement) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
 
 // GetSliceListExpression is the term type for the alternative `GetSliceList(...)` of sort Expression.
 type GetSliceListExpression struct {
@@ -1344,12 +4078,110 @@ func (t *GetSliceListExpression) String() string {
 	return fmt.Sprintf("GetSliceList(%v,%v,%v,%v)", t.AstName, t.VariableBeginAST, t.VariableEndAST, t.Tail)
 }
 
+func (t *GetSliceListExpression) ChildCount() int { return 4 }
+
+func (t *GetSliceListExpression) ChildAt(i int) any {
+	switch i {
+	case 0:
+		return t.AstName
+	case 1:
+		return t.VariableBeginAST
+	case 2:
+		return t.VariableEndAST
+	case 3:
+		return t.Tail
+	}
+	panic(fmt.Sprintf("GetSliceListExpression.ChildAt: index %d out of range", i))
+}
+
+func (t *GetSliceListExpression) SetChildAt(i int, child any) any {
+	switch i {
+	case 0:
+		return MakeGetSliceList(child.(TomName), t.VariableBeginAST, t.VariableEndAST, t.Tail)
+	case 1:
+		return MakeGetSliceList(t.AstName, child.(BQTerm), t.VariableEndAST, t.Tail)
+	case 2:
+		return MakeGetSliceList(t.AstName, t.VariableBeginAST, child.(BQTerm), t.Tail)
+	case 3:
+		return MakeGetSliceList(t.AstName, t.VariableBeginAST, t.VariableEndAST, child.(BQTerm))
+	}
+	panic(fmt.Sprintf("GetSliceListExpression.SetChildAt: index %d out of range", i))
+}
+
+func (t *GetSliceListExpression) Children() []any {
+	return []any{t.AstName, t.VariableBeginAST, t.VariableEndAST, t.Tail}
+}
+
+func (t *GetSliceListExpression) SetChildren(children []any) any {
+	return MakeGetSliceList(children[0].(TomName), children[1].(BQTerm), children[2].(BQTerm), children[3].(BQTerm))
+}
+
 // MakeGetSliceList builds the canonical (shared) GetSliceList term.
 func MakeGetSliceList(astName TomName, variableBeginAST BQTerm, variableEndAST BQTerm, tail BQTerm) Expression {
 	hashes := []uint32{astName.Hash(), variableBeginAST.Hash(), variableEndAST.Hash(), tail.Hash()}
 	proto := &GetSliceListExpression{hash: sharedobjects.MixSymbol(sharedobjects.StringHash("GetSliceList"), hashes), AstName: astName, VariableBeginAST: variableBeginAST, VariableEndAST: variableEndAST, Tail: tail}
 	return factory.Build(proto).(*GetSliceListExpression)
 }
+
+// IsGetSliceList is the `Is_GetSliceList` predicate strategy: succeeds (returns subject
+// unchanged) when subject has the `GetSliceList` shape, otherwise fails with
+// sl.ErrVisitFailure.
+type IsGetSliceList struct{}
+
+func (IsGetSliceList) VisitLight(subject any, _ sl.Introspector) (any, error) {
+	if _, ok := subject.(*GetSliceListExpression); ok {
+		return subject, nil
+	}
+	return subject, sl.ErrVisitFailure
+}
+func (IsGetSliceList) ChildCount() int             { return 0 }
+func (IsGetSliceList) ChildAt(int) sl.Strategy     { panic("IsGetSliceList: no children") }
+func (IsGetSliceList) SetChildAt(int, sl.Strategy) { panic("IsGetSliceList: no children") }
+
+// VisitGetSliceList is the `_GetSliceList` slot-visit strategy: when subject is `GetSliceList`,
+// applies each constituent strategy to the matching child slot and
+// rebuilds the term iff at least one child changed. Fails with
+// sl.ErrVisitFailure when subject isn't `GetSliceList`.
+type VisitGetSliceList struct {
+	args []sl.Strategy
+}
+
+// NewVisitGetSliceList builds the slot-visit strategy with the supplied per-slot
+// sub-strategies.
+func NewVisitGetSliceList(args ...sl.Strategy) *VisitGetSliceList {
+	return &VisitGetSliceList{args: args}
+}
+
+func (s *VisitGetSliceList) VisitLight(subject any, intro sl.Introspector) (any, error) {
+	if _, ok := subject.(*GetSliceListExpression); !ok {
+		return subject, sl.ErrVisitFailure
+	}
+	if len(s.args) != 4 {
+		return subject, sl.ErrVisitFailure
+	}
+	var newChildren []any
+	for i := 0; i < 4; i++ {
+		oldChild := intro.GetChildAt(subject, i)
+		newChild, err := s.args[i].VisitLight(oldChild, intro)
+		if err != nil {
+			return subject, err
+		}
+		if newChildren != nil {
+			newChildren[i] = newChild
+		} else if newChild != oldChild {
+			newChildren = intro.GetChildren(subject)
+			newChildren[i] = newChild
+		}
+	}
+	if newChildren != nil {
+		return intro.SetChildren(subject, newChildren), nil
+	}
+	return subject, nil
+}
+
+func (s *VisitGetSliceList) ChildCount() int                 { return len(s.args) }
+func (s *VisitGetSliceList) ChildAt(i int) sl.Strategy       { return s.args[i] }
+func (s *VisitGetSliceList) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
 
 // GetSliceArrayExpression is the term type for the alternative `GetSliceArray(...)` of sort Expression.
 type GetSliceArrayExpression struct {
@@ -1393,12 +4225,110 @@ func (t *GetSliceArrayExpression) String() string {
 	return fmt.Sprintf("GetSliceArray(%v,%v,%v,%v)", t.AstName, t.SubjectListName, t.VariableBeginAST, t.VariableEndAST)
 }
 
+func (t *GetSliceArrayExpression) ChildCount() int { return 4 }
+
+func (t *GetSliceArrayExpression) ChildAt(i int) any {
+	switch i {
+	case 0:
+		return t.AstName
+	case 1:
+		return t.SubjectListName
+	case 2:
+		return t.VariableBeginAST
+	case 3:
+		return t.VariableEndAST
+	}
+	panic(fmt.Sprintf("GetSliceArrayExpression.ChildAt: index %d out of range", i))
+}
+
+func (t *GetSliceArrayExpression) SetChildAt(i int, child any) any {
+	switch i {
+	case 0:
+		return MakeGetSliceArray(child.(TomName), t.SubjectListName, t.VariableBeginAST, t.VariableEndAST)
+	case 1:
+		return MakeGetSliceArray(t.AstName, child.(BQTerm), t.VariableBeginAST, t.VariableEndAST)
+	case 2:
+		return MakeGetSliceArray(t.AstName, t.SubjectListName, child.(BQTerm), t.VariableEndAST)
+	case 3:
+		return MakeGetSliceArray(t.AstName, t.SubjectListName, t.VariableBeginAST, child.(BQTerm))
+	}
+	panic(fmt.Sprintf("GetSliceArrayExpression.SetChildAt: index %d out of range", i))
+}
+
+func (t *GetSliceArrayExpression) Children() []any {
+	return []any{t.AstName, t.SubjectListName, t.VariableBeginAST, t.VariableEndAST}
+}
+
+func (t *GetSliceArrayExpression) SetChildren(children []any) any {
+	return MakeGetSliceArray(children[0].(TomName), children[1].(BQTerm), children[2].(BQTerm), children[3].(BQTerm))
+}
+
 // MakeGetSliceArray builds the canonical (shared) GetSliceArray term.
 func MakeGetSliceArray(astName TomName, subjectListName BQTerm, variableBeginAST BQTerm, variableEndAST BQTerm) Expression {
 	hashes := []uint32{astName.Hash(), subjectListName.Hash(), variableBeginAST.Hash(), variableEndAST.Hash()}
 	proto := &GetSliceArrayExpression{hash: sharedobjects.MixSymbol(sharedobjects.StringHash("GetSliceArray"), hashes), AstName: astName, SubjectListName: subjectListName, VariableBeginAST: variableBeginAST, VariableEndAST: variableEndAST}
 	return factory.Build(proto).(*GetSliceArrayExpression)
 }
+
+// IsGetSliceArray is the `Is_GetSliceArray` predicate strategy: succeeds (returns subject
+// unchanged) when subject has the `GetSliceArray` shape, otherwise fails with
+// sl.ErrVisitFailure.
+type IsGetSliceArray struct{}
+
+func (IsGetSliceArray) VisitLight(subject any, _ sl.Introspector) (any, error) {
+	if _, ok := subject.(*GetSliceArrayExpression); ok {
+		return subject, nil
+	}
+	return subject, sl.ErrVisitFailure
+}
+func (IsGetSliceArray) ChildCount() int             { return 0 }
+func (IsGetSliceArray) ChildAt(int) sl.Strategy     { panic("IsGetSliceArray: no children") }
+func (IsGetSliceArray) SetChildAt(int, sl.Strategy) { panic("IsGetSliceArray: no children") }
+
+// VisitGetSliceArray is the `_GetSliceArray` slot-visit strategy: when subject is `GetSliceArray`,
+// applies each constituent strategy to the matching child slot and
+// rebuilds the term iff at least one child changed. Fails with
+// sl.ErrVisitFailure when subject isn't `GetSliceArray`.
+type VisitGetSliceArray struct {
+	args []sl.Strategy
+}
+
+// NewVisitGetSliceArray builds the slot-visit strategy with the supplied per-slot
+// sub-strategies.
+func NewVisitGetSliceArray(args ...sl.Strategy) *VisitGetSliceArray {
+	return &VisitGetSliceArray{args: args}
+}
+
+func (s *VisitGetSliceArray) VisitLight(subject any, intro sl.Introspector) (any, error) {
+	if _, ok := subject.(*GetSliceArrayExpression); !ok {
+		return subject, sl.ErrVisitFailure
+	}
+	if len(s.args) != 4 {
+		return subject, sl.ErrVisitFailure
+	}
+	var newChildren []any
+	for i := 0; i < 4; i++ {
+		oldChild := intro.GetChildAt(subject, i)
+		newChild, err := s.args[i].VisitLight(oldChild, intro)
+		if err != nil {
+			return subject, err
+		}
+		if newChildren != nil {
+			newChildren[i] = newChild
+		} else if newChild != oldChild {
+			newChildren = intro.GetChildren(subject)
+			newChildren[i] = newChild
+		}
+	}
+	if newChildren != nil {
+		return intro.SetChildren(subject, newChildren), nil
+	}
+	return subject, nil
+}
+
+func (s *VisitGetSliceArray) ChildCount() int                 { return len(s.args) }
+func (s *VisitGetSliceArray) ChildAt(i int) sl.Strategy       { return s.args[i] }
+func (s *VisitGetSliceArray) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
 
 // ConstraintToExpressionExpression is the term type for the alternative `ConstraintToExpression(...)` of sort Expression.
 type ConstraintToExpressionExpression struct {
@@ -1430,12 +4360,102 @@ func (t *ConstraintToExpressionExpression) String() string {
 	return fmt.Sprintf("ConstraintToExpression(%v)", t.Cons)
 }
 
+func (t *ConstraintToExpressionExpression) ChildCount() int { return 1 }
+
+func (t *ConstraintToExpressionExpression) ChildAt(i int) any {
+	switch i {
+	case 0:
+		return t.Cons
+	}
+	panic(fmt.Sprintf("ConstraintToExpressionExpression.ChildAt: index %d out of range", i))
+}
+
+func (t *ConstraintToExpressionExpression) SetChildAt(i int, child any) any {
+	switch i {
+	case 0:
+		return MakeConstraintToExpression(child.(Constraint))
+	}
+	panic(fmt.Sprintf("ConstraintToExpressionExpression.SetChildAt: index %d out of range", i))
+}
+
+func (t *ConstraintToExpressionExpression) Children() []any {
+	return []any{t.Cons}
+}
+
+func (t *ConstraintToExpressionExpression) SetChildren(children []any) any {
+	return MakeConstraintToExpression(children[0].(Constraint))
+}
+
 // MakeConstraintToExpression builds the canonical (shared) ConstraintToExpression term.
 func MakeConstraintToExpression(cons Constraint) Expression {
 	hashes := []uint32{cons.Hash()}
 	proto := &ConstraintToExpressionExpression{hash: sharedobjects.MixSymbol(sharedobjects.StringHash("ConstraintToExpression"), hashes), Cons: cons}
 	return factory.Build(proto).(*ConstraintToExpressionExpression)
 }
+
+// IsConstraintToExpression is the `Is_ConstraintToExpression` predicate strategy: succeeds (returns subject
+// unchanged) when subject has the `ConstraintToExpression` shape, otherwise fails with
+// sl.ErrVisitFailure.
+type IsConstraintToExpression struct{}
+
+func (IsConstraintToExpression) VisitLight(subject any, _ sl.Introspector) (any, error) {
+	if _, ok := subject.(*ConstraintToExpressionExpression); ok {
+		return subject, nil
+	}
+	return subject, sl.ErrVisitFailure
+}
+func (IsConstraintToExpression) ChildCount() int { return 0 }
+func (IsConstraintToExpression) ChildAt(int) sl.Strategy {
+	panic("IsConstraintToExpression: no children")
+}
+func (IsConstraintToExpression) SetChildAt(int, sl.Strategy) {
+	panic("IsConstraintToExpression: no children")
+}
+
+// VisitConstraintToExpression is the `_ConstraintToExpression` slot-visit strategy: when subject is `ConstraintToExpression`,
+// applies each constituent strategy to the matching child slot and
+// rebuilds the term iff at least one child changed. Fails with
+// sl.ErrVisitFailure when subject isn't `ConstraintToExpression`.
+type VisitConstraintToExpression struct {
+	args []sl.Strategy
+}
+
+// NewVisitConstraintToExpression builds the slot-visit strategy with the supplied per-slot
+// sub-strategies.
+func NewVisitConstraintToExpression(args ...sl.Strategy) *VisitConstraintToExpression {
+	return &VisitConstraintToExpression{args: args}
+}
+
+func (s *VisitConstraintToExpression) VisitLight(subject any, intro sl.Introspector) (any, error) {
+	if _, ok := subject.(*ConstraintToExpressionExpression); !ok {
+		return subject, sl.ErrVisitFailure
+	}
+	if len(s.args) != 1 {
+		return subject, sl.ErrVisitFailure
+	}
+	var newChildren []any
+	for i := 0; i < 1; i++ {
+		oldChild := intro.GetChildAt(subject, i)
+		newChild, err := s.args[i].VisitLight(oldChild, intro)
+		if err != nil {
+			return subject, err
+		}
+		if newChildren != nil {
+			newChildren[i] = newChild
+		} else if newChild != oldChild {
+			newChildren = intro.GetChildren(subject)
+			newChildren[i] = newChild
+		}
+	}
+	if newChildren != nil {
+		return intro.SetChildren(subject, newChildren), nil
+	}
+	return subject, nil
+}
+
+func (s *VisitConstraintToExpression) ChildCount() int                 { return len(s.args) }
+func (s *VisitConstraintToExpression) ChildAt(i int) sl.Strategy       { return s.args[i] }
+func (s *VisitConstraintToExpression) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
 
 // ACMatchLoopExpression is the term type for the alternative `ACMatchLoop(...)` of sort Expression.
 type ACMatchLoopExpression struct {
@@ -1483,12 +4503,114 @@ func (t *ACMatchLoopExpression) String() string {
 	return fmt.Sprintf("ACMatchLoop(%s,%v,%v,%v,%v)", sharedobjects.JavaEscape(t.SymbolName), t.VariableX, t.VariableY, t.MultiplicityY, t.Subject)
 }
 
+func (t *ACMatchLoopExpression) ChildCount() int { return 5 }
+
+func (t *ACMatchLoopExpression) ChildAt(i int) any {
+	switch i {
+	case 0:
+		return t.SymbolName
+	case 1:
+		return t.VariableX
+	case 2:
+		return t.VariableY
+	case 3:
+		return t.MultiplicityY
+	case 4:
+		return t.Subject
+	}
+	panic(fmt.Sprintf("ACMatchLoopExpression.ChildAt: index %d out of range", i))
+}
+
+func (t *ACMatchLoopExpression) SetChildAt(i int, child any) any {
+	switch i {
+	case 0:
+		return MakeACMatchLoop(child.(string), t.VariableX, t.VariableY, t.MultiplicityY, t.Subject)
+	case 1:
+		return MakeACMatchLoop(t.SymbolName, child.(TomTerm), t.VariableY, t.MultiplicityY, t.Subject)
+	case 2:
+		return MakeACMatchLoop(t.SymbolName, t.VariableX, child.(TomTerm), t.MultiplicityY, t.Subject)
+	case 3:
+		return MakeACMatchLoop(t.SymbolName, t.VariableX, t.VariableY, child.(int64), t.Subject)
+	case 4:
+		return MakeACMatchLoop(t.SymbolName, t.VariableX, t.VariableY, t.MultiplicityY, child.(BQTerm))
+	}
+	panic(fmt.Sprintf("ACMatchLoopExpression.SetChildAt: index %d out of range", i))
+}
+
+func (t *ACMatchLoopExpression) Children() []any {
+	return []any{t.SymbolName, t.VariableX, t.VariableY, t.MultiplicityY, t.Subject}
+}
+
+func (t *ACMatchLoopExpression) SetChildren(children []any) any {
+	return MakeACMatchLoop(children[0].(string), children[1].(TomTerm), children[2].(TomTerm), children[3].(int64), children[4].(BQTerm))
+}
+
 // MakeACMatchLoop builds the canonical (shared) ACMatchLoop term.
 func MakeACMatchLoop(symbolName string, variableX TomTerm, variableY TomTerm, multiplicityY int64, subject BQTerm) Expression {
 	hashes := []uint32{sharedobjects.StringHash(fmt.Sprintf("%v", symbolName)), variableX.Hash(), variableY.Hash(), sharedobjects.StringHash(fmt.Sprintf("%v", multiplicityY)), subject.Hash()}
 	proto := &ACMatchLoopExpression{hash: sharedobjects.MixSymbol(sharedobjects.StringHash("ACMatchLoop"), hashes), SymbolName: symbolName, VariableX: variableX, VariableY: variableY, MultiplicityY: multiplicityY, Subject: subject}
 	return factory.Build(proto).(*ACMatchLoopExpression)
 }
+
+// IsACMatchLoop is the `Is_ACMatchLoop` predicate strategy: succeeds (returns subject
+// unchanged) when subject has the `ACMatchLoop` shape, otherwise fails with
+// sl.ErrVisitFailure.
+type IsACMatchLoop struct{}
+
+func (IsACMatchLoop) VisitLight(subject any, _ sl.Introspector) (any, error) {
+	if _, ok := subject.(*ACMatchLoopExpression); ok {
+		return subject, nil
+	}
+	return subject, sl.ErrVisitFailure
+}
+func (IsACMatchLoop) ChildCount() int             { return 0 }
+func (IsACMatchLoop) ChildAt(int) sl.Strategy     { panic("IsACMatchLoop: no children") }
+func (IsACMatchLoop) SetChildAt(int, sl.Strategy) { panic("IsACMatchLoop: no children") }
+
+// VisitACMatchLoop is the `_ACMatchLoop` slot-visit strategy: when subject is `ACMatchLoop`,
+// applies each constituent strategy to the matching child slot and
+// rebuilds the term iff at least one child changed. Fails with
+// sl.ErrVisitFailure when subject isn't `ACMatchLoop`.
+type VisitACMatchLoop struct {
+	args []sl.Strategy
+}
+
+// NewVisitACMatchLoop builds the slot-visit strategy with the supplied per-slot
+// sub-strategies.
+func NewVisitACMatchLoop(args ...sl.Strategy) *VisitACMatchLoop {
+	return &VisitACMatchLoop{args: args}
+}
+
+func (s *VisitACMatchLoop) VisitLight(subject any, intro sl.Introspector) (any, error) {
+	if _, ok := subject.(*ACMatchLoopExpression); !ok {
+		return subject, sl.ErrVisitFailure
+	}
+	if len(s.args) != 5 {
+		return subject, sl.ErrVisitFailure
+	}
+	var newChildren []any
+	for i := 0; i < 5; i++ {
+		oldChild := intro.GetChildAt(subject, i)
+		newChild, err := s.args[i].VisitLight(oldChild, intro)
+		if err != nil {
+			return subject, err
+		}
+		if newChildren != nil {
+			newChildren[i] = newChild
+		} else if newChild != oldChild {
+			newChildren = intro.GetChildren(subject)
+			newChildren[i] = newChild
+		}
+	}
+	if newChildren != nil {
+		return intro.SetChildren(subject, newChildren), nil
+	}
+	return subject, nil
+}
+
+func (s *VisitACMatchLoop) ChildCount() int                 { return len(s.args) }
+func (s *VisitACMatchLoop) ChildAt(i int) sl.Strategy       { return s.args[i] }
+func (s *VisitACMatchLoop) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
 
 // DoWhileExpressionExpression is the term type for the alternative `DoWhileExpression(...)` of sort Expression.
 type DoWhileExpressionExpression struct {
@@ -1524,12 +4646,102 @@ func (t *DoWhileExpressionExpression) String() string {
 	return fmt.Sprintf("DoWhileExpression(%v,%v)", t.EndExpression, t.LoopCondition)
 }
 
+func (t *DoWhileExpressionExpression) ChildCount() int { return 2 }
+
+func (t *DoWhileExpressionExpression) ChildAt(i int) any {
+	switch i {
+	case 0:
+		return t.EndExpression
+	case 1:
+		return t.LoopCondition
+	}
+	panic(fmt.Sprintf("DoWhileExpressionExpression.ChildAt: index %d out of range", i))
+}
+
+func (t *DoWhileExpressionExpression) SetChildAt(i int, child any) any {
+	switch i {
+	case 0:
+		return MakeDoWhileExpression(child.(Expression), t.LoopCondition)
+	case 1:
+		return MakeDoWhileExpression(t.EndExpression, child.(Expression))
+	}
+	panic(fmt.Sprintf("DoWhileExpressionExpression.SetChildAt: index %d out of range", i))
+}
+
+func (t *DoWhileExpressionExpression) Children() []any {
+	return []any{t.EndExpression, t.LoopCondition}
+}
+
+func (t *DoWhileExpressionExpression) SetChildren(children []any) any {
+	return MakeDoWhileExpression(children[0].(Expression), children[1].(Expression))
+}
+
 // MakeDoWhileExpression builds the canonical (shared) DoWhileExpression term.
 func MakeDoWhileExpression(endExpression Expression, loopCondition Expression) Expression {
 	hashes := []uint32{endExpression.Hash(), loopCondition.Hash()}
 	proto := &DoWhileExpressionExpression{hash: sharedobjects.MixSymbol(sharedobjects.StringHash("DoWhileExpression"), hashes), EndExpression: endExpression, LoopCondition: loopCondition}
 	return factory.Build(proto).(*DoWhileExpressionExpression)
 }
+
+// IsDoWhileExpression is the `Is_DoWhileExpression` predicate strategy: succeeds (returns subject
+// unchanged) when subject has the `DoWhileExpression` shape, otherwise fails with
+// sl.ErrVisitFailure.
+type IsDoWhileExpression struct{}
+
+func (IsDoWhileExpression) VisitLight(subject any, _ sl.Introspector) (any, error) {
+	if _, ok := subject.(*DoWhileExpressionExpression); ok {
+		return subject, nil
+	}
+	return subject, sl.ErrVisitFailure
+}
+func (IsDoWhileExpression) ChildCount() int             { return 0 }
+func (IsDoWhileExpression) ChildAt(int) sl.Strategy     { panic("IsDoWhileExpression: no children") }
+func (IsDoWhileExpression) SetChildAt(int, sl.Strategy) { panic("IsDoWhileExpression: no children") }
+
+// VisitDoWhileExpression is the `_DoWhileExpression` slot-visit strategy: when subject is `DoWhileExpression`,
+// applies each constituent strategy to the matching child slot and
+// rebuilds the term iff at least one child changed. Fails with
+// sl.ErrVisitFailure when subject isn't `DoWhileExpression`.
+type VisitDoWhileExpression struct {
+	args []sl.Strategy
+}
+
+// NewVisitDoWhileExpression builds the slot-visit strategy with the supplied per-slot
+// sub-strategies.
+func NewVisitDoWhileExpression(args ...sl.Strategy) *VisitDoWhileExpression {
+	return &VisitDoWhileExpression{args: args}
+}
+
+func (s *VisitDoWhileExpression) VisitLight(subject any, intro sl.Introspector) (any, error) {
+	if _, ok := subject.(*DoWhileExpressionExpression); !ok {
+		return subject, sl.ErrVisitFailure
+	}
+	if len(s.args) != 2 {
+		return subject, sl.ErrVisitFailure
+	}
+	var newChildren []any
+	for i := 0; i < 2; i++ {
+		oldChild := intro.GetChildAt(subject, i)
+		newChild, err := s.args[i].VisitLight(oldChild, intro)
+		if err != nil {
+			return subject, err
+		}
+		if newChildren != nil {
+			newChildren[i] = newChild
+		} else if newChild != oldChild {
+			newChildren = intro.GetChildren(subject)
+			newChildren[i] = newChild
+		}
+	}
+	if newChildren != nil {
+		return intro.SetChildren(subject, newChildren), nil
+	}
+	return subject, nil
+}
+
+func (s *VisitDoWhileExpression) ChildCount() int                 { return len(s.args) }
+func (s *VisitDoWhileExpression) ChildAt(i int) sl.Strategy       { return s.args[i] }
+func (s *VisitDoWhileExpression) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
 
 // IsSortExpression is the term type for the alternative `IsSort(...)` of sort Expression.
 type IsSortExpression struct {
@@ -1565,12 +4777,102 @@ func (t *IsSortExpression) String() string {
 	return fmt.Sprintf("IsSort(%v,%v)", t.AstType, t.Variable)
 }
 
+func (t *IsSortExpression) ChildCount() int { return 2 }
+
+func (t *IsSortExpression) ChildAt(i int) any {
+	switch i {
+	case 0:
+		return t.AstType
+	case 1:
+		return t.Variable
+	}
+	panic(fmt.Sprintf("IsSortExpression.ChildAt: index %d out of range", i))
+}
+
+func (t *IsSortExpression) SetChildAt(i int, child any) any {
+	switch i {
+	case 0:
+		return MakeIsSort(child.(TomType), t.Variable)
+	case 1:
+		return MakeIsSort(t.AstType, child.(BQTerm))
+	}
+	panic(fmt.Sprintf("IsSortExpression.SetChildAt: index %d out of range", i))
+}
+
+func (t *IsSortExpression) Children() []any {
+	return []any{t.AstType, t.Variable}
+}
+
+func (t *IsSortExpression) SetChildren(children []any) any {
+	return MakeIsSort(children[0].(TomType), children[1].(BQTerm))
+}
+
 // MakeIsSort builds the canonical (shared) IsSort term.
 func MakeIsSort(astType TomType, variable BQTerm) Expression {
 	hashes := []uint32{astType.Hash(), variable.Hash()}
 	proto := &IsSortExpression{hash: sharedobjects.MixSymbol(sharedobjects.StringHash("IsSort"), hashes), AstType: astType, Variable: variable}
 	return factory.Build(proto).(*IsSortExpression)
 }
+
+// IsIsSort is the `Is_IsSort` predicate strategy: succeeds (returns subject
+// unchanged) when subject has the `IsSort` shape, otherwise fails with
+// sl.ErrVisitFailure.
+type IsIsSort struct{}
+
+func (IsIsSort) VisitLight(subject any, _ sl.Introspector) (any, error) {
+	if _, ok := subject.(*IsSortExpression); ok {
+		return subject, nil
+	}
+	return subject, sl.ErrVisitFailure
+}
+func (IsIsSort) ChildCount() int             { return 0 }
+func (IsIsSort) ChildAt(int) sl.Strategy     { panic("IsIsSort: no children") }
+func (IsIsSort) SetChildAt(int, sl.Strategy) { panic("IsIsSort: no children") }
+
+// VisitIsSort is the `_IsSort` slot-visit strategy: when subject is `IsSort`,
+// applies each constituent strategy to the matching child slot and
+// rebuilds the term iff at least one child changed. Fails with
+// sl.ErrVisitFailure when subject isn't `IsSort`.
+type VisitIsSort struct {
+	args []sl.Strategy
+}
+
+// NewVisitIsSort builds the slot-visit strategy with the supplied per-slot
+// sub-strategies.
+func NewVisitIsSort(args ...sl.Strategy) *VisitIsSort {
+	return &VisitIsSort{args: args}
+}
+
+func (s *VisitIsSort) VisitLight(subject any, intro sl.Introspector) (any, error) {
+	if _, ok := subject.(*IsSortExpression); !ok {
+		return subject, sl.ErrVisitFailure
+	}
+	if len(s.args) != 2 {
+		return subject, sl.ErrVisitFailure
+	}
+	var newChildren []any
+	for i := 0; i < 2; i++ {
+		oldChild := intro.GetChildAt(subject, i)
+		newChild, err := s.args[i].VisitLight(oldChild, intro)
+		if err != nil {
+			return subject, err
+		}
+		if newChildren != nil {
+			newChildren[i] = newChild
+		} else if newChild != oldChild {
+			newChildren = intro.GetChildren(subject)
+			newChildren[i] = newChild
+		}
+	}
+	if newChildren != nil {
+		return intro.SetChildren(subject, newChildren), nil
+	}
+	return subject, nil
+}
+
+func (s *VisitIsSort) ChildCount() int                 { return len(s.args) }
+func (s *VisitIsSort) ChildAt(i int) sl.Strategy       { return s.args[i] }
+func (s *VisitIsSort) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
 
 // CodeExpression is the term type for the alternative `Code(...)` of sort Expression.
 type CodeExpression struct {
@@ -1602,9 +4904,95 @@ func (t *CodeExpression) String() string {
 	return fmt.Sprintf("Code(%s)", sharedobjects.JavaEscape(t.Code))
 }
 
+func (t *CodeExpression) ChildCount() int { return 1 }
+
+func (t *CodeExpression) ChildAt(i int) any {
+	switch i {
+	case 0:
+		return t.Code
+	}
+	panic(fmt.Sprintf("CodeExpression.ChildAt: index %d out of range", i))
+}
+
+func (t *CodeExpression) SetChildAt(i int, child any) any {
+	switch i {
+	case 0:
+		return MakeCode(child.(string))
+	}
+	panic(fmt.Sprintf("CodeExpression.SetChildAt: index %d out of range", i))
+}
+
+func (t *CodeExpression) Children() []any {
+	return []any{t.Code}
+}
+
+func (t *CodeExpression) SetChildren(children []any) any {
+	return MakeCode(children[0].(string))
+}
+
 // MakeCode builds the canonical (shared) Code term.
 func MakeCode(code string) Expression {
 	hashes := []uint32{sharedobjects.StringHash(fmt.Sprintf("%v", code))}
 	proto := &CodeExpression{hash: sharedobjects.MixSymbol(sharedobjects.StringHash("Code"), hashes), Code: code}
 	return factory.Build(proto).(*CodeExpression)
 }
+
+// IsCode is the `Is_Code` predicate strategy: succeeds (returns subject
+// unchanged) when subject has the `Code` shape, otherwise fails with
+// sl.ErrVisitFailure.
+type IsCode struct{}
+
+func (IsCode) VisitLight(subject any, _ sl.Introspector) (any, error) {
+	if _, ok := subject.(*CodeExpression); ok {
+		return subject, nil
+	}
+	return subject, sl.ErrVisitFailure
+}
+func (IsCode) ChildCount() int             { return 0 }
+func (IsCode) ChildAt(int) sl.Strategy     { panic("IsCode: no children") }
+func (IsCode) SetChildAt(int, sl.Strategy) { panic("IsCode: no children") }
+
+// VisitCode is the `_Code` slot-visit strategy: when subject is `Code`,
+// applies each constituent strategy to the matching child slot and
+// rebuilds the term iff at least one child changed. Fails with
+// sl.ErrVisitFailure when subject isn't `Code`.
+type VisitCode struct {
+	args []sl.Strategy
+}
+
+// NewVisitCode builds the slot-visit strategy with the supplied per-slot
+// sub-strategies.
+func NewVisitCode(args ...sl.Strategy) *VisitCode {
+	return &VisitCode{args: args}
+}
+
+func (s *VisitCode) VisitLight(subject any, intro sl.Introspector) (any, error) {
+	if _, ok := subject.(*CodeExpression); !ok {
+		return subject, sl.ErrVisitFailure
+	}
+	if len(s.args) != 1 {
+		return subject, sl.ErrVisitFailure
+	}
+	var newChildren []any
+	for i := 0; i < 1; i++ {
+		oldChild := intro.GetChildAt(subject, i)
+		newChild, err := s.args[i].VisitLight(oldChild, intro)
+		if err != nil {
+			return subject, err
+		}
+		if newChildren != nil {
+			newChildren[i] = newChild
+		} else if newChild != oldChild {
+			newChildren = intro.GetChildren(subject)
+			newChildren[i] = newChild
+		}
+	}
+	if newChildren != nil {
+		return intro.SetChildren(subject, newChildren), nil
+	}
+	return subject, nil
+}
+
+func (s *VisitCode) ChildCount() int                 { return len(s.args) }
+func (s *VisitCode) ChildAt(i int) sl.Strategy       { return s.args[i] }
+func (s *VisitCode) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }

@@ -6,11 +6,13 @@ import (
 	"strings"
 
 	"tom/tomgo/stable/library/sharedobjects"
+	sl "tom/tomgo/stable/library/sl"
 )
 
 // underscore-prevent: tolerate unused imports if a module has no slots of these types.
 var _ = fmt.Sprintf
 var _ = strings.Join
+var _ sl.Strategy = nil
 
 // TargetLanguage is the Go interface backing the Gom sort TargetLanguage.
 type TargetLanguage interface {
@@ -56,12 +58,106 @@ func (t *TLTargetLanguage) String() string {
 	return fmt.Sprintf("TL(%s,%v,%v)", sharedobjects.JavaEscape(t.Code), t.Start, t.End)
 }
 
+func (t *TLTargetLanguage) ChildCount() int { return 3 }
+
+func (t *TLTargetLanguage) ChildAt(i int) any {
+	switch i {
+	case 0:
+		return t.Code
+	case 1:
+		return t.Start
+	case 2:
+		return t.End
+	}
+	panic(fmt.Sprintf("TLTargetLanguage.ChildAt: index %d out of range", i))
+}
+
+func (t *TLTargetLanguage) SetChildAt(i int, child any) any {
+	switch i {
+	case 0:
+		return MakeTL(child.(string), t.Start, t.End)
+	case 1:
+		return MakeTL(t.Code, child.(TextPosition), t.End)
+	case 2:
+		return MakeTL(t.Code, t.Start, child.(TextPosition))
+	}
+	panic(fmt.Sprintf("TLTargetLanguage.SetChildAt: index %d out of range", i))
+}
+
+func (t *TLTargetLanguage) Children() []any {
+	return []any{t.Code, t.Start, t.End}
+}
+
+func (t *TLTargetLanguage) SetChildren(children []any) any {
+	return MakeTL(children[0].(string), children[1].(TextPosition), children[2].(TextPosition))
+}
+
 // MakeTL builds the canonical (shared) TL term.
 func MakeTL(code string, start TextPosition, end TextPosition) TargetLanguage {
 	hashes := []uint32{sharedobjects.StringHash(fmt.Sprintf("%v", code)), start.Hash(), end.Hash()}
 	proto := &TLTargetLanguage{hash: sharedobjects.MixSymbol(sharedobjects.StringHash("TL"), hashes), Code: code, Start: start, End: end}
 	return factory.Build(proto).(*TLTargetLanguage)
 }
+
+// IsTL is the `Is_TL` predicate strategy: succeeds (returns subject
+// unchanged) when subject has the `TL` shape, otherwise fails with
+// sl.ErrVisitFailure.
+type IsTL struct{}
+
+func (IsTL) VisitLight(subject any, _ sl.Introspector) (any, error) {
+	if _, ok := subject.(*TLTargetLanguage); ok {
+		return subject, nil
+	}
+	return subject, sl.ErrVisitFailure
+}
+func (IsTL) ChildCount() int             { return 0 }
+func (IsTL) ChildAt(int) sl.Strategy     { panic("IsTL: no children") }
+func (IsTL) SetChildAt(int, sl.Strategy) { panic("IsTL: no children") }
+
+// VisitTL is the `_TL` slot-visit strategy: when subject is `TL`,
+// applies each constituent strategy to the matching child slot and
+// rebuilds the term iff at least one child changed. Fails with
+// sl.ErrVisitFailure when subject isn't `TL`.
+type VisitTL struct {
+	args []sl.Strategy
+}
+
+// NewVisitTL builds the slot-visit strategy with the supplied per-slot
+// sub-strategies.
+func NewVisitTL(args ...sl.Strategy) *VisitTL {
+	return &VisitTL{args: args}
+}
+
+func (s *VisitTL) VisitLight(subject any, intro sl.Introspector) (any, error) {
+	if _, ok := subject.(*TLTargetLanguage); !ok {
+		return subject, sl.ErrVisitFailure
+	}
+	if len(s.args) != 3 {
+		return subject, sl.ErrVisitFailure
+	}
+	var newChildren []any
+	for i := 0; i < 3; i++ {
+		oldChild := intro.GetChildAt(subject, i)
+		newChild, err := s.args[i].VisitLight(oldChild, intro)
+		if err != nil {
+			return subject, err
+		}
+		if newChildren != nil {
+			newChildren[i] = newChild
+		} else if newChild != oldChild {
+			newChildren = intro.GetChildren(subject)
+			newChildren[i] = newChild
+		}
+	}
+	if newChildren != nil {
+		return intro.SetChildren(subject, newChildren), nil
+	}
+	return subject, nil
+}
+
+func (s *VisitTL) ChildCount() int                 { return len(s.args) }
+func (s *VisitTL) ChildAt(i int) sl.Strategy       { return s.args[i] }
+func (s *VisitTL) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
 
 // ITLTargetLanguage is the term type for the alternative `ITL(...)` of sort TargetLanguage.
 type ITLTargetLanguage struct {
@@ -93,12 +189,98 @@ func (t *ITLTargetLanguage) String() string {
 	return fmt.Sprintf("ITL(%s)", sharedobjects.JavaEscape(t.Code))
 }
 
+func (t *ITLTargetLanguage) ChildCount() int { return 1 }
+
+func (t *ITLTargetLanguage) ChildAt(i int) any {
+	switch i {
+	case 0:
+		return t.Code
+	}
+	panic(fmt.Sprintf("ITLTargetLanguage.ChildAt: index %d out of range", i))
+}
+
+func (t *ITLTargetLanguage) SetChildAt(i int, child any) any {
+	switch i {
+	case 0:
+		return MakeITL(child.(string))
+	}
+	panic(fmt.Sprintf("ITLTargetLanguage.SetChildAt: index %d out of range", i))
+}
+
+func (t *ITLTargetLanguage) Children() []any {
+	return []any{t.Code}
+}
+
+func (t *ITLTargetLanguage) SetChildren(children []any) any {
+	return MakeITL(children[0].(string))
+}
+
 // MakeITL builds the canonical (shared) ITL term.
 func MakeITL(code string) TargetLanguage {
 	hashes := []uint32{sharedobjects.StringHash(fmt.Sprintf("%v", code))}
 	proto := &ITLTargetLanguage{hash: sharedobjects.MixSymbol(sharedobjects.StringHash("ITL"), hashes), Code: code}
 	return factory.Build(proto).(*ITLTargetLanguage)
 }
+
+// IsITL is the `Is_ITL` predicate strategy: succeeds (returns subject
+// unchanged) when subject has the `ITL` shape, otherwise fails with
+// sl.ErrVisitFailure.
+type IsITL struct{}
+
+func (IsITL) VisitLight(subject any, _ sl.Introspector) (any, error) {
+	if _, ok := subject.(*ITLTargetLanguage); ok {
+		return subject, nil
+	}
+	return subject, sl.ErrVisitFailure
+}
+func (IsITL) ChildCount() int             { return 0 }
+func (IsITL) ChildAt(int) sl.Strategy     { panic("IsITL: no children") }
+func (IsITL) SetChildAt(int, sl.Strategy) { panic("IsITL: no children") }
+
+// VisitITL is the `_ITL` slot-visit strategy: when subject is `ITL`,
+// applies each constituent strategy to the matching child slot and
+// rebuilds the term iff at least one child changed. Fails with
+// sl.ErrVisitFailure when subject isn't `ITL`.
+type VisitITL struct {
+	args []sl.Strategy
+}
+
+// NewVisitITL builds the slot-visit strategy with the supplied per-slot
+// sub-strategies.
+func NewVisitITL(args ...sl.Strategy) *VisitITL {
+	return &VisitITL{args: args}
+}
+
+func (s *VisitITL) VisitLight(subject any, intro sl.Introspector) (any, error) {
+	if _, ok := subject.(*ITLTargetLanguage); !ok {
+		return subject, sl.ErrVisitFailure
+	}
+	if len(s.args) != 1 {
+		return subject, sl.ErrVisitFailure
+	}
+	var newChildren []any
+	for i := 0; i < 1; i++ {
+		oldChild := intro.GetChildAt(subject, i)
+		newChild, err := s.args[i].VisitLight(oldChild, intro)
+		if err != nil {
+			return subject, err
+		}
+		if newChildren != nil {
+			newChildren[i] = newChild
+		} else if newChild != oldChild {
+			newChildren = intro.GetChildren(subject)
+			newChildren[i] = newChild
+		}
+	}
+	if newChildren != nil {
+		return intro.SetChildren(subject, newChildren), nil
+	}
+	return subject, nil
+}
+
+func (s *VisitITL) ChildCount() int                 { return len(s.args) }
+func (s *VisitITL) ChildAt(i int) sl.Strategy       { return s.args[i] }
+func (s *VisitITL) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
 
 // CommentTargetLanguage is the term type for the alternative `Comment(...)` of sort TargetLanguage.
 type CommentTargetLanguage struct {
@@ -130,12 +312,98 @@ func (t *CommentTargetLanguage) String() string {
 	return fmt.Sprintf("Comment(%s)", sharedobjects.JavaEscape(t.Code))
 }
 
+func (t *CommentTargetLanguage) ChildCount() int { return 1 }
+
+func (t *CommentTargetLanguage) ChildAt(i int) any {
+	switch i {
+	case 0:
+		return t.Code
+	}
+	panic(fmt.Sprintf("CommentTargetLanguage.ChildAt: index %d out of range", i))
+}
+
+func (t *CommentTargetLanguage) SetChildAt(i int, child any) any {
+	switch i {
+	case 0:
+		return MakeComment(child.(string))
+	}
+	panic(fmt.Sprintf("CommentTargetLanguage.SetChildAt: index %d out of range", i))
+}
+
+func (t *CommentTargetLanguage) Children() []any {
+	return []any{t.Code}
+}
+
+func (t *CommentTargetLanguage) SetChildren(children []any) any {
+	return MakeComment(children[0].(string))
+}
+
 // MakeComment builds the canonical (shared) Comment term.
 func MakeComment(code string) TargetLanguage {
 	hashes := []uint32{sharedobjects.StringHash(fmt.Sprintf("%v", code))}
 	proto := &CommentTargetLanguage{hash: sharedobjects.MixSymbol(sharedobjects.StringHash("Comment"), hashes), Code: code}
 	return factory.Build(proto).(*CommentTargetLanguage)
 }
+
+// IsComment is the `Is_Comment` predicate strategy: succeeds (returns subject
+// unchanged) when subject has the `Comment` shape, otherwise fails with
+// sl.ErrVisitFailure.
+type IsComment struct{}
+
+func (IsComment) VisitLight(subject any, _ sl.Introspector) (any, error) {
+	if _, ok := subject.(*CommentTargetLanguage); ok {
+		return subject, nil
+	}
+	return subject, sl.ErrVisitFailure
+}
+func (IsComment) ChildCount() int             { return 0 }
+func (IsComment) ChildAt(int) sl.Strategy     { panic("IsComment: no children") }
+func (IsComment) SetChildAt(int, sl.Strategy) { panic("IsComment: no children") }
+
+// VisitComment is the `_Comment` slot-visit strategy: when subject is `Comment`,
+// applies each constituent strategy to the matching child slot and
+// rebuilds the term iff at least one child changed. Fails with
+// sl.ErrVisitFailure when subject isn't `Comment`.
+type VisitComment struct {
+	args []sl.Strategy
+}
+
+// NewVisitComment builds the slot-visit strategy with the supplied per-slot
+// sub-strategies.
+func NewVisitComment(args ...sl.Strategy) *VisitComment {
+	return &VisitComment{args: args}
+}
+
+func (s *VisitComment) VisitLight(subject any, intro sl.Introspector) (any, error) {
+	if _, ok := subject.(*CommentTargetLanguage); !ok {
+		return subject, sl.ErrVisitFailure
+	}
+	if len(s.args) != 1 {
+		return subject, sl.ErrVisitFailure
+	}
+	var newChildren []any
+	for i := 0; i < 1; i++ {
+		oldChild := intro.GetChildAt(subject, i)
+		newChild, err := s.args[i].VisitLight(oldChild, intro)
+		if err != nil {
+			return subject, err
+		}
+		if newChildren != nil {
+			newChildren[i] = newChild
+		} else if newChild != oldChild {
+			newChildren = intro.GetChildren(subject)
+			newChildren[i] = newChild
+		}
+	}
+	if newChildren != nil {
+		return intro.SetChildren(subject, newChildren), nil
+	}
+	return subject, nil
+}
+
+func (s *VisitComment) ChildCount() int                 { return len(s.args) }
+func (s *VisitComment) ChildAt(i int) sl.Strategy       { return s.args[i] }
+func (s *VisitComment) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
 
 // NoTLTargetLanguage is the term type for the alternative `noTL(...)` of sort TargetLanguage.
 type NoTLTargetLanguage struct {
@@ -160,12 +428,67 @@ func (t *NoTLTargetLanguage) String() string {
 	return "noTL" + "()"
 }
 
+func (t *NoTLTargetLanguage) ChildCount() int { return 0 }
+
+func (t *NoTLTargetLanguage) ChildAt(i int) any {
+	panic(fmt.Sprintf("NoTLTargetLanguage.ChildAt: index %d out of [0,0)", i))
+}
+
+func (t *NoTLTargetLanguage) SetChildAt(i int, child any) any {
+	panic(fmt.Sprintf("NoTLTargetLanguage.SetChildAt: index %d out of [0,0)", i))
+}
+
+func (t *NoTLTargetLanguage) Children() []any { return nil }
+
+func (t *NoTLTargetLanguage) SetChildren(children []any) any { return t }
+
 // MakeNoTL builds the canonical (shared) noTL term.
 func MakeNoTL() TargetLanguage {
 	hashes := []uint32{}
 	proto := &NoTLTargetLanguage{hash: sharedobjects.MixSymbol(sharedobjects.StringHash("noTL"), hashes)}
 	return factory.Build(proto).(*NoTLTargetLanguage)
 }
+
+// IsNoTL is the `Is_noTL` predicate strategy: succeeds (returns subject
+// unchanged) when subject has the `noTL` shape, otherwise fails with
+// sl.ErrVisitFailure.
+type IsNoTL struct{}
+
+func (IsNoTL) VisitLight(subject any, _ sl.Introspector) (any, error) {
+	if _, ok := subject.(*NoTLTargetLanguage); ok {
+		return subject, nil
+	}
+	return subject, sl.ErrVisitFailure
+}
+func (IsNoTL) ChildCount() int             { return 0 }
+func (IsNoTL) ChildAt(int) sl.Strategy     { panic("IsNoTL: no children") }
+func (IsNoTL) SetChildAt(int, sl.Strategy) { panic("IsNoTL: no children") }
+
+// VisitNoTL is the `_noTL` slot-visit strategy: when subject is `noTL`,
+// applies each constituent strategy to the matching child slot and
+// rebuilds the term iff at least one child changed. Fails with
+// sl.ErrVisitFailure when subject isn't `noTL`.
+type VisitNoTL struct {
+	args []sl.Strategy
+}
+
+// NewVisitNoTL builds the slot-visit strategy with the supplied per-slot
+// sub-strategies.
+func NewVisitNoTL(args ...sl.Strategy) *VisitNoTL {
+	return &VisitNoTL{args: args}
+}
+
+func (s *VisitNoTL) VisitLight(subject any, intro sl.Introspector) (any, error) {
+	if _, ok := subject.(*NoTLTargetLanguage); !ok {
+		return subject, sl.ErrVisitFailure
+	}
+	// Nullary alt: no children to visit.
+	return subject, nil
+}
+
+func (s *VisitNoTL) ChildCount() int                 { return len(s.args) }
+func (s *VisitNoTL) ChildAt(i int) sl.Strategy       { return s.args[i] }
+func (s *VisitNoTL) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
 
 // CodeList is the Go interface backing the Gom sort CodeList.
 type CodeList interface {
@@ -212,6 +535,32 @@ func (t *ConcCodeCodeList) String() string {
 	return "concCode" + "(" + strings.Join(parts, ",") + ")"
 }
 
+func (t *ConcCodeCodeList) ChildCount() int { return len(t.Slots) }
+
+func (t *ConcCodeCodeList) ChildAt(i int) any { return t.Slots[i] }
+
+func (t *ConcCodeCodeList) SetChildAt(i int, child any) any {
+	dup := append([]Code(nil), t.Slots...)
+	dup[i] = child.(Code)
+	return MakeConcCode(dup...)
+}
+
+func (t *ConcCodeCodeList) Children() []any {
+	out := make([]any, len(t.Slots))
+	for i, v := range t.Slots {
+		out[i] = v
+	}
+	return out
+}
+
+func (t *ConcCodeCodeList) SetChildren(children []any) any {
+	args := make([]Code, len(children))
+	for i, c := range children {
+		args[i] = c.(Code)
+	}
+	return MakeConcCode(args...)
+}
+
 // MakeConcCode builds the canonical (shared) concCode term.
 func MakeConcCode(args ...Code) CodeList {
 	hashes := make([]uint32, 0, len(args))
@@ -221,6 +570,69 @@ func MakeConcCode(args ...Code) CodeList {
 	proto := &ConcCodeCodeList{Slots: args, hash: sharedobjects.MixSymbol(sharedobjects.StringHash("concCode"), hashes)}
 	return factory.Build(proto).(*ConcCodeCodeList)
 }
+
+// IsConcCode is the `Is_concCode` predicate strategy: succeeds (returns subject
+// unchanged) when subject has the `concCode` shape, otherwise fails with
+// sl.ErrVisitFailure.
+type IsConcCode struct{}
+
+func (IsConcCode) VisitLight(subject any, _ sl.Introspector) (any, error) {
+	if _, ok := subject.(*ConcCodeCodeList); ok {
+		return subject, nil
+	}
+	return subject, sl.ErrVisitFailure
+}
+func (IsConcCode) ChildCount() int             { return 0 }
+func (IsConcCode) ChildAt(int) sl.Strategy     { panic("IsConcCode: no children") }
+func (IsConcCode) SetChildAt(int, sl.Strategy) { panic("IsConcCode: no children") }
+
+// VisitConcCode is the `_concCode` slot-visit strategy: when subject is `concCode`,
+// applies each constituent strategy to the matching child slot and
+// rebuilds the term iff at least one child changed. Fails with
+// sl.ErrVisitFailure when subject isn't `concCode`.
+type VisitConcCode struct {
+	args []sl.Strategy
+}
+
+// NewVisitConcCode builds the slot-visit strategy with the supplied per-slot
+// sub-strategies.
+func NewVisitConcCode(args ...sl.Strategy) *VisitConcCode {
+	return &VisitConcCode{args: args}
+}
+
+func (s *VisitConcCode) VisitLight(subject any, intro sl.Introspector) (any, error) {
+	if _, ok := subject.(*ConcCodeCodeList); !ok {
+		return subject, sl.ErrVisitFailure
+	}
+	// Variadic alt: visit every element with args[0] (Java's
+	// `_concX` invokes the sub-strategy on each list element).
+	if len(s.args) == 0 {
+		return subject, nil
+	}
+	count := intro.GetChildCount(subject)
+	var newChildren []any
+	for i := 0; i < count; i++ {
+		oldChild := intro.GetChildAt(subject, i)
+		newChild, err := s.args[0].VisitLight(oldChild, intro)
+		if err != nil {
+			return subject, err
+		}
+		if newChildren != nil {
+			newChildren[i] = newChild
+		} else if newChild != oldChild {
+			newChildren = intro.GetChildren(subject)
+			newChildren[i] = newChild
+		}
+	}
+	if newChildren != nil {
+		return intro.SetChildren(subject, newChildren), nil
+	}
+	return subject, nil
+}
+
+func (s *VisitConcCode) ChildCount() int                 { return len(s.args) }
+func (s *VisitConcCode) ChildAt(i int) sl.Strategy       { return s.args[i] }
+func (s *VisitConcCode) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
 
 // Code is the Go interface backing the Gom sort Code.
 type Code interface {
@@ -258,12 +670,100 @@ func (t *TargetLanguageToCodeCode) String() string {
 	return fmt.Sprintf("TargetLanguageToCode(%v)", t.Tl)
 }
 
+func (t *TargetLanguageToCodeCode) ChildCount() int { return 1 }
+
+func (t *TargetLanguageToCodeCode) ChildAt(i int) any {
+	switch i {
+	case 0:
+		return t.Tl
+	}
+	panic(fmt.Sprintf("TargetLanguageToCodeCode.ChildAt: index %d out of range", i))
+}
+
+func (t *TargetLanguageToCodeCode) SetChildAt(i int, child any) any {
+	switch i {
+	case 0:
+		return MakeTargetLanguageToCode(child.(TargetLanguage))
+	}
+	panic(fmt.Sprintf("TargetLanguageToCodeCode.SetChildAt: index %d out of range", i))
+}
+
+func (t *TargetLanguageToCodeCode) Children() []any {
+	return []any{t.Tl}
+}
+
+func (t *TargetLanguageToCodeCode) SetChildren(children []any) any {
+	return MakeTargetLanguageToCode(children[0].(TargetLanguage))
+}
+
 // MakeTargetLanguageToCode builds the canonical (shared) TargetLanguageToCode term.
 func MakeTargetLanguageToCode(tl TargetLanguage) Code {
 	hashes := []uint32{tl.Hash()}
 	proto := &TargetLanguageToCodeCode{hash: sharedobjects.MixSymbol(sharedobjects.StringHash("TargetLanguageToCode"), hashes), Tl: tl}
 	return factory.Build(proto).(*TargetLanguageToCodeCode)
 }
+
+// IsTargetLanguageToCode is the `Is_TargetLanguageToCode` predicate strategy: succeeds (returns subject
+// unchanged) when subject has the `TargetLanguageToCode` shape, otherwise fails with
+// sl.ErrVisitFailure.
+type IsTargetLanguageToCode struct{}
+
+func (IsTargetLanguageToCode) VisitLight(subject any, _ sl.Introspector) (any, error) {
+	if _, ok := subject.(*TargetLanguageToCodeCode); ok {
+		return subject, nil
+	}
+	return subject, sl.ErrVisitFailure
+}
+func (IsTargetLanguageToCode) ChildCount() int         { return 0 }
+func (IsTargetLanguageToCode) ChildAt(int) sl.Strategy { panic("IsTargetLanguageToCode: no children") }
+func (IsTargetLanguageToCode) SetChildAt(int, sl.Strategy) {
+	panic("IsTargetLanguageToCode: no children")
+}
+
+// VisitTargetLanguageToCode is the `_TargetLanguageToCode` slot-visit strategy: when subject is `TargetLanguageToCode`,
+// applies each constituent strategy to the matching child slot and
+// rebuilds the term iff at least one child changed. Fails with
+// sl.ErrVisitFailure when subject isn't `TargetLanguageToCode`.
+type VisitTargetLanguageToCode struct {
+	args []sl.Strategy
+}
+
+// NewVisitTargetLanguageToCode builds the slot-visit strategy with the supplied per-slot
+// sub-strategies.
+func NewVisitTargetLanguageToCode(args ...sl.Strategy) *VisitTargetLanguageToCode {
+	return &VisitTargetLanguageToCode{args: args}
+}
+
+func (s *VisitTargetLanguageToCode) VisitLight(subject any, intro sl.Introspector) (any, error) {
+	if _, ok := subject.(*TargetLanguageToCodeCode); !ok {
+		return subject, sl.ErrVisitFailure
+	}
+	if len(s.args) != 1 {
+		return subject, sl.ErrVisitFailure
+	}
+	var newChildren []any
+	for i := 0; i < 1; i++ {
+		oldChild := intro.GetChildAt(subject, i)
+		newChild, err := s.args[i].VisitLight(oldChild, intro)
+		if err != nil {
+			return subject, err
+		}
+		if newChildren != nil {
+			newChildren[i] = newChild
+		} else if newChild != oldChild {
+			newChildren = intro.GetChildren(subject)
+			newChildren[i] = newChild
+		}
+	}
+	if newChildren != nil {
+		return intro.SetChildren(subject, newChildren), nil
+	}
+	return subject, nil
+}
+
+func (s *VisitTargetLanguageToCode) ChildCount() int                 { return len(s.args) }
+func (s *VisitTargetLanguageToCode) ChildAt(i int) sl.Strategy       { return s.args[i] }
+func (s *VisitTargetLanguageToCode) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
 
 // InstructionToCodeCode is the term type for the alternative `InstructionToCode(...)` of sort Code.
 type InstructionToCodeCode struct {
@@ -295,6 +795,32 @@ func (t *InstructionToCodeCode) String() string {
 	return fmt.Sprintf("InstructionToCode(%v)", t.AstInstruction)
 }
 
+func (t *InstructionToCodeCode) ChildCount() int { return 1 }
+
+func (t *InstructionToCodeCode) ChildAt(i int) any {
+	switch i {
+	case 0:
+		return t.AstInstruction
+	}
+	panic(fmt.Sprintf("InstructionToCodeCode.ChildAt: index %d out of range", i))
+}
+
+func (t *InstructionToCodeCode) SetChildAt(i int, child any) any {
+	switch i {
+	case 0:
+		return MakeInstructionToCode(child.(Instruction))
+	}
+	panic(fmt.Sprintf("InstructionToCodeCode.SetChildAt: index %d out of range", i))
+}
+
+func (t *InstructionToCodeCode) Children() []any {
+	return []any{t.AstInstruction}
+}
+
+func (t *InstructionToCodeCode) SetChildren(children []any) any {
+	return MakeInstructionToCode(children[0].(Instruction))
+}
+
 // MakeInstructionToCode builds the canonical (shared) InstructionToCode term.
 func MakeInstructionToCode(astInstruction Instruction) Code {
 	// Rewrite rule (module:rules()): InstructionToCode(CodeToInstruction(t)) -> t.
@@ -305,6 +831,66 @@ func MakeInstructionToCode(astInstruction Instruction) Code {
 	proto := &InstructionToCodeCode{hash: sharedobjects.MixSymbol(sharedobjects.StringHash("InstructionToCode"), hashes), AstInstruction: astInstruction}
 	return factory.Build(proto).(*InstructionToCodeCode)
 }
+
+// IsInstructionToCode is the `Is_InstructionToCode` predicate strategy: succeeds (returns subject
+// unchanged) when subject has the `InstructionToCode` shape, otherwise fails with
+// sl.ErrVisitFailure.
+type IsInstructionToCode struct{}
+
+func (IsInstructionToCode) VisitLight(subject any, _ sl.Introspector) (any, error) {
+	if _, ok := subject.(*InstructionToCodeCode); ok {
+		return subject, nil
+	}
+	return subject, sl.ErrVisitFailure
+}
+func (IsInstructionToCode) ChildCount() int             { return 0 }
+func (IsInstructionToCode) ChildAt(int) sl.Strategy     { panic("IsInstructionToCode: no children") }
+func (IsInstructionToCode) SetChildAt(int, sl.Strategy) { panic("IsInstructionToCode: no children") }
+
+// VisitInstructionToCode is the `_InstructionToCode` slot-visit strategy: when subject is `InstructionToCode`,
+// applies each constituent strategy to the matching child slot and
+// rebuilds the term iff at least one child changed. Fails with
+// sl.ErrVisitFailure when subject isn't `InstructionToCode`.
+type VisitInstructionToCode struct {
+	args []sl.Strategy
+}
+
+// NewVisitInstructionToCode builds the slot-visit strategy with the supplied per-slot
+// sub-strategies.
+func NewVisitInstructionToCode(args ...sl.Strategy) *VisitInstructionToCode {
+	return &VisitInstructionToCode{args: args}
+}
+
+func (s *VisitInstructionToCode) VisitLight(subject any, intro sl.Introspector) (any, error) {
+	if _, ok := subject.(*InstructionToCodeCode); !ok {
+		return subject, sl.ErrVisitFailure
+	}
+	if len(s.args) != 1 {
+		return subject, sl.ErrVisitFailure
+	}
+	var newChildren []any
+	for i := 0; i < 1; i++ {
+		oldChild := intro.GetChildAt(subject, i)
+		newChild, err := s.args[i].VisitLight(oldChild, intro)
+		if err != nil {
+			return subject, err
+		}
+		if newChildren != nil {
+			newChildren[i] = newChild
+		} else if newChild != oldChild {
+			newChildren = intro.GetChildren(subject)
+			newChildren[i] = newChild
+		}
+	}
+	if newChildren != nil {
+		return intro.SetChildren(subject, newChildren), nil
+	}
+	return subject, nil
+}
+
+func (s *VisitInstructionToCode) ChildCount() int                 { return len(s.args) }
+func (s *VisitInstructionToCode) ChildAt(i int) sl.Strategy       { return s.args[i] }
+func (s *VisitInstructionToCode) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
 
 // DeclarationToCodeCode is the term type for the alternative `DeclarationToCode(...)` of sort Code.
 type DeclarationToCodeCode struct {
@@ -336,12 +922,98 @@ func (t *DeclarationToCodeCode) String() string {
 	return fmt.Sprintf("DeclarationToCode(%v)", t.AstDeclaration)
 }
 
+func (t *DeclarationToCodeCode) ChildCount() int { return 1 }
+
+func (t *DeclarationToCodeCode) ChildAt(i int) any {
+	switch i {
+	case 0:
+		return t.AstDeclaration
+	}
+	panic(fmt.Sprintf("DeclarationToCodeCode.ChildAt: index %d out of range", i))
+}
+
+func (t *DeclarationToCodeCode) SetChildAt(i int, child any) any {
+	switch i {
+	case 0:
+		return MakeDeclarationToCode(child.(Declaration))
+	}
+	panic(fmt.Sprintf("DeclarationToCodeCode.SetChildAt: index %d out of range", i))
+}
+
+func (t *DeclarationToCodeCode) Children() []any {
+	return []any{t.AstDeclaration}
+}
+
+func (t *DeclarationToCodeCode) SetChildren(children []any) any {
+	return MakeDeclarationToCode(children[0].(Declaration))
+}
+
 // MakeDeclarationToCode builds the canonical (shared) DeclarationToCode term.
 func MakeDeclarationToCode(astDeclaration Declaration) Code {
 	hashes := []uint32{astDeclaration.Hash()}
 	proto := &DeclarationToCodeCode{hash: sharedobjects.MixSymbol(sharedobjects.StringHash("DeclarationToCode"), hashes), AstDeclaration: astDeclaration}
 	return factory.Build(proto).(*DeclarationToCodeCode)
 }
+
+// IsDeclarationToCode is the `Is_DeclarationToCode` predicate strategy: succeeds (returns subject
+// unchanged) when subject has the `DeclarationToCode` shape, otherwise fails with
+// sl.ErrVisitFailure.
+type IsDeclarationToCode struct{}
+
+func (IsDeclarationToCode) VisitLight(subject any, _ sl.Introspector) (any, error) {
+	if _, ok := subject.(*DeclarationToCodeCode); ok {
+		return subject, nil
+	}
+	return subject, sl.ErrVisitFailure
+}
+func (IsDeclarationToCode) ChildCount() int             { return 0 }
+func (IsDeclarationToCode) ChildAt(int) sl.Strategy     { panic("IsDeclarationToCode: no children") }
+func (IsDeclarationToCode) SetChildAt(int, sl.Strategy) { panic("IsDeclarationToCode: no children") }
+
+// VisitDeclarationToCode is the `_DeclarationToCode` slot-visit strategy: when subject is `DeclarationToCode`,
+// applies each constituent strategy to the matching child slot and
+// rebuilds the term iff at least one child changed. Fails with
+// sl.ErrVisitFailure when subject isn't `DeclarationToCode`.
+type VisitDeclarationToCode struct {
+	args []sl.Strategy
+}
+
+// NewVisitDeclarationToCode builds the slot-visit strategy with the supplied per-slot
+// sub-strategies.
+func NewVisitDeclarationToCode(args ...sl.Strategy) *VisitDeclarationToCode {
+	return &VisitDeclarationToCode{args: args}
+}
+
+func (s *VisitDeclarationToCode) VisitLight(subject any, intro sl.Introspector) (any, error) {
+	if _, ok := subject.(*DeclarationToCodeCode); !ok {
+		return subject, sl.ErrVisitFailure
+	}
+	if len(s.args) != 1 {
+		return subject, sl.ErrVisitFailure
+	}
+	var newChildren []any
+	for i := 0; i < 1; i++ {
+		oldChild := intro.GetChildAt(subject, i)
+		newChild, err := s.args[i].VisitLight(oldChild, intro)
+		if err != nil {
+			return subject, err
+		}
+		if newChildren != nil {
+			newChildren[i] = newChild
+		} else if newChild != oldChild {
+			newChildren = intro.GetChildren(subject)
+			newChildren[i] = newChild
+		}
+	}
+	if newChildren != nil {
+		return intro.SetChildren(subject, newChildren), nil
+	}
+	return subject, nil
+}
+
+func (s *VisitDeclarationToCode) ChildCount() int                 { return len(s.args) }
+func (s *VisitDeclarationToCode) ChildAt(i int) sl.Strategy       { return s.args[i] }
+func (s *VisitDeclarationToCode) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
 
 // BQTermToCodeCode is the term type for the alternative `BQTermToCode(...)` of sort Code.
 type BQTermToCodeCode struct {
@@ -373,12 +1045,98 @@ func (t *BQTermToCodeCode) String() string {
 	return fmt.Sprintf("BQTermToCode(%v)", t.Bq)
 }
 
+func (t *BQTermToCodeCode) ChildCount() int { return 1 }
+
+func (t *BQTermToCodeCode) ChildAt(i int) any {
+	switch i {
+	case 0:
+		return t.Bq
+	}
+	panic(fmt.Sprintf("BQTermToCodeCode.ChildAt: index %d out of range", i))
+}
+
+func (t *BQTermToCodeCode) SetChildAt(i int, child any) any {
+	switch i {
+	case 0:
+		return MakeBQTermToCode(child.(BQTerm))
+	}
+	panic(fmt.Sprintf("BQTermToCodeCode.SetChildAt: index %d out of range", i))
+}
+
+func (t *BQTermToCodeCode) Children() []any {
+	return []any{t.Bq}
+}
+
+func (t *BQTermToCodeCode) SetChildren(children []any) any {
+	return MakeBQTermToCode(children[0].(BQTerm))
+}
+
 // MakeBQTermToCode builds the canonical (shared) BQTermToCode term.
 func MakeBQTermToCode(bq BQTerm) Code {
 	hashes := []uint32{bq.Hash()}
 	proto := &BQTermToCodeCode{hash: sharedobjects.MixSymbol(sharedobjects.StringHash("BQTermToCode"), hashes), Bq: bq}
 	return factory.Build(proto).(*BQTermToCodeCode)
 }
+
+// IsBQTermToCode is the `Is_BQTermToCode` predicate strategy: succeeds (returns subject
+// unchanged) when subject has the `BQTermToCode` shape, otherwise fails with
+// sl.ErrVisitFailure.
+type IsBQTermToCode struct{}
+
+func (IsBQTermToCode) VisitLight(subject any, _ sl.Introspector) (any, error) {
+	if _, ok := subject.(*BQTermToCodeCode); ok {
+		return subject, nil
+	}
+	return subject, sl.ErrVisitFailure
+}
+func (IsBQTermToCode) ChildCount() int             { return 0 }
+func (IsBQTermToCode) ChildAt(int) sl.Strategy     { panic("IsBQTermToCode: no children") }
+func (IsBQTermToCode) SetChildAt(int, sl.Strategy) { panic("IsBQTermToCode: no children") }
+
+// VisitBQTermToCode is the `_BQTermToCode` slot-visit strategy: when subject is `BQTermToCode`,
+// applies each constituent strategy to the matching child slot and
+// rebuilds the term iff at least one child changed. Fails with
+// sl.ErrVisitFailure when subject isn't `BQTermToCode`.
+type VisitBQTermToCode struct {
+	args []sl.Strategy
+}
+
+// NewVisitBQTermToCode builds the slot-visit strategy with the supplied per-slot
+// sub-strategies.
+func NewVisitBQTermToCode(args ...sl.Strategy) *VisitBQTermToCode {
+	return &VisitBQTermToCode{args: args}
+}
+
+func (s *VisitBQTermToCode) VisitLight(subject any, intro sl.Introspector) (any, error) {
+	if _, ok := subject.(*BQTermToCodeCode); !ok {
+		return subject, sl.ErrVisitFailure
+	}
+	if len(s.args) != 1 {
+		return subject, sl.ErrVisitFailure
+	}
+	var newChildren []any
+	for i := 0; i < 1; i++ {
+		oldChild := intro.GetChildAt(subject, i)
+		newChild, err := s.args[i].VisitLight(oldChild, intro)
+		if err != nil {
+			return subject, err
+		}
+		if newChildren != nil {
+			newChildren[i] = newChild
+		} else if newChild != oldChild {
+			newChildren = intro.GetChildren(subject)
+			newChildren[i] = newChild
+		}
+	}
+	if newChildren != nil {
+		return intro.SetChildren(subject, newChildren), nil
+	}
+	return subject, nil
+}
+
+func (s *VisitBQTermToCode) ChildCount() int                 { return len(s.args) }
+func (s *VisitBQTermToCode) ChildAt(i int) sl.Strategy       { return s.args[i] }
+func (s *VisitBQTermToCode) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
 
 // TomCode is the term type for the alternative `Tom(...)` of sort Code.
 type TomCode struct {
@@ -410,12 +1168,98 @@ func (t *TomCode) String() string {
 	return fmt.Sprintf("Tom(%v)", t.CodeList)
 }
 
+func (t *TomCode) ChildCount() int { return 1 }
+
+func (t *TomCode) ChildAt(i int) any {
+	switch i {
+	case 0:
+		return t.CodeList
+	}
+	panic(fmt.Sprintf("TomCode.ChildAt: index %d out of range", i))
+}
+
+func (t *TomCode) SetChildAt(i int, child any) any {
+	switch i {
+	case 0:
+		return MakeTom(child.(CodeList))
+	}
+	panic(fmt.Sprintf("TomCode.SetChildAt: index %d out of range", i))
+}
+
+func (t *TomCode) Children() []any {
+	return []any{t.CodeList}
+}
+
+func (t *TomCode) SetChildren(children []any) any {
+	return MakeTom(children[0].(CodeList))
+}
+
 // MakeTom builds the canonical (shared) Tom term.
 func MakeTom(codeList CodeList) Code {
 	hashes := []uint32{codeList.Hash()}
 	proto := &TomCode{hash: sharedobjects.MixSymbol(sharedobjects.StringHash("Tom"), hashes), CodeList: codeList}
 	return factory.Build(proto).(*TomCode)
 }
+
+// IsTom is the `Is_Tom` predicate strategy: succeeds (returns subject
+// unchanged) when subject has the `Tom` shape, otherwise fails with
+// sl.ErrVisitFailure.
+type IsTom struct{}
+
+func (IsTom) VisitLight(subject any, _ sl.Introspector) (any, error) {
+	if _, ok := subject.(*TomCode); ok {
+		return subject, nil
+	}
+	return subject, sl.ErrVisitFailure
+}
+func (IsTom) ChildCount() int             { return 0 }
+func (IsTom) ChildAt(int) sl.Strategy     { panic("IsTom: no children") }
+func (IsTom) SetChildAt(int, sl.Strategy) { panic("IsTom: no children") }
+
+// VisitTom is the `_Tom` slot-visit strategy: when subject is `Tom`,
+// applies each constituent strategy to the matching child slot and
+// rebuilds the term iff at least one child changed. Fails with
+// sl.ErrVisitFailure when subject isn't `Tom`.
+type VisitTom struct {
+	args []sl.Strategy
+}
+
+// NewVisitTom builds the slot-visit strategy with the supplied per-slot
+// sub-strategies.
+func NewVisitTom(args ...sl.Strategy) *VisitTom {
+	return &VisitTom{args: args}
+}
+
+func (s *VisitTom) VisitLight(subject any, intro sl.Introspector) (any, error) {
+	if _, ok := subject.(*TomCode); !ok {
+		return subject, sl.ErrVisitFailure
+	}
+	if len(s.args) != 1 {
+		return subject, sl.ErrVisitFailure
+	}
+	var newChildren []any
+	for i := 0; i < 1; i++ {
+		oldChild := intro.GetChildAt(subject, i)
+		newChild, err := s.args[i].VisitLight(oldChild, intro)
+		if err != nil {
+			return subject, err
+		}
+		if newChildren != nil {
+			newChildren[i] = newChild
+		} else if newChild != oldChild {
+			newChildren = intro.GetChildren(subject)
+			newChildren[i] = newChild
+		}
+	}
+	if newChildren != nil {
+		return intro.SetChildren(subject, newChildren), nil
+	}
+	return subject, nil
+}
+
+func (s *VisitTom) ChildCount() int                 { return len(s.args) }
+func (s *VisitTom) ChildAt(i int) sl.Strategy       { return s.args[i] }
+func (s *VisitTom) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
 
 // TomIncludeCode is the term type for the alternative `TomInclude(...)` of sort Code.
 type TomIncludeCode struct {
@@ -447,12 +1291,98 @@ func (t *TomIncludeCode) String() string {
 	return fmt.Sprintf("TomInclude(%v)", t.CodeList)
 }
 
+func (t *TomIncludeCode) ChildCount() int { return 1 }
+
+func (t *TomIncludeCode) ChildAt(i int) any {
+	switch i {
+	case 0:
+		return t.CodeList
+	}
+	panic(fmt.Sprintf("TomIncludeCode.ChildAt: index %d out of range", i))
+}
+
+func (t *TomIncludeCode) SetChildAt(i int, child any) any {
+	switch i {
+	case 0:
+		return MakeTomInclude(child.(CodeList))
+	}
+	panic(fmt.Sprintf("TomIncludeCode.SetChildAt: index %d out of range", i))
+}
+
+func (t *TomIncludeCode) Children() []any {
+	return []any{t.CodeList}
+}
+
+func (t *TomIncludeCode) SetChildren(children []any) any {
+	return MakeTomInclude(children[0].(CodeList))
+}
+
 // MakeTomInclude builds the canonical (shared) TomInclude term.
 func MakeTomInclude(codeList CodeList) Code {
 	hashes := []uint32{codeList.Hash()}
 	proto := &TomIncludeCode{hash: sharedobjects.MixSymbol(sharedobjects.StringHash("TomInclude"), hashes), CodeList: codeList}
 	return factory.Build(proto).(*TomIncludeCode)
 }
+
+// IsTomInclude is the `Is_TomInclude` predicate strategy: succeeds (returns subject
+// unchanged) when subject has the `TomInclude` shape, otherwise fails with
+// sl.ErrVisitFailure.
+type IsTomInclude struct{}
+
+func (IsTomInclude) VisitLight(subject any, _ sl.Introspector) (any, error) {
+	if _, ok := subject.(*TomIncludeCode); ok {
+		return subject, nil
+	}
+	return subject, sl.ErrVisitFailure
+}
+func (IsTomInclude) ChildCount() int             { return 0 }
+func (IsTomInclude) ChildAt(int) sl.Strategy     { panic("IsTomInclude: no children") }
+func (IsTomInclude) SetChildAt(int, sl.Strategy) { panic("IsTomInclude: no children") }
+
+// VisitTomInclude is the `_TomInclude` slot-visit strategy: when subject is `TomInclude`,
+// applies each constituent strategy to the matching child slot and
+// rebuilds the term iff at least one child changed. Fails with
+// sl.ErrVisitFailure when subject isn't `TomInclude`.
+type VisitTomInclude struct {
+	args []sl.Strategy
+}
+
+// NewVisitTomInclude builds the slot-visit strategy with the supplied per-slot
+// sub-strategies.
+func NewVisitTomInclude(args ...sl.Strategy) *VisitTomInclude {
+	return &VisitTomInclude{args: args}
+}
+
+func (s *VisitTomInclude) VisitLight(subject any, intro sl.Introspector) (any, error) {
+	if _, ok := subject.(*TomIncludeCode); !ok {
+		return subject, sl.ErrVisitFailure
+	}
+	if len(s.args) != 1 {
+		return subject, sl.ErrVisitFailure
+	}
+	var newChildren []any
+	for i := 0; i < 1; i++ {
+		oldChild := intro.GetChildAt(subject, i)
+		newChild, err := s.args[i].VisitLight(oldChild, intro)
+		if err != nil {
+			return subject, err
+		}
+		if newChildren != nil {
+			newChildren[i] = newChild
+		} else if newChild != oldChild {
+			newChildren = intro.GetChildren(subject)
+			newChildren[i] = newChild
+		}
+	}
+	if newChildren != nil {
+		return intro.SetChildren(subject, newChildren), nil
+	}
+	return subject, nil
+}
+
+func (s *VisitTomInclude) ChildCount() int                 { return len(s.args) }
+func (s *VisitTomInclude) ChildAt(i int) sl.Strategy       { return s.args[i] }
+func (s *VisitTomInclude) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
 
 // BQTermList is the Go interface backing the Gom sort BQTermList.
 type BQTermList interface {
@@ -499,6 +1429,32 @@ func (t *ConcBQTermBQTermList) String() string {
 	return "concBQTerm" + "(" + strings.Join(parts, ",") + ")"
 }
 
+func (t *ConcBQTermBQTermList) ChildCount() int { return len(t.Slots) }
+
+func (t *ConcBQTermBQTermList) ChildAt(i int) any { return t.Slots[i] }
+
+func (t *ConcBQTermBQTermList) SetChildAt(i int, child any) any {
+	dup := append([]BQTerm(nil), t.Slots...)
+	dup[i] = child.(BQTerm)
+	return MakeConcBQTerm(dup...)
+}
+
+func (t *ConcBQTermBQTermList) Children() []any {
+	out := make([]any, len(t.Slots))
+	for i, v := range t.Slots {
+		out[i] = v
+	}
+	return out
+}
+
+func (t *ConcBQTermBQTermList) SetChildren(children []any) any {
+	args := make([]BQTerm, len(children))
+	for i, c := range children {
+		args[i] = c.(BQTerm)
+	}
+	return MakeConcBQTerm(args...)
+}
+
 // MakeConcBQTerm builds the canonical (shared) concBQTerm term.
 func MakeConcBQTerm(args ...BQTerm) BQTermList {
 	hashes := make([]uint32, 0, len(args))
@@ -508,6 +1464,69 @@ func MakeConcBQTerm(args ...BQTerm) BQTermList {
 	proto := &ConcBQTermBQTermList{Slots: args, hash: sharedobjects.MixSymbol(sharedobjects.StringHash("concBQTerm"), hashes)}
 	return factory.Build(proto).(*ConcBQTermBQTermList)
 }
+
+// IsConcBQTerm is the `Is_concBQTerm` predicate strategy: succeeds (returns subject
+// unchanged) when subject has the `concBQTerm` shape, otherwise fails with
+// sl.ErrVisitFailure.
+type IsConcBQTerm struct{}
+
+func (IsConcBQTerm) VisitLight(subject any, _ sl.Introspector) (any, error) {
+	if _, ok := subject.(*ConcBQTermBQTermList); ok {
+		return subject, nil
+	}
+	return subject, sl.ErrVisitFailure
+}
+func (IsConcBQTerm) ChildCount() int             { return 0 }
+func (IsConcBQTerm) ChildAt(int) sl.Strategy     { panic("IsConcBQTerm: no children") }
+func (IsConcBQTerm) SetChildAt(int, sl.Strategy) { panic("IsConcBQTerm: no children") }
+
+// VisitConcBQTerm is the `_concBQTerm` slot-visit strategy: when subject is `concBQTerm`,
+// applies each constituent strategy to the matching child slot and
+// rebuilds the term iff at least one child changed. Fails with
+// sl.ErrVisitFailure when subject isn't `concBQTerm`.
+type VisitConcBQTerm struct {
+	args []sl.Strategy
+}
+
+// NewVisitConcBQTerm builds the slot-visit strategy with the supplied per-slot
+// sub-strategies.
+func NewVisitConcBQTerm(args ...sl.Strategy) *VisitConcBQTerm {
+	return &VisitConcBQTerm{args: args}
+}
+
+func (s *VisitConcBQTerm) VisitLight(subject any, intro sl.Introspector) (any, error) {
+	if _, ok := subject.(*ConcBQTermBQTermList); !ok {
+		return subject, sl.ErrVisitFailure
+	}
+	// Variadic alt: visit every element with args[0] (Java's
+	// `_concX` invokes the sub-strategy on each list element).
+	if len(s.args) == 0 {
+		return subject, nil
+	}
+	count := intro.GetChildCount(subject)
+	var newChildren []any
+	for i := 0; i < count; i++ {
+		oldChild := intro.GetChildAt(subject, i)
+		newChild, err := s.args[0].VisitLight(oldChild, intro)
+		if err != nil {
+			return subject, err
+		}
+		if newChildren != nil {
+			newChildren[i] = newChild
+		} else if newChild != oldChild {
+			newChildren = intro.GetChildren(subject)
+			newChildren[i] = newChild
+		}
+	}
+	if newChildren != nil {
+		return intro.SetChildren(subject, newChildren), nil
+	}
+	return subject, nil
+}
+
+func (s *VisitConcBQTerm) ChildCount() int                 { return len(s.args) }
+func (s *VisitConcBQTerm) ChildAt(i int) sl.Strategy       { return s.args[i] }
+func (s *VisitConcBQTerm) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
 
 // CompositeMember is the Go interface backing the Gom sort CompositeMember.
 type CompositeMember interface {
@@ -545,12 +1564,98 @@ func (t *CompositeBQTermCompositeMember) String() string {
 	return fmt.Sprintf("CompositeBQTerm(%v)", t.Term)
 }
 
+func (t *CompositeBQTermCompositeMember) ChildCount() int { return 1 }
+
+func (t *CompositeBQTermCompositeMember) ChildAt(i int) any {
+	switch i {
+	case 0:
+		return t.Term
+	}
+	panic(fmt.Sprintf("CompositeBQTermCompositeMember.ChildAt: index %d out of range", i))
+}
+
+func (t *CompositeBQTermCompositeMember) SetChildAt(i int, child any) any {
+	switch i {
+	case 0:
+		return MakeCompositeBQTerm(child.(BQTerm))
+	}
+	panic(fmt.Sprintf("CompositeBQTermCompositeMember.SetChildAt: index %d out of range", i))
+}
+
+func (t *CompositeBQTermCompositeMember) Children() []any {
+	return []any{t.Term}
+}
+
+func (t *CompositeBQTermCompositeMember) SetChildren(children []any) any {
+	return MakeCompositeBQTerm(children[0].(BQTerm))
+}
+
 // MakeCompositeBQTerm builds the canonical (shared) CompositeBQTerm term.
 func MakeCompositeBQTerm(term BQTerm) CompositeMember {
 	hashes := []uint32{term.Hash()}
 	proto := &CompositeBQTermCompositeMember{hash: sharedobjects.MixSymbol(sharedobjects.StringHash("CompositeBQTerm"), hashes), Term: term}
 	return factory.Build(proto).(*CompositeBQTermCompositeMember)
 }
+
+// IsCompositeBQTerm is the `Is_CompositeBQTerm` predicate strategy: succeeds (returns subject
+// unchanged) when subject has the `CompositeBQTerm` shape, otherwise fails with
+// sl.ErrVisitFailure.
+type IsCompositeBQTerm struct{}
+
+func (IsCompositeBQTerm) VisitLight(subject any, _ sl.Introspector) (any, error) {
+	if _, ok := subject.(*CompositeBQTermCompositeMember); ok {
+		return subject, nil
+	}
+	return subject, sl.ErrVisitFailure
+}
+func (IsCompositeBQTerm) ChildCount() int             { return 0 }
+func (IsCompositeBQTerm) ChildAt(int) sl.Strategy     { panic("IsCompositeBQTerm: no children") }
+func (IsCompositeBQTerm) SetChildAt(int, sl.Strategy) { panic("IsCompositeBQTerm: no children") }
+
+// VisitCompositeBQTerm is the `_CompositeBQTerm` slot-visit strategy: when subject is `CompositeBQTerm`,
+// applies each constituent strategy to the matching child slot and
+// rebuilds the term iff at least one child changed. Fails with
+// sl.ErrVisitFailure when subject isn't `CompositeBQTerm`.
+type VisitCompositeBQTerm struct {
+	args []sl.Strategy
+}
+
+// NewVisitCompositeBQTerm builds the slot-visit strategy with the supplied per-slot
+// sub-strategies.
+func NewVisitCompositeBQTerm(args ...sl.Strategy) *VisitCompositeBQTerm {
+	return &VisitCompositeBQTerm{args: args}
+}
+
+func (s *VisitCompositeBQTerm) VisitLight(subject any, intro sl.Introspector) (any, error) {
+	if _, ok := subject.(*CompositeBQTermCompositeMember); !ok {
+		return subject, sl.ErrVisitFailure
+	}
+	if len(s.args) != 1 {
+		return subject, sl.ErrVisitFailure
+	}
+	var newChildren []any
+	for i := 0; i < 1; i++ {
+		oldChild := intro.GetChildAt(subject, i)
+		newChild, err := s.args[i].VisitLight(oldChild, intro)
+		if err != nil {
+			return subject, err
+		}
+		if newChildren != nil {
+			newChildren[i] = newChild
+		} else if newChild != oldChild {
+			newChildren = intro.GetChildren(subject)
+			newChildren[i] = newChild
+		}
+	}
+	if newChildren != nil {
+		return intro.SetChildren(subject, newChildren), nil
+	}
+	return subject, nil
+}
+
+func (s *VisitCompositeBQTerm) ChildCount() int                 { return len(s.args) }
+func (s *VisitCompositeBQTerm) ChildAt(i int) sl.Strategy       { return s.args[i] }
+func (s *VisitCompositeBQTerm) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
 
 // CompositeTLCompositeMember is the term type for the alternative `CompositeTL(...)` of sort CompositeMember.
 type CompositeTLCompositeMember struct {
@@ -582,12 +1687,98 @@ func (t *CompositeTLCompositeMember) String() string {
 	return fmt.Sprintf("CompositeTL(%v)", t.Tl)
 }
 
+func (t *CompositeTLCompositeMember) ChildCount() int { return 1 }
+
+func (t *CompositeTLCompositeMember) ChildAt(i int) any {
+	switch i {
+	case 0:
+		return t.Tl
+	}
+	panic(fmt.Sprintf("CompositeTLCompositeMember.ChildAt: index %d out of range", i))
+}
+
+func (t *CompositeTLCompositeMember) SetChildAt(i int, child any) any {
+	switch i {
+	case 0:
+		return MakeCompositeTL(child.(TargetLanguage))
+	}
+	panic(fmt.Sprintf("CompositeTLCompositeMember.SetChildAt: index %d out of range", i))
+}
+
+func (t *CompositeTLCompositeMember) Children() []any {
+	return []any{t.Tl}
+}
+
+func (t *CompositeTLCompositeMember) SetChildren(children []any) any {
+	return MakeCompositeTL(children[0].(TargetLanguage))
+}
+
 // MakeCompositeTL builds the canonical (shared) CompositeTL term.
 func MakeCompositeTL(tl TargetLanguage) CompositeMember {
 	hashes := []uint32{tl.Hash()}
 	proto := &CompositeTLCompositeMember{hash: sharedobjects.MixSymbol(sharedobjects.StringHash("CompositeTL"), hashes), Tl: tl}
 	return factory.Build(proto).(*CompositeTLCompositeMember)
 }
+
+// IsCompositeTL is the `Is_CompositeTL` predicate strategy: succeeds (returns subject
+// unchanged) when subject has the `CompositeTL` shape, otherwise fails with
+// sl.ErrVisitFailure.
+type IsCompositeTL struct{}
+
+func (IsCompositeTL) VisitLight(subject any, _ sl.Introspector) (any, error) {
+	if _, ok := subject.(*CompositeTLCompositeMember); ok {
+		return subject, nil
+	}
+	return subject, sl.ErrVisitFailure
+}
+func (IsCompositeTL) ChildCount() int             { return 0 }
+func (IsCompositeTL) ChildAt(int) sl.Strategy     { panic("IsCompositeTL: no children") }
+func (IsCompositeTL) SetChildAt(int, sl.Strategy) { panic("IsCompositeTL: no children") }
+
+// VisitCompositeTL is the `_CompositeTL` slot-visit strategy: when subject is `CompositeTL`,
+// applies each constituent strategy to the matching child slot and
+// rebuilds the term iff at least one child changed. Fails with
+// sl.ErrVisitFailure when subject isn't `CompositeTL`.
+type VisitCompositeTL struct {
+	args []sl.Strategy
+}
+
+// NewVisitCompositeTL builds the slot-visit strategy with the supplied per-slot
+// sub-strategies.
+func NewVisitCompositeTL(args ...sl.Strategy) *VisitCompositeTL {
+	return &VisitCompositeTL{args: args}
+}
+
+func (s *VisitCompositeTL) VisitLight(subject any, intro sl.Introspector) (any, error) {
+	if _, ok := subject.(*CompositeTLCompositeMember); !ok {
+		return subject, sl.ErrVisitFailure
+	}
+	if len(s.args) != 1 {
+		return subject, sl.ErrVisitFailure
+	}
+	var newChildren []any
+	for i := 0; i < 1; i++ {
+		oldChild := intro.GetChildAt(subject, i)
+		newChild, err := s.args[i].VisitLight(oldChild, intro)
+		if err != nil {
+			return subject, err
+		}
+		if newChildren != nil {
+			newChildren[i] = newChild
+		} else if newChild != oldChild {
+			newChildren = intro.GetChildren(subject)
+			newChildren[i] = newChild
+		}
+	}
+	if newChildren != nil {
+		return intro.SetChildren(subject, newChildren), nil
+	}
+	return subject, nil
+}
+
+func (s *VisitCompositeTL) ChildCount() int                 { return len(s.args) }
+func (s *VisitCompositeTL) ChildAt(i int) sl.Strategy       { return s.args[i] }
+func (s *VisitCompositeTL) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
 
 // BQTerm is the Go interface backing the Gom sort BQTerm.
 type BQTerm interface {
@@ -633,12 +1824,106 @@ func (t *BQApplBQTerm) String() string {
 	return fmt.Sprintf("BQAppl(%v,%v,%v)", t.Options, t.AstName, t.Args)
 }
 
+func (t *BQApplBQTerm) ChildCount() int { return 3 }
+
+func (t *BQApplBQTerm) ChildAt(i int) any {
+	switch i {
+	case 0:
+		return t.Options
+	case 1:
+		return t.AstName
+	case 2:
+		return t.Args
+	}
+	panic(fmt.Sprintf("BQApplBQTerm.ChildAt: index %d out of range", i))
+}
+
+func (t *BQApplBQTerm) SetChildAt(i int, child any) any {
+	switch i {
+	case 0:
+		return MakeBQAppl(child.(OptionList), t.AstName, t.Args)
+	case 1:
+		return MakeBQAppl(t.Options, child.(TomName), t.Args)
+	case 2:
+		return MakeBQAppl(t.Options, t.AstName, child.(BQTermList))
+	}
+	panic(fmt.Sprintf("BQApplBQTerm.SetChildAt: index %d out of range", i))
+}
+
+func (t *BQApplBQTerm) Children() []any {
+	return []any{t.Options, t.AstName, t.Args}
+}
+
+func (t *BQApplBQTerm) SetChildren(children []any) any {
+	return MakeBQAppl(children[0].(OptionList), children[1].(TomName), children[2].(BQTermList))
+}
+
 // MakeBQAppl builds the canonical (shared) BQAppl term.
 func MakeBQAppl(options OptionList, astName TomName, args BQTermList) BQTerm {
 	hashes := []uint32{options.Hash(), astName.Hash(), args.Hash()}
 	proto := &BQApplBQTerm{hash: sharedobjects.MixSymbol(sharedobjects.StringHash("BQAppl"), hashes), Options: options, AstName: astName, Args: args}
 	return factory.Build(proto).(*BQApplBQTerm)
 }
+
+// IsBQAppl is the `Is_BQAppl` predicate strategy: succeeds (returns subject
+// unchanged) when subject has the `BQAppl` shape, otherwise fails with
+// sl.ErrVisitFailure.
+type IsBQAppl struct{}
+
+func (IsBQAppl) VisitLight(subject any, _ sl.Introspector) (any, error) {
+	if _, ok := subject.(*BQApplBQTerm); ok {
+		return subject, nil
+	}
+	return subject, sl.ErrVisitFailure
+}
+func (IsBQAppl) ChildCount() int             { return 0 }
+func (IsBQAppl) ChildAt(int) sl.Strategy     { panic("IsBQAppl: no children") }
+func (IsBQAppl) SetChildAt(int, sl.Strategy) { panic("IsBQAppl: no children") }
+
+// VisitBQAppl is the `_BQAppl` slot-visit strategy: when subject is `BQAppl`,
+// applies each constituent strategy to the matching child slot and
+// rebuilds the term iff at least one child changed. Fails with
+// sl.ErrVisitFailure when subject isn't `BQAppl`.
+type VisitBQAppl struct {
+	args []sl.Strategy
+}
+
+// NewVisitBQAppl builds the slot-visit strategy with the supplied per-slot
+// sub-strategies.
+func NewVisitBQAppl(args ...sl.Strategy) *VisitBQAppl {
+	return &VisitBQAppl{args: args}
+}
+
+func (s *VisitBQAppl) VisitLight(subject any, intro sl.Introspector) (any, error) {
+	if _, ok := subject.(*BQApplBQTerm); !ok {
+		return subject, sl.ErrVisitFailure
+	}
+	if len(s.args) != 3 {
+		return subject, sl.ErrVisitFailure
+	}
+	var newChildren []any
+	for i := 0; i < 3; i++ {
+		oldChild := intro.GetChildAt(subject, i)
+		newChild, err := s.args[i].VisitLight(oldChild, intro)
+		if err != nil {
+			return subject, err
+		}
+		if newChildren != nil {
+			newChildren[i] = newChild
+		} else if newChild != oldChild {
+			newChildren = intro.GetChildren(subject)
+			newChildren[i] = newChild
+		}
+	}
+	if newChildren != nil {
+		return intro.SetChildren(subject, newChildren), nil
+	}
+	return subject, nil
+}
+
+func (s *VisitBQAppl) ChildCount() int                 { return len(s.args) }
+func (s *VisitBQAppl) ChildAt(i int) sl.Strategy       { return s.args[i] }
+func (s *VisitBQAppl) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
 
 // BQRecordApplBQTerm is the term type for the alternative `BQRecordAppl(...)` of sort BQTerm.
 type BQRecordApplBQTerm struct {
@@ -678,12 +1963,106 @@ func (t *BQRecordApplBQTerm) String() string {
 	return fmt.Sprintf("BQRecordAppl(%v,%v,%v)", t.Options, t.AstName, t.Slots)
 }
 
+func (t *BQRecordApplBQTerm) ChildCount() int { return 3 }
+
+func (t *BQRecordApplBQTerm) ChildAt(i int) any {
+	switch i {
+	case 0:
+		return t.Options
+	case 1:
+		return t.AstName
+	case 2:
+		return t.Slots
+	}
+	panic(fmt.Sprintf("BQRecordApplBQTerm.ChildAt: index %d out of range", i))
+}
+
+func (t *BQRecordApplBQTerm) SetChildAt(i int, child any) any {
+	switch i {
+	case 0:
+		return MakeBQRecordAppl(child.(OptionList), t.AstName, t.Slots)
+	case 1:
+		return MakeBQRecordAppl(t.Options, child.(TomName), t.Slots)
+	case 2:
+		return MakeBQRecordAppl(t.Options, t.AstName, child.(BQSlotList))
+	}
+	panic(fmt.Sprintf("BQRecordApplBQTerm.SetChildAt: index %d out of range", i))
+}
+
+func (t *BQRecordApplBQTerm) Children() []any {
+	return []any{t.Options, t.AstName, t.Slots}
+}
+
+func (t *BQRecordApplBQTerm) SetChildren(children []any) any {
+	return MakeBQRecordAppl(children[0].(OptionList), children[1].(TomName), children[2].(BQSlotList))
+}
+
 // MakeBQRecordAppl builds the canonical (shared) BQRecordAppl term.
 func MakeBQRecordAppl(options OptionList, astName TomName, slots BQSlotList) BQTerm {
 	hashes := []uint32{options.Hash(), astName.Hash(), slots.Hash()}
 	proto := &BQRecordApplBQTerm{hash: sharedobjects.MixSymbol(sharedobjects.StringHash("BQRecordAppl"), hashes), Options: options, AstName: astName, Slots: slots}
 	return factory.Build(proto).(*BQRecordApplBQTerm)
 }
+
+// IsBQRecordAppl is the `Is_BQRecordAppl` predicate strategy: succeeds (returns subject
+// unchanged) when subject has the `BQRecordAppl` shape, otherwise fails with
+// sl.ErrVisitFailure.
+type IsBQRecordAppl struct{}
+
+func (IsBQRecordAppl) VisitLight(subject any, _ sl.Introspector) (any, error) {
+	if _, ok := subject.(*BQRecordApplBQTerm); ok {
+		return subject, nil
+	}
+	return subject, sl.ErrVisitFailure
+}
+func (IsBQRecordAppl) ChildCount() int             { return 0 }
+func (IsBQRecordAppl) ChildAt(int) sl.Strategy     { panic("IsBQRecordAppl: no children") }
+func (IsBQRecordAppl) SetChildAt(int, sl.Strategy) { panic("IsBQRecordAppl: no children") }
+
+// VisitBQRecordAppl is the `_BQRecordAppl` slot-visit strategy: when subject is `BQRecordAppl`,
+// applies each constituent strategy to the matching child slot and
+// rebuilds the term iff at least one child changed. Fails with
+// sl.ErrVisitFailure when subject isn't `BQRecordAppl`.
+type VisitBQRecordAppl struct {
+	args []sl.Strategy
+}
+
+// NewVisitBQRecordAppl builds the slot-visit strategy with the supplied per-slot
+// sub-strategies.
+func NewVisitBQRecordAppl(args ...sl.Strategy) *VisitBQRecordAppl {
+	return &VisitBQRecordAppl{args: args}
+}
+
+func (s *VisitBQRecordAppl) VisitLight(subject any, intro sl.Introspector) (any, error) {
+	if _, ok := subject.(*BQRecordApplBQTerm); !ok {
+		return subject, sl.ErrVisitFailure
+	}
+	if len(s.args) != 3 {
+		return subject, sl.ErrVisitFailure
+	}
+	var newChildren []any
+	for i := 0; i < 3; i++ {
+		oldChild := intro.GetChildAt(subject, i)
+		newChild, err := s.args[i].VisitLight(oldChild, intro)
+		if err != nil {
+			return subject, err
+		}
+		if newChildren != nil {
+			newChildren[i] = newChild
+		} else if newChild != oldChild {
+			newChildren = intro.GetChildren(subject)
+			newChildren[i] = newChild
+		}
+	}
+	if newChildren != nil {
+		return intro.SetChildren(subject, newChildren), nil
+	}
+	return subject, nil
+}
+
+func (s *VisitBQRecordAppl) ChildCount() int                 { return len(s.args) }
+func (s *VisitBQRecordAppl) ChildAt(i int) sl.Strategy       { return s.args[i] }
+func (s *VisitBQRecordAppl) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
 
 // BQVariableBQTerm is the term type for the alternative `BQVariable(...)` of sort BQTerm.
 type BQVariableBQTerm struct {
@@ -723,12 +2102,106 @@ func (t *BQVariableBQTerm) String() string {
 	return fmt.Sprintf("BQVariable(%v,%v,%v)", t.Options, t.AstName, t.AstType)
 }
 
+func (t *BQVariableBQTerm) ChildCount() int { return 3 }
+
+func (t *BQVariableBQTerm) ChildAt(i int) any {
+	switch i {
+	case 0:
+		return t.Options
+	case 1:
+		return t.AstName
+	case 2:
+		return t.AstType
+	}
+	panic(fmt.Sprintf("BQVariableBQTerm.ChildAt: index %d out of range", i))
+}
+
+func (t *BQVariableBQTerm) SetChildAt(i int, child any) any {
+	switch i {
+	case 0:
+		return MakeBQVariable(child.(OptionList), t.AstName, t.AstType)
+	case 1:
+		return MakeBQVariable(t.Options, child.(TomName), t.AstType)
+	case 2:
+		return MakeBQVariable(t.Options, t.AstName, child.(TomType))
+	}
+	panic(fmt.Sprintf("BQVariableBQTerm.SetChildAt: index %d out of range", i))
+}
+
+func (t *BQVariableBQTerm) Children() []any {
+	return []any{t.Options, t.AstName, t.AstType}
+}
+
+func (t *BQVariableBQTerm) SetChildren(children []any) any {
+	return MakeBQVariable(children[0].(OptionList), children[1].(TomName), children[2].(TomType))
+}
+
 // MakeBQVariable builds the canonical (shared) BQVariable term.
 func MakeBQVariable(options OptionList, astName TomName, astType TomType) BQTerm {
 	hashes := []uint32{options.Hash(), astName.Hash(), astType.Hash()}
 	proto := &BQVariableBQTerm{hash: sharedobjects.MixSymbol(sharedobjects.StringHash("BQVariable"), hashes), Options: options, AstName: astName, AstType: astType}
 	return factory.Build(proto).(*BQVariableBQTerm)
 }
+
+// IsBQVariable is the `Is_BQVariable` predicate strategy: succeeds (returns subject
+// unchanged) when subject has the `BQVariable` shape, otherwise fails with
+// sl.ErrVisitFailure.
+type IsBQVariable struct{}
+
+func (IsBQVariable) VisitLight(subject any, _ sl.Introspector) (any, error) {
+	if _, ok := subject.(*BQVariableBQTerm); ok {
+		return subject, nil
+	}
+	return subject, sl.ErrVisitFailure
+}
+func (IsBQVariable) ChildCount() int             { return 0 }
+func (IsBQVariable) ChildAt(int) sl.Strategy     { panic("IsBQVariable: no children") }
+func (IsBQVariable) SetChildAt(int, sl.Strategy) { panic("IsBQVariable: no children") }
+
+// VisitBQVariable is the `_BQVariable` slot-visit strategy: when subject is `BQVariable`,
+// applies each constituent strategy to the matching child slot and
+// rebuilds the term iff at least one child changed. Fails with
+// sl.ErrVisitFailure when subject isn't `BQVariable`.
+type VisitBQVariable struct {
+	args []sl.Strategy
+}
+
+// NewVisitBQVariable builds the slot-visit strategy with the supplied per-slot
+// sub-strategies.
+func NewVisitBQVariable(args ...sl.Strategy) *VisitBQVariable {
+	return &VisitBQVariable{args: args}
+}
+
+func (s *VisitBQVariable) VisitLight(subject any, intro sl.Introspector) (any, error) {
+	if _, ok := subject.(*BQVariableBQTerm); !ok {
+		return subject, sl.ErrVisitFailure
+	}
+	if len(s.args) != 3 {
+		return subject, sl.ErrVisitFailure
+	}
+	var newChildren []any
+	for i := 0; i < 3; i++ {
+		oldChild := intro.GetChildAt(subject, i)
+		newChild, err := s.args[i].VisitLight(oldChild, intro)
+		if err != nil {
+			return subject, err
+		}
+		if newChildren != nil {
+			newChildren[i] = newChild
+		} else if newChild != oldChild {
+			newChildren = intro.GetChildren(subject)
+			newChildren[i] = newChild
+		}
+	}
+	if newChildren != nil {
+		return intro.SetChildren(subject, newChildren), nil
+	}
+	return subject, nil
+}
+
+func (s *VisitBQVariable) ChildCount() int                 { return len(s.args) }
+func (s *VisitBQVariable) ChildAt(i int) sl.Strategy       { return s.args[i] }
+func (s *VisitBQVariable) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
 
 // BQVariableStarBQTerm is the term type for the alternative `BQVariableStar(...)` of sort BQTerm.
 type BQVariableStarBQTerm struct {
@@ -768,12 +2241,106 @@ func (t *BQVariableStarBQTerm) String() string {
 	return fmt.Sprintf("BQVariableStar(%v,%v,%v)", t.Options, t.AstName, t.AstType)
 }
 
+func (t *BQVariableStarBQTerm) ChildCount() int { return 3 }
+
+func (t *BQVariableStarBQTerm) ChildAt(i int) any {
+	switch i {
+	case 0:
+		return t.Options
+	case 1:
+		return t.AstName
+	case 2:
+		return t.AstType
+	}
+	panic(fmt.Sprintf("BQVariableStarBQTerm.ChildAt: index %d out of range", i))
+}
+
+func (t *BQVariableStarBQTerm) SetChildAt(i int, child any) any {
+	switch i {
+	case 0:
+		return MakeBQVariableStar(child.(OptionList), t.AstName, t.AstType)
+	case 1:
+		return MakeBQVariableStar(t.Options, child.(TomName), t.AstType)
+	case 2:
+		return MakeBQVariableStar(t.Options, t.AstName, child.(TomType))
+	}
+	panic(fmt.Sprintf("BQVariableStarBQTerm.SetChildAt: index %d out of range", i))
+}
+
+func (t *BQVariableStarBQTerm) Children() []any {
+	return []any{t.Options, t.AstName, t.AstType}
+}
+
+func (t *BQVariableStarBQTerm) SetChildren(children []any) any {
+	return MakeBQVariableStar(children[0].(OptionList), children[1].(TomName), children[2].(TomType))
+}
+
 // MakeBQVariableStar builds the canonical (shared) BQVariableStar term.
 func MakeBQVariableStar(options OptionList, astName TomName, astType TomType) BQTerm {
 	hashes := []uint32{options.Hash(), astName.Hash(), astType.Hash()}
 	proto := &BQVariableStarBQTerm{hash: sharedobjects.MixSymbol(sharedobjects.StringHash("BQVariableStar"), hashes), Options: options, AstName: astName, AstType: astType}
 	return factory.Build(proto).(*BQVariableStarBQTerm)
 }
+
+// IsBQVariableStar is the `Is_BQVariableStar` predicate strategy: succeeds (returns subject
+// unchanged) when subject has the `BQVariableStar` shape, otherwise fails with
+// sl.ErrVisitFailure.
+type IsBQVariableStar struct{}
+
+func (IsBQVariableStar) VisitLight(subject any, _ sl.Introspector) (any, error) {
+	if _, ok := subject.(*BQVariableStarBQTerm); ok {
+		return subject, nil
+	}
+	return subject, sl.ErrVisitFailure
+}
+func (IsBQVariableStar) ChildCount() int             { return 0 }
+func (IsBQVariableStar) ChildAt(int) sl.Strategy     { panic("IsBQVariableStar: no children") }
+func (IsBQVariableStar) SetChildAt(int, sl.Strategy) { panic("IsBQVariableStar: no children") }
+
+// VisitBQVariableStar is the `_BQVariableStar` slot-visit strategy: when subject is `BQVariableStar`,
+// applies each constituent strategy to the matching child slot and
+// rebuilds the term iff at least one child changed. Fails with
+// sl.ErrVisitFailure when subject isn't `BQVariableStar`.
+type VisitBQVariableStar struct {
+	args []sl.Strategy
+}
+
+// NewVisitBQVariableStar builds the slot-visit strategy with the supplied per-slot
+// sub-strategies.
+func NewVisitBQVariableStar(args ...sl.Strategy) *VisitBQVariableStar {
+	return &VisitBQVariableStar{args: args}
+}
+
+func (s *VisitBQVariableStar) VisitLight(subject any, intro sl.Introspector) (any, error) {
+	if _, ok := subject.(*BQVariableStarBQTerm); !ok {
+		return subject, sl.ErrVisitFailure
+	}
+	if len(s.args) != 3 {
+		return subject, sl.ErrVisitFailure
+	}
+	var newChildren []any
+	for i := 0; i < 3; i++ {
+		oldChild := intro.GetChildAt(subject, i)
+		newChild, err := s.args[i].VisitLight(oldChild, intro)
+		if err != nil {
+			return subject, err
+		}
+		if newChildren != nil {
+			newChildren[i] = newChild
+		} else if newChild != oldChild {
+			newChildren = intro.GetChildren(subject)
+			newChildren[i] = newChild
+		}
+	}
+	if newChildren != nil {
+		return intro.SetChildren(subject, newChildren), nil
+	}
+	return subject, nil
+}
+
+func (s *VisitBQVariableStar) ChildCount() int                 { return len(s.args) }
+func (s *VisitBQVariableStar) ChildAt(i int) sl.Strategy       { return s.args[i] }
+func (s *VisitBQVariableStar) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
 
 // BQDefaultBQTerm is the term type for the alternative `BQDefault(...)` of sort BQTerm.
 type BQDefaultBQTerm struct {
@@ -798,12 +2365,67 @@ func (t *BQDefaultBQTerm) String() string {
 	return "BQDefault" + "()"
 }
 
+func (t *BQDefaultBQTerm) ChildCount() int { return 0 }
+
+func (t *BQDefaultBQTerm) ChildAt(i int) any {
+	panic(fmt.Sprintf("BQDefaultBQTerm.ChildAt: index %d out of [0,0)", i))
+}
+
+func (t *BQDefaultBQTerm) SetChildAt(i int, child any) any {
+	panic(fmt.Sprintf("BQDefaultBQTerm.SetChildAt: index %d out of [0,0)", i))
+}
+
+func (t *BQDefaultBQTerm) Children() []any { return nil }
+
+func (t *BQDefaultBQTerm) SetChildren(children []any) any { return t }
+
 // MakeBQDefault builds the canonical (shared) BQDefault term.
 func MakeBQDefault() BQTerm {
 	hashes := []uint32{}
 	proto := &BQDefaultBQTerm{hash: sharedobjects.MixSymbol(sharedobjects.StringHash("BQDefault"), hashes)}
 	return factory.Build(proto).(*BQDefaultBQTerm)
 }
+
+// IsBQDefault is the `Is_BQDefault` predicate strategy: succeeds (returns subject
+// unchanged) when subject has the `BQDefault` shape, otherwise fails with
+// sl.ErrVisitFailure.
+type IsBQDefault struct{}
+
+func (IsBQDefault) VisitLight(subject any, _ sl.Introspector) (any, error) {
+	if _, ok := subject.(*BQDefaultBQTerm); ok {
+		return subject, nil
+	}
+	return subject, sl.ErrVisitFailure
+}
+func (IsBQDefault) ChildCount() int             { return 0 }
+func (IsBQDefault) ChildAt(int) sl.Strategy     { panic("IsBQDefault: no children") }
+func (IsBQDefault) SetChildAt(int, sl.Strategy) { panic("IsBQDefault: no children") }
+
+// VisitBQDefault is the `_BQDefault` slot-visit strategy: when subject is `BQDefault`,
+// applies each constituent strategy to the matching child slot and
+// rebuilds the term iff at least one child changed. Fails with
+// sl.ErrVisitFailure when subject isn't `BQDefault`.
+type VisitBQDefault struct {
+	args []sl.Strategy
+}
+
+// NewVisitBQDefault builds the slot-visit strategy with the supplied per-slot
+// sub-strategies.
+func NewVisitBQDefault(args ...sl.Strategy) *VisitBQDefault {
+	return &VisitBQDefault{args: args}
+}
+
+func (s *VisitBQDefault) VisitLight(subject any, intro sl.Introspector) (any, error) {
+	if _, ok := subject.(*BQDefaultBQTerm); !ok {
+		return subject, sl.ErrVisitFailure
+	}
+	// Nullary alt: no children to visit.
+	return subject, nil
+}
+
+func (s *VisitBQDefault) ChildCount() int                 { return len(s.args) }
+func (s *VisitBQDefault) ChildAt(i int) sl.Strategy       { return s.args[i] }
+func (s *VisitBQDefault) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
 
 // CompositeBQTerm is the term type for the alternative `Composite(...)` of sort BQTerm.
 type CompositeBQTerm struct {
@@ -844,6 +2466,32 @@ func (t *CompositeBQTerm) String() string {
 	return "Composite" + "(" + strings.Join(parts, ",") + ")"
 }
 
+func (t *CompositeBQTerm) ChildCount() int { return len(t.Slots) }
+
+func (t *CompositeBQTerm) ChildAt(i int) any { return t.Slots[i] }
+
+func (t *CompositeBQTerm) SetChildAt(i int, child any) any {
+	dup := append([]CompositeMember(nil), t.Slots...)
+	dup[i] = child.(CompositeMember)
+	return MakeComposite(dup...)
+}
+
+func (t *CompositeBQTerm) Children() []any {
+	out := make([]any, len(t.Slots))
+	for i, v := range t.Slots {
+		out[i] = v
+	}
+	return out
+}
+
+func (t *CompositeBQTerm) SetChildren(children []any) any {
+	args := make([]CompositeMember, len(children))
+	for i, c := range children {
+		args[i] = c.(CompositeMember)
+	}
+	return MakeComposite(args...)
+}
+
 // MakeComposite builds the canonical (shared) Composite term.
 func MakeComposite(args ...CompositeMember) BQTerm {
 	hashes := make([]uint32, 0, len(args))
@@ -853,6 +2501,69 @@ func MakeComposite(args ...CompositeMember) BQTerm {
 	proto := &CompositeBQTerm{Slots: args, hash: sharedobjects.MixSymbol(sharedobjects.StringHash("Composite"), hashes)}
 	return factory.Build(proto).(*CompositeBQTerm)
 }
+
+// IsComposite is the `Is_Composite` predicate strategy: succeeds (returns subject
+// unchanged) when subject has the `Composite` shape, otherwise fails with
+// sl.ErrVisitFailure.
+type IsComposite struct{}
+
+func (IsComposite) VisitLight(subject any, _ sl.Introspector) (any, error) {
+	if _, ok := subject.(*CompositeBQTerm); ok {
+		return subject, nil
+	}
+	return subject, sl.ErrVisitFailure
+}
+func (IsComposite) ChildCount() int             { return 0 }
+func (IsComposite) ChildAt(int) sl.Strategy     { panic("IsComposite: no children") }
+func (IsComposite) SetChildAt(int, sl.Strategy) { panic("IsComposite: no children") }
+
+// VisitComposite is the `_Composite` slot-visit strategy: when subject is `Composite`,
+// applies each constituent strategy to the matching child slot and
+// rebuilds the term iff at least one child changed. Fails with
+// sl.ErrVisitFailure when subject isn't `Composite`.
+type VisitComposite struct {
+	args []sl.Strategy
+}
+
+// NewVisitComposite builds the slot-visit strategy with the supplied per-slot
+// sub-strategies.
+func NewVisitComposite(args ...sl.Strategy) *VisitComposite {
+	return &VisitComposite{args: args}
+}
+
+func (s *VisitComposite) VisitLight(subject any, intro sl.Introspector) (any, error) {
+	if _, ok := subject.(*CompositeBQTerm); !ok {
+		return subject, sl.ErrVisitFailure
+	}
+	// Variadic alt: visit every element with args[0] (Java's
+	// `_concX` invokes the sub-strategy on each list element).
+	if len(s.args) == 0 {
+		return subject, nil
+	}
+	count := intro.GetChildCount(subject)
+	var newChildren []any
+	for i := 0; i < count; i++ {
+		oldChild := intro.GetChildAt(subject, i)
+		newChild, err := s.args[0].VisitLight(oldChild, intro)
+		if err != nil {
+			return subject, err
+		}
+		if newChildren != nil {
+			newChildren[i] = newChild
+		} else if newChild != oldChild {
+			newChildren = intro.GetChildren(subject)
+			newChildren[i] = newChild
+		}
+	}
+	if newChildren != nil {
+		return intro.SetChildren(subject, newChildren), nil
+	}
+	return subject, nil
+}
+
+func (s *VisitComposite) ChildCount() int                 { return len(s.args) }
+func (s *VisitComposite) ChildAt(i int) sl.Strategy       { return s.args[i] }
+func (s *VisitComposite) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
 
 // ReferencerBQTermBQTerm is the term type for the alternative `ReferencerBQTerm(...)` of sort BQTerm.
 type ReferencerBQTermBQTerm struct {
@@ -896,12 +2607,110 @@ func (t *ReferencerBQTermBQTerm) String() string {
 	return fmt.Sprintf("ReferencerBQTerm(%v,%v,%s,%v)", t.Options, t.AstName, sharedobjects.JavaEscape(t.Type), t.Term)
 }
 
+func (t *ReferencerBQTermBQTerm) ChildCount() int { return 4 }
+
+func (t *ReferencerBQTermBQTerm) ChildAt(i int) any {
+	switch i {
+	case 0:
+		return t.Options
+	case 1:
+		return t.AstName
+	case 2:
+		return t.Type
+	case 3:
+		return t.Term
+	}
+	panic(fmt.Sprintf("ReferencerBQTermBQTerm.ChildAt: index %d out of range", i))
+}
+
+func (t *ReferencerBQTermBQTerm) SetChildAt(i int, child any) any {
+	switch i {
+	case 0:
+		return MakeReferencerBQTerm(child.(OptionList), t.AstName, t.Type, t.Term)
+	case 1:
+		return MakeReferencerBQTerm(t.Options, child.(TomName), t.Type, t.Term)
+	case 2:
+		return MakeReferencerBQTerm(t.Options, t.AstName, child.(string), t.Term)
+	case 3:
+		return MakeReferencerBQTerm(t.Options, t.AstName, t.Type, child.(BQTerm))
+	}
+	panic(fmt.Sprintf("ReferencerBQTermBQTerm.SetChildAt: index %d out of range", i))
+}
+
+func (t *ReferencerBQTermBQTerm) Children() []any {
+	return []any{t.Options, t.AstName, t.Type, t.Term}
+}
+
+func (t *ReferencerBQTermBQTerm) SetChildren(children []any) any {
+	return MakeReferencerBQTerm(children[0].(OptionList), children[1].(TomName), children[2].(string), children[3].(BQTerm))
+}
+
 // MakeReferencerBQTerm builds the canonical (shared) ReferencerBQTerm term.
 func MakeReferencerBQTerm(options OptionList, astName TomName, type_ string, term BQTerm) BQTerm {
 	hashes := []uint32{options.Hash(), astName.Hash(), sharedobjects.StringHash(fmt.Sprintf("%v", type_)), term.Hash()}
 	proto := &ReferencerBQTermBQTerm{hash: sharedobjects.MixSymbol(sharedobjects.StringHash("ReferencerBQTerm"), hashes), Options: options, AstName: astName, Type: type_, Term: term}
 	return factory.Build(proto).(*ReferencerBQTermBQTerm)
 }
+
+// IsReferencerBQTerm is the `Is_ReferencerBQTerm` predicate strategy: succeeds (returns subject
+// unchanged) when subject has the `ReferencerBQTerm` shape, otherwise fails with
+// sl.ErrVisitFailure.
+type IsReferencerBQTerm struct{}
+
+func (IsReferencerBQTerm) VisitLight(subject any, _ sl.Introspector) (any, error) {
+	if _, ok := subject.(*ReferencerBQTermBQTerm); ok {
+		return subject, nil
+	}
+	return subject, sl.ErrVisitFailure
+}
+func (IsReferencerBQTerm) ChildCount() int             { return 0 }
+func (IsReferencerBQTerm) ChildAt(int) sl.Strategy     { panic("IsReferencerBQTerm: no children") }
+func (IsReferencerBQTerm) SetChildAt(int, sl.Strategy) { panic("IsReferencerBQTerm: no children") }
+
+// VisitReferencerBQTerm is the `_ReferencerBQTerm` slot-visit strategy: when subject is `ReferencerBQTerm`,
+// applies each constituent strategy to the matching child slot and
+// rebuilds the term iff at least one child changed. Fails with
+// sl.ErrVisitFailure when subject isn't `ReferencerBQTerm`.
+type VisitReferencerBQTerm struct {
+	args []sl.Strategy
+}
+
+// NewVisitReferencerBQTerm builds the slot-visit strategy with the supplied per-slot
+// sub-strategies.
+func NewVisitReferencerBQTerm(args ...sl.Strategy) *VisitReferencerBQTerm {
+	return &VisitReferencerBQTerm{args: args}
+}
+
+func (s *VisitReferencerBQTerm) VisitLight(subject any, intro sl.Introspector) (any, error) {
+	if _, ok := subject.(*ReferencerBQTermBQTerm); !ok {
+		return subject, sl.ErrVisitFailure
+	}
+	if len(s.args) != 4 {
+		return subject, sl.ErrVisitFailure
+	}
+	var newChildren []any
+	for i := 0; i < 4; i++ {
+		oldChild := intro.GetChildAt(subject, i)
+		newChild, err := s.args[i].VisitLight(oldChild, intro)
+		if err != nil {
+			return subject, err
+		}
+		if newChildren != nil {
+			newChildren[i] = newChild
+		} else if newChild != oldChild {
+			newChildren = intro.GetChildren(subject)
+			newChildren[i] = newChild
+		}
+	}
+	if newChildren != nil {
+		return intro.SetChildren(subject, newChildren), nil
+	}
+	return subject, nil
+}
+
+func (s *VisitReferencerBQTerm) ChildCount() int                 { return len(s.args) }
+func (s *VisitReferencerBQTerm) ChildAt(i int) sl.Strategy       { return s.args[i] }
+func (s *VisitReferencerBQTerm) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
 
 // FunctionCallBQTerm is the term type for the alternative `FunctionCall(...)` of sort BQTerm.
 type FunctionCallBQTerm struct {
@@ -941,12 +2750,106 @@ func (t *FunctionCallBQTerm) String() string {
 	return fmt.Sprintf("FunctionCall(%v,%v,%v)", t.AstName, t.AstType, t.Args)
 }
 
+func (t *FunctionCallBQTerm) ChildCount() int { return 3 }
+
+func (t *FunctionCallBQTerm) ChildAt(i int) any {
+	switch i {
+	case 0:
+		return t.AstName
+	case 1:
+		return t.AstType
+	case 2:
+		return t.Args
+	}
+	panic(fmt.Sprintf("FunctionCallBQTerm.ChildAt: index %d out of range", i))
+}
+
+func (t *FunctionCallBQTerm) SetChildAt(i int, child any) any {
+	switch i {
+	case 0:
+		return MakeFunctionCall(child.(TomName), t.AstType, t.Args)
+	case 1:
+		return MakeFunctionCall(t.AstName, child.(TomType), t.Args)
+	case 2:
+		return MakeFunctionCall(t.AstName, t.AstType, child.(BQTermList))
+	}
+	panic(fmt.Sprintf("FunctionCallBQTerm.SetChildAt: index %d out of range", i))
+}
+
+func (t *FunctionCallBQTerm) Children() []any {
+	return []any{t.AstName, t.AstType, t.Args}
+}
+
+func (t *FunctionCallBQTerm) SetChildren(children []any) any {
+	return MakeFunctionCall(children[0].(TomName), children[1].(TomType), children[2].(BQTermList))
+}
+
 // MakeFunctionCall builds the canonical (shared) FunctionCall term.
 func MakeFunctionCall(astName TomName, astType TomType, args BQTermList) BQTerm {
 	hashes := []uint32{astName.Hash(), astType.Hash(), args.Hash()}
 	proto := &FunctionCallBQTerm{hash: sharedobjects.MixSymbol(sharedobjects.StringHash("FunctionCall"), hashes), AstName: astName, AstType: astType, Args: args}
 	return factory.Build(proto).(*FunctionCallBQTerm)
 }
+
+// IsFunctionCall is the `Is_FunctionCall` predicate strategy: succeeds (returns subject
+// unchanged) when subject has the `FunctionCall` shape, otherwise fails with
+// sl.ErrVisitFailure.
+type IsFunctionCall struct{}
+
+func (IsFunctionCall) VisitLight(subject any, _ sl.Introspector) (any, error) {
+	if _, ok := subject.(*FunctionCallBQTerm); ok {
+		return subject, nil
+	}
+	return subject, sl.ErrVisitFailure
+}
+func (IsFunctionCall) ChildCount() int             { return 0 }
+func (IsFunctionCall) ChildAt(int) sl.Strategy     { panic("IsFunctionCall: no children") }
+func (IsFunctionCall) SetChildAt(int, sl.Strategy) { panic("IsFunctionCall: no children") }
+
+// VisitFunctionCall is the `_FunctionCall` slot-visit strategy: when subject is `FunctionCall`,
+// applies each constituent strategy to the matching child slot and
+// rebuilds the term iff at least one child changed. Fails with
+// sl.ErrVisitFailure when subject isn't `FunctionCall`.
+type VisitFunctionCall struct {
+	args []sl.Strategy
+}
+
+// NewVisitFunctionCall builds the slot-visit strategy with the supplied per-slot
+// sub-strategies.
+func NewVisitFunctionCall(args ...sl.Strategy) *VisitFunctionCall {
+	return &VisitFunctionCall{args: args}
+}
+
+func (s *VisitFunctionCall) VisitLight(subject any, intro sl.Introspector) (any, error) {
+	if _, ok := subject.(*FunctionCallBQTerm); !ok {
+		return subject, sl.ErrVisitFailure
+	}
+	if len(s.args) != 3 {
+		return subject, sl.ErrVisitFailure
+	}
+	var newChildren []any
+	for i := 0; i < 3; i++ {
+		oldChild := intro.GetChildAt(subject, i)
+		newChild, err := s.args[i].VisitLight(oldChild, intro)
+		if err != nil {
+			return subject, err
+		}
+		if newChildren != nil {
+			newChildren[i] = newChild
+		} else if newChild != oldChild {
+			newChildren = intro.GetChildren(subject)
+			newChildren[i] = newChild
+		}
+	}
+	if newChildren != nil {
+		return intro.SetChildren(subject, newChildren), nil
+	}
+	return subject, nil
+}
+
+func (s *VisitFunctionCall) ChildCount() int                 { return len(s.args) }
+func (s *VisitFunctionCall) ChildAt(i int) sl.Strategy       { return s.args[i] }
+func (s *VisitFunctionCall) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
 
 // BuildConstantBQTerm is the term type for the alternative `BuildConstant(...)` of sort BQTerm.
 type BuildConstantBQTerm struct {
@@ -978,12 +2881,98 @@ func (t *BuildConstantBQTerm) String() string {
 	return fmt.Sprintf("BuildConstant(%v)", t.AstName)
 }
 
+func (t *BuildConstantBQTerm) ChildCount() int { return 1 }
+
+func (t *BuildConstantBQTerm) ChildAt(i int) any {
+	switch i {
+	case 0:
+		return t.AstName
+	}
+	panic(fmt.Sprintf("BuildConstantBQTerm.ChildAt: index %d out of range", i))
+}
+
+func (t *BuildConstantBQTerm) SetChildAt(i int, child any) any {
+	switch i {
+	case 0:
+		return MakeBuildConstant(child.(TomName))
+	}
+	panic(fmt.Sprintf("BuildConstantBQTerm.SetChildAt: index %d out of range", i))
+}
+
+func (t *BuildConstantBQTerm) Children() []any {
+	return []any{t.AstName}
+}
+
+func (t *BuildConstantBQTerm) SetChildren(children []any) any {
+	return MakeBuildConstant(children[0].(TomName))
+}
+
 // MakeBuildConstant builds the canonical (shared) BuildConstant term.
 func MakeBuildConstant(astName TomName) BQTerm {
 	hashes := []uint32{astName.Hash()}
 	proto := &BuildConstantBQTerm{hash: sharedobjects.MixSymbol(sharedobjects.StringHash("BuildConstant"), hashes), AstName: astName}
 	return factory.Build(proto).(*BuildConstantBQTerm)
 }
+
+// IsBuildConstant is the `Is_BuildConstant` predicate strategy: succeeds (returns subject
+// unchanged) when subject has the `BuildConstant` shape, otherwise fails with
+// sl.ErrVisitFailure.
+type IsBuildConstant struct{}
+
+func (IsBuildConstant) VisitLight(subject any, _ sl.Introspector) (any, error) {
+	if _, ok := subject.(*BuildConstantBQTerm); ok {
+		return subject, nil
+	}
+	return subject, sl.ErrVisitFailure
+}
+func (IsBuildConstant) ChildCount() int             { return 0 }
+func (IsBuildConstant) ChildAt(int) sl.Strategy     { panic("IsBuildConstant: no children") }
+func (IsBuildConstant) SetChildAt(int, sl.Strategy) { panic("IsBuildConstant: no children") }
+
+// VisitBuildConstant is the `_BuildConstant` slot-visit strategy: when subject is `BuildConstant`,
+// applies each constituent strategy to the matching child slot and
+// rebuilds the term iff at least one child changed. Fails with
+// sl.ErrVisitFailure when subject isn't `BuildConstant`.
+type VisitBuildConstant struct {
+	args []sl.Strategy
+}
+
+// NewVisitBuildConstant builds the slot-visit strategy with the supplied per-slot
+// sub-strategies.
+func NewVisitBuildConstant(args ...sl.Strategy) *VisitBuildConstant {
+	return &VisitBuildConstant{args: args}
+}
+
+func (s *VisitBuildConstant) VisitLight(subject any, intro sl.Introspector) (any, error) {
+	if _, ok := subject.(*BuildConstantBQTerm); !ok {
+		return subject, sl.ErrVisitFailure
+	}
+	if len(s.args) != 1 {
+		return subject, sl.ErrVisitFailure
+	}
+	var newChildren []any
+	for i := 0; i < 1; i++ {
+		oldChild := intro.GetChildAt(subject, i)
+		newChild, err := s.args[i].VisitLight(oldChild, intro)
+		if err != nil {
+			return subject, err
+		}
+		if newChildren != nil {
+			newChildren[i] = newChild
+		} else if newChild != oldChild {
+			newChildren = intro.GetChildren(subject)
+			newChildren[i] = newChild
+		}
+	}
+	if newChildren != nil {
+		return intro.SetChildren(subject, newChildren), nil
+	}
+	return subject, nil
+}
+
+func (s *VisitBuildConstant) ChildCount() int                 { return len(s.args) }
+func (s *VisitBuildConstant) ChildAt(i int) sl.Strategy       { return s.args[i] }
+func (s *VisitBuildConstant) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
 
 // BuildTermBQTerm is the term type for the alternative `BuildTerm(...)` of sort BQTerm.
 type BuildTermBQTerm struct {
@@ -1023,12 +3012,106 @@ func (t *BuildTermBQTerm) String() string {
 	return fmt.Sprintf("BuildTerm(%v,%v,%s)", t.AstName, t.Args, sharedobjects.JavaEscape(t.ModuleName))
 }
 
+func (t *BuildTermBQTerm) ChildCount() int { return 3 }
+
+func (t *BuildTermBQTerm) ChildAt(i int) any {
+	switch i {
+	case 0:
+		return t.AstName
+	case 1:
+		return t.Args
+	case 2:
+		return t.ModuleName
+	}
+	panic(fmt.Sprintf("BuildTermBQTerm.ChildAt: index %d out of range", i))
+}
+
+func (t *BuildTermBQTerm) SetChildAt(i int, child any) any {
+	switch i {
+	case 0:
+		return MakeBuildTerm(child.(TomName), t.Args, t.ModuleName)
+	case 1:
+		return MakeBuildTerm(t.AstName, child.(BQTermList), t.ModuleName)
+	case 2:
+		return MakeBuildTerm(t.AstName, t.Args, child.(string))
+	}
+	panic(fmt.Sprintf("BuildTermBQTerm.SetChildAt: index %d out of range", i))
+}
+
+func (t *BuildTermBQTerm) Children() []any {
+	return []any{t.AstName, t.Args, t.ModuleName}
+}
+
+func (t *BuildTermBQTerm) SetChildren(children []any) any {
+	return MakeBuildTerm(children[0].(TomName), children[1].(BQTermList), children[2].(string))
+}
+
 // MakeBuildTerm builds the canonical (shared) BuildTerm term.
 func MakeBuildTerm(astName TomName, args BQTermList, moduleName string) BQTerm {
 	hashes := []uint32{astName.Hash(), args.Hash(), sharedobjects.StringHash(fmt.Sprintf("%v", moduleName))}
 	proto := &BuildTermBQTerm{hash: sharedobjects.MixSymbol(sharedobjects.StringHash("BuildTerm"), hashes), AstName: astName, Args: args, ModuleName: moduleName}
 	return factory.Build(proto).(*BuildTermBQTerm)
 }
+
+// IsBuildTerm is the `Is_BuildTerm` predicate strategy: succeeds (returns subject
+// unchanged) when subject has the `BuildTerm` shape, otherwise fails with
+// sl.ErrVisitFailure.
+type IsBuildTerm struct{}
+
+func (IsBuildTerm) VisitLight(subject any, _ sl.Introspector) (any, error) {
+	if _, ok := subject.(*BuildTermBQTerm); ok {
+		return subject, nil
+	}
+	return subject, sl.ErrVisitFailure
+}
+func (IsBuildTerm) ChildCount() int             { return 0 }
+func (IsBuildTerm) ChildAt(int) sl.Strategy     { panic("IsBuildTerm: no children") }
+func (IsBuildTerm) SetChildAt(int, sl.Strategy) { panic("IsBuildTerm: no children") }
+
+// VisitBuildTerm is the `_BuildTerm` slot-visit strategy: when subject is `BuildTerm`,
+// applies each constituent strategy to the matching child slot and
+// rebuilds the term iff at least one child changed. Fails with
+// sl.ErrVisitFailure when subject isn't `BuildTerm`.
+type VisitBuildTerm struct {
+	args []sl.Strategy
+}
+
+// NewVisitBuildTerm builds the slot-visit strategy with the supplied per-slot
+// sub-strategies.
+func NewVisitBuildTerm(args ...sl.Strategy) *VisitBuildTerm {
+	return &VisitBuildTerm{args: args}
+}
+
+func (s *VisitBuildTerm) VisitLight(subject any, intro sl.Introspector) (any, error) {
+	if _, ok := subject.(*BuildTermBQTerm); !ok {
+		return subject, sl.ErrVisitFailure
+	}
+	if len(s.args) != 3 {
+		return subject, sl.ErrVisitFailure
+	}
+	var newChildren []any
+	for i := 0; i < 3; i++ {
+		oldChild := intro.GetChildAt(subject, i)
+		newChild, err := s.args[i].VisitLight(oldChild, intro)
+		if err != nil {
+			return subject, err
+		}
+		if newChildren != nil {
+			newChildren[i] = newChild
+		} else if newChild != oldChild {
+			newChildren = intro.GetChildren(subject)
+			newChildren[i] = newChild
+		}
+	}
+	if newChildren != nil {
+		return intro.SetChildren(subject, newChildren), nil
+	}
+	return subject, nil
+}
+
+func (s *VisitBuildTerm) ChildCount() int                 { return len(s.args) }
+func (s *VisitBuildTerm) ChildAt(i int) sl.Strategy       { return s.args[i] }
+func (s *VisitBuildTerm) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
 
 // BuildEmptyListBQTerm is the term type for the alternative `BuildEmptyList(...)` of sort BQTerm.
 type BuildEmptyListBQTerm struct {
@@ -1060,12 +3143,98 @@ func (t *BuildEmptyListBQTerm) String() string {
 	return fmt.Sprintf("BuildEmptyList(%v)", t.AstName)
 }
 
+func (t *BuildEmptyListBQTerm) ChildCount() int { return 1 }
+
+func (t *BuildEmptyListBQTerm) ChildAt(i int) any {
+	switch i {
+	case 0:
+		return t.AstName
+	}
+	panic(fmt.Sprintf("BuildEmptyListBQTerm.ChildAt: index %d out of range", i))
+}
+
+func (t *BuildEmptyListBQTerm) SetChildAt(i int, child any) any {
+	switch i {
+	case 0:
+		return MakeBuildEmptyList(child.(TomName))
+	}
+	panic(fmt.Sprintf("BuildEmptyListBQTerm.SetChildAt: index %d out of range", i))
+}
+
+func (t *BuildEmptyListBQTerm) Children() []any {
+	return []any{t.AstName}
+}
+
+func (t *BuildEmptyListBQTerm) SetChildren(children []any) any {
+	return MakeBuildEmptyList(children[0].(TomName))
+}
+
 // MakeBuildEmptyList builds the canonical (shared) BuildEmptyList term.
 func MakeBuildEmptyList(astName TomName) BQTerm {
 	hashes := []uint32{astName.Hash()}
 	proto := &BuildEmptyListBQTerm{hash: sharedobjects.MixSymbol(sharedobjects.StringHash("BuildEmptyList"), hashes), AstName: astName}
 	return factory.Build(proto).(*BuildEmptyListBQTerm)
 }
+
+// IsBuildEmptyList is the `Is_BuildEmptyList` predicate strategy: succeeds (returns subject
+// unchanged) when subject has the `BuildEmptyList` shape, otherwise fails with
+// sl.ErrVisitFailure.
+type IsBuildEmptyList struct{}
+
+func (IsBuildEmptyList) VisitLight(subject any, _ sl.Introspector) (any, error) {
+	if _, ok := subject.(*BuildEmptyListBQTerm); ok {
+		return subject, nil
+	}
+	return subject, sl.ErrVisitFailure
+}
+func (IsBuildEmptyList) ChildCount() int             { return 0 }
+func (IsBuildEmptyList) ChildAt(int) sl.Strategy     { panic("IsBuildEmptyList: no children") }
+func (IsBuildEmptyList) SetChildAt(int, sl.Strategy) { panic("IsBuildEmptyList: no children") }
+
+// VisitBuildEmptyList is the `_BuildEmptyList` slot-visit strategy: when subject is `BuildEmptyList`,
+// applies each constituent strategy to the matching child slot and
+// rebuilds the term iff at least one child changed. Fails with
+// sl.ErrVisitFailure when subject isn't `BuildEmptyList`.
+type VisitBuildEmptyList struct {
+	args []sl.Strategy
+}
+
+// NewVisitBuildEmptyList builds the slot-visit strategy with the supplied per-slot
+// sub-strategies.
+func NewVisitBuildEmptyList(args ...sl.Strategy) *VisitBuildEmptyList {
+	return &VisitBuildEmptyList{args: args}
+}
+
+func (s *VisitBuildEmptyList) VisitLight(subject any, intro sl.Introspector) (any, error) {
+	if _, ok := subject.(*BuildEmptyListBQTerm); !ok {
+		return subject, sl.ErrVisitFailure
+	}
+	if len(s.args) != 1 {
+		return subject, sl.ErrVisitFailure
+	}
+	var newChildren []any
+	for i := 0; i < 1; i++ {
+		oldChild := intro.GetChildAt(subject, i)
+		newChild, err := s.args[i].VisitLight(oldChild, intro)
+		if err != nil {
+			return subject, err
+		}
+		if newChildren != nil {
+			newChildren[i] = newChild
+		} else if newChild != oldChild {
+			newChildren = intro.GetChildren(subject)
+			newChildren[i] = newChild
+		}
+	}
+	if newChildren != nil {
+		return intro.SetChildren(subject, newChildren), nil
+	}
+	return subject, nil
+}
+
+func (s *VisitBuildEmptyList) ChildCount() int                 { return len(s.args) }
+func (s *VisitBuildEmptyList) ChildAt(i int) sl.Strategy       { return s.args[i] }
+func (s *VisitBuildEmptyList) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
 
 // BuildConsListBQTerm is the term type for the alternative `BuildConsList(...)` of sort BQTerm.
 type BuildConsListBQTerm struct {
@@ -1105,12 +3274,106 @@ func (t *BuildConsListBQTerm) String() string {
 	return fmt.Sprintf("BuildConsList(%v,%v,%v)", t.AstName, t.HeadTerm, t.TailTerm)
 }
 
+func (t *BuildConsListBQTerm) ChildCount() int { return 3 }
+
+func (t *BuildConsListBQTerm) ChildAt(i int) any {
+	switch i {
+	case 0:
+		return t.AstName
+	case 1:
+		return t.HeadTerm
+	case 2:
+		return t.TailTerm
+	}
+	panic(fmt.Sprintf("BuildConsListBQTerm.ChildAt: index %d out of range", i))
+}
+
+func (t *BuildConsListBQTerm) SetChildAt(i int, child any) any {
+	switch i {
+	case 0:
+		return MakeBuildConsList(child.(TomName), t.HeadTerm, t.TailTerm)
+	case 1:
+		return MakeBuildConsList(t.AstName, child.(BQTerm), t.TailTerm)
+	case 2:
+		return MakeBuildConsList(t.AstName, t.HeadTerm, child.(BQTerm))
+	}
+	panic(fmt.Sprintf("BuildConsListBQTerm.SetChildAt: index %d out of range", i))
+}
+
+func (t *BuildConsListBQTerm) Children() []any {
+	return []any{t.AstName, t.HeadTerm, t.TailTerm}
+}
+
+func (t *BuildConsListBQTerm) SetChildren(children []any) any {
+	return MakeBuildConsList(children[0].(TomName), children[1].(BQTerm), children[2].(BQTerm))
+}
+
 // MakeBuildConsList builds the canonical (shared) BuildConsList term.
 func MakeBuildConsList(astName TomName, headTerm BQTerm, tailTerm BQTerm) BQTerm {
 	hashes := []uint32{astName.Hash(), headTerm.Hash(), tailTerm.Hash()}
 	proto := &BuildConsListBQTerm{hash: sharedobjects.MixSymbol(sharedobjects.StringHash("BuildConsList"), hashes), AstName: astName, HeadTerm: headTerm, TailTerm: tailTerm}
 	return factory.Build(proto).(*BuildConsListBQTerm)
 }
+
+// IsBuildConsList is the `Is_BuildConsList` predicate strategy: succeeds (returns subject
+// unchanged) when subject has the `BuildConsList` shape, otherwise fails with
+// sl.ErrVisitFailure.
+type IsBuildConsList struct{}
+
+func (IsBuildConsList) VisitLight(subject any, _ sl.Introspector) (any, error) {
+	if _, ok := subject.(*BuildConsListBQTerm); ok {
+		return subject, nil
+	}
+	return subject, sl.ErrVisitFailure
+}
+func (IsBuildConsList) ChildCount() int             { return 0 }
+func (IsBuildConsList) ChildAt(int) sl.Strategy     { panic("IsBuildConsList: no children") }
+func (IsBuildConsList) SetChildAt(int, sl.Strategy) { panic("IsBuildConsList: no children") }
+
+// VisitBuildConsList is the `_BuildConsList` slot-visit strategy: when subject is `BuildConsList`,
+// applies each constituent strategy to the matching child slot and
+// rebuilds the term iff at least one child changed. Fails with
+// sl.ErrVisitFailure when subject isn't `BuildConsList`.
+type VisitBuildConsList struct {
+	args []sl.Strategy
+}
+
+// NewVisitBuildConsList builds the slot-visit strategy with the supplied per-slot
+// sub-strategies.
+func NewVisitBuildConsList(args ...sl.Strategy) *VisitBuildConsList {
+	return &VisitBuildConsList{args: args}
+}
+
+func (s *VisitBuildConsList) VisitLight(subject any, intro sl.Introspector) (any, error) {
+	if _, ok := subject.(*BuildConsListBQTerm); !ok {
+		return subject, sl.ErrVisitFailure
+	}
+	if len(s.args) != 3 {
+		return subject, sl.ErrVisitFailure
+	}
+	var newChildren []any
+	for i := 0; i < 3; i++ {
+		oldChild := intro.GetChildAt(subject, i)
+		newChild, err := s.args[i].VisitLight(oldChild, intro)
+		if err != nil {
+			return subject, err
+		}
+		if newChildren != nil {
+			newChildren[i] = newChild
+		} else if newChild != oldChild {
+			newChildren = intro.GetChildren(subject)
+			newChildren[i] = newChild
+		}
+	}
+	if newChildren != nil {
+		return intro.SetChildren(subject, newChildren), nil
+	}
+	return subject, nil
+}
+
+func (s *VisitBuildConsList) ChildCount() int                 { return len(s.args) }
+func (s *VisitBuildConsList) ChildAt(i int) sl.Strategy       { return s.args[i] }
+func (s *VisitBuildConsList) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
 
 // BuildAppendListBQTerm is the term type for the alternative `BuildAppendList(...)` of sort BQTerm.
 type BuildAppendListBQTerm struct {
@@ -1150,12 +3413,106 @@ func (t *BuildAppendListBQTerm) String() string {
 	return fmt.Sprintf("BuildAppendList(%v,%v,%v)", t.AstName, t.HeadTerm, t.TailTerm)
 }
 
+func (t *BuildAppendListBQTerm) ChildCount() int { return 3 }
+
+func (t *BuildAppendListBQTerm) ChildAt(i int) any {
+	switch i {
+	case 0:
+		return t.AstName
+	case 1:
+		return t.HeadTerm
+	case 2:
+		return t.TailTerm
+	}
+	panic(fmt.Sprintf("BuildAppendListBQTerm.ChildAt: index %d out of range", i))
+}
+
+func (t *BuildAppendListBQTerm) SetChildAt(i int, child any) any {
+	switch i {
+	case 0:
+		return MakeBuildAppendList(child.(TomName), t.HeadTerm, t.TailTerm)
+	case 1:
+		return MakeBuildAppendList(t.AstName, child.(BQTerm), t.TailTerm)
+	case 2:
+		return MakeBuildAppendList(t.AstName, t.HeadTerm, child.(BQTerm))
+	}
+	panic(fmt.Sprintf("BuildAppendListBQTerm.SetChildAt: index %d out of range", i))
+}
+
+func (t *BuildAppendListBQTerm) Children() []any {
+	return []any{t.AstName, t.HeadTerm, t.TailTerm}
+}
+
+func (t *BuildAppendListBQTerm) SetChildren(children []any) any {
+	return MakeBuildAppendList(children[0].(TomName), children[1].(BQTerm), children[2].(BQTerm))
+}
+
 // MakeBuildAppendList builds the canonical (shared) BuildAppendList term.
 func MakeBuildAppendList(astName TomName, headTerm BQTerm, tailTerm BQTerm) BQTerm {
 	hashes := []uint32{astName.Hash(), headTerm.Hash(), tailTerm.Hash()}
 	proto := &BuildAppendListBQTerm{hash: sharedobjects.MixSymbol(sharedobjects.StringHash("BuildAppendList"), hashes), AstName: astName, HeadTerm: headTerm, TailTerm: tailTerm}
 	return factory.Build(proto).(*BuildAppendListBQTerm)
 }
+
+// IsBuildAppendList is the `Is_BuildAppendList` predicate strategy: succeeds (returns subject
+// unchanged) when subject has the `BuildAppendList` shape, otherwise fails with
+// sl.ErrVisitFailure.
+type IsBuildAppendList struct{}
+
+func (IsBuildAppendList) VisitLight(subject any, _ sl.Introspector) (any, error) {
+	if _, ok := subject.(*BuildAppendListBQTerm); ok {
+		return subject, nil
+	}
+	return subject, sl.ErrVisitFailure
+}
+func (IsBuildAppendList) ChildCount() int             { return 0 }
+func (IsBuildAppendList) ChildAt(int) sl.Strategy     { panic("IsBuildAppendList: no children") }
+func (IsBuildAppendList) SetChildAt(int, sl.Strategy) { panic("IsBuildAppendList: no children") }
+
+// VisitBuildAppendList is the `_BuildAppendList` slot-visit strategy: when subject is `BuildAppendList`,
+// applies each constituent strategy to the matching child slot and
+// rebuilds the term iff at least one child changed. Fails with
+// sl.ErrVisitFailure when subject isn't `BuildAppendList`.
+type VisitBuildAppendList struct {
+	args []sl.Strategy
+}
+
+// NewVisitBuildAppendList builds the slot-visit strategy with the supplied per-slot
+// sub-strategies.
+func NewVisitBuildAppendList(args ...sl.Strategy) *VisitBuildAppendList {
+	return &VisitBuildAppendList{args: args}
+}
+
+func (s *VisitBuildAppendList) VisitLight(subject any, intro sl.Introspector) (any, error) {
+	if _, ok := subject.(*BuildAppendListBQTerm); !ok {
+		return subject, sl.ErrVisitFailure
+	}
+	if len(s.args) != 3 {
+		return subject, sl.ErrVisitFailure
+	}
+	var newChildren []any
+	for i := 0; i < 3; i++ {
+		oldChild := intro.GetChildAt(subject, i)
+		newChild, err := s.args[i].VisitLight(oldChild, intro)
+		if err != nil {
+			return subject, err
+		}
+		if newChildren != nil {
+			newChildren[i] = newChild
+		} else if newChild != oldChild {
+			newChildren = intro.GetChildren(subject)
+			newChildren[i] = newChild
+		}
+	}
+	if newChildren != nil {
+		return intro.SetChildren(subject, newChildren), nil
+	}
+	return subject, nil
+}
+
+func (s *VisitBuildAppendList) ChildCount() int                 { return len(s.args) }
+func (s *VisitBuildAppendList) ChildAt(i int) sl.Strategy       { return s.args[i] }
+func (s *VisitBuildAppendList) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
 
 // BuildEmptyArrayBQTerm is the term type for the alternative `BuildEmptyArray(...)` of sort BQTerm.
 type BuildEmptyArrayBQTerm struct {
@@ -1191,12 +3548,102 @@ func (t *BuildEmptyArrayBQTerm) String() string {
 	return fmt.Sprintf("BuildEmptyArray(%v,%v)", t.AstName, t.Size)
 }
 
+func (t *BuildEmptyArrayBQTerm) ChildCount() int { return 2 }
+
+func (t *BuildEmptyArrayBQTerm) ChildAt(i int) any {
+	switch i {
+	case 0:
+		return t.AstName
+	case 1:
+		return t.Size
+	}
+	panic(fmt.Sprintf("BuildEmptyArrayBQTerm.ChildAt: index %d out of range", i))
+}
+
+func (t *BuildEmptyArrayBQTerm) SetChildAt(i int, child any) any {
+	switch i {
+	case 0:
+		return MakeBuildEmptyArray(child.(TomName), t.Size)
+	case 1:
+		return MakeBuildEmptyArray(t.AstName, child.(BQTerm))
+	}
+	panic(fmt.Sprintf("BuildEmptyArrayBQTerm.SetChildAt: index %d out of range", i))
+}
+
+func (t *BuildEmptyArrayBQTerm) Children() []any {
+	return []any{t.AstName, t.Size}
+}
+
+func (t *BuildEmptyArrayBQTerm) SetChildren(children []any) any {
+	return MakeBuildEmptyArray(children[0].(TomName), children[1].(BQTerm))
+}
+
 // MakeBuildEmptyArray builds the canonical (shared) BuildEmptyArray term.
 func MakeBuildEmptyArray(astName TomName, size BQTerm) BQTerm {
 	hashes := []uint32{astName.Hash(), size.Hash()}
 	proto := &BuildEmptyArrayBQTerm{hash: sharedobjects.MixSymbol(sharedobjects.StringHash("BuildEmptyArray"), hashes), AstName: astName, Size: size}
 	return factory.Build(proto).(*BuildEmptyArrayBQTerm)
 }
+
+// IsBuildEmptyArray is the `Is_BuildEmptyArray` predicate strategy: succeeds (returns subject
+// unchanged) when subject has the `BuildEmptyArray` shape, otherwise fails with
+// sl.ErrVisitFailure.
+type IsBuildEmptyArray struct{}
+
+func (IsBuildEmptyArray) VisitLight(subject any, _ sl.Introspector) (any, error) {
+	if _, ok := subject.(*BuildEmptyArrayBQTerm); ok {
+		return subject, nil
+	}
+	return subject, sl.ErrVisitFailure
+}
+func (IsBuildEmptyArray) ChildCount() int             { return 0 }
+func (IsBuildEmptyArray) ChildAt(int) sl.Strategy     { panic("IsBuildEmptyArray: no children") }
+func (IsBuildEmptyArray) SetChildAt(int, sl.Strategy) { panic("IsBuildEmptyArray: no children") }
+
+// VisitBuildEmptyArray is the `_BuildEmptyArray` slot-visit strategy: when subject is `BuildEmptyArray`,
+// applies each constituent strategy to the matching child slot and
+// rebuilds the term iff at least one child changed. Fails with
+// sl.ErrVisitFailure when subject isn't `BuildEmptyArray`.
+type VisitBuildEmptyArray struct {
+	args []sl.Strategy
+}
+
+// NewVisitBuildEmptyArray builds the slot-visit strategy with the supplied per-slot
+// sub-strategies.
+func NewVisitBuildEmptyArray(args ...sl.Strategy) *VisitBuildEmptyArray {
+	return &VisitBuildEmptyArray{args: args}
+}
+
+func (s *VisitBuildEmptyArray) VisitLight(subject any, intro sl.Introspector) (any, error) {
+	if _, ok := subject.(*BuildEmptyArrayBQTerm); !ok {
+		return subject, sl.ErrVisitFailure
+	}
+	if len(s.args) != 2 {
+		return subject, sl.ErrVisitFailure
+	}
+	var newChildren []any
+	for i := 0; i < 2; i++ {
+		oldChild := intro.GetChildAt(subject, i)
+		newChild, err := s.args[i].VisitLight(oldChild, intro)
+		if err != nil {
+			return subject, err
+		}
+		if newChildren != nil {
+			newChildren[i] = newChild
+		} else if newChild != oldChild {
+			newChildren = intro.GetChildren(subject)
+			newChildren[i] = newChild
+		}
+	}
+	if newChildren != nil {
+		return intro.SetChildren(subject, newChildren), nil
+	}
+	return subject, nil
+}
+
+func (s *VisitBuildEmptyArray) ChildCount() int                 { return len(s.args) }
+func (s *VisitBuildEmptyArray) ChildAt(i int) sl.Strategy       { return s.args[i] }
+func (s *VisitBuildEmptyArray) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
 
 // BuildConsArrayBQTerm is the term type for the alternative `BuildConsArray(...)` of sort BQTerm.
 type BuildConsArrayBQTerm struct {
@@ -1236,12 +3683,106 @@ func (t *BuildConsArrayBQTerm) String() string {
 	return fmt.Sprintf("BuildConsArray(%v,%v,%v)", t.AstName, t.HeadTerm, t.TailTerm)
 }
 
+func (t *BuildConsArrayBQTerm) ChildCount() int { return 3 }
+
+func (t *BuildConsArrayBQTerm) ChildAt(i int) any {
+	switch i {
+	case 0:
+		return t.AstName
+	case 1:
+		return t.HeadTerm
+	case 2:
+		return t.TailTerm
+	}
+	panic(fmt.Sprintf("BuildConsArrayBQTerm.ChildAt: index %d out of range", i))
+}
+
+func (t *BuildConsArrayBQTerm) SetChildAt(i int, child any) any {
+	switch i {
+	case 0:
+		return MakeBuildConsArray(child.(TomName), t.HeadTerm, t.TailTerm)
+	case 1:
+		return MakeBuildConsArray(t.AstName, child.(BQTerm), t.TailTerm)
+	case 2:
+		return MakeBuildConsArray(t.AstName, t.HeadTerm, child.(BQTerm))
+	}
+	panic(fmt.Sprintf("BuildConsArrayBQTerm.SetChildAt: index %d out of range", i))
+}
+
+func (t *BuildConsArrayBQTerm) Children() []any {
+	return []any{t.AstName, t.HeadTerm, t.TailTerm}
+}
+
+func (t *BuildConsArrayBQTerm) SetChildren(children []any) any {
+	return MakeBuildConsArray(children[0].(TomName), children[1].(BQTerm), children[2].(BQTerm))
+}
+
 // MakeBuildConsArray builds the canonical (shared) BuildConsArray term.
 func MakeBuildConsArray(astName TomName, headTerm BQTerm, tailTerm BQTerm) BQTerm {
 	hashes := []uint32{astName.Hash(), headTerm.Hash(), tailTerm.Hash()}
 	proto := &BuildConsArrayBQTerm{hash: sharedobjects.MixSymbol(sharedobjects.StringHash("BuildConsArray"), hashes), AstName: astName, HeadTerm: headTerm, TailTerm: tailTerm}
 	return factory.Build(proto).(*BuildConsArrayBQTerm)
 }
+
+// IsBuildConsArray is the `Is_BuildConsArray` predicate strategy: succeeds (returns subject
+// unchanged) when subject has the `BuildConsArray` shape, otherwise fails with
+// sl.ErrVisitFailure.
+type IsBuildConsArray struct{}
+
+func (IsBuildConsArray) VisitLight(subject any, _ sl.Introspector) (any, error) {
+	if _, ok := subject.(*BuildConsArrayBQTerm); ok {
+		return subject, nil
+	}
+	return subject, sl.ErrVisitFailure
+}
+func (IsBuildConsArray) ChildCount() int             { return 0 }
+func (IsBuildConsArray) ChildAt(int) sl.Strategy     { panic("IsBuildConsArray: no children") }
+func (IsBuildConsArray) SetChildAt(int, sl.Strategy) { panic("IsBuildConsArray: no children") }
+
+// VisitBuildConsArray is the `_BuildConsArray` slot-visit strategy: when subject is `BuildConsArray`,
+// applies each constituent strategy to the matching child slot and
+// rebuilds the term iff at least one child changed. Fails with
+// sl.ErrVisitFailure when subject isn't `BuildConsArray`.
+type VisitBuildConsArray struct {
+	args []sl.Strategy
+}
+
+// NewVisitBuildConsArray builds the slot-visit strategy with the supplied per-slot
+// sub-strategies.
+func NewVisitBuildConsArray(args ...sl.Strategy) *VisitBuildConsArray {
+	return &VisitBuildConsArray{args: args}
+}
+
+func (s *VisitBuildConsArray) VisitLight(subject any, intro sl.Introspector) (any, error) {
+	if _, ok := subject.(*BuildConsArrayBQTerm); !ok {
+		return subject, sl.ErrVisitFailure
+	}
+	if len(s.args) != 3 {
+		return subject, sl.ErrVisitFailure
+	}
+	var newChildren []any
+	for i := 0; i < 3; i++ {
+		oldChild := intro.GetChildAt(subject, i)
+		newChild, err := s.args[i].VisitLight(oldChild, intro)
+		if err != nil {
+			return subject, err
+		}
+		if newChildren != nil {
+			newChildren[i] = newChild
+		} else if newChild != oldChild {
+			newChildren = intro.GetChildren(subject)
+			newChildren[i] = newChild
+		}
+	}
+	if newChildren != nil {
+		return intro.SetChildren(subject, newChildren), nil
+	}
+	return subject, nil
+}
+
+func (s *VisitBuildConsArray) ChildCount() int                 { return len(s.args) }
+func (s *VisitBuildConsArray) ChildAt(i int) sl.Strategy       { return s.args[i] }
+func (s *VisitBuildConsArray) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
 
 // BuildAppendArrayBQTerm is the term type for the alternative `BuildAppendArray(...)` of sort BQTerm.
 type BuildAppendArrayBQTerm struct {
@@ -1281,12 +3822,106 @@ func (t *BuildAppendArrayBQTerm) String() string {
 	return fmt.Sprintf("BuildAppendArray(%v,%v,%v)", t.AstName, t.HeadTerm, t.TailTerm)
 }
 
+func (t *BuildAppendArrayBQTerm) ChildCount() int { return 3 }
+
+func (t *BuildAppendArrayBQTerm) ChildAt(i int) any {
+	switch i {
+	case 0:
+		return t.AstName
+	case 1:
+		return t.HeadTerm
+	case 2:
+		return t.TailTerm
+	}
+	panic(fmt.Sprintf("BuildAppendArrayBQTerm.ChildAt: index %d out of range", i))
+}
+
+func (t *BuildAppendArrayBQTerm) SetChildAt(i int, child any) any {
+	switch i {
+	case 0:
+		return MakeBuildAppendArray(child.(TomName), t.HeadTerm, t.TailTerm)
+	case 1:
+		return MakeBuildAppendArray(t.AstName, child.(BQTerm), t.TailTerm)
+	case 2:
+		return MakeBuildAppendArray(t.AstName, t.HeadTerm, child.(BQTerm))
+	}
+	panic(fmt.Sprintf("BuildAppendArrayBQTerm.SetChildAt: index %d out of range", i))
+}
+
+func (t *BuildAppendArrayBQTerm) Children() []any {
+	return []any{t.AstName, t.HeadTerm, t.TailTerm}
+}
+
+func (t *BuildAppendArrayBQTerm) SetChildren(children []any) any {
+	return MakeBuildAppendArray(children[0].(TomName), children[1].(BQTerm), children[2].(BQTerm))
+}
+
 // MakeBuildAppendArray builds the canonical (shared) BuildAppendArray term.
 func MakeBuildAppendArray(astName TomName, headTerm BQTerm, tailTerm BQTerm) BQTerm {
 	hashes := []uint32{astName.Hash(), headTerm.Hash(), tailTerm.Hash()}
 	proto := &BuildAppendArrayBQTerm{hash: sharedobjects.MixSymbol(sharedobjects.StringHash("BuildAppendArray"), hashes), AstName: astName, HeadTerm: headTerm, TailTerm: tailTerm}
 	return factory.Build(proto).(*BuildAppendArrayBQTerm)
 }
+
+// IsBuildAppendArray is the `Is_BuildAppendArray` predicate strategy: succeeds (returns subject
+// unchanged) when subject has the `BuildAppendArray` shape, otherwise fails with
+// sl.ErrVisitFailure.
+type IsBuildAppendArray struct{}
+
+func (IsBuildAppendArray) VisitLight(subject any, _ sl.Introspector) (any, error) {
+	if _, ok := subject.(*BuildAppendArrayBQTerm); ok {
+		return subject, nil
+	}
+	return subject, sl.ErrVisitFailure
+}
+func (IsBuildAppendArray) ChildCount() int             { return 0 }
+func (IsBuildAppendArray) ChildAt(int) sl.Strategy     { panic("IsBuildAppendArray: no children") }
+func (IsBuildAppendArray) SetChildAt(int, sl.Strategy) { panic("IsBuildAppendArray: no children") }
+
+// VisitBuildAppendArray is the `_BuildAppendArray` slot-visit strategy: when subject is `BuildAppendArray`,
+// applies each constituent strategy to the matching child slot and
+// rebuilds the term iff at least one child changed. Fails with
+// sl.ErrVisitFailure when subject isn't `BuildAppendArray`.
+type VisitBuildAppendArray struct {
+	args []sl.Strategy
+}
+
+// NewVisitBuildAppendArray builds the slot-visit strategy with the supplied per-slot
+// sub-strategies.
+func NewVisitBuildAppendArray(args ...sl.Strategy) *VisitBuildAppendArray {
+	return &VisitBuildAppendArray{args: args}
+}
+
+func (s *VisitBuildAppendArray) VisitLight(subject any, intro sl.Introspector) (any, error) {
+	if _, ok := subject.(*BuildAppendArrayBQTerm); !ok {
+		return subject, sl.ErrVisitFailure
+	}
+	if len(s.args) != 3 {
+		return subject, sl.ErrVisitFailure
+	}
+	var newChildren []any
+	for i := 0; i < 3; i++ {
+		oldChild := intro.GetChildAt(subject, i)
+		newChild, err := s.args[i].VisitLight(oldChild, intro)
+		if err != nil {
+			return subject, err
+		}
+		if newChildren != nil {
+			newChildren[i] = newChild
+		} else if newChild != oldChild {
+			newChildren = intro.GetChildren(subject)
+			newChildren[i] = newChild
+		}
+	}
+	if newChildren != nil {
+		return intro.SetChildren(subject, newChildren), nil
+	}
+	return subject, nil
+}
+
+func (s *VisitBuildAppendArray) ChildCount() int                 { return len(s.args) }
+func (s *VisitBuildAppendArray) ChildAt(i int) sl.Strategy       { return s.args[i] }
+func (s *VisitBuildAppendArray) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
 
 // ExpressionToBQTermBQTerm is the term type for the alternative `ExpressionToBQTerm(...)` of sort BQTerm.
 type ExpressionToBQTermBQTerm struct {
@@ -1318,6 +3953,32 @@ func (t *ExpressionToBQTermBQTerm) String() string {
 	return fmt.Sprintf("ExpressionToBQTerm(%v)", t.Exp)
 }
 
+func (t *ExpressionToBQTermBQTerm) ChildCount() int { return 1 }
+
+func (t *ExpressionToBQTermBQTerm) ChildAt(i int) any {
+	switch i {
+	case 0:
+		return t.Exp
+	}
+	panic(fmt.Sprintf("ExpressionToBQTermBQTerm.ChildAt: index %d out of range", i))
+}
+
+func (t *ExpressionToBQTermBQTerm) SetChildAt(i int, child any) any {
+	switch i {
+	case 0:
+		return MakeExpressionToBQTerm(child.(Expression))
+	}
+	panic(fmt.Sprintf("ExpressionToBQTermBQTerm.SetChildAt: index %d out of range", i))
+}
+
+func (t *ExpressionToBQTermBQTerm) Children() []any {
+	return []any{t.Exp}
+}
+
+func (t *ExpressionToBQTermBQTerm) SetChildren(children []any) any {
+	return MakeExpressionToBQTerm(children[0].(Expression))
+}
+
 // MakeExpressionToBQTerm builds the canonical (shared) ExpressionToBQTerm term.
 func MakeExpressionToBQTerm(exp Expression) BQTerm {
 	// Rewrite rule (module:rules()): ExpressionToBQTerm(BQTermToExpression(t)) -> t.
@@ -1328,6 +3989,66 @@ func MakeExpressionToBQTerm(exp Expression) BQTerm {
 	proto := &ExpressionToBQTermBQTerm{hash: sharedobjects.MixSymbol(sharedobjects.StringHash("ExpressionToBQTerm"), hashes), Exp: exp}
 	return factory.Build(proto).(*ExpressionToBQTermBQTerm)
 }
+
+// IsExpressionToBQTerm is the `Is_ExpressionToBQTerm` predicate strategy: succeeds (returns subject
+// unchanged) when subject has the `ExpressionToBQTerm` shape, otherwise fails with
+// sl.ErrVisitFailure.
+type IsExpressionToBQTerm struct{}
+
+func (IsExpressionToBQTerm) VisitLight(subject any, _ sl.Introspector) (any, error) {
+	if _, ok := subject.(*ExpressionToBQTermBQTerm); ok {
+		return subject, nil
+	}
+	return subject, sl.ErrVisitFailure
+}
+func (IsExpressionToBQTerm) ChildCount() int             { return 0 }
+func (IsExpressionToBQTerm) ChildAt(int) sl.Strategy     { panic("IsExpressionToBQTerm: no children") }
+func (IsExpressionToBQTerm) SetChildAt(int, sl.Strategy) { panic("IsExpressionToBQTerm: no children") }
+
+// VisitExpressionToBQTerm is the `_ExpressionToBQTerm` slot-visit strategy: when subject is `ExpressionToBQTerm`,
+// applies each constituent strategy to the matching child slot and
+// rebuilds the term iff at least one child changed. Fails with
+// sl.ErrVisitFailure when subject isn't `ExpressionToBQTerm`.
+type VisitExpressionToBQTerm struct {
+	args []sl.Strategy
+}
+
+// NewVisitExpressionToBQTerm builds the slot-visit strategy with the supplied per-slot
+// sub-strategies.
+func NewVisitExpressionToBQTerm(args ...sl.Strategy) *VisitExpressionToBQTerm {
+	return &VisitExpressionToBQTerm{args: args}
+}
+
+func (s *VisitExpressionToBQTerm) VisitLight(subject any, intro sl.Introspector) (any, error) {
+	if _, ok := subject.(*ExpressionToBQTermBQTerm); !ok {
+		return subject, sl.ErrVisitFailure
+	}
+	if len(s.args) != 1 {
+		return subject, sl.ErrVisitFailure
+	}
+	var newChildren []any
+	for i := 0; i < 1; i++ {
+		oldChild := intro.GetChildAt(subject, i)
+		newChild, err := s.args[i].VisitLight(oldChild, intro)
+		if err != nil {
+			return subject, err
+		}
+		if newChildren != nil {
+			newChildren[i] = newChild
+		} else if newChild != oldChild {
+			newChildren = intro.GetChildren(subject)
+			newChildren[i] = newChild
+		}
+	}
+	if newChildren != nil {
+		return intro.SetChildren(subject, newChildren), nil
+	}
+	return subject, nil
+}
+
+func (s *VisitExpressionToBQTerm) ChildCount() int                 { return len(s.args) }
+func (s *VisitExpressionToBQTerm) ChildAt(i int) sl.Strategy       { return s.args[i] }
+func (s *VisitExpressionToBQTerm) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
 
 // SymbolOfBQTerm is the term type for the alternative `SymbolOf(...)` of sort BQTerm.
 type SymbolOfBQTerm struct {
@@ -1359,12 +4080,98 @@ func (t *SymbolOfBQTerm) String() string {
 	return fmt.Sprintf("SymbolOf(%v)", t.GroundTerm)
 }
 
+func (t *SymbolOfBQTerm) ChildCount() int { return 1 }
+
+func (t *SymbolOfBQTerm) ChildAt(i int) any {
+	switch i {
+	case 0:
+		return t.GroundTerm
+	}
+	panic(fmt.Sprintf("SymbolOfBQTerm.ChildAt: index %d out of range", i))
+}
+
+func (t *SymbolOfBQTerm) SetChildAt(i int, child any) any {
+	switch i {
+	case 0:
+		return MakeSymbolOf(child.(BQTerm))
+	}
+	panic(fmt.Sprintf("SymbolOfBQTerm.SetChildAt: index %d out of range", i))
+}
+
+func (t *SymbolOfBQTerm) Children() []any {
+	return []any{t.GroundTerm}
+}
+
+func (t *SymbolOfBQTerm) SetChildren(children []any) any {
+	return MakeSymbolOf(children[0].(BQTerm))
+}
+
 // MakeSymbolOf builds the canonical (shared) SymbolOf term.
 func MakeSymbolOf(groundTerm BQTerm) BQTerm {
 	hashes := []uint32{groundTerm.Hash()}
 	proto := &SymbolOfBQTerm{hash: sharedobjects.MixSymbol(sharedobjects.StringHash("SymbolOf"), hashes), GroundTerm: groundTerm}
 	return factory.Build(proto).(*SymbolOfBQTerm)
 }
+
+// IsSymbolOf is the `Is_SymbolOf` predicate strategy: succeeds (returns subject
+// unchanged) when subject has the `SymbolOf` shape, otherwise fails with
+// sl.ErrVisitFailure.
+type IsSymbolOf struct{}
+
+func (IsSymbolOf) VisitLight(subject any, _ sl.Introspector) (any, error) {
+	if _, ok := subject.(*SymbolOfBQTerm); ok {
+		return subject, nil
+	}
+	return subject, sl.ErrVisitFailure
+}
+func (IsSymbolOf) ChildCount() int             { return 0 }
+func (IsSymbolOf) ChildAt(int) sl.Strategy     { panic("IsSymbolOf: no children") }
+func (IsSymbolOf) SetChildAt(int, sl.Strategy) { panic("IsSymbolOf: no children") }
+
+// VisitSymbolOf is the `_SymbolOf` slot-visit strategy: when subject is `SymbolOf`,
+// applies each constituent strategy to the matching child slot and
+// rebuilds the term iff at least one child changed. Fails with
+// sl.ErrVisitFailure when subject isn't `SymbolOf`.
+type VisitSymbolOf struct {
+	args []sl.Strategy
+}
+
+// NewVisitSymbolOf builds the slot-visit strategy with the supplied per-slot
+// sub-strategies.
+func NewVisitSymbolOf(args ...sl.Strategy) *VisitSymbolOf {
+	return &VisitSymbolOf{args: args}
+}
+
+func (s *VisitSymbolOf) VisitLight(subject any, intro sl.Introspector) (any, error) {
+	if _, ok := subject.(*SymbolOfBQTerm); !ok {
+		return subject, sl.ErrVisitFailure
+	}
+	if len(s.args) != 1 {
+		return subject, sl.ErrVisitFailure
+	}
+	var newChildren []any
+	for i := 0; i < 1; i++ {
+		oldChild := intro.GetChildAt(subject, i)
+		newChild, err := s.args[i].VisitLight(oldChild, intro)
+		if err != nil {
+			return subject, err
+		}
+		if newChildren != nil {
+			newChildren[i] = newChild
+		} else if newChild != oldChild {
+			newChildren = intro.GetChildren(subject)
+			newChildren[i] = newChild
+		}
+	}
+	if newChildren != nil {
+		return intro.SetChildren(subject, newChildren), nil
+	}
+	return subject, nil
+}
+
+func (s *VisitSymbolOf) ChildCount() int                 { return len(s.args) }
+func (s *VisitSymbolOf) ChildAt(i int) sl.Strategy       { return s.args[i] }
+func (s *VisitSymbolOf) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
 
 // SubtermBQTerm is the term type for the alternative `Subterm(...)` of sort BQTerm.
 type SubtermBQTerm struct {
@@ -1404,12 +4211,106 @@ func (t *SubtermBQTerm) String() string {
 	return fmt.Sprintf("Subterm(%v,%v,%v)", t.AstName, t.SlotName, t.GroundTerm)
 }
 
+func (t *SubtermBQTerm) ChildCount() int { return 3 }
+
+func (t *SubtermBQTerm) ChildAt(i int) any {
+	switch i {
+	case 0:
+		return t.AstName
+	case 1:
+		return t.SlotName
+	case 2:
+		return t.GroundTerm
+	}
+	panic(fmt.Sprintf("SubtermBQTerm.ChildAt: index %d out of range", i))
+}
+
+func (t *SubtermBQTerm) SetChildAt(i int, child any) any {
+	switch i {
+	case 0:
+		return MakeSubtermBQTerm(child.(TomName), t.SlotName, t.GroundTerm)
+	case 1:
+		return MakeSubtermBQTerm(t.AstName, child.(TomName), t.GroundTerm)
+	case 2:
+		return MakeSubtermBQTerm(t.AstName, t.SlotName, child.(BQTerm))
+	}
+	panic(fmt.Sprintf("SubtermBQTerm.SetChildAt: index %d out of range", i))
+}
+
+func (t *SubtermBQTerm) Children() []any {
+	return []any{t.AstName, t.SlotName, t.GroundTerm}
+}
+
+func (t *SubtermBQTerm) SetChildren(children []any) any {
+	return MakeSubtermBQTerm(children[0].(TomName), children[1].(TomName), children[2].(BQTerm))
+}
+
 // MakeSubtermBQTerm builds the canonical (shared) Subterm term.
 func MakeSubtermBQTerm(astName TomName, slotName TomName, groundTerm BQTerm) BQTerm {
 	hashes := []uint32{astName.Hash(), slotName.Hash(), groundTerm.Hash()}
 	proto := &SubtermBQTerm{hash: sharedobjects.MixSymbol(sharedobjects.StringHash("Subterm"), hashes), AstName: astName, SlotName: slotName, GroundTerm: groundTerm}
 	return factory.Build(proto).(*SubtermBQTerm)
 }
+
+// IsSubtermBQTerm is the `Is_Subterm` predicate strategy: succeeds (returns subject
+// unchanged) when subject has the `Subterm` shape, otherwise fails with
+// sl.ErrVisitFailure.
+type IsSubtermBQTerm struct{}
+
+func (IsSubtermBQTerm) VisitLight(subject any, _ sl.Introspector) (any, error) {
+	if _, ok := subject.(*SubtermBQTerm); ok {
+		return subject, nil
+	}
+	return subject, sl.ErrVisitFailure
+}
+func (IsSubtermBQTerm) ChildCount() int             { return 0 }
+func (IsSubtermBQTerm) ChildAt(int) sl.Strategy     { panic("IsSubtermBQTerm: no children") }
+func (IsSubtermBQTerm) SetChildAt(int, sl.Strategy) { panic("IsSubtermBQTerm: no children") }
+
+// VisitSubtermBQTerm is the `_Subterm` slot-visit strategy: when subject is `Subterm`,
+// applies each constituent strategy to the matching child slot and
+// rebuilds the term iff at least one child changed. Fails with
+// sl.ErrVisitFailure when subject isn't `Subterm`.
+type VisitSubtermBQTerm struct {
+	args []sl.Strategy
+}
+
+// NewVisitSubtermBQTerm builds the slot-visit strategy with the supplied per-slot
+// sub-strategies.
+func NewVisitSubtermBQTerm(args ...sl.Strategy) *VisitSubtermBQTerm {
+	return &VisitSubtermBQTerm{args: args}
+}
+
+func (s *VisitSubtermBQTerm) VisitLight(subject any, intro sl.Introspector) (any, error) {
+	if _, ok := subject.(*SubtermBQTerm); !ok {
+		return subject, sl.ErrVisitFailure
+	}
+	if len(s.args) != 3 {
+		return subject, sl.ErrVisitFailure
+	}
+	var newChildren []any
+	for i := 0; i < 3; i++ {
+		oldChild := intro.GetChildAt(subject, i)
+		newChild, err := s.args[i].VisitLight(oldChild, intro)
+		if err != nil {
+			return subject, err
+		}
+		if newChildren != nil {
+			newChildren[i] = newChild
+		} else if newChild != oldChild {
+			newChildren = intro.GetChildren(subject)
+			newChildren[i] = newChild
+		}
+	}
+	if newChildren != nil {
+		return intro.SetChildren(subject, newChildren), nil
+	}
+	return subject, nil
+}
+
+func (s *VisitSubtermBQTerm) ChildCount() int                 { return len(s.args) }
+func (s *VisitSubtermBQTerm) ChildAt(i int) sl.Strategy       { return s.args[i] }
+func (s *VisitSubtermBQTerm) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
 
 // VariableHeadListBQTerm is the term type for the alternative `VariableHeadList(...)` of sort BQTerm.
 type VariableHeadListBQTerm struct {
@@ -1449,12 +4350,106 @@ func (t *VariableHeadListBQTerm) String() string {
 	return fmt.Sprintf("VariableHeadList(%v,%v,%v)", t.Opname, t.Begin, t.End)
 }
 
+func (t *VariableHeadListBQTerm) ChildCount() int { return 3 }
+
+func (t *VariableHeadListBQTerm) ChildAt(i int) any {
+	switch i {
+	case 0:
+		return t.Opname
+	case 1:
+		return t.Begin
+	case 2:
+		return t.End
+	}
+	panic(fmt.Sprintf("VariableHeadListBQTerm.ChildAt: index %d out of range", i))
+}
+
+func (t *VariableHeadListBQTerm) SetChildAt(i int, child any) any {
+	switch i {
+	case 0:
+		return MakeVariableHeadList(child.(TomName), t.Begin, t.End)
+	case 1:
+		return MakeVariableHeadList(t.Opname, child.(BQTerm), t.End)
+	case 2:
+		return MakeVariableHeadList(t.Opname, t.Begin, child.(BQTerm))
+	}
+	panic(fmt.Sprintf("VariableHeadListBQTerm.SetChildAt: index %d out of range", i))
+}
+
+func (t *VariableHeadListBQTerm) Children() []any {
+	return []any{t.Opname, t.Begin, t.End}
+}
+
+func (t *VariableHeadListBQTerm) SetChildren(children []any) any {
+	return MakeVariableHeadList(children[0].(TomName), children[1].(BQTerm), children[2].(BQTerm))
+}
+
 // MakeVariableHeadList builds the canonical (shared) VariableHeadList term.
 func MakeVariableHeadList(opname TomName, begin BQTerm, end BQTerm) BQTerm {
 	hashes := []uint32{opname.Hash(), begin.Hash(), end.Hash()}
 	proto := &VariableHeadListBQTerm{hash: sharedobjects.MixSymbol(sharedobjects.StringHash("VariableHeadList"), hashes), Opname: opname, Begin: begin, End: end}
 	return factory.Build(proto).(*VariableHeadListBQTerm)
 }
+
+// IsVariableHeadList is the `Is_VariableHeadList` predicate strategy: succeeds (returns subject
+// unchanged) when subject has the `VariableHeadList` shape, otherwise fails with
+// sl.ErrVisitFailure.
+type IsVariableHeadList struct{}
+
+func (IsVariableHeadList) VisitLight(subject any, _ sl.Introspector) (any, error) {
+	if _, ok := subject.(*VariableHeadListBQTerm); ok {
+		return subject, nil
+	}
+	return subject, sl.ErrVisitFailure
+}
+func (IsVariableHeadList) ChildCount() int             { return 0 }
+func (IsVariableHeadList) ChildAt(int) sl.Strategy     { panic("IsVariableHeadList: no children") }
+func (IsVariableHeadList) SetChildAt(int, sl.Strategy) { panic("IsVariableHeadList: no children") }
+
+// VisitVariableHeadList is the `_VariableHeadList` slot-visit strategy: when subject is `VariableHeadList`,
+// applies each constituent strategy to the matching child slot and
+// rebuilds the term iff at least one child changed. Fails with
+// sl.ErrVisitFailure when subject isn't `VariableHeadList`.
+type VisitVariableHeadList struct {
+	args []sl.Strategy
+}
+
+// NewVisitVariableHeadList builds the slot-visit strategy with the supplied per-slot
+// sub-strategies.
+func NewVisitVariableHeadList(args ...sl.Strategy) *VisitVariableHeadList {
+	return &VisitVariableHeadList{args: args}
+}
+
+func (s *VisitVariableHeadList) VisitLight(subject any, intro sl.Introspector) (any, error) {
+	if _, ok := subject.(*VariableHeadListBQTerm); !ok {
+		return subject, sl.ErrVisitFailure
+	}
+	if len(s.args) != 3 {
+		return subject, sl.ErrVisitFailure
+	}
+	var newChildren []any
+	for i := 0; i < 3; i++ {
+		oldChild := intro.GetChildAt(subject, i)
+		newChild, err := s.args[i].VisitLight(oldChild, intro)
+		if err != nil {
+			return subject, err
+		}
+		if newChildren != nil {
+			newChildren[i] = newChild
+		} else if newChild != oldChild {
+			newChildren = intro.GetChildren(subject)
+			newChildren[i] = newChild
+		}
+	}
+	if newChildren != nil {
+		return intro.SetChildren(subject, newChildren), nil
+	}
+	return subject, nil
+}
+
+func (s *VisitVariableHeadList) ChildCount() int                 { return len(s.args) }
+func (s *VisitVariableHeadList) ChildAt(i int) sl.Strategy       { return s.args[i] }
+func (s *VisitVariableHeadList) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
 
 // VariableHeadArrayBQTerm is the term type for the alternative `VariableHeadArray(...)` of sort BQTerm.
 type VariableHeadArrayBQTerm struct {
@@ -1498,12 +4493,110 @@ func (t *VariableHeadArrayBQTerm) String() string {
 	return fmt.Sprintf("VariableHeadArray(%v,%v,%v,%v)", t.Opname, t.Subject, t.BeginIndex, t.EndIndex)
 }
 
+func (t *VariableHeadArrayBQTerm) ChildCount() int { return 4 }
+
+func (t *VariableHeadArrayBQTerm) ChildAt(i int) any {
+	switch i {
+	case 0:
+		return t.Opname
+	case 1:
+		return t.Subject
+	case 2:
+		return t.BeginIndex
+	case 3:
+		return t.EndIndex
+	}
+	panic(fmt.Sprintf("VariableHeadArrayBQTerm.ChildAt: index %d out of range", i))
+}
+
+func (t *VariableHeadArrayBQTerm) SetChildAt(i int, child any) any {
+	switch i {
+	case 0:
+		return MakeVariableHeadArray(child.(TomName), t.Subject, t.BeginIndex, t.EndIndex)
+	case 1:
+		return MakeVariableHeadArray(t.Opname, child.(BQTerm), t.BeginIndex, t.EndIndex)
+	case 2:
+		return MakeVariableHeadArray(t.Opname, t.Subject, child.(BQTerm), t.EndIndex)
+	case 3:
+		return MakeVariableHeadArray(t.Opname, t.Subject, t.BeginIndex, child.(BQTerm))
+	}
+	panic(fmt.Sprintf("VariableHeadArrayBQTerm.SetChildAt: index %d out of range", i))
+}
+
+func (t *VariableHeadArrayBQTerm) Children() []any {
+	return []any{t.Opname, t.Subject, t.BeginIndex, t.EndIndex}
+}
+
+func (t *VariableHeadArrayBQTerm) SetChildren(children []any) any {
+	return MakeVariableHeadArray(children[0].(TomName), children[1].(BQTerm), children[2].(BQTerm), children[3].(BQTerm))
+}
+
 // MakeVariableHeadArray builds the canonical (shared) VariableHeadArray term.
 func MakeVariableHeadArray(opname TomName, subject BQTerm, beginIndex BQTerm, endIndex BQTerm) BQTerm {
 	hashes := []uint32{opname.Hash(), subject.Hash(), beginIndex.Hash(), endIndex.Hash()}
 	proto := &VariableHeadArrayBQTerm{hash: sharedobjects.MixSymbol(sharedobjects.StringHash("VariableHeadArray"), hashes), Opname: opname, Subject: subject, BeginIndex: beginIndex, EndIndex: endIndex}
 	return factory.Build(proto).(*VariableHeadArrayBQTerm)
 }
+
+// IsVariableHeadArray is the `Is_VariableHeadArray` predicate strategy: succeeds (returns subject
+// unchanged) when subject has the `VariableHeadArray` shape, otherwise fails with
+// sl.ErrVisitFailure.
+type IsVariableHeadArray struct{}
+
+func (IsVariableHeadArray) VisitLight(subject any, _ sl.Introspector) (any, error) {
+	if _, ok := subject.(*VariableHeadArrayBQTerm); ok {
+		return subject, nil
+	}
+	return subject, sl.ErrVisitFailure
+}
+func (IsVariableHeadArray) ChildCount() int             { return 0 }
+func (IsVariableHeadArray) ChildAt(int) sl.Strategy     { panic("IsVariableHeadArray: no children") }
+func (IsVariableHeadArray) SetChildAt(int, sl.Strategy) { panic("IsVariableHeadArray: no children") }
+
+// VisitVariableHeadArray is the `_VariableHeadArray` slot-visit strategy: when subject is `VariableHeadArray`,
+// applies each constituent strategy to the matching child slot and
+// rebuilds the term iff at least one child changed. Fails with
+// sl.ErrVisitFailure when subject isn't `VariableHeadArray`.
+type VisitVariableHeadArray struct {
+	args []sl.Strategy
+}
+
+// NewVisitVariableHeadArray builds the slot-visit strategy with the supplied per-slot
+// sub-strategies.
+func NewVisitVariableHeadArray(args ...sl.Strategy) *VisitVariableHeadArray {
+	return &VisitVariableHeadArray{args: args}
+}
+
+func (s *VisitVariableHeadArray) VisitLight(subject any, intro sl.Introspector) (any, error) {
+	if _, ok := subject.(*VariableHeadArrayBQTerm); !ok {
+		return subject, sl.ErrVisitFailure
+	}
+	if len(s.args) != 4 {
+		return subject, sl.ErrVisitFailure
+	}
+	var newChildren []any
+	for i := 0; i < 4; i++ {
+		oldChild := intro.GetChildAt(subject, i)
+		newChild, err := s.args[i].VisitLight(oldChild, intro)
+		if err != nil {
+			return subject, err
+		}
+		if newChildren != nil {
+			newChildren[i] = newChild
+		} else if newChild != oldChild {
+			newChildren = intro.GetChildren(subject)
+			newChildren[i] = newChild
+		}
+	}
+	if newChildren != nil {
+		return intro.SetChildren(subject, newChildren), nil
+	}
+	return subject, nil
+}
+
+func (s *VisitVariableHeadArray) ChildCount() int                 { return len(s.args) }
+func (s *VisitVariableHeadArray) ChildAt(i int) sl.Strategy       { return s.args[i] }
+func (s *VisitVariableHeadArray) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
 
 // ListHeadBQTerm is the term type for the alternative `ListHead(...)` of sort BQTerm.
 type ListHeadBQTerm struct {
@@ -1543,12 +4636,106 @@ func (t *ListHeadBQTerm) String() string {
 	return fmt.Sprintf("ListHead(%v,%v,%v)", t.Opname, t.Codomain, t.Variable)
 }
 
+func (t *ListHeadBQTerm) ChildCount() int { return 3 }
+
+func (t *ListHeadBQTerm) ChildAt(i int) any {
+	switch i {
+	case 0:
+		return t.Opname
+	case 1:
+		return t.Codomain
+	case 2:
+		return t.Variable
+	}
+	panic(fmt.Sprintf("ListHeadBQTerm.ChildAt: index %d out of range", i))
+}
+
+func (t *ListHeadBQTerm) SetChildAt(i int, child any) any {
+	switch i {
+	case 0:
+		return MakeListHead(child.(TomName), t.Codomain, t.Variable)
+	case 1:
+		return MakeListHead(t.Opname, child.(TomType), t.Variable)
+	case 2:
+		return MakeListHead(t.Opname, t.Codomain, child.(BQTerm))
+	}
+	panic(fmt.Sprintf("ListHeadBQTerm.SetChildAt: index %d out of range", i))
+}
+
+func (t *ListHeadBQTerm) Children() []any {
+	return []any{t.Opname, t.Codomain, t.Variable}
+}
+
+func (t *ListHeadBQTerm) SetChildren(children []any) any {
+	return MakeListHead(children[0].(TomName), children[1].(TomType), children[2].(BQTerm))
+}
+
 // MakeListHead builds the canonical (shared) ListHead term.
 func MakeListHead(opname TomName, codomain TomType, variable BQTerm) BQTerm {
 	hashes := []uint32{opname.Hash(), codomain.Hash(), variable.Hash()}
 	proto := &ListHeadBQTerm{hash: sharedobjects.MixSymbol(sharedobjects.StringHash("ListHead"), hashes), Opname: opname, Codomain: codomain, Variable: variable}
 	return factory.Build(proto).(*ListHeadBQTerm)
 }
+
+// IsListHead is the `Is_ListHead` predicate strategy: succeeds (returns subject
+// unchanged) when subject has the `ListHead` shape, otherwise fails with
+// sl.ErrVisitFailure.
+type IsListHead struct{}
+
+func (IsListHead) VisitLight(subject any, _ sl.Introspector) (any, error) {
+	if _, ok := subject.(*ListHeadBQTerm); ok {
+		return subject, nil
+	}
+	return subject, sl.ErrVisitFailure
+}
+func (IsListHead) ChildCount() int             { return 0 }
+func (IsListHead) ChildAt(int) sl.Strategy     { panic("IsListHead: no children") }
+func (IsListHead) SetChildAt(int, sl.Strategy) { panic("IsListHead: no children") }
+
+// VisitListHead is the `_ListHead` slot-visit strategy: when subject is `ListHead`,
+// applies each constituent strategy to the matching child slot and
+// rebuilds the term iff at least one child changed. Fails with
+// sl.ErrVisitFailure when subject isn't `ListHead`.
+type VisitListHead struct {
+	args []sl.Strategy
+}
+
+// NewVisitListHead builds the slot-visit strategy with the supplied per-slot
+// sub-strategies.
+func NewVisitListHead(args ...sl.Strategy) *VisitListHead {
+	return &VisitListHead{args: args}
+}
+
+func (s *VisitListHead) VisitLight(subject any, intro sl.Introspector) (any, error) {
+	if _, ok := subject.(*ListHeadBQTerm); !ok {
+		return subject, sl.ErrVisitFailure
+	}
+	if len(s.args) != 3 {
+		return subject, sl.ErrVisitFailure
+	}
+	var newChildren []any
+	for i := 0; i < 3; i++ {
+		oldChild := intro.GetChildAt(subject, i)
+		newChild, err := s.args[i].VisitLight(oldChild, intro)
+		if err != nil {
+			return subject, err
+		}
+		if newChildren != nil {
+			newChildren[i] = newChild
+		} else if newChild != oldChild {
+			newChildren = intro.GetChildren(subject)
+			newChildren[i] = newChild
+		}
+	}
+	if newChildren != nil {
+		return intro.SetChildren(subject, newChildren), nil
+	}
+	return subject, nil
+}
+
+func (s *VisitListHead) ChildCount() int                 { return len(s.args) }
+func (s *VisitListHead) ChildAt(i int) sl.Strategy       { return s.args[i] }
+func (s *VisitListHead) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
 
 // ListTailBQTerm is the term type for the alternative `ListTail(...)` of sort BQTerm.
 type ListTailBQTerm struct {
@@ -1584,9 +4771,99 @@ func (t *ListTailBQTerm) String() string {
 	return fmt.Sprintf("ListTail(%v,%v)", t.Opname, t.Variable)
 }
 
+func (t *ListTailBQTerm) ChildCount() int { return 2 }
+
+func (t *ListTailBQTerm) ChildAt(i int) any {
+	switch i {
+	case 0:
+		return t.Opname
+	case 1:
+		return t.Variable
+	}
+	panic(fmt.Sprintf("ListTailBQTerm.ChildAt: index %d out of range", i))
+}
+
+func (t *ListTailBQTerm) SetChildAt(i int, child any) any {
+	switch i {
+	case 0:
+		return MakeListTail(child.(TomName), t.Variable)
+	case 1:
+		return MakeListTail(t.Opname, child.(BQTerm))
+	}
+	panic(fmt.Sprintf("ListTailBQTerm.SetChildAt: index %d out of range", i))
+}
+
+func (t *ListTailBQTerm) Children() []any {
+	return []any{t.Opname, t.Variable}
+}
+
+func (t *ListTailBQTerm) SetChildren(children []any) any {
+	return MakeListTail(children[0].(TomName), children[1].(BQTerm))
+}
+
 // MakeListTail builds the canonical (shared) ListTail term.
 func MakeListTail(opname TomName, variable BQTerm) BQTerm {
 	hashes := []uint32{opname.Hash(), variable.Hash()}
 	proto := &ListTailBQTerm{hash: sharedobjects.MixSymbol(sharedobjects.StringHash("ListTail"), hashes), Opname: opname, Variable: variable}
 	return factory.Build(proto).(*ListTailBQTerm)
 }
+
+// IsListTail is the `Is_ListTail` predicate strategy: succeeds (returns subject
+// unchanged) when subject has the `ListTail` shape, otherwise fails with
+// sl.ErrVisitFailure.
+type IsListTail struct{}
+
+func (IsListTail) VisitLight(subject any, _ sl.Introspector) (any, error) {
+	if _, ok := subject.(*ListTailBQTerm); ok {
+		return subject, nil
+	}
+	return subject, sl.ErrVisitFailure
+}
+func (IsListTail) ChildCount() int             { return 0 }
+func (IsListTail) ChildAt(int) sl.Strategy     { panic("IsListTail: no children") }
+func (IsListTail) SetChildAt(int, sl.Strategy) { panic("IsListTail: no children") }
+
+// VisitListTail is the `_ListTail` slot-visit strategy: when subject is `ListTail`,
+// applies each constituent strategy to the matching child slot and
+// rebuilds the term iff at least one child changed. Fails with
+// sl.ErrVisitFailure when subject isn't `ListTail`.
+type VisitListTail struct {
+	args []sl.Strategy
+}
+
+// NewVisitListTail builds the slot-visit strategy with the supplied per-slot
+// sub-strategies.
+func NewVisitListTail(args ...sl.Strategy) *VisitListTail {
+	return &VisitListTail{args: args}
+}
+
+func (s *VisitListTail) VisitLight(subject any, intro sl.Introspector) (any, error) {
+	if _, ok := subject.(*ListTailBQTerm); !ok {
+		return subject, sl.ErrVisitFailure
+	}
+	if len(s.args) != 2 {
+		return subject, sl.ErrVisitFailure
+	}
+	var newChildren []any
+	for i := 0; i < 2; i++ {
+		oldChild := intro.GetChildAt(subject, i)
+		newChild, err := s.args[i].VisitLight(oldChild, intro)
+		if err != nil {
+			return subject, err
+		}
+		if newChildren != nil {
+			newChildren[i] = newChild
+		} else if newChild != oldChild {
+			newChildren = intro.GetChildren(subject)
+			newChildren[i] = newChild
+		}
+	}
+	if newChildren != nil {
+		return intro.SetChildren(subject, newChildren), nil
+	}
+	return subject, nil
+}
+
+func (s *VisitListTail) ChildCount() int                 { return len(s.args) }
+func (s *VisitListTail) ChildAt(i int) sl.Strategy       { return s.args[i] }
+func (s *VisitListTail) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }

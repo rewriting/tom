@@ -6,11 +6,13 @@ import (
 	"strings"
 
 	"tom/tomgo/stable/library/sharedobjects"
+	sl "tom/tomgo/stable/library/sl"
 )
 
 // underscore-prevent: tolerate unused imports if a module has no slots of these types.
 var _ = fmt.Sprintf
 var _ = strings.Join
+var _ sl.Strategy = nil
 
 // Info is the Go interface backing the Gom sort Info.
 type Info interface {
@@ -52,12 +54,102 @@ func (t *PairNameOptionsInfo) String() string {
 	return fmt.Sprintf("PairNameOptions(%v,%v)", t.AstName, t.Options)
 }
 
+func (t *PairNameOptionsInfo) ChildCount() int { return 2 }
+
+func (t *PairNameOptionsInfo) ChildAt(i int) any {
+	switch i {
+	case 0:
+		return t.AstName
+	case 1:
+		return t.Options
+	}
+	panic(fmt.Sprintf("PairNameOptionsInfo.ChildAt: index %d out of range", i))
+}
+
+func (t *PairNameOptionsInfo) SetChildAt(i int, child any) any {
+	switch i {
+	case 0:
+		return MakePairNameOptions(child.(TomName), t.Options)
+	case 1:
+		return MakePairNameOptions(t.AstName, child.(OptionList))
+	}
+	panic(fmt.Sprintf("PairNameOptionsInfo.SetChildAt: index %d out of range", i))
+}
+
+func (t *PairNameOptionsInfo) Children() []any {
+	return []any{t.AstName, t.Options}
+}
+
+func (t *PairNameOptionsInfo) SetChildren(children []any) any {
+	return MakePairNameOptions(children[0].(TomName), children[1].(OptionList))
+}
+
 // MakePairNameOptions builds the canonical (shared) PairNameOptions term.
 func MakePairNameOptions(astName TomName, options OptionList) Info {
 	hashes := []uint32{astName.Hash(), options.Hash()}
 	proto := &PairNameOptionsInfo{hash: sharedobjects.MixSymbol(sharedobjects.StringHash("PairNameOptions"), hashes), AstName: astName, Options: options}
 	return factory.Build(proto).(*PairNameOptionsInfo)
 }
+
+// IsPairNameOptions is the `Is_PairNameOptions` predicate strategy: succeeds (returns subject
+// unchanged) when subject has the `PairNameOptions` shape, otherwise fails with
+// sl.ErrVisitFailure.
+type IsPairNameOptions struct{}
+
+func (IsPairNameOptions) VisitLight(subject any, _ sl.Introspector) (any, error) {
+	if _, ok := subject.(*PairNameOptionsInfo); ok {
+		return subject, nil
+	}
+	return subject, sl.ErrVisitFailure
+}
+func (IsPairNameOptions) ChildCount() int             { return 0 }
+func (IsPairNameOptions) ChildAt(int) sl.Strategy     { panic("IsPairNameOptions: no children") }
+func (IsPairNameOptions) SetChildAt(int, sl.Strategy) { panic("IsPairNameOptions: no children") }
+
+// VisitPairNameOptions is the `_PairNameOptions` slot-visit strategy: when subject is `PairNameOptions`,
+// applies each constituent strategy to the matching child slot and
+// rebuilds the term iff at least one child changed. Fails with
+// sl.ErrVisitFailure when subject isn't `PairNameOptions`.
+type VisitPairNameOptions struct {
+	args []sl.Strategy
+}
+
+// NewVisitPairNameOptions builds the slot-visit strategy with the supplied per-slot
+// sub-strategies.
+func NewVisitPairNameOptions(args ...sl.Strategy) *VisitPairNameOptions {
+	return &VisitPairNameOptions{args: args}
+}
+
+func (s *VisitPairNameOptions) VisitLight(subject any, intro sl.Introspector) (any, error) {
+	if _, ok := subject.(*PairNameOptionsInfo); !ok {
+		return subject, sl.ErrVisitFailure
+	}
+	if len(s.args) != 2 {
+		return subject, sl.ErrVisitFailure
+	}
+	var newChildren []any
+	for i := 0; i < 2; i++ {
+		oldChild := intro.GetChildAt(subject, i)
+		newChild, err := s.args[i].VisitLight(oldChild, intro)
+		if err != nil {
+			return subject, err
+		}
+		if newChildren != nil {
+			newChildren[i] = newChild
+		} else if newChild != oldChild {
+			newChildren = intro.GetChildren(subject)
+			newChildren[i] = newChild
+		}
+	}
+	if newChildren != nil {
+		return intro.SetChildren(subject, newChildren), nil
+	}
+	return subject, nil
+}
+
+func (s *VisitPairNameOptions) ChildCount() int                 { return len(s.args) }
+func (s *VisitPairNameOptions) ChildAt(i int) sl.Strategy       { return s.args[i] }
+func (s *VisitPairNameOptions) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
 
 // TypeConstraint is the Go interface backing the Gom sort TypeConstraint.
 type TypeConstraint interface {
@@ -103,12 +195,106 @@ func (t *EquationTypeConstraint) String() string {
 	return fmt.Sprintf("Equation(%v,%v,%v)", t.Type1, t.Type2, t.Info)
 }
 
+func (t *EquationTypeConstraint) ChildCount() int { return 3 }
+
+func (t *EquationTypeConstraint) ChildAt(i int) any {
+	switch i {
+	case 0:
+		return t.Type1
+	case 1:
+		return t.Type2
+	case 2:
+		return t.Info
+	}
+	panic(fmt.Sprintf("EquationTypeConstraint.ChildAt: index %d out of range", i))
+}
+
+func (t *EquationTypeConstraint) SetChildAt(i int, child any) any {
+	switch i {
+	case 0:
+		return MakeEquation(child.(TomType), t.Type2, t.Info)
+	case 1:
+		return MakeEquation(t.Type1, child.(TomType), t.Info)
+	case 2:
+		return MakeEquation(t.Type1, t.Type2, child.(Info))
+	}
+	panic(fmt.Sprintf("EquationTypeConstraint.SetChildAt: index %d out of range", i))
+}
+
+func (t *EquationTypeConstraint) Children() []any {
+	return []any{t.Type1, t.Type2, t.Info}
+}
+
+func (t *EquationTypeConstraint) SetChildren(children []any) any {
+	return MakeEquation(children[0].(TomType), children[1].(TomType), children[2].(Info))
+}
+
 // MakeEquation builds the canonical (shared) Equation term.
 func MakeEquation(type1 TomType, type2 TomType, info Info) TypeConstraint {
 	hashes := []uint32{type1.Hash(), type2.Hash(), info.Hash()}
 	proto := &EquationTypeConstraint{hash: sharedobjects.MixSymbol(sharedobjects.StringHash("Equation"), hashes), Type1: type1, Type2: type2, Info: info}
 	return factory.Build(proto).(*EquationTypeConstraint)
 }
+
+// IsEquation is the `Is_Equation` predicate strategy: succeeds (returns subject
+// unchanged) when subject has the `Equation` shape, otherwise fails with
+// sl.ErrVisitFailure.
+type IsEquation struct{}
+
+func (IsEquation) VisitLight(subject any, _ sl.Introspector) (any, error) {
+	if _, ok := subject.(*EquationTypeConstraint); ok {
+		return subject, nil
+	}
+	return subject, sl.ErrVisitFailure
+}
+func (IsEquation) ChildCount() int             { return 0 }
+func (IsEquation) ChildAt(int) sl.Strategy     { panic("IsEquation: no children") }
+func (IsEquation) SetChildAt(int, sl.Strategy) { panic("IsEquation: no children") }
+
+// VisitEquation is the `_Equation` slot-visit strategy: when subject is `Equation`,
+// applies each constituent strategy to the matching child slot and
+// rebuilds the term iff at least one child changed. Fails with
+// sl.ErrVisitFailure when subject isn't `Equation`.
+type VisitEquation struct {
+	args []sl.Strategy
+}
+
+// NewVisitEquation builds the slot-visit strategy with the supplied per-slot
+// sub-strategies.
+func NewVisitEquation(args ...sl.Strategy) *VisitEquation {
+	return &VisitEquation{args: args}
+}
+
+func (s *VisitEquation) VisitLight(subject any, intro sl.Introspector) (any, error) {
+	if _, ok := subject.(*EquationTypeConstraint); !ok {
+		return subject, sl.ErrVisitFailure
+	}
+	if len(s.args) != 3 {
+		return subject, sl.ErrVisitFailure
+	}
+	var newChildren []any
+	for i := 0; i < 3; i++ {
+		oldChild := intro.GetChildAt(subject, i)
+		newChild, err := s.args[i].VisitLight(oldChild, intro)
+		if err != nil {
+			return subject, err
+		}
+		if newChildren != nil {
+			newChildren[i] = newChild
+		} else if newChild != oldChild {
+			newChildren = intro.GetChildren(subject)
+			newChildren[i] = newChild
+		}
+	}
+	if newChildren != nil {
+		return intro.SetChildren(subject, newChildren), nil
+	}
+	return subject, nil
+}
+
+func (s *VisitEquation) ChildCount() int                 { return len(s.args) }
+func (s *VisitEquation) ChildAt(i int) sl.Strategy       { return s.args[i] }
+func (s *VisitEquation) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
 
 // SubtypeTypeConstraint is the term type for the alternative `Subtype(...)` of sort TypeConstraint.
 type SubtypeTypeConstraint struct {
@@ -148,12 +334,106 @@ func (t *SubtypeTypeConstraint) String() string {
 	return fmt.Sprintf("Subtype(%v,%v,%v)", t.Type1, t.Type2, t.Info)
 }
 
+func (t *SubtypeTypeConstraint) ChildCount() int { return 3 }
+
+func (t *SubtypeTypeConstraint) ChildAt(i int) any {
+	switch i {
+	case 0:
+		return t.Type1
+	case 1:
+		return t.Type2
+	case 2:
+		return t.Info
+	}
+	panic(fmt.Sprintf("SubtypeTypeConstraint.ChildAt: index %d out of range", i))
+}
+
+func (t *SubtypeTypeConstraint) SetChildAt(i int, child any) any {
+	switch i {
+	case 0:
+		return MakeSubtype(child.(TomType), t.Type2, t.Info)
+	case 1:
+		return MakeSubtype(t.Type1, child.(TomType), t.Info)
+	case 2:
+		return MakeSubtype(t.Type1, t.Type2, child.(Info))
+	}
+	panic(fmt.Sprintf("SubtypeTypeConstraint.SetChildAt: index %d out of range", i))
+}
+
+func (t *SubtypeTypeConstraint) Children() []any {
+	return []any{t.Type1, t.Type2, t.Info}
+}
+
+func (t *SubtypeTypeConstraint) SetChildren(children []any) any {
+	return MakeSubtype(children[0].(TomType), children[1].(TomType), children[2].(Info))
+}
+
 // MakeSubtype builds the canonical (shared) Subtype term.
 func MakeSubtype(type1 TomType, type2 TomType, info Info) TypeConstraint {
 	hashes := []uint32{type1.Hash(), type2.Hash(), info.Hash()}
 	proto := &SubtypeTypeConstraint{hash: sharedobjects.MixSymbol(sharedobjects.StringHash("Subtype"), hashes), Type1: type1, Type2: type2, Info: info}
 	return factory.Build(proto).(*SubtypeTypeConstraint)
 }
+
+// IsSubtype is the `Is_Subtype` predicate strategy: succeeds (returns subject
+// unchanged) when subject has the `Subtype` shape, otherwise fails with
+// sl.ErrVisitFailure.
+type IsSubtype struct{}
+
+func (IsSubtype) VisitLight(subject any, _ sl.Introspector) (any, error) {
+	if _, ok := subject.(*SubtypeTypeConstraint); ok {
+		return subject, nil
+	}
+	return subject, sl.ErrVisitFailure
+}
+func (IsSubtype) ChildCount() int             { return 0 }
+func (IsSubtype) ChildAt(int) sl.Strategy     { panic("IsSubtype: no children") }
+func (IsSubtype) SetChildAt(int, sl.Strategy) { panic("IsSubtype: no children") }
+
+// VisitSubtype is the `_Subtype` slot-visit strategy: when subject is `Subtype`,
+// applies each constituent strategy to the matching child slot and
+// rebuilds the term iff at least one child changed. Fails with
+// sl.ErrVisitFailure when subject isn't `Subtype`.
+type VisitSubtype struct {
+	args []sl.Strategy
+}
+
+// NewVisitSubtype builds the slot-visit strategy with the supplied per-slot
+// sub-strategies.
+func NewVisitSubtype(args ...sl.Strategy) *VisitSubtype {
+	return &VisitSubtype{args: args}
+}
+
+func (s *VisitSubtype) VisitLight(subject any, intro sl.Introspector) (any, error) {
+	if _, ok := subject.(*SubtypeTypeConstraint); !ok {
+		return subject, sl.ErrVisitFailure
+	}
+	if len(s.args) != 3 {
+		return subject, sl.ErrVisitFailure
+	}
+	var newChildren []any
+	for i := 0; i < 3; i++ {
+		oldChild := intro.GetChildAt(subject, i)
+		newChild, err := s.args[i].VisitLight(oldChild, intro)
+		if err != nil {
+			return subject, err
+		}
+		if newChildren != nil {
+			newChildren[i] = newChild
+		} else if newChild != oldChild {
+			newChildren = intro.GetChildren(subject)
+			newChildren[i] = newChild
+		}
+	}
+	if newChildren != nil {
+		return intro.SetChildren(subject, newChildren), nil
+	}
+	return subject, nil
+}
+
+func (s *VisitSubtype) ChildCount() int                 { return len(s.args) }
+func (s *VisitSubtype) ChildAt(i int) sl.Strategy       { return s.args[i] }
+func (s *VisitSubtype) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
 
 // FalseTypeConstraintTypeConstraint is the term type for the alternative `FalseTypeConstraint(...)` of sort TypeConstraint.
 type FalseTypeConstraintTypeConstraint struct {
@@ -178,12 +458,69 @@ func (t *FalseTypeConstraintTypeConstraint) String() string {
 	return "FalseTypeConstraint" + "()"
 }
 
+func (t *FalseTypeConstraintTypeConstraint) ChildCount() int { return 0 }
+
+func (t *FalseTypeConstraintTypeConstraint) ChildAt(i int) any {
+	panic(fmt.Sprintf("FalseTypeConstraintTypeConstraint.ChildAt: index %d out of [0,0)", i))
+}
+
+func (t *FalseTypeConstraintTypeConstraint) SetChildAt(i int, child any) any {
+	panic(fmt.Sprintf("FalseTypeConstraintTypeConstraint.SetChildAt: index %d out of [0,0)", i))
+}
+
+func (t *FalseTypeConstraintTypeConstraint) Children() []any { return nil }
+
+func (t *FalseTypeConstraintTypeConstraint) SetChildren(children []any) any { return t }
+
 // MakeFalseTypeConstraint builds the canonical (shared) FalseTypeConstraint term.
 func MakeFalseTypeConstraint() TypeConstraint {
 	hashes := []uint32{}
 	proto := &FalseTypeConstraintTypeConstraint{hash: sharedobjects.MixSymbol(sharedobjects.StringHash("FalseTypeConstraint"), hashes)}
 	return factory.Build(proto).(*FalseTypeConstraintTypeConstraint)
 }
+
+// IsFalseTypeConstraint is the `Is_FalseTypeConstraint` predicate strategy: succeeds (returns subject
+// unchanged) when subject has the `FalseTypeConstraint` shape, otherwise fails with
+// sl.ErrVisitFailure.
+type IsFalseTypeConstraint struct{}
+
+func (IsFalseTypeConstraint) VisitLight(subject any, _ sl.Introspector) (any, error) {
+	if _, ok := subject.(*FalseTypeConstraintTypeConstraint); ok {
+		return subject, nil
+	}
+	return subject, sl.ErrVisitFailure
+}
+func (IsFalseTypeConstraint) ChildCount() int         { return 0 }
+func (IsFalseTypeConstraint) ChildAt(int) sl.Strategy { panic("IsFalseTypeConstraint: no children") }
+func (IsFalseTypeConstraint) SetChildAt(int, sl.Strategy) {
+	panic("IsFalseTypeConstraint: no children")
+}
+
+// VisitFalseTypeConstraint is the `_FalseTypeConstraint` slot-visit strategy: when subject is `FalseTypeConstraint`,
+// applies each constituent strategy to the matching child slot and
+// rebuilds the term iff at least one child changed. Fails with
+// sl.ErrVisitFailure when subject isn't `FalseTypeConstraint`.
+type VisitFalseTypeConstraint struct {
+	args []sl.Strategy
+}
+
+// NewVisitFalseTypeConstraint builds the slot-visit strategy with the supplied per-slot
+// sub-strategies.
+func NewVisitFalseTypeConstraint(args ...sl.Strategy) *VisitFalseTypeConstraint {
+	return &VisitFalseTypeConstraint{args: args}
+}
+
+func (s *VisitFalseTypeConstraint) VisitLight(subject any, intro sl.Introspector) (any, error) {
+	if _, ok := subject.(*FalseTypeConstraintTypeConstraint); !ok {
+		return subject, sl.ErrVisitFailure
+	}
+	// Nullary alt: no children to visit.
+	return subject, nil
+}
+
+func (s *VisitFalseTypeConstraint) ChildCount() int                 { return len(s.args) }
+func (s *VisitFalseTypeConstraint) ChildAt(i int) sl.Strategy       { return s.args[i] }
+func (s *VisitFalseTypeConstraint) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
 
 // TypeConstraintList is the Go interface backing the Gom sort TypeConstraintList.
 type TypeConstraintList interface {
@@ -230,6 +567,32 @@ func (t *ConcTypeConstraintTypeConstraintList) String() string {
 	return "concTypeConstraint" + "(" + strings.Join(parts, ",") + ")"
 }
 
+func (t *ConcTypeConstraintTypeConstraintList) ChildCount() int { return len(t.Slots) }
+
+func (t *ConcTypeConstraintTypeConstraintList) ChildAt(i int) any { return t.Slots[i] }
+
+func (t *ConcTypeConstraintTypeConstraintList) SetChildAt(i int, child any) any {
+	dup := append([]TypeConstraint(nil), t.Slots...)
+	dup[i] = child.(TypeConstraint)
+	return MakeConcTypeConstraint(dup...)
+}
+
+func (t *ConcTypeConstraintTypeConstraintList) Children() []any {
+	out := make([]any, len(t.Slots))
+	for i, v := range t.Slots {
+		out[i] = v
+	}
+	return out
+}
+
+func (t *ConcTypeConstraintTypeConstraintList) SetChildren(children []any) any {
+	args := make([]TypeConstraint, len(children))
+	for i, c := range children {
+		args[i] = c.(TypeConstraint)
+	}
+	return MakeConcTypeConstraint(args...)
+}
+
 // MakeConcTypeConstraint builds the canonical (shared) concTypeConstraint term.
 func MakeConcTypeConstraint(args ...TypeConstraint) TypeConstraintList {
 	hashes := make([]uint32, 0, len(args))
@@ -239,3 +602,66 @@ func MakeConcTypeConstraint(args ...TypeConstraint) TypeConstraintList {
 	proto := &ConcTypeConstraintTypeConstraintList{Slots: args, hash: sharedobjects.MixSymbol(sharedobjects.StringHash("concTypeConstraint"), hashes)}
 	return factory.Build(proto).(*ConcTypeConstraintTypeConstraintList)
 }
+
+// IsConcTypeConstraint is the `Is_concTypeConstraint` predicate strategy: succeeds (returns subject
+// unchanged) when subject has the `concTypeConstraint` shape, otherwise fails with
+// sl.ErrVisitFailure.
+type IsConcTypeConstraint struct{}
+
+func (IsConcTypeConstraint) VisitLight(subject any, _ sl.Introspector) (any, error) {
+	if _, ok := subject.(*ConcTypeConstraintTypeConstraintList); ok {
+		return subject, nil
+	}
+	return subject, sl.ErrVisitFailure
+}
+func (IsConcTypeConstraint) ChildCount() int             { return 0 }
+func (IsConcTypeConstraint) ChildAt(int) sl.Strategy     { panic("IsConcTypeConstraint: no children") }
+func (IsConcTypeConstraint) SetChildAt(int, sl.Strategy) { panic("IsConcTypeConstraint: no children") }
+
+// VisitConcTypeConstraint is the `_concTypeConstraint` slot-visit strategy: when subject is `concTypeConstraint`,
+// applies each constituent strategy to the matching child slot and
+// rebuilds the term iff at least one child changed. Fails with
+// sl.ErrVisitFailure when subject isn't `concTypeConstraint`.
+type VisitConcTypeConstraint struct {
+	args []sl.Strategy
+}
+
+// NewVisitConcTypeConstraint builds the slot-visit strategy with the supplied per-slot
+// sub-strategies.
+func NewVisitConcTypeConstraint(args ...sl.Strategy) *VisitConcTypeConstraint {
+	return &VisitConcTypeConstraint{args: args}
+}
+
+func (s *VisitConcTypeConstraint) VisitLight(subject any, intro sl.Introspector) (any, error) {
+	if _, ok := subject.(*ConcTypeConstraintTypeConstraintList); !ok {
+		return subject, sl.ErrVisitFailure
+	}
+	// Variadic alt: visit every element with args[0] (Java's
+	// `_concX` invokes the sub-strategy on each list element).
+	if len(s.args) == 0 {
+		return subject, nil
+	}
+	count := intro.GetChildCount(subject)
+	var newChildren []any
+	for i := 0; i < count; i++ {
+		oldChild := intro.GetChildAt(subject, i)
+		newChild, err := s.args[0].VisitLight(oldChild, intro)
+		if err != nil {
+			return subject, err
+		}
+		if newChildren != nil {
+			newChildren[i] = newChild
+		} else if newChild != oldChild {
+			newChildren = intro.GetChildren(subject)
+			newChildren[i] = newChild
+		}
+	}
+	if newChildren != nil {
+		return intro.SetChildren(subject, newChildren), nil
+	}
+	return subject, nil
+}
+
+func (s *VisitConcTypeConstraint) ChildCount() int                 { return len(s.args) }
+func (s *VisitConcTypeConstraint) ChildAt(i int) sl.Strategy       { return s.args[i] }
+func (s *VisitConcTypeConstraint) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }

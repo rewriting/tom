@@ -1,6 +1,7 @@
 package gom
 
 import (
+	"fmt"
 	"path/filepath"
 	"strings"
 	"testing"
@@ -266,6 +267,48 @@ func TestParse_Corpus(t *testing.T) {
 			}
 			if CountSorts(mod) == 0 {
 				t.Fatal("no sorts parsed")
+			}
+		})
+	}
+}
+
+// TestParse_StringRoundTrip parses each .gom in the corpus, calls
+// String() on the resulting gomast.GomModule, feeds the textual form
+// to gomast.FromString, and verifies that the rebuilt term is the
+// SAME Go pointer as the original. Hash-consing guarantees structural
+// equality reduces to pointer equality, so this exercises both:
+//
+//   - The String() / FromString pair is a complete round-trip (no
+//     information lost on the way out, none invented on the way back).
+//   - Every Op printed by the parser's output appears in makeRegistry
+//     — a missing entry would surface as `unknown operator` here.
+func TestParse_StringRoundTrip(t *testing.T) {
+	for _, name := range []string{
+		"Builtin.gom",
+		"Dotted.gom",
+		"Imported.gom",
+		"Importing.gom",
+		"Leaf.gom",
+		"List.gom",
+		"Minimal.gom",
+		"Yang.gom",
+		"Ying.gom",
+		"fromterm/foo.gom",
+	} {
+		path := filepath.Join("..", "..", "..", "testdata", "corpus", "gom-nohooks", name)
+		t.Run(name, func(t *testing.T) {
+			mod, err := ParseFile(path)
+			if err != nil {
+				t.Fatal(err)
+			}
+			dump := fmt.Sprintf("%v", mod)
+			parsed, err := gomast.FromString(dump)
+			if err != nil {
+				t.Fatalf("FromString failed: %v\ninput=%s", err, dump)
+			}
+			if parsed != mod {
+				t.Fatalf("round-trip not pointer-equal\noriginal=%p\nparsed=%p\nstr=%s",
+					mod, parsed, dump)
 			}
 		})
 	}
