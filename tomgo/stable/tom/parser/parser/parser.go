@@ -75,8 +75,17 @@ func ParseAll(source, filename string) (*ParseResult, error) {
 // parser's includeChain with the list of files currently being
 // parsed via `%include`. The top-level call passes nil.
 func parseAllWithChain(source, filename string, chain []string) (*ParseResult, error) {
+	return parseAllWithChainAndSet(source, filename, chain, nil)
+}
+
+func parseAllWithChainAndSet(source, filename string, chain []string, parsed *map[string]bool) (*ParseResult, error) {
 	p := newParser(source, filename)
 	p.includeChain = chain
+	if parsed == nil {
+		s := make(map[string]bool)
+		parsed = &s
+	}
+	p.alreadyParsed = parsed
 	code, err := p.parseProgram()
 	if err != nil {
 		return nil, err
@@ -139,6 +148,16 @@ type parser struct {
 	// (e.g. `%include {self.t}`). The chain is propagated from
 	// parser to parser via ParseAllWithChain.
 	includeChain []string
+
+	// alreadyParsed is the GLOBAL set of resolved-paths that have
+	// already produced a non-empty TomInclude in this compilation
+	// unit. Mirrors Java's
+	// `TomStreamManager.alreadyParsedIncludedFiles`: a second
+	// occurrence of the same `%include {file}` (e.g. RuleBool.tom's
+	// duplicate `%include {aterm.tom}`) emits a structurally-empty
+	// `TomInclude(concCode())` instead of re-parsing. Shared via
+	// the pointer so all sub-parsers see the same set.
+	alreadyParsed *map[string]bool
 
 	// subjectCodomains is a side-table keyed by the BQTerm subject
 	// pointer that parseSubject returned. The value is the codomain
@@ -1932,20 +1951,24 @@ func (p *parser) parseInclude() error {
 	if err != nil {
 		return err
 	}
-	// Break cycles: if the resolved file is already on the include
-	// chain, refuse to re-parse. Java's TomStreamManager has the same
-	// guard via its `alreadyParsedIncludedFiles` set.
-	for _, prev := range p.includeChain {
-		if prev == resolved {
-			return fmt.Errorf("%%include cycle: %s already on chain %v", resolved, p.includeChain)
-		}
+	// Java's TomStreamManager.alreadyParsedIncludedFiles dedup: a
+	// second %include of the same resolved path (anywhere in this
+	// compilation unit) collapses to an empty TomInclude. This is
+	// what RuleBool.tom's duplicate `%include {aterm.tom}` lines
+	// (and the many transitive includes of e.g. char.tom) emit.
+	if p.alreadyParsed != nil && (*p.alreadyParsed)[resolved] {
+		p.codes = append(p.codes, tomast.MakeTomInclude(tomast.MakeConcCode()))
+		return nil
+	}
+	if p.alreadyParsed != nil {
+		(*p.alreadyParsed)[resolved] = true
 	}
 	src, err := os.ReadFile(resolved)
 	if err != nil {
 		return fmt.Errorf("read %%include %q: %w", resolved, err)
 	}
 	chain := append(append([]string(nil), p.includeChain...), p.filename)
-	subResult, err := parseAllWithChain(string(src), resolved, chain)
+	subResult, err := parseAllWithChainAndSet(string(src), resolved, chain, p.alreadyParsed)
 	if err != nil {
 		return fmt.Errorf("parse %%include %q: %w", resolved, err)
 	}
