@@ -286,6 +286,24 @@ var goFixtures = []struct {
 		},
 	},
 	{
+		// TestBackQuote.t — Go counterpart of fixtures/java/TestBackQuote.t.
+		// Exercises:
+		//   - star-vars in BQAppl args (`\`conc(x*, b(), y*, a(), z*)`),
+		//     not just in %match patterns;
+		//   - `%op L abc() {}` — declared with no hooks, the Go func
+		//     `abc()` provides the implementation;
+		//   - the same %match pattern with two star-vars in non-
+		//     adjacent positions (`x*`, `y*`, `z*` separated by
+		//     anchors `b()` and `a()`).
+		name:      "TestBackQuote",
+		useGoTest: true,
+		expected: []string{
+			"=== RUN   TestRoundTrip",
+			"=== RUN   TestAbcDirect",
+			"PASS",
+		},
+	},
+	{
 		// TestAlgebraic.t — first Go fixture using %strategy. Includes
 		// sl.tom from the Go mapping (Strategy / mu / MuVar / All /
 		// Sequence / SequenceId + composed RepeatId / BottomUp), and
