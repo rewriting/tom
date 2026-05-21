@@ -1,1 +1,1 @@
-Table([])
+Table([Entry("op",Symbol(Name("op"),TypesToType([],Type([],"None",EmptyTargetLanguageType)),[],[OriginTracking(Name("op"),2,"/Users/pem/github/tom/test/regress/BadOp.t")]))])

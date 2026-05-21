@@ -1,1 +1,1 @@
-Tom(concCode(TargetLanguageToCode(TL("\n%op None op() {\n\n}\n",TextPosition(1,1),TextPosition(5,1)))))
+Tom(concCode(DeclarationToCode(SymbolDecl(Name("op")))))

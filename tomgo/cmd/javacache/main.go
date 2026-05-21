@@ -104,16 +104,14 @@ func main() {
 		if err != nil {
 			fail("scratch:", err)
 		}
-		// Default: no `--newparser`, matching `test/build.sh build`'s
-		// behaviour. Some fixtures (rule/*, antipatterns/*) use
-		// newer syntax (`%rule`, etc.) that only the new parser
-		// accepts. We auto-detect them by looking at the source for
-		// the relevant island keywords.
-		srcBytes, _ := os.ReadFile(input)
-		args := []string{"--intermediate"}
-		if needsNewParser(string(srcBytes)) {
-			args = append(args, "--newparser")
-		}
+		// ALWAYS pass `--newparser`: our Go parser mimics the antlr4
+		// (newparser) Java parser flavour, which produces different
+		// hostblock content than the default (tomjava) parser
+		// because the simplifyCstBlockList merge produces a
+		// "Java byte-for-byte" content that differs from tomjava's
+		// stream concatenation. Aligning the cache to antlr4 keeps
+		// corpus parity meaningful.
+		args := []string{"--intermediate", "--newparser"}
 		args = append(args, "-d", scratch, input)
 		cmd := exec.Command(tomBin, args...)
 		cmd.Env = append(os.Environ(), "TOM_HOME="+tomHome)
