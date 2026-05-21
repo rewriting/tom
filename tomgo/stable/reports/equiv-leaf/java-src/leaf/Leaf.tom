@@ -1,0 +1,21 @@
+
+%include { string.tom }
+
+%typeterm Leaf {
+  implement { leaf.types.Leaf }
+  is_sort(t) { ($t instanceof leaf.types.Leaf) }
+
+  equals(t1,t2) { ($t1==$t2) }
+
+}
+%op Leaf Leaf() {
+  is_fsym(t) { ($t instanceof leaf.types.leaf.Leaf) }
+  make() { leaf.types.leaf.Leaf.make() }
+}
+
+%op Leaf Label(s:String) {
+  is_fsym(t) { ($t instanceof leaf.types.leaf.Label) }
+  get_slot(s, t) { $t.gets() }
+  make(t0) { leaf.types.leaf.Label.make($t0) }
+}
+

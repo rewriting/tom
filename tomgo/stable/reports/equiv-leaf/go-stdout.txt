@@ -1,0 +1,5 @@
+t1=Leaf()
+t2=Label("hello")
+shared-label=true
+diff-labels=true
+label-s=hello

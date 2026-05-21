@@ -1,0 +1,15 @@
+%typeterm List {
+  implement      { list.types.List }
+  is_sort(t)     { ($t instanceof list.types.List) }
+  equals(t1,t2)  { ($t1.equals($t2)) }
+}
+
+%oplist List conc( int* ) {
+  is_fsym(t)       { ($t instanceof list.types.List) }
+  make_empty()     { new list.types.List.Emptyconc() }
+  make_insert(e,l) { new list.types.List.Consconc($e, $l) }
+  get_head(l)      { ((list.types.List.Consconc)$l).getHeadconc() }
+  get_tail(l)      { ((list.types.List.Consconc)$l).getTailconc() }
+  is_empty(l)      { ($l instanceof list.types.List.Emptyconc) }
+}
+

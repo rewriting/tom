@@ -972,17 +972,13 @@ func (p *parser) tryIslandOrWater(island func() error, kind string) error {
 // The merged hostblock's start/end and content are what the Java parser
 // would have produced for the same `.t` file.
 func (p *parser) parseWater() error {
-	start := p.cur
 	// Whether comments end up in the emitted TL depends on the file
 	// kind. Java's lexer routes `//…\n` and `/* … */` comments to
 	// a hidden channel for `.tom` files (included via `%include`)
 	// but keeps them in the TL stream for `.t` host-language files.
-	// We mirror that — `stripComments` is true when the current
-	// parser is consuming a recursively-included `.tom` file.
 	stripComments := strings.HasSuffix(p.filename, ".tom")
+	startPos := p.cur
 	var sb strings.Builder
-	var firstNonWS *position
-	var lastNonWSEnd position
 	flush := func(from int, to int) {
 		if to > from {
 			sb.WriteString(p.src[from:to])
@@ -990,13 +986,6 @@ func (p *parser) parseWater() error {
 	}
 	chunkStart := p.idx
 	for !p.atEnd() && !p.isIslandStart() {
-		// Comments are always SCANNED opaquely so an embedded
-		// `%include` / `\`...` doesn't trigger an island dispatch
-		// (matters for `// %include {…}` lines in host source).
-		// Whether the comment bytes end up in the emitted TL
-		// depends on stripComments — Java's lexer routes comments
-		// to a hidden channel for `.tom` files but keeps them as
-		// host text for `.t` files.
 		if p.peek(0) == '/' && p.peek(1) == '/' {
 			if stripComments {
 				flush(chunkStart, p.idx)
@@ -1029,7 +1018,6 @@ func (p *parser) parseWater() error {
 		}
 		if p.peek(0) == '"' || p.peek(0) == '\'' {
 			quote := p.peek(0)
-			startQ := p.cur
 			p.advance()
 			for !p.atEnd() && p.peek(0) != quote {
 				if p.peek(0) == '\\' && !p.atEnd() {
@@ -1047,43 +1035,33 @@ func (p *parser) parseWater() error {
 			if !p.atEnd() && p.peek(0) == quote {
 				p.advance()
 			}
-			if firstNonWS == nil {
-				v := startQ
-				firstNonWS = &v
-			}
-			lastNonWSEnd = p.cur
 			continue
 		}
-		c := p.peek(0)
-		if c != ' ' && c != '\t' && c != '\n' && c != '\r' {
-			if firstNonWS == nil {
-				v := p.cur
-				firstNonWS = &v
-			}
-		}
 		p.advance()
-		if c != ' ' && c != '\t' && c != '\n' && c != '\r' {
-			lastNonWSEnd = p.cur
-		}
 	}
 	flush(chunkStart, p.idx)
-	if firstNonWS == nil {
-		// Pure whitespace / comments only — no TL emitted (Java's
-		// behaviour).
+	content := sb.String()
+	if content == "" {
 		return nil
 	}
-	content := sb.String()
-	// Java's TL preserves leading whitespace verbatim — it's what
-	// separates the previous island from this visible's first byte
-	// in the host code stream. The start position points to the
-	// first non-WS byte; the content starts where the parser cursor
-	// was when this run of water began.
+	// Java's TL position calculation is delegated to a faithful
+	// simulation of CstBuilder.buildHostblock + CstConverter.
+	// simplifyCstBlockList: tokenize → group visibles into hostblocks
+	// with claimed hidden tokens → merge with synthetic padding. The
+	// merged hostblock's (start, end) match the Java parser
+	// byte-for-byte. Pure-whitespace water yields zero hostblocks and
+	// we emit nothing — matching Java's HIDDEN-channel NL/WS rules.
+	tokens := tokenizeWater(content, startPos)
+	blocks := buildHostblocks(tokens)
+	if len(blocks) == 0 {
+		return nil
+	}
+	merged := mergeHostblocks(blocks)
 	p.codes = append(p.codes, tomast.MakeTargetLanguageToCode(tomast.MakeTL(
-		content,
-		tomast.MakeTextPosition(int64(firstNonWS.line), int64(firstNonWS.col)),
-		tomast.MakeTextPosition(int64(lastNonWSEnd.line), int64(lastNonWSEnd.col)),
+		merged.content,
+		tomast.MakeTextPosition(int64(merged.startLine), int64(merged.startCol)),
+		tomast.MakeTextPosition(int64(merged.endLine), int64(merged.endCol)),
 	)))
-	_ = start
 	return nil
 }
 

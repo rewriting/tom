@@ -23,10 +23,15 @@ import (
 	"strings"
 
 	"tom/tomgo/stable/platform"
-	"tom/tomgo/stable/platform/plugins"
-	tomparseq "tom/tomgo/stable/tom/parser/equiv"
-	"tom/tomgo/stable/tom/parser/equiv/astcmp"
+	tomparseq "tom/tomgo/tests/tom/parser/equiv"
+	"tom/tomgo/tests/tom/parser/equiv/astcmp"
 	tomparser "tom/tomgo/stable/tom/parser/parser"
+	"tom/tomgo/stable/tom/starter"
+	"tom/tomgo/stable/tom/parser"
+	"tom/tomgo/stable/tom/transformer"
+	"tom/tomgo/stable/tom/syntaxchecker"
+	"tom/tomgo/stable/tom/desugarer"
+	"tom/tomgo/stable/tom/typer"
 )
 
 type row struct {
@@ -130,11 +135,11 @@ func main() {
 
 		// Desugarer.
 		desState, err := platform.New(
-			plugins.Starter{},
-			plugins.Parser{},
-			plugins.Transformer{},
-			plugins.SyntaxChecker{},
-			plugins.Desugarer{},
+			starter.Plugin{},
+			parser.Plugin{},
+			transformer.Plugin{},
+			syntaxchecker.Plugin{},
+			desugarer.Plugin{},
 		).Run(platform.State{Filename: input})
 		if err == nil {
 			goDesugared := fmt.Sprintf("%v", desState.Code)
@@ -145,12 +150,12 @@ func main() {
 
 		// Typer.
 		tState, err := platform.New(
-			plugins.Starter{},
-			plugins.Parser{},
-			plugins.Transformer{},
-			plugins.SyntaxChecker{},
-			plugins.Desugarer{},
-			plugins.Typer{},
+			starter.Plugin{},
+			parser.Plugin{},
+			transformer.Plugin{},
+			syntaxchecker.Plugin{},
+			desugarer.Plugin{},
+			typer.Plugin{},
 		).Run(platform.State{Filename: input})
 		if err == nil {
 			goTyped := fmt.Sprintf("%v", tState.Code)

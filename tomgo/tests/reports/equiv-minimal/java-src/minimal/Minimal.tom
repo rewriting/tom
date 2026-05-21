@@ -1,0 +1,55 @@
+
+%typeterm Nop {
+  implement { minimal.types.Nop }
+  is_sort(t) { ($t instanceof minimal.types.Nop) }
+
+  equals(t1,t2) { ($t1==$t2) }
+
+}
+%op Nop EmptyNop() {
+  is_fsym(t) { ($t instanceof minimal.types.nop.EmptyNop) }
+  make() { minimal.types.nop.EmptyNop.make() }
+}
+
+%op Nop UnaryNop(slot:Nop) {
+  is_fsym(t) { ($t instanceof minimal.types.nop.UnaryNop) }
+  get_slot(slot, t) { $t.getslot() }
+  make(t0) { minimal.types.nop.UnaryNop.make($t0) }
+}
+
+%op Nop BinaryNop(ls:Nop, rs:Nop) {
+  is_fsym(t) { ($t instanceof minimal.types.nop.BinaryNop) }
+  get_slot(ls, t) { $t.getls() }
+  get_slot(rs, t) { $t.getrs() }
+  make(t0, t1) { minimal.types.nop.BinaryNop.make($t0, $t1) }
+}
+
+%op Nop TertiaryNop(ls:Nop, cs:Nop, rs:Nop) {
+  is_fsym(t) { ($t instanceof minimal.types.nop.TertiaryNop) }
+  get_slot(ls, t) { $t.getls() }
+  get_slot(cs, t) { $t.getcs() }
+  get_slot(rs, t) { $t.getrs() }
+  make(t0, t1, t2) { minimal.types.nop.TertiaryNop.make($t0, $t1, $t2) }
+}
+
+%op Nop EmptyVary() {
+  is_fsym(t) { ($t instanceof minimal.types.nop.EmptyVary) }
+  make() { minimal.types.nop.EmptyVary.make() }
+}
+
+%op Nop ConsVary(HeadVary:Nop, TailVary:Nop) {
+  is_fsym(t) { ($t instanceof minimal.types.nop.ConsVary) }
+  get_slot(HeadVary, t) { $t.getHeadVary() }
+  get_slot(TailVary, t) { $t.getTailVary() }
+  make(t0, t1) { minimal.types.nop.ConsVary.make($t0, $t1) }
+}
+
+
+%oplist Nop Vary(Nop*) {
+  is_fsym(t) { (($t instanceof minimal.types.nop.ConsVary) || ($t instanceof minimal.types.nop.EmptyVary)) }
+  make_empty() { minimal.types.nop.EmptyVary.make() }
+  make_insert(e,l) { minimal.types.nop.ConsVary.make($e,$l) }
+  get_head(l) { $l.getHeadVary() }
+  get_tail(l) { $l.getTailVary() }
+  is_empty(l) { $l.isEmptyVary() }
+}

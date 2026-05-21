@@ -15,3 +15,6 @@ reports/equiv-*/java-classes/
 # Compiled bytecode for the tomparseq Java mini-runner — rebuilt on
 # demand by tomparseq.JavaToolchain.EnsureCompiled.
 internal/tomparseq/java/*.class
+
+# Compiled cmd binaries (built locally, not part of the repo)
+/javacache

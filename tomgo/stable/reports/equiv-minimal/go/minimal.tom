@@ -1,0 +1,41 @@
+%typeterm Nop {
+  implement      { minimal.types.Nop }
+  is_sort(t)     { ($t instanceof minimal.types.Nop) }
+  equals(t1,t2)  { ($t1.equals($t2)) }
+}
+
+%op Nop EmptyNop() {
+  is_fsym(t)     { ($t != null) && ($t instanceof minimal.types.nop.EmptyNop) }
+  make()       { new minimal.types.nop.EmptyNop() }
+}
+
+%op Nop UnaryNop(slot:Nop) {
+  is_fsym(t)     { ($t != null) && ($t instanceof minimal.types.nop.UnaryNop) }
+  get_slot(slot,t) { ((minimal.types.nop.UnaryNop)$t).getSlot() }
+  make(slot)       { new minimal.types.nop.UnaryNop($slot) }
+}
+
+%op Nop BinaryNop(ls:Nop, rs:Nop) {
+  is_fsym(t)     { ($t != null) && ($t instanceof minimal.types.nop.BinaryNop) }
+  get_slot(ls,t) { ((minimal.types.nop.BinaryNop)$t).getLs() }
+  get_slot(rs,t) { ((minimal.types.nop.BinaryNop)$t).getRs() }
+  make(ls,rs)       { new minimal.types.nop.BinaryNop($ls,$rs) }
+}
+
+%op Nop TertiaryNop(ls:Nop, cs:Nop, rs:Nop) {
+  is_fsym(t)     { ($t != null) && ($t instanceof minimal.types.nop.TertiaryNop) }
+  get_slot(ls,t) { ((minimal.types.nop.TertiaryNop)$t).getLs() }
+  get_slot(cs,t) { ((minimal.types.nop.TertiaryNop)$t).getCs() }
+  get_slot(rs,t) { ((minimal.types.nop.TertiaryNop)$t).getRs() }
+  make(ls,cs,rs)       { new minimal.types.nop.TertiaryNop($ls,$cs,$rs) }
+}
+
+%oplist Nop Vary( Nop* ) {
+  is_fsym(t)       { ($t instanceof minimal.types.Nop) }
+  make_empty()     { new minimal.types.Nop.EmptyVary() }
+  make_insert(e,l) { new minimal.types.Nop.ConsVary($e, $l) }
+  get_head(l)      { ((minimal.types.Nop.ConsVary)$l).getHeadVary() }
+  get_tail(l)      { ((minimal.types.Nop.ConsVary)$l).getTailVary() }
+  is_empty(l)      { ($l instanceof minimal.types.Nop.EmptyVary) }
+}
+

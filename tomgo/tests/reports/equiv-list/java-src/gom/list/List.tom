@@ -1,0 +1,31 @@
+
+%include { int.tom }
+
+%typeterm List {
+  implement { gom.list.types.List }
+  is_sort(t) { ($t instanceof gom.list.types.List) }
+
+  equals(t1,t2) { ($t1==$t2) }
+
+}
+%op List Emptyconc() {
+  is_fsym(t) { ($t instanceof gom.list.types.list.Emptyconc) }
+  make() { gom.list.types.list.Emptyconc.make() }
+}
+
+%op List Consconc(Headconc:int, Tailconc:List) {
+  is_fsym(t) { ($t instanceof gom.list.types.list.Consconc) }
+  get_slot(Headconc, t) { $t.getHeadconc() }
+  get_slot(Tailconc, t) { $t.getTailconc() }
+  make(t0, t1) { gom.list.types.list.Consconc.make($t0, $t1) }
+}
+
+
+%oplist List conc(int*) {
+  is_fsym(t) { (($t instanceof gom.list.types.list.Consconc) || ($t instanceof gom.list.types.list.Emptyconc)) }
+  make_empty() { gom.list.types.list.Emptyconc.make() }
+  make_insert(e,l) { gom.list.types.list.Consconc.make($e,$l) }
+  get_head(l) { $l.getHeadconc() }
+  get_tail(l) { $l.getTailconc() }
+  is_empty(l) { $l.isEmptyconc() }
+}

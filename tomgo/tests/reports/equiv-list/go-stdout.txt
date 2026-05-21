@@ -1,0 +1,6 @@
+a=conc(1,2,3)
+shared=true
+diff=true
+empty=conc()
+shared-empty=true
+len=3
