@@ -319,8 +319,11 @@ var goFixtures = []struct {
 		//   - the same %match pattern with two star-vars in non-
 		//     adjacent positions (`x*`, `y*`, `z*` separated by
 		//     anchors `b()` and `a()`).
-		name:      "TestBackQuote",
-		useGoTest: true,
+		name:         "TestBackQuote",
+		useGoTest:    true,
+		useSlLib:     true,
+		hasInlineGom: true,
+		goPackage:    "testbackquote",
 		expected: []string{
 			"=== RUN   TestRoundTrip",
 			"=== RUN   TestAbcDirect",
@@ -333,8 +336,11 @@ var goFixtures = []struct {
 		// binds l to s1 (a BList) and then matches s2 element-wise
 		// against l. Three sub-tests (empty/empty, singleton/singleton
 		// match; singleton/pair doesn't).
-		name:      "TestVarVarStar",
-		useGoTest: true,
+		name:         "TestVarVarStar",
+		useGoTest:    true,
+		useSlLib:     true,
+		hasInlineGom: true,
+		goPackage:    "testvarvarstar",
 		expected: []string{
 			"=== RUN   TestEmptyEmpty",
 			"=== RUN   TestSingletonSingleton",
