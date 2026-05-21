@@ -857,7 +857,44 @@ func (p *parser) parseStrategy() error {
 	))
 	block := tomast.MakeAbstractBlock(tomast.MakeConcInstruction(stratCi, symbolCi))
 	p.codes = append(p.codes, tomast.MakeInstructionToCode(block))
+
+	// Register the strategy as a syntactic op in the SymbolTable so
+	// `` `Name() `` in user code routes through the BQAppl → BuildTerm
+	// rewrite (typer) and renders as `tom_make_Name()`. The Backend's
+	// emitStrategy then provides the `tom_make_Name()` helper.
+	registerStrategySymbol(&p.sig, name, startLine, p.filename)
 	return nil
+}
+
+// registerStrategySymbol attaches a synthetic syntactic op for a
+// `%strategy Name()` declaration so the typer + backend can route
+// `` `Name() `` references correctly.
+func registerStrategySymbol(sig *signature, name string, line int, file string) {
+	if sig == nil {
+		return
+	}
+	if _, exists := sig.Symbols[name]; exists {
+		return
+	}
+	// Build a TomSymbol shaped like `%op Strategy <name>()` — empty
+	// domain (no args), codomain Strategy.
+	strategyType := tomast.MakeType(
+		tomast.MakeConcTypeOption(),
+		"Strategy",
+		tomast.MakeEmptyTargetLanguageType(),
+	)
+	sym := tomast.MakeSymbol(
+		tomast.MakeName(name),
+		tomast.MakeTypesToType(
+			tomast.MakeConcTomType(),
+			strategyType,
+		),
+		tomast.MakeConcPairNameDecl(),
+		tomast.MakeConcOption(
+			tomast.MakeOriginTracking(tomast.MakeName(name), int64(line), file),
+		),
+	)
+	sig.Symbols[name] = sym
 }
 
 // bqVarTermType returns the AstType slot of a BQVariable /
@@ -1466,7 +1503,7 @@ func buildTomSymbolWithHooks(name, codomain string, slots []opSlot, hooks []toma
 //   - is_empty(l)        → IsEmptyDecl
 //   - get_size(l)        → GetSizeDecl
 //   - get_element(l, n)  → GetElementDecl
-func (p *parser) parseOpHooks(opName, codomain string, slots []opSlot, isVariadic bool) ([]tomast.Declaration, error) {
+func (p *parser) parseOpHooks(opName, codomain string, slots []opSlot, isVariadic bool, isList bool) ([]tomast.Declaration, error) {
 	var hooks []tomast.Declaration
 	for {
 		p.skipWhitespaceAndComments()
@@ -1487,10 +1524,16 @@ func (p *parser) parseOpHooks(opName, codomain string, slots []opSlot, isVariadi
 		if p.atEnd() || p.peek(0) != '{' {
 			return nil, fmt.Errorf("expected '{' after hook %q at %s", hookName, p.cur)
 		}
+		// Track the position of `{` so the make-hook body can be
+		// re-parsed through lowerActionBody with correct line/col
+		// origin tracking on the bqterms it contains.
+		bodyOpenPos := p.cur
 		body, err := p.captureHookBody()
 		if err != nil {
 			return nil, err
 		}
+		// Body content starts one column past the opening `{`.
+		bodyStart := position{line: bodyOpenPos.line, col: bodyOpenPos.col + 1}
 		opOT := tomast.MakeOriginTracking(tomast.MakeName(opName), int64(hookLine), p.filename)
 
 		switch hookName {
@@ -1540,11 +1583,34 @@ func (p *parser) parseOpHooks(opName, codomain string, slots []opSlot, isVariadi
 					makeTomType(slots[i].Type),
 				)
 			}
+			// Parse the body via `lowerActionBody` so any `` ` ``
+			// terms (e.g. `mu(MuVar("_x"), Sequence(...))` in sl's
+			// strategy combinators) become structured BQTerm nodes
+			// that the typer rewrites into `BuildTerm` /
+			// `BuildConsList` / etc. The Backend then renders the
+			// result with the expected `tom_make_X(...)` calls.
+			//
+			// Note: we DO NOT run `abstractCode` here — that
+			// converts `$var` → `{N}` whose curly braces would
+			// collide with `lowerActionBody`'s block grammar. The
+			// substitution happens at backend emit time on each TL
+			// chunk via `$<varName>` → `<argName>` direct lookup
+			// driven by the MakeDecl's recorded arg list.
+			bodyInsts, err := lowerActionBody(body, bodyStart, p.filename)
+			if err != nil {
+				return nil, fmt.Errorf("make body at line %d: %w", hookLine, err)
+			}
+			var makeInstr tomast.Instruction
+			if len(bodyInsts) == 0 {
+				makeInstr = tomast.MakeExpressionToInstruction(tomast.MakeCode(body))
+			} else {
+				makeInstr = tomast.MakeAbstractBlock(tomast.MakeConcInstruction(bodyInsts...))
+			}
 			hooks = append(hooks, tomast.MakeMakeDecl(
 				tomast.MakeName(opName),
 				makeTomType(codomain),
 				tomast.MakeConcBQTerm(bqArgs...),
-				tomast.MakeExpressionToInstruction(tomast.MakeCode(abstractCode(body, args))),
+				makeInstr,
 				opOT,
 			))
 		case "equals":
@@ -1584,7 +1650,12 @@ func (p *parser) parseOpHooks(opName, codomain string, slots []opSlot, isVariadi
 			eltVar := makeHookBQVariable(args[0], codomain, hookLine, p.filename)
 			listVar := makeHookBQVariable(args[1], codomain, hookLine, p.filename)
 			instr := tomast.MakeExpressionToInstruction(tomast.MakeCode(abstractCode(body, args)))
-			if hookName == "make_append" {
+			// `make_append`/`make_insert` map to MakeAddList for
+			// `%oplist`, MakeAddArray for `%oparray` (regardless of
+			// which hook name the user wrote). Mirrors Java's
+			// per-Subtype dispatch in
+			// ASTFactory.makeListSymbol/makeArraySymbol.
+			if isList {
 				hooks = append(hooks, tomast.MakeMakeAddList(
 					tomast.MakeName(opName),
 					eltVar,
@@ -1619,6 +1690,49 @@ func (p *parser) parseOpHooks(opName, codomain string, slots []opSlot, isVariadi
 				tomast.MakeName(opName),
 				makeHookBQVariable(args[0], codomain, hookLine, p.filename),
 				makeHookBQVariable(args[1], "int", hookLine, p.filename),
+				tomast.MakeCode(abstractCode(body, args)),
+				opOT,
+			))
+		case "get_head":
+			// %oplist hook — list version. Codomain of get_head
+			// is the *element* type (the slot type) since head
+			// returns one element.
+			if !isVariadic || !isList || len(args) != 1 {
+				continue
+			}
+			// The slot type is the variadic op's element type;
+			// pass it as the codomain of the GetHeadDecl. We
+			// reconstruct it from the parser's per-op state via
+			// the slots arg passed by parseVariadicOp (which sets
+			// hookSlots = [{Name: "_", Type: elemType}]).
+			elemType := codomain
+			if len(slots) > 0 {
+				elemType = slots[0].Type
+			}
+			hooks = append(hooks, tomast.MakeGetHeadDecl(
+				tomast.MakeName(opName),
+				makeTomType(elemType),
+				makeHookBQVariable(args[0], codomain, hookLine, p.filename),
+				tomast.MakeCode(abstractCode(body, args)),
+				opOT,
+			))
+		case "get_tail":
+			if !isVariadic || !isList || len(args) != 1 {
+				continue
+			}
+			hooks = append(hooks, tomast.MakeGetTailDecl(
+				tomast.MakeName(opName),
+				makeHookBQVariable(args[0], codomain, hookLine, p.filename),
+				tomast.MakeCode(abstractCode(body, args)),
+				opOT,
+			))
+		case "is_empty":
+			if !isVariadic || !isList || len(args) != 1 {
+				continue
+			}
+			hooks = append(hooks, tomast.MakeIsEmptyDecl(
+				tomast.MakeName(opName),
+				makeHookBQVariable(args[0], codomain, hookLine, p.filename),
 				tomast.MakeCode(abstractCode(body, args)),
 				opOT,
 			))
@@ -1750,7 +1864,7 @@ func (p *parser) parseOp() error {
 		return fmt.Errorf("expected '{' after %%op signature at %s", p.cur)
 	}
 	p.advance() // '{'
-	hookDecls, err := p.parseOpHooks(ctor, codomain, slots, false)
+	hookDecls, err := p.parseOpHooks(ctor, codomain, slots, false, false)
 	if err != nil {
 		return err
 	}
@@ -1824,7 +1938,7 @@ func (p *parser) parseVariadicOp(isList bool) error {
 	// We construct a synthetic single-slot list so make_append /
 	// get_element can resolve their var names.
 	hookSlots := []opSlot{{Name: "_", Type: elemType}}
-	hookDecls, err := p.parseOpHooks(ctor, codomain, hookSlots, true)
+	hookDecls, err := p.parseOpHooks(ctor, codomain, hookSlots, true, isList)
 	if err != nil {
 		return err
 	}

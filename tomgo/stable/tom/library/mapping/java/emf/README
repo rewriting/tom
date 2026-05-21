@@ -1,0 +1,37 @@
+README
+
+Libraries versions:
+
+ecore.tom and uml2.tom have been respectively generated with
+emf-generate-mappings from respectively
+org.eclipse.emf.ecore_2.5.0.v200906151043.jar and
+org.eclipse.uml2.uml_3.2.100.v201108110105.jar libraries (included in lib/tools)
+
+
+Note to Tom developers:
+
+- When updating the distributed libraries or the mappings, please ensure that
+  both are matching. Former mappings should be renamed with the version number
+  of the corresponding library, most recent ones should remain ecore.tom and
+  uml2.tom.
+- uml2.tom contains a StringEList mapping which is strongly related to
+  ecore.tom mappings. However, EMF Ecore does need String*, therefore such
+  mapping has not been generated, contrary to uml2.tom. For maintainability
+  reasons, it could remain as if (no manual operation when updating the
+  library). For logical reasons, this part could be moved into ecore.tom or
+  into a separated file (e.g. StringEList.tom)
+
+
+ecore.tom:
+- generated from lib/tools/org.eclipse.emf.ecore_2.5.0.v200906151043.jar
+- Ecore metamodel is included in the .jar file, under model/ repository
+- Ecore metamodel contains 52 EClassifiers
+- 56 sorts (%typeterm)
+- 28 operators (including 13 variadic ones)
+
+uml2.tom:
+- generated from lib/tools/org.eclipse.uml2.uml_3.2.100.v201108110105.jar
+- UML2 metamodel is included in the .jar file, under model/ repository
+- UML metamodel contains 264 EClassifiers
+- 345 sorts (%typeterm)
+- 346 operators (including 85 variadic ones)

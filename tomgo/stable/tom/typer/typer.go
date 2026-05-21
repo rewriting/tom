@@ -55,6 +55,15 @@ func Run(in tom.State) (tom.State, error) {
 	}
 	state := in
 	state.Code = code
+	// Pass 3: walk the SymbolTable's MakeDecl bodies. Their
+	// structured forms (AbstractBlock with BQTermToInstruction
+	// nodes) contain raw BQAppls that need BQAppl→BuildTerm /
+	// BuildConsList / BuildConsArray rewriting too. Java reaches
+	// these via the in-tree shape; ours are stored in the symbol
+	// table side-channel so we visit them explicitly.
+	if state.Symbols != nil {
+		nkt.processSymbolTableBodies(state.Symbols)
+	}
 	return state, nil
 }
 
@@ -152,22 +161,49 @@ func (n *newKernelTyper) inferAllTypes(subject any, contextType tomast.TomType) 
 		headName := headSymbolName(s.NameList)
 		domain := n.domainTypesFor(headName)
 		propagateSlot := n.shouldPropagateSlotTypes(headName, contextType)
+		// For variadic (list/array) ops, the slot has the element type,
+		// but a VariableStar embedded in the slot captures a SUBLIST
+		// of the LIST type (the codomain). We detect this once per
+		// RecordAppl so we can override the per-slot context for
+		// VariableStar children below.
+		listCtx := tomast.TomType(nil)
+		if headSym, ok := n.lookupSymbol(headName); ok {
+			if n.isArrayOperator(headSym) || n.isListOperator(headSym) {
+				listCtx = n.codomainOfSymbol(headSym)
+			}
+		}
 		slotsList, ok := s.Slots.(*tomast.ConcSlotSlotList)
 		if !ok {
 			return n.recurseChildren(subject)
 		}
 		newSlots := make([]tomast.Slot, len(slotsList.Slots))
+		// For variadic ops, all visible pattern slots share the SAME
+		// element type — domain has a single entry. Java's typer
+		// uses domain[0] for every slot index. Mirror that.
+		isVariadic := listCtx != nil
 		for i, slot := range slotsList.Slots {
 			var slotCtx tomast.TomType = tomast.MakeEmptyType()
-			if propagateSlot && i < len(domain) {
-				slotCtx = domain[i]
+			if propagateSlot {
+				if isVariadic && len(domain) > 0 {
+					slotCtx = domain[0]
+				} else if i < len(domain) {
+					slotCtx = domain[i]
+				}
 			}
 			pair, ok := slot.(*tomast.PairSlotApplSlot)
 			if !ok {
 				newSlots[i] = slot
 				continue
 			}
-			newAppl := n.inferAllTypes(pair.Appl, slotCtx).(tomast.TomTerm)
+			// Override slot context for VariableStar in variadic
+			// patterns — it captures a sublist of the LIST type.
+			perSlotCtx := slotCtx
+			if listCtx != nil {
+				if _, isStar := pair.Appl.(*tomast.VariableStarTomTerm); isStar {
+					perSlotCtx = listCtx
+				}
+			}
+			newAppl := n.inferAllTypes(pair.Appl, perSlotCtx).(tomast.TomTerm)
 			newSlots[i] = tomast.MakePairSlotAppl(pair.SlotName, newAppl)
 		}
 		// Constraints (e.g. AliasTo on `x@pat`) inherit the
@@ -219,7 +255,16 @@ func (n *newKernelTyper) inferAllTypes(subject any, contextType tomast.TomType) 
 		domain := n.domainTypesFor(name.String_)
 		newArgs := n.inferBQTermListWithDomain(s.Args, domain)
 		if n.symbols != nil {
-			if _, found := n.symbols.Symbols[name.String_]; found {
+			if sym, found := n.symbols.Symbols[name.String_]; found {
+				// Array / list operator: build the cons chain
+				// (Java ASTFactory.buildArray / buildList via
+				// TyperPlugin.TransformBQAppl).
+				if n.isArrayOperator(sym) {
+					return buildArrayBQTerm(name, newArgs)
+				}
+				if n.isListOperator(sym) {
+					return buildListBQTerm(name, newArgs)
+				}
 				moduleName := moduleNameFromOptions(s.Options)
 				return tomast.MakeBuildTerm(name, newArgs, moduleName)
 			}

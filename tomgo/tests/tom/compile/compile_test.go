@@ -41,6 +41,16 @@ type fixture struct {
 	expected    []string // substrings that MUST appear in stdout (in order)
 	useJUnit    bool     // include junit.jar/hamcrest.jar on the run classpath
 	expectedFmt string   // optional human-readable expected blob; only used in error messages
+
+	// needsMapping toggles passing $TOMGO_TOM_INCLUDE to the Go
+	// pipeline so `%include { sl.tom }` and friends resolve to the
+	// local `stable/tom/library/mapping/` tree.
+	needsMapping bool
+	// hasInlineGom signals the fixture uses a `%gom { module ... }`
+	// block; the parser then writes Java AST classes to a `gen/`
+	// subdirectory next to the source, which must be compiled into
+	// the work dir alongside the main `.java` before running.
+	hasInlineGom bool
 }
 
 var fixtures = []fixture{
@@ -64,6 +74,60 @@ var fixtures = []fixture{
 			"OK (8 tests)",
 		},
 	},
+	{
+		// Array.t — variadic %oparray L conc(E*) patterns with
+		// X*/x/X*/y/X* decompositions. main() calls testArray1()
+		// which runs assertTrue(sort1(l).equals(res)) and
+		// assertTrue(sort2(l).equals(res)). Both assertions throw
+		// "assertion failed." (a RuntimeException) when they
+		// fail — exit 0 with no stdout means both succeeded.
+		name:     "Array",
+		expected: []string{},
+	},
+	{
+		// TestArray.t — JUnit-driven extension of Array exercising
+		// non-linear patterns (`conc(X1*, x, X2*, x, X3*)`) which
+		// triggers GeneralPurposePropagator's duplicate-variable
+		// merge (fresh var + EqualBQTerm test) on the second `x`.
+		name:     "TestArray",
+		useJUnit: true,
+		expected: []string{
+			"JUnit version 4.10",
+			"OK (7 tests)",
+		},
+	},
+	{
+		// TestList.t — JUnit-driven %oplist L conc(E*) suite. Uses
+		// head/tail/is_empty hooks (vs Array's get_element/get_size)
+		// — exercises VariadicPropagator / VariadicGenerator and the
+		// list-shape Backend helpers (tom_get_head, tom_get_tail,
+		// tom_is_empty, tom_append_list, tom_get_slice).
+		name:     "TestList",
+		useJUnit: true,
+		expected: []string{
+			"JUnit version 4.10",
+			"OK (34 tests)",
+		},
+	},
+	{
+		// TestAlgebraic.t — uses %strategy + %gom + %include of sl.
+		// Exercises:
+		//   - inline gom expansion (generates testalgebraic.sig
+		//     classes under fixtures/gen/)
+		//   - %include resolution via $TOMGO_TOM_INCLUDE
+		//   - backquote expansion inside `%op` `make` hooks (sl's
+		//     strategy combinators)
+		//   - `%strategy R()` class generation + tom_make_R helper
+		//   - typer's BQAppl→BuildTerm/BuildConsList rewriting
+		name:         "TestAlgebraic",
+		useJUnit:     true,
+		needsMapping: true,
+		hasInlineGom: true,
+		expected: []string{
+			"JUnit version 4.10",
+			"OK (1 test)",
+		},
+	},
 }
 
 func TestCompileFixtures(t *testing.T) {
@@ -75,11 +139,34 @@ func TestCompileFixtures(t *testing.T) {
 		t.Run(f.name, func(t *testing.T) {
 			workDir := t.TempDir()
 
+			// Per-fixture environment: fixtures using %include of
+			// `sl.tom` (e.g. TestAlgebraic) need TOMGO_TOM_INCLUDE
+			// set so `expandGomBlock` and the parser's include
+			// resolver find the mapping/ tree.
+			if f.needsMapping {
+				mapDir := filepath.Join(resources.repoRoot, "stable", "tom", "library", "mapping")
+				prev := os.Getenv("TOMGO_TOM_INCLUDE")
+				t.Setenv("TOMGO_TOM_INCLUDE",
+					filepath.Join(mapDir, "java")+string(os.PathListSeparator)+mapDir)
+				defer os.Setenv("TOMGO_TOM_INCLUDE", prev)
+			}
+
 			sourcePath := filepath.Join(resources.fixturesDir, f.name+".t")
 			jarPath := filepath.Join(workDir, f.name+".java")
 			if err := runGoPipeline(sourcePath, jarPath); err != nil {
 				t.Fatalf("pipeline failed: %v", err)
 			}
+
+			// Fixtures with inline %gom drop generated AST classes
+			// under fixtures/gen/. Compile those into the work dir
+			// before the main .java so its imports resolve.
+			if f.hasInlineGom {
+				genDir := filepath.Join(resources.fixturesDir, "gen")
+				if err := javacGen(resources, workDir, genDir, f.useJUnit); err != nil {
+					t.Fatalf("javac gen/ failed: %v", err)
+				}
+			}
+
 			if err := javac(resources, workDir, jarPath, f.useJUnit); err != nil {
 				t.Fatalf("javac failed: %v", err)
 			}
@@ -94,6 +181,34 @@ func TestCompileFixtures(t *testing.T) {
 			}
 		})
 	}
+}
+
+// javacGen compiles every .java file under `genDir` into `workDir`.
+// Used by inline-%gom fixtures (TestAlgebraic) whose AST classes
+// must be on the classpath before the main fixture compiles.
+func javacGen(r resources, workDir, genDir string, useJUnit bool) error {
+	var sources []string
+	err := filepath.Walk(genDir, func(p string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+		if !info.IsDir() && strings.HasSuffix(p, ".java") {
+			sources = append(sources, p)
+		}
+		return nil
+	})
+	if err != nil || len(sources) == 0 {
+		return nil
+	}
+	cp := buildClasspath(r, useJUnit)
+	args := append([]string{"-cp", cp, "-d", workDir}, sources...)
+	cmd := exec.Command(filepath.Join(r.javaHome, "bin", "javac"), args...)
+	var stderr bytes.Buffer
+	cmd.Stderr = &stderr
+	if err := cmd.Run(); err != nil {
+		return &execError{err: err, stderr: stderr.String()}
+	}
+	return nil
 }
 
 // runGoPipeline runs the same chain cmd/tom uses, then writes the
@@ -125,6 +240,7 @@ type resources struct {
 	junitJar    string
 	hamcrestJar string
 	fixturesDir string
+	repoRoot    string // absolute path to tomgo's parent (for include paths)
 }
 
 // resolveResources locates everything needed. Returns ok=false (with
@@ -168,11 +284,15 @@ func resolveResources(t *testing.T) (resources, bool) {
 		}
 	}
 	r.fixturesDir = filepath.Join(cwd, "fixtures")
+	r.repoRoot = filepath.Join(repoRoot, "tomgo")
 	return r, true
 }
 
 func javac(r resources, workDir, src string, useJUnit bool) error {
-	cp := buildClasspath(r, useJUnit)
+	// Prepend workDir to the classpath so a fixture's own previously-
+	// emitted classes (e.g. AST classes from inline-gom under gen/
+	// compiled by javacGen) resolve here.
+	cp := workDir + string(os.PathListSeparator) + buildClasspath(r, useJUnit)
 	cmd := exec.Command(filepath.Join(r.javaHome, "bin", "javac"),
 		"-cp", cp,
 		"-d", workDir,
