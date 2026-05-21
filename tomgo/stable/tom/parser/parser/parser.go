@@ -2546,11 +2546,14 @@ func (p *parser) parseBQTermConstantWith(composite bool) (tomast.BQTerm, error) 
 		), nil
 	}
 	_ = startLine
-	options := tomast.MakeConcOption(
-		tomast.MakeOriginTracking(tomast.MakeName(literal), int64(startLine), p.filename),
-		tomast.MakeModuleName("default"),
-	)
-	return tomast.MakeBQAppl(options, tomast.MakeName(literal), tomast.MakeConcBQTerm()), nil
+	// Bare BQAppl arg context: the literal is a Java/Go constant
+	// (integer, float, char, string), not a nullary operator named
+	// `<literal>`. Emit BuildConstant so the backend renders it as
+	// the host-language literal (`5`, `"foo"`, `'c'`) rather than as
+	// `tom_make_5()` / `5()`. The BQAppl shape was wrong here —
+	// it produced spurious "unknown operator" callsites in the
+	// generated host code.
+	return tomast.MakeBuildConstant(tomast.MakeName(literal)), nil
 }
 
 // parseBQTerm parses one backquote term. The grammar (TomIslandParser.g4:122-

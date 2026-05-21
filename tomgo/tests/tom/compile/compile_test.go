@@ -175,6 +175,26 @@ var fixtures = []fixture{
 		},
 	},
 	{
+		// TestNumericConditions.t — constraint-action form
+		// `pat && y > 5 -> body`. Exercises:
+		//   - integer literals as BQAppl args (parser now emits
+		//     BuildConstant instead of BQAppl(name="6"));
+		//   - `NumericConstraint(lhs, rhs, op)` wrapped in
+		//     `ConstraintToExpression` — the Java backend now renders
+		//     these directly as `(lhs <op> rhs)` (new case in
+		//     emitExpression + emitConstraintExpr helper).
+		//   - chained constraints `pat && c1 && c2` (And of
+		//     NumericConstraints).
+		name:         "TestNumericConditions",
+		useJUnit:     true,
+		needsMapping: true,
+		hasInlineGom: true,
+		expected: []string{
+			"JUnit version 4.10",
+			"OK (",
+		},
+	},
+	{
 		// TestAlgebraic.t — uses %strategy + %gom + %include of sl.
 		// Exercises:
 		//   - inline gom expansion (generates testalgebraic.sig
@@ -380,6 +400,28 @@ var goFixtures = []struct {
 		goPackage:    "testnonvarsubjects",
 		expected: []string{
 			"=== RUN   TestNonVarSubject",
+			"PASS",
+		},
+	},
+	{
+		// TestNumericConditions.t — Go port. Exercises numeric
+		// constraint-actions (`y > 5`, `y < 5`, `y == 4`, etc.) on
+		// int-slotted Term. Same backend additions as Java side:
+		// integer literal in BQAppl args (`f(a(), 6)`) + numeric
+		// constraint emit (ConstraintToExpression → `(lhs op rhs)`).
+		name:         "TestNumericConditions",
+		useGoTest:    true,
+		useSlLib:     true,
+		needsMapping: true,
+		hasInlineGom: true,
+		goPackage:    "testnumericconditions",
+		expected: []string{
+			"=== RUN   TestGreater",
+			"=== RUN   TestGreaterOrEqual",
+			"=== RUN   TestLess",
+			"=== RUN   TestNotEqual",
+			"=== RUN   TestEqual",
+			"=== RUN   TestChained",
 			"PASS",
 		},
 	},

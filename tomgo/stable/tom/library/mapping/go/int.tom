@@ -3,7 +3,7 @@
  * Mirrors mapping/java/int.tom but uses Go's native `int`.
  */
 %typeterm int {
-  implement { int }
+  implement { int64 }
   is_sort(t) { true }
   equals(t1,t2) { $t1 == $t2 }
 }

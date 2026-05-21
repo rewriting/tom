@@ -359,8 +359,70 @@ func (e *emitter) emitExpression(expr tomast.Expression) {
 		e.buf.WriteString(" <= ")
 		e.emitExpression(x.Arg2)
 		e.buf.WriteString(")")
+	case *tomast.ConstraintToExpressionExpression:
+		// User-written `pat && y > 5` constraints land here. The
+		// SyntacticGenerator already lowered the common shapes
+		// (RecordAppl-on-SymbolOf, TestVar-merge), but
+		// `NumericConstraint(lhs, rhs, op)` passes through unchanged
+		// — render it directly as `lhs <op> rhs`.
+		e.emitConstraintExpr(x.Cons)
 	default:
 		fmt.Fprintf(&e.buf, "/* backend: unsupported expression %T */", x)
+	}
+}
+
+// emitConstraintExpr renders a Constraint as a Java boolean
+// expression. Only the shapes user-level numeric/equality
+// constraints produce (NumericConstraint, And/OrConstraint
+// recursing into the same shape) are handled — match
+// constraints are already lowered by the compiler before they
+// reach here.
+func (e *emitter) emitConstraintExpr(c tomast.Constraint) {
+	switch x := c.(type) {
+	case *tomast.NumericConstraintConstraint:
+		op := ""
+		switch x.Type.(type) {
+		case *tomast.NumLessThanNumericConstraintType:
+			op = "<"
+		case *tomast.NumLessOrEqualThanNumericConstraintType:
+			op = "<="
+		case *tomast.NumGreaterThanNumericConstraintType:
+			op = ">"
+		case *tomast.NumGreaterOrEqualThanNumericConstraintType:
+			op = ">="
+		case *tomast.NumDifferentNumericConstraintType:
+			op = "!="
+		case *tomast.NumEqualNumericConstraintType:
+			op = "=="
+		default:
+			fmt.Fprintf(&e.buf, "/* backend: unknown NumericConstraintType %T */", x.Type)
+			return
+		}
+		e.buf.WriteString("(")
+		e.emitBQTerm(x.Left)
+		fmt.Fprintf(&e.buf, " %s ", op)
+		e.emitBQTerm(x.Right)
+		e.buf.WriteString(")")
+	case *tomast.AndConstraintConstraint:
+		e.buf.WriteString("(")
+		for i, s := range x.Slots {
+			if i > 0 {
+				e.buf.WriteString(" && ")
+			}
+			e.emitConstraintExpr(s)
+		}
+		e.buf.WriteString(")")
+	case *tomast.OrConstraintConstraint:
+		e.buf.WriteString("(")
+		for i, s := range x.Slots {
+			if i > 0 {
+				e.buf.WriteString(" || ")
+			}
+			e.emitConstraintExpr(s)
+		}
+		e.buf.WriteString(")")
+	default:
+		fmt.Fprintf(&e.buf, "/* backend: unsupported constraint %T */", x)
 	}
 }
 

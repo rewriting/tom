@@ -268,8 +268,66 @@ func (e *emitter) emitExpression(expr tomast.Expression) {
 		e.buf.WriteString(" <= ")
 		e.emitExpression(x.Arg2)
 		e.buf.WriteString(")")
+	case *tomast.ConstraintToExpressionExpression:
+		// `pat && y > 5` constraints reach here as
+		// ConstraintToExpression(NumericConstraint(...)). Render
+		// directly as a Go boolean expression — Go's `<`, `>`, `==`
+		// etc. have the same shape as Java's.
+		e.emitConstraintExpr(x.Cons)
 	default:
 		fmt.Fprintf(&e.buf, "/* backend_go: unsupported expression %T */", x)
+	}
+}
+
+// emitConstraintExpr renders a Constraint as a Go boolean
+// expression. Same shape as the Java backend's helper —
+// NumericConstraint + And/OrConstraint composition.
+func (e *emitter) emitConstraintExpr(c tomast.Constraint) {
+	switch x := c.(type) {
+	case *tomast.NumericConstraintConstraint:
+		op := ""
+		switch x.Type.(type) {
+		case *tomast.NumLessThanNumericConstraintType:
+			op = "<"
+		case *tomast.NumLessOrEqualThanNumericConstraintType:
+			op = "<="
+		case *tomast.NumGreaterThanNumericConstraintType:
+			op = ">"
+		case *tomast.NumGreaterOrEqualThanNumericConstraintType:
+			op = ">="
+		case *tomast.NumDifferentNumericConstraintType:
+			op = "!="
+		case *tomast.NumEqualNumericConstraintType:
+			op = "=="
+		default:
+			fmt.Fprintf(&e.buf, "/* backend_go: unknown NumericConstraintType %T */", x.Type)
+			return
+		}
+		e.buf.WriteString("(")
+		e.emitBQTerm(x.Left)
+		fmt.Fprintf(&e.buf, " %s ", op)
+		e.emitBQTerm(x.Right)
+		e.buf.WriteString(")")
+	case *tomast.AndConstraintConstraint:
+		e.buf.WriteString("(")
+		for i, s := range x.Slots {
+			if i > 0 {
+				e.buf.WriteString(" && ")
+			}
+			e.emitConstraintExpr(s)
+		}
+		e.buf.WriteString(")")
+	case *tomast.OrConstraintConstraint:
+		e.buf.WriteString("(")
+		for i, s := range x.Slots {
+			if i > 0 {
+				e.buf.WriteString(" || ")
+			}
+			e.emitConstraintExpr(s)
+		}
+		e.buf.WriteString(")")
+	default:
+		fmt.Fprintf(&e.buf, "/* backend_go: unsupported constraint %T */", x)
 	}
 }
 
