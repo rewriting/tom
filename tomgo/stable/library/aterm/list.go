@@ -28,6 +28,7 @@ func (l *ATermList) GetAnnotations() *ATermList       { return l.factory.emptyLi
 func (l *ATermList) SetAnnotations(_ *ATermList) ATerm { return l }
 func (l *ATermList) HasAnnotations() bool             { return false }
 func (l *ATermList) Match(pattern string) []any       { return matchPattern(l, pattern) }
+func (l *ATermList)MatchTerm(pat ATerm) []any        { return matchPatternTerm(l, pat) }
 func (l *ATermList) Make(args []any) ATerm            { return makePattern(l, args) }
 
 func (l *ATermList) String() string {

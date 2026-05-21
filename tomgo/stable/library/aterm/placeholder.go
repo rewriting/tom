@@ -23,6 +23,7 @@ func (p *ATermPlaceholder) GetAnnotations() *ATermList { return p.factory.emptyL
 func (p *ATermPlaceholder) SetAnnotations(_ *ATermList) ATerm { return p }
 func (p *ATermPlaceholder) HasAnnotations() bool             { return false }
 func (p *ATermPlaceholder) Match(pattern string) []any       { return matchPattern(p, pattern) }
+func (p *ATermPlaceholder)MatchTerm(pat ATerm) []any        { return matchPatternTerm(p, pat) }
 func (p *ATermPlaceholder) Make(args []any) ATerm            { return makePattern(p, args) }
 
 func (p *ATermPlaceholder) Equivalent(other sharedobjects.Term) bool {

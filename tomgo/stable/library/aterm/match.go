@@ -26,6 +26,13 @@ package aterm
 func matchPattern(subject ATerm, pattern string) []any {
 	f := subject.Factory()
 	pat := f.Parse(pattern)
+	return matchPatternTerm(subject, pat)
+}
+
+// matchPatternTerm is the term-shaped sibling of matchPattern —
+// callers that have already parsed the pattern (e.g. an interpreter
+// caching rule LHS) jump in here directly.
+func matchPatternTerm(subject, pat ATerm) []any {
 	captured := []any{}
 	if !matchTerm(subject, pat, &captured) {
 		return nil

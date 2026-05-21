@@ -73,6 +73,7 @@ func (t *ATermAppl) SetAnnotations(annos *ATermList) ATerm {
 }
 func (t *ATermAppl) HasAnnotations() bool       { return t.annos != nil && !t.annos.IsEmpty() }
 func (t *ATermAppl) Match(pattern string) []any { return matchPattern(t, pattern) }
+func (t *ATermAppl)MatchTerm(pat ATerm) []any        { return matchPatternTerm(t, pat) }
 func (t *ATermAppl) Make(args []any) ATerm      { return makePattern(t, args) }
 
 // GetAnnotation looks up the value attached to `key` in the

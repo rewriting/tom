@@ -128,6 +128,14 @@ func (f *Factory) Make(pattern string, args []any) ATerm {
 	return r.makeFrom(p)
 }
 
+// MakeTerm is Make with a pre-parsed pattern term — useful when the
+// same template fires many times (interpreters caching their rule
+// RHSs). Matches Java's `factory.make(ATerm pattern, List args)`.
+func (f *Factory) MakeTerm(pattern ATerm, args []any) ATerm {
+	r := &makeRunner{factory: f, args: args}
+	return r.makeFrom(pattern)
+}
+
 // ImportTerm walks a term that may belong to a different factory
 // (different hash table) and rebuilds it under this factory.
 func (f *Factory) ImportTerm(t ATerm) ATerm {

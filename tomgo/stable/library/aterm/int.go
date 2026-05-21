@@ -28,6 +28,7 @@ func (t *ATermInt) SetAnnotations(_ *ATermList) ATerm { return t }
 func (t *ATermInt) HasAnnotations() bool { return false }
 
 func (t *ATermInt) Match(pattern string) []any { return matchPattern(t, pattern) }
+func (t *ATermInt)MatchTerm(pat ATerm) []any        { return matchPatternTerm(t, pat) }
 func (t *ATermInt) Make(args []any) ATerm     { return makePattern(t, args) }
 
 func (t *ATermInt) Equivalent(other sharedobjects.Term) bool {
@@ -58,6 +59,7 @@ func (t *ATermLong) GetAnnotations() *ATermList       { return t.factory.emptyLi
 func (t *ATermLong) SetAnnotations(_ *ATermList) ATerm { return t }
 func (t *ATermLong) HasAnnotations() bool             { return false }
 func (t *ATermLong) Match(pattern string) []any       { return matchPattern(t, pattern) }
+func (t *ATermLong)MatchTerm(pat ATerm) []any        { return matchPatternTerm(t, pat) }
 func (t *ATermLong) Make(args []any) ATerm            { return makePattern(t, args) }
 
 func (t *ATermLong) Equivalent(other sharedobjects.Term) bool {
@@ -88,6 +90,7 @@ func (t *ATermReal) GetAnnotations() *ATermList       { return t.factory.emptyLi
 func (t *ATermReal) SetAnnotations(_ *ATermList) ATerm { return t }
 func (t *ATermReal) HasAnnotations() bool             { return false }
 func (t *ATermReal) Match(pattern string) []any       { return matchPattern(t, pattern) }
+func (t *ATermReal)MatchTerm(pat ATerm) []any        { return matchPatternTerm(t, pat) }
 func (t *ATermReal) Make(args []any) ATerm            { return makePattern(t, args) }
 
 func (t *ATermReal) Equivalent(other sharedobjects.Term) bool {

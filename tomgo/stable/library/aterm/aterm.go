@@ -30,6 +30,11 @@ type ATerm interface {
 	// failure.
 	Match(pattern string) []any
 
+	// MatchTerm is the same as Match but takes a pre-parsed pattern
+	// term. Useful when the same pattern is applied many times —
+	// callers can parse it once and reuse the cached pointer.
+	MatchTerm(pattern ATerm) []any
+
 	// Make builds a term from `pattern` (parsed once) using the
 	// receiver's factory and the supplied args list as fill-ins.
 	// It's primarily here so callers can hop from factory.Make("X",
