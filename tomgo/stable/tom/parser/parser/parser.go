@@ -36,12 +36,15 @@
 package tomparser
 
 import (
+	"bytes"
 	"fmt"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"strings"
 
+	gombackend "tom/tomgo/stable/gom/backend"
+	gomparser "tom/tomgo/stable/gom/parser"
 	"tom/tomgo/stable/library/sharedobjects"
 	"tom/tomgo/stable/library/tomast"
 )
@@ -439,6 +442,19 @@ func (p *parser) parseGom() error {
 // under test/. Tests can override for hermetic harnesses.
 var GomDestDir = ""
 
+// Target picks the host language for %gom expansion. "" / "java" uses
+// the Java gom CLI (writes .java AST + a .tom mapping with Java
+// host-syntax). "go" uses the in-process Go gom backend (writes a
+// .go AST + a .tom mapping with Go host-syntax). Set by the parser
+// plugin from `state.Target`.
+var Target = ""
+
+// GomGoPackage, when non-empty, overrides the Go package the
+// generated AST file declares. For fixtures, the test harness sets
+// this to the fixture's `package <name>` so the generated AST
+// compiles in the same package as the test (no imports needed).
+var GomGoPackage = ""
+
 // expandGomBlock writes `body` to a temp `.gom` file, runs the Gom
 // compiler against it, parses the generated `.tom` output, and
 // returns the resulting code list. Mirrors Java's
@@ -456,6 +472,9 @@ func expandGomBlock(body, filename, javaPkg string, includeChain []string, alrea
 	trimmed := strings.TrimSpace(body)
 	if trimmed == "" {
 		return nil, nil
+	}
+	if Target == "go" {
+		return expandGomBlockGo(body, filename, includeChain, alreadyParsed)
 	}
 	moduleName := parseGomModuleName(body)
 	if moduleName == "" {
@@ -573,6 +592,63 @@ func detectJavaPackage(src string) string {
 		i++
 	}
 	return ""
+}
+
+// expandGomBlockGo is the Go-target counterpart of [expandGomBlock].
+// It parses the %gom body in-process via the tomgo Gom parser,
+// generates a Go AST file in `GomDestDir` (the test harness sets
+// this to its workDir so `go test` picks it up automatically), and
+// returns the Tom-syntax mapping (typeterm/op decls) parsed as the
+// caller's sub-result. No external CLI invocation — everything
+// stays in-process so the Go-target pipeline is self-contained.
+//
+// The generated Go AST file uses `GomGoPackage` as its package
+// declaration when set (the fixture's `package <name>`), so the
+// generated types and the fixture compile together as one Go
+// package — no imports needed.
+func expandGomBlockGo(body, filename string, includeChain []string, alreadyParsed *map[string]bool) (*ParseResult, error) {
+	mod, err := gomparser.ParseBytes([]byte(body))
+	if err != nil {
+		return nil, fmt.Errorf("expandGomBlockGo: parse %%gom body: %w", err)
+	}
+	moduleName := parseGomModuleName(body)
+	if moduleName == "" {
+		moduleName = "M"
+	}
+	pkg := GomGoPackage
+	if pkg == "" {
+		pkg = strings.ToLower(strings.TrimSuffix(filepath.Base(filename), ".t"))
+	}
+	opts := gombackend.Options{PackageName: pkg}
+	outDir := GomDestDir
+	if outDir == "" {
+		outDir = filepath.Join(filepath.Dir(filename), "gen")
+	}
+	if err := os.MkdirAll(outDir, 0o755); err != nil {
+		return nil, err
+	}
+	var goBuf bytes.Buffer
+	if err := gombackend.Generate(mod, opts, &goBuf); err != nil {
+		return nil, fmt.Errorf("expandGomBlockGo: generate Go AST: %w", err)
+	}
+	goPath := filepath.Join(outDir, strings.ToLower(moduleName)+"_gen.go")
+	if err := os.WriteFile(goPath, goBuf.Bytes(), 0o644); err != nil {
+		return nil, err
+	}
+	tomBytes := gombackend.EmitTomMappingGo(mod, opts)
+	tomPath := filepath.Join(outDir, moduleName+".tom")
+	// Persist the .tom alongside the generated .go for traceability —
+	// makes it easy to inspect what mappings were synthesised when
+	// debugging a fixture.
+	if err := os.WriteFile(tomPath, tomBytes, 0o644); err != nil {
+		return nil, err
+	}
+	chain := append(append([]string(nil), includeChain...), filename)
+	sub, err := parseAllWithChainAndSet(string(tomBytes), tomPath, chain, alreadyParsed)
+	if err != nil {
+		return nil, fmt.Errorf("expandGomBlockGo: parse generated mapping: %w", err)
+	}
+	return sub, nil
 }
 
 // parseGomModuleName extracts the value after `module` from a Gom

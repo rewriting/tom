@@ -28,6 +28,7 @@ import (
 	"tom/tomgo/stable/tom/compiler"
 	"tom/tomgo/stable/tom/desugarer"
 	"tom/tomgo/stable/tom/parser"
+	tomparser "tom/tomgo/stable/tom/parser/parser"
 	"tom/tomgo/stable/tom/starter"
 	"tom/tomgo/stable/tom/syntaxchecker"
 	"tom/tomgo/stable/tom/transformer"
@@ -236,6 +237,8 @@ var goFixtures = []struct {
 	useGoTest    bool
 	needsMapping bool // set TOMGO_TOM_INCLUDE before running the pipeline
 	useSlLib     bool // require tom/tomgo + replace in the generated go.mod
+	hasInlineGom bool // %gom block: gen .go file lands in workDir for `go test`
+	goPackage    string // override the generated AST file's `package` decl
 }{
 	{
 		name: "Peano",
@@ -357,6 +360,8 @@ var goFixtures = []struct {
 		useGoTest:    true,
 		needsMapping: true,
 		useSlLib:     true,
+		hasInlineGom: true,
+		goPackage:    "testalgebraic",
 		expected: []string{
 			"=== RUN   TestAlgebraic",
 			"--- PASS: TestAlgebraic",
@@ -390,6 +395,19 @@ func TestCompileGoFixtures(t *testing.T) {
 				mapDir := filepath.Join(resources.repoRoot, "stable", "tom", "library", "mapping")
 				t.Setenv("TOMGO_TOM_INCLUDE",
 					filepath.Join(mapDir, "go")+string(os.PathListSeparator)+mapDir)
+			}
+
+			// %gom expansion target: have the parser's Go-target gom
+			// emitter drop the generated AST file in workDir alongside
+			// the test, in the fixture's own Go package, so `go test`
+			// picks it up automatically without imports.
+			if f.hasInlineGom {
+				tomparser.GomDestDir = workDir
+				tomparser.GomGoPackage = f.goPackage
+				defer func() {
+					tomparser.GomDestDir = ""
+					tomparser.GomGoPackage = ""
+				}()
 			}
 
 			// Test files must end in `_test.go` for `go test` to

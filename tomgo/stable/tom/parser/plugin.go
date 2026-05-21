@@ -48,6 +48,11 @@ func Run(in tom.State) (tom.State, error) {
 		}
 		src = bytes
 	}
+	// Plumb Target into the parser so expandGomBlock can dispatch to
+	// the in-process Go gom backend (vs the Java gom CLI).
+	prevTarget := tomparser.Target
+	tomparser.Target = in.Target
+	defer func() { tomparser.Target = prevTarget }()
 	result, err := tomparser.ParseAll(string(src), in.Filename)
 	if err != nil {
 		return in, fmt.Errorf("Parser: parse %s: %w", in.Filename, err)

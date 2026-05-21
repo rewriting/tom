@@ -297,6 +297,88 @@ func EmitTomMapping(mod gomast.GomModule, opts Options) []byte {
 	return buf.Bytes()
 }
 
+// EmitTomMappingGo returns the Tom-mapping (.tom) source for a Gom
+// module, with hook bodies written in **Go** syntax (mirror of
+// [EmitTomMapping] which targets Java).
+//
+// Hook bodies reference the generated Go types directly:
+//
+//   - `implement` uses the sort interface (`L`, `E`, `T1`, …).
+//   - `is_sort` / `is_fsym` use IIFE-wrapped type assertions
+//     (`func() bool { _, ok := ($t).(*<Alt><Sort>); return ok }()`).
+//     Go's `t.(*X)` is a statement, not an expression, so we wrap it
+//     in a no-arg closure so the Tom backend's single-expression
+//     hook emit holds.
+//   - `make` / `get_slot` use the alt struct's factory + field
+//     access (`MakeA()`, `($t).(*FT1).X`).
+//
+// Variadic alternatives emit a `%oplist` with the same `Make<Alt>`
+// (which accepts `args ...<ElemSort>`), `make_empty` returning
+// `nil`, `make_insert(h, t)` building the new list via `Make<Alt>(h,
+// t...)`, etc.
+//
+// Generated alt struct names follow the gom backend's existing
+// scheme: `<ExportedAlt><Sort>` (e.g. `AT1` for alt `a` of sort
+// `T1`). Slot field names are `exportedField(slotName)`.
+func EmitTomMappingGo(mod gomast.GomModule, opts Options) []byte {
+	var buf bytes.Buffer
+	for _, prod := range moduleSorts(mod) {
+		sortNm := sortName(prod)
+		fmt.Fprintf(&buf, "%%typeterm %s {\n", sortNm)
+		fmt.Fprintf(&buf, "  implement      { %s }\n", sortNm)
+		fmt.Fprintf(&buf, "  is_sort(t)     { func() bool { _, ok := ($t).(%s); return ok }() }\n", sortNm)
+		fmt.Fprintf(&buf, "  equals(t1,t2)  { ($t1).Equivalent($t2) }\n")
+		fmt.Fprintf(&buf, "}\n\n")
+	}
+	for _, prod := range moduleSorts(mod) {
+		sortNm := sortName(prod)
+		for _, alt := range sortAlternatives(prod) {
+			altNm := alt.Name
+			structName := exportedField(altNm) + sortNm
+			if alternativeIsVariadic(alt) {
+				typeName := fieldTypeName(alternativeFields(alt)[0])
+				fmt.Fprintf(&buf, "%%oplist %s %s( %s* ) {\n", sortNm, altNm, typeName)
+				fmt.Fprintf(&buf, "  is_fsym(t)       { func() bool { _, ok := ($t).(*%s); return ok }() }\n", structName)
+				fmt.Fprintf(&buf, "  make_empty()     { Make%s() }\n", exportedField(altNm))
+				fmt.Fprintf(&buf, "  make_insert(e,l) { func() %s { s := ($l).(*%s).Slots; return Make%s(append([]%s{$e}, s...)...) }() }\n",
+					sortNm, structName, exportedField(altNm), typeName)
+				fmt.Fprintf(&buf, "  get_head(l)      { ($l).(*%s).Slots[0] }\n", structName)
+				fmt.Fprintf(&buf, "  get_tail(l)      { func() %s { s := ($l).(*%s).Slots; return Make%s(s[1:]...) }() }\n",
+					sortNm, structName, exportedField(altNm))
+				fmt.Fprintf(&buf, "  is_empty(l)      { len(($l).(*%s).Slots) == 0 }\n", structName)
+				fmt.Fprintf(&buf, "}\n\n")
+				continue
+			}
+			fields := alternativeFields(alt)
+			slotsParts := make([]string, 0, len(fields))
+			slotNames := make([]string, 0, len(fields))
+			for _, f := range fields {
+				nf, ok := f.(*gomast.NamedFieldField)
+				if !ok {
+					continue
+				}
+				typeName := fieldTypeName(f)
+				slotsParts = append(slotsParts, fmt.Sprintf("%s:%s", nf.Name, typeName))
+				slotNames = append(slotNames, nf.Name)
+			}
+			fmt.Fprintf(&buf, "%%op %s %s(%s) {\n", sortNm, altNm, strings.Join(slotsParts, ", "))
+			fmt.Fprintf(&buf, "  is_fsym(t)     { func() bool { _, ok := ($t).(*%s); return ok }() }\n", structName)
+			for _, sn := range slotNames {
+				fmt.Fprintf(&buf, "  get_slot(%s,t) { ($t).(*%s).%s }\n", sn, structName, exportedField(sn))
+			}
+			makeArgs := make([]string, len(slotNames))
+			for i, sn := range slotNames {
+				makeArgs[i] = "$" + sn
+			}
+			fmt.Fprintf(&buf, "  make(%s)       { Make%s(%s) }\n",
+				strings.Join(slotNames, ","),
+				exportedField(altNm), strings.Join(makeArgs, ","))
+			fmt.Fprintf(&buf, "}\n\n")
+		}
+	}
+	return buf.Bytes()
+}
+
 // GenerateBatchToDir compiles several Gom modules into a single Go
 // package living at dir. Cross-module slot types resolve to the local
 // Go interface because all sorts from every module share the same Go
