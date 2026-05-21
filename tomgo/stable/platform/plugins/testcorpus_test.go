@@ -34,6 +34,13 @@ func TestCorpus_ParityWithJava(t *testing.T) {
 	// etc. resolve. Java's TomStreamManager.getImportList walks
 	// `$TOM_HOME/share/tom/<lang>` first; match that order so the
 	// OriginTracking paths in the AST come out identical.
+	// Mirror Java's destdir for inline %gom expansion: the test
+	// build directs everything to `test/gen`, regardless of the
+	// fixture's depth under test/. Without this our parser defaults
+	// to `<source-dir>/gen` which mismatches OriginTracking paths
+	// for fixtures in subdirs (test/gom/, test/sl/, …).
+	tomparser.GomDestDir = filepath.Join(repoRoot, "test", "gen")
+
 	tomparser.IncludeSearchPath = []string{
 		// Java's tom CLI configures user-import-list to include
 		// destdir first (where Gom drops its generated .tom files).

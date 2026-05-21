@@ -383,8 +383,9 @@ func (p *parser) parseGom() error {
 	bodyEndIdx := p.idx - 1
 	body := p.src[bodyStartIdx:bodyEndIdx]
 
-	innerCodes, err := expandGomBlock(body, p.filename, p.includeChain)
-	if err != nil || len(innerCodes) == 0 {
+	javaPkg := detectJavaPackage(p.src)
+	subResult, err := expandGomBlock(body, p.filename, javaPkg, p.includeChain, p.alreadyParsed)
+	if err != nil || subResult == nil || subResult.Code == nil {
 		// Fall back to the empty-wrapper shape so the structural
 		// shape still matches Java's output for empty %gom blocks.
 		emptyBlock := tomast.MakeAbstractBlock(tomast.MakeConcInstruction())
@@ -392,12 +393,35 @@ func (p *parser) parseGom() error {
 		p.codes = append(p.codes, tomast.MakeTomInclude(tomast.MakeConcCode(inner)))
 		return nil
 	}
-	// Merge the sub-parser's signature data so subsequent fixtures
-	// can resolve the Gom-generated sorts/operators.
-	// (Sub-parser already populated subResult.Sorts/Symbols inside
-	// expandGomBlock; we don't currently surface those back to `p`
-	// because TomInclude is supposed to keep its symbols inside its
-	// own scope. To revisit if needed.)
+	// Merge the Gom-generated module's sorts/operators into the
+	// outer parser's signature so the Desugarer can fill in slot
+	// names and the Typer can resolve symbol types. Java's
+	// TomStreamManager-shared SymbolTable does this implicitly.
+	for k, v := range subResult.Sorts {
+		if _, exists := p.sig.Sorts[k]; !exists {
+			p.sig.Sorts[k] = v
+		}
+	}
+	for k, v := range subResult.Symbols {
+		if _, exists := p.sig.Symbols[k]; !exists {
+			p.sig.Symbols[k] = v
+		}
+	}
+	tom, ok := subResult.Code.(*tomast.TomCode)
+	if !ok {
+		return fmt.Errorf("gom output produced unexpected AST root: %T", subResult.Code)
+	}
+	cl, ok := tom.CodeList.(*tomast.ConcCodeCodeList)
+	if !ok {
+		return fmt.Errorf("gom output codeList not concCode: %T", tom.CodeList)
+	}
+	innerCodes := cl.Slots
+	if len(innerCodes) == 0 {
+		emptyBlock := tomast.MakeAbstractBlock(tomast.MakeConcInstruction())
+		inner := tomast.MakeInstructionToCode(emptyBlock)
+		p.codes = append(p.codes, tomast.MakeTomInclude(tomast.MakeConcCode(inner)))
+		return nil
+	}
 	instructions := make([]tomast.Instruction, len(innerCodes))
 	for i, c := range innerCodes {
 		instructions[i] = tomast.MakeCodeToInstruction(c)
@@ -428,7 +452,7 @@ var GomDestDir = ""
 // resulting TomInclude tree matches byte-for-byte.
 //
 // Returns (nil, nil) for an empty/whitespace-only body.
-func expandGomBlock(body, filename string, includeChain []string) ([]tomast.Code, error) {
+func expandGomBlock(body, filename, javaPkg string, includeChain []string, alreadyParsed *map[string]bool) (*ParseResult, error) {
 	trimmed := strings.TrimSpace(body)
 	if trimmed == "" {
 		return nil, nil
@@ -437,10 +461,15 @@ func expandGomBlock(body, filename string, includeChain []string) ([]tomast.Code
 	if moduleName == "" {
 		moduleName = "M"
 	}
-	// Package: lowercase of the input .t filename (without .t),
-	// mirroring TomParserTool.parseGomFile:152-157.
+	// Package passed to gom: Java's TomParserTool.parseGomFile uses
+	// `packageName + "." + lowerCase(inputBaseName)`, where
+	// packageName comes from the source's `package X;` declaration
+	// (empty for unpackaged sources). Mirror that.
 	inputBase := strings.TrimSuffix(filepath.Base(filename), ".t")
 	pkg := strings.ToLower(inputBase)
+	if javaPkg != "" {
+		pkg = javaPkg + "." + pkg
+	}
 
 	tmpDir, err := os.MkdirTemp("", "tomgom-")
 	if err != nil {
@@ -491,19 +520,57 @@ func expandGomBlock(body, filename string, includeChain []string) ([]tomast.Code
 		return nil, err
 	}
 	chain := append(append([]string(nil), includeChain...), filename)
-	sub, err := parseAllWithChain(string(src), tomFile, chain)
+	sub, err := parseAllWithChainAndSet(string(src), tomFile, chain, alreadyParsed)
 	if err != nil {
 		return nil, err
 	}
-	tom, ok := sub.Code.(*tomast.TomCode)
-	if !ok {
-		return nil, fmt.Errorf("gom output produced unexpected AST root: %T", sub.Code)
+	return sub, nil
+}
+
+// detectJavaPackage finds the first `package X;` statement in the
+// .t source and returns X (or "" if absent). Used to compute the
+// gom `--package` argument so the generated .tom file lands at the
+// same `<destdir>/<java-pkg>/<module>/<module>.tom` location that
+// `tom --intermediate` produces.
+//
+// Skips Java-style `//` and `/* … */` comments so a `package` keyword
+// inside a comment doesn't confuse us.
+func detectJavaPackage(src string) string {
+	i := 0
+	n := len(src)
+	for i < n {
+		// Skip comments.
+		if i+1 < n && src[i] == '/' && src[i+1] == '/' {
+			for i < n && src[i] != '\n' {
+				i++
+			}
+			continue
+		}
+		if i+1 < n && src[i] == '/' && src[i+1] == '*' {
+			i += 2
+			for i+1 < n && !(src[i] == '*' && src[i+1] == '/') {
+				i++
+			}
+			if i+1 < n {
+				i += 2
+			}
+			continue
+		}
+		// `package` must start at a word boundary.
+		if i+7 < n && src[i:i+7] == "package" && (src[i+7] == ' ' || src[i+7] == '\t') {
+			j := i + 7
+			for j < n && (src[j] == ' ' || src[j] == '\t') {
+				j++
+			}
+			start := j
+			for j < n && src[j] != ';' && src[j] != '\n' && src[j] != ' ' && src[j] != '\t' {
+				j++
+			}
+			return src[start:j]
+		}
+		i++
 	}
-	cl, ok := tom.CodeList.(*tomast.ConcCodeCodeList)
-	if !ok {
-		return nil, fmt.Errorf("gom output codeList not concCode: %T", tom.CodeList)
-	}
-	return cl.Slots, nil
+	return ""
 }
 
 // parseGomModuleName extracts the value after `module` from a Gom
