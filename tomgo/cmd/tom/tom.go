@@ -99,7 +99,15 @@ func main() {
 		}
 	}
 
-	dump := fmt.Sprintf("%v\n", state.Code)
+	var dump string
+	// After the backend phase, the generated Java source replaces
+	// the AST in state.Source. Emit that when we ran the full
+	// pipeline; otherwise dump the AST (debug / intermediate).
+	if *stop == "backend" {
+		dump = string(state.Source)
+	} else {
+		dump = fmt.Sprintf("%v\n", state.Code)
+	}
 	// Normalise input path so the dump is reproducible across machines.
 	dump = strings.ReplaceAll(dump, input, "__INPUT__")
 	dump = strings.ReplaceAll(dump, filepath.Dir(input), "__DIR__")
