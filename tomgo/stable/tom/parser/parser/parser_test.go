@@ -8,13 +8,13 @@ import (
 	"testing"
 )
 
-// parseFixture reads tomgo/testdata/parse/<name>/scenario.t and parses it via
+// parseFixture reads tomgo/tests/testdata/parse/<name>/scenario.t and parses it via
 // the hand-rolled Go parser, returning the canonical String() form with all
 // absolute paths normalised: scenario.t → __INPUT__, its containing directory
 // → __DIR__. Same convention as the tomparseq cross-language harness.
 func parseFixture(t *testing.T, name string) string {
 	t.Helper()
-	path := "../../../../testdata/parse/" + name + "/scenario.t"
+	path := "../../../../tests/testdata/parse/" + name + "/scenario.t"
 	abs, err := filepath.Abs(path)
 	if err != nil {
 		t.Fatalf("abs %s: %v", path, err)

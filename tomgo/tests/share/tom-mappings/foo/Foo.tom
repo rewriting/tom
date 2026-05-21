@@ -1,0 +1,65 @@
+%typeterm T {
+  implement      { Foo.types.T }
+  is_sort(t)     { ($t instanceof Foo.types.T) }
+  equals(t1,t2)  { ($t1.equals($t2)) }
+}
+
+%op T f(t1:String, t2:T) {
+  is_fsym(t)     { ($t != null) && ($t instanceof Foo.types.t.f) }
+  get_slot(t1,t) { ((Foo.types.t.f)$t).getT1() }
+  get_slot(t2,t) { ((Foo.types.t.f)$t).getT2() }
+  make(t1,t2)       { new Foo.types.t.f($t1,$t2) }
+}
+
+%op T h(t3:T) {
+  is_fsym(t)     { ($t != null) && ($t instanceof Foo.types.t.h) }
+  get_slot(t3,t) { ((Foo.types.t.h)$t).getT3() }
+  make(t3)       { new Foo.types.t.h($t3) }
+}
+
+%op T i(t4:int) {
+  is_fsym(t)     { ($t != null) && ($t instanceof Foo.types.t.i) }
+  get_slot(t4,t) { ((Foo.types.t.i)$t).getT4() }
+  make(t4)       { new Foo.types.t.i($t4) }
+}
+
+%op T j(t5:float) {
+  is_fsym(t)     { ($t != null) && ($t instanceof Foo.types.t.j) }
+  get_slot(t5,t) { ((Foo.types.t.j)$t).getT5() }
+  make(t5)       { new Foo.types.t.j($t5) }
+}
+
+%op T l(t7:long) {
+  is_fsym(t)     { ($t != null) && ($t instanceof Foo.types.t.l) }
+  get_slot(t7,t) { ((Foo.types.t.l)$t).getT7() }
+  make(t7)       { new Foo.types.t.l($t7) }
+}
+
+%op T d(t8:double) {
+  is_fsym(t)     { ($t != null) && ($t instanceof Foo.types.t.d) }
+  get_slot(t8,t) { ((Foo.types.t.d)$t).getT8() }
+  make(t8)       { new Foo.types.t.d($t8) }
+}
+
+%op T n(t9:char) {
+  is_fsym(t)     { ($t != null) && ($t instanceof Foo.types.t.n) }
+  get_slot(t9,t) { ((Foo.types.t.n)$t).getT9() }
+  make(t9)       { new Foo.types.t.n($t9) }
+}
+
+%op T o(t10:boolean) {
+  is_fsym(t)     { ($t != null) && ($t instanceof Foo.types.t.o) }
+  get_slot(t10,t) { ((Foo.types.t.o)$t).getT10() }
+  make(t10)       { new Foo.types.t.o($t10) }
+}
+
+%op T a() {
+  is_fsym(t)     { ($t != null) && ($t instanceof Foo.types.t.a) }
+  make()       { new Foo.types.t.a() }
+}
+
+%op T b() {
+  is_fsym(t)     { ($t != null) && ($t instanceof Foo.types.t.b) }
+  make()       { new Foo.types.t.b() }
+}
+

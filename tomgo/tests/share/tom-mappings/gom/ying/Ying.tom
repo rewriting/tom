@@ -1,0 +1,12 @@
+%typeterm Moon {
+  implement      { Ying.types.Moon }
+  is_sort(t)     { ($t instanceof Ying.types.Moon) }
+  equals(t1,t2)  { ($t1.equals($t2)) }
+}
+
+%op Moon ping(sl:Sun) {
+  is_fsym(t)     { ($t != null) && ($t instanceof Ying.types.moon.ping) }
+  get_slot(sl,t) { ((Ying.types.moon.ping)$t).getSl() }
+  make(sl)       { new Ying.types.moon.ping($sl) }
+}
+

@@ -1,6 +1,6 @@
 // Command javacache runs `tom --intermediate` on every `test/*.t` and
 // caches the resulting `.tfix.<phase>` files under
-// `tomgo/testdata/javacache/<rel-path>/`. The cached dumps replace
+// `tomgo/tests/testdata/javacache/<rel-path>/`. The cached dumps replace
 // the per-fixture `TomPipelineDump` invocations, turning parity
 // checks from O(minutes) into O(milliseconds) for repeated runs.
 //
@@ -32,7 +32,7 @@ import (
 var (
 	repoRoot = "/Users/pem/github/tom"
 	corpus   = filepath.Join(repoRoot, "test")
-	cacheDir = filepath.Join(repoRoot, "tomgo", "testdata", "java-ast")
+	cacheDir = filepath.Join(repoRoot, "tomgo", "tests", "testdata", "java-ast")
 	tomHome  = filepath.Join(repoRoot, "src", "dist")
 	tomBin   = filepath.Join(tomHome, "bin", "tom")
 )

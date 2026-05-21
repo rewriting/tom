@@ -1,0 +1,82 @@
+%typeterm Bool {
+  implement      { ML.types.Bool }
+  is_sort(t)     { ($t instanceof ML.types.Bool) }
+  equals(t1,t2)  { ($t1.equals($t2)) }
+}
+
+%typeterm Expr {
+  implement      { ML.types.Expr }
+  is_sort(t)     { ($t instanceof ML.types.Expr) }
+  equals(t1,t2)  { ($t1.equals($t2)) }
+}
+
+%op Bool True() {
+  is_fsym(t)     { ($t != null) && ($t instanceof ML.types.bool.True) }
+  make()       { new ML.types.bool.True() }
+}
+
+%op Bool False() {
+  is_fsym(t)     { ($t != null) && ($t instanceof ML.types.bool.False) }
+  make()       { new ML.types.bool.False() }
+}
+
+%op Bool Not(b:Bool) {
+  is_fsym(t)     { ($t != null) && ($t instanceof ML.types.bool.Not) }
+  get_slot(b,t) { ((ML.types.bool.Not)$t).getB() }
+  make(b)       { new ML.types.bool.Not($b) }
+}
+
+%op Bool And(l:Bool, r:Bool) {
+  is_fsym(t)     { ($t != null) && ($t instanceof ML.types.bool.And) }
+  get_slot(l,t) { ((ML.types.bool.And)$t).getL() }
+  get_slot(r,t) { ((ML.types.bool.And)$t).getR() }
+  make(l,r)       { new ML.types.bool.And($l,$r) }
+}
+
+%op Bool Or(l:Bool, r:Bool) {
+  is_fsym(t)     { ($t != null) && ($t instanceof ML.types.bool.Or) }
+  get_slot(l,t) { ((ML.types.bool.Or)$t).getL() }
+  get_slot(r,t) { ((ML.types.bool.Or)$t).getR() }
+  make(l,r)       { new ML.types.bool.Or($l,$r) }
+}
+
+%op Bool Eq(e1:Expr, e2:Expr) {
+  is_fsym(t)     { ($t != null) && ($t instanceof ML.types.bool.Eq) }
+  get_slot(e1,t) { ((ML.types.bool.Eq)$t).getE1() }
+  get_slot(e2,t) { ((ML.types.bool.Eq)$t).getE2() }
+  make(e1,e2)       { new ML.types.bool.Eq($e1,$e2) }
+}
+
+%op Expr Var(name:String) {
+  is_fsym(t)     { ($t != null) && ($t instanceof ML.types.expr.Var) }
+  get_slot(name,t) { ((ML.types.expr.Var)$t).getName() }
+  make(name)       { new ML.types.expr.Var($name) }
+}
+
+%op Expr Cst(val:int) {
+  is_fsym(t)     { ($t != null) && ($t instanceof ML.types.expr.Cst) }
+  get_slot(val,t) { ((ML.types.expr.Cst)$t).getVal() }
+  make(val)       { new ML.types.expr.Cst($val) }
+}
+
+%op Expr Plus(e1:Expr, e2:Expr) {
+  is_fsym(t)     { ($t != null) && ($t instanceof ML.types.expr.Plus) }
+  get_slot(e1,t) { ((ML.types.expr.Plus)$t).getE1() }
+  get_slot(e2,t) { ((ML.types.expr.Plus)$t).getE2() }
+  make(e1,e2)       { new ML.types.expr.Plus($e1,$e2) }
+}
+
+%op Expr Mult(e1:Expr, e2:Expr) {
+  is_fsym(t)     { ($t != null) && ($t instanceof ML.types.expr.Mult) }
+  get_slot(e1,t) { ((ML.types.expr.Mult)$t).getE1() }
+  get_slot(e2,t) { ((ML.types.expr.Mult)$t).getE2() }
+  make(e1,e2)       { new ML.types.expr.Mult($e1,$e2) }
+}
+
+%op Expr Mod(e1:Expr, e2:Expr) {
+  is_fsym(t)     { ($t != null) && ($t instanceof ML.types.expr.Mod) }
+  get_slot(e1,t) { ((ML.types.expr.Mod)$t).getE1() }
+  get_slot(e2,t) { ((ML.types.expr.Mod)$t).getE2() }
+  make(e1,e2)       { new ML.types.expr.Mod($e1,$e2) }
+}
+

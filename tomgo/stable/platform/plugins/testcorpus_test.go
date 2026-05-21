@@ -52,8 +52,8 @@ func TestCorpus_ParityWithJava(t *testing.T) {
 		filepath.Join(repoRoot, "src", "dist", "share", "tom"),
 		filepath.Join(repoRoot, "utils", "eclipse-plugin", "plugin", "include", "java"),
 		filepath.Join(repoRoot, "utils", "eclipse-plugin", "plugin", "include"),
-		filepath.Join(repoRoot, "tomgo", "share", "tom-mappings"),
-		filepath.Join(repoRoot, "tomgo", "share", "tom-mappings", "gom"),
+		filepath.Join(repoRoot, "tomgo", "tests", "share", "tom-mappings"),
+		filepath.Join(repoRoot, "tomgo", "tests", "share", "tom-mappings", "gom"),
 	}
 
 	corpusDir := filepath.Join(repoRoot, "test")

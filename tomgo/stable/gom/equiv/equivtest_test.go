@@ -40,9 +40,9 @@ func TestEquivalence(t *testing.T) {
 	for _, c := range cases {
 		c := c
 		t.Run(c.name, func(t *testing.T) {
-			gomFile := filepath.Join(repo, "tomgo", "testdata", "corpus", "gom-nohooks", c.gomFile)
-			scnGo := filepath.Join(repo, "tomgo", "testdata", "equiv", c.dir, "scenario.go")
-			scnJava := filepath.Join(repo, "tomgo", "testdata", "equiv", c.dir, "Scenario.java")
+			gomFile := filepath.Join(repo, "tomgo", "tests", "testdata", "corpus", "gom-nohooks", c.gomFile)
+			scnGo := filepath.Join(repo, "tomgo", "tests", "testdata", "equiv", c.dir, "scenario.go")
+			scnJava := filepath.Join(repo, "tomgo", "tests", "testdata", "equiv", c.dir, "Scenario.java")
 			workDir := filepath.Join("..", "..", "reports", "equiv-"+c.name)
 			if err := CompareTarget(tc, gomFile, scnGo, scnJava, workDir); err != nil {
 				t.Fatal(err)

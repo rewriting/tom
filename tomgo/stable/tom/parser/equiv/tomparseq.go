@@ -197,7 +197,7 @@ func (tc JavaToolchain) EnsurePipelineCompiled() error {
 // given phase, normalised to the comparison form (paths replaced by
 // `__INPUT__`/`__DIR__`). The lookup order:
 //
-//  1. The pre-computed cache under `tomgo/testdata/javacache/<rel>/`
+//  1. The pre-computed cache under `tomgo/tests/testdata/javacache/<rel>/`
 //     populated by `go run ./cmd/javacache` (instant, hundreds of
 //     fixtures pre-built from a single full `tom --intermediate`
 //     sweep).
@@ -247,7 +247,7 @@ func (tc JavaToolchain) DumpJavaPhase(inputFile string, phase Phase) (string, er
 //
 // where <dir>/<basename>.t is the fixture path relative to
 // /Users/pem/github/tom/test. Tests/tools can override CacheDir.
-var CacheDir = "/Users/pem/github/tom/tomgo/testdata/java-ast"
+var CacheDir = "/Users/pem/github/tom/tomgo/tests/testdata/java-ast"
 
 // readCachedDump returns the cached AST string for `(absInput, phase)`
 // if available. Phase `synchecked` falls back to `transformed` (Java's

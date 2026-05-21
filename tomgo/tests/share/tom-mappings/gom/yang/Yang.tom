@@ -1,0 +1,17 @@
+%typeterm Sun {
+  implement      { Yang.types.Sun }
+  is_sort(t)     { ($t instanceof Yang.types.Sun) }
+  equals(t1,t2)  { ($t1.equals($t2)) }
+}
+
+%op Sun pong(st:Moon) {
+  is_fsym(t)     { ($t != null) && ($t instanceof Yang.types.sun.pong) }
+  get_slot(st,t) { ((Yang.types.sun.pong)$t).getSt() }
+  make(st)       { new Yang.types.sun.pong($st) }
+}
+
+%op Sun shi() {
+  is_fsym(t)     { ($t != null) && ($t instanceof Yang.types.sun.shi) }
+  make()       { new Yang.types.sun.shi() }
+}
+

@@ -1,0 +1,18 @@
+%typeterm Wrapper {
+  implement      { MultiHook.types.Wrapper }
+  is_sort(t)     { ($t instanceof MultiHook.types.Wrapper) }
+  equals(t1,t2)  { ($t1.equals($t2)) }
+}
+
+%op Wrapper Int(i:int) {
+  is_fsym(t)     { ($t != null) && ($t instanceof MultiHook.types.wrapper.Int) }
+  get_slot(i,t) { ((MultiHook.types.wrapper.Int)$t).getI() }
+  make(i)       { new MultiHook.types.wrapper.Int($i) }
+}
+
+%op Wrapper OInt(i:int) {
+  is_fsym(t)     { ($t != null) && ($t instanceof MultiHook.types.wrapper.OInt) }
+  get_slot(i,t) { ((MultiHook.types.wrapper.OInt)$t).getI() }
+  make(i)       { new MultiHook.types.wrapper.OInt($i) }
+}
+

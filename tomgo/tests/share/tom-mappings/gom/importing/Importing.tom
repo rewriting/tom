@@ -1,0 +1,19 @@
+%typeterm Out {
+  implement      { Importing.types.Out }
+  is_sort(t)     { ($t instanceof Importing.types.Out) }
+  equals(t1,t2)  { ($t1.equals($t2)) }
+}
+
+%op Out Pack(i:Inner) {
+  is_fsym(t)     { ($t != null) && ($t instanceof Importing.types.out.Pack) }
+  get_slot(i,t) { ((Importing.types.out.Pack)$t).getI() }
+  make(i)       { new Importing.types.out.Pack($i) }
+}
+
+%op Out Loop(o:Out, i:Inner) {
+  is_fsym(t)     { ($t != null) && ($t instanceof Importing.types.out.Loop) }
+  get_slot(o,t) { ((Importing.types.out.Loop)$t).getO() }
+  get_slot(i,t) { ((Importing.types.out.Loop)$t).getI() }
+  make(o,i)       { new Importing.types.out.Loop($o,$i) }
+}
+

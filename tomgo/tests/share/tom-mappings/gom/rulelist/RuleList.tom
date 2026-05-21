@@ -1,0 +1,93 @@
+%typeterm Term {
+  implement      { RuleList.types.Term }
+  is_sort(t)     { ($t instanceof RuleList.types.Term) }
+  equals(t1,t2)  { ($t1.equals($t2)) }
+}
+
+%typeterm List {
+  implement      { RuleList.types.List }
+  is_sort(t)     { ($t instanceof RuleList.types.List) }
+  equals(t1,t2)  { ($t1.equals($t2)) }
+}
+
+%typeterm Bool {
+  implement      { RuleList.types.Bool }
+  is_sort(t)     { ($t instanceof RuleList.types.Bool) }
+  equals(t1,t2)  { ($t1.equals($t2)) }
+}
+
+%op Term a() {
+  is_fsym(t)     { ($t != null) && ($t instanceof RuleList.types.term.a) }
+  make()       { new RuleList.types.term.a() }
+}
+
+%op Term b() {
+  is_fsym(t)     { ($t != null) && ($t instanceof RuleList.types.term.b) }
+  make()       { new RuleList.types.term.b() }
+}
+
+%op Term c() {
+  is_fsym(t)     { ($t != null) && ($t instanceof RuleList.types.term.c) }
+  make()       { new RuleList.types.term.c() }
+}
+
+%op Term d() {
+  is_fsym(t)     { ($t != null) && ($t instanceof RuleList.types.term.d) }
+  make()       { new RuleList.types.term.d() }
+}
+
+%op Term f(x:Term) {
+  is_fsym(t)     { ($t != null) && ($t instanceof RuleList.types.term.f) }
+  get_slot(x,t) { ((RuleList.types.term.f)$t).getX() }
+  make(x)       { new RuleList.types.term.f($x) }
+}
+
+%op Term g(l:List) {
+  is_fsym(t)     { ($t != null) && ($t instanceof RuleList.types.term.g) }
+  get_slot(l,t) { ((RuleList.types.term.g)$t).getL() }
+  make(l)       { new RuleList.types.term.g($l) }
+}
+
+%op Term h(x:Term) {
+  is_fsym(t)     { ($t != null) && ($t instanceof RuleList.types.term.h) }
+  get_slot(x,t) { ((RuleList.types.term.h)$t).getX() }
+  make(x)       { new RuleList.types.term.h($x) }
+}
+
+%oplist Term k( Term* ) {
+  is_fsym(t)       { ($t instanceof RuleList.types.Term) }
+  make_empty()     { new RuleList.types.Term.Emptyk() }
+  make_insert(e,l) { new RuleList.types.Term.Consk($e, $l) }
+  get_head(l)      { ((RuleList.types.Term.Consk)$l).getHeadk() }
+  get_tail(l)      { ((RuleList.types.Term.Consk)$l).getTailk() }
+  is_empty(l)      { ($l instanceof RuleList.types.Term.Emptyk) }
+}
+
+%oplist List conc( Term* ) {
+  is_fsym(t)       { ($t instanceof RuleList.types.List) }
+  make_empty()     { new RuleList.types.List.Emptyconc() }
+  make_insert(e,l) { new RuleList.types.List.Consconc($e, $l) }
+  get_head(l)      { ((RuleList.types.List.Consconc)$l).getHeadconc() }
+  get_tail(l)      { ((RuleList.types.List.Consconc)$l).getTailconc() }
+  is_empty(l)      { ($l instanceof RuleList.types.List.Emptyconc) }
+}
+
+%op Bool True() {
+  is_fsym(t)     { ($t != null) && ($t instanceof RuleList.types.bool.True) }
+  make()       { new RuleList.types.bool.True() }
+}
+
+%op Bool False() {
+  is_fsym(t)     { ($t != null) && ($t instanceof RuleList.types.bool.False) }
+  make()       { new RuleList.types.bool.False() }
+}
+
+%oplist Bool And( Bool* ) {
+  is_fsym(t)       { ($t instanceof RuleList.types.Bool) }
+  make_empty()     { new RuleList.types.Bool.EmptyAnd() }
+  make_insert(e,l) { new RuleList.types.Bool.ConsAnd($e, $l) }
+  get_head(l)      { ((RuleList.types.Bool.ConsAnd)$l).getHeadAnd() }
+  get_tail(l)      { ((RuleList.types.Bool.ConsAnd)$l).getTailAnd() }
+  is_empty(l)      { ($l instanceof RuleList.types.Bool.EmptyAnd) }
+}
+

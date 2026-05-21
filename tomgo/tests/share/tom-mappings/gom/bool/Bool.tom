@@ -1,0 +1,36 @@
+%typeterm Bool {
+  implement      { Bool.types.Bool }
+  is_sort(t)     { ($t instanceof Bool.types.Bool) }
+  equals(t1,t2)  { ($t1.equals($t2)) }
+}
+
+%op Bool True() {
+  is_fsym(t)     { ($t != null) && ($t instanceof Bool.types.bool.True) }
+  make()       { new Bool.types.bool.True() }
+}
+
+%op Bool False() {
+  is_fsym(t)     { ($t != null) && ($t instanceof Bool.types.bool.False) }
+  make()       { new Bool.types.bool.False() }
+}
+
+%op Bool Not(b:Bool) {
+  is_fsym(t)     { ($t != null) && ($t instanceof Bool.types.bool.Not) }
+  get_slot(b,t) { ((Bool.types.bool.Not)$t).getB() }
+  make(b)       { new Bool.types.bool.Not($b) }
+}
+
+%op Bool And(l:Bool, r:Bool) {
+  is_fsym(t)     { ($t != null) && ($t instanceof Bool.types.bool.And) }
+  get_slot(l,t) { ((Bool.types.bool.And)$t).getL() }
+  get_slot(r,t) { ((Bool.types.bool.And)$t).getR() }
+  make(l,r)       { new Bool.types.bool.And($l,$r) }
+}
+
+%op Bool Or(l:Bool, r:Bool) {
+  is_fsym(t)     { ($t != null) && ($t instanceof Bool.types.bool.Or) }
+  get_slot(l,t) { ((Bool.types.bool.Or)$t).getL() }
+  get_slot(r,t) { ((Bool.types.bool.Or)$t).getR() }
+  make(l,r)       { new Bool.types.bool.Or($l,$r) }
+}
+

@@ -24,7 +24,7 @@ func TestPlatformParser_Match0b(t *testing.T) {
 		t.Fatal(err)
 	}
 	// stable/platform/plugins/ → tomgo/ is 3 levels up.
-	abs, err := filepath.Abs(filepath.Join(repo, "..", "..", "..", "testdata", "parse", "match0b", "scenario.t"))
+	abs, err := filepath.Abs(filepath.Join(repo, "..", "..", "..", "tests", "testdata", "parse", "match0b", "scenario.t"))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -93,7 +93,7 @@ func TestDefaultPipeline_StarterAllocatesSymbols(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	abs, err := filepath.Abs(filepath.Join(cwd, "..", "..", "..", "testdata", "parse", "match0b", "scenario.t"))
+	abs, err := filepath.Abs(filepath.Join(cwd, "..", "..", "..", "tests", "testdata", "parse", "match0b", "scenario.t"))
 	if err != nil {
 		t.Fatal(err)
 	}

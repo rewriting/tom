@@ -1,0 +1,203 @@
+%typeterm Wrapper {
+  implement      { Builtin.types.Wrapper }
+  is_sort(t)     { ($t instanceof Builtin.types.Wrapper) }
+  equals(t1,t2)  { ($t1.equals($t2)) }
+}
+
+%typeterm ListInt {
+  implement      { Builtin.types.ListInt }
+  is_sort(t)     { ($t instanceof Builtin.types.ListInt) }
+  equals(t1,t2)  { ($t1.equals($t2)) }
+}
+
+%typeterm ListLong {
+  implement      { Builtin.types.ListLong }
+  is_sort(t)     { ($t instanceof Builtin.types.ListLong) }
+  equals(t1,t2)  { ($t1.equals($t2)) }
+}
+
+%typeterm ListBool {
+  implement      { Builtin.types.ListBool }
+  is_sort(t)     { ($t instanceof Builtin.types.ListBool) }
+  equals(t1,t2)  { ($t1.equals($t2)) }
+}
+
+%typeterm ListChar {
+  implement      { Builtin.types.ListChar }
+  is_sort(t)     { ($t instanceof Builtin.types.ListChar) }
+  equals(t1,t2)  { ($t1.equals($t2)) }
+}
+
+%op Wrapper Int(i:int) {
+  is_fsym(t)     { ($t != null) && ($t instanceof Builtin.types.wrapper.Int) }
+  get_slot(i,t) { ((Builtin.types.wrapper.Int)$t).getI() }
+  make(i)       { new Builtin.types.wrapper.Int($i) }
+}
+
+%op Wrapper IntBis(i:int) {
+  is_fsym(t)     { ($t != null) && ($t instanceof Builtin.types.wrapper.IntBis) }
+  get_slot(i,t) { ((Builtin.types.wrapper.IntBis)$t).getI() }
+  make(i)       { new Builtin.types.wrapper.IntBis($i) }
+}
+
+%op Wrapper Name(n:String) {
+  is_fsym(t)     { ($t != null) && ($t instanceof Builtin.types.wrapper.Name) }
+  get_slot(n,t) { ((Builtin.types.wrapper.Name)$t).getN() }
+  make(n)       { new Builtin.types.wrapper.Name($n) }
+}
+
+%op Wrapper NameBis(n:String) {
+  is_fsym(t)     { ($t != null) && ($t instanceof Builtin.types.wrapper.NameBis) }
+  get_slot(n,t) { ((Builtin.types.wrapper.NameBis)$t).getN() }
+  make(n)       { new Builtin.types.wrapper.NameBis($n) }
+}
+
+%op Wrapper Node(aterm:ATerm) {
+  is_fsym(t)     { ($t != null) && ($t instanceof Builtin.types.wrapper.Node) }
+  get_slot(aterm,t) { ((Builtin.types.wrapper.Node)$t).getAterm() }
+  make(aterm)       { new Builtin.types.wrapper.Node($aterm) }
+}
+
+%op Wrapper NodeBis(aterm:ATerm) {
+  is_fsym(t)     { ($t != null) && ($t instanceof Builtin.types.wrapper.NodeBis) }
+  get_slot(aterm,t) { ((Builtin.types.wrapper.NodeBis)$t).getAterm() }
+  make(aterm)       { new Builtin.types.wrapper.NodeBis($aterm) }
+}
+
+%op Wrapper Long(l:long) {
+  is_fsym(t)     { ($t != null) && ($t instanceof Builtin.types.wrapper.Long) }
+  get_slot(l,t) { ((Builtin.types.wrapper.Long)$t).getL() }
+  make(l)       { new Builtin.types.wrapper.Long($l) }
+}
+
+%op Wrapper LongBis(l:long) {
+  is_fsym(t)     { ($t != null) && ($t instanceof Builtin.types.wrapper.LongBis) }
+  get_slot(l,t) { ((Builtin.types.wrapper.LongBis)$t).getL() }
+  make(l)       { new Builtin.types.wrapper.LongBis($l) }
+}
+
+%op Wrapper Char(c:char) {
+  is_fsym(t)     { ($t != null) && ($t instanceof Builtin.types.wrapper.Char) }
+  get_slot(c,t) { ((Builtin.types.wrapper.Char)$t).getC() }
+  make(c)       { new Builtin.types.wrapper.Char($c) }
+}
+
+%op Wrapper CharBis(c:char) {
+  is_fsym(t)     { ($t != null) && ($t instanceof Builtin.types.wrapper.CharBis) }
+  get_slot(c,t) { ((Builtin.types.wrapper.CharBis)$t).getC() }
+  make(c)       { new Builtin.types.wrapper.CharBis($c) }
+}
+
+%op Wrapper Bool(b:boolean) {
+  is_fsym(t)     { ($t != null) && ($t instanceof Builtin.types.wrapper.Bool) }
+  get_slot(b,t) { ((Builtin.types.wrapper.Bool)$t).getB() }
+  make(b)       { new Builtin.types.wrapper.Bool($b) }
+}
+
+%op Wrapper BoolBis(b:boolean) {
+  is_fsym(t)     { ($t != null) && ($t instanceof Builtin.types.wrapper.BoolBis) }
+  get_slot(b,t) { ((Builtin.types.wrapper.BoolBis)$t).getB() }
+  make(b)       { new Builtin.types.wrapper.BoolBis($b) }
+}
+
+%oplist Wrapper concWrap( Wrapper* ) {
+  is_fsym(t)       { ($t instanceof Builtin.types.Wrapper) }
+  make_empty()     { new Builtin.types.Wrapper.EmptyconcWrap() }
+  make_insert(e,l) { new Builtin.types.Wrapper.ConsconcWrap($e, $l) }
+  get_head(l)      { ((Builtin.types.Wrapper.ConsconcWrap)$l).getHeadconcWrap() }
+  get_tail(l)      { ((Builtin.types.Wrapper.ConsconcWrap)$l).getTailconcWrap() }
+  is_empty(l)      { ($l instanceof Builtin.types.Wrapper.EmptyconcWrap) }
+}
+
+%op Wrapper Real(r:float) {
+  is_fsym(t)     { ($t != null) && ($t instanceof Builtin.types.wrapper.Real) }
+  get_slot(r,t) { ((Builtin.types.wrapper.Real)$t).getR() }
+  make(r)       { new Builtin.types.wrapper.Real($r) }
+}
+
+%op Wrapper RealBis(r:float) {
+  is_fsym(t)     { ($t != null) && ($t instanceof Builtin.types.wrapper.RealBis) }
+  get_slot(r,t) { ((Builtin.types.wrapper.RealBis)$t).getR() }
+  make(r)       { new Builtin.types.wrapper.RealBis($r) }
+}
+
+%op Wrapper Double(d:double) {
+  is_fsym(t)     { ($t != null) && ($t instanceof Builtin.types.wrapper.Double) }
+  get_slot(d,t) { ((Builtin.types.wrapper.Double)$t).getD() }
+  make(d)       { new Builtin.types.wrapper.Double($d) }
+}
+
+%op Wrapper DoubleBis(d:double) {
+  is_fsym(t)     { ($t != null) && ($t instanceof Builtin.types.wrapper.DoubleBis) }
+  get_slot(d,t) { ((Builtin.types.wrapper.DoubleBis)$t).getD() }
+  make(d)       { new Builtin.types.wrapper.DoubleBis($d) }
+}
+
+%op Wrapper MultipleDouble(d1:double, d2:double, d3:double) {
+  is_fsym(t)     { ($t != null) && ($t instanceof Builtin.types.wrapper.MultipleDouble) }
+  get_slot(d1,t) { ((Builtin.types.wrapper.MultipleDouble)$t).getD1() }
+  get_slot(d2,t) { ((Builtin.types.wrapper.MultipleDouble)$t).getD2() }
+  get_slot(d3,t) { ((Builtin.types.wrapper.MultipleDouble)$t).getD3() }
+  make(d1,d2,d3)       { new Builtin.types.wrapper.MultipleDouble($d1,$d2,$d3) }
+}
+
+%op Wrapper WrapListInt(li:ListInt) {
+  is_fsym(t)     { ($t != null) && ($t instanceof Builtin.types.wrapper.WrapListInt) }
+  get_slot(li,t) { ((Builtin.types.wrapper.WrapListInt)$t).getLi() }
+  make(li)       { new Builtin.types.wrapper.WrapListInt($li) }
+}
+
+%op Wrapper WrapListLong(ll:ListLong) {
+  is_fsym(t)     { ($t != null) && ($t instanceof Builtin.types.wrapper.WrapListLong) }
+  get_slot(ll,t) { ((Builtin.types.wrapper.WrapListLong)$t).getLl() }
+  make(ll)       { new Builtin.types.wrapper.WrapListLong($ll) }
+}
+
+%op Wrapper WrapListBool(lb:ListBool) {
+  is_fsym(t)     { ($t != null) && ($t instanceof Builtin.types.wrapper.WrapListBool) }
+  get_slot(lb,t) { ((Builtin.types.wrapper.WrapListBool)$t).getLb() }
+  make(lb)       { new Builtin.types.wrapper.WrapListBool($lb) }
+}
+
+%op Wrapper WrapListChar(lc:ListChar) {
+  is_fsym(t)     { ($t != null) && ($t instanceof Builtin.types.wrapper.WrapListChar) }
+  get_slot(lc,t) { ((Builtin.types.wrapper.WrapListChar)$t).getLc() }
+  make(lc)       { new Builtin.types.wrapper.WrapListChar($lc) }
+}
+
+%oplist ListInt concInt( int* ) {
+  is_fsym(t)       { ($t instanceof Builtin.types.ListInt) }
+  make_empty()     { new Builtin.types.ListInt.EmptyconcInt() }
+  make_insert(e,l) { new Builtin.types.ListInt.ConsconcInt($e, $l) }
+  get_head(l)      { ((Builtin.types.ListInt.ConsconcInt)$l).getHeadconcInt() }
+  get_tail(l)      { ((Builtin.types.ListInt.ConsconcInt)$l).getTailconcInt() }
+  is_empty(l)      { ($l instanceof Builtin.types.ListInt.EmptyconcInt) }
+}
+
+%oplist ListLong concLong( long* ) {
+  is_fsym(t)       { ($t instanceof Builtin.types.ListLong) }
+  make_empty()     { new Builtin.types.ListLong.EmptyconcLong() }
+  make_insert(e,l) { new Builtin.types.ListLong.ConsconcLong($e, $l) }
+  get_head(l)      { ((Builtin.types.ListLong.ConsconcLong)$l).getHeadconcLong() }
+  get_tail(l)      { ((Builtin.types.ListLong.ConsconcLong)$l).getTailconcLong() }
+  is_empty(l)      { ($l instanceof Builtin.types.ListLong.EmptyconcLong) }
+}
+
+%oplist ListBool concBool( boolean* ) {
+  is_fsym(t)       { ($t instanceof Builtin.types.ListBool) }
+  make_empty()     { new Builtin.types.ListBool.EmptyconcBool() }
+  make_insert(e,l) { new Builtin.types.ListBool.ConsconcBool($e, $l) }
+  get_head(l)      { ((Builtin.types.ListBool.ConsconcBool)$l).getHeadconcBool() }
+  get_tail(l)      { ((Builtin.types.ListBool.ConsconcBool)$l).getTailconcBool() }
+  is_empty(l)      { ($l instanceof Builtin.types.ListBool.EmptyconcBool) }
+}
+
+%oplist ListChar concChar( char* ) {
+  is_fsym(t)       { ($t instanceof Builtin.types.ListChar) }
+  make_empty()     { new Builtin.types.ListChar.EmptyconcChar() }
+  make_insert(e,l) { new Builtin.types.ListChar.ConsconcChar($e, $l) }
+  get_head(l)      { ((Builtin.types.ListChar.ConsconcChar)$l).getHeadconcChar() }
+  get_tail(l)      { ((Builtin.types.ListChar.ConsconcChar)$l).getTailconcChar() }
+  is_empty(l)      { ($l instanceof Builtin.types.ListChar.EmptyconcChar) }
+}
+

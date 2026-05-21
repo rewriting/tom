@@ -48,7 +48,7 @@ pour aligner le print des strings sur la convention AT/aterm) livrées.
 La phase **4.A.1** corrige le hook AU généré par `emitAUPrologue`
 pour absorber l'unité (`AndConstraint(MC, TrueConstraint()) → MC`),
 en accord avec `HookTypeExpander.java:569`.
-**30 fixtures** sous `tomgo/testdata/parse/` valident byte-pour-byte
+**30 fixtures** sous `tomgo/tests/testdata/parse/` valident byte-pour-byte
 l'AST Go contre la référence Java. tomgo est un outil Go autonome qui :
 
 - lit un fichier `.gom` (avec ou sans hooks),
@@ -133,10 +133,13 @@ tomgo/
                                  #   (auto-amorce, byte-stable via TestSelfBootstrap)
       tomast/                    # AST TOM GÉNÉRÉ depuis tomgo/src/engine/adt/
                                  #   (Phase 4.A, byte-stable via TestSelfBootstrap_Tomast)
-  testdata/
-    corpus/gom-nohooks/          # 10 .gom de test/gom/ sans hooks
-    equiv/{minimal,leaf,list}/   # scénarios paired Go/Java pour stable/gom/equiv
-    parse/                       # fixtures .t du parser TOM (Phases 4.D+)
+  tests/                         # tous les artefacts liés aux tests
+    share/                       # mappings Tom utilisés par le harnais (tom-mappings/)
+    testdata/
+      corpus/gom-nohooks/        # 10 .gom de test/gom/ sans hooks
+      equiv/{minimal,leaf,list}/ # scénarios paired Go/Java pour stable/gom/equiv
+      parse/                     # fixtures .t du parser TOM (Phases 4.D+)
+      java-ast/                  # dumps Java cachés (tom --intermediate)
   reports/                       # rapports par phase
   README.md
   go.mod                         # module tom/tomgo, Go 1.22
@@ -159,7 +162,7 @@ Packages livrés cette itération :
   directement (sans `tom.engine.Tom`/`Tom.config`), `tomparseq.go`
   pour la résolution JDK et la normalisation des paths
   (`__INPUT__`/`__DIR__`).
-- `testdata/parse/<name>/scenario.t` — 30 fixtures actuellement.
+- `tests/testdata/parse/<name>/scenario.t` — 30 fixtures actuellement.
 
 Packages encore à matérialiser :
 - `internal/tomengine/` (phases compilateur suivantes — checker,
@@ -177,7 +180,7 @@ Arborescence `tomgo/`, `go.mod`, CLI squelette.
 - `tomgo scan-hooks <dir>` détecte les hooks par la règle ANTLR :
   `(sort|module|operator)? ID ':' ID '(' arglist ')' '{'` au début d'une ligne.
 - Inventaire dépôt : **176 `.gom` total, 128 sans hooks, 48 avec hooks**.
-- Corpus copié dans `testdata/corpus/gom-nohooks/` : Builtin, Dotted,
+- Corpus copié dans `tests/testdata/corpus/gom-nohooks/` : Builtin, Dotted,
   Imported, Importing, Leaf, List, Minimal, Yang, Ying, fromterm/foo.
 - Rapports : `phase1-inventory.md`, `phase1.md`.
 
@@ -516,7 +519,7 @@ Voir §4 ci-dessus. **21 fixtures** validées contre Java :
 `match0t_and`.
 Pattern à réutiliser pour chaque nouveau constructeur :
 
-1. un `.t` minimal dans `testdata/parse/<nom>/`,
+1. un `.t` minimal dans `tests/testdata/parse/<nom>/`,
 2. 1 ligne dans la slice `fixtures` de `TestGoParserAgainstJava`
    (`stable/tom/parser/equiv/dump_skeleton_test.go`),
 3. (optionnel) un `TestParse<Nom>` direct dans
@@ -729,7 +732,7 @@ Cibles bas niveau (en dessous de mage) si besoin :
 go run ./cmd/tomgo scan-hooks ..
 
 # Compiler un .gom isolé en Go (mode single)
-go run ./cmd/tomgo gom -o /tmp/out testdata/corpus/gom-nohooks/Minimal.gom
+go run ./cmd/tomgo gom -o /tmp/out tests/testdata/corpus/gom-nohooks/Minimal.gom
 (cd /tmp/out && go build ./... && go test ./...)
 
 # Compiler plusieurs .gom cross-importants en UN SEUL package Go (batch)
@@ -748,12 +751,12 @@ TOMGO_STABLE_DIST_LIB=/path/to/main/stable/dist/lib \
     go test ./stable/tom/parser/equiv/...
 
 # Ajouter une fixture (nouveau constructeur) :
-#   1) tomgo/testdata/parse/<nom>/scenario.t  — minimal .t qui exerce le constructeur
+#   1) tomgo/tests/testdata/parse/<nom>/scenario.t  — minimal .t qui exerce le constructeur
 #   2) tomgo/stable/tom/parser/equiv/dump_skeleton_test.go  — ajouter "<nom>" à la slice `fixtures`
 #   3) (optionnel) tomgo/stable/tom/parser/parser/parser_test.go  — un TestParse<Nom> direct
 #   4) lancer Java pour récupérer l'AST de référence :
 #      java -cp $(find /path/to/stable/dist/lib -name '*.jar' | paste -sd: -):tomgo/stable/tom/parser/equiv/java \
-#           TomParseDump tomgo/testdata/parse/<nom>/scenario.t
+#           TomParseDump tomgo/tests/testdata/parse/<nom>/scenario.t
 ```
 
 **Outillage externe attendu sur la machine** (sinon les tests
@@ -808,10 +811,280 @@ enrichir au fil des phases). La `Platform` les chaîne dans l'ordre.
 - ✅ Plugin **Parser** (`stable/platform/plugins/parser.go`) — wrappe
   `stable/tom/parser/parser.Parse` ; le test smoke `parser_test.go`
   prouve qu'un Platform à 1 plugin produit l'AST attendu.
-- ☐ Starter / Transformer / SyntaxChecker / Desugarer / Typer /
-  TypeChecker / Expander / Compiler / Optimizer / Backend — à porter
-  l'un après l'autre, chacun avec son jeu de tests d'équivalence
-  Java contre le pipeline officiel.
+- ✅ Plugin **Starter** + 9 stubs identity pour les phases suivantes
+  (`stable/platform/plugins/{starter,stubs,pipeline}.go`).
+- ☐ Transformer / SyntaxChecker / Desugarer / Typer / TypeChecker /
+  Expander / Compiler / Optimizer / Backend — à porter l'un après
+  l'autre, chacun avec son jeu de tests d'équivalence Java contre le
+  pipeline officiel.
+
+**Harnais de validation cross-phase (Phase 5.2)** : le runner
+`stable/tom/parser/equiv/java/TomPipelineDump.java` étend le
+`TomParseDump` historique pour chaîner les plugins
+Parser → Transformer → SyntaxChecker → Desugarer → Typer, et dumper
+l'AST après n'importe quelle phase. Côté Go :
+`JavaToolchain.DumpJavaPhase(input, phase)` (`Phase{Parsed,
+Transformed, Synchecked, Desugared, Typed}`) retourne l'AST normalisé,
+prêt à être comparé byte-pour-byte avec un plugin Go.
+
+`TestPipelineDump_MutationMatrix` pin l'observation suivante sur les
+30 fixtures actuelles : Transformer et SyntaxChecker sont **identité**
+partout ; Desugarer mute 13 fixtures (essentiellement `_` →
+`Name("_f_r_e_s_h_v_a_r_N")`) ; Typer mute 7 fixtures supplémentaires
+(backquote application + `%strategy`). Pas besoin de porter le
+Transformer et le SyntaxChecker pour démarrer — l'identity stub est
+correct sur tout le corpus. **Premier vrai plugin à porter** :
+`Desugarer`.
+
+---
+
+## 8.ter. Strategy library (Phase 6+)
+
+Pré-requis avant le portage des plugins en Go : porter
+`tom.library.sl` (37 fichiers Java / ~3900 LOC, autonome — pas de
+dépendance sur jjtraveler). C'est la bibliothèque de strategies que
+chaque visiteur `%strategy` / `%visit` généré utilise comme runtime.
+
+Surface portée à `stable/library/sl/` (Phases 6.0 → 6.4) :
+- ✅ **6.0** — interfaces `Strategy`/`Visitable`/`Introspector`,
+  `ErrVisitFailure` sentinel, combinateurs `Identity`/`Fail`,
+  `VisitableIntrospector` helper.
+- ✅ **6.1** — combinateurs primitifs : `Sequence`, `Choice`, `All`,
+  `One`, `SequenceId`, `ChoiceId`, `OneId` (avec le shortcut
+  null-tail Java `NewSequence(s, nil) == s`).
+- ✅ **6.2** — récursion fixed-point : `Mu` + `MuVar` avec expansion
+  en place du graph de strategies (équivalent du `Mu.expand` Java).
+- ✅ **6.3** — `AbstractStrategyBasic` : helper que les visiteurs
+  générés étendent. Expose `Any()` comme slot 0 pour la fallback.
+- ✅ **6.4** — built-in walks : `MakeTry`, `MakeRepeat`, `MakeRepeatId`,
+  `MakeTopDown`, `MakeTopDownIdStopOnSuccess`, `MakeOnceTopDown`,
+  `MakeOnceTopDownId`, `MakeBottomUp` (portage byte-équivalent des
+  `tom_make_*` Java).
+- ✅ **6.5** — Introspector tomast généré par le backend GOM
+  (`emitVisitableMethods` dans `stable/gom/backend/backend.go`).
+  Chaque alt expose `ChildCount/ChildAt/SetChildAt/Children/SetChildren`
+  ; variadics utilisent `len(t.Slots)` comme `ChildCount`. Slots
+  primitifs (`string`, `int64`, …) retournés bruts via `any` (pas de
+  boxing `VisitableBuiltin`). SetChildAt/SetChildren reconstruisent
+  via `Make<Op>` pour préserver le hash-cons.
+- ✅ **6.6** — Plugin `Desugarer` (`stable/platform/plugins/desugarer.go`)
+  porte le `DesugarerPlugin.java` :
+  - **Pass #1** `MakeTopDown(desugarUnderscore)` — `_` / `_*` →
+    `Name("_f_r_e_s_h_v_a_r_N")` (counter pré-incrémenté, reset par
+    Run).
+  - **Pass #2** `MakeTopDownIdStopOnSuccess(replaceTermApplTomSyntax)`
+    — `TermAppl(opts, names, args, constraints)` →
+    `RecordAppl(opts, names, concSlot(PairSlotAppl(EmptyName, arg)*),
+    constraints)`. Recursivement applique le walker sur chaque arg
+    (la version symbol-table-aware sera activée après le Typer).
+  - **Pass #3** (`replaceBQRecordApplTomSyntax`) ☐ à porter quand
+    une fixture exerce `` `Foo[a=v] ``.
+
+  `TestDesugarer_ParityWithJava` épingle l'équivalence byte-pour-byte
+  côté Java sur les **30 fixtures** via `DumpJavaPhase(...,
+  PhaseDesugared)`.
+- ✅ **6.7** — Plugin `Typer` (version minimale,
+  `stable/platform/plugins/typer.go`, ~200 LOC) :
+  - `BQAppl(opts, name, args)` → `FunctionCall(name, contextType, args)`
+    quand symbole inconnu, avec contextType propagé depuis le parent
+    (MatchConstraint.aType pour les subjects).
+  - `Variable.AstType` ("unknown type") → contextType depuis
+    `MatchConstraint.aType`.
+  - `BQVariable.AstType` propagé par nom depuis le scope des patterns.
+  - `TestTyper_ParityWithJava` byte-équivalent sur les **30 fixtures**
+    de `tests/testdata/parse/`. Le port complet du `NewKernelTyper.java`
+    (constraint solver Hindley-Milner + subtyping, ~1700 LOC) est
+    reporté jusqu'à ce que des fixtures plus riches exercent la
+    machinery (cf. 6.8).
+- 🟡 **6.8** — Exploration du corpus `test/` (121 `.t`). Premières
+  extensions parser :
+  - **Subjects typés** : `%match(term t1, term t2) { … }` —
+    `parseSubject` reconnaît un `codomain var` quand un second ID
+    suit le premier (lookahead byte-level).
+  - **OR-pattern + record-args** : `(zero|zero)[]` →
+    `RecordAppl(opts, [Name(zero), Name(zero)], concSlot(), …)`.
+  - **Record-pattern** : `Foo[slot=value, …]` →
+    `RecordAppl` direct (parsé par `parsePatternSlotList`).
+  - **IncludeSearchPath** : variable globale + env var
+    `TOMGO_TOM_INCLUDE` pour résoudre `%include` hors du dossier
+    source (équivalent Go de `TomStreamManager.getImportList`).
+
+  `cmd/parsecheck` est l'utilitaire qui rapporte le compte sur le
+  corpus `test/`. `TestCorpus_ParityWithJava` est un dashboard
+  non-bloquant (t.Logf) qui surface dans le test verbose les
+  comptes parseOK/parityOK/parseFail/parityDiff.
+
+  État actuel du corpus `test/` (28 fixtures racine, .t directs sans
+  les sous-répertoires) : **parseOK=20, parityOK=1, parityDiff=19,
+  parseFail=8, javaFail=0**. La seule fixture parity-OK est `Test.t`
+  (juste un `%gom { ... }` vide, pas de %match).
+
+  Extensions parser ajoutées cette itération :
+  - Patterns constantes : entiers (`0`, `-2`, `1L`, `1.23d`),
+    chars (`'a'`), strings (`"foo"`) → `TermAppl(opts,
+    concTomName(Name(literal)), concTomTerm(), concConstraint())`.
+  - `%gom { … }` reconnu et émis comme
+    `InstructionToCode(AbstractBlock(concInstruction()))` (corps
+    consommé en water).
+  - `%typeterm` hooks parsés : `is_sort(t) { body }` →
+    `IsSortDecl(BQVariable(Type(codomain)), Code(abstractCode(body)),
+    OT)` ; `equals(t1,t2) { body }` → `EqualTermDecl` ; `implement
+    { body }` → stocké dans `signature.Sorts[codomain]` (utilisé
+    par le Typer pour propager le TLType).
+  - Réécriture `abstractCode($var → {N})` dans les bodies de hooks
+    (mirror `tom.engine.tools.ASTFactory.abstractCode`).
+  - Ordre des decls dans `concDeclaration` inversé pour matcher
+    l'ordre LIFO de `CstBuilder`.
+  - Harnais Java `TomPipelineDump` corrigé : option `X` (chemin
+    `Tom.xml`) seedée pour le `%gom` path, `userImportList` étendue
+    avec les mappings Tom standards (`utils/eclipse-plugin/
+    plugin/include/{java,}/`) — la référence Java passe désormais
+    sur tout fixture acceptée par le parser (javaFail=0).
+
+  **Architecture SymbolTable** (Phase 6.8.A) :
+  - `tomparser.ParseAll(src, filename)` retourne `*ParseResult` :
+    `{Code, Sorts map[string]string, Symbols map[string]TomSymbol}`.
+  - `parseOp` consomme le slot list `(p:Nat, q:Nat)` proprement et
+    construit un `tomast.MakeSymbol(name, TypesToType(domain,
+    codomain), PairNameDeclList, options)` via `buildTomSymbol`.
+  - `parseTypeterm` capture le body de `implement` dans
+    `signature.Sorts[codomain]`.
+  - `platform.SymbolTable` étendu pour porter
+    `Sorts map[string]string` (TLType par sort) et
+    `Symbols map[string]TomSymbol`.
+  - Le **Parser plugin** appelle `ParseAll`, merge les deux maps
+    dans `State.Symbols`.
+  - Le **Desugarer** (`replaceTermApplTomSyntax`) prend la
+    SymbolTable, consulte `Symbols[opName]` pour récupérer les
+    slot names via `PairNameDeclList` — émet
+    `PairSlotAppl(Name("p"), …)` au lieu d'`EmptyName()` quand le
+    symbole est connu (Case B-defined de DesugarerPlugin.java).
+  - Le **Typer** (`newKernelTyper`) prend la SymbolTable, fait :
+    - `BQAppl(name, args)` → `BuildTerm(name, args, moduleName)` si
+      symbole connu, sinon `FunctionCall(name, contextType, args)`.
+    - Propage subject's Type ↓ pattern via `MatchConstraint.aType`
+      relevé quand `unknown type`.
+    - Type les slots de `RecordAppl(name, slots)` via
+      `domainTypesFor(name)` (les types de domaine du symbole).
+    - Phase finale `substituteTLTypes` : remplace partout
+      `Type(_, sort, EmptyTL)` par `Type(_, sort, TLType(body))`
+      quand sort.implement est connu.
+
+  Le dashboard est passé à **parityOK=3 (Test.t, Peano.t,
+  TestOptimizer.t)** après ces ajouts incrémentaux :
+  - **Comment stripping** dans `tokenizeWater` : `// …\n` et `/* …
+    */` sont sautés (Java les route en `-> skip`), avec la position
+    line/col qui avance toujours à travers les bytes.
+  - **Variable.Constraints recursion** : `AliasTo(boundVar)` est
+    typé avec le contextType de la Variable hôte (équation
+    `Equation(boundVar.Type, hostVar.Type)` du Java résolue
+    eagerly).
+  - **RecordAppl.Constraints recursion** : pareil pour les
+    contraintes d'un RecordAppl (utilisé par `pat@x@x@...`).
+  - **BQAppl args symbol-directed** :
+    `inferBQTermListWithDomain` passe le slot type comme
+    contextType pour chaque arg (e.g. `suc(plus(x,y))` →
+    `BuildTerm(suc, [FunctionCall(plus, Type("Nat"), …)])`).
+  - **%include propagation** : `parseInclude` utilise
+    désormais `ParseAll` et fait un merge no-collision des
+    `Sorts`/`Symbols` du fichier inclus dans le `signature` du
+    parser englobant.
+  - **%oplist/%oparray** : `parseVariadicOp` construit un
+    `TomSymbol(name, TypesToType(concTomType(elemType),
+    codomain), ConcPairNameDecl(), [DeclarationToOption(
+    MakeEmptyList|MakeEmptyArray(...))])` et le stocke dans
+    `signature.Symbols`. Le marker dans Options est ce que
+    `TomBase.isListOperator`/`isArrayOperator` regarde côté Java.
+
+  **Phase 6.9 — parser test/ exhaustif** (cumul d'itérations) :
+  - `parseOK=27/28` ; `parityOK=6` (Peano.t, Test.t, TestNonVarSubjects.t,
+    TestOptimizer.t, cfib1.t, loulou.t).
+  - **Comparaison AST via `astcmp`** (`stable/tom/parser/equiv/astcmp/`)
+    qui parse les deux dumps, applique des règles de simplification
+    (`Composite(CompositeBQTerm(t))` → `t`), puis compare
+    structurellement. Plus tolérant que `strings.Equal` mais
+    sémantiquement équivalent.
+  - **Constraints** complets : NumericConstraint (`!=`, `==`, `<`,
+    `<=`, `>`, `>=`), `&&`, `||`, parens, `pat << bqterm`. LHS de
+    `<<` reconnu comme pattern (lookahead `@`/`[`) ou bqterm.
+  - **Subjects non-variables** (`%match(5)`, `%match(f(x))`, `%match(int 5)`).
+  - **Visit rule body** : bare bqterm (`a() -> b()`) → `Return(bqterm)`.
+  - **Backquote** : `\`(x)` (parens sans fsym), `\`S9(3)` (arg entier),
+    char/string literals dans bqterm.
+  - **Comment stripping** dans body de `%match`, `%strategy`, water.
+  - **`%op` hooks parsés** (Phase 6.9.A) : `is_fsym`, `get_slot`,
+    `get_default`, `make`, `equals` pour `%op` ; `make_empty`,
+    `make_append`, `make_insert`, `get_size`, `get_element` pour
+    `%oplist`/`%oparray`. Chaque hook devient un `Declaration`
+    attaché au `TomSymbol.Options` via `DeclarationToOption(...)`.
+    `$var` → `{N}` réécriture appliquée aux bodies. Permet à
+    `TomBase.isListOperator`/`isArrayOperator` de fonctionner
+    correctement côté Typer (via la présence de
+    `MakeEmptyList`/`MakeEmptyArray`/`MakeAddList`/`MakeAddArray`
+    dans les options).
+  - **Annotation sur AntiTerm** : `name@!pat` ; la constraint AliasTo
+    descend à l'intérieur de l'AntiTerm.
+
+  Reste à porter pour les autres fixtures du corpus :
+  - **`BuildConsList` / `BuildConsArray`** dans le Typer
+    pour les BQAppl dont le symbole est un list/array
+    operator (avec `WithSymbol(name)` ajouté à la TypeOption
+    du codomain).
+  - **Top-level backquote islands** (`\`conc(...)` hors d'un
+    %match) : `bqcomposite` dans la grammaire ANTLR4, qui
+    devient `InstructionToCode(BQTermToInstruction(…))` côté
+    AST.
+  - **Composite wrapping** des args dans les bqterms
+    backquotés (loulou reste à 28 octets — un seul wrap
+    `Composite(CompositeBQTerm(BQVariable(x)))` manquant
+    sur l'arg `x` de `plus(x,y)`).
+  - **%op hooks** (is_fsym, get_slot, make, get_default) à
+    parser pour peupler les Options du TomSymbol et ajouter
+    les marqueurs qui changent le comportement Java
+    (e.g. `MakeAddList` pour les list-ops, `MakeDecl` pour
+    les builtin make hooks).
+  - Et au fond le port complet de **`NewKernelTyper.java`**
+    (résolveur de contraintes pour la cohérence
+    pattern-subject avec polymorphisme).
+
+  Gaps qui ressortent du parityDiff :
+  - **Body de `%typeterm`/`%op` non parsé** côté Go (les hooks
+    `implement {…}`, `is_fsym {…}`, `get_slot {…}`, `make {…}`,
+    `equals {…}`, etc. sont actuellement consommés comme water
+    opaque). Java parse ces hooks et en émet des `Declaration`s
+    (IsSortDecl, IsFsymDecl, GetSlotDecl, MakeDecl, EqualTermDecl)
+    qui peuplent la `SymbolTable`. Sans cela, le Desugarer
+    `replaceTermAppl` et le Typer `TransformBQAppl` ne trouvent
+    aucun symbole → ils ne savent pas que `suc(p:Nat)` a un slot
+    nommé `p`, par exemple, et émettent `PairSlotAppl(EmptyName(),
+    …)` au lieu de `PairSlotAppl(Name("p"), …)`.
+  - **SymbolTable absente** dans `State.Symbols` (allouée vide par
+    le Starter, jamais peuplée par le Parser).
+  - **Constraint solver Typer** : Variable.AstType ne se met pas à
+    jour à partir du subject's Type quand celui-ci est concret
+    (e.g. `BQVariable(t1, Type("Nat"))` → la pattern Variable(x)
+    devrait devenir Type("Nat")). Le typer simplifié ne propage
+    pas dans cette direction (pattern←subject).
+  - **Plus de constructions parser à porter** : patterns
+    constantes (entiers, strings), contraintes numériques
+    (`<`, `>=`, `==`, …), subjects non-variables (`%match(f(x))`),
+    backquote arg avec entiers (`\`S9(3)`), action body bare
+    bqterm (sans `{ }`), annotation sur AntiTerm.
+
+Différences API vs Java :
+- `error` au lieu d'exceptions cochées (`ErrVisitFailure` sentinel,
+  branching via `errors.Is`).
+- Pas de `Visit(Introspector)` (Environment-style) ; tous les plugins
+  downstream n'utilisent que `VisitLight`. À ajouter quand on
+  rencontrera Omega/Path.
+- `abstractCombinator` embedded fournit `args []Strategy` +
+  `ChildCount/At/SetAt` à tous les combinateurs (analogue du
+  Java `AbstractStrategyCombinator`).
+
+25 tests verts sur un AST jouet (`node{label, kids}` implémentant
+`Visitable`) — la suite épingle Identity/Fail, chaque combinateur,
+`Mu` à deux niveaux de récursion, et chaque built-in walk
+(TopDown/TopDownIdStopOnSuccess/etc.).
 
 ---
 

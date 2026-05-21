@@ -133,7 +133,7 @@ func resolveOrSkip(t *testing.T, fixtureName string) (JavaToolchain, string) {
 	if err != nil {
 		t.Skipf("tomparseq: %v", err)
 	}
-	inputAbs := repoRoot + "/tomgo/testdata/parse/" + fixtureName + "/scenario.t"
+	inputAbs := repoRoot + "/tomgo/tests/testdata/parse/" + fixtureName + "/scenario.t"
 	if _, err := os.Stat(inputAbs); err != nil {
 		t.Fatalf("fixture missing: %s (%v)", inputAbs, err)
 	}

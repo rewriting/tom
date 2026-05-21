@@ -18,7 +18,7 @@ import (
 // We delete the per-file output directory after the assertion to keep
 // the test artefact-free.
 func TestGenerate_BuildsCorpus(t *testing.T) {
-	corpus, err := filepath.Abs(filepath.Join("..", "..", "..", "testdata", "corpus", "gom-nohooks"))
+	corpus, err := filepath.Abs(filepath.Join("..", "..", "..", "tests", "testdata", "corpus", "gom-nohooks"))
 	if err != nil {
 		t.Fatal(err)
 	}

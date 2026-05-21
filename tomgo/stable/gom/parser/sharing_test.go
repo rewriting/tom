@@ -17,7 +17,7 @@ func TestParse_DeterministicSharing(t *testing.T) {
 	for _, name := range corpus {
 		name := name
 		t.Run(name, func(t *testing.T) {
-			path := filepath.Join("..", "..", "..", "testdata", "corpus", "gom-nohooks", name)
+			path := filepath.Join("..", "..", "..", "tests", "testdata", "corpus", "gom-nohooks", name)
 			a, err := ParseFile(path)
 			if err != nil {
 				t.Fatal(err)

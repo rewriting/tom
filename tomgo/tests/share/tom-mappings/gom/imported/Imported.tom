@@ -1,0 +1,23 @@
+%typeterm Inner {
+  implement      { Imported.types.Inner }
+  is_sort(t)     { ($t instanceof Imported.types.Inner) }
+  equals(t1,t2)  { ($t1.equals($t2)) }
+}
+
+%op Inner Atom() {
+  is_fsym(t)     { ($t != null) && ($t instanceof Imported.types.inner.Atom) }
+  make()       { new Imported.types.inner.Atom() }
+}
+
+%op Inner Element(e:Inner) {
+  is_fsym(t)     { ($t != null) && ($t instanceof Imported.types.inner.Element) }
+  get_slot(e,t) { ((Imported.types.inner.Element)$t).getE() }
+  make(e)       { new Imported.types.inner.Element($e) }
+}
+
+%op Inner LeafSlot(l:Leaf) {
+  is_fsym(t)     { ($t != null) && ($t instanceof Imported.types.inner.LeafSlot) }
+  get_slot(l,t) { ((Imported.types.inner.LeafSlot)$t).getL() }
+  make(l)       { new Imported.types.inner.LeafSlot($l) }
+}
+

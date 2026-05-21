@@ -1,0 +1,41 @@
+%typeterm Term {
+  implement      { JavaHook.types.Term }
+  is_sort(t)     { ($t instanceof JavaHook.types.Term) }
+  equals(t1,t2)  { ($t1.equals($t2)) }
+}
+
+%op Term EmptyTerm() {
+  is_fsym(t)     { ($t != null) && ($t instanceof JavaHook.types.term.EmptyTerm) }
+  make()       { new JavaHook.types.term.EmptyTerm() }
+}
+
+%op Term Unary(slot:Term) {
+  is_fsym(t)     { ($t != null) && ($t instanceof JavaHook.types.term.Unary) }
+  get_slot(slot,t) { ((JavaHook.types.term.Unary)$t).getSlot() }
+  make(slot)       { new JavaHook.types.term.Unary($slot) }
+}
+
+%op Term Binary(ls:Term, rs:Term) {
+  is_fsym(t)     { ($t != null) && ($t instanceof JavaHook.types.term.Binary) }
+  get_slot(ls,t) { ((JavaHook.types.term.Binary)$t).getLs() }
+  get_slot(rs,t) { ((JavaHook.types.term.Binary)$t).getRs() }
+  make(ls,rs)       { new JavaHook.types.term.Binary($ls,$rs) }
+}
+
+%op Term Ternary(ls:Term, cs:Term, rs:Term) {
+  is_fsym(t)     { ($t != null) && ($t instanceof JavaHook.types.term.Ternary) }
+  get_slot(ls,t) { ((JavaHook.types.term.Ternary)$t).getLs() }
+  get_slot(cs,t) { ((JavaHook.types.term.Ternary)$t).getCs() }
+  get_slot(rs,t) { ((JavaHook.types.term.Ternary)$t).getRs() }
+  make(ls,cs,rs)       { new JavaHook.types.term.Ternary($ls,$cs,$rs) }
+}
+
+%oplist Term Vary( Term* ) {
+  is_fsym(t)       { ($t instanceof JavaHook.types.Term) }
+  make_empty()     { new JavaHook.types.Term.EmptyVary() }
+  make_insert(e,l) { new JavaHook.types.Term.ConsVary($e, $l) }
+  get_head(l)      { ((JavaHook.types.Term.ConsVary)$l).getHeadVary() }
+  get_tail(l)      { ((JavaHook.types.Term.ConsVary)$l).getTailVary() }
+  is_empty(l)      { ($l instanceof JavaHook.types.Term.EmptyVary) }
+}
+
