@@ -16,8 +16,6 @@ import "testing"
 }
 
 // test1 — match the whole subject as a contiguous range.
-// Pattern `list(_*, list(a,b,c), _*)` on subject `list(a,b,c)`:
-// begin = subject, end = empty → slice = list(a,b,c) → matches.
 func TestSublist1(t *testing.T) {
 	var res Term = `list(a(), b(), c())
 	matched := false
@@ -25,12 +23,11 @@ func TestSublist1(t *testing.T) {
 		list(_*, list(a(), b(), c()), _*) -> { matched = true }
 	}
 	if !matched {
-		t.Errorf("list(_*, list(a,b,c), _*) should match list(a,b,c) as full range")
+		t.Errorf("list(_*, list(a,b,c), _*) should match")
 	}
 }
 
-// test2 — same but with annotation `_p@list(a,b,c)`. Inner pattern
-// is wrapped in an alias annotation; the range-match still fires.
+// test2 — same with annotation `_p@`.
 func TestSublist2(t *testing.T) {
 	var res Term = `list(a(), b(), c())
 	matched := false
@@ -38,41 +35,39 @@ func TestSublist2(t *testing.T) {
 		list(_*, _p@list(a(), b(), c()), _*) -> { matched = true }
 	}
 	if !matched {
-		t.Errorf("annotated sublist pattern should still match")
+		t.Errorf("annotated sublist pattern should match")
 	}
 }
 
 /*
-test3 — anchored sub-range between X-star / Y-star var-stars on a 4-element
-list; annotation p@ binds p to the matched sublist.
 
-  var res Term = `list(a(), b(), b(), c())
-  %match(res) {
-    list(X*, p@list(b(), b()), Y*) -> {
-      // p == `list(b,b), X == `list(a), Y == `list(c)
-    }
-  }
+The upstream Java fixture (/tom/test/TestSublists.t lines 71-189)
+contains tests 3-11 inside a comment block authored by the original
+Tom developers. We mirror that here: those tests live in this
+block until our backend grows the features they exercise.
 
-test4 — anti-pattern inside sub-range: list(_X*, p@!list(_*,!b(),_*), _Y*).
-test5 — termList outer / list inner (different sort): rule must NOT fire.
-test6 — termList outer / list inner, subject has a list element.
-test7 — termList outer / termList inner (same head, codomain TermList).
-test8 — anti-pattern on termList sub-range.
-test9 — alias on same-head termList sub-range.
-test10 — multi-pattern alias with anti: p@(b(), !b()).
-test11 — nested termList: termList(termList(a,b)) matched by
-         _z@termList(termList(a,b)).
+test3 — anchored sub-range with annotation 'p@list(b(),b())',
+        plus bindings checks (X, p, Y equality).
 
-These 9 tests are commented out in the upstream Java fixture
-(/tom/test/TestSublists.t lines 71-189) and reproduced here as a
-prose summary rather than code. To activate them, our backend
-needs the following gaps closed:
+test4 — anti-pattern inside sub-range:
+        list(_X*, p@!list(_*, !b(), _*), _Y*).
+        Requires Negate-aware emission of DoWhile cursor loops
+        (Java's reference lifts them to flag-statements).
 
-  - Anti-pattern inside sub-range — needs Negate-aware
-    pregenerator/backend lowering (tests 4, 8, 10).
-  - Strict Go interface typing for cross-sort sub-range
-    (tests 5, 6 emit `Term = TermList` casts that Go rejects).
-  - Nested same-head where inner is the COMPLETE value (test 11
-    is a type mismatch even in the upstream — TermList nested in
-    TermList without an intervening Term).
+tests 5, 6, 7, 9 — cross-sort or same-head where the slice type
+        differs from the element type (termList outer / list
+        inner, or termList outer / termList inner). Compiles in
+        Java via Object-erasure casts; Go's strict interface
+        typing rejects 'Term = TermList' assignments.
+
+test8 — anti-pattern on termList sub-range; combines 4 + 7's
+        complications.
+
+test10 — multi-pattern alias 'p@(b(), !b())' — composite
+        pattern syntax our parser doesn't yet expand.
+
+test11 — TermList nested in TermList (upstream type mismatch
+        accepted by Java erasure, rejected by Go interface
+        typing).
+
 */

@@ -104,6 +104,15 @@ func (env *compilerEnv) propagateVariadic(c tomast.Constraint) tomast.Constraint
 			return c
 		}
 		return tomast.MakeOrConstraintDisjunction(newSlots...)
+	case *tomast.NegateConstraint:
+		// Anti-pattern `!list(_*,...,_*)` is wrapped in Negate by
+		// the GP propagator. The inner MatchConstraint may itself
+		// be a list-pattern that needs further variadic expansion.
+		inner := env.propagateVariadic(x.C)
+		if inner != x.C {
+			return tomast.MakeNegate(inner)
+		}
+		return c
 	}
 	return c
 }
