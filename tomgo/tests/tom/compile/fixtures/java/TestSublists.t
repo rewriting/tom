@@ -68,7 +68,6 @@ public class TestSublists {
     fail();
   }
 
-/*
   @Test
   public void test3() {
     Term res = `list(a(),b(),b(),c());
@@ -85,6 +84,7 @@ public class TestSublists {
   }
 
 
+/*
   @Test
   public void test4() {
     Term res = `list(a(),b(),b(),c());
@@ -99,7 +99,7 @@ public class TestSublists {
     }
     fail();
   }
-
+*/
   //////// domain != codomain ///////////
 
   @Test
@@ -134,6 +134,7 @@ public class TestSublists {
     fail();
   }
 
+/*
   @Test
   public void test8() {
     TermList res = `termList(a(),b(),b(),c());
@@ -148,6 +149,7 @@ public class TestSublists {
     }
     fail();
   }
+*/
 
   @Test
   public void test9() {
@@ -164,6 +166,7 @@ public class TestSublists {
     fail();
   }
 
+/*
   @Test
   public void test10() {
     TermList res = `termList(a(),b(),b(),c());
@@ -175,6 +178,7 @@ public class TestSublists {
       }
     }
   }
+*/
 
   @Test
   public void test11() {
@@ -186,7 +190,7 @@ public class TestSublists {
     }
     fail();
   }
-*/
+
   public static void main(String[] args) {
     org.junit.runner.JUnitCore.main(TestSublists.class.getName());
   }

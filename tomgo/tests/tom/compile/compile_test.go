@@ -455,6 +455,12 @@ var goFixtures = []struct {
 		expected: []string{
 			"=== RUN   TestSublist1",
 			"=== RUN   TestSublist2",
+			"=== RUN   TestSublist3",
+			"=== RUN   TestSublist5",
+			"=== RUN   TestSublist6",
+			"=== RUN   TestSublist7",
+			"=== RUN   TestSublist9",
+			"=== RUN   TestSublist11",
 			"PASS",
 		},
 	},

@@ -856,9 +856,18 @@ func seedVarTypesFromSource(n *newKernelTyper, src []byte, syms *tom.SymbolTable
 				continue
 			}
 		}
-		if c == '"' || c == '\'' || c == '`' {
+		if c == '"' || c == '\'' {
 			skipQuoted(c)
 			pushTok("<lit>")
+			continue
+		}
+		if c == '`' {
+			// Tom backquote — opens an in-line backquote term that
+			// runs until the end of the host expression. Not a string
+			// delimiter; just skip the byte and treat the rest as
+			// normal tokens.
+			i++
+			pushTok("`")
 			continue
 		}
 		if isLetter(c) || c == '_' {

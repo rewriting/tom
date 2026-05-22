@@ -94,18 +94,53 @@ func buildListBQTerm(name tomast.TomName, args tomast.BQTermList) tomast.BQTerm 
 		return tomast.MakeBuildEmptyList(name)
 	}
 	n := len(conc.Slots)
+	outerName := nameOfTomName(name)
 	result := tomast.MakeBuildEmptyList(name)
 	// Walk from the LAST arg backwards so the FIRST arg ends up at
 	// the outermost cons.
 	for i := n - 1; i >= 0; i-- {
 		head := conc.Slots[i]
-		if isVarStarLike(head) {
+		// Splice-on-build: when an arg is itself a BuildConsList /
+		// BuildAppendList / BuildEmptyList of the SAME outer
+		// variadic head, treat it as a SUB-LIST to be flattened
+		// into the result (using BuildAppendList) rather than as a
+		// single element. This is the build-side counterpart of
+		// the sub-range pattern-matching case the variadic
+		// propagator handles. Without it, `\`termList(termList(a,b))`
+		// emits `tom_cons_list_termList(<TermList>, ...)` which is
+		// a type error since the head slot expects a Term.
+		if isVarStarLike(head) || isSameListHead(head, outerName) {
 			result = tomast.MakeBuildAppendList(name, head, result)
 		} else {
 			result = tomast.MakeBuildConsList(name, head, result)
 		}
 	}
 	return result
+}
+
+// nameOfTomName extracts the `s` from a `Name(s)` TomName, or
+// "" for shapes without a flat name (EmptyName, PositionName, …).
+func nameOfTomName(n tomast.TomName) string {
+	if x, ok := n.(*tomast.NameTomName); ok {
+		return x.String_
+	}
+	return ""
+}
+
+// isSameListHead reports whether `t` is a BuildConsList /
+// BuildAppendList / BuildEmptyList whose operator name matches
+// `outerName`. Used by buildListBQTerm to detect a sub-list
+// arg that should be spliced rather than treated as one element.
+func isSameListHead(t tomast.BQTerm, outerName string) bool {
+	switch x := t.(type) {
+	case *tomast.BuildConsListBQTerm:
+		return nameOfTomName(x.AstName) == outerName
+	case *tomast.BuildAppendListBQTerm:
+		return nameOfTomName(x.AstName) == outerName
+	case *tomast.BuildEmptyListBQTerm:
+		return nameOfTomName(x.AstName) == outerName
+	}
+	return false
 }
 
 // isArrayOperator returns true when the symbol carries a

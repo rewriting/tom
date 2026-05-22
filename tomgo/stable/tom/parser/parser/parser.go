@@ -1214,6 +1214,20 @@ func (p *parser) parseWater() error {
 	tokens := tokenizeWater(content, startPos)
 	blocks := buildHostblocks(tokens)
 	if len(blocks) == 0 {
+		// Pure-whitespace water: emit a bare newline when one is
+		// present so the surrounding host fragments (a backquote
+		// emit, a compiled-match emit, a function declaration)
+		// stay on separate lines. Without this, Go syntax breaks
+		// (`expr{{{` etc.). Java accepts the same shape via
+		// expression-statement looseness, so the Java fixtures
+		// don't regress.
+		if strings.ContainsRune(content, '\n') {
+			p.codes = append(p.codes, tomast.MakeTargetLanguageToCode(tomast.MakeTL(
+				"\n",
+				tomast.MakeTextPosition(int64(startPos.line), int64(startPos.col)),
+				tomast.MakeTextPosition(int64(startPos.line), int64(startPos.col)),
+			)))
+		}
 		return nil
 	}
 	merged := mergeHostblocks(blocks)
