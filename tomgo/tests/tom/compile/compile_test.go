@@ -46,7 +46,7 @@ type fixture struct {
 
 	// needsMapping toggles passing $TOMGO_TOM_INCLUDE to the Go
 	// pipeline so `%include { sl.tom }` and friends resolve to the
-	// local `stable/tom/library/mapping/` tree.
+	// local `stable/library/mapping/` tree.
 	needsMapping bool
 	// hasInlineGom signals the fixture uses a `%gom { module ... }`
 	// block; the parser then writes Java AST classes to a `gen/`
@@ -229,7 +229,7 @@ func TestCompileFixtures(t *testing.T) {
 			// set so `expandGomBlock` and the parser's include
 			// resolver find the mapping/ tree.
 			if f.needsMapping {
-				mapDir := filepath.Join(resources.repoRoot, "stable", "tom", "library", "mapping")
+				mapDir := filepath.Join(resources.repoRoot, "stable", "library", "mapping")
 				prev := os.Getenv("TOMGO_TOM_INCLUDE")
 				t.Setenv("TOMGO_TOM_INCLUDE",
 					filepath.Join(mapDir, "java")+string(os.PathListSeparator)+mapDir)
@@ -475,7 +475,7 @@ func TestCompileGoFixtures(t *testing.T) {
 			// (e.g. TestAlgebraic) need TOMGO_TOM_INCLUDE pointed at
 			// the Go mapping tree before the parser resolves imports.
 			if f.needsMapping {
-				mapDir := filepath.Join(resources.repoRoot, "stable", "tom", "library", "mapping")
+				mapDir := filepath.Join(resources.repoRoot, "stable", "library", "mapping")
 				t.Setenv("TOMGO_TOM_INCLUDE",
 					filepath.Join(mapDir, "go")+string(os.PathListSeparator)+mapDir)
 			}
