@@ -38,6 +38,7 @@ func Run(in tom.State) (tom.State, error) {
 	}
 	nkt := &newKernelTyper{
 		varTypes:   make(map[string]tomast.TomType),
+		varDecls:   make(map[string][]varDecl),
 		symbols:    in.Symbols,
 		typerAbort: in.HasInlineGom,
 	}
@@ -85,6 +86,14 @@ func Run(in tom.State) (tom.State, error) {
 // growing list of generated type equations.
 type newKernelTyper struct {
 	varTypes map[string]tomast.TomType
+	// varDecls maps a variable name to every host-code declaration
+	// of that name, in source order (line ascending). A %match
+	// subject `res` at line L resolves to the latest declaration
+	// with declLine ≤ L. This lets a single source file have
+	// multiple `Term res` / `TermList res` declarations in
+	// different method scopes without our flat `varTypes` map
+	// picking the wrong one.
+	varDecls map[string][]varDecl
 	symbols  *tom.SymbolTable
 	// typerAbort indicates that Java's typer would have aborted on
 	// this input (we proxy that via parser.HasInlineGom — see
@@ -92,6 +101,57 @@ type newKernelTyper struct {
 	// BQAppl→FunctionCall rewrite so the resulting AST shape matches
 	// Java's aborted-typer output.
 	typerAbort bool
+}
+
+// varDecl records one host-code declaration of a variable: the
+// source line where it appeared and the declared sort.
+type varDecl struct {
+	line int
+	typ  tomast.TomType
+}
+
+// lookupVarTypeAt returns the type of `name` as declared in the
+// nearest enclosing host-code declaration at or before `line`.
+// Multiple declarations of the same name (one per method scope,
+// e.g. `Term res` in test1 vs `TermList res` in test7) are
+// distinguished by line number.
+func (n *newKernelTyper) lookupVarTypeAt(name string, line int) (tomast.TomType, bool) {
+	decls := n.varDecls[name]
+	if len(decls) == 0 {
+		if t, ok := n.varTypes[name]; ok {
+			return t, true
+		}
+		return nil, false
+	}
+	// Pick the latest declaration with declLine <= line.
+	best := -1
+	for i, d := range decls {
+		if d.line <= line && (best < 0 || d.line > decls[best].line) {
+			best = i
+		}
+	}
+	if best < 0 {
+		// No declaration before the call site — fall back to the
+		// first (probably a forward reference or a parameter).
+		return decls[0].typ, true
+	}
+	return decls[best].typ, true
+}
+
+// bqVarOriginLine extracts the source line from a BQVariable's
+// OriginTracking option. Returns 0 if no tracking is present
+// (e.g. for synthetic terms produced by the compiler).
+func bqVarOriginLine(bqv *tomast.BQVariableBQTerm) int {
+	opts, ok := bqv.Options.(*tomast.ConcOptionOptionList)
+	if !ok {
+		return 0
+	}
+	for _, o := range opts.Slots {
+		if ot, ok := o.(*tomast.OriginTrackingOption); ok {
+			return int(ot.Line)
+		}
+	}
+	return 0
 }
 
 // inferAllTypes mirrors Java's NewKernelTyper.inferAllTypes(term,
@@ -137,13 +197,23 @@ func (n *newKernelTyper) inferAllTypes(subject any, contextType tomast.TomType) 
 			}
 		}
 		// Last-resort lookup: the subject is a bare BQVariable with
-		// "unknown type" whose name was seeded into varTypes by the
+		// "unknown type" whose name was seeded into varDecls by the
 		// pre-pass scanner (host-code declaration like
-		// `Term t = …; %match(t) {…}`).
+		// `Term t = …; %match(t) {…}`). Position-aware so multiple
+		// declarations of the same name across method scopes
+		// (e.g. `Term res` in test1 vs `TermList res` in test7)
+		// resolve to the nearest enclosing one. The subject's own
+		// AstType is also updated so the compiler's renamesubjects
+		// pass sees the resolved type (it pulls from
+		// subject.AstType, not from the MatchConstraint's aType).
 		if isUnknownType(aType) {
 			if bqv, ok := s.Subject.(*tomast.BQVariableBQTerm); ok {
-				if t, ok := n.varTypes[bqTermName(bqv)]; ok && !isUnknownType(t) {
+				line := bqVarOriginLine(bqv)
+				if t, ok := n.lookupVarTypeAt(bqTermName(bqv), line); ok && !isUnknownType(t) {
 					aType = t
+					if isUnknownType(bqv.AstType) {
+						s.Subject = tomast.MakeBQVariable(bqv.Options, bqv.AstName, t)
+					}
 				}
 			}
 		}
@@ -219,10 +289,23 @@ func (n *newKernelTyper) inferAllTypes(subject any, contextType tomast.TomType) 
 			}
 			// Override slot context for VariableStar in variadic
 			// patterns — it captures a sublist of the LIST type.
+			// Same override for SUB-RANGE patterns: when an inner
+			// pattern shares the SAME variadic head as the outer
+			// (e.g. `termList(_*, termList(b,b), _*)`), the inner
+			// matches a contiguous slice of the outer, so its type
+			// is the codomain, not the element type. Otherwise the
+			// AliasTo variable (`p@inner`) ends up typed Term when
+			// it should be TermList.
 			perSlotCtx := slotCtx
 			if listCtx != nil {
 				if _, isStar := pair.Appl.(*tomast.VariableStarTomTerm); isStar {
 					perSlotCtx = listCtx
+				} else if ra, ok := pair.Appl.(*tomast.RecordApplTomTerm); ok {
+					if nl, ok := ra.NameList.(*tomast.ConcTomNameTomNameList); ok && len(nl.Slots) > 0 {
+						if nm, ok := nl.Slots[0].(*tomast.NameTomName); ok && nm.String_ == headName {
+							perSlotCtx = listCtx
+						}
+					}
 				}
 			}
 			newAppl := n.inferAllTypes(pair.Appl, perSlotCtx).(tomast.TomTerm)
@@ -696,6 +779,10 @@ func seedVarTypesFromSource(n *newKernelTyper, src []byte, syms *tom.SymbolTable
 		i = j
 		return out
 	}
+	// We track currentLine inside the main loop; helpers below
+	// (comments, quoted) advance through bytes that may contain
+	// newlines, so they need to bump currentLine too.
+	currentLine := 1
 	skipLineComment := func() {
 		for i < len(s) && s[i] != '\n' {
 			i++
@@ -704,6 +791,9 @@ func seedVarTypesFromSource(n *newKernelTyper, src []byte, syms *tom.SymbolTable
 	skipBlockComment := func() {
 		i += 2
 		for i+1 < len(s) && !(s[i] == '*' && s[i+1] == '/') {
+			if s[i] == '\n' {
+				currentLine++
+			}
 			i++
 		}
 		if i+1 < len(s) {
@@ -713,6 +803,9 @@ func seedVarTypesFromSource(n *newKernelTyper, src []byte, syms *tom.SymbolTable
 	skipQuoted := func(q byte) {
 		i++
 		for i < len(s) && s[i] != q {
+			if s[i] == '\n' {
+				currentLine++
+			}
 			if s[i] == '\\' && i+1 < len(s) {
 				i++
 			}
@@ -722,6 +815,8 @@ func seedVarTypesFromSource(n *newKernelTyper, src []byte, syms *tom.SymbolTable
 			i++
 		}
 	}
+	// (currentLine is already declared above; declared once so
+	// helper closures and the main loop share the same counter.)
 	tryRecord := func(sortName, varName string, next byte) {
 		if _, ok := syms.Sorts[sortName]; !ok {
 			return
@@ -735,16 +830,19 @@ func seedVarTypesFromSource(n *newKernelTyper, src []byte, syms *tom.SymbolTable
 		default:
 			return
 		}
-		// Don't overwrite an existing entry — first declaration
-		// wins (Java's shadowing rules would be a fix later).
-		if _, exists := n.varTypes[varName]; exists {
-			return
-		}
-		n.varTypes[varName] = tomast.MakeType(
+		typ := tomast.MakeType(
 			tomast.MakeConcTypeOption(),
 			sortName,
 			tomast.MakeEmptyTargetLanguageType(),
 		)
+		// Record the declaration in varDecls (allows multiple
+		// declarations of the same name across method scopes).
+		// Also keep `varTypes` for callers that don't track line
+		// information — first-decl-wins for backward compat.
+		n.varDecls[varName] = append(n.varDecls[varName], varDecl{line: currentLine, typ: typ})
+		if _, exists := n.varTypes[varName]; !exists {
+			n.varTypes[varName] = typ
+		}
 	}
 	for i < len(s) {
 		c := s[i]
@@ -808,6 +906,9 @@ func seedVarTypesFromSource(n *newKernelTyper, src []byte, syms *tom.SymbolTable
 		// Whitespace: don't push, so `Sort<space>name` looks like
 		// adjacent tokens to tryRecord.
 		if c == ' ' || c == '\t' || c == '\n' || c == '\r' {
+			if c == '\n' {
+				currentLine++
+			}
 			i++
 			continue
 		}

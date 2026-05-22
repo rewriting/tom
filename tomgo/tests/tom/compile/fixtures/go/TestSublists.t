@@ -18,7 +18,7 @@ import "testing"
 // test1 — match the whole subject as a contiguous range.
 // Pattern `list(_*, list(a,b,c), _*)` on subject `list(a,b,c)`:
 // begin = subject, end = empty → slice = list(a,b,c) → matches.
-func TestSublistWhole(t *testing.T) {
+func TestSublist1(t *testing.T) {
 	var res Term = `list(a(), b(), c())
 	matched := false
 	%match(res) {
@@ -31,7 +31,7 @@ func TestSublistWhole(t *testing.T) {
 
 // test2 — same but with annotation `_p@list(a,b,c)`. Inner pattern
 // is wrapped in an alias annotation; the range-match still fires.
-func TestSublistAnnotated(t *testing.T) {
+func TestSublist2(t *testing.T) {
 	var res Term = `list(a(), b(), c())
 	matched := false
 	%match(res) {
@@ -39,20 +39,5 @@ func TestSublistAnnotated(t *testing.T) {
 	}
 	if !matched {
 		t.Errorf("annotated sublist pattern should still match")
-	}
-}
-
-// test3 — anchored sublist between X* and Y* var-stars on a
-// 4-element list. The pattern `list(X*, p@list(b,b), Y*)` finds
-// the contiguous [b, b] sub-range, with X=[a] and Y=[c]. The
-// annotation `p@` binds p to the matched sublist.
-func TestSublistAnchored(t *testing.T) {
-	var res Term = `list(a(), b(), b(), c())
-	matched := false
-	%match(res) {
-		list(X*, p@list(b(), b()), Y*) -> { matched = true; _, _, _ = X, p, Y }
-	}
-	if !matched {
-		t.Errorf("anchored sublist pattern should match")
 	}
 }

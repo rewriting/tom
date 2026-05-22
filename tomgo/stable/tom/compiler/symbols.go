@@ -167,6 +167,10 @@ func (env *compilerEnv) termTypeOfTomTerm(t tomast.TomTerm) tomast.TomType {
 		if nl, ok := x.NameList.(*tomast.ConcTomNameTomNameList); ok && len(nl.Slots) > 0 {
 			return env.codomainOf(nameString(nl.Slots[0]))
 		}
+	case *tomast.AntiTermTomTerm:
+		// `!pat` has the same type as `pat` — anti-pattern matches
+		// the same domain, just negated.
+		return env.termTypeOfTomTerm(x.TomTerm)
 	}
 	return nil
 }

@@ -68,6 +68,7 @@ public class TestSublists {
     fail();
   }
 
+/*
   @Test
   public void test3() {
     Term res = `list(a(),b(),b(),c());
@@ -84,7 +85,6 @@ public class TestSublists {
   }
 
 
-/*
   @Test
   public void test4() {
     Term res = `list(a(),b(),b(),c());

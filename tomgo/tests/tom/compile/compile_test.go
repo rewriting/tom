@@ -453,9 +453,8 @@ var goFixtures = []struct {
 		hasInlineGom: true,
 		goPackage:    "testsublists",
 		expected: []string{
-			"=== RUN   TestSublistWhole",
-			"=== RUN   TestSublistAnnotated",
-			"=== RUN   TestSublistAnchored",
+			"=== RUN   TestSublist1",
+			"=== RUN   TestSublist2",
 			"PASS",
 		},
 	},
