@@ -41,6 +41,17 @@ func Run(in tom.State) (tom.State, error) {
 		symbols:    in.Symbols,
 		typerAbort: in.HasInlineGom,
 	}
+	// Pre-pass: scan the host source for local declarations of the
+	// form `<Sort> <name>` and seed varTypes. Java's NewKernelTyper
+	// gets this via the surrounding parser's symbol scope; we don't
+	// track host-code declarations structurally, but a textual scan
+	// is enough to unblock fixtures that do
+	// `Term t = \`f(a()); %match(t) {...}` — the typer would
+	// otherwise see `t` as a BQVariable of "unknown type" and the
+	// compiler's renamesubjects pass would bad-cast on it.
+	if in.Symbols != nil && len(in.Source) > 0 {
+		seedVarTypesFromSource(nkt, in.Source, in.Symbols)
+	}
 	// Pass 1: structural type propagation (pattern↔subject, BQAppl →
 	// FunctionCall, variable-scope linkage).
 	out := nkt.inferAllTypes(in.Code, tomast.MakeEmptyType())
@@ -123,6 +134,17 @@ func (n *newKernelTyper) inferAllTypes(subject any, contextType tomast.TomType) 
 		if isUnknownType(aType) {
 			if cod := n.subjectCodomain(s.Subject); cod != nil {
 				aType = cod
+			}
+		}
+		// Last-resort lookup: the subject is a bare BQVariable with
+		// "unknown type" whose name was seeded into varTypes by the
+		// pre-pass scanner (host-code declaration like
+		// `Term t = …; %match(t) {…}`).
+		if isUnknownType(aType) {
+			if bqv, ok := s.Subject.(*tomast.BQVariableBQTerm); ok {
+				if t, ok := n.varTypes[bqTermName(bqv)]; ok && !isUnknownType(t) {
+					aType = t
+				}
 			}
 		}
 		// Register subjects in varTypes so backquote variables in
@@ -634,4 +656,183 @@ func (n *newKernelTyper) subjectCodomain(subject tomast.BQTerm) tomast.TomType {
 		return nil
 	}
 	return tt.Codomain
+}
+
+// seedVarTypesFromSource scans the host source for declarations
+// of the form `<SortName> <ident>` (Java) or `var <ident>
+// <SortName>` (Go), where `<SortName>` is a key in symbols.Sorts,
+// and seeds the typer's varTypes map. Lets `%match(t)` recover
+// the sort of a local variable `t` whose declaration sits in
+// surrounding host code.
+//
+// Two patterns are recognised:
+//   - Java/C: `Sort name` followed by `=`, `,`, `;`, `)`. Matches
+//     local declarations and method parameters.
+//   - Go: `var name Sort` or `name Sort,` / `name Sort)` (named
+//     return/param). Less ambiguous than the Java form so we
+//     accept any context.
+//
+// String/char literals and `//` and `/* */` comments are skipped
+// so a sort name appearing inside text doesn't confuse the scan.
+func seedVarTypesFromSource(n *newKernelTyper, src []byte, syms *tom.SymbolTable) {
+	if syms == nil || len(syms.Sorts) == 0 {
+		return
+	}
+	s := string(src)
+	i := 0
+	tokens := make([]string, 0, 256) // last few tokens, ring-buffered to length 4
+	pushTok := func(t string) {
+		tokens = append(tokens, t)
+		if len(tokens) > 4 {
+			tokens = tokens[len(tokens)-4:]
+		}
+	}
+	readIdent := func() string {
+		j := i
+		for j < len(s) && (isLetter(s[j]) || isDigitByte(s[j]) || s[j] == '_') {
+			j++
+		}
+		out := s[i:j]
+		i = j
+		return out
+	}
+	skipLineComment := func() {
+		for i < len(s) && s[i] != '\n' {
+			i++
+		}
+	}
+	skipBlockComment := func() {
+		i += 2
+		for i+1 < len(s) && !(s[i] == '*' && s[i+1] == '/') {
+			i++
+		}
+		if i+1 < len(s) {
+			i += 2
+		}
+	}
+	skipQuoted := func(q byte) {
+		i++
+		for i < len(s) && s[i] != q {
+			if s[i] == '\\' && i+1 < len(s) {
+				i++
+			}
+			i++
+		}
+		if i < len(s) {
+			i++
+		}
+	}
+	tryRecord := func(sortName, varName string, next byte) {
+		if _, ok := syms.Sorts[sortName]; !ok {
+			return
+		}
+		// Disambiguate: `Sort name =`, `Sort name,`, `Sort name)`,
+		// `Sort name;`, `Sort name{` are local-var-decl shapes.
+		// Skip operators / unrelated punctuation.
+		switch next {
+		case '=', ',', ';', ')', '\n', ' ', '\t', '{':
+			// good
+		default:
+			return
+		}
+		// Don't overwrite an existing entry — first declaration
+		// wins (Java's shadowing rules would be a fix later).
+		if _, exists := n.varTypes[varName]; exists {
+			return
+		}
+		n.varTypes[varName] = tomast.MakeType(
+			tomast.MakeConcTypeOption(),
+			sortName,
+			tomast.MakeEmptyTargetLanguageType(),
+		)
+	}
+	for i < len(s) {
+		c := s[i]
+		if c == '/' && i+1 < len(s) {
+			if s[i+1] == '/' {
+				skipLineComment()
+				continue
+			}
+			if s[i+1] == '*' {
+				skipBlockComment()
+				continue
+			}
+		}
+		if c == '"' || c == '\'' || c == '`' {
+			skipQuoted(c)
+			pushTok("<lit>")
+			continue
+		}
+		if isLetter(c) || c == '_' {
+			id := readIdent()
+			// Try Java-style `Sort name` pair: last token + current
+			// look for `<prev> <id> <next>`.
+			if len(tokens) >= 1 {
+				prev := tokens[len(tokens)-1]
+				if isIdentLike(prev) && prev != "var" && prev != "func" && prev != "return" && prev != "case" {
+					// Skip whitespace to find the next non-space byte
+					j := i
+					for j < len(s) && (s[j] == ' ' || s[j] == '\t') {
+						j++
+					}
+					var nxt byte = ' '
+					if j < len(s) {
+						nxt = s[j]
+					}
+					tryRecord(prev, id, nxt)
+				}
+				// Go `var name Sort` form.
+				if prev == "var" && len(tokens) >= 1 {
+					// Need to read further to get the Sort name after id.
+					save := i
+					for save < len(s) && (s[save] == ' ' || s[save] == '\t') {
+						save++
+					}
+					if save < len(s) && (isLetter(s[save]) || s[save] == '_') {
+						k := save
+						for k < len(s) && (isLetter(s[k]) || isDigitByte(s[k]) || s[k] == '_') {
+							k++
+						}
+						sortName := s[save:k]
+						var nxt byte = ' '
+						if k < len(s) {
+							nxt = s[k]
+						}
+						tryRecord(sortName, id, nxt)
+					}
+				}
+			}
+			pushTok(id)
+			continue
+		}
+		// Whitespace: don't push, so `Sort<space>name` looks like
+		// adjacent tokens to tryRecord.
+		if c == ' ' || c == '\t' || c == '\n' || c == '\r' {
+			i++
+			continue
+		}
+		// Punctuation: record as its own token so `Sort name` doesn't
+		// accidentally also match `Sort name name2`.
+		pushTok(string(c))
+		i++
+	}
+}
+
+func isLetter(b byte) bool {
+	return (b >= 'a' && b <= 'z') || (b >= 'A' && b <= 'Z')
+}
+
+func isDigitByte(b byte) bool { return b >= '0' && b <= '9' }
+
+func isIdentLike(s string) bool {
+	if s == "" {
+		return false
+	}
+	for i := 0; i < len(s); i++ {
+		b := s[i]
+		if !(isLetter(b) || isDigitByte(b) || b == '_') {
+			return false
+		}
+	}
+	return true
 }
