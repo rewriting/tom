@@ -195,6 +195,24 @@ var fixtures = []fixture{
 		},
 	},
 	{
+		// TestSublists.t — sublist-range matching. Pattern
+		// `list(_*, list(a(),b(),c()), _*)` looks for a CONTIGUOUS
+		// RANGE of elements equal to `[a, b, c]`. Subject is
+		// `list(a(),b(),c())` so the whole subject is the matching
+		// range. Variadic propagator now detects when an element
+		// pattern shares the same head as the outer variadic and
+		// generates begin/end cursor iteration + recursive slice
+		// match (mirror Java's VariadicGenerator.genSliceList).
+		name:         "TestSublists",
+		useJUnit:     true,
+		needsMapping: true,
+		hasInlineGom: true,
+		expected: []string{
+			"JUnit version 4.10",
+			"OK (2 tests)",
+		},
+	},
+	{
 		// TestAlgebraic.t — uses %strategy + %gom + %include of sl.
 		// Exercises:
 		//   - inline gom expansion (generates testalgebraic.sig
@@ -422,6 +440,21 @@ var goFixtures = []struct {
 			"=== RUN   TestNotEqual",
 			"=== RUN   TestEqual",
 			"=== RUN   TestChained",
+			"PASS",
+		},
+	},
+	{
+		// TestSublists.t — Go port. Same %gom + sublist-range
+		// matching test cases. Confirms the variadic propagator's
+		// new same-head detection works on the Go target too.
+		name:         "TestSublists",
+		useGoTest:    true,
+		useSlLib:     true,
+		hasInlineGom: true,
+		goPackage:    "testsublists",
+		expected: []string{
+			"=== RUN   TestSublistWhole",
+			"=== RUN   TestSublistAnnotated",
 			"PASS",
 		},
 	},

@@ -30,6 +30,29 @@ import (
 	"tom/tomgo/stable/library/tomast"
 )
 
+// isSameVariadicHead reports whether `appl` is a RecordAppl whose
+// (first) head name matches `opName`. Used to detect the "sublist
+// range" case where a variadic-headed pattern appears as an arg
+// inside the SAME variadic operator's arg list (e.g. `list(_*,
+// list(a,b,c), _*)` against a list subject). Java's reference
+// (VariadicGenerator.t) routes these to the slice-iteration
+// emitter rather than to single-element head/tail walking.
+func isSameVariadicHead(appl tomast.TomTerm, opName string) bool {
+	ra, ok := appl.(*tomast.RecordApplTomTerm)
+	if !ok {
+		return false
+	}
+	nameList, ok := ra.NameList.(*tomast.ConcTomNameTomNameList)
+	if !ok || len(nameList.Slots) == 0 {
+		return false
+	}
+	head, ok := nameList.Slots[0].(*tomast.NameTomName)
+	if !ok {
+		return false
+	}
+	return head.String_ == opName
+}
+
 // propagateVariadic walks a constraint and applies the list-style
 // expansion top-down at every match-able node.
 func (env *compilerEnv) propagateVariadic(c tomast.Constraint) tomast.Constraint {
@@ -163,10 +186,36 @@ func (env *compilerEnv) tryExpandVariadic(m *tomast.MatchConstraintConstraint) (
 						tomast.MakeMatchConstraint(convertBQVarToVar(newFresh), endSublist, aType),
 					)
 				}
+			} else if isSameVariadicHead(appl, opName) {
+				// Sub-range matching: the element pattern is itself a
+				// RecordAppl whose head is the SAME variadic operator
+				// as the outer list. Tom semantics says match a
+				// CONTIGUOUS RANGE of the outer list — iterate (begin,
+				// end) cursors and recursively pattern-match the
+				// inner against the resulting slice. The shape is the
+				// same as var-star non-last (begin / end / slice /
+				// newFresh), except the slice is consumed by another
+				// MatchConstraint against the inner pattern, which
+				// the next propagator iteration expands.
+				beginSublist := env.getBeginVariableStar(aType)
+				endSublist := env.getEndVariableStar(aType)
+				perSlot = append(perSlot,
+					tomast.MakeMatchConstraint(convertBQVarToVar(beginSublist), currentFresh, aType),
+					tomast.MakeMatchConstraint(convertBQVarToVar(endSublist), currentFresh, aType),
+					tomast.MakeMatchConstraint(
+						appl,
+						tomast.MakeVariableHeadList(firstName, beginSublist, endSublist),
+						aType,
+					),
+					tomast.MakeMatchConstraint(convertBQVarToVar(newFresh), endSublist, aType),
+				)
 			} else {
 				// Ordinary element pattern: NotEmpty + ListHead +
 				// ListTail.
 				applType := env.termTypeOfTomTerm(appl)
+				if applType == nil {
+					applType = aType
+				}
 				perSlot = append(perSlot,
 					tomast.MakeNegate(
 						tomast.MakeEmptyListConstraint(firstName, currentFresh),
