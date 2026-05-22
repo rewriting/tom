@@ -672,45 +672,12 @@ func parseGomModuleName(body string) string {
 	return ""
 }
 
-// locateBundledGom finds tomgo's own bundled gom jars and returns
-// (libDir, classpath, configPath). libDir is the absolute path to
-// `tomgo/stable/lib`; classpath is a `:`-joined list of all jars
-// under runtime/, tom/, tools/, compiletime/; configPath is the
-// Gom.config aterm-encoded plugin pipeline.
-//
-// Walks up from the current working directory until it finds the
-// `stable/lib/tom/gom.jar` marker — that's the autonomy contract:
-// no `$TOM_HOME`, no external dependency, everything tomgo needs
-// to run gom is inside its own tree.
+// locateBundledGom is a thin re-export of
+// [gombackend.LocateBundled]. Kept as a local alias because the
+// parser package can't change the caller-site signature without
+// touching every test that depends on the local symbol.
 func locateBundledGom() (libDir, classpath, gomConfig string) {
-	cwd, _ := os.Getwd()
-	for dir := cwd; ; {
-		p := filepath.Join(dir, "stable", "lib", "tom", "gom.jar")
-		if _, err := os.Stat(p); err == nil {
-			libDir = filepath.Join(dir, "stable", "lib")
-			break
-		}
-		parent := filepath.Dir(dir)
-		if parent == dir {
-			return "", "", ""
-		}
-		dir = parent
-	}
-	var jars []string
-	for _, sub := range []string{"runtime", "tom", "tools", "compiletime"} {
-		entries, err := os.ReadDir(filepath.Join(libDir, sub))
-		if err != nil {
-			continue
-		}
-		for _, e := range entries {
-			if strings.HasSuffix(e.Name(), ".jar") {
-				jars = append(jars, filepath.Join(libDir, sub, e.Name()))
-			}
-		}
-	}
-	classpath = strings.Join(jars, string(os.PathListSeparator))
-	gomConfig = filepath.Join(libDir, "config", "Gom.config")
-	return libDir, classpath, gomConfig
+	return gombackend.LocateBundled()
 }
 
 // locateJava resolves the `java` binary, preferring `$JAVA_HOME/bin/java`
@@ -1214,14 +1181,18 @@ func (p *parser) parseWater() error {
 	tokens := tokenizeWater(content, startPos)
 	blocks := buildHostblocks(tokens)
 	if len(blocks) == 0 {
-		// Pure-whitespace water: emit a bare newline when one is
-		// present so the surrounding host fragments (a backquote
-		// emit, a compiled-match emit, a function declaration)
-		// stay on separate lines. Without this, Go syntax breaks
-		// (`expr{{{` etc.). Java accepts the same shape via
-		// expression-statement looseness, so the Java fixtures
-		// don't regress.
-		if strings.ContainsRune(content, '\n') {
+		// Pure-whitespace water normally yields no TL — matches
+		// Java's HIDDEN-channel rule and keeps the AST byte-
+		// stable against the Java reference. For Go target only,
+		// emit a single `\n` when this water sits BETWEEN two
+		// emitted pieces (backquote emit + compiled-match emit,
+		// etc.). Go's strict syntax requires a separator between
+		// an expression and the following `{{{` block; Java is
+		// lenient.
+		if Target == "go" &&
+			strings.ContainsRune(content, '\n') &&
+			len(p.codes) > 0 &&
+			!p.atEnd() {
 			p.codes = append(p.codes, tomast.MakeTargetLanguageToCode(tomast.MakeTL(
 				"\n",
 				tomast.MakeTextPosition(int64(startPos.line), int64(startPos.col)),

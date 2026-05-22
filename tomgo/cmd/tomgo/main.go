@@ -12,7 +12,6 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
-	"strings"
 
 	"tom/tomgo/stable/gom/backend"
 	"tom/tomgo/stable/gom/parser"
@@ -168,41 +167,9 @@ func runGomJava(input, outDir, pkg string) error {
 	return cmd.Run()
 }
 
-// locateBundledGom walks up from CWD until it finds the marker
-// `stable/lib/tom/gom.jar`, then builds the classpath + locates the
-// Gom.config aterm-encoded plugin pipeline. Identical to the parser
-// package's helper — duplicated to avoid pulling the parser into
-// the CLI for one small lookup.
-func locateBundledGom() (libDir, classpath, gomConfig string) {
-	cwd, _ := os.Getwd()
-	for dir := cwd; ; {
-		p := filepath.Join(dir, "stable", "lib", "tom", "gom.jar")
-		if _, err := os.Stat(p); err == nil {
-			libDir = filepath.Join(dir, "stable", "lib")
-			break
-		}
-		parent := filepath.Dir(dir)
-		if parent == dir {
-			return "", "", ""
-		}
-		dir = parent
-	}
-	var jars []string
-	for _, sub := range []string{"runtime", "tom", "tools", "compiletime"} {
-		entries, err := os.ReadDir(filepath.Join(libDir, sub))
-		if err != nil {
-			continue
-		}
-		for _, e := range entries {
-			if filepath.Ext(e.Name()) == ".jar" {
-				jars = append(jars, filepath.Join(libDir, sub, e.Name()))
-			}
-		}
-	}
-	classpath = strings.Join(jars, string(os.PathListSeparator))
-	gomConfig = filepath.Join(libDir, "config", "Gom.config")
-	return libDir, classpath, gomConfig
-}
+// locateBundledGom is now provided by the gom backend package
+// (shared with the parser's expandGomBlock).
+var locateBundledGom = backend.LocateBundled
 
 func runGomBatch(args []string) error {
 	fs := flag.NewFlagSet("gom-batch", flag.ContinueOnError)

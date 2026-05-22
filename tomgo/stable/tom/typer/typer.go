@@ -154,6 +154,55 @@ func bqVarOriginLine(bqv *tomast.BQVariableBQTerm) int {
 	return 0
 }
 
+// resolveMatchAstType picks the most specific AstType for a
+// MatchConstraint after the parser leaves it as "unknown type".
+// Three independent fallbacks, tried in order; the first one
+// that finds a concrete type wins:
+//
+//  1. **Numeric-constant subject** (`%match(int 5)`): Java's
+//     NewKernelTyper sees a constant in the subject slot and
+//     infers Type("int", EmptyTL).
+//  2. **Constructor-call subject** (`%match(\`f(a()))`): the
+//     head's codomain in the SymbolTable resolves the type.
+//     Java tracks this via Subtype constraints in the solver;
+//     we approximate with a direct lookup.
+//  3. **Bare BQVariable subject** (`%match(t)` after `Term t =
+//     …`): the seedVarTypesFromSource pre-pass recorded `t`'s
+//     sort at the host-code declaration line; we look up the
+//     closest declaration to the BQVariable's OriginTracking
+//     line.
+//
+// Fallback (3) also updates the subject's own AstType so the
+// compiler's renamesubjects pass (which reads
+// `subject.AstType`, not `MatchConstraint.AstType`) sees the
+// resolved sort.
+func (n *newKernelTyper) resolveMatchAstType(s *tomast.MatchConstraintConstraint) tomast.TomType {
+	aType := s.AstType
+	if !isUnknownType(aType) {
+		return aType
+	}
+	if isNumericConstSubject(s.Subject) {
+		return tomast.MakeType(
+			tomast.MakeConcTypeOption(),
+			"int",
+			tomast.MakeEmptyTargetLanguageType(),
+		)
+	}
+	if cod := n.subjectCodomain(s.Subject); cod != nil {
+		return cod
+	}
+	if bqv, ok := s.Subject.(*tomast.BQVariableBQTerm); ok {
+		line := bqVarOriginLine(bqv)
+		if t, ok := n.lookupVarTypeAt(bqTermName(bqv), line); ok && !isUnknownType(t) {
+			if isUnknownType(bqv.AstType) {
+				s.Subject = tomast.MakeBQVariable(bqv.Options, bqv.AstName, t)
+			}
+			return t
+		}
+	}
+	return aType
+}
+
 // inferAllTypes mirrors Java's NewKernelTyper.inferAllTypes(term,
 // contextType): a recursive walker that threads a "contextType"
 // down through the tree and rewrites specific nodes when it knows
@@ -173,50 +222,7 @@ func (n *newKernelTyper) inferAllTypes(subject any, contextType tomast.TomType) 
 		// fresh TypeVar and leaves `"unknown type"` placeholders
 		// untouched. Eager substitution breaks parity (see Record.t
 		// / regress/SuccessiveErrors.t).
-		aType := s.AstType
-		// Numeric-constant inference: if aType is still the parser's
-		// "unknown type" placeholder AND the subject is a numeric
-		// constant (BQAppl with no args whose name is `-?[0-9]+`),
-		// Java's typer infers Type("int", EmptyTL). Mirror that here.
-		if isUnknownType(aType) && isNumericConstSubject(s.Subject) {
-			aType = tomast.MakeType(
-				tomast.MakeConcTypeOption(),
-				"int",
-				tomast.MakeEmptyTargetLanguageType(),
-			)
-		}
-		// Codomain propagation: if aType is still "unknown" and the
-		// subject is a constructor call (BQAppl with a head whose
-		// symbol has a known codomain), Java's constraint solver
-		// resolves aType to that codomain via Subtype(codomain, aType)
-		// constraints. We approximate that here without the full
-		// solver — direct lookup in the SymbolTable.
-		if isUnknownType(aType) {
-			if cod := n.subjectCodomain(s.Subject); cod != nil {
-				aType = cod
-			}
-		}
-		// Last-resort lookup: the subject is a bare BQVariable with
-		// "unknown type" whose name was seeded into varDecls by the
-		// pre-pass scanner (host-code declaration like
-		// `Term t = …; %match(t) {…}`). Position-aware so multiple
-		// declarations of the same name across method scopes
-		// (e.g. `Term res` in test1 vs `TermList res` in test7)
-		// resolve to the nearest enclosing one. The subject's own
-		// AstType is also updated so the compiler's renamesubjects
-		// pass sees the resolved type (it pulls from
-		// subject.AstType, not from the MatchConstraint's aType).
-		if isUnknownType(aType) {
-			if bqv, ok := s.Subject.(*tomast.BQVariableBQTerm); ok {
-				line := bqVarOriginLine(bqv)
-				if t, ok := n.lookupVarTypeAt(bqTermName(bqv), line); ok && !isUnknownType(t) {
-					aType = t
-					if isUnknownType(bqv.AstType) {
-						s.Subject = tomast.MakeBQVariable(bqv.Options, bqv.AstName, t)
-					}
-				}
-			}
-		}
+		aType := n.resolveMatchAstType(s)
 		// Register subjects in varTypes so backquote variables in
 		// the rule's body or downstream constraints can pick up the
 		// concrete type (regress/UnknownSymbol1's `\`tt` after a
@@ -757,192 +763,3 @@ func (n *newKernelTyper) subjectCodomain(subject tomast.BQTerm) tomast.TomType {
 //
 // String/char literals and `//` and `/* */` comments are skipped
 // so a sort name appearing inside text doesn't confuse the scan.
-func seedVarTypesFromSource(n *newKernelTyper, src []byte, syms *tom.SymbolTable) {
-	if syms == nil || len(syms.Sorts) == 0 {
-		return
-	}
-	s := string(src)
-	i := 0
-	tokens := make([]string, 0, 256) // last few tokens, ring-buffered to length 4
-	pushTok := func(t string) {
-		tokens = append(tokens, t)
-		if len(tokens) > 4 {
-			tokens = tokens[len(tokens)-4:]
-		}
-	}
-	readIdent := func() string {
-		j := i
-		for j < len(s) && (isLetter(s[j]) || isDigitByte(s[j]) || s[j] == '_') {
-			j++
-		}
-		out := s[i:j]
-		i = j
-		return out
-	}
-	// We track currentLine inside the main loop; helpers below
-	// (comments, quoted) advance through bytes that may contain
-	// newlines, so they need to bump currentLine too.
-	currentLine := 1
-	skipLineComment := func() {
-		for i < len(s) && s[i] != '\n' {
-			i++
-		}
-	}
-	skipBlockComment := func() {
-		i += 2
-		for i+1 < len(s) && !(s[i] == '*' && s[i+1] == '/') {
-			if s[i] == '\n' {
-				currentLine++
-			}
-			i++
-		}
-		if i+1 < len(s) {
-			i += 2
-		}
-	}
-	skipQuoted := func(q byte) {
-		i++
-		for i < len(s) && s[i] != q {
-			if s[i] == '\n' {
-				currentLine++
-			}
-			if s[i] == '\\' && i+1 < len(s) {
-				i++
-			}
-			i++
-		}
-		if i < len(s) {
-			i++
-		}
-	}
-	// (currentLine is already declared above; declared once so
-	// helper closures and the main loop share the same counter.)
-	tryRecord := func(sortName, varName string, next byte) {
-		if _, ok := syms.Sorts[sortName]; !ok {
-			return
-		}
-		// Disambiguate: `Sort name =`, `Sort name,`, `Sort name)`,
-		// `Sort name;`, `Sort name{` are local-var-decl shapes.
-		// Skip operators / unrelated punctuation.
-		switch next {
-		case '=', ',', ';', ')', '\n', ' ', '\t', '{':
-			// good
-		default:
-			return
-		}
-		typ := tomast.MakeType(
-			tomast.MakeConcTypeOption(),
-			sortName,
-			tomast.MakeEmptyTargetLanguageType(),
-		)
-		// Record the declaration in varDecls (allows multiple
-		// declarations of the same name across method scopes).
-		// Also keep `varTypes` for callers that don't track line
-		// information — first-decl-wins for backward compat.
-		n.varDecls[varName] = append(n.varDecls[varName], varDecl{line: currentLine, typ: typ})
-		if _, exists := n.varTypes[varName]; !exists {
-			n.varTypes[varName] = typ
-		}
-	}
-	for i < len(s) {
-		c := s[i]
-		if c == '/' && i+1 < len(s) {
-			if s[i+1] == '/' {
-				skipLineComment()
-				continue
-			}
-			if s[i+1] == '*' {
-				skipBlockComment()
-				continue
-			}
-		}
-		if c == '"' || c == '\'' {
-			skipQuoted(c)
-			pushTok("<lit>")
-			continue
-		}
-		if c == '`' {
-			// Tom backquote — opens an in-line backquote term that
-			// runs until the end of the host expression. Not a string
-			// delimiter; just skip the byte and treat the rest as
-			// normal tokens.
-			i++
-			pushTok("`")
-			continue
-		}
-		if isLetter(c) || c == '_' {
-			id := readIdent()
-			// Try Java-style `Sort name` pair: last token + current
-			// look for `<prev> <id> <next>`.
-			if len(tokens) >= 1 {
-				prev := tokens[len(tokens)-1]
-				if isIdentLike(prev) && prev != "var" && prev != "func" && prev != "return" && prev != "case" {
-					// Skip whitespace to find the next non-space byte
-					j := i
-					for j < len(s) && (s[j] == ' ' || s[j] == '\t') {
-						j++
-					}
-					var nxt byte = ' '
-					if j < len(s) {
-						nxt = s[j]
-					}
-					tryRecord(prev, id, nxt)
-				}
-				// Go `var name Sort` form.
-				if prev == "var" && len(tokens) >= 1 {
-					// Need to read further to get the Sort name after id.
-					save := i
-					for save < len(s) && (s[save] == ' ' || s[save] == '\t') {
-						save++
-					}
-					if save < len(s) && (isLetter(s[save]) || s[save] == '_') {
-						k := save
-						for k < len(s) && (isLetter(s[k]) || isDigitByte(s[k]) || s[k] == '_') {
-							k++
-						}
-						sortName := s[save:k]
-						var nxt byte = ' '
-						if k < len(s) {
-							nxt = s[k]
-						}
-						tryRecord(sortName, id, nxt)
-					}
-				}
-			}
-			pushTok(id)
-			continue
-		}
-		// Whitespace: don't push, so `Sort<space>name` looks like
-		// adjacent tokens to tryRecord.
-		if c == ' ' || c == '\t' || c == '\n' || c == '\r' {
-			if c == '\n' {
-				currentLine++
-			}
-			i++
-			continue
-		}
-		// Punctuation: record as its own token so `Sort name` doesn't
-		// accidentally also match `Sort name name2`.
-		pushTok(string(c))
-		i++
-	}
-}
-
-func isLetter(b byte) bool {
-	return (b >= 'a' && b <= 'z') || (b >= 'A' && b <= 'Z')
-}
-
-func isDigitByte(b byte) bool { return b >= '0' && b <= '9' }
-
-func isIdentLike(s string) bool {
-	if s == "" {
-		return false
-	}
-	for i := 0; i < len(s); i++ {
-		b := s[i]
-		if !(isLetter(b) || isDigitByte(b) || b == '_') {
-			return false
-		}
-	}
-	return true
-}

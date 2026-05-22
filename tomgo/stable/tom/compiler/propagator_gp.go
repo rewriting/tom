@@ -96,12 +96,12 @@ func (env *compilerEnv) propagateGP(c tomast.Constraint) tomast.Constraint {
 //
 // Returns (new, true) when the rule fires, (input, false) otherwise.
 func (env *compilerEnv) tryGeneralPropagation(m *tomast.MatchConstraintConstraint) (tomast.Constraint, bool) {
-	// Anti-pattern rule deferred — needs the pregenerator to know
-	// how to wrap nested DoWhile/MatchConstraint shapes under a
-	// Negation, which our current backend doesn't support. Without
-	// the rewrite, `MatchConstraint(AntiTerm(pat), …)` surfaces as
-	// a raw constraint, breaking tests 4/8/10 of TestSublists.
-	_ = m // placeholder so the unused-param lint doesn't fire
+	// Anti-pattern rule (`MatchConstraint(AntiTerm(p), s)` →
+	// `Negate(MatchConstraint(p, s))`) deferred: the pregenerator
+	// needs to know how to wrap nested DoWhile/MatchConstraint
+	// shapes under a Negation, which our backend doesn't support
+	// yet. Without the rewrite, anti-patterns in sub-range
+	// (TestSublists tests 4/8/10) surface as raw constraints.
 	switch p := m.Pattern.(type) {
 	case *tomast.VariableTomTerm:
 		if hasConstraint(p.Constraints) {

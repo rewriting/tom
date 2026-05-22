@@ -48,7 +48,7 @@ func buildArrayBQTerm(name tomast.TomName, args tomast.BQTermList) tomast.BQTerm
 	// Walk in source order so the FIRST arg ends up innermost.
 	// For BQVariableStar args (X*), use BuildAppendArray (flatten);
 	// otherwise BuildConsArray (single element).
-	for i := 0; i < n; i++ {
+	for i := range n {
 		head := conc.Slots[i]
 		if isVarStarLike(head) {
 			result = tomast.MakeBuildAppendArray(name, head, result)
@@ -94,7 +94,7 @@ func buildListBQTerm(name tomast.TomName, args tomast.BQTermList) tomast.BQTerm 
 		return tomast.MakeBuildEmptyList(name)
 	}
 	n := len(conc.Slots)
-	outerName := nameOfTomName(name)
+	outerName := nameString(name)
 	result := tomast.MakeBuildEmptyList(name)
 	// Walk from the LAST arg backwards so the FIRST arg ends up at
 	// the outermost cons.
@@ -118,9 +118,11 @@ func buildListBQTerm(name tomast.TomName, args tomast.BQTermList) tomast.BQTerm 
 	return result
 }
 
-// nameOfTomName extracts the `s` from a `Name(s)` TomName, or
+// nameString extracts the `s` from a `Name(s)` TomName, or
 // "" for shapes without a flat name (EmptyName, PositionName, …).
-func nameOfTomName(n tomast.TomName) string {
+// Same helper exists in stable/tom/compiler/legacy.go — kept
+// local to each package since neither depends on the other.
+func nameString(n tomast.TomName) string {
 	if x, ok := n.(*tomast.NameTomName); ok {
 		return x.String_
 	}
@@ -134,11 +136,11 @@ func nameOfTomName(n tomast.TomName) string {
 func isSameListHead(t tomast.BQTerm, outerName string) bool {
 	switch x := t.(type) {
 	case *tomast.BuildConsListBQTerm:
-		return nameOfTomName(x.AstName) == outerName
+		return nameString(x.AstName) == outerName
 	case *tomast.BuildAppendListBQTerm:
-		return nameOfTomName(x.AstName) == outerName
+		return nameString(x.AstName) == outerName
 	case *tomast.BuildEmptyListBQTerm:
-		return nameOfTomName(x.AstName) == outerName
+		return nameString(x.AstName) == outerName
 	}
 	return false
 }

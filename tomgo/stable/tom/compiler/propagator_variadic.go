@@ -30,6 +30,39 @@ import (
 	"tom/tomgo/stable/library/tomast"
 )
 
+// cursorSliceConstraints produces the four-constraint sequence
+// that walks a (begin, end) cursor pair along a list and binds
+// `appl` to the resulting slice:
+//
+//	begin   := currentFresh
+//	end     := currentFresh   (the generator iterates end through
+//	                           tails until it meets begin)
+//	appl    := VariableHeadList(opName, begin, end)
+//	newFresh := end
+//
+// Used for both var-star non-last slots (where `appl` is the
+// VariableStar) and same-head sub-range slots (where `appl` is
+// a RecordAppl with the outer's head). The recursion happens
+// downstream in the propagator's fixed-point loop.
+func (env *compilerEnv) cursorSliceConstraints(
+	opName *tomast.NameTomName,
+	currentFresh tomast.BQTerm,
+	newFresh tomast.BQTerm,
+	appl tomast.TomTerm,
+	aType tomast.TomType,
+) []tomast.Constraint {
+	beginSublist := env.getBeginVariableStar(aType)
+	endSublist := env.getEndVariableStar(aType)
+	return []tomast.Constraint{
+		tomast.MakeMatchConstraint(convertBQVarToVar(beginSublist), currentFresh, aType),
+		tomast.MakeMatchConstraint(convertBQVarToVar(endSublist), currentFresh, aType),
+		tomast.MakeMatchConstraint(appl,
+			tomast.MakeVariableHeadList(opName, beginSublist, endSublist),
+			aType),
+		tomast.MakeMatchConstraint(convertBQVarToVar(newFresh), endSublist, aType),
+	}
+}
+
 // isSameVariadicHead reports whether `appl` is a RecordAppl whose
 // (first) head name matches `opName`. Used to detect the "sublist
 // range" case where a variadic-headed pattern appears as an arg
@@ -182,18 +215,8 @@ func (env *compilerEnv) tryExpandVariadic(m *tomast.MatchConstraintConstraint) (
 						tomast.MakeMatchConstraint(appl, currentFresh, aType),
 					)
 				} else {
-					beginSublist := env.getBeginVariableStar(aType)
-					endSublist := env.getEndVariableStar(aType)
 					perSlot = append(perSlot,
-						tomast.MakeMatchConstraint(convertBQVarToVar(beginSublist), currentFresh, aType),
-						tomast.MakeMatchConstraint(convertBQVarToVar(endSublist), currentFresh, aType),
-						tomast.MakeMatchConstraint(
-							appl,
-							tomast.MakeVariableHeadList(firstName, beginSublist, endSublist),
-							aType,
-						),
-						tomast.MakeMatchConstraint(convertBQVarToVar(newFresh), endSublist, aType),
-					)
+						env.cursorSliceConstraints(firstName, currentFresh, newFresh, appl, aType)...)
 				}
 			} else if isSameVariadicHead(appl, opName) {
 				// Sub-range matching: the element pattern is itself a
@@ -202,22 +225,12 @@ func (env *compilerEnv) tryExpandVariadic(m *tomast.MatchConstraintConstraint) (
 				// CONTIGUOUS RANGE of the outer list — iterate (begin,
 				// end) cursors and recursively pattern-match the
 				// inner against the resulting slice. The shape is the
-				// same as var-star non-last (begin / end / slice /
-				// newFresh), except the slice is consumed by another
-				// MatchConstraint against the inner pattern, which
-				// the next propagator iteration expands.
-				beginSublist := env.getBeginVariableStar(aType)
-				endSublist := env.getEndVariableStar(aType)
+				// same as a var-star non-last, except the slice is
+				// consumed by a MatchConstraint against the inner
+				// pattern (which the next propagator iteration
+				// expands).
 				perSlot = append(perSlot,
-					tomast.MakeMatchConstraint(convertBQVarToVar(beginSublist), currentFresh, aType),
-					tomast.MakeMatchConstraint(convertBQVarToVar(endSublist), currentFresh, aType),
-					tomast.MakeMatchConstraint(
-						appl,
-						tomast.MakeVariableHeadList(firstName, beginSublist, endSublist),
-						aType,
-					),
-					tomast.MakeMatchConstraint(convertBQVarToVar(newFresh), endSublist, aType),
-				)
+					env.cursorSliceConstraints(firstName, currentFresh, newFresh, appl, aType)...)
 			} else {
 				// Ordinary element pattern: NotEmpty + ListHead +
 				// ListTail.
