@@ -40,47 +40,20 @@ func (env *compilerEnv) propagateGP(c tomast.Constraint) tomast.Constraint {
 		if merged, ok := env.mergeDuplicateVars(x); ok {
 			return env.propagateGP(merged)
 		}
-		newSlots := make([]tomast.Constraint, len(x.Slots))
-		changed := false
-		for i, item := range x.Slots {
-			r := env.propagateGP(item)
-			if r != item {
-				changed = true
-			}
-			newSlots[i] = r
+		if ns, changed := mapConstraintSlots(x.Slots, env.propagateGP); changed {
+			return tomast.MakeAndConstraint(ns...)
 		}
-		if !changed {
-			return c
-		}
-		return tomast.MakeAndConstraint(newSlots...)
+		return c
 	case *tomast.OrConstraintConstraint:
-		newSlots := make([]tomast.Constraint, len(x.Slots))
-		changed := false
-		for i, item := range x.Slots {
-			r := env.propagateGP(item)
-			if r != item {
-				changed = true
-			}
-			newSlots[i] = r
+		if ns, changed := mapConstraintSlots(x.Slots, env.propagateGP); changed {
+			return tomast.MakeOrConstraint(ns...)
 		}
-		if !changed {
-			return c
-		}
-		return tomast.MakeOrConstraint(newSlots...)
+		return c
 	case *tomast.OrConstraintDisjunctionConstraint:
-		newSlots := make([]tomast.Constraint, len(x.Slots))
-		changed := false
-		for i, item := range x.Slots {
-			r := env.propagateGP(item)
-			if r != item {
-				changed = true
-			}
-			newSlots[i] = r
+		if ns, changed := mapConstraintSlots(x.Slots, env.propagateGP); changed {
+			return tomast.MakeOrConstraintDisjunction(ns...)
 		}
-		if !changed {
-			return c
-		}
-		return tomast.MakeOrConstraintDisjunction(newSlots...)
+		return c
 	}
 	return c
 }

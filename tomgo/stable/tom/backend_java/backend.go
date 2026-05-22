@@ -384,87 +384,94 @@ func (e *emitter) emitSymbolHelpers(name tomast.TomName) error {
 		}
 	}
 
-	// Variadic-array generic helpers: tom_get_slice_<op> and
-	// tom_append_array_<op>. Java's reference emits these for every
-	// `%oparray` that survives dead-code elimination; we mirror the
-	// same shape with inline-substituted hook bodies.
 	if haveEmptyArr && haveAddArr && haveGetElem && haveGetSize {
-		codomainTL := tlTypeFor(s, e.symbols)
-
-		// tom_get_slice_<op>(subject, begin, end): result is built
-		// by repeatedly cons-ing element `subject[begin]` onto
-		// `result`, starting from `tom_empty_array_<op>(end-begin)`.
-		emptySliceBody := substitutePlaceholders(emptyArrayRaw, []string{"end-begin"})
-		sliceGetElem := substitutePlaceholders(getElemRaw, []string{"subject", "begin"})
-		sliceAddBody := substitutePlaceholders(addArrayRaw, []string{sliceGetElem, "result"})
-		fmt.Fprintf(&e.buf,
-			"   private static   %s  tom_get_slice_%s( %s  subject, int begin, int end) {      %s  result = %s;     while(begin!=end) {       result = %s;       begin++;     }     return result;   }",
-			codomainTL, opName, codomainTL, codomainTL, emptySliceBody, sliceAddBody)
-
-		// tom_append_array_<op>(l2, l1): copy l1 then l2 into a
-		// freshly-built array sized size1+size2.
-		appSize1 := substitutePlaceholders(getSizeRaw, []string{"l1"})
-		appSize2 := substitutePlaceholders(getSizeRaw, []string{"l2"})
-		appEmpty := substitutePlaceholders(emptyArrayRaw, []string{"size1+size2"})
-		appGetElemL1 := substitutePlaceholders(getElemRaw, []string{"l1", "size1-index"})
-		appAddL1 := substitutePlaceholders(addArrayRaw, []string{appGetElemL1, "result"})
-		appGetElemL2 := substitutePlaceholders(getElemRaw, []string{"l2", "size2-index"})
-		appAddL2 := substitutePlaceholders(addArrayRaw, []string{appGetElemL2, "result"})
-		fmt.Fprintf(&e.buf,
-			"    private static   %s  tom_append_array_%s( %s  l2,  %s  l1) {     int size1 = %s;     int size2 = %s;     int index;      %s  result = %s;     index=size1;     while(index >0) {       result = %s;       index--;     }      index=size2;     while(index > 0) {       result = %s;       index--;     }     return result;   }",
-			codomainTL, opName, codomainTL, codomainTL, appSize1, appSize2, codomainTL, appEmpty, appAddL1, appAddL2)
+		e.emitGenericArrayHelpers(s, opName, emptyArrayRaw, addArrayRaw, getElemRaw, getSizeRaw)
 	}
-
-	// Variadic-list generic helpers: tom_append_list_<op> and
-	// tom_get_slice_<op>. Mirrors Java's GenericGenerator output
-	// for every `%oplist` symbol that survived dead-code
-	// elimination.
 	if haveEmptyList && haveAddList && haveGetHead && haveGetTail && haveIsEmptyList {
-		codomainTL := tlTypeFor(s, e.symbols)
-		elemTL := elemTLFor(s, e.symbols)
-		_ = elemTL
-
-		// All four bodies are referenced multiple times — pre-bake
-		// the parameterised forms.
-		isEmptyL1 := substitutePlaceholders(isEmptyRaw, []string{"l1"})
-		isEmptyL2 := substitutePlaceholders(isEmptyRaw, []string{"l2"})
-		isEmptyTailL1 := substitutePlaceholders(isEmptyRaw,
-			[]string{substitutePlaceholders(getTailRaw, []string{"l1"})})
-		isEmptyEnd := substitutePlaceholders(isEmptyRaw, []string{"end"})
-		getHeadL1 := substitutePlaceholders(getHeadRaw, []string{"l1"})
-		getHeadBegin := substitutePlaceholders(getHeadRaw, []string{"begin"})
-		getTailL1 := substitutePlaceholders(getTailRaw, []string{"l1"})
-		getTailBegin := substitutePlaceholders(getTailRaw, []string{"begin"})
-		consHeadOntoL2 := substitutePlaceholders(addListRaw, []string{getHeadL1, "l2"})
-		consHeadOntoRec := substitutePlaceholders(addListRaw,
-			[]string{getHeadBegin,
-				"(" + codomainTL + ")tom_get_slice_" + opName + "(" + getTailBegin + ",end,tail)"})
-		// tom_append_list(l1, l2):
-		//   if isEmpty(l1) → l2
-		//   else if isEmpty(l2) → l1
-		//   else if isEmpty(tail(l1)) → cons(head(l1), l2)
-		//   else → cons(head(l1), append(tail(l1), l2))
-		consAppendRec := substitutePlaceholders(addListRaw,
-			[]string{getHeadL1, "tom_append_list_" + opName + "(" + getTailL1 + ",l2)"})
-		fmt.Fprintf(&e.buf,
-			"   private static   %s  tom_append_list_%s( %s l1,  %s  l2) {     if(%s) {       return l2;     } else if(%s) {       return l1;     } else if(%s) {       return %s;     } else {       return %s;     }   }",
-			codomainTL, opName, codomainTL, codomainTL,
-			isEmptyL1, isEmptyL2, isEmptyTailL1,
-			consHeadOntoL2, consAppendRec,
-		)
-
-		// tom_get_slice(begin, end, tail):
-		//   if begin == end → tail
-		//   else if end == tail && (isEmpty(end) || end == empty()) → begin
-		//   else → cons(head(begin), get_slice(tail(begin), end, tail))
-		emptyBody := emptyListRaw
-		fmt.Fprintf(&e.buf,
-			"   private static   %s  tom_get_slice_%s( %s  begin,  %s  end, %s  tail) {     if( begin.equals(end) ) {       return tail;     } else if( end.equals(tail)  && ( %s  ||  end.equals(%s) )) {       return begin;     }     return %s;   }",
-			codomainTL, opName, codomainTL, codomainTL, codomainTL,
-			isEmptyEnd, emptyBody, consHeadOntoRec,
-		)
+		e.emitGenericListHelpers(s, opName, emptyListRaw, addListRaw, getHeadRaw, getTailRaw, isEmptyRaw)
 	}
 	return nil
+}
+
+// emitGenericArrayHelpers writes `tom_get_slice_<op>` and
+// `tom_append_array_<op>` for an `%oparray` symbol after its
+// primitive hooks have been emitted. Java's GenericGenerator
+// emits the same shape for every variadic-array that survives
+// dead-code elimination; the bodies just plug the per-symbol
+// `make_empty` / `make_append` / `get_element` / `get_size`
+// templates into the loop scaffolding.
+func (e *emitter) emitGenericArrayHelpers(s *tomast.SymbolTomSymbol, opName, emptyArrayRaw, addArrayRaw, getElemRaw, getSizeRaw string) {
+	codomainTL := tlTypeFor(s, e.symbols)
+
+	// tom_get_slice_<op>(subject, begin, end): cons-loop building
+	// `result` by appending `subject[begin]` until `begin == end`.
+	emptySliceBody := substitutePlaceholders(emptyArrayRaw, []string{"end-begin"})
+	sliceGetElem := substitutePlaceholders(getElemRaw, []string{"subject", "begin"})
+	sliceAddBody := substitutePlaceholders(addArrayRaw, []string{sliceGetElem, "result"})
+	fmt.Fprintf(&e.buf,
+		"   private static   %s  tom_get_slice_%s( %s  subject, int begin, int end) {      %s  result = %s;     while(begin!=end) {       result = %s;       begin++;     }     return result;   }",
+		codomainTL, opName, codomainTL, codomainTL, emptySliceBody, sliceAddBody)
+
+	// tom_append_array_<op>(l2, l1): copy l1 then l2 into a
+	// freshly-built array sized size1+size2.
+	appSize1 := substitutePlaceholders(getSizeRaw, []string{"l1"})
+	appSize2 := substitutePlaceholders(getSizeRaw, []string{"l2"})
+	appEmpty := substitutePlaceholders(emptyArrayRaw, []string{"size1+size2"})
+	appGetElemL1 := substitutePlaceholders(getElemRaw, []string{"l1", "size1-index"})
+	appAddL1 := substitutePlaceholders(addArrayRaw, []string{appGetElemL1, "result"})
+	appGetElemL2 := substitutePlaceholders(getElemRaw, []string{"l2", "size2-index"})
+	appAddL2 := substitutePlaceholders(addArrayRaw, []string{appGetElemL2, "result"})
+	fmt.Fprintf(&e.buf,
+		"    private static   %s  tom_append_array_%s( %s  l2,  %s  l1) {     int size1 = %s;     int size2 = %s;     int index;      %s  result = %s;     index=size1;     while(index >0) {       result = %s;       index--;     }      index=size2;     while(index > 0) {       result = %s;       index--;     }     return result;   }",
+		codomainTL, opName, codomainTL, codomainTL, appSize1, appSize2, codomainTL, appEmpty, appAddL1, appAddL2)
+}
+
+// emitGenericListHelpers writes `tom_append_list_<op>` and
+// `tom_get_slice_<op>` for an `%oplist` symbol. The list flavour
+// uses head/tail/is_empty recursion (vs the array flavour's
+// indexed loops); the structure mirrors Java's GenericGenerator.
+func (e *emitter) emitGenericListHelpers(s *tomast.SymbolTomSymbol, opName, emptyListRaw, addListRaw, getHeadRaw, getTailRaw, isEmptyRaw string) {
+	codomainTL := tlTypeFor(s, e.symbols)
+
+	// Pre-bake parameterised forms — each placeholder body is
+	// referenced multiple times in the recursion.
+	isEmptyL1 := substitutePlaceholders(isEmptyRaw, []string{"l1"})
+	isEmptyL2 := substitutePlaceholders(isEmptyRaw, []string{"l2"})
+	isEmptyTailL1 := substitutePlaceholders(isEmptyRaw,
+		[]string{substitutePlaceholders(getTailRaw, []string{"l1"})})
+	isEmptyEnd := substitutePlaceholders(isEmptyRaw, []string{"end"})
+	getHeadL1 := substitutePlaceholders(getHeadRaw, []string{"l1"})
+	getHeadBegin := substitutePlaceholders(getHeadRaw, []string{"begin"})
+	getTailL1 := substitutePlaceholders(getTailRaw, []string{"l1"})
+	getTailBegin := substitutePlaceholders(getTailRaw, []string{"begin"})
+	consHeadOntoL2 := substitutePlaceholders(addListRaw, []string{getHeadL1, "l2"})
+	consHeadOntoRec := substitutePlaceholders(addListRaw,
+		[]string{getHeadBegin,
+			"(" + codomainTL + ")tom_get_slice_" + opName + "(" + getTailBegin + ",end,tail)"})
+	consAppendRec := substitutePlaceholders(addListRaw,
+		[]string{getHeadL1, "tom_append_list_" + opName + "(" + getTailL1 + ",l2)"})
+
+	// tom_append_list(l1, l2):
+	//   if isEmpty(l1) → l2
+	//   else if isEmpty(l2) → l1
+	//   else if isEmpty(tail(l1)) → cons(head(l1), l2)
+	//   else → cons(head(l1), append(tail(l1), l2))
+	fmt.Fprintf(&e.buf,
+		"   private static   %s  tom_append_list_%s( %s l1,  %s  l2) {     if(%s) {       return l2;     } else if(%s) {       return l1;     } else if(%s) {       return %s;     } else {       return %s;     }   }",
+		codomainTL, opName, codomainTL, codomainTL,
+		isEmptyL1, isEmptyL2, isEmptyTailL1,
+		consHeadOntoL2, consAppendRec,
+	)
+
+	// tom_get_slice(begin, end, tail):
+	//   if begin == end → tail
+	//   else if end == tail && (isEmpty(end) || end == empty()) → begin
+	//   else → cons(head(begin), get_slice(tail(begin), end, tail))
+	fmt.Fprintf(&e.buf,
+		"   private static   %s  tom_get_slice_%s( %s  begin,  %s  end, %s  tail) {     if( begin.equals(end) ) {       return tail;     } else if( end.equals(tail)  && ( %s  ||  end.equals(%s) )) {       return begin;     }     return %s;   }",
+		codomainTL, opName, codomainTL, codomainTL, codomainTL,
+		isEmptyEnd, emptyListRaw, consHeadOntoRec,
+	)
 }
 
 // emitInstruction dispatches on the post-compile instruction shapes.

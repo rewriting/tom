@@ -331,19 +331,11 @@ func (n *newKernelTyper) inferAllTypes(subject any, contextType tomast.TomType) 
 		// varTypes so BQVariables with the same name find it. Also
 		// propagate contextType into the Constraints list — Variables
 		// reachable via `name@pat` (AliasTo) get the same type.
-		newType := updateUnknownType(s.AstType, contextType)
-		if name, ok := s.AstName.(*tomast.NameTomName); ok {
-			n.varTypes[name.String_] = newType
-		}
-		newConstraints := n.inferConstraintsWithType(s.Constraints, newType)
+		newType, newConstraints := n.refinePatternVar(s.AstName, s.AstType, s.Constraints, contextType)
 		return tomast.MakeVariable(s.Options, s.AstName, newType, newConstraints)
 
 	case *tomast.VariableStarTomTerm:
-		newType := updateUnknownType(s.AstType, contextType)
-		if name, ok := s.AstName.(*tomast.NameTomName); ok {
-			n.varTypes[name.String_] = newType
-		}
-		newConstraints := n.inferConstraintsWithType(s.Constraints, newType)
+		newType, newConstraints := n.refinePatternVar(s.AstName, s.AstType, s.Constraints, contextType)
 		return tomast.MakeVariableStar(s.Options, s.AstName, newType, newConstraints)
 
 	case *tomast.BQApplBQTerm:
@@ -365,20 +357,18 @@ func (n *newKernelTyper) inferAllTypes(subject any, contextType tomast.TomType) 
 		}
 		domain := n.domainTypesFor(name.String_)
 		newArgs := n.inferBQTermListWithDomain(s.Args, domain)
-		if n.symbols != nil {
-			if sym, found := n.symbols.Symbols[name.String_]; found {
-				// Array / list operator: build the cons chain
-				// (Java ASTFactory.buildArray / buildList via
-				// TyperPlugin.TransformBQAppl).
-				if n.isArrayOperator(sym) {
-					return buildArrayBQTerm(name, newArgs)
-				}
-				if n.isListOperator(sym) {
-					return buildListBQTerm(name, newArgs)
-				}
-				moduleName := moduleNameFromOptions(s.Options)
-				return tomast.MakeBuildTerm(name, newArgs, moduleName)
+		if sym, found := n.lookupSymbol(name.String_); found {
+			// Array / list operator: build the cons chain
+			// (Java ASTFactory.buildArray / buildList via
+			// TyperPlugin.TransformBQAppl).
+			if n.isArrayOperator(sym) {
+				return buildArrayBQTerm(name, newArgs)
 			}
+			if n.isListOperator(sym) {
+				return buildListBQTerm(name, newArgs)
+			}
+			moduleName := moduleNameFromOptions(s.Options)
+			return tomast.MakeBuildTerm(name, newArgs, moduleName)
 		}
 		return tomast.MakeFunctionCall(name, contextType, newArgs)
 
@@ -386,18 +376,14 @@ func (n *newKernelTyper) inferAllTypes(subject any, contextType tomast.TomType) 
 		// Pattern-scope lookup: if a Variable with this name was
 		// registered earlier in this Run with a concrete type, and
 		// our AstType is still "unknown type", inherit that.
-		if name, ok := s.AstName.(*tomast.NameTomName); ok {
-			if known, found := n.varTypes[name.String_]; found && isUnknownType(s.AstType) {
-				return tomast.MakeBQVariable(s.Options, s.AstName, known)
-			}
+		if known, ok := n.lookupKnownBQVarType(s.AstName, s.AstType); ok {
+			return tomast.MakeBQVariable(s.Options, s.AstName, known)
 		}
 		return s
 
 	case *tomast.BQVariableStarBQTerm:
-		if name, ok := s.AstName.(*tomast.NameTomName); ok {
-			if known, found := n.varTypes[name.String_]; found && isUnknownType(s.AstType) {
-				return tomast.MakeBQVariableStar(s.Options, s.AstName, known)
-			}
+		if known, ok := n.lookupKnownBQVarType(s.AstName, s.AstType); ok {
+			return tomast.MakeBQVariableStar(s.Options, s.AstName, known)
 		}
 		return s
 	}
@@ -483,6 +469,40 @@ func (n *newKernelTyper) recurseChildren(subject any) any {
 		return subject
 	}
 	return intro.SetChildren(subject, dup)
+}
+
+// refinePatternVar is the shared body of the Variable /
+// VariableStar typing cases: refresh AstType against contextType,
+// register the resulting (name, type) pair in varTypes for downstream
+// BQVariable lookups, and recurse into the nested ConstraintList so
+// that AliasTo(boundVar) picks up the same type. The two pattern
+// variants differ only by which Make* constructor wraps the result,
+// so this helper keeps the typing logic in one place.
+func (n *newKernelTyper) refinePatternVar(astName tomast.TomName, astType tomast.TomType, cl tomast.ConstraintList, contextType tomast.TomType) (tomast.TomType, tomast.ConstraintList) {
+	newType := updateUnknownType(astType, contextType)
+	if name, ok := astName.(*tomast.NameTomName); ok {
+		n.varTypes[name.String_] = newType
+	}
+	return newType, n.inferConstraintsWithType(cl, newType)
+}
+
+// lookupKnownBQVarType returns the previously-registered type of a
+// BQVariable/BQVariableStar's name when the parser left its AstType
+// as "unknown type". Returns (nil, false) when no concrete update
+// applies — the caller should then keep the term as-is.
+func (n *newKernelTyper) lookupKnownBQVarType(astName tomast.TomName, astType tomast.TomType) (tomast.TomType, bool) {
+	name, ok := astName.(*tomast.NameTomName)
+	if !ok {
+		return nil, false
+	}
+	if !isUnknownType(astType) {
+		return nil, false
+	}
+	known, found := n.varTypes[name.String_]
+	if !found {
+		return nil, false
+	}
+	return known, true
 }
 
 // updateUnknownType returns ctx when current is the parser's
@@ -594,22 +614,11 @@ func (n *newKernelTyper) shouldPropagateSlotTypes(opName string, contextType tom
 	if contextType == nil || isEmptyType(contextType) || isUnknownType(contextType) {
 		return true
 	}
-	if n.symbols == nil {
-		return false
-	}
-	sym, ok := n.symbols.Symbols[opName]
+	sym, ok := n.lookupSymbol(opName)
 	if !ok {
 		return false
 	}
-	s, ok := sym.(*tomast.SymbolTomSymbol)
-	if !ok {
-		return false
-	}
-	tt, ok := s.TypesToType.(*tomast.TypesToTypeTomType)
-	if !ok {
-		return false
-	}
-	codomain := tt.Codomain
+	codomain := n.codomainOfSymbol(sym)
 	cTyped, ok := codomain.(*tomast.TypeTomType)
 	if !ok {
 		return false
@@ -625,10 +634,10 @@ func (n *newKernelTyper) shouldPropagateSlotTypes(opName string, contextType tom
 // symbol named opName, looked up in [Typer]'s SymbolTable. Empty
 // when the symbol is unknown or has no slots.
 func (n *newKernelTyper) domainTypesFor(opName string) []tomast.TomType {
-	if n.symbols == nil || opName == "" {
+	if opName == "" {
 		return nil
 	}
-	sym, ok := n.symbols.Symbols[opName]
+	sym, ok := n.lookupSymbol(opName)
 	if !ok {
 		return nil
 	}
@@ -721,9 +730,6 @@ func headSymbolName(nameList tomast.TomNameList) string {
 // MatchConstraint typing to fill in `aType` when the parser left
 // it as `"unknown type"` and the subject's constructor pins it.
 func (n *newKernelTyper) subjectCodomain(subject tomast.BQTerm) tomast.TomType {
-	if n.symbols == nil {
-		return nil
-	}
 	appl, ok := subject.(*tomast.BQApplBQTerm)
 	if !ok {
 		return nil
@@ -732,19 +738,11 @@ func (n *newKernelTyper) subjectCodomain(subject tomast.BQTerm) tomast.TomType {
 	if !ok {
 		return nil
 	}
-	sym, ok := n.symbols.Symbols[nm.String_]
+	sym, ok := n.lookupSymbol(nm.String_)
 	if !ok {
 		return nil
 	}
-	s, ok := sym.(*tomast.SymbolTomSymbol)
-	if !ok {
-		return nil
-	}
-	tt, ok := s.TypesToType.(*tomast.TypesToTypeTomType)
-	if !ok {
-		return nil
-	}
-	return tt.Codomain
+	return n.codomainOfSymbol(sym)
 }
 
 // seedVarTypesFromSource scans the host source for declarations

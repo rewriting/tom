@@ -20,6 +20,25 @@ package compiler
 
 import "tom/tomgo/stable/library/tomast"
 
+// mapConstraintSlots applies `f` to each item in `slots`, preserving
+// pointer identity when no element changed (so the caller can skip
+// re-building the enclosing And/Or node). Returns the new slice and
+// a `changed` flag. Helper for the propagators' And/Or/
+// OrConstraintDisjunction cases — Java's `%match` does the
+// identity-preserving fall-through automatically.
+func mapConstraintSlots(slots []tomast.Constraint, f func(tomast.Constraint) tomast.Constraint) ([]tomast.Constraint, bool) {
+	out := make([]tomast.Constraint, len(slots))
+	changed := false
+	for i, item := range slots {
+		r := f(item)
+		if r != item {
+			changed = true
+		}
+		out[i] = r
+	}
+	return out, changed
+}
+
 // performPropagations is the entry point used by CompileMatch. Java:
 // ConstraintPropagator.performPropagations(Constraint).
 //

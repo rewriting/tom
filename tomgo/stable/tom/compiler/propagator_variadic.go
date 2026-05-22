@@ -96,47 +96,20 @@ func (env *compilerEnv) propagateVariadic(c tomast.Constraint) tomast.Constraint
 		}
 		return x
 	case *tomast.AndConstraintConstraint:
-		newSlots := make([]tomast.Constraint, len(x.Slots))
-		changed := false
-		for i, item := range x.Slots {
-			r := env.propagateVariadic(item)
-			if r != item {
-				changed = true
-			}
-			newSlots[i] = r
+		if ns, changed := mapConstraintSlots(x.Slots, env.propagateVariadic); changed {
+			return tomast.MakeAndConstraint(ns...)
 		}
-		if !changed {
-			return c
-		}
-		return tomast.MakeAndConstraint(newSlots...)
+		return c
 	case *tomast.OrConstraintConstraint:
-		newSlots := make([]tomast.Constraint, len(x.Slots))
-		changed := false
-		for i, item := range x.Slots {
-			r := env.propagateVariadic(item)
-			if r != item {
-				changed = true
-			}
-			newSlots[i] = r
+		if ns, changed := mapConstraintSlots(x.Slots, env.propagateVariadic); changed {
+			return tomast.MakeOrConstraint(ns...)
 		}
-		if !changed {
-			return c
-		}
-		return tomast.MakeOrConstraint(newSlots...)
+		return c
 	case *tomast.OrConstraintDisjunctionConstraint:
-		newSlots := make([]tomast.Constraint, len(x.Slots))
-		changed := false
-		for i, item := range x.Slots {
-			r := env.propagateVariadic(item)
-			if r != item {
-				changed = true
-			}
-			newSlots[i] = r
+		if ns, changed := mapConstraintSlots(x.Slots, env.propagateVariadic); changed {
+			return tomast.MakeOrConstraintDisjunction(ns...)
 		}
-		if !changed {
-			return c
-		}
-		return tomast.MakeOrConstraintDisjunction(newSlots...)
+		return c
 	case *tomast.NegateConstraint:
 		// Anti-pattern `!list(_*,...,_*)` is wrapped in Negate by
 		// the GP propagator. The inner MatchConstraint may itself

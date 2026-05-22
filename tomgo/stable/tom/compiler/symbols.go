@@ -11,23 +11,41 @@ package compiler
 
 import (
 	"tom/tomgo/stable/library/tomast"
+	"tom/tomgo/stable/tom"
 )
 
-// isListOperator returns true when the named operator carries a
-// MakeEmptyList / MakeAddList hook (the markers Java's
-// TomBase.isListOperator looks for).
-func (env *compilerEnv) isListOperator(opName string) bool {
-	if env.symbols == nil {
-		return false
+// resolveSymbolIn fetches the SymbolTomSymbol for opName from `st`.
+// Returns (nil, false) when the table is missing, the symbol is
+// unknown, or the entry has an unexpected shape. Shared by every
+// helper below that walks a symbol's Options / TypesToType /
+// PairNameDeclList — none of those casts make sense without first
+// landing on a valid SymbolTomSymbol.
+func resolveSymbolIn(st *tom.SymbolTable, opName string) (*tomast.SymbolTomSymbol, bool) {
+	if st == nil {
+		return nil, false
 	}
-	sym, ok := env.symbols.Symbols[opName]
+	sym, ok := st.Symbols[opName]
 	if !ok {
-		return false
+		return nil, false
 	}
 	s, ok := sym.(*tomast.SymbolTomSymbol)
 	if !ok {
-		return false
+		return nil, false
 	}
+	return s, true
+}
+
+// resolveSymbol is the compilerEnv-bound convenience wrapper.
+func (env *compilerEnv) resolveSymbol(opName string) (*tomast.SymbolTomSymbol, bool) {
+	return resolveSymbolIn(env.symbols, opName)
+}
+
+// hasMakeOptionDecl returns true when the symbol's Options list
+// carries any of the supplied Make* declaration markers. Used to
+// distinguish list / array / syntactic operators (Java's
+// TomBase.isListOperator & friends rely on the same marker
+// presence).
+func hasMakeOptionDecl(s *tomast.SymbolTomSymbol, isMatch func(tomast.Declaration) bool) bool {
 	opts, ok := s.Options.(*tomast.ConcOptionOptionList)
 	if !ok {
 		return false
@@ -37,13 +55,29 @@ func (env *compilerEnv) isListOperator(opName string) bool {
 		if !ok {
 			continue
 		}
-		switch d.AstDeclaration.(type) {
-		case *tomast.MakeEmptyListDeclaration,
-			*tomast.MakeAddListDeclaration:
+		if isMatch(d.AstDeclaration) {
 			return true
 		}
 	}
 	return false
+}
+
+// isListOperator returns true when the named operator carries a
+// MakeEmptyList / MakeAddList hook (the markers Java's
+// TomBase.isListOperator looks for).
+func (env *compilerEnv) isListOperator(opName string) bool {
+	s, ok := env.resolveSymbol(opName)
+	if !ok {
+		return false
+	}
+	return hasMakeOptionDecl(s, func(d tomast.Declaration) bool {
+		switch d.(type) {
+		case *tomast.MakeEmptyListDeclaration,
+			*tomast.MakeAddListDeclaration:
+			return true
+		}
+		return false
+	})
 }
 
 // isSyntacticOperator returns true when the named operator is a
@@ -53,38 +87,23 @@ func (env *compilerEnv) isListOperator(opName string) bool {
 // MakeAddArray hook in its options — those are the markers Java's
 // `isListOperator` / `isArrayOperator` look for.
 func (env *compilerEnv) isSyntacticOperator(opName string) bool {
-	if env.symbols == nil {
-		return true
-	}
-	sym, ok := env.symbols.Symbols[opName]
+	s, ok := env.resolveSymbol(opName)
 	if !ok {
 		// Unknown symbol — treat as syntactic so the syntactic
 		// rewrite at least tries (matches Java's behaviour: it
 		// returns true for null symbol via the convention).
 		return true
 	}
-	s, ok := sym.(*tomast.SymbolTomSymbol)
-	if !ok {
-		return true
-	}
-	opts, ok := s.Options.(*tomast.ConcOptionOptionList)
-	if !ok {
-		return true
-	}
-	for _, opt := range opts.Slots {
-		dec, ok := opt.(*tomast.DeclarationToOptionOption)
-		if !ok {
-			continue
-		}
-		switch dec.AstDeclaration.(type) {
+	return !hasMakeOptionDecl(s, func(d tomast.Declaration) bool {
+		switch d.(type) {
 		case *tomast.MakeEmptyListDeclaration,
 			*tomast.MakeAddListDeclaration,
 			*tomast.MakeEmptyArrayDeclaration,
 			*tomast.MakeAddArrayDeclaration:
-			return false
+			return true
 		}
-	}
-	return true
+		return false
+	})
 }
 
 // termTypeOfBQTerm returns the AstType embedded in a BQTerm. Java's
@@ -175,22 +194,26 @@ func (env *compilerEnv) termTypeOfTomTerm(t tomast.TomTerm) tomast.TomType {
 	return nil
 }
 
+// typesToType extracts the TypesToTypeTomType node holding a
+// symbol's (Domain, Codomain). nil when the symbol's TypesToType
+// slot has an unexpected shape.
+func typesToType(s *tomast.SymbolTomSymbol) *tomast.TypesToTypeTomType {
+	tt, ok := s.TypesToType.(*tomast.TypesToTypeTomType)
+	if !ok {
+		return nil
+	}
+	return tt
+}
+
 // codomainOf looks up an operator's codomain TomType from the
 // SymbolTable. Returns nil when the symbol is unknown.
 func (env *compilerEnv) codomainOf(opName string) tomast.TomType {
-	if env.symbols == nil {
-		return nil
-	}
-	sym, ok := env.symbols.Symbols[opName]
+	s, ok := env.resolveSymbol(opName)
 	if !ok {
 		return nil
 	}
-	s, ok := sym.(*tomast.SymbolTomSymbol)
-	if !ok {
-		return nil
-	}
-	tt, ok := s.TypesToType.(*tomast.TypesToTypeTomType)
-	if !ok {
+	tt := typesToType(s)
+	if tt == nil {
 		return nil
 	}
 	return tt.Codomain
@@ -200,19 +223,12 @@ func (env *compilerEnv) codomainOf(opName string) tomast.TomType {
 // `opName`. Mirrors Java's TomBase.getSlotType. Returns nil when
 // the symbol or slot can't be resolved.
 func (env *compilerEnv) slotTypeFor(opName, slotName string) tomast.TomType {
-	if env.symbols == nil {
-		return nil
-	}
-	sym, ok := env.symbols.Symbols[opName]
+	s, ok := env.resolveSymbol(opName)
 	if !ok {
 		return nil
 	}
-	s, ok := sym.(*tomast.SymbolTomSymbol)
-	if !ok {
-		return nil
-	}
-	tt, ok := s.TypesToType.(*tomast.TypesToTypeTomType)
-	if !ok {
+	tt := typesToType(s)
+	if tt == nil {
 		return nil
 	}
 	domain, ok := tt.Domain.(*tomast.ConcTomTypeTomTypeList)

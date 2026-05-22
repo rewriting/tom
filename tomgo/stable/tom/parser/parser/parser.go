@@ -39,7 +39,6 @@ import (
 	"bytes"
 	"fmt"
 	"os"
-	"os/exec"
 	"path/filepath"
 	"strings"
 
@@ -499,14 +498,6 @@ func expandGomBlock(body, filename, javaPkg string, includeChain []string, alrea
 	if err := os.WriteFile(gomFile, []byte(body), 0o644); err != nil {
 		return nil, err
 	}
-	libDir, classpath, gomConfig := locateBundledGom()
-	if libDir == "" {
-		return nil, fmt.Errorf("gom bundled jars not found under tomgo/stable/lib")
-	}
-	javaBin, err := locateJava()
-	if err != nil {
-		return nil, err
-	}
 	// Output the generated .tom alongside the .t (mimicking Java's
 	// behaviour where the test build uses destdir=test/gen). For
 	// `<dir>/foo.t`, the gom output lands at `<dir>/gen/<pkg>/<mod>/
@@ -520,15 +511,7 @@ func expandGomBlock(body, filename, javaPkg string, includeChain []string, alrea
 	if err := os.MkdirAll(outDir, 0o755); err != nil {
 		return nil, err
 	}
-	args := []string{
-		"-cp", classpath,
-		"-Dtom.home=" + filepath.Dir(libDir),
-		"tom.gom.Gom",
-		"-X", gomConfig,
-		"-d", outDir, "--package", pkg, gomFile,
-	}
-	cmd := exec.Command(javaBin, args...)
-	if out, err := cmd.CombinedOutput(); err != nil {
+	if out, err := gombackend.RunBundledJavaGom(gomFile, outDir, pkg); err != nil {
 		return nil, fmt.Errorf("gom %s failed: %w\n%s", gomFile, err, out)
 	}
 	// With --package <pkg>, gom writes
@@ -672,35 +655,6 @@ func parseGomModuleName(body string) string {
 	return ""
 }
 
-// locateBundledGom is a thin re-export of
-// [gombackend.LocateBundled]. Kept as a local alias because the
-// parser package can't change the caller-site signature without
-// touching every test that depends on the local symbol.
-func locateBundledGom() (libDir, classpath, gomConfig string) {
-	return gombackend.LocateBundled()
-}
-
-// locateJava resolves the `java` binary, preferring `$JAVA_HOME/bin/java`
-// then `java` on `$PATH`. Returns an error if neither is available.
-func locateJava() (string, error) {
-	if home := os.Getenv("JAVA_HOME"); home != "" {
-		if p := filepath.Join(home, "bin", "java"); fileExists(p) {
-			return p, nil
-		}
-	}
-	p, err := exec.LookPath("java")
-	if err != nil {
-		return "", fmt.Errorf("java binary not found: %w", err)
-	}
-	return p, nil
-}
-
-func fileExists(p string) bool {
-	if _, err := os.Stat(p); err == nil {
-		return true
-	}
-	return false
-}
 
 // parseMetaquote handles `%[ ... ]%`. Per CstBuilder.java's exitMetaquote
 // + CstConverter.simplifyCstBlockList (Cst_Metaquote branch), the body

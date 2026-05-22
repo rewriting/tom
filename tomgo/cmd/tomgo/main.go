@@ -10,8 +10,6 @@ import (
 	"flag"
 	"fmt"
 	"os"
-	"os/exec"
-	"path/filepath"
 
 	"tom/tomgo/stable/gom/backend"
 	"tom/tomgo/stable/gom/parser"
@@ -136,40 +134,16 @@ func runGom(args []string) error {
 // to emit a Java AST package. This is tomgo's wrapper around the
 // legacy Java emitter — same output the Tom Java compiler produces
 // today, just driven from inside the tomgo tree (no external
-// $TOM_HOME, no `/tom/stable/dist` reliance).
+// $TOM_HOME, no `/tom/stable/dist` reliance). Delegates to the
+// shared helper `backend.RunBundledJavaGom` so the parser's
+// `expandGomBlock` and this CLI stay in lock-step.
 func runGomJava(input, outDir, pkg string) error {
-	libDir, classpath, gomConfig := locateBundledGom()
-	if libDir == "" {
-		return fmt.Errorf("tomgo bundled gom jars not found (looked for stable/lib/tom/gom.jar)")
+	out, err := backend.RunBundledJavaGom(input, outDir, pkg)
+	if len(out) > 0 {
+		os.Stdout.Write(out)
 	}
-	javaBin, err := exec.LookPath("java")
-	if err != nil {
-		if home := os.Getenv("JAVA_HOME"); home != "" {
-			javaBin = filepath.Join(home, "bin", "java")
-		} else {
-			return fmt.Errorf("java binary not found in PATH or JAVA_HOME")
-		}
-	}
-	args := []string{
-		"-cp", classpath,
-		"-Dtom.home=" + filepath.Dir(libDir),
-		"tom.gom.Gom",
-		"-X", gomConfig,
-		"-d", outDir,
-	}
-	if pkg != "" {
-		args = append(args, "--package", pkg)
-	}
-	args = append(args, input)
-	cmd := exec.Command(javaBin, args...)
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-	return cmd.Run()
+	return err
 }
-
-// locateBundledGom is now provided by the gom backend package
-// (shared with the parser's expandGomBlock).
-var locateBundledGom = backend.LocateBundled
 
 func runGomBatch(args []string) error {
 	fs := flag.NewFlagSet("gom-batch", flag.ContinueOnError)

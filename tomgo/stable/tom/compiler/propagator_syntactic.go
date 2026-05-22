@@ -46,33 +46,15 @@ func (env *compilerEnv) propagateSyntactic(c tomast.Constraint) tomast.Constrain
 		}
 		return x
 	case *tomast.AndConstraintConstraint:
-		newSlots := make([]tomast.Constraint, len(x.Slots))
-		changed := false
-		for i, item := range x.Slots {
-			r := env.propagateSyntactic(item)
-			if r != item {
-				changed = true
-			}
-			newSlots[i] = r
+		if ns, changed := mapConstraintSlots(x.Slots, env.propagateSyntactic); changed {
+			return tomast.MakeAndConstraint(ns...)
 		}
-		if !changed {
-			return c
-		}
-		return tomast.MakeAndConstraint(newSlots...)
+		return c
 	case *tomast.OrConstraintConstraint:
-		newSlots := make([]tomast.Constraint, len(x.Slots))
-		changed := false
-		for i, item := range x.Slots {
-			r := env.propagateSyntactic(item)
-			if r != item {
-				changed = true
-			}
-			newSlots[i] = r
+		if ns, changed := mapConstraintSlots(x.Slots, env.propagateSyntactic); changed {
+			return tomast.MakeOrConstraint(ns...)
 		}
-		if !changed {
-			return c
-		}
-		return tomast.MakeOrConstraint(newSlots...)
+		return c
 	}
 	return c
 }

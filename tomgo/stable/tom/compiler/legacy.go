@@ -492,14 +492,7 @@ func makeTLInstr(text string) tomast.Instruction {
 }
 
 func (c *compiler) slotNamesFor(opName string) []string {
-	if c.symbols == nil {
-		return nil
-	}
-	sym, ok := c.symbols.Symbols[opName]
-	if !ok {
-		return nil
-	}
-	s, ok := sym.(*tomast.SymbolTomSymbol)
+	s, ok := resolveSymbolIn(c.symbols, opName)
 	if !ok {
 		return nil
 	}
@@ -523,19 +516,12 @@ func (c *compiler) slotNamesFor(opName string) []string {
 // type of `tom_is_fun_sym_<op>` / `tom_get_slot_<op>_<slot>`).
 // Returns "" if the symbol is unknown or has no TL annotation.
 func (c *compiler) codomainTLFor(opName string) string {
-	if c.symbols == nil {
-		return ""
-	}
-	sym, ok := c.symbols.Symbols[opName]
+	s, ok := resolveSymbolIn(c.symbols, opName)
 	if !ok {
 		return ""
 	}
-	s, ok := sym.(*tomast.SymbolTomSymbol)
-	if !ok {
-		return ""
-	}
-	tt, ok := s.TypesToType.(*tomast.TypesToTypeTomType)
-	if !ok {
+	tt := typesToType(s)
+	if tt == nil {
 		return ""
 	}
 	cod, ok := tt.Codomain.(*tomast.TypeTomType)
@@ -552,19 +538,12 @@ func (c *compiler) codomainTLFor(opName string) string {
 }
 
 func (c *compiler) slotTLType(opName, slotName string) string {
-	if c.symbols == nil {
-		return ""
-	}
-	sym, ok := c.symbols.Symbols[opName]
+	s, ok := resolveSymbolIn(c.symbols, opName)
 	if !ok {
 		return ""
 	}
-	s, ok := sym.(*tomast.SymbolTomSymbol)
-	if !ok {
-		return ""
-	}
-	tt, ok := s.TypesToType.(*tomast.TypesToTypeTomType)
-	if !ok {
+	tt := typesToType(s)
+	if tt == nil {
 		return ""
 	}
 	domain, ok := tt.Domain.(*tomast.ConcTomTypeTomTypeList)

@@ -343,79 +343,83 @@ func (e *emitter) emitSymbolHelpers(name tomast.TomName) error {
 		}
 	}
 
-	// Variadic-array generic helpers: tom_get_slice_<op> and
-	// tom_append_array_<op>. Mirrors the Java backend — inlines the
-	// operator's make_empty / make_append / get_element / get_size
-	// bodies with re-named placeholders. The raw bodies were
-	// captured during the loop above; substitute positionally
-	// since the parser's `abstractCode` converted user-given names
-	// to `{0}` / `{1}` placeholders.
 	if haveEmptyArr && haveAddArr && haveGetElem && haveGetSize {
-		// tom_get_slice_<op>(subject, begin, end):
-		emptySliceBody := substitutePositional(emptyArrayRaw, []string{"end-begin"})
-		sliceGetElem := substitutePositional(getElemRaw, []string{"subject", "begin"})
-		sliceAddBody := substitutePositional(addArrayRaw, []string{sliceGetElem, "result"})
-		fmt.Fprintf(&e.buf,
-			"\nfunc tom_get_slice_%s(subject %s, begin int, end int) %s { var result %s = %s; for begin != end { result = %s; begin++ }; return result }\n",
-			opName, codomainTL, codomainTL, codomainTL, emptySliceBody, sliceAddBody)
-
-		// tom_append_array_<op>(l1, l2): copy l1 then l2 into a fresh
-		// slice. Builds via the same make_empty + cons pipeline.
-		appSize1 := substitutePositional(getSizeRaw, []string{"l1"})
-		appSize2 := substitutePositional(getSizeRaw, []string{"l2"})
-		appEmpty := substitutePositional(emptyArrayRaw, []string{"size1+size2"})
-		appGetElemL1 := substitutePositional(getElemRaw, []string{"l1", "size1-index"})
-		appAddL1 := substitutePositional(addArrayRaw, []string{appGetElemL1, "result"})
-		appGetElemL2 := substitutePositional(getElemRaw, []string{"l2", "size2-index"})
-		appAddL2 := substitutePositional(addArrayRaw, []string{appGetElemL2, "result"})
-		fmt.Fprintf(&e.buf,
-			"\nfunc tom_append_array_%s(l2 %s, l1 %s) %s { size1 := %s; size2 := %s; var result %s = %s; index := size1; for index > 0 { result = %s; index-- }; index = size2; for index > 0 { result = %s; index-- }; return result }\n",
-			opName, codomainTL, codomainTL, codomainTL, appSize1, appSize2, codomainTL, appEmpty, appAddL1, appAddL2)
+		e.emitGenericArrayHelpers(opName, codomainTL, emptyArrayRaw, addArrayRaw, getElemRaw, getSizeRaw)
 	}
-
-	// Variadic-list generic helpers: tom_append_list_<op> and
-	// tom_get_slice_<op>. Mirrors the Java backend's emission.
-	// Same algorithm: inline make_empty/make_insert/get_head/
-	// get_tail/is_empty bodies into Go expressions.
 	if haveEmptyList && haveAddList && haveGetHead && haveGetTail && haveIsEmptyList {
-		// is_empty body refers to its arg by positional `{0}` (it
-		// has only one). Inline-substitute below as needed.
-		isEmptyL1 := substitutePositional(isEmptyRaw, []string{"l1"})
-		isEmptyL2 := substitutePositional(isEmptyRaw, []string{"l2"})
-		getTailL1 := substitutePositional(getTailRaw, []string{"l1"})
-		isEmptyTailL1 := substitutePositional(isEmptyRaw, []string{getTailL1})
-		isEmptyEnd := substitutePositional(isEmptyRaw, []string{"end"})
-		getHeadL1 := substitutePositional(getHeadRaw, []string{"l1"})
-		getHeadBegin := substitutePositional(getHeadRaw, []string{"begin"})
-		getTailBegin := substitutePositional(getTailRaw, []string{"begin"})
-		consHeadOntoL2 := substitutePositional(addListRaw, []string{getHeadL1, "l2"})
-		consAppendRec := substitutePositional(addListRaw, []string{
-			getHeadL1, "tom_append_list_" + opName + "(" + getTailL1 + ",l2)",
-		})
-		consHeadOntoRec := substitutePositional(addListRaw, []string{
-			getHeadBegin, "tom_get_slice_" + opName + "(" + getTailBegin + ",end,tail)",
-		})
-		fmt.Fprintf(&e.buf,
-			"\nfunc tom_append_list_%s(l1 %s, l2 %s) %s { if %s { return l2 } else if %s { return l1 } else if %s { return %s } else { return %s } }\n",
-			opName, codomainTL, codomainTL, codomainTL,
-			isEmptyL1, isEmptyL2, isEmptyTailL1,
-			consHeadOntoL2, consAppendRec,
-		)
-		// tom_get_slice(begin, end, tail) — see Java reference. The
-		// `begin == end || (end == tail && (isEmpty(end) || end == empty()))`
-		// guard short-circuits common edge cases. Uses the
-		// typeterm's `tom_equal_term_<sort>` helper for equality
-		// so the comparison stays portable across L
-		// representations.
-		emptyBody := emptyListRaw
-		codomainSort := codomainSortName(s)
-		fmt.Fprintf(&e.buf,
-			"\nfunc tom_get_slice_%s(begin, end, tail %s) %s { if tom_equal_term_%s(begin, end) { return tail } else if tom_equal_term_%s(end, tail) && (%s || tom_equal_term_%s(end, %s)) { return begin } else { return %s } }\n",
-			opName, codomainTL, codomainTL,
-			codomainSort, codomainSort, isEmptyEnd, codomainSort, emptyBody, consHeadOntoRec,
-		)
+		e.emitGenericListHelpers(s, opName, codomainTL, emptyListRaw, addListRaw, getHeadRaw, getTailRaw, isEmptyRaw)
 	}
 	return nil
+}
+
+// emitGenericArrayHelpers writes `tom_get_slice_<op>` and
+// `tom_append_array_<op>` for an `%oparray` symbol after its
+// primitive hooks have been emitted. Mirrors the Java backend's
+// helper of the same name with Go syntax (no `private static`,
+// `for` instead of `while`, `:=` for short-decl).
+func (e *emitter) emitGenericArrayHelpers(opName, codomainTL, emptyArrayRaw, addArrayRaw, getElemRaw, getSizeRaw string) {
+	// tom_get_slice_<op>(subject, begin, end): cons-loop building
+	// `result` by appending `subject[begin]` until `begin == end`.
+	emptySliceBody := substitutePositional(emptyArrayRaw, []string{"end-begin"})
+	sliceGetElem := substitutePositional(getElemRaw, []string{"subject", "begin"})
+	sliceAddBody := substitutePositional(addArrayRaw, []string{sliceGetElem, "result"})
+	fmt.Fprintf(&e.buf,
+		"\nfunc tom_get_slice_%s(subject %s, begin int, end int) %s { var result %s = %s; for begin != end { result = %s; begin++ }; return result }\n",
+		opName, codomainTL, codomainTL, codomainTL, emptySliceBody, sliceAddBody)
+
+	// tom_append_array_<op>(l2, l1): copy l1 then l2 into a fresh
+	// slice. Builds via the same make_empty + cons pipeline.
+	appSize1 := substitutePositional(getSizeRaw, []string{"l1"})
+	appSize2 := substitutePositional(getSizeRaw, []string{"l2"})
+	appEmpty := substitutePositional(emptyArrayRaw, []string{"size1+size2"})
+	appGetElemL1 := substitutePositional(getElemRaw, []string{"l1", "size1-index"})
+	appAddL1 := substitutePositional(addArrayRaw, []string{appGetElemL1, "result"})
+	appGetElemL2 := substitutePositional(getElemRaw, []string{"l2", "size2-index"})
+	appAddL2 := substitutePositional(addArrayRaw, []string{appGetElemL2, "result"})
+	fmt.Fprintf(&e.buf,
+		"\nfunc tom_append_array_%s(l2 %s, l1 %s) %s { size1 := %s; size2 := %s; var result %s = %s; index := size1; for index > 0 { result = %s; index-- }; index = size2; for index > 0 { result = %s; index-- }; return result }\n",
+		opName, codomainTL, codomainTL, codomainTL, appSize1, appSize2, codomainTL, appEmpty, appAddL1, appAddL2)
+}
+
+// emitGenericListHelpers writes `tom_append_list_<op>` and
+// `tom_get_slice_<op>` for an `%oplist` symbol. The list flavour
+// uses head/tail recursion driven by `is_empty` checks; equality
+// of L values goes through the typeterm's `tom_equal_term_<sort>`
+// helper so the comparison stays portable.
+func (e *emitter) emitGenericListHelpers(s *tomast.SymbolTomSymbol, opName, codomainTL, emptyListRaw, addListRaw, getHeadRaw, getTailRaw, isEmptyRaw string) {
+	isEmptyL1 := substitutePositional(isEmptyRaw, []string{"l1"})
+	isEmptyL2 := substitutePositional(isEmptyRaw, []string{"l2"})
+	getTailL1 := substitutePositional(getTailRaw, []string{"l1"})
+	isEmptyTailL1 := substitutePositional(isEmptyRaw, []string{getTailL1})
+	isEmptyEnd := substitutePositional(isEmptyRaw, []string{"end"})
+	getHeadL1 := substitutePositional(getHeadRaw, []string{"l1"})
+	getHeadBegin := substitutePositional(getHeadRaw, []string{"begin"})
+	getTailBegin := substitutePositional(getTailRaw, []string{"begin"})
+	consHeadOntoL2 := substitutePositional(addListRaw, []string{getHeadL1, "l2"})
+	consAppendRec := substitutePositional(addListRaw, []string{
+		getHeadL1, "tom_append_list_" + opName + "(" + getTailL1 + ",l2)",
+	})
+	consHeadOntoRec := substitutePositional(addListRaw, []string{
+		getHeadBegin, "tom_get_slice_" + opName + "(" + getTailBegin + ",end,tail)",
+	})
+
+	// tom_append_list_<op>: same recursion as the Java backend.
+	fmt.Fprintf(&e.buf,
+		"\nfunc tom_append_list_%s(l1 %s, l2 %s) %s { if %s { return l2 } else if %s { return l1 } else if %s { return %s } else { return %s } }\n",
+		opName, codomainTL, codomainTL, codomainTL,
+		isEmptyL1, isEmptyL2, isEmptyTailL1,
+		consHeadOntoL2, consAppendRec,
+	)
+
+	// tom_get_slice_<op>(begin, end, tail): edge-case-aware
+	// recursion. The `begin == end || (end == tail && (isEmpty(end)
+	// || end == empty()))` guard short-circuits common cases.
+	codomainSort := codomainSortName(s)
+	fmt.Fprintf(&e.buf,
+		"\nfunc tom_get_slice_%s(begin, end, tail %s) %s { if tom_equal_term_%s(begin, end) { return tail } else if tom_equal_term_%s(end, tail) && (%s || tom_equal_term_%s(end, %s)) { return begin } else { return %s } }\n",
+		opName, codomainTL, codomainTL,
+		codomainSort, codomainSort, isEmptyEnd, codomainSort, emptyListRaw, consHeadOntoRec,
+	)
 }
 
 // substitutePositional substitutes `{N}` placeholders with the
