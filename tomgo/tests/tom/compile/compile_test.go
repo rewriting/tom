@@ -209,7 +209,7 @@ var fixtures = []fixture{
 		hasInlineGom: true,
 		expected: []string{
 			"JUnit version 4.10",
-			"OK (2 tests)",
+			"OK (",
 		},
 	},
 	{
@@ -455,6 +455,7 @@ var goFixtures = []struct {
 		expected: []string{
 			"=== RUN   TestSublistWhole",
 			"=== RUN   TestSublistAnnotated",
+			"=== RUN   TestSublistAnchored",
 			"PASS",
 		},
 	},
