@@ -26,8 +26,8 @@ func main() {
 	// Wire the standard Tom mapping directory so test/* fixtures that
 	// `%include { sl.tom }` etc. resolve.
 	tomparser.IncludeSearchPath = []string{
-		"/Users/pem/github/tom/utils/eclipse-plugin/plugin/include/java",
-		"/Users/pem/github/tom/utils/eclipse-plugin/plugin/include",
+		"/Users/pem/github/tom/tomgo/stable/library/mapping/java",
+		"/Users/pem/github/tom/tomgo/stable/library/mapping",
 		// Generated *.tom mappings emitted by `go run ./cmd/gentom`.
 		// They mirror Java's gom build output so .t fixtures that
 		// `%include {<modpath>/<File>.tom}` resolve without a real

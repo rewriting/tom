@@ -146,8 +146,8 @@ public class TomPipelineDump {
       // repo's bundled mappings.
       if (repoRoot != null) {
         List<File> imports = new ArrayList<>(sm.getUserImportList());
-        File langDir = new File(repoRoot, "utils/eclipse-plugin/plugin/include/java");
-        File rootDir = new File(repoRoot, "utils/eclipse-plugin/plugin/include");
+        File langDir = new File(repoRoot, "tomgo/stable/library/mapping/java");
+        File rootDir = new File(repoRoot, "tomgo/stable/library/mapping");
         if (langDir.isDirectory()) imports.add(langDir);
         if (rootDir.isDirectory()) imports.add(rootDir);
         sm.setUserImportList(imports);

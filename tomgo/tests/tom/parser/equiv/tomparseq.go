@@ -120,7 +120,7 @@ func (tc JavaToolchain) EnsureCompiled() error {
 
 // DumpJava runs TomParseDump on a .t file and returns its stdout (the
 // Gom-canonical Code.toString()) after applying the standard normalisation
-// (see normalizeAST).
+// (see NormalizeAST).
 func (tc JavaToolchain) DumpJava(inputFile string) (string, error) {
 	if err := tc.EnsureCompiled(); err != nil {
 		return "", err
@@ -140,10 +140,10 @@ func (tc JavaToolchain) DumpJava(inputFile string) (string, error) {
 	// The parser plugin's logger prints "antlr4: <path> parsing + building ..."
 	// to stdout before the AST. Strip the chatter and normalise paths.
 	out := stripParserChatter(stdout.String())
-	return normalizeAST(out, absInput), nil
+	return NormalizeAST(out, absInput), nil
 }
 
-// normalizeAST is the path-rewrite applied to *both* the Java and Go sides
+// NormalizeAST is the path-rewrite applied to *both* the Java and Go sides
 // before byte-comparison.
 //
 //	absInput              → __INPUT__   (the main .t file)
@@ -159,11 +159,41 @@ func (tc JavaToolchain) DumpJava(inputFile string) (string, error) {
 //
 // Order matters: replacing the directory first would also rewrite absInput
 // (since absInput starts with its own directory).
-func normalizeAST(s, absInput string) string {
+func NormalizeAST(s, absInput string) string {
 	s = strings.ReplaceAll(s, absInput, "__INPUT__")
 	s = strings.ReplaceAll(s, filepath.Dir(absInput), "__DIR__")
 	s = scratchPathRE.ReplaceAllString(s, "__DIR__/gen/")
+	// Canonicalise standard Tom mapping locations across the
+	// possible roots — Java's real `tom --intermediate` (used by
+	// cmd/javacache) resolves via $TOM_HOME/share/tom/<lang>, so
+	// cached dumps carry that path. Fresh runs (TomPipelineDump
+	// + our Go pipeline) resolve via tomgo/stable/library/mapping/
+	// <lang>. Map both to the same sentinel so the OriginTracking
+	// comparison stays semantic.
+	for _, p := range mappingRoots {
+		s = strings.ReplaceAll(s, p, "__MAPPING__/")
+	}
 	return s
+}
+
+// mappingRoots is the set of known on-disk locations that the
+// standard `int.tom` / `sl.tom` / `boolean.tom` / … mappings can
+// live at, on this machine. Each is canonicalised to the same
+// `__MAPPING__/` sentinel by [NormalizeAST].
+var mappingRoots = []string{
+	"/Users/pem/github/tom/src/dist/share/tom/java/",
+	"/Users/pem/github/tom/src/dist/share/tom/c/",
+	"/Users/pem/github/tom/src/dist/share/tom/caml/",
+	"/Users/pem/github/tom/src/dist/share/tom/ada/",
+	"/Users/pem/github/tom/src/dist/share/tom/",
+	"/Users/pem/github/tom/tomgo/stable/library/mapping/java/",
+	"/Users/pem/github/tom/tomgo/stable/library/mapping/go/",
+	"/Users/pem/github/tom/tomgo/stable/library/mapping/c/",
+	"/Users/pem/github/tom/tomgo/stable/library/mapping/caml/",
+	"/Users/pem/github/tom/tomgo/stable/library/mapping/ada/",
+	"/Users/pem/github/tom/tomgo/stable/library/mapping/",
+	"/Users/pem/github/tom/utils/eclipse-plugin/plugin/include/java/",
+	"/Users/pem/github/tom/utils/eclipse-plugin/plugin/include/",
 }
 
 // scratchPathRE matches the `<tmp>/tomint-NNN/` prefix javacache wraps
@@ -232,7 +262,7 @@ func (tc JavaToolchain) DumpJavaPhase(inputFile string, phase Phase) (string, er
 	if cached, ok, err := tc.readCachedDump(absInput, phase); err != nil {
 		return "", err
 	} else if ok {
-		return normalizeAST(cached, absInput), nil
+		return NormalizeAST(cached, absInput), nil
 	}
 	if err := tc.EnsurePipelineCompiled(); err != nil {
 		return "", err
@@ -245,7 +275,7 @@ func (tc JavaToolchain) DumpJavaPhase(inputFile string, phase Phase) (string, er
 	if err := cmd.Run(); err != nil {
 		return "", fmt.Errorf("TomPipelineDump on %s (phase %s) failed: %w", inputFile, phase, err)
 	}
-	return normalizeAST(stdout.String(), absInput), nil
+	return NormalizeAST(stdout.String(), absInput), nil
 }
 
 // CacheDir is the on-disk root of the Java reference cache. We
@@ -277,7 +307,7 @@ var CacheDir = "/Users/pem/github/tom/tomgo/tests/testdata/java-ast"
 // stops at the same point.
 //
 // The returned string is the raw `.tfix` contents, prior to path
-// normalisation. Callers run normalizeAST on it.
+// normalisation. Callers run NormalizeAST on it.
 func (tc JavaToolchain) readCachedDump(absInput string, phase Phase) (string, bool, error) {
 	suffix := string(phase)
 	if phase == PhaseSynchecked {
@@ -314,7 +344,7 @@ func (tc JavaToolchain) readCachedDump(absInput string, phase Phase) (string, bo
 
 // AssertParityWithGo compares the Java reference dump against a Go-built AST
 // string, returning nil on byte-equality and a unified-diff error otherwise.
-// The Go side is normalised the same way the Java side is (see normalizeAST).
+// The Go side is normalised the same way the Java side is (see NormalizeAST).
 // Callers may safely pass either an unnormalised AST (containing absInput and
 // its directory) or a pre-normalised one (containing only __INPUT__/__DIR__
 // placeholders) — the substitutions are idempotent on the placeholders.
@@ -327,7 +357,7 @@ func (tc JavaToolchain) AssertParityWithGo(inputFile, goSide string) error {
 	if err != nil {
 		return err
 	}
-	goSide = normalizeAST(goSide, absInput)
+	goSide = NormalizeAST(goSide, absInput)
 	if javaSide == goSide {
 		return nil
 	}

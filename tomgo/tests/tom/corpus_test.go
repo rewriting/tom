@@ -113,9 +113,7 @@ func TestCorpus_ParityWithJava(t *testing.T) {
 			parityDiff = append(parityDiff, name)
 			continue
 		}
-		goOut := fmt.Sprintf("%v", goState.Code)
-		goOut = strings.ReplaceAll(goOut, input, "__INPUT__")
-		goOut = strings.ReplaceAll(goOut, filepath.Dir(input), "__DIR__")
+		goOut := tomparseq.NormalizeAST(fmt.Sprintf("%v", goState.Code), input)
 		// Compare via astcmp so equivalence-preserving Java-side
 		// wrappers (Composite(CompositeBQTerm(t)) → t, …) get
 		// folded out before the structural check.

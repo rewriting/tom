@@ -15,8 +15,8 @@ import (
 
 func main() {
 	tomparser.IncludeSearchPath = []string{
-		"/Users/pem/github/tom/utils/eclipse-plugin/plugin/include/java",
-		"/Users/pem/github/tom/utils/eclipse-plugin/plugin/include",
+		"/Users/pem/github/tom/tomgo/stable/library/mapping/java",
+		"/Users/pem/github/tom/tomgo/stable/library/mapping",
 	}
 	input := os.Args[1]
 	st, err := tom.Run(tom.State{Filename: input}, starter.Run, parser.Run, desugarer.Run, typer.Run)

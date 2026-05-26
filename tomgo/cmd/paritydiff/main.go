@@ -33,8 +33,8 @@ type result struct {
 func main() {
 	repoRoot := "/Users/pem/github/tom"
 	tomparser.IncludeSearchPath = []string{
-		filepath.Join(repoRoot, "utils", "eclipse-plugin", "plugin", "include", "java"),
-		filepath.Join(repoRoot, "utils", "eclipse-plugin", "plugin", "include"),
+		filepath.Join(repoRoot, "tomgo", "stable", "library", "mapping", "java"),
+		filepath.Join(repoRoot, "tomgo", "stable", "library", "mapping"),
 		filepath.Join(repoRoot, "tomgo", "tests", "share", "tom-mappings"),
 		filepath.Join(repoRoot, "tomgo", "tests", "share", "tom-mappings", "gom"),
 	}

@@ -16,8 +16,8 @@ import (
 func main() {
 	repo := "/Users/pem/github/tom"
 	tomparser.IncludeSearchPath = []string{
-		filepath.Join(repo, "utils/eclipse-plugin/plugin/include/java"),
-		filepath.Join(repo, "utils/eclipse-plugin/plugin/include"),
+		filepath.Join(repo, "tomgo/stable/library/mapping/java"),
+		filepath.Join(repo, "tomgo/stable/library/mapping"),
 		filepath.Join(repo, "tomgo/tests/share/tom-mappings"),
 		filepath.Join(repo, "tomgo/tests/share/tom-mappings/gom"),
 	}
