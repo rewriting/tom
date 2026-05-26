@@ -28,76 +28,7 @@ import (
 // shapes SyntacticGenerator's strategy handles. Returns the
 // (possibly new) Expression.
 func (env *compilerEnv) generateSyntactic(e tomast.Expression) tomast.Expression {
-	switch x := e.(type) {
-	case *tomast.ConstraintToExpressionExpression:
-		if rewritten, ok := env.tryGenerateSyntactic(x); ok {
-			return rewritten
-		}
-		return e
-	case *tomast.AndExpression:
-		l := env.generateSyntactic(x.Arg1)
-		r := env.generateSyntactic(x.Arg2)
-		if l != x.Arg1 || r != x.Arg2 {
-			return tomast.MakeAnd(l, r)
-		}
-		return e
-	case *tomast.OrConnectorExpression:
-		newSlots, changed := env.mapSyntactic(x.Slots)
-		if changed {
-			return tomast.MakeOrConnector(newSlots...)
-		}
-		return e
-	case *tomast.OrExpressionDisjunctionExpression:
-		newSlots, changed := env.mapSyntactic(x.Slots)
-		if changed {
-			return tomast.MakeOrExpressionDisjunction(newSlots...)
-		}
-		return e
-	case *tomast.NegationExpression:
-		inner := env.generateSyntactic(x.Arg)
-		if inner != x.Arg {
-			return tomast.MakeNegation(inner)
-		}
-		return e
-	case *tomast.AntiMatchExpressionExpression:
-		inner := env.generateSyntactic(x.Expression)
-		if inner != x.Expression {
-			return tomast.MakeAntiMatchExpression(inner)
-		}
-		return e
-	}
-	return e
-}
-
-// mapSyntactic applies generateSyntactic to every element of `slots`,
-// returning a fresh slice + true when anything changed, or the
-// original + false when nothing did.
-func (env *compilerEnv) mapSyntactic(slots []tomast.Expression) ([]tomast.Expression, bool) {
-	newSlots := make([]tomast.Expression, len(slots))
-	changed := false
-	for i, s := range slots {
-		r := env.generateSyntactic(s)
-		if r != s {
-			changed = true
-		}
-		newSlots[i] = r
-	}
-	return newSlots, changed
-}
-
-// mapReplaceSubterms is the same shape as mapSyntactic for the
-// Subterm → GetSlot pass.
-func (env *compilerEnv) mapReplaceSubterms(slots []tomast.Expression) ([]tomast.Expression, bool) {
-	newSlots := make([]tomast.Expression, len(slots))
-	changed := false
-	for i, s := range slots {
-		r := env.replaceSubterms(s)
-		if r != s {
-			changed = true
-		}
-		newSlots[i] = r
-	}
-	return newSlots, changed
+	return walkExpressionConnectives(e, env.generateSyntactic, env.tryGenerateSyntactic)
 }
 
 // tryGenerateSyntactic does the per-shape rewrite. Returns the new
@@ -167,14 +98,12 @@ func (env *compilerEnv) replaceSubterms(e tomast.Expression) tomast.Expression {
 			return tomast.MakeAnd(l, r)
 		}
 	case *tomast.OrConnectorExpression:
-		newSlots, changed := env.mapReplaceSubterms(x.Slots)
-		if changed {
-			return tomast.MakeOrConnector(newSlots...)
+		if ns, changed := mapExpressionSlots(x.Slots, env.replaceSubterms); changed {
+			return tomast.MakeOrConnector(ns...)
 		}
 	case *tomast.OrExpressionDisjunctionExpression:
-		newSlots, changed := env.mapReplaceSubterms(x.Slots)
-		if changed {
-			return tomast.MakeOrExpressionDisjunction(newSlots...)
+		if ns, changed := mapExpressionSlots(x.Slots, env.replaceSubterms); changed {
+			return tomast.MakeOrExpressionDisjunction(ns...)
 		}
 	case *tomast.NegationExpression:
 		inner := env.replaceSubterms(x.Arg)

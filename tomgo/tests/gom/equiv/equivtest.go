@@ -33,11 +33,11 @@ import (
 // pipeline. Resolve returns one populated automatically by inspecting
 // the host environment.
 type JavaToolchain struct {
-	Java       string // absolute path to `java`
-	Javac      string // absolute path to `javac`
-	ConfigXML  string // path to a Gom.xml plugin config
-	CompilerJar string // tom-compiler-full.jar (contains tom.gom.Gom)
-	RuntimeJar  string // tom-runtime-full.jar  (runtime needed by generated code)
+	Java        string   // absolute path to `java`
+	Javac       string   // absolute path to `javac`
+	ConfigXML   string   // path to a Gom.xml plugin config
+	CompilerJar string   // tom-compiler-full.jar (contains tom.gom.Gom)
+	RuntimeJar  string   // tom-runtime-full.jar  (runtime needed by generated code)
 	ExtraJars   []string // shared-objects.jar, aterm.jar, jjtraveler.jar, antlr*.jar, args4j.jar, …
 }
 

@@ -8,6 +8,7 @@
 // reuse the cache transparently. The cache is invalidated when:
 //   - The fixture (.t file) is modified.
 //   - The reference `src/dist/lib/*.jar` build is rebuilt.
+//
 // We mirror Ant's incremental logic with a single sentinel file
 // (`.cache-stamp`) per fixture.
 //

@@ -265,7 +265,7 @@ func (p *parser) parseIdentOrCall() (*Node, error) {
 	return &Node{Op: id}, nil
 }
 
-func isSpace(b byte) bool   { return b == ' ' || b == '\t' || b == '\n' || b == '\r' }
+func isSpace(b byte) bool { return b == ' ' || b == '\t' || b == '\n' || b == '\r' }
 func isIdentStart(b byte) bool {
 	return (b >= 'A' && b <= 'Z') || (b >= 'a' && b <= 'z') || b == '_'
 }

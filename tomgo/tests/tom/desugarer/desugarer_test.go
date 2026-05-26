@@ -8,11 +8,11 @@ import (
 	"testing"
 
 	"tom/tomgo/stable/tom"
-	tomparseq "tom/tomgo/tests/tom/parser/equiv"
-	"tom/tomgo/stable/tom/starter"
-	"tom/tomgo/stable/tom/parser"
 	"tom/tomgo/stable/tom/desugarer"
+	"tom/tomgo/stable/tom/parser"
+	"tom/tomgo/stable/tom/starter"
 	"tom/tomgo/tests/tom/javatc"
+	tomparseq "tom/tomgo/tests/tom/parser/equiv"
 )
 
 // TestDesugarer_FreshVariableRewrite is the unit-level smoke test:
@@ -116,4 +116,3 @@ func TestDesugarer_ParityWithJava(t *testing.T) {
 		})
 	}
 }
-

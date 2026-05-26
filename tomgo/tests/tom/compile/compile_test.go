@@ -3,11 +3,11 @@
 //
 // For each fixture under tests/tom/compile/fixtures/:
 //
-//   1. Run the Go pipeline (cmd/tom equivalent) on the .t source.
-//   2. javac the resulting .java.
-//   3. java the resulting .class (optionally with JUnit on Test*.t).
-//   4. Assert the runtime output matches the per-fixture
-//      `expected.txt` (substring or full match — keep it simple).
+//  1. Run the Go pipeline (cmd/tom equivalent) on the .t source.
+//  2. javac the resulting .java.
+//  3. java the resulting .class (optionally with JUnit on Test*.t).
+//  4. Assert the runtime output matches the per-fixture
+//     `expected.txt` (substring or full match — keep it simple).
 //
 // Skipped without JDK / aterm.jar. The fixtures live in this
 // directory (copies, not symlinks) so the test is reproducible
@@ -23,8 +23,8 @@ import (
 	"testing"
 
 	"tom/tomgo/stable/tom"
-	"tom/tomgo/stable/tom/backend_java"
 	"tom/tomgo/stable/tom/backend_go"
+	"tom/tomgo/stable/tom/backend_java"
 	"tom/tomgo/stable/tom/compiler"
 	"tom/tomgo/stable/tom/desugarer"
 	"tom/tomgo/stable/tom/parser"
@@ -295,9 +295,9 @@ var goFixtures = []struct {
 	name         string
 	expected     []string
 	useGoTest    bool
-	needsMapping bool // set TOMGO_TOM_INCLUDE before running the pipeline
-	useSlLib     bool // require tom/tomgo + replace in the generated go.mod
-	hasInlineGom bool // %gom block: gen .go file lands in workDir for `go test`
+	needsMapping bool   // set TOMGO_TOM_INCLUDE before running the pipeline
+	useSlLib     bool   // require tom/tomgo + replace in the generated go.mod
+	hasInlineGom bool   // %gom block: gen .go file lands in workDir for `go test`
 	goPackage    string // override the generated AST file's `package` decl
 }{
 	{

@@ -67,10 +67,10 @@ func HasHookFile(path string) (bool, error) {
 // HookReport groups every .gom file found under a root by whether it
 // contains hooks.
 type HookReport struct {
-	Root       string
-	WithHooks  []string // sorted, paths relative to Root
-	NoHooks    []string // sorted, paths relative to Root
-	Errors     map[string]error
+	Root      string
+	WithHooks []string // sorted, paths relative to Root
+	NoHooks   []string // sorted, paths relative to Root
+	Errors    map[string]error
 }
 
 // Totals returns total, without-hooks, with-hooks counts.

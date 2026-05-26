@@ -46,7 +46,7 @@ func TestSimplify_CompositeUnwrap(t *testing.T) {
 	}{
 		// Loulou's actual diff: Java wraps the first arg of plus(x,y).
 		{
-			java: `concBQTerm(Composite(CompositeBQTerm(BQVariable(Name("x")))),BQVariable(Name("y")))`,
+			java:   `concBQTerm(Composite(CompositeBQTerm(BQVariable(Name("x")))),BQVariable(Name("y")))`,
 			goSide: `concBQTerm(BQVariable(Name("x")),BQVariable(Name("y")))`,
 		},
 		// Same shape but on a single arg.

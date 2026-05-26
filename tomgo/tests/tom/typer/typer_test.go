@@ -8,12 +8,12 @@ import (
 	"testing"
 
 	"tom/tomgo/stable/tom"
-	tomparseq "tom/tomgo/tests/tom/parser/equiv"
-	"tom/tomgo/stable/tom/starter"
-	"tom/tomgo/stable/tom/parser"
 	"tom/tomgo/stable/tom/desugarer"
+	"tom/tomgo/stable/tom/parser"
+	"tom/tomgo/stable/tom/starter"
 	"tom/tomgo/stable/tom/typer"
 	"tom/tomgo/tests/tom/javatc"
+	tomparseq "tom/tomgo/tests/tom/parser/equiv"
 )
 
 // TestTyper_ParityWithJava is the regression net for the Typer:

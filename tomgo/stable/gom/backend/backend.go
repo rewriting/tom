@@ -742,26 +742,26 @@ func (g *gen) emitHookImplOnAlt(prod *gomast.SortTypeProduction, alt *gomast.Alt
 // Two injection points are supported:
 //
 //  1. emitImpl     — adds an extra method on every alt struct of the
-//                    point-cut sort. Used by sort-scope `block` hooks
-//                    such as Objects/HookList:block which contributes
-//                    `ContainsTomCode() bool`.
+//     point-cut sort. Used by sort-scope `block` hooks
+//     such as Objects/HookList:block which contributes
+//     `ContainsTomCode() bool`.
 //  2. emitMakePrologue — injects Go code at the top of the alt's smart
-//                    constructor (before the standard hash-cons body).
-//                    The prologue may early-return, panic, or rebind
-//                    `args` / parameters to a normalised form. Used by
-//                    operator-scope `AU` / `make` / `make_insert` hooks
-//                    and by rewritten module-scope `rules` hooks.
+//     constructor (before the standard hash-cons body).
+//     The prologue may early-return, panic, or rebind
+//     `args` / parameters to a normalised form. Used by
+//     operator-scope `AU` / `make` / `make_insert` hooks
+//     and by rewritten module-scope `rules` hooks.
 //
 // hookSlot is the projection of the local `slot` struct used inside
 // emitAlternative; it is passed to emitMakePrologue so the prologue
 // can reason about the alt's shape without depending on package internals.
 type knownHook struct {
-	module        string // module the hook lives in, e.g. "Objects"
-	scope         string // "sort"|"module"|"operator"
-	pointCut      string // sort name (for sort scope) or alt name (for operator scope)
-	kind          string // "block", "AU", "make", "make_insert", "rules", …
-	interfaceDecl string // method signature for the sort interface (block hooks only)
-	emitImpl      func(buf *bytes.Buffer, g *gen, prod *gomast.SortTypeProduction, alt *gomast.AlternativeAlternative, structName string)
+	module           string // module the hook lives in, e.g. "Objects"
+	scope            string // "sort"|"module"|"operator"
+	pointCut         string // sort name (for sort scope) or alt name (for operator scope)
+	kind             string // "block", "AU", "make", "make_insert", "rules", …
+	interfaceDecl    string // method signature for the sort interface (block hooks only)
+	emitImpl         func(buf *bytes.Buffer, g *gen, prod *gomast.SortTypeProduction, alt *gomast.AlternativeAlternative, structName string)
 	emitMakePrologue func(buf *bytes.Buffer, g *gen, alt *gomast.AlternativeAlternative, sortName, structName string, slots []hookSlot, isVariadic bool)
 }
 
@@ -817,12 +817,12 @@ func (g *gen) makeProloguesForAlt(alt *gomast.AlternativeAlternative) []*knownHo
 //
 // Entries fall in two groups:
 //
-//  - emitImpl          adds a method on every alt of the point-cut
-//                      sort (sort-scope `block` hooks).
-//  - emitMakePrologue  injects code at the top of the alt's smart
-//                      constructor (operator-scope AU/make/make_insert,
-//                      and module-scope `rules` hooks rewritten to
-//                      per-operator prologues).
+//   - emitImpl          adds a method on every alt of the point-cut
+//     sort (sort-scope `block` hooks).
+//   - emitMakePrologue  injects code at the top of the alt's smart
+//     constructor (operator-scope AU/make/make_insert,
+//     and module-scope `rules` hooks rewritten to
+//     per-operator prologues).
 //
 // The module-scope `rules` hooks in src/tom/engine/adt/{Code,TomExpression}.gom
 // each compile to TWO entries (one per rewrite rule), because they're
@@ -899,10 +899,10 @@ var knownHookTable = []knownHook{
 	// --------------------------------------------------------------------
 	{
 		// InstructionToCode(CodeToInstruction(t)) -> t
-		module:           "Code",
-		scope:            "operator",
-		pointCut:         "InstructionToCode",
-		kind:             "rules-rewrite",
+		module:   "Code",
+		scope:    "operator",
+		pointCut: "InstructionToCode",
+		kind:     "rules-rewrite",
 		emitMakePrologue: emitInversePairPrologue(
 			"InstructionToCode", "AstInstruction",
 			"CodeToInstruction", "Instruction", "Code",
@@ -915,10 +915,10 @@ var knownHookTable = []knownHook{
 		// Instruction (defined in TomInstruction.gom). The module field
 		// here is the operator's owning module so the prologue actually
 		// fires when generating TomInstruction.gom.
-		module:           "TomInstruction",
-		scope:            "operator",
-		pointCut:         "CodeToInstruction",
-		kind:             "rules-rewrite",
+		module:   "TomInstruction",
+		scope:    "operator",
+		pointCut: "CodeToInstruction",
+		kind:     "rules-rewrite",
 		emitMakePrologue: emitInversePairPrologue(
 			"CodeToInstruction", "Code",
 			"InstructionToCode", "Code", "AstInstruction",
@@ -930,10 +930,10 @@ var knownHookTable = []knownHook{
 	// --------------------------------------------------------------------
 	{
 		// BQTermToExpression(ExpressionToBQTerm(t)) -> t
-		module:           "TomExpression",
-		scope:            "operator",
-		pointCut:         "BQTermToExpression",
-		kind:             "rules-rewrite",
+		module:   "TomExpression",
+		scope:    "operator",
+		pointCut: "BQTermToExpression",
+		kind:     "rules-rewrite",
 		emitMakePrologue: emitInversePairPrologue(
 			"BQTermToExpression", "AstTerm",
 			"ExpressionToBQTerm", "BQTerm", "Exp",
@@ -944,10 +944,10 @@ var knownHookTable = []knownHook{
 		// Like the previous entry: declared in TomExpression.gom, but
 		// the operator ExpressionToBQTerm is an alt of BQTerm (defined
 		// in Code.gom), so the module filter points to Code.
-		module:           "Code",
-		scope:            "operator",
-		pointCut:         "ExpressionToBQTerm",
-		kind:             "rules-rewrite",
+		module:   "Code",
+		scope:    "operator",
+		pointCut: "ExpressionToBQTerm",
+		kind:     "rules-rewrite",
 		emitMakePrologue: emitInversePairPrologue(
 			"ExpressionToBQTerm", "Exp",
 			"BQTermToExpression", "Expression", "AstTerm",
@@ -1078,8 +1078,9 @@ var knownHookTable = []knownHook{
 // op       = the variadic operator name (e.g. "AndConstraint").
 // sort     = the sort name (e.g. "Constraint").
 // unit     = the smart-constructor to call for an empty arg list
-//            (e.g. "TrueConstraint"), or "" if there is no unit and the
-//            empty case stays empty.
+//
+//	(e.g. "TrueConstraint"), or "" if there is no unit and the
+//	empty case stays empty.
 //
 // The emitted prologue always flattens nested `op` arguments
 // (associativity), and additionally short-circuits the zero-arg case
@@ -1136,15 +1137,16 @@ func emitAUPrologue(op, sort, unit string) func(buf *bytes.Buffer, g *gen, alt *
 
 // emitInversePairPrologue builds the prologue for one rewrite of the
 // form `LhsRoot(LhsInner(t)) -> t`, where:
-//   lhsRoot       = name of the alt being constructed (e.g. "InstructionToCode")
-//   lhsRootParam  = name of the single slot on lhsRoot (e.g. "AstInstruction")
-//                   (this is the Go parameter name in the generated Make;
-//                   we unexport it below)
-//   lhsInner      = name of the inner alt (e.g. "CodeToInstruction")
-//   lhsInnerSort  = sort name of lhsInner (e.g. "Instruction") — used to
-//                   compose the struct type `<lhsInner><lhsInnerSort>`
-//   innerSlot     = exported name of the slot on lhsInner that carries
-//                   the t we want to return (e.g. "Code")
+//
+//	lhsRoot       = name of the alt being constructed (e.g. "InstructionToCode")
+//	lhsRootParam  = name of the single slot on lhsRoot (e.g. "AstInstruction")
+//	                (this is the Go parameter name in the generated Make;
+//	                we unexport it below)
+//	lhsInner      = name of the inner alt (e.g. "CodeToInstruction")
+//	lhsInnerSort  = sort name of lhsInner (e.g. "Instruction") — used to
+//	                compose the struct type `<lhsInner><lhsInnerSort>`
+//	innerSlot     = exported name of the slot on lhsInner that carries
+//	                the t we want to return (e.g. "Code")
 func emitInversePairPrologue(lhsRoot, lhsRootParam, lhsInner, lhsInnerSort, innerSlot string) func(buf *bytes.Buffer, g *gen, alt *gomast.AlternativeAlternative, sortName, structName string, slots []hookSlot, isVariadic bool) {
 	return func(buf *bytes.Buffer, g *gen, alt *gomast.AlternativeAlternative, sortName, structName string, slots []hookSlot, isVariadic bool) {
 		if !g.ownSort[lhsInnerSort] {

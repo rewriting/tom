@@ -17,7 +17,7 @@ package aterm
 //   - <list>        → captures the matching ATermList (or the tail)
 //   - <placeholder> → captures the matched placeholder term
 //   - <fun(args)>   → composite: captures the function name AS WELL AS
-//                     every placeholder inside `args`
+//     every placeholder inside `args`
 //   - <ident()>     → like <fun(<>)>, fixed-name predicate (no name capture)
 //
 // Patterns are parsed once (via the term parser) so placeholders are

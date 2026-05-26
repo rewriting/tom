@@ -32,12 +32,12 @@ import (
 // Per Java's DesugarerPlugin.run, three visitor passes happen in
 // order:
 //
-//	1. TopDown(DesugarUnderscore)            — rename `_` to fresh vars
-//	2. TopDownIdStopOnSuccess(replaceTermAppl) — TermAppl → RecordAppl
-//	3. TopDown(replaceBQRecordAppl)          — BQRecordAppl → BQAppl
+//  1. TopDown(DesugarUnderscore)            — rename `_` to fresh vars
+//  2. TopDownIdStopOnSuccess(replaceTermAppl) — TermAppl → RecordAppl
+//  3. TopDown(replaceBQRecordAppl)          — BQRecordAppl → BQAppl
 //
 // Phase 6.6 currently ports passes #1 and #2. Pass #3 will be added
-// when fixtures with `` `Foo[a=v] `` records appear.
+// when fixtures with “ `Foo[a=v] “ records appear.
 func Run(in tom.State) (tom.State, error) {
 	if in.Code == nil {
 		return in, nil

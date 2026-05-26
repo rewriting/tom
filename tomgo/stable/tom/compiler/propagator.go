@@ -20,14 +20,14 @@ package compiler
 
 import "tom/tomgo/stable/library/tomast"
 
-// mapConstraintSlots applies `f` to each item in `slots`, preserving
-// pointer identity when no element changed (so the caller can skip
-// re-building the enclosing And/Or node). Returns the new slice and
-// a `changed` flag. Helper for the propagators' And/Or/
-// OrConstraintDisjunction cases — Java's `%match` does the
+// mapIdentityPreserving applies `f` to each item in `slots`, returning
+// the new slice and a `changed` flag (true iff at least one element
+// changed pointer identity). The caller uses `changed` to decide
+// whether to rebuild the enclosing constructor (And/Or/Negation/…) or
+// hand back the input untouched — Java's `%match` does this
 // identity-preserving fall-through automatically.
-func mapConstraintSlots(slots []tomast.Constraint, f func(tomast.Constraint) tomast.Constraint) ([]tomast.Constraint, bool) {
-	out := make([]tomast.Constraint, len(slots))
+func mapIdentityPreserving[T comparable](slots []T, f func(T) T) ([]T, bool) {
+	out := make([]T, len(slots))
 	changed := false
 	for i, item := range slots {
 		r := f(item)
@@ -37,6 +37,71 @@ func mapConstraintSlots(slots []tomast.Constraint, f func(tomast.Constraint) tom
 		out[i] = r
 	}
 	return out, changed
+}
+
+// mapConstraintSlots is the Constraint specialisation of
+// [mapIdentityPreserving], kept as a named helper so the four
+// propagators read cleanly at the call site.
+func mapConstraintSlots(slots []tomast.Constraint, f func(tomast.Constraint) tomast.Constraint) ([]tomast.Constraint, bool) {
+	return mapIdentityPreserving(slots, f)
+}
+
+// mapExpressionSlots is the Expression specialisation of
+// [mapIdentityPreserving] used by the syntactic/array/variadic
+// generators' OrConnector / OrExpressionDisjunction cases.
+func mapExpressionSlots(slots []tomast.Expression, f func(tomast.Expression) tomast.Expression) ([]tomast.Expression, bool) {
+	return mapIdentityPreserving(slots, f)
+}
+
+// walkExpressionConnectives walks the And / OrConnector /
+// OrExpressionDisjunction / Negation / AntiMatchExpression
+// connective layers of an Expression, recursing through `recurse`,
+// and delegates the ConstraintToExpression leaves to `tryLeaf`.
+// Identity is preserved through every cap: if no descendant
+// changed, the input is returned as-is. All three generators
+// (syntactic / variadic / array) share this exact shape — they
+// only differ in `recurse` (their `generateX` self-call) and
+// `tryLeaf` (their `tryGenerateX` rewriter).
+func walkExpressionConnectives(
+	e tomast.Expression,
+	recurse func(tomast.Expression) tomast.Expression,
+	tryLeaf func(*tomast.ConstraintToExpressionExpression) (tomast.Expression, bool),
+) tomast.Expression {
+	switch x := e.(type) {
+	case *tomast.ConstraintToExpressionExpression:
+		if rewritten, ok := tryLeaf(x); ok {
+			return rewritten
+		}
+		return e
+	case *tomast.AndExpression:
+		l := recurse(x.Arg1)
+		r := recurse(x.Arg2)
+		if l != x.Arg1 || r != x.Arg2 {
+			return tomast.MakeAnd(l, r)
+		}
+		return e
+	case *tomast.OrConnectorExpression:
+		if ns, changed := mapExpressionSlots(x.Slots, recurse); changed {
+			return tomast.MakeOrConnector(ns...)
+		}
+		return e
+	case *tomast.OrExpressionDisjunctionExpression:
+		if ns, changed := mapExpressionSlots(x.Slots, recurse); changed {
+			return tomast.MakeOrExpressionDisjunction(ns...)
+		}
+		return e
+	case *tomast.NegationExpression:
+		if inner := recurse(x.Arg); inner != x.Arg {
+			return tomast.MakeNegation(inner)
+		}
+		return e
+	case *tomast.AntiMatchExpressionExpression:
+		if inner := recurse(x.Expression); inner != x.Expression {
+			return tomast.MakeAntiMatchExpression(inner)
+		}
+		return e
+	}
+	return e
 }
 
 // performPropagations is the entry point used by CompileMatch. Java:

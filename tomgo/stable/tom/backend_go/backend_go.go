@@ -14,9 +14,9 @@
 // This first cut covers exactly what Peano needs:
 //   - `%typeterm`        → `tom_is_sort_X` / `tom_equal_term_X`
 //   - `%op`              → `tom_is_fun_sym_X` / `tom_make_X` /
-//                          `tom_get_slot_X_<slot>`
+//     `tom_get_slot_X_<slot>`
 //   - `%match`           → Let-chained `if` blocks (via the
-//                          compiler's CompiledMatch shape)
+//     compiler's CompiledMatch shape)
 //   - BuildTerm / BQVariable / Return — `%match` action bodies
 //
 // Variadic-list/array, %strategy, %gom, etc. are NOT yet wired up

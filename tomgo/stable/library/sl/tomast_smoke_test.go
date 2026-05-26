@@ -108,6 +108,6 @@ func (*renameEmpty) VisitLight(subject any, _ sl.Introspector) (any, error) {
 	), nil
 }
 
-func (*renameEmpty) ChildCount() int        { return 0 }
-func (*renameEmpty) ChildAt(int) sl.Strategy { return nil }
+func (*renameEmpty) ChildCount() int             { return 0 }
+func (*renameEmpty) ChildAt(int) sl.Strategy     { return nil }
 func (*renameEmpty) SetChildAt(int, sl.Strategy) {}

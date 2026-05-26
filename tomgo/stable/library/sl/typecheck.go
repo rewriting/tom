@@ -7,15 +7,15 @@ package sl
 // shot helper rather than the multi-statement Go type-assertion
 // form.
 
-func IsIdentity(t any) bool         { _, ok := t.(*Identity); return ok }
-func IsFail(t any) bool             { _, ok := t.(*Fail); return ok }
-func IsMu(t any) bool               { _, ok := t.(*Mu); return ok }
-func IsMuVar(t any) bool            { _, ok := t.(*MuVar); return ok }
-func IsAll(t any) bool              { _, ok := t.(*All); return ok }
-func IsOne(t any) bool              { _, ok := t.(*One); return ok }
-func IsOneId(t any) bool            { _, ok := t.(*OneId); return ok }
-func IsSequence(t any) bool         { _, ok := t.(*Sequence); return ok }
-func IsSequenceId(t any) bool       { _, ok := t.(*SequenceId); return ok }
-func IsChoice(t any) bool           { _, ok := t.(*Choice); return ok }
-func IsChoiceId(t any) bool         { _, ok := t.(*ChoiceId); return ok }
-func IsStrategy(t any) bool         { _, ok := t.(Strategy); return ok }
+func IsIdentity(t any) bool   { _, ok := t.(*Identity); return ok }
+func IsFail(t any) bool       { _, ok := t.(*Fail); return ok }
+func IsMu(t any) bool         { _, ok := t.(*Mu); return ok }
+func IsMuVar(t any) bool      { _, ok := t.(*MuVar); return ok }
+func IsAll(t any) bool        { _, ok := t.(*All); return ok }
+func IsOne(t any) bool        { _, ok := t.(*One); return ok }
+func IsOneId(t any) bool      { _, ok := t.(*OneId); return ok }
+func IsSequence(t any) bool   { _, ok := t.(*Sequence); return ok }
+func IsSequenceId(t any) bool { _, ok := t.(*SequenceId); return ok }
+func IsChoice(t any) bool     { _, ok := t.(*Choice); return ok }
+func IsChoiceId(t any) bool   { _, ok := t.(*ChoiceId); return ok }
+func IsStrategy(t any) bool   { _, ok := t.(Strategy); return ok }

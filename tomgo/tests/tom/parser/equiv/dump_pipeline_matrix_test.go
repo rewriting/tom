@@ -16,7 +16,7 @@ import (
 //   - SyntaxChecker     : identity on all 30 fixtures (checker, no mutation)
 //   - Desugarer         : mutates 13 fixtures (mostly `_` → fresh var)
 //   - Typer             : mutates 7 additional fixtures past Desugarer
-//                          (backquote-application / %strategy types)
+//     (backquote-application / %strategy types)
 //
 // Each entry below is a fixture name + the four expected "diff vs previous
 // phase" flags. Add new fixtures here when the canonical 30 list grows.
@@ -54,11 +54,11 @@ func TestPipelineDump_MutationMatrix(t *testing.T) {
 		"match0l_anti":      {false, false, true, false},
 		"match0m_or":        {false, false, true, false},
 		// Typer attaches inferred types to backquote applications.
-		"match0n_bqappl":      {false, false, false, true},
-		"match0q_bqappl_body": {false, false, false, true},
-		"match0r_bq_multi":    {false, false, false, true},
-		"match0s_bqstar":      {false, false, false, true},
-		"strategy0_minimal":   {false, false, false, true},
+		"match0n_bqappl":       {false, false, false, true},
+		"match0q_bqappl_body":  {false, false, false, true},
+		"match0r_bq_multi":     {false, false, false, true},
+		"match0s_bqstar":       {false, false, false, true},
+		"strategy0_minimal":    {false, false, false, true},
 		"strategy2_visit_body": {false, false, false, true},
 		// Both Desugarer and Typer touch this one.
 		"strategy1_visit": {false, false, true, true},

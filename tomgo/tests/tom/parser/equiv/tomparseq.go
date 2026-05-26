@@ -17,12 +17,12 @@
 package tomparseq
 
 import (
-	"regexp"
 	"errors"
 	"fmt"
 	"os"
 	"os/exec"
 	"path/filepath"
+	"regexp"
 	"strings"
 )
 

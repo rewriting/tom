@@ -77,8 +77,8 @@ func strategyFn(fn func(any, Introspector) (any, error)) Strategy {
 func (s *strategyFnImpl) VisitLight(subject any, i Introspector) (any, error) {
 	return s.fn(subject, i)
 }
-func (*strategyFnImpl) ChildCount() int        { return 0 }
-func (*strategyFnImpl) ChildAt(int) Strategy   { return nil }
+func (*strategyFnImpl) ChildCount() int          { return 0 }
+func (*strategyFnImpl) ChildAt(int) Strategy     { return nil }
 func (*strategyFnImpl) SetChildAt(int, Strategy) {}
 
 // ----------------------------------------------------------------

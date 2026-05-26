@@ -3,7 +3,7 @@
 // Current scope (iteration 0..2):
 //   - scan-hooks  Inventory .gom files and detect hooks (Phase 1).
 //   - gom         Compile a .gom file (without hooks) to a Go package
-//                 backed by the shared-objects runtime (Phase 2).
+//     backed by the shared-objects runtime (Phase 2).
 package main
 
 import (

@@ -564,7 +564,6 @@ func (e *emitter) emitBQTermArgList(l tomast.BQTermList) {
 	}
 }
 
-
 // bqTermAsText renders a BQTerm to a plain string (used when we
 // need the text form for inline composition with raw expressions
 // like `(idx >= tom_get_size_...())`).

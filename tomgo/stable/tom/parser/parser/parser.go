@@ -6,24 +6,24 @@
 //
 // Phase 4.D / 4.E / 4.F — current coverage:
 //
-//   start      : (water | islandStmt)* EOF
-//   islandStmt : typeterm | op | oplist | oparray | include | match
-//   typeterm   : '%typeterm' ID ('extends' ID)? '{' BALANCED '}'
-//   op         : '%op' ID ID '(' slotList? ')' '{' BALANCED '}'
-//   oplist     : '%oplist'  ID ID '(' ID '*' ')' '{' BALANCED '}'
-//   oparray    : '%oparray' ID ID '(' ID '*' ')' '{' BALANCED '}'
-//   include    : '%include' '{' includePath '}'
-//   match      : '%match' '(' subject (',' subject)* ')' '{' actionRule* '}'
-//   subject    : ID                                    (BQVariable only for now)
-//   actionRule : ruleSlot (',' ruleSlot)* '->' '{' BALANCED '}'
-//   ruleSlot   : pattern ('<<' bqterm)?
-//   pattern    : '!' pattern | basePattern ('@' ID)?
-//   basePattern: '_' '*'? | ID '*'? | ID '(' (pattern (',' pattern)*)? ')'
-//              | '(' ID ('|' ID)* ')' '(' (pattern (',' pattern)*)? ')'
-//                                                       (Variable/VariableStar or TermAppl, anti-prefix and `@` annotation optional)
-//   slotList   : slot (',' slot)*
-//   slot       : ID ':' ID
-//   includePath : (ID | '.' | '/' | '\\')+
+//	start      : (water | islandStmt)* EOF
+//	islandStmt : typeterm | op | oplist | oparray | include | match
+//	typeterm   : '%typeterm' ID ('extends' ID)? '{' BALANCED '}'
+//	op         : '%op' ID ID '(' slotList? ')' '{' BALANCED '}'
+//	oplist     : '%oplist'  ID ID '(' ID '*' ')' '{' BALANCED '}'
+//	oparray    : '%oparray' ID ID '(' ID '*' ')' '{' BALANCED '}'
+//	include    : '%include' '{' includePath '}'
+//	match      : '%match' '(' subject (',' subject)* ')' '{' actionRule* '}'
+//	subject    : ID                                    (BQVariable only for now)
+//	actionRule : ruleSlot (',' ruleSlot)* '->' '{' BALANCED '}'
+//	ruleSlot   : pattern ('<<' bqterm)?
+//	pattern    : '!' pattern | basePattern ('@' ID)?
+//	basePattern: '_' '*'? | ID '*'? | ID '(' (pattern (',' pattern)*)? ')'
+//	           | '(' ID ('|' ID)* ')' '(' (pattern (',' pattern)*)? ')'
+//	                                                    (Variable/VariableStar or TermAppl, anti-prefix and `@` annotation optional)
+//	slotList   : slot (',' slot)*
+//	slot       : ID ':' ID
+//	includePath : (ID | '.' | '/' | '\\')+
 //
 // `BALANCED` means: read everything up to and including the matching '}'.
 // The body content (implement/is_sort/equals/is_fsym/make/get_slot/…) is
@@ -655,7 +655,6 @@ func parseGomModuleName(body string) string {
 	return ""
 }
 
-
 // parseMetaquote handles `%[ ... ]%`. Per CstBuilder.java's exitMetaquote
 // + CstConverter.simplifyCstBlockList (Cst_Metaquote branch), the body
 // content (everything between `%[` and `]%`) is transformed into a
@@ -910,7 +909,7 @@ func (p *parser) parseStrategy() error {
 
 // registerStrategySymbol attaches a synthetic syntactic op for a
 // `%strategy Name()` declaration so the typer + backend can route
-// `` `Name() `` references correctly.
+// “ `Name() “ references correctly.
 func registerStrategySymbol(sig *signature, name string, line int, file string) {
 	if sig == nil {
 		return
@@ -1046,9 +1045,9 @@ func (p *parser) tryIslandOrWater(island func() error, kind string) error {
 //
 // The position calculation is delegated to a faithful Java-side simulation:
 //
-//   1. raw bytes → tokenizeWater     (water.go)
-//   2. tokens    → buildHostblocks   (mirrors CstBuilder.buildHostblock)
-//   3. hostblocks → mergeHostblocks  (mirrors CstConverter.simplifyCstBlockList + mergeString)
+//  1. raw bytes → tokenizeWater     (water.go)
+//  2. tokens    → buildHostblocks   (mirrors CstBuilder.buildHostblock)
+//  3. hostblocks → mergeHostblocks  (mirrors CstConverter.simplifyCstBlockList + mergeString)
 //
 // The merged hostblock's start/end and content are what the Java parser
 // would have produced for the same `.t` file.
@@ -1557,7 +1556,7 @@ func buildTomSymbolWithHooks(name, codomain string, slots []opSlot, hooks []toma
 //   - make_empty(n)      → MakeEmptyArray (array form)
 //   - make_append(e,l)   → MakeAddList / MakeAddArray
 //   - make_insert(e,l)   → MakeAddArray (or MakeAddList depending on
-//                          subkind; we map to MakeAddArray for now)
+//     subkind; we map to MakeAddArray for now)
 //   - get_head(l)        → GetHeadDecl
 //   - get_tail(l)        → GetTailDecl
 //   - is_empty(l)        → IsEmptyDecl
@@ -2141,7 +2140,9 @@ func resolveIncludePath(includePath, sourceDir string) (string, error) {
 // resolved relative to the directory of the parser's `filename`, parsed
 // recursively, and its top-level codes are wrapped in the same
 // `TomInclude(concCode(InstructionToCode(AbstractBlock(concInstruction(
-//   CodeToInstruction(c1), CodeToInstruction(c2), …)))))` sandwich that the
+//
+//	CodeToInstruction(c1), CodeToInstruction(c2), …)))))` sandwich that the
+//
 // Java reference parser emits.
 //
 // The grammar (`TomIslandParser.g4`) allows DOT, SLASH, BACKSLASH and ID in
@@ -2496,24 +2497,24 @@ func (p *parser) parseBQTermConstantWith(composite bool) (tomast.BQTerm, error) 
 }
 
 // parseBQTerm parses one backquote term. The grammar (TomIslandParser.g4:122-
-// 128 for the plain `bqterm` form) accepts an optional leading `` ` `` followed
+// 128 for the plain `bqterm` form) accepts an optional leading “ ` “ followed
 // by either:
 //   - `ID '(' (bqterm (',' bqterm)*)? ')'`  → `BQAppl(opts, Name(ID), bqList)`
 //   - `ID '*'?`                             → `BQVariable(opts, Name(ID), unknownType)`
-//                                             (or `BQVariableStar` if `*` — TODO)
+//     (or `BQVariableStar` if `*` — TODO)
 //
 // The `composite` flag toggles between the two grammars Java distinguishes
 // (`bqterm` for `<<` RHS / `%match(...)` subjects vs `bqcomposite` / `composite`
 // for action-body backquotes):
 //
 //   - composite=false : plain bqterm — args of an inner application stay as
-//                       BQVariable/BQAppl regardless of explicit `` ` `` on
-//                       them. Used in `<<` RHS (4.F.13).
-//   - composite=true  : an arg starting with `` ` `` is wrapped in
-//                       `Composite(CompositeTL(ITL("` `")), CompositeBQTerm(<term>))`,
-//                       mirroring Java's exitComposite (CstBuilder.java:386-
-//                       399) → Cst_BQComposite → AstBuilder.java:583-595.
-//                       Used in action bodies (4.F.14+).
+//     BQVariable/BQAppl regardless of explicit “ ` “ on
+//     them. Used in `<<` RHS (4.F.13).
+//   - composite=true  : an arg starting with “ ` “ is wrapped in
+//     `Composite(CompositeTL(ITL("` `")), CompositeBQTerm(<term>))`,
+//     mirroring Java's exitComposite (CstBuilder.java:386-
+//     399) → Cst_BQComposite → AstBuilder.java:583-595.
+//     Used in action bodies (4.F.14+).
 //
 // Per AstBuilder.java:551-570, the option list carries an `OriginTracking`
 // for the symbol/variable name plus the default `ModuleName("default")` —
@@ -2647,7 +2648,7 @@ func makeBQVarType(codomain string) tomast.TomType {
 }
 
 // parseBQTermArgList consumes `bqterm (',' bqterm)*` between '(' and ')'.
-// When composite=true, each arg starting with `` ` `` is wrapped in a
+// When composite=true, each arg starting with “ ` “ is wrapped in a
 // Composite(CompositeTL(ITL("` `")), CompositeBQTerm(<term>)) — see
 // parseBQTerm's docstring.
 func (p *parser) parseBQTermArgList(composite bool) ([]tomast.BQTerm, error) {
@@ -3399,7 +3400,7 @@ func (p *parser) parsePatternArgList() ([]tomast.TomTerm, error) {
 // `AbstractBlock(concInstruction(…))`.
 //
 // The body is a mixture of *water* (host-code chunks) and *backquote
-// islands* (`` `bqterm ``). The reference Java parser (CstBuilder.exitBlock
+// islands* (“ `bqterm “). The reference Java parser (CstBuilder.exitBlock
 // at lines 236-256, AstBuilder.convert(CstBlock) at lines 101-544) walks
 // the children of the block context, emitting either a HOSTBLOCK or a
 // Cst_BQTermToBlock per chunk. The latter lowers to a
@@ -3408,12 +3409,12 @@ func (p *parser) parsePatternArgList() ([]tomast.TomTerm, error) {
 // end)))` after the merge.
 //
 // We replay that two-pass behaviour with a sub-parser:
-//   1. Walk `content` byte by byte from `start`.
-//   2. On a `` ` ``, flush any accumulated water through the water pipeline
-//      (water-only chunks emit no hostblock → match4b/c/d/e/f/g body
-//      semantics), then delegate to `parseBQTerm` for the island. The
-//      returned BQTerm is wrapped in `BQTermToInstruction`.
-//   3. At EOF, flush remaining water.
+//  1. Walk `content` byte by byte from `start`.
+//  2. On a “ ` “, flush any accumulated water through the water pipeline
+//     (water-only chunks emit no hostblock → match4b/c/d/e/f/g body
+//     semantics), then delegate to `parseBQTerm` for the island. The
+//     returned BQTerm is wrapped in `BQTermToInstruction`.
+//  3. At EOF, flush remaining water.
 //
 // Other host-language islands (nested `%match`, `%strategy`, …) inside
 // the body are deliberately treated as opaque water for now — the byte

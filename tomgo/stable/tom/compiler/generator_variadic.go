@@ -30,59 +30,7 @@ import (
 // generateVariadic walks an Expression top-down and rewrites list-
 // shape constraints.
 func (env *compilerEnv) generateVariadic(e tomast.Expression) tomast.Expression {
-	switch x := e.(type) {
-	case *tomast.ConstraintToExpressionExpression:
-		if rewritten, ok := env.tryGenerateVariadic(x); ok {
-			return rewritten
-		}
-		return e
-	case *tomast.AndExpression:
-		l := env.generateVariadic(x.Arg1)
-		r := env.generateVariadic(x.Arg2)
-		if l != x.Arg1 || r != x.Arg2 {
-			return tomast.MakeAnd(l, r)
-		}
-		return e
-	case *tomast.OrConnectorExpression:
-		newSlots, changed := env.mapVariadic(x.Slots)
-		if changed {
-			return tomast.MakeOrConnector(newSlots...)
-		}
-		return e
-	case *tomast.OrExpressionDisjunctionExpression:
-		newSlots, changed := env.mapVariadic(x.Slots)
-		if changed {
-			return tomast.MakeOrExpressionDisjunction(newSlots...)
-		}
-		return e
-	case *tomast.NegationExpression:
-		inner := env.generateVariadic(x.Arg)
-		if inner != x.Arg {
-			return tomast.MakeNegation(inner)
-		}
-		return e
-	case *tomast.AntiMatchExpressionExpression:
-		inner := env.generateVariadic(x.Expression)
-		if inner != x.Expression {
-			return tomast.MakeAntiMatchExpression(inner)
-		}
-		return e
-	}
-	return e
-}
-
-// mapVariadic — slot mapper for generateVariadic.
-func (env *compilerEnv) mapVariadic(slots []tomast.Expression) ([]tomast.Expression, bool) {
-	newSlots := make([]tomast.Expression, len(slots))
-	changed := false
-	for i, s := range slots {
-		r := env.generateVariadic(s)
-		if r != s {
-			changed = true
-		}
-		newSlots[i] = r
-	}
-	return newSlots, changed
+	return walkExpressionConnectives(e, env.generateVariadic, env.tryGenerateVariadic)
 }
 
 // tryGenerateVariadic rewrites one ConstraintToExpression carrying

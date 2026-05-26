@@ -50,21 +50,18 @@ func (env *compilerEnv) renameSubjects(
 	subjectList *[]tomast.BQTerm,
 	renamedSubjects *[]tomast.TomTerm,
 ) tomast.Constraint {
+	recurse := func(item tomast.Constraint) tomast.Constraint {
+		return env.renameSubjects(item, subjectList, renamedSubjects)
+	}
 	switch x := c.(type) {
 	case *tomast.MatchConstraintConstraint:
 		return env.renameOneMatchConstraint(x, subjectList, renamedSubjects)
 	case *tomast.AndConstraintConstraint:
-		newSlots := make([]tomast.Constraint, len(x.Slots))
-		for i, item := range x.Slots {
-			newSlots[i] = env.renameSubjects(item, subjectList, renamedSubjects)
-		}
-		return tomast.MakeAndConstraint(newSlots...)
+		ns, _ := mapConstraintSlots(x.Slots, recurse)
+		return tomast.MakeAndConstraint(ns...)
 	case *tomast.OrConstraintConstraint:
-		newSlots := make([]tomast.Constraint, len(x.Slots))
-		for i, item := range x.Slots {
-			newSlots[i] = env.renameSubjects(item, subjectList, renamedSubjects)
-		}
-		return tomast.MakeOrConstraint(newSlots...)
+		ns, _ := mapConstraintSlots(x.Slots, recurse)
+		return tomast.MakeOrConstraint(ns...)
 	}
 	return c
 }

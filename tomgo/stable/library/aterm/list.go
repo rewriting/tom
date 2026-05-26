@@ -16,20 +16,20 @@ type ATermList struct {
 	factory *Factory
 }
 
-func (l *ATermList) Type() int             { return LIST }
-func (l *ATermList) Hash() uint32          { return l.hash }
-func (l *ATermList) Factory() *Factory     { return l.factory }
-func (l *ATermList) GetLength() int        { return l.length }
-func (l *ATermList) IsEmpty() bool         { return l.head == nil }
-func (l *ATermList) GetFirst() ATerm       { return l.head }
-func (l *ATermList) GetNext() *ATermList   { return l.tail }
-func (l *ATermList) IsEqual(o ATerm) bool  { return ATerm(l) == o }
-func (l *ATermList) GetAnnotations() *ATermList       { return l.factory.emptyList }
+func (l *ATermList) Type() int                         { return LIST }
+func (l *ATermList) Hash() uint32                      { return l.hash }
+func (l *ATermList) Factory() *Factory                 { return l.factory }
+func (l *ATermList) GetLength() int                    { return l.length }
+func (l *ATermList) IsEmpty() bool                     { return l.head == nil }
+func (l *ATermList) GetFirst() ATerm                   { return l.head }
+func (l *ATermList) GetNext() *ATermList               { return l.tail }
+func (l *ATermList) IsEqual(o ATerm) bool              { return ATerm(l) == o }
+func (l *ATermList) GetAnnotations() *ATermList        { return l.factory.emptyList }
 func (l *ATermList) SetAnnotations(_ *ATermList) ATerm { return l }
-func (l *ATermList) HasAnnotations() bool             { return false }
-func (l *ATermList) Match(pattern string) []any       { return matchPattern(l, pattern) }
-func (l *ATermList)MatchTerm(pat ATerm) []any        { return matchPatternTerm(l, pat) }
-func (l *ATermList) Make(args []any) ATerm            { return makePattern(l, args) }
+func (l *ATermList) HasAnnotations() bool              { return false }
+func (l *ATermList) Match(pattern string) []any        { return matchPattern(l, pattern) }
+func (l *ATermList) MatchTerm(pat ATerm) []any         { return matchPatternTerm(l, pat) }
+func (l *ATermList) Make(args []any) ATerm             { return makePattern(l, args) }
 
 func (l *ATermList) String() string {
 	var b strings.Builder

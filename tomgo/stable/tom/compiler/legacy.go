@@ -4,26 +4,26 @@
 //
 // The transformation has three jobs:
 //
-//   1. Match expansion. Every `Match(constraintInstructions, opts)`
-//      instruction becomes an `AbstractBlock` of independent rules.
-//      Each rule is a nested chain of `If(cond, success, Nop())`
-//      where the condition is a `Code` expression carrying the
-//      textual helper call (e.g. `tom_is_sort_term((( ATerm )t1))`,
-//      `tom_is_fun_sym_zero((( ATerm )t2))`).
+//  1. Match expansion. Every `Match(constraintInstructions, opts)`
+//     instruction becomes an `AbstractBlock` of independent rules.
+//     Each rule is a nested chain of `If(cond, success, Nop())`
+//     where the condition is a `Code` expression carrying the
+//     textual helper call (e.g. `tom_is_sort_term((( ATerm )t1))`,
+//     `tom_is_fun_sym_zero((( ATerm )t2))`).
 //
-//   2. Pattern-variable substitution. Each rule's pattern tree binds
-//      every `Variable` (and any aliased `AliasTo`) to the textual
-//      expression that produces its matched value (the cast subject
-//      at the leaf, a `tom_get_slot_…` chain inside slots). The
-//      rule's action body is walked, and every `BQVariable(name)`
-//      gets replaced by a `TL(<bound-expression>)` chunk —
-//      effectively inlining at compile time.
+//  2. Pattern-variable substitution. Each rule's pattern tree binds
+//     every `Variable` (and any aliased `AliasTo`) to the textual
+//     expression that produces its matched value (the cast subject
+//     at the leaf, a `tom_get_slot_…` chain inside slots). The
+//     rule's action body is walked, and every `BQVariable(name)`
+//     gets replaced by a `TL(<bound-expression>)` chunk —
+//     effectively inlining at compile time.
 //
-//   3. Backquoted-constructor materialisation. Each `BQAppl(op,
-//      args)` / `BuildTerm(op, args)` becomes the sequence
-//      `TL("tom_make_<op>(")` + (recursively materialised args
-//      separated by `TL(",")`) + `TL(")")`. After this pass,
-//      action bodies contain only `TL`/`CodeToInstruction` chunks.
+//  3. Backquoted-constructor materialisation. Each `BQAppl(op,
+//     args)` / `BuildTerm(op, args)` becomes the sequence
+//     `TL("tom_make_<op>(")` + (recursively materialised args
+//     separated by `TL(",")`) + `TL(")")`. After this pass,
+//     action bodies contain only `TL`/`CodeToInstruction` chunks.
 //
 // Side effects: the post-compile AST has NO `MatchInstruction`,
 // NO `BQTermToInstruction`, NO `RawActionInstruction`. The backend

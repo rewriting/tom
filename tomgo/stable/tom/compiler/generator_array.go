@@ -30,59 +30,7 @@ import (
 // generateArray walks an Expression top-down and rewrites array-shape
 // `ConstraintToExpression`s.
 func (env *compilerEnv) generateArray(e tomast.Expression) tomast.Expression {
-	switch x := e.(type) {
-	case *tomast.ConstraintToExpressionExpression:
-		if rewritten, ok := env.tryGenerateArray(x); ok {
-			return rewritten
-		}
-		return e
-	case *tomast.AndExpression:
-		l := env.generateArray(x.Arg1)
-		r := env.generateArray(x.Arg2)
-		if l != x.Arg1 || r != x.Arg2 {
-			return tomast.MakeAnd(l, r)
-		}
-		return e
-	case *tomast.OrConnectorExpression:
-		newSlots, changed := env.mapArray(x.Slots)
-		if changed {
-			return tomast.MakeOrConnector(newSlots...)
-		}
-		return e
-	case *tomast.OrExpressionDisjunctionExpression:
-		newSlots, changed := env.mapArray(x.Slots)
-		if changed {
-			return tomast.MakeOrExpressionDisjunction(newSlots...)
-		}
-		return e
-	case *tomast.NegationExpression:
-		inner := env.generateArray(x.Arg)
-		if inner != x.Arg {
-			return tomast.MakeNegation(inner)
-		}
-		return e
-	case *tomast.AntiMatchExpressionExpression:
-		inner := env.generateArray(x.Expression)
-		if inner != x.Expression {
-			return tomast.MakeAntiMatchExpression(inner)
-		}
-		return e
-	}
-	return e
-}
-
-// mapArray applies generateArray to every slot.
-func (env *compilerEnv) mapArray(slots []tomast.Expression) ([]tomast.Expression, bool) {
-	newSlots := make([]tomast.Expression, len(slots))
-	changed := false
-	for i, s := range slots {
-		r := env.generateArray(s)
-		if r != s {
-			changed = true
-		}
-		newSlots[i] = r
-	}
-	return newSlots, changed
+	return walkExpressionConnectives(e, env.generateArray, env.tryGenerateArray)
 }
 
 // tryGenerateArray rewrites one ConstraintToExpression carrying an

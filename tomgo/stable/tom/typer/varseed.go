@@ -34,10 +34,10 @@ import (
 // (backward-compatible for callers that don't track line info).
 //
 // Comments (`//…\n`, `/* … */`) and string/char literals are
-// skipped. Tom backquotes (`\``) are NOT treated as string
-// delimiters — they open an in-line backquote term that the
-// surrounding parser handles, and pairing them as quotes would
-// swallow subsequent variable declarations.
+// skipped. Tom backquotes (the bare backtick character) are NOT
+// treated as string delimiters — they open an in-line backquote
+// term that the surrounding parser handles, and pairing them as
+// quotes would swallow subsequent variable declarations.
 func seedVarTypesFromSource(n *newKernelTyper, src []byte, syms *tom.SymbolTable) {
 	if syms == nil || len(syms.Sorts) == 0 {
 		return

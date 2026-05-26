@@ -7,14 +7,14 @@
 // Nop())` chains plus inlined `TL` chunks). All this package does
 // is a mechanical tree walk:
 //
-//   TargetLanguageToCode(TL(text,...))   → text (verbatim)
-//   DeclarationToCode(TypeTermDecl)      → tom_is_sort / tom_equal helpers
-//   DeclarationToCode(SymbolDecl(name))  → tom_is_fun_sym / tom_make /
-//                                           tom_get_slot helpers (filtered
-//                                           through `usedSymbols`)
-//   InstructionToCode(If(Code, t, Nop))  → `if (<cond>) { <then> }`
-//   InstructionToCode(AbstractBlock([…]))→ `{ <items> }`
-//   InstructionToCode(Nop)               → ``
+//	TargetLanguageToCode(TL(text,...))   → text (verbatim)
+//	DeclarationToCode(TypeTermDecl)      → tom_is_sort / tom_equal helpers
+//	DeclarationToCode(SymbolDecl(name))  → tom_is_fun_sym / tom_make /
+//	                                        tom_get_slot helpers (filtered
+//	                                        through `usedSymbols`)
+//	InstructionToCode(If(Code, t, Nop))  → `if (<cond>) { <then> }`
+//	InstructionToCode(AbstractBlock([…]))→ `{ <items> }`
+//	InstructionToCode(Nop)               → ``
 //
 // Switching the backend to Go later is a matter of writing the
 // equivalents of `emitTypeTermHelpers`, `emitSymbolHelpers`, and

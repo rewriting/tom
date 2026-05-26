@@ -23,15 +23,15 @@ import (
 	"strings"
 
 	"tom/tomgo/stable/tom"
-	tomparseq "tom/tomgo/tests/tom/parser/equiv"
-	"tom/tomgo/tests/tom/parser/equiv/astcmp"
+	"tom/tomgo/stable/tom/desugarer"
+	"tom/tomgo/stable/tom/parser"
 	tomparser "tom/tomgo/stable/tom/parser/parser"
 	"tom/tomgo/stable/tom/starter"
-	"tom/tomgo/stable/tom/parser"
-	"tom/tomgo/stable/tom/transformer"
 	"tom/tomgo/stable/tom/syntaxchecker"
-	"tom/tomgo/stable/tom/desugarer"
+	"tom/tomgo/stable/tom/transformer"
 	"tom/tomgo/stable/tom/typer"
+	tomparseq "tom/tomgo/tests/tom/parser/equiv"
+	"tom/tomgo/tests/tom/parser/equiv/astcmp"
 )
 
 type row struct {

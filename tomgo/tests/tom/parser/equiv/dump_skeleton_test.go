@@ -62,27 +62,27 @@ func TestSkeletonAgainstJava(t *testing.T) {
 // Skipped without JDK / stable/dist/lib.
 func TestGoParserAgainstJava(t *testing.T) {
 	fixtures := []string{
-		"skeleton",         // Phase 4.D MVP
-		"op_noargs",        // Phase 4.E.1 — %op without slots
-		"op_slots",         // Phase 4.E.2 — %op with slots
-		"typeterm_extends", // Phase 4.E.3 — %typeterm X extends Y
-		"oplist_oparray",   // Phase 4.E.4 — %oplist / %oparray
-		"include_local",    // Phase 4.E.5 — %include
-		"water_multi",      // Phase 4.F.0 — water with several visibles between islands (validates ANTLR-fidèle tokeniser)
-		"match0b",          // Phase 4.F.1 — %match minimal (_ → { } with one subject)
-		"match0c_named",    // Phase 4.F.2 — %match with named pattern variable (x → { })
-		"match0d_appl",     // Phase 4.F.3 — %match with nullary pattern application (Foo() → { })
-		"match0e_appl_args", // Phase 4.F.4 — %match with pattern application + sub-patterns (Foo(x, Bar()) → { })
-		"match0f_multi",     // Phase 4.F.5 — multi-subject %match with N patterns (x, y → { } over %match(a, b))
-		"match0g_rules",     // Phase 4.F.6 — multiple rules in one %match (_ → {} x → {})
-		"match0h_body",      // Phase 4.F.7 — non-empty action body (_ → { doSomething(); })
-		"match0i_explicit",  // Phase 4.F.8 — explicit-subject constraint (Foo() << t → { })
-		"match0j_star",      // Phase 4.F.9 — variable-star patterns (x*, _* → { })
-		"match0k_annot",     // Phase 4.F.10 — annotated patterns (Foo(x@a) → { })
-		"match0l_anti",      // Phase 4.F.11 — anti-pattern (!Foo() → { })
-		"match0m_or",        // Phase 4.F.12 — OR-pattern ((Foo|Bar)() → { })
-		"match0n_bqappl",    // Phase 4.F.13 — backquote constant on << RHS (x << `Foo() → { })
-		"match0o_bqbody",    // Phase 4.F.14 — backquote variable in action body (x → { `x })
+		"skeleton",             // Phase 4.D MVP
+		"op_noargs",            // Phase 4.E.1 — %op without slots
+		"op_slots",             // Phase 4.E.2 — %op with slots
+		"typeterm_extends",     // Phase 4.E.3 — %typeterm X extends Y
+		"oplist_oparray",       // Phase 4.E.4 — %oplist / %oparray
+		"include_local",        // Phase 4.E.5 — %include
+		"water_multi",          // Phase 4.F.0 — water with several visibles between islands (validates ANTLR-fidèle tokeniser)
+		"match0b",              // Phase 4.F.1 — %match minimal (_ → { } with one subject)
+		"match0c_named",        // Phase 4.F.2 — %match with named pattern variable (x → { })
+		"match0d_appl",         // Phase 4.F.3 — %match with nullary pattern application (Foo() → { })
+		"match0e_appl_args",    // Phase 4.F.4 — %match with pattern application + sub-patterns (Foo(x, Bar()) → { })
+		"match0f_multi",        // Phase 4.F.5 — multi-subject %match with N patterns (x, y → { } over %match(a, b))
+		"match0g_rules",        // Phase 4.F.6 — multiple rules in one %match (_ → {} x → {})
+		"match0h_body",         // Phase 4.F.7 — non-empty action body (_ → { doSomething(); })
+		"match0i_explicit",     // Phase 4.F.8 — explicit-subject constraint (Foo() << t → { })
+		"match0j_star",         // Phase 4.F.9 — variable-star patterns (x*, _* → { })
+		"match0k_annot",        // Phase 4.F.10 — annotated patterns (Foo(x@a) → { })
+		"match0l_anti",         // Phase 4.F.11 — anti-pattern (!Foo() → { })
+		"match0m_or",           // Phase 4.F.12 — OR-pattern ((Foo|Bar)() → { })
+		"match0n_bqappl",       // Phase 4.F.13 — backquote constant on << RHS (x << `Foo() → { })
+		"match0o_bqbody",       // Phase 4.F.14 — backquote variable in action body (x → { `x })
 		"match0p_bqbody_water", // Phase 4.F.15 — backquote with surrounding host-code water ({ return `x; })
 		"match0q_bqappl_body",  // Phase 4.F.16 — backquote application in body ({ return `Foo(x); })
 		"match0r_bq_multi",     // Phase 4.F.17 — multiple backquotes in body ({ return `Foo(`a, `b); })

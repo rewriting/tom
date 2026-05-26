@@ -16,20 +16,20 @@ type ATermInt struct {
 	factory *Factory
 }
 
-func (t *ATermInt) Type() int           { return INT }
-func (t *ATermInt) Hash() uint32        { return t.hash }
-func (t *ATermInt) Factory() *Factory   { return t.factory }
-func (t *ATermInt) Value() int          { return int(t.value) }
-func (t *ATermInt) GetInt() int         { return int(t.value) }
-func (t *ATermInt) String() string      { return strconv.FormatInt(int64(t.value), 10) }
-func (t *ATermInt) IsEqual(o ATerm) bool { return ATerm(t) == o }
-func (t *ATermInt) GetAnnotations() *ATermList { return t.factory.emptyList }
+func (t *ATermInt) Type() int                         { return INT }
+func (t *ATermInt) Hash() uint32                      { return t.hash }
+func (t *ATermInt) Factory() *Factory                 { return t.factory }
+func (t *ATermInt) Value() int                        { return int(t.value) }
+func (t *ATermInt) GetInt() int                       { return int(t.value) }
+func (t *ATermInt) String() string                    { return strconv.FormatInt(int64(t.value), 10) }
+func (t *ATermInt) IsEqual(o ATerm) bool              { return ATerm(t) == o }
+func (t *ATermInt) GetAnnotations() *ATermList        { return t.factory.emptyList }
 func (t *ATermInt) SetAnnotations(_ *ATermList) ATerm { return t }
-func (t *ATermInt) HasAnnotations() bool { return false }
+func (t *ATermInt) HasAnnotations() bool              { return false }
 
 func (t *ATermInt) Match(pattern string) []any { return matchPattern(t, pattern) }
-func (t *ATermInt)MatchTerm(pat ATerm) []any        { return matchPatternTerm(t, pat) }
-func (t *ATermInt) Make(args []any) ATerm     { return makePattern(t, args) }
+func (t *ATermInt) MatchTerm(pat ATerm) []any  { return matchPatternTerm(t, pat) }
+func (t *ATermInt) Make(args []any) ATerm      { return makePattern(t, args) }
 
 func (t *ATermInt) Equivalent(other sharedobjects.Term) bool {
 	o, ok := other.(*ATermInt)
@@ -48,19 +48,19 @@ type ATermLong struct {
 	factory *Factory
 }
 
-func (t *ATermLong) Type() int            { return LONG }
-func (t *ATermLong) Hash() uint32         { return t.hash }
-func (t *ATermLong) Factory() *Factory    { return t.factory }
-func (t *ATermLong) GetLong() int64       { return t.value }
-func (t *ATermLong) Value() int64         { return t.value }
-func (t *ATermLong) String() string       { return strconv.FormatInt(t.value, 10) }
-func (t *ATermLong) IsEqual(o ATerm) bool { return ATerm(t) == o }
-func (t *ATermLong) GetAnnotations() *ATermList       { return t.factory.emptyList }
+func (t *ATermLong) Type() int                         { return LONG }
+func (t *ATermLong) Hash() uint32                      { return t.hash }
+func (t *ATermLong) Factory() *Factory                 { return t.factory }
+func (t *ATermLong) GetLong() int64                    { return t.value }
+func (t *ATermLong) Value() int64                      { return t.value }
+func (t *ATermLong) String() string                    { return strconv.FormatInt(t.value, 10) }
+func (t *ATermLong) IsEqual(o ATerm) bool              { return ATerm(t) == o }
+func (t *ATermLong) GetAnnotations() *ATermList        { return t.factory.emptyList }
 func (t *ATermLong) SetAnnotations(_ *ATermList) ATerm { return t }
-func (t *ATermLong) HasAnnotations() bool             { return false }
-func (t *ATermLong) Match(pattern string) []any       { return matchPattern(t, pattern) }
-func (t *ATermLong)MatchTerm(pat ATerm) []any        { return matchPatternTerm(t, pat) }
-func (t *ATermLong) Make(args []any) ATerm            { return makePattern(t, args) }
+func (t *ATermLong) HasAnnotations() bool              { return false }
+func (t *ATermLong) Match(pattern string) []any        { return matchPattern(t, pattern) }
+func (t *ATermLong) MatchTerm(pat ATerm) []any         { return matchPatternTerm(t, pat) }
+func (t *ATermLong) Make(args []any) ATerm             { return makePattern(t, args) }
 
 func (t *ATermLong) Equivalent(other sharedobjects.Term) bool {
 	o, ok := other.(*ATermLong)
@@ -79,19 +79,19 @@ type ATermReal struct {
 	factory *Factory
 }
 
-func (t *ATermReal) Type() int           { return REAL }
-func (t *ATermReal) Hash() uint32        { return t.hash }
-func (t *ATermReal) Factory() *Factory   { return t.factory }
-func (t *ATermReal) GetReal() float64    { return t.value }
-func (t *ATermReal) Value() float64      { return t.value }
-func (t *ATermReal) String() string      { return strconv.FormatFloat(t.value, 'g', -1, 64) }
-func (t *ATermReal) IsEqual(o ATerm) bool { return ATerm(t) == o }
-func (t *ATermReal) GetAnnotations() *ATermList       { return t.factory.emptyList }
+func (t *ATermReal) Type() int                         { return REAL }
+func (t *ATermReal) Hash() uint32                      { return t.hash }
+func (t *ATermReal) Factory() *Factory                 { return t.factory }
+func (t *ATermReal) GetReal() float64                  { return t.value }
+func (t *ATermReal) Value() float64                    { return t.value }
+func (t *ATermReal) String() string                    { return strconv.FormatFloat(t.value, 'g', -1, 64) }
+func (t *ATermReal) IsEqual(o ATerm) bool              { return ATerm(t) == o }
+func (t *ATermReal) GetAnnotations() *ATermList        { return t.factory.emptyList }
 func (t *ATermReal) SetAnnotations(_ *ATermList) ATerm { return t }
-func (t *ATermReal) HasAnnotations() bool             { return false }
-func (t *ATermReal) Match(pattern string) []any       { return matchPattern(t, pattern) }
-func (t *ATermReal)MatchTerm(pat ATerm) []any        { return matchPatternTerm(t, pat) }
-func (t *ATermReal) Make(args []any) ATerm            { return makePattern(t, args) }
+func (t *ATermReal) HasAnnotations() bool              { return false }
+func (t *ATermReal) Match(pattern string) []any        { return matchPattern(t, pattern) }
+func (t *ATermReal) MatchTerm(pat ATerm) []any         { return matchPatternTerm(t, pat) }
+func (t *ATermReal) Make(args []any) ATerm             { return makePattern(t, args) }
 
 func (t *ATermReal) Equivalent(other sharedobjects.Term) bool {
 	o, ok := other.(*ATermReal)

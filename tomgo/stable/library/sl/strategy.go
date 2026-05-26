@@ -35,8 +35,8 @@ type abstractCombinator struct {
 	args []Strategy
 }
 
-func (a *abstractCombinator) ChildCount() int           { return len(a.args) }
-func (a *abstractCombinator) ChildAt(i int) Strategy    { return a.args[i] }
+func (a *abstractCombinator) ChildCount() int              { return len(a.args) }
+func (a *abstractCombinator) ChildAt(i int) Strategy       { return a.args[i] }
 func (a *abstractCombinator) SetChildAt(i int, s Strategy) { a.args[i] = s }
 
 // initSubterm initialises the argument slots of an embedded

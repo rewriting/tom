@@ -48,10 +48,10 @@ func (k tokKind) String() string {
 }
 
 type token struct {
-	kind  tokKind
-	text  string // populated for tokID
-	line  int    // 1-based
-	col   int    // 1-based, of the first rune of the token
+	kind tokKind
+	text string // populated for tokID
+	line int    // 1-based
+	col  int    // 1-based, of the first rune of the token
 }
 
 type lexer struct {

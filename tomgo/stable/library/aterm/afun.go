@@ -17,8 +17,8 @@ type AFun struct {
 	factory *Factory
 }
 
-func (f *AFun) Name() string  { return f.name }
-func (f *AFun) Arity() int    { return f.arity }
+func (f *AFun) Name() string   { return f.name }
+func (f *AFun) Arity() int     { return f.arity }
 func (f *AFun) IsQuoted() bool { return f.quoted }
 
 func (f *AFun) Type() int    { return AFUN }

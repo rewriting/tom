@@ -30,6 +30,7 @@ import (
 //     Filename and Source are preserved for downstream plugins that
 //     may want to look back at the input (e.g. for error messages
 //     locating into the raw bytes).
+//
 // signature data gathered from `%typeterm` / `%op` declarations gets
 // merged into State.Symbols — the downstream plugins (Desugarer,
 // Typer, …) read those entries to resolve slot names, codomain

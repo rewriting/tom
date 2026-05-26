@@ -8,9 +8,9 @@ import (
 // either Zero() or Suc(arg). Two distinct goroutines must agree on the
 // canonical instance for any structurally equal value.
 type peano struct {
-	symbol string  // "zero" or "suc"
-	arg    *peano  // nil when symbol == "zero"
-	hash   uint32  // memoized
+	symbol string // "zero" or "suc"
+	arg    *peano // nil when symbol == "zero"
+	hash   uint32 // memoized
 }
 
 func newZero() *peano {
