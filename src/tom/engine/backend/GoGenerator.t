@@ -660,10 +660,19 @@ matchBlock: {
     TomTypeList tomTypes = TomBase.getSymbolDomain(tomSymbol);
     ArrayList<String> names = new ArrayList<String>();
     ArrayList<String> types = new ArrayList<String>();
+    // names of the parameters of sort Strategy (as JavaGenerator.buildClass)
+    ArrayList<String> stratParams = new ArrayList<String>();
     int index = 0;
     while(!tomTypes.isEmptyconcTomType()) {
-      types.add(goType(tomTypes.getHeadconcTomType()));
-      names.add(TomBase.getSlotName(tomSymbol, index).getString());
+      TomType type = tomTypes.getHeadconcTomType();
+      types.add(goType(type));
+      String name = TomBase.getSlotName(tomSymbol, index).getString();
+      names.add(name);
+      %match(type) {
+        Type[TomType="Strategy"] -> {
+          stratParams.add(name);
+        }
+      }
       tomTypes = tomTypes.getTailconcTomType();
       index++;
     }
@@ -691,12 +700,6 @@ matchBlock: {
     // as the Java backend: the children of the strategy are its default
     // strategy (child 0, from AbstractStrategyBasic) followed by its
     // Strategy-typed parameters
-    ArrayList<String> stratParams = new ArrayList<String>();
-    for(int i = 0 ; i < names.size() ; i++) {
-      if(types.get(i).trim().equals("sl.Strategy")) {
-        stratParams.add(names.get(i));
-      }
-    }
     if(!stratParams.isEmpty()) {
       StringBuilder c = new StringBuilder();
       c.append("func (" + RECEIVER + " *" + tomName + ") ChildCount() int { return " + (1 + stratParams.size()) + " }; ");

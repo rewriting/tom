@@ -8,6 +8,13 @@ import "reflect"
 // (which == would panic on) is the same as another one of the same type
 // when they share their data pointer (and, for a slice, its length):
 // the closest Go counterpart of the identity of a Java object.
+//
+// Caveat: a slice has no identity of its own, so two distinct empty
+// slices may be "the same": all nil slices of a type have data pointer
+// 0, and Go may give every zero-length allocation the same address. A
+// rewrite that replaces an empty list by another empty list of the same
+// type can thus be seen as no change (where Java would see two objects);
+// for an empty list this is harmless.
 func same(a, b any) bool {
 	if a == nil || b == nil {
 		return a == nil && b == nil

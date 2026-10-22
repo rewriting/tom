@@ -136,3 +136,22 @@ func TestWriteGomBlockUserMakeHook(t *testing.T) {
 		}
 	}
 }
+
+// A hook the Go backend cannot lower is an explicit error naming the
+// hook and the module, not silently dropped.
+func TestWriteGomBlockUnsupportedHook(t *testing.T) {
+	dir := t.TempDir()
+	src := filepath.Join(dir, "in.gom")
+	body := "module M\nabstract syntax\nT = a() | l(T*)\nl:make_insert(e,l) {\n  return `l(e,l*);\n}\n"
+	if err := os.WriteFile(src, []byte(body), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	mod, err := gomparser.ParseFile(src)
+	if err != nil {
+		t.Fatal(err)
+	}
+	_, err = writeGomBlock(mod, "fixture", filepath.Join(dir, "out"), backend.Options{})
+	if err == nil || !strings.Contains(err.Error(), "l:make_insert") || !strings.Contains(err.Error(), "module M") {
+		t.Fatalf("err = %v, want an error naming l:make_insert and module M", err)
+	}
+}

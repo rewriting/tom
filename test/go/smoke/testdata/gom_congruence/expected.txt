@@ -5,6 +5,9 @@ Is_f f(a(),a()) f(a(),a())
 Is_f/other fails true
 When_f f(b(),b()) f(b(),b())
 _l l(b(),b(),b()) l(b(),b(),b())
+_l/1 l(b()) l(b())
+_l/0 l() l()
+_l/fail fails true
 ITE fails true
 ITE/else c() c()
 Not b() b()

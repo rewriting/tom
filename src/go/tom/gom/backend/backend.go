@@ -441,6 +441,38 @@ func EmitTomMappingGo(mod gomast.GomModule, opts Options) []byte {
 	return buf.Bytes()
 }
 
+// CheckHooks reports, as an error naming the hook and the module, a hook
+// the Go backend cannot lower: instead of silently dropping it (and
+// generating terms that do not behave as Java Gom's), gomgo refuses the
+// module. The modules of the compiler's own ADT are lowered by the
+// knownHookTable and are not checked; elsewhere, the supported hooks are
+// the user `op:make(args) { … }` hooks of non-variadic operators.
+func CheckHooks(mod gomast.GomModule) error {
+	modName := moduleQualifiedName(mod)
+	for i := range knownHookTable {
+		if knownHookTable[i].module == modName {
+			return nil
+		}
+	}
+	alts := map[string]*gomast.AlternativeAlternative{}
+	for _, prod := range moduleSorts(mod) {
+		for _, alt := range sortAlternatives(prod) {
+			alts[alt.Name] = alt
+		}
+	}
+	for _, h := range moduleHooks(mod) {
+		if recognisedKnownHook(h) != nil {
+			continue
+		}
+		if alt, ok := alts[h.Name]; ok && userMakeHook(mod, alt) == h {
+			continue
+		}
+		return fmt.Errorf("gomgo: hook %s %s:%s of module %s is not supported by the Go backend (supported: op:make on a non-variadic operator)",
+			hookScopeName(h), h.Name, hookKindName(h), modName)
+	}
+	return nil
+}
+
 // userMakeHook returns the user-written `op:make(args) { … }` hook of a
 // non-variadic alternative, or nil. Hooks of the knownHookTable (the
 // lowered hooks of the compiler's own ADT) are not user hooks.
@@ -526,9 +558,12 @@ func emitUserMakeHooksGo(buf *bytes.Buffer, mod gomast.GomModule) {
 //
 // A variadic alternative is a flat list in Go (no Cons/Empty
 // operators): its `_<op>(sub)` builds Visit<Op>, which applies sub to
-// every element, where Java builds `Choice(When_Cons<op>(All(sub)),
-// When_Empty<op>(Identity()))` on the cons cells; there is no
-// Make_Cons<op>/Make_Empty<op> either.
+// every element. This is what Java's `Choice(When_Cons<op>(All(sub)),
+// When_Empty<op>(Identity()))` does too: the children of a Java Gom
+// Cons<op> term are all the elements of the list (its getChildren is
+// the flattened list), not its head and tail (checked with legacy/,
+// smoke fixture gom_congruence). There is no Make_Cons<op>/
+// Make_Empty<op>.
 func emitCongruenceMappingGo(buf *bytes.Buffer, mod gomast.GomModule) {
 	types := map[string]bool{}
 	for _, prod := range moduleSorts(mod) {
@@ -816,6 +851,9 @@ func defaultPackageName(mod gomast.GomModule) string {
 }
 
 func generateBytes(mod gomast.GomModule, opts Options) ([]byte, error) {
+	if err := CheckHooks(mod); err != nil {
+		return nil, err
+	}
 	if opts.PackageName == "" {
 		opts.PackageName = defaultPackageName(mod)
 	}

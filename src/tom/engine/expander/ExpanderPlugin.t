@@ -137,7 +137,12 @@ public class ExpanderPlugin extends TomGenericPlugin {
     return "(" + symbolTable.builtinToWrapper(type.getTomType()) + ")" + child;
   }
 
-  /** a call to another method of the generated LocalIntrospector */
+  /**
+   * a call to another method of the generated LocalIntrospector; in Go
+   * it goes through the receiver that GoGenerator.buildMethod names
+   * GoGenerator.RECEIVER (the expander already depends on that constant
+   * for callPrefix, the calls to the generated visit methods)
+   */
   private static String selfCall(String name) {
     return generateGoCode ? tom.engine.backend.GoGenerator.RECEIVER + "." + introspectorMethod(name) : name;
   }

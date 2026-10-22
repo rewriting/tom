@@ -49,7 +49,14 @@ func main() {
   show("Is_f", `Is_f(), `f(a(), a()))
   show("Is_f/other", `Is_f(), `a())
   show("When_f", `When_f(All(Try(AB()))), `f(a(), b()))
+  // Java Gom's Consl term has every list element as a child (getChildren
+  // is the flattened list), so Java's _l(sub) = Choice(When_Consl(All(sub)),
+  // When_Emptyl(Identity())) applies sub to each element; the outputs
+  // below were measured with legacy/ on the same Tom+Java program
   show("_l", `_l(Try(AB())), `l(a(), b(), a()))
+  show("_l/1", `_l(Try(AB())), `l(a()))
+  show("_l/0", `_l(AB()), `l())
+  show("_l/fail", `_l(AB()), `l(a(), b()))
   show("ITE", `IfThenElse(AB(), BC(), Identity()), `a())
   show("ITE/else", `IfThenElse(AB(), Identity(), BC()), `b())
   show("Not", `Not(AB()), `b())
