@@ -8,7 +8,7 @@ work and as the reference oracle for the Go extension developed at the
 repository root.
 
 The repository root contains the AI-assisted extension of this compiler
-(Go target, see `../tomgo/`).
+(Go target, see `../doc/go/README.md`).
 
 ## Requirements
 
