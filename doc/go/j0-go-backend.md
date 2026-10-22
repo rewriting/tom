@@ -57,6 +57,18 @@ antérieur au projet ; les 19 autres sont du projet :
   différence, aucune exception dans la liste `npAllowed`). Les entrées
   qui échouent (dont les 25 qui plantent en `-np` sur `Cst_IncludeFile`)
   échouent pareil dans les deux compilateurs.
+  *Mise à jour 2026-10-23 (J2, Task 1) :* les plantages `Cst_IncludeFile`
+  ne venaient pas du parser `-np` : 21 entrées de `test/gom` et `test/sl`
+  incluent un mapping que `test/build.xml` fait d'abord générer par Gom
+  (`testsl/testsl.tom`, etc.) ; sans ce mapping, les deux compilateurs
+  imprimaient `TomIncludeException` puis `convert: strange term:
+  Cst_IncludeFile` à l'identique, et T0 passait à vide. T0 lance
+  désormais le Gom de chaque distribution comme `build.xml` et passe `-I`
+  vers les mappings générés : ces 21 entrées produisent du Java,
+  identique à `legacy/` dans les deux modes (102 entrées avec sortie en
+  mode par défaut, 103 en `-np`, planchers relevés à ces valeurs), et le
+  test exige que chaque entrée de `test/gom` et `test/sl` produise du
+  Java dans les deux distributions.
 - **T1/T2** (`mage portGo`) : 103 cas (`test/**/*.t` hors `error/`) ;
   **13 OK**, 0 divergence, 0 échec go test / go build / tom, 0 oracle
   invalide, 90 non portés. Cas OK : `Array.t`, `Peano.t`,

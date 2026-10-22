@@ -49,11 +49,18 @@ func inputs(t *testing.T, root string) []string {
 // 2026-10-23 with the Gom mappings generated as in test/build.xml: 102
 // inputs (default) and 103 (-np), up from 81 and 82 before, when the 21
 // inputs of test/gom and test/sl including a generated mapping crashed
-// identically in both compilers; the floors sit just below.
+// identically in both compilers. The floors are the measured counts.
 const (
-	minDefault = 100
-	minNP      = 100
+	minDefault = 102
+	minNP      = 103
 )
+
+// mustProduce lists the test/ subdirectories (slash-terminated, relative
+// to the repository root) whose every input must compile and produce
+// Java in both dists: they are the ones that include Gom-generated
+// mappings, and a regression in the Gom step must not silently turn them
+// back into two identical crashes.
+var mustProduce = []string{"test/gom/", "test/sl/"}
 
 // The inputs are compiled the way test/build.xml compiles them (targets
 // build and build.nt), so that those including Gom-generated mappings are
@@ -208,6 +215,11 @@ func compareWithLegacy(t *testing.T, allowed map[string]string, floor int, args 
 			}
 			n := compareTrees(t, outL, outN)
 			filesCompared += n
+			for _, dir := range mustProduce {
+				if strings.HasPrefix(filepath.ToSlash(rel), dir) && (errL != nil || errN != nil || n == 0) {
+					t.Errorf("%s must produce Java in both dists (legacy err %v, new err %v, %d files)\nlegacy:\n%s\nnew:\n%s", rel, errL, errN, n, logL, logN)
+				}
+			}
 			if errL == nil && n > 0 {
 				succeeded++
 			}
