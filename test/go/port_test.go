@@ -58,6 +58,13 @@ type portCase struct {
 	// original compiles with the case (copied next to the generated Java
 	// for the oracle); the Go port holds their translation.
 	JavaSupport []string
+	// OracleDeps lists other originals (.t, relative to test/) that
+	// legacy/ compiles with the case for the oracle only: the original's
+	// host code names their classes (e.g. a main launching JUnit on
+	// another test class), which test/build.xml finds because it compiles
+	// the whole directory. The port drops that reference (no main), so the
+	// Go side does not compile them.
+	OracleDeps []string
 	// Suite: the original is a JUnit Suite (@SuiteClasses) of the
 	// JavaSupport classes. Its tests are their @Test methods, named
 	// "Class.method" (two classes may declare the same method); the Go
@@ -89,6 +96,9 @@ type gomFile struct {
 	// Go in the copy; the rest of the copy (the signature, the hooks'
 	// names, kinds and arguments) must still equal the original.
 	PortedHooks bool
+	// OracleOnly: compiled for the oracle only (by legacy/'s Gom), because
+	// only OracleDeps include its mapping; the Go side skips it.
+	OracleOnly bool
 }
 
 // testslGom is test/sl/testsl.gom, compiled by test/build.xml with
@@ -201,6 +211,12 @@ var cases = []portCase{
 	{Rel: "antipatterns/TestDoubleList.t", GoTest: true},
 	{Rel: "andor/TestAndOr.t", GoTest: true},
 	{Rel: "andor/TestAndOrConstraintOnly.t", GoTest: true},
+	// The mains of the backquote tests launch JUnit on TestDefaultValue.
+	{Rel: "backquote/TestBackquoteGom.t", GoTest: true, OracleDeps: []string{"backquote/TestDefaultValue.t"},
+		Gom: []gomFile{{Rel: "backquote/term.gom", OracleOnly: true}}},
+	{Rel: "backquote/TestDefaultValue.t", GoTest: true, Gom: []gomFile{{Rel: "backquote/term.gom"}}},
+	{Rel: "backquote/TestBackquoteWithBracket.t", GoTest: true, OracleDeps: []string{"backquote/TestDefaultValue.t"},
+		Gom: []gomFile{{Rel: "backquote/term.gom"}}},
 }
 
 // termgraphUnsupported is why the tests of gom/TestTermgraph.t are not
@@ -248,6 +264,9 @@ func generateGo(t *testing.T, c portCase, dir string) (map[string]string, string
 		args = append(args, "-I", dir)
 	}
 	for _, g := range c.Gom {
+		if g.OracleOnly {
+			continue
+		}
 		src, err := filepath.Abs(g.Rel)
 		if err != nil {
 			t.Fatal(err)
@@ -567,7 +586,7 @@ func legacyOracle(t *testing.T, c portCase) oracle {
 			t.Fatal(err)
 		}
 	}
-	for _, rel := range append(append([]string(nil), c.Support...), c.Rel) {
+	for _, rel := range append(append(append([]string(nil), c.Support...), c.OracleDeps...), c.Rel) {
 		if out, err := legacy.Compile(t, filepath.Join(root, "test", rel), dir, append(append([]string(nil), targs...), c.TomArgs[rel]...)...); err != nil {
 			t.Fatalf("legacy tom failed on %s: %v\n%s", rel, err, out)
 		}
@@ -723,7 +742,7 @@ func sourceSHA256(paths ...string) (string, error) {
 // oracle of c: test/<Rel>, then its support files and .gom files.
 func sourcesOf(root string, c portCase) []string {
 	paths := []string{filepath.Join(root, "test", c.Rel)}
-	for _, rel := range append(append([]string(nil), c.Support...), c.JavaSupport...) {
+	for _, rel := range append(append(append([]string(nil), c.Support...), c.JavaSupport...), c.OracleDeps...) {
 		paths = append(paths, filepath.Join(root, "test", rel))
 	}
 	for _, g := range c.Gom {
@@ -1160,10 +1179,20 @@ func TestCasesCoverPorts(t *testing.T) {
 			t.Errorf("oracle %s belongs to no case", f)
 		}
 	}
+	isCase := map[string]bool{}
+	for _, c := range cases {
+		isCase[c.Rel] = true
+	}
 	for _, c := range cases {
 		for _, rel := range append([]string{c.Rel}, c.Support...) {
 			if _, err := os.Stat(rel); err != nil {
 				t.Errorf("case %s has no port %s: %v", c.Rel, rel, err)
+			}
+		}
+		// an oracle-only dependency is an original with its own case
+		for _, rel := range c.OracleDeps {
+			if !isCase[rel] {
+				t.Errorf("case %s: OracleDeps %s is not a case", c.Rel, rel)
 			}
 		}
 	}
