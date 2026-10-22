@@ -1,6 +1,6 @@
 /*
  * Tom Go mapping — integer primitive.
- * Mirrors mapping/java/int.tom but uses Go's native `int`.
+ * Mirrors mapping/java/int.tom but uses `int64`, the Tom int type of the Go target.
  */
 %typeterm int {
   implement { int64 }

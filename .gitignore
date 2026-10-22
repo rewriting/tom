@@ -33,3 +33,8 @@ legacy/src/gen/
 legacy/stable/dist/
 legacy/stable/build/
 legacy/stable/gen/
+
+# tomgo build outputs
+tomgo/tomgo
+tomgo/gom
+tomgo/tom

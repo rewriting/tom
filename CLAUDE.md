@@ -732,8 +732,16 @@ régénérer l'oracle (`-update-oracle`) demande aussi le JDK 8 et `legacy/`.
 # Construire la version humaine (oracle) et la version étendue
 (cd legacy && unset TOM_HOME && ./build.sh stable && ./build.sh src.dist)
 unset TOM_HOME && ./build.sh src.dist
-# Compiler un .t vers Go (-go implique -np ; -gi est refusé)
+# Compiler un .t vers Go (-go implique l'analyseur island -np ; -gi est refusé)
 TOM_HOME=$PWD/src/dist src/dist/bin/tom -go -np -d out X.t
+# Les blocs %gom exigent un binaire tomgo : $TOMGO_BIN, sinon `tomgo` dans le PATH
+(cd tomgo && go build -o /tmp/tomgo ./cmd/tomgo)
+TOMGO_BIN=/tmp/tomgo TOM_HOME=$PWD/src/dist src/dist/bin/tom -go -d out X.t
+# Le Go généré qui importe tom/tomgo/... a besoin d'un go.mod dans out/ :
+#   module <nom>  /  go 1.22
+#   require tom/tomgo v0.0.0
+#   replace tom/tomgo => <repo>/tomgo
+# (c'est ce qu'écrit SetupGoModule dans tomgo/tests/tomjava)
 # Le compilateur bootstrappé accepte aussi -go
 TOM_HOME=$PWD/stable/dist stable/dist/bin/tom -go -d out X.t
 # Harnais (depuis tomgo/ ; les commandes suivantes s'y lancent aussi)

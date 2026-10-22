@@ -1,5 +1,9 @@
 # Go target — Tom standard mappings
 
+> **Superseded** by `src/tom/library/mapping/go/`, used by the Tom Java
+> `-go` target. These copies are kept only for the frozen hand-written
+> Go compiler.
+
 This directory mirrors `mapping/java/` but with Go-syntax hook
 bodies. Each `.tom` file declares the `%typeterm` and `%op`
 operators that let Tom programs talk about primitive/library

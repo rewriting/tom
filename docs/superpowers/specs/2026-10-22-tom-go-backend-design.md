@@ -240,3 +240,14 @@ cache permet d'exécuter le côté Go seul.
 - Backends C/Caml/Ada/Python (inchangés, non testés au-delà de T0).
 - Portage exhaustif d'`examples/` : seuls les exemples nécessaires à T3.
 - Détail du bootstrap J4 (spec séparé).
+
+## 7. Écarts décidés en cours de route
+
+- **Critère J1** : remplacé, sur décision de l'utilisateur, des 11
+  fixtures tomgo par des portages fidèles des tests de `test/`.
+- **T3** (couverture des constructions) : non bloquant, décision de
+  l'utilisateur.
+- **Stratégies à base d'environnement** : ajoutées en cours de route
+  (Task 8b) : `GetEnvironment()` et `Visit`/`VisitLight` alignés sur Java.
+- **`ChoiceId`/`OneId`** : `VisitLight` de la `sl` Go alignée sur Java
+  (l'échec du FIRST se propage), commit 19236dce8.

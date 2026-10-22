@@ -68,8 +68,25 @@ antérieur au projet ; les 19 autres sont du projet :
   l'original), contraintes `<<`/`&&`/`||`, règles étiquetées. Les
   comptes sont textuels (bornes hautes), pas une preuve d'exercice
   sémantique.
-- **Régression** : `go test -count=1 ./tests/gosmoke/` vert (programme
-  `smoke.t` + refus de `-go -gi`).
+- **Régression** : `go test -count=1 ./tests/gosmoke/` vert (8 fixtures
+  + test d'options) :
+  - `array_size` : `get_size` d'un `%oparray` renvoie un `int64` (le
+    `len($l)` Go, de type `int`, est converti ; un `;` final est toléré) ;
+  - `bottom_struct` : le « bottom » d'un sort struct (variables fraîches
+    d'un OR-pattern `(wa|wb)(...)`) est la valeur zéro, pas `nil` ;
+  - `bq_then_match` : un backquote en fin de ligne suivi d'un `%match` ;
+    le backend sépare lui-même les deux instructions Go ;
+  - `make_braces` : corps de hooks contenant des accolades (littéraux
+    composites) : `$var` substitué, `make_empty() { []*N{} }` reconnu ;
+  - `oplist_same_sort` : `%oplist` dont l'élément a le même sort que la liste ;
+  - `smoke` : programme Tom+Go de bout en bout (`%include`, `%match`
+    sur entiers, backquote) ;
+  - `strategy_env` : stratégies à base d'environnement
+    (`GetEnvironment()`, exécution d'une stratégie à sa propre position,
+    accord de `Visit`/`VisitLight`) ;
+  - `strategy_param` : paramètre de `%strategy` utilisé dans une
+    partie droite, un backquote et un sujet de `%match` ;
+  - test d'options (`options_test.go`) : `-go -gi` est refusé.
 
 ## 4. Promotion dans `stable/` (Task 10)
 
@@ -116,9 +133,9 @@ go test -count=1 ./...    # 22 paquets ok, 0 échec
   affectée, avec repli sur `any`.
 - Le Go généré tient sur une ligne logique par construction (lire avec
   `gofmt`) ; les numéros de ligne du `.go` dérivent de ceux du `.t`.
-- `ChoiceId.VisitLight` dans la `sl` Go passe au THEN quand FIRST
-  échoue, alors que Java propage l'échec (antérieur au projet, non
-  corrigé).
+- `ChoiceId.VisitLight`/`OneId.VisitLight` : la divergence avec Java
+  (échec du FIRST traité comme succès) a été corrigée dans le commit
+  19236dce8 ; les combinateurs `sl` sont alignés sur Java.
 - Mappings Go seulement pour `boolean`, `int`, `long`, `string`, plus
   `sl`, `Strategy`, `Position` (pas de `char`/`double`/`float`, pas de
   Collection/List/Map).
