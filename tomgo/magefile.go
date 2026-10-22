@@ -268,3 +268,8 @@ func PortGo() error {
 	}
 	return sh.RunV("go", "test", "-count=1", "./tests/port/", "-args", "-write-dashboard")
 }
+
+// Coverage runs T3 and rewrites reports/coverage.md.
+func Coverage() error {
+	return sh.RunV("go", "test", "-count=1", "-v", "./tests/coverage/...", "-args", "-write-coverage")
+}
