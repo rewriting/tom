@@ -5,7 +5,7 @@
 // Run from the repository root:
 //
 //	mage -d magefiles -w . -l        # list targets
-//	mage -d magefiles -w . all       # vet + unit tests + self-bootstrap
+//	mage -d magefiles -w . all       # vet + unit tests + self-bootstrap + smoke
 //
 // The validated Go tree is module tom (src/go/tom); the Tom+Go tests are
 // module tomtest (test/go). The frozen prototype (prototype/tomgo) keeps
@@ -132,5 +132,11 @@ func Coverage() error {
 	return runIn(testGoDir, "go", "test", "-count=1", "-v", "./coverage/...", "-args", "-write-coverage")
 }
 
-// All runs vet, the unit tests and the self-bootstrap check.
-func All() { mg.SerialDeps(Vet, Test, SelfBootstrap) }
+// Smoke runs the smoke tests of module tomtest (needs src/dist built; the
+// harness builds gomgo itself).
+func Smoke() error {
+	return runIn(testGoDir, "go", "test", "-count=1", "./smoke/")
+}
+
+// All runs vet, the unit tests, the self-bootstrap check and the smoke tests.
+func All() { mg.SerialDeps(Vet, Test, SelfBootstrap, Smoke) }

@@ -11,14 +11,14 @@ import (
 	gomparser "tom/gom/parser"
 )
 
-// TestEngineADTCompiles generates the Tom engine ADT (src/tom/engine/adt/*.gom,
+// TestEngineADT generates the Tom engine ADT (src/tom/engine/adt/*.gom,
 // with its hooks) into a temporary module, builds it, then runs the hook
 // behaviour tests of testdata/tomast_hooks_test.go inside it. It replaces the
 // prototype's committed-tomast tests: the validated tree does not ship tomast,
 // but the backend must keep handling the engine ADT (and lowering its 9 hooks:
 // AU with unit absorption, rewrite rules, Cast guard, NameNumber simplify,
 // concInstruction/concTomNumber splices) for the future Tom+Go compiler.
-func TestEngineADTCompiles(t *testing.T) {
+func TestEngineADT(t *testing.T) {
 	if _, err := exec.LookPath("go"); err != nil {
 		t.Skip("go not in PATH")
 	}

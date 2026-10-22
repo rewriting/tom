@@ -11,7 +11,7 @@ import (
 // pins down their observable effects so any drift in the backend
 // (or in the underlying .gom sources) is caught immediately.
 //
-// This file is test data: TestEngineADTHooks (engine_adt_test.go)
+// This file is test data: TestEngineADT (engine_adt_test.go)
 // generates the engine ADT into a temporary module `tomgen/tomast`,
 // copies this file next to it as hooks_test.go and runs `go test` there.
 

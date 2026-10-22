@@ -48,6 +48,9 @@ func (a *AbstractStrategyBasic) VisitLight(subject any, intro Introspector) (any
 	return a.args[0].VisitLight(subject, intro)
 }
 
+// embedderMsg is the panic message of the bare helper's environment-based methods.
+const embedderMsg = "sl: embedding strategy must define VisitEnv/Visit/VisitWith: Go has no virtual dispatch"
+
 // VisitEnv, Visit and VisitWith of the bare helper panic: Go has no
 // virtual dispatch, so the helper cannot call the VisitLight of the
 // strategy embedding it. An embedding strategy that is visited through
@@ -56,8 +59,6 @@ func (a *AbstractStrategyBasic) VisitLight(subject any, intro Introspector) (any
 //	func (r *R) VisitEnv(i Introspector) int { return VisitBasic(r, i) }
 //	func (r *R) Visit(s any, i Introspector) (any, error) { return VisitStrategy(r, s, i) }
 //	func (r *R) VisitWith(e *Environment, i Introspector) (any, error) { return VisitStrategyWith(r, e, i) }
-const embedderMsg = "sl: embedding strategy must define VisitEnv/Visit/VisitWith: Go has no virtual dispatch"
-
 func (a *AbstractStrategyBasic) VisitEnv(Introspector) int { panic(embedderMsg) }
 
 func (a *AbstractStrategyBasic) Visit(any, Introspector) (any, error) { panic(embedderMsg) }

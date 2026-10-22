@@ -221,3 +221,17 @@ func TestVisitBasic_FatalErrorPanics(t *testing.T) {
 	}()
 	s.Visit(leaf("a"), VisitableIntrospector{})
 }
+
+// Java OneId.visit(Introspector) returns SUCCESS unconditionally, even
+// when the inner strategy fails on every child; the term is unchanged.
+func TestVisitEnv_OneIdLenient(t *testing.T) {
+	subject := tree3()
+	want := printNode(subject)
+	got, err := NewOneId(NewFail()).Visit(subject, VisitableIntrospector{})
+	if err != nil {
+		t.Fatalf("OneId(Fail).Visit must succeed, got %v", err)
+	}
+	if pn := printNode(got.(*node)); pn != want {
+		t.Fatalf("term changed: %s, want %s", pn, want)
+	}
+}
