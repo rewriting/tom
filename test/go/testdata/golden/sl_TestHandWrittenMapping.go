@@ -1,0 +1,217 @@
+package sl
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+import (
+  "fmt"
+  "testing"
+
+  "tom/library/sl"
+)
+
+  func tom_equal_term_Strategy(t1  sl.Strategy , t2  sl.Strategy ) bool { return t1 == t2;  }; func tom_is_sort_Strategy(t any) bool { return sl.IsStrategy(t);  }; func tom_equal_term_Position(t1  *sl.Position , t2  *sl.Position ) bool { return (t1).Equals(t2);  }; func tom_is_sort_Position(t any) bool { return sl.IsPosition(t);  }; func tom_equal_term_String(t1 string, t2 string) bool { return t1 == t2;  }; func tom_is_sort_String(t string) bool { return true;  }; func tom_equal_term_int(t1 int64, t2 int64) bool { return t1 == t2;  }; func tom_is_sort_int(t int64) bool { return true;  }; func tom_is_fun_sym_mu(t  sl.Strategy ) bool { return  false ;  }; func tom_make_mu(name  sl.Strategy , v  sl.Strategy )  sl.Strategy  { return (sl.NewMu((name).(*sl.MuVar), v)) }; func tom_is_fun_sym_Mu(t  sl.Strategy ) bool { return sl.IsMu(t);  }; func tom_make_Mu(name  sl.Strategy , v  sl.Strategy )  sl.Strategy  { return (sl.NewMu((name).(*sl.MuVar), v)) }; func tom_get_slot_Mu_s1(t  sl.Strategy )  sl.Strategy  { return (t).ChildAt(0);  }; func tom_get_slot_Mu_s2(t  sl.Strategy )  sl.Strategy  { return (t).ChildAt(1);  }; func tom_is_fun_sym_MuVar(t  sl.Strategy ) bool { return sl.IsMuVar(t);  }; func tom_make_MuVar(name  string )  sl.Strategy  { return (sl.NewMuVar(name)) }; func tom_get_slot_MuVar_var(t  sl.Strategy )  string  { return (t).(*sl.MuVar).Name;  }; func tom_is_fun_sym_Identity(t  sl.Strategy ) bool { return sl.IsIdentity(t);  }; func tom_make_Identity()  sl.Strategy  { return (sl.NewIdentity()) }; func tom_is_fun_sym_Fail(t  sl.Strategy ) bool { return sl.IsFail(t);  }; func tom_make_Fail()  sl.Strategy  { return (sl.NewFail()) }; func tom_is_fun_sym_All(t  sl.Strategy ) bool { return sl.IsAll(t);  }; func tom_make_All(v  sl.Strategy )  sl.Strategy  { return (sl.NewAll(v)) }; func tom_get_slot_All_s1(t  sl.Strategy )  sl.Strategy  { return (t).ChildAt(0);  }; func tom_is_fun_sym_One(t  sl.Strategy ) bool { return sl.IsOne(t);  }; func tom_make_One(v  sl.Strategy )  sl.Strategy  { return (sl.NewOne(v)) }; func tom_get_slot_One_s1(t  sl.Strategy )  sl.Strategy  { return (t).ChildAt(0);  }; func tom_is_fun_sym_OneId(t  sl.Strategy ) bool { return sl.IsOneId(t);  }; func tom_make_OneId(v  sl.Strategy )  sl.Strategy  { return (sl.NewOneId(v)) }; func tom_get_slot_OneId_s1(t  sl.Strategy )  sl.Strategy  { return (t).ChildAt(0);  }; func tom_is_fun_sym_Omega(t  sl.Strategy ) bool { return sl.IsOmega(t);  }; func tom_make_Omega(pos  int64 , v  sl.Strategy )  sl.Strategy  { return (sl.NewOmega(int(pos), v)) }; func tom_get_slot_Omega_position(t  sl.Strategy )  int64  { return int64((t).(*sl.Omega).GetPos());  }; func tom_get_slot_Omega_s1(t  sl.Strategy )  sl.Strategy  { return (t).ChildAt(0);  }; func tom_is_fun_sym_IfThenElse(t  sl.Strategy ) bool { return sl.IsIfThenElse(t);  }; func tom_make_IfThenElse(condition  sl.Strategy , trueCase  sl.Strategy , falseCase  sl.Strategy )  sl.Strategy  { return (sl.NewIfThenElse(condition, trueCase, falseCase)) }; func tom_get_slot_IfThenElse_s1(t  sl.Strategy )  sl.Strategy  { return (t).ChildAt(sl.IfThenElseCondition);  }; func tom_get_slot_IfThenElse_s2(t  sl.Strategy )  sl.Strategy  { return (t).ChildAt(sl.IfThenElseTrueCase);  }; func tom_get_slot_IfThenElse_s3(t  sl.Strategy )  sl.Strategy  { return (t).ChildAt(sl.IfThenElseFalseCase);  }; func tom_is_fun_sym_Not(t  sl.Strategy ) bool { return sl.IsNot(t);  }; func tom_make_Not(v  sl.Strategy )  sl.Strategy  { return (sl.NewNot(v)) }; func tom_get_slot_Not_s1(t  sl.Strategy )  sl.Strategy  { return (t).ChildAt(0);  }; func tom_is_fun_sym_Sequence(t  sl.Strategy ) bool { return sl.IsSequence(t);  }; func tom_empty_list_Sequence()  sl.Strategy  { return (nil) }; func tom_cons_list_Sequence(head  sl.Strategy , tail  sl.Strategy )  sl.Strategy  { return (sl.NewSequence(head, tail)) }; func tom_get_head_Sequence_Strategy(t  sl.Strategy )  sl.Strategy  { return (t).ChildAt(0);  }; func tom_get_tail_Sequence_Strategy(t  sl.Strategy )  sl.Strategy  { return (t).ChildAt(1);  }; func tom_is_empty_Sequence_Strategy(s  sl.Strategy ) bool { return s == nil;  }; func tom_append_list_Sequence(l1  sl.Strategy , l2  sl.Strategy )  sl.Strategy  { if tom_is_empty_Sequence_Strategy(l1) { return l2 } else if tom_is_empty_Sequence_Strategy(l2) { return l1 } else if tom_is_fun_sym_Sequence(l1) { if tom_is_empty_Sequence_Strategy(tom_get_tail_Sequence_Strategy(l1)) { return tom_cons_list_Sequence(tom_get_head_Sequence_Strategy(l1), l2) } else { return tom_cons_list_Sequence(tom_get_head_Sequence_Strategy(l1), tom_append_list_Sequence(tom_get_tail_Sequence_Strategy(l1), l2)) } } else { return tom_cons_list_Sequence(l1, l2) }; }; func tom_get_slice_Sequence(begin  sl.Strategy , end  sl.Strategy , tail  sl.Strategy )  sl.Strategy  { if tom_equal_term_Strategy(begin, end) { return tail } else if tom_equal_term_Strategy(end, tail) && (tom_is_empty_Sequence_Strategy(end) || tom_equal_term_Strategy(end, tom_empty_list_Sequence())) { return begin }; return tom_cons_list_Sequence(func()  sl.Strategy  { if tom_is_fun_sym_Sequence(begin) { return tom_get_head_Sequence_Strategy(begin) }; return begin }(), tom_get_slice_Sequence(func()  sl.Strategy  { if tom_is_fun_sym_Sequence(begin) { return tom_get_tail_Sequence_Strategy(begin) }; return tom_empty_list_Sequence() }(), end, tail)) }; func tom_is_fun_sym_SequenceId(t  sl.Strategy ) bool { return sl.IsSequenceId(t);  }; func tom_empty_list_SequenceId()  sl.Strategy  { return (nil) }; func tom_cons_list_SequenceId(head  sl.Strategy , tail  sl.Strategy )  sl.Strategy  { return (sl.NewSequenceId(head, tail)) }; func tom_get_head_SequenceId_Strategy(t  sl.Strategy )  sl.Strategy  { return (t).ChildAt(0);  }; func tom_get_tail_SequenceId_Strategy(t  sl.Strategy )  sl.Strategy  { return (t).ChildAt(1);  }; func tom_is_empty_SequenceId_Strategy(s  sl.Strategy ) bool { return s == nil;  }; func tom_append_list_SequenceId(l1  sl.Strategy , l2  sl.Strategy )  sl.Strategy  { if tom_is_empty_SequenceId_Strategy(l1) { return l2 } else if tom_is_empty_SequenceId_Strategy(l2) { return l1 } else if tom_is_fun_sym_SequenceId(l1) { if tom_is_empty_SequenceId_Strategy(tom_get_tail_SequenceId_Strategy(l1)) { return tom_cons_list_SequenceId(tom_get_head_SequenceId_Strategy(l1), l2) } else { return tom_cons_list_SequenceId(tom_get_head_SequenceId_Strategy(l1), tom_append_list_SequenceId(tom_get_tail_SequenceId_Strategy(l1), l2)) } } else { return tom_cons_list_SequenceId(l1, l2) }; }; func tom_get_slice_SequenceId(begin  sl.Strategy , end  sl.Strategy , tail  sl.Strategy )  sl.Strategy  { if tom_equal_term_Strategy(begin, end) { return tail } else if tom_equal_term_Strategy(end, tail) && (tom_is_empty_SequenceId_Strategy(end) || tom_equal_term_Strategy(end, tom_empty_list_SequenceId())) { return begin }; return tom_cons_list_SequenceId(func()  sl.Strategy  { if tom_is_fun_sym_SequenceId(begin) { return tom_get_head_SequenceId_Strategy(begin) }; return begin }(), tom_get_slice_SequenceId(func()  sl.Strategy  { if tom_is_fun_sym_SequenceId(begin) { return tom_get_tail_SequenceId_Strategy(begin) }; return tom_empty_list_SequenceId() }(), end, tail)) }; func tom_is_fun_sym_Choice(t  sl.Strategy ) bool { return sl.IsChoice(t);  }; func tom_empty_list_Choice()  sl.Strategy  { return (nil) }; func tom_cons_list_Choice(head  sl.Strategy , tail  sl.Strategy )  sl.Strategy  { return (sl.NewChoice(head, tail)) }; func tom_get_head_Choice_Strategy(t  sl.Strategy )  sl.Strategy  { return (t).ChildAt(0);  }; func tom_get_tail_Choice_Strategy(t  sl.Strategy )  sl.Strategy  { return (t).ChildAt(1);  }; func tom_is_empty_Choice_Strategy(s  sl.Strategy ) bool { return s == nil;  }; func tom_append_list_Choice(l1  sl.Strategy , l2  sl.Strategy )  sl.Strategy  { if tom_is_empty_Choice_Strategy(l1) { return l2 } else if tom_is_empty_Choice_Strategy(l2) { return l1 } else if tom_is_fun_sym_Choice(l1) { if tom_is_empty_Choice_Strategy(tom_get_tail_Choice_Strategy(l1)) { return tom_cons_list_Choice(tom_get_head_Choice_Strategy(l1), l2) } else { return tom_cons_list_Choice(tom_get_head_Choice_Strategy(l1), tom_append_list_Choice(tom_get_tail_Choice_Strategy(l1), l2)) } } else { return tom_cons_list_Choice(l1, l2) }; }; func tom_get_slice_Choice(begin  sl.Strategy , end  sl.Strategy , tail  sl.Strategy )  sl.Strategy  { if tom_equal_term_Strategy(begin, end) { return tail } else if tom_equal_term_Strategy(end, tail) && (tom_is_empty_Choice_Strategy(end) || tom_equal_term_Strategy(end, tom_empty_list_Choice())) { return begin }; return tom_cons_list_Choice(func()  sl.Strategy  { if tom_is_fun_sym_Choice(begin) { return tom_get_head_Choice_Strategy(begin) }; return begin }(), tom_get_slice_Choice(func()  sl.Strategy  { if tom_is_fun_sym_Choice(begin) { return tom_get_tail_Choice_Strategy(begin) }; return tom_empty_list_Choice() }(), end, tail)) }; func tom_is_fun_sym_ChoiceId(t  sl.Strategy ) bool { return sl.IsChoiceId(t);  }; func tom_empty_list_ChoiceId()  sl.Strategy  { return (nil) }; func tom_cons_list_ChoiceId(head  sl.Strategy , tail  sl.Strategy )  sl.Strategy  { return (sl.NewChoiceId(head, tail)) }; func tom_get_head_ChoiceId_Strategy(t  sl.Strategy )  sl.Strategy  { return (t).ChildAt(0);  }; func tom_get_tail_ChoiceId_Strategy(t  sl.Strategy )  sl.Strategy  { return (t).ChildAt(1);  }; func tom_is_empty_ChoiceId_Strategy(s  sl.Strategy ) bool { return s == nil;  }; func tom_append_list_ChoiceId(l1  sl.Strategy , l2  sl.Strategy )  sl.Strategy  { if tom_is_empty_ChoiceId_Strategy(l1) { return l2 } else if tom_is_empty_ChoiceId_Strategy(l2) { return l1 } else if tom_is_fun_sym_ChoiceId(l1) { if tom_is_empty_ChoiceId_Strategy(tom_get_tail_ChoiceId_Strategy(l1)) { return tom_cons_list_ChoiceId(tom_get_head_ChoiceId_Strategy(l1), l2) } else { return tom_cons_list_ChoiceId(tom_get_head_ChoiceId_Strategy(l1), tom_append_list_ChoiceId(tom_get_tail_ChoiceId_Strategy(l1), l2)) } } else { return tom_cons_list_ChoiceId(l1, l2) }; }; func tom_get_slice_ChoiceId(begin  sl.Strategy , end  sl.Strategy , tail  sl.Strategy )  sl.Strategy  { if tom_equal_term_Strategy(begin, end) { return tail } else if tom_equal_term_Strategy(end, tail) && (tom_is_empty_ChoiceId_Strategy(end) || tom_equal_term_Strategy(end, tom_empty_list_ChoiceId())) { return begin }; return tom_cons_list_ChoiceId(func()  sl.Strategy  { if tom_is_fun_sym_ChoiceId(begin) { return tom_get_head_ChoiceId_Strategy(begin) }; return begin }(), tom_get_slice_ChoiceId(func()  sl.Strategy  { if tom_is_fun_sym_ChoiceId(begin) { return tom_get_tail_ChoiceId_Strategy(begin) }; return tom_empty_list_ChoiceId() }(), end, tail)) }; func tom_is_fun_sym_Try(t  sl.Strategy ) bool { return  false ;  }; func tom_make_Try(s  sl.Strategy )  sl.Strategy  { return (tom_cons_list_Choice(s,tom_cons_list_Choice(tom_make_Identity(),tom_empty_list_Choice()))) }; func tom_is_fun_sym_Repeat(t  sl.Strategy ) bool { return  false ;  }; func tom_make_Repeat(s  sl.Strategy )  sl.Strategy  { return (tom_make_mu(tom_make_MuVar("_x"),tom_cons_list_Choice(tom_cons_list_Sequence(s,tom_cons_list_Sequence(tom_make_MuVar("_x"),tom_empty_list_Sequence())),tom_cons_list_Choice(tom_make_Identity(),tom_empty_list_Choice())))) }; func tom_is_fun_sym_RepeatId(t  sl.Strategy ) bool { return  false ;  }; func tom_make_RepeatId(v  sl.Strategy )  sl.Strategy  { return (tom_make_mu(tom_make_MuVar("_x"),tom_cons_list_SequenceId(v,tom_cons_list_SequenceId(tom_make_MuVar("_x"),tom_empty_list_SequenceId())))) }; func tom_is_fun_sym_TopDown(t  sl.Strategy ) bool { return  false ;  }; func tom_make_TopDown(v  sl.Strategy )  sl.Strategy  { return (tom_make_mu(tom_make_MuVar("_x"),tom_cons_list_Sequence(v,tom_cons_list_Sequence(tom_make_All(tom_make_MuVar("_x")),tom_empty_list_Sequence())))) }; func tom_is_fun_sym_BottomUp(t  sl.Strategy ) bool { return  false ;  }; func tom_make_BottomUp(v  sl.Strategy )  sl.Strategy  { return (tom_make_mu(tom_make_MuVar("_x"),tom_cons_list_Sequence(tom_make_All(tom_make_MuVar("_x")),tom_cons_list_Sequence(v,tom_empty_list_Sequence())))) }; func tom_is_fun_sym_TopDownIdStopOnSuccess(t  sl.Strategy ) bool { return  false ;  }; func tom_make_TopDownIdStopOnSuccess(v  sl.Strategy )  sl.Strategy  { return (tom_make_mu(tom_make_MuVar("x"),tom_cons_list_ChoiceId(v,tom_cons_list_ChoiceId(tom_make_All(tom_make_MuVar("x")),tom_empty_list_ChoiceId())))) }; func tom_is_fun_sym_OnceTopDown(t  sl.Strategy ) bool { return  false ;  }; func tom_make_OnceTopDown(v  sl.Strategy )  sl.Strategy  { return (tom_make_mu(tom_make_MuVar("_x"),tom_cons_list_Choice(v,tom_cons_list_Choice(tom_make_One(tom_make_MuVar("_x")),tom_empty_list_Choice())))) }; func tom_is_fun_sym_OnceTopDownId(t  sl.Strategy ) bool { return  false ;  }; func tom_make_OnceTopDownId(v  sl.Strategy )  sl.Strategy  { return (tom_make_mu(tom_make_MuVar("_x"),tom_cons_list_ChoiceId(v,tom_cons_list_ChoiceId(tom_make_OneId(tom_make_MuVar("_x")),tom_empty_list_ChoiceId())))) }; func tom_is_fun_sym_Innermost(t  sl.Strategy ) bool { return  false ;  }; func tom_make_Innermost(v  sl.Strategy )  sl.Strategy  { return (tom_make_mu(tom_make_MuVar("_x"),tom_cons_list_Sequence(tom_make_All(tom_make_MuVar("_x")),tom_cons_list_Sequence(tom_make_Try(tom_cons_list_Sequence(v,tom_cons_list_Sequence(tom_make_MuVar("_x"),tom_empty_list_Sequence()))),tom_empty_list_Sequence())))) }; func tom_is_fun_sym_TopDownCollect(t  sl.Strategy ) bool { return  false ;  }; func tom_make_TopDownCollect(v  sl.Strategy )  sl.Strategy  { return (tom_make_mu(tom_make_MuVar("_x"),tom_make_Try(tom_cons_list_Sequence(v,tom_cons_list_Sequence(tom_make_All(tom_make_MuVar("_x")),tom_empty_list_Sequence()))))) }; func tom_is_fun_sym_TopDownStopOnSuccess(t  sl.Strategy ) bool { return  false ;  }; func tom_make_TopDownStopOnSuccess(v  sl.Strategy )  sl.Strategy  { return (tom_make_mu(tom_make_MuVar("x"),tom_cons_list_Choice(v,tom_cons_list_Choice(tom_make_All(tom_make_MuVar("x")),tom_empty_list_Choice())))) }; func tom_is_fun_sym_OnceBottomUp(t  sl.Strategy ) bool { return  false ;  }; func tom_make_OnceBottomUp(v  sl.Strategy )  sl.Strategy  { return (tom_make_mu(tom_make_MuVar("_x"),tom_cons_list_Choice(tom_make_One(tom_make_MuVar("_x")),tom_cons_list_Choice(v,tom_empty_list_Choice())))) }; func tom_is_fun_sym_Outermost(t  sl.Strategy ) bool { return  false ;  }; func tom_make_Outermost(v  sl.Strategy )  sl.Strategy  { return (tom_make_Repeat(tom_make_OnceTopDown(v))) }; func tom_is_fun_sym_OnceBottomUpId(t  sl.Strategy ) bool { return  false ;  }; func tom_make_OnceBottomUpId(v  sl.Strategy )  sl.Strategy  { return (tom_make_mu(tom_make_MuVar("_x"),tom_cons_list_ChoiceId(tom_make_OneId(tom_make_MuVar("_x")),tom_cons_list_ChoiceId(v,tom_empty_list_ChoiceId())))) }; func tom_is_fun_sym_InnermostId(t  sl.Strategy ) bool { return  false ;  }; func tom_make_InnermostId(v  sl.Strategy )  sl.Strategy  { return (tom_make_mu(tom_make_MuVar("_x"),tom_cons_list_Sequence(tom_make_All(tom_make_MuVar("_x")),tom_cons_list_Sequence(tom_cons_list_SequenceId(v,tom_cons_list_SequenceId(tom_make_MuVar("_x"),tom_empty_list_SequenceId())),tom_empty_list_Sequence())))) }; func tom_is_fun_sym_OutermostId(t  sl.Strategy ) bool { return  false ;  }; func tom_make_OutermostId(v  sl.Strategy )  sl.Strategy  { return (tom_make_RepeatId(tom_make_OnceTopDownId(v))) }; 
+
+  
+
+
+  type Term interface {
+    Equals(t any) bool
+  }
+
+  type f struct {
+    x Term
+  }
+
+  func newF(x Term) *f { return &f{x: x} }
+  func (t *f) getx() Term { return t.x }
+  func (t *f) Equals(o any) bool {
+    g, ok := o.(*f)
+    return ok && g.getx().Equals(t.x)
+  }
+  func (t *f) String() string { return "f(" + fmt.Sprint(t.x) + ")" }
+
+  type a struct{}
+
+  func newA() *a { return &a{} }
+  func (t *a) Equals(o any) bool {
+    _, ok := o.(*a)
+    return ok
+  }
+  func (t *a) String() string { return "a()" }
+
+
+  
+  func tom_equal_term_Term(t1  Term , t2  Term ) bool { return t1.Equals(t2);  }; func tom_is_sort_Term(t any) bool { return func() bool { _, ok := (t).(Term); return ok }();  }; func tom_is_fun_sym_f(t  Term ) bool { return func() bool { _, ok := (t).(*f); return ok }();  }; func tom_make_f(x  Term )  Term  { return (newF(x)) }; func tom_get_slot_f_x(t  Term )  Term  { return (t).(*f).getx();  }; func tom_is_fun_sym_a(t  Term ) bool { return func() bool { _, ok := (t).(*a); return ok }();  }; func tom_make_a()  Term  { return (newA()) }; func tom_equal_term_List(l1  List , l2  List ) bool { return l1.Equals(l2);  }; func tom_is_sort_List(t any) bool { return func() bool { _, ok := (t).(List); return ok }();  }; func tom_is_fun_sym_l(t  List ) bool { return t != nil;  }; func tom_empty_list_l()  List  { return (List{}) }; func tom_cons_list_l(e  Term , l  List )  List  { return (insert(e,l)) }; func tom_get_head_l_List(l  List )  Term  { return l[0];  }; func tom_get_tail_l_List(l  List )  List  { return l[1:];  }; func tom_is_empty_l_List(l  List ) bool { return len(l) == 0;  }; func tom_append_list_l(l1  List , l2  List )  List  { if tom_is_empty_l_List(l1) { return l2 } else if tom_is_empty_l_List(l2) { return l1 } else if tom_is_empty_l_List(tom_get_tail_l_List(l1)) { return tom_cons_list_l(tom_get_head_l_List(l1), l2) } else { return tom_cons_list_l(tom_get_head_l_List(l1), tom_append_list_l(tom_get_tail_l_List(l1), l2)) }; }; func tom_get_slice_l(begin  List , end  List , tail  List )  List  { if tom_equal_term_List(begin, end) { return tail } else if tom_equal_term_List(end, tail) && (tom_is_empty_l_List(end) || tom_equal_term_List(end, tom_empty_list_l())) { return begin }; return tom_cons_list_l(tom_get_head_l_List(begin), tom_get_slice_l(tom_get_tail_l_List(begin), end, tail)) }; func tom_is_fun_sym_t(t  List ) bool { return t != nil;  }; func tom_empty_array_t(n int64)  List  { return (make(List, 0, n)) }; func tom_cons_array_t(e  Term , l  List )  List  { return (add(e,l)) }; func tom_get_element_t_List(l  List , n int64)  Term  { return l[n];  }; func tom_get_size_t_List(l  List ) int64 { return int64(int64(len(l)));  }; func tom_get_slice_t(subject  List , begin int64, end int64)  List  { var result  List  = tom_empty_array_t(end-begin); for begin != end { result = tom_cons_array_t(tom_get_element_t_List(subject, begin), result); begin++ }; return result }; func tom_append_array_t(l2  List , l1  List )  List  { var size1 int64 = tom_get_size_t_List(l1); var size2 int64 = tom_get_size_t_List(l2); var index int64; var result  List  = tom_empty_array_t(size1+size2); index = size1; for index > 0 { result = tom_cons_array_t(tom_get_element_t_List(l1, size1-index), result); index-- }; index = size2; for index > 0 { result = tom_cons_array_t(tom_get_element_t_List(l2, size2-index), result); index-- }; return result }; 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  type List []Term
+
+  
+  func (l List) Equals(o any) bool {
+    m, ok := o.(List)
+    if !ok || len(l) != len(m) {
+      return false
+    }
+    for i := range l {
+      if !l[i].Equals(m[i]) {
+        return false
+      }
+    }
+    return true
+  }
+
+  func add(e Term, l List) List {
+    return append(append(List(nil), l...), e)
+  }
+
+  func insert(e Term, l List) List {
+    return append(List{e}, l...)
+  }
+
+  type LocalIntrospector struct{}; var _ sl.Introspector = (*LocalIntrospector)(nil); func (tom__strat *LocalIntrospector) SetChildAt(o any, i int, child any) any { newChildren := tom__strat.GetChildren(o); newChildren[i] = child; return tom__strat.SetChildren(o, newChildren) }; func (tom__strat *LocalIntrospector) GetChildAt(o any, i int) any { return tom__strat.GetChildren(o)[i];  }; func (tom__strat *LocalIntrospector) SetChildren(o any, children []any) any { if tom_is_sort_List(o) { if tom_is_fun_sym_l(any(o).( List )) { if len(children) == 0 { return tom_empty_list_l();  } else { var i int64 = int64(len(children)); _ = i; var res  List  = tom_empty_list_l(); _ = res; for i > 0 { i = i - 1; res = tom_cons_list_l(children[i].( Term ),res);  }; return res;  };  }; if tom_is_fun_sym_t(any(o).( List )) { if len(children) == 0 { return tom_empty_array_t(0);  } else { var i int64 = tom_get_size_t_List(any(o).( List )); _ = i; var res  List  = tom_empty_array_t(tom_get_size_t_List(any(o).( List ))); _ = res; for i > 0 { i = i - 1; res = tom_cons_array_t(children[i].( Term ),res);  }; return res;  };  };  }; if tom_is_sort_Position(o) {  }; if tom_is_sort_Strategy(o) { if tom_is_fun_sym_Choice(any(o).( sl.Strategy )) { if len(children) == 0 { return tom_empty_list_Choice();  } else { var i int64 = int64(len(children)); _ = i; var res  sl.Strategy  = tom_empty_list_Choice(); _ = res; for i > 0 { i = i - 1; res = tom_cons_list_Choice(children[i].( sl.Strategy ),res);  }; return res;  };  }; if tom_is_fun_sym_ChoiceId(any(o).( sl.Strategy )) { if len(children) == 0 { return tom_empty_list_ChoiceId();  } else { var i int64 = int64(len(children)); _ = i; var res  sl.Strategy  = tom_empty_list_ChoiceId(); _ = res; for i > 0 { i = i - 1; res = tom_cons_list_ChoiceId(children[i].( sl.Strategy ),res);  }; return res;  };  }; if tom_is_fun_sym_Sequence(any(o).( sl.Strategy )) { if len(children) == 0 { return tom_empty_list_Sequence();  } else { var i int64 = int64(len(children)); _ = i; var res  sl.Strategy  = tom_empty_list_Sequence(); _ = res; for i > 0 { i = i - 1; res = tom_cons_list_Sequence(children[i].( sl.Strategy ),res);  }; return res;  };  }; if tom_is_fun_sym_SequenceId(any(o).( sl.Strategy )) { if len(children) == 0 { return tom_empty_list_SequenceId();  } else { var i int64 = int64(len(children)); _ = i; var res  sl.Strategy  = tom_empty_list_SequenceId(); _ = res; for i > 0 { i = i - 1; res = tom_cons_list_SequenceId(children[i].( sl.Strategy ),res);  }; return res;  };  }; if tom_is_fun_sym_mu(any(o).( sl.Strategy )) { return tom_make_mu(any(children[0]).( sl.Strategy ),any(children[1]).( sl.Strategy ));  }; if tom_is_fun_sym_Try(any(o).( sl.Strategy )) { return tom_make_Try(any(children[0]).( sl.Strategy ));  }; if tom_is_fun_sym_TopDownStopOnSuccess(any(o).( sl.Strategy )) { return tom_make_TopDownStopOnSuccess(any(children[0]).( sl.Strategy ));  }; if tom_is_fun_sym_TopDownIdStopOnSuccess(any(o).( sl.Strategy )) { return tom_make_TopDownIdStopOnSuccess(any(children[0]).( sl.Strategy ));  }; if tom_is_fun_sym_TopDownCollect(any(o).( sl.Strategy )) { return tom_make_TopDownCollect(any(children[0]).( sl.Strategy ));  }; if tom_is_fun_sym_TopDown(any(o).( sl.Strategy )) { return tom_make_TopDown(any(children[0]).( sl.Strategy ));  }; if tom_is_fun_sym_RepeatId(any(o).( sl.Strategy )) { return tom_make_RepeatId(any(children[0]).( sl.Strategy ));  }; if tom_is_fun_sym_Repeat(any(o).( sl.Strategy )) { return tom_make_Repeat(any(children[0]).( sl.Strategy ));  }; if tom_is_fun_sym_R2(any(o).( sl.Strategy )) { return tom_make_R2();  }; if tom_is_fun_sym_R(any(o).( sl.Strategy )) { return tom_make_R();  }; if tom_is_fun_sym_OutermostId(any(o).( sl.Strategy )) { return tom_make_OutermostId(any(children[0]).( sl.Strategy ));  }; if tom_is_fun_sym_Outermost(any(o).( sl.Strategy )) { return tom_make_Outermost(any(children[0]).( sl.Strategy ));  }; if tom_is_fun_sym_OneId(any(o).( sl.Strategy )) { return tom_make_OneId(any(children[0]).( sl.Strategy ));  }; if tom_is_fun_sym_One(any(o).( sl.Strategy )) { return tom_make_One(any(children[0]).( sl.Strategy ));  }; if tom_is_fun_sym_OnceTopDownId(any(o).( sl.Strategy )) { return tom_make_OnceTopDownId(any(children[0]).( sl.Strategy ));  }; if tom_is_fun_sym_OnceTopDown(any(o).( sl.Strategy )) { return tom_make_OnceTopDown(any(children[0]).( sl.Strategy ));  }; if tom_is_fun_sym_OnceBottomUpId(any(o).( sl.Strategy )) { return tom_make_OnceBottomUpId(any(children[0]).( sl.Strategy ));  }; if tom_is_fun_sym_OnceBottomUp(any(o).( sl.Strategy )) { return tom_make_OnceBottomUp(any(children[0]).( sl.Strategy ));  }; if tom_is_fun_sym_Omega(any(o).( sl.Strategy )) { return tom_make_Omega(children[0].( int64 ),any(children[1]).( sl.Strategy ));  }; if tom_is_fun_sym_Not(any(o).( sl.Strategy )) { return tom_make_Not(any(children[0]).( sl.Strategy ));  }; if tom_is_fun_sym_MuVar(any(o).( sl.Strategy )) { return tom_make_MuVar(children[0].( string ));  }; if tom_is_fun_sym_Mu(any(o).( sl.Strategy )) { return tom_make_Mu(any(children[0]).( sl.Strategy ),any(children[1]).( sl.Strategy ));  }; if tom_is_fun_sym_InnermostId(any(o).( sl.Strategy )) { return tom_make_InnermostId(any(children[0]).( sl.Strategy ));  }; if tom_is_fun_sym_Innermost(any(o).( sl.Strategy )) { return tom_make_Innermost(any(children[0]).( sl.Strategy ));  }; if tom_is_fun_sym_IfThenElse(any(o).( sl.Strategy )) { return tom_make_IfThenElse(any(children[0]).( sl.Strategy ),any(children[1]).( sl.Strategy ),any(children[2]).( sl.Strategy ));  }; if tom_is_fun_sym_Identity(any(o).( sl.Strategy )) { return tom_make_Identity();  }; if tom_is_fun_sym_Fail(any(o).( sl.Strategy )) { return tom_make_Fail();  }; if tom_is_fun_sym_BottomUp(any(o).( sl.Strategy )) { return tom_make_BottomUp(any(children[0]).( sl.Strategy ));  }; if tom_is_fun_sym_All(any(o).( sl.Strategy )) { return tom_make_All(any(children[0]).( sl.Strategy ));  };  }; if tom_is_sort_Term(o) { if tom_is_fun_sym_f(any(o).( Term )) { return tom_make_f(any(children[0]).( Term ));  }; if tom_is_fun_sym_a(any(o).( Term )) { return tom_make_a();  };  }; return o;  }; func (tom__strat *LocalIntrospector) GetChildren(o any) []any { if tom_is_sort_List(o) { if tom_is_fun_sym_l(any(o).( List )) { if tom_is_empty_l_List(any(o).( List )) { return []any{}; } else { var i int64 = 0; _ = i; var size int64 = int64(tom__strat.GetChildCount(o)); _ = size; var vv  List  = any(o).( List ); _ = vv; var children []any = make([]any, size); _ = children; vv = vv; for i < size { children[i] = tom_get_head_l_List(vv); vv = tom_get_tail_l_List(vv); i = i + 1;  }; return children;  };  }; if tom_is_fun_sym_t(any(o).( List )) { if 0 >= tom_get_size_t_List(any(o).( List )) { return []any{};  } else { var i int64 = 0; _ = i; var children []any = make([]any, tom__strat.GetChildCount(o)); _ = children; for i < tom_get_size_t_List(any(o).( List )) { children[i] = tom_get_element_t_List(any(o).( List ),i); i = i + 1;  }; return children;  };  };  }; if tom_is_sort_Position(o) {  }; if tom_is_sort_Strategy(o) { if tom_is_fun_sym_Choice(any(o).( sl.Strategy )) { if tom_is_empty_Choice_Strategy(any(o).( sl.Strategy )) { return []any{}; } else { var i int64 = 0; _ = i; var size int64 = int64(tom__strat.GetChildCount(o)); _ = size; var vv  sl.Strategy  = any(o).( sl.Strategy ); _ = vv; var children []any = make([]any, size); _ = children; vv = vv; for i < size { children[i] = tom_get_head_Choice_Strategy(vv); vv = tom_get_tail_Choice_Strategy(vv); i = i + 1;  }; return children;  };  }; if tom_is_fun_sym_ChoiceId(any(o).( sl.Strategy )) { if tom_is_empty_ChoiceId_Strategy(any(o).( sl.Strategy )) { return []any{}; } else { var i int64 = 0; _ = i; var size int64 = int64(tom__strat.GetChildCount(o)); _ = size; var vv  sl.Strategy  = any(o).( sl.Strategy ); _ = vv; var children []any = make([]any, size); _ = children; vv = vv; for i < size { children[i] = tom_get_head_ChoiceId_Strategy(vv); vv = tom_get_tail_ChoiceId_Strategy(vv); i = i + 1;  }; return children;  };  }; if tom_is_fun_sym_Sequence(any(o).( sl.Strategy )) { if tom_is_empty_Sequence_Strategy(any(o).( sl.Strategy )) { return []any{}; } else { var i int64 = 0; _ = i; var size int64 = int64(tom__strat.GetChildCount(o)); _ = size; var vv  sl.Strategy  = any(o).( sl.Strategy ); _ = vv; var children []any = make([]any, size); _ = children; vv = vv; for i < size { children[i] = tom_get_head_Sequence_Strategy(vv); vv = tom_get_tail_Sequence_Strategy(vv); i = i + 1;  }; return children;  };  }; if tom_is_fun_sym_SequenceId(any(o).( sl.Strategy )) { if tom_is_empty_SequenceId_Strategy(any(o).( sl.Strategy )) { return []any{}; } else { var i int64 = 0; _ = i; var size int64 = int64(tom__strat.GetChildCount(o)); _ = size; var vv  sl.Strategy  = any(o).( sl.Strategy ); _ = vv; var children []any = make([]any, size); _ = children; vv = vv; for i < size { children[i] = tom_get_head_SequenceId_Strategy(vv); vv = tom_get_tail_SequenceId_Strategy(vv); i = i + 1;  }; return children;  };  }; if tom_is_fun_sym_mu(any(o).( sl.Strategy )) { return []any{nil,nil}; }; if tom_is_fun_sym_Try(any(o).( sl.Strategy )) { return []any{nil}; }; if tom_is_fun_sym_TopDownStopOnSuccess(any(o).( sl.Strategy )) { return []any{nil}; }; if tom_is_fun_sym_TopDownIdStopOnSuccess(any(o).( sl.Strategy )) { return []any{nil}; }; if tom_is_fun_sym_TopDownCollect(any(o).( sl.Strategy )) { return []any{nil}; }; if tom_is_fun_sym_TopDown(any(o).( sl.Strategy )) { return []any{nil}; }; if tom_is_fun_sym_RepeatId(any(o).( sl.Strategy )) { return []any{nil}; }; if tom_is_fun_sym_Repeat(any(o).( sl.Strategy )) { return []any{nil}; }; if tom_is_fun_sym_R2(any(o).( sl.Strategy )) { return []any{}; }; if tom_is_fun_sym_R(any(o).( sl.Strategy )) { return []any{}; }; if tom_is_fun_sym_OutermostId(any(o).( sl.Strategy )) { return []any{nil}; }; if tom_is_fun_sym_Outermost(any(o).( sl.Strategy )) { return []any{nil}; }; if tom_is_fun_sym_OneId(any(o).( sl.Strategy )) { return []any{tom_get_slot_OneId_s1(any(o).( sl.Strategy ))}; }; if tom_is_fun_sym_One(any(o).( sl.Strategy )) { return []any{tom_get_slot_One_s1(any(o).( sl.Strategy ))}; }; if tom_is_fun_sym_OnceTopDownId(any(o).( sl.Strategy )) { return []any{nil}; }; if tom_is_fun_sym_OnceTopDown(any(o).( sl.Strategy )) { return []any{nil}; }; if tom_is_fun_sym_OnceBottomUpId(any(o).( sl.Strategy )) { return []any{nil}; }; if tom_is_fun_sym_OnceBottomUp(any(o).( sl.Strategy )) { return []any{nil}; }; if tom_is_fun_sym_Omega(any(o).( sl.Strategy )) { return []any{tom_get_slot_Omega_position(any(o).( sl.Strategy )),tom_get_slot_Omega_s1(any(o).( sl.Strategy ))}; }; if tom_is_fun_sym_Not(any(o).( sl.Strategy )) { return []any{tom_get_slot_Not_s1(any(o).( sl.Strategy ))}; }; if tom_is_fun_sym_MuVar(any(o).( sl.Strategy )) { return []any{tom_get_slot_MuVar_var(any(o).( sl.Strategy ))}; }; if tom_is_fun_sym_Mu(any(o).( sl.Strategy )) { return []any{tom_get_slot_Mu_s1(any(o).( sl.Strategy )),tom_get_slot_Mu_s2(any(o).( sl.Strategy ))}; }; if tom_is_fun_sym_InnermostId(any(o).( sl.Strategy )) { return []any{nil}; }; if tom_is_fun_sym_Innermost(any(o).( sl.Strategy )) { return []any{nil}; }; if tom_is_fun_sym_IfThenElse(any(o).( sl.Strategy )) { return []any{tom_get_slot_IfThenElse_s1(any(o).( sl.Strategy )),tom_get_slot_IfThenElse_s2(any(o).( sl.Strategy )),tom_get_slot_IfThenElse_s3(any(o).( sl.Strategy ))}; }; if tom_is_fun_sym_Identity(any(o).( sl.Strategy )) { return []any{}; }; if tom_is_fun_sym_Fail(any(o).( sl.Strategy )) { return []any{}; }; if tom_is_fun_sym_BottomUp(any(o).( sl.Strategy )) { return []any{nil}; }; if tom_is_fun_sym_All(any(o).( sl.Strategy )) { return []any{tom_get_slot_All_s1(any(o).( sl.Strategy ))}; };  }; if tom_is_sort_Term(o) { if tom_is_fun_sym_f(any(o).( Term )) { return []any{tom_get_slot_f_x(any(o).( Term ))}; }; if tom_is_fun_sym_a(any(o).( Term )) { return []any{}; };  }; return nil;  }; func (tom__strat *LocalIntrospector) GetChildCount(o any) int { if o == nil { return 0;  }; if tom_is_sort_List(o) { if tom_is_fun_sym_t(any(o).( List )) { return int(tom_get_size_t_List(any(o).( List )));  }; if tom_is_fun_sym_l(any(o).( List )) { if tom_is_empty_l_List(any(o).( List )) { return 0;  } else { return 1 + tom__strat.GetChildCount(tom_get_tail_l_List(any(o).( List )));  };  };  }; if tom_is_sort_Position(o) {  }; if tom_is_sort_Strategy(o) { if tom_is_fun_sym_mu(any(o).( sl.Strategy )) { return 2;  }; if tom_is_fun_sym_Try(any(o).( sl.Strategy )) { return 1;  }; if tom_is_fun_sym_TopDownStopOnSuccess(any(o).( sl.Strategy )) { return 1;  }; if tom_is_fun_sym_TopDownIdStopOnSuccess(any(o).( sl.Strategy )) { return 1;  }; if tom_is_fun_sym_TopDownCollect(any(o).( sl.Strategy )) { return 1;  }; if tom_is_fun_sym_TopDown(any(o).( sl.Strategy )) { return 1;  }; if tom_is_fun_sym_SequenceId(any(o).( sl.Strategy )) { if tom_is_empty_SequenceId_Strategy(any(o).( sl.Strategy )) { return 0;  } else { return 1 + tom__strat.GetChildCount(tom_get_tail_SequenceId_Strategy(any(o).( sl.Strategy )));  };  }; if tom_is_fun_sym_Sequence(any(o).( sl.Strategy )) { if tom_is_empty_Sequence_Strategy(any(o).( sl.Strategy )) { return 0;  } else { return 1 + tom__strat.GetChildCount(tom_get_tail_Sequence_Strategy(any(o).( sl.Strategy )));  };  }; if tom_is_fun_sym_RepeatId(any(o).( sl.Strategy )) { return 1;  }; if tom_is_fun_sym_Repeat(any(o).( sl.Strategy )) { return 1;  }; if tom_is_fun_sym_R2(any(o).( sl.Strategy )) { return 0;  }; if tom_is_fun_sym_R(any(o).( sl.Strategy )) { return 0;  }; if tom_is_fun_sym_OutermostId(any(o).( sl.Strategy )) { return 1;  }; if tom_is_fun_sym_Outermost(any(o).( sl.Strategy )) { return 1;  }; if tom_is_fun_sym_OneId(any(o).( sl.Strategy )) { return 1;  }; if tom_is_fun_sym_One(any(o).( sl.Strategy )) { return 1;  }; if tom_is_fun_sym_OnceTopDownId(any(o).( sl.Strategy )) { return 1;  }; if tom_is_fun_sym_OnceTopDown(any(o).( sl.Strategy )) { return 1;  }; if tom_is_fun_sym_OnceBottomUpId(any(o).( sl.Strategy )) { return 1;  }; if tom_is_fun_sym_OnceBottomUp(any(o).( sl.Strategy )) { return 1;  }; if tom_is_fun_sym_Omega(any(o).( sl.Strategy )) { return 2;  }; if tom_is_fun_sym_Not(any(o).( sl.Strategy )) { return 1;  }; if tom_is_fun_sym_MuVar(any(o).( sl.Strategy )) { return 1;  }; if tom_is_fun_sym_Mu(any(o).( sl.Strategy )) { return 2;  }; if tom_is_fun_sym_InnermostId(any(o).( sl.Strategy )) { return 1;  }; if tom_is_fun_sym_Innermost(any(o).( sl.Strategy )) { return 1;  }; if tom_is_fun_sym_IfThenElse(any(o).( sl.Strategy )) { return 3;  }; if tom_is_fun_sym_Identity(any(o).( sl.Strategy )) { return 0;  }; if tom_is_fun_sym_Fail(any(o).( sl.Strategy )) { return 0;  }; if tom_is_fun_sym_ChoiceId(any(o).( sl.Strategy )) { if tom_is_empty_ChoiceId_Strategy(any(o).( sl.Strategy )) { return 0;  } else { return 1 + tom__strat.GetChildCount(tom_get_tail_ChoiceId_Strategy(any(o).( sl.Strategy )));  };  }; if tom_is_fun_sym_Choice(any(o).( sl.Strategy )) { if tom_is_empty_Choice_Strategy(any(o).( sl.Strategy )) { return 0;  } else { return 1 + tom__strat.GetChildCount(tom_get_tail_Choice_Strategy(any(o).( sl.Strategy )));  };  }; if tom_is_fun_sym_BottomUp(any(o).( sl.Strategy )) { return 1;  }; if tom_is_fun_sym_All(any(o).( sl.Strategy )) { return 1;  };  }; if tom_is_sort_Term(o) { if tom_is_fun_sym_f(any(o).( Term )) { return 1;  }; if tom_is_fun_sym_a(any(o).( Term )) { return 0;  };  }; return 0;  }; type R struct { *sl.AbstractStrategyBasic; }; func tom_new_R() *R { tom__strat := &R{}; tom__strat.AbstractStrategyBasic = sl.NewAbstractStrategyBasic(tom_make_Identity()); return tom__strat }; func (tom__strat *R) VisitLight(v any, introspector sl.Introspector) (tom__res any, tom__err error) { defer sl.RecoverVisitFailure(&tom__err); return tom__strat.visitLight(v, introspector), nil }; func (tom__strat *R) VisitEnv(introspector sl.Introspector) int { return sl.VisitBasic(tom__strat, introspector) }; func (tom__strat *R) Visit(v any, introspector sl.Introspector) (any, error) { return sl.VisitStrategy(tom__strat, v, introspector) }; func (tom__strat *R) VisitWith(env *sl.Environment, introspector sl.Introspector) (any, error) { return sl.VisitStrategyWith(tom__strat, env, introspector) }; func (tom__strat *R) visitLight(v any, introspector sl.Introspector) any { if tom_is_sort_Term(v) { return any(tom__strat.visit_Term(any(v).( Term ),introspector)).(any);  }; if tom__strat.HasEnvironment() { return sl.MustVisit(tom__strat.Any().VisitWith(tom__strat.GetEnvironment(),introspector));  } else { return sl.MustVisit(tom__strat.Any().VisitLight(v,introspector));  };  }; func (tom__strat *R) _visit_Term(arg  Term , introspector sl.Introspector)  Term  { if tom__strat.HasEnvironment() { return any(sl.MustVisit(tom__strat.Any().VisitWith(tom__strat.GetEnvironment(),introspector))).( Term );  } else { return any(sl.MustVisit(tom__strat.Any().VisitLight(arg,introspector))).( Term );  };  }; func (tom__strat *R) visit_Term(tom__arg  Term , introspector sl.Introspector)  Term  { ; { { if tom_is_sort_Term(tom__arg) { if tom_is_fun_sym_f(any(tom__arg).( Term )) { 
+
+ return tom_get_slot_f_x(any(tom__arg).( Term ));  };  };  };  }; return tom__strat._visit_Term(tom__arg,introspector);  }; func tom_is_fun_sym_R(t  sl.Strategy ) bool { return func() bool { _, ok := (t).(*R); return ok }();  }; func tom_make_R()  sl.Strategy  { return (tom_new_R()) }; type R2 struct { *sl.AbstractStrategyBasic; }; func tom_new_R2() *R2 { tom__strat := &R2{}; tom__strat.AbstractStrategyBasic = sl.NewAbstractStrategyBasic(tom_make_Identity()); return tom__strat }; func (tom__strat *R2) VisitLight(v any, introspector sl.Introspector) (tom__res any, tom__err error) { defer sl.RecoverVisitFailure(&tom__err); return tom__strat.visitLight(v, introspector), nil }; func (tom__strat *R2) VisitEnv(introspector sl.Introspector) int { return sl.VisitBasic(tom__strat, introspector) }; func (tom__strat *R2) Visit(v any, introspector sl.Introspector) (any, error) { return sl.VisitStrategy(tom__strat, v, introspector) }; func (tom__strat *R2) VisitWith(env *sl.Environment, introspector sl.Introspector) (any, error) { return sl.VisitStrategyWith(tom__strat, env, introspector) }; func (tom__strat *R2) visitLight(v any, introspector sl.Introspector) any { if tom_is_sort_Term(v) { return any(tom__strat.visit_Term(any(v).( Term ),introspector)).(any);  }; if tom__strat.HasEnvironment() { return sl.MustVisit(tom__strat.Any().VisitWith(tom__strat.GetEnvironment(),introspector));  } else { return sl.MustVisit(tom__strat.Any().VisitLight(v,introspector));  };  }; func (tom__strat *R2) _visit_Term(arg  Term , introspector sl.Introspector)  Term  { if tom__strat.HasEnvironment() { return any(sl.MustVisit(tom__strat.Any().VisitWith(tom__strat.GetEnvironment(),introspector))).( Term );  } else { return any(sl.MustVisit(tom__strat.Any().VisitLight(arg,introspector))).( Term );  };  }; func (tom__strat *R2) visit_Term(tom__arg  Term , introspector sl.Introspector)  Term  { ; { { if tom_is_sort_Term(tom__arg) { if tom_is_fun_sym_a(any(tom__arg).( Term )) { 
+
+
+
+
+
+ return tom_make_f(tom_make_a());  };  };  };  }; return tom__strat._visit_Term(tom__arg,introspector);  }; func tom_is_fun_sym_R2(t  sl.Strategy ) bool { return func() bool { _, ok := (t).(*R2); return ok }();  }; func tom_make_R2()  sl.Strategy  { return (tom_new_R2()) }; 
+
+
+
+
+    func Test1(tt *testing.T) {
+        var t Term = tom_make_f(tom_make_f(tom_make_f(tom_make_a())))
+        assertEquals(tt, tom_make_f(tom_make_a()), visit(tt, tom_make_TopDown(tom_make_R()), t, &LocalIntrospector{}))
+    }
+
+    func Test2(tt *testing.T) {
+        var t Term = tom_make_f(tom_make_a())
+        assertEquals(tt, tom_make_f(tom_make_f(tom_make_a())), visit(tt, tom_make_BottomUp(tom_make_R2()), t, &LocalIntrospector{}))
+    }
+
+    func Test3(tt *testing.T) {
+        var t Term = tom_make_f(tom_make_f(tom_make_f(tom_make_a())))
+        assertEquals(tt, tom_make_a(), visit(tt, tom_make_InnermostId(tom_make_R()), t, &LocalIntrospector{}))
+    }
+
+    func TestOpList1(tt *testing.T) {
+        var l List = tom_cons_list_l(tom_make_a(),tom_cons_list_l(tom_make_a(),tom_cons_list_l(tom_make_a(),tom_empty_list_l())))
+        assertEquals(tt, tom_cons_list_l(tom_make_f(tom_make_a()),tom_cons_list_l(tom_make_f(tom_make_a()),tom_cons_list_l(tom_make_f(tom_make_a()),tom_empty_list_l()))), visit(tt, tom_make_All(tom_make_R2()), l, &LocalIntrospector{}))
+    }
+
+
+    func TestOpList2(tt *testing.T) {
+        var t List = tom_cons_list_l(tom_make_f(tom_make_f(tom_make_f(tom_make_a()))),tom_cons_list_l(tom_make_a(),tom_cons_list_l(tom_make_f(tom_make_f(tom_make_f(tom_make_a()))),tom_empty_list_l())))
+        assertEquals(tt, tom_cons_list_l(tom_make_f(tom_make_a()),tom_cons_list_l(tom_make_a(),tom_cons_list_l(tom_make_f(tom_make_a()),tom_empty_list_l()))), visit(tt, tom_make_TopDown(tom_make_R()), t, &LocalIntrospector{}))
+    }
+
+    func TestOpList3(tt *testing.T) {
+        var t List = tom_cons_list_l(tom_make_f(tom_make_a()),tom_cons_list_l(tom_make_a(),tom_cons_list_l(tom_make_f(tom_make_a()),tom_empty_list_l())))
+        assertEquals(tt, tom_cons_list_l(tom_make_f(tom_make_f(tom_make_a())),tom_cons_list_l(tom_make_f(tom_make_a()),tom_cons_list_l(tom_make_f(tom_make_f(tom_make_a())),tom_empty_list_l()))), visit(tt, tom_make_BottomUp(tom_make_R2()), t, &LocalIntrospector{}))
+    }
+
+    func TestOpList4(tt *testing.T) {
+        var t List = tom_cons_list_l(tom_make_f(tom_make_f(tom_make_f(tom_make_a()))),tom_cons_list_l(tom_make_a(),tom_cons_list_l(tom_make_f(tom_make_f(tom_make_f(tom_make_a()))),tom_empty_list_l())))
+        assertEquals(tt, tom_cons_list_l(tom_make_a(),tom_cons_list_l(tom_make_a(),tom_cons_list_l(tom_make_a(),tom_empty_list_l()))), visit(tt, tom_make_InnermostId(tom_make_R()), t, &LocalIntrospector{}))
+    }
+
+    func TestOpArray1(tt *testing.T) {
+        var t List = tom_cons_array_t(tom_make_a(),tom_cons_array_t(tom_make_a(),tom_cons_array_t(tom_make_a(),tom_empty_array_t(3))))
+        assertEquals(tt, tom_cons_array_t(tom_make_f(tom_make_a()),tom_cons_array_t(tom_make_f(tom_make_a()),tom_cons_array_t(tom_make_f(tom_make_a()),tom_empty_array_t(3)))),visit(tt, tom_make_All(tom_make_R2()), t, &LocalIntrospector{}))
+    }
+
+    func TestOpArray2(tt *testing.T) {
+        var t List = tom_cons_array_t(tom_make_f(tom_make_f(tom_make_f(tom_make_a()))),tom_cons_array_t(tom_make_a(),tom_cons_array_t(tom_make_f(tom_make_f(tom_make_f(tom_make_a()))),tom_empty_array_t(3))))
+        assertEquals(tt, tom_cons_array_t(tom_make_f(tom_make_a()),tom_cons_array_t(tom_make_a(),tom_cons_array_t(tom_make_f(tom_make_a()),tom_empty_array_t(3)))), visit(tt, tom_make_TopDown(tom_make_R()), t, &LocalIntrospector{}))
+    }
+
+    func TestOpArray3(tt *testing.T) {
+        var t List = tom_cons_array_t(tom_make_f(tom_make_a()),tom_cons_array_t(tom_make_a(),tom_cons_array_t(tom_make_f(tom_make_a()),tom_empty_array_t(3))))
+        assertEquals(tt, tom_cons_array_t(tom_make_f(tom_make_f(tom_make_a())),tom_cons_array_t(tom_make_f(tom_make_a()),tom_cons_array_t(tom_make_f(tom_make_f(tom_make_a())),tom_empty_array_t(3)))), visit(tt, tom_make_BottomUp(tom_make_R2()), t, &LocalIntrospector{}))
+    }
+
+    func TestOpArray4(tt *testing.T) {
+        var t List = tom_cons_array_t(tom_make_f(tom_make_f(tom_make_f(tom_make_a()))),tom_cons_array_t(tom_make_a(),tom_cons_array_t(tom_make_f(tom_make_f(tom_make_f(tom_make_a()))),tom_empty_array_t(3))))
+        assertEquals(tt, tom_cons_array_t(tom_make_a(),tom_cons_array_t(tom_make_a(),tom_cons_array_t(tom_make_a(),tom_empty_array_t(3)))), visit(tt, tom_make_InnermostId(tom_make_R()), t, &LocalIntrospector{}))
+    }
+
+
+
+
+
+
+func visit(t *testing.T, s sl.Strategy, subject any, intro sl.Introspector) any {
+  t.Helper()
+  r, err := s.Visit(subject, intro)
+  if err != nil {
+    t.Fatal()
+  }
+  return r
+}
+
+
+
+
+func assertEquals(t *testing.T, expected interface{ Equals(any) bool }, actual any) {
+  t.Helper()
+  if !expected.Equals(actual) {
+    t.Errorf("expected:<%v> but was:<%v>", expected, actual)
+  }
+}

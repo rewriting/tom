@@ -101,6 +101,9 @@ antérieur au projet ; les 19 autres sont du projet :
   - `strategy_param` : paramètre de `%strategy` utilisé dans une
     partie droite, un backquote et un sujet de `%match` ;
   - test d'options (`options_test.go`) : `-go -gi` est refusé.
+    *(J2, 2026-10-23 : supprimé, `-gi` est désormais pris en charge en Go ;
+    fixture `gen_introspector`, options supplémentaires lues dans
+    `args.txt`.)*
 
 ## 4. Promotion dans `stable/` (Task 10)
 
@@ -140,9 +143,13 @@ mage -d magefiles -w . all && mage -d magefiles -w . portJava && mage -d magefil
 ## 5. Limites connues
 
 - `%transformation` et `-gi` (`--genIntrospector`) sont refusés avec
-  `-go`.
+  `-go`. *(J2, 2026-10-23 : `-gi` est pris en charge — `LocalIntrospector`
+  Go, utilisé comme `&LocalIntrospector{}` ; `%transformation` reste
+  refusé.)*
 - Les paramètres de type `Strategy` d'un `%strategy` ne sont pas exposés
   comme enfants (`ChildCount`/`ChildAt`), donc invisibles pour `Mu`/`Init`.
+  *(J2, 2026-10-23 : levée — ils suivent la stratégie par défaut, comme
+  en Java.)*
 - Le type d'une conditionnelle est lu sur ses branches ou sur la variable
   affectée, avec repli sur `any`.
 - Le Go généré tient sur une ligne logique par construction (lire avec

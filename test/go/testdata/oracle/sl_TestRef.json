@@ -1,0 +1,11 @@
+{
+  "passed": [
+    "TestRef1",
+    "TestRef2",
+    "TestRef3",
+    "TestRef4"
+  ],
+  "stdout": "",
+  "exitOK": true,
+  "source_sha256": "7d64d7034e1a41913ef5b083f9435f90b3c725d27666f2c10598ce214d090648"
+}

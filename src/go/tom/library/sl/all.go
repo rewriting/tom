@@ -28,7 +28,7 @@ func (a *All) VisitLight(subject any, intro Introspector) (any, error) {
 		}
 		if dup != nil {
 			dup[i] = newChild
-		} else if newChild != oldChild {
+		} else if !same(newChild, oldChild) {
 			dup = intro.GetChildren(subject)
 			dup[i] = newChild
 		}
@@ -55,7 +55,7 @@ func (a *All) VisitEnv(intro Introspector) int {
 		newChild := env.GetSubject()
 		if children != nil {
 			children[i] = newChild
-		} else if newChild != oldChild {
+		} else if !same(newChild, oldChild) {
 			children = intro.GetChildren(subject)
 			children[i] = newChild
 		}

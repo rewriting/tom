@@ -88,6 +88,8 @@ public class ExpanderPlugin extends TomGenericPlugin {
   private static TomType methodparameterType;
   private static TomType objectArrayType;
   private static TomType intType;
+  /** type of a child count or index in the Introspector interface */
+  private static TomType countType;
   
   private static TomType basicStratType;
   private static TomType introspectorType;
@@ -97,6 +99,8 @@ public class ExpanderPlugin extends TomGenericPlugin {
   private static BQTerm objectVar;
   private static BQTerm childVar;
   private static BQTerm intVar;
+  /** index parameter of getChildAt/setChildAt */
+  private static BQTerm indexVar;
   private static BQTerm objectArrayVar;
   private static String visitFuncPrefix; // _visit_TermN prefix is "_" but in Ada function can't start with "_"
   private static boolean generateAdaCode = false;
@@ -107,6 +111,36 @@ public class ExpanderPlugin extends TomGenericPlugin {
   /** if the flag is true, a class that implements Introspector is generated */
   private boolean genIntrospector = false;
   private boolean generatedIntrospector = false;
+
+  /**
+   * target code of the generated LocalIntrospector: the Java text, or its
+   * Go counterpart with -go (methods of the receiver, Go's nil/slices)
+   */
+  private static String tl(String java, String go) {
+    return generateGoCode ? go : java;
+  }
+
+  /** name of a method of the Introspector interface (exported in Go) */
+  private static String introspectorMethod(String name) {
+    return generateGoCode ? Character.toUpperCase(name.charAt(0)) + name.substring(1) : name;
+  }
+
+  /**
+   * child (an Object/any expression) converted to type, a builtin type
+   * in Java (cast to its wrapper class) or any type in Go (type assertion
+   * to its target type)
+   */
+  private static String castChild(SymbolTable symbolTable, TomType type, String child) {
+    if(generateGoCode) {
+      return child + ".(" + TomBase.getTLType(type) + ")";
+    }
+    return "(" + symbolTable.builtinToWrapper(type.getTomType()) + ")" + child;
+  }
+
+  /** a call to another method of the generated LocalIntrospector */
+  private static String selfCall(String name) {
+    return generateGoCode ? tom.engine.backend.GoGenerator.RECEIVER + "." + introspectorMethod(name) : name;
+  }
 
   public boolean getGenIntrospector() {
     return genIntrospector;
@@ -130,11 +164,6 @@ public class ExpanderPlugin extends TomGenericPlugin {
   }
 
   public void run(Map informationTracker) {
-	if(getOptionBooleanValue("goCode") && getOptionBooleanValue("genIntrospector")) {
-		TomMessage.error(logger, getStreamManager().getInputFileName(), 0,
-				TomMessage.unsupportedWithGo, "--genIntrospector");
-		return;
-	}
 	generateAdaCode = false;
 	generateGoCode = false;
 	callPrefix = "";
@@ -147,6 +176,8 @@ public class ExpanderPlugin extends TomGenericPlugin {
 		methodparameterType = ASTFactory.makeType(`concTypeOption(),"undefined","any");
 		objectArrayType = ASTFactory.makeType(`concTypeOption(),"undefined","[]any");
 		intType = ASTFactory.makeType(`concTypeOption(),"int","int64");
+		// sl.Introspector counts and indexes children with Go's int
+		countType = ASTFactory.makeType(`concTypeOption(),"undefined","int");
 		basicStratType = ASTFactory.makeType(`concTypeOption(),"undefined","sl.AbstractStrategyBasic");
 		introspectorType = ASTFactory.makeType(`concTypeOption(),"undefined","sl.Introspector");
 		visitfailureType = ASTFactory.makeType(`concTypeOption(),"undefined","error");
@@ -154,6 +185,7 @@ public class ExpanderPlugin extends TomGenericPlugin {
 		objectVar = `BQVariable(concOption(),Name("o"),objectType);
 		childVar = `BQVariable(concOption(),Name("child"),objectType);
 		intVar = `BQVariable(concOption(),Name("i"),intType);
+		indexVar = `BQVariable(concOption(),Name("i"),countType);
 		objectArrayVar = `BQVariable(concOption(),Name("children"),objectArrayType);
 	} else if(getOptionBooleanValue("aCode")) {
 		generateAdaCode = true;
@@ -173,6 +205,8 @@ public class ExpanderPlugin extends TomGenericPlugin {
 		childVar = `BQVariable(concOption(),Name("child"),objectType);
 		intVar = `BQVariable(concOption(),Name("i"),intType);
 		objectArrayVar = `BQVariable(concOption(),Name("children"),objectArrayType);
+		countType = intType;
+		indexVar = intVar;
 	} else {
 		visitFuncPrefix = "_";
 		objectType = ASTFactory.makeType(`concTypeOption(),"undefined","Object");
@@ -190,6 +224,8 @@ public class ExpanderPlugin extends TomGenericPlugin {
 		childVar = `BQVariable(concOption(),Name("child"),objectType);
 		intVar = `BQVariable(concOption(),Name("i"),intType);
 		objectArrayVar = `BQVariable(concOption(),Name("children"),objectArrayType);
+		countType = intType;
+		indexVar = intVar;
 	}
     long startChrono = System.currentTimeMillis();
     boolean intermediate = getOptionBooleanValue("intermediate");    
@@ -251,9 +287,9 @@ public class ExpanderPlugin extends TomGenericPlugin {
            * generate code for:
            * public int getChildCount(Object o);
            */
-          String funcName = "getChildCount";//function name
+          String funcName = introspectorMethod("getChildCount");//function name
           //manage null children: return 0
-          InstructionList instructions = `concInstruction(If(BQTermToExpression(Composite(CompositeTL(ITL("o==null")))),Return(Composite(CompositeTL(ITL("0")))),Nop()));
+          InstructionList instructions = `concInstruction(If(BQTermToExpression(Composite(CompositeTL(ITL(tl("o==null","o == nil"))))),Return(Composite(CompositeTL(ITL("0")))),Nop()));
           for(TomType type:types) {
             InstructionList instructionsForSort = `concInstruction();
             %match(type) {
@@ -268,11 +304,16 @@ public class ExpanderPlugin extends TomGenericPlugin {
                         inst =
                           `If(IsFsym(opName,var),If(IsEmptyList(opName,var),Return(Composite(CompositeTL(ITL("0")))),
                                   Return(Composite(
-                                      CompositeTL(ITL("1 + getChildCount(")),
+                                      CompositeTL(ITL("1 + " + selfCall("getChildCount") + "(")),
                                       CompositeBQTerm(ExpressionToBQTerm(GetTail(opName,var))),
                                       CompositeTL(ITL(")"))))), Nop());
                       } else if ( TomBase.isArrayOperator(`symbol) ) {
-                        inst = `If(IsFsym(opName,var), Return(ExpressionToBQTerm(GetSize(opName,var))),Nop());
+                        if(generateGoCode) {
+                          // get_size gives an int64 in Go
+                          inst = `If(IsFsym(opName,var), Return(Composite(CompositeTL(ITL("int(")),CompositeBQTerm(ExpressionToBQTerm(GetSize(opName,var))),CompositeTL(ITL(")")))),Nop());
+                        } else {
+                          inst = `If(IsFsym(opName,var), Return(ExpressionToBQTerm(GetSize(opName,var))),Nop());
+                        }
                       } else {
                         inst = `If(IsFsym(opName,var),Return(Composite(CompositeTL(ITL(""+TomBase.getArity(symbol))))),Nop());
                       } 
@@ -286,12 +327,12 @@ public class ExpanderPlugin extends TomGenericPlugin {
           }
           //default case (for builtins too): return 0
           instructions = `concInstruction(instructions*,Return(Composite(CompositeTL(ITL("0")))));
-          l = `concDeclaration(MethodDef(Name(funcName),concBQTerm(objectVar),intType,EmptyType(),AbstractBlock(instructions)),l*);
+          l = `concDeclaration(MethodDef(Name(funcName),concBQTerm(objectVar),countType,EmptyType(),AbstractBlock(instructions)),l*);
           /**
            * generate code for:
            * public Object[] getChildren(Object o);
            */
-          funcName = "getChildren";//function name
+          funcName = introspectorMethod("getChildren");//function name
           instructions = `concInstruction();
           for(TomType type:types) {
             InstructionList instructionsForSort = `concInstruction();
@@ -305,12 +346,12 @@ public class ExpanderPlugin extends TomGenericPlugin {
                     %match(symbol) {
                       Symbol[AstName=symbolName,TypesToType=TypesToType[Domain=domain,Codomain=codomain]] -> {
                         if(TomBase.isListOperator(symbol)) {
-                          BQTerm emptyArray = `Composite(CompositeTL(ITL("new Object[]{}")));
-                          BQTerm size = `Composite(CompositeTL(ITL("getChildCount(o)")));
+                          BQTerm emptyArray = `Composite(CompositeTL(ITL(tl("new Object[]{}","[]any{}"))));
+                          BQTerm size = `Composite(CompositeTL(ITL(tl("getChildCount(o)","int64(" + selfCall("getChildCount") + "(o))"))));
                           BQTerm vVar = `BQVariable(concOption(),Name("vv"),codomain);
                           BQTerm sizeVar = `BQVariable(concOption(),Name("size"),intType);
                           BQTerm children =
-                            `Composite(CompositeTL(ITL("new Object[")),CompositeBQTerm(sizeVar),CompositeTL(ITL("]"))); Instruction return_array = 
+                            `Composite(CompositeTL(ITL(tl("new Object[","make([]any, "))),CompositeBQTerm(sizeVar),CompositeTL(ITL(tl("]",")")))); Instruction return_array = 
                                   `LetRef(
                                     intVar,
                                     Integer(0),
@@ -336,15 +377,15 @@ public class ExpanderPlugin extends TomGenericPlugin {
                                       Return(objectArrayVar)
                                       ))))));
                           //default case (used for builtins too)                     
-                          Instruction return_emptyArray = `CodeToInstruction(TargetLanguageToCode(ITL("return new Object[]{};")));
+                          Instruction return_emptyArray = `CodeToInstruction(TargetLanguageToCode(ITL(tl("return new Object[]{};","return []any{};"))));
                           Instruction inst = `If(IsFsym(symbolName,var),If(IsEmptyList(symbolName,var),return_emptyArray,return_array),Nop());
                           // WARNING: list operator should be tested before other operators
                           // they a inserted in front of the list
                           instructionsForSort = `concInstruction(inst,instructionsForSort*);
                         } else if(TomBase.isArrayOperator(symbol)) {
                           // we consider that the children of an array are all its elements
-                          BQTerm emptyArray = `Composite(CompositeTL(ITL("new Object[]{}")));
-                          BQTerm children = `Composite(CompositeTL(ITL("new Object[getChildCount(o)]")));
+                          BQTerm emptyArray = `Composite(CompositeTL(ITL(tl("new Object[]{}","[]any{}"))));
+                          BQTerm children = `Composite(CompositeTL(ITL(tl("new Object[getChildCount(o)]","make([]any, " + selfCall("getChildCount") + "(o))"))));
                           Instruction inst = 
                             `If(IsFsym(symbolName,var),
                                 If(IsEmptyArray(symbolName,var,ExpressionToBQTerm(Integer(0))),
@@ -372,7 +413,7 @@ public class ExpanderPlugin extends TomGenericPlugin {
                           instructionsForSort = `concInstruction(inst,instructionsForSort*);
                         } else {
                           int arity = TomBase.getArity(symbol);
-                          BQTerm composite = `Composite(CompositeTL(ITL("return new Object[]{")));
+                          BQTerm composite = `Composite(CompositeTL(ITL(tl("return new Object[]{","return []any{"))));
                           PairNameDeclList pairNameDeclList = symbol.getPairNameDeclList();
                           for(int i=0; i< arity; i++) {
                             PairNameDecl pairNameDecl = pairNameDeclList.getHeadconcPairNameDecl();
@@ -381,7 +422,7 @@ public class ExpanderPlugin extends TomGenericPlugin {
                               EmptyDeclaration() -> {
                                 // case of undefined getSlot
                                 // return null (to be improved)
-                                composite =  `Composite(composite*,CompositeTL(ITL("null")));
+                                composite =  `Composite(composite*,CompositeTL(ITL(tl("null","nil"))));
                                 if(i < arity-1) {
                                   composite =  `Composite(composite*,CompositeTL(ITL(",")));
                                 }
@@ -410,14 +451,14 @@ public class ExpanderPlugin extends TomGenericPlugin {
             }
           }
           //default case: return null
-          instructions = `concInstruction(instructions*,Return(Composite(CompositeTL(ITL("null")))));
+          instructions = `concInstruction(instructions*,Return(Composite(CompositeTL(ITL(tl("null","nil"))))));
           l = `concDeclaration(MethodDef(Name(funcName),concBQTerm(objectVar),objectArrayType,EmptyType(),AbstractBlock(instructions)),l*);
 
           /**
            * generate code for:
            *  public Object setChildren(Object o, Object[] children);
            */
-          funcName = "setChildren";//function name
+          funcName = introspectorMethod("setChildren");//function name
           instructions = `concInstruction();
           for(TomType type:types) {
             InstructionList instructionsForSort = `concInstruction();
@@ -436,11 +477,11 @@ public class ExpanderPlugin extends TomGenericPlugin {
                               BQTerm res = `BQVariable(concOption(),Name("res"),codomain);
                               Instruction inst = 
                                 `If(IsFsym(symbolName,var),
-                                    If(BQTermToExpression(Composite(CompositeTL(ITL("children.length==0")))),
+                                    If(BQTermToExpression(Composite(CompositeTL(ITL(tl("children.length==0","len(children) == 0"))))),
                                       Return(BuildEmptyList(symbolName)),
                                       LetRef(
                                         intVar,
-                                        BQTermToExpression(Composite(CompositeTL(ITL("children.length")))),
+                                        BQTermToExpression(Composite(CompositeTL(ITL(tl("children.length","int64(len(children))"))))),
                                         LetRef(
                                           res,
                                           BQTermToExpression(BuildEmptyList(symbolName)),
@@ -449,7 +490,7 @@ public class ExpanderPlugin extends TomGenericPlugin {
                                                 GreaterThan(BQTermToExpression(intVar),Integer(0)),
                                                 AbstractBlock(concInstruction(
                                                     Assign(intVar, SubstractOne(intVar)),
-                                                    Assign(res, BQTermToExpression(BuildConsList(symbolName, Composite(CompositeTL(ITL("("+symbolTable.builtinToWrapper(domain.getTomType())+")children[i]"))), res)))
+                                                    Assign(res, BQTermToExpression(BuildConsList(symbolName, Composite(CompositeTL(ITL(castChild(symbolTable,domain,"children[i]")))), res)))
                                                     ))),
                                               Return(res)))))),
                                     Nop());
@@ -464,7 +505,7 @@ public class ExpanderPlugin extends TomGenericPlugin {
                               BQTerm res = `BQVariable(concOption(),Name("res"),codomain);
                               Instruction inst = 
                                 `If(IsFsym(symbolName,var),
-                                    If(BQTermToExpression(Composite(CompositeTL(ITL("children.length==0")))),
+                                    If(BQTermToExpression(Composite(CompositeTL(ITL(tl("children.length==0","len(children) == 0"))))),
                                       Return(BuildEmptyArray(symbolName,ExpressionToBQTerm(Integer(0)))),
                                       LetRef(
                                         intVar,
@@ -478,7 +519,7 @@ public class ExpanderPlugin extends TomGenericPlugin {
                                                 AbstractBlock(concInstruction(
                                                     Assign(intVar, SubstractOne(intVar)),
                                                     Assign(res,
-                                                      BQTermToExpression(BuildConsArray(symbolName, Composite(CompositeTL(ITL("("+symbolTable.builtinToWrapper(domain.getTomType())+")children[i]"))), res)))
+                                                      BQTermToExpression(BuildConsArray(symbolName, Composite(CompositeTL(ITL(castChild(symbolTable,domain,"children[i]")))), res)))
                                                     ))),
                                               Return(res)))))),
                                     Nop());
@@ -498,7 +539,7 @@ public class ExpanderPlugin extends TomGenericPlugin {
                             String slotTypeName = slotType.getTomType();
                             // manage builtin slots
                             if(symbolTable.isBuiltinType(slotTypeName)) {
-                              slots = `concBQTerm(slots*,Composite(CompositeTL(ITL("("+symbolTable.builtinToWrapper(slotTypeName)+")children["+i+"]"))));
+                              slots = `concBQTerm(slots*,Composite(CompositeTL(ITL(castChild(symbolTable,slotType,"children["+i+"]")))));
                             } else {
                               slots = `concBQTerm(slots*,ExpressionToBQTerm(Cast(slotType,BQTermToExpression(Composite(CompositeTL(ITL("children["+i+"]")))))));
                             }
@@ -524,20 +565,23 @@ public class ExpanderPlugin extends TomGenericPlugin {
            * generate code for:
            * public Object getChildAt(Object o, int i);
            */
-          funcName = "getChildAt";//function name
-          l = `concDeclaration(MethodDef(Name(funcName),concBQTerm(objectVar,intVar),objectType,EmptyType(),Return(Composite(CompositeTL(ITL("getChildren(o)[i]"))))),l*);
+          funcName = introspectorMethod("getChildAt");//function name
+          l = `concDeclaration(MethodDef(Name(funcName),concBQTerm(objectVar,indexVar),objectType,EmptyType(),Return(Composite(CompositeTL(ITL(selfCall("getChildren") + "(o)[i]"))))),l*);
 
           /**
            * generate code for:
            * public Object setChildAt( Object o, int i, Object child);
            */
-          funcName = "setChildAt";//function name
+          funcName = introspectorMethod("setChildAt");//function name
           String code = %[
             Object[] newChildren = getChildren(o);
             newChildren[i] = child;
             return setChildren(o, newChildren);
           ]%;
-          l = `concDeclaration(MethodDef(Name(funcName),concBQTerm(objectVar,intVar,childVar),objectType,EmptyType(),CodeToInstruction(TargetLanguageToCode(ITL(code)))),l*);
+          if(generateGoCode) {
+            code = "newChildren := " + selfCall("getChildren") + "(o); newChildren[i] = child; return " + selfCall("setChildren") + "(o, newChildren)";
+          }
+          l = `concDeclaration(MethodDef(Name(funcName),concBQTerm(objectVar,indexVar,childVar),objectType,EmptyType(),CodeToInstruction(TargetLanguageToCode(ITL(code)))),l*);
           introspectorClass = `IntrospectorClass(Name("LocalIntrospector"),AbstractDecl(l));
         }
 

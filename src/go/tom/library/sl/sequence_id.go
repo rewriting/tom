@@ -22,7 +22,7 @@ func (s *SequenceId) VisitLight(subject any, intro Introspector) (any, error) {
 	if err != nil {
 		return nil, err
 	}
-	if v != subject {
+	if !same(v, subject) {
 		return s.args[1].VisitLight(v, intro)
 	}
 	return v, nil
@@ -31,7 +31,7 @@ func (s *SequenceId) VisitLight(subject any, intro Introspector) (any, error) {
 func (s *SequenceId) VisitEnv(intro Introspector) int {
 	subject := s.environment.GetSubject()
 	status := s.args[0].VisitEnv(intro)
-	if status == StatusSuccess && s.environment.GetSubject() != subject {
+	if status == StatusSuccess && !same(s.environment.GetSubject(), subject) {
 		return s.args[1].VisitEnv(intro)
 	}
 	return status

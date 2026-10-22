@@ -9,14 +9,15 @@ avec le cas qui les utilise (comme `test/build.xml` compile tout le
 répertoire), et c'est le statut de ce cas qui les valide.
 
 - total : 103
-- OK : 19
+- OK : 22
 - divergence : 0
 - échec go test : 0
 - échec go build : 0
 - échec tom : 0
 - oracle invalide : 0
-- support : 1
-- non porté : 83
+- non supporté : 1
+- support : 4
+- non porté : 76
 
 | Cas | Statut | Notes |
 |---|---|---|
@@ -109,17 +110,17 @@ répertoire), et c'est le statut de ce cas qui les valide.
 | `rule/TestWhen.t` | non porté |  |
 | `rule/TomList.t` | non porté |  |
 | `sl/CommonStrat.t` | support | compilé avec `sl/TestImportStrat.t`, couvert par son statut |
-| `sl/IntrospectorBehaviour.t` | non porté |  |
-| `sl/NewBehaviour.t` | non porté |  |
-| `sl/OldBehaviour.t` | non porté |  |
+| `sl/IntrospectorBehaviour.t` | support | compilé avec `sl/TestSL.t`, couvert par son statut |
+| `sl/NewBehaviour.t` | support | compilé avec `sl/TestSL.t`, couvert par son statut |
+| `sl/OldBehaviour.t` | support | compilé avec `sl/TestSL.t`, couvert par son statut |
 | `sl/TestEnvironment.t` | OK |  |
 | `sl/TestGetSubterm.t` | OK |  |
-| `sl/TestHandWrittenMapping.t` | non porté |  |
+| `sl/TestHandWrittenMapping.t` | OK |  |
 | `sl/TestImportStrat.t` | OK |  |
 | `sl/TestOnceTopDownId.t` | OK |  |
 | `sl/TestPosition.t` | OK |  |
 | `sl/TestReduceAll.t` | OK |  |
-| `sl/TestRef.t` | non porté |  |
-| `sl/TestReflective.t` | non porté |  |
-| `sl/TestSL.t` | non porté |  |
+| `sl/TestRef.t` | non supporté | `TestRef1` non supporté : needs Gom's --termpointer (RefTerm/LabTerm/PathTerm/VarTerm, expand()) and the term-graph strategies of sl/graph.tom (DeRef, StrictDeRef, AllSeq), not implemented by gomgo and the Go sl library ; `TestRef2` non supporté : needs Gom's --termpointer (RefTerm/LabTerm/PathTerm/VarTerm, expand()) and the term-graph strategies of sl/graph.tom (DeRef, StrictDeRef, AllSeq), not implemented by gomgo and the Go sl library ; `TestRef3` non supporté : needs Gom's --termpointer (RefTerm/LabTerm/PathTerm/VarTerm, expand()) and the term-graph strategies of sl/graph.tom (DeRef, StrictDeRef, AllSeq), not implemented by gomgo and the Go sl library ; `TestRef4` non supporté : needs Gom's --termpointer (RefTerm/LabTerm/PathTerm/VarTerm, expand()) and the term-graph strategies of sl/graph.tom (DeRef, StrictDeRef, AllSeq), not implemented by gomgo and the Go sl library |
+| `sl/TestReflective.t` | OK | `TestMake` non supporté : gomgo represents the variadic l(Term*) of testsl.gom as a flat list, without Java Gom's Consl/Emptyl constructors, hence without Make_Consl/Make_Emptyl |
+| `sl/TestSL.t` | OK |  |
 | `sl/TestSLModes.t` | OK |  |

@@ -32,6 +32,8 @@
 %op Strategy Mu(s1:Strategy, s2:Strategy) {
   is_fsym(t) { sl.IsMu($t) }
   make(name,v) { sl.NewMu(($name).(*sl.MuVar), $v) }
+  get_slot(s1, t) { ($t).ChildAt(0) }
+  get_slot(s2, t) { ($t).ChildAt(1) }
 }
 
 %op Strategy MuVar(var:String) {
@@ -53,16 +55,19 @@
 %op Strategy All(s1:Strategy) {
   is_fsym(t) { sl.IsAll($t) }
   make(v) { sl.NewAll($v) }
+  get_slot(s1, t) { ($t).ChildAt(0) }
 }
 
 %op Strategy One(s1:Strategy) {
   is_fsym(t) { sl.IsOne($t) }
   make(v) { sl.NewOne($v) }
+  get_slot(s1, t) { ($t).ChildAt(0) }
 }
 
 %op Strategy OneId(s1:Strategy) {
   is_fsym(t) { sl.IsOneId($t) }
   make(v) { sl.NewOneId($v) }
+  get_slot(s1, t) { ($t).ChildAt(0) }
 }
 
 %op Strategy Omega(position:int, s1:Strategy) {

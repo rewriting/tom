@@ -37,6 +37,15 @@ func (VisitableIntrospector) GetChildren(subject any) []any {
 	if v, ok := subject.(Visitable); ok {
 		return v.Children()
 	}
+	// A strategy is a term too (Java's Strategy extends Visitable): its
+	// children are its sub-strategies.
+	if s, ok := subject.(Strategy); ok && s != nil {
+		children := make([]any, s.ChildCount())
+		for i := range children {
+			children[i] = s.ChildAt(i)
+		}
+		return children
+	}
 	return nil
 }
 
@@ -59,6 +68,14 @@ func (vi VisitableIntrospector) SetChildAt(subject any, i int, child any) any {
 func (VisitableIntrospector) SetChildren(subject any, children []any) any {
 	if v, ok := subject.(Visitable); ok {
 		return v.SetChildren(children)
+	}
+	// As Java's setChildren on a strategy, the strategy is updated in
+	// place and returned.
+	if s, ok := subject.(Strategy); ok && s != nil {
+		for i, c := range children {
+			s.SetChildAt(i, c.(Strategy))
+		}
+		return s
 	}
 	return subject
 }

@@ -209,7 +209,7 @@ func VisitCongruence(env *Environment, intro Introspector, args []Strategy, vari
 		newChild := env.GetSubject()
 		if children != nil {
 			children[i] = newChild
-		} else if newChild != oldChild {
+		} else if !same(newChild, oldChild) {
 			children = intro.GetChildren(subject)
 			children[i] = newChild
 		}

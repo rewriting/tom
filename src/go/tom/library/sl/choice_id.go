@@ -24,7 +24,7 @@ func (c *ChoiceId) VisitLight(subject any, intro Introspector) (any, error) {
 	if err != nil {
 		return nil, err
 	}
-	if v == subject {
+	if same(v, subject) {
 		return c.args[1].VisitLight(v, intro)
 	}
 	return v, nil
@@ -35,7 +35,7 @@ func (c *ChoiceId) VisitLight(subject any, intro Introspector) (any, error) {
 func (c *ChoiceId) VisitEnv(intro Introspector) int {
 	subject := c.environment.GetSubject()
 	status := c.args[0].VisitEnv(intro)
-	if status == StatusSuccess && c.environment.GetSubject() != subject {
+	if status == StatusSuccess && !same(c.environment.GetSubject(), subject) {
 		return status
 	}
 	// restore the subject: we are just interested in the status

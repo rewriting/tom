@@ -1,0 +1,6 @@
+TopDown f(a()) <nil>
+BottomUp f(f(a())) <nil>
+InnermostId a() <nil>
+All/list [f(a()) f(a()) f(a())] <nil>
+TopDown/list [f(a()) a()] <nil>
+1 3 0

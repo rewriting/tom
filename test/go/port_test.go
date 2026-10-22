@@ -34,6 +34,11 @@ type portCase struct {
 	// them. T2 exempts them from the legacy pass set, and fails if one
 	// of them exists and passes in Go (stale entry).
 	Unsupported map[string]string
+	// FullyUnsupported marks a port all of whose tests are Unsupported:
+	// T2 then only checks that what remains compiles and that no test
+	// passes, instead of reporting a vacuous oracle; the dashboard status
+	// is "non supporté".
+	FullyUnsupported bool
 	// Gom lists the standalone .gom files test/build.xml compiles with
 	// Gom before the case, whose generated mappings the case includes.
 	Gom []gomFile
@@ -44,9 +49,10 @@ type portCase struct {
 	// files cannot share a package (each defines the tom_* helpers of the
 	// mappings it includes).
 	Support []string
-	// TomArgs are the extra options test/build.xml gives tom for the case
-	// and its support files (both compilers).
-	TomArgs []string
+	// TomArgs are the extra options test/build.xml gives tom (both
+	// compilers) for an input of the case: the case itself or a support
+	// file (key: path relative to test/).
+	TomArgs map[string][]string
 }
 
 // gomFile is a standalone .gom file of test/ (Rel, relative to test/);
@@ -106,7 +112,20 @@ var cases = []portCase{
 	{Rel: "sl/TestImportStrat.t", GoTest: true, Gom: []gomFile{testslGom}, Support: []string{"sl/CommonStrat.t"}},
 	{Rel: "sl/TestReduceAll.t", GoTest: true},
 	{Rel: "sl/TestSLModes.t", GoTest: true, Gom: []gomFile{testslGom}},
+	{Rel: "sl/TestSL.t", GoTest: true, Gom: []gomFile{testslGom},
+		Support: []string{"sl/OldBehaviour.t", "sl/NewBehaviour.t", "sl/IntrospectorBehaviour.t"},
+		TomArgs: map[string][]string{"sl/IntrospectorBehaviour.t": {"--genIntrospector"}}},
+	{Rel: "sl/TestReflective.t", GoTest: true, Gom: []gomFile{testslGom}, Unsupported: map[string]string{
+		"TestMake": "gomgo represents the variadic l(Term*) of testsl.gom as a flat list, without Java Gom's Consl/Emptyl constructors, hence without Make_Consl/Make_Emptyl",
+	}},
+	{Rel: "sl/TestRef.t", GoTest: true, Gom: []gomFile{testslGom}, FullyUnsupported: true, Unsupported: map[string]string{
+		"TestRef1": testRefUnsupported, "TestRef2": testRefUnsupported, "TestRef3": testRefUnsupported, "TestRef4": testRefUnsupported,
+	}},
+	{Rel: "sl/TestHandWrittenMapping.t", GoTest: true, TomArgs: map[string][]string{"sl/TestHandWrittenMapping.t": {"--genIntrospector"}}},
 }
+
+// testRefUnsupported is why the tests of sl/TestRef.t are not ported.
+const testRefUnsupported = "needs Gom's --termpointer (RefTerm/LabTerm/PathTerm/VarTerm, expand()) and the term-graph strategies of sl/graph.tom (DeRef, StrictDeRef, AllSeq), not implemented by gomgo and the Go sl library"
 
 func base(c portCase) string { return strings.TrimSuffix(filepath.Base(c.Rel), ".t") }
 
@@ -136,7 +155,6 @@ func generateGo(t *testing.T, c portCase, dir string) (map[string]string, string
 	if len(c.Gom) > 0 {
 		args = append(args, "-I", dir)
 	}
-	args = append(args, c.TomArgs...)
 	for _, g := range c.Gom {
 		src, err := filepath.Abs(g.Rel)
 		if err != nil {
@@ -155,7 +173,7 @@ func generateGo(t *testing.T, c portCase, dir string) (map[string]string, string
 			t.Fatal(err)
 		}
 		sub := filepath.Join(dir, supportDir(rel))
-		if out, err := dist.Compile(t, src, sub, args...); err != nil {
+		if out, err := dist.Compile(t, src, sub, append(append([]string(nil), args...), c.TomArgs[rel]...)...); err != nil {
 			return nil, out, fmt.Errorf("tom -go failed on %s: %v", rel, err)
 		}
 		gens[rel] = filepath.Join(sub, strings.TrimSuffix(filepath.Base(rel), ".t")+".go")
@@ -164,7 +182,7 @@ func generateGo(t *testing.T, c portCase, dir string) (map[string]string, string
 	if err != nil {
 		t.Fatal(err)
 	}
-	if out, err := dist.Compile(t, src, dir, args...); err != nil {
+	if out, err := dist.Compile(t, src, dir, append(args, c.TomArgs[c.Rel]...)...); err != nil {
 		return nil, out, fmt.Errorf("tom -go failed: %v", err)
 	}
 	gen := filepath.Join(dir, base(c)+".go")
@@ -262,9 +280,15 @@ func oraclePath(c portCase) string {
 	return filepath.Join("testdata", "oracle", strings.ReplaceAll(strings.TrimSuffix(c.Rel, ".t"), "/", "_")+".json")
 }
 
+// capitalise gives the Go name of a JUnit test: testFoo -> TestFoo, and
+// testfoo -> TestFoo too, since go test only runs the functions whose
+// name continues with an upper case (or a digit) after Test.
 func capitalise(name string) string {
 	if name == "" {
 		return name
+	}
+	if strings.HasPrefix(name, "test") && len(name) > 4 {
+		return "Test" + strings.ToUpper(name[4:5]) + name[5:]
 	}
 	return strings.ToUpper(name[:1]) + name[1:]
 }
@@ -421,7 +445,7 @@ func legacyOracle(t *testing.T, c portCase) oracle {
 	// As test/build.xml: Gom first, then tom with -I towards the
 	// generated mappings of the input's package, on the case and its
 	// support files.
-	targs := append([]string(nil), c.TomArgs...)
+	var targs []string
 	if len(c.Gom) > 0 {
 		gen := t.TempDir()
 		for _, g := range c.Gom {
@@ -441,7 +465,7 @@ func legacyOracle(t *testing.T, c portCase) oracle {
 		}
 	}
 	for _, rel := range append(append([]string(nil), c.Support...), c.Rel) {
-		if out, err := legacy.Compile(t, filepath.Join(root, "test", rel), dir, targs...); err != nil {
+		if out, err := legacy.Compile(t, filepath.Join(root, "test", rel), dir, append(append([]string(nil), targs...), c.TomArgs[rel]...)...); err != nil {
 			t.Fatalf("legacy tom failed on %s: %v\n%s", rel, err, out)
 		}
 	}
@@ -634,8 +658,11 @@ func compareWithOracle(c portCase, want oracle, passed map[string]bool, out stri
 			required++
 		}
 	}
-	if required == 0 {
+	switch {
+	case required == 0 && !c.FullyUnsupported:
 		diffs = append(diffs, "vacuous oracle: no legacy-passing test remains required once Unsupported is removed")
+	case required > 0 && c.FullyUnsupported:
+		diffs = append(diffs, "FullyUnsupported, but "+strconv.Itoa(required)+" legacy-passing test(s) are not Unsupported")
 	}
 	if runErr != nil && len(topPassed) == 0 {
 		diffs = append(diffs, "go test failed and no Go test passed ("+runErr.Error()+")")
@@ -785,7 +812,7 @@ func TestDashboard(t *testing.T) {
 	b.WriteString("avec le cas qui les utilise (comme `test/build.xml` compile tout le\n")
 	b.WriteString("répertoire), et c'est le statut de ce cas qui les valide.\n\n")
 	b.WriteString("- total : " + strconv.Itoa(len(rows)) + "\n")
-	for _, s := range []string{"OK", "divergence", "échec go test", "échec go build", "échec tom", "oracle invalide", "support", "non porté"} {
+	for _, s := range []string{"OK", "divergence", "échec go test", "échec go build", "échec tom", "oracle invalide", "non supporté", "support", "non porté"} {
 		b.WriteString("- " + s + " : " + strconv.Itoa(counts[s]) + "\n")
 	}
 	b.WriteString("\n| Cas | Statut | Notes |\n|---|---|---|\n" + strings.Join(rows, "\n") + "\n")
@@ -826,6 +853,8 @@ func dashboardStatus(t *testing.T, c portCase) string {
 			status = "échec go test"
 		case len(compareWithOracle(c, want, passed, out, err)) > 0:
 			status = "divergence"
+		case c.FullyUnsupported:
+			status = "non supporté"
 		default:
 			status = "OK"
 		}
@@ -896,6 +925,14 @@ func TestOracleGuards(t *testing.T) {
 	allUnsupported := portCase{Rel: "X.t", GoTest: true, Unsupported: map[string]string{"TestU": "why"}}
 	if d := compareWithOracle(allUnsupported, oracle{Passed: []string{"TestU"}}, map[string]bool{}, "", nil); !hasDiff(d, "vacuous") {
 		t.Errorf("all-unsupported oracle: %v, want a vacuous-oracle divergence", d)
+	}
+	fully := allUnsupported
+	fully.FullyUnsupported = true
+	if d := compareWithOracle(fully, oracle{Passed: []string{"TestU"}}, map[string]bool{}, "", nil); len(d) != 0 {
+		t.Errorf("FullyUnsupported port: %v, want no divergence", d)
+	}
+	if d := compareWithOracle(fully, oracle{Passed: []string{"TestU", "TestA"}}, map[string]bool{}, "", nil); !hasDiff(d, "FullyUnsupported") {
+		t.Errorf("FullyUnsupported with a required test: %v, want a divergence", d)
 	}
 	if d := compareWithOracle(junit, oracle{Passed: []string{"TestA"}}, map[string]bool{}, "build failed", errors.New("exit status 1")); !hasDiff(d, "no Go test passed") {
 		t.Errorf("failed go test with zero passes: %v, want an explicit report", d)
@@ -989,6 +1026,18 @@ func TestGomCopiesIdentical(t *testing.T) {
 			if string(orig) != string(cp) {
 				t.Errorf("test/go/%s differs from test/%s", g.Rel, g.Rel)
 			}
+		}
+	}
+}
+
+// TestCapitalise pins the JUnit -> Go test names.
+func TestCapitalise(t *testing.T) {
+	for in, want := range map[string]string{
+		"testFoo": "TestFoo", "testfoo": "TestFoo", "test1": "Test1",
+		"testcountAll1": "TestCountAll1", "foo": "Foo",
+	} {
+		if got := capitalise(in); got != want {
+			t.Errorf("capitalise(%q) = %q, want %q", in, got, want)
 		}
 	}
 }

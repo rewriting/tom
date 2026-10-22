@@ -30,7 +30,7 @@ func (o *OneId) VisitLight(subject any, intro Introspector) (any, error) {
 			// Java OneId.visitLight does not catch VisitFailure.
 			return nil, err
 		}
-		if newChild != oldChild {
+		if !same(newChild, oldChild) {
 			return intro.SetChildAt(subject, i, newChild), nil
 		}
 	}
@@ -44,7 +44,7 @@ func (o *OneId) VisitEnv(intro Introspector) int {
 		env.Down(i + 1)
 		oldSubject := env.GetSubject()
 		status := o.args[0].VisitEnv(intro)
-		if status == StatusSuccess && env.GetSubject() != oldSubject {
+		if status == StatusSuccess && !same(env.GetSubject(), oldSubject) {
 			env.Up()
 			return StatusSuccess
 		}

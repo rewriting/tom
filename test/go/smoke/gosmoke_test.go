@@ -1,6 +1,7 @@
 // Package gosmoke compiles small Tom+Go programs with the root compiler
 // (tom -go -np), runs them with `go run`, and compares their stdout with
-// the expected output stored next to each fixture.
+// the expected output stored next to each fixture (extra tom options in
+// an optional args.txt).
 package gosmoke
 
 import (
@@ -40,7 +41,12 @@ func TestGoSmoke(t *testing.T) {
 				t.Fatal(err)
 			}
 			out := t.TempDir()
-			if msg, err := dist.Compile(t, src, out, "-go", "-np"); err != nil {
+			args := []string{"-go", "-np"}
+			// optional extra tom options, one per line
+			if extra, err := os.ReadFile(filepath.Join(d, "args.txt")); err == nil {
+				args = append(args, strings.Fields(string(extra))...)
+			}
+			if msg, err := dist.Compile(t, src, out, args...); err != nil {
 				t.Fatalf("tom -go: %v\n%s", err, msg)
 			}
 			gen := filepath.Join(out, name+".go")

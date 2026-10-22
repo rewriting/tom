@@ -1,0 +1,4 @@
+3 4
+3 <nil>
+P(All(x),0,_) false
+Mu v
