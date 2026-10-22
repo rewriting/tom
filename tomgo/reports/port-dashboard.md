@@ -6,13 +6,13 @@ Tom+Go, compilé par `tom -go`, se comporte comme l'original compilé par
 `legacy/` (mêmes tests JUnit réussis, ou même sortie et même statut).
 
 - total : 103
-- OK : 12
+- OK : 13
 - divergence : 0
 - échec go test : 0
 - échec go build : 0
 - échec tom : 0
 - oracle invalide : 0
-- non porté : 91
+- non porté : 90
 
 | Cas | Statut | Notes |
 |---|---|---|
@@ -38,7 +38,7 @@ Tom+Go, compilé par `tom -go`, se comporte comme l'original compilé par
 | `TestPeano.t` | OK |  |
 | `TestRecord.t` | non porté |  |
 | `TestReflectiveStrategy.t` | non porté |  |
-| `TestStrategy.t` | OK | `TestPosition` non supporté : needs the environment-based visit (getEnvironment().getPosition()) and sl.Position, absent from the Go sl |
+| `TestStrategy.t` | OK |  |
 | `TestSublists.t` | OK |  |
 | `TestVarVarStar.t` | OK |  |
 | `TomList.t` | non porté |  |
@@ -108,7 +108,7 @@ Tom+Go, compilé par `tom -go`, se comporte comme l'original compilé par
 | `sl/IntrospectorBehaviour.t` | non porté |  |
 | `sl/NewBehaviour.t` | non porté |  |
 | `sl/OldBehaviour.t` | non porté |  |
-| `sl/TestEnvironment.t` | non porté |  |
+| `sl/TestEnvironment.t` | OK |  |
 | `sl/TestGetSubterm.t` | non porté |  |
 | `sl/TestHandWrittenMapping.t` | non porté |  |
 | `sl/TestImportStrat.t` | non porté |  |

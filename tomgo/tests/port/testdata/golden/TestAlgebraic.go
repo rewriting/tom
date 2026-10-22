@@ -38,7 +38,7 @@ func Test1(t *testing.T) {
   
   
   
-  r, err := s.VisitLight(input, sl.VisitableIntrospector{})
+  r, err := s.Visit(input, sl.VisitableIntrospector{})
   if err != nil {
     t.Fatalf("VisitFailure: %v", err)
   }

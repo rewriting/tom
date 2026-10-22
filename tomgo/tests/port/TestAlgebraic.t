@@ -31,10 +31,10 @@ import (
 func Test1(t *testing.T) {
   var input T1 = `f(a())
   var s sl.Strategy = `RepeatId(BottomUp(R()))
-  // port: Go sl has no environment-based visit; s.visit(input) becomes
-  // s.VisitLight(input, sl.VisitableIntrospector{}) and the VisitFailure
-  // exception becomes the returned error, and the generic <T> T result an r.(T1).
-  r, err := s.VisitLight(input, sl.VisitableIntrospector{})
+  // port: s.visit(input) is s.Visit(input, sl.VisitableIntrospector{}) (Go
+  // has no overloading); the VisitFailure exception becomes the returned
+  // error, and the generic <T> T result an r.(T1).
+  r, err := s.Visit(input, sl.VisitableIntrospector{})
   if err != nil {
     t.Fatalf("VisitFailure: %v", err)
   }

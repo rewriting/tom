@@ -48,9 +48,8 @@ var cases = []portCase{
 	{Rel: "TestSublists.t", GoTest: true},
 	{Rel: "numeric/TestNumericConditions.t", GoTest: true},
 	{Rel: "TestAlgebraic.t", GoTest: true},
-	{Rel: "TestStrategy.t", GoTest: true, Unsupported: map[string]string{
-		"TestPosition": "needs the environment-based visit (getEnvironment().getPosition()) and sl.Position, absent from the Go sl",
-	}},
+	{Rel: "TestStrategy.t", GoTest: true},
+	{Rel: "sl/TestEnvironment.t", GoTest: true},
 }
 
 func base(c portCase) string { return strings.TrimSuffix(filepath.Base(c.Rel), ".t") }

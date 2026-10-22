@@ -92,35 +92,38 @@ func TestS(t *testing.T) {
   assertSame(t, "g(a,a) return a", visitLight(`rule9, `g(a(),a())), `a())
 }
 
-// port: unsupported — testPosition and GetPositionA need the
-// environment-based visit (getEnvironment().getPosition(), s.visit(t))
-// and tom.library.sl.Position, which the Go sl does not have.
-//  @Test
-//  public void testPosition() throws VisitFailure {
-//    //3 positions for now
-//    Hashtable positions = new Hashtable(3);
-//    Term t = `f(a());
-//    Term tBis = `f(b());
-//    Strategy getPos1 = `GetPositionA(positions,"p1");
-//    Strategy getPos2 = `GetPositionA(positions,"p2");
-//    Strategy getPos3 = `GetPositionA(positions,"p3");
-//
-//    `BottomUp(getPos1).visit(t);
-//    `BottomUp(getPos2).visit(t);
-//    `BottomUp(getPos3).visit(tBis);
-//
-//    Position p1 = (Position)positions.get("p1");
-//    Position p2 = (Position)positions.get("p2");
-//    Position p3 = (Position)positions.get("p3");
-//    assertTrue("equality on Position", p1.equals(p2));
-//    assertFalse("inequality on Position", p1.equals(p3));
-//  }
-//
-//  %strategy GetPositionA(positions:Hashtable,posName:String) extends Identity(){
-//    visit Term {
-//      a() -> {positions.put(posName,getEnvironment().getPosition());}
-//    }
-//  }
+// port: the *testing.T parameter is named tt because the original's
+// local `Term t` would shadow it.
+func TestPosition(tt *testing.T) {
+    //3 positions for now
+    var positions Hashtable = Hashtable{}
+    var t Term = `f(a())
+    var tBis Term = `f(b())
+    var getPos1 sl.Strategy = `GetPositionA(positions,"p1")
+    var getPos2 sl.Strategy = `GetPositionA(positions,"p2")
+    var getPos3 sl.Strategy = `GetPositionA(positions,"p3")
+
+    visit(tt, `BottomUp(getPos1), t)
+    visit(tt, `BottomUp(getPos2), t)
+    visit(tt, `BottomUp(getPos3), tBis)
+
+    // port: Java's (Position) cast lets null through; the comma-ok
+    // assertion keeps a nil *sl.Position (p3: tBis has no a()).
+    p1, _ := positions["p1"].(*sl.Position)
+    p2, _ := positions["p2"].(*sl.Position)
+    p3, _ := positions["p3"].(*sl.Position)
+    assertTrue(tt, "equality on Position", p1.Equals(p2))
+    assertFalse(tt, "inequality on Position", p1.Equals(p3))
+}
+
+  %strategy GetPositionA(positions:Hashtable,posName:String) extends Identity(){
+    visit Term {
+      // port: host code reads the strategy parameters as fields of the
+      // receiver, and getEnvironment() as tom__strat.GetEnvironment()
+      // (positions.put(posName,getEnvironment().getPosition()) in Java).
+      a() -> {tom__strat.positions[tom__strat.posName] = tom__strat.GetEnvironment().GetPosition()}
+    }
+  }
 
   %strategy S0() extends Identity() {
     visit Term {
@@ -227,6 +230,33 @@ func visitLight(s sl.Strategy, subject any) any {
     panic(visitFailure{err})
   }
   return r
+}
+
+// tom.library.sl.Strategy.visit(t), which throws VisitFailure out of
+// the JUnit test (reported as an error): the Go test fails instead.
+func visit(t *testing.T, s sl.Strategy, subject any) any {
+  t.Helper()
+  r, err := s.Visit(subject, sl.VisitableIntrospector{})
+  if err != nil {
+    t.Fatal("tom.library.sl.VisitFailure()")
+  }
+  return r
+}
+
+// org.junit.Assert.assertTrue
+func assertTrue(t *testing.T, message string, condition bool) {
+  t.Helper()
+  if !condition {
+    t.Errorf("%s", message)
+  }
+}
+
+// org.junit.Assert.assertFalse
+func assertFalse(t *testing.T, message string, condition bool) {
+  t.Helper()
+  if condition {
+    t.Errorf("%s", message)
+  }
 }
 
 // org.junit.Assert.assertSame

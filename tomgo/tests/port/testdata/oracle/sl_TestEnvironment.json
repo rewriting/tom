@@ -1,0 +1,9 @@
+{
+  "passed": [
+    "TestEqual",
+    "TestUpAndDown"
+  ],
+  "stdout": "",
+  "exitOK": true,
+  "source_sha256": "828767101075288e46bde6312f489bba0aeb400365f5b7ed2e045d2e06655d92"
+}
