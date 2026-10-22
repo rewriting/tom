@@ -531,6 +531,24 @@ public class Compiler extends TomGenericPlugin {
           }
         ]%;
 
+  /* the Go version of next_minimal_extract (-go): the int of Tom is int64,
+   * intarray is []int64; sol is updated in place, as the Java int[] */
+  private static String next_minimal_extract_go = 
+        %[
+func next_minimal_extract(multiplicity int64, total int64, E []int64, sol []int64) bool {
+  pos := total-1
+  for pos>=0 && (sol[pos]+multiplicity)>E[pos] {
+    sol[pos]=0
+    pos--
+  }
+  if pos<0 {
+    return false
+  }
+  sol[pos]+=multiplicity
+  return true
+}
+]%;
+
   /**
    * Adds the necessary functions to the ADT of the program
    * 
@@ -562,7 +580,8 @@ public class Compiler extends TomGenericPlugin {
       l = `concCode(DeclarationToCode(getPILforGetTermForMultiplicity(op,opType)),l*);
       // 4. next_minimal_extract
       if(!generatedNextMinimalExtract) {
-        l = `concCode(TargetLanguageToCode(ITL(next_minimal_extract)),l*);
+        String nme = getOptionBooleanValue("goCode")?next_minimal_extract_go:next_minimal_extract;
+        l = `concCode(TargetLanguageToCode(ITL(nme)),l*);
         generatedNextMinimalExtract = true;
       }
     }

@@ -261,8 +261,19 @@ func (p *parser) parseHookAfterPointCut(scope, pointCut string, line int) (gomas
 	if err := p.advance(); err != nil {
 		return nil, err
 	}
-	kindStr, err := p.consumeID()
-	if err != nil {
+	if p.tok.kind != tokID {
+		return nil, p.errf("expected identifier, got %s", p.tok.kind)
+	}
+	kindStr := p.tok.text
+	// The arglist is optional (Gom grammar: arglist : ('(' (ID (','
+	// ID)*)? ')')?), as in `f:AC{}`: the body then follows the kind.
+	if err := p.lex.skipWhitespaceAndComments(); err != nil {
+		return nil, err
+	}
+	if r, _ := p.lex.peek(); r == '{' {
+		return p.finishHook(scope, pointCut, kindStr, nil, line)
+	}
+	if err := p.advance(); err != nil {
 		return nil, err
 	}
 	if err := p.expect(tokLParen); err != nil {
@@ -289,6 +300,12 @@ func (p *parser) parseHookAfterPointCut(scope, pointCut string, line int) (gomas
 	if p.tok.kind != tokRParen {
 		return nil, p.errf("expected ')' in hook arg list")
 	}
+	return p.finishHook(scope, pointCut, kindStr, args, line)
+}
+
+// finishHook reads the raw brace body of a hook (the lexer is just before
+// it) and builds the Hook production.
+func (p *parser) finishHook(scope, pointCut, kindStr string, args []gomast.Arg, line int) (gomast.Production, error) {
 	body, err := p.lex.readBracedBody()
 	if err != nil {
 		return nil, err

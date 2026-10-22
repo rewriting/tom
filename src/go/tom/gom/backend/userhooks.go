@@ -10,7 +10,7 @@ package backend
 //   - `op:make_insert(e,l) {…}`, `op:make_empty() {…}` and the rules of a
 //     variadic operator run at the head of Cons<op>.make / Empty<op>.make;
 //   - the theory of a variadic operator whose domain is its codomain —
-//     `op:FL()`, `op:AU() { neutral }`, `op:ACU() { neutral }`,
+//     `op:FL()`, `op:AC()`, `op:AU() { neutral }`, `op:ACU() { neutral }`,
 //     `op:Free()`, or FL by default when it has no construction hook —
 //     normalises the lists (flattening, neutral element, ordering);
 //   - `block`/`javablock` hooks (any scope) are host code, emitted into
@@ -36,7 +36,7 @@ type opHook struct {
 
 // opTheory is the theory of a variadic operator.
 type opTheory struct {
-	kind    string // "", "FL", "Free", "AU", "ACU"
+	kind    string // "", "FL", "Free", "AC", "AU", "ACU"
 	neutral string // the trimmed body of an AU/ACU hook (the neutral element), or ""
 }
 
@@ -176,7 +176,7 @@ func hooksOfKind(hooks []opHook, kind string) []opHook {
 }
 
 // theoryOf returns the theory of a variadic alt (HookTypeExpander: an
-// explicit FL/AU/ACU/Free hook, or FL by default for an operator whose
+// explicit FL/AC/AU/ACU/Free hook, or FL by default for an operator whose
 // domain is its codomain and that has no construction hook).
 func theoryOf(mod gomast.GomModule, alt *gomast.AlternativeAlternative) opTheory {
 	if mod == nil || moduleIsKnown(mod) || !alternativeIsVariadic(alt) {
@@ -187,7 +187,7 @@ func theoryOf(mod gomast.GomModule, alt *gomast.AlternativeAlternative) opTheory
 			continue
 		}
 		switch k := hookKindName(h); k {
-		case "FL", "Free":
+		case "FL", "Free", "AC":
 			return opTheory{kind: k}
 		case "AU", "ACU":
 			return opTheory{kind: k, neutral: trimHookBody(h)}
@@ -248,7 +248,7 @@ func checkUserHooks(mod gomast.GomModule) error {
 				if variadic {
 					continue
 				}
-			case "FL", "Free", "AU", "ACU":
+			case "FL", "Free", "AC", "AU", "ACU":
 				if sameSortVariadic(mod, alt) {
 					if err := checkTheoryOrder(mod, alt); err != nil {
 						return unsupported(h, err.Error())
@@ -262,13 +262,13 @@ func checkUserHooks(mod gomast.GomModule) error {
 				}
 			}
 		}
-		return unsupported(h, "supported: make, make_insert, make_empty, rules, FL, AU, ACU, Free, block, empty import")
+		return unsupported(h, "supported: make, make_insert, make_empty, rules, FL, AC, AU, ACU, Free, block, empty import")
 	}
 	for _, prod := range moduleSorts(mod) {
 		for _, alt := range sortAlternatives(prod) {
 			if alternativeIsVariadic(alt) && sameSortVariadic(mod, alt) && len(opHooks(mod, alt)) > 0 && theoryOf(mod, alt).kind == "" {
 				// Java Gom: mustSpecifyAssociatedTheoryForVarOp
-				return fmt.Errorf("gomgo: the variadic operator %s of module %s has construction hooks but no theory (FL, AU, ACU or Free)", alt.Name, modName)
+				return fmt.Errorf("gomgo: the variadic operator %s of module %s has construction hooks but no theory (FL, AC, AU, ACU or Free)", alt.Name, modName)
 			}
 		}
 	}
@@ -298,7 +298,7 @@ func checkTheoryOrder(mod gomast.GomModule, alt *gomast.AlternativeAlternative) 
 			switch hookKindName(h) {
 			case "make_insert", "make_empty":
 				seenUser = true
-			case "FL", "Free", "AU", "ACU":
+			case "FL", "Free", "AC", "AU", "ACU":
 				if seenUser {
 					return fmt.Errorf("the theory hook of %s must be declared before its make_insert/make_empty hooks and the rules of %s (Java Gom runs them in declaration order, the Go backend runs the theory first)", alt.Name, alt.Name)
 				}

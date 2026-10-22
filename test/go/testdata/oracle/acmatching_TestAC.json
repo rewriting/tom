@@ -1,0 +1,11 @@
+{
+  "passed": [
+    "Test1",
+    "Test2",
+    "Test3",
+    "Test4"
+  ],
+  "stdout": "",
+  "exitOK": true,
+  "source_sha256": "ed5d7c5a762009e52ac1b3edbfd296021a1212ff074cc3a0aab3453f6ff84b9d"
+}

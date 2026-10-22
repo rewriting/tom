@@ -1,0 +1,25 @@
+/*
+ * Tom Go mapping — array of integers.
+ * Mirrors mapping/java/intarray.tom: Java's int[] is []int64 (int64 is
+ * the Tom int type of the Go target). As in Java, make_empty(n) is an
+ * array of n zeros and make_append copies the array. Java compares two
+ * int[] by identity (equals); Go slices have no identity: equals
+ * compares the elements.
+ */
+%typeterm intarray {
+  implement { []int64 }
+  is_sort(t) { $t != nil }
+  equals(t1,t2) { tom_intArrayEquals($t1, $t2) }
+}
+
+%oparray intarray concInt(int*) {
+  is_fsym(l)       { $l != nil }
+  make_empty(n)    { make([]int64, $n) }
+  make_append(o,l) { concIntArrayAppend($o,$l) }
+  get_element(l,n) { $l[$n] }
+  get_size(l)      { len($l) }
+}
+
+func concIntArrayAppend(o int64, array []int64) []int64 { tmp := make([]int64, len(array)+1); copy(tmp, array); tmp[len(array)] = o; return tmp };
+
+func tom_intArrayEquals(t1, t2 []int64) bool { if len(t1) != len(t2) { return false }; for i := range t1 { if t1[i] != t2[i] { return false } }; return true };

@@ -216,6 +216,8 @@ var cases = []portCase{
 		Gom: []gomFile{{Rel: "backquote/term.gom", OracleOnly: true}}},
 	{Rel: "backquote/TestDefaultValue.t", GoTest: true, Gom: []gomFile{{Rel: "backquote/term.gom"}}},
 	{Rel: "rule/Array.t"},
+	{Rel: "acmatching/TestAC.t", GoTest: true},
+	{Rel: "acmatching/TestBool3.t", GoTest: true},
 	{Rel: "backquote/TestBackquoteWithBracket.t", GoTest: true, OracleDeps: []string{"backquote/TestDefaultValue.t"},
 		Gom: []gomFile{{Rel: "backquote/term.gom"}}},
 }

@@ -11,7 +11,7 @@ package backend
 //     Reverse, CompareTo, CompareToLPO;
 //   - for a variadic operator op of sort S over E: the list
 //     constructors of Java's Cons<op>/Empty<op> classes, through the
-//     construction hooks and the theory (FL, AU, ACU, Free):
+//     construction hooks and the theory (FL, AC, AU, ACU, Free):
 //     Empty<Op>() S, Cons<Op>(head E, tail S) S, RealMakeCons<Op>
 //     (insertion without hook), Raw<Op>(elems…) (the term holding
 //     exactly elems), Make<Op>(elems…) (Java's fromArray, Tom's
@@ -335,11 +335,31 @@ func (g *gen) emitVariadicJava(sortNm string, alt *gomast.AlternativeAlternative
 		w("\tif h, ok := any(head).(*%s); ok && len(h.Slots) > 0 {\n\t\treturn Cons%s(h.Slots[0], Cons%s(h.GetTail%s(), tail))\n\t}\n", structName, opGo, opGo, op)
 	}
 	switch th.kind {
-	case "FL":
+	case "FL", "AC":
 		w("\t// FL: flattened list\n")
 		w("\tif %s {\n\t\treturn tail\n\t}\n", isEmpty("head"))
-		flattenHead()
+		// FL/AC: Java's make(head.head, make(head.tail, tail)) recursion
+		// ends with make(empty, tail) == tail: the same Cons calls,
+		// innermost first, without building the tails of head (a Go
+		// list is a flat slice: each tail would be a copy)
+		w("\tif h, ok := any(head).(*%s); ok && len(h.Slots) > 0 {\n\t\tfor i := len(h.Slots) - 1; i >= 0; i-- {\n\t\t\ttail = Cons%s(h.Slots[i], tail)\n\t\t}\n\t\treturn tail\n\t}\n", structName, opGo)
 		w("\tif _, ok := any(tail).(*%s); !ok {\n\t\treturn Cons%s(head, Cons%s(tail, Empty%s()))\n\t}\n", structName, opGo, opGo, opGo)
+		if th.kind == "AC" {
+			// Java Gom's makeACHookList: the FL hook, then the swap
+			// that keeps the elements sorted (compareTo)
+			w("\t// AC: the elements are kept sorted (CompareTo)\n")
+			w("\tif t, ok := any(tail).(*%s); ok && len(t.Slots) > 0 {\n", structName)
+			// tail = Cons(tmpHd, Cons(t.GetTail(), Empty())): the inner
+			// Cons rebuilds the elements of the tail of t one by one (the
+			// flattening above); when they are sorted and none is a list
+			// of the operator, each of these Cons is a plain RealMakeCons,
+			// so the result is the tail of t itself (no quadratic copy)
+			// (without make_insert hook: a hook would run in these Cons)
+			w("\t\tif 0 < head.CompareTo(t.Slots[0]) {\n\t\t\ttmpHd := head\n\t\t\thead = t.Slots[0]\n")
+			w("\t\t\tplain := %v\n\t\t\tfor i := 1; i < len(t.Slots) && plain; i++ {\n\t\t\t\t_, isList := any(t.Slots[i]).(*%s)\n\t\t\t\tplain = !isList && (i+1 == len(t.Slots) || t.Slots[i].CompareTo(t.Slots[i+1]) <= 0)\n\t\t\t}\n", !insertHooks, structName)
+			w("\t\t\tvar rest %s\n\t\t\tif plain {\n\t\t\t\trest = Raw%s(t.Slots[1:]...)\n\t\t\t} else {\n\t\t\t\trest = Cons%s(t.GetTail%s(), Empty%s())\n\t\t\t}\n", sortNm, opGo, opGo, op, opGo)
+			w("\t\t\ttail = Cons%s(tmpHd, rest)\n\t\t}\n\t}\n", opGo)
+		}
 	case "ACU", "AU":
 		// Java Gom's order (HookTypeExpander prepends each hook, so the
 		// emitted Cons<op>.make runs them in reverse of makeAUHookList /

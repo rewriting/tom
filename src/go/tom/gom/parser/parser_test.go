@@ -224,6 +224,32 @@ Foo:make(x,y) {}
 	}
 }
 
+// The arglist of a hook is optional (Gom grammar), as in test/acmatching's
+// `f:AC{}`.
+func TestParse_HookWithoutArgList(t *testing.T) {
+	src := `module gom.X
+abstract syntax
+T = a() | f(T*)
+f:AC{}
+g:FL {  }
+Bar = C()
+`
+	mod, err := ParseBytes([]byte(src))
+	if err != nil {
+		t.Fatal(err)
+	}
+	hooks := Hooks(mod)
+	if len(hooks) != 2 || hooks[0].Name != "f" || HookKind(hooks[0]) != "AC" || hooks[1].Name != "g" || HookKind(hooks[1]) != "FL" {
+		t.Fatalf("hooks = %v", hooks)
+	}
+	if n := len(hooks[0].Args.(*gomast.ConcArgArgList).Slots); n != 0 {
+		t.Errorf("want no arg, got %d", n)
+	}
+	if sorts := Sorts(mod); len(sorts) != 2 || SortName(sorts[1]) != "Bar" {
+		t.Errorf("post-hook sort decl missed")
+	}
+}
+
 func TestParse_ObjectsGomReal(t *testing.T) {
 	// The real Objects.gom from the repo carries one sort-scoped hook
 	// and a non-trivial body containing %match braces.
