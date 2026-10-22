@@ -76,6 +76,59 @@ public class CstBuilder extends TomIslandParserBaseListener {
   public String getStringValue(ParseTree node) { return (String) getValue(node); }
   public CstBlockList getBlockListFromBlock(ParseTree node) { return ((CstBlock) getValue(node)).getblocks(); }
 
+  /*
+   * Body of a mapping hook (implement, is_fsym, make, get_slot, ...).
+   * The island grammar parses nested braces in a hook body as a nested
+   * block, so `make(p) { &T{X: $p} }` would give
+   * ConcCstBlock(HOSTBLOCK("&T"), Cst_UnamedBlock(...)): AstBuilder only
+   * abstracts `$p` (ASTFactory.abstractCode) when the body is a single
+   * HOSTBLOCK, and make_empty() etc. are even dropped. When the body
+   * contains nested blocks but no Tom island, it is pure host code: it
+   * is rebuilt as a single HOSTBLOCK from the tokens between the braces
+   * (hidden whitespace included, skipped comments excluded). Bodies
+   * without nested braces are left unchanged.
+   */
+  public CstBlockList getHookBlockList(TomIslandParser.BlockContext ctx) {
+    CstBlockList bl = getBlockListFromBlock(ctx);
+    boolean nested = false;
+    for(CstBlock b:bl.getCollectionConcCstBlock()) {
+      if(b.isCst_UnamedBlock()) {
+        nested = true;
+      }
+    }
+    if(!nested || !isHostCodeOnly(bl)) {
+      return bl;
+    }
+    Token lbrace = ctx.getStart();
+    Token rbrace = ctx.getStop();
+    StringBuilder text = new StringBuilder();
+    for(Token tok:tokens.get(lbrace.getTokenIndex()+1, rbrace.getTokenIndex()-1)) {
+      text.append(tok.getText());
+    }
+    String source = lbrace.getTokenSource().getSourceName();
+    if(source == IntStream.UNKNOWN_SOURCE_NAME) {
+      source = this.filename;
+    }
+    CstOption ot = `Cst_OriginTracking(source,
+        lbrace.getLine(), lbrace.getCharPositionInLine()+2,
+        rbrace.getLine(), rbrace.getCharPositionInLine()+1);
+    return `ConcCstBlock(HOSTBLOCK(ConcCstOption(ot), text.toString()));
+  }
+
+  /* true when bl only holds HOSTBLOCKs and nested blocks of HOSTBLOCKs */
+  private static boolean isHostCodeOnly(CstBlockList bl) {
+    for(CstBlock b:bl.getCollectionConcCstBlock()) {
+      if(b.isHOSTBLOCK()) {
+        continue;
+      }
+      if(b.isCst_UnamedBlock() && isHostCodeOnly(b.getblocks())) {
+        continue;
+      }
+      return false;
+    }
+    return true;
+  }
+
   private ParseTreeProperty<Object> values2 = new ParseTreeProperty<Object>();
   private void setValue2(ParseTree node, Object value) { values2.put(node, value); } 
   public Object getValue2(ParseTree node) { return values2.get(node); }
@@ -773,7 +826,7 @@ public class CstBuilder extends TomIslandParserBaseListener {
    */
   public void exitImplement(TomIslandParser.ImplementContext ctx) {
     setValue("exitImplement", ctx,
-        `Cst_Implement(getBlockListFromBlock(ctx.block())));
+        `Cst_Implement(getHookBlockList(ctx.block())));
   }
 
   /*
@@ -783,7 +836,7 @@ public class CstBuilder extends TomIslandParserBaseListener {
    */
   public void exitEqualsTerm(TomIslandParser.EqualsTermContext ctx) {
     setValue("exitEquals", ctx,
-        `Cst_Equals(Cst_Name(ctx.id1.getText()), Cst_Name(ctx.id2.getText()), getBlockListFromBlock(ctx.block())));
+        `Cst_Equals(Cst_Name(ctx.id1.getText()), Cst_Name(ctx.id2.getText()), getHookBlockList(ctx.block())));
   }
 
   /*
@@ -793,7 +846,7 @@ public class CstBuilder extends TomIslandParserBaseListener {
    */
   public void exitIsSort(TomIslandParser.IsSortContext ctx) {
     setValue("exitIsSort", ctx,
-        `Cst_IsSort(Cst_Name(ctx.ID().getText()), getBlockListFromBlock(ctx.block())));
+        `Cst_IsSort(Cst_Name(ctx.ID().getText()), getHookBlockList(ctx.block())));
   }
 
   /*
@@ -803,7 +856,7 @@ public class CstBuilder extends TomIslandParserBaseListener {
    */
   public void exitIsFsym(TomIslandParser.IsFsymContext ctx) {
     setValue("exitIsFsym", ctx,
-        `Cst_IsFsym(Cst_Name(ctx.ID().getText()), getBlockListFromBlock(ctx.block())));
+        `Cst_IsFsym(Cst_Name(ctx.ID().getText()), getHookBlockList(ctx.block())));
   }
 
   /*
@@ -817,7 +870,7 @@ public class CstBuilder extends TomIslandParserBaseListener {
       nameList = `ConcCstName(nameList*, Cst_Name(e.getText()));
     }
     setValue("exitMake", ctx,
-        `Cst_Make(nameList, getBlockListFromBlock(ctx.block())));
+        `Cst_Make(nameList, getHookBlockList(ctx.block())));
   }
 
   /*
@@ -827,7 +880,7 @@ public class CstBuilder extends TomIslandParserBaseListener {
    */
   public void exitMakeEmptyList(TomIslandParser.MakeEmptyListContext ctx) {
     setValue("exitMakeEmptyList", ctx,
-        `Cst_MakeEmptyList(getBlockListFromBlock(ctx.block())));
+        `Cst_MakeEmptyList(getHookBlockList(ctx.block())));
   }
 
   /*
@@ -837,7 +890,7 @@ public class CstBuilder extends TomIslandParserBaseListener {
    */
   public void exitMakeEmptyArray(TomIslandParser.MakeEmptyArrayContext ctx) {
     setValue("exitMakeEmptyArray", ctx,
-        `Cst_MakeEmptyArray(Cst_Name(ctx.ID().getText()), getBlockListFromBlock(ctx.block())));
+        `Cst_MakeEmptyArray(Cst_Name(ctx.ID().getText()), getHookBlockList(ctx.block())));
   }
 
   /*
@@ -847,7 +900,7 @@ public class CstBuilder extends TomIslandParserBaseListener {
    */
   public void exitMakeAppendArray(TomIslandParser.MakeAppendArrayContext ctx) {
     setValue("exitMakeAppendArray", ctx,
-        `Cst_MakeAppend(Cst_Name(ctx.id1.getText()), Cst_Name(ctx.id2.getText()), getBlockListFromBlock(ctx.block())));
+        `Cst_MakeAppend(Cst_Name(ctx.id1.getText()), Cst_Name(ctx.id2.getText()), getHookBlockList(ctx.block())));
   }
 
   /*
@@ -857,7 +910,7 @@ public class CstBuilder extends TomIslandParserBaseListener {
    */
   public void exitMakeInsertList(TomIslandParser.MakeInsertListContext ctx) {
     setValue("exitMakeInsertList", ctx,
-        `Cst_MakeInsert(Cst_Name(ctx.id1.getText()), Cst_Name(ctx.id2.getText()), getBlockListFromBlock(ctx.block())));
+        `Cst_MakeInsert(Cst_Name(ctx.id1.getText()), Cst_Name(ctx.id2.getText()), getHookBlockList(ctx.block())));
   }
 
   /*
@@ -867,7 +920,7 @@ public class CstBuilder extends TomIslandParserBaseListener {
    */
   public void exitGetSlot(TomIslandParser.GetSlotContext ctx) {
     setValue("exitGetSlot", ctx,
-        `Cst_GetSlot(Cst_Name(ctx.id1.getText()), Cst_Name(ctx.id2.getText()), getBlockListFromBlock(ctx.block())));
+        `Cst_GetSlot(Cst_Name(ctx.id1.getText()), Cst_Name(ctx.id2.getText()), getHookBlockList(ctx.block())));
   }
 
   /*
@@ -877,7 +930,7 @@ public class CstBuilder extends TomIslandParserBaseListener {
    */
   public void exitGetHead(TomIslandParser.GetHeadContext ctx) {
     setValue("exitGetHead", ctx,
-        `Cst_GetHead(Cst_Name(ctx.ID().getText()), getBlockListFromBlock(ctx.block())));
+        `Cst_GetHead(Cst_Name(ctx.ID().getText()), getHookBlockList(ctx.block())));
   }
 
   /*
@@ -887,7 +940,7 @@ public class CstBuilder extends TomIslandParserBaseListener {
    */
   public void exitGetTail(TomIslandParser.GetTailContext ctx) {
     setValue("exitGetTail", ctx,
-        `Cst_GetTail(Cst_Name(ctx.ID().getText()), getBlockListFromBlock(ctx.block())));
+        `Cst_GetTail(Cst_Name(ctx.ID().getText()), getHookBlockList(ctx.block())));
   }
 
   /*
@@ -897,7 +950,7 @@ public class CstBuilder extends TomIslandParserBaseListener {
    */
   public void exitGetElement(TomIslandParser.GetElementContext ctx) {
     setValue("exitGetElement", ctx,
-        `Cst_GetElement(Cst_Name(ctx.id1.getText()), Cst_Name(ctx.id2.getText()), getBlockListFromBlock(ctx.block())));
+        `Cst_GetElement(Cst_Name(ctx.id1.getText()), Cst_Name(ctx.id2.getText()), getHookBlockList(ctx.block())));
   }
 
   /*
@@ -907,7 +960,7 @@ public class CstBuilder extends TomIslandParserBaseListener {
    */
   public void exitIsEmptyList(TomIslandParser.IsEmptyListContext ctx) {
     setValue("exitIsEmptyList", ctx,
-        `Cst_IsEmpty(Cst_Name(ctx.ID().getText()), getBlockListFromBlock(ctx.block())));
+        `Cst_IsEmpty(Cst_Name(ctx.ID().getText()), getHookBlockList(ctx.block())));
   }
 
   /*
@@ -917,7 +970,7 @@ public class CstBuilder extends TomIslandParserBaseListener {
    */
   public void exitGetSize(TomIslandParser.GetSizeContext ctx) {
     setValue("exitGetSize", ctx,
-        `Cst_GetSize(Cst_Name(ctx.ID().getText()), getBlockListFromBlock(ctx.block())));
+        `Cst_GetSize(Cst_Name(ctx.ID().getText()), getHookBlockList(ctx.block())));
   }
 
   /*
@@ -927,7 +980,7 @@ public class CstBuilder extends TomIslandParserBaseListener {
    */
   public void exitGetDefault(TomIslandParser.GetDefaultContext ctx) {
     setValue("exitGetDefault", ctx,
-        `Cst_GetDefault(Cst_Name(ctx.ID().getText()), getBlockListFromBlock(ctx.block())));
+        `Cst_GetDefault(Cst_Name(ctx.ID().getText()), getHookBlockList(ctx.block())));
   }
 
   /*
