@@ -94,7 +94,7 @@ func MakePairSlotAppl(slotName TomName, appl TomTerm) Slot {
 // IsPairSlotAppl is the `Is_PairSlotAppl` predicate strategy: succeeds (returns subject
 // unchanged) when subject has the `PairSlotAppl` shape, otherwise fails with
 // sl.ErrVisitFailure.
-type IsPairSlotAppl struct{}
+type IsPairSlotAppl struct{ sl.AbstractStrategy }
 
 func (IsPairSlotAppl) VisitLight(subject any, _ sl.Introspector) (any, error) {
 	if _, ok := subject.(*PairSlotApplSlot); ok {
@@ -105,12 +105,27 @@ func (IsPairSlotAppl) VisitLight(subject any, _ sl.Introspector) (any, error) {
 func (IsPairSlotAppl) ChildCount() int             { return 0 }
 func (IsPairSlotAppl) ChildAt(int) sl.Strategy     { panic("IsPairSlotAppl: no children") }
 func (IsPairSlotAppl) SetChildAt(int, sl.Strategy) { panic("IsPairSlotAppl: no children") }
+func (s *IsPairSlotAppl) VisitEnv(sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*PairSlotApplSlot); ok {
+		return sl.StatusSuccess
+	}
+	return sl.StatusFailure
+}
+func (s *IsPairSlotAppl) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *IsPairSlotAppl) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*IsPairSlotAppl)(nil)
 
 // VisitPairSlotAppl is the `_PairSlotAppl` slot-visit strategy: when subject is `PairSlotAppl`,
 // applies each constituent strategy to the matching child slot and
 // rebuilds the term iff at least one child changed. Fails with
 // sl.ErrVisitFailure when subject isn't `PairSlotAppl`.
 type VisitPairSlotAppl struct {
+	sl.AbstractStrategy
 	args []sl.Strategy
 }
 
@@ -150,6 +165,24 @@ func (s *VisitPairSlotAppl) VisitLight(subject any, intro sl.Introspector) (any,
 func (s *VisitPairSlotAppl) ChildCount() int                 { return len(s.args) }
 func (s *VisitPairSlotAppl) ChildAt(i int) sl.Strategy       { return s.args[i] }
 func (s *VisitPairSlotAppl) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
+
+func (s *VisitPairSlotAppl) VisitEnv(intro sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*PairSlotApplSlot); !ok {
+		return sl.StatusFailure
+	}
+	if len(s.args) != 2 {
+		return sl.StatusFailure
+	}
+	return sl.VisitCongruence(s.GetEnvironment(), intro, s.args, false)
+}
+func (s *VisitPairSlotAppl) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *VisitPairSlotAppl) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*VisitPairSlotAppl)(nil)
 
 // SlotList is the Go interface backing the Gom sort SlotList.
 type SlotList interface {
@@ -235,7 +268,7 @@ func MakeConcSlot(args ...Slot) SlotList {
 // IsConcSlot is the `Is_concSlot` predicate strategy: succeeds (returns subject
 // unchanged) when subject has the `concSlot` shape, otherwise fails with
 // sl.ErrVisitFailure.
-type IsConcSlot struct{}
+type IsConcSlot struct{ sl.AbstractStrategy }
 
 func (IsConcSlot) VisitLight(subject any, _ sl.Introspector) (any, error) {
 	if _, ok := subject.(*ConcSlotSlotList); ok {
@@ -246,12 +279,27 @@ func (IsConcSlot) VisitLight(subject any, _ sl.Introspector) (any, error) {
 func (IsConcSlot) ChildCount() int             { return 0 }
 func (IsConcSlot) ChildAt(int) sl.Strategy     { panic("IsConcSlot: no children") }
 func (IsConcSlot) SetChildAt(int, sl.Strategy) { panic("IsConcSlot: no children") }
+func (s *IsConcSlot) VisitEnv(sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*ConcSlotSlotList); ok {
+		return sl.StatusSuccess
+	}
+	return sl.StatusFailure
+}
+func (s *IsConcSlot) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *IsConcSlot) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*IsConcSlot)(nil)
 
 // VisitConcSlot is the `_concSlot` slot-visit strategy: when subject is `concSlot`,
 // applies each constituent strategy to the matching child slot and
 // rebuilds the term iff at least one child changed. Fails with
 // sl.ErrVisitFailure when subject isn't `concSlot`.
 type VisitConcSlot struct {
+	sl.AbstractStrategy
 	args []sl.Strategy
 }
 
@@ -294,6 +342,21 @@ func (s *VisitConcSlot) VisitLight(subject any, intro sl.Introspector) (any, err
 func (s *VisitConcSlot) ChildCount() int                 { return len(s.args) }
 func (s *VisitConcSlot) ChildAt(i int) sl.Strategy       { return s.args[i] }
 func (s *VisitConcSlot) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
+
+func (s *VisitConcSlot) VisitEnv(intro sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*ConcSlotSlotList); !ok {
+		return sl.StatusFailure
+	}
+	return sl.VisitCongruence(s.GetEnvironment(), intro, s.args, true)
+}
+func (s *VisitConcSlot) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *VisitConcSlot) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*VisitConcSlot)(nil)
 
 // BQSlot is the Go interface backing the Gom sort BQSlot.
 type BQSlot interface {
@@ -375,7 +438,7 @@ func MakePairSlotBQTerm(slotName TomName, bqterm BQTerm) BQSlot {
 // IsPairSlotBQTerm is the `Is_PairSlotBQTerm` predicate strategy: succeeds (returns subject
 // unchanged) when subject has the `PairSlotBQTerm` shape, otherwise fails with
 // sl.ErrVisitFailure.
-type IsPairSlotBQTerm struct{}
+type IsPairSlotBQTerm struct{ sl.AbstractStrategy }
 
 func (IsPairSlotBQTerm) VisitLight(subject any, _ sl.Introspector) (any, error) {
 	if _, ok := subject.(*PairSlotBQTermBQSlot); ok {
@@ -386,12 +449,27 @@ func (IsPairSlotBQTerm) VisitLight(subject any, _ sl.Introspector) (any, error) 
 func (IsPairSlotBQTerm) ChildCount() int             { return 0 }
 func (IsPairSlotBQTerm) ChildAt(int) sl.Strategy     { panic("IsPairSlotBQTerm: no children") }
 func (IsPairSlotBQTerm) SetChildAt(int, sl.Strategy) { panic("IsPairSlotBQTerm: no children") }
+func (s *IsPairSlotBQTerm) VisitEnv(sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*PairSlotBQTermBQSlot); ok {
+		return sl.StatusSuccess
+	}
+	return sl.StatusFailure
+}
+func (s *IsPairSlotBQTerm) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *IsPairSlotBQTerm) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*IsPairSlotBQTerm)(nil)
 
 // VisitPairSlotBQTerm is the `_PairSlotBQTerm` slot-visit strategy: when subject is `PairSlotBQTerm`,
 // applies each constituent strategy to the matching child slot and
 // rebuilds the term iff at least one child changed. Fails with
 // sl.ErrVisitFailure when subject isn't `PairSlotBQTerm`.
 type VisitPairSlotBQTerm struct {
+	sl.AbstractStrategy
 	args []sl.Strategy
 }
 
@@ -431,6 +509,24 @@ func (s *VisitPairSlotBQTerm) VisitLight(subject any, intro sl.Introspector) (an
 func (s *VisitPairSlotBQTerm) ChildCount() int                 { return len(s.args) }
 func (s *VisitPairSlotBQTerm) ChildAt(i int) sl.Strategy       { return s.args[i] }
 func (s *VisitPairSlotBQTerm) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
+
+func (s *VisitPairSlotBQTerm) VisitEnv(intro sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*PairSlotBQTermBQSlot); !ok {
+		return sl.StatusFailure
+	}
+	if len(s.args) != 2 {
+		return sl.StatusFailure
+	}
+	return sl.VisitCongruence(s.GetEnvironment(), intro, s.args, false)
+}
+func (s *VisitPairSlotBQTerm) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *VisitPairSlotBQTerm) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*VisitPairSlotBQTerm)(nil)
 
 // BQSlotList is the Go interface backing the Gom sort BQSlotList.
 type BQSlotList interface {
@@ -516,7 +612,7 @@ func MakeConcBQSlot(args ...BQSlot) BQSlotList {
 // IsConcBQSlot is the `Is_concBQSlot` predicate strategy: succeeds (returns subject
 // unchanged) when subject has the `concBQSlot` shape, otherwise fails with
 // sl.ErrVisitFailure.
-type IsConcBQSlot struct{}
+type IsConcBQSlot struct{ sl.AbstractStrategy }
 
 func (IsConcBQSlot) VisitLight(subject any, _ sl.Introspector) (any, error) {
 	if _, ok := subject.(*ConcBQSlotBQSlotList); ok {
@@ -527,12 +623,27 @@ func (IsConcBQSlot) VisitLight(subject any, _ sl.Introspector) (any, error) {
 func (IsConcBQSlot) ChildCount() int             { return 0 }
 func (IsConcBQSlot) ChildAt(int) sl.Strategy     { panic("IsConcBQSlot: no children") }
 func (IsConcBQSlot) SetChildAt(int, sl.Strategy) { panic("IsConcBQSlot: no children") }
+func (s *IsConcBQSlot) VisitEnv(sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*ConcBQSlotBQSlotList); ok {
+		return sl.StatusSuccess
+	}
+	return sl.StatusFailure
+}
+func (s *IsConcBQSlot) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *IsConcBQSlot) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*IsConcBQSlot)(nil)
 
 // VisitConcBQSlot is the `_concBQSlot` slot-visit strategy: when subject is `concBQSlot`,
 // applies each constituent strategy to the matching child slot and
 // rebuilds the term iff at least one child changed. Fails with
 // sl.ErrVisitFailure when subject isn't `concBQSlot`.
 type VisitConcBQSlot struct {
+	sl.AbstractStrategy
 	args []sl.Strategy
 }
 
@@ -575,6 +686,21 @@ func (s *VisitConcBQSlot) VisitLight(subject any, intro sl.Introspector) (any, e
 func (s *VisitConcBQSlot) ChildCount() int                 { return len(s.args) }
 func (s *VisitConcBQSlot) ChildAt(i int) sl.Strategy       { return s.args[i] }
 func (s *VisitConcBQSlot) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
+
+func (s *VisitConcBQSlot) VisitEnv(intro sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*ConcBQSlotBQSlotList); !ok {
+		return sl.StatusFailure
+	}
+	return sl.VisitCongruence(s.GetEnvironment(), intro, s.args, true)
+}
+func (s *VisitConcBQSlot) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *VisitConcBQSlot) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*VisitConcBQSlot)(nil)
 
 // PairNameDecl is the Go interface backing the Gom sort PairNameDecl.
 type PairNameDecl interface {
@@ -656,7 +782,7 @@ func MakePairNameDecl(slotName TomName, slotDecl Declaration) PairNameDecl {
 // IsPairNameDecl is the `Is_PairNameDecl` predicate strategy: succeeds (returns subject
 // unchanged) when subject has the `PairNameDecl` shape, otherwise fails with
 // sl.ErrVisitFailure.
-type IsPairNameDecl struct{}
+type IsPairNameDecl struct{ sl.AbstractStrategy }
 
 func (IsPairNameDecl) VisitLight(subject any, _ sl.Introspector) (any, error) {
 	if _, ok := subject.(*PairNameDeclPairNameDecl); ok {
@@ -667,12 +793,27 @@ func (IsPairNameDecl) VisitLight(subject any, _ sl.Introspector) (any, error) {
 func (IsPairNameDecl) ChildCount() int             { return 0 }
 func (IsPairNameDecl) ChildAt(int) sl.Strategy     { panic("IsPairNameDecl: no children") }
 func (IsPairNameDecl) SetChildAt(int, sl.Strategy) { panic("IsPairNameDecl: no children") }
+func (s *IsPairNameDecl) VisitEnv(sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*PairNameDeclPairNameDecl); ok {
+		return sl.StatusSuccess
+	}
+	return sl.StatusFailure
+}
+func (s *IsPairNameDecl) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *IsPairNameDecl) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*IsPairNameDecl)(nil)
 
 // VisitPairNameDecl is the `_PairNameDecl` slot-visit strategy: when subject is `PairNameDecl`,
 // applies each constituent strategy to the matching child slot and
 // rebuilds the term iff at least one child changed. Fails with
 // sl.ErrVisitFailure when subject isn't `PairNameDecl`.
 type VisitPairNameDecl struct {
+	sl.AbstractStrategy
 	args []sl.Strategy
 }
 
@@ -712,6 +853,24 @@ func (s *VisitPairNameDecl) VisitLight(subject any, intro sl.Introspector) (any,
 func (s *VisitPairNameDecl) ChildCount() int                 { return len(s.args) }
 func (s *VisitPairNameDecl) ChildAt(i int) sl.Strategy       { return s.args[i] }
 func (s *VisitPairNameDecl) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
+
+func (s *VisitPairNameDecl) VisitEnv(intro sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*PairNameDeclPairNameDecl); !ok {
+		return sl.StatusFailure
+	}
+	if len(s.args) != 2 {
+		return sl.StatusFailure
+	}
+	return sl.VisitCongruence(s.GetEnvironment(), intro, s.args, false)
+}
+func (s *VisitPairNameDecl) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *VisitPairNameDecl) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*VisitPairNameDecl)(nil)
 
 // PairNameDeclList is the Go interface backing the Gom sort PairNameDeclList.
 type PairNameDeclList interface {
@@ -797,7 +956,7 @@ func MakeConcPairNameDecl(args ...PairNameDecl) PairNameDeclList {
 // IsConcPairNameDecl is the `Is_concPairNameDecl` predicate strategy: succeeds (returns subject
 // unchanged) when subject has the `concPairNameDecl` shape, otherwise fails with
 // sl.ErrVisitFailure.
-type IsConcPairNameDecl struct{}
+type IsConcPairNameDecl struct{ sl.AbstractStrategy }
 
 func (IsConcPairNameDecl) VisitLight(subject any, _ sl.Introspector) (any, error) {
 	if _, ok := subject.(*ConcPairNameDeclPairNameDeclList); ok {
@@ -808,12 +967,27 @@ func (IsConcPairNameDecl) VisitLight(subject any, _ sl.Introspector) (any, error
 func (IsConcPairNameDecl) ChildCount() int             { return 0 }
 func (IsConcPairNameDecl) ChildAt(int) sl.Strategy     { panic("IsConcPairNameDecl: no children") }
 func (IsConcPairNameDecl) SetChildAt(int, sl.Strategy) { panic("IsConcPairNameDecl: no children") }
+func (s *IsConcPairNameDecl) VisitEnv(sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*ConcPairNameDeclPairNameDeclList); ok {
+		return sl.StatusSuccess
+	}
+	return sl.StatusFailure
+}
+func (s *IsConcPairNameDecl) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *IsConcPairNameDecl) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*IsConcPairNameDecl)(nil)
 
 // VisitConcPairNameDecl is the `_concPairNameDecl` slot-visit strategy: when subject is `concPairNameDecl`,
 // applies each constituent strategy to the matching child slot and
 // rebuilds the term iff at least one child changed. Fails with
 // sl.ErrVisitFailure when subject isn't `concPairNameDecl`.
 type VisitConcPairNameDecl struct {
+	sl.AbstractStrategy
 	args []sl.Strategy
 }
 
@@ -856,3 +1030,18 @@ func (s *VisitConcPairNameDecl) VisitLight(subject any, intro sl.Introspector) (
 func (s *VisitConcPairNameDecl) ChildCount() int                 { return len(s.args) }
 func (s *VisitConcPairNameDecl) ChildAt(i int) sl.Strategy       { return s.args[i] }
 func (s *VisitConcPairNameDecl) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
+
+func (s *VisitConcPairNameDecl) VisitEnv(intro sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*ConcPairNameDeclPairNameDeclList); !ok {
+		return sl.StatusFailure
+	}
+	return sl.VisitCongruence(s.GetEnvironment(), intro, s.args, true)
+}
+func (s *VisitConcPairNameDecl) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *VisitConcPairNameDecl) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*VisitConcPairNameDecl)(nil)

@@ -104,7 +104,7 @@ func MakeConc(args ...int64) List {
 // IsConc is the `Is_conc` predicate strategy: succeeds (returns subject
 // unchanged) when subject has the `conc` shape, otherwise fails with
 // sl.ErrVisitFailure.
-type IsConc struct{}
+type IsConc struct{ sl.AbstractStrategy }
 
 func (IsConc) VisitLight(subject any, _ sl.Introspector) (any, error) {
 	if _, ok := subject.(*ConcList); ok {
@@ -115,12 +115,27 @@ func (IsConc) VisitLight(subject any, _ sl.Introspector) (any, error) {
 func (IsConc) ChildCount() int             { return 0 }
 func (IsConc) ChildAt(int) sl.Strategy     { panic("IsConc: no children") }
 func (IsConc) SetChildAt(int, sl.Strategy) { panic("IsConc: no children") }
+func (s *IsConc) VisitEnv(sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*ConcList); ok {
+		return sl.StatusSuccess
+	}
+	return sl.StatusFailure
+}
+func (s *IsConc) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *IsConc) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*IsConc)(nil)
 
 // VisitConc is the `_conc` slot-visit strategy: when subject is `conc`,
 // applies each constituent strategy to the matching child slot and
 // rebuilds the term iff at least one child changed. Fails with
 // sl.ErrVisitFailure when subject isn't `conc`.
 type VisitConc struct {
+	sl.AbstractStrategy
 	args []sl.Strategy
 }
 
@@ -163,3 +178,18 @@ func (s *VisitConc) VisitLight(subject any, intro sl.Introspector) (any, error) 
 func (s *VisitConc) ChildCount() int                 { return len(s.args) }
 func (s *VisitConc) ChildAt(i int) sl.Strategy       { return s.args[i] }
 func (s *VisitConc) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
+
+func (s *VisitConc) VisitEnv(intro sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*ConcList); !ok {
+		return sl.StatusFailure
+	}
+	return sl.VisitCongruence(s.GetEnvironment(), intro, s.args, true)
+}
+func (s *VisitConc) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *VisitConc) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*VisitConc)(nil)

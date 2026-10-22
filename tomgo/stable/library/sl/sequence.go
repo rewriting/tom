@@ -26,3 +26,19 @@ func (s *Sequence) VisitLight(subject any, intro Introspector) (any, error) {
 	}
 	return s.args[1].VisitLight(v, intro)
 }
+
+func (s *Sequence) VisitEnv(intro Introspector) int {
+	status := s.args[0].VisitEnv(intro)
+	if status == StatusSuccess {
+		return s.args[1].VisitEnv(intro)
+	}
+	return status
+}
+
+func (s *Sequence) Visit(subject any, intro Introspector) (any, error) {
+	return VisitStrategy(s, subject, intro)
+}
+
+func (s *Sequence) VisitWith(env *Environment, intro Introspector) (any, error) {
+	return VisitStrategyWith(s, env, intro)
+}

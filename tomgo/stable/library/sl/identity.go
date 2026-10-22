@@ -18,3 +18,14 @@ func NewIdentity() Strategy {
 func (Identity) VisitLight(subject any, _ Introspector) (any, error) {
 	return subject, nil
 }
+
+// VisitEnv always succeeds and leaves the subject unchanged.
+func (i *Identity) VisitEnv(Introspector) int { return StatusSuccess }
+
+func (i *Identity) Visit(subject any, intro Introspector) (any, error) {
+	return VisitStrategy(i, subject, intro)
+}
+
+func (i *Identity) VisitWith(env *Environment, intro Introspector) (any, error) {
+	return VisitStrategyWith(i, env, intro)
+}

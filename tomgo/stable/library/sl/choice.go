@@ -30,3 +30,22 @@ func (c *Choice) VisitLight(subject any, intro Introspector) (any, error) {
 	}
 	return nil, err
 }
+
+func (c *Choice) VisitEnv(intro Introspector) int {
+	subject := c.environment.GetSubject()
+	status := c.args[0].VisitEnv(intro)
+	if status == StatusSuccess {
+		return status
+	}
+	// reset the modifications from FIRST
+	c.environment.SetSubject(subject)
+	return c.args[1].VisitEnv(intro)
+}
+
+func (c *Choice) Visit(subject any, intro Introspector) (any, error) {
+	return VisitStrategy(c, subject, intro)
+}
+
+func (c *Choice) VisitWith(env *Environment, intro Introspector) (any, error) {
+	return VisitStrategyWith(c, env, intro)
+}

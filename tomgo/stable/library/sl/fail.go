@@ -26,3 +26,14 @@ func (f *Fail) VisitLight(_ any, _ Introspector) (any, error) {
 	}
 	return nil, fmt.Errorf("%w: %s", ErrVisitFailure, f.message)
 }
+
+// VisitEnv always fails.
+func (f *Fail) VisitEnv(Introspector) int { return StatusFailure }
+
+func (f *Fail) Visit(subject any, intro Introspector) (any, error) {
+	return VisitStrategy(f, subject, intro)
+}
+
+func (f *Fail) VisitWith(env *Environment, intro Introspector) (any, error) {
+	return VisitStrategyWith(f, env, intro)
+}

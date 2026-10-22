@@ -86,7 +86,7 @@ func MakeBQTermToInstruction(tom BQTerm) Instruction {
 // IsBQTermToInstruction is the `Is_BQTermToInstruction` predicate strategy: succeeds (returns subject
 // unchanged) when subject has the `BQTermToInstruction` shape, otherwise fails with
 // sl.ErrVisitFailure.
-type IsBQTermToInstruction struct{}
+type IsBQTermToInstruction struct{ sl.AbstractStrategy }
 
 func (IsBQTermToInstruction) VisitLight(subject any, _ sl.Introspector) (any, error) {
 	if _, ok := subject.(*BQTermToInstructionInstruction); ok {
@@ -99,12 +99,27 @@ func (IsBQTermToInstruction) ChildAt(int) sl.Strategy { panic("IsBQTermToInstruc
 func (IsBQTermToInstruction) SetChildAt(int, sl.Strategy) {
 	panic("IsBQTermToInstruction: no children")
 }
+func (s *IsBQTermToInstruction) VisitEnv(sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*BQTermToInstructionInstruction); ok {
+		return sl.StatusSuccess
+	}
+	return sl.StatusFailure
+}
+func (s *IsBQTermToInstruction) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *IsBQTermToInstruction) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*IsBQTermToInstruction)(nil)
 
 // VisitBQTermToInstruction is the `_BQTermToInstruction` slot-visit strategy: when subject is `BQTermToInstruction`,
 // applies each constituent strategy to the matching child slot and
 // rebuilds the term iff at least one child changed. Fails with
 // sl.ErrVisitFailure when subject isn't `BQTermToInstruction`.
 type VisitBQTermToInstruction struct {
+	sl.AbstractStrategy
 	args []sl.Strategy
 }
 
@@ -144,6 +159,24 @@ func (s *VisitBQTermToInstruction) VisitLight(subject any, intro sl.Introspector
 func (s *VisitBQTermToInstruction) ChildCount() int                 { return len(s.args) }
 func (s *VisitBQTermToInstruction) ChildAt(i int) sl.Strategy       { return s.args[i] }
 func (s *VisitBQTermToInstruction) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
+
+func (s *VisitBQTermToInstruction) VisitEnv(intro sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*BQTermToInstructionInstruction); !ok {
+		return sl.StatusFailure
+	}
+	if len(s.args) != 1 {
+		return sl.StatusFailure
+	}
+	return sl.VisitCongruence(s.GetEnvironment(), intro, s.args, false)
+}
+func (s *VisitBQTermToInstruction) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *VisitBQTermToInstruction) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*VisitBQTermToInstruction)(nil)
 
 // ExpressionToInstructionInstruction is the term type for the alternative `ExpressionToInstruction(...)` of sort Instruction.
 type ExpressionToInstructionInstruction struct {
@@ -211,7 +244,7 @@ func MakeExpressionToInstruction(expr Expression) Instruction {
 // IsExpressionToInstruction is the `Is_ExpressionToInstruction` predicate strategy: succeeds (returns subject
 // unchanged) when subject has the `ExpressionToInstruction` shape, otherwise fails with
 // sl.ErrVisitFailure.
-type IsExpressionToInstruction struct{}
+type IsExpressionToInstruction struct{ sl.AbstractStrategy }
 
 func (IsExpressionToInstruction) VisitLight(subject any, _ sl.Introspector) (any, error) {
 	if _, ok := subject.(*ExpressionToInstructionInstruction); ok {
@@ -226,12 +259,27 @@ func (IsExpressionToInstruction) ChildAt(int) sl.Strategy {
 func (IsExpressionToInstruction) SetChildAt(int, sl.Strategy) {
 	panic("IsExpressionToInstruction: no children")
 }
+func (s *IsExpressionToInstruction) VisitEnv(sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*ExpressionToInstructionInstruction); ok {
+		return sl.StatusSuccess
+	}
+	return sl.StatusFailure
+}
+func (s *IsExpressionToInstruction) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *IsExpressionToInstruction) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*IsExpressionToInstruction)(nil)
 
 // VisitExpressionToInstruction is the `_ExpressionToInstruction` slot-visit strategy: when subject is `ExpressionToInstruction`,
 // applies each constituent strategy to the matching child slot and
 // rebuilds the term iff at least one child changed. Fails with
 // sl.ErrVisitFailure when subject isn't `ExpressionToInstruction`.
 type VisitExpressionToInstruction struct {
+	sl.AbstractStrategy
 	args []sl.Strategy
 }
 
@@ -271,6 +319,24 @@ func (s *VisitExpressionToInstruction) VisitLight(subject any, intro sl.Introspe
 func (s *VisitExpressionToInstruction) ChildCount() int                 { return len(s.args) }
 func (s *VisitExpressionToInstruction) ChildAt(i int) sl.Strategy       { return s.args[i] }
 func (s *VisitExpressionToInstruction) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
+
+func (s *VisitExpressionToInstruction) VisitEnv(intro sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*ExpressionToInstructionInstruction); !ok {
+		return sl.StatusFailure
+	}
+	if len(s.args) != 1 {
+		return sl.StatusFailure
+	}
+	return sl.VisitCongruence(s.GetEnvironment(), intro, s.args, false)
+}
+func (s *VisitExpressionToInstruction) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *VisitExpressionToInstruction) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*VisitExpressionToInstruction)(nil)
 
 // CodeToInstructionInstruction is the term type for the alternative `CodeToInstruction(...)` of sort Instruction.
 type CodeToInstructionInstruction struct {
@@ -342,7 +408,7 @@ func MakeCodeToInstruction(code Code) Instruction {
 // IsCodeToInstruction is the `Is_CodeToInstruction` predicate strategy: succeeds (returns subject
 // unchanged) when subject has the `CodeToInstruction` shape, otherwise fails with
 // sl.ErrVisitFailure.
-type IsCodeToInstruction struct{}
+type IsCodeToInstruction struct{ sl.AbstractStrategy }
 
 func (IsCodeToInstruction) VisitLight(subject any, _ sl.Introspector) (any, error) {
 	if _, ok := subject.(*CodeToInstructionInstruction); ok {
@@ -353,12 +419,27 @@ func (IsCodeToInstruction) VisitLight(subject any, _ sl.Introspector) (any, erro
 func (IsCodeToInstruction) ChildCount() int             { return 0 }
 func (IsCodeToInstruction) ChildAt(int) sl.Strategy     { panic("IsCodeToInstruction: no children") }
 func (IsCodeToInstruction) SetChildAt(int, sl.Strategy) { panic("IsCodeToInstruction: no children") }
+func (s *IsCodeToInstruction) VisitEnv(sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*CodeToInstructionInstruction); ok {
+		return sl.StatusSuccess
+	}
+	return sl.StatusFailure
+}
+func (s *IsCodeToInstruction) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *IsCodeToInstruction) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*IsCodeToInstruction)(nil)
 
 // VisitCodeToInstruction is the `_CodeToInstruction` slot-visit strategy: when subject is `CodeToInstruction`,
 // applies each constituent strategy to the matching child slot and
 // rebuilds the term iff at least one child changed. Fails with
 // sl.ErrVisitFailure when subject isn't `CodeToInstruction`.
 type VisitCodeToInstruction struct {
+	sl.AbstractStrategy
 	args []sl.Strategy
 }
 
@@ -398,6 +479,24 @@ func (s *VisitCodeToInstruction) VisitLight(subject any, intro sl.Introspector) 
 func (s *VisitCodeToInstruction) ChildCount() int                 { return len(s.args) }
 func (s *VisitCodeToInstruction) ChildAt(i int) sl.Strategy       { return s.args[i] }
 func (s *VisitCodeToInstruction) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
+
+func (s *VisitCodeToInstruction) VisitEnv(intro sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*CodeToInstructionInstruction); !ok {
+		return sl.StatusFailure
+	}
+	if len(s.args) != 1 {
+		return sl.StatusFailure
+	}
+	return sl.VisitCongruence(s.GetEnvironment(), intro, s.args, false)
+}
+func (s *VisitCodeToInstruction) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *VisitCodeToInstruction) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*VisitCodeToInstruction)(nil)
 
 // IfInstruction is the term type for the alternative `If(...)` of sort Instruction.
 type IfInstruction struct {
@@ -481,7 +580,7 @@ func MakeIf(condition Expression, succesInst Instruction, failureInst Instructio
 // IsIf is the `Is_If` predicate strategy: succeeds (returns subject
 // unchanged) when subject has the `If` shape, otherwise fails with
 // sl.ErrVisitFailure.
-type IsIf struct{}
+type IsIf struct{ sl.AbstractStrategy }
 
 func (IsIf) VisitLight(subject any, _ sl.Introspector) (any, error) {
 	if _, ok := subject.(*IfInstruction); ok {
@@ -492,12 +591,27 @@ func (IsIf) VisitLight(subject any, _ sl.Introspector) (any, error) {
 func (IsIf) ChildCount() int             { return 0 }
 func (IsIf) ChildAt(int) sl.Strategy     { panic("IsIf: no children") }
 func (IsIf) SetChildAt(int, sl.Strategy) { panic("IsIf: no children") }
+func (s *IsIf) VisitEnv(sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*IfInstruction); ok {
+		return sl.StatusSuccess
+	}
+	return sl.StatusFailure
+}
+func (s *IsIf) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *IsIf) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*IsIf)(nil)
 
 // VisitIf is the `_If` slot-visit strategy: when subject is `If`,
 // applies each constituent strategy to the matching child slot and
 // rebuilds the term iff at least one child changed. Fails with
 // sl.ErrVisitFailure when subject isn't `If`.
 type VisitIf struct {
+	sl.AbstractStrategy
 	args []sl.Strategy
 }
 
@@ -537,6 +651,24 @@ func (s *VisitIf) VisitLight(subject any, intro sl.Introspector) (any, error) {
 func (s *VisitIf) ChildCount() int                 { return len(s.args) }
 func (s *VisitIf) ChildAt(i int) sl.Strategy       { return s.args[i] }
 func (s *VisitIf) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
+
+func (s *VisitIf) VisitEnv(intro sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*IfInstruction); !ok {
+		return sl.StatusFailure
+	}
+	if len(s.args) != 3 {
+		return sl.StatusFailure
+	}
+	return sl.VisitCongruence(s.GetEnvironment(), intro, s.args, false)
+}
+func (s *VisitIf) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *VisitIf) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*VisitIf)(nil)
 
 // DoWhileInstruction is the term type for the alternative `DoWhile(...)` of sort Instruction.
 type DoWhileInstruction struct {
@@ -612,7 +744,7 @@ func MakeDoWhile(doInst Instruction, condition Expression) Instruction {
 // IsDoWhile is the `Is_DoWhile` predicate strategy: succeeds (returns subject
 // unchanged) when subject has the `DoWhile` shape, otherwise fails with
 // sl.ErrVisitFailure.
-type IsDoWhile struct{}
+type IsDoWhile struct{ sl.AbstractStrategy }
 
 func (IsDoWhile) VisitLight(subject any, _ sl.Introspector) (any, error) {
 	if _, ok := subject.(*DoWhileInstruction); ok {
@@ -623,12 +755,27 @@ func (IsDoWhile) VisitLight(subject any, _ sl.Introspector) (any, error) {
 func (IsDoWhile) ChildCount() int             { return 0 }
 func (IsDoWhile) ChildAt(int) sl.Strategy     { panic("IsDoWhile: no children") }
 func (IsDoWhile) SetChildAt(int, sl.Strategy) { panic("IsDoWhile: no children") }
+func (s *IsDoWhile) VisitEnv(sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*DoWhileInstruction); ok {
+		return sl.StatusSuccess
+	}
+	return sl.StatusFailure
+}
+func (s *IsDoWhile) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *IsDoWhile) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*IsDoWhile)(nil)
 
 // VisitDoWhile is the `_DoWhile` slot-visit strategy: when subject is `DoWhile`,
 // applies each constituent strategy to the matching child slot and
 // rebuilds the term iff at least one child changed. Fails with
 // sl.ErrVisitFailure when subject isn't `DoWhile`.
 type VisitDoWhile struct {
+	sl.AbstractStrategy
 	args []sl.Strategy
 }
 
@@ -668,6 +815,24 @@ func (s *VisitDoWhile) VisitLight(subject any, intro sl.Introspector) (any, erro
 func (s *VisitDoWhile) ChildCount() int                 { return len(s.args) }
 func (s *VisitDoWhile) ChildAt(i int) sl.Strategy       { return s.args[i] }
 func (s *VisitDoWhile) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
+
+func (s *VisitDoWhile) VisitEnv(intro sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*DoWhileInstruction); !ok {
+		return sl.StatusFailure
+	}
+	if len(s.args) != 2 {
+		return sl.StatusFailure
+	}
+	return sl.VisitCongruence(s.GetEnvironment(), intro, s.args, false)
+}
+func (s *VisitDoWhile) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *VisitDoWhile) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*VisitDoWhile)(nil)
 
 // WhileDoInstruction is the term type for the alternative `WhileDo(...)` of sort Instruction.
 type WhileDoInstruction struct {
@@ -743,7 +908,7 @@ func MakeWhileDo(condition Expression, doInst Instruction) Instruction {
 // IsWhileDo is the `Is_WhileDo` predicate strategy: succeeds (returns subject
 // unchanged) when subject has the `WhileDo` shape, otherwise fails with
 // sl.ErrVisitFailure.
-type IsWhileDo struct{}
+type IsWhileDo struct{ sl.AbstractStrategy }
 
 func (IsWhileDo) VisitLight(subject any, _ sl.Introspector) (any, error) {
 	if _, ok := subject.(*WhileDoInstruction); ok {
@@ -754,12 +919,27 @@ func (IsWhileDo) VisitLight(subject any, _ sl.Introspector) (any, error) {
 func (IsWhileDo) ChildCount() int             { return 0 }
 func (IsWhileDo) ChildAt(int) sl.Strategy     { panic("IsWhileDo: no children") }
 func (IsWhileDo) SetChildAt(int, sl.Strategy) { panic("IsWhileDo: no children") }
+func (s *IsWhileDo) VisitEnv(sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*WhileDoInstruction); ok {
+		return sl.StatusSuccess
+	}
+	return sl.StatusFailure
+}
+func (s *IsWhileDo) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *IsWhileDo) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*IsWhileDo)(nil)
 
 // VisitWhileDo is the `_WhileDo` slot-visit strategy: when subject is `WhileDo`,
 // applies each constituent strategy to the matching child slot and
 // rebuilds the term iff at least one child changed. Fails with
 // sl.ErrVisitFailure when subject isn't `WhileDo`.
 type VisitWhileDo struct {
+	sl.AbstractStrategy
 	args []sl.Strategy
 }
 
@@ -799,6 +979,24 @@ func (s *VisitWhileDo) VisitLight(subject any, intro sl.Introspector) (any, erro
 func (s *VisitWhileDo) ChildCount() int                 { return len(s.args) }
 func (s *VisitWhileDo) ChildAt(i int) sl.Strategy       { return s.args[i] }
 func (s *VisitWhileDo) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
+
+func (s *VisitWhileDo) VisitEnv(intro sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*WhileDoInstruction); !ok {
+		return sl.StatusFailure
+	}
+	if len(s.args) != 2 {
+		return sl.StatusFailure
+	}
+	return sl.VisitCongruence(s.GetEnvironment(), intro, s.args, false)
+}
+func (s *VisitWhileDo) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *VisitWhileDo) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*VisitWhileDo)(nil)
 
 // LetInstruction is the term type for the alternative `Let(...)` of sort Instruction.
 type LetInstruction struct {
@@ -882,7 +1080,7 @@ func MakeLet(variable BQTerm, source Expression, astInstruction Instruction) Ins
 // IsLet is the `Is_Let` predicate strategy: succeeds (returns subject
 // unchanged) when subject has the `Let` shape, otherwise fails with
 // sl.ErrVisitFailure.
-type IsLet struct{}
+type IsLet struct{ sl.AbstractStrategy }
 
 func (IsLet) VisitLight(subject any, _ sl.Introspector) (any, error) {
 	if _, ok := subject.(*LetInstruction); ok {
@@ -893,12 +1091,27 @@ func (IsLet) VisitLight(subject any, _ sl.Introspector) (any, error) {
 func (IsLet) ChildCount() int             { return 0 }
 func (IsLet) ChildAt(int) sl.Strategy     { panic("IsLet: no children") }
 func (IsLet) SetChildAt(int, sl.Strategy) { panic("IsLet: no children") }
+func (s *IsLet) VisitEnv(sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*LetInstruction); ok {
+		return sl.StatusSuccess
+	}
+	return sl.StatusFailure
+}
+func (s *IsLet) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *IsLet) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*IsLet)(nil)
 
 // VisitLet is the `_Let` slot-visit strategy: when subject is `Let`,
 // applies each constituent strategy to the matching child slot and
 // rebuilds the term iff at least one child changed. Fails with
 // sl.ErrVisitFailure when subject isn't `Let`.
 type VisitLet struct {
+	sl.AbstractStrategy
 	args []sl.Strategy
 }
 
@@ -938,6 +1151,24 @@ func (s *VisitLet) VisitLight(subject any, intro sl.Introspector) (any, error) {
 func (s *VisitLet) ChildCount() int                 { return len(s.args) }
 func (s *VisitLet) ChildAt(i int) sl.Strategy       { return s.args[i] }
 func (s *VisitLet) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
+
+func (s *VisitLet) VisitEnv(intro sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*LetInstruction); !ok {
+		return sl.StatusFailure
+	}
+	if len(s.args) != 3 {
+		return sl.StatusFailure
+	}
+	return sl.VisitCongruence(s.GetEnvironment(), intro, s.args, false)
+}
+func (s *VisitLet) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *VisitLet) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*VisitLet)(nil)
 
 // LetRefInstruction is the term type for the alternative `LetRef(...)` of sort Instruction.
 type LetRefInstruction struct {
@@ -1021,7 +1252,7 @@ func MakeLetRef(variable BQTerm, source Expression, astInstruction Instruction) 
 // IsLetRef is the `Is_LetRef` predicate strategy: succeeds (returns subject
 // unchanged) when subject has the `LetRef` shape, otherwise fails with
 // sl.ErrVisitFailure.
-type IsLetRef struct{}
+type IsLetRef struct{ sl.AbstractStrategy }
 
 func (IsLetRef) VisitLight(subject any, _ sl.Introspector) (any, error) {
 	if _, ok := subject.(*LetRefInstruction); ok {
@@ -1032,12 +1263,27 @@ func (IsLetRef) VisitLight(subject any, _ sl.Introspector) (any, error) {
 func (IsLetRef) ChildCount() int             { return 0 }
 func (IsLetRef) ChildAt(int) sl.Strategy     { panic("IsLetRef: no children") }
 func (IsLetRef) SetChildAt(int, sl.Strategy) { panic("IsLetRef: no children") }
+func (s *IsLetRef) VisitEnv(sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*LetRefInstruction); ok {
+		return sl.StatusSuccess
+	}
+	return sl.StatusFailure
+}
+func (s *IsLetRef) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *IsLetRef) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*IsLetRef)(nil)
 
 // VisitLetRef is the `_LetRef` slot-visit strategy: when subject is `LetRef`,
 // applies each constituent strategy to the matching child slot and
 // rebuilds the term iff at least one child changed. Fails with
 // sl.ErrVisitFailure when subject isn't `LetRef`.
 type VisitLetRef struct {
+	sl.AbstractStrategy
 	args []sl.Strategy
 }
 
@@ -1077,6 +1323,24 @@ func (s *VisitLetRef) VisitLight(subject any, intro sl.Introspector) (any, error
 func (s *VisitLetRef) ChildCount() int                 { return len(s.args) }
 func (s *VisitLetRef) ChildAt(i int) sl.Strategy       { return s.args[i] }
 func (s *VisitLetRef) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
+
+func (s *VisitLetRef) VisitEnv(intro sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*LetRefInstruction); !ok {
+		return sl.StatusFailure
+	}
+	if len(s.args) != 3 {
+		return sl.StatusFailure
+	}
+	return sl.VisitCongruence(s.GetEnvironment(), intro, s.args, false)
+}
+func (s *VisitLetRef) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *VisitLetRef) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*VisitLetRef)(nil)
 
 // AssignInstruction is the term type for the alternative `Assign(...)` of sort Instruction.
 type AssignInstruction struct {
@@ -1152,7 +1416,7 @@ func MakeAssign(variable BQTerm, source Expression) Instruction {
 // IsAssign is the `Is_Assign` predicate strategy: succeeds (returns subject
 // unchanged) when subject has the `Assign` shape, otherwise fails with
 // sl.ErrVisitFailure.
-type IsAssign struct{}
+type IsAssign struct{ sl.AbstractStrategy }
 
 func (IsAssign) VisitLight(subject any, _ sl.Introspector) (any, error) {
 	if _, ok := subject.(*AssignInstruction); ok {
@@ -1163,12 +1427,27 @@ func (IsAssign) VisitLight(subject any, _ sl.Introspector) (any, error) {
 func (IsAssign) ChildCount() int             { return 0 }
 func (IsAssign) ChildAt(int) sl.Strategy     { panic("IsAssign: no children") }
 func (IsAssign) SetChildAt(int, sl.Strategy) { panic("IsAssign: no children") }
+func (s *IsAssign) VisitEnv(sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*AssignInstruction); ok {
+		return sl.StatusSuccess
+	}
+	return sl.StatusFailure
+}
+func (s *IsAssign) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *IsAssign) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*IsAssign)(nil)
 
 // VisitAssign is the `_Assign` slot-visit strategy: when subject is `Assign`,
 // applies each constituent strategy to the matching child slot and
 // rebuilds the term iff at least one child changed. Fails with
 // sl.ErrVisitFailure when subject isn't `Assign`.
 type VisitAssign struct {
+	sl.AbstractStrategy
 	args []sl.Strategy
 }
 
@@ -1208,6 +1487,24 @@ func (s *VisitAssign) VisitLight(subject any, intro sl.Introspector) (any, error
 func (s *VisitAssign) ChildCount() int                 { return len(s.args) }
 func (s *VisitAssign) ChildAt(i int) sl.Strategy       { return s.args[i] }
 func (s *VisitAssign) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
+
+func (s *VisitAssign) VisitEnv(intro sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*AssignInstruction); !ok {
+		return sl.StatusFailure
+	}
+	if len(s.args) != 2 {
+		return sl.StatusFailure
+	}
+	return sl.VisitCongruence(s.GetEnvironment(), intro, s.args, false)
+}
+func (s *VisitAssign) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *VisitAssign) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*VisitAssign)(nil)
 
 // AssignArrayInstruction is the term type for the alternative `AssignArray(...)` of sort Instruction.
 type AssignArrayInstruction struct {
@@ -1291,7 +1588,7 @@ func MakeAssignArray(variable BQTerm, index BQTerm, source Expression) Instructi
 // IsAssignArray is the `Is_AssignArray` predicate strategy: succeeds (returns subject
 // unchanged) when subject has the `AssignArray` shape, otherwise fails with
 // sl.ErrVisitFailure.
-type IsAssignArray struct{}
+type IsAssignArray struct{ sl.AbstractStrategy }
 
 func (IsAssignArray) VisitLight(subject any, _ sl.Introspector) (any, error) {
 	if _, ok := subject.(*AssignArrayInstruction); ok {
@@ -1302,12 +1599,27 @@ func (IsAssignArray) VisitLight(subject any, _ sl.Introspector) (any, error) {
 func (IsAssignArray) ChildCount() int             { return 0 }
 func (IsAssignArray) ChildAt(int) sl.Strategy     { panic("IsAssignArray: no children") }
 func (IsAssignArray) SetChildAt(int, sl.Strategy) { panic("IsAssignArray: no children") }
+func (s *IsAssignArray) VisitEnv(sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*AssignArrayInstruction); ok {
+		return sl.StatusSuccess
+	}
+	return sl.StatusFailure
+}
+func (s *IsAssignArray) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *IsAssignArray) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*IsAssignArray)(nil)
 
 // VisitAssignArray is the `_AssignArray` slot-visit strategy: when subject is `AssignArray`,
 // applies each constituent strategy to the matching child slot and
 // rebuilds the term iff at least one child changed. Fails with
 // sl.ErrVisitFailure when subject isn't `AssignArray`.
 type VisitAssignArray struct {
+	sl.AbstractStrategy
 	args []sl.Strategy
 }
 
@@ -1347,6 +1659,24 @@ func (s *VisitAssignArray) VisitLight(subject any, intro sl.Introspector) (any, 
 func (s *VisitAssignArray) ChildCount() int                 { return len(s.args) }
 func (s *VisitAssignArray) ChildAt(i int) sl.Strategy       { return s.args[i] }
 func (s *VisitAssignArray) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
+
+func (s *VisitAssignArray) VisitEnv(intro sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*AssignArrayInstruction); !ok {
+		return sl.StatusFailure
+	}
+	if len(s.args) != 3 {
+		return sl.StatusFailure
+	}
+	return sl.VisitCongruence(s.GetEnvironment(), intro, s.args, false)
+}
+func (s *VisitAssignArray) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *VisitAssignArray) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*VisitAssignArray)(nil)
 
 // ReturnInstruction is the term type for the alternative `Return(...)` of sort Instruction.
 type ReturnInstruction struct {
@@ -1414,7 +1744,7 @@ func MakeReturn(kid1 BQTerm) Instruction {
 // IsReturn is the `Is_Return` predicate strategy: succeeds (returns subject
 // unchanged) when subject has the `Return` shape, otherwise fails with
 // sl.ErrVisitFailure.
-type IsReturn struct{}
+type IsReturn struct{ sl.AbstractStrategy }
 
 func (IsReturn) VisitLight(subject any, _ sl.Introspector) (any, error) {
 	if _, ok := subject.(*ReturnInstruction); ok {
@@ -1425,12 +1755,27 @@ func (IsReturn) VisitLight(subject any, _ sl.Introspector) (any, error) {
 func (IsReturn) ChildCount() int             { return 0 }
 func (IsReturn) ChildAt(int) sl.Strategy     { panic("IsReturn: no children") }
 func (IsReturn) SetChildAt(int, sl.Strategy) { panic("IsReturn: no children") }
+func (s *IsReturn) VisitEnv(sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*ReturnInstruction); ok {
+		return sl.StatusSuccess
+	}
+	return sl.StatusFailure
+}
+func (s *IsReturn) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *IsReturn) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*IsReturn)(nil)
 
 // VisitReturn is the `_Return` slot-visit strategy: when subject is `Return`,
 // applies each constituent strategy to the matching child slot and
 // rebuilds the term iff at least one child changed. Fails with
 // sl.ErrVisitFailure when subject isn't `Return`.
 type VisitReturn struct {
+	sl.AbstractStrategy
 	args []sl.Strategy
 }
 
@@ -1470,6 +1815,24 @@ func (s *VisitReturn) VisitLight(subject any, intro sl.Introspector) (any, error
 func (s *VisitReturn) ChildCount() int                 { return len(s.args) }
 func (s *VisitReturn) ChildAt(i int) sl.Strategy       { return s.args[i] }
 func (s *VisitReturn) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
+
+func (s *VisitReturn) VisitEnv(intro sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*ReturnInstruction); !ok {
+		return sl.StatusFailure
+	}
+	if len(s.args) != 1 {
+		return sl.StatusFailure
+	}
+	return sl.VisitCongruence(s.GetEnvironment(), intro, s.args, false)
+}
+func (s *VisitReturn) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *VisitReturn) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*VisitReturn)(nil)
 
 // NopInstruction is the term type for the alternative `Nop(...)` of sort Instruction.
 type NopInstruction struct {
@@ -1518,7 +1881,7 @@ func MakeNop() Instruction {
 // IsNop is the `Is_Nop` predicate strategy: succeeds (returns subject
 // unchanged) when subject has the `Nop` shape, otherwise fails with
 // sl.ErrVisitFailure.
-type IsNop struct{}
+type IsNop struct{ sl.AbstractStrategy }
 
 func (IsNop) VisitLight(subject any, _ sl.Introspector) (any, error) {
 	if _, ok := subject.(*NopInstruction); ok {
@@ -1529,12 +1892,27 @@ func (IsNop) VisitLight(subject any, _ sl.Introspector) (any, error) {
 func (IsNop) ChildCount() int             { return 0 }
 func (IsNop) ChildAt(int) sl.Strategy     { panic("IsNop: no children") }
 func (IsNop) SetChildAt(int, sl.Strategy) { panic("IsNop: no children") }
+func (s *IsNop) VisitEnv(sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*NopInstruction); ok {
+		return sl.StatusSuccess
+	}
+	return sl.StatusFailure
+}
+func (s *IsNop) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *IsNop) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*IsNop)(nil)
 
 // VisitNop is the `_Nop` slot-visit strategy: when subject is `Nop`,
 // applies each constituent strategy to the matching child slot and
 // rebuilds the term iff at least one child changed. Fails with
 // sl.ErrVisitFailure when subject isn't `Nop`.
 type VisitNop struct {
+	sl.AbstractStrategy
 	args []sl.Strategy
 }
 
@@ -1555,6 +1933,21 @@ func (s *VisitNop) VisitLight(subject any, intro sl.Introspector) (any, error) {
 func (s *VisitNop) ChildCount() int                 { return len(s.args) }
 func (s *VisitNop) ChildAt(i int) sl.Strategy       { return s.args[i] }
 func (s *VisitNop) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
+
+func (s *VisitNop) VisitEnv(intro sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*NopInstruction); !ok {
+		return sl.StatusFailure
+	}
+	return sl.VisitCongruence(s.GetEnvironment(), intro, s.args, false)
+}
+func (s *VisitNop) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *VisitNop) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*VisitNop)(nil)
 
 // AbstractBlockInstruction is the term type for the alternative `AbstractBlock(...)` of sort Instruction.
 type AbstractBlockInstruction struct {
@@ -1622,7 +2015,7 @@ func MakeAbstractBlock(instList InstructionList) Instruction {
 // IsAbstractBlock is the `Is_AbstractBlock` predicate strategy: succeeds (returns subject
 // unchanged) when subject has the `AbstractBlock` shape, otherwise fails with
 // sl.ErrVisitFailure.
-type IsAbstractBlock struct{}
+type IsAbstractBlock struct{ sl.AbstractStrategy }
 
 func (IsAbstractBlock) VisitLight(subject any, _ sl.Introspector) (any, error) {
 	if _, ok := subject.(*AbstractBlockInstruction); ok {
@@ -1633,12 +2026,27 @@ func (IsAbstractBlock) VisitLight(subject any, _ sl.Introspector) (any, error) {
 func (IsAbstractBlock) ChildCount() int             { return 0 }
 func (IsAbstractBlock) ChildAt(int) sl.Strategy     { panic("IsAbstractBlock: no children") }
 func (IsAbstractBlock) SetChildAt(int, sl.Strategy) { panic("IsAbstractBlock: no children") }
+func (s *IsAbstractBlock) VisitEnv(sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*AbstractBlockInstruction); ok {
+		return sl.StatusSuccess
+	}
+	return sl.StatusFailure
+}
+func (s *IsAbstractBlock) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *IsAbstractBlock) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*IsAbstractBlock)(nil)
 
 // VisitAbstractBlock is the `_AbstractBlock` slot-visit strategy: when subject is `AbstractBlock`,
 // applies each constituent strategy to the matching child slot and
 // rebuilds the term iff at least one child changed. Fails with
 // sl.ErrVisitFailure when subject isn't `AbstractBlock`.
 type VisitAbstractBlock struct {
+	sl.AbstractStrategy
 	args []sl.Strategy
 }
 
@@ -1678,6 +2086,24 @@ func (s *VisitAbstractBlock) VisitLight(subject any, intro sl.Introspector) (any
 func (s *VisitAbstractBlock) ChildCount() int                 { return len(s.args) }
 func (s *VisitAbstractBlock) ChildAt(i int) sl.Strategy       { return s.args[i] }
 func (s *VisitAbstractBlock) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
+
+func (s *VisitAbstractBlock) VisitEnv(intro sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*AbstractBlockInstruction); !ok {
+		return sl.StatusFailure
+	}
+	if len(s.args) != 1 {
+		return sl.StatusFailure
+	}
+	return sl.VisitCongruence(s.GetEnvironment(), intro, s.args, false)
+}
+func (s *VisitAbstractBlock) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *VisitAbstractBlock) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*VisitAbstractBlock)(nil)
 
 // UnamedBlockInstruction is the term type for the alternative `UnamedBlock(...)` of sort Instruction.
 type UnamedBlockInstruction struct {
@@ -1745,7 +2171,7 @@ func MakeUnamedBlock(instList InstructionList) Instruction {
 // IsUnamedBlock is the `Is_UnamedBlock` predicate strategy: succeeds (returns subject
 // unchanged) when subject has the `UnamedBlock` shape, otherwise fails with
 // sl.ErrVisitFailure.
-type IsUnamedBlock struct{}
+type IsUnamedBlock struct{ sl.AbstractStrategy }
 
 func (IsUnamedBlock) VisitLight(subject any, _ sl.Introspector) (any, error) {
 	if _, ok := subject.(*UnamedBlockInstruction); ok {
@@ -1756,12 +2182,27 @@ func (IsUnamedBlock) VisitLight(subject any, _ sl.Introspector) (any, error) {
 func (IsUnamedBlock) ChildCount() int             { return 0 }
 func (IsUnamedBlock) ChildAt(int) sl.Strategy     { panic("IsUnamedBlock: no children") }
 func (IsUnamedBlock) SetChildAt(int, sl.Strategy) { panic("IsUnamedBlock: no children") }
+func (s *IsUnamedBlock) VisitEnv(sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*UnamedBlockInstruction); ok {
+		return sl.StatusSuccess
+	}
+	return sl.StatusFailure
+}
+func (s *IsUnamedBlock) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *IsUnamedBlock) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*IsUnamedBlock)(nil)
 
 // VisitUnamedBlock is the `_UnamedBlock` slot-visit strategy: when subject is `UnamedBlock`,
 // applies each constituent strategy to the matching child slot and
 // rebuilds the term iff at least one child changed. Fails with
 // sl.ErrVisitFailure when subject isn't `UnamedBlock`.
 type VisitUnamedBlock struct {
+	sl.AbstractStrategy
 	args []sl.Strategy
 }
 
@@ -1801,6 +2242,24 @@ func (s *VisitUnamedBlock) VisitLight(subject any, intro sl.Introspector) (any, 
 func (s *VisitUnamedBlock) ChildCount() int                 { return len(s.args) }
 func (s *VisitUnamedBlock) ChildAt(i int) sl.Strategy       { return s.args[i] }
 func (s *VisitUnamedBlock) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
+
+func (s *VisitUnamedBlock) VisitEnv(intro sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*UnamedBlockInstruction); !ok {
+		return sl.StatusFailure
+	}
+	if len(s.args) != 1 {
+		return sl.StatusFailure
+	}
+	return sl.VisitCongruence(s.GetEnvironment(), intro, s.args, false)
+}
+func (s *VisitUnamedBlock) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *VisitUnamedBlock) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*VisitUnamedBlock)(nil)
 
 // NamedBlockInstruction is the term type for the alternative `NamedBlock(...)` of sort Instruction.
 type NamedBlockInstruction struct {
@@ -1876,7 +2335,7 @@ func MakeNamedBlock(blockName string, instList InstructionList) Instruction {
 // IsNamedBlock is the `Is_NamedBlock` predicate strategy: succeeds (returns subject
 // unchanged) when subject has the `NamedBlock` shape, otherwise fails with
 // sl.ErrVisitFailure.
-type IsNamedBlock struct{}
+type IsNamedBlock struct{ sl.AbstractStrategy }
 
 func (IsNamedBlock) VisitLight(subject any, _ sl.Introspector) (any, error) {
 	if _, ok := subject.(*NamedBlockInstruction); ok {
@@ -1887,12 +2346,27 @@ func (IsNamedBlock) VisitLight(subject any, _ sl.Introspector) (any, error) {
 func (IsNamedBlock) ChildCount() int             { return 0 }
 func (IsNamedBlock) ChildAt(int) sl.Strategy     { panic("IsNamedBlock: no children") }
 func (IsNamedBlock) SetChildAt(int, sl.Strategy) { panic("IsNamedBlock: no children") }
+func (s *IsNamedBlock) VisitEnv(sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*NamedBlockInstruction); ok {
+		return sl.StatusSuccess
+	}
+	return sl.StatusFailure
+}
+func (s *IsNamedBlock) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *IsNamedBlock) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*IsNamedBlock)(nil)
 
 // VisitNamedBlock is the `_NamedBlock` slot-visit strategy: when subject is `NamedBlock`,
 // applies each constituent strategy to the matching child slot and
 // rebuilds the term iff at least one child changed. Fails with
 // sl.ErrVisitFailure when subject isn't `NamedBlock`.
 type VisitNamedBlock struct {
+	sl.AbstractStrategy
 	args []sl.Strategy
 }
 
@@ -1932,6 +2406,24 @@ func (s *VisitNamedBlock) VisitLight(subject any, intro sl.Introspector) (any, e
 func (s *VisitNamedBlock) ChildCount() int                 { return len(s.args) }
 func (s *VisitNamedBlock) ChildAt(i int) sl.Strategy       { return s.args[i] }
 func (s *VisitNamedBlock) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
+
+func (s *VisitNamedBlock) VisitEnv(intro sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*NamedBlockInstruction); !ok {
+		return sl.StatusFailure
+	}
+	if len(s.args) != 2 {
+		return sl.StatusFailure
+	}
+	return sl.VisitCongruence(s.GetEnvironment(), intro, s.args, false)
+}
+func (s *VisitNamedBlock) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *VisitNamedBlock) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*VisitNamedBlock)(nil)
 
 // MatchInstruction is the term type for the alternative `Match(...)` of sort Instruction.
 type MatchInstruction struct {
@@ -2007,7 +2499,7 @@ func MakeMatch(constraintInstructionList ConstraintInstructionList, options Opti
 // IsMatch is the `Is_Match` predicate strategy: succeeds (returns subject
 // unchanged) when subject has the `Match` shape, otherwise fails with
 // sl.ErrVisitFailure.
-type IsMatch struct{}
+type IsMatch struct{ sl.AbstractStrategy }
 
 func (IsMatch) VisitLight(subject any, _ sl.Introspector) (any, error) {
 	if _, ok := subject.(*MatchInstruction); ok {
@@ -2018,12 +2510,27 @@ func (IsMatch) VisitLight(subject any, _ sl.Introspector) (any, error) {
 func (IsMatch) ChildCount() int             { return 0 }
 func (IsMatch) ChildAt(int) sl.Strategy     { panic("IsMatch: no children") }
 func (IsMatch) SetChildAt(int, sl.Strategy) { panic("IsMatch: no children") }
+func (s *IsMatch) VisitEnv(sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*MatchInstruction); ok {
+		return sl.StatusSuccess
+	}
+	return sl.StatusFailure
+}
+func (s *IsMatch) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *IsMatch) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*IsMatch)(nil)
 
 // VisitMatch is the `_Match` slot-visit strategy: when subject is `Match`,
 // applies each constituent strategy to the matching child slot and
 // rebuilds the term iff at least one child changed. Fails with
 // sl.ErrVisitFailure when subject isn't `Match`.
 type VisitMatch struct {
+	sl.AbstractStrategy
 	args []sl.Strategy
 }
 
@@ -2063,6 +2570,24 @@ func (s *VisitMatch) VisitLight(subject any, intro sl.Introspector) (any, error)
 func (s *VisitMatch) ChildCount() int                 { return len(s.args) }
 func (s *VisitMatch) ChildAt(i int) sl.Strategy       { return s.args[i] }
 func (s *VisitMatch) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
+
+func (s *VisitMatch) VisitEnv(intro sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*MatchInstruction); !ok {
+		return sl.StatusFailure
+	}
+	if len(s.args) != 2 {
+		return sl.StatusFailure
+	}
+	return sl.VisitCongruence(s.GetEnvironment(), intro, s.args, false)
+}
+func (s *VisitMatch) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *VisitMatch) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*VisitMatch)(nil)
 
 // CompiledMatchInstruction is the term type for the alternative `CompiledMatch(...)` of sort Instruction.
 type CompiledMatchInstruction struct {
@@ -2138,7 +2663,7 @@ func MakeCompiledMatch(automataInst Instruction, options OptionList) Instruction
 // IsCompiledMatch is the `Is_CompiledMatch` predicate strategy: succeeds (returns subject
 // unchanged) when subject has the `CompiledMatch` shape, otherwise fails with
 // sl.ErrVisitFailure.
-type IsCompiledMatch struct{}
+type IsCompiledMatch struct{ sl.AbstractStrategy }
 
 func (IsCompiledMatch) VisitLight(subject any, _ sl.Introspector) (any, error) {
 	if _, ok := subject.(*CompiledMatchInstruction); ok {
@@ -2149,12 +2674,27 @@ func (IsCompiledMatch) VisitLight(subject any, _ sl.Introspector) (any, error) {
 func (IsCompiledMatch) ChildCount() int             { return 0 }
 func (IsCompiledMatch) ChildAt(int) sl.Strategy     { panic("IsCompiledMatch: no children") }
 func (IsCompiledMatch) SetChildAt(int, sl.Strategy) { panic("IsCompiledMatch: no children") }
+func (s *IsCompiledMatch) VisitEnv(sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*CompiledMatchInstruction); ok {
+		return sl.StatusSuccess
+	}
+	return sl.StatusFailure
+}
+func (s *IsCompiledMatch) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *IsCompiledMatch) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*IsCompiledMatch)(nil)
 
 // VisitCompiledMatch is the `_CompiledMatch` slot-visit strategy: when subject is `CompiledMatch`,
 // applies each constituent strategy to the matching child slot and
 // rebuilds the term iff at least one child changed. Fails with
 // sl.ErrVisitFailure when subject isn't `CompiledMatch`.
 type VisitCompiledMatch struct {
+	sl.AbstractStrategy
 	args []sl.Strategy
 }
 
@@ -2194,6 +2734,24 @@ func (s *VisitCompiledMatch) VisitLight(subject any, intro sl.Introspector) (any
 func (s *VisitCompiledMatch) ChildCount() int                 { return len(s.args) }
 func (s *VisitCompiledMatch) ChildAt(i int) sl.Strategy       { return s.args[i] }
 func (s *VisitCompiledMatch) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
+
+func (s *VisitCompiledMatch) VisitEnv(intro sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*CompiledMatchInstruction); !ok {
+		return sl.StatusFailure
+	}
+	if len(s.args) != 2 {
+		return sl.StatusFailure
+	}
+	return sl.VisitCongruence(s.GetEnvironment(), intro, s.args, false)
+}
+func (s *VisitCompiledMatch) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *VisitCompiledMatch) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*VisitCompiledMatch)(nil)
 
 // CompiledPatternInstruction is the term type for the alternative `CompiledPattern(...)` of sort Instruction.
 type CompiledPatternInstruction struct {
@@ -2269,7 +2827,7 @@ func MakeCompiledPattern(contraint Constraint, automataInst Instruction) Instruc
 // IsCompiledPattern is the `Is_CompiledPattern` predicate strategy: succeeds (returns subject
 // unchanged) when subject has the `CompiledPattern` shape, otherwise fails with
 // sl.ErrVisitFailure.
-type IsCompiledPattern struct{}
+type IsCompiledPattern struct{ sl.AbstractStrategy }
 
 func (IsCompiledPattern) VisitLight(subject any, _ sl.Introspector) (any, error) {
 	if _, ok := subject.(*CompiledPatternInstruction); ok {
@@ -2280,12 +2838,27 @@ func (IsCompiledPattern) VisitLight(subject any, _ sl.Introspector) (any, error)
 func (IsCompiledPattern) ChildCount() int             { return 0 }
 func (IsCompiledPattern) ChildAt(int) sl.Strategy     { panic("IsCompiledPattern: no children") }
 func (IsCompiledPattern) SetChildAt(int, sl.Strategy) { panic("IsCompiledPattern: no children") }
+func (s *IsCompiledPattern) VisitEnv(sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*CompiledPatternInstruction); ok {
+		return sl.StatusSuccess
+	}
+	return sl.StatusFailure
+}
+func (s *IsCompiledPattern) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *IsCompiledPattern) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*IsCompiledPattern)(nil)
 
 // VisitCompiledPattern is the `_CompiledPattern` slot-visit strategy: when subject is `CompiledPattern`,
 // applies each constituent strategy to the matching child slot and
 // rebuilds the term iff at least one child changed. Fails with
 // sl.ErrVisitFailure when subject isn't `CompiledPattern`.
 type VisitCompiledPattern struct {
+	sl.AbstractStrategy
 	args []sl.Strategy
 }
 
@@ -2325,6 +2898,24 @@ func (s *VisitCompiledPattern) VisitLight(subject any, intro sl.Introspector) (a
 func (s *VisitCompiledPattern) ChildCount() int                 { return len(s.args) }
 func (s *VisitCompiledPattern) ChildAt(i int) sl.Strategy       { return s.args[i] }
 func (s *VisitCompiledPattern) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
+
+func (s *VisitCompiledPattern) VisitEnv(intro sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*CompiledPatternInstruction); !ok {
+		return sl.StatusFailure
+	}
+	if len(s.args) != 2 {
+		return sl.StatusFailure
+	}
+	return sl.VisitCongruence(s.GetEnvironment(), intro, s.args, false)
+}
+func (s *VisitCompiledPattern) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *VisitCompiledPattern) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*VisitCompiledPattern)(nil)
 
 // RawActionInstruction is the term type for the alternative `RawAction(...)` of sort Instruction.
 type RawActionInstruction struct {
@@ -2392,7 +2983,7 @@ func MakeRawAction(astInstruction Instruction) Instruction {
 // IsRawAction is the `Is_RawAction` predicate strategy: succeeds (returns subject
 // unchanged) when subject has the `RawAction` shape, otherwise fails with
 // sl.ErrVisitFailure.
-type IsRawAction struct{}
+type IsRawAction struct{ sl.AbstractStrategy }
 
 func (IsRawAction) VisitLight(subject any, _ sl.Introspector) (any, error) {
 	if _, ok := subject.(*RawActionInstruction); ok {
@@ -2403,12 +2994,27 @@ func (IsRawAction) VisitLight(subject any, _ sl.Introspector) (any, error) {
 func (IsRawAction) ChildCount() int             { return 0 }
 func (IsRawAction) ChildAt(int) sl.Strategy     { panic("IsRawAction: no children") }
 func (IsRawAction) SetChildAt(int, sl.Strategy) { panic("IsRawAction: no children") }
+func (s *IsRawAction) VisitEnv(sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*RawActionInstruction); ok {
+		return sl.StatusSuccess
+	}
+	return sl.StatusFailure
+}
+func (s *IsRawAction) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *IsRawAction) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*IsRawAction)(nil)
 
 // VisitRawAction is the `_RawAction` slot-visit strategy: when subject is `RawAction`,
 // applies each constituent strategy to the matching child slot and
 // rebuilds the term iff at least one child changed. Fails with
 // sl.ErrVisitFailure when subject isn't `RawAction`.
 type VisitRawAction struct {
+	sl.AbstractStrategy
 	args []sl.Strategy
 }
 
@@ -2448,6 +3054,24 @@ func (s *VisitRawAction) VisitLight(subject any, intro sl.Introspector) (any, er
 func (s *VisitRawAction) ChildCount() int                 { return len(s.args) }
 func (s *VisitRawAction) ChildAt(i int) sl.Strategy       { return s.args[i] }
 func (s *VisitRawAction) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
+
+func (s *VisitRawAction) VisitEnv(intro sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*RawActionInstruction); !ok {
+		return sl.StatusFailure
+	}
+	if len(s.args) != 1 {
+		return sl.StatusFailure
+	}
+	return sl.VisitCongruence(s.GetEnvironment(), intro, s.args, false)
+}
+func (s *VisitRawAction) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *VisitRawAction) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*VisitRawAction)(nil)
 
 // TracelinkInstruction is the term type for the alternative `Tracelink(...)` of sort Instruction.
 type TracelinkInstruction struct {
@@ -2547,7 +3171,7 @@ func MakeTracelink(type_ TomName, name TomName, elementaryTransfoName TomName, e
 // IsTracelink is the `Is_Tracelink` predicate strategy: succeeds (returns subject
 // unchanged) when subject has the `Tracelink` shape, otherwise fails with
 // sl.ErrVisitFailure.
-type IsTracelink struct{}
+type IsTracelink struct{ sl.AbstractStrategy }
 
 func (IsTracelink) VisitLight(subject any, _ sl.Introspector) (any, error) {
 	if _, ok := subject.(*TracelinkInstruction); ok {
@@ -2558,12 +3182,27 @@ func (IsTracelink) VisitLight(subject any, _ sl.Introspector) (any, error) {
 func (IsTracelink) ChildCount() int             { return 0 }
 func (IsTracelink) ChildAt(int) sl.Strategy     { panic("IsTracelink: no children") }
 func (IsTracelink) SetChildAt(int, sl.Strategy) { panic("IsTracelink: no children") }
+func (s *IsTracelink) VisitEnv(sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*TracelinkInstruction); ok {
+		return sl.StatusSuccess
+	}
+	return sl.StatusFailure
+}
+func (s *IsTracelink) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *IsTracelink) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*IsTracelink)(nil)
 
 // VisitTracelink is the `_Tracelink` slot-visit strategy: when subject is `Tracelink`,
 // applies each constituent strategy to the matching child slot and
 // rebuilds the term iff at least one child changed. Fails with
 // sl.ErrVisitFailure when subject isn't `Tracelink`.
 type VisitTracelink struct {
+	sl.AbstractStrategy
 	args []sl.Strategy
 }
 
@@ -2603,6 +3242,24 @@ func (s *VisitTracelink) VisitLight(subject any, intro sl.Introspector) (any, er
 func (s *VisitTracelink) ChildCount() int                 { return len(s.args) }
 func (s *VisitTracelink) ChildAt(i int) sl.Strategy       { return s.args[i] }
 func (s *VisitTracelink) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
+
+func (s *VisitTracelink) VisitEnv(intro sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*TracelinkInstruction); !ok {
+		return sl.StatusFailure
+	}
+	if len(s.args) != 5 {
+		return sl.StatusFailure
+	}
+	return sl.VisitCongruence(s.GetEnvironment(), intro, s.args, false)
+}
+func (s *VisitTracelink) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *VisitTracelink) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*VisitTracelink)(nil)
 
 // TracelinkPopulateResolveInstruction is the term type for the alternative `TracelinkPopulateResolve(...)` of sort Instruction.
 type TracelinkPopulateResolveInstruction struct {
@@ -2694,7 +3351,7 @@ func MakeTracelinkPopulateResolve(refClassName TomName, tracedLinks TomNameList,
 // IsTracelinkPopulateResolve is the `Is_TracelinkPopulateResolve` predicate strategy: succeeds (returns subject
 // unchanged) when subject has the `TracelinkPopulateResolve` shape, otherwise fails with
 // sl.ErrVisitFailure.
-type IsTracelinkPopulateResolve struct{}
+type IsTracelinkPopulateResolve struct{ sl.AbstractStrategy }
 
 func (IsTracelinkPopulateResolve) VisitLight(subject any, _ sl.Introspector) (any, error) {
 	if _, ok := subject.(*TracelinkPopulateResolveInstruction); ok {
@@ -2709,12 +3366,27 @@ func (IsTracelinkPopulateResolve) ChildAt(int) sl.Strategy {
 func (IsTracelinkPopulateResolve) SetChildAt(int, sl.Strategy) {
 	panic("IsTracelinkPopulateResolve: no children")
 }
+func (s *IsTracelinkPopulateResolve) VisitEnv(sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*TracelinkPopulateResolveInstruction); ok {
+		return sl.StatusSuccess
+	}
+	return sl.StatusFailure
+}
+func (s *IsTracelinkPopulateResolve) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *IsTracelinkPopulateResolve) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*IsTracelinkPopulateResolve)(nil)
 
 // VisitTracelinkPopulateResolve is the `_TracelinkPopulateResolve` slot-visit strategy: when subject is `TracelinkPopulateResolve`,
 // applies each constituent strategy to the matching child slot and
 // rebuilds the term iff at least one child changed. Fails with
 // sl.ErrVisitFailure when subject isn't `TracelinkPopulateResolve`.
 type VisitTracelinkPopulateResolve struct {
+	sl.AbstractStrategy
 	args []sl.Strategy
 }
 
@@ -2754,6 +3426,24 @@ func (s *VisitTracelinkPopulateResolve) VisitLight(subject any, intro sl.Introsp
 func (s *VisitTracelinkPopulateResolve) ChildCount() int                 { return len(s.args) }
 func (s *VisitTracelinkPopulateResolve) ChildAt(i int) sl.Strategy       { return s.args[i] }
 func (s *VisitTracelinkPopulateResolve) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
+
+func (s *VisitTracelinkPopulateResolve) VisitEnv(intro sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*TracelinkPopulateResolveInstruction); !ok {
+		return sl.StatusFailure
+	}
+	if len(s.args) != 4 {
+		return sl.StatusFailure
+	}
+	return sl.VisitCongruence(s.GetEnvironment(), intro, s.args, false)
+}
+func (s *VisitTracelinkPopulateResolve) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *VisitTracelinkPopulateResolve) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*VisitTracelinkPopulateResolve)(nil)
 
 // ResolveInstruction is the term type for the alternative `Resolve(...)` of sort Instruction.
 type ResolveInstruction struct {
@@ -2861,7 +3551,7 @@ func MakeResolve(resolveBQTerm BQTerm, src string, sType string, target string, 
 // IsResolve is the `Is_Resolve` predicate strategy: succeeds (returns subject
 // unchanged) when subject has the `Resolve` shape, otherwise fails with
 // sl.ErrVisitFailure.
-type IsResolve struct{}
+type IsResolve struct{ sl.AbstractStrategy }
 
 func (IsResolve) VisitLight(subject any, _ sl.Introspector) (any, error) {
 	if _, ok := subject.(*ResolveInstruction); ok {
@@ -2872,12 +3562,27 @@ func (IsResolve) VisitLight(subject any, _ sl.Introspector) (any, error) {
 func (IsResolve) ChildCount() int             { return 0 }
 func (IsResolve) ChildAt(int) sl.Strategy     { panic("IsResolve: no children") }
 func (IsResolve) SetChildAt(int, sl.Strategy) { panic("IsResolve: no children") }
+func (s *IsResolve) VisitEnv(sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*ResolveInstruction); ok {
+		return sl.StatusSuccess
+	}
+	return sl.StatusFailure
+}
+func (s *IsResolve) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *IsResolve) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*IsResolve)(nil)
 
 // VisitResolve is the `_Resolve` slot-visit strategy: when subject is `Resolve`,
 // applies each constituent strategy to the matching child slot and
 // rebuilds the term iff at least one child changed. Fails with
 // sl.ErrVisitFailure when subject isn't `Resolve`.
 type VisitResolve struct {
+	sl.AbstractStrategy
 	args []sl.Strategy
 }
 
@@ -2917,6 +3622,24 @@ func (s *VisitResolve) VisitLight(subject any, intro sl.Introspector) (any, erro
 func (s *VisitResolve) ChildCount() int                 { return len(s.args) }
 func (s *VisitResolve) ChildAt(i int) sl.Strategy       { return s.args[i] }
 func (s *VisitResolve) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
+
+func (s *VisitResolve) VisitEnv(intro sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*ResolveInstruction); !ok {
+		return sl.StatusFailure
+	}
+	if len(s.args) != 6 {
+		return sl.StatusFailure
+	}
+	return sl.VisitCongruence(s.GetEnvironment(), intro, s.args, false)
+}
+func (s *VisitResolve) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *VisitResolve) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*VisitResolve)(nil)
 
 // RefClassTracelinkInstruction is the Go interface backing the Gom sort RefClassTracelinkInstruction.
 type RefClassTracelinkInstruction interface {
@@ -2998,7 +3721,7 @@ func MakeRefClassTracelinkInstruction(type_ TomName, name TomName) RefClassTrace
 // IsRefClassTracelinkInstruction is the `Is_RefClassTracelinkInstruction` predicate strategy: succeeds (returns subject
 // unchanged) when subject has the `RefClassTracelinkInstruction` shape, otherwise fails with
 // sl.ErrVisitFailure.
-type IsRefClassTracelinkInstruction struct{}
+type IsRefClassTracelinkInstruction struct{ sl.AbstractStrategy }
 
 func (IsRefClassTracelinkInstruction) VisitLight(subject any, _ sl.Introspector) (any, error) {
 	if _, ok := subject.(*RefClassTracelinkInstructionRefClassTracelinkInstruction); ok {
@@ -3013,12 +3736,27 @@ func (IsRefClassTracelinkInstruction) ChildAt(int) sl.Strategy {
 func (IsRefClassTracelinkInstruction) SetChildAt(int, sl.Strategy) {
 	panic("IsRefClassTracelinkInstruction: no children")
 }
+func (s *IsRefClassTracelinkInstruction) VisitEnv(sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*RefClassTracelinkInstructionRefClassTracelinkInstruction); ok {
+		return sl.StatusSuccess
+	}
+	return sl.StatusFailure
+}
+func (s *IsRefClassTracelinkInstruction) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *IsRefClassTracelinkInstruction) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*IsRefClassTracelinkInstruction)(nil)
 
 // VisitRefClassTracelinkInstruction is the `_RefClassTracelinkInstruction` slot-visit strategy: when subject is `RefClassTracelinkInstruction`,
 // applies each constituent strategy to the matching child slot and
 // rebuilds the term iff at least one child changed. Fails with
 // sl.ErrVisitFailure when subject isn't `RefClassTracelinkInstruction`.
 type VisitRefClassTracelinkInstruction struct {
+	sl.AbstractStrategy
 	args []sl.Strategy
 }
 
@@ -3058,6 +3796,24 @@ func (s *VisitRefClassTracelinkInstruction) VisitLight(subject any, intro sl.Int
 func (s *VisitRefClassTracelinkInstruction) ChildCount() int                 { return len(s.args) }
 func (s *VisitRefClassTracelinkInstruction) ChildAt(i int) sl.Strategy       { return s.args[i] }
 func (s *VisitRefClassTracelinkInstruction) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
+
+func (s *VisitRefClassTracelinkInstruction) VisitEnv(intro sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*RefClassTracelinkInstructionRefClassTracelinkInstruction); !ok {
+		return sl.StatusFailure
+	}
+	if len(s.args) != 2 {
+		return sl.StatusFailure
+	}
+	return sl.VisitCongruence(s.GetEnvironment(), intro, s.args, false)
+}
+func (s *VisitRefClassTracelinkInstruction) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *VisitRefClassTracelinkInstruction) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*VisitRefClassTracelinkInstruction)(nil)
 
 // RefClassTracelinkInstructionList is the Go interface backing the Gom sort RefClassTracelinkInstructionList.
 type RefClassTracelinkInstructionList interface {
@@ -3150,7 +3906,7 @@ func MakeConcRefClassTracelinkInstruction(args ...RefClassTracelinkInstruction) 
 // IsConcRefClassTracelinkInstruction is the `Is_concRefClassTracelinkInstruction` predicate strategy: succeeds (returns subject
 // unchanged) when subject has the `concRefClassTracelinkInstruction` shape, otherwise fails with
 // sl.ErrVisitFailure.
-type IsConcRefClassTracelinkInstruction struct{}
+type IsConcRefClassTracelinkInstruction struct{ sl.AbstractStrategy }
 
 func (IsConcRefClassTracelinkInstruction) VisitLight(subject any, _ sl.Introspector) (any, error) {
 	if _, ok := subject.(*ConcRefClassTracelinkInstructionRefClassTracelinkInstructionList); ok {
@@ -3165,12 +3921,27 @@ func (IsConcRefClassTracelinkInstruction) ChildAt(int) sl.Strategy {
 func (IsConcRefClassTracelinkInstruction) SetChildAt(int, sl.Strategy) {
 	panic("IsConcRefClassTracelinkInstruction: no children")
 }
+func (s *IsConcRefClassTracelinkInstruction) VisitEnv(sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*ConcRefClassTracelinkInstructionRefClassTracelinkInstructionList); ok {
+		return sl.StatusSuccess
+	}
+	return sl.StatusFailure
+}
+func (s *IsConcRefClassTracelinkInstruction) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *IsConcRefClassTracelinkInstruction) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*IsConcRefClassTracelinkInstruction)(nil)
 
 // VisitConcRefClassTracelinkInstruction is the `_concRefClassTracelinkInstruction` slot-visit strategy: when subject is `concRefClassTracelinkInstruction`,
 // applies each constituent strategy to the matching child slot and
 // rebuilds the term iff at least one child changed. Fails with
 // sl.ErrVisitFailure when subject isn't `concRefClassTracelinkInstruction`.
 type VisitConcRefClassTracelinkInstruction struct {
+	sl.AbstractStrategy
 	args []sl.Strategy
 }
 
@@ -3213,6 +3984,21 @@ func (s *VisitConcRefClassTracelinkInstruction) VisitLight(subject any, intro sl
 func (s *VisitConcRefClassTracelinkInstruction) ChildCount() int                 { return len(s.args) }
 func (s *VisitConcRefClassTracelinkInstruction) ChildAt(i int) sl.Strategy       { return s.args[i] }
 func (s *VisitConcRefClassTracelinkInstruction) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
+
+func (s *VisitConcRefClassTracelinkInstruction) VisitEnv(intro sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*ConcRefClassTracelinkInstructionRefClassTracelinkInstructionList); !ok {
+		return sl.StatusFailure
+	}
+	return sl.VisitCongruence(s.GetEnvironment(), intro, s.args, true)
+}
+func (s *VisitConcRefClassTracelinkInstruction) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *VisitConcRefClassTracelinkInstruction) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*VisitConcRefClassTracelinkInstruction)(nil)
 
 // ConstraintInstruction is the Go interface backing the Gom sort ConstraintInstruction.
 type ConstraintInstruction interface {
@@ -3302,7 +4088,7 @@ func MakeConstraintInstruction(constraint Constraint, action Instruction, option
 // IsConstraintInstruction is the `Is_ConstraintInstruction` predicate strategy: succeeds (returns subject
 // unchanged) when subject has the `ConstraintInstruction` shape, otherwise fails with
 // sl.ErrVisitFailure.
-type IsConstraintInstruction struct{}
+type IsConstraintInstruction struct{ sl.AbstractStrategy }
 
 func (IsConstraintInstruction) VisitLight(subject any, _ sl.Introspector) (any, error) {
 	if _, ok := subject.(*ConstraintInstructionConstraintInstruction); ok {
@@ -3317,12 +4103,27 @@ func (IsConstraintInstruction) ChildAt(int) sl.Strategy {
 func (IsConstraintInstruction) SetChildAt(int, sl.Strategy) {
 	panic("IsConstraintInstruction: no children")
 }
+func (s *IsConstraintInstruction) VisitEnv(sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*ConstraintInstructionConstraintInstruction); ok {
+		return sl.StatusSuccess
+	}
+	return sl.StatusFailure
+}
+func (s *IsConstraintInstruction) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *IsConstraintInstruction) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*IsConstraintInstruction)(nil)
 
 // VisitConstraintInstruction is the `_ConstraintInstruction` slot-visit strategy: when subject is `ConstraintInstruction`,
 // applies each constituent strategy to the matching child slot and
 // rebuilds the term iff at least one child changed. Fails with
 // sl.ErrVisitFailure when subject isn't `ConstraintInstruction`.
 type VisitConstraintInstruction struct {
+	sl.AbstractStrategy
 	args []sl.Strategy
 }
 
@@ -3362,6 +4163,24 @@ func (s *VisitConstraintInstruction) VisitLight(subject any, intro sl.Introspect
 func (s *VisitConstraintInstruction) ChildCount() int                 { return len(s.args) }
 func (s *VisitConstraintInstruction) ChildAt(i int) sl.Strategy       { return s.args[i] }
 func (s *VisitConstraintInstruction) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
+
+func (s *VisitConstraintInstruction) VisitEnv(intro sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*ConstraintInstructionConstraintInstruction); !ok {
+		return sl.StatusFailure
+	}
+	if len(s.args) != 3 {
+		return sl.StatusFailure
+	}
+	return sl.VisitCongruence(s.GetEnvironment(), intro, s.args, false)
+}
+func (s *VisitConstraintInstruction) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *VisitConstraintInstruction) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*VisitConstraintInstruction)(nil)
 
 // RuleInstruction is the Go interface backing the Gom sort RuleInstruction.
 type RuleInstruction interface {
@@ -3459,7 +4278,7 @@ func MakeRuleInstruction(typeName string, term TomTerm, action InstructionList, 
 // IsRuleInstruction is the `Is_RuleInstruction` predicate strategy: succeeds (returns subject
 // unchanged) when subject has the `RuleInstruction` shape, otherwise fails with
 // sl.ErrVisitFailure.
-type IsRuleInstruction struct{}
+type IsRuleInstruction struct{ sl.AbstractStrategy }
 
 func (IsRuleInstruction) VisitLight(subject any, _ sl.Introspector) (any, error) {
 	if _, ok := subject.(*RuleInstructionRuleInstruction); ok {
@@ -3470,12 +4289,27 @@ func (IsRuleInstruction) VisitLight(subject any, _ sl.Introspector) (any, error)
 func (IsRuleInstruction) ChildCount() int             { return 0 }
 func (IsRuleInstruction) ChildAt(int) sl.Strategy     { panic("IsRuleInstruction: no children") }
 func (IsRuleInstruction) SetChildAt(int, sl.Strategy) { panic("IsRuleInstruction: no children") }
+func (s *IsRuleInstruction) VisitEnv(sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*RuleInstructionRuleInstruction); ok {
+		return sl.StatusSuccess
+	}
+	return sl.StatusFailure
+}
+func (s *IsRuleInstruction) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *IsRuleInstruction) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*IsRuleInstruction)(nil)
 
 // VisitRuleInstruction is the `_RuleInstruction` slot-visit strategy: when subject is `RuleInstruction`,
 // applies each constituent strategy to the matching child slot and
 // rebuilds the term iff at least one child changed. Fails with
 // sl.ErrVisitFailure when subject isn't `RuleInstruction`.
 type VisitRuleInstruction struct {
+	sl.AbstractStrategy
 	args []sl.Strategy
 }
 
@@ -3515,6 +4349,24 @@ func (s *VisitRuleInstruction) VisitLight(subject any, intro sl.Introspector) (a
 func (s *VisitRuleInstruction) ChildCount() int                 { return len(s.args) }
 func (s *VisitRuleInstruction) ChildAt(i int) sl.Strategy       { return s.args[i] }
 func (s *VisitRuleInstruction) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
+
+func (s *VisitRuleInstruction) VisitEnv(intro sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*RuleInstructionRuleInstruction); !ok {
+		return sl.StatusFailure
+	}
+	if len(s.args) != 4 {
+		return sl.StatusFailure
+	}
+	return sl.VisitCongruence(s.GetEnvironment(), intro, s.args, false)
+}
+func (s *VisitRuleInstruction) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *VisitRuleInstruction) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*VisitRuleInstruction)(nil)
 
 // RuleInstructionList is the Go interface backing the Gom sort RuleInstructionList.
 type RuleInstructionList interface {
@@ -3600,7 +4452,7 @@ func MakeConcRuleInstruction(args ...RuleInstruction) RuleInstructionList {
 // IsConcRuleInstruction is the `Is_concRuleInstruction` predicate strategy: succeeds (returns subject
 // unchanged) when subject has the `concRuleInstruction` shape, otherwise fails with
 // sl.ErrVisitFailure.
-type IsConcRuleInstruction struct{}
+type IsConcRuleInstruction struct{ sl.AbstractStrategy }
 
 func (IsConcRuleInstruction) VisitLight(subject any, _ sl.Introspector) (any, error) {
 	if _, ok := subject.(*ConcRuleInstructionRuleInstructionList); ok {
@@ -3613,12 +4465,27 @@ func (IsConcRuleInstruction) ChildAt(int) sl.Strategy { panic("IsConcRuleInstruc
 func (IsConcRuleInstruction) SetChildAt(int, sl.Strategy) {
 	panic("IsConcRuleInstruction: no children")
 }
+func (s *IsConcRuleInstruction) VisitEnv(sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*ConcRuleInstructionRuleInstructionList); ok {
+		return sl.StatusSuccess
+	}
+	return sl.StatusFailure
+}
+func (s *IsConcRuleInstruction) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *IsConcRuleInstruction) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*IsConcRuleInstruction)(nil)
 
 // VisitConcRuleInstruction is the `_concRuleInstruction` slot-visit strategy: when subject is `concRuleInstruction`,
 // applies each constituent strategy to the matching child slot and
 // rebuilds the term iff at least one child changed. Fails with
 // sl.ErrVisitFailure when subject isn't `concRuleInstruction`.
 type VisitConcRuleInstruction struct {
+	sl.AbstractStrategy
 	args []sl.Strategy
 }
 
@@ -3661,6 +4528,21 @@ func (s *VisitConcRuleInstruction) VisitLight(subject any, intro sl.Introspector
 func (s *VisitConcRuleInstruction) ChildCount() int                 { return len(s.args) }
 func (s *VisitConcRuleInstruction) ChildAt(i int) sl.Strategy       { return s.args[i] }
 func (s *VisitConcRuleInstruction) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
+
+func (s *VisitConcRuleInstruction) VisitEnv(intro sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*ConcRuleInstructionRuleInstructionList); !ok {
+		return sl.StatusFailure
+	}
+	return sl.VisitCongruence(s.GetEnvironment(), intro, s.args, true)
+}
+func (s *VisitConcRuleInstruction) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *VisitConcRuleInstruction) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*VisitConcRuleInstruction)(nil)
 
 // ConstraintInstructionList is the Go interface backing the Gom sort ConstraintInstructionList.
 type ConstraintInstructionList interface {
@@ -3746,7 +4628,7 @@ func MakeConcConstraintInstruction(args ...ConstraintInstruction) ConstraintInst
 // IsConcConstraintInstruction is the `Is_concConstraintInstruction` predicate strategy: succeeds (returns subject
 // unchanged) when subject has the `concConstraintInstruction` shape, otherwise fails with
 // sl.ErrVisitFailure.
-type IsConcConstraintInstruction struct{}
+type IsConcConstraintInstruction struct{ sl.AbstractStrategy }
 
 func (IsConcConstraintInstruction) VisitLight(subject any, _ sl.Introspector) (any, error) {
 	if _, ok := subject.(*ConcConstraintInstructionConstraintInstructionList); ok {
@@ -3761,12 +4643,27 @@ func (IsConcConstraintInstruction) ChildAt(int) sl.Strategy {
 func (IsConcConstraintInstruction) SetChildAt(int, sl.Strategy) {
 	panic("IsConcConstraintInstruction: no children")
 }
+func (s *IsConcConstraintInstruction) VisitEnv(sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*ConcConstraintInstructionConstraintInstructionList); ok {
+		return sl.StatusSuccess
+	}
+	return sl.StatusFailure
+}
+func (s *IsConcConstraintInstruction) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *IsConcConstraintInstruction) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*IsConcConstraintInstruction)(nil)
 
 // VisitConcConstraintInstruction is the `_concConstraintInstruction` slot-visit strategy: when subject is `concConstraintInstruction`,
 // applies each constituent strategy to the matching child slot and
 // rebuilds the term iff at least one child changed. Fails with
 // sl.ErrVisitFailure when subject isn't `concConstraintInstruction`.
 type VisitConcConstraintInstruction struct {
+	sl.AbstractStrategy
 	args []sl.Strategy
 }
 
@@ -3809,6 +4706,21 @@ func (s *VisitConcConstraintInstruction) VisitLight(subject any, intro sl.Intros
 func (s *VisitConcConstraintInstruction) ChildCount() int                 { return len(s.args) }
 func (s *VisitConcConstraintInstruction) ChildAt(i int) sl.Strategy       { return s.args[i] }
 func (s *VisitConcConstraintInstruction) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
+
+func (s *VisitConcConstraintInstruction) VisitEnv(intro sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*ConcConstraintInstructionConstraintInstructionList); !ok {
+		return sl.StatusFailure
+	}
+	return sl.VisitCongruence(s.GetEnvironment(), intro, s.args, true)
+}
+func (s *VisitConcConstraintInstruction) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *VisitConcConstraintInstruction) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*VisitConcConstraintInstruction)(nil)
 
 // InstructionList is the Go interface backing the Gom sort InstructionList.
 type InstructionList interface {
@@ -3909,7 +4821,7 @@ func MakeConcInstruction(args ...Instruction) InstructionList {
 // IsConcInstruction is the `Is_concInstruction` predicate strategy: succeeds (returns subject
 // unchanged) when subject has the `concInstruction` shape, otherwise fails with
 // sl.ErrVisitFailure.
-type IsConcInstruction struct{}
+type IsConcInstruction struct{ sl.AbstractStrategy }
 
 func (IsConcInstruction) VisitLight(subject any, _ sl.Introspector) (any, error) {
 	if _, ok := subject.(*ConcInstructionInstructionList); ok {
@@ -3920,12 +4832,27 @@ func (IsConcInstruction) VisitLight(subject any, _ sl.Introspector) (any, error)
 func (IsConcInstruction) ChildCount() int             { return 0 }
 func (IsConcInstruction) ChildAt(int) sl.Strategy     { panic("IsConcInstruction: no children") }
 func (IsConcInstruction) SetChildAt(int, sl.Strategy) { panic("IsConcInstruction: no children") }
+func (s *IsConcInstruction) VisitEnv(sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*ConcInstructionInstructionList); ok {
+		return sl.StatusSuccess
+	}
+	return sl.StatusFailure
+}
+func (s *IsConcInstruction) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *IsConcInstruction) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*IsConcInstruction)(nil)
 
 // VisitConcInstruction is the `_concInstruction` slot-visit strategy: when subject is `concInstruction`,
 // applies each constituent strategy to the matching child slot and
 // rebuilds the term iff at least one child changed. Fails with
 // sl.ErrVisitFailure when subject isn't `concInstruction`.
 type VisitConcInstruction struct {
+	sl.AbstractStrategy
 	args []sl.Strategy
 }
 
@@ -3968,3 +4895,18 @@ func (s *VisitConcInstruction) VisitLight(subject any, intro sl.Introspector) (a
 func (s *VisitConcInstruction) ChildCount() int                 { return len(s.args) }
 func (s *VisitConcInstruction) ChildAt(i int) sl.Strategy       { return s.args[i] }
 func (s *VisitConcInstruction) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
+
+func (s *VisitConcInstruction) VisitEnv(intro sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*ConcInstructionInstructionList); !ok {
+		return sl.StatusFailure
+	}
+	return sl.VisitCongruence(s.GetEnvironment(), intro, s.args, true)
+}
+func (s *VisitConcInstruction) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *VisitConcInstruction) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*VisitConcInstruction)(nil)

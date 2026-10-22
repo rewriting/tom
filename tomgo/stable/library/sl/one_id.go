@@ -35,3 +35,27 @@ func (o *OneId) VisitLight(subject any, intro Introspector) (any, error) {
 	}
 	return subject, nil
 }
+
+func (o *OneId) VisitEnv(intro Introspector) int {
+	env := o.environment
+	count := intro.GetChildCount(env.GetSubject())
+	for i := range count {
+		env.Down(i + 1)
+		oldSubject := env.GetSubject()
+		status := o.args[0].VisitEnv(intro)
+		if status == StatusSuccess && env.GetSubject() != oldSubject {
+			env.Up()
+			return StatusSuccess
+		}
+		env.UpLocal()
+	}
+	return StatusSuccess
+}
+
+func (o *OneId) Visit(subject any, intro Introspector) (any, error) {
+	return VisitStrategy(o, subject, intro)
+}
+
+func (o *OneId) VisitWith(env *Environment, intro Introspector) (any, error) {
+	return VisitStrategyWith(o, env, intro)
+}

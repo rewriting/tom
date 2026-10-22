@@ -1505,7 +1505,7 @@ func (g *gen) emitStrategyClasses(sortNm, opGo, opName, structName string, slotC
 	fmt.Fprintf(&g.buf, "// %s is the `Is_%s` predicate strategy: succeeds (returns subject\n", isName, opName)
 	fmt.Fprintf(&g.buf, "// unchanged) when subject has the `%s` shape, otherwise fails with\n", opName)
 	fmt.Fprintln(&g.buf, "// sl.ErrVisitFailure.")
-	fmt.Fprintf(&g.buf, "type %s struct{}\n\n", isName)
+	fmt.Fprintf(&g.buf, "type %s struct{ sl.AbstractStrategy }\n\n", isName)
 	fmt.Fprintf(&g.buf, "func (%s) VisitLight(subject any, _ sl.Introspector) (any, error) {\n", isName)
 	fmt.Fprintf(&g.buf, "\tif _, ok := subject.(*%s); ok {\n", structName)
 	fmt.Fprintln(&g.buf, "\t\treturn subject, nil")
@@ -1515,6 +1515,14 @@ func (g *gen) emitStrategyClasses(sortNm, opGo, opName, structName string, slotC
 	fmt.Fprintf(&g.buf, "func (%s) ChildCount() int                  { return 0 }\n", isName)
 	fmt.Fprintf(&g.buf, "func (%s) ChildAt(int) sl.Strategy          { panic(\"%s: no children\") }\n", isName, isName)
 	fmt.Fprintf(&g.buf, "func (%s) SetChildAt(int, sl.Strategy)      { panic(\"%s: no children\") }\n", isName, isName)
+	// Environment-based visit (Java Is_<Alt>.visit(Introspector)).
+	fmt.Fprintf(&g.buf, "func (s *%s) VisitEnv(sl.Introspector) int {\n", isName)
+	fmt.Fprintf(&g.buf, "\tif _, ok := s.GetEnvironment().GetSubject().(*%s); ok {\n", structName)
+	fmt.Fprintln(&g.buf, "\t\treturn sl.StatusSuccess")
+	fmt.Fprintln(&g.buf, "\t}")
+	fmt.Fprintln(&g.buf, "\treturn sl.StatusFailure")
+	fmt.Fprintln(&g.buf, "}")
+	g.emitStrategyVisitEntryPoints(isName)
 	fmt.Fprintln(&g.buf)
 
 	// Visit<Alt>: slot-visit strategy.
@@ -1523,6 +1531,7 @@ func (g *gen) emitStrategyClasses(sortNm, opGo, opName, structName string, slotC
 	fmt.Fprintf(&g.buf, "// rebuilds the term iff at least one child changed. Fails with\n")
 	fmt.Fprintf(&g.buf, "// sl.ErrVisitFailure when subject isn't `%s`.\n", opName)
 	fmt.Fprintf(&g.buf, "type %s struct {\n", visitName)
+	fmt.Fprintln(&g.buf, "\tsl.AbstractStrategy")
 	fmt.Fprintln(&g.buf, "\targs []sl.Strategy")
 	fmt.Fprintln(&g.buf, "}")
 	fmt.Fprintln(&g.buf)
@@ -1599,6 +1608,34 @@ func (g *gen) emitStrategyClasses(sortNm, opGo, opName, structName string, slotC
 	fmt.Fprintf(&g.buf, "func (s *%s) ChildAt(i int) sl.Strategy      { return s.args[i] }\n", visitName)
 	fmt.Fprintf(&g.buf, "func (s *%s) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }\n", visitName)
 	fmt.Fprintln(&g.buf)
+
+	// Environment-based visit (Java _<Alt>.visit(Introspector)).
+	fmt.Fprintf(&g.buf, "func (s *%s) VisitEnv(intro sl.Introspector) int {\n", visitName)
+	fmt.Fprintf(&g.buf, "\tif _, ok := s.GetEnvironment().GetSubject().(*%s); !ok {\n", structName)
+	fmt.Fprintln(&g.buf, "\t\treturn sl.StatusFailure")
+	fmt.Fprintln(&g.buf, "\t}")
+	if !isVariadic && slotCount > 0 {
+		fmt.Fprintf(&g.buf, "\tif len(s.args) != %d {\n", slotCount)
+		fmt.Fprintln(&g.buf, "\t\treturn sl.StatusFailure")
+		fmt.Fprintln(&g.buf, "\t}")
+	}
+	fmt.Fprintf(&g.buf, "\treturn sl.VisitCongruence(s.GetEnvironment(), intro, s.args, %t)\n", isVariadic)
+	fmt.Fprintln(&g.buf, "}")
+	g.emitStrategyVisitEntryPoints(visitName)
+	fmt.Fprintln(&g.buf)
+}
+
+// emitStrategyVisitEntryPoints writes the Visit / VisitWith methods
+// every sl.Strategy defines on top of its VisitEnv (Go has no virtual
+// dispatch, so they cannot be inherited from sl.AbstractStrategy).
+func (g *gen) emitStrategyVisitEntryPoints(name string) {
+	fmt.Fprintf(&g.buf, "func (s *%s) Visit(subject any, intro sl.Introspector) (any, error) {\n", name)
+	fmt.Fprintln(&g.buf, "\treturn sl.VisitStrategy(s, subject, intro)")
+	fmt.Fprintln(&g.buf, "}")
+	fmt.Fprintf(&g.buf, "func (s *%s) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {\n", name)
+	fmt.Fprintln(&g.buf, "\treturn sl.VisitStrategyWith(s, env, intro)")
+	fmt.Fprintln(&g.buf, "}")
+	fmt.Fprintf(&g.buf, "\nvar _ sl.Strategy = (*%s)(nil)\n", name)
 }
 
 // emitVisitableMethods writes Children/SetChildren/ChildCount/

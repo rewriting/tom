@@ -110,7 +110,7 @@ func MakeTermAppl(options OptionList, nameList TomNameList, args TomList, constr
 // IsTermAppl is the `Is_TermAppl` predicate strategy: succeeds (returns subject
 // unchanged) when subject has the `TermAppl` shape, otherwise fails with
 // sl.ErrVisitFailure.
-type IsTermAppl struct{}
+type IsTermAppl struct{ sl.AbstractStrategy }
 
 func (IsTermAppl) VisitLight(subject any, _ sl.Introspector) (any, error) {
 	if _, ok := subject.(*TermApplTomTerm); ok {
@@ -121,12 +121,27 @@ func (IsTermAppl) VisitLight(subject any, _ sl.Introspector) (any, error) {
 func (IsTermAppl) ChildCount() int             { return 0 }
 func (IsTermAppl) ChildAt(int) sl.Strategy     { panic("IsTermAppl: no children") }
 func (IsTermAppl) SetChildAt(int, sl.Strategy) { panic("IsTermAppl: no children") }
+func (s *IsTermAppl) VisitEnv(sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*TermApplTomTerm); ok {
+		return sl.StatusSuccess
+	}
+	return sl.StatusFailure
+}
+func (s *IsTermAppl) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *IsTermAppl) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*IsTermAppl)(nil)
 
 // VisitTermAppl is the `_TermAppl` slot-visit strategy: when subject is `TermAppl`,
 // applies each constituent strategy to the matching child slot and
 // rebuilds the term iff at least one child changed. Fails with
 // sl.ErrVisitFailure when subject isn't `TermAppl`.
 type VisitTermAppl struct {
+	sl.AbstractStrategy
 	args []sl.Strategy
 }
 
@@ -166,6 +181,24 @@ func (s *VisitTermAppl) VisitLight(subject any, intro sl.Introspector) (any, err
 func (s *VisitTermAppl) ChildCount() int                 { return len(s.args) }
 func (s *VisitTermAppl) ChildAt(i int) sl.Strategy       { return s.args[i] }
 func (s *VisitTermAppl) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
+
+func (s *VisitTermAppl) VisitEnv(intro sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*TermApplTomTerm); !ok {
+		return sl.StatusFailure
+	}
+	if len(s.args) != 4 {
+		return sl.StatusFailure
+	}
+	return sl.VisitCongruence(s.GetEnvironment(), intro, s.args, false)
+}
+func (s *VisitTermAppl) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *VisitTermAppl) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*VisitTermAppl)(nil)
 
 // RecordApplTomTerm is the term type for the alternative `RecordAppl(...)` of sort TomTerm.
 type RecordApplTomTerm struct {
@@ -257,7 +290,7 @@ func MakeRecordAppl(options OptionList, nameList TomNameList, slots SlotList, co
 // IsRecordAppl is the `Is_RecordAppl` predicate strategy: succeeds (returns subject
 // unchanged) when subject has the `RecordAppl` shape, otherwise fails with
 // sl.ErrVisitFailure.
-type IsRecordAppl struct{}
+type IsRecordAppl struct{ sl.AbstractStrategy }
 
 func (IsRecordAppl) VisitLight(subject any, _ sl.Introspector) (any, error) {
 	if _, ok := subject.(*RecordApplTomTerm); ok {
@@ -268,12 +301,27 @@ func (IsRecordAppl) VisitLight(subject any, _ sl.Introspector) (any, error) {
 func (IsRecordAppl) ChildCount() int             { return 0 }
 func (IsRecordAppl) ChildAt(int) sl.Strategy     { panic("IsRecordAppl: no children") }
 func (IsRecordAppl) SetChildAt(int, sl.Strategy) { panic("IsRecordAppl: no children") }
+func (s *IsRecordAppl) VisitEnv(sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*RecordApplTomTerm); ok {
+		return sl.StatusSuccess
+	}
+	return sl.StatusFailure
+}
+func (s *IsRecordAppl) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *IsRecordAppl) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*IsRecordAppl)(nil)
 
 // VisitRecordAppl is the `_RecordAppl` slot-visit strategy: when subject is `RecordAppl`,
 // applies each constituent strategy to the matching child slot and
 // rebuilds the term iff at least one child changed. Fails with
 // sl.ErrVisitFailure when subject isn't `RecordAppl`.
 type VisitRecordAppl struct {
+	sl.AbstractStrategy
 	args []sl.Strategy
 }
 
@@ -313,6 +361,24 @@ func (s *VisitRecordAppl) VisitLight(subject any, intro sl.Introspector) (any, e
 func (s *VisitRecordAppl) ChildCount() int                 { return len(s.args) }
 func (s *VisitRecordAppl) ChildAt(i int) sl.Strategy       { return s.args[i] }
 func (s *VisitRecordAppl) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
+
+func (s *VisitRecordAppl) VisitEnv(intro sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*RecordApplTomTerm); !ok {
+		return sl.StatusFailure
+	}
+	if len(s.args) != 4 {
+		return sl.StatusFailure
+	}
+	return sl.VisitCongruence(s.GetEnvironment(), intro, s.args, false)
+}
+func (s *VisitRecordAppl) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *VisitRecordAppl) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*VisitRecordAppl)(nil)
 
 // VariableTomTerm is the term type for the alternative `Variable(...)` of sort TomTerm.
 type VariableTomTerm struct {
@@ -404,7 +470,7 @@ func MakeVariable(options OptionList, astName TomName, astType TomType, constrai
 // IsVariable is the `Is_Variable` predicate strategy: succeeds (returns subject
 // unchanged) when subject has the `Variable` shape, otherwise fails with
 // sl.ErrVisitFailure.
-type IsVariable struct{}
+type IsVariable struct{ sl.AbstractStrategy }
 
 func (IsVariable) VisitLight(subject any, _ sl.Introspector) (any, error) {
 	if _, ok := subject.(*VariableTomTerm); ok {
@@ -415,12 +481,27 @@ func (IsVariable) VisitLight(subject any, _ sl.Introspector) (any, error) {
 func (IsVariable) ChildCount() int             { return 0 }
 func (IsVariable) ChildAt(int) sl.Strategy     { panic("IsVariable: no children") }
 func (IsVariable) SetChildAt(int, sl.Strategy) { panic("IsVariable: no children") }
+func (s *IsVariable) VisitEnv(sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*VariableTomTerm); ok {
+		return sl.StatusSuccess
+	}
+	return sl.StatusFailure
+}
+func (s *IsVariable) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *IsVariable) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*IsVariable)(nil)
 
 // VisitVariable is the `_Variable` slot-visit strategy: when subject is `Variable`,
 // applies each constituent strategy to the matching child slot and
 // rebuilds the term iff at least one child changed. Fails with
 // sl.ErrVisitFailure when subject isn't `Variable`.
 type VisitVariable struct {
+	sl.AbstractStrategy
 	args []sl.Strategy
 }
 
@@ -460,6 +541,24 @@ func (s *VisitVariable) VisitLight(subject any, intro sl.Introspector) (any, err
 func (s *VisitVariable) ChildCount() int                 { return len(s.args) }
 func (s *VisitVariable) ChildAt(i int) sl.Strategy       { return s.args[i] }
 func (s *VisitVariable) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
+
+func (s *VisitVariable) VisitEnv(intro sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*VariableTomTerm); !ok {
+		return sl.StatusFailure
+	}
+	if len(s.args) != 4 {
+		return sl.StatusFailure
+	}
+	return sl.VisitCongruence(s.GetEnvironment(), intro, s.args, false)
+}
+func (s *VisitVariable) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *VisitVariable) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*VisitVariable)(nil)
 
 // VariableStarTomTerm is the term type for the alternative `VariableStar(...)` of sort TomTerm.
 type VariableStarTomTerm struct {
@@ -551,7 +650,7 @@ func MakeVariableStar(options OptionList, astName TomName, astType TomType, cons
 // IsVariableStar is the `Is_VariableStar` predicate strategy: succeeds (returns subject
 // unchanged) when subject has the `VariableStar` shape, otherwise fails with
 // sl.ErrVisitFailure.
-type IsVariableStar struct{}
+type IsVariableStar struct{ sl.AbstractStrategy }
 
 func (IsVariableStar) VisitLight(subject any, _ sl.Introspector) (any, error) {
 	if _, ok := subject.(*VariableStarTomTerm); ok {
@@ -562,12 +661,27 @@ func (IsVariableStar) VisitLight(subject any, _ sl.Introspector) (any, error) {
 func (IsVariableStar) ChildCount() int             { return 0 }
 func (IsVariableStar) ChildAt(int) sl.Strategy     { panic("IsVariableStar: no children") }
 func (IsVariableStar) SetChildAt(int, sl.Strategy) { panic("IsVariableStar: no children") }
+func (s *IsVariableStar) VisitEnv(sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*VariableStarTomTerm); ok {
+		return sl.StatusSuccess
+	}
+	return sl.StatusFailure
+}
+func (s *IsVariableStar) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *IsVariableStar) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*IsVariableStar)(nil)
 
 // VisitVariableStar is the `_VariableStar` slot-visit strategy: when subject is `VariableStar`,
 // applies each constituent strategy to the matching child slot and
 // rebuilds the term iff at least one child changed. Fails with
 // sl.ErrVisitFailure when subject isn't `VariableStar`.
 type VisitVariableStar struct {
+	sl.AbstractStrategy
 	args []sl.Strategy
 }
 
@@ -607,6 +721,24 @@ func (s *VisitVariableStar) VisitLight(subject any, intro sl.Introspector) (any,
 func (s *VisitVariableStar) ChildCount() int                 { return len(s.args) }
 func (s *VisitVariableStar) ChildAt(i int) sl.Strategy       { return s.args[i] }
 func (s *VisitVariableStar) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
+
+func (s *VisitVariableStar) VisitEnv(intro sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*VariableStarTomTerm); !ok {
+		return sl.StatusFailure
+	}
+	if len(s.args) != 4 {
+		return sl.StatusFailure
+	}
+	return sl.VisitCongruence(s.GetEnvironment(), intro, s.args, false)
+}
+func (s *VisitVariableStar) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *VisitVariableStar) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*VisitVariableStar)(nil)
 
 // TomSymbolToTomTermTomTerm is the term type for the alternative `TomSymbolToTomTerm(...)` of sort TomTerm.
 type TomSymbolToTomTermTomTerm struct {
@@ -674,7 +806,7 @@ func MakeTomSymbolToTomTerm(astSymbol TomSymbol) TomTerm {
 // IsTomSymbolToTomTerm is the `Is_TomSymbolToTomTerm` predicate strategy: succeeds (returns subject
 // unchanged) when subject has the `TomSymbolToTomTerm` shape, otherwise fails with
 // sl.ErrVisitFailure.
-type IsTomSymbolToTomTerm struct{}
+type IsTomSymbolToTomTerm struct{ sl.AbstractStrategy }
 
 func (IsTomSymbolToTomTerm) VisitLight(subject any, _ sl.Introspector) (any, error) {
 	if _, ok := subject.(*TomSymbolToTomTermTomTerm); ok {
@@ -685,12 +817,27 @@ func (IsTomSymbolToTomTerm) VisitLight(subject any, _ sl.Introspector) (any, err
 func (IsTomSymbolToTomTerm) ChildCount() int             { return 0 }
 func (IsTomSymbolToTomTerm) ChildAt(int) sl.Strategy     { panic("IsTomSymbolToTomTerm: no children") }
 func (IsTomSymbolToTomTerm) SetChildAt(int, sl.Strategy) { panic("IsTomSymbolToTomTerm: no children") }
+func (s *IsTomSymbolToTomTerm) VisitEnv(sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*TomSymbolToTomTermTomTerm); ok {
+		return sl.StatusSuccess
+	}
+	return sl.StatusFailure
+}
+func (s *IsTomSymbolToTomTerm) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *IsTomSymbolToTomTerm) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*IsTomSymbolToTomTerm)(nil)
 
 // VisitTomSymbolToTomTerm is the `_TomSymbolToTomTerm` slot-visit strategy: when subject is `TomSymbolToTomTerm`,
 // applies each constituent strategy to the matching child slot and
 // rebuilds the term iff at least one child changed. Fails with
 // sl.ErrVisitFailure when subject isn't `TomSymbolToTomTerm`.
 type VisitTomSymbolToTomTerm struct {
+	sl.AbstractStrategy
 	args []sl.Strategy
 }
 
@@ -730,6 +877,24 @@ func (s *VisitTomSymbolToTomTerm) VisitLight(subject any, intro sl.Introspector)
 func (s *VisitTomSymbolToTomTerm) ChildCount() int                 { return len(s.args) }
 func (s *VisitTomSymbolToTomTerm) ChildAt(i int) sl.Strategy       { return s.args[i] }
 func (s *VisitTomSymbolToTomTerm) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
+
+func (s *VisitTomSymbolToTomTerm) VisitEnv(intro sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*TomSymbolToTomTermTomTerm); !ok {
+		return sl.StatusFailure
+	}
+	if len(s.args) != 1 {
+		return sl.StatusFailure
+	}
+	return sl.VisitCongruence(s.GetEnvironment(), intro, s.args, false)
+}
+func (s *VisitTomSymbolToTomTerm) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *VisitTomSymbolToTomTerm) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*VisitTomSymbolToTomTerm)(nil)
 
 // AntiTermTomTerm is the term type for the alternative `AntiTerm(...)` of sort TomTerm.
 type AntiTermTomTerm struct {
@@ -797,7 +962,7 @@ func MakeAntiTerm(tomTerm TomTerm) TomTerm {
 // IsAntiTerm is the `Is_AntiTerm` predicate strategy: succeeds (returns subject
 // unchanged) when subject has the `AntiTerm` shape, otherwise fails with
 // sl.ErrVisitFailure.
-type IsAntiTerm struct{}
+type IsAntiTerm struct{ sl.AbstractStrategy }
 
 func (IsAntiTerm) VisitLight(subject any, _ sl.Introspector) (any, error) {
 	if _, ok := subject.(*AntiTermTomTerm); ok {
@@ -808,12 +973,27 @@ func (IsAntiTerm) VisitLight(subject any, _ sl.Introspector) (any, error) {
 func (IsAntiTerm) ChildCount() int             { return 0 }
 func (IsAntiTerm) ChildAt(int) sl.Strategy     { panic("IsAntiTerm: no children") }
 func (IsAntiTerm) SetChildAt(int, sl.Strategy) { panic("IsAntiTerm: no children") }
+func (s *IsAntiTerm) VisitEnv(sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*AntiTermTomTerm); ok {
+		return sl.StatusSuccess
+	}
+	return sl.StatusFailure
+}
+func (s *IsAntiTerm) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *IsAntiTerm) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*IsAntiTerm)(nil)
 
 // VisitAntiTerm is the `_AntiTerm` slot-visit strategy: when subject is `AntiTerm`,
 // applies each constituent strategy to the matching child slot and
 // rebuilds the term iff at least one child changed. Fails with
 // sl.ErrVisitFailure when subject isn't `AntiTerm`.
 type VisitAntiTerm struct {
+	sl.AbstractStrategy
 	args []sl.Strategy
 }
 
@@ -853,6 +1033,24 @@ func (s *VisitAntiTerm) VisitLight(subject any, intro sl.Introspector) (any, err
 func (s *VisitAntiTerm) ChildCount() int                 { return len(s.args) }
 func (s *VisitAntiTerm) ChildAt(i int) sl.Strategy       { return s.args[i] }
 func (s *VisitAntiTerm) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
+
+func (s *VisitAntiTerm) VisitEnv(intro sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*AntiTermTomTerm); !ok {
+		return sl.StatusFailure
+	}
+	if len(s.args) != 1 {
+		return sl.StatusFailure
+	}
+	return sl.VisitCongruence(s.GetEnvironment(), intro, s.args, false)
+}
+func (s *VisitAntiTerm) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *VisitAntiTerm) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*VisitAntiTerm)(nil)
 
 // AutomataTomTerm is the term type for the alternative `Automata(...)` of sort TomTerm.
 type AutomataTomTerm struct {
@@ -944,7 +1142,7 @@ func MakeAutomata(options OptionList, constraint Constraint, numberList TomNumbe
 // IsAutomata is the `Is_Automata` predicate strategy: succeeds (returns subject
 // unchanged) when subject has the `Automata` shape, otherwise fails with
 // sl.ErrVisitFailure.
-type IsAutomata struct{}
+type IsAutomata struct{ sl.AbstractStrategy }
 
 func (IsAutomata) VisitLight(subject any, _ sl.Introspector) (any, error) {
 	if _, ok := subject.(*AutomataTomTerm); ok {
@@ -955,12 +1153,27 @@ func (IsAutomata) VisitLight(subject any, _ sl.Introspector) (any, error) {
 func (IsAutomata) ChildCount() int             { return 0 }
 func (IsAutomata) ChildAt(int) sl.Strategy     { panic("IsAutomata: no children") }
 func (IsAutomata) SetChildAt(int, sl.Strategy) { panic("IsAutomata: no children") }
+func (s *IsAutomata) VisitEnv(sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*AutomataTomTerm); ok {
+		return sl.StatusSuccess
+	}
+	return sl.StatusFailure
+}
+func (s *IsAutomata) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *IsAutomata) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*IsAutomata)(nil)
 
 // VisitAutomata is the `_Automata` slot-visit strategy: when subject is `Automata`,
 // applies each constituent strategy to the matching child slot and
 // rebuilds the term iff at least one child changed. Fails with
 // sl.ErrVisitFailure when subject isn't `Automata`.
 type VisitAutomata struct {
+	sl.AbstractStrategy
 	args []sl.Strategy
 }
 
@@ -1000,6 +1213,24 @@ func (s *VisitAutomata) VisitLight(subject any, intro sl.Introspector) (any, err
 func (s *VisitAutomata) ChildCount() int                 { return len(s.args) }
 func (s *VisitAutomata) ChildAt(i int) sl.Strategy       { return s.args[i] }
 func (s *VisitAutomata) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
+
+func (s *VisitAutomata) VisitEnv(intro sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*AutomataTomTerm); !ok {
+		return sl.StatusFailure
+	}
+	if len(s.args) != 4 {
+		return sl.StatusFailure
+	}
+	return sl.VisitCongruence(s.GetEnvironment(), intro, s.args, false)
+}
+func (s *VisitAutomata) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *VisitAutomata) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*VisitAutomata)(nil)
 
 // TestVarTomTerm is the term type for the alternative `TestVar(...)` of sort TomTerm.
 type TestVarTomTerm struct {
@@ -1067,7 +1298,7 @@ func MakeTestVar(variable TomTerm) TomTerm {
 // IsTestVar is the `Is_TestVar` predicate strategy: succeeds (returns subject
 // unchanged) when subject has the `TestVar` shape, otherwise fails with
 // sl.ErrVisitFailure.
-type IsTestVar struct{}
+type IsTestVar struct{ sl.AbstractStrategy }
 
 func (IsTestVar) VisitLight(subject any, _ sl.Introspector) (any, error) {
 	if _, ok := subject.(*TestVarTomTerm); ok {
@@ -1078,12 +1309,27 @@ func (IsTestVar) VisitLight(subject any, _ sl.Introspector) (any, error) {
 func (IsTestVar) ChildCount() int             { return 0 }
 func (IsTestVar) ChildAt(int) sl.Strategy     { panic("IsTestVar: no children") }
 func (IsTestVar) SetChildAt(int, sl.Strategy) { panic("IsTestVar: no children") }
+func (s *IsTestVar) VisitEnv(sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*TestVarTomTerm); ok {
+		return sl.StatusSuccess
+	}
+	return sl.StatusFailure
+}
+func (s *IsTestVar) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *IsTestVar) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*IsTestVar)(nil)
 
 // VisitTestVar is the `_TestVar` slot-visit strategy: when subject is `TestVar`,
 // applies each constituent strategy to the matching child slot and
 // rebuilds the term iff at least one child changed. Fails with
 // sl.ErrVisitFailure when subject isn't `TestVar`.
 type VisitTestVar struct {
+	sl.AbstractStrategy
 	args []sl.Strategy
 }
 
@@ -1123,6 +1369,24 @@ func (s *VisitTestVar) VisitLight(subject any, intro sl.Introspector) (any, erro
 func (s *VisitTestVar) ChildCount() int                 { return len(s.args) }
 func (s *VisitTestVar) ChildAt(i int) sl.Strategy       { return s.args[i] }
 func (s *VisitTestVar) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
+
+func (s *VisitTestVar) VisitEnv(intro sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*TestVarTomTerm); !ok {
+		return sl.StatusFailure
+	}
+	if len(s.args) != 1 {
+		return sl.StatusFailure
+	}
+	return sl.VisitCongruence(s.GetEnvironment(), intro, s.args, false)
+}
+func (s *VisitTestVar) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *VisitTestVar) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*VisitTestVar)(nil)
 
 // TruePatternTomTerm is the term type for the alternative `TruePattern(...)` of sort TomTerm.
 type TruePatternTomTerm struct {
@@ -1171,7 +1435,7 @@ func MakeTruePattern() TomTerm {
 // IsTruePattern is the `Is_TruePattern` predicate strategy: succeeds (returns subject
 // unchanged) when subject has the `TruePattern` shape, otherwise fails with
 // sl.ErrVisitFailure.
-type IsTruePattern struct{}
+type IsTruePattern struct{ sl.AbstractStrategy }
 
 func (IsTruePattern) VisitLight(subject any, _ sl.Introspector) (any, error) {
 	if _, ok := subject.(*TruePatternTomTerm); ok {
@@ -1182,12 +1446,27 @@ func (IsTruePattern) VisitLight(subject any, _ sl.Introspector) (any, error) {
 func (IsTruePattern) ChildCount() int             { return 0 }
 func (IsTruePattern) ChildAt(int) sl.Strategy     { panic("IsTruePattern: no children") }
 func (IsTruePattern) SetChildAt(int, sl.Strategy) { panic("IsTruePattern: no children") }
+func (s *IsTruePattern) VisitEnv(sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*TruePatternTomTerm); ok {
+		return sl.StatusSuccess
+	}
+	return sl.StatusFailure
+}
+func (s *IsTruePattern) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *IsTruePattern) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*IsTruePattern)(nil)
 
 // VisitTruePattern is the `_TruePattern` slot-visit strategy: when subject is `TruePattern`,
 // applies each constituent strategy to the matching child slot and
 // rebuilds the term iff at least one child changed. Fails with
 // sl.ErrVisitFailure when subject isn't `TruePattern`.
 type VisitTruePattern struct {
+	sl.AbstractStrategy
 	args []sl.Strategy
 }
 
@@ -1208,6 +1487,21 @@ func (s *VisitTruePattern) VisitLight(subject any, intro sl.Introspector) (any, 
 func (s *VisitTruePattern) ChildCount() int                 { return len(s.args) }
 func (s *VisitTruePattern) ChildAt(i int) sl.Strategy       { return s.args[i] }
 func (s *VisitTruePattern) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
+
+func (s *VisitTruePattern) VisitEnv(intro sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*TruePatternTomTerm); !ok {
+		return sl.StatusFailure
+	}
+	return sl.VisitCongruence(s.GetEnvironment(), intro, s.args, false)
+}
+func (s *VisitTruePattern) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *VisitTruePattern) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*VisitTruePattern)(nil)
 
 // FalsePatternTomTerm is the term type for the alternative `FalsePattern(...)` of sort TomTerm.
 type FalsePatternTomTerm struct {
@@ -1256,7 +1550,7 @@ func MakeFalsePattern() TomTerm {
 // IsFalsePattern is the `Is_FalsePattern` predicate strategy: succeeds (returns subject
 // unchanged) when subject has the `FalsePattern` shape, otherwise fails with
 // sl.ErrVisitFailure.
-type IsFalsePattern struct{}
+type IsFalsePattern struct{ sl.AbstractStrategy }
 
 func (IsFalsePattern) VisitLight(subject any, _ sl.Introspector) (any, error) {
 	if _, ok := subject.(*FalsePatternTomTerm); ok {
@@ -1267,12 +1561,27 @@ func (IsFalsePattern) VisitLight(subject any, _ sl.Introspector) (any, error) {
 func (IsFalsePattern) ChildCount() int             { return 0 }
 func (IsFalsePattern) ChildAt(int) sl.Strategy     { panic("IsFalsePattern: no children") }
 func (IsFalsePattern) SetChildAt(int, sl.Strategy) { panic("IsFalsePattern: no children") }
+func (s *IsFalsePattern) VisitEnv(sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*FalsePatternTomTerm); ok {
+		return sl.StatusSuccess
+	}
+	return sl.StatusFailure
+}
+func (s *IsFalsePattern) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *IsFalsePattern) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*IsFalsePattern)(nil)
 
 // VisitFalsePattern is the `_FalsePattern` slot-visit strategy: when subject is `FalsePattern`,
 // applies each constituent strategy to the matching child slot and
 // rebuilds the term iff at least one child changed. Fails with
 // sl.ErrVisitFailure when subject isn't `FalsePattern`.
 type VisitFalsePattern struct {
+	sl.AbstractStrategy
 	args []sl.Strategy
 }
 
@@ -1293,6 +1602,21 @@ func (s *VisitFalsePattern) VisitLight(subject any, intro sl.Introspector) (any,
 func (s *VisitFalsePattern) ChildCount() int                 { return len(s.args) }
 func (s *VisitFalsePattern) ChildAt(i int) sl.Strategy       { return s.args[i] }
 func (s *VisitFalsePattern) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
+
+func (s *VisitFalsePattern) VisitEnv(intro sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*FalsePatternTomTerm); !ok {
+		return sl.StatusFailure
+	}
+	return sl.VisitCongruence(s.GetEnvironment(), intro, s.args, false)
+}
+func (s *VisitFalsePattern) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *VisitFalsePattern) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*VisitFalsePattern)(nil)
 
 // IntegerPatternTomTerm is the term type for the alternative `IntegerPattern(...)` of sort TomTerm.
 type IntegerPatternTomTerm struct {
@@ -1360,7 +1684,7 @@ func MakeIntegerPattern(value int64) TomTerm {
 // IsIntegerPattern is the `Is_IntegerPattern` predicate strategy: succeeds (returns subject
 // unchanged) when subject has the `IntegerPattern` shape, otherwise fails with
 // sl.ErrVisitFailure.
-type IsIntegerPattern struct{}
+type IsIntegerPattern struct{ sl.AbstractStrategy }
 
 func (IsIntegerPattern) VisitLight(subject any, _ sl.Introspector) (any, error) {
 	if _, ok := subject.(*IntegerPatternTomTerm); ok {
@@ -1371,12 +1695,27 @@ func (IsIntegerPattern) VisitLight(subject any, _ sl.Introspector) (any, error) 
 func (IsIntegerPattern) ChildCount() int             { return 0 }
 func (IsIntegerPattern) ChildAt(int) sl.Strategy     { panic("IsIntegerPattern: no children") }
 func (IsIntegerPattern) SetChildAt(int, sl.Strategy) { panic("IsIntegerPattern: no children") }
+func (s *IsIntegerPattern) VisitEnv(sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*IntegerPatternTomTerm); ok {
+		return sl.StatusSuccess
+	}
+	return sl.StatusFailure
+}
+func (s *IsIntegerPattern) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *IsIntegerPattern) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*IsIntegerPattern)(nil)
 
 // VisitIntegerPattern is the `_IntegerPattern` slot-visit strategy: when subject is `IntegerPattern`,
 // applies each constituent strategy to the matching child slot and
 // rebuilds the term iff at least one child changed. Fails with
 // sl.ErrVisitFailure when subject isn't `IntegerPattern`.
 type VisitIntegerPattern struct {
+	sl.AbstractStrategy
 	args []sl.Strategy
 }
 
@@ -1416,6 +1755,24 @@ func (s *VisitIntegerPattern) VisitLight(subject any, intro sl.Introspector) (an
 func (s *VisitIntegerPattern) ChildCount() int                 { return len(s.args) }
 func (s *VisitIntegerPattern) ChildAt(i int) sl.Strategy       { return s.args[i] }
 func (s *VisitIntegerPattern) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
+
+func (s *VisitIntegerPattern) VisitEnv(intro sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*IntegerPatternTomTerm); !ok {
+		return sl.StatusFailure
+	}
+	if len(s.args) != 1 {
+		return sl.StatusFailure
+	}
+	return sl.VisitCongruence(s.GetEnvironment(), intro, s.args, false)
+}
+func (s *VisitIntegerPattern) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *VisitIntegerPattern) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*VisitIntegerPattern)(nil)
 
 // TomList is the Go interface backing the Gom sort TomList.
 type TomList interface {
@@ -1501,7 +1858,7 @@ func MakeConcTomTerm(args ...TomTerm) TomList {
 // IsConcTomTerm is the `Is_concTomTerm` predicate strategy: succeeds (returns subject
 // unchanged) when subject has the `concTomTerm` shape, otherwise fails with
 // sl.ErrVisitFailure.
-type IsConcTomTerm struct{}
+type IsConcTomTerm struct{ sl.AbstractStrategy }
 
 func (IsConcTomTerm) VisitLight(subject any, _ sl.Introspector) (any, error) {
 	if _, ok := subject.(*ConcTomTermTomList); ok {
@@ -1512,12 +1869,27 @@ func (IsConcTomTerm) VisitLight(subject any, _ sl.Introspector) (any, error) {
 func (IsConcTomTerm) ChildCount() int             { return 0 }
 func (IsConcTomTerm) ChildAt(int) sl.Strategy     { panic("IsConcTomTerm: no children") }
 func (IsConcTomTerm) SetChildAt(int, sl.Strategy) { panic("IsConcTomTerm: no children") }
+func (s *IsConcTomTerm) VisitEnv(sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*ConcTomTermTomList); ok {
+		return sl.StatusSuccess
+	}
+	return sl.StatusFailure
+}
+func (s *IsConcTomTerm) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *IsConcTomTerm) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*IsConcTomTerm)(nil)
 
 // VisitConcTomTerm is the `_concTomTerm` slot-visit strategy: when subject is `concTomTerm`,
 // applies each constituent strategy to the matching child slot and
 // rebuilds the term iff at least one child changed. Fails with
 // sl.ErrVisitFailure when subject isn't `concTomTerm`.
 type VisitConcTomTerm struct {
+	sl.AbstractStrategy
 	args []sl.Strategy
 }
 
@@ -1560,3 +1932,18 @@ func (s *VisitConcTomTerm) VisitLight(subject any, intro sl.Introspector) (any, 
 func (s *VisitConcTomTerm) ChildCount() int                 { return len(s.args) }
 func (s *VisitConcTomTerm) ChildAt(i int) sl.Strategy       { return s.args[i] }
 func (s *VisitConcTomTerm) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
+
+func (s *VisitConcTomTerm) VisitEnv(intro sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*ConcTomTermTomList); !ok {
+		return sl.StatusFailure
+	}
+	return sl.VisitCongruence(s.GetEnvironment(), intro, s.args, true)
+}
+func (s *VisitConcTomTerm) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *VisitConcTomTerm) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*VisitConcTomTerm)(nil)

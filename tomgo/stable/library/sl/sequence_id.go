@@ -27,3 +27,20 @@ func (s *SequenceId) VisitLight(subject any, intro Introspector) (any, error) {
 	}
 	return v, nil
 }
+
+func (s *SequenceId) VisitEnv(intro Introspector) int {
+	subject := s.environment.GetSubject()
+	status := s.args[0].VisitEnv(intro)
+	if status == StatusSuccess && s.environment.GetSubject() != subject {
+		return s.args[1].VisitEnv(intro)
+	}
+	return status
+}
+
+func (s *SequenceId) Visit(subject any, intro Introspector) (any, error) {
+	return VisitStrategy(s, subject, intro)
+}
+
+func (s *SequenceId) VisitWith(env *Environment, intro Introspector) (any, error) {
+	return VisitStrategyWith(s, env, intro)
+}

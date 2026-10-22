@@ -95,3 +95,19 @@ func expandWalk(s Strategy, parent Strategy, childIdx int, visited map[Strategy]
 		expandWalk(s.ChildAt(i), s, i, visited, stack)
 	}
 }
+
+func (m *Mu) VisitEnv(intro Introspector) int {
+	if !m.expanded {
+		expandMu(m)
+		m.expanded = true
+	}
+	return m.args[muBodySlot].VisitEnv(intro)
+}
+
+func (m *Mu) Visit(subject any, intro Introspector) (any, error) {
+	return VisitStrategy(m, subject, intro)
+}
+
+func (m *Mu) VisitWith(env *Environment, intro Introspector) (any, error) {
+	return VisitStrategyWith(m, env, intro)
+}

@@ -30,3 +30,25 @@ func (o *One) VisitLight(subject any, intro Introspector) (any, error) {
 	}
 	return nil, ErrVisitFailure
 }
+
+func (o *One) VisitEnv(intro Introspector) int {
+	env := o.environment
+	count := intro.GetChildCount(env.GetSubject())
+	for i := range count {
+		env.Down(i + 1)
+		if o.args[0].VisitEnv(intro) == StatusSuccess {
+			env.Up()
+			return StatusSuccess
+		}
+		env.UpLocal()
+	}
+	return StatusFailure
+}
+
+func (o *One) Visit(subject any, intro Introspector) (any, error) {
+	return VisitStrategy(o, subject, intro)
+}
+
+func (o *One) VisitWith(env *Environment, intro Introspector) (any, error) {
+	return VisitStrategyWith(o, env, intro)
+}

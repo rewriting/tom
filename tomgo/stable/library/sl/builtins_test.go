@@ -30,7 +30,20 @@ func (r *renameStrategyBasic) VisitLight(subject any, intro Introspector) (any, 
 	if n, ok := subject.(*node); ok && n.label == r.from {
 		return &node{label: r.to, kids: n.kids}, nil
 	}
+	// as generated code: under an environment, the fallback runs Any
+	// at the current position of the environment
+	if r.HasEnvironment() {
+		return r.Any().VisitWith(r.GetEnvironment(), intro)
+	}
 	return r.Any().VisitLight(subject, intro)
+}
+
+func (r *renameStrategyBasic) VisitEnv(intro Introspector) int { return VisitBasic(r, intro) }
+func (r *renameStrategyBasic) Visit(subject any, intro Introspector) (any, error) {
+	return VisitStrategy(r, subject, intro)
+}
+func (r *renameStrategyBasic) VisitWith(env *Environment, intro Introspector) (any, error) {
+	return VisitStrategyWith(r, env, intro)
 }
 
 func TestAbstractStrategyBasic_DispatchAndFallback(t *testing.T) {

@@ -47,3 +47,19 @@ func (a *AbstractStrategyBasic) Any() Strategy { return a.args[0] }
 func (a *AbstractStrategyBasic) VisitLight(subject any, intro Introspector) (any, error) {
 	return a.args[0].VisitLight(subject, intro)
 }
+
+// VisitEnv is Java's AbstractStrategyBasic.visit(Introspector):
+// VisitLight on the current subject of the environment. A strategy
+// embedding AbstractStrategyBasic must define its own VisitEnv as
+// `return VisitBasic(self, intro)` (and Visit/VisitWith likewise),
+// because Go has no virtual dispatch: this one calls the VisitLight
+// of the bare helper, not the one of the embedding strategy.
+func (a *AbstractStrategyBasic) VisitEnv(intro Introspector) int { return VisitBasic(a, intro) }
+
+func (a *AbstractStrategyBasic) Visit(subject any, intro Introspector) (any, error) {
+	return VisitStrategy(a, subject, intro)
+}
+
+func (a *AbstractStrategyBasic) VisitWith(env *Environment, intro Introspector) (any, error) {
+	return VisitStrategyWith(a, env, intro)
+}

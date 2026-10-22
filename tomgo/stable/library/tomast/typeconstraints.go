@@ -94,7 +94,7 @@ func MakePairNameOptions(astName TomName, options OptionList) Info {
 // IsPairNameOptions is the `Is_PairNameOptions` predicate strategy: succeeds (returns subject
 // unchanged) when subject has the `PairNameOptions` shape, otherwise fails with
 // sl.ErrVisitFailure.
-type IsPairNameOptions struct{}
+type IsPairNameOptions struct{ sl.AbstractStrategy }
 
 func (IsPairNameOptions) VisitLight(subject any, _ sl.Introspector) (any, error) {
 	if _, ok := subject.(*PairNameOptionsInfo); ok {
@@ -105,12 +105,27 @@ func (IsPairNameOptions) VisitLight(subject any, _ sl.Introspector) (any, error)
 func (IsPairNameOptions) ChildCount() int             { return 0 }
 func (IsPairNameOptions) ChildAt(int) sl.Strategy     { panic("IsPairNameOptions: no children") }
 func (IsPairNameOptions) SetChildAt(int, sl.Strategy) { panic("IsPairNameOptions: no children") }
+func (s *IsPairNameOptions) VisitEnv(sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*PairNameOptionsInfo); ok {
+		return sl.StatusSuccess
+	}
+	return sl.StatusFailure
+}
+func (s *IsPairNameOptions) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *IsPairNameOptions) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*IsPairNameOptions)(nil)
 
 // VisitPairNameOptions is the `_PairNameOptions` slot-visit strategy: when subject is `PairNameOptions`,
 // applies each constituent strategy to the matching child slot and
 // rebuilds the term iff at least one child changed. Fails with
 // sl.ErrVisitFailure when subject isn't `PairNameOptions`.
 type VisitPairNameOptions struct {
+	sl.AbstractStrategy
 	args []sl.Strategy
 }
 
@@ -150,6 +165,24 @@ func (s *VisitPairNameOptions) VisitLight(subject any, intro sl.Introspector) (a
 func (s *VisitPairNameOptions) ChildCount() int                 { return len(s.args) }
 func (s *VisitPairNameOptions) ChildAt(i int) sl.Strategy       { return s.args[i] }
 func (s *VisitPairNameOptions) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
+
+func (s *VisitPairNameOptions) VisitEnv(intro sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*PairNameOptionsInfo); !ok {
+		return sl.StatusFailure
+	}
+	if len(s.args) != 2 {
+		return sl.StatusFailure
+	}
+	return sl.VisitCongruence(s.GetEnvironment(), intro, s.args, false)
+}
+func (s *VisitPairNameOptions) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *VisitPairNameOptions) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*VisitPairNameOptions)(nil)
 
 // TypeConstraint is the Go interface backing the Gom sort TypeConstraint.
 type TypeConstraint interface {
@@ -239,7 +272,7 @@ func MakeEquation(type1 TomType, type2 TomType, info Info) TypeConstraint {
 // IsEquation is the `Is_Equation` predicate strategy: succeeds (returns subject
 // unchanged) when subject has the `Equation` shape, otherwise fails with
 // sl.ErrVisitFailure.
-type IsEquation struct{}
+type IsEquation struct{ sl.AbstractStrategy }
 
 func (IsEquation) VisitLight(subject any, _ sl.Introspector) (any, error) {
 	if _, ok := subject.(*EquationTypeConstraint); ok {
@@ -250,12 +283,27 @@ func (IsEquation) VisitLight(subject any, _ sl.Introspector) (any, error) {
 func (IsEquation) ChildCount() int             { return 0 }
 func (IsEquation) ChildAt(int) sl.Strategy     { panic("IsEquation: no children") }
 func (IsEquation) SetChildAt(int, sl.Strategy) { panic("IsEquation: no children") }
+func (s *IsEquation) VisitEnv(sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*EquationTypeConstraint); ok {
+		return sl.StatusSuccess
+	}
+	return sl.StatusFailure
+}
+func (s *IsEquation) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *IsEquation) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*IsEquation)(nil)
 
 // VisitEquation is the `_Equation` slot-visit strategy: when subject is `Equation`,
 // applies each constituent strategy to the matching child slot and
 // rebuilds the term iff at least one child changed. Fails with
 // sl.ErrVisitFailure when subject isn't `Equation`.
 type VisitEquation struct {
+	sl.AbstractStrategy
 	args []sl.Strategy
 }
 
@@ -295,6 +343,24 @@ func (s *VisitEquation) VisitLight(subject any, intro sl.Introspector) (any, err
 func (s *VisitEquation) ChildCount() int                 { return len(s.args) }
 func (s *VisitEquation) ChildAt(i int) sl.Strategy       { return s.args[i] }
 func (s *VisitEquation) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
+
+func (s *VisitEquation) VisitEnv(intro sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*EquationTypeConstraint); !ok {
+		return sl.StatusFailure
+	}
+	if len(s.args) != 3 {
+		return sl.StatusFailure
+	}
+	return sl.VisitCongruence(s.GetEnvironment(), intro, s.args, false)
+}
+func (s *VisitEquation) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *VisitEquation) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*VisitEquation)(nil)
 
 // SubtypeTypeConstraint is the term type for the alternative `Subtype(...)` of sort TypeConstraint.
 type SubtypeTypeConstraint struct {
@@ -378,7 +444,7 @@ func MakeSubtype(type1 TomType, type2 TomType, info Info) TypeConstraint {
 // IsSubtype is the `Is_Subtype` predicate strategy: succeeds (returns subject
 // unchanged) when subject has the `Subtype` shape, otherwise fails with
 // sl.ErrVisitFailure.
-type IsSubtype struct{}
+type IsSubtype struct{ sl.AbstractStrategy }
 
 func (IsSubtype) VisitLight(subject any, _ sl.Introspector) (any, error) {
 	if _, ok := subject.(*SubtypeTypeConstraint); ok {
@@ -389,12 +455,27 @@ func (IsSubtype) VisitLight(subject any, _ sl.Introspector) (any, error) {
 func (IsSubtype) ChildCount() int             { return 0 }
 func (IsSubtype) ChildAt(int) sl.Strategy     { panic("IsSubtype: no children") }
 func (IsSubtype) SetChildAt(int, sl.Strategy) { panic("IsSubtype: no children") }
+func (s *IsSubtype) VisitEnv(sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*SubtypeTypeConstraint); ok {
+		return sl.StatusSuccess
+	}
+	return sl.StatusFailure
+}
+func (s *IsSubtype) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *IsSubtype) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*IsSubtype)(nil)
 
 // VisitSubtype is the `_Subtype` slot-visit strategy: when subject is `Subtype`,
 // applies each constituent strategy to the matching child slot and
 // rebuilds the term iff at least one child changed. Fails with
 // sl.ErrVisitFailure when subject isn't `Subtype`.
 type VisitSubtype struct {
+	sl.AbstractStrategy
 	args []sl.Strategy
 }
 
@@ -434,6 +515,24 @@ func (s *VisitSubtype) VisitLight(subject any, intro sl.Introspector) (any, erro
 func (s *VisitSubtype) ChildCount() int                 { return len(s.args) }
 func (s *VisitSubtype) ChildAt(i int) sl.Strategy       { return s.args[i] }
 func (s *VisitSubtype) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
+
+func (s *VisitSubtype) VisitEnv(intro sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*SubtypeTypeConstraint); !ok {
+		return sl.StatusFailure
+	}
+	if len(s.args) != 3 {
+		return sl.StatusFailure
+	}
+	return sl.VisitCongruence(s.GetEnvironment(), intro, s.args, false)
+}
+func (s *VisitSubtype) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *VisitSubtype) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*VisitSubtype)(nil)
 
 // FalseTypeConstraintTypeConstraint is the term type for the alternative `FalseTypeConstraint(...)` of sort TypeConstraint.
 type FalseTypeConstraintTypeConstraint struct {
@@ -482,7 +581,7 @@ func MakeFalseTypeConstraint() TypeConstraint {
 // IsFalseTypeConstraint is the `Is_FalseTypeConstraint` predicate strategy: succeeds (returns subject
 // unchanged) when subject has the `FalseTypeConstraint` shape, otherwise fails with
 // sl.ErrVisitFailure.
-type IsFalseTypeConstraint struct{}
+type IsFalseTypeConstraint struct{ sl.AbstractStrategy }
 
 func (IsFalseTypeConstraint) VisitLight(subject any, _ sl.Introspector) (any, error) {
 	if _, ok := subject.(*FalseTypeConstraintTypeConstraint); ok {
@@ -495,12 +594,27 @@ func (IsFalseTypeConstraint) ChildAt(int) sl.Strategy { panic("IsFalseTypeConstr
 func (IsFalseTypeConstraint) SetChildAt(int, sl.Strategy) {
 	panic("IsFalseTypeConstraint: no children")
 }
+func (s *IsFalseTypeConstraint) VisitEnv(sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*FalseTypeConstraintTypeConstraint); ok {
+		return sl.StatusSuccess
+	}
+	return sl.StatusFailure
+}
+func (s *IsFalseTypeConstraint) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *IsFalseTypeConstraint) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*IsFalseTypeConstraint)(nil)
 
 // VisitFalseTypeConstraint is the `_FalseTypeConstraint` slot-visit strategy: when subject is `FalseTypeConstraint`,
 // applies each constituent strategy to the matching child slot and
 // rebuilds the term iff at least one child changed. Fails with
 // sl.ErrVisitFailure when subject isn't `FalseTypeConstraint`.
 type VisitFalseTypeConstraint struct {
+	sl.AbstractStrategy
 	args []sl.Strategy
 }
 
@@ -521,6 +635,21 @@ func (s *VisitFalseTypeConstraint) VisitLight(subject any, intro sl.Introspector
 func (s *VisitFalseTypeConstraint) ChildCount() int                 { return len(s.args) }
 func (s *VisitFalseTypeConstraint) ChildAt(i int) sl.Strategy       { return s.args[i] }
 func (s *VisitFalseTypeConstraint) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
+
+func (s *VisitFalseTypeConstraint) VisitEnv(intro sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*FalseTypeConstraintTypeConstraint); !ok {
+		return sl.StatusFailure
+	}
+	return sl.VisitCongruence(s.GetEnvironment(), intro, s.args, false)
+}
+func (s *VisitFalseTypeConstraint) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *VisitFalseTypeConstraint) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*VisitFalseTypeConstraint)(nil)
 
 // TypeConstraintList is the Go interface backing the Gom sort TypeConstraintList.
 type TypeConstraintList interface {
@@ -606,7 +735,7 @@ func MakeConcTypeConstraint(args ...TypeConstraint) TypeConstraintList {
 // IsConcTypeConstraint is the `Is_concTypeConstraint` predicate strategy: succeeds (returns subject
 // unchanged) when subject has the `concTypeConstraint` shape, otherwise fails with
 // sl.ErrVisitFailure.
-type IsConcTypeConstraint struct{}
+type IsConcTypeConstraint struct{ sl.AbstractStrategy }
 
 func (IsConcTypeConstraint) VisitLight(subject any, _ sl.Introspector) (any, error) {
 	if _, ok := subject.(*ConcTypeConstraintTypeConstraintList); ok {
@@ -617,12 +746,27 @@ func (IsConcTypeConstraint) VisitLight(subject any, _ sl.Introspector) (any, err
 func (IsConcTypeConstraint) ChildCount() int             { return 0 }
 func (IsConcTypeConstraint) ChildAt(int) sl.Strategy     { panic("IsConcTypeConstraint: no children") }
 func (IsConcTypeConstraint) SetChildAt(int, sl.Strategy) { panic("IsConcTypeConstraint: no children") }
+func (s *IsConcTypeConstraint) VisitEnv(sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*ConcTypeConstraintTypeConstraintList); ok {
+		return sl.StatusSuccess
+	}
+	return sl.StatusFailure
+}
+func (s *IsConcTypeConstraint) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *IsConcTypeConstraint) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*IsConcTypeConstraint)(nil)
 
 // VisitConcTypeConstraint is the `_concTypeConstraint` slot-visit strategy: when subject is `concTypeConstraint`,
 // applies each constituent strategy to the matching child slot and
 // rebuilds the term iff at least one child changed. Fails with
 // sl.ErrVisitFailure when subject isn't `concTypeConstraint`.
 type VisitConcTypeConstraint struct {
+	sl.AbstractStrategy
 	args []sl.Strategy
 }
 
@@ -665,3 +809,18 @@ func (s *VisitConcTypeConstraint) VisitLight(subject any, intro sl.Introspector)
 func (s *VisitConcTypeConstraint) ChildCount() int                 { return len(s.args) }
 func (s *VisitConcTypeConstraint) ChildAt(i int) sl.Strategy       { return s.args[i] }
 func (s *VisitConcTypeConstraint) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
+
+func (s *VisitConcTypeConstraint) VisitEnv(intro sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*ConcTypeConstraintTypeConstraintList); !ok {
+		return sl.StatusFailure
+	}
+	return sl.VisitCongruence(s.GetEnvironment(), intro, s.args, true)
+}
+func (s *VisitConcTypeConstraint) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *VisitConcTypeConstraint) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*VisitConcTypeConstraint)(nil)

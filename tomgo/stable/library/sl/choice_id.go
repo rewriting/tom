@@ -29,3 +29,28 @@ func (c *ChoiceId) VisitLight(subject any, intro Introspector) (any, error) {
 	// Java reference's "restore the subject" semantics).
 	return c.args[1].VisitLight(subject, intro)
 }
+
+// VisitEnv is the Java ChoiceId.visit(Introspector). Unlike
+// VisitLight, a failure of FIRST is a failure (Java only tries THEN
+// when FIRST succeeded without changing the subject).
+func (c *ChoiceId) VisitEnv(intro Introspector) int {
+	subject := c.environment.GetSubject()
+	status := c.args[0].VisitEnv(intro)
+	if status == StatusSuccess && c.environment.GetSubject() != subject {
+		return status
+	}
+	// restore the subject: we are just interested in the status
+	c.environment.SetSubject(subject)
+	if status == StatusSuccess {
+		return c.args[1].VisitEnv(intro)
+	}
+	return status
+}
+
+func (c *ChoiceId) Visit(subject any, intro Introspector) (any, error) {
+	return VisitStrategy(c, subject, intro)
+}
+
+func (c *ChoiceId) VisitWith(env *Environment, intro Introspector) (any, error) {
+	return VisitStrategyWith(c, env, intro)
+}

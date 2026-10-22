@@ -73,7 +73,7 @@ func MakeLeaf() Leaf {
 // IsLeaf is the `Is_Leaf` predicate strategy: succeeds (returns subject
 // unchanged) when subject has the `Leaf` shape, otherwise fails with
 // sl.ErrVisitFailure.
-type IsLeaf struct{}
+type IsLeaf struct{ sl.AbstractStrategy }
 
 func (IsLeaf) VisitLight(subject any, _ sl.Introspector) (any, error) {
 	if _, ok := subject.(*LeafLeaf); ok {
@@ -84,12 +84,27 @@ func (IsLeaf) VisitLight(subject any, _ sl.Introspector) (any, error) {
 func (IsLeaf) ChildCount() int             { return 0 }
 func (IsLeaf) ChildAt(int) sl.Strategy     { panic("IsLeaf: no children") }
 func (IsLeaf) SetChildAt(int, sl.Strategy) { panic("IsLeaf: no children") }
+func (s *IsLeaf) VisitEnv(sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*LeafLeaf); ok {
+		return sl.StatusSuccess
+	}
+	return sl.StatusFailure
+}
+func (s *IsLeaf) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *IsLeaf) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*IsLeaf)(nil)
 
 // VisitLeaf is the `_Leaf` slot-visit strategy: when subject is `Leaf`,
 // applies each constituent strategy to the matching child slot and
 // rebuilds the term iff at least one child changed. Fails with
 // sl.ErrVisitFailure when subject isn't `Leaf`.
 type VisitLeaf struct {
+	sl.AbstractStrategy
 	args []sl.Strategy
 }
 
@@ -110,6 +125,21 @@ func (s *VisitLeaf) VisitLight(subject any, intro sl.Introspector) (any, error) 
 func (s *VisitLeaf) ChildCount() int                 { return len(s.args) }
 func (s *VisitLeaf) ChildAt(i int) sl.Strategy       { return s.args[i] }
 func (s *VisitLeaf) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
+
+func (s *VisitLeaf) VisitEnv(intro sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*LeafLeaf); !ok {
+		return sl.StatusFailure
+	}
+	return sl.VisitCongruence(s.GetEnvironment(), intro, s.args, false)
+}
+func (s *VisitLeaf) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *VisitLeaf) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*VisitLeaf)(nil)
 
 // LabelLeaf is the term type for the alternative `Label(...)` of sort Leaf.
 type LabelLeaf struct {
@@ -177,7 +207,7 @@ func MakeLabel(s string) Leaf {
 // IsLabel is the `Is_Label` predicate strategy: succeeds (returns subject
 // unchanged) when subject has the `Label` shape, otherwise fails with
 // sl.ErrVisitFailure.
-type IsLabel struct{}
+type IsLabel struct{ sl.AbstractStrategy }
 
 func (IsLabel) VisitLight(subject any, _ sl.Introspector) (any, error) {
 	if _, ok := subject.(*LabelLeaf); ok {
@@ -188,12 +218,27 @@ func (IsLabel) VisitLight(subject any, _ sl.Introspector) (any, error) {
 func (IsLabel) ChildCount() int             { return 0 }
 func (IsLabel) ChildAt(int) sl.Strategy     { panic("IsLabel: no children") }
 func (IsLabel) SetChildAt(int, sl.Strategy) { panic("IsLabel: no children") }
+func (s *IsLabel) VisitEnv(sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*LabelLeaf); ok {
+		return sl.StatusSuccess
+	}
+	return sl.StatusFailure
+}
+func (s *IsLabel) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *IsLabel) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*IsLabel)(nil)
 
 // VisitLabel is the `_Label` slot-visit strategy: when subject is `Label`,
 // applies each constituent strategy to the matching child slot and
 // rebuilds the term iff at least one child changed. Fails with
 // sl.ErrVisitFailure when subject isn't `Label`.
 type VisitLabel struct {
+	sl.AbstractStrategy
 	args []sl.Strategy
 }
 
@@ -233,3 +278,21 @@ func (s *VisitLabel) VisitLight(subject any, intro sl.Introspector) (any, error)
 func (s *VisitLabel) ChildCount() int                 { return len(s.args) }
 func (s *VisitLabel) ChildAt(i int) sl.Strategy       { return s.args[i] }
 func (s *VisitLabel) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
+
+func (s *VisitLabel) VisitEnv(intro sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*LabelLeaf); !ok {
+		return sl.StatusFailure
+	}
+	if len(s.args) != 1 {
+		return sl.StatusFailure
+	}
+	return sl.VisitCongruence(s.GetEnvironment(), intro, s.args, false)
+}
+func (s *VisitLabel) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *VisitLabel) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*VisitLabel)(nil)

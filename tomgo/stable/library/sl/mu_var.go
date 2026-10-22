@@ -33,3 +33,18 @@ func (m *MuVar) VisitLight(subject any, intro Introspector) (any, error) {
 // IsExpanded reports whether this MuVar has been bound to a Mu body
 // by [Mu.expand].
 func (m *MuVar) IsExpanded() bool { return m.Instance != nil }
+
+func (m *MuVar) VisitEnv(intro Introspector) int {
+	if m.Instance == nil {
+		return StatusFailure
+	}
+	return m.Instance.VisitEnv(intro)
+}
+
+func (m *MuVar) Visit(subject any, intro Introspector) (any, error) {
+	return VisitStrategy(m, subject, intro)
+}
+
+func (m *MuVar) VisitWith(env *Environment, intro Introspector) (any, error) {
+	return VisitStrategyWith(m, env, intro)
+}

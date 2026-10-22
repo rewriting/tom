@@ -73,7 +73,7 @@ func MakeEmptyNop() Nop {
 // IsEmptyNop is the `Is_EmptyNop` predicate strategy: succeeds (returns subject
 // unchanged) when subject has the `EmptyNop` shape, otherwise fails with
 // sl.ErrVisitFailure.
-type IsEmptyNop struct{}
+type IsEmptyNop struct{ sl.AbstractStrategy }
 
 func (IsEmptyNop) VisitLight(subject any, _ sl.Introspector) (any, error) {
 	if _, ok := subject.(*EmptyNopNop); ok {
@@ -84,12 +84,27 @@ func (IsEmptyNop) VisitLight(subject any, _ sl.Introspector) (any, error) {
 func (IsEmptyNop) ChildCount() int             { return 0 }
 func (IsEmptyNop) ChildAt(int) sl.Strategy     { panic("IsEmptyNop: no children") }
 func (IsEmptyNop) SetChildAt(int, sl.Strategy) { panic("IsEmptyNop: no children") }
+func (s *IsEmptyNop) VisitEnv(sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*EmptyNopNop); ok {
+		return sl.StatusSuccess
+	}
+	return sl.StatusFailure
+}
+func (s *IsEmptyNop) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *IsEmptyNop) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*IsEmptyNop)(nil)
 
 // VisitEmptyNop is the `_EmptyNop` slot-visit strategy: when subject is `EmptyNop`,
 // applies each constituent strategy to the matching child slot and
 // rebuilds the term iff at least one child changed. Fails with
 // sl.ErrVisitFailure when subject isn't `EmptyNop`.
 type VisitEmptyNop struct {
+	sl.AbstractStrategy
 	args []sl.Strategy
 }
 
@@ -110,6 +125,21 @@ func (s *VisitEmptyNop) VisitLight(subject any, intro sl.Introspector) (any, err
 func (s *VisitEmptyNop) ChildCount() int                 { return len(s.args) }
 func (s *VisitEmptyNop) ChildAt(i int) sl.Strategy       { return s.args[i] }
 func (s *VisitEmptyNop) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
+
+func (s *VisitEmptyNop) VisitEnv(intro sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*EmptyNopNop); !ok {
+		return sl.StatusFailure
+	}
+	return sl.VisitCongruence(s.GetEnvironment(), intro, s.args, false)
+}
+func (s *VisitEmptyNop) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *VisitEmptyNop) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*VisitEmptyNop)(nil)
 
 // UnaryNopNop is the term type for the alternative `UnaryNop(...)` of sort Nop.
 type UnaryNopNop struct {
@@ -177,7 +207,7 @@ func MakeUnaryNop(slot Nop) Nop {
 // IsUnaryNop is the `Is_UnaryNop` predicate strategy: succeeds (returns subject
 // unchanged) when subject has the `UnaryNop` shape, otherwise fails with
 // sl.ErrVisitFailure.
-type IsUnaryNop struct{}
+type IsUnaryNop struct{ sl.AbstractStrategy }
 
 func (IsUnaryNop) VisitLight(subject any, _ sl.Introspector) (any, error) {
 	if _, ok := subject.(*UnaryNopNop); ok {
@@ -188,12 +218,27 @@ func (IsUnaryNop) VisitLight(subject any, _ sl.Introspector) (any, error) {
 func (IsUnaryNop) ChildCount() int             { return 0 }
 func (IsUnaryNop) ChildAt(int) sl.Strategy     { panic("IsUnaryNop: no children") }
 func (IsUnaryNop) SetChildAt(int, sl.Strategy) { panic("IsUnaryNop: no children") }
+func (s *IsUnaryNop) VisitEnv(sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*UnaryNopNop); ok {
+		return sl.StatusSuccess
+	}
+	return sl.StatusFailure
+}
+func (s *IsUnaryNop) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *IsUnaryNop) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*IsUnaryNop)(nil)
 
 // VisitUnaryNop is the `_UnaryNop` slot-visit strategy: when subject is `UnaryNop`,
 // applies each constituent strategy to the matching child slot and
 // rebuilds the term iff at least one child changed. Fails with
 // sl.ErrVisitFailure when subject isn't `UnaryNop`.
 type VisitUnaryNop struct {
+	sl.AbstractStrategy
 	args []sl.Strategy
 }
 
@@ -233,6 +278,24 @@ func (s *VisitUnaryNop) VisitLight(subject any, intro sl.Introspector) (any, err
 func (s *VisitUnaryNop) ChildCount() int                 { return len(s.args) }
 func (s *VisitUnaryNop) ChildAt(i int) sl.Strategy       { return s.args[i] }
 func (s *VisitUnaryNop) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
+
+func (s *VisitUnaryNop) VisitEnv(intro sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*UnaryNopNop); !ok {
+		return sl.StatusFailure
+	}
+	if len(s.args) != 1 {
+		return sl.StatusFailure
+	}
+	return sl.VisitCongruence(s.GetEnvironment(), intro, s.args, false)
+}
+func (s *VisitUnaryNop) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *VisitUnaryNop) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*VisitUnaryNop)(nil)
 
 // BinaryNopNop is the term type for the alternative `BinaryNop(...)` of sort Nop.
 type BinaryNopNop struct {
@@ -308,7 +371,7 @@ func MakeBinaryNop(ls Nop, rs Nop) Nop {
 // IsBinaryNop is the `Is_BinaryNop` predicate strategy: succeeds (returns subject
 // unchanged) when subject has the `BinaryNop` shape, otherwise fails with
 // sl.ErrVisitFailure.
-type IsBinaryNop struct{}
+type IsBinaryNop struct{ sl.AbstractStrategy }
 
 func (IsBinaryNop) VisitLight(subject any, _ sl.Introspector) (any, error) {
 	if _, ok := subject.(*BinaryNopNop); ok {
@@ -319,12 +382,27 @@ func (IsBinaryNop) VisitLight(subject any, _ sl.Introspector) (any, error) {
 func (IsBinaryNop) ChildCount() int             { return 0 }
 func (IsBinaryNop) ChildAt(int) sl.Strategy     { panic("IsBinaryNop: no children") }
 func (IsBinaryNop) SetChildAt(int, sl.Strategy) { panic("IsBinaryNop: no children") }
+func (s *IsBinaryNop) VisitEnv(sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*BinaryNopNop); ok {
+		return sl.StatusSuccess
+	}
+	return sl.StatusFailure
+}
+func (s *IsBinaryNop) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *IsBinaryNop) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*IsBinaryNop)(nil)
 
 // VisitBinaryNop is the `_BinaryNop` slot-visit strategy: when subject is `BinaryNop`,
 // applies each constituent strategy to the matching child slot and
 // rebuilds the term iff at least one child changed. Fails with
 // sl.ErrVisitFailure when subject isn't `BinaryNop`.
 type VisitBinaryNop struct {
+	sl.AbstractStrategy
 	args []sl.Strategy
 }
 
@@ -364,6 +442,24 @@ func (s *VisitBinaryNop) VisitLight(subject any, intro sl.Introspector) (any, er
 func (s *VisitBinaryNop) ChildCount() int                 { return len(s.args) }
 func (s *VisitBinaryNop) ChildAt(i int) sl.Strategy       { return s.args[i] }
 func (s *VisitBinaryNop) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
+
+func (s *VisitBinaryNop) VisitEnv(intro sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*BinaryNopNop); !ok {
+		return sl.StatusFailure
+	}
+	if len(s.args) != 2 {
+		return sl.StatusFailure
+	}
+	return sl.VisitCongruence(s.GetEnvironment(), intro, s.args, false)
+}
+func (s *VisitBinaryNop) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *VisitBinaryNop) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*VisitBinaryNop)(nil)
 
 // TertiaryNopNop is the term type for the alternative `TertiaryNop(...)` of sort Nop.
 type TertiaryNopNop struct {
@@ -447,7 +543,7 @@ func MakeTertiaryNop(ls Nop, cs Nop, rs Nop) Nop {
 // IsTertiaryNop is the `Is_TertiaryNop` predicate strategy: succeeds (returns subject
 // unchanged) when subject has the `TertiaryNop` shape, otherwise fails with
 // sl.ErrVisitFailure.
-type IsTertiaryNop struct{}
+type IsTertiaryNop struct{ sl.AbstractStrategy }
 
 func (IsTertiaryNop) VisitLight(subject any, _ sl.Introspector) (any, error) {
 	if _, ok := subject.(*TertiaryNopNop); ok {
@@ -458,12 +554,27 @@ func (IsTertiaryNop) VisitLight(subject any, _ sl.Introspector) (any, error) {
 func (IsTertiaryNop) ChildCount() int             { return 0 }
 func (IsTertiaryNop) ChildAt(int) sl.Strategy     { panic("IsTertiaryNop: no children") }
 func (IsTertiaryNop) SetChildAt(int, sl.Strategy) { panic("IsTertiaryNop: no children") }
+func (s *IsTertiaryNop) VisitEnv(sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*TertiaryNopNop); ok {
+		return sl.StatusSuccess
+	}
+	return sl.StatusFailure
+}
+func (s *IsTertiaryNop) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *IsTertiaryNop) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*IsTertiaryNop)(nil)
 
 // VisitTertiaryNop is the `_TertiaryNop` slot-visit strategy: when subject is `TertiaryNop`,
 // applies each constituent strategy to the matching child slot and
 // rebuilds the term iff at least one child changed. Fails with
 // sl.ErrVisitFailure when subject isn't `TertiaryNop`.
 type VisitTertiaryNop struct {
+	sl.AbstractStrategy
 	args []sl.Strategy
 }
 
@@ -503,6 +614,24 @@ func (s *VisitTertiaryNop) VisitLight(subject any, intro sl.Introspector) (any, 
 func (s *VisitTertiaryNop) ChildCount() int                 { return len(s.args) }
 func (s *VisitTertiaryNop) ChildAt(i int) sl.Strategy       { return s.args[i] }
 func (s *VisitTertiaryNop) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
+
+func (s *VisitTertiaryNop) VisitEnv(intro sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*TertiaryNopNop); !ok {
+		return sl.StatusFailure
+	}
+	if len(s.args) != 3 {
+		return sl.StatusFailure
+	}
+	return sl.VisitCongruence(s.GetEnvironment(), intro, s.args, false)
+}
+func (s *VisitTertiaryNop) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *VisitTertiaryNop) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*VisitTertiaryNop)(nil)
 
 // VaryNop is the term type for the alternative `Vary(...)` of sort Nop.
 type VaryNop struct {
@@ -582,7 +711,7 @@ func MakeVary(args ...Nop) Nop {
 // IsVary is the `Is_Vary` predicate strategy: succeeds (returns subject
 // unchanged) when subject has the `Vary` shape, otherwise fails with
 // sl.ErrVisitFailure.
-type IsVary struct{}
+type IsVary struct{ sl.AbstractStrategy }
 
 func (IsVary) VisitLight(subject any, _ sl.Introspector) (any, error) {
 	if _, ok := subject.(*VaryNop); ok {
@@ -593,12 +722,27 @@ func (IsVary) VisitLight(subject any, _ sl.Introspector) (any, error) {
 func (IsVary) ChildCount() int             { return 0 }
 func (IsVary) ChildAt(int) sl.Strategy     { panic("IsVary: no children") }
 func (IsVary) SetChildAt(int, sl.Strategy) { panic("IsVary: no children") }
+func (s *IsVary) VisitEnv(sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*VaryNop); ok {
+		return sl.StatusSuccess
+	}
+	return sl.StatusFailure
+}
+func (s *IsVary) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *IsVary) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*IsVary)(nil)
 
 // VisitVary is the `_Vary` slot-visit strategy: when subject is `Vary`,
 // applies each constituent strategy to the matching child slot and
 // rebuilds the term iff at least one child changed. Fails with
 // sl.ErrVisitFailure when subject isn't `Vary`.
 type VisitVary struct {
+	sl.AbstractStrategy
 	args []sl.Strategy
 }
 
@@ -641,3 +785,18 @@ func (s *VisitVary) VisitLight(subject any, intro sl.Introspector) (any, error) 
 func (s *VisitVary) ChildCount() int                 { return len(s.args) }
 func (s *VisitVary) ChildAt(i int) sl.Strategy       { return s.args[i] }
 func (s *VisitVary) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
+
+func (s *VisitVary) VisitEnv(intro sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*VaryNop); !ok {
+		return sl.StatusFailure
+	}
+	return sl.VisitCongruence(s.GetEnvironment(), intro, s.args, true)
+}
+func (s *VisitVary) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *VisitVary) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*VisitVary)(nil)

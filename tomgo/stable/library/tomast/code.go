@@ -102,7 +102,7 @@ func MakeTL(code string, start TextPosition, end TextPosition) TargetLanguage {
 // IsTL is the `Is_TL` predicate strategy: succeeds (returns subject
 // unchanged) when subject has the `TL` shape, otherwise fails with
 // sl.ErrVisitFailure.
-type IsTL struct{}
+type IsTL struct{ sl.AbstractStrategy }
 
 func (IsTL) VisitLight(subject any, _ sl.Introspector) (any, error) {
 	if _, ok := subject.(*TLTargetLanguage); ok {
@@ -113,12 +113,27 @@ func (IsTL) VisitLight(subject any, _ sl.Introspector) (any, error) {
 func (IsTL) ChildCount() int             { return 0 }
 func (IsTL) ChildAt(int) sl.Strategy     { panic("IsTL: no children") }
 func (IsTL) SetChildAt(int, sl.Strategy) { panic("IsTL: no children") }
+func (s *IsTL) VisitEnv(sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*TLTargetLanguage); ok {
+		return sl.StatusSuccess
+	}
+	return sl.StatusFailure
+}
+func (s *IsTL) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *IsTL) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*IsTL)(nil)
 
 // VisitTL is the `_TL` slot-visit strategy: when subject is `TL`,
 // applies each constituent strategy to the matching child slot and
 // rebuilds the term iff at least one child changed. Fails with
 // sl.ErrVisitFailure when subject isn't `TL`.
 type VisitTL struct {
+	sl.AbstractStrategy
 	args []sl.Strategy
 }
 
@@ -158,6 +173,24 @@ func (s *VisitTL) VisitLight(subject any, intro sl.Introspector) (any, error) {
 func (s *VisitTL) ChildCount() int                 { return len(s.args) }
 func (s *VisitTL) ChildAt(i int) sl.Strategy       { return s.args[i] }
 func (s *VisitTL) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
+
+func (s *VisitTL) VisitEnv(intro sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*TLTargetLanguage); !ok {
+		return sl.StatusFailure
+	}
+	if len(s.args) != 3 {
+		return sl.StatusFailure
+	}
+	return sl.VisitCongruence(s.GetEnvironment(), intro, s.args, false)
+}
+func (s *VisitTL) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *VisitTL) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*VisitTL)(nil)
 
 // ITLTargetLanguage is the term type for the alternative `ITL(...)` of sort TargetLanguage.
 type ITLTargetLanguage struct {
@@ -225,7 +258,7 @@ func MakeITL(code string) TargetLanguage {
 // IsITL is the `Is_ITL` predicate strategy: succeeds (returns subject
 // unchanged) when subject has the `ITL` shape, otherwise fails with
 // sl.ErrVisitFailure.
-type IsITL struct{}
+type IsITL struct{ sl.AbstractStrategy }
 
 func (IsITL) VisitLight(subject any, _ sl.Introspector) (any, error) {
 	if _, ok := subject.(*ITLTargetLanguage); ok {
@@ -236,12 +269,27 @@ func (IsITL) VisitLight(subject any, _ sl.Introspector) (any, error) {
 func (IsITL) ChildCount() int             { return 0 }
 func (IsITL) ChildAt(int) sl.Strategy     { panic("IsITL: no children") }
 func (IsITL) SetChildAt(int, sl.Strategy) { panic("IsITL: no children") }
+func (s *IsITL) VisitEnv(sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*ITLTargetLanguage); ok {
+		return sl.StatusSuccess
+	}
+	return sl.StatusFailure
+}
+func (s *IsITL) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *IsITL) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*IsITL)(nil)
 
 // VisitITL is the `_ITL` slot-visit strategy: when subject is `ITL`,
 // applies each constituent strategy to the matching child slot and
 // rebuilds the term iff at least one child changed. Fails with
 // sl.ErrVisitFailure when subject isn't `ITL`.
 type VisitITL struct {
+	sl.AbstractStrategy
 	args []sl.Strategy
 }
 
@@ -281,6 +329,24 @@ func (s *VisitITL) VisitLight(subject any, intro sl.Introspector) (any, error) {
 func (s *VisitITL) ChildCount() int                 { return len(s.args) }
 func (s *VisitITL) ChildAt(i int) sl.Strategy       { return s.args[i] }
 func (s *VisitITL) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
+
+func (s *VisitITL) VisitEnv(intro sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*ITLTargetLanguage); !ok {
+		return sl.StatusFailure
+	}
+	if len(s.args) != 1 {
+		return sl.StatusFailure
+	}
+	return sl.VisitCongruence(s.GetEnvironment(), intro, s.args, false)
+}
+func (s *VisitITL) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *VisitITL) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*VisitITL)(nil)
 
 // CommentTargetLanguage is the term type for the alternative `Comment(...)` of sort TargetLanguage.
 type CommentTargetLanguage struct {
@@ -348,7 +414,7 @@ func MakeComment(code string) TargetLanguage {
 // IsComment is the `Is_Comment` predicate strategy: succeeds (returns subject
 // unchanged) when subject has the `Comment` shape, otherwise fails with
 // sl.ErrVisitFailure.
-type IsComment struct{}
+type IsComment struct{ sl.AbstractStrategy }
 
 func (IsComment) VisitLight(subject any, _ sl.Introspector) (any, error) {
 	if _, ok := subject.(*CommentTargetLanguage); ok {
@@ -359,12 +425,27 @@ func (IsComment) VisitLight(subject any, _ sl.Introspector) (any, error) {
 func (IsComment) ChildCount() int             { return 0 }
 func (IsComment) ChildAt(int) sl.Strategy     { panic("IsComment: no children") }
 func (IsComment) SetChildAt(int, sl.Strategy) { panic("IsComment: no children") }
+func (s *IsComment) VisitEnv(sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*CommentTargetLanguage); ok {
+		return sl.StatusSuccess
+	}
+	return sl.StatusFailure
+}
+func (s *IsComment) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *IsComment) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*IsComment)(nil)
 
 // VisitComment is the `_Comment` slot-visit strategy: when subject is `Comment`,
 // applies each constituent strategy to the matching child slot and
 // rebuilds the term iff at least one child changed. Fails with
 // sl.ErrVisitFailure when subject isn't `Comment`.
 type VisitComment struct {
+	sl.AbstractStrategy
 	args []sl.Strategy
 }
 
@@ -404,6 +485,24 @@ func (s *VisitComment) VisitLight(subject any, intro sl.Introspector) (any, erro
 func (s *VisitComment) ChildCount() int                 { return len(s.args) }
 func (s *VisitComment) ChildAt(i int) sl.Strategy       { return s.args[i] }
 func (s *VisitComment) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
+
+func (s *VisitComment) VisitEnv(intro sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*CommentTargetLanguage); !ok {
+		return sl.StatusFailure
+	}
+	if len(s.args) != 1 {
+		return sl.StatusFailure
+	}
+	return sl.VisitCongruence(s.GetEnvironment(), intro, s.args, false)
+}
+func (s *VisitComment) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *VisitComment) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*VisitComment)(nil)
 
 // NoTLTargetLanguage is the term type for the alternative `noTL(...)` of sort TargetLanguage.
 type NoTLTargetLanguage struct {
@@ -452,7 +551,7 @@ func MakeNoTL() TargetLanguage {
 // IsNoTL is the `Is_noTL` predicate strategy: succeeds (returns subject
 // unchanged) when subject has the `noTL` shape, otherwise fails with
 // sl.ErrVisitFailure.
-type IsNoTL struct{}
+type IsNoTL struct{ sl.AbstractStrategy }
 
 func (IsNoTL) VisitLight(subject any, _ sl.Introspector) (any, error) {
 	if _, ok := subject.(*NoTLTargetLanguage); ok {
@@ -463,12 +562,27 @@ func (IsNoTL) VisitLight(subject any, _ sl.Introspector) (any, error) {
 func (IsNoTL) ChildCount() int             { return 0 }
 func (IsNoTL) ChildAt(int) sl.Strategy     { panic("IsNoTL: no children") }
 func (IsNoTL) SetChildAt(int, sl.Strategy) { panic("IsNoTL: no children") }
+func (s *IsNoTL) VisitEnv(sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*NoTLTargetLanguage); ok {
+		return sl.StatusSuccess
+	}
+	return sl.StatusFailure
+}
+func (s *IsNoTL) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *IsNoTL) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*IsNoTL)(nil)
 
 // VisitNoTL is the `_noTL` slot-visit strategy: when subject is `noTL`,
 // applies each constituent strategy to the matching child slot and
 // rebuilds the term iff at least one child changed. Fails with
 // sl.ErrVisitFailure when subject isn't `noTL`.
 type VisitNoTL struct {
+	sl.AbstractStrategy
 	args []sl.Strategy
 }
 
@@ -489,6 +603,21 @@ func (s *VisitNoTL) VisitLight(subject any, intro sl.Introspector) (any, error) 
 func (s *VisitNoTL) ChildCount() int                 { return len(s.args) }
 func (s *VisitNoTL) ChildAt(i int) sl.Strategy       { return s.args[i] }
 func (s *VisitNoTL) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
+
+func (s *VisitNoTL) VisitEnv(intro sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*NoTLTargetLanguage); !ok {
+		return sl.StatusFailure
+	}
+	return sl.VisitCongruence(s.GetEnvironment(), intro, s.args, false)
+}
+func (s *VisitNoTL) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *VisitNoTL) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*VisitNoTL)(nil)
 
 // CodeList is the Go interface backing the Gom sort CodeList.
 type CodeList interface {
@@ -574,7 +703,7 @@ func MakeConcCode(args ...Code) CodeList {
 // IsConcCode is the `Is_concCode` predicate strategy: succeeds (returns subject
 // unchanged) when subject has the `concCode` shape, otherwise fails with
 // sl.ErrVisitFailure.
-type IsConcCode struct{}
+type IsConcCode struct{ sl.AbstractStrategy }
 
 func (IsConcCode) VisitLight(subject any, _ sl.Introspector) (any, error) {
 	if _, ok := subject.(*ConcCodeCodeList); ok {
@@ -585,12 +714,27 @@ func (IsConcCode) VisitLight(subject any, _ sl.Introspector) (any, error) {
 func (IsConcCode) ChildCount() int             { return 0 }
 func (IsConcCode) ChildAt(int) sl.Strategy     { panic("IsConcCode: no children") }
 func (IsConcCode) SetChildAt(int, sl.Strategy) { panic("IsConcCode: no children") }
+func (s *IsConcCode) VisitEnv(sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*ConcCodeCodeList); ok {
+		return sl.StatusSuccess
+	}
+	return sl.StatusFailure
+}
+func (s *IsConcCode) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *IsConcCode) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*IsConcCode)(nil)
 
 // VisitConcCode is the `_concCode` slot-visit strategy: when subject is `concCode`,
 // applies each constituent strategy to the matching child slot and
 // rebuilds the term iff at least one child changed. Fails with
 // sl.ErrVisitFailure when subject isn't `concCode`.
 type VisitConcCode struct {
+	sl.AbstractStrategy
 	args []sl.Strategy
 }
 
@@ -633,6 +777,21 @@ func (s *VisitConcCode) VisitLight(subject any, intro sl.Introspector) (any, err
 func (s *VisitConcCode) ChildCount() int                 { return len(s.args) }
 func (s *VisitConcCode) ChildAt(i int) sl.Strategy       { return s.args[i] }
 func (s *VisitConcCode) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
+
+func (s *VisitConcCode) VisitEnv(intro sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*ConcCodeCodeList); !ok {
+		return sl.StatusFailure
+	}
+	return sl.VisitCongruence(s.GetEnvironment(), intro, s.args, true)
+}
+func (s *VisitConcCode) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *VisitConcCode) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*VisitConcCode)(nil)
 
 // Code is the Go interface backing the Gom sort Code.
 type Code interface {
@@ -706,7 +865,7 @@ func MakeTargetLanguageToCode(tl TargetLanguage) Code {
 // IsTargetLanguageToCode is the `Is_TargetLanguageToCode` predicate strategy: succeeds (returns subject
 // unchanged) when subject has the `TargetLanguageToCode` shape, otherwise fails with
 // sl.ErrVisitFailure.
-type IsTargetLanguageToCode struct{}
+type IsTargetLanguageToCode struct{ sl.AbstractStrategy }
 
 func (IsTargetLanguageToCode) VisitLight(subject any, _ sl.Introspector) (any, error) {
 	if _, ok := subject.(*TargetLanguageToCodeCode); ok {
@@ -719,12 +878,27 @@ func (IsTargetLanguageToCode) ChildAt(int) sl.Strategy { panic("IsTargetLanguage
 func (IsTargetLanguageToCode) SetChildAt(int, sl.Strategy) {
 	panic("IsTargetLanguageToCode: no children")
 }
+func (s *IsTargetLanguageToCode) VisitEnv(sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*TargetLanguageToCodeCode); ok {
+		return sl.StatusSuccess
+	}
+	return sl.StatusFailure
+}
+func (s *IsTargetLanguageToCode) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *IsTargetLanguageToCode) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*IsTargetLanguageToCode)(nil)
 
 // VisitTargetLanguageToCode is the `_TargetLanguageToCode` slot-visit strategy: when subject is `TargetLanguageToCode`,
 // applies each constituent strategy to the matching child slot and
 // rebuilds the term iff at least one child changed. Fails with
 // sl.ErrVisitFailure when subject isn't `TargetLanguageToCode`.
 type VisitTargetLanguageToCode struct {
+	sl.AbstractStrategy
 	args []sl.Strategy
 }
 
@@ -764,6 +938,24 @@ func (s *VisitTargetLanguageToCode) VisitLight(subject any, intro sl.Introspecto
 func (s *VisitTargetLanguageToCode) ChildCount() int                 { return len(s.args) }
 func (s *VisitTargetLanguageToCode) ChildAt(i int) sl.Strategy       { return s.args[i] }
 func (s *VisitTargetLanguageToCode) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
+
+func (s *VisitTargetLanguageToCode) VisitEnv(intro sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*TargetLanguageToCodeCode); !ok {
+		return sl.StatusFailure
+	}
+	if len(s.args) != 1 {
+		return sl.StatusFailure
+	}
+	return sl.VisitCongruence(s.GetEnvironment(), intro, s.args, false)
+}
+func (s *VisitTargetLanguageToCode) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *VisitTargetLanguageToCode) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*VisitTargetLanguageToCode)(nil)
 
 // InstructionToCodeCode is the term type for the alternative `InstructionToCode(...)` of sort Code.
 type InstructionToCodeCode struct {
@@ -835,7 +1027,7 @@ func MakeInstructionToCode(astInstruction Instruction) Code {
 // IsInstructionToCode is the `Is_InstructionToCode` predicate strategy: succeeds (returns subject
 // unchanged) when subject has the `InstructionToCode` shape, otherwise fails with
 // sl.ErrVisitFailure.
-type IsInstructionToCode struct{}
+type IsInstructionToCode struct{ sl.AbstractStrategy }
 
 func (IsInstructionToCode) VisitLight(subject any, _ sl.Introspector) (any, error) {
 	if _, ok := subject.(*InstructionToCodeCode); ok {
@@ -846,12 +1038,27 @@ func (IsInstructionToCode) VisitLight(subject any, _ sl.Introspector) (any, erro
 func (IsInstructionToCode) ChildCount() int             { return 0 }
 func (IsInstructionToCode) ChildAt(int) sl.Strategy     { panic("IsInstructionToCode: no children") }
 func (IsInstructionToCode) SetChildAt(int, sl.Strategy) { panic("IsInstructionToCode: no children") }
+func (s *IsInstructionToCode) VisitEnv(sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*InstructionToCodeCode); ok {
+		return sl.StatusSuccess
+	}
+	return sl.StatusFailure
+}
+func (s *IsInstructionToCode) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *IsInstructionToCode) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*IsInstructionToCode)(nil)
 
 // VisitInstructionToCode is the `_InstructionToCode` slot-visit strategy: when subject is `InstructionToCode`,
 // applies each constituent strategy to the matching child slot and
 // rebuilds the term iff at least one child changed. Fails with
 // sl.ErrVisitFailure when subject isn't `InstructionToCode`.
 type VisitInstructionToCode struct {
+	sl.AbstractStrategy
 	args []sl.Strategy
 }
 
@@ -891,6 +1098,24 @@ func (s *VisitInstructionToCode) VisitLight(subject any, intro sl.Introspector) 
 func (s *VisitInstructionToCode) ChildCount() int                 { return len(s.args) }
 func (s *VisitInstructionToCode) ChildAt(i int) sl.Strategy       { return s.args[i] }
 func (s *VisitInstructionToCode) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
+
+func (s *VisitInstructionToCode) VisitEnv(intro sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*InstructionToCodeCode); !ok {
+		return sl.StatusFailure
+	}
+	if len(s.args) != 1 {
+		return sl.StatusFailure
+	}
+	return sl.VisitCongruence(s.GetEnvironment(), intro, s.args, false)
+}
+func (s *VisitInstructionToCode) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *VisitInstructionToCode) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*VisitInstructionToCode)(nil)
 
 // DeclarationToCodeCode is the term type for the alternative `DeclarationToCode(...)` of sort Code.
 type DeclarationToCodeCode struct {
@@ -958,7 +1183,7 @@ func MakeDeclarationToCode(astDeclaration Declaration) Code {
 // IsDeclarationToCode is the `Is_DeclarationToCode` predicate strategy: succeeds (returns subject
 // unchanged) when subject has the `DeclarationToCode` shape, otherwise fails with
 // sl.ErrVisitFailure.
-type IsDeclarationToCode struct{}
+type IsDeclarationToCode struct{ sl.AbstractStrategy }
 
 func (IsDeclarationToCode) VisitLight(subject any, _ sl.Introspector) (any, error) {
 	if _, ok := subject.(*DeclarationToCodeCode); ok {
@@ -969,12 +1194,27 @@ func (IsDeclarationToCode) VisitLight(subject any, _ sl.Introspector) (any, erro
 func (IsDeclarationToCode) ChildCount() int             { return 0 }
 func (IsDeclarationToCode) ChildAt(int) sl.Strategy     { panic("IsDeclarationToCode: no children") }
 func (IsDeclarationToCode) SetChildAt(int, sl.Strategy) { panic("IsDeclarationToCode: no children") }
+func (s *IsDeclarationToCode) VisitEnv(sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*DeclarationToCodeCode); ok {
+		return sl.StatusSuccess
+	}
+	return sl.StatusFailure
+}
+func (s *IsDeclarationToCode) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *IsDeclarationToCode) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*IsDeclarationToCode)(nil)
 
 // VisitDeclarationToCode is the `_DeclarationToCode` slot-visit strategy: when subject is `DeclarationToCode`,
 // applies each constituent strategy to the matching child slot and
 // rebuilds the term iff at least one child changed. Fails with
 // sl.ErrVisitFailure when subject isn't `DeclarationToCode`.
 type VisitDeclarationToCode struct {
+	sl.AbstractStrategy
 	args []sl.Strategy
 }
 
@@ -1014,6 +1254,24 @@ func (s *VisitDeclarationToCode) VisitLight(subject any, intro sl.Introspector) 
 func (s *VisitDeclarationToCode) ChildCount() int                 { return len(s.args) }
 func (s *VisitDeclarationToCode) ChildAt(i int) sl.Strategy       { return s.args[i] }
 func (s *VisitDeclarationToCode) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
+
+func (s *VisitDeclarationToCode) VisitEnv(intro sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*DeclarationToCodeCode); !ok {
+		return sl.StatusFailure
+	}
+	if len(s.args) != 1 {
+		return sl.StatusFailure
+	}
+	return sl.VisitCongruence(s.GetEnvironment(), intro, s.args, false)
+}
+func (s *VisitDeclarationToCode) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *VisitDeclarationToCode) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*VisitDeclarationToCode)(nil)
 
 // BQTermToCodeCode is the term type for the alternative `BQTermToCode(...)` of sort Code.
 type BQTermToCodeCode struct {
@@ -1081,7 +1339,7 @@ func MakeBQTermToCode(bq BQTerm) Code {
 // IsBQTermToCode is the `Is_BQTermToCode` predicate strategy: succeeds (returns subject
 // unchanged) when subject has the `BQTermToCode` shape, otherwise fails with
 // sl.ErrVisitFailure.
-type IsBQTermToCode struct{}
+type IsBQTermToCode struct{ sl.AbstractStrategy }
 
 func (IsBQTermToCode) VisitLight(subject any, _ sl.Introspector) (any, error) {
 	if _, ok := subject.(*BQTermToCodeCode); ok {
@@ -1092,12 +1350,27 @@ func (IsBQTermToCode) VisitLight(subject any, _ sl.Introspector) (any, error) {
 func (IsBQTermToCode) ChildCount() int             { return 0 }
 func (IsBQTermToCode) ChildAt(int) sl.Strategy     { panic("IsBQTermToCode: no children") }
 func (IsBQTermToCode) SetChildAt(int, sl.Strategy) { panic("IsBQTermToCode: no children") }
+func (s *IsBQTermToCode) VisitEnv(sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*BQTermToCodeCode); ok {
+		return sl.StatusSuccess
+	}
+	return sl.StatusFailure
+}
+func (s *IsBQTermToCode) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *IsBQTermToCode) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*IsBQTermToCode)(nil)
 
 // VisitBQTermToCode is the `_BQTermToCode` slot-visit strategy: when subject is `BQTermToCode`,
 // applies each constituent strategy to the matching child slot and
 // rebuilds the term iff at least one child changed. Fails with
 // sl.ErrVisitFailure when subject isn't `BQTermToCode`.
 type VisitBQTermToCode struct {
+	sl.AbstractStrategy
 	args []sl.Strategy
 }
 
@@ -1137,6 +1410,24 @@ func (s *VisitBQTermToCode) VisitLight(subject any, intro sl.Introspector) (any,
 func (s *VisitBQTermToCode) ChildCount() int                 { return len(s.args) }
 func (s *VisitBQTermToCode) ChildAt(i int) sl.Strategy       { return s.args[i] }
 func (s *VisitBQTermToCode) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
+
+func (s *VisitBQTermToCode) VisitEnv(intro sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*BQTermToCodeCode); !ok {
+		return sl.StatusFailure
+	}
+	if len(s.args) != 1 {
+		return sl.StatusFailure
+	}
+	return sl.VisitCongruence(s.GetEnvironment(), intro, s.args, false)
+}
+func (s *VisitBQTermToCode) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *VisitBQTermToCode) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*VisitBQTermToCode)(nil)
 
 // TomCode is the term type for the alternative `Tom(...)` of sort Code.
 type TomCode struct {
@@ -1204,7 +1495,7 @@ func MakeTom(codeList CodeList) Code {
 // IsTom is the `Is_Tom` predicate strategy: succeeds (returns subject
 // unchanged) when subject has the `Tom` shape, otherwise fails with
 // sl.ErrVisitFailure.
-type IsTom struct{}
+type IsTom struct{ sl.AbstractStrategy }
 
 func (IsTom) VisitLight(subject any, _ sl.Introspector) (any, error) {
 	if _, ok := subject.(*TomCode); ok {
@@ -1215,12 +1506,27 @@ func (IsTom) VisitLight(subject any, _ sl.Introspector) (any, error) {
 func (IsTom) ChildCount() int             { return 0 }
 func (IsTom) ChildAt(int) sl.Strategy     { panic("IsTom: no children") }
 func (IsTom) SetChildAt(int, sl.Strategy) { panic("IsTom: no children") }
+func (s *IsTom) VisitEnv(sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*TomCode); ok {
+		return sl.StatusSuccess
+	}
+	return sl.StatusFailure
+}
+func (s *IsTom) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *IsTom) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*IsTom)(nil)
 
 // VisitTom is the `_Tom` slot-visit strategy: when subject is `Tom`,
 // applies each constituent strategy to the matching child slot and
 // rebuilds the term iff at least one child changed. Fails with
 // sl.ErrVisitFailure when subject isn't `Tom`.
 type VisitTom struct {
+	sl.AbstractStrategy
 	args []sl.Strategy
 }
 
@@ -1260,6 +1566,24 @@ func (s *VisitTom) VisitLight(subject any, intro sl.Introspector) (any, error) {
 func (s *VisitTom) ChildCount() int                 { return len(s.args) }
 func (s *VisitTom) ChildAt(i int) sl.Strategy       { return s.args[i] }
 func (s *VisitTom) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
+
+func (s *VisitTom) VisitEnv(intro sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*TomCode); !ok {
+		return sl.StatusFailure
+	}
+	if len(s.args) != 1 {
+		return sl.StatusFailure
+	}
+	return sl.VisitCongruence(s.GetEnvironment(), intro, s.args, false)
+}
+func (s *VisitTom) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *VisitTom) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*VisitTom)(nil)
 
 // TomIncludeCode is the term type for the alternative `TomInclude(...)` of sort Code.
 type TomIncludeCode struct {
@@ -1327,7 +1651,7 @@ func MakeTomInclude(codeList CodeList) Code {
 // IsTomInclude is the `Is_TomInclude` predicate strategy: succeeds (returns subject
 // unchanged) when subject has the `TomInclude` shape, otherwise fails with
 // sl.ErrVisitFailure.
-type IsTomInclude struct{}
+type IsTomInclude struct{ sl.AbstractStrategy }
 
 func (IsTomInclude) VisitLight(subject any, _ sl.Introspector) (any, error) {
 	if _, ok := subject.(*TomIncludeCode); ok {
@@ -1338,12 +1662,27 @@ func (IsTomInclude) VisitLight(subject any, _ sl.Introspector) (any, error) {
 func (IsTomInclude) ChildCount() int             { return 0 }
 func (IsTomInclude) ChildAt(int) sl.Strategy     { panic("IsTomInclude: no children") }
 func (IsTomInclude) SetChildAt(int, sl.Strategy) { panic("IsTomInclude: no children") }
+func (s *IsTomInclude) VisitEnv(sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*TomIncludeCode); ok {
+		return sl.StatusSuccess
+	}
+	return sl.StatusFailure
+}
+func (s *IsTomInclude) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *IsTomInclude) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*IsTomInclude)(nil)
 
 // VisitTomInclude is the `_TomInclude` slot-visit strategy: when subject is `TomInclude`,
 // applies each constituent strategy to the matching child slot and
 // rebuilds the term iff at least one child changed. Fails with
 // sl.ErrVisitFailure when subject isn't `TomInclude`.
 type VisitTomInclude struct {
+	sl.AbstractStrategy
 	args []sl.Strategy
 }
 
@@ -1383,6 +1722,24 @@ func (s *VisitTomInclude) VisitLight(subject any, intro sl.Introspector) (any, e
 func (s *VisitTomInclude) ChildCount() int                 { return len(s.args) }
 func (s *VisitTomInclude) ChildAt(i int) sl.Strategy       { return s.args[i] }
 func (s *VisitTomInclude) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
+
+func (s *VisitTomInclude) VisitEnv(intro sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*TomIncludeCode); !ok {
+		return sl.StatusFailure
+	}
+	if len(s.args) != 1 {
+		return sl.StatusFailure
+	}
+	return sl.VisitCongruence(s.GetEnvironment(), intro, s.args, false)
+}
+func (s *VisitTomInclude) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *VisitTomInclude) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*VisitTomInclude)(nil)
 
 // BQTermList is the Go interface backing the Gom sort BQTermList.
 type BQTermList interface {
@@ -1468,7 +1825,7 @@ func MakeConcBQTerm(args ...BQTerm) BQTermList {
 // IsConcBQTerm is the `Is_concBQTerm` predicate strategy: succeeds (returns subject
 // unchanged) when subject has the `concBQTerm` shape, otherwise fails with
 // sl.ErrVisitFailure.
-type IsConcBQTerm struct{}
+type IsConcBQTerm struct{ sl.AbstractStrategy }
 
 func (IsConcBQTerm) VisitLight(subject any, _ sl.Introspector) (any, error) {
 	if _, ok := subject.(*ConcBQTermBQTermList); ok {
@@ -1479,12 +1836,27 @@ func (IsConcBQTerm) VisitLight(subject any, _ sl.Introspector) (any, error) {
 func (IsConcBQTerm) ChildCount() int             { return 0 }
 func (IsConcBQTerm) ChildAt(int) sl.Strategy     { panic("IsConcBQTerm: no children") }
 func (IsConcBQTerm) SetChildAt(int, sl.Strategy) { panic("IsConcBQTerm: no children") }
+func (s *IsConcBQTerm) VisitEnv(sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*ConcBQTermBQTermList); ok {
+		return sl.StatusSuccess
+	}
+	return sl.StatusFailure
+}
+func (s *IsConcBQTerm) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *IsConcBQTerm) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*IsConcBQTerm)(nil)
 
 // VisitConcBQTerm is the `_concBQTerm` slot-visit strategy: when subject is `concBQTerm`,
 // applies each constituent strategy to the matching child slot and
 // rebuilds the term iff at least one child changed. Fails with
 // sl.ErrVisitFailure when subject isn't `concBQTerm`.
 type VisitConcBQTerm struct {
+	sl.AbstractStrategy
 	args []sl.Strategy
 }
 
@@ -1527,6 +1899,21 @@ func (s *VisitConcBQTerm) VisitLight(subject any, intro sl.Introspector) (any, e
 func (s *VisitConcBQTerm) ChildCount() int                 { return len(s.args) }
 func (s *VisitConcBQTerm) ChildAt(i int) sl.Strategy       { return s.args[i] }
 func (s *VisitConcBQTerm) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
+
+func (s *VisitConcBQTerm) VisitEnv(intro sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*ConcBQTermBQTermList); !ok {
+		return sl.StatusFailure
+	}
+	return sl.VisitCongruence(s.GetEnvironment(), intro, s.args, true)
+}
+func (s *VisitConcBQTerm) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *VisitConcBQTerm) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*VisitConcBQTerm)(nil)
 
 // CompositeMember is the Go interface backing the Gom sort CompositeMember.
 type CompositeMember interface {
@@ -1600,7 +1987,7 @@ func MakeCompositeBQTerm(term BQTerm) CompositeMember {
 // IsCompositeBQTerm is the `Is_CompositeBQTerm` predicate strategy: succeeds (returns subject
 // unchanged) when subject has the `CompositeBQTerm` shape, otherwise fails with
 // sl.ErrVisitFailure.
-type IsCompositeBQTerm struct{}
+type IsCompositeBQTerm struct{ sl.AbstractStrategy }
 
 func (IsCompositeBQTerm) VisitLight(subject any, _ sl.Introspector) (any, error) {
 	if _, ok := subject.(*CompositeBQTermCompositeMember); ok {
@@ -1611,12 +1998,27 @@ func (IsCompositeBQTerm) VisitLight(subject any, _ sl.Introspector) (any, error)
 func (IsCompositeBQTerm) ChildCount() int             { return 0 }
 func (IsCompositeBQTerm) ChildAt(int) sl.Strategy     { panic("IsCompositeBQTerm: no children") }
 func (IsCompositeBQTerm) SetChildAt(int, sl.Strategy) { panic("IsCompositeBQTerm: no children") }
+func (s *IsCompositeBQTerm) VisitEnv(sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*CompositeBQTermCompositeMember); ok {
+		return sl.StatusSuccess
+	}
+	return sl.StatusFailure
+}
+func (s *IsCompositeBQTerm) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *IsCompositeBQTerm) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*IsCompositeBQTerm)(nil)
 
 // VisitCompositeBQTerm is the `_CompositeBQTerm` slot-visit strategy: when subject is `CompositeBQTerm`,
 // applies each constituent strategy to the matching child slot and
 // rebuilds the term iff at least one child changed. Fails with
 // sl.ErrVisitFailure when subject isn't `CompositeBQTerm`.
 type VisitCompositeBQTerm struct {
+	sl.AbstractStrategy
 	args []sl.Strategy
 }
 
@@ -1656,6 +2058,24 @@ func (s *VisitCompositeBQTerm) VisitLight(subject any, intro sl.Introspector) (a
 func (s *VisitCompositeBQTerm) ChildCount() int                 { return len(s.args) }
 func (s *VisitCompositeBQTerm) ChildAt(i int) sl.Strategy       { return s.args[i] }
 func (s *VisitCompositeBQTerm) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
+
+func (s *VisitCompositeBQTerm) VisitEnv(intro sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*CompositeBQTermCompositeMember); !ok {
+		return sl.StatusFailure
+	}
+	if len(s.args) != 1 {
+		return sl.StatusFailure
+	}
+	return sl.VisitCongruence(s.GetEnvironment(), intro, s.args, false)
+}
+func (s *VisitCompositeBQTerm) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *VisitCompositeBQTerm) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*VisitCompositeBQTerm)(nil)
 
 // CompositeTLCompositeMember is the term type for the alternative `CompositeTL(...)` of sort CompositeMember.
 type CompositeTLCompositeMember struct {
@@ -1723,7 +2143,7 @@ func MakeCompositeTL(tl TargetLanguage) CompositeMember {
 // IsCompositeTL is the `Is_CompositeTL` predicate strategy: succeeds (returns subject
 // unchanged) when subject has the `CompositeTL` shape, otherwise fails with
 // sl.ErrVisitFailure.
-type IsCompositeTL struct{}
+type IsCompositeTL struct{ sl.AbstractStrategy }
 
 func (IsCompositeTL) VisitLight(subject any, _ sl.Introspector) (any, error) {
 	if _, ok := subject.(*CompositeTLCompositeMember); ok {
@@ -1734,12 +2154,27 @@ func (IsCompositeTL) VisitLight(subject any, _ sl.Introspector) (any, error) {
 func (IsCompositeTL) ChildCount() int             { return 0 }
 func (IsCompositeTL) ChildAt(int) sl.Strategy     { panic("IsCompositeTL: no children") }
 func (IsCompositeTL) SetChildAt(int, sl.Strategy) { panic("IsCompositeTL: no children") }
+func (s *IsCompositeTL) VisitEnv(sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*CompositeTLCompositeMember); ok {
+		return sl.StatusSuccess
+	}
+	return sl.StatusFailure
+}
+func (s *IsCompositeTL) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *IsCompositeTL) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*IsCompositeTL)(nil)
 
 // VisitCompositeTL is the `_CompositeTL` slot-visit strategy: when subject is `CompositeTL`,
 // applies each constituent strategy to the matching child slot and
 // rebuilds the term iff at least one child changed. Fails with
 // sl.ErrVisitFailure when subject isn't `CompositeTL`.
 type VisitCompositeTL struct {
+	sl.AbstractStrategy
 	args []sl.Strategy
 }
 
@@ -1779,6 +2214,24 @@ func (s *VisitCompositeTL) VisitLight(subject any, intro sl.Introspector) (any, 
 func (s *VisitCompositeTL) ChildCount() int                 { return len(s.args) }
 func (s *VisitCompositeTL) ChildAt(i int) sl.Strategy       { return s.args[i] }
 func (s *VisitCompositeTL) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
+
+func (s *VisitCompositeTL) VisitEnv(intro sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*CompositeTLCompositeMember); !ok {
+		return sl.StatusFailure
+	}
+	if len(s.args) != 1 {
+		return sl.StatusFailure
+	}
+	return sl.VisitCongruence(s.GetEnvironment(), intro, s.args, false)
+}
+func (s *VisitCompositeTL) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *VisitCompositeTL) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*VisitCompositeTL)(nil)
 
 // BQTerm is the Go interface backing the Gom sort BQTerm.
 type BQTerm interface {
@@ -1868,7 +2321,7 @@ func MakeBQAppl(options OptionList, astName TomName, args BQTermList) BQTerm {
 // IsBQAppl is the `Is_BQAppl` predicate strategy: succeeds (returns subject
 // unchanged) when subject has the `BQAppl` shape, otherwise fails with
 // sl.ErrVisitFailure.
-type IsBQAppl struct{}
+type IsBQAppl struct{ sl.AbstractStrategy }
 
 func (IsBQAppl) VisitLight(subject any, _ sl.Introspector) (any, error) {
 	if _, ok := subject.(*BQApplBQTerm); ok {
@@ -1879,12 +2332,27 @@ func (IsBQAppl) VisitLight(subject any, _ sl.Introspector) (any, error) {
 func (IsBQAppl) ChildCount() int             { return 0 }
 func (IsBQAppl) ChildAt(int) sl.Strategy     { panic("IsBQAppl: no children") }
 func (IsBQAppl) SetChildAt(int, sl.Strategy) { panic("IsBQAppl: no children") }
+func (s *IsBQAppl) VisitEnv(sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*BQApplBQTerm); ok {
+		return sl.StatusSuccess
+	}
+	return sl.StatusFailure
+}
+func (s *IsBQAppl) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *IsBQAppl) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*IsBQAppl)(nil)
 
 // VisitBQAppl is the `_BQAppl` slot-visit strategy: when subject is `BQAppl`,
 // applies each constituent strategy to the matching child slot and
 // rebuilds the term iff at least one child changed. Fails with
 // sl.ErrVisitFailure when subject isn't `BQAppl`.
 type VisitBQAppl struct {
+	sl.AbstractStrategy
 	args []sl.Strategy
 }
 
@@ -1924,6 +2392,24 @@ func (s *VisitBQAppl) VisitLight(subject any, intro sl.Introspector) (any, error
 func (s *VisitBQAppl) ChildCount() int                 { return len(s.args) }
 func (s *VisitBQAppl) ChildAt(i int) sl.Strategy       { return s.args[i] }
 func (s *VisitBQAppl) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
+
+func (s *VisitBQAppl) VisitEnv(intro sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*BQApplBQTerm); !ok {
+		return sl.StatusFailure
+	}
+	if len(s.args) != 3 {
+		return sl.StatusFailure
+	}
+	return sl.VisitCongruence(s.GetEnvironment(), intro, s.args, false)
+}
+func (s *VisitBQAppl) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *VisitBQAppl) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*VisitBQAppl)(nil)
 
 // BQRecordApplBQTerm is the term type for the alternative `BQRecordAppl(...)` of sort BQTerm.
 type BQRecordApplBQTerm struct {
@@ -2007,7 +2493,7 @@ func MakeBQRecordAppl(options OptionList, astName TomName, slots BQSlotList) BQT
 // IsBQRecordAppl is the `Is_BQRecordAppl` predicate strategy: succeeds (returns subject
 // unchanged) when subject has the `BQRecordAppl` shape, otherwise fails with
 // sl.ErrVisitFailure.
-type IsBQRecordAppl struct{}
+type IsBQRecordAppl struct{ sl.AbstractStrategy }
 
 func (IsBQRecordAppl) VisitLight(subject any, _ sl.Introspector) (any, error) {
 	if _, ok := subject.(*BQRecordApplBQTerm); ok {
@@ -2018,12 +2504,27 @@ func (IsBQRecordAppl) VisitLight(subject any, _ sl.Introspector) (any, error) {
 func (IsBQRecordAppl) ChildCount() int             { return 0 }
 func (IsBQRecordAppl) ChildAt(int) sl.Strategy     { panic("IsBQRecordAppl: no children") }
 func (IsBQRecordAppl) SetChildAt(int, sl.Strategy) { panic("IsBQRecordAppl: no children") }
+func (s *IsBQRecordAppl) VisitEnv(sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*BQRecordApplBQTerm); ok {
+		return sl.StatusSuccess
+	}
+	return sl.StatusFailure
+}
+func (s *IsBQRecordAppl) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *IsBQRecordAppl) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*IsBQRecordAppl)(nil)
 
 // VisitBQRecordAppl is the `_BQRecordAppl` slot-visit strategy: when subject is `BQRecordAppl`,
 // applies each constituent strategy to the matching child slot and
 // rebuilds the term iff at least one child changed. Fails with
 // sl.ErrVisitFailure when subject isn't `BQRecordAppl`.
 type VisitBQRecordAppl struct {
+	sl.AbstractStrategy
 	args []sl.Strategy
 }
 
@@ -2063,6 +2564,24 @@ func (s *VisitBQRecordAppl) VisitLight(subject any, intro sl.Introspector) (any,
 func (s *VisitBQRecordAppl) ChildCount() int                 { return len(s.args) }
 func (s *VisitBQRecordAppl) ChildAt(i int) sl.Strategy       { return s.args[i] }
 func (s *VisitBQRecordAppl) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
+
+func (s *VisitBQRecordAppl) VisitEnv(intro sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*BQRecordApplBQTerm); !ok {
+		return sl.StatusFailure
+	}
+	if len(s.args) != 3 {
+		return sl.StatusFailure
+	}
+	return sl.VisitCongruence(s.GetEnvironment(), intro, s.args, false)
+}
+func (s *VisitBQRecordAppl) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *VisitBQRecordAppl) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*VisitBQRecordAppl)(nil)
 
 // BQVariableBQTerm is the term type for the alternative `BQVariable(...)` of sort BQTerm.
 type BQVariableBQTerm struct {
@@ -2146,7 +2665,7 @@ func MakeBQVariable(options OptionList, astName TomName, astType TomType) BQTerm
 // IsBQVariable is the `Is_BQVariable` predicate strategy: succeeds (returns subject
 // unchanged) when subject has the `BQVariable` shape, otherwise fails with
 // sl.ErrVisitFailure.
-type IsBQVariable struct{}
+type IsBQVariable struct{ sl.AbstractStrategy }
 
 func (IsBQVariable) VisitLight(subject any, _ sl.Introspector) (any, error) {
 	if _, ok := subject.(*BQVariableBQTerm); ok {
@@ -2157,12 +2676,27 @@ func (IsBQVariable) VisitLight(subject any, _ sl.Introspector) (any, error) {
 func (IsBQVariable) ChildCount() int             { return 0 }
 func (IsBQVariable) ChildAt(int) sl.Strategy     { panic("IsBQVariable: no children") }
 func (IsBQVariable) SetChildAt(int, sl.Strategy) { panic("IsBQVariable: no children") }
+func (s *IsBQVariable) VisitEnv(sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*BQVariableBQTerm); ok {
+		return sl.StatusSuccess
+	}
+	return sl.StatusFailure
+}
+func (s *IsBQVariable) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *IsBQVariable) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*IsBQVariable)(nil)
 
 // VisitBQVariable is the `_BQVariable` slot-visit strategy: when subject is `BQVariable`,
 // applies each constituent strategy to the matching child slot and
 // rebuilds the term iff at least one child changed. Fails with
 // sl.ErrVisitFailure when subject isn't `BQVariable`.
 type VisitBQVariable struct {
+	sl.AbstractStrategy
 	args []sl.Strategy
 }
 
@@ -2202,6 +2736,24 @@ func (s *VisitBQVariable) VisitLight(subject any, intro sl.Introspector) (any, e
 func (s *VisitBQVariable) ChildCount() int                 { return len(s.args) }
 func (s *VisitBQVariable) ChildAt(i int) sl.Strategy       { return s.args[i] }
 func (s *VisitBQVariable) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
+
+func (s *VisitBQVariable) VisitEnv(intro sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*BQVariableBQTerm); !ok {
+		return sl.StatusFailure
+	}
+	if len(s.args) != 3 {
+		return sl.StatusFailure
+	}
+	return sl.VisitCongruence(s.GetEnvironment(), intro, s.args, false)
+}
+func (s *VisitBQVariable) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *VisitBQVariable) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*VisitBQVariable)(nil)
 
 // BQVariableStarBQTerm is the term type for the alternative `BQVariableStar(...)` of sort BQTerm.
 type BQVariableStarBQTerm struct {
@@ -2285,7 +2837,7 @@ func MakeBQVariableStar(options OptionList, astName TomName, astType TomType) BQ
 // IsBQVariableStar is the `Is_BQVariableStar` predicate strategy: succeeds (returns subject
 // unchanged) when subject has the `BQVariableStar` shape, otherwise fails with
 // sl.ErrVisitFailure.
-type IsBQVariableStar struct{}
+type IsBQVariableStar struct{ sl.AbstractStrategy }
 
 func (IsBQVariableStar) VisitLight(subject any, _ sl.Introspector) (any, error) {
 	if _, ok := subject.(*BQVariableStarBQTerm); ok {
@@ -2296,12 +2848,27 @@ func (IsBQVariableStar) VisitLight(subject any, _ sl.Introspector) (any, error) 
 func (IsBQVariableStar) ChildCount() int             { return 0 }
 func (IsBQVariableStar) ChildAt(int) sl.Strategy     { panic("IsBQVariableStar: no children") }
 func (IsBQVariableStar) SetChildAt(int, sl.Strategy) { panic("IsBQVariableStar: no children") }
+func (s *IsBQVariableStar) VisitEnv(sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*BQVariableStarBQTerm); ok {
+		return sl.StatusSuccess
+	}
+	return sl.StatusFailure
+}
+func (s *IsBQVariableStar) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *IsBQVariableStar) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*IsBQVariableStar)(nil)
 
 // VisitBQVariableStar is the `_BQVariableStar` slot-visit strategy: when subject is `BQVariableStar`,
 // applies each constituent strategy to the matching child slot and
 // rebuilds the term iff at least one child changed. Fails with
 // sl.ErrVisitFailure when subject isn't `BQVariableStar`.
 type VisitBQVariableStar struct {
+	sl.AbstractStrategy
 	args []sl.Strategy
 }
 
@@ -2341,6 +2908,24 @@ func (s *VisitBQVariableStar) VisitLight(subject any, intro sl.Introspector) (an
 func (s *VisitBQVariableStar) ChildCount() int                 { return len(s.args) }
 func (s *VisitBQVariableStar) ChildAt(i int) sl.Strategy       { return s.args[i] }
 func (s *VisitBQVariableStar) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
+
+func (s *VisitBQVariableStar) VisitEnv(intro sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*BQVariableStarBQTerm); !ok {
+		return sl.StatusFailure
+	}
+	if len(s.args) != 3 {
+		return sl.StatusFailure
+	}
+	return sl.VisitCongruence(s.GetEnvironment(), intro, s.args, false)
+}
+func (s *VisitBQVariableStar) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *VisitBQVariableStar) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*VisitBQVariableStar)(nil)
 
 // BQDefaultBQTerm is the term type for the alternative `BQDefault(...)` of sort BQTerm.
 type BQDefaultBQTerm struct {
@@ -2389,7 +2974,7 @@ func MakeBQDefault() BQTerm {
 // IsBQDefault is the `Is_BQDefault` predicate strategy: succeeds (returns subject
 // unchanged) when subject has the `BQDefault` shape, otherwise fails with
 // sl.ErrVisitFailure.
-type IsBQDefault struct{}
+type IsBQDefault struct{ sl.AbstractStrategy }
 
 func (IsBQDefault) VisitLight(subject any, _ sl.Introspector) (any, error) {
 	if _, ok := subject.(*BQDefaultBQTerm); ok {
@@ -2400,12 +2985,27 @@ func (IsBQDefault) VisitLight(subject any, _ sl.Introspector) (any, error) {
 func (IsBQDefault) ChildCount() int             { return 0 }
 func (IsBQDefault) ChildAt(int) sl.Strategy     { panic("IsBQDefault: no children") }
 func (IsBQDefault) SetChildAt(int, sl.Strategy) { panic("IsBQDefault: no children") }
+func (s *IsBQDefault) VisitEnv(sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*BQDefaultBQTerm); ok {
+		return sl.StatusSuccess
+	}
+	return sl.StatusFailure
+}
+func (s *IsBQDefault) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *IsBQDefault) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*IsBQDefault)(nil)
 
 // VisitBQDefault is the `_BQDefault` slot-visit strategy: when subject is `BQDefault`,
 // applies each constituent strategy to the matching child slot and
 // rebuilds the term iff at least one child changed. Fails with
 // sl.ErrVisitFailure when subject isn't `BQDefault`.
 type VisitBQDefault struct {
+	sl.AbstractStrategy
 	args []sl.Strategy
 }
 
@@ -2426,6 +3026,21 @@ func (s *VisitBQDefault) VisitLight(subject any, intro sl.Introspector) (any, er
 func (s *VisitBQDefault) ChildCount() int                 { return len(s.args) }
 func (s *VisitBQDefault) ChildAt(i int) sl.Strategy       { return s.args[i] }
 func (s *VisitBQDefault) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
+
+func (s *VisitBQDefault) VisitEnv(intro sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*BQDefaultBQTerm); !ok {
+		return sl.StatusFailure
+	}
+	return sl.VisitCongruence(s.GetEnvironment(), intro, s.args, false)
+}
+func (s *VisitBQDefault) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *VisitBQDefault) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*VisitBQDefault)(nil)
 
 // CompositeBQTerm is the term type for the alternative `Composite(...)` of sort BQTerm.
 type CompositeBQTerm struct {
@@ -2505,7 +3120,7 @@ func MakeComposite(args ...CompositeMember) BQTerm {
 // IsComposite is the `Is_Composite` predicate strategy: succeeds (returns subject
 // unchanged) when subject has the `Composite` shape, otherwise fails with
 // sl.ErrVisitFailure.
-type IsComposite struct{}
+type IsComposite struct{ sl.AbstractStrategy }
 
 func (IsComposite) VisitLight(subject any, _ sl.Introspector) (any, error) {
 	if _, ok := subject.(*CompositeBQTerm); ok {
@@ -2516,12 +3131,27 @@ func (IsComposite) VisitLight(subject any, _ sl.Introspector) (any, error) {
 func (IsComposite) ChildCount() int             { return 0 }
 func (IsComposite) ChildAt(int) sl.Strategy     { panic("IsComposite: no children") }
 func (IsComposite) SetChildAt(int, sl.Strategy) { panic("IsComposite: no children") }
+func (s *IsComposite) VisitEnv(sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*CompositeBQTerm); ok {
+		return sl.StatusSuccess
+	}
+	return sl.StatusFailure
+}
+func (s *IsComposite) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *IsComposite) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*IsComposite)(nil)
 
 // VisitComposite is the `_Composite` slot-visit strategy: when subject is `Composite`,
 // applies each constituent strategy to the matching child slot and
 // rebuilds the term iff at least one child changed. Fails with
 // sl.ErrVisitFailure when subject isn't `Composite`.
 type VisitComposite struct {
+	sl.AbstractStrategy
 	args []sl.Strategy
 }
 
@@ -2564,6 +3194,21 @@ func (s *VisitComposite) VisitLight(subject any, intro sl.Introspector) (any, er
 func (s *VisitComposite) ChildCount() int                 { return len(s.args) }
 func (s *VisitComposite) ChildAt(i int) sl.Strategy       { return s.args[i] }
 func (s *VisitComposite) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
+
+func (s *VisitComposite) VisitEnv(intro sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*CompositeBQTerm); !ok {
+		return sl.StatusFailure
+	}
+	return sl.VisitCongruence(s.GetEnvironment(), intro, s.args, true)
+}
+func (s *VisitComposite) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *VisitComposite) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*VisitComposite)(nil)
 
 // ReferencerBQTermBQTerm is the term type for the alternative `ReferencerBQTerm(...)` of sort BQTerm.
 type ReferencerBQTermBQTerm struct {
@@ -2655,7 +3300,7 @@ func MakeReferencerBQTerm(options OptionList, astName TomName, type_ string, ter
 // IsReferencerBQTerm is the `Is_ReferencerBQTerm` predicate strategy: succeeds (returns subject
 // unchanged) when subject has the `ReferencerBQTerm` shape, otherwise fails with
 // sl.ErrVisitFailure.
-type IsReferencerBQTerm struct{}
+type IsReferencerBQTerm struct{ sl.AbstractStrategy }
 
 func (IsReferencerBQTerm) VisitLight(subject any, _ sl.Introspector) (any, error) {
 	if _, ok := subject.(*ReferencerBQTermBQTerm); ok {
@@ -2666,12 +3311,27 @@ func (IsReferencerBQTerm) VisitLight(subject any, _ sl.Introspector) (any, error
 func (IsReferencerBQTerm) ChildCount() int             { return 0 }
 func (IsReferencerBQTerm) ChildAt(int) sl.Strategy     { panic("IsReferencerBQTerm: no children") }
 func (IsReferencerBQTerm) SetChildAt(int, sl.Strategy) { panic("IsReferencerBQTerm: no children") }
+func (s *IsReferencerBQTerm) VisitEnv(sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*ReferencerBQTermBQTerm); ok {
+		return sl.StatusSuccess
+	}
+	return sl.StatusFailure
+}
+func (s *IsReferencerBQTerm) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *IsReferencerBQTerm) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*IsReferencerBQTerm)(nil)
 
 // VisitReferencerBQTerm is the `_ReferencerBQTerm` slot-visit strategy: when subject is `ReferencerBQTerm`,
 // applies each constituent strategy to the matching child slot and
 // rebuilds the term iff at least one child changed. Fails with
 // sl.ErrVisitFailure when subject isn't `ReferencerBQTerm`.
 type VisitReferencerBQTerm struct {
+	sl.AbstractStrategy
 	args []sl.Strategy
 }
 
@@ -2711,6 +3371,24 @@ func (s *VisitReferencerBQTerm) VisitLight(subject any, intro sl.Introspector) (
 func (s *VisitReferencerBQTerm) ChildCount() int                 { return len(s.args) }
 func (s *VisitReferencerBQTerm) ChildAt(i int) sl.Strategy       { return s.args[i] }
 func (s *VisitReferencerBQTerm) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
+
+func (s *VisitReferencerBQTerm) VisitEnv(intro sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*ReferencerBQTermBQTerm); !ok {
+		return sl.StatusFailure
+	}
+	if len(s.args) != 4 {
+		return sl.StatusFailure
+	}
+	return sl.VisitCongruence(s.GetEnvironment(), intro, s.args, false)
+}
+func (s *VisitReferencerBQTerm) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *VisitReferencerBQTerm) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*VisitReferencerBQTerm)(nil)
 
 // FunctionCallBQTerm is the term type for the alternative `FunctionCall(...)` of sort BQTerm.
 type FunctionCallBQTerm struct {
@@ -2794,7 +3472,7 @@ func MakeFunctionCall(astName TomName, astType TomType, args BQTermList) BQTerm 
 // IsFunctionCall is the `Is_FunctionCall` predicate strategy: succeeds (returns subject
 // unchanged) when subject has the `FunctionCall` shape, otherwise fails with
 // sl.ErrVisitFailure.
-type IsFunctionCall struct{}
+type IsFunctionCall struct{ sl.AbstractStrategy }
 
 func (IsFunctionCall) VisitLight(subject any, _ sl.Introspector) (any, error) {
 	if _, ok := subject.(*FunctionCallBQTerm); ok {
@@ -2805,12 +3483,27 @@ func (IsFunctionCall) VisitLight(subject any, _ sl.Introspector) (any, error) {
 func (IsFunctionCall) ChildCount() int             { return 0 }
 func (IsFunctionCall) ChildAt(int) sl.Strategy     { panic("IsFunctionCall: no children") }
 func (IsFunctionCall) SetChildAt(int, sl.Strategy) { panic("IsFunctionCall: no children") }
+func (s *IsFunctionCall) VisitEnv(sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*FunctionCallBQTerm); ok {
+		return sl.StatusSuccess
+	}
+	return sl.StatusFailure
+}
+func (s *IsFunctionCall) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *IsFunctionCall) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*IsFunctionCall)(nil)
 
 // VisitFunctionCall is the `_FunctionCall` slot-visit strategy: when subject is `FunctionCall`,
 // applies each constituent strategy to the matching child slot and
 // rebuilds the term iff at least one child changed. Fails with
 // sl.ErrVisitFailure when subject isn't `FunctionCall`.
 type VisitFunctionCall struct {
+	sl.AbstractStrategy
 	args []sl.Strategy
 }
 
@@ -2850,6 +3543,24 @@ func (s *VisitFunctionCall) VisitLight(subject any, intro sl.Introspector) (any,
 func (s *VisitFunctionCall) ChildCount() int                 { return len(s.args) }
 func (s *VisitFunctionCall) ChildAt(i int) sl.Strategy       { return s.args[i] }
 func (s *VisitFunctionCall) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
+
+func (s *VisitFunctionCall) VisitEnv(intro sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*FunctionCallBQTerm); !ok {
+		return sl.StatusFailure
+	}
+	if len(s.args) != 3 {
+		return sl.StatusFailure
+	}
+	return sl.VisitCongruence(s.GetEnvironment(), intro, s.args, false)
+}
+func (s *VisitFunctionCall) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *VisitFunctionCall) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*VisitFunctionCall)(nil)
 
 // BuildConstantBQTerm is the term type for the alternative `BuildConstant(...)` of sort BQTerm.
 type BuildConstantBQTerm struct {
@@ -2917,7 +3628,7 @@ func MakeBuildConstant(astName TomName) BQTerm {
 // IsBuildConstant is the `Is_BuildConstant` predicate strategy: succeeds (returns subject
 // unchanged) when subject has the `BuildConstant` shape, otherwise fails with
 // sl.ErrVisitFailure.
-type IsBuildConstant struct{}
+type IsBuildConstant struct{ sl.AbstractStrategy }
 
 func (IsBuildConstant) VisitLight(subject any, _ sl.Introspector) (any, error) {
 	if _, ok := subject.(*BuildConstantBQTerm); ok {
@@ -2928,12 +3639,27 @@ func (IsBuildConstant) VisitLight(subject any, _ sl.Introspector) (any, error) {
 func (IsBuildConstant) ChildCount() int             { return 0 }
 func (IsBuildConstant) ChildAt(int) sl.Strategy     { panic("IsBuildConstant: no children") }
 func (IsBuildConstant) SetChildAt(int, sl.Strategy) { panic("IsBuildConstant: no children") }
+func (s *IsBuildConstant) VisitEnv(sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*BuildConstantBQTerm); ok {
+		return sl.StatusSuccess
+	}
+	return sl.StatusFailure
+}
+func (s *IsBuildConstant) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *IsBuildConstant) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*IsBuildConstant)(nil)
 
 // VisitBuildConstant is the `_BuildConstant` slot-visit strategy: when subject is `BuildConstant`,
 // applies each constituent strategy to the matching child slot and
 // rebuilds the term iff at least one child changed. Fails with
 // sl.ErrVisitFailure when subject isn't `BuildConstant`.
 type VisitBuildConstant struct {
+	sl.AbstractStrategy
 	args []sl.Strategy
 }
 
@@ -2973,6 +3699,24 @@ func (s *VisitBuildConstant) VisitLight(subject any, intro sl.Introspector) (any
 func (s *VisitBuildConstant) ChildCount() int                 { return len(s.args) }
 func (s *VisitBuildConstant) ChildAt(i int) sl.Strategy       { return s.args[i] }
 func (s *VisitBuildConstant) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
+
+func (s *VisitBuildConstant) VisitEnv(intro sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*BuildConstantBQTerm); !ok {
+		return sl.StatusFailure
+	}
+	if len(s.args) != 1 {
+		return sl.StatusFailure
+	}
+	return sl.VisitCongruence(s.GetEnvironment(), intro, s.args, false)
+}
+func (s *VisitBuildConstant) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *VisitBuildConstant) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*VisitBuildConstant)(nil)
 
 // BuildTermBQTerm is the term type for the alternative `BuildTerm(...)` of sort BQTerm.
 type BuildTermBQTerm struct {
@@ -3056,7 +3800,7 @@ func MakeBuildTerm(astName TomName, args BQTermList, moduleName string) BQTerm {
 // IsBuildTerm is the `Is_BuildTerm` predicate strategy: succeeds (returns subject
 // unchanged) when subject has the `BuildTerm` shape, otherwise fails with
 // sl.ErrVisitFailure.
-type IsBuildTerm struct{}
+type IsBuildTerm struct{ sl.AbstractStrategy }
 
 func (IsBuildTerm) VisitLight(subject any, _ sl.Introspector) (any, error) {
 	if _, ok := subject.(*BuildTermBQTerm); ok {
@@ -3067,12 +3811,27 @@ func (IsBuildTerm) VisitLight(subject any, _ sl.Introspector) (any, error) {
 func (IsBuildTerm) ChildCount() int             { return 0 }
 func (IsBuildTerm) ChildAt(int) sl.Strategy     { panic("IsBuildTerm: no children") }
 func (IsBuildTerm) SetChildAt(int, sl.Strategy) { panic("IsBuildTerm: no children") }
+func (s *IsBuildTerm) VisitEnv(sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*BuildTermBQTerm); ok {
+		return sl.StatusSuccess
+	}
+	return sl.StatusFailure
+}
+func (s *IsBuildTerm) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *IsBuildTerm) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*IsBuildTerm)(nil)
 
 // VisitBuildTerm is the `_BuildTerm` slot-visit strategy: when subject is `BuildTerm`,
 // applies each constituent strategy to the matching child slot and
 // rebuilds the term iff at least one child changed. Fails with
 // sl.ErrVisitFailure when subject isn't `BuildTerm`.
 type VisitBuildTerm struct {
+	sl.AbstractStrategy
 	args []sl.Strategy
 }
 
@@ -3112,6 +3871,24 @@ func (s *VisitBuildTerm) VisitLight(subject any, intro sl.Introspector) (any, er
 func (s *VisitBuildTerm) ChildCount() int                 { return len(s.args) }
 func (s *VisitBuildTerm) ChildAt(i int) sl.Strategy       { return s.args[i] }
 func (s *VisitBuildTerm) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
+
+func (s *VisitBuildTerm) VisitEnv(intro sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*BuildTermBQTerm); !ok {
+		return sl.StatusFailure
+	}
+	if len(s.args) != 3 {
+		return sl.StatusFailure
+	}
+	return sl.VisitCongruence(s.GetEnvironment(), intro, s.args, false)
+}
+func (s *VisitBuildTerm) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *VisitBuildTerm) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*VisitBuildTerm)(nil)
 
 // BuildEmptyListBQTerm is the term type for the alternative `BuildEmptyList(...)` of sort BQTerm.
 type BuildEmptyListBQTerm struct {
@@ -3179,7 +3956,7 @@ func MakeBuildEmptyList(astName TomName) BQTerm {
 // IsBuildEmptyList is the `Is_BuildEmptyList` predicate strategy: succeeds (returns subject
 // unchanged) when subject has the `BuildEmptyList` shape, otherwise fails with
 // sl.ErrVisitFailure.
-type IsBuildEmptyList struct{}
+type IsBuildEmptyList struct{ sl.AbstractStrategy }
 
 func (IsBuildEmptyList) VisitLight(subject any, _ sl.Introspector) (any, error) {
 	if _, ok := subject.(*BuildEmptyListBQTerm); ok {
@@ -3190,12 +3967,27 @@ func (IsBuildEmptyList) VisitLight(subject any, _ sl.Introspector) (any, error) 
 func (IsBuildEmptyList) ChildCount() int             { return 0 }
 func (IsBuildEmptyList) ChildAt(int) sl.Strategy     { panic("IsBuildEmptyList: no children") }
 func (IsBuildEmptyList) SetChildAt(int, sl.Strategy) { panic("IsBuildEmptyList: no children") }
+func (s *IsBuildEmptyList) VisitEnv(sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*BuildEmptyListBQTerm); ok {
+		return sl.StatusSuccess
+	}
+	return sl.StatusFailure
+}
+func (s *IsBuildEmptyList) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *IsBuildEmptyList) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*IsBuildEmptyList)(nil)
 
 // VisitBuildEmptyList is the `_BuildEmptyList` slot-visit strategy: when subject is `BuildEmptyList`,
 // applies each constituent strategy to the matching child slot and
 // rebuilds the term iff at least one child changed. Fails with
 // sl.ErrVisitFailure when subject isn't `BuildEmptyList`.
 type VisitBuildEmptyList struct {
+	sl.AbstractStrategy
 	args []sl.Strategy
 }
 
@@ -3235,6 +4027,24 @@ func (s *VisitBuildEmptyList) VisitLight(subject any, intro sl.Introspector) (an
 func (s *VisitBuildEmptyList) ChildCount() int                 { return len(s.args) }
 func (s *VisitBuildEmptyList) ChildAt(i int) sl.Strategy       { return s.args[i] }
 func (s *VisitBuildEmptyList) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
+
+func (s *VisitBuildEmptyList) VisitEnv(intro sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*BuildEmptyListBQTerm); !ok {
+		return sl.StatusFailure
+	}
+	if len(s.args) != 1 {
+		return sl.StatusFailure
+	}
+	return sl.VisitCongruence(s.GetEnvironment(), intro, s.args, false)
+}
+func (s *VisitBuildEmptyList) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *VisitBuildEmptyList) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*VisitBuildEmptyList)(nil)
 
 // BuildConsListBQTerm is the term type for the alternative `BuildConsList(...)` of sort BQTerm.
 type BuildConsListBQTerm struct {
@@ -3318,7 +4128,7 @@ func MakeBuildConsList(astName TomName, headTerm BQTerm, tailTerm BQTerm) BQTerm
 // IsBuildConsList is the `Is_BuildConsList` predicate strategy: succeeds (returns subject
 // unchanged) when subject has the `BuildConsList` shape, otherwise fails with
 // sl.ErrVisitFailure.
-type IsBuildConsList struct{}
+type IsBuildConsList struct{ sl.AbstractStrategy }
 
 func (IsBuildConsList) VisitLight(subject any, _ sl.Introspector) (any, error) {
 	if _, ok := subject.(*BuildConsListBQTerm); ok {
@@ -3329,12 +4139,27 @@ func (IsBuildConsList) VisitLight(subject any, _ sl.Introspector) (any, error) {
 func (IsBuildConsList) ChildCount() int             { return 0 }
 func (IsBuildConsList) ChildAt(int) sl.Strategy     { panic("IsBuildConsList: no children") }
 func (IsBuildConsList) SetChildAt(int, sl.Strategy) { panic("IsBuildConsList: no children") }
+func (s *IsBuildConsList) VisitEnv(sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*BuildConsListBQTerm); ok {
+		return sl.StatusSuccess
+	}
+	return sl.StatusFailure
+}
+func (s *IsBuildConsList) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *IsBuildConsList) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*IsBuildConsList)(nil)
 
 // VisitBuildConsList is the `_BuildConsList` slot-visit strategy: when subject is `BuildConsList`,
 // applies each constituent strategy to the matching child slot and
 // rebuilds the term iff at least one child changed. Fails with
 // sl.ErrVisitFailure when subject isn't `BuildConsList`.
 type VisitBuildConsList struct {
+	sl.AbstractStrategy
 	args []sl.Strategy
 }
 
@@ -3374,6 +4199,24 @@ func (s *VisitBuildConsList) VisitLight(subject any, intro sl.Introspector) (any
 func (s *VisitBuildConsList) ChildCount() int                 { return len(s.args) }
 func (s *VisitBuildConsList) ChildAt(i int) sl.Strategy       { return s.args[i] }
 func (s *VisitBuildConsList) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
+
+func (s *VisitBuildConsList) VisitEnv(intro sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*BuildConsListBQTerm); !ok {
+		return sl.StatusFailure
+	}
+	if len(s.args) != 3 {
+		return sl.StatusFailure
+	}
+	return sl.VisitCongruence(s.GetEnvironment(), intro, s.args, false)
+}
+func (s *VisitBuildConsList) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *VisitBuildConsList) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*VisitBuildConsList)(nil)
 
 // BuildAppendListBQTerm is the term type for the alternative `BuildAppendList(...)` of sort BQTerm.
 type BuildAppendListBQTerm struct {
@@ -3457,7 +4300,7 @@ func MakeBuildAppendList(astName TomName, headTerm BQTerm, tailTerm BQTerm) BQTe
 // IsBuildAppendList is the `Is_BuildAppendList` predicate strategy: succeeds (returns subject
 // unchanged) when subject has the `BuildAppendList` shape, otherwise fails with
 // sl.ErrVisitFailure.
-type IsBuildAppendList struct{}
+type IsBuildAppendList struct{ sl.AbstractStrategy }
 
 func (IsBuildAppendList) VisitLight(subject any, _ sl.Introspector) (any, error) {
 	if _, ok := subject.(*BuildAppendListBQTerm); ok {
@@ -3468,12 +4311,27 @@ func (IsBuildAppendList) VisitLight(subject any, _ sl.Introspector) (any, error)
 func (IsBuildAppendList) ChildCount() int             { return 0 }
 func (IsBuildAppendList) ChildAt(int) sl.Strategy     { panic("IsBuildAppendList: no children") }
 func (IsBuildAppendList) SetChildAt(int, sl.Strategy) { panic("IsBuildAppendList: no children") }
+func (s *IsBuildAppendList) VisitEnv(sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*BuildAppendListBQTerm); ok {
+		return sl.StatusSuccess
+	}
+	return sl.StatusFailure
+}
+func (s *IsBuildAppendList) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *IsBuildAppendList) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*IsBuildAppendList)(nil)
 
 // VisitBuildAppendList is the `_BuildAppendList` slot-visit strategy: when subject is `BuildAppendList`,
 // applies each constituent strategy to the matching child slot and
 // rebuilds the term iff at least one child changed. Fails with
 // sl.ErrVisitFailure when subject isn't `BuildAppendList`.
 type VisitBuildAppendList struct {
+	sl.AbstractStrategy
 	args []sl.Strategy
 }
 
@@ -3513,6 +4371,24 @@ func (s *VisitBuildAppendList) VisitLight(subject any, intro sl.Introspector) (a
 func (s *VisitBuildAppendList) ChildCount() int                 { return len(s.args) }
 func (s *VisitBuildAppendList) ChildAt(i int) sl.Strategy       { return s.args[i] }
 func (s *VisitBuildAppendList) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
+
+func (s *VisitBuildAppendList) VisitEnv(intro sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*BuildAppendListBQTerm); !ok {
+		return sl.StatusFailure
+	}
+	if len(s.args) != 3 {
+		return sl.StatusFailure
+	}
+	return sl.VisitCongruence(s.GetEnvironment(), intro, s.args, false)
+}
+func (s *VisitBuildAppendList) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *VisitBuildAppendList) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*VisitBuildAppendList)(nil)
 
 // BuildEmptyArrayBQTerm is the term type for the alternative `BuildEmptyArray(...)` of sort BQTerm.
 type BuildEmptyArrayBQTerm struct {
@@ -3588,7 +4464,7 @@ func MakeBuildEmptyArray(astName TomName, size BQTerm) BQTerm {
 // IsBuildEmptyArray is the `Is_BuildEmptyArray` predicate strategy: succeeds (returns subject
 // unchanged) when subject has the `BuildEmptyArray` shape, otherwise fails with
 // sl.ErrVisitFailure.
-type IsBuildEmptyArray struct{}
+type IsBuildEmptyArray struct{ sl.AbstractStrategy }
 
 func (IsBuildEmptyArray) VisitLight(subject any, _ sl.Introspector) (any, error) {
 	if _, ok := subject.(*BuildEmptyArrayBQTerm); ok {
@@ -3599,12 +4475,27 @@ func (IsBuildEmptyArray) VisitLight(subject any, _ sl.Introspector) (any, error)
 func (IsBuildEmptyArray) ChildCount() int             { return 0 }
 func (IsBuildEmptyArray) ChildAt(int) sl.Strategy     { panic("IsBuildEmptyArray: no children") }
 func (IsBuildEmptyArray) SetChildAt(int, sl.Strategy) { panic("IsBuildEmptyArray: no children") }
+func (s *IsBuildEmptyArray) VisitEnv(sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*BuildEmptyArrayBQTerm); ok {
+		return sl.StatusSuccess
+	}
+	return sl.StatusFailure
+}
+func (s *IsBuildEmptyArray) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *IsBuildEmptyArray) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*IsBuildEmptyArray)(nil)
 
 // VisitBuildEmptyArray is the `_BuildEmptyArray` slot-visit strategy: when subject is `BuildEmptyArray`,
 // applies each constituent strategy to the matching child slot and
 // rebuilds the term iff at least one child changed. Fails with
 // sl.ErrVisitFailure when subject isn't `BuildEmptyArray`.
 type VisitBuildEmptyArray struct {
+	sl.AbstractStrategy
 	args []sl.Strategy
 }
 
@@ -3644,6 +4535,24 @@ func (s *VisitBuildEmptyArray) VisitLight(subject any, intro sl.Introspector) (a
 func (s *VisitBuildEmptyArray) ChildCount() int                 { return len(s.args) }
 func (s *VisitBuildEmptyArray) ChildAt(i int) sl.Strategy       { return s.args[i] }
 func (s *VisitBuildEmptyArray) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
+
+func (s *VisitBuildEmptyArray) VisitEnv(intro sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*BuildEmptyArrayBQTerm); !ok {
+		return sl.StatusFailure
+	}
+	if len(s.args) != 2 {
+		return sl.StatusFailure
+	}
+	return sl.VisitCongruence(s.GetEnvironment(), intro, s.args, false)
+}
+func (s *VisitBuildEmptyArray) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *VisitBuildEmptyArray) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*VisitBuildEmptyArray)(nil)
 
 // BuildConsArrayBQTerm is the term type for the alternative `BuildConsArray(...)` of sort BQTerm.
 type BuildConsArrayBQTerm struct {
@@ -3727,7 +4636,7 @@ func MakeBuildConsArray(astName TomName, headTerm BQTerm, tailTerm BQTerm) BQTer
 // IsBuildConsArray is the `Is_BuildConsArray` predicate strategy: succeeds (returns subject
 // unchanged) when subject has the `BuildConsArray` shape, otherwise fails with
 // sl.ErrVisitFailure.
-type IsBuildConsArray struct{}
+type IsBuildConsArray struct{ sl.AbstractStrategy }
 
 func (IsBuildConsArray) VisitLight(subject any, _ sl.Introspector) (any, error) {
 	if _, ok := subject.(*BuildConsArrayBQTerm); ok {
@@ -3738,12 +4647,27 @@ func (IsBuildConsArray) VisitLight(subject any, _ sl.Introspector) (any, error) 
 func (IsBuildConsArray) ChildCount() int             { return 0 }
 func (IsBuildConsArray) ChildAt(int) sl.Strategy     { panic("IsBuildConsArray: no children") }
 func (IsBuildConsArray) SetChildAt(int, sl.Strategy) { panic("IsBuildConsArray: no children") }
+func (s *IsBuildConsArray) VisitEnv(sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*BuildConsArrayBQTerm); ok {
+		return sl.StatusSuccess
+	}
+	return sl.StatusFailure
+}
+func (s *IsBuildConsArray) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *IsBuildConsArray) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*IsBuildConsArray)(nil)
 
 // VisitBuildConsArray is the `_BuildConsArray` slot-visit strategy: when subject is `BuildConsArray`,
 // applies each constituent strategy to the matching child slot and
 // rebuilds the term iff at least one child changed. Fails with
 // sl.ErrVisitFailure when subject isn't `BuildConsArray`.
 type VisitBuildConsArray struct {
+	sl.AbstractStrategy
 	args []sl.Strategy
 }
 
@@ -3783,6 +4707,24 @@ func (s *VisitBuildConsArray) VisitLight(subject any, intro sl.Introspector) (an
 func (s *VisitBuildConsArray) ChildCount() int                 { return len(s.args) }
 func (s *VisitBuildConsArray) ChildAt(i int) sl.Strategy       { return s.args[i] }
 func (s *VisitBuildConsArray) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
+
+func (s *VisitBuildConsArray) VisitEnv(intro sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*BuildConsArrayBQTerm); !ok {
+		return sl.StatusFailure
+	}
+	if len(s.args) != 3 {
+		return sl.StatusFailure
+	}
+	return sl.VisitCongruence(s.GetEnvironment(), intro, s.args, false)
+}
+func (s *VisitBuildConsArray) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *VisitBuildConsArray) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*VisitBuildConsArray)(nil)
 
 // BuildAppendArrayBQTerm is the term type for the alternative `BuildAppendArray(...)` of sort BQTerm.
 type BuildAppendArrayBQTerm struct {
@@ -3866,7 +4808,7 @@ func MakeBuildAppendArray(astName TomName, headTerm BQTerm, tailTerm BQTerm) BQT
 // IsBuildAppendArray is the `Is_BuildAppendArray` predicate strategy: succeeds (returns subject
 // unchanged) when subject has the `BuildAppendArray` shape, otherwise fails with
 // sl.ErrVisitFailure.
-type IsBuildAppendArray struct{}
+type IsBuildAppendArray struct{ sl.AbstractStrategy }
 
 func (IsBuildAppendArray) VisitLight(subject any, _ sl.Introspector) (any, error) {
 	if _, ok := subject.(*BuildAppendArrayBQTerm); ok {
@@ -3877,12 +4819,27 @@ func (IsBuildAppendArray) VisitLight(subject any, _ sl.Introspector) (any, error
 func (IsBuildAppendArray) ChildCount() int             { return 0 }
 func (IsBuildAppendArray) ChildAt(int) sl.Strategy     { panic("IsBuildAppendArray: no children") }
 func (IsBuildAppendArray) SetChildAt(int, sl.Strategy) { panic("IsBuildAppendArray: no children") }
+func (s *IsBuildAppendArray) VisitEnv(sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*BuildAppendArrayBQTerm); ok {
+		return sl.StatusSuccess
+	}
+	return sl.StatusFailure
+}
+func (s *IsBuildAppendArray) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *IsBuildAppendArray) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*IsBuildAppendArray)(nil)
 
 // VisitBuildAppendArray is the `_BuildAppendArray` slot-visit strategy: when subject is `BuildAppendArray`,
 // applies each constituent strategy to the matching child slot and
 // rebuilds the term iff at least one child changed. Fails with
 // sl.ErrVisitFailure when subject isn't `BuildAppendArray`.
 type VisitBuildAppendArray struct {
+	sl.AbstractStrategy
 	args []sl.Strategy
 }
 
@@ -3922,6 +4879,24 @@ func (s *VisitBuildAppendArray) VisitLight(subject any, intro sl.Introspector) (
 func (s *VisitBuildAppendArray) ChildCount() int                 { return len(s.args) }
 func (s *VisitBuildAppendArray) ChildAt(i int) sl.Strategy       { return s.args[i] }
 func (s *VisitBuildAppendArray) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
+
+func (s *VisitBuildAppendArray) VisitEnv(intro sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*BuildAppendArrayBQTerm); !ok {
+		return sl.StatusFailure
+	}
+	if len(s.args) != 3 {
+		return sl.StatusFailure
+	}
+	return sl.VisitCongruence(s.GetEnvironment(), intro, s.args, false)
+}
+func (s *VisitBuildAppendArray) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *VisitBuildAppendArray) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*VisitBuildAppendArray)(nil)
 
 // ExpressionToBQTermBQTerm is the term type for the alternative `ExpressionToBQTerm(...)` of sort BQTerm.
 type ExpressionToBQTermBQTerm struct {
@@ -3993,7 +4968,7 @@ func MakeExpressionToBQTerm(exp Expression) BQTerm {
 // IsExpressionToBQTerm is the `Is_ExpressionToBQTerm` predicate strategy: succeeds (returns subject
 // unchanged) when subject has the `ExpressionToBQTerm` shape, otherwise fails with
 // sl.ErrVisitFailure.
-type IsExpressionToBQTerm struct{}
+type IsExpressionToBQTerm struct{ sl.AbstractStrategy }
 
 func (IsExpressionToBQTerm) VisitLight(subject any, _ sl.Introspector) (any, error) {
 	if _, ok := subject.(*ExpressionToBQTermBQTerm); ok {
@@ -4004,12 +4979,27 @@ func (IsExpressionToBQTerm) VisitLight(subject any, _ sl.Introspector) (any, err
 func (IsExpressionToBQTerm) ChildCount() int             { return 0 }
 func (IsExpressionToBQTerm) ChildAt(int) sl.Strategy     { panic("IsExpressionToBQTerm: no children") }
 func (IsExpressionToBQTerm) SetChildAt(int, sl.Strategy) { panic("IsExpressionToBQTerm: no children") }
+func (s *IsExpressionToBQTerm) VisitEnv(sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*ExpressionToBQTermBQTerm); ok {
+		return sl.StatusSuccess
+	}
+	return sl.StatusFailure
+}
+func (s *IsExpressionToBQTerm) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *IsExpressionToBQTerm) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*IsExpressionToBQTerm)(nil)
 
 // VisitExpressionToBQTerm is the `_ExpressionToBQTerm` slot-visit strategy: when subject is `ExpressionToBQTerm`,
 // applies each constituent strategy to the matching child slot and
 // rebuilds the term iff at least one child changed. Fails with
 // sl.ErrVisitFailure when subject isn't `ExpressionToBQTerm`.
 type VisitExpressionToBQTerm struct {
+	sl.AbstractStrategy
 	args []sl.Strategy
 }
 
@@ -4049,6 +5039,24 @@ func (s *VisitExpressionToBQTerm) VisitLight(subject any, intro sl.Introspector)
 func (s *VisitExpressionToBQTerm) ChildCount() int                 { return len(s.args) }
 func (s *VisitExpressionToBQTerm) ChildAt(i int) sl.Strategy       { return s.args[i] }
 func (s *VisitExpressionToBQTerm) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
+
+func (s *VisitExpressionToBQTerm) VisitEnv(intro sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*ExpressionToBQTermBQTerm); !ok {
+		return sl.StatusFailure
+	}
+	if len(s.args) != 1 {
+		return sl.StatusFailure
+	}
+	return sl.VisitCongruence(s.GetEnvironment(), intro, s.args, false)
+}
+func (s *VisitExpressionToBQTerm) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *VisitExpressionToBQTerm) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*VisitExpressionToBQTerm)(nil)
 
 // SymbolOfBQTerm is the term type for the alternative `SymbolOf(...)` of sort BQTerm.
 type SymbolOfBQTerm struct {
@@ -4116,7 +5124,7 @@ func MakeSymbolOf(groundTerm BQTerm) BQTerm {
 // IsSymbolOf is the `Is_SymbolOf` predicate strategy: succeeds (returns subject
 // unchanged) when subject has the `SymbolOf` shape, otherwise fails with
 // sl.ErrVisitFailure.
-type IsSymbolOf struct{}
+type IsSymbolOf struct{ sl.AbstractStrategy }
 
 func (IsSymbolOf) VisitLight(subject any, _ sl.Introspector) (any, error) {
 	if _, ok := subject.(*SymbolOfBQTerm); ok {
@@ -4127,12 +5135,27 @@ func (IsSymbolOf) VisitLight(subject any, _ sl.Introspector) (any, error) {
 func (IsSymbolOf) ChildCount() int             { return 0 }
 func (IsSymbolOf) ChildAt(int) sl.Strategy     { panic("IsSymbolOf: no children") }
 func (IsSymbolOf) SetChildAt(int, sl.Strategy) { panic("IsSymbolOf: no children") }
+func (s *IsSymbolOf) VisitEnv(sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*SymbolOfBQTerm); ok {
+		return sl.StatusSuccess
+	}
+	return sl.StatusFailure
+}
+func (s *IsSymbolOf) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *IsSymbolOf) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*IsSymbolOf)(nil)
 
 // VisitSymbolOf is the `_SymbolOf` slot-visit strategy: when subject is `SymbolOf`,
 // applies each constituent strategy to the matching child slot and
 // rebuilds the term iff at least one child changed. Fails with
 // sl.ErrVisitFailure when subject isn't `SymbolOf`.
 type VisitSymbolOf struct {
+	sl.AbstractStrategy
 	args []sl.Strategy
 }
 
@@ -4172,6 +5195,24 @@ func (s *VisitSymbolOf) VisitLight(subject any, intro sl.Introspector) (any, err
 func (s *VisitSymbolOf) ChildCount() int                 { return len(s.args) }
 func (s *VisitSymbolOf) ChildAt(i int) sl.Strategy       { return s.args[i] }
 func (s *VisitSymbolOf) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
+
+func (s *VisitSymbolOf) VisitEnv(intro sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*SymbolOfBQTerm); !ok {
+		return sl.StatusFailure
+	}
+	if len(s.args) != 1 {
+		return sl.StatusFailure
+	}
+	return sl.VisitCongruence(s.GetEnvironment(), intro, s.args, false)
+}
+func (s *VisitSymbolOf) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *VisitSymbolOf) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*VisitSymbolOf)(nil)
 
 // SubtermBQTerm is the term type for the alternative `Subterm(...)` of sort BQTerm.
 type SubtermBQTerm struct {
@@ -4255,7 +5296,7 @@ func MakeSubtermBQTerm(astName TomName, slotName TomName, groundTerm BQTerm) BQT
 // IsSubtermBQTerm is the `Is_Subterm` predicate strategy: succeeds (returns subject
 // unchanged) when subject has the `Subterm` shape, otherwise fails with
 // sl.ErrVisitFailure.
-type IsSubtermBQTerm struct{}
+type IsSubtermBQTerm struct{ sl.AbstractStrategy }
 
 func (IsSubtermBQTerm) VisitLight(subject any, _ sl.Introspector) (any, error) {
 	if _, ok := subject.(*SubtermBQTerm); ok {
@@ -4266,12 +5307,27 @@ func (IsSubtermBQTerm) VisitLight(subject any, _ sl.Introspector) (any, error) {
 func (IsSubtermBQTerm) ChildCount() int             { return 0 }
 func (IsSubtermBQTerm) ChildAt(int) sl.Strategy     { panic("IsSubtermBQTerm: no children") }
 func (IsSubtermBQTerm) SetChildAt(int, sl.Strategy) { panic("IsSubtermBQTerm: no children") }
+func (s *IsSubtermBQTerm) VisitEnv(sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*SubtermBQTerm); ok {
+		return sl.StatusSuccess
+	}
+	return sl.StatusFailure
+}
+func (s *IsSubtermBQTerm) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *IsSubtermBQTerm) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*IsSubtermBQTerm)(nil)
 
 // VisitSubtermBQTerm is the `_Subterm` slot-visit strategy: when subject is `Subterm`,
 // applies each constituent strategy to the matching child slot and
 // rebuilds the term iff at least one child changed. Fails with
 // sl.ErrVisitFailure when subject isn't `Subterm`.
 type VisitSubtermBQTerm struct {
+	sl.AbstractStrategy
 	args []sl.Strategy
 }
 
@@ -4311,6 +5367,24 @@ func (s *VisitSubtermBQTerm) VisitLight(subject any, intro sl.Introspector) (any
 func (s *VisitSubtermBQTerm) ChildCount() int                 { return len(s.args) }
 func (s *VisitSubtermBQTerm) ChildAt(i int) sl.Strategy       { return s.args[i] }
 func (s *VisitSubtermBQTerm) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
+
+func (s *VisitSubtermBQTerm) VisitEnv(intro sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*SubtermBQTerm); !ok {
+		return sl.StatusFailure
+	}
+	if len(s.args) != 3 {
+		return sl.StatusFailure
+	}
+	return sl.VisitCongruence(s.GetEnvironment(), intro, s.args, false)
+}
+func (s *VisitSubtermBQTerm) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *VisitSubtermBQTerm) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*VisitSubtermBQTerm)(nil)
 
 // VariableHeadListBQTerm is the term type for the alternative `VariableHeadList(...)` of sort BQTerm.
 type VariableHeadListBQTerm struct {
@@ -4394,7 +5468,7 @@ func MakeVariableHeadList(opname TomName, begin BQTerm, end BQTerm) BQTerm {
 // IsVariableHeadList is the `Is_VariableHeadList` predicate strategy: succeeds (returns subject
 // unchanged) when subject has the `VariableHeadList` shape, otherwise fails with
 // sl.ErrVisitFailure.
-type IsVariableHeadList struct{}
+type IsVariableHeadList struct{ sl.AbstractStrategy }
 
 func (IsVariableHeadList) VisitLight(subject any, _ sl.Introspector) (any, error) {
 	if _, ok := subject.(*VariableHeadListBQTerm); ok {
@@ -4405,12 +5479,27 @@ func (IsVariableHeadList) VisitLight(subject any, _ sl.Introspector) (any, error
 func (IsVariableHeadList) ChildCount() int             { return 0 }
 func (IsVariableHeadList) ChildAt(int) sl.Strategy     { panic("IsVariableHeadList: no children") }
 func (IsVariableHeadList) SetChildAt(int, sl.Strategy) { panic("IsVariableHeadList: no children") }
+func (s *IsVariableHeadList) VisitEnv(sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*VariableHeadListBQTerm); ok {
+		return sl.StatusSuccess
+	}
+	return sl.StatusFailure
+}
+func (s *IsVariableHeadList) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *IsVariableHeadList) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*IsVariableHeadList)(nil)
 
 // VisitVariableHeadList is the `_VariableHeadList` slot-visit strategy: when subject is `VariableHeadList`,
 // applies each constituent strategy to the matching child slot and
 // rebuilds the term iff at least one child changed. Fails with
 // sl.ErrVisitFailure when subject isn't `VariableHeadList`.
 type VisitVariableHeadList struct {
+	sl.AbstractStrategy
 	args []sl.Strategy
 }
 
@@ -4450,6 +5539,24 @@ func (s *VisitVariableHeadList) VisitLight(subject any, intro sl.Introspector) (
 func (s *VisitVariableHeadList) ChildCount() int                 { return len(s.args) }
 func (s *VisitVariableHeadList) ChildAt(i int) sl.Strategy       { return s.args[i] }
 func (s *VisitVariableHeadList) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
+
+func (s *VisitVariableHeadList) VisitEnv(intro sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*VariableHeadListBQTerm); !ok {
+		return sl.StatusFailure
+	}
+	if len(s.args) != 3 {
+		return sl.StatusFailure
+	}
+	return sl.VisitCongruence(s.GetEnvironment(), intro, s.args, false)
+}
+func (s *VisitVariableHeadList) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *VisitVariableHeadList) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*VisitVariableHeadList)(nil)
 
 // VariableHeadArrayBQTerm is the term type for the alternative `VariableHeadArray(...)` of sort BQTerm.
 type VariableHeadArrayBQTerm struct {
@@ -4541,7 +5648,7 @@ func MakeVariableHeadArray(opname TomName, subject BQTerm, beginIndex BQTerm, en
 // IsVariableHeadArray is the `Is_VariableHeadArray` predicate strategy: succeeds (returns subject
 // unchanged) when subject has the `VariableHeadArray` shape, otherwise fails with
 // sl.ErrVisitFailure.
-type IsVariableHeadArray struct{}
+type IsVariableHeadArray struct{ sl.AbstractStrategy }
 
 func (IsVariableHeadArray) VisitLight(subject any, _ sl.Introspector) (any, error) {
 	if _, ok := subject.(*VariableHeadArrayBQTerm); ok {
@@ -4552,12 +5659,27 @@ func (IsVariableHeadArray) VisitLight(subject any, _ sl.Introspector) (any, erro
 func (IsVariableHeadArray) ChildCount() int             { return 0 }
 func (IsVariableHeadArray) ChildAt(int) sl.Strategy     { panic("IsVariableHeadArray: no children") }
 func (IsVariableHeadArray) SetChildAt(int, sl.Strategy) { panic("IsVariableHeadArray: no children") }
+func (s *IsVariableHeadArray) VisitEnv(sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*VariableHeadArrayBQTerm); ok {
+		return sl.StatusSuccess
+	}
+	return sl.StatusFailure
+}
+func (s *IsVariableHeadArray) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *IsVariableHeadArray) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*IsVariableHeadArray)(nil)
 
 // VisitVariableHeadArray is the `_VariableHeadArray` slot-visit strategy: when subject is `VariableHeadArray`,
 // applies each constituent strategy to the matching child slot and
 // rebuilds the term iff at least one child changed. Fails with
 // sl.ErrVisitFailure when subject isn't `VariableHeadArray`.
 type VisitVariableHeadArray struct {
+	sl.AbstractStrategy
 	args []sl.Strategy
 }
 
@@ -4597,6 +5719,24 @@ func (s *VisitVariableHeadArray) VisitLight(subject any, intro sl.Introspector) 
 func (s *VisitVariableHeadArray) ChildCount() int                 { return len(s.args) }
 func (s *VisitVariableHeadArray) ChildAt(i int) sl.Strategy       { return s.args[i] }
 func (s *VisitVariableHeadArray) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
+
+func (s *VisitVariableHeadArray) VisitEnv(intro sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*VariableHeadArrayBQTerm); !ok {
+		return sl.StatusFailure
+	}
+	if len(s.args) != 4 {
+		return sl.StatusFailure
+	}
+	return sl.VisitCongruence(s.GetEnvironment(), intro, s.args, false)
+}
+func (s *VisitVariableHeadArray) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *VisitVariableHeadArray) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*VisitVariableHeadArray)(nil)
 
 // ListHeadBQTerm is the term type for the alternative `ListHead(...)` of sort BQTerm.
 type ListHeadBQTerm struct {
@@ -4680,7 +5820,7 @@ func MakeListHead(opname TomName, codomain TomType, variable BQTerm) BQTerm {
 // IsListHead is the `Is_ListHead` predicate strategy: succeeds (returns subject
 // unchanged) when subject has the `ListHead` shape, otherwise fails with
 // sl.ErrVisitFailure.
-type IsListHead struct{}
+type IsListHead struct{ sl.AbstractStrategy }
 
 func (IsListHead) VisitLight(subject any, _ sl.Introspector) (any, error) {
 	if _, ok := subject.(*ListHeadBQTerm); ok {
@@ -4691,12 +5831,27 @@ func (IsListHead) VisitLight(subject any, _ sl.Introspector) (any, error) {
 func (IsListHead) ChildCount() int             { return 0 }
 func (IsListHead) ChildAt(int) sl.Strategy     { panic("IsListHead: no children") }
 func (IsListHead) SetChildAt(int, sl.Strategy) { panic("IsListHead: no children") }
+func (s *IsListHead) VisitEnv(sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*ListHeadBQTerm); ok {
+		return sl.StatusSuccess
+	}
+	return sl.StatusFailure
+}
+func (s *IsListHead) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *IsListHead) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*IsListHead)(nil)
 
 // VisitListHead is the `_ListHead` slot-visit strategy: when subject is `ListHead`,
 // applies each constituent strategy to the matching child slot and
 // rebuilds the term iff at least one child changed. Fails with
 // sl.ErrVisitFailure when subject isn't `ListHead`.
 type VisitListHead struct {
+	sl.AbstractStrategy
 	args []sl.Strategy
 }
 
@@ -4736,6 +5891,24 @@ func (s *VisitListHead) VisitLight(subject any, intro sl.Introspector) (any, err
 func (s *VisitListHead) ChildCount() int                 { return len(s.args) }
 func (s *VisitListHead) ChildAt(i int) sl.Strategy       { return s.args[i] }
 func (s *VisitListHead) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
+
+func (s *VisitListHead) VisitEnv(intro sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*ListHeadBQTerm); !ok {
+		return sl.StatusFailure
+	}
+	if len(s.args) != 3 {
+		return sl.StatusFailure
+	}
+	return sl.VisitCongruence(s.GetEnvironment(), intro, s.args, false)
+}
+func (s *VisitListHead) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *VisitListHead) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*VisitListHead)(nil)
 
 // ListTailBQTerm is the term type for the alternative `ListTail(...)` of sort BQTerm.
 type ListTailBQTerm struct {
@@ -4811,7 +5984,7 @@ func MakeListTail(opname TomName, variable BQTerm) BQTerm {
 // IsListTail is the `Is_ListTail` predicate strategy: succeeds (returns subject
 // unchanged) when subject has the `ListTail` shape, otherwise fails with
 // sl.ErrVisitFailure.
-type IsListTail struct{}
+type IsListTail struct{ sl.AbstractStrategy }
 
 func (IsListTail) VisitLight(subject any, _ sl.Introspector) (any, error) {
 	if _, ok := subject.(*ListTailBQTerm); ok {
@@ -4822,12 +5995,27 @@ func (IsListTail) VisitLight(subject any, _ sl.Introspector) (any, error) {
 func (IsListTail) ChildCount() int             { return 0 }
 func (IsListTail) ChildAt(int) sl.Strategy     { panic("IsListTail: no children") }
 func (IsListTail) SetChildAt(int, sl.Strategy) { panic("IsListTail: no children") }
+func (s *IsListTail) VisitEnv(sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*ListTailBQTerm); ok {
+		return sl.StatusSuccess
+	}
+	return sl.StatusFailure
+}
+func (s *IsListTail) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *IsListTail) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*IsListTail)(nil)
 
 // VisitListTail is the `_ListTail` slot-visit strategy: when subject is `ListTail`,
 // applies each constituent strategy to the matching child slot and
 // rebuilds the term iff at least one child changed. Fails with
 // sl.ErrVisitFailure when subject isn't `ListTail`.
 type VisitListTail struct {
+	sl.AbstractStrategy
 	args []sl.Strategy
 }
 
@@ -4867,3 +6055,21 @@ func (s *VisitListTail) VisitLight(subject any, intro sl.Introspector) (any, err
 func (s *VisitListTail) ChildCount() int                 { return len(s.args) }
 func (s *VisitListTail) ChildAt(i int) sl.Strategy       { return s.args[i] }
 func (s *VisitListTail) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
+
+func (s *VisitListTail) VisitEnv(intro sl.Introspector) int {
+	if _, ok := s.GetEnvironment().GetSubject().(*ListTailBQTerm); !ok {
+		return sl.StatusFailure
+	}
+	if len(s.args) != 2 {
+		return sl.StatusFailure
+	}
+	return sl.VisitCongruence(s.GetEnvironment(), intro, s.args, false)
+}
+func (s *VisitListTail) Visit(subject any, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategy(s, subject, intro)
+}
+func (s *VisitListTail) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(s, env, intro)
+}
+
+var _ sl.Strategy = (*VisitListTail)(nil)

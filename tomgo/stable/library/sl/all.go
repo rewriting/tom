@@ -38,3 +38,39 @@ func (a *All) VisitLight(subject any, intro Introspector) (any, error) {
 	}
 	return intro.SetChildren(subject, dup), nil
 }
+
+func (a *All) VisitEnv(intro Introspector) int {
+	env := a.environment
+	env.SetIntrospector(intro)
+	subject := env.GetSubject()
+	count := intro.GetChildCount(subject)
+	var children []any
+	for i := range count {
+		oldChild := intro.GetChildAt(subject, i)
+		env.Down(i + 1)
+		if status := a.args[0].VisitEnv(intro); status != StatusSuccess {
+			env.UpLocal()
+			return status
+		}
+		newChild := env.GetSubject()
+		if children != nil {
+			children[i] = newChild
+		} else if newChild != oldChild {
+			children = intro.GetChildren(subject)
+			children[i] = newChild
+		}
+		env.UpLocal()
+	}
+	if children != nil {
+		env.SetSubject(intro.SetChildren(subject, children))
+	}
+	return StatusSuccess
+}
+
+func (a *All) Visit(subject any, intro Introspector) (any, error) {
+	return VisitStrategy(a, subject, intro)
+}
+
+func (a *All) VisitWith(env *Environment, intro Introspector) (any, error) {
+	return VisitStrategyWith(a, env, intro)
+}

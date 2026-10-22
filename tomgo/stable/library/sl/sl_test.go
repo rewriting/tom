@@ -67,6 +67,7 @@ func renameStrategy(from, to string) Strategy {
 // struct (not a bare function type) because Mu.expand uses a map
 // keyed on Strategy, and function types are not hashable in Go.
 type strategyFnImpl struct {
+	AbstractStrategy
 	fn func(any, Introspector) (any, error)
 }
 
@@ -77,9 +78,16 @@ func strategyFn(fn func(any, Introspector) (any, error)) Strategy {
 func (s *strategyFnImpl) VisitLight(subject any, i Introspector) (any, error) {
 	return s.fn(subject, i)
 }
-func (*strategyFnImpl) ChildCount() int          { return 0 }
-func (*strategyFnImpl) ChildAt(int) Strategy     { return nil }
-func (*strategyFnImpl) SetChildAt(int, Strategy) {}
+func (*strategyFnImpl) ChildCount() int               { return 0 }
+func (*strategyFnImpl) ChildAt(int) Strategy          { return nil }
+func (*strategyFnImpl) SetChildAt(int, Strategy)      {}
+func (s *strategyFnImpl) VisitEnv(i Introspector) int { return VisitBasic(s, i) }
+func (s *strategyFnImpl) Visit(subject any, i Introspector) (any, error) {
+	return VisitStrategy(s, subject, i)
+}
+func (s *strategyFnImpl) VisitWith(env *Environment, i Introspector) (any, error) {
+	return VisitStrategyWith(s, env, i)
+}
 
 // ----------------------------------------------------------------
 // Phase 6.0 — Identity / Fail
