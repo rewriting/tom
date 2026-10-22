@@ -185,6 +185,10 @@ func Generate(mod gomast.GomModule, opts Options, out io.Writer) error {
 // Each generated module is a standalone Go module so it can be built
 // and tested in isolation.
 func GenerateToDir(mod gomast.GomModule, opts Options, dir string) (string, error) {
+	tomRoot, err := locateTomModuleRoot()
+	if err != nil {
+		return "", err
+	}
 	if err := os.MkdirAll(dir, 0o755); err != nil {
 		return "", err
 	}
@@ -203,7 +207,7 @@ func GenerateToDir(mod gomast.GomModule, opts Options, dir string) (string, erro
 		return "", err
 	}
 	goMod := fmt.Sprintf("module tomgen/%s\n\ngo 1.26\n\nrequire tom v0.0.0\nreplace tom => %s\n",
-		opts.PackageName, locateTomModuleRoot())
+		opts.PackageName, tomRoot)
 	if err := os.WriteFile(filepath.Join(abs, "go.mod"), []byte(goMod), 0o644); err != nil {
 		return "", err
 	}
@@ -438,6 +442,10 @@ func EmitTomMappingGo(mod gomast.GomModule, opts Options) []byte {
 // `src/tom/gom/adt/*.gom`, where every file imports symbols defined
 // in the others.
 func GenerateBatchToDir(modules []gomast.GomModule, opts Options, dir string) (string, error) {
+	tomRoot, err := locateTomModuleRoot()
+	if err != nil {
+		return "", err
+	}
 	if len(modules) == 0 {
 		return "", fmt.Errorf("GenerateBatchToDir: empty module list")
 	}
@@ -512,7 +520,7 @@ func GenerateBatchToDir(modules []gomast.GomModule, opts Options, dir string) (s
 		return "", err
 	}
 	goMod := fmt.Sprintf("module tomgen/%s\n\ngo 1.26\n\nrequire tom v0.0.0\nreplace tom => %s\n",
-		opts.PackageName, locateTomModuleRoot())
+		opts.PackageName, tomRoot)
 	if err := os.WriteFile(filepath.Join(abs, "go.mod"), []byte(goMod), 0o644); err != nil {
 		return "", err
 	}
@@ -591,20 +599,22 @@ func generateBatchBytes(mod gomast.GomModule, allSorts map[string]bool, makeColl
 // locateTomModuleRoot returns the absolute path to the root of the Go
 // module `tom` (src/go/tom/), used in the generated `replace` directive.
 // It walks up from the working directory looking for a go.mod that has
-// a line which is exactly "module tom".
-func locateTomModuleRoot() string {
-	dir, err := os.Getwd()
+// a line which is exactly "module tom", and fails when there is none
+// (the generated module could not resolve tom/library/... otherwise).
+func locateTomModuleRoot() (string, error) {
+	start, err := os.Getwd()
 	if err != nil {
-		return ".."
+		return "", fmt.Errorf("locating module tom: %w", err)
 	}
+	dir := start
 	for {
 		gm, err := os.ReadFile(filepath.Join(dir, "go.mod"))
 		if err == nil && isTomModule(gm) {
-			return dir
+			return dir, nil
 		}
 		parent := filepath.Dir(dir)
 		if parent == dir {
-			return ".."
+			return "", fmt.Errorf("no go.mod declaring `module tom` found in %s or its parents; run from within src/go/tom", start)
 		}
 		dir = parent
 	}

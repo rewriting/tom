@@ -12,10 +12,12 @@ import (
 )
 
 // TestEngineADTCompiles generates the Tom engine ADT (src/tom/engine/adt/*.gom,
-// with its hooks) into a temporary module and builds it. It replaces the
+// with its hooks) into a temporary module, builds it, then runs the hook
+// behaviour tests of testdata/tomast_hooks_test.go inside it. It replaces the
 // prototype's committed-tomast tests: the validated tree does not ship tomast,
-// but the backend must keep handling the engine ADT for the future Tom+Go
-// compiler.
+// but the backend must keep handling the engine ADT (and lowering its 9 hooks:
+// AU with unit absorption, rewrite rules, Cast guard, NameNumber simplify,
+// concInstruction/concTomNumber splices) for the future Tom+Go compiler.
 func TestEngineADTCompiles(t *testing.T) {
 	if _, err := exec.LookPath("go"); err != nil {
 		t.Skip("go not in PATH")
@@ -41,6 +43,19 @@ func TestEngineADTCompiles(t *testing.T) {
 	cmd.Dir = out
 	if b, err := cmd.CombinedOutput(); err != nil {
 		t.Fatalf("generated engine ADT does not build: %v\n%s", err, b)
+	}
+
+	hooks, err := os.ReadFile(filepath.Join("testdata", "tomast_hooks_test.go"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(out, "hooks_test.go"), hooks, 0o644); err != nil {
+		t.Fatal(err)
+	}
+	cmd = exec.Command("go", "test", "-count=1", "./...")
+	cmd.Dir = out
+	if b, err := cmd.CombinedOutput(); err != nil {
+		t.Fatalf("engine ADT hook behaviour tests failed: %v\n%s", err, b)
 	}
 }
 

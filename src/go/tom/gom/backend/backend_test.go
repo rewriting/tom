@@ -11,8 +11,8 @@ import (
 )
 
 // gomNoHooksCorpus lists the hook-free .gom files of the repository's
-// test/gom/ directory that make up the Phase 2 corpus (the prototype
-// kept a copy of them under tomgo/tests/testdata/corpus/gom-nohooks/).
+// test/gom/ directory that make up the Phase 2 corpus: parse, generate
+// and build must succeed for each of them without any hook support.
 var gomNoHooksCorpus = []string{
 	"Builtin.gom", "Dotted.gom", "Imported.gom", "Importing.gom",
 	"Leaf.gom", "List.gom", "Minimal.gom", "Yang.gom", "Ying.gom",
@@ -33,7 +33,11 @@ func TestGenerate_BuildsCorpus(t *testing.T) {
 	}
 	var entries []string
 	for _, name := range gomNoHooksCorpus {
-		entries = append(entries, filepath.Join(corpus, name))
+		path := filepath.Join(corpus, name)
+		if _, err := os.Stat(path); err != nil {
+			t.Fatalf("corpus file %s is missing (expected in the repository's test/gom/): %v", path, err)
+		}
+		entries = append(entries, path)
 	}
 	for _, path := range entries {
 		path := path
