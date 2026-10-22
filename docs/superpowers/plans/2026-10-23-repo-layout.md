@@ -386,6 +386,27 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
 
 ---
 
+### Task 3b : aterm dans le runtime validé (`src/go/tom/library/aterm`)
+
+Décision de l'utilisateur (2026-10-23) : aterm est une bibliothèque de
+termes (runtime, comme `aterm.jar` en Java), pas un outil de test. On
+installe la version complète du prototype.
+
+**Files:**
+- Create: `src/go/tom/library/aterm/**` (copie de `tomgo/stable/library/aterm`, imports réécrits), `src/tom/library/mapping/go/aterm.tom` si les ports en ont besoin
+- Modify: `test/go/Peano.t`, `test/go/Array.t` (et tout port qui importe le sous-ensemble), goldens correspondants
+- Delete: `test/go/aterm/`
+
+**Interfaces:**
+- Produces: package `tom/library/aterm` (package `aterm`).
+
+- [ ] **Step 1 :** copier `tomgo/stable/library/aterm` vers `src/go/tom/library/aterm` (cp, pas git mv : le prototype garde sa copie), réécrire ses imports `tom/tomgo/...` selon la table des Global Constraints, `go test ./library/aterm/` vert dans `src/go/tom`.
+- [ ] **Step 2 :** comparer l'API utilisée par `test/go/aterm` (le sous-ensemble) avec celle de `tom/library/aterm` ; si une fonction utilisée par les ports manque, l'ajouter à `tom/library/aterm` avec un test (en reprenant la sémantique Java `aterm`, pas celle du sous-ensemble si elles diffèrent — signaler toute différence).
+- [ ] **Step 3 :** faire importer `tom/library/aterm` par les ports (le code hôte seulement change), régénérer leurs goldens, vérifier T2 (Peano/Array : stdout identique à l'oracle legacy), supprimer `test/go/aterm/` et ses mentions (`TestCasesCoverPorts`, magefile `PortGo`).
+- [ ] **Step 4 :** `go test` vert dans `src/go/tom` et `test/go`, `mage portGo` (13 OK) ; commit `tom-go layout: install aterm in module tom, ports use it`.
+
+---
+
 ### Task 4 : geler le prototype, `go.work` et `magefiles/` à la racine
 
 **Files:**
