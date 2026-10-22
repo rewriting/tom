@@ -690,6 +690,15 @@ matchBlock: {
     }
     output.write("func (" + RECEIVER + " *" + tomName + ") VisitLight(v any, introspector sl.Introspector) (tom__res any, tom__err error) { "
         + "defer sl.RecoverVisitFailure(&tom__err); return " + RECEIVER + ".visitLight(v, introspector), nil }; ");
+    // environment-based visit (Java AbstractStrategyBasic.visit(Introspector)
+    // and AbstractStrategy.visit(T,Introspector) / visit(Environment,Introspector)):
+    // Go has no virtual dispatch, so each strategy defines them on itself
+    output.write("func (" + RECEIVER + " *" + tomName + ") VisitEnv(introspector sl.Introspector) int { "
+        + "return sl.VisitBasic(" + RECEIVER + ", introspector) }; ");
+    output.write("func (" + RECEIVER + " *" + tomName + ") Visit(v any, introspector sl.Introspector) (any, error) { "
+        + "return sl.VisitStrategy(" + RECEIVER + ", v, introspector) }; ");
+    output.write("func (" + RECEIVER + " *" + tomName + ") VisitWith(env *sl.Environment, introspector sl.Introspector) (any, error) { "
+        + "return sl.VisitStrategyWith(" + RECEIVER + ", env, introspector) }; ");
     currentClass = tomName;
     classFields = new HashSet<String>(names);
     generateDeclaration(deep,`declaration,moduleName);

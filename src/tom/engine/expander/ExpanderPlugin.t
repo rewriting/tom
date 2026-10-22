@@ -621,8 +621,10 @@ public class ExpanderPlugin extends TomGenericPlugin {
           BQTerm arg = `BQVariable(concOption(orgTrack),Name("arg"),type);
           Instruction ifThenElse;
           if(generateGoCode) {
-            // the Go sl has no environment-based visit
-            ifThenElse = `Return(ExpressionToBQTerm(Cast(type,BQTermToExpression(Composite(CompositeTL(ITL("sl.MustVisit(" + callPrefix + "Any().VisitLight(arg,introspector))")))))));
+            // Go: the environment field is read through HasEnvironment/GetEnvironment
+            Instruction goReturn1 = `Return(ExpressionToBQTerm(Cast(type,BQTermToExpression(Composite(CompositeTL(ITL("sl.MustVisit(" + callPrefix + "Any().VisitWith(" + callPrefix + "GetEnvironment(),introspector))")))))));
+            Instruction goReturn2 = `Return(ExpressionToBQTerm(Cast(type,BQTermToExpression(Composite(CompositeTL(ITL("sl.MustVisit(" + callPrefix + "Any().VisitLight(arg,introspector))")))))));
+            ifThenElse = `If(Code(callPrefix + "HasEnvironment()"),goReturn1,goReturn2);
           } else {
             BQTerm environmentVar;
             Instruction return1, return2;
@@ -662,7 +664,9 @@ public class ExpanderPlugin extends TomGenericPlugin {
                 Return(ExpressionToBQTerm(Cast(genericType,BQTermToExpression(Composite(CompositeTL(ITL("visitLight(str.any, v,intro)")))))))));
         } else if(generateGoCode) {
           ifList = `concInstruction(ifList*,
-              Return(Composite(CompositeTL(ITL("sl.MustVisit(" + callPrefix + "Any().VisitLight(v,introspector))")))));
+              If(Code(callPrefix + "HasEnvironment()"),
+                Return(Composite(CompositeTL(ITL("sl.MustVisit(" + callPrefix + "Any().VisitWith(" + callPrefix + "GetEnvironment(),introspector))")))),
+                Return(Composite(CompositeTL(ITL("sl.MustVisit(" + callPrefix + "Any().VisitLight(v,introspector))"))))));
         } else {
           ifList = `concInstruction(ifList*,              
               If(testEnvNotNull,

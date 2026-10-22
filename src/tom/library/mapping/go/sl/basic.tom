@@ -19,7 +19,7 @@
  * `get_tail` read child 0 (Java FIRST) / child 1 (Java THEN) — the
  * generated append/slice helpers need them.
  *
- * Mu / MuVar / Identity / Fail / All / One / OneId — primitives
+ * Mu / MuVar / Identity / Fail / All / One / OneId / Omega — primitives
  * the composed walks (BottomUp/RepeatId/…) expand into.
  */
 %include { int.tom }
@@ -63,6 +63,13 @@
 %op Strategy OneId(s1:Strategy) {
   is_fsym(t) { sl.IsOneId($t) }
   make(v) { sl.NewOneId($v) }
+}
+
+%op Strategy Omega(position:int, s1:Strategy) {
+  is_fsym(t) { sl.IsOmega($t) }
+  make(pos,v) { sl.NewOmega(int($pos), $v) }
+  get_slot(position, t) { int64(($t).(*sl.Omega).GetPos()) }
+  get_slot(s1, t) { ($t).ChildAt(0) }
 }
 
 %oplist Strategy Sequence(Strategy*) {

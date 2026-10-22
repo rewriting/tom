@@ -1,0 +1,7 @@
+g(f(a()),g(a(),b())) <nil> [[1, 1] [2, 1]]
+g(f(b()),g(b(),b())) <nil> g(f(b()),g(b(),b())) <nil> true
+AtG [] rewrote f(a())
+AtG [2] rewrote b()
+g(f(a()),g(b(),b())) <nil>
+[2, 1] g(f(a()),g(c(),b())) <nil>
+sl: visit failure

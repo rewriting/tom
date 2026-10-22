@@ -6,6 +6,7 @@
  * Includes string.tom because MuVar takes a String-typed name.
  */
 %include { Strategy.tom }
+%include { Position.tom }
 %include { string.tom }
 
 %include { sl/basic.tom }
