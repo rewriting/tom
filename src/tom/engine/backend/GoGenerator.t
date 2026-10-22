@@ -532,6 +532,19 @@ matchBlock: {
     output.write(s.toString());
   }
 
+  /*
+   * get_size returns the Tom int type (int64), but the natural Go hook
+   * body is len($l), of type int: convert explicitly.
+   */
+  protected void buildGetSizeDecl(int deep, TomName opNameAST, String name1, String type,
+      Expression code, String moduleName) throws IOException {
+    if(code.isCode()) {
+      String it = goType(getSymbolTable(moduleName).getIntType());
+      code = code.setCode(it + "(" + code.getCode().trim() + ")");
+    }
+    super.buildGetSizeDecl(deep,opNameAST,name1,type,code,moduleName);
+  }
+
   protected void genDeclArray(String name, String moduleName) throws IOException {
     if(nodeclMode || !getSymbolTable(moduleName).isUsedSymbolDestructor(name)) {
       return;

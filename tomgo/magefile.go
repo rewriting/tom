@@ -254,3 +254,10 @@ func Clean() error {
 func PortJava() error {
 	return sh.RunV("go", "test", "-count=1", "./tests/javaparity/...")
 }
+
+// PortGo runs T1 (golden Go output, build and run) on the Tom+Go ports
+// in tests/port/ (needs src/dist built). From Task 8 it also runs T2
+// (behaviour vs legacy/) and rewrites reports/port-dashboard.md.
+func PortGo() error {
+	return sh.RunV("go", "test", "-count=1", "./tests/port/...")
+}
