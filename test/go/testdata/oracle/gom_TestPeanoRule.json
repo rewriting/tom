@@ -1,0 +1,19 @@
+{
+  "passed": [
+    "TestPlus",
+    "TestFib1",
+    "TestFib5",
+    "TestFib5bis",
+    "TestFib5ter",
+    "TestFib6",
+    "TestFib6bis",
+    "TestFib6ter",
+    "TestNonZ1",
+    "TestNonZ2",
+    "TestInt2p",
+    "TestPeano2int"
+  ],
+  "stdout": "",
+  "exitOK": true,
+  "source_sha256": "92996516cdaa29eefbb3388557360ca27bd6cf176fbb14dffe1ca5badd279b42"
+}

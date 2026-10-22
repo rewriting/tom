@@ -1,0 +1,18 @@
+{
+  "passed": [
+    "TestRuleFalseCond",
+    "TestRuleAnd",
+    "TestRuleOra",
+    "TestRuleOrb",
+    "TestRuleOrc",
+    "TestRuleAndAnd",
+    "TestRuleParena",
+    "TestRuleParenb",
+    "TestRuleParenc",
+    "TestRuleParend",
+    "TestRuleParene"
+  ],
+  "stdout": "",
+  "exitOK": true,
+  "source_sha256": "2a4ce1dec6b024c4fec157e37c68eee30c2c64a9740a990d6534cc3058b8578e"
+}

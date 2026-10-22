@@ -1,0 +1,9 @@
+{
+  "passed": [
+    "TestEmptySameDoCo",
+    "TestEmptyNotSameDoCo"
+  ],
+  "stdout": "",
+  "exitOK": true,
+  "source_sha256": "00848b5e81e02ba3a62fbeb557350bede4d501f7f48d1f934e2c7f259ccd7757"
+}

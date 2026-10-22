@@ -1,0 +1,23 @@
+module gom.JavaHook
+abstract syntax
+Term = EmptyTerm()
+     | Unary(slot:Term)
+     | Binary(ls:Term,rs:Term)
+     | Ternary(ls:Term,cs:Term,rs:Term)
+     | Vary(Term*)
+EmptyTerm:make() {
+  fmt.Println("EmptyTerm()");
+}
+Binary:make(l,r) {
+  fmt.Println("Binary("+fmt.Sprint(l)+","+fmt.Sprint(r)+")");
+}
+Unary:make(a) {
+  fmt.Println("Unary("+fmt.Sprint(a)+")");
+}
+Vary:FL() {}
+Vary:make_insert(e,l) {
+  fmt.Println("inserting("+fmt.Sprint(e)+","+fmt.Sprint(l)+")");
+}
+Ternary:make(t1,t2,t3) {
+  fmt.Println("Ternary("+fmt.Sprint(t1)+","+fmt.Sprint(t2)+","+fmt.Sprint(t3)+")");
+}

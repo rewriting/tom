@@ -1,0 +1,12 @@
+FL fl(a(),b(),c()) 3 a() fl(b(),c()) true false
+FL reverse fl(c(),b(),a()) append fl(a(),b(),c(),a())
+Free free(a(),free(b()),free())
+AU au(a(),b(),c()) a() au() a()
+AU tail au(b(),c()) c() 3
+AU neutral m() n() n() nau(m(),m())
+ACU true true false
+hooks ins(a(),b()) w(0)
+Cons/Empty fl(a(),b()) fl() au(a(),b())
+API true 3 w Consfl Emptyfl
+ a() b() c()
+Consau a() au(b(),c())

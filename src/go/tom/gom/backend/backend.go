@@ -467,6 +467,10 @@ func EmitTomMappingGo(mod gomast.GomModule, opts Options) []byte {
 		for _, alt := range sortAlternatives(prod) {
 			altNm := alt.Name
 			structName := exportedField(altNm) + sortNm
+			if alternativeIsVariadic(alt) && !moduleIsKnown(mod) {
+				emitVariadicMappingGo(&buf, sortNm, alt, structName, fieldTypeName(alternativeFields(alt)[0]))
+				continue
+			}
 			if alternativeIsVariadic(alt) {
 				typeName := fieldTypeName(alternativeFields(alt)[0])
 				fmt.Fprintf(&buf, "%%oplist %s %s( %s* ) {\n", sortNm, altNm, typeName)
@@ -524,57 +528,10 @@ func EmitTomMappingGo(mod gomast.GomModule, opts Options) []byte {
 // knownHookTable and are not checked; elsewhere, the supported hooks are
 // the user `op:make(args) { … }` hooks of non-variadic operators.
 func CheckHooks(mod gomast.GomModule) error {
-	modName := moduleQualifiedName(mod)
-	for i := range knownHookTable {
-		if knownHookTable[i].module == modName {
-			return nil
-		}
-	}
-	alts := map[string]*gomast.AlternativeAlternative{}
-	for _, prod := range moduleSorts(mod) {
-		for _, alt := range sortAlternatives(prod) {
-			alts[alt.Name] = alt
-		}
-	}
-	for _, h := range moduleHooks(mod) {
-		if recognisedKnownHook(h) != nil {
-			continue
-		}
-		if alt, ok := alts[h.Name]; ok && isUserMakeHook(mod, alt, h) {
-			continue
-		}
-		return fmt.Errorf("gomgo: hook %s %s:%s of module %s is not supported by the Go backend (supported: op:make on a non-variadic operator)",
-			hookScopeName(h), h.Name, hookKindName(h), modName)
-	}
-	return nil
-}
-
-// userMakeHooks returns, in declaration order, the user-written
-// `op:make(args) { … }` hooks of a non-variadic alternative (Java Gom
-// runs them one after the other, OperatorTemplate.generateMakeHooks).
-// Hooks of the knownHookTable (the lowered hooks of the compiler's own
-// ADT) are not user hooks.
-func userMakeHooks(mod gomast.GomModule, alt *gomast.AlternativeAlternative) []*gomast.HookProduction {
-	if mod == nil || alternativeIsVariadic(alt) {
+	if moduleIsKnown(mod) {
 		return nil
 	}
-	var out []*gomast.HookProduction
-	for _, h := range moduleHooks(mod) {
-		if hookScopeName(h) == "operator" && h.Name == alt.Name && hookKindName(h) == "make" && recognisedKnownHook(h) == nil {
-			out = append(out, h)
-		}
-	}
-	return out
-}
-
-// isUserMakeHook reports whether h is one of the user make hooks of alt.
-func isUserMakeHook(mod gomast.GomModule, alt *gomast.AlternativeAlternative, h *gomast.HookProduction) bool {
-	for _, u := range userMakeHooks(mod, alt) {
-		if u == h {
-			return true
-		}
-	}
-	return false
+	return checkUserHooks(mod)
 }
 
 // hookArgNames returns the argument names of a hook (`make(i, j)`).
@@ -590,13 +547,16 @@ func hookArgNames(h *gomast.HookProduction) []string {
 	return names
 }
 
-// emitUserMakeHooksGo writes, into the Tom mapping, the user make hooks
-// of the module. Java Gom (OperatorTemplate.generateConstructor) puts
-// the bodies of all the make hooks of an operator, in order, at the
-// head of its make, each in its own block: a hook that returns gives the
-// result; otherwise the arguments, which the hook may have reassigned,
-// go on to the next hook (renamed when the next hook names them
-// differently: `int j = i;`) and finally to realMake.
+// emitUserMakeHooksGo writes, into the Tom mapping, the user
+// construction hooks of the module (see userhooks.go) and its block
+// hooks. Java Gom (OperatorTemplate.generateConstructor) puts the bodies
+// of all the make hooks of an operator, in order, at the head of its
+// make, each in its own block: a hook that returns gives the result;
+// otherwise the arguments, which the hook may have reassigned, go on to
+// the next hook (renamed when the next hook names them differently:
+// `int j = i;`) and finally to realMake. Likewise for the make_insert
+// (Cons<op>.make(head,tail)) and make_empty (Empty<op>.make()) hooks of
+// a variadic operator.
 //
 // The bodies are Tom+Go code (they may use %match and backquotes on the
 // module's operators), so they cannot go into the generated Go file:
@@ -627,72 +587,88 @@ func emitUserMakeHooksGo(buf *bytes.Buffer, mod gomast.GomModule, imported map[s
 	for _, prod := range moduleSorts(mod) {
 		sortNm := sortName(prod)
 		for _, alt := range sortAlternatives(prod) {
-			hooks := userMakeHooks(mod, alt)
-			if len(hooks) == 0 {
+			hooks := opHooks(mod, alt)
+			opGo := exportedField(alt.Name)
+			if !alternativeIsVariadic(alt) {
+				var slotTypes []string
+				for _, f := range alternativeFields(alt) {
+					if _, ok := f.(*gomast.NamedFieldField); ok {
+						slotTypes = append(slotTypes, types.goType(fieldTypeName(f), false))
+					}
+				}
+				emitHookFuncGo(buf, "HookMake"+opGo, sortNm, slotTypes, hooksOfKind(hooks, "make"))
 				continue
 			}
-			var slotTypes []string
-			for _, f := range alternativeFields(alt) {
-				if _, ok := f.(*gomast.NamedFieldField); ok {
-					slotTypes = append(slotTypes, types.goType(fieldTypeName(f), false))
-				}
-			}
-			// argument names of each hook (missing ones: tom__argI)
-			namesOf := func(h *gomast.HookProduction) []string {
-				given := hookArgNames(h)
-				names := make([]string, len(slotTypes))
-				for i := range names {
-					names[i] = fmt.Sprintf("tom__arg%d", i)
-					if i < len(given) {
-						names[i] = given[i]
-					}
-				}
-				return names
-			}
-			first := namesOf(hooks[0])
-			declared := map[string]bool{}
-			var params []string
-			for i, n := range first {
-				params = append(params, n+" "+slotTypes[i])
-				declared[n] = true
-			}
-			var decls []string
-			for _, h := range hooks[1:] {
-				for i, n := range namesOf(h) {
-					if !declared[n] {
-						declared[n] = true
-						decls = append(decls, fmt.Sprintf("var %s %s;", n, slotTypes[i]))
-					}
-				}
-			}
-			results := append([]string{sortNm}, slotTypes...)
-			opGo := exportedField(alt.Name)
-			// explicit semicolons: tom emits the host code of an included
-			// file on a single line
-			fmt.Fprintf(buf, "func init() {\n")
-			fmt.Fprintf(buf, "  HookMake%s = func(%s) (%s) {\n", opGo, strings.Join(params, ", "), strings.Join(results, ", "))
-			for _, d := range decls {
-				fmt.Fprintf(buf, "    %s\n", d)
-			}
-			fmt.Fprintf(buf, "    tom__r := func() %s {\n", sortNm)
-			cur := first
-			for _, h := range hooks {
-				next := namesOf(h)
-				for i := range next {
-					if next[i] != cur[i] {
-						fmt.Fprintf(buf, "    %s = %s;\n", next[i], cur[i])
-					}
-				}
-				cur = next
-				fmt.Fprintf(buf, "    {\n%s\n    };\n", hookBody(h))
-			}
-			fmt.Fprintf(buf, "    return nil;\n")
-			fmt.Fprintf(buf, "    }();\n")
-			fmt.Fprintf(buf, "    return %s;\n", strings.Join(append([]string{"tom__r"}, cur...), ", "))
-			fmt.Fprintf(buf, "  };\n")
-			fmt.Fprintf(buf, "};\n\n")
+			elem := types.goType(fieldTypeName(alternativeFields(alt)[0]), false)
+			emitHookFuncGo(buf, "HookMakeInsert"+opGo, sortNm, []string{elem, sortNm}, hooksOfKind(hooks, "make_insert"))
+			emitHookFuncGo(buf, "HookMakeEmpty"+opGo, sortNm, nil, hooksOfKind(hooks, "make_empty"))
 		}
 	}
+	// block hooks: host code (Go declarations) of the module
+	for _, b := range blockHooks(mod) {
+		fmt.Fprintf(buf, "%s\n;\n\n", mappingHostCode(b))
+	}
+}
+
+// emitHookFuncGo writes the init function that sets the hook variable
+// name to the hooks (none: nothing is written), for an operator of sort
+// sortNm whose arguments have the Go types slotTypes.
+func emitHookFuncGo(buf *bytes.Buffer, name, sortNm string, slotTypes []string, hooks []opHook) {
+	if len(hooks) == 0 {
+		return
+	}
+	// argument names of each hook (missing ones: tom__argI)
+	namesOf := func(h opHook) []string {
+		names := make([]string, len(slotTypes))
+		for i := range names {
+			names[i] = fmt.Sprintf("tom__arg%d", i)
+			if i < len(h.args) {
+				names[i] = h.args[i]
+			}
+		}
+		return names
+	}
+	first := namesOf(hooks[0])
+	declared := map[string]bool{}
+	var params []string
+	for i, n := range first {
+		params = append(params, n+" "+slotTypes[i])
+		declared[n] = true
+	}
+	var decls []string
+	for _, h := range hooks[1:] {
+		for i, n := range namesOf(h) {
+			if !declared[n] {
+				declared[n] = true
+				decls = append(decls, fmt.Sprintf("var %s %s;", n, slotTypes[i]))
+			}
+		}
+	}
+	results := append([]string{sortNm}, slotTypes...)
+	// explicit semicolons: tom emits the host code of an included file
+	// on a single line
+	fmt.Fprintf(buf, "func init() {\n")
+	fmt.Fprintf(buf, "  %s = func(%s) (%s) {\n", name, strings.Join(params, ", "), strings.Join(results, ", "))
+	for _, d := range decls {
+		fmt.Fprintf(buf, "    %s\n", d)
+	}
+	fmt.Fprintf(buf, "    tom__r := func() %s {\n", sortNm)
+	cur := first
+	for _, h := range hooks {
+		next := namesOf(h)
+		for i := range next {
+			if next[i] != cur[i] {
+				fmt.Fprintf(buf, "    %s = %s;\n", next[i], cur[i])
+			}
+		}
+		cur = next
+		fmt.Fprintf(buf, "    {\n%s\n    };\n", mappingHostCode(h.body))
+	}
+	fmt.Fprintf(buf, "    return nil;\n")
+	fmt.Fprintf(buf, "    }();\n")
+	fmt.Fprintf(buf, "    return %s;\n", strings.Join(append([]string{"tom__r"}, cur...), ", "))
+	fmt.Fprintf(buf, "  };\n")
+	fmt.Fprintf(buf, "};\n\n")
 }
 
 // emitCongruenceMappingGo writes the congruence strategy operators of
@@ -1017,6 +993,7 @@ func generateBytesFactory(mod gomast.GomModule, opts Options, withFactory bool) 
 		pkgName:    opts.PackageName,
 		congruence: opts.WithCongruenceStrategies,
 		noSharing:  opts.NoSharing,
+		javaAPI:    !moduleIsKnown(mod),
 	}
 	for _, s := range moduleSorts(mod) {
 		g.ownSort[sortName(s)] = true
@@ -1068,6 +1045,12 @@ type gen struct {
 
 	// noSharing is Options.NoSharing (Java Gom's --nosharing).
 	noSharing bool
+
+	// javaAPI: generate the Java Gom API of the terms and Java Gom's list
+	// semantics (javaapi.go, userhooks.go). Set for the user modules
+	// (Generate, gom-block), not for the batch generation of the
+	// compiler's own ADT.
+	javaAPI bool
 }
 
 // emitReturnProto ends a smart constructor: the canonical (shared) term,
@@ -1128,7 +1111,13 @@ func (g *gen) emitFactory() {
 
 func (g *gen) emitSort(prod *gomast.SortTypeProduction) {
 	name := sortName(prod)
-	sortHooks := g.sortScopedHooks(name)
+	var sortHooks []*gomast.HookProduction
+	if moduleIsKnown(g.mod) {
+		// the sort hooks of user modules are block hooks, emitted into
+		// the mapping
+		sortHooks = g.sortScopedHooks(name)
+	}
+	api := g.sortAPIOf(prod)
 
 	fmt.Fprintf(&g.buf, "// %s is the Go interface backing the Gom sort %s.\n", name, name)
 	fmt.Fprintf(&g.buf, "type %s interface {\n", name)
@@ -1137,6 +1126,9 @@ func (g *gen) emitSort(prod *gomast.SortTypeProduction) {
 	if g.noSharing {
 		fmt.Fprintln(&g.buf, "	// DeepEquals compares terms that are not maximally shared (--nosharing).")
 		fmt.Fprintln(&g.buf, "	DeepEquals(o any) bool")
+	}
+	if g.javaAPI {
+		g.emitJavaAPIInterface(api)
 	}
 	for _, h := range sortHooks {
 		if decl := interfaceDeclForHook(h); decl != "" {
@@ -1147,6 +1139,9 @@ func (g *gen) emitSort(prod *gomast.SortTypeProduction) {
 	fmt.Fprintln(&g.buf)
 	for _, alt := range sortAlternatives(prod) {
 		g.emitAlternative(name, alt)
+		if g.javaAPI {
+			g.emitJavaAPIMethods(api, alt)
+		}
 		for _, h := range sortHooks {
 			g.emitHookImplOnAlt(prod, alt, h)
 		}
@@ -1868,7 +1863,9 @@ afterEquivalent:
 		prologueSlots = append(prologueSlots, hookSlot{Name: s.Name, GoType: s.GoType, IsVar: s.IsVar})
 	}
 	prologues := g.makeProloguesForAlt(alt)
-	if isVariadic {
+	if isVariadic && g.javaAPI {
+		g.emitVariadicJava(sortNm, alt, structName, slots[0].GoType)
+	} else if isVariadic {
 		fmt.Fprintf(&g.buf, "func %s(args ...%s) %s {\n", makeName, slots[0].GoType, sortNm)
 		for _, p := range prologues {
 			p.emitMakePrologue(&g.buf, g, alt, sortNm, structName, prologueSlots, isVariadic)
@@ -1895,7 +1892,7 @@ afterEquivalent:
 			types = append(types, s.GoType)
 			names = append(names, unexported(s.Name))
 		}
-		hooked := len(userMakeHooks(g.mod, alt)) > 0
+		hooked := len(hooksOfKind(opHooks(g.mod, alt), "make")) > 0
 		if hooked {
 			fmt.Fprintf(&g.buf, "// Hook%s runs the user `%s:make` hooks of the Gom module: it\n", makeName, opName)
 			fmt.Fprintf(&g.buf, "// returns their result (nil if none returned) and the arguments\n")

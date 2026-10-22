@@ -1,0 +1,11 @@
+{
+  "passed": [
+    "TestSorta",
+    "TestSortMaxMin",
+    "TestSortNoDup",
+    "TestSortMix"
+  ],
+  "stdout": "",
+  "exitOK": true,
+  "source_sha256": "75c23665338206bc86cf0e19cf475ca347bb74dbdfe487cbba325681dbc3e6a4"
+}

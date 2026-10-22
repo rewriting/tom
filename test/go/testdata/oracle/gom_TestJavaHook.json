@@ -1,0 +1,12 @@
+{
+  "passed": [
+    "TestEmptyMakeHook",
+    "TestUnaryMakeHook",
+    "TestBinaryMakeBeforeHook",
+    "TestTernaryMakeBeforeHook",
+    "TestVaryMakeInsertHook"
+  ],
+  "stdout": "",
+  "exitOK": true,
+  "source_sha256": "51dedbcdad1e4db162816591b30db71bff378a6be6c39857c7f099a7fab3e3f3"
+}

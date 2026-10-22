@@ -20,6 +20,7 @@ import (
 	"strings"
 	"testing"
 
+	gomparser "tom/gom/parser"
 	"tomtest/harness"
 )
 
@@ -75,6 +76,10 @@ type gomFile struct {
 	// Gom finds them next to Rel); gomgo reads the identical copies next
 	// to the port's copy and generates them in the same Go package.
 	Deps []string
+	// PortedHooks: the hook bodies of Rel are host code (Java), ported to
+	// Go in the copy; the rest of the copy (the signature, the hooks'
+	// names, kinds and arguments) must still equal the original.
+	PortedHooks bool
 }
 
 // testslGom is test/sl/testsl.gom, compiled by test/build.xml with
@@ -152,6 +157,17 @@ var cases = []portCase{
 	{Rel: "gom/TestGomMultithread.t", GoTest: true},
 	{Rel: "gom/TestGomWithoutMaximalSharing.t", GoTest: true},
 	{Rel: "gom/TestImport.t", GoTest: true, Gom: []gomFile{importingGom}},
+	{Rel: "gom/TestRuleBool.t", GoTest: true, Gom: []gomFile{{Rel: "gom/RuleBool.gom"}}},
+	{Rel: "gom/TestRuleCond.t", GoTest: true},
+	{Rel: "gom/TestPeanoRule.t", GoTest: true},
+	{Rel: "gom/TestMakeEmpty.t", GoTest: true},
+	{Rel: "gom/TestJavaHook.t", GoTest: true, Gom: []gomFile{{Rel: "gom/JavaHook.gom", PortedHooks: true}}},
+	{Rel: "gom/TestFL.t", GoTest: true},
+	{Rel: "gom/TestAU.t", GoTest: true},
+	{Rel: "gom/TestACU.t", GoTest: true},
+	{Rel: "gom/TestList.t", GoTest: true},
+	{Rel: "gom/TestRuleList.t", GoTest: true, Gom: []gomFile{{Rel: "gom/RuleList.gom"}}},
+	{Rel: "gom/TestRuleSortList.t", GoTest: true},
 	{Rel: "gom/TestYingYang.t", GoTest: true, Gom: []gomFile{{Rel: "gom/Ying.gom", Deps: []string{"gom/Yang.gom"}}}},
 }
 
@@ -1060,12 +1076,39 @@ func TestGomCopiesIdentical(t *testing.T) {
 					t.Errorf("%s: missing copy of test/%s: %v", c.Rel, rel, err)
 					continue
 				}
+				if rel == g.Rel && g.PortedHooks {
+					o, err1 := gomWithoutHookBodies(orig)
+					c, err2 := gomWithoutHookBodies(cp)
+					if err1 != nil || err2 != nil {
+						t.Errorf("%s: parsing: %v %v", rel, err1, err2)
+					} else if o != c {
+						t.Errorf("test/go/%s differs from test/%s outside its hook bodies:\n%s\n%s", rel, rel, o, c)
+					}
+					continue
+				}
 				if string(orig) != string(cp) {
 					t.Errorf("test/go/%s differs from test/%s", rel, rel)
 				}
 			}
 		}
 	}
+}
+
+// hookCode matches the code of a hook in the printed Gom AST, origin a
+// line number (which the ported hook bodies may shift).
+var (
+	hookCode = regexp.MustCompile(`HookCode\("(?:[^"\\]|\\.)*"\)`)
+	origin   = regexp.MustCompile(`Origin\([0-9]+\)`)
+)
+
+// gomWithoutHookBodies is the printed AST of a .gom with its hook code
+// blanked (hook names, kinds and arguments are kept).
+func gomWithoutHookBodies(src []byte) (string, error) {
+	mod, err := gomparser.ParseBytes(src)
+	if err != nil {
+		return "", err
+	}
+	return origin.ReplaceAllString(hookCode.ReplaceAllString(fmt.Sprint(mod), `HookCode("")`), "Origin(0)"), nil
 }
 
 // TestCapitalise pins the JUnit -> Go test names.

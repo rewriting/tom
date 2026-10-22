@@ -1,0 +1,13 @@
+module gom.RuleBool
+abstract syntax
+Bool = True()
+     | False()
+     | Not(b:Bool)
+     | And(l:Bool,r:Bool)
+     | Or(l:Bool,r:Bool)
+module RuleBool:rules() {
+  Not(And(l,r)) -> Or(Not(l),Not(r))
+  Not(Or(l,r))  -> And(Not(l),Not(r))
+  Not(True())   -> False()
+  Not(False())  -> True()
+}

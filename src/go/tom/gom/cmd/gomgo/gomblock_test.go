@@ -205,16 +205,24 @@ func TestRunGomBlockImports(t *testing.T) {
 func TestWriteGomBlockUnsupportedHook(t *testing.T) {
 	dir := t.TempDir()
 	src := filepath.Join(dir, "in.gom")
-	body := "module M\nabstract syntax\nT = a() | l(T*)\nl:make_insert(e,l) {\n  return `l(e,l*);\n}\n"
-	if err := os.WriteFile(src, []byte(body), 0o644); err != nil {
-		t.Fatal(err)
-	}
-	mod, err := gomparser.ParseFile(src)
-	if err != nil {
-		t.Fatal(err)
-	}
-	_, err = writeGomBlock(mod, "fixture", filepath.Join(dir, "out"), backend.Options{})
-	if err == nil || !strings.Contains(err.Error(), "l:make_insert") || !strings.Contains(err.Error(), "module M") {
-		t.Fatalf("err = %v, want an error naming l:make_insert and module M", err)
+	for _, tc := range []struct{ body, want string }{
+		// term-graph rewriting (Java Gom's --termgraph) is not implemented
+		{"module M\nabstract syntax\nT = a() | k(x:T)\nsort T:graphrules(R,Identity) {\n  k(x) -> x\n}\n", "sort T:graphrules"},
+		// Java Gom: the theory of a list operator with hooks must be given
+		{"module M\nabstract syntax\nT = a() | l(T*)\nl:make_insert(e,l) {\n  return `l(e,l*);\n}\n", "no theory"},
+		// the neutral element must be a constant of the module
+		{"module M\nabstract syntax\nT = a() | l(T*)\nl:AU() { `b() }\n", "l:AU"},
+	} {
+		if err := os.WriteFile(src, []byte(tc.body), 0o644); err != nil {
+			t.Fatal(err)
+		}
+		mod, err := gomparser.ParseFile(src)
+		if err != nil {
+			t.Fatal(err)
+		}
+		_, err = writeGomBlock(mod, "fixture", filepath.Join(dir, "out"), backend.Options{})
+		if err == nil || !strings.Contains(err.Error(), tc.want) || !strings.Contains(err.Error(), "module M") {
+			t.Errorf("err = %v, want an error naming %q and module M", err, tc.want)
+		}
 	}
 }

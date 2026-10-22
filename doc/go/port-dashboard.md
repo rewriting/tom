@@ -9,7 +9,7 @@ avec le cas qui les utilise (comme `test/build.xml` compile tout le
 répertoire), et c'est le statut de ce cas qui les valide.
 
 - total : 103
-- OK : 32
+- OK : 43
 - divergence : 0
 - échec go test : 0
 - échec go build : 0
@@ -17,7 +17,7 @@ répertoire), et c'est le statut de ce cas qui les valide.
 - oracle invalide : 0
 - non supporté : 1
 - support : 4
-- non porté : 66
+- non porté : 55
 
 | Cas | Statut | Notes |
 |---|---|---|
@@ -61,27 +61,27 @@ répertoire), et c'est le statut de ce cas qui les valide.
 | `backquote/TestDefaultValue.t` | non porté |  |
 | `cfib1.t` | non porté |  |
 | `gom/BenchConsGom.t` | OK |  |
-| `gom/TestACU.t` | non porté |  |
-| `gom/TestAU.t` | non porté |  |
+| `gom/TestACU.t` | OK |  |
+| `gom/TestAU.t` | OK |  |
 | `gom/TestBool.t` | OK |  |
 | `gom/TestBuiltin.t` | non porté |  |
 | `gom/TestCollection.t` | non porté |  |
 | `gom/TestDotted.t` | OK |  |
-| `gom/TestFL.t` | non porté |  |
+| `gom/TestFL.t` | OK |  |
 | `gom/TestFrom.t` | non porté |  |
 | `gom/TestFromMethods.t` | non porté |  |
 | `gom/TestGomMultithread.t` | OK |  |
 | `gom/TestGomWithoutMaximalSharing.t` | OK |  |
 | `gom/TestImport.t` | OK |  |
-| `gom/TestJavaHook.t` | non porté |  |
-| `gom/TestList.t` | non porté |  |
-| `gom/TestMakeEmpty.t` | non porté |  |
+| `gom/TestJavaHook.t` | OK |  |
+| `gom/TestList.t` | OK |  |
+| `gom/TestMakeEmpty.t` | OK |  |
 | `gom/TestMultiHook.t` | OK |  |
-| `gom/TestPeanoRule.t` | non porté |  |
-| `gom/TestRuleBool.t` | non porté |  |
-| `gom/TestRuleCond.t` | non porté |  |
-| `gom/TestRuleList.t` | non porté |  |
-| `gom/TestRuleSortList.t` | non porté |  |
+| `gom/TestPeanoRule.t` | OK |  |
+| `gom/TestRuleBool.t` | OK |  |
+| `gom/TestRuleCond.t` | OK |  |
+| `gom/TestRuleList.t` | OK |  |
+| `gom/TestRuleSortList.t` | OK |  |
 | `gom/TestSortHook.t` | non porté |  |
 | `gom/TestStratMapping.t` | OK |  |
 | `gom/TestTermgraph.t` | non porté |  |
