@@ -143,7 +143,8 @@ func TestMakeBottomUp_RenameAll(t *testing.T) {
 // walk stops without scanning beyond.
 func TestMakeTopDownIdStopOnSuccess(t *testing.T) {
 	rewrite := renameStrategy("a", "X") // fails on non-a, rewrites a
-	strat := MakeTopDownIdStopOnSuccess(rewrite)
+	// Java ChoiceId propagates failure of v, so v must be non-failing.
+	strat := MakeTopDownIdStopOnSuccess(MakeTry(rewrite))
 
 	root := parent("R", parent("Inner", leaf("a"), leaf("a")), leaf("b"))
 	got, err := strat.VisitLight(root, VisitableIntrospector{})

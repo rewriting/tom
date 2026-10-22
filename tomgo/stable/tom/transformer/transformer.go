@@ -77,3 +77,13 @@ func (p *processTransformation) VisitLight(subject any, intro sl.Introspector) (
 	}
 	return p.Any().VisitLight(subject, intro)
 }
+
+// Environment-based visit entry points: Go has no virtual dispatch, so
+// the embedding strategy must define them (see sl.AbstractStrategyBasic).
+func (p *processTransformation) VisitEnv(i sl.Introspector) int { return sl.VisitBasic(p, i) }
+func (p *processTransformation) Visit(s any, i sl.Introspector) (any, error) {
+	return sl.VisitStrategy(p, s, i)
+}
+func (p *processTransformation) VisitWith(e *sl.Environment, i sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(p, e, i)
+}

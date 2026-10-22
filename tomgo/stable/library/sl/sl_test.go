@@ -313,7 +313,7 @@ func TestChoiceId_FirstChangedShortCircuits(t *testing.T) {
 // "X" and stop (ChoiceId short-circuits once a child changed).
 func TestMu_TopDownReplace(t *testing.T) {
 	x := NewMuVar("x")
-	body := NewChoiceId(renameStrategy("a", "X"), NewAll(x))
+	body := NewChoiceId(MakeTry(renameStrategy("a", "X")), NewAll(x))
 	rec := NewMu(x, body)
 
 	root := parent("R", parent("R", leaf("a")), leaf("b"))
@@ -401,3 +401,38 @@ func TestStrategyTreeShape(t *testing.T) {
 
 // ensure we don't accidentally leak fmt — used only here for debug.
 var _ = fmt.Sprintf
+
+// Java ChoiceId.visitLight lets a VisitFailure of FIRST propagate:
+// THEN is only tried when FIRST succeeded without changing the subject.
+func TestChoiceId_FirstFailurePropagates(t *testing.T) {
+	_, err := NewChoiceId(NewFail(), NewIdentity()).VisitLight(leaf("a"), VisitableIntrospector{})
+	if !errors.Is(err, ErrVisitFailure) {
+		t.Fatalf("want ErrVisitFailure, got %v", err)
+	}
+}
+
+// Java OneId.visitLight does not catch the VisitFailure of its argument.
+func TestOneId_ChildFailurePropagates(t *testing.T) {
+	_, err := NewOneId(NewFail()).VisitLight(parent("f", leaf("x")), VisitableIntrospector{})
+	if !errors.Is(err, ErrVisitFailure) {
+		t.Fatalf("want ErrVisitFailure, got %v", err)
+	}
+}
+
+func TestAbstractStrategyBasic_BareEnvVisitPanics(t *testing.T) {
+	a := NewAbstractStrategyBasic(NewIdentity())
+	for name, f := range map[string]func(){
+		"VisitEnv":  func() { a.VisitEnv(VisitableIntrospector{}) },
+		"Visit":     func() { _, _ = a.Visit(leaf("a"), VisitableIntrospector{}) },
+		"VisitWith": func() { _, _ = a.VisitWith(nil, VisitableIntrospector{}) },
+	} {
+		func() {
+			defer func() {
+				if r := recover(); r == nil || !strings.Contains(fmt.Sprint(r), "no virtual dispatch") {
+					t.Errorf("%s: want panic mentioning virtual dispatch, got %v", name, r)
+				}
+			}()
+			f()
+		}()
+	}
+}

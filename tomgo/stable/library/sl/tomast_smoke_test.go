@@ -69,7 +69,8 @@ func TestStrategyOnTomast(t *testing.T) {
 	// Rewrite: if subject is a Variable whose AstName is EmptyName(),
 	// return a copy with Name("fresh1") instead.
 	rewrite := &renameEmpty{}
-	walker := sl.MakeTopDownIdStopOnSuccess(rewrite)
+	// ChoiceId propagates failure (Java): rewrite must be non-failing.
+	walker := sl.MakeTopDownIdStopOnSuccess(sl.MakeTry(rewrite))
 
 	got, err := walker.VisitLight(v, sl.VisitableIntrospector{})
 	if err != nil {
@@ -89,7 +90,8 @@ func TestStrategyOnTomast(t *testing.T) {
 // renameEmpty matches Java's DesugarUnderscore on a single fixture:
 // any Variable with EmptyName() becomes Variable(..., Name("fresh1"),
 // ...). The strategy fails on anything else so MakeTopDownIdStopOnSuccess
-// keeps walking.
+// keeps walking
+// once wrapped in sl.MakeTry (ChoiceId propagates failure, as in Java).
 type renameEmpty struct{ sl.AbstractStrategy }
 
 func (*renameEmpty) VisitLight(subject any, _ sl.Introspector) (any, error) {

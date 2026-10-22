@@ -78,6 +78,11 @@ func (e *emitter) emitStrategy(strat *tomast.StrategyDeclaration) error {
 	}
 	e.buf.WriteString("\treturn tom__strat.Any().VisitLight(v, introspector)\n}\n")
 
+	// Environment-based entry points (no virtual dispatch in Go).
+	fmt.Fprintf(&e.buf, "\nfunc (tom__strat *%s) VisitEnv(i sl.Introspector) int { return sl.VisitBasic(tom__strat, i) }\n", name)
+	fmt.Fprintf(&e.buf, "\nfunc (tom__strat *%s) Visit(s any, i sl.Introspector) (any, error) {\n\treturn sl.VisitStrategy(tom__strat, s, i)\n}\n", name)
+	fmt.Fprintf(&e.buf, "\nfunc (tom__strat *%s) VisitWith(env *sl.Environment, i sl.Introspector) (any, error) {\n\treturn sl.VisitStrategyWith(tom__strat, env, i)\n}\n", name)
+
 	// Per-sort visit_<Sort> + _visit_<Sort> methods.
 	for _, ps := range perSort {
 		// _visit_<Sort>: fall back to `any` when no rule fired.

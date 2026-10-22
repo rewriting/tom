@@ -262,3 +262,23 @@ func tomTermArgs(args tomast.TomList) []tomast.TomTerm {
 	}
 	return nil
 }
+
+// Environment-based visit entry points: Go has no virtual dispatch, so
+// the embedding strategy must define them (see sl.AbstractStrategyBasic).
+func (d *desugarUnderscore) VisitEnv(i sl.Introspector) int { return sl.VisitBasic(d, i) }
+func (d *desugarUnderscore) Visit(s any, i sl.Introspector) (any, error) {
+	return sl.VisitStrategy(d, s, i)
+}
+func (d *desugarUnderscore) VisitWith(e *sl.Environment, i sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(d, e, i)
+}
+
+// Environment-based visit entry points: Go has no virtual dispatch, so
+// the embedding strategy must define them (see sl.AbstractStrategyBasic).
+func (r *replaceTermApplTomSyntax) VisitEnv(i sl.Introspector) int { return sl.VisitBasic(r, i) }
+func (r *replaceTermApplTomSyntax) Visit(s any, i sl.Introspector) (any, error) {
+	return sl.VisitStrategy(r, s, i)
+}
+func (r *replaceTermApplTomSyntax) VisitWith(e *sl.Environment, i sl.Introspector) (any, error) {
+	return sl.VisitStrategyWith(r, e, i)
+}

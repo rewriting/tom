@@ -1,13 +1,13 @@
 package sl
 
-// ChoiceId tries First; if it succeeds *and changed the subject*,
-// returns that. Otherwise tries Then on the original subject. This is
-// the "identity-aware" sibling of [Choice]: it treats "First succeeded
-// but did nothing" as failure-equivalent for branching purposes,
-// which is critical for one-pass top-down walks like
-// TopDownIdStopOnSuccess.
+// ChoiceId (Java tom.library.sl.ChoiceId) applies First. A failure of
+// First propagates (Then is NOT tried). If First succeeded and
+// returned the subject unchanged (identity), Then is applied to it;
+// otherwise First's result is returned. Strategies combined through
+// ChoiceId (e.g. TopDownIdStopOnSuccess) must therefore not fail,
+// typically by wrapping them in [MakeTry].
 //
-//	ChoiceId(v1,v2)[t] = v1[t] if v1[t] != t, else v2[t]
+//	ChoiceId(v1,v2)[t] = v1[t] if v1[t] != t, else v2[t]; fails if v1[t] fails
 type ChoiceId struct{ abstractCombinator }
 
 func NewChoiceId(first, then Strategy) Strategy {
@@ -21,18 +21,17 @@ func NewChoiceId(first, then Strategy) Strategy {
 
 func (c *ChoiceId) VisitLight(subject any, intro Introspector) (any, error) {
 	v, err := c.args[0].VisitLight(subject, intro)
-	if err == nil && v != subject {
-		return v, nil
+	if err != nil {
+		return nil, err
 	}
-	// First either failed outright or returned the subject unchanged;
-	// both cases fall through to Then (subject not v, mirroring the
-	// Java reference's "restore the subject" semantics).
-	return c.args[1].VisitLight(subject, intro)
+	if v == subject {
+		return c.args[1].VisitLight(v, intro)
+	}
+	return v, nil
 }
 
-// VisitEnv is the Java ChoiceId.visit(Introspector). Unlike
-// VisitLight, a failure of FIRST is a failure (Java only tries THEN
-// when FIRST succeeded without changing the subject).
+// VisitEnv is the Java ChoiceId.visit(Introspector); same semantics as
+// VisitLight.
 func (c *ChoiceId) VisitEnv(intro Introspector) int {
 	subject := c.environment.GetSubject()
 	status := c.args[0].VisitEnv(intro)
