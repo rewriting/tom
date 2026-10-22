@@ -1,0 +1,8 @@
+module PlatformAlert
+imports String int
+
+abstract syntax
+
+Alert = Error(Message:String, File:String, Line:int)
+      | Warning(Message:String, File:String, Line:int)
+AlertList = concAlert(Alert*)

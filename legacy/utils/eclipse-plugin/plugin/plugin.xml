@@ -1,0 +1,433 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+	<!-- Preference pages -->
+	<extension
+			point="org.eclipse.ui.preferencePages">
+		<page
+            name="Tom"
+            class="fr.loria.eclipse.jtom.ui.preferences.TomGeneralPreferencePage"
+            id="fr.loria.eclipse.jtom.ui.preferences.TomGeneralPreferencePage">
+		</page>
+		<page
+            name="Tom Editor"
+            category="fr.loria.eclipse.jtom.ui.preferences.TomGeneralPreferencePage"
+            class="fr.loria.eclipse.jtom.ui.preferences.TomEditorPreferencePage"
+            id="fr.loria.eclipse.jtom.ui.preferences.TomEditorPreferencePage">
+		</page>
+		<page
+            name="Tom Template Editor"
+            category="fr.loria.eclipse.jtom.ui.preferences.TomGeneralPreferencePage"
+            class="fr.loria.eclipse.jtom.ui.preferences.TemplatesPreferencePage"
+            id="fr.loria.eclipse.jtom.ui.preferences.TomTemplatePreferencePage">
+		</page>
+  <page
+        category="fr.loria.eclipse.jtom.ui.preferences.TomGeneralPreferencePage"
+        class="fr.loria.eclipse.aircube.ui.preferences.AircubePreferencePage"
+        id="fr.loria.eclipse.aircube.ui.preferences.AircubePreferencePage"
+        name="Versions"/>
+		</extension>
+
+	<!-- Property pages -->
+	<extension
+			point="org.eclipse.ui.propertyPages">
+		<page
+			objectClass="org.eclipse.core.resources.IFile"
+            name="Tom Compilation"
+            class="fr.loria.eclipse.jtom.ui.properties.TomFilePropertyPage"
+            nameFilter="*.t"
+            id="fr.loria.eclipse.jtom.ui.properties.TomFilePropertyPage">
+		</page>
+	</extension>
+
+	<!-- Builders -->
+    <extension
+          point="org.eclipse.ui.propertyPages">
+       <page
+             class="fr.loria.eclipse.gom.properties.GOMFilePropertyPage"
+             id="fr.loria.eclipse.gom.properties.GOMPropertyPage"
+             name="Gom Compilation"
+             nameFilter="*.gom"
+             objectClass="org.eclipse.core.resources.IFile"/>
+    </extension>
+    <extension
+          id="GomBuilder"
+          name="Gom Builder"
+          point="org.eclipse.core.resources.builders">
+       <builder hasNature="false">
+          <run class="fr.loria.eclipse.gom.builders.GomBuilder"/>
+       </builder>
+    </extension>
+	<extension
+         id="TomBuilder"
+         name="Tom Builder"
+         point="org.eclipse.core.resources.builders">
+		<builder hasNature="false">
+			<run class="fr.loria.eclipse.jtom.builders.TomBuilder">
+			</run>
+		</builder>
+	</extension>
+	<extension
+         id="TomBuildAnalyser"
+         name="Tom Builder Analyser"
+         point="org.eclipse.core.resources.builders">
+		<builder hasNature="false">
+			<run class="fr.loria.eclipse.jtom.builders.TomBuildAnalyser">
+			</run>
+		</builder>
+	</extension>
+   	
+	<!-- Pop-up Menu-->
+   	<extension
+			point="org.eclipse.ui.popupMenus">
+		<objectContribution
+            objectClass="org.eclipse.core.resources.IFile"
+            nameFilter="*.t"
+            id="fr.loria.eclipse.jtom.popup.actions.TomPopupBuilder">
+			<action
+				label="Compile with Tom"
+				icon="icons/BigTom.gif"
+               	class="fr.loria.eclipse.aircube.core.popup.actions.PopupBuilder"
+               	menubarPath="other"
+               	enablesFor="1"
+               	id="fr.loria.eclipse.jtom.popup.actions.TomPopupBuilder.Action">
+         	</action>
+      	</objectContribution>
+   	</extension>
+
+   	<extension
+			point="org.eclipse.ui.popupMenus">
+		<objectContribution
+        adaptable="true"
+        id="fr.loria.eclipse.jtom.popup.actions.MappingGeneratorPopupBuilderJava"        
+        nameFilter="*.class"
+        objectClass="org.eclipse.core.resources.IFile">
+			<action
+				label="Generate Tom Mappings..."
+				icon="icons/TomMappings.gif"
+               	class="fr.loria.eclipse.aircube.core.popup.actions.PopupBuilder"
+               	menubarPath="other"               	
+               	id="fr.loria.eclipse.jtom.popup.actions.MappingGeneratorPopupBuilderJava.Action">
+         	</action>
+      	</objectContribution>
+   	</extension>
+
+   	<extension
+			point="org.eclipse.ui.popupMenus">
+		<objectContribution
+        adaptable="true"
+        id="fr.loria.eclipse.jtom.popup.actions.MappingGeneratorPopupBuilderFolder"
+        objectClass="org.eclipse.core.resources.IFolder">
+			<action
+				label="Generate Tom Mappings..."
+				icon="icons/TomMappings.gif"
+               	class="fr.loria.eclipse.aircube.core.popup.actions.PopupBuilder"
+               	menubarPath="other"               	
+               	id="fr.loria.eclipse.jtom.popup.actions.MappingGeneratorPopupBuilderFolder.Action">
+         	</action>
+      	</objectContribution>
+   	</extension>
+
+   
+	<!-- Define the main book for online help -->
+    <extension
+          point="org.eclipse.ui.popupMenus">
+       <objectContribution
+             id="fr.loria.eclipse.gom.popup.actions.GomPopupBuilder"
+             nameFilter="*.gom"
+             objectClass="org.eclipse.core.resources.IFile">
+          <action
+                class="fr.loria.eclipse.aircube.core.popup.actions.PopupBuilder"
+                enablesFor="1"
+                icon="icons/BigGOM.gif"
+                id="fr.loria.eclipse.gom.popup.actions.GomPopupBuilder.Action"
+                label="Compile with Gom"
+                menubarPath="other"/>
+       </objectContribution>
+    </extension>
+   	<extension
+			point="org.eclipse.help.toc">
+		<toc
+			file="help.xml"
+            primary="true">
+      	</toc>
+   	</extension>
+
+	<!-- TOM Wizard-->
+   	<extension
+    	     point="org.eclipse.ui.newWizards">
+      	<category
+			name="%PluginWizard.tomCategoryName"
+            id="fr.loria.eclipse.jtom.ui.wizards">
+      	</category>
+      
+		<!-- Tom project -->
+		<wizard
+            name="%ProjectCreationWizard.title"
+            id="fr.loria.eclipse.jtom.ui.wizards.javatomproject"
+            category="fr.loria.eclipse.jtom.ui.wizards"
+            class="fr.loria.eclipse.jtom.ui.wizards.TomProjectCreationWizard"
+            icon="icons/newtomprj_wiz.gif"
+            finalPerspective="org.eclipse.jdt.ui.JavaPerspective"
+            project="true"
+            preferredPerspectives="org.eclipse.jdt.ui.JavaPerspective">
+         	<description>
+            	%ProjectCreationWizard.description
+         	</description>
+         	<projectsetup>
+				<nature id="org.eclipse.jdt.core.javanature"/>
+				<builder
+                  id="fr.loria.eclipse.tom.GomBuilder">
+            	</builder>				
+            	<builder
+                  id="fr.loria.eclipse.tom.TomBuilder">
+            	</builder>
+            	<builder
+                  id="org.eclipse.jdt.core.javabuilder">
+            	</builder>
+            	<builder
+                  id="fr.loria.eclipse.tom.TomBuildAnalyser">
+            	</builder>
+            	<library
+                  pluginId="fr.loria.eclipse.tom"
+                  type="jar"
+                  src="lib/aircube-bundle.jar">
+            	</library>
+			</projectsetup> 
+		</wizard>
+		<!-- Tom file Wizard-->
+      	<wizard
+            	name="%FileCreationWizard.title"
+            	icon="icons/BigTom.gif"
+            	category="fr.loria.eclipse.jtom.ui.wizards"
+            	class="fr.loria.eclipse.jtom.ui.wizards.TomFileCreationWizard"
+            	id="fr.loria.eclipse.jtom.ui.wizards.javatomclass">
+         	<description>
+            	%FileCreationWizard.description
+         	</description>
+      	</wizard>
+   	</extension>
+   
+	<!-- Tom Editor -->
+    <extension
+          point="org.eclipse.ui.newWizards">
+       <wizard
+             category="fr.loria.eclipse.jtom.ui.wizards"
+             class="fr.loria.eclipse.gom.wizards.GOMFileCreationWizard"
+             icon="icons/BigGOM.gif"
+             id="fr.loria.eclipse.gom.wizards.GOMFileCreationWizard"
+             name="Gom File">
+          <description/>
+       </wizard>
+    </extension>
+   	<extension
+         	point="org.eclipse.ui.editors">
+		<editor
+            name="Tom Editor"
+            extensions="t"
+            icon="icons/BigTom.gif"
+            class="fr.loria.eclipse.jtom.editor.TomEditor"
+            id="fr.loria.eclipse.jtom.editor.TomEditor"
+            contributorClass="fr.loria.eclipse.jtom.editor.TomActionContributor"
+            symbolicFontName="org.eclipse.jdt.ui.editors.textfont">
+      	</editor>
+  <editor
+        class="fr.loria.eclipse.gom.editor.GomEditor"
+        default="true"
+        extensions="gom"
+        icon="icons/BigGOM.gif"
+        id="fr.loria.eclipse.gom.editor.GomEditor"
+        name="Gom Editor"
+        symbolicFontName="org.eclipse.jdt.ui.editors.textfont">
+  </editor>
+   	</extension>
+   <extension
+         id="fr.loria.eclipse.gom.JavaDocumentSetupParticipant"
+         name="Gom Setup Participant"
+         point="org.eclipse.core.filebuffers.documentSetup">
+      <participant
+            class="fr.loria.eclipse.gom.editor.GomDocumentSetupParticipant"
+            extensions="gom">
+      </participant>
+   </extension>
+   	<extension
+			id="fr.loria.eclipse.jtom.JavaDocumentSetupParticipant"
+        	name="Tom Setup Participant"
+         	point="org.eclipse.core.filebuffers.documentSetup">
+		<participant
+            extensions="t"
+            class="fr.loria.eclipse.jtom.editor.TomDocumentSetupParticipant">
+		</participant>
+	</extension>
+   	<!-- Templates -->
+   	<extension
+         	point="org.eclipse.ui.editors.templates">
+      	<contextType
+            name="%tom.contentType.name"
+            class="fr.loria.eclipse.jtom.editor.template.TomContextType"
+            id="fr.loria.eclipse.jtom.template.tom">
+      	</contextType>
+      	<resolver
+            name="%tom.resolvers.include"
+            type="include"
+            icon="icons/BigTom.gif"
+            description="%tom.resolvers.inlude.description"
+            contextTypeId="fr.loria.eclipse.jtom.template.tom"
+            class="fr.loria.eclipse.jtom.editor.template.TomIncludeVariableResolver">
+      	</resolver>
+      	<resolver
+            name="%tom.resolvers.sort"
+            type="sort"
+            icon="icons/BigTom.gif"
+            description="%tom.resolvers.sort.description"
+            contextTypeId="fr.loria.eclipse.jtom.template.tom"
+            class="fr.loria.eclipse.jtom.editor.template.TomVariableResolver">
+      	</resolver>
+      	<resolver
+            name="%tom.resolvers.op"
+            type="op"
+            icon="icons/BigTom.gif"
+            description="%tom.resolvers.op.description"
+            contextTypeId="fr.loria.eclipse.jtom.template.tom"
+            class="fr.loria.eclipse.jtom.editor.template.TomVariableResolver">
+      	</resolver>
+      	<include
+			file="templates/tom.xml"
+			translations="templates/tom.properties">
+      	</include>
+   	</extension>
+	<!--<extension
+         point="org.eclipse.ui.editors.documentProviders">
+      <provider
+            extensions="t"
+            class="fr.loria.eclipse.jtom.editor.TomDocumentProvider"
+            id="fr.loria.eclipse.jtom.editor.TomDocumentProvider">
+      </provider>
+   </extension>   -->
+	
+	<!-- TOM Marker -->
+	<extension
+         	id="tomFailureMarker"
+         	name="tomFailureMarker"
+         	point="org.eclipse.core.resources.markers">
+		<super
+			type="org.eclipse.core.resources.problemmarker">
+      	</super>
+      	<persistent value="true">
+      	</persistent>
+   	</extension>
+   	<extension
+         	point="org.eclipse.ui.ide.markerImageProviders">
+      	<imageprovider
+            markertype="fr.loria.eclipse.tom.tomFailureMarker"
+            icon="icons/tom_failure.gif"
+            id="fr.loria.eclipse.tom.imageprovider1">
+      	</imageprovider>
+   	</extension>
+    <extension
+    	     point="org.eclipse.ui.editors.annotationTypes">
+      	<type
+            super="org.eclipse.ui.workbench.texteditor.error"
+            markerType="fr.loria.eclipse.tom.tomFailureMarker"
+            name="fr.loria.eclipse.tom.tomFailureAnnotation"
+            markerSeverity="2">
+      	</type>
+   	</extension>
+   	<extension
+         	point="org.eclipse.ui.editors.markerAnnotationSpecification">
+      	<specification
+            icon="icons/tom_failure.gif"
+            annotationType="fr.loria.eclipse.tom.tomFailureAnnotation">
+      	</specification>
+   	</extension>
+    <extension
+          point="org.eclipse.ui.intro.configExtension">
+       <configExtension
+             content="$nl$/intro/tutorialsExtensionContent.xml"
+             configId="org.eclipse.platform.introConfig"/>
+    </extension>
+    <extension
+          point="org.eclipse.ui.cheatsheets.cheatSheetContent">
+       <cheatsheet
+             contentFile="$nl$/cheatsheets/HelloWorld.xml"
+             name="%tom.cheatsheet.helloworld.name"
+             id="fr.loria.eclipse.tom.helloworld"/>
+    </extension>
+    <extension
+          point="org.eclipse.ant.core.extraClasspathEntries">
+       <extraClasspathEntry library="tom-ant.jar"/>
+    </extension>
+    <extension
+          point="org.eclipse.ant.core.antTasks">
+       <antTask
+             class="fr.loria.eclipse.aircube.ant.TomAntTask"
+             library="lib/aircube-bundle.jar"
+             name="tom"/>
+       <antTask
+             class="fr.loria.eclipse.aircube.ant.GomAntTask"
+             library="lib/aircube-bundle.jar"
+             name="gom"/>
+    </extension>
+   <extension
+         point="org.eclipse.ltk.core.refactoring.renameParticipants">
+      <renameParticipant
+            class="fr.loria.eclipse.gom.refactoring.GomRenameParticipant"
+            id="fr.loria.eclipse.refactoring.RenameParticipant"
+            name="Gom Rename Participant">
+         <enablement>
+        <with variable="element">
+          <instanceof value="org.eclipse.core.resources.IFile"/>        
+        </with>
+     </enablement>
+      </renameParticipant>
+   </extension>
+   <extension
+         point="org.eclipse.ltk.core.refactoring.deleteParticipants">
+      <deleteParticipant
+            class="fr.loria.eclipse.gom.refactoring.GomDeleteParticipant"
+            id="fr.loria.eclipse.refactoring.DeleteParticipant"
+            name="Gom Delete Participant">
+         <enablement>
+            <with variable="element">
+               <instanceof value="org.eclipse.core.resources.IFile"/>
+            </with>
+         </enablement>
+      </deleteParticipant>
+   </extension>
+   <extension
+         point="org.eclipse.ltk.core.refactoring.moveParticipants">
+      <moveParticipant
+            class="fr.loria.eclipse.gom.refactoring.GomMoveParticipant"
+            id="pluginMartin.moveParticipant1"
+            name="Gom Move Participant">
+         <enablement>
+            <with variable="element">
+               <instanceof value="org.eclipse.core.resources.IFile"/>
+            </with>
+         </enablement>
+      </moveParticipant>
+   </extension>
+   <extension
+         id="tom_textual_proposals"
+         name="Tom Proposal"
+         point="org.eclipse.jdt.ui.javaCompletionProposalComputer">
+      <javaCompletionProposalComputer
+            categoryId="textual_proposals"
+            class="fr.loria.eclipse.jtom.editor.completion.TomAndJavaCompletionProposalComputer">
+         <partition
+               type="__dftl_partition_content_type">
+         </partition>
+      </javaCompletionProposalComputer>
+   </extension>
+   <extension
+         point="org.eclipse.jdt.core.compilationParticipant">
+      <compilationParticipant
+            class="fr.loria.eclipse.jtom.compilation.TomCompilationParticipant"
+            id="fr.loria.eclipse.jtom.compilation.TomParticipant"
+            modifiesEnvironment="true">
+      </compilationParticipant>
+   </extension>
+   
+ 
+
+</plugin>

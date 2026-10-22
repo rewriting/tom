@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Build the strings example" default="build" basedir=".">
+  <import file="${basedir}/src/main/ant/common.xml"/>
+
+  <echo>project.build.directory   : ${project.build.directory}</echo>
+  <echo>examples.dir              : ${examples.dir}</echo>
+  <echo>basedir                   : ${basedir}</echo>
+	
+  <property name="example" value="strings"/>
+  <property name="distribute" value="yes"/>
+</project>
+
+
+

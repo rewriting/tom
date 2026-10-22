@@ -27,3 +27,9 @@ applications/quickcheck/src/tom/sort
 applications/quickcheck/src/system
 System.tom
 /src/tom/library/enumerator/nbproject/private/
+legacy/src/dist/
+legacy/src/build/
+legacy/src/gen/
+legacy/stable/dist/
+legacy/stable/build/
+legacy/stable/gen/

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<introContent>  
+  <extensionContent style="intro/css/tutorials.css" path="tutorials/page-content/jdtAnchor">
+    <group label="TOM Development" id="tom" style-id="tutorials-group">
+    
+      <link url="http://org.eclipse.ui.intro/showStandby?partId=org.eclipse.platform.cheatsheet&amp;input=fr.loria.eclipse.tom.helloworld"
+       label="Build TOM + Java application" id="tom-hello-world" style-id="tutorials-link">
+        <text>Create a project using TOM + Java that will print the famous "Hello World !"</text>
+      </link>
+      
+    </group>
+  </extensionContent>
+</introContent>

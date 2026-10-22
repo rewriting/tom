@@ -1,0 +1,15 @@
+module PlatformOption
+imports String int
+
+abstract syntax
+
+PlatformOption = PluginOption(Name:String, AltName:String, Description:String, Value:PlatformValue, AttrName:String)
+
+PlatformValue = BooleanValue(BooleanValue:PlatformBoolean)
+	      | StringValue(StringValue:String)
+	      | IntegerValue(IntegerValue:int)
+
+PlatformBoolean = True()
+		| False()
+
+PlatformOptionList = concPlatformOption(PlatformOption*)

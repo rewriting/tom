@@ -1,0 +1,119 @@
+.TH TOM 1 "tom-2.5"
+.SH "NAME"
+tom \- a pattern matching compiler
+
+.SH "SYNOPSIS"
+.IX Header "SYNOPSIS"
+.B tom
+.RI [ options ]
+.I sources[.t] ...
+.br
+.B tom.src
+.RI [ options ]
+.I sources[.t] ...
+
+.SH "DESCRIPTION"
+.IX Header "DESCRIPTION"
+Tom is a pattern matching compiler, developed at Inria. Tom is
+particularly well-suited for programming various transformations on
+trees/terms. The tool can be seen as a Yacc-like compiler translating
+patterns into executable pattern matching automata. Similarly to Yacc,
+when a match is found, the corresponding semantic action (a sequence
+of instructions written in C or Java) is triggered and executed.
+
+.SH "OPTIONS"
+.IX Header "OPTIONS"
+The options are used either to choose the action to be performed or to
+configure the building process. They are mostly the same in
+.B tom
+and
+.BR tom.src .
+
+.TP
+.BI -X\ <file>
+Defines an alternate XML configuration file
+.TP
+.BI --noTypeCheck
+Do not perform type checking
+.TP
+.BI -D,\ --noDeclaration
+Do not generate code for declarations
+.TP
+.BI -I,\ --import\ <path>
+Path for %include
+.TP
+.BI -c,\ --cCode
+Generate C code
+.TP
+.BI -j,\ --jCode
+Generate Java code
+.TP
+.BI --camlCode
+Generate Caml code
+.TP
+.BI -d,\ --destdir\ <directory>
+Specify where to place generated files
+.TP
+.BI -h,\ --help
+Display the list of all available options and exit.
+.TP
+.BI -i,\ --intermediate
+Generates intermediate files
+.TP
+.BI --noOutput
+Do not generate code
+.TP
+.BI -W,\ --wall
+Print all warnings
+.TP
+.BI -O,\ --optimize
+Generate optimized code
+.TP
+.BI -O2,\ --optimize2
+Use more agressive optimization techniques
+.TP
+.BI -o,\ --output\ <file>
+Set output file name
+.TP
+.BI -p,\ --pretty
+Generate readable code
+.TP
+.BI --protected
+Generate protected functions
+.TP
+.BI --noSyntaxCheck
+Do not perform syntax checking
+.TP
+.BI --noStatic
+Generate non static functions
+.TP
+.BI -l,\ --lazyType
+Use universal type
+.TP
+.BI -v,\ --verbose
+Set verbose mode on
+.TP
+.BI --verify
+Verify correctness of match compilation
+.TP
+.BI -V,\ --version
+Print version and exit.
+.PP
+
+.SH "BUGS"
+.IX Header "BUGS"
+Report them all...
+
+This page documents Tom version 2.5
+
+The homepage for Tom can be found at http://tom.loria.fr/.
+
+.SH "SEE ALSO"
+.IX Header "SEE ALSO"
+\&\fIjavac\fR\|(1),
+\fIjava\fR\|(1)
+
+.SH "AUTHORS"
+.IX Header "AUTHORS"
+See the AUTHORS file in distribution, or <http://tom.loria.fr/support.php>,
+for contributors to Tom.

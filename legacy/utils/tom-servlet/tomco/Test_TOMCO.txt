@@ -1,0 +1,256 @@
+public class HelloWorld {
+	public static void main(String argv[]) {
+		System.out.println("Hello World1");
+System.out.println("Hello World2");
+System.out.println("Hello World3");
+System.out.println("Hello World4");
+System.out.println("Hello World5");
+
+	}
+}
+
+-----------------------------------------------------------------------------------------------
+
+public class HelloWorld {
+	public static void main(String argv[]) {
+		for (int i = 0 ; i< 10000000 ; i ++){
+			System.out.println("Hello World");
+		}
+	}
+}
+
+------------------------------------------------------------------------------------------------
+import main.peano.types.*;
+  public class Main {
+  %gom {
+    module Peano
+    abstract syntax
+    Nat = zero()
+        | suc(pred:Nat)
+        | plus(x1:Nat, x2:Nat)
+  }
+  public final static void main(String[] args) {
+    Nat z   = `zero();
+    Nat one = `suc(z);
+    System.out.println(z);
+    System.out.println(one);
+  }
+}
+------------------------------------------------------------------------------------------------
+import main.peano.types.*;
+  public class Main {
+  %gom {
+    module Peano
+    abstract syntax
+    Nat = zero()
+        | suc(pred:Nat)
+        | plus(x1:Nat, x2:Nat)
+  }
+  public final static void main(String[] args) {
+    Nat two = `plus(suc(zero()),suc(zero()));
+    System.out.println(two);
+    two = evaluate(two);
+    System.out.println(two);
+  }
+  public static Nat evaluate(Nat n) {
+    %match(n) {
+      plus(x, zero()) -> { return `x; }
+      plus(x, suc(y)) -> { return `suc(plus(x,y)); }
+    }
+    return n;
+  }
+}
+
+------------------------------------------------------------------------------------------------
+import gates.logic.types.*;
+  public class Gates {
+    %gom {
+      module Logic
+        imports int
+        abstract syntax
+        Bool = Input(n:int)
+             | True()
+             | False()
+             | Not(b:Bool)
+             | Or(b1:Bool, b2:Bool)
+             | And(b1:Bool, b2:Bool)
+             | Nand(b1:Bool, b2:Bool)
+             | Xor(b1:Bool, b2:Bool)
+ 
+        module Logic:rules() {
+          Not(a)   -> Nand(a,a)
+          Or(a,b)  -> Nand(Not(a),Not(b))
+          And(a,b) -> Not(Nand(a,b))
+          Xor(a,b) -> Or(And(a,Not(b)),And(Not(a),b))
+          Nand(False(),_)     -> True()
+          Nand(_,False())     -> True()
+          Nand(True(),True()) -> False()
+        }
+    }
+    public final static void main(String[] args) {
+    Bool b = `Xor(True(),False());
+    System.out.println("b = " + b);
+  }
+}
+// RESULTAT
+Construction fichier End
+line 1:21 no viable alternative at character '\r'
+line 2:41 no viable alternative at character '\r'
+line 3:36 no viable alternative at character '\r'
+line 4:53 no viable alternative at character '\r'
+line 5:39 no viable alternative at character '\r'
+line 6:39 no viable alternative at character '\r'
+
+------------------------------------------------------------------------------------------------
+public class HelloWorld {
+  %include { string.tom }
+    public final static void main(String[] args) {
+    String who = "World";
+    %match(who) {
+      "World" -> { System.out.println("Hello " + who); }
+      _       -> { System.out.println("Don't panic"); }
+    }
+  }
+}
+
+------------------------------------------------------------------------------------------------
+public class HelloWorld {
+  %include { string.tom }
+    public final static void main(String[] args) {
+    String who = "World";
+    matchblock: {
+      %match(who) {
+        "World" -> { System.out.println("Hello " + who);
+                     break matchblock;
+                   }
+        _       -> { System.out.println("Don't panic"); }
+      }
+    }
+  }
+}
+
+------------------------------------------------------------------------------------------------
+public class HelloWorld {
+  %include { string.tom }
+  public final static void main(String[] args) {
+    %match("Hello") {
+      concString(_*,'e',_*) -> { System.out.println("we have found a 'e'"); }
+    }
+  }
+}
+
+------------------------------------------------------------------------------------------------
+public class StringMatching {
+  %include { string.tom }
+    public final static void main(String[] args) {
+    String s = "abcabc";
+    %match(s) {
+      concString(_*,x,_*,x,_*)    -> { System.out.println("x = " + `x); }
+      concString('a',_*,y,_*,'c') -> { System.out.println("y = " + `y); }
+      concString(C1*,'abc',C2*)   -> { System.out.println("C1 = " + `C1*); }
+      concString(_*,z@'bc',_*)    -> { System.out.println("z = " + `z); }
+      concString(_*,L*,_*,L*,_*)  -> { if(`L*.length() > 0) {
+                                        System.out.println("L = " + `L*); } }
+    }
+  }
+}
+
+------------------------------------------------------------------------------------------------
+public class StringMatching2 {
+  %include { string.tom }
+  
+  public static boolean pal(String s){
+		%match(s){
+			concString() -> {return true;}
+			concString(x) -> {return true;}
+			concString(x,y*,x) -> {return pal(`y);}
+		}
+		return false;
+}
+    public final static void main(String[] args) {
+    	String []tabPalindrome=new String[]{"anna","eve","toi"};
+    	for (int i=0; i<tabPalindrome.length ; i++){
+    		if (pal(tabPalindrome[i])){
+    			System.out.println(tabPalindrome[i]+" est un palindrome");
+    		}else{
+    			System.out.println(tabPalindrome[i]+" n'est pas un palindrome");
+    		}
+    	}
+    }
+}
+
+
+------------------------------------------------------------------------------------------------
+
+import list1.list.types.*;
+public class List1 {
+  %gom {
+    module List
+    abstract syntax
+    E = a()
+      | b()
+      | c()
+    L = f( E* )
+   }
+   
+   public static L removeDouble(L l) {
+  %match(l) {
+    f(X1*,x,x,X2*) -> {
+      return removeDouble(`f(X1*,x,X2*));
+    }
+  }
+  return l;
+}
+
+public static L swapSort(L l) {
+  %match(l) {
+    f(X*,e1,Z*,e2,Y*) -> {
+      if(`gt(e1,e2)) {
+        return `swapSort(f(X*,e2,Z*,e1,Y*));
+      }
+    }
+  }
+  return l;
+}
+private static boolean gt(E e1, E e2) {
+  return e1.toString().compareTo(e2.toString()) > 0;
+}
+
+public final static void main(String[] args) {
+  L l = `f(a(),b(),c(),a(),b(),c(),a());
+  L res1 = swapSort(l);
+  L res2 = removeDouble(res1);
+  System.out.println(" l       = " + l);
+  System.out.println("sorted l = " + res1);
+  System.out.println("single l = " + res2);
+}
+}
+
+
+------------------------------------------------------------------------------------------------
+
+import main.example.types.*;
+import tom.library.sl.*;
+  public class Main {
+    %gom {
+      module Example
+      abstract syntax
+      Term = a() | b() | f(x:Term)
+    }
+    %include { sl.tom }
+    public final static void main(String[] args) {
+      try {
+        Term t1 = `a();
+        Term t2 = (Term) `Trans1().visit(t1);
+        System.out.println("t2 = " + t2);
+      } catch(VisitFailure e) {
+        System.out.println("the strategy failed");
+      }
+    }
+    %strategy Trans1() extends Fail() {
+      visit Term {
+        a() -> b()
+      }
+    }
+}
+

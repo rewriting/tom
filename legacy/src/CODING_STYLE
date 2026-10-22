@@ -1,0 +1,30 @@
+* use Java coding conventions
+
+* do not use abbreviations in names (variables, functions, files, etc.)
+
+* always use braces:
+  if(c) {
+    then part
+  } else {
+    else part
+  }
+
+* use space between ')' and '{':
+  %match(s) {
+    p -> { ... }
+  }
+
+* do not use space between keyword (if, for, while, etc.) and '(':
+  if(test) {
+    ...
+  }
+
+* use 2 spaces (not tabulation) for indenting
+
+* do not write lines longer than 80 columns. Vi(m) users can add these lines to
+  their ~/.vimrc file :
+set textwidth=79 "to have an automatic line break
+:hi ColorColumn ctermbg=darkgrey "or another color
+set colorcolumn=80 "to show a vertical limit
+
+* TO BE COMPLETED -- PLEASE CONTRIBUTE

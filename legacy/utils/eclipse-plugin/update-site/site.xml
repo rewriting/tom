@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <description name="Tom-Eclipse plugin update site" url="http://tom.loria.fr/eclipse-update/">
+      Tom feature
+   </description>
+   <feature url="features/fr.loria.eclipse.tom_2.10.0.jar" id="fr.loria.eclipse.tom" version="2.10">
+      <category name="Tom"/>
+   </feature>
+   <feature url="features/fr.loria.eclipse.tom_2.9.0.jar" id="fr.loria.eclipse.tom" version="2.9">
+      <category name="Tom"/>
+   </feature>
+   <category-def name="Tom" label="Tom"/>
+</site>

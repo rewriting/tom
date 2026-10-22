@@ -1,0 +1,248 @@
+%include { ../sl.tom }
+%include { ../util/types/Map.tom }
+%include { ../adt/bytecode/Bytecode.tom }
+
+/**
+ * This strategy fills in the `Map' m with the position 
+ * corresponding to each `Anchor'.
+ * Thus, we can retrieve the position from a `Label'.
+ * @param m the map to be filled.
+ */
+
+%strategy BuildLabelMap(m:Map) extends Identity() {
+  visit InstructionList {
+    ConsInstructionList(Anchor(l), _) -> {
+      m.put(`l, getEnvironment().getPosition());
+    }
+  }
+}
+
+/**
+ * `OneCfg' stands for OneControlFlowGraph.
+ * This works as the classical `One' strategy but is
+ * adapted for a ControlFlowGraph run.
+ * (i.e. a `Goto' instruction has one child : the one to jump to;
+ * a `IfXX' instruction has two children : the one which
+ * satisfies the expression, and the other...)
+ * @param s the strategy to be applied on each child.
+ * @param m the label map (see the BuildLabelMap strategy).
+ */
+
+%strategy OneCfg(s:Strategy, m:Map) extends Identity() {
+  visit InstructionList {
+    ConsInstructionList(Goto(l),_) -> {
+      tom.library.sl.Position p = (tom.library.sl.Position) (m.get(`l));
+      tom.library.sl.Position current = getEnvironment().getPosition();
+      getEnvironment().followPath(p.sub(current));
+      s.visit(getEnvironment());
+      if(getEnvironment().getStatus() == Environment.SUCCESS) {
+        getEnvironment().followPath(current.sub(p));
+      } else {
+        //do not take in account the changes 
+        getEnvironment().followPathLocal(current.sub(p));
+      }
+      return (InstructionList) getEnvironment().getSubject();
+    }
+
+    ConsInstructionList((Ifeq|Ifne|Iflt|Ifge|Ifgt|Ifle|
+          If_icmpeq|If_icmpne|If_icmplt|If_icmpge|If_icmpgt|If_icmple|
+          If_acmpeq|If_acmpne|Jsr|Ifnull|Ifnonnull)(l),_) -> {
+      tom.library.sl.Position p = (tom.library.sl.Position) (m.get(`l));
+      tom.library.sl.Position current = getEnvironment().getPosition();
+      getEnvironment().followPath(p.sub(current));
+      s.visit(getEnvironment());
+      if(getEnvironment().getStatus() == Environment.SUCCESS) {
+        getEnvironment().followPath(current.sub(p));
+        return (InstructionList) getEnvironment().getSubject();
+      } else {
+        //do not take in account the changes 
+        getEnvironment().followPathLocal(current.sub(p));
+      }
+    }
+
+    ConsInstructionList((Tableswitch|Lookupswitch)[dflt=dflt, labels=labels],_) -> {
+      LabelNodeList labelList = `labels;
+      %match(labelList) {
+        LabelNodeList(_*, x, _*) -> {
+          tom.library.sl.Position p = (tom.library.sl.Position) (m.get(`x));
+          tom.library.sl.Position current = getEnvironment().getPosition();
+          getEnvironment().followPath(p.sub(current));
+          s.visit(getEnvironment());
+          if(getEnvironment().getStatus() == Environment.SUCCESS) {
+            getEnvironment().followPath(current.sub(p));
+            return (InstructionList) getEnvironment().getSubject();
+          } else {
+            //do not take in account the changes 
+            getEnvironment().followPathLocal(current.sub(p));
+          }
+        }
+      }
+      tom.library.sl.Position p = (tom.library.sl.Position) (m.get(`dflt));
+      tom.library.sl.Position current = getEnvironment().getPosition();
+      getEnvironment().followPath(p.sub(current));
+      s.visit(getEnvironment());
+      if(getEnvironment().getStatus() == Environment.SUCCESS) {
+        getEnvironment().followPath(current.sub(p));
+        return (InstructionList) getEnvironment().getSubject();
+      } else {
+        //do not take in account the changes 
+        getEnvironment().followPathLocal(current.sub(p));
+      }
+
+    }
+
+    // Visit the next instruction.
+    //only if the tail of the list is not empty
+    ConsInstructionList(_,!InstructionList()) -> {
+      getEnvironment().down(2);
+      s.visit(getEnvironment());
+      getEnvironment().up();
+    }
+  }
+}
+
+/**
+ * `AllCfg' stands for AllControlFlowGraph.
+ * This works as the classical `All' strategy but is
+ * adapted for a ControlFlowGraph run.
+ * (i.e. a `Goto' instruction has one child : the one to jump to;
+ * a `IfXX' instruction has two children : the one which
+ * satisfies the expression, and the other...)
+ * @param s the strategy to be applied on each child.
+ * @param m the label map (see the BuildLabelMap strategy).
+ */
+
+%strategy AllCfg(s:Strategy, m:Map) extends Identity() {
+  visit InstructionList {
+
+    ConsInstructionList(Goto(l),_) -> {
+      tom.library.sl.Position p = (tom.library.sl.Position) (m.get(`l));
+      tom.library.sl.Position current = getEnvironment().getPosition();
+      getEnvironment().followPath(p.sub(current));
+      s.visit(getEnvironment());
+      if(getEnvironment().getStatus() == Environment.SUCCESS) {
+        getEnvironment().followPath(current.sub(p));
+      } else {
+        //do not take in account the changes 
+        getEnvironment().followPathLocal(current.sub(p));
+      }         
+      return (InstructionList) getEnvironment().getSubject();
+    }
+
+    ConsInstructionList((Ifeq|Ifne|Iflt|Ifge|Ifgt|Ifle|
+          If_icmpeq|If_icmpne|If_icmplt|If_icmpge|If_icmpgt|If_icmple|
+          If_acmpeq|If_acmpne|Jsr|Ifnull|Ifnonnull)(l),_) -> {
+      tom.library.sl.Position p = (tom.library.sl.Position) (m.get(`l));
+      tom.library.sl.Position current = getEnvironment().getPosition();
+      getEnvironment().followPath(p.sub(current));
+      s.visit(getEnvironment());
+      if(getEnvironment().getStatus() == Environment.SUCCESS) {
+        getEnvironment().followPath(current.sub(p));
+      } else {
+        //do not take in account the changes 
+        getEnvironment().followPathLocal(current.sub(p));
+      }         
+    }
+
+    ConsInstructionList((Tableswitch|Lookupswitch)[dflt=dflt, labels=labels],_) -> {
+      LabelNodeList labels = `labels;
+      %match(labels) {
+        LabelNodeList(_*, x, _*) -> {
+          tom.library.sl.Position p = (tom.library.sl.Position) (m.get(`x));
+          tom.library.sl.Position current = getEnvironment().getPosition();
+          getEnvironment().followPath(current.sub(p));
+          s.visit(getEnvironment());
+          if(getEnvironment().getStatus() == Environment.SUCCESS) {
+            getEnvironment().followPath(current.sub(p));
+          } else {
+            //do not take in account the changes 
+            getEnvironment().followPathLocal(current.sub(p));
+          }     
+        }         
+      }
+      tom.library.sl.Position p = (tom.library.sl.Position) (m.get(`dflt));
+      tom.library.sl.Position current = getEnvironment().getPosition();
+      getEnvironment().followPath(p.sub(current));
+      s.visit(getEnvironment());
+      if(getEnvironment().getStatus() == Environment.SUCCESS) {
+        getEnvironment().followPath(current.sub(p));
+      } else {
+        //do not take in account the changes 
+        getEnvironment().followPathLocal(current.sub(p));
+      }
+    }
+
+    // Visit the next instruction.
+    //only if the tail of the list is not empty
+    ConsInstructionList(_,!InstructionList()) -> {
+      getEnvironment().down(2);
+      s.visit(getEnvironment());
+      getEnvironment().up();
+    }
+  }
+}
+
+/**
+ * Adds one to the current node mark.
+ * @param map the map containing all instructions marks.
+ */
+%strategy Mark(map:Map) extends Identity() {
+  visit InstructionList {
+    c@_ -> {
+      Object o = map.get(`c);
+      int value = 1;
+      if(o != null)
+        value = ((Integer)o).intValue() + 1;
+      map.put(`c, Integer.valueOf(value));
+    }
+  }
+}
+
+/**
+ * Substract one to the current node mark.
+ * @param map the map containing all instructions marks.
+ */
+%strategy UnMark(map:Map) extends Identity() {
+  visit InstructionList {
+    c@_ -> {
+      Object o = map.get(`c);
+      if(o == null) {
+        throw new tom.library.sl.VisitFailure();
+      }
+      int value = ((Integer)o).intValue() - 1;
+      map.put(`c, Integer.valueOf(value));
+    }
+  }
+}
+
+/**
+ * Indicates if the current node is marked (>0) or not.
+ * @param map the map containing all instructions marks.
+ */
+%strategy IsMarked(map:Map) extends Identity() {
+  visit InstructionList {
+    c@_ -> {
+      Object o = map.get(`c);
+      if(o == null || ((Integer)o).intValue() <= 0)
+        throw new tom.library.sl.VisitFailure();
+    }
+  }
+}
+
+/**
+ * This strategy opertor corresponds to temporal operator AU in CTL.
+ * Identity() can be interpreted as True and Failure as False
+ * It succeeds if s1 is "True" until s2 is "True".
+ * @param s1 the first strategy.
+ * @param s2 the second strategy.
+ * @param m the label map (see the BuildLabelMap strategy).
+ * @param t the complete list of instructions
+ */
+%op Strategy AUMap(s1:Strategy, s2:Strategy, m:Map) {
+  make(s1,s2,m) { `mu(MuVar("x"),Choice(s2,Sequence(s1,AllCfg(MuVar("x"),m)))) }
+}
+
+%op Strategy AGMap(s:Strategy, m:Map) {
+  make(s,m) { `mu(MuVar("x"),Sequence(s,AllCfg(MuVar("x"),m))) }
+}
+

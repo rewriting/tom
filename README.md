@@ -7,6 +7,14 @@
   on trees/terms.
 
 
+## Two versions in this repository
+
+- [`legacy/`](legacy/README.md) — the original Tom+Java compiler, exactly as
+  written by its human authors (frozen copy of commit `2918e95c7`).
+  Start there to install the historical Tom; see its README.
+- The repository root (`src/`, `stable/`, `tomgo/`) — the AI-assisted
+  extension of that compiler with a Go target.
+
 ## Documentation
 
 The documentation is available [here](doc/README.md)

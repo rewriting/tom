@@ -1,0 +1,57 @@
+
+%include { string.tom }
+
+%include { int.tom }
+
+%typeterm AlertList {
+  implement { tom.platform.adt.platformalert.types.AlertList }
+  is_sort(t) { ($t instanceof tom.platform.adt.platformalert.types.AlertList) }
+
+  equals(t1,t2) { ($t1==$t2) }
+
+}
+
+%typeterm Alert {
+  implement { tom.platform.adt.platformalert.types.Alert }
+  is_sort(t) { ($t instanceof tom.platform.adt.platformalert.types.Alert) }
+
+  equals(t1,t2) { ($t1==$t2) }
+
+}
+%op AlertList EmptyconcAlert() {
+  is_fsym(t) { ($t instanceof tom.platform.adt.platformalert.types.alertlist.EmptyconcAlert) }
+  make() { tom.platform.adt.platformalert.types.alertlist.EmptyconcAlert.make() }
+}
+
+%op AlertList ConsconcAlert(HeadconcAlert:Alert, TailconcAlert:AlertList) {
+  is_fsym(t) { ($t instanceof tom.platform.adt.platformalert.types.alertlist.ConsconcAlert) }
+  get_slot(HeadconcAlert, t) { $t.getHeadconcAlert() }
+  get_slot(TailconcAlert, t) { $t.getTailconcAlert() }
+  make(t0, t1) { tom.platform.adt.platformalert.types.alertlist.ConsconcAlert.make($t0, $t1) }
+}
+
+%op Alert Error(Message:String, File:String, Line:int) {
+  is_fsym(t) { ($t instanceof tom.platform.adt.platformalert.types.alert.Error) }
+  get_slot(Message, t) { $t.getMessage() }
+  get_slot(File, t) { $t.getFile() }
+  get_slot(Line, t) { $t.getLine() }
+  make(t0, t1, t2) { tom.platform.adt.platformalert.types.alert.Error.make($t0, $t1, $t2) }
+}
+
+%op Alert Warning(Message:String, File:String, Line:int) {
+  is_fsym(t) { ($t instanceof tom.platform.adt.platformalert.types.alert.Warning) }
+  get_slot(Message, t) { $t.getMessage() }
+  get_slot(File, t) { $t.getFile() }
+  get_slot(Line, t) { $t.getLine() }
+  make(t0, t1, t2) { tom.platform.adt.platformalert.types.alert.Warning.make($t0, $t1, $t2) }
+}
+
+
+%oplist AlertList concAlert(Alert*) {
+  is_fsym(t) { (($t instanceof tom.platform.adt.platformalert.types.alertlist.ConsconcAlert) || ($t instanceof tom.platform.adt.platformalert.types.alertlist.EmptyconcAlert)) }
+  make_empty() { tom.platform.adt.platformalert.types.alertlist.EmptyconcAlert.make() }
+  make_insert(e,l) { tom.platform.adt.platformalert.types.alertlist.ConsconcAlert.make($e,$l) }
+  get_head(l) { $l.getHeadconcAlert() }
+  get_tail(l) { $l.getTailconcAlert() }
+  is_empty(l) { $l.isEmptyconcAlert() }
+}

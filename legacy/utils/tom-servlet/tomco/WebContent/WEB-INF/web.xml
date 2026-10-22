@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" id="WebApp_ID" version="2.5">
+  <display-name>TOMCO</display-name>
+  <welcome-file-list>
+    <welcome-file>index.html</welcome-file>
+    <welcome-file>index.htm</welcome-file>
+    <welcome-file>index.jsp</welcome-file>
+    <welcome-file>default.html</welcome-file>
+    <welcome-file>default.htm</welcome-file>
+    <welcome-file>default.jsp</welcome-file>
+  </welcome-file-list>
+  <servlet>
+    <description></description>
+    <display-name>FormulaireServlet</display-name>
+    <servlet-name>FormulaireServlet</servlet-name>
+    <servlet-class>Servlet.FormulaireServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>FormulaireServlet</servlet-name>
+    <url-pattern>/FormulaireServlet</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>FormRServlet</display-name>
+    <servlet-name>FormRServlet</servlet-name>
+    <servlet-class>Servlet.FormRServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>FormRServlet</servlet-name>
+    <url-pattern>/FormRServlet</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>JarAppletServlet</display-name>
+    <servlet-name>JarAppletServlet</servlet-name>
+    <servlet-class>Servlet.JarAppletServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>JarAppletServlet</servlet-name>
+    <url-pattern>/JarAppletServlet</url-pattern>
+  </servlet-mapping>
+  <listener>
+    <listener-class>Conf.MyHttpSessionListener</listener-class>
+  </listener>
+  
+<session-config>
+	<session-timeout>60</session-timeout>
+</session-config>
+  
+</web-app>

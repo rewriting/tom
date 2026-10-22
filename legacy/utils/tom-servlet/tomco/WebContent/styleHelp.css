@@ -1,0 +1,74 @@
+body {
+	padding-left: 11em;
+	font-family: Georgia, "Times New Roman", Times, serif;
+	color: purple;
+	background-color: #FEE7F0;
+	font-size: small;
+	font-size-adjust: inherit;
+}
+
+ul.navbar {
+	list-style-type: none;
+	padding: 0;
+	margin: 0;
+	position: absolute;
+	top: 2em;
+	left: 1em;
+	width: 9em;
+}
+
+div#retour {
+	text-align: right;
+}
+
+div#retour a{
+	text-align: right;
+	color: blue;
+}
+
+h1 {
+	font-family: Helvetica, Geneva, Arial, SunSans-Regular, sans-serif;
+}
+
+h2 {
+	font-style: italic;
+	font-stretch: wider;
+	color: black;
+}
+
+dt {
+	font: serif;
+	font-style:oblique;
+	text-decoration: underline;
+	color: blue;
+}
+
+ul.navbar li {
+	background: #E67E30;
+	margin: 0.5em 0;
+	padding: 0.3em;
+	border-right: 1em solid olive;
+}
+
+ul.navbar a {
+	text-decoration: none;
+	color: white;
+}
+
+a:link {
+	color: white;
+}
+
+a:visited {
+	color: white;
+}
+
+
+div#webmaster {
+	margin-top: 2em;
+	padding-top: 2em;
+	border-top: thin dotted;
+	font-style: italic;
+	font-size: 10pt;
+	font-family: sans-serif;
+}

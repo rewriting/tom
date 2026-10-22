@@ -1,0 +1,7 @@
+to test the parser :
+
+cd ~/github/tom/src/build
+
+grun tom.engine.parser.antlr4.TomIsland start -gui < ~/github/tom/test/Peano.t 
+
+

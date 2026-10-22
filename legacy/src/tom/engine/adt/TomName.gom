@@ -1,0 +1,36 @@
+module TomName
+imports int
+abstract syntax
+TomName = Name(String:String)
+        | PositionName(NumberList:TomNumberList)
+        | EmptyName()
+        | AntiName(Name:TomName)
+
+TomNumber = MatchNumber(Integer:int)
+          | PatternNumber(Integer:int)
+          | ListNumber(Integer:int)
+          | IndexNumber(Integer:int)
+          | Begin(Integer:int)
+          | End(Integer:int)
+          | Save(Integer:int)
+          | Position(Integer:int)
+          | AbsVar(Integer:int)
+          | RenamedVar(AstName:TomName)
+          | NameNumber(AstName:TomName)
+
+TomNumberList = concTomNumber(TomNumber*)
+
+TomNameList = concTomName(TomName*)
+
+NameNumber:make(name) {
+  %match(name) {
+    PositionName(concTomNumber(p@Position[])) -> { return `p; }
+  }
+}
+
+concTomNumber:make_insert(e,l) {
+  %match(e) {
+    NameNumber(PositionName(concTomNumber(p*))) -> { return `concTomNumber(p*,l*); }
+  }
+}
+

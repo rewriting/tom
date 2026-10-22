@@ -1,0 +1,85 @@
+.TH GOM 1 "gom-2.5"
+.SH "NAME"
+gom \- a generator of canonical abstract syntax trees
+
+.SH "SYNOPSIS"
+.IX Header "SYNOPSIS"
+.B gom
+.RI [ options ]
+.I sources[.gom] ...
+.br
+.B gom.src
+.RI [ options ]
+.I sources[.gom] ...
+
+.SH "DESCRIPTION"
+.IX Header "DESCRIPTION"
+Gom is a generator of tree implementations in Java, allowing the definition of
+a preferred canonical form, using hooks or rules. The tree implementations Gom
+generates are characterized by strong typing, immutability (there is no way to
+manipulate them with side-effects), maximal subterm sharing and the ability to
+be used with Tom strategies.
+
+.SH "OPTIONS"
+.IX Header "OPTIONS"
+The options are used either to choose the action to be performed or to
+configure the building process. They are mostly the same in
+.B gom
+and
+.BR gom.src .
+
+.TP
+.BI -X\ <file>
+Defines an alternate XML configuration file
+.TP
+.BI -I,\ --import\ <path>
+Path searching includes
+.TP
+.BI -d,\ --destdir\ <directory>
+Specify where to place generated files
+.TP
+.BI -p,\ --package\ <package>
+Specify the package prefix to use in the generated files
+.TP
+.BI -h,\ --help
+Display the list of all available options and exit.
+.TP
+.BI -i,\ --intermediate
+Generates intermediate files
+.TP
+.BI -v,\ --verbose
+Set verbose mode on
+.TP
+.BI -sm,\ --strategies-mapping
+Enable strategy mapping support
+.TP
+.BI -tg,\ --termgraph
+Extend the signature for term-graphs
+.TP
+.BI -tp,\ --pointer
+Extend the signature for pointers
+.TP
+.BI -vv,\ --debug
+Set debug mode on (imply verbose mode)
+.TP
+.BI -V,\ --version
+Print version and exit.
+.PP
+
+.SH "BUGS"
+.IX Header "BUGS"
+Report them all...<https://gforge.inria.fr/projects/tom/>
+
+This page documents Gom version 2.5
+
+The homepage for Gom can be found at http://tom.loria.fr/.
+
+.SH "SEE ALSO"
+.IX Header "SEE ALSO"
+\&\fItom\fR\|(1),
+\fIjavac\fR\|(1)
+
+.SH "AUTHORS"
+.IX Header "AUTHORS"
+See the AUTHORS file in distribution, or <http://tom.loria.fr/support.php>,
+for contributors to Tom.

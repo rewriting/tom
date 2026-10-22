@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?NLS TYPE="org.eclipse.help.toc"?>
+
+<toc label="TOM Online Help"  topic="book.html"><!-- Accueil -->
+
+    <topic label="Overview" href="overview.html"/> <!-- Brief introduction -->
+    <topic label="Pattern matching programming" href="concepts/concept1.html" />
+	<topic label="Introduction to TOM" href="concepts/concept2.html" /> 
+	<topic label="Creating a new TOM project" href="config/createProject.html"/>
+	<topic label="Configure an existing JAVA project" href="config/configure.html"/>
+    <topic label="Basics on TOM plugin usage" href="config/basic.html"/>
+        
+    <topic label="Programming in TOM"  href="sample/tom.html">
+		<topic label="Builtin and %Match construct" href="sample/tom1.html"/>
+       	<topic label="A simple Address Book" href="sample/tom2.html"/>
+       	<topic label="List Matching and sorting" href="sample/tom3.html"/>
+       	<topic label="Mapping to existing structures" href="sample/tom4.html"/>
+    </topic>
+
+	<topic label="Tom Manuals"  href="ref/ref.html">
+		<topic label="Language Reference" href="ref/reference.html"/>
+		<topic label="Tom User's Guide" href="ref/guide.html"/>
+		<topic label="Complete Tom Tutorial" href="ref/tutorial.html"/>
+	</topic>
+	
+</toc>

@@ -1,0 +1,11 @@
+elan-users@loria.fr
+ldta@loria.fr
+manifico@loria.fr
+transformation-users@lists.gforge.inria.fr
+qsl_tous@loria.fr
+sts@lists.urchin.earth.li
+i4-all@rewerse.net
+EAPLS@JISCMAIL.AC.UK
+rewriting@ens-lyon.fr
+compilers@iecc·com
+gdr.gpl@imag.fr

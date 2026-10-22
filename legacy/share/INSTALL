@@ -1,0 +1,102 @@
+Installing TOM
+==============
+
+The binary distribution of Tom consists of the following directory layout:
+
+  tom
+   +--- bin (BSD Licence)
+   |
+   +--- lib 
+   |     +--- compiletime (not developed by the Tom project)
+   |     |     +--- ant-antlr          // ant task for antlr
+   |     |     +--- ant-contrib        // ant task for running regress tests
+   |     |     +--- ant-junit          
+   |     |     +--- ant-launcher
+   |     |     +--- ant                // to compile the project
+   |     |     +--- antlr3             // ant plugin for v3
+   |     |     +--- junit              // to test the system
+   |     |
+   |     +--- runtime (BSD Licence)
+   |     |     +--- shared-objects     // Factory of shared objects
+   |     |     +--- jjtraveler         // Visitable interface
+   |     |     +--- aterm              // ATerm library
+   |     |     +--- tom-library        // support for strategies, bytecode, viewer, and xml 
+   |     |     +--- emf                // support for Eclipse Modelling Framework
+   |     |     +--- Bytecode           // ADT for ASM Bytecode library
+   |     |     +--- TNode              // ADT for XML
+   |     |
+   |     +--- tom (GPL Licence)
+   |     |     +--- tom                // Tom compiler
+   |     |     +--- gom                // Gom compiler
+   |     |     +--- GomADT             // ADT for Gom 
+   |     |     +--- TomSignature       // ADT for Tom
+   |     |     +--- plugin-platform    // plugin platform
+   |     |     +--- PlatformAlert      // platform error messages
+   |     |     +--- PlatformOption     // platform options
+   |     |
+   |     +--- tools (not needed by the runtime, unless you use bytecode, term viewer, or xml supports)
+   |     |     +--- antlr-2.7.7        // to compile the Tom parser
+   |     |     +--- antlr-3.2          // to compile the Gom parser
+   |     |     +--- asm-3.0            // to manipulate bytecode
+   |     |     +--- grappa1_2          // to visualize terms
+   |     |     +--- xercesImpl         // for XML
+   |     |     +--- xml-apis           // for XML
+   |     |     +--- args4j-2.0.10      // for command line parsing
+   |     |     +--- commons-lang-2.4
+   |     
+   +--- share (BSD Licence)
+         +--- contrib
+         |
+         +--- man
+         |
+         +--- tom 
+               +--- adt
+               +--- c
+               +--- caml
+               +--- java
+
+
+ Only the bin/ and lib/ directories are required to run Tom.
+ To install Tom, choose a directory and copy the distribution file there. 
+ This directory will be known as TOM_HOME.
+
+Setup
+=====
+Before you can run Tom there is some additional set up you will need
+to do:
+  - Add the bin directory to your path.
+  - Set the TOM_HOME environment variable to the directory where you
+    installed Tom.
+  - JDK 1.5 or newer is needed.
+    Optionally, set the JAVA_HOME environment variable.
+    This should be set to the directory where your JDK is installed.
+
+Windows
+-------
+We assume that Tom is installed in C:\tom\. 
+The following steps are needed for setting up the environment:
+  - in the *User Variables* section 
+  - set JAVA_HOME to where Java JDK is installed (something like C:\Program Files\Java\jdk1.6.0_13)
+  - set TOM_HOME to C:\tom
+  - set CLASSPATH to .;%TOM_HOME%\lib\tom-runtime-full.jar
+  - set PATH to %Path%;%TOM_HOME%\bin;%JAVA_HOME%\bin
+
+For a detailed description of setting environment variables in Windows, 
+please refer to Windows documentation. For Windows XP, some information 
+can be found here :
+http://support.microsoft.com/default.aspx?scid=kb;en-us;310519&sd=tech
+
+Unix
+----
+Assume Tom is installed in ${HOME}/tom. The following sets up the
+environment:
+
+(bash)
+  export TOM_HOME=${HOME}/tom
+  export PATH=${TOM_HOME}/bin:${PATH}
+  export CLASSPATH=${TOM_HOME}/lib/tom-runtime-full.jar:${CLASSPATH}
+
+(csh)
+  setenv TOM_HOME ${HOME}/tom
+  set path=( $TOM_HOME/bin $path )
+  setenv CLASSPATH ${TOM_HOME}/lib/tom-runtime-full.jar:${CLASSPATH}

@@ -1,0 +1,58 @@
+********************************************
+   HOWTO generate the TOM Eclipse plugin
+********************************************
+
+Required :
+
+* a fresh update or checkout of jtom
+* Eclipse whose workspace contains the following 2 projects :
+	- jtom-eclipse
+	- tom-feature
+	
+	The simplest way to get these projects under Eclipse is to use the CVS Repository perspective 
+	or to use the new project wizard > CVS > Checkout project.
+	Nothing else is needed since the two projects should be configured to know each other.
+	
+Then follow these steps :
+
+*** Note: steps 1),  2) and 3) can be done by the 'prepare.plugin.(stable|src)' targets
+***       in the jtom project
+
+1) Run the target 'all' of the jtom/build.xml to create all stuff that may be
+   needed.
+2) Run the target 'bundle.src' or 'bundle.stable' in the jtom project that will
+   create aircube-bundle-(src|stable).jar from folder (src|stable) of jtom.
+3) Move the freshly created jar in the jtom-eclipse project (in lib) and rename
+   it aircube-bundle.jar
+   Copy also the Tom.xml, Gom.xml and GomAntlrAdaptor.xml files corresponding
+   to the tom version you will include in the plugin in jtom-eclipse/config
+   And the needed includes in jtom-eclipse/include
+4) Select Project > Clean > Clean All Projects.
+   This will erase all previously compiled classes and recompile everything.
+   If something that the plugin uses has changed (like a Tom sort whose
+   signature has evolved), errors will appears.
+5) Correct the errors ;)
+
+No more errors ? Great !
+
+The Tom plugin can now be tested.
+
+* Open the plugin.xml file in the jtom-eclipse project and selected the
+  Overview tab (at the bottom of the editor).
+* Click on 'Launch a runtime workbench' (with debug mode if you need to go
+  deeper in the code)
+  This will create a new Eclipse instance in which the plugin is deployed and 
+  can be tested 'as it will appears for the final user'
+
+Once the plugin is tested and works, you can now export the deployment jars.
+
+**** Remember to increment version number of each plugin project ****
+
+* Open the feature.xml file in the tom-feature project and select 'Content' tab
+* Remove the old plugin binding and select 'Add' to link the feature to the new plugin version
+* Change the version number of the feature
+* Click on 'Export' and choose option 'individual JAR archives for the Update site'
+* Choose the directory to export the jar files.
+
+That's it !
+
