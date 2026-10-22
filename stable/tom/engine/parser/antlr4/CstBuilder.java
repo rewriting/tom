@@ -1012,11 +1012,11 @@ public class CstBuilder extends TomIslandParserBaseListener {
    */
 
   private String getText(CstOptionList ol) {
-    { /* unamed block */{ /* unamed block */if ( (ol instanceof tom.engine.adt.cst.types.CstOptionList) ) {if ( (((( tom.engine.adt.cst.types.CstOptionList )ol) instanceof tom.engine.adt.cst.types.cstoptionlist.ConsConcCstOption) || ((( tom.engine.adt.cst.types.CstOptionList )ol) instanceof tom.engine.adt.cst.types.cstoptionlist.EmptyConcCstOption)) ) { tom.engine.adt.cst.types.CstOptionList  tomMatch2_end_4=(( tom.engine.adt.cst.types.CstOptionList )ol);do {{ /* unamed block */if (!( tomMatch2_end_4.isEmptyConcCstOption() )) { tom.engine.adt.cst.types.CstOption  tomMatch2_8= tomMatch2_end_4.getHeadConcCstOption() ;if ( ((( tom.engine.adt.cst.types.CstOption )tomMatch2_8) instanceof tom.engine.adt.cst.types.cstoption.Cst_OriginText) ) {
+    { /* unamed block */{ /* unamed block */if ( (ol instanceof tom.engine.adt.cst.types.CstOptionList) ) {if ( (((( tom.engine.adt.cst.types.CstOptionList )ol) instanceof tom.engine.adt.cst.types.cstoptionlist.ConsConcCstOption) || ((( tom.engine.adt.cst.types.CstOptionList )ol) instanceof tom.engine.adt.cst.types.cstoptionlist.EmptyConcCstOption)) ) { tom.engine.adt.cst.types.CstOptionList  tomMatch343_end_4=(( tom.engine.adt.cst.types.CstOptionList )ol);do {{ /* unamed block */if (!( tomMatch343_end_4.isEmptyConcCstOption() )) { tom.engine.adt.cst.types.CstOption  tomMatch343_8= tomMatch343_end_4.getHeadConcCstOption() ;if ( ((( tom.engine.adt.cst.types.CstOption )tomMatch343_8) instanceof tom.engine.adt.cst.types.cstoption.Cst_OriginText) ) {
 
 
-        return  tomMatch2_8.gettext() ;
-      }}if ( tomMatch2_end_4.isEmptyConcCstOption() ) {tomMatch2_end_4=(( tom.engine.adt.cst.types.CstOptionList )ol);} else {tomMatch2_end_4= tomMatch2_end_4.getTailConcCstOption() ;}}} while(!( (tomMatch2_end_4==(( tom.engine.adt.cst.types.CstOptionList )ol)) ));}}}}
+        return  tomMatch343_8.gettext() ;
+      }}if ( tomMatch343_end_4.isEmptyConcCstOption() ) {tomMatch343_end_4=(( tom.engine.adt.cst.types.CstOptionList )ol);} else {tomMatch343_end_4= tomMatch343_end_4.getTailConcCstOption() ;}}} while(!( (tomMatch343_end_4==(( tom.engine.adt.cst.types.CstOptionList )ol)) ));}}}}
 
 
     return "";

@@ -2,7 +2,7 @@
  * Tom Go mapping — Position.
  *
  * Mirrors mapping/java/Position.tom with the Go type
- * `*sl.Position` of tom/tomgo/stable/library/sl.
+ * `*sl.Position` of tom/library/sl.
  */
 %typeterm Position {
   implement { *sl.Position }

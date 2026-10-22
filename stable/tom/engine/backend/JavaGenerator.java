@@ -138,10 +138,10 @@ public class JavaGenerator extends CFamilyGenerator {
     while(!argList.isEmptyconcBQTerm()) {
       BQTerm arg = argList.getHeadconcBQTerm();
 matchBlock: {
-              { /* unamed block */{ /* unamed block */if ( (arg instanceof tom.engine.adt.code.types.BQTerm) ) {if ( ((( tom.engine.adt.code.types.BQTerm )arg) instanceof tom.engine.adt.code.types.bqterm.BQVariable) ) { tom.engine.adt.tomname.types.TomName  tomMatch107_1= (( tom.engine.adt.code.types.BQTerm )arg).getAstName() ;if ( ((( tom.engine.adt.tomname.types.TomName )tomMatch107_1) instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
+              { /* unamed block */{ /* unamed block */if ( (arg instanceof tom.engine.adt.code.types.BQTerm) ) {if ( ((( tom.engine.adt.code.types.BQTerm )arg) instanceof tom.engine.adt.code.types.bqterm.BQVariable) ) { tom.engine.adt.tomname.types.TomName  tomMatch120_1= (( tom.engine.adt.code.types.BQTerm )arg).getAstName() ;if ( ((( tom.engine.adt.tomname.types.TomName )tomMatch120_1) instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
 
 
-                  args = args+ tomMatch107_1.getString() ;
+                  args = args+ tomMatch120_1.getString() ;
                   break matchBlock;
                 }}}}{ /* unamed block */if ( (arg instanceof tom.engine.adt.code.types.BQTerm) ) {
 
@@ -173,10 +173,10 @@ matchBlock: {
       while(!argList.isEmptyconcBQTerm()) {
         BQTerm arg = argList.getHeadconcBQTerm();
 matchBlock: {
-              { /* unamed block */{ /* unamed block */if ( (arg instanceof tom.engine.adt.code.types.BQTerm) ) {if ( ((( tom.engine.adt.code.types.BQTerm )arg) instanceof tom.engine.adt.code.types.bqterm.BQVariable) ) { tom.engine.adt.tomname.types.TomName  tomMatch108_1= (( tom.engine.adt.code.types.BQTerm )arg).getAstName() ; tom.engine.adt.tomtype.types.TomType  tomMatch108_2= (( tom.engine.adt.code.types.BQTerm )arg).getAstType() ;if ( ((( tom.engine.adt.tomname.types.TomName )tomMatch108_1) instanceof tom.engine.adt.tomname.types.tomname.Name) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )tomMatch108_2) instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) { tom.engine.adt.tomtype.types.TargetLanguageType  tomMatch108_8= tomMatch108_2.getTlType() ;if ( ((( tom.engine.adt.tomtype.types.TargetLanguageType )tomMatch108_8) instanceof tom.engine.adt.tomtype.types.targetlanguagetype.TLType) ) {
+              { /* unamed block */{ /* unamed block */if ( (arg instanceof tom.engine.adt.code.types.BQTerm) ) {if ( ((( tom.engine.adt.code.types.BQTerm )arg) instanceof tom.engine.adt.code.types.bqterm.BQVariable) ) { tom.engine.adt.tomname.types.TomName  tomMatch121_1= (( tom.engine.adt.code.types.BQTerm )arg).getAstName() ; tom.engine.adt.tomtype.types.TomType  tomMatch121_2= (( tom.engine.adt.code.types.BQTerm )arg).getAstType() ;if ( ((( tom.engine.adt.tomname.types.TomName )tomMatch121_1) instanceof tom.engine.adt.tomname.types.tomname.Name) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )tomMatch121_2) instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) { tom.engine.adt.tomtype.types.TargetLanguageType  tomMatch121_8= tomMatch121_2.getTlType() ;if ( ((( tom.engine.adt.tomtype.types.TargetLanguageType )tomMatch121_8) instanceof tom.engine.adt.tomtype.types.targetlanguagetype.TLType) ) {
 
 
-                  s.append(TomBase.getTLCode(tomMatch108_8) + " " +  tomMatch108_1.getString() );
+                  s.append(TomBase.getTLCode(tomMatch121_8) + " " +  tomMatch121_1.getString() );
                   break matchBlock;
                 }}}}}}{ /* unamed block */if ( (arg instanceof tom.engine.adt.code.types.BQTerm) ) {
 
@@ -227,9 +227,9 @@ matchBlock: {
 
   protected String getFullQualifiedNameFromType(TomType type) {
     String result = null;
-    { /* unamed block */{ /* unamed block */if ( (type instanceof tom.engine.adt.tomtype.types.TomType) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )type) instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) { tom.engine.adt.tomtype.types.TargetLanguageType  tomMatch109_1= (( tom.engine.adt.tomtype.types.TomType )type).getTlType() ;if ( ((( tom.engine.adt.tomtype.types.TargetLanguageType )tomMatch109_1) instanceof tom.engine.adt.tomtype.types.targetlanguagetype.TLType) ) {
+    { /* unamed block */{ /* unamed block */if ( (type instanceof tom.engine.adt.tomtype.types.TomType) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )type) instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) { tom.engine.adt.tomtype.types.TargetLanguageType  tomMatch122_1= (( tom.engine.adt.tomtype.types.TomType )type).getTlType() ;if ( ((( tom.engine.adt.tomtype.types.TargetLanguageType )tomMatch122_1) instanceof tom.engine.adt.tomtype.types.targetlanguagetype.TLType) ) {
 
- return result =  tomMatch109_1.getString() ; }}}}}
+ return result =  tomMatch122_1.getString() ; }}}}}
 
     throw new RuntimeException("Should not be there: full qualified name of "+type+" is null");
   }
@@ -268,7 +268,7 @@ matchBlock: {
     //ReferenceClass(RefName:TomName,Fields:InstructionList)
     //Tracelink(Type:TomName,Name:TomName,ElementaryTransfoName:TomName,Expr:Expression,OrgTrack:Option)//BQTerm, then blocklist
     String getfunctionbody = "";
-    { /* unamed block */{ /* unamed block */if ( (refclassTInstructions instanceof tom.engine.adt.tominstruction.types.RefClassTracelinkInstructionList) ) {if ( (((( tom.engine.adt.tominstruction.types.RefClassTracelinkInstructionList )refclassTInstructions) instanceof tom.engine.adt.tominstruction.types.refclasstracelinkinstructionlist.ConsconcRefClassTracelinkInstruction) || ((( tom.engine.adt.tominstruction.types.RefClassTracelinkInstructionList )refclassTInstructions) instanceof tom.engine.adt.tominstruction.types.refclasstracelinkinstructionlist.EmptyconcRefClassTracelinkInstruction)) ) { tom.engine.adt.tominstruction.types.RefClassTracelinkInstructionList  tomMatch110_end_4=(( tom.engine.adt.tominstruction.types.RefClassTracelinkInstructionList )refclassTInstructions);do {{ /* unamed block */if (!( tomMatch110_end_4.isEmptyconcRefClassTracelinkInstruction() )) { tom.engine.adt.tominstruction.types.RefClassTracelinkInstruction  tomMatch110_9= tomMatch110_end_4.getHeadconcRefClassTracelinkInstruction() ;if ( ((( tom.engine.adt.tominstruction.types.RefClassTracelinkInstruction )tomMatch110_9) instanceof tom.engine.adt.tominstruction.types.refclasstracelinkinstruction.RefClassTracelinkInstruction) ) { tom.engine.adt.tomname.types.TomName  tomMatch110_7= tomMatch110_9.getType() ; tom.engine.adt.tomname.types.TomName  tomMatch110_8= tomMatch110_9.getName() ;if ( ((( tom.engine.adt.tomname.types.TomName )tomMatch110_7) instanceof tom.engine.adt.tomname.types.tomname.Name) ) { String  tom___type= tomMatch110_7.getString() ;if ( ((( tom.engine.adt.tomname.types.TomName )tomMatch110_8) instanceof tom.engine.adt.tomname.types.tomname.Name) ) { String  tom___name= tomMatch110_8.getString() ;
+    { /* unamed block */{ /* unamed block */if ( (refclassTInstructions instanceof tom.engine.adt.tominstruction.types.RefClassTracelinkInstructionList) ) {if ( (((( tom.engine.adt.tominstruction.types.RefClassTracelinkInstructionList )refclassTInstructions) instanceof tom.engine.adt.tominstruction.types.refclasstracelinkinstructionlist.ConsconcRefClassTracelinkInstruction) || ((( tom.engine.adt.tominstruction.types.RefClassTracelinkInstructionList )refclassTInstructions) instanceof tom.engine.adt.tominstruction.types.refclasstracelinkinstructionlist.EmptyconcRefClassTracelinkInstruction)) ) { tom.engine.adt.tominstruction.types.RefClassTracelinkInstructionList  tomMatch123_end_4=(( tom.engine.adt.tominstruction.types.RefClassTracelinkInstructionList )refclassTInstructions);do {{ /* unamed block */if (!( tomMatch123_end_4.isEmptyconcRefClassTracelinkInstruction() )) { tom.engine.adt.tominstruction.types.RefClassTracelinkInstruction  tomMatch123_9= tomMatch123_end_4.getHeadconcRefClassTracelinkInstruction() ;if ( ((( tom.engine.adt.tominstruction.types.RefClassTracelinkInstruction )tomMatch123_9) instanceof tom.engine.adt.tominstruction.types.refclasstracelinkinstruction.RefClassTracelinkInstruction) ) { tom.engine.adt.tomname.types.TomName  tomMatch123_7= tomMatch123_9.getType() ; tom.engine.adt.tomname.types.TomName  tomMatch123_8= tomMatch123_9.getName() ;if ( ((( tom.engine.adt.tomname.types.TomName )tomMatch123_7) instanceof tom.engine.adt.tomname.types.tomname.Name) ) { String  tom___type= tomMatch123_7.getString() ;if ( ((( tom.engine.adt.tomname.types.TomName )tomMatch123_8) instanceof tom.engine.adt.tomname.types.tomname.Name) ) { String  tom___name= tomMatch123_8.getString() ;
 
 
       output.write("\n  private "+tom___type+" "+tom___name+";\n  public "+tom___type+" get"+tom___name+"() { return "+tom___name+"; }\n  public void set"+tom___name+"("+tom___type+" value) { this."+tom___name+" = value; }\n"
@@ -277,7 +277,7 @@ matchBlock: {
 
 );
       getfunctionbody = getfunctionbody+"if(name.equals(\""+tom___name+"\")) {\n        return get"+tom___name+"();\n    } else ";
-      }}}}if ( tomMatch110_end_4.isEmptyconcRefClassTracelinkInstruction() ) {tomMatch110_end_4=(( tom.engine.adt.tominstruction.types.RefClassTracelinkInstructionList )refclassTInstructions);} else {tomMatch110_end_4= tomMatch110_end_4.getTailconcRefClassTracelinkInstruction() ;}}} while(!( (tomMatch110_end_4==(( tom.engine.adt.tominstruction.types.RefClassTracelinkInstructionList )refclassTInstructions)) ));}}}}
+      }}}}if ( tomMatch123_end_4.isEmptyconcRefClassTracelinkInstruction() ) {tomMatch123_end_4=(( tom.engine.adt.tominstruction.types.RefClassTracelinkInstructionList )refclassTInstructions);} else {tomMatch123_end_4= tomMatch123_end_4.getTailconcRefClassTracelinkInstruction() ;}}} while(!( (tomMatch123_end_4==(( tom.engine.adt.tominstruction.types.RefClassTracelinkInstructionList )refclassTInstructions)) ));}}}}
 
 
 
@@ -508,10 +508,10 @@ matchBlock: {
     output.write(deep, stratmodifier + "class " + tomName);
     //write extends
 matchblock: {
-              { /* unamed block */{ /* unamed block */if ( (extendsType instanceof tom.engine.adt.tomtype.types.TomType) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )extendsType) instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) { tom.engine.adt.tomtype.types.TargetLanguageType  tomMatch112_1= (( tom.engine.adt.tomtype.types.TomType )extendsType).getTlType() ;if ( ((( tom.engine.adt.tomtype.types.TargetLanguageType )tomMatch112_1) instanceof tom.engine.adt.tomtype.types.targetlanguagetype.TLType) ) {
+              { /* unamed block */{ /* unamed block */if ( (extendsType instanceof tom.engine.adt.tomtype.types.TomType) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )extendsType) instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) { tom.engine.adt.tomtype.types.TargetLanguageType  tomMatch125_1= (( tom.engine.adt.tomtype.types.TomType )extendsType).getTlType() ;if ( ((( tom.engine.adt.tomtype.types.TargetLanguageType )tomMatch125_1) instanceof tom.engine.adt.tomtype.types.targetlanguagetype.TLType) ) {
 
 
-				output.write(deep," extends " +  tomMatch112_1.getString() );
+				output.write(deep," extends " +  tomMatch125_1.getString() );
         break matchblock;
 			}}}}{ /* unamed block */if ( (extendsType instanceof tom.engine.adt.tomtype.types.TomType) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )extendsType) instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) {if ( ((( tom.engine.adt.tomtype.types.TargetLanguageType ) (( tom.engine.adt.tomtype.types.TomType )extendsType).getTlType() ) instanceof tom.engine.adt.tomtype.types.targetlanguagetype.EmptyTargetLanguageType) ) {
 
@@ -649,10 +649,10 @@ matchblock: {
     }
     output.writeln(deep,")");
 matchblock: {
-    { /* unamed block */{ /* unamed block */if ( (throwsType instanceof tom.engine.adt.tomtype.types.TomType) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )throwsType) instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) { tom.engine.adt.tomtype.types.TargetLanguageType  tomMatch114_1= (( tom.engine.adt.tomtype.types.TomType )throwsType).getTlType() ;if ( ((( tom.engine.adt.tomtype.types.TargetLanguageType )tomMatch114_1) instanceof tom.engine.adt.tomtype.types.targetlanguagetype.TLType) ) {
+    { /* unamed block */{ /* unamed block */if ( (throwsType instanceof tom.engine.adt.tomtype.types.TomType) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )throwsType) instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) { tom.engine.adt.tomtype.types.TargetLanguageType  tomMatch127_1= (( tom.engine.adt.tomtype.types.TomType )throwsType).getTlType() ;if ( ((( tom.engine.adt.tomtype.types.TargetLanguageType )tomMatch127_1) instanceof tom.engine.adt.tomtype.types.targetlanguagetype.TLType) ) {
 
 
-				output.write(deep," throws " +  tomMatch114_1.getString() );
+				output.write(deep," throws " +  tomMatch127_1.getString() );
         break matchblock;
 			}}}}{ /* unamed block */if ( (throwsType instanceof tom.engine.adt.tomtype.types.TomType) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )throwsType) instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) {if ( ((( tom.engine.adt.tomtype.types.TargetLanguageType ) (( tom.engine.adt.tomtype.types.TomType )throwsType).getTlType() ) instanceof tom.engine.adt.tomtype.types.targetlanguagetype.EmptyTargetLanguageType) ) {
 

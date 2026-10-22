@@ -484,12 +484,12 @@ public abstract class TemplateClass {
       SlotField slot = slotList.getHeadConcSlotField();
       slotList = slotList.getTailConcSlotField();
       if (index>0) { writer.write(", "); }
-      { /* unamed block */{ /* unamed block */if ( (slot instanceof tom.gom.adt.objects.types.SlotField) ) {if ( ((( tom.gom.adt.objects.types.SlotField )slot) instanceof tom.gom.adt.objects.types.slotfield.SlotField) ) { tom.gom.adt.objects.types.ClassName  tomMatch626_2= (( tom.gom.adt.objects.types.SlotField )slot).getDomain() ;if ( ((( tom.gom.adt.objects.types.ClassName )tomMatch626_2) instanceof tom.gom.adt.objects.types.classname.ClassName) ) {
+      { /* unamed block */{ /* unamed block */if ( (slot instanceof tom.gom.adt.objects.types.SlotField) ) {if ( ((( tom.gom.adt.objects.types.SlotField )slot) instanceof tom.gom.adt.objects.types.slotfield.SlotField) ) { tom.gom.adt.objects.types.ClassName  tomMatch639_2= (( tom.gom.adt.objects.types.SlotField )slot).getDomain() ;if ( ((( tom.gom.adt.objects.types.ClassName )tomMatch639_2) instanceof tom.gom.adt.objects.types.classname.ClassName) ) {
 
 
           writer.write( (( tom.gom.adt.objects.types.SlotField )slot).getName() );
           writer.write(":");
-          writer.write( tomMatch626_2.getName() );
+          writer.write( tomMatch639_2.getName() );
           index++;
         }}}}}
 
