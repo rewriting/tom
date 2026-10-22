@@ -36,3 +36,14 @@ func TestRecoverVisitFailureRepanicsOthers(t *testing.T) {
 		panic("boom")
 	}()
 }
+
+func TestThrowVisitFailure(t *testing.T) {
+	var err error
+	func() {
+		defer RecoverVisitFailure(&err)
+		ThrowVisitFailure()
+	}()
+	if !errors.Is(err, ErrVisitFailure) {
+		t.Fatalf("got %v, want ErrVisitFailure", err)
+	}
+}

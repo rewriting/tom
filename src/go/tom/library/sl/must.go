@@ -26,3 +26,10 @@ func RecoverVisitFailure(err *error) {
 		panic(r)
 	}
 }
+
+// ThrowVisitFailure is Java's `throw new VisitFailure()` in the host code
+// of a %strategy rule: it panics with the carrier that the generated
+// VisitLight (via [RecoverVisitFailure]) turns into [ErrVisitFailure].
+func ThrowVisitFailure() {
+	panic(visitFailurePanic{ErrVisitFailure})
+}

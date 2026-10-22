@@ -34,6 +34,56 @@ type portCase struct {
 	// them. T2 exempts them from the legacy pass set, and fails if one
 	// of them exists and passes in Go (stale entry).
 	Unsupported map[string]string
+	// Gom lists the standalone .gom files test/build.xml compiles with
+	// Gom before the case, whose generated mappings the case includes.
+	Gom []gomFile
+	// Support lists other .t files (relative to test/) compiled with the
+	// case: the original needs their classes (same Java package). In Go
+	// each one is compiled into its own package, in the sub-directory
+	// supportDir(rel) of the case's module, because two Tom-generated Go
+	// files cannot share a package (each defines the tom_* helpers of the
+	// mappings it includes).
+	Support []string
+	// TomArgs are the extra options test/build.xml gives tom for the case
+	// and its support files (both compilers).
+	TomArgs []string
+}
+
+// gomFile is a standalone .gom file of test/ (Rel, relative to test/);
+// the port directory keeps an identical copy at test/go/<Rel>
+// (TestGomCopiesIdentical), from which gomgo generates the Go side.
+type gomFile struct {
+	Rel string
+	// JavaArgs are the options of test/build.xml's <gom.preset> call,
+	// given to legacy/'s Gom for the oracle.
+	JavaArgs []string
+	// GoArgs are the options given to `gomgo gom-block`.
+	GoArgs []string
+}
+
+// testslGom is test/sl/testsl.gom, compiled by test/build.xml with
+// package=sl, termpointer=true and withCongruenceStrategies=true.
+// gomgo does not implement --termpointer (term pointers: the
+// VarTerm/RefTerm/PathTerm/LabTerm operators and expand()); only
+// sl/TestRef.t relies on them.
+var testslGom = gomFile{
+	Rel:      "sl/testsl.gom",
+	JavaArgs: []string{"--package", "sl", "--termpointer", "--withCongruenceStrategies"},
+	GoArgs:   []string{"--withCongruenceStrategies"},
+}
+
+// gomModuleDir is the directory, relative to the case's output
+// directory (the Go module root, or the -I root for legacy/), that
+// receives the code generated for g: Gom's <module>/<module>.tom layout,
+// so that `%include { testsl/testsl.tom }` resolves against -I.
+func gomModuleDir(g gomFile) string {
+	return strings.TrimSuffix(filepath.Base(g.Rel), ".gom")
+}
+
+// supportDir is the Go package directory (relative to the case's module
+// root) of a support file: its lower-cased base name.
+func supportDir(rel string) string {
+	return strings.ToLower(strings.TrimSuffix(filepath.Base(rel), ".t"))
 }
 
 var cases = []portCase{
@@ -50,40 +100,89 @@ var cases = []portCase{
 	{Rel: "TestAlgebraic.t", GoTest: true},
 	{Rel: "TestStrategy.t", GoTest: true},
 	{Rel: "sl/TestEnvironment.t", GoTest: true},
+	{Rel: "sl/TestPosition.t", GoTest: true},
+	{Rel: "sl/TestOnceTopDownId.t", GoTest: true},
+	{Rel: "sl/TestGetSubterm.t", GoTest: true},
+	{Rel: "sl/TestImportStrat.t", GoTest: true, Gom: []gomFile{testslGom}, Support: []string{"sl/CommonStrat.t"}},
 }
 
 func base(c portCase) string { return strings.TrimSuffix(filepath.Base(c.Rel), ".t") }
 
 func compileCase(t *testing.T, c portCase) string {
 	t.Helper()
-	dist := harness.NewDist(t)
 	dir := t.TempDir()
-	src, err := filepath.Abs(c.Rel)
+	gens, out, err := generateGo(t, c, dir)
 	if err != nil {
-		t.Fatal(err)
+		t.Fatalf("%v\n%s", err, out)
 	}
-	if out, err := dist.Compile(t, src, dir, "-go", "-np"); err != nil {
-		t.Fatalf("tom -go failed: %v\n%s", err, out)
+	for rel, gen := range gens {
+		checkGolden(t, rel, gen)
 	}
-	gen := filepath.Join(dir, base(c)+".go")
-	if c.GoTest {
-		if err := os.Rename(gen, filepath.Join(dir, base(c)+"_test.go")); err != nil {
-			t.Fatal(err)
-		}
-		gen = filepath.Join(dir, base(c)+"_test.go")
-	}
-	checkGolden(t, c, gen)
 	harness.SetupGoModule(t, dir)
 	return dir
 }
 
-func checkGolden(t *testing.T, c portCase, gen string) {
+// generateGo fills dir (the future Go module root) as test/build.xml
+// would for the Java original: gomgo first compiles the case's
+// standalone .gom copies into dir/<module>/, then tom -go (with -I dir)
+// compiles the support files into dir/<supportDir>/ and the case into
+// dir. It returns the generated file of each .t (relative to test/).
+func generateGo(t *testing.T, c portCase, dir string) (map[string]string, string, error) {
+	t.Helper()
+	dist := harness.NewDist(t)
+	args := []string{"-go", "-np"}
+	if len(c.Gom) > 0 {
+		args = append(args, "-I", dir)
+	}
+	args = append(args, c.TomArgs...)
+	for _, g := range c.Gom {
+		src, err := filepath.Abs(g.Rel)
+		if err != nil {
+			t.Fatal(err)
+		}
+		mod := gomModuleDir(g)
+		gargs := append(append([]string{"gom-block", "-o", filepath.Join(dir, mod), "--pkg", mod}, g.GoArgs...), src)
+		if out, err := harness.RunIn(dir, nil, harness.GomgoBin(t), gargs...); err != nil {
+			return nil, out, fmt.Errorf("gomgo %v failed: %v", gargs, err)
+		}
+	}
+	gens := map[string]string{}
+	for _, rel := range c.Support {
+		src, err := filepath.Abs(rel)
+		if err != nil {
+			t.Fatal(err)
+		}
+		sub := filepath.Join(dir, supportDir(rel))
+		if out, err := dist.Compile(t, src, sub, args...); err != nil {
+			return nil, out, fmt.Errorf("tom -go failed on %s: %v", rel, err)
+		}
+		gens[rel] = filepath.Join(sub, strings.TrimSuffix(filepath.Base(rel), ".t")+".go")
+	}
+	src, err := filepath.Abs(c.Rel)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if out, err := dist.Compile(t, src, dir, args...); err != nil {
+		return nil, out, fmt.Errorf("tom -go failed: %v", err)
+	}
+	gen := filepath.Join(dir, base(c)+".go")
+	if c.GoTest {
+		if err := os.Rename(gen, filepath.Join(dir, base(c)+"_test.go")); err != nil {
+			return nil, "", err
+		}
+		gen = filepath.Join(dir, base(c)+"_test.go")
+	}
+	gens[c.Rel] = gen
+	return gens, "", nil
+}
+
+func checkGolden(t *testing.T, rel, gen string) {
 	t.Helper()
 	got, err := os.ReadFile(gen)
 	if err != nil {
 		t.Fatal(err)
 	}
-	golden := filepath.Join("testdata", "golden", strings.ReplaceAll(strings.TrimSuffix(c.Rel, ".t"), "/", "_")+".go")
+	golden := filepath.Join("testdata", "golden", strings.ReplaceAll(strings.TrimSuffix(rel, ".t"), "/", "_")+".go")
 	if *update {
 		if err := os.WriteFile(golden, got, 0o644); err != nil {
 			t.Fatal(err)
@@ -307,7 +406,8 @@ func legacyOracle(t *testing.T, c portCase) oracle {
 		if err := json.Unmarshal(data, &o); err != nil {
 			t.Fatal(err)
 		}
-		if err := oracleStale(c, o, filepath.Join(harness.RepoRoot(t), "test", c.Rel)); err != nil {
+		srcs := sourcesOf(harness.RepoRoot(t), c)
+		if err := oracleStale(c, o, srcs[0], srcs[1:]...); err != nil {
 			t.Fatal(err)
 		}
 		return o
@@ -316,8 +416,32 @@ func legacyOracle(t *testing.T, c portCase) oracle {
 	root := harness.RepoRoot(t)
 	src := filepath.Join(root, "test", c.Rel)
 	dir := t.TempDir()
-	if out, err := legacy.Compile(t, src, dir); err != nil {
-		t.Fatalf("legacy tom failed: %v\n%s", err, out)
+	// As test/build.xml: Gom first, then tom with -I towards the
+	// generated mappings of the input's package, on the case and its
+	// support files.
+	targs := append([]string(nil), c.TomArgs...)
+	if len(c.Gom) > 0 {
+		gen := t.TempDir()
+		for _, g := range c.Gom {
+			gargs := append(append([]string{"--destdir", gen}, g.JavaArgs...), filepath.Join(root, "test", g.Rel))
+			if out, err := harness.RunIn(gen, []string{"TOM_HOME=" + legacy.Home}, filepath.Join(legacy.Home, "bin", "gom"), gargs...); err != nil {
+				t.Fatalf("legacy gom %v failed: %v\n%s", gargs, err, out)
+			}
+		}
+		inc := gen
+		if pkg := javaPackage(t, src); pkg != "" {
+			inc = filepath.Join(gen, strings.ReplaceAll(pkg, ".", string(filepath.Separator)))
+		}
+		targs = append([]string{"-I", inc}, targs...)
+		// Gom's own Java sources belong to the program.
+		if err := copyTree(gen, dir); err != nil {
+			t.Fatal(err)
+		}
+	}
+	for _, rel := range append(append([]string(nil), c.Support...), c.Rel) {
+		if out, err := legacy.Compile(t, filepath.Join(root, "test", rel), dir, targs...); err != nil {
+			t.Fatalf("legacy tom failed on %s: %v\n%s", rel, err, out)
+		}
 	}
 	cp := strings.Join([]string{
 		filepath.Join(legacy.Home, "lib", "tom-runtime-full.jar"),
@@ -339,7 +463,7 @@ func legacyOracle(t *testing.T, c portCase) oracle {
 		class = pkg + "." + class
 	}
 	var o oracle
-	sum, err := sourceSHA256(src)
+	sum, err := sourceSHA256(sourcesOf(root, c)...)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -403,28 +527,64 @@ func javaPackage(t *testing.T, src string) string {
 	return ""
 }
 
-func sourceSHA256(path string) (string, error) {
-	f, err := os.Open(path)
-	if err != nil {
-		return "", err
-	}
-	defer f.Close()
+// sourceSHA256 hashes the concatenation of the given files (for a
+// single file, the hash of that file).
+func sourceSHA256(paths ...string) (string, error) {
 	h := sha256.New()
-	if _, err := io.Copy(h, f); err != nil {
-		return "", err
+	for _, path := range paths {
+		f, err := os.Open(path)
+		if err != nil {
+			return "", err
+		}
+		_, err = io.Copy(h, f)
+		f.Close()
+		if err != nil {
+			return "", err
+		}
 	}
 	return hex.EncodeToString(h.Sum(nil)), nil
 }
 
+// sourcesOf lists the original files whose content determines the
+// oracle of c: test/<Rel>, then its support files and .gom files.
+func sourcesOf(root string, c portCase) []string {
+	paths := []string{filepath.Join(root, "test", c.Rel)}
+	for _, rel := range c.Support {
+		paths = append(paths, filepath.Join(root, "test", rel))
+	}
+	for _, g := range c.Gom {
+		paths = append(paths, filepath.Join(root, "test", g.Rel))
+	}
+	return paths
+}
+
+// copyTree copies the regular files of src into dst (same layout).
+func copyTree(src, dst string) error {
+	return filepath.Walk(src, func(p string, info os.FileInfo, err error) error {
+		if err != nil || info.IsDir() {
+			return err
+		}
+		rel, _ := filepath.Rel(src, p)
+		data, err := os.ReadFile(p)
+		if err != nil {
+			return err
+		}
+		if err := os.MkdirAll(filepath.Join(dst, filepath.Dir(rel)), 0o755); err != nil {
+			return err
+		}
+		return os.WriteFile(filepath.Join(dst, rel), data, 0o644)
+	})
+}
+
 // oracleStale checks, without Java, that a cached oracle still matches
 // the original source src.
-func oracleStale(c portCase, o oracle, src string) error {
-	sum, err := sourceSHA256(src)
+func oracleStale(c portCase, o oracle, src string, extra ...string) error {
+	sum, err := sourceSHA256(append([]string{src}, extra...)...)
 	if err != nil {
 		return err
 	}
 	if sum != o.SourceSHA256 {
-		return fmt.Errorf("oracle stale: %s changed since the oracle was computed (run with -update-oracle)", src)
+		return fmt.Errorf("oracle stale: %s (or its support/.gom files) changed since the oracle was computed (run with -update-oracle)", src)
 	}
 	if !c.GoTest {
 		return nil
@@ -516,6 +676,9 @@ func TestSameBehaviourAsLegacy(t *testing.T) {
 			}
 			if len(diffs) > 0 && c.GoTest {
 				t.Logf("go test output:\n%s", goTestOutput(out))
+				if vout, verr := harness.RunIn(dir, nil, "go", "vet", "./..."); verr != nil {
+					t.Logf("go vet ./... (build diagnostics):\n%s", vout)
+				}
 			}
 		})
 	}
@@ -565,8 +728,12 @@ func TestDashboard(t *testing.T) {
 	}
 	root := harness.RepoRoot(t)
 	ported := map[string]portCase{}
+	supportOf := map[string]string{} // support file -> its case
 	for _, c := range cases {
 		ported[c.Rel] = c
+		for _, rel := range c.Support {
+			supportOf[rel] = c.Rel
+		}
 	}
 	var rows []string
 	counts := map[string]int{}
@@ -584,7 +751,11 @@ func TestDashboard(t *testing.T) {
 			return nil
 		}
 		status, note := "non porté", ""
-		if c, ok := ported[rel]; ok {
+		if main, ok := supportOf[rel]; ok {
+			// A support file has no test of its own: its classes are
+			// exercised, in Java and in Go, by the case that uses them.
+			status, note = "support", "compilé avec `"+main+"`, couvert par son statut"
+		} else if c, ok := ported[rel]; ok {
 			status = dashboardStatus(t, c)
 			var names []string
 			for name := range c.Unsupported {
@@ -607,9 +778,12 @@ func TestDashboard(t *testing.T) {
 	b.WriteString("Généré par `mage portGo` (`go test ./ -args -write-dashboard` dans `test/go`).\n")
 	b.WriteString("Chaque `test/**/*.t` hors `error/` ; un cas porté est OK quand son port\n")
 	b.WriteString("Tom+Go, compilé par `tom -go`, se comporte comme l'original compilé par\n")
-	b.WriteString("`legacy/` (mêmes tests JUnit réussis, ou même sortie et même statut).\n\n")
+	b.WriteString("`legacy/` (mêmes tests JUnit réussis, ou même sortie et même statut).\n")
+	b.WriteString("Un fichier « support » n'a pas de test propre : ses classes sont compilées\n")
+	b.WriteString("avec le cas qui les utilise (comme `test/build.xml` compile tout le\n")
+	b.WriteString("répertoire), et c'est le statut de ce cas qui les valide.\n\n")
 	b.WriteString("- total : " + strconv.Itoa(len(rows)) + "\n")
-	for _, s := range []string{"OK", "divergence", "échec go test", "échec go build", "échec tom", "oracle invalide", "non porté"} {
+	for _, s := range []string{"OK", "divergence", "échec go test", "échec go build", "échec tom", "oracle invalide", "support", "non porté"} {
 		b.WriteString("- " + s + " : " + strconv.Itoa(counts[s]) + "\n")
 	}
 	b.WriteString("\n| Cas | Statut | Notes |\n|---|---|---|\n" + strings.Join(rows, "\n") + "\n")
@@ -631,20 +805,9 @@ func dashboardStatus(t *testing.T, c portCase) string {
 	}
 	status := "échec tom"
 	t.Run("status/"+c.Rel, func(t *testing.T) {
-		dist := harness.NewDist(t)
 		dir := t.TempDir()
-		src, err := filepath.Abs(c.Rel)
-		if err != nil {
-			t.Fatal(err)
-		}
-		if _, err := dist.Compile(t, src, dir, "-go", "-np"); err != nil {
+		if _, _, err := generateGo(t, c, dir); err != nil {
 			return
-		}
-		if c.GoTest {
-			gen := filepath.Join(dir, base(c)+".go")
-			if err := os.Rename(gen, filepath.Join(dir, base(c)+"_test.go")); err != nil {
-				return
-			}
 		}
 		harness.SetupGoModule(t, dir)
 		buildArgs := []string{"build", "."}
@@ -771,6 +934,12 @@ func TestCasesCoverPorts(t *testing.T) {
 	oracles := map[string]bool{}
 	for _, c := range cases {
 		inCases[c.Rel] = true
+		for _, rel := range c.Support {
+			inCases[rel] = true
+		}
+		for _, g := range c.Gom {
+			inCases[g.Rel] = true
+		}
 		oracles[filepath.Base(oraclePath(c))] = true
 	}
 	filepath.Walk(".", func(p string, info os.FileInfo, err error) error {
@@ -780,8 +949,8 @@ func TestCasesCoverPorts(t *testing.T) {
 		if info.IsDir() && (p == "testdata" || p == "harness" || p == "javaparity" || p == "smoke" || p == "coverage") {
 			return filepath.SkipDir
 		}
-		if !info.IsDir() && strings.HasSuffix(p, ".t") && !inCases[filepath.ToSlash(p)] {
-			t.Errorf("port %s is not listed in cases", p)
+		if !info.IsDir() && (strings.HasSuffix(p, ".t") || strings.HasSuffix(p, ".gom")) && !inCases[filepath.ToSlash(p)] {
+			t.Errorf("port %s is not listed in cases (as Rel, Support or Gom)", p)
 		}
 		return nil
 	})
@@ -792,8 +961,32 @@ func TestCasesCoverPorts(t *testing.T) {
 		}
 	}
 	for _, c := range cases {
-		if _, err := os.Stat(c.Rel); err != nil {
-			t.Errorf("case %s has no port: %v", c.Rel, err)
+		for _, rel := range append([]string{c.Rel}, c.Support...) {
+			if _, err := os.Stat(rel); err != nil {
+				t.Errorf("case %s has no port %s: %v", c.Rel, rel, err)
+			}
+		}
+	}
+}
+
+// TestGomCopiesIdentical: a standalone .gom is an algebraic signature,
+// not host code, so the copy the Go side compiles must equal the original.
+func TestGomCopiesIdentical(t *testing.T) {
+	root := harness.RepoRoot(t)
+	for _, c := range cases {
+		for _, g := range c.Gom {
+			orig, err := os.ReadFile(filepath.Join(root, "test", g.Rel))
+			if err != nil {
+				t.Fatal(err)
+			}
+			cp, err := os.ReadFile(g.Rel)
+			if err != nil {
+				t.Errorf("%s: missing copy of test/%s: %v", c.Rel, g.Rel, err)
+				continue
+			}
+			if string(orig) != string(cp) {
+				t.Errorf("test/go/%s differs from test/%s", g.Rel, g.Rel)
+			}
 		}
 	}
 }

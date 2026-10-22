@@ -1,0 +1,13 @@
+{
+  "passed": [
+    "TestNormalize",
+    "TestAdd",
+    "TestInverse",
+    "TestSub",
+    "TestEquals",
+    "TestHashCode"
+  ],
+  "stdout": "",
+  "exitOK": true,
+  "source_sha256": "826465cf2be6722917424a5071e4086e987de12dc6cc29b72e5e286b8a6dbbff"
+}

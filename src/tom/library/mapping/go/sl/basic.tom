@@ -72,6 +72,20 @@
   get_slot(s1, t) { ($t).ChildAt(0) }
 }
 
+%op Strategy IfThenElse(s1:Strategy, s2:Strategy, s3:Strategy) {
+  is_fsym(t) { sl.IsIfThenElse($t) }
+  make(condition,trueCase,falseCase) { sl.NewIfThenElse($condition, $trueCase, $falseCase) }
+  get_slot(s1, t) { ($t).ChildAt(sl.IfThenElseCondition) }
+  get_slot(s2, t) { ($t).ChildAt(sl.IfThenElseTrueCase) }
+  get_slot(s3, t) { ($t).ChildAt(sl.IfThenElseFalseCase) }
+}
+
+%op Strategy Not(s1:Strategy) {
+  is_fsym(t) { sl.IsNot($t) }
+  make(v) { sl.NewNot($v) }
+  get_slot(s1, t) { ($t).ChildAt(0) }
+}
+
 %oplist Strategy Sequence(Strategy*) {
   is_fsym(t) { sl.IsSequence($t) }
   make_empty() { nil }

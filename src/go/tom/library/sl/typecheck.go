@@ -19,4 +19,6 @@ func IsSequenceId(t any) bool { _, ok := t.(*SequenceId); return ok }
 func IsChoice(t any) bool     { _, ok := t.(*Choice); return ok }
 func IsChoiceId(t any) bool   { _, ok := t.(*ChoiceId); return ok }
 func IsOmega(t any) bool      { _, ok := t.(*Omega); return ok }
+func IsIfThenElse(t any) bool { _, ok := t.(*IfThenElse); return ok }
+func IsNot(t any) bool        { _, ok := t.(*Not); return ok }
 func IsStrategy(t any) bool   { _, ok := t.(Strategy); return ok }

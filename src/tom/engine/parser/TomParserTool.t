@@ -119,7 +119,7 @@ public class TomParserTool {
   public String parseGomFile(String gomCode, int initialGomLine, String[] userOpts) throws TomIncludeException {
     String res = "";
     if(((Boolean)getOptionManager().getOptionValue("goCode")).booleanValue()) {
-      return parseGomFileGo(gomCode, initialGomLine);
+      return parseGomFileGo(gomCode, initialGomLine, userOpts);
     }
     //System.out.println("gomCode: " + gomCode);
     String currentFileName = getStreamManager().getInputFileName();
@@ -270,9 +270,10 @@ public class TomParserTool {
   /*
    * -go: the %gom block is compiled by "gomgo gom-block", which writes the
    * Go structures next to the generated file and prints the path of the
-   * Go-host-code mapping to include.
+   * Go-host-code mapping to include. The user options of %gom(...) are
+   * passed on (gomgo rejects those it does not support).
    */
-  private String parseGomFileGo(String gomCode, int initialGomLine) {
+  private String parseGomFileGo(String gomCode, int initialGomLine, String[] userOpts) {
     String currentFileName = getStreamManager().getInputFileName();
     String gomgo = System.getenv("GOMGO_BIN");
     if(gomgo == null || gomgo.length() == 0) {
@@ -290,9 +291,20 @@ public class TomParserTool {
       }
       File outDir = getStreamManager().getOutputFile().getCanonicalFile().getParentFile();
       outDir.mkdirs();
-      ProcessBuilder pb = new ProcessBuilder(gomgo, "gom-block",
-          "--pkg", goPackageOf(new File(currentFileName)),
-          "-o", outDir.getPath(), tmpFile.getPath());
+      java.util.List<String> command = new java.util.ArrayList<String>();
+      command.add(gomgo);
+      command.add("gom-block");
+      command.add("--pkg");
+      command.add(goPackageOf(new File(currentFileName)));
+      command.add("-o");
+      command.add(outDir.getPath());
+      for(String opt : userOpts) {
+        if(opt.length() > 0) {
+          command.add(opt);
+        }
+      }
+      command.add(tmpFile.getPath());
+      ProcessBuilder pb = new ProcessBuilder(command);
       pb.redirectError(ProcessBuilder.Redirect.INHERIT);
       try {
         p = pb.start();

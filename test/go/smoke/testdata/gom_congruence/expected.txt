@@ -1,0 +1,12 @@
+_f f(b(),b()) f(b(),b())
+_f/fail fails true
+_f/other fails true
+Is_f f(a(),a()) f(a(),a())
+Is_f/other fails true
+When_f f(b(),b()) f(b(),b())
+_l l(b(),b(),b()) l(b(),b(),b())
+ITE fails true
+ITE/else c() c()
+Not b() b()
+Not/fail fails true
+Outermost f(c(),l(c(),c())) f(c(),l(c(),c()))

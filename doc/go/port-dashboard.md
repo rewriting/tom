@@ -4,15 +4,19 @@ Généré par `mage portGo` (`go test ./ -args -write-dashboard` dans `test/go`)
 Chaque `test/**/*.t` hors `error/` ; un cas porté est OK quand son port
 Tom+Go, compilé par `tom -go`, se comporte comme l'original compilé par
 `legacy/` (mêmes tests JUnit réussis, ou même sortie et même statut).
+Un fichier « support » n'a pas de test propre : ses classes sont compilées
+avec le cas qui les utilise (comme `test/build.xml` compile tout le
+répertoire), et c'est le statut de ce cas qui les valide.
 
 - total : 103
-- OK : 13
+- OK : 17
 - divergence : 0
 - échec go test : 0
 - échec go build : 0
 - échec tom : 0
 - oracle invalide : 0
-- non porté : 90
+- support : 1
+- non porté : 85
 
 | Cas | Statut | Notes |
 |---|---|---|
@@ -104,16 +108,16 @@ Tom+Go, compilé par `tom -go`, se comporte comme l'original compilé par
 | `rule/TestPeano.t` | non porté |  |
 | `rule/TestWhen.t` | non porté |  |
 | `rule/TomList.t` | non porté |  |
-| `sl/CommonStrat.t` | non porté |  |
+| `sl/CommonStrat.t` | support | compilé avec `sl/TestImportStrat.t`, couvert par son statut |
 | `sl/IntrospectorBehaviour.t` | non porté |  |
 | `sl/NewBehaviour.t` | non porté |  |
 | `sl/OldBehaviour.t` | non porté |  |
 | `sl/TestEnvironment.t` | OK |  |
-| `sl/TestGetSubterm.t` | non porté |  |
+| `sl/TestGetSubterm.t` | OK |  |
 | `sl/TestHandWrittenMapping.t` | non porté |  |
-| `sl/TestImportStrat.t` | non porté |  |
-| `sl/TestOnceTopDownId.t` | non porté |  |
-| `sl/TestPosition.t` | non porté |  |
+| `sl/TestImportStrat.t` | OK |  |
+| `sl/TestOnceTopDownId.t` | OK |  |
+| `sl/TestPosition.t` | OK |  |
 | `sl/TestReduceAll.t` | non porté |  |
 | `sl/TestRef.t` | non porté |  |
 | `sl/TestReflective.t` | non porté |  |

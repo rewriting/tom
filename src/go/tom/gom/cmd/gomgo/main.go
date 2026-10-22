@@ -32,7 +32,7 @@ Commands:
                                    .gom files. Slot types are resolved across
                                    modules. Required for sources that import
                                    each other (e.g. src/tom/gom/adt/*.gom).
-  gom-block -o <dir> --pkg <name> <file.gom>
+  gom-block -o <dir> --pkg <name> [--withCongruenceStrategies] <file.gom>
                                    Compile a Tom gom block for the Go target
                                    (used by tom -go): writes <module>_gen.go
                                    and <Module>.tom, prints the .tom path.

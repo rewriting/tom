@@ -32,6 +32,10 @@ import (
 // of the Gom module name (lower-cased, scrubbed of non-letters).
 type Options struct {
 	PackageName string // overrides the auto-derived package name
+	// WithCongruenceStrategies adds to the Tom mapping the congruence
+	// strategy operators `_<op>`, `When_<op>` and `Is_<op>` (Java Gom's
+	// --withCongruenceStrategies, StratMappingTemplate).
+	WithCongruenceStrategies bool
 }
 
 // ---------------------------------------------------------------------------
@@ -430,7 +434,68 @@ func EmitTomMappingGo(mod gomast.GomModule, opts Options) []byte {
 			fmt.Fprintf(&buf, "}\n\n")
 		}
 	}
+	if opts.WithCongruenceStrategies {
+		emitCongruenceMappingGo(&buf, mod)
+	}
 	return buf.Bytes()
+}
+
+// emitCongruenceMappingGo writes the congruence strategy operators of
+// every alternative, mirroring Java Gom's StratMappingTemplate
+// (SOpTemplate / IsOpTemplate mappings) on the Go strategies the
+// backend generates (emitStrategyClasses):
+//
+//   - `_<op>(arg0..argN-1)` builds Visit<Op>: when the subject is <op>,
+//     applies argI to its I-th child;
+//   - `Is_<op>()` builds Is<Op>, which succeeds on <op> terms only;
+//   - `When_<op>(s)` is `Sequence(Is_<op>(), s)`.
+//
+// A variadic alternative is a flat list in Go (no Cons/Empty
+// operators): its `_<op>(sub)` builds Visit<Op>, which applies sub to
+// every element, where Java builds `Choice(When_Cons<op>(All(sub)),
+// When_Empty<op>(Identity()))` on the cons cells. The Java `Make_<op>`
+// strategies are not generated.
+func emitCongruenceMappingGo(buf *bytes.Buffer, mod gomast.GomModule) {
+	fmt.Fprintf(buf, "%%include { sl.tom }\n\n")
+	for _, prod := range moduleSorts(mod) {
+		for _, alt := range sortAlternatives(prod) {
+			opGo := exportedField(alt.Name)
+			if opGo == "" {
+				opGo = "Op"
+			}
+			isName, visitName := "Is"+opGo, "Visit"+opGo
+			var params, argNames []string
+			if alternativeIsVariadic(alt) {
+				params, argNames = []string{"sub:Strategy"}, []string{"sub"}
+			} else {
+				for i, f := range alternativeFields(alt) {
+					if _, ok := f.(*gomast.NamedFieldField); !ok {
+						continue
+					}
+					params = append(params, fmt.Sprintf("arg%d:Strategy", i))
+					argNames = append(argNames, fmt.Sprintf("arg%d", i))
+				}
+			}
+			dollar := make([]string, len(argNames))
+			for i, a := range argNames {
+				dollar[i] = "$" + a
+			}
+			fmt.Fprintf(buf, "%%op Strategy _%s(%s) {\n", alt.Name, strings.Join(params, ", "))
+			fmt.Fprintf(buf, "  is_fsym(t) { func() bool { _, ok := ($t).(*%s); return ok }() }\n", visitName)
+			for i, a := range argNames {
+				fmt.Fprintf(buf, "  get_slot(%s, t) { ($t).ChildAt(%d) }\n", a, i)
+			}
+			fmt.Fprintf(buf, "  make(%s) { New%s(%s) }\n", strings.Join(argNames, ", "), visitName, strings.Join(dollar, ", "))
+			fmt.Fprintf(buf, "}\n\n")
+			fmt.Fprintf(buf, "%%op Strategy When_%s(s:Strategy) {\n", alt.Name)
+			fmt.Fprintf(buf, "  make(s) { sl.NewSequence(&%s{}, $s) }\n", isName)
+			fmt.Fprintf(buf, "}\n\n")
+			fmt.Fprintf(buf, "%%op Strategy Is_%s() {\n", alt.Name)
+			fmt.Fprintf(buf, "  is_fsym(t) { func() bool { _, ok := ($t).(*%s); return ok }() }\n", isName)
+			fmt.Fprintf(buf, "  make() { &%s{} }\n", isName)
+			fmt.Fprintf(buf, "}\n\n")
+		}
+	}
 }
 
 // GenerateBatchToDir compiles several Gom modules into a single Go
