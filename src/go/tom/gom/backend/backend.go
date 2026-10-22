@@ -41,6 +41,11 @@ type Options struct {
 	// `imports M`): slots of these sorts are typed by their Go
 	// interface instead of `any`.
 	ImportedSorts map[string]bool
+	// NoSharing is Java Gom's --nosharing: terms are not maximally
+	// shared (each Make<Op> allocates a new term), they are compared by
+	// DeepEquals (a method of every sort) instead of ==, and the
+	// mapping's equals uses DeepEquals.
+	NoSharing bool
 }
 
 // ImportedUserModules returns the names of the non-builtin modules g
@@ -449,7 +454,12 @@ func EmitTomMappingGo(mod gomast.GomModule, opts Options) []byte {
 		fmt.Fprintf(&buf, "%%typeterm %s {\n", sortNm)
 		fmt.Fprintf(&buf, "  implement      { %s }\n", sortNm)
 		fmt.Fprintf(&buf, "  is_sort(t)     { func() bool { _, ok := ($t).(%s); return ok }() }\n", sortNm)
-		fmt.Fprintf(&buf, "  equals(t1,t2)  { ($t1).Equivalent($t2) }\n")
+		if opts.NoSharing {
+			// --nosharing: Java Gom's equals is deepEquals
+			fmt.Fprintf(&buf, "  equals(t1,t2)  { ($t1).DeepEquals($t2) }\n")
+		} else {
+			fmt.Fprintf(&buf, "  equals(t1,t2)  { ($t1).Equivalent($t2) }\n")
+		}
 		fmt.Fprintf(&buf, "}\n\n")
 	}
 	for _, prod := range moduleSorts(mod) {
@@ -1006,6 +1016,7 @@ func generateBytesFactory(mod gomast.GomModule, opts Options, withFactory bool) 
 		ownSort:    map[string]bool{},
 		pkgName:    opts.PackageName,
 		congruence: opts.WithCongruenceStrategies,
+		noSharing:  opts.NoSharing,
 	}
 	for _, s := range moduleSorts(mod) {
 		g.ownSort[sortName(s)] = true
@@ -1054,6 +1065,20 @@ type gen struct {
 	// congruence is Options.WithCongruenceStrategies: the Build<Op>
 	// (Java Make_<op>) strategies are generated only then.
 	congruence bool
+
+	// noSharing is Options.NoSharing (Java Gom's --nosharing).
+	noSharing bool
+}
+
+// emitReturnProto ends a smart constructor: the canonical (shared) term,
+// or, with --nosharing, the new term itself (Java Gom's
+// `return new <Op>(…)`).
+func (g *gen) emitReturnProto(structName string) {
+	if g.noSharing {
+		fmt.Fprintln(&g.buf, "\treturn proto")
+		return
+	}
+	fmt.Fprintf(&g.buf, "\treturn factory.Build(proto).(*%s)\n", structName)
 }
 
 // registryEntry describes one row of the makeRegistry table.
@@ -1109,6 +1134,10 @@ func (g *gen) emitSort(prod *gomast.SortTypeProduction) {
 	fmt.Fprintf(&g.buf, "type %s interface {\n", name)
 	fmt.Fprintln(&g.buf, "	sharedobjects.Term")
 	fmt.Fprintf(&g.buf, "	is%s()\n", name)
+	if g.noSharing {
+		fmt.Fprintln(&g.buf, "	// DeepEquals compares terms that are not maximally shared (--nosharing).")
+		fmt.Fprintln(&g.buf, "	DeepEquals(o any) bool")
+	}
 	for _, h := range sortHooks {
 		if decl := interfaceDeclForHook(h); decl != "" {
 			fmt.Fprintf(&g.buf, "\t%s\n", decl)
@@ -1710,6 +1739,44 @@ func (g *gen) emitAlternative(sortNm string, alt *gomast.AlternativeAlternative)
 	fmt.Fprintln(&g.buf, "}")
 	fmt.Fprintln(&g.buf)
 afterEquivalent:
+	// DeepEquals (--nosharing): Java Gom's deepEquals, the structural
+	// equality of terms that are not maximally shared.
+	if g.noSharing {
+		fmt.Fprintf(&g.buf, "func (t *%s) DeepEquals(other any) bool {\n", structName)
+		if !isVariadic && len(slots) == 0 {
+			fmt.Fprintf(&g.buf, "\t_, ok := other.(*%s)\n", structName)
+			fmt.Fprintln(&g.buf, "\treturn ok")
+		} else {
+			fmt.Fprintf(&g.buf, "\to, ok := other.(*%s)\n", structName)
+			fmt.Fprintln(&g.buf, "\tif !ok {")
+			fmt.Fprintln(&g.buf, "\t\treturn false")
+			fmt.Fprintln(&g.buf, "\t}")
+			if isVariadic {
+				varName := slots[0].Name
+				fmt.Fprintf(&g.buf, "\tif len(t.%s) != len(o.%s) {\n", varName, varName)
+				fmt.Fprintln(&g.buf, "\t\treturn false")
+				fmt.Fprintln(&g.buf, "\t}")
+				fmt.Fprintf(&g.buf, "\tfor i := range t.%s {\n", varName)
+				if g.isShared(slots[0].GoType) {
+					fmt.Fprintf(&g.buf, "\t\tif !t.%s[i].DeepEquals(o.%s[i]) { return false }\n", varName, varName)
+				} else {
+					fmt.Fprintf(&g.buf, "\t\tif t.%s[i] != o.%s[i] { return false }\n", varName, varName)
+				}
+				fmt.Fprintln(&g.buf, "\t}")
+			} else {
+				for _, s := range slots {
+					if g.isShared(s.GoType) {
+						fmt.Fprintf(&g.buf, "\tif !t.%s.DeepEquals(o.%s) { return false }\n", s.Name, s.Name)
+					} else {
+						fmt.Fprintf(&g.buf, "\tif t.%s != o.%s { return false }\n", s.Name, s.Name)
+					}
+				}
+			}
+			fmt.Fprintln(&g.buf, "\treturn true")
+		}
+		fmt.Fprintln(&g.buf, "}")
+		fmt.Fprintln(&g.buf)
+	}
 
 	// Duplicate.
 	fmt.Fprintf(&g.buf, "func (t *%s) Duplicate() sharedobjects.Term {\n", structName)
@@ -1816,7 +1883,7 @@ afterEquivalent:
 		fmt.Fprintln(&g.buf, "\t}")
 		fmt.Fprintf(&g.buf, "\tproto := &%s{%s: args, hash: sharedobjects.MixSymbol(sharedobjects.StringHash(%q), hashes)}\n",
 			structName, slots[0].Name, opName)
-		fmt.Fprintf(&g.buf, "\treturn factory.Build(proto).(*%s)\n", structName)
+		g.emitReturnProto(structName)
 		fmt.Fprintln(&g.buf, "}")
 	} else {
 		var params []string
@@ -1868,7 +1935,7 @@ afterEquivalent:
 			fmt.Fprintf(&g.buf, ", %s: %s", s.Name, unexported(s.Name))
 		}
 		fmt.Fprintln(&g.buf, "}")
-		fmt.Fprintf(&g.buf, "\treturn factory.Build(proto).(*%s)\n", structName)
+		g.emitReturnProto(structName)
 		fmt.Fprintln(&g.buf, "}")
 	}
 	fmt.Fprintln(&g.buf)

@@ -88,6 +88,10 @@ var testslGom = gomFile{
 	GoArgs:   []string{"--withCongruenceStrategies"},
 }
 
+// importingGom is test/gom/Importing.gom, which imports Imported.gom,
+// which imports Leaf.gom.
+var importingGom = gomFile{Rel: "gom/Importing.gom", Deps: []string{"gom/Imported.gom", "gom/Leaf.gom"}}
+
 // gomModuleDir is the directory, relative to the case's output
 // directory (the Go module root, or the -I root for legacy/), that
 // receives the code generated for g: Gom's <module>/<module>.tom layout,
@@ -144,6 +148,10 @@ var cases = []portCase{
 	{Rel: "gom/TestBool.t", GoTest: true, Gom: []gomFile{{Rel: "gom/Bool.gom"}}},
 	{Rel: "gom/TestMultiHook.t", GoTest: true, Gom: []gomFile{{Rel: "gom/MultiHook.gom"}}},
 	{Rel: "gom/TestTomHook.t", GoTest: true},
+	{Rel: "gom/TestStratMapping.t", GoTest: true},
+	{Rel: "gom/TestGomMultithread.t", GoTest: true},
+	{Rel: "gom/TestGomWithoutMaximalSharing.t", GoTest: true},
+	{Rel: "gom/TestImport.t", GoTest: true, Gom: []gomFile{importingGom}},
 	{Rel: "gom/TestYingYang.t", GoTest: true, Gom: []gomFile{{Rel: "gom/Ying.gom", Deps: []string{"gom/Yang.gom"}}}},
 }
 

@@ -1,0 +1,9 @@
+{
+  "passed": [
+    "TestMake",
+    "TestStrat"
+  ],
+  "stdout": "",
+  "exitOK": true,
+  "source_sha256": "18056f07dc5f3b720afcc8777969a30349579eb74ea5b97b33ec0b7814c03b16"
+}

@@ -1,0 +1,11 @@
+{
+  "passed": [
+    "TestBuild",
+    "TestMatch",
+    "TestStrategy",
+    "TestIdentity"
+  ],
+  "stdout": "",
+  "exitOK": true,
+  "source_sha256": "dd3a5916d1b70af4dce98c377faf223a058cbfa3066a8d9ba321f5a8e0bbc7b0"
+}

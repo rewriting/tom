@@ -1,6 +1,7 @@
 package sharedobjects
 
 import (
+	"sync"
 	"testing"
 )
 
@@ -144,5 +145,35 @@ func TestOneAtATime_Stable(t *testing.T) {
 	}
 	if a == c {
 		t.Errorf("order-insensitive hash, that's wrong: %x", a)
+	}
+}
+
+// The factory is safe for concurrent use, and terms built concurrently
+// are still maximally shared (Java's SharedObjectFactory is thread-safe;
+// test/gom/TestGomMultithread.t). Run with -race to check the locking.
+func TestFactory_Concurrent(t *testing.T) {
+	f := NewFactory()
+	const goroutines, depth = 16, 50
+	results := make([]*peano, goroutines)
+	var wg sync.WaitGroup
+	for g := 0; g < goroutines; g++ {
+		wg.Add(1)
+		go func(g int) {
+			defer wg.Done()
+			for i := 0; i < 20; i++ {
+				results[g] = makeNat(f, depth)
+				_ = f.Stats()
+				_ = f.Contains(results[g])
+			}
+		}(g)
+	}
+	wg.Wait()
+	for g := 1; g < goroutines; g++ {
+		if results[g] != results[0] {
+			t.Fatalf("goroutine %d built a different instance", g)
+		}
+	}
+	if n := f.Stats().NumTerms; n != depth+1 {
+		t.Fatalf("NumTerms = %d, want %d", n, depth+1)
 	}
 }

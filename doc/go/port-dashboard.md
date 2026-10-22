@@ -9,7 +9,7 @@ avec le cas qui les utilise (comme `test/build.xml` compile tout le
 répertoire), et c'est le statut de ce cas qui les valide.
 
 - total : 103
-- OK : 28
+- OK : 32
 - divergence : 0
 - échec go test : 0
 - échec go build : 0
@@ -17,7 +17,7 @@ répertoire), et c'est le statut de ce cas qui les valide.
 - oracle invalide : 0
 - non supporté : 1
 - support : 4
-- non porté : 70
+- non porté : 66
 
 | Cas | Statut | Notes |
 |---|---|---|
@@ -70,9 +70,9 @@ répertoire), et c'est le statut de ce cas qui les valide.
 | `gom/TestFL.t` | non porté |  |
 | `gom/TestFrom.t` | non porté |  |
 | `gom/TestFromMethods.t` | non porté |  |
-| `gom/TestGomMultithread.t` | non porté |  |
-| `gom/TestGomWithoutMaximalSharing.t` | non porté |  |
-| `gom/TestImport.t` | non porté |  |
+| `gom/TestGomMultithread.t` | OK |  |
+| `gom/TestGomWithoutMaximalSharing.t` | OK |  |
+| `gom/TestImport.t` | OK |  |
 | `gom/TestJavaHook.t` | non porté |  |
 | `gom/TestList.t` | non porté |  |
 | `gom/TestMakeEmpty.t` | non porté |  |
@@ -83,7 +83,7 @@ répertoire), et c'est le statut de ce cas qui les valide.
 | `gom/TestRuleList.t` | non porté |  |
 | `gom/TestRuleSortList.t` | non porté |  |
 | `gom/TestSortHook.t` | non porté |  |
-| `gom/TestStratMapping.t` | non porté |  |
+| `gom/TestStratMapping.t` | OK |  |
 | `gom/TestTermgraph.t` | non porté |  |
 | `gom/TestTomHook.t` | OK |  |
 | `gom/TestYingYang.t` | OK |  |

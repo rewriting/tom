@@ -2,6 +2,7 @@ package sharedobjects
 
 import (
 	"fmt"
+	"sync"
 )
 
 // Term is the contract a sharable value must satisfy to be hash-consed
@@ -22,11 +23,11 @@ type Term interface {
 }
 
 // Factory implements maximal sharing (hash-consing) for any value
-// implementing Term. Single-threaded — there is no internal locking.
-// The Tom/Gom compiler pipeline runs on a single goroutine; aterm
-// uses one factory per parse session. If concurrent access is ever
-// needed, wrap the calls in your own sync.Mutex.
+// implementing Term. It is safe for concurrent use, as Java's
+// shared.SharedObjectFactory: terms built by several goroutines are
+// still maximally shared (test/gom/TestGomMultithread.t).
 type Factory struct {
+	mu      sync.Mutex
 	buckets map[uint32][]Term // hash -> chained terms; chain handles collisions
 	count   int
 }
@@ -42,6 +43,8 @@ func NewFactory() *Factory {
 // is returned and the prototype is discarded.
 func (f *Factory) Build(prototype Term) Term {
 	h := prototype.Hash()
+	f.mu.Lock()
+	defer f.mu.Unlock()
 	for _, t := range f.buckets[h] {
 		if prototype.Equivalent(t) {
 			return t
@@ -56,6 +59,8 @@ func (f *Factory) Build(prototype Term) Term {
 // Contains reports whether t (by identity) is one of the canonical terms
 // held by this Factory. It is mostly useful for tests and debug checks.
 func (f *Factory) Contains(t Term) bool {
+	f.mu.Lock()
+	defer f.mu.Unlock()
 	for _, existing := range f.buckets[t.Hash()] {
 		if existing == t {
 			return true
@@ -74,6 +79,8 @@ type Stats struct {
 
 // Stats returns a snapshot of the factory's internal state.
 func (f *Factory) Stats() Stats {
+	f.mu.Lock()
+	defer f.mu.Unlock()
 	s := Stats{NumTerms: f.count, NumBuckets: len(f.buckets)}
 	for _, chain := range f.buckets {
 		if l := len(chain); l > 0 {

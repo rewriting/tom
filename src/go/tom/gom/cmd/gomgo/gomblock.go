@@ -26,11 +26,16 @@ func runGomBlock(args []string) error {
 	// gives a standalone .gom); the other Java Gom options are not
 	// supported and rejected as undefined flags.
 	fs.BoolVar(&opts.WithCongruenceStrategies, "withCongruenceStrategies", false, "add the congruence strategies (_op, When_op, Is_op) to the mapping")
+	fs.BoolVar(&opts.NoSharing, "nosharing", false, "no maximal sharing: Make<Op> allocates, terms are compared by DeepEquals")
+	// --multithread: Java Gom then allocates a prototype per make instead
+	// of reusing one; the Go factory is always safe for concurrent use
+	// (sharedobjects.Factory locks its table), so it changes nothing.
+	fs.Bool("multithread", false, "accepted for Java Gom compatibility: the Go factory is always thread-safe")
 	if err := fs.Parse(args); err != nil {
 		return err
 	}
 	if fs.NArg() != 1 || out == "" || pkg == "" {
-		return fmt.Errorf("usage: gomgo gom-block -o <dir> --pkg <name> [--withCongruenceStrategies] <file.gom>")
+		return fmt.Errorf("usage: gomgo gom-block -o <dir> --pkg <name> [--withCongruenceStrategies] [--nosharing] [--multithread] <file.gom>")
 	}
 	mod, err := gomparser.ParseFile(fs.Arg(0))
 	if err != nil {
