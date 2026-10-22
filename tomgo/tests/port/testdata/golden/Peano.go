@@ -65,7 +65,8 @@ func tom_equal_term_term(t1  *Term , t2  *Term ) bool { return (t1).Equals(t2); 
 
 
 func plus1(t1, t2 *Term) *Term {
-	{ { if tom_is_sort_term(t1) { if tom_is_fun_sym_zero(any(t1).( *Term )) { if tom_is_sort_term(t2) { 
+	
+{ { if tom_is_sort_term(t1) { if tom_is_fun_sym_zero(any(t1).( *Term )) { if tom_is_sort_term(t2) { 
  return any(t2).( *Term ) };  };  };  }; { if tom_is_sort_term(t1) { if tom_is_fun_sym_suc(any(t1).( *Term )) { if tom_is_sort_term(t2) { 
  return tom_make_suc(plus1(tom_get_slot_suc_pred(any(t1).( *Term )),any(t2).( *Term ))) };  };  };  };  }; 
 

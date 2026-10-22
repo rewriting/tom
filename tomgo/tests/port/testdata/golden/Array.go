@@ -82,7 +82,8 @@ func tom_equal_term_L(l1  []*Term , l2  []*Term ) bool { return equalsList(l1, l
 
 
 func sort1(l []*Term) []*Term {
-	{ { if tom_is_sort_L(l) { if tom_is_fun_sym_conc(any(l).( []*Term )) { var tomMatch1_2 int64 = 0; _ = tomMatch1_2; var tomMatch1_end_5 int64 = tomMatch1_2; _ = tomMatch1_end_5; for { { if !(tomMatch1_end_5 >= tom_get_size_conc_L(any(l).( []*Term ))) { var tom___x  *Term  = tom_get_element_conc_L(any(l).( []*Term ),tomMatch1_end_5); _ = tom___x; var tomMatch1_6 int64 = tomMatch1_end_5 + 1; _ = tomMatch1_6; var tomMatch1_end_9 int64 = tomMatch1_6; _ = tomMatch1_end_9; for { { if !(tomMatch1_end_9 >= tom_get_size_conc_L(any(l).( []*Term ))) { var tom___y  *Term  = tom_get_element_conc_L(any(l).( []*Term ),tomMatch1_end_9); _ = tom___y; 
+	
+{ { if tom_is_sort_L(l) { if tom_is_fun_sym_conc(any(l).( []*Term )) { var tomMatch1_2 int64 = 0; _ = tomMatch1_2; var tomMatch1_end_5 int64 = tomMatch1_2; _ = tomMatch1_end_5; for { { if !(tomMatch1_end_5 >= tom_get_size_conc_L(any(l).( []*Term ))) { var tom___x  *Term  = tom_get_element_conc_L(any(l).( []*Term ),tomMatch1_end_5); _ = tom___x; var tomMatch1_6 int64 = tomMatch1_end_5 + 1; _ = tomMatch1_6; var tomMatch1_end_9 int64 = tomMatch1_6; _ = tomMatch1_end_9; for { { if !(tomMatch1_end_9 >= tom_get_size_conc_L(any(l).( []*Term ))) { var tom___y  *Term  = tom_get_element_conc_L(any(l).( []*Term ),tomMatch1_end_9); _ = tom___y; 
 
 			if tom___x.Name > tom___y.Name { 
 				return sort1(tom_append_array_conc(tom_get_slice_conc(any(l).( []*Term ),tomMatch1_end_9 + 1,tom_get_size_conc_L(any(l).( []*Term ))),tom_cons_array_conc(tom___x,tom_append_array_conc(tom_get_slice_conc(any(l).( []*Term ),tomMatch1_6,tomMatch1_end_9),tom_cons_array_conc(tom___y,tom_append_array_conc(tom_get_slice_conc(any(l).( []*Term ),tomMatch1_2,tomMatch1_end_5),tom_empty_array_conc(5)))))))
@@ -96,7 +97,8 @@ func sort1(l []*Term) []*Term {
 
 
 func sort2(l []*Term) []*Term {
-	{ { if tom_is_sort_L(l) { if tom_is_fun_sym_conc(any(l).( []*Term )) { var tomMatch2_2 int64 = 0; _ = tomMatch2_2; var tomMatch2_end_5 int64 = tomMatch2_2; _ = tomMatch2_end_5; for { { if !(tomMatch2_end_5 >= tom_get_size_conc_L(any(l).( []*Term ))) { var tom___x  *Term  = tom_get_element_conc_L(any(l).( []*Term ),tomMatch2_end_5); _ = tom___x; var tomMatch2_6 int64 = tomMatch2_end_5 + 1; _ = tomMatch2_6; var tomMatch2_end_9 int64 = tomMatch2_6; _ = tomMatch2_end_9; for { { if !(tomMatch2_end_9 >= tom_get_size_conc_L(any(l).( []*Term ))) { var tom___y  *Term  = tom_get_element_conc_L(any(l).( []*Term ),tomMatch2_end_9); _ = tom___y; 
+	
+{ { if tom_is_sort_L(l) { if tom_is_fun_sym_conc(any(l).( []*Term )) { var tomMatch2_2 int64 = 0; _ = tomMatch2_2; var tomMatch2_end_5 int64 = tomMatch2_2; _ = tomMatch2_end_5; for { { if !(tomMatch2_end_5 >= tom_get_size_conc_L(any(l).( []*Term ))) { var tom___x  *Term  = tom_get_element_conc_L(any(l).( []*Term ),tomMatch2_end_5); _ = tom___x; var tomMatch2_6 int64 = tomMatch2_end_5 + 1; _ = tomMatch2_6; var tomMatch2_end_9 int64 = tomMatch2_6; _ = tomMatch2_end_9; for { { if !(tomMatch2_end_9 >= tom_get_size_conc_L(any(l).( []*Term ))) { var tom___y  *Term  = tom_get_element_conc_L(any(l).( []*Term ),tomMatch2_end_9); _ = tom___y; 
 
 			if tom___x.Name > tom___y.Name { 
 				return sort2(tom_append_array_conc(tom_get_slice_conc(any(l).( []*Term ),tomMatch2_end_9 + 1,tom_get_size_conc_L(any(l).( []*Term ))),tom_cons_array_conc(tom___x,tom_append_array_conc(tom_get_slice_conc(any(l).( []*Term ),tomMatch2_6,tomMatch2_end_9),tom_cons_array_conc(tom___y,tom_append_array_conc(tom_get_slice_conc(any(l).( []*Term ),tomMatch2_2,tomMatch2_end_5),tom_empty_array_conc(5)))))))
@@ -116,7 +118,8 @@ func sort2(l []*Term) []*Term {
 
 
 func double1(l []*Term) []*Term {
-	{ { if tom_is_sort_L(l) { if tom_is_fun_sym_conc(any(l).( []*Term )) { var tomMatch3_2 int64 = 0; _ = tomMatch3_2; var tomMatch3_end_5 int64 = tomMatch3_2; _ = tomMatch3_end_5; for { { if !(tomMatch3_end_5 >= tom_get_size_conc_L(any(l).( []*Term ))) { var tom___x  *Term  = tom_get_element_conc_L(any(l).( []*Term ),tomMatch3_end_5); _ = tom___x; var tomMatch3_6 int64 = tomMatch3_end_5 + 1; _ = tomMatch3_6; var tomMatch3_end_9 int64 = tomMatch3_6; _ = tomMatch3_end_9; for { { if !(tomMatch3_end_9 >= tom_get_size_conc_L(any(l).( []*Term ))) { if tom_equal_term_E(tom___x, tom_get_element_conc_L(any(l).( []*Term ),tomMatch3_end_9)) { 
+	
+{ { if tom_is_sort_L(l) { if tom_is_fun_sym_conc(any(l).( []*Term )) { var tomMatch3_2 int64 = 0; _ = tomMatch3_2; var tomMatch3_end_5 int64 = tomMatch3_2; _ = tomMatch3_end_5; for { { if !(tomMatch3_end_5 >= tom_get_size_conc_L(any(l).( []*Term ))) { var tom___x  *Term  = tom_get_element_conc_L(any(l).( []*Term ),tomMatch3_end_5); _ = tom___x; var tomMatch3_6 int64 = tomMatch3_end_5 + 1; _ = tomMatch3_6; var tomMatch3_end_9 int64 = tomMatch3_6; _ = tomMatch3_end_9; for { { if !(tomMatch3_end_9 >= tom_get_size_conc_L(any(l).( []*Term ))) { if tom_equal_term_E(tom___x, tom_get_element_conc_L(any(l).( []*Term ),tomMatch3_end_9)) { 
 
 			return double1(tom_append_array_conc(tom_get_slice_conc(any(l).( []*Term ),tomMatch3_end_9 + 1,tom_get_size_conc_L(any(l).( []*Term ))),tom_cons_array_conc(tom___x,tom_append_array_conc(tom_get_slice_conc(any(l).( []*Term ),tomMatch3_6,tomMatch3_end_9),tom_append_array_conc(tom_get_slice_conc(any(l).( []*Term ),tomMatch3_2,tomMatch3_end_5),tom_empty_array_conc(4))))))
 		 };  }; tomMatch3_end_9 = tomMatch3_end_9 + 1;  };  if !(!(tomMatch3_end_9 > tom_get_size_conc_L(any(l).( []*Term )))) { break; }; };  }; tomMatch3_end_5 = tomMatch3_end_5 + 1;  };  if !(!(tomMatch3_end_5 > tom_get_size_conc_L(any(l).( []*Term )))) { break; }; };  };  };  };  }; 

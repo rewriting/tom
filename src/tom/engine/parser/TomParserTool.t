@@ -118,6 +118,9 @@ public class TomParserTool {
    */
   public String parseGomFile(String gomCode, int initialGomLine, String[] userOpts) throws TomIncludeException {
     String res = "";
+    if(Boolean.TRUE == getOptionManager().getOptionValue("goCode")) {
+      return parseGomFileGo(gomCode, initialGomLine);
+    }
     //System.out.println("gomCode: " + gomCode);
     String currentFileName = getStreamManager().getInputFileName();
 
@@ -262,6 +265,67 @@ public class TomParserTool {
     }
 
     return res;
+  }
+
+  /*
+   * -go: the %gom block is compiled by "tomgo gom-block", which writes the
+   * Go structures next to the generated file and prints the path of the
+   * Go-host-code mapping to include.
+   */
+  private String parseGomFileGo(String gomCode, int initialGomLine) {
+    String currentFileName = getStreamManager().getInputFileName();
+    try {
+      File tmpFile = File.createTempFile("tmp", ".gom", null).getCanonicalFile();
+      tmpFile.deleteOnExit();
+      Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(tmpFile),"UTF-8"));
+      writer.write(gomCode);
+      writer.close();
+      File outDir = getStreamManager().getOutputFile().getCanonicalFile().getParentFile();
+      outDir.mkdirs();
+      String tomgo = System.getenv("TOMGO_BIN");
+      if(tomgo == null || tomgo.length() == 0) {
+        tomgo = "tomgo";
+      }
+      ProcessBuilder pb = new ProcessBuilder(tomgo, "gom-block",
+          "--pkg", goPackageOf(new File(currentFileName)),
+          "-o", outDir.getPath(), tmpFile.getPath());
+      pb.redirectError(ProcessBuilder.Redirect.INHERIT);
+      Process p = pb.start();
+      java.io.BufferedReader r = new java.io.BufferedReader(new java.io.InputStreamReader(p.getInputStream(),"UTF-8"));
+      String line;
+      String last = null;
+      while((line = r.readLine()) != null) {
+        if(line.trim().length() > 0) {
+          last = line.trim();
+        }
+      }
+      if(p.waitFor() != 0 || last == null) {
+        TomMessage.error(getLogger(), currentFileName, initialGomLine, TomMessage.gomFailure,currentFileName,Integer.valueOf(initialGomLine));
+        return "";
+      }
+      return last;
+    } catch (Exception e) {
+      TomMessage.error(getLogger(), currentFileName, initialGomLine, TomMessage.gomInitFailure,currentFileName,Integer.valueOf(initialGomLine), e);
+      return "";
+    }
+  }
+
+  /** the Go package declared by the first "package X" line of a .t file */
+  private static String goPackageOf(File f) throws IOException {
+    java.util.regex.Pattern pat = java.util.regex.Pattern.compile("^\\s*package\\s+([A-Za-z_][A-Za-z0-9_]*)");
+    java.io.BufferedReader r = new java.io.BufferedReader(new java.io.InputStreamReader(new FileInputStream(f),"UTF-8"));
+    try {
+      String line;
+      while((line = r.readLine()) != null) {
+        java.util.regex.Matcher m = pat.matcher(line);
+        if(m.find()) {
+          return m.group(1);
+        }
+      }
+    } finally {
+      r.close();
+    }
+    return "main";
   }
 
   public void printTree(Visitable tree) {

@@ -28,6 +28,11 @@ var cases = []portCase{
 	{Rel: "Array.t"},
 	{Rel: "TestArray.t", GoTest: true},
 	{Rel: "TestList.t", GoTest: true},
+	{Rel: "TestBackQuote.t", GoTest: true},
+	{Rel: "TestVarVarStar.t", GoTest: true},
+	{Rel: "TestNonVarSubjects.t", GoTest: true},
+	{Rel: "TestSublists.t", GoTest: true},
+	{Rel: "numeric/TestNumericConditions.t", GoTest: true},
 }
 
 func base(c portCase) string { return strings.TrimSuffix(filepath.Base(c.Rel), ".t") }

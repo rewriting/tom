@@ -111,7 +111,8 @@ func tom_equal_term_L(l1  []*Term , l2  []*Term ) bool { return equalsList(l1, l
 
 
 func classifyTag(l []*Term) string {
-	{ { if tom_is_sort_L(l) { if tom_is_fun_sym_conc(any(l).( []*Term )) { if tom_is_empty_conc_L(any(l).( []*Term )) { 
+	
+{ { if tom_is_sort_L(l) { if tom_is_fun_sym_conc(any(l).( []*Term )) { if tom_is_empty_conc_L(any(l).( []*Term )) { 
  return "empty"  };  };  };  }; { if tom_is_sort_L(l) { if tom_is_fun_sym_conc(any(l).( []*Term )) { if !(tom_is_empty_conc_L(any(l).( []*Term ))) { var tomMatch1_6  *Term  = tom_get_head_conc_L(any(l).( []*Term )); _ = tomMatch1_6; if tom_is_fun_sym_f(any(tomMatch1_6).( *Term )) { if tom_is_fun_sym_a(any(tom_get_slot_f_s1(tomMatch1_6)).( *Term )) { if tom_is_empty_conc_L(tom_get_tail_conc_L(any(l).( []*Term ))) { 
  return "singleton_fa"  };  };  };  };  };  };  }; { if tom_is_sort_L(l) { if tom_is_fun_sym_conc(any(l).( []*Term )) { var tomMatch1_end_14  []*Term  = any(l).( []*Term ); _ = tomMatch1_end_14; for { { if !(tom_is_empty_conc_L(tomMatch1_end_14)) { var tomMatch1_17  *Term  = tom_get_head_conc_L(tomMatch1_end_14); _ = tomMatch1_17; if tom_is_fun_sym_f(any(tomMatch1_17).( *Term )) { if tom_is_fun_sym_a(any(tom_get_slot_f_s1(tomMatch1_17)).( *Term )) { if tom_is_empty_conc_L(tom_get_tail_conc_L(tomMatch1_end_14)) { 
  return "ends_fa"  };  };  };  }; if tom_is_empty_conc_L(tomMatch1_end_14) { tomMatch1_end_14 = any(l).( []*Term );  } else { tomMatch1_end_14 = tom_get_tail_conc_L(tomMatch1_end_14);  };  };  if !(!(tom_equal_term_L(tomMatch1_end_14, any(l).( []*Term )))) { break; }; };  };  };  }; { if tom_is_sort_L(l) { if tom_is_fun_sym_conc(any(l).( []*Term )) { var tomMatch1_end_25  []*Term  = any(l).( []*Term ); _ = tomMatch1_end_25; for { { if !(tom_is_empty_conc_L(tomMatch1_end_25)) { var tomMatch1_32  *Term  = tom_get_head_conc_L(tomMatch1_end_25); _ = tomMatch1_32; if tom_is_fun_sym_f(any(tomMatch1_32).( *Term )) { if tom_is_fun_sym_a(any(tom_get_slot_f_s1(tomMatch1_32)).( *Term )) { var tomMatch1_26  []*Term  = tom_get_tail_conc_L(tomMatch1_end_25); _ = tomMatch1_26; var tomMatch1_end_29  []*Term  = tomMatch1_26; _ = tomMatch1_end_29; for { { if !(tom_is_empty_conc_L(tomMatch1_end_29)) { var tomMatch1_37  *Term  = tom_get_head_conc_L(tomMatch1_end_29); _ = tomMatch1_37; if tom_is_fun_sym_f(any(tomMatch1_37).( *Term )) { if tom_is_fun_sym_b(any(tom_get_slot_f_s1(tomMatch1_37)).( *Term )) { if tom_is_empty_conc_L(tom_get_tail_conc_L(tomMatch1_end_29)) { 
@@ -127,7 +128,8 @@ func classifyTag(l []*Term) string {
 
 
 func firstHead(l []*Term) *Term {
-	{ { if tom_is_sort_L(l) { if tom_is_fun_sym_conc(any(l).( []*Term )) { if !(tom_is_empty_conc_L(any(l).( []*Term ))) { 
+	
+{ { if tom_is_sort_L(l) { if tom_is_fun_sym_conc(any(l).( []*Term )) { if !(tom_is_empty_conc_L(any(l).( []*Term ))) { 
  return tom_get_head_conc_L(any(l).( []*Term )) };  };  };  };  }; 
 
 	return nil
@@ -137,7 +139,8 @@ func firstHead(l []*Term) *Term {
 
 
 func countElements(l []*Term) int {
-	{ { if tom_is_sort_L(l) { if tom_is_fun_sym_conc(any(l).( []*Term )) { if tom_is_empty_conc_L(any(l).( []*Term )) { 
+	
+{ { if tom_is_sort_L(l) { if tom_is_fun_sym_conc(any(l).( []*Term )) { if tom_is_empty_conc_L(any(l).( []*Term )) { 
  return 0  };  };  };  }; { if tom_is_sort_L(l) { if tom_is_fun_sym_conc(any(l).( []*Term )) { if !(tom_is_empty_conc_L(any(l).( []*Term ))) { 
  return 1 + countElements(tom_get_tail_conc_L(any(l).( []*Term )))  };  };  };  };  }; 
 
