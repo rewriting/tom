@@ -8,5 +8,6 @@
     "TestMatch6"
   ],
   "stdout": "",
-  "exitOK": true
+  "exitOK": true,
+  "source_sha256": "00ed3b52a28bd27683877941c164d87ea54ca8717e110bef1ca8b05124d2a642"
 }

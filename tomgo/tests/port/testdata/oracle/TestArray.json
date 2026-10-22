@@ -9,5 +9,6 @@
     "TestVariableStar1"
   ],
   "stdout": "",
-  "exitOK": true
+  "exitOK": true,
+  "source_sha256": "30ae6844856862c5669f4fa1ce35c8cb30ce0c33b8ffc00ca9061ea9cc0f6e5a"
 }

@@ -3,5 +3,6 @@
     "Test1"
   ],
   "stdout": "",
-  "exitOK": true
+  "exitOK": true,
+  "source_sha256": "12d8e3aa6d88516a1895b9996f474622fbee8334dddedc0352d18f521bf3580e"
 }

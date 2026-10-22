@@ -11,6 +11,7 @@ Tom+Go, compilé par `tom -go`, se comporte comme l'original compilé par
 - échec go test : 0
 - échec go build : 0
 - échec tom : 0
+- oracle invalide : 0
 - non porté : 91
 
 | Cas | Statut | Notes |

@@ -5,8 +5,13 @@ package port
 
 import (
 	"bufio"
+	"crypto/sha256"
+	"encoding/hex"
 	"encoding/json"
+	"errors"
 	"flag"
+	"fmt"
+	"io"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -148,6 +153,9 @@ type oracle struct {
 	Failed []string `json:"failed,omitempty"`
 	Stdout string   `json:"stdout"` // stdout+stderr of a main program
 	ExitOK bool     `json:"exitOK"`
+	// SourceSHA256 is the hash of test/<Rel> the oracle was computed
+	// from; a mismatch means the oracle is stale.
+	SourceSHA256 string `json:"source_sha256"`
 }
 
 func oraclePath(c portCase) string {
@@ -300,6 +308,9 @@ func legacyOracle(t *testing.T, c portCase) oracle {
 		if err := json.Unmarshal(data, &o); err != nil {
 			t.Fatal(err)
 		}
+		if err := oracleStale(c, o, filepath.Join(tomjava.RepoRoot(t), "test", c.Rel)); err != nil {
+			t.Fatal(err)
+		}
 		return o
 	}
 	legacy := tomjava.LegacyDist(t)
@@ -329,6 +340,11 @@ func legacyOracle(t *testing.T, c portCase) oracle {
 		class = pkg + "." + class
 	}
 	var o oracle
+	sum, err := sourceSHA256(src)
+	if err != nil {
+		t.Fatal(err)
+	}
+	o.SourceSHA256 = sum
 	if c.GoTest {
 		runJUnit(t, c, src, dir, cp, class, &o)
 	} else {
@@ -353,8 +369,12 @@ func junitTests(t *testing.T, src string) []string {
 	if err != nil {
 		t.Fatal(err)
 	}
+	return junitTestNames(string(data))
+}
+
+func junitTestNames(source string) []string {
 	var names []string
-	lines := strings.Split(stripComments(string(data)), "\n")
+	lines := strings.Split(stripComments(source), "\n")
 	for i, line := range lines {
 		s := strings.TrimSpace(line)
 		if s != "@Test" && !strings.HasPrefix(s, "@Test(") {
@@ -384,6 +404,48 @@ func javaPackage(t *testing.T, src string) string {
 	return ""
 }
 
+func sourceSHA256(path string) (string, error) {
+	f, err := os.Open(path)
+	if err != nil {
+		return "", err
+	}
+	defer f.Close()
+	h := sha256.New()
+	if _, err := io.Copy(h, f); err != nil {
+		return "", err
+	}
+	return hex.EncodeToString(h.Sum(nil)), nil
+}
+
+// oracleStale checks, without Java, that a cached oracle still matches
+// the original source src.
+func oracleStale(c portCase, o oracle, src string) error {
+	sum, err := sourceSHA256(src)
+	if err != nil {
+		return err
+	}
+	if sum != o.SourceSHA256 {
+		return fmt.Errorf("oracle stale: %s changed since the oracle was computed (run with -update-oracle)", src)
+	}
+	if !c.GoTest {
+		return nil
+	}
+	data, err := os.ReadFile(src)
+	if err != nil {
+		return err
+	}
+	var declared []string
+	for _, m := range junitTestNames(string(data)) {
+		declared = append(declared, capitalise(m))
+	}
+	recorded := append(append([]string(nil), o.Passed...), o.Failed...)
+	if strings.Join(sortedCopy(declared), ",") != strings.Join(sortedCopy(recorded), ",") {
+		return fmt.Errorf("oracle stale: %s declares %v but the oracle records %v (run with -update-oracle)",
+			src, sortedCopy(declared), sortedCopy(recorded))
+	}
+	return nil
+}
+
 // compareWithOracle returns the T2 divergences of one run against the
 // legacy oracle (empty when the port behaves like the original).
 func compareWithOracle(c portCase, want oracle, passed map[string]bool, out string, runErr error) []string {
@@ -404,6 +466,18 @@ func compareWithOracle(c portCase, want oracle, passed map[string]bool, out stri
 		if !strings.Contains(name, "/") { // subtests are the port's business
 			topPassed[name] = true
 		}
+	}
+	required := 0
+	for _, name := range want.Passed {
+		if _, unsupported := c.Unsupported[name]; !unsupported {
+			required++
+		}
+	}
+	if required == 0 {
+		diffs = append(diffs, "vacuous oracle: no legacy-passing test remains required once Unsupported is removed")
+	}
+	if runErr != nil && len(topPassed) == 0 {
+		diffs = append(diffs, "go test failed and no Go test passed ("+runErr.Error()+")")
 	}
 	for _, name := range want.Passed {
 		if _, unsupported := c.Unsupported[name]; unsupported {
@@ -532,7 +606,7 @@ func TestDashboard(t *testing.T) {
 	b.WriteString("Tom+Go, compilé par `tom -go`, se comporte comme l'original compilé par\n")
 	b.WriteString("`legacy/` (mêmes tests JUnit réussis, ou même sortie et même statut).\n\n")
 	b.WriteString("- total : " + strconv.Itoa(len(rows)) + "\n")
-	for _, s := range []string{"OK", "divergence", "échec go test", "échec go build", "échec tom", "non porté"} {
+	for _, s := range []string{"OK", "divergence", "échec go test", "échec go build", "échec tom", "oracle invalide", "non porté"} {
 		b.WriteString("- " + s + " : " + strconv.Itoa(counts[s]) + "\n")
 	}
 	b.WriteString("\n| Cas | Statut | Notes |\n|---|---|---|\n" + strings.Join(rows, "\n") + "\n")
@@ -545,8 +619,14 @@ func TestDashboard(t *testing.T) {
 // the dashboard test.
 func dashboardStatus(t *testing.T, c portCase) string {
 	t.Helper()
+	// Subtests are allowed to fail: their outcome is the status. The
+	// oracle is loaded first so that a missing or stale oracle is not
+	// mistaken for a Tom failure.
+	var want oracle
+	if !t.Run("oracle/"+c.Rel, func(t *testing.T) { want = legacyOracle(t, c) }) {
+		return "oracle invalide"
+	}
 	status := "échec tom"
-	// Subtests are allowed to fail: their outcome is the status.
 	t.Run("status/"+c.Rel, func(t *testing.T) {
 		dist := tomjava.NewDist(t)
 		dir := t.TempDir()
@@ -572,7 +652,6 @@ func dashboardStatus(t *testing.T, c portCase) string {
 			status = "échec go build"
 			return
 		}
-		want := legacyOracle(t, c)
 		passed, out, err := runCase(t, c, dir)
 		switch {
 		case c.GoTest && err != nil && len(passed) == 0:
@@ -630,4 +709,88 @@ func writeTemp(t *testing.T, content string) string {
 		t.Fatal(err)
 	}
 	return p
+}
+
+// TestOracleGuards pins the vacuity and staleness guards (fix round 1).
+func TestOracleGuards(t *testing.T) {
+	hasDiff := func(diffs []string, sub string) bool {
+		for _, d := range diffs {
+			if strings.Contains(d, sub) {
+				return true
+			}
+		}
+		return false
+	}
+	junit := portCase{Rel: "X.t", GoTest: true}
+	if d := compareWithOracle(junit, oracle{}, map[string]bool{}, "", nil); !hasDiff(d, "vacuous") {
+		t.Errorf("empty oracle vs empty Go run: %v, want a vacuous-oracle divergence", d)
+	}
+	allUnsupported := portCase{Rel: "X.t", GoTest: true, Unsupported: map[string]string{"TestU": "why"}}
+	if d := compareWithOracle(allUnsupported, oracle{Passed: []string{"TestU"}}, map[string]bool{}, "", nil); !hasDiff(d, "vacuous") {
+		t.Errorf("all-unsupported oracle: %v, want a vacuous-oracle divergence", d)
+	}
+	if d := compareWithOracle(junit, oracle{Passed: []string{"TestA"}}, map[string]bool{}, "build failed", errors.New("exit status 1")); !hasDiff(d, "no Go test passed") {
+		t.Errorf("failed go test with zero passes: %v, want an explicit report", d)
+	}
+
+	src := writeTemp(t, "@Test\npublic void testA() {}\n/* @Test\npublic void testZ() {} */\n@Test\npublic void testB() {}\n")
+	sum, err := sourceSHA256(src)
+	if err != nil {
+		t.Fatal(err)
+	}
+	fresh := oracle{Passed: []string{"TestA"}, Failed: []string{"TestB"}, SourceSHA256: sum}
+	if err := oracleStale(junit, fresh, src); err != nil {
+		t.Errorf("fresh oracle reported stale: %v", err)
+	}
+	missing := fresh
+	missing.Failed = nil
+	if err := oracleStale(junit, missing, src); err == nil {
+		t.Error("oracle missing testB not reported stale")
+	}
+	extra := fresh
+	extra.Passed = []string{"TestA", "TestZ"}
+	if err := oracleStale(junit, extra, src); err == nil {
+		t.Error("oracle with commented-out testZ not reported stale")
+	}
+	edited := fresh
+	edited.SourceSHA256 = "0000"
+	if err := oracleStale(portCase{Rel: "M.t"}, edited, src); err == nil {
+		t.Error("main oracle with a wrong source hash not reported stale")
+	}
+	if err := oracleStale(portCase{Rel: "M.t"}, oracle{SourceSHA256: sum, ExitOK: true}, src); err != nil {
+		t.Errorf("fresh main oracle reported stale: %v", err)
+	}
+}
+
+// TestCasesCoverPorts keeps cases, the ports and the oracle cache in step.
+func TestCasesCoverPorts(t *testing.T) {
+	inCases := map[string]bool{}
+	oracles := map[string]bool{}
+	for _, c := range cases {
+		inCases[c.Rel] = true
+		oracles[filepath.Base(oraclePath(c))] = true
+	}
+	filepath.Walk(".", func(p string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+		if info.IsDir() && (p == "aterm" || p == "testdata") {
+			return filepath.SkipDir
+		}
+		if !info.IsDir() && strings.HasSuffix(p, ".t") && !inCases[filepath.ToSlash(p)] {
+			t.Errorf("port %s is not listed in cases", p)
+		}
+		return nil
+	})
+	files, _ := filepath.Glob(filepath.Join("testdata", "oracle", "*.json"))
+	for _, f := range files {
+		if !oracles[filepath.Base(f)] {
+			t.Errorf("oracle %s belongs to no case", f)
+		}
+	}
+	for _, c := range cases {
+		if _, err := os.Stat(c.Rel); err != nil {
+			t.Errorf("case %s has no port: %v", c.Rel, err)
+		}
+	}
 }

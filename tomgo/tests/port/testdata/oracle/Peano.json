@@ -1,5 +1,6 @@
 {
   "passed": null,
   "stdout": "First loop has successfully terminated.\nSecond loop has successfully terminated.\nPeano test has successfully terminated.\n",
-  "exitOK": true
+  "exitOK": true,
+  "source_sha256": "4341c025f26ae54a42b8ce281a7b79d2eac5ce15efa94695c6673e25c96ffa64"
 }

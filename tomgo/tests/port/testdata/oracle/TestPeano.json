@@ -10,5 +10,6 @@
     "TestPeano2int"
   ],
   "stdout": "",
-  "exitOK": true
+  "exitOK": true,
+  "source_sha256": "c08003f6b05269161d3834818a611c18d7ed4faac3fb9e0901fd2f8b1780e3c2"
 }
