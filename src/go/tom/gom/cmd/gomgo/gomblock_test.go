@@ -210,6 +210,9 @@ func TestWriteGomBlockUnsupportedHook(t *testing.T) {
 		{"module M\nabstract syntax\nT = a() | k(x:T)\nsort T:graphrules(R,Identity) {\n  k(x) -> x\n}\n", "sort T:graphrules"},
 		// Java Gom: the theory of a list operator with hooks must be given
 		{"module M\nabstract syntax\nT = a() | l(T*)\nl:make_insert(e,l) {\n  return `l(e,l*);\n}\n", "no theory"},
+		// Java runs a theory declared after rules in declaration order;
+		// the Go backend runs the theory first: refused
+		{"module M\nabstract syntax\nT = a() | b() | l(T*)\nmodule M:rules() {\n  l(a(), x*) -> l(b(), x*)\n}\nl:FL() {}\n", "must be declared before"},
 		// the neutral element must be a constant of the module
 		{"module M\nabstract syntax\nT = a() | l(T*)\nl:AU() { `b() }\n", "l:AU"},
 	} {

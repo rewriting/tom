@@ -1,0 +1,1 @@
+conc(b(),b(),b()) conc(b()) au(a(),b()) au(a(),c())

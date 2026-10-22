@@ -164,23 +164,23 @@ func (g *gen) emitJavaAPIMethods(api sortAPI, alt *gomast.AlternativeAlternative
 		if o, ok := own[s.gomName]; ok {
 			w("func (t *%s) Get%s() %s { return t.%s }\n", st, s.gomName, s.goType, o.field)
 		} else {
-			w("func (t *%s) Get%s() %s {\n\tpanic(%q)\n}\n", st, s.gomName, s.goType, "This "+api.name+" has no "+s.gomName)
+			w("func (t *%s) Get%s() %s {\n\tpanic(&aterm.GomError{Msg: %q})\n}\n", st, s.gomName, s.goType, "This "+api.name+" has no "+s.gomName)
 		}
 	}
 	// GetHead<op>, GetTail<op>
 	for _, v := range api.variadic {
 		elem := g.elemGoType(v)
 		if v == alt {
-			w("func (t *%s) GetHead%s() %s {\n\tif len(t.Slots) == 0 {\n\t\tpanic(%q)\n\t}\n\treturn t.Slots[0]\n}\n", st, v.Name, elem, "This "+api.name+" has no Head"+v.Name)
-			w("func (t *%s) GetTail%s() %s {\n\tif len(t.Slots) == 0 {\n\t\tpanic(%q)\n\t}\n", st, v.Name, api.name, "This "+api.name+" has no Tail"+v.Name)
+			w("func (t *%s) GetHead%s() %s {\n\tif len(t.Slots) == 0 {\n\t\tpanic(&aterm.GomError{Msg: %q})\n\t}\n\treturn t.Slots[0]\n}\n", st, v.Name, elem, "This "+api.name+" has no Head"+v.Name)
+			w("func (t *%s) GetTail%s() %s {\n\tif len(t.Slots) == 0 {\n\t\tpanic(&aterm.GomError{Msg: %q})\n\t}\n", st, v.Name, api.name, "This "+api.name+" has no Tail"+v.Name)
 			if th := theoryOf(g.mod, v).kind; th == "AU" || th == "ACU" {
 				w("\t// AU: the last tail of a list is its last element\n")
 				w("\tif len(t.Slots) == 2 {\n\t\treturn t.Slots[1]\n\t}\n")
 			}
 			w("\treturn Raw%s(t.Slots[1:]...)\n}\n", exportedField(v.Name))
 		} else {
-			w("func (t *%s) GetHead%s() %s {\n\tpanic(%q)\n}\n", st, v.Name, elem, "This "+api.name+" has no Head"+v.Name)
-			w("func (t *%s) GetTail%s() %s {\n\tpanic(%q)\n}\n", st, v.Name, api.name, "This "+api.name+" has no Tail"+v.Name)
+			w("func (t *%s) GetHead%s() %s {\n\tpanic(&aterm.GomError{Msg: %q})\n}\n", st, v.Name, elem, "This "+api.name+" has no Head"+v.Name)
+			w("func (t *%s) GetTail%s() %s {\n\tpanic(&aterm.GomError{Msg: %q})\n}\n", st, v.Name, api.name, "This "+api.name+" has no Tail"+v.Name)
 		}
 	}
 	w("\n")
@@ -196,8 +196,8 @@ func (g *gen) emitJavaAPIMethods(api sortAPI, alt *gomast.AlternativeAlternative
 		w("func (t *%s) Append(element %s) %s {\n\tvar res %s = Cons%s(element, Empty%s())\n\tfor i := len(t.Slots) - 1; i >= 0; i-- {\n\t\tres = Cons%s(t.Slots[i], res)\n\t}\n\treturn res\n}\n\n",
 			st, g.elemGoType(alt), api.name, api.name, vGo, vGo, vGo)
 	} else {
-		w("func (t *%s) Length() int {\n\tpanic(%q)\n}\n\n", st, "This "+api.name+"."+alt.Name+" is not a list")
-		w("func (t *%s) Reverse() %s {\n\tpanic(%q)\n}\n\n", st, api.name, "This "+api.name+"."+alt.Name+" is not a list")
+		w("func (t *%s) Length() int {\n\tpanic(&aterm.GomError{Msg: %q, IllegalArgument: true})\n}\n\n", st, "This "+api.name+"."+alt.Name+" is not a list")
+		w("func (t *%s) Reverse() %s {\n\tpanic(&aterm.GomError{Msg: %q, IllegalArgument: true})\n}\n\n", st, api.name, "This "+api.name+"."+alt.Name+" is not a list")
 	}
 	// CompareTo, CompareToLPO
 	g.emitCompare(api, alt, st, "CompareTo", true)
@@ -213,7 +213,7 @@ func (g *gen) emitCompare(api sortAPI, alt *gomast.AlternativeAlternative, st, n
 	w("func (t *%s) %s(o any) int {\n", st, name)
 	if g.noSharing && byHash {
 		// Java Gom without maximal sharing: compareTo is not implemented
-		w("\tpanic(\"Unable to compare\")\n}\n\n")
+		w("\tpanic(&aterm.GomError{Msg: \"Unable to compare\"})\n}\n\n")
 		return
 	}
 	w("\tao := o.(%s)\n", api.name)
@@ -253,7 +253,7 @@ func (g *gen) emitCompare(api sortAPI, alt *gomast.AlternativeAlternative, st, n
 			cmp(s.goType, "t."+s.field, "tco."+s.field)
 		}
 	}
-	w("\tpanic(\"Unable to compare\")\n}\n\n")
+	w("\tpanic(&aterm.GomError{Msg: \"Unable to compare\"})\n}\n\n")
 }
 
 // neutralPattern is the AU/ACU neutral element the Go backend can
@@ -341,27 +341,22 @@ func (g *gen) emitVariadicJava(sortNm string, alt *gomast.AlternativeAlternative
 		flattenHead()
 		w("\tif _, ok := any(tail).(*%s); !ok {\n\t\treturn Cons%s(head, Cons%s(tail, Empty%s()))\n\t}\n", structName, opGo, opGo, opGo)
 	case "ACU", "AU":
+		// Java Gom's order (HookTypeExpander prepends each hook, so the
+		// emitted Cons<op>.make runs them in reverse of makeAUHookList /
+		// makeACUHookList): neutral removal, AU flattening, then, for
+		// ACU, the swap that keeps the elements sorted (compareTo).
+		if neutral != "" {
+			w("\t// %s: neutral element\n\tif head == %s {\n\t\treturn tail\n\t}\n\tif tail == %s {\n\t\treturn head\n\t}\n", th.kind, neutral, neutral)
+		}
+		w("\t// %s: flattening, the empty list is neutral\n", th.kind)
+		w("\tif %s {\n\t\treturn tail\n\t}\n", isEmpty("head"))
+		w("\tif %s {\n\t\treturn head\n\t}\n", isEmpty("tail"))
+		flattenHead()
 		if th.kind == "ACU" {
-			// Java Gom sorts (its ACU hook) before flattening (its AU
-			// hook): a list head may then be swapped behind an element,
-			// and whether the result is sorted depends on the hash
-			// values of the terms (compareTo compares them first). The
-			// Go backend flattens a list head first, so that the normal
-			// form is sorted whatever the hashes (test/gom/TestACU.t).
-			w("\t// ACU: a list head is flattened first\n")
-			w("\tif %s {\n\t\treturn tail\n\t}\n", isEmpty("head"))
-			flattenHead()
 			w("\t// ACU: the elements are kept sorted (CompareTo)\n")
 			w("\tif t, ok := any(tail).(*%s); ok && len(t.Slots) > 0 {\n", structName)
 			w("\t\tif 0 < head.CompareTo(t.Slots[0]) {\n\t\t\ttmpHd := head\n\t\t\thead = t.Slots[0]\n\t\t\ttail = Cons%s(tmpHd, Cons%s(t.GetTail%s(), Empty%s()))\n\t\t}\n", opGo, opGo, op, opGo)
 			w("\t} else {\n\t\tif 0 < head.CompareTo(tail) {\n\t\t\ttmpHd := head\n\t\t\thead = tail\n\t\t\ttail = tmpHd\n\t\t}\n\t}\n")
-		}
-		w("\t// AU: flattening, the empty list is neutral\n")
-		w("\tif %s {\n\t\treturn tail\n\t}\n", isEmpty("head"))
-		w("\tif %s {\n\t\treturn head\n\t}\n", isEmpty("tail"))
-		flattenHead()
-		if neutral != "" {
-			w("\t// neutral element\n\tif head == %s {\n\t\treturn tail\n\t}\n\tif tail == %s {\n\t\treturn head\n\t}\n", neutral, neutral)
 		}
 	}
 	if insertHooks {
@@ -376,7 +371,10 @@ func (g *gen) emitVariadicJava(sortNm string, alt *gomast.AlternativeAlternative
 		w("\t// a list ending with an element that is not a list (Java's Cons%s(head, tail))\n", op)
 		w("\treturn Raw%s(head, tail)\n}\n\n", opGo)
 	} else {
-		w("\tpanic(fmt.Sprintf(\"Cons%s: the tail %%v is not a %s list\", tail))\n}\n\n", op, op)
+		// Java Gom builds Cons<op>(head, tail) with a tail of the list sort
+		// that is not a list (e.g. the result of a make_empty hook); the
+		// flat slice of elements of another sort cannot hold it.
+		w("\tpanic(&aterm.GomError{Msg: fmt.Sprintf(\"Cons%s: the tail %%v is not a %s list (not representable in Go: the elements are not of its sort)\", tail)})\n}\n\n", op, op)
 	}
 
 	w("// Make%s builds the list of args as Tom's `%s(args…)` does: from Empty%s,\n// by Cons%s, through the construction hooks (Java's %s.fromArray).\n", opGo, op, opGo, opGo, op)

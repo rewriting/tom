@@ -187,10 +187,11 @@ public class GoGenerator extends GenericGenerator {
   }
 
   /*
-   * A Java long literal (32l, 7L) is not a Go literal: the suffix is
+   * A Java long literal (32l, 7L, octal 017L) is not a Go literal: the suffix is
    * dropped, the Go constant takes the type of its context (int64, the Go
-   * type of Tom's long). (Patterns with float/double suffixes are not
-   * parsed by the island parser that -go uses.)
+   * type of Tom's long). (Hexadecimal longs (0x1Fl) and float/double
+   * suffixes are not Tom constants: the island parser that -go uses, like
+   * legacy/'s, leaves such patterns and backquote arguments as host code.)
    */
   protected void generateBQTerm(int deep, BQTerm subject, String moduleName) throws IOException {
     %match(subject) {

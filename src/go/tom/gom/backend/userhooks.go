@@ -275,19 +275,32 @@ func checkUserHooks(mod gomast.GomModule) error {
 	return nil
 }
 
-// checkTheoryOrder: the Go backend runs the theory of a variadic
-// operator before its user hooks, which is Java Gom's order when the
-// theory hook is declared first.
+// checkTheoryOrder: Java Gom runs the hooks of a variadic operator in
+// declaration order (checked with legacy/'s Gom on a module mixing a
+// theory, a make_insert hook and rules); the Go backend runs the theory
+// (generated in Go) before the user hooks and the rules (Tom code of the
+// mapping), which is Java's order only when the theory hook is declared
+// before them. Another order is refused rather than silently changed.
 func checkTheoryOrder(mod gomast.GomModule, alt *gomast.AlternativeAlternative) error {
 	seenUser := false
 	for _, h := range moduleHooks(mod) {
+		if hookScopeName(h) == "module" && hookKindName(h) == "rules" {
+			if rules, err := parseRules(hookBody(h)); err == nil {
+				for _, r := range rules {
+					if ruleHead(r) == alt.Name {
+						seenUser = true
+					}
+				}
+			}
+			continue
+		}
 		if hookScopeName(h) == "operator" && h.Name == alt.Name {
 			switch hookKindName(h) {
 			case "make_insert", "make_empty":
 				seenUser = true
 			case "FL", "Free", "AU", "ACU":
 				if seenUser {
-					return fmt.Errorf("the theory hook of %s must be declared before its make_insert/make_empty hooks", alt.Name)
+					return fmt.Errorf("the theory hook of %s must be declared before its make_insert/make_empty hooks and the rules of %s (Java Gom runs them in declaration order, the Go backend runs the theory first)", alt.Name, alt.Name)
 				}
 			}
 		}

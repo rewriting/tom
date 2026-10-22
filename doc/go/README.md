@@ -32,6 +32,45 @@ Orchestration : `go.work` à la racine (modules `src/go/tom`, `test/go`,
 -w . <cible>` (ou `cd magefiles && mage <cible>`), cf. `mage -d magefiles
 -w . -l`.
 
+## Différences connues avec Java
+
+Termes générés par gomgo (modules utilisateur : blocs `%gom` et `.gom`
+autonomes), comparés à ceux de Java Gom (`legacy/`) :
+
+- **Ordre des éléments ACU.** Un opérateur `op:ACU()` garde ses éléments
+  triés par `compareTo`, qui compare d'abord les valeurs de hachage.
+  Celles de Go (`sharedobjects` : un « one-at-a-time » sur le nom de
+  l'opérateur et les hachages des enfants) ne sont pas celles de Java
+  (mélange lookup2 de Bob Jenkins dans `hashFunction()`, graine calculée
+  par Gom). L'ordre des éléments diffère donc : affichage (`String()`),
+  `ToATerm`, `ToArray`/`GetHead…`, `CompareTo`, et ordre d'énumération
+  des solutions d'un filtrage AC. L'égalité des termes et l'ensemble des
+  solutions sont les mêmes (test/gom/TestACU.t).
+- **Queue d'une liste qui n'est pas une liste.** Java Gom construit
+  `Cons<op>(e, x)` avec `x` de la sorte de la liste sans être une liste
+  (par ex. le résultat d'un hook `make_empty` : `lm(a(),m0())`). Le terme
+  Go d'un opérateur variadique est une tranche plate de ses éléments :
+  quand la sorte des éléments diffère de celle de la liste, un tel terme
+  n'est pas représentable et `Cons<Op>` panique avec un `*aterm.GomError`
+  (« … is not a … list (not representable in Go …) »). (Quand les sortes
+  sont égales, cas des théories AU/ACU, `x` est le dernier élément.)
+- **Hooks dans le mapping.** Les hooks `make`, `make_insert`,
+  `make_empty`, les règles (`module M:rules()`) et les blocs (`block`)
+  sont du code Tom+Go : gomgo les écrit dans le mapping généré (`.tom`),
+  qui les installe à l'initialisation du paquetage qui l'inclut. Du code
+  Go qui construit des termes sans inclure le mapping (paquetage qui ne
+  l'inclut pas, `Make<Op>` appelé hors d'un programme Tom) ne les exécute
+  pas ; les théories (FL, AU, ACU, Free) sont, elles, générées en Go et
+  toujours appliquées.
+- **Ordre des hooks d'un opérateur variadique.** Java Gom les exécute
+  dans l'ordre de déclaration ; Go exécute la théorie avant les hooks
+  `make_insert`/`make_empty` et les règles, et refuse un module qui
+  déclare la théorie après eux.
+- **Exceptions.** Les exceptions Java de l'API Gom sont des paniques
+  `*aterm.GomError` (`IllegalArgument` vrai pour une
+  `IllegalArgumentException` : `Length`/`Reverse` d'un terme qui n'est pas
+  une liste, ATerm qu'aucun opérateur ne convertit).
+
 ## Orientation pour la suite
 
 - **J4 — compilateur en Tom+Go, stratégie hybride (décidée le 2026-10-23).**

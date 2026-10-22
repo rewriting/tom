@@ -14,8 +14,11 @@ package gom
 
 
 
+
 import (
   "testing"
+
+  "tom/library/aterm"
 )
 
   func tom_equal_term_Element(t1  Element , t2  Element ) bool { return (t1).Equivalent(t2);  }; func tom_is_sort_Element(t any) bool { return func() bool { _, ok := (t).(Element); return ok }();  }; func tom_equal_term_List(t1  List , t2  List ) bool { return (t1).Equivalent(t2);  }; func tom_is_sort_List(t any) bool { return func() bool { _, ok := (t).(List); return ok }();  }; func tom_make_a()  Element  { return (MakeA()) }; func tom_make_b()  Element  { return (MakeB()) }; func tom_is_fun_sym_conc(t  List ) bool { return func() bool { _, ok := (t).(*ConcList); return ok }();  }; func tom_empty_list_conc()  List  { return (EmptyConc()) }; func tom_cons_list_conc(e  Element , l  List )  List  { return (ConsConc(e,l)) }; func tom_get_head_conc_List(l  List )  Element  { return (l).GetHeadconc();  }; func tom_get_tail_conc_List(l  List )  List  { return (l).GetTailconc();  }; func tom_is_empty_conc_List(l  List ) bool { return (l).IsEmptyconc();  }; func tom_append_list_conc(l1  List , l2  List )  List  { if tom_is_empty_conc_List(l1) { return l2 } else if tom_is_empty_conc_List(l2) { return l1 } else if tom_is_empty_conc_List(tom_get_tail_conc_List(l1)) { return tom_cons_list_conc(tom_get_head_conc_List(l1), l2) } else { return tom_cons_list_conc(tom_get_head_conc_List(l1), tom_append_list_conc(tom_get_tail_conc_List(l1), l2)) }; }; func tom_get_slice_conc(begin  List , end  List , tail  List )  List  { if tom_equal_term_List(begin, end) { return tail } else if tom_equal_term_List(end, tail) && (tom_is_empty_conc_List(end) || tom_equal_term_List(end, tom_empty_list_conc())) { return begin }; return tom_cons_list_conc(tom_get_head_conc_List(begin), tom_get_slice_conc(tom_get_tail_conc_List(begin), end, tail)) }; 
@@ -213,10 +216,16 @@ func TestNReverse(t *testing.T) {
 
 
 
+
+
 func catchIllegalArgument(f func()) (caught bool) {
   defer func() {
     if r := recover(); r != nil {
-      caught = true
+      if e, ok := r.(*aterm.GomError); ok && e.IllegalArgument {
+        caught = true
+        return
+      }
+      panic(r)
     }
   }()
   f()

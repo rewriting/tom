@@ -7,13 +7,16 @@ package gom
 // the operator) is the Go struct ConcList, ((conc)l) is l.(*ConcList).
 // port: the Java Gom methods length, toArray, append, reverse and the
 // static conc.fromArray are Length, ToArray, Append, Reverse and
-// ConcFromArray; an IllegalArgumentException is a panic (recovered by
+// ConcFromArray; an IllegalArgumentException is a panic with an
+// *aterm.GomError whose IllegalArgument is set (recovered by
 // catchIllegalArgument); Element[] is []Element, array.length is
 // len(array).
 // port: no main — `go test` runs the tests (the original main only launched JUnit).
 
 import (
   "testing"
+
+  "tom/library/aterm"
 )
 
   %gom {
@@ -179,11 +182,16 @@ func TestNReverse(t *testing.T) {
   }
 
 // catchIllegalArgument runs f and reports whether it threw an
-// IllegalArgumentException (a panic of the Java Gom API).
+// IllegalArgumentException: a *aterm.GomError with IllegalArgument set,
+// the panic of the Java Gom API; another panic is not caught.
 func catchIllegalArgument(f func()) (caught bool) {
   defer func() {
     if r := recover(); r != nil {
-      caught = true
+      if e, ok := r.(*aterm.GomError); ok && e.IllegalArgument {
+        caught = true
+        return
+      }
+      panic(r)
     }
   }()
   f()
