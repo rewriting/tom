@@ -1,0 +1,8 @@
+{
+  "passed": null,
+  "stdout": "",
+  "exitOK": false,
+  "diagnostics": "REGRESS: incompatibleTypes\nREGRESS: incompatibleTypes\n",
+  "diagnosticsDefaultParser": "REGRESS: incompatibleTypes\nREGRESS: incompatibleTypes\n",
+  "source_sha256": "be34837e53450ee7dfeef3508b3c7fe61ad71d676f2da3dd19647176269ee890"
+}

@@ -1,0 +1,8 @@
+{
+  "passed": null,
+  "stdout": "",
+  "exitOK": false,
+  "diagnostics": "REGRESS: unknownType\n",
+  "diagnosticsDefaultParser": "REGRESS: unknownType\n",
+  "source_sha256": "17b1e64f404acb29aff481bc0727c01461f297b408ca32d561320e8c274601ae"
+}

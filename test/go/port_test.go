@@ -70,6 +70,14 @@ type portCase struct {
 	// "Class.method" (two classes may declare the same method); the Go
 	// test of the method m of class C is TestC_m.
 	Suite bool
+	// Regress: the original is a non-regression test of tom's
+	// diagnostics (test/build.xml, target regress: tom must reject it;
+	// test/regress/<name>.t.nrt lists the expected errors). Nothing is
+	// run: the oracle is legacy/'s RegressFormatter log on the original
+	// (oracle.Diagnostics), and the port, compiled by tom -go with the
+	// same formatter, must be rejected with the same log. Dashboard
+	// status "OK (diagnostics)".
+	Regress bool
 }
 
 // gomFile is a standalone .gom file of test/ (Rel, relative to test/);
@@ -220,6 +228,19 @@ var cases = []portCase{
 	{Rel: "acmatching/TestBool3.t", GoTest: true},
 	{Rel: "backquote/TestBackquoteWithBracket.t", GoTest: true, OracleDeps: []string{"backquote/TestDefaultValue.t"},
 		Gom: []gomFile{{Rel: "backquote/term.gom"}}},
+	// test/regress: tom must reject each one, with the errors of legacy/
+	// (Include.t and TestNonLinearity.t: legacyFails).
+	{Rel: "regress/BadBackquote.t", Regress: true},
+	{Rel: "regress/BadOp.t", Regress: true},
+	{Rel: "regress/Disjunction1.t", Regress: true},
+	{Rel: "regress/Disjunction2.t", Regress: true},
+	{Rel: "regress/IncludeSl.t", Regress: true},
+	{Rel: "regress/SuccessiveErrors.t", Regress: true},
+	{Rel: "regress/UndeclaredExplicityType.t", Regress: true},
+	{Rel: "regress/UnknownSymbol1.t", Regress: true},
+	{Rel: "regress/UnknownSymbol2.t", Regress: true},
+	{Rel: "regress/VariableStar.t", Regress: true},
+	{Rel: "regress/WrongSymbol.t", Regress: true},
 }
 
 // legacyFails lists the originals (relative to test/) that legacy/
@@ -236,6 +257,21 @@ var legacyFails = map[string]legacyFailure{
 		NP:      failsIn{Stage: "javac", Output: []string{"%match(term t) {"}},
 	},
 	"rule/TomList.t": ruleFailure(ruleLegacyFails),
+	// test/build.xml's regress target expects includedFileNotFound
+	// (Include.t.nrt).
+	"regress/Include.t": {
+		Reason:  "includes the nonexistent titi.tom on purpose (non-regression test of the includedFileNotFound error), but legacy/'s tom crashes instead of reporting it (TomRuntimeException \"convert: strange term: Cst_IncludeFile\" after printing the TomIncludeException), with both parsers",
+		Default: failsIn{Stage: "tom", Output: []string{"Included file 'titi.tom' not found", "convert: strange term: Cst_IncludeFile"}},
+		NP:      failsIn{Stage: "tom", Output: []string{"Included file 'titi.tom' not found", "convert: strange term: Cst_IncludeFile"}},
+	},
+	// test/build.xml's regress target (with --newtyper, without effect)
+	// expects incompatibleTypes, incompatibleTypes, cannotGuessMatchType,
+	// incompatibleTypes (TestNonLinearity.t.nrt).
+	"regress/TestNonLinearity.t": {
+		Reason:  "non-regression test of typing errors, but legacy/'s typer crashes (TyperPlugin: Unhandled exception, findOriginTracking: not found: concOption()) with both parsers; a fix of the typer belongs to J4",
+		Default: failsIn{Stage: "tom", Output: []string{"TyperPlugin: Unhandled exception", "findOriginTracking:  not found: concOption()"}},
+		NP:      failsIn{Stage: "tom", Output: []string{"TyperPlugin: Unhandled exception", "findOriginTracking:  not found: concOption()"}},
+	},
 }
 
 // legacyFailure records why and how legacy/ fails on an original.
@@ -286,6 +322,18 @@ func base(c portCase) string { return strings.TrimSuffix(filepath.Base(c.Rel), "
 func compileCase(t *testing.T, c portCase) string {
 	t.Helper()
 	dir := t.TempDir()
+	if c.Regress {
+		log, out, err := regressDiagnostics(t, c, dir)
+		if err != nil {
+			t.Fatalf("%v\n%s", err, out)
+		}
+		path := filepath.Join(dir, base(c)+".log")
+		if err := os.WriteFile(path, []byte(log), 0o644); err != nil {
+			t.Fatal(err)
+		}
+		checkGolden(t, c.Rel, path)
+		return dir
+	}
 	gens, out, err := generateGo(t, c, dir)
 	if err != nil {
 		t.Fatalf("%v\n%s", err, out)
@@ -353,13 +401,43 @@ func generateGo(t *testing.T, c portCase, dir string) (map[string]string, string
 	return gens, "", nil
 }
 
+// regressFormatter are the tom options that log each error as
+// "REGRESS: <message name>" into log (test/build.xml, regress.compile).
+func regressFormatter(log string) []string {
+	return []string{"-Dtom.platform.error.formatter=tom.platform.RegressFormatter", "-Dtom.platform.error.logfile=" + log}
+}
+
+// regressDiagnostics compiles the port of a Regress case with tom -go
+// (-np) and the RegressFormatter, in dir, and returns the error log; it
+// is an error if tom accepts the port.
+func regressDiagnostics(t *testing.T, c portCase, dir string) (string, string, error) {
+	t.Helper()
+	src, err := filepath.Abs(c.Rel)
+	if err != nil {
+		t.Fatal(err)
+	}
+	log := filepath.Join(t.TempDir(), "regress.log")
+	args := append(append([]string{"-go", "-np"}, regressFormatter(log)...), c.TomArgs[c.Rel]...)
+	out, err := harness.NewDist(t).Compile(t, src, dir, args...)
+	if err == nil {
+		return "", out, fmt.Errorf("tom -go accepted %s, a non-regression test that it must reject", c.Rel)
+	}
+	data, rerr := os.ReadFile(log)
+	if rerr != nil {
+		return "", out, fmt.Errorf("tom -go failed without an error log: %v", rerr)
+	}
+	return string(data), out, nil
+}
+
+// checkGolden compares gen (generated Go, or the diagnostics log of a
+// Regress case) with testdata/golden/<rel>.go (.log).
 func checkGolden(t *testing.T, rel, gen string) {
 	t.Helper()
 	got, err := os.ReadFile(gen)
 	if err != nil {
 		t.Fatal(err)
 	}
-	golden := filepath.Join("testdata", "golden", strings.ReplaceAll(strings.TrimSuffix(rel, ".t"), "/", "_")+".go")
+	golden := filepath.Join("testdata", "golden", strings.ReplaceAll(strings.TrimSuffix(rel, ".t"), "/", "_")+filepath.Ext(gen))
 	if *update {
 		if err := os.WriteFile(golden, got, 0o644); err != nil {
 			t.Fatal(err)
@@ -400,6 +478,9 @@ func TestGoBackend(t *testing.T) {
 		c := c
 		t.Run(c.Rel, func(t *testing.T) {
 			dir := compileCase(t, c)
+			if c.Regress {
+				return // rejected by tom, nothing to run
+			}
 			if _, out, err := runCase(t, c, dir); err != nil {
 				t.Fatalf("running %s failed: %v\n%s", c.Rel, err, out)
 			}
@@ -428,6 +509,13 @@ type oracle struct {
 	Failed []string `json:"failed,omitempty"`
 	Stdout string   `json:"stdout"` // stdout+stderr of a main program
 	ExitOK bool     `json:"exitOK"`
+	// Diagnostics (Regress cases): the error log of legacy/'s tom -np on
+	// the original with tom.platform.RegressFormatter ("REGRESS: <message
+	// name>" per error), -np being the parser of the Go target.
+	Diagnostics string `json:"diagnostics,omitempty"`
+	// DiagnosticsDefaultParser: the same log with the default parser, for
+	// the record (not compared).
+	DiagnosticsDefaultParser string `json:"diagnosticsDefaultParser,omitempty"`
 	// SourceSHA256 is the hash of test/<Rel> the oracle was computed
 	// from; a mismatch means the oracle is stale.
 	SourceSHA256 string `json:"source_sha256"`
@@ -590,8 +678,8 @@ func stripComments(src string) string {
 // it observed in testdata/oracle/.
 func legacyOracle(t *testing.T, c portCase) oracle {
 	t.Helper()
-	path := oraclePath(c)
 	if !*updateOracle {
+		path := oraclePath(c)
 		data, err := os.ReadFile(path)
 		if err != nil {
 			t.Fatalf("missing %s (run with -update-oracle)", path)
@@ -605,6 +693,9 @@ func legacyOracle(t *testing.T, c portCase) oracle {
 			t.Fatal(err)
 		}
 		return o
+	}
+	if c.Regress {
+		return writeOracle(t, c, regressOracle(t, c))
 	}
 	legacy := harness.LegacyDist(t)
 	root := harness.RepoRoot(t)
@@ -677,12 +768,53 @@ func legacyOracle(t *testing.T, c portCase) oracle {
 		out, err := harness.RunIn(dir, nil, "java", "-cp", cp, class)
 		o.Stdout, o.ExitOK = out, err == nil
 	}
+	return writeOracle(t, c, o)
+}
+
+// writeOracle stores o as the oracle of c and returns it.
+func writeOracle(t *testing.T, c portCase, o oracle) oracle {
+	t.Helper()
+	path := oraclePath(c)
 	data, _ := json.MarshalIndent(o, "", "  ")
 	if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {
 		t.Fatal(err)
 	}
 	if err := os.WriteFile(path, append(data, '\n'), 0o644); err != nil {
 		t.Fatal(err)
+	}
+	return o
+}
+
+// regressOracle compiles the original of a Regress case with legacy/'s
+// tom and the RegressFormatter, with -np (the parser of the Go target)
+// and with the default parser: tom must reject it, with a non-empty log.
+func regressOracle(t *testing.T, c portCase) oracle {
+	t.Helper()
+	legacy := harness.LegacyDist(t)
+	root := harness.RepoRoot(t)
+	src := filepath.Join(root, "test", c.Rel)
+	var o oracle
+	sum, err := sourceSHA256(sourcesOf(root, c)...)
+	if err != nil {
+		t.Fatal(err)
+	}
+	o.SourceSHA256 = sum
+	for _, np := range []bool{true, false} {
+		log := filepath.Join(t.TempDir(), "regress.log")
+		args := regressFormatter(log)
+		if np {
+			args = append(args, "-np")
+		}
+		out, err := legacy.Compile(t, src, t.TempDir(), append(args, c.TomArgs[c.Rel]...)...)
+		data, _ := os.ReadFile(log)
+		if np {
+			if err == nil || len(data) == 0 {
+				t.Fatalf("legacy tom -np does not reject %s with an error log (err %v): not a Regress case\n%s", c.Rel, err, out)
+			}
+			o.Diagnostics = string(data)
+		} else {
+			o.DiagnosticsDefaultParser = string(data)
+		}
 	}
 	return o
 }
@@ -851,6 +983,18 @@ func oracleStale(c portCase, o oracle, src string, extra ...string) error {
 	return nil
 }
 
+// compareRegress returns the T2 divergences of the diagnostics of a
+// Regress port against the legacy oracle.
+func compareRegress(want oracle, log string) []string {
+	if want.Diagnostics == "" {
+		return []string{"vacuous oracle: no legacy diagnostics recorded"}
+	}
+	if log != want.Diagnostics {
+		return []string{"diagnostics differ\nlegacy:\n" + want.Diagnostics + "\ngo:\n" + log}
+	}
+	return nil
+}
+
 // compareWithOracle returns the T2 divergences of one run against the
 // legacy oracle (empty when the port behaves like the original).
 func compareWithOracle(c portCase, want oracle, passed map[string]bool, out string, runErr error) []string {
@@ -917,6 +1061,16 @@ func TestSameBehaviourAsLegacy(t *testing.T) {
 		c := c
 		t.Run(c.Rel, func(t *testing.T) {
 			want := legacyOracle(t, c)
+			if c.Regress {
+				log, out, err := regressDiagnostics(t, c, t.TempDir())
+				if err != nil {
+					t.Fatalf("%v\n%s", err, out)
+				}
+				for _, d := range compareRegress(want, log) {
+					t.Error(d)
+				}
+				return
+			}
 			dir := compileCase(t, c)
 			passed, out, err := runCase(t, c, dir)
 			diffs := compareWithOracle(c, want, passed, out, err)
@@ -1008,6 +1162,9 @@ func TestDashboard(t *testing.T) {
 			status, note = "support", "compilé avec `"+main+"`, couvert par son statut"
 		} else if c, ok := ported[rel]; ok {
 			status = dashboardStatus(t, c)
+			if c.Regress {
+				note = regressNote(root, c)
+			}
 			var names []string
 			for name := range c.Unsupported {
 				names = append(names, name)
@@ -1034,15 +1191,49 @@ func TestDashboard(t *testing.T) {
 	b.WriteString("avec le cas qui les utilise (comme `test/build.xml` compile tout le\n")
 	b.WriteString("répertoire), et c'est le statut de ce cas qui les valide.\n")
 	b.WriteString("Un original « échoue dans legacy » ne se compile pas avec `legacy/` :\n")
-	b.WriteString("pas d'oracle possible, il n'est pas porté (`TestLegacyFails` le vérifie).\n\n")
+	b.WriteString("pas d'oracle possible, il n'est pas porté (`TestLegacyFails` le vérifie).\n")
+	b.WriteString("Un cas « OK (diagnostics) » est un test de non-régression des diagnostics\n")
+	b.WriteString("(`test/regress/`) : `tom -go` rejette le port avec les mêmes erreurs que\n")
+	b.WriteString("`legacy/` sur l'original ; rien n'est exécuté (la couverture T3 ne le\n")
+	b.WriteString("compte pas).\n\n")
 	b.WriteString("- total : " + strconv.Itoa(len(rows)) + "\n")
-	for _, s := range []string{"OK", "divergence", "échec go test", "échec go build", "échec tom", "oracle invalide", "non supporté", "support", "échoue dans legacy", "non porté"} {
+	for _, s := range []string{"OK", "OK (diagnostics)", "divergence", "échec go test", "échec go build", "échec tom", "oracle invalide", "non supporté", "support", "échoue dans legacy", "non porté"} {
 		b.WriteString("- " + s + " : " + strconv.Itoa(counts[s]) + "\n")
 	}
 	b.WriteString("\n| Cas | Statut | Notes |\n|---|---|---|\n" + strings.Join(rows, "\n") + "\n")
 	if err := os.WriteFile(filepath.Join(root, "doc", "go", "port-dashboard.md"), []byte(b.String()), 0o644); err != nil {
 		t.Fatal(err)
 	}
+}
+
+// regressNote compares, for the dashboard, the diagnostics of legacy/
+// recorded in the oracle of a Regress case with the errors that
+// test/build.xml's regress target expects (test/<Rel>.nrt).
+func regressNote(root string, c portCase) string {
+	var o oracle
+	data, err := os.ReadFile(oraclePath(c))
+	if err != nil || json.Unmarshal(data, &o) != nil {
+		return ""
+	}
+	nrt, err := os.ReadFile(filepath.Join(root, "test", c.Rel+".nrt"))
+	if err != nil {
+		return "pas de `.nrt`"
+	}
+	names := func(log string) string {
+		return strings.Join(strings.Fields(strings.ReplaceAll(log, "REGRESS:", "")), ", ")
+	}
+	note := "erreurs : " + names(o.Diagnostics)
+	if o.Diagnostics != string(nrt) {
+		note += " ; le `.nrt` attend " + names(string(nrt)) + " (diffère déjà dans `legacy/`)"
+	}
+	if o.DiagnosticsDefaultParser != o.Diagnostics {
+		d := names(o.DiagnosticsDefaultParser)
+		if d == "" {
+			d = "aucune"
+		}
+		note += " ; parser par défaut de `legacy/` : " + d
+	}
+	return note
 }
 
 // dashboardStatus re-runs one case and classifies it without failing
@@ -1057,6 +1248,20 @@ func dashboardStatus(t *testing.T, c portCase) string {
 		return "oracle invalide"
 	}
 	status := "échec tom"
+	if c.Regress {
+		t.Run("status/"+c.Rel, func(t *testing.T) {
+			log, _, err := regressDiagnostics(t, c, t.TempDir())
+			switch {
+			case err != nil:
+				status = "échec tom" // accepted, or no log
+			case len(compareRegress(want, log)) > 0:
+				status = "divergence"
+			default:
+				status = "OK (diagnostics)"
+			}
+		})
+		return status
+	}
 	t.Run("status/"+c.Rel, func(t *testing.T) {
 		dir := t.TempDir()
 		if _, _, err := generateGo(t, c, dir); err != nil {
@@ -1163,6 +1368,16 @@ func TestOracleGuards(t *testing.T) {
 	}
 	if d := compareWithOracle(junit, oracle{Passed: []string{"TestA"}}, map[string]bool{}, "build failed", errors.New("exit status 1")); !hasDiff(d, "no Go test passed") {
 		t.Errorf("failed go test with zero passes: %v, want an explicit report", d)
+	}
+
+	if d := compareRegress(oracle{}, ""); !hasDiff(d, "vacuous") {
+		t.Errorf("Regress case with an empty oracle: %v, want a vacuous-oracle divergence", d)
+	}
+	if d := compareRegress(oracle{Diagnostics: "REGRESS: unknownSymbol\n"}, "REGRESS: unknownType\n"); !hasDiff(d, "diagnostics differ") {
+		t.Errorf("Regress case with other diagnostics: %v, want a divergence", d)
+	}
+	if d := compareRegress(oracle{Diagnostics: "REGRESS: unknownSymbol\n"}, "REGRESS: unknownSymbol\n"); len(d) != 0 {
+		t.Errorf("Regress case with the same diagnostics: %v, want none", d)
 	}
 
 	src := writeTemp(t, "@Test\npublic void testA() {}\n/* @Test\npublic void testZ() {} */\n@Test\npublic void testB() {}\n")

@@ -1,0 +1,8 @@
+{
+  "passed": null,
+  "stdout": "",
+  "exitOK": false,
+  "diagnostics": "REGRESS: invalidVariableStarArgument\n",
+  "diagnosticsDefaultParser": "REGRESS: invalidVariableStarArgument\n",
+  "source_sha256": "4fc7617c71ceea5accca617ce982ebdba8ebdd3067d6a47ad0bd3cc6ea6d7b92"
+}

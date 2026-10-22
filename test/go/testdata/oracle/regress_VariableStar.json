@@ -1,0 +1,8 @@
+{
+  "passed": null,
+  "stdout": "",
+  "exitOK": false,
+  "diagnostics": "REGRESS: incorrectVariableStarInMatch\n",
+  "diagnosticsDefaultParser": "REGRESS: incorrectVariableStarInMatch\n",
+  "source_sha256": "a2b754194f90e5059297618e52d357c1bd10fcc03dc90f89ba096a79013b6a9a"
+}

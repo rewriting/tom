@@ -1,0 +1,8 @@
+{
+  "passed": null,
+  "stdout": "",
+  "exitOK": false,
+  "diagnostics": "REGRESS: freeVarNotPresentInOr\n",
+  "diagnosticsDefaultParser": "REGRESS: freeVarNotPresentInOr\n",
+  "source_sha256": "3212bbab15f6e43637a59bc6cd8f4062d64df62f31d76718b776a60607780ace"
+}

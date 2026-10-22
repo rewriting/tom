@@ -1,0 +1,8 @@
+{
+  "passed": null,
+  "stdout": "",
+  "exitOK": false,
+  "diagnostics": "REGRESS: symbolCodomainError\nREGRESS: missingIncludeSL\n",
+  "diagnosticsDefaultParser": "REGRESS: symbolCodomainError\nREGRESS: missingIncludeSL\n",
+  "source_sha256": "52c8adfafe24fbf0677d6e325117798dafd236bde3bed7a8576af32e4aefc315"
+}
