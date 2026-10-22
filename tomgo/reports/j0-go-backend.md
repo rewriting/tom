@@ -127,6 +127,35 @@ go test -count=1 ./...    # 22 paquets ok, 0 échec
 - Dans le code hôte d'une stratégie, il faut écrire `tom__strat.<param>`
   et `tom__strat.GetEnvironment()`.
 
+Limites de la promotion dans `stable/` :
+
+- **Point fixe au niveau des classes seulement.** `./build.sh bootstrap`
+  montre que `src/` compilé deux fois par lui-même donne des `.class`
+  identiques. En revanche le `src/gen` produit par le nouveau `stable`
+  diffère des sources installées dans `stable/` (générées par l'ancien
+  `stable`) : numérotation `tomMatchN` et ordre des déclarations, dans
+  19 fichiers une fois la numérotation normalisée. Aucun second
+  bootinstall n'a été tenté ; on s'attend à ce qu'il converge (le
+  nouveau `stable` et `src/` sont le même compilateur, comme le montre le
+  point fixe des classes), mais ce n'est pas vérifié.
+- **Dérive amont réelle, pas seulement cosmétique.** Comme `stable/`
+  datait du bootinstall de janvier 2018, environ 70 fichiers diffèrent
+  sémantiquement (hors commentaires et blancs) de l'ancien `stable/` :
+  changements amont de `src/` entre 2018 et `v3` plus ceux de ce projet.
+  Ils sont validés indirectement par le point fixe et par les harnais,
+  pas revus un par un.
+- **Fichiers de `stable/` sans source dans `src/`.** Il en reste :
+  anciens lexers/parsers Gom antlr2 (`tom/gom/parser/{Block,GomLanguage,
+  SimpleBlock}*`), `tom/gom/expander/rule/Rule{Lexer,Parser}.java`,
+  `tom/library/xml/*`, `tom/platform/OptionParser.java`,
+  `tom/engine/parser/tomjava/TomIsland*`. Ils compilent encore, mais un
+  futur bootinstall qui changerait les API qu'ils appellent les ferait
+  casser comme `parser/antlr2/` (supprimé ici) ; un nettoyage de
+  `stable/` devra les traiter.
+- **`lib/tools/guava-18.0.jar`** a été copié par bootinstall depuis
+  `src/lib/tools` mais n'est utilisé par aucune source (aucun import
+  `com.google.common`).
+
 ## 6. Suite
 
 - **J2** : porter le reste de `test/` par lots (un sous-répertoire par

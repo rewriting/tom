@@ -102,7 +102,8 @@ main — est gelée, cf. ci-dessus.)
 | `tomgo/src/gom/adt/`              | 5 `.gom` décrivant l'AST de Gom (Code, Gom, Objects, Rule, SymbolTable) |
 | `tomgo/src/engine/adt/`           | 15 `.gom` décrivant l'AST de TOM (TomTerm, TomInstruction, TomSignature, TomOption, TomName, TomType, TomConstraint, TomDeclaration, TomExpression, TomSlot, CST, Code, Il, Theory, TypeConstraints) |
 | `src/tom/engine/parser/`        | Sources Tom+Java du parser TOM + grammaire ANTLR4 (lecture seule, sert de spec pour 4.D) |
-| `stable/`                       | Compilateur Java **généré** (251 fichiers `.java`) — spec exécutable |
+| `legacy/`                       | Compilateur Tom+Java **humain** figé (`v3` @ `2918e95c7`) — témoin et oracle des harnais, ne jamais modifier |
+| `stable/`                       | Compilateur Java **bootstrappé** qui construit `src/` (≈ 236 `.java` suivis) ; contient la cible Go depuis la fin de J0 (`stable/dist/bin/tom -go`) |
 | `stable/tom/engine/`            | Phases : starter → parser → checker → typer → desugarer → transformer → expander → compiler → optimizer → backend → prettyprinter |
 | `stable/tom/engine/parser/antlr4/` | `TomIslandLexer/Parser`, `TomJavaLexer/Parser`, `CstBuilder`, `AstBuilder`, `CstConverter` — référence pour Phase 4.D |
 | `stable/tom/gom/`               | Compilateur Gom (signatures algébriques) en Java                |
@@ -720,6 +721,13 @@ Go ⇄ Java sur le print du term en sortie, tests sur le corpus 4.E.
 Depuis la racine du dépôt. Toujours `unset TOM_HOME` avant `./build.sh`
 (le shell peut exporter un `TOM_HOME` pointant ailleurs).
 
+**JDK** : `./build.sh` (dans `legacy/` comme à la racine) exige un
+**JDK 8** — Ant exécute Tom dans son propre processus, et `legacy/` échoue
+avec un JDK ≥ 24. Le JDK 25 mentionné plus bas ne concerne que l'ancien
+harnais d'équivalence du parser Go (gelé). `mage portJava` et
+`mage portGo` supposent `legacy/src/dist` et `src/dist` déjà construits ;
+régénérer l'oracle (`-update-oracle`) demande aussi le JDK 8 et `legacy/`.
+
 ```bash
 # Construire la version humaine (oracle) et la version étendue
 (cd legacy && unset TOM_HOME && ./build.sh stable && ./build.sh src.dist)
@@ -728,7 +736,7 @@ unset TOM_HOME && ./build.sh src.dist
 TOM_HOME=$PWD/src/dist src/dist/bin/tom -go -np -d out X.t
 # Le compilateur bootstrappé accepte aussi -go
 TOM_HOME=$PWD/stable/dist stable/dist/bin/tom -go -d out X.t
-# Harnais
+# Harnais (depuis tomgo/ ; les commandes suivantes s'y lancent aussi)
 cd tomgo && mage portJava && mage portGo && mage coverage
 #   portJava : T0, sortie Java identique à legacy/ (défaut et -np)
 #   portGo   : T1 (goldens Go) + T2 (oracle legacy/) + port-dashboard.md
@@ -839,6 +847,9 @@ les tests Go-vs-Go (parser_test.go) tournent comme pin de non-régression.
 
 ## 8.bis. Pipeline Platform (Phase 5+)
 
+> **Historique, gelé depuis 2026-10-22** : concerne le compilateur Go
+> écrit à la main (cf. §1) ; plus à étendre.
+
 Le compilateur Tom Java enchaîne 11 plugins via `tom.platform.PluginPlatform`.
 L'ordre canonique (de `BootstrapPluginsList.java`) est :
 
@@ -899,6 +910,10 @@ correct sur tout le corpus. **Premier vrai plugin à porter** :
 ---
 
 ## 8.ter. Strategy library (Phase 6+)
+
+> **Historique, gelé depuis 2026-10-22** pour le portage des plugins ;
+> la bibliothèque `tomgo/stable/library/sl/` reste utilisée par la cible
+> Go (`-go`) et peut évoluer pour elle.
 
 Pré-requis avant le portage des plugins en Go : porter
 `tom.library.sl` (37 fichiers Java / ~3900 LOC, autonome — pas de
