@@ -33,7 +33,8 @@ const (
 func init() {
 	dir, err := os.Getwd()
 	if err != nil {
-		return
+		fmt.Fprintln(os.Stderr, "magefiles:", err)
+		os.Exit(1)
 	}
 	for d := dir; ; {
 		_, e1 := os.Stat(filepath.Join(d, "build.xml"))
@@ -44,7 +45,8 @@ func init() {
 		}
 		parent := filepath.Dir(d)
 		if parent == d {
-			return
+			fmt.Fprintf(os.Stderr, "magefiles: repository root (build.xml + go.work) not found above %s\n", dir)
+			os.Exit(1)
 		}
 		d = parent
 	}

@@ -10,6 +10,13 @@ prototype, `prototype/tomgo/reports/phase<N>.md`.
 
 ## 1. Objectif
 
+**État actuel / carte** : deux modules Go maintenus — `tom` (`src/go/tom` :
+runtime `sl`/`sharedobjects`/`aterm`, Gom en Go `gomgo`) et `tomtest`
+(`test/go` : ports Tom+Go, harnais T0–T3) — réunis par `go.work` et pilotés
+par `mage -d magefiles -w . <cible>` ; compilateur Java étendu (`-go`) dans
+`src/tom/`, témoin humain dans `legacy/`, prototype Go gelé dans
+`prototype/tomgo/`. Carte détaillée : §2–3 et `doc/go/README.md`.
+
 **Trajectoire actuelle (depuis 2026-10-22)** : la cible Go est ajoutée
 **au compilateur Tom+Java lui-même** (option `-go`, backend
 `src/tom/engine/backend/GoGenerator.t`, mappings
@@ -106,7 +113,7 @@ main — est gelée, cf. ci-dessus.)
 | `src/tom/library/mapping/go/` | Mappings Tom pour Go (`boolean.tom`, `int.tom`, `long.tom`, …) |
 | `src/tom/gom/adt/`, `src/tom/engine/adt/` | `.gom` décrivant l'AST de Gom / de TOM |
 | `src/go/tom/` | **Module Go `tom`** (validé) : `library/{sl,sharedobjects,aterm}`, `gom/{parser,backend,adt}`, `gom/cmd/gomgo` |
-| `stable/` | Compilateur Java **bootstrappé** qui construit `src/` ; contient aussi la cible Go (`stable/dist/bin/tom -go`) ; sa dist embarque le runtime Go dans `lib/go/tom` |
+| `stable/` | Compilateur Java **bootstrappé** qui construit `src/` ; contient aussi la cible Go (`stable/dist/bin/tom -go`) ; sa dist n'embarquera le runtime Go dans `lib/go/tom` (et `GOMGO_BIN`) qu'après `./build.sh bootinstall` + `./build.sh stable` (pas encore fait : `stable/dist/lib/go` absent, `TomParserTool` y lit encore `TOMGO_BIN`) |
 | `test/` | Corpus Tom+Java historique (121 `.t` + 18 `.gom`) |
 | `test/go/` | **Module Go `tomtest`** : ports Tom+Go de `test/` (`*.t`), `port_test.go` (T1/T2), `testdata/{golden,oracle}`, `harness/`, `javaparity/` (T0), `smoke/`, `coverage/` (T3), `sl/`, `numeric/` |
 | `doc/go/` | Rapports : `README.md` (carte), `j0-go-backend.md`, `port-dashboard.md` (généré), `coverage.md` (généré) |
@@ -132,7 +139,7 @@ src/go/tom/                      # module `tom` (go.mod)
     parser/                      # parser .gom (descente récursive)
     backend/                     # générateur .gom → .go + hooks (TestSelfBootstrap)
     adt/                         # AST Gom généré depuis src/tom/gom/adt/*.gom
-    cmd/gomgo/                   # CLI : gom, gom-batch, gom-block, scan-hooks
+    cmd/gomgo/                   # CLI : gom, gom-batch, gom-block
 test/go/                         # module `tomtest`
   *.t                            # ports Tom+Go (J2) ; port_test.go = T1 + T2
   testdata/{golden,oracle}/      # sorties Go de référence ; oracle legacy/ en cache
@@ -141,7 +148,7 @@ prototype/tomgo/                 # module `tom/tomgo`, GELÉ (cf. son README)
 ```
 
 Le runtime utilisé par le Go généré est `tom/library/...` (module `tom`) ;
-les dists le livrent dans `lib/go/tom`, d'où le `go.mod` utilisateur :
+`src/dist` le livre dans `lib/go/tom` (`stable/dist` après bootinstall), d'où le `go.mod` utilisateur :
 `require tom v0.0.0` + `replace tom => $TOM_HOME/lib/go/tom`.
 
 Comptes (2026-10-23, `go list ./...` par module, via `go.work`) :
@@ -703,10 +710,10 @@ GOMGO_BIN=/tmp/gomgo TOM_HOME=$PWD/src/dist src/dist/bin/tom -go -np -d out test
 # Le Go généré qui importe tom/library/... a besoin d'un go.mod dans out/ :
 #   module <nom>  /  go 1.22
 #   require tom v0.0.0
-#   replace tom => $TOM_HOME/lib/go/tom     (les dists livrent le runtime)
+#   replace tom => $TOM_HOME/lib/go/tom     (src/dist livre le runtime ; stable/dist après bootinstall)
 # (c'est ce qu'écrit SetupGoModule dans test/go/harness)
-# Le compilateur bootstrappé accepte aussi -go (à condition que stable/dist
-# soit reconstruit depuis les sources courantes : ./build.sh stable)
+# Le compilateur bootstrappé (stable/dist) ne l'acceptera avec GOMGO_BIN et
+# le runtime qu'après bootinstall + stable (non vérifié ici ; Task 6)
 TOM_HOME=$PWD/stable/dist stable/dist/bin/tom -go -d out X.t
 # Harnais et tests, depuis la racine (ou `cd magefiles && mage <cible>`)
 mage -d magefiles -w . -l          # lister les cibles
