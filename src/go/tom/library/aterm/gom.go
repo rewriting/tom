@@ -11,6 +11,17 @@ import (
 // toATerm, toStringBuilder). A conversion that fails panics with Java
 // Gom's RuntimeException message ("Not an Int : …").
 
+// GomError is the panic of a failed conversion of an ATerm into a Gom
+// term: Java Gom's RuntimeException ("Not an Int : …"), or, when no
+// operator of the sort converts the ATerm, its IllegalArgumentException
+// ("… is not a T", IllegalArgument set).
+type GomError struct {
+	Msg             string
+	IllegalArgument bool
+}
+
+func (e *GomError) Error() string { return e.Msg }
+
 // ATermConverter is Java's tom.library.utils.ATermConverter: it is
 // applied to each ATerm before it is converted into a Gom term.
 type ATermConverter interface {
@@ -29,7 +40,7 @@ func GomInt(at ATerm, conv ATermConverter) int64 {
 	if i, ok := at.(*ATermInt); ok {
 		return int64(i.GetInt())
 	}
-	panic("Not an Int : " + at.String())
+	panic(&GomError{Msg: "Not an Int : " + at.String()})
 }
 
 // GomLong is convertATermToLong.
@@ -38,7 +49,7 @@ func GomLong(at ATerm, conv ATermConverter) int64 {
 	if l, ok := at.(*ATermLong); ok {
 		return l.GetLong()
 	}
-	panic("Not a Long : " + at.String())
+	panic(&GomError{Msg: "Not a Long : " + at.String()})
 }
 
 // GomFloat is convertATermToFloat.
@@ -47,7 +58,7 @@ func GomFloat(at ATerm, conv ATermConverter) float32 {
 	if r, ok := at.(*ATermReal); ok {
 		return float32(r.GetReal())
 	}
-	panic("Not a Float : " + at.String())
+	panic(&GomError{Msg: "Not a Float : " + at.String()})
 }
 
 // GomDouble is convertATermToDouble.
@@ -56,7 +67,7 @@ func GomDouble(at ATerm, conv ATermConverter) float64 {
 	if r, ok := at.(*ATermReal); ok {
 		return r.GetReal()
 	}
-	panic("Not a Double : " + at.String())
+	panic(&GomError{Msg: "Not a Double : " + at.String()})
 }
 
 // GomBoolean is convertATermToBoolean: an int, 0 for false.
@@ -65,7 +76,7 @@ func GomBoolean(at ATerm, conv ATermConverter) bool {
 	if i, ok := at.(*ATermInt); ok {
 		return i.GetInt() != 0
 	}
-	panic("Not a Boolean : " + at.String())
+	panic(&GomError{Msg: "Not a Boolean : " + at.String()})
 }
 
 // GomChar is convertATermToChar: an int, the code of the char minus '0'.
@@ -74,7 +85,7 @@ func GomChar(at ATerm, conv ATermConverter) rune {
 	if i, ok := at.(*ATermInt); ok {
 		return rune(i.GetInt() + '0')
 	}
-	panic("Not a Char : " + at.String())
+	panic(&GomError{Msg: "Not a Char : " + at.String()})
 }
 
 // GomString is convertATermToString: a quoted constant.
@@ -83,7 +94,7 @@ func GomString(at ATerm, conv ATermConverter) string {
 	if a, ok := at.(*ATermAppl); ok && a.GetAFun().IsQuoted() && a.GetArity() == 0 {
 		return a.GetName()
 	}
-	panic("Not a String : " + at.String())
+	panic(&GomError{Msg: "Not a String : " + at.String()})
 }
 
 // GomTerm is the ATerm of a Gom slot of sort ATerm or ATermList.

@@ -33,8 +33,8 @@ func TestGomConversions(t *testing.T) {
 		t.Error("Char(49) / \"Hello\" not read back")
 	}
 	defer func() {
-		if r := recover(); r != "Not an Int : 4.5" {
-			t.Errorf("panic = %v", r)
+		if e, ok := recover().(*GomError); !ok || e.Msg != "Not an Int : 4.5" || e.IllegalArgument {
+			t.Errorf("panic = %v", e)
 		}
 	}()
 	GomInt(GetInstance().Parse("4.5"), id)

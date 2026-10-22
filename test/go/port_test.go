@@ -54,6 +54,15 @@ type portCase struct {
 	// compilers) for an input of the case: the case itself or a support
 	// file (key: path relative to test/).
 	TomArgs map[string][]string
+	// JavaSupport lists plain Java files (relative to test/) that the
+	// original compiles with the case (copied next to the generated Java
+	// for the oracle); the Go port holds their translation.
+	JavaSupport []string
+	// Suite: the original is a JUnit Suite (@SuiteClasses) of the
+	// JavaSupport classes. Its tests are their @Test methods, named
+	// "Class.method" (two classes may declare the same method); the Go
+	// test of the method m of class C is TestC_m.
+	Suite bool
 }
 
 // gomFile is a standalone .gom file of test/ (Rel, relative to test/);
@@ -180,6 +189,10 @@ var cases = []portCase{
 	{Rel: "gom/TestTermgraph.t", GoTest: true, FullyUnsupported: true, Unsupported: unsupportedAll(termgraphUnsupported,
 		"TestExpand", "TestExpandCycle", "TestGraphRules1", "TestGraphRules2", "TestGraphRules3", "TestGraphRules4",
 		"TestGraphRules51", "TestGraphRules52", "TestGraphRules6", "TestGraphRules7", "TestGraphRules8", "TestGraphRules9")},
+	{Rel: "gom/fromterm/TestFromTerm.t", GoTest: true, Suite: true, Gom: []gomFile{{Rel: "gom/fromterm/foo.gom"}},
+		JavaSupport: []string{"gom/fromterm/TypeString.java", "gom/fromterm/TypeInt.java", "gom/fromterm/TypeBoolean.java",
+			"gom/fromterm/TypeChar.java", "gom/fromterm/TypeLong.java", "gom/fromterm/TypeDouble.java", "gom/fromterm/TypeFloat.java",
+			"gom/fromterm/FooConverter.java"}},
 	{Rel: "gom/TestYingYang.t", GoTest: true, Gom: []gomFile{{Rel: "gom/Ying.gom", Deps: []string{"gom/Yang.gom"}}}},
 }
 
@@ -373,9 +386,9 @@ const junitListener = `import org.junit.runner.*;
 import org.junit.runner.notification.*;
 
 public class T2JUnitListener extends RunListener {
-  public void testStarted(Description d) { System.out.println("@@T2 started " + d.getMethodName()); }
-  public void testFailure(Failure f) { System.out.println("@@T2 failed " + f.getDescription().getMethodName()); }
-  public void testAssumptionFailure(Failure f) { System.out.println("@@T2 failed " + f.getDescription().getMethodName()); }
+  public void testStarted(Description d) { System.out.println("@@T2 started " + d.getMethodName() + " " + d.getClassName()); }
+  public void testFailure(Failure f) { System.out.println("@@T2 failed " + f.getDescription().getMethodName() + " " + f.getDescription().getClassName()); }
+  public void testAssumptionFailure(Failure f) { System.out.println("@@T2 failed " + f.getDescription().getMethodName() + " " + f.getDescription().getClassName()); }
   public static void main(String[] args) throws Exception {
     JUnitCore core = new JUnitCore();
     core.addListener(new T2JUnitListener());
@@ -387,7 +400,7 @@ public class T2JUnitListener extends RunListener {
 
 // junitEvent matches a listener line; the parameter index of a
 // @Parameterized row ("[3]") is stripped by the second group.
-var junitEvent = regexp.MustCompile(`^@@T2 (started|failed) ([A-Za-z_$][\w$]*)(\[[^\]]*\])?$`)
+var junitEvent = regexp.MustCompile(`^@@T2 (started|failed) ([A-Za-z_$][\w$]*)(\[[^\]]*\])?(?: ([\w$.]+))?$`)
 
 // runJUnit runs the compiled original under JUnit and fills o.Passed /
 // o.Failed. A parameterised test passes only if all its rows pass.
@@ -409,6 +422,14 @@ func runJUnit(t *testing.T, c portCase, src, dir, cp, class string, o *oracle) {
 		if m == nil {
 			continue
 		}
+		if c.Suite {
+			// Class.method, with the simple name of the class
+			cls := m[4]
+			if i := strings.LastIndex(cls, "."); i >= 0 {
+				cls = cls[i+1:]
+			}
+			m[2] = cls + "." + m[2]
+		}
 		if m[1] == "failed" {
 			failed[m[2]] = true
 			continue
@@ -427,15 +448,18 @@ func runJUnit(t *testing.T, c portCase, src, dir, cp, class string, o *oracle) {
 		t.Fatalf("JUnit failed without a test failure: %v\n%s", err, out)
 	}
 	// Cross-check: JUnit ran exactly the active @Test methods of the source.
-	declared := junitTests(t, src)
+	declared, err := declaredTests(c, src)
+	if err != nil {
+		t.Fatal(err)
+	}
 	if strings.Join(sortedCopy(declared), ",") != strings.Join(sortedCopy(order), ",") {
 		t.Fatalf("JUnit ran %v but %s declares %v\n%s", order, c.Rel, declared, out)
 	}
 	for _, m := range declared {
 		if failed[m] {
-			o.Failed = append(o.Failed, capitalise(m))
+			o.Failed = append(o.Failed, goTestName(m))
 		} else {
-			o.Passed = append(o.Passed, capitalise(m))
+			o.Passed = append(o.Passed, goTestName(m))
 		}
 	}
 	if len(declared) == 0 {
@@ -541,6 +565,15 @@ func legacyOracle(t *testing.T, c portCase) oracle {
 			t.Fatalf("legacy tom failed on %s: %v\n%s", rel, err, out)
 		}
 	}
+	for _, rel := range c.JavaSupport {
+		data, err := os.ReadFile(filepath.Join(root, "test", rel))
+		if err != nil {
+			t.Fatal(err)
+		}
+		if err := os.WriteFile(filepath.Join(dir, filepath.Base(rel)), data, 0o644); err != nil {
+			t.Fatal(err)
+		}
+	}
 	cp := strings.Join([]string{
 		filepath.Join(legacy.Home, "lib", "tom-runtime-full.jar"),
 		filepath.Join(root, "legacy", "stable", "lib", "compiletime", "junit.jar"),
@@ -580,6 +613,41 @@ func legacyOracle(t *testing.T, c portCase) oracle {
 		t.Fatal(err)
 	}
 	return o
+}
+
+// declaredTests lists the JUnit tests of the original src of c: its
+// active @Test methods, or, for a Suite, the "Class.method" of the
+// @Test methods of its JavaSupport classes.
+func declaredTests(c portCase, src string) ([]string, error) {
+	if !c.Suite {
+		data, err := os.ReadFile(src)
+		if err != nil {
+			return nil, err
+		}
+		return junitTestNames(string(data)), nil
+	}
+	testDir := strings.TrimSuffix(src, filepath.FromSlash(c.Rel))
+	var names []string
+	for _, rel := range c.JavaSupport {
+		data, err := os.ReadFile(filepath.Join(testDir, rel))
+		if err != nil {
+			return nil, err
+		}
+		cls := strings.TrimSuffix(filepath.Base(rel), ".java")
+		for _, m := range junitTestNames(string(data)) {
+			names = append(names, cls+"."+m)
+		}
+	}
+	return names, nil
+}
+
+// goTestName is the Go test of a JUnit test: testFoo -> TestFoo, and
+// Class.method (a Suite) -> TestClass_method.
+func goTestName(name string) string {
+	if cls, m, ok := strings.Cut(name, "."); ok {
+		return "Test" + cls + "_" + m
+	}
+	return capitalise(name)
 }
 
 // junitTests lists the active @Test methods of a JUnit .t source;
@@ -648,7 +716,7 @@ func sourceSHA256(paths ...string) (string, error) {
 // oracle of c: test/<Rel>, then its support files and .gom files.
 func sourcesOf(root string, c portCase) []string {
 	paths := []string{filepath.Join(root, "test", c.Rel)}
-	for _, rel := range c.Support {
+	for _, rel := range append(append([]string(nil), c.Support...), c.JavaSupport...) {
 		paths = append(paths, filepath.Join(root, "test", rel))
 	}
 	for _, g := range c.Gom {
@@ -694,9 +762,14 @@ func oracleStale(c portCase, o oracle, src string, extra ...string) error {
 	if err != nil {
 		return err
 	}
+	_ = data
+	names, err := declaredTests(c, src)
+	if err != nil {
+		return err
+	}
 	var declared []string
-	for _, m := range junitTestNames(string(data)) {
-		declared = append(declared, capitalise(m))
+	for _, m := range names {
+		declared = append(declared, goTestName(m))
 	}
 	recorded := append(append([]string(nil), o.Passed...), o.Failed...)
 	if strings.Join(sortedCopy(declared), ",") != strings.Join(sortedCopy(recorded), ",") {

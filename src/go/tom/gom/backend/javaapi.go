@@ -550,10 +550,10 @@ func (g *gen) emitJavaATerm(sortNm string, alt *gomast.AlternativeAlternative, s
 		w(", %s", a)
 	}
 	w(")\n}\n\n")
-	w("// fromTerm%s is Java Gom's %s.fromTerm: an unquoted application of\n// %s whose arguments are convertible.\n", structName, alt.Name, alt.Name)
+	w("// fromTerm%s is Java Gom's %s.fromTerm: an unquoted application of\n// %s whose arguments are convertible (as in Java, the arity is not\n// checked: a missing argument is an index out of range).\n", structName, alt.Name, alt.Name)
 	w("func fromTerm%s(trm aterm.ATerm, conv aterm.ATermConverter) (%s, bool) {\n", structName, sortNm)
 	w("\ttrm = conv.Convert(trm)\n")
-	w("\tif appl, ok := trm.(*aterm.ATermAppl); ok && appl.GetName() == %q && !appl.GetAFun().IsQuoted() && appl.GetArity() == %d {\n", alt.Name, len(slots))
+	w("\tif appl, ok := trm.(*aterm.ATermAppl); ok && appl.GetName() == %q && !appl.GetAFun().IsQuoted() {\n", alt.Name)
 	w("\t\treturn Make%s(%s), true\n\t}\n\treturn nil, false\n}\n\n", opGo, strings.Join(from, ", "))
 }
 
@@ -580,7 +580,7 @@ func (g *gen) emitJavaFromTerm(api sortAPI) {
 		}
 		w("\tif r, ok := fromTerm%s(converted, conv); ok {\n\t\tresults = append(results, r)\n\t}\n", opGo+s)
 	}
-	w("\tif len(results) == 0 {\n\t\tpanic(fmt.Sprintf(\"%%v is not a %s\", trm))\n\t}\n\treturn results[0]\n}\n\n", s)
+	w("\tif len(results) == 0 {\n\t\tpanic(&aterm.GomError{Msg: fmt.Sprintf(\"%%v is not a %s\", trm), IllegalArgument: true})\n\t}\n\treturn results[0]\n}\n\n", s)
 	w("// %sFromString is Java Gom's %s.fromString(s).\n", s, s)
 	w("func %sFromString(s string) %s { return %sFromTerm(aterm.GetInstance().Parse(s)) }\n\n", s, s, s)
 	w("// %sFromStream is Java Gom's %s.fromStream(stream) (an IOException is\n// the error).\n", s, s)
