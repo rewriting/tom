@@ -104,6 +104,8 @@ var cases = []portCase{
 	{Rel: "sl/TestOnceTopDownId.t", GoTest: true},
 	{Rel: "sl/TestGetSubterm.t", GoTest: true},
 	{Rel: "sl/TestImportStrat.t", GoTest: true, Gom: []gomFile{testslGom}, Support: []string{"sl/CommonStrat.t"}},
+	{Rel: "sl/TestReduceAll.t", GoTest: true},
+	{Rel: "sl/TestSLModes.t", GoTest: true, Gom: []gomFile{testslGom}},
 }
 
 func base(c portCase) string { return strings.TrimSuffix(filepath.Base(c.Rel), ".t") }

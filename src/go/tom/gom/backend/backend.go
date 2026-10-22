@@ -434,10 +434,83 @@ func EmitTomMappingGo(mod gomast.GomModule, opts Options) []byte {
 			fmt.Fprintf(&buf, "}\n\n")
 		}
 	}
+	emitUserMakeHooksGo(&buf, mod)
 	if opts.WithCongruenceStrategies {
 		emitCongruenceMappingGo(&buf, mod)
 	}
 	return buf.Bytes()
+}
+
+// userMakeHook returns the user-written `op:make(args) { … }` hook of a
+// non-variadic alternative, or nil. Hooks of the knownHookTable (the
+// lowered hooks of the compiler's own ADT) are not user hooks.
+func userMakeHook(mod gomast.GomModule, alt *gomast.AlternativeAlternative) *gomast.HookProduction {
+	if mod == nil || alternativeIsVariadic(alt) {
+		return nil
+	}
+	for _, h := range moduleHooks(mod) {
+		if hookScopeName(h) == "operator" && h.Name == alt.Name && hookKindName(h) == "make" && recognisedKnownHook(h) == nil {
+			return h
+		}
+	}
+	return nil
+}
+
+// emitUserMakeHooksGo writes, into the Tom mapping, the user make hooks
+// of the module (Java Gom inserts the hook body at the head of the
+// operator's make, before realMake). The body is Tom+Go code (it may
+// use %match and backquotes on the module's operators), so it cannot go
+// into the generated Go file: it is emitted as host code of the mapping,
+// in an init function that sets the hook<Make> variable the smart
+// constructor consults. A body that does not return falls through to
+// the normal construction (`return nil`).
+//
+// The mapping must therefore be included by exactly one Tom file of the
+// generated package, which is the case of a %gom block.
+func emitUserMakeHooksGo(buf *bytes.Buffer, mod gomast.GomModule) {
+	types := &gen{mod: mod, ownSort: map[string]bool{}}
+	for _, prod := range moduleSorts(mod) {
+		types.ownSort[sortName(prod)] = true
+	}
+	for _, prod := range moduleSorts(mod) {
+		sortNm := sortName(prod)
+		for _, alt := range sortAlternatives(prod) {
+			h := userMakeHook(mod, alt)
+			if h == nil {
+				continue
+			}
+			var argNames []string
+			if args, ok := h.Args.(*gomast.ConcArgArgList); ok {
+				for _, a := range args.Slots {
+					if aa, ok := a.(*gomast.ArgArg); ok {
+						argNames = append(argNames, aa.Name)
+					}
+				}
+			}
+			var params []string
+			i := 0
+			for _, f := range alternativeFields(alt) {
+				if _, ok := f.(*gomast.NamedFieldField); !ok {
+					continue
+				}
+				name := fmt.Sprintf("tom__arg%d", i)
+				if i < len(argNames) {
+					name = argNames[i]
+				}
+				params = append(params, name+" "+types.goType(fieldTypeName(f), false))
+				i++
+			}
+			opGo := exportedField(alt.Name)
+			fmt.Fprintf(buf, "func init() {\n")
+			fmt.Fprintf(buf, "  hookMake%s = func(%s) %s {\n", opGo, strings.Join(params, ", "), sortNm)
+			fmt.Fprintf(buf, "%s\n", hookBody(h))
+			// explicit semicolons: tom emits the host code of an included
+			// file on a single line
+			fmt.Fprintf(buf, "    ; return nil;\n")
+			fmt.Fprintf(buf, "  };\n")
+			fmt.Fprintf(buf, "};\n\n")
+		}
+	}
 }
 
 // emitCongruenceMappingGo writes the congruence strategy operators of
@@ -448,14 +521,19 @@ func EmitTomMappingGo(mod gomast.GomModule, opts Options) []byte {
 //   - `_<op>(arg0..argN-1)` builds Visit<Op>: when the subject is <op>,
 //     applies argI to its I-th child;
 //   - `Is_<op>()` builds Is<Op>, which succeeds on <op> terms only;
-//   - `When_<op>(s)` is `Sequence(Is_<op>(), s)`.
+//   - `When_<op>(s)` is `Sequence(Is_<op>(), s)`;
+//   - `Make_<op>(…)` builds Build<Op> (non-variadic alternatives).
 //
 // A variadic alternative is a flat list in Go (no Cons/Empty
 // operators): its `_<op>(sub)` builds Visit<Op>, which applies sub to
 // every element, where Java builds `Choice(When_Cons<op>(All(sub)),
-// When_Empty<op>(Identity()))` on the cons cells. The Java `Make_<op>`
-// strategies are not generated.
+// When_Empty<op>(Identity()))` on the cons cells; there is no
+// Make_Cons<op>/Make_Empty<op> either.
 func emitCongruenceMappingGo(buf *bytes.Buffer, mod gomast.GomModule) {
+	types := map[string]bool{}
+	for _, prod := range moduleSorts(mod) {
+		types[sortName(prod)] = true
+	}
 	fmt.Fprintf(buf, "%%include { sl.tom }\n\n")
 	for _, prod := range moduleSorts(mod) {
 		for _, alt := range sortAlternatives(prod) {
@@ -490,6 +568,29 @@ func emitCongruenceMappingGo(buf *bytes.Buffer, mod gomast.GomModule) {
 			fmt.Fprintf(buf, "%%op Strategy When_%s(s:Strategy) {\n", alt.Name)
 			fmt.Fprintf(buf, "  make(s) { sl.NewSequence(&%s{}, $s) }\n", isName)
 			fmt.Fprintf(buf, "}\n\n")
+			if !alternativeIsVariadic(alt) {
+				var mparams, mnames, mdollar, slotTypes []string
+				for i, f := range alternativeFields(alt) {
+					if _, ok := f.(*gomast.NamedFieldField); !ok {
+						continue
+					}
+					ty := fieldTypeName(f)
+					if types[ty] {
+						ty = "Strategy"
+					}
+					slotTypes = append(slotTypes, ty)
+					mparams = append(mparams, fmt.Sprintf("Make_%sarg%d:%s", alt.Name, i, ty))
+					mnames = append(mnames, fmt.Sprintf("a%d", i))
+					mdollar = append(mdollar, fmt.Sprintf("$a%d", i))
+				}
+				fmt.Fprintf(buf, "%%op Strategy Make_%s(%s) {\n", alt.Name, strings.Join(mparams, ", "))
+				fmt.Fprintf(buf, "  is_fsym(t) { func() bool { _, ok := ($t).(*Build%s); return ok }() }\n", opGo)
+				for i := range slotTypes {
+					fmt.Fprintf(buf, "  get_slot(Make_%sarg%d, t) { ($t).(*Build%s).Arg%d }\n", alt.Name, i, opGo, i)
+				}
+				fmt.Fprintf(buf, "  make(%s) { NewBuild%s(%s) }\n", strings.Join(mnames, ", "), opGo, strings.Join(mdollar, ", "))
+				fmt.Fprintf(buf, "}\n\n")
+			}
 			fmt.Fprintf(buf, "%%op Strategy Is_%s() {\n", alt.Name)
 			fmt.Fprintf(buf, "  is_fsym(t) { func() bool { _, ok := ($t).(*%s); return ok }() }\n", isName)
 			fmt.Fprintf(buf, "  make() { &%s{} }\n", isName)
@@ -719,9 +820,10 @@ func generateBytes(mod gomast.GomModule, opts Options) ([]byte, error) {
 		opts.PackageName = defaultPackageName(mod)
 	}
 	g := &gen{
-		mod:     mod,
-		ownSort: map[string]bool{},
-		pkgName: opts.PackageName,
+		mod:        mod,
+		ownSort:    map[string]bool{},
+		pkgName:    opts.PackageName,
+		congruence: opts.WithCongruenceStrategies,
 	}
 	for _, s := range moduleSorts(mod) {
 		g.ownSort[sortName(s)] = true
@@ -761,6 +863,10 @@ type gen struct {
 	// alternative emission. Used by GenerateBatchToDir to write a
 	// companion registry_gen.go that powers FromString.
 	registry []registryEntry
+
+	// congruence is Options.WithCongruenceStrategies: the Build<Op>
+	// (Java Make_<op>) strategies are generated only then.
+	congruence bool
 }
 
 // registryEntry describes one row of the makeRegistry table.
@@ -1530,9 +1636,27 @@ afterEquivalent:
 		for _, s := range slots {
 			params = append(params, fmt.Sprintf("%s %s", unexported(s.Name), s.GoType))
 		}
+		var types, names []string
+		for _, s := range slots {
+			types = append(types, s.GoType)
+			names = append(names, unexported(s.Name))
+		}
+		hook := userMakeHook(g.mod, alt)
+		if hook != nil {
+			fmt.Fprintf(&g.buf, "// hook%s is the user `%s:make` hook of the Gom module; the Tom\n", makeName, opName)
+			fmt.Fprintf(&g.buf, "// mapping generated with this file sets it (see UserMakeHooksGo).\n")
+			fmt.Fprintf(&g.buf, "var hook%s func(%s) %s\n\n", makeName, strings.Join(types, ", "), sortNm)
+		}
 		fmt.Fprintf(&g.buf, "func %s(%s) %s {\n", makeName, strings.Join(params, ", "), sortNm)
 		for _, p := range prologues {
 			p.emitMakePrologue(&g.buf, g, alt, sortNm, structName, prologueSlots, isVariadic)
+		}
+		if hook != nil {
+			fmt.Fprintf(&g.buf, "\tif hook%s != nil {\n", makeName)
+			fmt.Fprintf(&g.buf, "\t\tif r := hook%s(%s); r != nil {\n", makeName, strings.Join(names, ", "))
+			fmt.Fprintln(&g.buf, "\t\t\treturn r")
+			fmt.Fprintln(&g.buf, "\t\t}")
+			fmt.Fprintln(&g.buf, "\t}")
 		}
 		fmt.Fprintf(&g.buf, "\thashes := []uint32{")
 		first := true
@@ -1558,6 +1682,13 @@ afterEquivalent:
 	}
 	fmt.Fprintln(&g.buf)
 	g.emitStrategyClasses(sortNm, opGo, opName, structName, len(slots), isVariadic)
+	if g.congruence && !isVariadic {
+		var bslots []hookSlot
+		for _, s := range slots {
+			bslots = append(bslots, hookSlot{Name: s.Name, GoType: s.GoType})
+		}
+		g.emitBuildStrategy(opGo, opName, makeName, bslots)
+	}
 }
 
 // emitStrategyClasses writes two `sl.Strategy` implementations per
@@ -1705,6 +1836,84 @@ func (g *gen) emitStrategyClasses(sortNm, opGo, opName, structName string, slotC
 	fmt.Fprintf(&g.buf, "\treturn sl.VisitCongruence(s.GetEnvironment(), intro, s.args, %t)\n", isVariadic)
 	fmt.Fprintln(&g.buf, "}")
 	g.emitStrategyVisitEntryPoints(visitName)
+	fmt.Fprintln(&g.buf)
+}
+
+// emitBuildStrategy writes Build<Op>, the `Make_<op>` strategy of Java
+// Gom (MakeOpTemplate): it builds an <op> term whose children are the
+// results of its sub-strategies applied to the subject (one per slot of
+// a sort of the module), builtin slots being given as values. The
+// fields Arg<i> hold the per-slot strategies or values; the strategy
+// children (ChildCount/ChildAt) are the strategy slots only.
+func (g *gen) emitBuildStrategy(opGo, opName, makeName string, slots []hookSlot) {
+	name := "Build" + opGo
+	var strat []int
+	for i, s := range slots {
+		if g.isShared(s.GoType) {
+			strat = append(strat, i)
+		}
+	}
+	fieldType := func(s hookSlot) string {
+		if g.isShared(s.GoType) {
+			return "sl.Strategy"
+		}
+		return s.GoType
+	}
+	fmt.Fprintf(&g.buf, "// %s is the `Make_%s` strategy: it builds %s(…) from the results\n", name, opName, opName)
+	fmt.Fprintln(&g.buf, "// of its sub-strategies on the subject (builtin slots are values).")
+	fmt.Fprintf(&g.buf, "type %s struct {\n\tsl.AbstractStrategy\n", name)
+	for i, s := range slots {
+		fmt.Fprintf(&g.buf, "\tArg%d %s\n", i, fieldType(s))
+	}
+	fmt.Fprintln(&g.buf, "}")
+	fmt.Fprintln(&g.buf)
+	var params, inits []string
+	for i, s := range slots {
+		params = append(params, fmt.Sprintf("arg%d %s", i, fieldType(s)))
+		inits = append(inits, fmt.Sprintf("Arg%d: arg%d", i, i))
+	}
+	fmt.Fprintf(&g.buf, "// New%s builds Make_%s.\n", name, opName)
+	fmt.Fprintf(&g.buf, "func New%s(%s) *%s {\n\treturn &%s{%s}\n}\n\n", name, strings.Join(params, ", "), name, name, strings.Join(inits, ", "))
+	args := make([]string, len(slots))
+	// VisitLight: every sub-strategy is applied to the subject.
+	fmt.Fprintf(&g.buf, "func (s *%s) VisitLight(subject any, intro sl.Introspector) (any, error) {\n", name)
+	for i, sv := range slots {
+		if !g.isShared(sv.GoType) {
+			args[i] = fmt.Sprintf("s.Arg%d", i)
+			continue
+		}
+		args[i] = fmt.Sprintf("new%d", i)
+		fmt.Fprintf(&g.buf, "\ttmp%d, err := s.Arg%d.VisitLight(subject, intro)\n", i, i)
+		fmt.Fprintln(&g.buf, "\tif err != nil {\n\t\treturn nil, err\n\t}")
+		fmt.Fprintf(&g.buf, "\tnew%d, ok := tmp%d.(%s)\n", i, i, sv.GoType)
+		fmt.Fprintln(&g.buf, "\tif !ok {\n\t\treturn nil, sl.ErrVisitFailure\n\t}")
+	}
+	fmt.Fprintf(&g.buf, "\treturn %s(%s), nil\n}\n\n", makeName, strings.Join(args, ", "))
+	// VisitEnv: as Java, each sub-strategy visits in turn (its status
+	// is ignored) and the current subject is taken as the child.
+	fmt.Fprintf(&g.buf, "func (s *%s) VisitEnv(intro sl.Introspector) int {\n", name)
+	fmt.Fprintln(&g.buf, "\tenv := s.GetEnvironment()")
+	for i, sv := range slots {
+		if !g.isShared(sv.GoType) {
+			continue
+		}
+		fmt.Fprintf(&g.buf, "\ts.Arg%d.VisitEnv(intro)\n", i)
+		fmt.Fprintf(&g.buf, "\tnew%d, ok := env.GetSubject().(%s)\n", i, sv.GoType)
+		fmt.Fprintln(&g.buf, "\tif !ok {\n\t\treturn sl.StatusFailure\n\t}")
+	}
+	fmt.Fprintf(&g.buf, "\tenv.SetSubject(%s(%s))\n\treturn sl.StatusSuccess\n}\n\n", makeName, strings.Join(args, ", "))
+	fmt.Fprintf(&g.buf, "func (s *%s) ChildCount() int { return %d }\n\n", name, len(strat))
+	fmt.Fprintf(&g.buf, "func (s *%s) ChildAt(i int) sl.Strategy {\n\tswitch i {\n", name)
+	for k, i := range strat {
+		fmt.Fprintf(&g.buf, "\tcase %d:\n\t\treturn s.Arg%d\n", k, i)
+	}
+	fmt.Fprintf(&g.buf, "\t}\n\tpanic(\"%s: no child \" + fmt.Sprint(i))\n}\n\n", name)
+	fmt.Fprintf(&g.buf, "func (s *%s) SetChildAt(i int, v sl.Strategy) {\n\tswitch i {\n", name)
+	for k, i := range strat {
+		fmt.Fprintf(&g.buf, "\tcase %d:\n\t\ts.Arg%d = v\n\t\treturn\n", k, i)
+	}
+	fmt.Fprintf(&g.buf, "\t}\n\tpanic(\"%s: no child \" + fmt.Sprint(i))\n}\n", name)
+	g.emitStrategyVisitEntryPoints(name)
 	fmt.Fprintln(&g.buf)
 }
 

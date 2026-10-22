@@ -1,0 +1,13 @@
+{
+  "passed": [
+    "TestOneRed",
+    "TestAllRed_Visit",
+    "TestAllRed_Fire",
+    "TestCongruenceRed_Visit",
+    "TestCongruenceRed_Fire",
+    "TestOutermost"
+  ],
+  "stdout": "",
+  "exitOK": true,
+  "source_sha256": "c44bbc0aa42736a3992eb6c3c4a806e43d4d36acacbbc29ad60e43a07e13f801"
+}

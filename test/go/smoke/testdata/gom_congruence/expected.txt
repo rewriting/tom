@@ -9,4 +9,6 @@ ITE fails true
 ITE/else c() c()
 Not b() b()
 Not/fail fails true
+Make_f f(b(),c()) f(b(),c())
+Make_f/fail fails false
 Outermost f(c(),l(c(),c())) f(c(),l(c(),c()))

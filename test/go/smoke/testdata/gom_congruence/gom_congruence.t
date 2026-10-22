@@ -2,7 +2,7 @@ package main
 
 // %gom(--withCongruenceStrategies): tom -go passes the %gom options to
 // gomgo, whose mapping then defines the congruence strategies _f,
-// When_f, Is_f (and _l on a variadic operator); also IfThenElse, Not
+// When_f, Is_f, Make_f (and _l on a variadic operator); also IfThenElse, Not
 // and Outermost of the Go sl mappings.
 
 import (
@@ -54,5 +54,9 @@ func main() {
   show("ITE/else", `IfThenElse(AB(), Identity(), BC()), `b())
   show("Not", `Not(AB()), `b())
   show("Not/fail", `Not(AB()), `a())
+  show("Make_f", `Make_f(AB(), Make_c()), `a())
+  // as Java's Make_f.visit(Introspector), the environment-based visit
+  // ignores the status of the sub-strategies: only VisitLight fails
+  show("Make_f/fail", `Make_f(AB(), Make_c()), `b())
   show("Outermost", `Outermost(Choice(AB(), BC())), `f(a(), l(b(), a())))
 }

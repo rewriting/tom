@@ -9,14 +9,14 @@ avec le cas qui les utilise (comme `test/build.xml` compile tout le
 répertoire), et c'est le statut de ce cas qui les valide.
 
 - total : 103
-- OK : 17
+- OK : 19
 - divergence : 0
 - échec go test : 0
 - échec go build : 0
 - échec tom : 0
 - oracle invalide : 0
 - support : 1
-- non porté : 85
+- non porté : 83
 
 | Cas | Statut | Notes |
 |---|---|---|
@@ -118,8 +118,8 @@ répertoire), et c'est le statut de ce cas qui les valide.
 | `sl/TestImportStrat.t` | OK |  |
 | `sl/TestOnceTopDownId.t` | OK |  |
 | `sl/TestPosition.t` | OK |  |
-| `sl/TestReduceAll.t` | non porté |  |
+| `sl/TestReduceAll.t` | OK |  |
 | `sl/TestRef.t` | non porté |  |
 | `sl/TestReflective.t` | non porté |  |
 | `sl/TestSL.t` | non porté |  |
-| `sl/TestSLModes.t` | non porté |  |
+| `sl/TestSLModes.t` | OK |  |
