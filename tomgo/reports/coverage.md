@@ -11,14 +11,14 @@ Généré par `mage coverage`.
 | %include Collection/List/Map mappings | 18 |  | ☐ |
 | %op/%oplist/%typeterm declarations | 49 | `Array.t`, `Peano.t`, `TestArray.t`, `TestBackQuote.t`, `TestList.t`, `TestPeano.t`, `TestStrategy.t` | ☑ |
 | variadic patterns (X*) | 1005 | `Array.t`, `TestArray.t`, `TestBackQuote.t`, `TestList.t`, `TestNonVarSubjects.t`, `TestStrategy.t`, `TestSublists.t`, `TestVarVarStar.t`, `numeric/TestNumericConditions.t` | ☑ |
-| anti-patterns (!p) | 32 | `TestSublists.t` | ☑ |
-| aliases (x@p) | 306 | `Array.t`, `Peano.t`, `TestArray.t`, `TestList.t`, `TestPeano.t`, `TestSublists.t` | ☑ |
+| anti-patterns (!p) | 32 |  | ☐ |
+| aliases (x@p) | 306 | `Array.t`, `Peano.t`, `TestArray.t`, `TestList.t`, `TestPeano.t` | ☑ |
 | constraints (<< && ||) | 236 |  | ☐ |
 | backquote terms | 3789 | `Array.t`, `Peano.t`, `TestAlgebraic.t`, `TestArray.t`, `TestBackQuote.t`, `TestList.t`, `TestPeano.t`, `TestStrategy.t`, `TestSublists.t`, `TestVarVarStar.t`, `sl/TestEnvironment.t` | ☑ |
 | %strategy with parameters | 81 | `TestStrategy.t` | ☑ |
 | getEnvironment() | 23 | `TestStrategy.t` | ☑ |
-| getPosition() | 8 | `TestStrategy.t` | ☑ |
+| getPosition() | 8 | `TestStrategy.t`, `sl/TestEnvironment.t` | ☑ |
 | visit rules | 128 | `TestAlgebraic.t`, `TestStrategy.t` | ☑ |
 | labelled rules (l:p -> a) | 2 |  | ☐ |
 
-Constructions non couvertes : 3
+Constructions non couvertes : 4
