@@ -1,0 +1,14 @@
+/*
+ * Tom Go mapping — java.util types: LinkedList.
+ * Mirrors mapping/java/util/types/LinkedList.tom; java.util.LinkedList is
+ * Go's doubly linked list *list.List (package container/list, to import
+ * in the including file), and equals compares the elements in order with
+ * ==, as java.util.AbstractList.equals compares them with equals.
+ */
+%typeterm LinkedList {
+  implement      { *list.List }
+  is_sort(t)     { $t != nil }
+  equals(l1,l2)  { tom_linkedListEquals($l1, $l2) }
+}
+
+func tom_linkedListEquals(l1, l2 *list.List) bool { if l1.Len() != l2.Len() { return false }; for e1, e2 := l1.Front(), l2.Front(); e1 != nil; e1, e2 = e1.Next(), e2.Next() { if e1.Value != e2.Value { return false } }; return true };

@@ -194,6 +194,13 @@ var cases = []portCase{
 			"gom/fromterm/TypeChar.java", "gom/fromterm/TypeLong.java", "gom/fromterm/TypeDouble.java", "gom/fromterm/TypeFloat.java",
 			"gom/fromterm/FooConverter.java"}},
 	{Rel: "gom/TestYingYang.t", GoTest: true, Gom: []gomFile{{Rel: "gom/Ying.gom", Deps: []string{"gom/Yang.gom"}}}},
+	{Rel: "antipatterns/TestAntiPattern2.t", GoTest: true},
+	{Rel: "antipatterns/TestAntiPattern3.t", GoTest: true},
+	{Rel: "antipatterns/TestAntiPattern.t", GoTest: true},
+	{Rel: "antipatterns/TestAntiPatternAssociative.t", GoTest: true},
+	{Rel: "antipatterns/TestDoubleList.t", GoTest: true},
+	{Rel: "andor/TestAndOr.t", GoTest: true},
+	{Rel: "andor/TestAndOrConstraintOnly.t", GoTest: true},
 }
 
 // termgraphUnsupported is why the tests of gom/TestTermgraph.t are not

@@ -119,7 +119,7 @@ func Test9(t *testing.T) {
     ; { { var tomMatch9_0  Term  = tom_make_f(tom_make_a(),6); _ = tomMatch9_0; if tom_is_sort_Term(tomMatch9_0) { if tom_is_fun_sym_f(any(tomMatch9_0).( Term )) { var tom___y  int64  = tom_get_slot_f_t2(any(tomMatch9_0).( Term )); _ = tom___y; if tom___y > 2 { 
         
         return
-       }; if tom___y < 5 {                  return        };  };  };  };  }; 
+       }; if tom___y < 5 {                  return;        };  };  };  };  }; 
 
   t.FailNow()
 }
@@ -130,7 +130,7 @@ func Test10(t *testing.T) {
     ; { { var tomMatch10_0  Term  = tom_make_f(tom_make_a(),6); _ = tomMatch10_0; if tom_is_sort_Term(tomMatch10_0) { if tom_is_fun_sym_f(any(tomMatch10_0).( Term )) { var tom___y  int64  = tom_get_slot_f_t2(any(tomMatch10_0).( Term )); _ = tom___y; if !(tom_equal_term_int(6, tom___y)) { 
         
         t.FailNow()
-       }; if tom___y < 5 {                  t.FailNow()        };  };  };  };  }; 
+       }; if tom___y < 5 {                  t.FailNow();        };  };  };  };  }; 
 
   return
 
@@ -142,7 +142,7 @@ func Test11(t *testing.T) {
     ; { { var tomMatch11_0  Term  = tom_make_f(tom_make_a(),6); _ = tomMatch11_0; if tom_is_sort_Term(tomMatch11_0) { if tom_is_fun_sym_f(any(tomMatch11_0).( Term )) { var tom___y  int64  = tom_get_slot_f_t2(any(tomMatch11_0).( Term )); _ = tom___y; if tom_equal_term_int(6, tom___y) { 
         
         return
-       }; if tom___y < 5 {                  return        };  };  };  };  }; 
+       }; if tom___y < 5 {                  return;        };  };  };  };  }; 
 
   t.FailNow()
 }
@@ -153,7 +153,7 @@ func Test12(t *testing.T) {
     ; { { var tomMatch12_0  Term  = tom_make_f(tom_make_a(),6); _ = tomMatch12_0; if tom_is_sort_Term(tomMatch12_0) { if tom_is_fun_sym_f(any(tomMatch12_0).( Term )) { var tom___y  int64  = tom_get_slot_f_t2(any(tomMatch12_0).( Term )); _ = tom___y; if !(tom_equal_term_int(6, tom___y)) { 
         
         return
-       }; if tom___y >= 5 {                  return        };  };  };  };  }; 
+       }; if tom___y >= 5 {                  return;        };  };  };  };  }; 
 
   t.FailNow()
 }

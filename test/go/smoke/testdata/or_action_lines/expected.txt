@@ -1,0 +1,5 @@
+branch a()
+branch b()
+2
+has a
+no a

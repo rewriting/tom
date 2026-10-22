@@ -1,0 +1,21 @@
+/*
+ * Tom Go mapping — java.util collections: LinkedList.
+ * Mirrors mapping/java/util/LinkedList.tom on Go's *list.List (package
+ * container/list, to import in the including file). As in Java,
+ * make_insert and get_tail copy the list instead of sharing it.
+ */
+%include { types/LinkedList.tom }
+%include { types/Object.tom }
+
+%oplist LinkedList concLinkedList(Object*) {
+  is_fsym(l)       { ($l != nil) }
+  make_empty()     { list.New() }
+  make_insert(o,l) { concLinkedListAppend($o,$l) }
+  get_head(l)      { $l.Front().Value }
+  get_tail(l)      { concLinkedListgetTail($l) }
+  is_empty(l)      { ($l.Len()==0) }
+}
+
+func concLinkedListAppend(o any, l *list.List) *list.List { res := list.New(); res.PushBackList(l); res.PushFront(o); return res };
+
+func concLinkedListgetTail(l *list.List) *list.List { res := list.New(); res.PushBackList(l); res.Remove(res.Front()); return res };
