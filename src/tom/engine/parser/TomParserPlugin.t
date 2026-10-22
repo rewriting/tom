@@ -122,6 +122,11 @@ public class TomParserPlugin extends TomGenericPlugin {
     boolean eclipse      = ((Boolean)getOptionManager().getOptionValue("eclipse")).booleanValue();
     boolean newparser    = ((Boolean)getOptionManager().getOptionValue("newparser")).booleanValue();
     boolean tomjava      = ((Boolean)getOptionManager().getOptionValue("tomjava")).booleanValue();
+    if(tom.engine.parser.antlr4.CstConverter.goTarget) {
+      // -go implies the island parser (-np): only it synthesizes Go %strategy hooks
+      newparser = true;
+      tomjava = false;
+    }
     boolean printcst     = ((Boolean)getOptionManager().getOptionValue("printcst")).booleanValue();
     boolean printast     = ((Boolean)getOptionManager().getOptionValue("printast")).booleanValue();
 

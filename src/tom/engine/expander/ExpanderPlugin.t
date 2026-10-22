@@ -130,6 +130,11 @@ public class ExpanderPlugin extends TomGenericPlugin {
   }
 
   public void run(Map informationTracker) {
+	if(getOptionBooleanValue("goCode") && getOptionBooleanValue("genIntrospector")) {
+		TomMessage.error(logger, getStreamManager().getInputFileName(), 0,
+				TomMessage.unsupportedWithGo, "--genIntrospector");
+		return;
+	}
 	generateAdaCode = false;
 	generateGoCode = false;
 	callPrefix = "";
@@ -232,9 +237,6 @@ public class ExpanderPlugin extends TomGenericPlugin {
      */
     visit Declaration {
       Strategy(name,extendsTerm,visitList,hooks,orgTrack) -> {
-        if(generateGoCode && expander.getGenIntrospector()) {
-          throw new TomRuntimeException("--genIntrospector is not supported with -go");
-        }
         //Generate only one Introspector for a class if at least one  %strategy is found
         Declaration introspectorClass = `EmptyDeclaration();
         if(expander.getGenIntrospector() && !expander.getGeneratedIntrospector()) {
@@ -617,29 +619,26 @@ public class ExpanderPlugin extends TomGenericPlugin {
           ifList = `concInstruction(ifList*,ifInstr);
           // generate the _visit_Term
           BQTerm arg = `BQVariable(concOption(orgTrack),Name("arg"),type);
-          BQTerm environmentVar;
-          Instruction return1, return2;
-          if(generateAdaCode) {
-            environmentVar = `BQVariable(concOption(orgTrack),Name("str.env"),EmptyType());
-            return1 = `Return(ExpressionToBQTerm(Cast(type,TomInstructionToExpression(CodeToInstruction(TargetLanguageToCode(ITL("visit(str.any, str.env, intro)")))))));
-            return2 = `Return(ExpressionToBQTerm(Cast(type,TomInstructionToExpression(CodeToInstruction(TargetLanguageToCode(ITL("visitLight(str.any, ObjectPtr(arg),intro)")))))));
-          } else if(generateGoCode) {
-            environmentVar = `BQVariable(concOption(orgTrack),Name("environment"),EmptyType());
-            return2 = `Return(ExpressionToBQTerm(Cast(type,BQTermToExpression(Composite(CompositeTL(ITL("sl.MustVisit(" + callPrefix + "Any().VisitLight(arg,introspector))")))))));
-            return1 = return2;
-          } else {
-            environmentVar = `BQVariable(concOption(orgTrack),Name("environment"),EmptyType());
-            return1 = `Return(ExpressionToBQTerm(Cast(type,TomInstructionToExpression(CodeToInstruction(TargetLanguageToCode(ITL("any.visit(environment,introspector)")))))));
-            return2 = `Return(Composite(CompositeTL(ITL("any.visitLight(arg,introspector)"))));
-          }
-
-          testEnvNotNull =
-            `Negation(EqualTerm(expander.getStreamManager().getSymbolTable().getBooleanType(),
-                  ExpressionToBQTerm(Bottom(Type(concTypeOption(),"Object",EmptyTargetLanguageType()))),TomBase.convertFromBQVarToVar(environmentVar)));
           Instruction ifThenElse;
           if(generateGoCode) {
-            ifThenElse = return2; // the Go sl has no environment-based visit
+            // the Go sl has no environment-based visit
+            ifThenElse = `Return(ExpressionToBQTerm(Cast(type,BQTermToExpression(Composite(CompositeTL(ITL("sl.MustVisit(" + callPrefix + "Any().VisitLight(arg,introspector))")))))));
           } else {
+            BQTerm environmentVar;
+            Instruction return1, return2;
+            if(generateAdaCode) {
+              environmentVar = `BQVariable(concOption(orgTrack),Name("str.env"),EmptyType());
+              return1 = `Return(ExpressionToBQTerm(Cast(type,TomInstructionToExpression(CodeToInstruction(TargetLanguageToCode(ITL("visit(str.any, str.env, intro)")))))));
+              return2 = `Return(ExpressionToBQTerm(Cast(type,TomInstructionToExpression(CodeToInstruction(TargetLanguageToCode(ITL("visitLight(str.any, ObjectPtr(arg),intro)")))))));
+            } else {
+              environmentVar = `BQVariable(concOption(orgTrack),Name("environment"),EmptyType());
+              return1 = `Return(ExpressionToBQTerm(Cast(type,TomInstructionToExpression(CodeToInstruction(TargetLanguageToCode(ITL("any.visit(environment,introspector)")))))));
+              return2 = `Return(Composite(CompositeTL(ITL("any.visitLight(arg,introspector)"))));
+            }
+
+            testEnvNotNull =
+              `Negation(EqualTerm(expander.getStreamManager().getSymbolTable().getBooleanType(),
+                    ExpressionToBQTerm(Bottom(Type(concTypeOption(),"Object",EmptyTargetLanguageType()))),TomBase.convertFromBQVarToVar(environmentVar)));
             ifThenElse = `If(testEnvNotNull,return1,return2);
           }
           
