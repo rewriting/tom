@@ -540,7 +540,12 @@ matchBlock: {
       Expression code, String moduleName) throws IOException {
     if(code.isCode()) {
       String it = goType(getSymbolTable(moduleName).getIntType());
-      code = code.setCode(it + "(" + code.getCode().trim() + ")");
+      String body = code.getCode().trim();
+      /* a statement-style body `len($l);` cannot go inside int64(...) */
+      while(body.endsWith(";")) {
+        body = body.substring(0,body.length()-1).trim();
+      }
+      code = code.setCode(it + "(" + body + ")");
     }
     super.buildGetSizeDecl(deep,opNameAST,name1,type,code,moduleName);
   }

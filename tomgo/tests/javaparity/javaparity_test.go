@@ -34,14 +34,35 @@ func inputs(t *testing.T, root string) []string {
 }
 
 func TestJavaOutputIdenticalToLegacy(t *testing.T) {
+	compareWithLegacy(t, nil)
+}
+
+// npAllowed lists the inputs whose -np Java output may differ from
+// legacy/'s, each with the reason the new output is the correct one.
+var npAllowed = map[string]string{}
+
+// TestJavaOutputIdenticalToLegacyNewParser is T0 with the island parser
+// (-np), the parser the Go target uses: changes made to it for Go must
+// not alter the Java output, except for the allow-listed inputs.
+func TestJavaOutputIdenticalToLegacyNewParser(t *testing.T) {
+	compareWithLegacy(t, npAllowed, "-np")
+}
+
+// compareWithLegacy compiles every test/*.t with both compilers (with
+// args) and requires identical diagnostics and output trees, except for
+// the inputs listed in allowed (repository-relative path → reason).
+func compareWithLegacy(t *testing.T, allowed map[string]string, args ...string) {
 	legacy, current := tomjava.LegacyDist(t), tomjava.NewDist(t)
 	root := tomjava.RepoRoot(t)
 	for _, src := range inputs(t, root) {
 		rel, _ := filepath.Rel(root, src)
 		t.Run(rel, func(t *testing.T) {
+			if reason, ok := allowed[rel]; ok {
+				t.Skipf("allowed difference: %s", reason)
+			}
 			outL, outN := t.TempDir(), t.TempDir()
-			logL, errL := legacy.Compile(t, src, outL)
-			logN, errN := current.Compile(t, src, outN)
+			logL, errL := legacy.Compile(t, src, outL, args...)
+			logN, errN := current.Compile(t, src, outN, args...)
 			norm := func(s, out string) string {
 				s = timing.ReplaceAllString(s, "N ms")
 				s = tmpName.ReplaceAllString(s, "__TMP__.t")
