@@ -2334,6 +2334,40 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
 
 ---
 
+### Task 8b : stratégies avec environnement (`visit(Environment)`, `Position`)
+
+Ajoutée à la demande de l'utilisateur (2026-10-22). L'API à environnement
+est utilisée par 16 fichiers de `test/` (dont `test/sl/TestEnvironment.t`,
+`TestStrategy.testPosition`, `TestAlgebraic` qui appelle `s.visit(input)`)
+et par le compilateur lui-même (`OptimizerPlugin.t` : `getEnvironment`,
+`getPosition`), donc indispensable pour J3/J4.
+
+**Spécification exécutable :** `src/tom/library/sl/` (Java) — `Strategy.java`,
+`AbstractStrategy.java`, `AbstractStrategyBasic.java`,
+`AbstractStrategyCombinator.java`, `Environment.java` (322 l.),
+`Position.java` (371 l.), et la méthode `int visit(Introspector)` de chaque
+combinateur déjà porté en Go (`Identity`, `Fail`, `Sequence`, `SequenceId`,
+`Choice`, `ChoiceId`, `All`, `One`, `OneId`, `Mu`, `MuVar`, builtins).
+
+**Files:**
+- Create: `tomgo/stable/library/sl/environment.go`, `position.go` (+ tests)
+- Modify: `tomgo/stable/library/sl/*.go` (interface `Strategy` + chaque combinateur), `src/tom/engine/expander/ExpanderPlugin.t` (branche Go du chemin environnement), `src/tom/engine/backend/GoGenerator.t` (`buildClass`), mappings Go (`Position`, `Environment` si les originaux les incluent), `tomgo/tests/port/TestStrategy.t` (réactiver `TestPosition`), `tomgo/tests/port/TestAlgebraic.t` (revenir à `s.visit` fidèle), `tomgo/tests/port/port_test.go`
+
+**Interfaces (à suivre au plus près de Java, en Go idiomatique) :**
+- `type Position`, `type Environment` portés de Java (pile de sujets, omega, `Up`/`Down`/`FollowPath`, `GetSubject`/`SetSubject`, `GetRoot`, `GetPosition`, `GetIntrospector`).
+- `Strategy` gagne : `SetEnvironment(*Environment)`, `GetEnvironment() *Environment`, `VisitEnv(intro Introspector) int` (équivalent de `int visit(Introspector)` : 0 = succès, sinon échec, sujet lu/écrit dans l'environnement), et un point d'entrée `Visit(subject any, intro Introspector) (any, error)` (équivalent de `visit(T any, Introspector)` : crée l'environnement, initialise la stratégie, visite, renvoie la racine).
+- Chaque combinateur implémente `VisitEnv` en portant le code Java correspondant ; `VisitLight` reste inchangé.
+- Stratégies générées : `VisitEnv` comme `AbstractStrategyBasic.visit(Introspector)` (visitLight sur le sujet de l'environnement, `SetSubject`, échec → code d'échec) ; `_visit_T` reprend le test Java `environment != null ? any.visit(environment,introspector) : any.visitLight(arg,introspector)` ; `getEnvironment()` accessible depuis le code hôte d'une règle (`tom__strat.GetEnvironment()`, idiome à documenter).
+
+**Étapes (TDD) :**
+1. Tests Go de `Position`/`Environment` reprenant les comportements Java (navigation up/down, omega, `getPosition`).
+2. `VisitEnv` sur chaque combinateur, testé sur l'AST jouet existant de `sl_test.go` ; un test par combinateur compare `Visit` et `VisitLight` quand le résultat doit coïncider.
+3. Branche Go de l'expander + `buildClass` ; gosmoke `strategy_env` (règle qui lit `getEnvironment().getPosition()`).
+4. Réactiver `TestPosition` dans `TestStrategy.t`, rendre `TestAlgebraic.t` fidèle (`s.visit`), porter fidèlement `test/sl/TestEnvironment.t` ; mettre à jour `Unsupported`, oracles (`-update-oracle`) et goldens.
+5. `go test ./stable/library/sl/... ./tests/port/ ./tests/gosmoke/` et `mage portJava` verts ; commit(s) `tom-go J1: …`.
+
+---
+
 ### Task 9 (T3) : inventaire des constructions utilisées par le compilateur
 
 **Files:**
