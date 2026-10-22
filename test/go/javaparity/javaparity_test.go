@@ -45,12 +45,116 @@ func inputs(t *testing.T, root string) []string {
 }
 
 // Floors against a vacuous pass: the minimum number of inputs on which
-// the legacy compiler must succeed and produce output files (measured
-// values are in doc/go/j0-go-backend.md; the floors sit below them).
+// the legacy compiler must succeed and produce output files. Measured on
+// 2026-10-23 with the Gom mappings generated as in test/build.xml: 102
+// inputs (default) and 103 (-np), up from 81 and 82 before, when the 21
+// inputs of test/gom and test/sl including a generated mapping crashed
+// identically in both compilers; the floors sit just below.
 const (
-	minDefault = 70
-	minNP      = 70
+	minDefault = 100
+	minNP      = 100
 )
+
+// The inputs are compiled the way test/build.xml compiles them (targets
+// build and build.nt), so that those including Gom-generated mappings are
+// real comparisons rather than two identical "included file not found"
+// crashes:
+//   - each dist's own Gom first compiles the .gom files of test/ into a
+//     temporary directory (gomRuns mirrors the two <gom.preset> calls);
+//   - tom then finds the mappings as build.xml's tom does: there tom shares
+//     Gom's destdir and TomStreamManager.getImportList adds
+//     destdir/<package path>; here -d is the compared output directory, so
+//     the same directory, <gen>/<package path>, is passed with -I;
+//   - the inputs that build.xml compiles with extra options get them too
+//     (tomOptions).
+
+// gomRuns mirrors the <gom.preset> calls of test/build.xml: options, and
+// whether a .gom (path relative to test/, slash-separated) belongs to the
+// call. Both calls exclude **/error/** and **/regress/**.
+var gomRuns = []struct {
+	args    []string
+	include func(rel string) bool
+}{
+	{[]string{"--package", "sl", "--termpointer", "--withCongruenceStrategies"},
+		func(rel string) bool { return rel == "sl/testsl.gom" }},
+	{nil, func(rel string) bool { return rel != "sl/testsl.gom" }},
+}
+
+// tomOptions are the extra options of the dedicated <tom.preset> calls of
+// test/build.xml (input path relative to test/). --intermediate is left
+// out: it only dumps the intermediate ASTs next to the output.
+var tomOptions = map[string][]string{
+	"TestOptimizer.t":             {"--optimize"},
+	"sl/TestHandWrittenMapping.t": {"--genIntrospector"},
+	"sl/IntrospectorBehaviour.t":  {"--genIntrospector"},
+}
+
+// generateGom runs d's Gom as test/build.xml does and returns the
+// destination directory.
+func generateGom(t *testing.T, d harness.Dist, root string) string {
+	t.Helper()
+	testDir := filepath.Join(root, "test")
+	var all []string
+	if err := filepath.Walk(testDir, func(p string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+		if info.IsDir() {
+			switch info.Name() {
+			case "error", "regress":
+				return filepath.SkipDir
+			}
+			// test/go holds the Tom+Go ports, unknown to build.xml.
+			if p == filepath.Join(testDir, "go") {
+				return filepath.SkipDir
+			}
+			return nil
+		}
+		if strings.HasSuffix(p, ".gom") {
+			all = append(all, p)
+		}
+		return nil
+	}); err != nil {
+		t.Fatal(err)
+	}
+	gen := t.TempDir()
+	for _, run := range gomRuns {
+		var files []string
+		for _, p := range all {
+			rel, _ := filepath.Rel(testDir, p)
+			if run.include(filepath.ToSlash(rel)) {
+				files = append(files, p)
+			}
+		}
+		if len(files) == 0 {
+			t.Fatalf("gom run %v: no .gom file selected", run.args)
+		}
+		args := append(append([]string{"--destdir", gen}, run.args...), files...)
+		if out, err := harness.RunIn(testDir, []string{"TOM_HOME=" + d.Home}, filepath.Join(d.Home, "bin", "gom"), args...); err != nil {
+			t.Fatalf("%s/bin/gom %v: %v\n%s", d.Home, args, err, out)
+		}
+	}
+	return gen
+}
+
+// packageDecl matches the package declaration of a Tom+Java input.
+var packageDecl = regexp.MustCompile(`(?m)^\s*package\s+([\w.]+)\s*;`)
+
+// buildArgs returns the options test/build.xml gives tom for src, gen
+// being the directory generateGom filled.
+func buildArgs(t *testing.T, root, src, gen string) []string {
+	t.Helper()
+	text, err := os.ReadFile(src)
+	if err != nil {
+		t.Fatal(err)
+	}
+	inc := gen
+	if m := packageDecl.FindSubmatch(text); m != nil {
+		inc = filepath.Join(gen, strings.ReplaceAll(string(m[1]), ".", string(filepath.Separator)))
+	}
+	rel, _ := filepath.Rel(filepath.Join(root, "test"), src)
+	return append([]string{"-I", inc}, tomOptions[filepath.ToSlash(rel)]...)
+}
 
 func TestJavaOutputIdenticalToLegacy(t *testing.T) {
 	compareWithLegacy(t, nil, minDefault)
@@ -73,6 +177,7 @@ func TestJavaOutputIdenticalToLegacyNewParser(t *testing.T) {
 func compareWithLegacy(t *testing.T, allowed map[string]string, floor int, args ...string) {
 	legacy, current := harness.LegacyDist(t), harness.NewDist(t)
 	root := harness.RepoRoot(t)
+	genL, genN := generateGom(t, legacy, root), generateGom(t, current, root)
 	var succeeded, filesCompared int
 	defer func() {
 		t.Logf("T0 %v: %d inputs with legacy success, %d .java files compared", args, succeeded, filesCompared)
@@ -90,13 +195,13 @@ func compareWithLegacy(t *testing.T, allowed map[string]string, floor int, args 
 				t.Skipf("allowed difference: %s", reason)
 			}
 			outL, outN := t.TempDir(), t.TempDir()
-			logL, errL := legacy.Compile(t, src, outL, args...)
-			logN, errN := current.Compile(t, src, outN, args...)
+			logL, errL := legacy.Compile(t, src, outL, append(buildArgs(t, root, src, genL), args...)...)
+			logN, errN := current.Compile(t, src, outN, append(buildArgs(t, root, src, genN), args...)...)
 			norm := func(s, out string) string {
 				s = timing.ReplaceAllString(s, "N ms")
 				s = tmpName.ReplaceAllString(s, "__TMP__.t")
 				s = stackLine.ReplaceAllString(s, ".java:N)")
-				return harness.Normalize(s, map[string]string{out: "__OUT__", legacy.Home: "__HOME__", current.Home: "__HOME__"})
+				return harness.Normalize(s, map[string]string{out: "__OUT__", genL: "__GEN__", genN: "__GEN__", legacy.Home: "__HOME__", current.Home: "__HOME__"})
 			}
 			if (errL == nil) != (errN == nil) || norm(logL, outL) != norm(logN, outN) {
 				t.Fatalf("diagnostics differ\nlegacy (%v):\n%s\nnew (%v):\n%s", errL, logL, errN, logN)
