@@ -1,50 +1,67 @@
+/*
+ * Copyright (c) 2004-2015, Universite de Lorraine, Inria
+ * All rights reserved.
+ * 
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are
+ * met: 
+ * 	- Redistributions of source code must retain the above copyright
+ * 	notice, this list of conditions and the following disclaimer.  
+ * 	- Redistributions in binary form must reproduce the above copyright
+ * 	notice, this list of conditions and the following disclaimer in the
+ * 	documentation and/or other materials provided with the distribution.
+ * 	- Neither the name of the Inria nor the names of its
+ * 	contributors may be used to endorse or promote products derived from
+ * 	this software without specific prior written permission.
+ * 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+// Port of test/TestVarVarStar.t.
 package testvarvarstar
 
 import "testing"
 
-%gom {
-	module M
-	abstract syntax
-		A = a(s1:BList, s2:BList)
-		B = b()
-		BList = conc(B*)
+%gom{
+  module M
+  abstract syntax
+    A = a(s1:BList,s2: BList)
+    B = b()
+    BList = conc(B*)
 }
 
-// test1 — empty/empty: l binds to s1 = conc(), then conc(l*) on
-// s2 = conc() splats zero elements. Rule fires.
-func TestEmptyEmpty(t *testing.T) {
-	a := `a(conc(), conc())
-	matched := false
-	%match(A a) {
-		a(l, conc(l*)) -> { matched = true }
-	}
-	if !matched {
-		t.Errorf("a(conc(),conc()) should match a(l, conc(l*))")
-	}
+func Test1(t *testing.T) {
+  var a A = `a(conc(),conc())
+  %match(a) {
+    a(l,conc(l*)) -> { return }
+  }
+  t.FailNow()
 }
 
-// test2 — singleton/singleton: l = conc(b()), then conc(l*)
-// on s2 expects s2 = conc(b()) (same as l). Rule fires.
-func TestSingletonSingleton(t *testing.T) {
-	a := `a(conc(b()), conc(b()))
-	matched := false
-	%match(A a) {
-		a(l, conc(l*)) -> { matched = true }
-	}
-	if !matched {
-		t.Errorf("a(conc(b()),conc(b())) should match a(l, conc(l*))")
-	}
+func Test2(t *testing.T) {
+  var a A = `a(conc(b()),conc(b()))
+  %match(a) {
+    a(l,conc(l*)) -> { return }
+  }
+  t.FailNow()
 }
 
-// test3 — singleton/pair: l = conc(b()) but s2 = conc(b(),b())
-// has 2 elements. Rule does NOT fire.
-func TestMismatch(t *testing.T) {
-	a := `a(conc(b()), conc(b(), b()))
-	matched := false
-	%match(A a) {
-		a(l, conc(l*)) -> { matched = true }
-	}
-	if matched {
-		t.Errorf("a(conc(b()),conc(b(),b())) should NOT match a(l, conc(l*))")
-	}
+func Test3(t *testing.T) {
+  counter := 0
+  _ = counter
+  var a A = `a(conc(b()),conc(b(),b()))
+  %match(a) {
+    a(l,conc(l*)) -> { t.FailNow()}
+  }
+  return
 }

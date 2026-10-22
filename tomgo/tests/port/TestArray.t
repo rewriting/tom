@@ -1,201 +1,261 @@
-package array_test
+package testarray
+
+// Port of test/TestArray.t: the Java aterm library is replaced by its Go
+// subset tom/tomgo/tests/port/aterm, java.util.ArrayList by a slice,
+// java.util.logging by log/slog (FINE = Debug), @BeforeClass/@AfterClass
+// by TestMain and @Before by a setUp() call at the start of each test.
 
 import (
-	"testing"
+  "context"
+  "fmt"
+  "log/slog"
+  "os"
+  "strings"
+  "testing"
+
+  "tom/tomgo/tests/port/aterm"
 )
 
-type Term struct {
-	Name string
-	Args []*Term
-}
+var factory = aterm.GetInstance()
 
-func (t *Term) Equals(o *Term) bool {
-	if t == o {
-		return true
-	}
-	if t == nil || o == nil || t.Name != o.Name {
-		return false
-	}
-	return true
-}
-
-func equalsList(a, b []*Term) bool {
-	if len(a) != len(b) {
-		return false
-	}
-	for i := range a {
-		if !a[i].Equals(b[i]) {
-			return false
-		}
-	}
-	return true
-}
+var fzero, fsuc, fplus, ffib *aterm.AFun
+var tzero *aterm.ATermAppl
+var unsortedlist []aterm.ATerm
+var sortedlist []aterm.ATerm
+var listwithdoubles []aterm.ATerm
+var listwithoutdoubles []aterm.ATerm
+var logger *slog.Logger
+var level = slog.LevelDebug
 
 %typeterm L {
-	implement     { []*Term }
-	is_sort(t)    { $t != nil }
-	equals(l1,l2) { equalsList($l1, $l2) }
+  implement { []aterm.ATerm }
+  is_sort(t) { $t != nil }
+  equals(l1,l2)    { listEquals($l1, $l2) }
 }
 
 %oparray L conc( E* ) {
-	is_fsym(t)       { $t != nil }
-	make_empty(n)    { make([]*Term, 0, $n) }
-	make_append(e,l) { append($l, $e) }
-	get_element(l,n) { ($l)[$n] }
-	get_size(l)      { len($l) }
+  is_fsym(t)       { $t != nil }
+  get_element(l,n) { $l[$n] }
+  get_size(l)      { len($l) }
+  make_empty(n)    { make([]aterm.ATerm, 0, $n) }
+  make_append(e,l) { myAdd($e,$l) }
+}
+
+func myAdd(e aterm.ATerm, l []aterm.ATerm) []aterm.ATerm {
+  return append(l, e)
+}
+
+// java.util.ArrayList.equals
+func listEquals(l1, l2 []aterm.ATerm) bool {
+  if len(l1) != len(l2) {
+    return false
+  }
+  for i := range l1 {
+    if l1[i] != l2[i] {
+      return false
+    }
+  }
+  return true
 }
 
 %typeterm E {
-	implement     { *Term }
-	is_sort(t)    { $t != nil }
-	equals(t1,t2) { ($t1).Equals($t2) }
+  implement           { aterm.ATerm }
+  is_sort(t) { $t != nil }
+  equals(t1, t2)      { ($t1 == $t2) }
 }
 
 %op E a() {
-	is_fsym(t) { ($t).Name == "a" }
-	make()     { &Term{Name: "a"} }
+  is_fsym(t) { any($t).(*aterm.ATermAppl).GetName() == "a" }
+  make() { factory.MakeAppl(factory.MakeAFun("a", 0, false)) }
 }
 
 %op E b() {
-	is_fsym(t) { ($t).Name == "b" }
-	make()     { &Term{Name: "b"} }
+  is_fsym(t) { any($t).(*aterm.ATermAppl).GetName() == "b" }
+  make() { factory.MakeAppl(factory.MakeAFun("b", 0, false)) }
 }
 
 %op E c() {
-	is_fsym(t) { ($t).Name == "c" }
-	make()     { &Term{Name: "c"} }
+  is_fsym(t) { any($t).(*aterm.ATermAppl).GetName() == "c" }
+  make() { factory.MakeAppl(factory.MakeAFun("c", 0, false)) }
 }
 
-// sort1 — bubble sort by element name. For each pair (x, y) in wrong
-// order, swap with full surrounding sublists preserved and recurse.
-func sort1(l []*Term) []*Term {
-	%match(L l) {
-		conc(X1*, x, X2*, y, X3*) -> {
-			if `x.Name > `y.Name {
-				return sort1(`conc(X1*, y, X2*, x, X3*))
-			}
-		}
-	}
-	return l
+func TestMain(m *testing.M) {
+  staticSetUp()
+  code := m.Run()
+  staticTearDown()
+  os.Exit(code)
 }
 
-// sort2 — same algorithm, equivalent shape via direct rebuild.
-func sort2(l []*Term) []*Term {
-	%match(L l) {
-		conc(X1*, x, X2*, y, X3*) -> {
-			if `x.Name > `y.Name {
-				return sort2(`conc(X1*, y, X2*, x, X3*))
-			}
-		}
-	}
-	return l
+func staticSetUp() {
+  logger = slog.Default().With("class", "TestArray")
 }
 
-// double1 — remove one occurrence of every double via non-linear `x`.
-func double1(l []*Term) []*Term {
-	%match(L l) {
-		conc(X1*, x, X2*, x, X3*) -> {
-			return double1(`conc(X1*, X2*, x, X3*))
-		}
-	}
-	return l
+func setUp() {
+  var ta aterm.ATerm = factory.MakeAppl(factory.MakeAFun("a", 0, false))
+  var tb aterm.ATerm = factory.MakeAppl(factory.MakeAFun("b", 0, false))
+  var tc aterm.ATerm = factory.MakeAppl(factory.MakeAFun("c", 0, false))
+  l := []aterm.ATerm{}
+  l = append(l, ta)
+  l = append(l, tb)
+  l = append(l, tc)
+  l = append(l, ta)
+  l = append(l, tb)
+  l = append(l, tc)
+  unsortedlist = l
+
+  res := []aterm.ATerm{}
+  res = append(res, ta)
+  res = append(res, ta)
+  res = append(res, tb)
+  res = append(res, tb)
+  res = append(res, tc)
+  res = append(res, tc)
+  sortedlist = res
+
+  listwithdoubles = `conc(a(),b(),c(),a(),b(),c(),a())
+  listwithoutdoubles = `conc(a(),b(),c())
 }
 
-// double2 — same as double1, alternate rewrite shape.
-func double2(l []*Term) []*Term {
-	%match(L l) {
-		conc(X1*, x, X2*, x, X3*) -> {
-			return double2(`conc(X1*, X2*, x, X3*))
-		}
-	}
-	return l
-}
-
-// double4 — non-linear pattern with aliased VariableStar children.
-func double4(l []*Term) []*Term {
-	%match(L l) {
-		conc(X1*, x@_, X2@_*, x, X3@_*) -> {
-			return double4(`conc(X1*, X2*, x, X3*))
-		}
-	}
-	return l
-}
-
-// double5 — three rules; the FIRST match wins.
-func double5(l []*Term) []*Term {
-	%match(L l) {
-		conc(X1*, x@a(), X2*, x@a(), X3*) -> { return double5(`conc(X1*, X2*, x, X3*)) }
-		conc(X1*, x@_,   X2*, x@_,   X3*) -> { return double5(`conc(X1*, X2*, x, X3*)) }
-	}
-	return l
-}
-
-// makeFixtures — analog of @BeforeClass that builds the per-test
-// inputs. Called from each test to avoid the cross-test mutation
-// the Java fixture suffers from (sort1 modifies the input list in
-// place; we keep tests independent by always rebuilding).
-func makeFixtures() (unsorted, sorted, withDoubles, withoutDoubles []*Term) {
-	ta := `a()
-	tb := `b()
-	tc := `c()
-	unsorted = []*Term{ta, tb, tc, ta, tb, tc}
-	sorted = []*Term{ta, ta, tb, tb, tc, tc}
-	withDoubles = []*Term{ta, tb, tc, ta, tb, tc, ta}
-	withoutDoubles = []*Term{ta, tb, tc}
-	return
+func staticTearDown() {
+  logger = nil
 }
 
 func TestSort1(t *testing.T) {
-	u, s, _, _ := makeFixtures()
-	if got := sort1(u); !equalsList(got, s) {
-		t.Errorf("sort1 = %v, want %v", got, s)
-	}
+  setUp()
+  assertEquals(t,
+      "sort1 should return a sorted list",
+      sort1(unsortedlist), sortedlist)
 }
 
 func TestSort2(t *testing.T) {
-	u, s, _, _ := makeFixtures()
-	if got := sort2(u); !equalsList(got, s) {
-		t.Errorf("sort2 = %v, want %v", got, s)
-	}
+  setUp()
+  assertEquals(t,
+      "sort2 should return a sorted list",
+      sort2(unsortedlist), sortedlist)
 }
 
 func TestDouble1(t *testing.T) {
-	_, _, wd, wod := makeFixtures()
-	if got := double1(sort1(wd)); !equalsList(got, wod) {
-		t.Errorf("double1 = %v, want %v", got, wod)
-	}
+  setUp()
+  assertEquals(t,
+      "double1 should remove all double element in a list",
+      double1(sort1(listwithdoubles)),listwithoutdoubles)
 }
 
 func TestDouble2(t *testing.T) {
-	_, _, wd, wod := makeFixtures()
-	if got := double2(sort2(wd)); !equalsList(got, wod) {
-		t.Errorf("double2 = %v, want %v", got, wod)
-	}
+  setUp()
+  assertEquals(t,
+      "double2 should remove all double element in a list",
+      double2(sort2(listwithdoubles)),listwithoutdoubles)
 }
 
 func TestDouble4(t *testing.T) {
-	_, _, wd, wod := makeFixtures()
-	if got := double4(sort2(wd)); !equalsList(got, wod) {
-		t.Errorf("double4 = %v, want %v", got, wod)
-	}
+  setUp()
+  assertEquals(t,
+      "double4 should remove all double element in a list",
+      double4(sort2(listwithdoubles)),listwithoutdoubles)
 }
 
 func TestDouble5(t *testing.T) {
-	_, _, wd, wod := makeFixtures()
-	if got := double5(sort2(wd)); !equalsList(got, wod) {
-		t.Errorf("double5 = %v, want %v", got, wod)
-	}
+  setUp()
+  assertEquals(t,
+      "double5 should remove all double element in a list",
+      double5(sort2(listwithdoubles)),listwithoutdoubles)
+}
+
+func sort1(l []aterm.ATerm) []aterm.ATerm {
+  %match(L l) {
+    conc(X1*,x,X2*,y,X3*) -> {
+      xname := any(`x).(*aterm.ATermAppl).GetName()
+      yname := any(`y).(*aterm.ATermAppl).GetName()
+      if strings.Compare(xname, yname) > 0 {
+        result := `X1
+        result = append(result, `y)
+        result = append(result, (`X2)...)
+        result = append(result, `x)
+        result = append(result, (`X3)...)
+        return sort1(result)
+      }
+    }
+  }
+  return l
+}
+
+func double1(l []aterm.ATerm) []aterm.ATerm {
+  %match(L l) {
+    conc(X1*,x,X2*,x,X3*) -> {
+      result := `X1
+      result = append(result, (`X2)...)
+      result = append(result, `x)
+      result = append(result, (`X3)...)
+      return double1(result)
+    }
+  }
+  return l
+}
+
+func sort2(l []aterm.ATerm) []aterm.ATerm {
+  %match(L l) {
+    conc(X1*,x,X2*,y,X3*) -> {
+      xname := any(`x).(*aterm.ATermAppl).GetName()
+      yname := any(`y).(*aterm.ATermAppl).GetName()
+      if strings.Compare(xname, yname) > 0 {
+        return `sort2(conc(X1*,y,X2*,x,X3*))
+      }
+    }
+  }
+  return l
+}
+
+func double2(l []aterm.ATerm) []aterm.ATerm {
+  %match(L l) {
+    conc(X1*,x,X2*,x,X3*) -> {
+      return `double2(conc(X1*,X2*,x,X3*))
+    }
+  }
+  return l
+}
+
+
+func double4(l []aterm.ATerm) []aterm.ATerm {
+  %match(L l) {
+    conc(X1*,x@_,X2@_*,x,X3@_*) -> { return `double4(conc(X1*,X2*,x,X3*)) }
+  }
+  return l
+}
+
+func double5(l []aterm.ATerm) []aterm.ATerm {
+  %match(L l) {
+    conc(X1*,x@a(),X2*,x@a(),X3*) -> { return `double5(conc(X1*,X2*,x,X3*)) }
+    conc(X1*,x@_,X2*,x@_,X3*) -> { return `double5(conc(X1*,X2*,x,X3*)) }
+    conc(X1*,x@y,X2*,y@x,X3*) -> { return `double5(conc(X1*,X2*,x,X3*)) }
+  }
+  return l
 }
 
 func TestVariableStar1(t *testing.T) {
-	nbSol := 0
-	l := []*Term{`a(), `b()}
-	%match(L l) {
-		conc(X1*, X2*, X3*) -> {
-			nbSol++
-		}
-	}
-	if nbSol != 6 {
-		t.Errorf("VariableStar split count = %d, want 6", nbSol)
-	}
+  setUp()
+  nbSol := 0
+  var l []aterm.ATerm = `conc(a(),b())
+  %match(L l) {
+    conc(X1*,X2*,X3*) -> {
+      nbSol++
+      logger.Log(context.Background(), level, "X1 = " + fmt.Sprint(`X1*) + " X2 = " + fmt.Sprint(`X2*)+ " X3 = " + fmt.Sprint(`X3*))
+    }
+  }
+  assertTrue(t, "TestVariableStar1",nbSol==6)
+}
+
+// org.junit.Assert.assertTrue / assertEquals (ArrayList.equals)
+func assertTrue(t *testing.T, message string, condition bool) {
+  t.Helper()
+  if !condition {
+    t.Error(message)
+  }
+}
+
+func assertEquals(t *testing.T, message string, expected, actual []aterm.ATerm) {
+  t.Helper()
+  if !listEquals(expected, actual) {
+    t.Errorf("%s expected:<%v> but was:<%v>", message, expected, actual)
+  }
 }

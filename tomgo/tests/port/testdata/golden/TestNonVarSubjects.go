@@ -1,3 +1,33 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 package testnonvarsubjects
 
 
@@ -20,16 +50,9 @@ func tom_equal_term_Term(t1  Term , t2  Term ) bool { return (t1).Equivalent(t2)
 
 
 
+func Test1(t *testing.T) {    
+  ; { { if tom_is_sort_Term(tom_cons_list_list(tom_make_a(),tom_empty_list_list())) { 
+ return  };  };  }; 
 
-
-
-
-func TestNonVarSubject(t *testing.T) {
-	matched := false
-	; { { if tom_is_sort_Term(tom_cons_list_list(tom_make_a(),tom_empty_list_list())) { 
- matched = true  };  };  }; 
-
-	if !matched {
-		t.Errorf("%%match(list(a())) { _x -> ... } should fire")
-	}
-}
+  t.FailNow()
+}  

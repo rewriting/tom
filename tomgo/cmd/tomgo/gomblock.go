@@ -62,7 +62,8 @@ func writeGomBlock(mod gomast.GomModule, pkg, out string) (string, error) {
 		return "", err
 	}
 	tomPath := filepath.Join(out, name+".tom")
-	if err := os.WriteFile(tomPath, backend.EmitTomMappingGo(mod, opts), 0o644); err != nil {
+	mapping := append(backend.BuiltinIncludesGo(mod), backend.EmitTomMappingGo(mod, opts)...)
+	if err := os.WriteFile(tomPath, mapping, 0o644); err != nil {
 		return "", err
 	}
 	return filepath.Abs(tomPath)

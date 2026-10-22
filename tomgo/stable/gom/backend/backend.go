@@ -297,6 +297,56 @@ func EmitTomMapping(mod gomast.GomModule, opts Options) []byte {
 	return buf.Bytes()
 }
 
+// builtinMappings lists, in the order Java Gom emits them
+// (tom.gom.backend.shared.MappingTemplate), the builtin modules a Gom
+// module may import and the Tom mapping that declares their sort.
+var builtinMappings = []struct{ module, mapping string }{
+	{"boolean", "boolean.tom"},
+	{"String", "string.tom"},
+	{"int", "int.tom"},
+	{"char", "char.tom"},
+	{"double", "double.tom"},
+	{"long", "long.tom"},
+	{"float", "float.tom"},
+}
+
+// importedModules returns the names of the modules imported by g.
+func importedModules(g gomast.GomModule) map[string]bool {
+	out := map[string]bool{}
+	gm := g.(*gomast.GomModuleGomModule)
+	for _, sec := range gm.SectionList.(*gomast.ConcSectionSectionList).Slots {
+		imp, ok := sec.(*gomast.ImportsSection)
+		if !ok {
+			continue
+		}
+		if l, ok := imp.ImportList.(*gomast.ConcImportedModuleImportList); ok {
+			for _, m := range l.Slots {
+				if n, ok := m.(*gomast.GomModuleNameGomModuleName); ok {
+					out[n.Name] = true
+				}
+			}
+		}
+	}
+	return out
+}
+
+// BuiltinIncludesGo returns the %include lines a mapping of g needs for
+// the builtin modules it imports (int.tom for "imports int", …), as Java
+// Gom writes them at the top of its generated mapping.
+func BuiltinIncludesGo(g gomast.GomModule) []byte {
+	var buf bytes.Buffer
+	imported := importedModules(g)
+	for _, b := range builtinMappings {
+		if imported[b.module] {
+			fmt.Fprintf(&buf, "%%include { %s }\n", b.mapping)
+		}
+	}
+	if buf.Len() > 0 {
+		buf.WriteString("\n")
+	}
+	return buf.Bytes()
+}
+
 // EmitTomMappingGo returns the Tom-mapping (.tom) source for a Gom
 // module, with hook bodies written in **Go** syntax (mirror of
 // [EmitTomMapping] which targets Java).

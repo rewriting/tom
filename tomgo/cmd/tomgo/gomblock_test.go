@@ -37,3 +37,25 @@ func TestWriteGomBlock(t *testing.T) {
 		t.Fatalf("mapping is not the Go-host-code mapping:\n%s", mapping)
 	}
 }
+
+// Builtin imports bring their mapping in, as Java Gom does.
+func TestWriteGomBlockBuiltinIncludes(t *testing.T) {
+	dir := t.TempDir()
+	src := filepath.Join(dir, "in.gom")
+	body := "module M\nimports int String\nabstract syntax\nT = f(x:int, s:String)\n"
+	if err := os.WriteFile(src, []byte(body), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	mod, err := gomparser.ParseFile(src)
+	if err != nil {
+		t.Fatal(err)
+	}
+	tomPath, err := writeGomBlock(mod, "fixture", filepath.Join(dir, "out"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	mapping, _ := os.ReadFile(tomPath)
+	if !strings.HasPrefix(string(mapping), "%include { string.tom }\n%include { int.tom }\n\n") {
+		t.Fatalf("builtin includes missing:\n%s", mapping)
+	}
+}

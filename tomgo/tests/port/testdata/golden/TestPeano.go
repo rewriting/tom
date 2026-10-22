@@ -1,61 +1,32 @@
-package peano
+package testpeano
+
+
+
 
 
 
 import (
-	"fmt"
-	"testing"
+  "testing"
+
+  "tom/tomgo/tests/port/aterm"
 )
 
 
 
+var factory = aterm.GetInstance()
+var fzero, fsuc, fplus *aterm.AFun
+var tzero *aterm.ATermAppl
 
 
 
-
-
-type Term struct {
-	Name string
-	Args []*Term
+func init() {
+  fzero = factory.MakeAFun("zero", 0, false)
+  fsuc  = factory.MakeAFun("suc" , 1, false)
+  fplus = factory.MakeAFun("plus", 2, false)
+  tzero = factory.MakeAppl(fzero)
 }
 
-
-
-func (t *Term) Equals(o *Term) bool {
-	if t == o {
-		return true
-	}
-	if t == nil || o == nil || t.Name != o.Name || len(t.Args) != len(o.Args) {
-		return false
-	}
-	for i := range t.Args {
-		if !t.Args[i].Equals(o.Args[i]) {
-			return false
-		}
-	}
-	return true
-}
-
-
-
-func (t *Term) String() string {
-	if t == nil {
-		return "<nil>"
-	}
-	if len(t.Args) == 0 {
-		return t.Name
-	}
-	s := t.Name + "("
-	for i, a := range t.Args {
-		if i > 0 {
-			s += ","
-		}
-		s += a.String()
-	}
-	return s + ")"
-}
-
-func tom_equal_term_term(t1  *Term , t2  *Term ) bool { return (t1).Equals(t2);  }; func tom_is_sort_term(t any) bool { return t != nil;  }; func tom_is_fun_sym_zero(t  *Term ) bool { return (t).Name == "zero";  }; func tom_make_zero()  *Term  { return (&Term{Name: "zero"}) }; func tom_is_fun_sym_suc(t  *Term ) bool { return (t).Name == "suc";  }; func tom_make_suc(p  *Term )  *Term  { return (&Term{Name: "suc", Args: []*Term{p}}) }; func tom_get_slot_suc_pred(t  *Term )  *Term  { return (t).Args[0];  }; 
+func tom_equal_term_term(t1  aterm.ATerm , t2  aterm.ATerm ) bool { return t1 == t2;  }; func tom_is_sort_term(t any) bool { return t != nil;  }; func tom_equal_term_appl(t1  *aterm.ATermAppl , t2  *aterm.ATermAppl ) bool { return t1 == t2;  }; func tom_is_sort_appl(t any) bool { return t != nil;  }; func tom_is_fun_sym_zero(t  aterm.ATerm ) bool { return any(t).(*aterm.ATermAppl).GetAFun() == fzero;  }; func tom_make_zero()  aterm.ATerm  { return (factory.MakeAppl(fzero)) }; func tom_is_fun_sym_suc(t  aterm.ATerm ) bool { return any(t).(*aterm.ATermAppl).GetAFun() == fsuc;  }; func tom_make_suc(t  aterm.ATerm )  aterm.ATerm  { return (factory.MakeAppl(fsuc,t)) }; func tom_get_slot_suc_pred(t  aterm.ATerm )  aterm.ATerm  { return any(t).(*aterm.ATermAppl).GetArgument(0);  }; 
 
 
 
@@ -75,124 +46,204 @@ func tom_equal_term_term(t1  *Term , t2  *Term ) bool { return (t1).Equals(t2); 
 
 
 
-func plus1(t1, t2 *Term) *Term {
-	; { { if tom_is_sort_term(t1) { if tom_is_sort_term(t2) { if tom_is_fun_sym_zero(any(t2).( *Term )) { 
- return any(t1).( *Term ) };  };  };  }; { if tom_is_sort_term(t1) { if tom_is_sort_term(t2) { if tom_is_fun_sym_suc(any(t2).( *Term )) { 
- return tom_make_suc(plus1(any(t1).( *Term ),tom_get_slot_suc_pred(any(t2).( *Term )))) };  };  };  };  }; 
-
-	return nil
-}
 
 
 
 
-func plus2(t1, t2 *Term) *Term {
-	; { { if tom_is_sort_term(t1) { if tom_is_sort_term(t2) { if tom_is_fun_sym_zero(any(t2).( *Term )) { 
- return any(t1).( *Term ) };  };  };  }; { if tom_is_sort_term(t1) { if tom_is_sort_term(t2) { if tom_is_fun_sym_suc(any(t2).( *Term )) { 
- return tom_make_suc(plus2(any(t1).( *Term ),tom_get_slot_suc_pred(any(t2).( *Term )))) };  };  };  };  }; 
-
-	return nil
-}
 
 
 
 
-func fib3(t *Term) *Term {
-	; { { if tom_is_sort_term(t) { if tom_is_fun_sym_zero(any(t).( *Term )) { 
- return tom_make_suc(tom_make_zero()) };  };  }; { if tom_is_sort_term(t) { if tom_is_fun_sym_suc(any(t).( *Term )) { var tomMatch3_4  *Term  = tom_get_slot_suc_pred(any(t).( *Term )); _ = tomMatch3_4; if tom_is_fun_sym_zero(any(tomMatch3_4).( *Term )) { 
- return tom_make_suc(tomMatch3_4) };  };  };  }; { if tom_is_sort_term(t) { if tom_is_fun_sym_suc(any(t).( *Term )) { var tomMatch3_10  *Term  = tom_get_slot_suc_pred(any(t).( *Term )); _ = tomMatch3_10; if tom_is_fun_sym_suc(any(tomMatch3_10).( *Term )) { var tom___x  *Term  = tom_get_slot_suc_pred(tomMatch3_10); _ = tom___x; 
- return plus1(fib3(tom___x), fib3(tom_make_suc(tom___x)))  };  };  };  };  }; 
-
-	return nil
-}
 
 
-
-
-func int2peano(n int) *Term {
-	t := tom_make_zero()
-	for i := 0; i < n; i++ {
-		t = tom_make_suc(t)
-	}
-	return t
-}
-
-
-
-
-func peano2int(t *Term) int {
-	; { { if tom_is_sort_term(t) { if tom_is_fun_sym_zero(any(t).( *Term )) { 
- return 0  };  };  }; { if tom_is_sort_term(t) { if tom_is_fun_sym_suc(any(t).( *Term )) { 
- return 1 + peano2int(tom_get_slot_suc_pred(any(t).( *Term )))  };  };  };  }; 
-
-	return 0
-}
-
-
-
-
-func fibint(n int) int {
-	if n <= 1 {
-		return 1
-	}
-	return fibint(n-1) + fibint(n-2)
-}
 
 
 
 func TestPlus1(t *testing.T) {
-	for i := 0; i < 100; i++ {
-		N := int2peano(i)
-		if got := peano2int(plus1(N, N)); got != i+i {
-			t.Errorf("plus1(%d, %d) = %d, want %d  (N=%s)", i, i, got, i+i, N)
-		}
-	}
+  for i:=0 ; i<100 ; i++ {
+    N := int2peano(i)
+    assertTrue(t, "Testing plus1 with N ="+N.String()+": ",
+	  peano2int(plus1(N,N)) == (i+i) )
+  }
 }
 
 
 
 func TestPlus2(t *testing.T) {
-	for i := 0; i < 100; i++ {
-		N := int2peano(i)
-		if got := peano2int(plus2(N, N)); got != i+i {
-			t.Errorf("plus2(%d, %d) = %d, want %d  (N=%s)", i, i, got, i+i, N)
-		}
-	}
+  for i:=0 ; i<100 ; i++ {
+    N := int2peano(i)
+    assertTrue(t, "Testing plus2 with N ="+N.String()+": ",
+	  peano2int(plus2(N,N)) == (i+i) )
+  }
+}
+
+
+
+func TestPlus3(t *testing.T) {
+  for i:=0 ; i<100 ; i++ {
+    N := int2peano(i)
+    assertTrue(t, "Testing plus3 with N ="+N.String()+": ",
+	  peano2int(plus3(N,N)) == (i+i) )
+  }
+}
+
+
+
+func TestPlus4(t *testing.T) {
+  for i:=0 ; i<100 ; i++ {
+    N := int2peano(i)
+    assertTrue(t, "Testing plus4 with N ="+N.String()+": ",
+	  peano2int(plus4(N,N)) == (i+i) )
+  }
 }
 
 
 
 func TestFib3(t *testing.T) {
-	for i := 0; i < 15; i++ {
-		N := int2peano(i)
-		if got := peano2int(fib3(N)); got != fibint(i) {
-			t.Errorf("fib3(%d) = %d, want %d  (N=%s)", i, got, fibint(i), N)
-		}
-	}
+  for i:=0 ; i<15 ; i++ {
+    N := int2peano(i)
+    assertTrue(t, "Testing fib3 with N ="+N.String()+": ",
+	  peano2int(fib3(N)) == fibint(i) )
+  }
+}
+
+
+
+func TestFib4(t *testing.T) {
+  for i:=0 ; i<15 ; i++ {
+    N := int2peano(i)
+    assertTrue(t, "Testing fib4 with N ="+N.String()+": ",
+	  peano2int(fib4(N)) == fibint(i) )
+  }
+}
+
+
+
+func plus1(t1 aterm.ATerm, t2 aterm.ATerm) aterm.ATerm {
+  ; { { if tom_is_sort_term(t1) { if tom_is_sort_term(t2) { var tomMatch1_5 bool =  false ; _ = tomMatch1_5; var tomMatch1_4  aterm.ATerm  =  *new(aterm.ATerm) ; _ = tomMatch1_4; var tomMatch1_3  aterm.ATerm  =  *new(aterm.ATerm) ; _ = tomMatch1_3; if tom_is_fun_sym_zero(any(t2).( aterm.ATerm )) { { tomMatch1_5 =  true ; tomMatch1_3 = any(t2).( aterm.ATerm );  };  } else { if tom_is_fun_sym_zero(any(t2).( aterm.ATerm )) { { tomMatch1_5 =  true ; tomMatch1_4 = any(t2).( aterm.ATerm );  };  };  }; if tomMatch1_5 { 
+ return any(t1).( aterm.ATerm ) };  };  };  }; { if tom_is_sort_term(t1) { if tom_is_sort_term(t2) { if tom_is_fun_sym_suc(any(t2).( aterm.ATerm )) { 
+ return suc(plus1(any(t1).( aterm.ATerm ),tom_get_slot_suc_pred(any(t2).( aterm.ATerm ))))  };  };  };  };  }; 
+
+  return nil
+}
+
+
+
+func plus2(t1 aterm.ATerm, t2 aterm.ATerm) aterm.ATerm {
+  ; { { if tom_is_sort_term(t1) { if tom_is_sort_term(t2) { if tom_is_fun_sym_zero(any(t2).( aterm.ATerm )) { 
+ return any(t1).( aterm.ATerm ) };  };  };  }; { if tom_is_sort_term(t1) { if tom_is_sort_term(t2) { if tom_is_fun_sym_suc(any(t2).( aterm.ATerm )) { 
+ return suc(plus2(any(t1).( aterm.ATerm ),tom_get_slot_suc_pred(any(t2).( aterm.ATerm ))))  };  };  };  };  }; 
+
+  return nil
+}
+
+
+
+func plus3(t1 aterm.ATerm, t2 aterm.ATerm) aterm.ATerm {
+  ; { { if tom_is_sort_term(t1) { if tom_is_sort_term(t2) { if tom_is_fun_sym_zero(any(t2).( aterm.ATerm )) { 
+ return any(t1).( aterm.ATerm ) };  };  };  }; { if tom_is_sort_term(t1) { if tom_is_sort_term(t2) { if tom_is_fun_sym_suc(any(t2).( aterm.ATerm )) { 
+ return suc(plus3(any(t1).( aterm.ATerm ),tom_get_slot_suc_pred(any(t2).( aterm.ATerm ))))  };  };  };  };  }; 
+
+  return nil
+}
+
+
+
+func plus4(t1 aterm.ATerm, t2 aterm.ATerm) aterm.ATerm {
+  ; { { if tom_is_sort_term(t1) { if tom_is_sort_term(t2) { var tomMatch4_5 bool =  false ; _ = tomMatch4_5; var tomMatch4_4  aterm.ATerm  =  *new(aterm.ATerm) ; _ = tomMatch4_4; var tomMatch4_3  aterm.ATerm  =  *new(aterm.ATerm) ; _ = tomMatch4_3; if tom_is_fun_sym_zero(any(t2).( aterm.ATerm )) { { tomMatch4_5 =  true ; tomMatch4_3 = any(t2).( aterm.ATerm );  };  } else { if tom_is_fun_sym_zero(any(t2).( aterm.ATerm )) { { tomMatch4_5 =  true ; tomMatch4_4 = any(t2).( aterm.ATerm );  };  };  }; if tomMatch4_5 { 
+ return any(t1).( aterm.ATerm ) };  };  };  }; { if tom_is_sort_term(t1) { if tom_is_sort_term(t2) { var tomMatch4_12 bool =  false ; _ = tomMatch4_12; var tomMatch4_10  aterm.ATerm  =  *new(aterm.ATerm) ; _ = tomMatch4_10; var tomMatch4_11  aterm.ATerm  =  *new(aterm.ATerm) ; _ = tomMatch4_11; var tomMatch4_8  aterm.ATerm  =  *new(aterm.ATerm) ; _ = tomMatch4_8; if tom_is_fun_sym_suc(any(t2).( aterm.ATerm )) { { tomMatch4_12 =  true ; tomMatch4_10 = any(t2).( aterm.ATerm ); tomMatch4_8 = tom_get_slot_suc_pred(tomMatch4_10);  };  } else { if tom_is_fun_sym_suc(any(t2).( aterm.ATerm )) { { tomMatch4_12 =  true ; tomMatch4_11 = any(t2).( aterm.ATerm ); tomMatch4_8 = tom_get_slot_suc_pred(tomMatch4_11);  };  };  }; if tomMatch4_12 { 
+ return suc(plus1(any(t1).( aterm.ATerm ),tomMatch4_8))  };  };  };  };  }; 
+
+  return nil
+}
+
+
+
+func fib3(t aterm.ATerm) aterm.ATerm {
+  ; { { if tom_is_sort_term(t) { if tom_is_fun_sym_zero(any(t).( aterm.ATerm )) { 
+ return tom_make_suc(tom_make_zero()) };  };  }; { if tom_is_sort_term(t) { if tom_is_fun_sym_suc(any(t).( aterm.ATerm )) { var tomMatch5_4  aterm.ATerm  = tom_get_slot_suc_pred(any(t).( aterm.ATerm )); _ = tomMatch5_4; if tom_is_fun_sym_zero(any(tomMatch5_4).( aterm.ATerm )) { 
+ return tom_make_suc(tomMatch5_4) };  };  };  }; { if tom_is_sort_term(t) { if tom_is_fun_sym_suc(any(t).( aterm.ATerm )) { var tomMatch5_10  aterm.ATerm  = tom_get_slot_suc_pred(any(t).( aterm.ATerm )); _ = tomMatch5_10; if tom_is_fun_sym_suc(any(tomMatch5_10).( aterm.ATerm )) { var tom___x  aterm.ATerm  = tom_get_slot_suc_pred(tomMatch5_10); _ = tom___x; 
+ return plus3(fib3(tom___x),fib3(suc(tom___x)))  };  };  };  };  }; 
+
+  return nil
+}
+
+
+
+func fib4(t aterm.ATerm) aterm.ATerm {
+  ; { { if tom_is_sort_term(t) { if tom_is_fun_sym_zero(any(t).( aterm.ATerm )) { 
+ return tom_make_suc(tom_make_zero()) };  };  }; { if tom_is_sort_term(t) { if tom_is_fun_sym_suc(any(t).( aterm.ATerm )) { if tom_is_fun_sym_zero(any(tom_get_slot_suc_pred(any(t).( aterm.ATerm ))).( aterm.ATerm )) { 
+ return tom_make_suc(tom_make_zero()) };  };  };  }; { if tom_is_sort_term(t) { if tom_is_fun_sym_suc(any(t).( aterm.ATerm )) { var tomMatch6_10  aterm.ATerm  = tom_get_slot_suc_pred(any(t).( aterm.ATerm )); _ = tomMatch6_10; if tom_is_fun_sym_suc(any(tomMatch6_10).( aterm.ATerm )) { var tom___x  aterm.ATerm  = tom_get_slot_suc_pred(tomMatch6_10); _ = tom___x; 
+ return plus3(fib4(tom___x),fib4(suc(tom___x)))  };  };  };  };  }; 
+
+  return nil
+}
+
+
+
+func suc(t aterm.ATerm) aterm.ATerm {
+  return factory.MakeAppl(fsuc,t)
+}
+
+
+
+func fibint(n int) int {
+  if n<=1 {
+    return 1
+  } else {
+    return fibint(n-1)+fibint(n-2)
+  }
 }
 
 
 
 func TestInt2p(t *testing.T) {
-	got := int2peano(5)
-	want := tom_make_suc(tom_make_suc(tom_make_suc(tom_make_suc(tom_make_suc(tom_make_zero())))))
-	if !got.Equals(want) {
-		t.Errorf("int2peano(5) = %s, want %s", got, want)
-	}
+  assertEquals(t, "int2peano should return sssss(tzero) for 5",
+	int2peano(5),tom_make_suc(tom_make_suc(tom_make_suc(tom_make_suc(tom_make_suc(tzero))))))
+}
+
+
+
+func int2peano(n int) aterm.ATerm {
+  var N aterm.ATerm = tzero
+  for i:=0 ; i<n ; i++ {
+    N = suc(N)
+  }
+  return N
 }
 
 
 
 func TestPeano2int(t *testing.T) {
-	in := tom_make_suc(tom_make_suc(tom_make_suc(tom_make_suc(tom_make_suc(tom_make_zero())))))
-	if got := peano2int(in); got != 5 {
-		t.Errorf("peano2int(%s) = %d, want 5", in, got)
-	}
+  assertEquals(t, "peano2int should return 5 for sssss(tzero)",
+	peano2int(tom_make_suc(tom_make_suc(tom_make_suc(tom_make_suc(tom_make_suc(tzero)))))),5)
+}
+
+
+
+func peano2int(N aterm.ATerm) int {
+  ; { { if tom_is_sort_term(N) { if tom_is_fun_sym_zero(any(N).( aterm.ATerm )) { 
+ return 0  };  };  }; { if tom_is_sort_term(N) { if tom_is_fun_sym_suc(any(N).( aterm.ATerm )) { 
+return 1+peano2int(tom_get_slot_suc_pred(any(N).( aterm.ATerm )))  };  };  };  }; 
+
+  return 0
 }
 
 
 
 
+func assertTrue(t *testing.T, message string, condition bool) {
+  t.Helper()
+  if !condition {
+    t.Error(message)
+  }
+}
 
 
-var _ = fmt.Sprintf
+
+func assertEquals(t *testing.T, message string, expected, actual any) {
+  t.Helper()
+  if expected != actual {
+    t.Errorf("%s expected:<%v> but was:<%v>", message, expected, actual)
+  }
+}

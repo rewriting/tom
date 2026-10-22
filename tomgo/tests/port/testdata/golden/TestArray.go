@@ -1,45 +1,39 @@
-package array_test
+package testarray
+
+
+
+
+
 
 
 
 import (
-	"testing"
+  "context"
+  "fmt"
+  "log/slog"
+  "os"
+  "strings"
+  "testing"
+
+  "tom/tomgo/tests/port/aterm"
 )
 
 
 
-type Term struct {
-	Name string
-	Args []*Term
-}
+var factory = aterm.GetInstance()
 
 
 
-func (t *Term) Equals(o *Term) bool {
-	if t == o {
-		return true
-	}
-	if t == nil || o == nil || t.Name != o.Name {
-		return false
-	}
-	return true
-}
+var fzero, fsuc, fplus, ffib *aterm.AFun
+var tzero *aterm.ATermAppl
+var unsortedlist []aterm.ATerm
+var sortedlist []aterm.ATerm
+var listwithdoubles []aterm.ATerm
+var listwithoutdoubles []aterm.ATerm
+var logger *slog.Logger
+var level = slog.LevelDebug
 
-
-
-func equalsList(a, b []*Term) bool {
-	if len(a) != len(b) {
-		return false
-	}
-	for i := range a {
-		if !a[i].Equals(b[i]) {
-			return false
-		}
-	}
-	return true
-}
-
-func tom_equal_term_L(l1  []*Term , l2  []*Term ) bool { return equalsList(l1, l2);  }; func tom_is_sort_L(t any) bool { return t != nil;  }; func tom_is_fun_sym_conc(t  []*Term ) bool { return t != nil;  }; func tom_empty_array_conc(n int64)  []*Term  { return (make([]*Term, 0, n)) }; func tom_cons_array_conc(e  *Term , l  []*Term )  []*Term  { return (append(l, e)) }; func tom_get_element_conc_L(l  []*Term , n int64)  *Term  { return (l)[n];  }; func tom_get_size_conc_L(l  []*Term ) int64 { return int64(len(l));  }; func tom_get_slice_conc(subject  []*Term , begin int64, end int64)  []*Term  { var result  []*Term  = tom_empty_array_conc(end-begin); for begin != end { result = tom_cons_array_conc(tom_get_element_conc_L(subject, begin), result); begin++ }; return result }; func tom_append_array_conc(l2  []*Term , l1  []*Term )  []*Term  { var size1 int64 = tom_get_size_conc_L(l1); var size2 int64 = tom_get_size_conc_L(l2); var index int64; var result  []*Term  = tom_empty_array_conc(size1+size2); index = size1; for index > 0 { result = tom_cons_array_conc(tom_get_element_conc_L(l1, size1-index), result); index-- }; index = size2; for index > 0 { result = tom_cons_array_conc(tom_get_element_conc_L(l2, size2-index), result); index-- }; return result }; func tom_equal_term_E(t1  *Term , t2  *Term ) bool { return (t1).Equals(t2);  }; func tom_is_sort_E(t any) bool { return t != nil;  }; func tom_is_fun_sym_a(t  *Term ) bool { return (t).Name == "a";  }; func tom_make_a()  *Term  { return (&Term{Name: "a"}) }; func tom_make_b()  *Term  { return (&Term{Name: "b"}) }; func tom_make_c()  *Term  { return (&Term{Name: "c"}) }; 
+func tom_equal_term_L(l1  []aterm.ATerm , l2  []aterm.ATerm ) bool { return listEquals(l1, l2);  }; func tom_is_sort_L(t any) bool { return t != nil;  }; func tom_is_fun_sym_conc(t  []aterm.ATerm ) bool { return t != nil;  }; func tom_empty_array_conc(n int64)  []aterm.ATerm  { return (make([]aterm.ATerm, 0, n)) }; func tom_cons_array_conc(e  aterm.ATerm , l  []aterm.ATerm )  []aterm.ATerm  { return (myAdd(e,l)) }; func tom_get_element_conc_L(l  []aterm.ATerm , n int64)  aterm.ATerm  { return l[n];  }; func tom_get_size_conc_L(l  []aterm.ATerm ) int64 { return int64(len(l));  }; func tom_get_slice_conc(subject  []aterm.ATerm , begin int64, end int64)  []aterm.ATerm  { var result  []aterm.ATerm  = tom_empty_array_conc(end-begin); for begin != end { result = tom_cons_array_conc(tom_get_element_conc_L(subject, begin), result); begin++ }; return result }; func tom_append_array_conc(l2  []aterm.ATerm , l1  []aterm.ATerm )  []aterm.ATerm  { var size1 int64 = tom_get_size_conc_L(l1); var size2 int64 = tom_get_size_conc_L(l2); var index int64; var result  []aterm.ATerm  = tom_empty_array_conc(size1+size2); index = size1; for index > 0 { result = tom_cons_array_conc(tom_get_element_conc_L(l1, size1-index), result); index-- }; index = size2; for index > 0 { result = tom_cons_array_conc(tom_get_element_conc_L(l2, size2-index), result); index-- }; return result }; 
 
 
 
@@ -55,186 +49,262 @@ func tom_equal_term_L(l1  []*Term , l2  []*Term ) bool { return equalsList(l1, l
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-func sort1(l []*Term) []*Term {
-	; { { if tom_is_sort_L(l) { if tom_is_fun_sym_conc(any(l).( []*Term )) { var tomMatch1_2 int64 = 0; _ = tomMatch1_2; var tomMatch1_end_5 int64 = tomMatch1_2; _ = tomMatch1_end_5; for { { if !(tomMatch1_end_5 >= tom_get_size_conc_L(any(l).( []*Term ))) { var tom___x  *Term  = tom_get_element_conc_L(any(l).( []*Term ),tomMatch1_end_5); _ = tom___x; var tomMatch1_6 int64 = tomMatch1_end_5 + 1; _ = tomMatch1_6; var tomMatch1_end_9 int64 = tomMatch1_6; _ = tomMatch1_end_9; for { { if !(tomMatch1_end_9 >= tom_get_size_conc_L(any(l).( []*Term ))) { var tom___y  *Term  = tom_get_element_conc_L(any(l).( []*Term ),tomMatch1_end_9); _ = tom___y; 
-
-			if tom___x.Name > tom___y.Name { 
-				return sort1(tom_append_array_conc(tom_get_slice_conc(any(l).( []*Term ),tomMatch1_end_9 + 1,tom_get_size_conc_L(any(l).( []*Term ))),tom_cons_array_conc(tom___x,tom_append_array_conc(tom_get_slice_conc(any(l).( []*Term ),tomMatch1_6,tomMatch1_end_9),tom_cons_array_conc(tom___y,tom_append_array_conc(tom_get_slice_conc(any(l).( []*Term ),tomMatch1_2,tomMatch1_end_5),tom_empty_array_conc(5)))))))
-			 };  }; tomMatch1_end_9 = tomMatch1_end_9 + 1;  };  if !(!(tomMatch1_end_9 > tom_get_size_conc_L(any(l).( []*Term )))) { break; }; };  }; tomMatch1_end_5 = tomMatch1_end_5 + 1;  };  if !(!(tomMatch1_end_5 > tom_get_size_conc_L(any(l).( []*Term )))) { break; }; };  };  };  };  }; 
-
-
-	return l
+func myAdd(e aterm.ATerm, l []aterm.ATerm) []aterm.ATerm {
+  return append(l, e)
 }
 
 
 
 
-func sort2(l []*Term) []*Term {
-	; { { if tom_is_sort_L(l) { if tom_is_fun_sym_conc(any(l).( []*Term )) { var tomMatch2_2 int64 = 0; _ = tomMatch2_2; var tomMatch2_end_5 int64 = tomMatch2_2; _ = tomMatch2_end_5; for { { if !(tomMatch2_end_5 >= tom_get_size_conc_L(any(l).( []*Term ))) { var tom___x  *Term  = tom_get_element_conc_L(any(l).( []*Term ),tomMatch2_end_5); _ = tom___x; var tomMatch2_6 int64 = tomMatch2_end_5 + 1; _ = tomMatch2_6; var tomMatch2_end_9 int64 = tomMatch2_6; _ = tomMatch2_end_9; for { { if !(tomMatch2_end_9 >= tom_get_size_conc_L(any(l).( []*Term ))) { var tom___y  *Term  = tom_get_element_conc_L(any(l).( []*Term ),tomMatch2_end_9); _ = tom___y; 
+func listEquals(l1, l2 []aterm.ATerm) bool {
+  if len(l1) != len(l2) {
+    return false
+  }
+  for i := range l1 {
+    if l1[i] != l2[i] {
+      return false
+    }
+  }
+  return true
+}
 
-			if tom___x.Name > tom___y.Name { 
-				return sort2(tom_append_array_conc(tom_get_slice_conc(any(l).( []*Term ),tomMatch2_end_9 + 1,tom_get_size_conc_L(any(l).( []*Term ))),tom_cons_array_conc(tom___x,tom_append_array_conc(tom_get_slice_conc(any(l).( []*Term ),tomMatch2_6,tomMatch2_end_9),tom_cons_array_conc(tom___y,tom_append_array_conc(tom_get_slice_conc(any(l).( []*Term ),tomMatch2_2,tomMatch2_end_5),tom_empty_array_conc(5)))))))
-			 };  }; tomMatch2_end_9 = tomMatch2_end_9 + 1;  };  if !(!(tomMatch2_end_9 > tom_get_size_conc_L(any(l).( []*Term )))) { break; }; };  }; tomMatch2_end_5 = tomMatch2_end_5 + 1;  };  if !(!(tomMatch2_end_5 > tom_get_size_conc_L(any(l).( []*Term )))) { break; }; };  };  };  };  }; 
+func tom_equal_term_E(t1  aterm.ATerm , t2  aterm.ATerm ) bool { return (t1 == t2);  }; func tom_is_sort_E(t any) bool { return t != nil;  }; func tom_is_fun_sym_a(t  aterm.ATerm ) bool { return any(t).(*aterm.ATermAppl).GetName() == "a";  }; func tom_make_a()  aterm.ATerm  { return (factory.MakeAppl(factory.MakeAFun("a", 0, false))) }; func tom_make_b()  aterm.ATerm  { return (factory.MakeAppl(factory.MakeAFun("b", 0, false))) }; func tom_make_c()  aterm.ATerm  { return (factory.MakeAppl(factory.MakeAFun("c", 0, false))) }; 
 
 
-	return l
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+func TestMain(m *testing.M) {
+  staticSetUp()
+  code := m.Run()
+  staticTearDown()
+  os.Exit(code)
 }
 
 
 
-
-func double1(l []*Term) []*Term {
-	; { { if tom_is_sort_L(l) { if tom_is_fun_sym_conc(any(l).( []*Term )) { var tomMatch3_2 int64 = 0; _ = tomMatch3_2; var tomMatch3_end_5 int64 = tomMatch3_2; _ = tomMatch3_end_5; for { { if !(tomMatch3_end_5 >= tom_get_size_conc_L(any(l).( []*Term ))) { var tom___x  *Term  = tom_get_element_conc_L(any(l).( []*Term ),tomMatch3_end_5); _ = tom___x; var tomMatch3_6 int64 = tomMatch3_end_5 + 1; _ = tomMatch3_6; var tomMatch3_end_9 int64 = tomMatch3_6; _ = tomMatch3_end_9; for { { if !(tomMatch3_end_9 >= tom_get_size_conc_L(any(l).( []*Term ))) { if tom_equal_term_E(tom___x, tom_get_element_conc_L(any(l).( []*Term ),tomMatch3_end_9)) { 
-
-			return double1(tom_append_array_conc(tom_get_slice_conc(any(l).( []*Term ),tomMatch3_end_9 + 1,tom_get_size_conc_L(any(l).( []*Term ))),tom_cons_array_conc(tom___x,tom_append_array_conc(tom_get_slice_conc(any(l).( []*Term ),tomMatch3_6,tomMatch3_end_9),tom_append_array_conc(tom_get_slice_conc(any(l).( []*Term ),tomMatch3_2,tomMatch3_end_5),tom_empty_array_conc(4))))))
-		 };  }; tomMatch3_end_9 = tomMatch3_end_9 + 1;  };  if !(!(tomMatch3_end_9 > tom_get_size_conc_L(any(l).( []*Term )))) { break; }; };  }; tomMatch3_end_5 = tomMatch3_end_5 + 1;  };  if !(!(tomMatch3_end_5 > tom_get_size_conc_L(any(l).( []*Term )))) { break; }; };  };  };  };  }; 
-
-	return l
+func staticSetUp() {
+  logger = slog.Default().With("class", "TestArray")
 }
 
 
 
+func setUp() {
+  var ta aterm.ATerm = factory.MakeAppl(factory.MakeAFun("a", 0, false))
+  var tb aterm.ATerm = factory.MakeAppl(factory.MakeAFun("b", 0, false))
+  var tc aterm.ATerm = factory.MakeAppl(factory.MakeAFun("c", 0, false))
+  l := []aterm.ATerm{}
+  l = append(l, ta)
+  l = append(l, tb)
+  l = append(l, tc)
+  l = append(l, ta)
+  l = append(l, tb)
+  l = append(l, tc)
+  unsortedlist = l
 
-func double2(l []*Term) []*Term {
-	; { { if tom_is_sort_L(l) { if tom_is_fun_sym_conc(any(l).( []*Term )) { var tomMatch4_2 int64 = 0; _ = tomMatch4_2; var tomMatch4_end_5 int64 = tomMatch4_2; _ = tomMatch4_end_5; for { { if !(tomMatch4_end_5 >= tom_get_size_conc_L(any(l).( []*Term ))) { var tom___x  *Term  = tom_get_element_conc_L(any(l).( []*Term ),tomMatch4_end_5); _ = tom___x; var tomMatch4_6 int64 = tomMatch4_end_5 + 1; _ = tomMatch4_6; var tomMatch4_end_9 int64 = tomMatch4_6; _ = tomMatch4_end_9; for { { if !(tomMatch4_end_9 >= tom_get_size_conc_L(any(l).( []*Term ))) { if tom_equal_term_E(tom___x, tom_get_element_conc_L(any(l).( []*Term ),tomMatch4_end_9)) { 
+  res := []aterm.ATerm{}
+  res = append(res, ta)
+  res = append(res, ta)
+  res = append(res, tb)
+  res = append(res, tb)
+  res = append(res, tc)
+  res = append(res, tc)
+  sortedlist = res
 
-			return double2(tom_append_array_conc(tom_get_slice_conc(any(l).( []*Term ),tomMatch4_end_9 + 1,tom_get_size_conc_L(any(l).( []*Term ))),tom_cons_array_conc(tom___x,tom_append_array_conc(tom_get_slice_conc(any(l).( []*Term ),tomMatch4_6,tomMatch4_end_9),tom_append_array_conc(tom_get_slice_conc(any(l).( []*Term ),tomMatch4_2,tomMatch4_end_5),tom_empty_array_conc(4))))))
-		 };  }; tomMatch4_end_9 = tomMatch4_end_9 + 1;  };  if !(!(tomMatch4_end_9 > tom_get_size_conc_L(any(l).( []*Term )))) { break; }; };  }; tomMatch4_end_5 = tomMatch4_end_5 + 1;  };  if !(!(tomMatch4_end_5 > tom_get_size_conc_L(any(l).( []*Term )))) { break; }; };  };  };  };  }; 
-
-	return l
+  listwithdoubles = tom_cons_array_conc(tom_make_a(),tom_cons_array_conc(tom_make_c(),tom_cons_array_conc(tom_make_b(),tom_cons_array_conc(tom_make_a(),tom_cons_array_conc(tom_make_c(),tom_cons_array_conc(tom_make_b(),tom_cons_array_conc(tom_make_a(),tom_empty_array_conc(7))))))))
+  listwithoutdoubles = tom_cons_array_conc(tom_make_c(),tom_cons_array_conc(tom_make_b(),tom_cons_array_conc(tom_make_a(),tom_empty_array_conc(3))))
 }
 
 
 
-
-func double4(l []*Term) []*Term {
-	; { { if tom_is_sort_L(l) { if tom_is_fun_sym_conc(any(l).( []*Term )) { var tomMatch5_2 int64 = 0; _ = tomMatch5_2; var tomMatch5_end_5 int64 = tomMatch5_2; _ = tomMatch5_end_5; for { { if !(tomMatch5_end_5 >= tom_get_size_conc_L(any(l).( []*Term ))) { var tom___x  *Term  = tom_get_element_conc_L(any(l).( []*Term ),tomMatch5_end_5); _ = tom___x; var tomMatch5_6 int64 = tomMatch5_end_5 + 1; _ = tomMatch5_6; var tomMatch5_end_9 int64 = tomMatch5_6; _ = tomMatch5_end_9; for { { if !(tomMatch5_end_9 >= tom_get_size_conc_L(any(l).( []*Term ))) { if tom_equal_term_E(tom___x, tom_get_element_conc_L(any(l).( []*Term ),tomMatch5_end_9)) { 
-
-			return double4(tom_append_array_conc(tom_get_slice_conc(any(l).( []*Term ),tomMatch5_end_9 + 1,tom_get_size_conc_L(any(l).( []*Term ))),tom_cons_array_conc(tom___x,tom_append_array_conc(tom_get_slice_conc(any(l).( []*Term ),tomMatch5_6,tomMatch5_end_9),tom_append_array_conc(tom_get_slice_conc(any(l).( []*Term ),tomMatch5_2,tomMatch5_end_5),tom_empty_array_conc(4))))))
-		 };  }; tomMatch5_end_9 = tomMatch5_end_9 + 1;  };  if !(!(tomMatch5_end_9 > tom_get_size_conc_L(any(l).( []*Term )))) { break; }; };  }; tomMatch5_end_5 = tomMatch5_end_5 + 1;  };  if !(!(tomMatch5_end_5 > tom_get_size_conc_L(any(l).( []*Term )))) { break; }; };  };  };  };  }; 
-
-	return l
-}
-
-
-
-
-func double5(l []*Term) []*Term {
-	; { { if tom_is_sort_L(l) { if tom_is_fun_sym_conc(any(l).( []*Term )) { var tomMatch6_2 int64 = 0; _ = tomMatch6_2; var tomMatch6_end_5 int64 = tomMatch6_2; _ = tomMatch6_end_5; for { { if !(tomMatch6_end_5 >= tom_get_size_conc_L(any(l).( []*Term ))) { if tom_is_fun_sym_a(any(tom_get_element_conc_L(any(l).( []*Term ),tomMatch6_end_5)).( *Term )) { var tom___x  *Term  = tom_get_element_conc_L(any(l).( []*Term ),tomMatch6_end_5); _ = tom___x; var tomMatch6_6 int64 = tomMatch6_end_5 + 1; _ = tomMatch6_6; var tomMatch6_end_9 int64 = tomMatch6_6; _ = tomMatch6_end_9; for { { if !(tomMatch6_end_9 >= tom_get_size_conc_L(any(l).( []*Term ))) { if tom_is_fun_sym_a(any(tom_get_element_conc_L(any(l).( []*Term ),tomMatch6_end_9)).( *Term )) { if tom_equal_term_E(tom___x, tom_get_element_conc_L(any(l).( []*Term ),tomMatch6_end_9)) { 
- return double5(tom_append_array_conc(tom_get_slice_conc(any(l).( []*Term ),tomMatch6_end_9 + 1,tom_get_size_conc_L(any(l).( []*Term ))),tom_cons_array_conc(tom___x,tom_append_array_conc(tom_get_slice_conc(any(l).( []*Term ),tomMatch6_6,tomMatch6_end_9),tom_append_array_conc(tom_get_slice_conc(any(l).( []*Term ),tomMatch6_2,tomMatch6_end_5),tom_empty_array_conc(4))))))  };  };  }; tomMatch6_end_9 = tomMatch6_end_9 + 1;  };  if !(!(tomMatch6_end_9 > tom_get_size_conc_L(any(l).( []*Term )))) { break; }; };  };  }; tomMatch6_end_5 = tomMatch6_end_5 + 1;  };  if !(!(tomMatch6_end_5 > tom_get_size_conc_L(any(l).( []*Term )))) { break; }; };  };  };  }; { if tom_is_sort_L(l) { if tom_is_fun_sym_conc(any(l).( []*Term )) { var tomMatch6_19 int64 = 0; _ = tomMatch6_19; var tomMatch6_end_22 int64 = tomMatch6_19; _ = tomMatch6_end_22; for { { if !(tomMatch6_end_22 >= tom_get_size_conc_L(any(l).( []*Term ))) { var tom___x  *Term  = tom_get_element_conc_L(any(l).( []*Term ),tomMatch6_end_22); _ = tom___x; var tomMatch6_23 int64 = tomMatch6_end_22 + 1; _ = tomMatch6_23; var tomMatch6_end_26 int64 = tomMatch6_23; _ = tomMatch6_end_26; for { { if !(tomMatch6_end_26 >= tom_get_size_conc_L(any(l).( []*Term ))) { if tom_equal_term_E(tom___x, tom_get_element_conc_L(any(l).( []*Term ),tomMatch6_end_26)) { 
- return double5(tom_append_array_conc(tom_get_slice_conc(any(l).( []*Term ),tomMatch6_end_26 + 1,tom_get_size_conc_L(any(l).( []*Term ))),tom_cons_array_conc(tom___x,tom_append_array_conc(tom_get_slice_conc(any(l).( []*Term ),tomMatch6_23,tomMatch6_end_26),tom_append_array_conc(tom_get_slice_conc(any(l).( []*Term ),tomMatch6_19,tomMatch6_end_22),tom_empty_array_conc(4))))))  };  }; tomMatch6_end_26 = tomMatch6_end_26 + 1;  };  if !(!(tomMatch6_end_26 > tom_get_size_conc_L(any(l).( []*Term )))) { break; }; };  }; tomMatch6_end_22 = tomMatch6_end_22 + 1;  };  if !(!(tomMatch6_end_22 > tom_get_size_conc_L(any(l).( []*Term )))) { break; }; };  };  };  };  }; 
-
-	return l
-}
-
-
-
-
-
-
-
-
-
-
-func makeFixtures() (unsorted, sorted, withDoubles, withoutDoubles []*Term) {
-	ta := tom_make_a()
-	tb := tom_make_b()
-	tc := tom_make_c()
-	unsorted = []*Term{ta, tb, tc, ta, tb, tc}
-	sorted = []*Term{ta, ta, tb, tb, tc, tc}
-	withDoubles = []*Term{ta, tb, tc, ta, tb, tc, ta}
-	withoutDoubles = []*Term{ta, tb, tc}
-	return
+func staticTearDown() {
+  logger = nil
 }
 
 
 
 func TestSort1(t *testing.T) {
-	u, s, _, _ := makeFixtures()
-	if got := sort1(u); !equalsList(got, s) {
-		t.Errorf("sort1 = %v, want %v", got, s)
-	}
+  setUp()
+  assertEquals(t,
+      "sort1 should return a sorted list",
+      sort1(unsortedlist), sortedlist)
 }
 
 
 
 func TestSort2(t *testing.T) {
-	u, s, _, _ := makeFixtures()
-	if got := sort2(u); !equalsList(got, s) {
-		t.Errorf("sort2 = %v, want %v", got, s)
-	}
+  setUp()
+  assertEquals(t,
+      "sort2 should return a sorted list",
+      sort2(unsortedlist), sortedlist)
 }
 
 
 
 func TestDouble1(t *testing.T) {
-	_, _, wd, wod := makeFixtures()
-	if got := double1(sort1(wd)); !equalsList(got, wod) {
-		t.Errorf("double1 = %v, want %v", got, wod)
-	}
+  setUp()
+  assertEquals(t,
+      "double1 should remove all double element in a list",
+      double1(sort1(listwithdoubles)),listwithoutdoubles)
 }
 
 
 
 func TestDouble2(t *testing.T) {
-	_, _, wd, wod := makeFixtures()
-	if got := double2(sort2(wd)); !equalsList(got, wod) {
-		t.Errorf("double2 = %v, want %v", got, wod)
-	}
+  setUp()
+  assertEquals(t,
+      "double2 should remove all double element in a list",
+      double2(sort2(listwithdoubles)),listwithoutdoubles)
 }
 
 
 
 func TestDouble4(t *testing.T) {
-	_, _, wd, wod := makeFixtures()
-	if got := double4(sort2(wd)); !equalsList(got, wod) {
-		t.Errorf("double4 = %v, want %v", got, wod)
-	}
+  setUp()
+  assertEquals(t,
+      "double4 should remove all double element in a list",
+      double4(sort2(listwithdoubles)),listwithoutdoubles)
 }
 
 
 
 func TestDouble5(t *testing.T) {
-	_, _, wd, wod := makeFixtures()
-	if got := double5(sort2(wd)); !equalsList(got, wod) {
-		t.Errorf("double5 = %v, want %v", got, wod)
-	}
+  setUp()
+  assertEquals(t,
+      "double5 should remove all double element in a list",
+      double5(sort2(listwithdoubles)),listwithoutdoubles)
+}
+
+
+
+func sort1(l []aterm.ATerm) []aterm.ATerm {
+  ; { { if tom_is_sort_L(l) { if tom_is_fun_sym_conc(any(l).( []aterm.ATerm )) { var tomMatch1_2 int64 = 0; _ = tomMatch1_2; var tomMatch1_end_5 int64 = tomMatch1_2; _ = tomMatch1_end_5; for { { if !(tomMatch1_end_5 >= tom_get_size_conc_L(any(l).( []aterm.ATerm ))) { var tom___x  aterm.ATerm  = tom_get_element_conc_L(any(l).( []aterm.ATerm ),tomMatch1_end_5); _ = tom___x; var tomMatch1_6 int64 = tomMatch1_end_5 + 1; _ = tomMatch1_6; var tomMatch1_end_9 int64 = tomMatch1_6; _ = tomMatch1_end_9; for { { if !(tomMatch1_end_9 >= tom_get_size_conc_L(any(l).( []aterm.ATerm ))) { var tom___y  aterm.ATerm  = tom_get_element_conc_L(any(l).( []aterm.ATerm ),tomMatch1_end_9); _ = tom___y; 
+
+      xname := any(tom___x).(*aterm.ATermAppl).GetName()
+      yname := any(tom___y).(*aterm.ATermAppl).GetName()
+      if strings.Compare(xname, yname) > 0 { 
+        result := tom_get_slice_conc(any(l).( []aterm.ATerm ),tomMatch1_2,tomMatch1_end_5)
+        result = append(result, tom___y)
+        result = append(result, (tom_get_slice_conc(any(l).( []aterm.ATerm ),tomMatch1_6,tomMatch1_end_9))...)
+        result = append(result, tom___x)
+        result = append(result, (tom_get_slice_conc(any(l).( []aterm.ATerm ),tomMatch1_end_9 + 1,tom_get_size_conc_L(any(l).( []aterm.ATerm ))))...)
+        return sort1(result)
+       };  }; tomMatch1_end_9 = tomMatch1_end_9 + 1;  };  if !(!(tomMatch1_end_9 > tom_get_size_conc_L(any(l).( []aterm.ATerm )))) { break; }; };  }; tomMatch1_end_5 = tomMatch1_end_5 + 1;  };  if !(!(tomMatch1_end_5 > tom_get_size_conc_L(any(l).( []aterm.ATerm )))) { break; }; };  };  };  };  }; 
+
+
+  return l
+}
+
+
+
+func double1(l []aterm.ATerm) []aterm.ATerm {
+  ; { { if tom_is_sort_L(l) { if tom_is_fun_sym_conc(any(l).( []aterm.ATerm )) { var tomMatch2_2 int64 = 0; _ = tomMatch2_2; var tomMatch2_end_5 int64 = tomMatch2_2; _ = tomMatch2_end_5; for { { if !(tomMatch2_end_5 >= tom_get_size_conc_L(any(l).( []aterm.ATerm ))) { var tom___x  aterm.ATerm  = tom_get_element_conc_L(any(l).( []aterm.ATerm ),tomMatch2_end_5); _ = tom___x; var tomMatch2_6 int64 = tomMatch2_end_5 + 1; _ = tomMatch2_6; var tomMatch2_end_9 int64 = tomMatch2_6; _ = tomMatch2_end_9; for { { if !(tomMatch2_end_9 >= tom_get_size_conc_L(any(l).( []aterm.ATerm ))) { if tom_equal_term_E(tom___x, tom_get_element_conc_L(any(l).( []aterm.ATerm ),tomMatch2_end_9)) { 
+
+      result := tom_get_slice_conc(any(l).( []aterm.ATerm ),tomMatch2_2,tomMatch2_end_5)
+      result = append(result, (tom_get_slice_conc(any(l).( []aterm.ATerm ),tomMatch2_6,tomMatch2_end_9))...)
+      result = append(result, tom___x)
+      result = append(result, (tom_get_slice_conc(any(l).( []aterm.ATerm ),tomMatch2_end_9 + 1,tom_get_size_conc_L(any(l).( []aterm.ATerm ))))...)
+      return double1(result)
+     };  }; tomMatch2_end_9 = tomMatch2_end_9 + 1;  };  if !(!(tomMatch2_end_9 > tom_get_size_conc_L(any(l).( []aterm.ATerm )))) { break; }; };  }; tomMatch2_end_5 = tomMatch2_end_5 + 1;  };  if !(!(tomMatch2_end_5 > tom_get_size_conc_L(any(l).( []aterm.ATerm )))) { break; }; };  };  };  };  }; 
+
+  return l
+}
+
+
+
+func sort2(l []aterm.ATerm) []aterm.ATerm {
+  ; { { if tom_is_sort_L(l) { if tom_is_fun_sym_conc(any(l).( []aterm.ATerm )) { var tomMatch3_2 int64 = 0; _ = tomMatch3_2; var tomMatch3_end_5 int64 = tomMatch3_2; _ = tomMatch3_end_5; for { { if !(tomMatch3_end_5 >= tom_get_size_conc_L(any(l).( []aterm.ATerm ))) { var tom___x  aterm.ATerm  = tom_get_element_conc_L(any(l).( []aterm.ATerm ),tomMatch3_end_5); _ = tom___x; var tomMatch3_6 int64 = tomMatch3_end_5 + 1; _ = tomMatch3_6; var tomMatch3_end_9 int64 = tomMatch3_6; _ = tomMatch3_end_9; for { { if !(tomMatch3_end_9 >= tom_get_size_conc_L(any(l).( []aterm.ATerm ))) { var tom___y  aterm.ATerm  = tom_get_element_conc_L(any(l).( []aterm.ATerm ),tomMatch3_end_9); _ = tom___y; 
+
+      xname := any(tom___x).(*aterm.ATermAppl).GetName()
+      yname := any(tom___y).(*aterm.ATermAppl).GetName()
+      if strings.Compare(xname, yname) > 0 { 
+        return sort2(tom_append_array_conc(tom_get_slice_conc(any(l).( []aterm.ATerm ),tomMatch3_end_9 + 1,tom_get_size_conc_L(any(l).( []aterm.ATerm ))),tom_cons_array_conc(tom___x,tom_append_array_conc(tom_get_slice_conc(any(l).( []aterm.ATerm ),tomMatch3_6,tomMatch3_end_9),tom_cons_array_conc(tom___y,tom_append_array_conc(tom_get_slice_conc(any(l).( []aterm.ATerm ),tomMatch3_2,tomMatch3_end_5),tom_empty_array_conc(5))))))) };  }; tomMatch3_end_9 = tomMatch3_end_9 + 1;  };  if !(!(tomMatch3_end_9 > tom_get_size_conc_L(any(l).( []aterm.ATerm )))) { break; }; };  }; tomMatch3_end_5 = tomMatch3_end_5 + 1;  };  if !(!(tomMatch3_end_5 > tom_get_size_conc_L(any(l).( []aterm.ATerm )))) { break; }; };  };  };  };  }; 
+
+
+
+  return l
+}
+
+
+
+func double2(l []aterm.ATerm) []aterm.ATerm {
+  ; { { if tom_is_sort_L(l) { if tom_is_fun_sym_conc(any(l).( []aterm.ATerm )) { var tomMatch4_2 int64 = 0; _ = tomMatch4_2; var tomMatch4_end_5 int64 = tomMatch4_2; _ = tomMatch4_end_5; for { { if !(tomMatch4_end_5 >= tom_get_size_conc_L(any(l).( []aterm.ATerm ))) { var tom___x  aterm.ATerm  = tom_get_element_conc_L(any(l).( []aterm.ATerm ),tomMatch4_end_5); _ = tom___x; var tomMatch4_6 int64 = tomMatch4_end_5 + 1; _ = tomMatch4_6; var tomMatch4_end_9 int64 = tomMatch4_6; _ = tomMatch4_end_9; for { { if !(tomMatch4_end_9 >= tom_get_size_conc_L(any(l).( []aterm.ATerm ))) { if tom_equal_term_E(tom___x, tom_get_element_conc_L(any(l).( []aterm.ATerm ),tomMatch4_end_9)) { 
+
+      return double2(tom_append_array_conc(tom_get_slice_conc(any(l).( []aterm.ATerm ),tomMatch4_end_9 + 1,tom_get_size_conc_L(any(l).( []aterm.ATerm ))),tom_cons_array_conc(tom___x,tom_append_array_conc(tom_get_slice_conc(any(l).( []aterm.ATerm ),tomMatch4_6,tomMatch4_end_9),tom_append_array_conc(tom_get_slice_conc(any(l).( []aterm.ATerm ),tomMatch4_2,tomMatch4_end_5),tom_empty_array_conc(4)))))) };  }; tomMatch4_end_9 = tomMatch4_end_9 + 1;  };  if !(!(tomMatch4_end_9 > tom_get_size_conc_L(any(l).( []aterm.ATerm )))) { break; }; };  }; tomMatch4_end_5 = tomMatch4_end_5 + 1;  };  if !(!(tomMatch4_end_5 > tom_get_size_conc_L(any(l).( []aterm.ATerm )))) { break; }; };  };  };  };  }; 
+
+
+  return l
+}
+
+
+
+
+
+func double4(l []aterm.ATerm) []aterm.ATerm {
+  ; { { if tom_is_sort_L(l) { if tom_is_fun_sym_conc(any(l).( []aterm.ATerm )) { var tomMatch5_2 int64 = 0; _ = tomMatch5_2; var tomMatch5_end_5 int64 = tomMatch5_2; _ = tomMatch5_end_5; for { { if !(tomMatch5_end_5 >= tom_get_size_conc_L(any(l).( []aterm.ATerm ))) { var tom___x  aterm.ATerm  = tom_get_element_conc_L(any(l).( []aterm.ATerm ),tomMatch5_end_5); _ = tom___x; var tomMatch5_6 int64 = tomMatch5_end_5 + 1; _ = tomMatch5_6; var tomMatch5_end_9 int64 = tomMatch5_6; _ = tomMatch5_end_9; for { { if !(tomMatch5_end_9 >= tom_get_size_conc_L(any(l).( []aterm.ATerm ))) { if tom_equal_term_E(tom___x, tom_get_element_conc_L(any(l).( []aterm.ATerm ),tomMatch5_end_9)) { 
+ return double4(tom_append_array_conc(tom_get_slice_conc(any(l).( []aterm.ATerm ),tomMatch5_end_9 + 1,tom_get_size_conc_L(any(l).( []aterm.ATerm ))),tom_cons_array_conc(tom___x,tom_append_array_conc(tom_get_slice_conc(any(l).( []aterm.ATerm ),tomMatch5_6,tomMatch5_end_9),tom_append_array_conc(tom_get_slice_conc(any(l).( []aterm.ATerm ),tomMatch5_2,tomMatch5_end_5),tom_empty_array_conc(4)))))) };  }; tomMatch5_end_9 = tomMatch5_end_9 + 1;  };  if !(!(tomMatch5_end_9 > tom_get_size_conc_L(any(l).( []aterm.ATerm )))) { break; }; };  }; tomMatch5_end_5 = tomMatch5_end_5 + 1;  };  if !(!(tomMatch5_end_5 > tom_get_size_conc_L(any(l).( []aterm.ATerm )))) { break; }; };  };  };  };  }; 
+
+  return l
+}
+
+
+
+func double5(l []aterm.ATerm) []aterm.ATerm {
+  ; { { if tom_is_sort_L(l) { if tom_is_fun_sym_conc(any(l).( []aterm.ATerm )) { var tomMatch6_2 int64 = 0; _ = tomMatch6_2; var tomMatch6_end_5 int64 = tomMatch6_2; _ = tomMatch6_end_5; for { { if !(tomMatch6_end_5 >= tom_get_size_conc_L(any(l).( []aterm.ATerm ))) { if tom_is_fun_sym_a(any(tom_get_element_conc_L(any(l).( []aterm.ATerm ),tomMatch6_end_5)).( aterm.ATerm )) { var tom___x  aterm.ATerm  = tom_get_element_conc_L(any(l).( []aterm.ATerm ),tomMatch6_end_5); _ = tom___x; var tomMatch6_6 int64 = tomMatch6_end_5 + 1; _ = tomMatch6_6; var tomMatch6_end_9 int64 = tomMatch6_6; _ = tomMatch6_end_9; for { { if !(tomMatch6_end_9 >= tom_get_size_conc_L(any(l).( []aterm.ATerm ))) { if tom_is_fun_sym_a(any(tom_get_element_conc_L(any(l).( []aterm.ATerm ),tomMatch6_end_9)).( aterm.ATerm )) { if tom_equal_term_E(tom___x, tom_get_element_conc_L(any(l).( []aterm.ATerm ),tomMatch6_end_9)) { 
+ return double5(tom_append_array_conc(tom_get_slice_conc(any(l).( []aterm.ATerm ),tomMatch6_end_9 + 1,tom_get_size_conc_L(any(l).( []aterm.ATerm ))),tom_cons_array_conc(tom___x,tom_append_array_conc(tom_get_slice_conc(any(l).( []aterm.ATerm ),tomMatch6_6,tomMatch6_end_9),tom_append_array_conc(tom_get_slice_conc(any(l).( []aterm.ATerm ),tomMatch6_2,tomMatch6_end_5),tom_empty_array_conc(4)))))) };  };  }; tomMatch6_end_9 = tomMatch6_end_9 + 1;  };  if !(!(tomMatch6_end_9 > tom_get_size_conc_L(any(l).( []aterm.ATerm )))) { break; }; };  };  }; tomMatch6_end_5 = tomMatch6_end_5 + 1;  };  if !(!(tomMatch6_end_5 > tom_get_size_conc_L(any(l).( []aterm.ATerm )))) { break; }; };  };  };  }; { if tom_is_sort_L(l) { if tom_is_fun_sym_conc(any(l).( []aterm.ATerm )) { var tomMatch6_19 int64 = 0; _ = tomMatch6_19; var tomMatch6_end_22 int64 = tomMatch6_19; _ = tomMatch6_end_22; for { { if !(tomMatch6_end_22 >= tom_get_size_conc_L(any(l).( []aterm.ATerm ))) { var tom___x  aterm.ATerm  = tom_get_element_conc_L(any(l).( []aterm.ATerm ),tomMatch6_end_22); _ = tom___x; var tomMatch6_23 int64 = tomMatch6_end_22 + 1; _ = tomMatch6_23; var tomMatch6_end_26 int64 = tomMatch6_23; _ = tomMatch6_end_26; for { { if !(tomMatch6_end_26 >= tom_get_size_conc_L(any(l).( []aterm.ATerm ))) { if tom_equal_term_E(tom___x, tom_get_element_conc_L(any(l).( []aterm.ATerm ),tomMatch6_end_26)) { 
+ return double5(tom_append_array_conc(tom_get_slice_conc(any(l).( []aterm.ATerm ),tomMatch6_end_26 + 1,tom_get_size_conc_L(any(l).( []aterm.ATerm ))),tom_cons_array_conc(tom___x,tom_append_array_conc(tom_get_slice_conc(any(l).( []aterm.ATerm ),tomMatch6_23,tomMatch6_end_26),tom_append_array_conc(tom_get_slice_conc(any(l).( []aterm.ATerm ),tomMatch6_19,tomMatch6_end_22),tom_empty_array_conc(4)))))) };  }; tomMatch6_end_26 = tomMatch6_end_26 + 1;  };  if !(!(tomMatch6_end_26 > tom_get_size_conc_L(any(l).( []aterm.ATerm )))) { break; }; };  }; tomMatch6_end_22 = tomMatch6_end_22 + 1;  };  if !(!(tomMatch6_end_22 > tom_get_size_conc_L(any(l).( []aterm.ATerm )))) { break; }; };  };  };  }; { if tom_is_sort_L(l) { if tom_is_fun_sym_conc(any(l).( []aterm.ATerm )) { var tomMatch6_32 int64 = 0; _ = tomMatch6_32; var tomMatch6_end_35 int64 = tomMatch6_32; _ = tomMatch6_end_35; for { { if !(tomMatch6_end_35 >= tom_get_size_conc_L(any(l).( []aterm.ATerm ))) { var tom___x  aterm.ATerm  = tom_get_element_conc_L(any(l).( []aterm.ATerm ),tomMatch6_end_35); _ = tom___x; var tomMatch6_36 int64 = tomMatch6_end_35 + 1; _ = tomMatch6_36; var tomMatch6_end_39 int64 = tomMatch6_36; _ = tomMatch6_end_39; for { { if !(tomMatch6_end_39 >= tom_get_size_conc_L(any(l).( []aterm.ATerm ))) { if tom_equal_term_E(tom___x, tom_get_element_conc_L(any(l).( []aterm.ATerm ),tomMatch6_end_39)) { if tom_equal_term_E(tom_get_element_conc_L(any(l).( []aterm.ATerm ),tomMatch6_end_35), tom_get_element_conc_L(any(l).( []aterm.ATerm ),tomMatch6_end_39)) { 
+ return double5(tom_append_array_conc(tom_get_slice_conc(any(l).( []aterm.ATerm ),tomMatch6_end_39 + 1,tom_get_size_conc_L(any(l).( []aterm.ATerm ))),tom_cons_array_conc(tom___x,tom_append_array_conc(tom_get_slice_conc(any(l).( []aterm.ATerm ),tomMatch6_36,tomMatch6_end_39),tom_append_array_conc(tom_get_slice_conc(any(l).( []aterm.ATerm ),tomMatch6_32,tomMatch6_end_35),tom_empty_array_conc(4)))))) };  };  }; tomMatch6_end_39 = tomMatch6_end_39 + 1;  };  if !(!(tomMatch6_end_39 > tom_get_size_conc_L(any(l).( []aterm.ATerm )))) { break; }; };  }; tomMatch6_end_35 = tomMatch6_end_35 + 1;  };  if !(!(tomMatch6_end_35 > tom_get_size_conc_L(any(l).( []aterm.ATerm )))) { break; }; };  };  };  };  }; 
+
+  return l
 }
 
 
 
 func TestVariableStar1(t *testing.T) {
-	nbSol := 0
-	l := []*Term{tom_make_a(), tom_make_b()}
-	; { { if tom_is_sort_L(l) { if tom_is_fun_sym_conc(any(l).( []*Term )) { var tomMatch7_end_5 int64 = 0; _ = tomMatch7_end_5; for { { var tomMatch7_end_8 int64 = tomMatch7_end_5; _ = tomMatch7_end_8; for { { 
+  setUp()
+  nbSol := 0
+  var l []aterm.ATerm = tom_cons_array_conc(tom_make_b(),tom_cons_array_conc(tom_make_a(),tom_empty_array_conc(2))); { { if tom_is_sort_L(l) { if tom_is_fun_sym_conc(any(l).( []aterm.ATerm )) { var tomMatch7_2 int64 = 0; _ = tomMatch7_2; var tomMatch7_end_5 int64 = tomMatch7_2; _ = tomMatch7_end_5; for { { var tomMatch7_end_8 int64 = tomMatch7_end_5; _ = tomMatch7_end_8; for { { 
 
-			nbSol++
-		tomMatch7_end_8 = tomMatch7_end_8 + 1;  };  if !(!(tomMatch7_end_8 > tom_get_size_conc_L(any(l).( []*Term )))) { break; }; }; tomMatch7_end_5 = tomMatch7_end_5 + 1;  };  if !(!(tomMatch7_end_5 > tom_get_size_conc_L(any(l).( []*Term )))) { break; }; };  };  };  };  }; 
 
-	if nbSol != 6 {
-		t.Errorf("VariableStar split count = %d, want 6", nbSol)
-	}
+      nbSol++
+      logger.Log(context.Background(), level, "X1 = " + fmt.Sprint(tom_get_slice_conc(any(l).( []aterm.ATerm ),tomMatch7_2,tomMatch7_end_5)) + " X2 = " + fmt.Sprint(tom_get_slice_conc(any(l).( []aterm.ATerm ),tomMatch7_end_5,tomMatch7_end_8))+ " X3 = " + fmt.Sprint(tom_get_slice_conc(any(l).( []aterm.ATerm ),tomMatch7_end_8,tom_get_size_conc_L(any(l).( []aterm.ATerm )))))
+    tomMatch7_end_8 = tomMatch7_end_8 + 1;  };  if !(!(tomMatch7_end_8 > tom_get_size_conc_L(any(l).( []aterm.ATerm )))) { break; }; }; tomMatch7_end_5 = tomMatch7_end_5 + 1;  };  if !(!(tomMatch7_end_5 > tom_get_size_conc_L(any(l).( []aterm.ATerm )))) { break; }; };  };  };  };  }; 
+
+  assertTrue(t, "TestVariableStar1",nbSol==6)
+}
+
+
+
+
+func assertTrue(t *testing.T, message string, condition bool) {
+  t.Helper()
+  if !condition {
+    t.Error(message)
+  }
+}
+
+
+
+func assertEquals(t *testing.T, message string, expected, actual []aterm.ATerm) {
+  t.Helper()
+  if !listEquals(expected, actual) {
+    t.Errorf("%s expected:<%v> but was:<%v>", message, expected, actual)
+  }
 }

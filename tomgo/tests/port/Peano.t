@@ -1,96 +1,170 @@
 package main
 
-import "fmt"
+// Port of test/Peano.t: the Java aterm library is replaced by its Go
+// subset tom/tomgo/tests/port/aterm (same API, maximal sharing).
 
-// Term is the runtime representation of `term` values for Peano. A
-// constructor with no children is `&Term{Name:"zero"}`; `suc(p)` is
-// `&Term{Name:"suc", Args:[]*Term{p}}`; `plus(a,b)` similarly. Going
-// through pointers lets us hash-cons via plain Go map lookups (not
-// shown here — we don't need sharing for Peano correctness).
-type Term struct {
-	Name string
-	Args []*Term
-}
+import (
+	"fmt"
 
-func (t *Term) Equals(o *Term) bool {
-	if t == o {
-		return true
-	}
-	if t == nil || o == nil || t.Name != o.Name || len(t.Args) != len(o.Args) {
-		return false
-	}
-	for i := range t.Args {
-		if !t.Args[i].Equals(o.Args[i]) {
-			return false
-		}
-	}
-	return true
-}
+	"tom/tomgo/tests/port/aterm"
+)
+
+var factory *aterm.PureFactory
+var fzero, fsuc, fplus *aterm.AFun
+var tzero *aterm.ATermAppl
 
 %typeterm term {
-	implement     { *Term }
-	is_sort(t)    { $t != nil }
-	equals(t1,t2) { ($t1).Equals($t2) }
+  implement { aterm.ATerm }
+  is_sort(t) { $t != nil }
+  equals(t1, t2)      { $t1 == $t2}
+}
+
+%typeterm appl {
+  implement { *aterm.ATermAppl }
+  is_sort(t) { $t != nil }
+  equals(t1, t2)      { $t1 == $t2}
 }
 
 %op term zero() {
-	is_fsym(t) { ($t).Name == "zero" }
-	make()     { &Term{Name: "zero"} }
+  is_fsym(t) { any($t).(*aterm.ATermAppl).GetAFun() == fzero }
+  make() { factory.MakeAppl(fzero) }
 }
 
 %op term suc(pred:term) {
-	is_fsym(t)       { ($t).Name == "suc" }
-	get_slot(pred,t) { ($t).Args[0] }
-	make(p)          { &Term{Name: "suc", Args: []*Term{$p}} }
+  is_fsym(t) { any($t).(*aterm.ATermAppl).GetAFun() == fsuc }
+  get_slot(pred,t) { any($t).(*aterm.ATermAppl).GetArgument(0)  }
+  make(t) { factory.MakeAppl(fsuc,$t) }
 }
 
-%op term plus(s1:term, s2:term) {
-	is_fsym(t)      { ($t).Name == "plus" }
-	get_slot(s1,t)  { ($t).Args[0] }
-	get_slot(s2,t)  { ($t).Args[1] }
-	make(a,b)       { &Term{Name: "plus", Args: []*Term{$a, $b}} }
+%op term plus1(s1:term,s2:term) {
+  make(t1,t2) { plus1($t1,$t2) }
 }
 
-// plus1 walks t1 — zero acts as identity, suc(x) descends and re-wraps.
-func plus1(t1, t2 *Term) *Term {
-	%match(term t1, term t2) {
-		zero(), x       -> { return `x }
-		suc(x), y       -> { return `suc(plus1(x, y)) }
-	}
-	return nil
+%op term plus2(s1:term,s2:term) {
+  make(t1,t2) { plus2($t1,$t2) }
 }
 
-// int2peano builds n as suc^n(zero).
-func int2peano(n int) *Term {
-	t := `zero()
-	for i := 0; i < n; i++ {
-		t = `suc(t)
-	}
-	return t
+%op appl term2appl(s1:term) {
+  is_fsym(t) { any($t).(*aterm.ATermAppl).GetName() == "term2appl" }
+  get_slot(s1,t) { any($t).(*aterm.ATermAppl).GetArgument(0) }
+  make(t) { factory.MakeAppl(factory.MakeAFun("term2appl",1,false),$t) }
 }
 
-// peano2int counts suc layers.
-func peano2int(t *Term) int {
-	n := 0
-	for t != nil && t.Name == "suc" {
-		n++
-		t = t.Args[0]
-	}
-	return n
+func newPeano(f *aterm.PureFactory) {
+  factory = f
+
+  fzero = factory.MakeAFun("zero", 0, false)
+  fsuc  = factory.MakeAFun("suc" , 1, false)
+  fplus = factory.MakeAFun("plus", 2, false)
+  tzero = factory.MakeAppl(fzero)
+}
+
+func run() {
+  for i:=0 ; i<100 ; i++ {
+    N := int2peano(i)
+    assertTrue( peano2int(plus1(N,N)) == (i+i) )
+    assertTrue( peano2int(plus2(N,N)) == (i+i) )
+    assertTrue( peano2int(plus3(N,N)) == (i+i) )
+    assertTrue( peano2int(plus4(N,N)) == (i+i) )
+  }
+  fmt.Println("First loop has successfully terminated.")
+
+  for i:=0 ; i<15 ; i++ {
+    N := int2peano(i)
+    assertTrue( peano2int(fib3(N)) == fibint(i) )
+    assertTrue( peano2int(fib4(N)) == fibint(i) )
+  }
+  fmt.Println("Second loop has successfully terminated.")
+
 }
 
 func main() {
-	ok := true
-	for i := 0; i < 20; i++ {
-		n := int2peano(i)
-		got := peano2int(plus1(n, n))
-		if got != i+i {
-			ok = false
-			fmt.Printf("FAIL: plus1(%d,%d) = %d, want %d\n", i, i, got, i+i)
-		}
-	}
-	if ok {
-		fmt.Println("First loop has successfully terminated.")
-	}
-	fmt.Println("Peano test has successfully terminated.")
+  newPeano(aterm.NewPureFactory(16))
+  run()
+  fmt.Println("Peano test has successfully terminated.")
+}
+
+func plus1(t1 aterm.ATerm, t2 aterm.ATerm) aterm.ATerm {
+  %match(term t1, term t2) {
+    x,(zero|zero)[]   -> { return `x }
+    x,suc(y) -> { return suc(plus1(`x,`y)) }
+  }
+  //@ assert false;
+  return nil
+}
+
+func plus2(t1 aterm.ATerm, t2 aterm.ATerm) aterm.ATerm {
+  %match(term t1, term t2) {
+    x,zero()   -> { return `x }
+    x,suc[pred=y] -> { return suc(plus2(`x,`y)) }
+  }
+  return nil
+}
+
+func plus3(t1 aterm.ATerm, t2 aterm.ATerm) aterm.ATerm {
+  %match(term t1, term t2) {
+    x,zero()   -> { return `x }
+    x@_,suc[pred=y@z] -> { return suc(plus3(`x,`y)) }
+  }
+  return nil
+}
+
+  func plus4(t1 aterm.ATerm, t2 aterm.ATerm) aterm.ATerm {
+  %match(term t1, term t2) {
+    x,(zero|zero)[]   -> { return `x }
+    x,(suc|suc)[pred=y] -> { return suc(plus1(`x,`y)) }
+  }
+  return nil
+}
+
+func fib3(t aterm.ATerm) aterm.ATerm {
+  %match(term t) {
+    zero()             -> { return `suc(zero()) }
+    suc[pred=x@zero()] -> { return `suc(x) }
+    suc(suc(x))      -> { return plus3(fib3(`x),fib3(suc(`x))) }
+  }
+  return nil
+}
+
+func fib4(t aterm.ATerm) aterm.ATerm {
+  %match(term t) {
+    zero()      -> { return `suc(zero()) }
+    suc(zero()) -> { return `suc(zero()) }
+    suc(suc(x)) -> { return plus3(fib4(`x),fib4(suc(`x))) }
+  }
+  return nil
+}
+
+func suc(t aterm.ATerm) aterm.ATerm {
+  return factory.MakeAppl(fsuc,t)
+}
+
+func fibint(n int) int {
+  if n<=1 {
+    return 1
+  } else {
+    return fibint(n-1)+fibint(n-2)
+  }
+}
+
+func int2peano(n int) aterm.ATerm {
+  var N aterm.ATerm = tzero
+  for i:=0 ; i<n ; i++ {
+    N = suc(N)
+  }
+  return N
+}
+
+func peano2int(N aterm.ATerm) int {
+  %match(term N) {
+    zero() -> { return 0 }
+    suc(x) -> {return 1 +peano2int(`x) }
+  }
+  return 0
+}
+
+func assertTrue(condition bool) {
+  if !condition {
+    panic("assertion failed.")
+  }
 }

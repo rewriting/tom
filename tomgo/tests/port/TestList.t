@@ -1,181 +1,278 @@
-package list_test
+package testlist
+
+// Port of test/TestList.t: the Java aterm library is replaced by its Go
+// subset tom/tomgo/tests/port/aterm. The JUnit suite becomes one Go test
+// per @Test method (TestMatch1 … TestMatch6); a @Parameterized class
+// loops over its data(); @BeforeClass/@AfterClass become TestMain.
 
 import (
-	"testing"
+  "os"
+  "testing"
+
+  "tom/tomgo/tests/port/aterm"
 )
 
-// Term — same minimal element type as the other Go fixtures.
-type Term struct {
-	Name string
-	Args []*Term
+var ok, fail aterm.ATerm
+var factory *aterm.PureFactory = nil
+
+func TestMain(m *testing.M) {
+  setUp()
+  code := m.Run()
+  tearDown()
+  os.Exit(code)
 }
 
-func (t *Term) Equals(o *Term) bool {
-	if t == o {
-		return true
-	}
-	if t == nil || o == nil || t.Name != o.Name || len(t.Args) != len(o.Args) {
-		return false
-	}
-	for i := range t.Args {
-		if !t.Args[i].Equals(o.Args[i]) {
-			return false
-		}
-	}
-	return true
+func setUp() {
+  factory = aterm.GetInstance()
+  ok      = factory.Parse("ok")
+  fail    = factory.Parse("fail")
 }
 
-func equalsList(a, b []*Term) bool {
-	if len(a) != len(b) {
-		return false
-	}
-	for i := range a {
-		if !a[i].Equals(b[i]) {
-			return false
-		}
-	}
-	return true
-}
-
-// listInsert prepends an element to a slice — the canonical
-// `make_insert(e, l)` body for the list hook. We define it as a
-// helper so the `%oplist` body stays a single expression.
-func listInsert(e *Term, l []*Term) []*Term {
-	out := make([]*Term, 0, len(l)+1)
-	out = append(out, e)
-	out = append(out, l...)
-	return out
+func tearDown() {
+  factory = nil
+  ok = nil
+  fail = nil
 }
 
 %typeterm L {
-	implement     { []*Term }
-	is_sort(t)    { $t != nil }
-	equals(l1,l2) { equalsList($l1, $l2) }
+  implement { *aterm.ATermList }
+  is_sort(t) { $t != nil }
+  equals(l1,l2)  { $l1 == $l2 }
 }
 
-// %oplist hooks: list-style (vs Array's get_element/get_size). The
-// matcher will iterate via get_tail until is_empty fires; each
-// match-step "consumes" one head element.
 %oplist L conc( E* ) {
-	is_fsym(t)       { $t != nil }
-	get_head(l)      { ($l)[0] }
-	get_tail(l)      { ($l)[1:] }
-	is_empty(l)      { len($l) == 0 }
-	make_empty()     { []*Term{} }
-	make_insert(e,l) { listInsert($e, $l) }
+  is_fsym(t) { $t != nil }
+  get_head(l)    { any($l).(*aterm.ATermList).GetFirst() }
+  get_tail(l)    { any($l).(*aterm.ATermList).GetNext() }
+  is_empty(l)    { any($l).(*aterm.ATermList).IsEmpty() }
+  make_empty()   { factory.MakeList() }
+  make_insert(e,l) { any($l).(*aterm.ATermList).Insert($e) }
 }
 
 %typeterm E {
-	implement     { *Term }
-	is_sort(t)    { $t != nil }
-	equals(t1,t2) { ($t1).Equals($t2) }
+  implement { aterm.ATerm }
+  is_sort(t) { $t != nil }
+  equals(t1, t2) { ($t1 == $t2) }
 }
 
 %op E a() {
-	is_fsym(t) { ($t).Name == "a" }
-	make()     { &Term{Name: "a"} }
+  is_fsym(t) { any($t).(*aterm.ATermAppl).GetName() == "a" }
 }
 
 %op E b() {
-	is_fsym(t) { ($t).Name == "b" }
-	make()     { &Term{Name: "b"} }
+  is_fsym(t) { any($t).(*aterm.ATermAppl).GetName() == "b" }
 }
 
 %op E c() {
-	is_fsym(t) { ($t).Name == "c" }
-	make()     { &Term{Name: "c"} }
+  is_fsym(t) { any($t).(*aterm.ATermAppl).GetName() == "c" }
 }
 
 %op E f(s1:E) {
-	is_fsym(t)     { ($t).Name == "f" }
-	get_slot(s1,t) { ($t).Args[0] }
-	make(s)        { &Term{Name: "f", Args: []*Term{$s}} }
+  is_fsym(t) { any($t).(*aterm.ATermAppl).GetName() == "f" }
+  get_slot(s1,t) { any($t).(*aterm.ATermAppl).GetArgument(0)  }
 }
 
-// classifyTag pattern-matches a list against several shapes and
-// returns a short tag for the first pattern that fires. Mirrors
-// (a subset of) Java's Match1.match1 — non-parameterized, just the
-// patterns I want to exercise.
-func classifyTag(l []*Term) string {
-	%match(L l) {
-		conc()                            -> { return "empty" }
-		conc(f(a()))                      -> { return "singleton_fa" }
-		conc(_X1*, f(a()))                -> { return "ends_fa" }
-		conc(_X1*, f(a()), _X2*, f(b()))  -> { return "fa_then_fb" }
-		conc(f(b()), _X2*, f(b()), _X3*)  -> { return "starts_fb_then_fb" }
-	}
-	return "other"
+%op E g(s1:E) {
+  is_fsym(t) { any($t).(*aterm.ATermAppl).GetName() == "g" }
+  get_slot(s1,t) { any($t).(*aterm.ATermAppl).GetArgument(0)  }
 }
 
-// firstHead returns the first element via a list pattern, or nil.
-// Mirrors get_head but goes through `%match`.
-func firstHead(l []*Term) *Term {
-	%match(L l) {
-		conc(head, _Tail*) -> { return `head }
-	}
-	return nil
+%op E l(sl:L) {
+  is_fsym(t) { any($t).(*aterm.ATermAppl).GetName() == "l" }
+  get_slot(sl,t) { any($t).(*aterm.ATermAppl).GetArgument(0).(*aterm.ATermList)  }
 }
 
-// countElements walks the list with a tail-recursive %match.
-func countElements(l []*Term) int {
-	%match(L l) {
-		conc()             -> { return 0 }
-		conc(_h, t*)       -> { return 1 + countElements(`t) }
-	}
-	return 0
+%op E h(s1:E,s2:E) {
+  is_fsym(t) { any($t).(*aterm.ATermAppl).GetName() == "h" }
+  get_slot(s1,t) { any($t).(*aterm.ATermAppl).GetArgument(0)  }
+  get_slot(s2,t) { any($t).(*aterm.ATermAppl).GetArgument(1)  }
 }
 
-// Helpers to make tests readable.
-func ta() *Term { return `a() }
-func tb() *Term { return `b() }
-func tc() *Term { return `c() }
-func fa() *Term { return `f(a()) }
-func fb() *Term { return `f(b()) }
+// ---------------------------------------------------------------- Match1
 
-func TestEmpty(t *testing.T) {
-	if got := classifyTag([]*Term{}); got != "empty" {
-		t.Errorf("classifyTag([]) = %q, want empty", got)
-	}
+func TestMatch1(t *testing.T) {
+  for _, d := range match1Data() {
+    question, answer := d[0], d[1]
+    assertSame(t,
+      "TestMatch1 : expected "+answer+" for term "+question +"",
+      match1(factory.Parse(question)),
+      factory.Parse(answer))
+  }
 }
 
-func TestSingletonFA(t *testing.T) {
-	if got := classifyTag([]*Term{fa()}); got != "singleton_fa" {
-		t.Errorf("classifyTag([f(a)]) = %q, want singleton_fa", got)
-	}
+func match1Data() [][2]string {
+  return [][2]string {
+      { "[f(a)]",                  "pattern1" },
+      { "[a,b,f(a)]",              "pattern2" },
+      { "[a,f(a),b,f(b)]",         "pattern3" },
+      { "[a,f(a),f(b)]",           "pattern3" },
+      { "[f(a),f(b)]",             "pattern3" },
+      { "[a,f(a),b,f(b),c]",       "pattern4" },
+      { "[a,f(a),f(b),c]",         "pattern4" },
+      { "[f(a),f(b),c]",           "pattern4" },
+      { "[f(b),f(b)]",             "pattern5" },
+      { "[f(b),f(b),c]",           "pattern5" },
+      { "[f(b),a,f(b)]",           "pattern5" },
+      { "[f(b),a,f(b),c]",         "pattern5" },
+      { "[f(c),f(b)]",             "pattern6" },
+      { "[f(a),f(c),a,f(c)]",          "fail" },
+      { "[f(a),f(c),a,f(c),f(c)]", "pattern6" },
+      { "[]",                      "pattern7" },
+  }
 }
 
-func TestEndsFA(t *testing.T) {
-	if got := classifyTag([]*Term{ta(), tb(), fa()}); got != "ends_fa" {
-		t.Errorf("classifyTag([a,b,f(a)]) = %q, want ends_fa", got)
-	}
+func match1(t aterm.ATerm) aterm.ATerm {
+  res := fail
+  l := t.(*aterm.ATermList)
+  %match(L l) {
+    conc(f(a()))                           -> { return factory.Parse("pattern1") }
+    conc(_X1*,f(a()))                      -> { return factory.Parse("pattern2") }
+    conc(_X1*,f(a()),_X2*,f(b()))      -> { return factory.Parse("pattern3") }
+    conc(_X1*,f(a()),_X2*,f(b()),_X3*) -> { return factory.Parse("pattern4") }
+    conc(f(b()),_X2*,f(b()),_X3*)      -> { return factory.Parse("pattern5") }
+    conc(_X1*,f(c()),f(_x),_X3*)       -> { return factory.Parse("pattern6") }
+    conc()                             -> { return factory.Parse("pattern7") }
+  }
+  return res
 }
 
-func TestFAthenFB(t *testing.T) {
-	if got := classifyTag([]*Term{ta(), fa(), tb(), fb()}); got != "fa_then_fb" {
-		t.Errorf("classifyTag([a,f(a),b,f(b)]) = %q, want fa_then_fb", got)
-	}
+// ---------------------------------------------------------------- Match2
+
+func TestMatch2(t *testing.T) {
+  for _, d := range match2Data() {
+    question, answer := d[0], d[1]
+    assertSame(t,
+      "TestMatch2 : expected "+answer+" for term "+question +"",
+      match2(factory.Parse(question)),
+      factory.Parse(answer))
+  }
 }
 
-func TestStartsFBthenFB(t *testing.T) {
-	if got := classifyTag([]*Term{fb(), fb()}); got != "starts_fb_then_fb" {
-		t.Errorf("classifyTag([f(b),f(b)]) = %q, want starts_fb_then_fb", got)
-	}
+func match2Data() [][2]string {
+  return [][2]string {
+      { "h(a,l([f(a)]))"                  , "pattern1" },
+      { "h(l([f(a)]),a)"                  , "pattern2" },
+      { "h(l([a,b,a,b]),a)"               , "pattern3" },
+      { "h(l([a,b,a,b]),l([a,a,b,a]))"    , "fail"     },
+      { "h(l([a,b,a,b]),l([a,a,b,a,b]))"  , "pattern4" },
+      { "l([b,b,l([a]),a,l([a,c]),b,c])"  , "fail"     },
+      { "l([a,b,l([a]),a,l([a,c]),b,c])"  , "pattern5" },
+      { "l([a,b,l([c]),a,b,l([a,c]),b,c])", "fail"     },
+      { "l([a,b,l([c]),a,c,l([a,c]),b,c])", "pattern5" },
+  }
 }
 
-func TestFirstHead(t *testing.T) {
-	if got := firstHead([]*Term{ta(), tb(), tc()}); !got.Equals(ta()) {
-		t.Errorf("firstHead([a,b,c]) = %v, want a", got)
-	}
-	if got := firstHead([]*Term{}); got != nil {
-		t.Errorf("firstHead([]) = %v, want nil", got)
-	}
+func match2(t aterm.ATerm) aterm.ATerm {
+  res := fail
+  %match(E t) {
+    h(a(),l(conc(f(a()))))                       -> { return factory.Parse("pattern1") }
+    h(l(conc(f(a()))),a())                       -> { return factory.Parse("pattern2") }
+    h(l(conc(_X1*,_x,y,_X2*)),z)                 -> { if `y==`z { return factory.Parse("pattern3") } }
+    h(l(conc(_X1*,_x,X2*)),l(conc(_Y1*,_y,Y2*))) -> { if `X2==`Y2 && !(`X2).IsEmpty() {
+                  return factory.Parse("pattern4") } }
+    l(conc(_X1*,Y1*,_X2*,l(conc(Y2*)),_X3*))     -> { if `Y1==`Y2 { return factory.Parse("pattern5") } }
+  }
+  return res
 }
 
-func TestCount(t *testing.T) {
-	if got := countElements([]*Term{}); got != 0 {
-		t.Errorf("countElements([]) = %d, want 0", got)
-	}
-	if got := countElements([]*Term{ta(), tb(), tc()}); got != 3 {
-		t.Errorf("countElements([a,b,c]) = %d, want 3", got)
-	}
+// ---------------------------------------------------------------- Match3
+
+func TestMatch3(t *testing.T) {
+  for _, d := range match3Data() {
+    question, answer := d[0], d[1]
+    assertSame(t,
+      "TestMatch3 : expected "+answer+" for term "+question +"",
+      match3(factory.Parse(question)),
+      factory.Parse(answer))
+  }
+}
+
+func match3Data() [][2]string {
+  return [][2]string {
+      { "l([f(a)])"                     , "pattern1" },
+      { "l([f(a),f(b),f(a),f(c)])"      , "pattern2" },
+      { "l([g(f(a)),f(b),g(f(a)),f(c)])", "pattern3" },
+  }
+}
+
+func match3(t aterm.ATerm) aterm.ATerm {
+  res := fail
+  %match(E t) {
+    l(vl@conc(_x)) -> { if `vl==factory.Parse("[f(a)]") { return factory.Parse("pattern1") } }
+    l(conc(_X1*,vx@f(_x),_X2*,vy@f(_y),_X3*)) -> { if `vx==`vy { return factory.Parse("pattern2") } }
+    l(conc(_X1*,g(vx@f(_x)),_X2*,g(vy@f(_y)),_X3*)) -> { if `vx==`vy { return factory.Parse("pattern3") } }
+  }
+  return res
+}
+
+// ---------------------------------------------------------------- MatchOther
+
+func TestMatch4(t *testing.T) {
+  nbSol := 0
+  l := factory.Parse("[a,b]").(*aterm.ATermList)
+    %match(L l) {
+      conc(_X1*,_X2*,_X3*) -> {
+      nbSol++
+      //System.out.println("X1 = " + `X1* + " X2 = " + `X2*+ " X3 = " + `X3*);
+    }
+  }
+  assertTrue(t, "TestMatch4",nbSol==6)
+}
+
+func TestMatch5(t *testing.T) {
+  nbSol := 0
+  l := factory.Parse("[l([a,b]),a,b]").(*aterm.ATermList)
+  %match(L l) {
+    conc(l(conc(_R*,_T*)),_X1*,_u,_X2*) -> {
+      nbSol++
+      //System.out.println("R = " + `R* + " T = " + `T*+" X1 = " + `X1* + " X2 = " + `X2*+ " u = " + `u);
+    }
+  }
+  assertTrue(t, "TestMatch5",nbSol==6)
+}
+
+// ---------------------------------------------------------------- Match6
+
+func TestMatch6(t *testing.T) {
+  for _, d := range match6Data() {
+    question, answer := d[0], d[1]
+    assertSame(t,
+      "TestMatch6 : expected "+answer+" for term "+question +"",
+      match6(factory.Parse(question)),
+      factory.Parse(answer))
+  }
+}
+
+func match6Data() [][2]string {
+  return [][2]string {
+      { "[]"                         , "fail" },
+      { "[f(a)]"                     , "ok"   },
+      { "[f(a),f(b),f(a),f(c)]"      , "ok"   },
+      { "[g(f(a)),f(b),g(f(a)),f(c)]", "ok"   },
+  }
+}
+
+func match6(l aterm.ATerm) aterm.ATerm {
+  ll := l.(*aterm.ATermList)
+  %match(L ll) {
+    conc(_,_*) -> {
+      return factory.Parse("ok")
+    }
+  }
+  return factory.Parse("fail")
+}
+
+// org.junit.Assert.assertTrue / assertSame
+func assertTrue(t *testing.T, message string, condition bool) {
+  t.Helper()
+  if !condition {
+    t.Error(message)
+  }
+}
+
+func assertSame(t *testing.T, message string, expected, actual aterm.ATerm) {
+  t.Helper()
+  if expected != actual {
+    t.Errorf("%s expected same:<%v> was not:<%v>", message, expected, actual)
+  }
 }
