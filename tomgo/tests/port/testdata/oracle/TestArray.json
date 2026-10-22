@@ -1,0 +1,13 @@
+{
+  "passed": [
+    "TestSort1",
+    "TestSort2",
+    "TestDouble1",
+    "TestDouble2",
+    "TestDouble4",
+    "TestDouble5",
+    "TestVariableStar1"
+  ],
+  "stdout": "",
+  "exitOK": true
+}

@@ -256,8 +256,15 @@ func PortJava() error {
 }
 
 // PortGo runs T1 (golden Go output, build and run) on the Tom+Go ports
-// in tests/port/ (needs src/dist built). From Task 8 it also runs T2
-// (behaviour vs legacy/) and rewrites reports/port-dashboard.md.
+// in tests/port/ (needs src/dist built), T2 (behaviour vs the legacy/
+// oracle cached in tests/port/testdata/oracle/; refresh it with
+// `go test ./tests/port/ -run TestSameBehaviourAsLegacy -args
+// -update-oracle`) and rewrites reports/port-dashboard.md.
 func PortGo() error {
-	return sh.RunV("go", "test", "-count=1", "./tests/port/...")
+	// -write-dashboard is a flag of tests/port only: its subpackages
+	// (the aterm port) run on their own.
+	if err := sh.RunV("go", "test", "-count=1", "./tests/port/aterm/..."); err != nil {
+		return err
+	}
+	return sh.RunV("go", "test", "-count=1", "./tests/port/", "-args", "-write-dashboard")
 }

@@ -1,0 +1,14 @@
+{
+  "passed": [
+    "TestPlus1",
+    "TestPlus2",
+    "TestPlus3",
+    "TestPlus4",
+    "TestFib3",
+    "TestFib4",
+    "TestInt2p",
+    "TestPeano2int"
+  ],
+  "stdout": "",
+  "exitOK": true
+}
