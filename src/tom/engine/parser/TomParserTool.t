@@ -268,15 +268,15 @@ public class TomParserTool {
   }
 
   /*
-   * -go: the %gom block is compiled by "tomgo gom-block", which writes the
+   * -go: the %gom block is compiled by "gomgo gom-block", which writes the
    * Go structures next to the generated file and prints the path of the
    * Go-host-code mapping to include.
    */
   private String parseGomFileGo(String gomCode, int initialGomLine) {
     String currentFileName = getStreamManager().getInputFileName();
-    String tomgo = System.getenv("TOMGO_BIN");
-    if(tomgo == null || tomgo.length() == 0) {
-      tomgo = "tomgo";
+    String gomgo = System.getenv("GOMGO_BIN");
+    if(gomgo == null || gomgo.length() == 0) {
+      gomgo = "gomgo";
     }
     File tmpFile = null;
     Process p = null;
@@ -290,14 +290,14 @@ public class TomParserTool {
       }
       File outDir = getStreamManager().getOutputFile().getCanonicalFile().getParentFile();
       outDir.mkdirs();
-      ProcessBuilder pb = new ProcessBuilder(tomgo, "gom-block",
+      ProcessBuilder pb = new ProcessBuilder(gomgo, "gom-block",
           "--pkg", goPackageOf(new File(currentFileName)),
           "-o", outDir.getPath(), tmpFile.getPath());
       pb.redirectError(ProcessBuilder.Redirect.INHERIT);
       try {
         p = pb.start();
       } catch (IOException e) {
-        throw new IOException("cannot run '" + tomgo + "' (set TOMGO_BIN or put tomgo in the PATH): " + e.getMessage(), e);
+        throw new IOException("cannot run '" + gomgo + "' (set GOMGO_BIN or put gomgo in the PATH): " + e.getMessage(), e);
       }
       String last = null;
       java.io.BufferedReader r = new java.io.BufferedReader(new java.io.InputStreamReader(p.getInputStream(),"UTF-8"));

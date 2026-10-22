@@ -656,6 +656,16 @@
         <include name="go/**/*.tom"/>
       </fileset>
     </copy>
+
+    <!-- Go runtime and Gom (module tom), used by programs generated with -go -->
+    <copy todir="${stable.dist}/lib/go/tom">
+      <fileset dir="${basedir}/src/go/tom">
+        <include name="**/*.go"/>
+        <include name="go.mod"/>
+        <exclude name="**/*_test.go"/>
+        <exclude name="**/testdata/**"/>
+      </fileset>
+    </copy>
     <copy todir="${stable.dist.share}">
       <fileset dir="${share}">
         <include name="LICENCE"/>
@@ -927,6 +937,16 @@
       <fileset dir="${src.gen}/tom/library/">
         <include name="adt/bytecode/**/*.tom"/>
         <include name="adt/tnode/**/*.tom"/>
+      </fileset>
+    </copy>
+
+    <!-- Go runtime and Gom (module tom), used by programs generated with -go -->
+    <copy todir="${src.dist}/lib/go/tom">
+      <fileset dir="${basedir}/src/go/tom">
+        <include name="**/*.go"/>
+        <include name="go.mod"/>
+        <exclude name="**/*_test.go"/>
+        <exclude name="**/testdata/**"/>
       </fileset>
     </copy>
     <copy todir="${src.dist.share}">

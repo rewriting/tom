@@ -2,7 +2,7 @@
  * Tom Go mapping — Strategy interface.
  *
  * Mirrors mapping/java/Strategy.tom but uses the Go interface
- * `tom/tomgo/stable/library/sl.Strategy`. The `sl.IsStrategy` helper
+ * `tom/library/sl.Strategy`. The `sl.IsStrategy` helper
  * does the type-assertion an `is_fsym`-style expression can't do
  * inline (Go has no `instanceof`).
  */

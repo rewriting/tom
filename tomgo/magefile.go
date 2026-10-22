@@ -23,6 +23,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"strings"
 
@@ -249,27 +250,43 @@ func Clean() error {
 	return os.RemoveAll(dir)
 }
 
+// testGoDir holds the Tom+Go tests (module tomtest). Provisional: these
+// targets move to magefiles/ with the prototype (Task 4).
+const testGoDir = "../test/go"
+
+// runIn runs a command in dir, streaming its output.
+func runIn(dir string, args ...string) error {
+	cmd := exec.Command(args[0], args[1:]...)
+	cmd.Dir = dir
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	if mg.Verbose() {
+		fmt.Println("exec (in "+dir+"):", strings.Join(args, " "))
+	}
+	return cmd.Run()
+}
+
 // PortJava runs T0: the root compiler's Java output must equal legacy/'s
 // on every test/*.t (needs legacy/src/dist and src/dist built).
 func PortJava() error {
-	return sh.RunV("go", "test", "-count=1", "./tests/javaparity/...")
+	return runIn(testGoDir, "go", "test", "-count=1", "-timeout", "30m", "./javaparity/...")
 }
 
 // PortGo runs T1 (golden Go output, build and run) on the Tom+Go ports
-// in tests/port/ (needs src/dist built), T2 (behaviour vs the legacy/
-// oracle cached in tests/port/testdata/oracle/; refresh it with
-// `go test ./tests/port/ -run TestSameBehaviourAsLegacy -args
-// -update-oracle`) and rewrites reports/port-dashboard.md.
+// in test/go/ (needs src/dist built), T2 (behaviour vs the legacy/
+// oracle cached in test/go/testdata/oracle/; refresh it with
+// `go test ./ -run TestSameBehaviourAsLegacy -args -update-oracle` in
+// test/go) and rewrites doc/go/port-dashboard.md.
 func PortGo() error {
-	// -write-dashboard is a flag of tests/port only: its subpackages
-	// (the aterm port) run on their own.
-	if err := sh.RunV("go", "test", "-count=1", "./tests/port/aterm/..."); err != nil {
+	// -write-dashboard is a flag of the root package only: its
+	// subpackages (the aterm port) run on their own.
+	if err := runIn(testGoDir, "go", "test", "-count=1", "./aterm/..."); err != nil {
 		return err
 	}
-	return sh.RunV("go", "test", "-count=1", "./tests/port/", "-args", "-write-dashboard")
+	return runIn(testGoDir, "go", "test", "-count=1", "./", "-args", "-write-dashboard")
 }
 
-// Coverage runs T3 and rewrites reports/coverage.md.
+// Coverage runs T3 and rewrites doc/go/coverage.md.
 func Coverage() error {
-	return sh.RunV("go", "test", "-count=1", "-v", "./tests/coverage/...", "-args", "-write-coverage")
+	return runIn(testGoDir, "go", "test", "-count=1", "-v", "./coverage/...", "-args", "-write-coverage")
 }
