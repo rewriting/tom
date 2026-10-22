@@ -1,0 +1,92 @@
+/*
+ * Tom Go mapping — strategy primitives.
+ *
+ * Mirrors mapping/java/sl/basic.tom but uses the Go sl package:
+ *   tom.library.sl.Mu    → *sl.Mu       built by sl.NewMu
+ *   tom.library.sl.MuVar → *sl.MuVar    built by sl.NewMuVar (.Name field)
+ *   tom.library.sl.All   → strategy from sl.NewAll
+ *   ...
+ *
+ * The `is_fsym` hooks call the per-type helpers in
+ * stable/library/sl/typecheck.go (`sl.IsMu`, `sl.IsMuVar`, …),
+ * because `is_fsym(t) { … }` compiles to a single Go expression
+ * and we can't fit a multi-statement type assertion there.
+ *
+ * Variadic combinators (Sequence/Choice/…) use list-shape hooks:
+ * `make_empty()` returns `nil` (the strategy-graph terminator),
+ * `make_insert(h, t)` chains via `sl.NewSequence` etc. which
+ * already collapse a nil tail into the bare head.
+ *
+ * Mu / MuVar / Identity / Fail / All / One / OneId — primitives
+ * the composed walks (BottomUp/RepeatId/…) expand into.
+ */
+%include { int.tom }
+%include { string.tom }
+
+%op Strategy mu(s1:Strategy, s2:Strategy) {
+  make(name,v) { sl.NewMu(($name).(*sl.MuVar), $v) }
+}
+
+%op Strategy Mu(s1:Strategy, s2:Strategy) {
+  is_fsym(t) { sl.IsMu($t) }
+  make(name,v) { sl.NewMu(($name).(*sl.MuVar), $v) }
+}
+
+%op Strategy MuVar(var:String) {
+  is_fsym(t) { sl.IsMuVar($t) }
+  make(name) { sl.NewMuVar($name) }
+  get_slot(var, t) { ($t).(*sl.MuVar).Name }
+}
+
+%op Strategy Identity() {
+  is_fsym(t) { sl.IsIdentity($t) }
+  make() { sl.NewIdentity() }
+}
+
+%op Strategy Fail() {
+  is_fsym(t) { sl.IsFail($t) }
+  make() { sl.NewFail() }
+}
+
+%op Strategy All(s1:Strategy) {
+  is_fsym(t) { sl.IsAll($t) }
+  make(v) { sl.NewAll($v) }
+}
+
+%op Strategy One(s1:Strategy) {
+  is_fsym(t) { sl.IsOne($t) }
+  make(v) { sl.NewOne($v) }
+}
+
+%op Strategy OneId(s1:Strategy) {
+  is_fsym(t) { sl.IsOneId($t) }
+  make(v) { sl.NewOneId($v) }
+}
+
+%oplist Strategy Sequence(Strategy*) {
+  is_fsym(t) { sl.IsSequence($t) }
+  make_empty() { nil }
+  make_insert(head,tail) { sl.NewSequence($head, $tail) }
+  is_empty(s) { $s == nil }
+}
+
+%oplist Strategy SequenceId(Strategy*) {
+  is_fsym(t) { sl.IsSequenceId($t) }
+  make_empty() { nil }
+  make_insert(head,tail) { sl.NewSequenceId($head, $tail) }
+  is_empty(s) { $s == nil }
+}
+
+%oplist Strategy Choice(Strategy*) {
+  is_fsym(t) { sl.IsChoice($t) }
+  make_empty() { nil }
+  make_insert(head,tail) { sl.NewChoice($head, $tail) }
+  is_empty(s) { $s == nil }
+}
+
+%oplist Strategy ChoiceId(Strategy*) {
+  is_fsym(t) { sl.IsChoiceId($t) }
+  make_empty() { nil }
+  make_insert(head,tail) { sl.NewChoiceId($head, $tail) }
+  is_empty(s) { $s == nil }
+}

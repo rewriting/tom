@@ -84,6 +84,7 @@ public class BackendPlugin extends TomGenericPlugin {
         PluginOption("cCode", "c", "Generate C code", BooleanValue(False()), ""),
         PluginOption("camlCode", "", "Generate Caml code", BooleanValue(False()), ""),
         PluginOption("pCode", "", "Generate Python code", BooleanValue(False()), ""),
+        PluginOption("goCode", "go", "Generate Go code", BooleanValue(False()), ""),
         PluginOption("inline", "", "Inline mapping", BooleanValue(False()), ""),
         PluginOption("inlineplus", "", "Inline mapping", BooleanValue(False()), "")
         );
@@ -93,6 +94,7 @@ public class BackendPlugin extends TomGenericPlugin {
   public static final String PCODE = "pCode"; 
   public static final String JCODE = "jCode"; 
   public static final String ACODE = "aCode"; 
+  public static final String GOCODE = "goCode"; 
 
   /** the generated file name */
   private String generatedFileName = null;
@@ -122,6 +124,8 @@ public class BackendPlugin extends TomGenericPlugin {
             generator = new CGenerator(output, getOptionManager(), getSymbolTable());
           } else if(getOptionBooleanValue(BackendPlugin.CAMLCODE)) {
             generator = new CamlGenerator(output, getOptionManager(), getSymbolTable());
+          } else if(getOptionBooleanValue(BackendPlugin.GOCODE)) {
+            generator = new GoGenerator(output, getOptionManager(), getSymbolTable());
           } else if(getOptionBooleanValue(BackendPlugin.PCODE)) {
             generator = new PythonGenerator(output, getOptionManager(), getSymbolTable());
           } else if(getOptionBooleanValue("aCode")) {
@@ -183,26 +187,37 @@ public class BackendPlugin extends TomGenericPlugin {
       setOptionValue(BackendPlugin.CCODE, Boolean.FALSE);
       setOptionValue(BackendPlugin.PCODE, Boolean.FALSE);
       setOptionValue(BackendPlugin.ACODE, Boolean.FALSE);        
+      setOptionValue(BackendPlugin.GOCODE, Boolean.FALSE);
     } else if(optionName.equals(BackendPlugin.CCODE) && ((Boolean)optionValue).booleanValue() ) {
       setOptionValue(BackendPlugin.JCODE, Boolean.FALSE);
       setOptionValue(BackendPlugin.CAMLCODE, Boolean.FALSE);
       setOptionValue(BackendPlugin.PCODE, Boolean.FALSE);
       setOptionValue(BackendPlugin.ACODE, Boolean.FALSE);        
+      setOptionValue(BackendPlugin.GOCODE, Boolean.FALSE);
     } else if(optionName.equals(BackendPlugin.JCODE) && ((Boolean)optionValue).booleanValue() ) {
       setOptionValue(BackendPlugin.CCODE, Boolean.FALSE);
       setOptionValue(BackendPlugin.CAMLCODE, Boolean.FALSE);
       setOptionValue(BackendPlugin.PCODE, Boolean.FALSE);
       setOptionValue(BackendPlugin.ACODE, Boolean.FALSE);        
+      setOptionValue(BackendPlugin.GOCODE, Boolean.FALSE);
     } else if(optionName.equals(BackendPlugin.PCODE) && ((Boolean)optionValue).booleanValue() ) {
       setOptionValue(BackendPlugin.CCODE, Boolean.FALSE);
       setOptionValue(BackendPlugin.CAMLCODE, Boolean.FALSE);
       setOptionValue(BackendPlugin.JCODE, Boolean.FALSE);
       setOptionValue(BackendPlugin.ACODE, Boolean.FALSE);        
+      setOptionValue(BackendPlugin.GOCODE, Boolean.FALSE);
     } else if(optionName.equals(BackendPlugin.ACODE) && ((Boolean)optionValue).booleanValue() ) { 
       setOptionValue(BackendPlugin.CCODE, Boolean.FALSE);
       setOptionValue(BackendPlugin.CAMLCODE, Boolean.FALSE);
       setOptionValue(BackendPlugin.JCODE, Boolean.FALSE);
       setOptionValue(BackendPlugin.PCODE, Boolean.FALSE);
+      setOptionValue(BackendPlugin.GOCODE, Boolean.FALSE);
+    } else if(optionName.equals(BackendPlugin.GOCODE) && ((Boolean)optionValue).booleanValue() ) {
+      setOptionValue(BackendPlugin.CCODE, Boolean.FALSE);
+      setOptionValue(BackendPlugin.CAMLCODE, Boolean.FALSE);
+      setOptionValue(BackendPlugin.JCODE, Boolean.FALSE);
+      setOptionValue(BackendPlugin.PCODE, Boolean.FALSE);
+      setOptionValue(BackendPlugin.ACODE, Boolean.FALSE);
     }
   }
 

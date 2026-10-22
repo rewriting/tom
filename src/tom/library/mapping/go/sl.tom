@@ -1,0 +1,12 @@
+/*
+ * Tom Go mapping — strategy-language library top-level.
+ *
+ * Mirrors mapping/java/sl.tom: bundles Strategy + primitive
+ * combinators (sl/basic.tom) + composed walks (sl/composed.tom).
+ * Includes string.tom because MuVar takes a String-typed name.
+ */
+%include { Strategy.tom }
+%include { string.tom }
+
+%include { sl/basic.tom }
+%include { sl/composed.tom }

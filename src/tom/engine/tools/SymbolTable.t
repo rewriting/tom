@@ -74,6 +74,7 @@ public class SymbolTable {
   private boolean camlCode = false;
   private boolean pCode = false;
   private boolean aCode = false;
+  private boolean goCode = false;
 
   public void init(OptionManager optionManager) {
     mapSymbolName = new TreeMap<String,TomSymbol>();
@@ -81,7 +82,9 @@ public class SymbolTable {
     usedKeyEntry = new HashSet<KeyEntry>();
     mapInliner = new HashMap<String,String>();
 
-    if(((Boolean)optionManager.getOptionValue("cCode")).booleanValue()) {
+    if(((Boolean)optionManager.getOptionValue("goCode")).booleanValue()) {
+      goCode = true;
+    } else if(((Boolean)optionManager.getOptionValue("cCode")).booleanValue()) {
       cCode = true;
     } else if(((Boolean)optionManager.getOptionValue("jCode")).booleanValue()) {
       jCode = true;
@@ -238,6 +241,7 @@ public class SymbolTable {
   }
 
   public TomType getIntType() {
+    if(goCode) { return ASTFactory.makeType(`concTypeOption(),TYPE_INT,"int64"); }
     String type = "int";
     if(aCode) {
       type = "Integer";
@@ -246,6 +250,7 @@ public class SymbolTable {
   }
 
   public TomType getIntArrayType() {
+    if(goCode) { return ASTFactory.makeType(`concTypeOption(),TYPE_INT_ARRAY,"[]int64"); }
     String type = "int[]";
     if(aCode) {
       type = "array (Positive range <>) of Integer";
@@ -254,6 +259,7 @@ public class SymbolTable {
   }
 
   public TomType getLongType() {
+    if(goCode) { return ASTFactory.makeType(`concTypeOption(),TYPE_LONG,"int64"); }
     String type = "long";
     if(aCode) {
       type = "Long_Integer";
@@ -262,6 +268,7 @@ public class SymbolTable {
   }
 
   public TomType getFloatType() {
+    if(goCode) { return ASTFactory.makeType(`concTypeOption(),TYPE_FLOAT,"float32"); }
     String type = "float";
     if(aCode) {
       type = "Float";
@@ -270,6 +277,7 @@ public class SymbolTable {
   }
 
   public TomType getCharType() {
+    if(goCode) { return ASTFactory.makeType(`concTypeOption(),TYPE_CHAR,"rune"); }
     String type = "char";
     if(pCode) {
       type = "str";
@@ -280,6 +288,7 @@ public class SymbolTable {
   }
 
   public TomType getDoubleType() {
+    if(goCode) { return ASTFactory.makeType(`concTypeOption(),TYPE_DOUBLE,"float64"); }
     String type = "double";
     if(pCode) {
       type = "float";
@@ -290,6 +299,7 @@ public class SymbolTable {
   }
 
   public TomType getBooleanType() {
+    if(goCode) { return ASTFactory.makeType(`concTypeOption(),TYPE_BOOLEAN,"bool"); }
     String type = "boolean";
     if(cCode) {
       type = "int";
@@ -304,6 +314,7 @@ public class SymbolTable {
   }
 
   public TomType getStringType() {
+    if(goCode) { return ASTFactory.makeType(`concTypeOption(),TYPE_STRING,"string"); }
     String type = "String";
     if(cCode) {
       type = "char*";
@@ -314,6 +325,7 @@ public class SymbolTable {
   }
 
   public TomType getUniversalType() {
+    if(goCode) { return ASTFactory.makeType(`concTypeOption(),TYPE_UNIVERSAL,"any"); }
     String type = "Object";
     if(cCode) {
       type = "void*";
@@ -328,6 +340,7 @@ public class SymbolTable {
   }
 
   public TomType getVoidType() {
+    if(goCode) { return ASTFactory.makeType(`concTypeOption(),TYPE_VOID,""); }
     String type = "void";
     if(camlCode) {
       type = "unit";

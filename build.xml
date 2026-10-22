@@ -653,6 +653,7 @@
         <include name="c/**/*.tom"/>
         <include name="caml/**/*.tom"/>
         <include name="java/**/*.tom"/>
+        <include name="go/**/*.tom"/>
       </fileset>
     </copy>
     <copy todir="${stable.dist.share}">
@@ -921,6 +922,7 @@
         <include name="caml/**/*.tom"/>
         <include name="ada/**/*.tom"/>
         <include name="java/**/*.tom"/>
+        <include name="go/**/*.tom"/>
       </fileset>
       <fileset dir="${src.gen}/tom/library/">
         <include name="adt/bytecode/**/*.tom"/>
