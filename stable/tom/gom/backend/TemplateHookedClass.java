@@ -1,30 +1,28 @@
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+/*
+ * Gom
+ *
+ * Copyright (c) 2006-2017, Universite de Lorraine, Inria
+ * Nancy, France.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+ *
+ * Antoine Reilles  e-mail: Antoine.Reilles@loria.fr
+ *
+ **/
 
 package tom.gom.backend;
-
-
 
 import java.io.*;
 import java.util.*;
@@ -36,8 +34,6 @@ import tom.gom.adt.objects.*;
 import tom.gom.adt.objects.types.*;
 import tom.platform.OptionManager;
 import tom.gom.tools.GomEnvironment;
-
-
 
 public abstract class TemplateHookedClass extends TemplateClass {
   protected HookList hooks;
@@ -63,14 +59,18 @@ public abstract class TemplateHookedClass extends TemplateClass {
      private static   tom.gom.adt.objects.types.HookList  tom_append_list_ConcHook( tom.gom.adt.objects.types.HookList l1,  tom.gom.adt.objects.types.HookList  l2) {     if( l1.isEmptyConcHook() ) {       return l2;     } else if( l2.isEmptyConcHook() ) {       return l1;     } else if(  l1.getTailConcHook() .isEmptyConcHook() ) {       return  tom.gom.adt.objects.types.hooklist.ConsConcHook.make( l1.getHeadConcHook() ,l2) ;     } else {       return  tom.gom.adt.objects.types.hooklist.ConsConcHook.make( l1.getHeadConcHook() ,tom_append_list_ConcHook( l1.getTailConcHook() ,l2)) ;     }   }   private static   tom.gom.adt.objects.types.HookList  tom_get_slice_ConcHook( tom.gom.adt.objects.types.HookList  begin,  tom.gom.adt.objects.types.HookList  end, tom.gom.adt.objects.types.HookList  tail) {     if( (begin==end) ) {       return tail;     } else if( (end==tail)  && ( end.isEmptyConcHook()  ||  (end== tom.gom.adt.objects.types.hooklist.EmptyConcHook.make() ) )) {       /* code to avoid a call to make, and thus to avoid looping during list-matching */       return begin;     }     return  tom.gom.adt.objects.types.hooklist.ConsConcHook.make( begin.getHeadConcHook() ,( tom.gom.adt.objects.types.HookList )tom_get_slice_ConcHook( begin.getTailConcHook() ,end,tail)) ;   }   
 
 
+
+
   protected String generateBlock() {
     StringBuilder res = new StringBuilder();
     HookList h = tom_append_list_ConcHook(hooks, tom.gom.adt.objects.types.hooklist.EmptyConcHook.make() );
     { /* unamed block */{ /* unamed block */if ( (h instanceof tom.gom.adt.objects.types.HookList) ) {if ( (((( tom.gom.adt.objects.types.HookList )h) instanceof tom.gom.adt.objects.types.hooklist.ConsConcHook) || ((( tom.gom.adt.objects.types.HookList )h) instanceof tom.gom.adt.objects.types.hooklist.EmptyConcHook)) ) { tom.gom.adt.objects.types.HookList  tomMatch627_end_4=(( tom.gom.adt.objects.types.HookList )h);do {{ /* unamed block */if (!( tomMatch627_end_4.isEmptyConcHook() )) { tom.gom.adt.objects.types.Hook  tomMatch627_8= tomMatch627_end_4.getHeadConcHook() ;if ( ((( tom.gom.adt.objects.types.Hook )tomMatch627_8) instanceof tom.gom.adt.objects.types.hook.BlockHook) ) {
 
+
         res.append(CodeGen.generateCode( tomMatch627_8.getCode() ));
         res.append("\n");
       }}if ( tomMatch627_end_4.isEmptyConcHook() ) {tomMatch627_end_4=(( tom.gom.adt.objects.types.HookList )h);} else {tomMatch627_end_4= tomMatch627_end_4.getTailConcHook() ;}}} while(!( (tomMatch627_end_4==(( tom.gom.adt.objects.types.HookList )h)) ));}}}}
+
 
     return res.toString();
   }
@@ -80,9 +80,11 @@ public abstract class TemplateHookedClass extends TemplateClass {
     HookList h = tom_append_list_ConcHook(hooks, tom.gom.adt.objects.types.hooklist.EmptyConcHook.make() );
     { /* unamed block */{ /* unamed block */if ( (h instanceof tom.gom.adt.objects.types.HookList) ) {if ( (((( tom.gom.adt.objects.types.HookList )h) instanceof tom.gom.adt.objects.types.hooklist.ConsConcHook) || ((( tom.gom.adt.objects.types.HookList )h) instanceof tom.gom.adt.objects.types.hooklist.EmptyConcHook)) ) { tom.gom.adt.objects.types.HookList  tomMatch628_end_4=(( tom.gom.adt.objects.types.HookList )h);do {{ /* unamed block */if (!( tomMatch628_end_4.isEmptyConcHook() )) { tom.gom.adt.objects.types.Hook  tomMatch628_8= tomMatch628_end_4.getHeadConcHook() ;if ( ((( tom.gom.adt.objects.types.Hook )tomMatch628_8) instanceof tom.gom.adt.objects.types.hook.ImportHook) ) {
 
+
         res.append(CodeGen.generateCode( tomMatch628_8.getCode() ));
         res.append("\n");
       }}if ( tomMatch628_end_4.isEmptyConcHook() ) {tomMatch628_end_4=(( tom.gom.adt.objects.types.HookList )h);} else {tomMatch628_end_4= tomMatch628_end_4.getTailConcHook() ;}}} while(!( (tomMatch628_end_4==(( tom.gom.adt.objects.types.HookList )h)) ));}}}}
+
 
     return res.toString();
   }
@@ -92,19 +94,24 @@ public abstract class TemplateHookedClass extends TemplateClass {
     HookList h = tom_append_list_ConcHook(hooks, tom.gom.adt.objects.types.hooklist.EmptyConcHook.make() );
     { /* unamed block */{ /* unamed block */if ( (h instanceof tom.gom.adt.objects.types.HookList) ) {if ( (((( tom.gom.adt.objects.types.HookList )h) instanceof tom.gom.adt.objects.types.hooklist.ConsConcHook) || ((( tom.gom.adt.objects.types.HookList )h) instanceof tom.gom.adt.objects.types.hooklist.EmptyConcHook)) ) { tom.gom.adt.objects.types.HookList  tomMatch629_end_4=(( tom.gom.adt.objects.types.HookList )h);do {{ /* unamed block */if (!( tomMatch629_end_4.isEmptyConcHook() )) { tom.gom.adt.objects.types.Hook  tomMatch629_8= tomMatch629_end_4.getHeadConcHook() ;if ( ((( tom.gom.adt.objects.types.Hook )tomMatch629_8) instanceof tom.gom.adt.objects.types.hook.InterfaceHook) ) {
 
+
         res.append(",");
         res.append(CodeGen.generateCode( tomMatch629_8.getCode() ));
         res.append("\n");
       }}if ( tomMatch629_end_4.isEmptyConcHook() ) {tomMatch629_end_4=(( tom.gom.adt.objects.types.HookList )h);} else {tomMatch629_end_4= tomMatch629_end_4.getTailConcHook() ;}}} while(!( (tomMatch629_end_4==(( tom.gom.adt.objects.types.HookList )h)) ));}}}}
 
+
     return res.toString();
   }
 
-  
+  /*
+   * The function for generating the file is extended, to be able to call Tom if
+   * necessary (i.e. if there are user defined hooks)
+   */
   public int generateFile() {
     if (hooks.containsTomCode()) {
-      
-      
+      //System.out.println("Gom: prepare args for Tom call");
+      /* We need to call Tom to generate the file */
       File configFile = new File(tomHomePath,"Tom.config");
       if(!configFile.exists()) {
         GomMessage.finer(getLogger(),null,0,
@@ -162,6 +169,9 @@ public abstract class TemplateHookedClass extends TemplateClass {
       if(optionManager.getOptionValue("verbose")==Boolean.TRUE) {
         tomParams.add("--verbose");
       }
+      if(optionManager.getOptionValue("pretty")==Boolean.TRUE) {
+        tomParams.add("--pretty");
+      }
       tomParams.add("--output");
       tomParams.add(file_path);
     
@@ -175,7 +185,7 @@ public abstract class TemplateHookedClass extends TemplateClass {
       }
       tomParams.add(tmpFile.getPath());
       
-      
+      //System.out.println("Gom: args for Tom call ready");
 
       try {
         StringWriter gen = new StringWriter();
@@ -183,7 +193,7 @@ public abstract class TemplateHookedClass extends TemplateClass {
 
         Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(tmpFile)));
         String s = new String(gen.toString().getBytes("UTF-8"));
-        
+        //System.out.println("gom.TemplateHookedClass generateFile: " + s);
         writer.write(s); 
         writer.flush();
         writer.close();
@@ -191,7 +201,7 @@ public abstract class TemplateHookedClass extends TemplateClass {
         int res = tom.engine.Tom.exec(tomParams.toArray(new String[0]));
         tmpFile.deleteOnExit();
 
-        
+        //int res = tom.engine.Tom.exec(tomParams.toArray(new String[0]),informationTracker);
         if (res != 0 ) {
           GomMessage.error(getLogger(),null,0,
               tom.gom.GomMessage.tomFailure, file_path);
@@ -208,11 +218,9 @@ public abstract class TemplateHookedClass extends TemplateClass {
     return 0;
   }
 
-  
+  /** the class logger instance*/
   private Logger getLogger() {
     return Logger.getLogger(getClass().getName());
   }
-
-
 
 }

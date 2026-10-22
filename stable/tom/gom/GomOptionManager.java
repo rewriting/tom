@@ -1,30 +1,28 @@
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+/*
+ * Gom
+ *
+ * Copyright (c) 2000-2017, Universite de Lorraine, Inria
+ * Nancy, France.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+ *
+ * Antoine Reilles       e-mail: Antoine.Reilles@loria.fr
+ *
+ **/
 
 package tom.gom;
-
-
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -35,35 +33,36 @@ import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-
-
 import tom.platform.ConfigurationManager;
 import tom.platform.OptionManager;
 import tom.platform.OptionOwner;
 import tom.platform.adt.platformoption.types.*;
 
-
-
 public class GomOptionManager implements OptionManager, OptionOwner {
 
      private static   tom.platform.adt.platformoption.types.PlatformOptionList  tom_append_list_concPlatformOption( tom.platform.adt.platformoption.types.PlatformOptionList l1,  tom.platform.adt.platformoption.types.PlatformOptionList  l2) {     if( l1.isEmptyconcPlatformOption() ) {       return l2;     } else if( l2.isEmptyconcPlatformOption() ) {       return l1;     } else if(  l1.getTailconcPlatformOption() .isEmptyconcPlatformOption() ) {       return  tom.platform.adt.platformoption.types.platformoptionlist.ConsconcPlatformOption.make( l1.getHeadconcPlatformOption() ,l2) ;     } else {       return  tom.platform.adt.platformoption.types.platformoptionlist.ConsconcPlatformOption.make( l1.getHeadconcPlatformOption() ,tom_append_list_concPlatformOption( l1.getTailconcPlatformOption() ,l2)) ;     }   }   private static   tom.platform.adt.platformoption.types.PlatformOptionList  tom_get_slice_concPlatformOption( tom.platform.adt.platformoption.types.PlatformOptionList  begin,  tom.platform.adt.platformoption.types.PlatformOptionList  end, tom.platform.adt.platformoption.types.PlatformOptionList  tail) {     if( (begin==end) ) {       return tail;     } else if( (end==tail)  && ( end.isEmptyconcPlatformOption()  ||  (end== tom.platform.adt.platformoption.types.platformoptionlist.EmptyconcPlatformOption.make() ) )) {       /* code to avoid a call to make, and thus to avoid looping during list-matching */       return begin;     }     return  tom.platform.adt.platformoption.types.platformoptionlist.ConsconcPlatformOption.make( begin.getHeadconcPlatformOption() ,( tom.platform.adt.platformoption.types.PlatformOptionList )tom_get_slice_concPlatformOption( begin.getTailconcPlatformOption() ,end,tail)) ;   }   
 
-  
+
+
+  /** The global options */
   private PlatformOptionList globalOptions;
 
-  
+  /**  map the name of an option to the plugin which defines this option */
   private Map<String,OptionOwner> mapNameToOptionOwner;
 
-  
+  /** map the name of an option to the option itself */
   private Map<String,PlatformOption> mapNameToOption;
 
-  
+  /** map a shortname of an option to its full name */
   private Map<String,String> mapShortNameToName;
 
-  
+  /** the list of input files extract from the commandLine */
   private List<String> inputFileList;
 
-  
+  /**
+   * Basic Constructor
+   * @return a configurationManager that needs to be initialized
+   */
   public GomOptionManager() {
     mapNameToOptionOwner = new HashMap<String,OptionOwner>();
     mapNameToOption = new HashMap<String,PlatformOption>();
@@ -72,7 +71,15 @@ public class GomOptionManager implements OptionManager, OptionOwner {
     globalOptions =  tom.platform.adt.platformoption.types.platformoptionlist.EmptyconcPlatformOption.make() ;
   }
 
-  
+  /**
+   * initialize the GomOptionManager
+   *
+   * @return  an error code :
+   * <ul>
+   * <li>0 if no error was encountered</li>
+   * <li>1 if something went wrong</li>
+   * </ul>
+   */
   public int initialize(
       ConfigurationManager confManager,
       String[] commandLine) {
@@ -87,17 +94,24 @@ public class GomOptionManager implements OptionManager, OptionOwner {
     return checkAllOptionsDepedencies(optionOwnerList);
   }
 
-  
+  /**
+   * Inherited from OptionManager interface
+   */
   public void setGlobalOptionList(PlatformOptionList globalOptions) {
     this.globalOptions = globalOptions;
   }
 
-  
+  /** Accessor Method */
   public List<String> getInputToCompileList() {
     return inputFileList;
   }
 
-  
+  /**
+   * An option has changed
+   *
+   * @param optionName the option's name
+   * @param optionValue the option's desired value
+   */
   public void optionChanged(String optionName, Object optionValue) {
     String canonicalOptionName = getCanonicalName(optionName);
     if(canonicalOptionName.equals("verbose")) {
@@ -119,7 +133,9 @@ public class GomOptionManager implements OptionManager, OptionOwner {
     }
   }
 
-  
+  /**
+   * Sets an option to the desired value.
+   */
   public void setOptionValue(String optionName, Object optionValue) {
     PlatformBoolean bool = null;
     if(optionValue instanceof Boolean) {
@@ -134,16 +150,23 @@ public class GomOptionManager implements OptionManager, OptionOwner {
     } else {
       throw new RuntimeException("unknown optionValue type: " + optionValue);
     }
-    
+    // alert the owner of the change
     OptionOwner owner = getOptionOwnerFromName(optionName);
     owner.optionChanged(optionName, optionValue);
   }
 
-  
+  /**
+   * Returns the value of an option. Returns an Object which is a Boolean,
+   * a String or an Integer depending on what the option type is.
+   *
+   * @param optionName the name of the option whose value is seeked
+   * @return an Object containing the option's value
+   */
   public Object getOptionValue(String name) {
     PlatformOption option = getOptionFromName(name);
     if(option != null) {
       { /* unamed block */{ /* unamed block */if ( (option instanceof tom.platform.adt.platformoption.types.PlatformOption) ) {if ( ((( tom.platform.adt.platformoption.types.PlatformOption )option) instanceof tom.platform.adt.platformoption.types.platformoption.PluginOption) ) { tom.platform.adt.platformoption.types.PlatformValue  tomMatch550_1= (( tom.platform.adt.platformoption.types.PlatformOption )option).getValue() ;if ( ((( tom.platform.adt.platformoption.types.PlatformValue )tomMatch550_1) instanceof tom.platform.adt.platformoption.types.platformvalue.BooleanValue) ) {if ( ((( tom.platform.adt.platformoption.types.PlatformBoolean ) tomMatch550_1.getBooleanValue() ) instanceof tom.platform.adt.platformoption.types.platformboolean.True) ) {
+
  return Boolean.valueOf(true); }}}}}{ /* unamed block */if ( (option instanceof tom.platform.adt.platformoption.types.PlatformOption) ) {if ( ((( tom.platform.adt.platformoption.types.PlatformOption )option) instanceof tom.platform.adt.platformoption.types.platformoption.PluginOption) ) { tom.platform.adt.platformoption.types.PlatformValue  tomMatch550_10= (( tom.platform.adt.platformoption.types.PlatformOption )option).getValue() ;if ( ((( tom.platform.adt.platformoption.types.PlatformValue )tomMatch550_10) instanceof tom.platform.adt.platformoption.types.platformvalue.BooleanValue) ) {if ( ((( tom.platform.adt.platformoption.types.PlatformBoolean ) tomMatch550_10.getBooleanValue() ) instanceof tom.platform.adt.platformoption.types.platformboolean.False) ) {
  return Boolean.valueOf(false); }}}}}{ /* unamed block */if ( (option instanceof tom.platform.adt.platformoption.types.PlatformOption) ) {if ( ((( tom.platform.adt.platformoption.types.PlatformOption )option) instanceof tom.platform.adt.platformoption.types.platformoption.PluginOption) ) { tom.platform.adt.platformoption.types.PlatformValue  tomMatch550_19= (( tom.platform.adt.platformoption.types.PlatformOption )option).getValue() ;if ( ((( tom.platform.adt.platformoption.types.PlatformValue )tomMatch550_19) instanceof tom.platform.adt.platformoption.types.platformvalue.IntegerValue) ) {
  return Integer.valueOf( tomMatch550_19.getIntegerValue() ); }}}}{ /* unamed block */if ( (option instanceof tom.platform.adt.platformoption.types.PlatformOption) ) {if ( ((( tom.platform.adt.platformoption.types.PlatformOption )option) instanceof tom.platform.adt.platformoption.types.platformoption.PluginOption) ) { tom.platform.adt.platformoption.types.PlatformValue  tomMatch550_26= (( tom.platform.adt.platformoption.types.PlatformOption )option).getValue() ;if ( ((( tom.platform.adt.platformoption.types.PlatformValue )tomMatch550_26) instanceof tom.platform.adt.platformoption.types.platformvalue.StringValue) ) {
@@ -157,21 +180,29 @@ public class GomOptionManager implements OptionManager, OptionOwner {
     return null;
   }
 
-  
+  /**
+   * From OptionOwner Interface
+   * @return the global options
+   */
   public PlatformOptionList getDeclaredOptionList() {
     return globalOptions;
   }
 
-  
+  /**
+   * From OptionOwner Interface
+   * @return the prerequisites
+   */
   public PlatformOptionList getRequiredOptionList() {
     PlatformOptionList prerequisites =  tom.platform.adt.platformoption.types.platformoptionlist.EmptyconcPlatformOption.make() ;
-    
+    // for now, there is no incompatibilities or requirements on options
     return prerequisites;
   }
 
   public void setOptionManager(OptionManager om) {}
 
-  
+  /**
+   * collects the options/services provided by each plugin
+   */
   private void collectOptions(List<OptionOwner> optionOwnerList, List plugins) {
     for (OptionOwner owner : optionOwnerList) {
       PlatformOptionList list = owner.getDeclaredOptionList();
@@ -180,11 +211,13 @@ public class GomOptionManager implements OptionManager, OptionOwner {
         PlatformOption option = list.getHeadconcPlatformOption();
         { /* unamed block */{ /* unamed block */if ( (option instanceof tom.platform.adt.platformoption.types.PlatformOption) ) {if ( ((( tom.platform.adt.platformoption.types.PlatformOption )option) instanceof tom.platform.adt.platformoption.types.platformoption.PluginOption) ) { String  tom___name= (( tom.platform.adt.platformoption.types.PlatformOption )option).getName() ; String  tom___altName= (( tom.platform.adt.platformoption.types.PlatformOption )option).getAltName() ;
 
+
             setOptionOwnerFromName(tom___name, owner);
             setOptionFromName(tom___name, option);
-            if(tom___altName.length() > 0) { /* unamed block */
+            if(tom___altName.length() > 0) {
               mapShortNameToName.put(tom___altName,tom___name);
-            }}}}}
+            }
+          }}}}
 
 
         list = list.getTailconcPlatformOption();
@@ -192,7 +225,9 @@ public class GomOptionManager implements OptionManager, OptionOwner {
     }
   }
 
-  
+  /**
+   * Checks if every plugin's needs are fulfilled
+   */
   private int checkAllOptionsDepedencies(List optionOwnerList) {
     Iterator owners = optionOwnerList.iterator();
     while(owners.hasNext()) {
@@ -255,7 +290,9 @@ public class GomOptionManager implements OptionManager, OptionOwner {
     }
   }
 
-  
+  /**
+   * Self-explanatory. Displays an help message indicating how to use the compiler.
+   */
   private void displayHelp() {
     String beginning = "usage: gom [options] file [... file_n]"
       + "\noptions:\n";
@@ -266,64 +303,82 @@ public class GomOptionManager implements OptionManager, OptionOwner {
       PlatformOption h = entry.getValue();
       { /* unamed block */{ /* unamed block */if ( (h instanceof tom.platform.adt.platformoption.types.PlatformOption) ) {if ( ((( tom.platform.adt.platformoption.types.PlatformOption )h) instanceof tom.platform.adt.platformoption.types.platformoption.PluginOption) ) { String  tom___altName= (( tom.platform.adt.platformoption.types.PlatformOption )h).getAltName() ; String  tom___attrName= (( tom.platform.adt.platformoption.types.PlatformOption )h).getAttrName() ;
 
+
           buffer.append("\t--" +  (( tom.platform.adt.platformoption.types.PlatformOption )h).getName() );
-          if(tom___attrName.length() > 0) { /* unamed block */
+          if(tom___attrName.length() > 0) {
             buffer.append(" <" + tom___attrName + ">");
           }
-          if(tom___altName.length() > 0) { /* unamed block */
+          if(tom___altName.length() > 0) {
             buffer.append(" | -" + tom___altName);
           }
           buffer.append(":\t" +  (( tom.platform.adt.platformoption.types.PlatformOption )h).getDescription() );
           buffer.append("\n");
         }}}}
 
+
     }
 
     System.out.println(buffer.toString());
   }
 
-  
+  /**
+   * Self-explanatory. Displays the current version of the Gom compiler.
+   */
   public void displayVersion() {
     System.out.println("Gom " + tom.engine.Tom.VERSION + "\n\n"
                        + "Copyright (c) 2000-2017, Universite de Lorraine, Inria, Nancy, France.\n");
   }
 
-  
+  /**
+   * Checks if all the options a plugin needs are here.
+   *
+   * @param list a list of options that must be found with the right value
+   * @return true if every option was found with the right value
+   */
   private boolean checkOptionDependency(PlatformOptionList requiredOptions) {
     { /* unamed block */{ /* unamed block */if ( (requiredOptions instanceof tom.platform.adt.platformoption.types.PlatformOptionList) ) {if ( (((( tom.platform.adt.platformoption.types.PlatformOptionList )requiredOptions) instanceof tom.platform.adt.platformoption.types.platformoptionlist.ConsconcPlatformOption) || ((( tom.platform.adt.platformoption.types.PlatformOptionList )requiredOptions) instanceof tom.platform.adt.platformoption.types.platformoptionlist.EmptyconcPlatformOption)) ) {if ( (( tom.platform.adt.platformoption.types.PlatformOptionList )requiredOptions).isEmptyconcPlatformOption() ) {
+
 
         return true;
       }}}}{ /* unamed block */if ( (requiredOptions instanceof tom.platform.adt.platformoption.types.PlatformOptionList) ) {if ( (((( tom.platform.adt.platformoption.types.PlatformOptionList )requiredOptions) instanceof tom.platform.adt.platformoption.types.platformoptionlist.ConsconcPlatformOption) || ((( tom.platform.adt.platformoption.types.PlatformOptionList )requiredOptions) instanceof tom.platform.adt.platformoption.types.platformoptionlist.EmptyconcPlatformOption)) ) {if (!( (( tom.platform.adt.platformoption.types.PlatformOptionList )requiredOptions).isEmptyconcPlatformOption() )) { tom.platform.adt.platformoption.types.PlatformOption  tomMatch553_8= (( tom.platform.adt.platformoption.types.PlatformOptionList )requiredOptions).getHeadconcPlatformOption() ;if ( ((( tom.platform.adt.platformoption.types.PlatformOption )tomMatch553_8) instanceof tom.platform.adt.platformoption.types.platformoption.PluginOption) ) { String  tom___name= tomMatch553_8.getName() ; tom.platform.adt.platformoption.types.PlatformValue  tom___value= tomMatch553_8.getValue() ;
 
 
+
         PlatformOption option = getOptionFromName(tom___name);
-        if(option !=null) { /* unamed block */
+        if(option !=null) {
           PlatformValue localValue = option.getValue();
-          if(tom___value != localValue) { /* unamed block */
+          if(tom___value != localValue) {
             GomMessage.error(getLogger(),null,0,
                 GomMessage.incorrectOptionValue,
-                new Object[]{ /* unamed block */tom___name,tom___value,getOptionValue(tom___name)});
+                new Object[]{tom___name,tom___value,getOptionValue(tom___name)});
             return false;
-          } else { /* unamed block */
+          } else {
             return checkOptionDependency( (( tom.platform.adt.platformoption.types.PlatformOptionList )requiredOptions).getTailconcPlatformOption() );
-          }}
- else { /* unamed block */
+          }
+        } else {
           GomMessage.error(getLogger(),null,0,
               GomMessage.incorrectOptionValue,
-              new Object[]{ /* unamed block */tom___name,tom___value,getOptionValue(tom___name)});
+              new Object[]{tom___name,tom___value,getOptionValue(tom___name)});
           return false;
-        }}}}}}}
+        }
+      }}}}}}
 
 
     return false;
   }
 
-  
+  /** logger accessor in case of logging needs*/
   private Logger getLogger() {
     return Logger.getLogger(getClass().getName());
   }
 
-    
+    /**
+   * This method takes the arguments given by the user and deduces the options
+   * to set, then sets them.
+   *
+   * @param argumentList
+   * @return an array containing the name of the input files
+   */
   private List<String> processArguments(String[] argumentList) {
     List<String> inputFiles = new ArrayList<String>();
     StringBuilder imports = new StringBuilder();
@@ -337,18 +392,18 @@ public class GomOptionManager implements OptionManager, OptionOwner {
         GomMessage.finer(getLogger(), null, 0, GomMessage.processingArgument,
             i, argument);
         if(!argument.startsWith("-") || (argument.equals("-")) ) {
-          
+          // input file name, should never start with '-' (except for System.in)
           inputFiles.add(argument);
-        } else { 
-          argument = argument.substring(1); 
-          if(argument.startsWith("-")) { 
-            argument = argument.substring(1); 
+        } else { // s does start with '-', thus is -or at least should be- an option
+          argument = argument.substring(1); // crops the '-'
+          if(argument.startsWith("-")) { // if there's another one
+            argument = argument.substring(1); // crops the second '-'
           }
 
           if(argument.equals("X")) {
-            
-            
-            
+            // if we're here, the PluginPlatform has already handled the "-X" option
+            // and all errors that might occur
+            // just skip it,along with its argument
             i++;
             continue;
           }
@@ -378,7 +433,7 @@ public class GomOptionManager implements OptionManager, OptionOwner {
           OptionOwner plugin = getOptionOwnerFromName(argument);
           PlatformOption option = getOptionFromName(argument);
 
-          if (option == null || plugin == null) {
+          if (option == null || plugin == null) {// option not found
             GomMessage.error(getLogger(),null,0,
                 GomMessage.invalidOption,
                 argument);
@@ -387,8 +442,10 @@ public class GomOptionManager implements OptionManager, OptionOwner {
           } else {
             { /* unamed block */{ /* unamed block */if ( (option instanceof tom.platform.adt.platformoption.types.PlatformOption) ) {if ( ((( tom.platform.adt.platformoption.types.PlatformOption )option) instanceof tom.platform.adt.platformoption.types.platformoption.PluginOption) ) {if ( ((( tom.platform.adt.platformoption.types.PlatformValue ) (( tom.platform.adt.platformoption.types.PlatformOption )option).getValue() ) instanceof tom.platform.adt.platformoption.types.platformvalue.BooleanValue) ) {
 
+
                 setOptionValue(argument, Boolean.TRUE);
               }}}}{ /* unamed block */if ( (option instanceof tom.platform.adt.platformoption.types.PlatformOption) ) {if ( ((( tom.platform.adt.platformoption.types.PlatformOption )option) instanceof tom.platform.adt.platformoption.types.platformoption.PluginOption) ) {if ( ((( tom.platform.adt.platformoption.types.PlatformValue ) (( tom.platform.adt.platformoption.types.PlatformOption )option).getValue() ) instanceof tom.platform.adt.platformoption.types.platformvalue.IntegerValue) ) {
+
 
 
                 String t = argumentList[++i];
@@ -396,11 +453,13 @@ public class GomOptionManager implements OptionManager, OptionOwner {
               }}}}{ /* unamed block */if ( (option instanceof tom.platform.adt.platformoption.types.PlatformOption) ) {if ( ((( tom.platform.adt.platformoption.types.PlatformOption )option) instanceof tom.platform.adt.platformoption.types.platformoption.PluginOption) ) {if ( ((( tom.platform.adt.platformoption.types.PlatformValue ) (( tom.platform.adt.platformoption.types.PlatformOption )option).getValue() ) instanceof tom.platform.adt.platformoption.types.platformvalue.StringValue) ) {
 
 
-                if ( !( argument.equals("import") || argument.equals("I") ) ) { /* unamed block */
-                  
+
+                if ( !( argument.equals("import") || argument.equals("I") ) ) {
+                  // "import" is handled in the end
                   String t = argumentList[++i];
                   setOptionValue(argument, t);
-                }}}}}}
+                }
+              }}}}}
 
 
           }

@@ -1,0 +1,9 @@
+/*
+ * Tom Go mapping — long primitive.
+ * Mirrors mapping/java/long.tom; a Java long is a Go int64.
+ */
+%typeterm long {
+  implement { int64 }
+  is_sort(t) { true }
+  equals(t1,t2) { $t1 == $t2 }
+}

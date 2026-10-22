@@ -1,44 +1,36 @@
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+/*
+ *   
+ * TOM - To One Matching Compiler
+ * 
+ * Copyright (c) 2000-2017, Universite de Lorraine, Inria
+ * Nancy, France.
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+ * 
+ * Pierre-Etienne Moreau  e-mail: Pierre-Etienne.Moreau@loria.fr
+ *
+ **/
 
 package tom.engine.backend;
-
-
 
 import java.io.IOException;
 import java.util.LinkedList;
 
-
-
 import tom.engine.exception.TomRuntimeException;
 
-
-
 import tom.engine.TomBase;
-
-
 
 import tom.engine.adt.tomsignature.*;
 import tom.engine.adt.tomconstraint.types.*;
@@ -53,14 +45,10 @@ import tom.engine.adt.code.types.*;
 import tom.engine.adt.tomslot.types.*;
 import tom.engine.adt.tomtype.types.*;
 
-
-
 import tom.engine.tools.OutputCode;
 import tom.engine.tools.SymbolTable;
 import tom.engine.tools.ASTFactory;
 import tom.platform.OptionManager;
-
-
 
 public class CamlGenerator extends GenericGenerator {
   protected LinkedList<BQTerm> env = new LinkedList<BQTerm>();
@@ -69,11 +57,14 @@ public class CamlGenerator extends GenericGenerator {
     super(output, optionManager, symbolTable);
   }
   
+  // ------------------------------------------------------------
   
+
+  // ------------------------------------------------------------
   
-  
-  
-  
+  /*
+   * the implementation of methods are here for caml 
+   */
  
   protected void buildExpEqualTerm(int deep, TomType type, BQTerm exp1, TomTerm exp2, String moduleName) throws IOException {
     if(getSymbolTable(moduleName).isBooleanType(TomBase.getTomType(type))) {
@@ -133,7 +124,7 @@ public class CamlGenerator extends GenericGenerator {
   }
 
   
-
+/* ----- old ---- */
   
   protected void buildInstructionSequence(int deep, InstructionList instructionList, String moduleName) throws IOException {
     Instruction head = instructionList.getHeadconcInstruction();
@@ -148,7 +139,10 @@ public class CamlGenerator extends GenericGenerator {
         output.writeln(";");
       }
       generateInstruction(deep,instructionList.getHeadconcInstruction(), moduleName);
-      
+      /*
+       * buildInstructionSequence is used for CompiledPattern.
+       * Since a pattern should have type unit, we have to put a ";"
+       */
 
       instructionList = instructionList.getTailconcInstruction();
     }
@@ -214,7 +208,10 @@ public class CamlGenerator extends GenericGenerator {
     env.removeFirst();
   }
 
-  
+  /*
+   * redefinition of AbstractGenerator.getVariableName
+   * add a ! for variables under a LetRef
+   */
   protected String getVariableName(BQTerm var) {
     String varname = super.getVariableName(var);
     if(env.contains(var)) {
@@ -285,7 +282,7 @@ public class CamlGenerator extends GenericGenerator {
     }
     s.append("let " + declName + "_" + suffix + "(");
     for(int i=0 ; i<args.length ; ) {
-        
+        // the first argument is the type, second the name 
       s.append(args[i+1]);
       i+=2;
       if(i<args.length) {
@@ -296,14 +293,18 @@ public class CamlGenerator extends GenericGenerator {
 
     { /* unamed block */{ /* unamed block */if ( (tlCode instanceof tom.engine.adt.code.types.TargetLanguage) ) {if ( ((( tom.engine.adt.code.types.TargetLanguage )tlCode) instanceof tom.engine.adt.code.types.targetlanguage.TL) ) { tom.engine.adt.tomsignature.types.TextPosition  tomMatch93_2= (( tom.engine.adt.code.types.TargetLanguage )tlCode).getStart() ; tom.engine.adt.tomsignature.types.TextPosition  tomMatch93_3= (( tom.engine.adt.code.types.TargetLanguage )tlCode).getEnd() ;if ( ((( tom.engine.adt.tomsignature.types.TextPosition )tomMatch93_2) instanceof tom.engine.adt.tomsignature.types.textposition.TextPosition) ) { int  tom___startLine= tomMatch93_2.getLine() ;if ( ((( tom.engine.adt.tomsignature.types.TextPosition )tomMatch93_3) instanceof tom.engine.adt.tomsignature.types.textposition.TextPosition) ) {
 
+
+
         output.write(0,s, tom___startLine,  tomMatch93_3.getLine()  - tom___startLine);
         return;
       }}}}}{ /* unamed block */if ( (tlCode instanceof tom.engine.adt.code.types.TargetLanguage) ) {if ( ((( tom.engine.adt.code.types.TargetLanguage )tlCode) instanceof tom.engine.adt.code.types.targetlanguage.ITL) ) {
 
 
+
         output.write(s);
         return;
       }}}}
+
 
   }
 
@@ -320,14 +321,17 @@ public class CamlGenerator extends GenericGenerator {
         { /* unamed block */{ /* unamed block */if ( (arg instanceof tom.engine.adt.code.types.BQTerm) ) {if ( ((( tom.engine.adt.code.types.BQTerm )arg) instanceof tom.engine.adt.code.types.bqterm.BQVariable) ) { tom.engine.adt.tomname.types.TomName  tomMatch94_1= (( tom.engine.adt.code.types.BQTerm )arg).getAstName() ;if ( ((( tom.engine.adt.tomname.types.TomName )tomMatch94_1) instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
 
 
+
             s.append( tomMatch94_1.getString() );
             break matchBlock;
           }}}}{ /* unamed block */if ( (arg instanceof tom.engine.adt.code.types.BQTerm) ) {
 
 
+
             System.out.println("genDeclMake: strange term: " + arg);
             throw new TomRuntimeException("genDeclMake: strange term: " + arg);
           }}}
+
 
       }
       argList = argList.getTailconcBQTerm();
@@ -344,7 +348,7 @@ public class CamlGenerator extends GenericGenerator {
   protected void genDeclList(String name, String moduleName)  throws IOException {
     TomSymbol tomSymbol = getSymbolTable(moduleName).getSymbolFromName(name);
     TomType listType = TomBase.getSymbolCodomain(tomSymbol);
-    
+    //TomType eltType = getSymbolDomain(tomSymbol).getHeadconcTomType();
 
     String s = "";
     if(nodeclMode) {
@@ -374,7 +378,7 @@ public class CamlGenerator extends GenericGenerator {
     s+= "   else " +  make_insert + "(" + get_head + "(beginning)," + 
       get_slice + "(" + get_tail + "(beginning),ending,tail))\n";
     s+= "\n";
-    
+    //If necessary we remove \n code depending on pretty option
     s = ASTFactory.makeSingleLineCode(s, prettyMode);
     output.write(s);
   }
@@ -426,7 +430,7 @@ public class CamlGenerator extends GenericGenerator {
     }
     s.append("let " + modifier + " " + declName + "_" + suffix + "(");
     for(int i=0 ; i<args.length ; ) {
-      
+      // forget the type, caml will infer it
       s.append(args[i+1]);
       i+=2;
       if(i<args.length) {
@@ -448,13 +452,16 @@ public class CamlGenerator extends GenericGenerator {
     { /* unamed block */{ /* unamed block */if ( (subject instanceof tom.engine.adt.tominstruction.types.Instruction) ) {if ( ((( tom.engine.adt.tominstruction.types.Instruction )subject) instanceof tom.engine.adt.tominstruction.types.instruction.Nop) ) {buildNop()
 
 
+
 ;
         return;
       }}}{ /* unamed block */if ( (subject instanceof tom.engine.adt.tominstruction.types.Instruction) ) {
 
 
+
         super.generateInstruction(deep, subject, moduleName);
       }}}
+
 
   }
 
@@ -466,27 +473,27 @@ public class CamlGenerator extends GenericGenerator {
       BQTerm index, 
       Expression exp, String moduleName) throws IOException {
     output.indent(deep);
-    
-    
+    //  arrays are used in the AC algorithm;
+    // and the AC maching is only supported for AC operators comming from GOM (which isn't available anyway for caml)   
     throw new RuntimeException("Arrays NOT SUPPORTED in Caml !"); 
     
   }
 
-  
-  
+  //FIXME
+  //TODO: to implement
   protected String genResolveIsSortCode(String varName, String resolveStringName) throws IOException {
     throw new TomRuntimeException("%transformation (ResolveIsSort) not yet supported in Caml");
-    
+    //return "";
   }
 
   protected String genResolveIsFsymCode(String tomName, String varname) throws IOException {
     throw new TomRuntimeException("%transformation (ResolveIsFsym) not yet supported in Caml");
-    
+    //return "";
   }
 
   protected String genResolveGetSlotCode(String tomName, String varname, String slotName) throws IOException {
     throw new TomRuntimeException("%transformation (ResolveGetSlot) not yet supported in Caml");
-    
+    //return "";
   }
   
   protected void buildResolveClass(String wName, String tName, String extendsName, String moduleName) throws IOException {
@@ -517,12 +524,10 @@ public class CamlGenerator extends GenericGenerator {
     throw new TomRuntimeException("%transformation (TracelinkPopulateResolve instruction) not yet supported in Caml");
   }
 
-  
+  //tmp
   protected void buildResolve(int deep, BQTerm bqterm, String moduleName) throws IOException {
     throw new TomRuntimeException("%transformation (Resolve2 instruction) not yet supported in Caml");
   }
 
-
-
-
+///
 }

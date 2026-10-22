@@ -1,30 +1,28 @@
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+/*
+ * Gom
+ *
+ * Copyright (c) 2006-2017, Universite de Lorraine, Inria
+ * Nancy, France.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+ *
+ * Antoine Reilles  e-mail: Antoine.Reilles@loria.fr
+ *
+ **/
 
 package tom.gom.backend.strategy;
-
-
 
 import java.io.*;
 import java.util.logging.*;
@@ -33,19 +31,23 @@ import tom.gom.tools.GomEnvironment;
 import tom.gom.tools.error.GomRuntimeException;
 import tom.gom.adt.objects.types.*;
 
-
-
 public class SOpTemplate extends TemplateClass {
   ClassName operator;
   SlotFieldList slotList;
 
   
 
-  
+
+
+  /*
+   * The argument is an operator class, and this template generates the
+   * assotiated _Op strategy
+   */
   public SOpTemplate(GomClass gomClass, GomEnvironment gomEnvironment) {
     super(gomClass,gomEnvironment);
     ClassName clsName = this.className;
     { /* unamed block */{ /* unamed block */if ( (clsName instanceof tom.gom.adt.objects.types.ClassName) ) {if ( ((( tom.gom.adt.objects.types.ClassName )clsName) instanceof tom.gom.adt.objects.types.classname.ClassName) ) {
+
 
         String newpkg =  (( tom.gom.adt.objects.types.ClassName )clsName).getPkg() .replaceFirst(".types.",".strategy.");
         String newname = "_"+ (( tom.gom.adt.objects.types.ClassName )clsName).getName() ;
@@ -54,10 +56,12 @@ public class SOpTemplate extends TemplateClass {
 
 
 
+
         this.operator =  (( tom.gom.adt.objects.types.GomClass )gomClass).getClassName() ;
         this.slotList =  (( tom.gom.adt.objects.types.GomClass )gomClass).getSlotFields() ;
         return;
       }}}}
+
 
     throw new GomRuntimeException(
         "Wrong argument for SOpTemplate: " + gomClass);
@@ -208,8 +212,6 @@ writer.write("\npackage "+getPackage()+";\n\npublic class "+className()+" implem
 );
 }
 
-
-
 private String genConstrArgs(int count, String arg, boolean withDollar) {
   StringBuilder args = new StringBuilder();
   for(int i = 0; i < count; ++i) {
@@ -223,8 +225,6 @@ private String genConstrArgs(int count, String arg, boolean withDollar) {
   return args.toString();
 }
 
-
-
 private String genIdArgs(int count) {
   StringBuilder args = new StringBuilder();
   for(int i = 0; i < count; ++i) {
@@ -234,11 +234,9 @@ private String genIdArgs(int count) {
   return args.toString();
 }
 
-
-
 public String generateMapping() {
 
-  return "\n  %op Strategy "+className()+"("+genStratArgs(slotList.length(),"arg")+") {\n    is_fsym(t) { (($t!=null) && ($t instanceof "+fullClassName()+"))}\n    "+genGetSlot(slotList.length(),"arg")+"\n    make("+genConstrArgs(slotList.length(),"arg",false)+") { new "+fullClassName()+"("+genConstrArgs(slotList.length(),"arg",true)+") }\n  }\n  "
+  return "\n  %op Strategy "+className()+"("+genStratArgs(slotList.length(),"arg")+") {\n    is_fsym(t) { ($t instanceof "+fullClassName()+")}\n    "+genGetSlot(slotList.length(),"arg")+"\n    make("+genConstrArgs(slotList.length(),"arg",false)+") { new "+fullClassName()+"("+genConstrArgs(slotList.length(),"arg",true)+") }\n  }\n  "
 
 
 
@@ -246,8 +244,6 @@ public String generateMapping() {
 
 ;
 }
-
-
 
 private String genGetSlot(int count, String arg) {
   StringBuilder out = new StringBuilder();
@@ -257,8 +253,6 @@ private String genGetSlot(int count, String arg) {
   }
   return out.toString();
 }
-
-
 
 private String genStratArgs(int count, String arg) {
   StringBuilder args = new StringBuilder();
@@ -271,9 +265,7 @@ private String genStratArgs(int count, String arg) {
   return args.toString();
 }
 
-
-
-
+/** the class logger instance*/
 private Logger getLogger() {
   return Logger.getLogger(getClass().getName());
 }

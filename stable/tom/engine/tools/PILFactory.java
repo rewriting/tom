@@ -1,42 +1,36 @@
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+/*
+ * 
+ * TOM - To One Matching Compiler
+ * 
+ * Copyright (c) 2000-2017, Inria
+ * Nancy, France.
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+ * 
+ * Pierre-Etienne Moreau  e-mail: Pierre-Etienne.Moreau@loria.fr
+ * **/
 
 package tom.engine.tools;
-
-
 
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 
-
-
 import tom.engine.TomBase;
 import tom.engine.adt.tomsignature.*;
 import tom.engine.tools.TomGenericPlugin;
-
-
 
 import tom.engine.adt.tomsignature.*;
 import tom.engine.adt.tomconstraint.types.*;
@@ -51,11 +45,7 @@ import tom.engine.adt.tomslot.types.*;
 import tom.engine.adt.tomtype.types.*;
 import tom.engine.adt.code.types.*;
 
-
-
 import tom.library.sl.*;
-
-
 
 public class PILFactory {
 
@@ -63,7 +53,13 @@ public class PILFactory {
 
 
 
-  
+
+
+  /**
+   * level specifies the level of details of the output
+   * 0 is identity
+   * 1 removes options
+   */
   private int level = 0;
 
   public PILFactory() {
@@ -84,7 +80,9 @@ public class PILFactory {
     return subject;
   }
 
-  public static class replaceRemove extends tom.library.sl.AbstractStrategyBasic {public replaceRemove() {super(( new tom.library.sl.Identity() ));}public tom.library.sl.Visitable[] getChildren() {tom.library.sl.Visitable[] stratChildren = new tom.library.sl.Visitable[getChildCount()];stratChildren[0] = super.getChildAt(0);return stratChildren;}public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {super.setChildAt(0, children[0]);return this;}public int getChildCount() {return 1;}public tom.library.sl.Visitable getChildAt(int index) {switch (index) {case 0: return super.getChildAt(0);default: throw new IndexOutOfBoundsException();}}public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable child) {switch (index) {case 0: return super.setChildAt(0, child);default: throw new IndexOutOfBoundsException();}}@SuppressWarnings("unchecked")public <T> T visitLight(T v, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if ( (v instanceof tom.engine.adt.tomexpression.types.Expression) ) {return ((T)visit_Expression((( tom.engine.adt.tomexpression.types.Expression )v),introspector));}if ( (v instanceof tom.engine.adt.tomoption.types.Option) ) {return ((T)visit_Option((( tom.engine.adt.tomoption.types.Option )v),introspector));}if ( (v instanceof tom.engine.adt.code.types.TargetLanguage) ) {return ((T)visit_TargetLanguage((( tom.engine.adt.code.types.TargetLanguage )v),introspector));}if ( (v instanceof tom.engine.adt.tomoption.types.OptionList) ) {return ((T)visit_OptionList((( tom.engine.adt.tomoption.types.OptionList )v),introspector));}if (!(( null  == environment))) {return ((T)any.visit(environment,introspector));} else {return any.visitLight(v,introspector);}}@SuppressWarnings("unchecked")public  tom.engine.adt.tomoption.types.OptionList  _visit_OptionList( tom.engine.adt.tomoption.types.OptionList  arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if (!(( null  == environment))) {return (( tom.engine.adt.tomoption.types.OptionList )any.visit(environment,introspector));} else {return any.visitLight(arg,introspector);}}@SuppressWarnings("unchecked")public  tom.engine.adt.code.types.TargetLanguage  _visit_TargetLanguage( tom.engine.adt.code.types.TargetLanguage  arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if (!(( null  == environment))) {return (( tom.engine.adt.code.types.TargetLanguage )any.visit(environment,introspector));} else {return any.visitLight(arg,introspector);}}@SuppressWarnings("unchecked")public  tom.engine.adt.tomoption.types.Option  _visit_Option( tom.engine.adt.tomoption.types.Option  arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if (!(( null  == environment))) {return (( tom.engine.adt.tomoption.types.Option )any.visit(environment,introspector));} else {return any.visitLight(arg,introspector);}}@SuppressWarnings("unchecked")public  tom.engine.adt.tomexpression.types.Expression  _visit_Expression( tom.engine.adt.tomexpression.types.Expression  arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if (!(( null  == environment))) {return (( tom.engine.adt.tomexpression.types.Expression )any.visit(environment,introspector));} else {return any.visitLight(arg,introspector);}}@SuppressWarnings("unchecked")public  tom.engine.adt.tomexpression.types.Expression  visit_Expression( tom.engine.adt.tomexpression.types.Expression  tom__arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {{ /* unamed block */{ /* unamed block */if ( (tom__arg instanceof tom.engine.adt.tomexpression.types.Expression) ) {if ( ((( tom.engine.adt.tomexpression.types.Expression )tom__arg) instanceof tom.engine.adt.tomexpression.types.expression.Cast) ) {
+  public static class replaceRemove extends tom.library.sl.AbstractStrategyBasic {public replaceRemove() {super(( new tom.library.sl.Identity() ));}public tom.library.sl.Visitable[] getChildren() {tom.library.sl.Visitable[] stratChildren = new tom.library.sl.Visitable[getChildCount()];stratChildren[0] = super.getChildAt(0);return stratChildren;}public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {super.setChildAt(0, children[0]);return this;}public int getChildCount() {return 1;}public tom.library.sl.Visitable getChildAt(int index) {switch (index) {case 0: return super.getChildAt(0);default: throw new IndexOutOfBoundsException();}}public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable child) {switch (index) {case 0: return super.setChildAt(0, child);default: throw new IndexOutOfBoundsException();}}@SuppressWarnings("unchecked")public <T> T visitLight(T v, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if ( (v instanceof tom.engine.adt.tomoption.types.OptionList) ) {return ((T)visit_OptionList((( tom.engine.adt.tomoption.types.OptionList )v),introspector));}if ( (v instanceof tom.engine.adt.code.types.TargetLanguage) ) {return ((T)visit_TargetLanguage((( tom.engine.adt.code.types.TargetLanguage )v),introspector));}if ( (v instanceof tom.engine.adt.tomexpression.types.Expression) ) {return ((T)visit_Expression((( tom.engine.adt.tomexpression.types.Expression )v),introspector));}if ( (v instanceof tom.engine.adt.tomoption.types.Option) ) {return ((T)visit_Option((( tom.engine.adt.tomoption.types.Option )v),introspector));}if (!(( null  == environment))) {return ((T)any.visit(environment,introspector));} else {return any.visitLight(v,introspector);}}@SuppressWarnings("unchecked")public  tom.engine.adt.tomoption.types.Option  _visit_Option( tom.engine.adt.tomoption.types.Option  arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if (!(( null  == environment))) {return (( tom.engine.adt.tomoption.types.Option )any.visit(environment,introspector));} else {return any.visitLight(arg,introspector);}}@SuppressWarnings("unchecked")public  tom.engine.adt.tomexpression.types.Expression  _visit_Expression( tom.engine.adt.tomexpression.types.Expression  arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if (!(( null  == environment))) {return (( tom.engine.adt.tomexpression.types.Expression )any.visit(environment,introspector));} else {return any.visitLight(arg,introspector);}}@SuppressWarnings("unchecked")public  tom.engine.adt.code.types.TargetLanguage  _visit_TargetLanguage( tom.engine.adt.code.types.TargetLanguage  arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if (!(( null  == environment))) {return (( tom.engine.adt.code.types.TargetLanguage )any.visit(environment,introspector));} else {return any.visitLight(arg,introspector);}}@SuppressWarnings("unchecked")public  tom.engine.adt.tomoption.types.OptionList  _visit_OptionList( tom.engine.adt.tomoption.types.OptionList  arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if (!(( null  == environment))) {return (( tom.engine.adt.tomoption.types.OptionList )any.visit(environment,introspector));} else {return any.visitLight(arg,introspector);}}@SuppressWarnings("unchecked")public  tom.engine.adt.tomexpression.types.Expression  visit_Expression( tom.engine.adt.tomexpression.types.Expression  tom__arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {{ /* unamed block */{ /* unamed block */if ( (tom__arg instanceof tom.engine.adt.tomexpression.types.Expression) ) {if ( ((( tom.engine.adt.tomexpression.types.Expression )tom__arg) instanceof tom.engine.adt.tomexpression.types.expression.Cast) ) {
+
+
 
 
 
@@ -117,25 +115,31 @@ public class PILFactory {
 
   public String prettyPrint(Instruction subject) {
     { /* unamed block */{ /* unamed block */if ( (subject instanceof tom.engine.adt.tominstruction.types.Instruction) ) {if ( ((( tom.engine.adt.tominstruction.types.Instruction )subject) instanceof tom.engine.adt.tominstruction.types.instruction.CompiledMatch) ) {
+
  
         return prettyPrint( (( tom.engine.adt.tominstruction.types.Instruction )subject).getAutomataInst() ); 
       }}}{ /* unamed block */if ( (subject instanceof tom.engine.adt.tominstruction.types.Instruction) ) {if ( ((( tom.engine.adt.tominstruction.types.Instruction )subject) instanceof tom.engine.adt.tominstruction.types.instruction.Let) ) {
+
 
 
         return "let " + prettyPrint( (( tom.engine.adt.tominstruction.types.Instruction )subject).getVariable() ) + " = " + prettyPrint( (( tom.engine.adt.tominstruction.types.Instruction )subject).getSource() ) + " in\n\t" + prettyPrint( (( tom.engine.adt.tominstruction.types.Instruction )subject).getAstInstruction() ).replace("\n","\n\t");
       }}}{ /* unamed block */if ( (subject instanceof tom.engine.adt.tominstruction.types.Instruction) ) {if ( ((( tom.engine.adt.tominstruction.types.Instruction )subject) instanceof tom.engine.adt.tominstruction.types.instruction.LetRef) ) {
 
 
+
         return "letRef " + prettyPrint( (( tom.engine.adt.tominstruction.types.Instruction )subject).getVariable() ) + " = " + prettyPrint( (( tom.engine.adt.tominstruction.types.Instruction )subject).getSource() ) + " in\n\t" + prettyPrint( (( tom.engine.adt.tominstruction.types.Instruction )subject).getAstInstruction() ).replace("\n","\n\t");
       }}}{ /* unamed block */if ( (subject instanceof tom.engine.adt.tominstruction.types.Instruction) ) {if ( ((( tom.engine.adt.tominstruction.types.Instruction )subject) instanceof tom.engine.adt.tominstruction.types.instruction.Assign) ) {
+
 
 
         return prettyPrint( (( tom.engine.adt.tominstruction.types.Instruction )subject).getVariable() ) + " := " + prettyPrint( (( tom.engine.adt.tominstruction.types.Instruction )subject).getSource() ) ;
       }}}{ /* unamed block */if ( (subject instanceof tom.engine.adt.tominstruction.types.Instruction) ) {if ( ((( tom.engine.adt.tominstruction.types.Instruction )subject) instanceof tom.engine.adt.tominstruction.types.instruction.AssignArray) ) {
 
 
+
         return "AssignArray " + prettyPrint( (( tom.engine.adt.tominstruction.types.Instruction )subject).getVariable() ) + "["+prettyPrint( (( tom.engine.adt.tominstruction.types.Instruction )subject).getIndex() )+"] := " + prettyPrint( (( tom.engine.adt.tominstruction.types.Instruction )subject).getSource() ) ;
       }}}{ /* unamed block */if ( (subject instanceof tom.engine.adt.tominstruction.types.Instruction) ) {if ( ((( tom.engine.adt.tominstruction.types.Instruction )subject) instanceof tom.engine.adt.tominstruction.types.instruction.Assign) ) {
+
 
 
         return "Assign " + prettyPrint( (( tom.engine.adt.tominstruction.types.Instruction )subject).getVariable() ) + " = " + prettyPrint( (( tom.engine.adt.tominstruction.types.Instruction )subject).getSource() ) ;
@@ -143,8 +147,10 @@ public class PILFactory {
 
 
 
+
         return "do\n\t " + prettyPrint( (( tom.engine.adt.tominstruction.types.Instruction )subject).getDoInst() ).replace("\n","\n\t") +"while "+ prettyPrint( (( tom.engine.adt.tominstruction.types.Instruction )subject).getCondition() );
       }}}{ /* unamed block */if ( (subject instanceof tom.engine.adt.tominstruction.types.Instruction) ) {if ( ((( tom.engine.adt.tominstruction.types.Instruction )subject) instanceof tom.engine.adt.tominstruction.types.instruction.WhileDo) ) {
+
 
 
         return "while "+ prettyPrint( (( tom.engine.adt.tominstruction.types.Instruction )subject).getCondition() )+" do\n\t " + prettyPrint( (( tom.engine.adt.tominstruction.types.Instruction )subject).getDoInst() ).replace("\n","\n\t");
@@ -152,24 +158,30 @@ public class PILFactory {
 
 
 
+
         return  "if " + prettyPrint( (( tom.engine.adt.tominstruction.types.Instruction )subject).getCondition() ) + " then \n\t" + prettyPrint( (( tom.engine.adt.tominstruction.types.Instruction )subject).getSuccesInst() ).replace("\n","\n\t"); 
       }}}}{ /* unamed block */if ( (subject instanceof tom.engine.adt.tominstruction.types.Instruction) ) {if ( ((( tom.engine.adt.tominstruction.types.Instruction )subject) instanceof tom.engine.adt.tominstruction.types.instruction.If) ) {
+
 
 
         return "if " + prettyPrint( (( tom.engine.adt.tominstruction.types.Instruction )subject).getCondition() ) + " then \n\t" + prettyPrint( (( tom.engine.adt.tominstruction.types.Instruction )subject).getSuccesInst() ).replace("\n","\n\t") + "\n\telse " + prettyPrint( (( tom.engine.adt.tominstruction.types.Instruction )subject).getFailureInst() ).replace("\n","\n\t")+"\n";
       }}}{ /* unamed block */if ( (subject instanceof tom.engine.adt.tominstruction.types.Instruction) ) {if ( ((( tom.engine.adt.tominstruction.types.Instruction )subject) instanceof tom.engine.adt.tominstruction.types.instruction.AbstractBlock) ) { tom.engine.adt.tominstruction.types.InstructionList  tomMatch409_58= (( tom.engine.adt.tominstruction.types.Instruction )subject).getInstList() ;if ( (((( tom.engine.adt.tominstruction.types.InstructionList )tomMatch409_58) instanceof tom.engine.adt.tominstruction.types.instructionlist.ConsconcInstruction) || ((( tom.engine.adt.tominstruction.types.InstructionList )tomMatch409_58) instanceof tom.engine.adt.tominstruction.types.instructionlist.EmptyconcInstruction)) ) { tom.engine.adt.tominstruction.types.InstructionList  tomMatch409_end_64=tomMatch409_58;do {{ /* unamed block */if (!( tomMatch409_end_64.isEmptyconcInstruction() )) {if ( ((( tom.engine.adt.tominstruction.types.Instruction ) tomMatch409_end_64.getHeadconcInstruction() ) instanceof tom.engine.adt.tominstruction.types.instruction.Nop) ) {
 
 
+
         return prettyPrint( tom.engine.adt.tominstruction.types.instruction.AbstractBlock.make(tom_append_list_concInstruction(tom_get_slice_concInstruction(tomMatch409_58,tomMatch409_end_64, tom.engine.adt.tominstruction.types.instructionlist.EmptyconcInstruction.make() ),tom_append_list_concInstruction( tomMatch409_end_64.getTailconcInstruction() , tom.engine.adt.tominstruction.types.instructionlist.EmptyconcInstruction.make() ))) );
       }}if ( tomMatch409_end_64.isEmptyconcInstruction() ) {tomMatch409_end_64=tomMatch409_58;} else {tomMatch409_end_64= tomMatch409_end_64.getTailconcInstruction() ;}}} while(!( (tomMatch409_end_64==tomMatch409_58) ));}}}}{ /* unamed block */if ( (subject instanceof tom.engine.adt.tominstruction.types.Instruction) ) {if ( ((( tom.engine.adt.tominstruction.types.Instruction )subject) instanceof tom.engine.adt.tominstruction.types.instruction.AbstractBlock) ) {
+
 
 
         return prettyPrint( (( tom.engine.adt.tominstruction.types.Instruction )subject).getInstList() );
       }}}{ /* unamed block */if ( (subject instanceof tom.engine.adt.tominstruction.types.Instruction) ) {if ( ((( tom.engine.adt.tominstruction.types.Instruction )subject) instanceof tom.engine.adt.tominstruction.types.instruction.UnamedBlock) ) {
 
 
+
         return prettyPrint( (( tom.engine.adt.tominstruction.types.Instruction )subject).getInstList() );
       }}}{ /* unamed block */if ( (subject instanceof tom.engine.adt.tominstruction.types.Instruction) ) {if ( ((( tom.engine.adt.tominstruction.types.Instruction )subject) instanceof tom.engine.adt.tominstruction.types.instruction.NamedBlock) ) {
+
 
 
         return  (( tom.engine.adt.tominstruction.types.Instruction )subject).getBlockName()  + " : " + prettyPrint( (( tom.engine.adt.tominstruction.types.Instruction )subject).getInstList() );
@@ -177,12 +189,15 @@ public class PILFactory {
 
 
 
+
         return "targetLanguageInstructions";
       }}}{ /* unamed block */if ( (subject instanceof tom.engine.adt.tominstruction.types.Instruction) ) {if ( ((( tom.engine.adt.tominstruction.types.Instruction )subject) instanceof tom.engine.adt.tominstruction.types.instruction.CompiledPattern) ) {
+
 
  
         return prettyPrint( (( tom.engine.adt.tominstruction.types.Instruction )subject).getAutomataInst() ); 
       }}}}
+
 
     return subject.toString();
   }
@@ -190,82 +205,104 @@ public class PILFactory {
   public String prettyPrint(Expression subject) {
     { /* unamed block */{ /* unamed block */if ( (subject instanceof tom.engine.adt.tomexpression.types.Expression) ) {if ( ((( tom.engine.adt.tomexpression.types.Expression )subject) instanceof tom.engine.adt.tomexpression.types.expression.BQTermToExpression) ) {
 
+
         return prettyPrint( (( tom.engine.adt.tomexpression.types.Expression )subject).getAstTerm() );
       }}}{ /* unamed block */if ( (subject instanceof tom.engine.adt.tomexpression.types.Expression) ) {if ( ((( tom.engine.adt.tomexpression.types.Expression )subject) instanceof tom.engine.adt.tomexpression.types.expression.IsSort) ) {
+
 
 
         return "isSort\n\t";
       }}}{ /* unamed block */if ( (subject instanceof tom.engine.adt.tomexpression.types.Expression) ) {if ( ((( tom.engine.adt.tomexpression.types.Expression )subject) instanceof tom.engine.adt.tomexpression.types.expression.IsFsym) ) {
 
 
+
         return "is_fun_sym(" + prettyPrint( (( tom.engine.adt.tomexpression.types.Expression )subject).getAstName() ) + "," + prettyPrint( (( tom.engine.adt.tomexpression.types.Expression )subject).getVariable() ) + ")";
       }}}{ /* unamed block */if ( (subject instanceof tom.engine.adt.tomexpression.types.Expression) ) {if ( ((( tom.engine.adt.tomexpression.types.Expression )subject) instanceof tom.engine.adt.tomexpression.types.expression.Negation) ) {
+
 
 
         return "not " + prettyPrint( (( tom.engine.adt.tomexpression.types.Expression )subject).getArg() );
       }}}{ /* unamed block */if ( (subject instanceof tom.engine.adt.tomexpression.types.Expression) ) {if ( ((( tom.engine.adt.tomexpression.types.Expression )subject) instanceof tom.engine.adt.tomexpression.types.expression.And) ) {
 
 
+
         return prettyPrint( (( tom.engine.adt.tomexpression.types.Expression )subject).getArg1() ) + " && " + prettyPrint( (( tom.engine.adt.tomexpression.types.Expression )subject).getArg2() ) ;
       }}}{ /* unamed block */if ( (subject instanceof tom.engine.adt.tomexpression.types.Expression) ) {if ( ((( tom.engine.adt.tomexpression.types.Expression )subject) instanceof tom.engine.adt.tomexpression.types.expression.Or) ) {
+
 
 
         return prettyPrint( (( tom.engine.adt.tomexpression.types.Expression )subject).getArg1() ) + " || " + prettyPrint( (( tom.engine.adt.tomexpression.types.Expression )subject).getArg2() ) ;
       }}}{ /* unamed block */if ( (subject instanceof tom.engine.adt.tomexpression.types.Expression) ) {if ( ((( tom.engine.adt.tomexpression.types.Expression )subject) instanceof tom.engine.adt.tomexpression.types.expression.IsEmptyList) ) {
 
 
+
         return "is_empty(" + prettyPrint( (( tom.engine.adt.tomexpression.types.Expression )subject).getVariable() ) + ")";
       }}}{ /* unamed block */if ( (subject instanceof tom.engine.adt.tomexpression.types.Expression) ) {if ( ((( tom.engine.adt.tomexpression.types.Expression )subject) instanceof tom.engine.adt.tomexpression.types.expression.EqualTerm) ) {
+
 
 
         return prettyPrint( (( tom.engine.adt.tomexpression.types.Expression )subject).getKid1() ) + "==" + prettyPrint( (( tom.engine.adt.tomexpression.types.Expression )subject).getKid2() ) + ")";
       }}}{ /* unamed block */if ( (subject instanceof tom.engine.adt.tomexpression.types.Expression) ) {if ( ((( tom.engine.adt.tomexpression.types.Expression )subject) instanceof tom.engine.adt.tomexpression.types.expression.GetSliceList) ) {
 
 
+
         return "getSliceList("+prettyPrint( (( tom.engine.adt.tomexpression.types.Expression )subject).getAstName() )+","+prettyPrint( (( tom.engine.adt.tomexpression.types.Expression )subject).getVariableBeginAST() )+","+prettyPrint( (( tom.engine.adt.tomexpression.types.Expression )subject).getVariableEndAST() )+"," + prettyPrint( (( tom.engine.adt.tomexpression.types.Expression )subject).getTail() ) + ")";
       }}}{ /* unamed block */if ( (subject instanceof tom.engine.adt.tomexpression.types.Expression) ) {if ( ((( tom.engine.adt.tomexpression.types.Expression )subject) instanceof tom.engine.adt.tomexpression.types.expression.GetHead) ) {
+
 
 
         return "getHead("+prettyPrint( (( tom.engine.adt.tomexpression.types.Expression )subject).getVariable() )+")";
       }}}{ /* unamed block */if ( (subject instanceof tom.engine.adt.tomexpression.types.Expression) ) {if ( ((( tom.engine.adt.tomexpression.types.Expression )subject) instanceof tom.engine.adt.tomexpression.types.expression.GetTail) ) {
 
 
+
         return "getTail("+prettyPrint( (( tom.engine.adt.tomexpression.types.Expression )subject).getVariable() )+")";
       }}}{ /* unamed block */if ( (subject instanceof tom.engine.adt.tomexpression.types.Expression) ) {if ( ((( tom.engine.adt.tomexpression.types.Expression )subject) instanceof tom.engine.adt.tomexpression.types.expression.GetSlot) ) {
+
 
 
         return "get_slot_"+prettyPrint( (( tom.engine.adt.tomexpression.types.Expression )subject).getAstName() )+"_"+ (( tom.engine.adt.tomexpression.types.Expression )subject).getSlotNameString() +"("+prettyPrint( (( tom.engine.adt.tomexpression.types.Expression )subject).getVariable() )+")";
       }}}{ /* unamed block */if ( (subject instanceof tom.engine.adt.tomexpression.types.Expression) ) {if ( ((( tom.engine.adt.tomexpression.types.Expression )subject) instanceof tom.engine.adt.tomexpression.types.expression.GetElement) ) {
 
 
+
         return prettyPrint( (( tom.engine.adt.tomexpression.types.Expression )subject).getVariable() )+"["+prettyPrint( (( tom.engine.adt.tomexpression.types.Expression )subject).getIndex() )+"]";
       }}}{ /* unamed block */if ( (subject instanceof tom.engine.adt.tomexpression.types.Expression) ) {if ( ((( tom.engine.adt.tomexpression.types.Expression )subject) instanceof tom.engine.adt.tomexpression.types.expression.GetSize) ) {
+
 
 
         return "size("+prettyPrint( (( tom.engine.adt.tomexpression.types.Expression )subject).getVariable() )+")";
       }}}{ /* unamed block */if ( (subject instanceof tom.engine.adt.tomexpression.types.Expression) ) {if ( ((( tom.engine.adt.tomexpression.types.Expression )subject) instanceof tom.engine.adt.tomexpression.types.expression.GreaterOrEqualThan) ) {
 
 
+
         return prettyPrint( (( tom.engine.adt.tomexpression.types.Expression )subject).getArg1() )+" >= "+prettyPrint( (( tom.engine.adt.tomexpression.types.Expression )subject).getArg2() );
       }}}{ /* unamed block */if ( (subject instanceof tom.engine.adt.tomexpression.types.Expression) ) {if ( ((( tom.engine.adt.tomexpression.types.Expression )subject) instanceof tom.engine.adt.tomexpression.types.expression.GreaterThan) ) {
+
 
         return prettyPrint( (( tom.engine.adt.tomexpression.types.Expression )subject).getArg1() )+" > "+prettyPrint( (( tom.engine.adt.tomexpression.types.Expression )subject).getArg2() );
       }}}{ /* unamed block */if ( (subject instanceof tom.engine.adt.tomexpression.types.Expression) ) {if ( ((( tom.engine.adt.tomexpression.types.Expression )subject) instanceof tom.engine.adt.tomexpression.types.expression.LessOrEqualThan) ) {
 
+
         return prettyPrint( (( tom.engine.adt.tomexpression.types.Expression )subject).getArg1() )+" <= "+prettyPrint( (( tom.engine.adt.tomexpression.types.Expression )subject).getArg2() );
       }}}{ /* unamed block */if ( (subject instanceof tom.engine.adt.tomexpression.types.Expression) ) {if ( ((( tom.engine.adt.tomexpression.types.Expression )subject) instanceof tom.engine.adt.tomexpression.types.expression.LessThan) ) {
+
 
         return prettyPrint( (( tom.engine.adt.tomexpression.types.Expression )subject).getArg1() )+" < "+prettyPrint( (( tom.engine.adt.tomexpression.types.Expression )subject).getArg2() );
       }}}{ /* unamed block */if ( (subject instanceof tom.engine.adt.tomexpression.types.Expression) ) {if ( ((( tom.engine.adt.tomexpression.types.Expression )subject) instanceof tom.engine.adt.tomexpression.types.expression.Integer) ) {
 
+
         return ""+ (( tom.engine.adt.tomexpression.types.Expression )subject).getvalue() ;
       }}}{ /* unamed block */if ( (subject instanceof tom.engine.adt.tomexpression.types.Expression) ) {if ( ((( tom.engine.adt.tomexpression.types.Expression )subject) instanceof tom.engine.adt.tomexpression.types.expression.AddOne) ) {
+
 
         return prettyPrint( (( tom.engine.adt.tomexpression.types.Expression )subject).getVariable() )+"+1";
       }}}{ /* unamed block */if ( (subject instanceof tom.engine.adt.tomexpression.types.Expression) ) {if ( ((( tom.engine.adt.tomexpression.types.Expression )subject) instanceof tom.engine.adt.tomexpression.types.expression.SubstractOne) ) {
 
+
         return prettyPrint( (( tom.engine.adt.tomexpression.types.Expression )subject).getVariable() )+"-1";
       }}}}
+
 
     return subject.toString();
   }
@@ -274,28 +311,36 @@ public class PILFactory {
   public String prettyPrint(BQTerm subject) {
     { /* unamed block */{ /* unamed block */if ( (subject instanceof tom.engine.adt.code.types.BQTerm) ) {if ( ((( tom.engine.adt.code.types.BQTerm )subject) instanceof tom.engine.adt.code.types.bqterm.ExpressionToBQTerm) ) {
 
+
         return prettyPrint( (( tom.engine.adt.code.types.BQTerm )subject).getExp() );
       }}}{ /* unamed block */if ( (subject instanceof tom.engine.adt.code.types.BQTerm) ) {if ( ((( tom.engine.adt.code.types.BQTerm )subject) instanceof tom.engine.adt.code.types.bqterm.FunctionCall) ) { tom.engine.adt.code.types.BQTermList  tom___Args= (( tom.engine.adt.code.types.BQTerm )subject).getArgs() ;
+
 
         String s = "";
         int min=0;
         { /* unamed block */{ /* unamed block */if ( (tom___Args instanceof tom.engine.adt.code.types.BQTermList) ) {if ( (((( tom.engine.adt.code.types.BQTermList )tom___Args) instanceof tom.engine.adt.code.types.bqtermlist.ConsconcBQTerm) || ((( tom.engine.adt.code.types.BQTermList )tom___Args) instanceof tom.engine.adt.code.types.bqtermlist.EmptyconcBQTerm)) ) { tom.engine.adt.code.types.BQTermList  tomMatch412_end_4=(( tom.engine.adt.code.types.BQTermList )tom___Args);do {{ /* unamed block */if (!( tomMatch412_end_4.isEmptyconcBQTerm() )) {
 
+
             s += ","+prettyPrint( tomMatch412_end_4.getHeadconcBQTerm() );
             min=1;
           }if ( tomMatch412_end_4.isEmptyconcBQTerm() ) {tomMatch412_end_4=(( tom.engine.adt.code.types.BQTermList )tom___Args);} else {tomMatch412_end_4= tomMatch412_end_4.getTailconcBQTerm() ;}}} while(!( (tomMatch412_end_4==(( tom.engine.adt.code.types.BQTermList )tom___Args)) ));}}}}
 
+
         return prettyPrint( (( tom.engine.adt.code.types.BQTerm )subject).getAstName() )+"("+s.substring(min, s.length())+")";
       }}}{ /* unamed block */if ( (subject instanceof tom.engine.adt.code.types.BQTerm) ) {if ( ((( tom.engine.adt.code.types.BQTerm )subject) instanceof tom.engine.adt.code.types.bqterm.BuildEmptyArray) ) {
+
 
         return "new "+prettyPrint( (( tom.engine.adt.code.types.BQTerm )subject).getAstName() )+"["+prettyPrint( (( tom.engine.adt.code.types.BQTerm )subject).getSize() )+"]";
       }}}{ /* unamed block */if ( (subject instanceof tom.engine.adt.code.types.BQTerm) ) {if ( ((( tom.engine.adt.code.types.BQTerm )subject) instanceof tom.engine.adt.code.types.bqterm.BQVariable) ) {
 
+
         return prettyPrint( (( tom.engine.adt.code.types.BQTerm )subject).getAstName() );
       }}}{ /* unamed block */if ( (subject instanceof tom.engine.adt.code.types.BQTerm) ) {if ( ((( tom.engine.adt.code.types.BQTerm )subject) instanceof tom.engine.adt.code.types.bqterm.BQVariableStar) ) {
 
+
         return prettyPrint( (( tom.engine.adt.code.types.BQTerm )subject).getAstName() );
       }}}}
+
 
     return subject.toString();
   }
@@ -303,14 +348,18 @@ public class PILFactory {
   public String prettyPrint(TomTerm subject) {
     { /* unamed block */{ /* unamed block */if ( (subject instanceof tom.engine.adt.tomterm.types.TomTerm) ) {if ( ((( tom.engine.adt.tomterm.types.TomTerm )subject) instanceof tom.engine.adt.tomterm.types.tomterm.Variable) ) {
 
+
         return prettyPrint( (( tom.engine.adt.tomterm.types.TomTerm )subject).getAstName() );
       }}}{ /* unamed block */if ( (subject instanceof tom.engine.adt.tomterm.types.TomTerm) ) {if ( ((( tom.engine.adt.tomterm.types.TomTerm )subject) instanceof tom.engine.adt.tomterm.types.tomterm.VariableStar) ) {
+
 
         return prettyPrint( (( tom.engine.adt.tomterm.types.TomTerm )subject).getAstName() );
       }}}{ /* unamed block */if ( (subject instanceof tom.engine.adt.tomterm.types.TomTerm) ) {if ( ((( tom.engine.adt.tomterm.types.TomTerm )subject) instanceof tom.engine.adt.tomterm.types.tomterm.RecordAppl) ) {
 
+
         return prettyPrint( (( tom.engine.adt.tomterm.types.TomTerm )subject).getNameList() ); 
       }}}}
+
 
     return subject.toString();
   }
@@ -318,17 +367,21 @@ public class PILFactory {
   public String prettyPrint(TomName subject) {
     { /* unamed block */{ /* unamed block */if ( (subject instanceof tom.engine.adt.tomname.types.TomName) ) {if ( ((( tom.engine.adt.tomname.types.TomName )subject) instanceof tom.engine.adt.tomname.types.tomname.PositionName) ) {
 
+
         return "t"+ TomBase.tomNumberListToString( (( tom.engine.adt.tomname.types.TomName )subject).getNumberList() );
       }}}{ /* unamed block */if ( (subject instanceof tom.engine.adt.tomname.types.TomName) ) {if ( ((( tom.engine.adt.tomname.types.TomName )subject) instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
 
+
         return  (( tom.engine.adt.tomname.types.TomName )subject).getString() ;
       }}}}
+
 
     return subject.toString();
   }
 
   public String prettyPrint(TomType subject) {
     { /* unamed block */{ /* unamed block */if ( (subject instanceof tom.engine.adt.tomtype.types.TomType) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )subject) instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) {
+
  return  (( tom.engine.adt.tomtype.types.TomType )subject).getTomType() ; }}}}
 
     return subject.toString();
@@ -336,6 +389,7 @@ public class PILFactory {
 
   public String prettyPrint(TomNumber subject) {
     { /* unamed block */{ /* unamed block */if ( (subject instanceof tom.engine.adt.tomname.types.TomNumber) ) {if ( ((( tom.engine.adt.tomname.types.TomNumber )subject) instanceof tom.engine.adt.tomname.types.tomnumber.Position) ) {
+
  return "" +  (( tom.engine.adt.tomname.types.TomNumber )subject).getInteger() ; }}}{ /* unamed block */if ( (subject instanceof tom.engine.adt.tomname.types.TomNumber) ) {if ( ((( tom.engine.adt.tomname.types.TomNumber )subject) instanceof tom.engine.adt.tomname.types.tomnumber.NameNumber) ) {
  return prettyPrint( (( tom.engine.adt.tomname.types.TomNumber )subject).getAstName() ); }}}{ /* unamed block */if ( (subject instanceof tom.engine.adt.tomname.types.TomNumber) ) {if ( ((( tom.engine.adt.tomname.types.TomNumber )subject) instanceof tom.engine.adt.tomname.types.tomnumber.ListNumber) ) {
  return "listNumber"+ (( tom.engine.adt.tomname.types.TomNumber )subject).getInteger() ; }}}{ /* unamed block */if ( (subject instanceof tom.engine.adt.tomname.types.TomNumber) ) {if ( ((( tom.engine.adt.tomname.types.TomNumber )subject) instanceof tom.engine.adt.tomname.types.tomnumber.Begin) ) {
@@ -367,21 +421,23 @@ public class PILFactory {
   public static class collectMatch extends tom.library.sl.AbstractStrategyBasic {private  java.util.Collection  c;public collectMatch( java.util.Collection  c) {super(( new tom.library.sl.Identity() ));this.c=c;}public  java.util.Collection  getc() {return c;}public tom.library.sl.Visitable[] getChildren() {tom.library.sl.Visitable[] stratChildren = new tom.library.sl.Visitable[getChildCount()];stratChildren[0] = super.getChildAt(0);return stratChildren;}public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {super.setChildAt(0, children[0]);return this;}public int getChildCount() {return 1;}public tom.library.sl.Visitable getChildAt(int index) {switch (index) {case 0: return super.getChildAt(0);default: throw new IndexOutOfBoundsException();}}public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable child) {switch (index) {case 0: return super.setChildAt(0, child);default: throw new IndexOutOfBoundsException();}}@SuppressWarnings("unchecked")public <T> T visitLight(T v, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if ( (v instanceof tom.engine.adt.tominstruction.types.Instruction) ) {return ((T)visit_Instruction((( tom.engine.adt.tominstruction.types.Instruction )v),introspector));}if (!(( null  == environment))) {return ((T)any.visit(environment,introspector));} else {return any.visitLight(v,introspector);}}@SuppressWarnings("unchecked")public  tom.engine.adt.tominstruction.types.Instruction  _visit_Instruction( tom.engine.adt.tominstruction.types.Instruction  arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if (!(( null  == environment))) {return (( tom.engine.adt.tominstruction.types.Instruction )any.visit(environment,introspector));} else {return any.visitLight(arg,introspector);}}@SuppressWarnings("unchecked")public  tom.engine.adt.tominstruction.types.Instruction  visit_Instruction( tom.engine.adt.tominstruction.types.Instruction  tom__arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {{ /* unamed block */{ /* unamed block */if ( (tom__arg instanceof tom.engine.adt.tominstruction.types.Instruction) ) {if ( ((( tom.engine.adt.tominstruction.types.Instruction )tom__arg) instanceof tom.engine.adt.tominstruction.types.instruction.CompiledMatch) ) {
 
 
+
+
         c.add((( tom.engine.adt.tominstruction.types.Instruction )tom__arg));
       }}}}return _visit_Instruction(tom__arg,introspector);}}
+
 
  
 
   public Collection collectMatch(tom.library.sl.Visitable subject) {
     Collection result = new HashSet();
     try {
-      tom_make_TopDown( new collectMatch(result) ).visitLight(subject);
+      tom_make_TopDown( new collectMatch(result) )
+.visitLight(subject);
     } catch(tom.library.sl.VisitFailure e) {
       System.out.println("strategy failed");
     }
     return result;
   }
-
-
 
 }

@@ -1,37 +1,33 @@
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+/*
+ * Gom
+ *
+ * Copyright (c) 2006-2017, Universite de Lorraine, Inria
+ * Nancy, France.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+ *
+ * Antoine Reilles  e-mail: Antoine.Reilles@loria.fr
+ *
+ **/
 
 package tom.gom.antlradapter;
-
-
 
 import java.io.*;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-
 
 import tom.gom.GomStreamManager;
 import tom.gom.tools.GomEnvironment;
@@ -40,23 +36,19 @@ import tom.gom.adt.gom.types.*;
 import tom.gom.backend.CodeGen;
 import tom.gom.tools.error.GomRuntimeException;
 
-
-
 import tom.gom.adt.code.types.*;
 import tom.gom.adt.objects.*;
 import tom.gom.adt.objects.types.*;
 import tom.library.sl.VisitFailure;
 import tom.library.sl.Strategy;
 
-
-
 public class AdapterGenerator {
 
-  
+  /* Attributes needed to call tom properly */
   private File tomHomePath;
-  
-  
-  
+  // Here, we use a GomEnvironment in spite of the fact that only a GomStreamManager is needed
+  // But as other classes have a GomEnvironment, we keep the same model for the moment
+  // It is better to stay with one single model whatever class is used
   private GomEnvironment gomEnvironment;
   private String grammarPkg = "";
 
@@ -77,11 +69,14 @@ public class AdapterGenerator {
 
 
 
+
+
   public void generate(ModuleList moduleList, HookDeclList hookDecls) {
     final Map<OperatorDecl,Integer> operatormap = new HashMap<OperatorDecl,Integer>();
     IntRef intref = new IntRef(10);
     try {
-      tom_make_TopDown( new CollectOperators(operatormap,intref) ).visitLight(moduleList);
+      tom_make_TopDown( new CollectOperators(operatormap,intref) )
+.visitLight(moduleList);
     } catch (VisitFailure f) {
       throw new GomRuntimeException("CollectOperators should not fail");
     }
@@ -92,7 +87,7 @@ public class AdapterGenerator {
   public int writeTokenFile(Map<OperatorDecl,Integer> operatormap) {
     try {
        File output = tokenFileToGenerate();
-       
+       // make sure the directory exists
        output.getParentFile().mkdirs();
        Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(output)));
        generateTokenFile(operatormap, writer);
@@ -108,7 +103,7 @@ public class AdapterGenerator {
   public int writeAdapterFile(Map<OperatorDecl,Integer> operatormap) {
     try {
        File output = adaptorFileToGenerate();
-       
+       // make sure the directory exists
        output.getParentFile().mkdirs();
        Writer writer =
          new BufferedWriter(
@@ -132,7 +127,8 @@ public class AdapterGenerator {
   public void generateAdapterFile(Map<OperatorDecl,Integer> operatormap, Writer writer)
     throws java.io.IOException {
     writer.write(
-    "\npackage "+adapterPkg()+";\n\nimport org.antlr.runtime.Token;\nimport org.antlr.runtime.tree.Tree;\n"
+    
+"\npackage "+adapterPkg()+";\n\nimport org.antlr.runtime.Token;\nimport org.antlr.runtime.tree.Tree;\n"
 
 
 
@@ -162,9 +158,11 @@ public class AdapterGenerator {
       { /* unamed block */{ /* unamed block */if ( (opDecl instanceof tom.gom.adt.gom.types.OperatorDecl) ) {if ( ((( tom.gom.adt.gom.types.OperatorDecl )opDecl) instanceof tom.gom.adt.gom.types.operatordecl.OperatorDecl) ) { tom.gom.adt.gom.types.TypedProduction  tomMatch601_1= (( tom.gom.adt.gom.types.OperatorDecl )opDecl).getProd() ;if ( ((( tom.gom.adt.gom.types.TypedProduction )tomMatch601_1) instanceof tom.gom.adt.gom.types.typedproduction.Variadic) ) { tom.gom.adt.gom.types.SortDecl  tom___domainSort= tomMatch601_1.getSort() ; tom.gom.adt.gom.types.OperatorDecl  tom___op=(( tom.gom.adt.gom.types.OperatorDecl )opDecl);
 
 
+
           Code cast = genGetTerm(tom___domainSort,"tree.getChild(i)");
           Code code =
              tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make("      case ") , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make(opkey) , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make(":\n") , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make("        {\n") , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make("          res = ") , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Empty.make(tom___op) , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make(".make();\n") , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make("          for(int i = 0; i < tree.getChildCount(); i++) {\n") , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make("            ") , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.FullSortClass.make(tom___domainSort) , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make(" elem = ") ,tom_append_list_CodeList(cast, tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make(";\n") , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make("            ") , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.FullOperatorClass.make(tom___op) , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make(" list = (") , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.FullOperatorClass.make(tom___op) , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make(") res;\n") , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make("            ") , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make("res = list.append(elem);\n") , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make("          }\n") , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make("          break;\n") , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make("        }\n") , tom.gom.adt.code.types.code.EmptyCodeList.make() ) ) ) ) ) ) ) ) ) ) ) )) ) ) ) ) ) ) ) ) ) ) 
+
 
 
 
@@ -194,14 +192,17 @@ public class AdapterGenerator {
         }}}}{ /* unamed block */if ( (opDecl instanceof tom.gom.adt.gom.types.OperatorDecl) ) {if ( ((( tom.gom.adt.gom.types.OperatorDecl )opDecl) instanceof tom.gom.adt.gom.types.operatordecl.OperatorDecl) ) { tom.gom.adt.gom.types.TypedProduction  tomMatch601_8= (( tom.gom.adt.gom.types.OperatorDecl )opDecl).getProd() ; tom.gom.adt.gom.types.TypedProduction  tom___prod=tomMatch601_8;boolean tomMatch601_14= false ;if ( ((( tom.gom.adt.gom.types.TypedProduction )tomMatch601_8) instanceof tom.gom.adt.gom.types.typedproduction.Variadic) ) {if ( (tom___prod==tomMatch601_8) ) {tomMatch601_14= true ;}}if (!(tomMatch601_14)) {
 
 
+
         Code code =
            tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make("      case ") , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make(opkey) , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make(":\n") , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make("        {\n") , tom.gom.adt.code.types.code.EmptyCodeList.make() ) ) ) ) 
 
 
 
 
+
 ;
         { /* unamed block */{ /* unamed block */if ( (tom___prod instanceof tom.gom.adt.gom.types.TypedProduction) ) {if ( ((( tom.gom.adt.gom.types.TypedProduction )tom___prod) instanceof tom.gom.adt.gom.types.typedproduction.Slots) ) { tom.gom.adt.gom.types.SlotList  tom___slotList= (( tom.gom.adt.gom.types.TypedProduction )tom___prod).getSlots() ;
+
 
             int idx = 0;
             SlotList sList = tom___slotList;
@@ -213,7 +214,7 @@ public class AdapterGenerator {
 ;
             code =  tom.gom.adt.code.types.code.ConsCodeList.make(code, tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make(sCode) , tom.gom.adt.code.types.code.EmptyCodeList.make() ) ) ;
 
-            while(sList.isConsConcSlot()) { /* unamed block */
+            while(sList.isConsConcSlot()) {
               Slot slot = sList.getHeadConcSlot();
               sList = sList.getTailConcSlot();
               Code cast = genGetTerm(slot.getSort(),"tree.getChild("+idx+")");
@@ -238,8 +239,10 @@ public class AdapterGenerator {
               }}}}
 
 
+
           CodeGen.generateCode(code,writer);
         }}}}}
+
 
 
     }
@@ -258,8 +261,10 @@ public class AdapterGenerator {
       final OperatorDecl decl = entry.getKey();
       { /* unamed block */{ /* unamed block */if ( (decl instanceof tom.gom.adt.gom.types.OperatorDecl) ) {if ( ((( tom.gom.adt.gom.types.OperatorDecl )decl) instanceof tom.gom.adt.gom.types.operatordecl.OperatorDecl) ) {
 
+
           writer.write( (( tom.gom.adt.gom.types.OperatorDecl )decl).getName()  + "="+entry.getValue().intValue()+"\n");
         }}}}
+
 
     }
   }
@@ -275,9 +280,11 @@ public class AdapterGenerator {
 
 
 
+
         bag.put((( tom.gom.adt.gom.types.OperatorDecl )tom__arg),Integer.valueOf(intref.intValue));
         intref.intValue++;
       }}}}return _visit_OperatorDecl(tom__arg,introspector);}}
+
 
 
 
@@ -285,27 +292,30 @@ public class AdapterGenerator {
     Code code =  tom.gom.adt.code.types.code.EmptyCodeList.make() ;
     { /* unamed block */{ /* unamed block */if ( (sort instanceof tom.gom.adt.gom.types.SortDecl) ) {if ( ((( tom.gom.adt.gom.types.SortDecl )sort) instanceof tom.gom.adt.gom.types.sortdecl.SortDecl) ) {
 
+
         code =  tom.gom.adt.code.types.code.ConsCodeList.make(code, tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make("(") , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.FullSortClass.make(sort) , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make(")"+filename()+"Adaptor.getTerm("+tree+")") , tom.gom.adt.code.types.code.EmptyCodeList.make() ) ) ) ) 
 
 
 ;
       }}}{ /* unamed block */if ( (sort instanceof tom.gom.adt.gom.types.SortDecl) ) {if ( ((( tom.gom.adt.gom.types.SortDecl )sort) instanceof tom.gom.adt.gom.types.sortdecl.BuiltinSortDecl) ) { String  tom___name= (( tom.gom.adt.gom.types.SortDecl )sort).getName() ;
 
-        if ("int".equals(tom___name)) { /* unamed block */
+
+        if ("int".equals(tom___name)) {
           code =  tom.gom.adt.code.types.code.ConsCodeList.make(code, tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make("Integer.parseInt("+tree+".getText())") , tom.gom.adt.code.types.code.EmptyCodeList.make() ) ) 
 ;
-        } else if ("long".equals(tom___name)) { /* unamed block */
+        } else if ("long".equals(tom___name)) {
           code =  tom.gom.adt.code.types.code.ConsCodeList.make(code, tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make("Long.parseLong("+tree+".getText())") , tom.gom.adt.code.types.code.EmptyCodeList.make() ) ) 
 ;
-        } else if ("String".equals(tom___name)) { /* unamed block */
+        } else if ("String".equals(tom___name)) {
           code =  tom.gom.adt.code.types.code.ConsCodeList.make(code, tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make(tree+".getText()") , tom.gom.adt.code.types.code.EmptyCodeList.make() ) ) 
 ;
-        } else if ("boolean".equals(tom___name)) { /* unamed block */
+        } else if ("boolean".equals(tom___name)) {
           code =  tom.gom.adt.code.types.code.ConsCodeList.make(code, tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make("Boolean.valueOf("+tree+".getText())") , tom.gom.adt.code.types.code.EmptyCodeList.make() ) ) 
 ;
-        } else { /* unamed block */
+        } else {
           throw new RuntimeException("Unsupported builtin "+tom___name);
-        }}}}}
+        }
+      }}}}
 
 
     return code;

@@ -38,6 +38,16 @@ public interface TomJavaParserListener extends ParseTreeListener {
 	 */
 	void exitExpressionUnit(TomJavaParser.ExpressionUnitContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link TomJavaParser#gomUnit}.
+	 * @param ctx the parse tree
+	 */
+	void enterGomUnit(TomJavaParser.GomUnitContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link TomJavaParser#gomUnit}.
+	 * @param ctx the parse tree
+	 */
+	void exitGomUnit(TomJavaParser.GomUnitContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link TomJavaParser#packageDeclaration}.
 	 * @param ctx the parse tree
 	 */
@@ -1158,6 +1168,26 @@ public interface TomJavaParserListener extends ParseTreeListener {
 	 */
 	void exitGomStatement(TomJavaParser.GomStatementContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link TomJavaParser#gomOptions}.
+	 * @param ctx the parse tree
+	 */
+	void enterGomOptions(TomJavaParser.GomOptionsContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link TomJavaParser#gomOptions}.
+	 * @param ctx the parse tree
+	 */
+	void exitGomOptions(TomJavaParser.GomOptionsContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link TomJavaParser#gomBlock}.
+	 * @param ctx the parse tree
+	 */
+	void enterGomBlock(TomJavaParser.GomBlockContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link TomJavaParser#gomBlock}.
+	 * @param ctx the parse tree
+	 */
+	void exitGomBlock(TomJavaParser.GomBlockContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link TomJavaParser#ruleStatement}.
 	 * @param ctx the parse tree
 	 */
@@ -1177,16 +1207,6 @@ public interface TomJavaParserListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitUnknownBlock(TomJavaParser.UnknownBlockContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link TomJavaParser#gomOptions}.
-	 * @param ctx the parse tree
-	 */
-	void enterGomOptions(TomJavaParser.GomOptionsContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link TomJavaParser#gomOptions}.
-	 * @param ctx the parse tree
-	 */
-	void exitGomOptions(TomJavaParser.GomOptionsContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link TomJavaParser#visit}.
 	 * @param ctx the parse tree
@@ -1587,4 +1607,374 @@ public interface TomJavaParserListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitTomIdentifier(TomJavaParser.TomIdentifierContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link TomJavaParser#module}.
+	 * @param ctx the parse tree
+	 */
+	void enterModule(TomJavaParser.ModuleContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link TomJavaParser#module}.
+	 * @param ctx the parse tree
+	 */
+	void exitModule(TomJavaParser.ModuleContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link TomJavaParser#modulename}.
+	 * @param ctx the parse tree
+	 */
+	void enterModulename(TomJavaParser.ModulenameContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link TomJavaParser#modulename}.
+	 * @param ctx the parse tree
+	 */
+	void exitModulename(TomJavaParser.ModulenameContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link TomJavaParser#imports}.
+	 * @param ctx the parse tree
+	 */
+	void enterImports(TomJavaParser.ImportsContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link TomJavaParser#imports}.
+	 * @param ctx the parse tree
+	 */
+	void exitImports(TomJavaParser.ImportsContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link TomJavaParser#section}.
+	 * @param ctx the parse tree
+	 */
+	void enterSection(TomJavaParser.SectionContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link TomJavaParser#section}.
+	 * @param ctx the parse tree
+	 */
+	void exitSection(TomJavaParser.SectionContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link TomJavaParser#adtgrammar}.
+	 * @param ctx the parse tree
+	 */
+	void enterAdtgrammar(TomJavaParser.AdtgrammarContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link TomJavaParser#adtgrammar}.
+	 * @param ctx the parse tree
+	 */
+	void exitAdtgrammar(TomJavaParser.AdtgrammarContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link TomJavaParser#syntax}.
+	 * @param ctx the parse tree
+	 */
+	void enterSyntax(TomJavaParser.SyntaxContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link TomJavaParser#syntax}.
+	 * @param ctx the parse tree
+	 */
+	void exitSyntax(TomJavaParser.SyntaxContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link TomJavaParser#atomdecl}.
+	 * @param ctx the parse tree
+	 */
+	void enterAtomdecl(TomJavaParser.AtomdeclContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link TomJavaParser#atomdecl}.
+	 * @param ctx the parse tree
+	 */
+	void exitAtomdecl(TomJavaParser.AtomdeclContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link TomJavaParser#typedecl}.
+	 * @param ctx the parse tree
+	 */
+	void enterTypedecl(TomJavaParser.TypedeclContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link TomJavaParser#typedecl}.
+	 * @param ctx the parse tree
+	 */
+	void exitTypedecl(TomJavaParser.TypedeclContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link TomJavaParser#alternatives}.
+	 * @param ctx the parse tree
+	 */
+	void enterAlternatives(TomJavaParser.AlternativesContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link TomJavaParser#alternatives}.
+	 * @param ctx the parse tree
+	 */
+	void exitAlternatives(TomJavaParser.AlternativesContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link TomJavaParser#pattern_alternatives}.
+	 * @param ctx the parse tree
+	 */
+	void enterPattern_alternatives(TomJavaParser.Pattern_alternativesContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link TomJavaParser#pattern_alternatives}.
+	 * @param ctx the parse tree
+	 */
+	void exitPattern_alternatives(TomJavaParser.Pattern_alternativesContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link TomJavaParser#opdecl}.
+	 * @param ctx the parse tree
+	 */
+	void enterOpdecl(TomJavaParser.OpdeclContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link TomJavaParser#opdecl}.
+	 * @param ctx the parse tree
+	 */
+	void exitOpdecl(TomJavaParser.OpdeclContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link TomJavaParser#pattern_opdecl}.
+	 * @param ctx the parse tree
+	 */
+	void enterPattern_opdecl(TomJavaParser.Pattern_opdeclContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link TomJavaParser#pattern_opdecl}.
+	 * @param ctx the parse tree
+	 */
+	void exitPattern_opdecl(TomJavaParser.Pattern_opdeclContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link TomJavaParser#fieldlist}.
+	 * @param ctx the parse tree
+	 */
+	void enterFieldlist(TomJavaParser.FieldlistContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link TomJavaParser#fieldlist}.
+	 * @param ctx the parse tree
+	 */
+	void exitFieldlist(TomJavaParser.FieldlistContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link TomJavaParser#pattern_fieldlist}.
+	 * @param ctx the parse tree
+	 */
+	void enterPattern_fieldlist(TomJavaParser.Pattern_fieldlistContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link TomJavaParser#pattern_fieldlist}.
+	 * @param ctx the parse tree
+	 */
+	void exitPattern_fieldlist(TomJavaParser.Pattern_fieldlistContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link TomJavaParser#field}.
+	 * @param ctx the parse tree
+	 */
+	void enterField(TomJavaParser.FieldContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link TomJavaParser#field}.
+	 * @param ctx the parse tree
+	 */
+	void exitField(TomJavaParser.FieldContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link TomJavaParser#pattern_field}.
+	 * @param ctx the parse tree
+	 */
+	void enterPattern_field(TomJavaParser.Pattern_fieldContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link TomJavaParser#pattern_field}.
+	 * @param ctx the parse tree
+	 */
+	void exitPattern_field(TomJavaParser.Pattern_fieldContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link TomJavaParser#arglist}.
+	 * @param ctx the parse tree
+	 */
+	void enterArglist(TomJavaParser.ArglistContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link TomJavaParser#arglist}.
+	 * @param ctx the parse tree
+	 */
+	void exitArglist(TomJavaParser.ArglistContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link TomJavaParser#hookConstruct}.
+	 * @param ctx the parse tree
+	 */
+	void enterHookConstruct(TomJavaParser.HookConstructContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link TomJavaParser#hookConstruct}.
+	 * @param ctx the parse tree
+	 */
+	void exitHookConstruct(TomJavaParser.HookConstructContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link TomJavaParser#hookBlock}.
+	 * @param ctx the parse tree
+	 */
+	void enterHookBlock(TomJavaParser.HookBlockContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link TomJavaParser#hookBlock}.
+	 * @param ctx the parse tree
+	 */
+	void exitHookBlock(TomJavaParser.HookBlockContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link TomJavaParser#ruleBlock}.
+	 * @param ctx the parse tree
+	 */
+	void enterRuleBlock(TomJavaParser.RuleBlockContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link TomJavaParser#ruleBlock}.
+	 * @param ctx the parse tree
+	 */
+	void exitRuleBlock(TomJavaParser.RuleBlockContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link TomJavaParser#hookScope}.
+	 * @param ctx the parse tree
+	 */
+	void enterHookScope(TomJavaParser.HookScopeContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link TomJavaParser#hookScope}.
+	 * @param ctx the parse tree
+	 */
+	void exitHookScope(TomJavaParser.HookScopeContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link TomJavaParser#gomIdentifier}.
+	 * @param ctx the parse tree
+	 */
+	void enterGomIdentifier(TomJavaParser.GomIdentifierContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link TomJavaParser#gomIdentifier}.
+	 * @param ctx the parse tree
+	 */
+	void exitGomIdentifier(TomJavaParser.GomIdentifierContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link TomJavaParser#ruleset}.
+	 * @param ctx the parse tree
+	 */
+	void enterRuleset(TomJavaParser.RulesetContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link TomJavaParser#ruleset}.
+	 * @param ctx the parse tree
+	 */
+	void exitRuleset(TomJavaParser.RulesetContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link TomJavaParser#termrule}.
+	 * @param ctx the parse tree
+	 */
+	void enterTermrule(TomJavaParser.TermruleContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link TomJavaParser#termrule}.
+	 * @param ctx the parse tree
+	 */
+	void exitTermrule(TomJavaParser.TermruleContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link TomJavaParser#graphruleset}.
+	 * @param ctx the parse tree
+	 */
+	void enterGraphruleset(TomJavaParser.GraphrulesetContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link TomJavaParser#graphruleset}.
+	 * @param ctx the parse tree
+	 */
+	void exitGraphruleset(TomJavaParser.GraphrulesetContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link TomJavaParser#graphrule}.
+	 * @param ctx the parse tree
+	 */
+	void enterGraphrule(TomJavaParser.GraphruleContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link TomJavaParser#graphrule}.
+	 * @param ctx the parse tree
+	 */
+	void exitGraphrule(TomJavaParser.GraphruleContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link TomJavaParser#condition}.
+	 * @param ctx the parse tree
+	 */
+	void enterCondition(TomJavaParser.ConditionContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link TomJavaParser#condition}.
+	 * @param ctx the parse tree
+	 */
+	void exitCondition(TomJavaParser.ConditionContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link TomJavaParser#andcondition}.
+	 * @param ctx the parse tree
+	 */
+	void enterAndcondition(TomJavaParser.AndconditionContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link TomJavaParser#andcondition}.
+	 * @param ctx the parse tree
+	 */
+	void exitAndcondition(TomJavaParser.AndconditionContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link TomJavaParser#simplecondition}.
+	 * @param ctx the parse tree
+	 */
+	void enterSimplecondition(TomJavaParser.SimpleconditionContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link TomJavaParser#simplecondition}.
+	 * @param ctx the parse tree
+	 */
+	void exitSimplecondition(TomJavaParser.SimpleconditionContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link TomJavaParser#rule_pattern}.
+	 * @param ctx the parse tree
+	 */
+	void enterRule_pattern(TomJavaParser.Rule_patternContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link TomJavaParser#rule_pattern}.
+	 * @param ctx the parse tree
+	 */
+	void exitRule_pattern(TomJavaParser.Rule_patternContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link TomJavaParser#rule_term}.
+	 * @param ctx the parse tree
+	 */
+	void enterRule_term(TomJavaParser.Rule_termContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link TomJavaParser#rule_term}.
+	 * @param ctx the parse tree
+	 */
+	void exitRule_term(TomJavaParser.Rule_termContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link TomJavaParser#builtin}.
+	 * @param ctx the parse tree
+	 */
+	void enterBuiltin(TomJavaParser.BuiltinContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link TomJavaParser#builtin}.
+	 * @param ctx the parse tree
+	 */
+	void exitBuiltin(TomJavaParser.BuiltinContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link TomJavaParser#labelledpattern}.
+	 * @param ctx the parse tree
+	 */
+	void enterLabelledpattern(TomJavaParser.LabelledpatternContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link TomJavaParser#labelledpattern}.
+	 * @param ctx the parse tree
+	 */
+	void exitLabelledpattern(TomJavaParser.LabelledpatternContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link TomJavaParser#graphpattern}.
+	 * @param ctx the parse tree
+	 */
+	void enterGraphpattern(TomJavaParser.GraphpatternContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link TomJavaParser#graphpattern}.
+	 * @param ctx the parse tree
+	 */
+	void exitGraphpattern(TomJavaParser.GraphpatternContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link TomJavaParser#variable}.
+	 * @param ctx the parse tree
+	 */
+	void enterVariable(TomJavaParser.VariableContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link TomJavaParser#variable}.
+	 * @param ctx the parse tree
+	 */
+	void exitVariable(TomJavaParser.VariableContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link TomJavaParser#ref}.
+	 * @param ctx the parse tree
+	 */
+	void enterRef(TomJavaParser.RefContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link TomJavaParser#ref}.
+	 * @param ctx the parse tree
+	 */
+	void exitRef(TomJavaParser.RefContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link TomJavaParser#constructor}.
+	 * @param ctx the parse tree
+	 */
+	void enterConstructor(TomJavaParser.ConstructorContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link TomJavaParser#constructor}.
+	 * @param ctx the parse tree
+	 */
+	void exitConstructor(TomJavaParser.ConstructorContext ctx);
 }

@@ -129,6 +129,10 @@ public class TomStreamManager {
       inputSuffix = ".t";
       outputSuffix = ".tom.ml";
 			importLanguageSubdir = "caml";
+    } else if (((Boolean)optionManager.getOptionValue("goCode")).booleanValue()) {
+      inputSuffix = ".t";
+      outputSuffix = ".go";
+			importLanguageSubdir = "go";
     } else if (((Boolean)optionManager.getOptionValue("jCode")).booleanValue()) {
       inputSuffix = ".t";
       outputSuffix = ".java";

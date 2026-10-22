@@ -84,6 +84,8 @@ public class TomMessage extends BasicPlatformMessage {
       new TomMessage("TomOptionManager: ''{0}'' can''t run : prerequisites are not met");
   public static final TomMessage incorrectOptionValue  =
       new TomMessage("TomOptionManager: Option ''{0}'' was expected with value ''{1}'', but ''{2}'' was found instead");
+  public static final TomMessage unsupportedWithGo     =
+      new TomMessage("Option ''{0}'' is not supported with -go");
   public static final TomMessage outputTwice           =
       new TomMessage("TomOptionManager: Output filename specified twice");
   public static final TomMessage destdirTwice          =

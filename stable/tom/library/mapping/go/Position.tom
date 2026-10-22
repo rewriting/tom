@@ -1,0 +1,11 @@
+/*
+ * Tom Go mapping — Position.
+ *
+ * Mirrors mapping/java/Position.tom with the Go type
+ * `*sl.Position` of tom/tomgo/stable/library/sl.
+ */
+%typeterm Position {
+  implement { *sl.Position }
+  is_sort(t) { sl.IsPosition($t) }
+  equals(t1,t2) { ($t1).Equals($t2) }
+}

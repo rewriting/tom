@@ -1,35 +1,31 @@
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+/*
+ * Gom
+ *
+ * Copyright (c) 2006-2017, Universite de Lorraine, Inria
+ * Nancy, France.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+ *
+ * Antoine Reilles  e-mail: Antoine.Reilles@loria.fr
+ *
+ **/
 package tom.gom.backend;
-
-
 
 import java.io.*;
 import java.util.ArrayList;
 import java.util.logging.Logger;
-
-
 
 import tom.gom.GomMessage;
 import tom.gom.GomStreamManager;
@@ -37,8 +33,6 @@ import tom.gom.tools.GomEnvironment;
 import tom.gom.adt.objects.*;
 import tom.gom.adt.objects.types.*;
 import tom.gom.tools.error.GomRuntimeException;
-
-
 
 public abstract class TemplateClass {
   protected GomClass gomClass;
@@ -57,6 +51,8 @@ public abstract class TemplateClass {
 
   
 
+
+
   public abstract void generate(Writer writer) throws java.io.IOException;
 
   public String className() {
@@ -66,8 +62,10 @@ public abstract class TemplateClass {
   public String className(ClassName clsName) {
     { /* unamed block */{ /* unamed block */if ( (clsName instanceof tom.gom.adt.objects.types.ClassName) ) {if ( ((( tom.gom.adt.objects.types.ClassName )clsName) instanceof tom.gom.adt.objects.types.classname.ClassName) ) {
 
+
         return  (( tom.gom.adt.objects.types.ClassName )clsName).getName() ;
       }}}}
+
 
     throw new GomRuntimeException(
         "TemplateClass:className got a strange ClassName "+clsName);
@@ -80,11 +78,13 @@ public abstract class TemplateClass {
   public static String fullClassName(ClassName clsName) {
     { /* unamed block */{ /* unamed block */if ( (clsName instanceof tom.gom.adt.objects.types.ClassName) ) {if ( ((( tom.gom.adt.objects.types.ClassName )clsName) instanceof tom.gom.adt.objects.types.classname.ClassName) ) { String  tom___pkgPrefix= (( tom.gom.adt.objects.types.ClassName )clsName).getPkg() ; String  tom___name= (( tom.gom.adt.objects.types.ClassName )clsName).getName() ;
 
-        if(tom___pkgPrefix.length()==0) { /* unamed block */
+
+        if(tom___pkgPrefix.length()==0) {
           return tom___name;
-        } else { /* unamed block */
+        } else {
           return tom___pkgPrefix+"."+tom___name;
-        }}}}}
+        }
+      }}}}
 
 
     throw new GomRuntimeException(
@@ -98,8 +98,10 @@ public abstract class TemplateClass {
   public String getPackage(ClassName clsName) {
     { /* unamed block */{ /* unamed block */if ( (clsName instanceof tom.gom.adt.objects.types.ClassName) ) {if ( ((( tom.gom.adt.objects.types.ClassName )clsName) instanceof tom.gom.adt.objects.types.classname.ClassName) ) {
 
+
         return  (( tom.gom.adt.objects.types.ClassName )clsName).getPkg() ;
       }}}}
+
 
     throw new GomRuntimeException(
         "TemplateClass:getPackage got a strange ClassName "+clsName);
@@ -108,8 +110,10 @@ public abstract class TemplateClass {
   public String hasMethod(SlotField slot) {
     { /* unamed block */{ /* unamed block */if ( (slot instanceof tom.gom.adt.objects.types.SlotField) ) {if ( ((( tom.gom.adt.objects.types.SlotField )slot) instanceof tom.gom.adt.objects.types.slotfield.SlotField) ) {
 
+
         return "has"+ (( tom.gom.adt.objects.types.SlotField )slot).getName() ;
       }}}}
+
 
     throw new GomRuntimeException(
         "TemplateClass:hasMethod got a strange SlotField "+slot);
@@ -123,30 +127,40 @@ public abstract class TemplateClass {
     return setMethod(slot,false);
   }
 
-  
+  /**
+    * @param slot contains the name of the slot
+    * @param jmi true to generate a name with a capital letter
+    */
   public String getMethod(SlotField slot,boolean jmi) {
     { /* unamed block */{ /* unamed block */if ( (slot instanceof tom.gom.adt.objects.types.SlotField) ) {if ( ((( tom.gom.adt.objects.types.SlotField )slot) instanceof tom.gom.adt.objects.types.slotfield.SlotField) ) { String  tom___name= (( tom.gom.adt.objects.types.SlotField )slot).getName() ;
 
-        if(jmi) { /* unamed block */
+
+        if(jmi) {
           return "get"+jmize(tom___name);
-        } else { /* unamed block */
+        } else {
           return "get"+tom___name;
-        }}}}}
+        }
+      }}}}
 
 
     throw new GomRuntimeException(
         "TemplateClass:getMethod got a strange SlotField "+slot);
   }
 
-  
+  /**
+    * @param slot contains the name of the slot
+    * @param jmi true to generate a name with a capital letter
+    */
   public String setMethod(SlotField slot,boolean jmi) {
     { /* unamed block */{ /* unamed block */if ( (slot instanceof tom.gom.adt.objects.types.SlotField) ) {if ( ((( tom.gom.adt.objects.types.SlotField )slot) instanceof tom.gom.adt.objects.types.slotfield.SlotField) ) { String  tom___name= (( tom.gom.adt.objects.types.SlotField )slot).getName() ;
 
-        if(jmi) { /* unamed block */
+
+        if(jmi) {
           return "set"+jmize(tom___name);
-        } else { /* unamed block */
+        } else {
           return "set"+tom___name;
-        }}}}}
+        }
+      }}}}
 
 
     throw new GomRuntimeException(
@@ -154,15 +168,17 @@ public abstract class TemplateClass {
   }
 
   private String jmize(String name) {
-    
+    //TODO
     return org.apache.commons.lang.StringUtils.capitalize(name);
   }
 
   public String index(SlotField slot) {
     { /* unamed block */{ /* unamed block */if ( (slot instanceof tom.gom.adt.objects.types.SlotField) ) {if ( ((( tom.gom.adt.objects.types.SlotField )slot) instanceof tom.gom.adt.objects.types.slotfield.SlotField) ) {
 
+
         return "index_"+ (( tom.gom.adt.objects.types.SlotField )slot).getName() ;
       }}}}
+
 
     throw new GomRuntimeException(
         "TemplateClass:index got a strange SlotField "+slot);
@@ -171,8 +187,10 @@ public abstract class TemplateClass {
   public String slotDomain(SlotField slot) {
     { /* unamed block */{ /* unamed block */if ( (slot instanceof tom.gom.adt.objects.types.SlotField) ) {if ( ((( tom.gom.adt.objects.types.SlotField )slot) instanceof tom.gom.adt.objects.types.slotfield.SlotField) ) {
 
+
         return fullClassName( (( tom.gom.adt.objects.types.SlotField )slot).getDomain() );
       }}}}
+
 
     throw new GomRuntimeException(
         "TemplateClass:slotDomain got a strange SlotField "+slot);
@@ -185,8 +203,10 @@ public abstract class TemplateClass {
   public String classFieldName(ClassName clsName) {
     { /* unamed block */{ /* unamed block */if ( (clsName instanceof tom.gom.adt.objects.types.ClassName) ) {if ( ((( tom.gom.adt.objects.types.ClassName )clsName) instanceof tom.gom.adt.objects.types.classname.ClassName) ) {
 
+
         return  (( tom.gom.adt.objects.types.ClassName )clsName).getName() .toLowerCase();
       }}}}
+
 
     throw new GomRuntimeException(
         "TemplateClass:classFieldName got a strange ClassName "+clsName);
@@ -196,26 +216,27 @@ public abstract class TemplateClass {
                                 String element, String buffer) {
     { /* unamed block */{ /* unamed block */if ( (slot instanceof tom.gom.adt.objects.types.SlotField) ) {if ( ((( tom.gom.adt.objects.types.SlotField )slot) instanceof tom.gom.adt.objects.types.slotfield.SlotField) ) { tom.gom.adt.objects.types.ClassName  tom___domain= (( tom.gom.adt.objects.types.SlotField )slot).getDomain() ;
 
-        if(!getGomEnvironment().isBuiltinClass(tom___domain)) { /* unamed block */
+
+        if(!getGomEnvironment().isBuiltinClass(tom___domain)) {
           res.append(""+element+".toStringBuilder("+buffer+");\n"
 );
-        } else { /* unamed block */
+        } else {
           if (tom___domain.equals( tom.gom.adt.objects.types.classname.ClassName.make("", "int") )
               || tom___domain.equals( tom.gom.adt.objects.types.classname.ClassName.make("", "double") )
-              || tom___domain.equals( tom.gom.adt.objects.types.classname.ClassName.make("", "float") )) { /* unamed block */
+              || tom___domain.equals( tom.gom.adt.objects.types.classname.ClassName.make("", "float") )) {
             res.append(""+buffer+".append("+element+");\n"
 );
-          } else if (tom___domain.equals( tom.gom.adt.objects.types.classname.ClassName.make("", "long") )) { /* unamed block */
+          } else if (tom___domain.equals( tom.gom.adt.objects.types.classname.ClassName.make("", "long") )) {
             res.append(""+buffer+".append("+element+");\n            "+buffer+".append(\"l\");\n"
 
 );
-          } else if (tom___domain.equals( tom.gom.adt.objects.types.classname.ClassName.make("", "char") )) { /* unamed block */
+          } else if (tom___domain.equals( tom.gom.adt.objects.types.classname.ClassName.make("", "char") )) {
             res.append(""+buffer+".append(((int)"+element+"-(int)'0'));\n"
 );
-          } else if (tom___domain.equals( tom.gom.adt.objects.types.classname.ClassName.make("", "boolean") )) { /* unamed block */
+          } else if (tom___domain.equals( tom.gom.adt.objects.types.classname.ClassName.make("", "boolean") )) {
             res.append(""+buffer+".append("+element+"?1:0);\n"
 );
-          } else if (tom___domain.equals( tom.gom.adt.objects.types.classname.ClassName.make("", "String") )) { /* unamed block */
+          } else if (tom___domain.equals( tom.gom.adt.objects.types.classname.ClassName.make("", "String") )) {
             String atchar = "@";
             res.append(""+buffer+".append('\"');\n            for (int i = 0; i < "+element+".length(); i++) {\n              char c = "+element+".charAt(i);\n              switch (c) {\n                case '\\n':\n                  "+buffer+".append('\\\\');\n                  "+buffer+".append('n');\n                  break;\n                case '\\t':\n                  "+buffer+".append('\\\\');\n                  "+buffer+".append('t');\n                  break;\n                case '\\b':\n                  "+buffer+".append('\\\\');\n                  "+buffer+".append('b');\n                  break;\n                case '\\r':\n                  "+buffer+".append('\\\\');\n                  "+buffer+".append('r');\n                  break;\n                case '\\f':\n                  "+buffer+".append('\\\\');\n                  "+buffer+".append('f');\n                  break;\n                case '\\\\':\n                  "+buffer+".append('\\\\');\n                  "+buffer+".append('\\\\');\n                  break;\n                case '\\'':\n                  "+buffer+".append('\\\\');\n                  "+buffer+".append('\\'');\n                  break;\n                case '\\\"':\n                  "+buffer+".append('\\\\');\n                  "+buffer+".append('\\\"');\n                  break;\n                case '!':\n                case '"+atchar+"':\n                case '#':\n                case '$':\n                case '%':\n                case '^':\n                case '&':\n                case '*':\n                case '(':\n                case ')':\n                case '-':\n                case '_':\n                case '+':\n                case '=':\n                case '|':\n                case '~':\n                case '{':\n                case '}':\n                case '[':\n                case ']':\n                case ';':\n                case ':':\n                case '<':\n                case '>':\n                case ',':\n                case '.':\n                case '?':\n                case ' ':\n                case '/':\n                  "+buffer+".append(c);\n                  break;\n\n                default:\n                  if (java.lang.Character.isLetterOrDigit(c)) {\n                    "+buffer+".append(c);\n                  } else {\n                    "+buffer+".append('\\\\');\n                    "+buffer+".append((char) ('0' + c / 64));\n                    c = (char) (c % 64);\n                    "+buffer+".append((char) ('0' + c / 8));\n                    c = (char) (c % 8);\n                    "+buffer+".append((char) ('0' + c));\n                  }\n              }\n            }\n            "+buffer+".append('\"');\n"
 
@@ -300,13 +321,14 @@ public abstract class TemplateClass {
 
 
 );
-          } else if (tom___domain.equals( tom.gom.adt.objects.types.classname.ClassName.make("aterm", "ATerm") ) ||tom___domain.equals( tom.gom.adt.objects.types.classname.ClassName.make("aterm", "ATermList") )) { /* unamed block */
+          } else if (tom___domain.equals( tom.gom.adt.objects.types.classname.ClassName.make("aterm", "ATerm") ) ||tom___domain.equals( tom.gom.adt.objects.types.classname.ClassName.make("aterm", "ATermList") )) {
             res.append(""+buffer+".append("+element+".toString());\n"
 );
-          } else { /* unamed block */
+          } else {
             throw new GomRuntimeException("Builtin " + tom___domain + " not supported");
-          }}}}}}
-
+          }
+        }
+      }}}}
 
 
   }
@@ -314,46 +336,48 @@ public abstract class TemplateClass {
   public void toATermSlotField(StringBuilder res, SlotField slot) {
     { /* unamed block */{ /* unamed block */if ( (slot instanceof tom.gom.adt.objects.types.SlotField) ) {if ( ((( tom.gom.adt.objects.types.SlotField )slot) instanceof tom.gom.adt.objects.types.slotfield.SlotField) ) { tom.gom.adt.objects.types.ClassName  tom___domain= (( tom.gom.adt.objects.types.SlotField )slot).getDomain() ;
 
-        if(!getGomEnvironment().isBuiltinClass(tom___domain)) { /* unamed block */
+
+        if(!getGomEnvironment().isBuiltinClass(tom___domain)) {
           res.append(getMethod(slot));
           res.append("().toATerm()");
-        } else { /* unamed block */
-          if (tom___domain.equals( tom.gom.adt.objects.types.classname.ClassName.make("", "int") )) { /* unamed block */
+        } else {
+          if (tom___domain.equals( tom.gom.adt.objects.types.classname.ClassName.make("", "int") )) {
             res.append("(aterm.ATerm) atermFactory.makeInt(");
             res.append(getMethod(slot));
             res.append("())");
-          } else if (tom___domain.equals( tom.gom.adt.objects.types.classname.ClassName.make("", "boolean") )) { /* unamed block */
+          } else if (tom___domain.equals( tom.gom.adt.objects.types.classname.ClassName.make("", "boolean") )) {
             res.append("(aterm.ATerm) atermFactory.makeInt(");
             res.append(getMethod(slot));
             res.append("()?1:0)");
-          } else if (tom___domain.equals( tom.gom.adt.objects.types.classname.ClassName.make("", "long") )) { /* unamed block */
+          } else if (tom___domain.equals( tom.gom.adt.objects.types.classname.ClassName.make("", "long") )) {
             res.append("(aterm.ATerm) atermFactory.makeLong(");
             res.append(getMethod(slot));
             res.append("())");
-          } else if (tom___domain.equals( tom.gom.adt.objects.types.classname.ClassName.make("", "double") )) { /* unamed block */
+          } else if (tom___domain.equals( tom.gom.adt.objects.types.classname.ClassName.make("", "double") )) {
             res.append("(aterm.ATerm) atermFactory.makeReal(");
             res.append(getMethod(slot));
             res.append("())");
-          } else if (tom___domain.equals( tom.gom.adt.objects.types.classname.ClassName.make("", "float") )) { /* unamed block */
+          } else if (tom___domain.equals( tom.gom.adt.objects.types.classname.ClassName.make("", "float") )) {
             res.append("(aterm.ATerm) atermFactory.makeReal(");
             res.append(getMethod(slot));
             res.append("())");
-          } else if (tom___domain.equals( tom.gom.adt.objects.types.classname.ClassName.make("", "char") )) { /* unamed block */
+          } else if (tom___domain.equals( tom.gom.adt.objects.types.classname.ClassName.make("", "char") )) {
             res.append("(aterm.ATerm) atermFactory.makeInt(((int)");
             res.append(getMethod(slot));
             res.append("()-(int)'0'))");
-          } else if (tom___domain.equals( tom.gom.adt.objects.types.classname.ClassName.make("", "String") )) { /* unamed block */
+          } else if (tom___domain.equals( tom.gom.adt.objects.types.classname.ClassName.make("", "String") )) {
             res.append("(aterm.ATerm) atermFactory.makeAppl(");
             res.append("atermFactory.makeAFun(");
             res.append(getMethod(slot));
             res.append("() ,0 , true))");
-          } else if (tom___domain.equals( tom.gom.adt.objects.types.classname.ClassName.make("aterm", "ATerm") ) ||tom___domain.equals( tom.gom.adt.objects.types.classname.ClassName.make("aterm", "ATermList") )){ /* unamed block */
+          } else if (tom___domain.equals( tom.gom.adt.objects.types.classname.ClassName.make("aterm", "ATerm") ) ||tom___domain.equals( tom.gom.adt.objects.types.classname.ClassName.make("aterm", "ATermList") )){
             res.append(getMethod(slot));
             res.append("()");
-          } else { /* unamed block */
+          } else {
             throw new GomRuntimeException("Builtin " + tom___domain + " not supported");
-          }}}}}}
-
+          }
+        }
+      }}}}
 
 
   }
@@ -361,40 +385,43 @@ public abstract class TemplateClass {
   public void fromATermSlotField(StringBuilder buffer, SlotField slot, String appl, String atConv) {
     { /* unamed block */{ /* unamed block */if ( (slot instanceof tom.gom.adt.objects.types.SlotField) ) {if ( ((( tom.gom.adt.objects.types.SlotField )slot) instanceof tom.gom.adt.objects.types.slotfield.SlotField) ) { tom.gom.adt.objects.types.ClassName  tom___domain= (( tom.gom.adt.objects.types.SlotField )slot).getDomain() ;
 
-        if(!getGomEnvironment().isBuiltinClass(tom___domain)) { /* unamed block */
+
+        if(!getGomEnvironment().isBuiltinClass(tom___domain)) {
           buffer.append(fullClassName(tom___domain));
           buffer.append(".fromTerm(");
           buffer.append(appl);
           buffer.append(",");
           buffer.append(atConv);
           buffer.append(")");
-        } else { /* unamed block */
-          if (tom___domain.equals( tom.gom.adt.objects.types.classname.ClassName.make("", "int") )) { /* unamed block */
+        } else {
+          if (tom___domain.equals( tom.gom.adt.objects.types.classname.ClassName.make("", "int") )) {
             buffer.append("convertATermToInt(").append(appl).append(", ").append(atConv).append(")");
-          } else  if (tom___domain.equals( tom.gom.adt.objects.types.classname.ClassName.make("", "float") )) { /* unamed block */
+          } else  if (tom___domain.equals( tom.gom.adt.objects.types.classname.ClassName.make("", "float") )) {
             buffer.append("convertATermToFloat(").append(appl).append(", ").append(atConv).append(")");
-          } else  if (tom___domain.equals( tom.gom.adt.objects.types.classname.ClassName.make("", "boolean") )) { /* unamed block */
+          } else  if (tom___domain.equals( tom.gom.adt.objects.types.classname.ClassName.make("", "boolean") )) {
             buffer.append("convertATermToBoolean(").append(appl).append(", ").append(atConv).append(")");
-          } else  if (tom___domain.equals( tom.gom.adt.objects.types.classname.ClassName.make("", "long") )) { /* unamed block */
+          } else  if (tom___domain.equals( tom.gom.adt.objects.types.classname.ClassName.make("", "long") )) {
             buffer.append("convertATermToLong(").append(appl).append(", ").append(atConv).append(")");
-          } else  if (tom___domain.equals( tom.gom.adt.objects.types.classname.ClassName.make("", "double") )) { /* unamed block */
+          } else  if (tom___domain.equals( tom.gom.adt.objects.types.classname.ClassName.make("", "double") )) {
             buffer.append("convertATermToDouble(").append(appl).append(", ").append(atConv).append(")");
-          } else  if (tom___domain.equals( tom.gom.adt.objects.types.classname.ClassName.make("", "char") )) { /* unamed block */
+          } else  if (tom___domain.equals( tom.gom.adt.objects.types.classname.ClassName.make("", "char") )) {
             buffer.append("convertATermToChar(").append(appl).append(", ").append(atConv).append(")");
-          } else if (tom___domain.equals( tom.gom.adt.objects.types.classname.ClassName.make("", "String") )) { /* unamed block */
+          } else if (tom___domain.equals( tom.gom.adt.objects.types.classname.ClassName.make("", "String") )) {
             buffer.append("convertATermToString(").append(appl).append(", ").append(atConv).append(")");
-          } else if (tom___domain.equals( tom.gom.adt.objects.types.classname.ClassName.make("aterm", "ATerm") ) || tom___domain.equals( tom.gom.adt.objects.types.classname.ClassName.make("aterm", "ATermList") ) ){ /* unamed block */
+          } else if (tom___domain.equals( tom.gom.adt.objects.types.classname.ClassName.make("aterm", "ATerm") ) || tom___domain.equals( tom.gom.adt.objects.types.classname.ClassName.make("aterm", "ATermList") ) ){
             buffer.append(appl);
-          } else { /* unamed block */
+          } else {
             throw new GomRuntimeException("Builtin " + tom___domain + " not supported");
-          }}}}}}
-
+          }
+        }
+      }}}}
 
 
   }
 
   protected String primitiveToReferenceType(String classname) {
     { /* unamed block */{ /* unamed block */if ( true ) {if ( "byte".equals((( String )classname)) ) {
+
  return "java.lang.Byte"; }}}{ /* unamed block */if ( true ) {if ( "short".equals((( String )classname)) ) {
  return "java.lang.Short"; }}}{ /* unamed block */if ( true ) {if ( "int".equals((( String )classname)) ) {
  return "java.lang.Integer"; }}}{ /* unamed block */if ( true ) {if ( "long".equals((( String )classname)) ) {
@@ -420,9 +447,9 @@ public abstract class TemplateClass {
   public int generateFile() {
     try {
        File output = fileToGenerate();
-       
-       
-       
+       // make sure the directory exists
+       // if creation failed, try again, as this can be a manifestation of a
+       // race condition in mkdirs
        if (!output.getParentFile().mkdirs()) {
          output.getParentFile().mkdirs();
        }
@@ -459,11 +486,13 @@ public abstract class TemplateClass {
       if (index>0) { writer.write(", "); }
       { /* unamed block */{ /* unamed block */if ( (slot instanceof tom.gom.adt.objects.types.SlotField) ) {if ( ((( tom.gom.adt.objects.types.SlotField )slot) instanceof tom.gom.adt.objects.types.slotfield.SlotField) ) { tom.gom.adt.objects.types.ClassName  tomMatch626_2= (( tom.gom.adt.objects.types.SlotField )slot).getDomain() ;if ( ((( tom.gom.adt.objects.types.ClassName )tomMatch626_2) instanceof tom.gom.adt.objects.types.classname.ClassName) ) {
 
+
           writer.write( (( tom.gom.adt.objects.types.SlotField )slot).getName() );
           writer.write(":");
           writer.write( tomMatch626_2.getName() );
           index++;
         }}}}}
+
 
     }
   }
@@ -475,7 +504,8 @@ public abstract class TemplateClass {
       SlotField slot = slotList.getHeadConcSlotField();
       slotList = slotList.getTailConcSlotField();
       if (index>0) { writer.write(", "); }
-      
+      /* Warning: do not write the 'index' alone, this is not a valid variable
+         name */
       writer.write("t"+index);
       index++;
     }
@@ -488,7 +518,8 @@ public abstract class TemplateClass {
       SlotField slot = slotList.getHeadConcSlotField();
       slotList = slotList.getTailConcSlotField();
       if (index>0) { writer.write(", "); }
-      
+      /* Warning: do not write the 'index' alone, this is not a valid variable
+         name */
       writer.write("$t"+index);
       index++;
     }
@@ -502,7 +533,5 @@ public abstract class TemplateClass {
   private Logger getLogger() {
     return Logger.getLogger(getClass().getName());
   }
-
-
 
 }
