@@ -9,9 +9,14 @@ avec le cas qui les utilise (comme `test/build.xml` compile tout le
 répertoire), et c'est le statut de ce cas qui les valide.
 Un original « échoue dans legacy » ne se compile pas avec `legacy/` :
 pas d'oracle possible, il n'est pas porté (`TestLegacyFails` le vérifie).
+Un cas « OK (diagnostics) » est un test de non-régression des diagnostics
+(`test/regress/`) : `tom -go` rejette le port avec les mêmes erreurs que
+`legacy/` sur l'original ; rien n'est exécuté (la couverture T3 ne le
+compte pas).
 
 - total : 103
 - OK : 62
+- OK (diagnostics) : 11
 - divergence : 0
 - échec go test : 0
 - échec go build : 0
@@ -19,8 +24,8 @@ pas d'oracle possible, il n'est pas porté (`TestLegacyFails` le vérifie).
 - oracle invalide : 0
 - non supporté : 2
 - support : 4
-- échoue dans legacy : 5
-- non porté : 30
+- échoue dans legacy : 7
+- non porté : 17
 
 | Cas | Statut | Notes |
 |---|---|---|
@@ -93,24 +98,24 @@ pas d'oracle possible, il n'est pas porté (`TestLegacyFails` le vérifie).
 | `gom/fromterm/TestFromTerm.t` | OK |  |
 | `loulou.t` | non porté |  |
 | `numeric/TestNumericConditions.t` | OK |  |
-| `regress/BadBackquote.t` | non porté |  |
-| `regress/BadOp.t` | non porté |  |
-| `regress/Disjunction1.t` | non porté |  |
-| `regress/Disjunction2.t` | non porté |  |
-| `regress/Include.t` | non porté |  |
-| `regress/IncludeSl.t` | non porté |  |
-| `regress/SuccessiveErrors.t` | non porté |  |
-| `regress/TestNonLinearity.t` | non porté |  |
-| `regress/UndeclaredExplicityType.t` | non porté |  |
-| `regress/UnknownSymbol1.t` | non porté |  |
-| `regress/UnknownSymbol2.t` | non porté |  |
-| `regress/VariableStar.t` | non porté |  |
-| `regress/WrongSymbol.t` | non porté |  |
+| `regress/BadBackquote.t` | OK (diagnostics) | erreurs : incompatibleTypes, incompatibleTypes ; le `.nrt` attend incompatibleTypes (diffère déjà dans `legacy/`) |
+| `regress/BadOp.t` | OK (diagnostics) | erreurs : symbolCodomainError ; parser par défaut de `legacy/` : aucune |
+| `regress/Disjunction1.t` | OK (diagnostics) | erreurs : freeVarNotPresentInOr |
+| `regress/Disjunction2.t` | OK (diagnostics) | erreurs : freeVarNotPresentInOr |
+| `regress/Include.t` | échoue dans legacy | includes the nonexistent titi.tom on purpose (non-regression test of the includedFileNotFound error), but legacy/'s tom crashes instead of reporting it (TomRuntimeException "convert: strange term: Cst_IncludeFile" after printing the TomIncludeException), with both parsers |
+| `regress/IncludeSl.t` | OK (diagnostics) | erreurs : symbolCodomainError, missingIncludeSL |
+| `regress/SuccessiveErrors.t` | OK (diagnostics) | erreurs : incompatibleTypes, incompatibleTypes ; le `.nrt` attend invalidCodomain (diffère déjà dans `legacy/`) |
+| `regress/TestNonLinearity.t` | échoue dans legacy | non-regression test of typing errors, but legacy/'s typer crashes (TyperPlugin: Unhandled exception, findOriginTracking: not found: concOption()) with both parsers; a fix of the typer belongs to J4 |
+| `regress/UndeclaredExplicityType.t` | OK (diagnostics) | erreurs : unknownType |
+| `regress/UnknownSymbol1.t` | OK (diagnostics) | erreurs : unknownSymbol |
+| `regress/UnknownSymbol2.t` | OK (diagnostics) | erreurs : unknownSymbol |
+| `regress/VariableStar.t` | OK (diagnostics) | erreurs : incorrectVariableStarInMatch |
+| `regress/WrongSymbol.t` | OK (diagnostics) | erreurs : invalidVariableStarArgument |
 | `rule/Array.t` | OK |  |
 | `rule/Peano.t` | échoue dans legacy | obsolete %rule construct: legacy/'s tom crashes on it (NullPointerException in the CstBuilder of the default parser), and with -np it leaves %rule as host code, which javac rejects |
 | `rule/TestArray.t` | échoue dans legacy | obsolete %rule construct: legacy/'s tom crashes on it (NullPointerException in the CstBuilder of the default parser), and with -np it leaves %rule as host code, which javac rejects |
 | `rule/TestPeano.t` | échoue dans legacy | obsolete %rule construct: legacy/'s tom crashes on it (NullPointerException in the CstBuilder of the default parser), and with -np it leaves %rule as host code, which javac rejects |
-| `rule/TestWhen.t` | échoue dans legacy | obsolete %rule construct: legacy/'s tom crashes on it (NullPointerException in the CstBuilder of the default parser), and with -np it leaves %rule as host code, which javac rejects; its %match rules also use the obsolete `when` guards |
+| `rule/TestWhen.t` | échoue dans legacy | obsolete %rule construct: legacy/'s tom crashes on it (NullPointerException in the CstBuilder of the default parser), and with -np it leaves %rule as host code, which javac rejects; its %match rules also use the obsolete `when` guards, which -np leaves as host code too (javac stops on the first one, before the %rule) |
 | `rule/TomList.t` | échoue dans legacy | obsolete %rule construct: legacy/'s tom crashes on it (NullPointerException in the CstBuilder of the default parser), and with -np it leaves %rule as host code, which javac rejects |
 | `sl/CommonStrat.t` | support | compilé avec `sl/TestImportStrat.t`, couvert par son statut |
 | `sl/IntrospectorBehaviour.t` | support | compilé avec `sl/TestSL.t`, couvert par son statut |
