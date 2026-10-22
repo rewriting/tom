@@ -1,5 +1,9 @@
 # Backend Go pour le compilateur Tom+Java — design
 
+> **Chemins mis à jour le 2026-10-23** : voir
+> `docs/superpowers/specs/2026-10-23-repo-layout-design.md` (table
+> « Correspondance des chemins » du plan `2026-10-23-repo-layout.md`).
+
 Date : 2026-10-22
 Branche : `tom-go`
 Statut : validé en brainstorming, en attente de relecture du spec

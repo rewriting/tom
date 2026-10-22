@@ -101,7 +101,7 @@ unset TOM_HOME
 TOM_HOME=$PWD/stable/dist stable/dist/bin/tom -go -d out test/go/smoke/testdata/smoke/smoke.t
 (cd out && go run .)      # sortie = expected.txt ; go vet propre
 mage -d magefiles -w . all && mage -d magefiles -w . portJava && mage -d magefiles -w . portGo && mage -d magefiles -w . coverage   # tout vert
-(cd prototype/tomgo && go test -count=1 ./...)    # 22 paquets ok, 0 échec
+(cd prototype/tomgo && go test -count=1 ./...)    # 17 paquets ok (sur 47 ; 30 sans test), 0 échec — compté le 2026-10-23 avec `go list ./...` et `go test`
 ```
 
 - Le point fixe (`./build.sh bootstrap` : `src/` compilé deux fois par

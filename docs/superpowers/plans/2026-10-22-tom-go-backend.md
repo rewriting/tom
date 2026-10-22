@@ -1,5 +1,9 @@
 # Backend Go pour Tom+Java — plan d'implémentation (J−1 → J3)
 
+> **Chemins mis à jour le 2026-10-23** : voir
+> `docs/superpowers/specs/2026-10-23-repo-layout-design.md` (table
+> « Correspondance des chemins » du plan `2026-10-23-repo-layout.md`).
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** ajouter au compilateur Tom+Java une cible Go (`-go`) validée par

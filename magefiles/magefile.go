@@ -27,6 +27,29 @@ const (
 	testGoDir = "test/go"
 )
 
+// init moves to the repository root (the directory holding build.xml and
+// go.work), found by walking up from the working directory, so that the
+// targets work with or without `-w .`.
+func init() {
+	dir, err := os.Getwd()
+	if err != nil {
+		return
+	}
+	for d := dir; ; {
+		_, e1 := os.Stat(filepath.Join(d, "build.xml"))
+		_, e2 := os.Stat(filepath.Join(d, "go.work"))
+		if e1 == nil && e2 == nil {
+			_ = os.Chdir(d)
+			return
+		}
+		parent := filepath.Dir(d)
+		if parent == d {
+			return
+		}
+		d = parent
+	}
+}
+
 // runIn runs name with args in dir (relative to the repository root),
 // streaming its output.
 func runIn(dir, name string, args ...string) error {
