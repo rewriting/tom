@@ -56,6 +56,9 @@ public class CstConverter {
   %include { ../../adt/cst/CST.tom }
   %typeterm CstConverter { implement { CstConverter }}
 
+  /** true when the target is Go (-go): synthesized %op Strategy hooks are Go code */
+  public static boolean goTarget = false;
+
   private static Logger logger = Logger.getLogger("tom.engine.parser.CstConverter");
   private Logger getLogger() {
     return Logger.getLogger(getClass().getName());
@@ -132,7 +135,11 @@ public class CstConverter {
             makeargs += ("t" + index + ",");
             newargs += ("$t" + index + ",");
             index++;
-            getslots += %[get_slot(@`name@,t) { ((@`stratName@)$t).get@`name@() }]%;
+            if(goTarget) {
+              getslots += %[get_slot(@`name@,t) { ($t).(*@`stratName@).get@`name@() }]%;
+            } else {
+              getslots += %[get_slot(@`name@,t) { ((@`stratName@)$t).get@`name@() }]%;
+            }
           }
         }
         index = opargs.lastIndexOf(',');
@@ -142,13 +149,24 @@ public class CstConverter {
         index = newargs.lastIndexOf(',');
         if(index > 0) { newargs = newargs.substring(0,index); }
 
-        String opdecl = %[
+        String opdecl;
+        if(goTarget) {
+          opdecl = %[
+          %op Strategy @`stratName@(@opargs@) {
+            is_fsym(t) { func() bool { _, ok := ($t).(*@`stratName@); return ok }() }
+            @getslots@
+            make(@makeargs@) { tom_new_@`stratName@(@newargs@) }
+          }
+        ]%;
+        } else {
+          opdecl = %[
           %op Strategy @`stratName@(@opargs@) {
             is_fsym(t) { ($t instanceof @`stratName@) }
             @getslots@
             make(@makeargs@) { new @`stratName@(@newargs@) }
           }
         ]%;
+        }
 
         /* call the parser to build the corresponding CST */
         ANTLRInputStream tomInput = new ANTLRInputStream(opdecl);

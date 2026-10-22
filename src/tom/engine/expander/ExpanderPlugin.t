@@ -100,6 +100,9 @@ public class ExpanderPlugin extends TomGenericPlugin {
   private static BQTerm objectArrayVar;
   private static String visitFuncPrefix; // _visit_TermN prefix is "_" but in Ada function can't start with "_"
   private static boolean generateAdaCode = false;
+  private static boolean generateGoCode = false;
+  /** prefix of calls to the generated visit methods ("tom__strat." in Go) */
+  private static String callPrefix = "";
 
   /** if the flag is true, a class that implements Introspector is generated */
   private boolean genIntrospector = false;
@@ -127,7 +130,27 @@ public class ExpanderPlugin extends TomGenericPlugin {
   }
 
   public void run(Map informationTracker) {
-	if(getOptionBooleanValue("aCode")) {
+	generateAdaCode = false;
+	generateGoCode = false;
+	callPrefix = "";
+	if(getOptionBooleanValue("goCode")) {
+		generateGoCode = true;
+		callPrefix = tom.engine.backend.GoGenerator.RECEIVER + ".";
+		visitFuncPrefix = "_";
+		objectType = ASTFactory.makeType(`concTypeOption(),"undefined","any");
+		genericType = ASTFactory.makeType(`concTypeOption(),"undefined","any");
+		methodparameterType = ASTFactory.makeType(`concTypeOption(),"undefined","any");
+		objectArrayType = ASTFactory.makeType(`concTypeOption(),"undefined","[]any");
+		intType = ASTFactory.makeType(`concTypeOption(),"int","int64");
+		basicStratType = ASTFactory.makeType(`concTypeOption(),"undefined","sl.AbstractStrategyBasic");
+		introspectorType = ASTFactory.makeType(`concTypeOption(),"undefined","sl.Introspector");
+		visitfailureType = ASTFactory.makeType(`concTypeOption(),"undefined","error");
+		introspectorVar = `BQVariable(concOption(),Name("introspector"),introspectorType);
+		objectVar = `BQVariable(concOption(),Name("o"),objectType);
+		childVar = `BQVariable(concOption(),Name("child"),objectType);
+		intVar = `BQVariable(concOption(),Name("i"),intType);
+		objectArrayVar = `BQVariable(concOption(),Name("children"),objectArrayType);
+	} else if(getOptionBooleanValue("aCode")) {
 		generateAdaCode = true;
 		visitFuncPrefix = "tom_";
 		objectType = ASTFactory.makeType(`concTypeOption(),"undefined","ObjectPtr");
@@ -209,6 +232,9 @@ public class ExpanderPlugin extends TomGenericPlugin {
      */
     visit Declaration {
       Strategy(name,extendsTerm,visitList,hooks,orgTrack) -> {
+        if(generateGoCode && expander.getGenIntrospector()) {
+          throw new TomRuntimeException("--genIntrospector is not supported with -go");
+        }
         //Generate only one Introspector for a class if at least one  %strategy is found
         Declaration introspectorClass = `EmptyDeclaration();
         if(expander.getGenIntrospector() && !expander.getGeneratedIntrospector()) {
@@ -538,7 +564,7 @@ public class ExpanderPlugin extends TomGenericPlugin {
             }
             //return default strategy.visitLight(arg)
             // FIXME: put superclass keyword in backend, in c# 'super' is 'base'
-            Instruction returnStatement = `Return(FunctionCall(Name(visitFuncPrefix+ funcName),vType,subjectListAST));
+            Instruction returnStatement = `Return(FunctionCall(Name(callPrefix + visitFuncPrefix + funcName),vType,subjectListAST));
             Instruction matchStatement = `Match(constraintInstructionList, concOption(orgTrack));
             InstructionList instructions = `concInstruction(matchStatement, returnStatement);
             l = `concDeclaration(MethodDef(Name(funcName),subjectListAST,vType,visitfailureType,AbstractBlock(instructions)),l*);
@@ -586,7 +612,7 @@ public class ExpanderPlugin extends TomGenericPlugin {
           } else {
             funcArg = `concBQTerm(ExpressionToBQTerm(Cast(type,BQTermToExpression(vVar))),introspectorVar);
           }
-          Instruction returnStatement = `Return(ExpressionToBQTerm(Cast(genericType,BQTermToExpression(FunctionCall(Name(dispatchInfo.get(type)),type,funcArg)))));
+          Instruction returnStatement = `Return(ExpressionToBQTerm(Cast(genericType,BQTermToExpression(FunctionCall(Name(callPrefix + dispatchInfo.get(type)),type,funcArg)))));
           Instruction ifInstr = `If(IsSort(type,vVar),returnStatement,Nop());
           ifList = `concInstruction(ifList*,ifInstr);
           // generate the _visit_Term
@@ -597,6 +623,10 @@ public class ExpanderPlugin extends TomGenericPlugin {
             environmentVar = `BQVariable(concOption(orgTrack),Name("str.env"),EmptyType());
             return1 = `Return(ExpressionToBQTerm(Cast(type,TomInstructionToExpression(CodeToInstruction(TargetLanguageToCode(ITL("visit(str.any, str.env, intro)")))))));
             return2 = `Return(ExpressionToBQTerm(Cast(type,TomInstructionToExpression(CodeToInstruction(TargetLanguageToCode(ITL("visitLight(str.any, ObjectPtr(arg),intro)")))))));
+          } else if(generateGoCode) {
+            environmentVar = `BQVariable(concOption(orgTrack),Name("environment"),EmptyType());
+            return2 = `Return(ExpressionToBQTerm(Cast(type,BQTermToExpression(Composite(CompositeTL(ITL("sl.MustVisit(" + callPrefix + "Any().VisitLight(arg,introspector))")))))));
+            return1 = return2;
           } else {
             environmentVar = `BQVariable(concOption(orgTrack),Name("environment"),EmptyType());
             return1 = `Return(ExpressionToBQTerm(Cast(type,TomInstructionToExpression(CodeToInstruction(TargetLanguageToCode(ITL("any.visit(environment,introspector)")))))));
@@ -606,7 +636,12 @@ public class ExpanderPlugin extends TomGenericPlugin {
           testEnvNotNull =
             `Negation(EqualTerm(expander.getStreamManager().getSymbolTable().getBooleanType(),
                   ExpressionToBQTerm(Bottom(Type(concTypeOption(),"Object",EmptyTargetLanguageType()))),TomBase.convertFromBQVarToVar(environmentVar)));
-          Instruction ifThenElse = `If(testEnvNotNull,return1,return2);
+          Instruction ifThenElse;
+          if(generateGoCode) {
+            ifThenElse = return2; // the Go sl has no environment-based visit
+          } else {
+            ifThenElse = `If(testEnvNotNull,return1,return2);
+          }
           
           if(generateAdaCode) {
             methodParameterBQT = `concBQTerm(strategyVar, arg,introspectorVar);
@@ -626,6 +661,9 @@ public class ExpanderPlugin extends TomGenericPlugin {
               If(testEnvNotNull,
                 Return(ExpressionToBQTerm(Cast(genericType,BQTermToExpression(Composite(CompositeTL(ITL("visit(str.any, str.env, intro)"))))))),
                 Return(ExpressionToBQTerm(Cast(genericType,BQTermToExpression(Composite(CompositeTL(ITL("visitLight(str.any, v,intro)")))))))));
+        } else if(generateGoCode) {
+          ifList = `concInstruction(ifList*,
+              Return(Composite(CompositeTL(ITL("sl.MustVisit(" + callPrefix + "Any().VisitLight(v,introspector))")))));
         } else {
           ifList = `concInstruction(ifList*,              
               If(testEnvNotNull,

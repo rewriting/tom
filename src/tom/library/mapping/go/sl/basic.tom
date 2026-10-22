@@ -15,7 +15,9 @@
  * Variadic combinators (Sequence/Choice/…) use list-shape hooks:
  * `make_empty()` returns `nil` (the strategy-graph terminator),
  * `make_insert(h, t)` chains via `sl.NewSequence` etc. which
- * already collapse a nil tail into the bare head.
+ * already collapse a nil tail into the bare head; `get_head` /
+ * `get_tail` read child 0 (Java FIRST) / child 1 (Java THEN) — the
+ * generated append/slice helpers need them.
  *
  * Mu / MuVar / Identity / Fail / All / One / OneId — primitives
  * the composed walks (BottomUp/RepeatId/…) expand into.
@@ -67,6 +69,8 @@
   is_fsym(t) { sl.IsSequence($t) }
   make_empty() { nil }
   make_insert(head,tail) { sl.NewSequence($head, $tail) }
+  get_head(t) { ($t).ChildAt(0) }
+  get_tail(t) { ($t).ChildAt(1) }
   is_empty(s) { $s == nil }
 }
 
@@ -74,6 +78,8 @@
   is_fsym(t) { sl.IsSequenceId($t) }
   make_empty() { nil }
   make_insert(head,tail) { sl.NewSequenceId($head, $tail) }
+  get_head(t) { ($t).ChildAt(0) }
+  get_tail(t) { ($t).ChildAt(1) }
   is_empty(s) { $s == nil }
 }
 
@@ -81,6 +87,8 @@
   is_fsym(t) { sl.IsChoice($t) }
   make_empty() { nil }
   make_insert(head,tail) { sl.NewChoice($head, $tail) }
+  get_head(t) { ($t).ChildAt(0) }
+  get_tail(t) { ($t).ChildAt(1) }
   is_empty(s) { $s == nil }
 }
 
@@ -88,5 +96,7 @@
   is_fsym(t) { sl.IsChoiceId($t) }
   make_empty() { nil }
   make_insert(head,tail) { sl.NewChoiceId($head, $tail) }
+  get_head(t) { ($t).ChildAt(0) }
+  get_tail(t) { ($t).ChildAt(1) }
   is_empty(s) { $s == nil }
 }

@@ -118,6 +118,7 @@ public class TomParserPlugin extends TomGenericPlugin {
     long startChrono = System.currentTimeMillis();
     boolean intermediate = ((Boolean)getOptionManager().getOptionValue("intermediate")).booleanValue();
     boolean java         = ((Boolean)getOptionManager().getOptionValue("jCode")).booleanValue();
+    tom.engine.parser.antlr4.CstConverter.goTarget = ((Boolean)getOptionManager().getOptionValue("goCode")).booleanValue();
     boolean eclipse      = ((Boolean)getOptionManager().getOptionValue("eclipse")).booleanValue();
     boolean newparser    = ((Boolean)getOptionManager().getOptionValue("newparser")).booleanValue();
     boolean tomjava      = ((Boolean)getOptionManager().getOptionValue("tomjava")).booleanValue();

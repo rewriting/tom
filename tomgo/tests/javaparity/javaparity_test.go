@@ -16,6 +16,10 @@ import (
 // timing matches the "123 ms" phase timings the compiler prints.
 var timing = regexp.MustCompile(`\d+ ms`)
 
+// stackLine matches the source line of a Java stack-trace frame: editing
+// a compiler source shifts those lines without changing any behaviour.
+var stackLine = regexp.MustCompile(`\.java:\d+\)`)
+
 // tmpName matches the random temporary file names of generated .t files.
 var tmpName = regexp.MustCompile(`/[^\s]*/tmp\d+\.t`)
 
@@ -66,6 +70,7 @@ func compareWithLegacy(t *testing.T, allowed map[string]string, args ...string) 
 			norm := func(s, out string) string {
 				s = timing.ReplaceAllString(s, "N ms")
 				s = tmpName.ReplaceAllString(s, "__TMP__.t")
+				s = stackLine.ReplaceAllString(s, ".java:N)")
 				return tomjava.Normalize(s, map[string]string{out: "__OUT__", legacy.Home: "__HOME__", current.Home: "__HOME__"})
 			}
 			if (errL == nil) != (errN == nil) || norm(logL, outL) != norm(logN, outN) {
