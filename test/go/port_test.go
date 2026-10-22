@@ -215,9 +215,25 @@ var cases = []portCase{
 	{Rel: "backquote/TestBackquoteGom.t", GoTest: true, OracleDeps: []string{"backquote/TestDefaultValue.t"},
 		Gom: []gomFile{{Rel: "backquote/term.gom", OracleOnly: true}}},
 	{Rel: "backquote/TestDefaultValue.t", GoTest: true, Gom: []gomFile{{Rel: "backquote/term.gom"}}},
+	{Rel: "rule/Array.t"},
 	{Rel: "backquote/TestBackquoteWithBracket.t", GoTest: true, OracleDeps: []string{"backquote/TestDefaultValue.t"},
 		Gom: []gomFile{{Rel: "backquote/term.gom"}}},
 }
+
+// legacyFails lists the originals (relative to test/) that legacy/
+// cannot compile: no oracle is possible, so they are not ported (dashboard
+// status "échoue dans legacy"); TestLegacyFails checks that they still
+// fail. test/build.xml excludes rule/ from its compilation.
+var legacyFails = map[string]string{
+	"rule/Peano.t":     ruleLegacyFails,
+	"rule/TestArray.t": ruleLegacyFails,
+	"rule/TestPeano.t": ruleLegacyFails,
+	"rule/TestWhen.t":  ruleLegacyFails + "; its %match rules also use the obsolete `when` guards",
+	"rule/TomList.t":   ruleLegacyFails,
+}
+
+// ruleLegacyFails is why legacy/ cannot compile the %rule tests of rule/.
+const ruleLegacyFails = "obsolete %rule construct: legacy/'s tom crashes on it (NullPointerException in the CstBuilder of the default parser), and with -np it leaves %rule as host code, which javac rejects"
 
 // termgraphUnsupported is why the tests of gom/TestTermgraph.t are not
 // ported.
@@ -954,7 +970,9 @@ func TestDashboard(t *testing.T) {
 			return nil
 		}
 		status, note := "non porté", ""
-		if main, ok := supportOf[rel]; ok {
+		if reason, ok := legacyFails[rel]; ok {
+			status, note = "échoue dans legacy", reason
+		} else if main, ok := supportOf[rel]; ok {
 			// A support file has no test of its own: its classes are
 			// exercised, in Java and in Go, by the case that uses them.
 			status, note = "support", "compilé avec `"+main+"`, couvert par son statut"
@@ -984,9 +1002,11 @@ func TestDashboard(t *testing.T) {
 	b.WriteString("`legacy/` (mêmes tests JUnit réussis, ou même sortie et même statut).\n")
 	b.WriteString("Un fichier « support » n'a pas de test propre : ses classes sont compilées\n")
 	b.WriteString("avec le cas qui les utilise (comme `test/build.xml` compile tout le\n")
-	b.WriteString("répertoire), et c'est le statut de ce cas qui les valide.\n\n")
+	b.WriteString("répertoire), et c'est le statut de ce cas qui les valide.\n")
+	b.WriteString("Un original « échoue dans legacy » ne se compile pas avec `legacy/` :\n")
+	b.WriteString("pas d'oracle possible, il n'est pas porté (`TestLegacyFails` le vérifie).\n\n")
 	b.WriteString("- total : " + strconv.Itoa(len(rows)) + "\n")
-	for _, s := range []string{"OK", "divergence", "échec go test", "échec go build", "échec tom", "oracle invalide", "non supporté", "support", "non porté"} {
+	for _, s := range []string{"OK", "divergence", "échec go test", "échec go build", "échec tom", "oracle invalide", "non supporté", "support", "échoue dans legacy", "non porté"} {
 		b.WriteString("- " + s + " : " + strconv.Itoa(counts[s]) + "\n")
 	}
 	b.WriteString("\n| Cas | Statut | Notes |\n|---|---|---|\n" + strings.Join(rows, "\n") + "\n")
@@ -1247,6 +1267,50 @@ func gomWithoutHookBodies(src []byte) (string, error) {
 		return "", err
 	}
 	return origin.ReplaceAllString(hookCode.ReplaceAllString(fmt.Sprint(mod), `HookCode("")`), "Origin(0)"), nil
+}
+
+// TestLegacyFails checks that legacy/ still cannot compile the originals
+// of legacyFails (tom, then javac, as for an oracle), and that none of
+// them is also a case.
+func TestLegacyFails(t *testing.T) {
+	for _, c := range cases {
+		if _, ok := legacyFails[c.Rel]; ok {
+			t.Errorf("%s is both a case and in legacyFails", c.Rel)
+		}
+	}
+	legacy := harness.LegacyDist(t)
+	root := harness.RepoRoot(t)
+	cp := strings.Join([]string{
+		filepath.Join(legacy.Home, "lib", "tom-runtime-full.jar"),
+		filepath.Join(root, "legacy", "stable", "lib", "compiletime", "junit.jar"),
+	}, string(os.PathListSeparator))
+	var rels []string
+	for rel := range legacyFails {
+		rels = append(rels, rel)
+	}
+	sort.Strings(rels)
+	for _, rel := range rels {
+		t.Run(rel, func(t *testing.T) {
+			dir := t.TempDir()
+			if _, err := legacy.Compile(t, filepath.Join(root, "test", rel), dir); err != nil {
+				return // tom fails
+			}
+			var javaFiles []string
+			filepath.Walk(dir, func(p string, info os.FileInfo, err error) error {
+				if err == nil && strings.HasSuffix(p, ".java") {
+					javaFiles = append(javaFiles, p)
+				}
+				return err
+			})
+			if len(javaFiles) == 0 {
+				return // tom produced nothing
+			}
+			args := append([]string{"-nowarn", "-encoding", "UTF-8", "-cp", cp, "-d", dir}, javaFiles...)
+			if out, err := harness.RunIn(dir, nil, "javac", args...); err == nil {
+				t.Errorf("legacy/ compiles %s (tom and javac succeed): port it instead\n%s", rel, out)
+			}
+		})
+	}
 }
 
 // TestCapitalise pins the JUnit -> Go test names.
