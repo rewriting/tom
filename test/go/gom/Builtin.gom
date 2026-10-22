@@ -1,0 +1,31 @@
+module gom.b.u.i.l.t.i.n.Builtin
+imports int boolean String ATerm ATermList long char float double
+
+abstract syntax
+Wrapper = | Int(i:int)
+          | IntBis(i:int)
+          | Name(n:String)
+          | NameBis(n:String)
+          | Node(aterm:ATerm)
+          | NodeBis(aterm:ATerm)
+          | Long(l:long)
+          | LongBis(l:long)
+          | Char(c:char)
+          | CharBis(c:char)
+          | Bool(b:boolean)
+          | BoolBis(b:boolean)
+          | concWrap(Wrapper*)
+          | Real(r:float)
+          | RealBis(r:float)
+          | Double(d:double)
+          | DoubleBis(d:double)
+          | MultipleDouble(d1:double,d2:double,d3:double)
+          | WrapListInt(li:ListInt)
+          | WrapListLong(ll:ListLong)
+          | WrapListBool(lb:ListBool)
+          | WrapListChar(lc:ListChar)
+
+ListInt = concInt(int*)
+ListLong = concLong(long*)
+ListBool = concBool(boolean*)
+ListChar = concChar(char*)

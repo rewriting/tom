@@ -1,0 +1,19 @@
+{
+  "passed": [
+    "TestExpand",
+    "TestExpandCycle",
+    "TestGraphRules1",
+    "TestGraphRules2",
+    "TestGraphRules3",
+    "TestGraphRules4",
+    "TestGraphRules51",
+    "TestGraphRules52",
+    "TestGraphRules6",
+    "TestGraphRules7",
+    "TestGraphRules8",
+    "TestGraphRules9"
+  ],
+  "stdout": "",
+  "exitOK": true,
+  "source_sha256": "622f65b033c398d5e6d17c63d342b63486a91413db587c0d7a619d68cd218179"
+}

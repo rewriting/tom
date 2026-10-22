@@ -97,6 +97,10 @@ var testslGom = gomFile{
 // which imports Leaf.gom.
 var importingGom = gomFile{Rel: "gom/Importing.gom", Deps: []string{"gom/Imported.gom", "gom/Leaf.gom"}}
 
+// builtinGom is test/gom/Builtin.gom, module gom.b.u.i.l.t.i.n.Builtin:
+// Java Gom generates it in gom/b/u/i/l/t/i/n/builtin.
+var builtinGom = gomFile{Rel: "gom/Builtin.gom", Dir: "b/u/i/l/t/i/n/builtin"}
+
 // gomModuleDir is the directory, relative to the case's output
 // directory (the Go module root, or the -I root for legacy/), that
 // receives the code generated for g: Gom's <module>/<module>.tom layout,
@@ -168,7 +172,28 @@ var cases = []portCase{
 	{Rel: "gom/TestList.t", GoTest: true},
 	{Rel: "gom/TestRuleList.t", GoTest: true, Gom: []gomFile{{Rel: "gom/RuleList.gom"}}},
 	{Rel: "gom/TestRuleSortList.t", GoTest: true},
+	{Rel: "gom/TestFrom.t", GoTest: true, Gom: []gomFile{importingGom}},
+	{Rel: "gom/TestBuiltin.t", GoTest: true, Gom: []gomFile{builtinGom}},
+	{Rel: "gom/TestFromMethods.t", GoTest: true, Gom: []gomFile{builtinGom}},
+	{Rel: "gom/TestCollection.t", GoTest: true},
+	{Rel: "gom/TestSortHook.t", GoTest: true},
+	{Rel: "gom/TestTermgraph.t", GoTest: true, FullyUnsupported: true, Unsupported: unsupportedAll(termgraphUnsupported,
+		"TestExpand", "TestExpandCycle", "TestGraphRules1", "TestGraphRules2", "TestGraphRules3", "TestGraphRules4",
+		"TestGraphRules51", "TestGraphRules52", "TestGraphRules6", "TestGraphRules7", "TestGraphRules8", "TestGraphRules9")},
 	{Rel: "gom/TestYingYang.t", GoTest: true, Gom: []gomFile{{Rel: "gom/Ying.gom", Deps: []string{"gom/Yang.gom"}}}},
+}
+
+// termgraphUnsupported is why the tests of gom/TestTermgraph.t are not
+// ported.
+const termgraphUnsupported = "needs Gom's --termgraph (term-graph operators LabTerm/RefTerm/PathTerm, expand(), graphrules hooks compiled into term-graph rewriting strategies), not implemented by gomgo"
+
+// unsupportedAll maps each test name to the same reason.
+func unsupportedAll(reason string, names ...string) map[string]string {
+	m := map[string]string{}
+	for _, n := range names {
+		m[n] = reason
+	}
+	return m
 }
 
 // testRefUnsupported is why the tests of sl/TestRef.t are not ported.
@@ -573,7 +598,8 @@ func junitTestNames(source string) []string {
 	lines := strings.Split(stripComments(source), "\n")
 	for i, line := range lines {
 		s := strings.TrimSpace(line)
-		if s != "@Test" && !strings.HasPrefix(s, "@Test(") {
+		// a JUnit Theories runner runs the @Theory methods as tests
+		if s != "@Test" && !strings.HasPrefix(s, "@Test(") && s != "@Theory" && !strings.HasPrefix(s, "@Theory(") {
 			continue
 		}
 		for _, next := range lines[i+1:] {
@@ -946,6 +972,9 @@ func TestCompareWithOracle(t *testing.T) {
 	}
 	if got := junitTests(t, writeTemp(t, "/* @Test\npublic void testA() {} */\n// @Test\n@Test\npublic void testB() { String s = \"/*\"; }\n@Test\npublic void testC() {}\n")); strings.Join(got, ",") != "testB,testC" {
 		t.Errorf("junitTests = %v", got)
+	}
+	if got := junitTestNames("@Theory\npublic void testT(W w) {}\n@DataPoints\npublic static W[] data() {}\n"); strings.Join(got, ",") != "testT" {
+		t.Errorf("junitTestNames(@Theory) = %v", got)
 	}
 }
 

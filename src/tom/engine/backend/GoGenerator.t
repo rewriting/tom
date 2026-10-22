@@ -186,6 +186,24 @@ public class GoGenerator extends GenericGenerator {
     super.generateExpression(deep,subject,moduleName);
   }
 
+  /*
+   * A Java long literal (32l, 7L) is not a Go literal: the suffix is
+   * dropped, the Go constant takes the type of its context (int64, the Go
+   * type of Tom's long). (Patterns with float/double suffixes are not
+   * parsed by the island parser that -go uses.)
+   */
+  protected void generateBQTerm(int deep, BQTerm subject, String moduleName) throws IOException {
+    %match(subject) {
+      BuildConstant[AstName=Name(name)] -> {
+        if(`name.matches("-?[0-9]+[lL]")) {
+          output.write(`name.substring(0,`name.length()-1));
+          return;
+        }
+      }
+    }
+    super.generateBQTerm(deep,subject,moduleName);
+  }
+
   // ---------------------------------------------------------------- instructions
 
   protected void buildAssign(int deep, BQTerm var, OptionList optionList, Expression exp, String moduleName) throws IOException {

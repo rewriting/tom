@@ -1,0 +1,22 @@
+{
+  "passed": [
+    "TestInt",
+    "TestString",
+    "TestDouble",
+    "TestATerm",
+    "TestATermList",
+    "TestMatchInt",
+    "TestMatchLong",
+    "TestMatchChar",
+    "TestMatchString",
+    "TestDisjunctionInt",
+    "TestDisjunctionString",
+    "TestBoolean",
+    "TestMatchBoolean",
+    "TestFromString",
+    "TestFrom_int"
+  ],
+  "stdout": "",
+  "exitOK": true,
+  "source_sha256": "8cde64f0a7b65446ae02ee9754e192aff0311285d1d27fe8e05d05c071bfe631"
+}

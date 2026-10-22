@@ -1,0 +1,9 @@
+/*
+ * Tom Go mapping — char primitive.
+ * Mirrors mapping/java/char.tom; a Java char is a Go rune (Gom's goType).
+ */
+%typeterm char {
+  implement { rune }
+  is_sort(t) { true }
+  equals(t1,t2) { $t1 == $t2 }
+}

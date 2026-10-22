@@ -9,15 +9,15 @@ avec le cas qui les utilise (comme `test/build.xml` compile tout le
 répertoire), et c'est le statut de ce cas qui les valide.
 
 - total : 103
-- OK : 43
+- OK : 48
 - divergence : 0
 - échec go test : 0
 - échec go build : 0
 - échec tom : 0
 - oracle invalide : 0
-- non supporté : 1
+- non supporté : 2
 - support : 4
-- non porté : 55
+- non porté : 49
 
 | Cas | Statut | Notes |
 |---|---|---|
@@ -64,12 +64,12 @@ répertoire), et c'est le statut de ce cas qui les valide.
 | `gom/TestACU.t` | OK |  |
 | `gom/TestAU.t` | OK |  |
 | `gom/TestBool.t` | OK |  |
-| `gom/TestBuiltin.t` | non porté |  |
-| `gom/TestCollection.t` | non porté |  |
+| `gom/TestBuiltin.t` | OK |  |
+| `gom/TestCollection.t` | OK |  |
 | `gom/TestDotted.t` | OK |  |
 | `gom/TestFL.t` | OK |  |
-| `gom/TestFrom.t` | non porté |  |
-| `gom/TestFromMethods.t` | non porté |  |
+| `gom/TestFrom.t` | OK |  |
+| `gom/TestFromMethods.t` | OK |  |
 | `gom/TestGomMultithread.t` | OK |  |
 | `gom/TestGomWithoutMaximalSharing.t` | OK |  |
 | `gom/TestImport.t` | OK |  |
@@ -82,9 +82,9 @@ répertoire), et c'est le statut de ce cas qui les valide.
 | `gom/TestRuleCond.t` | OK |  |
 | `gom/TestRuleList.t` | OK |  |
 | `gom/TestRuleSortList.t` | OK |  |
-| `gom/TestSortHook.t` | non porté |  |
+| `gom/TestSortHook.t` | OK |  |
 | `gom/TestStratMapping.t` | OK |  |
-| `gom/TestTermgraph.t` | non porté |  |
+| `gom/TestTermgraph.t` | non supporté | `TestExpand` non supporté : needs Gom's --termgraph (term-graph operators LabTerm/RefTerm/PathTerm, expand(), graphrules hooks compiled into term-graph rewriting strategies), not implemented by gomgo ; `TestExpandCycle` non supporté : needs Gom's --termgraph (term-graph operators LabTerm/RefTerm/PathTerm, expand(), graphrules hooks compiled into term-graph rewriting strategies), not implemented by gomgo ; `TestGraphRules1` non supporté : needs Gom's --termgraph (term-graph operators LabTerm/RefTerm/PathTerm, expand(), graphrules hooks compiled into term-graph rewriting strategies), not implemented by gomgo ; `TestGraphRules2` non supporté : needs Gom's --termgraph (term-graph operators LabTerm/RefTerm/PathTerm, expand(), graphrules hooks compiled into term-graph rewriting strategies), not implemented by gomgo ; `TestGraphRules3` non supporté : needs Gom's --termgraph (term-graph operators LabTerm/RefTerm/PathTerm, expand(), graphrules hooks compiled into term-graph rewriting strategies), not implemented by gomgo ; `TestGraphRules4` non supporté : needs Gom's --termgraph (term-graph operators LabTerm/RefTerm/PathTerm, expand(), graphrules hooks compiled into term-graph rewriting strategies), not implemented by gomgo ; `TestGraphRules51` non supporté : needs Gom's --termgraph (term-graph operators LabTerm/RefTerm/PathTerm, expand(), graphrules hooks compiled into term-graph rewriting strategies), not implemented by gomgo ; `TestGraphRules52` non supporté : needs Gom's --termgraph (term-graph operators LabTerm/RefTerm/PathTerm, expand(), graphrules hooks compiled into term-graph rewriting strategies), not implemented by gomgo ; `TestGraphRules6` non supporté : needs Gom's --termgraph (term-graph operators LabTerm/RefTerm/PathTerm, expand(), graphrules hooks compiled into term-graph rewriting strategies), not implemented by gomgo ; `TestGraphRules7` non supporté : needs Gom's --termgraph (term-graph operators LabTerm/RefTerm/PathTerm, expand(), graphrules hooks compiled into term-graph rewriting strategies), not implemented by gomgo ; `TestGraphRules8` non supporté : needs Gom's --termgraph (term-graph operators LabTerm/RefTerm/PathTerm, expand(), graphrules hooks compiled into term-graph rewriting strategies), not implemented by gomgo ; `TestGraphRules9` non supporté : needs Gom's --termgraph (term-graph operators LabTerm/RefTerm/PathTerm, expand(), graphrules hooks compiled into term-graph rewriting strategies), not implemented by gomgo |
 | `gom/TestTomHook.t` | OK |  |
 | `gom/TestYingYang.t` | OK |  |
 | `gom/fromterm/TestFromTerm.t` | non porté |  |

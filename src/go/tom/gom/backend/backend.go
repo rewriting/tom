@@ -373,6 +373,8 @@ var builtinMappings = []struct{ module, mapping string }{
 	{"double", "double.tom"},
 	{"long", "long.tom"},
 	{"float", "float.tom"},
+	{"ATerm", "aterm.tom"},
+	{"ATermList", "aterm.tom"},
 }
 
 // importedModules returns the names of the modules imported by g.
@@ -406,8 +408,10 @@ func BuiltinIncludesGo(g gomast.GomModule, more ...gomast.GomModule) []byte {
 			imported[name] = true
 		}
 	}
+	included := map[string]bool{}
 	for _, b := range builtinMappings {
-		if imported[b.module] {
+		if imported[b.module] && !included[b.mapping] {
+			included[b.mapping] = true
 			fmt.Fprintf(&buf, "%%include { %s }\n", b.mapping)
 		}
 	}
@@ -442,7 +446,7 @@ func BuiltinIncludesGo(g gomast.GomModule, more ...gomast.GomModule) []byte {
 // `T1`). Slot field names are `exportedField(slotName)`.
 func EmitTomMappingGo(mod gomast.GomModule, opts Options) []byte {
 	var buf bytes.Buffer
-	types := &gen{mod: mod, ownSort: map[string]bool{}}
+	types := &gen{mod: mod, ownSort: map[string]bool{}, javaAPI: !moduleIsKnown(mod)}
 	for _, prod := range moduleSorts(mod) {
 		types.ownSort[sortName(prod)] = true
 	}
@@ -577,7 +581,7 @@ func hookArgNames(h *gomast.HookProduction) []string {
 // mapping of a standalone .gom (its package dot-imports the generated
 // one, whose Hook<Make> variables are exported for that reason).
 func emitUserMakeHooksGo(buf *bytes.Buffer, mod gomast.GomModule, imported map[string]bool) {
-	types := &gen{mod: mod, ownSort: map[string]bool{}}
+	types := &gen{mod: mod, ownSort: map[string]bool{}, javaAPI: !moduleIsKnown(mod)}
 	for _, prod := range moduleSorts(mod) {
 		types.ownSort[sortName(prod)] = true
 	}
@@ -1089,6 +1093,11 @@ func (g *gen) emitHeader() {
 	fmt.Fprintln(&g.buf, `	"fmt"`)
 	fmt.Fprintln(&g.buf, `	"strings"`)
 	fmt.Fprintln(&g.buf, "")
+	if g.javaAPI {
+		fmt.Fprintln(&g.buf, `	"io"`)
+		fmt.Fprintln(&g.buf, "")
+		fmt.Fprintln(&g.buf, `	"tom/library/aterm"`)
+	}
 	fmt.Fprintln(&g.buf, `	"tom/library/sharedobjects"`)
 	fmt.Fprintln(&g.buf, `	sl "tom/library/sl"`)
 	fmt.Fprintln(&g.buf, ")")
@@ -1097,6 +1106,10 @@ func (g *gen) emitHeader() {
 	fmt.Fprintln(&g.buf, "var _ = fmt.Sprintf")
 	fmt.Fprintln(&g.buf, "var _ = strings.Join")
 	fmt.Fprintln(&g.buf, "var _ sl.Strategy = nil")
+	if g.javaAPI {
+		fmt.Fprintln(&g.buf, "var _ = io.EOF")
+		fmt.Fprintln(&g.buf, "var _ = aterm.GetInstance")
+	}
 	fmt.Fprintln(&g.buf)
 }
 
@@ -1137,6 +1150,9 @@ func (g *gen) emitSort(prod *gomast.SortTypeProduction) {
 	}
 	fmt.Fprintln(&g.buf, "}")
 	fmt.Fprintln(&g.buf)
+	if g.javaAPI {
+		g.emitJavaFromTerm(api)
+	}
 	for _, alt := range sortAlternatives(prod) {
 		g.emitAlternative(name, alt)
 		if g.javaAPI {
@@ -1809,6 +1825,10 @@ afterEquivalent:
 		}
 		return name
 	}
+	if g.javaAPI {
+		g.emitJavaString(alt, structName)
+		goto afterString
+	}
 	fmt.Fprintf(&g.buf, "func (t *%s) String() string {\n", structName)
 	if isVariadic {
 		v := verbFor(slots[0].GoType)
@@ -1834,6 +1854,7 @@ afterEquivalent:
 	fmt.Fprintln(&g.buf, "}")
 	fmt.Fprintln(&g.buf)
 
+afterString:
 	// Visitable methods (Phase 6.5). Emit Children/SetChildren/
 	// ChildCount/ChildAt/SetChildAt so this struct can be walked by
 	// strategies in tom/library/sl. The shape mirrors what Java's
@@ -2350,7 +2371,15 @@ func (g *gen) goType(name string, _ bool) string {
 		return "float32"
 	case "double":
 		return "float64"
-	case "ATerm", "ATermList":
+	case "ATerm":
+		if g.javaAPI {
+			return "aterm.ATerm"
+		}
+		return "any"
+	case "ATermList":
+		if g.javaAPI {
+			return "*aterm.ATermList"
+		}
 		return "any"
 	}
 	if g.ownSort[name] {

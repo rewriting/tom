@@ -1,0 +1,9 @@
+{
+  "passed": [
+    "TestFromTerm",
+    "TestFromString"
+  ],
+  "stdout": "",
+  "exitOK": true,
+  "source_sha256": "43a4a44d256f1fb372023c5527f6eb2e8b5f9b130e4cc1646c80572edb3238be"
+}

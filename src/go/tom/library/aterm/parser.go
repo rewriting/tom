@@ -258,6 +258,14 @@ func (p *textParser) parseQuotedString() string {
 			case nxt == 'r':
 				b.WriteByte('\r')
 				p.pos += 2
+			case nxt == 'f':
+				// as Java's aterm reader (and Gom's toString, which
+				// writes \f and \b): test/gom/TestFromMethods.t
+				b.WriteByte('\f')
+				p.pos += 2
+			case nxt == 'b':
+				b.WriteByte('\b')
+				p.pos += 2
 			case nxt == '\\' || nxt == '"' || nxt == '\'':
 				b.WriteByte(nxt)
 				p.pos += 2

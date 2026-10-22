@@ -28,6 +28,7 @@ import (
 	"bytes"
 	"fmt"
 	"regexp"
+	"strings"
 
 	gomast "tom/gom/adt"
 )
@@ -44,6 +45,7 @@ type apiSlot struct {
 	gomName string // slot name in the .gom
 	field   string // Go field name
 	goType  string
+	gomType string // Gom sort of the slot (int, long, String, a sort, …)
 }
 
 func (g *gen) sortAPIOf(prod *gomast.SortTypeProduction) sortAPI {
@@ -85,7 +87,7 @@ func (g *gen) namedSlots(alt *gomast.AlternativeAlternative) []apiSlot {
 			name = fmt.Sprintf("%s%d", name, c+1)
 		}
 		seen[name]++
-		out = append(out, apiSlot{gomName: nf.Name, field: name, goType: g.goType(fieldTypeName(f), false)})
+		out = append(out, apiSlot{gomName: nf.Name, field: name, goType: g.goType(fieldTypeName(f), false), gomType: fieldTypeName(f)})
 	}
 	return out
 }
@@ -115,6 +117,7 @@ func (g *gen) emitJavaAPIInterface(api sortAPI) {
 	fmt.Fprintf(&g.buf, "\tReverse() %s\n", api.name)
 	fmt.Fprintln(&g.buf, "\tCompareTo(o any) int")
 	fmt.Fprintln(&g.buf, "\tCompareToLPO(o any) int")
+	fmt.Fprintln(&g.buf, "\tToATerm() aterm.ATerm")
 }
 
 // emitJavaAPIMethods writes the Java API methods of one alternative of
@@ -199,6 +202,8 @@ func (g *gen) emitJavaAPIMethods(api sortAPI, alt *gomast.AlternativeAlternative
 	// CompareTo, CompareToLPO
 	g.emitCompare(api, alt, st, "CompareTo", true)
 	g.emitCompare(api, alt, st, "CompareToLPO", false)
+	// ToATerm, fromTerm
+	g.emitJavaATerm(api.name, alt, st)
 }
 
 // emitCompare writes Java Gom's compareTo (a total order: hash, symbol,
@@ -229,7 +234,8 @@ func (g *gen) emitCompare(api sortAPI, alt *gomast.AlternativeAlternative, st, n
 			w("\tif c := strings.Compare(%s, %s); c != 0 {\n\t\treturn c\n\t}\n", a, b)
 		case goType == "bool":
 			w("\tif %s != %s {\n\t\tif !%s && %s {\n\t\t\treturn -1\n\t\t}\n\t\treturn 1\n\t}\n", a, b, a, b)
-		case goType == "any":
+		case goType == "any" || goType == "aterm.ATerm" || goType == "*aterm.ATermList":
+			// Java Gom: "Inefficient total order on ATerm" (their texts)
 			w("\tif c := strings.Compare(fmt.Sprint(%s), fmt.Sprint(%s)); c != 0 {\n\t\treturn c\n\t}\n", a, b)
 		default:
 			w("\tif %s != %s {\n\t\tif %s < %s {\n\t\t\treturn -1\n\t\t}\n\t\treturn 1\n\t}\n", a, b, a, b)
@@ -404,4 +410,179 @@ func emitVariadicMappingGo(buf *bytes.Buffer, sortNm string, alt *gomast.Alterna
 	fmt.Fprintf(buf, "  get_tail(l)      { ($l).GetTail%s() }\n", op)
 	fmt.Fprintf(buf, "  is_empty(l)      { ($l).IsEmpty%s() }\n", op)
 	fmt.Fprintf(buf, "}\n\n")
+}
+
+// javaSlotString is the Go expression of the text of a slot value x of
+// Gom sort gomType in a term's string, as Java Gom's toStringBuilder
+// writes it: long with an "l", char as its code minus '0', boolean as
+// 1/0, double/float as Java's toString, String quoted and escaped.
+func (g *gen) javaSlotString(gomType, x string) string {
+	switch gomType {
+	case "int":
+		return "fmt.Sprint(" + x + ")"
+	case "long":
+		return "fmt.Sprint(" + x + `) + "l"`
+	case "double":
+		return "aterm.JavaDouble(" + x + ")"
+	case "float":
+		return "aterm.JavaFloat(" + x + ")"
+	case "char":
+		return "fmt.Sprint(int(" + x + ") - '0')"
+	case "boolean":
+		return "func() string { if " + x + " { return \"1\" }; return \"0\" }()"
+	case "String":
+		return "sharedobjects.JavaEscape(" + x + ")"
+	}
+	return "fmt.Sprint(" + x + ")"
+}
+
+// emitJavaString writes String (Java Gom's toString).
+func (g *gen) emitJavaString(alt *gomast.AlternativeAlternative, structName string) {
+	w := func(format string, args ...any) { fmt.Fprintf(&g.buf, format, args...) }
+	w("func (t *%s) String() string {\n", structName)
+	if alternativeIsVariadic(alt) {
+		elem := fieldTypeName(alternativeFields(alt)[0])
+		w("\tparts := make([]string, len(t.Slots))\n\tfor i, v := range t.Slots {\n\t\tparts[i] = %s\n\t}\n", g.javaSlotString(elem, "v"))
+		w("\treturn %q + \"(\" + strings.Join(parts, \",\") + \")\"\n}\n\n", alt.Name)
+		return
+	}
+	slots := g.namedSlots(alt)
+	if len(slots) == 0 {
+		w("\treturn %q\n}\n\n", alt.Name+"()")
+		return
+	}
+	var parts []string
+	for _, sl := range slots {
+		parts = append(parts, g.javaSlotString(sl.gomType, "t."+sl.field))
+	}
+	w("\treturn %q + %s + \")\"\n}\n\n", alt.Name+"(", strings.Join(parts, " + \",\" + "))
+}
+
+// javaSlotATerm is the Go expression of the ATerm of a slot value x of
+// Gom sort gomType (Java Gom's toATermSlotField).
+func (g *gen) javaSlotATerm(gomType, x string) string {
+	switch gomType {
+	case "int":
+		return "aterm.MakeGomInt(" + x + ")"
+	case "long":
+		return "aterm.MakeGomLong(" + x + ")"
+	case "double":
+		return "aterm.MakeGomReal(" + x + ")"
+	case "float":
+		return "aterm.MakeGomReal(float64(" + x + "))"
+	case "char":
+		return "aterm.MakeGomChar(" + x + ")"
+	case "boolean":
+		return "aterm.MakeGomBoolean(" + x + ")"
+	case "String":
+		return "aterm.MakeGomString(" + x + ")"
+	case "ATerm", "ATermList":
+		return x
+	}
+	if !g.ownSort[gomType] {
+		// a sort of another module generated separately (slot of type any)
+		return x + ".(interface{ ToATerm() aterm.ATerm }).ToATerm()"
+	}
+	return x + ".ToATerm()"
+}
+
+// javaSlotFromATerm is the Go expression of the slot value of Gom sort
+// gomType read back from the ATerm a (Java Gom's fromATermSlotField).
+func (g *gen) javaSlotFromATerm(gomType, a string) string {
+	switch gomType {
+	case "int":
+		return "aterm.GomInt(" + a + ", conv)"
+	case "long":
+		return "aterm.GomLong(" + a + ", conv)"
+	case "double":
+		return "aterm.GomDouble(" + a + ", conv)"
+	case "float":
+		return "aterm.GomFloat(" + a + ", conv)"
+	case "char":
+		return "aterm.GomChar(" + a + ", conv)"
+	case "boolean":
+		return "aterm.GomBoolean(" + a + ", conv)"
+	case "String":
+		return "aterm.GomString(" + a + ", conv)"
+	case "ATerm":
+		return a
+	case "ATermList":
+		return a + ".(*aterm.ATermList)"
+	}
+	if g.ownSort[gomType] {
+		return gomType + "FromTermConv(" + a + ", conv)"
+	}
+	return a
+}
+
+// emitJavaATerm writes ToATerm and the fromTerm function of one
+// alternative (Java Gom's toATerm and <op>.fromTerm).
+func (g *gen) emitJavaATerm(sortNm string, alt *gomast.AlternativeAlternative, structName string) {
+	w := func(format string, args ...any) { fmt.Fprintf(&g.buf, format, args...) }
+	opGo := exportedField(alt.Name)
+	if alternativeIsVariadic(alt) {
+		elem := fieldTypeName(alternativeFields(alt)[0])
+		elemGo := g.goType(elem, false)
+		w("// ToATerm is the ATerm of the term: the list of its elements.\n")
+		w("func (t *%s) ToATerm() aterm.ATerm {\n\tf := aterm.GetInstance()\n\tl := f.MakeListEmpty()\n", structName)
+		w("\tfor i := len(t.Slots) - 1; i >= 0; i-- {\n\t\tl = f.MakeList(%s, l)\n\t}\n\treturn l\n}\n\n", g.javaSlotATerm(elem, "t.Slots[i]"))
+		w("// fromTerm%s is Java Gom's %s.fromTerm: an application of %s, or a\n// list (of ToATerm), of convertible elements.\n", structName, alt.Name, alt.Name)
+		w("func fromTerm%s(trm aterm.ATerm, conv aterm.ATermConverter) (res %s, ok bool) {\n", structName, sortNm)
+		w("\ttrm = conv.Convert(trm)\n")
+		w("\tif appl, isAppl := trm.(*aterm.ATermAppl); isAppl && appl.GetName() == %q {\n", alt.Name)
+		w("\t\telems := make([]%s, appl.GetArity())\n\t\tfor i, a := range appl.GetArguments() {\n\t\t\telems[i] = %s\n\t\t}\n\t\treturn Make%s(elems...), true\n\t}\n", elemGo, g.javaSlotFromATerm(elem, "a"), opGo)
+		w("\tif list, isList := trm.(*aterm.ATermList); isList {\n")
+		w("\t\t// an element that cannot be converted: not a %s (Java returns null)\n", alt.Name)
+		w("\t\tdefer func() {\n\t\t\tif recover() != nil {\n\t\t\t\tres, ok = nil, false\n\t\t\t}\n\t\t}()\n")
+		w("\t\tvar elems []%s\n\t\tfor !list.IsEmpty() {\n\t\t\telems = append(elems, %s)\n\t\t\tlist = list.GetNext()\n\t\t}\n\t\treturn Make%s(elems...), true\n\t}\n", elemGo, g.javaSlotFromATerm(elem, "list.GetFirst()"), opGo)
+		w("\treturn nil, false\n}\n\n")
+		return
+	}
+	slots := g.namedSlots(alt)
+	var args, from []string
+	for i, sl := range slots {
+		args = append(args, g.javaSlotATerm(sl.gomType, "t."+sl.field))
+		from = append(from, g.javaSlotFromATerm(sl.gomType, fmt.Sprintf("appl.GetArgument(%d)", i)))
+	}
+	w("// ToATerm is the ATerm of the term: an application of %s.\n", alt.Name)
+	w("func (t *%s) ToATerm() aterm.ATerm {\n\tf := aterm.GetInstance()\n\treturn f.MakeAppl(f.MakeAFun(%q, %d, false)", structName, alt.Name, len(slots))
+	for _, a := range args {
+		w(", %s", a)
+	}
+	w(")\n}\n\n")
+	w("// fromTerm%s is Java Gom's %s.fromTerm: an unquoted application of\n// %s whose arguments are convertible.\n", structName, alt.Name, alt.Name)
+	w("func fromTerm%s(trm aterm.ATerm, conv aterm.ATermConverter) (%s, bool) {\n", structName, sortNm)
+	w("\ttrm = conv.Convert(trm)\n")
+	w("\tif appl, ok := trm.(*aterm.ATermAppl); ok && appl.GetName() == %q && !appl.GetAFun().IsQuoted() && appl.GetArity() == %d {\n", alt.Name, len(slots))
+	w("\t\treturn Make%s(%s), true\n\t}\n\treturn nil, false\n}\n\n", opGo, strings.Join(from, ", "))
+}
+
+// emitJavaFromTerm writes the sort-level conversions from ATerms
+// (Java Gom's static <Sort>.fromTerm/fromString/fromStream).
+func (g *gen) emitJavaFromTerm(api sortAPI) {
+	w := func(format string, args ...any) { fmt.Fprintf(&g.buf, format, args...) }
+	s := api.name
+	w("// %sFromTerm is Java Gom's %s.fromTerm(trm).\n", s, s)
+	w("func %sFromTerm(trm aterm.ATerm) %s { return %sFromTermConv(trm, aterm.IdConverter{}) }\n\n", s, s, s)
+	w("// %sFromTermConv is Java Gom's %s.fromTerm(trm, atConv): the term of\n// the first operator of the sort that converts the ATerm; it panics\n// (IllegalArgumentException) when there is none.\n", s, s)
+	w("func %sFromTermConv(trm aterm.ATerm, conv aterm.ATermConverter) %s {\n\tconverted := conv.Convert(trm)\n\tvar results []%s\n", s, s, s)
+	ordered := []*gomast.AlternativeAlternative{}
+	for _, alt := range api.alts {
+		if !alternativeIsVariadic(alt) {
+			ordered = append(ordered, alt)
+		}
+	}
+	ordered = append(ordered, api.variadic...)
+	for _, alt := range ordered {
+		opGo := exportedField(alt.Name)
+		if opGo == "" {
+			opGo = "Op"
+		}
+		w("\tif r, ok := fromTerm%s(converted, conv); ok {\n\t\tresults = append(results, r)\n\t}\n", opGo+s)
+	}
+	w("\tif len(results) == 0 {\n\t\tpanic(fmt.Sprintf(\"%%v is not a %s\", trm))\n\t}\n\treturn results[0]\n}\n\n", s)
+	w("// %sFromString is Java Gom's %s.fromString(s).\n", s, s)
+	w("func %sFromString(s string) %s { return %sFromTerm(aterm.GetInstance().Parse(s)) }\n\n", s, s, s)
+	w("// %sFromStream is Java Gom's %s.fromStream(stream) (an IOException is\n// the error).\n", s, s)
+	w("func %sFromStream(stream io.Reader) (%s, error) {\n\tat, err := aterm.GetInstance().ReadFromTextFile(stream)\n\tif err != nil {\n\t\treturn nil, err\n\t}\n\treturn %sFromTerm(at), nil\n}\n\n", s, s, s)
 }

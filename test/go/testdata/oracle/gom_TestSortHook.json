@@ -1,0 +1,11 @@
+{
+  "passed": [
+    "TestHook1a",
+    "TestHook1b",
+    "TestHook2c",
+    "TestHook2d"
+  ],
+  "stdout": "",
+  "exitOK": true,
+  "source_sha256": "0c171fb082ec0d065781dcca57266ca63a36ab57beb97ef251cd22954ff86d39"
+}

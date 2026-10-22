@@ -1,0 +1,70 @@
+/*
+ * Tom Go mapping — ATerms (tom/library/aterm).
+ * Mirrors mapping/java/aterm.tom: aterm.ATerm, *aterm.ATermList and
+ * *aterm.AFun, built by the singleton factory aterm.GetInstance().
+ * The including Go file imports "tom/library/aterm".
+ */
+%include { boolean.tom }
+
+%typeterm ATerm {
+  implement { aterm.ATerm }
+  is_sort(t) { func() bool { _, ok := any($t).(aterm.ATerm); return ok }() }
+  equals(t1, t2) { $t1 == $t2 }
+}
+
+%typeterm ATermList {
+  implement { *aterm.ATermList }
+  is_sort(t) { func() bool { _, ok := any($t).(*aterm.ATermList); return ok }() }
+  equals(l1,l2) { $l1 == $l2 }
+}
+
+%typeterm AFun {
+  implement { *aterm.AFun }
+  is_sort(t) { func() bool { _, ok := any($t).(*aterm.AFun); return ok }() }
+  equals(t1, t2) { $t1 == $t2 }
+}
+
+%op ATerm ATermPlaceholder(type: ATerm ) {
+  is_fsym(t) { func() bool { _, ok := ($t).(*aterm.ATermPlaceholder); return ok }() }
+  make(type) { aterm.ATerm(aterm.GetInstance().MakePlaceholder($type)) }
+  get_slot(type, t) { ($t).(*aterm.ATermPlaceholder).GetPlaceholder() }
+}
+
+%oplist ATerm ATermList(ATerm*) {
+  is_fsym(t) { func() bool { _, ok := ($t).(*aterm.ATermList); return ok }() }
+  make_empty() { aterm.ATerm(aterm.GetInstance().MakeListEmpty()) }
+  make_insert(e,l) { aterm.ATerm(($l).(*aterm.ATermList).Insert($e)) }
+  get_head(t) { ($t).(*aterm.ATermList).GetFirst() }
+  get_tail(t) { aterm.ATerm(($t).(*aterm.ATermList).GetNext()) }
+  is_empty(t) { ($t).(*aterm.ATermList).IsEmpty() }
+}
+
+%oplist ATermList concATerm(ATerm*) {
+  is_fsym(t) { $t != nil }
+  make_empty() { aterm.GetInstance().MakeListEmpty() }
+  make_insert(e,l) { ($l).Insert($e) }
+  get_head(t) { ($t).GetFirst() }
+  get_tail(t) { ($t).GetNext() }
+  is_empty(t) { ($t).IsEmpty() }
+}
+
+%op ATerm ATermInt(val: int) {
+  is_fsym(t) { func() bool { _, ok := ($t).(*aterm.ATermInt); return ok }() }
+  make(i) { aterm.ATerm(aterm.GetInstance().MakeInt(int($i))) }
+  get_slot(val, t) { int64(($t).(*aterm.ATermInt).GetInt()) }
+}
+
+%op AFun AFun(name: String, arity: int, quoted: boolean)  {
+  is_fsym(t) { $t != nil }
+  make(f,a,q) { aterm.GetInstance().MakeAFun($f, int($a), $q) }
+  get_slot(name, t) { ($t).Name() }
+  get_slot(arity, t) { int64(($t).Arity()) }
+  get_slot(quoted, t) { ($t).IsQuoted() }
+}
+
+%op ATerm ATermAppl(fun: AFun, args: ATermList  ) {
+  is_fsym(t) { func() bool { _, ok := ($t).(*aterm.ATermAppl); return ok }() }
+  make(f,args) { aterm.ATerm(aterm.GetInstance().MakeApplList($f, $args)) }
+  get_slot(fun, t) { ($t).(*aterm.ATermAppl).GetAFun() }
+  get_slot(args, t) { aterm.GetInstance().MakeListFromSlice(($t).(*aterm.ATermAppl).GetArguments()) }
+}
