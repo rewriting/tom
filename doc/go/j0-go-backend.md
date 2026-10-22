@@ -100,8 +100,8 @@ unset TOM_HOME
 ./build.sh clean.src && ./build.sh src.dist    # BUILD SUCCESSFUL (1 min 44 s)
 TOM_HOME=$PWD/stable/dist stable/dist/bin/tom -go -d out test/go/smoke/testdata/smoke/smoke.t
 (cd out && go run .)      # sortie = expected.txt ; go vet propre
-cd tomgo && mage all && mage portJava && mage portGo && mage coverage   # tout vert
-go test -count=1 ./...    # 22 paquets ok, 0 échec
+mage -d magefiles -w . all && mage -d magefiles -w . portJava && mage -d magefiles -w . portGo && mage -d magefiles -w . coverage   # tout vert
+(cd prototype/tomgo && go test -count=1 ./...)    # 22 paquets ok, 0 échec
 ```
 
 - Le point fixe (`./build.sh bootstrap` : `src/` compilé deux fois par

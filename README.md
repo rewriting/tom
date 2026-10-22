@@ -12,8 +12,13 @@
 - [`legacy/`](legacy/README.md) — the original Tom+Java compiler, exactly as
   written by its human authors (frozen copy of commit `2918e95c7`).
   Start there to install the historical Tom; see its README.
-- The repository root (`src/`, `stable/`, `tomgo/`) — the AI-assisted
-  extension of that compiler with a Go target.
+- The repository root (`src/`, `stable/`) — the AI-assisted extension of
+  that compiler with a Go target. Its Go side lives in
+  [`src/go/tom`](src/go/tom) (module `tom`: runtime libraries and the Gom
+  compiler for Go), [`test/go`](test/go) (Tom+Go tests and parity
+  harnesses) and [`doc/go`](doc/go) (reports); orchestration with
+  `mage -d magefiles -w . -l`. [`prototype/tomgo`](prototype/tomgo/README.md)
+  is the frozen hand-written Go prototype.
 
 ## Documentation
 

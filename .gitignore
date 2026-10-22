@@ -34,7 +34,8 @@ legacy/stable/dist/
 legacy/stable/build/
 legacy/stable/gen/
 
-# tomgo build outputs
-tomgo/tomgo
-tomgo/gom
-tomgo/tom
+# Go build outputs
+prototype/tomgo/tomgo
+prototype/tomgo/gom
+prototype/tomgo/tom
+src/go/tom/gom/cmd/gomgo/gomgo

@@ -1,0 +1,8 @@
+go 1.26
+
+use (
+	./src/go/tom
+	./test/go
+	./magefiles
+	./prototype/tomgo
+)
