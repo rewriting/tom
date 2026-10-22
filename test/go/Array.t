@@ -1,12 +1,12 @@
 package main
 
 // Port of test/Array.t: the Java aterm library is replaced by its Go
-// subset tomtest/aterm, java.util.ArrayList by a slice.
+// port tom/library/aterm, java.util.ArrayList by a slice.
 
 import (
   "strings"
 
-  "tomtest/aterm"
+  "tom/library/aterm"
 )
 
 var factory = aterm.GetInstance()

@@ -110,20 +110,15 @@ func GomgoBin(t testing.TB) string {
 }
 
 // SetupGoModule writes a go.mod in dir that resolves module tom (the Go
-// runtime: sl, sharedobjects) to the copy shipped in the new dist
-// (<dist>/lib/go/tom), so generated code can import it, and module
-// tomtest to this checkout for the ports that import tomtest/aterm.
+// runtime: sl, sharedobjects, aterm) to the copy shipped in the new dist
+// (<dist>/lib/go/tom), so generated code can import it.
 func SetupGoModule(t testing.TB, dir string) {
 	t.Helper()
 	runtime := filepath.Join(NewDist(t).Home, "lib", "go", "tom")
 	if !fileExists(filepath.Join(runtime, "go.mod")) {
 		t.Fatalf("no Go runtime at %s (rebuild src.dist: ./build.sh src.dist)", runtime)
 	}
-	// tomtest (this module) provides the aterm subset some ports import;
-	// go mod tidy drops the requirement when it is unused.
-	tomtest := filepath.Join(RepoRoot(t), "test", "go")
-	mod := "module fixture\n\ngo 1.22\n\nrequire (\n\ttom v0.0.0\n\ttomtest v0.0.0\n)\n\nreplace tom => " + runtime +
-		"\n\nreplace tomtest => " + tomtest + "\n"
+	mod := "module fixture\n\ngo 1.22\n\nrequire tom v0.0.0\n\nreplace tom => " + runtime + "\n"
 	if err := os.WriteFile(filepath.Join(dir, "go.mod"), []byte(mod), 0o644); err != nil {
 		t.Fatal(err)
 	}

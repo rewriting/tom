@@ -1,7 +1,7 @@
 package testlist
 
 // Port of test/TestList.t: the Java aterm library is replaced by its Go
-// subset tomtest/aterm. The JUnit suite becomes one Go test
+// port tom/library/aterm. The JUnit suite becomes one Go test
 // per @Test method (TestMatch1 … TestMatch6); a @Parameterized class
 // loops over its data(); @BeforeClass/@AfterClass become TestMain.
 
@@ -9,7 +9,7 @@ import (
   "os"
   "testing"
 
-  "tomtest/aterm"
+  "tom/library/aterm"
 )
 
 var ok, fail aterm.ATerm
@@ -45,7 +45,7 @@ func tearDown() {
   get_head(l)    { any($l).(*aterm.ATermList).GetFirst() }
   get_tail(l)    { any($l).(*aterm.ATermList).GetNext() }
   is_empty(l)    { any($l).(*aterm.ATermList).IsEmpty() }
-  make_empty()   { factory.MakeList() }
+  make_empty()   { factory.MakeListEmpty() }
   make_insert(e,l) { any($l).(*aterm.ATermList).Insert($e) }
 }
 

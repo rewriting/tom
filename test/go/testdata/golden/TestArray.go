@@ -15,7 +15,7 @@ import (
   "strings"
   "testing"
 
-  "tomtest/aterm"
+  "tom/library/aterm"
 )
 
 

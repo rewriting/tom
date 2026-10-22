@@ -1,12 +1,12 @@
 package testpeano
 
 // Port of test/TestPeano.t: the Java aterm library is replaced by its Go
-// subset tomtest/aterm (same API, maximal sharing).
+// port tom/library/aterm (same API, maximal sharing).
 
 import (
   "testing"
 
-  "tomtest/aterm"
+  "tom/library/aterm"
 )
 
 var factory = aterm.GetInstance()

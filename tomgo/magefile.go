@@ -278,11 +278,6 @@ func PortJava() error {
 // `go test ./ -run TestSameBehaviourAsLegacy -args -update-oracle` in
 // test/go) and rewrites doc/go/port-dashboard.md.
 func PortGo() error {
-	// -write-dashboard is a flag of the root package only: its
-	// subpackages (the aterm port) run on their own.
-	if err := runIn(testGoDir, "go", "test", "-count=1", "./aterm/..."); err != nil {
-		return err
-	}
 	return runIn(testGoDir, "go", "test", "-count=1", "./", "-args", "-write-dashboard")
 }
 

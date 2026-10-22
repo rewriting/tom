@@ -8,7 +8,7 @@ package main
 import (
   "strings"
 
-  "tomtest/aterm"
+  "tom/library/aterm"
 )
 
 

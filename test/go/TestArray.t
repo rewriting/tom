@@ -1,7 +1,7 @@
 package testarray
 
 // Port of test/TestArray.t: the Java aterm library is replaced by its Go
-// subset tomtest/aterm, java.util.ArrayList by a slice,
+// port tom/library/aterm, java.util.ArrayList by a slice,
 // java.util.logging by log/slog (FINE = Debug), @BeforeClass/@AfterClass
 // by TestMain and @Before by a setUp() call at the start of each test.
 
@@ -13,7 +13,7 @@ import (
   "strings"
   "testing"
 
-  "tomtest/aterm"
+  "tom/library/aterm"
 )
 
 var factory = aterm.GetInstance()

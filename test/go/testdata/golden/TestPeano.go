@@ -8,7 +8,7 @@ package testpeano
 import (
   "testing"
 
-  "tomtest/aterm"
+  "tom/library/aterm"
 )
 
 

@@ -777,7 +777,7 @@ func TestCasesCoverPorts(t *testing.T) {
 		if err != nil {
 			return err
 		}
-		if info.IsDir() && (p == "aterm" || p == "testdata" || p == "harness" || p == "javaparity" || p == "smoke" || p == "coverage") {
+		if info.IsDir() && (p == "testdata" || p == "harness" || p == "javaparity" || p == "smoke" || p == "coverage") {
 			return filepath.SkipDir
 		}
 		if !info.IsDir() && strings.HasSuffix(p, ".t") && !inCases[filepath.ToSlash(p)] {

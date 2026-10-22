@@ -8,7 +8,7 @@ package main
 import (
 	"fmt"
 
-	"tomtest/aterm"
+	"tom/library/aterm"
 )
 
 
