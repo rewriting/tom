@@ -9,11 +9,33 @@ plus longs sont dans `tomgo/reports/phase<N>.md`.
 
 ## 1. Objectif
 
-**Trajectoire long terme** : porter le compilateur TOM (actuellement en
-Java dans `stable/`) vers Go, puis le réécrire en Tom+Go et l'auto-compiler
-avec l'amorce.
+**Trajectoire actuelle (depuis 2026-10-22)** : la cible Go est ajoutée
+**au compilateur Tom+Java lui-même** (option `-go`, backend
+`src/tom/engine/backend/GoGenerator.t`, mappings
+`src/tom/library/mapping/go/`, `%gom` délégué à `tomgo gom-block`,
+`%strategy` compilé sur la bibliothèque `sl` Go). Le compilateur Tom+Java
+d'origine, écrit à 100 % par des humains, est figé dans `legacy/`
+(commit `2918e95c7`) : c'est le **témoin** et l'oracle des harnais
+(T0 : sortie Java identique ; T2 : même comportement des ports Tom+Go).
+Le compilateur Go écrit à la main (`tomgo/stable/tom/`, Phases 4–6
+ci-dessous) est **gelé** : ses briques réutilisables (Gom Go,
+`sharedobjects`, `sl`, mappings) restent utilisées, mais on ne l'étend
+plus. Jalons : J0 (cible Go dans Tom Java, livré et promu dans
+`stable/`), J1 (fixtures Tom+Go, livré), J2 (portage de `test/` en
+Tom+Go, en cours — tableau de bord `tomgo/reports/port-dashboard.md`),
+J3 (couverture des constructions, `tomgo/reports/coverage.md`), J4
+(bootstrap du compilateur réécrit en Tom+Go, spec à venir). Références :
+spec `docs/superpowers/specs/2026-10-22-tom-go-backend-design.md`, plan
+`docs/superpowers/plans/2026-10-22-tom-go-backend.md`, rapport
+`tomgo/reports/j0-go-backend.md`.
 
-**État actuel** : Phases 0 → 3 livrées ; Phases 4.A (auto-amorce
+**Trajectoire long terme** : un compilateur Tom écrit en Tom+Go,
+compilé par lui-même (point fixe), amorcé par le compilateur Tom+Java
+étendu (`-go`). L'ancienne voie « porter le compilateur Java vers Go à la
+main, phase par phase » (Phases 0 → 6 ci-dessous) est abandonnée ; son
+historique est conservé pour référence.
+
+**État historique (compilateur Go écrit à la main, gelé)** : Phases 0 → 3 livrées ; Phases 4.A (auto-amorce
 tomast + 9 hooks engine), 4.B (survey parser Java), 4.C (harnais
 d'équivalence AST Go ⇄ Java), 4.D + 4.E.1–4.E.5 (parser TOM Go
 hand-rolled couvrant `%typeterm`, `%typeterm extends`, `%op` avec ou
@@ -59,14 +81,16 @@ l'AST Go contre la référence Java. tomgo est un outil Go autonome qui :
 - **utilise ses propres AST générés** (`stable/library/gomast/` pour le sous-
   langage Gom, `stable/library/tomast/` pour le langage TOM) — auto-amorce.
 
-**Itération en cours (Phase 4)** : porter le **compilateur TOM** phase
-par phase (parser → checker → typer → …), à partir de la référence Java
-`stable/tom/engine/`. Chaque phase Go doit produire le même AST que la
-version Java sur les mêmes entrées — comparable via le print du term.
+**Itération en cours** : J2 — porter `test/` en Tom+Go par lots
+(un sous-répertoire par lot), compiler avec `tom -go`, comparer au
+comportement de `legacy/`, corriger `GoGenerator.t` au besoin. (L'ancienne
+« Phase 4 » — porter le compilateur TOM phase par phase en Go écrit à la
+main — est gelée, cf. ci-dessus.)
 
-> La version Java de référence est `stable/` (compilateur déjà bootstrappé,
-> généré à partir des sources Tom+Java de `src/`). C'est cette
-> implémentation Java qui sert de spécification exécutable pour le portage.
+> `stable/` est le compilateur Java bootstrappé qui sert à construire
+> `src/` ; depuis la fin de J0 il contient lui aussi la cible Go
+> (`stable/dist/bin/tom -go`). `legacy/` est la référence humaine
+> intouchable.
 
 ---
 
@@ -497,9 +521,15 @@ Rapport : `phase4cd-parser.md`.
 
 ---
 
-## 5. Phase 4 — suite (à dérouler quand on rouvre une session)
+## 5. Phase 4 — suite (historique, gelée)
 
-**Stratégie générale** : porter le compilateur Java de `stable/tom/engine/`
+> **Gelé depuis 2026-10-22** : cette section décrit la suite prévue du
+> compilateur Go écrit à la main ; elle n'est plus à dérouler. La suite
+> du travail est J2 → J4 (cf. §1 et
+> `docs/superpowers/plans/2026-10-22-tom-go-backend.md`, section
+> « Après ce plan »).
+
+**Stratégie générale (historique)** : porter le compilateur Java de `stable/tom/engine/`
 phase par phase, en commençant par le parser. À chaque phase, vérifier
 que le pipeline Go produit le même AST `tomast.*` que la référence Java
 sur les mêmes entrées. Comparaison via le print du term (déjà prouvée
@@ -674,7 +704,9 @@ Go ⇄ Java sur le print du term en sortie, tests sur le corpus 4.E.
 - **Branche** : `tom-go` (worktree), main = `v3` non touché.
 - **Commits** : un commit par sous-étape vérifiable. Messages :
   `tomgo phase<N>: <verbe> <objet>` (ex. `tomgo phase 4.A: bootstrap
-  tomast + lower 9 engine ADT hooks`).
+  tomast + lower 9 engine ADT hooks`) pour l'historique ; depuis
+  2026-10-22 : `tom-go J<N>: <objet>` / `tom-go T<N>: <objet>`.
+- **`legacy/`** : ne jamais modifier (témoin humain, oracle des harnais).
 - **Rapports** : `tomgo/reports/phase<N>.md`, format markdown stable.
 - **Non-objectifs** (jusqu'à nouvel ordre) : performance, optimisations
   avancées, parité 100 % des options Java, backends C/Caml/Ada.
@@ -682,6 +714,34 @@ Go ⇄ Java sur le print du term en sortie, tests sur le corpus 4.E.
 ---
 
 ## 8. Cookbook — commandes utiles pour reprendre rapidement
+
+### Cible Go du compilateur Tom+Java (depuis 2026-10-22)
+
+Depuis la racine du dépôt. Toujours `unset TOM_HOME` avant `./build.sh`
+(le shell peut exporter un `TOM_HOME` pointant ailleurs).
+
+```bash
+# Construire la version humaine (oracle) et la version étendue
+(cd legacy && unset TOM_HOME && ./build.sh stable && ./build.sh src.dist)
+unset TOM_HOME && ./build.sh src.dist
+# Compiler un .t vers Go (-go implique -np ; -gi est refusé)
+TOM_HOME=$PWD/src/dist src/dist/bin/tom -go -np -d out X.t
+# Le compilateur bootstrappé accepte aussi -go
+TOM_HOME=$PWD/stable/dist stable/dist/bin/tom -go -d out X.t
+# Harnais
+cd tomgo && mage portJava && mage portGo && mage coverage
+#   portJava : T0, sortie Java identique à legacy/ (défaut et -np)
+#   portGo   : T1 (goldens Go) + T2 (oracle legacy/) + port-dashboard.md
+#   coverage : T3, reports/coverage.md
+go test -count=1 ./tests/gosmoke/   # petits programmes Tom+Go de régression
+
+# Promouvoir src/ dans stable/ (puis reconstruire stable et src)
+unset TOM_HOME && ./build.sh bootinstall && ./build.sh stable && ./build.sh src.dist
+# Point fixe optionnel (src compilé deux fois, classes comparées)
+unset TOM_HOME && ./build.sh bootstrap   # « BOOTSTRAP PERFORM SUCCESSFULLY »
+```
+
+### Compilateur Go écrit à la main (tomgo, gelé)
 
 L'orchestrateur est **`mage`** (installation : `go install
 github.com/magefile/mage@latest`). Toutes les commandes se lancent
@@ -1093,6 +1153,9 @@ Différences API vs Java :
 1. Lire ce fichier en entier (tu y es).
 2. `cd tomgo && go test ./...` doit passer — si non, regarder le rapport
    de la phase concernée dans `tomgo/reports/`.
-3. Ouvrir le dernier rapport (`phase4a-tom-hooks-survey.md` à ce jour)
-   pour le détail technique de l'étape qu'on vient de finir.
-4. Étape suivante = section 5 (4.B → 4.D → 4.E) de ce fichier.
+3. Ouvrir le dernier rapport (`j0-go-backend.md` à ce jour) pour le
+   détail technique de l'étape qu'on vient de finir, puis
+   `port-dashboard.md` et `coverage.md`.
+4. Étape suivante = J2 puis J3 (cf. §1 et la section « Après ce plan »
+   de `docs/superpowers/plans/2026-10-22-tom-go-backend.md`) ; la
+   section 5 de ce fichier est historique.
