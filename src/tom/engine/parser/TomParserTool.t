@@ -118,7 +118,7 @@ public class TomParserTool {
    */
   public String parseGomFile(String gomCode, int initialGomLine, String[] userOpts) throws TomIncludeException {
     String res = "";
-    if(Boolean.TRUE == getOptionManager().getOptionValue("goCode")) {
+    if(((Boolean)getOptionManager().getOptionValue("goCode")).booleanValue()) {
       return parseGomFileGo(gomCode, initialGomLine);
     }
     //System.out.println("gomCode: " + gomCode);
@@ -274,32 +274,46 @@ public class TomParserTool {
    */
   private String parseGomFileGo(String gomCode, int initialGomLine) {
     String currentFileName = getStreamManager().getInputFileName();
+    String tomgo = System.getenv("TOMGO_BIN");
+    if(tomgo == null || tomgo.length() == 0) {
+      tomgo = "tomgo";
+    }
+    File tmpFile = null;
+    Process p = null;
     try {
-      File tmpFile = File.createTempFile("tmp", ".gom", null).getCanonicalFile();
-      tmpFile.deleteOnExit();
+      tmpFile = File.createTempFile("tmp", ".gom", null).getCanonicalFile();
       Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(tmpFile),"UTF-8"));
-      writer.write(gomCode);
-      writer.close();
+      try {
+        writer.write(gomCode);
+      } finally {
+        writer.close();
+      }
       File outDir = getStreamManager().getOutputFile().getCanonicalFile().getParentFile();
       outDir.mkdirs();
-      String tomgo = System.getenv("TOMGO_BIN");
-      if(tomgo == null || tomgo.length() == 0) {
-        tomgo = "tomgo";
-      }
       ProcessBuilder pb = new ProcessBuilder(tomgo, "gom-block",
           "--pkg", goPackageOf(new File(currentFileName)),
           "-o", outDir.getPath(), tmpFile.getPath());
       pb.redirectError(ProcessBuilder.Redirect.INHERIT);
-      Process p = pb.start();
-      java.io.BufferedReader r = new java.io.BufferedReader(new java.io.InputStreamReader(p.getInputStream(),"UTF-8"));
-      String line;
-      String last = null;
-      while((line = r.readLine()) != null) {
-        if(line.trim().length() > 0) {
-          last = line.trim();
-        }
+      try {
+        p = pb.start();
+      } catch (IOException e) {
+        throw new IOException("cannot run '" + tomgo + "' (set TOMGO_BIN or put tomgo in the PATH): " + e.getMessage(), e);
       }
-      if(p.waitFor() != 0 || last == null) {
+      String last = null;
+      java.io.BufferedReader r = new java.io.BufferedReader(new java.io.InputStreamReader(p.getInputStream(),"UTF-8"));
+      try {
+        String line;
+        while((line = r.readLine()) != null) {
+          if(line.trim().length() > 0) {
+            last = line.trim();
+          }
+        }
+      } finally {
+        r.close();
+      }
+      int status = p.waitFor();
+      p = null;
+      if(status != 0 || last == null) {
         TomMessage.error(getLogger(), currentFileName, initialGomLine, TomMessage.gomFailure,currentFileName,Integer.valueOf(initialGomLine));
         return "";
       }
@@ -307,6 +321,13 @@ public class TomParserTool {
     } catch (Exception e) {
       TomMessage.error(getLogger(), currentFileName, initialGomLine, TomMessage.gomInitFailure,currentFileName,Integer.valueOf(initialGomLine), e);
       return "";
+    } finally {
+      if(p != null) {
+        p.destroy();
+      }
+      if(tmpFile != null) {
+        tmpFile.delete();
+      }
     }
   }
 

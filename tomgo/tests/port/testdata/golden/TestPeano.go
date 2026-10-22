@@ -76,8 +76,7 @@ func tom_equal_term_term(t1  *Term , t2  *Term ) bool { return (t1).Equals(t2); 
 
 
 func plus1(t1, t2 *Term) *Term {
-	
-{ { if tom_is_sort_term(t1) { if tom_is_sort_term(t2) { if tom_is_fun_sym_zero(any(t2).( *Term )) { 
+	; { { if tom_is_sort_term(t1) { if tom_is_sort_term(t2) { if tom_is_fun_sym_zero(any(t2).( *Term )) { 
  return any(t1).( *Term ) };  };  };  }; { if tom_is_sort_term(t1) { if tom_is_sort_term(t2) { if tom_is_fun_sym_suc(any(t2).( *Term )) { 
  return tom_make_suc(plus1(any(t1).( *Term ),tom_get_slot_suc_pred(any(t2).( *Term )))) };  };  };  };  }; 
 
@@ -88,8 +87,7 @@ func plus1(t1, t2 *Term) *Term {
 
 
 func plus2(t1, t2 *Term) *Term {
-	
-{ { if tom_is_sort_term(t1) { if tom_is_sort_term(t2) { if tom_is_fun_sym_zero(any(t2).( *Term )) { 
+	; { { if tom_is_sort_term(t1) { if tom_is_sort_term(t2) { if tom_is_fun_sym_zero(any(t2).( *Term )) { 
  return any(t1).( *Term ) };  };  };  }; { if tom_is_sort_term(t1) { if tom_is_sort_term(t2) { if tom_is_fun_sym_suc(any(t2).( *Term )) { 
  return tom_make_suc(plus2(any(t1).( *Term ),tom_get_slot_suc_pred(any(t2).( *Term )))) };  };  };  };  }; 
 
@@ -100,8 +98,7 @@ func plus2(t1, t2 *Term) *Term {
 
 
 func fib3(t *Term) *Term {
-	
-{ { if tom_is_sort_term(t) { if tom_is_fun_sym_zero(any(t).( *Term )) { 
+	; { { if tom_is_sort_term(t) { if tom_is_fun_sym_zero(any(t).( *Term )) { 
  return tom_make_suc(tom_make_zero()) };  };  }; { if tom_is_sort_term(t) { if tom_is_fun_sym_suc(any(t).( *Term )) { var tomMatch3_4  *Term  = tom_get_slot_suc_pred(any(t).( *Term )); _ = tomMatch3_4; if tom_is_fun_sym_zero(any(tomMatch3_4).( *Term )) { 
  return tom_make_suc(tomMatch3_4) };  };  };  }; { if tom_is_sort_term(t) { if tom_is_fun_sym_suc(any(t).( *Term )) { var tomMatch3_10  *Term  = tom_get_slot_suc_pred(any(t).( *Term )); _ = tomMatch3_10; if tom_is_fun_sym_suc(any(tomMatch3_10).( *Term )) { var tom___x  *Term  = tom_get_slot_suc_pred(tomMatch3_10); _ = tom___x; 
  return plus1(fib3(tom___x), fib3(tom_make_suc(tom___x)))  };  };  };  };  }; 
@@ -124,8 +121,7 @@ func int2peano(n int) *Term {
 
 
 func peano2int(t *Term) int {
-	
-{ { if tom_is_sort_term(t) { if tom_is_fun_sym_zero(any(t).( *Term )) { 
+	; { { if tom_is_sort_term(t) { if tom_is_fun_sym_zero(any(t).( *Term )) { 
  return 0  };  };  }; { if tom_is_sort_term(t) { if tom_is_fun_sym_suc(any(t).( *Term )) { 
  return 1 + peano2int(tom_get_slot_suc_pred(any(t).( *Term )))  };  };  };  }; 
 

@@ -27,8 +27,7 @@ func tom_equal_term_int(t1 int64, t2 int64) bool { return t1 == t2;  }; func tom
 
 func TestGreater(t *testing.T) {
 	matched := false
-	
-{ { var tomMatch1_0  Term  = tom_make_f(tom_make_a(),6); _ = tomMatch1_0; if tom_is_sort_Term(tomMatch1_0) { if tom_is_fun_sym_f(any(tomMatch1_0).( Term )) { if tom_get_slot_f_t2(any(tomMatch1_0).( Term )) > 5 { 
+	; { { var tomMatch1_0  Term  = tom_make_f(tom_make_a(),6); _ = tomMatch1_0; if tom_is_sort_Term(tomMatch1_0) { if tom_is_fun_sym_f(any(tomMatch1_0).( Term )) { if tom_get_slot_f_t2(any(tomMatch1_0).( Term )) > 5 { 
  matched = true  };  };  };  };  }; 
 
 	if !matched {
@@ -41,8 +40,7 @@ func TestGreater(t *testing.T) {
 
 func TestGreaterOrEqual(t *testing.T) {
 	matched := false
-	
-{ { var tomMatch2_0  Term  = tom_make_f(tom_make_a(),6); _ = tomMatch2_0; if tom_is_sort_Term(tomMatch2_0) { if tom_is_fun_sym_f(any(tomMatch2_0).( Term )) { if tom_get_slot_f_t2(any(tomMatch2_0).( Term )) >= 6 { 
+	; { { var tomMatch2_0  Term  = tom_make_f(tom_make_a(),6); _ = tomMatch2_0; if tom_is_sort_Term(tomMatch2_0) { if tom_is_fun_sym_f(any(tomMatch2_0).( Term )) { if tom_get_slot_f_t2(any(tomMatch2_0).( Term )) >= 6 { 
  matched = true  };  };  };  };  }; 
 
 	if !matched {
@@ -55,8 +53,7 @@ func TestGreaterOrEqual(t *testing.T) {
 
 func TestLess(t *testing.T) {
 	matched := false
-	
-{ { var tomMatch3_0  Term  = tom_make_f(tom_make_a(),3); _ = tomMatch3_0; if tom_is_sort_Term(tomMatch3_0) { if tom_is_fun_sym_f(any(tomMatch3_0).( Term )) { if tom_get_slot_f_t2(any(tomMatch3_0).( Term )) < 6 { 
+	; { { var tomMatch3_0  Term  = tom_make_f(tom_make_a(),3); _ = tomMatch3_0; if tom_is_sort_Term(tomMatch3_0) { if tom_is_fun_sym_f(any(tomMatch3_0).( Term )) { if tom_get_slot_f_t2(any(tomMatch3_0).( Term )) < 6 { 
  matched = true  };  };  };  };  }; 
 
 	if !matched {
@@ -69,8 +66,7 @@ func TestLess(t *testing.T) {
 
 func TestNotEqual(t *testing.T) {
 	matched := false
-	
-{ { var tomMatch4_0  Term  = tom_make_f(tom_make_a(),4); _ = tomMatch4_0; if tom_is_sort_Term(tomMatch4_0) { if tom_is_fun_sym_f(any(tomMatch4_0).( Term )) { if !(tom_equal_term_int(4, tom_get_slot_f_t2(any(tomMatch4_0).( Term )))) { 
+	; { { var tomMatch4_0  Term  = tom_make_f(tom_make_a(),4); _ = tomMatch4_0; if tom_is_sort_Term(tomMatch4_0) { if tom_is_fun_sym_f(any(tomMatch4_0).( Term )) { if !(tom_equal_term_int(4, tom_get_slot_f_t2(any(tomMatch4_0).( Term )))) { 
  matched = true  };  };  };  };  }; 
 
 	if matched {
@@ -83,8 +79,7 @@ func TestNotEqual(t *testing.T) {
 
 func TestEqual(t *testing.T) {
 	matched := false
-	
-{ { var tomMatch5_0  Term  = tom_make_f(tom_make_a(),4); _ = tomMatch5_0; if tom_is_sort_Term(tomMatch5_0) { if tom_is_fun_sym_f(any(tomMatch5_0).( Term )) { if tom_equal_term_int(4, tom_get_slot_f_t2(any(tomMatch5_0).( Term ))) { 
+	; { { var tomMatch5_0  Term  = tom_make_f(tom_make_a(),4); _ = tomMatch5_0; if tom_is_sort_Term(tomMatch5_0) { if tom_is_fun_sym_f(any(tomMatch5_0).( Term )) { if tom_equal_term_int(4, tom_get_slot_f_t2(any(tomMatch5_0).( Term ))) { 
  matched = true  };  };  };  };  }; 
 
 	if !matched {
@@ -97,8 +92,7 @@ func TestEqual(t *testing.T) {
 
 func TestChained(t *testing.T) {
 	matched := false
-	
-{ { var tomMatch6_0  Term  = tom_make_f(tom_make_a(),4); _ = tomMatch6_0; if tom_is_sort_Term(tomMatch6_0) { if tom_is_fun_sym_f(any(tomMatch6_0).( Term )) { var tom___y  int64  = tom_get_slot_f_t2(any(tomMatch6_0).( Term )); _ = tom___y; if tom___y > 2 { if tom___y < 5 { 
+	; { { var tomMatch6_0  Term  = tom_make_f(tom_make_a(),4); _ = tomMatch6_0; if tom_is_sort_Term(tomMatch6_0) { if tom_is_fun_sym_f(any(tomMatch6_0).( Term )) { var tom___y  int64  = tom_get_slot_f_t2(any(tomMatch6_0).( Term )); _ = tom___y; if tom___y > 2 { if tom___y < 5 { 
  matched = true  };  };  };  };  };  }; 
 
 	if !matched {

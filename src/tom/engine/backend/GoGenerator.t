@@ -237,14 +237,16 @@ public class GoGenerator extends GenericGenerator {
   }
 
   /*
-   * A newline ends a Go statement: when the host line before a %match ends
-   * with a backquote term, the whitespace-only water between
-   * them yields no host block, so the separator is restored here.
+   * When the host line before a %match ends with a backquote term
+   * (x := f() written with a backquote, then %match), the whitespace-only water
+   * between them yields no host block and the newline ending the Go
+   * statement is lost: a "; " separator is written instead (valid after a
+   * statement, a "{" or a newline, and it keeps the line numbering).
    */
   public void generateInstruction(int deep, Instruction subject, String moduleName) throws IOException {
     %match(subject) {
       UnamedBlock(concInstruction(CompiledMatch[],_*)) -> {
-        output.write("\n");
+        output.write("; ");
       }
     }
     super.generateInstruction(deep, subject, moduleName);
