@@ -65,6 +65,16 @@ type gomFile struct {
 	JavaArgs []string
 	// GoArgs are the options given to `gomgo gom-block`.
 	GoArgs []string
+	// Dir overrides the directory (relative to the Go module root, or to
+	// the -I root for legacy/) that receives the module: Java Gom's
+	// package path of the module below the case's own package, e.g.
+	// b/u/i/l/t/i/n/builtin for gom.b.u.i.l.t.i.n.Builtin included from
+	// package gom. Default: the lower-cased base name of Rel.
+	Dir string
+	// Deps lists the other .gom files of test/ the module imports (Java
+	// Gom finds them next to Rel); gomgo reads the identical copies next
+	// to the port's copy and generates them in the same Go package.
+	Deps []string
 }
 
 // testslGom is test/sl/testsl.gom, compiled by test/build.xml with
@@ -83,8 +93,15 @@ var testslGom = gomFile{
 // receives the code generated for g: Gom's <module>/<module>.tom layout,
 // so that `%include { testsl/testsl.tom }` resolves against -I.
 func gomModuleDir(g gomFile) string {
-	return strings.TrimSuffix(filepath.Base(g.Rel), ".gom")
+	if g.Dir != "" {
+		return g.Dir
+	}
+	return strings.ToLower(strings.TrimSuffix(filepath.Base(g.Rel), ".gom"))
 }
+
+// gomPackage is the Go package name of the code generated for g: the
+// last element of its directory.
+func gomPackage(g gomFile) string { return filepath.Base(gomModuleDir(g)) }
 
 // supportDir is the Go package directory (relative to the case's module
 // root) of a support file: its lower-cased base name.
@@ -122,6 +139,12 @@ var cases = []portCase{
 		"TestRef1": testRefUnsupported, "TestRef2": testRefUnsupported, "TestRef3": testRefUnsupported, "TestRef4": testRefUnsupported,
 	}},
 	{Rel: "sl/TestHandWrittenMapping.t", GoTest: true, TomArgs: map[string][]string{"sl/TestHandWrittenMapping.t": {"--genIntrospector"}}},
+	{Rel: "gom/TestDotted.t", GoTest: true, Gom: []gomFile{{Rel: "gom/Dotted.gom"}}},
+	{Rel: "gom/BenchConsGom.t", Gom: []gomFile{{Rel: "gom/List.gom"}}},
+	{Rel: "gom/TestBool.t", GoTest: true, Gom: []gomFile{{Rel: "gom/Bool.gom"}}},
+	{Rel: "gom/TestMultiHook.t", GoTest: true, Gom: []gomFile{{Rel: "gom/MultiHook.gom"}}},
+	{Rel: "gom/TestTomHook.t", GoTest: true},
+	{Rel: "gom/TestYingYang.t", GoTest: true, Gom: []gomFile{{Rel: "gom/Ying.gom", Deps: []string{"gom/Yang.gom"}}}},
 }
 
 // testRefUnsupported is why the tests of sl/TestRef.t are not ported.
@@ -161,7 +184,7 @@ func generateGo(t *testing.T, c portCase, dir string) (map[string]string, string
 			t.Fatal(err)
 		}
 		mod := gomModuleDir(g)
-		gargs := append(append([]string{"gom-block", "-o", filepath.Join(dir, mod), "--pkg", mod}, g.GoArgs...), src)
+		gargs := append(append([]string{"gom-block", "-o", filepath.Join(dir, mod), "--pkg", gomPackage(g)}, g.GoArgs...), src)
 		if out, err := harness.RunIn(dir, nil, harness.GomgoBin(t), gargs...); err != nil {
 			return nil, out, fmt.Errorf("gomgo %v failed: %v", gargs, err)
 		}
@@ -579,7 +602,9 @@ func sourcesOf(root string, c portCase) []string {
 		paths = append(paths, filepath.Join(root, "test", rel))
 	}
 	for _, g := range c.Gom {
-		paths = append(paths, filepath.Join(root, "test", g.Rel))
+		for _, rel := range append([]string{g.Rel}, g.Deps...) {
+			paths = append(paths, filepath.Join(root, "test", rel))
+		}
 	}
 	return paths
 }
@@ -978,6 +1003,9 @@ func TestCasesCoverPorts(t *testing.T) {
 		}
 		for _, g := range c.Gom {
 			inCases[g.Rel] = true
+			for _, rel := range g.Deps {
+				inCases[rel] = true
+			}
 		}
 		oracles[filepath.Base(oraclePath(c))] = true
 	}
@@ -1014,17 +1042,19 @@ func TestGomCopiesIdentical(t *testing.T) {
 	root := harness.RepoRoot(t)
 	for _, c := range cases {
 		for _, g := range c.Gom {
-			orig, err := os.ReadFile(filepath.Join(root, "test", g.Rel))
-			if err != nil {
-				t.Fatal(err)
-			}
-			cp, err := os.ReadFile(g.Rel)
-			if err != nil {
-				t.Errorf("%s: missing copy of test/%s: %v", c.Rel, g.Rel, err)
-				continue
-			}
-			if string(orig) != string(cp) {
-				t.Errorf("test/go/%s differs from test/%s", g.Rel, g.Rel)
+			for _, rel := range append([]string{g.Rel}, g.Deps...) {
+				orig, err := os.ReadFile(filepath.Join(root, "test", rel))
+				if err != nil {
+					t.Fatal(err)
+				}
+				cp, err := os.ReadFile(rel)
+				if err != nil {
+					t.Errorf("%s: missing copy of test/%s: %v", c.Rel, rel, err)
+					continue
+				}
+				if string(orig) != string(cp) {
+					t.Errorf("test/go/%s differs from test/%s", rel, rel)
+				}
 			}
 		}
 	}

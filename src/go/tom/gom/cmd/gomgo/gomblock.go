@@ -36,7 +36,11 @@ func runGomBlock(args []string) error {
 	if err != nil {
 		return err
 	}
-	tomPath, err := writeGomBlock(mod, pkg, out, opts)
+	imported, err := importClosure(mod, filepath.Dir(fs.Arg(0)))
+	if err != nil {
+		return err
+	}
+	tomPath, err := writeGomBlock(mod, pkg, out, opts, imported...)
 	if err != nil {
 		return err
 	}
@@ -44,14 +48,56 @@ func runGomBlock(args []string) error {
 	return nil
 }
 
-// writeGomBlock writes <out>/<lower(Module)>_gen.go in package pkg and
-// <out>/<Module>.tom (Go-host-code mapping), and returns the absolute
-// path of the mapping.
-func writeGomBlock(mod gomast.GomModule, pkg, out string, opts backend.Options) (string, error) {
+// importClosure loads the user modules mod imports, directly or not, as
+// Java Gom does: an `imports M` that is not a builtin names the module
+// of the file M.gom, looked up in dir (the directory of the importing
+// file). The result is in dependency order (a module after the modules
+// it imports), without mod itself; import cycles are allowed.
+func importClosure(mod gomast.GomModule, dir string) ([]gomast.GomModule, error) {
+	var out []gomast.GomModule
+	seen := map[string]bool{lastName(mod): true}
+	var visit func(m gomast.GomModule) error
+	visit = func(m gomast.GomModule) error {
+		for _, name := range backend.ImportedUserModules(m) {
+			if seen[name] {
+				continue
+			}
+			seen[name] = true
+			dep, err := gomparser.ParseFile(filepath.Join(dir, name+".gom"))
+			if err != nil {
+				return fmt.Errorf("module %s imports %s: %w", backend.QualifiedName(m), name, err)
+			}
+			if err := visit(dep); err != nil {
+				return err
+			}
+			out = append(out, dep)
+		}
+		return nil
+	}
+	if err := visit(mod); err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// lastName is the last component of the module's qualified name.
+func lastName(mod gomast.GomModule) string {
 	name := gomparser.QualifiedName(mod)
 	if i := strings.LastIndex(name, "."); i >= 0 {
 		name = name[i+1:]
 	}
+	return name
+}
+
+// writeGomBlock writes <out>/<lower(Module)>_gen.go in package pkg and
+// <out>/<Module>.tom (Go-host-code mapping), and returns the absolute
+// path of the mapping. The modules mod imports (imported, see
+// importClosure) are generated in the same package — Go packages cannot
+// import each other cyclically, as Gom modules can — each into its own
+// <lower(Module)>_gen.go, and the mapping declares their sorts and
+// operators too, as Java Gom's mapping of an importing module does.
+func writeGomBlock(mod gomast.GomModule, pkg, out string, opts backend.Options, imported ...gomast.GomModule) (string, error) {
+	name := lastName(mod)
 	if name == "" {
 		name = "M"
 	}
@@ -59,15 +105,36 @@ func writeGomBlock(mod gomast.GomModule, pkg, out string, opts backend.Options) 
 		return "", err
 	}
 	opts.PackageName = pkg
-	var buf bytes.Buffer
-	if err := backend.Generate(mod, opts, &buf); err != nil {
-		return "", err
-	}
-	if err := os.WriteFile(filepath.Join(out, strings.ToLower(name)+"_gen.go"), buf.Bytes(), 0o644); err != nil {
-		return "", err
+	all := append(append([]gomast.GomModule(nil), imported...), mod)
+	var mapping []byte
+	mapping = append(mapping, backend.BuiltinIncludesGo(mod, imported...)...)
+	for i, m := range all {
+		mopts := opts
+		if len(imported) > 0 {
+			mopts.ImportedSorts = map[string]bool{}
+			for j, o := range all {
+				if j != i {
+					for _, s := range backend.SortNames(o) {
+						mopts.ImportedSorts[s] = true
+					}
+				}
+			}
+		}
+		var buf bytes.Buffer
+		// the importing module's file declares the package's factory
+		if err := backend.GenerateGenerated(m, mopts, m == mod, &buf); err != nil {
+			return "", err
+		}
+		mname := lastName(m)
+		if mname == "" {
+			mname = "M"
+		}
+		if err := os.WriteFile(filepath.Join(out, strings.ToLower(mname)+"_gen.go"), buf.Bytes(), 0o644); err != nil {
+			return "", err
+		}
+		mapping = append(mapping, backend.EmitTomMappingGo(m, mopts)...)
 	}
 	tomPath := filepath.Join(out, name+".tom")
-	mapping := append(backend.BuiltinIncludesGo(mod), backend.EmitTomMappingGo(mod, opts)...)
 	if err := os.WriteFile(tomPath, mapping, 0o644); err != nil {
 		return "", err
 	}

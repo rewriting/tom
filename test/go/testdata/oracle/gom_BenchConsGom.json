@@ -1,0 +1,6 @@
+{
+  "passed": null,
+  "stdout": "Usage: java list.BenchConsGom \u003cmax\u003e\n",
+  "exitOK": true,
+  "source_sha256": "c878d623d506a49f4736d36b899b7817a9f039386c1ed1f52ef775201bb9ecf5"
+}

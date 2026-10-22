@@ -1,0 +1,4 @@
+module gom.List
+imports int
+abstract syntax
+List = conc(int*)

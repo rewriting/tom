@@ -105,7 +105,7 @@ func TestRunGomBlockCongruenceStrategies(t *testing.T) {
 	}
 }
 
-// A user `op:make` hook: the Go constructor consults hookMake<Op>, which
+// A user `op:make` hook: the Go constructor consults HookMake<Op>, which
 // the mapping's host code sets from the (Tom+Go) hook body.
 func TestWriteGomBlockUserMakeHook(t *testing.T) {
 	dir := t.TempDir()
@@ -124,13 +124,76 @@ func TestWriteGomBlockUserMakeHook(t *testing.T) {
 		t.Fatal(err)
 	}
 	goSrc, _ := os.ReadFile(filepath.Join(out, "m_gen.go"))
-	for _, want := range []string{"var hookMakeF func(T, T) T", "if r := hookMakeF(x, y); r != nil {"} {
+	for _, want := range []string{"var HookMakeF func(T, T) (T, T, T)", "hookResult, x, y = HookMakeF(x, y)", "if hookResult != nil {"} {
 		if !strings.Contains(string(goSrc), want) {
 			t.Errorf("m_gen.go lacks %q", want)
 		}
 	}
 	mapping, _ := os.ReadFile(tomPath)
-	for _, want := range []string{"hookMakeF = func(l T, r T) T {", "%match(l) { a() -> { return `a(); } }", "; return nil;"} {
+	for _, want := range []string{"HookMakeF = func(l T, r T) (T, T, T) {", "%match(l) { a() -> { return `a(); } }", "return nil;", "return tom__r, l, r;"} {
+		if !strings.Contains(string(mapping), want) {
+			t.Errorf("mapping lacks %q:\n%s", want, mapping)
+		}
+	}
+}
+
+// Several make hooks of one operator run in order, as in Java Gom
+// (OperatorTemplate.generateMakeHooks): an argument reassigned by a hook
+// reaches the next one, renamed when it names it differently.
+func TestWriteGomBlockMultipleMakeHooks(t *testing.T) {
+	dir := t.TempDir()
+	src := filepath.Join(dir, "in.gom")
+	body := "module M\nimports int\nabstract syntax\nW = Int(i:int)\nInt:make(i) {\n  i = i+1;\n}\nInt:make(j) {\n  j = j*2;\n}\n"
+	if err := os.WriteFile(src, []byte(body), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	mod, err := gomparser.ParseFile(src)
+	if err != nil {
+		t.Fatal(err)
+	}
+	tomPath, err := writeGomBlock(mod, "fixture", filepath.Join(dir, "out"), backend.Options{})
+	if err != nil {
+		t.Fatal(err)
+	}
+	mapping, _ := os.ReadFile(tomPath)
+	want := "HookMakeInt = func(i int64) (W, int64) {\n    var j int64;\n    tom__r := func() W {\n    {\n\n  i = i+1;\n\n    };\n    j = i;\n    {\n\n  j = j*2;\n\n    };\n    return nil;\n    }();\n    return tom__r, j;\n"
+	if !strings.Contains(string(mapping), want) {
+		t.Errorf("mapping lacks\n%s\n---\n%s", want, mapping)
+	}
+}
+
+// A module that imports user modules (Java Gom finds M.gom next to the
+// importing file) is generated with them in one Go package — Gom modules
+// may import each other cyclically, Go packages may not — and its
+// mapping declares their sorts and operators too.
+func TestRunGomBlockImports(t *testing.T) {
+	dir := t.TempDir()
+	files := map[string]string{
+		"Ying.gom": "module gom.Ying\nimports Yang\nabstract syntax\nMoon = ping(sl:Sun)\n",
+		"Yang.gom": "module gom.Yang\nimports Ying String\nabstract syntax\nSun = pong(st:Moon) | shi() | name(s:String)\n",
+	}
+	for name, body := range files {
+		if err := os.WriteFile(filepath.Join(dir, name), []byte(body), 0o644); err != nil {
+			t.Fatal(err)
+		}
+	}
+	out := filepath.Join(dir, "out")
+	if err := runGomBlock([]string{"-o", out, "--pkg", "ying", filepath.Join(dir, "Ying.gom")}); err != nil {
+		t.Fatal(err)
+	}
+	ying, _ := os.ReadFile(filepath.Join(out, "ying_gen.go"))
+	yang, _ := os.ReadFile(filepath.Join(out, "yang_gen.go"))
+	if !strings.Contains(string(ying), "Sl   Sun") && !strings.Contains(string(ying), "Sl Sun") {
+		t.Errorf("ying_gen.go: slot sl is not typed by the Go interface Sun:\n%s", ying)
+	}
+	if !strings.Contains(string(yang), "St   Moon") && !strings.Contains(string(yang), "St Moon") {
+		t.Errorf("yang_gen.go: slot st is not typed by the Go interface Moon")
+	}
+	if strings.Count(string(ying)+string(yang), "var factory = ") != 1 {
+		t.Errorf("the package must declare its factory exactly once")
+	}
+	mapping, _ := os.ReadFile(filepath.Join(out, "Ying.tom"))
+	for _, want := range []string{"%include { string.tom }", "%typeterm Sun {", "%typeterm Moon {", "%op Sun pong(st:Moon) {", "%op Moon ping(sl:Sun) {"} {
 		if !strings.Contains(string(mapping), want) {
 			t.Errorf("mapping lacks %q:\n%s", want, mapping)
 		}

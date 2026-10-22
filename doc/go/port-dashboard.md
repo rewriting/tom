@@ -9,7 +9,7 @@ avec le cas qui les utilise (comme `test/build.xml` compile tout le
 répertoire), et c'est le statut de ce cas qui les valide.
 
 - total : 103
-- OK : 22
+- OK : 28
 - divergence : 0
 - échec go test : 0
 - échec go build : 0
@@ -17,7 +17,7 @@ répertoire), et c'est le statut de ce cas qui les valide.
 - oracle invalide : 0
 - non supporté : 1
 - support : 4
-- non porté : 76
+- non porté : 70
 
 | Cas | Statut | Notes |
 |---|---|---|
@@ -60,13 +60,13 @@ répertoire), et c'est le statut de ce cas qui les valide.
 | `backquote/TestBackquoteWithBracket.t` | non porté |  |
 | `backquote/TestDefaultValue.t` | non porté |  |
 | `cfib1.t` | non porté |  |
-| `gom/BenchConsGom.t` | non porté |  |
+| `gom/BenchConsGom.t` | OK |  |
 | `gom/TestACU.t` | non porté |  |
 | `gom/TestAU.t` | non porté |  |
-| `gom/TestBool.t` | non porté |  |
+| `gom/TestBool.t` | OK |  |
 | `gom/TestBuiltin.t` | non porté |  |
 | `gom/TestCollection.t` | non porté |  |
-| `gom/TestDotted.t` | non porté |  |
+| `gom/TestDotted.t` | OK |  |
 | `gom/TestFL.t` | non porté |  |
 | `gom/TestFrom.t` | non porté |  |
 | `gom/TestFromMethods.t` | non porté |  |
@@ -76,7 +76,7 @@ répertoire), et c'est le statut de ce cas qui les valide.
 | `gom/TestJavaHook.t` | non porté |  |
 | `gom/TestList.t` | non porté |  |
 | `gom/TestMakeEmpty.t` | non porté |  |
-| `gom/TestMultiHook.t` | non porté |  |
+| `gom/TestMultiHook.t` | OK |  |
 | `gom/TestPeanoRule.t` | non porté |  |
 | `gom/TestRuleBool.t` | non porté |  |
 | `gom/TestRuleCond.t` | non porté |  |
@@ -85,8 +85,8 @@ répertoire), et c'est le statut de ce cas qui les valide.
 | `gom/TestSortHook.t` | non porté |  |
 | `gom/TestStratMapping.t` | non porté |  |
 | `gom/TestTermgraph.t` | non porté |  |
-| `gom/TestTomHook.t` | non porté |  |
-| `gom/TestYingYang.t` | non porté |  |
+| `gom/TestTomHook.t` | OK |  |
+| `gom/TestYingYang.t` | OK |  |
 | `gom/fromterm/TestFromTerm.t` | non porté |  |
 | `loulou.t` | non porté |  |
 | `numeric/TestNumericConditions.t` | OK |  |
