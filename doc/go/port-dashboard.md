@@ -7,9 +7,11 @@ Tom+Go, compilé par `tom -go`, se comporte comme l'original compilé par
 Un fichier « support » n'a pas de test propre : ses classes sont compilées
 avec le cas qui les utilise (comme `test/build.xml` compile tout le
 répertoire), et c'est le statut de ce cas qui les valide.
+Un original « échoue dans legacy » ne se compile pas avec `legacy/` :
+pas d'oracle possible, il n'est pas porté (`TestLegacyFails` le vérifie).
 
 - total : 103
-- OK : 49
+- OK : 62
 - divergence : 0
 - échec go test : 0
 - échec go build : 0
@@ -17,7 +19,8 @@ répertoire), et c'est le statut de ce cas qui les valide.
 - oracle invalide : 0
 - non supporté : 2
 - support : 4
-- non porté : 48
+- échoue dans legacy : 5
+- non porté : 30
 
 | Cas | Statut | Notes |
 |---|---|---|
@@ -47,18 +50,18 @@ répertoire), et c'est le statut de ce cas qui les valide.
 | `TestSublists.t` | OK |  |
 | `TestVarVarStar.t` | OK |  |
 | `TomList.t` | non porté |  |
-| `acmatching/TestAC.t` | non porté |  |
-| `acmatching/TestBool3.t` | non porté |  |
-| `andor/TestAndOr.t` | non porté |  |
-| `andor/TestAndOrConstraintOnly.t` | non porté |  |
-| `antipatterns/TestAntiPattern.t` | non porté |  |
-| `antipatterns/TestAntiPattern2.t` | non porté |  |
-| `antipatterns/TestAntiPattern3.t` | non porté |  |
-| `antipatterns/TestAntiPatternAssociative.t` | non porté |  |
-| `antipatterns/TestDoubleList.t` | non porté |  |
-| `backquote/TestBackquoteGom.t` | non porté |  |
-| `backquote/TestBackquoteWithBracket.t` | non porté |  |
-| `backquote/TestDefaultValue.t` | non porté |  |
+| `acmatching/TestAC.t` | OK |  |
+| `acmatching/TestBool3.t` | OK |  |
+| `andor/TestAndOr.t` | OK |  |
+| `andor/TestAndOrConstraintOnly.t` | OK |  |
+| `antipatterns/TestAntiPattern.t` | OK |  |
+| `antipatterns/TestAntiPattern2.t` | OK |  |
+| `antipatterns/TestAntiPattern3.t` | OK |  |
+| `antipatterns/TestAntiPatternAssociative.t` | OK |  |
+| `antipatterns/TestDoubleList.t` | OK |  |
+| `backquote/TestBackquoteGom.t` | OK |  |
+| `backquote/TestBackquoteWithBracket.t` | OK |  |
+| `backquote/TestDefaultValue.t` | OK |  |
 | `cfib1.t` | non porté |  |
 | `gom/BenchConsGom.t` | OK |  |
 | `gom/TestACU.t` | OK |  |
@@ -103,12 +106,12 @@ répertoire), et c'est le statut de ce cas qui les valide.
 | `regress/UnknownSymbol2.t` | non porté |  |
 | `regress/VariableStar.t` | non porté |  |
 | `regress/WrongSymbol.t` | non porté |  |
-| `rule/Array.t` | non porté |  |
-| `rule/Peano.t` | non porté |  |
-| `rule/TestArray.t` | non porté |  |
-| `rule/TestPeano.t` | non porté |  |
-| `rule/TestWhen.t` | non porté |  |
-| `rule/TomList.t` | non porté |  |
+| `rule/Array.t` | OK |  |
+| `rule/Peano.t` | échoue dans legacy | obsolete %rule construct: legacy/'s tom crashes on it (NullPointerException in the CstBuilder of the default parser), and with -np it leaves %rule as host code, which javac rejects |
+| `rule/TestArray.t` | échoue dans legacy | obsolete %rule construct: legacy/'s tom crashes on it (NullPointerException in the CstBuilder of the default parser), and with -np it leaves %rule as host code, which javac rejects |
+| `rule/TestPeano.t` | échoue dans legacy | obsolete %rule construct: legacy/'s tom crashes on it (NullPointerException in the CstBuilder of the default parser), and with -np it leaves %rule as host code, which javac rejects |
+| `rule/TestWhen.t` | échoue dans legacy | obsolete %rule construct: legacy/'s tom crashes on it (NullPointerException in the CstBuilder of the default parser), and with -np it leaves %rule as host code, which javac rejects; its %match rules also use the obsolete `when` guards |
+| `rule/TomList.t` | échoue dans legacy | obsolete %rule construct: legacy/'s tom crashes on it (NullPointerException in the CstBuilder of the default parser), and with -np it leaves %rule as host code, which javac rejects |
 | `sl/CommonStrat.t` | support | compilé avec `sl/TestImportStrat.t`, couvert par son statut |
 | `sl/IntrospectorBehaviour.t` | support | compilé avec `sl/TestSL.t`, couvert par son statut |
 | `sl/NewBehaviour.t` | support | compilé avec `sl/TestSL.t`, couvert par son statut |
