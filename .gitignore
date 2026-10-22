@@ -39,3 +39,5 @@ prototype/tomgo/tomgo
 prototype/tomgo/gom
 prototype/tomgo/tom
 src/go/tom/gom/cmd/gomgo/gomgo
+src/bootcheck/
+src/bootstrap/

@@ -55,7 +55,13 @@ func init() {
 // runIn runs name with args in dir (relative to the repository root),
 // streaming its output.
 func runIn(dir, name string, args ...string) error {
+	return runInEnv(dir, nil, name, args...)
+}
+
+// runInEnv is runIn with extra environment variables (KEY=VALUE).
+func runInEnv(dir string, env []string, name string, args ...string) error {
 	cmd := exec.Command(name, args...)
+	cmd.Env = append(os.Environ(), env...)
 	cmd.Dir = dir
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
@@ -139,4 +145,12 @@ func Smoke() error {
 }
 
 // All runs vet, the unit tests, the self-bootstrap check and the smoke tests.
-func All() { mg.SerialDeps(Vet, Test, SelfBootstrap, Smoke) }
+func All() { mg.SerialDeps(Vet, VetStandalone, Test, SelfBootstrap, Smoke) }
+
+// VetStandalone checks that both validated modules build without the workspace.
+func VetStandalone() error {
+	if err := runInEnv(tomDir, []string{"GOWORK=off"}, "go", "vet", "./..."); err != nil {
+		return err
+	}
+	return runInEnv(testGoDir, []string{"GOWORK=off"}, "go", "vet", "./...")
+}

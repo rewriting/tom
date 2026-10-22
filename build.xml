@@ -658,6 +658,7 @@
     </copy>
 
     <!-- Go runtime and Gom (module tom), used by programs generated with -go -->
+    <delete dir="${stable.dist}/lib/go/tom" quiet="true"/>
     <copy todir="${stable.dist}/lib/go/tom">
       <fileset dir="${basedir}/src/go/tom">
         <include name="**/*.go"/>
@@ -941,6 +942,7 @@
     </copy>
 
     <!-- Go runtime and Gom (module tom), used by programs generated with -go -->
+    <delete dir="${src.dist}/lib/go/tom" quiet="true"/>
     <copy todir="${src.dist}/lib/go/tom">
       <fileset dir="${basedir}/src/go/tom">
         <include name="**/*.go"/>

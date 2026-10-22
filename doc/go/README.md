@@ -16,6 +16,17 @@ Utiliser le runtime dans un projet : `require tom v0.0.0` et
 `replace tom => $TOM_HOME/lib/go/tom` dans `go.mod`, puis
 `import sl "tom/library/sl"`.
 
+## Démarrage rapide
+
+```bash
+unset TOM_HOME && ./build.sh src.dist
+go -C src/go/tom build -o /tmp/gomgo ./gom/cmd/gomgo
+GOMGO_BIN=/tmp/gomgo TOM_HOME=$PWD/src/dist src/dist/bin/tom -go -d out X.t
+```
+
+Puis dans `out/`, un `go.mod` avec `go 1.26` (Go ≥ 1.26 requis),
+`require tom v0.0.0` et `replace tom => $TOM_HOME/lib/go/tom`.
+
 Orchestration : `go.work` à la racine (modules `src/go/tom`, `test/go`,
 `magefiles`, `prototype/tomgo`) et `magefiles/` ; cibles `mage -d magefiles
 -w . <cible>` (ou `cd magefiles && mage <cible>`), cf. `mage -d magefiles

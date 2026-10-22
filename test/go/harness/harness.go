@@ -5,10 +5,13 @@
 package harness
 
 import (
+	"bytes"
 	"fmt"
+	"io/fs"
 	"os"
 	"os/exec"
 	"path/filepath"
+	"sort"
 	"strings"
 	"sync"
 	"testing"
@@ -118,7 +121,10 @@ func SetupGoModule(t testing.TB, dir string) {
 	if !fileExists(filepath.Join(runtime, "go.mod")) {
 		t.Fatalf("no Go runtime at %s (rebuild src.dist: ./build.sh src.dist)", runtime)
 	}
-	mod := "module fixture\n\ngo 1.22\n\nrequire tom v0.0.0\n\nreplace tom => " + runtime + "\n"
+	if diff := runtimeDiff(filepath.Join(RepoRoot(t), "src", "go", "tom"), runtime); diff != "" {
+		t.Fatalf("dist runtime is stale: rebuild with ./build.sh src.dist (or stable); first difference: %s", diff)
+	}
+	mod := "module fixture\n\ngo 1.26\n\nrequire tom v0.0.0\n\nreplace tom => " + runtime + "\n"
 	if err := os.WriteFile(filepath.Join(dir, "go.mod"), []byte(mod), 0o644); err != nil {
 		t.Fatal(err)
 	}
@@ -133,4 +139,53 @@ func Normalize(s string, repl map[string]string) string {
 		s = strings.ReplaceAll(s, from, to)
 	}
 	return s
+}
+
+// runtimeDiff compares the non-test .go files and go.mod of src and dist
+// (byte equality, relative paths, ignoring *_test.go and testdata/) and
+// returns the first differing relative path, or "".
+func runtimeDiff(src, dist string) string {
+	collect := func(root string) map[string]bool {
+		m := map[string]bool{}
+		_ = filepath.WalkDir(root, func(p string, d fs.DirEntry, err error) error {
+			if err != nil {
+				return nil
+			}
+			if d.IsDir() {
+				if d.Name() == "testdata" {
+					return filepath.SkipDir
+				}
+				return nil
+			}
+			n := d.Name()
+			if (strings.HasSuffix(n, ".go") && !strings.HasSuffix(n, "_test.go")) || (n == "go.mod" && filepath.Dir(p) == root) {
+				r, _ := filepath.Rel(root, p)
+				m[r] = true
+			}
+			return nil
+		})
+		return m
+	}
+	a, b := collect(src), collect(dist)
+	var names []string
+	for k := range a {
+		names = append(names, k)
+	}
+	for k := range b {
+		if !a[k] {
+			names = append(names, k)
+		}
+	}
+	sort.Strings(names)
+	for _, n := range names {
+		if !a[n] || !b[n] {
+			return n
+		}
+		x, _ := os.ReadFile(filepath.Join(src, n))
+		y, _ := os.ReadFile(filepath.Join(dist, n))
+		if !bytes.Equal(x, y) {
+			return n
+		}
+	}
+	return ""
 }

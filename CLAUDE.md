@@ -113,12 +113,12 @@ main — est gelée, cf. ci-dessus.)
 | `src/tom/library/mapping/go/` | Mappings Tom pour Go (`boolean.tom`, `int.tom`, `long.tom`, …) |
 | `src/tom/gom/adt/`, `src/tom/engine/adt/` | `.gom` décrivant l'AST de Gom / de TOM |
 | `src/go/tom/` | **Module Go `tom`** (validé) : `library/{sl,sharedobjects,aterm}`, `gom/{parser,backend,adt}`, `gom/cmd/gomgo` |
-| `stable/` | Compilateur Java **bootstrappé** qui construit `src/` ; contient aussi la cible Go (`stable/dist/bin/tom -go`) ; sa dist n'embarquera le runtime Go dans `lib/go/tom` (et `GOMGO_BIN`) qu'après `./build.sh bootinstall` + `./build.sh stable` (pas encore fait : `stable/dist/lib/go` absent, `TomParserTool` y lit encore `TOMGO_BIN`) |
+| `stable/` | Compilateur Java **bootstrappé** qui construit `src/` ; contient aussi la cible Go (`stable/dist/bin/tom -go`) ; `src/` y a été promu le 2026-10-23 : sa dist embarque le runtime Go dans `lib/go/tom` et `TomParserTool` lit `GOMGO_BIN` |
 | `test/` | Corpus Tom+Java historique (121 `.t` + 18 `.gom`) |
 | `test/go/` | **Module Go `tomtest`** : ports Tom+Go de `test/` (`*.t`), `port_test.go` (T1/T2), `testdata/{golden,oracle}`, `harness/`, `javaparity/` (T0), `smoke/`, `coverage/` (T3), `sl/`, `numeric/` |
 | `doc/go/` | Rapports : `README.md` (carte), `j0-go-backend.md`, `port-dashboard.md` (généré), `coverage.md` (généré) |
 | `docs/superpowers/{specs,plans}/` | Specs et plans de travail (backend Go, réorganisation du dépôt) |
-| `magefiles/` | Orchestration (module `magefiles`) : `mage -d magefiles -w . <cible>` |
+| `magefiles/` | Orchestration (module `tommage`) : `mage -d magefiles -w . <cible>` |
 | `go.work` | Espace de travail : `src/go/tom`, `test/go`, `magefiles`, `prototype/tomgo` |
 | `prototype/tomgo/` | Prototype Go écrit à la main (Phases 0–6, **gelé**, réservoir de code ; son README liste les équivalents maintenus) |
 | `examples/`, `share/`, `applications/`, `utils/` | Exemples (402 `.t` + 51 `.gom`), mappings prédéfinis (`$TOM_HOME/share/tom`), pré-builts (`applications/prototype3D/lib/`), outils (`utils/eclipse-plugin/…`) |
@@ -148,7 +148,7 @@ prototype/tomgo/                 # module `tom/tomgo`, GELÉ (cf. son README)
 ```
 
 Le runtime utilisé par le Go généré est `tom/library/...` (module `tom`) ;
-`src/dist` le livre dans `lib/go/tom` (`stable/dist` après bootinstall), d'où le `go.mod` utilisateur :
+`src/dist` et `stable/dist` le livrent dans `lib/go/tom` (Go ≥ 1.26 requis), d'où le `go.mod` utilisateur :
 `require tom v0.0.0` + `replace tom => $TOM_HOME/lib/go/tom`.
 
 Comptes (2026-10-23, `go list ./...` par module, via `go.work`) :
@@ -708,13 +708,13 @@ go -C src/go/tom build -o /tmp/gomgo ./gom/cmd/gomgo
 # Compiler un .t vers Go (-go implique l'analyseur island -np ; -gi est refusé)
 GOMGO_BIN=/tmp/gomgo TOM_HOME=$PWD/src/dist src/dist/bin/tom -go -np -d out test/go/TestAlgebraic.t
 # Le Go généré qui importe tom/library/... a besoin d'un go.mod dans out/ :
-#   module <nom>  /  go 1.22
+#   module <nom>  /  go 1.26
 #   require tom v0.0.0
-#   replace tom => $TOM_HOME/lib/go/tom     (src/dist livre le runtime ; stable/dist après bootinstall)
+#   replace tom => $TOM_HOME/lib/go/tom     (src/dist et stable/dist livrent le runtime)
 # (c'est ce qu'écrit SetupGoModule dans test/go/harness)
-# Le compilateur bootstrappé (stable/dist) ne l'acceptera avec GOMGO_BIN et
-# le runtime qu'après bootinstall + stable (non vérifié ici ; Task 6)
-TOM_HOME=$PWD/stable/dist stable/dist/bin/tom -go -d out X.t
+# Le compilateur bootstrappé (stable/dist, promu le 2026-10-23) livre aussi
+# le runtime (lib/go/tom) et lit GOMGO_BIN :
+GOMGO_BIN=/tmp/gomgo TOM_HOME=$PWD/stable/dist stable/dist/bin/tom -go -d out X.t
 # Harnais et tests, depuis la racine (ou `cd magefiles && mage <cible>`)
 mage -d magefiles -w . -l          # lister les cibles
 mage -d magefiles -w . all         # vet + tests module tom + self-bootstrap
@@ -815,7 +815,7 @@ TOMGO_STABLE_DIST_LIB=/path/to/main/stable/dist/lib \
 
 **Outillage externe attendu sur la machine** (sinon les tests
 correspondants skippent) :
-- Go 1.22+ (`go version` ⇒ 1.26.3 testé).
+- Go 1.26+ (`go version` ⇒ 1.26.3 testé).
 - `mage` 1.17+ pour l'orchestration (`go install github.com/magefile/mage@latest`).
 - OpenJDK pour les tests d'équivalence Java — JDK 25 testé via
   `brew install openjdk`. Variables détectées : `$JAVA_HOME` puis
