@@ -705,7 +705,7 @@ régénérer l'oracle (`-update-oracle`) demande aussi le JDK 8 et `legacy/`.
 unset TOM_HOME && ./build.sh src.dist
 # Les blocs %gom exigent le binaire gomgo : $GOMGO_BIN, sinon `gomgo` dans le PATH
 go -C src/go/tom build -o /tmp/gomgo ./gom/cmd/gomgo
-# Compiler un .t vers Go (-go implique l'analyseur island -np ; -gi est refusé)
+# Compiler un .t vers Go (-go implique l'analyseur island -np ; -gi produit un LocalIntrospector Go)
 GOMGO_BIN=/tmp/gomgo TOM_HOME=$PWD/src/dist src/dist/bin/tom -go -np -d out test/go/TestAlgebraic.t
 # Le Go généré qui importe tom/library/... a besoin d'un go.mod dans out/ :
 #   module <nom>  /  go 1.26
