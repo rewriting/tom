@@ -58,7 +58,7 @@ autonomes), comparés à ceux de Java Gom (`legacy/`) :
   copie la queue (O(n), contre O(1) pour une cellule Java). Les hooks FL/AC
   évitent les copies inutiles sans changer le résultat, mais un programme
   qui construit beaucoup de grandes listes reste plus lent qu'en Java
-  (test/acmatching/TestBool3.t : 12 s en Go, 1 s en Java).
+  (test/acmatching/TestBool3.t : 12 s en Go, 1,2 s en Java).
 - **Hooks dans le mapping.** Les hooks `make`, `make_insert`,
   `make_empty`, les règles (`module M:rules()`) et les blocs (`block`)
   sont du code Tom+Go : gomgo les écrit dans le mapping généré (`.tom`),
@@ -71,6 +71,14 @@ autonomes), comparés à ceux de Java Gom (`legacy/`) :
   dans l'ordre de déclaration ; Go exécute la théorie avant les hooks
   `make_insert`/`make_empty` et les règles, et refuse un module qui
   déclare la théorie après eux.
+- **Aides du filtrage AC.** Les fonctions que le compilateur ajoute pour
+  un motif `f??(…)` (`next_minimal_extract`, `__getMultiplicities_<op>`,
+  `__getTermForMult_<op>`, `__computeLength_<op>`, …) sont, en Java, des
+  méthodes de la classe générée ; en Go, ce sont des fonctions de niveau
+  paquetage, émises dans chaque fichier généré qui en a besoin. Deux
+  fichiers `.t` d'un même paquetage Go qui utilisent le filtrage AC les
+  déclareraient donc deux fois (refusé par Go) ; à régler en J4 (comme
+  les `tom_*` des mappings, qui imposent déjà un fichier Tom par paquetage).
 - **Exceptions.** Les exceptions Java de l'API Gom sont des paniques
   `*aterm.GomError` (`IllegalArgument` vrai pour une
   `IllegalArgumentException` : `Length`/`Reverse` d'un terme qui n'est pas

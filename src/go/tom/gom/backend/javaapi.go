@@ -322,6 +322,7 @@ func (g *gen) emitVariadicJava(sortNm string, alt *gomast.AlternativeAlternative
 	w("}\n\n")
 
 	insertHooks := len(hooksOfKind(hooks, "make_insert")) > 0
+	emptyHooks := len(hooksOfKind(hooks, "make_empty")) > 0
 	if insertHooks {
 		w("// HookMakeInsert%s runs the make_insert hooks (and the rules) of the Gom\n// module: it returns their result (nil if none returned) and the\n// arguments they may have reassigned. The Tom mapping generated with\n// this file sets it.\n", opGo)
 		w("var HookMakeInsert%s func(%s, %s) (%s, %s, %s)\n\n", opGo, elem, sortNm, sortNm, elem, sortNm)
@@ -354,9 +355,10 @@ func (g *gen) emitVariadicJava(sortNm string, alt *gomast.AlternativeAlternative
 			// flattening above); when they are sorted and none is a list
 			// of the operator, each of these Cons is a plain RealMakeCons,
 			// so the result is the tail of t itself (no quadratic copy)
-			// (without make_insert hook: a hook would run in these Cons)
+			// (without make_insert hook: a hook would run in these Cons;
+			// without make_empty hook: Java's Empty.make() runs it)
 			w("\t\tif 0 < head.CompareTo(t.Slots[0]) {\n\t\t\ttmpHd := head\n\t\t\thead = t.Slots[0]\n")
-			w("\t\t\tplain := %v\n\t\t\tfor i := 1; i < len(t.Slots) && plain; i++ {\n\t\t\t\t_, isList := any(t.Slots[i]).(*%s)\n\t\t\t\tplain = !isList && (i+1 == len(t.Slots) || t.Slots[i].CompareTo(t.Slots[i+1]) <= 0)\n\t\t\t}\n", !insertHooks, structName)
+			w("\t\t\tplain := %v\n\t\t\tfor i := 1; i < len(t.Slots) && plain; i++ {\n\t\t\t\t_, isList := any(t.Slots[i]).(*%s)\n\t\t\t\tplain = !isList && (i+1 == len(t.Slots) || t.Slots[i].CompareTo(t.Slots[i+1]) <= 0)\n\t\t\t}\n", !insertHooks && !emptyHooks, structName)
 			w("\t\t\tvar rest %s\n\t\t\tif plain {\n\t\t\t\trest = Raw%s(t.Slots[1:]...)\n\t\t\t} else {\n\t\t\t\trest = Cons%s(t.GetTail%s(), Empty%s())\n\t\t\t}\n", sortNm, opGo, opGo, op, opGo)
 			w("\t\t\ttail = Cons%s(tmpHd, rest)\n\t\t}\n\t}\n", opGo)
 		}

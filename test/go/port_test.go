@@ -225,13 +225,41 @@ var cases = []portCase{
 // legacyFails lists the originals (relative to test/) that legacy/
 // cannot compile: no oracle is possible, so they are not ported (dashboard
 // status "échoue dans legacy"); TestLegacyFails checks that they still
-// fail. test/build.xml excludes rule/ from its compilation.
-var legacyFails = map[string]string{
-	"rule/Peano.t":     ruleLegacyFails,
-	"rule/TestArray.t": ruleLegacyFails,
-	"rule/TestPeano.t": ruleLegacyFails,
-	"rule/TestWhen.t":  ruleLegacyFails + "; its %match rules also use the obsolete `when` guards",
-	"rule/TomList.t":   ruleLegacyFails,
+// fail, as recorded. test/build.xml excludes rule/ from its compilation.
+var legacyFails = map[string]legacyFailure{
+	"rule/Peano.t":     ruleFailure(ruleLegacyFails),
+	"rule/TestArray.t": ruleFailure(ruleLegacyFails),
+	"rule/TestPeano.t": ruleFailure(ruleLegacyFails),
+	"rule/TestWhen.t": {
+		Reason:  ruleLegacyFails + "; its %match rules also use the obsolete `when` guards, which -np leaves as host code too (javac stops on the first one, before the %rule)",
+		Default: failsIn{Stage: "tom", Output: []string{"java.lang.NullPointerException"}},
+		NP:      failsIn{Stage: "javac", Output: []string{"%match(term t) {"}},
+	},
+	"rule/TomList.t": ruleFailure(ruleLegacyFails),
+}
+
+// legacyFailure records why and how legacy/ fails on an original.
+type legacyFailure struct {
+	Reason string
+	// Default and NP: the failure with the default parser and with -np.
+	Default, NP failsIn
+}
+
+// failsIn is a failure signature: the stage that fails ("tom": legacy/'s
+// tom rejects or crashes; "javac": tom succeeds and javac rejects its
+// output) and substrings of that stage's output.
+type failsIn struct {
+	Stage  string
+	Output []string
+}
+
+// ruleFailure is the failure of the %rule tests of rule/.
+func ruleFailure(reason string) legacyFailure {
+	return legacyFailure{
+		Reason:  reason,
+		Default: failsIn{Stage: "tom", Output: []string{"java.lang.NullPointerException"}},
+		NP:      failsIn{Stage: "javac", Output: []string{"%rule {"}},
+	}
 }
 
 // ruleLegacyFails is why legacy/ cannot compile the %rule tests of rule/.
@@ -972,8 +1000,8 @@ func TestDashboard(t *testing.T) {
 			return nil
 		}
 		status, note := "non porté", ""
-		if reason, ok := legacyFails[rel]; ok {
-			status, note = "échoue dans legacy", reason
+		if f, ok := legacyFails[rel]; ok {
+			status, note = "échoue dans legacy", f.Reason
 		} else if main, ok := supportOf[rel]; ok {
 			// A support file has no test of its own: its classes are
 			// exercised, in Java and in Go, by the case that uses them.
@@ -1271,9 +1299,10 @@ func gomWithoutHookBodies(src []byte) (string, error) {
 	return origin.ReplaceAllString(hookCode.ReplaceAllString(fmt.Sprint(mod), `HookCode("")`), "Origin(0)"), nil
 }
 
-// TestLegacyFails checks that legacy/ still cannot compile the originals
-// of legacyFails (tom, then javac, as for an oracle), and that none of
-// them is also a case.
+// TestLegacyFails checks that legacy/ still fails on the originals of
+// legacyFails as recorded, with the default parser and with -np (tom, then
+// javac on its output, as for an oracle), and that none of them is also a
+// case.
 func TestLegacyFails(t *testing.T) {
 	for _, c := range cases {
 		if _, ok := legacyFails[c.Rel]; ok {
@@ -1292,26 +1321,62 @@ func TestLegacyFails(t *testing.T) {
 	}
 	sort.Strings(rels)
 	for _, rel := range rels {
-		t.Run(rel, func(t *testing.T) {
-			dir := t.TempDir()
-			if _, err := legacy.Compile(t, filepath.Join(root, "test", rel), dir); err != nil {
-				return // tom fails
-			}
-			var javaFiles []string
-			filepath.Walk(dir, func(p string, info os.FileInfo, err error) error {
-				if err == nil && strings.HasSuffix(p, ".java") {
-					javaFiles = append(javaFiles, p)
+		f := legacyFails[rel]
+		src := filepath.Join(root, "test", rel)
+		if _, err := os.Stat(src); err != nil {
+			t.Errorf("legacyFails %s: %v", rel, err)
+			continue
+		}
+		for _, mode := range []struct {
+			name string
+			args []string
+			want failsIn
+		}{{"default", nil, f.Default}, {"np", []string{"-np"}, f.NP}} {
+			t.Run(rel+"/"+mode.name, func(t *testing.T) {
+				if mode.want.Stage != "tom" && mode.want.Stage != "javac" || len(mode.want.Output) == 0 {
+					t.Fatalf("invalid failure signature %+v", mode.want)
 				}
-				return err
+				dir := t.TempDir()
+				out, err := legacy.Compile(t, src, dir, mode.args...)
+				if mode.want.Stage == "tom" {
+					if err == nil {
+						t.Fatalf("legacy/'s tom accepts %s, expected it to fail with %q\n%s", rel, mode.want.Output, out)
+					}
+					checkFailureOutput(t, "tom", out, mode.want.Output)
+					return
+				}
+				if err != nil {
+					t.Fatalf("legacy/'s tom fails on %s, expected javac to fail on its output: %v\n%s", rel, err, out)
+				}
+				var javaFiles []string
+				filepath.Walk(dir, func(p string, info os.FileInfo, err error) error {
+					if err == nil && strings.HasSuffix(p, ".java") {
+						javaFiles = append(javaFiles, p)
+					}
+					return err
+				})
+				if len(javaFiles) == 0 {
+					t.Fatalf("legacy/'s tom produced no Java for %s\n%s", rel, out)
+				}
+				args := append([]string{"-nowarn", "-encoding", "UTF-8", "-cp", cp, "-d", dir}, javaFiles...)
+				jout, err := harness.RunIn(dir, nil, "javac", args...)
+				if err == nil {
+					t.Fatalf("legacy/ compiles %s (tom and javac succeed): port it instead\n%s", rel, jout)
+				}
+				checkFailureOutput(t, "javac", jout, mode.want.Output)
 			})
-			if len(javaFiles) == 0 {
-				return // tom produced nothing
-			}
-			args := append([]string{"-nowarn", "-encoding", "UTF-8", "-cp", cp, "-d", dir}, javaFiles...)
-			if out, err := harness.RunIn(dir, nil, "javac", args...); err == nil {
-				t.Errorf("legacy/ compiles %s (tom and javac succeed): port it instead\n%s", rel, out)
-			}
-		})
+		}
+	}
+}
+
+// checkFailureOutput requires each of want in the output of a failed
+// stage.
+func checkFailureOutput(t *testing.T, stage, out string, want []string) {
+	t.Helper()
+	for _, w := range want {
+		if !strings.Contains(out, w) {
+			t.Errorf("%s fails, but its output lacks %q (another failure?)\n%s", stage, w, out)
+		}
 	}
 }
 

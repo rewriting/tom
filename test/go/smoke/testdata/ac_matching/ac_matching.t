@@ -7,7 +7,7 @@ package main
 // the Go version of next_minimal_extract). The order of the elements of
 // an AC term depends on the hash values (it differs from Java's): only
 // order-independent facts are printed. Same output as the Tom+Java twin
-// compiled by legacy/.
+// compiled by legacy/ (twin/).
 
 import (
   "fmt"
@@ -45,7 +45,7 @@ func main() {
   %match(t2) {
     f??(X*,X*,Y*) -> {
       n++
-      if `X == `f() && `Y == t2 || `X == `a() && `Y == `f(b()) {
+      if `X == `f() && `Y == t2 || `X == `f(a()) && `Y == `f(b()) {
         k++
       }
     }
