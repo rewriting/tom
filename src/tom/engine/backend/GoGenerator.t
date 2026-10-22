@@ -236,6 +236,20 @@ public class GoGenerator extends GenericGenerator {
     output.write(" }; ");
   }
 
+  /*
+   * A newline ends a Go statement: when the host line before a %match ends
+   * with a backquote term, the whitespace-only water between
+   * them yields no host block, so the separator is restored here.
+   */
+  public void generateInstruction(int deep, Instruction subject, String moduleName) throws IOException {
+    %match(subject) {
+      UnamedBlock(concInstruction(CompiledMatch[],_*)) -> {
+        output.write("\n");
+      }
+    }
+    super.generateInstruction(deep, subject, moduleName);
+  }
+
   protected void buildInstructionSequence(int deep, InstructionList instructionList, String moduleName) throws IOException {
     generateInstructionList(deep, instructionList, moduleName);
   }
