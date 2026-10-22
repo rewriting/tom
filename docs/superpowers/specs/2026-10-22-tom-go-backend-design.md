@@ -52,22 +52,27 @@ détaille J−1 à J3.
 
 ### 3.1 J−1 — snapshot `legacy/`
 
-- Contenu : copie des fichiers **suivis par git** (`git ls-files`) de
-  `src/`, `stable/`, `share/`, plus `build.sh`, `build.xml`,
-  `local.properties_template`. Les répertoires générés et ignorés
-  (`src/{dist,build,gen}`, `stable/{dist,build}`) ne sont pas copiés.
-- Coût en dépôt quasi nul : git déduplique les blobs identiques.
-- `legacy/README.md` indique le commit d'origine (`74ed759d5`) et la
-  procédure de construction.
-- Vérification : `cd legacy && ./build.sh stable`. Tout chemin absolu ou
-  sortant de `legacy/` qui casse la construction est corrigé dans la copie
-  et documenté dans le README (exemple connu : la propriété `stable2.src`
-  de `build.xml` pointe vers `/Users/pem/github/tom2/stable`).
+`legacy/` est le **témoin du travail humain** : il contient la version
+écrite à 100 % par des humains, la racine contenant la version étendue
+par l'IA pour la cible Go.
+
+- Source : commit `2918e95c7`, pointe de `v3` (dernier commit humain,
+  29/08/2019) — **pas** `HEAD` : la branche `tom-go` a modifié
+  `build.xml` et les `tom-common.xml` (`fork=yes`, commit `d1d8e5f38`).
+- Contenu : `git archive 2918e95c7` de `src/`, `stable/`, `share/`,
+  `utils/` (modèles de lanceurs), `build.sh`, `build.xml`,
+  `local.properties_template`, `README`, `NEWS`, `AUTHORS`, `LICENCE`.
+- Construction : JDK 8, `unset TOM_HOME`, `./build.sh stable` puis
+  `./build.sh src.dist`. Aucune modification n'est autorisée pour la
+  faire fonctionner ; un échec est rapporté à l'utilisateur.
+- `legacy/README.md` (en anglais) : procédure d'installation complète
+  pour un utilisateur GitHub (prérequis, construction, `TOM_HOME`/`PATH`,
+  vérification sur un exemple). Le `README.md` racine renvoie vers elle.
 - Après ce commit, `legacy/` n'est plus jamais modifié.
 
 ### 3.2 J0 — sélection de la cible Go
 
-Nouveau drapeau `goCode` (option `--go`), calqué sur `pCode`/`aCode` :
+Nouvelle option `goCode` (alias `-go`, à utiliser avec `-np`, le parser îlot ANTLR4), calquée sur `pCode`/`aCode` :
 
 | Fichier (`src/tom/engine/…`) | Changement |
 |---|---|
@@ -116,7 +121,8 @@ ne sont pas modifiés.
 
 Dans `parser/TomParserTool.t` (l. 231), quand `goCode` est actif, le Tom
 Java remplace l'appel réflexif à `tom.gom.Gom.exec` par l'exécution d'un
-processus `tomgo gom` sur le fichier `.gom` temporaire déjà écrit.
+processus `tomgo gom-block` (nouvelle sous-commande) sur le fichier `.gom`
+temporaire ; le package Go est celui de la première ligne `package X` du `.t`.
 
 Contrat :
 
@@ -129,8 +135,9 @@ Contrat :
 - binaire résolu par `$TOMGO_BIN`, puis `tomgo` dans le `PATH` ;
   introuvable → erreur `TomMessage` explicite.
 
-Côté tomgo, l'option d'émission du mapping est ajoutée à `tomgo gom` en
-réutilisant la logique de `cmd/gentom`.
+Côté tomgo, `gom-block` écrit `<module>_gen.go` et le mapping à code hôte
+Go produit par `EmitTomMappingGo` (le `tomgo gom` existant produit un
+mapping à code hôte Java).
 
 ### 3.6 J0 — mappings Go
 
