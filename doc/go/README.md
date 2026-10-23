@@ -119,17 +119,36 @@ autonomes), comparés à ceux de Java Gom (`legacy/`) :
 
 ## Orientation pour la suite
 
-- **J4 — compilateur en Tom+Go, stratégie hybride (décidée le 2026-10-23).**
-  On remplace les phases du compilateur Tom+Java une par une par leur
-  version Go, dans la chaîne Java qui marche. Un pont Java ⇄ Go fait
-  passer le terme de travail **et** la table des symboles (formats aterm
-  déjà produits par `--intermediate` : `.tfix.*` et `.table`) ; un plugin
-  « externe » de la plateforme Java lance la phase Go ; une option choisit
-  Java ou Go phase par phase. Ordre : (0) pont seul avec une phase
-  identité, (1) desugarer, (2) parser (reprise du parser Go du
-  prototype, complété), (3) typer, expander, compilateur de motifs,
-  optimizer, backend, (4) orchestration Go et point fixe. Chaque étape
-  est validée par T0 (sortie Java identique à `legacy/`) et T2. Un spec
-  J4 dédié sera rédigé avant de commencer.
+- **J4 — compilateur en Tom+Go, stratégie hybride « de la fin vers le
+  début » (décidée le 2026-10-23).** On écrit le nouveau compilateur en
+  Tom+Go à côté du compilateur Tom+Java, en remplaçant les phases **en
+  partant de la dernière** :
+  - le compilateur Tom+Java exécute les phases 1…k, puis exporte **une
+    fois** le terme de travail **et** la table des symboles (formats
+    aterm déjà produits par `--intermediate` : `.tfix.*` et `.table` ;
+    vérifier d'abord que la table contient tout ce que le backend
+    consulte) ; le pont ne va que de Java vers Go ;
+  - un « suffixe » écrit en Tom+Go (compilé par la chaîne `-go`)
+    exécute les phases k+1…fin et produit le code ;
+  - premier jalon : le backend Go écrit en Tom+Go, branché après
+    l'optimizer, dont la sortie doit être identique octet pour octet à
+    celle de `GoGenerator` (goldens T1 : ports et cas smoke) ; en option
+    le backend Java, comparé à `legacy/` (T0) ;
+  - puis on recule k phase par phase (optimizer, compilateur de motifs,
+    expander, typer, desugarer…) ; le **parser vient en dernier**
+    (reprise du parser Go du prototype, complété) ; l'orchestration Go
+    se construit au fil des étapes ; on termine par le point fixe (le
+    compilateur Tom+Go se compile lui-même).
+  Un spec J4 dédié sera rédigé avant de commencer.
+- **Règle d'équivalence pour J4.** Identité stricte (octet pour octet)
+  pour toutes les étapes qui partent de l'AST exporté par Java, c'est-à-
+  dire toutes sauf le parser. À l'étape du parser, viser l'identité ; si
+  des écarts portant **uniquement** sur les positions (ligne, colonne,
+  fichier de l'`OriginTracking`) résistent, les accepter explicitement et
+  étroitement : comparateur d'AST qui masque seulement ces champs,
+  comparaison du code généré qui ignore seulement les retours à la ligne
+  de remplissage, diagnostics comparés par nom (mode `Regress`) ; chaque
+  tolérance est un test séparé avec un compteur visible, et la ligne
+  d'une erreur doit continuer à désigner le bon endroit du `.t`.
 - **Reporté :** `src/tom` → `src/java/tom` (et `stable/java`) ; à faire
   seulement quand un compilateur Tom+Go fonctionnera.
