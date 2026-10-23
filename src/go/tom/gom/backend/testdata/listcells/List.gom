@@ -1,0 +1,5 @@
+module List
+abstract syntax
+E = a() | b()
+L = conc(E*)
+T = t() | u() | fl(T*)

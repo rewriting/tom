@@ -46,19 +46,17 @@ autonomes), comparés à ceux de Java Gom (`legacy/`) :
   `ToATerm`, `ToArray`/`GetHead…`, `CompareTo`, et ordre d'énumération
   des solutions d'un filtrage AC. L'égalité des termes et l'ensemble des
   solutions sont les mêmes (test/gom/TestACU.t, test/acmatching).
-- **Queue d'une liste qui n'est pas une liste.** Java Gom construit
-  `Cons<op>(e, x)` avec `x` de la sorte de la liste sans être une liste
-  (par ex. le résultat d'un hook `make_empty` : `lm(a(),m0())`). Le terme
-  Go d'un opérateur variadique est une tranche plate de ses éléments :
-  quand la sorte des éléments diffère de celle de la liste, un tel terme
-  n'est pas représentable et `Cons<Op>` panique avec un `*aterm.GomError`
-  (« … is not a … list (not representable in Go …) »). (Quand les sortes
-  sont égales, cas des théories AU/ACU, `x` est le dernier élément.)
-- **Coût des listes.** Une liste Go est une tranche plate : `Cons<Op>`
-  copie la queue (O(n), contre O(1) pour une cellule Java). Les hooks FL/AC
-  évitent les copies inutiles sans changer le résultat, mais un programme
-  qui construit beaucoup de grandes listes reste plus lent qu'en Java
-  (test/acmatching/TestBool3.t : 12 s en Go, 1,2 s en Java).
+- **Coût des listes.** Comme en Java, une liste d'un opérateur variadique
+  est une chaîne de cellules `Cons<op>(tête, queue)` / `Empty<op>()`
+  partagées au maximum (`gom/backend/cells.go`) : `Cons<Op>`,
+  `GetTail<Op>`, `IsEmpty<Op>` sont en O(1), les queues sont partagées, et
+  une liste peut finir par une queue qui n'est pas une liste (par ex.
+  `lm(a(),m0())`, résultat d'un hook `make_empty`). La fabrique de
+  `sharedobjects` garde cependant tous les termes construits (pas de
+  références faibles comme celle de Java) : un programme qui construit
+  beaucoup de termes passe plus de temps dans le ramasse-miettes
+  (test/acmatching/TestBool3.t : 2,9 s en Go, 1,2 s en Java ; 12,4 s avec
+  l'ancienne représentation en tranches plates).
 - **Hooks dans le mapping.** Les hooks `make`, `make_insert`,
   `make_empty`, les règles (`module M:rules()`) et les blocs (`block`)
   sont du code Tom+Go : gomgo les écrit dans le mapping généré (`.tom`),

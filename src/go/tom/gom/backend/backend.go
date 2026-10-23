@@ -436,10 +436,11 @@ func BuiltinIncludesGo(g gomast.GomModule, more ...gomast.GomModule) []byte {
 //   - `make` / `get_slot` use the alt struct's factory + field
 //     access (`MakeA()`, `($t).(*FT1).X`).
 //
-// Variadic alternatives emit a `%oplist` with the same `Make<Alt>`
-// (which accepts `args ...<ElemSort>`), `make_empty` returning
-// `nil`, `make_insert(h, t)` building the new list via `Make<Alt>(h,
-// t...)`, etc.
+// Variadic alternatives of a user module emit Java Gom's
+// `Empty<op>`/`Cons<op>` operators and a `%oplist` on the cons cells
+// (emitVariadicMappingGo: O(1) get_head/get_tail/make_insert); those of
+// the compiler's own ADT (flat slices) a `%oplist` built by
+// `Make<Alt>(args...)`.
 //
 // Generated alt struct names follow the gom backend's existing
 // scheme: `<ExportedAlt><Sort>` (e.g. `AT1` for alt `a` of sort
@@ -686,14 +687,14 @@ func emitHookFuncGo(buf *bytes.Buffer, name, sortNm string, slotTypes []string, 
 //   - `When_<op>(s)` is `Sequence(Is_<op>(), s)`;
 //   - `Make_<op>(…)` builds Build<Op> (non-variadic alternatives).
 //
-// A variadic alternative is a flat list in Go (no Cons/Empty
-// operators): its `_<op>(sub)` builds Visit<Op>, which applies sub to
-// every element. This is what Java's `Choice(When_Cons<op>(All(sub)),
-// When_Empty<op>(Identity()))` does too: the children of a Java Gom
-// Cons<op> term are all the elements of the list (its getChildren is
-// the flattened list), not its head and tail (checked with legacy/,
-// smoke fixture gom_congruence). There is no Make_Cons<op>/
-// Make_Empty<op>.
+// A variadic alternative (cons cells, cells.go, but one Go type for
+// Java's Cons<op> and Empty<op>): its `_<op>(sub)` builds Visit<Op>,
+// which applies sub to every element. This is what Java's
+// `Choice(When_Cons<op>(All(sub)), When_Empty<op>(Identity()))` does
+// too: the children of a Java Gom Cons<op> term are all the elements of
+// the list (its getChildren is the flattened list), not its head and
+// tail (checked with legacy/, smoke fixture gom_congruence). There is no
+// Make_Cons<op>/Make_Empty<op>.
 func emitCongruenceMappingGo(buf *bytes.Buffer, mod gomast.GomModule) {
 	types := map[string]bool{}
 	for _, prod := range moduleSorts(mod) {
@@ -1095,6 +1096,7 @@ func (g *gen) emitHeader() {
 	fmt.Fprintln(&g.buf, "")
 	if g.javaAPI {
 		fmt.Fprintln(&g.buf, `	"io"`)
+		fmt.Fprintln(&g.buf, `	"sync/atomic"`)
 		fmt.Fprintln(&g.buf, "")
 		fmt.Fprintln(&g.buf, `	"tom/library/aterm"`)
 	}
@@ -1109,6 +1111,7 @@ func (g *gen) emitHeader() {
 	if g.javaAPI {
 		fmt.Fprintln(&g.buf, "var _ = io.EOF")
 		fmt.Fprintln(&g.buf, "var _ = aterm.GetInstance")
+		fmt.Fprintln(&g.buf, "var _ atomic.Bool")
 	}
 	fmt.Fprintln(&g.buf)
 }
@@ -1668,6 +1671,15 @@ func (g *gen) emitAlternative(sortNm string, alt *gomast.AlternativeAlternative)
 	var slots []slot
 	isVariadic := alternativeIsVariadic(alt)
 	fields := alternativeFields(alt)
+	if isVariadic && g.javaAPI {
+		// user module: Java Gom's shared cons cells (cells.go, javaapi.go)
+		elem := g.goType(fieldTypeName(fields[0]), false)
+		g.emitVariadicCells(sortNm, alt, structName, elem)
+		g.emitJavaString(alt, structName)
+		g.emitVariadicJava(sortNm, alt, structName, elem)
+		g.emitStrategyClasses(sortNm, opGo, opName, structName, 1, true)
+		return
+	}
 	if isVariadic {
 		typeName := fieldTypeName(fields[0])
 		slots = append(slots, slot{Name: "Slots", GoType: g.goType(typeName, false), IsVar: true})
@@ -1884,9 +1896,7 @@ afterString:
 		prologueSlots = append(prologueSlots, hookSlot{Name: s.Name, GoType: s.GoType, IsVar: s.IsVar})
 	}
 	prologues := g.makeProloguesForAlt(alt)
-	if isVariadic && g.javaAPI {
-		g.emitVariadicJava(sortNm, alt, structName, slots[0].GoType)
-	} else if isVariadic {
+	if isVariadic {
 		fmt.Fprintf(&g.buf, "func %s(args ...%s) %s {\n", makeName, slots[0].GoType, sortNm)
 		for _, p := range prologues {
 			p.emitMakePrologue(&g.buf, g, alt, sortNm, structName, prologueSlots, isVariadic)

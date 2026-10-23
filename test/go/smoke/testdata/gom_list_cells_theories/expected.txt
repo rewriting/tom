@@ -1,0 +1,6 @@
+FL fl(a(),b(),c()) 3 true true fl(c(),b(),a())
+AU au(a(),b(),c()) 3 true 3 au(c(),b(),a()) au(a(),b(),c(),d())
+AU small a() au() b() 2
+AU neutral nau(a(),b()) d() d() d() nau(a(),b())
+AC true true 4 Consac[a(),a(),b(),c()] true false
+ACU true 3 Consacu[a(),b(),c()] true true acu()

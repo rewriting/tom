@@ -18,11 +18,11 @@ package backend
 //     `op(elems…)`), <Op>FromArray, and on the list struct ToArray and
 //     Append.
 //
-// The Go term of a variadic operator is a flat slice of elements. A
-// list of an AU/ACU operator ending with an element that is not a list
-// (Java's Cons<op>(e, x) with x not a Cons<op>/Empty<op>, the normal
-// form of lists of length 2 or more) is the flat slice of all its
-// elements: GetTail<op> of a 2-element list returns its last element.
+// The Go term of a variadic operator is a maximally-shared cons cell, as
+// in Java (cells.go): Cons<Op>, GetHead<Op>, GetTail<Op> are O(1), and a
+// list may end with a tail that is not a list (Java's Cons<op>(e, x)
+// with x not a Cons<op>/Empty<op>: the normal form of the AU/ACU lists
+// of length 2 or more, or the result of a make_empty hook).
 
 import (
 	"bytes"
@@ -134,7 +134,7 @@ func (g *gen) emitJavaAPIMethods(api sortAPI, alt *gomast.AlternativeAlternative
 	// SymbolName
 	if variadic {
 		w("// SymbolName is the symbol of the Java term: Cons%s or Empty%s.\n", alt.Name, alt.Name)
-		w("func (t *%s) SymbolName() string {\n\tif len(t.Slots) == 0 {\n\t\treturn %q\n\t}\n\treturn %q\n}\n\n", st, "Empty"+alt.Name, "Cons"+alt.Name)
+		w("func (t *%s) SymbolName() string {\n\tif t.empty {\n\t\treturn %q\n\t}\n\treturn %q\n}\n\n", st, "Empty"+alt.Name, "Cons"+alt.Name)
 	} else {
 		w("func (t *%s) SymbolName() string { return %q }\n\n", st, alt.Name)
 	}
@@ -142,8 +142,8 @@ func (g *gen) emitJavaAPIMethods(api sortAPI, alt *gomast.AlternativeAlternative
 	for _, other := range api.alts {
 		if alternativeIsVariadic(other) {
 			if other == alt {
-				w("func (t *%s) IsCons%s() bool { return len(t.Slots) > 0 }\n", st, other.Name)
-				w("func (t *%s) IsEmpty%s() bool { return len(t.Slots) == 0 }\n", st, other.Name)
+				w("func (t *%s) IsCons%s() bool { return !t.empty }\n", st, other.Name)
+				w("func (t *%s) IsEmpty%s() bool { return t.empty }\n", st, other.Name)
 			} else {
 				w("func (t *%s) IsCons%s() bool { return false }\n", st, other.Name)
 				w("func (t *%s) IsEmpty%s() bool { return false }\n", st, other.Name)
@@ -171,13 +171,8 @@ func (g *gen) emitJavaAPIMethods(api sortAPI, alt *gomast.AlternativeAlternative
 	for _, v := range api.variadic {
 		elem := g.elemGoType(v)
 		if v == alt {
-			w("func (t *%s) GetHead%s() %s {\n\tif len(t.Slots) == 0 {\n\t\tpanic(&aterm.GomError{Msg: %q})\n\t}\n\treturn t.Slots[0]\n}\n", st, v.Name, elem, "This "+api.name+" has no Head"+v.Name)
-			w("func (t *%s) GetTail%s() %s {\n\tif len(t.Slots) == 0 {\n\t\tpanic(&aterm.GomError{Msg: %q})\n\t}\n", st, v.Name, api.name, "This "+api.name+" has no Tail"+v.Name)
-			if th := theoryOf(g.mod, v).kind; th == "AU" || th == "ACU" {
-				w("\t// AU: the last tail of a list is its last element\n")
-				w("\tif len(t.Slots) == 2 {\n\t\treturn t.Slots[1]\n\t}\n")
-			}
-			w("\treturn Raw%s(t.Slots[1:]...)\n}\n", exportedField(v.Name))
+			w("func (t *%s) GetHead%s() %s {\n\tif t.empty {\n\t\tpanic(&aterm.GomError{Msg: %q})\n\t}\n\treturn t.head\n}\n", st, v.Name, elem, "This "+api.name+" has no Head"+v.Name)
+			w("func (t *%s) GetTail%s() %s {\n\tif t.empty {\n\t\tpanic(&aterm.GomError{Msg: %q})\n\t}\n\treturn t.tail\n}\n", st, v.Name, api.name, "This "+api.name+" has no Tail"+v.Name)
 		} else {
 			w("func (t *%s) GetHead%s() %s {\n\tpanic(&aterm.GomError{Msg: %q})\n}\n", st, v.Name, elem, "This "+api.name+" has no Head"+v.Name)
 			w("func (t *%s) GetTail%s() %s {\n\tpanic(&aterm.GomError{Msg: %q})\n}\n", st, v.Name, api.name, "This "+api.name+" has no Tail"+v.Name)
@@ -186,15 +181,7 @@ func (g *gen) emitJavaAPIMethods(api sortAPI, alt *gomast.AlternativeAlternative
 	w("\n")
 	// Length, Reverse
 	if variadic {
-		vGo := exportedField(alt.Name)
-		w("// Length is the number of elements of the list.\nfunc (t *%s) Length() int { return len(t.Slots) }\n\n", st)
-		w("// Reverse is the reversed list, built by Cons%s (through the hooks).\n", vGo)
-		w("func (t *%s) Reverse() %s {\n\tif len(t.Slots) == 0 {\n\t\treturn t\n\t}\n\tvar rev %s = Empty%s()\n\tfor _, e := range t.Slots {\n\t\trev = Cons%s(e, rev)\n\t}\n\treturn rev\n}\n\n", st, api.name, api.name, vGo, vGo)
-		w("// ToArray returns the elements of the list (Java's Object[] toArray()).\n")
-		w("func (t *%s) ToArray() []any {\n\tout := make([]any, len(t.Slots))\n\tfor i, e := range t.Slots {\n\t\tout[i] = e\n\t}\n\treturn out\n}\n\n", st)
-		w("// Append returns the list with element added at its end, built by\n// Cons%s (through the hooks).\n", vGo)
-		w("func (t *%s) Append(element %s) %s {\n\tvar res %s = Cons%s(element, Empty%s())\n\tfor i := len(t.Slots) - 1; i >= 0; i-- {\n\t\tres = Cons%s(t.Slots[i], res)\n\t}\n\treturn res\n}\n\n",
-			st, g.elemGoType(alt), api.name, api.name, vGo, vGo, vGo)
+		g.emitListAPICells(api.name, alt, st)
 	} else {
 		w("func (t *%s) Length() int {\n\tpanic(&aterm.GomError{Msg: %q, IllegalArgument: true})\n}\n\n", st, "This "+api.name+"."+alt.Name+" is not a list")
 		w("func (t *%s) Reverse() %s {\n\tpanic(&aterm.GomError{Msg: %q, IllegalArgument: true})\n}\n\n", st, api.name, "This "+api.name+"."+alt.Name+" is not a list")
@@ -215,6 +202,12 @@ func (g *gen) emitCompare(api sortAPI, alt *gomast.AlternativeAlternative, st, n
 		// Java Gom without maximal sharing: compareTo is not implemented
 		w("\tpanic(&aterm.GomError{Msg: \"Unable to compare\"})\n}\n\n")
 		return
+	}
+	variadic := alternativeIsVariadic(alt)
+	if variadic {
+		// Java compares the slots of a Cons cell, head then tail: the
+		// cells of the two lists, one after the other
+		w("\tfor {\n")
 	}
 	w("\tao := o.(%s)\n", api.name)
 	if g.noSharing {
@@ -241,12 +234,14 @@ func (g *gen) emitCompare(api sortAPI, alt *gomast.AlternativeAlternative, st, n
 			w("\tif %s != %s {\n\t\tif %s < %s {\n\t\t\treturn -1\n\t\t}\n\t\treturn 1\n\t}\n", a, b, a, b)
 		}
 	}
-	if alternativeIsVariadic(alt) {
+	if variadic {
+		unable := "\tpanic(&aterm.GomError{Msg: \"Unable to compare\"})\n"
 		w("\ttco := ao.(*%s)\n", st)
-		w("\tfor i := 0; i < len(t.Slots) && i < len(tco.Slots); i++ {\n")
-		cmp(g.elemGoType(alt), "t.Slots[i]", "tco.Slots[i]")
-		w("\t}\n")
-		w("\tif len(t.Slots) != len(tco.Slots) {\n\t\tif len(t.Slots) < len(tco.Slots) {\n\t\t\treturn -1\n\t\t}\n\t\treturn 1\n\t}\n")
+		w("\tif t.empty {\n%s\t}\n", unable)
+		cmp(g.elemGoType(alt), "t.head", "tco.head")
+		w("\tnext, ok := t.tail.(*%s)\n\tif !ok {\n\t\tif c := t.tail.%s(tco.tail); c != 0 {\n\t\t\treturn c\n\t\t}\n%s\t}\n", st, name, unable)
+		w("\tt, o = next, tco.tail\n\t}\n}\n\n")
+		return
 	} else if slots := g.namedSlots(alt); len(slots) > 0 {
 		w("\ttco := ao.(*%s)\n", st)
 		for _, s := range slots {
@@ -282,7 +277,9 @@ func neutralGo(mod gomast.GomModule, th opTheory) (string, error) {
 
 // emitVariadicJava writes the list constructors of a variadic operator
 // (see the package comment above), replacing the plain Make<Op> of the
-// ADT backend.
+// ADT backend. The lists are cons cells (cells.go); Cons<Op> runs the
+// theory and the construction hooks as Java Gom's Cons<op>.make does
+// (HookTypeExpander), then RealMakeCons<Op> builds the shared cell.
 func (g *gen) emitVariadicJava(sortNm string, alt *gomast.AlternativeAlternative, structName, elem string) {
 	w := func(format string, args ...any) { fmt.Fprintf(&g.buf, format, args...) }
 	op := alt.Name
@@ -290,20 +287,20 @@ func (g *gen) emitVariadicJava(sortNm string, alt *gomast.AlternativeAlternative
 	hooks := opHooks(g.mod, alt)
 	th := theoryOf(g.mod, alt)
 	neutral, _ := neutralGo(g.mod, th) // CheckHooks reported the error
-	sameSort := sameSortVariadic(g.mod, alt)
 
-	w("// Raw%s builds the canonical (shared) %s list holding exactly args,\n// without construction hook.\n", opGo, op)
-	w("func Raw%s(args ...%s) %s {\n", opGo, elem, sortNm)
-	w("\thashes := make([]uint32, 0, len(args))\n\tfor _, a := range args {\n")
-	if g.isShared(elem) {
-		w("\t\thashes = append(hashes, a.Hash())\n")
-	} else {
-		w("\t\thashes = append(hashes, sharedobjects.StringHash(fmt.Sprintf(\"%%v\", a)))\n")
-	}
-	w("\t}\n")
-	w("\tproto := &%s{Slots: args, hash: sharedobjects.MixSymbol(sharedobjects.StringHash(%q), hashes)}\n", structName, op)
+	w("// RealMakeCons%s is Java Gom's Cons%s.realMake: the shared cell of head\n// and tail, without hook.\n", opGo, op)
+	w("func RealMakeCons%s(head %s, tail %s) %s {\n", opGo, elem, sortNm, sortNm)
+	w("\tproto := &%s{head: head, tail: tail, hash: sharedobjects.MixSymbol(sharedobjects.StringHash(%q), []uint32{%s, tail.Hash()})}\n", structName, "Cons"+op, g.hashOfElem(elem, "head"))
 	g.emitReturnProto(structName)
 	w("}\n\n")
+	w("// realMakeEmpty%s is Java Gom's Empty%s.realMake: the shared empty list,\n// without hook.\n", opGo, op)
+	w("func realMakeEmpty%s() %s {\n", opGo, sortNm)
+	w("\tproto := &%s{empty: true, hash: sharedobjects.MixSymbol(sharedobjects.StringHash(%q), nil)}\n", structName, "Empty"+op)
+	g.emitReturnProto(structName)
+	w("}\n\n")
+
+	w("// Raw%s builds the %s list holding exactly args, without construction\n// hook.\n", opGo, op)
+	w("func Raw%s(args ...%s) %s {\n\tl := realMakeEmpty%s()\n\tfor i := len(args) - 1; i >= 0; i-- {\n\t\tl = RealMakeCons%s(args[i], l)\n\t}\n\treturn l\n}\n\n", opGo, elem, sortNm, opGo, opGo)
 
 	if len(hooksOfKind(hooks, "make_empty")) > 0 {
 		w("// HookMakeEmpty%s runs the make_empty hooks (and the rules for %s()) of\n// the Gom module; the Tom mapping generated with this file sets it.\n", opGo, op)
@@ -317,50 +314,46 @@ func (g *gen) emitVariadicJava(sortNm string, alt *gomast.AlternativeAlternative
 		if len(hooksOfKind(hooks, "make_empty")) > 0 {
 			w("\tif HookMakeEmpty%s != nil {\n\t\tif r := HookMakeEmpty%s(); r != nil {\n\t\t\treturn r\n\t\t}\n\t}\n", opGo, opGo)
 		}
-		w("\treturn Raw%s()\n", opGo)
+		w("\treturn realMakeEmpty%s()\n", opGo)
 	}
 	w("}\n\n")
 
 	insertHooks := len(hooksOfKind(hooks, "make_insert")) > 0
-	emptyHooks := len(hooksOfKind(hooks, "make_empty")) > 0
 	if insertHooks {
 		w("// HookMakeInsert%s runs the make_insert hooks (and the rules) of the Gom\n// module: it returns their result (nil if none returned) and the\n// arguments they may have reassigned. The Tom mapping generated with\n// this file sets it.\n", opGo)
 		w("var HookMakeInsert%s func(%s, %s) (%s, %s, %s)\n\n", opGo, elem, sortNm, sortNm, elem, sortNm)
 	}
 	w("// Cons%s is Java Gom's Cons%s.make(head, tail): head inserted in front of\n// tail, after the construction hooks (theory %q first).\n", opGo, op, th.kind)
 	w("func Cons%s(head %s, tail %s) %s {\n", opGo, elem, sortNm, sortNm)
-	isEmpty := func(v string) string {
-		return fmt.Sprintf("func() bool { c, ok := any(%s).(*%s); return ok && len(c.Slots) == 0 }()", v, structName)
+	// the theory hooks of Java's HookTypeExpander (the theories apply to
+	// operators whose domain is their codomain: head has the list API)
+	flatten := func() {
+		w("\tif head.IsCons%s() {\n\t\treturn Cons%s(head.GetHead%s(), Cons%s(head.GetTail%s(), tail))\n\t}\n", op, opGo, op, opGo, op)
 	}
-	flattenHead := func() {
-		w("\tif h, ok := any(head).(*%s); ok && len(h.Slots) > 0 {\n\t\treturn Cons%s(h.Slots[0], Cons%s(h.GetTail%s(), tail))\n\t}\n", structName, opGo, opGo, op)
+	sorted := func(acu bool) {
+		// Java's hook: tail = `op(tmpHd, tail.getTail<op>()), the tail of
+		// tail being an element of the backquoted list (it is flattened
+		// by Cons(tail.getTail<op>(), Empty<op>.make()))
+		w("\tif tail.IsCons%s() {\n\t\tif 0 < head.CompareTo(tail.GetHead%s()) {\n\t\t\ttmpHd := head\n\t\t\thead = tail.GetHead%s()\n\t\t\ttail = Cons%s(tmpHd, Cons%s(tail.GetTail%s(), Empty%s()))\n\t\t}\n", op, op, op, opGo, opGo, op, opGo)
+		if acu {
+			w("\t} else {\n\t\tif 0 < head.CompareTo(tail) {\n\t\t\ttmpHd := head\n\t\t\thead = tail\n\t\t\ttail = tmpHd\n\t\t}\n")
+		}
+		w("\t}\n")
 	}
 	switch th.kind {
 	case "FL", "AC":
-		w("\t// FL: flattened list\n")
-		w("\tif %s {\n\t\treturn tail\n\t}\n", isEmpty("head"))
-		// FL/AC: Java's make(head.head, make(head.tail, tail)) recursion
-		// ends with make(empty, tail) == tail: the same Cons calls,
-		// innermost first, without building the tails of head (a Go
-		// list is a flat slice: each tail would be a copy)
-		w("\tif h, ok := any(head).(*%s); ok && len(h.Slots) > 0 {\n\t\tfor i := len(h.Slots) - 1; i >= 0; i-- {\n\t\t\ttail = Cons%s(h.Slots[i], tail)\n\t\t}\n\t\treturn tail\n\t}\n", structName, opGo)
-		w("\tif _, ok := any(tail).(*%s); !ok {\n\t\treturn Cons%s(head, Cons%s(tail, Empty%s()))\n\t}\n", structName, opGo, opGo, opGo)
+		// makeFLHookList / makeACHookList: flattening, the lists end with
+		// the empty list (then, for AC, the elements are kept sorted)
+		w("\t// FL: flattened list\n\tif head.IsEmpty%s() {\n\t\treturn tail\n\t}\n", op)
+		flatten()
+		end := "Cons" + opGo
 		if th.kind == "AC" {
-			// Java Gom's makeACHookList: the FL hook, then the swap
-			// that keeps the elements sorted (compareTo)
+			end = "RealMakeCons" + opGo
+		}
+		w("\tif !tail.IsCons%s() && !tail.IsEmpty%s() {\n\t\treturn Cons%s(head, %s(tail, Empty%s()))\n\t}\n", op, op, opGo, end, opGo)
+		if th.kind == "AC" {
 			w("\t// AC: the elements are kept sorted (CompareTo)\n")
-			w("\tif t, ok := any(tail).(*%s); ok && len(t.Slots) > 0 {\n", structName)
-			// tail = Cons(tmpHd, Cons(t.GetTail(), Empty())): the inner
-			// Cons rebuilds the elements of the tail of t one by one (the
-			// flattening above); when they are sorted and none is a list
-			// of the operator, each of these Cons is a plain RealMakeCons,
-			// so the result is the tail of t itself (no quadratic copy)
-			// (without make_insert hook: a hook would run in these Cons;
-			// without make_empty hook: Java's Empty.make() runs it)
-			w("\t\tif 0 < head.CompareTo(t.Slots[0]) {\n\t\t\ttmpHd := head\n\t\t\thead = t.Slots[0]\n")
-			w("\t\t\tplain := %v\n\t\t\tfor i := 1; i < len(t.Slots) && plain; i++ {\n\t\t\t\t_, isList := any(t.Slots[i]).(*%s)\n\t\t\t\tplain = !isList && (i+1 == len(t.Slots) || t.Slots[i].CompareTo(t.Slots[i+1]) <= 0)\n\t\t\t}\n", !insertHooks && !emptyHooks, structName)
-			w("\t\t\tvar rest %s\n\t\t\tif plain {\n\t\t\t\trest = Raw%s(t.Slots[1:]...)\n\t\t\t} else {\n\t\t\t\trest = Cons%s(t.GetTail%s(), Empty%s())\n\t\t\t}\n", sortNm, opGo, opGo, op, opGo)
-			w("\t\t\ttail = Cons%s(tmpHd, rest)\n\t\t}\n\t}\n", opGo)
+			sorted(false)
 		}
 	case "ACU", "AU":
 		// Java Gom's order (HookTypeExpander prepends each hook, so the
@@ -371,33 +364,18 @@ func (g *gen) emitVariadicJava(sortNm string, alt *gomast.AlternativeAlternative
 			w("\t// %s: neutral element\n\tif head == %s {\n\t\treturn tail\n\t}\n\tif tail == %s {\n\t\treturn head\n\t}\n", th.kind, neutral, neutral)
 		}
 		w("\t// %s: flattening, the empty list is neutral\n", th.kind)
-		w("\tif %s {\n\t\treturn tail\n\t}\n", isEmpty("head"))
-		w("\tif %s {\n\t\treturn head\n\t}\n", isEmpty("tail"))
-		flattenHead()
+		w("\tif head.IsEmpty%s() {\n\t\treturn tail\n\t}\n", op)
+		w("\tif tail.IsEmpty%s() {\n\t\treturn head\n\t}\n", op)
+		flatten()
 		if th.kind == "ACU" {
 			w("\t// ACU: the elements are kept sorted (CompareTo)\n")
-			w("\tif t, ok := any(tail).(*%s); ok && len(t.Slots) > 0 {\n", structName)
-			w("\t\tif 0 < head.CompareTo(t.Slots[0]) {\n\t\t\ttmpHd := head\n\t\t\thead = t.Slots[0]\n\t\t\ttail = Cons%s(tmpHd, Cons%s(t.GetTail%s(), Empty%s()))\n\t\t}\n", opGo, opGo, op, opGo)
-			w("\t} else {\n\t\tif 0 < head.CompareTo(tail) {\n\t\t\ttmpHd := head\n\t\t\thead = tail\n\t\t\ttail = tmpHd\n\t\t}\n\t}\n")
+			sorted(true)
 		}
 	}
 	if insertHooks {
 		w("\tif HookMakeInsert%s != nil {\n\t\tvar hookResult %s\n\t\thookResult, head, tail = HookMakeInsert%s(head, tail)\n\t\tif hookResult != nil {\n\t\t\treturn hookResult\n\t\t}\n\t}\n", opGo, sortNm, opGo)
 	}
 	w("\treturn RealMakeCons%s(head, tail)\n}\n\n", opGo)
-
-	w("// RealMakeCons%s is Java Gom's Cons%s.realMake: the insertion without hook.\n", opGo, op)
-	w("func RealMakeCons%s(head %s, tail %s) %s {\n", opGo, elem, sortNm, sortNm)
-	w("\tif c, ok := tail.(*%s); ok {\n\t\treturn Raw%s(append([]%s{head}, c.Slots...)...)\n\t}\n", structName, opGo, elem)
-	if sameSort {
-		w("\t// a list ending with an element that is not a list (Java's Cons%s(head, tail))\n", op)
-		w("\treturn Raw%s(head, tail)\n}\n\n", opGo)
-	} else {
-		// Java Gom builds Cons<op>(head, tail) with a tail of the list sort
-		// that is not a list (e.g. the result of a make_empty hook); the
-		// flat slice of elements of another sort cannot hold it.
-		w("\tpanic(&aterm.GomError{Msg: fmt.Sprintf(\"Cons%s: the tail %%v is not a %s list (not representable in Go: the elements are not of its sort)\", tail)})\n}\n\n", op, op)
-	}
 
 	w("// Make%s builds the list of args as Tom's `%s(args…)` does: from Empty%s,\n// by Cons%s, through the construction hooks (Java's %s.fromArray).\n", opGo, op, opGo, opGo, op)
 	w("func Make%s(args ...%s) %s {\n\tvar l %s = Empty%s()\n\tfor i := len(args) - 1; i >= 0; i-- {\n\t\tl = Cons%s(args[i], l)\n\t}\n\treturn l\n}\n\n", opGo, elem, sortNm, sortNm, opGo, opGo)
@@ -413,11 +391,11 @@ func emitVariadicMappingGo(buf *bytes.Buffer, sortNm string, alt *gomast.Alterna
 	op := alt.Name
 	opGo := exportedField(op)
 	fmt.Fprintf(buf, "%%op %s Empty%s() {\n", sortNm, op)
-	fmt.Fprintf(buf, "  is_fsym(t) { func() bool { c, ok := ($t).(*%s); return ok && len(c.Slots) == 0 }() }\n", structName)
+	fmt.Fprintf(buf, "  is_fsym(t) { ($t).IsEmpty%s() }\n", op)
 	fmt.Fprintf(buf, "  make() { Empty%s() }\n", opGo)
 	fmt.Fprintf(buf, "}\n\n")
 	fmt.Fprintf(buf, "%%op %s Cons%s(Head%s:%s, Tail%s:%s) {\n", sortNm, op, op, elemSort, op, sortNm)
-	fmt.Fprintf(buf, "  is_fsym(t) { func() bool { c, ok := ($t).(*%s); return ok && len(c.Slots) > 0 }() }\n", structName)
+	fmt.Fprintf(buf, "  is_fsym(t) { ($t).IsCons%s() }\n", op)
 	fmt.Fprintf(buf, "  get_slot(Head%s, t) { ($t).GetHead%s() }\n", op, op)
 	fmt.Fprintf(buf, "  get_slot(Tail%s, t) { ($t).GetTail%s() }\n", op, op)
 	fmt.Fprintf(buf, "  make(t0, t1) { Cons%s($t0, $t1) }\n", opGo)
@@ -462,8 +440,12 @@ func (g *gen) emitJavaString(alt *gomast.AlternativeAlternative, structName stri
 	w("func (t *%s) String() string {\n", structName)
 	if alternativeIsVariadic(alt) {
 		elem := fieldTypeName(alternativeFields(alt)[0])
-		w("\tparts := make([]string, len(t.Slots))\n\tfor i, v := range t.Slots {\n\t\tparts[i] = %s\n\t}\n", g.javaSlotString(elem, "v"))
-		w("\treturn %q + \"(\" + strings.Join(parts, \",\") + \")\"\n}\n\n", alt.Name)
+		// Java's toStringBuilder: the elements, then the tail when it is
+		// not a list
+		w("\tvar b strings.Builder\n\tb.WriteString(%q)\n", alt.Name+"(")
+		w("\tvar cur %s = t\n\tfor {\n\t\tc, ok := cur.(*%s)\n\t\tif !ok {\n\t\t\tb.WriteString(\",\" + fmt.Sprint(cur))\n\t\t\tbreak\n\t\t}\n\t\tif c.empty {\n\t\t\tbreak\n\t\t}\n", altCodomain(g.mod, alt), structName)
+		w("\t\tif c != t {\n\t\t\tb.WriteString(\",\")\n\t\t}\n\t\tb.WriteString(%s)\n\t\tcur = c.tail\n\t}\n", g.javaSlotString(elem, "c.head"))
+		w("\tb.WriteString(\")\")\n\treturn b.String()\n}\n\n")
 		return
 	}
 	slots := g.namedSlots(alt)
@@ -543,9 +525,12 @@ func (g *gen) emitJavaATerm(sortNm string, alt *gomast.AlternativeAlternative, s
 	if alternativeIsVariadic(alt) {
 		elem := fieldTypeName(alternativeFields(alt)[0])
 		elemGo := g.goType(elem, false)
-		w("// ToATerm is the ATerm of the term: the list of its elements.\n")
-		w("func (t *%s) ToATerm() aterm.ATerm {\n\tf := aterm.GetInstance()\n\tl := f.MakeListEmpty()\n", structName)
-		w("\tfor i := len(t.Slots) - 1; i >= 0; i-- {\n\t\tl = f.MakeList(%s, l)\n\t}\n\treturn l\n}\n\n", g.javaSlotATerm(elem, "t.Slots[i]"))
+		w("// ToATerm is Java's toATerm: the list of the elements, ending with the\n// ATerm list of the tail (a tail that is not a list is Java's\n// ClassCastException).\n")
+		w("func (t *%s) ToATerm() aterm.ATerm {\n\tf := aterm.GetInstance()\n\tvar heads []%s\n\tvar cur %s = t\n", structName, elemGo, sortNm)
+		w("\tfor {\n\t\tc, ok := cur.(*%s)\n\t\tif !ok || c.empty {\n\t\t\tbreak\n\t\t}\n\t\theads = append(heads, c.head)\n\t\tcur = c.tail\n\t}\n", structName)
+		w("\tl := f.MakeListEmpty()\n\tif c, ok := cur.(*%s); !ok || !c.empty {\n", structName)
+		w("\t\ttl, isList := cur.ToATerm().(*aterm.ATermList)\n\t\tif !isList {\n\t\t\tpanic(&aterm.GomError{Msg: fmt.Sprintf(\"ClassCastException: the ATerm of %%v is not an ATermList\", cur)})\n\t\t}\n\t\tl = tl\n\t}\n")
+		w("\tfor i := len(heads) - 1; i >= 0; i-- {\n\t\tl = f.MakeList(%s, l)\n\t}\n\treturn l\n}\n\n", g.javaSlotATerm(elem, "heads[i]"))
 		w("// fromTerm%s is Java Gom's %s.fromTerm: an application of %s, or a\n// list (of ToATerm), of convertible elements.\n", structName, alt.Name, alt.Name)
 		w("func fromTerm%s(trm aterm.ATerm, conv aterm.ATermConverter) (res %s, ok bool) {\n", structName, sortNm)
 		w("\ttrm = conv.Convert(trm)\n")
