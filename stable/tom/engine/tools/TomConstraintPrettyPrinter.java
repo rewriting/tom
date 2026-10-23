@@ -311,11 +311,11 @@ public class TomConstraintPrettyPrinter {
 
   public static String prettyPrint(SlotList subject) {
     String s = "";
-    { /* unamed block */{ /* unamed block */if ( (subject instanceof tom.engine.adt.tomslot.types.SlotList) ) {if ( (((( tom.engine.adt.tomslot.types.SlotList )subject) instanceof tom.engine.adt.tomslot.types.slotlist.ConsconcSlot) || ((( tom.engine.adt.tomslot.types.SlotList )subject) instanceof tom.engine.adt.tomslot.types.slotlist.EmptyconcSlot)) ) { tom.engine.adt.tomslot.types.SlotList  tomMatch445_end_4=(( tom.engine.adt.tomslot.types.SlotList )subject);do {{ /* unamed block */if (!( tomMatch445_end_4.isEmptyconcSlot() )) {
+    { /* unamed block */{ /* unamed block */if ( (subject instanceof tom.engine.adt.tomslot.types.SlotList) ) {if ( (((( tom.engine.adt.tomslot.types.SlotList )subject) instanceof tom.engine.adt.tomslot.types.slotlist.ConsconcSlot) || ((( tom.engine.adt.tomslot.types.SlotList )subject) instanceof tom.engine.adt.tomslot.types.slotlist.EmptyconcSlot)) ) { tom.engine.adt.tomslot.types.SlotList  tomMatch450_end_4=(( tom.engine.adt.tomslot.types.SlotList )subject);do {{ /* unamed block */if (!( tomMatch450_end_4.isEmptyconcSlot() )) {
 
 
-        s += prettyPrint( tomMatch445_end_4.getHeadconcSlot() )+",";
-      }if ( tomMatch445_end_4.isEmptyconcSlot() ) {tomMatch445_end_4=(( tom.engine.adt.tomslot.types.SlotList )subject);} else {tomMatch445_end_4= tomMatch445_end_4.getTailconcSlot() ;}}} while(!( (tomMatch445_end_4==(( tom.engine.adt.tomslot.types.SlotList )subject)) ));}}}}
+        s += prettyPrint( tomMatch450_end_4.getHeadconcSlot() )+",";
+      }if ( tomMatch450_end_4.isEmptyconcSlot() ) {tomMatch450_end_4=(( tom.engine.adt.tomslot.types.SlotList )subject);} else {tomMatch450_end_4= tomMatch450_end_4.getTailconcSlot() ;}}} while(!( (tomMatch450_end_4==(( tom.engine.adt.tomslot.types.SlotList )subject)) ));}}}}
 
 
     if (! s.equals("")) { return s.substring(0,s.length()-1); }
@@ -383,12 +383,12 @@ public class TomConstraintPrettyPrinter {
 
         String s = "";
         int min=0;
-        { /* unamed block */{ /* unamed block */if ( (tom___Args instanceof tom.engine.adt.code.types.BQTermList) ) {if ( (((( tom.engine.adt.code.types.BQTermList )tom___Args) instanceof tom.engine.adt.code.types.bqtermlist.ConsconcBQTerm) || ((( tom.engine.adt.code.types.BQTermList )tom___Args) instanceof tom.engine.adt.code.types.bqtermlist.EmptyconcBQTerm)) ) { tom.engine.adt.code.types.BQTermList  tomMatch447_end_4=(( tom.engine.adt.code.types.BQTermList )tom___Args);do {{ /* unamed block */if (!( tomMatch447_end_4.isEmptyconcBQTerm() )) {
+        { /* unamed block */{ /* unamed block */if ( (tom___Args instanceof tom.engine.adt.code.types.BQTermList) ) {if ( (((( tom.engine.adt.code.types.BQTermList )tom___Args) instanceof tom.engine.adt.code.types.bqtermlist.ConsconcBQTerm) || ((( tom.engine.adt.code.types.BQTermList )tom___Args) instanceof tom.engine.adt.code.types.bqtermlist.EmptyconcBQTerm)) ) { tom.engine.adt.code.types.BQTermList  tomMatch452_end_4=(( tom.engine.adt.code.types.BQTermList )tom___Args);do {{ /* unamed block */if (!( tomMatch452_end_4.isEmptyconcBQTerm() )) {
 
 
-            s += ","+prettyPrint( tomMatch447_end_4.getHeadconcBQTerm() );
+            s += ","+prettyPrint( tomMatch452_end_4.getHeadconcBQTerm() );
             min=1;
-          }if ( tomMatch447_end_4.isEmptyconcBQTerm() ) {tomMatch447_end_4=(( tom.engine.adt.code.types.BQTermList )tom___Args);} else {tomMatch447_end_4= tomMatch447_end_4.getTailconcBQTerm() ;}}} while(!( (tomMatch447_end_4==(( tom.engine.adt.code.types.BQTermList )tom___Args)) ));}}}}
+          }if ( tomMatch452_end_4.isEmptyconcBQTerm() ) {tomMatch452_end_4=(( tom.engine.adt.code.types.BQTermList )tom___Args);} else {tomMatch452_end_4= tomMatch452_end_4.getTailconcBQTerm() ;}}} while(!( (tomMatch452_end_4==(( tom.engine.adt.code.types.BQTermList )tom___Args)) ));}}}}
 
 
         return prettyPrint( (( tom.engine.adt.code.types.BQTerm )subject).getAstName() )+"("+s.substring(min, s.length())+")";

@@ -52,7 +52,8 @@ import tom.platform.OptionManager;
 /**
  * Go backend. The code is written on one logical line (as the other
  * backends do without -pretty), so every statement ends with ';' and
- * every block with '};' -- except before 'else'.
+ * every block the compiler builds with '};' -- except before 'else'
+ * (the { … } of the host code stay host text, see AstBuilder).
  */
 public class GoGenerator extends GenericGenerator {
 
@@ -194,6 +195,27 @@ public class GoGenerator extends GenericGenerator {
     super.generateExpression(deep,subject,moduleName);
   }
 
+  /*
+   * A Java long literal (32l, 7L, octal 017L) is not a Go literal: the suffix is
+   * dropped, the Go constant takes the type of its context (int64, the Go
+   * type of Tom's long). (Hexadecimal longs (0x1Fl) and float/double
+   * suffixes are not Tom constants: the island parser that -go uses, like
+   * legacy/'s, leaves such patterns and backquote arguments as host code.)
+   */
+  protected void generateBQTerm(int deep, BQTerm subject, String moduleName) throws IOException {
+    { /* unamed block */{ /* unamed block */if ( (subject instanceof tom.engine.adt.code.types.BQTerm) ) {if ( ((( tom.engine.adt.code.types.BQTerm )subject) instanceof tom.engine.adt.code.types.bqterm.BuildConstant) ) { tom.engine.adt.tomname.types.TomName  tomMatch113_1= (( tom.engine.adt.code.types.BQTerm )subject).getAstName() ;if ( ((( tom.engine.adt.tomname.types.TomName )tomMatch113_1) instanceof tom.engine.adt.tomname.types.tomname.Name) ) { String  tom___name= tomMatch113_1.getString() ;
+
+
+        if(tom___name.matches("-?[0-9]+[lL]")) {
+          output.write(tom___name.substring(0,tom___name.length()-1));
+          return;
+        }
+      }}}}}
+
+
+    super.generateBQTerm(deep,subject,moduleName);
+  }
+
   // ---------------------------------------------------------------- instructions
 
   protected void buildAssign(int deep, BQTerm var, OptionList optionList, Expression exp, String moduleName) throws IOException {
@@ -262,7 +284,7 @@ public class GoGenerator extends GenericGenerator {
    * statement, a "{" or a newline, and it keeps the line numbering).
    */
   public void generateInstruction(int deep, Instruction subject, String moduleName) throws IOException {
-    { /* unamed block */{ /* unamed block */if ( (subject instanceof tom.engine.adt.tominstruction.types.Instruction) ) {if ( ((( tom.engine.adt.tominstruction.types.Instruction )subject) instanceof tom.engine.adt.tominstruction.types.instruction.UnamedBlock) ) { tom.engine.adt.tominstruction.types.InstructionList  tomMatch114_1= (( tom.engine.adt.tominstruction.types.Instruction )subject).getInstList() ;if ( (((( tom.engine.adt.tominstruction.types.InstructionList )tomMatch114_1) instanceof tom.engine.adt.tominstruction.types.instructionlist.ConsconcInstruction) || ((( tom.engine.adt.tominstruction.types.InstructionList )tomMatch114_1) instanceof tom.engine.adt.tominstruction.types.instructionlist.EmptyconcInstruction)) ) {if (!( tomMatch114_1.isEmptyconcInstruction() )) {if ( ((( tom.engine.adt.tominstruction.types.Instruction ) tomMatch114_1.getHeadconcInstruction() ) instanceof tom.engine.adt.tominstruction.types.instruction.CompiledMatch) ) {
+    { /* unamed block */{ /* unamed block */if ( (subject instanceof tom.engine.adt.tominstruction.types.Instruction) ) {if ( ((( tom.engine.adt.tominstruction.types.Instruction )subject) instanceof tom.engine.adt.tominstruction.types.instruction.UnamedBlock) ) { tom.engine.adt.tominstruction.types.InstructionList  tomMatch115_1= (( tom.engine.adt.tominstruction.types.Instruction )subject).getInstList() ;if ( (((( tom.engine.adt.tominstruction.types.InstructionList )tomMatch115_1) instanceof tom.engine.adt.tominstruction.types.instructionlist.ConsconcInstruction) || ((( tom.engine.adt.tominstruction.types.InstructionList )tomMatch115_1) instanceof tom.engine.adt.tominstruction.types.instructionlist.EmptyconcInstruction)) ) {if (!( tomMatch115_1.isEmptyconcInstruction() )) {if ( ((( tom.engine.adt.tominstruction.types.Instruction ) tomMatch115_1.getHeadconcInstruction() ) instanceof tom.engine.adt.tominstruction.types.instruction.CompiledMatch) ) {
 
 
         output.write("; ");
@@ -270,6 +292,16 @@ public class GoGenerator extends GenericGenerator {
 
 
     super.generateInstruction(deep, subject, moduleName);
+    { /* unamed block */{ /* unamed block */if ( (subject instanceof tom.engine.adt.tominstruction.types.Instruction) ) {if ( ((( tom.engine.adt.tominstruction.types.Instruction )subject) instanceof tom.engine.adt.tominstruction.types.instruction.RawAction) ) {
+
+
+        /* the host code of an action may end with the "}" of one of its
+         * blocks (kept as host text): end the statement before the code
+         * that follows */
+        output.write("; ");
+      }}}}
+
+
   }
 
   protected void buildInstructionSequence(int deep, InstructionList instructionList, String moduleName) throws IOException {
@@ -302,6 +334,8 @@ public class GoGenerator extends GenericGenerator {
     output.write(" break " + blockName + "; }; ");
   }
 
+  /* a block the compiler builds (host { … } blocks are host text, see
+   * AstBuilder): "};" ends it as a statement */
   protected void buildUnamedBlock(int deep, InstructionList instList, String moduleName) throws IOException {
     output.write("{ ");
     generateInstructionList(deep+1,instList,moduleName);
@@ -421,6 +455,13 @@ public class GoGenerator extends GenericGenerator {
       output.write(" == ");
       generateTomTerm(deep,exp2,moduleName);
       output.write(")");
+    } else if(otherSort(sType,termType(exp1,moduleName),moduleName) || otherSort(sType,termType(exp2,moduleName),moduleName)) {
+      String goSort = sortGoType(sType,moduleName);
+      output.write("func() bool { tom_a, tom_ok1 := any(");
+      generateBQTerm(deep,exp1,moduleName);
+      output.write(").(" + goSort + "); tom_b, tom_ok2 := any(");
+      generateTomTerm(deep,exp2,moduleName);
+      output.write(").(" + goSort + "); return tom_ok1 && tom_ok2 && tom_equal_term_" + sType + "(tom_a, tom_b) }()");
     } else {
       output.write("tom_equal_term_" + sType + "(");
       generateBQTerm(deep,exp1,moduleName);
@@ -438,6 +479,13 @@ public class GoGenerator extends GenericGenerator {
       output.write(" == ");
       generateBQTerm(deep,exp2,moduleName);
       output.write(")");
+    } else if(otherSort(sType,termType(exp1,moduleName),moduleName) || otherSort(sType,termType(exp2,moduleName),moduleName)) {
+      String goSort = sortGoType(sType,moduleName);
+      output.write("func() bool { tom_a, tom_ok1 := any(");
+      generateBQTerm(deep,exp1,moduleName);
+      output.write(").(" + goSort + "); tom_b, tom_ok2 := any(");
+      generateBQTerm(deep,exp2,moduleName);
+      output.write(").(" + goSort + "); return tom_ok1 && tom_ok2 && tom_equal_term_" + sType + "(tom_a, tom_b) }()");
     } else {
       output.write("tom_equal_term_" + sType + "(");
       generateBQTerm(deep,exp1,moduleName);
@@ -445,6 +493,44 @@ public class GoGenerator extends GenericGenerator {
       generateBQTerm(deep,exp2,moduleName);
       output.write(")");
     }
+  }
+
+  /*
+   * Equality of two terms of a sort that has subtypes or supertypes
+   * (%typeterm … extends …): the compiler may compare a value whose
+   * static sort is another one (e.g. a slot of a supertype bound to a
+   * variable also compared with a constant of the subtype), which Java
+   * accepts because tom_equal_term_<sort> takes Objects. In Go the
+   * equality takes the sort's type: each argument is converted with a
+   * checked type assertion, and a value that is not of the sort is not
+   * equal (where Java's equals would return false). Edge case: a nil
+   * interface argument fails the assertion, so the result is false
+   * without calling the mapping's equals (Java would call equals on null,
+   * or throw a NullPointerException when null is the receiver).
+   */
+
+  /* the sort of a term, or null when the backend cannot tell */
+  private String termType(BQTerm t, String moduleName) {
+    try {
+      return TomBase.getTomType(TomBase.getTermType(t,getSymbolTable(moduleName)));
+    } catch(RuntimeException e) {
+      return null;
+    }
+  }
+
+  private String termType(TomTerm t, String moduleName) {
+    try {
+      return TomBase.getTomType(TomBase.getTermType(t,getSymbolTable(moduleName)));
+    } catch(RuntimeException e) {
+      return null;
+    }
+  }
+
+  /* argSort is a known sort, other than sType, of a non-builtin sType */
+  private boolean otherSort(String sType, String argSort, String moduleName) {
+    SymbolTable st = getSymbolTable(moduleName);
+    return argSort != null && !argSort.equals(sType) && !st.isUnknownType(argSort)
+      && !st.isBuiltinType(sType) && st.getType(sType) != null && st.getType(argSort) != null;
   }
 
   // ---------------------------------------------------------------- mapping functions
@@ -491,17 +577,17 @@ public class GoGenerator extends GenericGenerator {
     if(nodeclMode) {
       return;
     }
-    { /* unamed block */{ /* unamed block */if ( (instr instanceof tom.engine.adt.tominstruction.types.Instruction) ) {if ( ((( tom.engine.adt.tominstruction.types.Instruction )instr) instanceof tom.engine.adt.tominstruction.types.instruction.ExpressionToInstruction) ) { tom.engine.adt.tomexpression.types.Expression  tomMatch116_1= (( tom.engine.adt.tominstruction.types.Instruction )instr).getExpr() ;if ( ((( tom.engine.adt.tomexpression.types.Expression )tomMatch116_1) instanceof tom.engine.adt.tomexpression.types.expression.Code) ) {
+    { /* unamed block */{ /* unamed block */if ( (instr instanceof tom.engine.adt.tominstruction.types.Instruction) ) {if ( ((( tom.engine.adt.tominstruction.types.Instruction )instr) instanceof tom.engine.adt.tominstruction.types.instruction.ExpressionToInstruction) ) { tom.engine.adt.tomexpression.types.Expression  tomMatch118_1= (( tom.engine.adt.tominstruction.types.Instruction )instr).getExpr() ;if ( ((( tom.engine.adt.tomexpression.types.Expression )tomMatch118_1) instanceof tom.engine.adt.tomexpression.types.expression.Code) ) {
 
 
-        String ncode =  tomMatch116_1.getCode() ;
+        String ncode =  tomMatch118_1.getCode() ;
         int index = 0;
-        { /* unamed block */{ /* unamed block */if ( (argList instanceof tom.engine.adt.code.types.BQTermList) ) {if ( (((( tom.engine.adt.code.types.BQTermList )argList) instanceof tom.engine.adt.code.types.bqtermlist.ConsconcBQTerm) || ((( tom.engine.adt.code.types.BQTermList )argList) instanceof tom.engine.adt.code.types.bqtermlist.EmptyconcBQTerm)) ) { tom.engine.adt.code.types.BQTermList  tomMatch117_end_4=(( tom.engine.adt.code.types.BQTermList )argList);do {{ /* unamed block */if (!( tomMatch117_end_4.isEmptyconcBQTerm() )) { tom.engine.adt.code.types.BQTerm  tomMatch117_8= tomMatch117_end_4.getHeadconcBQTerm() ;if ( ((( tom.engine.adt.code.types.BQTerm )tomMatch117_8) instanceof tom.engine.adt.code.types.bqterm.BQVariable) ) { tom.engine.adt.tomname.types.TomName  tomMatch117_7= tomMatch117_8.getAstName() ;if ( ((( tom.engine.adt.tomname.types.TomName )tomMatch117_7) instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
+        { /* unamed block */{ /* unamed block */if ( (argList instanceof tom.engine.adt.code.types.BQTermList) ) {if ( (((( tom.engine.adt.code.types.BQTermList )argList) instanceof tom.engine.adt.code.types.bqtermlist.ConsconcBQTerm) || ((( tom.engine.adt.code.types.BQTermList )argList) instanceof tom.engine.adt.code.types.bqtermlist.EmptyconcBQTerm)) ) { tom.engine.adt.code.types.BQTermList  tomMatch119_end_4=(( tom.engine.adt.code.types.BQTermList )argList);do {{ /* unamed block */if (!( tomMatch119_end_4.isEmptyconcBQTerm() )) { tom.engine.adt.code.types.BQTerm  tomMatch119_8= tomMatch119_end_4.getHeadconcBQTerm() ;if ( ((( tom.engine.adt.code.types.BQTerm )tomMatch119_8) instanceof tom.engine.adt.code.types.bqterm.BQVariable) ) { tom.engine.adt.tomname.types.TomName  tomMatch119_7= tomMatch119_8.getAstName() ;if ( ((( tom.engine.adt.tomname.types.TomName )tomMatch119_7) instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
 
 
-            ncode = ncode.replace("{"+index+"}", tomMatch117_7.getString() );
+            ncode = ncode.replace("{"+index+"}", tomMatch119_7.getString() );
             index++;
-          }}}if ( tomMatch117_end_4.isEmptyconcBQTerm() ) {tomMatch117_end_4=(( tom.engine.adt.code.types.BQTermList )argList);} else {tomMatch117_end_4= tomMatch117_end_4.getTailconcBQTerm() ;}}} while(!( (tomMatch117_end_4==(( tom.engine.adt.code.types.BQTermList )argList)) ));}}}}
+          }}}if ( tomMatch119_end_4.isEmptyconcBQTerm() ) {tomMatch119_end_4=(( tom.engine.adt.code.types.BQTermList )argList);} else {tomMatch119_end_4= tomMatch119_end_4.getTailconcBQTerm() ;}}} while(!( (tomMatch119_end_4==(( tom.engine.adt.code.types.BQTermList )argList)) ));}}}}
 
 
         instr =  tom.engine.adt.tominstruction.types.instruction.ExpressionToInstruction.make( tom.engine.adt.tomexpression.types.expression.Code.make(ncode) ) ;
@@ -513,10 +599,10 @@ public class GoGenerator extends GenericGenerator {
     while(!argList.isEmptyconcBQTerm()) {
       BQTerm arg = argList.getHeadconcBQTerm();
 matchBlock: {
-      { /* unamed block */{ /* unamed block */if ( (arg instanceof tom.engine.adt.code.types.BQTerm) ) {if ( ((( tom.engine.adt.code.types.BQTerm )arg) instanceof tom.engine.adt.code.types.bqterm.BQVariable) ) { tom.engine.adt.tomname.types.TomName  tomMatch118_1= (( tom.engine.adt.code.types.BQTerm )arg).getAstName() ; tom.engine.adt.tomtype.types.TomType  tomMatch118_2= (( tom.engine.adt.code.types.BQTerm )arg).getAstType() ;if ( ((( tom.engine.adt.tomname.types.TomName )tomMatch118_1) instanceof tom.engine.adt.tomname.types.tomname.Name) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )tomMatch118_2) instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) { tom.engine.adt.tomtype.types.TargetLanguageType  tomMatch118_8= tomMatch118_2.getTlType() ;if ( ((( tom.engine.adt.tomtype.types.TargetLanguageType )tomMatch118_8) instanceof tom.engine.adt.tomtype.types.targetlanguagetype.TLType) ) {
+      { /* unamed block */{ /* unamed block */if ( (arg instanceof tom.engine.adt.code.types.BQTerm) ) {if ( ((( tom.engine.adt.code.types.BQTerm )arg) instanceof tom.engine.adt.code.types.bqterm.BQVariable) ) { tom.engine.adt.tomname.types.TomName  tomMatch120_1= (( tom.engine.adt.code.types.BQTerm )arg).getAstName() ; tom.engine.adt.tomtype.types.TomType  tomMatch120_2= (( tom.engine.adt.code.types.BQTerm )arg).getAstType() ;if ( ((( tom.engine.adt.tomname.types.TomName )tomMatch120_1) instanceof tom.engine.adt.tomname.types.tomname.Name) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )tomMatch120_2) instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) { tom.engine.adt.tomtype.types.TargetLanguageType  tomMatch120_8= tomMatch120_2.getTlType() ;if ( ((( tom.engine.adt.tomtype.types.TargetLanguageType )tomMatch120_8) instanceof tom.engine.adt.tomtype.types.targetlanguagetype.TLType) ) {
 
 
-          s.append( tomMatch118_1.getString()  + " " + TomBase.getTLCode(tomMatch118_8));
+          s.append( tomMatch120_1.getString()  + " " + TomBase.getTLCode(tomMatch120_8));
           break matchBlock;
         }}}}}}{ /* unamed block */if ( (arg instanceof tom.engine.adt.code.types.BQTerm) ) {
 
@@ -676,18 +762,29 @@ matchBlock: {
    * AbstractStrategyBasic, a constructor tom_new_S, one getter per
    * parameter, an exported VisitLight that converts MustVisit panics back
    * into errors, then the methods generated by the expander.
-   * Limitation: Strategy-typed parameters are plain fields, they are not
-   * exposed as children (enough for strategies used without mu over them).
+   * Strategy-typed parameters are also children (ChildCount/ChildAt/
+   * SetChildAt), after the default strategy, as in Java.
    */
   protected void buildClass(int deep, String tomName, TomType extendsType, BQTerm superTerm, Declaration declaration, String moduleName) throws IOException {
     TomSymbol tomSymbol = getSymbolTable(moduleName).getSymbolFromName(tomName);
     TomTypeList tomTypes = TomBase.getSymbolDomain(tomSymbol);
     ArrayList<String> names = new ArrayList<String>();
     ArrayList<String> types = new ArrayList<String>();
+    // names of the parameters of sort Strategy (as JavaGenerator.buildClass)
+    ArrayList<String> stratParams = new ArrayList<String>();
     int index = 0;
     while(!tomTypes.isEmptyconcTomType()) {
-      types.add(goType(tomTypes.getHeadconcTomType()));
-      names.add(TomBase.getSlotName(tomSymbol, index).getString());
+      TomType type = tomTypes.getHeadconcTomType();
+      types.add(goType(type));
+      String name = TomBase.getSlotName(tomSymbol, index).getString();
+      names.add(name);
+      { /* unamed block */{ /* unamed block */if ( (type instanceof tom.engine.adt.tomtype.types.TomType) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )type) instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) {if ( "Strategy".equals( (( tom.engine.adt.tomtype.types.TomType )type).getTomType() ) ) {
+
+
+          stratParams.add(name);
+        }}}}}
+
+
       tomTypes = tomTypes.getTailconcTomType();
       index++;
     }
@@ -711,6 +808,24 @@ matchBlock: {
     for(int i = 0 ; i < names.size() ; i++) {
       output.write("func (" + RECEIVER + " *" + tomName + ") get" + names.get(i) + "() " + types.get(i)
           + " { return " + RECEIVER + "." + names.get(i) + " }; ");
+    }
+    // as the Java backend: the children of the strategy are its default
+    // strategy (child 0, from AbstractStrategyBasic) followed by its
+    // Strategy-typed parameters
+    if(!stratParams.isEmpty()) {
+      StringBuilder c = new StringBuilder();
+      c.append("func (" + RECEIVER + " *" + tomName + ") ChildCount() int { return " + (1 + stratParams.size()) + " }; ");
+      c.append("func (" + RECEIVER + " *" + tomName + ") ChildAt(i int) sl.Strategy { switch i { case 0: return " + RECEIVER + ".AbstractStrategyBasic.ChildAt(0); ");
+      for(int i = 0 ; i < stratParams.size() ; i++) {
+        c.append("case " + (i+1) + ": return " + RECEIVER + "." + stratParams.get(i) + "; ");
+      }
+      c.append("}; panic(\"" + tomName + ": no such child\") }; ");
+      c.append("func (" + RECEIVER + " *" + tomName + ") SetChildAt(i int, child sl.Strategy) { switch i { case 0: " + RECEIVER + ".AbstractStrategyBasic.SetChildAt(0, child); return; ");
+      for(int i = 0 ; i < stratParams.size() ; i++) {
+        c.append("case " + (i+1) + ": " + RECEIVER + "." + stratParams.get(i) + " = child; return; ");
+      }
+      c.append("}; panic(\"" + tomName + ": no such child\") }; ");
+      output.write(c.toString());
     }
     output.write("func (" + RECEIVER + " *" + tomName + ") VisitLight(v any, introspector sl.Introspector) (tom__res any, tom__err error) { "
         + "defer sl.RecoverVisitFailure(&tom__err); return " + RECEIVER + ".visitLight(v, introspector), nil }; ");
@@ -741,8 +856,17 @@ matchBlock: {
     return classFields.contains(name) ? RECEIVER + "." + name : name;
   }
 
+  /*
+   * --genIntrospector: LocalIntrospector is a struct whose methods (built
+   * by the expander with Go code) implement sl.Introspector; use it as
+   * &LocalIntrospector{} (Java: new LocalIntrospector()).
+   */
   protected void buildIntrospectorClass(int deep, String tomName, Declaration declaration, String moduleName) throws IOException {
-    throw new TomRuntimeException("--genIntrospector is not supported with -go");
+    output.write("type " + tomName + " struct{}; var _ sl.Introspector = (*" + tomName + ")(nil); ");
+    String savedClass = currentClass;
+    currentClass = tomName;
+    generateDeclaration(deep,declaration,moduleName);
+    currentClass = savedClass;
   }
 
   // ---------------------------------------------------------------- %transformation: unsupported

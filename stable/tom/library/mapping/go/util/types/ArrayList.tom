@@ -1,0 +1,14 @@
+/*
+ * Tom Go mapping — java.util types: ArrayList.
+ * Mirrors mapping/java/util/types/ArrayList.tom; java.util.ArrayList is a
+ * Go slice []any, and equals compares the elements in order with == (a
+ * nested []any element element-wise), as java.util.AbstractList.equals
+ * compares them with equals.
+ */
+%typeterm ArrayList {
+  implement      { []any }
+  is_sort(t)     { $t != nil }
+  equals(l1,l2)  { tom_arrayListEquals($l1, $l2) }
+}
+
+func tom_arrayListEquals(l1, l2 []any) bool { if len(l1) != len(l2) { return false }; for i := range l1 { a, ok1 := l1[i].([]any); b, ok2 := l2[i].([]any); if ok1 || ok2 { if !ok1 || !ok2 || !tom_arrayListEquals(a, b) { return false }; continue }; if l1[i] != l2[i] { return false } }; return true };

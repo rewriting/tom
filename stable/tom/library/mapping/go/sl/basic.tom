@@ -32,6 +32,8 @@
 %op Strategy Mu(s1:Strategy, s2:Strategy) {
   is_fsym(t) { sl.IsMu($t) }
   make(name,v) { sl.NewMu(($name).(*sl.MuVar), $v) }
+  get_slot(s1, t) { ($t).ChildAt(0) }
+  get_slot(s2, t) { ($t).ChildAt(1) }
 }
 
 %op Strategy MuVar(var:String) {
@@ -53,22 +55,39 @@
 %op Strategy All(s1:Strategy) {
   is_fsym(t) { sl.IsAll($t) }
   make(v) { sl.NewAll($v) }
+  get_slot(s1, t) { ($t).ChildAt(0) }
 }
 
 %op Strategy One(s1:Strategy) {
   is_fsym(t) { sl.IsOne($t) }
   make(v) { sl.NewOne($v) }
+  get_slot(s1, t) { ($t).ChildAt(0) }
 }
 
 %op Strategy OneId(s1:Strategy) {
   is_fsym(t) { sl.IsOneId($t) }
   make(v) { sl.NewOneId($v) }
+  get_slot(s1, t) { ($t).ChildAt(0) }
 }
 
 %op Strategy Omega(position:int, s1:Strategy) {
   is_fsym(t) { sl.IsOmega($t) }
   make(pos,v) { sl.NewOmega(int($pos), $v) }
   get_slot(position, t) { int64(($t).(*sl.Omega).GetPos()) }
+  get_slot(s1, t) { ($t).ChildAt(0) }
+}
+
+%op Strategy IfThenElse(s1:Strategy, s2:Strategy, s3:Strategy) {
+  is_fsym(t) { sl.IsIfThenElse($t) }
+  make(condition,trueCase,falseCase) { sl.NewIfThenElse($condition, $trueCase, $falseCase) }
+  get_slot(s1, t) { ($t).ChildAt(sl.IfThenElseCondition) }
+  get_slot(s2, t) { ($t).ChildAt(sl.IfThenElseTrueCase) }
+  get_slot(s3, t) { ($t).ChildAt(sl.IfThenElseFalseCase) }
+}
+
+%op Strategy Not(s1:Strategy) {
+  is_fsym(t) { sl.IsNot($t) }
+  make(v) { sl.NewNot($v) }
   get_slot(s1, t) { ($t).ChildAt(0) }
 }
 

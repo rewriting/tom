@@ -269,10 +269,10 @@ public class Viewer {
 
           w.write("─"+ ((aterm.ATermInt)(( aterm.ATerm )term)).getInt() );
           return;
-        }}}{ /* unamed block */if ( term instanceof aterm.ATerm ) {if ( (( aterm.ATerm )term) instanceof aterm.ATermAppl ) { aterm.AFun  tomMatch846_5= ((aterm.ATermAppl)(( aterm.ATerm )term)).getAFun() ;if ( (( aterm.AFun )tomMatch846_5) instanceof aterm.AFun ) { String  tom___afunname= tomMatch846_5.getName() ; aterm.ATermList  tom___list= ((aterm.ATermAppl)(( aterm.ATerm )term)).getArguments() ;
+        }}}{ /* unamed block */if ( term instanceof aterm.ATerm ) {if ( (( aterm.ATerm )term) instanceof aterm.ATermAppl ) { aterm.AFun  tomMatch851_5= ((aterm.ATermAppl)(( aterm.ATerm )term)).getAFun() ;if ( (( aterm.AFun )tomMatch851_5) instanceof aterm.AFun ) { String  tom___afunname= tomMatch851_5.getName() ; aterm.ATermList  tom___list= ((aterm.ATermAppl)(( aterm.ATerm )term)).getArguments() ;
 
 
-          String name = ( tomMatch846_5.isQuoted() )?"\""+tom___afunname+"\"":tom___afunname;
+          String name = ( tomMatch851_5.isQuoted() )?"\""+tom___afunname+"\"":tom___afunname;
           aterm.ATermAppl a = (aterm.ATermAppl) term;
           if (a.getArity() == 0) {  // no child
             w.write("─"+name);
@@ -284,7 +284,7 @@ public class Viewer {
             return;
           } else {
             int ndeep = deep + name.length() + 3;
-            { /* unamed block */{ /* unamed block */if ( tom___list instanceof aterm.ATermList ) {if ( (( aterm.ATermList )tom___list) instanceof aterm.ATermList ) {if (!( (( aterm.ATermList )tom___list).isEmpty() )) { aterm.ATermList  tomMatch847_2= (( aterm.ATermList )tom___list).getNext() ; aterm.ATermList  tomMatch847_end_5=tomMatch847_2;do {{ /* unamed block */ aterm.ATermList  tom___l=tom_get_slice_concATerm(tomMatch847_2,tomMatch847_end_5, aterm.pure.SingletonFactory.getInstance().makeList() );if (!( tomMatch847_end_5.isEmpty() )) {if (  tomMatch847_end_5.getNext() .isEmpty() ) {
+            { /* unamed block */{ /* unamed block */if ( tom___list instanceof aterm.ATermList ) {if ( (( aterm.ATermList )tom___list) instanceof aterm.ATermList ) {if (!( (( aterm.ATermList )tom___list).isEmpty() )) { aterm.ATermList  tomMatch852_2= (( aterm.ATermList )tom___list).getNext() ; aterm.ATermList  tomMatch852_end_5=tomMatch852_2;do {{ /* unamed block */ aterm.ATermList  tom___l=tom_get_slice_concATerm(tomMatch852_2,tomMatch852_end_5, aterm.pure.SingletonFactory.getInstance().makeList() );if (!( tomMatch852_end_5.isEmpty() )) {if (  tomMatch852_end_5.getNext() .isEmpty() ) {
 
 
                 // first child
@@ -295,23 +295,23 @@ public class Viewer {
                 w.write('\n');
 
                 // 2 ... n-1
-                { /* unamed block */{ /* unamed block */if ( tom___l instanceof aterm.ATermList ) {if ( (( aterm.ATermList )tom___l) instanceof aterm.ATermList ) { aterm.ATermList  tomMatch848_end_4=(( aterm.ATermList )tom___l);do {{ /* unamed block */if (!( tomMatch848_end_4.isEmpty() )) {
+                { /* unamed block */{ /* unamed block */if ( tom___l instanceof aterm.ATermList ) {if ( (( aterm.ATermList )tom___l) instanceof aterm.ATermList ) { aterm.ATermList  tomMatch853_end_4=(( aterm.ATermList )tom___l);do {{ /* unamed block */if (!( tomMatch853_end_4.isEmpty() )) {
 
 
                     writeContext(w,context,ndeep-1);
                     w.write("├");
                     context.push(ndeep-1);
-                    ATermToTree( tomMatch848_end_4.getFirst() ,w,context,ndeep);
+                    ATermToTree( tomMatch853_end_4.getFirst() ,w,context,ndeep);
                     context.pop();
                     w.write('\n');
-                  }if ( tomMatch848_end_4.isEmpty() ) {tomMatch848_end_4=(( aterm.ATermList )tom___l);} else {tomMatch848_end_4= tomMatch848_end_4.getNext() ;}}} while(!( tomMatch848_end_4 == (( aterm.ATermList )tom___l) ));}}}}
+                  }if ( tomMatch853_end_4.isEmpty() ) {tomMatch853_end_4=(( aterm.ATermList )tom___l);} else {tomMatch853_end_4= tomMatch853_end_4.getNext() ;}}} while(!( tomMatch853_end_4 == (( aterm.ATermList )tom___l) ));}}}}
 
 
                 // last child
                 writeContext(w,context,ndeep-1);
                 w.write("└");
-                ATermToTree( tomMatch847_end_5.getFirst() ,w,context,ndeep);
-              }}if ( tomMatch847_end_5.isEmpty() ) {tomMatch847_end_5=tomMatch847_2;} else {tomMatch847_end_5= tomMatch847_end_5.getNext() ;}}} while(!( tomMatch847_end_5 == tomMatch847_2 ));}}}}}
+                ATermToTree( tomMatch852_end_5.getFirst() ,w,context,ndeep);
+              }}if ( tomMatch852_end_5.isEmpty() ) {tomMatch852_end_5=tomMatch852_2;} else {tomMatch852_end_5= tomMatch852_end_5.getNext() ;}}} while(!( tomMatch852_end_5 == tomMatch852_2 ));}}}}}
 
 
           }

@@ -162,13 +162,13 @@ public class ConfigurationManager {
   
   private List<String> extractClassPaths(PlatformConfig node) {
     List<String> res = new ArrayList<String>();
-    { /* unamed block */{ /* unamed block */if ( (node instanceof tom.platform.adt.platformconfig.types.PlatformConfig) ) {if ( ((( tom.platform.adt.platformconfig.types.PlatformConfig )node) instanceof tom.platform.adt.platformconfig.types.platformconfig.PlatformConfig) ) { tom.platform.adt.platformconfig.types.PluginList  tomMatch850_1= (( tom.platform.adt.platformconfig.types.PlatformConfig )node).getplugins() ;if ( (((( tom.platform.adt.platformconfig.types.PluginList )tomMatch850_1) instanceof tom.platform.adt.platformconfig.types.pluginlist.ConsconcPlugin) || ((( tom.platform.adt.platformconfig.types.PluginList )tomMatch850_1) instanceof tom.platform.adt.platformconfig.types.pluginlist.EmptyconcPlugin)) ) { tom.platform.adt.platformconfig.types.PluginList  tomMatch850_end_8=tomMatch850_1;do {{ /* unamed block */if (!( tomMatch850_end_8.isEmptyconcPlugin() )) { tom.platform.adt.platformconfig.types.Plugin  tomMatch850_13= tomMatch850_end_8.getHeadconcPlugin() ;if ( ((( tom.platform.adt.platformconfig.types.Plugin )tomMatch850_13) instanceof tom.platform.adt.platformconfig.types.plugin.Plugin) ) { String  tom___cp= tomMatch850_13.getclass() ;
+    { /* unamed block */{ /* unamed block */if ( (node instanceof tom.platform.adt.platformconfig.types.PlatformConfig) ) {if ( ((( tom.platform.adt.platformconfig.types.PlatformConfig )node) instanceof tom.platform.adt.platformconfig.types.platformconfig.PlatformConfig) ) { tom.platform.adt.platformconfig.types.PluginList  tomMatch855_1= (( tom.platform.adt.platformconfig.types.PlatformConfig )node).getplugins() ;if ( (((( tom.platform.adt.platformconfig.types.PluginList )tomMatch855_1) instanceof tom.platform.adt.platformconfig.types.pluginlist.ConsconcPlugin) || ((( tom.platform.adt.platformconfig.types.PluginList )tomMatch855_1) instanceof tom.platform.adt.platformconfig.types.pluginlist.EmptyconcPlugin)) ) { tom.platform.adt.platformconfig.types.PluginList  tomMatch855_end_8=tomMatch855_1;do {{ /* unamed block */if (!( tomMatch855_end_8.isEmptyconcPlugin() )) { tom.platform.adt.platformconfig.types.Plugin  tomMatch855_13= tomMatch855_end_8.getHeadconcPlugin() ;if ( ((( tom.platform.adt.platformconfig.types.Plugin )tomMatch855_13) instanceof tom.platform.adt.platformconfig.types.plugin.Plugin) ) { String  tom___cp= tomMatch855_13.getclass() ;
 
 
          res.add(tom___cp);
          PluginPlatformMessage.finer(logger, null, 0, 
              PluginPlatformMessage.classPathRead, tom___cp);
-       }}if ( tomMatch850_end_8.isEmptyconcPlugin() ) {tomMatch850_end_8=tomMatch850_1;} else {tomMatch850_end_8= tomMatch850_end_8.getTailconcPlugin() ;}}} while(!( (tomMatch850_end_8==tomMatch850_1) ));}}}}}
+       }}if ( tomMatch855_end_8.isEmptyconcPlugin() ) {tomMatch855_end_8=tomMatch855_1;} else {tomMatch855_end_8= tomMatch855_end_8.getTailconcPlugin() ;}}} while(!( (tomMatch855_end_8==tomMatch855_1) ));}}}}}
 
 
     return res;
@@ -187,7 +187,7 @@ public class ConfigurationManager {
    */
 
   private int createOptionManager(PlatformConfig node) {
-    { /* unamed block */{ /* unamed block */if ( (node instanceof tom.platform.adt.platformconfig.types.PlatformConfig) ) {if ( ((( tom.platform.adt.platformconfig.types.PlatformConfig )node) instanceof tom.platform.adt.platformconfig.types.platformconfig.PlatformConfig) ) { tom.platform.adt.platformconfig.types.OptionManager  tomMatch851_2= (( tom.platform.adt.platformconfig.types.PlatformConfig )node).getoptionmanager() ;if ( ((( tom.platform.adt.platformconfig.types.OptionManager )tomMatch851_2) instanceof tom.platform.adt.platformconfig.types.optionmanager.OptionManager) ) { tom.platform.adt.platformoption.types.PlatformOptionList  tomMatch851_6= tomMatch851_2.getoptions() ; String  tom___omclass= tomMatch851_2.getclass() ;if ( (tomMatch851_6 instanceof tom.platform.adt.platformoption.types.PlatformOptionList) ) {
+    { /* unamed block */{ /* unamed block */if ( (node instanceof tom.platform.adt.platformconfig.types.PlatformConfig) ) {if ( ((( tom.platform.adt.platformconfig.types.PlatformConfig )node) instanceof tom.platform.adt.platformconfig.types.platformconfig.PlatformConfig) ) { tom.platform.adt.platformconfig.types.OptionManager  tomMatch856_2= (( tom.platform.adt.platformconfig.types.PlatformConfig )node).getoptionmanager() ;if ( ((( tom.platform.adt.platformconfig.types.OptionManager )tomMatch856_2) instanceof tom.platform.adt.platformconfig.types.optionmanager.OptionManager) ) { tom.platform.adt.platformoption.types.PlatformOptionList  tomMatch856_6= tomMatch856_2.getoptions() ; String  tom___omclass= tomMatch856_2.getclass() ;if ( (tomMatch856_6 instanceof tom.platform.adt.platformoption.types.PlatformOptionList) ) {
 
 
         try {
@@ -215,7 +215,7 @@ public class ConfigurationManager {
 
         PlatformOption optionX =  tom.platform.adt.platformoption.types.platformoption.PluginOption.make("config", "X", "Defines an alternate configuration file",  tom.platform.adt.platformoption.types.platformvalue.StringValue.make(configurationFileName) , "") 
 ;
-        PlatformOptionList globalOptions =  tom.platform.adt.platformoption.types.platformoptionlist.ConsconcPlatformOption.make(optionX,tom_append_list_concPlatformOption(tomMatch851_6, tom.platform.adt.platformoption.types.platformoptionlist.EmptyconcPlatformOption.make() )) ;
+        PlatformOptionList globalOptions =  tom.platform.adt.platformoption.types.platformoptionlist.ConsconcPlatformOption.make(optionX,tom_append_list_concPlatformOption(tomMatch856_6, tom.platform.adt.platformoption.types.platformoptionlist.EmptyconcPlatformOption.make() )) ;
         optionManager.setGlobalOptionList(globalOptions);
         return 0;
       }}}}}}

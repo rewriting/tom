@@ -1,0 +1,9 @@
+/*
+ * Tom Go mapping — double primitive.
+ * Mirrors mapping/java/double.tom; a Java double is a Go float64.
+ */
+%typeterm double {
+  implement { float64 }
+  is_sort(t) { true }
+  equals(t1,t2) { $t1 == $t2 }
+}

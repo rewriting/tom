@@ -155,7 +155,7 @@ public class AdapterGenerator {
     for (Map.Entry<OperatorDecl,Integer> entry : operatormap.entrySet()) {
       OperatorDecl opDecl = entry.getKey();
       String opkey = entry.getValue().toString();
-      { /* unamed block */{ /* unamed block */if ( (opDecl instanceof tom.gom.adt.gom.types.OperatorDecl) ) {if ( ((( tom.gom.adt.gom.types.OperatorDecl )opDecl) instanceof tom.gom.adt.gom.types.operatordecl.OperatorDecl) ) { tom.gom.adt.gom.types.TypedProduction  tomMatch614_1= (( tom.gom.adt.gom.types.OperatorDecl )opDecl).getProd() ;if ( ((( tom.gom.adt.gom.types.TypedProduction )tomMatch614_1) instanceof tom.gom.adt.gom.types.typedproduction.Variadic) ) { tom.gom.adt.gom.types.SortDecl  tom___domainSort= tomMatch614_1.getSort() ; tom.gom.adt.gom.types.OperatorDecl  tom___op=(( tom.gom.adt.gom.types.OperatorDecl )opDecl);
+      { /* unamed block */{ /* unamed block */if ( (opDecl instanceof tom.gom.adt.gom.types.OperatorDecl) ) {if ( ((( tom.gom.adt.gom.types.OperatorDecl )opDecl) instanceof tom.gom.adt.gom.types.operatordecl.OperatorDecl) ) { tom.gom.adt.gom.types.TypedProduction  tomMatch619_1= (( tom.gom.adt.gom.types.OperatorDecl )opDecl).getProd() ;if ( ((( tom.gom.adt.gom.types.TypedProduction )tomMatch619_1) instanceof tom.gom.adt.gom.types.typedproduction.Variadic) ) { tom.gom.adt.gom.types.SortDecl  tom___domainSort= tomMatch619_1.getSort() ; tom.gom.adt.gom.types.OperatorDecl  tom___op=(( tom.gom.adt.gom.types.OperatorDecl )opDecl);
 
 
 
@@ -189,7 +189,7 @@ public class AdapterGenerator {
 
 ;
           CodeGen.generateCode(code,writer);
-        }}}}{ /* unamed block */if ( (opDecl instanceof tom.gom.adt.gom.types.OperatorDecl) ) {if ( ((( tom.gom.adt.gom.types.OperatorDecl )opDecl) instanceof tom.gom.adt.gom.types.operatordecl.OperatorDecl) ) { tom.gom.adt.gom.types.TypedProduction  tomMatch614_8= (( tom.gom.adt.gom.types.OperatorDecl )opDecl).getProd() ; tom.gom.adt.gom.types.TypedProduction  tom___prod=tomMatch614_8;boolean tomMatch614_14= false ;if ( ((( tom.gom.adt.gom.types.TypedProduction )tomMatch614_8) instanceof tom.gom.adt.gom.types.typedproduction.Variadic) ) {if ( (tom___prod==tomMatch614_8) ) {tomMatch614_14= true ;}}if (!(tomMatch614_14)) {
+        }}}}{ /* unamed block */if ( (opDecl instanceof tom.gom.adt.gom.types.OperatorDecl) ) {if ( ((( tom.gom.adt.gom.types.OperatorDecl )opDecl) instanceof tom.gom.adt.gom.types.operatordecl.OperatorDecl) ) { tom.gom.adt.gom.types.TypedProduction  tomMatch619_8= (( tom.gom.adt.gom.types.OperatorDecl )opDecl).getProd() ; tom.gom.adt.gom.types.TypedProduction  tom___prod=tomMatch619_8;boolean tomMatch619_14= false ;if ( ((( tom.gom.adt.gom.types.TypedProduction )tomMatch619_8) instanceof tom.gom.adt.gom.types.typedproduction.Variadic) ) {if ( (tom___prod==tomMatch619_8) ) {tomMatch619_14= true ;}}if (!(tomMatch619_14)) {
 
 
 

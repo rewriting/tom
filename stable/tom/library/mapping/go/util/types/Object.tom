@@ -1,0 +1,11 @@
+/*
+ * Tom Go mapping — java.util types: Object.
+ * Mirrors mapping/java/util/types/Object.tom; Object is the Go `any`, and
+ * Object.equals is Go's == on interface values (value equality for the
+ * boxed numbers, strings and pointers a Java Object would hold).
+ */
+%typeterm Object {
+  implement      { any }
+  is_sort(t)     { true }
+  equals(o1,o2)  { $o1 == $o2 }
+}
