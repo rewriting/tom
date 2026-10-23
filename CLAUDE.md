@@ -30,10 +30,14 @@ Phases 4–6 ci-dessous) est **gelé** : ses briques réutilisables (Gom Go,
 `sharedobjects`, `sl`, mappings) restent utilisées, mais on ne l'étend
 plus. Jalons : J0 (cible Go dans Tom Java, livré et promu dans
 `stable/`), J1 (fixtures Tom+Go, livré), J2 (portage de `test/` en
-Tom+Go, en cours — tableau de bord `doc/go/port-dashboard.md`),
-J3 (couverture des constructions, `doc/go/coverage.md`), J4
-(compilateur réécrit en Tom+Go, stratégie hybride phase par phase —
-cf. `doc/go/README.md`, spec à venir). Références :
+Tom+Go, **terminé** le 2026-10-23 : 77 OK, 11 OK diagnostics, 9 échoue
+dans legacy, 2 non supportés, 0 divergence, 0 non porté — rapport
+`doc/go/j2-report.md`, tableau de bord `doc/go/port-dashboard.md`),
+J3 (couverture des constructions : 17/17, `doc/go/coverage.md`), J4
+(compilateur réécrit en Tom+Go, portage « de la fin vers le début » à
+partir du backend, règle d'équivalence stricte sauf positions au
+parser — cf. `doc/go/README.md` « Orientation pour la suite », spec à
+venir). Références :
 spec `docs/superpowers/specs/2026-10-22-tom-go-backend-design.md`, plan
 `docs/superpowers/plans/2026-10-22-tom-go-backend.md`, rapport
 `doc/go/j0-go-backend.md`; carte des chemins : `doc/go/README.md`, spec
@@ -91,9 +95,10 @@ l'AST Go contre la référence Java. tomgo est un outil Go autonome qui :
 - **utilise ses propres AST générés** (`stable/library/gomast/` pour le sous-
   langage Gom, `stable/library/tomast/` pour le langage TOM) — auto-amorce.
 
-**Itération en cours** : J2 — porter `test/` en Tom+Go par lots
-(un sous-répertoire par lot), compiler avec `tom -go`, comparer au
-comportement de `legacy/`, corriger `GoGenerator.t` au besoin. (L'ancienne
+**Itération en cours** : J2 terminé (plan
+`docs/superpowers/plans/2026-10-23-j2-port.md`, rapport
+`doc/go/j2-report.md`) ; prochaine étape : spec J4 (portage du
+compilateur en Tom+Go de la fin vers le début, cf. `doc/go/README.md`). (L'ancienne
 « Phase 4 » — porter le compilateur TOM phase par phase en Go écrit à la
 main — est gelée, cf. ci-dessus.)
 
@@ -495,9 +500,8 @@ Rapport : `phase4cd-parser.md`.
 
 > **Gelé depuis 2026-10-22** : cette section décrit la suite prévue du
 > compilateur Go écrit à la main ; elle n'est plus à dérouler. La suite
-> du travail est J2 → J4 (cf. §1 et
-> `docs/superpowers/plans/2026-10-22-tom-go-backend.md`, section
-> « Après ce plan »).
+> du travail est J4 (cf. §1 et `doc/go/README.md`, « Orientation pour
+> la suite »).
 
 **Stratégie générale (historique)** : porter le compilateur Java de `stable/tom/engine/`
 phase par phase, en commençant par le parser. À chaque phase, vérifier
@@ -1154,9 +1158,9 @@ Différences API vs Java :
 1. Lire ce fichier en entier (tu y es).
 2. `mage -d magefiles -w . all` doit passer — si non, regarder le rapport
    concerné dans `doc/go/`.
-3. Ouvrir le dernier rapport (`doc/go/j0-go-backend.md` à ce jour) pour le
+3. Ouvrir le dernier rapport (`doc/go/j2-report.md` à ce jour) pour le
    détail technique de l'étape qu'on vient de finir, puis
    `doc/go/port-dashboard.md` et `doc/go/coverage.md`.
-4. Étape suivante = J2 puis J3 (cf. §1 et la section « Après ce plan »
-   de `docs/superpowers/plans/2026-10-22-tom-go-backend.md`) ; la
-   section 5 de ce fichier est historique.
+4. Étape suivante = rédiger le spec J4 (portage du compilateur en Tom+Go
+   « de la fin vers le début », cf. `doc/go/README.md`) ; la section 5
+   de ce fichier est historique.
