@@ -541,11 +541,26 @@ func (g *gen) emitJavaATerm(sortNm string, alt *gomast.AlternativeAlternative, s
 	if alternativeIsVariadic(alt) {
 		elem := fieldTypeName(alternativeFields(alt)[0])
 		elemGo := g.goType(elem, false)
-		w("// ToATerm is Java's toATerm: the list of the elements, ending with the\n// ATerm list of the tail (a tail that is not a list is Java's\n// ClassCastException).\n")
+		// AU and ACU absorb the empty list (Cons(x, Empty) is x, and the
+		// neutral, if any): their lists end with an element (Java's
+		// toATerm, a cast of the tail to ATermList, throws
+		// ClassCastException there; deliberate extension, doc/go/README.md).
+		th := theoryOf(g.pkgMods, g.mod, alt)
+		endsWithElement := (th.kind == "AU" || th.kind == "ACU") && elem == sortNm
+		if endsWithElement {
+			w("// ToATerm is Java's toATerm: the list of the elements. The list (theory\n// %s) may end with an element instead of the empty list: it is its last\n// element (Java: ClassCastException).\n", th.kind)
+		} else {
+			w("// ToATerm is Java's toATerm: the list of the elements, ending with the\n// ATerm list of the tail (a tail that is not a list is Java's\n// ClassCastException).\n")
+		}
 		w("func (t *%s) ToATerm() aterm.ATerm {\n\tf := aterm.GetInstance()\n\tvar heads []%s\n\tvar cur %s = t\n", structName, elemGo, sortNm)
 		w("\tfor {\n\t\tc, ok := cur.(*%s)\n\t\tif !ok || c.empty {\n\t\t\tbreak\n\t\t}\n\t\theads = append(heads, c.head)\n\t\tcur = c.tail\n\t}\n", structName)
-		w("\tl := f.MakeListEmpty()\n\tif c, ok := cur.(*%s); !ok || !c.empty {\n", structName)
-		w("\t\ttl, isList := cur.ToATerm().(*aterm.ATermList)\n\t\tif !isList {\n\t\t\tpanic(&aterm.GomError{Msg: fmt.Sprintf(\"ClassCastException: the ATerm of %%v is not an ATermList\", cur)})\n\t\t}\n\t\tl = tl\n\t}\n")
+		if endsWithElement {
+			// after the loop, cur is the empty cell or the last element
+			w("\tif _, ok := cur.(*%s); !ok {\n\t\theads = append(heads, cur)\n\t}\n\tl := f.MakeListEmpty()\n", structName)
+		} else {
+			w("\tl := f.MakeListEmpty()\n\tif c, ok := cur.(*%s); !ok || !c.empty {\n", structName)
+			w("\t\ttl, isList := cur.ToATerm().(*aterm.ATermList)\n\t\tif !isList {\n\t\t\tpanic(&aterm.GomError{Msg: fmt.Sprintf(\"ClassCastException: the ATerm of %%v is not an ATermList\", cur)})\n\t\t}\n\t\tl = tl\n\t}\n")
+		}
 		w("\tfor i := len(heads) - 1; i >= 0; i-- {\n\t\tl = f.MakeList(%s, l)\n\t}\n\treturn l\n}\n\n", g.javaSlotATerm(elem, "heads[i]"))
 		w("// fromTerm%s is Java Gom's %s.fromTerm: an application of %s, or a\n// list (of ToATerm), of convertible elements.\n", structName, alt.Name, alt.Name)
 		w("func fromTerm%s(trm aterm.ATerm, conv aterm.ATermConverter) (res %s, ok bool) {\n", structName, sortNm)

@@ -125,6 +125,20 @@ autonomes), comparés à ceux de Java Gom (`legacy/`) :
   dernière queue n'est pas une liste et n'est pas de la sorte des éléments
   (`conc(a(),nil())`, `lm(a(),m0())` d'un hook `make_empty`) paniquent
   ainsi, comme le `toArray` typé de Java lève `ArrayStoreException`.
+- **`ToATerm` des listes AU.** Un opérateur `op:AU()` ou `op:ACU()`
+  (avec ou sans neutre) absorbe la liste vide et son neutre :
+  `Make<Op>(x, y)` est la cellule `Cons<Op>(x, y)`, dont la queue est
+  l'élément `y` (par ex. `AndConstraint` du moteur, d'unité
+  `TrueConstraint()`). Java lève `ClassCastException` dans le `toATerm`
+  généré (transtypage de la queue en `ATermList`,
+  `src/gen/tom/engine/adt/tomconstraint/types/constraint/AndConstraint.java:130`) ;
+  Go écrit cette queue comme dernier élément de la liste ATerm (même si
+  c'est elle-même une liste d'un autre opérateur, alors imbriquée), et
+  `FromTerm(ToATerm(v)) == v` pour le premier opérateur variadique de la
+  sorte (une liste ATerm ne nomme pas son opérateur : comme en Java,
+  `<Sort>FromTerm` la lit avec le premier ; `test/go/adt/aterm_test.go`).
+  Les autres listes (FL, AC, sans théorie) gardent le comportement de
+  Java.
 
 ## Sources et amorce
 
