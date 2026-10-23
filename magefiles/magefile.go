@@ -99,94 +99,133 @@ func Vet() error {
 
 // SelfBootstrap checks that the compiler's ADTs (tom/gom/adt, the AST
 // gomgo is built on, and tom/engine/adt) regenerate from their .gom
-// files byte-identically to the amorce stable/go/tom, and that the .gom
-// copies have the signatures of the Java originals.
+// files with the current backend byte-identically to their generation by
+// the amorce stable/go/tom (bootstrap), and that the .gom copies have the
+// signatures of the Java originals.
 func SelfBootstrap() error {
 	mg.Deps(Bootstrap)
 	return runIn(tomDir, "go", "test", "-count=1", "-run", "TestSelfBootstrap|TestSignatureParity", "./gom/backend/")
 }
 
-// The compiler's ADTs: src/go/tom/<dir> holds the .gom sources only (the
-// generated .go and .tom are gitignored), stable/go/tom/<dir> the
-// committed generation (the amorce, as stable/ holds the Java code that
-// bootstraps the Java compiler).
+// The compiler's ADTs: src/go/tom/<dir> holds the .gom sources only
+// (their generated .go and .tom are gitignored).
 var adts = []struct{ dir, pkg string }{
 	{"gom/adt", "adt"},    // the AST of Gom: gomgo is built on it
 	{"engine/adt", "adt"}, // the AST of Tom
 }
 
+// stableGoDir is the Go amorce: a full standalone copy of module tom
+// (non-test Go, generated gom/adt included), as stable/ holds the Java
+// code that bootstraps the Java compiler. It is not in go.work: it is
+// built with GOWORK=off.
 const stableGoDir = "stable/go/tom"
 
 // Bootstrap makes src/go/tom buildable from the .gom sources (from a
-// fresh clone too): it copies the amorce of gom/adt (stable/go/tom/gom/adt)
-// into src/go/tom/gom/adt, builds gomgo on it, regenerates both ADTs from
-// their .gom files into src/go/tom (gomgo gom-batch --gohooks), and
-// requires the regenerated gom/adt to be byte-identical to the amorce
-// (fixpoint). After a deliberate change of src/go/tom/gom/adt/*.gom or of
-// gomgo, run promoteAdt, then bootstrap again.
+// fresh clone too; idempotent): it builds gomgo from the amorce
+// stable/go/tom, generates both ADTs from their .gom files into
+// src/go/tom with it (stage 1), builds gomgo from src/go/tom on them,
+// regenerates both ADTs with it (stage 2) and requires stage 2 to be
+// byte-identical to stage 1 (fixpoint: the generated code works in gomgo
+// itself). After a deliberate change of gomgo or of the .gom files that
+// changes the generated code, run promoteGo, then bootstrap again.
 func Bootstrap() error {
-	if err := syncGenerated(filepath.Join(stableGoDir, "gom", "adt"), filepath.Join(tomDir, "gom", "adt")); err != nil {
-		return err
-	}
-	if err := regenAdts(); err != nil {
-		return err
-	}
-	if diff, err := generatedDiff(filepath.Join(stableGoDir, "gom", "adt"), filepath.Join(tomDir, "gom", "adt")); err != nil {
-		return err
-	} else if diff != "" {
-		return fmt.Errorf("bootstrap: %s/gom/adt regenerated from its .gom files differs from the amorce %s/gom/adt (%s). "+
-			"If the change of the .gom files or of gomgo is deliberate, run `mage -d magefiles -w . promoteAdt`, then `bootstrap` again (fixpoint)",
-			tomDir, stableGoDir, diff)
-	}
-	return nil
-}
-
-// PromoteAdt regenerates both ADTs from their .gom files into
-// src/go/tom (with the gomgo built on the current src/go/tom/gom/adt,
-// the amorce when it is missing) and copies the generation into the
-// amorce stable/go/tom. Use it deliberately, when the .gom files or
-// gomgo evolve; then run bootstrap, which checks the fixpoint.
-func PromoteAdt() error {
-	gen := filepath.Join(tomDir, "gom", "adt")
-	if names, err := generatedFiles(gen); err != nil {
-		return err
-	} else if len(names) == 0 {
-		if err := syncGenerated(filepath.Join(stableGoDir, "gom", "adt"), gen); err != nil {
-			return err
-		}
-	}
-	if err := regenAdts(); err != nil {
-		return err
-	}
-	for _, a := range adts {
-		if err := syncGenerated(filepath.Join(tomDir, filepath.FromSlash(a.dir)), filepath.Join(stableGoDir, filepath.FromSlash(a.dir))); err != nil {
-			return err
-		}
-	}
-	fmt.Println("promoted the generated ADTs to " + stableGoDir + "; now run bootstrap (fixpoint check)")
-	return nil
-}
-
-// regenAdts builds gomgo on the current src/go/tom/gom/adt and
-// regenerates both ADTs from their .gom files into src/go/tom.
-func regenAdts() error {
 	tmp, err := os.MkdirTemp("", "tom-bootstrap-")
 	if err != nil {
 		return err
 	}
 	defer os.RemoveAll(tmp)
-	gomgo := filepath.Join(tmp, "gomgo")
-	if err := runIn(tomDir, "go", "build", "-o", gomgo, "./gom/cmd/gomgo"); err != nil {
-		return fmt.Errorf("bootstrap: building gomgo on %s/gom/adt: %w", tomDir, err)
+	stable := filepath.Join(tmp, "gomgo-stable")
+	if err := runInEnv(stableGoDir, []string{"GOWORK=off"}, "go", "build", "-o", stable, "./gom/cmd/gomgo"); err != nil {
+		return fmt.Errorf("bootstrap: building gomgo from the amorce %s: %w", stableGoDir, err)
 	}
-	for i, a := range adts {
+	if err := generateAdts(stable, tmp, "stage1", true); err != nil {
+		return err
+	}
+	src := filepath.Join(tmp, "gomgo-src")
+	if err := runIn(tomDir, "go", "build", "-o", src, "./gom/cmd/gomgo"); err != nil {
+		return fmt.Errorf("bootstrap: building gomgo from %s on the generated ADTs: %w", tomDir, err)
+	}
+	if err := generateAdts(src, tmp, "stage2", false); err != nil {
+		return err
+	}
+	for _, a := range adts {
+		d := filepath.FromSlash(a.dir)
+		if diff, err := generatedDiff(filepath.Join(tmp, "stage1", d), filepath.Join(tmp, "stage2", d)); err != nil {
+			return err
+		} else if diff != "" {
+			return fmt.Errorf("bootstrap: %s generated by the gomgo of %s differs from its generation by the amorce %s (%s). "+
+				"If the change of gomgo or of the .gom files is deliberate, run `mage -d magefiles -w . promoteGo`, then `bootstrap` again",
+				a.dir, tomDir, stableGoDir, diff)
+		}
+	}
+	return nil
+}
+
+// PromoteGo makes the current src/go/tom the amorce: it regenerates both
+// ADTs with the gomgo of src/go/tom (twice: the second gomgo is built on
+// the first generation, and must regenerate it identically), then copies
+// module tom — its non-test .go files and go.mod, the generated ADTs
+// included — into stable/go/tom, and checks that the amorce builds
+// standalone (GOWORK=off) and that its gomgo regenerates its own gom/adt
+// identically. Use it deliberately, when gomgo or the .gom files evolve
+// (a gomgo feature the .gom files need), then run bootstrap.
+func PromoteGo() error {
+	tmp, err := os.MkdirTemp("", "tom-promote-")
+	if err != nil {
+		return err
+	}
+	defer os.RemoveAll(tmp)
+	for i := 1; i <= 2; i++ {
+		bin := filepath.Join(tmp, fmt.Sprint("gomgo", i))
+		if err := runIn(tomDir, "go", "build", "-o", bin, "./gom/cmd/gomgo"); err != nil {
+			return fmt.Errorf("promoteGo: building gomgo from %s: %w", tomDir, err)
+		}
+		if err := generateAdts(bin, tmp, fmt.Sprint("gen", i), true); err != nil {
+			return err
+		}
+	}
+	for _, a := range adts {
+		d := filepath.FromSlash(a.dir)
+		if diff, err := generatedDiff(filepath.Join(tmp, "gen1", d), filepath.Join(tmp, "gen2", d)); err != nil {
+			return err
+		} else if diff != "" {
+			return fmt.Errorf("promoteGo: %s is not a fixpoint of the gomgo of %s (%s)", a.dir, tomDir, diff)
+		}
+	}
+	if err := copyModule(tomDir, stableGoDir); err != nil {
+		return err
+	}
+	bin := filepath.Join(tmp, "gomgo-stable")
+	if err := runInEnv(stableGoDir, []string{"GOWORK=off"}, "go", "build", "-o", bin, "./gom/cmd/gomgo"); err != nil {
+		return fmt.Errorf("promoteGo: the amorce %s does not build: %w", stableGoDir, err)
+	}
+	if err := runInEnv(stableGoDir, []string{"GOWORK=off"}, "go", "vet", "./..."); err != nil {
+		return err
+	}
+	if err := generateAdts(bin, tmp, "check", false); err != nil {
+		return err
+	}
+	if diff, err := generatedDiff(filepath.Join(tmp, "check", "gom", "adt"), filepath.Join(stableGoDir, "gom", "adt")); err != nil {
+		return err
+	} else if diff != "" {
+		return fmt.Errorf("promoteGo: the gomgo of the amorce does not regenerate its gom/adt identically (%s)", diff)
+	}
+	fmt.Println("promoted " + tomDir + " to the amorce " + stableGoDir + "; now run bootstrap")
+	return nil
+}
+
+// generateAdts generates both ADTs from their .gom files (src/go/tom)
+// with the gomgo binary into <tmp>/<stage>/<dir>, and, when toSrc, also
+// makes them the generated files of src/go/tom/<dir>.
+func generateAdts(gomgo, tmp, stage string, toSrc bool) error {
+	for _, a := range adts {
 		src := filepath.Join(tomDir, filepath.FromSlash(a.dir))
 		files, err := filepath.Glob(filepath.Join(src, "*.gom"))
 		if err != nil || len(files) == 0 {
 			return fmt.Errorf("bootstrap: no .gom file in %s", src)
 		}
 		sort.Strings(files)
-		out := filepath.Join(tmp, fmt.Sprint(i))
+		out := filepath.Join(tmp, stage, filepath.FromSlash(a.dir))
 		args := []string{"gom-batch", "--gohooks", "--pkg", a.pkg, "-o", out}
 		for _, f := range files {
 			args = append(args, filepath.Base(f))
@@ -194,17 +233,71 @@ func regenAdts() error {
 		cmd := exec.Command(gomgo, args...)
 		cmd.Dir = src
 		if b, err := cmd.CombinedOutput(); err != nil {
-			return fmt.Errorf("bootstrap: gomgo gom-batch in %s: %v\n%s", src, err, b)
+			return fmt.Errorf("bootstrap: %s gom-batch in %s: %v\n%s", filepath.Base(gomgo), src, err, b)
 		}
 		// gom-batch writes a stand-alone go.mod; the ADTs live in module tom
 		if err := os.Remove(filepath.Join(out, "go.mod")); err != nil {
 			return err
 		}
-		if err := syncGenerated(out, src); err != nil {
-			return err
+		if toSrc {
+			if err := syncGenerated(out, src); err != nil {
+				return err
+			}
 		}
 	}
 	return nil
+}
+
+// copyModule makes dst a copy of the Go module at src: its non-test .go
+// files (testdata excluded) and go.mod; the other files of dst are
+// removed.
+func copyModule(src, dst string) error {
+	want := map[string]bool{}
+	err := filepath.WalkDir(src, func(p string, d os.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+		if d.IsDir() {
+			if d.Name() == "testdata" {
+				return filepath.SkipDir
+			}
+			return nil
+		}
+		n := d.Name()
+		if (strings.HasSuffix(n, ".go") && !strings.HasSuffix(n, "_test.go")) || (n == "go.mod" && filepath.Dir(p) == src) {
+			r, _ := filepath.Rel(src, p)
+			want[r] = true
+		}
+		return nil
+	})
+	if err != nil {
+		return err
+	}
+	for r := range want {
+		b, err := os.ReadFile(filepath.Join(src, r))
+		if err != nil {
+			return err
+		}
+		t := filepath.Join(dst, r)
+		if err := os.MkdirAll(filepath.Dir(t), 0o755); err != nil {
+			return err
+		}
+		if old, err := os.ReadFile(t); err == nil && bytes.Equal(old, b) {
+			continue
+		}
+		if err := os.WriteFile(t, b, 0o644); err != nil {
+			return err
+		}
+	}
+	return filepath.WalkDir(dst, func(p string, d os.DirEntry, err error) error {
+		if err != nil || d.IsDir() {
+			return err
+		}
+		if r, _ := filepath.Rel(dst, p); !want[r] {
+			return os.Remove(p)
+		}
+		return nil
+	})
 }
 
 // generatedFiles returns the names of the generated files of an ADT

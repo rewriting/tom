@@ -108,8 +108,8 @@ autonomes), comparés à ceux de Java Gom (`legacy/`) :
 ## Sources et amorce
 
 Comme pour Java (`stable/` contient le code Java qui amorce le
-compilateur), `src/` ne contient que des sources et `stable/` l'amorce
-générée :
+compilateur), `src/` ne contient que des sources et `stable/go/tom`
+l'amorce Go :
 
 - `src/go/tom/gom/adt/*.gom` (AST de Gom, sur lequel gomgo est
   construit) et `src/go/tom/engine/adt/*.gom` (AST de Tom, les 15
@@ -118,21 +118,25 @@ générée :
   originaux de `src/tom` (`TestSignatureParity`), hooks réécrits en Go
   (les règles des originaux deviennent des hooks `make`) ; les AST Go
   peuvent ainsi évoluer indépendamment de ceux de Java. Seuls ces
-  `.gom` sont commités dans ces répertoires.
-- `stable/go/tom/{gom,engine}/adt` contient leur génération (fichiers Go
-  et mapping `adt.tom`, produits par `gomgo gom-batch --gohooks` : API
-  Java, cellules, hooks en Go).
-- `mage -d magefiles -w . bootstrap` copie l'amorce de `gom/adt` dans
-  `src/go/tom/gom/adt`, construit gomgo dessus, régénère les deux ADT
-  depuis leurs `.gom` dans `src/go/tom` (fichiers ignorés par git) et
-  exige que `gom/adt` régénéré soit identique octet pour octet à
-  l'amorce (point fixe). Toutes les cibles mage en dépendent : `git
-  clone` puis `mage -d magefiles -w . all` suffit.
-- Après une évolution voulue des `.gom` ou de gomgo :
-  `mage -d magefiles -w . promoteAdt` (copie la nouvelle génération dans
-  `stable/go/tom`), puis `bootstrap`. `TestSelfBootstrap`
-  (`gom/backend`) compare la régénération à l'amorce ; les tests de
-  comportement des ADT sont dans `test/go/adt`.
+  `.gom` sont commités dans ces répertoires ; le code Go et le mapping
+  `adt.tom` générés y sont ignorés par git.
+- `stable/go/tom` est une copie autonome complète du module `tom` (Go
+  non-test de `library/` et `gom/`, `gom/adt` généré compris), hors de
+  `go.work`, construite par `GOWORK=off go build ./...`.
+- `mage -d magefiles -w . bootstrap` construit gomgo depuis l'amorce,
+  génère avec lui les deux ADT depuis leurs `.gom` dans `src/go/tom`
+  (`gomgo gom-batch --gohooks`), construit gomgo depuis `src/go/tom` sur
+  ce code et régénère les ADT avec lui : les deux générations doivent
+  être identiques octet pour octet (point fixe : le code généré est mis
+  à l'épreuve dans gomgo lui-même). Toutes les cibles mage en dépendent :
+  `git clone` puis `mage -d magefiles -w . all` suffit.
+- Après une évolution voulue de gomgo ou des `.gom` qui change le code
+  généré : `mage -d magefiles -w . promoteGo` (vérifie le point fixe de
+  `src/go/tom`, le copie dans `stable/go/tom`, vérifie que l'amorce se
+  construit seule et régénère son `gom/adt` à l'identique), puis
+  `bootstrap`. `TestSelfBootstrap` (`gom/backend`) compare la
+  régénération au code généré par l'amorce ; les tests de comportement
+  des ADT sont dans `test/go/adt`.
 - La dist (`<dist>/lib/go/tom`) ne contient que le runtime
   (`library/**`, `go.mod`) ; gomgo se construit depuis `src/go/tom`.
 
