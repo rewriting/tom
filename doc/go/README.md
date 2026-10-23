@@ -9,7 +9,7 @@
 | Gom écrit en Go (`gomgo`) | `src/go/tom/gom/` | validé |
 | Mappings Go | `src/tom/library/mapping/go/` | validé |
 | Tests Tom+Go (ports de `test/`), T0–T3, smoke | `test/go/` (module `tomtest`) | validé |
-| Rapports | `doc/go/` | à jour |
+| Rapports | `doc/go/` : J0–T3 [`j0-go-backend.md`](j0-go-backend.md), J2 [`j2-report.md`](j2-report.md), [tableau de bord](port-dashboard.md), [couverture](coverage.md) | à jour |
 | Prototype tomgo (compilateur Go écrit à la main) | `prototype/tomgo/` | gelé, réservoir de code |
 
 Utiliser le runtime dans un projet : `require tom v0.0.0` et
