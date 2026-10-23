@@ -278,9 +278,16 @@ Aucun `.t` n'existe encore sous `src/go`.
   instancie : `&LocalIntrospector{}` dans
   `test/go/sl/TestHandWrittenMapping.t`) sont aussi des déclarations de
   niveau paquetage, mais le code de l'utilisateur les nomme : ils ne sont
-  pas préfixés (comme en Java, ce sont des noms de classes visibles).
-  Deux `.t` d'un paquetage ne peuvent donc pas déclarer la même
-  stratégie, ni utiliser tous deux `-gi`.
+  pas préfixés (comme en Java, ce sont des noms de classes visibles). Le
+  constructeur `tom_new_<S>` d'une stratégie suit son type : il est
+  appelé depuis le texte du hook `make` que le parser écrit
+  (`CstConverter.t:158`) et ne change pas non plus. Deux `.t` d'un
+  paquetage ne peuvent donc pas déclarer la même stratégie, ni utiliser
+  tous deux `-gi`. Deux blocs `%gom` dans un même paquetage ne le peuvent
+  pas non plus : le code généré par gomgo déclare `factory` dans chaque
+  module (vérifié : `tb_gen.go:25:5: factory redeclared`) ; c'est hors du
+  champ de D1 (le compilateur Tom+Go importe l'ADT du moteur au lieu
+  d'utiliser `%gom`).
 - **L'option existante `-D` (`noDeclaration`) ne résout rien** : avec
   `-go`, elle n'est que partiellement honorée (`GoGenerator.t:662`), et les
   `tom_equal_term_*` et `tom_is_sort_*` restent déclarés.
@@ -469,8 +476,8 @@ extension, chaque caractère hors `[A-Za-z0-9_]` remplacé par `_`
 (`tom_make_suc` → `tom_Peano_make_suc`) ; un autre nom généré de niveau
 paquetage `n` devient `tom_<F>_n` (`next_minimal_extract`,
 `__getMultiplicities_<op>`…). Les variables locales (`tom_a`, `tom__strat`,
-`tom__arg`…) et les noms écrits par l'utilisateur (§3.4) ne changent
-pas. Les fonctions des mappings deviennent des fermetures dans le corps
+`tom__arg`…), les noms écrits par l'utilisateur et `tom_new_<S>` (§3.4)
+ne changent pas. Les fonctions des mappings deviennent des fermetures dans le corps
 des hooks. Seule la cible Go change : T0 le garantit pour Java.
 
 ### 4.4 Structure du code porté
