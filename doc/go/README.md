@@ -101,6 +101,20 @@ autonomes), comparés à ceux de Java Gom (`legacy/`) :
   (`conc(a(),nil())`, `lm(a(),m0())` d'un hook `make_empty`) paniquent
   ainsi, comme le `toArray` typé de Java lève `ArrayStoreException`.
 
+## Limites connues de `-go` (parser îlot `-np`)
+
+- **Règles étiquetées** (`l: motif -> action`, `break l`) : seul le parser
+  par défaut (tomjava, `CstBuilder.exitLabelledpattern`) les reconnaît ;
+  la grammaire îlot (`TomIslandParser.g4`) n'a pas de règle étiquetée, et
+  `-go` impose `-np` : le `%match` reste du code hôte. Aucun test de
+  `test/` ne les utilise ; les 2 « occurrences » comptées par T3 dans le
+  compilateur sont des commentaires (`GeneralPurposePropagator.t:111,126`).
+- **Sujet d'un `%match` non inspecté** : une variable hôte qui n'est que
+  le sujet d'un `%match` dont les motifs ne l'examinent pas (`_`, `x@y`
+  sur `String`) n'est pas référencée par le code généré (en Java non
+  plus) ; Go refuse alors la variable inutilisée (`_ = s` dans le port de
+  `test/TestOptimizer.t`).
+
 ## Orientation pour la suite
 
 - **J4 — compilateur en Tom+Go, stratégie hybride (décidée le 2026-10-23).**

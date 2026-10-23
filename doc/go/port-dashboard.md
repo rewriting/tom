@@ -15,7 +15,7 @@ Un cas « OK (diagnostics) » est un test de non-régression des diagnostics
 compte pas).
 
 - total : 103
-- OK : 62
+- OK : 77
 - OK (diagnostics) : 11
 - divergence : 0
 - échec go test : 0
@@ -24,37 +24,37 @@ compte pas).
 - oracle invalide : 0
 - non supporté : 2
 - support : 4
-- échoue dans legacy : 7
-- non porté : 17
+- échoue dans legacy : 9
+- non porté : 0
 
 | Cas | Statut | Notes |
 |---|---|---|
 | `Array.t` | OK |  |
 | `Peano.t` | OK |  |
-| `Record.t` | non porté |  |
-| `Test.t` | non porté |  |
+| `Record.t` | échoue dans legacy | the typer rejects the %op hierarchy of Java classes (Incompatible types 'TomBinaryOperator' and 'TomExp' for symbol 'BinaryOperator', Cannot guess the type of 'e1'), with both parsers; with --oldtyper, javac rejects the generated Java (Exp cannot be converted to CstExp); test/build.xml excludes it (its commented-out --lazyType option no longer exists) |
+| `Test.t` | OK |  |
 | `TestAlgebraic.t` | OK |  |
 | `TestArray.t` | OK |  |
-| `TestArray2.t` | non porté |  |
-| `TestArrayNonLinear.t` | non porté |  |
+| `TestArray2.t` | OK |  |
+| `TestArrayNonLinear.t` | OK |  |
 | `TestBackQuote.t` | OK |  |
-| `TestBuiltin.t` | non porté |  |
-| `TestConstraintCombination.t` | non porté |  |
-| `TestConstraintCombinationWithSubtype.t` | non porté |  |
+| `TestBuiltin.t` | OK |  |
+| `TestConstraintCombination.t` | OK |  |
+| `TestConstraintCombinationWithSubtype.t` | OK |  |
 | `TestList.t` | OK |  |
-| `TestList2.t` | non porté |  |
-| `TestListNonLinear.t` | non porté |  |
-| `TestMatch.t` | non porté |  |
-| `TestMatchInference.t` | non porté |  |
+| `TestList2.t` | OK |  |
+| `TestListNonLinear.t` | OK |  |
+| `TestMatch.t` | OK |  |
+| `TestMatchInference.t` | OK |  |
 | `TestNonVarSubjects.t` | OK |  |
-| `TestOptimizer.t` | non porté |  |
+| `TestOptimizer.t` | OK |  |
 | `TestPeano.t` | OK |  |
-| `TestRecord.t` | non porté |  |
-| `TestReflectiveStrategy.t` | non porté |  |
+| `TestRecord.t` | échoue dans legacy | the typer rejects the %op hierarchy of Java classes (Incompatible types 'TomBinaryOperator' and 'TomExp' for symbol 'BinaryOperator', Cannot guess the type of 'e1'), with both parsers; with --oldtyper, javac rejects the generated Java (Exp cannot be converted to CstExp); test/build.xml excludes it (its commented-out --lazyType option no longer exists) |
+| `TestReflectiveStrategy.t` | OK |  |
 | `TestStrategy.t` | OK |  |
 | `TestSublists.t` | OK |  |
 | `TestVarVarStar.t` | OK |  |
-| `TomList.t` | non porté |  |
+| `TomList.t` | OK |  |
 | `acmatching/TestAC.t` | OK |  |
 | `acmatching/TestBool3.t` | OK |  |
 | `andor/TestAndOr.t` | OK |  |
@@ -67,7 +67,7 @@ compte pas).
 | `backquote/TestBackquoteGom.t` | OK |  |
 | `backquote/TestBackquoteWithBracket.t` | OK |  |
 | `backquote/TestDefaultValue.t` | OK |  |
-| `cfib1.t` | non porté |  |
+| `cfib1.t` | OK |  |
 | `gom/BenchConsGom.t` | OK |  |
 | `gom/TestACU.t` | OK |  |
 | `gom/TestAU.t` | OK |  |
@@ -96,7 +96,7 @@ compte pas).
 | `gom/TestTomHook.t` | OK |  |
 | `gom/TestYingYang.t` | OK |  |
 | `gom/fromterm/TestFromTerm.t` | OK |  |
-| `loulou.t` | non porté |  |
+| `loulou.t` | OK |  |
 | `numeric/TestNumericConditions.t` | OK |  |
 | `regress/BadBackquote.t` | OK (diagnostics) | erreurs : incompatibleTypes, incompatibleTypes ; le `.nrt` attend incompatibleTypes (diffère déjà dans `legacy/`) |
 | `regress/BadOp.t` | OK (diagnostics) | erreurs : symbolCodomainError ; parser par défaut de `legacy/` : aucune |
