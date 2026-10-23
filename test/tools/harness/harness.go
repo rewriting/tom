@@ -147,7 +147,21 @@ func NewDist(t testing.TB) Dist {
 	if err := freshness(RepoRoot(t), d.Home); err != nil {
 		t.Fatal(err)
 	}
+	d.Bin(t, "gomgo")
 	return d
+}
+
+// Bin is the Go command name installed in the dist (<home>/bin/name,
+// by mage installGo, called by ./build.sh src.dist and stable); a
+// missing binary fails the test: the harness uses the binaries of the
+// dist under test, never builds them.
+func (d Dist) Bin(t testing.TB, name string) string {
+	t.Helper()
+	p := filepath.Join(d.Home, "bin", name)
+	if !fileExists(p) {
+		t.Fatalf("no %s in the dist %s: rebuild it (unset TOM_HOME && ./build.sh src.dist)", name, d.Home)
+	}
+	return p
 }
 
 var (
@@ -169,9 +183,11 @@ func freshness(root, home string) error {
 
 // CheckFresh returns an error when the compiler of the dist at home
 // (lib/tom-compiler-full.jar) is older than one of the sources it is
-// built from: src/tom/**/*.{t,java,tom,config} and src/tom/library/mapping/** of the
-// repository root. (The Go runtime the dist ships is compared with
-// src/go/tom by SetupGoModule.)
+// built from: src/tom/**/*.{t,java,tom,config}, src/tom/library/mapping/**
+// and src/config/*.config of the repository root. It also fails when a
+// Go command installed in bin/ (gomgo, tomgo) is older than the newest
+// src/go/tom/**/*.go (not *_test.go, not testdata/) or *.gom. (The Go
+// runtime the dist ships is compared with src/go/tom by SetupGoModule.)
 func CheckFresh(root, home string) error {
 	jar := filepath.Join(home, "lib", "tom-compiler-full.jar")
 	st, err := os.Stat(jar)
@@ -202,20 +218,63 @@ func CheckFresh(root, home string) error {
 	if err != nil {
 		return fmt.Errorf("scanning the compiler's sources: %v", err)
 	}
+	cfgs, _ := filepath.Glob(filepath.Join(root, "src", "config", "*.config"))
+	{
+		for _, p := range cfgs {
+			if info, err := os.Stat(p); err == nil && info.ModTime().After(newestTime) {
+				newest, newestTime = p, info.ModTime()
+			}
+		}
+	}
 	if newest != "" && newestTime.After(st.ModTime()) {
 		rel, _ := filepath.Rel(root, newest)
 		return fmt.Errorf("stale compiler: %s (%s) is newer than %s (%s): rebuild ./build.sh src.dist",
 			rel, newestTime.Format(time.RFC3339), jar, st.ModTime().Format(time.RFC3339))
 	}
+	// the Go commands installed in bin/
+	var goNewest string
+	var goNewestTime time.Time
+	_ = filepath.WalkDir(filepath.Join(root, "src", "go", "tom"), func(p string, d fs.DirEntry, err error) error {
+		if err != nil {
+			return nil
+		}
+		if d.IsDir() {
+			if d.Name() == "testdata" {
+				return filepath.SkipDir
+			}
+			return nil
+		}
+		if (strings.HasSuffix(p, ".go") && !strings.HasSuffix(p, "_test.go")) || strings.HasSuffix(p, ".gom") {
+			if info, err := d.Info(); err == nil && info.ModTime().After(goNewestTime) {
+				goNewest, goNewestTime = p, info.ModTime()
+			}
+		}
+		return nil
+	})
+	for _, name := range []string{"gomgo", "tomgo"} {
+		bin := filepath.Join(home, "bin", name)
+		bst, err := os.Stat(bin)
+		if err != nil {
+			continue
+		}
+		if goNewest != "" && goNewestTime.After(bst.ModTime()) {
+			rel, _ := filepath.Rel(root, goNewest)
+			return fmt.Errorf("stale Go command: %s is newer than %s: rebuild ./build.sh src.dist", rel, bin)
+		}
+	}
 	return nil
 }
 
 // Compile runs `bin/tom -d outDir args… src` with TOM_HOME=d.Home and
-// GOMGO_BIN set, and returns the combined stdout+stderr.
+// GOMGO_BIN set to the dist's bin/gomgo (when it exists), and returns the combined stdout+stderr.
 func (d Dist) Compile(t testing.TB, src, outDir string, args ...string) (string, error) {
 	t.Helper()
 	full := append(append([]string{"-d", outDir}, args...), src)
-	env := []string{"TOM_HOME=" + d.Home, "GOMGO_BIN=" + GomgoBin(t)}
+	env := []string{"TOM_HOME=" + d.Home}
+	// the compiler of stable/ still reads GOMGO_BIN; legacy/ has no gomgo
+	if g := filepath.Join(d.Home, "bin", "gomgo"); fileExists(g) {
+		env = append(env, "GOMGO_BIN="+g)
+	}
 	return RunIn(filepath.Dir(src), env, filepath.Join(d.Home, "bin", "tom"), full...)
 }
 
@@ -227,42 +286,6 @@ func RunIn(dir string, env []string, name string, args ...string) (string, error
 	cmd.Env = append(os.Environ(), env...)
 	out, err := cmd.CombinedOutput()
 	return string(out), err
-}
-
-var (
-	gomgoOnce sync.Once
-	gomgoPath string
-	gomgoErr  error
-)
-
-// GomgoBin builds the gomgo command (tom/gom/cmd/gomgo, from
-// src/go/tom) once per test binary and returns its path.
-func GomgoBin(t testing.TB) string {
-	t.Helper()
-	root := RepoRoot(t)
-	gomgoOnce.Do(func() {
-		// the compiler's ADTs gomgo is built on are generated locally
-		// (gitignored) from their .gom files by mage bootstrap
-		if gen, _ := filepath.Glob(filepath.Join(root, "src", "go", "tom", "gom", "adt", "*.go")); len(gen) == 0 {
-			gomgoErr = fmt.Errorf("src/go/tom/gom/adt holds no generated Go code: run `mage -d magefiles -w . bootstrap`")
-			return
-		}
-		dir, err := os.MkdirTemp("", "gomgo-harness-")
-		if err != nil {
-			gomgoErr = err
-			return
-		}
-		gomgoPath = filepath.Join(dir, "gomgo")
-		var out string
-		out, gomgoErr = RunIn(filepath.Join(root, "src", "go", "tom"), nil, "go", "build", "-o", gomgoPath, "./gom/cmd/gomgo")
-		if gomgoErr != nil {
-			gomgoErr = fmt.Errorf("%v\n%s", gomgoErr, out)
-		}
-	})
-	if gomgoErr != nil {
-		t.Fatalf("building gomgo: %v", gomgoErr)
-	}
-	return gomgoPath
 }
 
 // SetupGoModule writes a go.mod in dir that resolves module tom (the Go
@@ -298,8 +321,8 @@ func Normalize(s string, repl map[string]string) string {
 // files of library/ and go.mod, the files build.xml copies into
 // <dist>/lib/go/tom (byte equality, relative paths, ignoring *_test.go
 // and testdata/) — and returns the first differing relative path, or "".
-// gomgo and the compiler's ADTs (gom/, engine/) are not shipped: they
-// are built from src/go/tom (GomgoBin).
+// gomgo and the compiler's ADTs (gom/, engine/) are not shipped as
+// sources: gomgo/tomgo are installed in <dist>/bin by mage installGo.
 func runtimeDiff(src, dist string) string {
 	collect := func(root string) map[string]bool {
 		m := map[string]bool{}

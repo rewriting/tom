@@ -658,8 +658,8 @@
     </copy>
 
     <!-- Go runtime (module tom: its packages library/**), used by programs
-         generated with -go; gomgo and the compiler's ADTs (gom/, engine/,
-         generated locally by mage bootstrap) are built from src/go/tom -->
+         generated with -go; gomgo/tomgo are installed in bin/ by mage
+         installGo (below) -->
     <delete dir="${stable.dist}/lib/go/tom" quiet="true"/>
     <copy todir="${stable.dist}/lib/go/tom">
       <fileset dir="${basedir}/src/go/tom">
@@ -669,6 +669,13 @@
         <exclude name="**/testdata/**"/>
       </fileset>
     </copy>
+    <!-- Go commands (gomgo, tomgo) installed in bin/: the dist ships
+         binaries, src/ holds sources only (built by mage installGo;
+         Go and mage are required) -->
+    <exec executable="mage" dir="${basedir}" failonerror="true">
+      <arg value="-d"/><arg value="magefiles"/><arg value="-w"/><arg value="."/>
+      <arg value="installGo"/><arg value="stable"/><arg value="${stable.dist.bin}"/>
+    </exec>
     <copy todir="${stable.dist.share}">
       <fileset dir="${share}">
         <include name="LICENCE"/>
@@ -944,8 +951,8 @@
     </copy>
 
     <!-- Go runtime (module tom: its packages library/**), used by programs
-         generated with -go; gomgo and the compiler's ADTs (gom/, engine/,
-         generated locally by mage bootstrap) are built from src/go/tom -->
+         generated with -go; gomgo/tomgo are installed in bin/ by mage
+         installGo (below) -->
     <delete dir="${src.dist}/lib/go/tom" quiet="true"/>
     <copy todir="${src.dist}/lib/go/tom">
       <fileset dir="${basedir}/src/go/tom">
@@ -955,6 +962,13 @@
         <exclude name="**/testdata/**"/>
       </fileset>
     </copy>
+    <!-- Go commands (gomgo, tomgo) installed in bin/: the dist ships
+         binaries, src/ holds sources only (built by mage installGo;
+         Go and mage are required) -->
+    <exec executable="mage" dir="${basedir}" failonerror="true">
+      <arg value="-d"/><arg value="magefiles"/><arg value="-w"/><arg value="."/>
+      <arg value="installGo"/><arg value="src"/><arg value="${src.dist.bin}"/>
+    </exec>
     <copy todir="${src.dist.share}">
       <fileset dir="${share}">
         <include name="LICENCE"/>

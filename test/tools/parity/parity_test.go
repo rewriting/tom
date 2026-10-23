@@ -431,7 +431,7 @@ func generateGo(t *testing.T, c portCase, dir string) (map[string]string, string
 		}
 		mod := gomModuleDir(g)
 		gargs := append(append([]string{"gom-block", "-o", filepath.Join(dir, mod), "--pkg", gomPackage(g)}, g.GoArgs...), src)
-		if out, err := harness.RunIn(dir, nil, harness.GomgoBin(t), gargs...); err != nil {
+		if out, err := harness.RunIn(dir, nil, harness.NewDist(t).Bin(t, "gomgo"), gargs...); err != nil {
 			return nil, out, fmt.Errorf("gomgo %v failed: %v", gargs, err)
 		}
 	}

@@ -270,14 +270,18 @@ public class TomParserTool {
   /*
    * -go: the %gom block is compiled by "gomgo gom-block", which writes the
    * Go structures next to the generated file and prints the path of the
-   * Go-host-code mapping to include. The user options of %gom(...) are
+   * Go-host-code mapping to include. gomgo is <tom.home>/bin/gomgo
+   * (GOMGO_BIN overrides it). The user options of %gom(...) are
    * passed on (gomgo rejects those it does not support).
    */
   private String parseGomFileGo(String gomCode, int initialGomLine, String[] userOpts) {
     String currentFileName = getStreamManager().getInputFileName();
+    // -go: gomgo is installed in <tom.home>/bin by the build of the dist;
+    // GOMGO_BIN overrides it. No PATH lookup.
     String gomgo = System.getenv("GOMGO_BIN");
     if(gomgo == null || gomgo.length() == 0) {
-      gomgo = "gomgo";
+      String home = System.getProperty("tom.home");
+      gomgo = (home == null) ? "" : new File(new File(home, "bin"), "gomgo").getPath();
     }
     File tmpFile = null;
     Process p = null;
@@ -309,7 +313,7 @@ public class TomParserTool {
       try {
         p = pb.start();
       } catch (IOException e) {
-        throw new IOException("cannot run '" + gomgo + "' (set GOMGO_BIN or put gomgo in the PATH): " + e.getMessage(), e);
+        throw new IOException("cannot run gomgo '" + gomgo + "' (rebuild the distribution, which installs bin/gomgo, or set GOMGO_BIN): " + e.getMessage(), e);
       }
       String last = null;
       java.io.BufferedReader r = new java.io.BufferedReader(new java.io.InputStreamReader(p.getInputStream(),"UTF-8"));

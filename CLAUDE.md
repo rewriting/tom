@@ -122,7 +122,7 @@ main — est gelée, cf. ci-dessus.)
 | `src/go/tom/` | **Module Go `tom`** (validé) : `library/{sl,sharedobjects,aterm}`, `gom/{parser,backend}`, `gom/cmd/gomgo` ; `gom/adt` et `engine/adt` ne contiennent que des `.gom` |
 | `src/go/tom/{gom,engine}/adt/` | **Copies Go** (5 + 15 `.gom`) de `src/tom/{gom,engine}/adt` : mêmes signatures (`TestSignatureParity`), hooks écrits en Go (`gomgo --gohooks`). Le `*.go` et `adt.tom` générés sont ignorés par git : `mage -d magefiles -w . bootstrap` les produit localement |
 | `stable/go/tom/` | **Amorce Go** : instantané autonome COMPLET du module `tom` (Go non-test + ADT générés), hors `go.work`, construit par `GOWORK=off go build ./...` ; mis à jour par `promoteGo` |
-| `stable/` | Compilateur Java **bootstrappé** qui construit `src/` ; contient aussi la cible Go (`stable/dist/bin/tom -go`) ; `src/` y a été promu le 2026-10-23 : sa dist embarque le runtime Go dans `lib/go/tom` et `TomParserTool` lit `GOMGO_BIN` |
+| `stable/` | Compilateur Java **bootstrappé** qui construit `src/` ; contient aussi la cible Go (`stable/dist/bin/tom -go`) ; `src/` y a été promu le 2026-10-23 : sa dist embarque le runtime Go dans `lib/go/tom` et `bin/gomgo` (`mage installGo`) ; son `TomParserTool` lit encore `GOMGO_BIN` |
 | `test/java/` | Tests Tom+Java historiques (121 `.t` + 18 `.gom`, `build.xml`) ; les chemins `test/<rel>` des anciens rapports sont désormais `test/java/<rel>` |
 | `test/go/` | **Module Go `tomtest`** : ports Tom+Go de `test/java/` (`*.t`, mêmes chemins relatifs), `testdata/{golden,oracle}`, `smoke/testdata` (fixtures + jumeaux Java), `adt/` (tests de comportement des ADT générés du compilateur : hooks, règles, listes) |
 | `test/tools/` | **Module Go `tomtools`** (`replace tom`) : `harness/` (seul endroit qui définit les emplacements : `JavaTestDir`/`GoTestDir`/`ToolsDir`), `javaparity/` (T0), `parity/` (T1/T2 + tableau de bord), `coverage/` (T3), `smoke/` (runner + `TestJavaTwins`) |
@@ -747,18 +747,19 @@ régénérer l'oracle (`-update-oracle`) demande aussi le JDK 8 et `legacy/`.
 # Construire la version humaine (oracle) et la version étendue
 (cd legacy && unset TOM_HOME && ./build.sh stable && ./build.sh src.dist)
 unset TOM_HOME && ./build.sh src.dist
-# Les blocs %gom exigent le binaire gomgo : $GOMGO_BIN, sinon `gomgo` dans le PATH
-go -C src/go/tom build -o /tmp/gomgo ./gom/cmd/gomgo
+# Les blocs %gom exigent gomgo : installé dans <dist>/bin par ./build.sh (mage installGo) ;
+# $GOMGO_BIN ne sert qu'à le surcharger
 # Compiler un .t vers Go (-go implique l'analyseur island -np ; -gi produit un LocalIntrospector Go)
-GOMGO_BIN=/tmp/gomgo TOM_HOME=$PWD/src/dist src/dist/bin/tom -go -np -d out test/go/TestAlgebraic.t
+TOM_HOME=$PWD/src/dist src/dist/bin/tom -go -np -d out test/go/TestAlgebraic.t
 # Le Go généré qui importe tom/library/... a besoin d'un go.mod dans out/ :
 #   module <nom>  /  go 1.26
 #   require tom v0.0.0
 #   replace tom => $TOM_HOME/lib/go/tom     (src/dist et stable/dist livrent le runtime)
 # (c'est ce qu'écrit SetupGoModule dans test/tools/harness)
 # Le compilateur bootstrappé (stable/dist, promu le 2026-10-23) livre aussi
-# le runtime (lib/go/tom) et lit GOMGO_BIN :
-GOMGO_BIN=/tmp/gomgo TOM_HOME=$PWD/stable/dist stable/dist/bin/tom -go -d out X.t
+# le runtime (lib/go/tom) et bin/gomgo ; le compilateur Java de stable/ lit encore
+# GOMGO_BIN (jusqu'à la prochaine promotion Java) :
+GOMGO_BIN=$PWD/stable/dist/bin/gomgo TOM_HOME=$PWD/stable/dist stable/dist/bin/tom -go -d out X.t
 # Harnais et tests, depuis la racine (ou `cd magefiles && mage <cible>`)
 mage -d magefiles -w . -l          # lister les cibles
 mage -d magefiles -w . all         # vet + tests module tom + self-bootstrap

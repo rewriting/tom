@@ -436,6 +436,51 @@ func Smoke() error {
 	return runInEnv(toolsDir, requireTools, "go", "test", "-count=1", "./smoke/")
 }
 
+// goCommands are the Go commands of module tom installed in <dist>/bin
+// (the dist ships binaries; src/ holds sources only). A command whose
+// main package is absent from the tree is skipped (tomgo before J4.0c
+// in the amorce).
+var goCommands = []struct{ name, pkg string }{
+	{"gomgo", "./gom/cmd/gomgo"},
+	{"tomgo", "./engine/cmd/tomgo"},
+}
+
+// InstallGo builds the Go commands into binDir: from = "src" builds them
+// from src/go/tom (after bootstrap: the ADTs are generated locally),
+// from = "stable" from the amorce stable/go/tom (GOWORK=off). Called by
+// build.xml (src.dist, stable.dist).
+func InstallGo(from, binDir string) error {
+	var dir string
+	var env []string
+	switch from {
+	case "src":
+		mg.Deps(Bootstrap)
+		dir = tomDir
+	case "stable":
+		dir, env = stableGoDir, []string{"GOWORK=off"}
+	default:
+		return fmt.Errorf("installGo: from must be src or stable, not %q", from)
+	}
+	abs, err := filepath.Abs(binDir)
+	if err != nil {
+		return err
+	}
+	if err := os.MkdirAll(abs, 0o755); err != nil {
+		return err
+	}
+	for _, c := range goCommands {
+		if _, err := os.Stat(filepath.Join(dir, filepath.FromSlash(c.pkg))); err != nil {
+			fmt.Printf("installGo: %s: no %s in %s, not installed\n", c.name, c.pkg, dir)
+			continue
+		}
+		if err := runInEnv(dir, env, "go", "build", "-o", filepath.Join(abs, c.name), c.pkg); err != nil {
+			return fmt.Errorf("installGo: building %s from %s: %w", c.name, dir, err)
+		}
+		fmt.Printf("installGo: %s -> %s\n", c.name, filepath.Join(abs, c.name))
+	}
+	return nil
+}
+
 // All runs vet, the unit tests, the self-bootstrap check and the smoke
 // tests (after Bootstrap: it works from a fresh clone).
 func All() { mg.SerialDeps(Bootstrap, Vet, VetStandalone, Test, SelfBootstrap, Smoke) }

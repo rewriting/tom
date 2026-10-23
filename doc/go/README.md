@@ -22,11 +22,13 @@ Utiliser le runtime dans un projet : `require tom v0.0.0` et
 ## Démarrage rapide
 
 ```bash
-unset TOM_HOME && ./build.sh src.dist
-mage -d magefiles -w . bootstrap   # génère les ADT de src/go/tom (voir « Sources et amorce »)
-go -C src/go/tom build -o /tmp/gomgo ./gom/cmd/gomgo
-GOMGO_BIN=/tmp/gomgo TOM_HOME=$PWD/src/dist src/dist/bin/tom -go -d out X.t
+unset TOM_HOME && ./build.sh src.dist   # Go et mage requis : la dist contient bin/gomgo (mage installGo)
+TOM_HOME=$PWD/src/dist src/dist/bin/tom -go -d out X.t   # gomgo = $TOM_HOME/bin/gomgo
 ```
+
+`./build.sh src.dist` (et `stable`) appelle `mage installGo`, qui construit
+`gomgo` (et plus tard `tomgo`) dans `<dist>/bin` ; `GOMGO_BIN` ne sert qu'à
+surcharger ce binaire.
 
 Puis dans `out/`, un `go.mod` avec `go 1.26` (Go ≥ 1.26 requis),
 `require tom v0.0.0` et `replace tom => $TOM_HOME/lib/go/tom`.
@@ -157,7 +159,12 @@ l'amorce Go :
   régénération au code généré par l'amorce ; les tests de comportement
   des ADT sont dans `test/go/adt`.
 - La dist (`<dist>/lib/go/tom`) ne contient que le runtime
-  (`library/**`, `go.mod`) ; gomgo se construit depuis `src/go/tom`.
+  (`library/**`, `go.mod`) ; `gomgo` est installé dans `<dist>/bin` par
+  `mage installGo` (appelé par `./build.sh src.dist` et `stable` : Go et
+  mage sont requis pour construire une dist). `src.dist` le construit
+  depuis `src/go/tom`, `stable.dist` depuis l'amorce. Les harnais
+  utilisent ces binaires (`Dist.Bin`) et `CheckFresh` détecte un
+  binaire plus ancien que les sources Go.
 - **Ce que prouve le point fixe.** Juste après `promoteGo`, gomgo de
   l'amorce et gomgo de `src` sont le même code : le point fixe est
   trivialement vrai tant que gomgo ne change pas. Pour l'ADT du
