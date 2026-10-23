@@ -539,22 +539,17 @@ func EmitTomMappingGo(mod gomast.GomModule, opts Options) []byte {
 				emitVariadicMappingGo(&buf, sortNm, alt, structName, names.of(alt, sortNm), fieldTypeName(alternativeFields(alt)[0]))
 				continue
 			}
-			fields := alternativeFields(alt)
-			slotsParts := make([]string, 0, len(fields))
-			slotNames := make([]string, 0, len(fields))
-			for _, f := range fields {
-				nf, ok := f.(*gomast.NamedFieldField)
-				if !ok {
-					continue
-				}
-				typeName := fieldTypeName(f)
-				slotsParts = append(slotsParts, fmt.Sprintf("%s:%s", nf.Name, typeName))
-				slotNames = append(slotNames, nf.Name)
+			sfs := slotFieldNames(alt)
+			slotsParts := make([]string, 0, len(sfs))
+			slotNames := make([]string, 0, len(sfs))
+			for _, sf := range sfs {
+				slotsParts = append(slotsParts, fmt.Sprintf("%s:%s", sf.gom, fieldTypeName(sf.f)))
+				slotNames = append(slotNames, sf.gom)
 			}
 			fmt.Fprintf(&buf, "%%op %s %s(%s) {\n", sortNm, altNm, strings.Join(slotsParts, ", "))
 			fmt.Fprintf(&buf, "  is_fsym(t)     { func() bool { _, ok := ($t).(*%s); return ok }() }\n", structName)
-			for _, sn := range slotNames {
-				fmt.Fprintf(&buf, "  get_slot(%s,t) { ($t).(*%s).%s }\n", sn, structName, exportedField(sn))
+			for _, sf := range sfs {
+				fmt.Fprintf(&buf, "  get_slot(%s,t) { ($t).(*%s).%s }\n", sf.gom, structName, sf.field)
 			}
 			makeArgs := make([]string, len(slotNames))
 			for i, sn := range slotNames {
@@ -1210,30 +1205,8 @@ func (g *gen) emitAlternative(sortNm string, alt *gomast.AlternativeAlternative)
 	// The slots of the (non-variadic) alternative, with their Go field
 	// names.
 	var slots []hookSlot
-	seen := map[string]int{}
-	for i, f := range fields {
-		nf, ok := f.(*gomast.NamedFieldField)
-		if !ok {
-			// In a non-variadic alternative every field must be
-			// named — anything else is a parser bug.
-			continue
-		}
-		name := exportedField(nf.Name)
-		if name == "" {
-			name = fmt.Sprintf("Slot%d", i)
-		}
-		// Avoid colliding with the struct's own methods (String,
-		// Hash, Equivalent, Duplicate). A Gom slot literally named
-		// `String:String` (as in TomName.Name) would otherwise
-		// produce `field and method with the same name`.
-		if reservedFieldName[name] {
-			name = name + "_"
-		}
-		if c := seen[name]; c > 0 {
-			name = fmt.Sprintf("%s%d", name, c+1)
-		}
-		seen[name]++
-		slots = append(slots, hookSlot{Name: name, GoType: g.goType(fieldTypeName(f), false)})
+	for _, sf := range slotFieldNames(alt) {
+		slots = append(slots, hookSlot{Name: sf.field, GoType: g.goType(fieldTypeName(sf.f), false)})
 	}
 
 	// Struct definition.

@@ -65,10 +65,20 @@ func (g *gen) sortAPIOf(prod *gomast.SortTypeProduction) sortAPI {
 	return api
 }
 
-// namedSlots lists the slots of a non-variadic alt as emitAlternative
-// names them.
-func (g *gen) namedSlots(alt *gomast.AlternativeAlternative) []apiSlot {
-	var out []apiSlot
+// slotField is a slot of a non-variadic alt: its Gom name and the name
+// of its Go field.
+type slotField struct {
+	gom, field string
+	f          gomast.Field
+}
+
+// slotFieldNames is the single source of the Go field names of a
+// non-variadic alt (struct, Java API, mapping get_slot): the exported
+// slot name, Slot<i> for an empty name, a "_" suffix when the name is a
+// method of the alt struct (reservedFieldName), a number for a
+// duplicate. Unnamed fields are skipped.
+func slotFieldNames(alt *gomast.AlternativeAlternative) []slotField {
+	var out []slotField
 	seen := map[string]int{}
 	for i, f := range alternativeFields(alt) {
 		nf, ok := f.(*gomast.NamedFieldField)
@@ -79,6 +89,10 @@ func (g *gen) namedSlots(alt *gomast.AlternativeAlternative) []apiSlot {
 		if name == "" {
 			name = fmt.Sprintf("Slot%d", i)
 		}
+		// Avoid colliding with the struct's own methods (String,
+		// Hash, Equivalent, Duplicate…): a Gom slot literally named
+		// `String:String` (as in TomName.Name) would otherwise
+		// produce `field and method with the same name`.
 		if reservedFieldName[name] {
 			name = name + "_"
 		}
@@ -86,7 +100,17 @@ func (g *gen) namedSlots(alt *gomast.AlternativeAlternative) []apiSlot {
 			name = fmt.Sprintf("%s%d", name, c+1)
 		}
 		seen[name]++
-		out = append(out, apiSlot{gomName: nf.Name, field: name, goType: g.goType(fieldTypeName(f), false), gomType: fieldTypeName(f)})
+		out = append(out, slotField{gom: nf.Name, field: name, f: f})
+	}
+	return out
+}
+
+// namedSlots lists the slots of a non-variadic alt as emitAlternative
+// names them.
+func (g *gen) namedSlots(alt *gomast.AlternativeAlternative) []apiSlot {
+	var out []apiSlot
+	for _, s := range slotFieldNames(alt) {
+		out = append(out, apiSlot{gomName: s.gom, field: s.field, goType: g.goType(fieldTypeName(s.f), false), gomType: fieldTypeName(s.f)})
 	}
 	return out
 }
