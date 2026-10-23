@@ -436,6 +436,12 @@ func Smoke() error {
 	return runInEnv(toolsDir, requireTools, "go", "test", "-count=1", "./smoke/")
 }
 
+// J4 runs the J4 tests that need a built dist (test/tools/j4).
+func J4() error {
+	mg.Deps(Bootstrap)
+	return runInEnv(toolsDir, requireTools, "go", "test", "-count=1", "./j4/...")
+}
+
 // goCommands are the Go commands of module tom installed in <dist>/bin
 // (the dist ships binaries; src/ holds sources only). A command whose
 // main package is absent from the tree is skipped (tomgo before J4.0c
