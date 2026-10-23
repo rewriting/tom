@@ -228,13 +228,14 @@ public class Compiler extends TomGenericPlugin {
         ArrayList<BQTerm> subjectList = new ArrayList<BQTerm>();
         ArrayList<TomTerm> renamedSubjects = new ArrayList<TomTerm>();
         ArrayList<BQTerm> hostSubjects = new ArrayList<BQTerm>();
+        HashSet<TomName> hostNames = new HashSet<TomName>();
         // for each pattern action <term>,...,<term> -> { action }
         // build a matching automata
         %match(constraintInstructionList) {
           concConstraintInstruction(_*,ConstraintInstruction(constraint,action,optionList),_*) -> {
             actionNumber++;
             if(compiler.getOptionBooleanValue("goCode")) {
-              Compiler.collectHostSubjects(`constraint,hostSubjects);
+              Compiler.collectHostSubjects(`constraint,hostSubjects,hostNames);
             }
             try {
               // get the new names for subjects and generates casts -- needed especially for lists
@@ -291,8 +292,9 @@ public class Compiler extends TomGenericPlugin {
    * MatchConstraints of constraint that are variables not bound by a
    * pattern of the same constraint: variables of the host code (or of an
    * enclosing action), in scope before the compiled %match.
+   * hostNames holds the names of the subjects already in hostSubjects.
    */
-  private static void collectHostSubjects(Constraint constraint, ArrayList<BQTerm> hostSubjects) {
+  private static void collectHostSubjects(Constraint constraint, ArrayList<BQTerm> hostSubjects, HashSet<TomName> hostNames) {
     ArrayList<BQTerm> subjects = new ArrayList<BQTerm>();
     HashSet<TomName> bound = new HashSet<TomName>();
     try {
@@ -302,14 +304,7 @@ public class Compiler extends TomGenericPlugin {
     }
     for(BQTerm subject:subjects) {
       TomName name = subject.getAstName();
-      if(bound.contains(name)) {
-        continue;
-      }
-      boolean seen = false;
-      for(BQTerm other:hostSubjects) {
-        seen = seen || other.getAstName() == name;
-      }
-      if(!seen) {
+      if(!bound.contains(name) && hostNames.add(name)) {
         hostSubjects.add(subject);
       }
     }

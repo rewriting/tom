@@ -111,9 +111,11 @@ autonomes), comparés à ceux de Java Gom (`legacy/`) :
   exemples en commentaire de `GeneralPurposePropagator.t` ne comptent pas).
 - **Accolades du code hôte** : sous `-go`, les `{ … }` du code hôte d'une
   action (que `-np` analyse comme des blocs) restent du texte hôte
-  (`AstBuilder`), et le compilateur écrit `_ = s` pour chaque sujet
-  variable d'un `%match` (une variable hôte que les motifs n'inspectent
-  pas resterait inutilisée, ce que Go refuse).
+  (`AstBuilder`), et le compilateur écrit `_ = s` (une fois par nom) pour
+  chaque sujet variable d'un `%match` qui n'est pas lié par un motif de la
+  même règle, c'est-à-dire une variable du code hôte ou d'une action
+  englobante (une telle variable que les motifs n'inspectent pas
+  resterait inutilisée, ce que Go refuse).
 
 ## Orientation pour la suite
 
