@@ -35,7 +35,7 @@ plus. Jalons : J0 (cible Go dans Tom Java, livré et promu dans
 Tom+Go, **terminé** le 2026-10-23 : 77 OK, 11 OK diagnostics, 9 échoue
 dans legacy, 2 non supportés, 4 support, 0 divergence, 0 non porté — rapport
 `doc/go/j2-report.md`, tableau de bord `doc/go/port-dashboard.md`),
-J3 (couverture des constructions : 17/17, `doc/go/coverage.md`), J4
+J3 (couverture des constructions : 16 lignes, 0 non couverte, `doc/go/coverage.md`), J4
 (compilateur réécrit en Tom+Go, portage « de la fin vers le début » à
 partir du backend, règle d'équivalence stricte sauf positions au
 parser — cf. `doc/go/README.md` « Orientation pour la suite », spec à

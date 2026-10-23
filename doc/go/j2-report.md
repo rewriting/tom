@@ -59,8 +59,9 @@ Source : `doc/go/port-dashboard.md` (`mage portGo`), 103 fichiers.
 
 Évolution du nombre de cas OK : 13 au départ (fin de J0/J1), puis 22 après `sl/`, 49 après `gom/`, 62 après les petits répertoires, et 77 après les fichiers racine.
 
-**Couverture T3** (`doc/go/coverage.md`, `mage coverage`) : 17/17
-constructions couvertes. La ligne « règles étiquetées » compte 0
+**Couverture T3** (`doc/go/coverage.md`, `mage coverage`) : 16
+constructions listées, 0 non couverte (un premier décompte indiquait 17 ;
+le tableau actuel compte 16 lignes). La ligne « règles étiquetées » compte 0
 utilisation dans le compilateur. Les seules occurrences sont des exemples
 en commentaire de `GeneralPurposePropagator.t`, et le comptage retire
 désormais les commentaires. Elle est donc couverte à vide.
