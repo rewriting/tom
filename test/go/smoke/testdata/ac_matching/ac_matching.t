@@ -12,6 +12,7 @@ package main
 import (
   "fmt"
   "sort"
+  "strings"
 
   _ "tom/library/sl" // the generated term_gen.go needs the Go runtime module
 )
@@ -41,14 +42,26 @@ func main() {
   fmt.Println(len(sols), sols)
 
   var t2 T = `f(a(),b(),a())
-  n, k := 0, 0
+  var sols2 []string
   %match(t2) {
     f??(X*,X*,Y*) -> {
-      n++
-      if `X == `f() && `Y == t2 || `X == `f(a()) && `Y == `f(b()) {
-        k++
-      }
+      sols2 = append(sols2, "X=" + canon(`X) + " Y=" + canon(`Y))
     }
   }
-  fmt.Println(n, k)
+  sort.Strings(sols2)
+  fmt.Println(len(sols2), sols2)
+}
+
+// canon prints t with the elements of an f list sorted: the order of
+// the elements of an AC term depends on the hash values.
+func canon(t T) string {
+  if !t.IsConsf() && !t.IsEmptyf() {
+    return fmt.Sprint(t)
+  }
+  var elems []string
+  for ; t.IsConsf(); t = t.GetTailf() {
+    elems = append(elems, fmt.Sprint(t.GetHeadf()))
+  }
+  sort.Strings(elems)
+  return "f(" + strings.Join(elems, ",") + ")"
 }

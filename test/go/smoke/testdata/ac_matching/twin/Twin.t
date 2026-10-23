@@ -37,15 +37,27 @@ public class Twin {
     System.out.println(sols.size() + " [" + String.join(" ", sols) + "]");
 
     T t2 = `f(a(),b(),a());
-    int n = 0, k = 0;
+    List<String> sols2 = new ArrayList<String>();
     %match(t2) {
       f??(X*,X*,Y*) -> {
-        n++;
-        if (`X == `f() && `Y == t2 || `X == `f(a()) && `Y == `f(b())) {
-          k++;
-        }
+        sols2.add("X=" + canon(`X) + " Y=" + canon(`Y));
       }
     }
-    System.out.println(n + " " + k);
+    Collections.sort(sols2);
+    System.out.println(sols2.size() + " [" + String.join(" ", sols2) + "]");
+  }
+
+  // canon prints t with the elements of an f list sorted: the order of
+  // the elements of an AC term depends on the hash values.
+  static String canon(T t) {
+    if (!t.isConsf() && !t.isEmptyf()) {
+      return t.toString();
+    }
+    List<String> elems = new ArrayList<String>();
+    for (; t.isConsf(); t = t.getTailf()) {
+      elems.add(t.getHeadf().toString());
+    }
+    Collections.sort(elems);
+    return "f(" + String.join(",", elems) + ")";
   }
 }
