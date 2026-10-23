@@ -1,7 +1,11 @@
 // Package harness drives built Tom Java distributions (legacy/ and the
 // repository root) and temporary Go modules for the cross-checking
 // harnesses T0–T3. Every helper skips the calling test when a required
-// tool (java, a built dist) is missing.
+// tool (java, javac, cc, a built dist) is missing, unless
+// TOMGO_REQUIRE_TOOLS=1 (set by the mage targets portGo, portJava, smoke
+// and coverage, and implied by -write-dashboard): then a missing tool is
+// a failure, so that a run without its tools cannot pass vacuously. A
+// stale src/dist (older than the compiler's sources) is always a failure.
 package harness
 
 import (
@@ -15,7 +19,37 @@ import (
 	"strings"
 	"sync"
 	"testing"
+	"time"
 )
+
+// RequireToolsEnv is the environment variable that turns every
+// missing-tool skip of the harness into a failure (value "1").
+const RequireToolsEnv = "TOMGO_REQUIRE_TOOLS"
+
+// RequireTools reports whether a missing tool must fail the test.
+func RequireTools() bool { return os.Getenv(RequireToolsEnv) == "1" }
+
+// Missing reports a missing tool: it skips the test, or fails it when
+// RequireTools.
+func Missing(t testing.TB, format string, args ...any) {
+	t.Helper()
+	msg := fmt.Sprintf(format, args...)
+	if RequireTools() {
+		t.Fatalf("%s (%s=1: required tools must be present)", msg, RequireToolsEnv)
+	}
+	t.Skip(msg)
+}
+
+// LookPath returns the path of the command name, or reports it missing
+// (Missing).
+func LookPath(t testing.TB, name string) string {
+	t.Helper()
+	p, err := exec.LookPath(name)
+	if err != nil {
+		Missing(t, "%s not found in PATH", name)
+	}
+	return p
+}
 
 // RepoRoot walks up from the working directory to the directory that
 // holds both build.xml and test/go/go.mod.
@@ -44,15 +78,13 @@ type Dist struct{ Home string }
 
 func dist(t testing.TB, env, rel string) Dist {
 	t.Helper()
-	if _, err := exec.LookPath("java"); err != nil {
-		t.Skip("java not found in PATH")
-	}
+	LookPath(t, "java")
 	home := os.Getenv(env)
 	if home == "" {
 		home = filepath.Join(RepoRoot(t), rel)
 	}
 	if !fileExists(filepath.Join(home, "bin", "tom")) {
-		t.Skipf("no Tom distribution at %s (build it, or set %s)", home, env)
+		Missing(t, "no Tom distribution at %s (build it, or set %s)", home, env)
 	}
 	return Dist{Home: home}
 }
@@ -60,8 +92,77 @@ func dist(t testing.TB, env, rel string) Dist {
 // LegacyDist is the human-written compiler built in legacy/.
 func LegacyDist(t testing.TB) Dist { return dist(t, "TOM_LEGACY_HOME", "legacy/src/dist") }
 
-// NewDist is the extended compiler built at the repository root.
-func NewDist(t testing.TB) Dist { return dist(t, "TOM_NEW_HOME", "src/dist") }
+// NewDist is the extended compiler built at the repository root. It
+// fails (whatever RequireTools) when the dist is older than the
+// compiler's sources (CheckFresh).
+func NewDist(t testing.TB) Dist {
+	t.Helper()
+	d := dist(t, "TOM_NEW_HOME", "src/dist")
+	if err := freshness(RepoRoot(t), d.Home); err != nil {
+		t.Fatal(err)
+	}
+	return d
+}
+
+var (
+	freshMu    sync.Mutex
+	freshCache = map[string]error{}
+)
+
+// freshness is CheckFresh, computed once per dist home.
+func freshness(root, home string) error {
+	freshMu.Lock()
+	defer freshMu.Unlock()
+	if err, ok := freshCache[home]; ok {
+		return err
+	}
+	err := CheckFresh(root, home)
+	freshCache[home] = err
+	return err
+}
+
+// CheckFresh returns an error when the compiler of the dist at home
+// (lib/tom-compiler-full.jar) is older than one of the sources it is
+// built from: src/tom/**/*.{t,java,tom,config} and src/tom/library/mapping/** of the
+// repository root. (The Go runtime the dist ships is compared with
+// src/go/tom by SetupGoModule.)
+func CheckFresh(root, home string) error {
+	jar := filepath.Join(home, "lib", "tom-compiler-full.jar")
+	st, err := os.Stat(jar)
+	if err != nil {
+		return fmt.Errorf("no compiler jar in the dist: %v (rebuild ./build.sh src.dist)", err)
+	}
+	var newest string
+	var newestTime time.Time
+	consider := func(p string, d fs.DirEntry) {
+		if info, err := d.Info(); err == nil && info.ModTime().After(newestTime) {
+			newest, newestTime = p, info.ModTime()
+		}
+	}
+	src := filepath.Join(root, "src", "tom")
+	mapping := filepath.Join(src, "library", "mapping")
+	err = filepath.WalkDir(src, func(p string, d fs.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+		if d.IsDir() {
+			return nil
+		}
+		if hasAnySuffix(p, ".t", ".java", ".tom", ".config") || strings.HasPrefix(p, mapping+string(filepath.Separator)) {
+			consider(p, d)
+		}
+		return nil
+	})
+	if err != nil {
+		return fmt.Errorf("scanning the compiler's sources: %v", err)
+	}
+	if newest != "" && newestTime.After(st.ModTime()) {
+		rel, _ := filepath.Rel(root, newest)
+		return fmt.Errorf("stale compiler: %s (%s) is newer than %s (%s): rebuild ./build.sh src.dist",
+			rel, newestTime.Format(time.RFC3339), jar, st.ModTime().Format(time.RFC3339))
+	}
+	return nil
+}
 
 // Compile runs `bin/tom -d outDir args… src` with TOM_HOME=d.Home and
 // GOMGO_BIN set, and returns the combined stdout+stderr.
@@ -188,4 +289,13 @@ func runtimeDiff(src, dist string) string {
 		}
 	}
 	return ""
+}
+
+func hasAnySuffix(p string, suffixes ...string) bool {
+	for _, s := range suffixes {
+		if strings.HasSuffix(p, s) {
+			return true
+		}
+	}
+	return false
 }

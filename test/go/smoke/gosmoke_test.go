@@ -20,9 +20,7 @@ import (
 )
 
 func TestGoSmoke(t *testing.T) {
-	if _, err := exec.LookPath("go"); err != nil {
-		t.Skip("go not found in PATH")
-	}
+	harness.LookPath(t, "go")
 	dist := harness.NewDist(t)
 	dirs, err := filepath.Glob("testdata/*")
 	if err != nil {
@@ -91,9 +89,7 @@ func TestJavaTwins(t *testing.T) {
 		t.Fatal("no twin under testdata/*/twin/")
 	}
 	legacy := harness.LegacyDist(t)
-	if _, err := exec.LookPath("javac"); err != nil {
-		t.Skip("javac not found in PATH")
-	}
+	harness.LookPath(t, "javac")
 	cp := filepath.Join(legacy.Home, "lib", "tom-runtime-full.jar")
 	for _, twin := range twins {
 		d := filepath.Dir(filepath.Dir(twin))

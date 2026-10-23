@@ -167,8 +167,13 @@ planchers sont relevés à ces valeurs.
 ## 5. Tout relancer
 
 Prérequis : JDK 8, Go ≥ 1.26, `mage`, `legacy/src/dist` construit
-(`cd legacy && ./build.sh stable && ./build.sh src.dist`), et `cc` pour
-le mode C (sinon il est sauté).
+(`cd legacy && ./build.sh stable && ./build.sh src.dist`). `cc` ne sert
+qu'avec `-update-oracle` (recalcul des oracles C de `cfib1.t` et
+`loulou.t`) : T2 lit sinon l'oracle C mis en cache dans
+`test/go/testdata/oracle/`. Les cibles `mage` posent
+`TOMGO_REQUIRE_TOOLS=1` : un outil manquant (java, javac, cc, une dist)
+fait échouer au lieu de sauter, et une `src/dist` plus ancienne que les
+sources du compilateur échoue toujours (« rebuild ./build.sh src.dist »).
 
 ```bash
 unset TOM_HOME

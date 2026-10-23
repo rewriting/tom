@@ -130,7 +130,7 @@ func TestCoverage(t *testing.T) {
 	compiler := []string{filepath.Join(root, "src", "tom", "engine"), filepath.Join(root, "src", "tom", "platform")}
 	dashboard, err := os.ReadFile(filepath.Join(root, "doc", "go", "port-dashboard.md"))
 	if err != nil {
-		t.Skip("no port dashboard yet (run mage portGo)")
+		harness.Missing(t, "no port dashboard yet (run mage portGo)")
 	}
 	okCases := map[string]bool{}
 	for _, line := range strings.Split(string(dashboard), "\n") {

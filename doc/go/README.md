@@ -31,6 +31,10 @@ Orchestration : `go.work` à la racine (modules `src/go/tom`, `test/go`,
 `magefiles`, `prototype/tomgo`) et `magefiles/` ; cibles `mage -d magefiles
 -w . <cible>` (ou `cd magefiles && mage <cible>`), cf. `mage -d magefiles
 -w . -l`.
+Les cibles `portGo`, `portJava`, `smoke` et `coverage` (et `-write-dashboard`)
+posent `TOMGO_REQUIRE_TOOLS=1` : un outil absent (java, javac, cc, une dist)
+fait échouer le test au lieu de le sauter ; une `src/dist` plus ancienne
+que `src/tom/**/*.{t,java,tom,config}` ou `src/tom/library/mapping/**` échoue toujours.
 
 ## Différences connues avec Java
 
@@ -72,6 +76,9 @@ autonomes), comparés à ceux de Java Gom (`legacy/`) :
   `make_insert`…, ignorés) ; seuls les hooks de `knownHookTable` (ceux de
   l'ADT du compilateur) y sont abaissés, en prologue Go de `Make<Op>`.
   Passer l'ADT du compilateur aux cellules est une décision de J4.
+  Les ADT du compilateur (`src/tom/gom/adt`, `src/tom/engine/adt`) seront
+  copiés dans `src/go/tom` avec des hooks Go, pour passer par gomgo comme
+  n'importe quel module.
 - **Hooks dans le mapping.** Les hooks `make`, `make_insert`,
   `make_empty`, les règles (`module M:rules()`) et les blocs (`block`)
   sont du code Tom+Go : gomgo les écrit dans le mapping généré (`.tom`),
@@ -92,6 +99,13 @@ autonomes), comparés à ceux de Java Gom (`legacy/`) :
   fichiers `.t` d'un même paquetage Go qui utilisent le filtrage AC les
   déclareraient donc deux fois (refusé par Go) ; à régler en J4 (comme
   les `tom_*` des mappings, qui imposent déjà un fichier Tom par paquetage).
+- **Code hôte d'un `%strategy`.** Dans une action de `visit`, le code hôte
+  Java lit un paramètre de la stratégie comme un champ (`param`) et
+  appelle `getEnvironment()` ; en Go, il doit écrire
+  `tom__strat.<param>` et `tom__strat.GetEnvironment()` (`tom__strat` est
+  le récepteur de la méthode générée). C'est une limite du compilateur,
+  qui ne réécrit pas ces noms dans le code hôte ; les ports le signalent
+  par une note `// port:` (par ex. `test/go/sl/TestGetSubterm.t`).
 - **Exceptions.** Les exceptions Java de l'API Gom sont des paniques
   `*aterm.GomError` (`IllegalArgument` vrai pour une
   `IllegalArgumentException` : `Length`/`Reverse` d'un terme qui n'est pas
@@ -150,5 +164,21 @@ autonomes), comparés à ceux de Java Gom (`legacy/`) :
   de remplissage, diagnostics comparés par nom (mode `Regress`) ; chaque
   tolérance est un test séparé avec un compteur visible, et la ligne
   d'une erreur doit continuer à désigner le bon endroit du `.t`.
+- **Points à régler au début de J4.**
+  - Le pont doit exporter l'AST produit **avec `-go`** : les branches
+    propres à Go (`_ = s` des sujets non liés, accolades des `ITL`,
+    `LocalIntrospector` Go, `next_minimal_extract` Go) sont déjà dans
+    l'AST avant le backend ; les phases portées plus tard devront
+    reproduire `collectHostSubjects` et la règle des accolades.
+  - Décider comment plusieurs `.t` partagent un paquetage Go : les aides
+    `tom_*` des mappings et les aides AC de niveau paquetage imposent
+    aujourd'hui un `.t` par paquetage.
+  - L'ADT du moteur n'a pas de mapping Tom dans `src/go` : le générer
+    (ADT copiés dans `src/go/tom` et compilés comme modules utilisateur
+    par gomgo, voir « Représentation des listes »).
+  - Fabrique `sharedobjects` : références faibles (paquetage Go `weak`)
+    et, peut-être, découpage (sharding) du mutex global.
+  - Vérifier que la `.table` porte le code hôte Go des mappings générés
+    par gomgo.
 - **Reporté :** `src/tom` → `src/java/tom` (et `stable/java`) ; à faire
   seulement quand un compilateur Tom+Go fonctionnera.

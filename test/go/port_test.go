@@ -13,7 +13,6 @@ import (
 	"fmt"
 	"io"
 	"os"
-	"os/exec"
 	"path/filepath"
 	"regexp"
 	"sort"
@@ -26,6 +25,17 @@ import (
 )
 
 var update = flag.Bool("update", false, "rewrite testdata/golden/*.go from the current compiler")
+
+// TestMain: -write-dashboard implies TOMGO_REQUIRE_TOOLS=1, so that a
+// missing tool fails the run instead of writing a dashboard of skipped
+// (hence failed-looking) cases.
+func TestMain(m *testing.M) {
+	flag.Parse()
+	if *writeDashboard {
+		os.Setenv(harness.RequireToolsEnv, "1")
+	}
+	os.Exit(m.Run())
+}
 
 type portCase struct {
 	Rel    string // path relative to test/ (and to test/go/)
@@ -85,6 +95,21 @@ type portCase struct {
 	// legacy/'s tom -c -np (the default parser is tailored for Java) and
 	// the C compiler cc (cOracle).
 	C bool
+	// Asserts (main programs: neither GoTest nor Regress) is the
+	// original's assertion idiom and how many times the original calls it
+	// (outside comments and its definition); TestMainAssertions requires
+	// the port to call it at least as often, so that stripping assertions
+	// from a port cannot keep it OK (its oracle is only stdout and the exit
+	// status).
+	Asserts assertGuard
+}
+
+// assertGuard is the assertion idiom of a main program: the function (or
+// C macro) Call, called N times by the original. Call "" (N 0) records a
+// main program without assertion, checked by its output only.
+type assertGuard struct {
+	Call string
+	N    int
 }
 
 // gomFile is a standalone .gom file of test/ (Rel, relative to test/);
@@ -157,9 +182,9 @@ func supportDir(rel string) string {
 }
 
 var cases = []portCase{
-	{Rel: "Peano.t"},
+	{Rel: "Peano.t", Asserts: assertGuard{"assertTrue", 6}},
 	{Rel: "TestPeano.t", GoTest: true},
-	{Rel: "Array.t"},
+	{Rel: "Array.t", Asserts: assertGuard{"assertTrue", 6}},
 	{Rel: "TestArray.t", GoTest: true},
 	{Rel: "TestList.t", GoTest: true},
 	{Rel: "TestBackQuote.t", GoTest: true},
@@ -185,7 +210,7 @@ var cases = []portCase{
 	}},
 	{Rel: "sl/TestHandWrittenMapping.t", GoTest: true, TomArgs: map[string][]string{"sl/TestHandWrittenMapping.t": {"--genIntrospector"}}},
 	{Rel: "gom/TestDotted.t", GoTest: true, Gom: []gomFile{{Rel: "gom/Dotted.gom"}}},
-	{Rel: "gom/BenchConsGom.t", Gom: []gomFile{{Rel: "gom/List.gom"}}},
+	{Rel: "gom/BenchConsGom.t", Gom: []gomFile{{Rel: "gom/List.gom"}}, Asserts: assertGuard{"", 0}}, // a benchmark: no assertion
 	{Rel: "gom/TestBool.t", GoTest: true, Gom: []gomFile{{Rel: "gom/Bool.gom"}}},
 	{Rel: "gom/TestMultiHook.t", GoTest: true, Gom: []gomFile{{Rel: "gom/MultiHook.gom"}}},
 	{Rel: "gom/TestTomHook.t", GoTest: true},
@@ -228,7 +253,7 @@ var cases = []portCase{
 	{Rel: "backquote/TestBackquoteGom.t", GoTest: true, OracleDeps: []string{"backquote/TestDefaultValue.t"},
 		Gom: []gomFile{{Rel: "backquote/term.gom", OracleOnly: true}}},
 	{Rel: "backquote/TestDefaultValue.t", GoTest: true, Gom: []gomFile{{Rel: "backquote/term.gom"}}},
-	{Rel: "rule/Array.t"},
+	{Rel: "rule/Array.t", Asserts: assertGuard{"assertTrue", 6}},
 	{Rel: "acmatching/TestAC.t", GoTest: true},
 	{Rel: "acmatching/TestBool3.t", GoTest: true},
 	{Rel: "backquote/TestBackquoteWithBracket.t", GoTest: true, OracleDeps: []string{"backquote/TestDefaultValue.t"},
@@ -259,9 +284,9 @@ var cases = []portCase{
 	{Rel: "TestConstraintCombination.t", GoTest: true},
 	{Rel: "TestConstraintCombinationWithSubtype.t", GoTest: true},
 	{Rel: "TestReflectiveStrategy.t", GoTest: true},
-	{Rel: "TomList.t"},
-	{Rel: "cfib1.t", C: true},
-	{Rel: "loulou.t", C: true},
+	{Rel: "TomList.t", Asserts: assertGuard{"assertTrue", 6}},
+	{Rel: "cfib1.t", C: true, Asserts: assertGuard{"test_assert", 1}},
+	{Rel: "loulou.t", C: true, Asserts: assertGuard{"test_assert", 2}},
 }
 
 // legacyFails lists the originals (relative to test/) that legacy/
@@ -741,6 +766,7 @@ func legacyOracle(t *testing.T, c portCase) oracle {
 		return writeOracle(t, c, cOracle(t, c))
 	}
 	legacy := harness.LegacyDist(t)
+	harness.LookPath(t, "javac")
 	root := harness.RepoRoot(t)
 	src := filepath.Join(root, "test", c.Rel)
 	dir := t.TempDir()
@@ -835,10 +861,9 @@ func writeOracle(t *testing.T, c portCase, o oracle) oracle {
 // the warnings are not the test's business).
 func cOracle(t *testing.T, c portCase) oracle {
 	t.Helper()
-	cc, err := exec.LookPath("cc")
-	if err != nil {
-		t.Skip("cc not found in PATH")
-	}
+	// cc is needed only here, with -update-oracle: T2 otherwise reads
+	// the cached oracle
+	cc := harness.LookPath(t, "cc")
 	legacy := harness.LegacyDist(t)
 	root := harness.RepoRoot(t)
 	dir := t.TempDir()
@@ -1201,9 +1226,14 @@ func TestUnsupportedMarkers(t *testing.T) {
 			t.Errorf("%s: `// port: unsupported` note present=%v but Unsupported has %d entries", c.Rel, marked, len(c.Unsupported))
 		}
 		for name := range c.Unsupported {
+			// exact names: testGraphRules5 must not be satisfied by
+			// testGraphRules51
 			lower := strings.ToLower(name[:1]) + name[1:]
-			if !strings.Contains(string(data), lower) {
-				t.Errorf("%s: unsupported test %s (%s) not mentioned in the port", c.Rel, name, lower)
+			if !regexp.MustCompile(`\b` + regexp.QuoteMeta(lower) + `\b`).Match(data) {
+				t.Errorf("%s: unsupported test %s (%s) not named in the port's note", c.Rel, name, lower)
+			}
+			if !regexp.MustCompile(`(?m)^\s*//\s*func ` + regexp.QuoteMeta(name) + `\(`).Match(data) {
+				t.Errorf("%s: unsupported test %s is not kept commented out (`//func %s(`) in the port", c.Rel, name, name)
 			}
 		}
 	}
@@ -1287,6 +1317,9 @@ func TestDashboard(t *testing.T) {
 		b.WriteString("- " + s + " : " + strconv.Itoa(counts[s]) + "\n")
 	}
 	b.WriteString("\n| Cas | Statut | Notes |\n|---|---|---|\n" + strings.Join(rows, "\n") + "\n")
+	if t.Failed() {
+		t.Fatal("dashboard not written: a status could not be computed (see above)")
+	}
 	if err := os.WriteFile(filepath.Join(root, "doc", "go", "port-dashboard.md"), []byte(b.String()), 0o644); err != nil {
 		t.Fatal(err)
 	}
@@ -1334,8 +1367,18 @@ func dashboardStatus(t *testing.T, c portCase) string {
 		return "oracle invalide"
 	}
 	status := "échec tom"
+	// A skipped status subtest (a missing tool) would leave "échec tom":
+	// it fails the dashboard instead (with -write-dashboard, the harness
+	// already turns missing tools into failures).
+	skipped := false
+	defer func() {
+		if skipped {
+			t.Errorf("%s: status subtest skipped (missing tool?): the dashboard would record a failure that is not one", c.Rel)
+		}
+	}()
 	if c.Regress {
 		t.Run("status/"+c.Rel, func(t *testing.T) {
+			defer func() { skipped = t.Skipped() }()
 			log, _, err := regressDiagnostics(t, c, t.TempDir())
 			switch {
 			case err != nil:
@@ -1349,6 +1392,7 @@ func dashboardStatus(t *testing.T, c portCase) string {
 		return status
 	}
 	t.Run("status/"+c.Rel, func(t *testing.T) {
+		defer func() { skipped = t.Skipped() }()
 		dir := t.TempDir()
 		if _, _, err := generateGo(t, c, dir); err != nil {
 			return
@@ -1614,6 +1658,7 @@ func TestLegacyFails(t *testing.T) {
 		}
 	}
 	legacy := harness.LegacyDist(t)
+	harness.LookPath(t, "javac")
 	root := harness.RepoRoot(t)
 	cp := strings.Join([]string{
 		filepath.Join(legacy.Home, "lib", "tom-runtime-full.jar"),
@@ -1681,6 +1726,63 @@ func checkFailureOutput(t *testing.T, stage, out string, want []string) {
 		if !strings.Contains(out, w) {
 			t.Errorf("%s fails, but its output lacks %q (another failure?)\n%s", stage, w, out)
 		}
+	}
+}
+
+// assertCalls counts the calls of the function or macro name in src,
+// outside comments and outside its definitions (Java `void name(`, Go
+// `func name(`, C `#define name(`).
+func assertCalls(src, name string) int {
+	re := regexp.MustCompile(`(^|[^\w.])` + regexp.QuoteMeta(name) + `\s*\(`)
+	def := regexp.MustCompile(`(func|void|#define)\s+$`)
+	n := 0
+	for _, line := range strings.Split(stripComments(src), "\n") {
+		for _, m := range re.FindAllStringSubmatchIndex(line, -1) {
+			if !def.MatchString(line[:m[3]]) {
+				n++
+			}
+		}
+	}
+	return n
+}
+
+// TestMainAssertions: the original of every main-program case calls its
+// assertion idiom Asserts.N times, and the port at least as often.
+func TestMainAssertions(t *testing.T) {
+	root := harness.RepoRoot(t)
+	for _, c := range cases {
+		if c.GoTest || c.Regress {
+			if c.Asserts != (assertGuard{}) {
+				t.Errorf("%s: Asserts is for main programs only", c.Rel)
+			}
+			continue
+		}
+		if c.Asserts.Call == "" {
+			if c.Asserts.N != 0 {
+				t.Errorf("%s: Asserts.N without Asserts.Call", c.Rel)
+			}
+			if c.Rel != "gom/BenchConsGom.t" {
+				t.Errorf("%s: main program without an assertion guard (set Asserts)", c.Rel)
+			}
+			continue
+		}
+		orig, err := os.ReadFile(filepath.Join(root, "test", c.Rel))
+		if err != nil {
+			t.Fatal(err)
+		}
+		port, err := os.ReadFile(c.Rel)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if n := assertCalls(string(orig), c.Asserts.Call); n != c.Asserts.N {
+			t.Errorf("%s: the original calls %s %d times, the case table records %d", c.Rel, c.Asserts.Call, n, c.Asserts.N)
+		}
+		if n := assertCalls(string(port), c.Asserts.Call); n < c.Asserts.N {
+			t.Errorf("%s: the port calls %s %d times, fewer than the original's %d", c.Rel, c.Asserts.Call, n, c.Asserts.N)
+		}
+	}
+	if got := assertCalls("void assertTrue(boolean c) {}\n assertTrue(x); // assertTrue(y)\nfoo.assertTrue(z); xassertTrue(w)\n#define test_assert(c) x\n", "assertTrue"); got != 1 {
+		t.Errorf("assertCalls = %d, want 1", got)
 	}
 }
 
