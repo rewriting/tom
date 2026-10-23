@@ -6,9 +6,12 @@
 // Both directories hold .go goldens of the same names. For each pair,
 // the old file is transformed (the nine mapping helper functions removed,
 // the package-level tom_* declarations renamed with the per-file prefix
-// tom_<F>_), the new file has the nine closures folded back into calls
-// to the helpers, and the two Go token streams (comments, positions and
-// semicolons ignored) must be equal.
+// tom_<F>_, a removed helper taking its explicit ';' with it), the new
+// file has the nine closures folded back into calls to the helpers, and
+// the two Go token streams must be equal. Comments, positions and the
+// semicolons the scanner inserts at a newline are ignored; explicit ';'
+// tokens are compared, since the generated one-line Go depends on them
+// (a '}' turned into '};' is a real change).
 package main
 
 import (
@@ -67,7 +70,8 @@ type tok struct {
 	off int
 }
 
-// tokens scans src, dropping comments and semicolons.
+// tokens scans src, dropping comments and the automatically inserted
+// semicolons (literal "\n"); explicit ';' tokens are kept.
 func tokens(src []byte) ([]tok, error) {
 	fset := token.NewFileSet()
 	f := fset.AddFile("", fset.Base(), len(src))
@@ -80,7 +84,7 @@ func tokens(src []byte) ([]tok, error) {
 		if t == token.EOF {
 			break
 		}
-		if t == token.SEMICOLON {
+		if t == token.SEMICOLON && lit == "\n" {
 			continue
 		}
 		if lit == "" && t != token.IDENT {
@@ -180,11 +184,19 @@ func checkPair(old, new []byte, prefix string) error {
 		}
 	}
 	var a []tok
+	dropSemi := false // the token after a removed helper is its ';'
 next:
 	for _, t := range oldToks {
 		for _, r := range removed {
 			if t.off >= r.from && t.off < r.to {
+				dropSemi = true
 				continue next
+			}
+		}
+		if dropSemi {
+			dropSemi = false
+			if t.t == token.SEMICOLON {
+				continue
 			}
 		}
 		if t.t == token.IDENT {

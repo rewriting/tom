@@ -57,3 +57,26 @@ func TestErrorContext(t *testing.T) {
 		t.Fatalf("unexpected error %v", err)
 	}
 }
+
+func TestSemicolons(t *testing.T) {
+	old := "package main; func tom_make_a() int { return 1 }; func main() { if true { _ = tom_make_a() }; }"
+	cases := []struct {
+		name, new string
+		ok        bool
+	}{
+		// an explicit ';' added or removed is a real change of the one-line Go
+		{"explicit semicolon dropped",
+			"package main; func tom_X_make_a() int { return 1 }; func main() { if true { _ = tom_X_make_a() } }", false},
+		{"explicit semicolon added",
+			"package main; func tom_X_make_a() int { return 1; }; func main() { if true { _ = tom_X_make_a() }; }", false},
+		// newlines only move automatic semicolons
+		{"newline placement",
+			"package main; func tom_X_make_a() int { return 1 }; func main() {\n if true {\n _ = tom_X_make_a()\n }; }\n", true},
+	}
+	for _, c := range cases {
+		err := checkPair([]byte(old), []byte(c.new), pfx)
+		if (err == nil) != c.ok {
+			t.Errorf("%s: err = %v, want ok=%v", c.name, err, c.ok)
+		}
+	}
+}
