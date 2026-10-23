@@ -18,7 +18,7 @@ import (
 // Hook constructs are recognised — their kind/point-cut/arglist and a
 // raw (brace-balanced) body are stored in a `Hook` production. The
 // body itself is NOT interpreted at parse time; lowering it to Go is
-// the backend's job (see knownHookTable in tom/gom/backend).
+// the backend's job (see userhooks.go in tom/gom/backend).
 func Parse(r io.Reader) (gomast.GomModule, error) {
 	src, err := io.ReadAll(r)
 	if err != nil {

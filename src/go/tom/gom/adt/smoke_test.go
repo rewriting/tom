@@ -60,8 +60,8 @@ func TestSmoke_Construction(t *testing.T) {
 		}
 	}
 
-	// The HookList:block-derived ContainsTomCode should always be
-	// false on a module without hooks.
+	// ContainsTomCode (the HookList:javablock hook of Objects.gom) is
+	// false on an empty hook list.
 	emptyHookList := MakeConcHook()
 	if emptyHookList.ContainsTomCode() {
 		t.Fatal("empty HookList must not report ContainsTomCode")
@@ -75,4 +75,46 @@ func contains(s, sub string) bool {
 		}
 	}
 	return false
+}
+
+// ContainsTomCode is the javablock hook of HookList (Objects.gom):
+// Java's containsTomCode() of the HookList sort.
+func TestContainsTomCode_NoTomCode(t *testing.T) {
+	codeProg := MakeCode("// trivial Go body")
+	list := MakeConcHook(MakeBlockHook(codeProg, false), MakeInterfaceHook(codeProg))
+	if list.ContainsTomCode() {
+		t.Fatal("expected ContainsTomCode() = false, got true")
+	}
+}
+
+func TestContainsTomCode_FromBlockHook(t *testing.T) {
+	list := MakeConcHook(MakeBlockHook(MakeCode("// pretend this contains %match …"), true))
+	if !list.ContainsTomCode() {
+		t.Fatal("expected ContainsTomCode() = true on BlockHook with HasTomCode=true")
+	}
+}
+
+func TestContainsTomCode_FromMakeHook(t *testing.T) {
+	list := MakeConcHook(MakeMakeHook(MakeConcSlotField(), MakeCode("// body"), true))
+	if !list.ContainsTomCode() {
+		t.Fatal("expected ContainsTomCode() = true on MakeHook")
+	}
+}
+
+func TestContainsTomCode_FromMakeBeforeHook(t *testing.T) {
+	code := MakeCode("// body")
+	list := MakeConcHook(MakeInterfaceHook(code), MakeMakeBeforeHook(MakeConcSlotField(), code, true))
+	if !list.ContainsTomCode() {
+		t.Fatal("expected ContainsTomCode() = true on MakeBeforeHook (second element)")
+	}
+}
+
+func TestContainsTomCode_NonHasTomCodeKind(t *testing.T) {
+	// InterfaceHook / ImportHook / MappingHook have no HasTomCode
+	// field, so they must never contribute to ContainsTomCode.
+	code := MakeCode("hi")
+	list := MakeConcHook(MakeInterfaceHook(code), MakeImportHook(code), MakeMappingHook(code))
+	if list.ContainsTomCode() {
+		t.Fatal("hooks without HasTomCode must not be reported")
+	}
 }

@@ -1,9 +1,8 @@
 package backend
 
-// The Java Gom API of the generated terms, for the modules gomgo
-// generates outside the compiler's own ADT (gom-block, gom: Generate),
-// after Java Gom's SortTemplate, OperatorTemplate and
-// VariadicOperatorTemplate:
+// The Java Gom API of the generated terms (every module gomgo generates:
+// gom, gom-block, gom-batch), after Java Gom's SortTemplate,
+// OperatorTemplate and VariadicOperatorTemplate:
 //
 //   - on every sort (interface methods, implemented by every
 //     alternative): SymbolName, Is<op> (IsCons<op>/IsEmpty<op> for a
@@ -276,16 +275,15 @@ func neutralGo(mod gomast.GomModule, th opTheory) (string, error) {
 }
 
 // emitVariadicJava writes the list constructors of a variadic operator
-// (see the package comment above), replacing the plain Make<Op> of the
-// ADT backend. The lists are cons cells (cells.go); Cons<Op> runs the
+// (see the package comment above). The lists are cons cells (cells.go); Cons<Op> runs the
 // theory and the construction hooks as Java Gom's Cons<op>.make does
 // (HookTypeExpander), then RealMakeCons<Op> builds the shared cell.
 func (g *gen) emitVariadicJava(sortNm string, alt *gomast.AlternativeAlternative, structName, elem string) {
 	w := func(format string, args ...any) { fmt.Fprintf(&g.buf, format, args...) }
 	op := alt.Name
 	opGo := exportedField(op)
-	hooks := opHooks(g.mod, alt)
-	th := theoryOf(g.mod, alt)
+	hooks := opHooks(g.pkgMods, g.mod, alt)
+	th := theoryOf(g.pkgMods, g.mod, alt)
 	neutral, _ := neutralGo(g.mod, th) // CheckHooks reported the error
 
 	w("// RealMakeCons%s is Java Gom's Cons%s.realMake: the shared cell of head\n// and tail, without hook.\n", opGo, op)
@@ -383,8 +381,7 @@ func (g *gen) emitVariadicJava(sortNm string, alt *gomast.AlternativeAlternative
 	w("func %sFromArray(array []%s) %s { return Make%s(array...) }\n\n", opGo, elem, sortNm, opGo)
 }
 
-// emitVariadicMappingGo writes the mapping of a variadic operator for
-// the Java API backend: the Empty<op>/Cons<op> operators (as Java Gom
+// emitVariadicMappingGo writes the mapping of a variadic operator: the Empty<op>/Cons<op> operators (as Java Gom
 // declares them) and the %oplist, built by Empty<Op>/Cons<Op> through
 // the construction hooks.
 func emitVariadicMappingGo(buf *bytes.Buffer, sortNm string, alt *gomast.AlternativeAlternative, structName, elemSort string) {

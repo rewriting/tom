@@ -29,9 +29,10 @@ Commands:
                                    The output is a standalone Go module.
   gom-batch -o <out-dir> --pkg <name> <file1.gom> <file2.gom> …
                                    Generate ONE Go package combining several
-                                   .gom files. Slot types are resolved across
-                                   modules. Required for sources that import
-                                   each other (e.g. src/tom/gom/adt/*.gom).
+                                   .gom files (one <module>.go each) and its
+                                   Tom mapping <name>.tom. Slot types and
+                                   rules are resolved across modules
+                                   (e.g. src/go/tom/gom/adt/*.gom).
   gom-block -o <dir> --pkg <name> [--withCongruenceStrategies] [--nosharing]
             [--multithread] <file.gom>
                                    Compile a Tom gom block for the Go target

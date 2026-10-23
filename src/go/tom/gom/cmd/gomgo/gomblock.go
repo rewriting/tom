@@ -111,6 +111,7 @@ func writeGomBlock(mod gomast.GomModule, pkg, out string, opts backend.Options, 
 	}
 	opts.PackageName = pkg
 	all := append(append([]gomast.GomModule(nil), imported...), mod)
+	opts.PackageModules = all
 	var mapping []byte
 	mapping = append(mapping, backend.BuiltinIncludesGo(mod, imported...)...)
 	for i, m := range all {

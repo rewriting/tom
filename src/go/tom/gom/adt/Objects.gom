@@ -1,0 +1,77 @@
+module Objects
+imports String Code Gom boolean
+
+abstract syntax
+
+GomClass = AbstractTypeClass(ClassName:ClassName,
+                             Mapping:ClassName,
+                             SortList:ClassNameList,
+                             Hooks:HookList)
+         | SortClass(ClassName:ClassName,
+                     AbstractType:ClassName,
+                     Mapping:ClassName,
+                     Operators:ClassNameList,
+                     VariadicOperators:ClassNameList,
+                     OperatorClasses:GomClassList,
+                     SlotFields:SlotFieldList,
+                     Hooks:HookList)
+         | OperatorClass(ClassName:ClassName,
+                         AbstractType:ClassName,
+                         ExtendsType:ClassName,
+                         Mapping:ClassName,
+                         SortName:ClassName,
+                         SlotFields:SlotFieldList,
+                         Hooks:HookList,
+                         Comments:String)
+         | VariadicOperatorClass(ClassName:ClassName,
+                                 AbstractType:ClassName,
+                                 Mapping:ClassName,
+                                 SortName:ClassName,
+                                 Empty:GomClass,
+                                 Cons:GomClass,
+                                 Hooks:HookList,
+                                 Comments:String)
+         | TomMapping(ClassName:ClassName,SortClasses:GomClassList,OperatorClasses:GomClassList)
+
+GomClassList = ConcGomClass(GomClass*)
+
+ClassName = ClassName(Pkg:String,Name:String)
+ClassNameList = ConcClassName(ClassName*)
+
+SlotField = SlotField(Name:String,Domain:ClassName)
+SlotFieldList = ConcSlotField(SlotField*)
+
+Hook = MakeHook(HookArguments:SlotFieldList,Code:Code,HasTomCode:boolean)
+     | MakeBeforeHook(HookArguments:SlotFieldList,Code:Code,HasTomCode:boolean)
+     | BlockHook(Code:Code,HasTomCode:boolean)
+     | InterfaceHook(Code:Code)
+     | ImportHook(Code:Code)
+     | MappingHook(Code:Code)
+HookList = ConcHook(Hook*)
+
+// Go: plain Go code (a javablock: no Tom code, so the package needs no
+// Tom compilation); its method is declared by the HookList interface.
+sort HookList:javablock() {
+  // ContainsTomCode is Java's containsTomCode(): whether a hook of the
+  // list is a MakeHook, MakeBeforeHook or BlockHook whose HasTomCode is
+  // true (ConcHook(_*,(MakeHook|MakeBeforeHook|BlockHook)[HasTomCode=true()],_*)).
+  func (t *ConcHookHookList) ContainsTomCode() bool {
+    for _, h := range t.ToArray() {
+      switch h := h.(type) {
+      case *MakeHookHook:
+        if h.HasTomCode {
+          return true
+        }
+      case *MakeBeforeHookHook:
+        if h.HasTomCode {
+          return true
+        }
+      case *BlockHookHook:
+        if h.HasTomCode {
+          return true
+        }
+      }
+    }
+    return false
+  }
+}

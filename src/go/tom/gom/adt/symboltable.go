@@ -5,6 +5,10 @@ import (
 	"fmt"
 	"strings"
 
+	"io"
+	"sync/atomic"
+
+	"tom/library/aterm"
 	"tom/library/sharedobjects"
 	sl "tom/library/sl"
 )
@@ -13,11 +17,60 @@ import (
 var _ = fmt.Sprintf
 var _ = strings.Join
 var _ sl.Strategy = nil
+var _ = io.EOF
+var _ = aterm.GetInstance
+var _ atomic.Bool
 
 // SortDescription is the Go interface backing the Gom sort SortDescription.
 type SortDescription interface {
 	sharedobjects.Term
 	isSortDescription()
+	// Java Gom API (see the package's generated methods)
+	SymbolName() string
+	IsSortDescription() bool
+	GetConstructors() StringList
+	GetModuleSymbol() string
+	GetFreshInfo() FreshSortInfo
+	Length() int
+	Reverse() SortDescription
+	CompareTo(o any) int
+	CompareToLPO(o any) int
+	ToATerm() aterm.ATerm
+}
+
+// SortDescriptionFromTerm is Java Gom's SortDescription.fromTerm(trm).
+func SortDescriptionFromTerm(trm aterm.ATerm) SortDescription {
+	return SortDescriptionFromTermConv(trm, aterm.IdConverter{})
+}
+
+// SortDescriptionFromTermConv is Java Gom's SortDescription.fromTerm(trm, atConv): the term of
+// the first operator of the sort that converts the ATerm; it panics
+// (IllegalArgumentException) when there is none.
+func SortDescriptionFromTermConv(trm aterm.ATerm, conv aterm.ATermConverter) SortDescription {
+	converted := conv.Convert(trm)
+	var results []SortDescription
+	if r, ok := fromTermSortDescriptionSortDescription(converted, conv); ok {
+		results = append(results, r)
+	}
+	if len(results) == 0 {
+		panic(&aterm.GomError{Msg: fmt.Sprintf("%v is not a SortDescription", trm), IllegalArgument: true})
+	}
+	return results[0]
+}
+
+// SortDescriptionFromString is Java Gom's SortDescription.fromString(s).
+func SortDescriptionFromString(s string) SortDescription {
+	return SortDescriptionFromTerm(aterm.GetInstance().Parse(s))
+}
+
+// SortDescriptionFromStream is Java Gom's SortDescription.fromStream(stream) (an IOException is
+// the error).
+func SortDescriptionFromStream(stream io.Reader) (SortDescription, error) {
+	at, err := aterm.GetInstance().ReadFromTextFile(stream)
+	if err != nil {
+		return nil, err
+	}
+	return SortDescriptionFromTerm(at), nil
 }
 
 // SortDescriptionSortDescription is the term type for the alternative `SortDescription(...)` of sort SortDescription.
@@ -55,7 +108,7 @@ func (t *SortDescriptionSortDescription) Duplicate() sharedobjects.Term {
 }
 
 func (t *SortDescriptionSortDescription) String() string {
-	return fmt.Sprintf("SortDescription(%v,%s,%v)", t.Constructors, sharedobjects.JavaEscape(t.ModuleSymbol), t.FreshInfo)
+	return "SortDescription(" + fmt.Sprint(t.Constructors) + "," + sharedobjects.JavaEscape(t.ModuleSymbol) + "," + fmt.Sprint(t.FreshInfo) + ")"
 }
 
 func (t *SortDescriptionSortDescription) ChildCount() int { return 3 }
@@ -192,10 +245,148 @@ func (s *VisitSortDescription) VisitWith(env *sl.Environment, intro sl.Introspec
 
 var _ sl.Strategy = (*VisitSortDescription)(nil)
 
+func (t *SortDescriptionSortDescription) SymbolName() string { return "SortDescription" }
+
+func (t *SortDescriptionSortDescription) IsSortDescription() bool { return true }
+
+func (t *SortDescriptionSortDescription) GetConstructors() StringList { return t.Constructors }
+func (t *SortDescriptionSortDescription) GetModuleSymbol() string     { return t.ModuleSymbol }
+func (t *SortDescriptionSortDescription) GetFreshInfo() FreshSortInfo { return t.FreshInfo }
+
+func (t *SortDescriptionSortDescription) Length() int {
+	panic(&aterm.GomError{Msg: "This SortDescription.SortDescription is not a list", IllegalArgument: true})
+}
+
+func (t *SortDescriptionSortDescription) Reverse() SortDescription {
+	panic(&aterm.GomError{Msg: "This SortDescription.SortDescription is not a list", IllegalArgument: true})
+}
+
+func (t *SortDescriptionSortDescription) CompareTo(o any) int {
+	ao := o.(SortDescription)
+	if ao == SortDescription(t) {
+		return 0
+	}
+	if t.Hash() != ao.Hash() {
+		if t.Hash() < ao.Hash() {
+			return -1
+		}
+		return 1
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	tco := ao.(*SortDescriptionSortDescription)
+	if c := t.Constructors.CompareTo(tco.Constructors); c != 0 {
+		return c
+	}
+	if c := strings.Compare(t.ModuleSymbol, tco.ModuleSymbol); c != 0 {
+		return c
+	}
+	if c := t.FreshInfo.CompareTo(tco.FreshInfo); c != 0 {
+		return c
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+func (t *SortDescriptionSortDescription) CompareToLPO(o any) int {
+	ao := o.(SortDescription)
+	if ao == SortDescription(t) {
+		return 0
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	tco := ao.(*SortDescriptionSortDescription)
+	if c := t.Constructors.CompareToLPO(tco.Constructors); c != 0 {
+		return c
+	}
+	if c := strings.Compare(t.ModuleSymbol, tco.ModuleSymbol); c != 0 {
+		return c
+	}
+	if c := t.FreshInfo.CompareToLPO(tco.FreshInfo); c != 0 {
+		return c
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+// ToATerm is the ATerm of the term: an application of SortDescription.
+func (t *SortDescriptionSortDescription) ToATerm() aterm.ATerm {
+	f := aterm.GetInstance()
+	return f.MakeAppl(f.MakeAFun("SortDescription", 3, false), t.Constructors.ToATerm(), aterm.MakeGomString(t.ModuleSymbol), t.FreshInfo.ToATerm())
+}
+
+// fromTermSortDescriptionSortDescription is Java Gom's SortDescription.fromTerm: an unquoted application of
+// SortDescription whose arguments are convertible (as in Java, the arity is not
+// checked: a missing argument is an index out of range).
+func fromTermSortDescriptionSortDescription(trm aterm.ATerm, conv aterm.ATermConverter) (SortDescription, bool) {
+	trm = conv.Convert(trm)
+	if appl, ok := trm.(*aterm.ATermAppl); ok && appl.GetName() == "SortDescription" && !appl.GetAFun().IsQuoted() {
+		return MakeSortDescription(StringListFromTermConv(appl.GetArgument(0), conv), aterm.GomString(appl.GetArgument(1), conv), FreshSortInfoFromTermConv(appl.GetArgument(2), conv)), true
+	}
+	return nil, false
+}
+
 // FreshSortInfo is the Go interface backing the Gom sort FreshSortInfo.
 type FreshSortInfo interface {
 	sharedobjects.Term
 	isFreshSortInfo()
+	// Java Gom API (see the package's generated methods)
+	SymbolName() string
+	IsExpressionTypeInfo() bool
+	IsPatternTypeInfo() bool
+	IsAtomTypeInfo() bool
+	IsNoFreshSort() bool
+	GetAccessibleAtoms() StringList
+	GetBoundAtoms() StringList
+	Length() int
+	Reverse() FreshSortInfo
+	CompareTo(o any) int
+	CompareToLPO(o any) int
+	ToATerm() aterm.ATerm
+}
+
+// FreshSortInfoFromTerm is Java Gom's FreshSortInfo.fromTerm(trm).
+func FreshSortInfoFromTerm(trm aterm.ATerm) FreshSortInfo {
+	return FreshSortInfoFromTermConv(trm, aterm.IdConverter{})
+}
+
+// FreshSortInfoFromTermConv is Java Gom's FreshSortInfo.fromTerm(trm, atConv): the term of
+// the first operator of the sort that converts the ATerm; it panics
+// (IllegalArgumentException) when there is none.
+func FreshSortInfoFromTermConv(trm aterm.ATerm, conv aterm.ATermConverter) FreshSortInfo {
+	converted := conv.Convert(trm)
+	var results []FreshSortInfo
+	if r, ok := fromTermExpressionTypeInfoFreshSortInfo(converted, conv); ok {
+		results = append(results, r)
+	}
+	if r, ok := fromTermPatternTypeInfoFreshSortInfo(converted, conv); ok {
+		results = append(results, r)
+	}
+	if r, ok := fromTermAtomTypeInfoFreshSortInfo(converted, conv); ok {
+		results = append(results, r)
+	}
+	if r, ok := fromTermNoFreshSortFreshSortInfo(converted, conv); ok {
+		results = append(results, r)
+	}
+	if len(results) == 0 {
+		panic(&aterm.GomError{Msg: fmt.Sprintf("%v is not a FreshSortInfo", trm), IllegalArgument: true})
+	}
+	return results[0]
+}
+
+// FreshSortInfoFromString is Java Gom's FreshSortInfo.fromString(s).
+func FreshSortInfoFromString(s string) FreshSortInfo {
+	return FreshSortInfoFromTerm(aterm.GetInstance().Parse(s))
+}
+
+// FreshSortInfoFromStream is Java Gom's FreshSortInfo.fromStream(stream) (an IOException is
+// the error).
+func FreshSortInfoFromStream(stream io.Reader) (FreshSortInfo, error) {
+	at, err := aterm.GetInstance().ReadFromTextFile(stream)
+	if err != nil {
+		return nil, err
+	}
+	return FreshSortInfoFromTerm(at), nil
 }
 
 // ExpressionTypeInfoFreshSortInfo is the term type for the alternative `ExpressionTypeInfo(...)` of sort FreshSortInfo.
@@ -225,7 +416,7 @@ func (t *ExpressionTypeInfoFreshSortInfo) Duplicate() sharedobjects.Term {
 }
 
 func (t *ExpressionTypeInfoFreshSortInfo) String() string {
-	return fmt.Sprintf("ExpressionTypeInfo(%v)", t.AccessibleAtoms)
+	return "ExpressionTypeInfo(" + fmt.Sprint(t.AccessibleAtoms) + ")"
 }
 
 func (t *ExpressionTypeInfoFreshSortInfo) ChildCount() int { return 1 }
@@ -354,6 +545,79 @@ func (s *VisitExpressionTypeInfo) VisitWith(env *sl.Environment, intro sl.Intros
 
 var _ sl.Strategy = (*VisitExpressionTypeInfo)(nil)
 
+func (t *ExpressionTypeInfoFreshSortInfo) SymbolName() string { return "ExpressionTypeInfo" }
+
+func (t *ExpressionTypeInfoFreshSortInfo) IsExpressionTypeInfo() bool { return true }
+func (t *ExpressionTypeInfoFreshSortInfo) IsPatternTypeInfo() bool    { return false }
+func (t *ExpressionTypeInfoFreshSortInfo) IsAtomTypeInfo() bool       { return false }
+func (t *ExpressionTypeInfoFreshSortInfo) IsNoFreshSort() bool        { return false }
+
+func (t *ExpressionTypeInfoFreshSortInfo) GetAccessibleAtoms() StringList { return t.AccessibleAtoms }
+func (t *ExpressionTypeInfoFreshSortInfo) GetBoundAtoms() StringList {
+	panic(&aterm.GomError{Msg: "This FreshSortInfo has no BoundAtoms"})
+}
+
+func (t *ExpressionTypeInfoFreshSortInfo) Length() int {
+	panic(&aterm.GomError{Msg: "This FreshSortInfo.ExpressionTypeInfo is not a list", IllegalArgument: true})
+}
+
+func (t *ExpressionTypeInfoFreshSortInfo) Reverse() FreshSortInfo {
+	panic(&aterm.GomError{Msg: "This FreshSortInfo.ExpressionTypeInfo is not a list", IllegalArgument: true})
+}
+
+func (t *ExpressionTypeInfoFreshSortInfo) CompareTo(o any) int {
+	ao := o.(FreshSortInfo)
+	if ao == FreshSortInfo(t) {
+		return 0
+	}
+	if t.Hash() != ao.Hash() {
+		if t.Hash() < ao.Hash() {
+			return -1
+		}
+		return 1
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	tco := ao.(*ExpressionTypeInfoFreshSortInfo)
+	if c := t.AccessibleAtoms.CompareTo(tco.AccessibleAtoms); c != 0 {
+		return c
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+func (t *ExpressionTypeInfoFreshSortInfo) CompareToLPO(o any) int {
+	ao := o.(FreshSortInfo)
+	if ao == FreshSortInfo(t) {
+		return 0
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	tco := ao.(*ExpressionTypeInfoFreshSortInfo)
+	if c := t.AccessibleAtoms.CompareToLPO(tco.AccessibleAtoms); c != 0 {
+		return c
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+// ToATerm is the ATerm of the term: an application of ExpressionTypeInfo.
+func (t *ExpressionTypeInfoFreshSortInfo) ToATerm() aterm.ATerm {
+	f := aterm.GetInstance()
+	return f.MakeAppl(f.MakeAFun("ExpressionTypeInfo", 1, false), t.AccessibleAtoms.ToATerm())
+}
+
+// fromTermExpressionTypeInfoFreshSortInfo is Java Gom's ExpressionTypeInfo.fromTerm: an unquoted application of
+// ExpressionTypeInfo whose arguments are convertible (as in Java, the arity is not
+// checked: a missing argument is an index out of range).
+func fromTermExpressionTypeInfoFreshSortInfo(trm aterm.ATerm, conv aterm.ATermConverter) (FreshSortInfo, bool) {
+	trm = conv.Convert(trm)
+	if appl, ok := trm.(*aterm.ATermAppl); ok && appl.GetName() == "ExpressionTypeInfo" && !appl.GetAFun().IsQuoted() {
+		return MakeExpressionTypeInfo(StringListFromTermConv(appl.GetArgument(0), conv)), true
+	}
+	return nil, false
+}
+
 // PatternTypeInfoFreshSortInfo is the term type for the alternative `PatternTypeInfo(...)` of sort FreshSortInfo.
 type PatternTypeInfoFreshSortInfo struct {
 	BoundAtoms      StringList
@@ -385,7 +649,7 @@ func (t *PatternTypeInfoFreshSortInfo) Duplicate() sharedobjects.Term {
 }
 
 func (t *PatternTypeInfoFreshSortInfo) String() string {
-	return fmt.Sprintf("PatternTypeInfo(%v,%v)", t.BoundAtoms, t.AccessibleAtoms)
+	return "PatternTypeInfo(" + fmt.Sprint(t.BoundAtoms) + "," + fmt.Sprint(t.AccessibleAtoms) + ")"
 }
 
 func (t *PatternTypeInfoFreshSortInfo) ChildCount() int { return 2 }
@@ -518,6 +782,83 @@ func (s *VisitPatternTypeInfo) VisitWith(env *sl.Environment, intro sl.Introspec
 
 var _ sl.Strategy = (*VisitPatternTypeInfo)(nil)
 
+func (t *PatternTypeInfoFreshSortInfo) SymbolName() string { return "PatternTypeInfo" }
+
+func (t *PatternTypeInfoFreshSortInfo) IsExpressionTypeInfo() bool { return false }
+func (t *PatternTypeInfoFreshSortInfo) IsPatternTypeInfo() bool    { return true }
+func (t *PatternTypeInfoFreshSortInfo) IsAtomTypeInfo() bool       { return false }
+func (t *PatternTypeInfoFreshSortInfo) IsNoFreshSort() bool        { return false }
+
+func (t *PatternTypeInfoFreshSortInfo) GetAccessibleAtoms() StringList { return t.AccessibleAtoms }
+func (t *PatternTypeInfoFreshSortInfo) GetBoundAtoms() StringList      { return t.BoundAtoms }
+
+func (t *PatternTypeInfoFreshSortInfo) Length() int {
+	panic(&aterm.GomError{Msg: "This FreshSortInfo.PatternTypeInfo is not a list", IllegalArgument: true})
+}
+
+func (t *PatternTypeInfoFreshSortInfo) Reverse() FreshSortInfo {
+	panic(&aterm.GomError{Msg: "This FreshSortInfo.PatternTypeInfo is not a list", IllegalArgument: true})
+}
+
+func (t *PatternTypeInfoFreshSortInfo) CompareTo(o any) int {
+	ao := o.(FreshSortInfo)
+	if ao == FreshSortInfo(t) {
+		return 0
+	}
+	if t.Hash() != ao.Hash() {
+		if t.Hash() < ao.Hash() {
+			return -1
+		}
+		return 1
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	tco := ao.(*PatternTypeInfoFreshSortInfo)
+	if c := t.BoundAtoms.CompareTo(tco.BoundAtoms); c != 0 {
+		return c
+	}
+	if c := t.AccessibleAtoms.CompareTo(tco.AccessibleAtoms); c != 0 {
+		return c
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+func (t *PatternTypeInfoFreshSortInfo) CompareToLPO(o any) int {
+	ao := o.(FreshSortInfo)
+	if ao == FreshSortInfo(t) {
+		return 0
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	tco := ao.(*PatternTypeInfoFreshSortInfo)
+	if c := t.BoundAtoms.CompareToLPO(tco.BoundAtoms); c != 0 {
+		return c
+	}
+	if c := t.AccessibleAtoms.CompareToLPO(tco.AccessibleAtoms); c != 0 {
+		return c
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+// ToATerm is the ATerm of the term: an application of PatternTypeInfo.
+func (t *PatternTypeInfoFreshSortInfo) ToATerm() aterm.ATerm {
+	f := aterm.GetInstance()
+	return f.MakeAppl(f.MakeAFun("PatternTypeInfo", 2, false), t.BoundAtoms.ToATerm(), t.AccessibleAtoms.ToATerm())
+}
+
+// fromTermPatternTypeInfoFreshSortInfo is Java Gom's PatternTypeInfo.fromTerm: an unquoted application of
+// PatternTypeInfo whose arguments are convertible (as in Java, the arity is not
+// checked: a missing argument is an index out of range).
+func fromTermPatternTypeInfoFreshSortInfo(trm aterm.ATerm, conv aterm.ATermConverter) (FreshSortInfo, bool) {
+	trm = conv.Convert(trm)
+	if appl, ok := trm.(*aterm.ATermAppl); ok && appl.GetName() == "PatternTypeInfo" && !appl.GetAFun().IsQuoted() {
+		return MakePatternTypeInfo(StringListFromTermConv(appl.GetArgument(0), conv), StringListFromTermConv(appl.GetArgument(1), conv)), true
+	}
+	return nil, false
+}
+
 // AtomTypeInfoFreshSortInfo is the term type for the alternative `AtomTypeInfo(...)` of sort FreshSortInfo.
 type AtomTypeInfoFreshSortInfo struct {
 	hash uint32
@@ -538,7 +879,7 @@ func (t *AtomTypeInfoFreshSortInfo) Duplicate() sharedobjects.Term {
 }
 
 func (t *AtomTypeInfoFreshSortInfo) String() string {
-	return "AtomTypeInfo" + "()"
+	return "AtomTypeInfo()"
 }
 
 func (t *AtomTypeInfoFreshSortInfo) ChildCount() int { return 0 }
@@ -633,6 +974,73 @@ func (s *VisitAtomTypeInfo) VisitWith(env *sl.Environment, intro sl.Introspector
 
 var _ sl.Strategy = (*VisitAtomTypeInfo)(nil)
 
+func (t *AtomTypeInfoFreshSortInfo) SymbolName() string { return "AtomTypeInfo" }
+
+func (t *AtomTypeInfoFreshSortInfo) IsExpressionTypeInfo() bool { return false }
+func (t *AtomTypeInfoFreshSortInfo) IsPatternTypeInfo() bool    { return false }
+func (t *AtomTypeInfoFreshSortInfo) IsAtomTypeInfo() bool       { return true }
+func (t *AtomTypeInfoFreshSortInfo) IsNoFreshSort() bool        { return false }
+
+func (t *AtomTypeInfoFreshSortInfo) GetAccessibleAtoms() StringList {
+	panic(&aterm.GomError{Msg: "This FreshSortInfo has no AccessibleAtoms"})
+}
+func (t *AtomTypeInfoFreshSortInfo) GetBoundAtoms() StringList {
+	panic(&aterm.GomError{Msg: "This FreshSortInfo has no BoundAtoms"})
+}
+
+func (t *AtomTypeInfoFreshSortInfo) Length() int {
+	panic(&aterm.GomError{Msg: "This FreshSortInfo.AtomTypeInfo is not a list", IllegalArgument: true})
+}
+
+func (t *AtomTypeInfoFreshSortInfo) Reverse() FreshSortInfo {
+	panic(&aterm.GomError{Msg: "This FreshSortInfo.AtomTypeInfo is not a list", IllegalArgument: true})
+}
+
+func (t *AtomTypeInfoFreshSortInfo) CompareTo(o any) int {
+	ao := o.(FreshSortInfo)
+	if ao == FreshSortInfo(t) {
+		return 0
+	}
+	if t.Hash() != ao.Hash() {
+		if t.Hash() < ao.Hash() {
+			return -1
+		}
+		return 1
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+func (t *AtomTypeInfoFreshSortInfo) CompareToLPO(o any) int {
+	ao := o.(FreshSortInfo)
+	if ao == FreshSortInfo(t) {
+		return 0
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+// ToATerm is the ATerm of the term: an application of AtomTypeInfo.
+func (t *AtomTypeInfoFreshSortInfo) ToATerm() aterm.ATerm {
+	f := aterm.GetInstance()
+	return f.MakeAppl(f.MakeAFun("AtomTypeInfo", 0, false))
+}
+
+// fromTermAtomTypeInfoFreshSortInfo is Java Gom's AtomTypeInfo.fromTerm: an unquoted application of
+// AtomTypeInfo whose arguments are convertible (as in Java, the arity is not
+// checked: a missing argument is an index out of range).
+func fromTermAtomTypeInfoFreshSortInfo(trm aterm.ATerm, conv aterm.ATermConverter) (FreshSortInfo, bool) {
+	trm = conv.Convert(trm)
+	if appl, ok := trm.(*aterm.ATermAppl); ok && appl.GetName() == "AtomTypeInfo" && !appl.GetAFun().IsQuoted() {
+		return MakeAtomTypeInfo(), true
+	}
+	return nil, false
+}
+
 // NoFreshSortFreshSortInfo is the term type for the alternative `NoFreshSort(...)` of sort FreshSortInfo.
 type NoFreshSortFreshSortInfo struct {
 	hash uint32
@@ -653,7 +1061,7 @@ func (t *NoFreshSortFreshSortInfo) Duplicate() sharedobjects.Term {
 }
 
 func (t *NoFreshSortFreshSortInfo) String() string {
-	return "NoFreshSort" + "()"
+	return "NoFreshSort()"
 }
 
 func (t *NoFreshSortFreshSortInfo) ChildCount() int { return 0 }
@@ -748,10 +1156,129 @@ func (s *VisitNoFreshSort) VisitWith(env *sl.Environment, intro sl.Introspector)
 
 var _ sl.Strategy = (*VisitNoFreshSort)(nil)
 
+func (t *NoFreshSortFreshSortInfo) SymbolName() string { return "NoFreshSort" }
+
+func (t *NoFreshSortFreshSortInfo) IsExpressionTypeInfo() bool { return false }
+func (t *NoFreshSortFreshSortInfo) IsPatternTypeInfo() bool    { return false }
+func (t *NoFreshSortFreshSortInfo) IsAtomTypeInfo() bool       { return false }
+func (t *NoFreshSortFreshSortInfo) IsNoFreshSort() bool        { return true }
+
+func (t *NoFreshSortFreshSortInfo) GetAccessibleAtoms() StringList {
+	panic(&aterm.GomError{Msg: "This FreshSortInfo has no AccessibleAtoms"})
+}
+func (t *NoFreshSortFreshSortInfo) GetBoundAtoms() StringList {
+	panic(&aterm.GomError{Msg: "This FreshSortInfo has no BoundAtoms"})
+}
+
+func (t *NoFreshSortFreshSortInfo) Length() int {
+	panic(&aterm.GomError{Msg: "This FreshSortInfo.NoFreshSort is not a list", IllegalArgument: true})
+}
+
+func (t *NoFreshSortFreshSortInfo) Reverse() FreshSortInfo {
+	panic(&aterm.GomError{Msg: "This FreshSortInfo.NoFreshSort is not a list", IllegalArgument: true})
+}
+
+func (t *NoFreshSortFreshSortInfo) CompareTo(o any) int {
+	ao := o.(FreshSortInfo)
+	if ao == FreshSortInfo(t) {
+		return 0
+	}
+	if t.Hash() != ao.Hash() {
+		if t.Hash() < ao.Hash() {
+			return -1
+		}
+		return 1
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+func (t *NoFreshSortFreshSortInfo) CompareToLPO(o any) int {
+	ao := o.(FreshSortInfo)
+	if ao == FreshSortInfo(t) {
+		return 0
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+// ToATerm is the ATerm of the term: an application of NoFreshSort.
+func (t *NoFreshSortFreshSortInfo) ToATerm() aterm.ATerm {
+	f := aterm.GetInstance()
+	return f.MakeAppl(f.MakeAFun("NoFreshSort", 0, false))
+}
+
+// fromTermNoFreshSortFreshSortInfo is Java Gom's NoFreshSort.fromTerm: an unquoted application of
+// NoFreshSort whose arguments are convertible (as in Java, the arity is not
+// checked: a missing argument is an index out of range).
+func fromTermNoFreshSortFreshSortInfo(trm aterm.ATerm, conv aterm.ATermConverter) (FreshSortInfo, bool) {
+	trm = conv.Convert(trm)
+	if appl, ok := trm.(*aterm.ATermAppl); ok && appl.GetName() == "NoFreshSort" && !appl.GetAFun().IsQuoted() {
+		return MakeNoFreshSort(), true
+	}
+	return nil, false
+}
+
 // ConstructorDescription is the Go interface backing the Gom sort ConstructorDescription.
 type ConstructorDescription interface {
 	sharedobjects.Term
 	isConstructorDescription()
+	// Java Gom API (see the package's generated methods)
+	SymbolName() string
+	IsConstructorDescription() bool
+	IsVariadicConstructorDescription() bool
+	GetSortSymbol() string
+	GetFields() FieldDescriptionList
+	GetGenerated() GenerationInfo
+	GetDomain() string
+	GetIsRefreshPoint() bool
+	Length() int
+	Reverse() ConstructorDescription
+	CompareTo(o any) int
+	CompareToLPO(o any) int
+	ToATerm() aterm.ATerm
+}
+
+// ConstructorDescriptionFromTerm is Java Gom's ConstructorDescription.fromTerm(trm).
+func ConstructorDescriptionFromTerm(trm aterm.ATerm) ConstructorDescription {
+	return ConstructorDescriptionFromTermConv(trm, aterm.IdConverter{})
+}
+
+// ConstructorDescriptionFromTermConv is Java Gom's ConstructorDescription.fromTerm(trm, atConv): the term of
+// the first operator of the sort that converts the ATerm; it panics
+// (IllegalArgumentException) when there is none.
+func ConstructorDescriptionFromTermConv(trm aterm.ATerm, conv aterm.ATermConverter) ConstructorDescription {
+	converted := conv.Convert(trm)
+	var results []ConstructorDescription
+	if r, ok := fromTermConstructorDescriptionConstructorDescription(converted, conv); ok {
+		results = append(results, r)
+	}
+	if r, ok := fromTermVariadicConstructorDescriptionConstructorDescription(converted, conv); ok {
+		results = append(results, r)
+	}
+	if len(results) == 0 {
+		panic(&aterm.GomError{Msg: fmt.Sprintf("%v is not a ConstructorDescription", trm), IllegalArgument: true})
+	}
+	return results[0]
+}
+
+// ConstructorDescriptionFromString is Java Gom's ConstructorDescription.fromString(s).
+func ConstructorDescriptionFromString(s string) ConstructorDescription {
+	return ConstructorDescriptionFromTerm(aterm.GetInstance().Parse(s))
+}
+
+// ConstructorDescriptionFromStream is Java Gom's ConstructorDescription.fromStream(stream) (an IOException is
+// the error).
+func ConstructorDescriptionFromStream(stream io.Reader) (ConstructorDescription, error) {
+	at, err := aterm.GetInstance().ReadFromTextFile(stream)
+	if err != nil {
+		return nil, err
+	}
+	return ConstructorDescriptionFromTerm(at), nil
 }
 
 // ConstructorDescriptionConstructorDescription is the term type for the alternative `ConstructorDescription(...)` of sort ConstructorDescription.
@@ -789,7 +1316,7 @@ func (t *ConstructorDescriptionConstructorDescription) Duplicate() sharedobjects
 }
 
 func (t *ConstructorDescriptionConstructorDescription) String() string {
-	return fmt.Sprintf("ConstructorDescription(%s,%v,%v)", sharedobjects.JavaEscape(t.SortSymbol), t.Fields, t.Generated)
+	return "ConstructorDescription(" + sharedobjects.JavaEscape(t.SortSymbol) + "," + fmt.Sprint(t.Fields) + "," + fmt.Sprint(t.Generated) + ")"
 }
 
 func (t *ConstructorDescriptionConstructorDescription) ChildCount() int { return 3 }
@@ -930,6 +1457,102 @@ func (s *VisitConstructorDescription) VisitWith(env *sl.Environment, intro sl.In
 
 var _ sl.Strategy = (*VisitConstructorDescription)(nil)
 
+func (t *ConstructorDescriptionConstructorDescription) SymbolName() string {
+	return "ConstructorDescription"
+}
+
+func (t *ConstructorDescriptionConstructorDescription) IsConstructorDescription() bool { return true }
+func (t *ConstructorDescriptionConstructorDescription) IsVariadicConstructorDescription() bool {
+	return false
+}
+
+func (t *ConstructorDescriptionConstructorDescription) GetSortSymbol() string { return t.SortSymbol }
+func (t *ConstructorDescriptionConstructorDescription) GetFields() FieldDescriptionList {
+	return t.Fields
+}
+func (t *ConstructorDescriptionConstructorDescription) GetGenerated() GenerationInfo {
+	return t.Generated
+}
+func (t *ConstructorDescriptionConstructorDescription) GetDomain() string {
+	panic(&aterm.GomError{Msg: "This ConstructorDescription has no Domain"})
+}
+func (t *ConstructorDescriptionConstructorDescription) GetIsRefreshPoint() bool {
+	panic(&aterm.GomError{Msg: "This ConstructorDescription has no IsRefreshPoint"})
+}
+
+func (t *ConstructorDescriptionConstructorDescription) Length() int {
+	panic(&aterm.GomError{Msg: "This ConstructorDescription.ConstructorDescription is not a list", IllegalArgument: true})
+}
+
+func (t *ConstructorDescriptionConstructorDescription) Reverse() ConstructorDescription {
+	panic(&aterm.GomError{Msg: "This ConstructorDescription.ConstructorDescription is not a list", IllegalArgument: true})
+}
+
+func (t *ConstructorDescriptionConstructorDescription) CompareTo(o any) int {
+	ao := o.(ConstructorDescription)
+	if ao == ConstructorDescription(t) {
+		return 0
+	}
+	if t.Hash() != ao.Hash() {
+		if t.Hash() < ao.Hash() {
+			return -1
+		}
+		return 1
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	tco := ao.(*ConstructorDescriptionConstructorDescription)
+	if c := strings.Compare(t.SortSymbol, tco.SortSymbol); c != 0 {
+		return c
+	}
+	if c := t.Fields.CompareTo(tco.Fields); c != 0 {
+		return c
+	}
+	if c := t.Generated.CompareTo(tco.Generated); c != 0 {
+		return c
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+func (t *ConstructorDescriptionConstructorDescription) CompareToLPO(o any) int {
+	ao := o.(ConstructorDescription)
+	if ao == ConstructorDescription(t) {
+		return 0
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	tco := ao.(*ConstructorDescriptionConstructorDescription)
+	if c := strings.Compare(t.SortSymbol, tco.SortSymbol); c != 0 {
+		return c
+	}
+	if c := t.Fields.CompareToLPO(tco.Fields); c != 0 {
+		return c
+	}
+	if c := t.Generated.CompareToLPO(tco.Generated); c != 0 {
+		return c
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+// ToATerm is the ATerm of the term: an application of ConstructorDescription.
+func (t *ConstructorDescriptionConstructorDescription) ToATerm() aterm.ATerm {
+	f := aterm.GetInstance()
+	return f.MakeAppl(f.MakeAFun("ConstructorDescription", 3, false), aterm.MakeGomString(t.SortSymbol), t.Fields.ToATerm(), t.Generated.ToATerm())
+}
+
+// fromTermConstructorDescriptionConstructorDescription is Java Gom's ConstructorDescription.fromTerm: an unquoted application of
+// ConstructorDescription whose arguments are convertible (as in Java, the arity is not
+// checked: a missing argument is an index out of range).
+func fromTermConstructorDescriptionConstructorDescription(trm aterm.ATerm, conv aterm.ATermConverter) (ConstructorDescription, bool) {
+	trm = conv.Convert(trm)
+	if appl, ok := trm.(*aterm.ATermAppl); ok && appl.GetName() == "ConstructorDescription" && !appl.GetAFun().IsQuoted() {
+		return MakeConstructorDescription(aterm.GomString(appl.GetArgument(0), conv), FieldDescriptionListFromTermConv(appl.GetArgument(1), conv), GenerationInfoFromTermConv(appl.GetArgument(2), conv)), true
+	}
+	return nil, false
+}
+
 // VariadicConstructorDescriptionConstructorDescription is the term type for the alternative `VariadicConstructorDescription(...)` of sort ConstructorDescription.
 type VariadicConstructorDescriptionConstructorDescription struct {
 	SortSymbol     string
@@ -965,7 +1588,12 @@ func (t *VariadicConstructorDescriptionConstructorDescription) Duplicate() share
 }
 
 func (t *VariadicConstructorDescriptionConstructorDescription) String() string {
-	return fmt.Sprintf("VariadicConstructorDescription(%s,%s,%v)", sharedobjects.JavaEscape(t.SortSymbol), sharedobjects.JavaEscape(t.Domain), t.IsRefreshPoint)
+	return "VariadicConstructorDescription(" + sharedobjects.JavaEscape(t.SortSymbol) + "," + sharedobjects.JavaEscape(t.Domain) + "," + func() string {
+		if t.IsRefreshPoint {
+			return "1"
+		}
+		return "0"
+	}() + ")"
 }
 
 func (t *VariadicConstructorDescriptionConstructorDescription) ChildCount() int { return 3 }
@@ -1106,10 +1734,166 @@ func (s *VisitVariadicConstructorDescription) VisitWith(env *sl.Environment, int
 
 var _ sl.Strategy = (*VisitVariadicConstructorDescription)(nil)
 
+func (t *VariadicConstructorDescriptionConstructorDescription) SymbolName() string {
+	return "VariadicConstructorDescription"
+}
+
+func (t *VariadicConstructorDescriptionConstructorDescription) IsConstructorDescription() bool {
+	return false
+}
+func (t *VariadicConstructorDescriptionConstructorDescription) IsVariadicConstructorDescription() bool {
+	return true
+}
+
+func (t *VariadicConstructorDescriptionConstructorDescription) GetSortSymbol() string {
+	return t.SortSymbol
+}
+func (t *VariadicConstructorDescriptionConstructorDescription) GetFields() FieldDescriptionList {
+	panic(&aterm.GomError{Msg: "This ConstructorDescription has no Fields"})
+}
+func (t *VariadicConstructorDescriptionConstructorDescription) GetGenerated() GenerationInfo {
+	panic(&aterm.GomError{Msg: "This ConstructorDescription has no Generated"})
+}
+func (t *VariadicConstructorDescriptionConstructorDescription) GetDomain() string { return t.Domain }
+func (t *VariadicConstructorDescriptionConstructorDescription) GetIsRefreshPoint() bool {
+	return t.IsRefreshPoint
+}
+
+func (t *VariadicConstructorDescriptionConstructorDescription) Length() int {
+	panic(&aterm.GomError{Msg: "This ConstructorDescription.VariadicConstructorDescription is not a list", IllegalArgument: true})
+}
+
+func (t *VariadicConstructorDescriptionConstructorDescription) Reverse() ConstructorDescription {
+	panic(&aterm.GomError{Msg: "This ConstructorDescription.VariadicConstructorDescription is not a list", IllegalArgument: true})
+}
+
+func (t *VariadicConstructorDescriptionConstructorDescription) CompareTo(o any) int {
+	ao := o.(ConstructorDescription)
+	if ao == ConstructorDescription(t) {
+		return 0
+	}
+	if t.Hash() != ao.Hash() {
+		if t.Hash() < ao.Hash() {
+			return -1
+		}
+		return 1
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	tco := ao.(*VariadicConstructorDescriptionConstructorDescription)
+	if c := strings.Compare(t.SortSymbol, tco.SortSymbol); c != 0 {
+		return c
+	}
+	if c := strings.Compare(t.Domain, tco.Domain); c != 0 {
+		return c
+	}
+	if t.IsRefreshPoint != tco.IsRefreshPoint {
+		if !t.IsRefreshPoint && tco.IsRefreshPoint {
+			return -1
+		}
+		return 1
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+func (t *VariadicConstructorDescriptionConstructorDescription) CompareToLPO(o any) int {
+	ao := o.(ConstructorDescription)
+	if ao == ConstructorDescription(t) {
+		return 0
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	tco := ao.(*VariadicConstructorDescriptionConstructorDescription)
+	if c := strings.Compare(t.SortSymbol, tco.SortSymbol); c != 0 {
+		return c
+	}
+	if c := strings.Compare(t.Domain, tco.Domain); c != 0 {
+		return c
+	}
+	if t.IsRefreshPoint != tco.IsRefreshPoint {
+		if !t.IsRefreshPoint && tco.IsRefreshPoint {
+			return -1
+		}
+		return 1
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+// ToATerm is the ATerm of the term: an application of VariadicConstructorDescription.
+func (t *VariadicConstructorDescriptionConstructorDescription) ToATerm() aterm.ATerm {
+	f := aterm.GetInstance()
+	return f.MakeAppl(f.MakeAFun("VariadicConstructorDescription", 3, false), aterm.MakeGomString(t.SortSymbol), aterm.MakeGomString(t.Domain), aterm.MakeGomBoolean(t.IsRefreshPoint))
+}
+
+// fromTermVariadicConstructorDescriptionConstructorDescription is Java Gom's VariadicConstructorDescription.fromTerm: an unquoted application of
+// VariadicConstructorDescription whose arguments are convertible (as in Java, the arity is not
+// checked: a missing argument is an index out of range).
+func fromTermVariadicConstructorDescriptionConstructorDescription(trm aterm.ATerm, conv aterm.ATermConverter) (ConstructorDescription, bool) {
+	trm = conv.Convert(trm)
+	if appl, ok := trm.(*aterm.ATermAppl); ok && appl.GetName() == "VariadicConstructorDescription" && !appl.GetAFun().IsQuoted() {
+		return MakeVariadicConstructorDescription(aterm.GomString(appl.GetArgument(0), conv), aterm.GomString(appl.GetArgument(1), conv), aterm.GomBoolean(appl.GetArgument(2), conv)), true
+	}
+	return nil, false
+}
+
 // GenerationInfo is the Go interface backing the Gom sort GenerationInfo.
 type GenerationInfo interface {
 	sharedobjects.Term
 	isGenerationInfo()
+	// Java Gom API (see the package's generated methods)
+	SymbolName() string
+	IsNo() bool
+	IsGenCons() bool
+	IsGenNil() bool
+	GetBaseName() string
+	Length() int
+	Reverse() GenerationInfo
+	CompareTo(o any) int
+	CompareToLPO(o any) int
+	ToATerm() aterm.ATerm
+}
+
+// GenerationInfoFromTerm is Java Gom's GenerationInfo.fromTerm(trm).
+func GenerationInfoFromTerm(trm aterm.ATerm) GenerationInfo {
+	return GenerationInfoFromTermConv(trm, aterm.IdConverter{})
+}
+
+// GenerationInfoFromTermConv is Java Gom's GenerationInfo.fromTerm(trm, atConv): the term of
+// the first operator of the sort that converts the ATerm; it panics
+// (IllegalArgumentException) when there is none.
+func GenerationInfoFromTermConv(trm aterm.ATerm, conv aterm.ATermConverter) GenerationInfo {
+	converted := conv.Convert(trm)
+	var results []GenerationInfo
+	if r, ok := fromTermNoGenerationInfo(converted, conv); ok {
+		results = append(results, r)
+	}
+	if r, ok := fromTermGenConsGenerationInfo(converted, conv); ok {
+		results = append(results, r)
+	}
+	if r, ok := fromTermGenNilGenerationInfo(converted, conv); ok {
+		results = append(results, r)
+	}
+	if len(results) == 0 {
+		panic(&aterm.GomError{Msg: fmt.Sprintf("%v is not a GenerationInfo", trm), IllegalArgument: true})
+	}
+	return results[0]
+}
+
+// GenerationInfoFromString is Java Gom's GenerationInfo.fromString(s).
+func GenerationInfoFromString(s string) GenerationInfo {
+	return GenerationInfoFromTerm(aterm.GetInstance().Parse(s))
+}
+
+// GenerationInfoFromStream is Java Gom's GenerationInfo.fromStream(stream) (an IOException is
+// the error).
+func GenerationInfoFromStream(stream io.Reader) (GenerationInfo, error) {
+	at, err := aterm.GetInstance().ReadFromTextFile(stream)
+	if err != nil {
+		return nil, err
+	}
+	return GenerationInfoFromTerm(at), nil
 }
 
 // NoGenerationInfo is the term type for the alternative `No(...)` of sort GenerationInfo.
@@ -1132,7 +1916,7 @@ func (t *NoGenerationInfo) Duplicate() sharedobjects.Term {
 }
 
 func (t *NoGenerationInfo) String() string {
-	return "No" + "()"
+	return "No()"
 }
 
 func (t *NoGenerationInfo) ChildCount() int { return 0 }
@@ -1227,6 +2011,69 @@ func (s *VisitNo) VisitWith(env *sl.Environment, intro sl.Introspector) (any, er
 
 var _ sl.Strategy = (*VisitNo)(nil)
 
+func (t *NoGenerationInfo) SymbolName() string { return "No" }
+
+func (t *NoGenerationInfo) IsNo() bool      { return true }
+func (t *NoGenerationInfo) IsGenCons() bool { return false }
+func (t *NoGenerationInfo) IsGenNil() bool  { return false }
+
+func (t *NoGenerationInfo) GetBaseName() string {
+	panic(&aterm.GomError{Msg: "This GenerationInfo has no BaseName"})
+}
+
+func (t *NoGenerationInfo) Length() int {
+	panic(&aterm.GomError{Msg: "This GenerationInfo.No is not a list", IllegalArgument: true})
+}
+
+func (t *NoGenerationInfo) Reverse() GenerationInfo {
+	panic(&aterm.GomError{Msg: "This GenerationInfo.No is not a list", IllegalArgument: true})
+}
+
+func (t *NoGenerationInfo) CompareTo(o any) int {
+	ao := o.(GenerationInfo)
+	if ao == GenerationInfo(t) {
+		return 0
+	}
+	if t.Hash() != ao.Hash() {
+		if t.Hash() < ao.Hash() {
+			return -1
+		}
+		return 1
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+func (t *NoGenerationInfo) CompareToLPO(o any) int {
+	ao := o.(GenerationInfo)
+	if ao == GenerationInfo(t) {
+		return 0
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+// ToATerm is the ATerm of the term: an application of No.
+func (t *NoGenerationInfo) ToATerm() aterm.ATerm {
+	f := aterm.GetInstance()
+	return f.MakeAppl(f.MakeAFun("No", 0, false))
+}
+
+// fromTermNoGenerationInfo is Java Gom's No.fromTerm: an unquoted application of
+// No whose arguments are convertible (as in Java, the arity is not
+// checked: a missing argument is an index out of range).
+func fromTermNoGenerationInfo(trm aterm.ATerm, conv aterm.ATermConverter) (GenerationInfo, bool) {
+	trm = conv.Convert(trm)
+	if appl, ok := trm.(*aterm.ATermAppl); ok && appl.GetName() == "No" && !appl.GetAFun().IsQuoted() {
+		return MakeNo(), true
+	}
+	return nil, false
+}
+
 // GenConsGenerationInfo is the term type for the alternative `GenCons(...)` of sort GenerationInfo.
 type GenConsGenerationInfo struct {
 	BaseName string
@@ -1254,7 +2101,7 @@ func (t *GenConsGenerationInfo) Duplicate() sharedobjects.Term {
 }
 
 func (t *GenConsGenerationInfo) String() string {
-	return fmt.Sprintf("GenCons(%s)", sharedobjects.JavaEscape(t.BaseName))
+	return "GenCons(" + sharedobjects.JavaEscape(t.BaseName) + ")"
 }
 
 func (t *GenConsGenerationInfo) ChildCount() int { return 1 }
@@ -1383,6 +2230,75 @@ func (s *VisitGenCons) VisitWith(env *sl.Environment, intro sl.Introspector) (an
 
 var _ sl.Strategy = (*VisitGenCons)(nil)
 
+func (t *GenConsGenerationInfo) SymbolName() string { return "GenCons" }
+
+func (t *GenConsGenerationInfo) IsNo() bool      { return false }
+func (t *GenConsGenerationInfo) IsGenCons() bool { return true }
+func (t *GenConsGenerationInfo) IsGenNil() bool  { return false }
+
+func (t *GenConsGenerationInfo) GetBaseName() string { return t.BaseName }
+
+func (t *GenConsGenerationInfo) Length() int {
+	panic(&aterm.GomError{Msg: "This GenerationInfo.GenCons is not a list", IllegalArgument: true})
+}
+
+func (t *GenConsGenerationInfo) Reverse() GenerationInfo {
+	panic(&aterm.GomError{Msg: "This GenerationInfo.GenCons is not a list", IllegalArgument: true})
+}
+
+func (t *GenConsGenerationInfo) CompareTo(o any) int {
+	ao := o.(GenerationInfo)
+	if ao == GenerationInfo(t) {
+		return 0
+	}
+	if t.Hash() != ao.Hash() {
+		if t.Hash() < ao.Hash() {
+			return -1
+		}
+		return 1
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	tco := ao.(*GenConsGenerationInfo)
+	if c := strings.Compare(t.BaseName, tco.BaseName); c != 0 {
+		return c
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+func (t *GenConsGenerationInfo) CompareToLPO(o any) int {
+	ao := o.(GenerationInfo)
+	if ao == GenerationInfo(t) {
+		return 0
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	tco := ao.(*GenConsGenerationInfo)
+	if c := strings.Compare(t.BaseName, tco.BaseName); c != 0 {
+		return c
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+// ToATerm is the ATerm of the term: an application of GenCons.
+func (t *GenConsGenerationInfo) ToATerm() aterm.ATerm {
+	f := aterm.GetInstance()
+	return f.MakeAppl(f.MakeAFun("GenCons", 1, false), aterm.MakeGomString(t.BaseName))
+}
+
+// fromTermGenConsGenerationInfo is Java Gom's GenCons.fromTerm: an unquoted application of
+// GenCons whose arguments are convertible (as in Java, the arity is not
+// checked: a missing argument is an index out of range).
+func fromTermGenConsGenerationInfo(trm aterm.ATerm, conv aterm.ATermConverter) (GenerationInfo, bool) {
+	trm = conv.Convert(trm)
+	if appl, ok := trm.(*aterm.ATermAppl); ok && appl.GetName() == "GenCons" && !appl.GetAFun().IsQuoted() {
+		return MakeGenCons(aterm.GomString(appl.GetArgument(0), conv)), true
+	}
+	return nil, false
+}
+
 // GenNilGenerationInfo is the term type for the alternative `GenNil(...)` of sort GenerationInfo.
 type GenNilGenerationInfo struct {
 	BaseName string
@@ -1410,7 +2326,7 @@ func (t *GenNilGenerationInfo) Duplicate() sharedobjects.Term {
 }
 
 func (t *GenNilGenerationInfo) String() string {
-	return fmt.Sprintf("GenNil(%s)", sharedobjects.JavaEscape(t.BaseName))
+	return "GenNil(" + sharedobjects.JavaEscape(t.BaseName) + ")"
 }
 
 func (t *GenNilGenerationInfo) ChildCount() int { return 1 }
@@ -1539,16 +2455,137 @@ func (s *VisitGenNil) VisitWith(env *sl.Environment, intro sl.Introspector) (any
 
 var _ sl.Strategy = (*VisitGenNil)(nil)
 
+func (t *GenNilGenerationInfo) SymbolName() string { return "GenNil" }
+
+func (t *GenNilGenerationInfo) IsNo() bool      { return false }
+func (t *GenNilGenerationInfo) IsGenCons() bool { return false }
+func (t *GenNilGenerationInfo) IsGenNil() bool  { return true }
+
+func (t *GenNilGenerationInfo) GetBaseName() string { return t.BaseName }
+
+func (t *GenNilGenerationInfo) Length() int {
+	panic(&aterm.GomError{Msg: "This GenerationInfo.GenNil is not a list", IllegalArgument: true})
+}
+
+func (t *GenNilGenerationInfo) Reverse() GenerationInfo {
+	panic(&aterm.GomError{Msg: "This GenerationInfo.GenNil is not a list", IllegalArgument: true})
+}
+
+func (t *GenNilGenerationInfo) CompareTo(o any) int {
+	ao := o.(GenerationInfo)
+	if ao == GenerationInfo(t) {
+		return 0
+	}
+	if t.Hash() != ao.Hash() {
+		if t.Hash() < ao.Hash() {
+			return -1
+		}
+		return 1
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	tco := ao.(*GenNilGenerationInfo)
+	if c := strings.Compare(t.BaseName, tco.BaseName); c != 0 {
+		return c
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+func (t *GenNilGenerationInfo) CompareToLPO(o any) int {
+	ao := o.(GenerationInfo)
+	if ao == GenerationInfo(t) {
+		return 0
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	tco := ao.(*GenNilGenerationInfo)
+	if c := strings.Compare(t.BaseName, tco.BaseName); c != 0 {
+		return c
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+// ToATerm is the ATerm of the term: an application of GenNil.
+func (t *GenNilGenerationInfo) ToATerm() aterm.ATerm {
+	f := aterm.GetInstance()
+	return f.MakeAppl(f.MakeAFun("GenNil", 1, false), aterm.MakeGomString(t.BaseName))
+}
+
+// fromTermGenNilGenerationInfo is Java Gom's GenNil.fromTerm: an unquoted application of
+// GenNil whose arguments are convertible (as in Java, the arity is not
+// checked: a missing argument is an index out of range).
+func fromTermGenNilGenerationInfo(trm aterm.ATerm, conv aterm.ATermConverter) (GenerationInfo, bool) {
+	trm = conv.Convert(trm)
+	if appl, ok := trm.(*aterm.ATermAppl); ok && appl.GetName() == "GenNil" && !appl.GetAFun().IsQuoted() {
+		return MakeGenNil(aterm.GomString(appl.GetArgument(0), conv)), true
+	}
+	return nil, false
+}
+
 // FieldDescriptionList is the Go interface backing the Gom sort FieldDescriptionList.
 type FieldDescriptionList interface {
 	sharedobjects.Term
 	isFieldDescriptionList()
+	// Java Gom API (see the package's generated methods)
+	SymbolName() string
+	IsConsconcFieldDescription() bool
+	IsEmptyconcFieldDescription() bool
+	GetHeadconcFieldDescription() FieldDescription
+	GetTailconcFieldDescription() FieldDescriptionList
+	Length() int
+	Reverse() FieldDescriptionList
+	CompareTo(o any) int
+	CompareToLPO(o any) int
+	ToATerm() aterm.ATerm
 }
 
-// ConcFieldDescriptionFieldDescriptionList is the term type for the alternative `concFieldDescription(...)` of sort FieldDescriptionList.
+// FieldDescriptionListFromTerm is Java Gom's FieldDescriptionList.fromTerm(trm).
+func FieldDescriptionListFromTerm(trm aterm.ATerm) FieldDescriptionList {
+	return FieldDescriptionListFromTermConv(trm, aterm.IdConverter{})
+}
+
+// FieldDescriptionListFromTermConv is Java Gom's FieldDescriptionList.fromTerm(trm, atConv): the term of
+// the first operator of the sort that converts the ATerm; it panics
+// (IllegalArgumentException) when there is none.
+func FieldDescriptionListFromTermConv(trm aterm.ATerm, conv aterm.ATermConverter) FieldDescriptionList {
+	converted := conv.Convert(trm)
+	var results []FieldDescriptionList
+	if r, ok := fromTermConcFieldDescriptionFieldDescriptionList(converted, conv); ok {
+		results = append(results, r)
+	}
+	if len(results) == 0 {
+		panic(&aterm.GomError{Msg: fmt.Sprintf("%v is not a FieldDescriptionList", trm), IllegalArgument: true})
+	}
+	return results[0]
+}
+
+// FieldDescriptionListFromString is Java Gom's FieldDescriptionList.fromString(s).
+func FieldDescriptionListFromString(s string) FieldDescriptionList {
+	return FieldDescriptionListFromTerm(aterm.GetInstance().Parse(s))
+}
+
+// FieldDescriptionListFromStream is Java Gom's FieldDescriptionList.fromStream(stream) (an IOException is
+// the error).
+func FieldDescriptionListFromStream(stream io.Reader) (FieldDescriptionList, error) {
+	at, err := aterm.GetInstance().ReadFromTextFile(stream)
+	if err != nil {
+		return nil, err
+	}
+	return FieldDescriptionListFromTerm(at), nil
+}
+
+// ConcFieldDescriptionFieldDescriptionList is the term type of the variadic operator `concFieldDescription(...)` of sort FieldDescriptionList
+// (Java's abstract class concFieldDescription): a maximally-shared cons cell (Java's
+// ConsconcFieldDescription: a head and a tail) or the empty list (Java's EmptyconcFieldDescription).
 type ConcFieldDescriptionFieldDescriptionList struct {
-	Slots []FieldDescription
+	head  FieldDescription
+	tail  FieldDescriptionList
+	empty bool
 	hash  uint32
+	// children caches the Visitable children (Java's children field)
+	children atomic.Pointer[[]any]
 }
 
 func (*ConcFieldDescriptionFieldDescriptionList) isFieldDescriptionList() {}
@@ -1557,51 +2594,53 @@ func (t *ConcFieldDescriptionFieldDescriptionList) Hash() uint32 { return t.hash
 
 func (t *ConcFieldDescriptionFieldDescriptionList) Equivalent(other sharedobjects.Term) bool {
 	o, ok := other.(*ConcFieldDescriptionFieldDescriptionList)
-	if !ok {
-		return false
-	}
-	if len(t.Slots) != len(o.Slots) {
-		return false
-	}
-	for i := range t.Slots {
-		if t.Slots[i] != o.Slots[i] {
-			return false
-		}
-	}
-	return true
+	return ok && t.empty == o.empty && t.head == o.head && t.tail == o.tail
 }
 
 func (t *ConcFieldDescriptionFieldDescriptionList) Duplicate() sharedobjects.Term {
-	cp := append([]FieldDescription(nil), t.Slots...)
-	return &ConcFieldDescriptionFieldDescriptionList{Slots: cp, hash: t.hash}
+	return &ConcFieldDescriptionFieldDescriptionList{head: t.head, tail: t.tail, empty: t.empty, hash: t.hash}
 }
 
-func (t *ConcFieldDescriptionFieldDescriptionList) String() string {
-	parts := make([]string, len(t.Slots))
-	for i, v := range t.Slots {
-		parts[i] = fmt.Sprintf("%v", v)
+// elements returns the cached Visitable children of the list: its
+// elements (Java's getChildren, i.e. toArray).
+// Java's getChildren is the typed toArray(new FieldDescription[]{}): a last tail
+// that is not a list (of sort FieldDescriptionList) cannot be stored in it
+// (ArrayStoreException, a *aterm.GomError here).
+func (t *ConcFieldDescriptionFieldDescriptionList) elements() []any {
+	if c := t.children.Load(); c != nil {
+		return *c
 	}
-	return "concFieldDescription" + "(" + strings.Join(parts, ",") + ")"
+	var cur FieldDescriptionList = t
+	for {
+		c, ok := cur.(*ConcFieldDescriptionFieldDescriptionList)
+		if !ok || c.empty {
+			break
+		}
+		cur = c.tail
+	}
+	if c, ok := cur.(*ConcFieldDescriptionFieldDescriptionList); !ok || !c.empty {
+		panic(&aterm.GomError{Msg: fmt.Sprintf("ArrayStoreException: the tail %v of a concFieldDescription list is not a FieldDescription", cur)})
+	}
+	c := t.ToArray()
+	t.children.Store(&c)
+	return c
 }
 
-func (t *ConcFieldDescriptionFieldDescriptionList) ChildCount() int { return len(t.Slots) }
+func (t *ConcFieldDescriptionFieldDescriptionList) ChildCount() int { return len(t.elements()) }
 
-func (t *ConcFieldDescriptionFieldDescriptionList) ChildAt(i int) any { return t.Slots[i] }
+func (t *ConcFieldDescriptionFieldDescriptionList) ChildAt(i int) any { return t.elements()[i] }
 
 func (t *ConcFieldDescriptionFieldDescriptionList) SetChildAt(i int, child any) any {
-	dup := append([]FieldDescription(nil), t.Slots...)
-	dup[i] = child.(FieldDescription)
-	return MakeConcFieldDescription(dup...)
+	dup := t.Children()
+	dup[i] = child
+	return t.SetChildren(dup)
 }
 
 func (t *ConcFieldDescriptionFieldDescriptionList) Children() []any {
-	out := make([]any, len(t.Slots))
-	for i, v := range t.Slots {
-		out[i] = v
-	}
-	return out
+	return append([]any(nil), t.elements()...)
 }
 
+// SetChildren is Java's setChildren of a list: ConcFieldDescriptionFromArray(children).
 func (t *ConcFieldDescriptionFieldDescriptionList) SetChildren(children []any) any {
 	args := make([]FieldDescription, len(children))
 	for i, c := range children {
@@ -1610,14 +2649,78 @@ func (t *ConcFieldDescriptionFieldDescriptionList) SetChildren(children []any) a
 	return MakeConcFieldDescription(args...)
 }
 
-// MakeConcFieldDescription builds the canonical (shared) concFieldDescription term.
-func MakeConcFieldDescription(args ...FieldDescription) FieldDescriptionList {
-	hashes := make([]uint32, 0, len(args))
-	for _, a := range args {
-		hashes = append(hashes, a.Hash())
+func (t *ConcFieldDescriptionFieldDescriptionList) String() string {
+	var b strings.Builder
+	b.WriteString("concFieldDescription(")
+	var cur FieldDescriptionList = t
+	for {
+		c, ok := cur.(*ConcFieldDescriptionFieldDescriptionList)
+		if !ok {
+			b.WriteString("," + fmt.Sprint(cur))
+			break
+		}
+		if c.empty {
+			break
+		}
+		if c != t {
+			b.WriteString(",")
+		}
+		b.WriteString(fmt.Sprint(c.head))
+		cur = c.tail
 	}
-	proto := &ConcFieldDescriptionFieldDescriptionList{Slots: args, hash: sharedobjects.MixSymbol(sharedobjects.StringHash("concFieldDescription"), hashes)}
+	b.WriteString(")")
+	return b.String()
+}
+
+// RealMakeConsConcFieldDescription is Java Gom's ConsconcFieldDescription.realMake: the shared cell of head
+// and tail, without hook.
+func RealMakeConsConcFieldDescription(head FieldDescription, tail FieldDescriptionList) FieldDescriptionList {
+	proto := &ConcFieldDescriptionFieldDescriptionList{head: head, tail: tail, hash: sharedobjects.MixSymbol(sharedobjects.StringHash("ConsconcFieldDescription"), []uint32{head.Hash(), tail.Hash()})}
 	return factory.Build(proto).(*ConcFieldDescriptionFieldDescriptionList)
+}
+
+// realMakeEmptyConcFieldDescription is Java Gom's EmptyconcFieldDescription.realMake: the shared empty list,
+// without hook.
+func realMakeEmptyConcFieldDescription() FieldDescriptionList {
+	proto := &ConcFieldDescriptionFieldDescriptionList{empty: true, hash: sharedobjects.MixSymbol(sharedobjects.StringHash("EmptyconcFieldDescription"), nil)}
+	return factory.Build(proto).(*ConcFieldDescriptionFieldDescriptionList)
+}
+
+// RawConcFieldDescription builds the concFieldDescription list holding exactly args, without construction
+// hook.
+func RawConcFieldDescription(args ...FieldDescription) FieldDescriptionList {
+	l := realMakeEmptyConcFieldDescription()
+	for i := len(args) - 1; i >= 0; i-- {
+		l = RealMakeConsConcFieldDescription(args[i], l)
+	}
+	return l
+}
+
+// EmptyConcFieldDescription is Java Gom's EmptyconcFieldDescription.make(): the empty concFieldDescription list, after the
+// construction hooks.
+func EmptyConcFieldDescription() FieldDescriptionList {
+	return realMakeEmptyConcFieldDescription()
+}
+
+// ConsConcFieldDescription is Java Gom's ConsconcFieldDescription.make(head, tail): head inserted in front of
+// tail, after the construction hooks (theory "" first).
+func ConsConcFieldDescription(head FieldDescription, tail FieldDescriptionList) FieldDescriptionList {
+	return RealMakeConsConcFieldDescription(head, tail)
+}
+
+// MakeConcFieldDescription builds the list of args as Tom's `concFieldDescription(args…)` does: from EmptyConcFieldDescription,
+// by ConsConcFieldDescription, through the construction hooks (Java's concFieldDescription.fromArray).
+func MakeConcFieldDescription(args ...FieldDescription) FieldDescriptionList {
+	var l FieldDescriptionList = EmptyConcFieldDescription()
+	for i := len(args) - 1; i >= 0; i-- {
+		l = ConsConcFieldDescription(args[i], l)
+	}
+	return l
+}
+
+// ConcFieldDescriptionFromArray is Java Gom's concFieldDescription.fromArray(array).
+func ConcFieldDescriptionFromArray(array []FieldDescription) FieldDescriptionList {
+	return MakeConcFieldDescription(array...)
 }
 
 // IsConcFieldDescription is the `Is_concFieldDescription` predicate strategy: succeeds (returns subject
@@ -1715,10 +2818,278 @@ func (s *VisitConcFieldDescription) VisitWith(env *sl.Environment, intro sl.Intr
 
 var _ sl.Strategy = (*VisitConcFieldDescription)(nil)
 
+// SymbolName is the symbol of the Java term: ConsconcFieldDescription or EmptyconcFieldDescription.
+func (t *ConcFieldDescriptionFieldDescriptionList) SymbolName() string {
+	if t.empty {
+		return "EmptyconcFieldDescription"
+	}
+	return "ConsconcFieldDescription"
+}
+
+func (t *ConcFieldDescriptionFieldDescriptionList) IsConsconcFieldDescription() bool  { return !t.empty }
+func (t *ConcFieldDescriptionFieldDescriptionList) IsEmptyconcFieldDescription() bool { return t.empty }
+
+func (t *ConcFieldDescriptionFieldDescriptionList) GetHeadconcFieldDescription() FieldDescription {
+	if t.empty {
+		panic(&aterm.GomError{Msg: "This FieldDescriptionList has no HeadconcFieldDescription"})
+	}
+	return t.head
+}
+func (t *ConcFieldDescriptionFieldDescriptionList) GetTailconcFieldDescription() FieldDescriptionList {
+	if t.empty {
+		panic(&aterm.GomError{Msg: "This FieldDescriptionList has no TailconcFieldDescription"})
+	}
+	return t.tail
+}
+
+// Length is Java's length(): the number of elements of the list (a
+// tail that is not a concFieldDescription list counts as one element).
+func (t *ConcFieldDescriptionFieldDescriptionList) Length() int {
+	res := 0
+	var tl FieldDescriptionList = t
+	for {
+		c, ok := tl.(*ConcFieldDescriptionFieldDescriptionList)
+		if !ok || c.empty {
+			return res
+		}
+		res++
+		tl = c.tail
+		if _, ok := tl.(*ConcFieldDescriptionFieldDescriptionList); !ok {
+			res++
+		}
+	}
+}
+
+// ToArray returns the elements of the list (Java's Object[] toArray()),
+// ending with its tail when that is not a concFieldDescription list.
+func (t *ConcFieldDescriptionFieldDescriptionList) ToArray() []any {
+	out := make([]any, 0, t.Length())
+	var cur FieldDescriptionList = t
+	for {
+		c, ok := cur.(*ConcFieldDescriptionFieldDescriptionList)
+		if !ok || c.empty {
+			break
+		}
+		out = append(out, c.head)
+		cur = c.tail
+	}
+	if c, ok := cur.(*ConcFieldDescriptionFieldDescriptionList); !ok || !c.empty {
+		out = append(out, cur)
+	}
+	return out
+}
+
+// Reverse is Java's reverse(): the reversed list, built by ConsConcFieldDescription
+// (through the hooks).
+func (t *ConcFieldDescriptionFieldDescriptionList) Reverse() FieldDescriptionList {
+	if t.empty {
+		return t
+	}
+	var cur FieldDescriptionList = t
+	var rev FieldDescriptionList = EmptyConcFieldDescription()
+	for {
+		c, ok := cur.(*ConcFieldDescriptionFieldDescriptionList)
+		if !ok || c.empty {
+			break
+		}
+		rev = ConsConcFieldDescription(c.head, rev)
+		cur = c.tail
+	}
+	return rev
+}
+
+// Append is Java's append(element): the list with element added at its
+// end, built by ConsConcFieldDescription (through the hooks).
+func (t *ConcFieldDescriptionFieldDescriptionList) Append(element FieldDescription) FieldDescriptionList {
+	var heads []FieldDescription
+	var cur FieldDescriptionList = t
+	for {
+		c, ok := cur.(*ConcFieldDescriptionFieldDescriptionList)
+		if !ok || c.empty {
+			break
+		}
+		heads = append(heads, c.head)
+		cur = c.tail
+	}
+	var res FieldDescriptionList
+	if c, ok := cur.(*ConcFieldDescriptionFieldDescriptionList); ok && c.empty {
+		res = ConsConcFieldDescription(element, cur)
+	} else {
+		res = ConsConcFieldDescription(element, cur)
+	}
+	for i := len(heads) - 1; i >= 0; i-- {
+		res = ConsConcFieldDescription(heads[i], res)
+	}
+	return res
+}
+
+func (t *ConcFieldDescriptionFieldDescriptionList) CompareTo(o any) int {
+	for {
+		ao := o.(FieldDescriptionList)
+		if ao == FieldDescriptionList(t) {
+			return 0
+		}
+		if t.Hash() != ao.Hash() {
+			if t.Hash() < ao.Hash() {
+				return -1
+			}
+			return 1
+		}
+		if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+			return c
+		}
+		tco := ao.(*ConcFieldDescriptionFieldDescriptionList)
+		if t.empty {
+			panic(&aterm.GomError{Msg: "Unable to compare"})
+		}
+		if c := t.head.CompareTo(tco.head); c != 0 {
+			return c
+		}
+		next, ok := t.tail.(*ConcFieldDescriptionFieldDescriptionList)
+		if !ok {
+			if c := t.tail.CompareTo(tco.tail); c != 0 {
+				return c
+			}
+			panic(&aterm.GomError{Msg: "Unable to compare"})
+		}
+		t, o = next, tco.tail
+	}
+}
+
+func (t *ConcFieldDescriptionFieldDescriptionList) CompareToLPO(o any) int {
+	for {
+		ao := o.(FieldDescriptionList)
+		if ao == FieldDescriptionList(t) {
+			return 0
+		}
+		if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+			return c
+		}
+		tco := ao.(*ConcFieldDescriptionFieldDescriptionList)
+		if t.empty {
+			panic(&aterm.GomError{Msg: "Unable to compare"})
+		}
+		if c := t.head.CompareToLPO(tco.head); c != 0 {
+			return c
+		}
+		next, ok := t.tail.(*ConcFieldDescriptionFieldDescriptionList)
+		if !ok {
+			if c := t.tail.CompareToLPO(tco.tail); c != 0 {
+				return c
+			}
+			panic(&aterm.GomError{Msg: "Unable to compare"})
+		}
+		t, o = next, tco.tail
+	}
+}
+
+// ToATerm is Java's toATerm: the list of the elements, ending with the
+// ATerm list of the tail (a tail that is not a list is Java's
+// ClassCastException).
+func (t *ConcFieldDescriptionFieldDescriptionList) ToATerm() aterm.ATerm {
+	f := aterm.GetInstance()
+	var heads []FieldDescription
+	var cur FieldDescriptionList = t
+	for {
+		c, ok := cur.(*ConcFieldDescriptionFieldDescriptionList)
+		if !ok || c.empty {
+			break
+		}
+		heads = append(heads, c.head)
+		cur = c.tail
+	}
+	l := f.MakeListEmpty()
+	if c, ok := cur.(*ConcFieldDescriptionFieldDescriptionList); !ok || !c.empty {
+		tl, isList := cur.ToATerm().(*aterm.ATermList)
+		if !isList {
+			panic(&aterm.GomError{Msg: fmt.Sprintf("ClassCastException: the ATerm of %v is not an ATermList", cur)})
+		}
+		l = tl
+	}
+	for i := len(heads) - 1; i >= 0; i-- {
+		l = f.MakeList(heads[i].ToATerm(), l)
+	}
+	return l
+}
+
+// fromTermConcFieldDescriptionFieldDescriptionList is Java Gom's concFieldDescription.fromTerm: an application of concFieldDescription, or a
+// list (of ToATerm), of convertible elements.
+func fromTermConcFieldDescriptionFieldDescriptionList(trm aterm.ATerm, conv aterm.ATermConverter) (res FieldDescriptionList, ok bool) {
+	trm = conv.Convert(trm)
+	if appl, isAppl := trm.(*aterm.ATermAppl); isAppl && appl.GetName() == "concFieldDescription" {
+		elems := make([]FieldDescription, appl.GetArity())
+		for i, a := range appl.GetArguments() {
+			elems[i] = FieldDescriptionFromTermConv(a, conv)
+		}
+		return MakeConcFieldDescription(elems...), true
+	}
+	if list, isList := trm.(*aterm.ATermList); isList {
+		// an element that cannot be converted: not a concFieldDescription (Java returns null)
+		defer func() {
+			if recover() != nil {
+				res, ok = nil, false
+			}
+		}()
+		var elems []FieldDescription
+		for !list.IsEmpty() {
+			elems = append(elems, FieldDescriptionFromTermConv(list.GetFirst(), conv))
+			list = list.GetNext()
+		}
+		return MakeConcFieldDescription(elems...), true
+	}
+	return nil, false
+}
+
 // FieldDescription is the Go interface backing the Gom sort FieldDescription.
 type FieldDescription interface {
 	sharedobjects.Term
 	isFieldDescription()
+	// Java Gom API (see the package's generated methods)
+	SymbolName() string
+	IsFieldDescription() bool
+	GetFieldName() string
+	GetSort() string
+	GetStatusValue() Status
+	Length() int
+	Reverse() FieldDescription
+	CompareTo(o any) int
+	CompareToLPO(o any) int
+	ToATerm() aterm.ATerm
+}
+
+// FieldDescriptionFromTerm is Java Gom's FieldDescription.fromTerm(trm).
+func FieldDescriptionFromTerm(trm aterm.ATerm) FieldDescription {
+	return FieldDescriptionFromTermConv(trm, aterm.IdConverter{})
+}
+
+// FieldDescriptionFromTermConv is Java Gom's FieldDescription.fromTerm(trm, atConv): the term of
+// the first operator of the sort that converts the ATerm; it panics
+// (IllegalArgumentException) when there is none.
+func FieldDescriptionFromTermConv(trm aterm.ATerm, conv aterm.ATermConverter) FieldDescription {
+	converted := conv.Convert(trm)
+	var results []FieldDescription
+	if r, ok := fromTermFieldDescriptionFieldDescription(converted, conv); ok {
+		results = append(results, r)
+	}
+	if len(results) == 0 {
+		panic(&aterm.GomError{Msg: fmt.Sprintf("%v is not a FieldDescription", trm), IllegalArgument: true})
+	}
+	return results[0]
+}
+
+// FieldDescriptionFromString is Java Gom's FieldDescription.fromString(s).
+func FieldDescriptionFromString(s string) FieldDescription {
+	return FieldDescriptionFromTerm(aterm.GetInstance().Parse(s))
+}
+
+// FieldDescriptionFromStream is Java Gom's FieldDescription.fromStream(stream) (an IOException is
+// the error).
+func FieldDescriptionFromStream(stream io.Reader) (FieldDescription, error) {
+	at, err := aterm.GetInstance().ReadFromTextFile(stream)
+	if err != nil {
+		return nil, err
+	}
+	return FieldDescriptionFromTerm(at), nil
 }
 
 // FieldDescriptionFieldDescription is the term type for the alternative `FieldDescription(...)` of sort FieldDescription.
@@ -1756,7 +3127,7 @@ func (t *FieldDescriptionFieldDescription) Duplicate() sharedobjects.Term {
 }
 
 func (t *FieldDescriptionFieldDescription) String() string {
-	return fmt.Sprintf("FieldDescription(%s,%s,%v)", sharedobjects.JavaEscape(t.FieldName), sharedobjects.JavaEscape(t.Sort), t.StatusValue)
+	return "FieldDescription(" + sharedobjects.JavaEscape(t.FieldName) + "," + sharedobjects.JavaEscape(t.Sort) + "," + fmt.Sprint(t.StatusValue) + ")"
 }
 
 func (t *FieldDescriptionFieldDescription) ChildCount() int { return 3 }
@@ -1893,10 +3264,150 @@ func (s *VisitFieldDescription) VisitWith(env *sl.Environment, intro sl.Introspe
 
 var _ sl.Strategy = (*VisitFieldDescription)(nil)
 
+func (t *FieldDescriptionFieldDescription) SymbolName() string { return "FieldDescription" }
+
+func (t *FieldDescriptionFieldDescription) IsFieldDescription() bool { return true }
+
+func (t *FieldDescriptionFieldDescription) GetFieldName() string   { return t.FieldName }
+func (t *FieldDescriptionFieldDescription) GetSort() string        { return t.Sort }
+func (t *FieldDescriptionFieldDescription) GetStatusValue() Status { return t.StatusValue }
+
+func (t *FieldDescriptionFieldDescription) Length() int {
+	panic(&aterm.GomError{Msg: "This FieldDescription.FieldDescription is not a list", IllegalArgument: true})
+}
+
+func (t *FieldDescriptionFieldDescription) Reverse() FieldDescription {
+	panic(&aterm.GomError{Msg: "This FieldDescription.FieldDescription is not a list", IllegalArgument: true})
+}
+
+func (t *FieldDescriptionFieldDescription) CompareTo(o any) int {
+	ao := o.(FieldDescription)
+	if ao == FieldDescription(t) {
+		return 0
+	}
+	if t.Hash() != ao.Hash() {
+		if t.Hash() < ao.Hash() {
+			return -1
+		}
+		return 1
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	tco := ao.(*FieldDescriptionFieldDescription)
+	if c := strings.Compare(t.FieldName, tco.FieldName); c != 0 {
+		return c
+	}
+	if c := strings.Compare(t.Sort, tco.Sort); c != 0 {
+		return c
+	}
+	if c := t.StatusValue.CompareTo(tco.StatusValue); c != 0 {
+		return c
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+func (t *FieldDescriptionFieldDescription) CompareToLPO(o any) int {
+	ao := o.(FieldDescription)
+	if ao == FieldDescription(t) {
+		return 0
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	tco := ao.(*FieldDescriptionFieldDescription)
+	if c := strings.Compare(t.FieldName, tco.FieldName); c != 0 {
+		return c
+	}
+	if c := strings.Compare(t.Sort, tco.Sort); c != 0 {
+		return c
+	}
+	if c := t.StatusValue.CompareToLPO(tco.StatusValue); c != 0 {
+		return c
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+// ToATerm is the ATerm of the term: an application of FieldDescription.
+func (t *FieldDescriptionFieldDescription) ToATerm() aterm.ATerm {
+	f := aterm.GetInstance()
+	return f.MakeAppl(f.MakeAFun("FieldDescription", 3, false), aterm.MakeGomString(t.FieldName), aterm.MakeGomString(t.Sort), t.StatusValue.ToATerm())
+}
+
+// fromTermFieldDescriptionFieldDescription is Java Gom's FieldDescription.fromTerm: an unquoted application of
+// FieldDescription whose arguments are convertible (as in Java, the arity is not
+// checked: a missing argument is an index out of range).
+func fromTermFieldDescriptionFieldDescription(trm aterm.ATerm, conv aterm.ATermConverter) (FieldDescription, bool) {
+	trm = conv.Convert(trm)
+	if appl, ok := trm.(*aterm.ATermAppl); ok && appl.GetName() == "FieldDescription" && !appl.GetAFun().IsQuoted() {
+		return MakeFieldDescription(aterm.GomString(appl.GetArgument(0), conv), aterm.GomString(appl.GetArgument(1), conv), StatusFromTermConv(appl.GetArgument(2), conv)), true
+	}
+	return nil, false
+}
+
 // Status is the Go interface backing the Gom sort Status.
 type Status interface {
 	sharedobjects.Term
 	isStatus()
+	// Java Gom API (see the package's generated methods)
+	SymbolName() string
+	IsSRefreshPoint() bool
+	IsSInner() bool
+	IsSOuter() bool
+	IsSNeutral() bool
+	IsSPattern() bool
+	IsSNone() bool
+	Length() int
+	Reverse() Status
+	CompareTo(o any) int
+	CompareToLPO(o any) int
+	ToATerm() aterm.ATerm
+}
+
+// StatusFromTerm is Java Gom's Status.fromTerm(trm).
+func StatusFromTerm(trm aterm.ATerm) Status { return StatusFromTermConv(trm, aterm.IdConverter{}) }
+
+// StatusFromTermConv is Java Gom's Status.fromTerm(trm, atConv): the term of
+// the first operator of the sort that converts the ATerm; it panics
+// (IllegalArgumentException) when there is none.
+func StatusFromTermConv(trm aterm.ATerm, conv aterm.ATermConverter) Status {
+	converted := conv.Convert(trm)
+	var results []Status
+	if r, ok := fromTermSRefreshPointStatus(converted, conv); ok {
+		results = append(results, r)
+	}
+	if r, ok := fromTermSInnerStatus(converted, conv); ok {
+		results = append(results, r)
+	}
+	if r, ok := fromTermSOuterStatus(converted, conv); ok {
+		results = append(results, r)
+	}
+	if r, ok := fromTermSNeutralStatus(converted, conv); ok {
+		results = append(results, r)
+	}
+	if r, ok := fromTermSPatternStatus(converted, conv); ok {
+		results = append(results, r)
+	}
+	if r, ok := fromTermSNoneStatus(converted, conv); ok {
+		results = append(results, r)
+	}
+	if len(results) == 0 {
+		panic(&aterm.GomError{Msg: fmt.Sprintf("%v is not a Status", trm), IllegalArgument: true})
+	}
+	return results[0]
+}
+
+// StatusFromString is Java Gom's Status.fromString(s).
+func StatusFromString(s string) Status { return StatusFromTerm(aterm.GetInstance().Parse(s)) }
+
+// StatusFromStream is Java Gom's Status.fromStream(stream) (an IOException is
+// the error).
+func StatusFromStream(stream io.Reader) (Status, error) {
+	at, err := aterm.GetInstance().ReadFromTextFile(stream)
+	if err != nil {
+		return nil, err
+	}
+	return StatusFromTerm(at), nil
 }
 
 // SRefreshPointStatus is the term type for the alternative `SRefreshPoint(...)` of sort Status.
@@ -1919,7 +3430,7 @@ func (t *SRefreshPointStatus) Duplicate() sharedobjects.Term {
 }
 
 func (t *SRefreshPointStatus) String() string {
-	return "SRefreshPoint" + "()"
+	return "SRefreshPoint()"
 }
 
 func (t *SRefreshPointStatus) ChildCount() int { return 0 }
@@ -2014,6 +3525,68 @@ func (s *VisitSRefreshPoint) VisitWith(env *sl.Environment, intro sl.Introspecto
 
 var _ sl.Strategy = (*VisitSRefreshPoint)(nil)
 
+func (t *SRefreshPointStatus) SymbolName() string { return "SRefreshPoint" }
+
+func (t *SRefreshPointStatus) IsSRefreshPoint() bool { return true }
+func (t *SRefreshPointStatus) IsSInner() bool        { return false }
+func (t *SRefreshPointStatus) IsSOuter() bool        { return false }
+func (t *SRefreshPointStatus) IsSNeutral() bool      { return false }
+func (t *SRefreshPointStatus) IsSPattern() bool      { return false }
+func (t *SRefreshPointStatus) IsSNone() bool         { return false }
+
+func (t *SRefreshPointStatus) Length() int {
+	panic(&aterm.GomError{Msg: "This Status.SRefreshPoint is not a list", IllegalArgument: true})
+}
+
+func (t *SRefreshPointStatus) Reverse() Status {
+	panic(&aterm.GomError{Msg: "This Status.SRefreshPoint is not a list", IllegalArgument: true})
+}
+
+func (t *SRefreshPointStatus) CompareTo(o any) int {
+	ao := o.(Status)
+	if ao == Status(t) {
+		return 0
+	}
+	if t.Hash() != ao.Hash() {
+		if t.Hash() < ao.Hash() {
+			return -1
+		}
+		return 1
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+func (t *SRefreshPointStatus) CompareToLPO(o any) int {
+	ao := o.(Status)
+	if ao == Status(t) {
+		return 0
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+// ToATerm is the ATerm of the term: an application of SRefreshPoint.
+func (t *SRefreshPointStatus) ToATerm() aterm.ATerm {
+	f := aterm.GetInstance()
+	return f.MakeAppl(f.MakeAFun("SRefreshPoint", 0, false))
+}
+
+// fromTermSRefreshPointStatus is Java Gom's SRefreshPoint.fromTerm: an unquoted application of
+// SRefreshPoint whose arguments are convertible (as in Java, the arity is not
+// checked: a missing argument is an index out of range).
+func fromTermSRefreshPointStatus(trm aterm.ATerm, conv aterm.ATermConverter) (Status, bool) {
+	trm = conv.Convert(trm)
+	if appl, ok := trm.(*aterm.ATermAppl); ok && appl.GetName() == "SRefreshPoint" && !appl.GetAFun().IsQuoted() {
+		return MakeSRefreshPoint(), true
+	}
+	return nil, false
+}
+
 // SInnerStatus is the term type for the alternative `SInner(...)` of sort Status.
 type SInnerStatus struct {
 	hash uint32
@@ -2034,7 +3607,7 @@ func (t *SInnerStatus) Duplicate() sharedobjects.Term {
 }
 
 func (t *SInnerStatus) String() string {
-	return "SInner" + "()"
+	return "SInner()"
 }
 
 func (t *SInnerStatus) ChildCount() int { return 0 }
@@ -2129,6 +3702,68 @@ func (s *VisitSInner) VisitWith(env *sl.Environment, intro sl.Introspector) (any
 
 var _ sl.Strategy = (*VisitSInner)(nil)
 
+func (t *SInnerStatus) SymbolName() string { return "SInner" }
+
+func (t *SInnerStatus) IsSRefreshPoint() bool { return false }
+func (t *SInnerStatus) IsSInner() bool        { return true }
+func (t *SInnerStatus) IsSOuter() bool        { return false }
+func (t *SInnerStatus) IsSNeutral() bool      { return false }
+func (t *SInnerStatus) IsSPattern() bool      { return false }
+func (t *SInnerStatus) IsSNone() bool         { return false }
+
+func (t *SInnerStatus) Length() int {
+	panic(&aterm.GomError{Msg: "This Status.SInner is not a list", IllegalArgument: true})
+}
+
+func (t *SInnerStatus) Reverse() Status {
+	panic(&aterm.GomError{Msg: "This Status.SInner is not a list", IllegalArgument: true})
+}
+
+func (t *SInnerStatus) CompareTo(o any) int {
+	ao := o.(Status)
+	if ao == Status(t) {
+		return 0
+	}
+	if t.Hash() != ao.Hash() {
+		if t.Hash() < ao.Hash() {
+			return -1
+		}
+		return 1
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+func (t *SInnerStatus) CompareToLPO(o any) int {
+	ao := o.(Status)
+	if ao == Status(t) {
+		return 0
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+// ToATerm is the ATerm of the term: an application of SInner.
+func (t *SInnerStatus) ToATerm() aterm.ATerm {
+	f := aterm.GetInstance()
+	return f.MakeAppl(f.MakeAFun("SInner", 0, false))
+}
+
+// fromTermSInnerStatus is Java Gom's SInner.fromTerm: an unquoted application of
+// SInner whose arguments are convertible (as in Java, the arity is not
+// checked: a missing argument is an index out of range).
+func fromTermSInnerStatus(trm aterm.ATerm, conv aterm.ATermConverter) (Status, bool) {
+	trm = conv.Convert(trm)
+	if appl, ok := trm.(*aterm.ATermAppl); ok && appl.GetName() == "SInner" && !appl.GetAFun().IsQuoted() {
+		return MakeSInner(), true
+	}
+	return nil, false
+}
+
 // SOuterStatus is the term type for the alternative `SOuter(...)` of sort Status.
 type SOuterStatus struct {
 	hash uint32
@@ -2149,7 +3784,7 @@ func (t *SOuterStatus) Duplicate() sharedobjects.Term {
 }
 
 func (t *SOuterStatus) String() string {
-	return "SOuter" + "()"
+	return "SOuter()"
 }
 
 func (t *SOuterStatus) ChildCount() int { return 0 }
@@ -2244,6 +3879,68 @@ func (s *VisitSOuter) VisitWith(env *sl.Environment, intro sl.Introspector) (any
 
 var _ sl.Strategy = (*VisitSOuter)(nil)
 
+func (t *SOuterStatus) SymbolName() string { return "SOuter" }
+
+func (t *SOuterStatus) IsSRefreshPoint() bool { return false }
+func (t *SOuterStatus) IsSInner() bool        { return false }
+func (t *SOuterStatus) IsSOuter() bool        { return true }
+func (t *SOuterStatus) IsSNeutral() bool      { return false }
+func (t *SOuterStatus) IsSPattern() bool      { return false }
+func (t *SOuterStatus) IsSNone() bool         { return false }
+
+func (t *SOuterStatus) Length() int {
+	panic(&aterm.GomError{Msg: "This Status.SOuter is not a list", IllegalArgument: true})
+}
+
+func (t *SOuterStatus) Reverse() Status {
+	panic(&aterm.GomError{Msg: "This Status.SOuter is not a list", IllegalArgument: true})
+}
+
+func (t *SOuterStatus) CompareTo(o any) int {
+	ao := o.(Status)
+	if ao == Status(t) {
+		return 0
+	}
+	if t.Hash() != ao.Hash() {
+		if t.Hash() < ao.Hash() {
+			return -1
+		}
+		return 1
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+func (t *SOuterStatus) CompareToLPO(o any) int {
+	ao := o.(Status)
+	if ao == Status(t) {
+		return 0
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+// ToATerm is the ATerm of the term: an application of SOuter.
+func (t *SOuterStatus) ToATerm() aterm.ATerm {
+	f := aterm.GetInstance()
+	return f.MakeAppl(f.MakeAFun("SOuter", 0, false))
+}
+
+// fromTermSOuterStatus is Java Gom's SOuter.fromTerm: an unquoted application of
+// SOuter whose arguments are convertible (as in Java, the arity is not
+// checked: a missing argument is an index out of range).
+func fromTermSOuterStatus(trm aterm.ATerm, conv aterm.ATermConverter) (Status, bool) {
+	trm = conv.Convert(trm)
+	if appl, ok := trm.(*aterm.ATermAppl); ok && appl.GetName() == "SOuter" && !appl.GetAFun().IsQuoted() {
+		return MakeSOuter(), true
+	}
+	return nil, false
+}
+
 // SNeutralStatus is the term type for the alternative `SNeutral(...)` of sort Status.
 type SNeutralStatus struct {
 	hash uint32
@@ -2264,7 +3961,7 @@ func (t *SNeutralStatus) Duplicate() sharedobjects.Term {
 }
 
 func (t *SNeutralStatus) String() string {
-	return "SNeutral" + "()"
+	return "SNeutral()"
 }
 
 func (t *SNeutralStatus) ChildCount() int { return 0 }
@@ -2359,6 +4056,68 @@ func (s *VisitSNeutral) VisitWith(env *sl.Environment, intro sl.Introspector) (a
 
 var _ sl.Strategy = (*VisitSNeutral)(nil)
 
+func (t *SNeutralStatus) SymbolName() string { return "SNeutral" }
+
+func (t *SNeutralStatus) IsSRefreshPoint() bool { return false }
+func (t *SNeutralStatus) IsSInner() bool        { return false }
+func (t *SNeutralStatus) IsSOuter() bool        { return false }
+func (t *SNeutralStatus) IsSNeutral() bool      { return true }
+func (t *SNeutralStatus) IsSPattern() bool      { return false }
+func (t *SNeutralStatus) IsSNone() bool         { return false }
+
+func (t *SNeutralStatus) Length() int {
+	panic(&aterm.GomError{Msg: "This Status.SNeutral is not a list", IllegalArgument: true})
+}
+
+func (t *SNeutralStatus) Reverse() Status {
+	panic(&aterm.GomError{Msg: "This Status.SNeutral is not a list", IllegalArgument: true})
+}
+
+func (t *SNeutralStatus) CompareTo(o any) int {
+	ao := o.(Status)
+	if ao == Status(t) {
+		return 0
+	}
+	if t.Hash() != ao.Hash() {
+		if t.Hash() < ao.Hash() {
+			return -1
+		}
+		return 1
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+func (t *SNeutralStatus) CompareToLPO(o any) int {
+	ao := o.(Status)
+	if ao == Status(t) {
+		return 0
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+// ToATerm is the ATerm of the term: an application of SNeutral.
+func (t *SNeutralStatus) ToATerm() aterm.ATerm {
+	f := aterm.GetInstance()
+	return f.MakeAppl(f.MakeAFun("SNeutral", 0, false))
+}
+
+// fromTermSNeutralStatus is Java Gom's SNeutral.fromTerm: an unquoted application of
+// SNeutral whose arguments are convertible (as in Java, the arity is not
+// checked: a missing argument is an index out of range).
+func fromTermSNeutralStatus(trm aterm.ATerm, conv aterm.ATermConverter) (Status, bool) {
+	trm = conv.Convert(trm)
+	if appl, ok := trm.(*aterm.ATermAppl); ok && appl.GetName() == "SNeutral" && !appl.GetAFun().IsQuoted() {
+		return MakeSNeutral(), true
+	}
+	return nil, false
+}
+
 // SPatternStatus is the term type for the alternative `SPattern(...)` of sort Status.
 type SPatternStatus struct {
 	hash uint32
@@ -2379,7 +4138,7 @@ func (t *SPatternStatus) Duplicate() sharedobjects.Term {
 }
 
 func (t *SPatternStatus) String() string {
-	return "SPattern" + "()"
+	return "SPattern()"
 }
 
 func (t *SPatternStatus) ChildCount() int { return 0 }
@@ -2474,6 +4233,68 @@ func (s *VisitSPattern) VisitWith(env *sl.Environment, intro sl.Introspector) (a
 
 var _ sl.Strategy = (*VisitSPattern)(nil)
 
+func (t *SPatternStatus) SymbolName() string { return "SPattern" }
+
+func (t *SPatternStatus) IsSRefreshPoint() bool { return false }
+func (t *SPatternStatus) IsSInner() bool        { return false }
+func (t *SPatternStatus) IsSOuter() bool        { return false }
+func (t *SPatternStatus) IsSNeutral() bool      { return false }
+func (t *SPatternStatus) IsSPattern() bool      { return true }
+func (t *SPatternStatus) IsSNone() bool         { return false }
+
+func (t *SPatternStatus) Length() int {
+	panic(&aterm.GomError{Msg: "This Status.SPattern is not a list", IllegalArgument: true})
+}
+
+func (t *SPatternStatus) Reverse() Status {
+	panic(&aterm.GomError{Msg: "This Status.SPattern is not a list", IllegalArgument: true})
+}
+
+func (t *SPatternStatus) CompareTo(o any) int {
+	ao := o.(Status)
+	if ao == Status(t) {
+		return 0
+	}
+	if t.Hash() != ao.Hash() {
+		if t.Hash() < ao.Hash() {
+			return -1
+		}
+		return 1
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+func (t *SPatternStatus) CompareToLPO(o any) int {
+	ao := o.(Status)
+	if ao == Status(t) {
+		return 0
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+// ToATerm is the ATerm of the term: an application of SPattern.
+func (t *SPatternStatus) ToATerm() aterm.ATerm {
+	f := aterm.GetInstance()
+	return f.MakeAppl(f.MakeAFun("SPattern", 0, false))
+}
+
+// fromTermSPatternStatus is Java Gom's SPattern.fromTerm: an unquoted application of
+// SPattern whose arguments are convertible (as in Java, the arity is not
+// checked: a missing argument is an index out of range).
+func fromTermSPatternStatus(trm aterm.ATerm, conv aterm.ATermConverter) (Status, bool) {
+	trm = conv.Convert(trm)
+	if appl, ok := trm.(*aterm.ATermAppl); ok && appl.GetName() == "SPattern" && !appl.GetAFun().IsQuoted() {
+		return MakeSPattern(), true
+	}
+	return nil, false
+}
+
 // SNoneStatus is the term type for the alternative `SNone(...)` of sort Status.
 type SNoneStatus struct {
 	hash uint32
@@ -2494,7 +4315,7 @@ func (t *SNoneStatus) Duplicate() sharedobjects.Term {
 }
 
 func (t *SNoneStatus) String() string {
-	return "SNone" + "()"
+	return "SNone()"
 }
 
 func (t *SNoneStatus) ChildCount() int { return 0 }
@@ -2589,16 +4410,130 @@ func (s *VisitSNone) VisitWith(env *sl.Environment, intro sl.Introspector) (any,
 
 var _ sl.Strategy = (*VisitSNone)(nil)
 
+func (t *SNoneStatus) SymbolName() string { return "SNone" }
+
+func (t *SNoneStatus) IsSRefreshPoint() bool { return false }
+func (t *SNoneStatus) IsSInner() bool        { return false }
+func (t *SNoneStatus) IsSOuter() bool        { return false }
+func (t *SNoneStatus) IsSNeutral() bool      { return false }
+func (t *SNoneStatus) IsSPattern() bool      { return false }
+func (t *SNoneStatus) IsSNone() bool         { return true }
+
+func (t *SNoneStatus) Length() int {
+	panic(&aterm.GomError{Msg: "This Status.SNone is not a list", IllegalArgument: true})
+}
+
+func (t *SNoneStatus) Reverse() Status {
+	panic(&aterm.GomError{Msg: "This Status.SNone is not a list", IllegalArgument: true})
+}
+
+func (t *SNoneStatus) CompareTo(o any) int {
+	ao := o.(Status)
+	if ao == Status(t) {
+		return 0
+	}
+	if t.Hash() != ao.Hash() {
+		if t.Hash() < ao.Hash() {
+			return -1
+		}
+		return 1
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+func (t *SNoneStatus) CompareToLPO(o any) int {
+	ao := o.(Status)
+	if ao == Status(t) {
+		return 0
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+// ToATerm is the ATerm of the term: an application of SNone.
+func (t *SNoneStatus) ToATerm() aterm.ATerm {
+	f := aterm.GetInstance()
+	return f.MakeAppl(f.MakeAFun("SNone", 0, false))
+}
+
+// fromTermSNoneStatus is Java Gom's SNone.fromTerm: an unquoted application of
+// SNone whose arguments are convertible (as in Java, the arity is not
+// checked: a missing argument is an index out of range).
+func fromTermSNoneStatus(trm aterm.ATerm, conv aterm.ATermConverter) (Status, bool) {
+	trm = conv.Convert(trm)
+	if appl, ok := trm.(*aterm.ATermAppl); ok && appl.GetName() == "SNone" && !appl.GetAFun().IsQuoted() {
+		return MakeSNone(), true
+	}
+	return nil, false
+}
+
 // StringList is the Go interface backing the Gom sort StringList.
 type StringList interface {
 	sharedobjects.Term
 	isStringList()
+	// Java Gom API (see the package's generated methods)
+	SymbolName() string
+	IsConsStringList() bool
+	IsEmptyStringList() bool
+	GetHeadStringList() string
+	GetTailStringList() StringList
+	Length() int
+	Reverse() StringList
+	CompareTo(o any) int
+	CompareToLPO(o any) int
+	ToATerm() aterm.ATerm
 }
 
-// StringListStringList is the term type for the alternative `StringList(...)` of sort StringList.
+// StringListFromTerm is Java Gom's StringList.fromTerm(trm).
+func StringListFromTerm(trm aterm.ATerm) StringList {
+	return StringListFromTermConv(trm, aterm.IdConverter{})
+}
+
+// StringListFromTermConv is Java Gom's StringList.fromTerm(trm, atConv): the term of
+// the first operator of the sort that converts the ATerm; it panics
+// (IllegalArgumentException) when there is none.
+func StringListFromTermConv(trm aterm.ATerm, conv aterm.ATermConverter) StringList {
+	converted := conv.Convert(trm)
+	var results []StringList
+	if r, ok := fromTermStringListStringList(converted, conv); ok {
+		results = append(results, r)
+	}
+	if len(results) == 0 {
+		panic(&aterm.GomError{Msg: fmt.Sprintf("%v is not a StringList", trm), IllegalArgument: true})
+	}
+	return results[0]
+}
+
+// StringListFromString is Java Gom's StringList.fromString(s).
+func StringListFromString(s string) StringList {
+	return StringListFromTerm(aterm.GetInstance().Parse(s))
+}
+
+// StringListFromStream is Java Gom's StringList.fromStream(stream) (an IOException is
+// the error).
+func StringListFromStream(stream io.Reader) (StringList, error) {
+	at, err := aterm.GetInstance().ReadFromTextFile(stream)
+	if err != nil {
+		return nil, err
+	}
+	return StringListFromTerm(at), nil
+}
+
+// StringListStringList is the term type of the variadic operator `StringList(...)` of sort StringList
+// (Java's abstract class StringList): a maximally-shared cons cell (Java's
+// ConsStringList: a head and a tail) or the empty list (Java's EmptyStringList).
 type StringListStringList struct {
-	Slots []string
+	head  string
+	tail  StringList
+	empty bool
 	hash  uint32
+	// children caches the Visitable children (Java's children field)
+	children atomic.Pointer[[]any]
 }
 
 func (*StringListStringList) isStringList() {}
@@ -2607,51 +4542,51 @@ func (t *StringListStringList) Hash() uint32 { return t.hash }
 
 func (t *StringListStringList) Equivalent(other sharedobjects.Term) bool {
 	o, ok := other.(*StringListStringList)
-	if !ok {
-		return false
-	}
-	if len(t.Slots) != len(o.Slots) {
-		return false
-	}
-	for i := range t.Slots {
-		if t.Slots[i] != o.Slots[i] {
-			return false
-		}
-	}
-	return true
+	return ok && t.empty == o.empty && t.head == o.head && t.tail == o.tail
 }
 
 func (t *StringListStringList) Duplicate() sharedobjects.Term {
-	cp := append([]string(nil), t.Slots...)
-	return &StringListStringList{Slots: cp, hash: t.hash}
+	return &StringListStringList{head: t.head, tail: t.tail, empty: t.empty, hash: t.hash}
 }
 
-func (t *StringListStringList) String() string {
-	parts := make([]string, len(t.Slots))
-	for i, v := range t.Slots {
-		parts[i] = fmt.Sprintf("%s", sharedobjects.JavaEscape(v))
+// elements returns the cached Visitable children of the list: its
+// elements (Java's getChildren, i.e. toArray).
+// Java's getChildren is the typed toArray(new string[]{}): a last tail
+// that is not a list (of sort StringList) cannot be stored in it
+// (ArrayStoreException, a *aterm.GomError here).
+func (t *StringListStringList) elements() []any {
+	if c := t.children.Load(); c != nil {
+		return *c
 	}
-	return "StringList" + "(" + strings.Join(parts, ",") + ")"
+	var cur StringList = t
+	for {
+		c, ok := cur.(*StringListStringList)
+		if !ok || c.empty {
+			break
+		}
+		cur = c.tail
+	}
+	if c, ok := cur.(*StringListStringList); !ok || !c.empty {
+		panic(&aterm.GomError{Msg: fmt.Sprintf("ArrayStoreException: the tail %v of a StringList list is not a string", cur)})
+	}
+	c := t.ToArray()
+	t.children.Store(&c)
+	return c
 }
 
-func (t *StringListStringList) ChildCount() int { return len(t.Slots) }
+func (t *StringListStringList) ChildCount() int { return len(t.elements()) }
 
-func (t *StringListStringList) ChildAt(i int) any { return t.Slots[i] }
+func (t *StringListStringList) ChildAt(i int) any { return t.elements()[i] }
 
 func (t *StringListStringList) SetChildAt(i int, child any) any {
-	dup := append([]string(nil), t.Slots...)
-	dup[i] = child.(string)
-	return MakeStringList(dup...)
+	dup := t.Children()
+	dup[i] = child
+	return t.SetChildren(dup)
 }
 
-func (t *StringListStringList) Children() []any {
-	out := make([]any, len(t.Slots))
-	for i, v := range t.Slots {
-		out[i] = v
-	}
-	return out
-}
+func (t *StringListStringList) Children() []any { return append([]any(nil), t.elements()...) }
 
+// SetChildren is Java's setChildren of a list: StringListFromArray(children).
 func (t *StringListStringList) SetChildren(children []any) any {
 	args := make([]string, len(children))
 	for i, c := range children {
@@ -2660,15 +4595,77 @@ func (t *StringListStringList) SetChildren(children []any) any {
 	return MakeStringList(args...)
 }
 
-// MakeStringList builds the canonical (shared) StringList term.
-func MakeStringList(args ...string) StringList {
-	hashes := make([]uint32, 0, len(args))
-	for _, a := range args {
-		hashes = append(hashes, sharedobjects.StringHash(fmt.Sprintf("%v", a)))
+func (t *StringListStringList) String() string {
+	var b strings.Builder
+	b.WriteString("StringList(")
+	var cur StringList = t
+	for {
+		c, ok := cur.(*StringListStringList)
+		if !ok {
+			b.WriteString("," + fmt.Sprint(cur))
+			break
+		}
+		if c.empty {
+			break
+		}
+		if c != t {
+			b.WriteString(",")
+		}
+		b.WriteString(sharedobjects.JavaEscape(c.head))
+		cur = c.tail
 	}
-	proto := &StringListStringList{Slots: args, hash: sharedobjects.MixSymbol(sharedobjects.StringHash("StringList"), hashes)}
+	b.WriteString(")")
+	return b.String()
+}
+
+// RealMakeConsStringList is Java Gom's ConsStringList.realMake: the shared cell of head
+// and tail, without hook.
+func RealMakeConsStringList(head string, tail StringList) StringList {
+	proto := &StringListStringList{head: head, tail: tail, hash: sharedobjects.MixSymbol(sharedobjects.StringHash("ConsStringList"), []uint32{sharedobjects.StringHash(head), tail.Hash()})}
 	return factory.Build(proto).(*StringListStringList)
 }
+
+// realMakeEmptyStringList is Java Gom's EmptyStringList.realMake: the shared empty list,
+// without hook.
+func realMakeEmptyStringList() StringList {
+	proto := &StringListStringList{empty: true, hash: sharedobjects.MixSymbol(sharedobjects.StringHash("EmptyStringList"), nil)}
+	return factory.Build(proto).(*StringListStringList)
+}
+
+// RawStringList builds the StringList list holding exactly args, without construction
+// hook.
+func RawStringList(args ...string) StringList {
+	l := realMakeEmptyStringList()
+	for i := len(args) - 1; i >= 0; i-- {
+		l = RealMakeConsStringList(args[i], l)
+	}
+	return l
+}
+
+// EmptyStringList is Java Gom's EmptyStringList.make(): the empty StringList list, after the
+// construction hooks.
+func EmptyStringList() StringList {
+	return realMakeEmptyStringList()
+}
+
+// ConsStringList is Java Gom's ConsStringList.make(head, tail): head inserted in front of
+// tail, after the construction hooks (theory "" first).
+func ConsStringList(head string, tail StringList) StringList {
+	return RealMakeConsStringList(head, tail)
+}
+
+// MakeStringList builds the list of args as Tom's `StringList(args…)` does: from EmptyStringList,
+// by ConsStringList, through the construction hooks (Java's StringList.fromArray).
+func MakeStringList(args ...string) StringList {
+	var l StringList = EmptyStringList()
+	for i := len(args) - 1; i >= 0; i-- {
+		l = ConsStringList(args[i], l)
+	}
+	return l
+}
+
+// StringListFromArray is Java Gom's StringList.fromArray(array).
+func StringListFromArray(array []string) StringList { return MakeStringList(array...) }
 
 // IsStringList is the `Is_StringList` predicate strategy: succeeds (returns subject
 // unchanged) when subject has the `StringList` shape, otherwise fails with
@@ -2762,3 +4759,225 @@ func (s *VisitStringList) VisitWith(env *sl.Environment, intro sl.Introspector) 
 }
 
 var _ sl.Strategy = (*VisitStringList)(nil)
+
+// SymbolName is the symbol of the Java term: ConsStringList or EmptyStringList.
+func (t *StringListStringList) SymbolName() string {
+	if t.empty {
+		return "EmptyStringList"
+	}
+	return "ConsStringList"
+}
+
+func (t *StringListStringList) IsConsStringList() bool  { return !t.empty }
+func (t *StringListStringList) IsEmptyStringList() bool { return t.empty }
+
+func (t *StringListStringList) GetHeadStringList() string {
+	if t.empty {
+		panic(&aterm.GomError{Msg: "This StringList has no HeadStringList"})
+	}
+	return t.head
+}
+func (t *StringListStringList) GetTailStringList() StringList {
+	if t.empty {
+		panic(&aterm.GomError{Msg: "This StringList has no TailStringList"})
+	}
+	return t.tail
+}
+
+// Length is Java's length(): the number of elements of the list (a
+// tail that is not a StringList list counts as one element).
+func (t *StringListStringList) Length() int {
+	res := 0
+	var tl StringList = t
+	for {
+		c, ok := tl.(*StringListStringList)
+		if !ok || c.empty {
+			return res
+		}
+		res++
+		tl = c.tail
+		if _, ok := tl.(*StringListStringList); !ok {
+			res++
+		}
+	}
+}
+
+// ToArray returns the elements of the list (Java's Object[] toArray()),
+// ending with its tail when that is not a StringList list.
+func (t *StringListStringList) ToArray() []any {
+	out := make([]any, 0, t.Length())
+	var cur StringList = t
+	for {
+		c, ok := cur.(*StringListStringList)
+		if !ok || c.empty {
+			break
+		}
+		out = append(out, c.head)
+		cur = c.tail
+	}
+	if c, ok := cur.(*StringListStringList); !ok || !c.empty {
+		out = append(out, cur)
+	}
+	return out
+}
+
+// Reverse is Java's reverse(): the reversed list, built by ConsStringList
+// (through the hooks).
+func (t *StringListStringList) Reverse() StringList {
+	if t.empty {
+		return t
+	}
+	var cur StringList = t
+	var rev StringList = EmptyStringList()
+	for {
+		c, ok := cur.(*StringListStringList)
+		if !ok || c.empty {
+			break
+		}
+		rev = ConsStringList(c.head, rev)
+		cur = c.tail
+	}
+	return rev
+}
+
+// Append is Java's append(element): the list with element added at its
+// end, built by ConsStringList (through the hooks).
+func (t *StringListStringList) Append(element string) StringList {
+	var heads []string
+	var cur StringList = t
+	for {
+		c, ok := cur.(*StringListStringList)
+		if !ok || c.empty {
+			break
+		}
+		heads = append(heads, c.head)
+		cur = c.tail
+	}
+	var res StringList
+	if c, ok := cur.(*StringListStringList); ok && c.empty {
+		res = ConsStringList(element, cur)
+	} else {
+		res = ConsStringList(element, cur)
+	}
+	for i := len(heads) - 1; i >= 0; i-- {
+		res = ConsStringList(heads[i], res)
+	}
+	return res
+}
+
+func (t *StringListStringList) CompareTo(o any) int {
+	for {
+		ao := o.(StringList)
+		if ao == StringList(t) {
+			return 0
+		}
+		if t.Hash() != ao.Hash() {
+			if t.Hash() < ao.Hash() {
+				return -1
+			}
+			return 1
+		}
+		if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+			return c
+		}
+		tco := ao.(*StringListStringList)
+		if t.empty {
+			panic(&aterm.GomError{Msg: "Unable to compare"})
+		}
+		if c := strings.Compare(t.head, tco.head); c != 0 {
+			return c
+		}
+		next, ok := t.tail.(*StringListStringList)
+		if !ok {
+			if c := t.tail.CompareTo(tco.tail); c != 0 {
+				return c
+			}
+			panic(&aterm.GomError{Msg: "Unable to compare"})
+		}
+		t, o = next, tco.tail
+	}
+}
+
+func (t *StringListStringList) CompareToLPO(o any) int {
+	for {
+		ao := o.(StringList)
+		if ao == StringList(t) {
+			return 0
+		}
+		if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+			return c
+		}
+		tco := ao.(*StringListStringList)
+		if t.empty {
+			panic(&aterm.GomError{Msg: "Unable to compare"})
+		}
+		if c := strings.Compare(t.head, tco.head); c != 0 {
+			return c
+		}
+		next, ok := t.tail.(*StringListStringList)
+		if !ok {
+			if c := t.tail.CompareToLPO(tco.tail); c != 0 {
+				return c
+			}
+			panic(&aterm.GomError{Msg: "Unable to compare"})
+		}
+		t, o = next, tco.tail
+	}
+}
+
+// ToATerm is Java's toATerm: the list of the elements, ending with the
+// ATerm list of the tail (a tail that is not a list is Java's
+// ClassCastException).
+func (t *StringListStringList) ToATerm() aterm.ATerm {
+	f := aterm.GetInstance()
+	var heads []string
+	var cur StringList = t
+	for {
+		c, ok := cur.(*StringListStringList)
+		if !ok || c.empty {
+			break
+		}
+		heads = append(heads, c.head)
+		cur = c.tail
+	}
+	l := f.MakeListEmpty()
+	if c, ok := cur.(*StringListStringList); !ok || !c.empty {
+		tl, isList := cur.ToATerm().(*aterm.ATermList)
+		if !isList {
+			panic(&aterm.GomError{Msg: fmt.Sprintf("ClassCastException: the ATerm of %v is not an ATermList", cur)})
+		}
+		l = tl
+	}
+	for i := len(heads) - 1; i >= 0; i-- {
+		l = f.MakeList(aterm.MakeGomString(heads[i]), l)
+	}
+	return l
+}
+
+// fromTermStringListStringList is Java Gom's StringList.fromTerm: an application of StringList, or a
+// list (of ToATerm), of convertible elements.
+func fromTermStringListStringList(trm aterm.ATerm, conv aterm.ATermConverter) (res StringList, ok bool) {
+	trm = conv.Convert(trm)
+	if appl, isAppl := trm.(*aterm.ATermAppl); isAppl && appl.GetName() == "StringList" {
+		elems := make([]string, appl.GetArity())
+		for i, a := range appl.GetArguments() {
+			elems[i] = aterm.GomString(a, conv)
+		}
+		return MakeStringList(elems...), true
+	}
+	if list, isList := trm.(*aterm.ATermList); isList {
+		// an element that cannot be converted: not a StringList (Java returns null)
+		defer func() {
+			if recover() != nil {
+				res, ok = nil, false
+			}
+		}()
+		var elems []string
+		for !list.IsEmpty() {
+			elems = append(elems, aterm.GomString(list.GetFirst(), conv))
+			list = list.GetNext()
+		}
+		return MakeStringList(elems...), true
+	}
+	return nil, false
+}

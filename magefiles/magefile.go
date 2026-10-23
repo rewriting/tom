@@ -76,19 +76,6 @@ func runInEnv(dir string, env []string, name string, args ...string) error {
 // vacuously (test/go/harness).
 var requireTools = []string{"TOMGO_REQUIRE_TOOLS=1"}
 
-// rel returns files relative to base.
-func rel(base string, files []string) []string {
-	out := make([]string, 0, len(files))
-	for _, f := range files {
-		r, err := filepath.Rel(base, f)
-		if err != nil {
-			r = f
-		}
-		out = append(out, r)
-	}
-	return out
-}
-
 // Test runs the unit tests of the validated Go tree (module tom).
 func Test() error { return runIn(tomDir, "go", "test", "-count=1", "./...") }
 
@@ -100,27 +87,22 @@ func Vet() error {
 	return runIn(testGoDir, "go", "vet", "./...")
 }
 
-// SelfBootstrap checks that tom/gom/adt regenerates byte-identically.
+// SelfBootstrap checks that the compiler's ADTs (tom/gom/adt, the AST
+// gomgo is built on, tom/engine/adt and tom/engine/adt/il) regenerate
+// byte-identically from their .gom files (needs src/dist built: the
+// hooks of engine/adt are compiled by tom -go).
 func SelfBootstrap() error {
-	return runIn(tomDir, "go", "test", "-count=1", "-run", "TestSelfBootstrap", "./gom/backend/")
+	return runInEnv(tomDir, requireTools, "go", "test", "-count=1", "-run", "TestSelfBootstrap|TestSignatureParity", "./internal/adtgen/")
 }
 
-// RegenGomAdt regenerates src/go/tom/gom/adt from src/tom/gom/adt/*.gom.
-func RegenGomAdt() error {
-	files, err := filepath.Glob("src/tom/gom/adt/*.gom")
-	if err != nil || len(files) == 0 {
-		return fmt.Errorf("no .gom in src/tom/gom/adt: %v", err)
-	}
-	args := append([]string{"run", "./gom/cmd/gomgo", "gom-batch", "--pkg", "adt", "-o", "gom/adt"}, rel(tomDir, files)...)
-	if err := runIn(tomDir, "go", args...); err != nil {
-		return err
-	}
-	// gom-batch drops a stand-alone go.mod next to the generated package;
-	// inside module tom it would cut gom/adt off the module.
-	if err := os.Remove(filepath.Join(tomDir, "gom", "adt", "go.mod")); err != nil && !os.IsNotExist(err) {
-		return err
-	}
-	return nil
+// RegenAdt regenerates the compiler's ADTs in src/go/tom (gom/adt,
+// engine/adt, engine/adt/il) from their .gom files: gomgo gom-batch, then
+// tom -go (TOM_HOME, default src/dist) for the hooks of engine/adt
+// (internal/adtgen). Run it twice after a change of the Gom ADT or of
+// gomgo: the second run rebuilds gomgo on the regenerated gom/adt and
+// must change nothing (TestSelfBootstrap).
+func RegenAdt() error {
+	return runIn(tomDir, "go", "run", "./internal/adtgen/regenadt")
 }
 
 // PortJava runs T0: the root compiler's Java output must equal legacy/'s

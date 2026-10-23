@@ -22,17 +22,12 @@ func firstSort(t *testing.T, m gomast.GomModule) *gomast.SortTypeProduction {
 
 // altsOf returns the alternatives of a SortType production.
 func altsOf(prod *gomast.SortTypeProduction) []*gomast.AlternativeAlternative {
-	altList := prod.AlternativeList.(*gomast.ConcAlternativeAlternativeList)
-	out := make([]*gomast.AlternativeAlternative, 0, len(altList.Slots))
-	for _, a := range altList.Slots {
-		out = append(out, a.(*gomast.AlternativeAlternative))
-	}
-	return out
+	return elements[*gomast.AlternativeAlternative](prod.AlternativeList.(*gomast.ConcAlternativeAlternativeList))
 }
 
 // fieldsOf returns the fields of an alternative.
 func fieldsOf(alt *gomast.AlternativeAlternative) []gomast.Field {
-	return alt.DomainList.(*gomast.ConcFieldFieldList).Slots
+	return elements[gomast.Field](alt.DomainList.(*gomast.ConcFieldFieldList))
 }
 
 func TestParse_Minimal(t *testing.T) {
@@ -215,12 +210,12 @@ Foo:make(x,y) {}
 		t.Fatal(err)
 	}
 	h := Hooks(mod)[0]
-	argList := h.Args.(*gomast.ConcArgArgList)
-	if len(argList.Slots) != 2 {
-		t.Fatalf("want 2 args, got %d", len(argList.Slots))
+	args := elements[gomast.Arg](h.Args.(*gomast.ConcArgArgList))
+	if len(args) != 2 {
+		t.Fatalf("want 2 args, got %d", len(args))
 	}
-	if argList.Slots[0].(*gomast.ArgArg).Name != "x" || argList.Slots[1].(*gomast.ArgArg).Name != "y" {
-		t.Errorf("args = %v", argList.Slots)
+	if args[0].(*gomast.ArgArg).Name != "x" || args[1].(*gomast.ArgArg).Name != "y" {
+		t.Errorf("args = %v", args)
 	}
 }
 
@@ -242,7 +237,7 @@ Bar = C()
 	if len(hooks) != 2 || hooks[0].Name != "f" || HookKind(hooks[0]) != "AC" || hooks[1].Name != "g" || HookKind(hooks[1]) != "FL" {
 		t.Fatalf("hooks = %v", hooks)
 	}
-	if n := len(hooks[0].Args.(*gomast.ConcArgArgList).Slots); n != 0 {
+	if n := hooks[0].Args.Length(); n != 0 {
 		t.Errorf("want no arg, got %d", n)
 	}
 	if sorts := Sorts(mod); len(sorts) != 2 || SortName(sorts[1]) != "Bar" {
@@ -300,14 +295,12 @@ func TestParse_Corpus(t *testing.T) {
 
 // TestParse_StringRoundTrip parses each .gom in the corpus, calls
 // String() on the resulting gomast.GomModule, feeds the textual form
-// to gomast.FromString, and verifies that the rebuilt term is the
-// SAME Go pointer as the original. Hash-consing guarantees structural
-// equality reduces to pointer equality, so this exercises both:
-//
-//   - The String() / FromString pair is a complete round-trip (no
-//     information lost on the way out, none invented on the way back).
-//   - Every Op printed by the parser's output appears in makeRegistry
-//     — a missing entry would surface as `unknown operator` here.
+// to gomast.GomModuleFromString (Java Gom's GomModule.fromString), and
+// verifies that the rebuilt term is the SAME Go pointer as the
+// original. Hash-consing guarantees structural equality reduces to
+// pointer equality, so this checks that the String() / FromString pair
+// is a complete round-trip (no information lost on the way out, none
+// invented on the way back).
 func TestParse_StringRoundTrip(t *testing.T) {
 	for _, name := range []string{
 		"Builtin.gom",
@@ -328,10 +321,7 @@ func TestParse_StringRoundTrip(t *testing.T) {
 				t.Fatal(err)
 			}
 			dump := fmt.Sprintf("%v", mod)
-			parsed, err := gomast.FromString(dump)
-			if err != nil {
-				t.Fatalf("FromString failed: %v\ninput=%s", err, dump)
-			}
+			parsed := gomast.GomModuleFromString(dump)
 			if parsed != mod {
 				t.Fatalf("round-trip not pointer-equal\noriginal=%p\nparsed=%p\nstr=%s",
 					mod, parsed, dump)

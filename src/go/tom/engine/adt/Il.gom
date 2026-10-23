@@ -1,0 +1,52 @@
+module Il
+imports String int ATerm
+abstract syntax
+Symbol = fsymbol(Name:String)
+Variable=  var(Name:String)
+
+AbsTerm = absvar(Varname:Variable)
+				| st(Symbol:Symbol,Abst:AbsTerm,Index:int)
+				| sl(Symbol:Symbol,Abst:AbsTerm,Name:String)
+
+Term = tau(Abst:AbsTerm)
+		 | repr(Term:String)
+		 | subterm(Symbol:Symbol,T:Term,Index:int)
+		 | slot(Symbol:Symbol,T:Term,Name:String)
+		 | appSubsT(Subs:SubstitutionList,T:Term)
+
+Expr = iltrue(Subst:SubstitutionList)
+		 | ilfalse()
+		 | isfsym(T:Term,Symbol:Symbol)
+		 | eq(Lt:Term,Rt:Term)
+		 | tisfsym(Abst:AbsTerm,Symbol:Symbol)
+		 | teq(Labst:AbsTerm,Rabst:AbsTerm)
+		 | iland(Left:Expr,Right:Expr)
+		 | ilor(Left:Expr,Right:Expr)
+		 | ilnot(Exp:Expr)
+		 | appSubsE(Subs:SubstitutionList,E:Expr)
+
+Instr = accept(Positive:ATerm,Negative:ATerm)
+			| refuse()
+			| ITE(E:Expr,Ift:Instr,Iff:Instr)
+			| ILLet(Var:Variable,T:Term,Body:Instr)
+			| sequence(Instrlist:InstrList)
+
+InstrList = semicolon(Instr*)
+
+Substitution = undefsubs()
+						 | is(Var:Variable,Term:Term)
+
+SubstitutionList = subs(Substitution *)
+Environment = env(Subs:SubstitutionList,I:Instr)
+
+Seq =  seq()
+		| dedexpr(Exprs:ExprList)
+		| dedterm(Terms:TermList)
+
+TermList = concTerm(Term *)
+ExprList = concExpr(Expr *)
+
+Deriv = ebs(Lhs:Environment,Rhs:Environment)
+DerivTree = endderiv()
+					| derivrule(Name:String,Post:Deriv,Pre:DerivTree,Cond:Seq)
+					| derivrule2(Name:String,Post:Deriv,Pre:DerivTree,Pre2:DerivTree,Cond:Seq)

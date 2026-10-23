@@ -66,13 +66,13 @@ func Imports(g gomast.GomModule) []string {
 	gm := g.(*gomast.GomModuleGomModule)
 	sectionList := gm.SectionList.(*gomast.ConcSectionSectionList)
 	var out []string
-	for _, sec := range sectionList.Slots {
+	for _, sec := range elements[gomast.Section](sectionList) {
 		imp, ok := sec.(*gomast.ImportsSection)
 		if !ok {
 			continue
 		}
 		list := imp.ImportList.(*gomast.ConcImportedModuleImportList)
-		for _, n := range list.Slots {
+		for _, n := range elements[gomast.GomModuleName](list) {
 			out = append(out, n.(*gomast.GomModuleNameGomModuleName).Name)
 		}
 	}
@@ -114,14 +114,25 @@ func HookBody(h *gomast.HookProduction) string {
 func walkProductions(g gomast.GomModule, fn func(gomast.Production)) {
 	gm := g.(*gomast.GomModuleGomModule)
 	sectionList := gm.SectionList.(*gomast.ConcSectionSectionList)
-	for _, sec := range sectionList.Slots {
+	for _, sec := range elements[gomast.Section](sectionList) {
 		pub, ok := sec.(*gomast.PublicSection)
 		if !ok {
 			continue
 		}
 		prodList := pub.ProductionList.(*gomast.ConcProductionProductionList)
-		for _, p := range prodList.Slots {
+		for _, p := range elements[gomast.Production](prodList) {
 			fn(p)
 		}
 	}
+}
+
+// elements returns the elements of a Gom list term, typed (Java Gom's
+// toArray: the lists are cons cells).
+func elements[T any](l interface{ ToArray() []any }) []T {
+	arr := l.ToArray()
+	out := make([]T, len(arr))
+	for i, x := range arr {
+		out[i] = x.(T)
+	}
+	return out
 }
