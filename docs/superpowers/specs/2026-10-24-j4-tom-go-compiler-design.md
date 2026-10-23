@@ -2,7 +2,8 @@
 
 Date : 2026-10-24
 Branche : `tom-go`
-Statut : proposition, en attente des décisions de la §8 et de la relecture
+Statut : décisions D1–D6 prises par l'utilisateur le 2026-10-24 (§8) ;
+plan du premier jalon : `docs/superpowers/plans/2026-10-24-j4-0-bridge.md`
 
 Références : `docs/superpowers/specs/2026-10-22-tom-go-backend-design.md`
 (J−1…J3), `docs/superpowers/specs/2026-10-23-repo-layout-design.md`,
@@ -10,7 +11,8 @@ Références : `docs/superpowers/specs/2026-10-22-tom-go-backend-design.md`
 début de J4 »), `.superpowers/sdd/progress.md` (décisions de
 l'utilisateur). Les expériences citées ont été faites dans un répertoire
 de travail hors dépôt (`…/scratchpad/j4/`) ; le dépôt n'a pas été modifié
-(sauf ce fichier). Détail : `.superpowers/sdd/j4-spec-report.md`.
+(sauf ce fichier). Détail : `.superpowers/sdd/j4-spec-report.md` ; mise à
+jour après les décisions : `.superpowers/sdd/j4-plan-report.md`.
 
 ## 1. Résumé
 
@@ -38,13 +40,17 @@ de travail hors dépôt (`…/scratchpad/j4/`) ; le dépôt n'a pas été modifi
   de Tom+Java à porter (GoGenerator, la quasi-totalité de GenericGenerator
   et du parcours d'AbstractGenerator, OutputCode, un sous-ensemble de
   SymbolTable/TomBase, la passe `Collector` de BackendPlugin), soit
-  environ 5 000 à 5 800 lignes de Tom+Go. Le backend Java en ajouterait
-  1 100 à 1 300.
+  environ 5 000 à 5 800 lignes de Tom+Go. Le côté Go ne produit que du Go
+  (D5) : le backend Java n'est pas porté.
 - **Préalable bloquant** : un paquetage Go ne peut aujourd'hui contenir
   qu'**un seul** `.t` (expérience : deux `.t` d'un même paquetage
   redéclarent `tom_equal_term_int`, `tom_is_sort_int`, `tom_stringHead`…).
-  Le backend s'étend sur au moins trois `.t` d'un même paquetage : il faut
-  trancher (§8, D1) avant d'écrire du Tom+Go.
+  Le backend s'étend sur au moins trois `.t` d'un même paquetage. Décision
+  D1 (b) : un préfixe par fichier sur les déclarations générées, appliqué
+  d'abord au `GoGenerator` Java (J4.0b).
+- **Deux défauts de gomgo** à corriger avant d'écrire du Tom+Go (J4.0a) :
+  `adt.tom` lit `.String` au lieu du champ `String_` ; `ToATerm` panique
+  sur une liste AU qui finit par un élément (§3.2).
 - **Plus gros risque** : la taille et le style du code à porter (héritage
   Java à trois niveaux, exceptions comme flot de contrôle, environ 150
   méthodes qui lèvent `IOException`), puis, pour les phases suivantes,
@@ -59,9 +65,9 @@ de travail hors dépôt (`…/scratchpad/j4/`) ; le dépôt n'a pas été modifi
    Tom+Go (compilé par la chaîne `-go`) exécute les phases k+1…fin.
 2. Premier jalon : le **backend Go** en Tom+Go, branché après l'optimizer.
    Sa sortie est identique octet pour octet à celle de `GoGenerator`
-   (goldens T1 : 77 ports et cas smoke). En option : le backend Java
-   (comparé par T0). Ensuite k recule (optimizer, compilateur de motifs,
-   expander, typer, desugarer…). Le **parser vient en dernier** : on reprend
+   (goldens T1 : 77 ports et cas smoke). Le côté Go ne cible que Go
+   (D5) : ni backend Java, ni branches Java des phases. Ensuite k recule
+   (optimizer, compilateur de motifs, expander, typer, desugarer…). Le **parser vient en dernier** : on reprend
    celui de `prototype/tomgo/stable/tom/parser`, complété. L'orchestration
    Go se construit au fil des étapes, et on termine par le point fixe.
 3. **Équivalence.** Identité stricte pour chaque étape qui part de l'AST
@@ -171,18 +177,32 @@ de travail hors dépôt (`…/scratchpad/j4/`) ; le dépôt n'a pas été modifi
     La syntaxe ATerm de `.parsed.table` (`[…]`) est aussi relue.
 - **Défaut trouvé (hors chemin du pont)** : `v.ToATerm()` panique sur les
   AST d'avant le compilateur (« ClassCastException: the ATerm of
-  MatchConstraint(…) is not an ATermList ») : l'opérateur AU
-  `AndConstraint`, dont le hook aplatit et absorbe l'unité, n'est pas
-  converti en liste. Le pont n'utilise pas `ToATerm` ; à corriger dans
-  gomgo avant que du code Tom+Go ne s'en serve.
+  MatchConstraint(…) is not an ATermList »). L'opérateur `AndConstraint`
+  est AU d'unité `TrueConstraint()` : son hook absorbe l'unité, si bien
+  que `AndConstraint(a,b)` est la cellule `ConsAndConstraint(a, b)` dont
+  la queue est un **élément**, pas une liste. *Correction après relecture*
+  : Java a le même défaut — son `toATerm` généré convertit la queue en
+  `ATermList` par un transtypage (`src/gen/tom/engine/adt/tomconstraint/
+  types/constraint/AndConstraint.java:126-133`), qui lève la même
+  `ClassCastException`. La correction Go (J4.0a) est donc une extension
+  voulue, notée dans « Différences connues avec Java » de
+  `doc/go/README.md` : pour un opérateur dont la théorie absorbe l'unité
+  (`Make<Op>(x)` rend `x`), une queue qui est un élément est écrite comme
+  dernier élément de la liste ATerm, et `FromTerm(ToATerm(v)) == v`. Le
+  pont n'utilise pas `ToATerm`.
 - **Écrire du Tom+Go sur l'ADT du moteur fonctionne.** Expérience : un `.t`
   qui inclut `adt.tom`, fait un `%match` de liste sur `Code` et une
   `%strategy` `TopDown` qui visite les `TL` lit un dump Java ; `tom -go`
   puis `go build` réussissent et il s'exécute (13 ms). Trois écueils :
   1. **Bug de gomgo** : `adt.tom` écrit `get_slot(String,t) {
      ($t).(*NameTomName).String }`, alors que le champ s'appelle
-     `String_` (renommage de `--gohooks`). Quatre occurrences
-     (`adt.tom:3111,3309,3330,4016`) ; contourné dans l'expérience.
+     `String_`. Quatre occurrences (`adt.tom:3111,3309,3330,4016`) ;
+     contourné dans l'expérience. *Précision* : le renommage des champs
+     réservés (`reservedFieldName`, `gom/backend/backend.go:1090`) est
+     appliqué à tous les modules, pas seulement avec `--gohooks`, alors
+     que `EmitTomMappingGo` (`backend.go:557`) écrit `exportedField(slot)`
+     sans ce renommage : un `%gom` utilisateur dont un champ s'appelle
+     `String` ou `Hash` a le même défaut.
   2. `adt.tom` emploie des noms non qualifiés (`Code`, `MakeName`) : le
      code Tom+Go doit faire `import . "tom/engine/adt"`. Il inclut aussi
      `aterm.tom`, ce qui exige `import "tom/library/aterm"`.
@@ -207,7 +227,7 @@ Mesures (`wc -l`, comptes de `%match`, hiérarchie) :
 | `SymbolTable.t` (sous-ensemble) | environ 530 sur 687 | recherche, marques, types builtin, inliners, `fromTerm` |
 | `TomBase.t` (sous-ensemble) | environ 280 | `getTLType`, `getTomType`, `getSymbolCodomain`, `getSlotName`… |
 | **Total chemin Go** | **environ 4 300 à 4 600** | environ 5 000 à 5 800 lignes de Tom+Go, colle comprise |
-| `JavaGenerator.t` + `CFamilyGenerator.t` | 652 + 537 | option ; la partie EMF (environ 150 lignes) est à exclure |
+| `JavaGenerator.t` + `CFamilyGenerator.t` | 652 + 537 | **non porté** (D5 : le côté Go ne cible que Go) |
 
 Pour situer les étapes suivantes : optimizer 828 lignes, compiler 3 948
 (16 fichiers), expander 750, typer 3 748, checker 2 124, desugarer 345,
@@ -245,12 +265,22 @@ Aucun `.t` n'existe encore sous `src/go`.
     types utilisés (`tom_make_*`, `tom_is_fun_sym_*`, `tom_get_slot_*`,
     `tom_equal_term_*`, `tom_is_sort_*`…). En Java, ce sont des méthodes
     `private static` de la classe ; en Go, des fonctions du paquetage ;
-  - **(ii)** les fonctions écrites en dur dans deux mappings Go
-    (`string.tom:25,27`, `intarray.tom:25`) ;
+  - **(ii)** les fonctions écrites en dur dans les mappings Go : neuf
+    fonctions dans six fichiers (`string.tom:25,27` ; `intarray.tom:23,25` ;
+    `util/ArrayList.tom:18` ; `util/LinkedList.tom:19,21` ;
+    `util/types/ArrayList.tom:14` ; `util/types/LinkedList.tom:14`) ;
   - **(iii)** les aides du filtrage AC émises par le compilateur en `ITL`
     (`next_minimal_extract`, `__getMultiplicities_<op>`…).
 - **Contre-épreuve** : renommer `tom_` en `tomB_` dans `B.go` suffit : le
   paquetage se construit et s'exécute (`zero 3 A`).
+- **Noms écrits par l'utilisateur.** Les types des `%strategy` (nommés
+  par l'utilisateur) et `LocalIntrospector` (`-gi`, que le code hôte
+  instancie : `&LocalIntrospector{}` dans
+  `test/go/sl/TestHandWrittenMapping.t`) sont aussi des déclarations de
+  niveau paquetage, mais le code de l'utilisateur les nomme : ils ne sont
+  pas préfixés (comme en Java, ce sont des noms de classes visibles).
+  Deux `.t` d'un paquetage ne peuvent donc pas déclarer la même
+  stratégie, ni utiliser tous deux `-gi`.
 - **L'option existante `-D` (`noDeclaration`) ne résout rien** : avec
   `-go`, elle n'est que partiellement honorée (`GoGenerator.t:662`), et les
   `tom_equal_term_*` et `tom_is_sort_*` restent déclarés.
@@ -261,70 +291,121 @@ Aucun `.t` n'existe encore sous `src/go`.
 
 **Côté Java.**
 
-- Une option globale `--goFrom <phase>` (nom d'un plugin de
-  `Tom.config`, par ex. `Backend`, puis `Optimizer`…) est déclarée dans les
-  options de plateforme de `Tom.config`. Les options des plugins (`-go`,
-  `-O`, `--genIntrospector`…) restent déclarées, car tous les plugins
-  restent dans la chaîne.
-- Dans `PluginPlatform.run`, avant d'exécuter le plugin nommé par
-  `--goFrom`, la plateforme appelle `tom.engine.bridge.GoBridge.handOver
-  (args, optionManager)` puis sort de la boucle **avec succès**. Le
-  changement est d'environ 10 lignes dans la plateforme, plus une classe
-  `tom/engine/bridge/GoBridge.java`.
-- Variante possible (D3) : brancher le pont seulement dans `BackendPlugin`
-  pour J4.1, puis le généraliser.
+- Deux options de plateforme sont déclarées dans `src/config/Tom.config`
+  (liste `concPlatformOption`, à côté de `intermediate`) :
+  - `goFrom` (`StringValue("")`, argument `phase`) : nom d'un plugin de
+    `Tom.config` avant lequel la compilation passe au suffixe Go. Le nom
+    est comparé sans tenir compte de la casse ni des espaces (`Backend`,
+    `Optimizer`, `TypeChecker` pour « Type checker »…). Un nom inconnu
+    est une erreur de la plateforme.
+  - `goCheck` (`BooleanValue(False())`) : avec `goFrom`, le pont vérifie
+    l'aller-retour du paquet (`tomgo suffix --echo`), puis **la chaîne
+    Java continue** comme sans `goFrom` (sortie inchangée). C'est le mode
+    de P0 (§5.1).
+  Les options des plugins (`-go`, `-O`, `--genIntrospector`…) restent
+  déclarées : tous les plugins restent dans la chaîne.
+- **Crochet générique (D3)** dans `PluginPlatform.run`
+  (`src/tom/platform/PluginPlatform.t:158-199`), environ 10 lignes :
+  - `ConfigurationManager` garde, à côté de la liste des plugins, la
+    liste de leurs noms (`extractClassPaths` les lit déjà,
+    `ConfigurationManager.t:165`) ; `PluginPlatformFactory` les passe à
+    `PluginPlatform` avec la valeur de `goFrom`, lue seulement si
+    l'option est déclarée (Gom utilise la même plateforme avec
+    `Gom.config`, qui ne la déclare pas : `getOptionValue` d'une option
+    inconnue lève une erreur, `TomOptionManager.t:191`).
+  - Avant d'exécuter le plugin nommé par `goFrom`, la plateforme
+    instancie par réflexion `tom.engine.bridge.GoBridgePlugin` (la
+    plateforme ne dépend pas de `tom.engine` à la compilation), lui donne
+    le gestionnaire d'options et les arguments courants
+    (`[Code, TomStreamManager]`), et l'exécute. Sans `goCheck`, elle sort
+    ensuite de la boucle **avec succès** (le résultat est celui du
+    pont) ; avec `goCheck`, elle continue avec le plugin Java.
+  - `goFrom` vide (défaut) : le code de la boucle est inchangé ; la sortie
+    est identique octet pour octet (T0, T1).
+- `GoBridgePlugin` (`src/tom/engine/bridge/GoBridgePlugin.java`,
+  `extends TomGenericPlugin`) refuse de fonctionner sans `-go` (D5 : le
+  suffixe Go ne produit que du Go).
 
-**`GoBridge.handOver`.**
+**`GoBridgePlugin.run`.**
 
-1. Écrit le **paquet** (§4.2) sur l'entrée standard d'un processus Go.
-2. Le binaire est résolu comme gomgo : `$TOMGO_BIN`, puis `tomgo` dans le
-   `PATH`. Introuvable → erreur `TomMessage` explicite.
-3. Lit la sortie standard du processus (le code généré) et l'écrit dans le
-   fichier de sortie habituel (`getStreamManager().getOutputFile()`, avec
-   l'option `encoding`), comme le fait `BackendPlugin` aujourd'hui.
+1. Écrit le **paquet** (§4.2) sur l'entrée standard d'un processus
+   `tomgo suffix` (`tomgo suffix --echo` avec `goCheck`), en UTF-8, depuis
+   un fil séparé ; la sortie d'erreur est lue par un autre fil.
+2. **Binaire (D2)** : `$TOMGO_BIN` s'il est défini (surcharge), sinon
+   `<tom.home>/bin/tomgo` (`-Dtom.home` est posé par `bin/tom`), installé
+   dans la dist par la construction (§4.3). Introuvable → erreur
+   `TomMessage` explicite qui donne le chemin cherché. Pas de recherche
+   dans le `PATH` : le prototype gelé a aussi un `tomgo`
+   (`prototype/tomgo/cmd/tomgo`). gomgo est trouvé de la même façon par
+   `TomParserTool.parseGomFileGo` (`$GOMGO_BIN`, sinon
+   `<tom.home>/bin/gomgo`).
+3. Sans `goCheck` : lit la sortie standard (le code généré) et l'écrit
+   dans le fichier de sortie habituel
+   (`getStreamManager().getOutputFile()`, avec l'option `encoding`),
+   comme `BackendPlugin` ; `getArgs()` rend `[nom du fichier généré]`.
+   Avec `goCheck` : compare la sortie au paquet envoyé, octet pour octet ;
+   une différence est une erreur qui nomme la première ligne différente.
 4. Relaie chaque ligne `ERROR <nom> <fichier> <ligne> <message>` de la
-   sortie d'erreur du processus en `TomMessage.error`, et chaque ligne
-   `WARNING …` en avertissement. Un code de sortie non nul est une erreur.
+   sortie d'erreur en `TomMessage.error`, chaque ligne `WARNING …` en
+   avertissement ; un code de sortie non nul est une erreur (avec le
+   texte de la sortie d'erreur).
+5. Avec `--intermediate`, écrit aussi le paquet dans
+   `<sortie>.tfix.bridge`.
 
 Ainsi `tom -go [--goFrom Backend]` reste la seule commande des harnais. La
-bascule Java/Go se fait par une option, que T1, T2 et smoke peuvent
-ajouter par une variable d'environnement (`TOMGO_GOFROM=Backend`), sans
-toucher aux goldens.
+bascule se fait par une option, que T1, T2 et smoke ajoutent par des
+variables d'environnement lues par `harness.Dist.Compile`
+(`test/tools/harness/harness.go:215`) : `TOMGO_GOFROM=<phase>`,
+`TOMGO_GOCHECK=1` (ajoute `--goFrom Backend --goCheck`) et
+`TOMGO_DUMPS=<répertoire>` (ajoute `--intermediate` et recueille les
+`*.tfix*`). Les goldens ne changent pas.
 
-**Côté Go.** Une commande `tomgo` (nom : D2) dans le module `tom`. Pour
-J4.1, `tomgo suffix` lit le paquet sur l'entrée standard, reconstruit
-`Code`, la table et les marques, exécute les phases à partir de celle
-indiquée par l'en-tête, puis écrit le code sur la sortie standard. Le
-suffixe refuse une phase qu'il ne connaît pas encore (code de sortie 2,
-message explicite).
+**Côté Go.** La commande `tomgo` (D2), source
+`src/go/tom/engine/cmd/tomgo/`, lit et écrit le paquet par le paquetage
+`tom/engine/bridge` (`src/go/tom/engine/bridge/`). `tomgo suffix` lit le
+paquet sur l'entrée standard, reconstruit `Code`, la table, les marques
+et les types, exécute les phases à partir de celle de la ligne `from`,
+puis écrit le code sur la sortie standard. Il refuse une phase qu'il ne
+connaît pas encore (code de sortie 2, message explicite) : c'est le cas
+de toutes en J4.0. `tomgo suffix --echo` réécrit le paquet relu.
 
-### 4.2 Le paquet (format d'échange)
+### 4.2 Le paquet (format d'échange, D6)
 
-Le format est texte, une donnée par ligne : chaque terme Gom tient sur une
-ligne (§3.1).
+Le format est texte, UTF-8, une donnée par ligne : chaque terme Gom tient
+sur une ligne (§3.1). L'ordre des lignes est fixe.
 
 ```
 tom-bridge 1
-from Backend
+from Backend                        (nom du plugin, sans espaces)
 input /chemin/absolu/X.t
 output /chemin/absolu/X.go
-option goCode true
-option pretty false
-…                                   (toutes les options de plateforme et de plugins, nom valeur)
+option destdir string "out"         (toutes les options connues, triées par nom :
+option goCode bool true              option <nom> bool|int|string <valeur>)
+option verbose bool false
+…
 used UsedSymbolConstructor(Symbol(…))   (une ligne par KeyEntry, triées par toString)
-type Type(…)                        (une ligne par entrée de mapTypeName, dès que k < Expander)
+type Type(…)                        (une ligne par entrée de mapTypeName, dans l'ordre de ses clés)
 table Table(concTomEntry(…))
 code Tom(concCode(…))
+end
 ```
 
 - Les termes sont écrits par `toString()` (format éprouvé ci-dessus) et
-  relus par `XFromString` ; il n'y a rien à écrire côté Go.
+  relus par `XFromString` (`CodeFromString`, `TomSymbolTableFromString`,
+  `KeyEntryFromString`, `TomTypeFromString`) ; il n'y a pas de lecteur de
+  termes à écrire côté Go.
+- Valeur d'une option `string` : littéral entre guillemets, échappements
+  `\\`, `\"`, `\n`, `\r`, `\t`, et `\u00XX` pour les autres caractères
+  de contrôle, relu par `strconv.Unquote`.
+- Les options sont celles de `TomOptionManager` (plateforme et plugins),
+  toutes, pour que les étapes suivantes n'aient pas à toucher au pont.
+  Les types (`type`) sont exportés dès J4.0, même si le backend ne les
+  lit pas.
+- La ligne `end` détecte un paquet tronqué. Une ligne de terme qui
+  contiendrait un saut de ligne est une erreur du pont (jamais observée :
+  0 sur 675 dumps).
 - Le paquet n'est pas une sorte Gom, afin que les ADT Java et Go restent
   indépendants (décision 4). Il est versionné par sa première ligne.
-- Options : exporter la liste complète plutôt qu'un sous-ensemble, pour que
-  les étapes suivantes n'aient pas à toucher au pont.
-- Débogage : avec `--intermediate`, `GoBridge` écrit aussi le paquet dans
-  `<sortie>.tfix.bridge`.
 
 ### 4.3 Sources, construction et amorce du Tom+Go
 
@@ -334,40 +415,77 @@ OutputCode), `platform` (options, messages), puis `optimizer`, `compiler`…
 La commande est dans `src/go/tom/engine/cmd/tomgo/`. Du Go pur (sans
 construction Tom) peut voisiner en `.go` : ce sont des sources.
 
-**Construction.**
+**Binaires installés dans la dist (D2).** « `src/` contient des
+sources, pas des binaires » : `gomgo` et `tomgo` sont construits par la
+construction de la dist et installés dans `<dist>/bin/gomgo` et
+`<dist>/bin/tomgo`.
 
-- Une nouvelle cible `mage regenTomGo` compile chaque `.t` de
-  `src/go/tom/engine/**` avec la dist **`src/dist`** (`tom -go -np -I
-  src/go/tom/engine/adt`), avec gomgo pour les blocs `%gom`. Le `.go`
-  produit est écrit à côté du `.t`, ignoré par git, comme les ADT.
+- `build.xml` (`src.dist` et `stable.dist`) appelle une cible mage
+  `installGo <src|stable> <dist>` : pour `src`, elle lance `bootstrap`
+  (les ADT générés sont ignorés par git) puis `go build` dans
+  `src/go/tom` ; pour `stable`, `GOWORK=off go build` dans l'amorce
+  `stable/go/tom`. Elle installe chaque commande présente
+  (`gom/cmd/gomgo`, `engine/cmd/tomgo`) et dit lesquelles. Go et mage
+  deviennent des prérequis de `./build.sh src.dist` et `stable` ; la
+  construction échoue clairement s'ils manquent.
+- Le côté Java trouve les binaires depuis `tom.home` (§4.1) ;
+  `TOMGO_BIN` et `GOMGO_BIN` ne sont plus que des surcharges.
+- Les harnais (`test/tools/harness`) utilisent les binaires de la dist
+  testée (`Dist.Bin`) au lieu de construire gomgo ; un binaire absent
+  fait échouer le test avec un message qui dit de reconstruire la dist.
+  `CheckFresh` vérifie aussi que les binaires ne sont pas plus anciens
+  que les sources Go (`src/go/tom/**/*.{go,gom}` hors tests) ni que
+  `src/config/*.config`.
+- Le compilateur Java de `stable/` lit encore `GOMGO_BIN` ou le `PATH`
+  jusqu'à la prochaine promotion de `src/` dans `stable/` ; les harnais
+  posent `GOMGO_BIN` vers le binaire de la dist, ce qui marche dans les
+  deux cas.
+
+**Compilation du Tom+Go (D4).**
+
+- Une nouvelle cible `mage regenTomGo` (J4.1a, avec le premier `.t`)
+  compile chaque `.t` de `src/go/tom/engine/**` avec la dist
+  **`src/dist`** (`tom -go -np -I src/go/tom/engine/adt`), vérifiée
+  fraîche par `CheckFresh`, avec le gomgo de la dist pour les blocs
+  `%gom`. Le `.go` produit est écrit à côté du `.t`, ignoré par git, comme
+  les ADT.
 - `mage promoteGo` (existant) copie ces `.go` dans `stable/go/tom/…`, où
   ils sont commités comme amorce.
 - `mage bootstrap` continue de tout construire depuis l'amorce **sans
-  Java**. Seule la régénération demande une dist Java, jusqu'au point fixe
-  (D4).
+  Java**. Seule la régénération demande une dist Java, jusqu'au point fixe.
 
 **Inclusion de l'ADT.** Le code Tom+Go fait `import . "tom/engine/adt"` et
 `import "tom/library/aterm"`, et inclut `adt.tom` (point « le mapping de
 l'ADT du moteur est à inclure » de `doc/go/README.md`). Avant d'écrire du
-Tom+Go, corriger dans gomgo :
+Tom+Go, J4.0a corrige dans gomgo :
 
 - le `get_slot` des champs renommés (§3.2, écueil 1) ;
-- `ToATerm` des opérateurs AU.
+- `ToATerm` des listes AU qui finissent par un élément (§3.2).
 
-**Plusieurs `.t` par paquetage.** C'est un prérequis : voir D1, option
-recommandée « préfixe par fichier », qui s'applique d'abord au
-`GoGenerator` Java.
+**Plusieurs `.t` par paquetage (D1 b, J4.0b).** Le préfixe est
+`tom_<F>_`, où `<F>` est le nom de base du fichier d'entrée sans
+extension, chaque caractère hors `[A-Za-z0-9_]` remplacé par `_`
+(`Peano.t` → `tom_Peano_`). Un nom généré `tom_x` devient `tom_<F>_x`
+(`tom_make_suc` → `tom_Peano_make_suc`) ; un autre nom généré de niveau
+paquetage `n` devient `tom_<F>_n` (`next_minimal_extract`,
+`__getMultiplicities_<op>`…). Les variables locales (`tom_a`, `tom__strat`,
+`tom__arg`…) et les noms écrits par l'utilisateur (§3.4) ne changent
+pas. Les fonctions des mappings deviennent des fermetures dans le corps
+des hooks. Seule la cible Go change : T0 le garantit pour Java.
 
 ### 4.4 Structure du code porté
 
-- **Héritage.** Pour J4.1, une seule cible (Go) : la hiérarchie
+- **Héritage.** Une seule cible (Go, D5) : la hiérarchie
   `AbstractGenerator → GenericGenerator → GoGenerator` est aplatie en un
-  type `goGenerator`. Chaque méthode Java devient une méthode Go de même
-  nom, dans le même ordre, avec un commentaire `// Java: Fichier.t:ligne`,
-  ce qui facilite la relecture côte à côte.
-  - Si le backend Java est porté aussi (D5), les méthodes redéfinissables
-    passent par une interface `generator` et un champ `self` (répartition
-    virtuelle explicite).
+  type `goGenerator`. Pour chaque méthode, on porte la version la plus
+  dérivée sur le chemin Go (celle de `GoGenerator` si elle la redéfinit,
+  sinon celle de `GenericGenerator`, sinon celle d'`AbstractGenerator`).
+  Chaque méthode Java devient une méthode Go de même nom, dans le même
+  ordre, avec un commentaire `// Java: Fichier.t:ligne`, ce qui facilite
+  la relecture côte à côte.
+- **Branches Java.** Les branches propres aux autres cibles (`jCode`,
+  `cCode`…) des phases portées sont omises côté Go ; elles restent
+  intactes dans les sources Java, que T0 continue de valider.
 - **Exceptions.**
   - `TomRuntimeException` et les erreurs d'E/S deviennent des `panic`
     typées, récupérées une seule fois par le pilote, qui écrit `ERROR …`
@@ -401,11 +519,10 @@ Elle émerge par étapes :
 
 | Niveau | Quoi | Oracle | Règle |
 |---|---|---|---|
-| **P0 pont** | relecture du paquet (code, table, marques, types) par l'ADT Go puis réimpression | le paquet lui-même | identité stricte ; corpus : T1 + smoke (121 entrées) + **T0 en `-go`** quand c'est possible |
+| **P0 pont** | relecture du paquet (code, table, marques, types) par `tomgo suffix --echo` (`--goCheck`), et des dumps `--intermediate` de toutes les phases par l'ADT Go (`String()` et `FromTerm(ToATerm(v))`) | le paquet ou le dump lui-même | identité stricte ; corpus : T1 + smoke (121 entrées) |
 | **P1 phase** | une phase portée P, en isolation : `Go_P(dump avant P)` | dump Java après P (`--intermediate`, plus table et marques) | identité stricte du `toString()` |
 | **P2 bout en bout** | `tom -go --goFrom X` sur les cas T1 et smoke | goldens T1 existants | identité stricte ; T2 (comportement) inchangé par construction |
 | **P3 auto-application** | le compilateur hybride compile les sources Tom+Go du suffixe | sortie de `tom -go` 100 % Java sur les mêmes sources | identité stricte (« self-T1 ») |
-| **P4 Java** (option D5) | backend Java en Go, `--goFrom Backend` sans `-go` | T0 (legacy) | identité stricte |
 | **Parser** | AST Go comparé au `.tfix.parsed` Java | voir §2.3 | identité visée ; tolérances de position séparées, comptées |
 
 Remarques :
@@ -414,16 +531,20 @@ Remarques :
   (`.compiled` → `.optimized` pour l'optimizer, `.expanded` → `.compiled`
   pour le compilateur, `.typed` → `.expanded` pour l'expander…). Il
   manque la table aux frontières autres que le typer, d'où le dump du
-  paquet par `--intermediate` (§4.2).
-- L'optimizer et le compilateur de motifs agissent aussi sur des AST à
-  cible Java. Leurs ports peuvent donc être éprouvés en P1 sur les dumps du
-  corpus T0 (102 entrées), ce qui élargit la couverture au-delà des 121
-  entrées Go. Cela suppose de garder leurs branches `jCode` (D5).
+  paquet par `--intermediate` (`.tfix.bridge`, §4.1).
+- **T0 ne valide que le compilateur Java** (sortie `--java` identique à
+  `legacy/`). Il garde son rôle à chaque jalon : les changements Java du
+  pont et du préfixe (J4.0b, J4.0c) doivent laisser la sortie Java
+  inchangée, et les branches Java du middle-end restent dans les sources
+  Java, intactes. Le côté Go ne cible que Go (D5) : il est validé par les
+  goldens T1, le comportement T2 (oracle `legacy/`) et les cas smoke ; les
+  jumeaux Java des cas smoke (`TestJavaTwins`) restent l'oracle du
+  comportement du code généré.
 
 ### 5.2 Application mécanique de la règle d'équivalence
 
 - Une seule fonction de comparaison par niveau, dans
-  `test/tools/j4/` : `bytes.Equal` pour P0–P4. Elle n'a pas de paramètre
+  `test/tools/j4/` : `bytes.Equal` pour P0–P3. Elle n'a pas de paramètre
   de normalisation.
 - Les tolérances du parser sont des fonctions distinctes
   (`maskPositions`, `ignorePaddingNewlines`, `diagByName`), chacune
@@ -458,91 +579,90 @@ Remarques :
 
 ## 6. Jalons
 
-Chaque jalon est un plan d'implémentation séparé et se termine par un
-commit vert (`mage all`, T1, T2, smoke, T0 inchangés). (U) marque une
-dépendance à une décision de la §8.
+Chaque jalon se termine par un commit vert (`mage all`, T1, T2, smoke, T0
+inchangés, sauf changement voulu et vérifié des goldens en J4.0b). Les
+jalons J4.0a–J4.0d forment un seul plan
+(`docs/superpowers/plans/2026-10-24-j4-0-bridge.md`) ; chacun des suivants
+aura le sien. La colonne « Décisions » renvoie à la §8 : toutes sont
+prises, plus rien n'attend l'utilisateur.
 
-| Jalon | Contenu | Critère de sortie |
-|---|---|---|
-| **J4.0a — préalables gomgo** | `get_slot` des champs renommés ; `ToATerm` des opérateurs AU ; test Tom+Go minimal (le programme de §3.2) dans `test/go` | le `.t` d'essai se compile sans contournement ; `ToATerm` relu sur les 675 dumps |
-| **J4.0b — plusieurs `.t` par paquetage** (U : D1) | mise en œuvre de l'option choisie dans `GoGenerator`, `Compiler` (aides AC) et les mappings `string`/`intarray` ; goldens régénérés | deux `.t` d'un paquetage se construisent ; diff des goldens limité aux renommages (vérifié par script) ; T2 inchangé |
-| **J4.0c — pont** (U : D2, D3) | `--goFrom`, `GoBridge`, paquet ; `tomgo suffix` en mode `--check` (relit le paquet, le réimprime, compare) ; `mage regenTomGo` | P0 vert sur T1 + smoke (121 entrées) et T0 en `-go` ; un `--goFrom Backend` avec un suffixe absent échoue proprement |
-| **J4.1a — fondations Go** | `OutputCode`, sous-ensembles `SymbolTable`/`TomBase`, options et messages, en Tom+Go, avec tests unitaires | tests unitaires verts ; compilés par `regenTomGo` |
-| **J4.1b — backend Go** | `Collector`, parcours `generate…`, `GenericGenerator`, `GoGenerator` ; portage par familles d'instructions, en suivant le compteur P2 | P2 : 100 % des goldens T1 + smoke identiques avec `--goFrom Backend` ; budget §5.3 tenu |
-| **J4.1c — amorce** | `promoteGo` du backend ; P3 sur ses propres sources | self-T1 identique ; `mage bootstrap` sans Java vert |
-| **J4.1j — backend Java en Go** (U : D5) | `CFamilyGenerator` + `JavaGenerator` sans EMF | T0 identique avec `--goFrom Backend` |
-| **J4.2 — optimizer** | `OptimizerPlugin` + `sl/builtin.tom` Go | P1 `.compiled` → `.optimized` identique ; P2 avec `--goFrom Optimizer` |
-| **J4.3 — compilateur de motifs** | `compiler/*` (16 fichiers), dont `collectHostSubjects` et les aides AC Go | P1 `.expanded` → `.compiled` ; P2 |
-| **J4.4 — expander** | export des types ; `ExpanderPlugin`, dont l'introspecteur Go | P1 `.typed` → `.expanded` ; P2 |
-| **J4.5 — type checker, typer** | diagnostics en mode Regress ; `NewKernelTyper` | P1 ; cas d'erreur T2 identiques par nom |
-| **J4.6 — desugarer, syntax checker, transformer** | | P1 ; P2 avec `--goFrom Transformer` |
-| **J4.7 — parser** | parser du prototype reciblé sur `tom/engine/adt`, complété ; règle des accolades `ITL` | AST identique, ou tolérances de position comptées (§5.2) ; P2 |
-| **J4.8 — orchestration** | starter, `%include`, gomgo en bibliothèque, CLI `tomgo` autonome | T1/T2/smoke verts avec `tomgo` seul, sans Java |
-| **J4.9 — point fixe** | stage1 (`.go` produit par Java `-go`) compile les sources : stage2 ; stage2 recompile : stage3 | sortie de stage2 identique à celle de stage1 (et stage3 identique à stage2) |
+| Jalon | Contenu | Dépend de | Décisions | Critère de sortie |
+|---|---|---|---|---|
+| **J4.0a — binaires dans la dist, bugs gomgo** | cible `mage installGo` appelée par `build.xml` (`src.dist`, `stable.dist`) : `<dist>/bin/gomgo` ; `TomParserTool` trouve gomgo depuis `tom.home` ; harnais sur les binaires de la dist (`Dist.Bin`, `CheckFresh` étendu) ; `get_slot` des champs renommés ; `ToATerm` des listes AU ; programme Tom+Go d'essai sur l'ADT du moteur (§3.2) | — | D2 | les deux dists contiennent `bin/gomgo` ; harnais sans `go build` de gomgo ; le `.t` d'essai se compile et s'exécute sans contournement ; tests unitaires des deux corrections ; T0, T1, T2, smoke inchangés |
+| **J4.0b — préfixe par fichier** | `tom_<F>_` dans `AbstractGenerator`/`GenericGenerator`/`GoGenerator`, noms des aides AC du compilateur, fermetures dans les mappings Go ; goldens T1 régénérés | J4.0a | D1 | deux `.t` (avec mappings `int`/`string` et filtrage AC) d'un paquetage se construisent et s'exécutent ; diff des goldens = renommages seuls (programme de vérification) ; T0, T2, smoke, jumeaux Java inchangés |
+| **J4.0c — pont** | options `goFrom`/`goCheck`, crochet de `PluginPlatform`, `GoBridgePlugin` et écriture du paquet ; paquetage Go `tom/engine/bridge` (lecture/écriture), commande `tomgo suffix` (`--echo`, phases refusées) ; `tomgo` installé dans la dist | J4.0a | D2, D3, D6 | sans `goFrom`, sortie identique (T0, T1) ; `--goFrom Backend` échoue proprement (code 2, message) ; `--goFrom` sans `-go` refusé ; `TOMGO_BIN` absent et binaire absent : erreur claire |
+| **J4.0d — identité (P0)** | harnais : `TOMGO_GOCHECK`, `TOMGO_DUMPS` ; cible `mage bridgeCheck` ; test des dumps (`String()` et `ToATerm`) | J4.0b, J4.0c | D6 | `--goCheck` vert sur T1 + smoke (121 entrées, goldens inchangés) ; tous les dumps relus à l'identique (675 au relevé de §3.2, plus les `.tfix.bridge`), compteurs imprimés |
+| **J4.1a — fondations Go** | `OutputCode`, sous-ensembles `SymbolTable`/`TomBase`, options et messages, en Tom+Go, avec tests unitaires ; `mage regenTomGo` | J4.0 | D4 | tests unitaires verts ; compilés par `regenTomGo` avec `src/dist` |
+| **J4.1b — backend Go** | `Collector`, parcours `generate…`, `GenericGenerator`, `GoGenerator` (aplatis, §4.4) ; portage par familles d'instructions, en suivant le compteur P2 | J4.1a | D5 | P2 : 100 % des goldens T1 + smoke identiques avec `--goFrom Backend` ; budget §5.3 tenu |
+| **J4.1c — amorce** | `promoteGo` du backend ; P3 sur ses propres sources | J4.1b | D4 | self-T1 identique ; `mage bootstrap` sans Java vert |
+| **J4.2 — optimizer** | `OptimizerPlugin` + `sl/builtin.tom` Go | J4.1c | D5 | P1 `.compiled` → `.optimized` identique ; P2 avec `--goFrom Optimizer` |
+| **J4.3 — compilateur de motifs** | `compiler/*` (16 fichiers), dont `collectHostSubjects` et les aides AC Go (préfixées) | J4.2 | D1, D5 | P1 `.expanded` → `.compiled` ; P2 |
+| **J4.4 — expander** | `ExpanderPlugin`, dont l'introspecteur Go (les types sont déjà dans le paquet) | J4.3 | D5 | P1 `.typed` → `.expanded` ; P2 |
+| **J4.5 — type checker, typer** | diagnostics en mode Regress ; `NewKernelTyper` | J4.4 | | P1 ; cas d'erreur T2 identiques par nom |
+| **J4.6 — desugarer, syntax checker, transformer** | | J4.5 | | P1 ; P2 avec `--goFrom Transformer` |
+| **J4.7 — parser** | parser du prototype reciblé sur `tom/engine/adt`, complété ; règle des accolades `ITL` | J4.6 | | AST identique, ou tolérances de position comptées (§5.2) ; P2 |
+| **J4.8 — orchestration** | starter, `%include`, gomgo en bibliothèque, CLI `tomgo` autonome | J4.7 | D2 | T1/T2/smoke verts avec `tomgo` seul, sans Java |
+| **J4.9 — point fixe** | stage1 (`.go` produit par Java `-go`) compile les sources : stage2 ; stage2 recompile : stage3 | J4.8 | | sortie de stage2 identique à celle de stage1 (et stage3 identique à stage2) |
+
+J4.0b et J4.0c sont indépendants (fichiers disjoints, hors
+documentation) ; J4.0d a besoin des deux.
 
 ## 7. Risques
 
 | Risque | Atténuation |
 |---|---|
-| Volume du backend (environ 5 000 lignes) pour une seule étape | J4.1 découpé en a/b/c ; compteur P2 par cas ; portage méthode par méthode avec renvoi `// Java:` |
-| Héritage et exceptions Java mal traduits (répartition virtuelle, flot par exception) | aplatissement pour une seule cible ; `panic` limité aux erreurs, retours explicites ailleurs (§4.4) |
+| Volume du backend Go : `GoGenerator` (887 lignes) plus les parties partagées sur le chemin Go de `GenericGenerator` (1 007), d'`AbstractGenerator` (environ 880 de parcours), d'`OutputCode`, de `SymbolTable`/`TomBase` et du `Collector`, soit 4 300 à 4 600 lignes de Tom+Java (pas de backend Java : D5) | J4.1 découpé en a/b/c ; compteur P2 par cas ; portage méthode par méthode avec renvoi `// Java:` |
+| Chaîne d'héritage à trois niveaux (`AbstractGenerator → GenericGenerator → GoGenerator`, environ 60 méthodes redéfinies) mal aplatie : méthode de la classe de base portée alors que `GoGenerator` la redéfinit, ou appel virtuel perdu | aplatissement en un seul type, version la plus dérivée par méthode (§4.4) ; liste des méthodes redéfinies relevée au début de J4.1b et cochée ; P2 par famille d'instructions |
+| Exceptions comme flot de contrôle, environ 150 méthodes qui lèvent `IOException` | `panic` limité aux erreurs, récupéré une fois par le pilote ; retours explicites ailleurs (§4.4) |
 | Sortie qui dépend de l'ordre d'itération d'un `HashSet`/`HashMap` Java (middle-end) | aide `javaHashOrder` ; repéré par P1, phase par phase ; 53 boucles à examiner |
+| Préfixe par fichier (J4.0b) : un nom oublié (déclaration ou appel) casse la construction ; un nom de trop casse le code utilisateur | deux `.t` d'un paquetage en test ; programme « renommages seuls » sur les 83 goldens `.go` ; T0 pour Java ; noms écrits par l'utilisateur exclus (§3.4) |
+| Fermetures dans les hooks des mappings : le parser îlot laisse parfois `$var` tel quel dans un corps de hook avec accolades | `$var` placé hors des accolades (`func(…){…}($s)`) ; chaque mapping réécrit exercé par T1/T2 ou un cas smoke |
+| Binaires de la dist périmés par rapport à `src/go/tom` | `CheckFresh` compare leurs dates aux sources Go ; la construction de la dist reconstruit toujours les binaires |
+| La construction de la dist exige maintenant Go et mage | prérequis documentés (`CLAUDE.md`, `doc/go/README.md`) ; échec explicite de `installGo` |
 | Limites du parser îlot sur le Tom+Go du compilateur (paramètres de stratégie de type non identifiant, règles étiquetées, `$var` dans des hooks avec accolades) | contournements locaux notés `// port:` ; liste tenue au tableau de bord |
 | Fabrique `sharedobjects` sans références faibles, mutex global : mémoire et temps sur de gros fichiers | mesure à J4.1 (budget §5.3) ; paquet Go `weak` si dépassé |
-| La table exportée devient incomplète quand k recule (types, état des plugins) | le paquet porte déjà `type` ; chaque jalon vérifie par `grep` les champs d'état lus par la phase portée |
+| La table exportée devient incomplète quand k recule (état des plugins) | le paquet porte déjà types, marques et toutes les options ; chaque jalon vérifie par `grep` les champs d'état lus par la phase portée |
 | Les sorties d'erreur passent par un autre processus | protocole `ERROR …` sur stderr, comparé par nom (Regress) |
 | La régénération dépend d'une dist Java jusqu'au point fixe | `bootstrap` depuis l'amorce sans Java ; seule `regenTomGo` exige Java |
 | Chemins absolus dans `OriginTracking` (fichier d'entrée temporaire des harnais) | sans effet tant que les deux côtés lisent le même paquet ; à traiter au parser (tolérance « fichier ») |
 
-## 8. Décisions ouvertes (à trancher par l'utilisateur)
+## 8. Décisions prises
 
-Chaque décision donne les options, la recommandation, et sa raison.
+Décisions de l'utilisateur du 2026-10-24. Chaque entrée donne le choix et
+la raison qui compte.
 
-- **D1 — plusieurs `.t` dans un paquetage Go.**
-  - (a) Un seul `.t` par paquetage ; le reste en `.go` pur.
-  - (b) Préfixe par fichier pour toutes les déclarations de niveau
-    paquetage générées (`tom_<Fichier>_make_x`…), aussi dans les aides AC
-    du compilateur, et fonctions des mappings `string`/`intarray`
-    réécrites en fermetures ou préfixées.
-  - (c) Rendre `-D` complet en Go (tout en ligne, aucune déclaration).
-
-  **Recommandation : (b)**, appliquée d'abord au `GoGenerator` Java
-  (J4.0b), sans condition. Raisons : l'expérience montre que le renommage
-  suffit ; (a) obligerait à fondre `AbstractGenerator`, `GenericGenerator`
-  et `GoGenerator` en un seul `.t` ; (c) change la forme du code produit et
-  rend le portage plus délicat. Coût : les 94 goldens changent, une seule
-  fois, par un diff vérifié « renommages seuls ». Variante possible :
-  préfixe activé seulement par une option, pour ne pas toucher aux goldens.
-- **D2 — nom et emplacement de la commande Go.** `tomgo` dans
-  `src/go/tom/engine/cmd/tomgo` (sous-commande `suffix`), ou
-  `tom-go-suffix`.
-  **Recommandation : `tomgo`**, qui deviendra le compilateur complet
-  (J4.8). Le prototype a aussi un `tomgo` (`prototype/tomgo/cmd/tomgo`), mais il est gelé et dans un autre module : seuls les binaires installés pourraient se confondre. Variable d'environnement
-  `TOMGO_BIN`.
-- **D3 — point d'insertion du pont.** Crochet générique dans
-  `PluginPlatform` avec `--goFrom <plugin>`, ou branchement dans
-  `BackendPlugin` seulement pour J4.1.
-  **Recommandation : crochet générique dès J4.0c** (environ 10 lignes) :
-  il sert tel quel à chaque recul de k, et les options de tous les plugins
-  restent déclarées.
-- **D4 — dist Java utilisée pour compiler le Tom+Go.** `src/dist` (le
-  compilateur en développement) ou `stable/dist` (promu).
-  **Recommandation : `src/dist`**, vérifiée fraîche par la garde existante
-  (`CheckFresh`). Le `GoGenerator` de référence évolue encore en J4.0b, et
+- **D1 — plusieurs `.t` dans un paquetage Go : (b), préfixe par
+  fichier.** Toutes les déclarations de niveau paquetage générées
+  reçoivent le préfixe `tom_<F>_` (§4.3), y compris les aides AC du
+  compilateur ; les fonctions des mappings Go deviennent des fermetures.
+  Le préfixe est appliqué d'abord au `GoGenerator` Java (J4.0b), sans
+  condition (pas d'option). Raisons : l'expérience montre que le
+  renommage suffit ; (a) obligerait à fondre `AbstractGenerator`,
+  `GenericGenerator` et `GoGenerator` en un seul `.t` ; (c) (`-D` complet
+  en Go) change la forme du code produit. Coût accepté : les goldens T1
+  changent une fois, par un diff vérifié « renommages seuls ».
+- **D2 — commande `tomgo`, binaires installés dans la dist.** Sources dans
+  `src/go/tom/engine/cmd/tomgo` (sous-commande `suffix`) ; `tomgo` deviendra
+  le compilateur complet (J4.8). Principe de l'utilisateur : « `src` sont
+  des sources, pas des binaires ». `gomgo` et `tomgo` sont donc construits
+  par la construction de la dist et installés dans `<dist>/bin` ; le côté
+  Java les trouve depuis `tom.home` ; `TOMGO_BIN` et `GOMGO_BIN` ne restent
+  que comme surcharges ; les harnais utilisent les binaires installés de
+  la dist testée et échouent clairement s'ils manquent.
+- **D3 — crochet générique `--goFrom <plugin>` dans `PluginPlatform`,
+  dès J4.0c** (environ 10 lignes). Il sert tel quel à chaque recul de k,
+  et les options de tous les plugins restent déclarées. Le mode
+  `--goCheck` en est une extension de quelques lignes, nécessaire à P0.
+- **D4 — `src/dist` compile le Tom+Go**, vérifiée fraîche par
+  `CheckFresh`. Le `GoGenerator` de référence évolue encore (J4.0b), et
   c'est sa sortie que le suffixe doit reproduire.
-- **D5 — jusqu'où porter la cible Java.**
-  - (a) Go seulement (branches `jCode` des phases omises).
-  - (b) Backend Java en Go en plus (J4.1j, environ 1 200 lignes).
-  - (c) Toutes les branches Java du middle-end conservées, pour éprouver
-    les ports sur T0.
-
-  **Recommandation : (c) pour le middle-end et (a) pour le backend dans un
-  premier temps.** Garder les branches Java de l'optimizer et du
-  compilateur ne coûte presque rien et double à peu près le corpus de P1 (102 entrées T0 en plus des 121). Le
-  `JavaGenerator` en Go n'apporte rien au point fixe d'un compilateur
-  Tom+Go → Go. À reconsidérer après J4.3.
-- **D6 — format du paquet.** Texte ligne par ligne (§4.2), une sorte Gom
-  dédiée, ou plusieurs fichiers (`.tfix.*` existants).
-  **Recommandation : texte ligne par ligne sur stdin/stdout.** Rien à
-  écrire côté Go pour lire les termes, pas de fichier temporaire, et les
-  ADT Java et Go restent indépendants.
+- **D5 — (a) : le côté Go ne cible que Go.** Ni backend Java en Go, ni
+  branches Java (`jCode`…) dans les ports du middle-end. Raison de
+  l'utilisateur : sinon il faudrait aussi étendre gomgo (Gom écrit en Go)
+  pour qu'il génère du Java. Conséquences : pas de jalon « backend Java
+  en Go » ; T0 continue de valider seulement le compilateur Java ; le
+  côté Go est validé par T1, T2 et smoke (§5.1). (L'utilisateur avait
+  d'abord choisi (b), puis est revenu à (a) le même jour.)
+- **D6 — paquet texte, un terme par ligne, sur stdin/stdout** (§4.2). Rien
+  à écrire côté Go pour lire les termes, pas de fichier temporaire, et
+  les ADT Java et Go restent indépendants.
