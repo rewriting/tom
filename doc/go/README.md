@@ -7,6 +7,7 @@
 | Runtime Go `sl`, `sharedobjects` | `src/go/tom/library/` (module `tom`) | validé |
 | Runtime Go `aterm` (lecture/écriture ATerm) | `src/go/tom/library/aterm` (module `tom`) | validé |
 | Gom écrit en Go (`gomgo`) | `src/go/tom/gom/` | validé |
+| ADT du compilateur Go (copies des `.gom`, hooks en Go) | `src/go/tom/gom/adt`, `src/go/tom/engine/adt` | validé |
 | Mappings Go | `src/tom/library/mapping/go/` | validé |
 | Tests Tom+Go (ports de `test/`), T0–T3, smoke | `test/go/` (module `tomtest`) | validé |
 | Rapports | `doc/go/` : J0–T3 [`j0-go-backend.md`](j0-go-backend.md), J2 [`j2-report.md`](j2-report.md), [tableau de bord](port-dashboard.md), [couverture](coverage.md) | à jour |
@@ -51,7 +52,7 @@ autonomes), comparés à ceux de Java Gom (`legacy/`) :
   des solutions d'un filtrage AC. L'égalité des termes et l'ensemble des
   solutions sont les mêmes (test/gom/TestACU.t, test/acmatching).
 - **Coût des listes.** Comme en Java, une liste d'un opérateur variadique
-  (module compilé par `gomgo gom` ou `gom-block`, voir plus bas) est une chaîne de cellules `Cons<op>(tête, queue)` / `Empty<op>()`
+  (de tout module compilé par gomgo) est une chaîne de cellules `Cons<op>(tête, queue)` / `Empty<op>()`
   partagées au maximum (`gom/backend/cells.go`) : `Cons<Op>`,
   `GetTail<Op>`, `IsEmpty<Op>` sont en O(1), les queues sont partagées, et
   une liste peut finir par une queue qui n'est pas une liste (par ex.
@@ -61,24 +62,6 @@ autonomes), comparés à ceux de Java Gom (`legacy/`) :
   beaucoup de termes passe plus de temps dans le ramasse-miettes
   (test/acmatching/TestBool3.t : 2,9 s en Go, 1,2 s en Java ; 12,4 s avec
   l'ancienne représentation en tranches plates).
-- **Modules compilés par `gomgo gom-batch`.** Seuls `gomgo gom`
-  (`Generate`/`GenerateToDir`) et `gomgo gom-block` (blocs `%gom` compilés
-  par `tom -go`, `.gom` autonomes des tests) posent l'option `javaAPI` du
-  générateur, et seulement pour un module absent de `knownHookTable`. La
-  génération par lots (`GenerateBatchToDir` → `generateBatchBytes`,
-  `src/go/tom/gom/backend/backend.go`) ne la pose jamais : **tout** module
-  compilé avec `gom-batch` — l'ADT du compilateur (`src/tom/engine/adt`)
-  comme un `.gom` utilisateur — garde des listes en tranches plates
-  construites en entier par `Make<Op>(args…)` (accès `.Slots`, `get_tail`
-  et `make_insert` du mapping par copie, en O(n)), sans l'API Java
-  (`Cons<Op>`/`Empty<Op>`, `GetHead…`/`GetTail…`, `Length`, `ToATerm`,
-  `CompareTo`, …) ni les théories et hooks utilisateur (FL, AU, ACU,
-  `make_insert`…, ignorés) ; seuls les hooks de `knownHookTable` (ceux de
-  l'ADT du compilateur) y sont abaissés, en prologue Go de `Make<Op>`.
-  Passer l'ADT du compilateur aux cellules est une décision de J4.
-  Les ADT du compilateur (`src/tom/gom/adt`, `src/tom/engine/adt`) seront
-  copiés dans `src/go/tom` avec des hooks Go, pour passer par gomgo comme
-  n'importe quel module.
 - **Hooks dans le mapping.** Les hooks `make`, `make_insert`,
   `make_empty`, les règles (`module M:rules()`) et les blocs (`block`)
   sont du code Tom+Go : gomgo les écrit dans le mapping généré (`.tom`),
@@ -86,7 +69,12 @@ autonomes), comparés à ceux de Java Gom (`legacy/`) :
   Go qui construit des termes sans inclure le mapping (paquetage qui ne
   l'inclut pas, `Make<Op>` appelé hors d'un programme Tom) ne les exécute
   pas ; les théories (FL, AU, ACU, Free) sont, elles, générées en Go et
-  toujours appliquées.
+  toujours appliquées. Un hook `javablock` (genre interne de Java Gom :
+  un `block` sans code Tom, que la grammaire de Gom du compilateur Java
+  n'accepte pas dans un source ; gomgo l'accepte) est du Go pur, écrit
+  dans le fichier Go généré ; une méthode
+  qu'un `javablock` de sorte déclare sur chaque alternative de la sorte
+  est ajoutée à l'interface de la sorte.
 - **Ordre des hooks d'un opérateur variadique.** Java Gom les exécute
   dans l'ordre de déclaration ; Go exécute la théorie avant les hooks
   `make_insert`/`make_empty` et les règles, et refuse un module qui
@@ -114,6 +102,24 @@ autonomes), comparés à ceux de Java Gom (`legacy/`) :
   dernière queue n'est pas une liste et n'est pas de la sorte des éléments
   (`conc(a(),nil())`, `lm(a(),m0())` d'un hook `make_empty`) paniquent
   ainsi, comme le `toArray` typé de Java lève `ArrayStoreException`.
+
+## ADT du compilateur Go
+
+Le compilateur Go a ses propres copies des fichiers `.gom` des ADT du
+compilateur Java : `src/go/tom/gom/adt/*.gom` (AST de Gom, sur lequel
+gomgo est construit) et `src/go/tom/engine/adt/*.gom` (AST de Tom ;
+`Il.gom` est généré seul dans `engine/adt/il`, comme dans `build.xml`).
+Mêmes sortes, opérateurs et champs que les originaux de `src/tom`
+(`TestSignatureParity`), hooks réécrits en Go (Tom+Go pour les hooks de
+construction et les règles, `javablock` en Go pur pour
+`HookList.ContainsTomCode`) : les AST Go peuvent évoluer
+indépendamment de ceux de Java. Les paquetages sont générés comme tout
+module (`gomgo gom-batch` : API Java, cellules, mapping `adt.tom`) ;
+`engine/adt/hooks.t`, qui inclut le mapping, est compilé par `tom -go`
+en `hooks.go`, qui installe les hooks. Régénérer avec `mage -d magefiles
+-w . regenAdt` (`src/go/tom/internal/adtgen`) ; `TestSelfBootstrap`
+exige que les paquetages commités soient identiques octet pour octet à
+une régénération (point fixe pour `gom/adt`).
 
 ## Limites connues de `-go` (parser îlot `-np`)
 
@@ -173,9 +179,9 @@ autonomes), comparés à ceux de Java Gom (`legacy/`) :
   - Décider comment plusieurs `.t` partagent un paquetage Go : les aides
     `tom_*` des mappings et les aides AC de niveau paquetage imposent
     aujourd'hui un `.t` par paquetage.
-  - L'ADT du moteur n'a pas de mapping Tom dans `src/go` : le générer
-    (ADT copiés dans `src/go/tom` et compilés comme modules utilisateur
-    par gomgo, voir « Représentation des listes »).
+  - Le mapping de l'ADT du moteur (`src/go/tom/engine/adt/adt.tom`,
+    voir « ADT du compilateur Go ») est à inclure par le compilateur
+    Tom+Go.
   - Fabrique `sharedobjects` : références faibles (paquetage Go `weak`)
     et, peut-être, découpage (sharding) du mutex global.
   - Vérifier que la `.table` porte le code hôte Go des mappings générés
