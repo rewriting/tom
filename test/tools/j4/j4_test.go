@@ -6,6 +6,7 @@ import (
 	"os"
 	"path/filepath"
 	"testing"
+	"time"
 
 	"tomtools/harness"
 )
@@ -85,9 +86,12 @@ func TestTwoFilesOnePackage(t *testing.T) {
 	if msg, err := harness.RunIn(out, nil, "go", "vet", "."); err != nil {
 		t.Fatalf("go vet: %v\n%s", err, msg)
 	}
-	got, err := harness.RunIn(out, nil, "go", "run", ".")
+	if msg, err := harness.RunIn(out, nil, "go", "build", "-o", "prog", "."); err != nil {
+		t.Fatalf("go build: %v\n%s", err, msg)
+	}
+	got, err := harness.RunInTimeout(out, 60*time.Second, nil, filepath.Join(out, "prog"))
 	if err != nil {
-		t.Fatalf("go run: %v\n%s", err, got)
+		t.Fatalf("run (timeout (AC loop?)): %v\n%s", err, got)
 	}
 	if got != string(want) {
 		t.Fatalf("output %q, want %q", got, want)

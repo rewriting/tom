@@ -10,6 +10,7 @@ package harness
 
 import (
 	"bytes"
+	"context"
 	"fmt"
 	"io/fs"
 	"os"
@@ -285,6 +286,22 @@ func RunIn(dir string, env []string, name string, args ...string) (string, error
 	cmd.Dir = dir
 	cmd.Env = append(os.Environ(), env...)
 	out, err := cmd.CombinedOutput()
+	return string(out), err
+}
+
+// RunInTimeout is RunIn with a deadline: the command is killed after d
+// and the error then wraps context.DeadlineExceeded.
+func RunInTimeout(dir string, d time.Duration, env []string, name string, args ...string) (string, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), d)
+	defer cancel()
+	cmd := exec.CommandContext(ctx, name, args...)
+	cmd.Dir = dir
+	cmd.Env = append(os.Environ(), env...)
+	cmd.WaitDelay = time.Second
+	out, err := cmd.CombinedOutput()
+	if ctx.Err() != nil {
+		err = fmt.Errorf("timeout after %v: %w", d, ctx.Err())
+	}
 	return string(out), err
 }
 

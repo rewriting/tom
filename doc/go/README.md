@@ -121,7 +121,10 @@ autonomes), comparés à ceux de Java Gom (`legacy/`) :
   `tom_new_<S>`, les types des `%strategy` et `LocalIntrospector`. Plusieurs
   `.t` d'un même paquetage sont donc permis, sauf un même `%strategy`,
   `-gi` dans deux fichiers, ou deux blocs `%gom` (gomgo déclare `factory`
-  par module). Test : `test/go/j4/testdata/multi` (`TestTwoFilesOnePackage`).
+  par module). Deux entrées de même préfixe `F` assaini (`a/X.t` et `b/X.t`,
+  ou `a-b.t` et `a_b.t` qui donnent toutes deux `a_b`) compilées dans UN
+  même paquetage Go se heurtent encore : éviter les fichiers de même nom
+  dans un paquetage. Test : `test/go/j4/testdata/multi` (`TestTwoFilesOnePackage`).
 - **Code hôte d'un `%strategy`.** Dans une action de `visit`, le code hôte
   Java lit un paramètre de la stratégie comme un champ (`param`) et
   appelle `getEnvironment()` ; en Go, il doit écrire
@@ -218,6 +221,14 @@ l'amorce Go :
   même règle, c'est-à-dire une variable du code hôte ou d'une action
   englobante (une telle variable que les motifs n'inspectent pas
   resterait inutilisée, ce que Go refuse).
+- **Filtrage AC dont les variables ne servent pas dans l'action** : un
+  `%match` AC comme `f??(_*,a(),_*) -> { n++ }` ne termine jamais (l'optimiseur
+  inline le `LetRef` du tableau de solutions AC dans la condition du
+  `DoWhile`, `OptimizerPlugin.t` ~264-331 et
+  `ConstraintGenerator.buildACMatchLoop` ~489-505 : le tableau est reconstruit
+  vide à chaque test). Le compilateur Java a le même défaut (optimiseur
+  partagé). Les fixtures `A.t`/`B.t` de `test/go/j4` utilisent les variables
+  comme contournement. À traiter dans une tâche à part.
 
 ## Orientation pour la suite
 
