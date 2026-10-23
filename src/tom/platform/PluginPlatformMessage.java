@@ -111,6 +111,9 @@ public class PluginPlatformMessage implements PlatformMessage {
   public static final PluginPlatformMessage runWarningMessage =
     new PluginPlatformMessage("=>Execution generated {0,number,integer} warning(s).");
 
+  public static final PluginPlatformMessage goFromUnknownPlugin =
+    new PluginPlatformMessage("--goFrom {0}: no such plugin (known: {1})");
+
   //PluginFactory messages
   public static final PluginPlatformMessage noPluginActivated =
     new PluginPlatformMessage("Error : No plugin was activated.");

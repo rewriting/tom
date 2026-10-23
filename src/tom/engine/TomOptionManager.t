@@ -31,7 +31,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.SortedSet;
 import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -163,6 +165,13 @@ public class TomOptionManager implements OptionManager, OptionOwner {
     // alert the owner of the change
     OptionOwner owner = getOptionOwnerFromName(optionName);
     owner.optionChanged(getCanonicalName(optionName), optionValue);
+  }
+
+  /**
+   * @return the names of all the known options, sorted (exported by the J4 bridge)
+   */
+  public SortedSet<String> getOptionNames() {
+    return new TreeSet<String>(mapNameToOption.keySet());
   }
 
   /**

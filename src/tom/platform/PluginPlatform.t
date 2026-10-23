@@ -73,6 +73,18 @@ public class PluginPlatform extends PluginPlatformBase implements Runnable {
   /** Result of the run() method which is collected with all the run() results */
   private int runResult;
 
+  /** The plugin class of the bridge to the Go suffix (loaded by reflection: the platform does not depend on tom.engine) */
+  public final static String GO_BRIDGE = "tom.engine.bridge.GoBridgePlugin";
+
+  /** --goFrom: name of the plugin before which the Go suffix takes over ("" : the whole chain runs in Java) */
+  private String goFrom = "";
+
+  /** The plugin names, in the order of pluginsList */
+  private List<String> pluginNames;
+
+  /** The option manager, given to the bridge */
+  private OptionManager optionManager;
+
   /**
    * The current file name to process - this is used in the status handler 
    * in order to have the file name when it was not passed at logging 
@@ -127,9 +139,57 @@ public class PluginPlatform extends PluginPlatformBase implements Runnable {
 //modifier les commentaires
 
   /**
+   * Sets the bridge to the Go suffix (J4): before the plugin named goFrom
+   * (compared without spaces nor case), the platform runs GO_BRIDGE. An
+   * empty goFrom (the default) leaves run() unchanged.
+   */
+  public void setGoFrom(String goFrom, List<String> pluginNames, OptionManager optionManager) {
+    this.goFrom = (goFrom == null) ? "" : goFrom.replace(" ", "");
+    this.pluginNames = pluginNames;
+    this.optionManager = optionManager;
+  }
+
+  private boolean goFromMatches(Plugin plugin) {
+    int index = pluginsList.indexOf(plugin);
+    return index >= 0 && index < pluginNames.size()
+      && pluginNames.get(index).replace(" ", "").equalsIgnoreCase(goFrom);
+  }
+
+  private boolean goCheck() {
+    return ((Boolean)optionManager.getOptionValue("goCheck")).booleanValue();
+  }
+
+  /** Creates the bridge to the Go suffix, null (after an error) if it cannot be */
+  private Plugin newGoBridge(Plugin before) {
+    try {
+      Plugin bridge = (Plugin) Class.forName(GO_BRIDGE).newInstance();
+      ((OptionOwner)bridge).setOptionManager(optionManager);
+      String from = pluginNames.get(pluginsList.indexOf(before)).replace(" ", "");
+      bridge.getClass().getMethod("setFrom", String.class).invoke(bridge, from);
+      return bridge;
+    } catch(Exception e) {
+      PluginPlatformMessage.error(getLogger(), null, 0,
+          PluginPlatformMessage.instantiationError, GO_BRIDGE);
+      return null;
+    }
+  }
+
+  /**
    * The main method which runs the PluginPlatform.
    */
   public void run() {
+    if(goFrom.length() > 0) {
+      boolean known = false;
+      for(Plugin p : pluginsList) {
+        known = known || goFromMatches(p);
+      }
+      if(!known) {
+        PluginPlatformMessage.error(getLogger(), null, 0,
+            PluginPlatformMessage.goFromUnknownPlugin, goFrom, pluginNames);
+        this.runResult = 1;
+        return;
+      }
+    }
     try {
       boolean globalSuccess = true;
       int globalNbOfErrors = 0;
@@ -174,6 +234,30 @@ public class PluginPlatform extends PluginPlatformBase implements Runnable {
           }
           Plugin plugin = it.next();
           currentFileName = input;
+          if(goFrom.length() > 0 && goFromMatches(plugin)) {
+            // J4 bridge: hand [Code, TomStreamManager] over to the Go suffix
+            Plugin bridge = newGoBridge(plugin);
+            if(bridge != null) {
+              bridge.setArgs(pluginArg);
+              if(!statusHandler.hasError()) {
+                bridge.run(informationTracker);
+              }
+            }
+            if(bridge == null || statusHandler.hasError()) {
+              PluginPlatformMessage.info(getLogger(), null, 0,
+                  PluginPlatformMessage.processingError, GO_BRIDGE, initArgument);
+              success = false;
+              globalSuccess = false;
+              globalNbOfErrors += Math.max(1, statusHandler.nbOfErrors());
+              globalNbOfWarnings += statusHandler.nbOfWarnings();
+              break;
+            }
+            if(!goCheck()) {
+              // the Go suffix produced the output: the Java chain stops here
+              pluginArg = bridge.getArgs();
+              break;
+            }
+          }
           plugin.setArgs(pluginArg);
           if(statusHandler.hasError()) {
             PluginPlatformMessage.info(getLogger(), null, 0, PluginPlatformMessage.settingArgError);

@@ -51,6 +51,9 @@ public class ConfigurationManager {
   /** The plugins instance list*/
   private List<Plugin> pluginsList;
 
+  /** The plugin names, in the order of pluginsList (Plugin(name,cp) of the config file) */
+  private List<String> pluginNames;
+
   /** The OptionManager */
   private OptionManager optionManager;
   
@@ -62,6 +65,7 @@ public class ConfigurationManager {
   public ConfigurationManager(String configurationFileName) {
     this.configurationFileName = configurationFileName;
     this.pluginsList = new ArrayList<Plugin>();
+    this.pluginNames = new ArrayList<String>();
   }
   
   /**
@@ -105,6 +109,11 @@ public class ConfigurationManager {
   /** Accessor method */
   public List<Plugin> getPluginsList() {
     return pluginsList;
+  }
+
+  /** Accessor method: the names of the plugins, in the order of getPluginsList() */
+  public List<String> getPluginNames() {
+    return pluginNames;
   }
 
   /** Accessor method */
@@ -164,6 +173,7 @@ public class ConfigurationManager {
     %match(node) {
       PlatformConfig(concPlugin(_*,Plugin(name,cp),_*),optionmanager) -> {
          res.add(`cp);
+         pluginNames.add(`name);
          PluginPlatformMessage.finer(logger, null, 0, 
              PluginPlatformMessage.classPathRead, `cp);
        }

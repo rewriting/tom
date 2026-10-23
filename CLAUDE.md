@@ -753,6 +753,13 @@ unset TOM_HOME && ./build.sh src.dist
 # Déclarations de niveau paquetage générées préfixées tom_<F>_ (F = nom du .t) : plusieurs .t par paquetage Go
 # (sauf même %strategy, -gi deux fois, deux %gom) ; doc/go/README.md « Plusieurs .t par paquetage Go »
 TOM_HOME=$PWD/src/dist src/dist/bin/tom -go -np -d out test/go/TestAlgebraic.t
+# Pont Java -> Go (J4.0c) : --goFrom <plugin> arrête la chaîne Java juste avant ce plugin
+# (nom de Tom.config sans espaces ni casse : Backend, Optimizer, TypeChecker...) et passe le
+# paquet (options, marques, types, table, terme) à <dist>/bin/tomgo suffix ($TOMGO_BIN en
+# surcharge) ; exige -go. En J4.0 tomgo ne connaît aucune phase (erreur « not ported »).
+# --goCheck : aller-retour tomgo suffix --echo comparé octet pour octet, puis la chaîne Java finit
+# (sortie inchangée) ; avec --intermediate, le paquet est aussi écrit dans <sortie>.tfix.bridge
+TOM_HOME=$PWD/src/dist src/dist/bin/tom -go -np -d out --goFrom Backend --goCheck test/go/Peano.t
 # Le Go généré qui importe tom/library/... a besoin d'un go.mod dans out/ :
 #   module <nom>  /  go 1.26
 #   require tom v0.0.0
@@ -766,7 +773,7 @@ GOMGO_BIN=$PWD/stable/dist/bin/gomgo TOM_HOME=$PWD/stable/dist stable/dist/bin/t
 mage -d magefiles -w . -l          # lister les cibles
 mage -d magefiles -w . all         # vet + tests module tom + self-bootstrap
 mage -d magefiles -w . portJava && mage -d magefiles -w . portGo && mage -d magefiles -w . coverage
-mage -d magefiles -w . j4                  # tests J4 qui demandent une dist (test/tools/j4 : programme Tom+Go sur l'ADT du moteur, src/go/tom en replace)
+mage -d magefiles -w . j4                  # tests J4 qui demandent une dist (test/tools/j4 : programme Tom+Go sur l'ADT du moteur, src/go/tom en replace ; TestGoFrom : --goFrom/--goCheck)
 #   portJava : T0, sortie Java identique à legacy/ (défaut et -np), ~4 min
 #   portGo   : T1 (goldens Go) + T2 (oracle legacy/) + doc/go/port-dashboard.md
 #   coverage : T3, doc/go/coverage.md

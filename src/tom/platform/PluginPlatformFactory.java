@@ -32,6 +32,8 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.logging.*;
 
+import tom.platform.adt.platformoption.types.PlatformOptionList;
+
 /**
  * The PluginPlatform factory is a singleton class that is responsable for the
  * creation of PluginPlatform based on a commandLine seen as a array of string
@@ -114,7 +116,9 @@ public class PluginPlatformFactory {
     if (confManager.initialize(commandLine) == 1) {
       return null;
     }
-    return new PluginPlatform(confManager.getPluginsList(),logRadical,inputToCompileList);
+    PluginPlatform platform = new PluginPlatform(confManager.getPluginsList(),logRadical,inputToCompileList);
+    platform.setGoFrom(declaredGoFrom(confManager.getOptionManager()), confManager.getPluginNames(), confManager.getOptionManager());
+    return platform;
   }
 
   //second PluginPlatform create() method : used if it is launched by Gom
@@ -130,7 +134,28 @@ public class PluginPlatformFactory {
     if (confManager.initialize(commandLine) == 1) {
       return null;
     }
-    return new PluginPlatform(confManager.getPluginsList(),logRadical,inputToCompileList,informationTracker);
+    PluginPlatform platform = new PluginPlatform(confManager.getPluginsList(),logRadical,inputToCompileList,informationTracker);
+    platform.setGoFrom(declaredGoFrom(confManager.getOptionManager()), confManager.getPluginNames(), confManager.getOptionManager());
+    return platform;
+  }
+
+  /**
+   * The value of the option goFrom (J4 bridge to the Go suffix), or "" when
+   * the configuration does not declare it (Gom.config): getOptionValue of
+   * an undeclared option is an error.
+   */
+  private static String declaredGoFrom(OptionManager om) {
+    if(om instanceof OptionOwner) {
+      PlatformOptionList list = ((OptionOwner)om).getDeclaredOptionList();
+      while(list != null && !list.isEmptyconcPlatformOption()) {
+        if("goFrom".equals(list.getHeadconcPlatformOption().getName())) {
+          Object value = om.getOptionValue("goFrom");
+          return (value instanceof String) ? (String)value : "";
+        }
+        list = list.getTailconcPlatformOption();
+      }
+    }
+    return "";
   }
 
   /**

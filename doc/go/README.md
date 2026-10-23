@@ -206,6 +206,37 @@ l'amorce Go :
   construisent pas seuls et `32915077a` est le premier vert (pas de
   bisect à travers eux).
 
+## Pont Java → Go (J4)
+
+Spec J4 §4.1-4.2. Le compilateur Tom+Java peut passer la main au
+suffixe Go (`<dist>/bin/tomgo`, installé par `mage installGo`) :
+
+- `--goFrom <plugin>` : la plateforme (`PluginPlatform.run`) exécute la
+  chaîne Java jusqu'au plugin nommé (nom de `Tom.config`, comparé sans
+  espaces ni casse : `Backend`, `Optimizer`, `TypeChecker`…), exclu, puis
+  `tom.engine.bridge.GoBridgePlugin`, qui écrit le **paquet** sur l'entrée
+  standard de `tomgo suffix` et écrit sa sortie standard dans le fichier
+  de sortie habituel. Exige `-go` (le suffixe ne produit que du Go). Un
+  nom inconnu est une erreur de la plateforme. En J4.0, `tomgo suffix`
+  ne connaît aucune phase et la refuse (« phase X is not ported to Go
+  yet », code 2), message relayé par `tom`.
+- `--goCheck` (avec `--goFrom`) : le pont envoie le paquet à
+  `tomgo suffix --echo`, exige qu'il revienne identique octet pour octet
+  (sinon erreur qui donne la première ligne différente), puis **la
+  chaîne Java continue** : la sortie est celle de Java.
+- Binaire : `$TOMGO_BIN` s'il est défini (surcharge), sinon
+  `<tom.home>/bin/tomgo` ; jamais le `PATH`. Absent : erreur qui donne le
+  chemin cherché.
+- Paquet : texte UTF-8, une donnée par ligne (`tom-bridge 1`, `from`,
+  `input`, `output`, une ligne `option` par option connue triée par nom,
+  `used` par marque triée, `type` par type déclaré, `table`, `code`,
+  `end`) ; termes Gom par `toString()`, relus côté Go par
+  `src/go/tom/engine/bridge`. Avec `--intermediate`, il est aussi écrit
+  dans `<sortie>.tfix.bridge`.
+- Sans `--goFrom` (défaut) rien ne change ; Gom, qui utilise la même
+  plateforme sans déclarer `goFrom`, n'est pas concerné.
+- Test : `TestGoFrom` (`test/tools/j4`, `mage -d magefiles -w . j4`).
+
 ## Limites connues de `-go` (parser îlot `-np`)
 
 - **Règles étiquetées** (`l: motif -> action`, `break l`) : seul le parser

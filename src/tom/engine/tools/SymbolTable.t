@@ -145,6 +145,22 @@ public class SymbolTable {
     */
   }
 
+  /** The used marks (KeyEntry), sorted by toString(): exported by the J4 bridge */
+  public List<KeyEntry> getUsedKeyEntries() {
+    List<KeyEntry> res = new ArrayList<KeyEntry>(usedKeyEntry);
+    Collections.sort(res, new Comparator<KeyEntry>() {
+        public int compare(KeyEntry a, KeyEntry b) {
+          return a.toString().compareTo(b.toString());
+        }
+      });
+    return res;
+  }
+
+  /** The declared types, in the order of the keys of mapTypeName: exported by the J4 bridge */
+  public List<TomType> getTypeEntries() {
+    return new ArrayList<TomType>(mapTypeName.values());
+  }
+
   public TomType getType(String name) {
     if (mapTypeName.containsKey(name)) {
       return mapTypeName.get(name);

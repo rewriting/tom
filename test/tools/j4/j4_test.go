@@ -5,6 +5,7 @@ package j4
 import (
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 	"time"
 
@@ -95,5 +96,66 @@ func TestTwoFilesOnePackage(t *testing.T) {
 	}
 	if got != string(want) {
 		t.Fatalf("output %q, want %q", got, want)
+	}
+}
+
+// TestGoFrom checks the Java side of the bridge (J4.0c, spec §4.1):
+// --goFrom stops the Java chain before the named plugin and hands the
+// bundle to <dist>/bin/tomgo suffix, --goCheck checks the round trip
+// (tomgo suffix --echo) then lets the Java chain finish; the errors
+// (unknown plugin, no -go, no tomgo, phase not ported) are explicit.
+func TestGoFrom(t *testing.T) {
+	root := harness.RepoRoot(t)
+	dist := harness.NewDist(t)
+	dist.Bin(t, "tomgo")
+	goSrc := filepath.Join(harness.GoTestDir(root), "Peano.t")
+	golden, err := os.ReadFile(filepath.Join(harness.GoTestDir(root), "testdata", "golden", "Peano.go"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	tom := func(env []string, src string, args ...string) (string, string, error) {
+		out := t.TempDir()
+		full := append(append([]string{"-d", out}, args...), src)
+		env = append([]string{"TOM_HOME=" + dist.Home, "TOMGO_BIN="}, env...)
+		msg, err := harness.RunIn(filepath.Dir(src), env, filepath.Join(dist.Home, "bin", "tom"), full...)
+		return out, msg, err
+	}
+	fails := func(name, want string, env []string, src string, args ...string) {
+		t.Run(name, func(t *testing.T) {
+			_, msg, err := tom(env, src, args...)
+			if err == nil {
+				t.Fatalf("tom %v succeeded, want an error %q\n%s", args, want, msg)
+			}
+			if !strings.Contains(msg, want) {
+				t.Fatalf("tom %v: output does not contain %q:\n%s", args, want, msg)
+			}
+		})
+	}
+	fails("unknown plugin", "--goFrom Nope: no such plugin", nil, goSrc, "-go", "-np", "--goFrom", "Nope")
+	fails("without -go", "--goFrom needs -go", nil, filepath.Join(harness.JavaTestDir(root), "Peano.t"), "--goFrom", "Backend")
+	fails("no tomgo", "tomgo not found at /nonexistent", []string{"TOMGO_BIN=/nonexistent"}, goSrc, "-go", "-np", "--goFrom", "Backend")
+	fails("not ported", "phase Backend is not ported to Go yet", nil, goSrc, "-go", "-np", "--goFrom", "Backend")
+	for _, from := range []string{"Backend", "TypeChecker", "optimizer"} {
+		t.Run("goCheck "+from, func(t *testing.T) {
+			out, msg, err := tom(nil, goSrc, "-go", "-np", "--goFrom", from, "--goCheck", "--intermediate")
+			if err != nil {
+				t.Fatalf("tom --goFrom %s --goCheck: %v\n%s", from, err, msg)
+			}
+			got, err := os.ReadFile(filepath.Join(out, "Peano.go"))
+			if err != nil {
+				t.Fatal(err)
+			}
+			if string(got) != string(golden) {
+				t.Fatalf("--goCheck changed the output of the Java chain")
+			}
+			bundle, err := os.ReadFile(filepath.Join(out, "Peano.go.tfix.bridge"))
+			if err != nil {
+				t.Fatal(err)
+			}
+			name := map[string]string{"Backend": "Backend", "TypeChecker": "Typechecker", "optimizer": "Optimizer"}[from]
+			if head := "tom-bridge 1\nfrom " + name + "\n"; !strings.HasPrefix(string(bundle), head) || !strings.HasSuffix(string(bundle), "\nend\n") {
+				t.Fatalf("bundle starts with %.80q, want %q ... end", bundle, head)
+			}
+		})
 	}
 }

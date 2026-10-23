@@ -467,6 +467,22 @@ public class TomMessage extends BasicPlatformMessage {
   public static final TomMessage newTyperNotUsed =
     new TomMessage("The new typer is not in use.");
 
+  // J4 bridge to the Go suffix (GoBridgePlugin)
+  public static final TomMessage goBridgeNeedsGo =
+      new TomMessage("--goFrom needs -go: the Go suffix generates Go only");
+  public static final TomMessage goBridgeNotFound =
+      new TomMessage("tomgo not found at {0}: rebuild the distribution (it installs bin/tomgo) or set TOMGO_BIN");
+  public static final TomMessage goBridgeBadTerm =
+      new TomMessage("bridge: the {0} term contains a newline and cannot be written on one line");
+  public static final TomMessage goBridgeMismatch =
+      new TomMessage("bridge round trip differs at line {0}: {1}");
+  public static final TomMessage goBridgeError =
+      new TomMessage("{0}: {1}");
+  public static final TomMessage goBridgeFailure =
+      new TomMessage("tomgo exited with status {0}: {1}");
+  public static final TomMessage goBridgeIOException =
+      new TomMessage("bridge: cannot run {0}: {1}");
+
   /*
    * FINER
    */
