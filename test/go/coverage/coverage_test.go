@@ -152,7 +152,7 @@ func TestCoverage(t *testing.T) {
 		uses := count(t, compiler, c.Re)
 		var by []string
 		for _, rel := range ok {
-			data, err := os.ReadFile(filepath.Join(root, "test", "go", rel))
+			data, err := os.ReadFile(filepath.Join(harness.GoTestDir(root), rel))
 			if err != nil {
 				t.Fatal(err)
 			}

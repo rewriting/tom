@@ -20,7 +20,7 @@
   <property name="src.version"    value="${DSTAMP}"/>
 
   <!-- some used directory location -->
-  <property name="test"           location="test"/>
+  <property name="test"           location="test/java"/>
   <property name="examples"       location="examples"/>
   <property name="examples.gen"   location="${examples}/gen"/>
   <property name="examples.build" location="${examples}/build"/>

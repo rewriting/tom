@@ -1,6 +1,6 @@
 // Package javaparity is T0: the extended compiler must produce, for the
 // default Java target, exactly what the human-written compiler in legacy/
-// produces on every test/ input.
+// produces on every test/java/ input.
 package javaparity
 
 import (
@@ -25,11 +25,7 @@ var tmpName = regexp.MustCompile(`/[^\s]*/tmp\d+\.t`)
 
 func inputs(t *testing.T, root string) []string {
 	var files []string
-	err := filepath.Walk(filepath.Join(root, "test"), func(p string, info os.FileInfo, err error) error {
-		// test/go holds the Tom+Go ports and harnesses, not Java inputs.
-		if err == nil && info.IsDir() && p == filepath.Join(root, "test", "go") {
-			return filepath.SkipDir
-		}
+	err := filepath.Walk(harness.JavaTestDir(root), func(p string, info os.FileInfo, err error) error {
 		if err == nil && !info.IsDir() && strings.HasSuffix(p, ".t") {
 			files = append(files, p)
 		}
@@ -39,34 +35,34 @@ func inputs(t *testing.T, root string) []string {
 		t.Fatal(err)
 	}
 	if len(files) == 0 {
-		t.Fatalf("no .t input found under %s: T0 would pass vacuously", filepath.Join(root, "test"))
+		t.Fatalf("no .t input found under %s: T0 would pass vacuously", harness.JavaTestDir(root))
 	}
 	return files
 }
 
 // Floors against a vacuous pass: the minimum number of inputs on which
 // the legacy compiler must succeed and produce output files. Measured on
-// 2026-10-23 with the Gom mappings generated as in test/build.xml: 102
+// 2026-10-23 with the Gom mappings generated as in test/java/build.xml: 102
 // inputs (default) and 103 (-np), up from 81 and 82 before, when the 21
-// inputs of test/gom and test/sl including a generated mapping crashed
+// inputs of test/java/gom and test/java/sl including a generated mapping crashed
 // identically in both compilers. The floors are the measured counts.
 const (
 	minDefault = 102
 	minNP      = 103
 )
 
-// mustProduce lists the test/ subdirectories (slash-terminated, relative
-// to the repository root) whose every input must compile and produce
+// mustProduce lists the test/java/ subdirectories (slash-terminated, relative
+// to test/java/) whose every input must compile and produce
 // Java in both dists: they are the ones that include Gom-generated
 // mappings, and a regression in the Gom step must not silently turn them
 // back into two identical crashes.
-var mustProduce = []string{"test/gom/", "test/sl/"}
+var mustProduce = []string{"gom/", "sl/"}
 
-// The inputs are compiled the way test/build.xml compiles them (targets
+// The inputs are compiled the way test/java/build.xml compiles them (targets
 // build and build.nt), so that those including Gom-generated mappings are
 // real comparisons rather than two identical "included file not found"
 // crashes:
-//   - each dist's own Gom first compiles the .gom files of test/ into a
+//   - each dist's own Gom first compiles the .gom files of test/java/ into a
 //     temporary directory (gomRuns mirrors the two <gom.preset> calls);
 //   - tom then finds the mappings as build.xml's tom does: there tom shares
 //     Gom's destdir and TomStreamManager.getImportList adds
@@ -75,8 +71,8 @@ var mustProduce = []string{"test/gom/", "test/sl/"}
 //   - the inputs that build.xml compiles with extra options get them too
 //     (tomOptions).
 
-// gomRuns mirrors the <gom.preset> calls of test/build.xml: options, and
-// whether a .gom (path relative to test/, slash-separated) belongs to the
+// gomRuns mirrors the <gom.preset> calls of test/java/build.xml: options, and
+// whether a .gom (path relative to test/java/, slash-separated) belongs to the
 // call. Both calls exclude **/error/** and **/regress/**.
 var gomRuns = []struct {
 	args    []string
@@ -88,7 +84,7 @@ var gomRuns = []struct {
 }
 
 // tomOptions are the extra options of the dedicated <tom.preset> calls of
-// test/build.xml (input path relative to test/). --intermediate is left
+// test/java/build.xml (input path relative to test/java/). --intermediate is left
 // out: it only dumps the intermediate ASTs next to the output.
 var tomOptions = map[string][]string{
 	"TestOptimizer.t":             {"--optimize"},
@@ -96,11 +92,11 @@ var tomOptions = map[string][]string{
 	"sl/IntrospectorBehaviour.t":  {"--genIntrospector"},
 }
 
-// generateGom runs d's Gom as test/build.xml does and returns the
+// generateGom runs d's Gom as test/java/build.xml does and returns the
 // destination directory.
 func generateGom(t *testing.T, d harness.Dist, root string) string {
 	t.Helper()
-	testDir := filepath.Join(root, "test")
+	testDir := harness.JavaTestDir(root)
 	var all []string
 	if err := filepath.Walk(testDir, func(p string, info os.FileInfo, err error) error {
 		if err != nil {
@@ -109,10 +105,6 @@ func generateGom(t *testing.T, d harness.Dist, root string) string {
 		if info.IsDir() {
 			switch info.Name() {
 			case "error", "regress":
-				return filepath.SkipDir
-			}
-			// test/go holds the Tom+Go ports, unknown to build.xml.
-			if p == filepath.Join(testDir, "go") {
 				return filepath.SkipDir
 			}
 			return nil
@@ -147,7 +139,7 @@ func generateGom(t *testing.T, d harness.Dist, root string) string {
 // packageDecl matches the package declaration of a Tom+Java input.
 var packageDecl = regexp.MustCompile(`(?m)^\s*package\s+([\w.]+)\s*;`)
 
-// buildArgs returns the options test/build.xml gives tom for src, gen
+// buildArgs returns the options test/java/build.xml gives tom for src, gen
 // being the directory generateGom filled.
 func buildArgs(t *testing.T, root, src, gen string) []string {
 	t.Helper()
@@ -159,7 +151,7 @@ func buildArgs(t *testing.T, root, src, gen string) []string {
 	if m := packageDecl.FindSubmatch(text); m != nil {
 		inc = filepath.Join(gen, strings.ReplaceAll(string(m[1]), ".", string(filepath.Separator)))
 	}
-	rel, _ := filepath.Rel(filepath.Join(root, "test"), src)
+	rel, _ := filepath.Rel(harness.JavaTestDir(root), src)
 	return append([]string{"-I", inc}, tomOptions[filepath.ToSlash(rel)]...)
 }
 
@@ -178,7 +170,7 @@ func TestJavaOutputIdenticalToLegacyNewParser(t *testing.T) {
 	compareWithLegacy(t, npAllowed, minNP, "-np")
 }
 
-// compareWithLegacy compiles every test/*.t with both compilers (with
+// compareWithLegacy compiles every test/java/*.t with both compilers (with
 // args) and requires identical diagnostics and output trees, except for
 // the inputs listed in allowed (repository-relative path → reason).
 func compareWithLegacy(t *testing.T, allowed map[string]string, floor int, args ...string) {
@@ -197,6 +189,7 @@ func compareWithLegacy(t *testing.T, allowed map[string]string, floor int, args 
 	}()
 	for _, src := range inputs(t, root) {
 		rel, _ := filepath.Rel(root, src)
+		javaRel, _ := filepath.Rel(harness.JavaTestDir(root), src) // relative to test/java/, for mustProduce
 		t.Run(rel, func(t *testing.T) {
 			if reason, ok := allowed[rel]; ok {
 				t.Skipf("allowed difference: %s", reason)
@@ -216,7 +209,7 @@ func compareWithLegacy(t *testing.T, allowed map[string]string, floor int, args 
 			n := compareTrees(t, outL, outN)
 			filesCompared += n
 			for _, dir := range mustProduce {
-				if strings.HasPrefix(filepath.ToSlash(rel), dir) && (errL != nil || errN != nil || n == 0) {
+				if strings.HasPrefix(filepath.ToSlash(javaRel), dir) && (errL != nil || errN != nil || n == 0) {
 					t.Errorf("%s must produce Java in both dists (legacy err %v, new err %v, %d files)\nlegacy:\n%s\nnew:\n%s", rel, errL, errN, n, logL, logN)
 				}
 			}

@@ -1,16 +1,16 @@
 # Tableau de bord du portage Tom+Go (T2)
 
 Généré par `mage portGo` (`go test ./ -args -write-dashboard` dans `test/go`).
-Chaque `test/**/*.t` hors `error/` ; un cas porté est OK quand son port
+Chaque `test/java/**/*.t` hors `error/` ; un cas porté est OK quand son port
 Tom+Go, compilé par `tom -go`, se comporte comme l'original compilé par
 `legacy/` (mêmes tests JUnit réussis, ou même sortie et même statut).
 Un fichier « support » n'a pas de test propre : ses classes sont compilées
-avec le cas qui les utilise (comme `test/build.xml` compile tout le
+avec le cas qui les utilise (comme `test/java/build.xml` compile tout le
 répertoire), et c'est le statut de ce cas qui les valide.
 Un original « échoue dans legacy » ne se compile pas avec `legacy/` :
 pas d'oracle possible, il n'est pas porté (`TestLegacyFails` le vérifie).
 Un cas « OK (diagnostics) » est un test de non-régression des diagnostics
-(`test/regress/`) : `tom -go` rejette le port avec les mêmes erreurs que
+(`test/java/regress/`) : `tom -go` rejette le port avec les mêmes erreurs que
 `legacy/` sur l'original ; rien n'est exécuté (la couverture T3 ne le
 compte pas).
 
@@ -31,7 +31,7 @@ compte pas).
 |---|---|---|
 | `Array.t` | OK |  |
 | `Peano.t` | OK |  |
-| `Record.t` | échoue dans legacy | the typer rejects the %op hierarchy of Java classes (Incompatible types 'TomBinaryOperator' and 'TomExp' for symbol 'BinaryOperator', Cannot guess the type of 'e1'), with both parsers; with --oldtyper, javac rejects the generated Java (Exp cannot be converted to CstExp); test/build.xml excludes it (its commented-out --lazyType option no longer exists) |
+| `Record.t` | échoue dans legacy | the typer rejects the %op hierarchy of Java classes (Incompatible types 'TomBinaryOperator' and 'TomExp' for symbol 'BinaryOperator', Cannot guess the type of 'e1'), with both parsers; with --oldtyper, javac rejects the generated Java (Exp cannot be converted to CstExp); test/java/build.xml excludes it (its commented-out --lazyType option no longer exists) |
 | `Test.t` | OK |  |
 | `TestAlgebraic.t` | OK |  |
 | `TestArray.t` | OK |  |
@@ -49,7 +49,7 @@ compte pas).
 | `TestNonVarSubjects.t` | OK |  |
 | `TestOptimizer.t` | OK |  |
 | `TestPeano.t` | OK |  |
-| `TestRecord.t` | échoue dans legacy | the typer rejects the %op hierarchy of Java classes (Incompatible types 'TomBinaryOperator' and 'TomExp' for symbol 'BinaryOperator', Cannot guess the type of 'e1'), with both parsers; with --oldtyper, javac rejects the generated Java (Exp cannot be converted to CstExp); test/build.xml excludes it (its commented-out --lazyType option no longer exists) |
+| `TestRecord.t` | échoue dans legacy | the typer rejects the %op hierarchy of Java classes (Incompatible types 'TomBinaryOperator' and 'TomExp' for symbol 'BinaryOperator', Cannot guess the type of 'e1'), with both parsers; with --oldtyper, javac rejects the generated Java (Exp cannot be converted to CstExp); test/java/build.xml excludes it (its commented-out --lazyType option no longer exists) |
 | `TestReflectiveStrategy.t` | OK |  |
 | `TestStrategy.t` | OK |  |
 | `TestSublists.t` | OK |  |

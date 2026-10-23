@@ -397,7 +397,7 @@ func generatedDiff(a, b string) (string, error) {
 }
 
 // PortJava runs T0: the root compiler's Java output must equal legacy/'s
-// on every test/*.t (needs legacy/src/dist and src/dist built).
+// on every test/java/*.t (needs legacy/src/dist and src/dist built).
 func PortJava() error {
 	mg.Deps(Bootstrap)
 	return runInEnv(testGoDir, requireTools, "go", "test", "-count=1", "-timeout", "30m", "./javaparity/...")

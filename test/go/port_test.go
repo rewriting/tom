@@ -1,4 +1,4 @@
-// Package port holds the Tom+Go ports of test/*.t and checks them:
+// Package port holds the Tom+Go ports of test/java/*.t and checks them:
 // T1 (generated Go is pinned by golden files and builds) and, from
 // Task 8, T2 (same behaviour as the original under legacy/).
 package port
@@ -38,7 +38,7 @@ func TestMain(m *testing.M) {
 }
 
 type portCase struct {
-	Rel    string // path relative to test/ (and to test/go/)
+	Rel    string // path relative to test/java/ (and to test/go/)
 	GoTest bool   // run with `go test` (JUnit-style) rather than `go run`
 	// Unsupported lists the original tests (Go-capitalised name ->
 	// reason) that the port keeps commented out under a
@@ -51,28 +51,28 @@ type portCase struct {
 	// passes, instead of reporting a vacuous oracle; the dashboard status
 	// is "non supporté".
 	FullyUnsupported bool
-	// Gom lists the standalone .gom files test/build.xml compiles with
+	// Gom lists the standalone .gom files test/java/build.xml compiles with
 	// Gom before the case, whose generated mappings the case includes.
 	Gom []gomFile
-	// Support lists other .t files (relative to test/) compiled with the
+	// Support lists other .t files (relative to test/java/) compiled with the
 	// case: the original needs their classes (same Java package). In Go
 	// each one is compiled into its own package, in the sub-directory
 	// supportDir(rel) of the case's module, because two Tom-generated Go
 	// files cannot share a package (each defines the tom_* helpers of the
 	// mappings it includes).
 	Support []string
-	// TomArgs are the extra options test/build.xml gives tom (both
+	// TomArgs are the extra options test/java/build.xml gives tom (both
 	// compilers) for an input of the case: the case itself or a support
-	// file (key: path relative to test/).
+	// file (key: path relative to test/java/).
 	TomArgs map[string][]string
-	// JavaSupport lists plain Java files (relative to test/) that the
+	// JavaSupport lists plain Java files (relative to test/java/) that the
 	// original compiles with the case (copied next to the generated Java
 	// for the oracle); the Go port holds their translation.
 	JavaSupport []string
-	// OracleDeps lists other originals (.t, relative to test/) that
+	// OracleDeps lists other originals (.t, relative to test/java/) that
 	// legacy/ compiles with the case for the oracle only: the original's
 	// host code names their classes (e.g. a main launching JUnit on
-	// another test class), which test/build.xml finds because it compiles
+	// another test class), which test/java/build.xml finds because it compiles
 	// the whole directory. The port drops that reference (no main), so the
 	// Go side does not compile them.
 	OracleDeps []string
@@ -82,15 +82,15 @@ type portCase struct {
 	// test of the method m of class C is TestC_m.
 	Suite bool
 	// Regress: the original is a non-regression test of tom's
-	// diagnostics (test/build.xml, target regress: tom must reject it;
-	// test/regress/<name>.t.nrt lists the expected errors). Nothing is
+	// diagnostics (test/java/build.xml, target regress: tom must reject it;
+	// test/java/regress/<name>.t.nrt lists the expected errors). Nothing is
 	// run: the oracle is legacy/'s RegressFormatter log on the original
 	// (oracle.Diagnostics), and the port, compiled by tom -go with the
 	// same formatter, must be rejected with the same log. Dashboard
 	// status "OK (diagnostics)".
 	Regress bool
-	// C: the original is a C program (test/cfib1.t, test/loulou.t, which
-	// test/build.xml leaves out): the port is a Go main program, and the
+	// C: the original is a C program (test/java/cfib1.t, test/java/loulou.t, which
+	// test/java/build.xml leaves out): the port is a Go main program, and the
 	// oracle is the output and exit status of the original compiled by
 	// legacy/'s tom -c -np (the default parser is tailored for Java) and
 	// the C compiler cc (cOracle).
@@ -112,12 +112,12 @@ type assertGuard struct {
 	N    int
 }
 
-// gomFile is a standalone .gom file of test/ (Rel, relative to test/);
+// gomFile is a standalone .gom file of test/java/ (Rel, relative to test/java/);
 // the port directory keeps an identical copy at test/go/<Rel>
 // (TestGomCopiesIdentical), from which gomgo generates the Go side.
 type gomFile struct {
 	Rel string
-	// JavaArgs are the options of test/build.xml's <gom.preset> call,
+	// JavaArgs are the options of test/java/build.xml's <gom.preset> call,
 	// given to legacy/'s Gom for the oracle.
 	JavaArgs []string
 	// GoArgs are the options given to `gomgo gom-block`.
@@ -128,7 +128,7 @@ type gomFile struct {
 	// b/u/i/l/t/i/n/builtin for gom.b.u.i.l.t.i.n.Builtin included from
 	// package gom. Default: the lower-cased base name of Rel.
 	Dir string
-	// Deps lists the other .gom files of test/ the module imports (Java
+	// Deps lists the other .gom files of test/java/ the module imports (Java
 	// Gom finds them next to Rel); gomgo reads the identical copies next
 	// to the port's copy and generates them in the same Go package.
 	Deps []string
@@ -141,7 +141,7 @@ type gomFile struct {
 	OracleOnly bool
 }
 
-// testslGom is test/sl/testsl.gom, compiled by test/build.xml with
+// testslGom is test/java/sl/testsl.gom, compiled by test/java/build.xml with
 // package=sl, termpointer=true and withCongruenceStrategies=true.
 // gomgo does not implement --termpointer (term pointers: the
 // VarTerm/RefTerm/PathTerm/LabTerm operators and expand()); only
@@ -152,11 +152,11 @@ var testslGom = gomFile{
 	GoArgs:   []string{"--withCongruenceStrategies"},
 }
 
-// importingGom is test/gom/Importing.gom, which imports Imported.gom,
+// importingGom is test/java/gom/Importing.gom, which imports Imported.gom,
 // which imports Leaf.gom.
 var importingGom = gomFile{Rel: "gom/Importing.gom", Deps: []string{"gom/Imported.gom", "gom/Leaf.gom"}}
 
-// builtinGom is test/gom/Builtin.gom, module gom.b.u.i.l.t.i.n.Builtin:
+// builtinGom is test/java/gom/Builtin.gom, module gom.b.u.i.l.t.i.n.Builtin:
 // Java Gom generates it in gom/b/u/i/l/t/i/n/builtin.
 var builtinGom = gomFile{Rel: "gom/Builtin.gom", Dir: "b/u/i/l/t/i/n/builtin"}
 
@@ -258,7 +258,7 @@ var cases = []portCase{
 	{Rel: "acmatching/TestBool3.t", GoTest: true},
 	{Rel: "backquote/TestBackquoteWithBracket.t", GoTest: true, OracleDeps: []string{"backquote/TestDefaultValue.t"},
 		Gom: []gomFile{{Rel: "backquote/term.gom"}}},
-	// test/regress: tom must reject each one, with the errors of legacy/
+	// test/java/regress: tom must reject each one, with the errors of legacy/
 	// (Include.t and TestNonLinearity.t: legacyFails).
 	{Rel: "regress/BadBackquote.t", Regress: true},
 	{Rel: "regress/BadOp.t", Regress: true},
@@ -271,7 +271,7 @@ var cases = []portCase{
 	{Rel: "regress/UnknownSymbol2.t", Regress: true},
 	{Rel: "regress/VariableStar.t", Regress: true},
 	{Rel: "regress/WrongSymbol.t", Regress: true},
-	// remaining files of test/
+	// remaining files of test/java/
 	{Rel: "Test.t", GoTest: true},
 	{Rel: "TestOptimizer.t", GoTest: true, TomArgs: map[string][]string{"TestOptimizer.t": {"--optimize"}}},
 	{Rel: "TestMatchInference.t", GoTest: true},
@@ -289,10 +289,10 @@ var cases = []portCase{
 	{Rel: "loulou.t", C: true, Asserts: assertGuard{"test_assert", 2}},
 }
 
-// legacyFails lists the originals (relative to test/) that legacy/
+// legacyFails lists the originals (relative to test/java/) that legacy/
 // cannot compile: no oracle is possible, so they are not ported (dashboard
 // status "échoue dans legacy"); TestLegacyFails checks that they still
-// fail, as recorded. test/build.xml excludes rule/ from its compilation.
+// fail, as recorded. test/java/build.xml excludes rule/ from its compilation.
 var legacyFails = map[string]legacyFailure{
 	"rule/Peano.t":     ruleFailure(ruleLegacyFails),
 	"rule/TestArray.t": ruleFailure(ruleLegacyFails),
@@ -303,17 +303,17 @@ var legacyFails = map[string]legacyFailure{
 		NP:      failsIn{Stage: "javac", Output: []string{"%match(term t) {"}},
 	},
 	"rule/TomList.t": ruleFailure(ruleLegacyFails),
-	// test/build.xml's regress target expects includedFileNotFound
+	// test/java/build.xml's regress target expects includedFileNotFound
 	// (Include.t.nrt).
 	"regress/Include.t": {
 		Reason:  "includes the nonexistent titi.tom on purpose (non-regression test of the includedFileNotFound error), but legacy/'s tom crashes instead of reporting it (TomRuntimeException \"convert: strange term: Cst_IncludeFile\" after printing the TomIncludeException), with both parsers",
 		Default: failsIn{Stage: "tom", Output: []string{"Included file 'titi.tom' not found", "convert: strange term: Cst_IncludeFile"}},
 		NP:      failsIn{Stage: "tom", Output: []string{"Included file 'titi.tom' not found", "convert: strange term: Cst_IncludeFile"}},
 	},
-	// test/build.xml's regress target (with --newtyper, without effect)
+	// test/java/build.xml's regress target (with --newtyper, without effect)
 	// expects incompatibleTypes, incompatibleTypes, cannotGuessMatchType,
 	// incompatibleTypes (TestNonLinearity.t.nrt).
-	// test/build.xml excludes them ("called with a special option": the
+	// test/java/build.xml excludes them ("called with a special option": the
 	// commented-out preset gives them --lazyType, which legacy/'s tom no
 	// longer knows).
 	"Record.t":     recordFailure,
@@ -347,7 +347,7 @@ type failsIn struct {
 // javac rejects its output (incompatible types: Exp cannot be converted
 // to CstExp, UnaryOperator, BinaryOperator).
 var recordFailure = legacyFailure{
-	Reason:  "the typer rejects the %op hierarchy of Java classes (Incompatible types 'TomBinaryOperator' and 'TomExp' for symbol 'BinaryOperator', Cannot guess the type of 'e1'), with both parsers; with --oldtyper, javac rejects the generated Java (Exp cannot be converted to CstExp); test/build.xml excludes it (its commented-out --lazyType option no longer exists)",
+	Reason:  "the typer rejects the %op hierarchy of Java classes (Incompatible types 'TomBinaryOperator' and 'TomExp' for symbol 'BinaryOperator', Cannot guess the type of 'e1'), with both parsers; with --oldtyper, javac rejects the generated Java (Exp cannot be converted to CstExp); test/java/build.xml excludes it (its commented-out --lazyType option no longer exists)",
 	Default: failsIn{Stage: "tom", Output: []string{"Incompatible types 'TomBinaryOperator' and 'TomExp' for symbol 'BinaryOperator'"}},
 	NP:      failsIn{Stage: "tom", Output: []string{"Incompatible types 'TomBinaryOperator' and 'TomExp' for symbol 'BinaryOperator'"}},
 }
@@ -408,11 +408,11 @@ func compileCase(t *testing.T, c portCase) string {
 	return dir
 }
 
-// generateGo fills dir (the future Go module root) as test/build.xml
+// generateGo fills dir (the future Go module root) as test/java/build.xml
 // would for the Java original: gomgo first compiles the case's
 // standalone .gom copies into dir/<module>/, then tom -go (with -I dir)
 // compiles the support files into dir/<supportDir>/ and the case into
-// dir. It returns the generated file of each .t (relative to test/).
+// dir. It returns the generated file of each .t (relative to test/java/).
 func generateGo(t *testing.T, c portCase, dir string) (map[string]string, string, error) {
 	t.Helper()
 	dist := harness.NewDist(t)
@@ -465,7 +465,7 @@ func generateGo(t *testing.T, c portCase, dir string) (map[string]string, string
 }
 
 // regressFormatter are the tom options that log each error as
-// "REGRESS: <message name>" into log (test/build.xml, regress.compile).
+// "REGRESS: <message name>" into log (test/java/build.xml, regress.compile).
 func regressFormatter(log string) []string {
 	return []string{"-Dtom.platform.error.formatter=tom.platform.RegressFormatter", "-Dtom.platform.error.logfile=" + log}
 }
@@ -559,7 +559,7 @@ var (
 	writeDashboard = flag.Bool("write-dashboard", false, "rewrite ../../doc/go/port-dashboard.md")
 )
 
-// oracle is what the original test/<Rel>, compiled by legacy/ and run
+// oracle is what the original test/java/<Rel>, compiled by legacy/ and run
 // under the JVM, did.
 type oracle struct {
 	// Passed lists the JUnit tests that passed, Go-capitalised
@@ -579,7 +579,7 @@ type oracle struct {
 	// DiagnosticsDefaultParser: the same log with the default parser, for
 	// the record (not compared).
 	DiagnosticsDefaultParser string `json:"diagnosticsDefaultParser,omitempty"`
-	// SourceSHA256 is the hash of test/<Rel> the oracle was computed
+	// SourceSHA256 is the hash of test/java/<Rel> the oracle was computed
 	// from; a mismatch means the oracle is stale.
 	SourceSHA256 string `json:"source_sha256"`
 }
@@ -738,7 +738,7 @@ func stripComments(src string) string {
 	return b.String()
 }
 
-// legacyOracle compiles and runs the ORIGINAL test/<Rel> with the
+// legacyOracle compiles and runs the ORIGINAL test/java/<Rel> with the
 // human-written compiler (javac + JUnit or java main) and caches what
 // it observed in testdata/oracle/.
 func legacyOracle(t *testing.T, c portCase) oracle {
@@ -768,16 +768,16 @@ func legacyOracle(t *testing.T, c portCase) oracle {
 	legacy := harness.LegacyDist(t)
 	harness.LookPath(t, "javac")
 	root := harness.RepoRoot(t)
-	src := filepath.Join(root, "test", c.Rel)
+	src := filepath.Join(harness.JavaTestDir(root), c.Rel)
 	dir := t.TempDir()
-	// As test/build.xml: Gom first, then tom with -I towards the
+	// As test/java/build.xml: Gom first, then tom with -I towards the
 	// generated mappings of the input's package, on the case and its
 	// support files.
 	var targs []string
 	if len(c.Gom) > 0 {
 		gen := t.TempDir()
 		for _, g := range c.Gom {
-			gargs := append(append([]string{"--destdir", gen}, g.JavaArgs...), filepath.Join(root, "test", g.Rel))
+			gargs := append(append([]string{"--destdir", gen}, g.JavaArgs...), filepath.Join(harness.JavaTestDir(root), g.Rel))
 			if out, err := harness.RunIn(gen, []string{"TOM_HOME=" + legacy.Home}, filepath.Join(legacy.Home, "bin", "gom"), gargs...); err != nil {
 				t.Fatalf("legacy gom %v failed: %v\n%s", gargs, err, out)
 			}
@@ -793,12 +793,12 @@ func legacyOracle(t *testing.T, c portCase) oracle {
 		}
 	}
 	for _, rel := range append(append(append([]string(nil), c.Support...), c.OracleDeps...), c.Rel) {
-		if out, err := legacy.Compile(t, filepath.Join(root, "test", rel), dir, append(append([]string(nil), targs...), c.TomArgs[rel]...)...); err != nil {
+		if out, err := legacy.Compile(t, filepath.Join(harness.JavaTestDir(root), rel), dir, append(append([]string(nil), targs...), c.TomArgs[rel]...)...); err != nil {
 			t.Fatalf("legacy tom failed on %s: %v\n%s", rel, err, out)
 		}
 	}
 	for _, rel := range c.JavaSupport {
-		data, err := os.ReadFile(filepath.Join(root, "test", rel))
+		data, err := os.ReadFile(filepath.Join(harness.JavaTestDir(root), rel))
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -867,7 +867,7 @@ func cOracle(t *testing.T, c portCase) oracle {
 	legacy := harness.LegacyDist(t)
 	root := harness.RepoRoot(t)
 	dir := t.TempDir()
-	if out, err := legacy.Compile(t, filepath.Join(root, "test", c.Rel), dir, append([]string{"-c", "-np"}, c.TomArgs[c.Rel]...)...); err != nil {
+	if out, err := legacy.Compile(t, filepath.Join(harness.JavaTestDir(root), c.Rel), dir, append([]string{"-c", "-np"}, c.TomArgs[c.Rel]...)...); err != nil {
 		t.Fatalf("legacy tom -c failed on %s: %v\n%s", c.Rel, err, out)
 	}
 	cFiles, _ := filepath.Glob(filepath.Join(dir, "*.c"))
@@ -896,7 +896,7 @@ func regressOracle(t *testing.T, c portCase) oracle {
 	t.Helper()
 	legacy := harness.LegacyDist(t)
 	root := harness.RepoRoot(t)
-	src := filepath.Join(root, "test", c.Rel)
+	src := filepath.Join(harness.JavaTestDir(root), c.Rel)
 	var o oracle
 	sum, err := sourceSHA256(sourcesOf(root, c)...)
 	if err != nil {
@@ -975,7 +975,7 @@ func junitTestNames(source string) []string {
 	for i, line := range lines {
 		s := strings.TrimSpace(line)
 		// a JUnit Theories runner runs the @Theory methods as tests; the
-		// annotation may be qualified (@org.junit.Test, test/Test.t)
+		// annotation may be qualified (@org.junit.Test, test/java/Test.t)
 		for _, pkg := range []string{"@org.junit.experimental.theories.", "@org.junit."} {
 			if strings.HasPrefix(s, pkg) {
 				s = "@" + strings.TrimPrefix(s, pkg)
@@ -1028,15 +1028,15 @@ func sourceSHA256(paths ...string) (string, error) {
 }
 
 // sourcesOf lists the original files whose content determines the
-// oracle of c: test/<Rel>, then its support files and .gom files.
+// oracle of c: test/java/<Rel>, then its support files and .gom files.
 func sourcesOf(root string, c portCase) []string {
-	paths := []string{filepath.Join(root, "test", c.Rel)}
+	paths := []string{filepath.Join(harness.JavaTestDir(root), c.Rel)}
 	for _, rel := range append(append(append([]string(nil), c.Support...), c.JavaSupport...), c.OracleDeps...) {
-		paths = append(paths, filepath.Join(root, "test", rel))
+		paths = append(paths, filepath.Join(harness.JavaTestDir(root), rel))
 	}
 	for _, g := range c.Gom {
 		for _, rel := range append([]string{g.Rel}, g.Deps...) {
-			paths = append(paths, filepath.Join(root, "test", rel))
+			paths = append(paths, filepath.Join(harness.JavaTestDir(root), rel))
 		}
 	}
 	return paths
@@ -1239,7 +1239,7 @@ func TestUnsupportedMarkers(t *testing.T) {
 	}
 }
 
-// TestDashboard classifies every test/**/*.t (outside error/) and, with
+// TestDashboard classifies every test/java/**/*.t (outside error/) and, with
 // -write-dashboard, rewrites doc/go/port-dashboard.md.
 func TestDashboard(t *testing.T) {
 	if !*writeDashboard {
@@ -1256,15 +1256,11 @@ func TestDashboard(t *testing.T) {
 	}
 	var rows []string
 	counts := map[string]int{}
-	filepath.Walk(filepath.Join(root, "test"), func(p string, info os.FileInfo, err error) error {
-		// test/go holds the ports themselves, not original cases.
-		if err == nil && info.IsDir() && p == filepath.Join(root, "test", "go") {
-			return filepath.SkipDir
-		}
+	filepath.Walk(harness.JavaTestDir(root), func(p string, info os.FileInfo, err error) error {
 		if err != nil || info.IsDir() || !strings.HasSuffix(p, ".t") {
 			return err
 		}
-		rel, _ := filepath.Rel(filepath.Join(root, "test"), p)
+		rel, _ := filepath.Rel(harness.JavaTestDir(root), p)
 		rel = filepath.ToSlash(rel)
 		if strings.HasPrefix(rel, "error/") {
 			return nil
@@ -1300,16 +1296,16 @@ func TestDashboard(t *testing.T) {
 	var b strings.Builder
 	b.WriteString("# Tableau de bord du portage Tom+Go (T2)\n\n")
 	b.WriteString("Généré par `mage portGo` (`go test ./ -args -write-dashboard` dans `test/go`).\n")
-	b.WriteString("Chaque `test/**/*.t` hors `error/` ; un cas porté est OK quand son port\n")
+	b.WriteString("Chaque `test/java/**/*.t` hors `error/` ; un cas porté est OK quand son port\n")
 	b.WriteString("Tom+Go, compilé par `tom -go`, se comporte comme l'original compilé par\n")
 	b.WriteString("`legacy/` (mêmes tests JUnit réussis, ou même sortie et même statut).\n")
 	b.WriteString("Un fichier « support » n'a pas de test propre : ses classes sont compilées\n")
-	b.WriteString("avec le cas qui les utilise (comme `test/build.xml` compile tout le\n")
+	b.WriteString("avec le cas qui les utilise (comme `test/java/build.xml` compile tout le\n")
 	b.WriteString("répertoire), et c'est le statut de ce cas qui les valide.\n")
 	b.WriteString("Un original « échoue dans legacy » ne se compile pas avec `legacy/` :\n")
 	b.WriteString("pas d'oracle possible, il n'est pas porté (`TestLegacyFails` le vérifie).\n")
 	b.WriteString("Un cas « OK (diagnostics) » est un test de non-régression des diagnostics\n")
-	b.WriteString("(`test/regress/`) : `tom -go` rejette le port avec les mêmes erreurs que\n")
+	b.WriteString("(`test/java/regress/`) : `tom -go` rejette le port avec les mêmes erreurs que\n")
 	b.WriteString("`legacy/` sur l'original ; rien n'est exécuté (la couverture T3 ne le\n")
 	b.WriteString("compte pas).\n\n")
 	b.WriteString("- total : " + strconv.Itoa(len(rows)) + "\n")
@@ -1327,14 +1323,14 @@ func TestDashboard(t *testing.T) {
 
 // regressNote compares, for the dashboard, the diagnostics of legacy/
 // recorded in the oracle of a Regress case with the errors that
-// test/build.xml's regress target expects (test/<Rel>.nrt).
+// test/java/build.xml's regress target expects (test/java/<Rel>.nrt).
 func regressNote(root string, c portCase) string {
 	var o oracle
 	data, err := os.ReadFile(oraclePath(c))
 	if err != nil || json.Unmarshal(data, &o) != nil {
 		return ""
 	}
-	nrt, err := os.ReadFile(filepath.Join(root, "test", c.Rel+".nrt"))
+	nrt, err := os.ReadFile(filepath.Join(harness.JavaTestDir(root), c.Rel+".nrt"))
 	if err != nil {
 		return "pas de `.nrt`"
 	}
@@ -1603,13 +1599,13 @@ func TestGomCopiesIdentical(t *testing.T) {
 	for _, c := range cases {
 		for _, g := range c.Gom {
 			for _, rel := range append([]string{g.Rel}, g.Deps...) {
-				orig, err := os.ReadFile(filepath.Join(root, "test", rel))
+				orig, err := os.ReadFile(filepath.Join(harness.JavaTestDir(root), rel))
 				if err != nil {
 					t.Fatal(err)
 				}
 				cp, err := os.ReadFile(rel)
 				if err != nil {
-					t.Errorf("%s: missing copy of test/%s: %v", c.Rel, rel, err)
+					t.Errorf("%s: missing copy of test/java/%s: %v", c.Rel, rel, err)
 					continue
 				}
 				if rel == g.Rel && g.PortedHooks {
@@ -1618,12 +1614,12 @@ func TestGomCopiesIdentical(t *testing.T) {
 					if err1 != nil || err2 != nil {
 						t.Errorf("%s: parsing: %v %v", rel, err1, err2)
 					} else if o != c {
-						t.Errorf("test/go/%s differs from test/%s outside its hook bodies:\n%s\n%s", rel, rel, o, c)
+						t.Errorf("test/go/%s differs from test/java/%s outside its hook bodies:\n%s\n%s", rel, rel, o, c)
 					}
 					continue
 				}
 				if string(orig) != string(cp) {
-					t.Errorf("test/go/%s differs from test/%s", rel, rel)
+					t.Errorf("test/go/%s differs from test/java/%s", rel, rel)
 				}
 			}
 		}
@@ -1671,7 +1667,7 @@ func TestLegacyFails(t *testing.T) {
 	sort.Strings(rels)
 	for _, rel := range rels {
 		f := legacyFails[rel]
-		src := filepath.Join(root, "test", rel)
+		src := filepath.Join(harness.JavaTestDir(root), rel)
 		if _, err := os.Stat(src); err != nil {
 			t.Errorf("legacyFails %s: %v", rel, err)
 			continue
@@ -1766,7 +1762,7 @@ func TestMainAssertions(t *testing.T) {
 			}
 			continue
 		}
-		orig, err := os.ReadFile(filepath.Join(root, "test", c.Rel))
+		orig, err := os.ReadFile(filepath.Join(harness.JavaTestDir(root), c.Rel))
 		if err != nil {
 			t.Fatal(err)
 		}

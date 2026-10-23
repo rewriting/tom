@@ -51,8 +51,30 @@ func LookPath(t testing.TB, name string) string {
 	return p
 }
 
+// The test tree. This is the ONE place that knows where its parts live:
+// every other file derives its paths from these functions.
+//
+//	test/java  the Tom+Java tests (the originals; built by test/java/build.xml)
+//	test/go    the Tom+Go ports and their reference data (testdata/, smoke/testdata)
+//	test/tools the programs that compare the three (module tomtools)
+const (
+	testDirName  = "test"
+	javaDirName  = "java"
+	goDirName    = "go"
+	toolsDirName = "tools"
+)
+
+// JavaTestDir is the directory of the Tom+Java tests under root.
+func JavaTestDir(root string) string { return filepath.Join(root, testDirName, javaDirName) }
+
+// GoTestDir is the directory of the Tom+Go tests (ports, oracles) under root.
+func GoTestDir(root string) string { return filepath.Join(root, testDirName, goDirName) }
+
+// ToolsDir is the directory of the comparison tools (module tomtools).
+func ToolsDir(root string) string { return filepath.Join(root, testDirName, toolsDirName) }
+
 // RepoRoot walks up from the working directory to the directory that
-// holds both build.xml and test/go/go.mod.
+// holds both build.xml and the Java test tree's build.xml.
 func RepoRoot(t testing.TB) string {
 	t.Helper()
 	dir, err := os.Getwd()
@@ -60,7 +82,7 @@ func RepoRoot(t testing.TB) string {
 		t.Fatal(err)
 	}
 	for {
-		if fileExists(filepath.Join(dir, "build.xml")) && fileExists(filepath.Join(dir, "test", "go", "go.mod")) {
+		if fileExists(filepath.Join(dir, "build.xml")) && fileExists(filepath.Join(JavaTestDir(dir), "build.xml")) {
 			return dir
 		}
 		parent := filepath.Dir(dir)
