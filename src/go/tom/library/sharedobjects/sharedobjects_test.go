@@ -150,7 +150,7 @@ func TestOneAtATime_Stable(t *testing.T) {
 
 // The factory is safe for concurrent use, and terms built concurrently
 // are still maximally shared (Java's SharedObjectFactory is thread-safe;
-// test/gom/TestGomMultithread.t). Run with -race to check the locking.
+// test/java/gom/TestGomMultithread.t). Run with -race to check the locking.
 func TestFactory_Concurrent(t *testing.T) {
 	f := NewFactory()
 	const goroutines, depth = 16, 50

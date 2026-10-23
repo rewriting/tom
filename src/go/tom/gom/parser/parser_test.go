@@ -280,7 +280,7 @@ func TestParse_Corpus(t *testing.T) {
 		"Ying.gom",
 		"fromterm/foo.gom",
 	} {
-		path := filepath.Join("..", "..", "..", "..", "..", "test", "gom", name)
+		path := filepath.Join("..", "..", "..", "..", "..", "test", "java", "gom", name)
 		t.Run(name, func(t *testing.T) {
 			mod, err := ParseFile(path)
 			if err != nil {
@@ -314,7 +314,7 @@ func TestParse_StringRoundTrip(t *testing.T) {
 		"Ying.gom",
 		"fromterm/foo.gom",
 	} {
-		path := filepath.Join("..", "..", "..", "..", "..", "test", "gom", name)
+		path := filepath.Join("..", "..", "..", "..", "..", "test", "java", "gom", name)
 		t.Run(name, func(t *testing.T) {
 			mod, err := ParseFile(path)
 			if err != nil {

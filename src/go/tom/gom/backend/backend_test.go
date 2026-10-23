@@ -11,7 +11,7 @@ import (
 )
 
 // gomNoHooksCorpus lists the hook-free .gom files of the repository's
-// test/gom/ directory that make up the Phase 2 corpus: parse, generate
+// test/java/gom/ directory that make up the Phase 2 corpus: parse, generate
 // and build must succeed for each of them without any hook support.
 var gomNoHooksCorpus = []string{
 	"Builtin.gom", "Dotted.gom", "Imported.gom", "Importing.gom",
@@ -20,14 +20,14 @@ var gomNoHooksCorpus = []string{
 }
 
 // TestGenerate_BuildsCorpus is the Phase 2 gate: every hook-free .gom of
-// test/gom/ listed in gomNoHooksCorpus must round-trip cleanly through
+// test/java/gom/ listed in gomNoHooksCorpus must round-trip cleanly through
 //
 //	parse → generate → go build
 //
 // We delete the per-file output directory after the assertion to keep
 // the test artefact-free.
 func TestGenerate_BuildsCorpus(t *testing.T) {
-	corpus, err := filepath.Abs(filepath.Join("..", "..", "..", "..", "..", "test", "gom"))
+	corpus, err := filepath.Abs(filepath.Join("..", "..", "..", "..", "..", "test", "java", "gom"))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -35,7 +35,7 @@ func TestGenerate_BuildsCorpus(t *testing.T) {
 	for _, name := range gomNoHooksCorpus {
 		path := filepath.Join(corpus, name)
 		if _, err := os.Stat(path); err != nil {
-			t.Fatalf("corpus file %s is missing (expected in the repository's test/gom/): %v", path, err)
+			t.Fatalf("corpus file %s is missing (expected in the repository's test/java/gom/): %v", path, err)
 		}
 		entries = append(entries, path)
 	}

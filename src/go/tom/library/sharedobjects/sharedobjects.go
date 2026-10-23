@@ -25,7 +25,7 @@ type Term interface {
 // Factory implements maximal sharing (hash-consing) for any value
 // implementing Term. It is safe for concurrent use, as Java's
 // shared.SharedObjectFactory: terms built by several goroutines are
-// still maximally shared (test/gom/TestGomMultithread.t).
+// still maximally shared (test/java/gom/TestGomMultithread.t).
 type Factory struct {
 	mu      sync.Mutex
 	buckets map[uint32][]Term // hash -> chained terms; chain handles collisions

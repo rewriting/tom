@@ -18,7 +18,7 @@ func TestEnvironment_NewIsAtRoot(t *testing.T) {
 	}
 }
 
-// Same scenario as test/sl/TestEnvironment.t (testEqual, testUpAndDown).
+// Same scenario as test/java/sl/TestEnvironment.t (testEqual, testUpAndDown).
 func TestEnvironment_UpAndDown(t *testing.T) {
 	a, b := leaf("a"), leaf("b")
 	subject := parent("f", a, b)
