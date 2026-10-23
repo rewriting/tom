@@ -10859,3 +10859,43 @@ func fromTermConcInstructionInstructionList(trm aterm.ATerm, conv aterm.ATermCon
 	}
 	return nil, false
 }
+
+func init() {
+	HookMakeCodeToInstruction = func(t Code) (Instruction, Code) {
+		tom__r := func() Instruction {
+			{
+
+				if t.IsInstructionToCode() {
+					return t.GetAstInstruction()
+				}
+
+			}
+			return nil
+		}()
+		return tom__r, t
+	}
+}
+
+func init() {
+	HookMakeInsertConcInstruction = func(e Instruction, l InstructionList) (InstructionList, Instruction, InstructionList) {
+		tom__r := func() InstructionList {
+			{
+
+				if e.IsAbstractBlock() {
+					var elems []Instruction
+					for c := e.GetInstList(); c.IsConsconcInstruction(); c = c.GetTailconcInstruction() {
+						elems = append(elems, c.GetHeadconcInstruction())
+					}
+					res := l
+					for i := len(elems) - 1; i >= 0; i-- {
+						res = ConsConcInstruction(elems[i], res)
+					}
+					return res
+				}
+
+			}
+			return nil
+		}()
+		return tom__r, e, l
+	}
+}

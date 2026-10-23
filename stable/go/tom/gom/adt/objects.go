@@ -5444,7 +5444,7 @@ type HookList interface {
 	CompareTo(o any) int
 	CompareToLPO(o any) int
 	ToATerm() aterm.ATerm
-	// methods of the javablock hooks of sort HookList
+	// methods of the block hooks of sort HookList
 	ContainsTomCode() bool
 }
 
@@ -5939,7 +5939,7 @@ func fromTermConcHookHookList(trm aterm.ATerm, conv aterm.ATermConverter) (res H
 	return nil, false
 }
 
-// javablock hook sort HookList (Gom module Objects)
+// block hook sort HookList (Gom module Objects)
 // ContainsTomCode is Java's containsTomCode(): whether a hook of the
 // list is a MakeHook, MakeBeforeHook or BlockHook whose HasTomCode is
 // true (ConcHook(_*,(MakeHook|MakeBeforeHook|BlockHook)[HasTomCode=true()],_*)).

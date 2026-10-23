@@ -4746,3 +4746,46 @@ func fromTermConcTomNameTomNameList(trm aterm.ATerm, conv aterm.ATermConverter) 
 	}
 	return nil, false
 }
+
+func init() {
+	HookMakeNameNumber = func(name TomName) (TomNumber, TomName) {
+		tom__r := func() TomNumber {
+			{
+
+				if name.IsPositionName() {
+					l := name.GetNumberList()
+					if l.IsConsconcTomNumber() && l.GetTailconcTomNumber().IsEmptyconcTomNumber() && l.GetHeadconcTomNumber().IsPosition() {
+						return l.GetHeadconcTomNumber()
+					}
+				}
+
+			}
+			return nil
+		}()
+		return tom__r, name
+	}
+}
+
+func init() {
+	HookMakeInsertConcTomNumber = func(e TomNumber, l TomNumberList) (TomNumberList, TomNumber, TomNumberList) {
+		tom__r := func() TomNumberList {
+			{
+
+				if e.IsNameNumber() && e.GetAstName().IsPositionName() {
+					var elems []TomNumber
+					for c := e.GetAstName().GetNumberList(); c.IsConsconcTomNumber(); c = c.GetTailconcTomNumber() {
+						elems = append(elems, c.GetHeadconcTomNumber())
+					}
+					res := l
+					for i := len(elems) - 1; i >= 0; i-- {
+						res = ConsConcTomNumber(elems[i], res)
+					}
+					return res
+				}
+
+			}
+			return nil
+		}()
+		return tom__r, e, l
+	}
+}

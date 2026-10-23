@@ -1,20 +1,22 @@
-package adt
+package adt_test
 
 import (
 	"testing"
+
+	adt "tom/engine/adt"
 )
 
-// The hooks of the .gom files of this directory (AU theories, rules,
-// make and make_insert hooks) must change the canonical form of certain
-// Tom terms at construction time. This file pins down their observable
-// effects so any drift in the backend (or in the .gom sources, or in
-// hooks.go, which installs the Tom+Go hooks) is caught immediately.
+// The hooks of src/go/tom/engine/adt/*.gom (AU theories, the rules of
+// the Java originals written as make hooks, make and make_insert hooks,
+// all in Go) must change the canonical form of certain Tom terms at
+// construction time. This file pins down their observable effects so any
+// drift in the backend (or in the .gom sources) is caught immediately.
 
 // --- TomConstraint.gom — AndConstraint:AU() { TrueConstraint() } ----------
 
 func TestHook_AndConstraint_EmptyReturnsTrueConstraint(t *testing.T) {
-	got := MakeAndConstraint()
-	want := MakeTrueConstraint()
+	got := adt.MakeAndConstraint()
+	want := adt.MakeTrueConstraint()
 	if got != want {
 		t.Fatalf("MakeAndConstraint() should return TrueConstraint(), got %T %v", got, got)
 	}
@@ -23,11 +25,11 @@ func TestHook_AndConstraint_EmptyReturnsTrueConstraint(t *testing.T) {
 func TestHook_AndConstraint_AssociativityFlattens(t *testing.T) {
 	// Use FalseConstraint as the test payload — TrueConstraint is the unit
 	// of AndConstraint and would be absorbed (cf. unit-absorption test below).
-	b := MakeFalseConstraint()
-	inner := MakeAndConstraint(b, b)
-	outer := MakeAndConstraint(inner, b)
+	b := adt.MakeFalseConstraint()
+	inner := adt.MakeAndConstraint(b, b)
+	outer := adt.MakeAndConstraint(inner, b)
 	// AndConstraint(AndConstraint(b,b), b) flattens to AndConstraint(b, b, b).
-	flat := MakeAndConstraint(b, b, b)
+	flat := adt.MakeAndConstraint(b, b, b)
 	if outer != flat {
 		t.Fatalf("AndConstraint(AndConstraint(b,b), b) did not flatten:\n  got=%v\n  want=%v", outer, flat)
 	}
@@ -39,23 +41,23 @@ func TestHook_AndConstraint_AssociativityFlattens(t *testing.T) {
 // list collapses to the unit, and a 1-element list collapses to the
 // bare element.
 func TestHook_AndConstraint_AbsorbsTrueConstraintUnit(t *testing.T) {
-	u := MakeTrueConstraint()
-	b := MakeFalseConstraint()
-	if MakeAndConstraint(b, u) != b {
+	u := adt.MakeTrueConstraint()
+	b := adt.MakeFalseConstraint()
+	if adt.MakeAndConstraint(b, u) != b {
 		t.Fatalf("AndConstraint(b, unit) must collapse to b")
 	}
-	if MakeAndConstraint(u, b) != b {
+	if adt.MakeAndConstraint(u, b) != b {
 		t.Fatalf("AndConstraint(unit, b) must collapse to b")
 	}
-	if MakeAndConstraint(u, u, u) != u {
+	if adt.MakeAndConstraint(u, u, u) != u {
 		t.Fatalf("AndConstraint(unit, unit, unit) must collapse to the unit")
 	}
 	// 2-element AC with a unit dropped → 1-element → bare element.
-	if MakeAndConstraint(u, b, u) != b {
+	if adt.MakeAndConstraint(u, b, u) != b {
 		t.Fatalf("AndConstraint(unit, b, unit) must collapse to b")
 	}
 	// 3-element AC, two distinct non-units → preserved.
-	threeNonUnit := MakeAndConstraint(b, b, b)
+	threeNonUnit := adt.MakeAndConstraint(b, b, b)
 	asAndCons, ok := threeNonUnit.(interface{ String() string })
 	if !ok {
 		t.Fatalf("3-element AC has unexpected concrete type %T", threeNonUnit)
@@ -67,12 +69,12 @@ func TestHook_AndConstraint_AbsorbsTrueConstraintUnit(t *testing.T) {
 }
 
 func TestHook_OrConstraint_AbsorbsFalseConstraintUnit(t *testing.T) {
-	u := MakeFalseConstraint()
-	b := MakeTrueConstraint()
-	if MakeOrConstraint(b, u) != b {
+	u := adt.MakeFalseConstraint()
+	b := adt.MakeTrueConstraint()
+	if adt.MakeOrConstraint(b, u) != b {
 		t.Fatalf("OrConstraint(b, unit) must collapse to b")
 	}
-	if MakeOrConstraint(u, b) != b {
+	if adt.MakeOrConstraint(u, b) != b {
 		t.Fatalf("OrConstraint(unit, b) must collapse to b")
 	}
 }
@@ -80,8 +82,8 @@ func TestHook_OrConstraint_AbsorbsFalseConstraintUnit(t *testing.T) {
 // --- TomConstraint.gom — OrConstraint:AU() { FalseConstraint() } ----------
 
 func TestHook_OrConstraint_EmptyReturnsFalseConstraint(t *testing.T) {
-	got := MakeOrConstraint()
-	want := MakeFalseConstraint()
+	got := adt.MakeOrConstraint()
+	want := adt.MakeFalseConstraint()
 	if got != want {
 		t.Fatalf("MakeOrConstraint() should return FalseConstraint(), got %T %v", got, got)
 	}
@@ -90,15 +92,15 @@ func TestHook_OrConstraint_EmptyReturnsFalseConstraint(t *testing.T) {
 // --- TomConstraint.gom — OrConstraintDisjunction:AU() { } (no unit) ------
 
 func TestHook_OrConstraintDisjunction_NoUnit_FlattensOnly(t *testing.T) {
-	a := MakeTrueConstraint()
-	b := MakeFalseConstraint()
-	empty := MakeOrConstraintDisjunction()
-	if empty == MakeTrueConstraint() || empty == MakeFalseConstraint() {
+	a := adt.MakeTrueConstraint()
+	b := adt.MakeFalseConstraint()
+	empty := adt.MakeOrConstraintDisjunction()
+	if empty == adt.MakeTrueConstraint() || empty == adt.MakeFalseConstraint() {
 		t.Fatalf("OrConstraintDisjunction() must not collapse to True/False — no unit declared")
 	}
-	inner := MakeOrConstraintDisjunction(a, b)
-	outer := MakeOrConstraintDisjunction(inner, a)
-	flat := MakeOrConstraintDisjunction(a, b, a)
+	inner := adt.MakeOrConstraintDisjunction(a, b)
+	outer := adt.MakeOrConstraintDisjunction(inner, a)
+	flat := adt.MakeOrConstraintDisjunction(a, b, a)
 	if outer != flat {
 		t.Fatalf("OrConstraintDisjunction must flatten nested instances")
 	}
@@ -107,20 +109,20 @@ func TestHook_OrConstraintDisjunction_NoUnit_FlattensOnly(t *testing.T) {
 // --- Code.gom — module:rules() InstructionToCode ↔ CodeToInstruction -----
 
 func TestHook_CodeRules_InstructionToCode_CancelsInverse(t *testing.T) {
-	tl := MakeITL("body")
-	codeT := MakeTargetLanguageToCode(tl)
-	wrap := MakeCodeToInstruction(codeT)
-	got := MakeInstructionToCode(wrap)
+	tl := adt.MakeITL("body")
+	codeT := adt.MakeTargetLanguageToCode(tl)
+	wrap := adt.MakeCodeToInstruction(codeT)
+	got := adt.MakeInstructionToCode(wrap)
 	if got != codeT {
 		t.Fatalf("InstructionToCode∘CodeToInstruction didn't cancel\n  got=%v\n  want=%v", got, codeT)
 	}
 }
 
 func TestHook_CodeRules_CodeToInstruction_CancelsInverse(t *testing.T) {
-	tl := MakeITL("body")
-	codeT := MakeTargetLanguageToCode(tl)
-	inst := MakeCodeToInstruction(codeT)
-	got := MakeCodeToInstruction(MakeInstructionToCode(inst))
+	tl := adt.MakeITL("body")
+	codeT := adt.MakeTargetLanguageToCode(tl)
+	inst := adt.MakeCodeToInstruction(codeT)
+	got := adt.MakeCodeToInstruction(adt.MakeInstructionToCode(inst))
 	if got != inst {
 		t.Fatalf("CodeToInstruction∘InstructionToCode didn't cancel\n  got=%v\n  want=%v", got, inst)
 	}
@@ -129,19 +131,19 @@ func TestHook_CodeRules_CodeToInstruction_CancelsInverse(t *testing.T) {
 // --- TomExpression.gom — BQTermToExpression ↔ ExpressionToBQTerm ---------
 
 func TestHook_ExpressionRules_BQTermToExpression_CancelsInverse(t *testing.T) {
-	bq := MakeBQDefault()
-	expr := MakeBQTermToExpression(bq)
-	got := MakeExpressionToBQTerm(expr)
+	bq := adt.MakeBQDefault()
+	expr := adt.MakeBQTermToExpression(bq)
+	got := adt.MakeExpressionToBQTerm(expr)
 	if got != bq {
 		t.Fatalf("ExpressionToBQTerm∘BQTermToExpression didn't cancel\n  got=%v\n  want=%v", got, bq)
 	}
 }
 
 func TestHook_ExpressionRules_ExpressionToBQTerm_CancelsInverse(t *testing.T) {
-	bq := MakeBQDefault()
-	expr := MakeBQTermToExpression(bq)
-	roundtrip := MakeExpressionToBQTerm(expr) // = bq
-	got := MakeBQTermToExpression(roundtrip)
+	bq := adt.MakeBQDefault()
+	expr := adt.MakeBQTermToExpression(bq)
+	roundtrip := adt.MakeExpressionToBQTerm(expr) // = bq
+	got := adt.MakeBQTermToExpression(roundtrip)
 	if got != expr {
 		t.Fatalf("BQTermToExpression∘ExpressionToBQTerm didn't cancel")
 	}
@@ -160,14 +162,14 @@ func TestHook_Cast_RejectsUnknownType(t *testing.T) {
 			t.Fatalf("unexpected panic value: %v", r)
 		}
 	}()
-	badType := MakeType(MakeConcTypeOption(), "unknown type", MakeEmptyTargetLanguageType())
-	_ = MakeCast(badType, MakeBQTermToExpression(MakeBQDefault()))
+	badType := adt.MakeType(adt.MakeConcTypeOption(), "unknown type", adt.MakeEmptyTargetLanguageType())
+	_ = adt.MakeCast(badType, adt.MakeBQTermToExpression(adt.MakeBQDefault()))
 }
 
 func TestHook_Cast_AcceptsKnownType(t *testing.T) {
-	okType := MakeType(MakeConcTypeOption(), "int", MakeEmptyTargetLanguageType())
-	got := MakeCast(okType, MakeBQTermToExpression(MakeBQDefault()))
-	if _, ok := got.(*CastExpression); !ok {
+	okType := adt.MakeType(adt.MakeConcTypeOption(), "int", adt.MakeEmptyTargetLanguageType())
+	got := adt.MakeCast(okType, adt.MakeBQTermToExpression(adt.MakeBQDefault()))
+	if _, ok := got.(*adt.CastExpression); !ok {
 		t.Fatalf("MakeCast with known type should return *CastExpression, got %T", got)
 	}
 }
@@ -175,13 +177,13 @@ func TestHook_Cast_AcceptsKnownType(t *testing.T) {
 // --- TomInstruction.gom — concInstruction:make_insert splices AbstractBlock --
 
 func TestHook_ConcInstruction_FlattensAbstractBlock(t *testing.T) {
-	a := MakeNop()
-	b := MakeNop()
-	c := MakeNop()
-	inner := MakeConcInstruction(a, b)
-	block := MakeAbstractBlock(inner)
-	withBlock := MakeConcInstruction(block, c)
-	want := MakeConcInstruction(a, b, c)
+	a := adt.MakeNop()
+	b := adt.MakeNop()
+	c := adt.MakeNop()
+	inner := adt.MakeConcInstruction(a, b)
+	block := adt.MakeAbstractBlock(inner)
+	withBlock := adt.MakeConcInstruction(block, c)
+	want := adt.MakeConcInstruction(a, b, c)
 	if withBlock != want {
 		t.Fatalf("concInstruction make_insert did not splice AbstractBlock\n  got=%v\n  want=%v", withBlock, want)
 	}
@@ -190,18 +192,18 @@ func TestHook_ConcInstruction_FlattensAbstractBlock(t *testing.T) {
 // --- TomName.gom — NameNumber:make simplifies PositionName(concTomNumber([Position])) --
 
 func TestHook_NameNumber_SimplifiesNestedPosition(t *testing.T) {
-	pos := MakePosition(7)
-	wrapped := MakePositionName(MakeConcTomNumber(pos))
-	got := MakeNameNumber(wrapped)
+	pos := adt.MakePosition(7)
+	wrapped := adt.MakePositionName(adt.MakeConcTomNumber(pos))
+	got := adt.MakeNameNumber(wrapped)
 	if got != pos {
 		t.Fatalf("NameNumber:make didn't simplify to inner Position\n  got=%v\n  want=%v", got, pos)
 	}
 }
 
 func TestHook_NameNumber_DoesNotSimplifyOtherShapes(t *testing.T) {
-	multi := MakePositionName(MakeConcTomNumber(MakePosition(1), MakePosition(2)))
-	got := MakeNameNumber(multi)
-	if _, ok := got.(*NameNumberTomNumber); !ok {
+	multi := adt.MakePositionName(adt.MakeConcTomNumber(adt.MakePosition(1), adt.MakePosition(2)))
+	got := adt.MakeNameNumber(multi)
+	if _, ok := got.(*adt.NameNumberTomNumber); !ok {
 		t.Fatalf("NameNumber with >1 inner positions should stay a NameNumber, got %T", got)
 	}
 }
@@ -209,14 +211,14 @@ func TestHook_NameNumber_DoesNotSimplifyOtherShapes(t *testing.T) {
 // --- TomName.gom — concTomNumber:make_insert splices NameNumber-wrapped ---
 
 func TestHook_ConcTomNumber_FlattensNestedNameNumber(t *testing.T) {
-	inner := MakeConcTomNumber(MakePosition(1), MakePosition(2))
-	wrapped := MakePositionName(inner)
-	nn := MakeNameNumber(wrapped) // does not simplify (≠1 inner)
-	if _, ok := nn.(*NameNumberTomNumber); !ok {
+	inner := adt.MakeConcTomNumber(adt.MakePosition(1), adt.MakePosition(2))
+	wrapped := adt.MakePositionName(inner)
+	nn := adt.MakeNameNumber(wrapped) // does not simplify (≠1 inner)
+	if _, ok := nn.(*adt.NameNumberTomNumber); !ok {
 		t.Fatalf("expected wrapped value to be a NameNumber, got %T", nn)
 	}
-	out := MakeConcTomNumber(nn, MakePosition(3))
-	want := MakeConcTomNumber(MakePosition(1), MakePosition(2), MakePosition(3))
+	out := adt.MakeConcTomNumber(nn, adt.MakePosition(3))
+	want := adt.MakeConcTomNumber(adt.MakePosition(1), adt.MakePosition(2), adt.MakePosition(3))
 	if out != want {
 		t.Fatalf("concTomNumber make_insert did not splice nested NameNumber\n  got=%v\n  want=%v", out, want)
 	}

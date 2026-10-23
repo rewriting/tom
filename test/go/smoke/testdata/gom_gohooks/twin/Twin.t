@@ -1,10 +1,8 @@
 package smoke;
 
-// Tom+Java twin of ../gom_javablock.t: compiled by legacy/, its output
-// is ../expected.txt (TestJavaTwins). The Gom grammar of the Java
-// compiler has no `javablock` (an internal hook kind of Java Gom: a
-// block without Tom code); its Java counterpart is a `block` whose body
-// has no Tom code.
+// Tom+Java twin of ../gom_gohooks.t: compiled by legacy/, its output is
+// ../expected.txt (TestJavaTwins). The hooks are the Java code of the
+// Go hooks.
 
 import smoke.twin.jb.types.*;
 
@@ -14,6 +12,11 @@ public class Twin {
     abstract syntax
     T = a() | b() | f(lhs:T, rhs:T)
     L = conc(T*)
+    f:make(l, r) {
+      if (l.isb() && r.isb()) {
+        return `a();
+      }
+    }
     sort T:block() {
       public int size() {
         return isf() ? 1 + getlhs().size() + getrhs().size() : 1;
@@ -32,7 +35,7 @@ public class Twin {
 
   public static void main(String[] args) {
     T t = `f(a(), f(b(), a()));
-    System.out.println(t + " " + t.size() + " " + `b().size());
+    System.out.println(t + " " + t.size() + " " + `b().size() + " " + `f(b(), b()));
     L l = `conc(t, a());
     System.out.println(l + " " + l.weight() + " " + `conc().weight());
   }

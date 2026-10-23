@@ -47,6 +47,11 @@ type Options struct {
 	// DeepEquals (a method of every sort) instead of ==, and the
 	// mapping's equals uses DeepEquals.
 	NoSharing bool
+	// GoHooks (gomgo --gohooks): the hooks of the module are written in
+	// plain Go, without Tom code, and are generated into its Go file
+	// instead of the Tom mapping (see userhooks.go), so that the package
+	// works without Tom; the rules are then refused.
+	GoHooks bool
 	// PackageModules are all the modules generated into the same Go
 	// package, the generated one included (none: the module alone). The
 	// rules of each of them apply to the operators of all of them, as
@@ -54,6 +59,50 @@ type Options struct {
 	// operators of the whole module list (e.g. a rule of Code.gom whose
 	// left-hand side is an operator of TomInstruction.gom).
 	PackageModules []gomast.GomModule
+}
+
+// opNames tells apart the operators of a Go package whose Go names
+// (exportedField) are the same, such as subterm (Il.gom) and Subterm
+// (Code.gom): Java Gom puts them in different Java packages (one per
+// sort); in Go, the identifiers derived from such an operator
+// (Make<Op>, Cons<Op>, Hook<Make><Op>, Is<Op>, Visit<Op>, …) are
+// suffixed with its sort. The term types <Op><Sort> are distinct anyway.
+type opNames map[string]bool // Go names shared by several operators
+
+// newOpNames returns the shared Go names of the operators of pkg.
+func newOpNames(pkg []gomast.GomModule) opNames {
+	count := map[string]int{}
+	for _, m := range pkg {
+		for _, prod := range moduleSorts(m) {
+			for _, alt := range sortAlternatives(prod) {
+				count[opBase(alt)]++
+			}
+		}
+	}
+	n := opNames{}
+	for name, c := range count {
+		if c > 1 {
+			n[name] = true
+		}
+	}
+	return n
+}
+
+// opBase is the exported Go name of the operator.
+func opBase(alt *gomast.AlternativeAlternative) string {
+	if op := exportedField(alt.Name); op != "" {
+		return op
+	}
+	return "Op"
+}
+
+// of returns the Go identifier stem of the operator alt of sort sortNm.
+func (n opNames) of(alt *gomast.AlternativeAlternative, sortNm string) string {
+	if op := opBase(alt); n[op] {
+		return op + sortNm
+	} else {
+		return op
+	}
 }
 
 // packageModules returns opts.PackageModules, or mod alone.
@@ -467,6 +516,7 @@ func BuiltinIncludesGo(g gomast.GomModule, more ...gomast.GomModule) []byte {
 // `T1`). Slot field names are `exportedField(slotName)`.
 func EmitTomMappingGo(mod gomast.GomModule, opts Options) []byte {
 	var buf bytes.Buffer
+	names := newOpNames(opts.packageModules(mod))
 	for _, prod := range moduleSorts(mod) {
 		sortNm := sortName(prod)
 		fmt.Fprintf(&buf, "%%typeterm %s {\n", sortNm)
@@ -486,7 +536,7 @@ func EmitTomMappingGo(mod gomast.GomModule, opts Options) []byte {
 			altNm := alt.Name
 			structName := exportedField(altNm) + sortNm
 			if alternativeIsVariadic(alt) {
-				emitVariadicMappingGo(&buf, sortNm, alt, structName, fieldTypeName(alternativeFields(alt)[0]))
+				emitVariadicMappingGo(&buf, sortNm, alt, structName, names.of(alt, sortNm), fieldTypeName(alternativeFields(alt)[0]))
 				continue
 			}
 			fields := alternativeFields(alt)
@@ -512,13 +562,15 @@ func EmitTomMappingGo(mod gomast.GomModule, opts Options) []byte {
 			}
 			fmt.Fprintf(&buf, "  make(%s)       { Make%s(%s) }\n",
 				strings.Join(slotNames, ","),
-				exportedField(altNm), strings.Join(makeArgs, ","))
+				names.of(alt, sortNm), strings.Join(makeArgs, ","))
 			fmt.Fprintf(&buf, "}\n\n")
 		}
 	}
-	emitUserMakeHooksGo(&buf, mod, opts.packageModules(mod), opts.ImportedSorts)
+	if !opts.GoHooks {
+		emitUserMakeHooksGo(&buf, mod, opts.packageModules(mod), opts.ImportedSorts)
+	}
 	if opts.WithCongruenceStrategies {
-		emitCongruenceMappingGo(&buf, mod)
+		emitCongruenceMappingGo(&buf, mod, names)
 	}
 	return buf.Bytes()
 }
@@ -528,7 +580,7 @@ func EmitTomMappingGo(mod gomast.GomModule, opts Options) []byte {
 // generating terms that do not behave as Java Gom's), gomgo refuses the
 // module (see checkUserHooks for the supported hooks).
 func CheckHooks(mod gomast.GomModule) error {
-	return checkUserHooks([]gomast.GomModule{mod}, mod)
+	return checkUserHooks([]gomast.GomModule{mod}, mod, false)
 }
 
 // hookArgNames returns the argument names of a hook (`make(i, j)`).
@@ -585,7 +637,7 @@ func emitUserMakeHooksGo(buf *bytes.Buffer, mod gomast.GomModule, pkg []gomast.G
 		sortNm := sortName(prod)
 		for _, alt := range sortAlternatives(prod) {
 			hooks := opHooks(pkg, mod, alt)
-			opGo := exportedField(alt.Name)
+			opGo := newOpNames(pkg).of(alt, sortNm)
 			if !alternativeIsVariadic(alt) {
 				var slotTypes []string
 				for _, f := range alternativeFields(alt) {
@@ -593,12 +645,12 @@ func emitUserMakeHooksGo(buf *bytes.Buffer, mod gomast.GomModule, pkg []gomast.G
 						slotTypes = append(slotTypes, types.goType(fieldTypeName(f), false))
 					}
 				}
-				emitHookFuncGo(buf, "HookMake"+opGo, sortNm, slotTypes, hooksOfKind(hooks, "make"))
+				emitHookFunc(buf, "HookMake"+opGo, sortNm, slotTypes, hooksOfKind(hooks, "make"), mappingHostCode)
 				continue
 			}
 			elem := types.goType(fieldTypeName(alternativeFields(alt)[0]), false)
-			emitHookFuncGo(buf, "HookMakeInsert"+opGo, sortNm, []string{elem, sortNm}, hooksOfKind(hooks, "make_insert"))
-			emitHookFuncGo(buf, "HookMakeEmpty"+opGo, sortNm, nil, hooksOfKind(hooks, "make_empty"))
+			emitHookFunc(buf, "HookMakeInsert"+opGo, sortNm, []string{elem, sortNm}, hooksOfKind(hooks, "make_insert"), mappingHostCode)
+			emitHookFunc(buf, "HookMakeEmpty"+opGo, sortNm, nil, hooksOfKind(hooks, "make_empty"), mappingHostCode)
 		}
 	}
 	// block hooks: host code (Go declarations) of the module
@@ -607,10 +659,11 @@ func emitUserMakeHooksGo(buf *bytes.Buffer, mod gomast.GomModule, pkg []gomast.G
 	}
 }
 
-// emitHookFuncGo writes the init function that sets the hook variable
+// emitHookFunc writes the init function that sets the hook variable
 // name to the hooks (none: nothing is written), for an operator of sort
-// sortNm whose arguments have the Go types slotTypes.
-func emitHookFuncGo(buf *bytes.Buffer, name, sortNm string, slotTypes []string, hooks []opHook) {
+// sortNm whose arguments have the Go types slotTypes; code prepares the
+// bodies (mappingHostCode for the mapping).
+func emitHookFunc(buf *bytes.Buffer, name, sortNm string, slotTypes []string, hooks []opHook, code func(string) string) {
 	if len(hooks) == 0 {
 		return
 	}
@@ -659,7 +712,7 @@ func emitHookFuncGo(buf *bytes.Buffer, name, sortNm string, slotTypes []string, 
 			}
 		}
 		cur = next
-		fmt.Fprintf(buf, "    {\n%s\n    };\n", mappingHostCode(h.body))
+		fmt.Fprintf(buf, "    {\n%s\n    };\n", code(h.body))
 	}
 	fmt.Fprintf(buf, "    return nil;\n")
 	fmt.Fprintf(buf, "    }();\n")
@@ -687,7 +740,7 @@ func emitHookFuncGo(buf *bytes.Buffer, name, sortNm string, slotTypes []string, 
 // the list (its getChildren is the flattened list), not its head and
 // tail (checked with legacy/, smoke fixture gom_congruence). There is no
 // Make_Cons<op>/Make_Empty<op>.
-func emitCongruenceMappingGo(buf *bytes.Buffer, mod gomast.GomModule) {
+func emitCongruenceMappingGo(buf *bytes.Buffer, mod gomast.GomModule, names opNames) {
 	types := map[string]bool{}
 	for _, prod := range moduleSorts(mod) {
 		types[sortName(prod)] = true
@@ -695,10 +748,7 @@ func emitCongruenceMappingGo(buf *bytes.Buffer, mod gomast.GomModule) {
 	fmt.Fprintf(buf, "%%include { sl.tom }\n\n")
 	for _, prod := range moduleSorts(mod) {
 		for _, alt := range sortAlternatives(prod) {
-			opGo := exportedField(alt.Name)
-			if opGo == "" {
-				opGo = "Op"
-			}
+			opGo := names.of(alt, sortName(prod))
 			isName, visitName := "Is"+opGo, "Visit"+opGo
 			var params, argNames []string
 			if alternativeIsVariadic(alt) {
@@ -788,9 +838,9 @@ func emitCongruenceMappingGo(buf *bytes.Buffer, mod gomast.GomModule) {
 // package, with the hooks of every module, is written to <pkg>.tom.
 // The resulting Go module has the path tomgen/<pkg>.
 //
-// This is how the compiler's own ADTs are generated (gom/adt, from
-// src/go/tom/gom/adt/*.gom, and engine/adt; their hooks are installed by
-// the mapping, see doc.go of those packages).
+// This is how the compiler's own ADTs are generated (gom/adt and
+// engine/adt, from src/go/tom/{gom,engine}/adt/*.gom, with GoHooks: their
+// hooks are plain Go; see magefiles Bootstrap/PromoteAdt).
 func GenerateBatchToDir(modules []gomast.GomModule, opts Options, dir string) (string, error) {
 	tomRoot, err := locateTomModuleRoot()
 	if err != nil {
@@ -813,7 +863,12 @@ func GenerateBatchToDir(modules []gomast.GomModule, opts Options, dir string) (s
 		return "", err
 	}
 	opts.PackageModules = modules
-	mapping := BuiltinIncludesGo(modules[0], modules[1:]...)
+	var names []string
+	for _, m := range modules {
+		names = append(names, moduleQualifiedName(m))
+	}
+	mapping := []byte(fmt.Sprintf("/* Code generated by gomgo gom-batch from the Gom modules %s. DO NOT EDIT. */\n\n", strings.Join(names, " ")))
+	mapping = append(mapping, BuiltinIncludesGo(modules[0], modules[1:]...)...)
 	for i, m := range modules {
 		mopts := opts
 		mopts.ImportedSorts = map[string]bool{}
@@ -846,10 +901,9 @@ func GenerateBatchToDir(modules []gomast.GomModule, opts Options, dir string) (s
 }
 
 // checkPackageNames reports a sort or an operator declared twice among
-// the modules of one Go package, or two operators with the same Go name
-// (`subterm` and `Subterm`): their Go names would collide. (Java Gom
-// generates a Java package per sort; such modules are generated into
-// separate Go packages, as the separate gomcompile of build.xml.)
+// the modules of one Go package (two operators whose Go names only
+// differ by the case of their first letter, `subterm` and `Subterm`, are
+// told apart by opNames).
 func checkPackageNames(modules []gomast.GomModule) error {
 	sorts := map[string]string{}
 	ops := map[string]string{}
@@ -862,11 +916,10 @@ func checkPackageNames(modules []gomast.GomModule) error {
 			}
 			sorts[name] = qname
 			for _, alt := range sortAlternatives(s) {
-				goName := exportedField(alt.Name)
-				if prev, dup := ops[goName]; dup {
-					return fmt.Errorf("operator %s.%s.%s and %s have the same Go name %s: generate them into different Go packages", qname, name, alt.Name, prev, goName)
+				if prev, dup := ops[alt.Name]; dup {
+					return fmt.Errorf("operator %q is defined in both %s and %s", alt.Name, prev, qname+"."+name)
 				}
-				ops[goName] = qname + "." + name + "." + alt.Name
+				ops[alt.Name] = qname + "." + name
 			}
 		}
 	}
@@ -947,7 +1000,7 @@ func generateBytes(mod gomast.GomModule, opts Options) ([]byte, error) {
 
 func generateBytesFactory(mod gomast.GomModule, opts Options, withFactory bool) ([]byte, error) {
 	pkg := opts.packageModules(mod)
-	if err := checkUserHooks(pkg, mod); err != nil {
+	if err := checkUserHooks(pkg, mod, opts.GoHooks); err != nil {
 		return nil, err
 	}
 	if opts.PackageName == "" {
@@ -960,6 +1013,8 @@ func generateBytesFactory(mod gomast.GomModule, opts Options, withFactory bool) 
 		congruence: opts.WithCongruenceStrategies,
 		noSharing:  opts.NoSharing,
 		pkgMods:    pkg,
+		opNames:    newOpNames(pkg),
+		goHooks:    opts.GoHooks,
 	}
 	for _, s := range moduleSorts(mod) {
 		g.ownSort[sortName(s)] = true
@@ -974,7 +1029,9 @@ func generateBytesFactory(mod gomast.GomModule, opts Options, withFactory bool) 
 	for _, s := range moduleSorts(mod) {
 		g.emitSort(s)
 	}
-	g.emitJavaBlocks()
+	if g.goHooks {
+		g.emitGoHooks()
+	}
 	formatted, err := format.Source(g.buf.Bytes())
 	if err != nil {
 		// Return the raw source on a formatter error so the bug is debuggable.
@@ -998,6 +1055,12 @@ type gen struct {
 	// apply to the operators of all (Java Gom's RuleExpander works on the
 	// whole module list).
 	pkgMods []gomast.GomModule
+
+	// opNames are the Go names shared by several operators of pkgMods.
+	opNames opNames
+
+	// goHooks is Options.GoHooks.
+	goHooks bool
 
 	// congruence is Options.WithCongruenceStrategies: the Build<Op>
 	// (Java Make_<op>) strategies are generated only then.
@@ -1090,8 +1153,8 @@ func (g *gen) emitSort(prod *gomast.SortTypeProduction) {
 		fmt.Fprintln(&g.buf, "	DeepEquals(o any) bool")
 	}
 	g.emitJavaAPIInterface(api)
-	if methods := g.javaBlockSortMethods(prod); len(methods) > 0 {
-		fmt.Fprintf(&g.buf, "\t// methods of the javablock hooks of sort %s\n", name)
+	if methods := g.blockSortMethods(prod); len(methods) > 0 {
+		fmt.Fprintf(&g.buf, "\t// methods of the block hooks of sort %s\n", name)
 		for _, m := range methods {
 			fmt.Fprintf(&g.buf, "\t%s\n", m)
 		}
@@ -1122,11 +1185,8 @@ type hookSlot struct {
 // hash input and in the String() output so canonicalization and
 // pretty-printing remain faithful to the source.
 func (g *gen) emitAlternative(sortNm string, alt *gomast.AlternativeAlternative) {
-	opGo := exportedField(alt.Name)
-	if opGo == "" {
-		opGo = "Op"
-	}
-	structName := opGo + sortNm
+	structName := opBase(alt) + sortNm
+	opGo := g.opNames.of(alt, sortNm)
 	opName := alt.Name
 	makeName := "Make" + opGo
 

@@ -657,11 +657,13 @@
       </fileset>
     </copy>
 
-    <!-- Go runtime and Gom (module tom), used by programs generated with -go -->
+    <!-- Go runtime (module tom: its packages library/**), used by programs
+         generated with -go; gomgo and the compiler's ADTs (gom/, engine/,
+         generated locally by mage bootstrap) are built from src/go/tom -->
     <delete dir="${stable.dist}/lib/go/tom" quiet="true"/>
     <copy todir="${stable.dist}/lib/go/tom">
       <fileset dir="${basedir}/src/go/tom">
-        <include name="**/*.go"/>
+        <include name="library/**/*.go"/>
         <include name="go.mod"/>
         <exclude name="**/*_test.go"/>
         <exclude name="**/testdata/**"/>
@@ -941,11 +943,13 @@
       </fileset>
     </copy>
 
-    <!-- Go runtime and Gom (module tom), used by programs generated with -go -->
+    <!-- Go runtime (module tom: its packages library/**), used by programs
+         generated with -go; gomgo and the compiler's ADTs (gom/, engine/,
+         generated locally by mage bootstrap) are built from src/go/tom -->
     <delete dir="${src.dist}/lib/go/tom" quiet="true"/>
     <copy todir="${src.dist}/lib/go/tom">
       <fileset dir="${basedir}/src/go/tom">
-        <include name="**/*.go"/>
+        <include name="library/**/*.go"/>
         <include name="go.mod"/>
         <exclude name="**/*_test.go"/>
         <exclude name="**/testdata/**"/>

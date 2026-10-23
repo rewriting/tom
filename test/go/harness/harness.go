@@ -195,6 +195,12 @@ func GomgoBin(t testing.TB) string {
 	t.Helper()
 	root := RepoRoot(t)
 	gomgoOnce.Do(func() {
+		// the compiler's ADTs gomgo is built on are generated locally
+		// (gitignored) from their .gom files by mage bootstrap
+		if gen, _ := filepath.Glob(filepath.Join(root, "src", "go", "tom", "gom", "adt", "*.go")); len(gen) == 0 {
+			gomgoErr = fmt.Errorf("src/go/tom/gom/adt holds no generated Go code: run `mage -d magefiles -w . bootstrap`")
+			return
+		}
 		dir, err := os.MkdirTemp("", "gomgo-harness-")
 		if err != nil {
 			gomgoErr = err
@@ -242,9 +248,12 @@ func Normalize(s string, repl map[string]string) string {
 	return s
 }
 
-// runtimeDiff compares the non-test .go files and go.mod of src and dist
-// (byte equality, relative paths, ignoring *_test.go and testdata/) and
-// returns the first differing relative path, or "".
+// runtimeDiff compares the Go runtime of src and dist — the non-test .go
+// files of library/ and go.mod, the files build.xml copies into
+// <dist>/lib/go/tom (byte equality, relative paths, ignoring *_test.go
+// and testdata/) — and returns the first differing relative path, or "".
+// gomgo and the compiler's ADTs (gom/, engine/) are not shipped: they
+// are built from src/go/tom (GomgoBin).
 func runtimeDiff(src, dist string) string {
 	collect := func(root string) map[string]bool {
 		m := map[string]bool{}
@@ -259,7 +268,8 @@ func runtimeDiff(src, dist string) string {
 				return nil
 			}
 			n := d.Name()
-			if (strings.HasSuffix(n, ".go") && !strings.HasSuffix(n, "_test.go")) || (n == "go.mod" && filepath.Dir(p) == root) {
+			lib := strings.HasPrefix(p, filepath.Join(root, "library")+string(filepath.Separator))
+			if (lib && strings.HasSuffix(n, ".go") && !strings.HasSuffix(n, "_test.go")) || (n == "go.mod" && filepath.Dir(p) == root) {
 				r, _ := filepath.Rel(root, p)
 				m[r] = true
 			}

@@ -15795,3 +15795,35 @@ func fromTermCodeExpression(trm aterm.ATerm, conv aterm.ATermConverter) (Express
 	}
 	return nil, false
 }
+
+func init() {
+	HookMakeBQTermToExpression = func(t BQTerm) (Expression, BQTerm) {
+		tom__r := func() Expression {
+			{
+
+				if t.IsExpressionToBQTerm() {
+					return t.GetExp()
+				}
+
+			}
+			return nil
+		}()
+		return tom__r, t
+	}
+}
+
+func init() {
+	HookMakeCast = func(tp TomType, exp Expression) (Expression, TomType, Expression) {
+		tom__r := func() Expression {
+			{
+
+				if tp.IsType() && tp.GetTypeOptions().IsEmptyconcTypeOption() && tp.GetTomType() == "unknown type" && tp.GetTlType().IsEmptyTargetLanguageType() {
+					panic("bad cast")
+				}
+
+			}
+			return nil
+		}()
+		return tom__r, tp, exp
+	}
+}

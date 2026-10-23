@@ -1,47 +1,49 @@
-package adt
+package adt_test
 
 import (
 	"fmt"
 	"testing"
+
+	gomast "tom/gom/adt"
 )
 
 // TestSmoke_Construction exercises the simplest path through the
-// generated package: build a GomModule, check sharing, walk a sort.
+// generated package tom/gom/adt: build a GomModule, check sharing, walk a sort.
 // It also acts as a regression check that the regeneration of this
 // package produced compilable, hash-consing code.
 func TestSmoke_Construction(t *testing.T) {
-	name := MakeGomModuleName("Foo")
-	if MakeGomModuleName("Foo") != name {
+	name := gomast.MakeGomModuleName("Foo")
+	if gomast.MakeGomModuleName("Foo") != name {
 		t.Fatal("GomModuleName('Foo') should be shared")
 	}
 
 	// A trivial module with no sections at all.
-	empty := MakeConcSection()
-	mod := MakeGomModule(name, empty)
-	if MakeGomModule(name, empty) != mod {
+	empty := gomast.MakeConcSection()
+	mod := gomast.MakeGomModule(name, empty)
+	if gomast.MakeGomModule(name, empty) != mod {
 		t.Fatal("structurally equal GomModule should share")
 	}
 
 	// Build a tiny SortType production: `Nat = zero() | suc(pred:Nat)`.
-	gomType := MakeGomType(MakeExpressionType(), "Nat")
-	emptyFields := MakeConcField()
-	emptyOption := MakeOptionList()
-	zero := MakeAlternative("zero", emptyFields, gomType, emptyOption)
+	gomType := gomast.MakeGomType(gomast.MakeExpressionType(), "Nat")
+	emptyFields := gomast.MakeConcField()
+	emptyOption := gomast.MakeOptionList()
+	zero := gomast.MakeAlternative("zero", emptyFields, gomType, emptyOption)
 
-	predField := MakeNamedField("pred", gomType, MakeNone())
-	predFields := MakeConcField(predField)
-	suc := MakeAlternative("suc", predFields, gomType, emptyOption)
+	predField := gomast.MakeNamedField("pred", gomType, gomast.MakeNone())
+	predFields := gomast.MakeConcField(predField)
+	suc := gomast.MakeAlternative("suc", predFields, gomType, emptyOption)
 
-	alts := MakeConcAlternative(zero, suc)
-	sort := MakeSortType(gomType, MakeConcAtom(), alts)
-	prods := MakeConcProduction(sort)
-	public := MakePublic(prods)
-	sections := MakeConcSection(public)
-	natModule := MakeGomModule(MakeGomModuleName("Nat"), sections)
+	alts := gomast.MakeConcAlternative(zero, suc)
+	sort := gomast.MakeSortType(gomType, gomast.MakeConcAtom(), alts)
+	prods := gomast.MakeConcProduction(sort)
+	public := gomast.MakePublic(prods)
+	sections := gomast.MakeConcSection(public)
+	natModule := gomast.MakeGomModule(gomast.MakeGomModuleName("Nat"), sections)
 
 	// Sharing across the whole tree.
-	gomType2 := MakeGomType(MakeExpressionType(), "Nat")
-	zero2 := MakeAlternative("zero", emptyFields, gomType2, emptyOption)
+	gomType2 := gomast.MakeGomType(gomast.MakeExpressionType(), "Nat")
+	zero2 := gomast.MakeAlternative("zero", emptyFields, gomType2, emptyOption)
 	if zero != zero2 {
 		t.Fatal("two zero alternatives should share")
 	}
@@ -60,9 +62,9 @@ func TestSmoke_Construction(t *testing.T) {
 		}
 	}
 
-	// ContainsTomCode (the HookList:javablock hook of Objects.gom) is
+	// ContainsTomCode (the HookList:block hook of Objects.gom) is
 	// false on an empty hook list.
-	emptyHookList := MakeConcHook()
+	emptyHookList := gomast.MakeConcHook()
 	if emptyHookList.ContainsTomCode() {
 		t.Fatal("empty HookList must not report ContainsTomCode")
 	}
@@ -77,33 +79,33 @@ func contains(s, sub string) bool {
 	return false
 }
 
-// ContainsTomCode is the javablock hook of HookList (Objects.gom):
+// ContainsTomCode is the block hook (in Go) of HookList (Objects.gom):
 // Java's containsTomCode() of the HookList sort.
 func TestContainsTomCode_NoTomCode(t *testing.T) {
-	codeProg := MakeCode("// trivial Go body")
-	list := MakeConcHook(MakeBlockHook(codeProg, false), MakeInterfaceHook(codeProg))
+	codeProg := gomast.MakeCode("// trivial Go body")
+	list := gomast.MakeConcHook(gomast.MakeBlockHook(codeProg, false), gomast.MakeInterfaceHook(codeProg))
 	if list.ContainsTomCode() {
 		t.Fatal("expected ContainsTomCode() = false, got true")
 	}
 }
 
 func TestContainsTomCode_FromBlockHook(t *testing.T) {
-	list := MakeConcHook(MakeBlockHook(MakeCode("// pretend this contains %match …"), true))
+	list := gomast.MakeConcHook(gomast.MakeBlockHook(gomast.MakeCode("// pretend this contains %match …"), true))
 	if !list.ContainsTomCode() {
 		t.Fatal("expected ContainsTomCode() = true on BlockHook with HasTomCode=true")
 	}
 }
 
 func TestContainsTomCode_FromMakeHook(t *testing.T) {
-	list := MakeConcHook(MakeMakeHook(MakeConcSlotField(), MakeCode("// body"), true))
+	list := gomast.MakeConcHook(gomast.MakeMakeHook(gomast.MakeConcSlotField(), gomast.MakeCode("// body"), true))
 	if !list.ContainsTomCode() {
 		t.Fatal("expected ContainsTomCode() = true on MakeHook")
 	}
 }
 
 func TestContainsTomCode_FromMakeBeforeHook(t *testing.T) {
-	code := MakeCode("// body")
-	list := MakeConcHook(MakeInterfaceHook(code), MakeMakeBeforeHook(MakeConcSlotField(), code, true))
+	code := gomast.MakeCode("// body")
+	list := gomast.MakeConcHook(gomast.MakeInterfaceHook(code), gomast.MakeMakeBeforeHook(gomast.MakeConcSlotField(), code, true))
 	if !list.ContainsTomCode() {
 		t.Fatal("expected ContainsTomCode() = true on MakeBeforeHook (second element)")
 	}
@@ -112,8 +114,8 @@ func TestContainsTomCode_FromMakeBeforeHook(t *testing.T) {
 func TestContainsTomCode_NonHasTomCodeKind(t *testing.T) {
 	// InterfaceHook / ImportHook / MappingHook have no HasTomCode
 	// field, so they must never contribute to ContainsTomCode.
-	code := MakeCode("hi")
-	list := MakeConcHook(MakeInterfaceHook(code), MakeImportHook(code), MakeMappingHook(code))
+	code := gomast.MakeCode("hi")
+	list := gomast.MakeConcHook(gomast.MakeInterfaceHook(code), gomast.MakeImportHook(code), gomast.MakeMappingHook(code))
 	if list.ContainsTomCode() {
 		t.Fatal("hooks without HasTomCode must not be reported")
 	}

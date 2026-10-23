@@ -14,20 +14,24 @@ package backend
 //     `op:FL()`, `op:AC()`, `op:AU() { neutral }`, `op:ACU() { neutral }`,
 //     `op:Free()`, or FL by default when it has no construction hook —
 //     normalises the lists (flattening, neutral element, ordering);
-//   - `block` hooks (any scope) are host code that may hold Tom code
-//     (Java Gom: HasTomCode true), emitted into the mapping;
-//   - `javablock` hooks (any scope) are plain Go declarations without
-//     Tom code (Java Gom's internal hook kind for a block without Tom
-//     code: HasTomCode false, the class is not compiled by Tom; the Gom
-//     grammar of the Java compiler does not accept it in a source, gomgo
-//     does), emitted into the generated Go file; a method that a sort
-//     javablock declares on every alternative of the sort is added to
-//     the sort's interface (Java: a method of the sort class);
+//   - `block`/`javablock` hooks (any scope) are host code (Go
+//     declarations);
 //   - `import` hooks must be empty in Go (imports belong to the
 //     importing Go file).
 //
-// The construction hook bodies are Tom+Go code, emitted into the Tom
-// mapping (see emitUserMakeHooksGo); the theories are generated in Go.
+// The theories are generated in Go. The other hooks are written either
+//
+//   - in Tom+Go (the default): emitted into the Tom mapping (see
+//     emitUserMakeHooksGo), which installs them in the package of the
+//     Tom program that includes it (a %gom block); or
+//   - in plain Go, without Tom code (Options.GoHooks, gomgo --gohooks;
+//     Java Gom's hooks without Tom code, whose classes Tom does not
+//     compile): emitted into the generated Go file (emitGoHooks), so
+//     that the package works without Tom — the compiler's own ADTs. The
+//     rules, which gomgo translates into Tom code, are then refused (they
+//     are written as make hooks), and a method that a sort block hook
+//     declares on every alternative of the sort is added to the sort's
+//     interface (Java: a method of the sort class).
 
 import (
 	"fmt"
@@ -106,7 +110,9 @@ func moduleRules(mod gomast.GomModule) ([][]gomRule, error) {
 
 // realMakeName is the Go function inserting into a list of the variadic
 // operator op without hooks (Java's Cons<op>.realMake).
-func realMakeName(op string) string { return "RealMakeCons" + exportedField(op) }
+func realMakeName(pkg []gomast.GomModule, mod gomast.GomModule, alt *gomast.AlternativeAlternative) string {
+	return "RealMakeCons" + newOpNames(pkg).of(alt, altCodomain(mod, alt))
+}
 
 // opHooks returns the construction hooks of alt, an operator of mod, in
 // the order Java Gom runs them: its operator hooks (declared in mod) and
@@ -168,7 +174,7 @@ func opHooks(pkg []gomast.GomModule, mod gomast.GomModule, alt *gomast.Alternati
 				}
 			}
 			if len(insert) > 0 {
-				out = append(out, opHook{kind: "make_insert", args: []string{"head", "tail"}, body: ruleVariadicHookCode(realMakeName(alt.Name), insert)})
+				out = append(out, opHook{kind: "make_insert", args: []string{"head", "tail"}, body: ruleVariadicHookCode(realMakeName(pkg, mod, alt), insert)})
 			}
 		}
 	}
@@ -211,8 +217,8 @@ func theoryOf(pkg []gomast.GomModule, mod gomast.GomModule, alt *gomast.Alternat
 }
 
 // checkUserHooks validates the hooks of the module mod of the package
-// whose modules are pkg (CheckHooks).
-func checkUserHooks(pkg []gomast.GomModule, mod gomast.GomModule) error {
+// whose modules are pkg (CheckHooks); goHooks is Options.GoHooks.
+func checkUserHooks(pkg []gomast.GomModule, mod gomast.GomModule, goHooks bool) error {
 	modName := moduleQualifiedName(mod)
 	alts := map[string]*gomast.AlternativeAlternative{}
 	sorts := map[string]bool{}
@@ -232,11 +238,11 @@ func checkUserHooks(pkg []gomast.GomModule, mod gomast.GomModule) error {
 	for _, h := range moduleHooks(mod) {
 		kind := hookKindName(h)
 		switch kind {
-		case "block":
-			continue
-		case "javablock":
-			if _, err := parseGoDecls(hookBody(h)); err != nil {
-				return unsupported(h, "a javablock holds Go declarations without Tom code: "+err.Error())
+		case "block", "javablock":
+			if goHooks {
+				if _, err := parseGoDecls(hookBody(h)); err != nil {
+					return unsupported(h, "with --gohooks, a block holds Go declarations without Tom code: "+err.Error())
+				}
 			}
 			continue
 		case "import":
@@ -248,6 +254,9 @@ func checkUserHooks(pkg []gomast.GomModule, mod gomast.GomModule) error {
 		switch hookScopeName(h) {
 		case "module":
 			if kind == "rules" {
+				if goHooks {
+					return unsupported(h, "the rules are translated into Tom code: with --gohooks, write them as make hooks in Go")
+				}
 				continue
 			}
 		case "operator":
@@ -256,6 +265,11 @@ func checkUserHooks(pkg []gomast.GomModule, mod gomast.GomModule) error {
 				return unsupported(h, "unknown operator")
 			}
 			variadic := alternativeIsVariadic(alt)
+			if goHooks && (kind == "make" || kind == "make_insert" || kind == "make_empty") {
+				if err := parseGoStmts(hookBody(h)); err != nil {
+					return unsupported(h, "with --gohooks, a hook body is Go code without Tom code: "+err.Error())
+				}
+			}
 			switch kind {
 			case "make":
 				if !variadic {
@@ -271,7 +285,7 @@ func checkUserHooks(pkg []gomast.GomModule, mod gomast.GomModule) error {
 						return unsupported(h, err.Error())
 					}
 					if kind == "AU" || kind == "ACU" {
-						if _, err := neutralGo(mod, opTheory{kind: kind, neutral: trimHookBody(h)}); err != nil {
+						if _, err := neutralGo(pkg, mod, opTheory{kind: kind, neutral: trimHookBody(h)}); err != nil {
 							return unsupported(h, err.Error())
 						}
 					}
@@ -357,59 +371,90 @@ func onlyComments(body string) bool {
 	return true
 }
 
-// blockHooks returns the bodies of the block hooks of mod, in
-// declaration order: host code (Tom+Go), emitted into the mapping.
+// blockHooks returns the bodies of the block/javablock hooks of mod,
+// in declaration order: host code (Go declarations).
 func blockHooks(mod gomast.GomModule) []string {
 	var out []string
 	for _, h := range moduleHooks(mod) {
-		if hookKindName(h) == "block" {
+		if k := hookKindName(h); k == "block" || k == "javablock" {
 			out = append(out, hookBody(h))
 		}
 	}
 	return out
 }
 
-// parseGoDecls parses the body of a javablock hook: Go declarations.
+// parseGoDecls parses the body of a block hook as Go declarations.
 func parseGoDecls(body string) (*ast.File, error) {
-	return parser.ParseFile(token.NewFileSet(), "javablock.go", "package p\n"+body, parser.SkipObjectResolution)
+	return parser.ParseFile(token.NewFileSet(), "block.go", "package p\n"+body, parser.SkipObjectResolution)
 }
 
-// emitJavaBlocks writes the javablock hooks of the module (Go
-// declarations, in declaration order) at the end of its Go file.
-func (g *gen) emitJavaBlocks() {
+// parseGoStmts parses the body of a construction hook as Go statements.
+func parseGoStmts(body string) error {
+	_, err := parser.ParseFile(token.NewFileSet(), "hook.go", "package p\nfunc _() {\n"+body+"\n}\n", parser.SkipObjectResolution)
+	return err
+}
+
+// emitGoHooks writes, with Options.GoHooks, the hooks of the module into
+// its Go file: the construction hooks as the init functions that set the
+// Hook<Make> variables (as emitUserMakeHooksGo writes them into the
+// mapping otherwise), then the block hooks.
+func (g *gen) emitGoHooks() {
+	for _, prod := range moduleSorts(g.mod) {
+		sortNm := sortName(prod)
+		for _, alt := range sortAlternatives(prod) {
+			hooks := opHooks(g.pkgMods, g.mod, alt)
+			opGo := g.opNames.of(alt, sortNm)
+			if !alternativeIsVariadic(alt) {
+				var slotTypes []string
+				for _, f := range alternativeFields(alt) {
+					if _, ok := f.(*gomast.NamedFieldField); ok {
+						slotTypes = append(slotTypes, g.goType(fieldTypeName(f), false))
+					}
+				}
+				emitHookFunc(&g.buf, "HookMake"+opGo, sortNm, slotTypes, hooksOfKind(hooks, "make"), goHookBody)
+				continue
+			}
+			elem := g.goType(fieldTypeName(alternativeFields(alt)[0]), false)
+			emitHookFunc(&g.buf, "HookMakeInsert"+opGo, sortNm, []string{elem, sortNm}, hooksOfKind(hooks, "make_insert"), goHookBody)
+			emitHookFunc(&g.buf, "HookMakeEmpty"+opGo, sortNm, nil, hooksOfKind(hooks, "make_empty"), goHookBody)
+		}
+	}
 	for _, h := range moduleHooks(g.mod) {
-		if hookKindName(h) != "javablock" {
+		if k := hookKindName(h); k != "block" && k != "javablock" {
 			continue
 		}
-		fmt.Fprintf(&g.buf, "// javablock hook %s %s (Gom module %s)\n", hookScopeName(h), h.Name, moduleQualifiedName(g.mod))
+		fmt.Fprintf(&g.buf, "// %s hook %s %s (Gom module %s)\n", hookKindName(h), hookScopeName(h), h.Name, moduleQualifiedName(g.mod))
 		fmt.Fprintf(&g.buf, "%s\n\n", strings.TrimSpace(hookBody(h)))
 	}
 }
 
-// javaBlockSortMethods returns the method specifications (`Name(params)
-// results`, sorted by name) that the javablock hooks of the sort prod
-// declare on every alternative of the sort: Java Gom puts the code of a
-// sort hook in the class of the sort, so its methods apply to every term
-// of the sort; in Go they are added to the sort's interface.
-func (g *gen) javaBlockSortMethods(prod *gomast.SortTypeProduction) []string {
+// goHookBody is a hook body written in Go, as is.
+func goHookBody(body string) string { return body }
+
+// blockSortMethods returns, with Options.GoHooks, the method
+// specifications (`Name(params) results`, sorted by name) that the
+// block hooks of the sort prod declare on every alternative of the sort:
+// Java Gom puts the code of a sort hook in the class of the sort, so its
+// methods apply to every term of the sort; in Go they are added to the
+// sort's interface.
+func (g *gen) blockSortMethods(prod *gomast.SortTypeProduction) []string {
+	if !g.goHooks {
+		return nil
+	}
 	sortNm := sortName(prod)
 	alts := map[string]bool{}
 	for _, alt := range sortAlternatives(prod) {
-		opGo := exportedField(alt.Name)
-		if opGo == "" {
-			opGo = "Op"
-		}
-		alts[opGo+sortNm] = true
+		alts[opBase(alt)+sortNm] = true
 	}
 	// method name -> receiver struct -> specification
 	declared := map[string]map[string]string{}
 	for _, h := range moduleHooks(g.mod) {
-		if hookKindName(h) != "javablock" || hookScopeName(h) != "sort" || h.Name != sortNm {
+		if k := hookKindName(h); (k != "block" && k != "javablock") || hookScopeName(h) != "sort" || h.Name != sortNm {
 			continue
 		}
 		body := "package p\n" + hookBody(h)
 		fset := token.NewFileSet()
-		f, err := parser.ParseFile(fset, "javablock.go", body, parser.SkipObjectResolution)
+		f, err := parser.ParseFile(fset, "block.go", body, parser.SkipObjectResolution)
 		if err != nil {
 			continue // reported by CheckHooks
 		}

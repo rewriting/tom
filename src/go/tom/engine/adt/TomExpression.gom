@@ -82,18 +82,25 @@ Expression = BQTermToExpression(AstTerm:BQTerm)
         */
            | Code(Code:String)
 
-module TomExpression:rules() {
-  BQTermToExpression(ExpressionToBQTerm(t)) -> t
-  ExpressionToBQTerm(BQTermToExpression(t)) -> t
+// Go: the hooks are plain Go (gomgo --gohooks). The rules of the Java
+// original,
+//   module TomExpression:rules() {
+//     BQTermToExpression(ExpressionToBQTerm(t)) -> t
+//     ExpressionToBQTerm(BQTermToExpression(t)) -> t
+//   }
+// are make hooks (as Java Gom's RuleExpander makes them); the second one
+// is a hook of ExpressionToBQTerm, in Code.gom.
+BQTermToExpression:make(t) {
+  if t.IsExpressionToBQTerm() {
+    return t.GetExp()
+  }
 }
 
 // for debugging
-// Go: the hook argument `type` (a Go keyword) is named tp; the Java
-// RuntimeException is a panic.
+// Go: %match(type) { Type(concTypeOption(),"unknown type",EmptyTargetLanguageType()) -> ... };
+// the argument `type` (a Go keyword) is named tp, the RuntimeException is a panic.
 Cast:make(tp,exp) {
-  %match(TomType tp) {
-    Type(concTypeOption(),"unknown type",EmptyTargetLanguageType()) -> {
-      panic("bad cast");
-    }
+  if tp.IsType() && tp.GetTypeOptions().IsEmptyconcTypeOption() && tp.GetTomType() == "unknown type" && tp.GetTlType().IsEmptyTargetLanguageType() {
+    panic("bad cast")
   }
 }

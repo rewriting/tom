@@ -7,7 +7,7 @@
 | Runtime Go `sl`, `sharedobjects` | `src/go/tom/library/` (module `tom`) | validé |
 | Runtime Go `aterm` (lecture/écriture ATerm) | `src/go/tom/library/aterm` (module `tom`) | validé |
 | Gom écrit en Go (`gomgo`) | `src/go/tom/gom/` | validé |
-| ADT du compilateur Go (copies des `.gom`, hooks en Go) | `src/go/tom/gom/adt`, `src/go/tom/engine/adt` | validé |
+| ADT du compilateur Go : sources `.gom` (hooks en Go) / amorce générée | `src/go/tom/{gom,engine}/adt` / `stable/go/tom/{gom,engine}/adt` | validé |
 | Mappings Go | `src/tom/library/mapping/go/` | validé |
 | Tests Tom+Go (ports de `test/`), T0–T3, smoke | `test/go/` (module `tomtest`) | validé |
 | Rapports | `doc/go/` : J0–T3 [`j0-go-backend.md`](j0-go-backend.md), J2 [`j2-report.md`](j2-report.md), [tableau de bord](port-dashboard.md), [couverture](coverage.md) | à jour |
@@ -21,6 +21,7 @@ Utiliser le runtime dans un projet : `require tom v0.0.0` et
 
 ```bash
 unset TOM_HOME && ./build.sh src.dist
+mage -d magefiles -w . bootstrap   # génère les ADT de src/go/tom (voir « Sources et amorce »)
 go -C src/go/tom build -o /tmp/gomgo ./gom/cmd/gomgo
 GOMGO_BIN=/tmp/gomgo TOM_HOME=$PWD/src/dist src/dist/bin/tom -go -d out X.t
 ```
@@ -69,12 +70,13 @@ autonomes), comparés à ceux de Java Gom (`legacy/`) :
   Go qui construit des termes sans inclure le mapping (paquetage qui ne
   l'inclut pas, `Make<Op>` appelé hors d'un programme Tom) ne les exécute
   pas ; les théories (FL, AU, ACU, Free) sont, elles, générées en Go et
-  toujours appliquées. Un hook `javablock` (genre interne de Java Gom :
-  un `block` sans code Tom, que la grammaire de Gom du compilateur Java
-  n'accepte pas dans un source ; gomgo l'accepte) est du Go pur, écrit
-  dans le fichier Go généré ; une méthode
-  qu'un `javablock` de sorte déclare sur chaque alternative de la sorte
-  est ajoutée à l'interface de la sorte.
+  toujours appliquées. Avec l'option `--gohooks` de gomgo (propre à
+  gomgo : `%gom(--gohooks)`, `gom-batch --gohooks`), les hooks sont du Go
+  pur, sans code Tom, écrits dans le fichier Go généré : ils s'exécutent
+  sans Tom ; les règles (traduites en code Tom) sont alors refusées, et
+  une méthode qu'un `block` de sorte déclare sur chaque alternative de
+  la sorte est ajoutée à l'interface de la sorte (Java : méthode de la
+  classe de la sorte). C'est le mode des ADT du compilateur.
 - **Ordre des hooks d'un opérateur variadique.** Java Gom les exécute
   dans l'ordre de déclaration ; Go exécute la théorie avant les hooks
   `make_insert`/`make_empty` et les règles, et refuse un module qui
@@ -103,23 +105,36 @@ autonomes), comparés à ceux de Java Gom (`legacy/`) :
   (`conc(a(),nil())`, `lm(a(),m0())` d'un hook `make_empty`) paniquent
   ainsi, comme le `toArray` typé de Java lève `ArrayStoreException`.
 
-## ADT du compilateur Go
+## Sources et amorce
 
-Le compilateur Go a ses propres copies des fichiers `.gom` des ADT du
-compilateur Java : `src/go/tom/gom/adt/*.gom` (AST de Gom, sur lequel
-gomgo est construit) et `src/go/tom/engine/adt/*.gom` (AST de Tom ;
-`Il.gom` est généré seul dans `engine/adt/il`, comme dans `build.xml`).
-Mêmes sortes, opérateurs et champs que les originaux de `src/tom`
-(`TestSignatureParity`), hooks réécrits en Go (Tom+Go pour les hooks de
-construction et les règles, `javablock` en Go pur pour
-`HookList.ContainsTomCode`) : les AST Go peuvent évoluer
-indépendamment de ceux de Java. Les paquetages sont générés comme tout
-module (`gomgo gom-batch` : API Java, cellules, mapping `adt.tom`) ;
-`engine/adt/hooks.t`, qui inclut le mapping, est compilé par `tom -go`
-en `hooks.go`, qui installe les hooks. Régénérer avec `mage -d magefiles
--w . regenAdt` (`src/go/tom/internal/adtgen`) ; `TestSelfBootstrap`
-exige que les paquetages commités soient identiques octet pour octet à
-une régénération (point fixe pour `gom/adt`).
+Comme pour Java (`stable/` contient le code Java qui amorce le
+compilateur), `src/` ne contient que des sources et `stable/` l'amorce
+générée :
+
+- `src/go/tom/gom/adt/*.gom` (AST de Gom, sur lequel gomgo est
+  construit) et `src/go/tom/engine/adt/*.gom` (AST de Tom, les 15
+  modules dans un paquetage) sont les copies Go des `.gom` des ADT du
+  compilateur Java : mêmes sortes, opérateurs et champs que les
+  originaux de `src/tom` (`TestSignatureParity`), hooks réécrits en Go
+  (les règles des originaux deviennent des hooks `make`) ; les AST Go
+  peuvent ainsi évoluer indépendamment de ceux de Java. Seuls ces
+  `.gom` sont commités dans ces répertoires.
+- `stable/go/tom/{gom,engine}/adt` contient leur génération (fichiers Go
+  et mapping `adt.tom`, produits par `gomgo gom-batch --gohooks` : API
+  Java, cellules, hooks en Go).
+- `mage -d magefiles -w . bootstrap` copie l'amorce de `gom/adt` dans
+  `src/go/tom/gom/adt`, construit gomgo dessus, régénère les deux ADT
+  depuis leurs `.gom` dans `src/go/tom` (fichiers ignorés par git) et
+  exige que `gom/adt` régénéré soit identique octet pour octet à
+  l'amorce (point fixe). Toutes les cibles mage en dépendent : `git
+  clone` puis `mage -d magefiles -w . all` suffit.
+- Après une évolution voulue des `.gom` ou de gomgo :
+  `mage -d magefiles -w . promoteAdt` (copie la nouvelle génération dans
+  `stable/go/tom`), puis `bootstrap`. `TestSelfBootstrap`
+  (`gom/backend`) compare la régénération à l'amorce ; les tests de
+  comportement des ADT sont dans `test/go/adt`.
+- La dist (`<dist>/lib/go/tom`) ne contient que le runtime
+  (`library/**`, `go.mod`) ; gomgo se construit depuis `src/go/tom`.
 
 ## Limites connues de `-go` (parser îlot `-np`)
 
@@ -179,9 +194,8 @@ une régénération (point fixe pour `gom/adt`).
   - Décider comment plusieurs `.t` partagent un paquetage Go : les aides
     `tom_*` des mappings et les aides AC de niveau paquetage imposent
     aujourd'hui un `.t` par paquetage.
-  - Le mapping de l'ADT du moteur (`src/go/tom/engine/adt/adt.tom`,
-    voir « ADT du compilateur Go ») est à inclure par le compilateur
-    Tom+Go.
+  - Le mapping de l'ADT du moteur (`adt.tom`, généré, voir « Sources
+    et amorce ») est à inclure par le compilateur Tom+Go.
   - Fabrique `sharedobjects` : références faibles (paquetage Go `weak`)
     et, peut-être, découpage (sharding) du mutex global.
   - Vérifier que la `.table` porte le code hôte Go des mappings générés

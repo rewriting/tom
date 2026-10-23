@@ -27,13 +27,13 @@ Commands:
   gom -o <out-dir> [--pkg <name>] <file.gom>
                                    Generate a Go package from one .gom file.
                                    The output is a standalone Go module.
-  gom-batch -o <out-dir> --pkg <name> <file1.gom> <file2.gom> …
+  gom-batch -o <out-dir> --pkg <name> [--gohooks] <file1.gom> <file2.gom> …
                                    Generate ONE Go package combining several
                                    .gom files (one <module>.go each) and its
                                    Tom mapping <name>.tom. Slot types and
                                    rules are resolved across modules
                                    (e.g. src/go/tom/gom/adt/*.gom).
-  gom-block -o <dir> --pkg <name> [--withCongruenceStrategies] [--nosharing]
+  gom-block -o <dir> --pkg <name> [--withCongruenceStrategies] [--nosharing] [--gohooks]
             [--multithread] <file.gom>
                                    Compile a Tom gom block for the Go target
                                    (used by tom -go): writes <module>_gen.go
@@ -102,13 +102,15 @@ func runGom(args []string) error {
 func runGomBatch(args []string) error {
 	fs := flag.NewFlagSet("gom-batch", flag.ContinueOnError)
 	var out, pkg string
+	var goHooks bool
 	fs.StringVar(&out, "o", "", "output directory for the combined Go package (required)")
 	fs.StringVar(&pkg, "pkg", "", "Go package name for the combined module (required)")
+	fs.BoolVar(&goHooks, "gohooks", false, "the hooks are plain Go (no Tom code): generate them into the Go files, not the mapping")
 	if err := fs.Parse(args); err != nil {
 		return err
 	}
 	if out == "" || pkg == "" || fs.NArg() == 0 {
-		return fmt.Errorf("usage: gomgo gom-batch -o <out-dir> --pkg <name> <file1.gom> <file2.gom> ...")
+		return fmt.Errorf("usage: gomgo gom-batch -o <out-dir> --pkg <name> [--gohooks] <file1.gom> <file2.gom> ...")
 	}
 	var modules []gomast.GomModule
 	for _, f := range fs.Args() {
@@ -118,7 +120,7 @@ func runGomBatch(args []string) error {
 		}
 		modules = append(modules, m)
 	}
-	dir, err := backend.GenerateBatchToDir(modules, backend.Options{PackageName: pkg}, out)
+	dir, err := backend.GenerateBatchToDir(modules, backend.Options{PackageName: pkg, GoHooks: goHooks}, out)
 	if err != nil {
 		return err
 	}

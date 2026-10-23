@@ -1,12 +1,12 @@
 package main
 
-// A javablock hook of a %gom block (Java Gom's internal hook kind for a
-// block without Tom code, put into the class of its sort, which Tom
-// does not compile; gomgo accepts it in the source as plain Go code):
-// gomgo writes its Go declarations into the generated Go file, and the
-// methods it declares on every alternative of the sort are methods of
-// the sort's interface (Java: methods of the sort class), so they apply
-// to any term of the sort. Tom+Java twin: twin/Twin.t.
+// The hooks of a %gom block compiled with gomgo's --gohooks are plain Go
+// code (without Tom code), written into the generated Go file instead of
+// the Tom mapping (the mode of the compiler's own ADTs): a make hook
+// runs at the head of Make<Op>, and the methods a sort block declares on
+// every alternative of the sort are methods of the sort's interface
+// (Java: methods of the sort class), so they apply to any term of the
+// sort. Tom+Java twin: twin/Twin.t.
 
 import (
   "fmt"
@@ -14,17 +14,22 @@ import (
   _ "tom/library/sl" // the generated jb_gen.go needs the Go runtime module
 )
 
-%gom {
+%gom(--gohooks) {
   module jb
   abstract syntax
   T = a() | b() | f(lhs:T, rhs:T)
   L = conc(T*)
-  sort T:javablock() {
+  f:make(l, r) {
+    if l.Isb() && r.Isb() {
+      return MakeA()
+    }
+  }
+  sort T:block() {
     func (t *AT) Size() int { return 1 }
     func (t *BT) Size() int { return 1 }
     func (t *FT) Size() int { return 1 + t.Lhs.Size() + t.Rhs.Size() }
   }
-  sort L:javablock() {
+  sort L:block() {
     func (t *ConcL) Weight() int {
       w := 0
       var c L = t
@@ -39,7 +44,7 @@ import (
 
 func main() {
   var t T = `f(a(), f(b(), a()))
-  fmt.Println(t, t.Size(), `b().Size())
+  fmt.Println(t, t.Size(), `b().Size(), `f(b(), b()))
   var l L = `conc(t, a())
   fmt.Println(l, l.Weight(), `conc().Weight())
 }

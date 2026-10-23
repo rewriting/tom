@@ -41,3 +41,14 @@ prototype/tomgo/tom
 src/go/tom/gom/cmd/gomgo/gomgo
 src/bootcheck/
 src/bootstrap/
+
+# The Go copies of the compiler ADTs: src/go/tom/gom/adt and
+# src/go/tom/engine/adt hold only the .gom sources (committed). Their Go
+# code and Tom mapping are generated locally by
+# `mage -d magefiles -w . bootstrap` from the amorce committed in
+# stable/go/tom (as stable/ holds the Java code needed to bootstrap the
+# Java compiler); `mage -d magefiles -w . promoteAdt` updates the amorce.
+/src/go/tom/gom/adt/*.go
+/src/go/tom/gom/adt/*.tom
+/src/go/tom/engine/adt/*.go
+/src/go/tom/engine/adt/*.tom

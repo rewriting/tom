@@ -2,6 +2,9 @@ package backend
 
 import (
 	"bytes"
+	"os"
+	"os/exec"
+	"path/filepath"
 	"strings"
 	"testing"
 
@@ -26,31 +29,40 @@ func TestMappingHostCode(t *testing.T) {
 	}
 }
 
-// A javablock hook (Java Gom: host code without Tom code) is plain Go,
-// written into the generated Go file; the methods a sort javablock
-// declares on every alternative of the sort are added to the sort's
-// interface (Java: methods of the sort class), those declared on some
-// alternatives only are not.
-func TestJavaBlock(t *testing.T) {
+// With GoHooks (gomgo --gohooks), the hooks are plain Go written into
+// the generated Go file, not into the mapping: a construction hook sets
+// its Hook<Make> variable at init, a block hook is Go declarations, and
+// the methods a sort block declares on every alternative of the sort are
+// added to the sort's interface (Java: methods of the sort class), those
+// declared on some alternatives only are not.
+func TestGoHooks(t *testing.T) {
 	src := `module m.M
 abstract syntax
 T = a() | f(x:T)
-sort T:javablock() {
+L = conc(T*)
+sort T:block() {
   func (t *AT) Size() int { return 1 }
   func (t *FT) Size() int { return 1 + t.X.Size() }
   func (t *FT) Only() bool { return true }
   func helper() int { return 0 }
+}
+f:make(x) {
+  if x.Isf() {
+    return x.Getx()
+  }
+}
+conc:make_insert(e,l) {
+  if e.Isf() {
+    e = e.Getx()
+  }
 }
 `
 	mod, err := gom.ParseBytes([]byte(src))
 	if err != nil {
 		t.Fatal(err)
 	}
-	if err := CheckHooks(mod); err != nil {
-		t.Fatal(err)
-	}
 	var buf bytes.Buffer
-	if err := Generate(mod, Options{PackageName: "m"}, &buf); err != nil {
+	if err := Generate(mod, Options{PackageName: "m", GoHooks: true}, &buf); err != nil {
 		t.Fatal(err)
 	}
 	code := buf.String()
@@ -61,25 +73,44 @@ sort T:javablock() {
 	}
 	// (gofmt aligns the bodies of consecutive one-line functions)
 	flat := strings.Join(strings.Fields(code), " ")
-	for _, want := range []string{"func (t *FT) Size() int { return 1 + t.X.Size() }", "func helper() int { return 0 }"} {
+	for _, want := range []string{
+		"func (t *FT) Size() int { return 1 + t.X.Size() }",
+		"func helper() int { return 0 }",
+		"HookMakeF = func(x T) (T, T) {",
+		"HookMakeInsertConc = func(e T, l L) (L, T, L) {",
+	} {
 		if !strings.Contains(flat, want) {
 			t.Errorf("generated code lacks %q", want)
 		}
 	}
-	if strings.Contains(string(EmitTomMappingGo(mod, Options{})), "Size") {
-		t.Error("a javablock must not be written into the mapping")
+	if m := string(EmitTomMappingGo(mod, Options{GoHooks: true})); strings.Contains(m, "Size") || strings.Contains(m, "HookMake") {
+		t.Errorf("the hooks must not be written into the mapping:\n%s", m)
+	}
+	// without GoHooks, they are Tom+Go code of the mapping
+	if m := string(EmitTomMappingGo(mod, Options{})); !strings.Contains(m, "HookMakeF = func(") {
+		t.Errorf("without GoHooks the make hook belongs to the mapping:\n%s", m)
 	}
 }
 
-// A javablock holds Go declarations, without Tom code.
-func TestJavaBlockRejectsTomCode(t *testing.T) {
-	src := "module m.M\nabstract syntax\nT = a()\nsort T:javablock() {\n  func f(t T) bool { %match(t) { a() -> { return true } }; return false }\n}\n"
-	mod, err := gom.ParseBytes([]byte(src))
-	if err != nil {
-		t.Fatal(err)
-	}
-	if err := CheckHooks(mod); err == nil || !strings.Contains(err.Error(), "javablock") {
-		t.Fatalf("CheckHooks = %v, want a javablock error", err)
+// With GoHooks, a hook holds Go code without Tom code, and the rules
+// (translated into Tom code) are refused.
+func TestGoHooksRejectsTomCode(t *testing.T) {
+	for _, src := range []string{
+		"module m.M\nabstract syntax\nT = a()\nsort T:block() {\n  func f(t T) bool { %match(t) { a() -> { return true } }; return false }\n}\n",
+		"module m.M\nabstract syntax\nT = a() | g(x:T)\ng:make(x) {\n  %match(x) { a() -> { return `a(); } }\n}\n",
+		"module M\nabstract syntax\nT = a() | g(x:T)\nmodule M:rules() {\n  g(a()) -> a()\n}\n",
+	} {
+		mod, err := gom.ParseBytes([]byte(src))
+		if err != nil {
+			t.Fatal(err)
+		}
+		var buf bytes.Buffer
+		if err := Generate(mod, Options{PackageName: "m", GoHooks: true}, &buf); err == nil || !strings.Contains(err.Error(), "--gohooks") {
+			t.Errorf("Generate(GoHooks) = %v, want a --gohooks error, for\n%s", err, src)
+		}
+		if err := CheckHooks(mod); err != nil {
+			t.Errorf("without GoHooks the hooks are Tom+Go code: CheckHooks = %v", err)
+		}
 	}
 }
 
@@ -116,12 +147,32 @@ func TestRulesAcrossPackageModules(t *testing.T) {
 	}
 }
 
-// Two operators with the same Go name cannot share a Go package.
-func TestGenerateBatchRejectsGoNameCollision(t *testing.T) {
-	a, _ := gom.ParseBytes([]byte("module A\nabstract syntax\nS = subterm()\n"))
-	b, _ := gom.ParseBytes([]byte("module B\nabstract syntax\nU = Subterm()\n"))
-	_, err := GenerateBatchToDir([]gomast.GomModule{a, b}, Options{PackageName: "p"}, t.TempDir())
-	if err == nil || !strings.Contains(err.Error(), "same Go name Subterm") {
-		t.Fatalf("GenerateBatchToDir = %v, want a Go name collision error", err)
+// Two operators of a package with the same Go name (subterm and Subterm,
+// of Il.gom and Code.gom) get the names derived from them suffixed with
+// their sort; the other operators keep theirs.
+func TestGenerateBatchGoNameCollision(t *testing.T) {
+	a, _ := gom.ParseBytes([]byte("module A\nabstract syntax\nS = subterm() | s(S*)\n"))
+	b, _ := gom.ParseBytes([]byte("module B\nabstract syntax\nU = Subterm() | u()\n"))
+	dir, err := GenerateBatchToDir([]gomast.GomModule{a, b}, Options{PackageName: "p"}, t.TempDir())
+	if err != nil {
+		t.Fatal(err)
+	}
+	code := ""
+	for _, f := range []string{"a.go", "b.go", "p.tom"} {
+		bs, err := os.ReadFile(filepath.Join(dir, f))
+		if err != nil {
+			t.Fatal(err)
+		}
+		code += string(bs)
+	}
+	for _, want := range []string{"func MakeSubtermS() S", "func MakeSubtermU() U", "type IsSubtermS struct", "func MakeU() U", "func ConsS(", "make()       { MakeSubtermS() }"} {
+		if !strings.Contains(code, want) {
+			t.Errorf("generated code lacks %q", want)
+		}
+	}
+	cmd := exec.Command("go", "build", "./...")
+	cmd.Dir = dir
+	if out, err := cmd.CombinedOutput(); err != nil {
+		t.Fatalf("go build: %v\n%s", err, out)
 	}
 }

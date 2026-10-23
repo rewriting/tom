@@ -22,15 +22,29 @@ TomNumberList = concTomNumber(TomNumber*)
 
 TomNameList = concTomName(TomName*)
 
+// Go: the hooks are plain Go (gomgo --gohooks).
+// Java: %match(name) { PositionName(concTomNumber(p@Position[])) -> { return `p; } }
 NameNumber:make(name) {
-  %match(TomName name) {
-    PositionName(concTomNumber(p@Position[])) -> { return `p; }
+  if name.IsPositionName() {
+    l := name.GetNumberList()
+    if l.IsConsconcTomNumber() && l.GetTailconcTomNumber().IsEmptyconcTomNumber() && l.GetHeadconcTomNumber().IsPosition() {
+      return l.GetHeadconcTomNumber()
+    }
   }
 }
 
+// Java: %match(e) { NameNumber(PositionName(concTomNumber(p*))) -> { return `concTomNumber(p*,l*); } }
 concTomNumber:make_insert(e,l) {
-  %match(TomNumber e) {
-    NameNumber(PositionName(concTomNumber(p*))) -> { return `concTomNumber(p*,l*); }
+  if e.IsNameNumber() && e.GetAstName().IsPositionName() {
+    var elems []TomNumber
+    for c := e.GetAstName().GetNumberList(); c.IsConsconcTomNumber(); c = c.GetTailconcTomNumber() {
+      elems = append(elems, c.GetHeadconcTomNumber())
+    }
+    res := l
+    for i := len(elems) - 1; i >= 0; i-- {
+      res = ConsConcTomNumber(elems[i], res)
+    }
+    return res
   }
 }
 

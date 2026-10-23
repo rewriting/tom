@@ -122,11 +122,7 @@ func (g *gen) emitJavaAPIInterface(api sortAPI) {
 // emitJavaAPIMethods writes the Java API methods of one alternative of
 // the sort.
 func (g *gen) emitJavaAPIMethods(api sortAPI, alt *gomast.AlternativeAlternative) {
-	opGo := exportedField(alt.Name)
-	if opGo == "" {
-		opGo = "Op"
-	}
-	st := opGo + api.name
+	st := opBase(alt) + api.name
 	variadic := alternativeIsVariadic(alt)
 	w := func(format string, args ...any) { fmt.Fprintf(&g.buf, format, args...) }
 
@@ -256,7 +252,7 @@ var neutralPattern = regexp.MustCompile("^`?\\s*([A-Za-z_][A-Za-z0-9_]*)\\s*\\(\
 
 // neutralGo returns the Go expression of the neutral element of an
 // AU/ACU theory ("" for the default neutral, the empty list).
-func neutralGo(mod gomast.GomModule, th opTheory) (string, error) {
+func neutralGo(pkg []gomast.GomModule, mod gomast.GomModule, th opTheory) (string, error) {
 	if th.neutral == "" {
 		return "", nil
 	}
@@ -267,7 +263,7 @@ func neutralGo(mod gomast.GomModule, th opTheory) (string, error) {
 	for _, prod := range moduleSorts(mod) {
 		for _, alt := range sortAlternatives(prod) {
 			if alt.Name == m[1] && !alternativeIsVariadic(alt) && len(altSlotSorts(alt)) == 0 {
-				return "Make" + exportedField(alt.Name) + "()", nil
+				return "Make" + newOpNames(pkg).of(alt, sortName(prod)) + "()", nil
 			}
 		}
 	}
@@ -281,10 +277,10 @@ func neutralGo(mod gomast.GomModule, th opTheory) (string, error) {
 func (g *gen) emitVariadicJava(sortNm string, alt *gomast.AlternativeAlternative, structName, elem string) {
 	w := func(format string, args ...any) { fmt.Fprintf(&g.buf, format, args...) }
 	op := alt.Name
-	opGo := exportedField(op)
+	opGo := g.opNames.of(alt, sortNm)
 	hooks := opHooks(g.pkgMods, g.mod, alt)
 	th := theoryOf(g.pkgMods, g.mod, alt)
-	neutral, _ := neutralGo(g.mod, th) // CheckHooks reported the error
+	neutral, _ := neutralGo(g.pkgMods, g.mod, th) // CheckHooks reported the error
 
 	w("// RealMakeCons%s is Java Gom's Cons%s.realMake: the shared cell of head\n// and tail, without hook.\n", opGo, op)
 	w("func RealMakeCons%s(head %s, tail %s) %s {\n", opGo, elem, sortNm, sortNm)
@@ -384,9 +380,8 @@ func (g *gen) emitVariadicJava(sortNm string, alt *gomast.AlternativeAlternative
 // emitVariadicMappingGo writes the mapping of a variadic operator: the Empty<op>/Cons<op> operators (as Java Gom
 // declares them) and the %oplist, built by Empty<Op>/Cons<Op> through
 // the construction hooks.
-func emitVariadicMappingGo(buf *bytes.Buffer, sortNm string, alt *gomast.AlternativeAlternative, structName, elemSort string) {
+func emitVariadicMappingGo(buf *bytes.Buffer, sortNm string, alt *gomast.AlternativeAlternative, structName, opGo, elemSort string) {
 	op := alt.Name
-	opGo := exportedField(op)
 	fmt.Fprintf(buf, "%%op %s Empty%s() {\n", sortNm, op)
 	fmt.Fprintf(buf, "  is_fsym(t) { ($t).IsEmpty%s() }\n", op)
 	fmt.Fprintf(buf, "  make() { Empty%s() }\n", opGo)
@@ -518,7 +513,7 @@ func (g *gen) javaSlotFromATerm(gomType, a string) string {
 // alternative (Java Gom's toATerm and <op>.fromTerm).
 func (g *gen) emitJavaATerm(sortNm string, alt *gomast.AlternativeAlternative, structName string) {
 	w := func(format string, args ...any) { fmt.Fprintf(&g.buf, format, args...) }
-	opGo := exportedField(alt.Name)
+	opGo := g.opNames.of(alt, sortNm)
 	if alternativeIsVariadic(alt) {
 		elem := fieldTypeName(alternativeFields(alt)[0])
 		elemGo := g.goType(elem, false)
@@ -576,11 +571,7 @@ func (g *gen) emitJavaFromTerm(api sortAPI) {
 	}
 	ordered = append(ordered, api.variadic...)
 	for _, alt := range ordered {
-		opGo := exportedField(alt.Name)
-		if opGo == "" {
-			opGo = "Op"
-		}
-		w("\tif r, ok := fromTerm%s(converted, conv); ok {\n\t\tresults = append(results, r)\n\t}\n", opGo+s)
+		w("\tif r, ok := fromTerm%s(converted, conv); ok {\n\t\tresults = append(results, r)\n\t}\n", opBase(alt)+s)
 	}
 	w("\tif len(results) == 0 {\n\t\tpanic(&aterm.GomError{Msg: fmt.Sprintf(\"%%v is not a %s\", trm), IllegalArgument: true})\n\t}\n\treturn results[0]\n}\n\n", s)
 	w("// %sFromString is Java Gom's %s.fromString(s).\n", s, s)

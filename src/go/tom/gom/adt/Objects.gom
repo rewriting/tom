@@ -49,9 +49,9 @@ Hook = MakeHook(HookArguments:SlotFieldList,Code:Code,HasTomCode:boolean)
      | MappingHook(Code:Code)
 HookList = ConcHook(Hook*)
 
-// Go: plain Go code (a javablock: no Tom code, so the package needs no
-// Tom compilation); its method is declared by the HookList interface.
-sort HookList:javablock() {
+// Go: the hooks are plain Go (gomgo --gohooks); the method of this sort
+// block is declared by the HookList interface.
+sort HookList:block() {
   // ContainsTomCode is Java's containsTomCode(): whether a hook of the
   // list is a MakeHook, MakeBeforeHook or BlockHook whose HasTomCode is
   // true (ConcHook(_*,(MakeHook|MakeBeforeHook|BlockHook)[HasTomCode=true()],_*)).

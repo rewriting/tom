@@ -100,9 +100,26 @@ BQTerm = BQAppl(Options:OptionList,AstName:TomName,Args:BQTermList)
    */
   	| ListTail(Opname:TomName,Variable:BQTerm)  		   
 
-module Code:rules() {
-  InstructionToCode(CodeToInstruction(t)) -> t
-  CodeToInstruction(InstructionToCode(t)) -> t
+// Go: the hooks are plain Go (gomgo --gohooks). The rules of the Java
+// original,
+//   module Code:rules() {
+//     InstructionToCode(CodeToInstruction(t)) -> t
+//     CodeToInstruction(InstructionToCode(t)) -> t
+//   }
+// are make hooks (as Java Gom's RuleExpander makes them); the second one
+// is a hook of CodeToInstruction, in TomInstruction.gom, and the rule of
+// TomExpression.gom on ExpressionToBQTerm is here.
+InstructionToCode:make(t) {
+  if t.IsCodeToInstruction() {
+    return t.GetCode()
+  }
+}
+
+// rule of TomExpression.gom: ExpressionToBQTerm(BQTermToExpression(t)) -> t
+ExpressionToBQTerm:make(e) {
+  if e.IsBQTermToExpression() {
+    return e.GetAstTerm()
+  }
 }
 
 

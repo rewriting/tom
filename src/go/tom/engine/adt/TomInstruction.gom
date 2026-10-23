@@ -71,8 +71,25 @@ RuleInstructionList = concRuleInstruction(RuleInstruction*)
 ConstraintInstructionList = concConstraintInstruction(ConstraintInstruction*)    
   
 InstructionList = concInstruction(Instruction*)
+// Go: the hooks are plain Go (gomgo --gohooks).
+// Java: %match(e) { AbstractBlock(l1) -> { return `concInstruction(l1*,l*); } }
 concInstruction:make_insert(e,l) {
-  %match(Instruction e) {
-    AbstractBlock(l1) -> { return `concInstruction(l1*,l*); }
+  if e.IsAbstractBlock() {
+    var elems []Instruction
+    for c := e.GetInstList(); c.IsConsconcInstruction(); c = c.GetTailconcInstruction() {
+      elems = append(elems, c.GetHeadconcInstruction())
+    }
+    res := l
+    for i := len(elems) - 1; i >= 0; i-- {
+      res = ConsConcInstruction(elems[i], res)
+    }
+    return res
+  }
+}
+
+// rule of Code.gom: CodeToInstruction(InstructionToCode(t)) -> t
+CodeToInstruction:make(t) {
+  if t.IsInstructionToCode() {
+    return t.GetAstInstruction()
   }
 }

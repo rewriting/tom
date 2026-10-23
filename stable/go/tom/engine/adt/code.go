@@ -10410,11 +10410,11 @@ func (t *SubtermBQTerm) ChildAt(i int) any {
 func (t *SubtermBQTerm) SetChildAt(i int, child any) any {
 	switch i {
 	case 0:
-		return MakeSubterm(child.(TomName), t.SlotName, t.GroundTerm)
+		return MakeSubtermBQTerm(child.(TomName), t.SlotName, t.GroundTerm)
 	case 1:
-		return MakeSubterm(t.AstName, child.(TomName), t.GroundTerm)
+		return MakeSubtermBQTerm(t.AstName, child.(TomName), t.GroundTerm)
 	case 2:
-		return MakeSubterm(t.AstName, t.SlotName, child.(BQTerm))
+		return MakeSubtermBQTerm(t.AstName, t.SlotName, child.(BQTerm))
 	}
 	panic(fmt.Sprintf("SubtermBQTerm.SetChildAt: index %d out of range", i))
 }
@@ -10424,61 +10424,61 @@ func (t *SubtermBQTerm) Children() []any {
 }
 
 func (t *SubtermBQTerm) SetChildren(children []any) any {
-	return MakeSubterm(children[0].(TomName), children[1].(TomName), children[2].(BQTerm))
+	return MakeSubtermBQTerm(children[0].(TomName), children[1].(TomName), children[2].(BQTerm))
 }
 
-// MakeSubterm builds the canonical (shared) Subterm term.
-func MakeSubterm(astName TomName, slotName TomName, groundTerm BQTerm) BQTerm {
+// MakeSubtermBQTerm builds the canonical (shared) Subterm term.
+func MakeSubtermBQTerm(astName TomName, slotName TomName, groundTerm BQTerm) BQTerm {
 	hashes := []uint32{astName.Hash(), slotName.Hash(), groundTerm.Hash()}
 	proto := &SubtermBQTerm{hash: sharedobjects.MixSymbol(sharedobjects.StringHash("Subterm"), hashes), AstName: astName, SlotName: slotName, GroundTerm: groundTerm}
 	return factory.Build(proto).(*SubtermBQTerm)
 }
 
-// IsSubterm is the `Is_Subterm` predicate strategy: succeeds (returns subject
+// IsSubtermBQTerm is the `Is_Subterm` predicate strategy: succeeds (returns subject
 // unchanged) when subject has the `Subterm` shape, otherwise fails with
 // sl.ErrVisitFailure.
-type IsSubterm struct{ sl.AbstractStrategy }
+type IsSubtermBQTerm struct{ sl.AbstractStrategy }
 
-func (IsSubterm) VisitLight(subject any, _ sl.Introspector) (any, error) {
+func (IsSubtermBQTerm) VisitLight(subject any, _ sl.Introspector) (any, error) {
 	if _, ok := subject.(*SubtermBQTerm); ok {
 		return subject, nil
 	}
 	return subject, sl.ErrVisitFailure
 }
-func (IsSubterm) ChildCount() int             { return 0 }
-func (IsSubterm) ChildAt(int) sl.Strategy     { panic("IsSubterm: no children") }
-func (IsSubterm) SetChildAt(int, sl.Strategy) { panic("IsSubterm: no children") }
-func (s *IsSubterm) VisitEnv(sl.Introspector) int {
+func (IsSubtermBQTerm) ChildCount() int             { return 0 }
+func (IsSubtermBQTerm) ChildAt(int) sl.Strategy     { panic("IsSubtermBQTerm: no children") }
+func (IsSubtermBQTerm) SetChildAt(int, sl.Strategy) { panic("IsSubtermBQTerm: no children") }
+func (s *IsSubtermBQTerm) VisitEnv(sl.Introspector) int {
 	if _, ok := s.GetEnvironment().GetSubject().(*SubtermBQTerm); ok {
 		return sl.StatusSuccess
 	}
 	return sl.StatusFailure
 }
-func (s *IsSubterm) Visit(subject any, intro sl.Introspector) (any, error) {
+func (s *IsSubtermBQTerm) Visit(subject any, intro sl.Introspector) (any, error) {
 	return sl.VisitStrategy(s, subject, intro)
 }
-func (s *IsSubterm) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+func (s *IsSubtermBQTerm) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
 	return sl.VisitStrategyWith(s, env, intro)
 }
 
-var _ sl.Strategy = (*IsSubterm)(nil)
+var _ sl.Strategy = (*IsSubtermBQTerm)(nil)
 
-// VisitSubterm is the `_Subterm` slot-visit strategy: when subject is `Subterm`,
+// VisitSubtermBQTerm is the `_Subterm` slot-visit strategy: when subject is `Subterm`,
 // applies each constituent strategy to the matching child slot and
 // rebuilds the term iff at least one child changed. Fails with
 // sl.ErrVisitFailure when subject isn't `Subterm`.
-type VisitSubterm struct {
+type VisitSubtermBQTerm struct {
 	sl.AbstractStrategy
 	args []sl.Strategy
 }
 
-// NewVisitSubterm builds the slot-visit strategy with the supplied per-slot
+// NewVisitSubtermBQTerm builds the slot-visit strategy with the supplied per-slot
 // sub-strategies.
-func NewVisitSubterm(args ...sl.Strategy) *VisitSubterm {
-	return &VisitSubterm{args: args}
+func NewVisitSubtermBQTerm(args ...sl.Strategy) *VisitSubtermBQTerm {
+	return &VisitSubtermBQTerm{args: args}
 }
 
-func (s *VisitSubterm) VisitLight(subject any, intro sl.Introspector) (any, error) {
+func (s *VisitSubtermBQTerm) VisitLight(subject any, intro sl.Introspector) (any, error) {
 	if _, ok := subject.(*SubtermBQTerm); !ok {
 		return subject, sl.ErrVisitFailure
 	}
@@ -10505,11 +10505,11 @@ func (s *VisitSubterm) VisitLight(subject any, intro sl.Introspector) (any, erro
 	return subject, nil
 }
 
-func (s *VisitSubterm) ChildCount() int                 { return len(s.args) }
-func (s *VisitSubterm) ChildAt(i int) sl.Strategy       { return s.args[i] }
-func (s *VisitSubterm) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
+func (s *VisitSubtermBQTerm) ChildCount() int                 { return len(s.args) }
+func (s *VisitSubtermBQTerm) ChildAt(i int) sl.Strategy       { return s.args[i] }
+func (s *VisitSubtermBQTerm) SetChildAt(i int, v sl.Strategy) { s.args[i] = v }
 
-func (s *VisitSubterm) VisitEnv(intro sl.Introspector) int {
+func (s *VisitSubtermBQTerm) VisitEnv(intro sl.Introspector) int {
 	if _, ok := s.GetEnvironment().GetSubject().(*SubtermBQTerm); !ok {
 		return sl.StatusFailure
 	}
@@ -10518,14 +10518,14 @@ func (s *VisitSubterm) VisitEnv(intro sl.Introspector) int {
 	}
 	return sl.VisitCongruence(s.GetEnvironment(), intro, s.args, false)
 }
-func (s *VisitSubterm) Visit(subject any, intro sl.Introspector) (any, error) {
+func (s *VisitSubtermBQTerm) Visit(subject any, intro sl.Introspector) (any, error) {
 	return sl.VisitStrategy(s, subject, intro)
 }
-func (s *VisitSubterm) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
+func (s *VisitSubtermBQTerm) VisitWith(env *sl.Environment, intro sl.Introspector) (any, error) {
 	return sl.VisitStrategyWith(s, env, intro)
 }
 
-var _ sl.Strategy = (*VisitSubterm)(nil)
+var _ sl.Strategy = (*VisitSubtermBQTerm)(nil)
 
 func (t *SubtermBQTerm) SymbolName() string { return "Subterm" }
 
@@ -10689,7 +10689,7 @@ func (t *SubtermBQTerm) ToATerm() aterm.ATerm {
 func fromTermSubtermBQTerm(trm aterm.ATerm, conv aterm.ATermConverter) (BQTerm, bool) {
 	trm = conv.Convert(trm)
 	if appl, ok := trm.(*aterm.ATermAppl); ok && appl.GetName() == "Subterm" && !appl.GetAFun().IsQuoted() {
-		return MakeSubterm(TomNameFromTermConv(appl.GetArgument(0), conv), TomNameFromTermConv(appl.GetArgument(1), conv), BQTermFromTermConv(appl.GetArgument(2), conv)), true
+		return MakeSubtermBQTerm(TomNameFromTermConv(appl.GetArgument(0), conv), TomNameFromTermConv(appl.GetArgument(1), conv), BQTermFromTermConv(appl.GetArgument(2), conv)), true
 	}
 	return nil, false
 }
@@ -12048,4 +12048,36 @@ func fromTermListTailBQTerm(trm aterm.ATerm, conv aterm.ATermConverter) (BQTerm,
 		return MakeListTail(TomNameFromTermConv(appl.GetArgument(0), conv), BQTermFromTermConv(appl.GetArgument(1), conv)), true
 	}
 	return nil, false
+}
+
+func init() {
+	HookMakeInstructionToCode = func(t Instruction) (Code, Instruction) {
+		tom__r := func() Code {
+			{
+
+				if t.IsCodeToInstruction() {
+					return t.GetCode()
+				}
+
+			}
+			return nil
+		}()
+		return tom__r, t
+	}
+}
+
+func init() {
+	HookMakeExpressionToBQTerm = func(e Expression) (BQTerm, Expression) {
+		tom__r := func() BQTerm {
+			{
+
+				if e.IsBQTermToExpression() {
+					return e.GetAstTerm()
+				}
+
+			}
+			return nil
+		}()
+		return tom__r, e
+	}
 }
