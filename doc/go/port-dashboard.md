@@ -129,6 +129,6 @@ compte pas).
 | `sl/TestPosition.t` | OK |  |
 | `sl/TestReduceAll.t` | OK |  |
 | `sl/TestRef.t` | non supporté | `TestRef1` non supporté : needs Gom's --termpointer (RefTerm/LabTerm/PathTerm/VarTerm, expand()) and the term-graph strategies of sl/graph.tom (DeRef, StrictDeRef, AllSeq), not implemented by gomgo and the Go sl library ; `TestRef2` non supporté : needs Gom's --termpointer (RefTerm/LabTerm/PathTerm/VarTerm, expand()) and the term-graph strategies of sl/graph.tom (DeRef, StrictDeRef, AllSeq), not implemented by gomgo and the Go sl library ; `TestRef3` non supporté : needs Gom's --termpointer (RefTerm/LabTerm/PathTerm/VarTerm, expand()) and the term-graph strategies of sl/graph.tom (DeRef, StrictDeRef, AllSeq), not implemented by gomgo and the Go sl library ; `TestRef4` non supporté : needs Gom's --termpointer (RefTerm/LabTerm/PathTerm/VarTerm, expand()) and the term-graph strategies of sl/graph.tom (DeRef, StrictDeRef, AllSeq), not implemented by gomgo and the Go sl library |
-| `sl/TestReflective.t` | OK | `TestMake` non supporté : gomgo represents the variadic l(Term*) of testsl.gom as a flat list, without Java Gom's Consl/Emptyl constructors, hence without Make_Consl/Make_Emptyl |
+| `sl/TestReflective.t` | OK |  |
 | `sl/TestSL.t` | OK |  |
 | `sl/TestSLModes.t` | OK |  |

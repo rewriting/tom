@@ -107,13 +107,13 @@ autonomes), comparés à ceux de Java Gom (`legacy/`) :
   par défaut (tomjava, `CstBuilder.exitLabelledpattern`) les reconnaît ;
   la grammaire îlot (`TomIslandParser.g4`) n'a pas de règle étiquetée, et
   `-go` impose `-np` : le `%match` reste du code hôte. Aucun test de
-  `test/` ne les utilise ; les 2 « occurrences » comptées par T3 dans le
-  compilateur sont des commentaires (`GeneralPurposePropagator.t:111,126`).
-- **Sujet d'un `%match` non inspecté** : une variable hôte qui n'est que
-  le sujet d'un `%match` dont les motifs ne l'examinent pas (`_`, `x@y`
-  sur `String`) n'est pas référencée par le code généré (en Java non
-  plus) ; Go refuse alors la variable inutilisée (`_ = s` dans le port de
-  `test/TestOptimizer.t`).
+  `test/` ne les utilise, ni le compilateur (T3 : 0 utilisation, les
+  exemples en commentaire de `GeneralPurposePropagator.t` ne comptent pas).
+- **Accolades du code hôte** : sous `-go`, les `{ … }` du code hôte d'une
+  action (que `-np` analyse comme des blocs) restent du texte hôte
+  (`AstBuilder`), et le compilateur écrit `_ = s` pour chaque sujet
+  variable d'un `%match` (une variable hôte que les motifs n'inspectent
+  pas resterait inutilisée, ce que Go refuse).
 
 ## Orientation pour la suite
 
