@@ -1,0 +1,6 @@
+{
+  "passed": null,
+  "stdout": "testList1 has successfully terminated.\ntestList2 has successfully terminated.\nTomList test has successfully terminated.\n",
+  "exitOK": true,
+  "source_sha256": "daa07108b5d2977b78ee8947a7a38f6f895d61d8e858deef4700940cb574cb86"
+}

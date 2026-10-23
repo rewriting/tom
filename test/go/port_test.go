@@ -13,6 +13,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"regexp"
 	"sort"
@@ -78,6 +79,12 @@ type portCase struct {
 	// same formatter, must be rejected with the same log. Dashboard
 	// status "OK (diagnostics)".
 	Regress bool
+	// C: the original is a C program (test/cfib1.t, test/loulou.t, which
+	// test/build.xml leaves out): the port is a Go main program, and the
+	// oracle is the output and exit status of the original compiled by
+	// legacy/'s tom -c -np (the default parser is tailored for Java) and
+	// the C compiler cc (cOracle).
+	C bool
 }
 
 // gomFile is a standalone .gom file of test/ (Rel, relative to test/);
@@ -241,6 +248,22 @@ var cases = []portCase{
 	{Rel: "regress/UnknownSymbol2.t", Regress: true},
 	{Rel: "regress/VariableStar.t", Regress: true},
 	{Rel: "regress/WrongSymbol.t", Regress: true},
+	// remaining files of test/
+	{Rel: "Test.t", GoTest: true},
+	{Rel: "TestOptimizer.t", GoTest: true, TomArgs: map[string][]string{"TestOptimizer.t": {"--optimize"}}},
+	{Rel: "TestMatchInference.t", GoTest: true},
+	{Rel: "TestArrayNonLinear.t", GoTest: true},
+	{Rel: "TestArray2.t", GoTest: true},
+	{Rel: "TestListNonLinear.t", GoTest: true},
+	{Rel: "TestList2.t", GoTest: true},
+	{Rel: "TestMatch.t", GoTest: true},
+	{Rel: "TestBuiltin.t", GoTest: true},
+	{Rel: "TestConstraintCombination.t", GoTest: true},
+	{Rel: "TestConstraintCombinationWithSubtype.t", GoTest: true},
+	{Rel: "TestReflectiveStrategy.t", GoTest: true},
+	{Rel: "TomList.t"},
+	{Rel: "cfib1.t", C: true},
+	{Rel: "loulou.t", C: true},
 }
 
 // legacyFails lists the originals (relative to test/) that legacy/
@@ -267,6 +290,11 @@ var legacyFails = map[string]legacyFailure{
 	// test/build.xml's regress target (with --newtyper, without effect)
 	// expects incompatibleTypes, incompatibleTypes, cannotGuessMatchType,
 	// incompatibleTypes (TestNonLinearity.t.nrt).
+	// test/build.xml excludes them ("called with a special option": the
+	// commented-out preset gives them --lazyType, which legacy/'s tom no
+	// longer knows).
+	"Record.t":     recordFailure,
+	"TestRecord.t": recordFailure,
 	"regress/TestNonLinearity.t": {
 		Reason:  "non-regression test of typing errors, but legacy/'s typer crashes (TyperPlugin: Unhandled exception, findOriginTracking: not found: concOption()) with both parsers; a fix of the typer belongs to J4",
 		Default: failsIn{Stage: "tom", Output: []string{"TyperPlugin: Unhandled exception", "findOriginTracking:  not found: concOption()"}},
@@ -287,6 +315,18 @@ type legacyFailure struct {
 type failsIn struct {
 	Stage  string
 	Output []string
+}
+
+// recordFailure is the failure of Record.t and TestRecord.t: the typer
+// (the default, new one) rejects their %op hierarchy of Java classes
+// (BinaryOperator of sort TomBinaryOperator used where TomExp is
+// expected), with both parsers. With --oldtyper, tom accepts them but
+// javac rejects its output (incompatible types: Exp cannot be converted
+// to CstExp, UnaryOperator, BinaryOperator).
+var recordFailure = legacyFailure{
+	Reason:  "the typer rejects the %op hierarchy of Java classes (Incompatible types 'TomBinaryOperator' and 'TomExp' for symbol 'BinaryOperator', Cannot guess the type of 'e1'), with both parsers; with --oldtyper, javac rejects the generated Java (Exp cannot be converted to CstExp); test/build.xml excludes it (its commented-out --lazyType option no longer exists)",
+	Default: failsIn{Stage: "tom", Output: []string{"Incompatible types 'TomBinaryOperator' and 'TomExp' for symbol 'BinaryOperator'"}},
+	NP:      failsIn{Stage: "tom", Output: []string{"Incompatible types 'TomBinaryOperator' and 'TomExp' for symbol 'BinaryOperator'"}},
 }
 
 // ruleFailure is the failure of the %rule tests of rule/.
@@ -527,7 +567,9 @@ func oraclePath(c portCase) string {
 
 // capitalise gives the Go name of a JUnit test: testFoo -> TestFoo, and
 // testfoo -> TestFoo too, since go test only runs the functions whose
-// name continues with an upper case (or a digit) after Test.
+// name continues with an upper case (or a digit) after Test; a JUnit test
+// whose name does not start with test gets the prefix: match4 ->
+// TestMatch4.
 func capitalise(name string) string {
 	if name == "" {
 		return name
@@ -535,7 +577,7 @@ func capitalise(name string) string {
 	if strings.HasPrefix(name, "test") && len(name) > 4 {
 		return "Test" + strings.ToUpper(name[4:5]) + name[5:]
 	}
-	return strings.ToUpper(name[:1]) + name[1:]
+	return "Test" + strings.ToUpper(name[:1]) + name[1:]
 }
 
 // junitListener runs JUnitCore on one class and reports each executed
@@ -697,6 +739,9 @@ func legacyOracle(t *testing.T, c portCase) oracle {
 	if c.Regress {
 		return writeOracle(t, c, regressOracle(t, c))
 	}
+	if c.C {
+		return writeOracle(t, c, cOracle(t, c))
+	}
 	legacy := harness.LegacyDist(t)
 	root := harness.RepoRoot(t)
 	src := filepath.Join(root, "test", c.Rel)
@@ -785,6 +830,42 @@ func writeOracle(t *testing.T, c portCase, o oracle) oracle {
 	return o
 }
 
+// cOracle compiles the C original of a C case with legacy/'s tom -c -np
+// and cc, runs it and records its output and exit status. Since C
+// compilers reject the int/pointer conversions of the C mappings by
+// default nowadays (clang 15+), cc runs with -Wno-int-conversion (and -w:
+// the warnings are not the test's business).
+func cOracle(t *testing.T, c portCase) oracle {
+	t.Helper()
+	cc, err := exec.LookPath("cc")
+	if err != nil {
+		t.Skip("cc not found in PATH")
+	}
+	legacy := harness.LegacyDist(t)
+	root := harness.RepoRoot(t)
+	dir := t.TempDir()
+	if out, err := legacy.Compile(t, filepath.Join(root, "test", c.Rel), dir, append([]string{"-c", "-np"}, c.TomArgs[c.Rel]...)...); err != nil {
+		t.Fatalf("legacy tom -c failed on %s: %v\n%s", c.Rel, err, out)
+	}
+	cFiles, _ := filepath.Glob(filepath.Join(dir, "*.c"))
+	if len(cFiles) == 0 {
+		t.Fatalf("legacy tom -c produced no C file for %s", c.Rel)
+	}
+	prog := filepath.Join(dir, base(c))
+	if out, err := harness.RunIn(dir, nil, cc, append([]string{"-w", "-Wno-int-conversion", "-o", prog}, cFiles...)...); err != nil {
+		t.Fatalf("cc failed: %v\n%s", err, out)
+	}
+	var o oracle
+	sum, err := sourceSHA256(sourcesOf(root, c)...)
+	if err != nil {
+		t.Fatal(err)
+	}
+	o.SourceSHA256 = sum
+	out, err := harness.RunIn(dir, nil, prog)
+	o.Stdout, o.ExitOK = out, err == nil
+	return o
+}
+
 // regressOracle compiles the original of a Regress case with legacy/'s
 // tom and the RegressFormatter, with -np (the parser of the Go target)
 // and with the default parser: tom must reject it, with a non-empty log.
@@ -870,7 +951,13 @@ func junitTestNames(source string) []string {
 	lines := strings.Split(stripComments(source), "\n")
 	for i, line := range lines {
 		s := strings.TrimSpace(line)
-		// a JUnit Theories runner runs the @Theory methods as tests
+		// a JUnit Theories runner runs the @Theory methods as tests; the
+		// annotation may be qualified (@org.junit.Test, test/Test.t)
+		s = strings.TrimPrefix(s, "@org.junit.experimental.theories.")
+		s = strings.TrimPrefix(s, "@org.junit.")
+		if !strings.HasPrefix(s, "@") {
+			s = "@" + s
+		}
 		if s != "@Test" && !strings.HasPrefix(s, "@Test(") && s != "@Theory" && !strings.HasPrefix(s, "@Theory(") {
 			continue
 		}
@@ -1330,6 +1417,9 @@ func TestCompareWithOracle(t *testing.T) {
 	if got := junitTestNames("@Theory\npublic void testT(W w) {}\n@DataPoints\npublic static W[] data() {}\n"); strings.Join(got, ",") != "testT" {
 		t.Errorf("junitTestNames(@Theory) = %v", got)
 	}
+	if got := junitTestNames("@org.junit.Test\npublic void test1() {}\n"); strings.Join(got, ",") != "test1" {
+		t.Errorf("junitTestNames(@org.junit.Test) = %v", got)
+	}
 }
 
 func writeTemp(t *testing.T, content string) string {
@@ -1599,7 +1689,7 @@ func checkFailureOutput(t *testing.T, stage, out string, want []string) {
 func TestCapitalise(t *testing.T) {
 	for in, want := range map[string]string{
 		"testFoo": "TestFoo", "testfoo": "TestFoo", "test1": "Test1",
-		"testcountAll1": "TestCountAll1", "foo": "Foo",
+		"testcountAll1": "TestCountAll1", "foo": "TestFoo", "match4": "TestMatch4",
 	} {
 		if got := capitalise(in); got != want {
 			t.Errorf("capitalise(%q) = %q, want %q", in, got, want)

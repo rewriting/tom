@@ -1,0 +1,32 @@
+{
+  "passed": [
+    "Test1",
+    "Test2",
+    "Test3",
+    "Test4",
+    "TestMatchString1",
+    "TestMatchString2",
+    "TestMatchString3",
+    "TestMatchString4",
+    "TestMatchStringDefault",
+    "TestMatchStringE1",
+    "TestMatchStringE2",
+    "TestMatchStringEdefault",
+    "TestDouble1",
+    "TestDouble2",
+    "TestDoubleDefault",
+    "TestDoubleE1",
+    "TestDoubleE2",
+    "TestDoubleEdefault",
+    "TestChar1",
+    "TestChar2",
+    "TestCharDefault",
+    "TestCharE1",
+    "TestCharE2",
+    "TestCharEdefault",
+    "TestInt"
+  ],
+  "stdout": "",
+  "exitOK": true,
+  "source_sha256": "7a3654791617ce9cec1a51da8682fac403be8b2dc61d00feccbd0434978a0b36"
+}
