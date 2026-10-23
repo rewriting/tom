@@ -77,6 +77,23 @@ autonomes), comparés à ceux de Java Gom (`legacy/`) :
   une méthode qu'un `block` de sorte déclare sur chaque alternative de
   la sorte est ajoutée à l'interface de la sorte (Java : méthode de la
   classe de la sorte). C'est le mode des ADT du compilateur.
+  `--gohooks` est propre à gomgo (Java Gom ne le connaît pas), refuse
+  les règles, renomme les champs réservés (slot `SymbolName` devenu
+  `SymbolName_`, `String`/`Hash` suffixés par `_`) et impose des
+  paramètres de hook qui ne sont pas des mots-clés Go (`tp` au lieu de
+  `type` dans le hook `Cast`).
+- **Règles `rules()` des ADT du compilateur.** Dans les copies Go, les
+  règles des modules Java sont des hooks `make` Go : seul le motif de
+  tête est réécrit, et les arguments sont déjà construits quand
+  `Make<Op>` s'exécute (`InstructionToCode(CodeToInstruction(t))` → `t`,
+  etc., épinglé par `test/go/adt/rules_test.go`). Rien de mécanique ne
+  lie un hook Go à son hook Java : `TestSignatureParity` ignore les
+  hooks ; le lien est le commentaire `// Java:` dans le `.gom`.
+- **Noms Go des opérateurs homonymes.** Quand deux opérateurs ont le même
+  nom dans des sortes différentes, les identifiants Go sont suffixés par
+  la sorte (nspk : `MakeAAgentId`/`MakeAAddress`) ; Java Gom n'a jamais
+  de collision car il émet une classe par opérateur dans le paquetage de
+  chaque sorte.
 - **Ordre des hooks d'un opérateur variadique.** Java Gom les exécute
   dans l'ordre de déclaration ; Go exécute la théorie avant les hooks
   `make_insert`/`make_empty` et les règles, et refuse un module qui
@@ -139,6 +156,17 @@ l'amorce Go :
   des ADT sont dans `test/go/adt`.
 - La dist (`<dist>/lib/go/tom`) ne contient que le runtime
   (`library/**`, `go.mod`) ; gomgo se construit depuis `src/go/tom`.
+- **Ce que prouve le point fixe.** Juste après `promoteGo`, gomgo de
+  l'amorce et gomgo de `src` sont le même code : le point fixe est
+  trivialement vrai tant que gomgo ne change pas. Pour l'ADT du
+  compilateur (`engine/adt`), il montre seulement que les deux gomgo
+  génèrent le même code (gomgo n'est pas construit sur cet ADT) ; la
+  preuve que ce code fonctionne est `test/go/adt` (plus `go vet`).
+- **Promotion en deux temps.** L'amorce de départ (instantané) ne savait
+  pas générer le `gom/adt` à cellules cons : une promotion était
+  nécessaire. Conséquence : les commits `ac87b32fd` et `ab08f373a` ne se
+  construisent pas seuls et `32915077a` est le premier vert (pas de
+  bisect à travers eux).
 
 ## Limites connues de `-go` (parser îlot `-np`)
 

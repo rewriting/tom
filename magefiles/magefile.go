@@ -128,6 +128,12 @@ const stableGoDir = "stable/go/tom"
 // byte-identical to stage 1 (fixpoint: the generated code works in gomgo
 // itself). After a deliberate change of gomgo or of the .gom files that
 // changes the generated code, run promoteGo, then bootstrap again.
+//
+// Caveats: right after promoteGo the amorce gomgo and the src gomgo are
+// the same code, so the fixpoint is trivially true until gomgo changes;
+// for the engine ADT it only shows that both gomgo generate the same code
+// (gomgo is not built on the engine ADT): the proof that the generated
+// code works is test/go/adt (and go vet).
 func Bootstrap() error {
 	tmp, err := os.MkdirTemp("", "tom-bootstrap-")
 	if err != nil {
