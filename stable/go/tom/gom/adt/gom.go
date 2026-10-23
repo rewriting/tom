@@ -5,6 +5,10 @@ import (
 	"fmt"
 	"strings"
 
+	"io"
+	"sync/atomic"
+
+	"tom/library/aterm"
 	"tom/library/sharedobjects"
 	sl "tom/library/sl"
 )
@@ -13,11 +17,71 @@ import (
 var _ = fmt.Sprintf
 var _ = strings.Join
 var _ sl.Strategy = nil
+var _ = io.EOF
+var _ = aterm.GetInstance
+var _ atomic.Bool
 
 // Option is the Go interface backing the Gom sort Option.
 type Option interface {
 	sharedobjects.Term
 	isOption()
+	// Java Gom API (see the package's generated methods)
+	SymbolName() string
+	IsOrigin() bool
+	IsConsOptionList() bool
+	IsEmptyOptionList() bool
+	GetHeadOptionList() Option
+	GetTailOptionList() Option
+	IsHasTomCode() bool
+	IsDetails() bool
+	GetLine() int64
+	GetValue() bool
+	GetComments() string
+	Length() int
+	Reverse() Option
+	CompareTo(o any) int
+	CompareToLPO(o any) int
+	ToATerm() aterm.ATerm
+}
+
+// OptionFromTerm is Java Gom's Option.fromTerm(trm).
+func OptionFromTerm(trm aterm.ATerm) Option { return OptionFromTermConv(trm, aterm.IdConverter{}) }
+
+// OptionFromTermConv is Java Gom's Option.fromTerm(trm, atConv): the term of
+// the first operator of the sort that converts the ATerm; it panics
+// (IllegalArgumentException) when there is none.
+func OptionFromTermConv(trm aterm.ATerm, conv aterm.ATermConverter) Option {
+	converted := conv.Convert(trm)
+	var results []Option
+	if r, ok := fromTermOriginOption(converted, conv); ok {
+		results = append(results, r)
+	}
+	if r, ok := fromTermHasTomCodeOption(converted, conv); ok {
+		results = append(results, r)
+	}
+	if r, ok := fromTermDetailsOption(converted, conv); ok {
+		results = append(results, r)
+	}
+	if r, ok := fromTermOptionListOption(converted, conv); ok {
+		results = append(results, r)
+	}
+	if len(results) == 0 {
+		panic(&aterm.GomError{Msg: fmt.Sprintf("%v is not a Option", trm), IllegalArgument: true})
+	}
+	return results[0]
+}
+
+// OptionFromString is Java Gom's Option.fromString(s).
+func OptionFromString(s string) Option { return OptionFromTerm(aterm.GetInstance().Parse(s)) }
+
+// OptionFromStream is Java Gom's Option.fromStream(stream) (an IOException is
+// the error).
+func OptionFromStream(stream io.Reader) (Option, error) {
+	at, err := aterm.GetInstance().ReadFromTextFile(stream)
+	if err != nil {
+		return nil, err
+	}
+	return OptionFromTerm(at), nil
 }
 
 // OriginOption is the term type for the alternative `Origin(...)` of sort Option.
@@ -47,7 +111,7 @@ func (t *OriginOption) Duplicate() sharedobjects.Term {
 }
 
 func (t *OriginOption) String() string {
-	return fmt.Sprintf("Origin(%v)", t.Line)
+	return "Origin(" + fmt.Sprint(t.Line) + ")"
 }
 
 func (t *OriginOption) ChildCount() int { return 1 }
@@ -176,10 +240,105 @@ func (s *VisitOrigin) VisitWith(env *sl.Environment, intro sl.Introspector) (any
 
 var _ sl.Strategy = (*VisitOrigin)(nil)
 
-// OptionListOption is the term type for the alternative `OptionList(...)` of sort Option.
+func (t *OriginOption) SymbolName() string { return "Origin" }
+
+func (t *OriginOption) IsOrigin() bool          { return true }
+func (t *OriginOption) IsConsOptionList() bool  { return false }
+func (t *OriginOption) IsEmptyOptionList() bool { return false }
+func (t *OriginOption) IsHasTomCode() bool      { return false }
+func (t *OriginOption) IsDetails() bool         { return false }
+
+func (t *OriginOption) GetLine() int64 { return t.Line }
+func (t *OriginOption) GetValue() bool {
+	panic(&aterm.GomError{Msg: "This Option has no Value"})
+}
+func (t *OriginOption) GetComments() string {
+	panic(&aterm.GomError{Msg: "This Option has no Comments"})
+}
+func (t *OriginOption) GetHeadOptionList() Option {
+	panic(&aterm.GomError{Msg: "This Option has no HeadOptionList"})
+}
+func (t *OriginOption) GetTailOptionList() Option {
+	panic(&aterm.GomError{Msg: "This Option has no TailOptionList"})
+}
+
+func (t *OriginOption) Length() int {
+	panic(&aterm.GomError{Msg: "This Option.Origin is not a list", IllegalArgument: true})
+}
+
+func (t *OriginOption) Reverse() Option {
+	panic(&aterm.GomError{Msg: "This Option.Origin is not a list", IllegalArgument: true})
+}
+
+func (t *OriginOption) CompareTo(o any) int {
+	ao := o.(Option)
+	if ao == Option(t) {
+		return 0
+	}
+	if t.Hash() != ao.Hash() {
+		if t.Hash() < ao.Hash() {
+			return -1
+		}
+		return 1
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	tco := ao.(*OriginOption)
+	if t.Line != tco.Line {
+		if t.Line < tco.Line {
+			return -1
+		}
+		return 1
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+func (t *OriginOption) CompareToLPO(o any) int {
+	ao := o.(Option)
+	if ao == Option(t) {
+		return 0
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	tco := ao.(*OriginOption)
+	if t.Line != tco.Line {
+		if t.Line < tco.Line {
+			return -1
+		}
+		return 1
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+// ToATerm is the ATerm of the term: an application of Origin.
+func (t *OriginOption) ToATerm() aterm.ATerm {
+	f := aterm.GetInstance()
+	return f.MakeAppl(f.MakeAFun("Origin", 1, false), aterm.MakeGomInt(t.Line))
+}
+
+// fromTermOriginOption is Java Gom's Origin.fromTerm: an unquoted application of
+// Origin whose arguments are convertible (as in Java, the arity is not
+// checked: a missing argument is an index out of range).
+func fromTermOriginOption(trm aterm.ATerm, conv aterm.ATermConverter) (Option, bool) {
+	trm = conv.Convert(trm)
+	if appl, ok := trm.(*aterm.ATermAppl); ok && appl.GetName() == "Origin" && !appl.GetAFun().IsQuoted() {
+		return MakeOrigin(aterm.GomInt(appl.GetArgument(0), conv)), true
+	}
+	return nil, false
+}
+
+// OptionListOption is the term type of the variadic operator `OptionList(...)` of sort Option
+// (Java's abstract class OptionList): a maximally-shared cons cell (Java's
+// ConsOptionList: a head and a tail) or the empty list (Java's EmptyOptionList).
 type OptionListOption struct {
-	Slots []Option
+	head  Option
+	tail  Option
+	empty bool
 	hash  uint32
+	// children caches the Visitable children (Java's children field)
+	children atomic.Pointer[[]any]
 }
 
 func (*OptionListOption) isOption() {}
@@ -188,51 +347,37 @@ func (t *OptionListOption) Hash() uint32 { return t.hash }
 
 func (t *OptionListOption) Equivalent(other sharedobjects.Term) bool {
 	o, ok := other.(*OptionListOption)
-	if !ok {
-		return false
-	}
-	if len(t.Slots) != len(o.Slots) {
-		return false
-	}
-	for i := range t.Slots {
-		if t.Slots[i] != o.Slots[i] {
-			return false
-		}
-	}
-	return true
+	return ok && t.empty == o.empty && t.head == o.head && t.tail == o.tail
 }
 
 func (t *OptionListOption) Duplicate() sharedobjects.Term {
-	cp := append([]Option(nil), t.Slots...)
-	return &OptionListOption{Slots: cp, hash: t.hash}
+	return &OptionListOption{head: t.head, tail: t.tail, empty: t.empty, hash: t.hash}
 }
 
-func (t *OptionListOption) String() string {
-	parts := make([]string, len(t.Slots))
-	for i, v := range t.Slots {
-		parts[i] = fmt.Sprintf("%v", v)
+// elements returns the cached Visitable children of the list: its
+// elements (Java's getChildren, i.e. toArray).
+func (t *OptionListOption) elements() []any {
+	if c := t.children.Load(); c != nil {
+		return *c
 	}
-	return "OptionList" + "(" + strings.Join(parts, ",") + ")"
+	c := t.ToArray()
+	t.children.Store(&c)
+	return c
 }
 
-func (t *OptionListOption) ChildCount() int { return len(t.Slots) }
+func (t *OptionListOption) ChildCount() int { return len(t.elements()) }
 
-func (t *OptionListOption) ChildAt(i int) any { return t.Slots[i] }
+func (t *OptionListOption) ChildAt(i int) any { return t.elements()[i] }
 
 func (t *OptionListOption) SetChildAt(i int, child any) any {
-	dup := append([]Option(nil), t.Slots...)
-	dup[i] = child.(Option)
-	return MakeOptionList(dup...)
+	dup := t.Children()
+	dup[i] = child
+	return t.SetChildren(dup)
 }
 
-func (t *OptionListOption) Children() []any {
-	out := make([]any, len(t.Slots))
-	for i, v := range t.Slots {
-		out[i] = v
-	}
-	return out
-}
+func (t *OptionListOption) Children() []any { return append([]any(nil), t.elements()...) }
 
+// SetChildren is Java's setChildren of a list: OptionListFromArray(children).
 func (t *OptionListOption) SetChildren(children []any) any {
 	args := make([]Option, len(children))
 	for i, c := range children {
@@ -241,15 +386,87 @@ func (t *OptionListOption) SetChildren(children []any) any {
 	return MakeOptionList(args...)
 }
 
-// MakeOptionList builds the canonical (shared) OptionList term.
-func MakeOptionList(args ...Option) Option {
-	hashes := make([]uint32, 0, len(args))
-	for _, a := range args {
-		hashes = append(hashes, a.Hash())
+func (t *OptionListOption) String() string {
+	var b strings.Builder
+	b.WriteString("OptionList(")
+	var cur Option = t
+	for {
+		c, ok := cur.(*OptionListOption)
+		if !ok {
+			b.WriteString("," + fmt.Sprint(cur))
+			break
+		}
+		if c.empty {
+			break
+		}
+		if c != t {
+			b.WriteString(",")
+		}
+		b.WriteString(fmt.Sprint(c.head))
+		cur = c.tail
 	}
-	proto := &OptionListOption{Slots: args, hash: sharedobjects.MixSymbol(sharedobjects.StringHash("OptionList"), hashes)}
+	b.WriteString(")")
+	return b.String()
+}
+
+// RealMakeConsOptionList is Java Gom's ConsOptionList.realMake: the shared cell of head
+// and tail, without hook.
+func RealMakeConsOptionList(head Option, tail Option) Option {
+	proto := &OptionListOption{head: head, tail: tail, hash: sharedobjects.MixSymbol(sharedobjects.StringHash("ConsOptionList"), []uint32{head.Hash(), tail.Hash()})}
 	return factory.Build(proto).(*OptionListOption)
 }
+
+// realMakeEmptyOptionList is Java Gom's EmptyOptionList.realMake: the shared empty list,
+// without hook.
+func realMakeEmptyOptionList() Option {
+	proto := &OptionListOption{empty: true, hash: sharedobjects.MixSymbol(sharedobjects.StringHash("EmptyOptionList"), nil)}
+	return factory.Build(proto).(*OptionListOption)
+}
+
+// RawOptionList builds the OptionList list holding exactly args, without construction
+// hook.
+func RawOptionList(args ...Option) Option {
+	l := realMakeEmptyOptionList()
+	for i := len(args) - 1; i >= 0; i-- {
+		l = RealMakeConsOptionList(args[i], l)
+	}
+	return l
+}
+
+// EmptyOptionList is Java Gom's EmptyOptionList.make(): the empty OptionList list, after the
+// construction hooks.
+func EmptyOptionList() Option {
+	return realMakeEmptyOptionList()
+}
+
+// ConsOptionList is Java Gom's ConsOptionList.make(head, tail): head inserted in front of
+// tail, after the construction hooks (theory "FL" first).
+func ConsOptionList(head Option, tail Option) Option {
+	// FL: flattened list
+	if head.IsEmptyOptionList() {
+		return tail
+	}
+	if head.IsConsOptionList() {
+		return ConsOptionList(head.GetHeadOptionList(), ConsOptionList(head.GetTailOptionList(), tail))
+	}
+	if !tail.IsConsOptionList() && !tail.IsEmptyOptionList() {
+		return ConsOptionList(head, ConsOptionList(tail, EmptyOptionList()))
+	}
+	return RealMakeConsOptionList(head, tail)
+}
+
+// MakeOptionList builds the list of args as Tom's `OptionList(args…)` does: from EmptyOptionList,
+// by ConsOptionList, through the construction hooks (Java's OptionList.fromArray).
+func MakeOptionList(args ...Option) Option {
+	var l Option = EmptyOptionList()
+	for i := len(args) - 1; i >= 0; i-- {
+		l = ConsOptionList(args[i], l)
+	}
+	return l
+}
+
+// OptionListFromArray is Java Gom's OptionList.fromArray(array).
+func OptionListFromArray(array []Option) Option { return MakeOptionList(array...) }
 
 // IsOptionList is the `Is_OptionList` predicate strategy: succeeds (returns subject
 // unchanged) when subject has the `OptionList` shape, otherwise fails with
@@ -344,6 +561,243 @@ func (s *VisitOptionList) VisitWith(env *sl.Environment, intro sl.Introspector) 
 
 var _ sl.Strategy = (*VisitOptionList)(nil)
 
+// SymbolName is the symbol of the Java term: ConsOptionList or EmptyOptionList.
+func (t *OptionListOption) SymbolName() string {
+	if t.empty {
+		return "EmptyOptionList"
+	}
+	return "ConsOptionList"
+}
+
+func (t *OptionListOption) IsOrigin() bool          { return false }
+func (t *OptionListOption) IsConsOptionList() bool  { return !t.empty }
+func (t *OptionListOption) IsEmptyOptionList() bool { return t.empty }
+func (t *OptionListOption) IsHasTomCode() bool      { return false }
+func (t *OptionListOption) IsDetails() bool         { return false }
+
+func (t *OptionListOption) GetLine() int64 {
+	panic(&aterm.GomError{Msg: "This Option has no Line"})
+}
+func (t *OptionListOption) GetValue() bool {
+	panic(&aterm.GomError{Msg: "This Option has no Value"})
+}
+func (t *OptionListOption) GetComments() string {
+	panic(&aterm.GomError{Msg: "This Option has no Comments"})
+}
+func (t *OptionListOption) GetHeadOptionList() Option {
+	if t.empty {
+		panic(&aterm.GomError{Msg: "This Option has no HeadOptionList"})
+	}
+	return t.head
+}
+func (t *OptionListOption) GetTailOptionList() Option {
+	if t.empty {
+		panic(&aterm.GomError{Msg: "This Option has no TailOptionList"})
+	}
+	return t.tail
+}
+
+// Length is Java's length(): the number of elements of the list (a
+// tail that is not a OptionList list counts as one element).
+func (t *OptionListOption) Length() int {
+	res := 0
+	var tl Option = t
+	for {
+		c, ok := tl.(*OptionListOption)
+		if !ok || c.empty {
+			return res
+		}
+		res++
+		tl = c.tail
+		if _, ok := tl.(*OptionListOption); !ok {
+			res++
+		}
+	}
+}
+
+// ToArray returns the elements of the list (Java's Object[] toArray()),
+// ending with its tail when that is not a OptionList list.
+func (t *OptionListOption) ToArray() []any {
+	out := make([]any, 0, t.Length())
+	var cur Option = t
+	for {
+		c, ok := cur.(*OptionListOption)
+		if !ok || c.empty {
+			break
+		}
+		out = append(out, c.head)
+		cur = c.tail
+	}
+	if c, ok := cur.(*OptionListOption); !ok || !c.empty {
+		out = append(out, cur)
+	}
+	return out
+}
+
+// Reverse is Java's reverse(): the reversed list, built by ConsOptionList
+// (through the hooks).
+func (t *OptionListOption) Reverse() Option {
+	if t.empty {
+		return t
+	}
+	var cur Option = t
+	var rev Option = EmptyOptionList()
+	for {
+		c, ok := cur.(*OptionListOption)
+		if !ok || c.empty {
+			break
+		}
+		rev = ConsOptionList(c.head, rev)
+		cur = c.tail
+	}
+	if c, ok := cur.(*OptionListOption); !ok || !c.empty {
+		rev = ConsOptionList(cur, rev)
+	}
+	return rev
+}
+
+// Append is Java's append(element): the list with element added at its
+// end, built by ConsOptionList (through the hooks).
+func (t *OptionListOption) Append(element Option) Option {
+	var heads []Option
+	var cur Option = t
+	for {
+		c, ok := cur.(*OptionListOption)
+		if !ok || c.empty {
+			break
+		}
+		heads = append(heads, c.head)
+		cur = c.tail
+	}
+	var res Option
+	if c, ok := cur.(*OptionListOption); ok && c.empty {
+		res = ConsOptionList(element, cur)
+	} else {
+		res = ConsOptionList(cur, element)
+	}
+	for i := len(heads) - 1; i >= 0; i-- {
+		res = ConsOptionList(heads[i], res)
+	}
+	return res
+}
+
+func (t *OptionListOption) CompareTo(o any) int {
+	for {
+		ao := o.(Option)
+		if ao == Option(t) {
+			return 0
+		}
+		if t.Hash() != ao.Hash() {
+			if t.Hash() < ao.Hash() {
+				return -1
+			}
+			return 1
+		}
+		if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+			return c
+		}
+		tco := ao.(*OptionListOption)
+		if t.empty {
+			panic(&aterm.GomError{Msg: "Unable to compare"})
+		}
+		if c := t.head.CompareTo(tco.head); c != 0 {
+			return c
+		}
+		next, ok := t.tail.(*OptionListOption)
+		if !ok {
+			if c := t.tail.CompareTo(tco.tail); c != 0 {
+				return c
+			}
+			panic(&aterm.GomError{Msg: "Unable to compare"})
+		}
+		t, o = next, tco.tail
+	}
+}
+
+func (t *OptionListOption) CompareToLPO(o any) int {
+	for {
+		ao := o.(Option)
+		if ao == Option(t) {
+			return 0
+		}
+		if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+			return c
+		}
+		tco := ao.(*OptionListOption)
+		if t.empty {
+			panic(&aterm.GomError{Msg: "Unable to compare"})
+		}
+		if c := t.head.CompareToLPO(tco.head); c != 0 {
+			return c
+		}
+		next, ok := t.tail.(*OptionListOption)
+		if !ok {
+			if c := t.tail.CompareToLPO(tco.tail); c != 0 {
+				return c
+			}
+			panic(&aterm.GomError{Msg: "Unable to compare"})
+		}
+		t, o = next, tco.tail
+	}
+}
+
+// ToATerm is Java's toATerm: the list of the elements, ending with the
+// ATerm list of the tail (a tail that is not a list is Java's
+// ClassCastException).
+func (t *OptionListOption) ToATerm() aterm.ATerm {
+	f := aterm.GetInstance()
+	var heads []Option
+	var cur Option = t
+	for {
+		c, ok := cur.(*OptionListOption)
+		if !ok || c.empty {
+			break
+		}
+		heads = append(heads, c.head)
+		cur = c.tail
+	}
+	l := f.MakeListEmpty()
+	if c, ok := cur.(*OptionListOption); !ok || !c.empty {
+		tl, isList := cur.ToATerm().(*aterm.ATermList)
+		if !isList {
+			panic(&aterm.GomError{Msg: fmt.Sprintf("ClassCastException: the ATerm of %v is not an ATermList", cur)})
+		}
+		l = tl
+	}
+	for i := len(heads) - 1; i >= 0; i-- {
+		l = f.MakeList(heads[i].ToATerm(), l)
+	}
+	return l
+}
+
+// fromTermOptionListOption is Java Gom's OptionList.fromTerm: an application of OptionList, or a
+// list (of ToATerm), of convertible elements.
+func fromTermOptionListOption(trm aterm.ATerm, conv aterm.ATermConverter) (res Option, ok bool) {
+	trm = conv.Convert(trm)
+	if appl, isAppl := trm.(*aterm.ATermAppl); isAppl && appl.GetName() == "OptionList" {
+		elems := make([]Option, appl.GetArity())
+		for i, a := range appl.GetArguments() {
+			elems[i] = OptionFromTermConv(a, conv)
+		}
+		return MakeOptionList(elems...), true
+	}
+	if list, isList := trm.(*aterm.ATermList); isList {
+		// an element that cannot be converted: not a OptionList (Java returns null)
+		defer func() {
+			if recover() != nil {
+				res, ok = nil, false
+			}
+		}()
+		var elems []Option
+		for !list.IsEmpty() {
+			elems = append(elems, OptionFromTermConv(list.GetFirst(), conv))
+			list = list.GetNext()
+		}
+		return MakeOptionList(elems...), true
+	}
+	return nil, false
+}
+
 // HasTomCodeOption is the term type for the alternative `HasTomCode(...)` of sort Option.
 type HasTomCodeOption struct {
 	Value bool
@@ -371,7 +825,12 @@ func (t *HasTomCodeOption) Duplicate() sharedobjects.Term {
 }
 
 func (t *HasTomCodeOption) String() string {
-	return fmt.Sprintf("HasTomCode(%v)", t.Value)
+	return "HasTomCode(" + func() string {
+		if t.Value {
+			return "1"
+		}
+		return "0"
+	}() + ")"
 }
 
 func (t *HasTomCodeOption) ChildCount() int { return 1 }
@@ -500,6 +959,95 @@ func (s *VisitHasTomCode) VisitWith(env *sl.Environment, intro sl.Introspector) 
 
 var _ sl.Strategy = (*VisitHasTomCode)(nil)
 
+func (t *HasTomCodeOption) SymbolName() string { return "HasTomCode" }
+
+func (t *HasTomCodeOption) IsOrigin() bool          { return false }
+func (t *HasTomCodeOption) IsConsOptionList() bool  { return false }
+func (t *HasTomCodeOption) IsEmptyOptionList() bool { return false }
+func (t *HasTomCodeOption) IsHasTomCode() bool      { return true }
+func (t *HasTomCodeOption) IsDetails() bool         { return false }
+
+func (t *HasTomCodeOption) GetLine() int64 {
+	panic(&aterm.GomError{Msg: "This Option has no Line"})
+}
+func (t *HasTomCodeOption) GetValue() bool { return t.Value }
+func (t *HasTomCodeOption) GetComments() string {
+	panic(&aterm.GomError{Msg: "This Option has no Comments"})
+}
+func (t *HasTomCodeOption) GetHeadOptionList() Option {
+	panic(&aterm.GomError{Msg: "This Option has no HeadOptionList"})
+}
+func (t *HasTomCodeOption) GetTailOptionList() Option {
+	panic(&aterm.GomError{Msg: "This Option has no TailOptionList"})
+}
+
+func (t *HasTomCodeOption) Length() int {
+	panic(&aterm.GomError{Msg: "This Option.HasTomCode is not a list", IllegalArgument: true})
+}
+
+func (t *HasTomCodeOption) Reverse() Option {
+	panic(&aterm.GomError{Msg: "This Option.HasTomCode is not a list", IllegalArgument: true})
+}
+
+func (t *HasTomCodeOption) CompareTo(o any) int {
+	ao := o.(Option)
+	if ao == Option(t) {
+		return 0
+	}
+	if t.Hash() != ao.Hash() {
+		if t.Hash() < ao.Hash() {
+			return -1
+		}
+		return 1
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	tco := ao.(*HasTomCodeOption)
+	if t.Value != tco.Value {
+		if !t.Value && tco.Value {
+			return -1
+		}
+		return 1
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+func (t *HasTomCodeOption) CompareToLPO(o any) int {
+	ao := o.(Option)
+	if ao == Option(t) {
+		return 0
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	tco := ao.(*HasTomCodeOption)
+	if t.Value != tco.Value {
+		if !t.Value && tco.Value {
+			return -1
+		}
+		return 1
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+// ToATerm is the ATerm of the term: an application of HasTomCode.
+func (t *HasTomCodeOption) ToATerm() aterm.ATerm {
+	f := aterm.GetInstance()
+	return f.MakeAppl(f.MakeAFun("HasTomCode", 1, false), aterm.MakeGomBoolean(t.Value))
+}
+
+// fromTermHasTomCodeOption is Java Gom's HasTomCode.fromTerm: an unquoted application of
+// HasTomCode whose arguments are convertible (as in Java, the arity is not
+// checked: a missing argument is an index out of range).
+func fromTermHasTomCodeOption(trm aterm.ATerm, conv aterm.ATermConverter) (Option, bool) {
+	trm = conv.Convert(trm)
+	if appl, ok := trm.(*aterm.ATermAppl); ok && appl.GetName() == "HasTomCode" && !appl.GetAFun().IsQuoted() {
+		return MakeHasTomCode(aterm.GomBoolean(appl.GetArgument(0), conv)), true
+	}
+	return nil, false
+}
+
 // DetailsOption is the term type for the alternative `Details(...)` of sort Option.
 type DetailsOption struct {
 	Comments string
@@ -527,7 +1075,7 @@ func (t *DetailsOption) Duplicate() sharedobjects.Term {
 }
 
 func (t *DetailsOption) String() string {
-	return fmt.Sprintf("Details(%s)", sharedobjects.JavaEscape(t.Comments))
+	return "Details(" + sharedobjects.JavaEscape(t.Comments) + ")"
 }
 
 func (t *DetailsOption) ChildCount() int { return 1 }
@@ -656,10 +1204,136 @@ func (s *VisitDetails) VisitWith(env *sl.Environment, intro sl.Introspector) (an
 
 var _ sl.Strategy = (*VisitDetails)(nil)
 
+func (t *DetailsOption) SymbolName() string { return "Details" }
+
+func (t *DetailsOption) IsOrigin() bool          { return false }
+func (t *DetailsOption) IsConsOptionList() bool  { return false }
+func (t *DetailsOption) IsEmptyOptionList() bool { return false }
+func (t *DetailsOption) IsHasTomCode() bool      { return false }
+func (t *DetailsOption) IsDetails() bool         { return true }
+
+func (t *DetailsOption) GetLine() int64 {
+	panic(&aterm.GomError{Msg: "This Option has no Line"})
+}
+func (t *DetailsOption) GetValue() bool {
+	panic(&aterm.GomError{Msg: "This Option has no Value"})
+}
+func (t *DetailsOption) GetComments() string { return t.Comments }
+func (t *DetailsOption) GetHeadOptionList() Option {
+	panic(&aterm.GomError{Msg: "This Option has no HeadOptionList"})
+}
+func (t *DetailsOption) GetTailOptionList() Option {
+	panic(&aterm.GomError{Msg: "This Option has no TailOptionList"})
+}
+
+func (t *DetailsOption) Length() int {
+	panic(&aterm.GomError{Msg: "This Option.Details is not a list", IllegalArgument: true})
+}
+
+func (t *DetailsOption) Reverse() Option {
+	panic(&aterm.GomError{Msg: "This Option.Details is not a list", IllegalArgument: true})
+}
+
+func (t *DetailsOption) CompareTo(o any) int {
+	ao := o.(Option)
+	if ao == Option(t) {
+		return 0
+	}
+	if t.Hash() != ao.Hash() {
+		if t.Hash() < ao.Hash() {
+			return -1
+		}
+		return 1
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	tco := ao.(*DetailsOption)
+	if c := strings.Compare(t.Comments, tco.Comments); c != 0 {
+		return c
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+func (t *DetailsOption) CompareToLPO(o any) int {
+	ao := o.(Option)
+	if ao == Option(t) {
+		return 0
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	tco := ao.(*DetailsOption)
+	if c := strings.Compare(t.Comments, tco.Comments); c != 0 {
+		return c
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+// ToATerm is the ATerm of the term: an application of Details.
+func (t *DetailsOption) ToATerm() aterm.ATerm {
+	f := aterm.GetInstance()
+	return f.MakeAppl(f.MakeAFun("Details", 1, false), aterm.MakeGomString(t.Comments))
+}
+
+// fromTermDetailsOption is Java Gom's Details.fromTerm: an unquoted application of
+// Details whose arguments are convertible (as in Java, the arity is not
+// checked: a missing argument is an index out of range).
+func fromTermDetailsOption(trm aterm.ATerm, conv aterm.ATermConverter) (Option, bool) {
+	trm = conv.Convert(trm)
+	if appl, ok := trm.(*aterm.ATermAppl); ok && appl.GetName() == "Details" && !appl.GetAFun().IsQuoted() {
+		return MakeDetails(aterm.GomString(appl.GetArgument(0), conv)), true
+	}
+	return nil, false
+}
+
 // GomModule is the Go interface backing the Gom sort GomModule.
 type GomModule interface {
 	sharedobjects.Term
 	isGomModule()
+	// Java Gom API (see the package's generated methods)
+	SymbolName() string
+	IsGomModule() bool
+	GetModuleName() GomModuleName
+	GetSectionList() SectionList
+	Length() int
+	Reverse() GomModule
+	CompareTo(o any) int
+	CompareToLPO(o any) int
+	ToATerm() aterm.ATerm
+}
+
+// GomModuleFromTerm is Java Gom's GomModule.fromTerm(trm).
+func GomModuleFromTerm(trm aterm.ATerm) GomModule {
+	return GomModuleFromTermConv(trm, aterm.IdConverter{})
+}
+
+// GomModuleFromTermConv is Java Gom's GomModule.fromTerm(trm, atConv): the term of
+// the first operator of the sort that converts the ATerm; it panics
+// (IllegalArgumentException) when there is none.
+func GomModuleFromTermConv(trm aterm.ATerm, conv aterm.ATermConverter) GomModule {
+	converted := conv.Convert(trm)
+	var results []GomModule
+	if r, ok := fromTermGomModuleGomModule(converted, conv); ok {
+		results = append(results, r)
+	}
+	if len(results) == 0 {
+		panic(&aterm.GomError{Msg: fmt.Sprintf("%v is not a GomModule", trm), IllegalArgument: true})
+	}
+	return results[0]
+}
+
+// GomModuleFromString is Java Gom's GomModule.fromString(s).
+func GomModuleFromString(s string) GomModule { return GomModuleFromTerm(aterm.GetInstance().Parse(s)) }
+
+// GomModuleFromStream is Java Gom's GomModule.fromStream(stream) (an IOException is
+// the error).
+func GomModuleFromStream(stream io.Reader) (GomModule, error) {
+	at, err := aterm.GetInstance().ReadFromTextFile(stream)
+	if err != nil {
+		return nil, err
+	}
+	return GomModuleFromTerm(at), nil
 }
 
 // GomModuleGomModule is the term type for the alternative `GomModule(...)` of sort GomModule.
@@ -693,7 +1367,7 @@ func (t *GomModuleGomModule) Duplicate() sharedobjects.Term {
 }
 
 func (t *GomModuleGomModule) String() string {
-	return fmt.Sprintf("GomModule(%v,%v)", t.ModuleName, t.SectionList)
+	return "GomModule(" + fmt.Sprint(t.ModuleName) + "," + fmt.Sprint(t.SectionList) + ")"
 }
 
 func (t *GomModuleGomModule) ChildCount() int { return 2 }
@@ -826,16 +1500,142 @@ func (s *VisitGomModule) VisitWith(env *sl.Environment, intro sl.Introspector) (
 
 var _ sl.Strategy = (*VisitGomModule)(nil)
 
+func (t *GomModuleGomModule) SymbolName() string { return "GomModule" }
+
+func (t *GomModuleGomModule) IsGomModule() bool { return true }
+
+func (t *GomModuleGomModule) GetModuleName() GomModuleName { return t.ModuleName }
+func (t *GomModuleGomModule) GetSectionList() SectionList  { return t.SectionList }
+
+func (t *GomModuleGomModule) Length() int {
+	panic(&aterm.GomError{Msg: "This GomModule.GomModule is not a list", IllegalArgument: true})
+}
+
+func (t *GomModuleGomModule) Reverse() GomModule {
+	panic(&aterm.GomError{Msg: "This GomModule.GomModule is not a list", IllegalArgument: true})
+}
+
+func (t *GomModuleGomModule) CompareTo(o any) int {
+	ao := o.(GomModule)
+	if ao == GomModule(t) {
+		return 0
+	}
+	if t.Hash() != ao.Hash() {
+		if t.Hash() < ao.Hash() {
+			return -1
+		}
+		return 1
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	tco := ao.(*GomModuleGomModule)
+	if c := t.ModuleName.CompareTo(tco.ModuleName); c != 0 {
+		return c
+	}
+	if c := t.SectionList.CompareTo(tco.SectionList); c != 0 {
+		return c
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+func (t *GomModuleGomModule) CompareToLPO(o any) int {
+	ao := o.(GomModule)
+	if ao == GomModule(t) {
+		return 0
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	tco := ao.(*GomModuleGomModule)
+	if c := t.ModuleName.CompareToLPO(tco.ModuleName); c != 0 {
+		return c
+	}
+	if c := t.SectionList.CompareToLPO(tco.SectionList); c != 0 {
+		return c
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+// ToATerm is the ATerm of the term: an application of GomModule.
+func (t *GomModuleGomModule) ToATerm() aterm.ATerm {
+	f := aterm.GetInstance()
+	return f.MakeAppl(f.MakeAFun("GomModule", 2, false), t.ModuleName.ToATerm(), t.SectionList.ToATerm())
+}
+
+// fromTermGomModuleGomModule is Java Gom's GomModule.fromTerm: an unquoted application of
+// GomModule whose arguments are convertible (as in Java, the arity is not
+// checked: a missing argument is an index out of range).
+func fromTermGomModuleGomModule(trm aterm.ATerm, conv aterm.ATermConverter) (GomModule, bool) {
+	trm = conv.Convert(trm)
+	if appl, ok := trm.(*aterm.ATermAppl); ok && appl.GetName() == "GomModule" && !appl.GetAFun().IsQuoted() {
+		return MakeGomModule(GomModuleNameFromTermConv(appl.GetArgument(0), conv), SectionListFromTermConv(appl.GetArgument(1), conv)), true
+	}
+	return nil, false
+}
+
 // GomModuleList is the Go interface backing the Gom sort GomModuleList.
 type GomModuleList interface {
 	sharedobjects.Term
 	isGomModuleList()
+	// Java Gom API (see the package's generated methods)
+	SymbolName() string
+	IsConsConcGomModule() bool
+	IsEmptyConcGomModule() bool
+	GetHeadConcGomModule() GomModule
+	GetTailConcGomModule() GomModuleList
+	Length() int
+	Reverse() GomModuleList
+	CompareTo(o any) int
+	CompareToLPO(o any) int
+	ToATerm() aterm.ATerm
 }
 
-// ConcGomModuleGomModuleList is the term type for the alternative `ConcGomModule(...)` of sort GomModuleList.
+// GomModuleListFromTerm is Java Gom's GomModuleList.fromTerm(trm).
+func GomModuleListFromTerm(trm aterm.ATerm) GomModuleList {
+	return GomModuleListFromTermConv(trm, aterm.IdConverter{})
+}
+
+// GomModuleListFromTermConv is Java Gom's GomModuleList.fromTerm(trm, atConv): the term of
+// the first operator of the sort that converts the ATerm; it panics
+// (IllegalArgumentException) when there is none.
+func GomModuleListFromTermConv(trm aterm.ATerm, conv aterm.ATermConverter) GomModuleList {
+	converted := conv.Convert(trm)
+	var results []GomModuleList
+	if r, ok := fromTermConcGomModuleGomModuleList(converted, conv); ok {
+		results = append(results, r)
+	}
+	if len(results) == 0 {
+		panic(&aterm.GomError{Msg: fmt.Sprintf("%v is not a GomModuleList", trm), IllegalArgument: true})
+	}
+	return results[0]
+}
+
+// GomModuleListFromString is Java Gom's GomModuleList.fromString(s).
+func GomModuleListFromString(s string) GomModuleList {
+	return GomModuleListFromTerm(aterm.GetInstance().Parse(s))
+}
+
+// GomModuleListFromStream is Java Gom's GomModuleList.fromStream(stream) (an IOException is
+// the error).
+func GomModuleListFromStream(stream io.Reader) (GomModuleList, error) {
+	at, err := aterm.GetInstance().ReadFromTextFile(stream)
+	if err != nil {
+		return nil, err
+	}
+	return GomModuleListFromTerm(at), nil
+}
+
+// ConcGomModuleGomModuleList is the term type of the variadic operator `ConcGomModule(...)` of sort GomModuleList
+// (Java's abstract class ConcGomModule): a maximally-shared cons cell (Java's
+// ConsConcGomModule: a head and a tail) or the empty list (Java's EmptyConcGomModule).
 type ConcGomModuleGomModuleList struct {
-	Slots []GomModule
+	head  GomModule
+	tail  GomModuleList
+	empty bool
 	hash  uint32
+	// children caches the Visitable children (Java's children field)
+	children atomic.Pointer[[]any]
 }
 
 func (*ConcGomModuleGomModuleList) isGomModuleList() {}
@@ -844,51 +1644,51 @@ func (t *ConcGomModuleGomModuleList) Hash() uint32 { return t.hash }
 
 func (t *ConcGomModuleGomModuleList) Equivalent(other sharedobjects.Term) bool {
 	o, ok := other.(*ConcGomModuleGomModuleList)
-	if !ok {
-		return false
-	}
-	if len(t.Slots) != len(o.Slots) {
-		return false
-	}
-	for i := range t.Slots {
-		if t.Slots[i] != o.Slots[i] {
-			return false
-		}
-	}
-	return true
+	return ok && t.empty == o.empty && t.head == o.head && t.tail == o.tail
 }
 
 func (t *ConcGomModuleGomModuleList) Duplicate() sharedobjects.Term {
-	cp := append([]GomModule(nil), t.Slots...)
-	return &ConcGomModuleGomModuleList{Slots: cp, hash: t.hash}
+	return &ConcGomModuleGomModuleList{head: t.head, tail: t.tail, empty: t.empty, hash: t.hash}
 }
 
-func (t *ConcGomModuleGomModuleList) String() string {
-	parts := make([]string, len(t.Slots))
-	for i, v := range t.Slots {
-		parts[i] = fmt.Sprintf("%v", v)
+// elements returns the cached Visitable children of the list: its
+// elements (Java's getChildren, i.e. toArray).
+// Java's getChildren is the typed toArray(new GomModule[]{}): a last tail
+// that is not a list (of sort GomModuleList) cannot be stored in it
+// (ArrayStoreException, a *aterm.GomError here).
+func (t *ConcGomModuleGomModuleList) elements() []any {
+	if c := t.children.Load(); c != nil {
+		return *c
 	}
-	return "ConcGomModule" + "(" + strings.Join(parts, ",") + ")"
+	var cur GomModuleList = t
+	for {
+		c, ok := cur.(*ConcGomModuleGomModuleList)
+		if !ok || c.empty {
+			break
+		}
+		cur = c.tail
+	}
+	if c, ok := cur.(*ConcGomModuleGomModuleList); !ok || !c.empty {
+		panic(&aterm.GomError{Msg: fmt.Sprintf("ArrayStoreException: the tail %v of a ConcGomModule list is not a GomModule", cur)})
+	}
+	c := t.ToArray()
+	t.children.Store(&c)
+	return c
 }
 
-func (t *ConcGomModuleGomModuleList) ChildCount() int { return len(t.Slots) }
+func (t *ConcGomModuleGomModuleList) ChildCount() int { return len(t.elements()) }
 
-func (t *ConcGomModuleGomModuleList) ChildAt(i int) any { return t.Slots[i] }
+func (t *ConcGomModuleGomModuleList) ChildAt(i int) any { return t.elements()[i] }
 
 func (t *ConcGomModuleGomModuleList) SetChildAt(i int, child any) any {
-	dup := append([]GomModule(nil), t.Slots...)
-	dup[i] = child.(GomModule)
-	return MakeConcGomModule(dup...)
+	dup := t.Children()
+	dup[i] = child
+	return t.SetChildren(dup)
 }
 
-func (t *ConcGomModuleGomModuleList) Children() []any {
-	out := make([]any, len(t.Slots))
-	for i, v := range t.Slots {
-		out[i] = v
-	}
-	return out
-}
+func (t *ConcGomModuleGomModuleList) Children() []any { return append([]any(nil), t.elements()...) }
 
+// SetChildren is Java's setChildren of a list: ConcGomModuleFromArray(children).
 func (t *ConcGomModuleGomModuleList) SetChildren(children []any) any {
 	args := make([]GomModule, len(children))
 	for i, c := range children {
@@ -897,15 +1697,77 @@ func (t *ConcGomModuleGomModuleList) SetChildren(children []any) any {
 	return MakeConcGomModule(args...)
 }
 
-// MakeConcGomModule builds the canonical (shared) ConcGomModule term.
-func MakeConcGomModule(args ...GomModule) GomModuleList {
-	hashes := make([]uint32, 0, len(args))
-	for _, a := range args {
-		hashes = append(hashes, a.Hash())
+func (t *ConcGomModuleGomModuleList) String() string {
+	var b strings.Builder
+	b.WriteString("ConcGomModule(")
+	var cur GomModuleList = t
+	for {
+		c, ok := cur.(*ConcGomModuleGomModuleList)
+		if !ok {
+			b.WriteString("," + fmt.Sprint(cur))
+			break
+		}
+		if c.empty {
+			break
+		}
+		if c != t {
+			b.WriteString(",")
+		}
+		b.WriteString(fmt.Sprint(c.head))
+		cur = c.tail
 	}
-	proto := &ConcGomModuleGomModuleList{Slots: args, hash: sharedobjects.MixSymbol(sharedobjects.StringHash("ConcGomModule"), hashes)}
+	b.WriteString(")")
+	return b.String()
+}
+
+// RealMakeConsConcGomModule is Java Gom's ConsConcGomModule.realMake: the shared cell of head
+// and tail, without hook.
+func RealMakeConsConcGomModule(head GomModule, tail GomModuleList) GomModuleList {
+	proto := &ConcGomModuleGomModuleList{head: head, tail: tail, hash: sharedobjects.MixSymbol(sharedobjects.StringHash("ConsConcGomModule"), []uint32{head.Hash(), tail.Hash()})}
 	return factory.Build(proto).(*ConcGomModuleGomModuleList)
 }
+
+// realMakeEmptyConcGomModule is Java Gom's EmptyConcGomModule.realMake: the shared empty list,
+// without hook.
+func realMakeEmptyConcGomModule() GomModuleList {
+	proto := &ConcGomModuleGomModuleList{empty: true, hash: sharedobjects.MixSymbol(sharedobjects.StringHash("EmptyConcGomModule"), nil)}
+	return factory.Build(proto).(*ConcGomModuleGomModuleList)
+}
+
+// RawConcGomModule builds the ConcGomModule list holding exactly args, without construction
+// hook.
+func RawConcGomModule(args ...GomModule) GomModuleList {
+	l := realMakeEmptyConcGomModule()
+	for i := len(args) - 1; i >= 0; i-- {
+		l = RealMakeConsConcGomModule(args[i], l)
+	}
+	return l
+}
+
+// EmptyConcGomModule is Java Gom's EmptyConcGomModule.make(): the empty ConcGomModule list, after the
+// construction hooks.
+func EmptyConcGomModule() GomModuleList {
+	return realMakeEmptyConcGomModule()
+}
+
+// ConsConcGomModule is Java Gom's ConsConcGomModule.make(head, tail): head inserted in front of
+// tail, after the construction hooks (theory "" first).
+func ConsConcGomModule(head GomModule, tail GomModuleList) GomModuleList {
+	return RealMakeConsConcGomModule(head, tail)
+}
+
+// MakeConcGomModule builds the list of args as Tom's `ConcGomModule(args…)` does: from EmptyConcGomModule,
+// by ConsConcGomModule, through the construction hooks (Java's ConcGomModule.fromArray).
+func MakeConcGomModule(args ...GomModule) GomModuleList {
+	var l GomModuleList = EmptyConcGomModule()
+	for i := len(args) - 1; i >= 0; i-- {
+		l = ConsConcGomModule(args[i], l)
+	}
+	return l
+}
+
+// ConcGomModuleFromArray is Java Gom's ConcGomModule.fromArray(array).
+func ConcGomModuleFromArray(array []GomModule) GomModuleList { return MakeConcGomModule(array...) }
 
 // IsConcGomModule is the `Is_ConcGomModule` predicate strategy: succeeds (returns subject
 // unchanged) when subject has the `ConcGomModule` shape, otherwise fails with
@@ -1000,10 +1862,277 @@ func (s *VisitConcGomModule) VisitWith(env *sl.Environment, intro sl.Introspecto
 
 var _ sl.Strategy = (*VisitConcGomModule)(nil)
 
+// SymbolName is the symbol of the Java term: ConsConcGomModule or EmptyConcGomModule.
+func (t *ConcGomModuleGomModuleList) SymbolName() string {
+	if t.empty {
+		return "EmptyConcGomModule"
+	}
+	return "ConsConcGomModule"
+}
+
+func (t *ConcGomModuleGomModuleList) IsConsConcGomModule() bool  { return !t.empty }
+func (t *ConcGomModuleGomModuleList) IsEmptyConcGomModule() bool { return t.empty }
+
+func (t *ConcGomModuleGomModuleList) GetHeadConcGomModule() GomModule {
+	if t.empty {
+		panic(&aterm.GomError{Msg: "This GomModuleList has no HeadConcGomModule"})
+	}
+	return t.head
+}
+func (t *ConcGomModuleGomModuleList) GetTailConcGomModule() GomModuleList {
+	if t.empty {
+		panic(&aterm.GomError{Msg: "This GomModuleList has no TailConcGomModule"})
+	}
+	return t.tail
+}
+
+// Length is Java's length(): the number of elements of the list (a
+// tail that is not a ConcGomModule list counts as one element).
+func (t *ConcGomModuleGomModuleList) Length() int {
+	res := 0
+	var tl GomModuleList = t
+	for {
+		c, ok := tl.(*ConcGomModuleGomModuleList)
+		if !ok || c.empty {
+			return res
+		}
+		res++
+		tl = c.tail
+		if _, ok := tl.(*ConcGomModuleGomModuleList); !ok {
+			res++
+		}
+	}
+}
+
+// ToArray returns the elements of the list (Java's Object[] toArray()),
+// ending with its tail when that is not a ConcGomModule list.
+func (t *ConcGomModuleGomModuleList) ToArray() []any {
+	out := make([]any, 0, t.Length())
+	var cur GomModuleList = t
+	for {
+		c, ok := cur.(*ConcGomModuleGomModuleList)
+		if !ok || c.empty {
+			break
+		}
+		out = append(out, c.head)
+		cur = c.tail
+	}
+	if c, ok := cur.(*ConcGomModuleGomModuleList); !ok || !c.empty {
+		out = append(out, cur)
+	}
+	return out
+}
+
+// Reverse is Java's reverse(): the reversed list, built by ConsConcGomModule
+// (through the hooks).
+func (t *ConcGomModuleGomModuleList) Reverse() GomModuleList {
+	if t.empty {
+		return t
+	}
+	var cur GomModuleList = t
+	var rev GomModuleList = EmptyConcGomModule()
+	for {
+		c, ok := cur.(*ConcGomModuleGomModuleList)
+		if !ok || c.empty {
+			break
+		}
+		rev = ConsConcGomModule(c.head, rev)
+		cur = c.tail
+	}
+	return rev
+}
+
+// Append is Java's append(element): the list with element added at its
+// end, built by ConsConcGomModule (through the hooks).
+func (t *ConcGomModuleGomModuleList) Append(element GomModule) GomModuleList {
+	var heads []GomModule
+	var cur GomModuleList = t
+	for {
+		c, ok := cur.(*ConcGomModuleGomModuleList)
+		if !ok || c.empty {
+			break
+		}
+		heads = append(heads, c.head)
+		cur = c.tail
+	}
+	var res GomModuleList
+	if c, ok := cur.(*ConcGomModuleGomModuleList); ok && c.empty {
+		res = ConsConcGomModule(element, cur)
+	} else {
+		res = ConsConcGomModule(element, cur)
+	}
+	for i := len(heads) - 1; i >= 0; i-- {
+		res = ConsConcGomModule(heads[i], res)
+	}
+	return res
+}
+
+func (t *ConcGomModuleGomModuleList) CompareTo(o any) int {
+	for {
+		ao := o.(GomModuleList)
+		if ao == GomModuleList(t) {
+			return 0
+		}
+		if t.Hash() != ao.Hash() {
+			if t.Hash() < ao.Hash() {
+				return -1
+			}
+			return 1
+		}
+		if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+			return c
+		}
+		tco := ao.(*ConcGomModuleGomModuleList)
+		if t.empty {
+			panic(&aterm.GomError{Msg: "Unable to compare"})
+		}
+		if c := t.head.CompareTo(tco.head); c != 0 {
+			return c
+		}
+		next, ok := t.tail.(*ConcGomModuleGomModuleList)
+		if !ok {
+			if c := t.tail.CompareTo(tco.tail); c != 0 {
+				return c
+			}
+			panic(&aterm.GomError{Msg: "Unable to compare"})
+		}
+		t, o = next, tco.tail
+	}
+}
+
+func (t *ConcGomModuleGomModuleList) CompareToLPO(o any) int {
+	for {
+		ao := o.(GomModuleList)
+		if ao == GomModuleList(t) {
+			return 0
+		}
+		if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+			return c
+		}
+		tco := ao.(*ConcGomModuleGomModuleList)
+		if t.empty {
+			panic(&aterm.GomError{Msg: "Unable to compare"})
+		}
+		if c := t.head.CompareToLPO(tco.head); c != 0 {
+			return c
+		}
+		next, ok := t.tail.(*ConcGomModuleGomModuleList)
+		if !ok {
+			if c := t.tail.CompareToLPO(tco.tail); c != 0 {
+				return c
+			}
+			panic(&aterm.GomError{Msg: "Unable to compare"})
+		}
+		t, o = next, tco.tail
+	}
+}
+
+// ToATerm is Java's toATerm: the list of the elements, ending with the
+// ATerm list of the tail (a tail that is not a list is Java's
+// ClassCastException).
+func (t *ConcGomModuleGomModuleList) ToATerm() aterm.ATerm {
+	f := aterm.GetInstance()
+	var heads []GomModule
+	var cur GomModuleList = t
+	for {
+		c, ok := cur.(*ConcGomModuleGomModuleList)
+		if !ok || c.empty {
+			break
+		}
+		heads = append(heads, c.head)
+		cur = c.tail
+	}
+	l := f.MakeListEmpty()
+	if c, ok := cur.(*ConcGomModuleGomModuleList); !ok || !c.empty {
+		tl, isList := cur.ToATerm().(*aterm.ATermList)
+		if !isList {
+			panic(&aterm.GomError{Msg: fmt.Sprintf("ClassCastException: the ATerm of %v is not an ATermList", cur)})
+		}
+		l = tl
+	}
+	for i := len(heads) - 1; i >= 0; i-- {
+		l = f.MakeList(heads[i].ToATerm(), l)
+	}
+	return l
+}
+
+// fromTermConcGomModuleGomModuleList is Java Gom's ConcGomModule.fromTerm: an application of ConcGomModule, or a
+// list (of ToATerm), of convertible elements.
+func fromTermConcGomModuleGomModuleList(trm aterm.ATerm, conv aterm.ATermConverter) (res GomModuleList, ok bool) {
+	trm = conv.Convert(trm)
+	if appl, isAppl := trm.(*aterm.ATermAppl); isAppl && appl.GetName() == "ConcGomModule" {
+		elems := make([]GomModule, appl.GetArity())
+		for i, a := range appl.GetArguments() {
+			elems[i] = GomModuleFromTermConv(a, conv)
+		}
+		return MakeConcGomModule(elems...), true
+	}
+	if list, isList := trm.(*aterm.ATermList); isList {
+		// an element that cannot be converted: not a ConcGomModule (Java returns null)
+		defer func() {
+			if recover() != nil {
+				res, ok = nil, false
+			}
+		}()
+		var elems []GomModule
+		for !list.IsEmpty() {
+			elems = append(elems, GomModuleFromTermConv(list.GetFirst(), conv))
+			list = list.GetNext()
+		}
+		return MakeConcGomModule(elems...), true
+	}
+	return nil, false
+}
+
 // Section is the Go interface backing the Gom sort Section.
 type Section interface {
 	sharedobjects.Term
 	isSection()
+	// Java Gom API (see the package's generated methods)
+	SymbolName() string
+	IsImports() bool
+	IsPublic() bool
+	GetImportList() ImportList
+	GetProductionList() ProductionList
+	Length() int
+	Reverse() Section
+	CompareTo(o any) int
+	CompareToLPO(o any) int
+	ToATerm() aterm.ATerm
+}
+
+// SectionFromTerm is Java Gom's Section.fromTerm(trm).
+func SectionFromTerm(trm aterm.ATerm) Section { return SectionFromTermConv(trm, aterm.IdConverter{}) }
+
+// SectionFromTermConv is Java Gom's Section.fromTerm(trm, atConv): the term of
+// the first operator of the sort that converts the ATerm; it panics
+// (IllegalArgumentException) when there is none.
+func SectionFromTermConv(trm aterm.ATerm, conv aterm.ATermConverter) Section {
+	converted := conv.Convert(trm)
+	var results []Section
+	if r, ok := fromTermImportsSection(converted, conv); ok {
+		results = append(results, r)
+	}
+	if r, ok := fromTermPublicSection(converted, conv); ok {
+		results = append(results, r)
+	}
+	if len(results) == 0 {
+		panic(&aterm.GomError{Msg: fmt.Sprintf("%v is not a Section", trm), IllegalArgument: true})
+	}
+	return results[0]
+}
+
+// SectionFromString is Java Gom's Section.fromString(s).
+func SectionFromString(s string) Section { return SectionFromTerm(aterm.GetInstance().Parse(s)) }
+
+// SectionFromStream is Java Gom's Section.fromStream(stream) (an IOException is
+// the error).
+func SectionFromStream(stream io.Reader) (Section, error) {
+	at, err := aterm.GetInstance().ReadFromTextFile(stream)
+	if err != nil {
+		return nil, err
+	}
+	return SectionFromTerm(at), nil
 }
 
 // ImportsSection is the term type for the alternative `Imports(...)` of sort Section.
@@ -1033,7 +2162,7 @@ func (t *ImportsSection) Duplicate() sharedobjects.Term {
 }
 
 func (t *ImportsSection) String() string {
-	return fmt.Sprintf("Imports(%v)", t.ImportList)
+	return "Imports(" + fmt.Sprint(t.ImportList) + ")"
 }
 
 func (t *ImportsSection) ChildCount() int { return 1 }
@@ -1162,6 +2291,77 @@ func (s *VisitImports) VisitWith(env *sl.Environment, intro sl.Introspector) (an
 
 var _ sl.Strategy = (*VisitImports)(nil)
 
+func (t *ImportsSection) SymbolName() string { return "Imports" }
+
+func (t *ImportsSection) IsImports() bool { return true }
+func (t *ImportsSection) IsPublic() bool  { return false }
+
+func (t *ImportsSection) GetImportList() ImportList { return t.ImportList }
+func (t *ImportsSection) GetProductionList() ProductionList {
+	panic(&aterm.GomError{Msg: "This Section has no ProductionList"})
+}
+
+func (t *ImportsSection) Length() int {
+	panic(&aterm.GomError{Msg: "This Section.Imports is not a list", IllegalArgument: true})
+}
+
+func (t *ImportsSection) Reverse() Section {
+	panic(&aterm.GomError{Msg: "This Section.Imports is not a list", IllegalArgument: true})
+}
+
+func (t *ImportsSection) CompareTo(o any) int {
+	ao := o.(Section)
+	if ao == Section(t) {
+		return 0
+	}
+	if t.Hash() != ao.Hash() {
+		if t.Hash() < ao.Hash() {
+			return -1
+		}
+		return 1
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	tco := ao.(*ImportsSection)
+	if c := t.ImportList.CompareTo(tco.ImportList); c != 0 {
+		return c
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+func (t *ImportsSection) CompareToLPO(o any) int {
+	ao := o.(Section)
+	if ao == Section(t) {
+		return 0
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	tco := ao.(*ImportsSection)
+	if c := t.ImportList.CompareToLPO(tco.ImportList); c != 0 {
+		return c
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+// ToATerm is the ATerm of the term: an application of Imports.
+func (t *ImportsSection) ToATerm() aterm.ATerm {
+	f := aterm.GetInstance()
+	return f.MakeAppl(f.MakeAFun("Imports", 1, false), t.ImportList.ToATerm())
+}
+
+// fromTermImportsSection is Java Gom's Imports.fromTerm: an unquoted application of
+// Imports whose arguments are convertible (as in Java, the arity is not
+// checked: a missing argument is an index out of range).
+func fromTermImportsSection(trm aterm.ATerm, conv aterm.ATermConverter) (Section, bool) {
+	trm = conv.Convert(trm)
+	if appl, ok := trm.(*aterm.ATermAppl); ok && appl.GetName() == "Imports" && !appl.GetAFun().IsQuoted() {
+		return MakeImports(ImportListFromTermConv(appl.GetArgument(0), conv)), true
+	}
+	return nil, false
+}
+
 // PublicSection is the term type for the alternative `Public(...)` of sort Section.
 type PublicSection struct {
 	ProductionList ProductionList
@@ -1189,7 +2389,7 @@ func (t *PublicSection) Duplicate() sharedobjects.Term {
 }
 
 func (t *PublicSection) String() string {
-	return fmt.Sprintf("Public(%v)", t.ProductionList)
+	return "Public(" + fmt.Sprint(t.ProductionList) + ")"
 }
 
 func (t *PublicSection) ChildCount() int { return 1 }
@@ -1318,16 +2518,139 @@ func (s *VisitPublic) VisitWith(env *sl.Environment, intro sl.Introspector) (any
 
 var _ sl.Strategy = (*VisitPublic)(nil)
 
+func (t *PublicSection) SymbolName() string { return "Public" }
+
+func (t *PublicSection) IsImports() bool { return false }
+func (t *PublicSection) IsPublic() bool  { return true }
+
+func (t *PublicSection) GetImportList() ImportList {
+	panic(&aterm.GomError{Msg: "This Section has no ImportList"})
+}
+func (t *PublicSection) GetProductionList() ProductionList { return t.ProductionList }
+
+func (t *PublicSection) Length() int {
+	panic(&aterm.GomError{Msg: "This Section.Public is not a list", IllegalArgument: true})
+}
+
+func (t *PublicSection) Reverse() Section {
+	panic(&aterm.GomError{Msg: "This Section.Public is not a list", IllegalArgument: true})
+}
+
+func (t *PublicSection) CompareTo(o any) int {
+	ao := o.(Section)
+	if ao == Section(t) {
+		return 0
+	}
+	if t.Hash() != ao.Hash() {
+		if t.Hash() < ao.Hash() {
+			return -1
+		}
+		return 1
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	tco := ao.(*PublicSection)
+	if c := t.ProductionList.CompareTo(tco.ProductionList); c != 0 {
+		return c
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+func (t *PublicSection) CompareToLPO(o any) int {
+	ao := o.(Section)
+	if ao == Section(t) {
+		return 0
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	tco := ao.(*PublicSection)
+	if c := t.ProductionList.CompareToLPO(tco.ProductionList); c != 0 {
+		return c
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+// ToATerm is the ATerm of the term: an application of Public.
+func (t *PublicSection) ToATerm() aterm.ATerm {
+	f := aterm.GetInstance()
+	return f.MakeAppl(f.MakeAFun("Public", 1, false), t.ProductionList.ToATerm())
+}
+
+// fromTermPublicSection is Java Gom's Public.fromTerm: an unquoted application of
+// Public whose arguments are convertible (as in Java, the arity is not
+// checked: a missing argument is an index out of range).
+func fromTermPublicSection(trm aterm.ATerm, conv aterm.ATermConverter) (Section, bool) {
+	trm = conv.Convert(trm)
+	if appl, ok := trm.(*aterm.ATermAppl); ok && appl.GetName() == "Public" && !appl.GetAFun().IsQuoted() {
+		return MakePublic(ProductionListFromTermConv(appl.GetArgument(0), conv)), true
+	}
+	return nil, false
+}
+
 // SectionList is the Go interface backing the Gom sort SectionList.
 type SectionList interface {
 	sharedobjects.Term
 	isSectionList()
+	// Java Gom API (see the package's generated methods)
+	SymbolName() string
+	IsConsConcSection() bool
+	IsEmptyConcSection() bool
+	GetHeadConcSection() Section
+	GetTailConcSection() SectionList
+	Length() int
+	Reverse() SectionList
+	CompareTo(o any) int
+	CompareToLPO(o any) int
+	ToATerm() aterm.ATerm
 }
 
-// ConcSectionSectionList is the term type for the alternative `ConcSection(...)` of sort SectionList.
+// SectionListFromTerm is Java Gom's SectionList.fromTerm(trm).
+func SectionListFromTerm(trm aterm.ATerm) SectionList {
+	return SectionListFromTermConv(trm, aterm.IdConverter{})
+}
+
+// SectionListFromTermConv is Java Gom's SectionList.fromTerm(trm, atConv): the term of
+// the first operator of the sort that converts the ATerm; it panics
+// (IllegalArgumentException) when there is none.
+func SectionListFromTermConv(trm aterm.ATerm, conv aterm.ATermConverter) SectionList {
+	converted := conv.Convert(trm)
+	var results []SectionList
+	if r, ok := fromTermConcSectionSectionList(converted, conv); ok {
+		results = append(results, r)
+	}
+	if len(results) == 0 {
+		panic(&aterm.GomError{Msg: fmt.Sprintf("%v is not a SectionList", trm), IllegalArgument: true})
+	}
+	return results[0]
+}
+
+// SectionListFromString is Java Gom's SectionList.fromString(s).
+func SectionListFromString(s string) SectionList {
+	return SectionListFromTerm(aterm.GetInstance().Parse(s))
+}
+
+// SectionListFromStream is Java Gom's SectionList.fromStream(stream) (an IOException is
+// the error).
+func SectionListFromStream(stream io.Reader) (SectionList, error) {
+	at, err := aterm.GetInstance().ReadFromTextFile(stream)
+	if err != nil {
+		return nil, err
+	}
+	return SectionListFromTerm(at), nil
+}
+
+// ConcSectionSectionList is the term type of the variadic operator `ConcSection(...)` of sort SectionList
+// (Java's abstract class ConcSection): a maximally-shared cons cell (Java's
+// ConsConcSection: a head and a tail) or the empty list (Java's EmptyConcSection).
 type ConcSectionSectionList struct {
-	Slots []Section
+	head  Section
+	tail  SectionList
+	empty bool
 	hash  uint32
+	// children caches the Visitable children (Java's children field)
+	children atomic.Pointer[[]any]
 }
 
 func (*ConcSectionSectionList) isSectionList() {}
@@ -1336,51 +2659,51 @@ func (t *ConcSectionSectionList) Hash() uint32 { return t.hash }
 
 func (t *ConcSectionSectionList) Equivalent(other sharedobjects.Term) bool {
 	o, ok := other.(*ConcSectionSectionList)
-	if !ok {
-		return false
-	}
-	if len(t.Slots) != len(o.Slots) {
-		return false
-	}
-	for i := range t.Slots {
-		if t.Slots[i] != o.Slots[i] {
-			return false
-		}
-	}
-	return true
+	return ok && t.empty == o.empty && t.head == o.head && t.tail == o.tail
 }
 
 func (t *ConcSectionSectionList) Duplicate() sharedobjects.Term {
-	cp := append([]Section(nil), t.Slots...)
-	return &ConcSectionSectionList{Slots: cp, hash: t.hash}
+	return &ConcSectionSectionList{head: t.head, tail: t.tail, empty: t.empty, hash: t.hash}
 }
 
-func (t *ConcSectionSectionList) String() string {
-	parts := make([]string, len(t.Slots))
-	for i, v := range t.Slots {
-		parts[i] = fmt.Sprintf("%v", v)
+// elements returns the cached Visitable children of the list: its
+// elements (Java's getChildren, i.e. toArray).
+// Java's getChildren is the typed toArray(new Section[]{}): a last tail
+// that is not a list (of sort SectionList) cannot be stored in it
+// (ArrayStoreException, a *aterm.GomError here).
+func (t *ConcSectionSectionList) elements() []any {
+	if c := t.children.Load(); c != nil {
+		return *c
 	}
-	return "ConcSection" + "(" + strings.Join(parts, ",") + ")"
+	var cur SectionList = t
+	for {
+		c, ok := cur.(*ConcSectionSectionList)
+		if !ok || c.empty {
+			break
+		}
+		cur = c.tail
+	}
+	if c, ok := cur.(*ConcSectionSectionList); !ok || !c.empty {
+		panic(&aterm.GomError{Msg: fmt.Sprintf("ArrayStoreException: the tail %v of a ConcSection list is not a Section", cur)})
+	}
+	c := t.ToArray()
+	t.children.Store(&c)
+	return c
 }
 
-func (t *ConcSectionSectionList) ChildCount() int { return len(t.Slots) }
+func (t *ConcSectionSectionList) ChildCount() int { return len(t.elements()) }
 
-func (t *ConcSectionSectionList) ChildAt(i int) any { return t.Slots[i] }
+func (t *ConcSectionSectionList) ChildAt(i int) any { return t.elements()[i] }
 
 func (t *ConcSectionSectionList) SetChildAt(i int, child any) any {
-	dup := append([]Section(nil), t.Slots...)
-	dup[i] = child.(Section)
-	return MakeConcSection(dup...)
+	dup := t.Children()
+	dup[i] = child
+	return t.SetChildren(dup)
 }
 
-func (t *ConcSectionSectionList) Children() []any {
-	out := make([]any, len(t.Slots))
-	for i, v := range t.Slots {
-		out[i] = v
-	}
-	return out
-}
+func (t *ConcSectionSectionList) Children() []any { return append([]any(nil), t.elements()...) }
 
+// SetChildren is Java's setChildren of a list: ConcSectionFromArray(children).
 func (t *ConcSectionSectionList) SetChildren(children []any) any {
 	args := make([]Section, len(children))
 	for i, c := range children {
@@ -1389,15 +2712,77 @@ func (t *ConcSectionSectionList) SetChildren(children []any) any {
 	return MakeConcSection(args...)
 }
 
-// MakeConcSection builds the canonical (shared) ConcSection term.
-func MakeConcSection(args ...Section) SectionList {
-	hashes := make([]uint32, 0, len(args))
-	for _, a := range args {
-		hashes = append(hashes, a.Hash())
+func (t *ConcSectionSectionList) String() string {
+	var b strings.Builder
+	b.WriteString("ConcSection(")
+	var cur SectionList = t
+	for {
+		c, ok := cur.(*ConcSectionSectionList)
+		if !ok {
+			b.WriteString("," + fmt.Sprint(cur))
+			break
+		}
+		if c.empty {
+			break
+		}
+		if c != t {
+			b.WriteString(",")
+		}
+		b.WriteString(fmt.Sprint(c.head))
+		cur = c.tail
 	}
-	proto := &ConcSectionSectionList{Slots: args, hash: sharedobjects.MixSymbol(sharedobjects.StringHash("ConcSection"), hashes)}
+	b.WriteString(")")
+	return b.String()
+}
+
+// RealMakeConsConcSection is Java Gom's ConsConcSection.realMake: the shared cell of head
+// and tail, without hook.
+func RealMakeConsConcSection(head Section, tail SectionList) SectionList {
+	proto := &ConcSectionSectionList{head: head, tail: tail, hash: sharedobjects.MixSymbol(sharedobjects.StringHash("ConsConcSection"), []uint32{head.Hash(), tail.Hash()})}
 	return factory.Build(proto).(*ConcSectionSectionList)
 }
+
+// realMakeEmptyConcSection is Java Gom's EmptyConcSection.realMake: the shared empty list,
+// without hook.
+func realMakeEmptyConcSection() SectionList {
+	proto := &ConcSectionSectionList{empty: true, hash: sharedobjects.MixSymbol(sharedobjects.StringHash("EmptyConcSection"), nil)}
+	return factory.Build(proto).(*ConcSectionSectionList)
+}
+
+// RawConcSection builds the ConcSection list holding exactly args, without construction
+// hook.
+func RawConcSection(args ...Section) SectionList {
+	l := realMakeEmptyConcSection()
+	for i := len(args) - 1; i >= 0; i-- {
+		l = RealMakeConsConcSection(args[i], l)
+	}
+	return l
+}
+
+// EmptyConcSection is Java Gom's EmptyConcSection.make(): the empty ConcSection list, after the
+// construction hooks.
+func EmptyConcSection() SectionList {
+	return realMakeEmptyConcSection()
+}
+
+// ConsConcSection is Java Gom's ConsConcSection.make(head, tail): head inserted in front of
+// tail, after the construction hooks (theory "" first).
+func ConsConcSection(head Section, tail SectionList) SectionList {
+	return RealMakeConsConcSection(head, tail)
+}
+
+// MakeConcSection builds the list of args as Tom's `ConcSection(args…)` does: from EmptyConcSection,
+// by ConsConcSection, through the construction hooks (Java's ConcSection.fromArray).
+func MakeConcSection(args ...Section) SectionList {
+	var l SectionList = EmptyConcSection()
+	for i := len(args) - 1; i >= 0; i-- {
+		l = ConsConcSection(args[i], l)
+	}
+	return l
+}
+
+// ConcSectionFromArray is Java Gom's ConcSection.fromArray(array).
+func ConcSectionFromArray(array []Section) SectionList { return MakeConcSection(array...) }
 
 // IsConcSection is the `Is_ConcSection` predicate strategy: succeeds (returns subject
 // unchanged) when subject has the `ConcSection` shape, otherwise fails with
@@ -1492,16 +2877,290 @@ func (s *VisitConcSection) VisitWith(env *sl.Environment, intro sl.Introspector)
 
 var _ sl.Strategy = (*VisitConcSection)(nil)
 
+// SymbolName is the symbol of the Java term: ConsConcSection or EmptyConcSection.
+func (t *ConcSectionSectionList) SymbolName() string {
+	if t.empty {
+		return "EmptyConcSection"
+	}
+	return "ConsConcSection"
+}
+
+func (t *ConcSectionSectionList) IsConsConcSection() bool  { return !t.empty }
+func (t *ConcSectionSectionList) IsEmptyConcSection() bool { return t.empty }
+
+func (t *ConcSectionSectionList) GetHeadConcSection() Section {
+	if t.empty {
+		panic(&aterm.GomError{Msg: "This SectionList has no HeadConcSection"})
+	}
+	return t.head
+}
+func (t *ConcSectionSectionList) GetTailConcSection() SectionList {
+	if t.empty {
+		panic(&aterm.GomError{Msg: "This SectionList has no TailConcSection"})
+	}
+	return t.tail
+}
+
+// Length is Java's length(): the number of elements of the list (a
+// tail that is not a ConcSection list counts as one element).
+func (t *ConcSectionSectionList) Length() int {
+	res := 0
+	var tl SectionList = t
+	for {
+		c, ok := tl.(*ConcSectionSectionList)
+		if !ok || c.empty {
+			return res
+		}
+		res++
+		tl = c.tail
+		if _, ok := tl.(*ConcSectionSectionList); !ok {
+			res++
+		}
+	}
+}
+
+// ToArray returns the elements of the list (Java's Object[] toArray()),
+// ending with its tail when that is not a ConcSection list.
+func (t *ConcSectionSectionList) ToArray() []any {
+	out := make([]any, 0, t.Length())
+	var cur SectionList = t
+	for {
+		c, ok := cur.(*ConcSectionSectionList)
+		if !ok || c.empty {
+			break
+		}
+		out = append(out, c.head)
+		cur = c.tail
+	}
+	if c, ok := cur.(*ConcSectionSectionList); !ok || !c.empty {
+		out = append(out, cur)
+	}
+	return out
+}
+
+// Reverse is Java's reverse(): the reversed list, built by ConsConcSection
+// (through the hooks).
+func (t *ConcSectionSectionList) Reverse() SectionList {
+	if t.empty {
+		return t
+	}
+	var cur SectionList = t
+	var rev SectionList = EmptyConcSection()
+	for {
+		c, ok := cur.(*ConcSectionSectionList)
+		if !ok || c.empty {
+			break
+		}
+		rev = ConsConcSection(c.head, rev)
+		cur = c.tail
+	}
+	return rev
+}
+
+// Append is Java's append(element): the list with element added at its
+// end, built by ConsConcSection (through the hooks).
+func (t *ConcSectionSectionList) Append(element Section) SectionList {
+	var heads []Section
+	var cur SectionList = t
+	for {
+		c, ok := cur.(*ConcSectionSectionList)
+		if !ok || c.empty {
+			break
+		}
+		heads = append(heads, c.head)
+		cur = c.tail
+	}
+	var res SectionList
+	if c, ok := cur.(*ConcSectionSectionList); ok && c.empty {
+		res = ConsConcSection(element, cur)
+	} else {
+		res = ConsConcSection(element, cur)
+	}
+	for i := len(heads) - 1; i >= 0; i-- {
+		res = ConsConcSection(heads[i], res)
+	}
+	return res
+}
+
+func (t *ConcSectionSectionList) CompareTo(o any) int {
+	for {
+		ao := o.(SectionList)
+		if ao == SectionList(t) {
+			return 0
+		}
+		if t.Hash() != ao.Hash() {
+			if t.Hash() < ao.Hash() {
+				return -1
+			}
+			return 1
+		}
+		if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+			return c
+		}
+		tco := ao.(*ConcSectionSectionList)
+		if t.empty {
+			panic(&aterm.GomError{Msg: "Unable to compare"})
+		}
+		if c := t.head.CompareTo(tco.head); c != 0 {
+			return c
+		}
+		next, ok := t.tail.(*ConcSectionSectionList)
+		if !ok {
+			if c := t.tail.CompareTo(tco.tail); c != 0 {
+				return c
+			}
+			panic(&aterm.GomError{Msg: "Unable to compare"})
+		}
+		t, o = next, tco.tail
+	}
+}
+
+func (t *ConcSectionSectionList) CompareToLPO(o any) int {
+	for {
+		ao := o.(SectionList)
+		if ao == SectionList(t) {
+			return 0
+		}
+		if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+			return c
+		}
+		tco := ao.(*ConcSectionSectionList)
+		if t.empty {
+			panic(&aterm.GomError{Msg: "Unable to compare"})
+		}
+		if c := t.head.CompareToLPO(tco.head); c != 0 {
+			return c
+		}
+		next, ok := t.tail.(*ConcSectionSectionList)
+		if !ok {
+			if c := t.tail.CompareToLPO(tco.tail); c != 0 {
+				return c
+			}
+			panic(&aterm.GomError{Msg: "Unable to compare"})
+		}
+		t, o = next, tco.tail
+	}
+}
+
+// ToATerm is Java's toATerm: the list of the elements, ending with the
+// ATerm list of the tail (a tail that is not a list is Java's
+// ClassCastException).
+func (t *ConcSectionSectionList) ToATerm() aterm.ATerm {
+	f := aterm.GetInstance()
+	var heads []Section
+	var cur SectionList = t
+	for {
+		c, ok := cur.(*ConcSectionSectionList)
+		if !ok || c.empty {
+			break
+		}
+		heads = append(heads, c.head)
+		cur = c.tail
+	}
+	l := f.MakeListEmpty()
+	if c, ok := cur.(*ConcSectionSectionList); !ok || !c.empty {
+		tl, isList := cur.ToATerm().(*aterm.ATermList)
+		if !isList {
+			panic(&aterm.GomError{Msg: fmt.Sprintf("ClassCastException: the ATerm of %v is not an ATermList", cur)})
+		}
+		l = tl
+	}
+	for i := len(heads) - 1; i >= 0; i-- {
+		l = f.MakeList(heads[i].ToATerm(), l)
+	}
+	return l
+}
+
+// fromTermConcSectionSectionList is Java Gom's ConcSection.fromTerm: an application of ConcSection, or a
+// list (of ToATerm), of convertible elements.
+func fromTermConcSectionSectionList(trm aterm.ATerm, conv aterm.ATermConverter) (res SectionList, ok bool) {
+	trm = conv.Convert(trm)
+	if appl, isAppl := trm.(*aterm.ATermAppl); isAppl && appl.GetName() == "ConcSection" {
+		elems := make([]Section, appl.GetArity())
+		for i, a := range appl.GetArguments() {
+			elems[i] = SectionFromTermConv(a, conv)
+		}
+		return MakeConcSection(elems...), true
+	}
+	if list, isList := trm.(*aterm.ATermList); isList {
+		// an element that cannot be converted: not a ConcSection (Java returns null)
+		defer func() {
+			if recover() != nil {
+				res, ok = nil, false
+			}
+		}()
+		var elems []Section
+		for !list.IsEmpty() {
+			elems = append(elems, SectionFromTermConv(list.GetFirst(), conv))
+			list = list.GetNext()
+		}
+		return MakeConcSection(elems...), true
+	}
+	return nil, false
+}
+
 // ImportList is the Go interface backing the Gom sort ImportList.
 type ImportList interface {
 	sharedobjects.Term
 	isImportList()
+	// Java Gom API (see the package's generated methods)
+	SymbolName() string
+	IsConsConcImportedModule() bool
+	IsEmptyConcImportedModule() bool
+	GetHeadConcImportedModule() GomModuleName
+	GetTailConcImportedModule() ImportList
+	Length() int
+	Reverse() ImportList
+	CompareTo(o any) int
+	CompareToLPO(o any) int
+	ToATerm() aterm.ATerm
 }
 
-// ConcImportedModuleImportList is the term type for the alternative `ConcImportedModule(...)` of sort ImportList.
+// ImportListFromTerm is Java Gom's ImportList.fromTerm(trm).
+func ImportListFromTerm(trm aterm.ATerm) ImportList {
+	return ImportListFromTermConv(trm, aterm.IdConverter{})
+}
+
+// ImportListFromTermConv is Java Gom's ImportList.fromTerm(trm, atConv): the term of
+// the first operator of the sort that converts the ATerm; it panics
+// (IllegalArgumentException) when there is none.
+func ImportListFromTermConv(trm aterm.ATerm, conv aterm.ATermConverter) ImportList {
+	converted := conv.Convert(trm)
+	var results []ImportList
+	if r, ok := fromTermConcImportedModuleImportList(converted, conv); ok {
+		results = append(results, r)
+	}
+	if len(results) == 0 {
+		panic(&aterm.GomError{Msg: fmt.Sprintf("%v is not a ImportList", trm), IllegalArgument: true})
+	}
+	return results[0]
+}
+
+// ImportListFromString is Java Gom's ImportList.fromString(s).
+func ImportListFromString(s string) ImportList {
+	return ImportListFromTerm(aterm.GetInstance().Parse(s))
+}
+
+// ImportListFromStream is Java Gom's ImportList.fromStream(stream) (an IOException is
+// the error).
+func ImportListFromStream(stream io.Reader) (ImportList, error) {
+	at, err := aterm.GetInstance().ReadFromTextFile(stream)
+	if err != nil {
+		return nil, err
+	}
+	return ImportListFromTerm(at), nil
+}
+
+// ConcImportedModuleImportList is the term type of the variadic operator `ConcImportedModule(...)` of sort ImportList
+// (Java's abstract class ConcImportedModule): a maximally-shared cons cell (Java's
+// ConsConcImportedModule: a head and a tail) or the empty list (Java's EmptyConcImportedModule).
 type ConcImportedModuleImportList struct {
-	Slots []GomModuleName
+	head  GomModuleName
+	tail  ImportList
+	empty bool
 	hash  uint32
+	// children caches the Visitable children (Java's children field)
+	children atomic.Pointer[[]any]
 }
 
 func (*ConcImportedModuleImportList) isImportList() {}
@@ -1510,51 +3169,51 @@ func (t *ConcImportedModuleImportList) Hash() uint32 { return t.hash }
 
 func (t *ConcImportedModuleImportList) Equivalent(other sharedobjects.Term) bool {
 	o, ok := other.(*ConcImportedModuleImportList)
-	if !ok {
-		return false
-	}
-	if len(t.Slots) != len(o.Slots) {
-		return false
-	}
-	for i := range t.Slots {
-		if t.Slots[i] != o.Slots[i] {
-			return false
-		}
-	}
-	return true
+	return ok && t.empty == o.empty && t.head == o.head && t.tail == o.tail
 }
 
 func (t *ConcImportedModuleImportList) Duplicate() sharedobjects.Term {
-	cp := append([]GomModuleName(nil), t.Slots...)
-	return &ConcImportedModuleImportList{Slots: cp, hash: t.hash}
+	return &ConcImportedModuleImportList{head: t.head, tail: t.tail, empty: t.empty, hash: t.hash}
 }
 
-func (t *ConcImportedModuleImportList) String() string {
-	parts := make([]string, len(t.Slots))
-	for i, v := range t.Slots {
-		parts[i] = fmt.Sprintf("%v", v)
+// elements returns the cached Visitable children of the list: its
+// elements (Java's getChildren, i.e. toArray).
+// Java's getChildren is the typed toArray(new GomModuleName[]{}): a last tail
+// that is not a list (of sort ImportList) cannot be stored in it
+// (ArrayStoreException, a *aterm.GomError here).
+func (t *ConcImportedModuleImportList) elements() []any {
+	if c := t.children.Load(); c != nil {
+		return *c
 	}
-	return "ConcImportedModule" + "(" + strings.Join(parts, ",") + ")"
+	var cur ImportList = t
+	for {
+		c, ok := cur.(*ConcImportedModuleImportList)
+		if !ok || c.empty {
+			break
+		}
+		cur = c.tail
+	}
+	if c, ok := cur.(*ConcImportedModuleImportList); !ok || !c.empty {
+		panic(&aterm.GomError{Msg: fmt.Sprintf("ArrayStoreException: the tail %v of a ConcImportedModule list is not a GomModuleName", cur)})
+	}
+	c := t.ToArray()
+	t.children.Store(&c)
+	return c
 }
 
-func (t *ConcImportedModuleImportList) ChildCount() int { return len(t.Slots) }
+func (t *ConcImportedModuleImportList) ChildCount() int { return len(t.elements()) }
 
-func (t *ConcImportedModuleImportList) ChildAt(i int) any { return t.Slots[i] }
+func (t *ConcImportedModuleImportList) ChildAt(i int) any { return t.elements()[i] }
 
 func (t *ConcImportedModuleImportList) SetChildAt(i int, child any) any {
-	dup := append([]GomModuleName(nil), t.Slots...)
-	dup[i] = child.(GomModuleName)
-	return MakeConcImportedModule(dup...)
+	dup := t.Children()
+	dup[i] = child
+	return t.SetChildren(dup)
 }
 
-func (t *ConcImportedModuleImportList) Children() []any {
-	out := make([]any, len(t.Slots))
-	for i, v := range t.Slots {
-		out[i] = v
-	}
-	return out
-}
+func (t *ConcImportedModuleImportList) Children() []any { return append([]any(nil), t.elements()...) }
 
+// SetChildren is Java's setChildren of a list: ConcImportedModuleFromArray(children).
 func (t *ConcImportedModuleImportList) SetChildren(children []any) any {
 	args := make([]GomModuleName, len(children))
 	for i, c := range children {
@@ -1563,14 +3222,78 @@ func (t *ConcImportedModuleImportList) SetChildren(children []any) any {
 	return MakeConcImportedModule(args...)
 }
 
-// MakeConcImportedModule builds the canonical (shared) ConcImportedModule term.
-func MakeConcImportedModule(args ...GomModuleName) ImportList {
-	hashes := make([]uint32, 0, len(args))
-	for _, a := range args {
-		hashes = append(hashes, a.Hash())
+func (t *ConcImportedModuleImportList) String() string {
+	var b strings.Builder
+	b.WriteString("ConcImportedModule(")
+	var cur ImportList = t
+	for {
+		c, ok := cur.(*ConcImportedModuleImportList)
+		if !ok {
+			b.WriteString("," + fmt.Sprint(cur))
+			break
+		}
+		if c.empty {
+			break
+		}
+		if c != t {
+			b.WriteString(",")
+		}
+		b.WriteString(fmt.Sprint(c.head))
+		cur = c.tail
 	}
-	proto := &ConcImportedModuleImportList{Slots: args, hash: sharedobjects.MixSymbol(sharedobjects.StringHash("ConcImportedModule"), hashes)}
+	b.WriteString(")")
+	return b.String()
+}
+
+// RealMakeConsConcImportedModule is Java Gom's ConsConcImportedModule.realMake: the shared cell of head
+// and tail, without hook.
+func RealMakeConsConcImportedModule(head GomModuleName, tail ImportList) ImportList {
+	proto := &ConcImportedModuleImportList{head: head, tail: tail, hash: sharedobjects.MixSymbol(sharedobjects.StringHash("ConsConcImportedModule"), []uint32{head.Hash(), tail.Hash()})}
 	return factory.Build(proto).(*ConcImportedModuleImportList)
+}
+
+// realMakeEmptyConcImportedModule is Java Gom's EmptyConcImportedModule.realMake: the shared empty list,
+// without hook.
+func realMakeEmptyConcImportedModule() ImportList {
+	proto := &ConcImportedModuleImportList{empty: true, hash: sharedobjects.MixSymbol(sharedobjects.StringHash("EmptyConcImportedModule"), nil)}
+	return factory.Build(proto).(*ConcImportedModuleImportList)
+}
+
+// RawConcImportedModule builds the ConcImportedModule list holding exactly args, without construction
+// hook.
+func RawConcImportedModule(args ...GomModuleName) ImportList {
+	l := realMakeEmptyConcImportedModule()
+	for i := len(args) - 1; i >= 0; i-- {
+		l = RealMakeConsConcImportedModule(args[i], l)
+	}
+	return l
+}
+
+// EmptyConcImportedModule is Java Gom's EmptyConcImportedModule.make(): the empty ConcImportedModule list, after the
+// construction hooks.
+func EmptyConcImportedModule() ImportList {
+	return realMakeEmptyConcImportedModule()
+}
+
+// ConsConcImportedModule is Java Gom's ConsConcImportedModule.make(head, tail): head inserted in front of
+// tail, after the construction hooks (theory "" first).
+func ConsConcImportedModule(head GomModuleName, tail ImportList) ImportList {
+	return RealMakeConsConcImportedModule(head, tail)
+}
+
+// MakeConcImportedModule builds the list of args as Tom's `ConcImportedModule(args…)` does: from EmptyConcImportedModule,
+// by ConsConcImportedModule, through the construction hooks (Java's ConcImportedModule.fromArray).
+func MakeConcImportedModule(args ...GomModuleName) ImportList {
+	var l ImportList = EmptyConcImportedModule()
+	for i := len(args) - 1; i >= 0; i-- {
+		l = ConsConcImportedModule(args[i], l)
+	}
+	return l
+}
+
+// ConcImportedModuleFromArray is Java Gom's ConcImportedModule.fromArray(array).
+func ConcImportedModuleFromArray(array []GomModuleName) ImportList {
+	return MakeConcImportedModule(array...)
 }
 
 // IsConcImportedModule is the `Is_ConcImportedModule` predicate strategy: succeeds (returns subject
@@ -1666,10 +3389,292 @@ func (s *VisitConcImportedModule) VisitWith(env *sl.Environment, intro sl.Intros
 
 var _ sl.Strategy = (*VisitConcImportedModule)(nil)
 
+// SymbolName is the symbol of the Java term: ConsConcImportedModule or EmptyConcImportedModule.
+func (t *ConcImportedModuleImportList) SymbolName() string {
+	if t.empty {
+		return "EmptyConcImportedModule"
+	}
+	return "ConsConcImportedModule"
+}
+
+func (t *ConcImportedModuleImportList) IsConsConcImportedModule() bool  { return !t.empty }
+func (t *ConcImportedModuleImportList) IsEmptyConcImportedModule() bool { return t.empty }
+
+func (t *ConcImportedModuleImportList) GetHeadConcImportedModule() GomModuleName {
+	if t.empty {
+		panic(&aterm.GomError{Msg: "This ImportList has no HeadConcImportedModule"})
+	}
+	return t.head
+}
+func (t *ConcImportedModuleImportList) GetTailConcImportedModule() ImportList {
+	if t.empty {
+		panic(&aterm.GomError{Msg: "This ImportList has no TailConcImportedModule"})
+	}
+	return t.tail
+}
+
+// Length is Java's length(): the number of elements of the list (a
+// tail that is not a ConcImportedModule list counts as one element).
+func (t *ConcImportedModuleImportList) Length() int {
+	res := 0
+	var tl ImportList = t
+	for {
+		c, ok := tl.(*ConcImportedModuleImportList)
+		if !ok || c.empty {
+			return res
+		}
+		res++
+		tl = c.tail
+		if _, ok := tl.(*ConcImportedModuleImportList); !ok {
+			res++
+		}
+	}
+}
+
+// ToArray returns the elements of the list (Java's Object[] toArray()),
+// ending with its tail when that is not a ConcImportedModule list.
+func (t *ConcImportedModuleImportList) ToArray() []any {
+	out := make([]any, 0, t.Length())
+	var cur ImportList = t
+	for {
+		c, ok := cur.(*ConcImportedModuleImportList)
+		if !ok || c.empty {
+			break
+		}
+		out = append(out, c.head)
+		cur = c.tail
+	}
+	if c, ok := cur.(*ConcImportedModuleImportList); !ok || !c.empty {
+		out = append(out, cur)
+	}
+	return out
+}
+
+// Reverse is Java's reverse(): the reversed list, built by ConsConcImportedModule
+// (through the hooks).
+func (t *ConcImportedModuleImportList) Reverse() ImportList {
+	if t.empty {
+		return t
+	}
+	var cur ImportList = t
+	var rev ImportList = EmptyConcImportedModule()
+	for {
+		c, ok := cur.(*ConcImportedModuleImportList)
+		if !ok || c.empty {
+			break
+		}
+		rev = ConsConcImportedModule(c.head, rev)
+		cur = c.tail
+	}
+	return rev
+}
+
+// Append is Java's append(element): the list with element added at its
+// end, built by ConsConcImportedModule (through the hooks).
+func (t *ConcImportedModuleImportList) Append(element GomModuleName) ImportList {
+	var heads []GomModuleName
+	var cur ImportList = t
+	for {
+		c, ok := cur.(*ConcImportedModuleImportList)
+		if !ok || c.empty {
+			break
+		}
+		heads = append(heads, c.head)
+		cur = c.tail
+	}
+	var res ImportList
+	if c, ok := cur.(*ConcImportedModuleImportList); ok && c.empty {
+		res = ConsConcImportedModule(element, cur)
+	} else {
+		res = ConsConcImportedModule(element, cur)
+	}
+	for i := len(heads) - 1; i >= 0; i-- {
+		res = ConsConcImportedModule(heads[i], res)
+	}
+	return res
+}
+
+func (t *ConcImportedModuleImportList) CompareTo(o any) int {
+	for {
+		ao := o.(ImportList)
+		if ao == ImportList(t) {
+			return 0
+		}
+		if t.Hash() != ao.Hash() {
+			if t.Hash() < ao.Hash() {
+				return -1
+			}
+			return 1
+		}
+		if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+			return c
+		}
+		tco := ao.(*ConcImportedModuleImportList)
+		if t.empty {
+			panic(&aterm.GomError{Msg: "Unable to compare"})
+		}
+		if c := t.head.CompareTo(tco.head); c != 0 {
+			return c
+		}
+		next, ok := t.tail.(*ConcImportedModuleImportList)
+		if !ok {
+			if c := t.tail.CompareTo(tco.tail); c != 0 {
+				return c
+			}
+			panic(&aterm.GomError{Msg: "Unable to compare"})
+		}
+		t, o = next, tco.tail
+	}
+}
+
+func (t *ConcImportedModuleImportList) CompareToLPO(o any) int {
+	for {
+		ao := o.(ImportList)
+		if ao == ImportList(t) {
+			return 0
+		}
+		if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+			return c
+		}
+		tco := ao.(*ConcImportedModuleImportList)
+		if t.empty {
+			panic(&aterm.GomError{Msg: "Unable to compare"})
+		}
+		if c := t.head.CompareToLPO(tco.head); c != 0 {
+			return c
+		}
+		next, ok := t.tail.(*ConcImportedModuleImportList)
+		if !ok {
+			if c := t.tail.CompareToLPO(tco.tail); c != 0 {
+				return c
+			}
+			panic(&aterm.GomError{Msg: "Unable to compare"})
+		}
+		t, o = next, tco.tail
+	}
+}
+
+// ToATerm is Java's toATerm: the list of the elements, ending with the
+// ATerm list of the tail (a tail that is not a list is Java's
+// ClassCastException).
+func (t *ConcImportedModuleImportList) ToATerm() aterm.ATerm {
+	f := aterm.GetInstance()
+	var heads []GomModuleName
+	var cur ImportList = t
+	for {
+		c, ok := cur.(*ConcImportedModuleImportList)
+		if !ok || c.empty {
+			break
+		}
+		heads = append(heads, c.head)
+		cur = c.tail
+	}
+	l := f.MakeListEmpty()
+	if c, ok := cur.(*ConcImportedModuleImportList); !ok || !c.empty {
+		tl, isList := cur.ToATerm().(*aterm.ATermList)
+		if !isList {
+			panic(&aterm.GomError{Msg: fmt.Sprintf("ClassCastException: the ATerm of %v is not an ATermList", cur)})
+		}
+		l = tl
+	}
+	for i := len(heads) - 1; i >= 0; i-- {
+		l = f.MakeList(heads[i].ToATerm(), l)
+	}
+	return l
+}
+
+// fromTermConcImportedModuleImportList is Java Gom's ConcImportedModule.fromTerm: an application of ConcImportedModule, or a
+// list (of ToATerm), of convertible elements.
+func fromTermConcImportedModuleImportList(trm aterm.ATerm, conv aterm.ATermConverter) (res ImportList, ok bool) {
+	trm = conv.Convert(trm)
+	if appl, isAppl := trm.(*aterm.ATermAppl); isAppl && appl.GetName() == "ConcImportedModule" {
+		elems := make([]GomModuleName, appl.GetArity())
+		for i, a := range appl.GetArguments() {
+			elems[i] = GomModuleNameFromTermConv(a, conv)
+		}
+		return MakeConcImportedModule(elems...), true
+	}
+	if list, isList := trm.(*aterm.ATermList); isList {
+		// an element that cannot be converted: not a ConcImportedModule (Java returns null)
+		defer func() {
+			if recover() != nil {
+				res, ok = nil, false
+			}
+		}()
+		var elems []GomModuleName
+		for !list.IsEmpty() {
+			elems = append(elems, GomModuleNameFromTermConv(list.GetFirst(), conv))
+			list = list.GetNext()
+		}
+		return MakeConcImportedModule(elems...), true
+	}
+	return nil, false
+}
+
 // Production is the Go interface backing the Gom sort Production.
 type Production interface {
 	sharedobjects.Term
 	isProduction()
+	// Java Gom API (see the package's generated methods)
+	SymbolName() string
+	IsHook() bool
+	IsSortType() bool
+	IsAtomDecl() bool
+	GetNameType() IdKind
+	GetName() string
+	GetHookType() HookKind
+	GetArgs() ArgList
+	GetHookContent() HookContent
+	GetOption() Option
+	GetType() GomType
+	GetBinds() AtomList
+	GetAlternativeList() AlternativeList
+	Length() int
+	Reverse() Production
+	CompareTo(o any) int
+	CompareToLPO(o any) int
+	ToATerm() aterm.ATerm
+}
+
+// ProductionFromTerm is Java Gom's Production.fromTerm(trm).
+func ProductionFromTerm(trm aterm.ATerm) Production {
+	return ProductionFromTermConv(trm, aterm.IdConverter{})
+}
+
+// ProductionFromTermConv is Java Gom's Production.fromTerm(trm, atConv): the term of
+// the first operator of the sort that converts the ATerm; it panics
+// (IllegalArgumentException) when there is none.
+func ProductionFromTermConv(trm aterm.ATerm, conv aterm.ATermConverter) Production {
+	converted := conv.Convert(trm)
+	var results []Production
+	if r, ok := fromTermHookProduction(converted, conv); ok {
+		results = append(results, r)
+	}
+	if r, ok := fromTermSortTypeProduction(converted, conv); ok {
+		results = append(results, r)
+	}
+	if r, ok := fromTermAtomDeclProduction(converted, conv); ok {
+		results = append(results, r)
+	}
+	if len(results) == 0 {
+		panic(&aterm.GomError{Msg: fmt.Sprintf("%v is not a Production", trm), IllegalArgument: true})
+	}
+	return results[0]
+}
+
+// ProductionFromString is Java Gom's Production.fromString(s).
+func ProductionFromString(s string) Production {
+	return ProductionFromTerm(aterm.GetInstance().Parse(s))
+}
+
+// ProductionFromStream is Java Gom's Production.fromStream(stream) (an IOException is
+// the error).
+func ProductionFromStream(stream io.Reader) (Production, error) {
+	at, err := aterm.GetInstance().ReadFromTextFile(stream)
+	if err != nil {
+		return nil, err
+	}
+	return ProductionFromTerm(at), nil
 }
 
 // HookProduction is the term type for the alternative `Hook(...)` of sort Production.
@@ -1719,7 +3724,7 @@ func (t *HookProduction) Duplicate() sharedobjects.Term {
 }
 
 func (t *HookProduction) String() string {
-	return fmt.Sprintf("Hook(%v,%s,%v,%v,%v,%v)", t.NameType, sharedobjects.JavaEscape(t.Name), t.HookType, t.Args, t.HookContent, t.Option)
+	return "Hook(" + fmt.Sprint(t.NameType) + "," + sharedobjects.JavaEscape(t.Name) + "," + fmt.Sprint(t.HookType) + "," + fmt.Sprint(t.Args) + "," + fmt.Sprint(t.HookContent) + "," + fmt.Sprint(t.Option) + ")"
 }
 
 func (t *HookProduction) ChildCount() int { return 6 }
@@ -1868,6 +3873,119 @@ func (s *VisitHook) VisitWith(env *sl.Environment, intro sl.Introspector) (any, 
 
 var _ sl.Strategy = (*VisitHook)(nil)
 
+func (t *HookProduction) SymbolName() string { return "Hook" }
+
+func (t *HookProduction) IsHook() bool     { return true }
+func (t *HookProduction) IsSortType() bool { return false }
+func (t *HookProduction) IsAtomDecl() bool { return false }
+
+func (t *HookProduction) GetNameType() IdKind         { return t.NameType }
+func (t *HookProduction) GetName() string             { return t.Name }
+func (t *HookProduction) GetHookType() HookKind       { return t.HookType }
+func (t *HookProduction) GetArgs() ArgList            { return t.Args }
+func (t *HookProduction) GetHookContent() HookContent { return t.HookContent }
+func (t *HookProduction) GetOption() Option           { return t.Option }
+func (t *HookProduction) GetType() GomType {
+	panic(&aterm.GomError{Msg: "This Production has no Type"})
+}
+func (t *HookProduction) GetBinds() AtomList {
+	panic(&aterm.GomError{Msg: "This Production has no Binds"})
+}
+func (t *HookProduction) GetAlternativeList() AlternativeList {
+	panic(&aterm.GomError{Msg: "This Production has no AlternativeList"})
+}
+
+func (t *HookProduction) Length() int {
+	panic(&aterm.GomError{Msg: "This Production.Hook is not a list", IllegalArgument: true})
+}
+
+func (t *HookProduction) Reverse() Production {
+	panic(&aterm.GomError{Msg: "This Production.Hook is not a list", IllegalArgument: true})
+}
+
+func (t *HookProduction) CompareTo(o any) int {
+	ao := o.(Production)
+	if ao == Production(t) {
+		return 0
+	}
+	if t.Hash() != ao.Hash() {
+		if t.Hash() < ao.Hash() {
+			return -1
+		}
+		return 1
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	tco := ao.(*HookProduction)
+	if c := t.NameType.CompareTo(tco.NameType); c != 0 {
+		return c
+	}
+	if c := strings.Compare(t.Name, tco.Name); c != 0 {
+		return c
+	}
+	if c := t.HookType.CompareTo(tco.HookType); c != 0 {
+		return c
+	}
+	if c := t.Args.CompareTo(tco.Args); c != 0 {
+		return c
+	}
+	if c := t.HookContent.CompareTo(tco.HookContent); c != 0 {
+		return c
+	}
+	if c := t.Option.CompareTo(tco.Option); c != 0 {
+		return c
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+func (t *HookProduction) CompareToLPO(o any) int {
+	ao := o.(Production)
+	if ao == Production(t) {
+		return 0
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	tco := ao.(*HookProduction)
+	if c := t.NameType.CompareToLPO(tco.NameType); c != 0 {
+		return c
+	}
+	if c := strings.Compare(t.Name, tco.Name); c != 0 {
+		return c
+	}
+	if c := t.HookType.CompareToLPO(tco.HookType); c != 0 {
+		return c
+	}
+	if c := t.Args.CompareToLPO(tco.Args); c != 0 {
+		return c
+	}
+	if c := t.HookContent.CompareToLPO(tco.HookContent); c != 0 {
+		return c
+	}
+	if c := t.Option.CompareToLPO(tco.Option); c != 0 {
+		return c
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+// ToATerm is the ATerm of the term: an application of Hook.
+func (t *HookProduction) ToATerm() aterm.ATerm {
+	f := aterm.GetInstance()
+	return f.MakeAppl(f.MakeAFun("Hook", 6, false), t.NameType.ToATerm(), aterm.MakeGomString(t.Name), t.HookType.ToATerm(), t.Args.ToATerm(), t.HookContent.ToATerm(), t.Option.ToATerm())
+}
+
+// fromTermHookProduction is Java Gom's Hook.fromTerm: an unquoted application of
+// Hook whose arguments are convertible (as in Java, the arity is not
+// checked: a missing argument is an index out of range).
+func fromTermHookProduction(trm aterm.ATerm, conv aterm.ATermConverter) (Production, bool) {
+	trm = conv.Convert(trm)
+	if appl, ok := trm.(*aterm.ATermAppl); ok && appl.GetName() == "Hook" && !appl.GetAFun().IsQuoted() {
+		return MakeHook(IdKindFromTermConv(appl.GetArgument(0), conv), aterm.GomString(appl.GetArgument(1), conv), HookKindFromTermConv(appl.GetArgument(2), conv), ArgListFromTermConv(appl.GetArgument(3), conv), HookContentFromTermConv(appl.GetArgument(4), conv), OptionFromTermConv(appl.GetArgument(5), conv)), true
+	}
+	return nil, false
+}
+
 // SortTypeProduction is the term type for the alternative `SortType(...)` of sort Production.
 type SortTypeProduction struct {
 	Type            GomType
@@ -1903,7 +4021,7 @@ func (t *SortTypeProduction) Duplicate() sharedobjects.Term {
 }
 
 func (t *SortTypeProduction) String() string {
-	return fmt.Sprintf("SortType(%v,%v,%v)", t.Type, t.Binds, t.AlternativeList)
+	return "SortType(" + fmt.Sprint(t.Type) + "," + fmt.Sprint(t.Binds) + "," + fmt.Sprint(t.AlternativeList) + ")"
 }
 
 func (t *SortTypeProduction) ChildCount() int { return 3 }
@@ -2040,6 +4158,107 @@ func (s *VisitSortType) VisitWith(env *sl.Environment, intro sl.Introspector) (a
 
 var _ sl.Strategy = (*VisitSortType)(nil)
 
+func (t *SortTypeProduction) SymbolName() string { return "SortType" }
+
+func (t *SortTypeProduction) IsHook() bool     { return false }
+func (t *SortTypeProduction) IsSortType() bool { return true }
+func (t *SortTypeProduction) IsAtomDecl() bool { return false }
+
+func (t *SortTypeProduction) GetNameType() IdKind {
+	panic(&aterm.GomError{Msg: "This Production has no NameType"})
+}
+func (t *SortTypeProduction) GetName() string {
+	panic(&aterm.GomError{Msg: "This Production has no Name"})
+}
+func (t *SortTypeProduction) GetHookType() HookKind {
+	panic(&aterm.GomError{Msg: "This Production has no HookType"})
+}
+func (t *SortTypeProduction) GetArgs() ArgList {
+	panic(&aterm.GomError{Msg: "This Production has no Args"})
+}
+func (t *SortTypeProduction) GetHookContent() HookContent {
+	panic(&aterm.GomError{Msg: "This Production has no HookContent"})
+}
+func (t *SortTypeProduction) GetOption() Option {
+	panic(&aterm.GomError{Msg: "This Production has no Option"})
+}
+func (t *SortTypeProduction) GetType() GomType                    { return t.Type }
+func (t *SortTypeProduction) GetBinds() AtomList                  { return t.Binds }
+func (t *SortTypeProduction) GetAlternativeList() AlternativeList { return t.AlternativeList }
+
+func (t *SortTypeProduction) Length() int {
+	panic(&aterm.GomError{Msg: "This Production.SortType is not a list", IllegalArgument: true})
+}
+
+func (t *SortTypeProduction) Reverse() Production {
+	panic(&aterm.GomError{Msg: "This Production.SortType is not a list", IllegalArgument: true})
+}
+
+func (t *SortTypeProduction) CompareTo(o any) int {
+	ao := o.(Production)
+	if ao == Production(t) {
+		return 0
+	}
+	if t.Hash() != ao.Hash() {
+		if t.Hash() < ao.Hash() {
+			return -1
+		}
+		return 1
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	tco := ao.(*SortTypeProduction)
+	if c := t.Type.CompareTo(tco.Type); c != 0 {
+		return c
+	}
+	if c := t.Binds.CompareTo(tco.Binds); c != 0 {
+		return c
+	}
+	if c := t.AlternativeList.CompareTo(tco.AlternativeList); c != 0 {
+		return c
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+func (t *SortTypeProduction) CompareToLPO(o any) int {
+	ao := o.(Production)
+	if ao == Production(t) {
+		return 0
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	tco := ao.(*SortTypeProduction)
+	if c := t.Type.CompareToLPO(tco.Type); c != 0 {
+		return c
+	}
+	if c := t.Binds.CompareToLPO(tco.Binds); c != 0 {
+		return c
+	}
+	if c := t.AlternativeList.CompareToLPO(tco.AlternativeList); c != 0 {
+		return c
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+// ToATerm is the ATerm of the term: an application of SortType.
+func (t *SortTypeProduction) ToATerm() aterm.ATerm {
+	f := aterm.GetInstance()
+	return f.MakeAppl(f.MakeAFun("SortType", 3, false), t.Type.ToATerm(), t.Binds.ToATerm(), t.AlternativeList.ToATerm())
+}
+
+// fromTermSortTypeProduction is Java Gom's SortType.fromTerm: an unquoted application of
+// SortType whose arguments are convertible (as in Java, the arity is not
+// checked: a missing argument is an index out of range).
+func fromTermSortTypeProduction(trm aterm.ATerm, conv aterm.ATermConverter) (Production, bool) {
+	trm = conv.Convert(trm)
+	if appl, ok := trm.(*aterm.ATermAppl); ok && appl.GetName() == "SortType" && !appl.GetAFun().IsQuoted() {
+		return MakeSortType(GomTypeFromTermConv(appl.GetArgument(0), conv), AtomListFromTermConv(appl.GetArgument(1), conv), AlternativeListFromTermConv(appl.GetArgument(2), conv)), true
+	}
+	return nil, false
+}
+
 // AtomDeclProduction is the term type for the alternative `AtomDecl(...)` of sort Production.
 type AtomDeclProduction struct {
 	Name string
@@ -2067,7 +4286,7 @@ func (t *AtomDeclProduction) Duplicate() sharedobjects.Term {
 }
 
 func (t *AtomDeclProduction) String() string {
-	return fmt.Sprintf("AtomDecl(%s)", sharedobjects.JavaEscape(t.Name))
+	return "AtomDecl(" + sharedobjects.JavaEscape(t.Name) + ")"
 }
 
 func (t *AtomDeclProduction) ChildCount() int { return 1 }
@@ -2196,16 +4415,161 @@ func (s *VisitAtomDecl) VisitWith(env *sl.Environment, intro sl.Introspector) (a
 
 var _ sl.Strategy = (*VisitAtomDecl)(nil)
 
+func (t *AtomDeclProduction) SymbolName() string { return "AtomDecl" }
+
+func (t *AtomDeclProduction) IsHook() bool     { return false }
+func (t *AtomDeclProduction) IsSortType() bool { return false }
+func (t *AtomDeclProduction) IsAtomDecl() bool { return true }
+
+func (t *AtomDeclProduction) GetNameType() IdKind {
+	panic(&aterm.GomError{Msg: "This Production has no NameType"})
+}
+func (t *AtomDeclProduction) GetName() string { return t.Name }
+func (t *AtomDeclProduction) GetHookType() HookKind {
+	panic(&aterm.GomError{Msg: "This Production has no HookType"})
+}
+func (t *AtomDeclProduction) GetArgs() ArgList {
+	panic(&aterm.GomError{Msg: "This Production has no Args"})
+}
+func (t *AtomDeclProduction) GetHookContent() HookContent {
+	panic(&aterm.GomError{Msg: "This Production has no HookContent"})
+}
+func (t *AtomDeclProduction) GetOption() Option {
+	panic(&aterm.GomError{Msg: "This Production has no Option"})
+}
+func (t *AtomDeclProduction) GetType() GomType {
+	panic(&aterm.GomError{Msg: "This Production has no Type"})
+}
+func (t *AtomDeclProduction) GetBinds() AtomList {
+	panic(&aterm.GomError{Msg: "This Production has no Binds"})
+}
+func (t *AtomDeclProduction) GetAlternativeList() AlternativeList {
+	panic(&aterm.GomError{Msg: "This Production has no AlternativeList"})
+}
+
+func (t *AtomDeclProduction) Length() int {
+	panic(&aterm.GomError{Msg: "This Production.AtomDecl is not a list", IllegalArgument: true})
+}
+
+func (t *AtomDeclProduction) Reverse() Production {
+	panic(&aterm.GomError{Msg: "This Production.AtomDecl is not a list", IllegalArgument: true})
+}
+
+func (t *AtomDeclProduction) CompareTo(o any) int {
+	ao := o.(Production)
+	if ao == Production(t) {
+		return 0
+	}
+	if t.Hash() != ao.Hash() {
+		if t.Hash() < ao.Hash() {
+			return -1
+		}
+		return 1
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	tco := ao.(*AtomDeclProduction)
+	if c := strings.Compare(t.Name, tco.Name); c != 0 {
+		return c
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+func (t *AtomDeclProduction) CompareToLPO(o any) int {
+	ao := o.(Production)
+	if ao == Production(t) {
+		return 0
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	tco := ao.(*AtomDeclProduction)
+	if c := strings.Compare(t.Name, tco.Name); c != 0 {
+		return c
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+// ToATerm is the ATerm of the term: an application of AtomDecl.
+func (t *AtomDeclProduction) ToATerm() aterm.ATerm {
+	f := aterm.GetInstance()
+	return f.MakeAppl(f.MakeAFun("AtomDecl", 1, false), aterm.MakeGomString(t.Name))
+}
+
+// fromTermAtomDeclProduction is Java Gom's AtomDecl.fromTerm: an unquoted application of
+// AtomDecl whose arguments are convertible (as in Java, the arity is not
+// checked: a missing argument is an index out of range).
+func fromTermAtomDeclProduction(trm aterm.ATerm, conv aterm.ATermConverter) (Production, bool) {
+	trm = conv.Convert(trm)
+	if appl, ok := trm.(*aterm.ATermAppl); ok && appl.GetName() == "AtomDecl" && !appl.GetAFun().IsQuoted() {
+		return MakeAtomDecl(aterm.GomString(appl.GetArgument(0), conv)), true
+	}
+	return nil, false
+}
+
 // ProductionList is the Go interface backing the Gom sort ProductionList.
 type ProductionList interface {
 	sharedobjects.Term
 	isProductionList()
+	// Java Gom API (see the package's generated methods)
+	SymbolName() string
+	IsConsConcProduction() bool
+	IsEmptyConcProduction() bool
+	GetHeadConcProduction() Production
+	GetTailConcProduction() ProductionList
+	Length() int
+	Reverse() ProductionList
+	CompareTo(o any) int
+	CompareToLPO(o any) int
+	ToATerm() aterm.ATerm
 }
 
-// ConcProductionProductionList is the term type for the alternative `ConcProduction(...)` of sort ProductionList.
+// ProductionListFromTerm is Java Gom's ProductionList.fromTerm(trm).
+func ProductionListFromTerm(trm aterm.ATerm) ProductionList {
+	return ProductionListFromTermConv(trm, aterm.IdConverter{})
+}
+
+// ProductionListFromTermConv is Java Gom's ProductionList.fromTerm(trm, atConv): the term of
+// the first operator of the sort that converts the ATerm; it panics
+// (IllegalArgumentException) when there is none.
+func ProductionListFromTermConv(trm aterm.ATerm, conv aterm.ATermConverter) ProductionList {
+	converted := conv.Convert(trm)
+	var results []ProductionList
+	if r, ok := fromTermConcProductionProductionList(converted, conv); ok {
+		results = append(results, r)
+	}
+	if len(results) == 0 {
+		panic(&aterm.GomError{Msg: fmt.Sprintf("%v is not a ProductionList", trm), IllegalArgument: true})
+	}
+	return results[0]
+}
+
+// ProductionListFromString is Java Gom's ProductionList.fromString(s).
+func ProductionListFromString(s string) ProductionList {
+	return ProductionListFromTerm(aterm.GetInstance().Parse(s))
+}
+
+// ProductionListFromStream is Java Gom's ProductionList.fromStream(stream) (an IOException is
+// the error).
+func ProductionListFromStream(stream io.Reader) (ProductionList, error) {
+	at, err := aterm.GetInstance().ReadFromTextFile(stream)
+	if err != nil {
+		return nil, err
+	}
+	return ProductionListFromTerm(at), nil
+}
+
+// ConcProductionProductionList is the term type of the variadic operator `ConcProduction(...)` of sort ProductionList
+// (Java's abstract class ConcProduction): a maximally-shared cons cell (Java's
+// ConsConcProduction: a head and a tail) or the empty list (Java's EmptyConcProduction).
 type ConcProductionProductionList struct {
-	Slots []Production
+	head  Production
+	tail  ProductionList
+	empty bool
 	hash  uint32
+	// children caches the Visitable children (Java's children field)
+	children atomic.Pointer[[]any]
 }
 
 func (*ConcProductionProductionList) isProductionList() {}
@@ -2214,51 +4578,51 @@ func (t *ConcProductionProductionList) Hash() uint32 { return t.hash }
 
 func (t *ConcProductionProductionList) Equivalent(other sharedobjects.Term) bool {
 	o, ok := other.(*ConcProductionProductionList)
-	if !ok {
-		return false
-	}
-	if len(t.Slots) != len(o.Slots) {
-		return false
-	}
-	for i := range t.Slots {
-		if t.Slots[i] != o.Slots[i] {
-			return false
-		}
-	}
-	return true
+	return ok && t.empty == o.empty && t.head == o.head && t.tail == o.tail
 }
 
 func (t *ConcProductionProductionList) Duplicate() sharedobjects.Term {
-	cp := append([]Production(nil), t.Slots...)
-	return &ConcProductionProductionList{Slots: cp, hash: t.hash}
+	return &ConcProductionProductionList{head: t.head, tail: t.tail, empty: t.empty, hash: t.hash}
 }
 
-func (t *ConcProductionProductionList) String() string {
-	parts := make([]string, len(t.Slots))
-	for i, v := range t.Slots {
-		parts[i] = fmt.Sprintf("%v", v)
+// elements returns the cached Visitable children of the list: its
+// elements (Java's getChildren, i.e. toArray).
+// Java's getChildren is the typed toArray(new Production[]{}): a last tail
+// that is not a list (of sort ProductionList) cannot be stored in it
+// (ArrayStoreException, a *aterm.GomError here).
+func (t *ConcProductionProductionList) elements() []any {
+	if c := t.children.Load(); c != nil {
+		return *c
 	}
-	return "ConcProduction" + "(" + strings.Join(parts, ",") + ")"
+	var cur ProductionList = t
+	for {
+		c, ok := cur.(*ConcProductionProductionList)
+		if !ok || c.empty {
+			break
+		}
+		cur = c.tail
+	}
+	if c, ok := cur.(*ConcProductionProductionList); !ok || !c.empty {
+		panic(&aterm.GomError{Msg: fmt.Sprintf("ArrayStoreException: the tail %v of a ConcProduction list is not a Production", cur)})
+	}
+	c := t.ToArray()
+	t.children.Store(&c)
+	return c
 }
 
-func (t *ConcProductionProductionList) ChildCount() int { return len(t.Slots) }
+func (t *ConcProductionProductionList) ChildCount() int { return len(t.elements()) }
 
-func (t *ConcProductionProductionList) ChildAt(i int) any { return t.Slots[i] }
+func (t *ConcProductionProductionList) ChildAt(i int) any { return t.elements()[i] }
 
 func (t *ConcProductionProductionList) SetChildAt(i int, child any) any {
-	dup := append([]Production(nil), t.Slots...)
-	dup[i] = child.(Production)
-	return MakeConcProduction(dup...)
+	dup := t.Children()
+	dup[i] = child
+	return t.SetChildren(dup)
 }
 
-func (t *ConcProductionProductionList) Children() []any {
-	out := make([]any, len(t.Slots))
-	for i, v := range t.Slots {
-		out[i] = v
-	}
-	return out
-}
+func (t *ConcProductionProductionList) Children() []any { return append([]any(nil), t.elements()...) }
 
+// SetChildren is Java's setChildren of a list: ConcProductionFromArray(children).
 func (t *ConcProductionProductionList) SetChildren(children []any) any {
 	args := make([]Production, len(children))
 	for i, c := range children {
@@ -2267,15 +4631,77 @@ func (t *ConcProductionProductionList) SetChildren(children []any) any {
 	return MakeConcProduction(args...)
 }
 
-// MakeConcProduction builds the canonical (shared) ConcProduction term.
-func MakeConcProduction(args ...Production) ProductionList {
-	hashes := make([]uint32, 0, len(args))
-	for _, a := range args {
-		hashes = append(hashes, a.Hash())
+func (t *ConcProductionProductionList) String() string {
+	var b strings.Builder
+	b.WriteString("ConcProduction(")
+	var cur ProductionList = t
+	for {
+		c, ok := cur.(*ConcProductionProductionList)
+		if !ok {
+			b.WriteString("," + fmt.Sprint(cur))
+			break
+		}
+		if c.empty {
+			break
+		}
+		if c != t {
+			b.WriteString(",")
+		}
+		b.WriteString(fmt.Sprint(c.head))
+		cur = c.tail
 	}
-	proto := &ConcProductionProductionList{Slots: args, hash: sharedobjects.MixSymbol(sharedobjects.StringHash("ConcProduction"), hashes)}
+	b.WriteString(")")
+	return b.String()
+}
+
+// RealMakeConsConcProduction is Java Gom's ConsConcProduction.realMake: the shared cell of head
+// and tail, without hook.
+func RealMakeConsConcProduction(head Production, tail ProductionList) ProductionList {
+	proto := &ConcProductionProductionList{head: head, tail: tail, hash: sharedobjects.MixSymbol(sharedobjects.StringHash("ConsConcProduction"), []uint32{head.Hash(), tail.Hash()})}
 	return factory.Build(proto).(*ConcProductionProductionList)
 }
+
+// realMakeEmptyConcProduction is Java Gom's EmptyConcProduction.realMake: the shared empty list,
+// without hook.
+func realMakeEmptyConcProduction() ProductionList {
+	proto := &ConcProductionProductionList{empty: true, hash: sharedobjects.MixSymbol(sharedobjects.StringHash("EmptyConcProduction"), nil)}
+	return factory.Build(proto).(*ConcProductionProductionList)
+}
+
+// RawConcProduction builds the ConcProduction list holding exactly args, without construction
+// hook.
+func RawConcProduction(args ...Production) ProductionList {
+	l := realMakeEmptyConcProduction()
+	for i := len(args) - 1; i >= 0; i-- {
+		l = RealMakeConsConcProduction(args[i], l)
+	}
+	return l
+}
+
+// EmptyConcProduction is Java Gom's EmptyConcProduction.make(): the empty ConcProduction list, after the
+// construction hooks.
+func EmptyConcProduction() ProductionList {
+	return realMakeEmptyConcProduction()
+}
+
+// ConsConcProduction is Java Gom's ConsConcProduction.make(head, tail): head inserted in front of
+// tail, after the construction hooks (theory "" first).
+func ConsConcProduction(head Production, tail ProductionList) ProductionList {
+	return RealMakeConsConcProduction(head, tail)
+}
+
+// MakeConcProduction builds the list of args as Tom's `ConcProduction(args…)` does: from EmptyConcProduction,
+// by ConsConcProduction, through the construction hooks (Java's ConcProduction.fromArray).
+func MakeConcProduction(args ...Production) ProductionList {
+	var l ProductionList = EmptyConcProduction()
+	for i := len(args) - 1; i >= 0; i-- {
+		l = ConsConcProduction(args[i], l)
+	}
+	return l
+}
+
+// ConcProductionFromArray is Java Gom's ConcProduction.fromArray(array).
+func ConcProductionFromArray(array []Production) ProductionList { return MakeConcProduction(array...) }
 
 // IsConcProduction is the `Is_ConcProduction` predicate strategy: succeeds (returns subject
 // unchanged) when subject has the `ConcProduction` shape, otherwise fails with
@@ -2370,16 +4796,290 @@ func (s *VisitConcProduction) VisitWith(env *sl.Environment, intro sl.Introspect
 
 var _ sl.Strategy = (*VisitConcProduction)(nil)
 
+// SymbolName is the symbol of the Java term: ConsConcProduction or EmptyConcProduction.
+func (t *ConcProductionProductionList) SymbolName() string {
+	if t.empty {
+		return "EmptyConcProduction"
+	}
+	return "ConsConcProduction"
+}
+
+func (t *ConcProductionProductionList) IsConsConcProduction() bool  { return !t.empty }
+func (t *ConcProductionProductionList) IsEmptyConcProduction() bool { return t.empty }
+
+func (t *ConcProductionProductionList) GetHeadConcProduction() Production {
+	if t.empty {
+		panic(&aterm.GomError{Msg: "This ProductionList has no HeadConcProduction"})
+	}
+	return t.head
+}
+func (t *ConcProductionProductionList) GetTailConcProduction() ProductionList {
+	if t.empty {
+		panic(&aterm.GomError{Msg: "This ProductionList has no TailConcProduction"})
+	}
+	return t.tail
+}
+
+// Length is Java's length(): the number of elements of the list (a
+// tail that is not a ConcProduction list counts as one element).
+func (t *ConcProductionProductionList) Length() int {
+	res := 0
+	var tl ProductionList = t
+	for {
+		c, ok := tl.(*ConcProductionProductionList)
+		if !ok || c.empty {
+			return res
+		}
+		res++
+		tl = c.tail
+		if _, ok := tl.(*ConcProductionProductionList); !ok {
+			res++
+		}
+	}
+}
+
+// ToArray returns the elements of the list (Java's Object[] toArray()),
+// ending with its tail when that is not a ConcProduction list.
+func (t *ConcProductionProductionList) ToArray() []any {
+	out := make([]any, 0, t.Length())
+	var cur ProductionList = t
+	for {
+		c, ok := cur.(*ConcProductionProductionList)
+		if !ok || c.empty {
+			break
+		}
+		out = append(out, c.head)
+		cur = c.tail
+	}
+	if c, ok := cur.(*ConcProductionProductionList); !ok || !c.empty {
+		out = append(out, cur)
+	}
+	return out
+}
+
+// Reverse is Java's reverse(): the reversed list, built by ConsConcProduction
+// (through the hooks).
+func (t *ConcProductionProductionList) Reverse() ProductionList {
+	if t.empty {
+		return t
+	}
+	var cur ProductionList = t
+	var rev ProductionList = EmptyConcProduction()
+	for {
+		c, ok := cur.(*ConcProductionProductionList)
+		if !ok || c.empty {
+			break
+		}
+		rev = ConsConcProduction(c.head, rev)
+		cur = c.tail
+	}
+	return rev
+}
+
+// Append is Java's append(element): the list with element added at its
+// end, built by ConsConcProduction (through the hooks).
+func (t *ConcProductionProductionList) Append(element Production) ProductionList {
+	var heads []Production
+	var cur ProductionList = t
+	for {
+		c, ok := cur.(*ConcProductionProductionList)
+		if !ok || c.empty {
+			break
+		}
+		heads = append(heads, c.head)
+		cur = c.tail
+	}
+	var res ProductionList
+	if c, ok := cur.(*ConcProductionProductionList); ok && c.empty {
+		res = ConsConcProduction(element, cur)
+	} else {
+		res = ConsConcProduction(element, cur)
+	}
+	for i := len(heads) - 1; i >= 0; i-- {
+		res = ConsConcProduction(heads[i], res)
+	}
+	return res
+}
+
+func (t *ConcProductionProductionList) CompareTo(o any) int {
+	for {
+		ao := o.(ProductionList)
+		if ao == ProductionList(t) {
+			return 0
+		}
+		if t.Hash() != ao.Hash() {
+			if t.Hash() < ao.Hash() {
+				return -1
+			}
+			return 1
+		}
+		if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+			return c
+		}
+		tco := ao.(*ConcProductionProductionList)
+		if t.empty {
+			panic(&aterm.GomError{Msg: "Unable to compare"})
+		}
+		if c := t.head.CompareTo(tco.head); c != 0 {
+			return c
+		}
+		next, ok := t.tail.(*ConcProductionProductionList)
+		if !ok {
+			if c := t.tail.CompareTo(tco.tail); c != 0 {
+				return c
+			}
+			panic(&aterm.GomError{Msg: "Unable to compare"})
+		}
+		t, o = next, tco.tail
+	}
+}
+
+func (t *ConcProductionProductionList) CompareToLPO(o any) int {
+	for {
+		ao := o.(ProductionList)
+		if ao == ProductionList(t) {
+			return 0
+		}
+		if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+			return c
+		}
+		tco := ao.(*ConcProductionProductionList)
+		if t.empty {
+			panic(&aterm.GomError{Msg: "Unable to compare"})
+		}
+		if c := t.head.CompareToLPO(tco.head); c != 0 {
+			return c
+		}
+		next, ok := t.tail.(*ConcProductionProductionList)
+		if !ok {
+			if c := t.tail.CompareToLPO(tco.tail); c != 0 {
+				return c
+			}
+			panic(&aterm.GomError{Msg: "Unable to compare"})
+		}
+		t, o = next, tco.tail
+	}
+}
+
+// ToATerm is Java's toATerm: the list of the elements, ending with the
+// ATerm list of the tail (a tail that is not a list is Java's
+// ClassCastException).
+func (t *ConcProductionProductionList) ToATerm() aterm.ATerm {
+	f := aterm.GetInstance()
+	var heads []Production
+	var cur ProductionList = t
+	for {
+		c, ok := cur.(*ConcProductionProductionList)
+		if !ok || c.empty {
+			break
+		}
+		heads = append(heads, c.head)
+		cur = c.tail
+	}
+	l := f.MakeListEmpty()
+	if c, ok := cur.(*ConcProductionProductionList); !ok || !c.empty {
+		tl, isList := cur.ToATerm().(*aterm.ATermList)
+		if !isList {
+			panic(&aterm.GomError{Msg: fmt.Sprintf("ClassCastException: the ATerm of %v is not an ATermList", cur)})
+		}
+		l = tl
+	}
+	for i := len(heads) - 1; i >= 0; i-- {
+		l = f.MakeList(heads[i].ToATerm(), l)
+	}
+	return l
+}
+
+// fromTermConcProductionProductionList is Java Gom's ConcProduction.fromTerm: an application of ConcProduction, or a
+// list (of ToATerm), of convertible elements.
+func fromTermConcProductionProductionList(trm aterm.ATerm, conv aterm.ATermConverter) (res ProductionList, ok bool) {
+	trm = conv.Convert(trm)
+	if appl, isAppl := trm.(*aterm.ATermAppl); isAppl && appl.GetName() == "ConcProduction" {
+		elems := make([]Production, appl.GetArity())
+		for i, a := range appl.GetArguments() {
+			elems[i] = ProductionFromTermConv(a, conv)
+		}
+		return MakeConcProduction(elems...), true
+	}
+	if list, isList := trm.(*aterm.ATermList); isList {
+		// an element that cannot be converted: not a ConcProduction (Java returns null)
+		defer func() {
+			if recover() != nil {
+				res, ok = nil, false
+			}
+		}()
+		var elems []Production
+		for !list.IsEmpty() {
+			elems = append(elems, ProductionFromTermConv(list.GetFirst(), conv))
+			list = list.GetNext()
+		}
+		return MakeConcProduction(elems...), true
+	}
+	return nil, false
+}
+
 // AlternativeList is the Go interface backing the Gom sort AlternativeList.
 type AlternativeList interface {
 	sharedobjects.Term
 	isAlternativeList()
+	// Java Gom API (see the package's generated methods)
+	SymbolName() string
+	IsConsConcAlternative() bool
+	IsEmptyConcAlternative() bool
+	GetHeadConcAlternative() Alternative
+	GetTailConcAlternative() AlternativeList
+	Length() int
+	Reverse() AlternativeList
+	CompareTo(o any) int
+	CompareToLPO(o any) int
+	ToATerm() aterm.ATerm
 }
 
-// ConcAlternativeAlternativeList is the term type for the alternative `ConcAlternative(...)` of sort AlternativeList.
+// AlternativeListFromTerm is Java Gom's AlternativeList.fromTerm(trm).
+func AlternativeListFromTerm(trm aterm.ATerm) AlternativeList {
+	return AlternativeListFromTermConv(trm, aterm.IdConverter{})
+}
+
+// AlternativeListFromTermConv is Java Gom's AlternativeList.fromTerm(trm, atConv): the term of
+// the first operator of the sort that converts the ATerm; it panics
+// (IllegalArgumentException) when there is none.
+func AlternativeListFromTermConv(trm aterm.ATerm, conv aterm.ATermConverter) AlternativeList {
+	converted := conv.Convert(trm)
+	var results []AlternativeList
+	if r, ok := fromTermConcAlternativeAlternativeList(converted, conv); ok {
+		results = append(results, r)
+	}
+	if len(results) == 0 {
+		panic(&aterm.GomError{Msg: fmt.Sprintf("%v is not a AlternativeList", trm), IllegalArgument: true})
+	}
+	return results[0]
+}
+
+// AlternativeListFromString is Java Gom's AlternativeList.fromString(s).
+func AlternativeListFromString(s string) AlternativeList {
+	return AlternativeListFromTerm(aterm.GetInstance().Parse(s))
+}
+
+// AlternativeListFromStream is Java Gom's AlternativeList.fromStream(stream) (an IOException is
+// the error).
+func AlternativeListFromStream(stream io.Reader) (AlternativeList, error) {
+	at, err := aterm.GetInstance().ReadFromTextFile(stream)
+	if err != nil {
+		return nil, err
+	}
+	return AlternativeListFromTerm(at), nil
+}
+
+// ConcAlternativeAlternativeList is the term type of the variadic operator `ConcAlternative(...)` of sort AlternativeList
+// (Java's abstract class ConcAlternative): a maximally-shared cons cell (Java's
+// ConsConcAlternative: a head and a tail) or the empty list (Java's EmptyConcAlternative).
 type ConcAlternativeAlternativeList struct {
-	Slots []Alternative
+	head  Alternative
+	tail  AlternativeList
+	empty bool
 	hash  uint32
+	// children caches the Visitable children (Java's children field)
+	children atomic.Pointer[[]any]
 }
 
 func (*ConcAlternativeAlternativeList) isAlternativeList() {}
@@ -2388,51 +5088,51 @@ func (t *ConcAlternativeAlternativeList) Hash() uint32 { return t.hash }
 
 func (t *ConcAlternativeAlternativeList) Equivalent(other sharedobjects.Term) bool {
 	o, ok := other.(*ConcAlternativeAlternativeList)
-	if !ok {
-		return false
-	}
-	if len(t.Slots) != len(o.Slots) {
-		return false
-	}
-	for i := range t.Slots {
-		if t.Slots[i] != o.Slots[i] {
-			return false
-		}
-	}
-	return true
+	return ok && t.empty == o.empty && t.head == o.head && t.tail == o.tail
 }
 
 func (t *ConcAlternativeAlternativeList) Duplicate() sharedobjects.Term {
-	cp := append([]Alternative(nil), t.Slots...)
-	return &ConcAlternativeAlternativeList{Slots: cp, hash: t.hash}
+	return &ConcAlternativeAlternativeList{head: t.head, tail: t.tail, empty: t.empty, hash: t.hash}
 }
 
-func (t *ConcAlternativeAlternativeList) String() string {
-	parts := make([]string, len(t.Slots))
-	for i, v := range t.Slots {
-		parts[i] = fmt.Sprintf("%v", v)
+// elements returns the cached Visitable children of the list: its
+// elements (Java's getChildren, i.e. toArray).
+// Java's getChildren is the typed toArray(new Alternative[]{}): a last tail
+// that is not a list (of sort AlternativeList) cannot be stored in it
+// (ArrayStoreException, a *aterm.GomError here).
+func (t *ConcAlternativeAlternativeList) elements() []any {
+	if c := t.children.Load(); c != nil {
+		return *c
 	}
-	return "ConcAlternative" + "(" + strings.Join(parts, ",") + ")"
+	var cur AlternativeList = t
+	for {
+		c, ok := cur.(*ConcAlternativeAlternativeList)
+		if !ok || c.empty {
+			break
+		}
+		cur = c.tail
+	}
+	if c, ok := cur.(*ConcAlternativeAlternativeList); !ok || !c.empty {
+		panic(&aterm.GomError{Msg: fmt.Sprintf("ArrayStoreException: the tail %v of a ConcAlternative list is not a Alternative", cur)})
+	}
+	c := t.ToArray()
+	t.children.Store(&c)
+	return c
 }
 
-func (t *ConcAlternativeAlternativeList) ChildCount() int { return len(t.Slots) }
+func (t *ConcAlternativeAlternativeList) ChildCount() int { return len(t.elements()) }
 
-func (t *ConcAlternativeAlternativeList) ChildAt(i int) any { return t.Slots[i] }
+func (t *ConcAlternativeAlternativeList) ChildAt(i int) any { return t.elements()[i] }
 
 func (t *ConcAlternativeAlternativeList) SetChildAt(i int, child any) any {
-	dup := append([]Alternative(nil), t.Slots...)
-	dup[i] = child.(Alternative)
-	return MakeConcAlternative(dup...)
+	dup := t.Children()
+	dup[i] = child
+	return t.SetChildren(dup)
 }
 
-func (t *ConcAlternativeAlternativeList) Children() []any {
-	out := make([]any, len(t.Slots))
-	for i, v := range t.Slots {
-		out[i] = v
-	}
-	return out
-}
+func (t *ConcAlternativeAlternativeList) Children() []any { return append([]any(nil), t.elements()...) }
 
+// SetChildren is Java's setChildren of a list: ConcAlternativeFromArray(children).
 func (t *ConcAlternativeAlternativeList) SetChildren(children []any) any {
 	args := make([]Alternative, len(children))
 	for i, c := range children {
@@ -2441,14 +5141,78 @@ func (t *ConcAlternativeAlternativeList) SetChildren(children []any) any {
 	return MakeConcAlternative(args...)
 }
 
-// MakeConcAlternative builds the canonical (shared) ConcAlternative term.
-func MakeConcAlternative(args ...Alternative) AlternativeList {
-	hashes := make([]uint32, 0, len(args))
-	for _, a := range args {
-		hashes = append(hashes, a.Hash())
+func (t *ConcAlternativeAlternativeList) String() string {
+	var b strings.Builder
+	b.WriteString("ConcAlternative(")
+	var cur AlternativeList = t
+	for {
+		c, ok := cur.(*ConcAlternativeAlternativeList)
+		if !ok {
+			b.WriteString("," + fmt.Sprint(cur))
+			break
+		}
+		if c.empty {
+			break
+		}
+		if c != t {
+			b.WriteString(",")
+		}
+		b.WriteString(fmt.Sprint(c.head))
+		cur = c.tail
 	}
-	proto := &ConcAlternativeAlternativeList{Slots: args, hash: sharedobjects.MixSymbol(sharedobjects.StringHash("ConcAlternative"), hashes)}
+	b.WriteString(")")
+	return b.String()
+}
+
+// RealMakeConsConcAlternative is Java Gom's ConsConcAlternative.realMake: the shared cell of head
+// and tail, without hook.
+func RealMakeConsConcAlternative(head Alternative, tail AlternativeList) AlternativeList {
+	proto := &ConcAlternativeAlternativeList{head: head, tail: tail, hash: sharedobjects.MixSymbol(sharedobjects.StringHash("ConsConcAlternative"), []uint32{head.Hash(), tail.Hash()})}
 	return factory.Build(proto).(*ConcAlternativeAlternativeList)
+}
+
+// realMakeEmptyConcAlternative is Java Gom's EmptyConcAlternative.realMake: the shared empty list,
+// without hook.
+func realMakeEmptyConcAlternative() AlternativeList {
+	proto := &ConcAlternativeAlternativeList{empty: true, hash: sharedobjects.MixSymbol(sharedobjects.StringHash("EmptyConcAlternative"), nil)}
+	return factory.Build(proto).(*ConcAlternativeAlternativeList)
+}
+
+// RawConcAlternative builds the ConcAlternative list holding exactly args, without construction
+// hook.
+func RawConcAlternative(args ...Alternative) AlternativeList {
+	l := realMakeEmptyConcAlternative()
+	for i := len(args) - 1; i >= 0; i-- {
+		l = RealMakeConsConcAlternative(args[i], l)
+	}
+	return l
+}
+
+// EmptyConcAlternative is Java Gom's EmptyConcAlternative.make(): the empty ConcAlternative list, after the
+// construction hooks.
+func EmptyConcAlternative() AlternativeList {
+	return realMakeEmptyConcAlternative()
+}
+
+// ConsConcAlternative is Java Gom's ConsConcAlternative.make(head, tail): head inserted in front of
+// tail, after the construction hooks (theory "" first).
+func ConsConcAlternative(head Alternative, tail AlternativeList) AlternativeList {
+	return RealMakeConsConcAlternative(head, tail)
+}
+
+// MakeConcAlternative builds the list of args as Tom's `ConcAlternative(args…)` does: from EmptyConcAlternative,
+// by ConsConcAlternative, through the construction hooks (Java's ConcAlternative.fromArray).
+func MakeConcAlternative(args ...Alternative) AlternativeList {
+	var l AlternativeList = EmptyConcAlternative()
+	for i := len(args) - 1; i >= 0; i-- {
+		l = ConsConcAlternative(args[i], l)
+	}
+	return l
+}
+
+// ConcAlternativeFromArray is Java Gom's ConcAlternative.fromArray(array).
+func ConcAlternativeFromArray(array []Alternative) AlternativeList {
+	return MakeConcAlternative(array...)
 }
 
 // IsConcAlternative is the `Is_ConcAlternative` predicate strategy: succeeds (returns subject
@@ -2544,10 +5308,279 @@ func (s *VisitConcAlternative) VisitWith(env *sl.Environment, intro sl.Introspec
 
 var _ sl.Strategy = (*VisitConcAlternative)(nil)
 
+// SymbolName is the symbol of the Java term: ConsConcAlternative or EmptyConcAlternative.
+func (t *ConcAlternativeAlternativeList) SymbolName() string {
+	if t.empty {
+		return "EmptyConcAlternative"
+	}
+	return "ConsConcAlternative"
+}
+
+func (t *ConcAlternativeAlternativeList) IsConsConcAlternative() bool  { return !t.empty }
+func (t *ConcAlternativeAlternativeList) IsEmptyConcAlternative() bool { return t.empty }
+
+func (t *ConcAlternativeAlternativeList) GetHeadConcAlternative() Alternative {
+	if t.empty {
+		panic(&aterm.GomError{Msg: "This AlternativeList has no HeadConcAlternative"})
+	}
+	return t.head
+}
+func (t *ConcAlternativeAlternativeList) GetTailConcAlternative() AlternativeList {
+	if t.empty {
+		panic(&aterm.GomError{Msg: "This AlternativeList has no TailConcAlternative"})
+	}
+	return t.tail
+}
+
+// Length is Java's length(): the number of elements of the list (a
+// tail that is not a ConcAlternative list counts as one element).
+func (t *ConcAlternativeAlternativeList) Length() int {
+	res := 0
+	var tl AlternativeList = t
+	for {
+		c, ok := tl.(*ConcAlternativeAlternativeList)
+		if !ok || c.empty {
+			return res
+		}
+		res++
+		tl = c.tail
+		if _, ok := tl.(*ConcAlternativeAlternativeList); !ok {
+			res++
+		}
+	}
+}
+
+// ToArray returns the elements of the list (Java's Object[] toArray()),
+// ending with its tail when that is not a ConcAlternative list.
+func (t *ConcAlternativeAlternativeList) ToArray() []any {
+	out := make([]any, 0, t.Length())
+	var cur AlternativeList = t
+	for {
+		c, ok := cur.(*ConcAlternativeAlternativeList)
+		if !ok || c.empty {
+			break
+		}
+		out = append(out, c.head)
+		cur = c.tail
+	}
+	if c, ok := cur.(*ConcAlternativeAlternativeList); !ok || !c.empty {
+		out = append(out, cur)
+	}
+	return out
+}
+
+// Reverse is Java's reverse(): the reversed list, built by ConsConcAlternative
+// (through the hooks).
+func (t *ConcAlternativeAlternativeList) Reverse() AlternativeList {
+	if t.empty {
+		return t
+	}
+	var cur AlternativeList = t
+	var rev AlternativeList = EmptyConcAlternative()
+	for {
+		c, ok := cur.(*ConcAlternativeAlternativeList)
+		if !ok || c.empty {
+			break
+		}
+		rev = ConsConcAlternative(c.head, rev)
+		cur = c.tail
+	}
+	return rev
+}
+
+// Append is Java's append(element): the list with element added at its
+// end, built by ConsConcAlternative (through the hooks).
+func (t *ConcAlternativeAlternativeList) Append(element Alternative) AlternativeList {
+	var heads []Alternative
+	var cur AlternativeList = t
+	for {
+		c, ok := cur.(*ConcAlternativeAlternativeList)
+		if !ok || c.empty {
+			break
+		}
+		heads = append(heads, c.head)
+		cur = c.tail
+	}
+	var res AlternativeList
+	if c, ok := cur.(*ConcAlternativeAlternativeList); ok && c.empty {
+		res = ConsConcAlternative(element, cur)
+	} else {
+		res = ConsConcAlternative(element, cur)
+	}
+	for i := len(heads) - 1; i >= 0; i-- {
+		res = ConsConcAlternative(heads[i], res)
+	}
+	return res
+}
+
+func (t *ConcAlternativeAlternativeList) CompareTo(o any) int {
+	for {
+		ao := o.(AlternativeList)
+		if ao == AlternativeList(t) {
+			return 0
+		}
+		if t.Hash() != ao.Hash() {
+			if t.Hash() < ao.Hash() {
+				return -1
+			}
+			return 1
+		}
+		if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+			return c
+		}
+		tco := ao.(*ConcAlternativeAlternativeList)
+		if t.empty {
+			panic(&aterm.GomError{Msg: "Unable to compare"})
+		}
+		if c := t.head.CompareTo(tco.head); c != 0 {
+			return c
+		}
+		next, ok := t.tail.(*ConcAlternativeAlternativeList)
+		if !ok {
+			if c := t.tail.CompareTo(tco.tail); c != 0 {
+				return c
+			}
+			panic(&aterm.GomError{Msg: "Unable to compare"})
+		}
+		t, o = next, tco.tail
+	}
+}
+
+func (t *ConcAlternativeAlternativeList) CompareToLPO(o any) int {
+	for {
+		ao := o.(AlternativeList)
+		if ao == AlternativeList(t) {
+			return 0
+		}
+		if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+			return c
+		}
+		tco := ao.(*ConcAlternativeAlternativeList)
+		if t.empty {
+			panic(&aterm.GomError{Msg: "Unable to compare"})
+		}
+		if c := t.head.CompareToLPO(tco.head); c != 0 {
+			return c
+		}
+		next, ok := t.tail.(*ConcAlternativeAlternativeList)
+		if !ok {
+			if c := t.tail.CompareToLPO(tco.tail); c != 0 {
+				return c
+			}
+			panic(&aterm.GomError{Msg: "Unable to compare"})
+		}
+		t, o = next, tco.tail
+	}
+}
+
+// ToATerm is Java's toATerm: the list of the elements, ending with the
+// ATerm list of the tail (a tail that is not a list is Java's
+// ClassCastException).
+func (t *ConcAlternativeAlternativeList) ToATerm() aterm.ATerm {
+	f := aterm.GetInstance()
+	var heads []Alternative
+	var cur AlternativeList = t
+	for {
+		c, ok := cur.(*ConcAlternativeAlternativeList)
+		if !ok || c.empty {
+			break
+		}
+		heads = append(heads, c.head)
+		cur = c.tail
+	}
+	l := f.MakeListEmpty()
+	if c, ok := cur.(*ConcAlternativeAlternativeList); !ok || !c.empty {
+		tl, isList := cur.ToATerm().(*aterm.ATermList)
+		if !isList {
+			panic(&aterm.GomError{Msg: fmt.Sprintf("ClassCastException: the ATerm of %v is not an ATermList", cur)})
+		}
+		l = tl
+	}
+	for i := len(heads) - 1; i >= 0; i-- {
+		l = f.MakeList(heads[i].ToATerm(), l)
+	}
+	return l
+}
+
+// fromTermConcAlternativeAlternativeList is Java Gom's ConcAlternative.fromTerm: an application of ConcAlternative, or a
+// list (of ToATerm), of convertible elements.
+func fromTermConcAlternativeAlternativeList(trm aterm.ATerm, conv aterm.ATermConverter) (res AlternativeList, ok bool) {
+	trm = conv.Convert(trm)
+	if appl, isAppl := trm.(*aterm.ATermAppl); isAppl && appl.GetName() == "ConcAlternative" {
+		elems := make([]Alternative, appl.GetArity())
+		for i, a := range appl.GetArguments() {
+			elems[i] = AlternativeFromTermConv(a, conv)
+		}
+		return MakeConcAlternative(elems...), true
+	}
+	if list, isList := trm.(*aterm.ATermList); isList {
+		// an element that cannot be converted: not a ConcAlternative (Java returns null)
+		defer func() {
+			if recover() != nil {
+				res, ok = nil, false
+			}
+		}()
+		var elems []Alternative
+		for !list.IsEmpty() {
+			elems = append(elems, AlternativeFromTermConv(list.GetFirst(), conv))
+			list = list.GetNext()
+		}
+		return MakeConcAlternative(elems...), true
+	}
+	return nil, false
+}
+
 // Alternative is the Go interface backing the Gom sort Alternative.
 type Alternative interface {
 	sharedobjects.Term
 	isAlternative()
+	// Java Gom API (see the package's generated methods)
+	SymbolName() string
+	IsAlternative() bool
+	GetName() string
+	GetDomainList() FieldList
+	GetCodomain() GomType
+	GetOption() Option
+	Length() int
+	Reverse() Alternative
+	CompareTo(o any) int
+	CompareToLPO(o any) int
+	ToATerm() aterm.ATerm
+}
+
+// AlternativeFromTerm is Java Gom's Alternative.fromTerm(trm).
+func AlternativeFromTerm(trm aterm.ATerm) Alternative {
+	return AlternativeFromTermConv(trm, aterm.IdConverter{})
+}
+
+// AlternativeFromTermConv is Java Gom's Alternative.fromTerm(trm, atConv): the term of
+// the first operator of the sort that converts the ATerm; it panics
+// (IllegalArgumentException) when there is none.
+func AlternativeFromTermConv(trm aterm.ATerm, conv aterm.ATermConverter) Alternative {
+	converted := conv.Convert(trm)
+	var results []Alternative
+	if r, ok := fromTermAlternativeAlternative(converted, conv); ok {
+		results = append(results, r)
+	}
+	if len(results) == 0 {
+		panic(&aterm.GomError{Msg: fmt.Sprintf("%v is not a Alternative", trm), IllegalArgument: true})
+	}
+	return results[0]
+}
+
+// AlternativeFromString is Java Gom's Alternative.fromString(s).
+func AlternativeFromString(s string) Alternative {
+	return AlternativeFromTerm(aterm.GetInstance().Parse(s))
+}
+
+// AlternativeFromStream is Java Gom's Alternative.fromStream(stream) (an IOException is
+// the error).
+func AlternativeFromStream(stream io.Reader) (Alternative, error) {
+	at, err := aterm.GetInstance().ReadFromTextFile(stream)
+	if err != nil {
+		return nil, err
+	}
+	return AlternativeFromTerm(at), nil
 }
 
 // AlternativeAlternative is the term type for the alternative `Alternative(...)` of sort Alternative.
@@ -2589,7 +5622,7 @@ func (t *AlternativeAlternative) Duplicate() sharedobjects.Term {
 }
 
 func (t *AlternativeAlternative) String() string {
-	return fmt.Sprintf("Alternative(%s,%v,%v,%v)", sharedobjects.JavaEscape(t.Name), t.DomainList, t.Codomain, t.Option)
+	return "Alternative(" + sharedobjects.JavaEscape(t.Name) + "," + fmt.Sprint(t.DomainList) + "," + fmt.Sprint(t.Codomain) + "," + fmt.Sprint(t.Option) + ")"
 }
 
 func (t *AlternativeAlternative) ChildCount() int { return 4 }
@@ -2730,10 +5763,140 @@ func (s *VisitAlternative) VisitWith(env *sl.Environment, intro sl.Introspector)
 
 var _ sl.Strategy = (*VisitAlternative)(nil)
 
+func (t *AlternativeAlternative) SymbolName() string { return "Alternative" }
+
+func (t *AlternativeAlternative) IsAlternative() bool { return true }
+
+func (t *AlternativeAlternative) GetName() string          { return t.Name }
+func (t *AlternativeAlternative) GetDomainList() FieldList { return t.DomainList }
+func (t *AlternativeAlternative) GetCodomain() GomType     { return t.Codomain }
+func (t *AlternativeAlternative) GetOption() Option        { return t.Option }
+
+func (t *AlternativeAlternative) Length() int {
+	panic(&aterm.GomError{Msg: "This Alternative.Alternative is not a list", IllegalArgument: true})
+}
+
+func (t *AlternativeAlternative) Reverse() Alternative {
+	panic(&aterm.GomError{Msg: "This Alternative.Alternative is not a list", IllegalArgument: true})
+}
+
+func (t *AlternativeAlternative) CompareTo(o any) int {
+	ao := o.(Alternative)
+	if ao == Alternative(t) {
+		return 0
+	}
+	if t.Hash() != ao.Hash() {
+		if t.Hash() < ao.Hash() {
+			return -1
+		}
+		return 1
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	tco := ao.(*AlternativeAlternative)
+	if c := strings.Compare(t.Name, tco.Name); c != 0 {
+		return c
+	}
+	if c := t.DomainList.CompareTo(tco.DomainList); c != 0 {
+		return c
+	}
+	if c := t.Codomain.CompareTo(tco.Codomain); c != 0 {
+		return c
+	}
+	if c := t.Option.CompareTo(tco.Option); c != 0 {
+		return c
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+func (t *AlternativeAlternative) CompareToLPO(o any) int {
+	ao := o.(Alternative)
+	if ao == Alternative(t) {
+		return 0
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	tco := ao.(*AlternativeAlternative)
+	if c := strings.Compare(t.Name, tco.Name); c != 0 {
+		return c
+	}
+	if c := t.DomainList.CompareToLPO(tco.DomainList); c != 0 {
+		return c
+	}
+	if c := t.Codomain.CompareToLPO(tco.Codomain); c != 0 {
+		return c
+	}
+	if c := t.Option.CompareToLPO(tco.Option); c != 0 {
+		return c
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+// ToATerm is the ATerm of the term: an application of Alternative.
+func (t *AlternativeAlternative) ToATerm() aterm.ATerm {
+	f := aterm.GetInstance()
+	return f.MakeAppl(f.MakeAFun("Alternative", 4, false), aterm.MakeGomString(t.Name), t.DomainList.ToATerm(), t.Codomain.ToATerm(), t.Option.ToATerm())
+}
+
+// fromTermAlternativeAlternative is Java Gom's Alternative.fromTerm: an unquoted application of
+// Alternative whose arguments are convertible (as in Java, the arity is not
+// checked: a missing argument is an index out of range).
+func fromTermAlternativeAlternative(trm aterm.ATerm, conv aterm.ATermConverter) (Alternative, bool) {
+	trm = conv.Convert(trm)
+	if appl, ok := trm.(*aterm.ATermAppl); ok && appl.GetName() == "Alternative" && !appl.GetAFun().IsQuoted() {
+		return MakeAlternative(aterm.GomString(appl.GetArgument(0), conv), FieldListFromTermConv(appl.GetArgument(1), conv), GomTypeFromTermConv(appl.GetArgument(2), conv), OptionFromTermConv(appl.GetArgument(3), conv)), true
+	}
+	return nil, false
+}
+
 // HookKind is the Go interface backing the Gom sort HookKind.
 type HookKind interface {
 	sharedobjects.Term
 	isHookKind()
+	// Java Gom API (see the package's generated methods)
+	SymbolName() string
+	IsHookKind() bool
+	Getkind() string
+	Length() int
+	Reverse() HookKind
+	CompareTo(o any) int
+	CompareToLPO(o any) int
+	ToATerm() aterm.ATerm
+}
+
+// HookKindFromTerm is Java Gom's HookKind.fromTerm(trm).
+func HookKindFromTerm(trm aterm.ATerm) HookKind {
+	return HookKindFromTermConv(trm, aterm.IdConverter{})
+}
+
+// HookKindFromTermConv is Java Gom's HookKind.fromTerm(trm, atConv): the term of
+// the first operator of the sort that converts the ATerm; it panics
+// (IllegalArgumentException) when there is none.
+func HookKindFromTermConv(trm aterm.ATerm, conv aterm.ATermConverter) HookKind {
+	converted := conv.Convert(trm)
+	var results []HookKind
+	if r, ok := fromTermHookKindHookKind(converted, conv); ok {
+		results = append(results, r)
+	}
+	if len(results) == 0 {
+		panic(&aterm.GomError{Msg: fmt.Sprintf("%v is not a HookKind", trm), IllegalArgument: true})
+	}
+	return results[0]
+}
+
+// HookKindFromString is Java Gom's HookKind.fromString(s).
+func HookKindFromString(s string) HookKind { return HookKindFromTerm(aterm.GetInstance().Parse(s)) }
+
+// HookKindFromStream is Java Gom's HookKind.fromStream(stream) (an IOException is
+// the error).
+func HookKindFromStream(stream io.Reader) (HookKind, error) {
+	at, err := aterm.GetInstance().ReadFromTextFile(stream)
+	if err != nil {
+		return nil, err
+	}
+	return HookKindFromTerm(at), nil
 }
 
 // HookKindHookKind is the term type for the alternative `HookKind(...)` of sort HookKind.
@@ -2763,7 +5926,7 @@ func (t *HookKindHookKind) Duplicate() sharedobjects.Term {
 }
 
 func (t *HookKindHookKind) String() string {
-	return fmt.Sprintf("HookKind(%s)", sharedobjects.JavaEscape(t.Kind))
+	return "HookKind(" + sharedobjects.JavaEscape(t.Kind) + ")"
 }
 
 func (t *HookKindHookKind) ChildCount() int { return 1 }
@@ -2892,10 +6055,129 @@ func (s *VisitHookKind) VisitWith(env *sl.Environment, intro sl.Introspector) (a
 
 var _ sl.Strategy = (*VisitHookKind)(nil)
 
+func (t *HookKindHookKind) SymbolName() string { return "HookKind" }
+
+func (t *HookKindHookKind) IsHookKind() bool { return true }
+
+func (t *HookKindHookKind) Getkind() string { return t.Kind }
+
+func (t *HookKindHookKind) Length() int {
+	panic(&aterm.GomError{Msg: "This HookKind.HookKind is not a list", IllegalArgument: true})
+}
+
+func (t *HookKindHookKind) Reverse() HookKind {
+	panic(&aterm.GomError{Msg: "This HookKind.HookKind is not a list", IllegalArgument: true})
+}
+
+func (t *HookKindHookKind) CompareTo(o any) int {
+	ao := o.(HookKind)
+	if ao == HookKind(t) {
+		return 0
+	}
+	if t.Hash() != ao.Hash() {
+		if t.Hash() < ao.Hash() {
+			return -1
+		}
+		return 1
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	tco := ao.(*HookKindHookKind)
+	if c := strings.Compare(t.Kind, tco.Kind); c != 0 {
+		return c
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+func (t *HookKindHookKind) CompareToLPO(o any) int {
+	ao := o.(HookKind)
+	if ao == HookKind(t) {
+		return 0
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	tco := ao.(*HookKindHookKind)
+	if c := strings.Compare(t.Kind, tco.Kind); c != 0 {
+		return c
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+// ToATerm is the ATerm of the term: an application of HookKind.
+func (t *HookKindHookKind) ToATerm() aterm.ATerm {
+	f := aterm.GetInstance()
+	return f.MakeAppl(f.MakeAFun("HookKind", 1, false), aterm.MakeGomString(t.Kind))
+}
+
+// fromTermHookKindHookKind is Java Gom's HookKind.fromTerm: an unquoted application of
+// HookKind whose arguments are convertible (as in Java, the arity is not
+// checked: a missing argument is an index out of range).
+func fromTermHookKindHookKind(trm aterm.ATerm, conv aterm.ATermConverter) (HookKind, bool) {
+	trm = conv.Convert(trm)
+	if appl, ok := trm.(*aterm.ATermAppl); ok && appl.GetName() == "HookKind" && !appl.GetAFun().IsQuoted() {
+		return MakeHookKind(aterm.GomString(appl.GetArgument(0), conv)), true
+	}
+	return nil, false
+}
+
 // IdKind is the Go interface backing the Gom sort IdKind.
 type IdKind interface {
 	sharedobjects.Term
 	isIdKind()
+	// Java Gom API (see the package's generated methods)
+	SymbolName() string
+	IsKindModule() bool
+	IsKindSort() bool
+	IsKindOperator() bool
+	IsKindFutureOperator() bool
+	GetConsOrNil() Future
+	Length() int
+	Reverse() IdKind
+	CompareTo(o any) int
+	CompareToLPO(o any) int
+	ToATerm() aterm.ATerm
+}
+
+// IdKindFromTerm is Java Gom's IdKind.fromTerm(trm).
+func IdKindFromTerm(trm aterm.ATerm) IdKind { return IdKindFromTermConv(trm, aterm.IdConverter{}) }
+
+// IdKindFromTermConv is Java Gom's IdKind.fromTerm(trm, atConv): the term of
+// the first operator of the sort that converts the ATerm; it panics
+// (IllegalArgumentException) when there is none.
+func IdKindFromTermConv(trm aterm.ATerm, conv aterm.ATermConverter) IdKind {
+	converted := conv.Convert(trm)
+	var results []IdKind
+	if r, ok := fromTermKindModuleIdKind(converted, conv); ok {
+		results = append(results, r)
+	}
+	if r, ok := fromTermKindSortIdKind(converted, conv); ok {
+		results = append(results, r)
+	}
+	if r, ok := fromTermKindOperatorIdKind(converted, conv); ok {
+		results = append(results, r)
+	}
+	if r, ok := fromTermKindFutureOperatorIdKind(converted, conv); ok {
+		results = append(results, r)
+	}
+	if len(results) == 0 {
+		panic(&aterm.GomError{Msg: fmt.Sprintf("%v is not a IdKind", trm), IllegalArgument: true})
+	}
+	return results[0]
+}
+
+// IdKindFromString is Java Gom's IdKind.fromString(s).
+func IdKindFromString(s string) IdKind { return IdKindFromTerm(aterm.GetInstance().Parse(s)) }
+
+// IdKindFromStream is Java Gom's IdKind.fromStream(stream) (an IOException is
+// the error).
+func IdKindFromStream(stream io.Reader) (IdKind, error) {
+	at, err := aterm.GetInstance().ReadFromTextFile(stream)
+	if err != nil {
+		return nil, err
+	}
+	return IdKindFromTerm(at), nil
 }
 
 // KindModuleIdKind is the term type for the alternative `KindModule(...)` of sort IdKind.
@@ -2918,7 +6200,7 @@ func (t *KindModuleIdKind) Duplicate() sharedobjects.Term {
 }
 
 func (t *KindModuleIdKind) String() string {
-	return "KindModule" + "()"
+	return "KindModule()"
 }
 
 func (t *KindModuleIdKind) ChildCount() int { return 0 }
@@ -3013,6 +6295,70 @@ func (s *VisitKindModule) VisitWith(env *sl.Environment, intro sl.Introspector) 
 
 var _ sl.Strategy = (*VisitKindModule)(nil)
 
+func (t *KindModuleIdKind) SymbolName() string { return "KindModule" }
+
+func (t *KindModuleIdKind) IsKindModule() bool         { return true }
+func (t *KindModuleIdKind) IsKindSort() bool           { return false }
+func (t *KindModuleIdKind) IsKindOperator() bool       { return false }
+func (t *KindModuleIdKind) IsKindFutureOperator() bool { return false }
+
+func (t *KindModuleIdKind) GetConsOrNil() Future {
+	panic(&aterm.GomError{Msg: "This IdKind has no ConsOrNil"})
+}
+
+func (t *KindModuleIdKind) Length() int {
+	panic(&aterm.GomError{Msg: "This IdKind.KindModule is not a list", IllegalArgument: true})
+}
+
+func (t *KindModuleIdKind) Reverse() IdKind {
+	panic(&aterm.GomError{Msg: "This IdKind.KindModule is not a list", IllegalArgument: true})
+}
+
+func (t *KindModuleIdKind) CompareTo(o any) int {
+	ao := o.(IdKind)
+	if ao == IdKind(t) {
+		return 0
+	}
+	if t.Hash() != ao.Hash() {
+		if t.Hash() < ao.Hash() {
+			return -1
+		}
+		return 1
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+func (t *KindModuleIdKind) CompareToLPO(o any) int {
+	ao := o.(IdKind)
+	if ao == IdKind(t) {
+		return 0
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+// ToATerm is the ATerm of the term: an application of KindModule.
+func (t *KindModuleIdKind) ToATerm() aterm.ATerm {
+	f := aterm.GetInstance()
+	return f.MakeAppl(f.MakeAFun("KindModule", 0, false))
+}
+
+// fromTermKindModuleIdKind is Java Gom's KindModule.fromTerm: an unquoted application of
+// KindModule whose arguments are convertible (as in Java, the arity is not
+// checked: a missing argument is an index out of range).
+func fromTermKindModuleIdKind(trm aterm.ATerm, conv aterm.ATermConverter) (IdKind, bool) {
+	trm = conv.Convert(trm)
+	if appl, ok := trm.(*aterm.ATermAppl); ok && appl.GetName() == "KindModule" && !appl.GetAFun().IsQuoted() {
+		return MakeKindModule(), true
+	}
+	return nil, false
+}
+
 // KindSortIdKind is the term type for the alternative `KindSort(...)` of sort IdKind.
 type KindSortIdKind struct {
 	hash uint32
@@ -3033,7 +6379,7 @@ func (t *KindSortIdKind) Duplicate() sharedobjects.Term {
 }
 
 func (t *KindSortIdKind) String() string {
-	return "KindSort" + "()"
+	return "KindSort()"
 }
 
 func (t *KindSortIdKind) ChildCount() int { return 0 }
@@ -3128,6 +6474,70 @@ func (s *VisitKindSort) VisitWith(env *sl.Environment, intro sl.Introspector) (a
 
 var _ sl.Strategy = (*VisitKindSort)(nil)
 
+func (t *KindSortIdKind) SymbolName() string { return "KindSort" }
+
+func (t *KindSortIdKind) IsKindModule() bool         { return false }
+func (t *KindSortIdKind) IsKindSort() bool           { return true }
+func (t *KindSortIdKind) IsKindOperator() bool       { return false }
+func (t *KindSortIdKind) IsKindFutureOperator() bool { return false }
+
+func (t *KindSortIdKind) GetConsOrNil() Future {
+	panic(&aterm.GomError{Msg: "This IdKind has no ConsOrNil"})
+}
+
+func (t *KindSortIdKind) Length() int {
+	panic(&aterm.GomError{Msg: "This IdKind.KindSort is not a list", IllegalArgument: true})
+}
+
+func (t *KindSortIdKind) Reverse() IdKind {
+	panic(&aterm.GomError{Msg: "This IdKind.KindSort is not a list", IllegalArgument: true})
+}
+
+func (t *KindSortIdKind) CompareTo(o any) int {
+	ao := o.(IdKind)
+	if ao == IdKind(t) {
+		return 0
+	}
+	if t.Hash() != ao.Hash() {
+		if t.Hash() < ao.Hash() {
+			return -1
+		}
+		return 1
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+func (t *KindSortIdKind) CompareToLPO(o any) int {
+	ao := o.(IdKind)
+	if ao == IdKind(t) {
+		return 0
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+// ToATerm is the ATerm of the term: an application of KindSort.
+func (t *KindSortIdKind) ToATerm() aterm.ATerm {
+	f := aterm.GetInstance()
+	return f.MakeAppl(f.MakeAFun("KindSort", 0, false))
+}
+
+// fromTermKindSortIdKind is Java Gom's KindSort.fromTerm: an unquoted application of
+// KindSort whose arguments are convertible (as in Java, the arity is not
+// checked: a missing argument is an index out of range).
+func fromTermKindSortIdKind(trm aterm.ATerm, conv aterm.ATermConverter) (IdKind, bool) {
+	trm = conv.Convert(trm)
+	if appl, ok := trm.(*aterm.ATermAppl); ok && appl.GetName() == "KindSort" && !appl.GetAFun().IsQuoted() {
+		return MakeKindSort(), true
+	}
+	return nil, false
+}
+
 // KindOperatorIdKind is the term type for the alternative `KindOperator(...)` of sort IdKind.
 type KindOperatorIdKind struct {
 	hash uint32
@@ -3148,7 +6558,7 @@ func (t *KindOperatorIdKind) Duplicate() sharedobjects.Term {
 }
 
 func (t *KindOperatorIdKind) String() string {
-	return "KindOperator" + "()"
+	return "KindOperator()"
 }
 
 func (t *KindOperatorIdKind) ChildCount() int { return 0 }
@@ -3243,6 +6653,70 @@ func (s *VisitKindOperator) VisitWith(env *sl.Environment, intro sl.Introspector
 
 var _ sl.Strategy = (*VisitKindOperator)(nil)
 
+func (t *KindOperatorIdKind) SymbolName() string { return "KindOperator" }
+
+func (t *KindOperatorIdKind) IsKindModule() bool         { return false }
+func (t *KindOperatorIdKind) IsKindSort() bool           { return false }
+func (t *KindOperatorIdKind) IsKindOperator() bool       { return true }
+func (t *KindOperatorIdKind) IsKindFutureOperator() bool { return false }
+
+func (t *KindOperatorIdKind) GetConsOrNil() Future {
+	panic(&aterm.GomError{Msg: "This IdKind has no ConsOrNil"})
+}
+
+func (t *KindOperatorIdKind) Length() int {
+	panic(&aterm.GomError{Msg: "This IdKind.KindOperator is not a list", IllegalArgument: true})
+}
+
+func (t *KindOperatorIdKind) Reverse() IdKind {
+	panic(&aterm.GomError{Msg: "This IdKind.KindOperator is not a list", IllegalArgument: true})
+}
+
+func (t *KindOperatorIdKind) CompareTo(o any) int {
+	ao := o.(IdKind)
+	if ao == IdKind(t) {
+		return 0
+	}
+	if t.Hash() != ao.Hash() {
+		if t.Hash() < ao.Hash() {
+			return -1
+		}
+		return 1
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+func (t *KindOperatorIdKind) CompareToLPO(o any) int {
+	ao := o.(IdKind)
+	if ao == IdKind(t) {
+		return 0
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+// ToATerm is the ATerm of the term: an application of KindOperator.
+func (t *KindOperatorIdKind) ToATerm() aterm.ATerm {
+	f := aterm.GetInstance()
+	return f.MakeAppl(f.MakeAFun("KindOperator", 0, false))
+}
+
+// fromTermKindOperatorIdKind is Java Gom's KindOperator.fromTerm: an unquoted application of
+// KindOperator whose arguments are convertible (as in Java, the arity is not
+// checked: a missing argument is an index out of range).
+func fromTermKindOperatorIdKind(trm aterm.ATerm, conv aterm.ATermConverter) (IdKind, bool) {
+	trm = conv.Convert(trm)
+	if appl, ok := trm.(*aterm.ATermAppl); ok && appl.GetName() == "KindOperator" && !appl.GetAFun().IsQuoted() {
+		return MakeKindOperator(), true
+	}
+	return nil, false
+}
+
 // KindFutureOperatorIdKind is the term type for the alternative `KindFutureOperator(...)` of sort IdKind.
 type KindFutureOperatorIdKind struct {
 	ConsOrNil Future
@@ -3270,7 +6744,7 @@ func (t *KindFutureOperatorIdKind) Duplicate() sharedobjects.Term {
 }
 
 func (t *KindFutureOperatorIdKind) String() string {
-	return fmt.Sprintf("KindFutureOperator(%v)", t.ConsOrNil)
+	return "KindFutureOperator(" + fmt.Sprint(t.ConsOrNil) + ")"
 }
 
 func (t *KindFutureOperatorIdKind) ChildCount() int { return 1 }
@@ -3399,10 +6873,120 @@ func (s *VisitKindFutureOperator) VisitWith(env *sl.Environment, intro sl.Intros
 
 var _ sl.Strategy = (*VisitKindFutureOperator)(nil)
 
+func (t *KindFutureOperatorIdKind) SymbolName() string { return "KindFutureOperator" }
+
+func (t *KindFutureOperatorIdKind) IsKindModule() bool         { return false }
+func (t *KindFutureOperatorIdKind) IsKindSort() bool           { return false }
+func (t *KindFutureOperatorIdKind) IsKindOperator() bool       { return false }
+func (t *KindFutureOperatorIdKind) IsKindFutureOperator() bool { return true }
+
+func (t *KindFutureOperatorIdKind) GetConsOrNil() Future { return t.ConsOrNil }
+
+func (t *KindFutureOperatorIdKind) Length() int {
+	panic(&aterm.GomError{Msg: "This IdKind.KindFutureOperator is not a list", IllegalArgument: true})
+}
+
+func (t *KindFutureOperatorIdKind) Reverse() IdKind {
+	panic(&aterm.GomError{Msg: "This IdKind.KindFutureOperator is not a list", IllegalArgument: true})
+}
+
+func (t *KindFutureOperatorIdKind) CompareTo(o any) int {
+	ao := o.(IdKind)
+	if ao == IdKind(t) {
+		return 0
+	}
+	if t.Hash() != ao.Hash() {
+		if t.Hash() < ao.Hash() {
+			return -1
+		}
+		return 1
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	tco := ao.(*KindFutureOperatorIdKind)
+	if c := t.ConsOrNil.CompareTo(tco.ConsOrNil); c != 0 {
+		return c
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+func (t *KindFutureOperatorIdKind) CompareToLPO(o any) int {
+	ao := o.(IdKind)
+	if ao == IdKind(t) {
+		return 0
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	tco := ao.(*KindFutureOperatorIdKind)
+	if c := t.ConsOrNil.CompareToLPO(tco.ConsOrNil); c != 0 {
+		return c
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+// ToATerm is the ATerm of the term: an application of KindFutureOperator.
+func (t *KindFutureOperatorIdKind) ToATerm() aterm.ATerm {
+	f := aterm.GetInstance()
+	return f.MakeAppl(f.MakeAFun("KindFutureOperator", 1, false), t.ConsOrNil.ToATerm())
+}
+
+// fromTermKindFutureOperatorIdKind is Java Gom's KindFutureOperator.fromTerm: an unquoted application of
+// KindFutureOperator whose arguments are convertible (as in Java, the arity is not
+// checked: a missing argument is an index out of range).
+func fromTermKindFutureOperatorIdKind(trm aterm.ATerm, conv aterm.ATermConverter) (IdKind, bool) {
+	trm = conv.Convert(trm)
+	if appl, ok := trm.(*aterm.ATermAppl); ok && appl.GetName() == "KindFutureOperator" && !appl.GetAFun().IsQuoted() {
+		return MakeKindFutureOperator(FutureFromTermConv(appl.GetArgument(0), conv)), true
+	}
+	return nil, false
+}
+
 // Arg is the Go interface backing the Gom sort Arg.
 type Arg interface {
 	sharedobjects.Term
 	isArg()
+	// Java Gom API (see the package's generated methods)
+	SymbolName() string
+	IsArg() bool
+	GetName() string
+	Length() int
+	Reverse() Arg
+	CompareTo(o any) int
+	CompareToLPO(o any) int
+	ToATerm() aterm.ATerm
+}
+
+// ArgFromTerm is Java Gom's Arg.fromTerm(trm).
+func ArgFromTerm(trm aterm.ATerm) Arg { return ArgFromTermConv(trm, aterm.IdConverter{}) }
+
+// ArgFromTermConv is Java Gom's Arg.fromTerm(trm, atConv): the term of
+// the first operator of the sort that converts the ATerm; it panics
+// (IllegalArgumentException) when there is none.
+func ArgFromTermConv(trm aterm.ATerm, conv aterm.ATermConverter) Arg {
+	converted := conv.Convert(trm)
+	var results []Arg
+	if r, ok := fromTermArgArg(converted, conv); ok {
+		results = append(results, r)
+	}
+	if len(results) == 0 {
+		panic(&aterm.GomError{Msg: fmt.Sprintf("%v is not a Arg", trm), IllegalArgument: true})
+	}
+	return results[0]
+}
+
+// ArgFromString is Java Gom's Arg.fromString(s).
+func ArgFromString(s string) Arg { return ArgFromTerm(aterm.GetInstance().Parse(s)) }
+
+// ArgFromStream is Java Gom's Arg.fromStream(stream) (an IOException is
+// the error).
+func ArgFromStream(stream io.Reader) (Arg, error) {
+	at, err := aterm.GetInstance().ReadFromTextFile(stream)
+	if err != nil {
+		return nil, err
+	}
+	return ArgFromTerm(at), nil
 }
 
 // ArgArg is the term type for the alternative `Arg(...)` of sort Arg.
@@ -3432,7 +7016,7 @@ func (t *ArgArg) Duplicate() sharedobjects.Term {
 }
 
 func (t *ArgArg) String() string {
-	return fmt.Sprintf("Arg(%s)", sharedobjects.JavaEscape(t.Name))
+	return "Arg(" + sharedobjects.JavaEscape(t.Name) + ")"
 }
 
 func (t *ArgArg) ChildCount() int { return 1 }
@@ -3561,16 +7145,131 @@ func (s *VisitArg) VisitWith(env *sl.Environment, intro sl.Introspector) (any, e
 
 var _ sl.Strategy = (*VisitArg)(nil)
 
+func (t *ArgArg) SymbolName() string { return "Arg" }
+
+func (t *ArgArg) IsArg() bool { return true }
+
+func (t *ArgArg) GetName() string { return t.Name }
+
+func (t *ArgArg) Length() int {
+	panic(&aterm.GomError{Msg: "This Arg.Arg is not a list", IllegalArgument: true})
+}
+
+func (t *ArgArg) Reverse() Arg {
+	panic(&aterm.GomError{Msg: "This Arg.Arg is not a list", IllegalArgument: true})
+}
+
+func (t *ArgArg) CompareTo(o any) int {
+	ao := o.(Arg)
+	if ao == Arg(t) {
+		return 0
+	}
+	if t.Hash() != ao.Hash() {
+		if t.Hash() < ao.Hash() {
+			return -1
+		}
+		return 1
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	tco := ao.(*ArgArg)
+	if c := strings.Compare(t.Name, tco.Name); c != 0 {
+		return c
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+func (t *ArgArg) CompareToLPO(o any) int {
+	ao := o.(Arg)
+	if ao == Arg(t) {
+		return 0
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	tco := ao.(*ArgArg)
+	if c := strings.Compare(t.Name, tco.Name); c != 0 {
+		return c
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+// ToATerm is the ATerm of the term: an application of Arg.
+func (t *ArgArg) ToATerm() aterm.ATerm {
+	f := aterm.GetInstance()
+	return f.MakeAppl(f.MakeAFun("Arg", 1, false), aterm.MakeGomString(t.Name))
+}
+
+// fromTermArgArg is Java Gom's Arg.fromTerm: an unquoted application of
+// Arg whose arguments are convertible (as in Java, the arity is not
+// checked: a missing argument is an index out of range).
+func fromTermArgArg(trm aterm.ATerm, conv aterm.ATermConverter) (Arg, bool) {
+	trm = conv.Convert(trm)
+	if appl, ok := trm.(*aterm.ATermAppl); ok && appl.GetName() == "Arg" && !appl.GetAFun().IsQuoted() {
+		return MakeArg(aterm.GomString(appl.GetArgument(0), conv)), true
+	}
+	return nil, false
+}
+
 // ArgList is the Go interface backing the Gom sort ArgList.
 type ArgList interface {
 	sharedobjects.Term
 	isArgList()
+	// Java Gom API (see the package's generated methods)
+	SymbolName() string
+	IsConsConcArg() bool
+	IsEmptyConcArg() bool
+	GetHeadConcArg() Arg
+	GetTailConcArg() ArgList
+	Length() int
+	Reverse() ArgList
+	CompareTo(o any) int
+	CompareToLPO(o any) int
+	ToATerm() aterm.ATerm
 }
 
-// ConcArgArgList is the term type for the alternative `ConcArg(...)` of sort ArgList.
+// ArgListFromTerm is Java Gom's ArgList.fromTerm(trm).
+func ArgListFromTerm(trm aterm.ATerm) ArgList { return ArgListFromTermConv(trm, aterm.IdConverter{}) }
+
+// ArgListFromTermConv is Java Gom's ArgList.fromTerm(trm, atConv): the term of
+// the first operator of the sort that converts the ATerm; it panics
+// (IllegalArgumentException) when there is none.
+func ArgListFromTermConv(trm aterm.ATerm, conv aterm.ATermConverter) ArgList {
+	converted := conv.Convert(trm)
+	var results []ArgList
+	if r, ok := fromTermConcArgArgList(converted, conv); ok {
+		results = append(results, r)
+	}
+	if len(results) == 0 {
+		panic(&aterm.GomError{Msg: fmt.Sprintf("%v is not a ArgList", trm), IllegalArgument: true})
+	}
+	return results[0]
+}
+
+// ArgListFromString is Java Gom's ArgList.fromString(s).
+func ArgListFromString(s string) ArgList { return ArgListFromTerm(aterm.GetInstance().Parse(s)) }
+
+// ArgListFromStream is Java Gom's ArgList.fromStream(stream) (an IOException is
+// the error).
+func ArgListFromStream(stream io.Reader) (ArgList, error) {
+	at, err := aterm.GetInstance().ReadFromTextFile(stream)
+	if err != nil {
+		return nil, err
+	}
+	return ArgListFromTerm(at), nil
+}
+
+// ConcArgArgList is the term type of the variadic operator `ConcArg(...)` of sort ArgList
+// (Java's abstract class ConcArg): a maximally-shared cons cell (Java's
+// ConsConcArg: a head and a tail) or the empty list (Java's EmptyConcArg).
 type ConcArgArgList struct {
-	Slots []Arg
+	head  Arg
+	tail  ArgList
+	empty bool
 	hash  uint32
+	// children caches the Visitable children (Java's children field)
+	children atomic.Pointer[[]any]
 }
 
 func (*ConcArgArgList) isArgList() {}
@@ -3579,51 +7278,51 @@ func (t *ConcArgArgList) Hash() uint32 { return t.hash }
 
 func (t *ConcArgArgList) Equivalent(other sharedobjects.Term) bool {
 	o, ok := other.(*ConcArgArgList)
-	if !ok {
-		return false
-	}
-	if len(t.Slots) != len(o.Slots) {
-		return false
-	}
-	for i := range t.Slots {
-		if t.Slots[i] != o.Slots[i] {
-			return false
-		}
-	}
-	return true
+	return ok && t.empty == o.empty && t.head == o.head && t.tail == o.tail
 }
 
 func (t *ConcArgArgList) Duplicate() sharedobjects.Term {
-	cp := append([]Arg(nil), t.Slots...)
-	return &ConcArgArgList{Slots: cp, hash: t.hash}
+	return &ConcArgArgList{head: t.head, tail: t.tail, empty: t.empty, hash: t.hash}
 }
 
-func (t *ConcArgArgList) String() string {
-	parts := make([]string, len(t.Slots))
-	for i, v := range t.Slots {
-		parts[i] = fmt.Sprintf("%v", v)
+// elements returns the cached Visitable children of the list: its
+// elements (Java's getChildren, i.e. toArray).
+// Java's getChildren is the typed toArray(new Arg[]{}): a last tail
+// that is not a list (of sort ArgList) cannot be stored in it
+// (ArrayStoreException, a *aterm.GomError here).
+func (t *ConcArgArgList) elements() []any {
+	if c := t.children.Load(); c != nil {
+		return *c
 	}
-	return "ConcArg" + "(" + strings.Join(parts, ",") + ")"
+	var cur ArgList = t
+	for {
+		c, ok := cur.(*ConcArgArgList)
+		if !ok || c.empty {
+			break
+		}
+		cur = c.tail
+	}
+	if c, ok := cur.(*ConcArgArgList); !ok || !c.empty {
+		panic(&aterm.GomError{Msg: fmt.Sprintf("ArrayStoreException: the tail %v of a ConcArg list is not a Arg", cur)})
+	}
+	c := t.ToArray()
+	t.children.Store(&c)
+	return c
 }
 
-func (t *ConcArgArgList) ChildCount() int { return len(t.Slots) }
+func (t *ConcArgArgList) ChildCount() int { return len(t.elements()) }
 
-func (t *ConcArgArgList) ChildAt(i int) any { return t.Slots[i] }
+func (t *ConcArgArgList) ChildAt(i int) any { return t.elements()[i] }
 
 func (t *ConcArgArgList) SetChildAt(i int, child any) any {
-	dup := append([]Arg(nil), t.Slots...)
-	dup[i] = child.(Arg)
-	return MakeConcArg(dup...)
+	dup := t.Children()
+	dup[i] = child
+	return t.SetChildren(dup)
 }
 
-func (t *ConcArgArgList) Children() []any {
-	out := make([]any, len(t.Slots))
-	for i, v := range t.Slots {
-		out[i] = v
-	}
-	return out
-}
+func (t *ConcArgArgList) Children() []any { return append([]any(nil), t.elements()...) }
 
+// SetChildren is Java's setChildren of a list: ConcArgFromArray(children).
 func (t *ConcArgArgList) SetChildren(children []any) any {
 	args := make([]Arg, len(children))
 	for i, c := range children {
@@ -3632,15 +7331,77 @@ func (t *ConcArgArgList) SetChildren(children []any) any {
 	return MakeConcArg(args...)
 }
 
-// MakeConcArg builds the canonical (shared) ConcArg term.
-func MakeConcArg(args ...Arg) ArgList {
-	hashes := make([]uint32, 0, len(args))
-	for _, a := range args {
-		hashes = append(hashes, a.Hash())
+func (t *ConcArgArgList) String() string {
+	var b strings.Builder
+	b.WriteString("ConcArg(")
+	var cur ArgList = t
+	for {
+		c, ok := cur.(*ConcArgArgList)
+		if !ok {
+			b.WriteString("," + fmt.Sprint(cur))
+			break
+		}
+		if c.empty {
+			break
+		}
+		if c != t {
+			b.WriteString(",")
+		}
+		b.WriteString(fmt.Sprint(c.head))
+		cur = c.tail
 	}
-	proto := &ConcArgArgList{Slots: args, hash: sharedobjects.MixSymbol(sharedobjects.StringHash("ConcArg"), hashes)}
+	b.WriteString(")")
+	return b.String()
+}
+
+// RealMakeConsConcArg is Java Gom's ConsConcArg.realMake: the shared cell of head
+// and tail, without hook.
+func RealMakeConsConcArg(head Arg, tail ArgList) ArgList {
+	proto := &ConcArgArgList{head: head, tail: tail, hash: sharedobjects.MixSymbol(sharedobjects.StringHash("ConsConcArg"), []uint32{head.Hash(), tail.Hash()})}
 	return factory.Build(proto).(*ConcArgArgList)
 }
+
+// realMakeEmptyConcArg is Java Gom's EmptyConcArg.realMake: the shared empty list,
+// without hook.
+func realMakeEmptyConcArg() ArgList {
+	proto := &ConcArgArgList{empty: true, hash: sharedobjects.MixSymbol(sharedobjects.StringHash("EmptyConcArg"), nil)}
+	return factory.Build(proto).(*ConcArgArgList)
+}
+
+// RawConcArg builds the ConcArg list holding exactly args, without construction
+// hook.
+func RawConcArg(args ...Arg) ArgList {
+	l := realMakeEmptyConcArg()
+	for i := len(args) - 1; i >= 0; i-- {
+		l = RealMakeConsConcArg(args[i], l)
+	}
+	return l
+}
+
+// EmptyConcArg is Java Gom's EmptyConcArg.make(): the empty ConcArg list, after the
+// construction hooks.
+func EmptyConcArg() ArgList {
+	return realMakeEmptyConcArg()
+}
+
+// ConsConcArg is Java Gom's ConsConcArg.make(head, tail): head inserted in front of
+// tail, after the construction hooks (theory "" first).
+func ConsConcArg(head Arg, tail ArgList) ArgList {
+	return RealMakeConsConcArg(head, tail)
+}
+
+// MakeConcArg builds the list of args as Tom's `ConcArg(args…)` does: from EmptyConcArg,
+// by ConsConcArg, through the construction hooks (Java's ConcArg.fromArray).
+func MakeConcArg(args ...Arg) ArgList {
+	var l ArgList = EmptyConcArg()
+	for i := len(args) - 1; i >= 0; i-- {
+		l = ConsConcArg(args[i], l)
+	}
+	return l
+}
+
+// ConcArgFromArray is Java Gom's ConcArg.fromArray(array).
+func ConcArgFromArray(array []Arg) ArgList { return MakeConcArg(array...) }
 
 // IsConcArg is the `Is_ConcArg` predicate strategy: succeeds (returns subject
 // unchanged) when subject has the `ConcArg` shape, otherwise fails with
@@ -3735,10 +7496,291 @@ func (s *VisitConcArg) VisitWith(env *sl.Environment, intro sl.Introspector) (an
 
 var _ sl.Strategy = (*VisitConcArg)(nil)
 
+// SymbolName is the symbol of the Java term: ConsConcArg or EmptyConcArg.
+func (t *ConcArgArgList) SymbolName() string {
+	if t.empty {
+		return "EmptyConcArg"
+	}
+	return "ConsConcArg"
+}
+
+func (t *ConcArgArgList) IsConsConcArg() bool  { return !t.empty }
+func (t *ConcArgArgList) IsEmptyConcArg() bool { return t.empty }
+
+func (t *ConcArgArgList) GetHeadConcArg() Arg {
+	if t.empty {
+		panic(&aterm.GomError{Msg: "This ArgList has no HeadConcArg"})
+	}
+	return t.head
+}
+func (t *ConcArgArgList) GetTailConcArg() ArgList {
+	if t.empty {
+		panic(&aterm.GomError{Msg: "This ArgList has no TailConcArg"})
+	}
+	return t.tail
+}
+
+// Length is Java's length(): the number of elements of the list (a
+// tail that is not a ConcArg list counts as one element).
+func (t *ConcArgArgList) Length() int {
+	res := 0
+	var tl ArgList = t
+	for {
+		c, ok := tl.(*ConcArgArgList)
+		if !ok || c.empty {
+			return res
+		}
+		res++
+		tl = c.tail
+		if _, ok := tl.(*ConcArgArgList); !ok {
+			res++
+		}
+	}
+}
+
+// ToArray returns the elements of the list (Java's Object[] toArray()),
+// ending with its tail when that is not a ConcArg list.
+func (t *ConcArgArgList) ToArray() []any {
+	out := make([]any, 0, t.Length())
+	var cur ArgList = t
+	for {
+		c, ok := cur.(*ConcArgArgList)
+		if !ok || c.empty {
+			break
+		}
+		out = append(out, c.head)
+		cur = c.tail
+	}
+	if c, ok := cur.(*ConcArgArgList); !ok || !c.empty {
+		out = append(out, cur)
+	}
+	return out
+}
+
+// Reverse is Java's reverse(): the reversed list, built by ConsConcArg
+// (through the hooks).
+func (t *ConcArgArgList) Reverse() ArgList {
+	if t.empty {
+		return t
+	}
+	var cur ArgList = t
+	var rev ArgList = EmptyConcArg()
+	for {
+		c, ok := cur.(*ConcArgArgList)
+		if !ok || c.empty {
+			break
+		}
+		rev = ConsConcArg(c.head, rev)
+		cur = c.tail
+	}
+	return rev
+}
+
+// Append is Java's append(element): the list with element added at its
+// end, built by ConsConcArg (through the hooks).
+func (t *ConcArgArgList) Append(element Arg) ArgList {
+	var heads []Arg
+	var cur ArgList = t
+	for {
+		c, ok := cur.(*ConcArgArgList)
+		if !ok || c.empty {
+			break
+		}
+		heads = append(heads, c.head)
+		cur = c.tail
+	}
+	var res ArgList
+	if c, ok := cur.(*ConcArgArgList); ok && c.empty {
+		res = ConsConcArg(element, cur)
+	} else {
+		res = ConsConcArg(element, cur)
+	}
+	for i := len(heads) - 1; i >= 0; i-- {
+		res = ConsConcArg(heads[i], res)
+	}
+	return res
+}
+
+func (t *ConcArgArgList) CompareTo(o any) int {
+	for {
+		ao := o.(ArgList)
+		if ao == ArgList(t) {
+			return 0
+		}
+		if t.Hash() != ao.Hash() {
+			if t.Hash() < ao.Hash() {
+				return -1
+			}
+			return 1
+		}
+		if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+			return c
+		}
+		tco := ao.(*ConcArgArgList)
+		if t.empty {
+			panic(&aterm.GomError{Msg: "Unable to compare"})
+		}
+		if c := t.head.CompareTo(tco.head); c != 0 {
+			return c
+		}
+		next, ok := t.tail.(*ConcArgArgList)
+		if !ok {
+			if c := t.tail.CompareTo(tco.tail); c != 0 {
+				return c
+			}
+			panic(&aterm.GomError{Msg: "Unable to compare"})
+		}
+		t, o = next, tco.tail
+	}
+}
+
+func (t *ConcArgArgList) CompareToLPO(o any) int {
+	for {
+		ao := o.(ArgList)
+		if ao == ArgList(t) {
+			return 0
+		}
+		if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+			return c
+		}
+		tco := ao.(*ConcArgArgList)
+		if t.empty {
+			panic(&aterm.GomError{Msg: "Unable to compare"})
+		}
+		if c := t.head.CompareToLPO(tco.head); c != 0 {
+			return c
+		}
+		next, ok := t.tail.(*ConcArgArgList)
+		if !ok {
+			if c := t.tail.CompareToLPO(tco.tail); c != 0 {
+				return c
+			}
+			panic(&aterm.GomError{Msg: "Unable to compare"})
+		}
+		t, o = next, tco.tail
+	}
+}
+
+// ToATerm is Java's toATerm: the list of the elements, ending with the
+// ATerm list of the tail (a tail that is not a list is Java's
+// ClassCastException).
+func (t *ConcArgArgList) ToATerm() aterm.ATerm {
+	f := aterm.GetInstance()
+	var heads []Arg
+	var cur ArgList = t
+	for {
+		c, ok := cur.(*ConcArgArgList)
+		if !ok || c.empty {
+			break
+		}
+		heads = append(heads, c.head)
+		cur = c.tail
+	}
+	l := f.MakeListEmpty()
+	if c, ok := cur.(*ConcArgArgList); !ok || !c.empty {
+		tl, isList := cur.ToATerm().(*aterm.ATermList)
+		if !isList {
+			panic(&aterm.GomError{Msg: fmt.Sprintf("ClassCastException: the ATerm of %v is not an ATermList", cur)})
+		}
+		l = tl
+	}
+	for i := len(heads) - 1; i >= 0; i-- {
+		l = f.MakeList(heads[i].ToATerm(), l)
+	}
+	return l
+}
+
+// fromTermConcArgArgList is Java Gom's ConcArg.fromTerm: an application of ConcArg, or a
+// list (of ToATerm), of convertible elements.
+func fromTermConcArgArgList(trm aterm.ATerm, conv aterm.ATermConverter) (res ArgList, ok bool) {
+	trm = conv.Convert(trm)
+	if appl, isAppl := trm.(*aterm.ATermAppl); isAppl && appl.GetName() == "ConcArg" {
+		elems := make([]Arg, appl.GetArity())
+		for i, a := range appl.GetArguments() {
+			elems[i] = ArgFromTermConv(a, conv)
+		}
+		return MakeConcArg(elems...), true
+	}
+	if list, isList := trm.(*aterm.ATermList); isList {
+		// an element that cannot be converted: not a ConcArg (Java returns null)
+		defer func() {
+			if recover() != nil {
+				res, ok = nil, false
+			}
+		}()
+		var elems []Arg
+		for !list.IsEmpty() {
+			elems = append(elems, ArgFromTermConv(list.GetFirst(), conv))
+			list = list.GetNext()
+		}
+		return MakeConcArg(elems...), true
+	}
+	return nil, false
+}
+
 // ScopeSpecifier is the Go interface backing the Gom sort ScopeSpecifier.
 type ScopeSpecifier interface {
 	sharedobjects.Term
 	isScopeSpecifier()
+	// Java Gom API (see the package's generated methods)
+	SymbolName() string
+	IsNone() bool
+	IsInner() bool
+	IsOuter() bool
+	IsNeutral() bool
+	IsRefresh() bool
+	Length() int
+	Reverse() ScopeSpecifier
+	CompareTo(o any) int
+	CompareToLPO(o any) int
+	ToATerm() aterm.ATerm
+}
+
+// ScopeSpecifierFromTerm is Java Gom's ScopeSpecifier.fromTerm(trm).
+func ScopeSpecifierFromTerm(trm aterm.ATerm) ScopeSpecifier {
+	return ScopeSpecifierFromTermConv(trm, aterm.IdConverter{})
+}
+
+// ScopeSpecifierFromTermConv is Java Gom's ScopeSpecifier.fromTerm(trm, atConv): the term of
+// the first operator of the sort that converts the ATerm; it panics
+// (IllegalArgumentException) when there is none.
+func ScopeSpecifierFromTermConv(trm aterm.ATerm, conv aterm.ATermConverter) ScopeSpecifier {
+	converted := conv.Convert(trm)
+	var results []ScopeSpecifier
+	if r, ok := fromTermNoneScopeSpecifier(converted, conv); ok {
+		results = append(results, r)
+	}
+	if r, ok := fromTermInnerScopeSpecifier(converted, conv); ok {
+		results = append(results, r)
+	}
+	if r, ok := fromTermOuterScopeSpecifier(converted, conv); ok {
+		results = append(results, r)
+	}
+	if r, ok := fromTermNeutralScopeSpecifier(converted, conv); ok {
+		results = append(results, r)
+	}
+	if r, ok := fromTermRefreshScopeSpecifier(converted, conv); ok {
+		results = append(results, r)
+	}
+	if len(results) == 0 {
+		panic(&aterm.GomError{Msg: fmt.Sprintf("%v is not a ScopeSpecifier", trm), IllegalArgument: true})
+	}
+	return results[0]
+}
+
+// ScopeSpecifierFromString is Java Gom's ScopeSpecifier.fromString(s).
+func ScopeSpecifierFromString(s string) ScopeSpecifier {
+	return ScopeSpecifierFromTerm(aterm.GetInstance().Parse(s))
+}
+
+// ScopeSpecifierFromStream is Java Gom's ScopeSpecifier.fromStream(stream) (an IOException is
+// the error).
+func ScopeSpecifierFromStream(stream io.Reader) (ScopeSpecifier, error) {
+	at, err := aterm.GetInstance().ReadFromTextFile(stream)
+	if err != nil {
+		return nil, err
+	}
+	return ScopeSpecifierFromTerm(at), nil
 }
 
 // NoneScopeSpecifier is the term type for the alternative `None(...)` of sort ScopeSpecifier.
@@ -3761,7 +7803,7 @@ func (t *NoneScopeSpecifier) Duplicate() sharedobjects.Term {
 }
 
 func (t *NoneScopeSpecifier) String() string {
-	return "None" + "()"
+	return "None()"
 }
 
 func (t *NoneScopeSpecifier) ChildCount() int { return 0 }
@@ -3856,6 +7898,67 @@ func (s *VisitNone) VisitWith(env *sl.Environment, intro sl.Introspector) (any, 
 
 var _ sl.Strategy = (*VisitNone)(nil)
 
+func (t *NoneScopeSpecifier) SymbolName() string { return "None" }
+
+func (t *NoneScopeSpecifier) IsNone() bool    { return true }
+func (t *NoneScopeSpecifier) IsInner() bool   { return false }
+func (t *NoneScopeSpecifier) IsOuter() bool   { return false }
+func (t *NoneScopeSpecifier) IsNeutral() bool { return false }
+func (t *NoneScopeSpecifier) IsRefresh() bool { return false }
+
+func (t *NoneScopeSpecifier) Length() int {
+	panic(&aterm.GomError{Msg: "This ScopeSpecifier.None is not a list", IllegalArgument: true})
+}
+
+func (t *NoneScopeSpecifier) Reverse() ScopeSpecifier {
+	panic(&aterm.GomError{Msg: "This ScopeSpecifier.None is not a list", IllegalArgument: true})
+}
+
+func (t *NoneScopeSpecifier) CompareTo(o any) int {
+	ao := o.(ScopeSpecifier)
+	if ao == ScopeSpecifier(t) {
+		return 0
+	}
+	if t.Hash() != ao.Hash() {
+		if t.Hash() < ao.Hash() {
+			return -1
+		}
+		return 1
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+func (t *NoneScopeSpecifier) CompareToLPO(o any) int {
+	ao := o.(ScopeSpecifier)
+	if ao == ScopeSpecifier(t) {
+		return 0
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+// ToATerm is the ATerm of the term: an application of None.
+func (t *NoneScopeSpecifier) ToATerm() aterm.ATerm {
+	f := aterm.GetInstance()
+	return f.MakeAppl(f.MakeAFun("None", 0, false))
+}
+
+// fromTermNoneScopeSpecifier is Java Gom's None.fromTerm: an unquoted application of
+// None whose arguments are convertible (as in Java, the arity is not
+// checked: a missing argument is an index out of range).
+func fromTermNoneScopeSpecifier(trm aterm.ATerm, conv aterm.ATermConverter) (ScopeSpecifier, bool) {
+	trm = conv.Convert(trm)
+	if appl, ok := trm.(*aterm.ATermAppl); ok && appl.GetName() == "None" && !appl.GetAFun().IsQuoted() {
+		return MakeNone(), true
+	}
+	return nil, false
+}
+
 // InnerScopeSpecifier is the term type for the alternative `Inner(...)` of sort ScopeSpecifier.
 type InnerScopeSpecifier struct {
 	hash uint32
@@ -3876,7 +7979,7 @@ func (t *InnerScopeSpecifier) Duplicate() sharedobjects.Term {
 }
 
 func (t *InnerScopeSpecifier) String() string {
-	return "Inner" + "()"
+	return "Inner()"
 }
 
 func (t *InnerScopeSpecifier) ChildCount() int { return 0 }
@@ -3971,6 +8074,67 @@ func (s *VisitInner) VisitWith(env *sl.Environment, intro sl.Introspector) (any,
 
 var _ sl.Strategy = (*VisitInner)(nil)
 
+func (t *InnerScopeSpecifier) SymbolName() string { return "Inner" }
+
+func (t *InnerScopeSpecifier) IsNone() bool    { return false }
+func (t *InnerScopeSpecifier) IsInner() bool   { return true }
+func (t *InnerScopeSpecifier) IsOuter() bool   { return false }
+func (t *InnerScopeSpecifier) IsNeutral() bool { return false }
+func (t *InnerScopeSpecifier) IsRefresh() bool { return false }
+
+func (t *InnerScopeSpecifier) Length() int {
+	panic(&aterm.GomError{Msg: "This ScopeSpecifier.Inner is not a list", IllegalArgument: true})
+}
+
+func (t *InnerScopeSpecifier) Reverse() ScopeSpecifier {
+	panic(&aterm.GomError{Msg: "This ScopeSpecifier.Inner is not a list", IllegalArgument: true})
+}
+
+func (t *InnerScopeSpecifier) CompareTo(o any) int {
+	ao := o.(ScopeSpecifier)
+	if ao == ScopeSpecifier(t) {
+		return 0
+	}
+	if t.Hash() != ao.Hash() {
+		if t.Hash() < ao.Hash() {
+			return -1
+		}
+		return 1
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+func (t *InnerScopeSpecifier) CompareToLPO(o any) int {
+	ao := o.(ScopeSpecifier)
+	if ao == ScopeSpecifier(t) {
+		return 0
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+// ToATerm is the ATerm of the term: an application of Inner.
+func (t *InnerScopeSpecifier) ToATerm() aterm.ATerm {
+	f := aterm.GetInstance()
+	return f.MakeAppl(f.MakeAFun("Inner", 0, false))
+}
+
+// fromTermInnerScopeSpecifier is Java Gom's Inner.fromTerm: an unquoted application of
+// Inner whose arguments are convertible (as in Java, the arity is not
+// checked: a missing argument is an index out of range).
+func fromTermInnerScopeSpecifier(trm aterm.ATerm, conv aterm.ATermConverter) (ScopeSpecifier, bool) {
+	trm = conv.Convert(trm)
+	if appl, ok := trm.(*aterm.ATermAppl); ok && appl.GetName() == "Inner" && !appl.GetAFun().IsQuoted() {
+		return MakeInner(), true
+	}
+	return nil, false
+}
+
 // OuterScopeSpecifier is the term type for the alternative `Outer(...)` of sort ScopeSpecifier.
 type OuterScopeSpecifier struct {
 	hash uint32
@@ -3991,7 +8155,7 @@ func (t *OuterScopeSpecifier) Duplicate() sharedobjects.Term {
 }
 
 func (t *OuterScopeSpecifier) String() string {
-	return "Outer" + "()"
+	return "Outer()"
 }
 
 func (t *OuterScopeSpecifier) ChildCount() int { return 0 }
@@ -4086,6 +8250,67 @@ func (s *VisitOuter) VisitWith(env *sl.Environment, intro sl.Introspector) (any,
 
 var _ sl.Strategy = (*VisitOuter)(nil)
 
+func (t *OuterScopeSpecifier) SymbolName() string { return "Outer" }
+
+func (t *OuterScopeSpecifier) IsNone() bool    { return false }
+func (t *OuterScopeSpecifier) IsInner() bool   { return false }
+func (t *OuterScopeSpecifier) IsOuter() bool   { return true }
+func (t *OuterScopeSpecifier) IsNeutral() bool { return false }
+func (t *OuterScopeSpecifier) IsRefresh() bool { return false }
+
+func (t *OuterScopeSpecifier) Length() int {
+	panic(&aterm.GomError{Msg: "This ScopeSpecifier.Outer is not a list", IllegalArgument: true})
+}
+
+func (t *OuterScopeSpecifier) Reverse() ScopeSpecifier {
+	panic(&aterm.GomError{Msg: "This ScopeSpecifier.Outer is not a list", IllegalArgument: true})
+}
+
+func (t *OuterScopeSpecifier) CompareTo(o any) int {
+	ao := o.(ScopeSpecifier)
+	if ao == ScopeSpecifier(t) {
+		return 0
+	}
+	if t.Hash() != ao.Hash() {
+		if t.Hash() < ao.Hash() {
+			return -1
+		}
+		return 1
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+func (t *OuterScopeSpecifier) CompareToLPO(o any) int {
+	ao := o.(ScopeSpecifier)
+	if ao == ScopeSpecifier(t) {
+		return 0
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+// ToATerm is the ATerm of the term: an application of Outer.
+func (t *OuterScopeSpecifier) ToATerm() aterm.ATerm {
+	f := aterm.GetInstance()
+	return f.MakeAppl(f.MakeAFun("Outer", 0, false))
+}
+
+// fromTermOuterScopeSpecifier is Java Gom's Outer.fromTerm: an unquoted application of
+// Outer whose arguments are convertible (as in Java, the arity is not
+// checked: a missing argument is an index out of range).
+func fromTermOuterScopeSpecifier(trm aterm.ATerm, conv aterm.ATermConverter) (ScopeSpecifier, bool) {
+	trm = conv.Convert(trm)
+	if appl, ok := trm.(*aterm.ATermAppl); ok && appl.GetName() == "Outer" && !appl.GetAFun().IsQuoted() {
+		return MakeOuter(), true
+	}
+	return nil, false
+}
+
 // NeutralScopeSpecifier is the term type for the alternative `Neutral(...)` of sort ScopeSpecifier.
 type NeutralScopeSpecifier struct {
 	hash uint32
@@ -4106,7 +8331,7 @@ func (t *NeutralScopeSpecifier) Duplicate() sharedobjects.Term {
 }
 
 func (t *NeutralScopeSpecifier) String() string {
-	return "Neutral" + "()"
+	return "Neutral()"
 }
 
 func (t *NeutralScopeSpecifier) ChildCount() int { return 0 }
@@ -4201,6 +8426,67 @@ func (s *VisitNeutral) VisitWith(env *sl.Environment, intro sl.Introspector) (an
 
 var _ sl.Strategy = (*VisitNeutral)(nil)
 
+func (t *NeutralScopeSpecifier) SymbolName() string { return "Neutral" }
+
+func (t *NeutralScopeSpecifier) IsNone() bool    { return false }
+func (t *NeutralScopeSpecifier) IsInner() bool   { return false }
+func (t *NeutralScopeSpecifier) IsOuter() bool   { return false }
+func (t *NeutralScopeSpecifier) IsNeutral() bool { return true }
+func (t *NeutralScopeSpecifier) IsRefresh() bool { return false }
+
+func (t *NeutralScopeSpecifier) Length() int {
+	panic(&aterm.GomError{Msg: "This ScopeSpecifier.Neutral is not a list", IllegalArgument: true})
+}
+
+func (t *NeutralScopeSpecifier) Reverse() ScopeSpecifier {
+	panic(&aterm.GomError{Msg: "This ScopeSpecifier.Neutral is not a list", IllegalArgument: true})
+}
+
+func (t *NeutralScopeSpecifier) CompareTo(o any) int {
+	ao := o.(ScopeSpecifier)
+	if ao == ScopeSpecifier(t) {
+		return 0
+	}
+	if t.Hash() != ao.Hash() {
+		if t.Hash() < ao.Hash() {
+			return -1
+		}
+		return 1
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+func (t *NeutralScopeSpecifier) CompareToLPO(o any) int {
+	ao := o.(ScopeSpecifier)
+	if ao == ScopeSpecifier(t) {
+		return 0
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+// ToATerm is the ATerm of the term: an application of Neutral.
+func (t *NeutralScopeSpecifier) ToATerm() aterm.ATerm {
+	f := aterm.GetInstance()
+	return f.MakeAppl(f.MakeAFun("Neutral", 0, false))
+}
+
+// fromTermNeutralScopeSpecifier is Java Gom's Neutral.fromTerm: an unquoted application of
+// Neutral whose arguments are convertible (as in Java, the arity is not
+// checked: a missing argument is an index out of range).
+func fromTermNeutralScopeSpecifier(trm aterm.ATerm, conv aterm.ATermConverter) (ScopeSpecifier, bool) {
+	trm = conv.Convert(trm)
+	if appl, ok := trm.(*aterm.ATermAppl); ok && appl.GetName() == "Neutral" && !appl.GetAFun().IsQuoted() {
+		return MakeNeutral(), true
+	}
+	return nil, false
+}
+
 // RefreshScopeSpecifier is the term type for the alternative `Refresh(...)` of sort ScopeSpecifier.
 type RefreshScopeSpecifier struct {
 	hash uint32
@@ -4221,7 +8507,7 @@ func (t *RefreshScopeSpecifier) Duplicate() sharedobjects.Term {
 }
 
 func (t *RefreshScopeSpecifier) String() string {
-	return "Refresh" + "()"
+	return "Refresh()"
 }
 
 func (t *RefreshScopeSpecifier) ChildCount() int { return 0 }
@@ -4316,10 +8602,117 @@ func (s *VisitRefresh) VisitWith(env *sl.Environment, intro sl.Introspector) (an
 
 var _ sl.Strategy = (*VisitRefresh)(nil)
 
+func (t *RefreshScopeSpecifier) SymbolName() string { return "Refresh" }
+
+func (t *RefreshScopeSpecifier) IsNone() bool    { return false }
+func (t *RefreshScopeSpecifier) IsInner() bool   { return false }
+func (t *RefreshScopeSpecifier) IsOuter() bool   { return false }
+func (t *RefreshScopeSpecifier) IsNeutral() bool { return false }
+func (t *RefreshScopeSpecifier) IsRefresh() bool { return true }
+
+func (t *RefreshScopeSpecifier) Length() int {
+	panic(&aterm.GomError{Msg: "This ScopeSpecifier.Refresh is not a list", IllegalArgument: true})
+}
+
+func (t *RefreshScopeSpecifier) Reverse() ScopeSpecifier {
+	panic(&aterm.GomError{Msg: "This ScopeSpecifier.Refresh is not a list", IllegalArgument: true})
+}
+
+func (t *RefreshScopeSpecifier) CompareTo(o any) int {
+	ao := o.(ScopeSpecifier)
+	if ao == ScopeSpecifier(t) {
+		return 0
+	}
+	if t.Hash() != ao.Hash() {
+		if t.Hash() < ao.Hash() {
+			return -1
+		}
+		return 1
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+func (t *RefreshScopeSpecifier) CompareToLPO(o any) int {
+	ao := o.(ScopeSpecifier)
+	if ao == ScopeSpecifier(t) {
+		return 0
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+// ToATerm is the ATerm of the term: an application of Refresh.
+func (t *RefreshScopeSpecifier) ToATerm() aterm.ATerm {
+	f := aterm.GetInstance()
+	return f.MakeAppl(f.MakeAFun("Refresh", 0, false))
+}
+
+// fromTermRefreshScopeSpecifier is Java Gom's Refresh.fromTerm: an unquoted application of
+// Refresh whose arguments are convertible (as in Java, the arity is not
+// checked: a missing argument is an index out of range).
+func fromTermRefreshScopeSpecifier(trm aterm.ATerm, conv aterm.ATermConverter) (ScopeSpecifier, bool) {
+	trm = conv.Convert(trm)
+	if appl, ok := trm.(*aterm.ATermAppl); ok && appl.GetName() == "Refresh" && !appl.GetAFun().IsQuoted() {
+		return MakeRefresh(), true
+	}
+	return nil, false
+}
+
 // Field is the Go interface backing the Gom sort Field.
 type Field interface {
 	sharedobjects.Term
 	isField()
+	// Java Gom API (see the package's generated methods)
+	SymbolName() string
+	IsStarredField() bool
+	IsNamedField() bool
+	GetFieldType() GomType
+	GetSpecifier() ScopeSpecifier
+	GetName() string
+	Length() int
+	Reverse() Field
+	CompareTo(o any) int
+	CompareToLPO(o any) int
+	ToATerm() aterm.ATerm
+}
+
+// FieldFromTerm is Java Gom's Field.fromTerm(trm).
+func FieldFromTerm(trm aterm.ATerm) Field { return FieldFromTermConv(trm, aterm.IdConverter{}) }
+
+// FieldFromTermConv is Java Gom's Field.fromTerm(trm, atConv): the term of
+// the first operator of the sort that converts the ATerm; it panics
+// (IllegalArgumentException) when there is none.
+func FieldFromTermConv(trm aterm.ATerm, conv aterm.ATermConverter) Field {
+	converted := conv.Convert(trm)
+	var results []Field
+	if r, ok := fromTermStarredFieldField(converted, conv); ok {
+		results = append(results, r)
+	}
+	if r, ok := fromTermNamedFieldField(converted, conv); ok {
+		results = append(results, r)
+	}
+	if len(results) == 0 {
+		panic(&aterm.GomError{Msg: fmt.Sprintf("%v is not a Field", trm), IllegalArgument: true})
+	}
+	return results[0]
+}
+
+// FieldFromString is Java Gom's Field.fromString(s).
+func FieldFromString(s string) Field { return FieldFromTerm(aterm.GetInstance().Parse(s)) }
+
+// FieldFromStream is Java Gom's Field.fromStream(stream) (an IOException is
+// the error).
+func FieldFromStream(stream io.Reader) (Field, error) {
+	at, err := aterm.GetInstance().ReadFromTextFile(stream)
+	if err != nil {
+		return nil, err
+	}
+	return FieldFromTerm(at), nil
 }
 
 // StarredFieldField is the term type for the alternative `StarredField(...)` of sort Field.
@@ -4353,7 +8746,7 @@ func (t *StarredFieldField) Duplicate() sharedobjects.Term {
 }
 
 func (t *StarredFieldField) String() string {
-	return fmt.Sprintf("StarredField(%v,%v)", t.FieldType, t.Specifier)
+	return "StarredField(" + fmt.Sprint(t.FieldType) + "," + fmt.Sprint(t.Specifier) + ")"
 }
 
 func (t *StarredFieldField) ChildCount() int { return 2 }
@@ -4486,6 +8879,84 @@ func (s *VisitStarredField) VisitWith(env *sl.Environment, intro sl.Introspector
 
 var _ sl.Strategy = (*VisitStarredField)(nil)
 
+func (t *StarredFieldField) SymbolName() string { return "StarredField" }
+
+func (t *StarredFieldField) IsStarredField() bool { return true }
+func (t *StarredFieldField) IsNamedField() bool   { return false }
+
+func (t *StarredFieldField) GetFieldType() GomType        { return t.FieldType }
+func (t *StarredFieldField) GetSpecifier() ScopeSpecifier { return t.Specifier }
+func (t *StarredFieldField) GetName() string {
+	panic(&aterm.GomError{Msg: "This Field has no Name"})
+}
+
+func (t *StarredFieldField) Length() int {
+	panic(&aterm.GomError{Msg: "This Field.StarredField is not a list", IllegalArgument: true})
+}
+
+func (t *StarredFieldField) Reverse() Field {
+	panic(&aterm.GomError{Msg: "This Field.StarredField is not a list", IllegalArgument: true})
+}
+
+func (t *StarredFieldField) CompareTo(o any) int {
+	ao := o.(Field)
+	if ao == Field(t) {
+		return 0
+	}
+	if t.Hash() != ao.Hash() {
+		if t.Hash() < ao.Hash() {
+			return -1
+		}
+		return 1
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	tco := ao.(*StarredFieldField)
+	if c := t.FieldType.CompareTo(tco.FieldType); c != 0 {
+		return c
+	}
+	if c := t.Specifier.CompareTo(tco.Specifier); c != 0 {
+		return c
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+func (t *StarredFieldField) CompareToLPO(o any) int {
+	ao := o.(Field)
+	if ao == Field(t) {
+		return 0
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	tco := ao.(*StarredFieldField)
+	if c := t.FieldType.CompareToLPO(tco.FieldType); c != 0 {
+		return c
+	}
+	if c := t.Specifier.CompareToLPO(tco.Specifier); c != 0 {
+		return c
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+// ToATerm is the ATerm of the term: an application of StarredField.
+func (t *StarredFieldField) ToATerm() aterm.ATerm {
+	f := aterm.GetInstance()
+	return f.MakeAppl(f.MakeAFun("StarredField", 2, false), t.FieldType.ToATerm(), t.Specifier.ToATerm())
+}
+
+// fromTermStarredFieldField is Java Gom's StarredField.fromTerm: an unquoted application of
+// StarredField whose arguments are convertible (as in Java, the arity is not
+// checked: a missing argument is an index out of range).
+func fromTermStarredFieldField(trm aterm.ATerm, conv aterm.ATermConverter) (Field, bool) {
+	trm = conv.Convert(trm)
+	if appl, ok := trm.(*aterm.ATermAppl); ok && appl.GetName() == "StarredField" && !appl.GetAFun().IsQuoted() {
+		return MakeStarredField(GomTypeFromTermConv(appl.GetArgument(0), conv), ScopeSpecifierFromTermConv(appl.GetArgument(1), conv)), true
+	}
+	return nil, false
+}
+
 // NamedFieldField is the term type for the alternative `NamedField(...)` of sort Field.
 type NamedFieldField struct {
 	Name      string
@@ -4521,7 +8992,7 @@ func (t *NamedFieldField) Duplicate() sharedobjects.Term {
 }
 
 func (t *NamedFieldField) String() string {
-	return fmt.Sprintf("NamedField(%s,%v,%v)", sharedobjects.JavaEscape(t.Name), t.FieldType, t.Specifier)
+	return "NamedField(" + sharedobjects.JavaEscape(t.Name) + "," + fmt.Sprint(t.FieldType) + "," + fmt.Sprint(t.Specifier) + ")"
 }
 
 func (t *NamedFieldField) ChildCount() int { return 3 }
@@ -4658,16 +9129,148 @@ func (s *VisitNamedField) VisitWith(env *sl.Environment, intro sl.Introspector) 
 
 var _ sl.Strategy = (*VisitNamedField)(nil)
 
+func (t *NamedFieldField) SymbolName() string { return "NamedField" }
+
+func (t *NamedFieldField) IsStarredField() bool { return false }
+func (t *NamedFieldField) IsNamedField() bool   { return true }
+
+func (t *NamedFieldField) GetFieldType() GomType        { return t.FieldType }
+func (t *NamedFieldField) GetSpecifier() ScopeSpecifier { return t.Specifier }
+func (t *NamedFieldField) GetName() string              { return t.Name }
+
+func (t *NamedFieldField) Length() int {
+	panic(&aterm.GomError{Msg: "This Field.NamedField is not a list", IllegalArgument: true})
+}
+
+func (t *NamedFieldField) Reverse() Field {
+	panic(&aterm.GomError{Msg: "This Field.NamedField is not a list", IllegalArgument: true})
+}
+
+func (t *NamedFieldField) CompareTo(o any) int {
+	ao := o.(Field)
+	if ao == Field(t) {
+		return 0
+	}
+	if t.Hash() != ao.Hash() {
+		if t.Hash() < ao.Hash() {
+			return -1
+		}
+		return 1
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	tco := ao.(*NamedFieldField)
+	if c := strings.Compare(t.Name, tco.Name); c != 0 {
+		return c
+	}
+	if c := t.FieldType.CompareTo(tco.FieldType); c != 0 {
+		return c
+	}
+	if c := t.Specifier.CompareTo(tco.Specifier); c != 0 {
+		return c
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+func (t *NamedFieldField) CompareToLPO(o any) int {
+	ao := o.(Field)
+	if ao == Field(t) {
+		return 0
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	tco := ao.(*NamedFieldField)
+	if c := strings.Compare(t.Name, tco.Name); c != 0 {
+		return c
+	}
+	if c := t.FieldType.CompareToLPO(tco.FieldType); c != 0 {
+		return c
+	}
+	if c := t.Specifier.CompareToLPO(tco.Specifier); c != 0 {
+		return c
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+// ToATerm is the ATerm of the term: an application of NamedField.
+func (t *NamedFieldField) ToATerm() aterm.ATerm {
+	f := aterm.GetInstance()
+	return f.MakeAppl(f.MakeAFun("NamedField", 3, false), aterm.MakeGomString(t.Name), t.FieldType.ToATerm(), t.Specifier.ToATerm())
+}
+
+// fromTermNamedFieldField is Java Gom's NamedField.fromTerm: an unquoted application of
+// NamedField whose arguments are convertible (as in Java, the arity is not
+// checked: a missing argument is an index out of range).
+func fromTermNamedFieldField(trm aterm.ATerm, conv aterm.ATermConverter) (Field, bool) {
+	trm = conv.Convert(trm)
+	if appl, ok := trm.(*aterm.ATermAppl); ok && appl.GetName() == "NamedField" && !appl.GetAFun().IsQuoted() {
+		return MakeNamedField(aterm.GomString(appl.GetArgument(0), conv), GomTypeFromTermConv(appl.GetArgument(1), conv), ScopeSpecifierFromTermConv(appl.GetArgument(2), conv)), true
+	}
+	return nil, false
+}
+
 // FieldList is the Go interface backing the Gom sort FieldList.
 type FieldList interface {
 	sharedobjects.Term
 	isFieldList()
+	// Java Gom API (see the package's generated methods)
+	SymbolName() string
+	IsConsConcField() bool
+	IsEmptyConcField() bool
+	GetHeadConcField() Field
+	GetTailConcField() FieldList
+	Length() int
+	Reverse() FieldList
+	CompareTo(o any) int
+	CompareToLPO(o any) int
+	ToATerm() aterm.ATerm
 }
 
-// ConcFieldFieldList is the term type for the alternative `ConcField(...)` of sort FieldList.
+// FieldListFromTerm is Java Gom's FieldList.fromTerm(trm).
+func FieldListFromTerm(trm aterm.ATerm) FieldList {
+	return FieldListFromTermConv(trm, aterm.IdConverter{})
+}
+
+// FieldListFromTermConv is Java Gom's FieldList.fromTerm(trm, atConv): the term of
+// the first operator of the sort that converts the ATerm; it panics
+// (IllegalArgumentException) when there is none.
+func FieldListFromTermConv(trm aterm.ATerm, conv aterm.ATermConverter) FieldList {
+	converted := conv.Convert(trm)
+	var results []FieldList
+	if r, ok := fromTermConcFieldFieldList(converted, conv); ok {
+		results = append(results, r)
+	}
+	if len(results) == 0 {
+		panic(&aterm.GomError{Msg: fmt.Sprintf("%v is not a FieldList", trm), IllegalArgument: true})
+	}
+	return results[0]
+}
+
+// FieldListFromString is Java Gom's FieldList.fromString(s).
+func FieldListFromString(s string) FieldList { return FieldListFromTerm(aterm.GetInstance().Parse(s)) }
+
+// FieldListFromStream is Java Gom's FieldList.fromStream(stream) (an IOException is
+// the error).
+func FieldListFromStream(stream io.Reader) (FieldList, error) {
+	at, err := aterm.GetInstance().ReadFromTextFile(stream)
+	if err != nil {
+		return nil, err
+	}
+	return FieldListFromTerm(at), nil
+}
+
+// ConcFieldFieldList is the term type of the variadic operator `ConcField(...)` of sort FieldList
+// (Java's abstract class ConcField): a maximally-shared cons cell (Java's
+// ConsConcField: a head and a tail) or the empty list (Java's EmptyConcField).
 type ConcFieldFieldList struct {
-	Slots []Field
+	head  Field
+	tail  FieldList
+	empty bool
 	hash  uint32
+	// children caches the Visitable children (Java's children field)
+	children atomic.Pointer[[]any]
 }
 
 func (*ConcFieldFieldList) isFieldList() {}
@@ -4676,51 +9279,51 @@ func (t *ConcFieldFieldList) Hash() uint32 { return t.hash }
 
 func (t *ConcFieldFieldList) Equivalent(other sharedobjects.Term) bool {
 	o, ok := other.(*ConcFieldFieldList)
-	if !ok {
-		return false
-	}
-	if len(t.Slots) != len(o.Slots) {
-		return false
-	}
-	for i := range t.Slots {
-		if t.Slots[i] != o.Slots[i] {
-			return false
-		}
-	}
-	return true
+	return ok && t.empty == o.empty && t.head == o.head && t.tail == o.tail
 }
 
 func (t *ConcFieldFieldList) Duplicate() sharedobjects.Term {
-	cp := append([]Field(nil), t.Slots...)
-	return &ConcFieldFieldList{Slots: cp, hash: t.hash}
+	return &ConcFieldFieldList{head: t.head, tail: t.tail, empty: t.empty, hash: t.hash}
 }
 
-func (t *ConcFieldFieldList) String() string {
-	parts := make([]string, len(t.Slots))
-	for i, v := range t.Slots {
-		parts[i] = fmt.Sprintf("%v", v)
+// elements returns the cached Visitable children of the list: its
+// elements (Java's getChildren, i.e. toArray).
+// Java's getChildren is the typed toArray(new Field[]{}): a last tail
+// that is not a list (of sort FieldList) cannot be stored in it
+// (ArrayStoreException, a *aterm.GomError here).
+func (t *ConcFieldFieldList) elements() []any {
+	if c := t.children.Load(); c != nil {
+		return *c
 	}
-	return "ConcField" + "(" + strings.Join(parts, ",") + ")"
+	var cur FieldList = t
+	for {
+		c, ok := cur.(*ConcFieldFieldList)
+		if !ok || c.empty {
+			break
+		}
+		cur = c.tail
+	}
+	if c, ok := cur.(*ConcFieldFieldList); !ok || !c.empty {
+		panic(&aterm.GomError{Msg: fmt.Sprintf("ArrayStoreException: the tail %v of a ConcField list is not a Field", cur)})
+	}
+	c := t.ToArray()
+	t.children.Store(&c)
+	return c
 }
 
-func (t *ConcFieldFieldList) ChildCount() int { return len(t.Slots) }
+func (t *ConcFieldFieldList) ChildCount() int { return len(t.elements()) }
 
-func (t *ConcFieldFieldList) ChildAt(i int) any { return t.Slots[i] }
+func (t *ConcFieldFieldList) ChildAt(i int) any { return t.elements()[i] }
 
 func (t *ConcFieldFieldList) SetChildAt(i int, child any) any {
-	dup := append([]Field(nil), t.Slots...)
-	dup[i] = child.(Field)
-	return MakeConcField(dup...)
+	dup := t.Children()
+	dup[i] = child
+	return t.SetChildren(dup)
 }
 
-func (t *ConcFieldFieldList) Children() []any {
-	out := make([]any, len(t.Slots))
-	for i, v := range t.Slots {
-		out[i] = v
-	}
-	return out
-}
+func (t *ConcFieldFieldList) Children() []any { return append([]any(nil), t.elements()...) }
 
+// SetChildren is Java's setChildren of a list: ConcFieldFromArray(children).
 func (t *ConcFieldFieldList) SetChildren(children []any) any {
 	args := make([]Field, len(children))
 	for i, c := range children {
@@ -4729,15 +9332,77 @@ func (t *ConcFieldFieldList) SetChildren(children []any) any {
 	return MakeConcField(args...)
 }
 
-// MakeConcField builds the canonical (shared) ConcField term.
-func MakeConcField(args ...Field) FieldList {
-	hashes := make([]uint32, 0, len(args))
-	for _, a := range args {
-		hashes = append(hashes, a.Hash())
+func (t *ConcFieldFieldList) String() string {
+	var b strings.Builder
+	b.WriteString("ConcField(")
+	var cur FieldList = t
+	for {
+		c, ok := cur.(*ConcFieldFieldList)
+		if !ok {
+			b.WriteString("," + fmt.Sprint(cur))
+			break
+		}
+		if c.empty {
+			break
+		}
+		if c != t {
+			b.WriteString(",")
+		}
+		b.WriteString(fmt.Sprint(c.head))
+		cur = c.tail
 	}
-	proto := &ConcFieldFieldList{Slots: args, hash: sharedobjects.MixSymbol(sharedobjects.StringHash("ConcField"), hashes)}
+	b.WriteString(")")
+	return b.String()
+}
+
+// RealMakeConsConcField is Java Gom's ConsConcField.realMake: the shared cell of head
+// and tail, without hook.
+func RealMakeConsConcField(head Field, tail FieldList) FieldList {
+	proto := &ConcFieldFieldList{head: head, tail: tail, hash: sharedobjects.MixSymbol(sharedobjects.StringHash("ConsConcField"), []uint32{head.Hash(), tail.Hash()})}
 	return factory.Build(proto).(*ConcFieldFieldList)
 }
+
+// realMakeEmptyConcField is Java Gom's EmptyConcField.realMake: the shared empty list,
+// without hook.
+func realMakeEmptyConcField() FieldList {
+	proto := &ConcFieldFieldList{empty: true, hash: sharedobjects.MixSymbol(sharedobjects.StringHash("EmptyConcField"), nil)}
+	return factory.Build(proto).(*ConcFieldFieldList)
+}
+
+// RawConcField builds the ConcField list holding exactly args, without construction
+// hook.
+func RawConcField(args ...Field) FieldList {
+	l := realMakeEmptyConcField()
+	for i := len(args) - 1; i >= 0; i-- {
+		l = RealMakeConsConcField(args[i], l)
+	}
+	return l
+}
+
+// EmptyConcField is Java Gom's EmptyConcField.make(): the empty ConcField list, after the
+// construction hooks.
+func EmptyConcField() FieldList {
+	return realMakeEmptyConcField()
+}
+
+// ConsConcField is Java Gom's ConsConcField.make(head, tail): head inserted in front of
+// tail, after the construction hooks (theory "" first).
+func ConsConcField(head Field, tail FieldList) FieldList {
+	return RealMakeConsConcField(head, tail)
+}
+
+// MakeConcField builds the list of args as Tom's `ConcField(args…)` does: from EmptyConcField,
+// by ConsConcField, through the construction hooks (Java's ConcField.fromArray).
+func MakeConcField(args ...Field) FieldList {
+	var l FieldList = EmptyConcField()
+	for i := len(args) - 1; i >= 0; i-- {
+		l = ConsConcField(args[i], l)
+	}
+	return l
+}
+
+// ConcFieldFromArray is Java Gom's ConcField.fromArray(array).
+func ConcFieldFromArray(array []Field) FieldList { return MakeConcField(array...) }
 
 // IsConcField is the `Is_ConcField` predicate strategy: succeeds (returns subject
 // unchanged) when subject has the `ConcField` shape, otherwise fails with
@@ -4832,10 +9497,276 @@ func (s *VisitConcField) VisitWith(env *sl.Environment, intro sl.Introspector) (
 
 var _ sl.Strategy = (*VisitConcField)(nil)
 
+// SymbolName is the symbol of the Java term: ConsConcField or EmptyConcField.
+func (t *ConcFieldFieldList) SymbolName() string {
+	if t.empty {
+		return "EmptyConcField"
+	}
+	return "ConsConcField"
+}
+
+func (t *ConcFieldFieldList) IsConsConcField() bool  { return !t.empty }
+func (t *ConcFieldFieldList) IsEmptyConcField() bool { return t.empty }
+
+func (t *ConcFieldFieldList) GetHeadConcField() Field {
+	if t.empty {
+		panic(&aterm.GomError{Msg: "This FieldList has no HeadConcField"})
+	}
+	return t.head
+}
+func (t *ConcFieldFieldList) GetTailConcField() FieldList {
+	if t.empty {
+		panic(&aterm.GomError{Msg: "This FieldList has no TailConcField"})
+	}
+	return t.tail
+}
+
+// Length is Java's length(): the number of elements of the list (a
+// tail that is not a ConcField list counts as one element).
+func (t *ConcFieldFieldList) Length() int {
+	res := 0
+	var tl FieldList = t
+	for {
+		c, ok := tl.(*ConcFieldFieldList)
+		if !ok || c.empty {
+			return res
+		}
+		res++
+		tl = c.tail
+		if _, ok := tl.(*ConcFieldFieldList); !ok {
+			res++
+		}
+	}
+}
+
+// ToArray returns the elements of the list (Java's Object[] toArray()),
+// ending with its tail when that is not a ConcField list.
+func (t *ConcFieldFieldList) ToArray() []any {
+	out := make([]any, 0, t.Length())
+	var cur FieldList = t
+	for {
+		c, ok := cur.(*ConcFieldFieldList)
+		if !ok || c.empty {
+			break
+		}
+		out = append(out, c.head)
+		cur = c.tail
+	}
+	if c, ok := cur.(*ConcFieldFieldList); !ok || !c.empty {
+		out = append(out, cur)
+	}
+	return out
+}
+
+// Reverse is Java's reverse(): the reversed list, built by ConsConcField
+// (through the hooks).
+func (t *ConcFieldFieldList) Reverse() FieldList {
+	if t.empty {
+		return t
+	}
+	var cur FieldList = t
+	var rev FieldList = EmptyConcField()
+	for {
+		c, ok := cur.(*ConcFieldFieldList)
+		if !ok || c.empty {
+			break
+		}
+		rev = ConsConcField(c.head, rev)
+		cur = c.tail
+	}
+	return rev
+}
+
+// Append is Java's append(element): the list with element added at its
+// end, built by ConsConcField (through the hooks).
+func (t *ConcFieldFieldList) Append(element Field) FieldList {
+	var heads []Field
+	var cur FieldList = t
+	for {
+		c, ok := cur.(*ConcFieldFieldList)
+		if !ok || c.empty {
+			break
+		}
+		heads = append(heads, c.head)
+		cur = c.tail
+	}
+	var res FieldList
+	if c, ok := cur.(*ConcFieldFieldList); ok && c.empty {
+		res = ConsConcField(element, cur)
+	} else {
+		res = ConsConcField(element, cur)
+	}
+	for i := len(heads) - 1; i >= 0; i-- {
+		res = ConsConcField(heads[i], res)
+	}
+	return res
+}
+
+func (t *ConcFieldFieldList) CompareTo(o any) int {
+	for {
+		ao := o.(FieldList)
+		if ao == FieldList(t) {
+			return 0
+		}
+		if t.Hash() != ao.Hash() {
+			if t.Hash() < ao.Hash() {
+				return -1
+			}
+			return 1
+		}
+		if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+			return c
+		}
+		tco := ao.(*ConcFieldFieldList)
+		if t.empty {
+			panic(&aterm.GomError{Msg: "Unable to compare"})
+		}
+		if c := t.head.CompareTo(tco.head); c != 0 {
+			return c
+		}
+		next, ok := t.tail.(*ConcFieldFieldList)
+		if !ok {
+			if c := t.tail.CompareTo(tco.tail); c != 0 {
+				return c
+			}
+			panic(&aterm.GomError{Msg: "Unable to compare"})
+		}
+		t, o = next, tco.tail
+	}
+}
+
+func (t *ConcFieldFieldList) CompareToLPO(o any) int {
+	for {
+		ao := o.(FieldList)
+		if ao == FieldList(t) {
+			return 0
+		}
+		if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+			return c
+		}
+		tco := ao.(*ConcFieldFieldList)
+		if t.empty {
+			panic(&aterm.GomError{Msg: "Unable to compare"})
+		}
+		if c := t.head.CompareToLPO(tco.head); c != 0 {
+			return c
+		}
+		next, ok := t.tail.(*ConcFieldFieldList)
+		if !ok {
+			if c := t.tail.CompareToLPO(tco.tail); c != 0 {
+				return c
+			}
+			panic(&aterm.GomError{Msg: "Unable to compare"})
+		}
+		t, o = next, tco.tail
+	}
+}
+
+// ToATerm is Java's toATerm: the list of the elements, ending with the
+// ATerm list of the tail (a tail that is not a list is Java's
+// ClassCastException).
+func (t *ConcFieldFieldList) ToATerm() aterm.ATerm {
+	f := aterm.GetInstance()
+	var heads []Field
+	var cur FieldList = t
+	for {
+		c, ok := cur.(*ConcFieldFieldList)
+		if !ok || c.empty {
+			break
+		}
+		heads = append(heads, c.head)
+		cur = c.tail
+	}
+	l := f.MakeListEmpty()
+	if c, ok := cur.(*ConcFieldFieldList); !ok || !c.empty {
+		tl, isList := cur.ToATerm().(*aterm.ATermList)
+		if !isList {
+			panic(&aterm.GomError{Msg: fmt.Sprintf("ClassCastException: the ATerm of %v is not an ATermList", cur)})
+		}
+		l = tl
+	}
+	for i := len(heads) - 1; i >= 0; i-- {
+		l = f.MakeList(heads[i].ToATerm(), l)
+	}
+	return l
+}
+
+// fromTermConcFieldFieldList is Java Gom's ConcField.fromTerm: an application of ConcField, or a
+// list (of ToATerm), of convertible elements.
+func fromTermConcFieldFieldList(trm aterm.ATerm, conv aterm.ATermConverter) (res FieldList, ok bool) {
+	trm = conv.Convert(trm)
+	if appl, isAppl := trm.(*aterm.ATermAppl); isAppl && appl.GetName() == "ConcField" {
+		elems := make([]Field, appl.GetArity())
+		for i, a := range appl.GetArguments() {
+			elems[i] = FieldFromTermConv(a, conv)
+		}
+		return MakeConcField(elems...), true
+	}
+	if list, isList := trm.(*aterm.ATermList); isList {
+		// an element that cannot be converted: not a ConcField (Java returns null)
+		defer func() {
+			if recover() != nil {
+				res, ok = nil, false
+			}
+		}()
+		var elems []Field
+		for !list.IsEmpty() {
+			elems = append(elems, FieldFromTermConv(list.GetFirst(), conv))
+			list = list.GetNext()
+		}
+		return MakeConcField(elems...), true
+	}
+	return nil, false
+}
+
 // GomModuleName is the Go interface backing the Gom sort GomModuleName.
 type GomModuleName interface {
 	sharedobjects.Term
 	isGomModuleName()
+	// Java Gom API (see the package's generated methods)
+	SymbolName() string
+	IsGomModuleName() bool
+	GetName() string
+	Length() int
+	Reverse() GomModuleName
+	CompareTo(o any) int
+	CompareToLPO(o any) int
+	ToATerm() aterm.ATerm
+}
+
+// GomModuleNameFromTerm is Java Gom's GomModuleName.fromTerm(trm).
+func GomModuleNameFromTerm(trm aterm.ATerm) GomModuleName {
+	return GomModuleNameFromTermConv(trm, aterm.IdConverter{})
+}
+
+// GomModuleNameFromTermConv is Java Gom's GomModuleName.fromTerm(trm, atConv): the term of
+// the first operator of the sort that converts the ATerm; it panics
+// (IllegalArgumentException) when there is none.
+func GomModuleNameFromTermConv(trm aterm.ATerm, conv aterm.ATermConverter) GomModuleName {
+	converted := conv.Convert(trm)
+	var results []GomModuleName
+	if r, ok := fromTermGomModuleNameGomModuleName(converted, conv); ok {
+		results = append(results, r)
+	}
+	if len(results) == 0 {
+		panic(&aterm.GomError{Msg: fmt.Sprintf("%v is not a GomModuleName", trm), IllegalArgument: true})
+	}
+	return results[0]
+}
+
+// GomModuleNameFromString is Java Gom's GomModuleName.fromString(s).
+func GomModuleNameFromString(s string) GomModuleName {
+	return GomModuleNameFromTerm(aterm.GetInstance().Parse(s))
+}
+
+// GomModuleNameFromStream is Java Gom's GomModuleName.fromStream(stream) (an IOException is
+// the error).
+func GomModuleNameFromStream(stream io.Reader) (GomModuleName, error) {
+	at, err := aterm.GetInstance().ReadFromTextFile(stream)
+	if err != nil {
+		return nil, err
+	}
+	return GomModuleNameFromTerm(at), nil
 }
 
 // GomModuleNameGomModuleName is the term type for the alternative `GomModuleName(...)` of sort GomModuleName.
@@ -4865,7 +9796,7 @@ func (t *GomModuleNameGomModuleName) Duplicate() sharedobjects.Term {
 }
 
 func (t *GomModuleNameGomModuleName) String() string {
-	return fmt.Sprintf("GomModuleName(%s)", sharedobjects.JavaEscape(t.Name))
+	return "GomModuleName(" + sharedobjects.JavaEscape(t.Name) + ")"
 }
 
 func (t *GomModuleNameGomModuleName) ChildCount() int { return 1 }
@@ -4994,10 +9925,126 @@ func (s *VisitGomModuleName) VisitWith(env *sl.Environment, intro sl.Introspecto
 
 var _ sl.Strategy = (*VisitGomModuleName)(nil)
 
+func (t *GomModuleNameGomModuleName) SymbolName() string { return "GomModuleName" }
+
+func (t *GomModuleNameGomModuleName) IsGomModuleName() bool { return true }
+
+func (t *GomModuleNameGomModuleName) GetName() string { return t.Name }
+
+func (t *GomModuleNameGomModuleName) Length() int {
+	panic(&aterm.GomError{Msg: "This GomModuleName.GomModuleName is not a list", IllegalArgument: true})
+}
+
+func (t *GomModuleNameGomModuleName) Reverse() GomModuleName {
+	panic(&aterm.GomError{Msg: "This GomModuleName.GomModuleName is not a list", IllegalArgument: true})
+}
+
+func (t *GomModuleNameGomModuleName) CompareTo(o any) int {
+	ao := o.(GomModuleName)
+	if ao == GomModuleName(t) {
+		return 0
+	}
+	if t.Hash() != ao.Hash() {
+		if t.Hash() < ao.Hash() {
+			return -1
+		}
+		return 1
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	tco := ao.(*GomModuleNameGomModuleName)
+	if c := strings.Compare(t.Name, tco.Name); c != 0 {
+		return c
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+func (t *GomModuleNameGomModuleName) CompareToLPO(o any) int {
+	ao := o.(GomModuleName)
+	if ao == GomModuleName(t) {
+		return 0
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	tco := ao.(*GomModuleNameGomModuleName)
+	if c := strings.Compare(t.Name, tco.Name); c != 0 {
+		return c
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+// ToATerm is the ATerm of the term: an application of GomModuleName.
+func (t *GomModuleNameGomModuleName) ToATerm() aterm.ATerm {
+	f := aterm.GetInstance()
+	return f.MakeAppl(f.MakeAFun("GomModuleName", 1, false), aterm.MakeGomString(t.Name))
+}
+
+// fromTermGomModuleNameGomModuleName is Java Gom's GomModuleName.fromTerm: an unquoted application of
+// GomModuleName whose arguments are convertible (as in Java, the arity is not
+// checked: a missing argument is an index out of range).
+func fromTermGomModuleNameGomModuleName(trm aterm.ATerm, conv aterm.ATermConverter) (GomModuleName, bool) {
+	trm = conv.Convert(trm)
+	if appl, ok := trm.(*aterm.ATermAppl); ok && appl.GetName() == "GomModuleName" && !appl.GetAFun().IsQuoted() {
+		return MakeGomModuleName(aterm.GomString(appl.GetArgument(0), conv)), true
+	}
+	return nil, false
+}
+
 // TypeSpec is the Go interface backing the Gom sort TypeSpec.
 type TypeSpec interface {
 	sharedobjects.Term
 	isTypeSpec()
+	// Java Gom API (see the package's generated methods)
+	SymbolName() string
+	IsPatternType() bool
+	IsExpressionType() bool
+	IsAtomType() bool
+	Length() int
+	Reverse() TypeSpec
+	CompareTo(o any) int
+	CompareToLPO(o any) int
+	ToATerm() aterm.ATerm
+}
+
+// TypeSpecFromTerm is Java Gom's TypeSpec.fromTerm(trm).
+func TypeSpecFromTerm(trm aterm.ATerm) TypeSpec {
+	return TypeSpecFromTermConv(trm, aterm.IdConverter{})
+}
+
+// TypeSpecFromTermConv is Java Gom's TypeSpec.fromTerm(trm, atConv): the term of
+// the first operator of the sort that converts the ATerm; it panics
+// (IllegalArgumentException) when there is none.
+func TypeSpecFromTermConv(trm aterm.ATerm, conv aterm.ATermConverter) TypeSpec {
+	converted := conv.Convert(trm)
+	var results []TypeSpec
+	if r, ok := fromTermPatternTypeTypeSpec(converted, conv); ok {
+		results = append(results, r)
+	}
+	if r, ok := fromTermExpressionTypeTypeSpec(converted, conv); ok {
+		results = append(results, r)
+	}
+	if r, ok := fromTermAtomTypeTypeSpec(converted, conv); ok {
+		results = append(results, r)
+	}
+	if len(results) == 0 {
+		panic(&aterm.GomError{Msg: fmt.Sprintf("%v is not a TypeSpec", trm), IllegalArgument: true})
+	}
+	return results[0]
+}
+
+// TypeSpecFromString is Java Gom's TypeSpec.fromString(s).
+func TypeSpecFromString(s string) TypeSpec { return TypeSpecFromTerm(aterm.GetInstance().Parse(s)) }
+
+// TypeSpecFromStream is Java Gom's TypeSpec.fromStream(stream) (an IOException is
+// the error).
+func TypeSpecFromStream(stream io.Reader) (TypeSpec, error) {
+	at, err := aterm.GetInstance().ReadFromTextFile(stream)
+	if err != nil {
+		return nil, err
+	}
+	return TypeSpecFromTerm(at), nil
 }
 
 // PatternTypeTypeSpec is the term type for the alternative `PatternType(...)` of sort TypeSpec.
@@ -5020,7 +10067,7 @@ func (t *PatternTypeTypeSpec) Duplicate() sharedobjects.Term {
 }
 
 func (t *PatternTypeTypeSpec) String() string {
-	return "PatternType" + "()"
+	return "PatternType()"
 }
 
 func (t *PatternTypeTypeSpec) ChildCount() int { return 0 }
@@ -5115,6 +10162,65 @@ func (s *VisitPatternType) VisitWith(env *sl.Environment, intro sl.Introspector)
 
 var _ sl.Strategy = (*VisitPatternType)(nil)
 
+func (t *PatternTypeTypeSpec) SymbolName() string { return "PatternType" }
+
+func (t *PatternTypeTypeSpec) IsPatternType() bool    { return true }
+func (t *PatternTypeTypeSpec) IsExpressionType() bool { return false }
+func (t *PatternTypeTypeSpec) IsAtomType() bool       { return false }
+
+func (t *PatternTypeTypeSpec) Length() int {
+	panic(&aterm.GomError{Msg: "This TypeSpec.PatternType is not a list", IllegalArgument: true})
+}
+
+func (t *PatternTypeTypeSpec) Reverse() TypeSpec {
+	panic(&aterm.GomError{Msg: "This TypeSpec.PatternType is not a list", IllegalArgument: true})
+}
+
+func (t *PatternTypeTypeSpec) CompareTo(o any) int {
+	ao := o.(TypeSpec)
+	if ao == TypeSpec(t) {
+		return 0
+	}
+	if t.Hash() != ao.Hash() {
+		if t.Hash() < ao.Hash() {
+			return -1
+		}
+		return 1
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+func (t *PatternTypeTypeSpec) CompareToLPO(o any) int {
+	ao := o.(TypeSpec)
+	if ao == TypeSpec(t) {
+		return 0
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+// ToATerm is the ATerm of the term: an application of PatternType.
+func (t *PatternTypeTypeSpec) ToATerm() aterm.ATerm {
+	f := aterm.GetInstance()
+	return f.MakeAppl(f.MakeAFun("PatternType", 0, false))
+}
+
+// fromTermPatternTypeTypeSpec is Java Gom's PatternType.fromTerm: an unquoted application of
+// PatternType whose arguments are convertible (as in Java, the arity is not
+// checked: a missing argument is an index out of range).
+func fromTermPatternTypeTypeSpec(trm aterm.ATerm, conv aterm.ATermConverter) (TypeSpec, bool) {
+	trm = conv.Convert(trm)
+	if appl, ok := trm.(*aterm.ATermAppl); ok && appl.GetName() == "PatternType" && !appl.GetAFun().IsQuoted() {
+		return MakePatternType(), true
+	}
+	return nil, false
+}
+
 // ExpressionTypeTypeSpec is the term type for the alternative `ExpressionType(...)` of sort TypeSpec.
 type ExpressionTypeTypeSpec struct {
 	hash uint32
@@ -5135,7 +10241,7 @@ func (t *ExpressionTypeTypeSpec) Duplicate() sharedobjects.Term {
 }
 
 func (t *ExpressionTypeTypeSpec) String() string {
-	return "ExpressionType" + "()"
+	return "ExpressionType()"
 }
 
 func (t *ExpressionTypeTypeSpec) ChildCount() int { return 0 }
@@ -5230,6 +10336,65 @@ func (s *VisitExpressionType) VisitWith(env *sl.Environment, intro sl.Introspect
 
 var _ sl.Strategy = (*VisitExpressionType)(nil)
 
+func (t *ExpressionTypeTypeSpec) SymbolName() string { return "ExpressionType" }
+
+func (t *ExpressionTypeTypeSpec) IsPatternType() bool    { return false }
+func (t *ExpressionTypeTypeSpec) IsExpressionType() bool { return true }
+func (t *ExpressionTypeTypeSpec) IsAtomType() bool       { return false }
+
+func (t *ExpressionTypeTypeSpec) Length() int {
+	panic(&aterm.GomError{Msg: "This TypeSpec.ExpressionType is not a list", IllegalArgument: true})
+}
+
+func (t *ExpressionTypeTypeSpec) Reverse() TypeSpec {
+	panic(&aterm.GomError{Msg: "This TypeSpec.ExpressionType is not a list", IllegalArgument: true})
+}
+
+func (t *ExpressionTypeTypeSpec) CompareTo(o any) int {
+	ao := o.(TypeSpec)
+	if ao == TypeSpec(t) {
+		return 0
+	}
+	if t.Hash() != ao.Hash() {
+		if t.Hash() < ao.Hash() {
+			return -1
+		}
+		return 1
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+func (t *ExpressionTypeTypeSpec) CompareToLPO(o any) int {
+	ao := o.(TypeSpec)
+	if ao == TypeSpec(t) {
+		return 0
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+// ToATerm is the ATerm of the term: an application of ExpressionType.
+func (t *ExpressionTypeTypeSpec) ToATerm() aterm.ATerm {
+	f := aterm.GetInstance()
+	return f.MakeAppl(f.MakeAFun("ExpressionType", 0, false))
+}
+
+// fromTermExpressionTypeTypeSpec is Java Gom's ExpressionType.fromTerm: an unquoted application of
+// ExpressionType whose arguments are convertible (as in Java, the arity is not
+// checked: a missing argument is an index out of range).
+func fromTermExpressionTypeTypeSpec(trm aterm.ATerm, conv aterm.ATermConverter) (TypeSpec, bool) {
+	trm = conv.Convert(trm)
+	if appl, ok := trm.(*aterm.ATermAppl); ok && appl.GetName() == "ExpressionType" && !appl.GetAFun().IsQuoted() {
+		return MakeExpressionType(), true
+	}
+	return nil, false
+}
+
 // AtomTypeTypeSpec is the term type for the alternative `AtomType(...)` of sort TypeSpec.
 type AtomTypeTypeSpec struct {
 	hash uint32
@@ -5250,7 +10415,7 @@ func (t *AtomTypeTypeSpec) Duplicate() sharedobjects.Term {
 }
 
 func (t *AtomTypeTypeSpec) String() string {
-	return "AtomType" + "()"
+	return "AtomType()"
 }
 
 func (t *AtomTypeTypeSpec) ChildCount() int { return 0 }
@@ -5345,10 +10510,110 @@ func (s *VisitAtomType) VisitWith(env *sl.Environment, intro sl.Introspector) (a
 
 var _ sl.Strategy = (*VisitAtomType)(nil)
 
+func (t *AtomTypeTypeSpec) SymbolName() string { return "AtomType" }
+
+func (t *AtomTypeTypeSpec) IsPatternType() bool    { return false }
+func (t *AtomTypeTypeSpec) IsExpressionType() bool { return false }
+func (t *AtomTypeTypeSpec) IsAtomType() bool       { return true }
+
+func (t *AtomTypeTypeSpec) Length() int {
+	panic(&aterm.GomError{Msg: "This TypeSpec.AtomType is not a list", IllegalArgument: true})
+}
+
+func (t *AtomTypeTypeSpec) Reverse() TypeSpec {
+	panic(&aterm.GomError{Msg: "This TypeSpec.AtomType is not a list", IllegalArgument: true})
+}
+
+func (t *AtomTypeTypeSpec) CompareTo(o any) int {
+	ao := o.(TypeSpec)
+	if ao == TypeSpec(t) {
+		return 0
+	}
+	if t.Hash() != ao.Hash() {
+		if t.Hash() < ao.Hash() {
+			return -1
+		}
+		return 1
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+func (t *AtomTypeTypeSpec) CompareToLPO(o any) int {
+	ao := o.(TypeSpec)
+	if ao == TypeSpec(t) {
+		return 0
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+// ToATerm is the ATerm of the term: an application of AtomType.
+func (t *AtomTypeTypeSpec) ToATerm() aterm.ATerm {
+	f := aterm.GetInstance()
+	return f.MakeAppl(f.MakeAFun("AtomType", 0, false))
+}
+
+// fromTermAtomTypeTypeSpec is Java Gom's AtomType.fromTerm: an unquoted application of
+// AtomType whose arguments are convertible (as in Java, the arity is not
+// checked: a missing argument is an index out of range).
+func fromTermAtomTypeTypeSpec(trm aterm.ATerm, conv aterm.ATermConverter) (TypeSpec, bool) {
+	trm = conv.Convert(trm)
+	if appl, ok := trm.(*aterm.ATermAppl); ok && appl.GetName() == "AtomType" && !appl.GetAFun().IsQuoted() {
+		return MakeAtomType(), true
+	}
+	return nil, false
+}
+
 // GomType is the Go interface backing the Gom sort GomType.
 type GomType interface {
 	sharedobjects.Term
 	isGomType()
+	// Java Gom API (see the package's generated methods)
+	SymbolName() string
+	IsGomType() bool
+	GetSpecialization() TypeSpec
+	GetName() string
+	Length() int
+	Reverse() GomType
+	CompareTo(o any) int
+	CompareToLPO(o any) int
+	ToATerm() aterm.ATerm
+}
+
+// GomTypeFromTerm is Java Gom's GomType.fromTerm(trm).
+func GomTypeFromTerm(trm aterm.ATerm) GomType { return GomTypeFromTermConv(trm, aterm.IdConverter{}) }
+
+// GomTypeFromTermConv is Java Gom's GomType.fromTerm(trm, atConv): the term of
+// the first operator of the sort that converts the ATerm; it panics
+// (IllegalArgumentException) when there is none.
+func GomTypeFromTermConv(trm aterm.ATerm, conv aterm.ATermConverter) GomType {
+	converted := conv.Convert(trm)
+	var results []GomType
+	if r, ok := fromTermGomTypeGomType(converted, conv); ok {
+		results = append(results, r)
+	}
+	if len(results) == 0 {
+		panic(&aterm.GomError{Msg: fmt.Sprintf("%v is not a GomType", trm), IllegalArgument: true})
+	}
+	return results[0]
+}
+
+// GomTypeFromString is Java Gom's GomType.fromString(s).
+func GomTypeFromString(s string) GomType { return GomTypeFromTerm(aterm.GetInstance().Parse(s)) }
+
+// GomTypeFromStream is Java Gom's GomType.fromStream(stream) (an IOException is
+// the error).
+func GomTypeFromStream(stream io.Reader) (GomType, error) {
+	at, err := aterm.GetInstance().ReadFromTextFile(stream)
+	if err != nil {
+		return nil, err
+	}
+	return GomTypeFromTerm(at), nil
 }
 
 // GomTypeGomType is the term type for the alternative `GomType(...)` of sort GomType.
@@ -5382,7 +10647,7 @@ func (t *GomTypeGomType) Duplicate() sharedobjects.Term {
 }
 
 func (t *GomTypeGomType) String() string {
-	return fmt.Sprintf("GomType(%v,%s)", t.Specialization, sharedobjects.JavaEscape(t.Name))
+	return "GomType(" + fmt.Sprint(t.Specialization) + "," + sharedobjects.JavaEscape(t.Name) + ")"
 }
 
 func (t *GomTypeGomType) ChildCount() int { return 2 }
@@ -5515,16 +10780,142 @@ func (s *VisitGomType) VisitWith(env *sl.Environment, intro sl.Introspector) (an
 
 var _ sl.Strategy = (*VisitGomType)(nil)
 
+func (t *GomTypeGomType) SymbolName() string { return "GomType" }
+
+func (t *GomTypeGomType) IsGomType() bool { return true }
+
+func (t *GomTypeGomType) GetSpecialization() TypeSpec { return t.Specialization }
+func (t *GomTypeGomType) GetName() string             { return t.Name }
+
+func (t *GomTypeGomType) Length() int {
+	panic(&aterm.GomError{Msg: "This GomType.GomType is not a list", IllegalArgument: true})
+}
+
+func (t *GomTypeGomType) Reverse() GomType {
+	panic(&aterm.GomError{Msg: "This GomType.GomType is not a list", IllegalArgument: true})
+}
+
+func (t *GomTypeGomType) CompareTo(o any) int {
+	ao := o.(GomType)
+	if ao == GomType(t) {
+		return 0
+	}
+	if t.Hash() != ao.Hash() {
+		if t.Hash() < ao.Hash() {
+			return -1
+		}
+		return 1
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	tco := ao.(*GomTypeGomType)
+	if c := t.Specialization.CompareTo(tco.Specialization); c != 0 {
+		return c
+	}
+	if c := strings.Compare(t.Name, tco.Name); c != 0 {
+		return c
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+func (t *GomTypeGomType) CompareToLPO(o any) int {
+	ao := o.(GomType)
+	if ao == GomType(t) {
+		return 0
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	tco := ao.(*GomTypeGomType)
+	if c := t.Specialization.CompareToLPO(tco.Specialization); c != 0 {
+		return c
+	}
+	if c := strings.Compare(t.Name, tco.Name); c != 0 {
+		return c
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+// ToATerm is the ATerm of the term: an application of GomType.
+func (t *GomTypeGomType) ToATerm() aterm.ATerm {
+	f := aterm.GetInstance()
+	return f.MakeAppl(f.MakeAFun("GomType", 2, false), t.Specialization.ToATerm(), aterm.MakeGomString(t.Name))
+}
+
+// fromTermGomTypeGomType is Java Gom's GomType.fromTerm: an unquoted application of
+// GomType whose arguments are convertible (as in Java, the arity is not
+// checked: a missing argument is an index out of range).
+func fromTermGomTypeGomType(trm aterm.ATerm, conv aterm.ATermConverter) (GomType, bool) {
+	trm = conv.Convert(trm)
+	if appl, ok := trm.(*aterm.ATermAppl); ok && appl.GetName() == "GomType" && !appl.GetAFun().IsQuoted() {
+		return MakeGomType(TypeSpecFromTermConv(appl.GetArgument(0), conv), aterm.GomString(appl.GetArgument(1), conv)), true
+	}
+	return nil, false
+}
+
 // GomTypeList is the Go interface backing the Gom sort GomTypeList.
 type GomTypeList interface {
 	sharedobjects.Term
 	isGomTypeList()
+	// Java Gom API (see the package's generated methods)
+	SymbolName() string
+	IsConsConcGomType() bool
+	IsEmptyConcGomType() bool
+	GetHeadConcGomType() GomType
+	GetTailConcGomType() GomTypeList
+	Length() int
+	Reverse() GomTypeList
+	CompareTo(o any) int
+	CompareToLPO(o any) int
+	ToATerm() aterm.ATerm
 }
 
-// ConcGomTypeGomTypeList is the term type for the alternative `ConcGomType(...)` of sort GomTypeList.
+// GomTypeListFromTerm is Java Gom's GomTypeList.fromTerm(trm).
+func GomTypeListFromTerm(trm aterm.ATerm) GomTypeList {
+	return GomTypeListFromTermConv(trm, aterm.IdConverter{})
+}
+
+// GomTypeListFromTermConv is Java Gom's GomTypeList.fromTerm(trm, atConv): the term of
+// the first operator of the sort that converts the ATerm; it panics
+// (IllegalArgumentException) when there is none.
+func GomTypeListFromTermConv(trm aterm.ATerm, conv aterm.ATermConverter) GomTypeList {
+	converted := conv.Convert(trm)
+	var results []GomTypeList
+	if r, ok := fromTermConcGomTypeGomTypeList(converted, conv); ok {
+		results = append(results, r)
+	}
+	if len(results) == 0 {
+		panic(&aterm.GomError{Msg: fmt.Sprintf("%v is not a GomTypeList", trm), IllegalArgument: true})
+	}
+	return results[0]
+}
+
+// GomTypeListFromString is Java Gom's GomTypeList.fromString(s).
+func GomTypeListFromString(s string) GomTypeList {
+	return GomTypeListFromTerm(aterm.GetInstance().Parse(s))
+}
+
+// GomTypeListFromStream is Java Gom's GomTypeList.fromStream(stream) (an IOException is
+// the error).
+func GomTypeListFromStream(stream io.Reader) (GomTypeList, error) {
+	at, err := aterm.GetInstance().ReadFromTextFile(stream)
+	if err != nil {
+		return nil, err
+	}
+	return GomTypeListFromTerm(at), nil
+}
+
+// ConcGomTypeGomTypeList is the term type of the variadic operator `ConcGomType(...)` of sort GomTypeList
+// (Java's abstract class ConcGomType): a maximally-shared cons cell (Java's
+// ConsConcGomType: a head and a tail) or the empty list (Java's EmptyConcGomType).
 type ConcGomTypeGomTypeList struct {
-	Slots []GomType
+	head  GomType
+	tail  GomTypeList
+	empty bool
 	hash  uint32
+	// children caches the Visitable children (Java's children field)
+	children atomic.Pointer[[]any]
 }
 
 func (*ConcGomTypeGomTypeList) isGomTypeList() {}
@@ -5533,51 +10924,51 @@ func (t *ConcGomTypeGomTypeList) Hash() uint32 { return t.hash }
 
 func (t *ConcGomTypeGomTypeList) Equivalent(other sharedobjects.Term) bool {
 	o, ok := other.(*ConcGomTypeGomTypeList)
-	if !ok {
-		return false
-	}
-	if len(t.Slots) != len(o.Slots) {
-		return false
-	}
-	for i := range t.Slots {
-		if t.Slots[i] != o.Slots[i] {
-			return false
-		}
-	}
-	return true
+	return ok && t.empty == o.empty && t.head == o.head && t.tail == o.tail
 }
 
 func (t *ConcGomTypeGomTypeList) Duplicate() sharedobjects.Term {
-	cp := append([]GomType(nil), t.Slots...)
-	return &ConcGomTypeGomTypeList{Slots: cp, hash: t.hash}
+	return &ConcGomTypeGomTypeList{head: t.head, tail: t.tail, empty: t.empty, hash: t.hash}
 }
 
-func (t *ConcGomTypeGomTypeList) String() string {
-	parts := make([]string, len(t.Slots))
-	for i, v := range t.Slots {
-		parts[i] = fmt.Sprintf("%v", v)
+// elements returns the cached Visitable children of the list: its
+// elements (Java's getChildren, i.e. toArray).
+// Java's getChildren is the typed toArray(new GomType[]{}): a last tail
+// that is not a list (of sort GomTypeList) cannot be stored in it
+// (ArrayStoreException, a *aterm.GomError here).
+func (t *ConcGomTypeGomTypeList) elements() []any {
+	if c := t.children.Load(); c != nil {
+		return *c
 	}
-	return "ConcGomType" + "(" + strings.Join(parts, ",") + ")"
+	var cur GomTypeList = t
+	for {
+		c, ok := cur.(*ConcGomTypeGomTypeList)
+		if !ok || c.empty {
+			break
+		}
+		cur = c.tail
+	}
+	if c, ok := cur.(*ConcGomTypeGomTypeList); !ok || !c.empty {
+		panic(&aterm.GomError{Msg: fmt.Sprintf("ArrayStoreException: the tail %v of a ConcGomType list is not a GomType", cur)})
+	}
+	c := t.ToArray()
+	t.children.Store(&c)
+	return c
 }
 
-func (t *ConcGomTypeGomTypeList) ChildCount() int { return len(t.Slots) }
+func (t *ConcGomTypeGomTypeList) ChildCount() int { return len(t.elements()) }
 
-func (t *ConcGomTypeGomTypeList) ChildAt(i int) any { return t.Slots[i] }
+func (t *ConcGomTypeGomTypeList) ChildAt(i int) any { return t.elements()[i] }
 
 func (t *ConcGomTypeGomTypeList) SetChildAt(i int, child any) any {
-	dup := append([]GomType(nil), t.Slots...)
-	dup[i] = child.(GomType)
-	return MakeConcGomType(dup...)
+	dup := t.Children()
+	dup[i] = child
+	return t.SetChildren(dup)
 }
 
-func (t *ConcGomTypeGomTypeList) Children() []any {
-	out := make([]any, len(t.Slots))
-	for i, v := range t.Slots {
-		out[i] = v
-	}
-	return out
-}
+func (t *ConcGomTypeGomTypeList) Children() []any { return append([]any(nil), t.elements()...) }
 
+// SetChildren is Java's setChildren of a list: ConcGomTypeFromArray(children).
 func (t *ConcGomTypeGomTypeList) SetChildren(children []any) any {
 	args := make([]GomType, len(children))
 	for i, c := range children {
@@ -5586,15 +10977,77 @@ func (t *ConcGomTypeGomTypeList) SetChildren(children []any) any {
 	return MakeConcGomType(args...)
 }
 
-// MakeConcGomType builds the canonical (shared) ConcGomType term.
-func MakeConcGomType(args ...GomType) GomTypeList {
-	hashes := make([]uint32, 0, len(args))
-	for _, a := range args {
-		hashes = append(hashes, a.Hash())
+func (t *ConcGomTypeGomTypeList) String() string {
+	var b strings.Builder
+	b.WriteString("ConcGomType(")
+	var cur GomTypeList = t
+	for {
+		c, ok := cur.(*ConcGomTypeGomTypeList)
+		if !ok {
+			b.WriteString("," + fmt.Sprint(cur))
+			break
+		}
+		if c.empty {
+			break
+		}
+		if c != t {
+			b.WriteString(",")
+		}
+		b.WriteString(fmt.Sprint(c.head))
+		cur = c.tail
 	}
-	proto := &ConcGomTypeGomTypeList{Slots: args, hash: sharedobjects.MixSymbol(sharedobjects.StringHash("ConcGomType"), hashes)}
+	b.WriteString(")")
+	return b.String()
+}
+
+// RealMakeConsConcGomType is Java Gom's ConsConcGomType.realMake: the shared cell of head
+// and tail, without hook.
+func RealMakeConsConcGomType(head GomType, tail GomTypeList) GomTypeList {
+	proto := &ConcGomTypeGomTypeList{head: head, tail: tail, hash: sharedobjects.MixSymbol(sharedobjects.StringHash("ConsConcGomType"), []uint32{head.Hash(), tail.Hash()})}
 	return factory.Build(proto).(*ConcGomTypeGomTypeList)
 }
+
+// realMakeEmptyConcGomType is Java Gom's EmptyConcGomType.realMake: the shared empty list,
+// without hook.
+func realMakeEmptyConcGomType() GomTypeList {
+	proto := &ConcGomTypeGomTypeList{empty: true, hash: sharedobjects.MixSymbol(sharedobjects.StringHash("EmptyConcGomType"), nil)}
+	return factory.Build(proto).(*ConcGomTypeGomTypeList)
+}
+
+// RawConcGomType builds the ConcGomType list holding exactly args, without construction
+// hook.
+func RawConcGomType(args ...GomType) GomTypeList {
+	l := realMakeEmptyConcGomType()
+	for i := len(args) - 1; i >= 0; i-- {
+		l = RealMakeConsConcGomType(args[i], l)
+	}
+	return l
+}
+
+// EmptyConcGomType is Java Gom's EmptyConcGomType.make(): the empty ConcGomType list, after the
+// construction hooks.
+func EmptyConcGomType() GomTypeList {
+	return realMakeEmptyConcGomType()
+}
+
+// ConsConcGomType is Java Gom's ConsConcGomType.make(head, tail): head inserted in front of
+// tail, after the construction hooks (theory "" first).
+func ConsConcGomType(head GomType, tail GomTypeList) GomTypeList {
+	return RealMakeConsConcGomType(head, tail)
+}
+
+// MakeConcGomType builds the list of args as Tom's `ConcGomType(args…)` does: from EmptyConcGomType,
+// by ConsConcGomType, through the construction hooks (Java's ConcGomType.fromArray).
+func MakeConcGomType(args ...GomType) GomTypeList {
+	var l GomTypeList = EmptyConcGomType()
+	for i := len(args) - 1; i >= 0; i-- {
+		l = ConsConcGomType(args[i], l)
+	}
+	return l
+}
+
+// ConcGomTypeFromArray is Java Gom's ConcGomType.fromArray(array).
+func ConcGomTypeFromArray(array []GomType) GomTypeList { return MakeConcGomType(array...) }
 
 // IsConcGomType is the `Is_ConcGomType` predicate strategy: succeeds (returns subject
 // unchanged) when subject has the `ConcGomType` shape, otherwise fails with
@@ -5689,16 +11142,288 @@ func (s *VisitConcGomType) VisitWith(env *sl.Environment, intro sl.Introspector)
 
 var _ sl.Strategy = (*VisitConcGomType)(nil)
 
+// SymbolName is the symbol of the Java term: ConsConcGomType or EmptyConcGomType.
+func (t *ConcGomTypeGomTypeList) SymbolName() string {
+	if t.empty {
+		return "EmptyConcGomType"
+	}
+	return "ConsConcGomType"
+}
+
+func (t *ConcGomTypeGomTypeList) IsConsConcGomType() bool  { return !t.empty }
+func (t *ConcGomTypeGomTypeList) IsEmptyConcGomType() bool { return t.empty }
+
+func (t *ConcGomTypeGomTypeList) GetHeadConcGomType() GomType {
+	if t.empty {
+		panic(&aterm.GomError{Msg: "This GomTypeList has no HeadConcGomType"})
+	}
+	return t.head
+}
+func (t *ConcGomTypeGomTypeList) GetTailConcGomType() GomTypeList {
+	if t.empty {
+		panic(&aterm.GomError{Msg: "This GomTypeList has no TailConcGomType"})
+	}
+	return t.tail
+}
+
+// Length is Java's length(): the number of elements of the list (a
+// tail that is not a ConcGomType list counts as one element).
+func (t *ConcGomTypeGomTypeList) Length() int {
+	res := 0
+	var tl GomTypeList = t
+	for {
+		c, ok := tl.(*ConcGomTypeGomTypeList)
+		if !ok || c.empty {
+			return res
+		}
+		res++
+		tl = c.tail
+		if _, ok := tl.(*ConcGomTypeGomTypeList); !ok {
+			res++
+		}
+	}
+}
+
+// ToArray returns the elements of the list (Java's Object[] toArray()),
+// ending with its tail when that is not a ConcGomType list.
+func (t *ConcGomTypeGomTypeList) ToArray() []any {
+	out := make([]any, 0, t.Length())
+	var cur GomTypeList = t
+	for {
+		c, ok := cur.(*ConcGomTypeGomTypeList)
+		if !ok || c.empty {
+			break
+		}
+		out = append(out, c.head)
+		cur = c.tail
+	}
+	if c, ok := cur.(*ConcGomTypeGomTypeList); !ok || !c.empty {
+		out = append(out, cur)
+	}
+	return out
+}
+
+// Reverse is Java's reverse(): the reversed list, built by ConsConcGomType
+// (through the hooks).
+func (t *ConcGomTypeGomTypeList) Reverse() GomTypeList {
+	if t.empty {
+		return t
+	}
+	var cur GomTypeList = t
+	var rev GomTypeList = EmptyConcGomType()
+	for {
+		c, ok := cur.(*ConcGomTypeGomTypeList)
+		if !ok || c.empty {
+			break
+		}
+		rev = ConsConcGomType(c.head, rev)
+		cur = c.tail
+	}
+	return rev
+}
+
+// Append is Java's append(element): the list with element added at its
+// end, built by ConsConcGomType (through the hooks).
+func (t *ConcGomTypeGomTypeList) Append(element GomType) GomTypeList {
+	var heads []GomType
+	var cur GomTypeList = t
+	for {
+		c, ok := cur.(*ConcGomTypeGomTypeList)
+		if !ok || c.empty {
+			break
+		}
+		heads = append(heads, c.head)
+		cur = c.tail
+	}
+	var res GomTypeList
+	if c, ok := cur.(*ConcGomTypeGomTypeList); ok && c.empty {
+		res = ConsConcGomType(element, cur)
+	} else {
+		res = ConsConcGomType(element, cur)
+	}
+	for i := len(heads) - 1; i >= 0; i-- {
+		res = ConsConcGomType(heads[i], res)
+	}
+	return res
+}
+
+func (t *ConcGomTypeGomTypeList) CompareTo(o any) int {
+	for {
+		ao := o.(GomTypeList)
+		if ao == GomTypeList(t) {
+			return 0
+		}
+		if t.Hash() != ao.Hash() {
+			if t.Hash() < ao.Hash() {
+				return -1
+			}
+			return 1
+		}
+		if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+			return c
+		}
+		tco := ao.(*ConcGomTypeGomTypeList)
+		if t.empty {
+			panic(&aterm.GomError{Msg: "Unable to compare"})
+		}
+		if c := t.head.CompareTo(tco.head); c != 0 {
+			return c
+		}
+		next, ok := t.tail.(*ConcGomTypeGomTypeList)
+		if !ok {
+			if c := t.tail.CompareTo(tco.tail); c != 0 {
+				return c
+			}
+			panic(&aterm.GomError{Msg: "Unable to compare"})
+		}
+		t, o = next, tco.tail
+	}
+}
+
+func (t *ConcGomTypeGomTypeList) CompareToLPO(o any) int {
+	for {
+		ao := o.(GomTypeList)
+		if ao == GomTypeList(t) {
+			return 0
+		}
+		if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+			return c
+		}
+		tco := ao.(*ConcGomTypeGomTypeList)
+		if t.empty {
+			panic(&aterm.GomError{Msg: "Unable to compare"})
+		}
+		if c := t.head.CompareToLPO(tco.head); c != 0 {
+			return c
+		}
+		next, ok := t.tail.(*ConcGomTypeGomTypeList)
+		if !ok {
+			if c := t.tail.CompareToLPO(tco.tail); c != 0 {
+				return c
+			}
+			panic(&aterm.GomError{Msg: "Unable to compare"})
+		}
+		t, o = next, tco.tail
+	}
+}
+
+// ToATerm is Java's toATerm: the list of the elements, ending with the
+// ATerm list of the tail (a tail that is not a list is Java's
+// ClassCastException).
+func (t *ConcGomTypeGomTypeList) ToATerm() aterm.ATerm {
+	f := aterm.GetInstance()
+	var heads []GomType
+	var cur GomTypeList = t
+	for {
+		c, ok := cur.(*ConcGomTypeGomTypeList)
+		if !ok || c.empty {
+			break
+		}
+		heads = append(heads, c.head)
+		cur = c.tail
+	}
+	l := f.MakeListEmpty()
+	if c, ok := cur.(*ConcGomTypeGomTypeList); !ok || !c.empty {
+		tl, isList := cur.ToATerm().(*aterm.ATermList)
+		if !isList {
+			panic(&aterm.GomError{Msg: fmt.Sprintf("ClassCastException: the ATerm of %v is not an ATermList", cur)})
+		}
+		l = tl
+	}
+	for i := len(heads) - 1; i >= 0; i-- {
+		l = f.MakeList(heads[i].ToATerm(), l)
+	}
+	return l
+}
+
+// fromTermConcGomTypeGomTypeList is Java Gom's ConcGomType.fromTerm: an application of ConcGomType, or a
+// list (of ToATerm), of convertible elements.
+func fromTermConcGomTypeGomTypeList(trm aterm.ATerm, conv aterm.ATermConverter) (res GomTypeList, ok bool) {
+	trm = conv.Convert(trm)
+	if appl, isAppl := trm.(*aterm.ATermAppl); isAppl && appl.GetName() == "ConcGomType" {
+		elems := make([]GomType, appl.GetArity())
+		for i, a := range appl.GetArguments() {
+			elems[i] = GomTypeFromTermConv(a, conv)
+		}
+		return MakeConcGomType(elems...), true
+	}
+	if list, isList := trm.(*aterm.ATermList); isList {
+		// an element that cannot be converted: not a ConcGomType (Java returns null)
+		defer func() {
+			if recover() != nil {
+				res, ok = nil, false
+			}
+		}()
+		var elems []GomType
+		for !list.IsEmpty() {
+			elems = append(elems, GomTypeFromTermConv(list.GetFirst(), conv))
+			list = list.GetNext()
+		}
+		return MakeConcGomType(elems...), true
+	}
+	return nil, false
+}
+
 // AtomList is the Go interface backing the Gom sort AtomList.
 type AtomList interface {
 	sharedobjects.Term
 	isAtomList()
+	// Java Gom API (see the package's generated methods)
+	SymbolName() string
+	IsConsConcAtom() bool
+	IsEmptyConcAtom() bool
+	GetHeadConcAtom() string
+	GetTailConcAtom() AtomList
+	Length() int
+	Reverse() AtomList
+	CompareTo(o any) int
+	CompareToLPO(o any) int
+	ToATerm() aterm.ATerm
 }
 
-// ConcAtomAtomList is the term type for the alternative `ConcAtom(...)` of sort AtomList.
+// AtomListFromTerm is Java Gom's AtomList.fromTerm(trm).
+func AtomListFromTerm(trm aterm.ATerm) AtomList {
+	return AtomListFromTermConv(trm, aterm.IdConverter{})
+}
+
+// AtomListFromTermConv is Java Gom's AtomList.fromTerm(trm, atConv): the term of
+// the first operator of the sort that converts the ATerm; it panics
+// (IllegalArgumentException) when there is none.
+func AtomListFromTermConv(trm aterm.ATerm, conv aterm.ATermConverter) AtomList {
+	converted := conv.Convert(trm)
+	var results []AtomList
+	if r, ok := fromTermConcAtomAtomList(converted, conv); ok {
+		results = append(results, r)
+	}
+	if len(results) == 0 {
+		panic(&aterm.GomError{Msg: fmt.Sprintf("%v is not a AtomList", trm), IllegalArgument: true})
+	}
+	return results[0]
+}
+
+// AtomListFromString is Java Gom's AtomList.fromString(s).
+func AtomListFromString(s string) AtomList { return AtomListFromTerm(aterm.GetInstance().Parse(s)) }
+
+// AtomListFromStream is Java Gom's AtomList.fromStream(stream) (an IOException is
+// the error).
+func AtomListFromStream(stream io.Reader) (AtomList, error) {
+	at, err := aterm.GetInstance().ReadFromTextFile(stream)
+	if err != nil {
+		return nil, err
+	}
+	return AtomListFromTerm(at), nil
+}
+
+// ConcAtomAtomList is the term type of the variadic operator `ConcAtom(...)` of sort AtomList
+// (Java's abstract class ConcAtom): a maximally-shared cons cell (Java's
+// ConsConcAtom: a head and a tail) or the empty list (Java's EmptyConcAtom).
 type ConcAtomAtomList struct {
-	Slots []string
+	head  string
+	tail  AtomList
+	empty bool
 	hash  uint32
+	// children caches the Visitable children (Java's children field)
+	children atomic.Pointer[[]any]
 }
 
 func (*ConcAtomAtomList) isAtomList() {}
@@ -5707,51 +11432,51 @@ func (t *ConcAtomAtomList) Hash() uint32 { return t.hash }
 
 func (t *ConcAtomAtomList) Equivalent(other sharedobjects.Term) bool {
 	o, ok := other.(*ConcAtomAtomList)
-	if !ok {
-		return false
-	}
-	if len(t.Slots) != len(o.Slots) {
-		return false
-	}
-	for i := range t.Slots {
-		if t.Slots[i] != o.Slots[i] {
-			return false
-		}
-	}
-	return true
+	return ok && t.empty == o.empty && t.head == o.head && t.tail == o.tail
 }
 
 func (t *ConcAtomAtomList) Duplicate() sharedobjects.Term {
-	cp := append([]string(nil), t.Slots...)
-	return &ConcAtomAtomList{Slots: cp, hash: t.hash}
+	return &ConcAtomAtomList{head: t.head, tail: t.tail, empty: t.empty, hash: t.hash}
 }
 
-func (t *ConcAtomAtomList) String() string {
-	parts := make([]string, len(t.Slots))
-	for i, v := range t.Slots {
-		parts[i] = fmt.Sprintf("%s", sharedobjects.JavaEscape(v))
+// elements returns the cached Visitable children of the list: its
+// elements (Java's getChildren, i.e. toArray).
+// Java's getChildren is the typed toArray(new string[]{}): a last tail
+// that is not a list (of sort AtomList) cannot be stored in it
+// (ArrayStoreException, a *aterm.GomError here).
+func (t *ConcAtomAtomList) elements() []any {
+	if c := t.children.Load(); c != nil {
+		return *c
 	}
-	return "ConcAtom" + "(" + strings.Join(parts, ",") + ")"
+	var cur AtomList = t
+	for {
+		c, ok := cur.(*ConcAtomAtomList)
+		if !ok || c.empty {
+			break
+		}
+		cur = c.tail
+	}
+	if c, ok := cur.(*ConcAtomAtomList); !ok || !c.empty {
+		panic(&aterm.GomError{Msg: fmt.Sprintf("ArrayStoreException: the tail %v of a ConcAtom list is not a string", cur)})
+	}
+	c := t.ToArray()
+	t.children.Store(&c)
+	return c
 }
 
-func (t *ConcAtomAtomList) ChildCount() int { return len(t.Slots) }
+func (t *ConcAtomAtomList) ChildCount() int { return len(t.elements()) }
 
-func (t *ConcAtomAtomList) ChildAt(i int) any { return t.Slots[i] }
+func (t *ConcAtomAtomList) ChildAt(i int) any { return t.elements()[i] }
 
 func (t *ConcAtomAtomList) SetChildAt(i int, child any) any {
-	dup := append([]string(nil), t.Slots...)
-	dup[i] = child.(string)
-	return MakeConcAtom(dup...)
+	dup := t.Children()
+	dup[i] = child
+	return t.SetChildren(dup)
 }
 
-func (t *ConcAtomAtomList) Children() []any {
-	out := make([]any, len(t.Slots))
-	for i, v := range t.Slots {
-		out[i] = v
-	}
-	return out
-}
+func (t *ConcAtomAtomList) Children() []any { return append([]any(nil), t.elements()...) }
 
+// SetChildren is Java's setChildren of a list: ConcAtomFromArray(children).
 func (t *ConcAtomAtomList) SetChildren(children []any) any {
 	args := make([]string, len(children))
 	for i, c := range children {
@@ -5760,15 +11485,77 @@ func (t *ConcAtomAtomList) SetChildren(children []any) any {
 	return MakeConcAtom(args...)
 }
 
-// MakeConcAtom builds the canonical (shared) ConcAtom term.
-func MakeConcAtom(args ...string) AtomList {
-	hashes := make([]uint32, 0, len(args))
-	for _, a := range args {
-		hashes = append(hashes, sharedobjects.StringHash(fmt.Sprintf("%v", a)))
+func (t *ConcAtomAtomList) String() string {
+	var b strings.Builder
+	b.WriteString("ConcAtom(")
+	var cur AtomList = t
+	for {
+		c, ok := cur.(*ConcAtomAtomList)
+		if !ok {
+			b.WriteString("," + fmt.Sprint(cur))
+			break
+		}
+		if c.empty {
+			break
+		}
+		if c != t {
+			b.WriteString(",")
+		}
+		b.WriteString(sharedobjects.JavaEscape(c.head))
+		cur = c.tail
 	}
-	proto := &ConcAtomAtomList{Slots: args, hash: sharedobjects.MixSymbol(sharedobjects.StringHash("ConcAtom"), hashes)}
+	b.WriteString(")")
+	return b.String()
+}
+
+// RealMakeConsConcAtom is Java Gom's ConsConcAtom.realMake: the shared cell of head
+// and tail, without hook.
+func RealMakeConsConcAtom(head string, tail AtomList) AtomList {
+	proto := &ConcAtomAtomList{head: head, tail: tail, hash: sharedobjects.MixSymbol(sharedobjects.StringHash("ConsConcAtom"), []uint32{sharedobjects.StringHash(head), tail.Hash()})}
 	return factory.Build(proto).(*ConcAtomAtomList)
 }
+
+// realMakeEmptyConcAtom is Java Gom's EmptyConcAtom.realMake: the shared empty list,
+// without hook.
+func realMakeEmptyConcAtom() AtomList {
+	proto := &ConcAtomAtomList{empty: true, hash: sharedobjects.MixSymbol(sharedobjects.StringHash("EmptyConcAtom"), nil)}
+	return factory.Build(proto).(*ConcAtomAtomList)
+}
+
+// RawConcAtom builds the ConcAtom list holding exactly args, without construction
+// hook.
+func RawConcAtom(args ...string) AtomList {
+	l := realMakeEmptyConcAtom()
+	for i := len(args) - 1; i >= 0; i-- {
+		l = RealMakeConsConcAtom(args[i], l)
+	}
+	return l
+}
+
+// EmptyConcAtom is Java Gom's EmptyConcAtom.make(): the empty ConcAtom list, after the
+// construction hooks.
+func EmptyConcAtom() AtomList {
+	return realMakeEmptyConcAtom()
+}
+
+// ConsConcAtom is Java Gom's ConsConcAtom.make(head, tail): head inserted in front of
+// tail, after the construction hooks (theory "" first).
+func ConsConcAtom(head string, tail AtomList) AtomList {
+	return RealMakeConsConcAtom(head, tail)
+}
+
+// MakeConcAtom builds the list of args as Tom's `ConcAtom(args…)` does: from EmptyConcAtom,
+// by ConsConcAtom, through the construction hooks (Java's ConcAtom.fromArray).
+func MakeConcAtom(args ...string) AtomList {
+	var l AtomList = EmptyConcAtom()
+	for i := len(args) - 1; i >= 0; i-- {
+		l = ConsConcAtom(args[i], l)
+	}
+	return l
+}
+
+// ConcAtomFromArray is Java Gom's ConcAtom.fromArray(array).
+func ConcAtomFromArray(array []string) AtomList { return MakeConcAtom(array...) }
 
 // IsConcAtom is the `Is_ConcAtom` predicate strategy: succeeds (returns subject
 // unchanged) when subject has the `ConcAtom` shape, otherwise fails with
@@ -5863,10 +11650,273 @@ func (s *VisitConcAtom) VisitWith(env *sl.Environment, intro sl.Introspector) (a
 
 var _ sl.Strategy = (*VisitConcAtom)(nil)
 
+// SymbolName is the symbol of the Java term: ConsConcAtom or EmptyConcAtom.
+func (t *ConcAtomAtomList) SymbolName() string {
+	if t.empty {
+		return "EmptyConcAtom"
+	}
+	return "ConsConcAtom"
+}
+
+func (t *ConcAtomAtomList) IsConsConcAtom() bool  { return !t.empty }
+func (t *ConcAtomAtomList) IsEmptyConcAtom() bool { return t.empty }
+
+func (t *ConcAtomAtomList) GetHeadConcAtom() string {
+	if t.empty {
+		panic(&aterm.GomError{Msg: "This AtomList has no HeadConcAtom"})
+	}
+	return t.head
+}
+func (t *ConcAtomAtomList) GetTailConcAtom() AtomList {
+	if t.empty {
+		panic(&aterm.GomError{Msg: "This AtomList has no TailConcAtom"})
+	}
+	return t.tail
+}
+
+// Length is Java's length(): the number of elements of the list (a
+// tail that is not a ConcAtom list counts as one element).
+func (t *ConcAtomAtomList) Length() int {
+	res := 0
+	var tl AtomList = t
+	for {
+		c, ok := tl.(*ConcAtomAtomList)
+		if !ok || c.empty {
+			return res
+		}
+		res++
+		tl = c.tail
+		if _, ok := tl.(*ConcAtomAtomList); !ok {
+			res++
+		}
+	}
+}
+
+// ToArray returns the elements of the list (Java's Object[] toArray()),
+// ending with its tail when that is not a ConcAtom list.
+func (t *ConcAtomAtomList) ToArray() []any {
+	out := make([]any, 0, t.Length())
+	var cur AtomList = t
+	for {
+		c, ok := cur.(*ConcAtomAtomList)
+		if !ok || c.empty {
+			break
+		}
+		out = append(out, c.head)
+		cur = c.tail
+	}
+	if c, ok := cur.(*ConcAtomAtomList); !ok || !c.empty {
+		out = append(out, cur)
+	}
+	return out
+}
+
+// Reverse is Java's reverse(): the reversed list, built by ConsConcAtom
+// (through the hooks).
+func (t *ConcAtomAtomList) Reverse() AtomList {
+	if t.empty {
+		return t
+	}
+	var cur AtomList = t
+	var rev AtomList = EmptyConcAtom()
+	for {
+		c, ok := cur.(*ConcAtomAtomList)
+		if !ok || c.empty {
+			break
+		}
+		rev = ConsConcAtom(c.head, rev)
+		cur = c.tail
+	}
+	return rev
+}
+
+// Append is Java's append(element): the list with element added at its
+// end, built by ConsConcAtom (through the hooks).
+func (t *ConcAtomAtomList) Append(element string) AtomList {
+	var heads []string
+	var cur AtomList = t
+	for {
+		c, ok := cur.(*ConcAtomAtomList)
+		if !ok || c.empty {
+			break
+		}
+		heads = append(heads, c.head)
+		cur = c.tail
+	}
+	var res AtomList
+	if c, ok := cur.(*ConcAtomAtomList); ok && c.empty {
+		res = ConsConcAtom(element, cur)
+	} else {
+		res = ConsConcAtom(element, cur)
+	}
+	for i := len(heads) - 1; i >= 0; i-- {
+		res = ConsConcAtom(heads[i], res)
+	}
+	return res
+}
+
+func (t *ConcAtomAtomList) CompareTo(o any) int {
+	for {
+		ao := o.(AtomList)
+		if ao == AtomList(t) {
+			return 0
+		}
+		if t.Hash() != ao.Hash() {
+			if t.Hash() < ao.Hash() {
+				return -1
+			}
+			return 1
+		}
+		if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+			return c
+		}
+		tco := ao.(*ConcAtomAtomList)
+		if t.empty {
+			panic(&aterm.GomError{Msg: "Unable to compare"})
+		}
+		if c := strings.Compare(t.head, tco.head); c != 0 {
+			return c
+		}
+		next, ok := t.tail.(*ConcAtomAtomList)
+		if !ok {
+			if c := t.tail.CompareTo(tco.tail); c != 0 {
+				return c
+			}
+			panic(&aterm.GomError{Msg: "Unable to compare"})
+		}
+		t, o = next, tco.tail
+	}
+}
+
+func (t *ConcAtomAtomList) CompareToLPO(o any) int {
+	for {
+		ao := o.(AtomList)
+		if ao == AtomList(t) {
+			return 0
+		}
+		if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+			return c
+		}
+		tco := ao.(*ConcAtomAtomList)
+		if t.empty {
+			panic(&aterm.GomError{Msg: "Unable to compare"})
+		}
+		if c := strings.Compare(t.head, tco.head); c != 0 {
+			return c
+		}
+		next, ok := t.tail.(*ConcAtomAtomList)
+		if !ok {
+			if c := t.tail.CompareToLPO(tco.tail); c != 0 {
+				return c
+			}
+			panic(&aterm.GomError{Msg: "Unable to compare"})
+		}
+		t, o = next, tco.tail
+	}
+}
+
+// ToATerm is Java's toATerm: the list of the elements, ending with the
+// ATerm list of the tail (a tail that is not a list is Java's
+// ClassCastException).
+func (t *ConcAtomAtomList) ToATerm() aterm.ATerm {
+	f := aterm.GetInstance()
+	var heads []string
+	var cur AtomList = t
+	for {
+		c, ok := cur.(*ConcAtomAtomList)
+		if !ok || c.empty {
+			break
+		}
+		heads = append(heads, c.head)
+		cur = c.tail
+	}
+	l := f.MakeListEmpty()
+	if c, ok := cur.(*ConcAtomAtomList); !ok || !c.empty {
+		tl, isList := cur.ToATerm().(*aterm.ATermList)
+		if !isList {
+			panic(&aterm.GomError{Msg: fmt.Sprintf("ClassCastException: the ATerm of %v is not an ATermList", cur)})
+		}
+		l = tl
+	}
+	for i := len(heads) - 1; i >= 0; i-- {
+		l = f.MakeList(aterm.MakeGomString(heads[i]), l)
+	}
+	return l
+}
+
+// fromTermConcAtomAtomList is Java Gom's ConcAtom.fromTerm: an application of ConcAtom, or a
+// list (of ToATerm), of convertible elements.
+func fromTermConcAtomAtomList(trm aterm.ATerm, conv aterm.ATermConverter) (res AtomList, ok bool) {
+	trm = conv.Convert(trm)
+	if appl, isAppl := trm.(*aterm.ATermAppl); isAppl && appl.GetName() == "ConcAtom" {
+		elems := make([]string, appl.GetArity())
+		for i, a := range appl.GetArguments() {
+			elems[i] = aterm.GomString(a, conv)
+		}
+		return MakeConcAtom(elems...), true
+	}
+	if list, isList := trm.(*aterm.ATermList); isList {
+		// an element that cannot be converted: not a ConcAtom (Java returns null)
+		defer func() {
+			if recover() != nil {
+				res, ok = nil, false
+			}
+		}()
+		var elems []string
+		for !list.IsEmpty() {
+			elems = append(elems, aterm.GomString(list.GetFirst(), conv))
+			list = list.GetNext()
+		}
+		return MakeConcAtom(elems...), true
+	}
+	return nil, false
+}
+
 // Module is the Go interface backing the Gom sort Module.
 type Module interface {
 	sharedobjects.Term
 	isModule()
+	// Java Gom API (see the package's generated methods)
+	SymbolName() string
+	IsModule() bool
+	GetMDecl() ModuleDecl
+	GetSorts() SortList
+	Length() int
+	Reverse() Module
+	CompareTo(o any) int
+	CompareToLPO(o any) int
+	ToATerm() aterm.ATerm
+}
+
+// ModuleFromTerm is Java Gom's Module.fromTerm(trm).
+func ModuleFromTerm(trm aterm.ATerm) Module { return ModuleFromTermConv(trm, aterm.IdConverter{}) }
+
+// ModuleFromTermConv is Java Gom's Module.fromTerm(trm, atConv): the term of
+// the first operator of the sort that converts the ATerm; it panics
+// (IllegalArgumentException) when there is none.
+func ModuleFromTermConv(trm aterm.ATerm, conv aterm.ATermConverter) Module {
+	converted := conv.Convert(trm)
+	var results []Module
+	if r, ok := fromTermModuleModule(converted, conv); ok {
+		results = append(results, r)
+	}
+	if len(results) == 0 {
+		panic(&aterm.GomError{Msg: fmt.Sprintf("%v is not a Module", trm), IllegalArgument: true})
+	}
+	return results[0]
+}
+
+// ModuleFromString is Java Gom's Module.fromString(s).
+func ModuleFromString(s string) Module { return ModuleFromTerm(aterm.GetInstance().Parse(s)) }
+
+// ModuleFromStream is Java Gom's Module.fromStream(stream) (an IOException is
+// the error).
+func ModuleFromStream(stream io.Reader) (Module, error) {
+	at, err := aterm.GetInstance().ReadFromTextFile(stream)
+	if err != nil {
+		return nil, err
+	}
+	return ModuleFromTerm(at), nil
 }
 
 // ModuleModule is the term type for the alternative `Module(...)` of sort Module.
@@ -5900,7 +11950,7 @@ func (t *ModuleModule) Duplicate() sharedobjects.Term {
 }
 
 func (t *ModuleModule) String() string {
-	return fmt.Sprintf("Module(%v,%v)", t.MDecl, t.Sorts)
+	return "Module(" + fmt.Sprint(t.MDecl) + "," + fmt.Sprint(t.Sorts) + ")"
 }
 
 func (t *ModuleModule) ChildCount() int { return 2 }
@@ -6033,16 +12083,142 @@ func (s *VisitModule) VisitWith(env *sl.Environment, intro sl.Introspector) (any
 
 var _ sl.Strategy = (*VisitModule)(nil)
 
+func (t *ModuleModule) SymbolName() string { return "Module" }
+
+func (t *ModuleModule) IsModule() bool { return true }
+
+func (t *ModuleModule) GetMDecl() ModuleDecl { return t.MDecl }
+func (t *ModuleModule) GetSorts() SortList   { return t.Sorts }
+
+func (t *ModuleModule) Length() int {
+	panic(&aterm.GomError{Msg: "This Module.Module is not a list", IllegalArgument: true})
+}
+
+func (t *ModuleModule) Reverse() Module {
+	panic(&aterm.GomError{Msg: "This Module.Module is not a list", IllegalArgument: true})
+}
+
+func (t *ModuleModule) CompareTo(o any) int {
+	ao := o.(Module)
+	if ao == Module(t) {
+		return 0
+	}
+	if t.Hash() != ao.Hash() {
+		if t.Hash() < ao.Hash() {
+			return -1
+		}
+		return 1
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	tco := ao.(*ModuleModule)
+	if c := t.MDecl.CompareTo(tco.MDecl); c != 0 {
+		return c
+	}
+	if c := t.Sorts.CompareTo(tco.Sorts); c != 0 {
+		return c
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+func (t *ModuleModule) CompareToLPO(o any) int {
+	ao := o.(Module)
+	if ao == Module(t) {
+		return 0
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	tco := ao.(*ModuleModule)
+	if c := t.MDecl.CompareToLPO(tco.MDecl); c != 0 {
+		return c
+	}
+	if c := t.Sorts.CompareToLPO(tco.Sorts); c != 0 {
+		return c
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+// ToATerm is the ATerm of the term: an application of Module.
+func (t *ModuleModule) ToATerm() aterm.ATerm {
+	f := aterm.GetInstance()
+	return f.MakeAppl(f.MakeAFun("Module", 2, false), t.MDecl.ToATerm(), t.Sorts.ToATerm())
+}
+
+// fromTermModuleModule is Java Gom's Module.fromTerm: an unquoted application of
+// Module whose arguments are convertible (as in Java, the arity is not
+// checked: a missing argument is an index out of range).
+func fromTermModuleModule(trm aterm.ATerm, conv aterm.ATermConverter) (Module, bool) {
+	trm = conv.Convert(trm)
+	if appl, ok := trm.(*aterm.ATermAppl); ok && appl.GetName() == "Module" && !appl.GetAFun().IsQuoted() {
+		return MakeModule(ModuleDeclFromTermConv(appl.GetArgument(0), conv), SortListFromTermConv(appl.GetArgument(1), conv)), true
+	}
+	return nil, false
+}
+
 // ModuleList is the Go interface backing the Gom sort ModuleList.
 type ModuleList interface {
 	sharedobjects.Term
 	isModuleList()
+	// Java Gom API (see the package's generated methods)
+	SymbolName() string
+	IsConsConcModule() bool
+	IsEmptyConcModule() bool
+	GetHeadConcModule() Module
+	GetTailConcModule() ModuleList
+	Length() int
+	Reverse() ModuleList
+	CompareTo(o any) int
+	CompareToLPO(o any) int
+	ToATerm() aterm.ATerm
 }
 
-// ConcModuleModuleList is the term type for the alternative `ConcModule(...)` of sort ModuleList.
+// ModuleListFromTerm is Java Gom's ModuleList.fromTerm(trm).
+func ModuleListFromTerm(trm aterm.ATerm) ModuleList {
+	return ModuleListFromTermConv(trm, aterm.IdConverter{})
+}
+
+// ModuleListFromTermConv is Java Gom's ModuleList.fromTerm(trm, atConv): the term of
+// the first operator of the sort that converts the ATerm; it panics
+// (IllegalArgumentException) when there is none.
+func ModuleListFromTermConv(trm aterm.ATerm, conv aterm.ATermConverter) ModuleList {
+	converted := conv.Convert(trm)
+	var results []ModuleList
+	if r, ok := fromTermConcModuleModuleList(converted, conv); ok {
+		results = append(results, r)
+	}
+	if len(results) == 0 {
+		panic(&aterm.GomError{Msg: fmt.Sprintf("%v is not a ModuleList", trm), IllegalArgument: true})
+	}
+	return results[0]
+}
+
+// ModuleListFromString is Java Gom's ModuleList.fromString(s).
+func ModuleListFromString(s string) ModuleList {
+	return ModuleListFromTerm(aterm.GetInstance().Parse(s))
+}
+
+// ModuleListFromStream is Java Gom's ModuleList.fromStream(stream) (an IOException is
+// the error).
+func ModuleListFromStream(stream io.Reader) (ModuleList, error) {
+	at, err := aterm.GetInstance().ReadFromTextFile(stream)
+	if err != nil {
+		return nil, err
+	}
+	return ModuleListFromTerm(at), nil
+}
+
+// ConcModuleModuleList is the term type of the variadic operator `ConcModule(...)` of sort ModuleList
+// (Java's abstract class ConcModule): a maximally-shared cons cell (Java's
+// ConsConcModule: a head and a tail) or the empty list (Java's EmptyConcModule).
 type ConcModuleModuleList struct {
-	Slots []Module
+	head  Module
+	tail  ModuleList
+	empty bool
 	hash  uint32
+	// children caches the Visitable children (Java's children field)
+	children atomic.Pointer[[]any]
 }
 
 func (*ConcModuleModuleList) isModuleList() {}
@@ -6051,51 +12227,51 @@ func (t *ConcModuleModuleList) Hash() uint32 { return t.hash }
 
 func (t *ConcModuleModuleList) Equivalent(other sharedobjects.Term) bool {
 	o, ok := other.(*ConcModuleModuleList)
-	if !ok {
-		return false
-	}
-	if len(t.Slots) != len(o.Slots) {
-		return false
-	}
-	for i := range t.Slots {
-		if t.Slots[i] != o.Slots[i] {
-			return false
-		}
-	}
-	return true
+	return ok && t.empty == o.empty && t.head == o.head && t.tail == o.tail
 }
 
 func (t *ConcModuleModuleList) Duplicate() sharedobjects.Term {
-	cp := append([]Module(nil), t.Slots...)
-	return &ConcModuleModuleList{Slots: cp, hash: t.hash}
+	return &ConcModuleModuleList{head: t.head, tail: t.tail, empty: t.empty, hash: t.hash}
 }
 
-func (t *ConcModuleModuleList) String() string {
-	parts := make([]string, len(t.Slots))
-	for i, v := range t.Slots {
-		parts[i] = fmt.Sprintf("%v", v)
+// elements returns the cached Visitable children of the list: its
+// elements (Java's getChildren, i.e. toArray).
+// Java's getChildren is the typed toArray(new Module[]{}): a last tail
+// that is not a list (of sort ModuleList) cannot be stored in it
+// (ArrayStoreException, a *aterm.GomError here).
+func (t *ConcModuleModuleList) elements() []any {
+	if c := t.children.Load(); c != nil {
+		return *c
 	}
-	return "ConcModule" + "(" + strings.Join(parts, ",") + ")"
+	var cur ModuleList = t
+	for {
+		c, ok := cur.(*ConcModuleModuleList)
+		if !ok || c.empty {
+			break
+		}
+		cur = c.tail
+	}
+	if c, ok := cur.(*ConcModuleModuleList); !ok || !c.empty {
+		panic(&aterm.GomError{Msg: fmt.Sprintf("ArrayStoreException: the tail %v of a ConcModule list is not a Module", cur)})
+	}
+	c := t.ToArray()
+	t.children.Store(&c)
+	return c
 }
 
-func (t *ConcModuleModuleList) ChildCount() int { return len(t.Slots) }
+func (t *ConcModuleModuleList) ChildCount() int { return len(t.elements()) }
 
-func (t *ConcModuleModuleList) ChildAt(i int) any { return t.Slots[i] }
+func (t *ConcModuleModuleList) ChildAt(i int) any { return t.elements()[i] }
 
 func (t *ConcModuleModuleList) SetChildAt(i int, child any) any {
-	dup := append([]Module(nil), t.Slots...)
-	dup[i] = child.(Module)
-	return MakeConcModule(dup...)
+	dup := t.Children()
+	dup[i] = child
+	return t.SetChildren(dup)
 }
 
-func (t *ConcModuleModuleList) Children() []any {
-	out := make([]any, len(t.Slots))
-	for i, v := range t.Slots {
-		out[i] = v
-	}
-	return out
-}
+func (t *ConcModuleModuleList) Children() []any { return append([]any(nil), t.elements()...) }
 
+// SetChildren is Java's setChildren of a list: ConcModuleFromArray(children).
 func (t *ConcModuleModuleList) SetChildren(children []any) any {
 	args := make([]Module, len(children))
 	for i, c := range children {
@@ -6104,15 +12280,77 @@ func (t *ConcModuleModuleList) SetChildren(children []any) any {
 	return MakeConcModule(args...)
 }
 
-// MakeConcModule builds the canonical (shared) ConcModule term.
-func MakeConcModule(args ...Module) ModuleList {
-	hashes := make([]uint32, 0, len(args))
-	for _, a := range args {
-		hashes = append(hashes, a.Hash())
+func (t *ConcModuleModuleList) String() string {
+	var b strings.Builder
+	b.WriteString("ConcModule(")
+	var cur ModuleList = t
+	for {
+		c, ok := cur.(*ConcModuleModuleList)
+		if !ok {
+			b.WriteString("," + fmt.Sprint(cur))
+			break
+		}
+		if c.empty {
+			break
+		}
+		if c != t {
+			b.WriteString(",")
+		}
+		b.WriteString(fmt.Sprint(c.head))
+		cur = c.tail
 	}
-	proto := &ConcModuleModuleList{Slots: args, hash: sharedobjects.MixSymbol(sharedobjects.StringHash("ConcModule"), hashes)}
+	b.WriteString(")")
+	return b.String()
+}
+
+// RealMakeConsConcModule is Java Gom's ConsConcModule.realMake: the shared cell of head
+// and tail, without hook.
+func RealMakeConsConcModule(head Module, tail ModuleList) ModuleList {
+	proto := &ConcModuleModuleList{head: head, tail: tail, hash: sharedobjects.MixSymbol(sharedobjects.StringHash("ConsConcModule"), []uint32{head.Hash(), tail.Hash()})}
 	return factory.Build(proto).(*ConcModuleModuleList)
 }
+
+// realMakeEmptyConcModule is Java Gom's EmptyConcModule.realMake: the shared empty list,
+// without hook.
+func realMakeEmptyConcModule() ModuleList {
+	proto := &ConcModuleModuleList{empty: true, hash: sharedobjects.MixSymbol(sharedobjects.StringHash("EmptyConcModule"), nil)}
+	return factory.Build(proto).(*ConcModuleModuleList)
+}
+
+// RawConcModule builds the ConcModule list holding exactly args, without construction
+// hook.
+func RawConcModule(args ...Module) ModuleList {
+	l := realMakeEmptyConcModule()
+	for i := len(args) - 1; i >= 0; i-- {
+		l = RealMakeConsConcModule(args[i], l)
+	}
+	return l
+}
+
+// EmptyConcModule is Java Gom's EmptyConcModule.make(): the empty ConcModule list, after the
+// construction hooks.
+func EmptyConcModule() ModuleList {
+	return realMakeEmptyConcModule()
+}
+
+// ConsConcModule is Java Gom's ConsConcModule.make(head, tail): head inserted in front of
+// tail, after the construction hooks (theory "" first).
+func ConsConcModule(head Module, tail ModuleList) ModuleList {
+	return RealMakeConsConcModule(head, tail)
+}
+
+// MakeConcModule builds the list of args as Tom's `ConcModule(args…)` does: from EmptyConcModule,
+// by ConsConcModule, through the construction hooks (Java's ConcModule.fromArray).
+func MakeConcModule(args ...Module) ModuleList {
+	var l ModuleList = EmptyConcModule()
+	for i := len(args) - 1; i >= 0; i-- {
+		l = ConsConcModule(args[i], l)
+	}
+	return l
+}
+
+// ConcModuleFromArray is Java Gom's ConcModule.fromArray(array).
+func ConcModuleFromArray(array []Module) ModuleList { return MakeConcModule(array...) }
 
 // IsConcModule is the `Is_ConcModule` predicate strategy: succeeds (returns subject
 // unchanged) when subject has the `ConcModule` shape, otherwise fails with
@@ -6207,10 +12445,277 @@ func (s *VisitConcModule) VisitWith(env *sl.Environment, intro sl.Introspector) 
 
 var _ sl.Strategy = (*VisitConcModule)(nil)
 
+// SymbolName is the symbol of the Java term: ConsConcModule or EmptyConcModule.
+func (t *ConcModuleModuleList) SymbolName() string {
+	if t.empty {
+		return "EmptyConcModule"
+	}
+	return "ConsConcModule"
+}
+
+func (t *ConcModuleModuleList) IsConsConcModule() bool  { return !t.empty }
+func (t *ConcModuleModuleList) IsEmptyConcModule() bool { return t.empty }
+
+func (t *ConcModuleModuleList) GetHeadConcModule() Module {
+	if t.empty {
+		panic(&aterm.GomError{Msg: "This ModuleList has no HeadConcModule"})
+	}
+	return t.head
+}
+func (t *ConcModuleModuleList) GetTailConcModule() ModuleList {
+	if t.empty {
+		panic(&aterm.GomError{Msg: "This ModuleList has no TailConcModule"})
+	}
+	return t.tail
+}
+
+// Length is Java's length(): the number of elements of the list (a
+// tail that is not a ConcModule list counts as one element).
+func (t *ConcModuleModuleList) Length() int {
+	res := 0
+	var tl ModuleList = t
+	for {
+		c, ok := tl.(*ConcModuleModuleList)
+		if !ok || c.empty {
+			return res
+		}
+		res++
+		tl = c.tail
+		if _, ok := tl.(*ConcModuleModuleList); !ok {
+			res++
+		}
+	}
+}
+
+// ToArray returns the elements of the list (Java's Object[] toArray()),
+// ending with its tail when that is not a ConcModule list.
+func (t *ConcModuleModuleList) ToArray() []any {
+	out := make([]any, 0, t.Length())
+	var cur ModuleList = t
+	for {
+		c, ok := cur.(*ConcModuleModuleList)
+		if !ok || c.empty {
+			break
+		}
+		out = append(out, c.head)
+		cur = c.tail
+	}
+	if c, ok := cur.(*ConcModuleModuleList); !ok || !c.empty {
+		out = append(out, cur)
+	}
+	return out
+}
+
+// Reverse is Java's reverse(): the reversed list, built by ConsConcModule
+// (through the hooks).
+func (t *ConcModuleModuleList) Reverse() ModuleList {
+	if t.empty {
+		return t
+	}
+	var cur ModuleList = t
+	var rev ModuleList = EmptyConcModule()
+	for {
+		c, ok := cur.(*ConcModuleModuleList)
+		if !ok || c.empty {
+			break
+		}
+		rev = ConsConcModule(c.head, rev)
+		cur = c.tail
+	}
+	return rev
+}
+
+// Append is Java's append(element): the list with element added at its
+// end, built by ConsConcModule (through the hooks).
+func (t *ConcModuleModuleList) Append(element Module) ModuleList {
+	var heads []Module
+	var cur ModuleList = t
+	for {
+		c, ok := cur.(*ConcModuleModuleList)
+		if !ok || c.empty {
+			break
+		}
+		heads = append(heads, c.head)
+		cur = c.tail
+	}
+	var res ModuleList
+	if c, ok := cur.(*ConcModuleModuleList); ok && c.empty {
+		res = ConsConcModule(element, cur)
+	} else {
+		res = ConsConcModule(element, cur)
+	}
+	for i := len(heads) - 1; i >= 0; i-- {
+		res = ConsConcModule(heads[i], res)
+	}
+	return res
+}
+
+func (t *ConcModuleModuleList) CompareTo(o any) int {
+	for {
+		ao := o.(ModuleList)
+		if ao == ModuleList(t) {
+			return 0
+		}
+		if t.Hash() != ao.Hash() {
+			if t.Hash() < ao.Hash() {
+				return -1
+			}
+			return 1
+		}
+		if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+			return c
+		}
+		tco := ao.(*ConcModuleModuleList)
+		if t.empty {
+			panic(&aterm.GomError{Msg: "Unable to compare"})
+		}
+		if c := t.head.CompareTo(tco.head); c != 0 {
+			return c
+		}
+		next, ok := t.tail.(*ConcModuleModuleList)
+		if !ok {
+			if c := t.tail.CompareTo(tco.tail); c != 0 {
+				return c
+			}
+			panic(&aterm.GomError{Msg: "Unable to compare"})
+		}
+		t, o = next, tco.tail
+	}
+}
+
+func (t *ConcModuleModuleList) CompareToLPO(o any) int {
+	for {
+		ao := o.(ModuleList)
+		if ao == ModuleList(t) {
+			return 0
+		}
+		if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+			return c
+		}
+		tco := ao.(*ConcModuleModuleList)
+		if t.empty {
+			panic(&aterm.GomError{Msg: "Unable to compare"})
+		}
+		if c := t.head.CompareToLPO(tco.head); c != 0 {
+			return c
+		}
+		next, ok := t.tail.(*ConcModuleModuleList)
+		if !ok {
+			if c := t.tail.CompareToLPO(tco.tail); c != 0 {
+				return c
+			}
+			panic(&aterm.GomError{Msg: "Unable to compare"})
+		}
+		t, o = next, tco.tail
+	}
+}
+
+// ToATerm is Java's toATerm: the list of the elements, ending with the
+// ATerm list of the tail (a tail that is not a list is Java's
+// ClassCastException).
+func (t *ConcModuleModuleList) ToATerm() aterm.ATerm {
+	f := aterm.GetInstance()
+	var heads []Module
+	var cur ModuleList = t
+	for {
+		c, ok := cur.(*ConcModuleModuleList)
+		if !ok || c.empty {
+			break
+		}
+		heads = append(heads, c.head)
+		cur = c.tail
+	}
+	l := f.MakeListEmpty()
+	if c, ok := cur.(*ConcModuleModuleList); !ok || !c.empty {
+		tl, isList := cur.ToATerm().(*aterm.ATermList)
+		if !isList {
+			panic(&aterm.GomError{Msg: fmt.Sprintf("ClassCastException: the ATerm of %v is not an ATermList", cur)})
+		}
+		l = tl
+	}
+	for i := len(heads) - 1; i >= 0; i-- {
+		l = f.MakeList(heads[i].ToATerm(), l)
+	}
+	return l
+}
+
+// fromTermConcModuleModuleList is Java Gom's ConcModule.fromTerm: an application of ConcModule, or a
+// list (of ToATerm), of convertible elements.
+func fromTermConcModuleModuleList(trm aterm.ATerm, conv aterm.ATermConverter) (res ModuleList, ok bool) {
+	trm = conv.Convert(trm)
+	if appl, isAppl := trm.(*aterm.ATermAppl); isAppl && appl.GetName() == "ConcModule" {
+		elems := make([]Module, appl.GetArity())
+		for i, a := range appl.GetArguments() {
+			elems[i] = ModuleFromTermConv(a, conv)
+		}
+		return MakeConcModule(elems...), true
+	}
+	if list, isList := trm.(*aterm.ATermList); isList {
+		// an element that cannot be converted: not a ConcModule (Java returns null)
+		defer func() {
+			if recover() != nil {
+				res, ok = nil, false
+			}
+		}()
+		var elems []Module
+		for !list.IsEmpty() {
+			elems = append(elems, ModuleFromTermConv(list.GetFirst(), conv))
+			list = list.GetNext()
+		}
+		return MakeConcModule(elems...), true
+	}
+	return nil, false
+}
+
 // ModuleDecl is the Go interface backing the Gom sort ModuleDecl.
 type ModuleDecl interface {
 	sharedobjects.Term
 	isModuleDecl()
+	// Java Gom API (see the package's generated methods)
+	SymbolName() string
+	IsModuleDecl() bool
+	GetModuleName() GomModuleName
+	GetPkg() string
+	Length() int
+	Reverse() ModuleDecl
+	CompareTo(o any) int
+	CompareToLPO(o any) int
+	ToATerm() aterm.ATerm
+}
+
+// ModuleDeclFromTerm is Java Gom's ModuleDecl.fromTerm(trm).
+func ModuleDeclFromTerm(trm aterm.ATerm) ModuleDecl {
+	return ModuleDeclFromTermConv(trm, aterm.IdConverter{})
+}
+
+// ModuleDeclFromTermConv is Java Gom's ModuleDecl.fromTerm(trm, atConv): the term of
+// the first operator of the sort that converts the ATerm; it panics
+// (IllegalArgumentException) when there is none.
+func ModuleDeclFromTermConv(trm aterm.ATerm, conv aterm.ATermConverter) ModuleDecl {
+	converted := conv.Convert(trm)
+	var results []ModuleDecl
+	if r, ok := fromTermModuleDeclModuleDecl(converted, conv); ok {
+		results = append(results, r)
+	}
+	if len(results) == 0 {
+		panic(&aterm.GomError{Msg: fmt.Sprintf("%v is not a ModuleDecl", trm), IllegalArgument: true})
+	}
+	return results[0]
+}
+
+// ModuleDeclFromString is Java Gom's ModuleDecl.fromString(s).
+func ModuleDeclFromString(s string) ModuleDecl {
+	return ModuleDeclFromTerm(aterm.GetInstance().Parse(s))
+}
+
+// ModuleDeclFromStream is Java Gom's ModuleDecl.fromStream(stream) (an IOException is
+// the error).
+func ModuleDeclFromStream(stream io.Reader) (ModuleDecl, error) {
+	at, err := aterm.GetInstance().ReadFromTextFile(stream)
+	if err != nil {
+		return nil, err
+	}
+	return ModuleDeclFromTerm(at), nil
 }
 
 // ModuleDeclModuleDecl is the term type for the alternative `ModuleDecl(...)` of sort ModuleDecl.
@@ -6244,7 +12749,7 @@ func (t *ModuleDeclModuleDecl) Duplicate() sharedobjects.Term {
 }
 
 func (t *ModuleDeclModuleDecl) String() string {
-	return fmt.Sprintf("ModuleDecl(%v,%s)", t.ModuleName, sharedobjects.JavaEscape(t.Pkg))
+	return "ModuleDecl(" + fmt.Sprint(t.ModuleName) + "," + sharedobjects.JavaEscape(t.Pkg) + ")"
 }
 
 func (t *ModuleDeclModuleDecl) ChildCount() int { return 2 }
@@ -6377,16 +12882,142 @@ func (s *VisitModuleDecl) VisitWith(env *sl.Environment, intro sl.Introspector) 
 
 var _ sl.Strategy = (*VisitModuleDecl)(nil)
 
+func (t *ModuleDeclModuleDecl) SymbolName() string { return "ModuleDecl" }
+
+func (t *ModuleDeclModuleDecl) IsModuleDecl() bool { return true }
+
+func (t *ModuleDeclModuleDecl) GetModuleName() GomModuleName { return t.ModuleName }
+func (t *ModuleDeclModuleDecl) GetPkg() string               { return t.Pkg }
+
+func (t *ModuleDeclModuleDecl) Length() int {
+	panic(&aterm.GomError{Msg: "This ModuleDecl.ModuleDecl is not a list", IllegalArgument: true})
+}
+
+func (t *ModuleDeclModuleDecl) Reverse() ModuleDecl {
+	panic(&aterm.GomError{Msg: "This ModuleDecl.ModuleDecl is not a list", IllegalArgument: true})
+}
+
+func (t *ModuleDeclModuleDecl) CompareTo(o any) int {
+	ao := o.(ModuleDecl)
+	if ao == ModuleDecl(t) {
+		return 0
+	}
+	if t.Hash() != ao.Hash() {
+		if t.Hash() < ao.Hash() {
+			return -1
+		}
+		return 1
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	tco := ao.(*ModuleDeclModuleDecl)
+	if c := t.ModuleName.CompareTo(tco.ModuleName); c != 0 {
+		return c
+	}
+	if c := strings.Compare(t.Pkg, tco.Pkg); c != 0 {
+		return c
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+func (t *ModuleDeclModuleDecl) CompareToLPO(o any) int {
+	ao := o.(ModuleDecl)
+	if ao == ModuleDecl(t) {
+		return 0
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	tco := ao.(*ModuleDeclModuleDecl)
+	if c := t.ModuleName.CompareToLPO(tco.ModuleName); c != 0 {
+		return c
+	}
+	if c := strings.Compare(t.Pkg, tco.Pkg); c != 0 {
+		return c
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+// ToATerm is the ATerm of the term: an application of ModuleDecl.
+func (t *ModuleDeclModuleDecl) ToATerm() aterm.ATerm {
+	f := aterm.GetInstance()
+	return f.MakeAppl(f.MakeAFun("ModuleDecl", 2, false), t.ModuleName.ToATerm(), aterm.MakeGomString(t.Pkg))
+}
+
+// fromTermModuleDeclModuleDecl is Java Gom's ModuleDecl.fromTerm: an unquoted application of
+// ModuleDecl whose arguments are convertible (as in Java, the arity is not
+// checked: a missing argument is an index out of range).
+func fromTermModuleDeclModuleDecl(trm aterm.ATerm, conv aterm.ATermConverter) (ModuleDecl, bool) {
+	trm = conv.Convert(trm)
+	if appl, ok := trm.(*aterm.ATermAppl); ok && appl.GetName() == "ModuleDecl" && !appl.GetAFun().IsQuoted() {
+		return MakeModuleDecl(GomModuleNameFromTermConv(appl.GetArgument(0), conv), aterm.GomString(appl.GetArgument(1), conv)), true
+	}
+	return nil, false
+}
+
 // ModuleDeclList is the Go interface backing the Gom sort ModuleDeclList.
 type ModuleDeclList interface {
 	sharedobjects.Term
 	isModuleDeclList()
+	// Java Gom API (see the package's generated methods)
+	SymbolName() string
+	IsConsConcModuleDecl() bool
+	IsEmptyConcModuleDecl() bool
+	GetHeadConcModuleDecl() ModuleDecl
+	GetTailConcModuleDecl() ModuleDeclList
+	Length() int
+	Reverse() ModuleDeclList
+	CompareTo(o any) int
+	CompareToLPO(o any) int
+	ToATerm() aterm.ATerm
 }
 
-// ConcModuleDeclModuleDeclList is the term type for the alternative `ConcModuleDecl(...)` of sort ModuleDeclList.
+// ModuleDeclListFromTerm is Java Gom's ModuleDeclList.fromTerm(trm).
+func ModuleDeclListFromTerm(trm aterm.ATerm) ModuleDeclList {
+	return ModuleDeclListFromTermConv(trm, aterm.IdConverter{})
+}
+
+// ModuleDeclListFromTermConv is Java Gom's ModuleDeclList.fromTerm(trm, atConv): the term of
+// the first operator of the sort that converts the ATerm; it panics
+// (IllegalArgumentException) when there is none.
+func ModuleDeclListFromTermConv(trm aterm.ATerm, conv aterm.ATermConverter) ModuleDeclList {
+	converted := conv.Convert(trm)
+	var results []ModuleDeclList
+	if r, ok := fromTermConcModuleDeclModuleDeclList(converted, conv); ok {
+		results = append(results, r)
+	}
+	if len(results) == 0 {
+		panic(&aterm.GomError{Msg: fmt.Sprintf("%v is not a ModuleDeclList", trm), IllegalArgument: true})
+	}
+	return results[0]
+}
+
+// ModuleDeclListFromString is Java Gom's ModuleDeclList.fromString(s).
+func ModuleDeclListFromString(s string) ModuleDeclList {
+	return ModuleDeclListFromTerm(aterm.GetInstance().Parse(s))
+}
+
+// ModuleDeclListFromStream is Java Gom's ModuleDeclList.fromStream(stream) (an IOException is
+// the error).
+func ModuleDeclListFromStream(stream io.Reader) (ModuleDeclList, error) {
+	at, err := aterm.GetInstance().ReadFromTextFile(stream)
+	if err != nil {
+		return nil, err
+	}
+	return ModuleDeclListFromTerm(at), nil
+}
+
+// ConcModuleDeclModuleDeclList is the term type of the variadic operator `ConcModuleDecl(...)` of sort ModuleDeclList
+// (Java's abstract class ConcModuleDecl): a maximally-shared cons cell (Java's
+// ConsConcModuleDecl: a head and a tail) or the empty list (Java's EmptyConcModuleDecl).
 type ConcModuleDeclModuleDeclList struct {
-	Slots []ModuleDecl
+	head  ModuleDecl
+	tail  ModuleDeclList
+	empty bool
 	hash  uint32
+	// children caches the Visitable children (Java's children field)
+	children atomic.Pointer[[]any]
 }
 
 func (*ConcModuleDeclModuleDeclList) isModuleDeclList() {}
@@ -6395,51 +13026,51 @@ func (t *ConcModuleDeclModuleDeclList) Hash() uint32 { return t.hash }
 
 func (t *ConcModuleDeclModuleDeclList) Equivalent(other sharedobjects.Term) bool {
 	o, ok := other.(*ConcModuleDeclModuleDeclList)
-	if !ok {
-		return false
-	}
-	if len(t.Slots) != len(o.Slots) {
-		return false
-	}
-	for i := range t.Slots {
-		if t.Slots[i] != o.Slots[i] {
-			return false
-		}
-	}
-	return true
+	return ok && t.empty == o.empty && t.head == o.head && t.tail == o.tail
 }
 
 func (t *ConcModuleDeclModuleDeclList) Duplicate() sharedobjects.Term {
-	cp := append([]ModuleDecl(nil), t.Slots...)
-	return &ConcModuleDeclModuleDeclList{Slots: cp, hash: t.hash}
+	return &ConcModuleDeclModuleDeclList{head: t.head, tail: t.tail, empty: t.empty, hash: t.hash}
 }
 
-func (t *ConcModuleDeclModuleDeclList) String() string {
-	parts := make([]string, len(t.Slots))
-	for i, v := range t.Slots {
-		parts[i] = fmt.Sprintf("%v", v)
+// elements returns the cached Visitable children of the list: its
+// elements (Java's getChildren, i.e. toArray).
+// Java's getChildren is the typed toArray(new ModuleDecl[]{}): a last tail
+// that is not a list (of sort ModuleDeclList) cannot be stored in it
+// (ArrayStoreException, a *aterm.GomError here).
+func (t *ConcModuleDeclModuleDeclList) elements() []any {
+	if c := t.children.Load(); c != nil {
+		return *c
 	}
-	return "ConcModuleDecl" + "(" + strings.Join(parts, ",") + ")"
+	var cur ModuleDeclList = t
+	for {
+		c, ok := cur.(*ConcModuleDeclModuleDeclList)
+		if !ok || c.empty {
+			break
+		}
+		cur = c.tail
+	}
+	if c, ok := cur.(*ConcModuleDeclModuleDeclList); !ok || !c.empty {
+		panic(&aterm.GomError{Msg: fmt.Sprintf("ArrayStoreException: the tail %v of a ConcModuleDecl list is not a ModuleDecl", cur)})
+	}
+	c := t.ToArray()
+	t.children.Store(&c)
+	return c
 }
 
-func (t *ConcModuleDeclModuleDeclList) ChildCount() int { return len(t.Slots) }
+func (t *ConcModuleDeclModuleDeclList) ChildCount() int { return len(t.elements()) }
 
-func (t *ConcModuleDeclModuleDeclList) ChildAt(i int) any { return t.Slots[i] }
+func (t *ConcModuleDeclModuleDeclList) ChildAt(i int) any { return t.elements()[i] }
 
 func (t *ConcModuleDeclModuleDeclList) SetChildAt(i int, child any) any {
-	dup := append([]ModuleDecl(nil), t.Slots...)
-	dup[i] = child.(ModuleDecl)
-	return MakeConcModuleDecl(dup...)
+	dup := t.Children()
+	dup[i] = child
+	return t.SetChildren(dup)
 }
 
-func (t *ConcModuleDeclModuleDeclList) Children() []any {
-	out := make([]any, len(t.Slots))
-	for i, v := range t.Slots {
-		out[i] = v
-	}
-	return out
-}
+func (t *ConcModuleDeclModuleDeclList) Children() []any { return append([]any(nil), t.elements()...) }
 
+// SetChildren is Java's setChildren of a list: ConcModuleDeclFromArray(children).
 func (t *ConcModuleDeclModuleDeclList) SetChildren(children []any) any {
 	args := make([]ModuleDecl, len(children))
 	for i, c := range children {
@@ -6448,15 +13079,77 @@ func (t *ConcModuleDeclModuleDeclList) SetChildren(children []any) any {
 	return MakeConcModuleDecl(args...)
 }
 
-// MakeConcModuleDecl builds the canonical (shared) ConcModuleDecl term.
-func MakeConcModuleDecl(args ...ModuleDecl) ModuleDeclList {
-	hashes := make([]uint32, 0, len(args))
-	for _, a := range args {
-		hashes = append(hashes, a.Hash())
+func (t *ConcModuleDeclModuleDeclList) String() string {
+	var b strings.Builder
+	b.WriteString("ConcModuleDecl(")
+	var cur ModuleDeclList = t
+	for {
+		c, ok := cur.(*ConcModuleDeclModuleDeclList)
+		if !ok {
+			b.WriteString("," + fmt.Sprint(cur))
+			break
+		}
+		if c.empty {
+			break
+		}
+		if c != t {
+			b.WriteString(",")
+		}
+		b.WriteString(fmt.Sprint(c.head))
+		cur = c.tail
 	}
-	proto := &ConcModuleDeclModuleDeclList{Slots: args, hash: sharedobjects.MixSymbol(sharedobjects.StringHash("ConcModuleDecl"), hashes)}
+	b.WriteString(")")
+	return b.String()
+}
+
+// RealMakeConsConcModuleDecl is Java Gom's ConsConcModuleDecl.realMake: the shared cell of head
+// and tail, without hook.
+func RealMakeConsConcModuleDecl(head ModuleDecl, tail ModuleDeclList) ModuleDeclList {
+	proto := &ConcModuleDeclModuleDeclList{head: head, tail: tail, hash: sharedobjects.MixSymbol(sharedobjects.StringHash("ConsConcModuleDecl"), []uint32{head.Hash(), tail.Hash()})}
 	return factory.Build(proto).(*ConcModuleDeclModuleDeclList)
 }
+
+// realMakeEmptyConcModuleDecl is Java Gom's EmptyConcModuleDecl.realMake: the shared empty list,
+// without hook.
+func realMakeEmptyConcModuleDecl() ModuleDeclList {
+	proto := &ConcModuleDeclModuleDeclList{empty: true, hash: sharedobjects.MixSymbol(sharedobjects.StringHash("EmptyConcModuleDecl"), nil)}
+	return factory.Build(proto).(*ConcModuleDeclModuleDeclList)
+}
+
+// RawConcModuleDecl builds the ConcModuleDecl list holding exactly args, without construction
+// hook.
+func RawConcModuleDecl(args ...ModuleDecl) ModuleDeclList {
+	l := realMakeEmptyConcModuleDecl()
+	for i := len(args) - 1; i >= 0; i-- {
+		l = RealMakeConsConcModuleDecl(args[i], l)
+	}
+	return l
+}
+
+// EmptyConcModuleDecl is Java Gom's EmptyConcModuleDecl.make(): the empty ConcModuleDecl list, after the
+// construction hooks.
+func EmptyConcModuleDecl() ModuleDeclList {
+	return realMakeEmptyConcModuleDecl()
+}
+
+// ConsConcModuleDecl is Java Gom's ConsConcModuleDecl.make(head, tail): head inserted in front of
+// tail, after the construction hooks (theory "" first).
+func ConsConcModuleDecl(head ModuleDecl, tail ModuleDeclList) ModuleDeclList {
+	return RealMakeConsConcModuleDecl(head, tail)
+}
+
+// MakeConcModuleDecl builds the list of args as Tom's `ConcModuleDecl(args…)` does: from EmptyConcModuleDecl,
+// by ConsConcModuleDecl, through the construction hooks (Java's ConcModuleDecl.fromArray).
+func MakeConcModuleDecl(args ...ModuleDecl) ModuleDeclList {
+	var l ModuleDeclList = EmptyConcModuleDecl()
+	for i := len(args) - 1; i >= 0; i-- {
+		l = ConsConcModuleDecl(args[i], l)
+	}
+	return l
+}
+
+// ConcModuleDeclFromArray is Java Gom's ConcModuleDecl.fromArray(array).
+func ConcModuleDeclFromArray(array []ModuleDecl) ModuleDeclList { return MakeConcModuleDecl(array...) }
 
 // IsConcModuleDecl is the `Is_ConcModuleDecl` predicate strategy: succeeds (returns subject
 // unchanged) when subject has the `ConcModuleDecl` shape, otherwise fails with
@@ -6551,10 +13244,279 @@ func (s *VisitConcModuleDecl) VisitWith(env *sl.Environment, intro sl.Introspect
 
 var _ sl.Strategy = (*VisitConcModuleDecl)(nil)
 
+// SymbolName is the symbol of the Java term: ConsConcModuleDecl or EmptyConcModuleDecl.
+func (t *ConcModuleDeclModuleDeclList) SymbolName() string {
+	if t.empty {
+		return "EmptyConcModuleDecl"
+	}
+	return "ConsConcModuleDecl"
+}
+
+func (t *ConcModuleDeclModuleDeclList) IsConsConcModuleDecl() bool  { return !t.empty }
+func (t *ConcModuleDeclModuleDeclList) IsEmptyConcModuleDecl() bool { return t.empty }
+
+func (t *ConcModuleDeclModuleDeclList) GetHeadConcModuleDecl() ModuleDecl {
+	if t.empty {
+		panic(&aterm.GomError{Msg: "This ModuleDeclList has no HeadConcModuleDecl"})
+	}
+	return t.head
+}
+func (t *ConcModuleDeclModuleDeclList) GetTailConcModuleDecl() ModuleDeclList {
+	if t.empty {
+		panic(&aterm.GomError{Msg: "This ModuleDeclList has no TailConcModuleDecl"})
+	}
+	return t.tail
+}
+
+// Length is Java's length(): the number of elements of the list (a
+// tail that is not a ConcModuleDecl list counts as one element).
+func (t *ConcModuleDeclModuleDeclList) Length() int {
+	res := 0
+	var tl ModuleDeclList = t
+	for {
+		c, ok := tl.(*ConcModuleDeclModuleDeclList)
+		if !ok || c.empty {
+			return res
+		}
+		res++
+		tl = c.tail
+		if _, ok := tl.(*ConcModuleDeclModuleDeclList); !ok {
+			res++
+		}
+	}
+}
+
+// ToArray returns the elements of the list (Java's Object[] toArray()),
+// ending with its tail when that is not a ConcModuleDecl list.
+func (t *ConcModuleDeclModuleDeclList) ToArray() []any {
+	out := make([]any, 0, t.Length())
+	var cur ModuleDeclList = t
+	for {
+		c, ok := cur.(*ConcModuleDeclModuleDeclList)
+		if !ok || c.empty {
+			break
+		}
+		out = append(out, c.head)
+		cur = c.tail
+	}
+	if c, ok := cur.(*ConcModuleDeclModuleDeclList); !ok || !c.empty {
+		out = append(out, cur)
+	}
+	return out
+}
+
+// Reverse is Java's reverse(): the reversed list, built by ConsConcModuleDecl
+// (through the hooks).
+func (t *ConcModuleDeclModuleDeclList) Reverse() ModuleDeclList {
+	if t.empty {
+		return t
+	}
+	var cur ModuleDeclList = t
+	var rev ModuleDeclList = EmptyConcModuleDecl()
+	for {
+		c, ok := cur.(*ConcModuleDeclModuleDeclList)
+		if !ok || c.empty {
+			break
+		}
+		rev = ConsConcModuleDecl(c.head, rev)
+		cur = c.tail
+	}
+	return rev
+}
+
+// Append is Java's append(element): the list with element added at its
+// end, built by ConsConcModuleDecl (through the hooks).
+func (t *ConcModuleDeclModuleDeclList) Append(element ModuleDecl) ModuleDeclList {
+	var heads []ModuleDecl
+	var cur ModuleDeclList = t
+	for {
+		c, ok := cur.(*ConcModuleDeclModuleDeclList)
+		if !ok || c.empty {
+			break
+		}
+		heads = append(heads, c.head)
+		cur = c.tail
+	}
+	var res ModuleDeclList
+	if c, ok := cur.(*ConcModuleDeclModuleDeclList); ok && c.empty {
+		res = ConsConcModuleDecl(element, cur)
+	} else {
+		res = ConsConcModuleDecl(element, cur)
+	}
+	for i := len(heads) - 1; i >= 0; i-- {
+		res = ConsConcModuleDecl(heads[i], res)
+	}
+	return res
+}
+
+func (t *ConcModuleDeclModuleDeclList) CompareTo(o any) int {
+	for {
+		ao := o.(ModuleDeclList)
+		if ao == ModuleDeclList(t) {
+			return 0
+		}
+		if t.Hash() != ao.Hash() {
+			if t.Hash() < ao.Hash() {
+				return -1
+			}
+			return 1
+		}
+		if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+			return c
+		}
+		tco := ao.(*ConcModuleDeclModuleDeclList)
+		if t.empty {
+			panic(&aterm.GomError{Msg: "Unable to compare"})
+		}
+		if c := t.head.CompareTo(tco.head); c != 0 {
+			return c
+		}
+		next, ok := t.tail.(*ConcModuleDeclModuleDeclList)
+		if !ok {
+			if c := t.tail.CompareTo(tco.tail); c != 0 {
+				return c
+			}
+			panic(&aterm.GomError{Msg: "Unable to compare"})
+		}
+		t, o = next, tco.tail
+	}
+}
+
+func (t *ConcModuleDeclModuleDeclList) CompareToLPO(o any) int {
+	for {
+		ao := o.(ModuleDeclList)
+		if ao == ModuleDeclList(t) {
+			return 0
+		}
+		if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+			return c
+		}
+		tco := ao.(*ConcModuleDeclModuleDeclList)
+		if t.empty {
+			panic(&aterm.GomError{Msg: "Unable to compare"})
+		}
+		if c := t.head.CompareToLPO(tco.head); c != 0 {
+			return c
+		}
+		next, ok := t.tail.(*ConcModuleDeclModuleDeclList)
+		if !ok {
+			if c := t.tail.CompareToLPO(tco.tail); c != 0 {
+				return c
+			}
+			panic(&aterm.GomError{Msg: "Unable to compare"})
+		}
+		t, o = next, tco.tail
+	}
+}
+
+// ToATerm is Java's toATerm: the list of the elements, ending with the
+// ATerm list of the tail (a tail that is not a list is Java's
+// ClassCastException).
+func (t *ConcModuleDeclModuleDeclList) ToATerm() aterm.ATerm {
+	f := aterm.GetInstance()
+	var heads []ModuleDecl
+	var cur ModuleDeclList = t
+	for {
+		c, ok := cur.(*ConcModuleDeclModuleDeclList)
+		if !ok || c.empty {
+			break
+		}
+		heads = append(heads, c.head)
+		cur = c.tail
+	}
+	l := f.MakeListEmpty()
+	if c, ok := cur.(*ConcModuleDeclModuleDeclList); !ok || !c.empty {
+		tl, isList := cur.ToATerm().(*aterm.ATermList)
+		if !isList {
+			panic(&aterm.GomError{Msg: fmt.Sprintf("ClassCastException: the ATerm of %v is not an ATermList", cur)})
+		}
+		l = tl
+	}
+	for i := len(heads) - 1; i >= 0; i-- {
+		l = f.MakeList(heads[i].ToATerm(), l)
+	}
+	return l
+}
+
+// fromTermConcModuleDeclModuleDeclList is Java Gom's ConcModuleDecl.fromTerm: an application of ConcModuleDecl, or a
+// list (of ToATerm), of convertible elements.
+func fromTermConcModuleDeclModuleDeclList(trm aterm.ATerm, conv aterm.ATermConverter) (res ModuleDeclList, ok bool) {
+	trm = conv.Convert(trm)
+	if appl, isAppl := trm.(*aterm.ATermAppl); isAppl && appl.GetName() == "ConcModuleDecl" {
+		elems := make([]ModuleDecl, appl.GetArity())
+		for i, a := range appl.GetArguments() {
+			elems[i] = ModuleDeclFromTermConv(a, conv)
+		}
+		return MakeConcModuleDecl(elems...), true
+	}
+	if list, isList := trm.(*aterm.ATermList); isList {
+		// an element that cannot be converted: not a ConcModuleDecl (Java returns null)
+		defer func() {
+			if recover() != nil {
+				res, ok = nil, false
+			}
+		}()
+		var elems []ModuleDecl
+		for !list.IsEmpty() {
+			elems = append(elems, ModuleDeclFromTermConv(list.GetFirst(), conv))
+			list = list.GetNext()
+		}
+		return MakeConcModuleDecl(elems...), true
+	}
+	return nil, false
+}
+
 // SortDecl is the Go interface backing the Gom sort SortDecl.
 type SortDecl interface {
 	sharedobjects.Term
 	isSortDecl()
+	// Java Gom API (see the package's generated methods)
+	SymbolName() string
+	IsSortDecl() bool
+	IsBuiltinSortDecl() bool
+	GetName() string
+	GetModuleDecl() ModuleDecl
+	Length() int
+	Reverse() SortDecl
+	CompareTo(o any) int
+	CompareToLPO(o any) int
+	ToATerm() aterm.ATerm
+}
+
+// SortDeclFromTerm is Java Gom's SortDecl.fromTerm(trm).
+func SortDeclFromTerm(trm aterm.ATerm) SortDecl {
+	return SortDeclFromTermConv(trm, aterm.IdConverter{})
+}
+
+// SortDeclFromTermConv is Java Gom's SortDecl.fromTerm(trm, atConv): the term of
+// the first operator of the sort that converts the ATerm; it panics
+// (IllegalArgumentException) when there is none.
+func SortDeclFromTermConv(trm aterm.ATerm, conv aterm.ATermConverter) SortDecl {
+	converted := conv.Convert(trm)
+	var results []SortDecl
+	if r, ok := fromTermSortDeclSortDecl(converted, conv); ok {
+		results = append(results, r)
+	}
+	if r, ok := fromTermBuiltinSortDeclSortDecl(converted, conv); ok {
+		results = append(results, r)
+	}
+	if len(results) == 0 {
+		panic(&aterm.GomError{Msg: fmt.Sprintf("%v is not a SortDecl", trm), IllegalArgument: true})
+	}
+	return results[0]
+}
+
+// SortDeclFromString is Java Gom's SortDecl.fromString(s).
+func SortDeclFromString(s string) SortDecl { return SortDeclFromTerm(aterm.GetInstance().Parse(s)) }
+
+// SortDeclFromStream is Java Gom's SortDecl.fromStream(stream) (an IOException is
+// the error).
+func SortDeclFromStream(stream io.Reader) (SortDecl, error) {
+	at, err := aterm.GetInstance().ReadFromTextFile(stream)
+	if err != nil {
+		return nil, err
+	}
+	return SortDeclFromTerm(at), nil
 }
 
 // SortDeclSortDecl is the term type for the alternative `SortDecl(...)` of sort SortDecl.
@@ -6588,7 +13550,7 @@ func (t *SortDeclSortDecl) Duplicate() sharedobjects.Term {
 }
 
 func (t *SortDeclSortDecl) String() string {
-	return fmt.Sprintf("SortDecl(%s,%v)", sharedobjects.JavaEscape(t.Name), t.ModuleDecl)
+	return "SortDecl(" + sharedobjects.JavaEscape(t.Name) + "," + fmt.Sprint(t.ModuleDecl) + ")"
 }
 
 func (t *SortDeclSortDecl) ChildCount() int { return 2 }
@@ -6721,6 +13683,81 @@ func (s *VisitSortDecl) VisitWith(env *sl.Environment, intro sl.Introspector) (a
 
 var _ sl.Strategy = (*VisitSortDecl)(nil)
 
+func (t *SortDeclSortDecl) SymbolName() string { return "SortDecl" }
+
+func (t *SortDeclSortDecl) IsSortDecl() bool        { return true }
+func (t *SortDeclSortDecl) IsBuiltinSortDecl() bool { return false }
+
+func (t *SortDeclSortDecl) GetName() string           { return t.Name }
+func (t *SortDeclSortDecl) GetModuleDecl() ModuleDecl { return t.ModuleDecl }
+
+func (t *SortDeclSortDecl) Length() int {
+	panic(&aterm.GomError{Msg: "This SortDecl.SortDecl is not a list", IllegalArgument: true})
+}
+
+func (t *SortDeclSortDecl) Reverse() SortDecl {
+	panic(&aterm.GomError{Msg: "This SortDecl.SortDecl is not a list", IllegalArgument: true})
+}
+
+func (t *SortDeclSortDecl) CompareTo(o any) int {
+	ao := o.(SortDecl)
+	if ao == SortDecl(t) {
+		return 0
+	}
+	if t.Hash() != ao.Hash() {
+		if t.Hash() < ao.Hash() {
+			return -1
+		}
+		return 1
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	tco := ao.(*SortDeclSortDecl)
+	if c := strings.Compare(t.Name, tco.Name); c != 0 {
+		return c
+	}
+	if c := t.ModuleDecl.CompareTo(tco.ModuleDecl); c != 0 {
+		return c
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+func (t *SortDeclSortDecl) CompareToLPO(o any) int {
+	ao := o.(SortDecl)
+	if ao == SortDecl(t) {
+		return 0
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	tco := ao.(*SortDeclSortDecl)
+	if c := strings.Compare(t.Name, tco.Name); c != 0 {
+		return c
+	}
+	if c := t.ModuleDecl.CompareToLPO(tco.ModuleDecl); c != 0 {
+		return c
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+// ToATerm is the ATerm of the term: an application of SortDecl.
+func (t *SortDeclSortDecl) ToATerm() aterm.ATerm {
+	f := aterm.GetInstance()
+	return f.MakeAppl(f.MakeAFun("SortDecl", 2, false), aterm.MakeGomString(t.Name), t.ModuleDecl.ToATerm())
+}
+
+// fromTermSortDeclSortDecl is Java Gom's SortDecl.fromTerm: an unquoted application of
+// SortDecl whose arguments are convertible (as in Java, the arity is not
+// checked: a missing argument is an index out of range).
+func fromTermSortDeclSortDecl(trm aterm.ATerm, conv aterm.ATermConverter) (SortDecl, bool) {
+	trm = conv.Convert(trm)
+	if appl, ok := trm.(*aterm.ATermAppl); ok && appl.GetName() == "SortDecl" && !appl.GetAFun().IsQuoted() {
+		return MakeSortDecl(aterm.GomString(appl.GetArgument(0), conv), ModuleDeclFromTermConv(appl.GetArgument(1), conv)), true
+	}
+	return nil, false
+}
+
 // BuiltinSortDeclSortDecl is the term type for the alternative `BuiltinSortDecl(...)` of sort SortDecl.
 type BuiltinSortDeclSortDecl struct {
 	Name string
@@ -6748,7 +13785,7 @@ func (t *BuiltinSortDeclSortDecl) Duplicate() sharedobjects.Term {
 }
 
 func (t *BuiltinSortDeclSortDecl) String() string {
-	return fmt.Sprintf("BuiltinSortDecl(%s)", sharedobjects.JavaEscape(t.Name))
+	return "BuiltinSortDecl(" + sharedobjects.JavaEscape(t.Name) + ")"
 }
 
 func (t *BuiltinSortDeclSortDecl) ChildCount() int { return 1 }
@@ -6877,16 +13914,139 @@ func (s *VisitBuiltinSortDecl) VisitWith(env *sl.Environment, intro sl.Introspec
 
 var _ sl.Strategy = (*VisitBuiltinSortDecl)(nil)
 
+func (t *BuiltinSortDeclSortDecl) SymbolName() string { return "BuiltinSortDecl" }
+
+func (t *BuiltinSortDeclSortDecl) IsSortDecl() bool        { return false }
+func (t *BuiltinSortDeclSortDecl) IsBuiltinSortDecl() bool { return true }
+
+func (t *BuiltinSortDeclSortDecl) GetName() string { return t.Name }
+func (t *BuiltinSortDeclSortDecl) GetModuleDecl() ModuleDecl {
+	panic(&aterm.GomError{Msg: "This SortDecl has no ModuleDecl"})
+}
+
+func (t *BuiltinSortDeclSortDecl) Length() int {
+	panic(&aterm.GomError{Msg: "This SortDecl.BuiltinSortDecl is not a list", IllegalArgument: true})
+}
+
+func (t *BuiltinSortDeclSortDecl) Reverse() SortDecl {
+	panic(&aterm.GomError{Msg: "This SortDecl.BuiltinSortDecl is not a list", IllegalArgument: true})
+}
+
+func (t *BuiltinSortDeclSortDecl) CompareTo(o any) int {
+	ao := o.(SortDecl)
+	if ao == SortDecl(t) {
+		return 0
+	}
+	if t.Hash() != ao.Hash() {
+		if t.Hash() < ao.Hash() {
+			return -1
+		}
+		return 1
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	tco := ao.(*BuiltinSortDeclSortDecl)
+	if c := strings.Compare(t.Name, tco.Name); c != 0 {
+		return c
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+func (t *BuiltinSortDeclSortDecl) CompareToLPO(o any) int {
+	ao := o.(SortDecl)
+	if ao == SortDecl(t) {
+		return 0
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	tco := ao.(*BuiltinSortDeclSortDecl)
+	if c := strings.Compare(t.Name, tco.Name); c != 0 {
+		return c
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+// ToATerm is the ATerm of the term: an application of BuiltinSortDecl.
+func (t *BuiltinSortDeclSortDecl) ToATerm() aterm.ATerm {
+	f := aterm.GetInstance()
+	return f.MakeAppl(f.MakeAFun("BuiltinSortDecl", 1, false), aterm.MakeGomString(t.Name))
+}
+
+// fromTermBuiltinSortDeclSortDecl is Java Gom's BuiltinSortDecl.fromTerm: an unquoted application of
+// BuiltinSortDecl whose arguments are convertible (as in Java, the arity is not
+// checked: a missing argument is an index out of range).
+func fromTermBuiltinSortDeclSortDecl(trm aterm.ATerm, conv aterm.ATermConverter) (SortDecl, bool) {
+	trm = conv.Convert(trm)
+	if appl, ok := trm.(*aterm.ATermAppl); ok && appl.GetName() == "BuiltinSortDecl" && !appl.GetAFun().IsQuoted() {
+		return MakeBuiltinSortDecl(aterm.GomString(appl.GetArgument(0), conv)), true
+	}
+	return nil, false
+}
+
 // SortDeclList is the Go interface backing the Gom sort SortDeclList.
 type SortDeclList interface {
 	sharedobjects.Term
 	isSortDeclList()
+	// Java Gom API (see the package's generated methods)
+	SymbolName() string
+	IsConsConcSortDecl() bool
+	IsEmptyConcSortDecl() bool
+	GetHeadConcSortDecl() SortDecl
+	GetTailConcSortDecl() SortDeclList
+	Length() int
+	Reverse() SortDeclList
+	CompareTo(o any) int
+	CompareToLPO(o any) int
+	ToATerm() aterm.ATerm
 }
 
-// ConcSortDeclSortDeclList is the term type for the alternative `ConcSortDecl(...)` of sort SortDeclList.
+// SortDeclListFromTerm is Java Gom's SortDeclList.fromTerm(trm).
+func SortDeclListFromTerm(trm aterm.ATerm) SortDeclList {
+	return SortDeclListFromTermConv(trm, aterm.IdConverter{})
+}
+
+// SortDeclListFromTermConv is Java Gom's SortDeclList.fromTerm(trm, atConv): the term of
+// the first operator of the sort that converts the ATerm; it panics
+// (IllegalArgumentException) when there is none.
+func SortDeclListFromTermConv(trm aterm.ATerm, conv aterm.ATermConverter) SortDeclList {
+	converted := conv.Convert(trm)
+	var results []SortDeclList
+	if r, ok := fromTermConcSortDeclSortDeclList(converted, conv); ok {
+		results = append(results, r)
+	}
+	if len(results) == 0 {
+		panic(&aterm.GomError{Msg: fmt.Sprintf("%v is not a SortDeclList", trm), IllegalArgument: true})
+	}
+	return results[0]
+}
+
+// SortDeclListFromString is Java Gom's SortDeclList.fromString(s).
+func SortDeclListFromString(s string) SortDeclList {
+	return SortDeclListFromTerm(aterm.GetInstance().Parse(s))
+}
+
+// SortDeclListFromStream is Java Gom's SortDeclList.fromStream(stream) (an IOException is
+// the error).
+func SortDeclListFromStream(stream io.Reader) (SortDeclList, error) {
+	at, err := aterm.GetInstance().ReadFromTextFile(stream)
+	if err != nil {
+		return nil, err
+	}
+	return SortDeclListFromTerm(at), nil
+}
+
+// ConcSortDeclSortDeclList is the term type of the variadic operator `ConcSortDecl(...)` of sort SortDeclList
+// (Java's abstract class ConcSortDecl): a maximally-shared cons cell (Java's
+// ConsConcSortDecl: a head and a tail) or the empty list (Java's EmptyConcSortDecl).
 type ConcSortDeclSortDeclList struct {
-	Slots []SortDecl
+	head  SortDecl
+	tail  SortDeclList
+	empty bool
 	hash  uint32
+	// children caches the Visitable children (Java's children field)
+	children atomic.Pointer[[]any]
 }
 
 func (*ConcSortDeclSortDeclList) isSortDeclList() {}
@@ -6895,51 +14055,51 @@ func (t *ConcSortDeclSortDeclList) Hash() uint32 { return t.hash }
 
 func (t *ConcSortDeclSortDeclList) Equivalent(other sharedobjects.Term) bool {
 	o, ok := other.(*ConcSortDeclSortDeclList)
-	if !ok {
-		return false
-	}
-	if len(t.Slots) != len(o.Slots) {
-		return false
-	}
-	for i := range t.Slots {
-		if t.Slots[i] != o.Slots[i] {
-			return false
-		}
-	}
-	return true
+	return ok && t.empty == o.empty && t.head == o.head && t.tail == o.tail
 }
 
 func (t *ConcSortDeclSortDeclList) Duplicate() sharedobjects.Term {
-	cp := append([]SortDecl(nil), t.Slots...)
-	return &ConcSortDeclSortDeclList{Slots: cp, hash: t.hash}
+	return &ConcSortDeclSortDeclList{head: t.head, tail: t.tail, empty: t.empty, hash: t.hash}
 }
 
-func (t *ConcSortDeclSortDeclList) String() string {
-	parts := make([]string, len(t.Slots))
-	for i, v := range t.Slots {
-		parts[i] = fmt.Sprintf("%v", v)
+// elements returns the cached Visitable children of the list: its
+// elements (Java's getChildren, i.e. toArray).
+// Java's getChildren is the typed toArray(new SortDecl[]{}): a last tail
+// that is not a list (of sort SortDeclList) cannot be stored in it
+// (ArrayStoreException, a *aterm.GomError here).
+func (t *ConcSortDeclSortDeclList) elements() []any {
+	if c := t.children.Load(); c != nil {
+		return *c
 	}
-	return "ConcSortDecl" + "(" + strings.Join(parts, ",") + ")"
+	var cur SortDeclList = t
+	for {
+		c, ok := cur.(*ConcSortDeclSortDeclList)
+		if !ok || c.empty {
+			break
+		}
+		cur = c.tail
+	}
+	if c, ok := cur.(*ConcSortDeclSortDeclList); !ok || !c.empty {
+		panic(&aterm.GomError{Msg: fmt.Sprintf("ArrayStoreException: the tail %v of a ConcSortDecl list is not a SortDecl", cur)})
+	}
+	c := t.ToArray()
+	t.children.Store(&c)
+	return c
 }
 
-func (t *ConcSortDeclSortDeclList) ChildCount() int { return len(t.Slots) }
+func (t *ConcSortDeclSortDeclList) ChildCount() int { return len(t.elements()) }
 
-func (t *ConcSortDeclSortDeclList) ChildAt(i int) any { return t.Slots[i] }
+func (t *ConcSortDeclSortDeclList) ChildAt(i int) any { return t.elements()[i] }
 
 func (t *ConcSortDeclSortDeclList) SetChildAt(i int, child any) any {
-	dup := append([]SortDecl(nil), t.Slots...)
-	dup[i] = child.(SortDecl)
-	return MakeConcSortDecl(dup...)
+	dup := t.Children()
+	dup[i] = child
+	return t.SetChildren(dup)
 }
 
-func (t *ConcSortDeclSortDeclList) Children() []any {
-	out := make([]any, len(t.Slots))
-	for i, v := range t.Slots {
-		out[i] = v
-	}
-	return out
-}
+func (t *ConcSortDeclSortDeclList) Children() []any { return append([]any(nil), t.elements()...) }
 
+// SetChildren is Java's setChildren of a list: ConcSortDeclFromArray(children).
 func (t *ConcSortDeclSortDeclList) SetChildren(children []any) any {
 	args := make([]SortDecl, len(children))
 	for i, c := range children {
@@ -6948,15 +14108,77 @@ func (t *ConcSortDeclSortDeclList) SetChildren(children []any) any {
 	return MakeConcSortDecl(args...)
 }
 
-// MakeConcSortDecl builds the canonical (shared) ConcSortDecl term.
-func MakeConcSortDecl(args ...SortDecl) SortDeclList {
-	hashes := make([]uint32, 0, len(args))
-	for _, a := range args {
-		hashes = append(hashes, a.Hash())
+func (t *ConcSortDeclSortDeclList) String() string {
+	var b strings.Builder
+	b.WriteString("ConcSortDecl(")
+	var cur SortDeclList = t
+	for {
+		c, ok := cur.(*ConcSortDeclSortDeclList)
+		if !ok {
+			b.WriteString("," + fmt.Sprint(cur))
+			break
+		}
+		if c.empty {
+			break
+		}
+		if c != t {
+			b.WriteString(",")
+		}
+		b.WriteString(fmt.Sprint(c.head))
+		cur = c.tail
 	}
-	proto := &ConcSortDeclSortDeclList{Slots: args, hash: sharedobjects.MixSymbol(sharedobjects.StringHash("ConcSortDecl"), hashes)}
+	b.WriteString(")")
+	return b.String()
+}
+
+// RealMakeConsConcSortDecl is Java Gom's ConsConcSortDecl.realMake: the shared cell of head
+// and tail, without hook.
+func RealMakeConsConcSortDecl(head SortDecl, tail SortDeclList) SortDeclList {
+	proto := &ConcSortDeclSortDeclList{head: head, tail: tail, hash: sharedobjects.MixSymbol(sharedobjects.StringHash("ConsConcSortDecl"), []uint32{head.Hash(), tail.Hash()})}
 	return factory.Build(proto).(*ConcSortDeclSortDeclList)
 }
+
+// realMakeEmptyConcSortDecl is Java Gom's EmptyConcSortDecl.realMake: the shared empty list,
+// without hook.
+func realMakeEmptyConcSortDecl() SortDeclList {
+	proto := &ConcSortDeclSortDeclList{empty: true, hash: sharedobjects.MixSymbol(sharedobjects.StringHash("EmptyConcSortDecl"), nil)}
+	return factory.Build(proto).(*ConcSortDeclSortDeclList)
+}
+
+// RawConcSortDecl builds the ConcSortDecl list holding exactly args, without construction
+// hook.
+func RawConcSortDecl(args ...SortDecl) SortDeclList {
+	l := realMakeEmptyConcSortDecl()
+	for i := len(args) - 1; i >= 0; i-- {
+		l = RealMakeConsConcSortDecl(args[i], l)
+	}
+	return l
+}
+
+// EmptyConcSortDecl is Java Gom's EmptyConcSortDecl.make(): the empty ConcSortDecl list, after the
+// construction hooks.
+func EmptyConcSortDecl() SortDeclList {
+	return realMakeEmptyConcSortDecl()
+}
+
+// ConsConcSortDecl is Java Gom's ConsConcSortDecl.make(head, tail): head inserted in front of
+// tail, after the construction hooks (theory "" first).
+func ConsConcSortDecl(head SortDecl, tail SortDeclList) SortDeclList {
+	return RealMakeConsConcSortDecl(head, tail)
+}
+
+// MakeConcSortDecl builds the list of args as Tom's `ConcSortDecl(args…)` does: from EmptyConcSortDecl,
+// by ConsConcSortDecl, through the construction hooks (Java's ConcSortDecl.fromArray).
+func MakeConcSortDecl(args ...SortDecl) SortDeclList {
+	var l SortDeclList = EmptyConcSortDecl()
+	for i := len(args) - 1; i >= 0; i-- {
+		l = ConsConcSortDecl(args[i], l)
+	}
+	return l
+}
+
+// ConcSortDeclFromArray is Java Gom's ConcSortDecl.fromArray(array).
+func ConcSortDeclFromArray(array []SortDecl) SortDeclList { return MakeConcSortDecl(array...) }
 
 // IsConcSortDecl is the `Is_ConcSortDecl` predicate strategy: succeeds (returns subject
 // unchanged) when subject has the `ConcSortDecl` shape, otherwise fails with
@@ -7051,10 +14273,279 @@ func (s *VisitConcSortDecl) VisitWith(env *sl.Environment, intro sl.Introspector
 
 var _ sl.Strategy = (*VisitConcSortDecl)(nil)
 
+// SymbolName is the symbol of the Java term: ConsConcSortDecl or EmptyConcSortDecl.
+func (t *ConcSortDeclSortDeclList) SymbolName() string {
+	if t.empty {
+		return "EmptyConcSortDecl"
+	}
+	return "ConsConcSortDecl"
+}
+
+func (t *ConcSortDeclSortDeclList) IsConsConcSortDecl() bool  { return !t.empty }
+func (t *ConcSortDeclSortDeclList) IsEmptyConcSortDecl() bool { return t.empty }
+
+func (t *ConcSortDeclSortDeclList) GetHeadConcSortDecl() SortDecl {
+	if t.empty {
+		panic(&aterm.GomError{Msg: "This SortDeclList has no HeadConcSortDecl"})
+	}
+	return t.head
+}
+func (t *ConcSortDeclSortDeclList) GetTailConcSortDecl() SortDeclList {
+	if t.empty {
+		panic(&aterm.GomError{Msg: "This SortDeclList has no TailConcSortDecl"})
+	}
+	return t.tail
+}
+
+// Length is Java's length(): the number of elements of the list (a
+// tail that is not a ConcSortDecl list counts as one element).
+func (t *ConcSortDeclSortDeclList) Length() int {
+	res := 0
+	var tl SortDeclList = t
+	for {
+		c, ok := tl.(*ConcSortDeclSortDeclList)
+		if !ok || c.empty {
+			return res
+		}
+		res++
+		tl = c.tail
+		if _, ok := tl.(*ConcSortDeclSortDeclList); !ok {
+			res++
+		}
+	}
+}
+
+// ToArray returns the elements of the list (Java's Object[] toArray()),
+// ending with its tail when that is not a ConcSortDecl list.
+func (t *ConcSortDeclSortDeclList) ToArray() []any {
+	out := make([]any, 0, t.Length())
+	var cur SortDeclList = t
+	for {
+		c, ok := cur.(*ConcSortDeclSortDeclList)
+		if !ok || c.empty {
+			break
+		}
+		out = append(out, c.head)
+		cur = c.tail
+	}
+	if c, ok := cur.(*ConcSortDeclSortDeclList); !ok || !c.empty {
+		out = append(out, cur)
+	}
+	return out
+}
+
+// Reverse is Java's reverse(): the reversed list, built by ConsConcSortDecl
+// (through the hooks).
+func (t *ConcSortDeclSortDeclList) Reverse() SortDeclList {
+	if t.empty {
+		return t
+	}
+	var cur SortDeclList = t
+	var rev SortDeclList = EmptyConcSortDecl()
+	for {
+		c, ok := cur.(*ConcSortDeclSortDeclList)
+		if !ok || c.empty {
+			break
+		}
+		rev = ConsConcSortDecl(c.head, rev)
+		cur = c.tail
+	}
+	return rev
+}
+
+// Append is Java's append(element): the list with element added at its
+// end, built by ConsConcSortDecl (through the hooks).
+func (t *ConcSortDeclSortDeclList) Append(element SortDecl) SortDeclList {
+	var heads []SortDecl
+	var cur SortDeclList = t
+	for {
+		c, ok := cur.(*ConcSortDeclSortDeclList)
+		if !ok || c.empty {
+			break
+		}
+		heads = append(heads, c.head)
+		cur = c.tail
+	}
+	var res SortDeclList
+	if c, ok := cur.(*ConcSortDeclSortDeclList); ok && c.empty {
+		res = ConsConcSortDecl(element, cur)
+	} else {
+		res = ConsConcSortDecl(element, cur)
+	}
+	for i := len(heads) - 1; i >= 0; i-- {
+		res = ConsConcSortDecl(heads[i], res)
+	}
+	return res
+}
+
+func (t *ConcSortDeclSortDeclList) CompareTo(o any) int {
+	for {
+		ao := o.(SortDeclList)
+		if ao == SortDeclList(t) {
+			return 0
+		}
+		if t.Hash() != ao.Hash() {
+			if t.Hash() < ao.Hash() {
+				return -1
+			}
+			return 1
+		}
+		if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+			return c
+		}
+		tco := ao.(*ConcSortDeclSortDeclList)
+		if t.empty {
+			panic(&aterm.GomError{Msg: "Unable to compare"})
+		}
+		if c := t.head.CompareTo(tco.head); c != 0 {
+			return c
+		}
+		next, ok := t.tail.(*ConcSortDeclSortDeclList)
+		if !ok {
+			if c := t.tail.CompareTo(tco.tail); c != 0 {
+				return c
+			}
+			panic(&aterm.GomError{Msg: "Unable to compare"})
+		}
+		t, o = next, tco.tail
+	}
+}
+
+func (t *ConcSortDeclSortDeclList) CompareToLPO(o any) int {
+	for {
+		ao := o.(SortDeclList)
+		if ao == SortDeclList(t) {
+			return 0
+		}
+		if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+			return c
+		}
+		tco := ao.(*ConcSortDeclSortDeclList)
+		if t.empty {
+			panic(&aterm.GomError{Msg: "Unable to compare"})
+		}
+		if c := t.head.CompareToLPO(tco.head); c != 0 {
+			return c
+		}
+		next, ok := t.tail.(*ConcSortDeclSortDeclList)
+		if !ok {
+			if c := t.tail.CompareToLPO(tco.tail); c != 0 {
+				return c
+			}
+			panic(&aterm.GomError{Msg: "Unable to compare"})
+		}
+		t, o = next, tco.tail
+	}
+}
+
+// ToATerm is Java's toATerm: the list of the elements, ending with the
+// ATerm list of the tail (a tail that is not a list is Java's
+// ClassCastException).
+func (t *ConcSortDeclSortDeclList) ToATerm() aterm.ATerm {
+	f := aterm.GetInstance()
+	var heads []SortDecl
+	var cur SortDeclList = t
+	for {
+		c, ok := cur.(*ConcSortDeclSortDeclList)
+		if !ok || c.empty {
+			break
+		}
+		heads = append(heads, c.head)
+		cur = c.tail
+	}
+	l := f.MakeListEmpty()
+	if c, ok := cur.(*ConcSortDeclSortDeclList); !ok || !c.empty {
+		tl, isList := cur.ToATerm().(*aterm.ATermList)
+		if !isList {
+			panic(&aterm.GomError{Msg: fmt.Sprintf("ClassCastException: the ATerm of %v is not an ATermList", cur)})
+		}
+		l = tl
+	}
+	for i := len(heads) - 1; i >= 0; i-- {
+		l = f.MakeList(heads[i].ToATerm(), l)
+	}
+	return l
+}
+
+// fromTermConcSortDeclSortDeclList is Java Gom's ConcSortDecl.fromTerm: an application of ConcSortDecl, or a
+// list (of ToATerm), of convertible elements.
+func fromTermConcSortDeclSortDeclList(trm aterm.ATerm, conv aterm.ATermConverter) (res SortDeclList, ok bool) {
+	trm = conv.Convert(trm)
+	if appl, isAppl := trm.(*aterm.ATermAppl); isAppl && appl.GetName() == "ConcSortDecl" {
+		elems := make([]SortDecl, appl.GetArity())
+		for i, a := range appl.GetArguments() {
+			elems[i] = SortDeclFromTermConv(a, conv)
+		}
+		return MakeConcSortDecl(elems...), true
+	}
+	if list, isList := trm.(*aterm.ATermList); isList {
+		// an element that cannot be converted: not a ConcSortDecl (Java returns null)
+		defer func() {
+			if recover() != nil {
+				res, ok = nil, false
+			}
+		}()
+		var elems []SortDecl
+		for !list.IsEmpty() {
+			elems = append(elems, SortDeclFromTermConv(list.GetFirst(), conv))
+			list = list.GetNext()
+		}
+		return MakeConcSortDecl(elems...), true
+	}
+	return nil, false
+}
+
 // OperatorDecl is the Go interface backing the Gom sort OperatorDecl.
 type OperatorDecl interface {
 	sharedobjects.Term
 	isOperatorDecl()
+	// Java Gom API (see the package's generated methods)
+	SymbolName() string
+	IsOperatorDecl() bool
+	GetName() string
+	GetSort() SortDecl
+	GetProd() TypedProduction
+	GetOption() Option
+	Length() int
+	Reverse() OperatorDecl
+	CompareTo(o any) int
+	CompareToLPO(o any) int
+	ToATerm() aterm.ATerm
+}
+
+// OperatorDeclFromTerm is Java Gom's OperatorDecl.fromTerm(trm).
+func OperatorDeclFromTerm(trm aterm.ATerm) OperatorDecl {
+	return OperatorDeclFromTermConv(trm, aterm.IdConverter{})
+}
+
+// OperatorDeclFromTermConv is Java Gom's OperatorDecl.fromTerm(trm, atConv): the term of
+// the first operator of the sort that converts the ATerm; it panics
+// (IllegalArgumentException) when there is none.
+func OperatorDeclFromTermConv(trm aterm.ATerm, conv aterm.ATermConverter) OperatorDecl {
+	converted := conv.Convert(trm)
+	var results []OperatorDecl
+	if r, ok := fromTermOperatorDeclOperatorDecl(converted, conv); ok {
+		results = append(results, r)
+	}
+	if len(results) == 0 {
+		panic(&aterm.GomError{Msg: fmt.Sprintf("%v is not a OperatorDecl", trm), IllegalArgument: true})
+	}
+	return results[0]
+}
+
+// OperatorDeclFromString is Java Gom's OperatorDecl.fromString(s).
+func OperatorDeclFromString(s string) OperatorDecl {
+	return OperatorDeclFromTerm(aterm.GetInstance().Parse(s))
+}
+
+// OperatorDeclFromStream is Java Gom's OperatorDecl.fromStream(stream) (an IOException is
+// the error).
+func OperatorDeclFromStream(stream io.Reader) (OperatorDecl, error) {
+	at, err := aterm.GetInstance().ReadFromTextFile(stream)
+	if err != nil {
+		return nil, err
+	}
+	return OperatorDeclFromTerm(at), nil
 }
 
 // OperatorDeclOperatorDecl is the term type for the alternative `OperatorDecl(...)` of sort OperatorDecl.
@@ -7096,7 +14587,7 @@ func (t *OperatorDeclOperatorDecl) Duplicate() sharedobjects.Term {
 }
 
 func (t *OperatorDeclOperatorDecl) String() string {
-	return fmt.Sprintf("OperatorDecl(%s,%v,%v,%v)", sharedobjects.JavaEscape(t.Name), t.Sort, t.Prod, t.Option)
+	return "OperatorDecl(" + sharedobjects.JavaEscape(t.Name) + "," + fmt.Sprint(t.Sort) + "," + fmt.Sprint(t.Prod) + "," + fmt.Sprint(t.Option) + ")"
 }
 
 func (t *OperatorDeclOperatorDecl) ChildCount() int { return 4 }
@@ -7237,16 +14728,156 @@ func (s *VisitOperatorDecl) VisitWith(env *sl.Environment, intro sl.Introspector
 
 var _ sl.Strategy = (*VisitOperatorDecl)(nil)
 
+func (t *OperatorDeclOperatorDecl) SymbolName() string { return "OperatorDecl" }
+
+func (t *OperatorDeclOperatorDecl) IsOperatorDecl() bool { return true }
+
+func (t *OperatorDeclOperatorDecl) GetName() string          { return t.Name }
+func (t *OperatorDeclOperatorDecl) GetSort() SortDecl        { return t.Sort }
+func (t *OperatorDeclOperatorDecl) GetProd() TypedProduction { return t.Prod }
+func (t *OperatorDeclOperatorDecl) GetOption() Option        { return t.Option }
+
+func (t *OperatorDeclOperatorDecl) Length() int {
+	panic(&aterm.GomError{Msg: "This OperatorDecl.OperatorDecl is not a list", IllegalArgument: true})
+}
+
+func (t *OperatorDeclOperatorDecl) Reverse() OperatorDecl {
+	panic(&aterm.GomError{Msg: "This OperatorDecl.OperatorDecl is not a list", IllegalArgument: true})
+}
+
+func (t *OperatorDeclOperatorDecl) CompareTo(o any) int {
+	ao := o.(OperatorDecl)
+	if ao == OperatorDecl(t) {
+		return 0
+	}
+	if t.Hash() != ao.Hash() {
+		if t.Hash() < ao.Hash() {
+			return -1
+		}
+		return 1
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	tco := ao.(*OperatorDeclOperatorDecl)
+	if c := strings.Compare(t.Name, tco.Name); c != 0 {
+		return c
+	}
+	if c := t.Sort.CompareTo(tco.Sort); c != 0 {
+		return c
+	}
+	if c := t.Prod.CompareTo(tco.Prod); c != 0 {
+		return c
+	}
+	if c := t.Option.CompareTo(tco.Option); c != 0 {
+		return c
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+func (t *OperatorDeclOperatorDecl) CompareToLPO(o any) int {
+	ao := o.(OperatorDecl)
+	if ao == OperatorDecl(t) {
+		return 0
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	tco := ao.(*OperatorDeclOperatorDecl)
+	if c := strings.Compare(t.Name, tco.Name); c != 0 {
+		return c
+	}
+	if c := t.Sort.CompareToLPO(tco.Sort); c != 0 {
+		return c
+	}
+	if c := t.Prod.CompareToLPO(tco.Prod); c != 0 {
+		return c
+	}
+	if c := t.Option.CompareToLPO(tco.Option); c != 0 {
+		return c
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+// ToATerm is the ATerm of the term: an application of OperatorDecl.
+func (t *OperatorDeclOperatorDecl) ToATerm() aterm.ATerm {
+	f := aterm.GetInstance()
+	return f.MakeAppl(f.MakeAFun("OperatorDecl", 4, false), aterm.MakeGomString(t.Name), t.Sort.ToATerm(), t.Prod.ToATerm(), t.Option.ToATerm())
+}
+
+// fromTermOperatorDeclOperatorDecl is Java Gom's OperatorDecl.fromTerm: an unquoted application of
+// OperatorDecl whose arguments are convertible (as in Java, the arity is not
+// checked: a missing argument is an index out of range).
+func fromTermOperatorDeclOperatorDecl(trm aterm.ATerm, conv aterm.ATermConverter) (OperatorDecl, bool) {
+	trm = conv.Convert(trm)
+	if appl, ok := trm.(*aterm.ATermAppl); ok && appl.GetName() == "OperatorDecl" && !appl.GetAFun().IsQuoted() {
+		return MakeOperatorDecl(aterm.GomString(appl.GetArgument(0), conv), SortDeclFromTermConv(appl.GetArgument(1), conv), TypedProductionFromTermConv(appl.GetArgument(2), conv), OptionFromTermConv(appl.GetArgument(3), conv)), true
+	}
+	return nil, false
+}
+
 // OperatorDeclList is the Go interface backing the Gom sort OperatorDeclList.
 type OperatorDeclList interface {
 	sharedobjects.Term
 	isOperatorDeclList()
+	// Java Gom API (see the package's generated methods)
+	SymbolName() string
+	IsConsConcOperator() bool
+	IsEmptyConcOperator() bool
+	GetHeadConcOperator() OperatorDecl
+	GetTailConcOperator() OperatorDeclList
+	Length() int
+	Reverse() OperatorDeclList
+	CompareTo(o any) int
+	CompareToLPO(o any) int
+	ToATerm() aterm.ATerm
 }
 
-// ConcOperatorOperatorDeclList is the term type for the alternative `ConcOperator(...)` of sort OperatorDeclList.
+// OperatorDeclListFromTerm is Java Gom's OperatorDeclList.fromTerm(trm).
+func OperatorDeclListFromTerm(trm aterm.ATerm) OperatorDeclList {
+	return OperatorDeclListFromTermConv(trm, aterm.IdConverter{})
+}
+
+// OperatorDeclListFromTermConv is Java Gom's OperatorDeclList.fromTerm(trm, atConv): the term of
+// the first operator of the sort that converts the ATerm; it panics
+// (IllegalArgumentException) when there is none.
+func OperatorDeclListFromTermConv(trm aterm.ATerm, conv aterm.ATermConverter) OperatorDeclList {
+	converted := conv.Convert(trm)
+	var results []OperatorDeclList
+	if r, ok := fromTermConcOperatorOperatorDeclList(converted, conv); ok {
+		results = append(results, r)
+	}
+	if len(results) == 0 {
+		panic(&aterm.GomError{Msg: fmt.Sprintf("%v is not a OperatorDeclList", trm), IllegalArgument: true})
+	}
+	return results[0]
+}
+
+// OperatorDeclListFromString is Java Gom's OperatorDeclList.fromString(s).
+func OperatorDeclListFromString(s string) OperatorDeclList {
+	return OperatorDeclListFromTerm(aterm.GetInstance().Parse(s))
+}
+
+// OperatorDeclListFromStream is Java Gom's OperatorDeclList.fromStream(stream) (an IOException is
+// the error).
+func OperatorDeclListFromStream(stream io.Reader) (OperatorDeclList, error) {
+	at, err := aterm.GetInstance().ReadFromTextFile(stream)
+	if err != nil {
+		return nil, err
+	}
+	return OperatorDeclListFromTerm(at), nil
+}
+
+// ConcOperatorOperatorDeclList is the term type of the variadic operator `ConcOperator(...)` of sort OperatorDeclList
+// (Java's abstract class ConcOperator): a maximally-shared cons cell (Java's
+// ConsConcOperator: a head and a tail) or the empty list (Java's EmptyConcOperator).
 type ConcOperatorOperatorDeclList struct {
-	Slots []OperatorDecl
+	head  OperatorDecl
+	tail  OperatorDeclList
+	empty bool
 	hash  uint32
+	// children caches the Visitable children (Java's children field)
+	children atomic.Pointer[[]any]
 }
 
 func (*ConcOperatorOperatorDeclList) isOperatorDeclList() {}
@@ -7255,51 +14886,51 @@ func (t *ConcOperatorOperatorDeclList) Hash() uint32 { return t.hash }
 
 func (t *ConcOperatorOperatorDeclList) Equivalent(other sharedobjects.Term) bool {
 	o, ok := other.(*ConcOperatorOperatorDeclList)
-	if !ok {
-		return false
-	}
-	if len(t.Slots) != len(o.Slots) {
-		return false
-	}
-	for i := range t.Slots {
-		if t.Slots[i] != o.Slots[i] {
-			return false
-		}
-	}
-	return true
+	return ok && t.empty == o.empty && t.head == o.head && t.tail == o.tail
 }
 
 func (t *ConcOperatorOperatorDeclList) Duplicate() sharedobjects.Term {
-	cp := append([]OperatorDecl(nil), t.Slots...)
-	return &ConcOperatorOperatorDeclList{Slots: cp, hash: t.hash}
+	return &ConcOperatorOperatorDeclList{head: t.head, tail: t.tail, empty: t.empty, hash: t.hash}
 }
 
-func (t *ConcOperatorOperatorDeclList) String() string {
-	parts := make([]string, len(t.Slots))
-	for i, v := range t.Slots {
-		parts[i] = fmt.Sprintf("%v", v)
+// elements returns the cached Visitable children of the list: its
+// elements (Java's getChildren, i.e. toArray).
+// Java's getChildren is the typed toArray(new OperatorDecl[]{}): a last tail
+// that is not a list (of sort OperatorDeclList) cannot be stored in it
+// (ArrayStoreException, a *aterm.GomError here).
+func (t *ConcOperatorOperatorDeclList) elements() []any {
+	if c := t.children.Load(); c != nil {
+		return *c
 	}
-	return "ConcOperator" + "(" + strings.Join(parts, ",") + ")"
+	var cur OperatorDeclList = t
+	for {
+		c, ok := cur.(*ConcOperatorOperatorDeclList)
+		if !ok || c.empty {
+			break
+		}
+		cur = c.tail
+	}
+	if c, ok := cur.(*ConcOperatorOperatorDeclList); !ok || !c.empty {
+		panic(&aterm.GomError{Msg: fmt.Sprintf("ArrayStoreException: the tail %v of a ConcOperator list is not a OperatorDecl", cur)})
+	}
+	c := t.ToArray()
+	t.children.Store(&c)
+	return c
 }
 
-func (t *ConcOperatorOperatorDeclList) ChildCount() int { return len(t.Slots) }
+func (t *ConcOperatorOperatorDeclList) ChildCount() int { return len(t.elements()) }
 
-func (t *ConcOperatorOperatorDeclList) ChildAt(i int) any { return t.Slots[i] }
+func (t *ConcOperatorOperatorDeclList) ChildAt(i int) any { return t.elements()[i] }
 
 func (t *ConcOperatorOperatorDeclList) SetChildAt(i int, child any) any {
-	dup := append([]OperatorDecl(nil), t.Slots...)
-	dup[i] = child.(OperatorDecl)
-	return MakeConcOperator(dup...)
+	dup := t.Children()
+	dup[i] = child
+	return t.SetChildren(dup)
 }
 
-func (t *ConcOperatorOperatorDeclList) Children() []any {
-	out := make([]any, len(t.Slots))
-	for i, v := range t.Slots {
-		out[i] = v
-	}
-	return out
-}
+func (t *ConcOperatorOperatorDeclList) Children() []any { return append([]any(nil), t.elements()...) }
 
+// SetChildren is Java's setChildren of a list: ConcOperatorFromArray(children).
 func (t *ConcOperatorOperatorDeclList) SetChildren(children []any) any {
 	args := make([]OperatorDecl, len(children))
 	for i, c := range children {
@@ -7308,15 +14939,77 @@ func (t *ConcOperatorOperatorDeclList) SetChildren(children []any) any {
 	return MakeConcOperator(args...)
 }
 
-// MakeConcOperator builds the canonical (shared) ConcOperator term.
-func MakeConcOperator(args ...OperatorDecl) OperatorDeclList {
-	hashes := make([]uint32, 0, len(args))
-	for _, a := range args {
-		hashes = append(hashes, a.Hash())
+func (t *ConcOperatorOperatorDeclList) String() string {
+	var b strings.Builder
+	b.WriteString("ConcOperator(")
+	var cur OperatorDeclList = t
+	for {
+		c, ok := cur.(*ConcOperatorOperatorDeclList)
+		if !ok {
+			b.WriteString("," + fmt.Sprint(cur))
+			break
+		}
+		if c.empty {
+			break
+		}
+		if c != t {
+			b.WriteString(",")
+		}
+		b.WriteString(fmt.Sprint(c.head))
+		cur = c.tail
 	}
-	proto := &ConcOperatorOperatorDeclList{Slots: args, hash: sharedobjects.MixSymbol(sharedobjects.StringHash("ConcOperator"), hashes)}
+	b.WriteString(")")
+	return b.String()
+}
+
+// RealMakeConsConcOperator is Java Gom's ConsConcOperator.realMake: the shared cell of head
+// and tail, without hook.
+func RealMakeConsConcOperator(head OperatorDecl, tail OperatorDeclList) OperatorDeclList {
+	proto := &ConcOperatorOperatorDeclList{head: head, tail: tail, hash: sharedobjects.MixSymbol(sharedobjects.StringHash("ConsConcOperator"), []uint32{head.Hash(), tail.Hash()})}
 	return factory.Build(proto).(*ConcOperatorOperatorDeclList)
 }
+
+// realMakeEmptyConcOperator is Java Gom's EmptyConcOperator.realMake: the shared empty list,
+// without hook.
+func realMakeEmptyConcOperator() OperatorDeclList {
+	proto := &ConcOperatorOperatorDeclList{empty: true, hash: sharedobjects.MixSymbol(sharedobjects.StringHash("EmptyConcOperator"), nil)}
+	return factory.Build(proto).(*ConcOperatorOperatorDeclList)
+}
+
+// RawConcOperator builds the ConcOperator list holding exactly args, without construction
+// hook.
+func RawConcOperator(args ...OperatorDecl) OperatorDeclList {
+	l := realMakeEmptyConcOperator()
+	for i := len(args) - 1; i >= 0; i-- {
+		l = RealMakeConsConcOperator(args[i], l)
+	}
+	return l
+}
+
+// EmptyConcOperator is Java Gom's EmptyConcOperator.make(): the empty ConcOperator list, after the
+// construction hooks.
+func EmptyConcOperator() OperatorDeclList {
+	return realMakeEmptyConcOperator()
+}
+
+// ConsConcOperator is Java Gom's ConsConcOperator.make(head, tail): head inserted in front of
+// tail, after the construction hooks (theory "" first).
+func ConsConcOperator(head OperatorDecl, tail OperatorDeclList) OperatorDeclList {
+	return RealMakeConsConcOperator(head, tail)
+}
+
+// MakeConcOperator builds the list of args as Tom's `ConcOperator(args…)` does: from EmptyConcOperator,
+// by ConsConcOperator, through the construction hooks (Java's ConcOperator.fromArray).
+func MakeConcOperator(args ...OperatorDecl) OperatorDeclList {
+	var l OperatorDeclList = EmptyConcOperator()
+	for i := len(args) - 1; i >= 0; i-- {
+		l = ConsConcOperator(args[i], l)
+	}
+	return l
+}
+
+// ConcOperatorFromArray is Java Gom's ConcOperator.fromArray(array).
+func ConcOperatorFromArray(array []OperatorDecl) OperatorDeclList { return MakeConcOperator(array...) }
 
 // IsConcOperator is the `Is_ConcOperator` predicate strategy: succeeds (returns subject
 // unchanged) when subject has the `ConcOperator` shape, otherwise fails with
@@ -7411,10 +15104,281 @@ func (s *VisitConcOperator) VisitWith(env *sl.Environment, intro sl.Introspector
 
 var _ sl.Strategy = (*VisitConcOperator)(nil)
 
+// SymbolName is the symbol of the Java term: ConsConcOperator or EmptyConcOperator.
+func (t *ConcOperatorOperatorDeclList) SymbolName() string {
+	if t.empty {
+		return "EmptyConcOperator"
+	}
+	return "ConsConcOperator"
+}
+
+func (t *ConcOperatorOperatorDeclList) IsConsConcOperator() bool  { return !t.empty }
+func (t *ConcOperatorOperatorDeclList) IsEmptyConcOperator() bool { return t.empty }
+
+func (t *ConcOperatorOperatorDeclList) GetHeadConcOperator() OperatorDecl {
+	if t.empty {
+		panic(&aterm.GomError{Msg: "This OperatorDeclList has no HeadConcOperator"})
+	}
+	return t.head
+}
+func (t *ConcOperatorOperatorDeclList) GetTailConcOperator() OperatorDeclList {
+	if t.empty {
+		panic(&aterm.GomError{Msg: "This OperatorDeclList has no TailConcOperator"})
+	}
+	return t.tail
+}
+
+// Length is Java's length(): the number of elements of the list (a
+// tail that is not a ConcOperator list counts as one element).
+func (t *ConcOperatorOperatorDeclList) Length() int {
+	res := 0
+	var tl OperatorDeclList = t
+	for {
+		c, ok := tl.(*ConcOperatorOperatorDeclList)
+		if !ok || c.empty {
+			return res
+		}
+		res++
+		tl = c.tail
+		if _, ok := tl.(*ConcOperatorOperatorDeclList); !ok {
+			res++
+		}
+	}
+}
+
+// ToArray returns the elements of the list (Java's Object[] toArray()),
+// ending with its tail when that is not a ConcOperator list.
+func (t *ConcOperatorOperatorDeclList) ToArray() []any {
+	out := make([]any, 0, t.Length())
+	var cur OperatorDeclList = t
+	for {
+		c, ok := cur.(*ConcOperatorOperatorDeclList)
+		if !ok || c.empty {
+			break
+		}
+		out = append(out, c.head)
+		cur = c.tail
+	}
+	if c, ok := cur.(*ConcOperatorOperatorDeclList); !ok || !c.empty {
+		out = append(out, cur)
+	}
+	return out
+}
+
+// Reverse is Java's reverse(): the reversed list, built by ConsConcOperator
+// (through the hooks).
+func (t *ConcOperatorOperatorDeclList) Reverse() OperatorDeclList {
+	if t.empty {
+		return t
+	}
+	var cur OperatorDeclList = t
+	var rev OperatorDeclList = EmptyConcOperator()
+	for {
+		c, ok := cur.(*ConcOperatorOperatorDeclList)
+		if !ok || c.empty {
+			break
+		}
+		rev = ConsConcOperator(c.head, rev)
+		cur = c.tail
+	}
+	return rev
+}
+
+// Append is Java's append(element): the list with element added at its
+// end, built by ConsConcOperator (through the hooks).
+func (t *ConcOperatorOperatorDeclList) Append(element OperatorDecl) OperatorDeclList {
+	var heads []OperatorDecl
+	var cur OperatorDeclList = t
+	for {
+		c, ok := cur.(*ConcOperatorOperatorDeclList)
+		if !ok || c.empty {
+			break
+		}
+		heads = append(heads, c.head)
+		cur = c.tail
+	}
+	var res OperatorDeclList
+	if c, ok := cur.(*ConcOperatorOperatorDeclList); ok && c.empty {
+		res = ConsConcOperator(element, cur)
+	} else {
+		res = ConsConcOperator(element, cur)
+	}
+	for i := len(heads) - 1; i >= 0; i-- {
+		res = ConsConcOperator(heads[i], res)
+	}
+	return res
+}
+
+func (t *ConcOperatorOperatorDeclList) CompareTo(o any) int {
+	for {
+		ao := o.(OperatorDeclList)
+		if ao == OperatorDeclList(t) {
+			return 0
+		}
+		if t.Hash() != ao.Hash() {
+			if t.Hash() < ao.Hash() {
+				return -1
+			}
+			return 1
+		}
+		if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+			return c
+		}
+		tco := ao.(*ConcOperatorOperatorDeclList)
+		if t.empty {
+			panic(&aterm.GomError{Msg: "Unable to compare"})
+		}
+		if c := t.head.CompareTo(tco.head); c != 0 {
+			return c
+		}
+		next, ok := t.tail.(*ConcOperatorOperatorDeclList)
+		if !ok {
+			if c := t.tail.CompareTo(tco.tail); c != 0 {
+				return c
+			}
+			panic(&aterm.GomError{Msg: "Unable to compare"})
+		}
+		t, o = next, tco.tail
+	}
+}
+
+func (t *ConcOperatorOperatorDeclList) CompareToLPO(o any) int {
+	for {
+		ao := o.(OperatorDeclList)
+		if ao == OperatorDeclList(t) {
+			return 0
+		}
+		if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+			return c
+		}
+		tco := ao.(*ConcOperatorOperatorDeclList)
+		if t.empty {
+			panic(&aterm.GomError{Msg: "Unable to compare"})
+		}
+		if c := t.head.CompareToLPO(tco.head); c != 0 {
+			return c
+		}
+		next, ok := t.tail.(*ConcOperatorOperatorDeclList)
+		if !ok {
+			if c := t.tail.CompareToLPO(tco.tail); c != 0 {
+				return c
+			}
+			panic(&aterm.GomError{Msg: "Unable to compare"})
+		}
+		t, o = next, tco.tail
+	}
+}
+
+// ToATerm is Java's toATerm: the list of the elements, ending with the
+// ATerm list of the tail (a tail that is not a list is Java's
+// ClassCastException).
+func (t *ConcOperatorOperatorDeclList) ToATerm() aterm.ATerm {
+	f := aterm.GetInstance()
+	var heads []OperatorDecl
+	var cur OperatorDeclList = t
+	for {
+		c, ok := cur.(*ConcOperatorOperatorDeclList)
+		if !ok || c.empty {
+			break
+		}
+		heads = append(heads, c.head)
+		cur = c.tail
+	}
+	l := f.MakeListEmpty()
+	if c, ok := cur.(*ConcOperatorOperatorDeclList); !ok || !c.empty {
+		tl, isList := cur.ToATerm().(*aterm.ATermList)
+		if !isList {
+			panic(&aterm.GomError{Msg: fmt.Sprintf("ClassCastException: the ATerm of %v is not an ATermList", cur)})
+		}
+		l = tl
+	}
+	for i := len(heads) - 1; i >= 0; i-- {
+		l = f.MakeList(heads[i].ToATerm(), l)
+	}
+	return l
+}
+
+// fromTermConcOperatorOperatorDeclList is Java Gom's ConcOperator.fromTerm: an application of ConcOperator, or a
+// list (of ToATerm), of convertible elements.
+func fromTermConcOperatorOperatorDeclList(trm aterm.ATerm, conv aterm.ATermConverter) (res OperatorDeclList, ok bool) {
+	trm = conv.Convert(trm)
+	if appl, isAppl := trm.(*aterm.ATermAppl); isAppl && appl.GetName() == "ConcOperator" {
+		elems := make([]OperatorDecl, appl.GetArity())
+		for i, a := range appl.GetArguments() {
+			elems[i] = OperatorDeclFromTermConv(a, conv)
+		}
+		return MakeConcOperator(elems...), true
+	}
+	if list, isList := trm.(*aterm.ATermList); isList {
+		// an element that cannot be converted: not a ConcOperator (Java returns null)
+		defer func() {
+			if recover() != nil {
+				res, ok = nil, false
+			}
+		}()
+		var elems []OperatorDecl
+		for !list.IsEmpty() {
+			elems = append(elems, OperatorDeclFromTermConv(list.GetFirst(), conv))
+			list = list.GetNext()
+		}
+		return MakeConcOperator(elems...), true
+	}
+	return nil, false
+}
+
 // TypedProduction is the Go interface backing the Gom sort TypedProduction.
 type TypedProduction interface {
 	sharedobjects.Term
 	isTypedProduction()
+	// Java Gom API (see the package's generated methods)
+	SymbolName() string
+	IsSlots() bool
+	IsVariadic() bool
+	GetSlots() SlotList
+	GetSort() SortDecl
+	Length() int
+	Reverse() TypedProduction
+	CompareTo(o any) int
+	CompareToLPO(o any) int
+	ToATerm() aterm.ATerm
+}
+
+// TypedProductionFromTerm is Java Gom's TypedProduction.fromTerm(trm).
+func TypedProductionFromTerm(trm aterm.ATerm) TypedProduction {
+	return TypedProductionFromTermConv(trm, aterm.IdConverter{})
+}
+
+// TypedProductionFromTermConv is Java Gom's TypedProduction.fromTerm(trm, atConv): the term of
+// the first operator of the sort that converts the ATerm; it panics
+// (IllegalArgumentException) when there is none.
+func TypedProductionFromTermConv(trm aterm.ATerm, conv aterm.ATermConverter) TypedProduction {
+	converted := conv.Convert(trm)
+	var results []TypedProduction
+	if r, ok := fromTermSlotsTypedProduction(converted, conv); ok {
+		results = append(results, r)
+	}
+	if r, ok := fromTermVariadicTypedProduction(converted, conv); ok {
+		results = append(results, r)
+	}
+	if len(results) == 0 {
+		panic(&aterm.GomError{Msg: fmt.Sprintf("%v is not a TypedProduction", trm), IllegalArgument: true})
+	}
+	return results[0]
+}
+
+// TypedProductionFromString is Java Gom's TypedProduction.fromString(s).
+func TypedProductionFromString(s string) TypedProduction {
+	return TypedProductionFromTerm(aterm.GetInstance().Parse(s))
+}
+
+// TypedProductionFromStream is Java Gom's TypedProduction.fromStream(stream) (an IOException is
+// the error).
+func TypedProductionFromStream(stream io.Reader) (TypedProduction, error) {
+	at, err := aterm.GetInstance().ReadFromTextFile(stream)
+	if err != nil {
+		return nil, err
+	}
+	return TypedProductionFromTerm(at), nil
 }
 
 // SlotsTypedProduction is the term type for the alternative `Slots(...)` of sort TypedProduction.
@@ -7444,7 +15408,7 @@ func (t *SlotsTypedProduction) Duplicate() sharedobjects.Term {
 }
 
 func (t *SlotsTypedProduction) String() string {
-	return fmt.Sprintf("Slots(%v)", t.Slots)
+	return "Slots(" + fmt.Sprint(t.Slots) + ")"
 }
 
 func (t *SlotsTypedProduction) ChildCount() int { return 1 }
@@ -7573,6 +15537,77 @@ func (s *VisitSlots) VisitWith(env *sl.Environment, intro sl.Introspector) (any,
 
 var _ sl.Strategy = (*VisitSlots)(nil)
 
+func (t *SlotsTypedProduction) SymbolName() string { return "Slots" }
+
+func (t *SlotsTypedProduction) IsSlots() bool    { return true }
+func (t *SlotsTypedProduction) IsVariadic() bool { return false }
+
+func (t *SlotsTypedProduction) GetSlots() SlotList { return t.Slots }
+func (t *SlotsTypedProduction) GetSort() SortDecl {
+	panic(&aterm.GomError{Msg: "This TypedProduction has no Sort"})
+}
+
+func (t *SlotsTypedProduction) Length() int {
+	panic(&aterm.GomError{Msg: "This TypedProduction.Slots is not a list", IllegalArgument: true})
+}
+
+func (t *SlotsTypedProduction) Reverse() TypedProduction {
+	panic(&aterm.GomError{Msg: "This TypedProduction.Slots is not a list", IllegalArgument: true})
+}
+
+func (t *SlotsTypedProduction) CompareTo(o any) int {
+	ao := o.(TypedProduction)
+	if ao == TypedProduction(t) {
+		return 0
+	}
+	if t.Hash() != ao.Hash() {
+		if t.Hash() < ao.Hash() {
+			return -1
+		}
+		return 1
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	tco := ao.(*SlotsTypedProduction)
+	if c := t.Slots.CompareTo(tco.Slots); c != 0 {
+		return c
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+func (t *SlotsTypedProduction) CompareToLPO(o any) int {
+	ao := o.(TypedProduction)
+	if ao == TypedProduction(t) {
+		return 0
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	tco := ao.(*SlotsTypedProduction)
+	if c := t.Slots.CompareToLPO(tco.Slots); c != 0 {
+		return c
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+// ToATerm is the ATerm of the term: an application of Slots.
+func (t *SlotsTypedProduction) ToATerm() aterm.ATerm {
+	f := aterm.GetInstance()
+	return f.MakeAppl(f.MakeAFun("Slots", 1, false), t.Slots.ToATerm())
+}
+
+// fromTermSlotsTypedProduction is Java Gom's Slots.fromTerm: an unquoted application of
+// Slots whose arguments are convertible (as in Java, the arity is not
+// checked: a missing argument is an index out of range).
+func fromTermSlotsTypedProduction(trm aterm.ATerm, conv aterm.ATermConverter) (TypedProduction, bool) {
+	trm = conv.Convert(trm)
+	if appl, ok := trm.(*aterm.ATermAppl); ok && appl.GetName() == "Slots" && !appl.GetAFun().IsQuoted() {
+		return MakeSlots(SlotListFromTermConv(appl.GetArgument(0), conv)), true
+	}
+	return nil, false
+}
+
 // VariadicTypedProduction is the term type for the alternative `Variadic(...)` of sort TypedProduction.
 type VariadicTypedProduction struct {
 	Sort SortDecl
@@ -7600,7 +15635,7 @@ func (t *VariadicTypedProduction) Duplicate() sharedobjects.Term {
 }
 
 func (t *VariadicTypedProduction) String() string {
-	return fmt.Sprintf("Variadic(%v)", t.Sort)
+	return "Variadic(" + fmt.Sprint(t.Sort) + ")"
 }
 
 func (t *VariadicTypedProduction) ChildCount() int { return 1 }
@@ -7729,10 +15764,122 @@ func (s *VisitVariadic) VisitWith(env *sl.Environment, intro sl.Introspector) (a
 
 var _ sl.Strategy = (*VisitVariadic)(nil)
 
+func (t *VariadicTypedProduction) SymbolName() string { return "Variadic" }
+
+func (t *VariadicTypedProduction) IsSlots() bool    { return false }
+func (t *VariadicTypedProduction) IsVariadic() bool { return true }
+
+func (t *VariadicTypedProduction) GetSlots() SlotList {
+	panic(&aterm.GomError{Msg: "This TypedProduction has no Slots"})
+}
+func (t *VariadicTypedProduction) GetSort() SortDecl { return t.Sort }
+
+func (t *VariadicTypedProduction) Length() int {
+	panic(&aterm.GomError{Msg: "This TypedProduction.Variadic is not a list", IllegalArgument: true})
+}
+
+func (t *VariadicTypedProduction) Reverse() TypedProduction {
+	panic(&aterm.GomError{Msg: "This TypedProduction.Variadic is not a list", IllegalArgument: true})
+}
+
+func (t *VariadicTypedProduction) CompareTo(o any) int {
+	ao := o.(TypedProduction)
+	if ao == TypedProduction(t) {
+		return 0
+	}
+	if t.Hash() != ao.Hash() {
+		if t.Hash() < ao.Hash() {
+			return -1
+		}
+		return 1
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	tco := ao.(*VariadicTypedProduction)
+	if c := t.Sort.CompareTo(tco.Sort); c != 0 {
+		return c
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+func (t *VariadicTypedProduction) CompareToLPO(o any) int {
+	ao := o.(TypedProduction)
+	if ao == TypedProduction(t) {
+		return 0
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	tco := ao.(*VariadicTypedProduction)
+	if c := t.Sort.CompareToLPO(tco.Sort); c != 0 {
+		return c
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+// ToATerm is the ATerm of the term: an application of Variadic.
+func (t *VariadicTypedProduction) ToATerm() aterm.ATerm {
+	f := aterm.GetInstance()
+	return f.MakeAppl(f.MakeAFun("Variadic", 1, false), t.Sort.ToATerm())
+}
+
+// fromTermVariadicTypedProduction is Java Gom's Variadic.fromTerm: an unquoted application of
+// Variadic whose arguments are convertible (as in Java, the arity is not
+// checked: a missing argument is an index out of range).
+func fromTermVariadicTypedProduction(trm aterm.ATerm, conv aterm.ATermConverter) (TypedProduction, bool) {
+	trm = conv.Convert(trm)
+	if appl, ok := trm.(*aterm.ATermAppl); ok && appl.GetName() == "Variadic" && !appl.GetAFun().IsQuoted() {
+		return MakeVariadic(SortDeclFromTermConv(appl.GetArgument(0), conv)), true
+	}
+	return nil, false
+}
+
 // Slot is the Go interface backing the Gom sort Slot.
 type Slot interface {
 	sharedobjects.Term
 	isSlot()
+	// Java Gom API (see the package's generated methods)
+	SymbolName() string
+	IsSlot() bool
+	GetName() string
+	GetSort() SortDecl
+	Length() int
+	Reverse() Slot
+	CompareTo(o any) int
+	CompareToLPO(o any) int
+	ToATerm() aterm.ATerm
+}
+
+// SlotFromTerm is Java Gom's Slot.fromTerm(trm).
+func SlotFromTerm(trm aterm.ATerm) Slot { return SlotFromTermConv(trm, aterm.IdConverter{}) }
+
+// SlotFromTermConv is Java Gom's Slot.fromTerm(trm, atConv): the term of
+// the first operator of the sort that converts the ATerm; it panics
+// (IllegalArgumentException) when there is none.
+func SlotFromTermConv(trm aterm.ATerm, conv aterm.ATermConverter) Slot {
+	converted := conv.Convert(trm)
+	var results []Slot
+	if r, ok := fromTermSlotSlot(converted, conv); ok {
+		results = append(results, r)
+	}
+	if len(results) == 0 {
+		panic(&aterm.GomError{Msg: fmt.Sprintf("%v is not a Slot", trm), IllegalArgument: true})
+	}
+	return results[0]
+}
+
+// SlotFromString is Java Gom's Slot.fromString(s).
+func SlotFromString(s string) Slot { return SlotFromTerm(aterm.GetInstance().Parse(s)) }
+
+// SlotFromStream is Java Gom's Slot.fromStream(stream) (an IOException is
+// the error).
+func SlotFromStream(stream io.Reader) (Slot, error) {
+	at, err := aterm.GetInstance().ReadFromTextFile(stream)
+	if err != nil {
+		return nil, err
+	}
+	return SlotFromTerm(at), nil
 }
 
 // SlotSlot is the term type for the alternative `Slot(...)` of sort Slot.
@@ -7766,7 +15913,7 @@ func (t *SlotSlot) Duplicate() sharedobjects.Term {
 }
 
 func (t *SlotSlot) String() string {
-	return fmt.Sprintf("Slot(%s,%v)", sharedobjects.JavaEscape(t.Name), t.Sort)
+	return "Slot(" + sharedobjects.JavaEscape(t.Name) + "," + fmt.Sprint(t.Sort) + ")"
 }
 
 func (t *SlotSlot) ChildCount() int { return 2 }
@@ -7899,16 +16046,140 @@ func (s *VisitSlot) VisitWith(env *sl.Environment, intro sl.Introspector) (any, 
 
 var _ sl.Strategy = (*VisitSlot)(nil)
 
+func (t *SlotSlot) SymbolName() string { return "Slot" }
+
+func (t *SlotSlot) IsSlot() bool { return true }
+
+func (t *SlotSlot) GetName() string   { return t.Name }
+func (t *SlotSlot) GetSort() SortDecl { return t.Sort }
+
+func (t *SlotSlot) Length() int {
+	panic(&aterm.GomError{Msg: "This Slot.Slot is not a list", IllegalArgument: true})
+}
+
+func (t *SlotSlot) Reverse() Slot {
+	panic(&aterm.GomError{Msg: "This Slot.Slot is not a list", IllegalArgument: true})
+}
+
+func (t *SlotSlot) CompareTo(o any) int {
+	ao := o.(Slot)
+	if ao == Slot(t) {
+		return 0
+	}
+	if t.Hash() != ao.Hash() {
+		if t.Hash() < ao.Hash() {
+			return -1
+		}
+		return 1
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	tco := ao.(*SlotSlot)
+	if c := strings.Compare(t.Name, tco.Name); c != 0 {
+		return c
+	}
+	if c := t.Sort.CompareTo(tco.Sort); c != 0 {
+		return c
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+func (t *SlotSlot) CompareToLPO(o any) int {
+	ao := o.(Slot)
+	if ao == Slot(t) {
+		return 0
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	tco := ao.(*SlotSlot)
+	if c := strings.Compare(t.Name, tco.Name); c != 0 {
+		return c
+	}
+	if c := t.Sort.CompareToLPO(tco.Sort); c != 0 {
+		return c
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+// ToATerm is the ATerm of the term: an application of Slot.
+func (t *SlotSlot) ToATerm() aterm.ATerm {
+	f := aterm.GetInstance()
+	return f.MakeAppl(f.MakeAFun("Slot", 2, false), aterm.MakeGomString(t.Name), t.Sort.ToATerm())
+}
+
+// fromTermSlotSlot is Java Gom's Slot.fromTerm: an unquoted application of
+// Slot whose arguments are convertible (as in Java, the arity is not
+// checked: a missing argument is an index out of range).
+func fromTermSlotSlot(trm aterm.ATerm, conv aterm.ATermConverter) (Slot, bool) {
+	trm = conv.Convert(trm)
+	if appl, ok := trm.(*aterm.ATermAppl); ok && appl.GetName() == "Slot" && !appl.GetAFun().IsQuoted() {
+		return MakeSlot(aterm.GomString(appl.GetArgument(0), conv), SortDeclFromTermConv(appl.GetArgument(1), conv)), true
+	}
+	return nil, false
+}
+
 // SlotList is the Go interface backing the Gom sort SlotList.
 type SlotList interface {
 	sharedobjects.Term
 	isSlotList()
+	// Java Gom API (see the package's generated methods)
+	SymbolName() string
+	IsConsConcSlot() bool
+	IsEmptyConcSlot() bool
+	GetHeadConcSlot() Slot
+	GetTailConcSlot() SlotList
+	Length() int
+	Reverse() SlotList
+	CompareTo(o any) int
+	CompareToLPO(o any) int
+	ToATerm() aterm.ATerm
 }
 
-// ConcSlotSlotList is the term type for the alternative `ConcSlot(...)` of sort SlotList.
+// SlotListFromTerm is Java Gom's SlotList.fromTerm(trm).
+func SlotListFromTerm(trm aterm.ATerm) SlotList {
+	return SlotListFromTermConv(trm, aterm.IdConverter{})
+}
+
+// SlotListFromTermConv is Java Gom's SlotList.fromTerm(trm, atConv): the term of
+// the first operator of the sort that converts the ATerm; it panics
+// (IllegalArgumentException) when there is none.
+func SlotListFromTermConv(trm aterm.ATerm, conv aterm.ATermConverter) SlotList {
+	converted := conv.Convert(trm)
+	var results []SlotList
+	if r, ok := fromTermConcSlotSlotList(converted, conv); ok {
+		results = append(results, r)
+	}
+	if len(results) == 0 {
+		panic(&aterm.GomError{Msg: fmt.Sprintf("%v is not a SlotList", trm), IllegalArgument: true})
+	}
+	return results[0]
+}
+
+// SlotListFromString is Java Gom's SlotList.fromString(s).
+func SlotListFromString(s string) SlotList { return SlotListFromTerm(aterm.GetInstance().Parse(s)) }
+
+// SlotListFromStream is Java Gom's SlotList.fromStream(stream) (an IOException is
+// the error).
+func SlotListFromStream(stream io.Reader) (SlotList, error) {
+	at, err := aterm.GetInstance().ReadFromTextFile(stream)
+	if err != nil {
+		return nil, err
+	}
+	return SlotListFromTerm(at), nil
+}
+
+// ConcSlotSlotList is the term type of the variadic operator `ConcSlot(...)` of sort SlotList
+// (Java's abstract class ConcSlot): a maximally-shared cons cell (Java's
+// ConsConcSlot: a head and a tail) or the empty list (Java's EmptyConcSlot).
 type ConcSlotSlotList struct {
-	Slots []Slot
+	head  Slot
+	tail  SlotList
+	empty bool
 	hash  uint32
+	// children caches the Visitable children (Java's children field)
+	children atomic.Pointer[[]any]
 }
 
 func (*ConcSlotSlotList) isSlotList() {}
@@ -7917,51 +16188,51 @@ func (t *ConcSlotSlotList) Hash() uint32 { return t.hash }
 
 func (t *ConcSlotSlotList) Equivalent(other sharedobjects.Term) bool {
 	o, ok := other.(*ConcSlotSlotList)
-	if !ok {
-		return false
-	}
-	if len(t.Slots) != len(o.Slots) {
-		return false
-	}
-	for i := range t.Slots {
-		if t.Slots[i] != o.Slots[i] {
-			return false
-		}
-	}
-	return true
+	return ok && t.empty == o.empty && t.head == o.head && t.tail == o.tail
 }
 
 func (t *ConcSlotSlotList) Duplicate() sharedobjects.Term {
-	cp := append([]Slot(nil), t.Slots...)
-	return &ConcSlotSlotList{Slots: cp, hash: t.hash}
+	return &ConcSlotSlotList{head: t.head, tail: t.tail, empty: t.empty, hash: t.hash}
 }
 
-func (t *ConcSlotSlotList) String() string {
-	parts := make([]string, len(t.Slots))
-	for i, v := range t.Slots {
-		parts[i] = fmt.Sprintf("%v", v)
+// elements returns the cached Visitable children of the list: its
+// elements (Java's getChildren, i.e. toArray).
+// Java's getChildren is the typed toArray(new Slot[]{}): a last tail
+// that is not a list (of sort SlotList) cannot be stored in it
+// (ArrayStoreException, a *aterm.GomError here).
+func (t *ConcSlotSlotList) elements() []any {
+	if c := t.children.Load(); c != nil {
+		return *c
 	}
-	return "ConcSlot" + "(" + strings.Join(parts, ",") + ")"
+	var cur SlotList = t
+	for {
+		c, ok := cur.(*ConcSlotSlotList)
+		if !ok || c.empty {
+			break
+		}
+		cur = c.tail
+	}
+	if c, ok := cur.(*ConcSlotSlotList); !ok || !c.empty {
+		panic(&aterm.GomError{Msg: fmt.Sprintf("ArrayStoreException: the tail %v of a ConcSlot list is not a Slot", cur)})
+	}
+	c := t.ToArray()
+	t.children.Store(&c)
+	return c
 }
 
-func (t *ConcSlotSlotList) ChildCount() int { return len(t.Slots) }
+func (t *ConcSlotSlotList) ChildCount() int { return len(t.elements()) }
 
-func (t *ConcSlotSlotList) ChildAt(i int) any { return t.Slots[i] }
+func (t *ConcSlotSlotList) ChildAt(i int) any { return t.elements()[i] }
 
 func (t *ConcSlotSlotList) SetChildAt(i int, child any) any {
-	dup := append([]Slot(nil), t.Slots...)
-	dup[i] = child.(Slot)
-	return MakeConcSlot(dup...)
+	dup := t.Children()
+	dup[i] = child
+	return t.SetChildren(dup)
 }
 
-func (t *ConcSlotSlotList) Children() []any {
-	out := make([]any, len(t.Slots))
-	for i, v := range t.Slots {
-		out[i] = v
-	}
-	return out
-}
+func (t *ConcSlotSlotList) Children() []any { return append([]any(nil), t.elements()...) }
 
+// SetChildren is Java's setChildren of a list: ConcSlotFromArray(children).
 func (t *ConcSlotSlotList) SetChildren(children []any) any {
 	args := make([]Slot, len(children))
 	for i, c := range children {
@@ -7970,15 +16241,77 @@ func (t *ConcSlotSlotList) SetChildren(children []any) any {
 	return MakeConcSlot(args...)
 }
 
-// MakeConcSlot builds the canonical (shared) ConcSlot term.
-func MakeConcSlot(args ...Slot) SlotList {
-	hashes := make([]uint32, 0, len(args))
-	for _, a := range args {
-		hashes = append(hashes, a.Hash())
+func (t *ConcSlotSlotList) String() string {
+	var b strings.Builder
+	b.WriteString("ConcSlot(")
+	var cur SlotList = t
+	for {
+		c, ok := cur.(*ConcSlotSlotList)
+		if !ok {
+			b.WriteString("," + fmt.Sprint(cur))
+			break
+		}
+		if c.empty {
+			break
+		}
+		if c != t {
+			b.WriteString(",")
+		}
+		b.WriteString(fmt.Sprint(c.head))
+		cur = c.tail
 	}
-	proto := &ConcSlotSlotList{Slots: args, hash: sharedobjects.MixSymbol(sharedobjects.StringHash("ConcSlot"), hashes)}
+	b.WriteString(")")
+	return b.String()
+}
+
+// RealMakeConsConcSlot is Java Gom's ConsConcSlot.realMake: the shared cell of head
+// and tail, without hook.
+func RealMakeConsConcSlot(head Slot, tail SlotList) SlotList {
+	proto := &ConcSlotSlotList{head: head, tail: tail, hash: sharedobjects.MixSymbol(sharedobjects.StringHash("ConsConcSlot"), []uint32{head.Hash(), tail.Hash()})}
 	return factory.Build(proto).(*ConcSlotSlotList)
 }
+
+// realMakeEmptyConcSlot is Java Gom's EmptyConcSlot.realMake: the shared empty list,
+// without hook.
+func realMakeEmptyConcSlot() SlotList {
+	proto := &ConcSlotSlotList{empty: true, hash: sharedobjects.MixSymbol(sharedobjects.StringHash("EmptyConcSlot"), nil)}
+	return factory.Build(proto).(*ConcSlotSlotList)
+}
+
+// RawConcSlot builds the ConcSlot list holding exactly args, without construction
+// hook.
+func RawConcSlot(args ...Slot) SlotList {
+	l := realMakeEmptyConcSlot()
+	for i := len(args) - 1; i >= 0; i-- {
+		l = RealMakeConsConcSlot(args[i], l)
+	}
+	return l
+}
+
+// EmptyConcSlot is Java Gom's EmptyConcSlot.make(): the empty ConcSlot list, after the
+// construction hooks.
+func EmptyConcSlot() SlotList {
+	return realMakeEmptyConcSlot()
+}
+
+// ConsConcSlot is Java Gom's ConsConcSlot.make(head, tail): head inserted in front of
+// tail, after the construction hooks (theory "" first).
+func ConsConcSlot(head Slot, tail SlotList) SlotList {
+	return RealMakeConsConcSlot(head, tail)
+}
+
+// MakeConcSlot builds the list of args as Tom's `ConcSlot(args…)` does: from EmptyConcSlot,
+// by ConsConcSlot, through the construction hooks (Java's ConcSlot.fromArray).
+func MakeConcSlot(args ...Slot) SlotList {
+	var l SlotList = EmptyConcSlot()
+	for i := len(args) - 1; i >= 0; i-- {
+		l = ConsConcSlot(args[i], l)
+	}
+	return l
+}
+
+// ConcSlotFromArray is Java Gom's ConcSlot.fromArray(array).
+func ConcSlotFromArray(array []Slot) SlotList { return MakeConcSlot(array...) }
 
 // IsConcSlot is the `Is_ConcSlot` predicate strategy: succeeds (returns subject
 // unchanged) when subject has the `ConcSlot` shape, otherwise fails with
@@ -8073,10 +16406,273 @@ func (s *VisitConcSlot) VisitWith(env *sl.Environment, intro sl.Introspector) (a
 
 var _ sl.Strategy = (*VisitConcSlot)(nil)
 
+// SymbolName is the symbol of the Java term: ConsConcSlot or EmptyConcSlot.
+func (t *ConcSlotSlotList) SymbolName() string {
+	if t.empty {
+		return "EmptyConcSlot"
+	}
+	return "ConsConcSlot"
+}
+
+func (t *ConcSlotSlotList) IsConsConcSlot() bool  { return !t.empty }
+func (t *ConcSlotSlotList) IsEmptyConcSlot() bool { return t.empty }
+
+func (t *ConcSlotSlotList) GetHeadConcSlot() Slot {
+	if t.empty {
+		panic(&aterm.GomError{Msg: "This SlotList has no HeadConcSlot"})
+	}
+	return t.head
+}
+func (t *ConcSlotSlotList) GetTailConcSlot() SlotList {
+	if t.empty {
+		panic(&aterm.GomError{Msg: "This SlotList has no TailConcSlot"})
+	}
+	return t.tail
+}
+
+// Length is Java's length(): the number of elements of the list (a
+// tail that is not a ConcSlot list counts as one element).
+func (t *ConcSlotSlotList) Length() int {
+	res := 0
+	var tl SlotList = t
+	for {
+		c, ok := tl.(*ConcSlotSlotList)
+		if !ok || c.empty {
+			return res
+		}
+		res++
+		tl = c.tail
+		if _, ok := tl.(*ConcSlotSlotList); !ok {
+			res++
+		}
+	}
+}
+
+// ToArray returns the elements of the list (Java's Object[] toArray()),
+// ending with its tail when that is not a ConcSlot list.
+func (t *ConcSlotSlotList) ToArray() []any {
+	out := make([]any, 0, t.Length())
+	var cur SlotList = t
+	for {
+		c, ok := cur.(*ConcSlotSlotList)
+		if !ok || c.empty {
+			break
+		}
+		out = append(out, c.head)
+		cur = c.tail
+	}
+	if c, ok := cur.(*ConcSlotSlotList); !ok || !c.empty {
+		out = append(out, cur)
+	}
+	return out
+}
+
+// Reverse is Java's reverse(): the reversed list, built by ConsConcSlot
+// (through the hooks).
+func (t *ConcSlotSlotList) Reverse() SlotList {
+	if t.empty {
+		return t
+	}
+	var cur SlotList = t
+	var rev SlotList = EmptyConcSlot()
+	for {
+		c, ok := cur.(*ConcSlotSlotList)
+		if !ok || c.empty {
+			break
+		}
+		rev = ConsConcSlot(c.head, rev)
+		cur = c.tail
+	}
+	return rev
+}
+
+// Append is Java's append(element): the list with element added at its
+// end, built by ConsConcSlot (through the hooks).
+func (t *ConcSlotSlotList) Append(element Slot) SlotList {
+	var heads []Slot
+	var cur SlotList = t
+	for {
+		c, ok := cur.(*ConcSlotSlotList)
+		if !ok || c.empty {
+			break
+		}
+		heads = append(heads, c.head)
+		cur = c.tail
+	}
+	var res SlotList
+	if c, ok := cur.(*ConcSlotSlotList); ok && c.empty {
+		res = ConsConcSlot(element, cur)
+	} else {
+		res = ConsConcSlot(element, cur)
+	}
+	for i := len(heads) - 1; i >= 0; i-- {
+		res = ConsConcSlot(heads[i], res)
+	}
+	return res
+}
+
+func (t *ConcSlotSlotList) CompareTo(o any) int {
+	for {
+		ao := o.(SlotList)
+		if ao == SlotList(t) {
+			return 0
+		}
+		if t.Hash() != ao.Hash() {
+			if t.Hash() < ao.Hash() {
+				return -1
+			}
+			return 1
+		}
+		if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+			return c
+		}
+		tco := ao.(*ConcSlotSlotList)
+		if t.empty {
+			panic(&aterm.GomError{Msg: "Unable to compare"})
+		}
+		if c := t.head.CompareTo(tco.head); c != 0 {
+			return c
+		}
+		next, ok := t.tail.(*ConcSlotSlotList)
+		if !ok {
+			if c := t.tail.CompareTo(tco.tail); c != 0 {
+				return c
+			}
+			panic(&aterm.GomError{Msg: "Unable to compare"})
+		}
+		t, o = next, tco.tail
+	}
+}
+
+func (t *ConcSlotSlotList) CompareToLPO(o any) int {
+	for {
+		ao := o.(SlotList)
+		if ao == SlotList(t) {
+			return 0
+		}
+		if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+			return c
+		}
+		tco := ao.(*ConcSlotSlotList)
+		if t.empty {
+			panic(&aterm.GomError{Msg: "Unable to compare"})
+		}
+		if c := t.head.CompareToLPO(tco.head); c != 0 {
+			return c
+		}
+		next, ok := t.tail.(*ConcSlotSlotList)
+		if !ok {
+			if c := t.tail.CompareToLPO(tco.tail); c != 0 {
+				return c
+			}
+			panic(&aterm.GomError{Msg: "Unable to compare"})
+		}
+		t, o = next, tco.tail
+	}
+}
+
+// ToATerm is Java's toATerm: the list of the elements, ending with the
+// ATerm list of the tail (a tail that is not a list is Java's
+// ClassCastException).
+func (t *ConcSlotSlotList) ToATerm() aterm.ATerm {
+	f := aterm.GetInstance()
+	var heads []Slot
+	var cur SlotList = t
+	for {
+		c, ok := cur.(*ConcSlotSlotList)
+		if !ok || c.empty {
+			break
+		}
+		heads = append(heads, c.head)
+		cur = c.tail
+	}
+	l := f.MakeListEmpty()
+	if c, ok := cur.(*ConcSlotSlotList); !ok || !c.empty {
+		tl, isList := cur.ToATerm().(*aterm.ATermList)
+		if !isList {
+			panic(&aterm.GomError{Msg: fmt.Sprintf("ClassCastException: the ATerm of %v is not an ATermList", cur)})
+		}
+		l = tl
+	}
+	for i := len(heads) - 1; i >= 0; i-- {
+		l = f.MakeList(heads[i].ToATerm(), l)
+	}
+	return l
+}
+
+// fromTermConcSlotSlotList is Java Gom's ConcSlot.fromTerm: an application of ConcSlot, or a
+// list (of ToATerm), of convertible elements.
+func fromTermConcSlotSlotList(trm aterm.ATerm, conv aterm.ATermConverter) (res SlotList, ok bool) {
+	trm = conv.Convert(trm)
+	if appl, isAppl := trm.(*aterm.ATermAppl); isAppl && appl.GetName() == "ConcSlot" {
+		elems := make([]Slot, appl.GetArity())
+		for i, a := range appl.GetArguments() {
+			elems[i] = SlotFromTermConv(a, conv)
+		}
+		return MakeConcSlot(elems...), true
+	}
+	if list, isList := trm.(*aterm.ATermList); isList {
+		// an element that cannot be converted: not a ConcSlot (Java returns null)
+		defer func() {
+			if recover() != nil {
+				res, ok = nil, false
+			}
+		}()
+		var elems []Slot
+		for !list.IsEmpty() {
+			elems = append(elems, SlotFromTermConv(list.GetFirst(), conv))
+			list = list.GetNext()
+		}
+		return MakeConcSlot(elems...), true
+	}
+	return nil, false
+}
+
 // Sort is the Go interface backing the Gom sort Sort.
 type Sort interface {
 	sharedobjects.Term
 	isSort()
+	// Java Gom API (see the package's generated methods)
+	SymbolName() string
+	IsSort() bool
+	GetDecl() SortDecl
+	GetOperatorDecls() OperatorDeclList
+	Length() int
+	Reverse() Sort
+	CompareTo(o any) int
+	CompareToLPO(o any) int
+	ToATerm() aterm.ATerm
+}
+
+// SortFromTerm is Java Gom's Sort.fromTerm(trm).
+func SortFromTerm(trm aterm.ATerm) Sort { return SortFromTermConv(trm, aterm.IdConverter{}) }
+
+// SortFromTermConv is Java Gom's Sort.fromTerm(trm, atConv): the term of
+// the first operator of the sort that converts the ATerm; it panics
+// (IllegalArgumentException) when there is none.
+func SortFromTermConv(trm aterm.ATerm, conv aterm.ATermConverter) Sort {
+	converted := conv.Convert(trm)
+	var results []Sort
+	if r, ok := fromTermSortSort(converted, conv); ok {
+		results = append(results, r)
+	}
+	if len(results) == 0 {
+		panic(&aterm.GomError{Msg: fmt.Sprintf("%v is not a Sort", trm), IllegalArgument: true})
+	}
+	return results[0]
+}
+
+// SortFromString is Java Gom's Sort.fromString(s).
+func SortFromString(s string) Sort { return SortFromTerm(aterm.GetInstance().Parse(s)) }
+
+// SortFromStream is Java Gom's Sort.fromStream(stream) (an IOException is
+// the error).
+func SortFromStream(stream io.Reader) (Sort, error) {
+	at, err := aterm.GetInstance().ReadFromTextFile(stream)
+	if err != nil {
+		return nil, err
+	}
+	return SortFromTerm(at), nil
 }
 
 // SortSort is the term type for the alternative `Sort(...)` of sort Sort.
@@ -8110,7 +16706,7 @@ func (t *SortSort) Duplicate() sharedobjects.Term {
 }
 
 func (t *SortSort) String() string {
-	return fmt.Sprintf("Sort(%v,%v)", t.Decl, t.OperatorDecls)
+	return "Sort(" + fmt.Sprint(t.Decl) + "," + fmt.Sprint(t.OperatorDecls) + ")"
 }
 
 func (t *SortSort) ChildCount() int { return 2 }
@@ -8243,16 +16839,140 @@ func (s *VisitSort) VisitWith(env *sl.Environment, intro sl.Introspector) (any, 
 
 var _ sl.Strategy = (*VisitSort)(nil)
 
+func (t *SortSort) SymbolName() string { return "Sort" }
+
+func (t *SortSort) IsSort() bool { return true }
+
+func (t *SortSort) GetDecl() SortDecl                  { return t.Decl }
+func (t *SortSort) GetOperatorDecls() OperatorDeclList { return t.OperatorDecls }
+
+func (t *SortSort) Length() int {
+	panic(&aterm.GomError{Msg: "This Sort.Sort is not a list", IllegalArgument: true})
+}
+
+func (t *SortSort) Reverse() Sort {
+	panic(&aterm.GomError{Msg: "This Sort.Sort is not a list", IllegalArgument: true})
+}
+
+func (t *SortSort) CompareTo(o any) int {
+	ao := o.(Sort)
+	if ao == Sort(t) {
+		return 0
+	}
+	if t.Hash() != ao.Hash() {
+		if t.Hash() < ao.Hash() {
+			return -1
+		}
+		return 1
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	tco := ao.(*SortSort)
+	if c := t.Decl.CompareTo(tco.Decl); c != 0 {
+		return c
+	}
+	if c := t.OperatorDecls.CompareTo(tco.OperatorDecls); c != 0 {
+		return c
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+func (t *SortSort) CompareToLPO(o any) int {
+	ao := o.(Sort)
+	if ao == Sort(t) {
+		return 0
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	tco := ao.(*SortSort)
+	if c := t.Decl.CompareToLPO(tco.Decl); c != 0 {
+		return c
+	}
+	if c := t.OperatorDecls.CompareToLPO(tco.OperatorDecls); c != 0 {
+		return c
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+// ToATerm is the ATerm of the term: an application of Sort.
+func (t *SortSort) ToATerm() aterm.ATerm {
+	f := aterm.GetInstance()
+	return f.MakeAppl(f.MakeAFun("Sort", 2, false), t.Decl.ToATerm(), t.OperatorDecls.ToATerm())
+}
+
+// fromTermSortSort is Java Gom's Sort.fromTerm: an unquoted application of
+// Sort whose arguments are convertible (as in Java, the arity is not
+// checked: a missing argument is an index out of range).
+func fromTermSortSort(trm aterm.ATerm, conv aterm.ATermConverter) (Sort, bool) {
+	trm = conv.Convert(trm)
+	if appl, ok := trm.(*aterm.ATermAppl); ok && appl.GetName() == "Sort" && !appl.GetAFun().IsQuoted() {
+		return MakeSort(SortDeclFromTermConv(appl.GetArgument(0), conv), OperatorDeclListFromTermConv(appl.GetArgument(1), conv)), true
+	}
+	return nil, false
+}
+
 // SortList is the Go interface backing the Gom sort SortList.
 type SortList interface {
 	sharedobjects.Term
 	isSortList()
+	// Java Gom API (see the package's generated methods)
+	SymbolName() string
+	IsConsConcSort() bool
+	IsEmptyConcSort() bool
+	GetHeadConcSort() Sort
+	GetTailConcSort() SortList
+	Length() int
+	Reverse() SortList
+	CompareTo(o any) int
+	CompareToLPO(o any) int
+	ToATerm() aterm.ATerm
 }
 
-// ConcSortSortList is the term type for the alternative `ConcSort(...)` of sort SortList.
+// SortListFromTerm is Java Gom's SortList.fromTerm(trm).
+func SortListFromTerm(trm aterm.ATerm) SortList {
+	return SortListFromTermConv(trm, aterm.IdConverter{})
+}
+
+// SortListFromTermConv is Java Gom's SortList.fromTerm(trm, atConv): the term of
+// the first operator of the sort that converts the ATerm; it panics
+// (IllegalArgumentException) when there is none.
+func SortListFromTermConv(trm aterm.ATerm, conv aterm.ATermConverter) SortList {
+	converted := conv.Convert(trm)
+	var results []SortList
+	if r, ok := fromTermConcSortSortList(converted, conv); ok {
+		results = append(results, r)
+	}
+	if len(results) == 0 {
+		panic(&aterm.GomError{Msg: fmt.Sprintf("%v is not a SortList", trm), IllegalArgument: true})
+	}
+	return results[0]
+}
+
+// SortListFromString is Java Gom's SortList.fromString(s).
+func SortListFromString(s string) SortList { return SortListFromTerm(aterm.GetInstance().Parse(s)) }
+
+// SortListFromStream is Java Gom's SortList.fromStream(stream) (an IOException is
+// the error).
+func SortListFromStream(stream io.Reader) (SortList, error) {
+	at, err := aterm.GetInstance().ReadFromTextFile(stream)
+	if err != nil {
+		return nil, err
+	}
+	return SortListFromTerm(at), nil
+}
+
+// ConcSortSortList is the term type of the variadic operator `ConcSort(...)` of sort SortList
+// (Java's abstract class ConcSort): a maximally-shared cons cell (Java's
+// ConsConcSort: a head and a tail) or the empty list (Java's EmptyConcSort).
 type ConcSortSortList struct {
-	Slots []Sort
+	head  Sort
+	tail  SortList
+	empty bool
 	hash  uint32
+	// children caches the Visitable children (Java's children field)
+	children atomic.Pointer[[]any]
 }
 
 func (*ConcSortSortList) isSortList() {}
@@ -8261,51 +16981,51 @@ func (t *ConcSortSortList) Hash() uint32 { return t.hash }
 
 func (t *ConcSortSortList) Equivalent(other sharedobjects.Term) bool {
 	o, ok := other.(*ConcSortSortList)
-	if !ok {
-		return false
-	}
-	if len(t.Slots) != len(o.Slots) {
-		return false
-	}
-	for i := range t.Slots {
-		if t.Slots[i] != o.Slots[i] {
-			return false
-		}
-	}
-	return true
+	return ok && t.empty == o.empty && t.head == o.head && t.tail == o.tail
 }
 
 func (t *ConcSortSortList) Duplicate() sharedobjects.Term {
-	cp := append([]Sort(nil), t.Slots...)
-	return &ConcSortSortList{Slots: cp, hash: t.hash}
+	return &ConcSortSortList{head: t.head, tail: t.tail, empty: t.empty, hash: t.hash}
 }
 
-func (t *ConcSortSortList) String() string {
-	parts := make([]string, len(t.Slots))
-	for i, v := range t.Slots {
-		parts[i] = fmt.Sprintf("%v", v)
+// elements returns the cached Visitable children of the list: its
+// elements (Java's getChildren, i.e. toArray).
+// Java's getChildren is the typed toArray(new Sort[]{}): a last tail
+// that is not a list (of sort SortList) cannot be stored in it
+// (ArrayStoreException, a *aterm.GomError here).
+func (t *ConcSortSortList) elements() []any {
+	if c := t.children.Load(); c != nil {
+		return *c
 	}
-	return "ConcSort" + "(" + strings.Join(parts, ",") + ")"
+	var cur SortList = t
+	for {
+		c, ok := cur.(*ConcSortSortList)
+		if !ok || c.empty {
+			break
+		}
+		cur = c.tail
+	}
+	if c, ok := cur.(*ConcSortSortList); !ok || !c.empty {
+		panic(&aterm.GomError{Msg: fmt.Sprintf("ArrayStoreException: the tail %v of a ConcSort list is not a Sort", cur)})
+	}
+	c := t.ToArray()
+	t.children.Store(&c)
+	return c
 }
 
-func (t *ConcSortSortList) ChildCount() int { return len(t.Slots) }
+func (t *ConcSortSortList) ChildCount() int { return len(t.elements()) }
 
-func (t *ConcSortSortList) ChildAt(i int) any { return t.Slots[i] }
+func (t *ConcSortSortList) ChildAt(i int) any { return t.elements()[i] }
 
 func (t *ConcSortSortList) SetChildAt(i int, child any) any {
-	dup := append([]Sort(nil), t.Slots...)
-	dup[i] = child.(Sort)
-	return MakeConcSort(dup...)
+	dup := t.Children()
+	dup[i] = child
+	return t.SetChildren(dup)
 }
 
-func (t *ConcSortSortList) Children() []any {
-	out := make([]any, len(t.Slots))
-	for i, v := range t.Slots {
-		out[i] = v
-	}
-	return out
-}
+func (t *ConcSortSortList) Children() []any { return append([]any(nil), t.elements()...) }
 
+// SetChildren is Java's setChildren of a list: ConcSortFromArray(children).
 func (t *ConcSortSortList) SetChildren(children []any) any {
 	args := make([]Sort, len(children))
 	for i, c := range children {
@@ -8314,15 +17034,77 @@ func (t *ConcSortSortList) SetChildren(children []any) any {
 	return MakeConcSort(args...)
 }
 
-// MakeConcSort builds the canonical (shared) ConcSort term.
-func MakeConcSort(args ...Sort) SortList {
-	hashes := make([]uint32, 0, len(args))
-	for _, a := range args {
-		hashes = append(hashes, a.Hash())
+func (t *ConcSortSortList) String() string {
+	var b strings.Builder
+	b.WriteString("ConcSort(")
+	var cur SortList = t
+	for {
+		c, ok := cur.(*ConcSortSortList)
+		if !ok {
+			b.WriteString("," + fmt.Sprint(cur))
+			break
+		}
+		if c.empty {
+			break
+		}
+		if c != t {
+			b.WriteString(",")
+		}
+		b.WriteString(fmt.Sprint(c.head))
+		cur = c.tail
 	}
-	proto := &ConcSortSortList{Slots: args, hash: sharedobjects.MixSymbol(sharedobjects.StringHash("ConcSort"), hashes)}
+	b.WriteString(")")
+	return b.String()
+}
+
+// RealMakeConsConcSort is Java Gom's ConsConcSort.realMake: the shared cell of head
+// and tail, without hook.
+func RealMakeConsConcSort(head Sort, tail SortList) SortList {
+	proto := &ConcSortSortList{head: head, tail: tail, hash: sharedobjects.MixSymbol(sharedobjects.StringHash("ConsConcSort"), []uint32{head.Hash(), tail.Hash()})}
 	return factory.Build(proto).(*ConcSortSortList)
 }
+
+// realMakeEmptyConcSort is Java Gom's EmptyConcSort.realMake: the shared empty list,
+// without hook.
+func realMakeEmptyConcSort() SortList {
+	proto := &ConcSortSortList{empty: true, hash: sharedobjects.MixSymbol(sharedobjects.StringHash("EmptyConcSort"), nil)}
+	return factory.Build(proto).(*ConcSortSortList)
+}
+
+// RawConcSort builds the ConcSort list holding exactly args, without construction
+// hook.
+func RawConcSort(args ...Sort) SortList {
+	l := realMakeEmptyConcSort()
+	for i := len(args) - 1; i >= 0; i-- {
+		l = RealMakeConsConcSort(args[i], l)
+	}
+	return l
+}
+
+// EmptyConcSort is Java Gom's EmptyConcSort.make(): the empty ConcSort list, after the
+// construction hooks.
+func EmptyConcSort() SortList {
+	return realMakeEmptyConcSort()
+}
+
+// ConsConcSort is Java Gom's ConsConcSort.make(head, tail): head inserted in front of
+// tail, after the construction hooks (theory "" first).
+func ConsConcSort(head Sort, tail SortList) SortList {
+	return RealMakeConsConcSort(head, tail)
+}
+
+// MakeConcSort builds the list of args as Tom's `ConcSort(args…)` does: from EmptyConcSort,
+// by ConsConcSort, through the construction hooks (Java's ConcSort.fromArray).
+func MakeConcSort(args ...Sort) SortList {
+	var l SortList = EmptyConcSort()
+	for i := len(args) - 1; i >= 0; i-- {
+		l = ConsConcSort(args[i], l)
+	}
+	return l
+}
+
+// ConcSortFromArray is Java Gom's ConcSort.fromArray(array).
+func ConcSortFromArray(array []Sort) SortList { return MakeConcSort(array...) }
 
 // IsConcSort is the `Is_ConcSort` predicate strategy: succeeds (returns subject
 // unchanged) when subject has the `ConcSort` shape, otherwise fails with
@@ -8417,10 +17199,287 @@ func (s *VisitConcSort) VisitWith(env *sl.Environment, intro sl.Introspector) (a
 
 var _ sl.Strategy = (*VisitConcSort)(nil)
 
+// SymbolName is the symbol of the Java term: ConsConcSort or EmptyConcSort.
+func (t *ConcSortSortList) SymbolName() string {
+	if t.empty {
+		return "EmptyConcSort"
+	}
+	return "ConsConcSort"
+}
+
+func (t *ConcSortSortList) IsConsConcSort() bool  { return !t.empty }
+func (t *ConcSortSortList) IsEmptyConcSort() bool { return t.empty }
+
+func (t *ConcSortSortList) GetHeadConcSort() Sort {
+	if t.empty {
+		panic(&aterm.GomError{Msg: "This SortList has no HeadConcSort"})
+	}
+	return t.head
+}
+func (t *ConcSortSortList) GetTailConcSort() SortList {
+	if t.empty {
+		panic(&aterm.GomError{Msg: "This SortList has no TailConcSort"})
+	}
+	return t.tail
+}
+
+// Length is Java's length(): the number of elements of the list (a
+// tail that is not a ConcSort list counts as one element).
+func (t *ConcSortSortList) Length() int {
+	res := 0
+	var tl SortList = t
+	for {
+		c, ok := tl.(*ConcSortSortList)
+		if !ok || c.empty {
+			return res
+		}
+		res++
+		tl = c.tail
+		if _, ok := tl.(*ConcSortSortList); !ok {
+			res++
+		}
+	}
+}
+
+// ToArray returns the elements of the list (Java's Object[] toArray()),
+// ending with its tail when that is not a ConcSort list.
+func (t *ConcSortSortList) ToArray() []any {
+	out := make([]any, 0, t.Length())
+	var cur SortList = t
+	for {
+		c, ok := cur.(*ConcSortSortList)
+		if !ok || c.empty {
+			break
+		}
+		out = append(out, c.head)
+		cur = c.tail
+	}
+	if c, ok := cur.(*ConcSortSortList); !ok || !c.empty {
+		out = append(out, cur)
+	}
+	return out
+}
+
+// Reverse is Java's reverse(): the reversed list, built by ConsConcSort
+// (through the hooks).
+func (t *ConcSortSortList) Reverse() SortList {
+	if t.empty {
+		return t
+	}
+	var cur SortList = t
+	var rev SortList = EmptyConcSort()
+	for {
+		c, ok := cur.(*ConcSortSortList)
+		if !ok || c.empty {
+			break
+		}
+		rev = ConsConcSort(c.head, rev)
+		cur = c.tail
+	}
+	return rev
+}
+
+// Append is Java's append(element): the list with element added at its
+// end, built by ConsConcSort (through the hooks).
+func (t *ConcSortSortList) Append(element Sort) SortList {
+	var heads []Sort
+	var cur SortList = t
+	for {
+		c, ok := cur.(*ConcSortSortList)
+		if !ok || c.empty {
+			break
+		}
+		heads = append(heads, c.head)
+		cur = c.tail
+	}
+	var res SortList
+	if c, ok := cur.(*ConcSortSortList); ok && c.empty {
+		res = ConsConcSort(element, cur)
+	} else {
+		res = ConsConcSort(element, cur)
+	}
+	for i := len(heads) - 1; i >= 0; i-- {
+		res = ConsConcSort(heads[i], res)
+	}
+	return res
+}
+
+func (t *ConcSortSortList) CompareTo(o any) int {
+	for {
+		ao := o.(SortList)
+		if ao == SortList(t) {
+			return 0
+		}
+		if t.Hash() != ao.Hash() {
+			if t.Hash() < ao.Hash() {
+				return -1
+			}
+			return 1
+		}
+		if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+			return c
+		}
+		tco := ao.(*ConcSortSortList)
+		if t.empty {
+			panic(&aterm.GomError{Msg: "Unable to compare"})
+		}
+		if c := t.head.CompareTo(tco.head); c != 0 {
+			return c
+		}
+		next, ok := t.tail.(*ConcSortSortList)
+		if !ok {
+			if c := t.tail.CompareTo(tco.tail); c != 0 {
+				return c
+			}
+			panic(&aterm.GomError{Msg: "Unable to compare"})
+		}
+		t, o = next, tco.tail
+	}
+}
+
+func (t *ConcSortSortList) CompareToLPO(o any) int {
+	for {
+		ao := o.(SortList)
+		if ao == SortList(t) {
+			return 0
+		}
+		if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+			return c
+		}
+		tco := ao.(*ConcSortSortList)
+		if t.empty {
+			panic(&aterm.GomError{Msg: "Unable to compare"})
+		}
+		if c := t.head.CompareToLPO(tco.head); c != 0 {
+			return c
+		}
+		next, ok := t.tail.(*ConcSortSortList)
+		if !ok {
+			if c := t.tail.CompareToLPO(tco.tail); c != 0 {
+				return c
+			}
+			panic(&aterm.GomError{Msg: "Unable to compare"})
+		}
+		t, o = next, tco.tail
+	}
+}
+
+// ToATerm is Java's toATerm: the list of the elements, ending with the
+// ATerm list of the tail (a tail that is not a list is Java's
+// ClassCastException).
+func (t *ConcSortSortList) ToATerm() aterm.ATerm {
+	f := aterm.GetInstance()
+	var heads []Sort
+	var cur SortList = t
+	for {
+		c, ok := cur.(*ConcSortSortList)
+		if !ok || c.empty {
+			break
+		}
+		heads = append(heads, c.head)
+		cur = c.tail
+	}
+	l := f.MakeListEmpty()
+	if c, ok := cur.(*ConcSortSortList); !ok || !c.empty {
+		tl, isList := cur.ToATerm().(*aterm.ATermList)
+		if !isList {
+			panic(&aterm.GomError{Msg: fmt.Sprintf("ClassCastException: the ATerm of %v is not an ATermList", cur)})
+		}
+		l = tl
+	}
+	for i := len(heads) - 1; i >= 0; i-- {
+		l = f.MakeList(heads[i].ToATerm(), l)
+	}
+	return l
+}
+
+// fromTermConcSortSortList is Java Gom's ConcSort.fromTerm: an application of ConcSort, or a
+// list (of ToATerm), of convertible elements.
+func fromTermConcSortSortList(trm aterm.ATerm, conv aterm.ATermConverter) (res SortList, ok bool) {
+	trm = conv.Convert(trm)
+	if appl, isAppl := trm.(*aterm.ATermAppl); isAppl && appl.GetName() == "ConcSort" {
+		elems := make([]Sort, appl.GetArity())
+		for i, a := range appl.GetArguments() {
+			elems[i] = SortFromTermConv(a, conv)
+		}
+		return MakeConcSort(elems...), true
+	}
+	if list, isList := trm.(*aterm.ATermList); isList {
+		// an element that cannot be converted: not a ConcSort (Java returns null)
+		defer func() {
+			if recover() != nil {
+				res, ok = nil, false
+			}
+		}()
+		var elems []Sort
+		for !list.IsEmpty() {
+			elems = append(elems, SortFromTermConv(list.GetFirst(), conv))
+			list = list.GetNext()
+		}
+		return MakeConcSort(elems...), true
+	}
+	return nil, false
+}
+
 // Decl is the Go interface backing the Gom sort Decl.
 type Decl interface {
 	sharedobjects.Term
 	isDecl()
+	// Java Gom API (see the package's generated methods)
+	SymbolName() string
+	IsCutModule() bool
+	IsCutSort() bool
+	IsCutOperator() bool
+	IsCutFutureOperator() bool
+	GetMDecl() ModuleDecl
+	GetSort() SortDecl
+	GetODecl() OperatorDecl
+	GetConsOrNil() Future
+	Length() int
+	Reverse() Decl
+	CompareTo(o any) int
+	CompareToLPO(o any) int
+	ToATerm() aterm.ATerm
+}
+
+// DeclFromTerm is Java Gom's Decl.fromTerm(trm).
+func DeclFromTerm(trm aterm.ATerm) Decl { return DeclFromTermConv(trm, aterm.IdConverter{}) }
+
+// DeclFromTermConv is Java Gom's Decl.fromTerm(trm, atConv): the term of
+// the first operator of the sort that converts the ATerm; it panics
+// (IllegalArgumentException) when there is none.
+func DeclFromTermConv(trm aterm.ATerm, conv aterm.ATermConverter) Decl {
+	converted := conv.Convert(trm)
+	var results []Decl
+	if r, ok := fromTermCutModuleDecl(converted, conv); ok {
+		results = append(results, r)
+	}
+	if r, ok := fromTermCutSortDecl(converted, conv); ok {
+		results = append(results, r)
+	}
+	if r, ok := fromTermCutOperatorDecl(converted, conv); ok {
+		results = append(results, r)
+	}
+	if r, ok := fromTermCutFutureOperatorDecl(converted, conv); ok {
+		results = append(results, r)
+	}
+	if len(results) == 0 {
+		panic(&aterm.GomError{Msg: fmt.Sprintf("%v is not a Decl", trm), IllegalArgument: true})
+	}
+	return results[0]
+}
+
+// DeclFromString is Java Gom's Decl.fromString(s).
+func DeclFromString(s string) Decl { return DeclFromTerm(aterm.GetInstance().Parse(s)) }
+
+// DeclFromStream is Java Gom's Decl.fromStream(stream) (an IOException is
+// the error).
+func DeclFromStream(stream io.Reader) (Decl, error) {
+	at, err := aterm.GetInstance().ReadFromTextFile(stream)
+	if err != nil {
+		return nil, err
+	}
+	return DeclFromTerm(at), nil
 }
 
 // CutModuleDecl is the term type for the alternative `CutModule(...)` of sort Decl.
@@ -8450,7 +17509,7 @@ func (t *CutModuleDecl) Duplicate() sharedobjects.Term {
 }
 
 func (t *CutModuleDecl) String() string {
-	return fmt.Sprintf("CutModule(%v)", t.MDecl)
+	return "CutModule(" + fmt.Sprint(t.MDecl) + ")"
 }
 
 func (t *CutModuleDecl) ChildCount() int { return 1 }
@@ -8579,6 +17638,85 @@ func (s *VisitCutModule) VisitWith(env *sl.Environment, intro sl.Introspector) (
 
 var _ sl.Strategy = (*VisitCutModule)(nil)
 
+func (t *CutModuleDecl) SymbolName() string { return "CutModule" }
+
+func (t *CutModuleDecl) IsCutModule() bool         { return true }
+func (t *CutModuleDecl) IsCutSort() bool           { return false }
+func (t *CutModuleDecl) IsCutOperator() bool       { return false }
+func (t *CutModuleDecl) IsCutFutureOperator() bool { return false }
+
+func (t *CutModuleDecl) GetMDecl() ModuleDecl { return t.MDecl }
+func (t *CutModuleDecl) GetSort() SortDecl {
+	panic(&aterm.GomError{Msg: "This Decl has no Sort"})
+}
+func (t *CutModuleDecl) GetODecl() OperatorDecl {
+	panic(&aterm.GomError{Msg: "This Decl has no ODecl"})
+}
+func (t *CutModuleDecl) GetConsOrNil() Future {
+	panic(&aterm.GomError{Msg: "This Decl has no ConsOrNil"})
+}
+
+func (t *CutModuleDecl) Length() int {
+	panic(&aterm.GomError{Msg: "This Decl.CutModule is not a list", IllegalArgument: true})
+}
+
+func (t *CutModuleDecl) Reverse() Decl {
+	panic(&aterm.GomError{Msg: "This Decl.CutModule is not a list", IllegalArgument: true})
+}
+
+func (t *CutModuleDecl) CompareTo(o any) int {
+	ao := o.(Decl)
+	if ao == Decl(t) {
+		return 0
+	}
+	if t.Hash() != ao.Hash() {
+		if t.Hash() < ao.Hash() {
+			return -1
+		}
+		return 1
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	tco := ao.(*CutModuleDecl)
+	if c := t.MDecl.CompareTo(tco.MDecl); c != 0 {
+		return c
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+func (t *CutModuleDecl) CompareToLPO(o any) int {
+	ao := o.(Decl)
+	if ao == Decl(t) {
+		return 0
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	tco := ao.(*CutModuleDecl)
+	if c := t.MDecl.CompareToLPO(tco.MDecl); c != 0 {
+		return c
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+// ToATerm is the ATerm of the term: an application of CutModule.
+func (t *CutModuleDecl) ToATerm() aterm.ATerm {
+	f := aterm.GetInstance()
+	return f.MakeAppl(f.MakeAFun("CutModule", 1, false), t.MDecl.ToATerm())
+}
+
+// fromTermCutModuleDecl is Java Gom's CutModule.fromTerm: an unquoted application of
+// CutModule whose arguments are convertible (as in Java, the arity is not
+// checked: a missing argument is an index out of range).
+func fromTermCutModuleDecl(trm aterm.ATerm, conv aterm.ATermConverter) (Decl, bool) {
+	trm = conv.Convert(trm)
+	if appl, ok := trm.(*aterm.ATermAppl); ok && appl.GetName() == "CutModule" && !appl.GetAFun().IsQuoted() {
+		return MakeCutModule(ModuleDeclFromTermConv(appl.GetArgument(0), conv)), true
+	}
+	return nil, false
+}
+
 // CutSortDecl is the term type for the alternative `CutSort(...)` of sort Decl.
 type CutSortDecl struct {
 	Sort SortDecl
@@ -8606,7 +17744,7 @@ func (t *CutSortDecl) Duplicate() sharedobjects.Term {
 }
 
 func (t *CutSortDecl) String() string {
-	return fmt.Sprintf("CutSort(%v)", t.Sort)
+	return "CutSort(" + fmt.Sprint(t.Sort) + ")"
 }
 
 func (t *CutSortDecl) ChildCount() int { return 1 }
@@ -8735,6 +17873,85 @@ func (s *VisitCutSort) VisitWith(env *sl.Environment, intro sl.Introspector) (an
 
 var _ sl.Strategy = (*VisitCutSort)(nil)
 
+func (t *CutSortDecl) SymbolName() string { return "CutSort" }
+
+func (t *CutSortDecl) IsCutModule() bool         { return false }
+func (t *CutSortDecl) IsCutSort() bool           { return true }
+func (t *CutSortDecl) IsCutOperator() bool       { return false }
+func (t *CutSortDecl) IsCutFutureOperator() bool { return false }
+
+func (t *CutSortDecl) GetMDecl() ModuleDecl {
+	panic(&aterm.GomError{Msg: "This Decl has no MDecl"})
+}
+func (t *CutSortDecl) GetSort() SortDecl { return t.Sort }
+func (t *CutSortDecl) GetODecl() OperatorDecl {
+	panic(&aterm.GomError{Msg: "This Decl has no ODecl"})
+}
+func (t *CutSortDecl) GetConsOrNil() Future {
+	panic(&aterm.GomError{Msg: "This Decl has no ConsOrNil"})
+}
+
+func (t *CutSortDecl) Length() int {
+	panic(&aterm.GomError{Msg: "This Decl.CutSort is not a list", IllegalArgument: true})
+}
+
+func (t *CutSortDecl) Reverse() Decl {
+	panic(&aterm.GomError{Msg: "This Decl.CutSort is not a list", IllegalArgument: true})
+}
+
+func (t *CutSortDecl) CompareTo(o any) int {
+	ao := o.(Decl)
+	if ao == Decl(t) {
+		return 0
+	}
+	if t.Hash() != ao.Hash() {
+		if t.Hash() < ao.Hash() {
+			return -1
+		}
+		return 1
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	tco := ao.(*CutSortDecl)
+	if c := t.Sort.CompareTo(tco.Sort); c != 0 {
+		return c
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+func (t *CutSortDecl) CompareToLPO(o any) int {
+	ao := o.(Decl)
+	if ao == Decl(t) {
+		return 0
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	tco := ao.(*CutSortDecl)
+	if c := t.Sort.CompareToLPO(tco.Sort); c != 0 {
+		return c
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+// ToATerm is the ATerm of the term: an application of CutSort.
+func (t *CutSortDecl) ToATerm() aterm.ATerm {
+	f := aterm.GetInstance()
+	return f.MakeAppl(f.MakeAFun("CutSort", 1, false), t.Sort.ToATerm())
+}
+
+// fromTermCutSortDecl is Java Gom's CutSort.fromTerm: an unquoted application of
+// CutSort whose arguments are convertible (as in Java, the arity is not
+// checked: a missing argument is an index out of range).
+func fromTermCutSortDecl(trm aterm.ATerm, conv aterm.ATermConverter) (Decl, bool) {
+	trm = conv.Convert(trm)
+	if appl, ok := trm.(*aterm.ATermAppl); ok && appl.GetName() == "CutSort" && !appl.GetAFun().IsQuoted() {
+		return MakeCutSort(SortDeclFromTermConv(appl.GetArgument(0), conv)), true
+	}
+	return nil, false
+}
+
 // CutOperatorDecl is the term type for the alternative `CutOperator(...)` of sort Decl.
 type CutOperatorDecl struct {
 	ODecl OperatorDecl
@@ -8762,7 +17979,7 @@ func (t *CutOperatorDecl) Duplicate() sharedobjects.Term {
 }
 
 func (t *CutOperatorDecl) String() string {
-	return fmt.Sprintf("CutOperator(%v)", t.ODecl)
+	return "CutOperator(" + fmt.Sprint(t.ODecl) + ")"
 }
 
 func (t *CutOperatorDecl) ChildCount() int { return 1 }
@@ -8891,6 +18108,85 @@ func (s *VisitCutOperator) VisitWith(env *sl.Environment, intro sl.Introspector)
 
 var _ sl.Strategy = (*VisitCutOperator)(nil)
 
+func (t *CutOperatorDecl) SymbolName() string { return "CutOperator" }
+
+func (t *CutOperatorDecl) IsCutModule() bool         { return false }
+func (t *CutOperatorDecl) IsCutSort() bool           { return false }
+func (t *CutOperatorDecl) IsCutOperator() bool       { return true }
+func (t *CutOperatorDecl) IsCutFutureOperator() bool { return false }
+
+func (t *CutOperatorDecl) GetMDecl() ModuleDecl {
+	panic(&aterm.GomError{Msg: "This Decl has no MDecl"})
+}
+func (t *CutOperatorDecl) GetSort() SortDecl {
+	panic(&aterm.GomError{Msg: "This Decl has no Sort"})
+}
+func (t *CutOperatorDecl) GetODecl() OperatorDecl { return t.ODecl }
+func (t *CutOperatorDecl) GetConsOrNil() Future {
+	panic(&aterm.GomError{Msg: "This Decl has no ConsOrNil"})
+}
+
+func (t *CutOperatorDecl) Length() int {
+	panic(&aterm.GomError{Msg: "This Decl.CutOperator is not a list", IllegalArgument: true})
+}
+
+func (t *CutOperatorDecl) Reverse() Decl {
+	panic(&aterm.GomError{Msg: "This Decl.CutOperator is not a list", IllegalArgument: true})
+}
+
+func (t *CutOperatorDecl) CompareTo(o any) int {
+	ao := o.(Decl)
+	if ao == Decl(t) {
+		return 0
+	}
+	if t.Hash() != ao.Hash() {
+		if t.Hash() < ao.Hash() {
+			return -1
+		}
+		return 1
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	tco := ao.(*CutOperatorDecl)
+	if c := t.ODecl.CompareTo(tco.ODecl); c != 0 {
+		return c
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+func (t *CutOperatorDecl) CompareToLPO(o any) int {
+	ao := o.(Decl)
+	if ao == Decl(t) {
+		return 0
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	tco := ao.(*CutOperatorDecl)
+	if c := t.ODecl.CompareToLPO(tco.ODecl); c != 0 {
+		return c
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+// ToATerm is the ATerm of the term: an application of CutOperator.
+func (t *CutOperatorDecl) ToATerm() aterm.ATerm {
+	f := aterm.GetInstance()
+	return f.MakeAppl(f.MakeAFun("CutOperator", 1, false), t.ODecl.ToATerm())
+}
+
+// fromTermCutOperatorDecl is Java Gom's CutOperator.fromTerm: an unquoted application of
+// CutOperator whose arguments are convertible (as in Java, the arity is not
+// checked: a missing argument is an index out of range).
+func fromTermCutOperatorDecl(trm aterm.ATerm, conv aterm.ATermConverter) (Decl, bool) {
+	trm = conv.Convert(trm)
+	if appl, ok := trm.(*aterm.ATermAppl); ok && appl.GetName() == "CutOperator" && !appl.GetAFun().IsQuoted() {
+		return MakeCutOperator(OperatorDeclFromTermConv(appl.GetArgument(0), conv)), true
+	}
+	return nil, false
+}
+
 // CutFutureOperatorDecl is the term type for the alternative `CutFutureOperator(...)` of sort Decl.
 type CutFutureOperatorDecl struct {
 	ODecl     OperatorDecl
@@ -8922,7 +18218,7 @@ func (t *CutFutureOperatorDecl) Duplicate() sharedobjects.Term {
 }
 
 func (t *CutFutureOperatorDecl) String() string {
-	return fmt.Sprintf("CutFutureOperator(%v,%v)", t.ODecl, t.ConsOrNil)
+	return "CutFutureOperator(" + fmt.Sprint(t.ODecl) + "," + fmt.Sprint(t.ConsOrNil) + ")"
 }
 
 func (t *CutFutureOperatorDecl) ChildCount() int { return 2 }
@@ -9055,10 +18351,136 @@ func (s *VisitCutFutureOperator) VisitWith(env *sl.Environment, intro sl.Introsp
 
 var _ sl.Strategy = (*VisitCutFutureOperator)(nil)
 
+func (t *CutFutureOperatorDecl) SymbolName() string { return "CutFutureOperator" }
+
+func (t *CutFutureOperatorDecl) IsCutModule() bool         { return false }
+func (t *CutFutureOperatorDecl) IsCutSort() bool           { return false }
+func (t *CutFutureOperatorDecl) IsCutOperator() bool       { return false }
+func (t *CutFutureOperatorDecl) IsCutFutureOperator() bool { return true }
+
+func (t *CutFutureOperatorDecl) GetMDecl() ModuleDecl {
+	panic(&aterm.GomError{Msg: "This Decl has no MDecl"})
+}
+func (t *CutFutureOperatorDecl) GetSort() SortDecl {
+	panic(&aterm.GomError{Msg: "This Decl has no Sort"})
+}
+func (t *CutFutureOperatorDecl) GetODecl() OperatorDecl { return t.ODecl }
+func (t *CutFutureOperatorDecl) GetConsOrNil() Future   { return t.ConsOrNil }
+
+func (t *CutFutureOperatorDecl) Length() int {
+	panic(&aterm.GomError{Msg: "This Decl.CutFutureOperator is not a list", IllegalArgument: true})
+}
+
+func (t *CutFutureOperatorDecl) Reverse() Decl {
+	panic(&aterm.GomError{Msg: "This Decl.CutFutureOperator is not a list", IllegalArgument: true})
+}
+
+func (t *CutFutureOperatorDecl) CompareTo(o any) int {
+	ao := o.(Decl)
+	if ao == Decl(t) {
+		return 0
+	}
+	if t.Hash() != ao.Hash() {
+		if t.Hash() < ao.Hash() {
+			return -1
+		}
+		return 1
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	tco := ao.(*CutFutureOperatorDecl)
+	if c := t.ODecl.CompareTo(tco.ODecl); c != 0 {
+		return c
+	}
+	if c := t.ConsOrNil.CompareTo(tco.ConsOrNil); c != 0 {
+		return c
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+func (t *CutFutureOperatorDecl) CompareToLPO(o any) int {
+	ao := o.(Decl)
+	if ao == Decl(t) {
+		return 0
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	tco := ao.(*CutFutureOperatorDecl)
+	if c := t.ODecl.CompareToLPO(tco.ODecl); c != 0 {
+		return c
+	}
+	if c := t.ConsOrNil.CompareToLPO(tco.ConsOrNil); c != 0 {
+		return c
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+// ToATerm is the ATerm of the term: an application of CutFutureOperator.
+func (t *CutFutureOperatorDecl) ToATerm() aterm.ATerm {
+	f := aterm.GetInstance()
+	return f.MakeAppl(f.MakeAFun("CutFutureOperator", 2, false), t.ODecl.ToATerm(), t.ConsOrNil.ToATerm())
+}
+
+// fromTermCutFutureOperatorDecl is Java Gom's CutFutureOperator.fromTerm: an unquoted application of
+// CutFutureOperator whose arguments are convertible (as in Java, the arity is not
+// checked: a missing argument is an index out of range).
+func fromTermCutFutureOperatorDecl(trm aterm.ATerm, conv aterm.ATermConverter) (Decl, bool) {
+	trm = conv.Convert(trm)
+	if appl, ok := trm.(*aterm.ATermAppl); ok && appl.GetName() == "CutFutureOperator" && !appl.GetAFun().IsQuoted() {
+		return MakeCutFutureOperator(OperatorDeclFromTermConv(appl.GetArgument(0), conv), FutureFromTermConv(appl.GetArgument(1), conv)), true
+	}
+	return nil, false
+}
+
 // Future is the Go interface backing the Gom sort Future.
 type Future interface {
 	sharedobjects.Term
 	isFuture()
+	// Java Gom API (see the package's generated methods)
+	SymbolName() string
+	IsFutureNil() bool
+	IsFutureCons() bool
+	Length() int
+	Reverse() Future
+	CompareTo(o any) int
+	CompareToLPO(o any) int
+	ToATerm() aterm.ATerm
+}
+
+// FutureFromTerm is Java Gom's Future.fromTerm(trm).
+func FutureFromTerm(trm aterm.ATerm) Future { return FutureFromTermConv(trm, aterm.IdConverter{}) }
+
+// FutureFromTermConv is Java Gom's Future.fromTerm(trm, atConv): the term of
+// the first operator of the sort that converts the ATerm; it panics
+// (IllegalArgumentException) when there is none.
+func FutureFromTermConv(trm aterm.ATerm, conv aterm.ATermConverter) Future {
+	converted := conv.Convert(trm)
+	var results []Future
+	if r, ok := fromTermFutureNilFuture(converted, conv); ok {
+		results = append(results, r)
+	}
+	if r, ok := fromTermFutureConsFuture(converted, conv); ok {
+		results = append(results, r)
+	}
+	if len(results) == 0 {
+		panic(&aterm.GomError{Msg: fmt.Sprintf("%v is not a Future", trm), IllegalArgument: true})
+	}
+	return results[0]
+}
+
+// FutureFromString is Java Gom's Future.fromString(s).
+func FutureFromString(s string) Future { return FutureFromTerm(aterm.GetInstance().Parse(s)) }
+
+// FutureFromStream is Java Gom's Future.fromStream(stream) (an IOException is
+// the error).
+func FutureFromStream(stream io.Reader) (Future, error) {
+	at, err := aterm.GetInstance().ReadFromTextFile(stream)
+	if err != nil {
+		return nil, err
+	}
+	return FutureFromTerm(at), nil
 }
 
 // FutureNilFuture is the term type for the alternative `FutureNil(...)` of sort Future.
@@ -9081,7 +18503,7 @@ func (t *FutureNilFuture) Duplicate() sharedobjects.Term {
 }
 
 func (t *FutureNilFuture) String() string {
-	return "FutureNil" + "()"
+	return "FutureNil()"
 }
 
 func (t *FutureNilFuture) ChildCount() int { return 0 }
@@ -9176,6 +18598,64 @@ func (s *VisitFutureNil) VisitWith(env *sl.Environment, intro sl.Introspector) (
 
 var _ sl.Strategy = (*VisitFutureNil)(nil)
 
+func (t *FutureNilFuture) SymbolName() string { return "FutureNil" }
+
+func (t *FutureNilFuture) IsFutureNil() bool  { return true }
+func (t *FutureNilFuture) IsFutureCons() bool { return false }
+
+func (t *FutureNilFuture) Length() int {
+	panic(&aterm.GomError{Msg: "This Future.FutureNil is not a list", IllegalArgument: true})
+}
+
+func (t *FutureNilFuture) Reverse() Future {
+	panic(&aterm.GomError{Msg: "This Future.FutureNil is not a list", IllegalArgument: true})
+}
+
+func (t *FutureNilFuture) CompareTo(o any) int {
+	ao := o.(Future)
+	if ao == Future(t) {
+		return 0
+	}
+	if t.Hash() != ao.Hash() {
+		if t.Hash() < ao.Hash() {
+			return -1
+		}
+		return 1
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+func (t *FutureNilFuture) CompareToLPO(o any) int {
+	ao := o.(Future)
+	if ao == Future(t) {
+		return 0
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+// ToATerm is the ATerm of the term: an application of FutureNil.
+func (t *FutureNilFuture) ToATerm() aterm.ATerm {
+	f := aterm.GetInstance()
+	return f.MakeAppl(f.MakeAFun("FutureNil", 0, false))
+}
+
+// fromTermFutureNilFuture is Java Gom's FutureNil.fromTerm: an unquoted application of
+// FutureNil whose arguments are convertible (as in Java, the arity is not
+// checked: a missing argument is an index out of range).
+func fromTermFutureNilFuture(trm aterm.ATerm, conv aterm.ATermConverter) (Future, bool) {
+	trm = conv.Convert(trm)
+	if appl, ok := trm.(*aterm.ATermAppl); ok && appl.GetName() == "FutureNil" && !appl.GetAFun().IsQuoted() {
+		return MakeFutureNil(), true
+	}
+	return nil, false
+}
+
 // FutureConsFuture is the term type for the alternative `FutureCons(...)` of sort Future.
 type FutureConsFuture struct {
 	hash uint32
@@ -9196,7 +18676,7 @@ func (t *FutureConsFuture) Duplicate() sharedobjects.Term {
 }
 
 func (t *FutureConsFuture) String() string {
-	return "FutureCons" + "()"
+	return "FutureCons()"
 }
 
 func (t *FutureConsFuture) ChildCount() int { return 0 }
@@ -9291,10 +18771,130 @@ func (s *VisitFutureCons) VisitWith(env *sl.Environment, intro sl.Introspector) 
 
 var _ sl.Strategy = (*VisitFutureCons)(nil)
 
+func (t *FutureConsFuture) SymbolName() string { return "FutureCons" }
+
+func (t *FutureConsFuture) IsFutureNil() bool  { return false }
+func (t *FutureConsFuture) IsFutureCons() bool { return true }
+
+func (t *FutureConsFuture) Length() int {
+	panic(&aterm.GomError{Msg: "This Future.FutureCons is not a list", IllegalArgument: true})
+}
+
+func (t *FutureConsFuture) Reverse() Future {
+	panic(&aterm.GomError{Msg: "This Future.FutureCons is not a list", IllegalArgument: true})
+}
+
+func (t *FutureConsFuture) CompareTo(o any) int {
+	ao := o.(Future)
+	if ao == Future(t) {
+		return 0
+	}
+	if t.Hash() != ao.Hash() {
+		if t.Hash() < ao.Hash() {
+			return -1
+		}
+		return 1
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+func (t *FutureConsFuture) CompareToLPO(o any) int {
+	ao := o.(Future)
+	if ao == Future(t) {
+		return 0
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+// ToATerm is the ATerm of the term: an application of FutureCons.
+func (t *FutureConsFuture) ToATerm() aterm.ATerm {
+	f := aterm.GetInstance()
+	return f.MakeAppl(f.MakeAFun("FutureCons", 0, false))
+}
+
+// fromTermFutureConsFuture is Java Gom's FutureCons.fromTerm: an unquoted application of
+// FutureCons whose arguments are convertible (as in Java, the arity is not
+// checked: a missing argument is an index out of range).
+func fromTermFutureConsFuture(trm aterm.ATerm, conv aterm.ATermConverter) (Future, bool) {
+	trm = conv.Convert(trm)
+	if appl, ok := trm.(*aterm.ATermAppl); ok && appl.GetName() == "FutureCons" && !appl.GetAFun().IsQuoted() {
+		return MakeFutureCons(), true
+	}
+	return nil, false
+}
+
 // HookDecl is the Go interface backing the Gom sort HookDecl.
 type HookDecl interface {
 	sharedobjects.Term
 	isHookDecl()
+	// Java Gom API (see the package's generated methods)
+	SymbolName() string
+	IsMakeHookDecl() bool
+	IsBlockHookDecl() bool
+	IsInterfaceHookDecl() bool
+	IsImportHookDecl() bool
+	IsMappingHookDecl() bool
+	GetPointcut() Decl
+	GetSlotArgs() SlotList
+	GetCode() Code
+	GetHookType() HookKind
+	GetHasTomCode() bool
+	Length() int
+	Reverse() HookDecl
+	CompareTo(o any) int
+	CompareToLPO(o any) int
+	ToATerm() aterm.ATerm
+}
+
+// HookDeclFromTerm is Java Gom's HookDecl.fromTerm(trm).
+func HookDeclFromTerm(trm aterm.ATerm) HookDecl {
+	return HookDeclFromTermConv(trm, aterm.IdConverter{})
+}
+
+// HookDeclFromTermConv is Java Gom's HookDecl.fromTerm(trm, atConv): the term of
+// the first operator of the sort that converts the ATerm; it panics
+// (IllegalArgumentException) when there is none.
+func HookDeclFromTermConv(trm aterm.ATerm, conv aterm.ATermConverter) HookDecl {
+	converted := conv.Convert(trm)
+	var results []HookDecl
+	if r, ok := fromTermMakeHookDeclHookDecl(converted, conv); ok {
+		results = append(results, r)
+	}
+	if r, ok := fromTermBlockHookDeclHookDecl(converted, conv); ok {
+		results = append(results, r)
+	}
+	if r, ok := fromTermInterfaceHookDeclHookDecl(converted, conv); ok {
+		results = append(results, r)
+	}
+	if r, ok := fromTermImportHookDeclHookDecl(converted, conv); ok {
+		results = append(results, r)
+	}
+	if r, ok := fromTermMappingHookDeclHookDecl(converted, conv); ok {
+		results = append(results, r)
+	}
+	if len(results) == 0 {
+		panic(&aterm.GomError{Msg: fmt.Sprintf("%v is not a HookDecl", trm), IllegalArgument: true})
+	}
+	return results[0]
+}
+
+// HookDeclFromString is Java Gom's HookDecl.fromString(s).
+func HookDeclFromString(s string) HookDecl { return HookDeclFromTerm(aterm.GetInstance().Parse(s)) }
+
+// HookDeclFromStream is Java Gom's HookDecl.fromStream(stream) (an IOException is
+// the error).
+func HookDeclFromStream(stream io.Reader) (HookDecl, error) {
+	at, err := aterm.GetInstance().ReadFromTextFile(stream)
+	if err != nil {
+		return nil, err
+	}
+	return HookDeclFromTerm(at), nil
 }
 
 // MakeHookDeclHookDecl is the term type for the alternative `MakeHookDecl(...)` of sort HookDecl.
@@ -9340,7 +18940,12 @@ func (t *MakeHookDeclHookDecl) Duplicate() sharedobjects.Term {
 }
 
 func (t *MakeHookDeclHookDecl) String() string {
-	return fmt.Sprintf("MakeHookDecl(%v,%v,%v,%v,%v)", t.Pointcut, t.SlotArgs, t.Code, t.HookType, t.HasTomCode)
+	return "MakeHookDecl(" + fmt.Sprint(t.Pointcut) + "," + fmt.Sprint(t.SlotArgs) + "," + fmt.Sprint(t.Code) + "," + fmt.Sprint(t.HookType) + "," + func() string {
+		if t.HasTomCode {
+			return "1"
+		}
+		return "0"
+	}() + ")"
 }
 
 func (t *MakeHookDeclHookDecl) ChildCount() int { return 5 }
@@ -9485,6 +19090,111 @@ func (s *VisitMakeHookDecl) VisitWith(env *sl.Environment, intro sl.Introspector
 
 var _ sl.Strategy = (*VisitMakeHookDecl)(nil)
 
+func (t *MakeHookDeclHookDecl) SymbolName() string { return "MakeHookDecl" }
+
+func (t *MakeHookDeclHookDecl) IsMakeHookDecl() bool      { return true }
+func (t *MakeHookDeclHookDecl) IsBlockHookDecl() bool     { return false }
+func (t *MakeHookDeclHookDecl) IsInterfaceHookDecl() bool { return false }
+func (t *MakeHookDeclHookDecl) IsImportHookDecl() bool    { return false }
+func (t *MakeHookDeclHookDecl) IsMappingHookDecl() bool   { return false }
+
+func (t *MakeHookDeclHookDecl) GetPointcut() Decl     { return t.Pointcut }
+func (t *MakeHookDeclHookDecl) GetSlotArgs() SlotList { return t.SlotArgs }
+func (t *MakeHookDeclHookDecl) GetCode() Code         { return t.Code }
+func (t *MakeHookDeclHookDecl) GetHookType() HookKind { return t.HookType }
+func (t *MakeHookDeclHookDecl) GetHasTomCode() bool   { return t.HasTomCode }
+
+func (t *MakeHookDeclHookDecl) Length() int {
+	panic(&aterm.GomError{Msg: "This HookDecl.MakeHookDecl is not a list", IllegalArgument: true})
+}
+
+func (t *MakeHookDeclHookDecl) Reverse() HookDecl {
+	panic(&aterm.GomError{Msg: "This HookDecl.MakeHookDecl is not a list", IllegalArgument: true})
+}
+
+func (t *MakeHookDeclHookDecl) CompareTo(o any) int {
+	ao := o.(HookDecl)
+	if ao == HookDecl(t) {
+		return 0
+	}
+	if t.Hash() != ao.Hash() {
+		if t.Hash() < ao.Hash() {
+			return -1
+		}
+		return 1
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	tco := ao.(*MakeHookDeclHookDecl)
+	if c := t.Pointcut.CompareTo(tco.Pointcut); c != 0 {
+		return c
+	}
+	if c := t.SlotArgs.CompareTo(tco.SlotArgs); c != 0 {
+		return c
+	}
+	if c := t.Code.CompareTo(tco.Code); c != 0 {
+		return c
+	}
+	if c := t.HookType.CompareTo(tco.HookType); c != 0 {
+		return c
+	}
+	if t.HasTomCode != tco.HasTomCode {
+		if !t.HasTomCode && tco.HasTomCode {
+			return -1
+		}
+		return 1
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+func (t *MakeHookDeclHookDecl) CompareToLPO(o any) int {
+	ao := o.(HookDecl)
+	if ao == HookDecl(t) {
+		return 0
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	tco := ao.(*MakeHookDeclHookDecl)
+	if c := t.Pointcut.CompareToLPO(tco.Pointcut); c != 0 {
+		return c
+	}
+	if c := t.SlotArgs.CompareToLPO(tco.SlotArgs); c != 0 {
+		return c
+	}
+	if c := t.Code.CompareToLPO(tco.Code); c != 0 {
+		return c
+	}
+	if c := t.HookType.CompareToLPO(tco.HookType); c != 0 {
+		return c
+	}
+	if t.HasTomCode != tco.HasTomCode {
+		if !t.HasTomCode && tco.HasTomCode {
+			return -1
+		}
+		return 1
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+// ToATerm is the ATerm of the term: an application of MakeHookDecl.
+func (t *MakeHookDeclHookDecl) ToATerm() aterm.ATerm {
+	f := aterm.GetInstance()
+	return f.MakeAppl(f.MakeAFun("MakeHookDecl", 5, false), t.Pointcut.ToATerm(), t.SlotArgs.ToATerm(), t.Code.ToATerm(), t.HookType.ToATerm(), aterm.MakeGomBoolean(t.HasTomCode))
+}
+
+// fromTermMakeHookDeclHookDecl is Java Gom's MakeHookDecl.fromTerm: an unquoted application of
+// MakeHookDecl whose arguments are convertible (as in Java, the arity is not
+// checked: a missing argument is an index out of range).
+func fromTermMakeHookDeclHookDecl(trm aterm.ATerm, conv aterm.ATermConverter) (HookDecl, bool) {
+	trm = conv.Convert(trm)
+	if appl, ok := trm.(*aterm.ATermAppl); ok && appl.GetName() == "MakeHookDecl" && !appl.GetAFun().IsQuoted() {
+		return MakeMakeHookDecl(DeclFromTermConv(appl.GetArgument(0), conv), SlotListFromTermConv(appl.GetArgument(1), conv), CodeFromTermConv(appl.GetArgument(2), conv), HookKindFromTermConv(appl.GetArgument(3), conv), aterm.GomBoolean(appl.GetArgument(4), conv)), true
+	}
+	return nil, false
+}
+
 // BlockHookDeclHookDecl is the term type for the alternative `BlockHookDecl(...)` of sort HookDecl.
 type BlockHookDeclHookDecl struct {
 	Pointcut   Decl
@@ -9520,7 +19230,12 @@ func (t *BlockHookDeclHookDecl) Duplicate() sharedobjects.Term {
 }
 
 func (t *BlockHookDeclHookDecl) String() string {
-	return fmt.Sprintf("BlockHookDecl(%v,%v,%v)", t.Pointcut, t.Code, t.HasTomCode)
+	return "BlockHookDecl(" + fmt.Sprint(t.Pointcut) + "," + fmt.Sprint(t.Code) + "," + func() string {
+		if t.HasTomCode {
+			return "1"
+		}
+		return "0"
+	}() + ")"
 }
 
 func (t *BlockHookDeclHookDecl) ChildCount() int { return 3 }
@@ -9657,6 +19372,103 @@ func (s *VisitBlockHookDecl) VisitWith(env *sl.Environment, intro sl.Introspecto
 
 var _ sl.Strategy = (*VisitBlockHookDecl)(nil)
 
+func (t *BlockHookDeclHookDecl) SymbolName() string { return "BlockHookDecl" }
+
+func (t *BlockHookDeclHookDecl) IsMakeHookDecl() bool      { return false }
+func (t *BlockHookDeclHookDecl) IsBlockHookDecl() bool     { return true }
+func (t *BlockHookDeclHookDecl) IsInterfaceHookDecl() bool { return false }
+func (t *BlockHookDeclHookDecl) IsImportHookDecl() bool    { return false }
+func (t *BlockHookDeclHookDecl) IsMappingHookDecl() bool   { return false }
+
+func (t *BlockHookDeclHookDecl) GetPointcut() Decl { return t.Pointcut }
+func (t *BlockHookDeclHookDecl) GetSlotArgs() SlotList {
+	panic(&aterm.GomError{Msg: "This HookDecl has no SlotArgs"})
+}
+func (t *BlockHookDeclHookDecl) GetCode() Code { return t.Code }
+func (t *BlockHookDeclHookDecl) GetHookType() HookKind {
+	panic(&aterm.GomError{Msg: "This HookDecl has no HookType"})
+}
+func (t *BlockHookDeclHookDecl) GetHasTomCode() bool { return t.HasTomCode }
+
+func (t *BlockHookDeclHookDecl) Length() int {
+	panic(&aterm.GomError{Msg: "This HookDecl.BlockHookDecl is not a list", IllegalArgument: true})
+}
+
+func (t *BlockHookDeclHookDecl) Reverse() HookDecl {
+	panic(&aterm.GomError{Msg: "This HookDecl.BlockHookDecl is not a list", IllegalArgument: true})
+}
+
+func (t *BlockHookDeclHookDecl) CompareTo(o any) int {
+	ao := o.(HookDecl)
+	if ao == HookDecl(t) {
+		return 0
+	}
+	if t.Hash() != ao.Hash() {
+		if t.Hash() < ao.Hash() {
+			return -1
+		}
+		return 1
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	tco := ao.(*BlockHookDeclHookDecl)
+	if c := t.Pointcut.CompareTo(tco.Pointcut); c != 0 {
+		return c
+	}
+	if c := t.Code.CompareTo(tco.Code); c != 0 {
+		return c
+	}
+	if t.HasTomCode != tco.HasTomCode {
+		if !t.HasTomCode && tco.HasTomCode {
+			return -1
+		}
+		return 1
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+func (t *BlockHookDeclHookDecl) CompareToLPO(o any) int {
+	ao := o.(HookDecl)
+	if ao == HookDecl(t) {
+		return 0
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	tco := ao.(*BlockHookDeclHookDecl)
+	if c := t.Pointcut.CompareToLPO(tco.Pointcut); c != 0 {
+		return c
+	}
+	if c := t.Code.CompareToLPO(tco.Code); c != 0 {
+		return c
+	}
+	if t.HasTomCode != tco.HasTomCode {
+		if !t.HasTomCode && tco.HasTomCode {
+			return -1
+		}
+		return 1
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+// ToATerm is the ATerm of the term: an application of BlockHookDecl.
+func (t *BlockHookDeclHookDecl) ToATerm() aterm.ATerm {
+	f := aterm.GetInstance()
+	return f.MakeAppl(f.MakeAFun("BlockHookDecl", 3, false), t.Pointcut.ToATerm(), t.Code.ToATerm(), aterm.MakeGomBoolean(t.HasTomCode))
+}
+
+// fromTermBlockHookDeclHookDecl is Java Gom's BlockHookDecl.fromTerm: an unquoted application of
+// BlockHookDecl whose arguments are convertible (as in Java, the arity is not
+// checked: a missing argument is an index out of range).
+func fromTermBlockHookDeclHookDecl(trm aterm.ATerm, conv aterm.ATermConverter) (HookDecl, bool) {
+	trm = conv.Convert(trm)
+	if appl, ok := trm.(*aterm.ATermAppl); ok && appl.GetName() == "BlockHookDecl" && !appl.GetAFun().IsQuoted() {
+		return MakeBlockHookDecl(DeclFromTermConv(appl.GetArgument(0), conv), CodeFromTermConv(appl.GetArgument(1), conv), aterm.GomBoolean(appl.GetArgument(2), conv)), true
+	}
+	return nil, false
+}
+
 // InterfaceHookDeclHookDecl is the term type for the alternative `InterfaceHookDecl(...)` of sort HookDecl.
 type InterfaceHookDeclHookDecl struct {
 	Pointcut Decl
@@ -9688,7 +19500,7 @@ func (t *InterfaceHookDeclHookDecl) Duplicate() sharedobjects.Term {
 }
 
 func (t *InterfaceHookDeclHookDecl) String() string {
-	return fmt.Sprintf("InterfaceHookDecl(%v,%v)", t.Pointcut, t.Code)
+	return "InterfaceHookDecl(" + fmt.Sprint(t.Pointcut) + "," + fmt.Sprint(t.Code) + ")"
 }
 
 func (t *InterfaceHookDeclHookDecl) ChildCount() int { return 2 }
@@ -9821,6 +19633,93 @@ func (s *VisitInterfaceHookDecl) VisitWith(env *sl.Environment, intro sl.Introsp
 
 var _ sl.Strategy = (*VisitInterfaceHookDecl)(nil)
 
+func (t *InterfaceHookDeclHookDecl) SymbolName() string { return "InterfaceHookDecl" }
+
+func (t *InterfaceHookDeclHookDecl) IsMakeHookDecl() bool      { return false }
+func (t *InterfaceHookDeclHookDecl) IsBlockHookDecl() bool     { return false }
+func (t *InterfaceHookDeclHookDecl) IsInterfaceHookDecl() bool { return true }
+func (t *InterfaceHookDeclHookDecl) IsImportHookDecl() bool    { return false }
+func (t *InterfaceHookDeclHookDecl) IsMappingHookDecl() bool   { return false }
+
+func (t *InterfaceHookDeclHookDecl) GetPointcut() Decl { return t.Pointcut }
+func (t *InterfaceHookDeclHookDecl) GetSlotArgs() SlotList {
+	panic(&aterm.GomError{Msg: "This HookDecl has no SlotArgs"})
+}
+func (t *InterfaceHookDeclHookDecl) GetCode() Code { return t.Code }
+func (t *InterfaceHookDeclHookDecl) GetHookType() HookKind {
+	panic(&aterm.GomError{Msg: "This HookDecl has no HookType"})
+}
+func (t *InterfaceHookDeclHookDecl) GetHasTomCode() bool {
+	panic(&aterm.GomError{Msg: "This HookDecl has no HasTomCode"})
+}
+
+func (t *InterfaceHookDeclHookDecl) Length() int {
+	panic(&aterm.GomError{Msg: "This HookDecl.InterfaceHookDecl is not a list", IllegalArgument: true})
+}
+
+func (t *InterfaceHookDeclHookDecl) Reverse() HookDecl {
+	panic(&aterm.GomError{Msg: "This HookDecl.InterfaceHookDecl is not a list", IllegalArgument: true})
+}
+
+func (t *InterfaceHookDeclHookDecl) CompareTo(o any) int {
+	ao := o.(HookDecl)
+	if ao == HookDecl(t) {
+		return 0
+	}
+	if t.Hash() != ao.Hash() {
+		if t.Hash() < ao.Hash() {
+			return -1
+		}
+		return 1
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	tco := ao.(*InterfaceHookDeclHookDecl)
+	if c := t.Pointcut.CompareTo(tco.Pointcut); c != 0 {
+		return c
+	}
+	if c := t.Code.CompareTo(tco.Code); c != 0 {
+		return c
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+func (t *InterfaceHookDeclHookDecl) CompareToLPO(o any) int {
+	ao := o.(HookDecl)
+	if ao == HookDecl(t) {
+		return 0
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	tco := ao.(*InterfaceHookDeclHookDecl)
+	if c := t.Pointcut.CompareToLPO(tco.Pointcut); c != 0 {
+		return c
+	}
+	if c := t.Code.CompareToLPO(tco.Code); c != 0 {
+		return c
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+// ToATerm is the ATerm of the term: an application of InterfaceHookDecl.
+func (t *InterfaceHookDeclHookDecl) ToATerm() aterm.ATerm {
+	f := aterm.GetInstance()
+	return f.MakeAppl(f.MakeAFun("InterfaceHookDecl", 2, false), t.Pointcut.ToATerm(), t.Code.ToATerm())
+}
+
+// fromTermInterfaceHookDeclHookDecl is Java Gom's InterfaceHookDecl.fromTerm: an unquoted application of
+// InterfaceHookDecl whose arguments are convertible (as in Java, the arity is not
+// checked: a missing argument is an index out of range).
+func fromTermInterfaceHookDeclHookDecl(trm aterm.ATerm, conv aterm.ATermConverter) (HookDecl, bool) {
+	trm = conv.Convert(trm)
+	if appl, ok := trm.(*aterm.ATermAppl); ok && appl.GetName() == "InterfaceHookDecl" && !appl.GetAFun().IsQuoted() {
+		return MakeInterfaceHookDecl(DeclFromTermConv(appl.GetArgument(0), conv), CodeFromTermConv(appl.GetArgument(1), conv)), true
+	}
+	return nil, false
+}
+
 // ImportHookDeclHookDecl is the term type for the alternative `ImportHookDecl(...)` of sort HookDecl.
 type ImportHookDeclHookDecl struct {
 	Pointcut Decl
@@ -9852,7 +19751,7 @@ func (t *ImportHookDeclHookDecl) Duplicate() sharedobjects.Term {
 }
 
 func (t *ImportHookDeclHookDecl) String() string {
-	return fmt.Sprintf("ImportHookDecl(%v,%v)", t.Pointcut, t.Code)
+	return "ImportHookDecl(" + fmt.Sprint(t.Pointcut) + "," + fmt.Sprint(t.Code) + ")"
 }
 
 func (t *ImportHookDeclHookDecl) ChildCount() int { return 2 }
@@ -9985,6 +19884,93 @@ func (s *VisitImportHookDecl) VisitWith(env *sl.Environment, intro sl.Introspect
 
 var _ sl.Strategy = (*VisitImportHookDecl)(nil)
 
+func (t *ImportHookDeclHookDecl) SymbolName() string { return "ImportHookDecl" }
+
+func (t *ImportHookDeclHookDecl) IsMakeHookDecl() bool      { return false }
+func (t *ImportHookDeclHookDecl) IsBlockHookDecl() bool     { return false }
+func (t *ImportHookDeclHookDecl) IsInterfaceHookDecl() bool { return false }
+func (t *ImportHookDeclHookDecl) IsImportHookDecl() bool    { return true }
+func (t *ImportHookDeclHookDecl) IsMappingHookDecl() bool   { return false }
+
+func (t *ImportHookDeclHookDecl) GetPointcut() Decl { return t.Pointcut }
+func (t *ImportHookDeclHookDecl) GetSlotArgs() SlotList {
+	panic(&aterm.GomError{Msg: "This HookDecl has no SlotArgs"})
+}
+func (t *ImportHookDeclHookDecl) GetCode() Code { return t.Code }
+func (t *ImportHookDeclHookDecl) GetHookType() HookKind {
+	panic(&aterm.GomError{Msg: "This HookDecl has no HookType"})
+}
+func (t *ImportHookDeclHookDecl) GetHasTomCode() bool {
+	panic(&aterm.GomError{Msg: "This HookDecl has no HasTomCode"})
+}
+
+func (t *ImportHookDeclHookDecl) Length() int {
+	panic(&aterm.GomError{Msg: "This HookDecl.ImportHookDecl is not a list", IllegalArgument: true})
+}
+
+func (t *ImportHookDeclHookDecl) Reverse() HookDecl {
+	panic(&aterm.GomError{Msg: "This HookDecl.ImportHookDecl is not a list", IllegalArgument: true})
+}
+
+func (t *ImportHookDeclHookDecl) CompareTo(o any) int {
+	ao := o.(HookDecl)
+	if ao == HookDecl(t) {
+		return 0
+	}
+	if t.Hash() != ao.Hash() {
+		if t.Hash() < ao.Hash() {
+			return -1
+		}
+		return 1
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	tco := ao.(*ImportHookDeclHookDecl)
+	if c := t.Pointcut.CompareTo(tco.Pointcut); c != 0 {
+		return c
+	}
+	if c := t.Code.CompareTo(tco.Code); c != 0 {
+		return c
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+func (t *ImportHookDeclHookDecl) CompareToLPO(o any) int {
+	ao := o.(HookDecl)
+	if ao == HookDecl(t) {
+		return 0
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	tco := ao.(*ImportHookDeclHookDecl)
+	if c := t.Pointcut.CompareToLPO(tco.Pointcut); c != 0 {
+		return c
+	}
+	if c := t.Code.CompareToLPO(tco.Code); c != 0 {
+		return c
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+// ToATerm is the ATerm of the term: an application of ImportHookDecl.
+func (t *ImportHookDeclHookDecl) ToATerm() aterm.ATerm {
+	f := aterm.GetInstance()
+	return f.MakeAppl(f.MakeAFun("ImportHookDecl", 2, false), t.Pointcut.ToATerm(), t.Code.ToATerm())
+}
+
+// fromTermImportHookDeclHookDecl is Java Gom's ImportHookDecl.fromTerm: an unquoted application of
+// ImportHookDecl whose arguments are convertible (as in Java, the arity is not
+// checked: a missing argument is an index out of range).
+func fromTermImportHookDeclHookDecl(trm aterm.ATerm, conv aterm.ATermConverter) (HookDecl, bool) {
+	trm = conv.Convert(trm)
+	if appl, ok := trm.(*aterm.ATermAppl); ok && appl.GetName() == "ImportHookDecl" && !appl.GetAFun().IsQuoted() {
+		return MakeImportHookDecl(DeclFromTermConv(appl.GetArgument(0), conv), CodeFromTermConv(appl.GetArgument(1), conv)), true
+	}
+	return nil, false
+}
+
 // MappingHookDeclHookDecl is the term type for the alternative `MappingHookDecl(...)` of sort HookDecl.
 type MappingHookDeclHookDecl struct {
 	Pointcut Decl
@@ -10016,7 +20002,7 @@ func (t *MappingHookDeclHookDecl) Duplicate() sharedobjects.Term {
 }
 
 func (t *MappingHookDeclHookDecl) String() string {
-	return fmt.Sprintf("MappingHookDecl(%v,%v)", t.Pointcut, t.Code)
+	return "MappingHookDecl(" + fmt.Sprint(t.Pointcut) + "," + fmt.Sprint(t.Code) + ")"
 }
 
 func (t *MappingHookDeclHookDecl) ChildCount() int { return 2 }
@@ -10149,16 +20135,155 @@ func (s *VisitMappingHookDecl) VisitWith(env *sl.Environment, intro sl.Introspec
 
 var _ sl.Strategy = (*VisitMappingHookDecl)(nil)
 
+func (t *MappingHookDeclHookDecl) SymbolName() string { return "MappingHookDecl" }
+
+func (t *MappingHookDeclHookDecl) IsMakeHookDecl() bool      { return false }
+func (t *MappingHookDeclHookDecl) IsBlockHookDecl() bool     { return false }
+func (t *MappingHookDeclHookDecl) IsInterfaceHookDecl() bool { return false }
+func (t *MappingHookDeclHookDecl) IsImportHookDecl() bool    { return false }
+func (t *MappingHookDeclHookDecl) IsMappingHookDecl() bool   { return true }
+
+func (t *MappingHookDeclHookDecl) GetPointcut() Decl { return t.Pointcut }
+func (t *MappingHookDeclHookDecl) GetSlotArgs() SlotList {
+	panic(&aterm.GomError{Msg: "This HookDecl has no SlotArgs"})
+}
+func (t *MappingHookDeclHookDecl) GetCode() Code { return t.Code }
+func (t *MappingHookDeclHookDecl) GetHookType() HookKind {
+	panic(&aterm.GomError{Msg: "This HookDecl has no HookType"})
+}
+func (t *MappingHookDeclHookDecl) GetHasTomCode() bool {
+	panic(&aterm.GomError{Msg: "This HookDecl has no HasTomCode"})
+}
+
+func (t *MappingHookDeclHookDecl) Length() int {
+	panic(&aterm.GomError{Msg: "This HookDecl.MappingHookDecl is not a list", IllegalArgument: true})
+}
+
+func (t *MappingHookDeclHookDecl) Reverse() HookDecl {
+	panic(&aterm.GomError{Msg: "This HookDecl.MappingHookDecl is not a list", IllegalArgument: true})
+}
+
+func (t *MappingHookDeclHookDecl) CompareTo(o any) int {
+	ao := o.(HookDecl)
+	if ao == HookDecl(t) {
+		return 0
+	}
+	if t.Hash() != ao.Hash() {
+		if t.Hash() < ao.Hash() {
+			return -1
+		}
+		return 1
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	tco := ao.(*MappingHookDeclHookDecl)
+	if c := t.Pointcut.CompareTo(tco.Pointcut); c != 0 {
+		return c
+	}
+	if c := t.Code.CompareTo(tco.Code); c != 0 {
+		return c
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+func (t *MappingHookDeclHookDecl) CompareToLPO(o any) int {
+	ao := o.(HookDecl)
+	if ao == HookDecl(t) {
+		return 0
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	tco := ao.(*MappingHookDeclHookDecl)
+	if c := t.Pointcut.CompareToLPO(tco.Pointcut); c != 0 {
+		return c
+	}
+	if c := t.Code.CompareToLPO(tco.Code); c != 0 {
+		return c
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+// ToATerm is the ATerm of the term: an application of MappingHookDecl.
+func (t *MappingHookDeclHookDecl) ToATerm() aterm.ATerm {
+	f := aterm.GetInstance()
+	return f.MakeAppl(f.MakeAFun("MappingHookDecl", 2, false), t.Pointcut.ToATerm(), t.Code.ToATerm())
+}
+
+// fromTermMappingHookDeclHookDecl is Java Gom's MappingHookDecl.fromTerm: an unquoted application of
+// MappingHookDecl whose arguments are convertible (as in Java, the arity is not
+// checked: a missing argument is an index out of range).
+func fromTermMappingHookDeclHookDecl(trm aterm.ATerm, conv aterm.ATermConverter) (HookDecl, bool) {
+	trm = conv.Convert(trm)
+	if appl, ok := trm.(*aterm.ATermAppl); ok && appl.GetName() == "MappingHookDecl" && !appl.GetAFun().IsQuoted() {
+		return MakeMappingHookDecl(DeclFromTermConv(appl.GetArgument(0), conv), CodeFromTermConv(appl.GetArgument(1), conv)), true
+	}
+	return nil, false
+}
+
 // HookDeclList is the Go interface backing the Gom sort HookDeclList.
 type HookDeclList interface {
 	sharedobjects.Term
 	isHookDeclList()
+	// Java Gom API (see the package's generated methods)
+	SymbolName() string
+	IsConsConcHookDecl() bool
+	IsEmptyConcHookDecl() bool
+	GetHeadConcHookDecl() HookDecl
+	GetTailConcHookDecl() HookDeclList
+	Length() int
+	Reverse() HookDeclList
+	CompareTo(o any) int
+	CompareToLPO(o any) int
+	ToATerm() aterm.ATerm
 }
 
-// ConcHookDeclHookDeclList is the term type for the alternative `ConcHookDecl(...)` of sort HookDeclList.
+// HookDeclListFromTerm is Java Gom's HookDeclList.fromTerm(trm).
+func HookDeclListFromTerm(trm aterm.ATerm) HookDeclList {
+	return HookDeclListFromTermConv(trm, aterm.IdConverter{})
+}
+
+// HookDeclListFromTermConv is Java Gom's HookDeclList.fromTerm(trm, atConv): the term of
+// the first operator of the sort that converts the ATerm; it panics
+// (IllegalArgumentException) when there is none.
+func HookDeclListFromTermConv(trm aterm.ATerm, conv aterm.ATermConverter) HookDeclList {
+	converted := conv.Convert(trm)
+	var results []HookDeclList
+	if r, ok := fromTermConcHookDeclHookDeclList(converted, conv); ok {
+		results = append(results, r)
+	}
+	if len(results) == 0 {
+		panic(&aterm.GomError{Msg: fmt.Sprintf("%v is not a HookDeclList", trm), IllegalArgument: true})
+	}
+	return results[0]
+}
+
+// HookDeclListFromString is Java Gom's HookDeclList.fromString(s).
+func HookDeclListFromString(s string) HookDeclList {
+	return HookDeclListFromTerm(aterm.GetInstance().Parse(s))
+}
+
+// HookDeclListFromStream is Java Gom's HookDeclList.fromStream(stream) (an IOException is
+// the error).
+func HookDeclListFromStream(stream io.Reader) (HookDeclList, error) {
+	at, err := aterm.GetInstance().ReadFromTextFile(stream)
+	if err != nil {
+		return nil, err
+	}
+	return HookDeclListFromTerm(at), nil
+}
+
+// ConcHookDeclHookDeclList is the term type of the variadic operator `ConcHookDecl(...)` of sort HookDeclList
+// (Java's abstract class ConcHookDecl): a maximally-shared cons cell (Java's
+// ConsConcHookDecl: a head and a tail) or the empty list (Java's EmptyConcHookDecl).
 type ConcHookDeclHookDeclList struct {
-	Slots []HookDecl
+	head  HookDecl
+	tail  HookDeclList
+	empty bool
 	hash  uint32
+	// children caches the Visitable children (Java's children field)
+	children atomic.Pointer[[]any]
 }
 
 func (*ConcHookDeclHookDeclList) isHookDeclList() {}
@@ -10167,51 +20292,51 @@ func (t *ConcHookDeclHookDeclList) Hash() uint32 { return t.hash }
 
 func (t *ConcHookDeclHookDeclList) Equivalent(other sharedobjects.Term) bool {
 	o, ok := other.(*ConcHookDeclHookDeclList)
-	if !ok {
-		return false
-	}
-	if len(t.Slots) != len(o.Slots) {
-		return false
-	}
-	for i := range t.Slots {
-		if t.Slots[i] != o.Slots[i] {
-			return false
-		}
-	}
-	return true
+	return ok && t.empty == o.empty && t.head == o.head && t.tail == o.tail
 }
 
 func (t *ConcHookDeclHookDeclList) Duplicate() sharedobjects.Term {
-	cp := append([]HookDecl(nil), t.Slots...)
-	return &ConcHookDeclHookDeclList{Slots: cp, hash: t.hash}
+	return &ConcHookDeclHookDeclList{head: t.head, tail: t.tail, empty: t.empty, hash: t.hash}
 }
 
-func (t *ConcHookDeclHookDeclList) String() string {
-	parts := make([]string, len(t.Slots))
-	for i, v := range t.Slots {
-		parts[i] = fmt.Sprintf("%v", v)
+// elements returns the cached Visitable children of the list: its
+// elements (Java's getChildren, i.e. toArray).
+// Java's getChildren is the typed toArray(new HookDecl[]{}): a last tail
+// that is not a list (of sort HookDeclList) cannot be stored in it
+// (ArrayStoreException, a *aterm.GomError here).
+func (t *ConcHookDeclHookDeclList) elements() []any {
+	if c := t.children.Load(); c != nil {
+		return *c
 	}
-	return "ConcHookDecl" + "(" + strings.Join(parts, ",") + ")"
+	var cur HookDeclList = t
+	for {
+		c, ok := cur.(*ConcHookDeclHookDeclList)
+		if !ok || c.empty {
+			break
+		}
+		cur = c.tail
+	}
+	if c, ok := cur.(*ConcHookDeclHookDeclList); !ok || !c.empty {
+		panic(&aterm.GomError{Msg: fmt.Sprintf("ArrayStoreException: the tail %v of a ConcHookDecl list is not a HookDecl", cur)})
+	}
+	c := t.ToArray()
+	t.children.Store(&c)
+	return c
 }
 
-func (t *ConcHookDeclHookDeclList) ChildCount() int { return len(t.Slots) }
+func (t *ConcHookDeclHookDeclList) ChildCount() int { return len(t.elements()) }
 
-func (t *ConcHookDeclHookDeclList) ChildAt(i int) any { return t.Slots[i] }
+func (t *ConcHookDeclHookDeclList) ChildAt(i int) any { return t.elements()[i] }
 
 func (t *ConcHookDeclHookDeclList) SetChildAt(i int, child any) any {
-	dup := append([]HookDecl(nil), t.Slots...)
-	dup[i] = child.(HookDecl)
-	return MakeConcHookDecl(dup...)
+	dup := t.Children()
+	dup[i] = child
+	return t.SetChildren(dup)
 }
 
-func (t *ConcHookDeclHookDeclList) Children() []any {
-	out := make([]any, len(t.Slots))
-	for i, v := range t.Slots {
-		out[i] = v
-	}
-	return out
-}
+func (t *ConcHookDeclHookDeclList) Children() []any { return append([]any(nil), t.elements()...) }
 
+// SetChildren is Java's setChildren of a list: ConcHookDeclFromArray(children).
 func (t *ConcHookDeclHookDeclList) SetChildren(children []any) any {
 	args := make([]HookDecl, len(children))
 	for i, c := range children {
@@ -10220,15 +20345,77 @@ func (t *ConcHookDeclHookDeclList) SetChildren(children []any) any {
 	return MakeConcHookDecl(args...)
 }
 
-// MakeConcHookDecl builds the canonical (shared) ConcHookDecl term.
-func MakeConcHookDecl(args ...HookDecl) HookDeclList {
-	hashes := make([]uint32, 0, len(args))
-	for _, a := range args {
-		hashes = append(hashes, a.Hash())
+func (t *ConcHookDeclHookDeclList) String() string {
+	var b strings.Builder
+	b.WriteString("ConcHookDecl(")
+	var cur HookDeclList = t
+	for {
+		c, ok := cur.(*ConcHookDeclHookDeclList)
+		if !ok {
+			b.WriteString("," + fmt.Sprint(cur))
+			break
+		}
+		if c.empty {
+			break
+		}
+		if c != t {
+			b.WriteString(",")
+		}
+		b.WriteString(fmt.Sprint(c.head))
+		cur = c.tail
 	}
-	proto := &ConcHookDeclHookDeclList{Slots: args, hash: sharedobjects.MixSymbol(sharedobjects.StringHash("ConcHookDecl"), hashes)}
+	b.WriteString(")")
+	return b.String()
+}
+
+// RealMakeConsConcHookDecl is Java Gom's ConsConcHookDecl.realMake: the shared cell of head
+// and tail, without hook.
+func RealMakeConsConcHookDecl(head HookDecl, tail HookDeclList) HookDeclList {
+	proto := &ConcHookDeclHookDeclList{head: head, tail: tail, hash: sharedobjects.MixSymbol(sharedobjects.StringHash("ConsConcHookDecl"), []uint32{head.Hash(), tail.Hash()})}
 	return factory.Build(proto).(*ConcHookDeclHookDeclList)
 }
+
+// realMakeEmptyConcHookDecl is Java Gom's EmptyConcHookDecl.realMake: the shared empty list,
+// without hook.
+func realMakeEmptyConcHookDecl() HookDeclList {
+	proto := &ConcHookDeclHookDeclList{empty: true, hash: sharedobjects.MixSymbol(sharedobjects.StringHash("EmptyConcHookDecl"), nil)}
+	return factory.Build(proto).(*ConcHookDeclHookDeclList)
+}
+
+// RawConcHookDecl builds the ConcHookDecl list holding exactly args, without construction
+// hook.
+func RawConcHookDecl(args ...HookDecl) HookDeclList {
+	l := realMakeEmptyConcHookDecl()
+	for i := len(args) - 1; i >= 0; i-- {
+		l = RealMakeConsConcHookDecl(args[i], l)
+	}
+	return l
+}
+
+// EmptyConcHookDecl is Java Gom's EmptyConcHookDecl.make(): the empty ConcHookDecl list, after the
+// construction hooks.
+func EmptyConcHookDecl() HookDeclList {
+	return realMakeEmptyConcHookDecl()
+}
+
+// ConsConcHookDecl is Java Gom's ConsConcHookDecl.make(head, tail): head inserted in front of
+// tail, after the construction hooks (theory "" first).
+func ConsConcHookDecl(head HookDecl, tail HookDeclList) HookDeclList {
+	return RealMakeConsConcHookDecl(head, tail)
+}
+
+// MakeConcHookDecl builds the list of args as Tom's `ConcHookDecl(args…)` does: from EmptyConcHookDecl,
+// by ConsConcHookDecl, through the construction hooks (Java's ConcHookDecl.fromArray).
+func MakeConcHookDecl(args ...HookDecl) HookDeclList {
+	var l HookDeclList = EmptyConcHookDecl()
+	for i := len(args) - 1; i >= 0; i-- {
+		l = ConsConcHookDecl(args[i], l)
+	}
+	return l
+}
+
+// ConcHookDeclFromArray is Java Gom's ConcHookDecl.fromArray(array).
+func ConcHookDeclFromArray(array []HookDecl) HookDeclList { return MakeConcHookDecl(array...) }
 
 // IsConcHookDecl is the `Is_ConcHookDecl` predicate strategy: succeeds (returns subject
 // unchanged) when subject has the `ConcHookDecl` shape, otherwise fails with
@@ -10323,10 +20510,281 @@ func (s *VisitConcHookDecl) VisitWith(env *sl.Environment, intro sl.Introspector
 
 var _ sl.Strategy = (*VisitConcHookDecl)(nil)
 
+// SymbolName is the symbol of the Java term: ConsConcHookDecl or EmptyConcHookDecl.
+func (t *ConcHookDeclHookDeclList) SymbolName() string {
+	if t.empty {
+		return "EmptyConcHookDecl"
+	}
+	return "ConsConcHookDecl"
+}
+
+func (t *ConcHookDeclHookDeclList) IsConsConcHookDecl() bool  { return !t.empty }
+func (t *ConcHookDeclHookDeclList) IsEmptyConcHookDecl() bool { return t.empty }
+
+func (t *ConcHookDeclHookDeclList) GetHeadConcHookDecl() HookDecl {
+	if t.empty {
+		panic(&aterm.GomError{Msg: "This HookDeclList has no HeadConcHookDecl"})
+	}
+	return t.head
+}
+func (t *ConcHookDeclHookDeclList) GetTailConcHookDecl() HookDeclList {
+	if t.empty {
+		panic(&aterm.GomError{Msg: "This HookDeclList has no TailConcHookDecl"})
+	}
+	return t.tail
+}
+
+// Length is Java's length(): the number of elements of the list (a
+// tail that is not a ConcHookDecl list counts as one element).
+func (t *ConcHookDeclHookDeclList) Length() int {
+	res := 0
+	var tl HookDeclList = t
+	for {
+		c, ok := tl.(*ConcHookDeclHookDeclList)
+		if !ok || c.empty {
+			return res
+		}
+		res++
+		tl = c.tail
+		if _, ok := tl.(*ConcHookDeclHookDeclList); !ok {
+			res++
+		}
+	}
+}
+
+// ToArray returns the elements of the list (Java's Object[] toArray()),
+// ending with its tail when that is not a ConcHookDecl list.
+func (t *ConcHookDeclHookDeclList) ToArray() []any {
+	out := make([]any, 0, t.Length())
+	var cur HookDeclList = t
+	for {
+		c, ok := cur.(*ConcHookDeclHookDeclList)
+		if !ok || c.empty {
+			break
+		}
+		out = append(out, c.head)
+		cur = c.tail
+	}
+	if c, ok := cur.(*ConcHookDeclHookDeclList); !ok || !c.empty {
+		out = append(out, cur)
+	}
+	return out
+}
+
+// Reverse is Java's reverse(): the reversed list, built by ConsConcHookDecl
+// (through the hooks).
+func (t *ConcHookDeclHookDeclList) Reverse() HookDeclList {
+	if t.empty {
+		return t
+	}
+	var cur HookDeclList = t
+	var rev HookDeclList = EmptyConcHookDecl()
+	for {
+		c, ok := cur.(*ConcHookDeclHookDeclList)
+		if !ok || c.empty {
+			break
+		}
+		rev = ConsConcHookDecl(c.head, rev)
+		cur = c.tail
+	}
+	return rev
+}
+
+// Append is Java's append(element): the list with element added at its
+// end, built by ConsConcHookDecl (through the hooks).
+func (t *ConcHookDeclHookDeclList) Append(element HookDecl) HookDeclList {
+	var heads []HookDecl
+	var cur HookDeclList = t
+	for {
+		c, ok := cur.(*ConcHookDeclHookDeclList)
+		if !ok || c.empty {
+			break
+		}
+		heads = append(heads, c.head)
+		cur = c.tail
+	}
+	var res HookDeclList
+	if c, ok := cur.(*ConcHookDeclHookDeclList); ok && c.empty {
+		res = ConsConcHookDecl(element, cur)
+	} else {
+		res = ConsConcHookDecl(element, cur)
+	}
+	for i := len(heads) - 1; i >= 0; i-- {
+		res = ConsConcHookDecl(heads[i], res)
+	}
+	return res
+}
+
+func (t *ConcHookDeclHookDeclList) CompareTo(o any) int {
+	for {
+		ao := o.(HookDeclList)
+		if ao == HookDeclList(t) {
+			return 0
+		}
+		if t.Hash() != ao.Hash() {
+			if t.Hash() < ao.Hash() {
+				return -1
+			}
+			return 1
+		}
+		if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+			return c
+		}
+		tco := ao.(*ConcHookDeclHookDeclList)
+		if t.empty {
+			panic(&aterm.GomError{Msg: "Unable to compare"})
+		}
+		if c := t.head.CompareTo(tco.head); c != 0 {
+			return c
+		}
+		next, ok := t.tail.(*ConcHookDeclHookDeclList)
+		if !ok {
+			if c := t.tail.CompareTo(tco.tail); c != 0 {
+				return c
+			}
+			panic(&aterm.GomError{Msg: "Unable to compare"})
+		}
+		t, o = next, tco.tail
+	}
+}
+
+func (t *ConcHookDeclHookDeclList) CompareToLPO(o any) int {
+	for {
+		ao := o.(HookDeclList)
+		if ao == HookDeclList(t) {
+			return 0
+		}
+		if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+			return c
+		}
+		tco := ao.(*ConcHookDeclHookDeclList)
+		if t.empty {
+			panic(&aterm.GomError{Msg: "Unable to compare"})
+		}
+		if c := t.head.CompareToLPO(tco.head); c != 0 {
+			return c
+		}
+		next, ok := t.tail.(*ConcHookDeclHookDeclList)
+		if !ok {
+			if c := t.tail.CompareToLPO(tco.tail); c != 0 {
+				return c
+			}
+			panic(&aterm.GomError{Msg: "Unable to compare"})
+		}
+		t, o = next, tco.tail
+	}
+}
+
+// ToATerm is Java's toATerm: the list of the elements, ending with the
+// ATerm list of the tail (a tail that is not a list is Java's
+// ClassCastException).
+func (t *ConcHookDeclHookDeclList) ToATerm() aterm.ATerm {
+	f := aterm.GetInstance()
+	var heads []HookDecl
+	var cur HookDeclList = t
+	for {
+		c, ok := cur.(*ConcHookDeclHookDeclList)
+		if !ok || c.empty {
+			break
+		}
+		heads = append(heads, c.head)
+		cur = c.tail
+	}
+	l := f.MakeListEmpty()
+	if c, ok := cur.(*ConcHookDeclHookDeclList); !ok || !c.empty {
+		tl, isList := cur.ToATerm().(*aterm.ATermList)
+		if !isList {
+			panic(&aterm.GomError{Msg: fmt.Sprintf("ClassCastException: the ATerm of %v is not an ATermList", cur)})
+		}
+		l = tl
+	}
+	for i := len(heads) - 1; i >= 0; i-- {
+		l = f.MakeList(heads[i].ToATerm(), l)
+	}
+	return l
+}
+
+// fromTermConcHookDeclHookDeclList is Java Gom's ConcHookDecl.fromTerm: an application of ConcHookDecl, or a
+// list (of ToATerm), of convertible elements.
+func fromTermConcHookDeclHookDeclList(trm aterm.ATerm, conv aterm.ATermConverter) (res HookDeclList, ok bool) {
+	trm = conv.Convert(trm)
+	if appl, isAppl := trm.(*aterm.ATermAppl); isAppl && appl.GetName() == "ConcHookDecl" {
+		elems := make([]HookDecl, appl.GetArity())
+		for i, a := range appl.GetArguments() {
+			elems[i] = HookDeclFromTermConv(a, conv)
+		}
+		return MakeConcHookDecl(elems...), true
+	}
+	if list, isList := trm.(*aterm.ATermList); isList {
+		// an element that cannot be converted: not a ConcHookDecl (Java returns null)
+		defer func() {
+			if recover() != nil {
+				res, ok = nil, false
+			}
+		}()
+		var elems []HookDecl
+		for !list.IsEmpty() {
+			elems = append(elems, HookDeclFromTermConv(list.GetFirst(), conv))
+			list = list.GetNext()
+		}
+		return MakeConcHookDecl(elems...), true
+	}
+	return nil, false
+}
+
 // HookContent is the Go interface backing the Gom sort HookContent.
 type HookContent interface {
 	sharedobjects.Term
 	isHookContent()
+	// Java Gom API (see the package's generated methods)
+	SymbolName() string
+	IsHookCode() bool
+	IsHookRules() bool
+	GetStringCode() string
+	GetRules() RuleList
+	Length() int
+	Reverse() HookContent
+	CompareTo(o any) int
+	CompareToLPO(o any) int
+	ToATerm() aterm.ATerm
+}
+
+// HookContentFromTerm is Java Gom's HookContent.fromTerm(trm).
+func HookContentFromTerm(trm aterm.ATerm) HookContent {
+	return HookContentFromTermConv(trm, aterm.IdConverter{})
+}
+
+// HookContentFromTermConv is Java Gom's HookContent.fromTerm(trm, atConv): the term of
+// the first operator of the sort that converts the ATerm; it panics
+// (IllegalArgumentException) when there is none.
+func HookContentFromTermConv(trm aterm.ATerm, conv aterm.ATermConverter) HookContent {
+	converted := conv.Convert(trm)
+	var results []HookContent
+	if r, ok := fromTermHookCodeHookContent(converted, conv); ok {
+		results = append(results, r)
+	}
+	if r, ok := fromTermHookRulesHookContent(converted, conv); ok {
+		results = append(results, r)
+	}
+	if len(results) == 0 {
+		panic(&aterm.GomError{Msg: fmt.Sprintf("%v is not a HookContent", trm), IllegalArgument: true})
+	}
+	return results[0]
+}
+
+// HookContentFromString is Java Gom's HookContent.fromString(s).
+func HookContentFromString(s string) HookContent {
+	return HookContentFromTerm(aterm.GetInstance().Parse(s))
+}
+
+// HookContentFromStream is Java Gom's HookContent.fromStream(stream) (an IOException is
+// the error).
+func HookContentFromStream(stream io.Reader) (HookContent, error) {
+	at, err := aterm.GetInstance().ReadFromTextFile(stream)
+	if err != nil {
+		return nil, err
+	}
+	return HookContentFromTerm(at), nil
 }
 
 // HookCodeHookContent is the term type for the alternative `HookCode(...)` of sort HookContent.
@@ -10356,7 +20814,7 @@ func (t *HookCodeHookContent) Duplicate() sharedobjects.Term {
 }
 
 func (t *HookCodeHookContent) String() string {
-	return fmt.Sprintf("HookCode(%s)", sharedobjects.JavaEscape(t.StringCode))
+	return "HookCode(" + sharedobjects.JavaEscape(t.StringCode) + ")"
 }
 
 func (t *HookCodeHookContent) ChildCount() int { return 1 }
@@ -10485,6 +20943,77 @@ func (s *VisitHookCode) VisitWith(env *sl.Environment, intro sl.Introspector) (a
 
 var _ sl.Strategy = (*VisitHookCode)(nil)
 
+func (t *HookCodeHookContent) SymbolName() string { return "HookCode" }
+
+func (t *HookCodeHookContent) IsHookCode() bool  { return true }
+func (t *HookCodeHookContent) IsHookRules() bool { return false }
+
+func (t *HookCodeHookContent) GetStringCode() string { return t.StringCode }
+func (t *HookCodeHookContent) GetRules() RuleList {
+	panic(&aterm.GomError{Msg: "This HookContent has no Rules"})
+}
+
+func (t *HookCodeHookContent) Length() int {
+	panic(&aterm.GomError{Msg: "This HookContent.HookCode is not a list", IllegalArgument: true})
+}
+
+func (t *HookCodeHookContent) Reverse() HookContent {
+	panic(&aterm.GomError{Msg: "This HookContent.HookCode is not a list", IllegalArgument: true})
+}
+
+func (t *HookCodeHookContent) CompareTo(o any) int {
+	ao := o.(HookContent)
+	if ao == HookContent(t) {
+		return 0
+	}
+	if t.Hash() != ao.Hash() {
+		if t.Hash() < ao.Hash() {
+			return -1
+		}
+		return 1
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	tco := ao.(*HookCodeHookContent)
+	if c := strings.Compare(t.StringCode, tco.StringCode); c != 0 {
+		return c
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+func (t *HookCodeHookContent) CompareToLPO(o any) int {
+	ao := o.(HookContent)
+	if ao == HookContent(t) {
+		return 0
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	tco := ao.(*HookCodeHookContent)
+	if c := strings.Compare(t.StringCode, tco.StringCode); c != 0 {
+		return c
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+// ToATerm is the ATerm of the term: an application of HookCode.
+func (t *HookCodeHookContent) ToATerm() aterm.ATerm {
+	f := aterm.GetInstance()
+	return f.MakeAppl(f.MakeAFun("HookCode", 1, false), aterm.MakeGomString(t.StringCode))
+}
+
+// fromTermHookCodeHookContent is Java Gom's HookCode.fromTerm: an unquoted application of
+// HookCode whose arguments are convertible (as in Java, the arity is not
+// checked: a missing argument is an index out of range).
+func fromTermHookCodeHookContent(trm aterm.ATerm, conv aterm.ATermConverter) (HookContent, bool) {
+	trm = conv.Convert(trm)
+	if appl, ok := trm.(*aterm.ATermAppl); ok && appl.GetName() == "HookCode" && !appl.GetAFun().IsQuoted() {
+		return MakeHookCode(aterm.GomString(appl.GetArgument(0), conv)), true
+	}
+	return nil, false
+}
+
 // HookRulesHookContent is the term type for the alternative `HookRules(...)` of sort HookContent.
 type HookRulesHookContent struct {
 	Rules RuleList
@@ -10512,7 +21041,7 @@ func (t *HookRulesHookContent) Duplicate() sharedobjects.Term {
 }
 
 func (t *HookRulesHookContent) String() string {
-	return fmt.Sprintf("HookRules(%v)", t.Rules)
+	return "HookRules(" + fmt.Sprint(t.Rules) + ")"
 }
 
 func (t *HookRulesHookContent) ChildCount() int { return 1 }
@@ -10641,10 +21170,122 @@ func (s *VisitHookRules) VisitWith(env *sl.Environment, intro sl.Introspector) (
 
 var _ sl.Strategy = (*VisitHookRules)(nil)
 
+func (t *HookRulesHookContent) SymbolName() string { return "HookRules" }
+
+func (t *HookRulesHookContent) IsHookCode() bool  { return false }
+func (t *HookRulesHookContent) IsHookRules() bool { return true }
+
+func (t *HookRulesHookContent) GetStringCode() string {
+	panic(&aterm.GomError{Msg: "This HookContent has no StringCode"})
+}
+func (t *HookRulesHookContent) GetRules() RuleList { return t.Rules }
+
+func (t *HookRulesHookContent) Length() int {
+	panic(&aterm.GomError{Msg: "This HookContent.HookRules is not a list", IllegalArgument: true})
+}
+
+func (t *HookRulesHookContent) Reverse() HookContent {
+	panic(&aterm.GomError{Msg: "This HookContent.HookRules is not a list", IllegalArgument: true})
+}
+
+func (t *HookRulesHookContent) CompareTo(o any) int {
+	ao := o.(HookContent)
+	if ao == HookContent(t) {
+		return 0
+	}
+	if t.Hash() != ao.Hash() {
+		if t.Hash() < ao.Hash() {
+			return -1
+		}
+		return 1
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	tco := ao.(*HookRulesHookContent)
+	if c := t.Rules.CompareTo(tco.Rules); c != 0 {
+		return c
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+func (t *HookRulesHookContent) CompareToLPO(o any) int {
+	ao := o.(HookContent)
+	if ao == HookContent(t) {
+		return 0
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	tco := ao.(*HookRulesHookContent)
+	if c := t.Rules.CompareToLPO(tco.Rules); c != 0 {
+		return c
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+// ToATerm is the ATerm of the term: an application of HookRules.
+func (t *HookRulesHookContent) ToATerm() aterm.ATerm {
+	f := aterm.GetInstance()
+	return f.MakeAppl(f.MakeAFun("HookRules", 1, false), t.Rules.ToATerm())
+}
+
+// fromTermHookRulesHookContent is Java Gom's HookRules.fromTerm: an unquoted application of
+// HookRules whose arguments are convertible (as in Java, the arity is not
+// checked: a missing argument is an index out of range).
+func fromTermHookRulesHookContent(trm aterm.ATerm, conv aterm.ATermConverter) (HookContent, bool) {
+	trm = conv.Convert(trm)
+	if appl, ok := trm.(*aterm.ATermAppl); ok && appl.GetName() == "HookRules" && !appl.GetAFun().IsQuoted() {
+		return MakeHookRules(RuleListFromTermConv(appl.GetArgument(0), conv)), true
+	}
+	return nil, false
+}
+
 // Pair is the Go interface backing the Gom sort Pair.
 type Pair interface {
 	sharedobjects.Term
 	isPair()
+	// Java Gom API (see the package's generated methods)
+	SymbolName() string
+	IsModHookPair() bool
+	GetModules() ModuleList
+	GetHookDecls() HookDeclList
+	Length() int
+	Reverse() Pair
+	CompareTo(o any) int
+	CompareToLPO(o any) int
+	ToATerm() aterm.ATerm
+}
+
+// PairFromTerm is Java Gom's Pair.fromTerm(trm).
+func PairFromTerm(trm aterm.ATerm) Pair { return PairFromTermConv(trm, aterm.IdConverter{}) }
+
+// PairFromTermConv is Java Gom's Pair.fromTerm(trm, atConv): the term of
+// the first operator of the sort that converts the ATerm; it panics
+// (IllegalArgumentException) when there is none.
+func PairFromTermConv(trm aterm.ATerm, conv aterm.ATermConverter) Pair {
+	converted := conv.Convert(trm)
+	var results []Pair
+	if r, ok := fromTermModHookPairPair(converted, conv); ok {
+		results = append(results, r)
+	}
+	if len(results) == 0 {
+		panic(&aterm.GomError{Msg: fmt.Sprintf("%v is not a Pair", trm), IllegalArgument: true})
+	}
+	return results[0]
+}
+
+// PairFromString is Java Gom's Pair.fromString(s).
+func PairFromString(s string) Pair { return PairFromTerm(aterm.GetInstance().Parse(s)) }
+
+// PairFromStream is Java Gom's Pair.fromStream(stream) (an IOException is
+// the error).
+func PairFromStream(stream io.Reader) (Pair, error) {
+	at, err := aterm.GetInstance().ReadFromTextFile(stream)
+	if err != nil {
+		return nil, err
+	}
+	return PairFromTerm(at), nil
 }
 
 // ModHookPairPair is the term type for the alternative `ModHookPair(...)` of sort Pair.
@@ -10678,7 +21319,7 @@ func (t *ModHookPairPair) Duplicate() sharedobjects.Term {
 }
 
 func (t *ModHookPairPair) String() string {
-	return fmt.Sprintf("ModHookPair(%v,%v)", t.Modules, t.HookDecls)
+	return "ModHookPair(" + fmt.Sprint(t.Modules) + "," + fmt.Sprint(t.HookDecls) + ")"
 }
 
 func (t *ModHookPairPair) ChildCount() int { return 2 }
@@ -10810,3 +21451,77 @@ func (s *VisitModHookPair) VisitWith(env *sl.Environment, intro sl.Introspector)
 }
 
 var _ sl.Strategy = (*VisitModHookPair)(nil)
+
+func (t *ModHookPairPair) SymbolName() string { return "ModHookPair" }
+
+func (t *ModHookPairPair) IsModHookPair() bool { return true }
+
+func (t *ModHookPairPair) GetModules() ModuleList     { return t.Modules }
+func (t *ModHookPairPair) GetHookDecls() HookDeclList { return t.HookDecls }
+
+func (t *ModHookPairPair) Length() int {
+	panic(&aterm.GomError{Msg: "This Pair.ModHookPair is not a list", IllegalArgument: true})
+}
+
+func (t *ModHookPairPair) Reverse() Pair {
+	panic(&aterm.GomError{Msg: "This Pair.ModHookPair is not a list", IllegalArgument: true})
+}
+
+func (t *ModHookPairPair) CompareTo(o any) int {
+	ao := o.(Pair)
+	if ao == Pair(t) {
+		return 0
+	}
+	if t.Hash() != ao.Hash() {
+		if t.Hash() < ao.Hash() {
+			return -1
+		}
+		return 1
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	tco := ao.(*ModHookPairPair)
+	if c := t.Modules.CompareTo(tco.Modules); c != 0 {
+		return c
+	}
+	if c := t.HookDecls.CompareTo(tco.HookDecls); c != 0 {
+		return c
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+func (t *ModHookPairPair) CompareToLPO(o any) int {
+	ao := o.(Pair)
+	if ao == Pair(t) {
+		return 0
+	}
+	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
+		return c
+	}
+	tco := ao.(*ModHookPairPair)
+	if c := t.Modules.CompareToLPO(tco.Modules); c != 0 {
+		return c
+	}
+	if c := t.HookDecls.CompareToLPO(tco.HookDecls); c != 0 {
+		return c
+	}
+	panic(&aterm.GomError{Msg: "Unable to compare"})
+}
+
+// ToATerm is the ATerm of the term: an application of ModHookPair.
+func (t *ModHookPairPair) ToATerm() aterm.ATerm {
+	f := aterm.GetInstance()
+	return f.MakeAppl(f.MakeAFun("ModHookPair", 2, false), t.Modules.ToATerm(), t.HookDecls.ToATerm())
+}
+
+// fromTermModHookPairPair is Java Gom's ModHookPair.fromTerm: an unquoted application of
+// ModHookPair whose arguments are convertible (as in Java, the arity is not
+// checked: a missing argument is an index out of range).
+func fromTermModHookPairPair(trm aterm.ATerm, conv aterm.ATermConverter) (Pair, bool) {
+	trm = conv.Convert(trm)
+	if appl, ok := trm.(*aterm.ATermAppl); ok && appl.GetName() == "ModHookPair" && !appl.GetAFun().IsQuoted() {
+		return MakeModHookPair(ModuleListFromTermConv(appl.GetArgument(0), conv), HookDeclListFromTermConv(appl.GetArgument(1), conv)), true
+	}
+	return nil, false
+}

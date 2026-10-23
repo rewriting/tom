@@ -27,6 +27,8 @@ func runGomBlock(args []string) error {
 	// supported and rejected as undefined flags.
 	fs.BoolVar(&opts.WithCongruenceStrategies, "withCongruenceStrategies", false, "add the congruence strategies (_op, When_op, Is_op) to the mapping")
 	fs.BoolVar(&opts.NoSharing, "nosharing", false, "no maximal sharing: Make<Op> allocates, terms are compared by DeepEquals")
+	// --gohooks: a gomgo option (not Java Gom's): the hooks are plain Go
+	fs.BoolVar(&opts.GoHooks, "gohooks", false, "the hooks are plain Go (no Tom code): generate them into the Go file, not the mapping")
 	// --multithread: Java Gom then allocates a prototype per make instead
 	// of reusing one; the Go factory is always safe for concurrent use
 	// (sharedobjects.Factory locks its table), so it changes nothing.
@@ -35,7 +37,7 @@ func runGomBlock(args []string) error {
 		return err
 	}
 	if fs.NArg() != 1 || out == "" || pkg == "" {
-		return fmt.Errorf("usage: gomgo gom-block -o <dir> --pkg <name> [--withCongruenceStrategies] [--nosharing] [--multithread] <file.gom>")
+		return fmt.Errorf("usage: gomgo gom-block -o <dir> --pkg <name> [--withCongruenceStrategies] [--nosharing] [--multithread] [--gohooks] <file.gom>")
 	}
 	mod, err := gomparser.ParseFile(fs.Arg(0))
 	if err != nil {
@@ -111,6 +113,7 @@ func writeGomBlock(mod gomast.GomModule, pkg, out string, opts backend.Options, 
 	}
 	opts.PackageName = pkg
 	all := append(append([]gomast.GomModule(nil), imported...), mod)
+	opts.PackageModules = all
 	var mapping []byte
 	mapping = append(mapping, backend.BuiltinIncludesGo(mod, imported...)...)
 	for i, m := range all {

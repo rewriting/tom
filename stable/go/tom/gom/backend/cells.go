@@ -36,7 +36,7 @@ import (
 func (g *gen) emitVariadicCells(sortNm string, alt *gomast.AlternativeAlternative, structName, elem string) {
 	w := func(format string, args ...any) { fmt.Fprintf(&g.buf, format, args...) }
 	op := alt.Name
-	opGo := exportedField(op)
+	opGo := g.opNames.of(alt, sortNm)
 
 	w("// %s is the term type of the variadic operator `%s(...)` of sort %s\n", structName, op, sortNm)
 	w("// (Java's abstract class %s): a maximally-shared cons cell (Java's\n", op)
@@ -130,8 +130,8 @@ func (g *gen) hashOfElem(elem, x string) string {
 // expandCells substitutes the placeholders of a code template: @ST@ the
 // term type, @S@ the sort, @E@ the Go element type, @Op@ the exported
 // operator name, @op@ the operator name.
-func expandCells(tmpl, st, sortNm, elem string, alt *gomast.AlternativeAlternative) string {
-	return strings.NewReplacer("@ST@", st, "@S@", sortNm, "@E@", elem, "@Op@", exportedField(alt.Name), "@op@", alt.Name).Replace(tmpl)
+func (g *gen) expandCells(tmpl, st, sortNm, elem string, alt *gomast.AlternativeAlternative) string {
+	return strings.NewReplacer("@ST@", st, "@S@", sortNm, "@E@", elem, "@Op@", g.opNames.of(alt, sortNm), "@op@", alt.Name).Replace(tmpl)
 }
 
 // listAPITemplate is Java Gom's list API of a variadic operator
@@ -232,16 +232,16 @@ func (t *@ST@) Append(element @E@) @S@ {
 func (g *gen) emitListAPICells(sortNm string, alt *gomast.AlternativeAlternative, st string) {
 	elem := g.elemGoType(alt)
 	same := sameSortVariadic(g.mod, alt)
-	g.buf.WriteString(expandCells(listAPITemplate, st, sortNm, elem, alt))
+	g.buf.WriteString(g.expandCells(listAPITemplate, st, sortNm, elem, alt))
 	last := ""
 	if same {
 		// domain = codomain: the last tail is the first element
 		last = "\tif c, ok := cur.(*@ST@); !ok || !c.empty {\n\t\trev = Cons@Op@(cur, rev)\n\t}\n"
 	}
-	g.buf.WriteString(expandCells(strings.Replace(reverseTemplate, "@LAST@", last, 1), st, sortNm, elem, alt))
+	g.buf.WriteString(g.expandCells(strings.Replace(reverseTemplate, "@LAST@", last, 1), st, sortNm, elem, alt))
 	nonList := "\t\tres = Cons@Op@(element, cur)\n"
 	if same {
 		nonList = "\t\tres = Cons@Op@(cur, element)\n"
 	}
-	g.buf.WriteString(expandCells(strings.Replace(appendTemplate, "@NONLIST@", nonList, 1), st, sortNm, elem, alt))
+	g.buf.WriteString(g.expandCells(strings.Replace(appendTemplate, "@NONLIST@", nonList, 1), st, sortNm, elem, alt))
 }
