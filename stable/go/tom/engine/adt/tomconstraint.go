@@ -2294,9 +2294,9 @@ func (t *AndConstraintConstraint) CompareToLPO(o any) int {
 	}
 }
 
-// ToATerm is Java's toATerm: the list of the elements, ending with the
-// ATerm list of the tail (a tail that is not a list is Java's
-// ClassCastException).
+// ToATerm is Java's toATerm: the list of the elements. The list (theory
+// AU) may end with an element instead of the empty list: it is its last
+// element (Java: ClassCastException).
 func (t *AndConstraintConstraint) ToATerm() aterm.ATerm {
 	f := aterm.GetInstance()
 	var heads []Constraint
@@ -2309,14 +2309,10 @@ func (t *AndConstraintConstraint) ToATerm() aterm.ATerm {
 		heads = append(heads, c.head)
 		cur = c.tail
 	}
-	l := f.MakeListEmpty()
-	if c, ok := cur.(*AndConstraintConstraint); !ok || !c.empty {
-		tl, isList := cur.ToATerm().(*aterm.ATermList)
-		if !isList {
-			panic(&aterm.GomError{Msg: fmt.Sprintf("ClassCastException: the ATerm of %v is not an ATermList", cur)})
-		}
-		l = tl
+	if _, ok := cur.(*AndConstraintConstraint); !ok {
+		heads = append(heads, cur)
 	}
+	l := f.MakeListEmpty()
 	for i := len(heads) - 1; i >= 0; i-- {
 		l = f.MakeList(heads[i].ToATerm(), l)
 	}
@@ -2825,9 +2821,9 @@ func (t *OrConstraintConstraint) CompareToLPO(o any) int {
 	}
 }
 
-// ToATerm is Java's toATerm: the list of the elements, ending with the
-// ATerm list of the tail (a tail that is not a list is Java's
-// ClassCastException).
+// ToATerm is Java's toATerm: the list of the elements. The list (theory
+// AU) may end with an element instead of the empty list: it is its last
+// element (Java: ClassCastException).
 func (t *OrConstraintConstraint) ToATerm() aterm.ATerm {
 	f := aterm.GetInstance()
 	var heads []Constraint
@@ -2840,14 +2836,10 @@ func (t *OrConstraintConstraint) ToATerm() aterm.ATerm {
 		heads = append(heads, c.head)
 		cur = c.tail
 	}
-	l := f.MakeListEmpty()
-	if c, ok := cur.(*OrConstraintConstraint); !ok || !c.empty {
-		tl, isList := cur.ToATerm().(*aterm.ATermList)
-		if !isList {
-			panic(&aterm.GomError{Msg: fmt.Sprintf("ClassCastException: the ATerm of %v is not an ATermList", cur)})
-		}
-		l = tl
+	if _, ok := cur.(*OrConstraintConstraint); !ok {
+		heads = append(heads, cur)
 	}
+	l := f.MakeListEmpty()
 	for i := len(heads) - 1; i >= 0; i-- {
 		l = f.MakeList(heads[i].ToATerm(), l)
 	}
@@ -3356,9 +3348,9 @@ func (t *OrConstraintDisjunctionConstraint) CompareToLPO(o any) int {
 	}
 }
 
-// ToATerm is Java's toATerm: the list of the elements, ending with the
-// ATerm list of the tail (a tail that is not a list is Java's
-// ClassCastException).
+// ToATerm is Java's toATerm: the list of the elements. The list (theory
+// AU) may end with an element instead of the empty list: it is its last
+// element (Java: ClassCastException).
 func (t *OrConstraintDisjunctionConstraint) ToATerm() aterm.ATerm {
 	f := aterm.GetInstance()
 	var heads []Constraint
@@ -3371,14 +3363,10 @@ func (t *OrConstraintDisjunctionConstraint) ToATerm() aterm.ATerm {
 		heads = append(heads, c.head)
 		cur = c.tail
 	}
-	l := f.MakeListEmpty()
-	if c, ok := cur.(*OrConstraintDisjunctionConstraint); !ok || !c.empty {
-		tl, isList := cur.ToATerm().(*aterm.ATermList)
-		if !isList {
-			panic(&aterm.GomError{Msg: fmt.Sprintf("ClassCastException: the ATerm of %v is not an ATermList", cur)})
-		}
-		l = tl
+	if _, ok := cur.(*OrConstraintDisjunctionConstraint); !ok {
+		heads = append(heads, cur)
 	}
+	l := f.MakeListEmpty()
 	for i := len(heads) - 1; i >= 0; i-- {
 		l = f.MakeList(heads[i].ToATerm(), l)
 	}
