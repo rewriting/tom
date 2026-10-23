@@ -444,8 +444,8 @@ func J4() error {
 
 // goCommands are the Go commands of module tom installed in <dist>/bin
 // (the dist ships binaries; src/ holds sources only). A command whose
-// main package is absent from the tree is skipped (tomgo before J4.0c
-// in the amorce).
+// main package is absent from the tree is skipped (tomgo in an amorce
+// older than J4.0c).
 var goCommands = []struct{ name, pkg string }{
 	{"gomgo", "./gom/cmd/gomgo"},
 	{"tomgo", "./engine/cmd/tomgo"},
