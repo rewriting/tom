@@ -1,0 +1,18 @@
+/*
+ * Tom Go mapping — java.util collections: ArrayList.
+ * Mirrors mapping/java/util/ArrayList.tom on a Go slice []any. As in
+ * Java, make_append copies the list (a shallow copy) instead of sharing
+ * it.
+ */
+%include { types/ArrayList.tom }
+%include { types/Object.tom }
+
+%oparray ArrayList concArrayList(Object*) {
+  is_fsym(l)       { ($l != nil) }
+  make_empty(n)    { make([]any, 0, $n) }
+  make_append(o,l) { concArrayListAppend($o,$l) }
+  get_element(l,n) { $l[$n] }
+  get_size(l)      { len($l) }
+}
+
+func concArrayListAppend(o any, l []any) []any { res := make([]any, len(l), len(l)+1); copy(res, l); return append(res, o) };

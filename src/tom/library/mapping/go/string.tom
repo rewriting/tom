@@ -2,10 +2,26 @@
  * Tom Go mapping — string primitive.
  *
  * Tom's `String` sort maps to Go's native `string`. Equality is a
- * direct `==` comparison.
+ * direct `==` comparison. As mapping/java/string.tom, it includes
+ * char.tom and declares concString(char*): a string as the list of its
+ * characters (runes; Java's charAt(0) and substring(1)).
  */
+%include {char.tom}
 %typeterm String {
   implement { string }
   is_sort(t) { true }
   equals(t1,t2) { $t1 == $t2 }
 }
+
+%oplist String concString(char*) {
+  is_fsym(t) { true }
+  make_empty() { "" }
+  make_insert(c,s) { string($c)+$s }
+  get_head(s) { tom_stringHead($s) }
+  get_tail(s) { tom_stringTail($s) }
+  is_empty(s) { len($s)==0 }
+}
+
+func tom_stringHead(s string) rune { for _, c := range s { return c }; return 0 };
+
+func tom_stringTail(s string) string { for i := range s { if i > 0 { return s[i:] } }; return "" };

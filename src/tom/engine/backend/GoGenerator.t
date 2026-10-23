@@ -311,9 +311,50 @@ public class GoGenerator extends GenericGenerator {
   }
 
   protected void buildUnamedBlock(int deep, InstructionList instList, String moduleName) throws IOException {
+    boolean beforeElse = blockBeforeElse;
+    blockBeforeElse = false;
     output.write("{ ");
     generateInstructionList(deep+1,instList,moduleName);
-    output.write(" }; ");
+    output.write(beforeElse ? " } " : " }; ");
+  }
+
+  /* set while the next block is a host block that the statement goes on after */
+  private boolean blockBeforeElse = false;
+
+  /*
+   * The -np parser makes every { … } of the host code of a %match action
+   * an unamed block. Such a block followed by host code that continues
+   * the statement ends with "}" instead of "};": an if statement going on
+   * with "else" (if c { … } else { … }), or an expression going on after
+   * the braces of a composite literal or a function literal (T{}, f(T{a,
+   * b}), T{}.m(), func() { … }()).
+   */
+  public void generateInstructionList(int deep, InstructionList subject, String moduleName) throws IOException {
+    while(!subject.isEmptyconcInstruction()) {
+      Instruction head = subject.getHeadconcInstruction();
+      subject = subject.getTailconcInstruction();
+      blockBeforeElse = head.isUnamedBlock() && !subject.isEmptyconcInstruction()
+        && continuesStatement(subject.getHeadconcInstruction());
+      generateInstruction(deep,head,moduleName);
+      blockBeforeElse = false;
+    }
+  }
+
+  /* the host code of instr starts with the keyword else, or with a
+   * token that cannot start a statement: ) ] , . ( ; : */
+  private static boolean continuesStatement(Instruction instr) {
+    String code = null;
+    %match(instr) {
+      CodeToInstruction(TargetLanguageToCode((TL|ITL)[Code=c])) -> { code = `c; }
+    }
+    if(code == null) {
+      return false;
+    }
+    code = code.trim();
+    if(code.startsWith("else") && (code.length() == 4 || !Character.isJavaIdentifierPart(code.charAt(4)))) {
+      return true;
+    }
+    return code.length() > 0 && ")],.(;:".indexOf(code.charAt(0)) >= 0;
   }
 
   protected void buildReturn(int deep, BQTerm exp, String moduleName) throws IOException {
@@ -427,6 +468,13 @@ public class GoGenerator extends GenericGenerator {
       output.write(" == ");
       generateTomTerm(deep,exp2,moduleName);
       output.write(")");
+    } else if(otherSort(sType,termType(exp1,moduleName),moduleName) || otherSort(sType,termType(exp2,moduleName),moduleName)) {
+      String goSort = sortGoType(sType,moduleName);
+      output.write("func() bool { tom_a, tom_ok1 := any(");
+      generateBQTerm(deep,exp1,moduleName);
+      output.write(").(" + goSort + "); tom_b, tom_ok2 := any(");
+      generateTomTerm(deep,exp2,moduleName);
+      output.write(").(" + goSort + "); return tom_ok1 && tom_ok2 && tom_equal_term_" + sType + "(tom_a, tom_b) }()");
     } else {
       output.write("tom_equal_term_" + sType + "(");
       generateBQTerm(deep,exp1,moduleName);
@@ -444,6 +492,13 @@ public class GoGenerator extends GenericGenerator {
       output.write(" == ");
       generateBQTerm(deep,exp2,moduleName);
       output.write(")");
+    } else if(otherSort(sType,termType(exp1,moduleName),moduleName) || otherSort(sType,termType(exp2,moduleName),moduleName)) {
+      String goSort = sortGoType(sType,moduleName);
+      output.write("func() bool { tom_a, tom_ok1 := any(");
+      generateBQTerm(deep,exp1,moduleName);
+      output.write(").(" + goSort + "); tom_b, tom_ok2 := any(");
+      generateBQTerm(deep,exp2,moduleName);
+      output.write(").(" + goSort + "); return tom_ok1 && tom_ok2 && tom_equal_term_" + sType + "(tom_a, tom_b) }()");
     } else {
       output.write("tom_equal_term_" + sType + "(");
       generateBQTerm(deep,exp1,moduleName);
@@ -451,6 +506,41 @@ public class GoGenerator extends GenericGenerator {
       generateBQTerm(deep,exp2,moduleName);
       output.write(")");
     }
+  }
+
+  /*
+   * Equality of two terms of a sort that has subtypes or supertypes
+   * (%typeterm … extends …): the compiler may compare a value whose
+   * static sort is another one (e.g. a slot of a supertype bound to a
+   * variable also compared with a constant of the subtype), which Java
+   * accepts because tom_equal_term_<sort> takes Objects. In Go the
+   * equality takes the sort's type: each argument is converted with a
+   * checked type assertion, and a value that is not of the sort is not
+   * equal (where Java's equals would return false).
+   */
+
+  /* the sort of a term, or null when the backend cannot tell */
+  private String termType(BQTerm t, String moduleName) {
+    try {
+      return TomBase.getTomType(TomBase.getTermType(t,getSymbolTable(moduleName)));
+    } catch(RuntimeException e) {
+      return null;
+    }
+  }
+
+  private String termType(TomTerm t, String moduleName) {
+    try {
+      return TomBase.getTomType(TomBase.getTermType(t,getSymbolTable(moduleName)));
+    } catch(RuntimeException e) {
+      return null;
+    }
+  }
+
+  /* argSort is a known sort, other than sType, of a non-builtin sType */
+  private boolean otherSort(String sType, String argSort, String moduleName) {
+    SymbolTable st = getSymbolTable(moduleName);
+    return argSort != null && !argSort.equals(sType) && !st.isUnknownType(argSort)
+      && !st.isBuiltinType(sType) && st.getType(sType) != null && st.getType(argSort) != null;
   }
 
   // ---------------------------------------------------------------- mapping functions

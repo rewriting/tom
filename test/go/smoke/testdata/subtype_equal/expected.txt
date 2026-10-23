@@ -1,0 +1,2 @@
+div(zero()) 1
+div(neg(zero())) 10

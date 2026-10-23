@@ -148,7 +148,6 @@ func (p *parser) parseModule() (gomast.GomModule, error) {
 	}
 
 	var prods []gomast.Production
-	hasSort := false
 	for p.tok.kind != tokEOF {
 		var scope string
 		if p.tok.kind == tokID && isScopeKeyword(p.tok.text) {
@@ -178,13 +177,9 @@ func (p *parser) parseModule() (gomast.GomModule, error) {
 				return nil, err
 			}
 			prods = append(prods, s)
-			hasSort = true
 		default:
 			return nil, p.errf("expected '=' (sort decl) or ':' (hook) after %q, got %s", first, p.tok.kind)
 		}
-	}
-	if !hasSort {
-		return nil, fmt.Errorf("module %s has no sort declaration", strings.Join(nameParts, "."))
 	}
 	sections = append(sections, gomast.MakePublic(gomast.MakeConcProduction(prods...)))
 	return gomast.MakeGomModule(moduleName, gomast.MakeConcSection(sections...)), nil

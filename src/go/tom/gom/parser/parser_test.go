@@ -367,3 +367,15 @@ Foo = X()
 		t.Fatal("GomType('Foo') built from two different modules should be the same shared instance")
 	}
 }
+
+// TestParse_EmptyModule: a module may declare no sort (the Gom grammar
+// allows an empty abstract syntax; test/Test.t has such a %gom block).
+func TestParse_EmptyModule(t *testing.T) {
+	mod, err := ParseBytes([]byte("module test\nimports\nabstract syntax\n"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if sorts := Sorts(mod); len(sorts) != 0 {
+		t.Errorf("sorts = %v, want none", sorts)
+	}
+}
