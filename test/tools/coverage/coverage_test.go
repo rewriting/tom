@@ -13,7 +13,7 @@ import (
 	"strings"
 	"testing"
 
-	"tomtest/harness"
+	"tomtools/harness"
 )
 
 var write = flag.Bool("write-coverage", false, "rewrite ../../doc/go/coverage.md")

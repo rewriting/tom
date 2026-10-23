@@ -1,13 +1,13 @@
-// Package gosmoke compiles small Tom+Go programs with the root compiler
+// Package smoke compiles small Tom+Go programs with the root compiler
 // (tom -go -np), runs them with `go run`, and compares their stdout with
-// the expected output stored next to each fixture (extra tom options in
+// the expected output stored next to each fixture (test/go/smoke/testdata) (extra tom options in
 // an optional args.txt).
 //
 // A fixture testdata/<name>/<name>.t whose expected output was measured
 // on Java keeps its Tom+Java twin in testdata/<name>/twin/Twin.t (class
 // smoke.Twin, ignored by TestGoSmoke): TestJavaTwins compiles it with
 // legacy/, runs it under the JVM and requires the same expected.txt.
-package gosmoke
+package smoke
 
 import (
 	"os"
@@ -16,8 +16,15 @@ import (
 	"strings"
 	"testing"
 
-	"tomtest/harness"
+	"tomtools/harness"
 )
+
+// The fixtures live in test/go/smoke/testdata; the tests address them by
+// relative paths.
+func TestMain(m *testing.M) {
+	harness.ChdirGoTest("smoke")
+	os.Exit(m.Run())
+}
 
 func TestGoSmoke(t *testing.T) {
 	harness.LookPath(t, "go")

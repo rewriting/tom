@@ -1,7 +1,7 @@
-// Package port holds the Tom+Go ports of test/java/*.t and checks them:
+// Package parity holds the Tom+Go ports of test/java/*.t and checks them:
 // T1 (generated Go is pinned by golden files and builds) and, from
 // Task 8, T2 (same behaviour as the original under legacy/).
-package port
+package parity
 
 import (
 	"bufio"
@@ -21,16 +21,17 @@ import (
 	"testing"
 
 	gomparser "tom/gom/parser"
-	"tomtest/harness"
+	"tomtools/harness"
 )
 
-var update = flag.Bool("update", false, "rewrite testdata/golden/*.go from the current compiler")
+var update = flag.Bool("update", false, "rewrite test/go/testdata/golden/*.go from the current compiler")
 
 // TestMain: -write-dashboard implies TOMGO_REQUIRE_TOOLS=1, so that a
 // missing tool fails the run instead of writing a dashboard of skipped
 // (hence failed-looking) cases.
 func TestMain(m *testing.M) {
 	flag.Parse()
+	harness.ChdirGoTest("")
 	if *writeDashboard {
 		os.Setenv(harness.RequireToolsEnv, "1")
 	}
@@ -555,8 +556,8 @@ func TestGoBackend(t *testing.T) {
 // T2: behaviour of each port vs the original run by legacy/.
 
 var (
-	updateOracle   = flag.Bool("update-oracle", false, "recompute testdata/oracle/*.json with legacy/")
-	writeDashboard = flag.Bool("write-dashboard", false, "rewrite ../../doc/go/port-dashboard.md")
+	updateOracle   = flag.Bool("update-oracle", false, "recompute test/go/testdata/oracle/*.json with legacy/")
+	writeDashboard = flag.Bool("write-dashboard", false, "rewrite doc/go/port-dashboard.md")
 )
 
 // oracle is what the original test/java/<Rel>, compiled by legacy/ and run
@@ -1295,7 +1296,7 @@ func TestDashboard(t *testing.T) {
 	})
 	var b strings.Builder
 	b.WriteString("# Tableau de bord du portage Tom+Go (T2)\n\n")
-	b.WriteString("Généré par `mage portGo` (`go test ./ -args -write-dashboard` dans `test/go`).\n")
+	b.WriteString("Généré par `mage portGo` (`go test ./parity/ -args -write-dashboard` dans `test/tools`).\n")
 	b.WriteString("Chaque `test/java/**/*.t` hors `error/` ; un cas porté est OK quand son port\n")
 	b.WriteString("Tom+Go, compilé par `tom -go`, se comporte comme l'original compilé par\n")
 	b.WriteString("`legacy/` (mêmes tests JUnit réussis, ou même sortie et même statut).\n")
@@ -1559,7 +1560,7 @@ func TestCasesCoverPorts(t *testing.T) {
 		if err != nil {
 			return err
 		}
-		if info.IsDir() && (p == "testdata" || p == "harness" || p == "javaparity" || p == "smoke" || p == "coverage") {
+		if info.IsDir() && (p == "testdata" || p == "smoke" || p == "adt") {
 			return filepath.SkipDir
 		}
 		if !info.IsDir() && (strings.HasSuffix(p, ".t") || strings.HasSuffix(p, ".gom")) && !inCases[filepath.ToSlash(p)] {

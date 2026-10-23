@@ -1,6 +1,6 @@
 # Tableau de bord du portage Tom+Go (T2)
 
-Généré par `mage portGo` (`go test ./ -args -write-dashboard` dans `test/go`).
+Généré par `mage portGo` (`go test ./parity/ -args -write-dashboard` dans `test/tools`).
 Chaque `test/java/**/*.t` hors `error/` ; un cas porté est OK quand son port
 Tom+Go, compilé par `tom -go`, se comporte comme l'original compilé par
 `legacy/` (mêmes tests JUnit réussis, ou même sortie et même statut).

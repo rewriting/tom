@@ -8,7 +8,8 @@
 //	mage -d magefiles -w . all       # vet + unit tests + self-bootstrap + smoke
 //
 // The validated Go tree is module tom (src/go/tom); the Tom+Go tests are
-// module tomtest (test/go). The frozen prototype (prototype/tomgo) keeps
+// module tomtest (test/go: ADT tests, ports, reference data); the programs
+// comparing Java, Go and legacy are module tomtools (test/tools). The frozen prototype (prototype/tomgo) keeps
 // its own magefile.
 package main
 
@@ -27,6 +28,10 @@ import (
 const (
 	tomDir    = "src/go/tom"
 	testGoDir = "test/go"
+	// toolsDir is module tomtools: the programs that compare the Java, Go
+	// and legacy worlds. harness.JavaTestDir/GoTestDir/ToolsDir define the
+	// same locations for the Go code; this is the mage-side mirror.
+	toolsDir = "test/tools"
 )
 
 // init moves to the repository root (the directory holding build.xml and
@@ -75,7 +80,7 @@ func runInEnv(dir string, env []string, name string, args ...string) error {
 
 // requireTools makes the harness fail, instead of skipping, when a tool
 // (java, javac, cc, a built dist) is missing: a target must not pass
-// vacuously (test/go/harness).
+// vacuously (test/tools/harness).
 var requireTools = []string{"TOMGO_REQUIRE_TOOLS=1"}
 
 // Test runs the unit tests of the validated Go tree (module tom) and the
@@ -88,13 +93,17 @@ func Test() error {
 	return runIn(testGoDir, "go", "test", "-count=1", "./adt/...")
 }
 
-// Vet vets the validated Go tree and the Tom+Go test harnesses.
+// Vet vets the validated Go tree, the ADT tests (test/go) and the
+// comparison tools (test/tools).
 func Vet() error {
 	mg.Deps(Bootstrap)
 	if err := runIn(tomDir, "go", "vet", "./..."); err != nil {
 		return err
 	}
-	return runIn(testGoDir, "go", "vet", "./...")
+	if err := runIn(testGoDir, "go", "vet", "./..."); err != nil {
+		return err
+	}
+	return runIn(toolsDir, "go", "vet", "./...")
 }
 
 // SelfBootstrap checks that the compiler's ADTs (tom/gom/adt, the AST
@@ -400,30 +409,31 @@ func generatedDiff(a, b string) (string, error) {
 // on every test/java/*.t (needs legacy/src/dist and src/dist built).
 func PortJava() error {
 	mg.Deps(Bootstrap)
-	return runInEnv(testGoDir, requireTools, "go", "test", "-count=1", "-timeout", "30m", "./javaparity/...")
+	return runInEnv(toolsDir, requireTools, "go", "test", "-count=1", "-timeout", "30m", "./javaparity/...")
 }
 
 // PortGo runs T1 (golden Go output, build and run) on the Tom+Go ports
 // in test/go/ (needs src/dist built), T2 (behaviour vs the legacy/
 // oracle cached in test/go/testdata/oracle/; refresh it with
-// `go test ./ -run TestSameBehaviourAsLegacy -args -update-oracle` in
-// test/go) and rewrites doc/go/port-dashboard.md.
+// `go test ./parity/ -run TestSameBehaviourAsLegacy -args -update-oracle`
+// in test/tools) and rewrites doc/go/port-dashboard.md.
 func PortGo() error {
 	mg.Deps(Bootstrap)
-	return runInEnv(testGoDir, requireTools, "go", "test", "-count=1", "./", "-args", "-write-dashboard")
+	return runInEnv(toolsDir, requireTools, "go", "test", "-count=1", "./parity/", "-args", "-write-dashboard")
 }
 
 // Coverage runs T3 and rewrites doc/go/coverage.md.
 func Coverage() error {
 	mg.Deps(Bootstrap)
-	return runInEnv(testGoDir, requireTools, "go", "test", "-count=1", "-v", "./coverage/...", "-args", "-write-coverage")
+	return runInEnv(toolsDir, requireTools, "go", "test", "-count=1", "-v", "./coverage/...", "-args", "-write-coverage")
 }
 
-// Smoke runs the smoke tests of module tomtest (needs src/dist built; the
-// harness builds gomgo itself).
+// Smoke runs the smoke tests (test/tools/smoke, fixtures in
+// test/go/smoke/testdata; needs src/dist built, the harness builds gomgo
+// itself).
 func Smoke() error {
 	mg.Deps(Bootstrap)
-	return runInEnv(testGoDir, requireTools, "go", "test", "-count=1", "./smoke/")
+	return runInEnv(toolsDir, requireTools, "go", "test", "-count=1", "./smoke/")
 }
 
 // All runs vet, the unit tests, the self-bootstrap check and the smoke
@@ -436,5 +446,8 @@ func VetStandalone() error {
 	if err := runInEnv(tomDir, []string{"GOWORK=off"}, "go", "vet", "./..."); err != nil {
 		return err
 	}
-	return runInEnv(testGoDir, []string{"GOWORK=off"}, "go", "vet", "./...")
+	if err := runInEnv(testGoDir, []string{"GOWORK=off"}, "go", "vet", "./..."); err != nil {
+		return err
+	}
+	return runInEnv(toolsDir, []string{"GOWORK=off"}, "go", "vet", "./...")
 }

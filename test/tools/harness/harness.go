@@ -73,23 +73,47 @@ func GoTestDir(root string) string { return filepath.Join(root, testDirName, goD
 // ToolsDir is the directory of the comparison tools (module tomtools).
 func ToolsDir(root string) string { return filepath.Join(root, testDirName, toolsDirName) }
 
-// RepoRoot walks up from the working directory to the directory that
+// FindRoot walks up from the working directory to the directory that
 // holds both build.xml and the Java test tree's build.xml.
-func RepoRoot(t testing.TB) string {
-	t.Helper()
+func FindRoot() (string, error) {
 	dir, err := os.Getwd()
 	if err != nil {
-		t.Fatal(err)
+		return "", err
 	}
 	for {
 		if fileExists(filepath.Join(dir, "build.xml")) && fileExists(filepath.Join(JavaTestDir(dir), "build.xml")) {
-			return dir
+			return dir, nil
 		}
 		parent := filepath.Dir(dir)
 		if parent == dir {
-			t.Fatal("repository root not found")
+			return "", fmt.Errorf("repository root not found")
 		}
 		dir = parent
+	}
+}
+
+// RepoRoot is FindRoot, failing the test when the root is not found.
+func RepoRoot(t testing.TB) string {
+	t.Helper()
+	root, err := FindRoot()
+	if err != nil {
+		t.Fatal(err)
+	}
+	return root
+}
+
+// ChdirGoTest changes the working directory to test/go/<sub> (test/go
+// when sub is empty), where the ports and their reference data live: the
+// runners address them by relative paths (testdata/golden, <Rel>.t, …).
+// For TestMain; it exits the process on failure.
+func ChdirGoTest(sub string) {
+	root, err := FindRoot()
+	if err == nil {
+		err = os.Chdir(filepath.Join(GoTestDir(root), sub))
+	}
+	if err != nil {
+		fmt.Fprintln(os.Stderr, "harness.ChdirGoTest:", err)
+		os.Exit(1)
 	}
 }
 

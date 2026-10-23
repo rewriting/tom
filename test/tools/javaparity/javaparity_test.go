@@ -10,7 +10,7 @@ import (
 	"strings"
 	"testing"
 
-	"tomtest/harness"
+	"tomtools/harness"
 )
 
 // timing matches the "123 ms" phase timings the compiler prints.
