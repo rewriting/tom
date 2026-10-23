@@ -205,6 +205,14 @@ func PromoteGo() error {
 	if err := generateAdts(bin, tmp, "check", false); err != nil {
 		return err
 	}
+	// the amorce holds the Go code of module tom, not the mappings
+	if maps, _ := filepath.Glob(filepath.Join(tmp, "check", "gom", "adt", "*.tom")); len(maps) > 0 {
+		for _, m := range maps {
+			if err := os.Remove(m); err != nil {
+				return err
+			}
+		}
+	}
 	if diff, err := generatedDiff(filepath.Join(tmp, "check", "gom", "adt"), filepath.Join(stableGoDir, "gom", "adt")); err != nil {
 		return err
 	} else if diff != "" {
