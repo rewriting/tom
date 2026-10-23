@@ -1,5 +1,7 @@
 # J2 — portage de `test/` en Tom+Go
 
+Chemins : depuis la réorganisation du 2026-10-24, les originaux `test/<rel>` cités ci-dessous sont dans `test/java/<rel>` et les harnais `test/go/{harness,javaparity,coverage,smoke}` et `port_test.go` dans `test/tools/{harness,javaparity,coverage,smoke,parity}` ; les ports restent dans `test/go`.
+
 Date : 2026-10-23. Branche `tom-go`.
 Plan : `docs/superpowers/plans/2026-10-23-j2-port.md`.
 Spec de référence : `docs/superpowers/specs/2026-10-22-tom-go-backend-design.md`
@@ -182,9 +184,9 @@ mage -d magefiles -w . all                        # vet, tests unitaires, auto-a
 mage -d magefiles -w . portJava                   # T0
 mage -d magefiles -w . portGo                     # T1 + T2, réécrit doc/go/port-dashboard.md
 mage -d magefiles -w . coverage                   # T3, réécrit doc/go/coverage.md
-# oracles et goldens (dans test/go) :
-go test ./ -run TestSameBehaviourAsLegacy -args -update-oracle
-go test ./ -run TestGoBackend -args -update
+# oracles et goldens (écrits dans test/go/testdata, lancés depuis test/tools) :
+(cd test/tools && go test ./parity/ -run TestSameBehaviourAsLegacy -args -update-oracle)
+(cd test/tools && go test ./parity/ -run TestGoBackend -args -update)
 ```
 
 Promotion dans `stable/` (faite le 2026-10-23, commit `d407d2e83`) :

@@ -11,8 +11,10 @@ prototype, `prototype/tomgo/reports/phase<N>.md`.
 ## 1. Objectif
 
 **État actuel / carte** : deux modules Go maintenus — `tom` (`src/go/tom` :
-runtime `sl`/`sharedobjects`/`aterm`, Gom en Go `gomgo`) et `tomtest`
-(`test/go` : ports Tom+Go, harnais T0–T3) — réunis par `go.work` et pilotés
+runtime `sl`/`sharedobjects`/`aterm`, Gom en Go `gomgo`), `tomtest`
+(`test/go` : ports Tom+Go, données de référence, tests des ADT) et
+`tomtools` (`test/tools` : harnais T0–T3 qui comparent Java, Go et
+`legacy/`) — réunis par `go.work` et pilotés
 par `mage -d magefiles -w . <cible>` ; compilateur Java étendu (`-go`) dans
 `src/tom/`, témoin humain dans `legacy/`, prototype Go gelé dans
 `prototype/tomgo/`. Carte détaillée : §2–3 et `doc/go/README.md`.
@@ -121,12 +123,13 @@ main — est gelée, cf. ci-dessus.)
 | `src/go/tom/{gom,engine}/adt/` | **Copies Go** (5 + 15 `.gom`) de `src/tom/{gom,engine}/adt` : mêmes signatures (`TestSignatureParity`), hooks écrits en Go (`gomgo --gohooks`). Le `*.go` et `adt.tom` générés sont ignorés par git : `mage -d magefiles -w . bootstrap` les produit localement |
 | `stable/go/tom/` | **Amorce Go** : instantané autonome COMPLET du module `tom` (Go non-test + ADT générés), hors `go.work`, construit par `GOWORK=off go build ./...` ; mis à jour par `promoteGo` |
 | `stable/` | Compilateur Java **bootstrappé** qui construit `src/` ; contient aussi la cible Go (`stable/dist/bin/tom -go`) ; `src/` y a été promu le 2026-10-23 : sa dist embarque le runtime Go dans `lib/go/tom` et `TomParserTool` lit `GOMGO_BIN` |
-| `test/` | Corpus Tom+Java historique (121 `.t` + 18 `.gom`) |
-| `test/go/` | **Module Go `tomtest`** : ports Tom+Go de `test/` (`*.t`), `port_test.go` (T1/T2), `testdata/{golden,oracle}`, `harness/`, `javaparity/` (T0), `smoke/`, `coverage/` (T3), `sl/`, `numeric/`, `adt/` (tests de comportement des ADT générés du compilateur : hooks, règles, listes) |
+| `test/java/` | Tests Tom+Java historiques (121 `.t` + 18 `.gom`, `build.xml`) ; les chemins `test/<rel>` des anciens rapports sont désormais `test/java/<rel>` |
+| `test/go/` | **Module Go `tomtest`** : ports Tom+Go de `test/java/` (`*.t`, mêmes chemins relatifs), `testdata/{golden,oracle}`, `smoke/testdata` (fixtures + jumeaux Java), `adt/` (tests de comportement des ADT générés du compilateur : hooks, règles, listes) |
+| `test/tools/` | **Module Go `tomtools`** (`replace tom`) : `harness/` (seul endroit qui définit les emplacements : `JavaTestDir`/`GoTestDir`/`ToolsDir`), `javaparity/` (T0), `parity/` (T1/T2 + tableau de bord), `coverage/` (T3), `smoke/` (runner + `TestJavaTwins`) |
 | `doc/go/` | Rapports : `README.md` (carte), `j0-go-backend.md`, `port-dashboard.md` (généré), `coverage.md` (généré) |
 | `docs/superpowers/{specs,plans}/` | Specs et plans de travail (backend Go, réorganisation du dépôt) |
 | `magefiles/` | Orchestration (module `tommage`) : `mage -d magefiles -w . <cible>` |
-| `go.work` | Espace de travail : `src/go/tom`, `test/go`, `magefiles`, `prototype/tomgo` (pas `stable/go/tom`) |
+| `go.work` | Espace de travail : `src/go/tom`, `test/go`, `test/tools`, `magefiles`, `prototype/tomgo` (pas `stable/go/tom`) |
 | `prototype/tomgo/` | Prototype Go écrit à la main (Phases 0–6, **gelé**, réservoir de code ; son README liste les équivalents maintenus) |
 | `examples/`, `share/`, `applications/`, `utils/` | Exemples (402 `.t` + 51 `.gom`), mappings prédéfinis (`$TOM_HOME/share/tom`), pré-builts (`applications/prototype3D/lib/`), outils (`utils/eclipse-plugin/…`) |
 
@@ -152,11 +155,14 @@ src/go/tom/                      # module `tom` (go.mod)
   engine/adt/                    # AST de Tom : 15 *.gom commités, *.go + adt.tom générés
 stable/go/tom/                   # amorce : instantané autonome complet du module `tom`
                                  #   (hors go.work, GOWORK=off)
+test/java/                       # tests Tom+Java (build.xml, *.t, *.gom)
 test/go/                         # module `tomtest`
-  *.t                            # ports Tom+Go (J2) ; port_test.go = T1 + T2
+  *.t sl/ numeric/ gom/ …        # ports Tom+Go (J2), mêmes chemins que test/java
   testdata/{golden,oracle}/      # sorties Go de référence ; oracle legacy/ en cache
-  harness/ javaparity/ smoke/ coverage/ sl/ numeric/
+  smoke/testdata/                # fixtures smoke (+ jumeaux Java)
   adt/                           # tests de comportement de l'ADT du compilateur généré
+test/tools/                      # module `tomtools`
+  harness/ javaparity/ parity/ coverage/ smoke/   # T0, T1/T2, T3, smoke
 prototype/tomgo/                 # module `tom/tomgo`, GELÉ (cf. son README)
 ```
 
@@ -165,7 +171,7 @@ Le runtime utilisé par le Go généré est `tom/library/...` (module `tom`) ;
 `require tom v0.0.0` + `replace tom => $TOM_HOME/lib/go/tom`.
 
 Comptes (2026-10-23, `go list ./...` par module, via `go.work`) :
-`src/go/tom` 8 paquets (6 avec tests) ; `test/go` 6 (5 avec tests) ;
+`src/go/tom` 8 paquets (6 avec tests) ; `test/go` 1 (avec tests) et `test/tools` 5 (4 avec tests) (comptes du 2026-10-23 avant la réorganisation : `test/go` 6, 5 avec tests) ;
 `prototype/tomgo` 47 (17 avec tests, `go test` : 17 ok).
 
 Points d'architecture (ADT du compilateur et amorce Go) :
@@ -189,11 +195,10 @@ Points d'architecture (ADT du compilateur et amorce Go) :
 - La dist (`<dist>/lib/go/tom`) ne livre que le runtime (`library/**` et
   `go.mod`).
 
-Disposition cible à long terme (différée) : `src/{java,go}`,
-`stable/{java,go}`, `test/{java,go}` (`test/` au singulier ; `test/tools`
-pour les outils de comparaison, prévu). **Prochaine tâche** : réorganiser
-`test/` — déplacer les tests Java dans `test/java` et les outils de
-comparaison dans `test/tools`.
+Disposition de `test/` (réorganisée le 2026-10-24) : `test/java` (tests
+Tom+Java), `test/go` (ports et données), `test/tools` (outils de
+comparaison, module `tomtools`). Disposition cible à long terme (différée)
+pour le reste : `src/{java,go}`, `stable/{java,go}`.
 
 > Les chemins `stable/library/{gomast,tomast}`, `stable/tom/parser/…`,
 > `tests/testdata/parse/`, … des phases historiques (§4–5) sont ceux du
@@ -750,7 +755,7 @@ GOMGO_BIN=/tmp/gomgo TOM_HOME=$PWD/src/dist src/dist/bin/tom -go -np -d out test
 #   module <nom>  /  go 1.26
 #   require tom v0.0.0
 #   replace tom => $TOM_HOME/lib/go/tom     (src/dist et stable/dist livrent le runtime)
-# (c'est ce qu'écrit SetupGoModule dans test/go/harness)
+# (c'est ce qu'écrit SetupGoModule dans test/tools/harness)
 # Le compilateur bootstrappé (stable/dist, promu le 2026-10-23) livre aussi
 # le runtime (lib/go/tom) et lit GOMGO_BIN :
 GOMGO_BIN=/tmp/gomgo TOM_HOME=$PWD/stable/dist stable/dist/bin/tom -go -d out X.t
@@ -761,7 +766,7 @@ mage -d magefiles -w . portJava && mage -d magefiles -w . portGo && mage -d mage
 #   portJava : T0, sortie Java identique à legacy/ (défaut et -np), ~4 min
 #   portGo   : T1 (goldens Go) + T2 (oracle legacy/) + doc/go/port-dashboard.md
 #   coverage : T3, doc/go/coverage.md
-(cd test/go && go test -count=1 ./smoke/)   # petits programmes Tom+Go de régression
+(cd test/tools && go test -count=1 ./smoke/)   # petits programmes Tom+Go de régression
 mage -d magefiles -w . bootstrap           # génère les ADT de src/go/tom (clone neuf OK ; toutes les cibles en dépendent)
 mage -d magefiles -w . promoteGo           # après une évolution voulue de gomgo ou des .gom ; puis bootstrap à nouveau
 mage -d magefiles -w . selfBootstrap       # TestSelfBootstrap + TestSignatureParity (gom/backend)
@@ -1200,7 +1205,6 @@ Différences API vs Java :
 3. Ouvrir le dernier rapport (`doc/go/j2-report.md` à ce jour) pour le
    détail technique de l'étape qu'on vient de finir, puis
    `doc/go/port-dashboard.md` et `doc/go/coverage.md`.
-4. Prochaine tâche : réorganiser `test/` (tests Java vers `test/java`,
-   outils de comparaison vers `test/tools`, cf. §3). Ensuite : rédiger le spec J4 (portage du compilateur en Tom+Go
+4. Prochaine tâche : rédiger le spec J4 (portage du compilateur en Tom+Go
    « de la fin vers le début », cf. `doc/go/README.md`) ; la section 5
    de ce fichier est historique.

@@ -9,7 +9,9 @@
 | Gom écrit en Go (`gomgo`) | `src/go/tom/gom/` | validé |
 | ADT du compilateur Go : sources `.gom` (hooks en Go) / amorce générée | `src/go/tom/{gom,engine}/adt` / `stable/go/tom/{gom,engine}/adt` | validé |
 | Mappings Go | `src/tom/library/mapping/go/` | validé |
-| Tests Tom+Go (ports de `test/`), T0–T3, smoke | `test/go/` (module `tomtest`) | validé |
+| Tests Tom+Java (originaux) | `test/java/` | historique |
+| Tests Tom+Go (ports de `test/java/`), données de référence, tests des ADT | `test/go/` (module `tomtest`) | validé |
+| Harnais T0–T3, smoke (comparent Java, Go, `legacy/`) | `test/tools/` (module `tomtools`) | validé |
 | Rapports | `doc/go/` : J0–T3 [`j0-go-backend.md`](j0-go-backend.md), J2 [`j2-report.md`](j2-report.md), [tableau de bord](port-dashboard.md), [couverture](coverage.md) | à jour |
 | Prototype tomgo (compilateur Go écrit à la main) | `prototype/tomgo/` | gelé, réservoir de code |
 
@@ -29,7 +31,7 @@ GOMGO_BIN=/tmp/gomgo TOM_HOME=$PWD/src/dist src/dist/bin/tom -go -d out X.t
 Puis dans `out/`, un `go.mod` avec `go 1.26` (Go ≥ 1.26 requis),
 `require tom v0.0.0` et `replace tom => $TOM_HOME/lib/go/tom`.
 
-Orchestration : `go.work` à la racine (modules `src/go/tom`, `test/go`,
+Orchestration : `go.work` à la racine (modules `src/go/tom`, `test/go`, `test/tools`,
 `magefiles`, `prototype/tomgo`) et `magefiles/` ; cibles `mage -d magefiles
 -w . <cible>` (ou `cd magefiles && mage <cible>`), cf. `mage -d magefiles
 -w . -l`.
@@ -51,7 +53,7 @@ autonomes), comparés à ceux de Java Gom (`legacy/`) :
   par Gom). L'ordre des éléments diffère donc : affichage (`String()`),
   `ToATerm`, `ToArray`/`GetHead…`, `CompareTo`, et ordre d'énumération
   des solutions d'un filtrage AC. L'égalité des termes et l'ensemble des
-  solutions sont les mêmes (test/gom/TestACU.t, test/acmatching).
+  solutions sont les mêmes (test/java/gom/TestACU.t, test/java/acmatching).
 - **Coût des listes.** Comme en Java, une liste d'un opérateur variadique
   (de tout module compilé par gomgo) est une chaîne de cellules `Cons<op>(tête, queue)` / `Empty<op>()`
   partagées au maximum (`gom/backend/cells.go`) : `Cons<Op>`,
@@ -61,7 +63,7 @@ autonomes), comparés à ceux de Java Gom (`legacy/`) :
   `sharedobjects` garde cependant tous les termes construits (pas de
   références faibles comme celle de Java) : un programme qui construit
   beaucoup de termes passe plus de temps dans le ramasse-miettes
-  (test/acmatching/TestBool3.t : 2,9 s en Go, 1,2 s en Java ; 12,4 s avec
+  (test/java/acmatching/TestBool3.t : 2,9 s en Go, 1,2 s en Java ; 12,4 s avec
   l'ancienne représentation en tranches plates).
 - **Hooks dans le mapping.** Les hooks `make`, `make_insert`,
   `make_empty`, les règles (`module M:rules()`) et les blocs (`block`)

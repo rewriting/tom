@@ -15,8 +15,9 @@
 - The repository root (`src/`, `stable/`) — the AI-assisted extension of
   that compiler with a Go target. Its Go side lives in
   [`src/go/tom`](src/go/tom) (module `tom`: runtime libraries and the Gom
-  compiler for Go), [`test/go`](test/go) (Tom+Go tests and parity
-  harnesses) and [`doc/go`](doc/go) (reports); orchestration with
+  compiler for Go), [`test/java`](test/java) (the Tom+Java tests),
+  [`test/go`](test/go) (Tom+Go ports and reference data),
+  [`test/tools`](test/tools) (harnesses comparing Java, Go and `legacy/`) and [`doc/go`](doc/go) (reports); orchestration with
   `mage -d magefiles -w . -l`. [`prototype/tomgo`](prototype/tomgo/README.md)
   is the frozen hand-written Go prototype.
 

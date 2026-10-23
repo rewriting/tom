@@ -1,5 +1,7 @@
 # J0 → T3 — cible Go dans le compilateur Tom+Java
 
+Chemins : depuis la réorganisation du 2026-10-24, les originaux `test/<rel>` cités ci-dessous sont dans `test/java/<rel>` et les harnais `test/go/{harness,javaparity,coverage,smoke}` dans `test/tools/…` (`go test ./smoke/` se lance dans `test/tools`).
+
 Chemins mis à jour par la réorganisation du 2026-10-23 (voir docs/superpowers/specs/2026-10-23-repo-layout-design.md).
 
 Date : 2026-10-22. Branche `tom-go`.
@@ -82,7 +84,7 @@ antérieur au projet ; les 19 autres sont du projet :
   l'original), contraintes `<<`/`&&`/`||`, règles étiquetées. Les
   comptes sont textuels (bornes hautes), pas une preuve d'exercice
   sémantique.
-- **Régression** : `go test -count=1 ./smoke/` (dans `test/go`) vert (8 fixtures
+- **Régression** : `go test -count=1 ./smoke/` (dans `test/tools`) vert (8 fixtures
   + test d'options) :
   - `array_size` : `get_size` d'un `%oparray` renvoie un `int64` (le
     `len($l)` Go, de type `int`, est converti ; un `;` final est toléré) ;
