@@ -5,10 +5,6 @@ import (
 	"fmt"
 	"strings"
 
-	"io"
-	"sync/atomic"
-
-	"tom/library/aterm"
 	"tom/library/sharedobjects"
 	sl "tom/library/sl"
 )
@@ -17,9 +13,6 @@ import (
 var _ = fmt.Sprintf
 var _ = strings.Join
 var _ sl.Strategy = nil
-var _ = io.EOF
-var _ = aterm.GetInstance
-var _ atomic.Bool
 
 // factory is the per-package shared-objects factory backing every constructor.
 var factory = sharedobjects.NewFactory()
@@ -31,90 +24,6 @@ func Factory() *sharedobjects.Factory { return factory }
 type Code interface {
 	sharedobjects.Term
 	isCode()
-	// Java Gom API (see the package's generated methods)
-	SymbolName() string
-	IsCode() bool
-	IsIsEmpty() bool
-	IsIsCons() bool
-	IsEmpty() bool
-	IsCons() bool
-	IsFullSortClass() bool
-	IsShortSortClass() bool
-	IsFullOperatorClass() bool
-	IsCompare() bool
-	IsConsCodeList() bool
-	IsEmptyCodeList() bool
-	GetHeadCodeList() Code
-	GetTailCodeList() Code
-	Getprog() string
-	GetVar() string
-	GetOperator() OperatorDecl
-	GetSort() SortDecl
-	GetLCode() Code
-	GetRCode() Code
-	Length() int
-	Reverse() Code
-	CompareTo(o any) int
-	CompareToLPO(o any) int
-	ToATerm() aterm.ATerm
-}
-
-// CodeFromTerm is Java Gom's Code.fromTerm(trm).
-func CodeFromTerm(trm aterm.ATerm) Code { return CodeFromTermConv(trm, aterm.IdConverter{}) }
-
-// CodeFromTermConv is Java Gom's Code.fromTerm(trm, atConv): the term of
-// the first operator of the sort that converts the ATerm; it panics
-// (IllegalArgumentException) when there is none.
-func CodeFromTermConv(trm aterm.ATerm, conv aterm.ATermConverter) Code {
-	converted := conv.Convert(trm)
-	var results []Code
-	if r, ok := fromTermCodeCode(converted, conv); ok {
-		results = append(results, r)
-	}
-	if r, ok := fromTermIsEmptyCode(converted, conv); ok {
-		results = append(results, r)
-	}
-	if r, ok := fromTermIsConsCode(converted, conv); ok {
-		results = append(results, r)
-	}
-	if r, ok := fromTermEmptyCode(converted, conv); ok {
-		results = append(results, r)
-	}
-	if r, ok := fromTermConsCode(converted, conv); ok {
-		results = append(results, r)
-	}
-	if r, ok := fromTermFullSortClassCode(converted, conv); ok {
-		results = append(results, r)
-	}
-	if r, ok := fromTermShortSortClassCode(converted, conv); ok {
-		results = append(results, r)
-	}
-	if r, ok := fromTermFullOperatorClassCode(converted, conv); ok {
-		results = append(results, r)
-	}
-	if r, ok := fromTermCompareCode(converted, conv); ok {
-		results = append(results, r)
-	}
-	if r, ok := fromTermCodeListCode(converted, conv); ok {
-		results = append(results, r)
-	}
-	if len(results) == 0 {
-		panic(&aterm.GomError{Msg: fmt.Sprintf("%v is not a Code", trm), IllegalArgument: true})
-	}
-	return results[0]
-}
-
-// CodeFromString is Java Gom's Code.fromString(s).
-func CodeFromString(s string) Code { return CodeFromTerm(aterm.GetInstance().Parse(s)) }
-
-// CodeFromStream is Java Gom's Code.fromStream(stream) (an IOException is
-// the error).
-func CodeFromStream(stream io.Reader) (Code, error) {
-	at, err := aterm.GetInstance().ReadFromTextFile(stream)
-	if err != nil {
-		return nil, err
-	}
-	return CodeFromTerm(at), nil
 }
 
 // CodeCode is the term type for the alternative `Code(...)` of sort Code.
@@ -144,7 +53,7 @@ func (t *CodeCode) Duplicate() sharedobjects.Term {
 }
 
 func (t *CodeCode) String() string {
-	return "Code(" + sharedobjects.JavaEscape(t.Prog) + ")"
+	return fmt.Sprintf("Code(%s)", sharedobjects.JavaEscape(t.Prog))
 }
 
 func (t *CodeCode) ChildCount() int { return 1 }
@@ -273,104 +182,6 @@ func (s *VisitCode) VisitWith(env *sl.Environment, intro sl.Introspector) (any, 
 
 var _ sl.Strategy = (*VisitCode)(nil)
 
-func (t *CodeCode) SymbolName() string { return "Code" }
-
-func (t *CodeCode) IsCode() bool              { return true }
-func (t *CodeCode) IsIsEmpty() bool           { return false }
-func (t *CodeCode) IsIsCons() bool            { return false }
-func (t *CodeCode) IsEmpty() bool             { return false }
-func (t *CodeCode) IsCons() bool              { return false }
-func (t *CodeCode) IsFullSortClass() bool     { return false }
-func (t *CodeCode) IsShortSortClass() bool    { return false }
-func (t *CodeCode) IsFullOperatorClass() bool { return false }
-func (t *CodeCode) IsCompare() bool           { return false }
-func (t *CodeCode) IsConsCodeList() bool      { return false }
-func (t *CodeCode) IsEmptyCodeList() bool     { return false }
-
-func (t *CodeCode) Getprog() string { return t.Prog }
-func (t *CodeCode) GetVar() string {
-	panic(&aterm.GomError{Msg: "This Code has no Var"})
-}
-func (t *CodeCode) GetOperator() OperatorDecl {
-	panic(&aterm.GomError{Msg: "This Code has no Operator"})
-}
-func (t *CodeCode) GetSort() SortDecl {
-	panic(&aterm.GomError{Msg: "This Code has no Sort"})
-}
-func (t *CodeCode) GetLCode() Code {
-	panic(&aterm.GomError{Msg: "This Code has no LCode"})
-}
-func (t *CodeCode) GetRCode() Code {
-	panic(&aterm.GomError{Msg: "This Code has no RCode"})
-}
-func (t *CodeCode) GetHeadCodeList() Code {
-	panic(&aterm.GomError{Msg: "This Code has no HeadCodeList"})
-}
-func (t *CodeCode) GetTailCodeList() Code {
-	panic(&aterm.GomError{Msg: "This Code has no TailCodeList"})
-}
-
-func (t *CodeCode) Length() int {
-	panic(&aterm.GomError{Msg: "This Code.Code is not a list", IllegalArgument: true})
-}
-
-func (t *CodeCode) Reverse() Code {
-	panic(&aterm.GomError{Msg: "This Code.Code is not a list", IllegalArgument: true})
-}
-
-func (t *CodeCode) CompareTo(o any) int {
-	ao := o.(Code)
-	if ao == Code(t) {
-		return 0
-	}
-	if t.Hash() != ao.Hash() {
-		if t.Hash() < ao.Hash() {
-			return -1
-		}
-		return 1
-	}
-	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
-		return c
-	}
-	tco := ao.(*CodeCode)
-	if c := strings.Compare(t.Prog, tco.Prog); c != 0 {
-		return c
-	}
-	panic(&aterm.GomError{Msg: "Unable to compare"})
-}
-
-func (t *CodeCode) CompareToLPO(o any) int {
-	ao := o.(Code)
-	if ao == Code(t) {
-		return 0
-	}
-	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
-		return c
-	}
-	tco := ao.(*CodeCode)
-	if c := strings.Compare(t.Prog, tco.Prog); c != 0 {
-		return c
-	}
-	panic(&aterm.GomError{Msg: "Unable to compare"})
-}
-
-// ToATerm is the ATerm of the term: an application of Code.
-func (t *CodeCode) ToATerm() aterm.ATerm {
-	f := aterm.GetInstance()
-	return f.MakeAppl(f.MakeAFun("Code", 1, false), aterm.MakeGomString(t.Prog))
-}
-
-// fromTermCodeCode is Java Gom's Code.fromTerm: an unquoted application of
-// Code whose arguments are convertible (as in Java, the arity is not
-// checked: a missing argument is an index out of range).
-func fromTermCodeCode(trm aterm.ATerm, conv aterm.ATermConverter) (Code, bool) {
-	trm = conv.Convert(trm)
-	if appl, ok := trm.(*aterm.ATermAppl); ok && appl.GetName() == "Code" && !appl.GetAFun().IsQuoted() {
-		return MakeCode(aterm.GomString(appl.GetArgument(0), conv)), true
-	}
-	return nil, false
-}
-
 // IsEmptyCode is the term type for the alternative `IsEmpty(...)` of sort Code.
 type IsEmptyCode struct {
 	Var      string
@@ -402,7 +213,7 @@ func (t *IsEmptyCode) Duplicate() sharedobjects.Term {
 }
 
 func (t *IsEmptyCode) String() string {
-	return "IsEmpty(" + sharedobjects.JavaEscape(t.Var) + "," + fmt.Sprint(t.Operator) + ")"
+	return fmt.Sprintf("IsEmpty(%s,%v)", sharedobjects.JavaEscape(t.Var), t.Operator)
 }
 
 func (t *IsEmptyCode) ChildCount() int { return 2 }
@@ -535,108 +346,6 @@ func (s *VisitIsEmpty) VisitWith(env *sl.Environment, intro sl.Introspector) (an
 
 var _ sl.Strategy = (*VisitIsEmpty)(nil)
 
-func (t *IsEmptyCode) SymbolName() string { return "IsEmpty" }
-
-func (t *IsEmptyCode) IsCode() bool              { return false }
-func (t *IsEmptyCode) IsIsEmpty() bool           { return true }
-func (t *IsEmptyCode) IsIsCons() bool            { return false }
-func (t *IsEmptyCode) IsEmpty() bool             { return false }
-func (t *IsEmptyCode) IsCons() bool              { return false }
-func (t *IsEmptyCode) IsFullSortClass() bool     { return false }
-func (t *IsEmptyCode) IsShortSortClass() bool    { return false }
-func (t *IsEmptyCode) IsFullOperatorClass() bool { return false }
-func (t *IsEmptyCode) IsCompare() bool           { return false }
-func (t *IsEmptyCode) IsConsCodeList() bool      { return false }
-func (t *IsEmptyCode) IsEmptyCodeList() bool     { return false }
-
-func (t *IsEmptyCode) Getprog() string {
-	panic(&aterm.GomError{Msg: "This Code has no prog"})
-}
-func (t *IsEmptyCode) GetVar() string            { return t.Var }
-func (t *IsEmptyCode) GetOperator() OperatorDecl { return t.Operator }
-func (t *IsEmptyCode) GetSort() SortDecl {
-	panic(&aterm.GomError{Msg: "This Code has no Sort"})
-}
-func (t *IsEmptyCode) GetLCode() Code {
-	panic(&aterm.GomError{Msg: "This Code has no LCode"})
-}
-func (t *IsEmptyCode) GetRCode() Code {
-	panic(&aterm.GomError{Msg: "This Code has no RCode"})
-}
-func (t *IsEmptyCode) GetHeadCodeList() Code {
-	panic(&aterm.GomError{Msg: "This Code has no HeadCodeList"})
-}
-func (t *IsEmptyCode) GetTailCodeList() Code {
-	panic(&aterm.GomError{Msg: "This Code has no TailCodeList"})
-}
-
-func (t *IsEmptyCode) Length() int {
-	panic(&aterm.GomError{Msg: "This Code.IsEmpty is not a list", IllegalArgument: true})
-}
-
-func (t *IsEmptyCode) Reverse() Code {
-	panic(&aterm.GomError{Msg: "This Code.IsEmpty is not a list", IllegalArgument: true})
-}
-
-func (t *IsEmptyCode) CompareTo(o any) int {
-	ao := o.(Code)
-	if ao == Code(t) {
-		return 0
-	}
-	if t.Hash() != ao.Hash() {
-		if t.Hash() < ao.Hash() {
-			return -1
-		}
-		return 1
-	}
-	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
-		return c
-	}
-	tco := ao.(*IsEmptyCode)
-	if c := strings.Compare(t.Var, tco.Var); c != 0 {
-		return c
-	}
-	if c := t.Operator.CompareTo(tco.Operator); c != 0 {
-		return c
-	}
-	panic(&aterm.GomError{Msg: "Unable to compare"})
-}
-
-func (t *IsEmptyCode) CompareToLPO(o any) int {
-	ao := o.(Code)
-	if ao == Code(t) {
-		return 0
-	}
-	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
-		return c
-	}
-	tco := ao.(*IsEmptyCode)
-	if c := strings.Compare(t.Var, tco.Var); c != 0 {
-		return c
-	}
-	if c := t.Operator.CompareToLPO(tco.Operator); c != 0 {
-		return c
-	}
-	panic(&aterm.GomError{Msg: "Unable to compare"})
-}
-
-// ToATerm is the ATerm of the term: an application of IsEmpty.
-func (t *IsEmptyCode) ToATerm() aterm.ATerm {
-	f := aterm.GetInstance()
-	return f.MakeAppl(f.MakeAFun("IsEmpty", 2, false), aterm.MakeGomString(t.Var), t.Operator.ToATerm())
-}
-
-// fromTermIsEmptyCode is Java Gom's IsEmpty.fromTerm: an unquoted application of
-// IsEmpty whose arguments are convertible (as in Java, the arity is not
-// checked: a missing argument is an index out of range).
-func fromTermIsEmptyCode(trm aterm.ATerm, conv aterm.ATermConverter) (Code, bool) {
-	trm = conv.Convert(trm)
-	if appl, ok := trm.(*aterm.ATermAppl); ok && appl.GetName() == "IsEmpty" && !appl.GetAFun().IsQuoted() {
-		return MakeIsEmpty(aterm.GomString(appl.GetArgument(0), conv), OperatorDeclFromTermConv(appl.GetArgument(1), conv)), true
-	}
-	return nil, false
-}
-
 // IsConsCode is the term type for the alternative `IsCons(...)` of sort Code.
 type IsConsCode struct {
 	Var      string
@@ -668,7 +377,7 @@ func (t *IsConsCode) Duplicate() sharedobjects.Term {
 }
 
 func (t *IsConsCode) String() string {
-	return "IsCons(" + sharedobjects.JavaEscape(t.Var) + "," + fmt.Sprint(t.Operator) + ")"
+	return fmt.Sprintf("IsCons(%s,%v)", sharedobjects.JavaEscape(t.Var), t.Operator)
 }
 
 func (t *IsConsCode) ChildCount() int { return 2 }
@@ -801,108 +510,6 @@ func (s *VisitIsCons) VisitWith(env *sl.Environment, intro sl.Introspector) (any
 
 var _ sl.Strategy = (*VisitIsCons)(nil)
 
-func (t *IsConsCode) SymbolName() string { return "IsCons" }
-
-func (t *IsConsCode) IsCode() bool              { return false }
-func (t *IsConsCode) IsIsEmpty() bool           { return false }
-func (t *IsConsCode) IsIsCons() bool            { return true }
-func (t *IsConsCode) IsEmpty() bool             { return false }
-func (t *IsConsCode) IsCons() bool              { return false }
-func (t *IsConsCode) IsFullSortClass() bool     { return false }
-func (t *IsConsCode) IsShortSortClass() bool    { return false }
-func (t *IsConsCode) IsFullOperatorClass() bool { return false }
-func (t *IsConsCode) IsCompare() bool           { return false }
-func (t *IsConsCode) IsConsCodeList() bool      { return false }
-func (t *IsConsCode) IsEmptyCodeList() bool     { return false }
-
-func (t *IsConsCode) Getprog() string {
-	panic(&aterm.GomError{Msg: "This Code has no prog"})
-}
-func (t *IsConsCode) GetVar() string            { return t.Var }
-func (t *IsConsCode) GetOperator() OperatorDecl { return t.Operator }
-func (t *IsConsCode) GetSort() SortDecl {
-	panic(&aterm.GomError{Msg: "This Code has no Sort"})
-}
-func (t *IsConsCode) GetLCode() Code {
-	panic(&aterm.GomError{Msg: "This Code has no LCode"})
-}
-func (t *IsConsCode) GetRCode() Code {
-	panic(&aterm.GomError{Msg: "This Code has no RCode"})
-}
-func (t *IsConsCode) GetHeadCodeList() Code {
-	panic(&aterm.GomError{Msg: "This Code has no HeadCodeList"})
-}
-func (t *IsConsCode) GetTailCodeList() Code {
-	panic(&aterm.GomError{Msg: "This Code has no TailCodeList"})
-}
-
-func (t *IsConsCode) Length() int {
-	panic(&aterm.GomError{Msg: "This Code.IsCons is not a list", IllegalArgument: true})
-}
-
-func (t *IsConsCode) Reverse() Code {
-	panic(&aterm.GomError{Msg: "This Code.IsCons is not a list", IllegalArgument: true})
-}
-
-func (t *IsConsCode) CompareTo(o any) int {
-	ao := o.(Code)
-	if ao == Code(t) {
-		return 0
-	}
-	if t.Hash() != ao.Hash() {
-		if t.Hash() < ao.Hash() {
-			return -1
-		}
-		return 1
-	}
-	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
-		return c
-	}
-	tco := ao.(*IsConsCode)
-	if c := strings.Compare(t.Var, tco.Var); c != 0 {
-		return c
-	}
-	if c := t.Operator.CompareTo(tco.Operator); c != 0 {
-		return c
-	}
-	panic(&aterm.GomError{Msg: "Unable to compare"})
-}
-
-func (t *IsConsCode) CompareToLPO(o any) int {
-	ao := o.(Code)
-	if ao == Code(t) {
-		return 0
-	}
-	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
-		return c
-	}
-	tco := ao.(*IsConsCode)
-	if c := strings.Compare(t.Var, tco.Var); c != 0 {
-		return c
-	}
-	if c := t.Operator.CompareToLPO(tco.Operator); c != 0 {
-		return c
-	}
-	panic(&aterm.GomError{Msg: "Unable to compare"})
-}
-
-// ToATerm is the ATerm of the term: an application of IsCons.
-func (t *IsConsCode) ToATerm() aterm.ATerm {
-	f := aterm.GetInstance()
-	return f.MakeAppl(f.MakeAFun("IsCons", 2, false), aterm.MakeGomString(t.Var), t.Operator.ToATerm())
-}
-
-// fromTermIsConsCode is Java Gom's IsCons.fromTerm: an unquoted application of
-// IsCons whose arguments are convertible (as in Java, the arity is not
-// checked: a missing argument is an index out of range).
-func fromTermIsConsCode(trm aterm.ATerm, conv aterm.ATermConverter) (Code, bool) {
-	trm = conv.Convert(trm)
-	if appl, ok := trm.(*aterm.ATermAppl); ok && appl.GetName() == "IsCons" && !appl.GetAFun().IsQuoted() {
-		return MakeIsCons(aterm.GomString(appl.GetArgument(0), conv), OperatorDeclFromTermConv(appl.GetArgument(1), conv)), true
-	}
-	return nil, false
-}
-
 // EmptyCode is the term type for the alternative `Empty(...)` of sort Code.
 type EmptyCode struct {
 	Operator OperatorDecl
@@ -930,7 +537,7 @@ func (t *EmptyCode) Duplicate() sharedobjects.Term {
 }
 
 func (t *EmptyCode) String() string {
-	return "Empty(" + fmt.Sprint(t.Operator) + ")"
+	return fmt.Sprintf("Empty(%v)", t.Operator)
 }
 
 func (t *EmptyCode) ChildCount() int { return 1 }
@@ -1059,104 +666,6 @@ func (s *VisitEmpty) VisitWith(env *sl.Environment, intro sl.Introspector) (any,
 
 var _ sl.Strategy = (*VisitEmpty)(nil)
 
-func (t *EmptyCode) SymbolName() string { return "Empty" }
-
-func (t *EmptyCode) IsCode() bool              { return false }
-func (t *EmptyCode) IsIsEmpty() bool           { return false }
-func (t *EmptyCode) IsIsCons() bool            { return false }
-func (t *EmptyCode) IsEmpty() bool             { return true }
-func (t *EmptyCode) IsCons() bool              { return false }
-func (t *EmptyCode) IsFullSortClass() bool     { return false }
-func (t *EmptyCode) IsShortSortClass() bool    { return false }
-func (t *EmptyCode) IsFullOperatorClass() bool { return false }
-func (t *EmptyCode) IsCompare() bool           { return false }
-func (t *EmptyCode) IsConsCodeList() bool      { return false }
-func (t *EmptyCode) IsEmptyCodeList() bool     { return false }
-
-func (t *EmptyCode) Getprog() string {
-	panic(&aterm.GomError{Msg: "This Code has no prog"})
-}
-func (t *EmptyCode) GetVar() string {
-	panic(&aterm.GomError{Msg: "This Code has no Var"})
-}
-func (t *EmptyCode) GetOperator() OperatorDecl { return t.Operator }
-func (t *EmptyCode) GetSort() SortDecl {
-	panic(&aterm.GomError{Msg: "This Code has no Sort"})
-}
-func (t *EmptyCode) GetLCode() Code {
-	panic(&aterm.GomError{Msg: "This Code has no LCode"})
-}
-func (t *EmptyCode) GetRCode() Code {
-	panic(&aterm.GomError{Msg: "This Code has no RCode"})
-}
-func (t *EmptyCode) GetHeadCodeList() Code {
-	panic(&aterm.GomError{Msg: "This Code has no HeadCodeList"})
-}
-func (t *EmptyCode) GetTailCodeList() Code {
-	panic(&aterm.GomError{Msg: "This Code has no TailCodeList"})
-}
-
-func (t *EmptyCode) Length() int {
-	panic(&aterm.GomError{Msg: "This Code.Empty is not a list", IllegalArgument: true})
-}
-
-func (t *EmptyCode) Reverse() Code {
-	panic(&aterm.GomError{Msg: "This Code.Empty is not a list", IllegalArgument: true})
-}
-
-func (t *EmptyCode) CompareTo(o any) int {
-	ao := o.(Code)
-	if ao == Code(t) {
-		return 0
-	}
-	if t.Hash() != ao.Hash() {
-		if t.Hash() < ao.Hash() {
-			return -1
-		}
-		return 1
-	}
-	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
-		return c
-	}
-	tco := ao.(*EmptyCode)
-	if c := t.Operator.CompareTo(tco.Operator); c != 0 {
-		return c
-	}
-	panic(&aterm.GomError{Msg: "Unable to compare"})
-}
-
-func (t *EmptyCode) CompareToLPO(o any) int {
-	ao := o.(Code)
-	if ao == Code(t) {
-		return 0
-	}
-	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
-		return c
-	}
-	tco := ao.(*EmptyCode)
-	if c := t.Operator.CompareToLPO(tco.Operator); c != 0 {
-		return c
-	}
-	panic(&aterm.GomError{Msg: "Unable to compare"})
-}
-
-// ToATerm is the ATerm of the term: an application of Empty.
-func (t *EmptyCode) ToATerm() aterm.ATerm {
-	f := aterm.GetInstance()
-	return f.MakeAppl(f.MakeAFun("Empty", 1, false), t.Operator.ToATerm())
-}
-
-// fromTermEmptyCode is Java Gom's Empty.fromTerm: an unquoted application of
-// Empty whose arguments are convertible (as in Java, the arity is not
-// checked: a missing argument is an index out of range).
-func fromTermEmptyCode(trm aterm.ATerm, conv aterm.ATermConverter) (Code, bool) {
-	trm = conv.Convert(trm)
-	if appl, ok := trm.(*aterm.ATermAppl); ok && appl.GetName() == "Empty" && !appl.GetAFun().IsQuoted() {
-		return MakeEmpty(OperatorDeclFromTermConv(appl.GetArgument(0), conv)), true
-	}
-	return nil, false
-}
-
 // ConsCode is the term type for the alternative `Cons(...)` of sort Code.
 type ConsCode struct {
 	Operator OperatorDecl
@@ -1184,7 +693,7 @@ func (t *ConsCode) Duplicate() sharedobjects.Term {
 }
 
 func (t *ConsCode) String() string {
-	return "Cons(" + fmt.Sprint(t.Operator) + ")"
+	return fmt.Sprintf("Cons(%v)", t.Operator)
 }
 
 func (t *ConsCode) ChildCount() int { return 1 }
@@ -1313,104 +822,6 @@ func (s *VisitCons) VisitWith(env *sl.Environment, intro sl.Introspector) (any, 
 
 var _ sl.Strategy = (*VisitCons)(nil)
 
-func (t *ConsCode) SymbolName() string { return "Cons" }
-
-func (t *ConsCode) IsCode() bool              { return false }
-func (t *ConsCode) IsIsEmpty() bool           { return false }
-func (t *ConsCode) IsIsCons() bool            { return false }
-func (t *ConsCode) IsEmpty() bool             { return false }
-func (t *ConsCode) IsCons() bool              { return true }
-func (t *ConsCode) IsFullSortClass() bool     { return false }
-func (t *ConsCode) IsShortSortClass() bool    { return false }
-func (t *ConsCode) IsFullOperatorClass() bool { return false }
-func (t *ConsCode) IsCompare() bool           { return false }
-func (t *ConsCode) IsConsCodeList() bool      { return false }
-func (t *ConsCode) IsEmptyCodeList() bool     { return false }
-
-func (t *ConsCode) Getprog() string {
-	panic(&aterm.GomError{Msg: "This Code has no prog"})
-}
-func (t *ConsCode) GetVar() string {
-	panic(&aterm.GomError{Msg: "This Code has no Var"})
-}
-func (t *ConsCode) GetOperator() OperatorDecl { return t.Operator }
-func (t *ConsCode) GetSort() SortDecl {
-	panic(&aterm.GomError{Msg: "This Code has no Sort"})
-}
-func (t *ConsCode) GetLCode() Code {
-	panic(&aterm.GomError{Msg: "This Code has no LCode"})
-}
-func (t *ConsCode) GetRCode() Code {
-	panic(&aterm.GomError{Msg: "This Code has no RCode"})
-}
-func (t *ConsCode) GetHeadCodeList() Code {
-	panic(&aterm.GomError{Msg: "This Code has no HeadCodeList"})
-}
-func (t *ConsCode) GetTailCodeList() Code {
-	panic(&aterm.GomError{Msg: "This Code has no TailCodeList"})
-}
-
-func (t *ConsCode) Length() int {
-	panic(&aterm.GomError{Msg: "This Code.Cons is not a list", IllegalArgument: true})
-}
-
-func (t *ConsCode) Reverse() Code {
-	panic(&aterm.GomError{Msg: "This Code.Cons is not a list", IllegalArgument: true})
-}
-
-func (t *ConsCode) CompareTo(o any) int {
-	ao := o.(Code)
-	if ao == Code(t) {
-		return 0
-	}
-	if t.Hash() != ao.Hash() {
-		if t.Hash() < ao.Hash() {
-			return -1
-		}
-		return 1
-	}
-	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
-		return c
-	}
-	tco := ao.(*ConsCode)
-	if c := t.Operator.CompareTo(tco.Operator); c != 0 {
-		return c
-	}
-	panic(&aterm.GomError{Msg: "Unable to compare"})
-}
-
-func (t *ConsCode) CompareToLPO(o any) int {
-	ao := o.(Code)
-	if ao == Code(t) {
-		return 0
-	}
-	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
-		return c
-	}
-	tco := ao.(*ConsCode)
-	if c := t.Operator.CompareToLPO(tco.Operator); c != 0 {
-		return c
-	}
-	panic(&aterm.GomError{Msg: "Unable to compare"})
-}
-
-// ToATerm is the ATerm of the term: an application of Cons.
-func (t *ConsCode) ToATerm() aterm.ATerm {
-	f := aterm.GetInstance()
-	return f.MakeAppl(f.MakeAFun("Cons", 1, false), t.Operator.ToATerm())
-}
-
-// fromTermConsCode is Java Gom's Cons.fromTerm: an unquoted application of
-// Cons whose arguments are convertible (as in Java, the arity is not
-// checked: a missing argument is an index out of range).
-func fromTermConsCode(trm aterm.ATerm, conv aterm.ATermConverter) (Code, bool) {
-	trm = conv.Convert(trm)
-	if appl, ok := trm.(*aterm.ATermAppl); ok && appl.GetName() == "Cons" && !appl.GetAFun().IsQuoted() {
-		return MakeCons(OperatorDeclFromTermConv(appl.GetArgument(0), conv)), true
-	}
-	return nil, false
-}
-
 // FullSortClassCode is the term type for the alternative `FullSortClass(...)` of sort Code.
 type FullSortClassCode struct {
 	Sort SortDecl
@@ -1438,7 +849,7 @@ func (t *FullSortClassCode) Duplicate() sharedobjects.Term {
 }
 
 func (t *FullSortClassCode) String() string {
-	return "FullSortClass(" + fmt.Sprint(t.Sort) + ")"
+	return fmt.Sprintf("FullSortClass(%v)", t.Sort)
 }
 
 func (t *FullSortClassCode) ChildCount() int { return 1 }
@@ -1567,104 +978,6 @@ func (s *VisitFullSortClass) VisitWith(env *sl.Environment, intro sl.Introspecto
 
 var _ sl.Strategy = (*VisitFullSortClass)(nil)
 
-func (t *FullSortClassCode) SymbolName() string { return "FullSortClass" }
-
-func (t *FullSortClassCode) IsCode() bool              { return false }
-func (t *FullSortClassCode) IsIsEmpty() bool           { return false }
-func (t *FullSortClassCode) IsIsCons() bool            { return false }
-func (t *FullSortClassCode) IsEmpty() bool             { return false }
-func (t *FullSortClassCode) IsCons() bool              { return false }
-func (t *FullSortClassCode) IsFullSortClass() bool     { return true }
-func (t *FullSortClassCode) IsShortSortClass() bool    { return false }
-func (t *FullSortClassCode) IsFullOperatorClass() bool { return false }
-func (t *FullSortClassCode) IsCompare() bool           { return false }
-func (t *FullSortClassCode) IsConsCodeList() bool      { return false }
-func (t *FullSortClassCode) IsEmptyCodeList() bool     { return false }
-
-func (t *FullSortClassCode) Getprog() string {
-	panic(&aterm.GomError{Msg: "This Code has no prog"})
-}
-func (t *FullSortClassCode) GetVar() string {
-	panic(&aterm.GomError{Msg: "This Code has no Var"})
-}
-func (t *FullSortClassCode) GetOperator() OperatorDecl {
-	panic(&aterm.GomError{Msg: "This Code has no Operator"})
-}
-func (t *FullSortClassCode) GetSort() SortDecl { return t.Sort }
-func (t *FullSortClassCode) GetLCode() Code {
-	panic(&aterm.GomError{Msg: "This Code has no LCode"})
-}
-func (t *FullSortClassCode) GetRCode() Code {
-	panic(&aterm.GomError{Msg: "This Code has no RCode"})
-}
-func (t *FullSortClassCode) GetHeadCodeList() Code {
-	panic(&aterm.GomError{Msg: "This Code has no HeadCodeList"})
-}
-func (t *FullSortClassCode) GetTailCodeList() Code {
-	panic(&aterm.GomError{Msg: "This Code has no TailCodeList"})
-}
-
-func (t *FullSortClassCode) Length() int {
-	panic(&aterm.GomError{Msg: "This Code.FullSortClass is not a list", IllegalArgument: true})
-}
-
-func (t *FullSortClassCode) Reverse() Code {
-	panic(&aterm.GomError{Msg: "This Code.FullSortClass is not a list", IllegalArgument: true})
-}
-
-func (t *FullSortClassCode) CompareTo(o any) int {
-	ao := o.(Code)
-	if ao == Code(t) {
-		return 0
-	}
-	if t.Hash() != ao.Hash() {
-		if t.Hash() < ao.Hash() {
-			return -1
-		}
-		return 1
-	}
-	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
-		return c
-	}
-	tco := ao.(*FullSortClassCode)
-	if c := t.Sort.CompareTo(tco.Sort); c != 0 {
-		return c
-	}
-	panic(&aterm.GomError{Msg: "Unable to compare"})
-}
-
-func (t *FullSortClassCode) CompareToLPO(o any) int {
-	ao := o.(Code)
-	if ao == Code(t) {
-		return 0
-	}
-	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
-		return c
-	}
-	tco := ao.(*FullSortClassCode)
-	if c := t.Sort.CompareToLPO(tco.Sort); c != 0 {
-		return c
-	}
-	panic(&aterm.GomError{Msg: "Unable to compare"})
-}
-
-// ToATerm is the ATerm of the term: an application of FullSortClass.
-func (t *FullSortClassCode) ToATerm() aterm.ATerm {
-	f := aterm.GetInstance()
-	return f.MakeAppl(f.MakeAFun("FullSortClass", 1, false), t.Sort.ToATerm())
-}
-
-// fromTermFullSortClassCode is Java Gom's FullSortClass.fromTerm: an unquoted application of
-// FullSortClass whose arguments are convertible (as in Java, the arity is not
-// checked: a missing argument is an index out of range).
-func fromTermFullSortClassCode(trm aterm.ATerm, conv aterm.ATermConverter) (Code, bool) {
-	trm = conv.Convert(trm)
-	if appl, ok := trm.(*aterm.ATermAppl); ok && appl.GetName() == "FullSortClass" && !appl.GetAFun().IsQuoted() {
-		return MakeFullSortClass(SortDeclFromTermConv(appl.GetArgument(0), conv)), true
-	}
-	return nil, false
-}
-
 // ShortSortClassCode is the term type for the alternative `ShortSortClass(...)` of sort Code.
 type ShortSortClassCode struct {
 	Sort SortDecl
@@ -1692,7 +1005,7 @@ func (t *ShortSortClassCode) Duplicate() sharedobjects.Term {
 }
 
 func (t *ShortSortClassCode) String() string {
-	return "ShortSortClass(" + fmt.Sprint(t.Sort) + ")"
+	return fmt.Sprintf("ShortSortClass(%v)", t.Sort)
 }
 
 func (t *ShortSortClassCode) ChildCount() int { return 1 }
@@ -1821,104 +1134,6 @@ func (s *VisitShortSortClass) VisitWith(env *sl.Environment, intro sl.Introspect
 
 var _ sl.Strategy = (*VisitShortSortClass)(nil)
 
-func (t *ShortSortClassCode) SymbolName() string { return "ShortSortClass" }
-
-func (t *ShortSortClassCode) IsCode() bool              { return false }
-func (t *ShortSortClassCode) IsIsEmpty() bool           { return false }
-func (t *ShortSortClassCode) IsIsCons() bool            { return false }
-func (t *ShortSortClassCode) IsEmpty() bool             { return false }
-func (t *ShortSortClassCode) IsCons() bool              { return false }
-func (t *ShortSortClassCode) IsFullSortClass() bool     { return false }
-func (t *ShortSortClassCode) IsShortSortClass() bool    { return true }
-func (t *ShortSortClassCode) IsFullOperatorClass() bool { return false }
-func (t *ShortSortClassCode) IsCompare() bool           { return false }
-func (t *ShortSortClassCode) IsConsCodeList() bool      { return false }
-func (t *ShortSortClassCode) IsEmptyCodeList() bool     { return false }
-
-func (t *ShortSortClassCode) Getprog() string {
-	panic(&aterm.GomError{Msg: "This Code has no prog"})
-}
-func (t *ShortSortClassCode) GetVar() string {
-	panic(&aterm.GomError{Msg: "This Code has no Var"})
-}
-func (t *ShortSortClassCode) GetOperator() OperatorDecl {
-	panic(&aterm.GomError{Msg: "This Code has no Operator"})
-}
-func (t *ShortSortClassCode) GetSort() SortDecl { return t.Sort }
-func (t *ShortSortClassCode) GetLCode() Code {
-	panic(&aterm.GomError{Msg: "This Code has no LCode"})
-}
-func (t *ShortSortClassCode) GetRCode() Code {
-	panic(&aterm.GomError{Msg: "This Code has no RCode"})
-}
-func (t *ShortSortClassCode) GetHeadCodeList() Code {
-	panic(&aterm.GomError{Msg: "This Code has no HeadCodeList"})
-}
-func (t *ShortSortClassCode) GetTailCodeList() Code {
-	panic(&aterm.GomError{Msg: "This Code has no TailCodeList"})
-}
-
-func (t *ShortSortClassCode) Length() int {
-	panic(&aterm.GomError{Msg: "This Code.ShortSortClass is not a list", IllegalArgument: true})
-}
-
-func (t *ShortSortClassCode) Reverse() Code {
-	panic(&aterm.GomError{Msg: "This Code.ShortSortClass is not a list", IllegalArgument: true})
-}
-
-func (t *ShortSortClassCode) CompareTo(o any) int {
-	ao := o.(Code)
-	if ao == Code(t) {
-		return 0
-	}
-	if t.Hash() != ao.Hash() {
-		if t.Hash() < ao.Hash() {
-			return -1
-		}
-		return 1
-	}
-	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
-		return c
-	}
-	tco := ao.(*ShortSortClassCode)
-	if c := t.Sort.CompareTo(tco.Sort); c != 0 {
-		return c
-	}
-	panic(&aterm.GomError{Msg: "Unable to compare"})
-}
-
-func (t *ShortSortClassCode) CompareToLPO(o any) int {
-	ao := o.(Code)
-	if ao == Code(t) {
-		return 0
-	}
-	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
-		return c
-	}
-	tco := ao.(*ShortSortClassCode)
-	if c := t.Sort.CompareToLPO(tco.Sort); c != 0 {
-		return c
-	}
-	panic(&aterm.GomError{Msg: "Unable to compare"})
-}
-
-// ToATerm is the ATerm of the term: an application of ShortSortClass.
-func (t *ShortSortClassCode) ToATerm() aterm.ATerm {
-	f := aterm.GetInstance()
-	return f.MakeAppl(f.MakeAFun("ShortSortClass", 1, false), t.Sort.ToATerm())
-}
-
-// fromTermShortSortClassCode is Java Gom's ShortSortClass.fromTerm: an unquoted application of
-// ShortSortClass whose arguments are convertible (as in Java, the arity is not
-// checked: a missing argument is an index out of range).
-func fromTermShortSortClassCode(trm aterm.ATerm, conv aterm.ATermConverter) (Code, bool) {
-	trm = conv.Convert(trm)
-	if appl, ok := trm.(*aterm.ATermAppl); ok && appl.GetName() == "ShortSortClass" && !appl.GetAFun().IsQuoted() {
-		return MakeShortSortClass(SortDeclFromTermConv(appl.GetArgument(0), conv)), true
-	}
-	return nil, false
-}
-
 // FullOperatorClassCode is the term type for the alternative `FullOperatorClass(...)` of sort Code.
 type FullOperatorClassCode struct {
 	Operator OperatorDecl
@@ -1946,7 +1161,7 @@ func (t *FullOperatorClassCode) Duplicate() sharedobjects.Term {
 }
 
 func (t *FullOperatorClassCode) String() string {
-	return "FullOperatorClass(" + fmt.Sprint(t.Operator) + ")"
+	return fmt.Sprintf("FullOperatorClass(%v)", t.Operator)
 }
 
 func (t *FullOperatorClassCode) ChildCount() int { return 1 }
@@ -2075,104 +1290,6 @@ func (s *VisitFullOperatorClass) VisitWith(env *sl.Environment, intro sl.Introsp
 
 var _ sl.Strategy = (*VisitFullOperatorClass)(nil)
 
-func (t *FullOperatorClassCode) SymbolName() string { return "FullOperatorClass" }
-
-func (t *FullOperatorClassCode) IsCode() bool              { return false }
-func (t *FullOperatorClassCode) IsIsEmpty() bool           { return false }
-func (t *FullOperatorClassCode) IsIsCons() bool            { return false }
-func (t *FullOperatorClassCode) IsEmpty() bool             { return false }
-func (t *FullOperatorClassCode) IsCons() bool              { return false }
-func (t *FullOperatorClassCode) IsFullSortClass() bool     { return false }
-func (t *FullOperatorClassCode) IsShortSortClass() bool    { return false }
-func (t *FullOperatorClassCode) IsFullOperatorClass() bool { return true }
-func (t *FullOperatorClassCode) IsCompare() bool           { return false }
-func (t *FullOperatorClassCode) IsConsCodeList() bool      { return false }
-func (t *FullOperatorClassCode) IsEmptyCodeList() bool     { return false }
-
-func (t *FullOperatorClassCode) Getprog() string {
-	panic(&aterm.GomError{Msg: "This Code has no prog"})
-}
-func (t *FullOperatorClassCode) GetVar() string {
-	panic(&aterm.GomError{Msg: "This Code has no Var"})
-}
-func (t *FullOperatorClassCode) GetOperator() OperatorDecl { return t.Operator }
-func (t *FullOperatorClassCode) GetSort() SortDecl {
-	panic(&aterm.GomError{Msg: "This Code has no Sort"})
-}
-func (t *FullOperatorClassCode) GetLCode() Code {
-	panic(&aterm.GomError{Msg: "This Code has no LCode"})
-}
-func (t *FullOperatorClassCode) GetRCode() Code {
-	panic(&aterm.GomError{Msg: "This Code has no RCode"})
-}
-func (t *FullOperatorClassCode) GetHeadCodeList() Code {
-	panic(&aterm.GomError{Msg: "This Code has no HeadCodeList"})
-}
-func (t *FullOperatorClassCode) GetTailCodeList() Code {
-	panic(&aterm.GomError{Msg: "This Code has no TailCodeList"})
-}
-
-func (t *FullOperatorClassCode) Length() int {
-	panic(&aterm.GomError{Msg: "This Code.FullOperatorClass is not a list", IllegalArgument: true})
-}
-
-func (t *FullOperatorClassCode) Reverse() Code {
-	panic(&aterm.GomError{Msg: "This Code.FullOperatorClass is not a list", IllegalArgument: true})
-}
-
-func (t *FullOperatorClassCode) CompareTo(o any) int {
-	ao := o.(Code)
-	if ao == Code(t) {
-		return 0
-	}
-	if t.Hash() != ao.Hash() {
-		if t.Hash() < ao.Hash() {
-			return -1
-		}
-		return 1
-	}
-	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
-		return c
-	}
-	tco := ao.(*FullOperatorClassCode)
-	if c := t.Operator.CompareTo(tco.Operator); c != 0 {
-		return c
-	}
-	panic(&aterm.GomError{Msg: "Unable to compare"})
-}
-
-func (t *FullOperatorClassCode) CompareToLPO(o any) int {
-	ao := o.(Code)
-	if ao == Code(t) {
-		return 0
-	}
-	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
-		return c
-	}
-	tco := ao.(*FullOperatorClassCode)
-	if c := t.Operator.CompareToLPO(tco.Operator); c != 0 {
-		return c
-	}
-	panic(&aterm.GomError{Msg: "Unable to compare"})
-}
-
-// ToATerm is the ATerm of the term: an application of FullOperatorClass.
-func (t *FullOperatorClassCode) ToATerm() aterm.ATerm {
-	f := aterm.GetInstance()
-	return f.MakeAppl(f.MakeAFun("FullOperatorClass", 1, false), t.Operator.ToATerm())
-}
-
-// fromTermFullOperatorClassCode is Java Gom's FullOperatorClass.fromTerm: an unquoted application of
-// FullOperatorClass whose arguments are convertible (as in Java, the arity is not
-// checked: a missing argument is an index out of range).
-func fromTermFullOperatorClassCode(trm aterm.ATerm, conv aterm.ATermConverter) (Code, bool) {
-	trm = conv.Convert(trm)
-	if appl, ok := trm.(*aterm.ATermAppl); ok && appl.GetName() == "FullOperatorClass" && !appl.GetAFun().IsQuoted() {
-		return MakeFullOperatorClass(OperatorDeclFromTermConv(appl.GetArgument(0), conv)), true
-	}
-	return nil, false
-}
-
 // CompareCode is the term type for the alternative `Compare(...)` of sort Code.
 type CompareCode struct {
 	LCode Code
@@ -2204,7 +1321,7 @@ func (t *CompareCode) Duplicate() sharedobjects.Term {
 }
 
 func (t *CompareCode) String() string {
-	return "Compare(" + fmt.Sprint(t.LCode) + "," + fmt.Sprint(t.RCode) + ")"
+	return fmt.Sprintf("Compare(%v,%v)", t.LCode, t.RCode)
 }
 
 func (t *CompareCode) ChildCount() int { return 2 }
@@ -2337,118 +1454,10 @@ func (s *VisitCompare) VisitWith(env *sl.Environment, intro sl.Introspector) (an
 
 var _ sl.Strategy = (*VisitCompare)(nil)
 
-func (t *CompareCode) SymbolName() string { return "Compare" }
-
-func (t *CompareCode) IsCode() bool              { return false }
-func (t *CompareCode) IsIsEmpty() bool           { return false }
-func (t *CompareCode) IsIsCons() bool            { return false }
-func (t *CompareCode) IsEmpty() bool             { return false }
-func (t *CompareCode) IsCons() bool              { return false }
-func (t *CompareCode) IsFullSortClass() bool     { return false }
-func (t *CompareCode) IsShortSortClass() bool    { return false }
-func (t *CompareCode) IsFullOperatorClass() bool { return false }
-func (t *CompareCode) IsCompare() bool           { return true }
-func (t *CompareCode) IsConsCodeList() bool      { return false }
-func (t *CompareCode) IsEmptyCodeList() bool     { return false }
-
-func (t *CompareCode) Getprog() string {
-	panic(&aterm.GomError{Msg: "This Code has no prog"})
-}
-func (t *CompareCode) GetVar() string {
-	panic(&aterm.GomError{Msg: "This Code has no Var"})
-}
-func (t *CompareCode) GetOperator() OperatorDecl {
-	panic(&aterm.GomError{Msg: "This Code has no Operator"})
-}
-func (t *CompareCode) GetSort() SortDecl {
-	panic(&aterm.GomError{Msg: "This Code has no Sort"})
-}
-func (t *CompareCode) GetLCode() Code { return t.LCode }
-func (t *CompareCode) GetRCode() Code { return t.RCode }
-func (t *CompareCode) GetHeadCodeList() Code {
-	panic(&aterm.GomError{Msg: "This Code has no HeadCodeList"})
-}
-func (t *CompareCode) GetTailCodeList() Code {
-	panic(&aterm.GomError{Msg: "This Code has no TailCodeList"})
-}
-
-func (t *CompareCode) Length() int {
-	panic(&aterm.GomError{Msg: "This Code.Compare is not a list", IllegalArgument: true})
-}
-
-func (t *CompareCode) Reverse() Code {
-	panic(&aterm.GomError{Msg: "This Code.Compare is not a list", IllegalArgument: true})
-}
-
-func (t *CompareCode) CompareTo(o any) int {
-	ao := o.(Code)
-	if ao == Code(t) {
-		return 0
-	}
-	if t.Hash() != ao.Hash() {
-		if t.Hash() < ao.Hash() {
-			return -1
-		}
-		return 1
-	}
-	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
-		return c
-	}
-	tco := ao.(*CompareCode)
-	if c := t.LCode.CompareTo(tco.LCode); c != 0 {
-		return c
-	}
-	if c := t.RCode.CompareTo(tco.RCode); c != 0 {
-		return c
-	}
-	panic(&aterm.GomError{Msg: "Unable to compare"})
-}
-
-func (t *CompareCode) CompareToLPO(o any) int {
-	ao := o.(Code)
-	if ao == Code(t) {
-		return 0
-	}
-	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
-		return c
-	}
-	tco := ao.(*CompareCode)
-	if c := t.LCode.CompareToLPO(tco.LCode); c != 0 {
-		return c
-	}
-	if c := t.RCode.CompareToLPO(tco.RCode); c != 0 {
-		return c
-	}
-	panic(&aterm.GomError{Msg: "Unable to compare"})
-}
-
-// ToATerm is the ATerm of the term: an application of Compare.
-func (t *CompareCode) ToATerm() aterm.ATerm {
-	f := aterm.GetInstance()
-	return f.MakeAppl(f.MakeAFun("Compare", 2, false), t.LCode.ToATerm(), t.RCode.ToATerm())
-}
-
-// fromTermCompareCode is Java Gom's Compare.fromTerm: an unquoted application of
-// Compare whose arguments are convertible (as in Java, the arity is not
-// checked: a missing argument is an index out of range).
-func fromTermCompareCode(trm aterm.ATerm, conv aterm.ATermConverter) (Code, bool) {
-	trm = conv.Convert(trm)
-	if appl, ok := trm.(*aterm.ATermAppl); ok && appl.GetName() == "Compare" && !appl.GetAFun().IsQuoted() {
-		return MakeCompare(CodeFromTermConv(appl.GetArgument(0), conv), CodeFromTermConv(appl.GetArgument(1), conv)), true
-	}
-	return nil, false
-}
-
-// CodeListCode is the term type of the variadic operator `CodeList(...)` of sort Code
-// (Java's abstract class CodeList): a maximally-shared cons cell (Java's
-// ConsCodeList: a head and a tail) or the empty list (Java's EmptyCodeList).
+// CodeListCode is the term type for the alternative `CodeList(...)` of sort Code.
 type CodeListCode struct {
-	head  Code
-	tail  Code
-	empty bool
+	Slots []Code
 	hash  uint32
-	// children caches the Visitable children (Java's children field)
-	children atomic.Pointer[[]any]
 }
 
 func (*CodeListCode) isCode() {}
@@ -2457,37 +1466,51 @@ func (t *CodeListCode) Hash() uint32 { return t.hash }
 
 func (t *CodeListCode) Equivalent(other sharedobjects.Term) bool {
 	o, ok := other.(*CodeListCode)
-	return ok && t.empty == o.empty && t.head == o.head && t.tail == o.tail
+	if !ok {
+		return false
+	}
+	if len(t.Slots) != len(o.Slots) {
+		return false
+	}
+	for i := range t.Slots {
+		if t.Slots[i] != o.Slots[i] {
+			return false
+		}
+	}
+	return true
 }
 
 func (t *CodeListCode) Duplicate() sharedobjects.Term {
-	return &CodeListCode{head: t.head, tail: t.tail, empty: t.empty, hash: t.hash}
+	cp := append([]Code(nil), t.Slots...)
+	return &CodeListCode{Slots: cp, hash: t.hash}
 }
 
-// elements returns the cached Visitable children of the list: its
-// elements (Java's getChildren, i.e. toArray).
-func (t *CodeListCode) elements() []any {
-	if c := t.children.Load(); c != nil {
-		return *c
+func (t *CodeListCode) String() string {
+	parts := make([]string, len(t.Slots))
+	for i, v := range t.Slots {
+		parts[i] = fmt.Sprintf("%v", v)
 	}
-	c := t.ToArray()
-	t.children.Store(&c)
-	return c
+	return "CodeList" + "(" + strings.Join(parts, ",") + ")"
 }
 
-func (t *CodeListCode) ChildCount() int { return len(t.elements()) }
+func (t *CodeListCode) ChildCount() int { return len(t.Slots) }
 
-func (t *CodeListCode) ChildAt(i int) any { return t.elements()[i] }
+func (t *CodeListCode) ChildAt(i int) any { return t.Slots[i] }
 
 func (t *CodeListCode) SetChildAt(i int, child any) any {
-	dup := t.Children()
-	dup[i] = child
-	return t.SetChildren(dup)
+	dup := append([]Code(nil), t.Slots...)
+	dup[i] = child.(Code)
+	return MakeCodeList(dup...)
 }
 
-func (t *CodeListCode) Children() []any { return append([]any(nil), t.elements()...) }
+func (t *CodeListCode) Children() []any {
+	out := make([]any, len(t.Slots))
+	for i, v := range t.Slots {
+		out[i] = v
+	}
+	return out
+}
 
-// SetChildren is Java's setChildren of a list: CodeListFromArray(children).
 func (t *CodeListCode) SetChildren(children []any) any {
 	args := make([]Code, len(children))
 	for i, c := range children {
@@ -2496,87 +1519,15 @@ func (t *CodeListCode) SetChildren(children []any) any {
 	return MakeCodeList(args...)
 }
 
-func (t *CodeListCode) String() string {
-	var b strings.Builder
-	b.WriteString("CodeList(")
-	var cur Code = t
-	for {
-		c, ok := cur.(*CodeListCode)
-		if !ok {
-			b.WriteString("," + fmt.Sprint(cur))
-			break
-		}
-		if c.empty {
-			break
-		}
-		if c != t {
-			b.WriteString(",")
-		}
-		b.WriteString(fmt.Sprint(c.head))
-		cur = c.tail
-	}
-	b.WriteString(")")
-	return b.String()
-}
-
-// RealMakeConsCodeList is Java Gom's ConsCodeList.realMake: the shared cell of head
-// and tail, without hook.
-func RealMakeConsCodeList(head Code, tail Code) Code {
-	proto := &CodeListCode{head: head, tail: tail, hash: sharedobjects.MixSymbol(sharedobjects.StringHash("ConsCodeList"), []uint32{head.Hash(), tail.Hash()})}
-	return factory.Build(proto).(*CodeListCode)
-}
-
-// realMakeEmptyCodeList is Java Gom's EmptyCodeList.realMake: the shared empty list,
-// without hook.
-func realMakeEmptyCodeList() Code {
-	proto := &CodeListCode{empty: true, hash: sharedobjects.MixSymbol(sharedobjects.StringHash("EmptyCodeList"), nil)}
-	return factory.Build(proto).(*CodeListCode)
-}
-
-// RawCodeList builds the CodeList list holding exactly args, without construction
-// hook.
-func RawCodeList(args ...Code) Code {
-	l := realMakeEmptyCodeList()
-	for i := len(args) - 1; i >= 0; i-- {
-		l = RealMakeConsCodeList(args[i], l)
-	}
-	return l
-}
-
-// EmptyCodeList is Java Gom's EmptyCodeList.make(): the empty CodeList list, after the
-// construction hooks.
-func EmptyCodeList() Code {
-	return realMakeEmptyCodeList()
-}
-
-// ConsCodeList is Java Gom's ConsCodeList.make(head, tail): head inserted in front of
-// tail, after the construction hooks (theory "FL" first).
-func ConsCodeList(head Code, tail Code) Code {
-	// FL: flattened list
-	if head.IsEmptyCodeList() {
-		return tail
-	}
-	if head.IsConsCodeList() {
-		return ConsCodeList(head.GetHeadCodeList(), ConsCodeList(head.GetTailCodeList(), tail))
-	}
-	if !tail.IsConsCodeList() && !tail.IsEmptyCodeList() {
-		return ConsCodeList(head, ConsCodeList(tail, EmptyCodeList()))
-	}
-	return RealMakeConsCodeList(head, tail)
-}
-
-// MakeCodeList builds the list of args as Tom's `CodeList(args…)` does: from EmptyCodeList,
-// by ConsCodeList, through the construction hooks (Java's CodeList.fromArray).
+// MakeCodeList builds the canonical (shared) CodeList term.
 func MakeCodeList(args ...Code) Code {
-	var l Code = EmptyCodeList()
-	for i := len(args) - 1; i >= 0; i-- {
-		l = ConsCodeList(args[i], l)
+	hashes := make([]uint32, 0, len(args))
+	for _, a := range args {
+		hashes = append(hashes, a.Hash())
 	}
-	return l
+	proto := &CodeListCode{Slots: args, hash: sharedobjects.MixSymbol(sharedobjects.StringHash("CodeList"), hashes)}
+	return factory.Build(proto).(*CodeListCode)
 }
-
-// CodeListFromArray is Java Gom's CodeList.fromArray(array).
-func CodeListFromArray(array []Code) Code { return MakeCodeList(array...) }
 
 // IsCodeList is the `Is_CodeList` predicate strategy: succeeds (returns subject
 // unchanged) when subject has the `CodeList` shape, otherwise fails with
@@ -2670,255 +1621,3 @@ func (s *VisitCodeList) VisitWith(env *sl.Environment, intro sl.Introspector) (a
 }
 
 var _ sl.Strategy = (*VisitCodeList)(nil)
-
-// SymbolName is the symbol of the Java term: ConsCodeList or EmptyCodeList.
-func (t *CodeListCode) SymbolName() string {
-	if t.empty {
-		return "EmptyCodeList"
-	}
-	return "ConsCodeList"
-}
-
-func (t *CodeListCode) IsCode() bool              { return false }
-func (t *CodeListCode) IsIsEmpty() bool           { return false }
-func (t *CodeListCode) IsIsCons() bool            { return false }
-func (t *CodeListCode) IsEmpty() bool             { return false }
-func (t *CodeListCode) IsCons() bool              { return false }
-func (t *CodeListCode) IsFullSortClass() bool     { return false }
-func (t *CodeListCode) IsShortSortClass() bool    { return false }
-func (t *CodeListCode) IsFullOperatorClass() bool { return false }
-func (t *CodeListCode) IsCompare() bool           { return false }
-func (t *CodeListCode) IsConsCodeList() bool      { return !t.empty }
-func (t *CodeListCode) IsEmptyCodeList() bool     { return t.empty }
-
-func (t *CodeListCode) Getprog() string {
-	panic(&aterm.GomError{Msg: "This Code has no prog"})
-}
-func (t *CodeListCode) GetVar() string {
-	panic(&aterm.GomError{Msg: "This Code has no Var"})
-}
-func (t *CodeListCode) GetOperator() OperatorDecl {
-	panic(&aterm.GomError{Msg: "This Code has no Operator"})
-}
-func (t *CodeListCode) GetSort() SortDecl {
-	panic(&aterm.GomError{Msg: "This Code has no Sort"})
-}
-func (t *CodeListCode) GetLCode() Code {
-	panic(&aterm.GomError{Msg: "This Code has no LCode"})
-}
-func (t *CodeListCode) GetRCode() Code {
-	panic(&aterm.GomError{Msg: "This Code has no RCode"})
-}
-func (t *CodeListCode) GetHeadCodeList() Code {
-	if t.empty {
-		panic(&aterm.GomError{Msg: "This Code has no HeadCodeList"})
-	}
-	return t.head
-}
-func (t *CodeListCode) GetTailCodeList() Code {
-	if t.empty {
-		panic(&aterm.GomError{Msg: "This Code has no TailCodeList"})
-	}
-	return t.tail
-}
-
-// Length is Java's length(): the number of elements of the list (a
-// tail that is not a CodeList list counts as one element).
-func (t *CodeListCode) Length() int {
-	res := 0
-	var tl Code = t
-	for {
-		c, ok := tl.(*CodeListCode)
-		if !ok || c.empty {
-			return res
-		}
-		res++
-		tl = c.tail
-		if _, ok := tl.(*CodeListCode); !ok {
-			res++
-		}
-	}
-}
-
-// ToArray returns the elements of the list (Java's Object[] toArray()),
-// ending with its tail when that is not a CodeList list.
-func (t *CodeListCode) ToArray() []any {
-	out := make([]any, 0, t.Length())
-	var cur Code = t
-	for {
-		c, ok := cur.(*CodeListCode)
-		if !ok || c.empty {
-			break
-		}
-		out = append(out, c.head)
-		cur = c.tail
-	}
-	if c, ok := cur.(*CodeListCode); !ok || !c.empty {
-		out = append(out, cur)
-	}
-	return out
-}
-
-// Reverse is Java's reverse(): the reversed list, built by ConsCodeList
-// (through the hooks).
-func (t *CodeListCode) Reverse() Code {
-	if t.empty {
-		return t
-	}
-	var cur Code = t
-	var rev Code = EmptyCodeList()
-	for {
-		c, ok := cur.(*CodeListCode)
-		if !ok || c.empty {
-			break
-		}
-		rev = ConsCodeList(c.head, rev)
-		cur = c.tail
-	}
-	if c, ok := cur.(*CodeListCode); !ok || !c.empty {
-		rev = ConsCodeList(cur, rev)
-	}
-	return rev
-}
-
-// Append is Java's append(element): the list with element added at its
-// end, built by ConsCodeList (through the hooks).
-func (t *CodeListCode) Append(element Code) Code {
-	var heads []Code
-	var cur Code = t
-	for {
-		c, ok := cur.(*CodeListCode)
-		if !ok || c.empty {
-			break
-		}
-		heads = append(heads, c.head)
-		cur = c.tail
-	}
-	var res Code
-	if c, ok := cur.(*CodeListCode); ok && c.empty {
-		res = ConsCodeList(element, cur)
-	} else {
-		res = ConsCodeList(cur, element)
-	}
-	for i := len(heads) - 1; i >= 0; i-- {
-		res = ConsCodeList(heads[i], res)
-	}
-	return res
-}
-
-func (t *CodeListCode) CompareTo(o any) int {
-	for {
-		ao := o.(Code)
-		if ao == Code(t) {
-			return 0
-		}
-		if t.Hash() != ao.Hash() {
-			if t.Hash() < ao.Hash() {
-				return -1
-			}
-			return 1
-		}
-		if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
-			return c
-		}
-		tco := ao.(*CodeListCode)
-		if t.empty {
-			panic(&aterm.GomError{Msg: "Unable to compare"})
-		}
-		if c := t.head.CompareTo(tco.head); c != 0 {
-			return c
-		}
-		next, ok := t.tail.(*CodeListCode)
-		if !ok {
-			if c := t.tail.CompareTo(tco.tail); c != 0 {
-				return c
-			}
-			panic(&aterm.GomError{Msg: "Unable to compare"})
-		}
-		t, o = next, tco.tail
-	}
-}
-
-func (t *CodeListCode) CompareToLPO(o any) int {
-	for {
-		ao := o.(Code)
-		if ao == Code(t) {
-			return 0
-		}
-		if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
-			return c
-		}
-		tco := ao.(*CodeListCode)
-		if t.empty {
-			panic(&aterm.GomError{Msg: "Unable to compare"})
-		}
-		if c := t.head.CompareToLPO(tco.head); c != 0 {
-			return c
-		}
-		next, ok := t.tail.(*CodeListCode)
-		if !ok {
-			if c := t.tail.CompareToLPO(tco.tail); c != 0 {
-				return c
-			}
-			panic(&aterm.GomError{Msg: "Unable to compare"})
-		}
-		t, o = next, tco.tail
-	}
-}
-
-// ToATerm is Java's toATerm: the list of the elements, ending with the
-// ATerm list of the tail (a tail that is not a list is Java's
-// ClassCastException).
-func (t *CodeListCode) ToATerm() aterm.ATerm {
-	f := aterm.GetInstance()
-	var heads []Code
-	var cur Code = t
-	for {
-		c, ok := cur.(*CodeListCode)
-		if !ok || c.empty {
-			break
-		}
-		heads = append(heads, c.head)
-		cur = c.tail
-	}
-	l := f.MakeListEmpty()
-	if c, ok := cur.(*CodeListCode); !ok || !c.empty {
-		tl, isList := cur.ToATerm().(*aterm.ATermList)
-		if !isList {
-			panic(&aterm.GomError{Msg: fmt.Sprintf("ClassCastException: the ATerm of %v is not an ATermList", cur)})
-		}
-		l = tl
-	}
-	for i := len(heads) - 1; i >= 0; i-- {
-		l = f.MakeList(heads[i].ToATerm(), l)
-	}
-	return l
-}
-
-// fromTermCodeListCode is Java Gom's CodeList.fromTerm: an application of CodeList, or a
-// list (of ToATerm), of convertible elements.
-func fromTermCodeListCode(trm aterm.ATerm, conv aterm.ATermConverter) (res Code, ok bool) {
-	trm = conv.Convert(trm)
-	if appl, isAppl := trm.(*aterm.ATermAppl); isAppl && appl.GetName() == "CodeList" {
-		elems := make([]Code, appl.GetArity())
-		for i, a := range appl.GetArguments() {
-			elems[i] = CodeFromTermConv(a, conv)
-		}
-		return MakeCodeList(elems...), true
-	}
-	if list, isList := trm.(*aterm.ATermList); isList {
-		// an element that cannot be converted: not a CodeList (Java returns null)
-		defer func() {
-			if recover() != nil {
-				res, ok = nil, false
-			}
-		}()
-		var elems []Code
-		for !list.IsEmpty() {
-			elems = append(elems, CodeFromTermConv(list.GetFirst(), conv))
-			list = list.GetNext()
-		}
-		return MakeCodeList(elems...), true
-	}
-	return nil, false
-}

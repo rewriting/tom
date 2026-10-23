@@ -5,10 +5,6 @@ import (
 	"fmt"
 	"strings"
 
-	"io"
-	"sync/atomic"
-
-	"tom/library/aterm"
 	"tom/library/sharedobjects"
 	sl "tom/library/sl"
 )
@@ -17,108 +13,11 @@ import (
 var _ = fmt.Sprintf
 var _ = strings.Join
 var _ sl.Strategy = nil
-var _ = io.EOF
-var _ = aterm.GetInstance
-var _ atomic.Bool
 
 // Term is the Go interface backing the Gom sort Term.
 type Term interface {
 	sharedobjects.Term
 	isTerm()
-	// Java Gom API (see the package's generated methods)
-	SymbolName() string
-	IsAppl() bool
-	IsVar() bool
-	IsVarStar() bool
-	IsUnnamedVar() bool
-	IsUnnamedVarStar() bool
-	IsAt() bool
-	IsAnti() bool
-	IsBuiltinInt() bool
-	IsBuiltinString() bool
-	IsLabTerm() bool
-	IsRefTerm() bool
-	IsConsPathTerm() bool
-	IsEmptyPathTerm() bool
-	GetHeadPathTerm() int64
-	GetTailPathTerm() Term
-	Getsymbol() string
-	Getargs() TermList
-	Getname() string
-	Getterm() Term
-	Geti() int64
-	Gets() string
-	Getl() string
-	Gett() Term
-	Length() int
-	Reverse() Term
-	CompareTo(o any) int
-	CompareToLPO(o any) int
-	ToATerm() aterm.ATerm
-}
-
-// TermFromTerm is Java Gom's Term.fromTerm(trm).
-func TermFromTerm(trm aterm.ATerm) Term { return TermFromTermConv(trm, aterm.IdConverter{}) }
-
-// TermFromTermConv is Java Gom's Term.fromTerm(trm, atConv): the term of
-// the first operator of the sort that converts the ATerm; it panics
-// (IllegalArgumentException) when there is none.
-func TermFromTermConv(trm aterm.ATerm, conv aterm.ATermConverter) Term {
-	converted := conv.Convert(trm)
-	var results []Term
-	if r, ok := fromTermApplTerm(converted, conv); ok {
-		results = append(results, r)
-	}
-	if r, ok := fromTermVarTerm(converted, conv); ok {
-		results = append(results, r)
-	}
-	if r, ok := fromTermVarStarTerm(converted, conv); ok {
-		results = append(results, r)
-	}
-	if r, ok := fromTermUnnamedVarTerm(converted, conv); ok {
-		results = append(results, r)
-	}
-	if r, ok := fromTermUnnamedVarStarTerm(converted, conv); ok {
-		results = append(results, r)
-	}
-	if r, ok := fromTermAtTerm(converted, conv); ok {
-		results = append(results, r)
-	}
-	if r, ok := fromTermAntiTerm(converted, conv); ok {
-		results = append(results, r)
-	}
-	if r, ok := fromTermBuiltinIntTerm(converted, conv); ok {
-		results = append(results, r)
-	}
-	if r, ok := fromTermBuiltinStringTerm(converted, conv); ok {
-		results = append(results, r)
-	}
-	if r, ok := fromTermLabTermTerm(converted, conv); ok {
-		results = append(results, r)
-	}
-	if r, ok := fromTermRefTermTerm(converted, conv); ok {
-		results = append(results, r)
-	}
-	if r, ok := fromTermPathTermTerm(converted, conv); ok {
-		results = append(results, r)
-	}
-	if len(results) == 0 {
-		panic(&aterm.GomError{Msg: fmt.Sprintf("%v is not a Term", trm), IllegalArgument: true})
-	}
-	return results[0]
-}
-
-// TermFromString is Java Gom's Term.fromString(s).
-func TermFromString(s string) Term { return TermFromTerm(aterm.GetInstance().Parse(s)) }
-
-// TermFromStream is Java Gom's Term.fromStream(stream) (an IOException is
-// the error).
-func TermFromStream(stream io.Reader) (Term, error) {
-	at, err := aterm.GetInstance().ReadFromTextFile(stream)
-	if err != nil {
-		return nil, err
-	}
-	return TermFromTerm(at), nil
 }
 
 // ApplTerm is the term type for the alternative `Appl(...)` of sort Term.
@@ -152,7 +51,7 @@ func (t *ApplTerm) Duplicate() sharedobjects.Term {
 }
 
 func (t *ApplTerm) String() string {
-	return "Appl(" + sharedobjects.JavaEscape(t.Symbol) + "," + fmt.Sprint(t.Args) + ")"
+	return fmt.Sprintf("Appl(%s,%v)", sharedobjects.JavaEscape(t.Symbol), t.Args)
 }
 
 func (t *ApplTerm) ChildCount() int { return 2 }
@@ -285,116 +184,6 @@ func (s *VisitAppl) VisitWith(env *sl.Environment, intro sl.Introspector) (any, 
 
 var _ sl.Strategy = (*VisitAppl)(nil)
 
-func (t *ApplTerm) SymbolName() string { return "Appl" }
-
-func (t *ApplTerm) IsAppl() bool           { return true }
-func (t *ApplTerm) IsVar() bool            { return false }
-func (t *ApplTerm) IsVarStar() bool        { return false }
-func (t *ApplTerm) IsUnnamedVar() bool     { return false }
-func (t *ApplTerm) IsUnnamedVarStar() bool { return false }
-func (t *ApplTerm) IsAt() bool             { return false }
-func (t *ApplTerm) IsAnti() bool           { return false }
-func (t *ApplTerm) IsBuiltinInt() bool     { return false }
-func (t *ApplTerm) IsBuiltinString() bool  { return false }
-func (t *ApplTerm) IsLabTerm() bool        { return false }
-func (t *ApplTerm) IsRefTerm() bool        { return false }
-func (t *ApplTerm) IsConsPathTerm() bool   { return false }
-func (t *ApplTerm) IsEmptyPathTerm() bool  { return false }
-
-func (t *ApplTerm) Getsymbol() string { return t.Symbol }
-func (t *ApplTerm) Getargs() TermList { return t.Args }
-func (t *ApplTerm) Getname() string {
-	panic(&aterm.GomError{Msg: "This Term has no name"})
-}
-func (t *ApplTerm) Getterm() Term {
-	panic(&aterm.GomError{Msg: "This Term has no term"})
-}
-func (t *ApplTerm) Geti() int64 {
-	panic(&aterm.GomError{Msg: "This Term has no i"})
-}
-func (t *ApplTerm) Gets() string {
-	panic(&aterm.GomError{Msg: "This Term has no s"})
-}
-func (t *ApplTerm) Getl() string {
-	panic(&aterm.GomError{Msg: "This Term has no l"})
-}
-func (t *ApplTerm) Gett() Term {
-	panic(&aterm.GomError{Msg: "This Term has no t"})
-}
-func (t *ApplTerm) GetHeadPathTerm() int64 {
-	panic(&aterm.GomError{Msg: "This Term has no HeadPathTerm"})
-}
-func (t *ApplTerm) GetTailPathTerm() Term {
-	panic(&aterm.GomError{Msg: "This Term has no TailPathTerm"})
-}
-
-func (t *ApplTerm) Length() int {
-	panic(&aterm.GomError{Msg: "This Term.Appl is not a list", IllegalArgument: true})
-}
-
-func (t *ApplTerm) Reverse() Term {
-	panic(&aterm.GomError{Msg: "This Term.Appl is not a list", IllegalArgument: true})
-}
-
-func (t *ApplTerm) CompareTo(o any) int {
-	ao := o.(Term)
-	if ao == Term(t) {
-		return 0
-	}
-	if t.Hash() != ao.Hash() {
-		if t.Hash() < ao.Hash() {
-			return -1
-		}
-		return 1
-	}
-	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
-		return c
-	}
-	tco := ao.(*ApplTerm)
-	if c := strings.Compare(t.Symbol, tco.Symbol); c != 0 {
-		return c
-	}
-	if c := t.Args.CompareTo(tco.Args); c != 0 {
-		return c
-	}
-	panic(&aterm.GomError{Msg: "Unable to compare"})
-}
-
-func (t *ApplTerm) CompareToLPO(o any) int {
-	ao := o.(Term)
-	if ao == Term(t) {
-		return 0
-	}
-	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
-		return c
-	}
-	tco := ao.(*ApplTerm)
-	if c := strings.Compare(t.Symbol, tco.Symbol); c != 0 {
-		return c
-	}
-	if c := t.Args.CompareToLPO(tco.Args); c != 0 {
-		return c
-	}
-	panic(&aterm.GomError{Msg: "Unable to compare"})
-}
-
-// ToATerm is the ATerm of the term: an application of Appl.
-func (t *ApplTerm) ToATerm() aterm.ATerm {
-	f := aterm.GetInstance()
-	return f.MakeAppl(f.MakeAFun("Appl", 2, false), aterm.MakeGomString(t.Symbol), t.Args.ToATerm())
-}
-
-// fromTermApplTerm is Java Gom's Appl.fromTerm: an unquoted application of
-// Appl whose arguments are convertible (as in Java, the arity is not
-// checked: a missing argument is an index out of range).
-func fromTermApplTerm(trm aterm.ATerm, conv aterm.ATermConverter) (Term, bool) {
-	trm = conv.Convert(trm)
-	if appl, ok := trm.(*aterm.ATermAppl); ok && appl.GetName() == "Appl" && !appl.GetAFun().IsQuoted() {
-		return MakeAppl(aterm.GomString(appl.GetArgument(0), conv), TermListFromTermConv(appl.GetArgument(1), conv)), true
-	}
-	return nil, false
-}
-
 // VarTerm is the term type for the alternative `Var(...)` of sort Term.
 type VarTerm struct {
 	Name string
@@ -422,7 +211,7 @@ func (t *VarTerm) Duplicate() sharedobjects.Term {
 }
 
 func (t *VarTerm) String() string {
-	return "Var(" + sharedobjects.JavaEscape(t.Name) + ")"
+	return fmt.Sprintf("Var(%s)", sharedobjects.JavaEscape(t.Name))
 }
 
 func (t *VarTerm) ChildCount() int { return 1 }
@@ -551,112 +340,6 @@ func (s *VisitVar) VisitWith(env *sl.Environment, intro sl.Introspector) (any, e
 
 var _ sl.Strategy = (*VisitVar)(nil)
 
-func (t *VarTerm) SymbolName() string { return "Var" }
-
-func (t *VarTerm) IsAppl() bool           { return false }
-func (t *VarTerm) IsVar() bool            { return true }
-func (t *VarTerm) IsVarStar() bool        { return false }
-func (t *VarTerm) IsUnnamedVar() bool     { return false }
-func (t *VarTerm) IsUnnamedVarStar() bool { return false }
-func (t *VarTerm) IsAt() bool             { return false }
-func (t *VarTerm) IsAnti() bool           { return false }
-func (t *VarTerm) IsBuiltinInt() bool     { return false }
-func (t *VarTerm) IsBuiltinString() bool  { return false }
-func (t *VarTerm) IsLabTerm() bool        { return false }
-func (t *VarTerm) IsRefTerm() bool        { return false }
-func (t *VarTerm) IsConsPathTerm() bool   { return false }
-func (t *VarTerm) IsEmptyPathTerm() bool  { return false }
-
-func (t *VarTerm) Getsymbol() string {
-	panic(&aterm.GomError{Msg: "This Term has no symbol"})
-}
-func (t *VarTerm) Getargs() TermList {
-	panic(&aterm.GomError{Msg: "This Term has no args"})
-}
-func (t *VarTerm) Getname() string { return t.Name }
-func (t *VarTerm) Getterm() Term {
-	panic(&aterm.GomError{Msg: "This Term has no term"})
-}
-func (t *VarTerm) Geti() int64 {
-	panic(&aterm.GomError{Msg: "This Term has no i"})
-}
-func (t *VarTerm) Gets() string {
-	panic(&aterm.GomError{Msg: "This Term has no s"})
-}
-func (t *VarTerm) Getl() string {
-	panic(&aterm.GomError{Msg: "This Term has no l"})
-}
-func (t *VarTerm) Gett() Term {
-	panic(&aterm.GomError{Msg: "This Term has no t"})
-}
-func (t *VarTerm) GetHeadPathTerm() int64 {
-	panic(&aterm.GomError{Msg: "This Term has no HeadPathTerm"})
-}
-func (t *VarTerm) GetTailPathTerm() Term {
-	panic(&aterm.GomError{Msg: "This Term has no TailPathTerm"})
-}
-
-func (t *VarTerm) Length() int {
-	panic(&aterm.GomError{Msg: "This Term.Var is not a list", IllegalArgument: true})
-}
-
-func (t *VarTerm) Reverse() Term {
-	panic(&aterm.GomError{Msg: "This Term.Var is not a list", IllegalArgument: true})
-}
-
-func (t *VarTerm) CompareTo(o any) int {
-	ao := o.(Term)
-	if ao == Term(t) {
-		return 0
-	}
-	if t.Hash() != ao.Hash() {
-		if t.Hash() < ao.Hash() {
-			return -1
-		}
-		return 1
-	}
-	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
-		return c
-	}
-	tco := ao.(*VarTerm)
-	if c := strings.Compare(t.Name, tco.Name); c != 0 {
-		return c
-	}
-	panic(&aterm.GomError{Msg: "Unable to compare"})
-}
-
-func (t *VarTerm) CompareToLPO(o any) int {
-	ao := o.(Term)
-	if ao == Term(t) {
-		return 0
-	}
-	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
-		return c
-	}
-	tco := ao.(*VarTerm)
-	if c := strings.Compare(t.Name, tco.Name); c != 0 {
-		return c
-	}
-	panic(&aterm.GomError{Msg: "Unable to compare"})
-}
-
-// ToATerm is the ATerm of the term: an application of Var.
-func (t *VarTerm) ToATerm() aterm.ATerm {
-	f := aterm.GetInstance()
-	return f.MakeAppl(f.MakeAFun("Var", 1, false), aterm.MakeGomString(t.Name))
-}
-
-// fromTermVarTerm is Java Gom's Var.fromTerm: an unquoted application of
-// Var whose arguments are convertible (as in Java, the arity is not
-// checked: a missing argument is an index out of range).
-func fromTermVarTerm(trm aterm.ATerm, conv aterm.ATermConverter) (Term, bool) {
-	trm = conv.Convert(trm)
-	if appl, ok := trm.(*aterm.ATermAppl); ok && appl.GetName() == "Var" && !appl.GetAFun().IsQuoted() {
-		return MakeVar(aterm.GomString(appl.GetArgument(0), conv)), true
-	}
-	return nil, false
-}
-
 // VarStarTerm is the term type for the alternative `VarStar(...)` of sort Term.
 type VarStarTerm struct {
 	Name string
@@ -684,7 +367,7 @@ func (t *VarStarTerm) Duplicate() sharedobjects.Term {
 }
 
 func (t *VarStarTerm) String() string {
-	return "VarStar(" + sharedobjects.JavaEscape(t.Name) + ")"
+	return fmt.Sprintf("VarStar(%s)", sharedobjects.JavaEscape(t.Name))
 }
 
 func (t *VarStarTerm) ChildCount() int { return 1 }
@@ -813,112 +496,6 @@ func (s *VisitVarStar) VisitWith(env *sl.Environment, intro sl.Introspector) (an
 
 var _ sl.Strategy = (*VisitVarStar)(nil)
 
-func (t *VarStarTerm) SymbolName() string { return "VarStar" }
-
-func (t *VarStarTerm) IsAppl() bool           { return false }
-func (t *VarStarTerm) IsVar() bool            { return false }
-func (t *VarStarTerm) IsVarStar() bool        { return true }
-func (t *VarStarTerm) IsUnnamedVar() bool     { return false }
-func (t *VarStarTerm) IsUnnamedVarStar() bool { return false }
-func (t *VarStarTerm) IsAt() bool             { return false }
-func (t *VarStarTerm) IsAnti() bool           { return false }
-func (t *VarStarTerm) IsBuiltinInt() bool     { return false }
-func (t *VarStarTerm) IsBuiltinString() bool  { return false }
-func (t *VarStarTerm) IsLabTerm() bool        { return false }
-func (t *VarStarTerm) IsRefTerm() bool        { return false }
-func (t *VarStarTerm) IsConsPathTerm() bool   { return false }
-func (t *VarStarTerm) IsEmptyPathTerm() bool  { return false }
-
-func (t *VarStarTerm) Getsymbol() string {
-	panic(&aterm.GomError{Msg: "This Term has no symbol"})
-}
-func (t *VarStarTerm) Getargs() TermList {
-	panic(&aterm.GomError{Msg: "This Term has no args"})
-}
-func (t *VarStarTerm) Getname() string { return t.Name }
-func (t *VarStarTerm) Getterm() Term {
-	panic(&aterm.GomError{Msg: "This Term has no term"})
-}
-func (t *VarStarTerm) Geti() int64 {
-	panic(&aterm.GomError{Msg: "This Term has no i"})
-}
-func (t *VarStarTerm) Gets() string {
-	panic(&aterm.GomError{Msg: "This Term has no s"})
-}
-func (t *VarStarTerm) Getl() string {
-	panic(&aterm.GomError{Msg: "This Term has no l"})
-}
-func (t *VarStarTerm) Gett() Term {
-	panic(&aterm.GomError{Msg: "This Term has no t"})
-}
-func (t *VarStarTerm) GetHeadPathTerm() int64 {
-	panic(&aterm.GomError{Msg: "This Term has no HeadPathTerm"})
-}
-func (t *VarStarTerm) GetTailPathTerm() Term {
-	panic(&aterm.GomError{Msg: "This Term has no TailPathTerm"})
-}
-
-func (t *VarStarTerm) Length() int {
-	panic(&aterm.GomError{Msg: "This Term.VarStar is not a list", IllegalArgument: true})
-}
-
-func (t *VarStarTerm) Reverse() Term {
-	panic(&aterm.GomError{Msg: "This Term.VarStar is not a list", IllegalArgument: true})
-}
-
-func (t *VarStarTerm) CompareTo(o any) int {
-	ao := o.(Term)
-	if ao == Term(t) {
-		return 0
-	}
-	if t.Hash() != ao.Hash() {
-		if t.Hash() < ao.Hash() {
-			return -1
-		}
-		return 1
-	}
-	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
-		return c
-	}
-	tco := ao.(*VarStarTerm)
-	if c := strings.Compare(t.Name, tco.Name); c != 0 {
-		return c
-	}
-	panic(&aterm.GomError{Msg: "Unable to compare"})
-}
-
-func (t *VarStarTerm) CompareToLPO(o any) int {
-	ao := o.(Term)
-	if ao == Term(t) {
-		return 0
-	}
-	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
-		return c
-	}
-	tco := ao.(*VarStarTerm)
-	if c := strings.Compare(t.Name, tco.Name); c != 0 {
-		return c
-	}
-	panic(&aterm.GomError{Msg: "Unable to compare"})
-}
-
-// ToATerm is the ATerm of the term: an application of VarStar.
-func (t *VarStarTerm) ToATerm() aterm.ATerm {
-	f := aterm.GetInstance()
-	return f.MakeAppl(f.MakeAFun("VarStar", 1, false), aterm.MakeGomString(t.Name))
-}
-
-// fromTermVarStarTerm is Java Gom's VarStar.fromTerm: an unquoted application of
-// VarStar whose arguments are convertible (as in Java, the arity is not
-// checked: a missing argument is an index out of range).
-func fromTermVarStarTerm(trm aterm.ATerm, conv aterm.ATermConverter) (Term, bool) {
-	trm = conv.Convert(trm)
-	if appl, ok := trm.(*aterm.ATermAppl); ok && appl.GetName() == "VarStar" && !appl.GetAFun().IsQuoted() {
-		return MakeVarStar(aterm.GomString(appl.GetArgument(0), conv)), true
-	}
-	return nil, false
-}
-
 // UnnamedVarTerm is the term type for the alternative `UnnamedVar(...)` of sort Term.
 type UnnamedVarTerm struct {
 	hash uint32
@@ -939,7 +516,7 @@ func (t *UnnamedVarTerm) Duplicate() sharedobjects.Term {
 }
 
 func (t *UnnamedVarTerm) String() string {
-	return "UnnamedVar()"
+	return "UnnamedVar" + "()"
 }
 
 func (t *UnnamedVarTerm) ChildCount() int { return 0 }
@@ -1034,106 +611,6 @@ func (s *VisitUnnamedVar) VisitWith(env *sl.Environment, intro sl.Introspector) 
 
 var _ sl.Strategy = (*VisitUnnamedVar)(nil)
 
-func (t *UnnamedVarTerm) SymbolName() string { return "UnnamedVar" }
-
-func (t *UnnamedVarTerm) IsAppl() bool           { return false }
-func (t *UnnamedVarTerm) IsVar() bool            { return false }
-func (t *UnnamedVarTerm) IsVarStar() bool        { return false }
-func (t *UnnamedVarTerm) IsUnnamedVar() bool     { return true }
-func (t *UnnamedVarTerm) IsUnnamedVarStar() bool { return false }
-func (t *UnnamedVarTerm) IsAt() bool             { return false }
-func (t *UnnamedVarTerm) IsAnti() bool           { return false }
-func (t *UnnamedVarTerm) IsBuiltinInt() bool     { return false }
-func (t *UnnamedVarTerm) IsBuiltinString() bool  { return false }
-func (t *UnnamedVarTerm) IsLabTerm() bool        { return false }
-func (t *UnnamedVarTerm) IsRefTerm() bool        { return false }
-func (t *UnnamedVarTerm) IsConsPathTerm() bool   { return false }
-func (t *UnnamedVarTerm) IsEmptyPathTerm() bool  { return false }
-
-func (t *UnnamedVarTerm) Getsymbol() string {
-	panic(&aterm.GomError{Msg: "This Term has no symbol"})
-}
-func (t *UnnamedVarTerm) Getargs() TermList {
-	panic(&aterm.GomError{Msg: "This Term has no args"})
-}
-func (t *UnnamedVarTerm) Getname() string {
-	panic(&aterm.GomError{Msg: "This Term has no name"})
-}
-func (t *UnnamedVarTerm) Getterm() Term {
-	panic(&aterm.GomError{Msg: "This Term has no term"})
-}
-func (t *UnnamedVarTerm) Geti() int64 {
-	panic(&aterm.GomError{Msg: "This Term has no i"})
-}
-func (t *UnnamedVarTerm) Gets() string {
-	panic(&aterm.GomError{Msg: "This Term has no s"})
-}
-func (t *UnnamedVarTerm) Getl() string {
-	panic(&aterm.GomError{Msg: "This Term has no l"})
-}
-func (t *UnnamedVarTerm) Gett() Term {
-	panic(&aterm.GomError{Msg: "This Term has no t"})
-}
-func (t *UnnamedVarTerm) GetHeadPathTerm() int64 {
-	panic(&aterm.GomError{Msg: "This Term has no HeadPathTerm"})
-}
-func (t *UnnamedVarTerm) GetTailPathTerm() Term {
-	panic(&aterm.GomError{Msg: "This Term has no TailPathTerm"})
-}
-
-func (t *UnnamedVarTerm) Length() int {
-	panic(&aterm.GomError{Msg: "This Term.UnnamedVar is not a list", IllegalArgument: true})
-}
-
-func (t *UnnamedVarTerm) Reverse() Term {
-	panic(&aterm.GomError{Msg: "This Term.UnnamedVar is not a list", IllegalArgument: true})
-}
-
-func (t *UnnamedVarTerm) CompareTo(o any) int {
-	ao := o.(Term)
-	if ao == Term(t) {
-		return 0
-	}
-	if t.Hash() != ao.Hash() {
-		if t.Hash() < ao.Hash() {
-			return -1
-		}
-		return 1
-	}
-	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
-		return c
-	}
-	panic(&aterm.GomError{Msg: "Unable to compare"})
-}
-
-func (t *UnnamedVarTerm) CompareToLPO(o any) int {
-	ao := o.(Term)
-	if ao == Term(t) {
-		return 0
-	}
-	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
-		return c
-	}
-	panic(&aterm.GomError{Msg: "Unable to compare"})
-}
-
-// ToATerm is the ATerm of the term: an application of UnnamedVar.
-func (t *UnnamedVarTerm) ToATerm() aterm.ATerm {
-	f := aterm.GetInstance()
-	return f.MakeAppl(f.MakeAFun("UnnamedVar", 0, false))
-}
-
-// fromTermUnnamedVarTerm is Java Gom's UnnamedVar.fromTerm: an unquoted application of
-// UnnamedVar whose arguments are convertible (as in Java, the arity is not
-// checked: a missing argument is an index out of range).
-func fromTermUnnamedVarTerm(trm aterm.ATerm, conv aterm.ATermConverter) (Term, bool) {
-	trm = conv.Convert(trm)
-	if appl, ok := trm.(*aterm.ATermAppl); ok && appl.GetName() == "UnnamedVar" && !appl.GetAFun().IsQuoted() {
-		return MakeUnnamedVar(), true
-	}
-	return nil, false
-}
-
 // UnnamedVarStarTerm is the term type for the alternative `UnnamedVarStar(...)` of sort Term.
 type UnnamedVarStarTerm struct {
 	hash uint32
@@ -1154,7 +631,7 @@ func (t *UnnamedVarStarTerm) Duplicate() sharedobjects.Term {
 }
 
 func (t *UnnamedVarStarTerm) String() string {
-	return "UnnamedVarStar()"
+	return "UnnamedVarStar" + "()"
 }
 
 func (t *UnnamedVarStarTerm) ChildCount() int { return 0 }
@@ -1249,106 +726,6 @@ func (s *VisitUnnamedVarStar) VisitWith(env *sl.Environment, intro sl.Introspect
 
 var _ sl.Strategy = (*VisitUnnamedVarStar)(nil)
 
-func (t *UnnamedVarStarTerm) SymbolName() string { return "UnnamedVarStar" }
-
-func (t *UnnamedVarStarTerm) IsAppl() bool           { return false }
-func (t *UnnamedVarStarTerm) IsVar() bool            { return false }
-func (t *UnnamedVarStarTerm) IsVarStar() bool        { return false }
-func (t *UnnamedVarStarTerm) IsUnnamedVar() bool     { return false }
-func (t *UnnamedVarStarTerm) IsUnnamedVarStar() bool { return true }
-func (t *UnnamedVarStarTerm) IsAt() bool             { return false }
-func (t *UnnamedVarStarTerm) IsAnti() bool           { return false }
-func (t *UnnamedVarStarTerm) IsBuiltinInt() bool     { return false }
-func (t *UnnamedVarStarTerm) IsBuiltinString() bool  { return false }
-func (t *UnnamedVarStarTerm) IsLabTerm() bool        { return false }
-func (t *UnnamedVarStarTerm) IsRefTerm() bool        { return false }
-func (t *UnnamedVarStarTerm) IsConsPathTerm() bool   { return false }
-func (t *UnnamedVarStarTerm) IsEmptyPathTerm() bool  { return false }
-
-func (t *UnnamedVarStarTerm) Getsymbol() string {
-	panic(&aterm.GomError{Msg: "This Term has no symbol"})
-}
-func (t *UnnamedVarStarTerm) Getargs() TermList {
-	panic(&aterm.GomError{Msg: "This Term has no args"})
-}
-func (t *UnnamedVarStarTerm) Getname() string {
-	panic(&aterm.GomError{Msg: "This Term has no name"})
-}
-func (t *UnnamedVarStarTerm) Getterm() Term {
-	panic(&aterm.GomError{Msg: "This Term has no term"})
-}
-func (t *UnnamedVarStarTerm) Geti() int64 {
-	panic(&aterm.GomError{Msg: "This Term has no i"})
-}
-func (t *UnnamedVarStarTerm) Gets() string {
-	panic(&aterm.GomError{Msg: "This Term has no s"})
-}
-func (t *UnnamedVarStarTerm) Getl() string {
-	panic(&aterm.GomError{Msg: "This Term has no l"})
-}
-func (t *UnnamedVarStarTerm) Gett() Term {
-	panic(&aterm.GomError{Msg: "This Term has no t"})
-}
-func (t *UnnamedVarStarTerm) GetHeadPathTerm() int64 {
-	panic(&aterm.GomError{Msg: "This Term has no HeadPathTerm"})
-}
-func (t *UnnamedVarStarTerm) GetTailPathTerm() Term {
-	panic(&aterm.GomError{Msg: "This Term has no TailPathTerm"})
-}
-
-func (t *UnnamedVarStarTerm) Length() int {
-	panic(&aterm.GomError{Msg: "This Term.UnnamedVarStar is not a list", IllegalArgument: true})
-}
-
-func (t *UnnamedVarStarTerm) Reverse() Term {
-	panic(&aterm.GomError{Msg: "This Term.UnnamedVarStar is not a list", IllegalArgument: true})
-}
-
-func (t *UnnamedVarStarTerm) CompareTo(o any) int {
-	ao := o.(Term)
-	if ao == Term(t) {
-		return 0
-	}
-	if t.Hash() != ao.Hash() {
-		if t.Hash() < ao.Hash() {
-			return -1
-		}
-		return 1
-	}
-	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
-		return c
-	}
-	panic(&aterm.GomError{Msg: "Unable to compare"})
-}
-
-func (t *UnnamedVarStarTerm) CompareToLPO(o any) int {
-	ao := o.(Term)
-	if ao == Term(t) {
-		return 0
-	}
-	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
-		return c
-	}
-	panic(&aterm.GomError{Msg: "Unable to compare"})
-}
-
-// ToATerm is the ATerm of the term: an application of UnnamedVarStar.
-func (t *UnnamedVarStarTerm) ToATerm() aterm.ATerm {
-	f := aterm.GetInstance()
-	return f.MakeAppl(f.MakeAFun("UnnamedVarStar", 0, false))
-}
-
-// fromTermUnnamedVarStarTerm is Java Gom's UnnamedVarStar.fromTerm: an unquoted application of
-// UnnamedVarStar whose arguments are convertible (as in Java, the arity is not
-// checked: a missing argument is an index out of range).
-func fromTermUnnamedVarStarTerm(trm aterm.ATerm, conv aterm.ATermConverter) (Term, bool) {
-	trm = conv.Convert(trm)
-	if appl, ok := trm.(*aterm.ATermAppl); ok && appl.GetName() == "UnnamedVarStar" && !appl.GetAFun().IsQuoted() {
-		return MakeUnnamedVarStar(), true
-	}
-	return nil, false
-}
-
 // AtTerm is the term type for the alternative `At(...)` of sort Term.
 type AtTerm struct {
 	Name string
@@ -1380,7 +757,7 @@ func (t *AtTerm) Duplicate() sharedobjects.Term {
 }
 
 func (t *AtTerm) String() string {
-	return "At(" + sharedobjects.JavaEscape(t.Name) + "," + fmt.Sprint(t.Term) + ")"
+	return fmt.Sprintf("At(%s,%v)", sharedobjects.JavaEscape(t.Name), t.Term)
 }
 
 func (t *AtTerm) ChildCount() int { return 2 }
@@ -1513,116 +890,6 @@ func (s *VisitAt) VisitWith(env *sl.Environment, intro sl.Introspector) (any, er
 
 var _ sl.Strategy = (*VisitAt)(nil)
 
-func (t *AtTerm) SymbolName() string { return "At" }
-
-func (t *AtTerm) IsAppl() bool           { return false }
-func (t *AtTerm) IsVar() bool            { return false }
-func (t *AtTerm) IsVarStar() bool        { return false }
-func (t *AtTerm) IsUnnamedVar() bool     { return false }
-func (t *AtTerm) IsUnnamedVarStar() bool { return false }
-func (t *AtTerm) IsAt() bool             { return true }
-func (t *AtTerm) IsAnti() bool           { return false }
-func (t *AtTerm) IsBuiltinInt() bool     { return false }
-func (t *AtTerm) IsBuiltinString() bool  { return false }
-func (t *AtTerm) IsLabTerm() bool        { return false }
-func (t *AtTerm) IsRefTerm() bool        { return false }
-func (t *AtTerm) IsConsPathTerm() bool   { return false }
-func (t *AtTerm) IsEmptyPathTerm() bool  { return false }
-
-func (t *AtTerm) Getsymbol() string {
-	panic(&aterm.GomError{Msg: "This Term has no symbol"})
-}
-func (t *AtTerm) Getargs() TermList {
-	panic(&aterm.GomError{Msg: "This Term has no args"})
-}
-func (t *AtTerm) Getname() string { return t.Name }
-func (t *AtTerm) Getterm() Term   { return t.Term }
-func (t *AtTerm) Geti() int64 {
-	panic(&aterm.GomError{Msg: "This Term has no i"})
-}
-func (t *AtTerm) Gets() string {
-	panic(&aterm.GomError{Msg: "This Term has no s"})
-}
-func (t *AtTerm) Getl() string {
-	panic(&aterm.GomError{Msg: "This Term has no l"})
-}
-func (t *AtTerm) Gett() Term {
-	panic(&aterm.GomError{Msg: "This Term has no t"})
-}
-func (t *AtTerm) GetHeadPathTerm() int64 {
-	panic(&aterm.GomError{Msg: "This Term has no HeadPathTerm"})
-}
-func (t *AtTerm) GetTailPathTerm() Term {
-	panic(&aterm.GomError{Msg: "This Term has no TailPathTerm"})
-}
-
-func (t *AtTerm) Length() int {
-	panic(&aterm.GomError{Msg: "This Term.At is not a list", IllegalArgument: true})
-}
-
-func (t *AtTerm) Reverse() Term {
-	panic(&aterm.GomError{Msg: "This Term.At is not a list", IllegalArgument: true})
-}
-
-func (t *AtTerm) CompareTo(o any) int {
-	ao := o.(Term)
-	if ao == Term(t) {
-		return 0
-	}
-	if t.Hash() != ao.Hash() {
-		if t.Hash() < ao.Hash() {
-			return -1
-		}
-		return 1
-	}
-	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
-		return c
-	}
-	tco := ao.(*AtTerm)
-	if c := strings.Compare(t.Name, tco.Name); c != 0 {
-		return c
-	}
-	if c := t.Term.CompareTo(tco.Term); c != 0 {
-		return c
-	}
-	panic(&aterm.GomError{Msg: "Unable to compare"})
-}
-
-func (t *AtTerm) CompareToLPO(o any) int {
-	ao := o.(Term)
-	if ao == Term(t) {
-		return 0
-	}
-	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
-		return c
-	}
-	tco := ao.(*AtTerm)
-	if c := strings.Compare(t.Name, tco.Name); c != 0 {
-		return c
-	}
-	if c := t.Term.CompareToLPO(tco.Term); c != 0 {
-		return c
-	}
-	panic(&aterm.GomError{Msg: "Unable to compare"})
-}
-
-// ToATerm is the ATerm of the term: an application of At.
-func (t *AtTerm) ToATerm() aterm.ATerm {
-	f := aterm.GetInstance()
-	return f.MakeAppl(f.MakeAFun("At", 2, false), aterm.MakeGomString(t.Name), t.Term.ToATerm())
-}
-
-// fromTermAtTerm is Java Gom's At.fromTerm: an unquoted application of
-// At whose arguments are convertible (as in Java, the arity is not
-// checked: a missing argument is an index out of range).
-func fromTermAtTerm(trm aterm.ATerm, conv aterm.ATermConverter) (Term, bool) {
-	trm = conv.Convert(trm)
-	if appl, ok := trm.(*aterm.ATermAppl); ok && appl.GetName() == "At" && !appl.GetAFun().IsQuoted() {
-		return MakeAt(aterm.GomString(appl.GetArgument(0), conv), TermFromTermConv(appl.GetArgument(1), conv)), true
-	}
-	return nil, false
-}
-
 // AntiTerm is the term type for the alternative `Anti(...)` of sort Term.
 type AntiTerm struct {
 	Term Term
@@ -1650,7 +917,7 @@ func (t *AntiTerm) Duplicate() sharedobjects.Term {
 }
 
 func (t *AntiTerm) String() string {
-	return "Anti(" + fmt.Sprint(t.Term) + ")"
+	return fmt.Sprintf("Anti(%v)", t.Term)
 }
 
 func (t *AntiTerm) ChildCount() int { return 1 }
@@ -1779,112 +1046,6 @@ func (s *VisitAnti) VisitWith(env *sl.Environment, intro sl.Introspector) (any, 
 
 var _ sl.Strategy = (*VisitAnti)(nil)
 
-func (t *AntiTerm) SymbolName() string { return "Anti" }
-
-func (t *AntiTerm) IsAppl() bool           { return false }
-func (t *AntiTerm) IsVar() bool            { return false }
-func (t *AntiTerm) IsVarStar() bool        { return false }
-func (t *AntiTerm) IsUnnamedVar() bool     { return false }
-func (t *AntiTerm) IsUnnamedVarStar() bool { return false }
-func (t *AntiTerm) IsAt() bool             { return false }
-func (t *AntiTerm) IsAnti() bool           { return true }
-func (t *AntiTerm) IsBuiltinInt() bool     { return false }
-func (t *AntiTerm) IsBuiltinString() bool  { return false }
-func (t *AntiTerm) IsLabTerm() bool        { return false }
-func (t *AntiTerm) IsRefTerm() bool        { return false }
-func (t *AntiTerm) IsConsPathTerm() bool   { return false }
-func (t *AntiTerm) IsEmptyPathTerm() bool  { return false }
-
-func (t *AntiTerm) Getsymbol() string {
-	panic(&aterm.GomError{Msg: "This Term has no symbol"})
-}
-func (t *AntiTerm) Getargs() TermList {
-	panic(&aterm.GomError{Msg: "This Term has no args"})
-}
-func (t *AntiTerm) Getname() string {
-	panic(&aterm.GomError{Msg: "This Term has no name"})
-}
-func (t *AntiTerm) Getterm() Term { return t.Term }
-func (t *AntiTerm) Geti() int64 {
-	panic(&aterm.GomError{Msg: "This Term has no i"})
-}
-func (t *AntiTerm) Gets() string {
-	panic(&aterm.GomError{Msg: "This Term has no s"})
-}
-func (t *AntiTerm) Getl() string {
-	panic(&aterm.GomError{Msg: "This Term has no l"})
-}
-func (t *AntiTerm) Gett() Term {
-	panic(&aterm.GomError{Msg: "This Term has no t"})
-}
-func (t *AntiTerm) GetHeadPathTerm() int64 {
-	panic(&aterm.GomError{Msg: "This Term has no HeadPathTerm"})
-}
-func (t *AntiTerm) GetTailPathTerm() Term {
-	panic(&aterm.GomError{Msg: "This Term has no TailPathTerm"})
-}
-
-func (t *AntiTerm) Length() int {
-	panic(&aterm.GomError{Msg: "This Term.Anti is not a list", IllegalArgument: true})
-}
-
-func (t *AntiTerm) Reverse() Term {
-	panic(&aterm.GomError{Msg: "This Term.Anti is not a list", IllegalArgument: true})
-}
-
-func (t *AntiTerm) CompareTo(o any) int {
-	ao := o.(Term)
-	if ao == Term(t) {
-		return 0
-	}
-	if t.Hash() != ao.Hash() {
-		if t.Hash() < ao.Hash() {
-			return -1
-		}
-		return 1
-	}
-	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
-		return c
-	}
-	tco := ao.(*AntiTerm)
-	if c := t.Term.CompareTo(tco.Term); c != 0 {
-		return c
-	}
-	panic(&aterm.GomError{Msg: "Unable to compare"})
-}
-
-func (t *AntiTerm) CompareToLPO(o any) int {
-	ao := o.(Term)
-	if ao == Term(t) {
-		return 0
-	}
-	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
-		return c
-	}
-	tco := ao.(*AntiTerm)
-	if c := t.Term.CompareToLPO(tco.Term); c != 0 {
-		return c
-	}
-	panic(&aterm.GomError{Msg: "Unable to compare"})
-}
-
-// ToATerm is the ATerm of the term: an application of Anti.
-func (t *AntiTerm) ToATerm() aterm.ATerm {
-	f := aterm.GetInstance()
-	return f.MakeAppl(f.MakeAFun("Anti", 1, false), t.Term.ToATerm())
-}
-
-// fromTermAntiTerm is Java Gom's Anti.fromTerm: an unquoted application of
-// Anti whose arguments are convertible (as in Java, the arity is not
-// checked: a missing argument is an index out of range).
-func fromTermAntiTerm(trm aterm.ATerm, conv aterm.ATermConverter) (Term, bool) {
-	trm = conv.Convert(trm)
-	if appl, ok := trm.(*aterm.ATermAppl); ok && appl.GetName() == "Anti" && !appl.GetAFun().IsQuoted() {
-		return MakeAnti(TermFromTermConv(appl.GetArgument(0), conv)), true
-	}
-	return nil, false
-}
-
 // BuiltinIntTerm is the term type for the alternative `BuiltinInt(...)` of sort Term.
 type BuiltinIntTerm struct {
 	I    int64
@@ -1912,7 +1073,7 @@ func (t *BuiltinIntTerm) Duplicate() sharedobjects.Term {
 }
 
 func (t *BuiltinIntTerm) String() string {
-	return "BuiltinInt(" + fmt.Sprint(t.I) + ")"
+	return fmt.Sprintf("BuiltinInt(%v)", t.I)
 }
 
 func (t *BuiltinIntTerm) ChildCount() int { return 1 }
@@ -2041,118 +1202,6 @@ func (s *VisitBuiltinInt) VisitWith(env *sl.Environment, intro sl.Introspector) 
 
 var _ sl.Strategy = (*VisitBuiltinInt)(nil)
 
-func (t *BuiltinIntTerm) SymbolName() string { return "BuiltinInt" }
-
-func (t *BuiltinIntTerm) IsAppl() bool           { return false }
-func (t *BuiltinIntTerm) IsVar() bool            { return false }
-func (t *BuiltinIntTerm) IsVarStar() bool        { return false }
-func (t *BuiltinIntTerm) IsUnnamedVar() bool     { return false }
-func (t *BuiltinIntTerm) IsUnnamedVarStar() bool { return false }
-func (t *BuiltinIntTerm) IsAt() bool             { return false }
-func (t *BuiltinIntTerm) IsAnti() bool           { return false }
-func (t *BuiltinIntTerm) IsBuiltinInt() bool     { return true }
-func (t *BuiltinIntTerm) IsBuiltinString() bool  { return false }
-func (t *BuiltinIntTerm) IsLabTerm() bool        { return false }
-func (t *BuiltinIntTerm) IsRefTerm() bool        { return false }
-func (t *BuiltinIntTerm) IsConsPathTerm() bool   { return false }
-func (t *BuiltinIntTerm) IsEmptyPathTerm() bool  { return false }
-
-func (t *BuiltinIntTerm) Getsymbol() string {
-	panic(&aterm.GomError{Msg: "This Term has no symbol"})
-}
-func (t *BuiltinIntTerm) Getargs() TermList {
-	panic(&aterm.GomError{Msg: "This Term has no args"})
-}
-func (t *BuiltinIntTerm) Getname() string {
-	panic(&aterm.GomError{Msg: "This Term has no name"})
-}
-func (t *BuiltinIntTerm) Getterm() Term {
-	panic(&aterm.GomError{Msg: "This Term has no term"})
-}
-func (t *BuiltinIntTerm) Geti() int64 { return t.I }
-func (t *BuiltinIntTerm) Gets() string {
-	panic(&aterm.GomError{Msg: "This Term has no s"})
-}
-func (t *BuiltinIntTerm) Getl() string {
-	panic(&aterm.GomError{Msg: "This Term has no l"})
-}
-func (t *BuiltinIntTerm) Gett() Term {
-	panic(&aterm.GomError{Msg: "This Term has no t"})
-}
-func (t *BuiltinIntTerm) GetHeadPathTerm() int64 {
-	panic(&aterm.GomError{Msg: "This Term has no HeadPathTerm"})
-}
-func (t *BuiltinIntTerm) GetTailPathTerm() Term {
-	panic(&aterm.GomError{Msg: "This Term has no TailPathTerm"})
-}
-
-func (t *BuiltinIntTerm) Length() int {
-	panic(&aterm.GomError{Msg: "This Term.BuiltinInt is not a list", IllegalArgument: true})
-}
-
-func (t *BuiltinIntTerm) Reverse() Term {
-	panic(&aterm.GomError{Msg: "This Term.BuiltinInt is not a list", IllegalArgument: true})
-}
-
-func (t *BuiltinIntTerm) CompareTo(o any) int {
-	ao := o.(Term)
-	if ao == Term(t) {
-		return 0
-	}
-	if t.Hash() != ao.Hash() {
-		if t.Hash() < ao.Hash() {
-			return -1
-		}
-		return 1
-	}
-	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
-		return c
-	}
-	tco := ao.(*BuiltinIntTerm)
-	if t.I != tco.I {
-		if t.I < tco.I {
-			return -1
-		}
-		return 1
-	}
-	panic(&aterm.GomError{Msg: "Unable to compare"})
-}
-
-func (t *BuiltinIntTerm) CompareToLPO(o any) int {
-	ao := o.(Term)
-	if ao == Term(t) {
-		return 0
-	}
-	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
-		return c
-	}
-	tco := ao.(*BuiltinIntTerm)
-	if t.I != tco.I {
-		if t.I < tco.I {
-			return -1
-		}
-		return 1
-	}
-	panic(&aterm.GomError{Msg: "Unable to compare"})
-}
-
-// ToATerm is the ATerm of the term: an application of BuiltinInt.
-func (t *BuiltinIntTerm) ToATerm() aterm.ATerm {
-	f := aterm.GetInstance()
-	return f.MakeAppl(f.MakeAFun("BuiltinInt", 1, false), aterm.MakeGomInt(t.I))
-}
-
-// fromTermBuiltinIntTerm is Java Gom's BuiltinInt.fromTerm: an unquoted application of
-// BuiltinInt whose arguments are convertible (as in Java, the arity is not
-// checked: a missing argument is an index out of range).
-func fromTermBuiltinIntTerm(trm aterm.ATerm, conv aterm.ATermConverter) (Term, bool) {
-	trm = conv.Convert(trm)
-	if appl, ok := trm.(*aterm.ATermAppl); ok && appl.GetName() == "BuiltinInt" && !appl.GetAFun().IsQuoted() {
-		return MakeBuiltinInt(aterm.GomInt(appl.GetArgument(0), conv)), true
-	}
-	return nil, false
-}
-
 // BuiltinStringTerm is the term type for the alternative `BuiltinString(...)` of sort Term.
 type BuiltinStringTerm struct {
 	S    string
@@ -2180,7 +1229,7 @@ func (t *BuiltinStringTerm) Duplicate() sharedobjects.Term {
 }
 
 func (t *BuiltinStringTerm) String() string {
-	return "BuiltinString(" + sharedobjects.JavaEscape(t.S) + ")"
+	return fmt.Sprintf("BuiltinString(%s)", sharedobjects.JavaEscape(t.S))
 }
 
 func (t *BuiltinStringTerm) ChildCount() int { return 1 }
@@ -2309,112 +1358,6 @@ func (s *VisitBuiltinString) VisitWith(env *sl.Environment, intro sl.Introspecto
 
 var _ sl.Strategy = (*VisitBuiltinString)(nil)
 
-func (t *BuiltinStringTerm) SymbolName() string { return "BuiltinString" }
-
-func (t *BuiltinStringTerm) IsAppl() bool           { return false }
-func (t *BuiltinStringTerm) IsVar() bool            { return false }
-func (t *BuiltinStringTerm) IsVarStar() bool        { return false }
-func (t *BuiltinStringTerm) IsUnnamedVar() bool     { return false }
-func (t *BuiltinStringTerm) IsUnnamedVarStar() bool { return false }
-func (t *BuiltinStringTerm) IsAt() bool             { return false }
-func (t *BuiltinStringTerm) IsAnti() bool           { return false }
-func (t *BuiltinStringTerm) IsBuiltinInt() bool     { return false }
-func (t *BuiltinStringTerm) IsBuiltinString() bool  { return true }
-func (t *BuiltinStringTerm) IsLabTerm() bool        { return false }
-func (t *BuiltinStringTerm) IsRefTerm() bool        { return false }
-func (t *BuiltinStringTerm) IsConsPathTerm() bool   { return false }
-func (t *BuiltinStringTerm) IsEmptyPathTerm() bool  { return false }
-
-func (t *BuiltinStringTerm) Getsymbol() string {
-	panic(&aterm.GomError{Msg: "This Term has no symbol"})
-}
-func (t *BuiltinStringTerm) Getargs() TermList {
-	panic(&aterm.GomError{Msg: "This Term has no args"})
-}
-func (t *BuiltinStringTerm) Getname() string {
-	panic(&aterm.GomError{Msg: "This Term has no name"})
-}
-func (t *BuiltinStringTerm) Getterm() Term {
-	panic(&aterm.GomError{Msg: "This Term has no term"})
-}
-func (t *BuiltinStringTerm) Geti() int64 {
-	panic(&aterm.GomError{Msg: "This Term has no i"})
-}
-func (t *BuiltinStringTerm) Gets() string { return t.S }
-func (t *BuiltinStringTerm) Getl() string {
-	panic(&aterm.GomError{Msg: "This Term has no l"})
-}
-func (t *BuiltinStringTerm) Gett() Term {
-	panic(&aterm.GomError{Msg: "This Term has no t"})
-}
-func (t *BuiltinStringTerm) GetHeadPathTerm() int64 {
-	panic(&aterm.GomError{Msg: "This Term has no HeadPathTerm"})
-}
-func (t *BuiltinStringTerm) GetTailPathTerm() Term {
-	panic(&aterm.GomError{Msg: "This Term has no TailPathTerm"})
-}
-
-func (t *BuiltinStringTerm) Length() int {
-	panic(&aterm.GomError{Msg: "This Term.BuiltinString is not a list", IllegalArgument: true})
-}
-
-func (t *BuiltinStringTerm) Reverse() Term {
-	panic(&aterm.GomError{Msg: "This Term.BuiltinString is not a list", IllegalArgument: true})
-}
-
-func (t *BuiltinStringTerm) CompareTo(o any) int {
-	ao := o.(Term)
-	if ao == Term(t) {
-		return 0
-	}
-	if t.Hash() != ao.Hash() {
-		if t.Hash() < ao.Hash() {
-			return -1
-		}
-		return 1
-	}
-	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
-		return c
-	}
-	tco := ao.(*BuiltinStringTerm)
-	if c := strings.Compare(t.S, tco.S); c != 0 {
-		return c
-	}
-	panic(&aterm.GomError{Msg: "Unable to compare"})
-}
-
-func (t *BuiltinStringTerm) CompareToLPO(o any) int {
-	ao := o.(Term)
-	if ao == Term(t) {
-		return 0
-	}
-	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
-		return c
-	}
-	tco := ao.(*BuiltinStringTerm)
-	if c := strings.Compare(t.S, tco.S); c != 0 {
-		return c
-	}
-	panic(&aterm.GomError{Msg: "Unable to compare"})
-}
-
-// ToATerm is the ATerm of the term: an application of BuiltinString.
-func (t *BuiltinStringTerm) ToATerm() aterm.ATerm {
-	f := aterm.GetInstance()
-	return f.MakeAppl(f.MakeAFun("BuiltinString", 1, false), aterm.MakeGomString(t.S))
-}
-
-// fromTermBuiltinStringTerm is Java Gom's BuiltinString.fromTerm: an unquoted application of
-// BuiltinString whose arguments are convertible (as in Java, the arity is not
-// checked: a missing argument is an index out of range).
-func fromTermBuiltinStringTerm(trm aterm.ATerm, conv aterm.ATermConverter) (Term, bool) {
-	trm = conv.Convert(trm)
-	if appl, ok := trm.(*aterm.ATermAppl); ok && appl.GetName() == "BuiltinString" && !appl.GetAFun().IsQuoted() {
-		return MakeBuiltinString(aterm.GomString(appl.GetArgument(0), conv)), true
-	}
-	return nil, false
-}
-
 // LabTermTerm is the term type for the alternative `LabTerm(...)` of sort Term.
 type LabTermTerm struct {
 	L    string
@@ -2446,7 +1389,7 @@ func (t *LabTermTerm) Duplicate() sharedobjects.Term {
 }
 
 func (t *LabTermTerm) String() string {
-	return "LabTerm(" + sharedobjects.JavaEscape(t.L) + "," + fmt.Sprint(t.T) + ")"
+	return fmt.Sprintf("LabTerm(%s,%v)", sharedobjects.JavaEscape(t.L), t.T)
 }
 
 func (t *LabTermTerm) ChildCount() int { return 2 }
@@ -2579,116 +1522,6 @@ func (s *VisitLabTerm) VisitWith(env *sl.Environment, intro sl.Introspector) (an
 
 var _ sl.Strategy = (*VisitLabTerm)(nil)
 
-func (t *LabTermTerm) SymbolName() string { return "LabTerm" }
-
-func (t *LabTermTerm) IsAppl() bool           { return false }
-func (t *LabTermTerm) IsVar() bool            { return false }
-func (t *LabTermTerm) IsVarStar() bool        { return false }
-func (t *LabTermTerm) IsUnnamedVar() bool     { return false }
-func (t *LabTermTerm) IsUnnamedVarStar() bool { return false }
-func (t *LabTermTerm) IsAt() bool             { return false }
-func (t *LabTermTerm) IsAnti() bool           { return false }
-func (t *LabTermTerm) IsBuiltinInt() bool     { return false }
-func (t *LabTermTerm) IsBuiltinString() bool  { return false }
-func (t *LabTermTerm) IsLabTerm() bool        { return true }
-func (t *LabTermTerm) IsRefTerm() bool        { return false }
-func (t *LabTermTerm) IsConsPathTerm() bool   { return false }
-func (t *LabTermTerm) IsEmptyPathTerm() bool  { return false }
-
-func (t *LabTermTerm) Getsymbol() string {
-	panic(&aterm.GomError{Msg: "This Term has no symbol"})
-}
-func (t *LabTermTerm) Getargs() TermList {
-	panic(&aterm.GomError{Msg: "This Term has no args"})
-}
-func (t *LabTermTerm) Getname() string {
-	panic(&aterm.GomError{Msg: "This Term has no name"})
-}
-func (t *LabTermTerm) Getterm() Term {
-	panic(&aterm.GomError{Msg: "This Term has no term"})
-}
-func (t *LabTermTerm) Geti() int64 {
-	panic(&aterm.GomError{Msg: "This Term has no i"})
-}
-func (t *LabTermTerm) Gets() string {
-	panic(&aterm.GomError{Msg: "This Term has no s"})
-}
-func (t *LabTermTerm) Getl() string { return t.L }
-func (t *LabTermTerm) Gett() Term   { return t.T }
-func (t *LabTermTerm) GetHeadPathTerm() int64 {
-	panic(&aterm.GomError{Msg: "This Term has no HeadPathTerm"})
-}
-func (t *LabTermTerm) GetTailPathTerm() Term {
-	panic(&aterm.GomError{Msg: "This Term has no TailPathTerm"})
-}
-
-func (t *LabTermTerm) Length() int {
-	panic(&aterm.GomError{Msg: "This Term.LabTerm is not a list", IllegalArgument: true})
-}
-
-func (t *LabTermTerm) Reverse() Term {
-	panic(&aterm.GomError{Msg: "This Term.LabTerm is not a list", IllegalArgument: true})
-}
-
-func (t *LabTermTerm) CompareTo(o any) int {
-	ao := o.(Term)
-	if ao == Term(t) {
-		return 0
-	}
-	if t.Hash() != ao.Hash() {
-		if t.Hash() < ao.Hash() {
-			return -1
-		}
-		return 1
-	}
-	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
-		return c
-	}
-	tco := ao.(*LabTermTerm)
-	if c := strings.Compare(t.L, tco.L); c != 0 {
-		return c
-	}
-	if c := t.T.CompareTo(tco.T); c != 0 {
-		return c
-	}
-	panic(&aterm.GomError{Msg: "Unable to compare"})
-}
-
-func (t *LabTermTerm) CompareToLPO(o any) int {
-	ao := o.(Term)
-	if ao == Term(t) {
-		return 0
-	}
-	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
-		return c
-	}
-	tco := ao.(*LabTermTerm)
-	if c := strings.Compare(t.L, tco.L); c != 0 {
-		return c
-	}
-	if c := t.T.CompareToLPO(tco.T); c != 0 {
-		return c
-	}
-	panic(&aterm.GomError{Msg: "Unable to compare"})
-}
-
-// ToATerm is the ATerm of the term: an application of LabTerm.
-func (t *LabTermTerm) ToATerm() aterm.ATerm {
-	f := aterm.GetInstance()
-	return f.MakeAppl(f.MakeAFun("LabTerm", 2, false), aterm.MakeGomString(t.L), t.T.ToATerm())
-}
-
-// fromTermLabTermTerm is Java Gom's LabTerm.fromTerm: an unquoted application of
-// LabTerm whose arguments are convertible (as in Java, the arity is not
-// checked: a missing argument is an index out of range).
-func fromTermLabTermTerm(trm aterm.ATerm, conv aterm.ATermConverter) (Term, bool) {
-	trm = conv.Convert(trm)
-	if appl, ok := trm.(*aterm.ATermAppl); ok && appl.GetName() == "LabTerm" && !appl.GetAFun().IsQuoted() {
-		return MakeLabTerm(aterm.GomString(appl.GetArgument(0), conv), TermFromTermConv(appl.GetArgument(1), conv)), true
-	}
-	return nil, false
-}
-
 // RefTermTerm is the term type for the alternative `RefTerm(...)` of sort Term.
 type RefTermTerm struct {
 	L    string
@@ -2716,7 +1549,7 @@ func (t *RefTermTerm) Duplicate() sharedobjects.Term {
 }
 
 func (t *RefTermTerm) String() string {
-	return "RefTerm(" + sharedobjects.JavaEscape(t.L) + ")"
+	return fmt.Sprintf("RefTerm(%s)", sharedobjects.JavaEscape(t.L))
 }
 
 func (t *RefTermTerm) ChildCount() int { return 1 }
@@ -2845,122 +1678,10 @@ func (s *VisitRefTerm) VisitWith(env *sl.Environment, intro sl.Introspector) (an
 
 var _ sl.Strategy = (*VisitRefTerm)(nil)
 
-func (t *RefTermTerm) SymbolName() string { return "RefTerm" }
-
-func (t *RefTermTerm) IsAppl() bool           { return false }
-func (t *RefTermTerm) IsVar() bool            { return false }
-func (t *RefTermTerm) IsVarStar() bool        { return false }
-func (t *RefTermTerm) IsUnnamedVar() bool     { return false }
-func (t *RefTermTerm) IsUnnamedVarStar() bool { return false }
-func (t *RefTermTerm) IsAt() bool             { return false }
-func (t *RefTermTerm) IsAnti() bool           { return false }
-func (t *RefTermTerm) IsBuiltinInt() bool     { return false }
-func (t *RefTermTerm) IsBuiltinString() bool  { return false }
-func (t *RefTermTerm) IsLabTerm() bool        { return false }
-func (t *RefTermTerm) IsRefTerm() bool        { return true }
-func (t *RefTermTerm) IsConsPathTerm() bool   { return false }
-func (t *RefTermTerm) IsEmptyPathTerm() bool  { return false }
-
-func (t *RefTermTerm) Getsymbol() string {
-	panic(&aterm.GomError{Msg: "This Term has no symbol"})
-}
-func (t *RefTermTerm) Getargs() TermList {
-	panic(&aterm.GomError{Msg: "This Term has no args"})
-}
-func (t *RefTermTerm) Getname() string {
-	panic(&aterm.GomError{Msg: "This Term has no name"})
-}
-func (t *RefTermTerm) Getterm() Term {
-	panic(&aterm.GomError{Msg: "This Term has no term"})
-}
-func (t *RefTermTerm) Geti() int64 {
-	panic(&aterm.GomError{Msg: "This Term has no i"})
-}
-func (t *RefTermTerm) Gets() string {
-	panic(&aterm.GomError{Msg: "This Term has no s"})
-}
-func (t *RefTermTerm) Getl() string { return t.L }
-func (t *RefTermTerm) Gett() Term {
-	panic(&aterm.GomError{Msg: "This Term has no t"})
-}
-func (t *RefTermTerm) GetHeadPathTerm() int64 {
-	panic(&aterm.GomError{Msg: "This Term has no HeadPathTerm"})
-}
-func (t *RefTermTerm) GetTailPathTerm() Term {
-	panic(&aterm.GomError{Msg: "This Term has no TailPathTerm"})
-}
-
-func (t *RefTermTerm) Length() int {
-	panic(&aterm.GomError{Msg: "This Term.RefTerm is not a list", IllegalArgument: true})
-}
-
-func (t *RefTermTerm) Reverse() Term {
-	panic(&aterm.GomError{Msg: "This Term.RefTerm is not a list", IllegalArgument: true})
-}
-
-func (t *RefTermTerm) CompareTo(o any) int {
-	ao := o.(Term)
-	if ao == Term(t) {
-		return 0
-	}
-	if t.Hash() != ao.Hash() {
-		if t.Hash() < ao.Hash() {
-			return -1
-		}
-		return 1
-	}
-	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
-		return c
-	}
-	tco := ao.(*RefTermTerm)
-	if c := strings.Compare(t.L, tco.L); c != 0 {
-		return c
-	}
-	panic(&aterm.GomError{Msg: "Unable to compare"})
-}
-
-func (t *RefTermTerm) CompareToLPO(o any) int {
-	ao := o.(Term)
-	if ao == Term(t) {
-		return 0
-	}
-	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
-		return c
-	}
-	tco := ao.(*RefTermTerm)
-	if c := strings.Compare(t.L, tco.L); c != 0 {
-		return c
-	}
-	panic(&aterm.GomError{Msg: "Unable to compare"})
-}
-
-// ToATerm is the ATerm of the term: an application of RefTerm.
-func (t *RefTermTerm) ToATerm() aterm.ATerm {
-	f := aterm.GetInstance()
-	return f.MakeAppl(f.MakeAFun("RefTerm", 1, false), aterm.MakeGomString(t.L))
-}
-
-// fromTermRefTermTerm is Java Gom's RefTerm.fromTerm: an unquoted application of
-// RefTerm whose arguments are convertible (as in Java, the arity is not
-// checked: a missing argument is an index out of range).
-func fromTermRefTermTerm(trm aterm.ATerm, conv aterm.ATermConverter) (Term, bool) {
-	trm = conv.Convert(trm)
-	if appl, ok := trm.(*aterm.ATermAppl); ok && appl.GetName() == "RefTerm" && !appl.GetAFun().IsQuoted() {
-		return MakeRefTerm(aterm.GomString(appl.GetArgument(0), conv)), true
-	}
-	return nil, false
-}
-
-// PathTermTerm is the term type of the variadic operator `PathTerm(...)` of sort Term
-// (Java's abstract class PathTerm): a maximally-shared cons cell (Java's
-// ConsPathTerm: a head and a tail) or the empty list (Java's EmptyPathTerm).
+// PathTermTerm is the term type for the alternative `PathTerm(...)` of sort Term.
 type PathTermTerm struct {
-	head  int64
-	tail  Term
-	empty bool
+	Slots []int64
 	hash  uint32
-	// children caches the Visitable children (Java's children field)
-	children atomic.Pointer[[]any]
 }
 
 func (*PathTermTerm) isTerm() {}
@@ -2969,51 +1690,51 @@ func (t *PathTermTerm) Hash() uint32 { return t.hash }
 
 func (t *PathTermTerm) Equivalent(other sharedobjects.Term) bool {
 	o, ok := other.(*PathTermTerm)
-	return ok && t.empty == o.empty && t.head == o.head && t.tail == o.tail
+	if !ok {
+		return false
+	}
+	if len(t.Slots) != len(o.Slots) {
+		return false
+	}
+	for i := range t.Slots {
+		if t.Slots[i] != o.Slots[i] {
+			return false
+		}
+	}
+	return true
 }
 
 func (t *PathTermTerm) Duplicate() sharedobjects.Term {
-	return &PathTermTerm{head: t.head, tail: t.tail, empty: t.empty, hash: t.hash}
+	cp := append([]int64(nil), t.Slots...)
+	return &PathTermTerm{Slots: cp, hash: t.hash}
 }
 
-// elements returns the cached Visitable children of the list: its
-// elements (Java's getChildren, i.e. toArray).
-// Java's getChildren is the typed toArray(new int64[]{}): a last tail
-// that is not a list (of sort Term) cannot be stored in it
-// (ArrayStoreException, a *aterm.GomError here).
-func (t *PathTermTerm) elements() []any {
-	if c := t.children.Load(); c != nil {
-		return *c
+func (t *PathTermTerm) String() string {
+	parts := make([]string, len(t.Slots))
+	for i, v := range t.Slots {
+		parts[i] = fmt.Sprintf("%v", v)
 	}
-	var cur Term = t
-	for {
-		c, ok := cur.(*PathTermTerm)
-		if !ok || c.empty {
-			break
-		}
-		cur = c.tail
-	}
-	if c, ok := cur.(*PathTermTerm); !ok || !c.empty {
-		panic(&aterm.GomError{Msg: fmt.Sprintf("ArrayStoreException: the tail %v of a PathTerm list is not a int64", cur)})
-	}
-	c := t.ToArray()
-	t.children.Store(&c)
-	return c
+	return "PathTerm" + "(" + strings.Join(parts, ",") + ")"
 }
 
-func (t *PathTermTerm) ChildCount() int { return len(t.elements()) }
+func (t *PathTermTerm) ChildCount() int { return len(t.Slots) }
 
-func (t *PathTermTerm) ChildAt(i int) any { return t.elements()[i] }
+func (t *PathTermTerm) ChildAt(i int) any { return t.Slots[i] }
 
 func (t *PathTermTerm) SetChildAt(i int, child any) any {
-	dup := t.Children()
-	dup[i] = child
-	return t.SetChildren(dup)
+	dup := append([]int64(nil), t.Slots...)
+	dup[i] = child.(int64)
+	return MakePathTerm(dup...)
 }
 
-func (t *PathTermTerm) Children() []any { return append([]any(nil), t.elements()...) }
+func (t *PathTermTerm) Children() []any {
+	out := make([]any, len(t.Slots))
+	for i, v := range t.Slots {
+		out[i] = v
+	}
+	return out
+}
 
-// SetChildren is Java's setChildren of a list: PathTermFromArray(children).
 func (t *PathTermTerm) SetChildren(children []any) any {
 	args := make([]int64, len(children))
 	for i, c := range children {
@@ -3022,77 +1743,15 @@ func (t *PathTermTerm) SetChildren(children []any) any {
 	return MakePathTerm(args...)
 }
 
-func (t *PathTermTerm) String() string {
-	var b strings.Builder
-	b.WriteString("PathTerm(")
-	var cur Term = t
-	for {
-		c, ok := cur.(*PathTermTerm)
-		if !ok {
-			b.WriteString("," + fmt.Sprint(cur))
-			break
-		}
-		if c.empty {
-			break
-		}
-		if c != t {
-			b.WriteString(",")
-		}
-		b.WriteString(fmt.Sprint(c.head))
-		cur = c.tail
-	}
-	b.WriteString(")")
-	return b.String()
-}
-
-// RealMakeConsPathTerm is Java Gom's ConsPathTerm.realMake: the shared cell of head
-// and tail, without hook.
-func RealMakeConsPathTerm(head int64, tail Term) Term {
-	proto := &PathTermTerm{head: head, tail: tail, hash: sharedobjects.MixSymbol(sharedobjects.StringHash("ConsPathTerm"), []uint32{sharedobjects.IntHash(head), tail.Hash()})}
-	return factory.Build(proto).(*PathTermTerm)
-}
-
-// realMakeEmptyPathTerm is Java Gom's EmptyPathTerm.realMake: the shared empty list,
-// without hook.
-func realMakeEmptyPathTerm() Term {
-	proto := &PathTermTerm{empty: true, hash: sharedobjects.MixSymbol(sharedobjects.StringHash("EmptyPathTerm"), nil)}
-	return factory.Build(proto).(*PathTermTerm)
-}
-
-// RawPathTerm builds the PathTerm list holding exactly args, without construction
-// hook.
-func RawPathTerm(args ...int64) Term {
-	l := realMakeEmptyPathTerm()
-	for i := len(args) - 1; i >= 0; i-- {
-		l = RealMakeConsPathTerm(args[i], l)
-	}
-	return l
-}
-
-// EmptyPathTerm is Java Gom's EmptyPathTerm.make(): the empty PathTerm list, after the
-// construction hooks.
-func EmptyPathTerm() Term {
-	return realMakeEmptyPathTerm()
-}
-
-// ConsPathTerm is Java Gom's ConsPathTerm.make(head, tail): head inserted in front of
-// tail, after the construction hooks (theory "" first).
-func ConsPathTerm(head int64, tail Term) Term {
-	return RealMakeConsPathTerm(head, tail)
-}
-
-// MakePathTerm builds the list of args as Tom's `PathTerm(args…)` does: from EmptyPathTerm,
-// by ConsPathTerm, through the construction hooks (Java's PathTerm.fromArray).
+// MakePathTerm builds the canonical (shared) PathTerm term.
 func MakePathTerm(args ...int64) Term {
-	var l Term = EmptyPathTerm()
-	for i := len(args) - 1; i >= 0; i-- {
-		l = ConsPathTerm(args[i], l)
+	hashes := make([]uint32, 0, len(args))
+	for _, a := range args {
+		hashes = append(hashes, sharedobjects.StringHash(fmt.Sprintf("%v", a)))
 	}
-	return l
+	proto := &PathTermTerm{Slots: args, hash: sharedobjects.MixSymbol(sharedobjects.StringHash("PathTerm"), hashes)}
+	return factory.Build(proto).(*PathTermTerm)
 }
-
-// PathTermFromArray is Java Gom's PathTerm.fromArray(array).
-func PathTermFromArray(array []int64) Term { return MakePathTerm(array...) }
 
 // IsPathTerm is the `Is_PathTerm` predicate strategy: succeeds (returns subject
 // unchanged) when subject has the `PathTerm` shape, otherwise fails with
@@ -3187,329 +1846,16 @@ func (s *VisitPathTerm) VisitWith(env *sl.Environment, intro sl.Introspector) (a
 
 var _ sl.Strategy = (*VisitPathTerm)(nil)
 
-// SymbolName is the symbol of the Java term: ConsPathTerm or EmptyPathTerm.
-func (t *PathTermTerm) SymbolName() string {
-	if t.empty {
-		return "EmptyPathTerm"
-	}
-	return "ConsPathTerm"
-}
-
-func (t *PathTermTerm) IsAppl() bool           { return false }
-func (t *PathTermTerm) IsVar() bool            { return false }
-func (t *PathTermTerm) IsVarStar() bool        { return false }
-func (t *PathTermTerm) IsUnnamedVar() bool     { return false }
-func (t *PathTermTerm) IsUnnamedVarStar() bool { return false }
-func (t *PathTermTerm) IsAt() bool             { return false }
-func (t *PathTermTerm) IsAnti() bool           { return false }
-func (t *PathTermTerm) IsBuiltinInt() bool     { return false }
-func (t *PathTermTerm) IsBuiltinString() bool  { return false }
-func (t *PathTermTerm) IsLabTerm() bool        { return false }
-func (t *PathTermTerm) IsRefTerm() bool        { return false }
-func (t *PathTermTerm) IsConsPathTerm() bool   { return !t.empty }
-func (t *PathTermTerm) IsEmptyPathTerm() bool  { return t.empty }
-
-func (t *PathTermTerm) Getsymbol() string {
-	panic(&aterm.GomError{Msg: "This Term has no symbol"})
-}
-func (t *PathTermTerm) Getargs() TermList {
-	panic(&aterm.GomError{Msg: "This Term has no args"})
-}
-func (t *PathTermTerm) Getname() string {
-	panic(&aterm.GomError{Msg: "This Term has no name"})
-}
-func (t *PathTermTerm) Getterm() Term {
-	panic(&aterm.GomError{Msg: "This Term has no term"})
-}
-func (t *PathTermTerm) Geti() int64 {
-	panic(&aterm.GomError{Msg: "This Term has no i"})
-}
-func (t *PathTermTerm) Gets() string {
-	panic(&aterm.GomError{Msg: "This Term has no s"})
-}
-func (t *PathTermTerm) Getl() string {
-	panic(&aterm.GomError{Msg: "This Term has no l"})
-}
-func (t *PathTermTerm) Gett() Term {
-	panic(&aterm.GomError{Msg: "This Term has no t"})
-}
-func (t *PathTermTerm) GetHeadPathTerm() int64 {
-	if t.empty {
-		panic(&aterm.GomError{Msg: "This Term has no HeadPathTerm"})
-	}
-	return t.head
-}
-func (t *PathTermTerm) GetTailPathTerm() Term {
-	if t.empty {
-		panic(&aterm.GomError{Msg: "This Term has no TailPathTerm"})
-	}
-	return t.tail
-}
-
-// Length is Java's length(): the number of elements of the list (a
-// tail that is not a PathTerm list counts as one element).
-func (t *PathTermTerm) Length() int {
-	res := 0
-	var tl Term = t
-	for {
-		c, ok := tl.(*PathTermTerm)
-		if !ok || c.empty {
-			return res
-		}
-		res++
-		tl = c.tail
-		if _, ok := tl.(*PathTermTerm); !ok {
-			res++
-		}
-	}
-}
-
-// ToArray returns the elements of the list (Java's Object[] toArray()),
-// ending with its tail when that is not a PathTerm list.
-func (t *PathTermTerm) ToArray() []any {
-	out := make([]any, 0, t.Length())
-	var cur Term = t
-	for {
-		c, ok := cur.(*PathTermTerm)
-		if !ok || c.empty {
-			break
-		}
-		out = append(out, c.head)
-		cur = c.tail
-	}
-	if c, ok := cur.(*PathTermTerm); !ok || !c.empty {
-		out = append(out, cur)
-	}
-	return out
-}
-
-// Reverse is Java's reverse(): the reversed list, built by ConsPathTerm
-// (through the hooks).
-func (t *PathTermTerm) Reverse() Term {
-	if t.empty {
-		return t
-	}
-	var cur Term = t
-	var rev Term = EmptyPathTerm()
-	for {
-		c, ok := cur.(*PathTermTerm)
-		if !ok || c.empty {
-			break
-		}
-		rev = ConsPathTerm(c.head, rev)
-		cur = c.tail
-	}
-	return rev
-}
-
-// Append is Java's append(element): the list with element added at its
-// end, built by ConsPathTerm (through the hooks).
-func (t *PathTermTerm) Append(element int64) Term {
-	var heads []int64
-	var cur Term = t
-	for {
-		c, ok := cur.(*PathTermTerm)
-		if !ok || c.empty {
-			break
-		}
-		heads = append(heads, c.head)
-		cur = c.tail
-	}
-	var res Term
-	if c, ok := cur.(*PathTermTerm); ok && c.empty {
-		res = ConsPathTerm(element, cur)
-	} else {
-		res = ConsPathTerm(element, cur)
-	}
-	for i := len(heads) - 1; i >= 0; i-- {
-		res = ConsPathTerm(heads[i], res)
-	}
-	return res
-}
-
-func (t *PathTermTerm) CompareTo(o any) int {
-	for {
-		ao := o.(Term)
-		if ao == Term(t) {
-			return 0
-		}
-		if t.Hash() != ao.Hash() {
-			if t.Hash() < ao.Hash() {
-				return -1
-			}
-			return 1
-		}
-		if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
-			return c
-		}
-		tco := ao.(*PathTermTerm)
-		if t.empty {
-			panic(&aterm.GomError{Msg: "Unable to compare"})
-		}
-		if t.head != tco.head {
-			if t.head < tco.head {
-				return -1
-			}
-			return 1
-		}
-		next, ok := t.tail.(*PathTermTerm)
-		if !ok {
-			if c := t.tail.CompareTo(tco.tail); c != 0 {
-				return c
-			}
-			panic(&aterm.GomError{Msg: "Unable to compare"})
-		}
-		t, o = next, tco.tail
-	}
-}
-
-func (t *PathTermTerm) CompareToLPO(o any) int {
-	for {
-		ao := o.(Term)
-		if ao == Term(t) {
-			return 0
-		}
-		if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
-			return c
-		}
-		tco := ao.(*PathTermTerm)
-		if t.empty {
-			panic(&aterm.GomError{Msg: "Unable to compare"})
-		}
-		if t.head != tco.head {
-			if t.head < tco.head {
-				return -1
-			}
-			return 1
-		}
-		next, ok := t.tail.(*PathTermTerm)
-		if !ok {
-			if c := t.tail.CompareToLPO(tco.tail); c != 0 {
-				return c
-			}
-			panic(&aterm.GomError{Msg: "Unable to compare"})
-		}
-		t, o = next, tco.tail
-	}
-}
-
-// ToATerm is Java's toATerm: the list of the elements, ending with the
-// ATerm list of the tail (a tail that is not a list is Java's
-// ClassCastException).
-func (t *PathTermTerm) ToATerm() aterm.ATerm {
-	f := aterm.GetInstance()
-	var heads []int64
-	var cur Term = t
-	for {
-		c, ok := cur.(*PathTermTerm)
-		if !ok || c.empty {
-			break
-		}
-		heads = append(heads, c.head)
-		cur = c.tail
-	}
-	l := f.MakeListEmpty()
-	if c, ok := cur.(*PathTermTerm); !ok || !c.empty {
-		tl, isList := cur.ToATerm().(*aterm.ATermList)
-		if !isList {
-			panic(&aterm.GomError{Msg: fmt.Sprintf("ClassCastException: the ATerm of %v is not an ATermList", cur)})
-		}
-		l = tl
-	}
-	for i := len(heads) - 1; i >= 0; i-- {
-		l = f.MakeList(aterm.MakeGomInt(heads[i]), l)
-	}
-	return l
-}
-
-// fromTermPathTermTerm is Java Gom's PathTerm.fromTerm: an application of PathTerm, or a
-// list (of ToATerm), of convertible elements.
-func fromTermPathTermTerm(trm aterm.ATerm, conv aterm.ATermConverter) (res Term, ok bool) {
-	trm = conv.Convert(trm)
-	if appl, isAppl := trm.(*aterm.ATermAppl); isAppl && appl.GetName() == "PathTerm" {
-		elems := make([]int64, appl.GetArity())
-		for i, a := range appl.GetArguments() {
-			elems[i] = aterm.GomInt(a, conv)
-		}
-		return MakePathTerm(elems...), true
-	}
-	if list, isList := trm.(*aterm.ATermList); isList {
-		// an element that cannot be converted: not a PathTerm (Java returns null)
-		defer func() {
-			if recover() != nil {
-				res, ok = nil, false
-			}
-		}()
-		var elems []int64
-		for !list.IsEmpty() {
-			elems = append(elems, aterm.GomInt(list.GetFirst(), conv))
-			list = list.GetNext()
-		}
-		return MakePathTerm(elems...), true
-	}
-	return nil, false
-}
-
 // TermList is the Go interface backing the Gom sort TermList.
 type TermList interface {
 	sharedobjects.Term
 	isTermList()
-	// Java Gom API (see the package's generated methods)
-	SymbolName() string
-	IsConsTermList() bool
-	IsEmptyTermList() bool
-	GetHeadTermList() Term
-	GetTailTermList() TermList
-	Length() int
-	Reverse() TermList
-	CompareTo(o any) int
-	CompareToLPO(o any) int
-	ToATerm() aterm.ATerm
 }
 
-// TermListFromTerm is Java Gom's TermList.fromTerm(trm).
-func TermListFromTerm(trm aterm.ATerm) TermList {
-	return TermListFromTermConv(trm, aterm.IdConverter{})
-}
-
-// TermListFromTermConv is Java Gom's TermList.fromTerm(trm, atConv): the term of
-// the first operator of the sort that converts the ATerm; it panics
-// (IllegalArgumentException) when there is none.
-func TermListFromTermConv(trm aterm.ATerm, conv aterm.ATermConverter) TermList {
-	converted := conv.Convert(trm)
-	var results []TermList
-	if r, ok := fromTermTermListTermList(converted, conv); ok {
-		results = append(results, r)
-	}
-	if len(results) == 0 {
-		panic(&aterm.GomError{Msg: fmt.Sprintf("%v is not a TermList", trm), IllegalArgument: true})
-	}
-	return results[0]
-}
-
-// TermListFromString is Java Gom's TermList.fromString(s).
-func TermListFromString(s string) TermList { return TermListFromTerm(aterm.GetInstance().Parse(s)) }
-
-// TermListFromStream is Java Gom's TermList.fromStream(stream) (an IOException is
-// the error).
-func TermListFromStream(stream io.Reader) (TermList, error) {
-	at, err := aterm.GetInstance().ReadFromTextFile(stream)
-	if err != nil {
-		return nil, err
-	}
-	return TermListFromTerm(at), nil
-}
-
-// TermListTermList is the term type of the variadic operator `TermList(...)` of sort TermList
-// (Java's abstract class TermList): a maximally-shared cons cell (Java's
-// ConsTermList: a head and a tail) or the empty list (Java's EmptyTermList).
+// TermListTermList is the term type for the alternative `TermList(...)` of sort TermList.
 type TermListTermList struct {
-	head  Term
-	tail  TermList
-	empty bool
+	Slots []Term
 	hash  uint32
-	// children caches the Visitable children (Java's children field)
-	children atomic.Pointer[[]any]
 }
 
 func (*TermListTermList) isTermList() {}
@@ -3518,51 +1864,51 @@ func (t *TermListTermList) Hash() uint32 { return t.hash }
 
 func (t *TermListTermList) Equivalent(other sharedobjects.Term) bool {
 	o, ok := other.(*TermListTermList)
-	return ok && t.empty == o.empty && t.head == o.head && t.tail == o.tail
+	if !ok {
+		return false
+	}
+	if len(t.Slots) != len(o.Slots) {
+		return false
+	}
+	for i := range t.Slots {
+		if t.Slots[i] != o.Slots[i] {
+			return false
+		}
+	}
+	return true
 }
 
 func (t *TermListTermList) Duplicate() sharedobjects.Term {
-	return &TermListTermList{head: t.head, tail: t.tail, empty: t.empty, hash: t.hash}
+	cp := append([]Term(nil), t.Slots...)
+	return &TermListTermList{Slots: cp, hash: t.hash}
 }
 
-// elements returns the cached Visitable children of the list: its
-// elements (Java's getChildren, i.e. toArray).
-// Java's getChildren is the typed toArray(new Term[]{}): a last tail
-// that is not a list (of sort TermList) cannot be stored in it
-// (ArrayStoreException, a *aterm.GomError here).
-func (t *TermListTermList) elements() []any {
-	if c := t.children.Load(); c != nil {
-		return *c
+func (t *TermListTermList) String() string {
+	parts := make([]string, len(t.Slots))
+	for i, v := range t.Slots {
+		parts[i] = fmt.Sprintf("%v", v)
 	}
-	var cur TermList = t
-	for {
-		c, ok := cur.(*TermListTermList)
-		if !ok || c.empty {
-			break
-		}
-		cur = c.tail
-	}
-	if c, ok := cur.(*TermListTermList); !ok || !c.empty {
-		panic(&aterm.GomError{Msg: fmt.Sprintf("ArrayStoreException: the tail %v of a TermList list is not a Term", cur)})
-	}
-	c := t.ToArray()
-	t.children.Store(&c)
-	return c
+	return "TermList" + "(" + strings.Join(parts, ",") + ")"
 }
 
-func (t *TermListTermList) ChildCount() int { return len(t.elements()) }
+func (t *TermListTermList) ChildCount() int { return len(t.Slots) }
 
-func (t *TermListTermList) ChildAt(i int) any { return t.elements()[i] }
+func (t *TermListTermList) ChildAt(i int) any { return t.Slots[i] }
 
 func (t *TermListTermList) SetChildAt(i int, child any) any {
-	dup := t.Children()
-	dup[i] = child
-	return t.SetChildren(dup)
+	dup := append([]Term(nil), t.Slots...)
+	dup[i] = child.(Term)
+	return MakeTermList(dup...)
 }
 
-func (t *TermListTermList) Children() []any { return append([]any(nil), t.elements()...) }
+func (t *TermListTermList) Children() []any {
+	out := make([]any, len(t.Slots))
+	for i, v := range t.Slots {
+		out[i] = v
+	}
+	return out
+}
 
-// SetChildren is Java's setChildren of a list: TermListFromArray(children).
 func (t *TermListTermList) SetChildren(children []any) any {
 	args := make([]Term, len(children))
 	for i, c := range children {
@@ -3571,77 +1917,15 @@ func (t *TermListTermList) SetChildren(children []any) any {
 	return MakeTermList(args...)
 }
 
-func (t *TermListTermList) String() string {
-	var b strings.Builder
-	b.WriteString("TermList(")
-	var cur TermList = t
-	for {
-		c, ok := cur.(*TermListTermList)
-		if !ok {
-			b.WriteString("," + fmt.Sprint(cur))
-			break
-		}
-		if c.empty {
-			break
-		}
-		if c != t {
-			b.WriteString(",")
-		}
-		b.WriteString(fmt.Sprint(c.head))
-		cur = c.tail
-	}
-	b.WriteString(")")
-	return b.String()
-}
-
-// RealMakeConsTermList is Java Gom's ConsTermList.realMake: the shared cell of head
-// and tail, without hook.
-func RealMakeConsTermList(head Term, tail TermList) TermList {
-	proto := &TermListTermList{head: head, tail: tail, hash: sharedobjects.MixSymbol(sharedobjects.StringHash("ConsTermList"), []uint32{head.Hash(), tail.Hash()})}
-	return factory.Build(proto).(*TermListTermList)
-}
-
-// realMakeEmptyTermList is Java Gom's EmptyTermList.realMake: the shared empty list,
-// without hook.
-func realMakeEmptyTermList() TermList {
-	proto := &TermListTermList{empty: true, hash: sharedobjects.MixSymbol(sharedobjects.StringHash("EmptyTermList"), nil)}
-	return factory.Build(proto).(*TermListTermList)
-}
-
-// RawTermList builds the TermList list holding exactly args, without construction
-// hook.
-func RawTermList(args ...Term) TermList {
-	l := realMakeEmptyTermList()
-	for i := len(args) - 1; i >= 0; i-- {
-		l = RealMakeConsTermList(args[i], l)
-	}
-	return l
-}
-
-// EmptyTermList is Java Gom's EmptyTermList.make(): the empty TermList list, after the
-// construction hooks.
-func EmptyTermList() TermList {
-	return realMakeEmptyTermList()
-}
-
-// ConsTermList is Java Gom's ConsTermList.make(head, tail): head inserted in front of
-// tail, after the construction hooks (theory "" first).
-func ConsTermList(head Term, tail TermList) TermList {
-	return RealMakeConsTermList(head, tail)
-}
-
-// MakeTermList builds the list of args as Tom's `TermList(args…)` does: from EmptyTermList,
-// by ConsTermList, through the construction hooks (Java's TermList.fromArray).
+// MakeTermList builds the canonical (shared) TermList term.
 func MakeTermList(args ...Term) TermList {
-	var l TermList = EmptyTermList()
-	for i := len(args) - 1; i >= 0; i-- {
-		l = ConsTermList(args[i], l)
+	hashes := make([]uint32, 0, len(args))
+	for _, a := range args {
+		hashes = append(hashes, a.Hash())
 	}
-	return l
+	proto := &TermListTermList{Slots: args, hash: sharedobjects.MixSymbol(sharedobjects.StringHash("TermList"), hashes)}
+	return factory.Build(proto).(*TermListTermList)
 }
-
-// TermListFromArray is Java Gom's TermList.fromArray(array).
-func TermListFromArray(array []Term) TermList { return MakeTermList(array...) }
 
 // IsTermList is the `Is_TermList` predicate strategy: succeeds (returns subject
 // unchanged) when subject has the `TermList` shape, otherwise fails with
@@ -3736,278 +2020,10 @@ func (s *VisitTermList) VisitWith(env *sl.Environment, intro sl.Introspector) (a
 
 var _ sl.Strategy = (*VisitTermList)(nil)
 
-// SymbolName is the symbol of the Java term: ConsTermList or EmptyTermList.
-func (t *TermListTermList) SymbolName() string {
-	if t.empty {
-		return "EmptyTermList"
-	}
-	return "ConsTermList"
-}
-
-func (t *TermListTermList) IsConsTermList() bool  { return !t.empty }
-func (t *TermListTermList) IsEmptyTermList() bool { return t.empty }
-
-func (t *TermListTermList) GetHeadTermList() Term {
-	if t.empty {
-		panic(&aterm.GomError{Msg: "This TermList has no HeadTermList"})
-	}
-	return t.head
-}
-func (t *TermListTermList) GetTailTermList() TermList {
-	if t.empty {
-		panic(&aterm.GomError{Msg: "This TermList has no TailTermList"})
-	}
-	return t.tail
-}
-
-// Length is Java's length(): the number of elements of the list (a
-// tail that is not a TermList list counts as one element).
-func (t *TermListTermList) Length() int {
-	res := 0
-	var tl TermList = t
-	for {
-		c, ok := tl.(*TermListTermList)
-		if !ok || c.empty {
-			return res
-		}
-		res++
-		tl = c.tail
-		if _, ok := tl.(*TermListTermList); !ok {
-			res++
-		}
-	}
-}
-
-// ToArray returns the elements of the list (Java's Object[] toArray()),
-// ending with its tail when that is not a TermList list.
-func (t *TermListTermList) ToArray() []any {
-	out := make([]any, 0, t.Length())
-	var cur TermList = t
-	for {
-		c, ok := cur.(*TermListTermList)
-		if !ok || c.empty {
-			break
-		}
-		out = append(out, c.head)
-		cur = c.tail
-	}
-	if c, ok := cur.(*TermListTermList); !ok || !c.empty {
-		out = append(out, cur)
-	}
-	return out
-}
-
-// Reverse is Java's reverse(): the reversed list, built by ConsTermList
-// (through the hooks).
-func (t *TermListTermList) Reverse() TermList {
-	if t.empty {
-		return t
-	}
-	var cur TermList = t
-	var rev TermList = EmptyTermList()
-	for {
-		c, ok := cur.(*TermListTermList)
-		if !ok || c.empty {
-			break
-		}
-		rev = ConsTermList(c.head, rev)
-		cur = c.tail
-	}
-	return rev
-}
-
-// Append is Java's append(element): the list with element added at its
-// end, built by ConsTermList (through the hooks).
-func (t *TermListTermList) Append(element Term) TermList {
-	var heads []Term
-	var cur TermList = t
-	for {
-		c, ok := cur.(*TermListTermList)
-		if !ok || c.empty {
-			break
-		}
-		heads = append(heads, c.head)
-		cur = c.tail
-	}
-	var res TermList
-	if c, ok := cur.(*TermListTermList); ok && c.empty {
-		res = ConsTermList(element, cur)
-	} else {
-		res = ConsTermList(element, cur)
-	}
-	for i := len(heads) - 1; i >= 0; i-- {
-		res = ConsTermList(heads[i], res)
-	}
-	return res
-}
-
-func (t *TermListTermList) CompareTo(o any) int {
-	for {
-		ao := o.(TermList)
-		if ao == TermList(t) {
-			return 0
-		}
-		if t.Hash() != ao.Hash() {
-			if t.Hash() < ao.Hash() {
-				return -1
-			}
-			return 1
-		}
-		if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
-			return c
-		}
-		tco := ao.(*TermListTermList)
-		if t.empty {
-			panic(&aterm.GomError{Msg: "Unable to compare"})
-		}
-		if c := t.head.CompareTo(tco.head); c != 0 {
-			return c
-		}
-		next, ok := t.tail.(*TermListTermList)
-		if !ok {
-			if c := t.tail.CompareTo(tco.tail); c != 0 {
-				return c
-			}
-			panic(&aterm.GomError{Msg: "Unable to compare"})
-		}
-		t, o = next, tco.tail
-	}
-}
-
-func (t *TermListTermList) CompareToLPO(o any) int {
-	for {
-		ao := o.(TermList)
-		if ao == TermList(t) {
-			return 0
-		}
-		if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
-			return c
-		}
-		tco := ao.(*TermListTermList)
-		if t.empty {
-			panic(&aterm.GomError{Msg: "Unable to compare"})
-		}
-		if c := t.head.CompareToLPO(tco.head); c != 0 {
-			return c
-		}
-		next, ok := t.tail.(*TermListTermList)
-		if !ok {
-			if c := t.tail.CompareToLPO(tco.tail); c != 0 {
-				return c
-			}
-			panic(&aterm.GomError{Msg: "Unable to compare"})
-		}
-		t, o = next, tco.tail
-	}
-}
-
-// ToATerm is Java's toATerm: the list of the elements, ending with the
-// ATerm list of the tail (a tail that is not a list is Java's
-// ClassCastException).
-func (t *TermListTermList) ToATerm() aterm.ATerm {
-	f := aterm.GetInstance()
-	var heads []Term
-	var cur TermList = t
-	for {
-		c, ok := cur.(*TermListTermList)
-		if !ok || c.empty {
-			break
-		}
-		heads = append(heads, c.head)
-		cur = c.tail
-	}
-	l := f.MakeListEmpty()
-	if c, ok := cur.(*TermListTermList); !ok || !c.empty {
-		tl, isList := cur.ToATerm().(*aterm.ATermList)
-		if !isList {
-			panic(&aterm.GomError{Msg: fmt.Sprintf("ClassCastException: the ATerm of %v is not an ATermList", cur)})
-		}
-		l = tl
-	}
-	for i := len(heads) - 1; i >= 0; i-- {
-		l = f.MakeList(heads[i].ToATerm(), l)
-	}
-	return l
-}
-
-// fromTermTermListTermList is Java Gom's TermList.fromTerm: an application of TermList, or a
-// list (of ToATerm), of convertible elements.
-func fromTermTermListTermList(trm aterm.ATerm, conv aterm.ATermConverter) (res TermList, ok bool) {
-	trm = conv.Convert(trm)
-	if appl, isAppl := trm.(*aterm.ATermAppl); isAppl && appl.GetName() == "TermList" {
-		elems := make([]Term, appl.GetArity())
-		for i, a := range appl.GetArguments() {
-			elems[i] = TermFromTermConv(a, conv)
-		}
-		return MakeTermList(elems...), true
-	}
-	if list, isList := trm.(*aterm.ATermList); isList {
-		// an element that cannot be converted: not a TermList (Java returns null)
-		defer func() {
-			if recover() != nil {
-				res, ok = nil, false
-			}
-		}()
-		var elems []Term
-		for !list.IsEmpty() {
-			elems = append(elems, TermFromTermConv(list.GetFirst(), conv))
-			list = list.GetNext()
-		}
-		return MakeTermList(elems...), true
-	}
-	return nil, false
-}
-
 // Rule is the Go interface backing the Gom sort Rule.
 type Rule interface {
 	sharedobjects.Term
 	isRule()
-	// Java Gom API (see the package's generated methods)
-	SymbolName() string
-	IsRule() bool
-	IsConditionalRule() bool
-	Getlhs() Term
-	Getrhs() Term
-	Getcond() Condition
-	Length() int
-	Reverse() Rule
-	CompareTo(o any) int
-	CompareToLPO(o any) int
-	ToATerm() aterm.ATerm
-}
-
-// RuleFromTerm is Java Gom's Rule.fromTerm(trm).
-func RuleFromTerm(trm aterm.ATerm) Rule { return RuleFromTermConv(trm, aterm.IdConverter{}) }
-
-// RuleFromTermConv is Java Gom's Rule.fromTerm(trm, atConv): the term of
-// the first operator of the sort that converts the ATerm; it panics
-// (IllegalArgumentException) when there is none.
-func RuleFromTermConv(trm aterm.ATerm, conv aterm.ATermConverter) Rule {
-	converted := conv.Convert(trm)
-	var results []Rule
-	if r, ok := fromTermRuleRule(converted, conv); ok {
-		results = append(results, r)
-	}
-	if r, ok := fromTermConditionalRuleRule(converted, conv); ok {
-		results = append(results, r)
-	}
-	if len(results) == 0 {
-		panic(&aterm.GomError{Msg: fmt.Sprintf("%v is not a Rule", trm), IllegalArgument: true})
-	}
-	return results[0]
-}
-
-// RuleFromString is Java Gom's Rule.fromString(s).
-func RuleFromString(s string) Rule { return RuleFromTerm(aterm.GetInstance().Parse(s)) }
-
-// RuleFromStream is Java Gom's Rule.fromStream(stream) (an IOException is
-// the error).
-func RuleFromStream(stream io.Reader) (Rule, error) {
-	at, err := aterm.GetInstance().ReadFromTextFile(stream)
-	if err != nil {
-		return nil, err
-	}
-	return RuleFromTerm(at), nil
 }
 
 // RuleRule is the term type for the alternative `Rule(...)` of sort Rule.
@@ -4041,7 +2057,7 @@ func (t *RuleRule) Duplicate() sharedobjects.Term {
 }
 
 func (t *RuleRule) String() string {
-	return "Rule(" + fmt.Sprint(t.Lhs) + "," + fmt.Sprint(t.Rhs) + ")"
+	return fmt.Sprintf("Rule(%v,%v)", t.Lhs, t.Rhs)
 }
 
 func (t *RuleRule) ChildCount() int { return 2 }
@@ -4174,84 +2190,6 @@ func (s *VisitRule) VisitWith(env *sl.Environment, intro sl.Introspector) (any, 
 
 var _ sl.Strategy = (*VisitRule)(nil)
 
-func (t *RuleRule) SymbolName() string { return "Rule" }
-
-func (t *RuleRule) IsRule() bool            { return true }
-func (t *RuleRule) IsConditionalRule() bool { return false }
-
-func (t *RuleRule) Getlhs() Term { return t.Lhs }
-func (t *RuleRule) Getrhs() Term { return t.Rhs }
-func (t *RuleRule) Getcond() Condition {
-	panic(&aterm.GomError{Msg: "This Rule has no cond"})
-}
-
-func (t *RuleRule) Length() int {
-	panic(&aterm.GomError{Msg: "This Rule.Rule is not a list", IllegalArgument: true})
-}
-
-func (t *RuleRule) Reverse() Rule {
-	panic(&aterm.GomError{Msg: "This Rule.Rule is not a list", IllegalArgument: true})
-}
-
-func (t *RuleRule) CompareTo(o any) int {
-	ao := o.(Rule)
-	if ao == Rule(t) {
-		return 0
-	}
-	if t.Hash() != ao.Hash() {
-		if t.Hash() < ao.Hash() {
-			return -1
-		}
-		return 1
-	}
-	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
-		return c
-	}
-	tco := ao.(*RuleRule)
-	if c := t.Lhs.CompareTo(tco.Lhs); c != 0 {
-		return c
-	}
-	if c := t.Rhs.CompareTo(tco.Rhs); c != 0 {
-		return c
-	}
-	panic(&aterm.GomError{Msg: "Unable to compare"})
-}
-
-func (t *RuleRule) CompareToLPO(o any) int {
-	ao := o.(Rule)
-	if ao == Rule(t) {
-		return 0
-	}
-	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
-		return c
-	}
-	tco := ao.(*RuleRule)
-	if c := t.Lhs.CompareToLPO(tco.Lhs); c != 0 {
-		return c
-	}
-	if c := t.Rhs.CompareToLPO(tco.Rhs); c != 0 {
-		return c
-	}
-	panic(&aterm.GomError{Msg: "Unable to compare"})
-}
-
-// ToATerm is the ATerm of the term: an application of Rule.
-func (t *RuleRule) ToATerm() aterm.ATerm {
-	f := aterm.GetInstance()
-	return f.MakeAppl(f.MakeAFun("Rule", 2, false), t.Lhs.ToATerm(), t.Rhs.ToATerm())
-}
-
-// fromTermRuleRule is Java Gom's Rule.fromTerm: an unquoted application of
-// Rule whose arguments are convertible (as in Java, the arity is not
-// checked: a missing argument is an index out of range).
-func fromTermRuleRule(trm aterm.ATerm, conv aterm.ATermConverter) (Rule, bool) {
-	trm = conv.Convert(trm)
-	if appl, ok := trm.(*aterm.ATermAppl); ok && appl.GetName() == "Rule" && !appl.GetAFun().IsQuoted() {
-		return MakeRule(TermFromTermConv(appl.GetArgument(0), conv), TermFromTermConv(appl.GetArgument(1), conv)), true
-	}
-	return nil, false
-}
-
 // ConditionalRuleRule is the term type for the alternative `ConditionalRule(...)` of sort Rule.
 type ConditionalRuleRule struct {
 	Lhs  Term
@@ -4287,7 +2225,7 @@ func (t *ConditionalRuleRule) Duplicate() sharedobjects.Term {
 }
 
 func (t *ConditionalRuleRule) String() string {
-	return "ConditionalRule(" + fmt.Sprint(t.Lhs) + "," + fmt.Sprint(t.Rhs) + "," + fmt.Sprint(t.Cond) + ")"
+	return fmt.Sprintf("ConditionalRule(%v,%v,%v)", t.Lhs, t.Rhs, t.Cond)
 }
 
 func (t *ConditionalRuleRule) ChildCount() int { return 3 }
@@ -4424,173 +2362,10 @@ func (s *VisitConditionalRule) VisitWith(env *sl.Environment, intro sl.Introspec
 
 var _ sl.Strategy = (*VisitConditionalRule)(nil)
 
-func (t *ConditionalRuleRule) SymbolName() string { return "ConditionalRule" }
-
-func (t *ConditionalRuleRule) IsRule() bool            { return false }
-func (t *ConditionalRuleRule) IsConditionalRule() bool { return true }
-
-func (t *ConditionalRuleRule) Getlhs() Term       { return t.Lhs }
-func (t *ConditionalRuleRule) Getrhs() Term       { return t.Rhs }
-func (t *ConditionalRuleRule) Getcond() Condition { return t.Cond }
-
-func (t *ConditionalRuleRule) Length() int {
-	panic(&aterm.GomError{Msg: "This Rule.ConditionalRule is not a list", IllegalArgument: true})
-}
-
-func (t *ConditionalRuleRule) Reverse() Rule {
-	panic(&aterm.GomError{Msg: "This Rule.ConditionalRule is not a list", IllegalArgument: true})
-}
-
-func (t *ConditionalRuleRule) CompareTo(o any) int {
-	ao := o.(Rule)
-	if ao == Rule(t) {
-		return 0
-	}
-	if t.Hash() != ao.Hash() {
-		if t.Hash() < ao.Hash() {
-			return -1
-		}
-		return 1
-	}
-	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
-		return c
-	}
-	tco := ao.(*ConditionalRuleRule)
-	if c := t.Lhs.CompareTo(tco.Lhs); c != 0 {
-		return c
-	}
-	if c := t.Rhs.CompareTo(tco.Rhs); c != 0 {
-		return c
-	}
-	if c := t.Cond.CompareTo(tco.Cond); c != 0 {
-		return c
-	}
-	panic(&aterm.GomError{Msg: "Unable to compare"})
-}
-
-func (t *ConditionalRuleRule) CompareToLPO(o any) int {
-	ao := o.(Rule)
-	if ao == Rule(t) {
-		return 0
-	}
-	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
-		return c
-	}
-	tco := ao.(*ConditionalRuleRule)
-	if c := t.Lhs.CompareToLPO(tco.Lhs); c != 0 {
-		return c
-	}
-	if c := t.Rhs.CompareToLPO(tco.Rhs); c != 0 {
-		return c
-	}
-	if c := t.Cond.CompareToLPO(tco.Cond); c != 0 {
-		return c
-	}
-	panic(&aterm.GomError{Msg: "Unable to compare"})
-}
-
-// ToATerm is the ATerm of the term: an application of ConditionalRule.
-func (t *ConditionalRuleRule) ToATerm() aterm.ATerm {
-	f := aterm.GetInstance()
-	return f.MakeAppl(f.MakeAFun("ConditionalRule", 3, false), t.Lhs.ToATerm(), t.Rhs.ToATerm(), t.Cond.ToATerm())
-}
-
-// fromTermConditionalRuleRule is Java Gom's ConditionalRule.fromTerm: an unquoted application of
-// ConditionalRule whose arguments are convertible (as in Java, the arity is not
-// checked: a missing argument is an index out of range).
-func fromTermConditionalRuleRule(trm aterm.ATerm, conv aterm.ATermConverter) (Rule, bool) {
-	trm = conv.Convert(trm)
-	if appl, ok := trm.(*aterm.ATermAppl); ok && appl.GetName() == "ConditionalRule" && !appl.GetAFun().IsQuoted() {
-		return MakeConditionalRule(TermFromTermConv(appl.GetArgument(0), conv), TermFromTermConv(appl.GetArgument(1), conv), ConditionFromTermConv(appl.GetArgument(2), conv)), true
-	}
-	return nil, false
-}
-
 // Condition is the Go interface backing the Gom sort Condition.
 type Condition interface {
 	sharedobjects.Term
 	isCondition()
-	// Java Gom API (see the package's generated methods)
-	SymbolName() string
-	IsCondEquals() bool
-	IsCondNotEquals() bool
-	IsCondLessEquals() bool
-	IsCondLessThan() bool
-	IsCondGreaterEquals() bool
-	IsCondGreaterThan() bool
-	IsConsCondAnd() bool
-	IsEmptyCondAnd() bool
-	GetHeadCondAnd() Condition
-	GetTailCondAnd() Condition
-	IsConsCondOr() bool
-	IsEmptyCondOr() bool
-	GetHeadCondOr() Condition
-	GetTailCondOr() Condition
-	IsCondMatch() bool
-	Gett1() Term
-	Gett2() Term
-	Length() int
-	Reverse() Condition
-	CompareTo(o any) int
-	CompareToLPO(o any) int
-	ToATerm() aterm.ATerm
-}
-
-// ConditionFromTerm is Java Gom's Condition.fromTerm(trm).
-func ConditionFromTerm(trm aterm.ATerm) Condition {
-	return ConditionFromTermConv(trm, aterm.IdConverter{})
-}
-
-// ConditionFromTermConv is Java Gom's Condition.fromTerm(trm, atConv): the term of
-// the first operator of the sort that converts the ATerm; it panics
-// (IllegalArgumentException) when there is none.
-func ConditionFromTermConv(trm aterm.ATerm, conv aterm.ATermConverter) Condition {
-	converted := conv.Convert(trm)
-	var results []Condition
-	if r, ok := fromTermCondEqualsCondition(converted, conv); ok {
-		results = append(results, r)
-	}
-	if r, ok := fromTermCondNotEqualsCondition(converted, conv); ok {
-		results = append(results, r)
-	}
-	if r, ok := fromTermCondLessEqualsCondition(converted, conv); ok {
-		results = append(results, r)
-	}
-	if r, ok := fromTermCondLessThanCondition(converted, conv); ok {
-		results = append(results, r)
-	}
-	if r, ok := fromTermCondGreaterEqualsCondition(converted, conv); ok {
-		results = append(results, r)
-	}
-	if r, ok := fromTermCondGreaterThanCondition(converted, conv); ok {
-		results = append(results, r)
-	}
-	if r, ok := fromTermCondMatchCondition(converted, conv); ok {
-		results = append(results, r)
-	}
-	if r, ok := fromTermCondAndCondition(converted, conv); ok {
-		results = append(results, r)
-	}
-	if r, ok := fromTermCondOrCondition(converted, conv); ok {
-		results = append(results, r)
-	}
-	if len(results) == 0 {
-		panic(&aterm.GomError{Msg: fmt.Sprintf("%v is not a Condition", trm), IllegalArgument: true})
-	}
-	return results[0]
-}
-
-// ConditionFromString is Java Gom's Condition.fromString(s).
-func ConditionFromString(s string) Condition { return ConditionFromTerm(aterm.GetInstance().Parse(s)) }
-
-// ConditionFromStream is Java Gom's Condition.fromStream(stream) (an IOException is
-// the error).
-func ConditionFromStream(stream io.Reader) (Condition, error) {
-	at, err := aterm.GetInstance().ReadFromTextFile(stream)
-	if err != nil {
-		return nil, err
-	}
-	return ConditionFromTerm(at), nil
 }
 
 // CondEqualsCondition is the term type for the alternative `CondEquals(...)` of sort Condition.
@@ -4624,7 +2399,7 @@ func (t *CondEqualsCondition) Duplicate() sharedobjects.Term {
 }
 
 func (t *CondEqualsCondition) String() string {
-	return "CondEquals(" + fmt.Sprint(t.T1) + "," + fmt.Sprint(t.T2) + ")"
+	return fmt.Sprintf("CondEquals(%v,%v)", t.T1, t.T2)
 }
 
 func (t *CondEqualsCondition) ChildCount() int { return 2 }
@@ -4757,102 +2532,6 @@ func (s *VisitCondEquals) VisitWith(env *sl.Environment, intro sl.Introspector) 
 
 var _ sl.Strategy = (*VisitCondEquals)(nil)
 
-func (t *CondEqualsCondition) SymbolName() string { return "CondEquals" }
-
-func (t *CondEqualsCondition) IsCondEquals() bool        { return true }
-func (t *CondEqualsCondition) IsCondNotEquals() bool     { return false }
-func (t *CondEqualsCondition) IsCondLessEquals() bool    { return false }
-func (t *CondEqualsCondition) IsCondLessThan() bool      { return false }
-func (t *CondEqualsCondition) IsCondGreaterEquals() bool { return false }
-func (t *CondEqualsCondition) IsCondGreaterThan() bool   { return false }
-func (t *CondEqualsCondition) IsConsCondAnd() bool       { return false }
-func (t *CondEqualsCondition) IsEmptyCondAnd() bool      { return false }
-func (t *CondEqualsCondition) IsConsCondOr() bool        { return false }
-func (t *CondEqualsCondition) IsEmptyCondOr() bool       { return false }
-func (t *CondEqualsCondition) IsCondMatch() bool         { return false }
-
-func (t *CondEqualsCondition) Gett1() Term { return t.T1 }
-func (t *CondEqualsCondition) Gett2() Term { return t.T2 }
-func (t *CondEqualsCondition) GetHeadCondAnd() Condition {
-	panic(&aterm.GomError{Msg: "This Condition has no HeadCondAnd"})
-}
-func (t *CondEqualsCondition) GetTailCondAnd() Condition {
-	panic(&aterm.GomError{Msg: "This Condition has no TailCondAnd"})
-}
-func (t *CondEqualsCondition) GetHeadCondOr() Condition {
-	panic(&aterm.GomError{Msg: "This Condition has no HeadCondOr"})
-}
-func (t *CondEqualsCondition) GetTailCondOr() Condition {
-	panic(&aterm.GomError{Msg: "This Condition has no TailCondOr"})
-}
-
-func (t *CondEqualsCondition) Length() int {
-	panic(&aterm.GomError{Msg: "This Condition.CondEquals is not a list", IllegalArgument: true})
-}
-
-func (t *CondEqualsCondition) Reverse() Condition {
-	panic(&aterm.GomError{Msg: "This Condition.CondEquals is not a list", IllegalArgument: true})
-}
-
-func (t *CondEqualsCondition) CompareTo(o any) int {
-	ao := o.(Condition)
-	if ao == Condition(t) {
-		return 0
-	}
-	if t.Hash() != ao.Hash() {
-		if t.Hash() < ao.Hash() {
-			return -1
-		}
-		return 1
-	}
-	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
-		return c
-	}
-	tco := ao.(*CondEqualsCondition)
-	if c := t.T1.CompareTo(tco.T1); c != 0 {
-		return c
-	}
-	if c := t.T2.CompareTo(tco.T2); c != 0 {
-		return c
-	}
-	panic(&aterm.GomError{Msg: "Unable to compare"})
-}
-
-func (t *CondEqualsCondition) CompareToLPO(o any) int {
-	ao := o.(Condition)
-	if ao == Condition(t) {
-		return 0
-	}
-	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
-		return c
-	}
-	tco := ao.(*CondEqualsCondition)
-	if c := t.T1.CompareToLPO(tco.T1); c != 0 {
-		return c
-	}
-	if c := t.T2.CompareToLPO(tco.T2); c != 0 {
-		return c
-	}
-	panic(&aterm.GomError{Msg: "Unable to compare"})
-}
-
-// ToATerm is the ATerm of the term: an application of CondEquals.
-func (t *CondEqualsCondition) ToATerm() aterm.ATerm {
-	f := aterm.GetInstance()
-	return f.MakeAppl(f.MakeAFun("CondEquals", 2, false), t.T1.ToATerm(), t.T2.ToATerm())
-}
-
-// fromTermCondEqualsCondition is Java Gom's CondEquals.fromTerm: an unquoted application of
-// CondEquals whose arguments are convertible (as in Java, the arity is not
-// checked: a missing argument is an index out of range).
-func fromTermCondEqualsCondition(trm aterm.ATerm, conv aterm.ATermConverter) (Condition, bool) {
-	trm = conv.Convert(trm)
-	if appl, ok := trm.(*aterm.ATermAppl); ok && appl.GetName() == "CondEquals" && !appl.GetAFun().IsQuoted() {
-		return MakeCondEquals(TermFromTermConv(appl.GetArgument(0), conv), TermFromTermConv(appl.GetArgument(1), conv)), true
-	}
-	return nil, false
-}
-
 // CondNotEqualsCondition is the term type for the alternative `CondNotEquals(...)` of sort Condition.
 type CondNotEqualsCondition struct {
 	T1   Term
@@ -4884,7 +2563,7 @@ func (t *CondNotEqualsCondition) Duplicate() sharedobjects.Term {
 }
 
 func (t *CondNotEqualsCondition) String() string {
-	return "CondNotEquals(" + fmt.Sprint(t.T1) + "," + fmt.Sprint(t.T2) + ")"
+	return fmt.Sprintf("CondNotEquals(%v,%v)", t.T1, t.T2)
 }
 
 func (t *CondNotEqualsCondition) ChildCount() int { return 2 }
@@ -5017,102 +2696,6 @@ func (s *VisitCondNotEquals) VisitWith(env *sl.Environment, intro sl.Introspecto
 
 var _ sl.Strategy = (*VisitCondNotEquals)(nil)
 
-func (t *CondNotEqualsCondition) SymbolName() string { return "CondNotEquals" }
-
-func (t *CondNotEqualsCondition) IsCondEquals() bool        { return false }
-func (t *CondNotEqualsCondition) IsCondNotEquals() bool     { return true }
-func (t *CondNotEqualsCondition) IsCondLessEquals() bool    { return false }
-func (t *CondNotEqualsCondition) IsCondLessThan() bool      { return false }
-func (t *CondNotEqualsCondition) IsCondGreaterEquals() bool { return false }
-func (t *CondNotEqualsCondition) IsCondGreaterThan() bool   { return false }
-func (t *CondNotEqualsCondition) IsConsCondAnd() bool       { return false }
-func (t *CondNotEqualsCondition) IsEmptyCondAnd() bool      { return false }
-func (t *CondNotEqualsCondition) IsConsCondOr() bool        { return false }
-func (t *CondNotEqualsCondition) IsEmptyCondOr() bool       { return false }
-func (t *CondNotEqualsCondition) IsCondMatch() bool         { return false }
-
-func (t *CondNotEqualsCondition) Gett1() Term { return t.T1 }
-func (t *CondNotEqualsCondition) Gett2() Term { return t.T2 }
-func (t *CondNotEqualsCondition) GetHeadCondAnd() Condition {
-	panic(&aterm.GomError{Msg: "This Condition has no HeadCondAnd"})
-}
-func (t *CondNotEqualsCondition) GetTailCondAnd() Condition {
-	panic(&aterm.GomError{Msg: "This Condition has no TailCondAnd"})
-}
-func (t *CondNotEqualsCondition) GetHeadCondOr() Condition {
-	panic(&aterm.GomError{Msg: "This Condition has no HeadCondOr"})
-}
-func (t *CondNotEqualsCondition) GetTailCondOr() Condition {
-	panic(&aterm.GomError{Msg: "This Condition has no TailCondOr"})
-}
-
-func (t *CondNotEqualsCondition) Length() int {
-	panic(&aterm.GomError{Msg: "This Condition.CondNotEquals is not a list", IllegalArgument: true})
-}
-
-func (t *CondNotEqualsCondition) Reverse() Condition {
-	panic(&aterm.GomError{Msg: "This Condition.CondNotEquals is not a list", IllegalArgument: true})
-}
-
-func (t *CondNotEqualsCondition) CompareTo(o any) int {
-	ao := o.(Condition)
-	if ao == Condition(t) {
-		return 0
-	}
-	if t.Hash() != ao.Hash() {
-		if t.Hash() < ao.Hash() {
-			return -1
-		}
-		return 1
-	}
-	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
-		return c
-	}
-	tco := ao.(*CondNotEqualsCondition)
-	if c := t.T1.CompareTo(tco.T1); c != 0 {
-		return c
-	}
-	if c := t.T2.CompareTo(tco.T2); c != 0 {
-		return c
-	}
-	panic(&aterm.GomError{Msg: "Unable to compare"})
-}
-
-func (t *CondNotEqualsCondition) CompareToLPO(o any) int {
-	ao := o.(Condition)
-	if ao == Condition(t) {
-		return 0
-	}
-	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
-		return c
-	}
-	tco := ao.(*CondNotEqualsCondition)
-	if c := t.T1.CompareToLPO(tco.T1); c != 0 {
-		return c
-	}
-	if c := t.T2.CompareToLPO(tco.T2); c != 0 {
-		return c
-	}
-	panic(&aterm.GomError{Msg: "Unable to compare"})
-}
-
-// ToATerm is the ATerm of the term: an application of CondNotEquals.
-func (t *CondNotEqualsCondition) ToATerm() aterm.ATerm {
-	f := aterm.GetInstance()
-	return f.MakeAppl(f.MakeAFun("CondNotEquals", 2, false), t.T1.ToATerm(), t.T2.ToATerm())
-}
-
-// fromTermCondNotEqualsCondition is Java Gom's CondNotEquals.fromTerm: an unquoted application of
-// CondNotEquals whose arguments are convertible (as in Java, the arity is not
-// checked: a missing argument is an index out of range).
-func fromTermCondNotEqualsCondition(trm aterm.ATerm, conv aterm.ATermConverter) (Condition, bool) {
-	trm = conv.Convert(trm)
-	if appl, ok := trm.(*aterm.ATermAppl); ok && appl.GetName() == "CondNotEquals" && !appl.GetAFun().IsQuoted() {
-		return MakeCondNotEquals(TermFromTermConv(appl.GetArgument(0), conv), TermFromTermConv(appl.GetArgument(1), conv)), true
-	}
-	return nil, false
-}
-
 // CondLessEqualsCondition is the term type for the alternative `CondLessEquals(...)` of sort Condition.
 type CondLessEqualsCondition struct {
 	T1   Term
@@ -5144,7 +2727,7 @@ func (t *CondLessEqualsCondition) Duplicate() sharedobjects.Term {
 }
 
 func (t *CondLessEqualsCondition) String() string {
-	return "CondLessEquals(" + fmt.Sprint(t.T1) + "," + fmt.Sprint(t.T2) + ")"
+	return fmt.Sprintf("CondLessEquals(%v,%v)", t.T1, t.T2)
 }
 
 func (t *CondLessEqualsCondition) ChildCount() int { return 2 }
@@ -5277,102 +2860,6 @@ func (s *VisitCondLessEquals) VisitWith(env *sl.Environment, intro sl.Introspect
 
 var _ sl.Strategy = (*VisitCondLessEquals)(nil)
 
-func (t *CondLessEqualsCondition) SymbolName() string { return "CondLessEquals" }
-
-func (t *CondLessEqualsCondition) IsCondEquals() bool        { return false }
-func (t *CondLessEqualsCondition) IsCondNotEquals() bool     { return false }
-func (t *CondLessEqualsCondition) IsCondLessEquals() bool    { return true }
-func (t *CondLessEqualsCondition) IsCondLessThan() bool      { return false }
-func (t *CondLessEqualsCondition) IsCondGreaterEquals() bool { return false }
-func (t *CondLessEqualsCondition) IsCondGreaterThan() bool   { return false }
-func (t *CondLessEqualsCondition) IsConsCondAnd() bool       { return false }
-func (t *CondLessEqualsCondition) IsEmptyCondAnd() bool      { return false }
-func (t *CondLessEqualsCondition) IsConsCondOr() bool        { return false }
-func (t *CondLessEqualsCondition) IsEmptyCondOr() bool       { return false }
-func (t *CondLessEqualsCondition) IsCondMatch() bool         { return false }
-
-func (t *CondLessEqualsCondition) Gett1() Term { return t.T1 }
-func (t *CondLessEqualsCondition) Gett2() Term { return t.T2 }
-func (t *CondLessEqualsCondition) GetHeadCondAnd() Condition {
-	panic(&aterm.GomError{Msg: "This Condition has no HeadCondAnd"})
-}
-func (t *CondLessEqualsCondition) GetTailCondAnd() Condition {
-	panic(&aterm.GomError{Msg: "This Condition has no TailCondAnd"})
-}
-func (t *CondLessEqualsCondition) GetHeadCondOr() Condition {
-	panic(&aterm.GomError{Msg: "This Condition has no HeadCondOr"})
-}
-func (t *CondLessEqualsCondition) GetTailCondOr() Condition {
-	panic(&aterm.GomError{Msg: "This Condition has no TailCondOr"})
-}
-
-func (t *CondLessEqualsCondition) Length() int {
-	panic(&aterm.GomError{Msg: "This Condition.CondLessEquals is not a list", IllegalArgument: true})
-}
-
-func (t *CondLessEqualsCondition) Reverse() Condition {
-	panic(&aterm.GomError{Msg: "This Condition.CondLessEquals is not a list", IllegalArgument: true})
-}
-
-func (t *CondLessEqualsCondition) CompareTo(o any) int {
-	ao := o.(Condition)
-	if ao == Condition(t) {
-		return 0
-	}
-	if t.Hash() != ao.Hash() {
-		if t.Hash() < ao.Hash() {
-			return -1
-		}
-		return 1
-	}
-	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
-		return c
-	}
-	tco := ao.(*CondLessEqualsCondition)
-	if c := t.T1.CompareTo(tco.T1); c != 0 {
-		return c
-	}
-	if c := t.T2.CompareTo(tco.T2); c != 0 {
-		return c
-	}
-	panic(&aterm.GomError{Msg: "Unable to compare"})
-}
-
-func (t *CondLessEqualsCondition) CompareToLPO(o any) int {
-	ao := o.(Condition)
-	if ao == Condition(t) {
-		return 0
-	}
-	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
-		return c
-	}
-	tco := ao.(*CondLessEqualsCondition)
-	if c := t.T1.CompareToLPO(tco.T1); c != 0 {
-		return c
-	}
-	if c := t.T2.CompareToLPO(tco.T2); c != 0 {
-		return c
-	}
-	panic(&aterm.GomError{Msg: "Unable to compare"})
-}
-
-// ToATerm is the ATerm of the term: an application of CondLessEquals.
-func (t *CondLessEqualsCondition) ToATerm() aterm.ATerm {
-	f := aterm.GetInstance()
-	return f.MakeAppl(f.MakeAFun("CondLessEquals", 2, false), t.T1.ToATerm(), t.T2.ToATerm())
-}
-
-// fromTermCondLessEqualsCondition is Java Gom's CondLessEquals.fromTerm: an unquoted application of
-// CondLessEquals whose arguments are convertible (as in Java, the arity is not
-// checked: a missing argument is an index out of range).
-func fromTermCondLessEqualsCondition(trm aterm.ATerm, conv aterm.ATermConverter) (Condition, bool) {
-	trm = conv.Convert(trm)
-	if appl, ok := trm.(*aterm.ATermAppl); ok && appl.GetName() == "CondLessEquals" && !appl.GetAFun().IsQuoted() {
-		return MakeCondLessEquals(TermFromTermConv(appl.GetArgument(0), conv), TermFromTermConv(appl.GetArgument(1), conv)), true
-	}
-	return nil, false
-}
-
 // CondLessThanCondition is the term type for the alternative `CondLessThan(...)` of sort Condition.
 type CondLessThanCondition struct {
 	T1   Term
@@ -5404,7 +2891,7 @@ func (t *CondLessThanCondition) Duplicate() sharedobjects.Term {
 }
 
 func (t *CondLessThanCondition) String() string {
-	return "CondLessThan(" + fmt.Sprint(t.T1) + "," + fmt.Sprint(t.T2) + ")"
+	return fmt.Sprintf("CondLessThan(%v,%v)", t.T1, t.T2)
 }
 
 func (t *CondLessThanCondition) ChildCount() int { return 2 }
@@ -5537,102 +3024,6 @@ func (s *VisitCondLessThan) VisitWith(env *sl.Environment, intro sl.Introspector
 
 var _ sl.Strategy = (*VisitCondLessThan)(nil)
 
-func (t *CondLessThanCondition) SymbolName() string { return "CondLessThan" }
-
-func (t *CondLessThanCondition) IsCondEquals() bool        { return false }
-func (t *CondLessThanCondition) IsCondNotEquals() bool     { return false }
-func (t *CondLessThanCondition) IsCondLessEquals() bool    { return false }
-func (t *CondLessThanCondition) IsCondLessThan() bool      { return true }
-func (t *CondLessThanCondition) IsCondGreaterEquals() bool { return false }
-func (t *CondLessThanCondition) IsCondGreaterThan() bool   { return false }
-func (t *CondLessThanCondition) IsConsCondAnd() bool       { return false }
-func (t *CondLessThanCondition) IsEmptyCondAnd() bool      { return false }
-func (t *CondLessThanCondition) IsConsCondOr() bool        { return false }
-func (t *CondLessThanCondition) IsEmptyCondOr() bool       { return false }
-func (t *CondLessThanCondition) IsCondMatch() bool         { return false }
-
-func (t *CondLessThanCondition) Gett1() Term { return t.T1 }
-func (t *CondLessThanCondition) Gett2() Term { return t.T2 }
-func (t *CondLessThanCondition) GetHeadCondAnd() Condition {
-	panic(&aterm.GomError{Msg: "This Condition has no HeadCondAnd"})
-}
-func (t *CondLessThanCondition) GetTailCondAnd() Condition {
-	panic(&aterm.GomError{Msg: "This Condition has no TailCondAnd"})
-}
-func (t *CondLessThanCondition) GetHeadCondOr() Condition {
-	panic(&aterm.GomError{Msg: "This Condition has no HeadCondOr"})
-}
-func (t *CondLessThanCondition) GetTailCondOr() Condition {
-	panic(&aterm.GomError{Msg: "This Condition has no TailCondOr"})
-}
-
-func (t *CondLessThanCondition) Length() int {
-	panic(&aterm.GomError{Msg: "This Condition.CondLessThan is not a list", IllegalArgument: true})
-}
-
-func (t *CondLessThanCondition) Reverse() Condition {
-	panic(&aterm.GomError{Msg: "This Condition.CondLessThan is not a list", IllegalArgument: true})
-}
-
-func (t *CondLessThanCondition) CompareTo(o any) int {
-	ao := o.(Condition)
-	if ao == Condition(t) {
-		return 0
-	}
-	if t.Hash() != ao.Hash() {
-		if t.Hash() < ao.Hash() {
-			return -1
-		}
-		return 1
-	}
-	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
-		return c
-	}
-	tco := ao.(*CondLessThanCondition)
-	if c := t.T1.CompareTo(tco.T1); c != 0 {
-		return c
-	}
-	if c := t.T2.CompareTo(tco.T2); c != 0 {
-		return c
-	}
-	panic(&aterm.GomError{Msg: "Unable to compare"})
-}
-
-func (t *CondLessThanCondition) CompareToLPO(o any) int {
-	ao := o.(Condition)
-	if ao == Condition(t) {
-		return 0
-	}
-	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
-		return c
-	}
-	tco := ao.(*CondLessThanCondition)
-	if c := t.T1.CompareToLPO(tco.T1); c != 0 {
-		return c
-	}
-	if c := t.T2.CompareToLPO(tco.T2); c != 0 {
-		return c
-	}
-	panic(&aterm.GomError{Msg: "Unable to compare"})
-}
-
-// ToATerm is the ATerm of the term: an application of CondLessThan.
-func (t *CondLessThanCondition) ToATerm() aterm.ATerm {
-	f := aterm.GetInstance()
-	return f.MakeAppl(f.MakeAFun("CondLessThan", 2, false), t.T1.ToATerm(), t.T2.ToATerm())
-}
-
-// fromTermCondLessThanCondition is Java Gom's CondLessThan.fromTerm: an unquoted application of
-// CondLessThan whose arguments are convertible (as in Java, the arity is not
-// checked: a missing argument is an index out of range).
-func fromTermCondLessThanCondition(trm aterm.ATerm, conv aterm.ATermConverter) (Condition, bool) {
-	trm = conv.Convert(trm)
-	if appl, ok := trm.(*aterm.ATermAppl); ok && appl.GetName() == "CondLessThan" && !appl.GetAFun().IsQuoted() {
-		return MakeCondLessThan(TermFromTermConv(appl.GetArgument(0), conv), TermFromTermConv(appl.GetArgument(1), conv)), true
-	}
-	return nil, false
-}
-
 // CondGreaterEqualsCondition is the term type for the alternative `CondGreaterEquals(...)` of sort Condition.
 type CondGreaterEqualsCondition struct {
 	T1   Term
@@ -5664,7 +3055,7 @@ func (t *CondGreaterEqualsCondition) Duplicate() sharedobjects.Term {
 }
 
 func (t *CondGreaterEqualsCondition) String() string {
-	return "CondGreaterEquals(" + fmt.Sprint(t.T1) + "," + fmt.Sprint(t.T2) + ")"
+	return fmt.Sprintf("CondGreaterEquals(%v,%v)", t.T1, t.T2)
 }
 
 func (t *CondGreaterEqualsCondition) ChildCount() int { return 2 }
@@ -5797,102 +3188,6 @@ func (s *VisitCondGreaterEquals) VisitWith(env *sl.Environment, intro sl.Introsp
 
 var _ sl.Strategy = (*VisitCondGreaterEquals)(nil)
 
-func (t *CondGreaterEqualsCondition) SymbolName() string { return "CondGreaterEquals" }
-
-func (t *CondGreaterEqualsCondition) IsCondEquals() bool        { return false }
-func (t *CondGreaterEqualsCondition) IsCondNotEquals() bool     { return false }
-func (t *CondGreaterEqualsCondition) IsCondLessEquals() bool    { return false }
-func (t *CondGreaterEqualsCondition) IsCondLessThan() bool      { return false }
-func (t *CondGreaterEqualsCondition) IsCondGreaterEquals() bool { return true }
-func (t *CondGreaterEqualsCondition) IsCondGreaterThan() bool   { return false }
-func (t *CondGreaterEqualsCondition) IsConsCondAnd() bool       { return false }
-func (t *CondGreaterEqualsCondition) IsEmptyCondAnd() bool      { return false }
-func (t *CondGreaterEqualsCondition) IsConsCondOr() bool        { return false }
-func (t *CondGreaterEqualsCondition) IsEmptyCondOr() bool       { return false }
-func (t *CondGreaterEqualsCondition) IsCondMatch() bool         { return false }
-
-func (t *CondGreaterEqualsCondition) Gett1() Term { return t.T1 }
-func (t *CondGreaterEqualsCondition) Gett2() Term { return t.T2 }
-func (t *CondGreaterEqualsCondition) GetHeadCondAnd() Condition {
-	panic(&aterm.GomError{Msg: "This Condition has no HeadCondAnd"})
-}
-func (t *CondGreaterEqualsCondition) GetTailCondAnd() Condition {
-	panic(&aterm.GomError{Msg: "This Condition has no TailCondAnd"})
-}
-func (t *CondGreaterEqualsCondition) GetHeadCondOr() Condition {
-	panic(&aterm.GomError{Msg: "This Condition has no HeadCondOr"})
-}
-func (t *CondGreaterEqualsCondition) GetTailCondOr() Condition {
-	panic(&aterm.GomError{Msg: "This Condition has no TailCondOr"})
-}
-
-func (t *CondGreaterEqualsCondition) Length() int {
-	panic(&aterm.GomError{Msg: "This Condition.CondGreaterEquals is not a list", IllegalArgument: true})
-}
-
-func (t *CondGreaterEqualsCondition) Reverse() Condition {
-	panic(&aterm.GomError{Msg: "This Condition.CondGreaterEquals is not a list", IllegalArgument: true})
-}
-
-func (t *CondGreaterEqualsCondition) CompareTo(o any) int {
-	ao := o.(Condition)
-	if ao == Condition(t) {
-		return 0
-	}
-	if t.Hash() != ao.Hash() {
-		if t.Hash() < ao.Hash() {
-			return -1
-		}
-		return 1
-	}
-	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
-		return c
-	}
-	tco := ao.(*CondGreaterEqualsCondition)
-	if c := t.T1.CompareTo(tco.T1); c != 0 {
-		return c
-	}
-	if c := t.T2.CompareTo(tco.T2); c != 0 {
-		return c
-	}
-	panic(&aterm.GomError{Msg: "Unable to compare"})
-}
-
-func (t *CondGreaterEqualsCondition) CompareToLPO(o any) int {
-	ao := o.(Condition)
-	if ao == Condition(t) {
-		return 0
-	}
-	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
-		return c
-	}
-	tco := ao.(*CondGreaterEqualsCondition)
-	if c := t.T1.CompareToLPO(tco.T1); c != 0 {
-		return c
-	}
-	if c := t.T2.CompareToLPO(tco.T2); c != 0 {
-		return c
-	}
-	panic(&aterm.GomError{Msg: "Unable to compare"})
-}
-
-// ToATerm is the ATerm of the term: an application of CondGreaterEquals.
-func (t *CondGreaterEqualsCondition) ToATerm() aterm.ATerm {
-	f := aterm.GetInstance()
-	return f.MakeAppl(f.MakeAFun("CondGreaterEquals", 2, false), t.T1.ToATerm(), t.T2.ToATerm())
-}
-
-// fromTermCondGreaterEqualsCondition is Java Gom's CondGreaterEquals.fromTerm: an unquoted application of
-// CondGreaterEquals whose arguments are convertible (as in Java, the arity is not
-// checked: a missing argument is an index out of range).
-func fromTermCondGreaterEqualsCondition(trm aterm.ATerm, conv aterm.ATermConverter) (Condition, bool) {
-	trm = conv.Convert(trm)
-	if appl, ok := trm.(*aterm.ATermAppl); ok && appl.GetName() == "CondGreaterEquals" && !appl.GetAFun().IsQuoted() {
-		return MakeCondGreaterEquals(TermFromTermConv(appl.GetArgument(0), conv), TermFromTermConv(appl.GetArgument(1), conv)), true
-	}
-	return nil, false
-}
-
 // CondGreaterThanCondition is the term type for the alternative `CondGreaterThan(...)` of sort Condition.
 type CondGreaterThanCondition struct {
 	T1   Term
@@ -5924,7 +3219,7 @@ func (t *CondGreaterThanCondition) Duplicate() sharedobjects.Term {
 }
 
 func (t *CondGreaterThanCondition) String() string {
-	return "CondGreaterThan(" + fmt.Sprint(t.T1) + "," + fmt.Sprint(t.T2) + ")"
+	return fmt.Sprintf("CondGreaterThan(%v,%v)", t.T1, t.T2)
 }
 
 func (t *CondGreaterThanCondition) ChildCount() int { return 2 }
@@ -6057,112 +3352,10 @@ func (s *VisitCondGreaterThan) VisitWith(env *sl.Environment, intro sl.Introspec
 
 var _ sl.Strategy = (*VisitCondGreaterThan)(nil)
 
-func (t *CondGreaterThanCondition) SymbolName() string { return "CondGreaterThan" }
-
-func (t *CondGreaterThanCondition) IsCondEquals() bool        { return false }
-func (t *CondGreaterThanCondition) IsCondNotEquals() bool     { return false }
-func (t *CondGreaterThanCondition) IsCondLessEquals() bool    { return false }
-func (t *CondGreaterThanCondition) IsCondLessThan() bool      { return false }
-func (t *CondGreaterThanCondition) IsCondGreaterEquals() bool { return false }
-func (t *CondGreaterThanCondition) IsCondGreaterThan() bool   { return true }
-func (t *CondGreaterThanCondition) IsConsCondAnd() bool       { return false }
-func (t *CondGreaterThanCondition) IsEmptyCondAnd() bool      { return false }
-func (t *CondGreaterThanCondition) IsConsCondOr() bool        { return false }
-func (t *CondGreaterThanCondition) IsEmptyCondOr() bool       { return false }
-func (t *CondGreaterThanCondition) IsCondMatch() bool         { return false }
-
-func (t *CondGreaterThanCondition) Gett1() Term { return t.T1 }
-func (t *CondGreaterThanCondition) Gett2() Term { return t.T2 }
-func (t *CondGreaterThanCondition) GetHeadCondAnd() Condition {
-	panic(&aterm.GomError{Msg: "This Condition has no HeadCondAnd"})
-}
-func (t *CondGreaterThanCondition) GetTailCondAnd() Condition {
-	panic(&aterm.GomError{Msg: "This Condition has no TailCondAnd"})
-}
-func (t *CondGreaterThanCondition) GetHeadCondOr() Condition {
-	panic(&aterm.GomError{Msg: "This Condition has no HeadCondOr"})
-}
-func (t *CondGreaterThanCondition) GetTailCondOr() Condition {
-	panic(&aterm.GomError{Msg: "This Condition has no TailCondOr"})
-}
-
-func (t *CondGreaterThanCondition) Length() int {
-	panic(&aterm.GomError{Msg: "This Condition.CondGreaterThan is not a list", IllegalArgument: true})
-}
-
-func (t *CondGreaterThanCondition) Reverse() Condition {
-	panic(&aterm.GomError{Msg: "This Condition.CondGreaterThan is not a list", IllegalArgument: true})
-}
-
-func (t *CondGreaterThanCondition) CompareTo(o any) int {
-	ao := o.(Condition)
-	if ao == Condition(t) {
-		return 0
-	}
-	if t.Hash() != ao.Hash() {
-		if t.Hash() < ao.Hash() {
-			return -1
-		}
-		return 1
-	}
-	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
-		return c
-	}
-	tco := ao.(*CondGreaterThanCondition)
-	if c := t.T1.CompareTo(tco.T1); c != 0 {
-		return c
-	}
-	if c := t.T2.CompareTo(tco.T2); c != 0 {
-		return c
-	}
-	panic(&aterm.GomError{Msg: "Unable to compare"})
-}
-
-func (t *CondGreaterThanCondition) CompareToLPO(o any) int {
-	ao := o.(Condition)
-	if ao == Condition(t) {
-		return 0
-	}
-	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
-		return c
-	}
-	tco := ao.(*CondGreaterThanCondition)
-	if c := t.T1.CompareToLPO(tco.T1); c != 0 {
-		return c
-	}
-	if c := t.T2.CompareToLPO(tco.T2); c != 0 {
-		return c
-	}
-	panic(&aterm.GomError{Msg: "Unable to compare"})
-}
-
-// ToATerm is the ATerm of the term: an application of CondGreaterThan.
-func (t *CondGreaterThanCondition) ToATerm() aterm.ATerm {
-	f := aterm.GetInstance()
-	return f.MakeAppl(f.MakeAFun("CondGreaterThan", 2, false), t.T1.ToATerm(), t.T2.ToATerm())
-}
-
-// fromTermCondGreaterThanCondition is Java Gom's CondGreaterThan.fromTerm: an unquoted application of
-// CondGreaterThan whose arguments are convertible (as in Java, the arity is not
-// checked: a missing argument is an index out of range).
-func fromTermCondGreaterThanCondition(trm aterm.ATerm, conv aterm.ATermConverter) (Condition, bool) {
-	trm = conv.Convert(trm)
-	if appl, ok := trm.(*aterm.ATermAppl); ok && appl.GetName() == "CondGreaterThan" && !appl.GetAFun().IsQuoted() {
-		return MakeCondGreaterThan(TermFromTermConv(appl.GetArgument(0), conv), TermFromTermConv(appl.GetArgument(1), conv)), true
-	}
-	return nil, false
-}
-
-// CondAndCondition is the term type of the variadic operator `CondAnd(...)` of sort Condition
-// (Java's abstract class CondAnd): a maximally-shared cons cell (Java's
-// ConsCondAnd: a head and a tail) or the empty list (Java's EmptyCondAnd).
+// CondAndCondition is the term type for the alternative `CondAnd(...)` of sort Condition.
 type CondAndCondition struct {
-	head  Condition
-	tail  Condition
-	empty bool
+	Slots []Condition
 	hash  uint32
-	// children caches the Visitable children (Java's children field)
-	children atomic.Pointer[[]any]
 }
 
 func (*CondAndCondition) isCondition() {}
@@ -6171,37 +3364,51 @@ func (t *CondAndCondition) Hash() uint32 { return t.hash }
 
 func (t *CondAndCondition) Equivalent(other sharedobjects.Term) bool {
 	o, ok := other.(*CondAndCondition)
-	return ok && t.empty == o.empty && t.head == o.head && t.tail == o.tail
+	if !ok {
+		return false
+	}
+	if len(t.Slots) != len(o.Slots) {
+		return false
+	}
+	for i := range t.Slots {
+		if t.Slots[i] != o.Slots[i] {
+			return false
+		}
+	}
+	return true
 }
 
 func (t *CondAndCondition) Duplicate() sharedobjects.Term {
-	return &CondAndCondition{head: t.head, tail: t.tail, empty: t.empty, hash: t.hash}
+	cp := append([]Condition(nil), t.Slots...)
+	return &CondAndCondition{Slots: cp, hash: t.hash}
 }
 
-// elements returns the cached Visitable children of the list: its
-// elements (Java's getChildren, i.e. toArray).
-func (t *CondAndCondition) elements() []any {
-	if c := t.children.Load(); c != nil {
-		return *c
+func (t *CondAndCondition) String() string {
+	parts := make([]string, len(t.Slots))
+	for i, v := range t.Slots {
+		parts[i] = fmt.Sprintf("%v", v)
 	}
-	c := t.ToArray()
-	t.children.Store(&c)
-	return c
+	return "CondAnd" + "(" + strings.Join(parts, ",") + ")"
 }
 
-func (t *CondAndCondition) ChildCount() int { return len(t.elements()) }
+func (t *CondAndCondition) ChildCount() int { return len(t.Slots) }
 
-func (t *CondAndCondition) ChildAt(i int) any { return t.elements()[i] }
+func (t *CondAndCondition) ChildAt(i int) any { return t.Slots[i] }
 
 func (t *CondAndCondition) SetChildAt(i int, child any) any {
-	dup := t.Children()
-	dup[i] = child
-	return t.SetChildren(dup)
+	dup := append([]Condition(nil), t.Slots...)
+	dup[i] = child.(Condition)
+	return MakeCondAnd(dup...)
 }
 
-func (t *CondAndCondition) Children() []any { return append([]any(nil), t.elements()...) }
+func (t *CondAndCondition) Children() []any {
+	out := make([]any, len(t.Slots))
+	for i, v := range t.Slots {
+		out[i] = v
+	}
+	return out
+}
 
-// SetChildren is Java's setChildren of a list: CondAndFromArray(children).
 func (t *CondAndCondition) SetChildren(children []any) any {
 	args := make([]Condition, len(children))
 	for i, c := range children {
@@ -6210,87 +3417,15 @@ func (t *CondAndCondition) SetChildren(children []any) any {
 	return MakeCondAnd(args...)
 }
 
-func (t *CondAndCondition) String() string {
-	var b strings.Builder
-	b.WriteString("CondAnd(")
-	var cur Condition = t
-	for {
-		c, ok := cur.(*CondAndCondition)
-		if !ok {
-			b.WriteString("," + fmt.Sprint(cur))
-			break
-		}
-		if c.empty {
-			break
-		}
-		if c != t {
-			b.WriteString(",")
-		}
-		b.WriteString(fmt.Sprint(c.head))
-		cur = c.tail
-	}
-	b.WriteString(")")
-	return b.String()
-}
-
-// RealMakeConsCondAnd is Java Gom's ConsCondAnd.realMake: the shared cell of head
-// and tail, without hook.
-func RealMakeConsCondAnd(head Condition, tail Condition) Condition {
-	proto := &CondAndCondition{head: head, tail: tail, hash: sharedobjects.MixSymbol(sharedobjects.StringHash("ConsCondAnd"), []uint32{head.Hash(), tail.Hash()})}
-	return factory.Build(proto).(*CondAndCondition)
-}
-
-// realMakeEmptyCondAnd is Java Gom's EmptyCondAnd.realMake: the shared empty list,
-// without hook.
-func realMakeEmptyCondAnd() Condition {
-	proto := &CondAndCondition{empty: true, hash: sharedobjects.MixSymbol(sharedobjects.StringHash("EmptyCondAnd"), nil)}
-	return factory.Build(proto).(*CondAndCondition)
-}
-
-// RawCondAnd builds the CondAnd list holding exactly args, without construction
-// hook.
-func RawCondAnd(args ...Condition) Condition {
-	l := realMakeEmptyCondAnd()
-	for i := len(args) - 1; i >= 0; i-- {
-		l = RealMakeConsCondAnd(args[i], l)
-	}
-	return l
-}
-
-// EmptyCondAnd is Java Gom's EmptyCondAnd.make(): the empty CondAnd list, after the
-// construction hooks.
-func EmptyCondAnd() Condition {
-	return realMakeEmptyCondAnd()
-}
-
-// ConsCondAnd is Java Gom's ConsCondAnd.make(head, tail): head inserted in front of
-// tail, after the construction hooks (theory "FL" first).
-func ConsCondAnd(head Condition, tail Condition) Condition {
-	// FL: flattened list
-	if head.IsEmptyCondAnd() {
-		return tail
-	}
-	if head.IsConsCondAnd() {
-		return ConsCondAnd(head.GetHeadCondAnd(), ConsCondAnd(head.GetTailCondAnd(), tail))
-	}
-	if !tail.IsConsCondAnd() && !tail.IsEmptyCondAnd() {
-		return ConsCondAnd(head, ConsCondAnd(tail, EmptyCondAnd()))
-	}
-	return RealMakeConsCondAnd(head, tail)
-}
-
-// MakeCondAnd builds the list of args as Tom's `CondAnd(args…)` does: from EmptyCondAnd,
-// by ConsCondAnd, through the construction hooks (Java's CondAnd.fromArray).
+// MakeCondAnd builds the canonical (shared) CondAnd term.
 func MakeCondAnd(args ...Condition) Condition {
-	var l Condition = EmptyCondAnd()
-	for i := len(args) - 1; i >= 0; i-- {
-		l = ConsCondAnd(args[i], l)
+	hashes := make([]uint32, 0, len(args))
+	for _, a := range args {
+		hashes = append(hashes, a.Hash())
 	}
-	return l
+	proto := &CondAndCondition{Slots: args, hash: sharedobjects.MixSymbol(sharedobjects.StringHash("CondAnd"), hashes)}
+	return factory.Build(proto).(*CondAndCondition)
 }
-
-// CondAndFromArray is Java Gom's CondAnd.fromArray(array).
-func CondAndFromArray(array []Condition) Condition { return MakeCondAnd(array...) }
 
 // IsCondAnd is the `Is_CondAnd` predicate strategy: succeeds (returns subject
 // unchanged) when subject has the `CondAnd` shape, otherwise fails with
@@ -6385,262 +3520,10 @@ func (s *VisitCondAnd) VisitWith(env *sl.Environment, intro sl.Introspector) (an
 
 var _ sl.Strategy = (*VisitCondAnd)(nil)
 
-// SymbolName is the symbol of the Java term: ConsCondAnd or EmptyCondAnd.
-func (t *CondAndCondition) SymbolName() string {
-	if t.empty {
-		return "EmptyCondAnd"
-	}
-	return "ConsCondAnd"
-}
-
-func (t *CondAndCondition) IsCondEquals() bool        { return false }
-func (t *CondAndCondition) IsCondNotEquals() bool     { return false }
-func (t *CondAndCondition) IsCondLessEquals() bool    { return false }
-func (t *CondAndCondition) IsCondLessThan() bool      { return false }
-func (t *CondAndCondition) IsCondGreaterEquals() bool { return false }
-func (t *CondAndCondition) IsCondGreaterThan() bool   { return false }
-func (t *CondAndCondition) IsConsCondAnd() bool       { return !t.empty }
-func (t *CondAndCondition) IsEmptyCondAnd() bool      { return t.empty }
-func (t *CondAndCondition) IsConsCondOr() bool        { return false }
-func (t *CondAndCondition) IsEmptyCondOr() bool       { return false }
-func (t *CondAndCondition) IsCondMatch() bool         { return false }
-
-func (t *CondAndCondition) Gett1() Term {
-	panic(&aterm.GomError{Msg: "This Condition has no t1"})
-}
-func (t *CondAndCondition) Gett2() Term {
-	panic(&aterm.GomError{Msg: "This Condition has no t2"})
-}
-func (t *CondAndCondition) GetHeadCondAnd() Condition {
-	if t.empty {
-		panic(&aterm.GomError{Msg: "This Condition has no HeadCondAnd"})
-	}
-	return t.head
-}
-func (t *CondAndCondition) GetTailCondAnd() Condition {
-	if t.empty {
-		panic(&aterm.GomError{Msg: "This Condition has no TailCondAnd"})
-	}
-	return t.tail
-}
-func (t *CondAndCondition) GetHeadCondOr() Condition {
-	panic(&aterm.GomError{Msg: "This Condition has no HeadCondOr"})
-}
-func (t *CondAndCondition) GetTailCondOr() Condition {
-	panic(&aterm.GomError{Msg: "This Condition has no TailCondOr"})
-}
-
-// Length is Java's length(): the number of elements of the list (a
-// tail that is not a CondAnd list counts as one element).
-func (t *CondAndCondition) Length() int {
-	res := 0
-	var tl Condition = t
-	for {
-		c, ok := tl.(*CondAndCondition)
-		if !ok || c.empty {
-			return res
-		}
-		res++
-		tl = c.tail
-		if _, ok := tl.(*CondAndCondition); !ok {
-			res++
-		}
-	}
-}
-
-// ToArray returns the elements of the list (Java's Object[] toArray()),
-// ending with its tail when that is not a CondAnd list.
-func (t *CondAndCondition) ToArray() []any {
-	out := make([]any, 0, t.Length())
-	var cur Condition = t
-	for {
-		c, ok := cur.(*CondAndCondition)
-		if !ok || c.empty {
-			break
-		}
-		out = append(out, c.head)
-		cur = c.tail
-	}
-	if c, ok := cur.(*CondAndCondition); !ok || !c.empty {
-		out = append(out, cur)
-	}
-	return out
-}
-
-// Reverse is Java's reverse(): the reversed list, built by ConsCondAnd
-// (through the hooks).
-func (t *CondAndCondition) Reverse() Condition {
-	if t.empty {
-		return t
-	}
-	var cur Condition = t
-	var rev Condition = EmptyCondAnd()
-	for {
-		c, ok := cur.(*CondAndCondition)
-		if !ok || c.empty {
-			break
-		}
-		rev = ConsCondAnd(c.head, rev)
-		cur = c.tail
-	}
-	if c, ok := cur.(*CondAndCondition); !ok || !c.empty {
-		rev = ConsCondAnd(cur, rev)
-	}
-	return rev
-}
-
-// Append is Java's append(element): the list with element added at its
-// end, built by ConsCondAnd (through the hooks).
-func (t *CondAndCondition) Append(element Condition) Condition {
-	var heads []Condition
-	var cur Condition = t
-	for {
-		c, ok := cur.(*CondAndCondition)
-		if !ok || c.empty {
-			break
-		}
-		heads = append(heads, c.head)
-		cur = c.tail
-	}
-	var res Condition
-	if c, ok := cur.(*CondAndCondition); ok && c.empty {
-		res = ConsCondAnd(element, cur)
-	} else {
-		res = ConsCondAnd(cur, element)
-	}
-	for i := len(heads) - 1; i >= 0; i-- {
-		res = ConsCondAnd(heads[i], res)
-	}
-	return res
-}
-
-func (t *CondAndCondition) CompareTo(o any) int {
-	for {
-		ao := o.(Condition)
-		if ao == Condition(t) {
-			return 0
-		}
-		if t.Hash() != ao.Hash() {
-			if t.Hash() < ao.Hash() {
-				return -1
-			}
-			return 1
-		}
-		if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
-			return c
-		}
-		tco := ao.(*CondAndCondition)
-		if t.empty {
-			panic(&aterm.GomError{Msg: "Unable to compare"})
-		}
-		if c := t.head.CompareTo(tco.head); c != 0 {
-			return c
-		}
-		next, ok := t.tail.(*CondAndCondition)
-		if !ok {
-			if c := t.tail.CompareTo(tco.tail); c != 0 {
-				return c
-			}
-			panic(&aterm.GomError{Msg: "Unable to compare"})
-		}
-		t, o = next, tco.tail
-	}
-}
-
-func (t *CondAndCondition) CompareToLPO(o any) int {
-	for {
-		ao := o.(Condition)
-		if ao == Condition(t) {
-			return 0
-		}
-		if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
-			return c
-		}
-		tco := ao.(*CondAndCondition)
-		if t.empty {
-			panic(&aterm.GomError{Msg: "Unable to compare"})
-		}
-		if c := t.head.CompareToLPO(tco.head); c != 0 {
-			return c
-		}
-		next, ok := t.tail.(*CondAndCondition)
-		if !ok {
-			if c := t.tail.CompareToLPO(tco.tail); c != 0 {
-				return c
-			}
-			panic(&aterm.GomError{Msg: "Unable to compare"})
-		}
-		t, o = next, tco.tail
-	}
-}
-
-// ToATerm is Java's toATerm: the list of the elements, ending with the
-// ATerm list of the tail (a tail that is not a list is Java's
-// ClassCastException).
-func (t *CondAndCondition) ToATerm() aterm.ATerm {
-	f := aterm.GetInstance()
-	var heads []Condition
-	var cur Condition = t
-	for {
-		c, ok := cur.(*CondAndCondition)
-		if !ok || c.empty {
-			break
-		}
-		heads = append(heads, c.head)
-		cur = c.tail
-	}
-	l := f.MakeListEmpty()
-	if c, ok := cur.(*CondAndCondition); !ok || !c.empty {
-		tl, isList := cur.ToATerm().(*aterm.ATermList)
-		if !isList {
-			panic(&aterm.GomError{Msg: fmt.Sprintf("ClassCastException: the ATerm of %v is not an ATermList", cur)})
-		}
-		l = tl
-	}
-	for i := len(heads) - 1; i >= 0; i-- {
-		l = f.MakeList(heads[i].ToATerm(), l)
-	}
-	return l
-}
-
-// fromTermCondAndCondition is Java Gom's CondAnd.fromTerm: an application of CondAnd, or a
-// list (of ToATerm), of convertible elements.
-func fromTermCondAndCondition(trm aterm.ATerm, conv aterm.ATermConverter) (res Condition, ok bool) {
-	trm = conv.Convert(trm)
-	if appl, isAppl := trm.(*aterm.ATermAppl); isAppl && appl.GetName() == "CondAnd" {
-		elems := make([]Condition, appl.GetArity())
-		for i, a := range appl.GetArguments() {
-			elems[i] = ConditionFromTermConv(a, conv)
-		}
-		return MakeCondAnd(elems...), true
-	}
-	if list, isList := trm.(*aterm.ATermList); isList {
-		// an element that cannot be converted: not a CondAnd (Java returns null)
-		defer func() {
-			if recover() != nil {
-				res, ok = nil, false
-			}
-		}()
-		var elems []Condition
-		for !list.IsEmpty() {
-			elems = append(elems, ConditionFromTermConv(list.GetFirst(), conv))
-			list = list.GetNext()
-		}
-		return MakeCondAnd(elems...), true
-	}
-	return nil, false
-}
-
-// CondOrCondition is the term type of the variadic operator `CondOr(...)` of sort Condition
-// (Java's abstract class CondOr): a maximally-shared cons cell (Java's
-// ConsCondOr: a head and a tail) or the empty list (Java's EmptyCondOr).
+// CondOrCondition is the term type for the alternative `CondOr(...)` of sort Condition.
 type CondOrCondition struct {
-	head  Condition
-	tail  Condition
-	empty bool
+	Slots []Condition
 	hash  uint32
-	// children caches the Visitable children (Java's children field)
-	children atomic.Pointer[[]any]
 }
 
 func (*CondOrCondition) isCondition() {}
@@ -6649,37 +3532,51 @@ func (t *CondOrCondition) Hash() uint32 { return t.hash }
 
 func (t *CondOrCondition) Equivalent(other sharedobjects.Term) bool {
 	o, ok := other.(*CondOrCondition)
-	return ok && t.empty == o.empty && t.head == o.head && t.tail == o.tail
+	if !ok {
+		return false
+	}
+	if len(t.Slots) != len(o.Slots) {
+		return false
+	}
+	for i := range t.Slots {
+		if t.Slots[i] != o.Slots[i] {
+			return false
+		}
+	}
+	return true
 }
 
 func (t *CondOrCondition) Duplicate() sharedobjects.Term {
-	return &CondOrCondition{head: t.head, tail: t.tail, empty: t.empty, hash: t.hash}
+	cp := append([]Condition(nil), t.Slots...)
+	return &CondOrCondition{Slots: cp, hash: t.hash}
 }
 
-// elements returns the cached Visitable children of the list: its
-// elements (Java's getChildren, i.e. toArray).
-func (t *CondOrCondition) elements() []any {
-	if c := t.children.Load(); c != nil {
-		return *c
+func (t *CondOrCondition) String() string {
+	parts := make([]string, len(t.Slots))
+	for i, v := range t.Slots {
+		parts[i] = fmt.Sprintf("%v", v)
 	}
-	c := t.ToArray()
-	t.children.Store(&c)
-	return c
+	return "CondOr" + "(" + strings.Join(parts, ",") + ")"
 }
 
-func (t *CondOrCondition) ChildCount() int { return len(t.elements()) }
+func (t *CondOrCondition) ChildCount() int { return len(t.Slots) }
 
-func (t *CondOrCondition) ChildAt(i int) any { return t.elements()[i] }
+func (t *CondOrCondition) ChildAt(i int) any { return t.Slots[i] }
 
 func (t *CondOrCondition) SetChildAt(i int, child any) any {
-	dup := t.Children()
-	dup[i] = child
-	return t.SetChildren(dup)
+	dup := append([]Condition(nil), t.Slots...)
+	dup[i] = child.(Condition)
+	return MakeCondOr(dup...)
 }
 
-func (t *CondOrCondition) Children() []any { return append([]any(nil), t.elements()...) }
+func (t *CondOrCondition) Children() []any {
+	out := make([]any, len(t.Slots))
+	for i, v := range t.Slots {
+		out[i] = v
+	}
+	return out
+}
 
-// SetChildren is Java's setChildren of a list: CondOrFromArray(children).
 func (t *CondOrCondition) SetChildren(children []any) any {
 	args := make([]Condition, len(children))
 	for i, c := range children {
@@ -6688,87 +3585,15 @@ func (t *CondOrCondition) SetChildren(children []any) any {
 	return MakeCondOr(args...)
 }
 
-func (t *CondOrCondition) String() string {
-	var b strings.Builder
-	b.WriteString("CondOr(")
-	var cur Condition = t
-	for {
-		c, ok := cur.(*CondOrCondition)
-		if !ok {
-			b.WriteString("," + fmt.Sprint(cur))
-			break
-		}
-		if c.empty {
-			break
-		}
-		if c != t {
-			b.WriteString(",")
-		}
-		b.WriteString(fmt.Sprint(c.head))
-		cur = c.tail
-	}
-	b.WriteString(")")
-	return b.String()
-}
-
-// RealMakeConsCondOr is Java Gom's ConsCondOr.realMake: the shared cell of head
-// and tail, without hook.
-func RealMakeConsCondOr(head Condition, tail Condition) Condition {
-	proto := &CondOrCondition{head: head, tail: tail, hash: sharedobjects.MixSymbol(sharedobjects.StringHash("ConsCondOr"), []uint32{head.Hash(), tail.Hash()})}
-	return factory.Build(proto).(*CondOrCondition)
-}
-
-// realMakeEmptyCondOr is Java Gom's EmptyCondOr.realMake: the shared empty list,
-// without hook.
-func realMakeEmptyCondOr() Condition {
-	proto := &CondOrCondition{empty: true, hash: sharedobjects.MixSymbol(sharedobjects.StringHash("EmptyCondOr"), nil)}
-	return factory.Build(proto).(*CondOrCondition)
-}
-
-// RawCondOr builds the CondOr list holding exactly args, without construction
-// hook.
-func RawCondOr(args ...Condition) Condition {
-	l := realMakeEmptyCondOr()
-	for i := len(args) - 1; i >= 0; i-- {
-		l = RealMakeConsCondOr(args[i], l)
-	}
-	return l
-}
-
-// EmptyCondOr is Java Gom's EmptyCondOr.make(): the empty CondOr list, after the
-// construction hooks.
-func EmptyCondOr() Condition {
-	return realMakeEmptyCondOr()
-}
-
-// ConsCondOr is Java Gom's ConsCondOr.make(head, tail): head inserted in front of
-// tail, after the construction hooks (theory "FL" first).
-func ConsCondOr(head Condition, tail Condition) Condition {
-	// FL: flattened list
-	if head.IsEmptyCondOr() {
-		return tail
-	}
-	if head.IsConsCondOr() {
-		return ConsCondOr(head.GetHeadCondOr(), ConsCondOr(head.GetTailCondOr(), tail))
-	}
-	if !tail.IsConsCondOr() && !tail.IsEmptyCondOr() {
-		return ConsCondOr(head, ConsCondOr(tail, EmptyCondOr()))
-	}
-	return RealMakeConsCondOr(head, tail)
-}
-
-// MakeCondOr builds the list of args as Tom's `CondOr(args…)` does: from EmptyCondOr,
-// by ConsCondOr, through the construction hooks (Java's CondOr.fromArray).
+// MakeCondOr builds the canonical (shared) CondOr term.
 func MakeCondOr(args ...Condition) Condition {
-	var l Condition = EmptyCondOr()
-	for i := len(args) - 1; i >= 0; i-- {
-		l = ConsCondOr(args[i], l)
+	hashes := make([]uint32, 0, len(args))
+	for _, a := range args {
+		hashes = append(hashes, a.Hash())
 	}
-	return l
+	proto := &CondOrCondition{Slots: args, hash: sharedobjects.MixSymbol(sharedobjects.StringHash("CondOr"), hashes)}
+	return factory.Build(proto).(*CondOrCondition)
 }
-
-// CondOrFromArray is Java Gom's CondOr.fromArray(array).
-func CondOrFromArray(array []Condition) Condition { return MakeCondOr(array...) }
 
 // IsCondOr is the `Is_CondOr` predicate strategy: succeeds (returns subject
 // unchanged) when subject has the `CondOr` shape, otherwise fails with
@@ -6863,252 +3688,6 @@ func (s *VisitCondOr) VisitWith(env *sl.Environment, intro sl.Introspector) (any
 
 var _ sl.Strategy = (*VisitCondOr)(nil)
 
-// SymbolName is the symbol of the Java term: ConsCondOr or EmptyCondOr.
-func (t *CondOrCondition) SymbolName() string {
-	if t.empty {
-		return "EmptyCondOr"
-	}
-	return "ConsCondOr"
-}
-
-func (t *CondOrCondition) IsCondEquals() bool        { return false }
-func (t *CondOrCondition) IsCondNotEquals() bool     { return false }
-func (t *CondOrCondition) IsCondLessEquals() bool    { return false }
-func (t *CondOrCondition) IsCondLessThan() bool      { return false }
-func (t *CondOrCondition) IsCondGreaterEquals() bool { return false }
-func (t *CondOrCondition) IsCondGreaterThan() bool   { return false }
-func (t *CondOrCondition) IsConsCondAnd() bool       { return false }
-func (t *CondOrCondition) IsEmptyCondAnd() bool      { return false }
-func (t *CondOrCondition) IsConsCondOr() bool        { return !t.empty }
-func (t *CondOrCondition) IsEmptyCondOr() bool       { return t.empty }
-func (t *CondOrCondition) IsCondMatch() bool         { return false }
-
-func (t *CondOrCondition) Gett1() Term {
-	panic(&aterm.GomError{Msg: "This Condition has no t1"})
-}
-func (t *CondOrCondition) Gett2() Term {
-	panic(&aterm.GomError{Msg: "This Condition has no t2"})
-}
-func (t *CondOrCondition) GetHeadCondAnd() Condition {
-	panic(&aterm.GomError{Msg: "This Condition has no HeadCondAnd"})
-}
-func (t *CondOrCondition) GetTailCondAnd() Condition {
-	panic(&aterm.GomError{Msg: "This Condition has no TailCondAnd"})
-}
-func (t *CondOrCondition) GetHeadCondOr() Condition {
-	if t.empty {
-		panic(&aterm.GomError{Msg: "This Condition has no HeadCondOr"})
-	}
-	return t.head
-}
-func (t *CondOrCondition) GetTailCondOr() Condition {
-	if t.empty {
-		panic(&aterm.GomError{Msg: "This Condition has no TailCondOr"})
-	}
-	return t.tail
-}
-
-// Length is Java's length(): the number of elements of the list (a
-// tail that is not a CondOr list counts as one element).
-func (t *CondOrCondition) Length() int {
-	res := 0
-	var tl Condition = t
-	for {
-		c, ok := tl.(*CondOrCondition)
-		if !ok || c.empty {
-			return res
-		}
-		res++
-		tl = c.tail
-		if _, ok := tl.(*CondOrCondition); !ok {
-			res++
-		}
-	}
-}
-
-// ToArray returns the elements of the list (Java's Object[] toArray()),
-// ending with its tail when that is not a CondOr list.
-func (t *CondOrCondition) ToArray() []any {
-	out := make([]any, 0, t.Length())
-	var cur Condition = t
-	for {
-		c, ok := cur.(*CondOrCondition)
-		if !ok || c.empty {
-			break
-		}
-		out = append(out, c.head)
-		cur = c.tail
-	}
-	if c, ok := cur.(*CondOrCondition); !ok || !c.empty {
-		out = append(out, cur)
-	}
-	return out
-}
-
-// Reverse is Java's reverse(): the reversed list, built by ConsCondOr
-// (through the hooks).
-func (t *CondOrCondition) Reverse() Condition {
-	if t.empty {
-		return t
-	}
-	var cur Condition = t
-	var rev Condition = EmptyCondOr()
-	for {
-		c, ok := cur.(*CondOrCondition)
-		if !ok || c.empty {
-			break
-		}
-		rev = ConsCondOr(c.head, rev)
-		cur = c.tail
-	}
-	if c, ok := cur.(*CondOrCondition); !ok || !c.empty {
-		rev = ConsCondOr(cur, rev)
-	}
-	return rev
-}
-
-// Append is Java's append(element): the list with element added at its
-// end, built by ConsCondOr (through the hooks).
-func (t *CondOrCondition) Append(element Condition) Condition {
-	var heads []Condition
-	var cur Condition = t
-	for {
-		c, ok := cur.(*CondOrCondition)
-		if !ok || c.empty {
-			break
-		}
-		heads = append(heads, c.head)
-		cur = c.tail
-	}
-	var res Condition
-	if c, ok := cur.(*CondOrCondition); ok && c.empty {
-		res = ConsCondOr(element, cur)
-	} else {
-		res = ConsCondOr(cur, element)
-	}
-	for i := len(heads) - 1; i >= 0; i-- {
-		res = ConsCondOr(heads[i], res)
-	}
-	return res
-}
-
-func (t *CondOrCondition) CompareTo(o any) int {
-	for {
-		ao := o.(Condition)
-		if ao == Condition(t) {
-			return 0
-		}
-		if t.Hash() != ao.Hash() {
-			if t.Hash() < ao.Hash() {
-				return -1
-			}
-			return 1
-		}
-		if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
-			return c
-		}
-		tco := ao.(*CondOrCondition)
-		if t.empty {
-			panic(&aterm.GomError{Msg: "Unable to compare"})
-		}
-		if c := t.head.CompareTo(tco.head); c != 0 {
-			return c
-		}
-		next, ok := t.tail.(*CondOrCondition)
-		if !ok {
-			if c := t.tail.CompareTo(tco.tail); c != 0 {
-				return c
-			}
-			panic(&aterm.GomError{Msg: "Unable to compare"})
-		}
-		t, o = next, tco.tail
-	}
-}
-
-func (t *CondOrCondition) CompareToLPO(o any) int {
-	for {
-		ao := o.(Condition)
-		if ao == Condition(t) {
-			return 0
-		}
-		if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
-			return c
-		}
-		tco := ao.(*CondOrCondition)
-		if t.empty {
-			panic(&aterm.GomError{Msg: "Unable to compare"})
-		}
-		if c := t.head.CompareToLPO(tco.head); c != 0 {
-			return c
-		}
-		next, ok := t.tail.(*CondOrCondition)
-		if !ok {
-			if c := t.tail.CompareToLPO(tco.tail); c != 0 {
-				return c
-			}
-			panic(&aterm.GomError{Msg: "Unable to compare"})
-		}
-		t, o = next, tco.tail
-	}
-}
-
-// ToATerm is Java's toATerm: the list of the elements, ending with the
-// ATerm list of the tail (a tail that is not a list is Java's
-// ClassCastException).
-func (t *CondOrCondition) ToATerm() aterm.ATerm {
-	f := aterm.GetInstance()
-	var heads []Condition
-	var cur Condition = t
-	for {
-		c, ok := cur.(*CondOrCondition)
-		if !ok || c.empty {
-			break
-		}
-		heads = append(heads, c.head)
-		cur = c.tail
-	}
-	l := f.MakeListEmpty()
-	if c, ok := cur.(*CondOrCondition); !ok || !c.empty {
-		tl, isList := cur.ToATerm().(*aterm.ATermList)
-		if !isList {
-			panic(&aterm.GomError{Msg: fmt.Sprintf("ClassCastException: the ATerm of %v is not an ATermList", cur)})
-		}
-		l = tl
-	}
-	for i := len(heads) - 1; i >= 0; i-- {
-		l = f.MakeList(heads[i].ToATerm(), l)
-	}
-	return l
-}
-
-// fromTermCondOrCondition is Java Gom's CondOr.fromTerm: an application of CondOr, or a
-// list (of ToATerm), of convertible elements.
-func fromTermCondOrCondition(trm aterm.ATerm, conv aterm.ATermConverter) (res Condition, ok bool) {
-	trm = conv.Convert(trm)
-	if appl, isAppl := trm.(*aterm.ATermAppl); isAppl && appl.GetName() == "CondOr" {
-		elems := make([]Condition, appl.GetArity())
-		for i, a := range appl.GetArguments() {
-			elems[i] = ConditionFromTermConv(a, conv)
-		}
-		return MakeCondOr(elems...), true
-	}
-	if list, isList := trm.(*aterm.ATermList); isList {
-		// an element that cannot be converted: not a CondOr (Java returns null)
-		defer func() {
-			if recover() != nil {
-				res, ok = nil, false
-			}
-		}()
-		var elems []Condition
-		for !list.IsEmpty() {
-			elems = append(elems, ConditionFromTermConv(list.GetFirst(), conv))
-			list = list.GetNext()
-		}
-		return MakeCondOr(elems...), true
-	}
-	return nil, false
-}
-
 // CondMatchCondition is the term type for the alternative `CondMatch(...)` of sort Condition.
 type CondMatchCondition struct {
 	T1   Term
@@ -7140,7 +3719,7 @@ func (t *CondMatchCondition) Duplicate() sharedobjects.Term {
 }
 
 func (t *CondMatchCondition) String() string {
-	return "CondMatch(" + fmt.Sprint(t.T1) + "," + fmt.Sprint(t.T2) + ")"
+	return fmt.Sprintf("CondMatch(%v,%v)", t.T1, t.T2)
 }
 
 func (t *CondMatchCondition) ChildCount() int { return 2 }
@@ -7273,162 +3852,16 @@ func (s *VisitCondMatch) VisitWith(env *sl.Environment, intro sl.Introspector) (
 
 var _ sl.Strategy = (*VisitCondMatch)(nil)
 
-func (t *CondMatchCondition) SymbolName() string { return "CondMatch" }
-
-func (t *CondMatchCondition) IsCondEquals() bool        { return false }
-func (t *CondMatchCondition) IsCondNotEquals() bool     { return false }
-func (t *CondMatchCondition) IsCondLessEquals() bool    { return false }
-func (t *CondMatchCondition) IsCondLessThan() bool      { return false }
-func (t *CondMatchCondition) IsCondGreaterEquals() bool { return false }
-func (t *CondMatchCondition) IsCondGreaterThan() bool   { return false }
-func (t *CondMatchCondition) IsConsCondAnd() bool       { return false }
-func (t *CondMatchCondition) IsEmptyCondAnd() bool      { return false }
-func (t *CondMatchCondition) IsConsCondOr() bool        { return false }
-func (t *CondMatchCondition) IsEmptyCondOr() bool       { return false }
-func (t *CondMatchCondition) IsCondMatch() bool         { return true }
-
-func (t *CondMatchCondition) Gett1() Term { return t.T1 }
-func (t *CondMatchCondition) Gett2() Term { return t.T2 }
-func (t *CondMatchCondition) GetHeadCondAnd() Condition {
-	panic(&aterm.GomError{Msg: "This Condition has no HeadCondAnd"})
-}
-func (t *CondMatchCondition) GetTailCondAnd() Condition {
-	panic(&aterm.GomError{Msg: "This Condition has no TailCondAnd"})
-}
-func (t *CondMatchCondition) GetHeadCondOr() Condition {
-	panic(&aterm.GomError{Msg: "This Condition has no HeadCondOr"})
-}
-func (t *CondMatchCondition) GetTailCondOr() Condition {
-	panic(&aterm.GomError{Msg: "This Condition has no TailCondOr"})
-}
-
-func (t *CondMatchCondition) Length() int {
-	panic(&aterm.GomError{Msg: "This Condition.CondMatch is not a list", IllegalArgument: true})
-}
-
-func (t *CondMatchCondition) Reverse() Condition {
-	panic(&aterm.GomError{Msg: "This Condition.CondMatch is not a list", IllegalArgument: true})
-}
-
-func (t *CondMatchCondition) CompareTo(o any) int {
-	ao := o.(Condition)
-	if ao == Condition(t) {
-		return 0
-	}
-	if t.Hash() != ao.Hash() {
-		if t.Hash() < ao.Hash() {
-			return -1
-		}
-		return 1
-	}
-	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
-		return c
-	}
-	tco := ao.(*CondMatchCondition)
-	if c := t.T1.CompareTo(tco.T1); c != 0 {
-		return c
-	}
-	if c := t.T2.CompareTo(tco.T2); c != 0 {
-		return c
-	}
-	panic(&aterm.GomError{Msg: "Unable to compare"})
-}
-
-func (t *CondMatchCondition) CompareToLPO(o any) int {
-	ao := o.(Condition)
-	if ao == Condition(t) {
-		return 0
-	}
-	if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
-		return c
-	}
-	tco := ao.(*CondMatchCondition)
-	if c := t.T1.CompareToLPO(tco.T1); c != 0 {
-		return c
-	}
-	if c := t.T2.CompareToLPO(tco.T2); c != 0 {
-		return c
-	}
-	panic(&aterm.GomError{Msg: "Unable to compare"})
-}
-
-// ToATerm is the ATerm of the term: an application of CondMatch.
-func (t *CondMatchCondition) ToATerm() aterm.ATerm {
-	f := aterm.GetInstance()
-	return f.MakeAppl(f.MakeAFun("CondMatch", 2, false), t.T1.ToATerm(), t.T2.ToATerm())
-}
-
-// fromTermCondMatchCondition is Java Gom's CondMatch.fromTerm: an unquoted application of
-// CondMatch whose arguments are convertible (as in Java, the arity is not
-// checked: a missing argument is an index out of range).
-func fromTermCondMatchCondition(trm aterm.ATerm, conv aterm.ATermConverter) (Condition, bool) {
-	trm = conv.Convert(trm)
-	if appl, ok := trm.(*aterm.ATermAppl); ok && appl.GetName() == "CondMatch" && !appl.GetAFun().IsQuoted() {
-		return MakeCondMatch(TermFromTermConv(appl.GetArgument(0), conv), TermFromTermConv(appl.GetArgument(1), conv)), true
-	}
-	return nil, false
-}
-
 // RuleList is the Go interface backing the Gom sort RuleList.
 type RuleList interface {
 	sharedobjects.Term
 	isRuleList()
-	// Java Gom API (see the package's generated methods)
-	SymbolName() string
-	IsConsRuleList() bool
-	IsEmptyRuleList() bool
-	GetHeadRuleList() Rule
-	GetTailRuleList() RuleList
-	Length() int
-	Reverse() RuleList
-	CompareTo(o any) int
-	CompareToLPO(o any) int
-	ToATerm() aterm.ATerm
 }
 
-// RuleListFromTerm is Java Gom's RuleList.fromTerm(trm).
-func RuleListFromTerm(trm aterm.ATerm) RuleList {
-	return RuleListFromTermConv(trm, aterm.IdConverter{})
-}
-
-// RuleListFromTermConv is Java Gom's RuleList.fromTerm(trm, atConv): the term of
-// the first operator of the sort that converts the ATerm; it panics
-// (IllegalArgumentException) when there is none.
-func RuleListFromTermConv(trm aterm.ATerm, conv aterm.ATermConverter) RuleList {
-	converted := conv.Convert(trm)
-	var results []RuleList
-	if r, ok := fromTermRuleListRuleList(converted, conv); ok {
-		results = append(results, r)
-	}
-	if len(results) == 0 {
-		panic(&aterm.GomError{Msg: fmt.Sprintf("%v is not a RuleList", trm), IllegalArgument: true})
-	}
-	return results[0]
-}
-
-// RuleListFromString is Java Gom's RuleList.fromString(s).
-func RuleListFromString(s string) RuleList { return RuleListFromTerm(aterm.GetInstance().Parse(s)) }
-
-// RuleListFromStream is Java Gom's RuleList.fromStream(stream) (an IOException is
-// the error).
-func RuleListFromStream(stream io.Reader) (RuleList, error) {
-	at, err := aterm.GetInstance().ReadFromTextFile(stream)
-	if err != nil {
-		return nil, err
-	}
-	return RuleListFromTerm(at), nil
-}
-
-// RuleListRuleList is the term type of the variadic operator `RuleList(...)` of sort RuleList
-// (Java's abstract class RuleList): a maximally-shared cons cell (Java's
-// ConsRuleList: a head and a tail) or the empty list (Java's EmptyRuleList).
+// RuleListRuleList is the term type for the alternative `RuleList(...)` of sort RuleList.
 type RuleListRuleList struct {
-	head  Rule
-	tail  RuleList
-	empty bool
+	Slots []Rule
 	hash  uint32
-	// children caches the Visitable children (Java's children field)
-	children atomic.Pointer[[]any]
 }
 
 func (*RuleListRuleList) isRuleList() {}
@@ -7437,51 +3870,51 @@ func (t *RuleListRuleList) Hash() uint32 { return t.hash }
 
 func (t *RuleListRuleList) Equivalent(other sharedobjects.Term) bool {
 	o, ok := other.(*RuleListRuleList)
-	return ok && t.empty == o.empty && t.head == o.head && t.tail == o.tail
+	if !ok {
+		return false
+	}
+	if len(t.Slots) != len(o.Slots) {
+		return false
+	}
+	for i := range t.Slots {
+		if t.Slots[i] != o.Slots[i] {
+			return false
+		}
+	}
+	return true
 }
 
 func (t *RuleListRuleList) Duplicate() sharedobjects.Term {
-	return &RuleListRuleList{head: t.head, tail: t.tail, empty: t.empty, hash: t.hash}
+	cp := append([]Rule(nil), t.Slots...)
+	return &RuleListRuleList{Slots: cp, hash: t.hash}
 }
 
-// elements returns the cached Visitable children of the list: its
-// elements (Java's getChildren, i.e. toArray).
-// Java's getChildren is the typed toArray(new Rule[]{}): a last tail
-// that is not a list (of sort RuleList) cannot be stored in it
-// (ArrayStoreException, a *aterm.GomError here).
-func (t *RuleListRuleList) elements() []any {
-	if c := t.children.Load(); c != nil {
-		return *c
+func (t *RuleListRuleList) String() string {
+	parts := make([]string, len(t.Slots))
+	for i, v := range t.Slots {
+		parts[i] = fmt.Sprintf("%v", v)
 	}
-	var cur RuleList = t
-	for {
-		c, ok := cur.(*RuleListRuleList)
-		if !ok || c.empty {
-			break
-		}
-		cur = c.tail
-	}
-	if c, ok := cur.(*RuleListRuleList); !ok || !c.empty {
-		panic(&aterm.GomError{Msg: fmt.Sprintf("ArrayStoreException: the tail %v of a RuleList list is not a Rule", cur)})
-	}
-	c := t.ToArray()
-	t.children.Store(&c)
-	return c
+	return "RuleList" + "(" + strings.Join(parts, ",") + ")"
 }
 
-func (t *RuleListRuleList) ChildCount() int { return len(t.elements()) }
+func (t *RuleListRuleList) ChildCount() int { return len(t.Slots) }
 
-func (t *RuleListRuleList) ChildAt(i int) any { return t.elements()[i] }
+func (t *RuleListRuleList) ChildAt(i int) any { return t.Slots[i] }
 
 func (t *RuleListRuleList) SetChildAt(i int, child any) any {
-	dup := t.Children()
-	dup[i] = child
-	return t.SetChildren(dup)
+	dup := append([]Rule(nil), t.Slots...)
+	dup[i] = child.(Rule)
+	return MakeRuleList(dup...)
 }
 
-func (t *RuleListRuleList) Children() []any { return append([]any(nil), t.elements()...) }
+func (t *RuleListRuleList) Children() []any {
+	out := make([]any, len(t.Slots))
+	for i, v := range t.Slots {
+		out[i] = v
+	}
+	return out
+}
 
-// SetChildren is Java's setChildren of a list: RuleListFromArray(children).
 func (t *RuleListRuleList) SetChildren(children []any) any {
 	args := make([]Rule, len(children))
 	for i, c := range children {
@@ -7490,77 +3923,15 @@ func (t *RuleListRuleList) SetChildren(children []any) any {
 	return MakeRuleList(args...)
 }
 
-func (t *RuleListRuleList) String() string {
-	var b strings.Builder
-	b.WriteString("RuleList(")
-	var cur RuleList = t
-	for {
-		c, ok := cur.(*RuleListRuleList)
-		if !ok {
-			b.WriteString("," + fmt.Sprint(cur))
-			break
-		}
-		if c.empty {
-			break
-		}
-		if c != t {
-			b.WriteString(",")
-		}
-		b.WriteString(fmt.Sprint(c.head))
-		cur = c.tail
-	}
-	b.WriteString(")")
-	return b.String()
-}
-
-// RealMakeConsRuleList is Java Gom's ConsRuleList.realMake: the shared cell of head
-// and tail, without hook.
-func RealMakeConsRuleList(head Rule, tail RuleList) RuleList {
-	proto := &RuleListRuleList{head: head, tail: tail, hash: sharedobjects.MixSymbol(sharedobjects.StringHash("ConsRuleList"), []uint32{head.Hash(), tail.Hash()})}
-	return factory.Build(proto).(*RuleListRuleList)
-}
-
-// realMakeEmptyRuleList is Java Gom's EmptyRuleList.realMake: the shared empty list,
-// without hook.
-func realMakeEmptyRuleList() RuleList {
-	proto := &RuleListRuleList{empty: true, hash: sharedobjects.MixSymbol(sharedobjects.StringHash("EmptyRuleList"), nil)}
-	return factory.Build(proto).(*RuleListRuleList)
-}
-
-// RawRuleList builds the RuleList list holding exactly args, without construction
-// hook.
-func RawRuleList(args ...Rule) RuleList {
-	l := realMakeEmptyRuleList()
-	for i := len(args) - 1; i >= 0; i-- {
-		l = RealMakeConsRuleList(args[i], l)
-	}
-	return l
-}
-
-// EmptyRuleList is Java Gom's EmptyRuleList.make(): the empty RuleList list, after the
-// construction hooks.
-func EmptyRuleList() RuleList {
-	return realMakeEmptyRuleList()
-}
-
-// ConsRuleList is Java Gom's ConsRuleList.make(head, tail): head inserted in front of
-// tail, after the construction hooks (theory "" first).
-func ConsRuleList(head Rule, tail RuleList) RuleList {
-	return RealMakeConsRuleList(head, tail)
-}
-
-// MakeRuleList builds the list of args as Tom's `RuleList(args…)` does: from EmptyRuleList,
-// by ConsRuleList, through the construction hooks (Java's RuleList.fromArray).
+// MakeRuleList builds the canonical (shared) RuleList term.
 func MakeRuleList(args ...Rule) RuleList {
-	var l RuleList = EmptyRuleList()
-	for i := len(args) - 1; i >= 0; i-- {
-		l = ConsRuleList(args[i], l)
+	hashes := make([]uint32, 0, len(args))
+	for _, a := range args {
+		hashes = append(hashes, a.Hash())
 	}
-	return l
+	proto := &RuleListRuleList{Slots: args, hash: sharedobjects.MixSymbol(sharedobjects.StringHash("RuleList"), hashes)}
+	return factory.Build(proto).(*RuleListRuleList)
 }
-
-// RuleListFromArray is Java Gom's RuleList.fromArray(array).
-func RuleListFromArray(array []Rule) RuleList { return MakeRuleList(array...) }
 
 // IsRuleList is the `Is_RuleList` predicate strategy: succeeds (returns subject
 // unchanged) when subject has the `RuleList` shape, otherwise fails with
@@ -7654,225 +4025,3 @@ func (s *VisitRuleList) VisitWith(env *sl.Environment, intro sl.Introspector) (a
 }
 
 var _ sl.Strategy = (*VisitRuleList)(nil)
-
-// SymbolName is the symbol of the Java term: ConsRuleList or EmptyRuleList.
-func (t *RuleListRuleList) SymbolName() string {
-	if t.empty {
-		return "EmptyRuleList"
-	}
-	return "ConsRuleList"
-}
-
-func (t *RuleListRuleList) IsConsRuleList() bool  { return !t.empty }
-func (t *RuleListRuleList) IsEmptyRuleList() bool { return t.empty }
-
-func (t *RuleListRuleList) GetHeadRuleList() Rule {
-	if t.empty {
-		panic(&aterm.GomError{Msg: "This RuleList has no HeadRuleList"})
-	}
-	return t.head
-}
-func (t *RuleListRuleList) GetTailRuleList() RuleList {
-	if t.empty {
-		panic(&aterm.GomError{Msg: "This RuleList has no TailRuleList"})
-	}
-	return t.tail
-}
-
-// Length is Java's length(): the number of elements of the list (a
-// tail that is not a RuleList list counts as one element).
-func (t *RuleListRuleList) Length() int {
-	res := 0
-	var tl RuleList = t
-	for {
-		c, ok := tl.(*RuleListRuleList)
-		if !ok || c.empty {
-			return res
-		}
-		res++
-		tl = c.tail
-		if _, ok := tl.(*RuleListRuleList); !ok {
-			res++
-		}
-	}
-}
-
-// ToArray returns the elements of the list (Java's Object[] toArray()),
-// ending with its tail when that is not a RuleList list.
-func (t *RuleListRuleList) ToArray() []any {
-	out := make([]any, 0, t.Length())
-	var cur RuleList = t
-	for {
-		c, ok := cur.(*RuleListRuleList)
-		if !ok || c.empty {
-			break
-		}
-		out = append(out, c.head)
-		cur = c.tail
-	}
-	if c, ok := cur.(*RuleListRuleList); !ok || !c.empty {
-		out = append(out, cur)
-	}
-	return out
-}
-
-// Reverse is Java's reverse(): the reversed list, built by ConsRuleList
-// (through the hooks).
-func (t *RuleListRuleList) Reverse() RuleList {
-	if t.empty {
-		return t
-	}
-	var cur RuleList = t
-	var rev RuleList = EmptyRuleList()
-	for {
-		c, ok := cur.(*RuleListRuleList)
-		if !ok || c.empty {
-			break
-		}
-		rev = ConsRuleList(c.head, rev)
-		cur = c.tail
-	}
-	return rev
-}
-
-// Append is Java's append(element): the list with element added at its
-// end, built by ConsRuleList (through the hooks).
-func (t *RuleListRuleList) Append(element Rule) RuleList {
-	var heads []Rule
-	var cur RuleList = t
-	for {
-		c, ok := cur.(*RuleListRuleList)
-		if !ok || c.empty {
-			break
-		}
-		heads = append(heads, c.head)
-		cur = c.tail
-	}
-	var res RuleList
-	if c, ok := cur.(*RuleListRuleList); ok && c.empty {
-		res = ConsRuleList(element, cur)
-	} else {
-		res = ConsRuleList(element, cur)
-	}
-	for i := len(heads) - 1; i >= 0; i-- {
-		res = ConsRuleList(heads[i], res)
-	}
-	return res
-}
-
-func (t *RuleListRuleList) CompareTo(o any) int {
-	for {
-		ao := o.(RuleList)
-		if ao == RuleList(t) {
-			return 0
-		}
-		if t.Hash() != ao.Hash() {
-			if t.Hash() < ao.Hash() {
-				return -1
-			}
-			return 1
-		}
-		if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
-			return c
-		}
-		tco := ao.(*RuleListRuleList)
-		if t.empty {
-			panic(&aterm.GomError{Msg: "Unable to compare"})
-		}
-		if c := t.head.CompareTo(tco.head); c != 0 {
-			return c
-		}
-		next, ok := t.tail.(*RuleListRuleList)
-		if !ok {
-			if c := t.tail.CompareTo(tco.tail); c != 0 {
-				return c
-			}
-			panic(&aterm.GomError{Msg: "Unable to compare"})
-		}
-		t, o = next, tco.tail
-	}
-}
-
-func (t *RuleListRuleList) CompareToLPO(o any) int {
-	for {
-		ao := o.(RuleList)
-		if ao == RuleList(t) {
-			return 0
-		}
-		if c := strings.Compare(t.SymbolName(), ao.SymbolName()); c != 0 {
-			return c
-		}
-		tco := ao.(*RuleListRuleList)
-		if t.empty {
-			panic(&aterm.GomError{Msg: "Unable to compare"})
-		}
-		if c := t.head.CompareToLPO(tco.head); c != 0 {
-			return c
-		}
-		next, ok := t.tail.(*RuleListRuleList)
-		if !ok {
-			if c := t.tail.CompareToLPO(tco.tail); c != 0 {
-				return c
-			}
-			panic(&aterm.GomError{Msg: "Unable to compare"})
-		}
-		t, o = next, tco.tail
-	}
-}
-
-// ToATerm is Java's toATerm: the list of the elements, ending with the
-// ATerm list of the tail (a tail that is not a list is Java's
-// ClassCastException).
-func (t *RuleListRuleList) ToATerm() aterm.ATerm {
-	f := aterm.GetInstance()
-	var heads []Rule
-	var cur RuleList = t
-	for {
-		c, ok := cur.(*RuleListRuleList)
-		if !ok || c.empty {
-			break
-		}
-		heads = append(heads, c.head)
-		cur = c.tail
-	}
-	l := f.MakeListEmpty()
-	if c, ok := cur.(*RuleListRuleList); !ok || !c.empty {
-		tl, isList := cur.ToATerm().(*aterm.ATermList)
-		if !isList {
-			panic(&aterm.GomError{Msg: fmt.Sprintf("ClassCastException: the ATerm of %v is not an ATermList", cur)})
-		}
-		l = tl
-	}
-	for i := len(heads) - 1; i >= 0; i-- {
-		l = f.MakeList(heads[i].ToATerm(), l)
-	}
-	return l
-}
-
-// fromTermRuleListRuleList is Java Gom's RuleList.fromTerm: an application of RuleList, or a
-// list (of ToATerm), of convertible elements.
-func fromTermRuleListRuleList(trm aterm.ATerm, conv aterm.ATermConverter) (res RuleList, ok bool) {
-	trm = conv.Convert(trm)
-	if appl, isAppl := trm.(*aterm.ATermAppl); isAppl && appl.GetName() == "RuleList" {
-		elems := make([]Rule, appl.GetArity())
-		for i, a := range appl.GetArguments() {
-			elems[i] = RuleFromTermConv(a, conv)
-		}
-		return MakeRuleList(elems...), true
-	}
-	if list, isList := trm.(*aterm.ATermList); isList {
-		// an element that cannot be converted: not a RuleList (Java returns null)
-		defer func() {
-			if recover() != nil {
-				res, ok = nil, false
-			}
-		}()
-		var elems []Rule
-		for !list.IsEmpty() {
-			elems = append(elems, RuleFromTermConv(list.GetFirst(), conv))
-			list = list.GetNext()
-		}
-		return MakeRuleList(elems...), true
-	}
-	return nil, false
-}
