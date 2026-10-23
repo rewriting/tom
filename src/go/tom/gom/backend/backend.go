@@ -1052,9 +1052,12 @@ type gen struct {
 	noSharing bool
 
 	// javaAPI: generate the Java Gom API of the terms and Java Gom's list
-	// semantics (javaapi.go, userhooks.go). Set for the user modules
-	// (Generate, gom-block), not for the batch generation of the
-	// compiler's own ADT.
+	// semantics (cells.go, javaapi.go, userhooks.go). Set by Generate
+	// (gomgo gom) and gom-block for the modules absent from
+	// knownHookTable; never by the batch generation (generateBatchBytes,
+	// gomgo gom-batch), so every module compiled in batch — the compiler's
+	// own ADT as well as a user .gom — keeps flat slices without the Java
+	// API, theories or user hooks.
 	javaAPI bool
 }
 

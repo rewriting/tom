@@ -47,7 +47,7 @@ autonomes), comparés à ceux de Java Gom (`legacy/`) :
   des solutions d'un filtrage AC. L'égalité des termes et l'ensemble des
   solutions sont les mêmes (test/gom/TestACU.t, test/acmatching).
 - **Coût des listes.** Comme en Java, une liste d'un opérateur variadique
-  est une chaîne de cellules `Cons<op>(tête, queue)` / `Empty<op>()`
+  (module compilé par `gomgo gom` ou `gom-block`, voir plus bas) est une chaîne de cellules `Cons<op>(tête, queue)` / `Empty<op>()`
   partagées au maximum (`gom/backend/cells.go`) : `Cons<Op>`,
   `GetTail<Op>`, `IsEmpty<Op>` sont en O(1), les queues sont partagées, et
   une liste peut finir par une queue qui n'est pas une liste (par ex.
@@ -57,6 +57,21 @@ autonomes), comparés à ceux de Java Gom (`legacy/`) :
   beaucoup de termes passe plus de temps dans le ramasse-miettes
   (test/acmatching/TestBool3.t : 2,9 s en Go, 1,2 s en Java ; 12,4 s avec
   l'ancienne représentation en tranches plates).
+- **Modules compilés par `gomgo gom-batch`.** Seuls `gomgo gom`
+  (`Generate`/`GenerateToDir`) et `gomgo gom-block` (blocs `%gom` compilés
+  par `tom -go`, `.gom` autonomes des tests) posent l'option `javaAPI` du
+  générateur, et seulement pour un module absent de `knownHookTable`. La
+  génération par lots (`GenerateBatchToDir` → `generateBatchBytes`,
+  `src/go/tom/gom/backend/backend.go`) ne la pose jamais : **tout** module
+  compilé avec `gom-batch` — l'ADT du compilateur (`src/tom/engine/adt`)
+  comme un `.gom` utilisateur — garde des listes en tranches plates
+  construites en entier par `Make<Op>(args…)` (accès `.Slots`, `get_tail`
+  et `make_insert` du mapping par copie, en O(n)), sans l'API Java
+  (`Cons<Op>`/`Empty<Op>`, `GetHead…`/`GetTail…`, `Length`, `ToATerm`,
+  `CompareTo`, …) ni les théories et hooks utilisateur (FL, AU, ACU,
+  `make_insert`…, ignorés) ; seuls les hooks de `knownHookTable` (ceux de
+  l'ADT du compilateur) y sont abaissés, en prologue Go de `Make<Op>`.
+  Passer l'ADT du compilateur aux cellules est une décision de J4.
 - **Hooks dans le mapping.** Les hooks `make`, `make_insert`,
   `make_empty`, les règles (`module M:rules()`) et les blocs (`block`)
   sont du code Tom+Go : gomgo les écrit dans le mapping généré (`.tom`),
@@ -80,7 +95,11 @@ autonomes), comparés à ceux de Java Gom (`legacy/`) :
 - **Exceptions.** Les exceptions Java de l'API Gom sont des paniques
   `*aterm.GomError` (`IllegalArgument` vrai pour une
   `IllegalArgumentException` : `Length`/`Reverse` d'un terme qui n'est pas
-  une liste, ATerm qu'aucun opérateur ne convertit).
+  une liste, ATerm qu'aucun opérateur ne convertit). Les enfants
+  `Visitable` d'une liste (`ChildCount`/`ChildAt`/`Children`) dont la
+  dernière queue n'est pas une liste et n'est pas de la sorte des éléments
+  (`conc(a(),nil())`, `lm(a(),m0())` d'un hook `make_empty`) paniquent
+  ainsi, comme le `toArray` typé de Java lève `ArrayStoreException`.
 
 ## Orientation pour la suite
 

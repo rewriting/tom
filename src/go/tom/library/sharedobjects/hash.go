@@ -1,5 +1,7 @@
 package sharedobjects
 
+import "math"
+
 // OneAtATime is the Bob Jenkins "one-at-a-time" mixing function used
 // historically by the Java shared-objects runtime (see
 // `src/shared/HashFunctions.java#oneAtATime`). It is the default mixer
@@ -54,3 +56,24 @@ func StringHash(s string) uint32 {
 	h += h << 15
 	return h
 }
+
+// IntHash hashes a builtin integer (Gom's int and long, char as its code
+// point) with the one-at-a-time mixer, without formatting it.
+func IntHash(v int64) uint32 {
+	u := uint64(v)
+	return MixSymbol(uint32(u>>32), []uint32{uint32(u)})
+}
+
+// BoolHash hashes a builtin boolean.
+func BoolHash(b bool) uint32 {
+	if b {
+		return IntHash(1)
+	}
+	return IntHash(0)
+}
+
+// Float64Hash hashes a builtin double through its IEEE 754 bits.
+func Float64Hash(f float64) uint32 { return IntHash(int64(math.Float64bits(f))) }
+
+// Float32Hash hashes a builtin float through its IEEE 754 bits.
+func Float32Hash(f float32) uint32 { return IntHash(int64(math.Float32bits(f))) }

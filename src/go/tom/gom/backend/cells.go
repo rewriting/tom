@@ -14,7 +14,9 @@ package backend
 // S built by another operator: the normal form of the AU/ACU lists of
 // two elements or more, or the result of a make_empty hook) ends the
 // list; the list API treats it as Java does (ToArray, Length, String,
-// Reverse, Append, ToATerm, Children).
+// Reverse, Append, ToATerm; the Visitable children panic with a GomError
+// when its sort is not the element sort, as Java's typed toArray throws
+// ArrayStoreException).
 //
 // The Visitable children of a list are its elements (Java's getChildren
 // of a variadic operator: toArray, computed once and cached in the term,
@@ -80,8 +82,16 @@ func (g *gen) emitVariadicCells(sortNm string, alt *gomast.AlternativeAlternativ
 		cast = "c.(" + elem + ")"
 	}
 	w("// elements returns the cached Visitable children of the list: its\n// elements (Java's getChildren, i.e. toArray).\n")
+	if !sameSortVariadic(g.mod, alt) {
+		w("// Java's getChildren is the typed toArray(new %s[]{}): a last tail\n// that is not a list (of sort %s) cannot be stored in it\n// (ArrayStoreException, a *aterm.GomError here).\n", elem, sortNm)
+	}
 	w("func (t *%s) elements() []any {\n", structName)
 	w("\tif c := t.children.Load(); c != nil {\n\t\treturn *c\n\t}\n")
+	if !sameSortVariadic(g.mod, alt) {
+		w("\tvar cur %s = t\n\tfor {\n\t\tc, ok := cur.(*%s)\n\t\tif !ok || c.empty {\n\t\t\tbreak\n\t\t}\n\t\tcur = c.tail\n\t}\n", sortNm, structName)
+		w("\tif c, ok := cur.(*%s); !ok || !c.empty {\n", structName)
+		w("\t\tpanic(&aterm.GomError{Msg: fmt.Sprintf(\"ArrayStoreException: the tail %%v of a %s list is not a %s\", cur)})\n\t}\n", alt.Name, elem)
+	}
 	w("\tc := t.ToArray()\n\tt.children.Store(&c)\n\treturn c\n}\n\n")
 	w("func (t *%s) ChildCount() int { return len(t.elements()) }\n\n", structName)
 	w("func (t *%s) ChildAt(i int) any { return t.elements()[i] }\n\n", structName)
@@ -95,10 +105,24 @@ func (g *gen) emitVariadicCells(sortNm string, alt *gomast.AlternativeAlternativ
 }
 
 // hashOfElem is the Go expression of the hash of a list element x of Go
-// type elem.
+// type elem: a term's own hash (an own sort, or an ATerm), or the hash of
+// the builtin value computed directly (no formatting).
 func (g *gen) hashOfElem(elem, x string) string {
-	if g.isShared(elem) {
+	switch {
+	case g.isShared(elem), elem == "aterm.ATerm", elem == "*aterm.ATermList":
 		return x + ".Hash()"
+	case elem == "string":
+		return "sharedobjects.StringHash(" + x + ")"
+	case elem == "int64":
+		return "sharedobjects.IntHash(" + x + ")"
+	case elem == "rune":
+		return "sharedobjects.IntHash(int64(" + x + "))"
+	case elem == "bool":
+		return "sharedobjects.BoolHash(" + x + ")"
+	case elem == "float64":
+		return "sharedobjects.Float64Hash(" + x + ")"
+	case elem == "float32":
+		return "sharedobjects.Float32Hash(" + x + ")"
 	}
 	return fmt.Sprintf("sharedobjects.StringHash(fmt.Sprintf(\"%%v\", %s))", x)
 }

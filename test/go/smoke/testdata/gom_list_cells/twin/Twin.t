@@ -35,5 +35,17 @@ public class Twin {
     // the make_empty hook ends the lists with m0()
     M p = `lm(a(), b());
     System.out.println("lm " + p + " " + p.length() + " " + (p.getTaillm().getTaillm() == `m0()) + " " + `lm() + " " + p.reverse() + " " + ((smoke.twin.cells.types.m.lm)p).append(`c()));
+
+    // Visitable children: the elements (typed toArray), which cannot hold
+    // a last tail of another sort (ArrayStoreException)
+    System.out.println("children " + childCount(l) + " " + childCount(x) + " " + childCount(p));
+  }
+
+  static Object childCount(tom.library.sl.Visitable v) {
+    try {
+      return v.getChildCount();
+    } catch(ArrayStoreException e) {
+      return "ArrayStoreException";
+    }
   }
 }

@@ -177,3 +177,20 @@ func TestFactory_Concurrent(t *testing.T) {
 		t.Fatalf("NumTerms = %d, want %d", n, depth+1)
 	}
 }
+
+// TestBuiltinHashes: the hashes of builtin list elements are computed
+// directly, and tell apart values that differ only in their high bits.
+func TestBuiltinHashes(t *testing.T) {
+	if IntHash(1) == IntHash(1<<32+1) || IntHash(1) == IntHash(2) || IntHash(-1) == IntHash(1) {
+		t.Error("IntHash collides on simple values")
+	}
+	if IntHash(7) != IntHash(7) || Float64Hash(1.5) != Float64Hash(1.5) || Float32Hash(2.5) != Float32Hash(2.5) {
+		t.Error("builtin hashes are not deterministic")
+	}
+	if BoolHash(true) == BoolHash(false) || Float64Hash(1.5) == Float64Hash(2.5) {
+		t.Error("builtin hashes collide")
+	}
+	if n := testing.AllocsPerRun(100, func() { IntHash(42); Float64Hash(4.2); StringHash("abc") }); n != 0 {
+		t.Errorf("builtin hashes allocate (%v allocs)", n)
+	}
+}

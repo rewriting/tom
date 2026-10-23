@@ -11,6 +11,7 @@ package main
 import (
   "fmt"
 
+  "tom/library/aterm"
   _ "tom/library/sl" // the generated cells_gen.go needs the Go runtime module
 )
 
@@ -43,4 +44,22 @@ func main() {
   // the make_empty hook ends the lists with m0()
   var p M = `lm(a(), b())
   fmt.Println("lm", p, p.Length(), p.GetTaillm().GetTaillm() == `m0(), `lm(), p.Reverse(), p.(*LmM).Append(`c()))
+
+  // Visitable children: the elements (Java's typed toArray), which
+  // cannot hold a last tail of another sort (Java's ArrayStoreException)
+  fmt.Println("children", childCount(l.(*ConcL)), childCount(x.(*ConcL)), childCount(p.(*LmM)))
+}
+
+// childCount is v.ChildCount(), or the GomError it panics with (Java's
+// getChildCount throwing ArrayStoreException).
+func childCount(v interface{ ChildCount() int }) (res any) {
+  defer func() {
+    if r := recover(); r != nil {
+      if _, ok := r.(*aterm.GomError); !ok {
+        panic(r)
+      }
+      res = "ArrayStoreException"
+    }
+  }()
+  return v.ChildCount()
 }

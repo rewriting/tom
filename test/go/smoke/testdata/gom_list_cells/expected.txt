@@ -3,3 +3,4 @@ x conc(a(),nil()) 2 true true false
 y conc(b(),a(),nil()) 3 conc(a(),b()) conc(b(),a(),c(),nil()) 3 true
 match b() a() nil()
 lm lm(a(),b(),m0()) 3 true m0() lm(b(),a(),m0()) lm(a(),b(),c(),m0())
+children 2 ArrayStoreException ArrayStoreException

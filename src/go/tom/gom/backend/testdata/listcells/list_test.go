@@ -57,6 +57,39 @@ func BenchmarkConsFL10000(b *testing.B) {
 	}
 }
 
+// BenchmarkConsInt10000 builds a 10 000-element list of builtin ints
+// (the hash of a builtin head is computed directly, without fmt).
+func BenchmarkConsInt10000(b *testing.B) {
+	b.ReportAllocs()
+	for i := 0; i < b.N; i++ {
+		var l IL = EmptyIlist()
+		for j := 0; j < n; j++ {
+			l = ConsIlist(int64(j), l)
+		}
+	}
+}
+
+// strs are the elements of BenchmarkConsString10000.
+var strs = func() []string {
+	out := make([]string, n)
+	for i := range out {
+		out[i] = string(rune('a'+i%26)) + string(rune('a'+i/26%26)) + string(rune('a'+i/676%26))
+	}
+	return out
+}()
+
+// BenchmarkConsString10000 builds a 10 000-element list of builtin
+// strings.
+func BenchmarkConsString10000(b *testing.B) {
+	b.ReportAllocs()
+	for i := 0; i < b.N; i++ {
+		var l SL = EmptySlist()
+		for _, s := range strs {
+			l = ConsSlist(s, l)
+		}
+	}
+}
+
 // BenchmarkGetTail10000 walks a 10 000-element list with GetTailconc
 // (Tom's get_tail of the %oplist mapping).
 func BenchmarkGetTail10000(b *testing.B) {
