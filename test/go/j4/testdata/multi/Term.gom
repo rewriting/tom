@@ -1,0 +1,5 @@
+module Term
+imports
+abstract syntax
+T = a() | b() | c() | f(T*)
+f:AC{}

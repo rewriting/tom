@@ -86,7 +86,7 @@ public abstract class GenericGenerator extends AbstractGenerator {
 	deep = 0; //to avoid usless spaces inside the code
     String template = getSymbolTable(moduleName).getMake(opname);
     if(instantiateTemplate(deep,template,opname,argList,moduleName) == false) {
-      String prefix = "tom_make_";
+      String prefix = declName("tom_make_");
       output.write(prefix+opname);
       output.writeOpenBrace();
       int index=0;
@@ -192,7 +192,7 @@ public abstract class GenericGenerator extends AbstractGenerator {
     String sType = TomBase.getTomType(type);
     String template = getSymbolTable(moduleName).getGetSizeArray(opName);
     if(instantiateTemplate(deep,template,opName,`concBQTerm(expArray),moduleName) == false) {
-      output.write("tom_get_size_" + `opName + "_" + sType + "(");
+      output.write(declName("tom_get_size_" + `opName + "_" + sType) + "(");
       generateBQTerm(deep,expArray,moduleName);
       output.write(")");
     }
@@ -291,7 +291,7 @@ public abstract class GenericGenerator extends AbstractGenerator {
     String template = getSymbolTable(moduleName).getIsSort(type);
     String opname="";
     if(instantiateTemplate(deep,template,opname,`concBQTerm(exp),moduleName) == false) {
-      output.write("tom_is_sort_" + type + "(");
+      output.write(declName("tom_is_sort_" + type) + "(");
       generateBQTerm(deep,exp,moduleName);
       output.write(")");
     }
@@ -303,7 +303,7 @@ public abstract class GenericGenerator extends AbstractGenerator {
     if(instantiateTemplate(deep,template,opname,`concBQTerm(exp),moduleName) == false) {
       String s = isFsymMap.get(opname);
       if(s == null) {
-        s = "tom_is_fun_sym_" + opname + "(";
+        s = declName("tom_is_fun_sym_" + opname) + "(";
       }
       output.write(s);
       //System.out.println("generate BQTerm for '" + exp + "'");
@@ -319,10 +319,7 @@ public abstract class GenericGenerator extends AbstractGenerator {
       //output.write("tom_get_slot_" + opname + "_" + slotName + "(");
       //generateBQTerm(deep,var);
       //output.write(")");
-      output.write("tom_get_slot_");
-      output.write(opname);
-      output.writeUnderscore();
-      output.write(slotName);
+      output.write(declName("tom_get_slot_" + opname + "_" + slotName));
       output.writeOpenBrace();
       /*
        * add a cast to ensure correct typing when using subtypes
@@ -335,10 +332,7 @@ public abstract class GenericGenerator extends AbstractGenerator {
 
   protected void buildExpGetDefault(int deep, String opname, String slotName, String moduleName) throws IOException {
 	deep = 0; //to avoid usless spaces inside the code  
-    output.write("tom_get_default_");
-    output.write(opname);
-    output.writeUnderscore();
-    output.write(slotName);
+    output.write(declName("tom_get_default_" + opname + "_" + slotName));
     output.writeOpenBrace();
     output.writeCloseBrace();
   }
@@ -347,7 +341,7 @@ public abstract class GenericGenerator extends AbstractGenerator {
 	deep = 0; //to avoid usless spaces inside the code  
     String template = getSymbolTable(moduleName).getGetHead(opName);
     if(instantiateTemplate(deep,template,opName,`concBQTerm(var),moduleName) == false) {
-      output.write("tom_get_head_" + opName + "_" + TomBase.getTomType(domain) + "(");
+      output.write(declName("tom_get_head_" + opName + "_" + TomBase.getTomType(domain)) + "(");
       generateBQTerm(deep,var,moduleName);
       output.write(")");
     }
@@ -357,7 +351,7 @@ public abstract class GenericGenerator extends AbstractGenerator {
 	deep = 0; //to avoid usless spaces inside the code  
     String template = getSymbolTable(moduleName).getGetTail(opName);
     if(instantiateTemplate(deep,template,opName,`concBQTerm(var),moduleName) == false) {
-      output.write("tom_get_tail_" + opName + "_" + TomBase.getTomType(type) + "(");
+      output.write(declName("tom_get_tail_" + opName + "_" + TomBase.getTomType(type)) + "(");
       generateBQTerm(deep,var,moduleName);
       output.write(")");
     }
@@ -367,7 +361,7 @@ public abstract class GenericGenerator extends AbstractGenerator {
 	deep = 0; //to avoid usless spaces inside the code  
     String template = getSymbolTable(moduleName).getIsEmptyList(opName);
     if(instantiateTemplate(deep,template,opName,`concBQTerm(var),moduleName) == false) {
-      output.write("tom_is_empty_" + `opName + "_" + TomBase.getTomType(type) + "(");
+      output.write(declName("tom_is_empty_" + `opName + "_" + TomBase.getTomType(type)) + "(");
       generateBQTerm(deep,var,moduleName);
       output.write(")");
     }
@@ -384,7 +378,7 @@ public abstract class GenericGenerator extends AbstractGenerator {
     String sType = TomBase.getTomType(type);
     String template = getSymbolTable(moduleName).getGetSizeArray(opName);
     if(instantiateTemplate(deep,template,opName,`concBQTerm(var),moduleName) == false) {
-      output.write("tom_get_size_" + `opName + "_" + sType + "(");
+      output.write(declName("tom_get_size_" + `opName + "_" + sType) + "(");
       generateBQTerm(deep,var,moduleName);
       output.write(")");
     }
@@ -392,7 +386,7 @@ public abstract class GenericGenerator extends AbstractGenerator {
 
   protected void buildExpGetSliceList(int deep, String name, BQTerm varBegin, BQTerm varEnd, BQTerm tail, String moduleName) throws IOException {
 	deep = 0; //to avoid usless spaces inside the code  
-    output.write("tom_get_slice_" + name + "(");
+    output.write(declName("tom_get_slice_" + name) + "(");
     generateBQTerm(deep,varBegin,moduleName);
     output.write(",");
     generateBQTerm(deep,varEnd,moduleName);
@@ -403,7 +397,7 @@ public abstract class GenericGenerator extends AbstractGenerator {
 
   protected void buildExpGetSliceArray(int deep, String name, BQTerm varArray, BQTerm varBegin, BQTerm expEnd, String moduleName) throws IOException {
 	deep = 0; //to avoid usless spaces inside the code  
-    output.write("tom_get_slice_" + name + "(");
+    output.write(declName("tom_get_slice_" + name) + "(");
     generateBQTerm(deep,varArray,moduleName);
     output.write(",");
     generateBQTerm(deep,varBegin,moduleName);
@@ -442,7 +436,7 @@ public abstract class GenericGenerator extends AbstractGenerator {
       // using builtin types (e.g. boolean)
 
       String argType = TomBase.getTLCode(tlType);
-      genDeclInstr(TomBase.getTLType(returnType), "tom_is_fun_sym", opname,
+      genDeclInstr(TomBase.getTLType(returnType), declName("tom_is_fun_sym"), opname,
           new String[] { argType, varname }, `Return(ExpressionToBQTerm(code)),deep,moduleName);
     }
 
@@ -463,7 +457,7 @@ public abstract class GenericGenerator extends AbstractGenerator {
       String argType;
       argType = TomBase.getTLCode(tlType);
 
-      genDeclInstr(TomBase.getTLType(returnType), "tom_is_fun_sym", opname,
+      genDeclInstr(TomBase.getTLType(returnType), declName("tom_is_fun_sym"), opname,
           new String[] { argType, varname }, `Return(ExpressionToBQTerm(code)),deep,moduleName);
     }
 
@@ -503,7 +497,7 @@ public abstract class GenericGenerator extends AbstractGenerator {
       String argType;
       argType = TomBase.getTLCode(tlType);
       genDeclInstr(TomBase.getTLType(returnType),
-          "tom_get_slot", opname  + "_" + slotName.getString(),
+          declName("tom_get_slot"), opname  + "_" + slotName.getString(),
           new String[] { argType, varname },
           `Return(ExpressionToBQTerm(code)),deep,moduleName);
     }
@@ -531,7 +525,7 @@ public abstract class GenericGenerator extends AbstractGenerator {
       String argType;
       argType = TomBase.getTLCode(tlType);
       genDeclInstr(TomBase.getTLType(returnType),
-          "tom_get_slot", opname  + "_" + slotName.getString(),
+          declName("tom_get_slot"), opname  + "_" + slotName.getString(),
           new String[] { argType, varname },
           `Return(ExpressionToBQTerm(code)),deep,moduleName);
     }
@@ -554,7 +548,7 @@ public abstract class GenericGenerator extends AbstractGenerator {
     TomType returnType = l.getHeadconcTomType();
 
     genDeclInstr(TomBase.getTLType(returnType),
-        "tom_get_default", opname  + "_" + slotName.getString(),
+        declName("tom_get_default"), opname  + "_" + slotName.getString(),
         new String[] { },
         `Return(ExpressionToBQTerm(code)),deep,moduleName);
   }
@@ -581,7 +575,7 @@ public abstract class GenericGenerator extends AbstractGenerator {
       }
     }
     if(!inline || !code.isCode() || !inlined) {
-      genDeclInstr(TomBase.getTLType(getSymbolTable(moduleName).getBooleanType()), "tom_equal_term", type1,
+      genDeclInstr(TomBase.getTLType(getSymbolTable(moduleName).getBooleanType()), declName("tom_equal_term"), type1,
           new String[] {
           TomBase.getTLType(argType1), varname1,
           TomBase.getTLType(argType2), varname2
@@ -606,7 +600,7 @@ public abstract class GenericGenerator extends AbstractGenerator {
       if(getSymbolTable(moduleName).isBuiltinType(type)) {
         argType = getSymbolTable(moduleName).getBuiltinType(type);
       }
-      genDeclInstr(TomBase.getTLType(getSymbolTable(moduleName).getBooleanType()), "tom_is_sort", type,
+      genDeclInstr(TomBase.getTLType(getSymbolTable(moduleName).getBooleanType()), declName("tom_is_sort"), type,
           new String[] { TomBase.getTLType(argType), varName },
           `Return(ExpressionToBQTerm(code)),deep,moduleName);
     }
@@ -628,7 +622,7 @@ public abstract class GenericGenerator extends AbstractGenerator {
       if(!inline || !code.isCode() || !inlined) {
         String returnType = null;
         String argType = null;
-        String functionName = "tom_get_head_" + opname;
+        String functionName = declName("tom_get_head_" + opname);
 
         %match(opNameAST) {
           EmptyName() -> {
@@ -666,7 +660,7 @@ public abstract class GenericGenerator extends AbstractGenerator {
           if(!inline || !code.isCode() || !inlined) {
             String returnType = null;
             String argType = null;
-            String functionName = "tom_get_tail_" + opname;
+            String functionName = declName("tom_get_tail_" + opname);
 
             %match(opNameAST) {
               EmptyName() -> {
@@ -703,7 +697,7 @@ public abstract class GenericGenerator extends AbstractGenerator {
         }
         if(!inline || !code.isCode() || !inlined) {
           String argType = null;
-          String functionName = "tom_is_empty_" + opname;
+          String functionName = declName("tom_is_empty_" + opname);
 
           %match(opNameAST) {
             EmptyName() -> {
@@ -740,7 +734,7 @@ public abstract class GenericGenerator extends AbstractGenerator {
         if(!inline || !code.isCode() || !inlined) {
           String returnType = null;
           String argType = null;
-          String functionName = "tom_get_element";
+          String functionName = declName("tom_get_element");
 
           %match(opNameAST) {
             EmptyName() -> {
@@ -776,7 +770,7 @@ public abstract class GenericGenerator extends AbstractGenerator {
         }
         if(!inline || !code.isCode() || !inlined) {
           String argType = null;
-          String functionName = "tom_get_size";
+          String functionName = declName("tom_get_size");
 
           %match(opNameAST) {
             EmptyName() -> {
@@ -811,7 +805,7 @@ public abstract class GenericGenerator extends AbstractGenerator {
         String sType = TomBase.getTomType(domain);
         String template = getSymbolTable(moduleName).getGetElementArray(opName);
         if(instantiateTemplate(deep,template,opName,`concBQTerm(varName,varIndex),moduleName) == false) {
-          output.write("tom_get_element_" + `opName + "_" + sType + "(");
+          output.write(declName("tom_get_element_" + `opName + "_" + sType) + "(");
           generateBQTerm(deep,varName,moduleName);
           output.write(",");
           generateBQTerm(deep,varIndex,moduleName);
@@ -824,7 +818,7 @@ public abstract class GenericGenerator extends AbstractGenerator {
 		deep = 0; //to avoid usless spaces inside the code
         %match(list) {
           BuildEmptyList(Name(name)) -> {
-            String prefix = "tom_empty_list_";
+            String prefix = declName("tom_empty_list_");
             String template = getSymbolTable(moduleName).getMakeEmptyList(`name);
             if(instantiateTemplate(deep,template,`name,`concBQTerm(),moduleName) == false) {
               output.write(prefix + `name + "()");
@@ -833,7 +827,7 @@ public abstract class GenericGenerator extends AbstractGenerator {
           }
 
           BuildConsList(Name(name), headTerm, tailTerm) -> {
-            String prefix = "tom_cons_list_";
+            String prefix = declName("tom_cons_list_");
             String template = getSymbolTable(moduleName).getMakeAddList(`name);
             if(instantiateTemplate(deep,template,`name,`concBQTerm(headTerm,tailTerm),moduleName) == false) {
               output.write(prefix + `name + "(");
@@ -846,7 +840,7 @@ public abstract class GenericGenerator extends AbstractGenerator {
           }
 
           BuildAppendList(Name(name), headTerm, tailTerm) -> {
-            output.write("tom_append_list_" + `name + "(");
+            output.write(declName("tom_append_list_" + `name) + "(");
             generateBQTerm(deep,`headTerm,moduleName);
             output.write(",");
             generateBQTerm(deep,`tailTerm,moduleName);
@@ -855,7 +849,7 @@ public abstract class GenericGenerator extends AbstractGenerator {
           }
 
           BuildEmptyArray(Name(name),size) -> {
-            String prefix = "tom_empty_array_";
+            String prefix = declName("tom_empty_array_");
             String template = getSymbolTable(moduleName).getMakeEmptyArray(`name);
             if(instantiateTemplate(deep,template,`name,`concBQTerm(size),moduleName) == false) {
               output.write(prefix + `name + "(");
@@ -868,7 +862,7 @@ public abstract class GenericGenerator extends AbstractGenerator {
           BuildConsArray(Name(name), headTerm, tailTerm) -> {
             String template = getSymbolTable(moduleName).getMakeAddArray(`name);
             if(instantiateTemplate(deep,template,`name,`concBQTerm(headTerm,tailTerm),moduleName) == false) {
-              String prefix = "tom_cons_array_";
+              String prefix = declName("tom_cons_array_");
               output.write(prefix + `name + "(");
               generateBQTerm(deep,`headTerm,moduleName);
               output.write(",");
@@ -879,7 +873,7 @@ public abstract class GenericGenerator extends AbstractGenerator {
           }
 
           BuildAppendArray(Name(name), headTerm, tailTerm) -> {
-            output.write("tom_append_array_" + `name + "(");
+            output.write(declName("tom_append_array_" + `name) + "(");
             generateBQTerm(deep,`headTerm,moduleName);
             output.write(",");
             generateBQTerm(deep,`tailTerm,moduleName);
@@ -922,7 +916,7 @@ public abstract class GenericGenerator extends AbstractGenerator {
   	           // add this test to avoid generating get_slice and append_array when
   	           // the constructor is not used in any matching
           s = %[
-  @modifier@ @utype@ tom_get_slice_@name@(@utype@ subject, int begin, int end) {
+  @modifier@ @utype@ @declName("tom_get_slice_"+name)@(@utype@ subject, int begin, int end) {
     @glType@ result = @getMakeEmptyArray(name,"end-begin",moduleName)@;
     while(begin!=end) {
       result = @getMakeAddArray(name,getGetElementArray(name,tomType,"subject","begin",moduleName),"result",moduleName)@;
@@ -931,7 +925,7 @@ public abstract class GenericGenerator extends AbstractGenerator {
     return result;
   }
 
-  @modifier@ @utype@ tom_append_array_@name@(@utype@ l2, @utype@ l1) {
+  @modifier@ @utype@ @declName("tom_append_array_"+name)@(@utype@ l2, @utype@ l1) {
     int size1 = @getGetSizeArray(name,tomType,"l1",moduleName)@;
     int size2 = @getGetSizeArray(name,tomType,"l2",moduleName)@;
     int index;
@@ -957,7 +951,7 @@ public abstract class GenericGenerator extends AbstractGenerator {
 
 
   private String getMakeEmptyArray(String name,String size,String moduleName) {
-    String prefix = "tom_empty_array_";
+    String prefix = declName("tom_empty_array_");
     String template = getSymbolTable(moduleName).getMakeEmptyArray(name);
     String res = instantiateTemplate(template,size);
     if(res==null || (!inlineplus && res.equals(template))) {
@@ -970,7 +964,7 @@ public abstract class GenericGenerator extends AbstractGenerator {
     String template = getSymbolTable(moduleName).getMakeAddArray(name);
     String res = instantiateTemplate(template,elt,subject);
     if(res==null || (!inlineplus && res.equals(template))) {
-      res = %[tom_cons_array_@name@(@elt@,@subject@)]%;
+      res = %[@declName("tom_cons_array_"+name)@(@elt@,@subject@)]%;
     }
     return res;
   }
@@ -979,7 +973,7 @@ public abstract class GenericGenerator extends AbstractGenerator {
     String template = getSymbolTable(moduleName).getGetElementArray(name);
     String res = instantiateTemplate(template,subject,index);
     if(res==null || (!inlineplus && res.equals(template))) {
-      res = %[tom_get_element_@name@_@type@(@subject@,@index@)]%;
+      res = %[@declName("tom_get_element_"+name+"_"+type)@(@subject@,@index@)]%;
     }
     return res;
   }
@@ -988,7 +982,7 @@ public abstract class GenericGenerator extends AbstractGenerator {
     String template = getSymbolTable(moduleName).getGetSizeArray(name);
     String res = instantiateTemplate(template,subject);
     if(res==null || (!inlineplus && res.equals(template))) {
-      res = %[tom_get_size_@name@_@type@(@subject@)]%;
+      res = %[@declName("tom_get_size_"+name+"_"+type)@(@subject@)]%;
     }
     return res;
   }

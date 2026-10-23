@@ -598,6 +598,20 @@ func next_minimal_extract(multiplicity int64, total int64, E []int64, sol []int6
 ]%;
 
   /**
+   * Name of a function the compiler adds for AC matching (the
+   * __computeLength_f/__getMultiplicities_f/__getTermForMult_f helpers,
+   * next_minimal_extract): with -go it takes the per-file prefix tom_<F>_
+   * of the package-level declarations (TomBase.goDeclPrefix), so that
+   * several .t files of one Go package can use AC matching; unchanged
+   * for the other backends.
+   */
+  public String goHelperName(String name) {
+    return getOptionBooleanValue("goCode")
+      ? TomBase.goDeclPrefix(getStreamManager().getInputFileName()) + name
+      : name;
+  }
+
+  /**
    * Adds the necessary functions to the ADT of the program
    * 
    * @param subject the AST of the program
@@ -628,7 +642,9 @@ func next_minimal_extract(multiplicity int64, total int64, E []int64, sol []int6
       l = `concCode(DeclarationToCode(getPILforGetTermForMultiplicity(op,opType)),l*);
       // 4. next_minimal_extract
       if(!generatedNextMinimalExtract) {
-        String nme = getOptionBooleanValue("goCode")?next_minimal_extract_go:next_minimal_extract;
+        String nme = getOptionBooleanValue("goCode")
+          ? next_minimal_extract_go.replace("func next_minimal_extract(", "func " + goHelperName("next_minimal_extract") + "(")
+          : next_minimal_extract;
         l = `concCode(TargetLanguageToCode(ITL(nme)),l*);
         generatedNextMinimalExtract = true;
       }
@@ -709,6 +725,8 @@ func next_minimal_extract(multiplicity int64, total int64, E []int64, sol []int6
    *     }
    */
   private Declaration getPILforGetMultiplicities(String opNameString, TomType opType) {
+    String computeLengthName = goHelperName(ConstraintGenerator.computeLengthFuncName + "_" + opNameString);
+    String multiplicityName = goHelperName(ConstraintGenerator.multiplicityFuncName + "_" + opNameString);
     TomType intType = getSymbolTable().getIntType();
     TomType intArrayType = getSymbolTable().getIntArrayType();
     // the name of the int[] operator
@@ -758,7 +776,7 @@ func next_minimal_extract(multiplicity int64, total int64, E []int64, sol []int6
 
     // var declarations + ifList + counter declaration + the while + return
     Instruction functionBody = `LetRef(length, BQTermToExpression(FunctionCall(
-            Name(ConstraintGenerator.computeLengthFuncName + "_" + opNameString),
+            Name(computeLengthName),
             intType,concBQTerm(subject))),
         LetRef(mult,BQTermToExpression(BuildEmptyArray(intArrayName,length)),
           LetRef(oldElem,Bottom(opType),
@@ -767,7 +785,7 @@ func next_minimal_extract(multiplicity int64, total int64, E []int64, sol []int6
                 LetRef(counter,Integer(0),whileLoop),
                 Return(mult))))));
 
-    return `MethodDef(Name(ConstraintGenerator.multiplicityFuncName+"_" + opNameString),
+    return `MethodDef(Name(multiplicityName),
         concBQTerm(subject),intArrayType,EmptyType(),functionBody);
   }
 
@@ -799,6 +817,7 @@ func next_minimal_extract(multiplicity int64, total int64, E []int64, sol []int6
    * }
    */
   private Declaration getPILforComputeLength(String opNameString, TomType opType) {    
+    String computeLengthName = goHelperName(ConstraintGenerator.computeLengthFuncName + "_" + opNameString);
     // all the variables
     BQTerm subject = `BQVariable(concOption(),Name("subject"),opType);    
     BQTerm old = `BQVariable(concOption(),Name("old"),opType);       
@@ -834,7 +853,7 @@ func next_minimal_extract(multiplicity int64, total int64, E []int64, sol []int6
                   whileLoop,
                   Return(counter)))))));
 
-    return `MethodDef(Name(ConstraintGenerator.computeLengthFuncName + "_" + opNameString),
+    return `MethodDef(Name(computeLengthName),
         concBQTerm(subject),getSymbolTable().getIntType(),EmptyType(),functionBody);
   }  
 
@@ -887,6 +906,7 @@ func next_minimal_extract(multiplicity int64, total int64, E []int64, sol []int6
    * 
    */
   private Declaration getPILforGetTermForMultiplicity(String opNameString, TomType opType) {
+    String getTermName = goHelperName(ConstraintGenerator.getTermForMultiplicityFuncName + "_" + opNameString);
 
     TomType intArrayType = getSymbolTable().getIntArrayType();
     TomType boolType = getSymbolTable().getBooleanType();
@@ -954,7 +974,7 @@ func next_minimal_extract(multiplicity int64, total int64, E []int64, sol []int6
               LetRef(tempSolIndex,Integer(-1),
                 UnamedBlock(concInstruction(whileLoop,Return(result)))))))); 
 
-    return `MethodDef(Name(ConstraintGenerator.getTermForMultiplicityFuncName + "_" + opNameString),
+    return `MethodDef(Name(getTermName),
         concBQTerm(tempSol,alpha,subject,isComplement),opType,EmptyType(),functionBody);
   } 
 }

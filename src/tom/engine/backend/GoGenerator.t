@@ -81,9 +81,25 @@ public class GoGenerator extends GenericGenerator {
    */
   private String conditionalType = null;
 
+  /**
+   * prefix of the package-level declarations generated for the current
+   * file (tom_<F>_, TomBase.goDeclPrefix): several .t files compiled
+   * into one Go package do not redeclare each other's tom_* functions
+   */
+  private String declPrefix = "tom_";
+
   public GoGenerator(OutputCode output, OptionManager optionManager,
                      SymbolTable symbolTable) {
     super(output, optionManager, symbolTable);
+  }
+
+  public void setDeclPrefix(String prefix) {
+    declPrefix = prefix;
+  }
+
+  /* tom_<hook>_… becomes tom_<F>_<hook>_… (declaration and uses) */
+  protected String declName(String name) {
+    return name.startsWith("tom_") ? declPrefix + name.substring(4) : declPrefix + name;
   }
 
   /** Go spelling of a TomType; "any" when no target type is known */
@@ -444,9 +460,9 @@ public class GoGenerator extends GenericGenerator {
       generateBQTerm(deep,exp1,moduleName);
       output.write(").(" + goSort + "); tom_b, tom_ok2 := any(");
       generateTomTerm(deep,exp2,moduleName);
-      output.write(").(" + goSort + "); return tom_ok1 && tom_ok2 && tom_equal_term_" + sType + "(tom_a, tom_b) }()");
+      output.write(").(" + goSort + "); return tom_ok1 && tom_ok2 && " + declName("tom_equal_term_" + sType) + "(tom_a, tom_b) }()");
     } else {
-      output.write("tom_equal_term_" + sType + "(");
+      output.write(declName("tom_equal_term_" + sType) + "(");
       generateBQTerm(deep,exp1,moduleName);
       output.write(", ");
       generateTomTerm(deep,exp2,moduleName);
@@ -468,9 +484,9 @@ public class GoGenerator extends GenericGenerator {
       generateBQTerm(deep,exp1,moduleName);
       output.write(").(" + goSort + "); tom_b, tom_ok2 := any(");
       generateBQTerm(deep,exp2,moduleName);
-      output.write(").(" + goSort + "); return tom_ok1 && tom_ok2 && tom_equal_term_" + sType + "(tom_a, tom_b) }()");
+      output.write(").(" + goSort + "); return tom_ok1 && tom_ok2 && " + declName("tom_equal_term_" + sType) + "(tom_a, tom_b) }()");
     } else {
-      output.write("tom_equal_term_" + sType + "(");
+      output.write(declName("tom_equal_term_" + sType) + "(");
       generateBQTerm(deep,exp1,moduleName);
       output.write(", ");
       generateBQTerm(deep,exp2,moduleName);
@@ -549,7 +565,7 @@ public class GoGenerator extends GenericGenerator {
     if(code.isCode()) {
       code = code.setCode(code.getCode().replace("{0}",varname1).replace("{1}",varname2));
     }
-    genDeclInstr(goType(getSymbolTable(moduleName).getBooleanType()), "tom_equal_term", type1,
+    genDeclInstr(goType(getSymbolTable(moduleName).getBooleanType()), declName("tom_equal_term"), type1,
         new String[] { sortGoType(type1,moduleName), varname1, sortGoType(type2,moduleName), varname2 },
         `Return(ExpressionToBQTerm(code)),deep,moduleName);
   }
@@ -608,15 +624,15 @@ matchBlock: {
     TomType eltType = TomBase.getSymbolDomain(tomSymbol).getHeadconcTomType();
     String tomType = TomBase.getTomType(listType);
     String t = goType(listType);
-    String isEmpty = "tom_is_empty_" + name + "_" + tomType;
-    String head = "tom_get_head_" + name + "_" + tomType;
-    String tail = "tom_get_tail_" + name + "_" + tomType;
-    String cons = "tom_cons_list_" + name;
-    String empty = "tom_empty_list_" + name + "()";
-    String equal = "tom_equal_term_" + tomType;
-    String isConc = "tom_is_fun_sym_" + name;
-    String append = "tom_append_list_" + name;
-    String slice = "tom_get_slice_" + name;
+    String isEmpty = declName("tom_is_empty_" + name + "_" + tomType);
+    String head = declName("tom_get_head_" + name + "_" + tomType);
+    String tail = declName("tom_get_tail_" + name + "_" + tomType);
+    String cons = declName("tom_cons_list_" + name);
+    String empty = declName("tom_empty_list_" + name) + "()";
+    String equal = declName("tom_equal_term_" + tomType);
+    String isConc = declName("tom_is_fun_sym_" + name);
+    String append = declName("tom_append_list_" + name);
+    String slice = declName("tom_get_slice_" + name);
     StringBuilder s = new StringBuilder();
     s.append("func " + append + "(l1 " + t + ", l2 " + t + ") " + t + " { ");
     s.append("if " + isEmpty + "(l1) { return l2 } else if " + isEmpty + "(l2) { return l1 } ");
@@ -667,14 +683,14 @@ matchBlock: {
     String tomType = TomBase.getTomType(listType);
     String t = goType(listType);
     String it = goType(getSymbolTable(moduleName).getIntType());
-    String empty = "tom_empty_array_" + name;
-    String cons = "tom_cons_array_" + name;
-    String elt = "tom_get_element_" + name + "_" + tomType;
-    String size = "tom_get_size_" + name + "_" + tomType;
+    String empty = declName("tom_empty_array_" + name);
+    String cons = declName("tom_cons_array_" + name);
+    String elt = declName("tom_get_element_" + name + "_" + tomType);
+    String size = declName("tom_get_size_" + name + "_" + tomType);
     StringBuilder s = new StringBuilder();
-    s.append("func tom_get_slice_" + name + "(subject " + t + ", begin " + it + ", end " + it + ") " + t + " { ");
+    s.append("func " + declName("tom_get_slice_" + name) + "(subject " + t + ", begin " + it + ", end " + it + ") " + t + " { ");
     s.append("var result " + t + " = " + empty + "(end-begin); for begin != end { result = " + cons + "(" + elt + "(subject, begin), result); begin++ }; return result }; ");
-    s.append("func tom_append_array_" + name + "(l2 " + t + ", l1 " + t + ") " + t + " { ");
+    s.append("func " + declName("tom_append_array_" + name) + "(l2 " + t + ", l1 " + t + ") " + t + " { ");
     s.append("var size1 " + it + " = " + size + "(l1); var size2 " + it + " = " + size + "(l2); var index " + it + "; ");
     s.append("var result " + t + " = " + empty + "(size1+size2); index = size1; ");
     s.append("for index > 0 { result = " + cons + "(" + elt + "(l1, size1-index), result); index-- }; index = size2; ");

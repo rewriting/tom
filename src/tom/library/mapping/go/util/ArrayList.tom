@@ -10,9 +10,7 @@
 %oparray ArrayList concArrayList(Object*) {
   is_fsym(l)       { ($l != nil) }
   make_empty(n)    { make([]any, 0, $n) }
-  make_append(o,l) { concArrayListAppend($o,$l) }
+  make_append(o,l) { func(o any, l []any) []any { res := make([]any, len(l), len(l)+1); copy(res, l); return append(res, o) }($o,$l) }
   get_element(l,n) { $l[$n] }
   get_size(l)      { len($l) }
 }
-
-func concArrayListAppend(o any, l []any) []any { res := make([]any, len(l), len(l)+1); copy(res, l); return append(res, o) };

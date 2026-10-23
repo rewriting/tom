@@ -463,6 +463,9 @@ public class ConstraintGenerator {
     * generate a loop and a call to next_minimal_extract
     */
   private Instruction buildACMatchLoop(String symbolName, TomTerm var_x, TomTerm var_y, int mult_y, BQTerm subject, Instruction action) {
+    String nextMinimalExtractName = getCompiler().goHelperName("next_minimal_extract");
+    String getTermName = getCompiler().goHelperName(ConstraintGenerator.getTermForMultiplicityFuncName + "_" + symbolName);
+    String multiplicityName = getCompiler().goHelperName(ConstraintGenerator.multiplicityFuncName + "_" + symbolName);
     //System.out.println("buildACMatchLoop: mult_y = " + mult_y);
 
     SymbolTable symbolTable = getCompiler().getSymbolTable();
@@ -483,13 +486,13 @@ public class ConstraintGenerator {
     TomType subtermType = getCompiler().getTermTypeFromTerm(var_x);
     TomType booleanType = symbolTable.getBooleanType();
     
-    Expression whileCond = `BQTermToExpression(FunctionCall(Name("next_minimal_extract"),booleanType,concBQTerm(multiplicity,length,alpha,tempSol)));
+    Expression whileCond = `BQTermToExpression(FunctionCall(Name(nextMinimalExtractName),booleanType,concBQTerm(multiplicity,length,alpha,tempSol)));
 
     Instruction instruction = `DoWhile(
           LetRef(TomBase.convertFromVarToBQVar(var_x),
-            BQTermToExpression(FunctionCall(Name(ConstraintGenerator.getTermForMultiplicityFuncName + "_" + symbolName), subtermType,concBQTerm(getTermArgs*,ExpressionToBQTerm(FalseTL())))),
+            BQTermToExpression(FunctionCall(Name(getTermName), subtermType,concBQTerm(getTermArgs*,ExpressionToBQTerm(FalseTL())))),
             LetRef(TomBase.convertFromVarToBQVar(var_y),
-              BQTermToExpression(FunctionCall(Name(ConstraintGenerator.getTermForMultiplicityFuncName + "_" + symbolName), subtermType,concBQTerm(getTermArgs*,ExpressionToBQTerm(TrueTL())))),
+              BQTermToExpression(FunctionCall(Name(getTermName), subtermType,concBQTerm(getTermArgs*,ExpressionToBQTerm(TrueTL())))),
               action
             )
           ), whileCond);
@@ -499,7 +502,7 @@ public class ConstraintGenerator {
     instruction = `LetRef(tempSol,BQTermToExpression(BuildEmptyArray(intArrayName,length)),instruction);
     instruction = `LetRef(length,GetSize(intArrayName,alpha),instruction);
     instruction = `LetRef(alpha,BQTermToExpression(FunctionCall(
-            Name(ConstraintGenerator.multiplicityFuncName + "_" + symbolName),
+            Name(multiplicityName),
             intArrayType,concBQTerm(subject))),instruction);
 
     return instruction;

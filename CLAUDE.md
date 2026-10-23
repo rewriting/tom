@@ -750,6 +750,8 @@ unset TOM_HOME && ./build.sh src.dist
 # Les blocs %gom exigent gomgo : installé dans <dist>/bin par ./build.sh (mage installGo) ;
 # $GOMGO_BIN ne sert qu'à le surcharger
 # Compiler un .t vers Go (-go implique l'analyseur island -np ; -gi produit un LocalIntrospector Go)
+# Déclarations de niveau paquetage générées préfixées tom_<F>_ (F = nom du .t) : plusieurs .t par paquetage Go
+# (sauf même %strategy, -gi deux fois, deux %gom) ; doc/go/README.md « Plusieurs .t par paquetage Go »
 TOM_HOME=$PWD/src/dist src/dist/bin/tom -go -np -d out test/go/TestAlgebraic.t
 # Le Go généré qui importe tom/library/... a besoin d'un go.mod dans out/ :
 #   module <nom>  /  go 1.26

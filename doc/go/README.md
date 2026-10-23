@@ -106,10 +106,22 @@ autonomes), comparés à ceux de Java Gom (`legacy/`) :
   un motif `f??(…)` (`next_minimal_extract`, `__getMultiplicities_<op>`,
   `__getTermForMult_<op>`, `__computeLength_<op>`, …) sont, en Java, des
   méthodes de la classe générée ; en Go, ce sont des fonctions de niveau
-  paquetage, émises dans chaque fichier généré qui en a besoin. Deux
-  fichiers `.t` d'un même paquetage Go qui utilisent le filtrage AC les
-  déclareraient donc deux fois (refusé par Go) ; à régler en J4 (comme
-  les `tom_*` des mappings, qui imposent déjà un fichier Tom par paquetage).
+  paquetage, émises dans chaque fichier généré qui en a besoin.
+- **Plusieurs `.t` par paquetage Go (préfixe par fichier, J4.0b).**
+  Toutes les déclarations de niveau paquetage générées pour Go (fonctions
+  `tom_<hook>_…` des mappings, aides AC ci-dessus) portent le préfixe
+  `tom_<F>_`, où `F` est le nom de base du `.t` sans extension, chaque
+  caractère hors `[A-Za-z0-9_]` remplacé par `_` (`stdin` pour l'entrée
+  standard) : `tom_make_f` devient `tom_A_make_f` dans `A.go`,
+  `next_minimal_extract` devient `tom_A_next_minimal_extract`
+  (`TomBase.goDeclPrefix`, `GoGenerator.declName`, `Compiler.goHelperName`).
+  Les mappings Go n'ont plus de fonction de niveau paquetage (fermetures
+  dans les hooks). Restent sans préfixe : `tom__strat`/`tom__arg`/
+  `tom__res`/`tom__err`, les locales `tom_a`/`tom_b`/`tom_ok1`/`tom_ok2`,
+  `tom_new_<S>`, les types des `%strategy` et `LocalIntrospector`. Plusieurs
+  `.t` d'un même paquetage sont donc permis, sauf un même `%strategy`,
+  `-gi` dans deux fichiers, ou deux blocs `%gom` (gomgo déclare `factory`
+  par module). Test : `test/go/j4/testdata/multi` (`TestTwoFilesOnePackage`).
 - **Code hôte d'un `%strategy`.** Dans une action de `visit`, le code hôte
   Java lit un paramètre de la stratégie comme un champ (`param`) et
   appelle `getEnvironment()` ; en Go, il doit écrire
@@ -246,9 +258,9 @@ l'amorce Go :
     `LocalIntrospector` Go, `next_minimal_extract` Go) sont déjà dans
     l'AST avant le backend ; les phases portées plus tard devront
     reproduire `collectHostSubjects` et la règle des accolades.
-  - Décider comment plusieurs `.t` partagent un paquetage Go : les aides
-    `tom_*` des mappings et les aides AC de niveau paquetage imposent
-    aujourd'hui un `.t` par paquetage.
+  - ~~Décider comment plusieurs `.t` partagent un paquetage Go~~ : réglé
+    en J4.0b, préfixe `tom_<F>_` des déclarations de niveau paquetage
+    générées (voir « Plusieurs `.t` par paquetage Go »).
   - Le mapping de l'ADT du moteur (`adt.tom`, généré, voir « Sources
     et amorce ») est à inclure par le compilateur Tom+Go.
   - Fabrique `sharedobjects` : références faibles (paquetage Go `weak`)

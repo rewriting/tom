@@ -8,7 +8,5 @@
 %typeterm LinkedList {
   implement      { *list.List }
   is_sort(t)     { $t != nil }
-  equals(l1,l2)  { tom_linkedListEquals($l1, $l2) }
+  equals(l1,l2)  { func(l1, l2 *list.List) bool { if l1.Len() != l2.Len() { return false }; for e1, e2 := l1.Front(), l2.Front(); e1 != nil; e1, e2 = e1.Next(), e2.Next() { if e1.Value != e2.Value { return false } }; return true }($l1, $l2) }
 }
-
-func tom_linkedListEquals(l1, l2 *list.List) bool { if l1.Len() != l2.Len() { return false }; for e1, e2 := l1.Front(), l2.Front(); e1 != nil; e1, e2 = e1.Next(), e2.Next() { if e1.Value != e2.Value { return false } }; return true };

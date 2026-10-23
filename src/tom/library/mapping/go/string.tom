@@ -17,11 +17,7 @@
   is_fsym(t) { true }
   make_empty() { "" }
   make_insert(c,s) { string($c)+$s }
-  get_head(s) { tom_stringHead($s) }
-  get_tail(s) { tom_stringTail($s) }
+  get_head(s) { func(s string) rune { for _, c := range s { return c }; return 0 }($s) }
+  get_tail(s) { func(s string) string { for i := range s { if i > 0 { return s[i:] } }; return "" }($s) }
   is_empty(s) { len($s)==0 }
 }
-
-func tom_stringHead(s string) rune { for _, c := range s { return c }; return 0 };
-
-func tom_stringTail(s string) string { for i := range s { if i > 0 { return s[i:] } }; return "" };

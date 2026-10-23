@@ -20,7 +20,7 @@ import (
   "time"
 )
 
-  func tom_equal_term_T(t1  T , t2  T ) bool { return (t1).Equivalent(t2);  }; func tom_is_sort_T(t any) bool { return func() bool { _, ok := (t).(T); return ok }();  }; func tom_make_a()  T  { return (MakeA()) }; func tom_make_b()  T  { return (MakeB()) }; func tom_make_c()  T  { return (MakeC()) }; func tom_make_f(One  T , Two  T , Three  T , Four  T )  T  { return (MakeF(One,Two,Three,Four)) }; 
+  func tom_TestGomMultithread_equal_term_T(t1  T , t2  T ) bool { return (t1).Equivalent(t2);  }; func tom_TestGomMultithread_is_sort_T(t any) bool { return func() bool { _, ok := (t).(T); return ok }();  }; func tom_TestGomMultithread_make_a()  T  { return (MakeA()) }; func tom_TestGomMultithread_make_b()  T  { return (MakeB()) }; func tom_TestGomMultithread_make_c()  T  { return (MakeC()) }; func tom_TestGomMultithread_make_f(One  T , Two  T , Three  T , Four  T )  T  { return (MakeF(One,Two,Three,Four)) }; 
 
 
 
@@ -40,9 +40,9 @@ func TestMulti(t *testing.T) {
       go func() {
           defer executor.Done()
           task := func() T {
-            var res T = tom_make_a()
+            var res T = tom_TestGomMultithread_make_a()
             for i := 0; i < DEPTH; i++ {
-              res = tom_make_f(res,tom_make_b(),tom_make_c(),res)
+              res = tom_TestGomMultithread_make_f(res,tom_TestGomMultithread_make_b(),tom_TestGomMultithread_make_c(),res)
             }
             return res
           }

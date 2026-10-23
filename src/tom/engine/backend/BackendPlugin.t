@@ -125,7 +125,9 @@ public class BackendPlugin extends TomGenericPlugin {
           } else if(getOptionBooleanValue(BackendPlugin.CAMLCODE)) {
             generator = new CamlGenerator(output, getOptionManager(), getSymbolTable());
           } else if(getOptionBooleanValue(BackendPlugin.GOCODE)) {
-            generator = new GoGenerator(output, getOptionManager(), getSymbolTable());
+            GoGenerator goGenerator = new GoGenerator(output, getOptionManager(), getSymbolTable());
+            goGenerator.setDeclPrefix(TomBase.goDeclPrefix(getStreamManager().getInputFileName()));
+            generator = goGenerator;
           } else if(getOptionBooleanValue(BackendPlugin.PCODE)) {
             generator = new PythonGenerator(output, getOptionManager(), getSymbolTable());
           } else if(getOptionBooleanValue("aCode")) {

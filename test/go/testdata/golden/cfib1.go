@@ -53,7 +53,7 @@ func suc(x *term) *term {
   return(res)
 }
 
-func tom_is_sort_term(t any) bool { return (0==0);  }; func tom_is_fun_sym_zero(t  *term ) bool { return t.fs == ZERO;  }; func tom_is_fun_sym_suc(t  *term ) bool { return t.fs == SUC;  }; func tom_get_slot_suc_s1(t  *term )  *term  { return t.subt[0];  }; 
+func tom_cfib1_is_sort_term(t any) bool { return (0==0);  }; func tom_cfib1_is_fun_sym_zero(t  *term ) bool { return t.fs == ZERO;  }; func tom_cfib1_is_fun_sym_suc(t  *term ) bool { return t.fs == SUC;  }; func tom_cfib1_get_slot_suc_s1(t  *term )  *term  { return t.subt[0];  }; 
 
 
 
@@ -81,9 +81,9 @@ func tom_is_sort_term(t any) bool { return (0==0);  }; func tom_is_fun_sym_zero(
 
 
 func plus(t1 *term, t2 *term) *term {
-  ; { _ = t1; _ = t2; { if tom_is_sort_term(t1) { if tom_is_sort_term(t2) { if tom_is_fun_sym_zero(any(t2).( *term )) { 
- return (any(t1).( *term ));  };  };  };  }; { if tom_is_sort_term(t1) { if tom_is_sort_term(t2) { if tom_is_fun_sym_suc(any(t2).( *term )) { 
- return (suc(plus(any(t1).( *term ),tom_get_slot_suc_s1(any(t2).( *term ))))) ;  };  };  };  };  }; 
+  ; { _ = t1; _ = t2; { if tom_cfib1_is_sort_term(t1) { if tom_cfib1_is_sort_term(t2) { if tom_cfib1_is_fun_sym_zero(any(t2).( *term )) { 
+ return (any(t1).( *term ));  };  };  };  }; { if tom_cfib1_is_sort_term(t1) { if tom_cfib1_is_sort_term(t2) { if tom_cfib1_is_fun_sym_suc(any(t2).( *term )) { 
+ return (suc(plus(any(t1).( *term ),tom_cfib1_get_slot_suc_s1(any(t2).( *term ))))) ;  };  };  };  };  }; 
 
   panic("no rule applies")
 }
@@ -91,9 +91,9 @@ func plus(t1 *term, t2 *term) *term {
 
 
 func fib(t *term) *term {
-  ; { _ = t; { if tom_is_sort_term(t) { if tom_is_fun_sym_zero(any(t).( *term )) { 
- return(suc(zero)) ;  };  };  }; { if tom_is_sort_term(t) { if tom_is_fun_sym_suc(any(t).( *term )) { if tom_is_fun_sym_zero(any(tom_get_slot_suc_s1(any(t).( *term ))).( *term )) { 
- return(suc(zero)) ;  };  };  };  }; { if tom_is_sort_term(t) { if tom_is_fun_sym_suc(any(t).( *term )) { var tomMatch2_10  *term  = tom_get_slot_suc_s1(any(t).( *term )); _ = tomMatch2_10; if tom_is_fun_sym_suc(any(tomMatch2_10).( *term )) { var tom___x  *term  = tom_get_slot_suc_s1(tomMatch2_10); _ = tom___x; 
+  ; { _ = t; { if tom_cfib1_is_sort_term(t) { if tom_cfib1_is_fun_sym_zero(any(t).( *term )) { 
+ return(suc(zero)) ;  };  };  }; { if tom_cfib1_is_sort_term(t) { if tom_cfib1_is_fun_sym_suc(any(t).( *term )) { if tom_cfib1_is_fun_sym_zero(any(tom_cfib1_get_slot_suc_s1(any(t).( *term ))).( *term )) { 
+ return(suc(zero)) ;  };  };  };  }; { if tom_cfib1_is_sort_term(t) { if tom_cfib1_is_fun_sym_suc(any(t).( *term )) { var tomMatch2_10  *term  = tom_cfib1_get_slot_suc_s1(any(t).( *term )); _ = tomMatch2_10; if tom_cfib1_is_fun_sym_suc(any(tomMatch2_10).( *term )) { var tom___x  *term  = tom_cfib1_get_slot_suc_s1(tomMatch2_10); _ = tom___x; 
  return(plus(fib(tom___x),fib(suc(tom___x)))) ;  };  };  };  };  }; 
 
   panic("no rule applies")
@@ -102,9 +102,9 @@ func fib(t *term) *term {
 
 
 func count(t *term) int {
-  ; { _ = t; { if tom_is_sort_term(t) { if tom_is_fun_sym_zero(any(t).( *term )) { 
- return 0 ;  };  };  }; { if tom_is_sort_term(t) { if tom_is_fun_sym_suc(any(t).( *term )) { 
- return 1 + count(tom_get_slot_suc_s1(any(t).( *term ))) ;  };  };  };  }; 
+  ; { _ = t; { if tom_cfib1_is_sort_term(t) { if tom_cfib1_is_fun_sym_zero(any(t).( *term )) { 
+ return 0 ;  };  };  }; { if tom_cfib1_is_sort_term(t) { if tom_cfib1_is_fun_sym_suc(any(t).( *term )) { 
+ return 1 + count(tom_cfib1_get_slot_suc_s1(any(t).( *term ))) ;  };  };  };  }; 
 
   panic("no rule applies")
 }

@@ -10,12 +10,8 @@
 %oplist LinkedList concLinkedList(Object*) {
   is_fsym(l)       { ($l != nil) }
   make_empty()     { list.New() }
-  make_insert(o,l) { concLinkedListAppend($o,$l) }
+  make_insert(o,l) { func(o any, l *list.List) *list.List { res := list.New(); res.PushBackList(l); res.PushFront(o); return res }($o,$l) }
   get_head(l)      { $l.Front().Value }
-  get_tail(l)      { concLinkedListgetTail($l) }
+  get_tail(l)      { func(l *list.List) *list.List { res := list.New(); res.PushBackList(l); res.Remove(res.Front()); return res }($l) }
   is_empty(l)      { ($l.Len()==0) }
 }
-
-func concLinkedListAppend(o any, l *list.List) *list.List { res := list.New(); res.PushBackList(l); res.PushFront(o); return res };
-
-func concLinkedListgetTail(l *list.List) *list.List { res := list.New(); res.PushBackList(l); res.Remove(res.Front()); return res };

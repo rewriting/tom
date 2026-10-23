@@ -77,6 +77,28 @@ public final class TomBase {
 
   private static Logger logger = Logger.getLogger("tom.engine.TomBase");
 
+  /**
+   * Prefix tom_<F>_ of the package-level declarations generated for Go
+   * (the tom_* functions of the mappings, the AC matching helpers): F is
+   * the base name of the input file without its extension, every
+   * character outside [A-Za-z0-9_] replaced by '_'; "stdin" for an empty
+   * name or "-". Several .t files of one Go package then do not
+   * redeclare each other's helpers.
+   */
+  public static String goDeclPrefix(String inputFileName) {
+    String f = (inputFileName == null) ? "" : inputFileName;
+    int slash = Math.max(f.lastIndexOf('/'), f.lastIndexOf(java.io.File.separatorChar));
+    f = f.substring(slash + 1);
+    int dot = f.lastIndexOf('.');
+    if(dot > 0) {
+      f = f.substring(0, dot);
+    }
+    if(f.length() == 0 || f.equals("-")) {
+      f = "stdin";
+    }
+    return "tom_" + f.replaceAll("[^A-Za-z0-9_]", "_") + "_";
+  }
+
   /** shortcut */
 
   /**
