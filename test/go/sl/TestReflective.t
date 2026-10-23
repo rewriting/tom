@@ -319,16 +319,13 @@ func TestCountAll5(t *testing.T) {
         countAll(t, visit(t, `BottomUp(S5()), s).(sl.Strategy)))
   }
 
-// port: unsupported testMake: gomgo represents the variadic operator
-// l(Term*) of testsl.gom as a flat list, without the Consl/Emptyl
-// constructors of Java Gom, hence without Make_Consl/Make_Emptyl.
-//func TestMake(t *testing.T) {
-//    var s sl.Strategy = `Make_Consl(Make_a(),Make_Emptyl())
-//    %match(s) {
-//      Make_Consl(x,Make_Emptyl()) -> { return }
-//    }
-//    fail(t, "match should success")
-//  }
+func TestMake(t *testing.T) {
+    var s sl.Strategy = `Make_Consl(Make_a(),Make_Emptyl())
+    %match(s) {
+      Make_Consl(x,Make_Emptyl()) -> { return }
+    }
+    fail(t, "match should success")
+  }
 
 func TestMakeWithBuiltin(t *testing.T) {
     var s sl.Strategy = `Make_m(1)

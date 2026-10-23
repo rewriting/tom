@@ -21,9 +21,9 @@ func tom_equal_term_char(t1 rune, t2 rune) bool { return t1 == t2;  }; func tom_
 
 func Test1(t *testing.T) {
     ; { { var tomMatch1_0  int64  = 5; _ = tomMatch1_0; if  true  { if tom_equal_term_int(4, any(tomMatch1_0).( int64 )) { 
- t.Fatal("4 does not match")  };  };  }; { var tomMatch1_3  int64  = 5; _ = tomMatch1_3; if  true  { if tom_equal_term_int(5, any(tomMatch1_3).( int64 )) { 
- return  };  };  }; { var tomMatch1_6  int64  = 5; _ = tomMatch1_6; if  true  { if tom_equal_term_int(6, any(tomMatch1_6).( int64 )) { 
- t.Fatal("6 does not match")  };  };  };  }; 
+ t.Fatal("4 does not match") ;  };  };  }; { var tomMatch1_3  int64  = 5; _ = tomMatch1_3; if  true  { if tom_equal_term_int(5, any(tomMatch1_3).( int64 )) { 
+ return ;  };  };  }; { var tomMatch1_6  int64  = 5; _ = tomMatch1_6; if  true  { if tom_equal_term_int(6, any(tomMatch1_6).( int64 )) { 
+ t.Fatal("6 does not match") ;  };  };  };  }; 
 
     t.Fatal("5 should match")
   }
@@ -32,10 +32,10 @@ func Test1(t *testing.T) {
 
 func Test2(t *testing.T) {
     ; { { var tomMatch2_0  int64  = 5; _ = tomMatch2_0; if  true  { if tom_equal_term_int(5, any(tomMatch2_0).( int64 )) { var tomMatch2_1  string  = "foo"; _ = tomMatch2_1; if  true  { if tom_equal_term_String("goo", any(tomMatch2_1).( string )) { 
- t.Fatal("5,goo does not match")  };  };  };  };  }; { var tomMatch2_6  int64  = 5; _ = tomMatch2_6; if  true  { if tom_equal_term_int(5, any(tomMatch2_6).( int64 )) { var tomMatch2_7  string  = "foo"; _ = tomMatch2_7; if  true  { if tom_equal_term_String("bar", any(tomMatch2_7).( string )) { 
- t.Fatal("5,bar does not match")  };  };  };  };  }; { var tomMatch2_12  int64  = 5; _ = tomMatch2_12; if  true  { if tom_equal_term_int(5, any(tomMatch2_12).( int64 )) { var tomMatch2_13  string  = "foo"; _ = tomMatch2_13; if  true  { if tom_equal_term_String("foo", any(tomMatch2_13).( string )) { 
- return  };  };  };  };  }; { var tomMatch2_18  int64  = 5; _ = tomMatch2_18; if  true  { if tom_equal_term_int(6, any(tomMatch2_18).( int64 )) { var tomMatch2_19  string  = "foo"; _ = tomMatch2_19; if  true  { if tom_equal_term_String("foo", any(tomMatch2_19).( string )) { 
- t.Fatal("6,foo does not match")  };  };  };  };  };  }; 
+ t.Fatal("5,goo does not match") ;  };  };  };  };  }; { var tomMatch2_6  int64  = 5; _ = tomMatch2_6; if  true  { if tom_equal_term_int(5, any(tomMatch2_6).( int64 )) { var tomMatch2_7  string  = "foo"; _ = tomMatch2_7; if  true  { if tom_equal_term_String("bar", any(tomMatch2_7).( string )) { 
+ t.Fatal("5,bar does not match") ;  };  };  };  };  }; { var tomMatch2_12  int64  = 5; _ = tomMatch2_12; if  true  { if tom_equal_term_int(5, any(tomMatch2_12).( int64 )) { var tomMatch2_13  string  = "foo"; _ = tomMatch2_13; if  true  { if tom_equal_term_String("foo", any(tomMatch2_13).( string )) { 
+ return ;  };  };  };  };  }; { var tomMatch2_18  int64  = 5; _ = tomMatch2_18; if  true  { if tom_equal_term_int(6, any(tomMatch2_18).( int64 )) { var tomMatch2_19  string  = "foo"; _ = tomMatch2_19; if  true  { if tom_equal_term_String("foo", any(tomMatch2_19).( string )) { 
+ t.Fatal("6,foo does not match") ;  };  };  };  };  };  }; 
 
     t.Fatal("5,foo should match")
   }
@@ -45,9 +45,9 @@ func Test2(t *testing.T) {
 func ff(x Term) Term { return tom_make_f(x) }
 func Test3(t *testing.T) {
     ; { { var tomMatch3_0  Term  = tom_make_f(tom_make_a()); _ = tomMatch3_0; if tom_is_sort_Term(tomMatch3_0) { if tom_is_fun_sym_f(any(tomMatch3_0).( Term )) { if tom_is_fun_sym_a(any(tom_get_slot_f_s(any(tomMatch3_0).( Term ))).( Term )) { var tomMatch3_1  Term  = ff(tom_make_a()); _ = tomMatch3_1; if tom_is_sort_Term(tomMatch3_1) { if tom_is_fun_sym_a(any(tomMatch3_1).( Term )) { 
- t.Fatal()  };  };  };  };  };  }; { var tomMatch3_9  Term  = tom_make_f(tom_make_a()); _ = tomMatch3_9; if tom_is_sort_Term(tomMatch3_9) { if tom_is_fun_sym_a(any(tomMatch3_9).( Term )) { var tomMatch3_10  Term  = ff(tom_make_a()); _ = tomMatch3_10; if tom_is_sort_Term(tomMatch3_10) { if tom_is_fun_sym_f(any(tomMatch3_10).( Term )) { if tom_is_fun_sym_a(any(tom_get_slot_f_s(any(tomMatch3_10).( Term ))).( Term )) { 
- t.Fatal()  };  };  };  };  };  }; { var tomMatch3_18  Term  = tom_make_f(tom_make_a()); _ = tomMatch3_18; if tom_is_sort_Term(tomMatch3_18) { if tom_is_fun_sym_f(any(tomMatch3_18).( Term )) { if tom_is_fun_sym_a(any(tom_get_slot_f_s(any(tomMatch3_18).( Term ))).( Term )) { var tomMatch3_19  Term  = ff(tom_make_a()); _ = tomMatch3_19; if tom_is_sort_Term(tomMatch3_19) { if tom_is_fun_sym_f(any(tomMatch3_19).( Term )) { 
- return  };  };  };  };  };  };  }; 
+ t.Fatal() ;  };  };  };  };  };  }; { var tomMatch3_9  Term  = tom_make_f(tom_make_a()); _ = tomMatch3_9; if tom_is_sort_Term(tomMatch3_9) { if tom_is_fun_sym_a(any(tomMatch3_9).( Term )) { var tomMatch3_10  Term  = ff(tom_make_a()); _ = tomMatch3_10; if tom_is_sort_Term(tomMatch3_10) { if tom_is_fun_sym_f(any(tomMatch3_10).( Term )) { if tom_is_fun_sym_a(any(tom_get_slot_f_s(any(tomMatch3_10).( Term ))).( Term )) { 
+ t.Fatal() ;  };  };  };  };  };  }; { var tomMatch3_18  Term  = tom_make_f(tom_make_a()); _ = tomMatch3_18; if tom_is_sort_Term(tomMatch3_18) { if tom_is_fun_sym_f(any(tomMatch3_18).( Term )) { if tom_is_fun_sym_a(any(tom_get_slot_f_s(any(tomMatch3_18).( Term ))).( Term )) { var tomMatch3_19  Term  = ff(tom_make_a()); _ = tomMatch3_19; if tom_is_sort_Term(tomMatch3_19) { if tom_is_fun_sym_f(any(tomMatch3_19).( Term )) { 
+ return ;  };  };  };  };  };  };  }; 
 
     t.Fatal("a,f(a) hould match")
   }

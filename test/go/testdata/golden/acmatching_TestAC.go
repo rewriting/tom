@@ -56,11 +56,11 @@ func Test1(t *testing.T) {
     bagX := map[T]bool{}
     bagY := map[T]bool{}
 
-    ; { { if tom_is_sort_T(t1) { if tom_is_fun_sym_f(any(t1).( T )) { var tomMatch1_end_7  T  = any(t1).( T ); _ = tomMatch1_end_7; for { { var tomMatch1_1  T  = tom_get_slice_f(any(t1).( T ),tomMatch1_end_7,tom_empty_list_f()); _ = tomMatch1_1; if !( (tom_is_empty_f_T(tomMatch1_end_7) || tom_equal_term_T(tomMatch1_end_7, tom_empty_list_f())) ) { if tom_is_fun_sym_a(any(func()  T  { if tom_is_fun_sym_f(tomMatch1_end_7) { return tom_get_head_f_T(tomMatch1_end_7) }; return tomMatch1_end_7 }()).( T )) { var tomMatch1_8  T  = func()  T  { if tom_is_fun_sym_f(tomMatch1_end_7) { return tom_get_tail_f_T(tomMatch1_end_7) }; return tom_empty_list_f() }(); _ = tomMatch1_8; var tomMatch1_alpha_12 []int64 = __getMultiplicities_f(tom_append_list_f(tomMatch1_1,tom_append_list_f(tomMatch1_8,tom_empty_list_f()))); _ = tomMatch1_alpha_12; var tomMatch1_length_15 int64 = tom_get_size_concInt_intarray(tomMatch1_alpha_12); _ = tomMatch1_length_15; var tomMatch1_tempSol_13 []int64 = tom_empty_array_concInt(tomMatch1_length_15); _ = tomMatch1_tempSol_13; for { 
+    ; { _ = t1; { if tom_is_sort_T(t1) { if tom_is_fun_sym_f(any(t1).( T )) { var tomMatch1_end_7  T  = any(t1).( T ); _ = tomMatch1_end_7; for { { var tomMatch1_1  T  = tom_get_slice_f(any(t1).( T ),tomMatch1_end_7,tom_empty_list_f()); _ = tomMatch1_1; if !( (tom_is_empty_f_T(tomMatch1_end_7) || tom_equal_term_T(tomMatch1_end_7, tom_empty_list_f())) ) { if tom_is_fun_sym_a(any(func()  T  { if tom_is_fun_sym_f(tomMatch1_end_7) { return tom_get_head_f_T(tomMatch1_end_7) }; return tomMatch1_end_7 }()).( T )) { var tomMatch1_8  T  = func()  T  { if tom_is_fun_sym_f(tomMatch1_end_7) { return tom_get_tail_f_T(tomMatch1_end_7) }; return tom_empty_list_f() }(); _ = tomMatch1_8; var tomMatch1_alpha_12 []int64 = __getMultiplicities_f(tom_append_list_f(tomMatch1_1,tom_append_list_f(tomMatch1_8,tom_empty_list_f()))); _ = tomMatch1_alpha_12; var tomMatch1_length_15 int64 = tom_get_size_concInt_intarray(tomMatch1_alpha_12); _ = tomMatch1_length_15; var tomMatch1_tempSol_13 []int64 = tom_empty_array_concInt(tomMatch1_length_15); _ = tomMatch1_tempSol_13; for { 
 
         bagX[__getTermForMult_f(tomMatch1_tempSol_13,tomMatch1_alpha_12,tom_append_list_f(tomMatch1_1,tom_append_list_f(tomMatch1_8,tom_empty_list_f())), false )] = true
         bagY[__getTermForMult_f(tomMatch1_tempSol_13,tomMatch1_alpha_12,tom_append_list_f(tomMatch1_1,tom_append_list_f(tomMatch1_8,tom_empty_list_f())), true )] = true
-       if !(next_minimal_extract(1,tomMatch1_length_15,tomMatch1_alpha_12,tomMatch1_tempSol_13)) { break; }; };  };  }; if  (tom_is_empty_f_T(tomMatch1_end_7) || tom_equal_term_T(tomMatch1_end_7, tom_empty_list_f()))  { tomMatch1_end_7 = any(t1).( T );  } else { tomMatch1_end_7 = func()  T  { if tom_is_fun_sym_f(tomMatch1_end_7) { return tom_get_tail_f_T(tomMatch1_end_7) }; return tom_empty_list_f() }();  };  };  if !(!(tom_equal_term_T(tomMatch1_end_7, any(t1).( T )))) { break; }; };  };  };  };  }; 
+      ;  if !(next_minimal_extract(1,tomMatch1_length_15,tomMatch1_alpha_12,tomMatch1_tempSol_13)) { break; }; };  };  }; if  (tom_is_empty_f_T(tomMatch1_end_7) || tom_equal_term_T(tomMatch1_end_7, tom_empty_list_f()))  { tomMatch1_end_7 = any(t1).( T );  } else { tomMatch1_end_7 = func()  T  { if tom_is_fun_sym_f(tomMatch1_end_7) { return tom_get_tail_f_T(tomMatch1_end_7) }; return tom_empty_list_f() }();  };  };  if !(!(tom_equal_term_T(tomMatch1_end_7, any(t1).( T )))) { break; }; };  };  };  };  }; 
 
 
     assertThat(t, "f() is solution", bagX, hasItem(tom_empty_list_f()))
@@ -79,11 +79,11 @@ func Test2(t *testing.T) {
       bagX := map[T]bool{}
       bagY := map[T]bool{}
 
-      ; { { if tom_is_sort_T(t1) { var tomMatch2_alpha_2 []int64 = __getMultiplicities_f(any(t1).( T )); _ = tomMatch2_alpha_2; var tomMatch2_length_5 int64 = tom_get_size_concInt_intarray(tomMatch2_alpha_2); _ = tomMatch2_length_5; var tomMatch2_tempSol_3 []int64 = tom_empty_array_concInt(tomMatch2_length_5); _ = tomMatch2_tempSol_3; for { 
+      ; { _ = t1; { if tom_is_sort_T(t1) { var tomMatch2_alpha_2 []int64 = __getMultiplicities_f(any(t1).( T )); _ = tomMatch2_alpha_2; var tomMatch2_length_5 int64 = tom_get_size_concInt_intarray(tomMatch2_alpha_2); _ = tomMatch2_length_5; var tomMatch2_tempSol_3 []int64 = tom_empty_array_concInt(tomMatch2_length_5); _ = tomMatch2_tempSol_3; for { 
 
           bagX[__getTermForMult_f(tomMatch2_tempSol_3,tomMatch2_alpha_2,any(t1).( T ), false )] = true
           bagY[__getTermForMult_f(tomMatch2_tempSol_3,tomMatch2_alpha_2,any(t1).( T ), true )] = true
-         if !(next_minimal_extract(2,tomMatch2_length_5,tomMatch2_alpha_2,tomMatch2_tempSol_3)) { break; }; };  };  };  }; 
+        ;  if !(next_minimal_extract(2,tomMatch2_length_5,tomMatch2_alpha_2,tomMatch2_tempSol_3)) { break; }; };  };  };  }; 
 
 
       assertThat(t, "f() is solution of X", bagX, hasItem(tom_empty_list_f()))
@@ -95,11 +95,11 @@ func Test2(t *testing.T) {
 
       bagXX := map[T]bool{}
       bagYY := map[T]bool{}
-      ; { { if tom_is_sort_T(t1) { var tomMatch3_alpha_2 []int64 = __getMultiplicities_f(any(t1).( T )); _ = tomMatch3_alpha_2; var tomMatch3_length_5 int64 = tom_get_size_concInt_intarray(tomMatch3_alpha_2); _ = tomMatch3_length_5; var tomMatch3_tempSol_3 []int64 = tom_empty_array_concInt(tomMatch3_length_5); _ = tomMatch3_tempSol_3; for { 
+      ; { _ = t1; { if tom_is_sort_T(t1) { var tomMatch3_alpha_2 []int64 = __getMultiplicities_f(any(t1).( T )); _ = tomMatch3_alpha_2; var tomMatch3_length_5 int64 = tom_get_size_concInt_intarray(tomMatch3_alpha_2); _ = tomMatch3_length_5; var tomMatch3_tempSol_3 []int64 = tom_empty_array_concInt(tomMatch3_length_5); _ = tomMatch3_tempSol_3; for { 
 
           bagXX[__getTermForMult_f(tomMatch3_tempSol_3,tomMatch3_alpha_2,any(t1).( T ), true )] = true
           bagYY[__getTermForMult_f(tomMatch3_tempSol_3,tomMatch3_alpha_2,any(t1).( T ), false )] = true
-         if !(next_minimal_extract(2,tomMatch3_length_5,tomMatch3_alpha_2,tomMatch3_tempSol_3)) { break; }; };  };  };  }; 
+        ;  if !(next_minimal_extract(2,tomMatch3_length_5,tomMatch3_alpha_2,tomMatch3_tempSol_3)) { break; }; };  };  };  }; 
 
       assertEqualSets(t, "bagX==bagYY",bagX,bagYY)
       assertEqualSets(t, "bagY==bagXX",bagY,bagXX)
@@ -115,11 +115,11 @@ func Test3(t *testing.T) {
       bagX := map[T]bool{}
       bagY := map[T]bool{}
 
-      ; { { if tom_is_sort_T(t1) { var tomMatch4_alpha_13 []int64 = __getMultiplicities_f(any(t1).( T )); _ = tomMatch4_alpha_13; var tomMatch4_length_16 int64 = tom_get_size_concInt_intarray(tomMatch4_alpha_13); _ = tomMatch4_length_16; var tomMatch4_tempSol_14 []int64 = tom_empty_array_concInt(tomMatch4_length_16); _ = tomMatch4_tempSol_14; for { var tomMatch4_1  T  = __getTermForMult_f(tomMatch4_tempSol_14,tomMatch4_alpha_13,any(t1).( T ), true ); _ = tomMatch4_1; var tomMatch4_alpha_8 []int64 = __getMultiplicities_f(tomMatch4_1); _ = tomMatch4_alpha_8; var tomMatch4_length_11 int64 = tom_get_size_concInt_intarray(tomMatch4_alpha_8); _ = tomMatch4_length_11; var tomMatch4_tempSol_9 []int64 = tom_empty_array_concInt(tomMatch4_length_11); _ = tomMatch4_tempSol_9; for { 
+      ; { _ = t1; { if tom_is_sort_T(t1) { var tomMatch4_alpha_13 []int64 = __getMultiplicities_f(any(t1).( T )); _ = tomMatch4_alpha_13; var tomMatch4_length_16 int64 = tom_get_size_concInt_intarray(tomMatch4_alpha_13); _ = tomMatch4_length_16; var tomMatch4_tempSol_14 []int64 = tom_empty_array_concInt(tomMatch4_length_16); _ = tomMatch4_tempSol_14; for { var tomMatch4_1  T  = __getTermForMult_f(tomMatch4_tempSol_14,tomMatch4_alpha_13,any(t1).( T ), true ); _ = tomMatch4_1; var tomMatch4_alpha_8 []int64 = __getMultiplicities_f(tomMatch4_1); _ = tomMatch4_alpha_8; var tomMatch4_length_11 int64 = tom_get_size_concInt_intarray(tomMatch4_alpha_8); _ = tomMatch4_length_11; var tomMatch4_tempSol_9 []int64 = tom_empty_array_concInt(tomMatch4_length_11); _ = tomMatch4_tempSol_9; for { 
 
           bagX[__getTermForMult_f(tomMatch4_tempSol_14,tomMatch4_alpha_13,any(t1).( T ), false )] = true
           bagY[__getTermForMult_f(tomMatch4_tempSol_9,tomMatch4_alpha_8,tomMatch4_1, false )] = true
-         if !(next_minimal_extract(2,tomMatch4_length_11,tomMatch4_alpha_8,tomMatch4_tempSol_9)) { break; }; };  if !(next_minimal_extract(2,tomMatch4_length_16,tomMatch4_alpha_13,tomMatch4_tempSol_14)) { break; }; };  };  };  }; 
+        ;  if !(next_minimal_extract(2,tomMatch4_length_11,tomMatch4_alpha_8,tomMatch4_tempSol_9)) { break; }; };  if !(next_minimal_extract(2,tomMatch4_length_16,tomMatch4_alpha_13,tomMatch4_tempSol_14)) { break; }; };  };  };  }; 
 
 
       assertThat(t, "f() is solution of X", bagX, hasItem(tom_empty_list_f()))
@@ -136,10 +136,10 @@ func Test4(t *testing.T) {
     var t1 T = tom_cons_list_f(tom_make_a(),tom_cons_list_f(tom_make_b(),tom_cons_list_f(tom_make_b(),tom_cons_list_f(tom_make_a(),tom_empty_list_f()))))
     bagX := map[T]bool{}
 
-    ; { { if tom_is_sort_T(t1) { var tomMatch5_alpha_1 []int64 = __getMultiplicities_f(any(t1).( T )); _ = tomMatch5_alpha_1; var tomMatch5_length_4 int64 = tom_get_size_concInt_intarray(tomMatch5_alpha_1); _ = tomMatch5_length_4; var tomMatch5_tempSol_2 []int64 = tom_empty_array_concInt(tomMatch5_length_4); _ = tomMatch5_tempSol_2; for { var tom___X  T  = __getTermForMult_f(tomMatch5_tempSol_2,tomMatch5_alpha_1,any(t1).( T ), false ); _ = tom___X; if tom_equal_term_T(__getTermForMult_f(tomMatch5_tempSol_2,tomMatch5_alpha_1,any(t1).( T ), true ), tom___X) { 
+    ; { _ = t1; { if tom_is_sort_T(t1) { var tomMatch5_alpha_1 []int64 = __getMultiplicities_f(any(t1).( T )); _ = tomMatch5_alpha_1; var tomMatch5_length_4 int64 = tom_get_size_concInt_intarray(tomMatch5_alpha_1); _ = tomMatch5_length_4; var tomMatch5_tempSol_2 []int64 = tom_empty_array_concInt(tomMatch5_length_4); _ = tomMatch5_tempSol_2; for { var tom___X  T  = __getTermForMult_f(tomMatch5_tempSol_2,tomMatch5_alpha_1,any(t1).( T ), false ); _ = tom___X; if tom_equal_term_T(__getTermForMult_f(tomMatch5_tempSol_2,tomMatch5_alpha_1,any(t1).( T ), true ), tom___X) { 
 
         bagX[tom___X] = true
-       };  if !(next_minimal_extract(1,tomMatch5_length_4,tomMatch5_alpha_1,tomMatch5_tempSol_2)) { break; }; };  };  };  }; 
+      ;  };  if !(next_minimal_extract(1,tomMatch5_length_4,tomMatch5_alpha_1,tomMatch5_tempSol_2)) { break; }; };  };  };  }; 
 
 
     assertThat(t, "f(a(),b()) is solution of X", bagX, hasItem(tom_cons_list_f(tom_make_a(),tom_cons_list_f(tom_make_b(),tom_empty_list_f()))))

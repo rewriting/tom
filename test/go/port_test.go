@@ -179,9 +179,7 @@ var cases = []portCase{
 	{Rel: "sl/TestSL.t", GoTest: true, Gom: []gomFile{testslGom},
 		Support: []string{"sl/OldBehaviour.t", "sl/NewBehaviour.t", "sl/IntrospectorBehaviour.t"},
 		TomArgs: map[string][]string{"sl/IntrospectorBehaviour.t": {"--genIntrospector"}}},
-	{Rel: "sl/TestReflective.t", GoTest: true, Gom: []gomFile{testslGom}, Unsupported: map[string]string{
-		"TestMake": "gomgo represents the variadic l(Term*) of testsl.gom as a flat list, without Java Gom's Consl/Emptyl constructors, hence without Make_Consl/Make_Emptyl",
-	}},
+	{Rel: "sl/TestReflective.t", GoTest: true, Gom: []gomFile{testslGom}},
 	{Rel: "sl/TestRef.t", GoTest: true, Gom: []gomFile{testslGom}, FullyUnsupported: true, Unsupported: map[string]string{
 		"TestRef1": testRefUnsupported, "TestRef2": testRefUnsupported, "TestRef3": testRefUnsupported, "TestRef4": testRefUnsupported,
 	}},
@@ -953,10 +951,11 @@ func junitTestNames(source string) []string {
 		s := strings.TrimSpace(line)
 		// a JUnit Theories runner runs the @Theory methods as tests; the
 		// annotation may be qualified (@org.junit.Test, test/Test.t)
-		s = strings.TrimPrefix(s, "@org.junit.experimental.theories.")
-		s = strings.TrimPrefix(s, "@org.junit.")
-		if !strings.HasPrefix(s, "@") {
-			s = "@" + s
+		for _, pkg := range []string{"@org.junit.experimental.theories.", "@org.junit."} {
+			if strings.HasPrefix(s, pkg) {
+				s = "@" + strings.TrimPrefix(s, pkg)
+				break
+			}
 		}
 		if s != "@Test" && !strings.HasPrefix(s, "@Test(") && s != "@Theory" && !strings.HasPrefix(s, "@Theory(") {
 			continue

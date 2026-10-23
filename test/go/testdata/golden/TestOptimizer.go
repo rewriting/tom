@@ -1,9 +1,6 @@
 
 
 
-
-
-
 package testoptimizer
 
 
@@ -16,7 +13,7 @@ func Test1(t *testing.T) {
 		var s string = ""
 		
 		
-		; { { if  true  {  };  }; { if  true  {  };  };  }; 
+		; { _ = s; { if  true  { ;  };  }; { if  true  { ;  };  };  }; 
 
 
 
@@ -24,5 +21,4 @@ func Test1(t *testing.T) {
 
 
 
-		_ = s
 	}

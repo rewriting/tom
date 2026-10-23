@@ -68,6 +68,12 @@ public class AstBuilder {
   private SymbolTable symbolTable;
   private TomParserTool parserTool;
 
+  /* true when tom generates Go (-go) */
+  private boolean goTarget() {
+    Object go = parserTool.getOptionManager().getOptionValue("goCode");
+    return Boolean.TRUE.equals(go);
+  }
+
   public AstBuilder(TomParserTool parserTool,SymbolTable st) {
     this.parserTool = parserTool;
     this.symbolTable = st;
@@ -535,6 +541,17 @@ matchblock: {
       }
 
       Cst_UnamedBlock(options,blocks) -> {
+        if(goTarget()) {
+          /*
+           * Go target: a { … } of the host code is host syntax. Keeping its
+           * braces as host text (instead of an UnamedBlock, which the Go
+           * backend closes with "};" like the blocks it builds itself)
+           * leaves "} else", composite literals (T{…}, []T{{…}}[0],
+           * T{} == u) and comments after "}" as written.
+           */
+          InstructionList inner = convert(`blocks);
+          return `AbstractBlock(concInstruction(CodeToInstruction(TargetLanguageToCode(ITL("{"))),inner*,CodeToInstruction(TargetLanguageToCode(ITL("}")))));
+        }
         return `UnamedBlock(convert(blocks));
       }
 

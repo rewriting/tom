@@ -601,7 +601,7 @@ func TestCombinations(t *testing.T) {
 
         nbCasesOK++
         fmt.Println("Case #1: x = " + fmt.Sprint(tom___x))
-       };  }; var tomMatch1_1  tNat  = tom_make_suc(tom_make_suc(tom_make_zero())); _ = tomMatch1_1; if tom_is_sort_tNat(tomMatch1_1) { var tom___x  tNat  = any(tomMatch1_1).( tNat ); _ = tom___x; if !(tom_equal_term_tNat(tom___x, tom_make_zero())) {          nbCasesOK++;         fmt.Println("Case #1: x = " + fmt.Sprint(tom___x));        };  };  };  }; 
+      ;  };  }; var tomMatch1_1  tNat  = tom_make_suc(tom_make_suc(tom_make_zero())); _ = tomMatch1_1; if tom_is_sort_tNat(tomMatch1_1) { var tom___x  tNat  = any(tomMatch1_1).( tNat ); _ = tom___x; if !(tom_equal_term_tNat(tom___x, tom_make_zero())) {          nbCasesOK++;         fmt.Println("Case #1: x = " + fmt.Sprint(tom___x));       ;  };  };  };  }; 
 
 
 

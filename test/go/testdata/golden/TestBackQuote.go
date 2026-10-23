@@ -18,7 +18,7 @@ func tom_equal_term_char(t1 rune, t2 rune) bool { return t1 == t2;  }; func tom_
 
 func Test1(t *testing.T) {
   var l L = tom_cons_list_conc(tom_make_a(),tom_cons_list_conc(tom_make_b(),tom_cons_list_conc(tom_make_c(),tom_cons_list_conc(tom_make_a(),tom_cons_list_conc(tom_make_b(),tom_empty_list_conc())))))
-  var l2 L = tom_empty_list_conc(); { { if tom_is_sort_L(l) { if tom_is_fun_sym_conc(any(l).( L )) { var tomMatch1_end_4  L  = any(l).( L ); _ = tomMatch1_end_4; for { { if !(tom_is_empty_conc_L(tomMatch1_end_4)) { if tom_is_fun_sym_b(any(tom_get_head_conc_L(tomMatch1_end_4)).( E )) { var tomMatch1_5  L  = tom_get_tail_conc_L(tomMatch1_end_4); _ = tomMatch1_5; var tomMatch1_end_8  L  = tomMatch1_5; _ = tomMatch1_end_8; for { { if !(tom_is_empty_conc_L(tomMatch1_end_8)) { if tom_is_fun_sym_a(any(tom_get_head_conc_L(tomMatch1_end_8)).( E )) { 
+  var l2 L = tom_empty_list_conc(); { _ = l; { if tom_is_sort_L(l) { if tom_is_fun_sym_conc(any(l).( L )) { var tomMatch1_end_4  L  = any(l).( L ); _ = tomMatch1_end_4; for { { if !(tom_is_empty_conc_L(tomMatch1_end_4)) { if tom_is_fun_sym_b(any(tom_get_head_conc_L(tomMatch1_end_4)).( E )) { var tomMatch1_5  L  = tom_get_tail_conc_L(tomMatch1_end_4); _ = tomMatch1_5; var tomMatch1_end_8  L  = tomMatch1_5; _ = tomMatch1_end_8; for { { if !(tom_is_empty_conc_L(tomMatch1_end_8)) { if tom_is_fun_sym_a(any(tom_get_head_conc_L(tomMatch1_end_8)).( E )) { 
 
 
 
@@ -29,7 +29,7 @@ func Test1(t *testing.T) {
 
 
 
-      l2 = tom_append_list_conc(tom_get_slice_conc(any(l).( L ),tomMatch1_end_4,tom_empty_list_conc()),tom_cons_list_conc(tom_make_b(),tom_append_list_conc(tom_get_slice_conc(tomMatch1_5,tomMatch1_end_8,tom_empty_list_conc()),tom_cons_list_conc(tom_make_a(),tom_append_list_conc(tom_get_tail_conc_L(tomMatch1_end_8),tom_empty_list_conc()))))) };  }; if tom_is_empty_conc_L(tomMatch1_end_8) { tomMatch1_end_8 = tomMatch1_5;  } else { tomMatch1_end_8 = tom_get_tail_conc_L(tomMatch1_end_8);  };  };  if !(!(tom_equal_term_L(tomMatch1_end_8, tomMatch1_5))) { break; }; };  };  }; if tom_is_empty_conc_L(tomMatch1_end_4) { tomMatch1_end_4 = any(l).( L );  } else { tomMatch1_end_4 = tom_get_tail_conc_L(tomMatch1_end_4);  };  };  if !(!(tom_equal_term_L(tomMatch1_end_4, any(l).( L )))) { break; }; };  };  };  };  }; 
+      l2 = tom_append_list_conc(tom_get_slice_conc(any(l).( L ),tomMatch1_end_4,tom_empty_list_conc()),tom_cons_list_conc(tom_make_b(),tom_append_list_conc(tom_get_slice_conc(tomMatch1_5,tomMatch1_end_8,tom_empty_list_conc()),tom_cons_list_conc(tom_make_a(),tom_append_list_conc(tom_get_tail_conc_L(tomMatch1_end_8),tom_empty_list_conc())))));  };  }; if tom_is_empty_conc_L(tomMatch1_end_8) { tomMatch1_end_8 = tomMatch1_5;  } else { tomMatch1_end_8 = tom_get_tail_conc_L(tomMatch1_end_8);  };  };  if !(!(tom_equal_term_L(tomMatch1_end_8, tomMatch1_5))) { break; }; };  };  }; if tom_is_empty_conc_L(tomMatch1_end_4) { tomMatch1_end_4 = any(l).( L );  } else { tomMatch1_end_4 = tom_get_tail_conc_L(tomMatch1_end_4);  };  };  if !(!(tom_equal_term_L(tomMatch1_end_4, any(l).( L )))) { break; }; };  };  };  };  }; 
 
 
 

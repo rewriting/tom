@@ -110,7 +110,8 @@ func count(t *testing.T, dirs []string, re *regexp.Regexp) int {
 					return err
 				}
 				files++
-				n += len(re.FindAllIndex(data, -1))
+				// commented-out code and examples are not uses
+				n += len(re.FindAllIndex(stripComments(data), -1))
 			}
 			return nil
 		})

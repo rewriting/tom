@@ -86,14 +86,14 @@ func TestNeutral2(t *testing.T) {
 func TestNeutral3(t *testing.T) {
     var l L = tom_make_bb()
     cnt := 0
-    ; { { if tom_is_sort_L(l) { if tom_is_sort_L(any(l).( L )) { var tomMatch1_end_4  L  = any(l).( L ); _ = tomMatch1_end_4; for { { var tom___x  L  = tom_get_slice_list(any(l).( L ),tomMatch1_end_4,tom_empty_list_list()); _ = tom___x; var tom___y  L  = tomMatch1_end_4; _ = tom___y; 
+    ; { _ = l; { if tom_is_sort_L(l) { if tom_is_sort_L(any(l).( L )) { var tomMatch1_end_4  L  = any(l).( L ); _ = tomMatch1_end_4; for { { var tom___x  L  = tom_get_slice_list(any(l).( L ),tomMatch1_end_4,tom_empty_list_list()); _ = tom___x; var tom___y  L  = tomMatch1_end_4; _ = tom___y; 
 
-        if(tom___x == tom_make_bb() && tom___y == tom_make_aa()) { 
+        if(tom___x == tom_make_bb() && tom___y == tom_make_aa()) {
           cnt += 2
-         }; 
-        if(tom___x == tom_make_aa() && tom___y == tom_make_bb()) { 
+        }
+        if(tom___x == tom_make_aa() && tom___y == tom_make_bb()) {
           cnt += 3
-         }; if  (tom_is_empty_list_L(tomMatch1_end_4) || tom_equal_term_L(tomMatch1_end_4, tom_empty_list_list()))  { tomMatch1_end_4 = any(l).( L );  } else { tomMatch1_end_4 = func()  L  { if tom_is_fun_sym_list(tomMatch1_end_4) { return tom_get_tail_list_L(tomMatch1_end_4) }; return tom_empty_list_list() }();  };  };  if !(!(tom_equal_term_L(tomMatch1_end_4, any(l).( L )))) { break; }; };  };  };  };  }; 
+        }; if  (tom_is_empty_list_L(tomMatch1_end_4) || tom_equal_term_L(tomMatch1_end_4, tom_empty_list_list()))  { tomMatch1_end_4 = any(l).( L );  } else { tomMatch1_end_4 = func()  L  { if tom_is_fun_sym_list(tomMatch1_end_4) { return tom_get_tail_list_L(tomMatch1_end_4) }; return tom_empty_list_list() }();  };  };  if !(!(tom_equal_term_L(tomMatch1_end_4, any(l).( L )))) { break; }; };  };  };  };  }; 
 
 
     if (0 == cnt) {
@@ -107,14 +107,14 @@ func TestNeutral3(t *testing.T) {
 func TestNeutral4(tt *testing.T) {
     var t T = tom_make_b()
     cnt := 0
-    ; { { if tom_is_sort_T(t) { if tom_is_sort_T(any(t).( T )) { var tomMatch2_end_4  T  = any(t).( T ); _ = tomMatch2_end_4; for { { var tom___x  T  = tom_get_slice_conc(any(t).( T ),tomMatch2_end_4,tom_empty_list_conc()); _ = tom___x; var tom___y  T  = tomMatch2_end_4; _ = tom___y; 
+    ; { _ = t; { if tom_is_sort_T(t) { if tom_is_sort_T(any(t).( T )) { var tomMatch2_end_4  T  = any(t).( T ); _ = tomMatch2_end_4; for { { var tom___x  T  = tom_get_slice_conc(any(t).( T ),tomMatch2_end_4,tom_empty_list_conc()); _ = tom___x; var tom___y  T  = tomMatch2_end_4; _ = tom___y; 
 
-        if (tom___x == tom_make_b() && tom___y == tom_empty_list_conc()) { 
+        if (tom___x == tom_make_b() && tom___y == tom_empty_list_conc()) {
           cnt += 2
-         }; 
-        if (tom___x == tom_empty_list_conc() && tom___y == tom_make_b()) { 
+        }
+        if (tom___x == tom_empty_list_conc() && tom___y == tom_make_b()) {
           cnt += 3
-         }; if  (tom_is_empty_conc_T(tomMatch2_end_4) || tom_equal_term_T(tomMatch2_end_4, tom_empty_list_conc()))  { tomMatch2_end_4 = any(t).( T );  } else { tomMatch2_end_4 = func()  T  { if tom_is_fun_sym_conc(tomMatch2_end_4) { return tom_get_tail_conc_T(tomMatch2_end_4) }; return tom_empty_list_conc() }();  };  };  if !(!(tom_equal_term_T(tomMatch2_end_4, any(t).( T )))) { break; }; };  };  };  };  }; 
+        }; if  (tom_is_empty_conc_T(tomMatch2_end_4) || tom_equal_term_T(tomMatch2_end_4, tom_empty_list_conc()))  { tomMatch2_end_4 = any(t).( T );  } else { tomMatch2_end_4 = func()  T  { if tom_is_fun_sym_conc(tomMatch2_end_4) { return tom_get_tail_conc_T(tomMatch2_end_4) }; return tom_empty_list_conc() }();  };  };  if !(!(tom_equal_term_T(tomMatch2_end_4, any(t).( T )))) { break; }; };  };  };  };  }; 
 
 
     if (0 == cnt) {
@@ -128,10 +128,10 @@ func TestNeutral4(tt *testing.T) {
 func TestNeutral5(tt *testing.T) {
     var t NAU = tom_make_m()
     cnt := 0
-    ; { { if tom_is_sort_NAU(t) { if tom_is_fun_sym_p(any(t).( NAU )) { var tomMatch3_end_4  NAU  = any(t).( NAU ); _ = tomMatch3_end_4; for { { 
+    ; { _ = t; { if tom_is_sort_NAU(t) { if tom_is_fun_sym_p(any(t).( NAU )) { var tomMatch3_end_4  NAU  = any(t).( NAU ); _ = tomMatch3_end_4; for { { 
 
         cnt += 2
-      if  (tom_is_empty_p_NAU(tomMatch3_end_4) || tom_equal_term_NAU(tomMatch3_end_4, tom_empty_list_p()))  { tomMatch3_end_4 = any(t).( NAU );  } else { tomMatch3_end_4 = func()  NAU  { if tom_is_fun_sym_p(tomMatch3_end_4) { return tom_get_tail_p_NAU(tomMatch3_end_4) }; return tom_empty_list_p() }();  };  };  if !(!(tom_equal_term_NAU(tomMatch3_end_4, any(t).( NAU )))) { break; }; };  };  };  };  }; 
+      ; if  (tom_is_empty_p_NAU(tomMatch3_end_4) || tom_equal_term_NAU(tomMatch3_end_4, tom_empty_list_p()))  { tomMatch3_end_4 = any(t).( NAU );  } else { tomMatch3_end_4 = func()  NAU  { if tom_is_fun_sym_p(tomMatch3_end_4) { return tom_get_tail_p_NAU(tomMatch3_end_4) }; return tom_empty_list_p() }();  };  };  if !(!(tom_equal_term_NAU(tomMatch3_end_4, any(t).( NAU )))) { break; }; };  };  };  };  }; 
 
     assertEqualsMsg(tt, "m() does not match p(x*,y*)",cnt,0)
 }

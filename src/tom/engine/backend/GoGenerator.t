@@ -52,7 +52,8 @@ import tom.platform.OptionManager;
 /**
  * Go backend. The code is written on one logical line (as the other
  * backends do without -pretty), so every statement ends with ';' and
- * every block with '};' -- except before 'else'.
+ * every block the compiler builds with '};' -- except before 'else'
+ * (the { … } of the host code stay host text, see AstBuilder).
  */
 public class GoGenerator extends GenericGenerator {
 
@@ -278,6 +279,14 @@ public class GoGenerator extends GenericGenerator {
       }
     }
     super.generateInstruction(deep, subject, moduleName);
+    %match(subject) {
+      RawAction[] -> {
+        /* the host code of an action may end with the "}" of one of its
+         * blocks (kept as host text): end the statement before the code
+         * that follows */
+        output.write("; ");
+      }
+    }
   }
 
   protected void buildInstructionSequence(int deep, InstructionList instructionList, String moduleName) throws IOException {
@@ -310,51 +319,12 @@ public class GoGenerator extends GenericGenerator {
     output.write(" break " + blockName + "; }; ");
   }
 
+  /* a block the compiler builds (host { … } blocks are host text, see
+   * AstBuilder): "};" ends it as a statement */
   protected void buildUnamedBlock(int deep, InstructionList instList, String moduleName) throws IOException {
-    boolean beforeElse = blockBeforeElse;
-    blockBeforeElse = false;
     output.write("{ ");
     generateInstructionList(deep+1,instList,moduleName);
-    output.write(beforeElse ? " } " : " }; ");
-  }
-
-  /* set while the next block is a host block that the statement goes on after */
-  private boolean blockBeforeElse = false;
-
-  /*
-   * The -np parser makes every { … } of the host code of a %match action
-   * an unamed block. Such a block followed by host code that continues
-   * the statement ends with "}" instead of "};": an if statement going on
-   * with "else" (if c { … } else { … }), or an expression going on after
-   * the braces of a composite literal or a function literal (T{}, f(T{a,
-   * b}), T{}.m(), func() { … }()).
-   */
-  public void generateInstructionList(int deep, InstructionList subject, String moduleName) throws IOException {
-    while(!subject.isEmptyconcInstruction()) {
-      Instruction head = subject.getHeadconcInstruction();
-      subject = subject.getTailconcInstruction();
-      blockBeforeElse = head.isUnamedBlock() && !subject.isEmptyconcInstruction()
-        && continuesStatement(subject.getHeadconcInstruction());
-      generateInstruction(deep,head,moduleName);
-      blockBeforeElse = false;
-    }
-  }
-
-  /* the host code of instr starts with the keyword else, or with a
-   * token that cannot start a statement: ) ] , . ( ; : */
-  private static boolean continuesStatement(Instruction instr) {
-    String code = null;
-    %match(instr) {
-      CodeToInstruction(TargetLanguageToCode((TL|ITL)[Code=c])) -> { code = `c; }
-    }
-    if(code == null) {
-      return false;
-    }
-    code = code.trim();
-    if(code.startsWith("else") && (code.length() == 4 || !Character.isJavaIdentifierPart(code.charAt(4)))) {
-      return true;
-    }
-    return code.length() > 0 && ")],.(;:".indexOf(code.charAt(0)) >= 0;
+    output.write(" }; ");
   }
 
   protected void buildReturn(int deep, BQTerm exp, String moduleName) throws IOException {
@@ -516,7 +486,10 @@ public class GoGenerator extends GenericGenerator {
    * accepts because tom_equal_term_<sort> takes Objects. In Go the
    * equality takes the sort's type: each argument is converted with a
    * checked type assertion, and a value that is not of the sort is not
-   * equal (where Java's equals would return false).
+   * equal (where Java's equals would return false). Edge case: a nil
+   * interface argument fails the assertion, so the result is false
+   * without calling the mapping's equals (Java would call equals on null,
+   * or throw a NullPointerException when null is the receiver).
    */
 
   /* the sort of a term, or null when the backend cannot tell */

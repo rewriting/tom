@@ -39,9 +39,9 @@ import (
 
 
 func match1(subject Term) Result {
-    ; { { if tom_is_sort_Term(subject) { if tom_is_fun_sym_a(any(subject).( Term )) { 
+    ; { _ = subject; { if tom_is_sort_Term(subject) { if tom_is_fun_sym_a(any(subject).( Term )) { 
 
-        return tom_make_True() };  };  };  }; 
+        return tom_make_True();  };  };  };  }; 
 
 
     return tom_make_False()
@@ -57,9 +57,9 @@ func TestAp1(t *testing.T) {
 
 
 func match2(subject Term) Result {
-    ; { { if tom_is_sort_Term(subject) { var tomMatch2_3 bool =  false ; _ = tomMatch2_3; if tom_is_fun_sym_a(any(subject).( Term )) { tomMatch2_3 =  true ;  }; if !(tomMatch2_3) { 
+    ; { _ = subject; { if tom_is_sort_Term(subject) { var tomMatch2_3 bool =  false ; _ = tomMatch2_3; if tom_is_fun_sym_a(any(subject).( Term )) { tomMatch2_3 =  true ;  }; if !(tomMatch2_3) { 
 
-        return tom_make_True() };  };  };  }; 
+        return tom_make_True();  };  };  };  }; 
 
 
     return tom_make_False()
@@ -77,9 +77,9 @@ func TestAp2(t *testing.T) {
 
 
 func match3(subject Term) Result {
-    ; { { if tom_is_sort_Term(subject) { if tom_is_fun_sym_f(any(subject).( Term )) { if tom_is_fun_sym_a(any(tom_get_slot_f_x1(any(subject).( Term ))).( Term )) { var tomMatch3_9 bool =  false ; _ = tomMatch3_9; if tom_is_fun_sym_b(any(tom_get_slot_f_x2(any(subject).( Term ))).( Term )) { tomMatch3_9 =  true ;  }; if !(tomMatch3_9) { 
+    ; { _ = subject; { if tom_is_sort_Term(subject) { if tom_is_fun_sym_f(any(subject).( Term )) { if tom_is_fun_sym_a(any(tom_get_slot_f_x1(any(subject).( Term ))).( Term )) { var tomMatch3_9 bool =  false ; _ = tomMatch3_9; if tom_is_fun_sym_b(any(tom_get_slot_f_x2(any(subject).( Term ))).( Term )) { tomMatch3_9 =  true ;  }; if !(tomMatch3_9) { 
 
-        return tom_make_True() };  };  };  };  };  }; 
+        return tom_make_True();  };  };  };  };  };  }; 
 
 
     return tom_make_False()
@@ -97,9 +97,9 @@ func TestAp3(t *testing.T) {
 
 
 func match3_1(subject Term) Result {
-    ; { { if tom_is_sort_Term(subject) { if tom_is_fun_sym_f(any(subject).( Term )) { var tomMatch4_10 bool =  false ; _ = tomMatch4_10; if tom_is_fun_sym_a(any(tom_get_slot_f_x1(any(subject).( Term ))).( Term )) { tomMatch4_10 =  true ;  }; if !(tomMatch4_10) { var tomMatch4_9 bool =  false ; _ = tomMatch4_9; if tom_is_fun_sym_b(any(tom_get_slot_f_x2(any(subject).( Term ))).( Term )) { tomMatch4_9 =  true ;  }; if !(tomMatch4_9) { 
+    ; { _ = subject; { if tom_is_sort_Term(subject) { if tom_is_fun_sym_f(any(subject).( Term )) { var tomMatch4_10 bool =  false ; _ = tomMatch4_10; if tom_is_fun_sym_a(any(tom_get_slot_f_x1(any(subject).( Term ))).( Term )) { tomMatch4_10 =  true ;  }; if !(tomMatch4_10) { var tomMatch4_9 bool =  false ; _ = tomMatch4_9; if tom_is_fun_sym_b(any(tom_get_slot_f_x2(any(subject).( Term ))).( Term )) { tomMatch4_9 =  true ;  }; if !(tomMatch4_9) { 
 
-        return tom_make_True() };  };  };  };  };  }; 
+        return tom_make_True();  };  };  };  };  };  }; 
 
 
     return tom_make_False()
@@ -118,9 +118,9 @@ func TestAp3_1(t *testing.T) {
 
 
 func match3_2(subject Term) Result {
-    ; { { if tom_is_sort_Term(subject) { var tomMatch5_3 bool =  false ; _ = tomMatch5_3; if tom_is_fun_sym_f(any(subject).( Term )) { tomMatch5_3 =  true ;  }; if !(tomMatch5_3) { 
+    ; { _ = subject; { if tom_is_sort_Term(subject) { var tomMatch5_3 bool =  false ; _ = tomMatch5_3; if tom_is_fun_sym_f(any(subject).( Term )) { tomMatch5_3 =  true ;  }; if !(tomMatch5_3) { 
 
-        return tom_make_True() };  };  };  }; 
+        return tom_make_True();  };  };  };  }; 
 
 
     return tom_make_False()
@@ -136,9 +136,9 @@ func TestAp3_2(t *testing.T) {
 
 
 func match3_3(subject Term) Result {
-    ; { { if tom_is_sort_Term(subject) { var tomMatch6_5 bool =  false ; _ = tomMatch6_5; if tom_is_fun_sym_f(any(subject).( Term )) { tomMatch6_5 =  true ;  }; if !(tomMatch6_5) { 
+    ; { _ = subject; { if tom_is_sort_Term(subject) { var tomMatch6_5 bool =  false ; _ = tomMatch6_5; if tom_is_fun_sym_f(any(subject).( Term )) { tomMatch6_5 =  true ;  }; if !(tomMatch6_5) { 
 
-        return tom_make_True() };  };  };  }; 
+        return tom_make_True();  };  };  };  }; 
 
 
     return tom_make_False()
@@ -154,9 +154,9 @@ func TestAp3_3(t *testing.T) {
 
 
 func match3_4(subject Term) Result {
-    ; { { if tom_is_sort_Term(subject) { var tomMatch7_10 bool =  false ; _ = tomMatch7_10; var tomMatch7_12 bool =  false ; _ = tomMatch7_12; var tomMatch7_1  Term  =  *new(Term) ; _ = tomMatch7_1; var tomMatch7_5  Term  =  *new(Term) ; _ = tomMatch7_5; var tomMatch7_4  Term  =  *new(Term) ; _ = tomMatch7_4; var tomMatch7_2  Term  =  *new(Term) ; _ = tomMatch7_2; if tom_is_fun_sym_f(any(subject).( Term )) { { tomMatch7_12 =  true ; tomMatch7_4 = any(subject).( Term ); tomMatch7_1 = tom_get_slot_f_x1(tomMatch7_4); tomMatch7_2 = tom_get_slot_f_x2(tomMatch7_4);  };  } else { if tom_is_fun_sym_ff(any(subject).( Term )) { { tomMatch7_12 =  true ; tomMatch7_5 = any(subject).( Term ); tomMatch7_1 = tom_get_slot_ff_x1(tomMatch7_5); tomMatch7_2 = tom_get_slot_ff_x2(tomMatch7_5);  };  };  }; if tomMatch7_12 { if tom_is_fun_sym_a(any(tomMatch7_1).( Term )) { var tomMatch7_11 bool =  false ; _ = tomMatch7_11; if tom_is_fun_sym_b(any(tomMatch7_2).( Term )) { tomMatch7_11 =  true ;  }; if !(tomMatch7_11) { tomMatch7_10 =  true ;  };  };  }; if !(tomMatch7_10) { 
+    ; { _ = subject; { if tom_is_sort_Term(subject) { var tomMatch7_10 bool =  false ; _ = tomMatch7_10; var tomMatch7_12 bool =  false ; _ = tomMatch7_12; var tomMatch7_1  Term  =  *new(Term) ; _ = tomMatch7_1; var tomMatch7_5  Term  =  *new(Term) ; _ = tomMatch7_5; var tomMatch7_4  Term  =  *new(Term) ; _ = tomMatch7_4; var tomMatch7_2  Term  =  *new(Term) ; _ = tomMatch7_2; if tom_is_fun_sym_f(any(subject).( Term )) { { tomMatch7_12 =  true ; tomMatch7_4 = any(subject).( Term ); tomMatch7_1 = tom_get_slot_f_x1(tomMatch7_4); tomMatch7_2 = tom_get_slot_f_x2(tomMatch7_4);  };  } else { if tom_is_fun_sym_ff(any(subject).( Term )) { { tomMatch7_12 =  true ; tomMatch7_5 = any(subject).( Term ); tomMatch7_1 = tom_get_slot_ff_x1(tomMatch7_5); tomMatch7_2 = tom_get_slot_ff_x2(tomMatch7_5);  };  };  }; if tomMatch7_12 { if tom_is_fun_sym_a(any(tomMatch7_1).( Term )) { var tomMatch7_11 bool =  false ; _ = tomMatch7_11; if tom_is_fun_sym_b(any(tomMatch7_2).( Term )) { tomMatch7_11 =  true ;  }; if !(tomMatch7_11) { tomMatch7_10 =  true ;  };  };  }; if !(tomMatch7_10) { 
 
-        return tom_make_True() };  };  };  }; 
+        return tom_make_True();  };  };  };  }; 
 
 
     return tom_make_False()
@@ -179,9 +179,9 @@ func TestAp3_4(t *testing.T) {
 
 
 func match4(subject Term) Result {
-    ; { { if tom_is_sort_Term(subject) { var tomMatch8_9 bool =  false ; _ = tomMatch8_9; if tom_is_fun_sym_f(any(subject).( Term )) { if tom_is_fun_sym_a(any(tom_get_slot_f_x1(any(subject).( Term ))).( Term )) { var tomMatch8_10 bool =  false ; _ = tomMatch8_10; if tom_is_fun_sym_b(any(tom_get_slot_f_x2(any(subject).( Term ))).( Term )) { tomMatch8_10 =  true ;  }; if !(tomMatch8_10) { tomMatch8_9 =  true ;  };  };  }; if !(tomMatch8_9) { 
+    ; { _ = subject; { if tom_is_sort_Term(subject) { var tomMatch8_9 bool =  false ; _ = tomMatch8_9; if tom_is_fun_sym_f(any(subject).( Term )) { if tom_is_fun_sym_a(any(tom_get_slot_f_x1(any(subject).( Term ))).( Term )) { var tomMatch8_10 bool =  false ; _ = tomMatch8_10; if tom_is_fun_sym_b(any(tom_get_slot_f_x2(any(subject).( Term ))).( Term )) { tomMatch8_10 =  true ;  }; if !(tomMatch8_10) { tomMatch8_9 =  true ;  };  };  }; if !(tomMatch8_9) { 
 
-        return tom_make_True() };  };  };  }; 
+        return tom_make_True();  };  };  };  }; 
 
 
     return tom_make_False()
@@ -201,9 +201,9 @@ func TestAp4(t *testing.T) {
 
 
 func match5(subject Term) Result {
-    ; { { if tom_is_sort_Term(subject) { if tom_is_fun_sym_f(any(subject).( Term )) { var tom___x  Term  = tom_get_slot_f_x1(any(subject).( Term )); _ = tom___x; if tom_equal_term_Term(tom___x, tom_get_slot_f_x2(any(subject).( Term ))) { 
+    ; { _ = subject; { if tom_is_sort_Term(subject) { if tom_is_fun_sym_f(any(subject).( Term )) { var tom___x  Term  = tom_get_slot_f_x1(any(subject).( Term )); _ = tom___x; if tom_equal_term_Term(tom___x, tom_get_slot_f_x2(any(subject).( Term ))) { 
 
-        return tom_make_Equal("x",tom___x) };  };  };  };  }; 
+        return tom_make_Equal("x",tom___x);  };  };  };  };  }; 
 
 
     return tom_make_False()
@@ -219,9 +219,9 @@ func TestAp5(t *testing.T) {
 
 
 func match7(subject Term) Result {
-    ; { { if tom_is_sort_Term(subject) { var tomMatch10_6 bool =  false ; _ = tomMatch10_6; if tom_is_fun_sym_f(any(subject).( Term )) { if tom_equal_term_Term(tom_get_slot_f_x1(any(subject).( Term )), tom_get_slot_f_x2(any(subject).( Term ))) { tomMatch10_6 =  true ;  };  }; if !(tomMatch10_6) { 
+    ; { _ = subject; { if tom_is_sort_Term(subject) { var tomMatch10_6 bool =  false ; _ = tomMatch10_6; if tom_is_fun_sym_f(any(subject).( Term )) { if tom_equal_term_Term(tom_get_slot_f_x1(any(subject).( Term )), tom_get_slot_f_x2(any(subject).( Term ))) { tomMatch10_6 =  true ;  };  }; if !(tomMatch10_6) { 
 
-        return tom_make_True() };  };  };  }; 
+        return tom_make_True();  };  };  };  }; 
 
 
     return tom_make_False()
@@ -240,9 +240,9 @@ func TestAp7(t *testing.T) {
 
 
 func match8(subject Term) Result {
-    ; { { if tom_is_sort_Term(subject) { if tom_is_fun_sym_f(any(subject).( Term )) { var tomMatch11_2  Term  = tom_get_slot_f_x2(any(subject).( Term )); _ = tomMatch11_2; var tom___x  Term  = tom_get_slot_f_x1(any(subject).( Term )); _ = tom___x; var tomMatch11_9 bool =  false ; _ = tomMatch11_9; if tom_is_fun_sym_g(any(tomMatch11_2).( Term )) { if tom_equal_term_Term(tom___x, tom_get_slot_g_pred(tomMatch11_2)) { tomMatch11_9 =  true ;  };  }; if !(tomMatch11_9) { 
+    ; { _ = subject; { if tom_is_sort_Term(subject) { if tom_is_fun_sym_f(any(subject).( Term )) { var tomMatch11_2  Term  = tom_get_slot_f_x2(any(subject).( Term )); _ = tomMatch11_2; var tom___x  Term  = tom_get_slot_f_x1(any(subject).( Term )); _ = tom___x; var tomMatch11_9 bool =  false ; _ = tomMatch11_9; if tom_is_fun_sym_g(any(tomMatch11_2).( Term )) { if tom_equal_term_Term(tom___x, tom_get_slot_g_pred(tomMatch11_2)) { tomMatch11_9 =  true ;  };  }; if !(tomMatch11_9) { 
 
-        return tom_make_Equal("x",tom___x) };  };  };  };  }; 
+        return tom_make_Equal("x",tom___x);  };  };  };  };  }; 
 
 
     return tom_make_False()
@@ -260,9 +260,9 @@ func TestAp8(t *testing.T) {
 
 
 func match8_1(subject Term) Result {
-    ; { { if tom_is_sort_Term(subject) { if tom_is_fun_sym_f(any(subject).( Term )) { var tomMatch12_1  Term  = tom_get_slot_f_x1(any(subject).( Term )); _ = tomMatch12_1; var tom___x  Term  = tom_get_slot_f_x2(any(subject).( Term )); _ = tom___x; var tomMatch12_9 bool =  false ; _ = tomMatch12_9; if tom_is_fun_sym_g(any(tomMatch12_1).( Term )) { if tom_equal_term_Term(tom___x, tom_get_slot_g_pred(tomMatch12_1)) { tomMatch12_9 =  true ;  };  }; if !(tomMatch12_9) { 
+    ; { _ = subject; { if tom_is_sort_Term(subject) { if tom_is_fun_sym_f(any(subject).( Term )) { var tomMatch12_1  Term  = tom_get_slot_f_x1(any(subject).( Term )); _ = tomMatch12_1; var tom___x  Term  = tom_get_slot_f_x2(any(subject).( Term )); _ = tom___x; var tomMatch12_9 bool =  false ; _ = tomMatch12_9; if tom_is_fun_sym_g(any(tomMatch12_1).( Term )) { if tom_equal_term_Term(tom___x, tom_get_slot_g_pred(tomMatch12_1)) { tomMatch12_9 =  true ;  };  }; if !(tomMatch12_9) { 
 
-        return tom_make_Equal("x",tom___x) };  };  };  };  }; 
+        return tom_make_Equal("x",tom___x);  };  };  };  };  }; 
 
 
     return tom_make_False()
@@ -280,9 +280,9 @@ func TestAp8_1(t *testing.T) {
 
 
 func match9(subject Term) Result {
-    ; { { if tom_is_sort_Term(subject) { var tomMatch13_9 bool =  false ; _ = tomMatch13_9; if tom_is_fun_sym_f(any(subject).( Term )) { var tomMatch13_2  Term  = tom_get_slot_f_x2(any(subject).( Term )); _ = tomMatch13_2; var tomMatch13_10 bool =  false ; _ = tomMatch13_10; if tom_is_fun_sym_g(any(tomMatch13_2).( Term )) { if tom_equal_term_Term(tom_get_slot_f_x1(any(subject).( Term )), tom_get_slot_g_pred(tomMatch13_2)) { tomMatch13_10 =  true ;  };  }; if !(tomMatch13_10) { tomMatch13_9 =  true ;  };  }; if !(tomMatch13_9) { 
+    ; { _ = subject; { if tom_is_sort_Term(subject) { var tomMatch13_9 bool =  false ; _ = tomMatch13_9; if tom_is_fun_sym_f(any(subject).( Term )) { var tomMatch13_2  Term  = tom_get_slot_f_x2(any(subject).( Term )); _ = tomMatch13_2; var tomMatch13_10 bool =  false ; _ = tomMatch13_10; if tom_is_fun_sym_g(any(tomMatch13_2).( Term )) { if tom_equal_term_Term(tom_get_slot_f_x1(any(subject).( Term )), tom_get_slot_g_pred(tomMatch13_2)) { tomMatch13_10 =  true ;  };  }; if !(tomMatch13_10) { tomMatch13_9 =  true ;  };  }; if !(tomMatch13_9) { 
 
-        return tom_make_True() };  };  };  }; 
+        return tom_make_True();  };  };  };  }; 
 
 
     return tom_make_False()
@@ -300,9 +300,9 @@ func TestAp9(t *testing.T) {
 
 
 func match9_1(subject Term) Result {
-    ; { { if tom_is_sort_Term(subject) { var tomMatch14_8 bool =  false ; _ = tomMatch14_8; if tom_is_fun_sym_f(any(subject).( Term )) { var tomMatch14_9 bool =  false ; _ = tomMatch14_9; if tom_is_fun_sym_g(any(tom_get_slot_f_x2(any(subject).( Term ))).( Term )) { tomMatch14_9 =  true ;  }; if !(tomMatch14_9) { tomMatch14_8 =  true ;  };  }; if !(tomMatch14_8) { 
+    ; { _ = subject; { if tom_is_sort_Term(subject) { var tomMatch14_8 bool =  false ; _ = tomMatch14_8; if tom_is_fun_sym_f(any(subject).( Term )) { var tomMatch14_9 bool =  false ; _ = tomMatch14_9; if tom_is_fun_sym_g(any(tom_get_slot_f_x2(any(subject).( Term ))).( Term )) { tomMatch14_9 =  true ;  }; if !(tomMatch14_9) { tomMatch14_8 =  true ;  };  }; if !(tomMatch14_8) { 
 
-        return tom_make_True() };  };  };  }; 
+        return tom_make_True();  };  };  };  }; 
 
 
     return tom_make_False()
@@ -319,9 +319,9 @@ func TestAp9_1(t *testing.T) {
 
 
 func match10(subject Term) Result {
-    ; { { if tom_is_sort_Term(subject) { if tom_is_fun_sym_f(any(subject).( Term )) { var tom___x  Term  = tom_get_slot_f_x1(any(subject).( Term )); _ = tom___x; var tomMatch15_6 bool =  false ; _ = tomMatch15_6; if tom_equal_term_Term(tom___x, tom_get_slot_f_x2(any(subject).( Term ))) { tomMatch15_6 =  true ;  }; if !(tomMatch15_6) { 
+    ; { _ = subject; { if tom_is_sort_Term(subject) { if tom_is_fun_sym_f(any(subject).( Term )) { var tom___x  Term  = tom_get_slot_f_x1(any(subject).( Term )); _ = tom___x; var tomMatch15_6 bool =  false ; _ = tomMatch15_6; if tom_equal_term_Term(tom___x, tom_get_slot_f_x2(any(subject).( Term ))) { tomMatch15_6 =  true ;  }; if !(tomMatch15_6) { 
 
-        return tom_make_Equal("x",tom___x) };  };  };  };  }; 
+        return tom_make_Equal("x",tom___x);  };  };  };  };  }; 
 
 
     return tom_make_False()
@@ -337,9 +337,9 @@ func TestAp10(t *testing.T) {
 
 
 func match11(subject Term) Result {
-    ; { { if tom_is_sort_Term(subject) { if tom_is_fun_sym_f(any(subject).( Term )) { var tomMatch16_12 bool =  false ; _ = tomMatch16_12; if tom_is_fun_sym_g(any(tom_get_slot_f_x1(any(subject).( Term ))).( Term )) { tomMatch16_12 =  true ;  }; if !(tomMatch16_12) { var tomMatch16_11 bool =  false ; _ = tomMatch16_11; if tom_is_fun_sym_g(any(tom_get_slot_f_x2(any(subject).( Term ))).( Term )) { tomMatch16_11 =  true ;  }; if !(tomMatch16_11) { 
+    ; { _ = subject; { if tom_is_sort_Term(subject) { if tom_is_fun_sym_f(any(subject).( Term )) { var tomMatch16_12 bool =  false ; _ = tomMatch16_12; if tom_is_fun_sym_g(any(tom_get_slot_f_x1(any(subject).( Term ))).( Term )) { tomMatch16_12 =  true ;  }; if !(tomMatch16_12) { var tomMatch16_11 bool =  false ; _ = tomMatch16_11; if tom_is_fun_sym_g(any(tom_get_slot_f_x2(any(subject).( Term ))).( Term )) { tomMatch16_11 =  true ;  }; if !(tomMatch16_11) { 
 
-        return tom_make_True() };  };  };  };  };  }; 
+        return tom_make_True();  };  };  };  };  };  }; 
 
 
     return tom_make_False()
@@ -354,9 +354,9 @@ func TestAp11(t *testing.T) {
 
 
 func match12(subject Term) Result {
-    ; { { if tom_is_sort_Term(subject) { var tomMatch17_11 bool =  false ; _ = tomMatch17_11; if tom_is_fun_sym_f(any(subject).( Term )) { var tomMatch17_13 bool =  false ; _ = tomMatch17_13; if tom_is_fun_sym_g(any(tom_get_slot_f_x1(any(subject).( Term ))).( Term )) { tomMatch17_13 =  true ;  }; if !(tomMatch17_13) { var tomMatch17_12 bool =  false ; _ = tomMatch17_12; if tom_is_fun_sym_g(any(tom_get_slot_f_x2(any(subject).( Term ))).( Term )) { tomMatch17_12 =  true ;  }; if !(tomMatch17_12) { tomMatch17_11 =  true ;  };  };  }; if !(tomMatch17_11) { 
+    ; { _ = subject; { if tom_is_sort_Term(subject) { var tomMatch17_11 bool =  false ; _ = tomMatch17_11; if tom_is_fun_sym_f(any(subject).( Term )) { var tomMatch17_13 bool =  false ; _ = tomMatch17_13; if tom_is_fun_sym_g(any(tom_get_slot_f_x1(any(subject).( Term ))).( Term )) { tomMatch17_13 =  true ;  }; if !(tomMatch17_13) { var tomMatch17_12 bool =  false ; _ = tomMatch17_12; if tom_is_fun_sym_g(any(tom_get_slot_f_x2(any(subject).( Term ))).( Term )) { tomMatch17_12 =  true ;  }; if !(tomMatch17_12) { tomMatch17_11 =  true ;  };  };  }; if !(tomMatch17_11) { 
 
-        return tom_make_True() };  };  };  }; 
+        return tom_make_True();  };  };  };  }; 
 
 
     return tom_make_False()
@@ -371,9 +371,9 @@ func TestAp12(t *testing.T) {
 
 
 func match13(subject Term) Result {
-    ; { { if tom_is_sort_Term(subject) { if tom_is_fun_sym_f(any(subject).( Term )) { var tomMatch18_6 bool =  false ; _ = tomMatch18_6; tomMatch18_6 =  true ; if !(tomMatch18_6) { var tomMatch18_5 bool =  false ; _ = tomMatch18_5; tomMatch18_5 =  true ; if !(tomMatch18_5) { 
+    ; { _ = subject; { if tom_is_sort_Term(subject) { if tom_is_fun_sym_f(any(subject).( Term )) { var tomMatch18_6 bool =  false ; _ = tomMatch18_6; tomMatch18_6 =  true ; if !(tomMatch18_6) { var tomMatch18_5 bool =  false ; _ = tomMatch18_5; tomMatch18_5 =  true ; if !(tomMatch18_5) { 
 
-        return tom_make_True() };  };  };  };  };  }; 
+        return tom_make_True();  };  };  };  };  };  }; 
 
 
     return tom_make_False()
@@ -389,9 +389,9 @@ func TestAp13(t *testing.T) {
 
 
 func match14(subject Term) Result {
-    ; { { if tom_is_sort_Term(subject) { 
+    ; { _ = subject; { if tom_is_sort_Term(subject) { 
 
-        return tom_make_True() };  };  }; 
+        return tom_make_True();  };  };  }; 
 
 
     return tom_make_False()
@@ -400,9 +400,9 @@ func match14(subject Term) Result {
 
 
 func match15(subject Term) Result {
-    ; { { if tom_is_sort_Term(subject) { if tom_is_fun_sym_f(any(subject).( Term )) { var tomMatch20_5 bool =  false ; _ = tomMatch20_5; tomMatch20_5 =  true ; if !(tomMatch20_5) { 
+    ; { _ = subject; { if tom_is_sort_Term(subject) { if tom_is_fun_sym_f(any(subject).( Term )) { var tomMatch20_5 bool =  false ; _ = tomMatch20_5; tomMatch20_5 =  true ; if !(tomMatch20_5) { 
 
-        return tom_make_True() };  };  };  };  }; 
+        return tom_make_True();  };  };  };  };  }; 
 
 
     return tom_make_False()
@@ -419,9 +419,9 @@ func TestAp15(t *testing.T) {
 
 
 func match16(subject Term) Result {
-    ; { { if tom_is_sort_Term(subject) { if tom_is_fun_sym_f(any(subject).( Term )) { var tomMatch21_2  Term  = tom_get_slot_f_x2(any(subject).( Term )); _ = tomMatch21_2; var tom___x  Term  = tom_get_slot_f_x1(any(subject).( Term )); _ = tom___x; if tom_is_fun_sym_f(any(tomMatch21_2).( Term )) { var tomMatch21_6  Term  = tom_get_slot_f_x2(tomMatch21_2); _ = tomMatch21_6; if tom_is_fun_sym_a(any(tom_get_slot_f_x1(tomMatch21_2)).( Term )) { if tom_is_fun_sym_f(any(tomMatch21_6).( Term )) { var tomMatch21_12  Term  = tom_get_slot_f_x2(tomMatch21_6); _ = tomMatch21_12; var tomMatch21_19 bool =  false ; _ = tomMatch21_19; if tom_is_fun_sym_g(any(tomMatch21_12).( Term )) { if tom_equal_term_Term(tom___x, tom_get_slot_g_pred(tomMatch21_12)) { tomMatch21_19 =  true ;  };  }; if !(tomMatch21_19) { 
+    ; { _ = subject; { if tom_is_sort_Term(subject) { if tom_is_fun_sym_f(any(subject).( Term )) { var tomMatch21_2  Term  = tom_get_slot_f_x2(any(subject).( Term )); _ = tomMatch21_2; var tom___x  Term  = tom_get_slot_f_x1(any(subject).( Term )); _ = tom___x; if tom_is_fun_sym_f(any(tomMatch21_2).( Term )) { var tomMatch21_6  Term  = tom_get_slot_f_x2(tomMatch21_2); _ = tomMatch21_6; if tom_is_fun_sym_a(any(tom_get_slot_f_x1(tomMatch21_2)).( Term )) { if tom_is_fun_sym_f(any(tomMatch21_6).( Term )) { var tomMatch21_12  Term  = tom_get_slot_f_x2(tomMatch21_6); _ = tomMatch21_12; var tomMatch21_19 bool =  false ; _ = tomMatch21_19; if tom_is_fun_sym_g(any(tomMatch21_12).( Term )) { if tom_equal_term_Term(tom___x, tom_get_slot_g_pred(tomMatch21_12)) { tomMatch21_19 =  true ;  };  }; if !(tomMatch21_19) { 
 
-        return tom_cons_list_And(tom_make_Equal("x",tom___x),tom_cons_list_And(tom_make_Equal("y",tom_get_slot_f_x1(tomMatch21_6)),tom_empty_list_And())) };  };  };  };  };  };  };  }; 
+        return tom_cons_list_And(tom_make_Equal("x",tom___x),tom_cons_list_And(tom_make_Equal("y",tom_get_slot_f_x1(tomMatch21_6)),tom_empty_list_And()));  };  };  };  };  };  };  };  }; 
 
 
     return tom_make_False()
@@ -441,9 +441,9 @@ func TestAp16(t *testing.T) {
 
 
 func match17(subject Term) Result {
-    ; { { if tom_is_sort_Term(subject) { if tom_is_fun_sym_i(any(subject).( Term )) { var tomMatch22_6 bool =  false ; _ = tomMatch22_6; if tom_equal_term_int(1, tom_get_slot_i_val(any(subject).( Term ))) { tomMatch22_6 =  true ;  }; if !(tomMatch22_6) { 
+    ; { _ = subject; { if tom_is_sort_Term(subject) { if tom_is_fun_sym_i(any(subject).( Term )) { var tomMatch22_6 bool =  false ; _ = tomMatch22_6; if tom_equal_term_int(1, tom_get_slot_i_val(any(subject).( Term ))) { tomMatch22_6 =  true ;  }; if !(tomMatch22_6) { 
 
-        return tom_make_True() };  };  };  };  }; 
+        return tom_make_True();  };  };  };  };  }; 
 
 
     return tom_make_False()
@@ -459,9 +459,9 @@ func TestAp17(t *testing.T) {
 
 
 func match18(subject Term) Result {
-    ; { { if tom_is_sort_Term(subject) { if tom_is_fun_sym_i(any(subject).( Term )) { var tomMatch23_1  int64  = tom_get_slot_i_val(any(subject).( Term )); _ = tomMatch23_1; var tom___x  int64  = tomMatch23_1; _ = tom___x; var tomMatch23_7 bool =  false ; _ = tomMatch23_7; if tom_equal_term_int(1, tomMatch23_1) { if tom_equal_term_int(tom___x, tomMatch23_1) { tomMatch23_7 =  true ;  };  }; if !(tomMatch23_7) { 
+    ; { _ = subject; { if tom_is_sort_Term(subject) { if tom_is_fun_sym_i(any(subject).( Term )) { var tomMatch23_1  int64  = tom_get_slot_i_val(any(subject).( Term )); _ = tomMatch23_1; var tom___x  int64  = tomMatch23_1; _ = tom___x; var tomMatch23_7 bool =  false ; _ = tomMatch23_7; if tom_equal_term_int(1, tomMatch23_1) { if tom_equal_term_int(tom___x, tomMatch23_1) { tomMatch23_7 =  true ;  };  }; if !(tomMatch23_7) { 
 
-        return tom_make_Equal("j(x)",tom_make_j(tom___x)) };  };  };  };  }; 
+        return tom_make_Equal("j(x)",tom_make_j(tom___x));  };  };  };  };  }; 
 
 
     return tom_make_False()
@@ -477,9 +477,9 @@ func TestAp18(t *testing.T) {
 
 
 func match19(subject Term) Result {
-    ; { { if tom_is_sort_Term(subject) { if tom_is_fun_sym_ff(any(subject).( Term )) { var tomMatch24_1  Term  = tom_get_slot_ff_x1(any(subject).( Term )); _ = tomMatch24_1; var tomMatch24_2  Term  = tom_get_slot_ff_x2(any(subject).( Term )); _ = tomMatch24_2; if tom_is_fun_sym_i(any(tomMatch24_1).( Term )) { var tomMatch24_5  int64  = tom_get_slot_i_val(tomMatch24_1); _ = tomMatch24_5; var tom___x  int64  = tomMatch24_5; _ = tom___x; if tom_is_fun_sym_i(any(tomMatch24_2).( Term )) { if tom_equal_term_int(tom___x, tom_get_slot_i_val(tomMatch24_2)) { var tomMatch24_15 bool =  false ; _ = tomMatch24_15; if tom_equal_term_int(1, tomMatch24_5) { if tom_equal_term_int(tom___x, tomMatch24_5) { tomMatch24_15 =  true ;  };  }; if !(tomMatch24_15) { 
+    ; { _ = subject; { if tom_is_sort_Term(subject) { if tom_is_fun_sym_ff(any(subject).( Term )) { var tomMatch24_1  Term  = tom_get_slot_ff_x1(any(subject).( Term )); _ = tomMatch24_1; var tomMatch24_2  Term  = tom_get_slot_ff_x2(any(subject).( Term )); _ = tomMatch24_2; if tom_is_fun_sym_i(any(tomMatch24_1).( Term )) { var tomMatch24_5  int64  = tom_get_slot_i_val(tomMatch24_1); _ = tomMatch24_5; var tom___x  int64  = tomMatch24_5; _ = tom___x; if tom_is_fun_sym_i(any(tomMatch24_2).( Term )) { if tom_equal_term_int(tom___x, tom_get_slot_i_val(tomMatch24_2)) { var tomMatch24_15 bool =  false ; _ = tomMatch24_15; if tom_equal_term_int(1, tomMatch24_5) { if tom_equal_term_int(tom___x, tomMatch24_5) { tomMatch24_15 =  true ;  };  }; if !(tomMatch24_15) { 
 
-        return tom_make_Equal("j(x)",tom_make_j(tom___x)) };  };  };  };  };  };  };  }; 
+        return tom_make_Equal("j(x)",tom_make_j(tom___x));  };  };  };  };  };  };  };  }; 
 
 
     return tom_make_False()
@@ -495,9 +495,9 @@ func TestAp19(t *testing.T) {
 
 
 func match20(subject Term) Result {
-    ; { { if tom_is_sort_Term(subject) { if tom_is_fun_sym_ff(any(subject).( Term )) { var tomMatch25_1  Term  = tom_get_slot_ff_x1(any(subject).( Term )); _ = tomMatch25_1; var tom___x  Term  = tomMatch25_1; _ = tom___x; if tom_equal_term_Term(tom___x, tom_get_slot_ff_x2(any(subject).( Term ))) { var tomMatch25_9 bool =  false ; _ = tomMatch25_9; if tom_is_fun_sym_a(any(tomMatch25_1).( Term )) { if tom_equal_term_Term(tom___x, tomMatch25_1) { tomMatch25_9 =  true ;  };  }; if !(tomMatch25_9) { 
+    ; { _ = subject; { if tom_is_sort_Term(subject) { if tom_is_fun_sym_ff(any(subject).( Term )) { var tomMatch25_1  Term  = tom_get_slot_ff_x1(any(subject).( Term )); _ = tomMatch25_1; var tom___x  Term  = tomMatch25_1; _ = tom___x; if tom_equal_term_Term(tom___x, tom_get_slot_ff_x2(any(subject).( Term ))) { var tomMatch25_9 bool =  false ; _ = tomMatch25_9; if tom_is_fun_sym_a(any(tomMatch25_1).( Term )) { if tom_equal_term_Term(tom___x, tomMatch25_1) { tomMatch25_9 =  true ;  };  }; if !(tomMatch25_9) { 
 
-        return tom_make_Equal("x",tom___x) };  };  };  };  };  }; 
+        return tom_make_Equal("x",tom___x);  };  };  };  };  };  }; 
 
 
     return tom_make_False()

@@ -179,10 +179,10 @@ func TestNReverse(t *testing.T) {
 }
 
   func getListReverse(l List) List {
-    ; { { if tom_is_sort_List(l) { if tom_is_fun_sym_conc(any(l).( List )) { if !(tom_is_empty_conc_List(any(l).( List ))) { 
+    ; { _ = l; { if tom_is_sort_List(l) { if tom_is_fun_sym_conc(any(l).( List )) { if !(tom_is_empty_conc_List(any(l).( List ))) { 
 
         var nt List = getListReverse(tom_get_tail_conc_List(any(l).( List )))
-        return tom_append_list_conc(nt,tom_cons_list_conc(tom_get_head_conc_List(any(l).( List )),tom_empty_list_conc())) };  };  };  };  }; 
+        return tom_append_list_conc(nt,tom_cons_list_conc(tom_get_head_conc_List(any(l).( List )),tom_empty_list_conc()));  };  };  };  };  }; 
 
 
     return l
@@ -191,22 +191,22 @@ func TestNReverse(t *testing.T) {
   func getListArray(l List) []Element {
     length := getListLength(l)
     var array []Element = make([]Element, length)
-    ; { { if tom_is_sort_List(l) { if tom_is_fun_sym_conc(any(l).( List )) { if !(tom_is_empty_conc_List(any(l).( List ))) { 
+    ; { _ = l; { if tom_is_sort_List(l) { if tom_is_fun_sym_conc(any(l).( List )) { if !(tom_is_empty_conc_List(any(l).( List ))) { 
 
         array[0]=tom_get_head_conc_List(any(l).( List ))
         var tailArray []Element = getListArray(tom_get_tail_conc_List(any(l).( List )))
-        for i:=0;i<length-1;i++ { 
+        for i:=0;i<length-1;i++ {
           array[i+1]=tailArray[i]
-         };  };  };  };  };  }; 
+        };  };  };  };  };  }; 
 
 
     return array
   }
 
   func getListLength(l List) int {
-    ; { { if tom_is_sort_List(l) { if tom_is_fun_sym_conc(any(l).( List )) { if tom_is_empty_conc_List(any(l).( List )) { 
- return 0  };  };  };  }; { if tom_is_sort_List(l) { if tom_is_fun_sym_conc(any(l).( List )) { if !(tom_is_empty_conc_List(any(l).( List ))) { 
- return 1+getListLength(tom_get_tail_conc_List(any(l).( List )))  };  };  };  };  }; 
+    ; { _ = l; { if tom_is_sort_List(l) { if tom_is_fun_sym_conc(any(l).( List )) { if tom_is_empty_conc_List(any(l).( List )) { 
+ return 0 ;  };  };  };  }; { if tom_is_sort_List(l) { if tom_is_fun_sym_conc(any(l).( List )) { if !(tom_is_empty_conc_List(any(l).( List ))) { 
+ return 1+getListLength(tom_get_tail_conc_List(any(l).( List ))) ;  };  };  };  };  }; 
 
     return 0
   }

@@ -41,9 +41,9 @@ func tom_is_sort_Nat(t any) bool { return (0==0);  }; func tom_is_fun_sym_zero(t
 
 
 func plus(t1 int, t2 int) int {
-  ; { { if tom_is_sort_Nat(t1) { if tom_is_sort_Nat(t2) { if tom_is_fun_sym_zero(any(t2).( int )) { 
- return any(t1).( int ) };  };  };  }; { if tom_is_sort_Nat(t1) { if tom_is_sort_Nat(t2) { if tom_is_fun_sym_suc(any(t2).( int )) { 
- return tom_make_suc(plus(any(t1).( int ),tom_get_slot_suc_p(any(t2).( int )))) };  };  };  };  }; 
+  ; { _ = t1; _ = t2; { if tom_is_sort_Nat(t1) { if tom_is_sort_Nat(t2) { if tom_is_fun_sym_zero(any(t2).( int )) { 
+ return any(t1).( int );  };  };  };  }; { if tom_is_sort_Nat(t1) { if tom_is_sort_Nat(t2) { if tom_is_fun_sym_suc(any(t2).( int )) { 
+ return tom_make_suc(plus(any(t1).( int ),tom_get_slot_suc_p(any(t2).( int ))));  };  };  };  };  }; 
 
   panic("no rule applies")
 }

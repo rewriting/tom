@@ -137,10 +137,10 @@ func getDouble(t aterm.ATerm) float64 {
 
 
 func fib(t int64) int64 {
-    ; { { if  true  { if tom_equal_term_int(0, any(t).( int64 )) { 
- return 1  };  };  }; { if  true  { if tom_equal_term_int(1, any(t).( int64 )) { 
- return 1  };  };  }; { if  true  { var tom___n  int64  = any(t).( int64 ); _ = tom___n; 
- return fib(tom___n - 1) + fib(tom___n - 2)  };  };  }; 
+    ; { _ = t; { if  true  { if tom_equal_term_int(0, any(t).( int64 )) { 
+ return 1 ;  };  };  }; { if  true  { if tom_equal_term_int(1, any(t).( int64 )) { 
+ return 1 ;  };  };  }; { if  true  { var tom___n  int64  = any(t).( int64 ); _ = tom___n; 
+ return fib(tom___n - 1) + fib(tom___n - 2) ;  };  };  }; 
 
 		return -1
   }
@@ -148,13 +148,13 @@ func fib(t int64) int64 {
 
 
 func fibE(t aterm.ATerm) int64 {
-    ; { { if tom_is_sort_E(t) { if tom_is_fun_sym_int(any(t).( aterm.ATerm )) { if tom_equal_term_int(0, tom_get_slot_int_intSlot(any(t).( aterm.ATerm ))) { 
- return 1  };  };  };  }; { if tom_is_sort_E(t) { if tom_is_fun_sym_int(any(t).( aterm.ATerm )) { if tom_equal_term_int(1, tom_get_slot_int_intSlot(any(t).( aterm.ATerm ))) { 
- return 1  };  };  };  }; { if tom_is_sort_E(t) { if tom_is_fun_sym_int(any(t).( aterm.ATerm )) { var tom___n  int64  = tom_get_slot_int_intSlot(any(t).( aterm.ATerm )); _ = tom___n; 
+    ; { _ = t; { if tom_is_sort_E(t) { if tom_is_fun_sym_int(any(t).( aterm.ATerm )) { if tom_equal_term_int(0, tom_get_slot_int_intSlot(any(t).( aterm.ATerm ))) { 
+ return 1 ;  };  };  };  }; { if tom_is_sort_E(t) { if tom_is_fun_sym_int(any(t).( aterm.ATerm )) { if tom_equal_term_int(1, tom_get_slot_int_intSlot(any(t).( aterm.ATerm ))) { 
+ return 1 ;  };  };  };  }; { if tom_is_sort_E(t) { if tom_is_fun_sym_int(any(t).( aterm.ATerm )) { var tom___n  int64  = tom_get_slot_int_intSlot(any(t).( aterm.ATerm )); _ = tom___n; 
 
         n1 := tom___n - 1
         n2 := tom___n - 2
-        return fibE(tom_make_int(n1)) + fibE(tom_make_int(n2))  };  };  };  }; 
+        return fibE(tom_make_int(n1)) + fibE(tom_make_int(n2)) ;  };  };  };  }; 
 
     return -1
   }
@@ -162,10 +162,10 @@ func fibE(t aterm.ATerm) int64 {
 
 
 func fibLong(t int64) int64 {
-    ; { { if  true  { if tom_equal_term_long(0, any(t).( int64 )) { 
- return 1  };  };  }; { if  true  { if tom_equal_term_long(1, any(t).( int64 )) { 
- return 1  };  };  }; { if  true  { var tom___n  int64  = any(t).( int64 ); _ = tom___n; 
- return fibLong(tom___n - 1) + fibLong(tom___n - 2)  };  };  }; 
+    ; { _ = t; { if  true  { if tom_equal_term_long(0, any(t).( int64 )) { 
+ return 1 ;  };  };  }; { if  true  { if tom_equal_term_long(1, any(t).( int64 )) { 
+ return 1 ;  };  };  }; { if  true  { var tom___n  int64  = any(t).( int64 ); _ = tom___n; 
+ return fibLong(tom___n - 1) + fibLong(tom___n - 2) ;  };  };  }; 
 
 		return -1
   }
@@ -173,13 +173,13 @@ func fibLong(t int64) int64 {
 
 
 func fibLongE(t aterm.ATerm) int64 {
-    ; { { if tom_is_sort_E(t) { if tom_is_fun_sym_long(any(t).( aterm.ATerm )) { if tom_equal_term_long(0, tom_get_slot_long_longSlot(any(t).( aterm.ATerm ))) { 
- return 1  };  };  };  }; { if tom_is_sort_E(t) { if tom_is_fun_sym_long(any(t).( aterm.ATerm )) { if tom_equal_term_long(1, tom_get_slot_long_longSlot(any(t).( aterm.ATerm ))) { 
- return 1  };  };  };  }; { if tom_is_sort_E(t) { if tom_is_fun_sym_long(any(t).( aterm.ATerm )) { var tom___n  int64  = tom_get_slot_long_longSlot(any(t).( aterm.ATerm )); _ = tom___n; 
+    ; { _ = t; { if tom_is_sort_E(t) { if tom_is_fun_sym_long(any(t).( aterm.ATerm )) { if tom_equal_term_long(0, tom_get_slot_long_longSlot(any(t).( aterm.ATerm ))) { 
+ return 1 ;  };  };  };  }; { if tom_is_sort_E(t) { if tom_is_fun_sym_long(any(t).( aterm.ATerm )) { if tom_equal_term_long(1, tom_get_slot_long_longSlot(any(t).( aterm.ATerm ))) { 
+ return 1 ;  };  };  };  }; { if tom_is_sort_E(t) { if tom_is_fun_sym_long(any(t).( aterm.ATerm )) { var tom___n  int64  = tom_get_slot_long_longSlot(any(t).( aterm.ATerm )); _ = tom___n; 
 
         n1 := tom___n - 1
         n2 := tom___n - 2
-        return fibLongE(tom_make_long(n1)) + fibLongE(tom_make_long(n2))  };  };  };  }; 
+        return fibLongE(tom_make_long(n1)) + fibLongE(tom_make_long(n2)) ;  };  };  };  }; 
 
     return -1
   }
@@ -187,9 +187,9 @@ func fibLongE(t aterm.ATerm) int64 {
 
 
 func matchString(t string) string {
-    ; { { if  true  { if tom_equal_term_String("Albert", any(t).( string )) { 
- return "Albert"  };  };  }; { if  true  { if tom_equal_term_String("Roger", any(t).( string )) { 
- return "Roger"  };  };  };  }; 
+    ; { _ = t; { if  true  { if tom_equal_term_String("Albert", any(t).( string )) { 
+ return "Albert" ;  };  };  }; { if  true  { if tom_equal_term_String("Roger", any(t).( string )) { 
+ return "Roger" ;  };  };  };  }; 
 
 		return "Unknown" 
   }
@@ -197,10 +197,10 @@ func matchString(t string) string {
 
 
 func matchStringE(t aterm.ATerm) string {
-    ; { { if tom_is_sort_E(t) { if tom_is_fun_sym_string(any(t).( aterm.ATerm )) { if tom_equal_term_String("Albert", tom_get_slot_string_stringSlot(any(t).( aterm.ATerm ))) { 
- return "Albert"  };  };  };  }; { if tom_is_sort_E(t) { if tom_is_fun_sym_string(any(t).( aterm.ATerm )) { if tom_equal_term_String("Roger", tom_get_slot_string_stringSlot(any(t).( aterm.ATerm ))) { 
- return "Roger"  };  };  };  }; { if tom_is_sort_E(t) { if tom_is_fun_sym_string(any(t).( aterm.ATerm )) { 
- return "Unknown"  };  };  };  }; 
+    ; { _ = t; { if tom_is_sort_E(t) { if tom_is_fun_sym_string(any(t).( aterm.ATerm )) { if tom_equal_term_String("Albert", tom_get_slot_string_stringSlot(any(t).( aterm.ATerm ))) { 
+ return "Albert" ;  };  };  };  }; { if tom_is_sort_E(t) { if tom_is_fun_sym_string(any(t).( aterm.ATerm )) { if tom_equal_term_String("Roger", tom_get_slot_string_stringSlot(any(t).( aterm.ATerm ))) { 
+ return "Roger" ;  };  };  };  }; { if tom_is_sort_E(t) { if tom_is_fun_sym_string(any(t).( aterm.ATerm )) { 
+ return "Unknown" ;  };  };  };  }; 
 
 		return "Unknown" 
   }
@@ -208,9 +208,9 @@ func matchStringE(t aterm.ATerm) string {
 
 
 func matchChar(t rune) rune {
-    ; { { if  true  { if tom_equal_term_char('a', any(t).( rune )) { 
- return 'a'  };  };  }; { if  true  { if tom_equal_term_char('b', any(t).( rune )) { 
- return 'b'  };  };  };  }; 
+    ; { _ = t; { if  true  { if tom_equal_term_char('a', any(t).( rune )) { 
+ return 'a' ;  };  };  }; { if  true  { if tom_equal_term_char('b', any(t).( rune )) { 
+ return 'b' ;  };  };  };  }; 
 
 		return '-' 
   }
@@ -218,9 +218,9 @@ func matchChar(t rune) rune {
 
 
 func matchCharE(t aterm.ATerm) rune {
-    ; { { if tom_is_sort_E(t) { if tom_is_fun_sym_char(any(t).( aterm.ATerm )) { if tom_equal_term_char('a', tom_get_slot_char_charSlot(any(t).( aterm.ATerm ))) { 
- return 'a'  };  };  };  }; { if tom_is_sort_E(t) { if tom_is_fun_sym_char(any(t).( aterm.ATerm )) { if tom_equal_term_char('b', tom_get_slot_char_charSlot(any(t).( aterm.ATerm ))) { 
- return 'b'  };  };  };  };  }; 
+    ; { _ = t; { if tom_is_sort_E(t) { if tom_is_fun_sym_char(any(t).( aterm.ATerm )) { if tom_equal_term_char('a', tom_get_slot_char_charSlot(any(t).( aterm.ATerm ))) { 
+ return 'a' ;  };  };  };  }; { if tom_is_sort_E(t) { if tom_is_fun_sym_char(any(t).( aterm.ATerm )) { if tom_equal_term_char('b', tom_get_slot_char_charSlot(any(t).( aterm.ATerm ))) { 
+ return 'b' ;  };  };  };  };  }; 
 
 		return '-' 
   }
@@ -228,16 +228,16 @@ func matchCharE(t aterm.ATerm) rune {
 
 
 func matchInt(t int64) int64 {
-    ; { { if  true  { if tom_equal_term_int(-1, any(t).( int64 )) { 
- return t  };  };  }; { if  true  { if tom_equal_term_int(-2, any(t).( int64 )) { 
- return -2  };  };  };  }; 
+    ; { _ = t; { if  true  { if tom_equal_term_int(-1, any(t).( int64 )) { 
+ return t ;  };  };  }; { if  true  { if tom_equal_term_int(-2, any(t).( int64 )) { 
+ return -2 ;  };  };  };  }; 
 
 		return 0 
   }
 func matchDouble(t float64) float64 {
-    ; { { if  true  { if tom_equal_term_double(1.23, any(t).( float64 )) { 
- return 1.23  };  };  }; { if  true  { if tom_equal_term_double(3.14, any(t).( float64 )) { 
- return 3.14  };  };  };  }; 
+    ; { _ = t; { if  true  { if tom_equal_term_double(1.23, any(t).( float64 )) { 
+ return 1.23 ;  };  };  }; { if  true  { if tom_equal_term_double(3.14, any(t).( float64 )) { 
+ return 3.14 ;  };  };  };  }; 
 
 		return 0 
   }
@@ -245,9 +245,9 @@ func matchDouble(t float64) float64 {
 
 
 func matchDoubleE(t aterm.ATerm) float64 {
-    ; { { if tom_is_sort_E(t) { if tom_is_fun_sym_double(any(t).( aterm.ATerm )) { if tom_equal_term_double(1.23, tom_get_slot_double_doubleSlot(any(t).( aterm.ATerm ))) { 
- return 1.23  };  };  };  }; { if tom_is_sort_E(t) { if tom_is_fun_sym_double(any(t).( aterm.ATerm )) { if tom_equal_term_double(3.14, tom_get_slot_double_doubleSlot(any(t).( aterm.ATerm ))) { 
- return 3.14  };  };  };  };  }; 
+    ; { _ = t; { if tom_is_sort_E(t) { if tom_is_fun_sym_double(any(t).( aterm.ATerm )) { if tom_equal_term_double(1.23, tom_get_slot_double_doubleSlot(any(t).( aterm.ATerm ))) { 
+ return 1.23 ;  };  };  };  }; { if tom_is_sort_E(t) { if tom_is_fun_sym_double(any(t).( aterm.ATerm )) { if tom_equal_term_double(3.14, tom_get_slot_double_doubleSlot(any(t).( aterm.ATerm ))) { 
+ return 3.14 ;  };  };  };  };  }; 
 
 		return 0 
   }
@@ -299,16 +299,16 @@ func TestMatchString3(t *testing.T) {
     ab := 0
     bc := 0
     abc := 0
-    ; { { if  true  { if tom_is_fun_sym_concString(any(s).( string )) { var tomMatch12_end_4  string  = any(s).( string ); _ = tomMatch12_end_4; for { { if !(tom_is_empty_concString_String(tomMatch12_end_4)) { if tom_equal_term_char('a', tom_get_head_concString_String(tomMatch12_end_4)) { 
- a++  };  }; if tom_is_empty_concString_String(tomMatch12_end_4) { tomMatch12_end_4 = any(s).( string );  } else { tomMatch12_end_4 = tom_get_tail_concString_String(tomMatch12_end_4);  };  };  if !(!(tom_equal_term_String(tomMatch12_end_4, any(s).( string )))) { break; }; };  };  };  }; { if  true  { if tom_is_fun_sym_concString(any(s).( string )) { var tomMatch12_end_13  string  = any(s).( string ); _ = tomMatch12_end_13; for { { if !(tom_is_empty_concString_String(tomMatch12_end_13)) { if tom_equal_term_char('b', tom_get_head_concString_String(tomMatch12_end_13)) { 
- b++  };  }; if tom_is_empty_concString_String(tomMatch12_end_13) { tomMatch12_end_13 = any(s).( string );  } else { tomMatch12_end_13 = tom_get_tail_concString_String(tomMatch12_end_13);  };  };  if !(!(tom_equal_term_String(tomMatch12_end_13, any(s).( string )))) { break; }; };  };  };  }; { if  true  { if tom_is_fun_sym_concString(any(s).( string )) { var tomMatch12_end_22  string  = any(s).( string ); _ = tomMatch12_end_22; for { { if !(tom_is_empty_concString_String(tomMatch12_end_22)) { if tom_equal_term_char('c', tom_get_head_concString_String(tomMatch12_end_22)) { 
- c++  };  }; if tom_is_empty_concString_String(tomMatch12_end_22) { tomMatch12_end_22 = any(s).( string );  } else { tomMatch12_end_22 = tom_get_tail_concString_String(tomMatch12_end_22);  };  };  if !(!(tom_equal_term_String(tomMatch12_end_22, any(s).( string )))) { break; }; };  };  };  }; { if  true  { if tom_is_fun_sym_concString(any(s).( string )) { var tomMatch12_end_31  string  = any(s).( string ); _ = tomMatch12_end_31; for { { if !(tom_is_empty_concString_String(tomMatch12_end_31)) { if tom_equal_term_char('a', tom_get_head_concString_String(tomMatch12_end_31)) { var tomMatch12_32  string  = tom_get_tail_concString_String(tomMatch12_end_31); _ = tomMatch12_32; var tomMatch12_end_35  string  = tomMatch12_32; _ = tomMatch12_end_35; for { { if !(tom_is_empty_concString_String(tomMatch12_end_35)) { if tom_equal_term_char('b', tom_get_head_concString_String(tomMatch12_end_35)) { 
- a_b++  };  }; if tom_is_empty_concString_String(tomMatch12_end_35) { tomMatch12_end_35 = tomMatch12_32;  } else { tomMatch12_end_35 = tom_get_tail_concString_String(tomMatch12_end_35);  };  };  if !(!(tom_equal_term_String(tomMatch12_end_35, tomMatch12_32))) { break; }; };  };  }; if tom_is_empty_concString_String(tomMatch12_end_31) { tomMatch12_end_31 = any(s).( string );  } else { tomMatch12_end_31 = tom_get_tail_concString_String(tomMatch12_end_31);  };  };  if !(!(tom_equal_term_String(tomMatch12_end_31, any(s).( string )))) { break; }; };  };  };  }; { if  true  { if tom_is_fun_sym_concString(any(s).( string )) { var tomMatch12_end_46  string  = any(s).( string ); _ = tomMatch12_end_46; for { { if !(tom_is_empty_concString_String(tomMatch12_end_46)) { if tom_equal_term_char('a', tom_get_head_concString_String(tomMatch12_end_46)) { var tomMatch12_47  string  = tom_get_tail_concString_String(tomMatch12_end_46); _ = tomMatch12_47; var tomMatch12_end_50  string  = tomMatch12_47; _ = tomMatch12_end_50; for { { if !(tom_is_empty_concString_String(tomMatch12_end_50)) { if tom_equal_term_char('c', tom_get_head_concString_String(tomMatch12_end_50)) { 
- a_c++  };  }; if tom_is_empty_concString_String(tomMatch12_end_50) { tomMatch12_end_50 = tomMatch12_47;  } else { tomMatch12_end_50 = tom_get_tail_concString_String(tomMatch12_end_50);  };  };  if !(!(tom_equal_term_String(tomMatch12_end_50, tomMatch12_47))) { break; }; };  };  }; if tom_is_empty_concString_String(tomMatch12_end_46) { tomMatch12_end_46 = any(s).( string );  } else { tomMatch12_end_46 = tom_get_tail_concString_String(tomMatch12_end_46);  };  };  if !(!(tom_equal_term_String(tomMatch12_end_46, any(s).( string )))) { break; }; };  };  };  }; { if  true  { if tom_is_fun_sym_concString(any(s).( string )) { var tomMatch12_end_61  string  = any(s).( string ); _ = tomMatch12_end_61; for { { if !(tom_is_empty_concString_String(tomMatch12_end_61)) { if tom_equal_term_char('b', tom_get_head_concString_String(tomMatch12_end_61)) { var tomMatch12_62  string  = tom_get_tail_concString_String(tomMatch12_end_61); _ = tomMatch12_62; var tomMatch12_end_65  string  = tomMatch12_62; _ = tomMatch12_end_65; for { { if !(tom_is_empty_concString_String(tomMatch12_end_65)) { if tom_equal_term_char('c', tom_get_head_concString_String(tomMatch12_end_65)) { 
- b_c++  };  }; if tom_is_empty_concString_String(tomMatch12_end_65) { tomMatch12_end_65 = tomMatch12_62;  } else { tomMatch12_end_65 = tom_get_tail_concString_String(tomMatch12_end_65);  };  };  if !(!(tom_equal_term_String(tomMatch12_end_65, tomMatch12_62))) { break; }; };  };  }; if tom_is_empty_concString_String(tomMatch12_end_61) { tomMatch12_end_61 = any(s).( string );  } else { tomMatch12_end_61 = tom_get_tail_concString_String(tomMatch12_end_61);  };  };  if !(!(tom_equal_term_String(tomMatch12_end_61, any(s).( string )))) { break; }; };  };  };  }; { if  true  { if tom_is_fun_sym_concString(any(s).( string )) { var tomMatch12_end_77  string  = any(s).( string ); _ = tomMatch12_end_77; for { { var tomMatch12_end_80  string  = tomMatch12_end_77; _ = tomMatch12_end_80; for { { var tomMatch12_73  string  = tom_get_slice_concString(tomMatch12_end_77,tomMatch12_end_80,tom_empty_list_concString()); _ = tomMatch12_73; if tom_is_fun_sym_concString(tomMatch12_73) { if !(tom_is_empty_concString_String(tomMatch12_73)) { if tom_equal_term_char('a', tom_get_head_concString_String(tomMatch12_73)) { var tomMatch12_83  string  = tom_get_tail_concString_String(tomMatch12_73); _ = tomMatch12_83; if !(tom_is_empty_concString_String(tomMatch12_83)) { if tom_equal_term_char('b', tom_get_head_concString_String(tomMatch12_83)) { if tom_is_empty_concString_String(tom_get_tail_concString_String(tomMatch12_83)) { 
- ab++  };  };  };  };  };  }; if tom_is_empty_concString_String(tomMatch12_end_80) { tomMatch12_end_80 = tomMatch12_end_77;  } else { tomMatch12_end_80 = tom_get_tail_concString_String(tomMatch12_end_80);  };  };  if !(!(tom_equal_term_String(tomMatch12_end_80, tomMatch12_end_77))) { break; }; }; if tom_is_empty_concString_String(tomMatch12_end_77) { tomMatch12_end_77 = any(s).( string );  } else { tomMatch12_end_77 = tom_get_tail_concString_String(tomMatch12_end_77);  };  };  if !(!(tom_equal_term_String(tomMatch12_end_77, any(s).( string )))) { break; }; };  };  };  }; { if  true  { if tom_is_fun_sym_concString(any(s).( string )) { var tomMatch12_end_94  string  = any(s).( string ); _ = tomMatch12_end_94; for { { var tomMatch12_end_97  string  = tomMatch12_end_94; _ = tomMatch12_end_97; for { { var tomMatch12_90  string  = tom_get_slice_concString(tomMatch12_end_94,tomMatch12_end_97,tom_empty_list_concString()); _ = tomMatch12_90; if tom_is_fun_sym_concString(tomMatch12_90) { if !(tom_is_empty_concString_String(tomMatch12_90)) { if tom_equal_term_char('b', tom_get_head_concString_String(tomMatch12_90)) { var tomMatch12_100  string  = tom_get_tail_concString_String(tomMatch12_90); _ = tomMatch12_100; if !(tom_is_empty_concString_String(tomMatch12_100)) { if tom_equal_term_char('c', tom_get_head_concString_String(tomMatch12_100)) { if tom_is_empty_concString_String(tom_get_tail_concString_String(tomMatch12_100)) { 
- bc++  };  };  };  };  };  }; if tom_is_empty_concString_String(tomMatch12_end_97) { tomMatch12_end_97 = tomMatch12_end_94;  } else { tomMatch12_end_97 = tom_get_tail_concString_String(tomMatch12_end_97);  };  };  if !(!(tom_equal_term_String(tomMatch12_end_97, tomMatch12_end_94))) { break; }; }; if tom_is_empty_concString_String(tomMatch12_end_94) { tomMatch12_end_94 = any(s).( string );  } else { tomMatch12_end_94 = tom_get_tail_concString_String(tomMatch12_end_94);  };  };  if !(!(tom_equal_term_String(tomMatch12_end_94, any(s).( string )))) { break; }; };  };  };  }; { if  true  { if tom_is_fun_sym_concString(any(s).( string )) { var tomMatch12_end_111  string  = any(s).( string ); _ = tomMatch12_end_111; for { { var tomMatch12_end_114  string  = tomMatch12_end_111; _ = tomMatch12_end_114; for { { var tomMatch12_107  string  = tom_get_slice_concString(tomMatch12_end_111,tomMatch12_end_114,tom_empty_list_concString()); _ = tomMatch12_107; if tom_is_fun_sym_concString(tomMatch12_107) { if !(tom_is_empty_concString_String(tomMatch12_107)) { if tom_equal_term_char('a', tom_get_head_concString_String(tomMatch12_107)) { var tomMatch12_117  string  = tom_get_tail_concString_String(tomMatch12_107); _ = tomMatch12_117; if !(tom_is_empty_concString_String(tomMatch12_117)) { if tom_equal_term_char('b', tom_get_head_concString_String(tomMatch12_117)) { var tomMatch12_118  string  = tom_get_tail_concString_String(tomMatch12_117); _ = tomMatch12_118; if !(tom_is_empty_concString_String(tomMatch12_118)) { if tom_equal_term_char('c', tom_get_head_concString_String(tomMatch12_118)) { if tom_is_empty_concString_String(tom_get_tail_concString_String(tomMatch12_118)) { 
- abc++  };  };  };  };  };  };  };  }; if tom_is_empty_concString_String(tomMatch12_end_114) { tomMatch12_end_114 = tomMatch12_end_111;  } else { tomMatch12_end_114 = tom_get_tail_concString_String(tomMatch12_end_114);  };  };  if !(!(tom_equal_term_String(tomMatch12_end_114, tomMatch12_end_111))) { break; }; }; if tom_is_empty_concString_String(tomMatch12_end_111) { tomMatch12_end_111 = any(s).( string );  } else { tomMatch12_end_111 = tom_get_tail_concString_String(tomMatch12_end_111);  };  };  if !(!(tom_equal_term_String(tomMatch12_end_111, any(s).( string )))) { break; }; };  };  };  };  }; 
+    ; { _ = s; { if  true  { if tom_is_fun_sym_concString(any(s).( string )) { var tomMatch12_end_4  string  = any(s).( string ); _ = tomMatch12_end_4; for { { if !(tom_is_empty_concString_String(tomMatch12_end_4)) { if tom_equal_term_char('a', tom_get_head_concString_String(tomMatch12_end_4)) { 
+ a++ ;  };  }; if tom_is_empty_concString_String(tomMatch12_end_4) { tomMatch12_end_4 = any(s).( string );  } else { tomMatch12_end_4 = tom_get_tail_concString_String(tomMatch12_end_4);  };  };  if !(!(tom_equal_term_String(tomMatch12_end_4, any(s).( string )))) { break; }; };  };  };  }; { if  true  { if tom_is_fun_sym_concString(any(s).( string )) { var tomMatch12_end_13  string  = any(s).( string ); _ = tomMatch12_end_13; for { { if !(tom_is_empty_concString_String(tomMatch12_end_13)) { if tom_equal_term_char('b', tom_get_head_concString_String(tomMatch12_end_13)) { 
+ b++ ;  };  }; if tom_is_empty_concString_String(tomMatch12_end_13) { tomMatch12_end_13 = any(s).( string );  } else { tomMatch12_end_13 = tom_get_tail_concString_String(tomMatch12_end_13);  };  };  if !(!(tom_equal_term_String(tomMatch12_end_13, any(s).( string )))) { break; }; };  };  };  }; { if  true  { if tom_is_fun_sym_concString(any(s).( string )) { var tomMatch12_end_22  string  = any(s).( string ); _ = tomMatch12_end_22; for { { if !(tom_is_empty_concString_String(tomMatch12_end_22)) { if tom_equal_term_char('c', tom_get_head_concString_String(tomMatch12_end_22)) { 
+ c++ ;  };  }; if tom_is_empty_concString_String(tomMatch12_end_22) { tomMatch12_end_22 = any(s).( string );  } else { tomMatch12_end_22 = tom_get_tail_concString_String(tomMatch12_end_22);  };  };  if !(!(tom_equal_term_String(tomMatch12_end_22, any(s).( string )))) { break; }; };  };  };  }; { if  true  { if tom_is_fun_sym_concString(any(s).( string )) { var tomMatch12_end_31  string  = any(s).( string ); _ = tomMatch12_end_31; for { { if !(tom_is_empty_concString_String(tomMatch12_end_31)) { if tom_equal_term_char('a', tom_get_head_concString_String(tomMatch12_end_31)) { var tomMatch12_32  string  = tom_get_tail_concString_String(tomMatch12_end_31); _ = tomMatch12_32; var tomMatch12_end_35  string  = tomMatch12_32; _ = tomMatch12_end_35; for { { if !(tom_is_empty_concString_String(tomMatch12_end_35)) { if tom_equal_term_char('b', tom_get_head_concString_String(tomMatch12_end_35)) { 
+ a_b++ ;  };  }; if tom_is_empty_concString_String(tomMatch12_end_35) { tomMatch12_end_35 = tomMatch12_32;  } else { tomMatch12_end_35 = tom_get_tail_concString_String(tomMatch12_end_35);  };  };  if !(!(tom_equal_term_String(tomMatch12_end_35, tomMatch12_32))) { break; }; };  };  }; if tom_is_empty_concString_String(tomMatch12_end_31) { tomMatch12_end_31 = any(s).( string );  } else { tomMatch12_end_31 = tom_get_tail_concString_String(tomMatch12_end_31);  };  };  if !(!(tom_equal_term_String(tomMatch12_end_31, any(s).( string )))) { break; }; };  };  };  }; { if  true  { if tom_is_fun_sym_concString(any(s).( string )) { var tomMatch12_end_46  string  = any(s).( string ); _ = tomMatch12_end_46; for { { if !(tom_is_empty_concString_String(tomMatch12_end_46)) { if tom_equal_term_char('a', tom_get_head_concString_String(tomMatch12_end_46)) { var tomMatch12_47  string  = tom_get_tail_concString_String(tomMatch12_end_46); _ = tomMatch12_47; var tomMatch12_end_50  string  = tomMatch12_47; _ = tomMatch12_end_50; for { { if !(tom_is_empty_concString_String(tomMatch12_end_50)) { if tom_equal_term_char('c', tom_get_head_concString_String(tomMatch12_end_50)) { 
+ a_c++ ;  };  }; if tom_is_empty_concString_String(tomMatch12_end_50) { tomMatch12_end_50 = tomMatch12_47;  } else { tomMatch12_end_50 = tom_get_tail_concString_String(tomMatch12_end_50);  };  };  if !(!(tom_equal_term_String(tomMatch12_end_50, tomMatch12_47))) { break; }; };  };  }; if tom_is_empty_concString_String(tomMatch12_end_46) { tomMatch12_end_46 = any(s).( string );  } else { tomMatch12_end_46 = tom_get_tail_concString_String(tomMatch12_end_46);  };  };  if !(!(tom_equal_term_String(tomMatch12_end_46, any(s).( string )))) { break; }; };  };  };  }; { if  true  { if tom_is_fun_sym_concString(any(s).( string )) { var tomMatch12_end_61  string  = any(s).( string ); _ = tomMatch12_end_61; for { { if !(tom_is_empty_concString_String(tomMatch12_end_61)) { if tom_equal_term_char('b', tom_get_head_concString_String(tomMatch12_end_61)) { var tomMatch12_62  string  = tom_get_tail_concString_String(tomMatch12_end_61); _ = tomMatch12_62; var tomMatch12_end_65  string  = tomMatch12_62; _ = tomMatch12_end_65; for { { if !(tom_is_empty_concString_String(tomMatch12_end_65)) { if tom_equal_term_char('c', tom_get_head_concString_String(tomMatch12_end_65)) { 
+ b_c++ ;  };  }; if tom_is_empty_concString_String(tomMatch12_end_65) { tomMatch12_end_65 = tomMatch12_62;  } else { tomMatch12_end_65 = tom_get_tail_concString_String(tomMatch12_end_65);  };  };  if !(!(tom_equal_term_String(tomMatch12_end_65, tomMatch12_62))) { break; }; };  };  }; if tom_is_empty_concString_String(tomMatch12_end_61) { tomMatch12_end_61 = any(s).( string );  } else { tomMatch12_end_61 = tom_get_tail_concString_String(tomMatch12_end_61);  };  };  if !(!(tom_equal_term_String(tomMatch12_end_61, any(s).( string )))) { break; }; };  };  };  }; { if  true  { if tom_is_fun_sym_concString(any(s).( string )) { var tomMatch12_end_77  string  = any(s).( string ); _ = tomMatch12_end_77; for { { var tomMatch12_end_80  string  = tomMatch12_end_77; _ = tomMatch12_end_80; for { { var tomMatch12_73  string  = tom_get_slice_concString(tomMatch12_end_77,tomMatch12_end_80,tom_empty_list_concString()); _ = tomMatch12_73; if tom_is_fun_sym_concString(tomMatch12_73) { if !(tom_is_empty_concString_String(tomMatch12_73)) { if tom_equal_term_char('a', tom_get_head_concString_String(tomMatch12_73)) { var tomMatch12_83  string  = tom_get_tail_concString_String(tomMatch12_73); _ = tomMatch12_83; if !(tom_is_empty_concString_String(tomMatch12_83)) { if tom_equal_term_char('b', tom_get_head_concString_String(tomMatch12_83)) { if tom_is_empty_concString_String(tom_get_tail_concString_String(tomMatch12_83)) { 
+ ab++ ;  };  };  };  };  };  }; if tom_is_empty_concString_String(tomMatch12_end_80) { tomMatch12_end_80 = tomMatch12_end_77;  } else { tomMatch12_end_80 = tom_get_tail_concString_String(tomMatch12_end_80);  };  };  if !(!(tom_equal_term_String(tomMatch12_end_80, tomMatch12_end_77))) { break; }; }; if tom_is_empty_concString_String(tomMatch12_end_77) { tomMatch12_end_77 = any(s).( string );  } else { tomMatch12_end_77 = tom_get_tail_concString_String(tomMatch12_end_77);  };  };  if !(!(tom_equal_term_String(tomMatch12_end_77, any(s).( string )))) { break; }; };  };  };  }; { if  true  { if tom_is_fun_sym_concString(any(s).( string )) { var tomMatch12_end_94  string  = any(s).( string ); _ = tomMatch12_end_94; for { { var tomMatch12_end_97  string  = tomMatch12_end_94; _ = tomMatch12_end_97; for { { var tomMatch12_90  string  = tom_get_slice_concString(tomMatch12_end_94,tomMatch12_end_97,tom_empty_list_concString()); _ = tomMatch12_90; if tom_is_fun_sym_concString(tomMatch12_90) { if !(tom_is_empty_concString_String(tomMatch12_90)) { if tom_equal_term_char('b', tom_get_head_concString_String(tomMatch12_90)) { var tomMatch12_100  string  = tom_get_tail_concString_String(tomMatch12_90); _ = tomMatch12_100; if !(tom_is_empty_concString_String(tomMatch12_100)) { if tom_equal_term_char('c', tom_get_head_concString_String(tomMatch12_100)) { if tom_is_empty_concString_String(tom_get_tail_concString_String(tomMatch12_100)) { 
+ bc++ ;  };  };  };  };  };  }; if tom_is_empty_concString_String(tomMatch12_end_97) { tomMatch12_end_97 = tomMatch12_end_94;  } else { tomMatch12_end_97 = tom_get_tail_concString_String(tomMatch12_end_97);  };  };  if !(!(tom_equal_term_String(tomMatch12_end_97, tomMatch12_end_94))) { break; }; }; if tom_is_empty_concString_String(tomMatch12_end_94) { tomMatch12_end_94 = any(s).( string );  } else { tomMatch12_end_94 = tom_get_tail_concString_String(tomMatch12_end_94);  };  };  if !(!(tom_equal_term_String(tomMatch12_end_94, any(s).( string )))) { break; }; };  };  };  }; { if  true  { if tom_is_fun_sym_concString(any(s).( string )) { var tomMatch12_end_111  string  = any(s).( string ); _ = tomMatch12_end_111; for { { var tomMatch12_end_114  string  = tomMatch12_end_111; _ = tomMatch12_end_114; for { { var tomMatch12_107  string  = tom_get_slice_concString(tomMatch12_end_111,tomMatch12_end_114,tom_empty_list_concString()); _ = tomMatch12_107; if tom_is_fun_sym_concString(tomMatch12_107) { if !(tom_is_empty_concString_String(tomMatch12_107)) { if tom_equal_term_char('a', tom_get_head_concString_String(tomMatch12_107)) { var tomMatch12_117  string  = tom_get_tail_concString_String(tomMatch12_107); _ = tomMatch12_117; if !(tom_is_empty_concString_String(tomMatch12_117)) { if tom_equal_term_char('b', tom_get_head_concString_String(tomMatch12_117)) { var tomMatch12_118  string  = tom_get_tail_concString_String(tomMatch12_117); _ = tomMatch12_118; if !(tom_is_empty_concString_String(tomMatch12_118)) { if tom_equal_term_char('c', tom_get_head_concString_String(tomMatch12_118)) { if tom_is_empty_concString_String(tom_get_tail_concString_String(tomMatch12_118)) { 
+ abc++ ;  };  };  };  };  };  };  };  }; if tom_is_empty_concString_String(tomMatch12_end_114) { tomMatch12_end_114 = tomMatch12_end_111;  } else { tomMatch12_end_114 = tom_get_tail_concString_String(tomMatch12_end_114);  };  };  if !(!(tom_equal_term_String(tomMatch12_end_114, tomMatch12_end_111))) { break; }; }; if tom_is_empty_concString_String(tomMatch12_end_111) { tomMatch12_end_111 = any(s).( string );  } else { tomMatch12_end_111 = tom_get_tail_concString_String(tomMatch12_end_111);  };  };  if !(!(tom_equal_term_String(tomMatch12_end_111, any(s).( string )))) { break; }; };  };  };  };  }; 
 
     assertEquals(t, a,4)
     assertEquals(t, b,4)
@@ -329,11 +329,11 @@ func TestMatchString4(t *testing.T) {
     b := 0
     c := 0
     aa := 0
-    ; { { if  true  { if tom_is_fun_sym_concString(any(s).( string )) { var tomMatch13_end_5  string  = any(s).( string ); _ = tomMatch13_end_5; for { { var tomMatch13_end_8  string  = tomMatch13_end_5; _ = tomMatch13_end_8; for { { var tomMatch13_1  string  = tom_get_slice_concString(tomMatch13_end_5,tomMatch13_end_8,tom_empty_list_concString()); _ = tomMatch13_1; if tom_is_fun_sym_concString(tomMatch13_1) { if !(tom_is_empty_concString_String(tomMatch13_1)) { if tom_equal_term_char('\'', tom_get_head_concString_String(tomMatch13_1)) { if tom_is_empty_concString_String(tom_get_tail_concString_String(tomMatch13_1)) { 
- a++  };  };  };  }; if tom_is_empty_concString_String(tomMatch13_end_8) { tomMatch13_end_8 = tomMatch13_end_5;  } else { tomMatch13_end_8 = tom_get_tail_concString_String(tomMatch13_end_8);  };  };  if !(!(tom_equal_term_String(tomMatch13_end_8, tomMatch13_end_5))) { break; }; }; if tom_is_empty_concString_String(tomMatch13_end_5) { tomMatch13_end_5 = any(s).( string );  } else { tomMatch13_end_5 = tom_get_tail_concString_String(tomMatch13_end_5);  };  };  if !(!(tom_equal_term_String(tomMatch13_end_5, any(s).( string )))) { break; }; };  };  };  }; { if  true  { if tom_is_fun_sym_concString(any(s).( string )) { var tomMatch13_end_18  string  = any(s).( string ); _ = tomMatch13_end_18; for { { if !(tom_is_empty_concString_String(tomMatch13_end_18)) { if tom_equal_term_char('"', tom_get_head_concString_String(tomMatch13_end_18)) { 
- b++  };  }; if tom_is_empty_concString_String(tomMatch13_end_18) { tomMatch13_end_18 = any(s).( string );  } else { tomMatch13_end_18 = tom_get_tail_concString_String(tomMatch13_end_18);  };  };  if !(!(tom_equal_term_String(tomMatch13_end_18, any(s).( string )))) { break; }; };  };  };  }; { if  true  { if tom_is_fun_sym_concString(any(s).( string )) { var tomMatch13_end_28  string  = any(s).( string ); _ = tomMatch13_end_28; for { { var tomMatch13_end_31  string  = tomMatch13_end_28; _ = tomMatch13_end_31; for { { var tomMatch13_24  string  = tom_get_slice_concString(tomMatch13_end_28,tomMatch13_end_31,tom_empty_list_concString()); _ = tomMatch13_24; if tom_is_fun_sym_concString(tomMatch13_24) { if !(tom_is_empty_concString_String(tomMatch13_24)) { if tom_equal_term_char('\\', tom_get_head_concString_String(tomMatch13_24)) { if tom_is_empty_concString_String(tom_get_tail_concString_String(tomMatch13_24)) { 
- c++  };  };  };  }; if tom_is_empty_concString_String(tomMatch13_end_31) { tomMatch13_end_31 = tomMatch13_end_28;  } else { tomMatch13_end_31 = tom_get_tail_concString_String(tomMatch13_end_31);  };  };  if !(!(tom_equal_term_String(tomMatch13_end_31, tomMatch13_end_28))) { break; }; }; if tom_is_empty_concString_String(tomMatch13_end_28) { tomMatch13_end_28 = any(s).( string );  } else { tomMatch13_end_28 = tom_get_tail_concString_String(tomMatch13_end_28);  };  };  if !(!(tom_equal_term_String(tomMatch13_end_28, any(s).( string )))) { break; }; };  };  };  }; { if  true  { if tom_is_fun_sym_concString(any(s).( string )) { var tomMatch13_end_42  string  = any(s).( string ); _ = tomMatch13_end_42; for { { var tomMatch13_end_45  string  = tomMatch13_end_42; _ = tomMatch13_end_45; for { { var tomMatch13_38  string  = tom_get_slice_concString(tomMatch13_end_42,tomMatch13_end_45,tom_empty_list_concString()); _ = tomMatch13_38; if tom_is_fun_sym_concString(tomMatch13_38) { if !(tom_is_empty_concString_String(tomMatch13_38)) { if tom_equal_term_char('\'', tom_get_head_concString_String(tomMatch13_38)) { var tomMatch13_48  string  = tom_get_tail_concString_String(tomMatch13_38); _ = tomMatch13_48; if !(tom_is_empty_concString_String(tomMatch13_48)) { if tom_equal_term_char('\'', tom_get_head_concString_String(tomMatch13_48)) { if tom_is_empty_concString_String(tom_get_tail_concString_String(tomMatch13_48)) { 
- aa++  };  };  };  };  };  }; if tom_is_empty_concString_String(tomMatch13_end_45) { tomMatch13_end_45 = tomMatch13_end_42;  } else { tomMatch13_end_45 = tom_get_tail_concString_String(tomMatch13_end_45);  };  };  if !(!(tom_equal_term_String(tomMatch13_end_45, tomMatch13_end_42))) { break; }; }; if tom_is_empty_concString_String(tomMatch13_end_42) { tomMatch13_end_42 = any(s).( string );  } else { tomMatch13_end_42 = tom_get_tail_concString_String(tomMatch13_end_42);  };  };  if !(!(tom_equal_term_String(tomMatch13_end_42, any(s).( string )))) { break; }; };  };  };  };  }; 
+    ; { _ = s; { if  true  { if tom_is_fun_sym_concString(any(s).( string )) { var tomMatch13_end_5  string  = any(s).( string ); _ = tomMatch13_end_5; for { { var tomMatch13_end_8  string  = tomMatch13_end_5; _ = tomMatch13_end_8; for { { var tomMatch13_1  string  = tom_get_slice_concString(tomMatch13_end_5,tomMatch13_end_8,tom_empty_list_concString()); _ = tomMatch13_1; if tom_is_fun_sym_concString(tomMatch13_1) { if !(tom_is_empty_concString_String(tomMatch13_1)) { if tom_equal_term_char('\'', tom_get_head_concString_String(tomMatch13_1)) { if tom_is_empty_concString_String(tom_get_tail_concString_String(tomMatch13_1)) { 
+ a++ ;  };  };  };  }; if tom_is_empty_concString_String(tomMatch13_end_8) { tomMatch13_end_8 = tomMatch13_end_5;  } else { tomMatch13_end_8 = tom_get_tail_concString_String(tomMatch13_end_8);  };  };  if !(!(tom_equal_term_String(tomMatch13_end_8, tomMatch13_end_5))) { break; }; }; if tom_is_empty_concString_String(tomMatch13_end_5) { tomMatch13_end_5 = any(s).( string );  } else { tomMatch13_end_5 = tom_get_tail_concString_String(tomMatch13_end_5);  };  };  if !(!(tom_equal_term_String(tomMatch13_end_5, any(s).( string )))) { break; }; };  };  };  }; { if  true  { if tom_is_fun_sym_concString(any(s).( string )) { var tomMatch13_end_18  string  = any(s).( string ); _ = tomMatch13_end_18; for { { if !(tom_is_empty_concString_String(tomMatch13_end_18)) { if tom_equal_term_char('"', tom_get_head_concString_String(tomMatch13_end_18)) { 
+ b++ ;  };  }; if tom_is_empty_concString_String(tomMatch13_end_18) { tomMatch13_end_18 = any(s).( string );  } else { tomMatch13_end_18 = tom_get_tail_concString_String(tomMatch13_end_18);  };  };  if !(!(tom_equal_term_String(tomMatch13_end_18, any(s).( string )))) { break; }; };  };  };  }; { if  true  { if tom_is_fun_sym_concString(any(s).( string )) { var tomMatch13_end_28  string  = any(s).( string ); _ = tomMatch13_end_28; for { { var tomMatch13_end_31  string  = tomMatch13_end_28; _ = tomMatch13_end_31; for { { var tomMatch13_24  string  = tom_get_slice_concString(tomMatch13_end_28,tomMatch13_end_31,tom_empty_list_concString()); _ = tomMatch13_24; if tom_is_fun_sym_concString(tomMatch13_24) { if !(tom_is_empty_concString_String(tomMatch13_24)) { if tom_equal_term_char('\\', tom_get_head_concString_String(tomMatch13_24)) { if tom_is_empty_concString_String(tom_get_tail_concString_String(tomMatch13_24)) { 
+ c++ ;  };  };  };  }; if tom_is_empty_concString_String(tomMatch13_end_31) { tomMatch13_end_31 = tomMatch13_end_28;  } else { tomMatch13_end_31 = tom_get_tail_concString_String(tomMatch13_end_31);  };  };  if !(!(tom_equal_term_String(tomMatch13_end_31, tomMatch13_end_28))) { break; }; }; if tom_is_empty_concString_String(tomMatch13_end_28) { tomMatch13_end_28 = any(s).( string );  } else { tomMatch13_end_28 = tom_get_tail_concString_String(tomMatch13_end_28);  };  };  if !(!(tom_equal_term_String(tomMatch13_end_28, any(s).( string )))) { break; }; };  };  };  }; { if  true  { if tom_is_fun_sym_concString(any(s).( string )) { var tomMatch13_end_42  string  = any(s).( string ); _ = tomMatch13_end_42; for { { var tomMatch13_end_45  string  = tomMatch13_end_42; _ = tomMatch13_end_45; for { { var tomMatch13_38  string  = tom_get_slice_concString(tomMatch13_end_42,tomMatch13_end_45,tom_empty_list_concString()); _ = tomMatch13_38; if tom_is_fun_sym_concString(tomMatch13_38) { if !(tom_is_empty_concString_String(tomMatch13_38)) { if tom_equal_term_char('\'', tom_get_head_concString_String(tomMatch13_38)) { var tomMatch13_48  string  = tom_get_tail_concString_String(tomMatch13_38); _ = tomMatch13_48; if !(tom_is_empty_concString_String(tomMatch13_48)) { if tom_equal_term_char('\'', tom_get_head_concString_String(tomMatch13_48)) { if tom_is_empty_concString_String(tom_get_tail_concString_String(tomMatch13_48)) { 
+ aa++ ;  };  };  };  };  };  }; if tom_is_empty_concString_String(tomMatch13_end_45) { tomMatch13_end_45 = tomMatch13_end_42;  } else { tomMatch13_end_45 = tom_get_tail_concString_String(tomMatch13_end_45);  };  };  if !(!(tom_equal_term_String(tomMatch13_end_45, tomMatch13_end_42))) { break; }; }; if tom_is_empty_concString_String(tomMatch13_end_42) { tomMatch13_end_42 = any(s).( string );  } else { tomMatch13_end_42 = tom_get_tail_concString_String(tomMatch13_end_42);  };  };  if !(!(tom_equal_term_String(tomMatch13_end_42, any(s).( string )))) { break; }; };  };  };  };  }; 
 
     assertEquals(t, a,4)
     assertEquals(t, b,1)

@@ -734,6 +734,26 @@ func emitCongruenceMappingGo(buf *bytes.Buffer, mod gomast.GomModule) {
 			fmt.Fprintf(buf, "%%op Strategy When_%s(s:Strategy) {\n", alt.Name)
 			fmt.Fprintf(buf, "  make(s) { sl.NewSequence(&%s{}, $s) }\n", isName)
 			fmt.Fprintf(buf, "}\n\n")
+			if alternativeIsVariadic(alt) && !moduleIsKnown(mod) {
+				// Make_Cons<op>(head, tail) and Make_Empty<op>() (Java Gom's
+				// MakeOpTemplate on the Cons<op>/Empty<op> operator classes)
+				ety := fieldTypeName(alternativeFields(alt)[0])
+				if types[ety] {
+					ety = "Strategy"
+				}
+				cons, empty := "Cons"+alt.Name, "Empty"+alt.Name
+				consGo, emptyGo := "Cons"+opGo, "Empty"+opGo
+				fmt.Fprintf(buf, "%%op Strategy Make_%s(Make_%sarg0:%s, Make_%sarg1:Strategy) {\n", cons, cons, ety, cons)
+				fmt.Fprintf(buf, "  is_fsym(t) { func() bool { _, ok := ($t).(*Build%s); return ok }() }\n", consGo)
+				fmt.Fprintf(buf, "  get_slot(Make_%sarg0, t) { ($t).(*Build%s).Arg0 }\n", cons, consGo)
+				fmt.Fprintf(buf, "  get_slot(Make_%sarg1, t) { ($t).(*Build%s).Arg1 }\n", cons, consGo)
+				fmt.Fprintf(buf, "  make(a0, a1) { NewBuild%s($a0, $a1) }\n", consGo)
+				fmt.Fprintf(buf, "}\n\n")
+				fmt.Fprintf(buf, "%%op Strategy Make_%s() {\n", empty)
+				fmt.Fprintf(buf, "  is_fsym(t) { func() bool { _, ok := ($t).(*Build%s); return ok }() }\n", emptyGo)
+				fmt.Fprintf(buf, "  make() { NewBuild%s() }\n", emptyGo)
+				fmt.Fprintf(buf, "}\n\n")
+			}
 			if !alternativeIsVariadic(alt) {
 				var mparams, mnames, mdollar, slotTypes []string
 				for i, f := range alternativeFields(alt) {
@@ -1681,6 +1701,12 @@ func (g *gen) emitAlternative(sortNm string, alt *gomast.AlternativeAlternative)
 		g.emitJavaString(alt, structName)
 		g.emitVariadicJava(sortNm, alt, structName, elem)
 		g.emitStrategyClasses(sortNm, opGo, opName, structName, 1, true)
+		if g.congruence {
+			// Java Gom's Cons<op>/Empty<op> are operator classes with their
+			// own Make_ strategies (StratMappingTemplate, MakeOpTemplate)
+			g.emitBuildStrategy("Cons"+opGo, "Cons"+opName, "Cons"+opGo, []hookSlot{{Name: "HeadArg", GoType: elem}, {Name: "TailArg", GoType: sortNm}})
+			g.emitBuildStrategy("Empty"+opGo, "Empty"+opName, "Empty"+opGo, nil)
+		}
 		return
 	}
 	if isVariadic {

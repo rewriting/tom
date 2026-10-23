@@ -26,6 +26,13 @@ public class Twin {
             return `x + 20;
           } else if (`x == 2) {
             return add(new pair(`x, 1)) + new pair().sum() + new F() { public int call() { return 100; } }.call();
+          } /* c */ else if (`x == 3) {
+            pair[] ps = new pair[] { new pair(`x, 1), new pair(2, 3) };
+            pair o = new pair(1, 2);
+            int v = new int[] { `x, 1 }[0];
+            boolean eq = true;
+            if (eq) { return ps[1].b + o.b + v + 200; }
+            return 0;
           } else {
             if (i > 5) { return 50; } else { return 30; }
           }
@@ -34,5 +41,5 @@ public class Twin {
     return 0;
   }
 
-  public static void main(String[] args) { System.out.println(f(0) + " " + f(1) + " " + f(2) + " " + f(3) + " " + f(6)); }
+  public static void main(String[] args) { System.out.println(f(0) + " " + f(1) + " " + f(2) + " " + f(3) + " " + f(4) + " " + f(6)); }
 }
