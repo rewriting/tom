@@ -109,7 +109,8 @@ func TestTwoFilesOnePackage(t *testing.T) {
 // --goFrom stops the Java chain before the named plugin and hands the
 // bundle to <dist>/bin/tomgo suffix, --goCheck checks the round trip
 // (tomgo suffix --echo) then lets the Java chain finish; the errors
-// (unknown plugin, no -go, no tomgo, phase not ported) are explicit.
+// (unknown plugin, no -go, no tomgo, phase not ported) are explicit; the
+// backend runs in Go (J4.1b) and writes the golden output of an F1 source.
 func TestGoFrom(t *testing.T) {
 	root := harness.RepoRoot(t)
 	dist := harness.NewDist(t)
@@ -142,7 +143,25 @@ func TestGoFrom(t *testing.T) {
 	fails("goFrom Parser", "cannot hand over before Parser: the bridge starts after the parser", nil, goSrc, "-go", "-np", "--goFrom", "Parser")
 	fails("without -go", "--goFrom needs -go", nil, filepath.Join(harness.JavaTestDir(root), "Peano.t"), "--goFrom", "Backend")
 	fails("no tomgo", "tomgo not found at /nonexistent", []string{"TOMGO_BIN=/nonexistent"}, goSrc, "-go", "-np", "--goFrom", "Backend")
-	fails("not ported", "phase Backend is not ported to Go yet", nil, goSrc, "-go", "-np", "--goFrom", "Backend")
+	fails("not ported", "phase Optimizer is not ported to Go yet", nil, goSrc, "-go", "-np", "--goFrom", "Optimizer")
+	t.Run("Backend in Go (F1)", func(t *testing.T) {
+		src := filepath.Join(harness.GoTestDir(root), "Test.t")
+		want, err := os.ReadFile(filepath.Join(harness.GoTestDir(root), "testdata", "golden", "Test.go"))
+		if err != nil {
+			t.Fatal(err)
+		}
+		out, msg, err := tom(nil, src, "-go", "-np", "--goFrom", "Backend")
+		if err != nil {
+			t.Fatalf("tom --goFrom Backend: %v\n%s", err, msg)
+		}
+		got, err := os.ReadFile(filepath.Join(out, "Test.go"))
+		if err != nil {
+			t.Fatal(err)
+		}
+		if string(got) != string(want) {
+			t.Fatalf("--goFrom Backend: %s", firstLineDiff(string(got), string(want)))
+		}
+	})
 	for _, from := range []string{"Backend", "TypeChecker", "optimizer"} {
 		t.Run("goCheck "+from, func(t *testing.T) {
 			out, msg, err := tom(nil, goSrc, "-go", "-np", "--goFrom", from, "--goCheck", "--intermediate")

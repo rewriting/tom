@@ -21,6 +21,8 @@ var (
 	BackendIOException = Message{"backendIOException", "BackendPlugin : IOException occurs writting to file ''{0}'': {1} "}
 	// ExceptionMessage is TomMessage.exceptionMessage (TomMessage.java:72).
 	ExceptionMessage = Message{"exceptionMessage", "{0}: Unhandled exception\n"}
+	// NotReturnedPluginOption is TomMessage.notReturnedPluginOption (TomMessage.java:101).
+	NotReturnedPluginOption = Message{"notReturnedPluginOption", "TomOptionManager: getOptionFromName did not return a PluginOption"}
 	// OptionNotFound is TomMessage.optionNotFound (TomMessage.java:80).
 	OptionNotFound = Message{"optionNotFound", "TomOptionManager: Option ''{0}'' not found"}
 	// TomGenerationPhase is TomMessage.tomGenerationPhase (TomMessage.java:298).

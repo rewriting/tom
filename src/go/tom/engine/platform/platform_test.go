@@ -52,6 +52,21 @@ func TestOptions(t *testing.T) {
 	}
 }
 
+func TestOptionNotFoundReported(t *testing.T) {
+	var b strings.Builder
+	r := NewReporter(&b, false)
+	o := opts()
+	o.SetReporter(r)
+	if got := panicMsg(t, func() { o.Bool("nope") }); got != "TomOptionManager: Option 'nope' not found" {
+		t.Fatalf("panic: %q", got)
+	}
+	want := "ERROR\t-\t0\tTomOptionManager: Option 'nope' not found\n" +
+		"ERROR\t-\t0\tTomOptionManager: getOptionFromName did not return a PluginOption\n"
+	if b.String() != want {
+		t.Fatalf("got %q, want %q", b.String(), want)
+	}
+}
+
 func TestMessageText(t *testing.T) {
 	cases := []struct {
 		m    Message

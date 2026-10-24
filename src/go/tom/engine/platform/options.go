@@ -17,7 +17,8 @@ import (
 // and the getOption{Boolean,Integer,String}Value of TomGenericPlugin
 // (TomGenericPlugin.t:258-280).
 type Options struct {
-	byName map[string]bridge.Option
+	byName   map[string]bridge.Option
+	reporter *Reporter
 }
 
 // NewOptions indexes the options of a bundle.
@@ -35,6 +36,13 @@ func (o *Options) Has(name string) bool {
 	return ok
 }
 
+// SetReporter makes an unknown option report what Java's
+// TomOptionManager reports before the caller fails: optionNotFound
+// (TomOptionManager.t:291) then notReturnedPluginOption
+// (TomOptionManager.t:200). port: Java's file is null; "-" is the file
+// GoBridgePlugin relays as the input file.
+func (o *Options) SetReporter(r *Reporter) { o.reporter = r }
+
 // value is the value of an option of the given kind. An unknown option is
 // Java's optionNotFound error followed by a RuntimeException
 // (TomOptionManager.t:286-292), a kind mismatch Java's ClassCastException:
@@ -42,6 +50,10 @@ func (o *Options) Has(name string) bool {
 func (o *Options) value(name, kind string) string {
 	x, ok := o.byName[name]
 	if !ok {
+		if o.reporter != nil {
+			o.reporter.Error("-", 0, OptionNotFound, name)
+			o.reporter.Error("-", 0, NotReturnedPluginOption)
+		}
 		panic(&RuntimeError{Msg: OptionNotFound.Text(name)})
 	}
 	if x.Kind != kind {

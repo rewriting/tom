@@ -1,8 +1,9 @@
 // Command tomgo is the Go side of the Tom compiler (spec J4): the
 // subcommand suffix reads on stdin the bundle the Java compiler hands over
-// (package tom/engine/bridge) and runs the phases ported to Go. In J4.0
-// no phase is ported: suffix refuses them, and suffix --echo only rewrites
-// the bundle (the identity check of the bridge).
+// (package tom/engine/bridge) and runs the phases ported to Go: the
+// backend (J4.1b), which writes the generated code on stdout and its
+// diagnostics on stderr; suffix refuses the others, and suffix --echo only
+// rewrites the bundle (the identity check of the bridge).
 package main
 
 import (
@@ -13,16 +14,18 @@ import (
 	"os"
 	"strings"
 
+	"tom/engine/backend"
 	"tom/engine/bridge"
 	"tom/engine/platform"
 )
 
 const usage = "usage: tomgo suffix [--echo]   (bundle on stdin)\n"
 
-// ported lists the phases the Go suffix can run (none in J4.0), keyed by
+// ported lists the phases the Go suffix can run (the backend since
+// J4.1b), keyed by
 // the lower-cased Tom.config plugin name without spaces: the bundle's
 // "from" is compared case-insensitively.
-var ported = map[string]bool{}
+var ported = map[string]bool{"backend": true}
 
 // bundleFile is the "file" of the diagnostics about the bundle itself.
 const bundleFile = "-bundle-"
@@ -66,6 +69,18 @@ func run(args []string, stdin io.Reader, stdout, stderr io.Writer) int {
 	if !ported[strings.ToLower(b.From)] {
 		platform.WriteDiag(stderr, "ERROR", b.InputName, 0, fmt.Sprintf("phase %s is not ported to Go yet", b.From))
 		return 2
+	}
+	opts := platform.NewOptions(b.Options)
+	verbose := opts.Has("verbose") && opts.Bool("verbose")
+	r := platform.NewReporter(stderr, verbose)
+	w := bufio.NewWriter(stdout)
+	ok := backend.Generate(b, w, r)
+	if err := w.Flush(); err != nil {
+		platform.WriteDiag(stderr, "ERROR", b.InputName, 0, err.Error())
+		return 1
+	}
+	if !ok {
+		return 1
 	}
 	return 0
 }

@@ -66,8 +66,9 @@ func TestEcho(t *testing.T) {
 
 func TestSuffixRefusesPhase(t *testing.T) {
 	bin := build(t)
-	_, errs, code := runBin(t, bin, sample(t), "suffix")
-	want := "ERROR\tmy dir/X.t\t0\tphase Backend is not ported to Go yet\n"
+	in := strings.Replace(sample(t), "\nfrom Backend\n", "\nfrom Optimizer\n", 1)
+	_, errs, code := runBin(t, bin, in, "suffix")
+	want := "ERROR\tmy dir/X.t\t0\tphase Optimizer is not ported to Go yet\n"
 	if code != 2 || errs != want {
 		t.Fatalf("code %d stderr %q, want 2 %q", code, errs, want)
 	}
