@@ -587,8 +587,9 @@ func J4() error {
 
 // BridgeCheck runs P0 (J4 spec 5.1): T1 and the smoke tests with
 // --goFrom Backend --goCheck (each bundle echoed by tomgo must be
-// identical) and --intermediate, then re-reads every dump in Go and compares
-// the queries of the Go SymbolTable/TomBase with Java on every bundle.
+// identical) and --intermediate, then re-reads every dump in Go, compares
+// the queries of the Go SymbolTable/TomBase with Java on every bundle and
+// compares the state left by the Collector of the Go backend with Java.
 func BridgeCheck() error {
 	mg.Deps(TomGoFresh)
 	dumps, err := os.MkdirTemp("", "tom-dumps-")
@@ -603,7 +604,7 @@ func BridgeCheck() error {
 	if err := runInEnv(toolsDir, env, "go", "test", "-count=1", "./smoke/", "-run", "TestGoSmoke"); err != nil {
 		return err
 	}
-	return runInEnv(toolsDir, env, "go", "test", "-count=1", "-v", "./j4/", "-run", "TestDumpsRoundTrip|TestSymbolTableQueries")
+	return runInEnv(toolsDir, env, "go", "test", "-count=1", "-v", "./j4/", "-run", "TestDumpsRoundTrip|TestSymbolTableQueries|TestCollectorState")
 }
 
 // goCommands are the Go commands of module tom installed in <dist>/bin

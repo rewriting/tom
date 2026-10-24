@@ -1,4 +1,4 @@
-// tom-source-sha256: 08930b489b702bc09625f035fb6967e13d06ab94596a23d97e083e286025c6ab
+// tom-source-sha256: 095a19b81c92a6bf8d064747dc87fa00b17e54140f565886993ecf4351cb1554
 
 package tools
 
@@ -718,6 +718,35 @@ func (st *SymbolTable) GetEqualTerm(ty string) (string, bool) { return st.getInl
 
 
 func (st *SymbolTable) GetIntArrayOp() string { return intArrayOp }
+
+
+
+
+
+
+type InlinerEntry struct{ Key, Code string }
+
+
+
+
+
+
+
+
+
+
+func (st *SymbolTable) InlinerEntries() []InlinerEntry {
+	keys := make([]string, 0, len(st.mapInliner))
+	for k := range st.mapInliner {
+		keys = append(keys, k)
+	}
+	sort.Strings(keys)
+	res := make([]InlinerEntry, len(keys))
+	for i, k := range keys {
+		res[i] = InlinerEntry{Key: k, Code: st.mapInliner[k]}
+	}
+	return res
+}
 
 
 

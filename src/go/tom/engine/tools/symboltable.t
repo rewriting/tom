@@ -521,5 +521,26 @@ func (st *SymbolTable) GetEqualTerm(ty string) (string, bool) { return st.getInl
 // GetIntArrayOp is getIntArrayOp (SymbolTable.t:699).
 func (st *SymbolTable) GetIntArrayOp() string { return intArrayOp }
 
+// InlinerEntry is an entry of mapInliner (SymbolTable.t:559): Key is the
+// prefix of the inliner followed by the name, Code the host code.
+type InlinerEntry struct{ Key, Code string }
+
+// InlinerEntries returns the inliners sorted by key. Java has no such
+// accessor: the post-Collector dump (plan J4.1b) reads the field by
+// reflection. port: sorted by bytes, Java's TreeMap by UTF-16 units (the
+// same order on BMP text).
+func (st *SymbolTable) InlinerEntries() []InlinerEntry {
+	keys := make([]string, 0, len(st.mapInliner))
+	for k := range st.mapInliner {
+		keys = append(keys, k)
+	}
+	sort.Strings(keys)
+	res := make([]InlinerEntry, len(keys))
+	for i, k := range keys {
+		res[i] = InlinerEntry{Key: k, Code: st.mapInliner[k]}
+	}
+	return res
+}
+
 // The generated mapping code (adt.tom) names aterm types; this keeps the import used.
 var _ = aterm.GetInstance

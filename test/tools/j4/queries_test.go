@@ -172,10 +172,15 @@ func (q *queries) walk(node any) {
 	}
 }
 
-// bundles returns the bridge bundles to query: every *.tfix.bridge of
-// TOMGO_DUMPS when set (mage bridgeCheck), otherwise those of queryCorpus,
+// bundles returns the bridge bundles of queryCorpus (see bundlesOf).
+func bundles(t *testing.T, dist harness.Dist) ([]string, int) {
+	return bundlesOf(t, dist, queryCorpus)
+}
+
+// bundlesOf returns the bridge bundles to query: every *.tfix.bridge of
+// TOMGO_DUMPS when set (mage bridgeCheck), otherwise those of corpus,
 // compiled here with --goFrom Backend --goCheck --intermediate.
-func bundles(t *testing.T, dist harness.Dist) (paths []string, floor int) {
+func bundlesOf(t *testing.T, dist harness.Dist, corpus []string) (paths []string, floor int) {
 	t.Helper()
 	collect := func(dir string) {
 		filepath.WalkDir(dir, func(p string, d fs.DirEntry, err error) error {
@@ -192,7 +197,7 @@ func bundles(t *testing.T, dist harness.Dist) (paths []string, floor int) {
 	}
 	root := harness.RepoRoot(t)
 	out := t.TempDir()
-	for k, rel := range queryCorpus {
+	for k, rel := range corpus {
 		dir := filepath.Join(out, fmt.Sprint(k))
 		src := filepath.Join(harness.GoTestDir(root), filepath.FromSlash(rel))
 		if msg, err := dist.Compile(t, src, dir, "-go", "-np", "--goFrom", "Backend", "--goCheck", "--intermediate"); err != nil {
@@ -201,7 +206,22 @@ func bundles(t *testing.T, dist harness.Dist) (paths []string, floor int) {
 		collect(dir)
 	}
 	sort.Strings(paths)
-	return paths, len(queryCorpus)
+	return paths, len(corpus)
+}
+
+// readBundle reads the bridge bundle at path.
+func readBundle(t *testing.T, path string) *bridge.Bundle {
+	t.Helper()
+	f, err := os.Open(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer f.Close()
+	b, err := bridge.Read(f)
+	if err != nil {
+		t.Fatalf("%s: %v", path, err)
+	}
+	return b
 }
 
 // TestSymbolTableQueries compares the answers of the Go SymbolTable and
@@ -225,15 +245,7 @@ func TestSymbolTableQueries(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		f, err := os.Open(p)
-		if err != nil {
-			t.Fatal(err)
-		}
-		b, err := bridge.Read(f)
-		f.Close()
-		if err != nil {
-			t.Fatalf("%s: %v", p, err)
-		}
+		b := readBundle(t, p)
 		got := goQueries(b)
 		nsym := b.Table.GetEntryList().Length()
 		if err := checkBundleData(nsym, string(want)); err != nil {
@@ -318,6 +330,15 @@ func firstDiff(got, want string) string {
 	if got == want {
 		return ""
 	}
+	if msg := firstLineDiff(got, want); msg != "" {
+		return msg
+	}
+	return "outputs differ"
+}
+
+// firstLineDiff names the first line where got and want differ ("" when
+// they are equal).
+func firstLineDiff(got, want string) string {
 	g, w := strings.Split(got, "\n"), strings.Split(want, "\n")
 	for i := 0; i < len(g) || i < len(w); i++ {
 		var gl, wl string
@@ -331,7 +352,7 @@ func firstDiff(got, want string) string {
 			return fmt.Sprintf("line %d differs\nGo   %.300s\nJava %.300s", i+1, gl, wl)
 		}
 	}
-	return "outputs differ"
+	return ""
 }
 
 // TestQueryComparisonDetectsDifference is the counter-proof of

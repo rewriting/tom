@@ -176,3 +176,22 @@ func TestFromBundle(t *testing.T) {
 		t.Fatal("marks and types")
 	}
 }
+
+func TestInlinerEntries(t *testing.T) {
+	st := NewSymbolTable()
+	st.PutMake("f", "F()")
+	st.PutIsFsym("f", "isF({0})")
+	st.PutResolveGetSlot("f", "x")
+	got := st.InlinerEntries()
+	if len(got) != 3 {
+		t.Fatalf("got %v", got)
+	}
+	for i := 1; i < len(got); i++ {
+		if got[i-1].Key >= got[i].Key {
+			t.Fatalf("not sorted: %v", got)
+		}
+	}
+	if code, ok := st.GetMake("f"); !ok || code != "F()" {
+		t.Fatalf("GetMake: %q %v", code, ok)
+	}
+}
