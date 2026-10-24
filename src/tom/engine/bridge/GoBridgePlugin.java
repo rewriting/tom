@@ -242,7 +242,7 @@ public class GoBridgePlugin extends TomGenericPlugin {
       return;
     }
 
-    // relay the diagnostics of tomgo: LEVEL TAB file TAB line TAB message
+    // relay the diagnostics of tomgo: LEVEL TAB file TAB line TAB message (LEVEL is ERROR, WARNING or INFO)
     // (file "-bundle-": an error about the bundle itself, not about the .t)
     boolean reported = false;
     StringBuilder errText = new StringBuilder();
@@ -250,7 +250,8 @@ public class GoBridgePlugin extends TomGenericPlugin {
       String[] f = line.split("\t", 4);
       boolean isError = f.length == 4 && f[0].equals("ERROR");
       boolean isWarning = f.length == 4 && f[0].equals("WARNING");
-      if(isError || isWarning) {
+      boolean isInfo = f.length == 4 && f[0].equals("INFO");
+      if(isError || isWarning || isInfo) {
         String file = f[1].equals("-") ? input : f[1];
         String message = f[3];
         int lineNumber = 0;
@@ -267,8 +268,10 @@ public class GoBridgePlugin extends TomGenericPlugin {
         if(isError) {
           TomMessage.error(getLogger(), file, lineNumber, TomMessage.goBridgeError, "tomgo", message);
           reported = true;
-        } else {
+        } else if(isWarning) {
           TomMessage.warning(getLogger(), file, lineNumber, TomMessage.goBridgeError, "tomgo", message);
+        } else if(isInfo) {
+          TomMessage.info(getLogger(), file, lineNumber, TomMessage.goBridgeError, "tomgo", message);
         }
       } else {
         if(errText.length() > 0) {

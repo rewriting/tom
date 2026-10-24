@@ -284,7 +284,9 @@ func CheckFresh(root, home string) error {
 //	TOMGO_GOFROM=<phase>  adds --goFrom <phase>
 //	TOMGO_GOCHECK=1       adds --goFrom Backend --goCheck (exclusive with TOMGO_GOFROM)
 //	TOMGO_DUMPS=<dir>     adds --intermediate and moves every *.tfix* dump of
-//	                      the output directory to <dir>/<unique name>/
+//	                      the output directory to <dir>/<unique name>/ and copies the file
+//	                      each bundle's compilation wrote (its output line) next to it as
+//	                      <name>.generated
 const (
 	GoFromEnv  = "TOMGO_GOFROM"
 	GoCheckEnv = "TOMGO_GOCHECK"
@@ -316,7 +318,9 @@ func (d Dist) Compile(t testing.TB, src, outDir string, args ...string) (string,
 			args = append(slices.Clone(args), "--intermediate")
 		}
 	}
-	full := append(append([]string{"-d", outDir}, args...), src)
+	// fixed locale: MessageFormat groups the numbers of the messages as
+	// platform.Message.Text does (',')
+	full := append(append([]string{"-Duser.language=en", "-Duser.country=US", "-d", outDir}, args...), src)
 	out, err := RunIn(filepath.Dir(src), env, filepath.Join(d.Home, "bin", "tom"), full...)
 	if dumps != "" {
 		moveDumps(t, src, outDir, dumps)
@@ -346,11 +350,37 @@ func moveDumps(t testing.TB, src, outDir, dumps string) {
 		if err != nil || e.IsDir() || !strings.Contains(e.Name(), ".tfix") {
 			return nil
 		}
-		if err := os.Rename(p, filepath.Join(dir, e.Name())); err != nil {
+		dst := filepath.Join(dir, e.Name())
+		if err := os.Rename(p, dst); err != nil {
 			t.Errorf("moving dump %s: %v", p, err)
+			return nil
+		}
+		if strings.HasSuffix(e.Name(), ".tfix.bridge") {
+			copyGenerated(t, dst, dir)
 		}
 		return nil
 	})
+}
+
+// copyGenerated copies the file named by the output line of the bridge
+// bundle at bundle (if it exists) into dir as <base>.generated.
+func copyGenerated(t testing.TB, bundle, dir string) {
+	t.Helper()
+	data, err := os.ReadFile(bundle)
+	if err != nil {
+		t.Errorf("reading dump %s: %v", bundle, err)
+		return
+	}
+	for _, line := range strings.SplitN(string(data), "\n", 7) {
+		if out, ok := strings.CutPrefix(line, "output "); ok {
+			if gen, err := os.ReadFile(out); err == nil {
+				if err := os.WriteFile(filepath.Join(dir, filepath.Base(out)+".generated"), gen, 0o644); err != nil {
+					t.Errorf("copying %s: %v", out, err)
+				}
+			}
+			return
+		}
+	}
 }
 
 // RunIn runs a command in dir with extra environment variables and

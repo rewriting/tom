@@ -15,6 +15,32 @@ Commandes : `mage -d magefiles -w . j4` (5 paquets) et `bridgeCheck`
 | Lignes de donnée des réponses (`symbol`, `usedEntry`, `termType` non erreur, `used` vrai) | total 2750 sous `j4` (plancher 2600), 37850 sous `bridgeCheck` (plancher 36000) ; plancher par paquet à table non vide : 1 |
 | Sources Tom+Go compilées par `regenTomGo` | 3 (`astfactory.t`, `symboltable.t`, `tombase.t`) |
 
+## J4.1b : backend Go (P2) (mesures du 2026-10-24)
+
+Compteur in-process `TestBackendCorpus` (`test/tools/j4/backend_test.go`) : le
+backend Go (`backend.Generate`) sur chaque paquet pont, comparé octet pour octet
+à la sortie du backend Java (copiée en `<sortie>.generated` par le harnais), par
+famille. Commandes : `mage -d magefiles -w . j4` (7 paquets), `mage -d magefiles
+-w . bridgeCheck` (110 paquets). Planchers : `minIdenticalJ4 = 2`,
+`minIdenticalBridge = 4`.
+
+| Famille | `mage j4` paquets | identiques | différents | `bridgeCheck` paquets | identiques | différents |
+|---|---|---|---|---|---|---|
+| F1 squelette | 2 | 2 | 0 | 5 | 4 | 1 |
+| F2 filtrage | 1 | 0 | 1 | 33 | 0 | 33 |
+| F3 listes | 2 | 0 | 2 | 47 | 0 | 47 |
+| F4 stratégies | 2 | 0 | 2 | 25 | 0 | 25 |
+| Total | 7 | 2 | 5 | 110 | 4 | 106 |
+
+Bouchons atteints (`bridgeCheck`) : `buildIsFsymDecl` 50, `genDeclMake` 49,
+`buildUnamedBlock` 4, `buildMethodDef` 3 (le seul F1 différent,
+`gom/TestTermgraph.t`, s'arrête sur `genDeclMake`). État post-`Collector` :
+110 / 110 identiques (8311 lignes).
+
+| Tâche | Famille portée | `mage j4` identiques | `bridgeCheck` identiques |
+|---|---|---|---|
+| 3 (compteur) | F1 (squelette, partiel) | 2 / 7 | 4 / 110 |
+
 ## P0 : identité du pont
 
 Commande : `mage -d magefiles -w . bridgeCheck` (T1 `TestGoBackend` + smoke

@@ -138,6 +138,15 @@ func TestGoFrom(t *testing.T) {
 			}
 		})
 	}
+	t.Run("INFO relayed with --verbose", func(t *testing.T) {
+		_, msg, err := tom(nil, filepath.Join(harness.GoTestDir(root), "Test.t"), "-go", "-np", "--goFrom", "Backend", "--verbose")
+		if err != nil {
+			t.Fatalf("tom: %v\n%s", err, msg)
+		}
+		if !strings.Contains(msg, "tomgo: TOM generation phase (") {
+			t.Fatalf("no relayed INFO line in:\n%s", msg)
+		}
+	})
 	fails("unknown plugin", "--goFrom Nope: no such plugin", nil, goSrc, "-go", "-np", "--goFrom", "Nope")
 	fails("goFrom Starter", "cannot hand over before Starter: the bridge starts after the parser", nil, goSrc, "-go", "-np", "--goFrom", "Starter")
 	fails("goFrom Parser", "cannot hand over before Parser: the bridge starts after the parser", nil, goSrc, "-go", "-np", "--goFrom", "Parser")
