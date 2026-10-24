@@ -3,6 +3,18 @@
 Spec §5.2 : `docs/superpowers/specs/2026-10-24-j4-tom-go-compiler-design.md`.
 Mesures du 2026-10-24 (J4.0d).
 
+## J4.1a : fondations (mesures du 2026-10-24)
+
+Commandes : `mage -d magefiles -w . j4` (5 paquets) et `bridgeCheck`
+(110 paquets) ; rapport [`j4-1a-report.md`](j4-1a-report.md).
+
+| Mesure | Valeur |
+|---|---|
+| Scripts d'écriture `OutputCode` (Java contre Go) | 407 ; identiques 407 / différents 0 |
+| Paquets interrogés (`SymbolTable`/`TomBase`) | 115 (5 sous `j4`, 110 sous `bridgeCheck`) ; identiques 115 / différents 0 |
+| Lignes de réponse par paquet (minimum) | 287 sous `j4`, 15 sous `bridgeCheck` (plancher du test : 10) |
+| Sources Tom+Go compilées par `regenTomGo` | 3 (`astfactory.t`, `symboltable.t`, `tombase.t`) |
+
 ## P0 : identité du pont
 
 Commande : `mage -d magefiles -w . bridgeCheck` (T1 `TestGoBackend` + smoke

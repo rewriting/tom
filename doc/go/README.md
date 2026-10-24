@@ -8,11 +8,12 @@
 | Runtime Go `aterm` (lecture/écriture ATerm) | `src/go/tom/library/aterm` (module `tom`) | validé |
 | Gom écrit en Go (`gomgo`) | `src/go/tom/gom/` | validé |
 | ADT du compilateur Go : sources `.gom` (hooks en Go) / amorce générée | `src/go/tom/{gom,engine}/adt` / `stable/go/tom/{gom,engine}/adt` | validé |
+| Compilateur en Tom+Go (J4.1a : `OutputCode`, `SymbolTable`, `TomBase`, options, messages) | `src/go/tom/engine/{platform,tools}` (`X.t` → `X.t.go`) | en cours |
 | Mappings Go | `src/tom/library/mapping/go/` | validé |
 | Tests Tom+Java (originaux) | `test/java/` | historique |
 | Tests Tom+Go (ports de `test/java/`), données de référence, tests des ADT | `test/go/` (module `tomtest`) | validé |
 | Harnais T0–T3, smoke (comparent Java, Go, `legacy/`) | `test/tools/` (module `tomtools`) | validé |
-| Rapports | `doc/go/` : J0–T3 [`j0-go-backend.md`](j0-go-backend.md), J2 [`j2-report.md`](j2-report.md), [tableau de bord](port-dashboard.md), [couverture](coverage.md), J4.0 [rapport](j4-0-report.md), [pont P0](j4-dashboard.md) | à jour |
+| Rapports | `doc/go/` : J0–T3 [`j0-go-backend.md`](j0-go-backend.md), J2 [`j2-report.md`](j2-report.md), [tableau de bord](port-dashboard.md), [couverture](coverage.md), J4.0 [rapport](j4-0-report.md), J4.1a [rapport](j4-1a-report.md), [pont P0 et J4.1a](j4-dashboard.md) | à jour |
 | Prototype tomgo (compilateur Go écrit à la main) | `prototype/tomgo/` | gelé, réservoir de code |
 
 Utiliser le runtime dans un projet : `require tom v0.0.0` et
@@ -193,7 +194,9 @@ l'amorce Go :
   `promoteGo` le copie dans l'amorce ; `bootstrap` reprend le `X.t.go` de
   l'amorce quand `src` n'en a pas (un clone neuf se construit sans Java) ;
   `mage tomGoFresh` (préalable de `test`, `vet`, `j4`, `bridgeCheck`)
-  refuse un `X.t` plus récent que son `X.t.go`. Après une régénération
+  refuse un `X.t` dont le `X.t.go` ne porte pas le SHA-256 de son contenu
+  actuel (première ligne `// tom-source-sha256: <hex>` ; les dates ne
+  comptent pas : un clone les renouvelle). Après une régénération
   qui change un fichier, reconstruire `src/dist` avant les harnais
   (`CheckFresh` des binaires).
 - La dist (`<dist>/lib/go/tom`) ne contient que le runtime
@@ -315,8 +318,9 @@ suffixe Go (`<dist>/bin/tomgo`, installé par `mage installGo`) :
   Spec J4 : `docs/superpowers/specs/2026-10-24-j4-tom-go-compiler-design.md`.
   **J4.0 (pont Java → Go) est fait** (2026-10-24, rapport
   [`j4-0-report.md`](j4-0-report.md), tableau de bord
-  [`j4-dashboard.md`](j4-dashboard.md)) ; prochain plan : J4.1a
-  (fondations Go, `mage regenTomGo`).
+  [`j4-dashboard.md`](j4-dashboard.md)) ; **J4.1a (fondations Go) est fait** (2026-10-24, rapport
+  [`j4-1a-report.md`](j4-1a-report.md)) ; prochain plan : J4.1b (backend
+  Go en Tom+Go).
 - **Règle d'équivalence pour J4.** Identité stricte (octet pour octet)
   pour toutes les étapes qui partent de l'AST exporté par Java, c'est-à-
   dire toutes sauf le parser. À l'étape du parser, viser l'identité ; si
