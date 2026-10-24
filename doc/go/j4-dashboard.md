@@ -84,6 +84,7 @@ Notes :
 |---|---|---|---|
 | Task 3 (famille F1) | identiques 4 / 5 en F1 | 2 / 2 | `minIdenticalJ4 = 2`, `minIdenticalBridge = 4` |
 | Task 4 (famille F2) | F1 4 / 5, F2 32 / 33 ; total identiques 36 / 110 | 3 / 7 (F1 2 / 2, F2 1 / 1) | `minIdenticalJ4 = 3`, `minIdenticalBridge = 36` |
+| Task 5 (famille F3) | F1 5 / 5, F2 33 / 33, F3 47 / 47 ; total identiques 85 / 110 | 5 / 7 (F1 2 / 2, F2 1 / 1, F3 2 / 2) | `minIdenticalJ4 = 5`, `minIdenticalBridge = 85` |
 
 Task 4 : les deux cas F1/F2 encore différents (`gom/TestTermgraph.t`,
 `sl/TestImportStrat.t`) s'arrêtent sur `buildGetHeadDecl` (famille F3,

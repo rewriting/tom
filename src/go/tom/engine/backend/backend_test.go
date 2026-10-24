@@ -87,3 +87,11 @@ func TestBuildExpConditionalType(t *testing.T) {
 		t.Fatalf("got %q, want %q", sb.String(), want)
 	}
 }
+
+func TestGenDeclArrayNeedsUsedDestructor(t *testing.T) {
+	g, sb := newTestGenerator(t)
+	g.genDeclArray("concX", "default") // not used: nothing (GoGenerator.t:678)
+	if sb.String() != "" {
+		t.Fatalf("got %q", sb.String())
+	}
+}
