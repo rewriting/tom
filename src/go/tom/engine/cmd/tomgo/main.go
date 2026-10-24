@@ -14,6 +14,7 @@ import (
 	"strings"
 
 	"tom/engine/bridge"
+	"tom/engine/platform"
 )
 
 const usage = "usage: tomgo suffix [--echo]   (bundle on stdin)\n"
@@ -25,14 +26,6 @@ var ported = map[string]bool{}
 
 // bundleFile is the "file" of the diagnostics about the bundle itself.
 const bundleFile = "-bundle-"
-
-// diag writes one diagnostic: LEVEL TAB file TAB line TAB message (the
-// message on one line), the protocol GoBridgePlugin reads on stderr.
-func diag(w io.Writer, level, file string, line int, msg string) {
-	msg = strings.NewReplacer("\t", " ", "\r", " ", "\n", " ").Replace(msg)
-	file = strings.NewReplacer("\t", " ", "\r", " ", "\n", " ").Replace(file)
-	fmt.Fprintf(w, "%s\t%s\t%d\t%s\n", level, file, line, msg)
-}
 
 func main() { os.Exit(run(os.Args[1:], os.Stdin, os.Stdout, os.Stderr)) }
 
@@ -56,7 +49,7 @@ func run(args []string, stdin io.Reader, stdout, stderr io.Writer) int {
 		if errors.As(err, &be) {
 			line, msg = be.Line, be.Msg
 		}
-		diag(stderr, "ERROR", bundleFile, line, msg)
+		platform.WriteDiag(stderr, "ERROR", bundleFile, line, msg)
 		return 1
 	}
 	if echo {
@@ -65,13 +58,13 @@ func run(args []string, stdin io.Reader, stdout, stderr io.Writer) int {
 			err = w.Flush()
 		}
 		if err != nil {
-			diag(stderr, "ERROR", b.InputName, 0, err.Error())
+			platform.WriteDiag(stderr, "ERROR", b.InputName, 0, err.Error())
 			return 1
 		}
 		return 0
 	}
 	if !ported[strings.ToLower(b.From)] {
-		diag(stderr, "ERROR", b.InputName, 0, fmt.Sprintf("phase %s is not ported to Go yet", b.From))
+		platform.WriteDiag(stderr, "ERROR", b.InputName, 0, fmt.Sprintf("phase %s is not ported to Go yet", b.From))
 		return 2
 	}
 	return 0
