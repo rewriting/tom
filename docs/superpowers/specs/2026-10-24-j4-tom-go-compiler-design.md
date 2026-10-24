@@ -352,9 +352,10 @@ Aucun `.t` n'existe encore sous `src/go`.
    comme `BackendPlugin` ; `getArgs()` rend `[nom du fichier généré]`.
    Avec `goCheck` : compare la sortie au paquet envoyé, octet pour octet ;
    une différence est une erreur qui nomme la première ligne différente.
-4. Relaie chaque ligne `ERROR <nom> <fichier> <ligne> <message>` de la
-   sortie d'erreur en `TomMessage.error`, chaque ligne `WARNING …` en
-   avertissement ; un code de sortie non nul est une erreur (avec le
+4. Relaie chaque ligne `ERROR<TAB>fichier<TAB>ligne<TAB>message` de la
+   sortie d'erreur en `TomMessage.error`, chaque ligne `WARNING…` en
+   avertissement (fichier `-bundle-` : erreur de lecture du paquet, signalée
+   comme erreur du pont et non comme position du `.t`) ; un code de sortie non nul est une erreur (avec le
    texte de la sortie d'erreur).
 5. Avec `--intermediate`, écrit aussi le paquet dans
    `<sortie>.tfix.bridge`.
@@ -383,8 +384,9 @@ sur une ligne (§3.1). L'ordre des lignes est fixe.
 
 ```
 tom-bridge 1
-from Backend                        (nom du plugin, sans espaces)
+from Backend                        (nom de plugin de Tom.config sans espaces, comparé sans tenir compte de la casse ; Java écrit `Typechecker`)
 input /chemin/absolu/X.t
+inputname "X.t"                    (nom d'entrée tel que saisi, getInputFileName(), pour les diagnostics ; littéral entre guillemets)
 output /chemin/absolu/X.go
 option destdir string "out"         (toutes les options connues, triées par nom :
 option goCode bool true              option <nom> bool|int|string <valeur>)

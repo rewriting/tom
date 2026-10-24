@@ -482,6 +482,8 @@ public class TomMessage extends BasicPlatformMessage {
       new TomMessage("tomgo exited with status {0}: {1}");
   public static final TomMessage goBridgeTimeout =
       new TomMessage("bridge: {0} did not finish within {1} seconds (TOMGO_TIMEOUT) and was killed");
+  public static final TomMessage goBridgeBadTimeout =
+      new TomMessage("bridge: TOMGO_TIMEOUT={0} is not a positive number of seconds: using 300");
   public static final TomMessage goBridgeIOException =
       new TomMessage("bridge: cannot run {0}: {1}");
 

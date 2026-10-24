@@ -70,9 +70,7 @@ Seul fichier suivi modifié par les vérifications : `doc/go/coverage.md`
   appel (défaut de l'optimiseur / `ConstraintGenerator.buildACMatchLoop`,
   partagé). Les fixtures `A.t`/`B.t` de `test/go/j4` utilisent les variables
   comme contournement. À traiter dans une tâche à part.
-- **Marques `used`** : le paquet ne porte pas les marques « utilisé » de
-  la table Java ; elles sont recalculées par le backend Go (commentaire dans
-  `bundle()` et README).
+- **Marques `used`** : le paquet porte les marques déjà posées par les phases précédentes (par exemple celles du compilateur pour `concInt` en présence de filtrage AC) ; le backend Go devra partir de l'ensemble du paquet et ajouter les siennes, comme `markUsedConstructorDestructor` (commentaire dans `bundle()` et README).
 - **ATerm des opérateurs de liste** : un terme-liste ATerm ne nomme pas
   son opérateur, la relecture donne le premier opérateur variadique du sort
   (même limite côté Java, voir `doc/go/j4-dashboard.md` : 111/10

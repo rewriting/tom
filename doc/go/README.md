@@ -27,7 +27,7 @@ TOM_HOME=$PWD/src/dist src/dist/bin/tom -go -d out X.t   # gomgo = $TOM_HOME/bin
 ```
 
 `./build.sh src.dist` (et `stable`) appelle `mage installGo`, qui construit
-`gomgo` (et plus tard `tomgo`) dans `<dist>/bin` ; `GOMGO_BIN` ne sert qu'à
+`gomgo` et `tomgo` dans `<dist>/bin` ; `GOMGO_BIN` ne sert qu'à
 surcharger ce binaire.
 
 Puis dans `out/`, un `go.mod` avec `go 1.26` (Go ≥ 1.26 requis),
@@ -228,14 +228,17 @@ suffixe Go (`<dist>/bin/tomgo`, installé par `mage installGo`) :
   `<tom.home>/bin/tomgo` ; jamais le `PATH`. Absent : erreur qui donne le
   chemin cherché.
 - Paquet : texte UTF-8, une donnée par ligne (`tom-bridge 1`, `from`,
-  `input`, `output`, une ligne `option` par option connue triée par nom,
+  `input`, `inputname` (nom saisi, pour les diagnostics), `output`, une ligne `option` par option connue triée par nom,
   `used` par marque triée, `type` par type déclaré, `table`, `code`,
   `end`) ; termes Gom par `toString()`, relus côté Go par
   `src/go/tom/engine/bridge`. Avec `--intermediate`, il est aussi écrit
   dans `<sortie>.tfix.bridge`.
-- Les marques d'utilisation (`used`) ne sont calculées par Java que dans le backend : un paquet coupé avant `Backend` les porte vides, et le backend Go devra les recalculer à partir du code, comme `markUsedConstructorDestructor`.
+- Les marques d'utilisation (`used`) : le paquet porte les marques déjà posées par les phases précédentes (par exemple celles du compilateur pour `concInt` en présence de filtrage AC) ; le backend Go devra partir de cet ensemble et ajouter les siennes, comme `markUsedConstructorDestructor`.
 - Délai : `tomgo` est tué (erreur explicite) s'il ne termine pas en 300 s ;
-  `$TOMGO_TIMEOUT` (secondes) le surcharge. `--goFrom Starter` et
+  `$TOMGO_TIMEOUT` (secondes) le surcharge (valeur nulle, négative ou non
+  numérique : avertissement, visible avec `-W`, et retour à 300). Diagnostics de `tomgo` sur
+  stderr : `NIVEAU<TAB>fichier<TAB>ligne<TAB>message` ; fichier `-bundle-` pour
+  une erreur de lecture du paquet. Avec `noOutput`, aucun fichier n'est écrit. `--goFrom Starter` et
   `--goFrom Parser` sont refusés (le pont démarre après le parseur).
 - Sans `--goFrom` (défaut) rien ne change ; Gom, qui utilise la même
   plateforme sans déclarer `goFrom`, n'est pas concerné.

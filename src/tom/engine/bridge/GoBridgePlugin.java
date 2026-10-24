@@ -65,6 +65,9 @@ public class GoBridgePlugin extends TomGenericPlugin {
   /** suffix of the bundle written with --intermediate */
   public static final String BRIDGE_SUFFIX = ".tfix.bridge";
 
+  /** the "file" of the tomgo diagnostics about the bundle itself */
+  static final String BUNDLE_FILE = "-bundle-";
+
   /** the plugin before which the bridge runs, without spaces */
   private String from = "";
 
@@ -134,10 +137,16 @@ public class GoBridgePlugin extends TomGenericPlugin {
     long timeout = 300;
     String env = System.getenv("TOMGO_TIMEOUT");
     if(env != null && env.trim().length() > 0) {
+      long value = 0;
       try {
-        timeout = Long.parseLong(env.trim());
+        value = Long.parseLong(env.trim());
       } catch(NumberFormatException e) {
-        timeout = 300;
+        value = 0;
+      }
+      if(value > 0) {
+        timeout = value;
+      } else {
+        TomMessage.warning(getLogger(), input, 0, TomMessage.goBridgeBadTimeout, env);
       }
     }
     final long deadline = System.nanoTime() + TimeUnit.SECONDS.toNanos(timeout);
@@ -233,26 +242,33 @@ public class GoBridgePlugin extends TomGenericPlugin {
       return;
     }
 
-    // relay the diagnostics of tomgo: ERROR|WARNING <name> <file> <line> <message>
+    // relay the diagnostics of tomgo: LEVEL TAB file TAB line TAB message
+    // (file "-bundle-": an error about the bundle itself, not about the .t)
     boolean reported = false;
     StringBuilder errText = new StringBuilder();
     for(String line : stderr) {
-      String[] f = line.split(" ", 5);
-      boolean isError = f.length == 5 && f[0].equals("ERROR");
-      boolean isWarning = f.length == 5 && f[0].equals("WARNING");
+      String[] f = line.split("\t", 4);
+      boolean isError = f.length == 4 && f[0].equals("ERROR");
+      boolean isWarning = f.length == 4 && f[0].equals("WARNING");
       if(isError || isWarning) {
-        String file = f[2].equals("-") ? input : f[2];
+        String file = f[1].equals("-") ? input : f[1];
+        String message = f[3];
         int lineNumber = 0;
         try {
-          lineNumber = Integer.parseInt(f[3]);
+          lineNumber = Integer.parseInt(f[2]);
         } catch(NumberFormatException e) {
           lineNumber = 0;
         }
+        if(f[1].equals(BUNDLE_FILE)) {
+          file = input;
+          message = "bundle line " + lineNumber + ": " + message;
+          lineNumber = 0;
+        }
         if(isError) {
-          TomMessage.error(getLogger(), file, lineNumber, TomMessage.goBridgeError, f[1], f[4]);
+          TomMessage.error(getLogger(), file, lineNumber, TomMessage.goBridgeError, "tomgo", message);
           reported = true;
         } else {
-          TomMessage.warning(getLogger(), file, lineNumber, TomMessage.goBridgeError, f[1], f[4]);
+          TomMessage.warning(getLogger(), file, lineNumber, TomMessage.goBridgeError, "tomgo", message);
         }
       } else {
         if(errText.length() > 0) {
@@ -282,6 +298,10 @@ public class GoBridgePlugin extends TomGenericPlugin {
         }
         return;
       }
+      if(getOptionBooleanValue("noOutput")) {
+        // as BackendPlugin: nothing is generated
+        return;
+      }
       String encoding = (String)getOptionValue("encoding");
       File output = getStreamManager().getOutputFile();
       Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(output), encoding));
@@ -302,6 +322,7 @@ public class GoBridgePlugin extends TomGenericPlugin {
     b.append("tom-bridge ").append(VERSION).append('\n');
     b.append("from ").append(from).append('\n');
     b.append("input ").append(new File(getStreamManager().getInputFileName()).getCanonicalPath()).append('\n');
+    b.append("inputname ").append(quote(getStreamManager().getInputFileName())).append('\n');
     b.append("output ").append(getStreamManager().getOutputFile().getCanonicalPath()).append('\n');
     TomOptionManager om = (TomOptionManager)getOptionManager();
     for(String name : om.getOptionNames()) {
@@ -317,10 +338,10 @@ public class GoBridgePlugin extends TomGenericPlugin {
       b.append('\n');
     }
     SymbolTable table = getSymbolTable();
-    // The "used" marks are computed by Java only in the backend
-    // (BackendPlugin.markUsedConstructorDestructor, just before generation):
-    // a bundle cut before Backend carries none, by construction. The Go
-    // backend will have to recompute them from the code.
+    // The bundle carries the "used" marks already set by earlier phases
+    // (e.g. the compiler's AC marks on concInt, Compiler.t); the Go backend
+    // must start from this set and add its own marks, as
+    // BackendPlugin.markUsedConstructorDestructor does just before generation.
     for(KeyEntry e : table.getUsedKeyEntries()) {
       if(!line(b, "used", e)) {
         return null;
@@ -362,7 +383,7 @@ public class GoBridgePlugin extends TomGenericPlugin {
         case '\r': b.append("\\r"); break;
         case '\t': b.append("\\t"); break;
         default:
-          if(c < 0x20) {
+          if(c < 0x20 || c == 0x7f) {
             b.append(String.format("\\u%04x", (int)c));
           } else {
             b.append(c);

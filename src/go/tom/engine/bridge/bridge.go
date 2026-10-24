@@ -28,14 +28,17 @@ type Option struct {
 
 // Bundle is the content of a bundle.
 type Bundle struct {
-	From    string         // plugin name, without spaces ("Backend")
-	Input   string         // absolute path of the .t
-	Output  string         // absolute path of the generated file
-	Options []Option       // sorted by name
-	Used    []adt.KeyEntry // sorted by String()
-	Types   []adt.TomType  // in the order of the Java map keys
-	Table   adt.TomSymbolTable
-	Code    adt.Code
+	From      string         // plugin name, without spaces ("Backend")
+	Input     string         // absolute path of the .t
+	InputName string         // the input name as typed on the command line (diagnostics)
+	Output    string         // absolute path of the generated file
+	Options   []Option       // sorted by name
+	Used      []adt.KeyEntry // sorted by String()
+	Types     []adt.TomType  // in the order of the Java map keys
+	Table     adt.TomSymbolTable
+	Code      adt.Code
+
+	inputNameRaw string // InputName as written, kept for an identical Write
 }
 
 // Option returns the decoded value of an option and whether it exists.
@@ -133,6 +136,14 @@ func Read(r io.Reader) (*Bundle, error) {
 	if b.Input, err = header("input"); err != nil {
 		return nil, err
 	}
+	rawName, err := header("inputname")
+	if err != nil {
+		return nil, err
+	}
+	if b.InputName, err = strconv.Unquote(rawName); err != nil {
+		return nil, &Error{n, fmt.Sprintf("inputname: bad string literal: %v", err)}
+	}
+	b.inputNameRaw = rawName
 	if b.Output, err = header("output"); err != nil {
 		return nil, err
 	}
@@ -235,13 +246,17 @@ func (b *Bundle) Write(w io.Writer) error {
 		return errors.New("bridge: bundle without table or code")
 	}
 	bw := bufio.NewWriterSize(w, 1<<20)
-	fmt.Fprintf(bw, "tom-bridge %d\nfrom %s\ninput %s\noutput %s\n", Version, b.From, b.Input, b.Output)
+	name := b.inputNameRaw
+	if name == "" { // a Bundle built by hand
+		name = JavaQuote(b.InputName)
+	}
+	fmt.Fprintf(bw, "tom-bridge %d\nfrom %s\ninput %s\ninputname %s\noutput %s\n", Version, b.From, b.Input, name, b.Output)
 	for _, o := range b.Options {
 		raw := o.raw
 		if raw == "" { // an Option built by hand
 			raw = o.Value
 			if o.Kind == "string" {
-				raw = strconv.Quote(o.Value)
+				raw = JavaQuote(o.Value)
 			}
 		}
 		fmt.Fprintf(bw, "option %s %s %s\n", o.Name, o.Kind, raw)
@@ -254,4 +269,33 @@ func (b *Bundle) Write(w io.Writer) error {
 	}
 	fmt.Fprintf(bw, "table %s\ncode %s\nend\n", fmt.Sprint(b.Table), fmt.Sprint(b.Code))
 	return bw.Flush()
+}
+
+// JavaQuote quotes s as GoBridgePlugin.quote does: \\ \" \n \r \t are
+// escaped, any other character below 0x20 or 0x7f is written \u00XX, and
+// everything else is raw (strconv.Quote would escape non-printable and
+// non-ASCII runes differently). strconv.Unquote reads it back.
+func JavaQuote(s string) string {
+	var b strings.Builder
+	b.WriteByte('"')
+	for _, c := range s {
+		switch {
+		case c == '\\':
+			b.WriteString(`\\`)
+		case c == '"':
+			b.WriteString(`\"`)
+		case c == '\n':
+			b.WriteString(`\n`)
+		case c == '\r':
+			b.WriteString(`\r`)
+		case c == '\t':
+			b.WriteString(`\t`)
+		case c < 0x20 || c == 0x7f:
+			fmt.Fprintf(&b, `\u%04x`, c)
+		default:
+			b.WriteRune(c)
+		}
+	}
+	b.WriteByte('"')
+	return b.String()
 }

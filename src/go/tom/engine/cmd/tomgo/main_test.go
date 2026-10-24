@@ -25,7 +25,7 @@ func sample(t *testing.T) string {
 		t.Fatalf("no term.txt: %v", err)
 	}
 	return strings.Join([]string{
-		"tom-bridge 1", "from Backend", "input /tmp/X.t", "output /tmp/X.go",
+		"tom-bridge 1", "from Backend", "input /tmp/X.t", `inputname "my dir/X.t"`, "output /tmp/X.go",
 		`option destdir string "out\"dir\nx"`,
 		"option goCode bool true",
 		"option level int 2",
@@ -67,7 +67,7 @@ func TestEcho(t *testing.T) {
 func TestSuffixRefusesPhase(t *testing.T) {
 	bin := build(t)
 	_, errs, code := runBin(t, bin, sample(t), "suffix")
-	want := "ERROR tomgo /tmp/X.t 0 phase Backend is not ported to Go yet\n"
+	want := "ERROR\tmy dir/X.t\t0\tphase Backend is not ported to Go yet\n"
 	if code != 2 || errs != want {
 		t.Fatalf("code %d stderr %q, want 2 %q", code, errs, want)
 	}
@@ -77,7 +77,7 @@ func TestSuffixReadError(t *testing.T) {
 	bin := build(t)
 	for _, args := range [][]string{{"suffix"}, {"suffix", "--echo"}} {
 		_, errs, code := runBin(t, bin, "tom-bridge 2\n", args...)
-		if code != 1 || !strings.HasPrefix(errs, "ERROR tomgo - 1 ") {
+		if code != 1 || !strings.HasPrefix(errs, "ERROR\t-bundle-\t1\t") {
 			t.Fatalf("%v: code %d stderr %q", args, code, errs)
 		}
 	}

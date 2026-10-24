@@ -166,6 +166,32 @@ func TestGoFrom(t *testing.T) {
 			}
 		})
 	}
+	t.Run("used marks and inputname", func(t *testing.T) {
+		ac := filepath.Join(harness.GoTestDir(root), "smoke", "testdata", "ac_matching", "ac_matching.t")
+		out, msg, err := tom(nil, ac, "-go", "-np", "--goFrom", "Backend", "--goCheck", "--intermediate")
+		if err != nil {
+			t.Fatalf("tom: %v\n%s", err, msg)
+		}
+		bundle, err := os.ReadFile(filepath.Join(out, "ac_matching.go.tfix.bridge"))
+		if err != nil {
+			t.Fatal(err)
+		}
+		used := 0
+		for _, l := range strings.Split(string(bundle), "\n") {
+			if strings.HasPrefix(l, "used ") {
+				used++
+				if !strings.Contains(l, "concInt") {
+					t.Errorf("unexpected used mark %.120s", l)
+				}
+			}
+		}
+		if used == 0 {
+			t.Fatalf("no used line naming concInt in the bundle")
+		}
+		if !strings.Contains(string(bundle), "\ninputname \""+ac+"\"\n") {
+			t.Fatalf("no inputname line %q in the bundle", ac)
+		}
+	})
 }
 
 // TestGoFromFakeTomgo drives the bridge with fake tomgo scripts
@@ -210,6 +236,51 @@ func TestGoFromFakeTomgo(t *testing.T) {
 		}
 		if !strings.Contains(msg, "bridge round trip differs at line 3: X") {
 			t.Fatalf("no mismatch message:\n%s", msg)
+		}
+	})
+	t.Run("diagnostics", func(t *testing.T) {
+		script := "#!/bin/sh\ncat >/dev/null\nprintf 'WARNING\\t/a dir/X.t\\t3\\tbe careful\\n' >&2\nprintf 'ERROR\\t/a dir/X.t\\t7\\tbad thing\\n' >&2\nexit 1\n"
+		_, msg, _, err := run(fake(script), nil, "-go", "-np", "-W", "--goFrom", "Backend")
+		if err == nil {
+			t.Fatalf("tom succeeded\n%s", msg)
+		}
+		for _, want := range []string{"/a dir/X.t", "bad thing", "be careful"} {
+			if !strings.Contains(msg, want) {
+				t.Fatalf("output lacks %q:\n%s", want, msg)
+			}
+		}
+	})
+	t.Run("bundle error", func(t *testing.T) {
+		script := "#!/bin/sh\ncat >/dev/null\nprintf 'ERROR\\t-bundle-\\t5\\tunknown line\\n' >&2\nexit 1\n"
+		_, msg, _, err := run(fake(script), nil, "-go", "-np", "--goFrom", "Backend")
+		if err == nil || !strings.Contains(msg, "bundle line 5: unknown line") {
+			t.Fatalf("no bundle error (%v):\n%s", err, msg)
+		}
+		if strings.Contains(msg, "Peano.t:5") || strings.Contains(msg, "Peano.t, line 5") {
+			t.Fatalf("bundle error reported as a .t position:\n%s", msg)
+		}
+	})
+	t.Run("bad timeout", func(t *testing.T) {
+		for _, v := range []string{"0", "-3", "abc"} {
+			out, msg, _, err := run(fake("#!/bin/sh\ncat >/dev/null\nprintf 'x\\n'\n"), []string{"TOMGO_TIMEOUT=" + v}, "-go", "-np", "-W", "--goFrom", "Backend")
+			if err != nil {
+				t.Fatalf("TOMGO_TIMEOUT=%s: %v\n%s", v, err, msg)
+			}
+			if !strings.Contains(msg, "TOMGO_TIMEOUT="+v+" is not a positive number") {
+				t.Fatalf("TOMGO_TIMEOUT=%s: no warning:\n%s", v, msg)
+			}
+			if _, err := os.Stat(filepath.Join(out, "Peano.go")); err != nil {
+				t.Fatal(err)
+			}
+		}
+	})
+	t.Run("noOutput", func(t *testing.T) {
+		out, msg, _, err := run(fake("#!/bin/sh\ncat >/dev/null\nprintf 'x\\n'\n"), nil, "-go", "-np", "--noOutput", "--goFrom", "Backend")
+		if err != nil {
+			t.Fatalf("tom: %v\n%s", err, msg)
+		}
+		if _, err := os.Stat(filepath.Join(out, "Peano.go")); err == nil {
+			t.Fatalf("Peano.go written with --noOutput")
 		}
 	})
 	t.Run("success", func(t *testing.T) {

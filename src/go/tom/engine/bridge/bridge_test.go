@@ -30,6 +30,7 @@ func sample(t testing.TB) string {
 		"tom-bridge 1",
 		"from Backend",
 		"input /tmp/X.t",
+		`inputname "../my dir/X.t"`,
 		"output /tmp/X.go",
 		`option destdir string "out\"dir\nline2\\"`,
 		"option goCode bool true",
@@ -134,7 +135,7 @@ func TestReadErrors(t *testing.T) {
 // A term line may be very long (up to 310 KB observed).
 func TestLongLine(t *testing.T) {
 	long := "code Tom(concCode(TargetLanguageToCode(TL(\"" + strings.Repeat("x", 1<<20) + "\",TextPosition(1,1),TextPosition(1,2)))))\n"
-	in := strings.Join([]string{"tom-bridge 1", "from Backend", "input /i", "output /o", tableLine}, "\n") + "\n" + long + "end\n"
+	in := strings.Join([]string{"tom-bridge 1", "from Backend", "input /i", `inputname "i"`, "output /o", tableLine}, "\n") + "\n" + long + "end\n"
 	b, err := Read(strings.NewReader(in))
 	if err != nil {
 		t.Fatal(err)
@@ -165,12 +166,41 @@ func TestDumpsReadable(t *testing.T) {
 		var in string
 		switch {
 		case strings.HasSuffix(f, ".table"):
-			in = "tom-bridge 1\nfrom X\ninput /i\noutput /o\ntable " + line + "\n" + "code Tom(concCode())\nend\n"
+			in = "tom-bridge 1\nfrom X\ninput /i\ninputname \"i\"\noutput /o\ntable " + line + "\n" + "code Tom(concCode())\nend\n"
 		default:
-			in = "tom-bridge 1\nfrom X\ninput /i\noutput /o\ntable Table(concTomEntry())\ncode " + line + "\nend\n"
+			in = "tom-bridge 1\nfrom X\ninput /i\ninputname \"i\"\noutput /o\ntable Table(concTomEntry())\ncode " + line + "\nend\n"
 		}
 		if _, err := Read(strings.NewReader(in)); err != nil {
 			t.Errorf("%s: %v", filepath.Base(f), err)
+		}
+	}
+}
+
+func TestInputName(t *testing.T) {
+	b, err := Read(strings.NewReader(sample(t)))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if b.InputName != "../my dir/X.t" {
+		t.Fatalf("InputName = %q", b.InputName)
+	}
+}
+
+// JavaQuote mirrors GoBridgePlugin.quote, whatever strconv.Quote does.
+func TestJavaQuote(t *testing.T) {
+	for in, want := range map[string]string{
+		"plain":          `"plain"`,
+		"a\"b\\c":        `"a\"b\\c"`,
+		"l1\nl2\r\t":     `"l1\nl2\r\t"`,
+		"\x01\x1f\x7f":   `"\u0001\u001f\u007f"`,
+		"é€\u00a0\u200b": "\"é€\u00a0\u200b\"",
+	} {
+		got := JavaQuote(in)
+		if got != want {
+			t.Errorf("JavaQuote(%q) = %s, want %s", in, got, want)
+		}
+		if back, err := strconv.Unquote(got); err != nil || back != in {
+			t.Errorf("Unquote(%s) = %q, %v", got, back, err)
 		}
 	}
 }
