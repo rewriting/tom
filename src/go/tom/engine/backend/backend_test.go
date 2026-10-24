@@ -56,13 +56,34 @@ func TestGenerateExpressionTrimsCode(t *testing.T) {
 	}
 }
 
-func TestNotPortedPanics(t *testing.T) {
-	g, _ := newTestGenerator(t)
-	defer func() {
-		e, ok := recover().(*platform.RuntimeError)
-		if !ok || !strings.Contains(e.Msg, "buildIf is not ported yet") {
-			t.Fatalf("panic %v", e)
-		}
-	}()
+func TestBuildIfForms(t *testing.T) {
+	g, sb := newTestGenerator(t)
 	g.generateInstruction(1, MakeIf(MakeTrueTL(), MakeNop(), MakeNop()), "default")
+	if want := "if  true  {  }; "; sb.String() != want {
+		t.Fatalf("If: got %q, want %q", sb.String(), want)
+	}
+	g, sb = newTestGenerator(t)
+	g.buildDoWhile(1, MakeNop(), MakeFalseTL(), "default")
+	if want := "for {  if !( false ) { break; }; }; "; sb.String() != want {
+		t.Fatalf("DoWhile: got %q, want %q", sb.String(), want)
+	}
+	g, sb = newTestGenerator(t)
+	g.buildNamedBlock(1, "matchlab", MakeConcInstruction(), "default")
+	if want := "matchlab: for {  break matchlab; }; "; sb.String() != want {
+		t.Fatalf("NamedBlock: got %q, want %q", sb.String(), want)
+	}
+}
+
+func TestBuildExpConditionalType(t *testing.T) {
+	g, sb := newTestGenerator(t)
+	s := "int64"
+	g.generateTypedExpression(1, &s, MakeConditional(MakeTrueTL(), MakeCode("1"), MakeCode("2")), "default")
+	if want := "func() int64 { if  true  { return 1 }; return 2 }()"; sb.String() != want {
+		t.Fatalf("got %q, want %q", sb.String(), want)
+	}
+	g, sb = newTestGenerator(t)
+	g.buildExpConditional(1, MakeTrueTL(), MakeCode("1"), MakeCode("2"), "default")
+	if want := "func() any { if  true  { return 1 }; return 2 }()"; sb.String() != want {
+		t.Fatalf("got %q, want %q", sb.String(), want)
+	}
 }

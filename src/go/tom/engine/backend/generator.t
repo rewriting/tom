@@ -205,5 +205,14 @@ func (g *goGenerator) generateTypedExpression(deep int, goType *string, exp Expr
 	g.generateExpression(deep, exp, moduleName)
 }
 
+// optString is the *string of a Java String that can be null: &s when ok,
+// nil otherwise (R7), for generateTypedExpression.
+func optString(s string, ok bool) *string {
+	if ok {
+		return &s
+	}
+	return nil
+}
+
 // The generated mapping code (adt.tom) names aterm types; this keeps the import used.
 var _ = aterm.GetInstance

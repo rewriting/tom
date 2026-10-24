@@ -58,10 +58,10 @@ var backendCorpus = append(append([]string(nil), queryCorpus...), f1Corpus...)
 // Floors of TestBackendCorpus: the number of bundles whose Go output is
 // identical to Java's, raised by each family task of J4.1b (plan J4.1b,
 // « Compteur P2 et familles »); never lowered. F1 is 4 of 5 for now:
-// gom/TestTermgraph.t stops on genDeclMake (Task 4).
+// gom/TestTermgraph.t stops on buildGetHeadDecl (Task 5); F2 is 32 of 33 (sl/TestImportStrat.t stops on buildGetHeadDecl too).
 const (
-	minIdenticalJ4     = 2 // F1
-	minIdenticalBridge = 4 // F1
+	minIdenticalJ4     = 3 // F1, F2
+	minIdenticalBridge = 36 // F1 4, F2 32
 )
 
 // backendFamilies are the families of the P2 counter (plan J4.1b), in the

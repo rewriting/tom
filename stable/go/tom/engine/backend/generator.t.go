@@ -1,4 +1,4 @@
-// tom-source-sha256: db7ba905ae88fb2653ce7f42b97f88faf6dd32e9b9b03da05eaa820efb043a37
+// tom-source-sha256: b979a283eb7101ff2b4e97d9f25f745810a97a2f1ddeeb0d2b7f0ceeaf893393
 
 package backend
 
@@ -261,6 +261,18 @@ func (g *goGenerator) generateTypedExpression(deep int, goType *string, exp Expr
 	g.conditionalType = goType
 	defer func() { g.conditionalType = saved }()
 	g.generateExpression(deep, exp, moduleName)
+}
+
+
+
+
+
+
+func optString(s string, ok bool) *string {
+	if ok {
+		return &s
+	}
+	return nil
 }
 
 

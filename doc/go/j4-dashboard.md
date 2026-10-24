@@ -77,3 +77,14 @@ Notes :
 | P1 | | | | |
 | P2 | | | | |
 | P3 | | | | |
+
+### P2 (J4.1b) : compteur par famille
+
+| Tâche | Mesure `bridgeCheck` (110 paquets) | Sous `mage j4` | Planchers |
+|---|---|---|---|
+| Task 3 (famille F1) | identiques 4 / 5 en F1 | 2 / 2 | `minIdenticalJ4 = 2`, `minIdenticalBridge = 4` |
+| Task 4 (famille F2) | F1 4 / 5, F2 32 / 33 ; total identiques 36 / 110 | 3 / 7 (F1 2 / 2, F2 1 / 1) | `minIdenticalJ4 = 3`, `minIdenticalBridge = 36` |
+
+Task 4 : les deux cas F1/F2 encore différents (`gom/TestTermgraph.t`,
+`sl/TestImportStrat.t`) s'arrêtent sur `buildGetHeadDecl` (famille F3,
+Task 5), aucune méthode de F2 ; le plan en attendait 38.
