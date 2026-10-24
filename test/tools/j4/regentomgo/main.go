@@ -4,8 +4,10 @@
 //
 //	tom -go -np -I src/go/tom/engine/adt -o <tmp>/X.t.go X.t
 //
-// A generated file is written only when its content changes (mage
-// tomGoFresh and CheckFresh compare dates). The compiler of the dist must
+// Each generated file starts with the line
+// "// tom-source-sha256: <hex>" (SHA-256 of X.t): mage tomGoFresh compares
+// it with the current X.t (dates play no role). A generated file is
+// written only when its content changes. The compiler of the dist must
 // be fresh (harness.CheckFreshCompiler). Each generated file is also
 // compared with the amorce (stable/go/tom, same path): a difference is
 // reported (run mage promoteGo).
@@ -16,6 +18,8 @@ package main
 
 import (
 	"bytes"
+	"crypto/sha256"
+	"encoding/hex"
 	"flag"
 	"fmt"
 	"io/fs"
@@ -102,6 +106,12 @@ func run(check, verbose bool) error {
 		if err != nil {
 			return fmt.Errorf("%s: no generated file: %v", rel, err)
 		}
+		srcBytes, err := os.ReadFile(src)
+		if err != nil {
+			return err
+		}
+		sum := sha256.Sum256(srcBytes)
+		b = append([]byte("// tom-source-sha256: "+hex.EncodeToString(sum[:])+"\n\n"), b...)
 		if a, err := os.ReadFile(filepath.Join(root, "stable", "go", "tom", rel+".go")); err != nil || !bytes.Equal(a, b) {
 			amorce = append(amorce, rel+".go")
 		}

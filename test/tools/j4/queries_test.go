@@ -219,7 +219,7 @@ func TestSymbolTableQueries(t *testing.T) {
 	if msg, err := harness.RunInTimeout(outDir, 10*time.Minute, nil, "java", args...); err != nil {
 		t.Fatalf("java SymbolTableQueries: %v\n%s", err, msg)
 	}
-	same, differ := 0, 0
+	same, differ, minSeen := 0, 0, 0
 	for k, p := range paths {
 		want, err := os.ReadFile(filepath.Join(outDir, fmt.Sprint(k)+".txt"))
 		if err != nil {
@@ -235,25 +235,83 @@ func TestSymbolTableQueries(t *testing.T) {
 			t.Fatalf("%s: %v", p, err)
 		}
 		got := goQueries(b)
-		if got == string(want) {
-			same++
+		if n := answerLines(string(want)); n < minAnswerLines {
+			t.Errorf("%s: Java output has %d answer lines, want at least %d (vacuous comparison)", p, n, minAnswerLines)
+		}
+		if n := answerLines(got); n < minAnswerLines {
+			t.Errorf("%s: Go output has %d answer lines, want at least %d (vacuous comparison)", p, n, minAnswerLines)
+		}
+		if n := answerLines(string(want)); minSeen == 0 || n < minSeen {
+			minSeen = n
+		}
+		if msg := firstDiff(got, string(want)); msg != "" {
+			differ++
+			t.Errorf("%s: %s", p, msg)
 			continue
 		}
-		differ++
-		g, w := strings.Split(got, "\n"), strings.Split(string(want), "\n")
-		for i := 0; i < len(g) || i < len(w); i++ {
-			var gl, wl string
-			if i < len(g) {
-				gl = g[i]
-			}
-			if i < len(w) {
-				wl = w[i]
-			}
-			if gl != wl {
-				t.Errorf("%s: line %d differs\nGo   %.300s\nJava %.300s", p, i+1, gl, wl)
-				break
-			}
+		same++
+	}
+	t.Logf("réponses par paquet : minimum %d lignes", minSeen)
+	t.Logf("requêtes SymbolTable/TomBase : paquets %d, identiques %d, différents %d", len(paths), same, differ)
+}
+
+// minAnswerLines is the least number of non-empty answer lines expected
+// from any bundle (measured minimum: 287 on the 5 bundles of mage j4, 15
+// on the 110 of bridgeCheck; see the log of
+// TestSymbolTableQueries); below it a comparison would be vacuous.
+const minAnswerLines = 1
+
+// answerLines counts the non-empty lines of a query output.
+func answerLines(out string) int {
+	n := 0
+	for _, l := range strings.Split(out, "\n") {
+		if strings.TrimSpace(l) != "" {
+			n++
 		}
 	}
-	t.Logf("requêtes SymbolTable/TomBase : paquets %d, identiques %d, différents %d", len(paths), same, differ)
+	return n
+}
+
+// firstDiff describes the first differing line of two query outputs ("" when identical).
+func firstDiff(got, want string) string {
+	if got == want {
+		return ""
+	}
+	g, w := strings.Split(got, "\n"), strings.Split(want, "\n")
+	for i := 0; i < len(g) || i < len(w); i++ {
+		var gl, wl string
+		if i < len(g) {
+			gl = g[i]
+		}
+		if i < len(w) {
+			wl = w[i]
+		}
+		if gl != wl {
+			return fmt.Sprintf("line %d differs\nGo   %.300s\nJava %.300s", i+1, gl, wl)
+		}
+	}
+	return "outputs differ"
+}
+
+// TestQueryComparisonDetectsDifference is the counter-proof of
+// TestSymbolTableQueries: a wrong answer, a missing line or an extra line
+// must be reported, and an identical output must not.
+func TestQueryComparisonDetectsDifference(t *testing.T) {
+	want := "a 1\nb 2\nc 3\n"
+	if firstDiff(want, want) != "" {
+		t.Fatal("identical outputs reported as different")
+	}
+	for name, got := range map[string]string{
+		"wrong value": "a 1\nb 9\nc 3\n",
+		"missing":     "a 1\nb 2\n",
+		"extra":       "a 1\nb 2\nc 3\nd 4\n",
+		"empty":       "",
+	} {
+		if firstDiff(got, want) == "" {
+			t.Errorf("%s: difference not detected", name)
+		}
+	}
+	if answerLines("") != 0 || answerLines("\n \n") != 0 || answerLines(want) != 3 {
+		t.Error("answerLines miscounts")
+	}
 }

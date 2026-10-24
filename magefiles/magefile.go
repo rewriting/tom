@@ -15,6 +15,8 @@ package main
 
 import (
 	"bytes"
+	"crypto/sha256"
+	"encoding/hex"
 	"fmt"
 	"os"
 	"os/exec"
@@ -186,8 +188,9 @@ func Bootstrap() error {
 // included — into stable/go/tom, and checks that the amorce builds
 // standalone (GOWORK=off) and that its gomgo regenerates its own gom/adt
 // identically. The Go generated from the Tom+Go sources (X.t.go, mage
-// regenTomGo) is copied with the rest of the module. Use it deliberately, when gomgo or the .gom files evolve
-// (a gomgo feature the .gom files need), then run bootstrap.
+// regenTomGo) is copied with the rest of the module. Use it deliberately,
+// when gomgo or the .gom files evolve (a gomgo feature the .gom files
+// need), then run bootstrap.
 func PromoteGo() error {
 	if err := checkTomGoFresh(); err != nil {
 		return err
@@ -399,32 +402,51 @@ func tomGoFromAmorce() error {
 	return nil
 }
 
+// tomSourceHashPrefix starts the first line of every generated X.t.go
+// (written by regentomgo): the SHA-256 of the source X.t it was
+// generated from.
+const tomSourceHashPrefix = "// tom-source-sha256: "
+
+// checkGenFresh fails when the generated file gen is missing or was not
+// generated from the current content of the Tom+Go source src (modification
+// times play no role: a clone gives fresh dates to everything).
+func checkGenFresh(src, gen string) error {
+	srcBytes, err := os.ReadFile(src)
+	if err != nil {
+		return err
+	}
+	g, err := os.ReadFile(gen)
+	if err != nil {
+		return fmt.Errorf("%s has no generated %s: run mage -d magefiles -w . regenTomGo (needs src/dist)", src, filepath.Base(gen))
+	}
+	sum := sha256.Sum256(srcBytes)
+	want := tomSourceHashPrefix + hex.EncodeToString(sum[:])
+	first, _, _ := strings.Cut(string(g), "\n")
+	if first != want {
+		return fmt.Errorf("%s changed since its generated %s; run mage regenTomGo (needs src/dist) then promoteGo",
+			filepath.Base(src), filepath.Base(gen))
+	}
+	return nil
+}
+
 // checkTomGoFresh fails when a Tom+Go source X.t of src/go/tom has no
-// generated X.t.go or is newer than it.
+// generated X.t.go or when X.t.go does not come from the current X.t.
 func checkTomGoFresh() error {
 	srcs, err := tomGoSources()
 	if err != nil {
 		return err
 	}
 	for _, s := range srcs {
-		st, err := os.Stat(s)
-		if err != nil {
+		if err := checkGenFresh(s, s+".go"); err != nil {
 			return err
-		}
-		gt, err := os.Stat(s + ".go")
-		if err != nil {
-			return fmt.Errorf("%s has no generated %s.go: run mage -d magefiles -w . regenTomGo (needs src/dist)", s, filepath.Base(s))
-		}
-		if st.ModTime().After(gt.ModTime()) {
-			return fmt.Errorf("%s is newer than its generated %s.go: run mage -d magefiles -w . regenTomGo (needs src/dist), "+
-				"or delete the .t.go to take the amorce's (bootstrap)", s, filepath.Base(s))
 		}
 	}
 	return nil
 }
 
 // TomGoFresh fails when the Go generated from a Tom+Go source of
-// src/go/tom (X.t -> X.t.go) is missing or older than its source.
+// src/go/tom (X.t -> X.t.go) is missing or not generated from the current
+// content of its source (SHA-256 header).
 func TomGoFresh() error {
 	mg.Deps(Bootstrap)
 	return checkTomGoFresh()
