@@ -57,7 +57,7 @@ Voir le plan. Écarts `// port:` relevés (`grep -n 'port:' src/go/tom/engine`) 
   Java (même ordre sur le BMP) ; `GetBuiltinType` : variante signalée dans
   le commentaire.
 - `tombase.t` : nettoyage de nom de fichier par rune ; `TomNumberListToString` ;
-  `GetSlotName` et un autre cas où Java imprime en plus l'erreur sur la
+  `GetSlotName` et `GetTermTypeExpr` où Java imprime en plus l'erreur sur la
   sortie standard.
 - `outputcode.go` : erreur d'écriture (Java imprime « write error » et
   continue) ; contexte de la dernière ligne (Java garde 256 unités UTF-16).
@@ -77,11 +77,19 @@ Sur `src/dist` fraîche (JDK 8), après régénération (3 écrits, puis
 | `mage … portGo` | `ok tomtools/parity` ; tableau de bord inchangé : 77 OK / 11 OK (diagnostics) / 9 échoue dans legacy / 2 non supporté / 4 support / 0 divergence / 0 non porté |
 | `mage … portJava` | non relancé : `src/tom` est inchangé depuis le début de J4.1a (aucune modification du compilateur Java) ; planchers T0 102/103 inchangés |
 
-Contre-épreuve des requêtes : le test refuse un paquet dont la sortie a
-moins de 10 lignes de réponse (minimum mesuré : 287 sous `j4`, 15 sous
-`bridgeCheck`) et `TestQueryComparisonDetectsDifference` vérifie qu'une
-valeur fausse, une ligne manquante, une ligne en trop ou une sortie vide
-sont détectées.
+Contre-épreuve des requêtes : les lignes fixes d'une sortie (12 lignes
+`type` des types prédéfinis, `builtins`, `table`, `prefix`) existent même
+pour un paquet vide ; le test compte donc les lignes qui dépendent des
+données du paquet (lignes `symbol`, `usedEntry`, réponses `termType` qui
+ne sont pas `!error`, lignes `  used` contenant `true`). Planchers dans le
+code (`queries_test.go`) : au moins 1 ligne de donnée par paquet dont la
+table de symboles n'est pas vide (sorties Java et Go), et en total sur
+tous les paquets au moins 2600 sous `j4` (mesuré : 2750 sur 5 paquets) et
+36000 sous `bridgeCheck` (mesuré : 37850 sur 110 paquets).
+`TestQueryComparisonDetectsDifference` vérifie qu'une valeur fausse, une
+ligne manquante, une ligne en trop ou une sortie vide sont détectées, et
+qu'un paquet réduit à ses lignes fixes (table non vide ou ensemble vide)
+échoue aux deux planchers.
 
 ## 5. Limites connues et points ouverts pour J4.1b
 

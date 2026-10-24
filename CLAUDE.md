@@ -777,7 +777,7 @@ mage -d magefiles -w . -l          # lister les cibles
 mage -d magefiles -w . all         # vet + tests module tom + self-bootstrap
 mage -d magefiles -w . portJava && mage -d magefiles -w . portGo && mage -d magefiles -w . coverage
 mage -d magefiles -w . regenTomGo         # X.t -> X.t.go (src/go/tom/engine/**, compilé par src/dist ; ignoré par git, promoteGo le met dans l'amorce)
-mage -d magefiles -w . tomGoFresh          # refuse un X.t dont le X.t.go ne porte pas le SHA-256 de son contenu actuel, première ligne `// tom-source-sha256: <hex>` (les dates ne comptent pas ; préalable de test, vet, j4, bridgeCheck)
+mage -d magefiles -w . tomGoFresh          # refuse un X.t dont le X.t.go ne porte pas le SHA-256 de son contenu actuel, première ligne `// tom-source-sha256: <hex>` (les dates ne comptent pas ; le SHA-256 ne couvre que le `.t` : une dérive venant de `adt.tom` ou de gomgo est attrapée par `TestTomGoRegen`, `mage j4` ; préalable de test, vet, j4, bridgeCheck)
 mage -d magefiles -w . j4                  # tests J4 qui demandent une dist (test/tools/j4 : programme Tom+Go sur l'ADT du moteur, src/go/tom en replace ; TestGoFrom : --goFrom/--goCheck)
 mage -d magefiles -w . bridgeCheck        # P0 : T1 + smoke avec --goFrom Backend --goCheck --intermediate, puis tous les dumps relus en Go (TestDumpsRoundTrip) ; ~2 min ; tableau doc/go/j4-dashboard.md
 #   portJava : T0, sortie Java identique à legacy/ (défaut et -np), ~4 min

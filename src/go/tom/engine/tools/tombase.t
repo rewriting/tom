@@ -51,27 +51,27 @@ func GoDeclPrefix(inputFileName string) string {
 // GetTomType is getTomType (TomBase.t:107): ok is false where Java returns
 // null (EmptyType, TypeVar).
 func GetTomType(ty TomType) (string, bool) {
-  %match {
-    Type[TomType=s] << ty -> { return `s, true }
-    EmptyType() << ty || TypeVar[] << ty -> { return "", false }
-  }
-  panic(&platform.RuntimeError{Msg: "getTomType error on term: " + platform.JavaString(ty)})
+	%match {
+		Type[TomType=s] << ty -> { return `s, true }
+		EmptyType() << ty || TypeVar[] << ty -> { return "", false }
+	}
+	panic(&platform.RuntimeError{Msg: "getTomType error on term: " + platform.JavaString(ty)})
 }
 
 // GetTLType is getTLType (TomBase.t:118).
 func GetTLType(ty TomType) string {
-  %match(ty) {
-    Type[TlType=tlType] -> { return GetTLCode(`tlType) }
-  }
-  panic(&platform.RuntimeError{Msg: "getTLType error on term: " + platform.JavaString(ty)})
+	%match(ty) {
+		Type[TlType=tlType] -> { return GetTLCode(`tlType) }
+	}
+	panic(&platform.RuntimeError{Msg: "getTLType error on term: " + platform.JavaString(ty)})
 }
 
 // GetTLCode is getTLCode (TomBase.t:128).
 func GetTLCode(ty TargetLanguageType) string {
-  %match(ty) {
-    TLType(str) -> { return `str }
-  }
-  panic(&platform.RuntimeError{Msg: "getTLCode error on term: " + platform.JavaString(ty)})
+	%match(ty) {
+		TLType(str) -> { return `str }
+	}
+	panic(&platform.RuntimeError{Msg: "getTLCode error on term: " + platform.JavaString(ty)})
 }
 
 // GetSymbolCodomain is getSymbolCodomain (TomBase.t:138).
@@ -115,7 +115,8 @@ func TomNumberListToString(numberList TomNumberList) string {
 }
 
 // numberIdentifier is the identifier of the name of a RenamedVar or a
-// NameNumber in tomNumberListToString (TomBase.t:208-237).
+// NameNumber in tomNumberListToString (TomBase.t:208-237). port: Java
+// duplicates this code in the two cases; it is factored here.
 func numberIdentifier(tomName TomName) string {
 	identifier := "Empty"
 	%match(tomName) {
@@ -253,4 +254,5 @@ func GetTermTypeExpr(t Expression, symbolTable *SymbolTable) TomType {
 	panic(&platform.RuntimeError{Msg: "getTermType error on term: " + platform.JavaString(t)})
 }
 
+// The generated mapping code (adt.tom) names aterm types; this keeps the import used.
 var _ = aterm.GetInstance

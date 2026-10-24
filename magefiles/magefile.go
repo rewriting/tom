@@ -350,12 +350,16 @@ func generatedFiles(dir string) ([]string, error) {
 	return out, nil
 }
 
-// tomGoSources returns the Tom+Go sources (*.t) of src/go/tom, testdata
-// excluded; the Go generated from X.t is X.t.go, next to it (mage
-// regenTomGo; gitignored in src/, kept in the amorce by promoteGo).
-func tomGoSources() ([]string, error) {
+// tomGoSources returns the Tom+Go sources (*.t) of src/go/tom/engine,
+// testdata excluded (the same walk as regentomgo); the Go generated from
+// X.t is X.t.go, next to it (mage regenTomGo; gitignored in src/, kept in
+// the amorce by promoteGo).
+func tomGoSources() ([]string, error) { return tomGoSourcesIn(tomDir) }
+
+// tomGoSourcesIn is tomGoSources for the module directory dir.
+func tomGoSourcesIn(dir string) ([]string, error) {
 	var out []string
-	err := filepath.WalkDir(tomDir, func(p string, d os.DirEntry, err error) error {
+	err := filepath.WalkDir(filepath.Join(dir, "engine"), func(p string, d os.DirEntry, err error) error {
 		if err != nil {
 			return err
 		}
@@ -374,30 +378,47 @@ func tomGoSources() ([]string, error) {
 	return out, err
 }
 
-// tomGoFromAmorce gives each Tom+Go source X.t of src/go/tom that lacks
-// its generated X.t.go (a fresh clone) the copy of the amorce
-// (stable/go/tom, same path), so that module tom builds without Java. A
-// source the amorce does not know yet is left to regenTomGo (tomGoFresh
-// reports it).
-func tomGoFromAmorce() error {
-	srcs, err := tomGoSources()
+// tomGoFromAmorce gives each Tom+Go source X.t of src/go/tom the
+// generated X.t.go of the amorce (stable/go/tom, same path) when src lacks
+// it (a fresh clone) or holds a stale one (after a pull that changed X.t,
+// when the amorce's copy matches the current X.t), so that module tom
+// builds without Java. A source the amorce does not know, or knows only
+// stale, is left to regenTomGo (tomGoFresh reports it).
+func tomGoFromAmorce() error { return tomGoFromAmorceIn(tomDir, stableGoDir) }
+
+// tomGoFromAmorceIn is tomGoFromAmorce on explicit directories.
+func tomGoFromAmorceIn(srcDir, amorceDir string) error {
+	srcs, err := tomGoSourcesIn(srcDir)
 	if err != nil {
 		return err
 	}
 	for _, s := range srcs {
 		gen := s + ".go"
-		if _, err := os.Stat(gen); err == nil {
-			continue
+		rel, _ := filepath.Rel(srcDir, gen)
+		from := filepath.Join(amorceDir, rel)
+		_, statErr := os.Stat(gen)
+		missing := statErr != nil
+		if !missing {
+			if checkGenFresh(s, gen) == nil {
+				continue
+			}
+			// stale: replace only by an amorce copy generated from this very X.t
+			if checkGenFresh(s, from) != nil {
+				continue
+			}
 		}
-		rel, _ := filepath.Rel(tomDir, gen)
-		b, err := os.ReadFile(filepath.Join(stableGoDir, rel))
+		b, err := os.ReadFile(from)
 		if err != nil {
 			continue
 		}
 		if err := os.WriteFile(gen, b, 0o644); err != nil {
 			return err
 		}
-		fmt.Println("bootstrap: " + gen + " taken from the amorce " + stableGoDir)
+		if missing {
+			fmt.Println("bootstrap: " + gen + " taken from the amorce " + amorceDir)
+		} else {
+			fmt.Println("bootstrap: " + gen + " was stale, replaced by the copy of the amorce " + amorceDir)
+		}
 	}
 	return nil
 }

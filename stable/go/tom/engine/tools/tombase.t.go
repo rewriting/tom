@@ -1,4 +1,4 @@
-// tom-source-sha256: 06da4dc916b7e4d661606367305feaa0c9ba7369b19a6e2b6d222bbd3161ef65
+// tom-source-sha256: 75bc0ed041835a934c711e627c7fd3da9a70850760dc79d759c0c3f15b4eeab1
 
 package tools
 
@@ -65,31 +65,31 @@ func GoDeclPrefix(inputFileName string) string {
 
 
 func GetTomType(ty TomType) (string, bool) {
-  ; { _ = ty; { if tom_tombase_is_sort_TomType(ty) { if tom_tombase_is_fun_sym_Type(any(ty).( TomType )) { 
+	; { _ = ty; { if tom_tombase_is_sort_TomType(ty) { if tom_tombase_is_fun_sym_Type(any(ty).( TomType )) { 
  return tom_tombase_get_slot_Type_TomType(any(ty).( TomType )), true ;  };  };  }; { if tom_tombase_is_sort_TomType(ty) { if tom_tombase_is_fun_sym_EmptyType(any(ty).( TomType )) { 
  return "", false ;  };  }; if tom_tombase_is_sort_TomType(ty) { if tom_tombase_is_fun_sym_TypeVar(any(ty).( TomType )) {  return "", false ;  };  };  };  }; 
 
-  panic(&platform.RuntimeError{Msg: "getTomType error on term: " + platform.JavaString(ty)})
+	panic(&platform.RuntimeError{Msg: "getTomType error on term: " + platform.JavaString(ty)})
 }
 
 
 
 
 func GetTLType(ty TomType) string {
-  ; { _ = ty; { if tom_tombase_is_sort_TomType(ty) { if tom_tombase_is_fun_sym_Type(any(ty).( TomType )) { 
+	; { _ = ty; { if tom_tombase_is_sort_TomType(ty) { if tom_tombase_is_fun_sym_Type(any(ty).( TomType )) { 
  return GetTLCode(tom_tombase_get_slot_Type_TlType(any(ty).( TomType ))) ;  };  };  };  }; 
 
-  panic(&platform.RuntimeError{Msg: "getTLType error on term: " + platform.JavaString(ty)})
+	panic(&platform.RuntimeError{Msg: "getTLType error on term: " + platform.JavaString(ty)})
 }
 
 
 
 
 func GetTLCode(ty TargetLanguageType) string {
-  ; { _ = ty; { if tom_tombase_is_sort_TargetLanguageType(ty) { if tom_tombase_is_fun_sym_TLType(any(ty).( TargetLanguageType )) { 
+	; { _ = ty; { if tom_tombase_is_sort_TargetLanguageType(ty) { if tom_tombase_is_fun_sym_TLType(any(ty).( TargetLanguageType )) { 
  return tom_tombase_get_slot_TLType_String(any(ty).( TargetLanguageType ));  };  };  };  }; 
 
-  panic(&platform.RuntimeError{Msg: "getTLCode error on term: " + platform.JavaString(ty)})
+	panic(&platform.RuntimeError{Msg: "getTLCode error on term: " + platform.JavaString(ty)})
 }
 
 
@@ -140,6 +140,8 @@ func TomNumberListToString(numberList TomNumberList) string {
 	}
 	return buf.String()
 }
+
+
 
 
 
@@ -305,6 +307,7 @@ func GetTermTypeExpr(t Expression, symbolTable *SymbolTable) TomType {
 
 	panic(&platform.RuntimeError{Msg: "getTermType error on term: " + platform.JavaString(t)})
 }
+
 
 
 

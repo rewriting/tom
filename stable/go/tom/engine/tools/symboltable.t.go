@@ -1,4 +1,4 @@
-// tom-source-sha256: a270f6635ff53780f05551388a34722440746a6326a85819034e8166edbd88eb
+// tom-source-sha256: 08930b489b702bc09625f035fb6967e13d06ab94596a23d97e083e286025c6ab
 
 package tools
 
@@ -44,7 +44,7 @@ const (
 
 
 func typeUnknown() TomType {
-  return tom_symboltable_make_Type(tom_symboltable_empty_list_concTypeOption(),"unknown type",tom_symboltable_make_EmptyTargetLanguageType())
+	return tom_symboltable_make_Type(tom_symboltable_empty_list_concTypeOption(),"unknown type",tom_symboltable_make_EmptyTargetLanguageType())
 }
 
 
@@ -126,11 +126,19 @@ func (st *SymbolTable) PutType(name string, astType TomType) {
 
 
 func (st *SymbolTable) GetUsedKeyEntries() []KeyEntry {
-	res := make([]KeyEntry, 0, len(st.usedKeyEntry))
-	for ke := range st.usedKeyEntry {
-		res = append(res, ke)
+	type keyed struct {
+		key string
+		ke  KeyEntry
 	}
-	sort.Slice(res, func(i, j int) bool { return fmt.Sprint(res[i]) < fmt.Sprint(res[j]) })
+	entries := make([]keyed, 0, len(st.usedKeyEntry))
+	for ke := range st.usedKeyEntry {
+		entries = append(entries, keyed{fmt.Sprint(ke), ke})
+	}
+	sort.Slice(entries, func(i, j int) bool { return entries[i].key < entries[j].key })
+	res := make([]KeyEntry, len(entries))
+	for i, e := range entries {
+		res[i] = e.ke
+	}
 	return res
 }
 
@@ -288,7 +296,11 @@ func (st *SymbolTable) GetIntType() TomType { return NewType(tom_symboltable_emp
 
 
 
+
+
 func (st *SymbolTable) GetIntArrayType() TomType { return NewType(tom_symboltable_empty_list_concTypeOption(), typeIntArray, "[]int64") }
+
+
 
 
 
@@ -298,7 +310,11 @@ func (st *SymbolTable) GetLongType() TomType { return NewType(tom_symboltable_em
 
 
 
+
+
 func (st *SymbolTable) GetFloatType() TomType { return NewType(tom_symboltable_empty_list_concTypeOption(), typeFloat, "float32") }
+
+
 
 
 
@@ -308,7 +324,11 @@ func (st *SymbolTable) GetCharType() TomType { return NewType(tom_symboltable_em
 
 
 
+
+
 func (st *SymbolTable) GetDoubleType() TomType { return NewType(tom_symboltable_empty_list_concTypeOption(), typeDouble, "float64") }
+
+
 
 
 
@@ -318,12 +338,18 @@ func (st *SymbolTable) GetBooleanType() TomType { return NewType(tom_symboltable
 
 
 
+
+
 func (st *SymbolTable) GetStringType() TomType { return NewType(tom_symboltable_empty_list_concTypeOption(), typeString, "string") }
 
 
 
 
+
+
 func (st *SymbolTable) GetUniversalType() TomType { return NewType(tom_symboltable_empty_list_concTypeOption(), typeUniversal, "any") }
+
+
 
 
 
@@ -692,6 +718,7 @@ func (st *SymbolTable) GetEqualTerm(ty string) (string, bool) { return st.getInl
 
 
 func (st *SymbolTable) GetIntArrayOp() string { return intArrayOp }
+
 
 
 

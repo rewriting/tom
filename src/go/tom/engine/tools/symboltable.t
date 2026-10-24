@@ -36,7 +36,7 @@ const (
 
 // typeUnknown is TYPE_UNKNOWN (SymbolTable.t:63).
 func typeUnknown() TomType {
-  return `Type(concTypeOption(), "unknown type", EmptyTargetLanguageType())
+	return `Type(concTypeOption(), "unknown type", EmptyTargetLanguageType())
 }
 
 // SymbolTable is tom.engine.tools.SymbolTable: a single table for every
@@ -96,11 +96,19 @@ func (st *SymbolTable) PutType(name string, astType TomType) {
 // marks sorted by their text. port: Go compares bytes, Java UTF-16 chars
 // (the same order on BMP text).
 func (st *SymbolTable) GetUsedKeyEntries() []KeyEntry {
-	res := make([]KeyEntry, 0, len(st.usedKeyEntry))
-	for ke := range st.usedKeyEntry {
-		res = append(res, ke)
+	type keyed struct {
+		key string
+		ke  KeyEntry
 	}
-	sort.Slice(res, func(i, j int) bool { return fmt.Sprint(res[i]) < fmt.Sprint(res[j]) })
+	entries := make([]keyed, 0, len(st.usedKeyEntry))
+	for ke := range st.usedKeyEntry {
+		entries = append(entries, keyed{fmt.Sprint(ke), ke})
+	}
+	sort.Slice(entries, func(i, j int) bool { return entries[i].key < entries[j].key })
+	res := make([]KeyEntry, len(entries))
+	for i, e := range entries {
+		res[i] = e.ke
+	}
 	return res
 }
 
@@ -222,30 +230,39 @@ func (st *SymbolTable) IsUsedTypeName(name string) bool {
 func (st *SymbolTable) GetIntType() TomType { return NewType(`concTypeOption(), typeInt, "int64") }
 
 // GetIntArrayType is getIntArrayType (SymbolTable.t:268).
+// Java: the branches of the other targets are omitted (D5).
 func (st *SymbolTable) GetIntArrayType() TomType { return NewType(`concTypeOption(), typeIntArray, "[]int64") }
 
 // GetLongType is getLongType (SymbolTable.t:277).
+// Java: the branches of the other targets are omitted (D5).
 func (st *SymbolTable) GetLongType() TomType { return NewType(`concTypeOption(), typeLong, "int64") }
 
 // GetFloatType is getFloatType (SymbolTable.t:286).
+// Java: the branches of the other targets are omitted (D5).
 func (st *SymbolTable) GetFloatType() TomType { return NewType(`concTypeOption(), typeFloat, "float32") }
 
 // GetCharType is getCharType (SymbolTable.t:295).
+// Java: the branches of the other targets are omitted (D5).
 func (st *SymbolTable) GetCharType() TomType { return NewType(`concTypeOption(), typeChar, "rune") }
 
 // GetDoubleType is getDoubleType (SymbolTable.t:306).
+// Java: the branches of the other targets are omitted (D5).
 func (st *SymbolTable) GetDoubleType() TomType { return NewType(`concTypeOption(), typeDouble, "float64") }
 
 // GetBooleanType is getBooleanType (SymbolTable.t:317).
+// Java: the branches of the other targets are omitted (D5).
 func (st *SymbolTable) GetBooleanType() TomType { return NewType(`concTypeOption(), typeBoolean, "bool") }
 
 // GetStringType is getStringType (SymbolTable.t:332).
+// Java: the branches of the other targets are omitted (D5).
 func (st *SymbolTable) GetStringType() TomType { return NewType(`concTypeOption(), typeString, "string") }
 
 // GetUniversalType is getUniversalType (SymbolTable.t:343).
+// Java: the branches of the other targets are omitted (D5).
 func (st *SymbolTable) GetUniversalType() TomType { return NewType(`concTypeOption(), typeUniversal, "any") }
 
 // GetVoidType is getVoidType (SymbolTable.t:358).
+// Java: the branches of the other targets are omitted (D5).
 func (st *SymbolTable) GetVoidType() TomType { return NewType(`concTypeOption(), typeVoid, "") }
 
 // IsIntType is isIntType (SymbolTable.t:371).
@@ -504,4 +521,5 @@ func (st *SymbolTable) GetEqualTerm(ty string) (string, bool) { return st.getInl
 // GetIntArrayOp is getIntArrayOp (SymbolTable.t:699).
 func (st *SymbolTable) GetIntArrayOp() string { return intArrayOp }
 
+// The generated mapping code (adt.tom) names aterm types; this keeps the import used.
 var _ = aterm.GetInstance

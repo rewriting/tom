@@ -1,4 +1,4 @@
-// tom-source-sha256: 34ba1dbdf4101f0d0f4a4c38e11744411291ab23e4b050bab078e18e53f66422
+// tom-source-sha256: c12ac80cc51db9749242aeca99e97aa4b85513a41f2679ed0d7f593fbe284933
 
 package tools
 
@@ -22,7 +22,7 @@ func tom_astfactory_equal_term_char(t1 rune, t2 rune) bool { return t1 == t2;  }
 
 
 func NewType(typeOptions TypeOptionList, tomName string, tlName string) TomType {
-  return tom_astfactory_make_Type(typeOptions,tomName,tom_astfactory_make_TLType(tlName))
+	return tom_astfactory_make_Type(typeOptions,tomName,tom_astfactory_make_TLType(tlName))
 }
 
 
@@ -30,11 +30,12 @@ func NewType(typeOptions TypeOptionList, tomName string, tlName string) TomType 
 
 
 func MakeSingleLineCode(code string, pretty bool) string {
-  if !pretty {
-    code = strings.NewReplacer("\n", " ", "\t", " ", "\r", " ").Replace(code)
-  }
-  return code
+	if !pretty {
+		code = strings.NewReplacer("\n", " ", "\t", " ", "\r", " ").Replace(code)
+	}
+	return code
 }
+
 
 
 

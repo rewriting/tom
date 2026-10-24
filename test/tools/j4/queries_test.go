@@ -219,7 +219,7 @@ func TestSymbolTableQueries(t *testing.T) {
 	if msg, err := harness.RunInTimeout(outDir, 10*time.Minute, nil, "java", args...); err != nil {
 		t.Fatalf("java SymbolTableQueries: %v\n%s", err, msg)
 	}
-	same, differ, minSeen := 0, 0, 0
+	same, differ, totalData := 0, 0, 0
 	for k, p := range paths {
 		want, err := os.ReadFile(filepath.Join(outDir, fmt.Sprint(k)+".txt"))
 		if err != nil {
@@ -235,15 +235,14 @@ func TestSymbolTableQueries(t *testing.T) {
 			t.Fatalf("%s: %v", p, err)
 		}
 		got := goQueries(b)
-		if n := answerLines(string(want)); n < minAnswerLines {
-			t.Errorf("%s: Java output has %d answer lines, want at least %d (vacuous comparison)", p, n, minAnswerLines)
+		nsym := b.Table.GetEntryList().Length()
+		if err := checkBundleData(nsym, string(want)); err != nil {
+			t.Errorf("%s: Java output: %v", p, err)
 		}
-		if n := answerLines(got); n < minAnswerLines {
-			t.Errorf("%s: Go output has %d answer lines, want at least %d (vacuous comparison)", p, n, minAnswerLines)
+		if err := checkBundleData(nsym, got); err != nil {
+			t.Errorf("%s: Go output: %v", p, err)
 		}
-		if n := answerLines(string(want)); minSeen == 0 || n < minSeen {
-			minSeen = n
-		}
+		totalData += dataLines(string(want))
 		if msg := firstDiff(got, string(want)); msg != "" {
 			differ++
 			t.Errorf("%s: %s", p, msg)
@@ -251,25 +250,67 @@ func TestSymbolTableQueries(t *testing.T) {
 		}
 		same++
 	}
-	t.Logf("réponses par paquet : minimum %d lignes", minSeen)
+	dfloor := minDataLinesJ4
+	if os.Getenv(harness.DumpsEnv) != "" {
+		dfloor = minDataLinesBridge
+	}
+	t.Logf("lignes de donnée (symbol, usedEntry, termType, used true) : total %d sur %d paquets, plancher %d", totalData, len(paths), dfloor)
+	if err := checkDataTotal(totalData, dfloor); err != nil {
+		t.Error(err)
+	}
 	t.Logf("requêtes SymbolTable/TomBase : paquets %d, identiques %d, différents %d", len(paths), same, differ)
 }
 
-// minAnswerLines is the least number of non-empty answer lines expected
-// from any bundle (measured minimum: 287 on the 5 bundles of mage j4, 15
-// on the 110 of bridgeCheck; see the log of
-// TestSymbolTableQueries); below it a comparison would be vacuous.
-const minAnswerLines = 1
+// Floors of the data-dependent lines of the Java answers (see dataLines).
+// The fixed lines of an output (12 builtin `type` lines, builtins, table,
+// prefix) are there for an empty bundle too, so they prove nothing; the
+// data lines depend on the bundle. Measured (TestSymbolTableQueries log):
+// 2750 on the 5 bundles of mage j4, 37850 on the 110 of
+// bridgeCheck; the floors are a little under them.
+const (
+	minDataLinesPerBundle = 1 // for a bundle whose table is not empty
+	minDataLinesJ4        = 2600
+	minDataLinesBridge    = 36000
+)
 
-// answerLines counts the non-empty lines of a query output.
-func answerLines(out string) int {
+// dataLines counts the lines of a query output that depend on the bundle:
+// `symbol` lines, `usedEntry` lines, `termType` answers that are not
+// !error and `used` lines (the used marks of a symbol) with a true.
+func dataLines(out string) int {
 	n := 0
 	for _, l := range strings.Split(out, "\n") {
-		if strings.TrimSpace(l) != "" {
+		switch {
+		case strings.HasPrefix(l, "symbol "), strings.HasPrefix(l, "usedEntry "):
 			n++
+		case strings.HasPrefix(l, "termType "):
+			if !strings.HasSuffix(l, " !error") {
+				n++
+			}
+		case strings.HasPrefix(l, "  used "):
+			if strings.Contains(l, "true") {
+				n++
+			}
 		}
 	}
 	return n
+}
+
+// checkBundleData fails when a bundle whose table has symbols yields an
+// output without any data line (a vacuous comparison).
+func checkBundleData(symbols int, out string) error {
+	if n := dataLines(out); symbols > 0 && n < minDataLinesPerBundle {
+		return fmt.Errorf("%d data lines for a table of %d symbols, want at least %d (vacuous comparison)", n, symbols, minDataLinesPerBundle)
+	}
+	return nil
+}
+
+// checkDataTotal fails when the data lines of all the bundles together
+// are under the floor.
+func checkDataTotal(total, floor int) error {
+	if total < floor {
+		return fmt.Errorf("%d data lines over all the bundles, want at least %d (vacuous comparison)", total, floor)
+	}
+	return nil
 }
 
 // firstDiff describes the first differing line of two query outputs ("" when identical).
@@ -311,7 +352,19 @@ func TestQueryComparisonDetectsDifference(t *testing.T) {
 			t.Errorf("%s: difference not detected", name)
 		}
 	}
-	if answerLines("") != 0 || answerLines("\n \n") != 0 || answerLines(want) != 3 {
-		t.Error("answerLines miscounts")
+	// An empty bundle: only the fixed lines (builtin types, builtins, table,
+	// prefix), no data. It must fail both floors.
+	fixed := "type int get null\ntype void get null\nbuiltins x\ntable Table(concTomEntry())\nprefix tom_x_ tom_x_\n"
+	if dataLines(fixed) != 0 {
+		t.Errorf("fixed lines counted as data: %d", dataLines(fixed))
+	}
+	if checkBundleData(3, fixed) == nil {
+		t.Error("a non-empty table with no data line passed")
+	}
+	if checkDataTotal(dataLines(fixed), minDataLinesJ4) == nil || checkDataTotal(dataLines(fixed), minDataLinesBridge) == nil {
+		t.Error("an empty set of bundles passed the totals")
+	}
+	if dataLines("symbol a\n  used true false false false false\ntermType T 1 !error\ntermType T 2 int\nusedEntry k\n") != 4 {
+		t.Error("dataLines miscounts")
 	}
 }

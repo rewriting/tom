@@ -12,7 +12,7 @@ Commandes : `mage -d magefiles -w . j4` (5 paquets) et `bridgeCheck`
 |---|---|
 | Scripts d'écriture `OutputCode` (Java contre Go) | 407 ; identiques 407 / différents 0 |
 | Paquets interrogés (`SymbolTable`/`TomBase`) | 115 (5 sous `j4`, 110 sous `bridgeCheck`) ; identiques 115 / différents 0 |
-| Lignes de réponse par paquet (minimum) | 287 sous `j4`, 15 sous `bridgeCheck` (plancher du test : 10) |
+| Lignes de donnée des réponses (`symbol`, `usedEntry`, `termType` non erreur, `used` vrai) | total 2750 sous `j4` (plancher 2600), 37850 sous `bridgeCheck` (plancher 36000) ; plancher par paquet à table non vide : 1 |
 | Sources Tom+Go compilées par `regenTomGo` | 3 (`astfactory.t`, `symboltable.t`, `tombase.t`) |
 
 ## P0 : identité du pont
