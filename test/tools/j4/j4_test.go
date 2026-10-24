@@ -443,3 +443,18 @@ func TestDumpsRoundTrip(t *testing.T) {
 		t.Fatalf("%d dumps differ", different)
 	}
 }
+
+// TestTomGoRegen checks that the Go generated from the Tom+Go sources of
+// the compiler (src/go/tom/engine/**/*.t -> X.t.go) is up to date in src
+// and in the amorce stable/go/tom (go run ./j4/regentomgo -check, with
+// src/dist).
+func TestTomGoRegen(t *testing.T) {
+	harness.LookPath(t, "go")
+	harness.NewDist(t)
+	root := harness.RepoRoot(t)
+	out, err := harness.RunIn(harness.ToolsDir(root), nil, "go", "run", "./j4/regentomgo", "-check")
+	if err != nil {
+		t.Fatalf("regentomgo -check: %v\n%s", err, out)
+	}
+	t.Log(strings.TrimSpace(out))
+}

@@ -183,14 +183,12 @@ func freshness(root, home string) error {
 	return err
 }
 
-// CheckFresh returns an error when the compiler of the dist at home
-// (lib/tom-compiler-full.jar) is older than one of the sources it is
+// CheckFreshCompiler returns an error when the compiler of the dist at
+// home (lib/tom-compiler-full.jar) is older than one of the sources it is
 // built from: src/tom/**/*.{t,java,tom,config}, src/tom/library/mapping/**
-// and src/config/*.config of the repository root. It also fails when a
-// Go command installed in bin/ (gomgo, tomgo) is older than the newest
-// src/go/tom/**/*.go (not *_test.go, not testdata/) or *.gom. (The Go
-// runtime the dist ships is compared with src/go/tom by SetupGoModule.)
-func CheckFresh(root, home string) error {
+// and src/config/*.config of the repository root. regentomgo needs only
+// this: it runs the compiler, not the Go commands of the dist.
+func CheckFreshCompiler(root, home string) error {
 	jar := filepath.Join(home, "lib", "tom-compiler-full.jar")
 	st, err := os.Stat(jar)
 	if err != nil {
@@ -232,6 +230,18 @@ func CheckFresh(root, home string) error {
 		rel, _ := filepath.Rel(root, newest)
 		return fmt.Errorf("stale compiler: %s (%s) is newer than %s (%s): rebuild ./build.sh src.dist",
 			rel, newestTime.Format(time.RFC3339), jar, st.ModTime().Format(time.RFC3339))
+	}
+	return nil
+}
+
+// CheckFresh is CheckFreshCompiler plus the Go commands installed in
+// bin/: it also fails when a Go command installed there (gomgo, tomgo) is
+// older than the newest src/go/tom/**/*.go (not *_test.go, not testdata/)
+// or *.gom. (The Go runtime the dist ships is compared with src/go/tom by
+// SetupGoModule.)
+func CheckFresh(root, home string) error {
+	if err := CheckFreshCompiler(root, home); err != nil {
+		return err
 	}
 	// the Go commands installed in bin/
 	var goNewest string

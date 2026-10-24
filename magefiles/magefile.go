@@ -86,7 +86,7 @@ var requireTools = []string{"TOMGO_REQUIRE_TOOLS=1"}
 // Test runs the unit tests of the validated Go tree (module tom) and the
 // tests of the compiler's ADTs (test/go/adt).
 func Test() error {
-	mg.Deps(Bootstrap)
+	mg.Deps(TomGoFresh)
 	if err := runIn(tomDir, "go", "test", "-count=1", "./..."); err != nil {
 		return err
 	}
@@ -96,7 +96,7 @@ func Test() error {
 // Vet vets the validated Go tree, the ADT tests (test/go) and the
 // comparison tools (test/tools).
 func Vet() error {
-	mg.Deps(Bootstrap)
+	mg.Deps(TomGoFresh)
 	if err := runIn(tomDir, "go", "vet", "./..."); err != nil {
 		return err
 	}
@@ -143,6 +143,9 @@ const stableGoDir = "stable/go/tom"
 // for the engine ADT it only shows that both gomgo generate the same code
 // (gomgo is not built on the engine ADT): the proof that the generated
 // code works is test/go/adt (and go vet).
+//
+// It also gives each Tom+Go source its generated X.t.go from the amorce
+// when src lacks it (tomGoFromAmorce).
 func Bootstrap() error {
 	tmp, err := os.MkdirTemp("", "tom-bootstrap-")
 	if err != nil {
@@ -173,7 +176,7 @@ func Bootstrap() error {
 				a.dir, tomDir, stableGoDir, diff)
 		}
 	}
-	return nil
+	return tomGoFromAmorce()
 }
 
 // PromoteGo makes the current src/go/tom the amorce: it regenerates both
@@ -182,9 +185,13 @@ func Bootstrap() error {
 // module tom — its non-test .go files and go.mod, the generated ADTs
 // included — into stable/go/tom, and checks that the amorce builds
 // standalone (GOWORK=off) and that its gomgo regenerates its own gom/adt
-// identically. Use it deliberately, when gomgo or the .gom files evolve
+// identically. The Go generated from the Tom+Go sources (X.t.go, mage
+// regenTomGo) is copied with the rest of the module. Use it deliberately, when gomgo or the .gom files evolve
 // (a gomgo feature the .gom files need), then run bootstrap.
 func PromoteGo() error {
+	if err := checkTomGoFresh(); err != nil {
+		return err
+	}
 	tmp, err := os.MkdirTemp("", "tom-promote-")
 	if err != nil {
 		return err
@@ -340,6 +347,99 @@ func generatedFiles(dir string) ([]string, error) {
 	return out, nil
 }
 
+// tomGoSources returns the Tom+Go sources (*.t) of src/go/tom, testdata
+// excluded; the Go generated from X.t is X.t.go, next to it (mage
+// regenTomGo; gitignored in src/, kept in the amorce by promoteGo).
+func tomGoSources() ([]string, error) {
+	var out []string
+	err := filepath.WalkDir(tomDir, func(p string, d os.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+		if d.IsDir() {
+			if d.Name() == "testdata" {
+				return filepath.SkipDir
+			}
+			return nil
+		}
+		if strings.HasSuffix(p, ".t") {
+			out = append(out, p)
+		}
+		return nil
+	})
+	sort.Strings(out)
+	return out, err
+}
+
+// tomGoFromAmorce gives each Tom+Go source X.t of src/go/tom that lacks
+// its generated X.t.go (a fresh clone) the copy of the amorce
+// (stable/go/tom, same path), so that module tom builds without Java. A
+// source the amorce does not know yet is left to regenTomGo (tomGoFresh
+// reports it).
+func tomGoFromAmorce() error {
+	srcs, err := tomGoSources()
+	if err != nil {
+		return err
+	}
+	for _, s := range srcs {
+		gen := s + ".go"
+		if _, err := os.Stat(gen); err == nil {
+			continue
+		}
+		rel, _ := filepath.Rel(tomDir, gen)
+		b, err := os.ReadFile(filepath.Join(stableGoDir, rel))
+		if err != nil {
+			continue
+		}
+		if err := os.WriteFile(gen, b, 0o644); err != nil {
+			return err
+		}
+		fmt.Println("bootstrap: " + gen + " taken from the amorce " + stableGoDir)
+	}
+	return nil
+}
+
+// checkTomGoFresh fails when a Tom+Go source X.t of src/go/tom has no
+// generated X.t.go or is newer than it.
+func checkTomGoFresh() error {
+	srcs, err := tomGoSources()
+	if err != nil {
+		return err
+	}
+	for _, s := range srcs {
+		st, err := os.Stat(s)
+		if err != nil {
+			return err
+		}
+		gt, err := os.Stat(s + ".go")
+		if err != nil {
+			return fmt.Errorf("%s has no generated %s.go: run mage -d magefiles -w . regenTomGo (needs src/dist)", s, filepath.Base(s))
+		}
+		if st.ModTime().After(gt.ModTime()) {
+			return fmt.Errorf("%s is newer than its generated %s.go: run mage -d magefiles -w . regenTomGo (needs src/dist), "+
+				"or delete the .t.go to take the amorce's (bootstrap)", s, filepath.Base(s))
+		}
+	}
+	return nil
+}
+
+// TomGoFresh fails when the Go generated from a Tom+Go source of
+// src/go/tom (X.t -> X.t.go) is missing or older than its source.
+func TomGoFresh() error {
+	mg.Deps(Bootstrap)
+	return checkTomGoFresh()
+}
+
+// RegenTomGo compiles the Tom+Go sources of the compiler
+// (src/go/tom/engine/**/*.t) with src/dist (D4; its compiler must be
+// fresh) into their X.t.go; needs a built src/dist (JDK 8,
+// ./build.sh src.dist). After it: promoteGo, then bootstrap, to put them
+// in the amorce.
+func RegenTomGo() error {
+	mg.Deps(Bootstrap)
+	return runIn(toolsDir, "go", "run", "./j4/regentomgo")
+}
+
 // syncGenerated makes the generated files of dir those of from: it
 // writes the files that differ and removes those that from lacks.
 func syncGenerated(from, dir string) error {
@@ -438,7 +538,7 @@ func Smoke() error {
 
 // J4 runs the J4 tests that need a built dist (test/tools/j4).
 func J4() error {
-	mg.Deps(Bootstrap)
+	mg.Deps(TomGoFresh)
 	return runInEnv(toolsDir, requireTools, "go", "test", "-count=1", "./j4/...")
 }
 
@@ -446,7 +546,7 @@ func J4() error {
 // --goFrom Backend --goCheck (each bundle echoed by tomgo must be
 // identical) and --intermediate, then re-reads every dump in Go.
 func BridgeCheck() error {
-	mg.Deps(Bootstrap)
+	mg.Deps(TomGoFresh)
 	dumps, err := os.MkdirTemp("", "tom-dumps-")
 	if err != nil {
 		return err
@@ -513,7 +613,7 @@ func All() { mg.SerialDeps(Bootstrap, Vet, VetStandalone, Test, SelfBootstrap, S
 
 // VetStandalone checks that both validated modules build without the workspace.
 func VetStandalone() error {
-	mg.Deps(Bootstrap)
+	mg.Deps(TomGoFresh)
 	if err := runInEnv(tomDir, []string{"GOWORK=off"}, "go", "vet", "./..."); err != nil {
 		return err
 	}

@@ -187,6 +187,15 @@ l'amorce Go :
   `bootstrap`. `TestSelfBootstrap` (`gom/backend`) compare la
   régénération au code généré par l'amorce ; les tests de comportement
   des ADT sont dans `test/go/adt`.
+- Sources Tom+Go du compilateur : `src/go/tom/engine/**/X.t` est compilé
+  par `mage -d magefiles -w . regenTomGo` (`src/dist`, D4, garde
+  `CheckFreshCompiler`) en `X.t.go` à côté du `.t`, ignoré par git ;
+  `promoteGo` le copie dans l'amorce ; `bootstrap` reprend le `X.t.go` de
+  l'amorce quand `src` n'en a pas (un clone neuf se construit sans Java) ;
+  `mage tomGoFresh` (préalable de `test`, `vet`, `j4`, `bridgeCheck`)
+  refuse un `X.t` plus récent que son `X.t.go`. Après une régénération
+  qui change un fichier, reconstruire `src/dist` avant les harnais
+  (`CheckFresh` des binaires).
 - La dist (`<dist>/lib/go/tom`) ne contient que le runtime
   (`library/**`, `go.mod`) ; `gomgo` est installé dans `<dist>/bin` par
   `mage installGo` (appelé par `./build.sh src.dist` et `stable` : Go et
