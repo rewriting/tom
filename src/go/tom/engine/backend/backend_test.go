@@ -95,3 +95,14 @@ func TestGenDeclArrayNeedsUsedDestructor(t *testing.T) {
 		t.Fatalf("got %q", sb.String())
 	}
 }
+
+func TestTransformationRefused(t *testing.T) {
+	g, _ := newTestGenerator(t)
+	defer func() {
+		e, ok := recover().(*platform.RuntimeError)
+		if !ok || e.Msg != "%transformation is not supported with -go" {
+			t.Fatalf("panic %v", e)
+		}
+	}()
+	g.buildResolveClass("w", "t", "e", "default")
+}

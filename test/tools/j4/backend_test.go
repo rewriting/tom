@@ -60,8 +60,8 @@ var backendCorpus = append(append([]string(nil), queryCorpus...), f1Corpus...)
 // « Compteur P2 et familles »); never lowered. F1 is 4 of 5 for now:
 // gom/TestTermgraph.t stops on buildGetHeadDecl (Task 5); F2 is 32 of 33 (sl/TestImportStrat.t stops on buildGetHeadDecl too).
 const (
-	minIdenticalJ4     = 5 // F1, F2, F3
-	minIdenticalBridge = 85 // F1 5, F2 33, F3 47
+	minIdenticalJ4     = 7 // F1 2, F2 1, F3 2, F4 2
+	minIdenticalBridge = 110 // F1 5, F2 33, F3 47, F4 25
 )
 
 // backendFamilies are the families of the P2 counter (plan J4.1b), in the
