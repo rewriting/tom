@@ -39,6 +39,7 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import tom.engine.TomMessage;
 import tom.engine.TomOptionManager;
@@ -130,20 +131,33 @@ public class GoBridgePlugin extends TomGenericPlugin {
     if(check) {
       command.add("--echo");
     }
-    byte[] stdout;
+    long timeout = 300;
+    String env = System.getenv("TOMGO_TIMEOUT");
+    if(env != null && env.trim().length() > 0) {
+      try {
+        timeout = Long.parseLong(env.trim());
+      } catch(NumberFormatException e) {
+        timeout = 300;
+      }
+    }
+    final long deadline = System.nanoTime() + TimeUnit.SECONDS.toNanos(timeout);
+    final byte[][] stdoutBox = new byte[1][];
     List<String> stderr = new ArrayList<String>();
-    int status;
+    int status = -1;
+    Process proc = null;
+    boolean finished = false;
+    boolean timedOut = false;
     try {
       final Process p = new ProcessBuilder(command).start();
+      proc = p;
       final byte[] toSend = bundle;
-      final IOException[] writeError = new IOException[1];
       Thread writer = new Thread() {
         public void run() {
           OutputStream in = p.getOutputStream();
           try {
             in.write(toSend);
           } catch(IOException e) {
-            writeError[0] = e; // tomgo may stop reading early: its status tells why
+            // tomgo may stop reading early: its status tells why
           } finally {
             try { in.close(); } catch(IOException e) { }
           }
@@ -168,17 +182,54 @@ public class GoBridgePlugin extends TomGenericPlugin {
           }
         }
       };
+      Thread outReader = new Thread() {
+        public void run() {
+          try {
+            stdoutBox[0] = readAll(p.getInputStream());
+          } catch(IOException e) {
+            stdoutBox[0] = null;
+          }
+        }
+      };
+      writer.setDaemon(true);
+      reader.setDaemon(true);
+      outReader.setDaemon(true);
       writer.start();
       reader.start();
-      stdout = readAll(p.getInputStream());
-      status = p.waitFor();
-      writer.join();
-      reader.join();
+      outReader.start();
+      if(p.waitFor(timeout, TimeUnit.SECONDS)) {
+        long left = Math.max(1, TimeUnit.NANOSECONDS.toMillis(deadline - System.nanoTime()));
+        outReader.join(left);
+        reader.join(left);
+        writer.join(left);
+        if(outReader.isAlive() || reader.isAlive()) {
+          // a grandchild kept the pipes open
+          timedOut = true;
+        } else {
+          status = p.exitValue();
+          finished = true;
+        }
+      } else {
+        timedOut = true;
+      }
     } catch(IOException e) {
       TomMessage.error(getLogger(), input, 0, TomMessage.goBridgeIOException, tomgo, e.getMessage());
       return;
     } catch(InterruptedException e) {
       TomMessage.error(getLogger(), input, 0, TomMessage.goBridgeIOException, tomgo, e.getMessage());
+      return;
+    } finally {
+      if(proc != null && !finished) {
+        proc.destroyForcibly();
+      }
+    }
+    if(timedOut) {
+      TomMessage.error(getLogger(), input, 0, TomMessage.goBridgeTimeout, tomgo, String.valueOf(timeout));
+      return;
+    }
+    byte[] stdout = stdoutBox[0];
+    if(stdout == null) {
+      TomMessage.error(getLogger(), input, 0, TomMessage.goBridgeIOException, tomgo, "cannot read standard output");
       return;
     }
 
@@ -266,6 +317,10 @@ public class GoBridgePlugin extends TomGenericPlugin {
       b.append('\n');
     }
     SymbolTable table = getSymbolTable();
+    // The "used" marks are computed by Java only in the backend
+    // (BackendPlugin.markUsedConstructorDestructor, just before generation):
+    // a bundle cut before Backend carries none, by construction. The Go
+    // backend will have to recompute them from the code.
     for(KeyEntry e : table.getUsedKeyEntries()) {
       if(!line(b, "used", e)) {
         return null;

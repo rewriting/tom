@@ -132,6 +132,8 @@ func TestGoFrom(t *testing.T) {
 		})
 	}
 	fails("unknown plugin", "--goFrom Nope: no such plugin", nil, goSrc, "-go", "-np", "--goFrom", "Nope")
+	fails("goFrom Starter", "cannot hand over before Starter: the bridge starts after the parser", nil, goSrc, "-go", "-np", "--goFrom", "Starter")
+	fails("goFrom Parser", "cannot hand over before Parser: the bridge starts after the parser", nil, goSrc, "-go", "-np", "--goFrom", "Parser")
 	fails("without -go", "--goFrom needs -go", nil, filepath.Join(harness.JavaTestDir(root), "Peano.t"), "--goFrom", "Backend")
 	fails("no tomgo", "tomgo not found at /nonexistent", []string{"TOMGO_BIN=/nonexistent"}, goSrc, "-go", "-np", "--goFrom", "Backend")
 	fails("not ported", "phase Backend is not ported to Go yet", nil, goSrc, "-go", "-np", "--goFrom", "Backend")
@@ -158,4 +160,64 @@ func TestGoFrom(t *testing.T) {
 			}
 		})
 	}
+}
+
+// TestGoFromFakeTomgo drives the bridge with fake tomgo scripts
+// (TOMGO_BIN): a hung tomgo is killed after TOMGO_TIMEOUT, a --goCheck
+// round trip that differs names the first differing line, and without
+// --goCheck the standard output of tomgo is the generated file.
+func TestGoFromFakeTomgo(t *testing.T) {
+	root := harness.RepoRoot(t)
+	dist := harness.NewDist(t)
+	src := filepath.Join(harness.GoTestDir(root), "Peano.t")
+	fake := func(script string) string {
+		path := filepath.Join(t.TempDir(), "tomgo")
+		if err := os.WriteFile(path, []byte(script), 0o755); err != nil {
+			t.Fatal(err)
+		}
+		return path
+	}
+	run := func(tomgo string, env []string, args ...string) (string, string, time.Duration, error) {
+		out := t.TempDir()
+		full := append(append([]string{"-d", out}, args...), src)
+		env = append([]string{"TOM_HOME=" + dist.Home, "TOMGO_BIN=" + tomgo}, env...)
+		start := time.Now()
+		msg, err := harness.RunInTimeout(filepath.Dir(src), 60*time.Second, env, filepath.Join(dist.Home, "bin", "tom"), full...)
+		return out, msg, time.Since(start), err
+	}
+	t.Run("hang", func(t *testing.T) {
+		_, msg, d, err := run(fake("#!/bin/sh\nexec sleep 600\n"), []string{"TOMGO_TIMEOUT=2"}, "-go", "-np", "--goFrom", "Backend")
+		if err == nil || strings.Contains(err.Error(), "timeout after") {
+			t.Fatalf("tom did not fail by itself within 60 s: %v\n%s", err, msg)
+		}
+		if d > 30*time.Second {
+			t.Fatalf("tom took %v", d)
+		}
+		if !strings.Contains(msg, "did not finish within 2 seconds") {
+			t.Fatalf("no timeout message:\n%s", msg)
+		}
+	})
+	t.Run("mismatch", func(t *testing.T) {
+		_, msg, _, err := run(fake("#!/bin/sh\nsed '3s/^/X/'\n"), nil, "-go", "-np", "--goFrom", "Backend", "--goCheck")
+		if err == nil {
+			t.Fatalf("tom succeeded on a differing round trip\n%s", msg)
+		}
+		if !strings.Contains(msg, "bridge round trip differs at line 3: X") {
+			t.Fatalf("no mismatch message:\n%s", msg)
+		}
+	})
+	t.Run("success", func(t *testing.T) {
+		const text = "package main\n\nfunc main() {}\n"
+		out, msg, _, err := run(fake("#!/bin/sh\ncat >/dev/null\nprintf 'package main\\n\\nfunc main() {}\\n'\n"), nil, "-go", "-np", "--goFrom", "Backend")
+		if err != nil {
+			t.Fatalf("tom: %v\n%s", err, msg)
+		}
+		got, err := os.ReadFile(filepath.Join(out, "Peano.go"))
+		if err != nil {
+			t.Fatal(err)
+		}
+		if string(got) != text {
+			t.Fatalf("output %q, want %q", got, text)
+		}
+	})
 }

@@ -233,6 +233,10 @@ suffixe Go (`<dist>/bin/tomgo`, installé par `mage installGo`) :
   `end`) ; termes Gom par `toString()`, relus côté Go par
   `src/go/tom/engine/bridge`. Avec `--intermediate`, il est aussi écrit
   dans `<sortie>.tfix.bridge`.
+- Les marques d'utilisation (`used`) ne sont calculées par Java que dans le backend : un paquet coupé avant `Backend` les porte vides, et le backend Go devra les recalculer à partir du code, comme `markUsedConstructorDestructor`.
+- Délai : `tomgo` est tué (erreur explicite) s'il ne termine pas en 300 s ;
+  `$TOMGO_TIMEOUT` (secondes) le surcharge. `--goFrom Starter` et
+  `--goFrom Parser` sont refusés (le pont démarre après le parseur).
 - Sans `--goFrom` (défaut) rien ne change ; Gom, qui utilise la même
   plateforme sans déclarer `goFrom`, n'est pas concerné.
 - Test : `TestGoFrom` (`test/tools/j4`, `mage -d magefiles -w . j4`).

@@ -114,6 +114,9 @@ public class PluginPlatformMessage implements PlatformMessage {
   public static final PluginPlatformMessage goFromUnknownPlugin =
     new PluginPlatformMessage("--goFrom {0}: no such plugin (known: {1})");
 
+  public static final PluginPlatformMessage goFromTooEarly =
+    new PluginPlatformMessage("--goFrom {0}: cannot hand over before {0}: the bridge starts after the parser");
+
   //PluginFactory messages
   public static final PluginPlatformMessage noPluginActivated =
     new PluginPlatformMessage("Error : No plugin was activated.");

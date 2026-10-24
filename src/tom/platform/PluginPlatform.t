@@ -179,6 +179,12 @@ public class PluginPlatform extends PluginPlatformBase implements Runnable {
    */
   public void run() {
     if(goFrom.length() > 0) {
+      if(goFrom.equalsIgnoreCase("Starter") || goFrom.equalsIgnoreCase("Parser")) {
+        PluginPlatformMessage.error(getLogger(), null, 0,
+            PluginPlatformMessage.goFromTooEarly, goFrom);
+        this.runResult = 1;
+        return;
+      }
       boolean known = false;
       for(Plugin p : pluginsList) {
         known = known || goFromMatches(p);
