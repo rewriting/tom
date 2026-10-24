@@ -22,7 +22,7 @@ func sample(t *testing.T) string {
 	t.Helper()
 	term, err := os.ReadFile(filepath.Join("..", "..", "..", "..", "..", "..", "test", "go", "j4", "testdata", "adtuse", "term.txt"))
 	if err != nil {
-		t.Skipf("no term.txt: %v", err)
+		t.Fatalf("no term.txt: %v", err)
 	}
 	return strings.Join([]string{
 		"tom-bridge 1", "from Backend", "input /tmp/X.t", "output /tmp/X.go",

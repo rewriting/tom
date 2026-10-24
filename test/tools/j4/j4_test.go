@@ -3,12 +3,18 @@
 package j4
 
 import (
+	"fmt"
+	"io/fs"
 	"os"
 	"path/filepath"
+	"sort"
 	"strings"
 	"testing"
 	"time"
 
+	"tom/engine/adt"
+	"tom/engine/bridge"
+	"tom/library/aterm"
 	"tomtools/harness"
 )
 
@@ -220,4 +226,149 @@ func TestGoFromFakeTomgo(t *testing.T) {
 			t.Fatalf("output %q, want %q", got, text)
 		}
 	})
+}
+
+// minDumpBundles is the floor of inputs a P0 run must check: the .tfix.bridge
+// bundles written by T1 (TestGoBackend, the cases that reach the backend)
+// and the smoke fixtures (27 of the 110), measured on 2026-10-24 (see doc/go/j4-dashboard.md).
+const (
+	minDumpBundles = 110
+	minDumpParsed  = 121 // inputs that reach the parser (T1 cases + smoke fixtures)
+)
+
+// TestDumpsRoundTrip re-reads in Go every dump that `mage bridgeCheck`
+// collected in $TOMGO_DUMPS (tom -go --intermediate): the printed form
+// (String(), the format of the bridge) must be identical to the file.
+// The ToATerm round trip is informative only: an ATerm list does not name
+// its operator, so reading it back gives the first variadic operator of
+// the sort (the same limitation exists in Java).
+func TestDumpsRoundTrip(t *testing.T) {
+	dumps := os.Getenv(harness.DumpsEnv)
+	if dumps == "" {
+		t.Skipf("%s not set (run by mage bridgeCheck)", harness.DumpsEnv)
+	}
+	counts := map[string]int{}
+	type ar struct{ ok, ko int }
+	atermRT := map[string]*ar{}
+	identical, different, bundles, smokeBundles := 0, 0, 0, 0
+	err := filepath.WalkDir(dumps, func(p string, e fs.DirEntry, err error) error {
+		if err != nil || e.IsDir() {
+			return err
+		}
+		name := e.Name()
+		i := strings.Index(name, ".tfix.")
+		if i < 0 {
+			return nil
+		}
+		suffix := name[i+len(".tfix."):]
+		raw, err := os.ReadFile(p)
+		if err != nil {
+			return err
+		}
+		content := string(raw)
+		counts[suffix]++
+		if suffix == "bridge" && strings.HasPrefix(filepath.Base(filepath.Dir(p)), "test_go_smoke_") {
+			smokeBundles++
+		}
+		var same bool
+		var viaATerm func() bool
+		func() {
+			defer func() {
+				if r := recover(); r != nil {
+					t.Errorf("%s: panic: %v", p, r)
+					same = false
+				}
+			}()
+			switch {
+			case suffix == "bridge":
+				bundles++
+				b, err := bridge.Read(strings.NewReader(content))
+				if err != nil {
+					t.Errorf("%s: %v", p, err)
+					return
+				}
+				var sb strings.Builder
+				if err := b.Write(&sb); err != nil {
+					t.Errorf("%s: write: %v", p, err)
+					return
+				}
+				same = sb.String() == content
+			case suffix == "parsed.table":
+				// TomParserPlugin writes symbolTable.toTerm().toATerm(): the
+				// ATerm syntax (lists without operator), not String(). The
+				// ATerm text must re-print identically; reading it as a
+				// table and writing it back is informative.
+				at := aterm.GetInstance().Parse(content)
+				// Java's ATerm writer escapes a quote inside a string
+				// (\'), the Go writer does not: compare modulo that escape.
+				want := strings.ReplaceAll(strings.TrimSuffix(content, "\n"), "\\'", "'")
+				same = fmt.Sprint(at) == want
+				viaATerm = func() bool {
+					return fmt.Sprint(adt.TomSymbolTableFromTerm(at).ToATerm()) == want
+				}
+			case strings.HasSuffix(suffix, ".table"):
+				v := adt.TomSymbolTableFromString(content)
+				same = fmt.Sprint(v) == strings.TrimSuffix(content, "\n")
+				viaATerm = func() bool { return adt.TomSymbolTableFromTerm(v.ToATerm()) == v }
+			default:
+				v := adt.CodeFromString(content)
+				same = fmt.Sprint(v) == strings.TrimSuffix(content, "\n")
+				viaATerm = func() bool { return adt.CodeFromTerm(v.ToATerm()) == v }
+			}
+		}()
+		if same {
+			identical++
+		} else {
+			different++
+			t.Errorf("%s: String() differs from the file", p)
+		}
+		if viaATerm != nil {
+			r := atermRT[suffix]
+			if r == nil {
+				r = &ar{}
+				atermRT[suffix] = r
+			}
+			ok := false
+			func() {
+				defer func() { recover() }()
+				ok = viaATerm()
+			}()
+			if ok {
+				r.ok++
+			} else {
+				r.ko++
+			}
+		}
+		return nil
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	total := identical + different
+	sufs := make([]string, 0, len(counts))
+	for s := range counts {
+		sufs = append(sufs, s)
+	}
+	sort.Strings(sufs)
+	for _, s := range sufs {
+		line := fmt.Sprintf("dumps .tfix.%s: %d", s, counts[s])
+		if r := atermRT[s]; r != nil {
+			line += fmt.Sprintf(" (ToATerm round trip, informative: %d identical / %d different)", r.ok, r.ko)
+		}
+		t.Log(line)
+	}
+	t.Logf("bundles (.tfix.bridge): %d, of which smoke: %d", bundles, smokeBundles)
+	t.Logf("total %d, identiques %d / différents %d", total, identical, different)
+	if total == 0 {
+		t.Fatal("no dump found")
+	}
+	if bundles < minDumpBundles {
+		t.Fatalf("only %d bundles checked, want at least %d", bundles, minDumpBundles)
+	}
+	if counts["parsed"] < minDumpParsed {
+		t.Fatalf("only %d inputs parsed, want at least %d", counts["parsed"], minDumpParsed)
+	}
+	if different > 0 {
+		t.Fatalf("%d dumps differ", different)
+	}
 }

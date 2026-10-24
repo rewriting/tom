@@ -20,7 +20,7 @@ func codeLine(t testing.TB) string {
 	p := filepath.Join("..", "..", "..", "..", "..", "test", "go", "j4", "testdata", "adtuse", "term.txt")
 	b, err := os.ReadFile(p)
 	if err != nil {
-		t.Skipf("no term.txt: %v", err)
+		t.Fatalf("no term.txt: %v", err)
 	}
 	return "code " + strings.TrimRight(string(b), "\n") + "\n"
 }

@@ -12,7 +12,7 @@
 | Tests Tom+Java (originaux) | `test/java/` | historique |
 | Tests Tom+Go (ports de `test/java/`), données de référence, tests des ADT | `test/go/` (module `tomtest`) | validé |
 | Harnais T0–T3, smoke (comparent Java, Go, `legacy/`) | `test/tools/` (module `tomtools`) | validé |
-| Rapports | `doc/go/` : J0–T3 [`j0-go-backend.md`](j0-go-backend.md), J2 [`j2-report.md`](j2-report.md), [tableau de bord](port-dashboard.md), [couverture](coverage.md) | à jour |
+| Rapports | `doc/go/` : J0–T3 [`j0-go-backend.md`](j0-go-backend.md), J2 [`j2-report.md`](j2-report.md), [tableau de bord](port-dashboard.md), [couverture](coverage.md), J4 [pont P0](j4-dashboard.md) | à jour |
 | Prototype tomgo (compilateur Go écrit à la main) | `prototype/tomgo/` | gelé, réservoir de code |
 
 Utiliser le runtime dans un projet : `require tom v0.0.0` et
@@ -240,6 +240,19 @@ suffixe Go (`<dist>/bin/tomgo`, installé par `mage installGo`) :
 - Sans `--goFrom` (défaut) rien ne change ; Gom, qui utilise la même
   plateforme sans déclarer `goFrom`, n'est pas concerné.
 - Test : `TestGoFrom` (`test/tools/j4`, `mage -d magefiles -w . j4`).
+- **P0, identité du pont** : `mage -d magefiles -w . bridgeCheck` compile T1
+  (`TestGoBackend`) et le smoke (`TestGoSmoke`) avec `--goFrom Backend
+  --goCheck --intermediate` (variables `TOMGO_GOCHECK=1`, `TOMGO_DUMPS=<dir>`
+  lues par `Dist.Compile` pour une dist qui a `bin/tomgo`, jamais `legacy/` ;
+  `TOMGO_GOFROM=<phase>` pour une seule phase), déplace tous les `*.tfix*`
+  dans `<dir>`, puis `TestDumpsRoundTrip` relit chacun en Go : `String()`
+  identique au fichier (`.tfix.bridge` : `Read` puis `Write` identique). Le
+  `.tfix.parsed.table` est écrit par Java en syntaxe ATerm (`toATerm()`, listes
+  sans opérateur, `\'` échappé) et non en `String()` : il est vérifié par
+  relecture/réimpression ATerm. L'aller-retour `ToATerm` est **informatif**
+  (comptes, jamais un échec) : un terme-liste ATerm ne nomme pas son
+  opérateur, la relecture donne le premier opérateur variadique du sort. Tableau :
+  [`j4-dashboard.md`](j4-dashboard.md).
 
 ## Limites connues de `-go` (parser îlot `-np`)
 

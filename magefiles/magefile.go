@@ -442,6 +442,26 @@ func J4() error {
 	return runInEnv(toolsDir, requireTools, "go", "test", "-count=1", "./j4/...")
 }
 
+// BridgeCheck runs P0 (J4 spec 5.1): T1 and the smoke tests with
+// --goFrom Backend --goCheck (each bundle echoed by tomgo must be
+// identical) and --intermediate, then re-reads every dump in Go.
+func BridgeCheck() error {
+	mg.Deps(Bootstrap)
+	dumps, err := os.MkdirTemp("", "tom-dumps-")
+	if err != nil {
+		return err
+	}
+	defer os.RemoveAll(dumps)
+	env := append([]string{"TOMGO_GOCHECK=1", "TOMGO_DUMPS=" + dumps}, requireTools...)
+	if err := runInEnv(toolsDir, env, "go", "test", "-count=1", "-timeout", "30m", "./parity/", "-run", "TestGoBackend"); err != nil {
+		return err
+	}
+	if err := runInEnv(toolsDir, env, "go", "test", "-count=1", "./smoke/", "-run", "TestGoSmoke"); err != nil {
+		return err
+	}
+	return runInEnv(toolsDir, env, "go", "test", "-count=1", "-v", "./j4/", "-run", "TestDumpsRoundTrip")
+}
+
 // goCommands are the Go commands of module tom installed in <dist>/bin
 // (the dist ships binaries; src/ holds sources only). A command whose
 // main package is absent from the tree is skipped (tomgo in an amorce

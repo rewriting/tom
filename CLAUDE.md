@@ -774,6 +774,7 @@ mage -d magefiles -w . -l          # lister les cibles
 mage -d magefiles -w . all         # vet + tests module tom + self-bootstrap
 mage -d magefiles -w . portJava && mage -d magefiles -w . portGo && mage -d magefiles -w . coverage
 mage -d magefiles -w . j4                  # tests J4 qui demandent une dist (test/tools/j4 : programme Tom+Go sur l'ADT du moteur, src/go/tom en replace ; TestGoFrom : --goFrom/--goCheck)
+mage -d magefiles -w . bridgeCheck        # P0 : T1 + smoke avec --goFrom Backend --goCheck --intermediate, puis tous les dumps relus en Go (TestDumpsRoundTrip) ; ~2 min ; tableau doc/go/j4-dashboard.md
 #   portJava : T0, sortie Java identique à legacy/ (défaut et -np), ~4 min
 #   portGo   : T1 (goldens Go) + T2 (oracle legacy/) + doc/go/port-dashboard.md
 #   coverage : T3, doc/go/coverage.md

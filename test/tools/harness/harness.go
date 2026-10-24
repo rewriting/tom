@@ -16,6 +16,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"slices"
 	"sort"
 	"strings"
 	"sync"
@@ -266,17 +267,80 @@ func CheckFresh(root, home string) error {
 	return nil
 }
 
+// Environment variables of the Java -> Go bridge checks (J4.0d, P0); they
+// are read by Compile for a dist that ships bin/tomgo (never legacy/) and
+// only when the arguments contain -go.
+//
+//	TOMGO_GOFROM=<phase>  adds --goFrom <phase>
+//	TOMGO_GOCHECK=1       adds --goFrom Backend --goCheck (exclusive with TOMGO_GOFROM)
+//	TOMGO_DUMPS=<dir>     adds --intermediate and moves every *.tfix* dump of
+//	                      the output directory to <dir>/<unique name>/
+const (
+	GoFromEnv  = "TOMGO_GOFROM"
+	GoCheckEnv = "TOMGO_GOCHECK"
+	DumpsEnv   = "TOMGO_DUMPS"
+)
+
 // Compile runs `bin/tom -d outDir args… src` with TOM_HOME=d.Home and
 // GOMGO_BIN set to the dist's bin/gomgo (when it exists), and returns the combined stdout+stderr.
+// See GoFromEnv for the bridge variables.
 func (d Dist) Compile(t testing.TB, src, outDir string, args ...string) (string, error) {
 	t.Helper()
-	full := append(append([]string{"-d", outDir}, args...), src)
 	env := []string{"TOM_HOME=" + d.Home}
 	// the compiler of stable/ still reads GOMGO_BIN; legacy/ has no gomgo
 	if g := filepath.Join(d.Home, "bin", "gomgo"); fileExists(g) {
 		env = append(env, "GOMGO_BIN="+g)
 	}
-	return RunIn(filepath.Dir(src), env, filepath.Join(d.Home, "bin", "tom"), full...)
+	dumps := ""
+	if fileExists(filepath.Join(d.Home, "bin", "tomgo")) && slices.Contains(args, "-go") {
+		from, check := os.Getenv(GoFromEnv), os.Getenv(GoCheckEnv) == "1"
+		if from != "" && check {
+			t.Fatalf("%s and %s=1 are exclusive", GoFromEnv, GoCheckEnv)
+		}
+		if check {
+			args = append(slices.Clone(args), "--goFrom", "Backend", "--goCheck")
+		} else if from != "" {
+			args = append(slices.Clone(args), "--goFrom", from)
+		}
+		if dumps = os.Getenv(DumpsEnv); dumps != "" {
+			args = append(slices.Clone(args), "--intermediate")
+		}
+	}
+	full := append(append([]string{"-d", outDir}, args...), src)
+	out, err := RunIn(filepath.Dir(src), env, filepath.Join(d.Home, "bin", "tom"), full...)
+	if dumps != "" {
+		moveDumps(t, src, outDir, dumps)
+	}
+	return out, err
+}
+
+// moveDumps moves every *.tfix* file under outDir into a new directory of
+// dumps named after src (path relative to the repository, / -> _, plus a
+// counter when taken), so that goldens and build directories stay clean.
+func moveDumps(t testing.TB, src, outDir, dumps string) {
+	t.Helper()
+	name := filepath.Base(src)
+	if root, err := FindRoot(); err == nil {
+		if rel, err := filepath.Rel(root, src); err == nil && !strings.HasPrefix(rel, "..") {
+			name = strings.ReplaceAll(rel, string(filepath.Separator), "_")
+		}
+	}
+	dir := filepath.Join(dumps, name)
+	for n := 2; fileExists(dir); n++ {
+		dir = filepath.Join(dumps, fmt.Sprintf("%s.%d", name, n))
+	}
+	if err := os.MkdirAll(dir, 0o755); err != nil {
+		t.Fatal(err)
+	}
+	filepath.WalkDir(outDir, func(p string, e fs.DirEntry, err error) error {
+		if err != nil || e.IsDir() || !strings.Contains(e.Name(), ".tfix") {
+			return nil
+		}
+		if err := os.Rename(p, filepath.Join(dir, e.Name())); err != nil {
+			t.Errorf("moving dump %s: %v", p, err)
+		}
+		return nil
+	})
 }
 
 // RunIn runs a command in dir with extra environment variables and
