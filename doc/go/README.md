@@ -12,7 +12,7 @@
 | Tests Tom+Java (originaux) | `test/java/` | historique |
 | Tests Tom+Go (ports de `test/java/`), données de référence, tests des ADT | `test/go/` (module `tomtest`) | validé |
 | Harnais T0–T3, smoke (comparent Java, Go, `legacy/`) | `test/tools/` (module `tomtools`) | validé |
-| Rapports | `doc/go/` : J0–T3 [`j0-go-backend.md`](j0-go-backend.md), J2 [`j2-report.md`](j2-report.md), [tableau de bord](port-dashboard.md), [couverture](coverage.md), J4 [pont P0](j4-dashboard.md) | à jour |
+| Rapports | `doc/go/` : J0–T3 [`j0-go-backend.md`](j0-go-backend.md), J2 [`j2-report.md`](j2-report.md), [tableau de bord](port-dashboard.md), [couverture](coverage.md), J4.0 [rapport](j4-0-report.md), [pont P0](j4-dashboard.md) | à jour |
 | Prototype tomgo (compilateur Go écrit à la main) | `prototype/tomgo/` | gelé, réservoir de code |
 
 Utiliser le runtime dans un projet : `require tom v0.0.0` et
@@ -300,7 +300,11 @@ suffixe Go (`<dist>/bin/tomgo`, installé par `mage installGo`) :
     (reprise du parser Go du prototype, complété) ; l'orchestration Go
     se construit au fil des étapes ; on termine par le point fixe (le
     compilateur Tom+Go se compile lui-même).
-  Un spec J4 dédié sera rédigé avant de commencer.
+  Spec J4 : `docs/superpowers/specs/2026-10-24-j4-tom-go-compiler-design.md`.
+  **J4.0 (pont Java → Go) est fait** (2026-10-24, rapport
+  [`j4-0-report.md`](j4-0-report.md), tableau de bord
+  [`j4-dashboard.md`](j4-dashboard.md)) ; prochain plan : J4.1a
+  (fondations Go, `mage regenTomGo`).
 - **Règle d'équivalence pour J4.** Identité stricte (octet pour octet)
   pour toutes les étapes qui partent de l'AST exporté par Java, c'est-à-
   dire toutes sauf le parser. À l'étape du parser, viser l'identité ; si

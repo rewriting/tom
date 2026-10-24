@@ -38,8 +38,10 @@ dans legacy, 2 non supportés, 4 support, 0 divergence, 0 non porté — rapport
 J3 (couverture des constructions : 16 lignes, 0 non couverte, `doc/go/coverage.md`), J4
 (compilateur réécrit en Tom+Go, portage « de la fin vers le début » à
 partir du backend, règle d'équivalence stricte sauf positions au
-parser — cf. `doc/go/README.md` « Orientation pour la suite », spec à
-venir). Références :
+parser — cf. `doc/go/README.md` « Orientation pour la suite » et le spec
+`docs/superpowers/specs/2026-10-24-j4-tom-go-compiler-design.md` ; J4.0
+(pont Java → Go, `--goFrom`, binaires dans la dist, préfixe `tom_<F>_`)
+**terminé** le 2026-10-24, rapport `doc/go/j4-0-report.md`). Références :
 spec `docs/superpowers/specs/2026-10-22-tom-go-backend-design.md`, plan
 `docs/superpowers/plans/2026-10-22-tom-go-backend.md`, rapport
 `doc/go/j0-go-backend.md`; carte des chemins : `doc/go/README.md`, spec
@@ -97,10 +99,11 @@ l'AST Go contre la référence Java. tomgo est un outil Go autonome qui :
 - **utilise ses propres AST générés** (`stable/library/gomast/` pour le sous-
   langage Gom, `stable/library/tomast/` pour le langage TOM) — auto-amorce.
 
-**Itération en cours** : J2 terminé (plan
-`docs/superpowers/plans/2026-10-23-j2-port.md`, rapport
-`doc/go/j2-report.md`) ; prochaine étape : spec J4 (portage du
-compilateur en Tom+Go de la fin vers le début, cf. `doc/go/README.md`). (L'ancienne
+**Itération en cours** : J4.0 terminé (plan
+`docs/superpowers/plans/2026-10-24-j4-0-bridge.md`, rapport
+`doc/go/j4-0-report.md`) ; prochaine étape : plan J4.1a (fondations Go,
+`mage regenTomGo`) d'après le spec J4
+`docs/superpowers/specs/2026-10-24-j4-tom-go-compiler-design.md`. (L'ancienne
 « Phase 4 » — porter le compilateur TOM phase par phase en Go écrit à la
 main — est gelée, cf. ci-dessus.)
 
@@ -1214,9 +1217,10 @@ Différences API vs Java :
 1. Lire ce fichier en entier (tu y es).
 2. `mage -d magefiles -w . all` doit passer — si non, regarder le rapport
    concerné dans `doc/go/`.
-3. Ouvrir le dernier rapport (`doc/go/j2-report.md` à ce jour) pour le
+3. Ouvrir le dernier rapport (`doc/go/j4-0-report.md` à ce jour) pour le
    détail technique de l'étape qu'on vient de finir, puis
    `doc/go/port-dashboard.md` et `doc/go/coverage.md`.
-4. Prochaine tâche : rédiger le spec J4 (portage du compilateur en Tom+Go
-   « de la fin vers le début », cf. `doc/go/README.md`) ; la section 5
+4. Prochaine tâche : rédiger le plan J4.1a (fondations Go, `mage
+   regenTomGo`) d'après le spec
+   `docs/superpowers/specs/2026-10-24-j4-tom-go-compiler-design.md` ; la section 5
    de ce fichier est historique.
