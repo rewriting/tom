@@ -16,12 +16,6 @@ func notPorted(method string) {
 }
 
 // family F2 (Task 4)
-func (g *goGenerator) buildTerm(deep int, opname string, argList BQTermList, moduleName string) {
-	notPorted("buildTerm")
-}
-func (g *goGenerator) buildFunctionCall(deep int, name string, argList BQTermList, moduleName string) {
-	notPorted("buildFunctionCall")
-}
 func (g *goGenerator) buildExpGreaterThan(deep int, exp1, exp2 Expression, moduleName string) {
 	notPorted("buildExpGreaterThan")
 }
@@ -34,30 +28,12 @@ func (g *goGenerator) buildExpLessThan(deep int, exp1, exp2 Expression, moduleNa
 func (g *goGenerator) buildExpLessOrEqualThan(deep int, exp1, exp2 Expression, moduleName string) {
 	notPorted("buildExpLessOrEqualThan")
 }
-func (g *goGenerator) buildExpIsSort(deep int, ty string, exp BQTerm, moduleName string) {
-	notPorted("buildExpIsSort")
-}
-func (g *goGenerator) buildExpIsFsym(deep int, opname string, exp BQTerm, moduleName string) {
-	notPorted("buildExpIsFsym")
-}
-func (g *goGenerator) buildExpGetSlot(deep int, opname, slotName string, v BQTerm, moduleName string) {
-	notPorted("buildExpGetSlot")
-}
 func (g *goGenerator) buildAddOne(deep int, v BQTerm, moduleName string) { notPorted("buildAddOne") }
 func (g *goGenerator) buildSubstractOne(deep int, v BQTerm, moduleName string) {
 	notPorted("buildSubstractOne")
 }
 func (g *goGenerator) buildSubstract(deep int, v1, v2 BQTerm, moduleName string) {
 	notPorted("buildSubstract")
-}
-func (g *goGenerator) buildIsFsymDecl(deep int, tomName, varname string, tlType TargetLanguageType, code Expression, moduleName string) {
-	notPorted("buildIsFsymDecl")
-}
-func (g *goGenerator) buildGetSlotDecl(deep int, tomName, varname string, tlType TargetLanguageType, code Expression, slotName TomName, moduleName string) {
-	notPorted("buildGetSlotDecl")
-}
-func (g *goGenerator) buildGetDefaultDecl(deep int, tomName string, code Expression, slotName TomName, moduleName string) {
-	notPorted("buildGetDefaultDecl")
 }
 func (g *goGenerator) buildAssign(deep int, v BQTerm, optionList OptionList, exp Expression, moduleName string) {
 	notPorted("buildAssign")
@@ -111,9 +87,6 @@ func (g *goGenerator) buildExpEqualTerm(deep int, ty TomType, exp1 BQTerm, exp2 
 }
 func (g *goGenerator) buildExpEqualBQTerm(deep int, ty TomType, exp1, exp2 BQTerm, moduleName string) {
 	notPorted("buildExpEqualBQTerm")
-}
-func (g *goGenerator) genDeclMake(prefix, funName string, returnType TomType, argList BQTermList, instr Instruction, moduleName string) {
-	notPorted("genDeclMake")
 }
 
 // family F3 (Task 5)
