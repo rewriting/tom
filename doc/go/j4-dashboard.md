@@ -15,7 +15,7 @@ Commandes : `mage -d magefiles -w . j4` (5 paquets) et `bridgeCheck`
 | Lignes de donnée des réponses (`symbol`, `usedEntry`, `termType` non erreur, `used` vrai) | total 2750 sous `j4` (plancher 2600), 37850 sous `bridgeCheck` (plancher 36000) ; plancher par paquet à table non vide : 1 |
 | Sources Tom+Go compilées par `regenTomGo` | 3 (`astfactory.t`, `symboltable.t`, `tombase.t`) |
 
-## J4.1b : backend Go (P2) (mesures du 2026-10-24)
+## J4.1b : backend Go (P2) (mesures du 2026-10-25)
 
 Compteur in-process `TestBackendCorpus` (`test/tools/j4/backend_test.go`) : le
 backend Go (`backend.Generate`) sur chaque paquet pont, comparé octet pour octet
@@ -36,10 +36,6 @@ famille. Commandes : `mage -d magefiles -w . j4` (7 paquets), `mage -d magefiles
 (Mesures de clôture, 2026-10-25. Au départ de la Task 3 : 2 / 7 et 4 / 110, avec
 les bouchons `buildIsFsymDecl` 50, `genDeclMake` 49, `buildUnamedBlock` 4,
 `buildMethodDef` 3 ; à la fin : aucun bouchon atteint.)
-
-| Tâche | Famille portée | `mage j4` identiques | `bridgeCheck` identiques |
-|---|---|---|---|
-| 3 (compteur) | F1 (squelette, partiel) | 2 / 7 | 4 / 110 |
 
 ## P0 : identité du pont
 
@@ -75,10 +71,10 @@ Notes :
 |---|---|---|---|---|
 | P0 | 121 | 1139 | 0 | 2026-10-24 |
 | P1 | | | | |
-| P2 (binaire, Task 7) | 110 (T1 83 + smoke 27) | 110 | 0 | 2026-10-24 |
+| P2 (binaire, Task 7) | 110 (T1 83 + smoke 27) | 110 | 0 | 2026-10-25 |
 | P3 | | | | |
 
-### P2 (J4.1b) : compteur par famille
+## P2 (J4.1b) : compteur par famille
 
 | Tâche | Mesure `bridgeCheck` (110 paquets) | Sous `mage j4` | Planchers |
 |---|---|---|---|
