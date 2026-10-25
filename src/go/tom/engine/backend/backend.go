@@ -12,7 +12,7 @@ import (
 // defaultDeep is BackendPlugin.defaultDeep (BackendPlugin.t:74).
 const defaultDeep = 1
 
-// Generate is BackendPlugin.run (BackendPlugin.t:110-173) on a bridge
+// Generate is BackendPlugin.run (BackendPlugin.t:110, to line 173) on a bridge
 // bundle: it writes on w the code Java's backend writes in the output
 // file, and its diagnostics on r; ok is false when an error was reported.
 // port: the encoding option and the output file are GoBridgePlugin's (it

@@ -75,7 +75,7 @@ Notes :
 |---|---|---|---|---|
 | P0 | 121 | 1139 | 0 | 2026-10-24 |
 | P1 | | | | |
-| P2 | | | | |
+| P2 (binaire, Task 7) | 110 (T1 83 + smoke 27) | 110 | 0 | 2026-10-24 |
 | P3 | | | | |
 
 ### P2 (J4.1b) : compteur par famille
@@ -90,3 +90,38 @@ Notes :
 Task 4 : les deux cas F1/F2 encore différents (`gom/TestTermgraph.t`,
 `sl/TestImportStrat.t`) s'arrêtent sur `buildGetHeadDecl` (famille F3,
 Task 5), aucune méthode de F2 ; le plan en attendait 38.
+
+### P2 par le binaire (Task 7, `mage backendCheck`)
+
+`tom -go -np --goFrom Backend` : T1 83 / 83 goldens `.go` identiques
+(`minGoldensGo = 83`, goldens non vides), smoke 27 / 27 identiques au
+backend Java (`minP2Smoke = 27`) puis exécutés. La sortie standard de
+`tomgo` est ignorée quand son code de sortie est non nul
+(`GoBridgePlugin`). Contre-épreuves non commitées : un `tomgo` factice qui
+ajoute un octet à la ligne `package`, ou écrit `package wrong`, fait échouer
+`TestGoBackend/Peano.t` (golden différent) ; un `tomgo` factice qui sort avec
+le code 3 fait échouer par `tomgo exited with status 3`.
+
+Budget (spec 5.3), `TestGoBackend`, deux mesures chacune :
+
+| Mode | Durées | Meilleure |
+|---|---|---|
+| tout Java | 73.398 s, 80.027 s | 73.398 s |
+| `--goFrom Backend` | 74.431 s, 82.712 s | 74.431 s |
+
+Rapport 74.431 / 73.398 = 1.014 (et 82.712 / 80.027 = 1.034) : sous 1.15.
+
+Cas d'erreur construits (`TestGoFrom`) : « backend runtime error »
+(`noTL()` : `Unhandled exception`, ligne -1) et « backend unknown option »
+(`Option 'pretty' not found`, `did not return a PluginOption`,
+`Unhandled exception`, dans cet ordre).
+
+Écart `-np` : « labelled %match » (le parseur île ne supporte pas un
+`%match` étiqueté, `matchBlock: { %match … break matchBlock; }`), à corriger
+plus tard dans le compilateur. Occurrences sur le chemin Go du backend Java :
+`GoGenerator.t:595` (`genDeclMake`, portée par `continue` dans la boucle
+`for`) et `GoGenerator.t:722` (`buildMethod`, portée par l'indicateur
+`matched`). Les autres occurrences (`JavaGenerator`, `CFamilyGenerator`,
+`AdaGenerator`, `CamlGenerator`, `CSharpGenerator`, `PythonGenerator`) sont
+hors chemin Go (D5). `AbstractGenerator`, `GenericGenerator` et
+`BackendPlugin` n'en ont aucune.

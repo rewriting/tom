@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io/fs"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"sort"
 	"strings"
@@ -145,6 +146,73 @@ func TestGoFrom(t *testing.T) {
 		}
 		if !strings.Contains(msg, "tomgo: TOM generation phase (") {
 			t.Fatalf("no relayed INFO line in:\n%s", msg)
+		}
+	})
+	// Error cases of the Go backend (spec 5.4): no case of T1 produces them,
+	// so the bundles are built from a real one (written by --intermediate)
+	// with its code replaced or one option removed; tomgo suffix is run
+	// directly and the messages are compared by name (their text).
+	bundleOf := func(t *testing.T) []string {
+		out := t.TempDir()
+		src := filepath.Join(harness.GoTestDir(root), "Test.t")
+		if msg, err := harness.RunIn(filepath.Dir(src), []string{"TOM_HOME=" + dist.Home, "TOMGO_BIN="},
+			filepath.Join(dist.Home, "bin", "tom"), "-go", "-np", "-d", out, "--goFrom", "Backend", "--intermediate", src); err != nil {
+			t.Fatalf("tom --intermediate: %v\n%s", err, msg)
+		}
+		files, _ := filepath.Glob(filepath.Join(out, "*.tfix.bridge"))
+		if len(files) != 1 {
+			t.Fatalf("bridge files %v", files)
+		}
+		b, err := os.ReadFile(files[0])
+		if err != nil {
+			t.Fatal(err)
+		}
+		return strings.Split(strings.TrimSuffix(string(b), "\n"), "\n")
+	}
+	suffix := func(t *testing.T, lines []string) (string, error) {
+		cmd := exec.Command(dist.Bin(t, "tomgo"), "suffix")
+		cmd.Stdin = strings.NewReader(strings.Join(lines, "\n") + "\n")
+		var stderr strings.Builder
+		cmd.Stderr = &stderr
+		err := cmd.Run()
+		return stderr.String(), err
+	}
+	t.Run("backend runtime error", func(t *testing.T) {
+		// code the Go backend cannot generate (noTL(): generateTargetLanguage,
+		// AbstractGenerator.t:611): the ERROR exceptionMessage at line -1,
+		// as BackendPlugin.run (BackendPlugin.t:159-166)
+		var lines []string
+		for _, l := range bundleOf(t) {
+			if strings.HasPrefix(l, "code ") {
+				l = "code Tom(concCode(TargetLanguageToCode(noTL())))"
+			}
+			lines = append(lines, l)
+		}
+		stderr, err := suffix(t, lines)
+		if err == nil || !strings.Contains(stderr, "\t-1\t") || !strings.Contains(stderr, ": Unhandled exception") ||
+			!strings.Contains(stderr, "Cannot generate code for TL: noTL()") {
+			t.Fatalf("err %v, stderr %q", err, stderr)
+		}
+	})
+	t.Run("backend unknown option", func(t *testing.T) {
+		// optionNotFound, then notReturnedPluginOption, then exceptionMessage
+		var lines []string
+		for _, l := range bundleOf(t) {
+			if !strings.HasPrefix(l, "option pretty ") {
+				lines = append(lines, l)
+			}
+		}
+		stderr, err := suffix(t, lines)
+		if err == nil {
+			t.Fatalf("tomgo succeeded without option pretty: %q", stderr)
+		}
+		at := 0
+		for _, want := range []string{"Option 'pretty' not found", "did not return a PluginOption", "Unhandled exception"} {
+			i := strings.Index(stderr[at:], want)
+			if i < 0 {
+				t.Fatalf("%q not found in order in stderr %q", want, stderr)
+			}
+			at += i + len(want)
 		}
 	})
 	fails("unknown plugin", "--goFrom Nope: no such plugin", nil, goSrc, "-go", "-np", "--goFrom", "Nope")

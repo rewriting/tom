@@ -26,7 +26,17 @@ func TestMain(m *testing.M) {
 	os.Exit(m.Run())
 }
 
+// minP2Smoke is the number of smoke cases compared with the Java backend
+// under TOMGO_GOFROM (mage backendCheck); measured: 27.
+const minP2Smoke = 27
+
 func TestGoSmoke(t *testing.T) {
+	p2Identical, ran, total := 0, 0, 0
+	defer func() {
+		if os.Getenv(harness.GoFromEnv) != "" && ran == total && !t.Failed() && p2Identical != minP2Smoke {
+			t.Errorf("P2: %d smoke cases identical, want %d (minP2Smoke)", p2Identical, minP2Smoke)
+		}
+	}()
 	harness.LookPath(t, "go")
 	dist := harness.NewDist(t)
 	dirs, err := filepath.Glob("testdata/*")
@@ -45,7 +55,9 @@ func TestGoSmoke(t *testing.T) {
 		if _, err := os.Stat(src); err != nil {
 			continue
 		}
+		total++
 		t.Run(name, func(t *testing.T) {
+			ran++
 			want, err := os.ReadFile(filepath.Join(d, "expected.txt"))
 			if err != nil {
 				t.Fatal(err)
@@ -63,6 +75,26 @@ func TestGoSmoke(t *testing.T) {
 			code, err := os.ReadFile(gen)
 			if err != nil {
 				t.Fatalf("generated file: %v", err)
+			}
+			if len(code) == 0 {
+				t.Fatalf("generated file %s is empty", gen)
+			}
+			if os.Getenv(harness.GoFromEnv) != "" {
+				// P2 (plan J4.1b): the same compilation through the Java
+				// backend writes the same bytes
+				ref := t.TempDir()
+				t.Setenv(harness.GoFromEnv, "")
+				if msg, err := dist.Compile(t, src, ref, args...); err != nil {
+					t.Fatalf("tom -go (Java backend): %v\n%s", err, msg)
+				}
+				want, err := os.ReadFile(filepath.Join(ref, name+".go"))
+				if err != nil {
+					t.Fatal(err)
+				}
+				if string(code) != string(want) {
+					t.Fatalf("P2: the Go backend differs from the Java backend")
+				}
+				p2Identical++
 			}
 			if strings.Contains(string(code), "\"tom/") {
 				harness.SetupGoModule(t, out)

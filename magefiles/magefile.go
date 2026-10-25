@@ -585,6 +585,19 @@ func J4() error {
 	return runInEnv(toolsDir, requireTools, "go", "test", "-count=1", "./j4/...")
 }
 
+// BackendCheck runs P2 through the binary (J4 spec 5.1, plan J4.1b): T1
+// (goldens byte for byte, build, run) and the smoke tests (same bytes as
+// the Java backend, then run) with --goFrom Backend, so that tomgo suffix
+// writes every generated file.
+func BackendCheck() error {
+	mg.Deps(TomGoFresh)
+	env := append([]string{"TOMGO_GOFROM=Backend"}, requireTools...)
+	if err := runInEnv(toolsDir, env, "go", "test", "-count=1", "-timeout", "30m", "./parity/", "-run", "TestGoBackend"); err != nil {
+		return err
+	}
+	return runInEnv(toolsDir, env, "go", "test", "-count=1", "./smoke/", "-run", "TestGoSmoke")
+}
+
 // BridgeCheck runs P0 (J4 spec 5.1): T1 and the smoke tests with
 // --goFrom Backend --goCheck (each bundle echoed by tomgo must be
 // identical) and --intermediate, then re-reads every dump in Go, compares

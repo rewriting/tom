@@ -18,6 +18,7 @@ import (
 	"sort"
 	"strconv"
 	"strings"
+	"sync/atomic"
 	"testing"
 
 	gomparser "tom/gom/parser"
@@ -512,10 +513,26 @@ func checkGolden(t *testing.T, rel, gen string) {
 	if err != nil {
 		t.Fatalf("missing golden %s (run with -update): %v", golden, err)
 	}
+	if filepath.Ext(gen) == ".go" && len(want) == 0 {
+		t.Fatalf("golden %s is empty", golden)
+	}
 	if string(want) != string(got) {
 		t.Fatalf("generated Go differs from %s (run with -update if intended)", golden)
 	}
+	if filepath.Ext(gen) == ".go" {
+		goldensChecked.Add(1)
+	}
 }
+
+// goldensChecked counts the .go goldens compared byte for byte (and
+// non-empty) by checkGolden; TestGoBackend checks it against
+// minGoldensGo when it ran every case.
+var goldensChecked atomic.Int64
+
+// minGoldensGo is the number of .go goldens of T1: with
+// TOMGO_GOFROM=Backend (mage backendCheck) every one of them is the output
+// of the Go backend (measured: 83).
+const minGoldensGo = 83
 
 // runCase runs the compiled case; for go-test cases it returns the set
 // of test names that passed.
@@ -538,9 +555,12 @@ func runCase(t *testing.T, c portCase, dir string) (map[string]bool, string, err
 }
 
 func TestGoBackend(t *testing.T) {
+	goldensChecked.Store(0)
+	ran := 0
 	for _, c := range cases {
 		c := c
 		t.Run(c.Rel, func(t *testing.T) {
+			ran++
 			dir := compileCase(t, c)
 			if c.Regress {
 				return // rejected by tom, nothing to run
@@ -549,6 +569,10 @@ func TestGoBackend(t *testing.T) {
 				t.Fatalf("running %s failed: %v\n%s", c.Rel, err, out)
 			}
 		})
+	}
+	// a full run (no -run filter on the cases) compared every golden
+	if ran == len(cases) && !t.Failed() && int(goldensChecked.Load()) != minGoldensGo {
+		t.Errorf("%d .go goldens compared, want %d (minGoldensGo)", goldensChecked.Load(), minGoldensGo)
 	}
 }
 

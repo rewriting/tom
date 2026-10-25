@@ -304,6 +304,9 @@ func (d Dist) Compile(t testing.TB, src, outDir string, args ...string) (string,
 		env = append(env, "GOMGO_BIN="+g)
 	}
 	dumps := ""
+	if os.Getenv(GoFromEnv) != "" && slices.Contains(args, "-go") && !fileExists(filepath.Join(d.Home, "bin", "tomgo")) {
+		t.Fatalf("%s is set but %s has no bin/tomgo: the bridge would not run", GoFromEnv, d.Home)
+	}
 	if fileExists(filepath.Join(d.Home, "bin", "tomgo")) && slices.Contains(args, "-go") {
 		from, check := os.Getenv(GoFromEnv), os.Getenv(GoCheckEnv) == "1"
 		if from != "" && check {
