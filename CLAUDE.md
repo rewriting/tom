@@ -41,7 +41,7 @@ partir du backend, règle d'équivalence stricte sauf positions au
 parser — cf. `doc/go/README.md` « Orientation pour la suite » et le spec
 `docs/superpowers/specs/2026-10-24-j4-tom-go-compiler-design.md` ; J4.0
 (pont Java → Go, `--goFrom`, binaires dans la dist, préfixe `tom_<F>_`)
-**terminé** le 2026-10-24, rapport `doc/go/j4-0-report.md` ; J4.1a (fondations Go : `OutputCode`, sous-ensembles `SymbolTable`/`TomBase`, options et messages, `mage regenTomGo`) **terminé** le 2026-10-24, rapport `doc/go/j4-1a-report.md`). Références :
+**terminé** le 2026-10-24, rapport `doc/go/j4-0-report.md` ; J4.1a (fondations Go : `OutputCode`, sous-ensembles `SymbolTable`/`TomBase`, options et messages, `mage regenTomGo`) **terminé** le 2026-10-24, rapport `doc/go/j4-1a-report.md` ; J4.1b (backend Go en Tom+Go dans `src/go/tom/engine/backend`, `tom -go --goFrom Backend` produit le code par `tomgo`, P2 110/110) **terminé** le 2026-10-25, rapport `doc/go/j4-1b-report.md`). Références :
 spec `docs/superpowers/specs/2026-10-22-tom-go-backend-design.md`, plan
 `docs/superpowers/plans/2026-10-22-tom-go-backend.md`, rapport
 `doc/go/j0-go-backend.md`; carte des chemins : `doc/go/README.md`, spec
@@ -99,10 +99,11 @@ l'AST Go contre la référence Java. tomgo est un outil Go autonome qui :
 - **utilise ses propres AST générés** (`stable/library/gomast/` pour le sous-
   langage Gom, `stable/library/tomast/` pour le langage TOM) — auto-amorce.
 
-**Itération en cours** : J4.1a terminé (plan
-`docs/superpowers/plans/2026-10-24-j4-1a-foundations.md`, rapport
-`doc/go/j4-1a-report.md`) ; prochaine étape : plan J4.1b (backend Go en
-Tom+Go) d'après le spec J4
+**Itération en cours** : J4.1b terminé (plan
+`docs/superpowers/plans/2026-10-24-j4-1b-backend.md`, rapport
+`doc/go/j4-1b-report.md`) ; prochaine étape : plan J4.1c (backend Go promu
+en référence : `promoteGo` du backend, P3 « self-T1 », `mage bootstrap` sans
+Java) d'après le spec J4
 `docs/superpowers/specs/2026-10-24-j4-tom-go-compiler-design.md`. (L'ancienne
 « Phase 4 » — porter le compilateur TOM phase par phase en Go écrit à la
 main — est gelée, cf. ci-dessus.)
@@ -122,7 +123,7 @@ main — est gelée, cf. ci-dessus.)
 | `src/tom/` | Sources Tom+Java du compilateur **étendu** (option `-go`, `backend/GoGenerator.t`), construit par `stable/` ; `src/dist` = sa distribution |
 | `src/tom/library/mapping/go/` | Mappings Tom pour Go (`boolean.tom`, `int.tom`, `long.tom`, …) |
 | `src/tom/gom/adt/`, `src/tom/engine/adt/` | `.gom` décrivant l'AST de Gom / de TOM (côté Java) |
-| `src/go/tom/` | **Module Go `tom`** (validé) : `library/{sl,sharedobjects,aterm}`, `gom/{parser,backend}`, `gom/cmd/gomgo`, `engine/{platform,tools,bridge,cmd/tomgo}` (compilateur en Go, J4 ; `tools` mêle `.go` et sources Tom+Go `X.t` → `X.t.go` ignoré par git) ; `gom/adt` et `engine/adt` ne contiennent que des `.gom` |
+| `src/go/tom/` | **Module Go `tom`** (validé) : `library/{sl,sharedobjects,aterm}`, `gom/{parser,backend}`, `gom/cmd/gomgo`, `engine/{platform,tools,bridge,backend,cmd/tomgo}` (compilateur en Go, J4 ; `tools` et `backend` (J4.1b) mêlent `.go` et sources Tom+Go `X.t` → `X.t.go` ignoré par git) ; `gom/adt` et `engine/adt` ne contiennent que des `.gom` |
 | `src/go/tom/{gom,engine}/adt/` | **Copies Go** (5 + 15 `.gom`) de `src/tom/{gom,engine}/adt` : mêmes signatures (`TestSignatureParity`), hooks écrits en Go (`gomgo --gohooks`). Le `*.go` et `adt.tom` générés sont ignorés par git : `mage -d magefiles -w . bootstrap` les produit localement |
 | `stable/go/tom/` | **Amorce Go** : instantané autonome COMPLET du module `tom` (Go non-test + ADT générés), hors `go.work`, construit par `GOWORK=off go build ./...` ; mis à jour par `promoteGo` |
 | `stable/` | Compilateur Java **bootstrappé** qui construit `src/` ; contient aussi la cible Go (`stable/dist/bin/tom -go`) ; `src/` y a été promu le 2026-10-23 : sa dist embarque le runtime Go dans `lib/go/tom` et `bin/gomgo` (`mage installGo`) ; son `TomParserTool` lit encore `GOMGO_BIN` |
@@ -778,6 +779,7 @@ mage -d magefiles -w . all         # vet + tests module tom + self-bootstrap
 mage -d magefiles -w . portJava && mage -d magefiles -w . portGo && mage -d magefiles -w . coverage
 mage -d magefiles -w . regenTomGo         # X.t -> X.t.go (src/go/tom/engine/**, compilé par src/dist ; ignoré par git, promoteGo le met dans l'amorce)
 mage -d magefiles -w . tomGoFresh          # refuse un X.t dont le X.t.go ne porte pas le SHA-256 de son contenu actuel, première ligne `// tom-source-sha256: <hex>` (les dates ne comptent pas ; le SHA-256 ne couvre que le `.t` : une dérive venant de `adt.tom` ou de gomgo est attrapée par `TestTomGoRegen`, `mage j4` ; préalable de test, vet, j4, bridgeCheck)
+mage -d magefiles -w . backendCheck       # P2 par le binaire : tom -go --goFrom Backend (le code vient de tomgo, backend Go de src/go/tom/engine/backend) contre les goldens T1 (83) et les cas smoke (27)
 mage -d magefiles -w . j4                  # tests J4 qui demandent une dist (test/tools/j4 : programme Tom+Go sur l'ADT du moteur, src/go/tom en replace ; TestGoFrom : --goFrom/--goCheck)
 mage -d magefiles -w . bridgeCheck        # P0 : T1 + smoke avec --goFrom Backend --goCheck --intermediate, puis tous les dumps relus en Go (TestDumpsRoundTrip) ; ~2 min ; tableau doc/go/j4-dashboard.md
 #   portJava : T0, sortie Java identique à legacy/ (défaut et -np), ~4 min
@@ -1219,10 +1221,11 @@ Différences API vs Java :
 1. Lire ce fichier en entier (tu y es).
 2. `mage -d magefiles -w . all` doit passer — si non, regarder le rapport
    concerné dans `doc/go/`.
-3. Ouvrir le dernier rapport (`doc/go/j4-1a-report.md` à ce jour) pour le
+3. Ouvrir le dernier rapport (`doc/go/j4-1b-report.md` à ce jour) pour le
    détail technique de l'étape qu'on vient de finir, puis
    `doc/go/port-dashboard.md` et `doc/go/coverage.md`.
-4. Prochaine tâche : rédiger le plan J4.1b (backend Go en Tom+Go, branché
-   après l'optimizer) d'après le spec
+4. Prochaine tâche : rédiger le plan J4.1c (faire du backend Go la
+   référence : `promoteGo` du backend, P3 self-T1, `mage bootstrap` sans
+   Java) d'après le spec
    `docs/superpowers/specs/2026-10-24-j4-tom-go-compiler-design.md` ; la section 5
    de ce fichier est historique.

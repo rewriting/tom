@@ -21,21 +21,21 @@ Compteur in-process `TestBackendCorpus` (`test/tools/j4/backend_test.go`) : le
 backend Go (`backend.Generate`) sur chaque paquet pont, comparé octet pour octet
 à la sortie du backend Java (copiée en `<sortie>.generated` par le harnais), par
 famille. Commandes : `mage -d magefiles -w . j4` (7 paquets), `mage -d magefiles
--w . bridgeCheck` (110 paquets). Planchers : `minIdenticalJ4 = 2`,
-`minIdenticalBridge = 4`.
+-w . bridgeCheck` (110 paquets). Planchers finaux : `minIdenticalJ4 = 7`,
+`minIdenticalBridge = 110` (clôture du jalon, rapport
+[`j4-1b-report.md`](j4-1b-report.md) ; la progression par tâche est plus bas).
 
 | Famille | `mage j4` paquets | identiques | différents | `bridgeCheck` paquets | identiques | différents |
 |---|---|---|---|---|---|---|
-| F1 squelette | 2 | 2 | 0 | 5 | 4 | 1 |
-| F2 filtrage | 1 | 0 | 1 | 33 | 0 | 33 |
-| F3 listes | 2 | 0 | 2 | 47 | 0 | 47 |
-| F4 stratégies | 2 | 0 | 2 | 25 | 0 | 25 |
-| Total | 7 | 2 | 5 | 110 | 4 | 106 |
+| F1 squelette | 2 | 2 | 0 | 5 | 5 | 0 |
+| F2 filtrage | 1 | 1 | 0 | 33 | 33 | 0 |
+| F3 listes | 2 | 2 | 0 | 47 | 47 | 0 |
+| F4 stratégies | 2 | 2 | 0 | 25 | 25 | 0 |
+| Total | 7 | 7 | 0 | 110 | 110 | 0 |
 
-Bouchons atteints (`bridgeCheck`) : `buildIsFsymDecl` 50, `genDeclMake` 49,
-`buildUnamedBlock` 4, `buildMethodDef` 3 (le seul F1 différent,
-`gom/TestTermgraph.t`, s'arrête sur `genDeclMake`). État post-`Collector` :
-110 / 110 identiques (8311 lignes).
+(Mesures de clôture, 2026-10-25. Au départ de la Task 3 : 2 / 7 et 4 / 110, avec
+les bouchons `buildIsFsymDecl` 50, `genDeclMake` 49, `buildUnamedBlock` 4,
+`buildMethodDef` 3 ; à la fin : aucun bouchon atteint.)
 
 | Tâche | Famille portée | `mage j4` identiques | `bridgeCheck` identiques |
 |---|---|---|---|
