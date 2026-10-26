@@ -60,6 +60,7 @@ func newGoGenerator(output *tools.OutputCode, opts *platform.Options, st *tools.
 	g.inlineplus = opts.Bool("inlineplus")
 	g.inline = g.inline || g.inlineplus
 	g.inline = g.inline && (cCode || jCode) // always false with -go (R10)
+	g.inlineplus = false // GoGenerator's constructor: the Go backend never inlines the hooks
 	return g
 }
 

@@ -27,8 +27,8 @@ func TestMain(m *testing.M) {
 }
 
 // minP2Smoke is the number of smoke cases compared with the Java backend
-// under TOMGO_GOFROM (mage backendCheck); measured: 27.
-const minP2Smoke = 27
+// under TOMGO_GOFROM (mage backendCheck); measured: 33.
+const minP2Smoke = 33
 
 func TestGoSmoke(t *testing.T) {
 	p2Identical, ran, total := 0, 0, 0

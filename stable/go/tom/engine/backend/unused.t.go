@@ -1,4 +1,4 @@
-// tom-source-sha256: 5320ac81f91c518afbd2bc565288b7337a6679eac683d353d17ee074b4d5fed2
+// tom-source-sha256: 3d9deadf8c90fa89ba803cd7849bc6af9f3e73ee1b06a2f3c522045d0b323dd6
 
 package backend
 
@@ -142,7 +142,7 @@ func (g *goGenerator) readsInstruction(inst Instruction, name string) int {
 			return max(r, g.readsInstruction(tomMatch3_31, name))
 		;  };  };  }; { if tom_unused_is_sort_Instruction(inst) { if tom_unused_is_fun_sym_Assign(any(inst).( Instruction )) { 
  return g.readsExpression(tom_unused_get_slot_Assign_Source(any(inst).( Instruction )), name) ;  };  };  }; { if tom_unused_is_sort_Instruction(inst) { if tom_unused_is_fun_sym_AssignArray(any(inst).( Instruction )) { 
- return g.readsExpression(tom_unused_get_slot_AssignArray_Source(any(inst).( Instruction )), name) ;  };  };  }; { if tom_unused_is_sort_Instruction(inst) { if tom_unused_is_fun_sym_Return(any(inst).( Instruction )) { 
+ return max(g.readsBQTerm(tom_unused_get_slot_AssignArray_Index(any(inst).( Instruction )), name), g.readsExpression(tom_unused_get_slot_AssignArray_Source(any(inst).( Instruction )), name)) ;  };  };  }; { if tom_unused_is_sort_Instruction(inst) { if tom_unused_is_fun_sym_Return(any(inst).( Instruction )) { 
  return g.readsBQTerm(tom_unused_get_slot_Return_Kid1(any(inst).( Instruction )), name) ;  };  };  }; { if tom_unused_is_sort_Instruction(inst) { var tomMatch3_56 bool =  false ; var tomMatch3_54  Instruction  =  *new(Instruction) ; var tomMatch3_55  Instruction  =  *new(Instruction) ; var tomMatch3_52  InstructionList  =  *new(InstructionList) ; if tom_unused_is_fun_sym_AbstractBlock(any(inst).( Instruction )) { { tomMatch3_56 =  true ; tomMatch3_54 = any(inst).( Instruction ); tomMatch3_52 = tom_unused_get_slot_AbstractBlock_InstList(tomMatch3_54);  };  } else { if tom_unused_is_fun_sym_UnamedBlock(any(inst).( Instruction )) { { tomMatch3_56 =  true ; tomMatch3_55 = any(inst).( Instruction ); tomMatch3_52 = tom_unused_get_slot_UnamedBlock_InstList(tomMatch3_55);  };  };  }; if tomMatch3_56 { 
  return g.readsInstructionList(tomMatch3_52, name) ;  };  };  }; { if tom_unused_is_sort_Instruction(inst) { if tom_unused_is_fun_sym_NamedBlock(any(inst).( Instruction )) { 
  return g.readsInstructionList(tom_unused_get_slot_NamedBlock_InstList(any(inst).( Instruction )), name) ;  };  };  }; { if tom_unused_is_sort_Instruction(inst) { if tom_unused_is_fun_sym_RawAction(any(inst).( Instruction )) { 
@@ -162,12 +162,16 @@ func (g *goGenerator) readsInstruction(inst Instruction, name string) int {
 
 
 
-func (g *goGenerator) readsInstructionList(l InstructionList, name string) int {
-	r := readNone
-	; { { if tom_unused_is_sort_InstructionList(l) { if tom_unused_is_fun_sym_concInstruction(any(l).( InstructionList )) { var tomMatch4_end_4  InstructionList  = any(l).( InstructionList ); for { { if !(tom_unused_is_empty_concInstruction_InstructionList(tomMatch4_end_4)) { 
- r = max(r, g.readsInstruction(tom_unused_get_head_concInstruction_InstructionList(tomMatch4_end_4), name)) ;  }; if tom_unused_is_empty_concInstruction_InstructionList(tomMatch4_end_4) { tomMatch4_end_4 = any(l).( InstructionList );  } else { tomMatch4_end_4 = tom_unused_get_tail_concInstruction_InstructionList(tomMatch4_end_4);  };  };  if !(!(tom_unused_equal_term_InstructionList(tomMatch4_end_4, any(l).( InstructionList )))) { break; }; };  };  };  };  }; 
 
-	return r
+
+
+
+
+
+
+
+func (g *goGenerator) readsInstructionList(l InstructionList, name string) int {
+	return g.readsInstructionRuns(l, name)
 }
 
 
@@ -175,8 +179,8 @@ func (g *goGenerator) readsInstructionList(l InstructionList, name string) int {
 
 func (g *goGenerator) readsCode(code Code, name string) int {
 	r := readNone
-	; { { if tom_unused_is_sort_Code(code) { var tomMatch5_11 bool =  false ; var tomMatch5_1  CodeList  =  *new(CodeList) ; var tomMatch5_4  Code  =  *new(Code) ; var tomMatch5_3  Code  =  *new(Code) ; if tom_unused_is_fun_sym_Tom(any(code).( Code )) { { tomMatch5_11 =  true ; tomMatch5_3 = any(code).( Code ); tomMatch5_1 = tom_unused_get_slot_Tom_CodeList(tomMatch5_3);  };  } else { if tom_unused_is_fun_sym_TomInclude(any(code).( Code )) { { tomMatch5_11 =  true ; tomMatch5_4 = any(code).( Code ); tomMatch5_1 = tom_unused_get_slot_TomInclude_CodeList(tomMatch5_4);  };  };  }; if tomMatch5_11 { if tom_unused_is_fun_sym_concCode(any(tomMatch5_1).( CodeList )) { var tomMatch5_end_8  CodeList  = tomMatch5_1; for { { if !(tom_unused_is_empty_concCode_CodeList(tomMatch5_end_8)) { 
- r = max(r, g.readsCode(tom_unused_get_head_concCode_CodeList(tomMatch5_end_8), name)) ;  }; if tom_unused_is_empty_concCode_CodeList(tomMatch5_end_8) { tomMatch5_end_8 = tomMatch5_1;  } else { tomMatch5_end_8 = tom_unused_get_tail_concCode_CodeList(tomMatch5_end_8);  };  };  if !(!(tom_unused_equal_term_CodeList(tomMatch5_end_8, tomMatch5_1))) { break; }; };  };  };  };  }; { if tom_unused_is_sort_Code(code) { if tom_unused_is_fun_sym_TargetLanguageToCode(any(code).( Code )) { 
+	; { { if tom_unused_is_sort_Code(code) { var tomMatch4_11 bool =  false ; var tomMatch4_3  Code  =  *new(Code) ; var tomMatch4_4  Code  =  *new(Code) ; var tomMatch4_1  CodeList  =  *new(CodeList) ; if tom_unused_is_fun_sym_Tom(any(code).( Code )) { { tomMatch4_11 =  true ; tomMatch4_3 = any(code).( Code ); tomMatch4_1 = tom_unused_get_slot_Tom_CodeList(tomMatch4_3);  };  } else { if tom_unused_is_fun_sym_TomInclude(any(code).( Code )) { { tomMatch4_11 =  true ; tomMatch4_4 = any(code).( Code ); tomMatch4_1 = tom_unused_get_slot_TomInclude_CodeList(tomMatch4_4);  };  };  }; if tomMatch4_11 { if tom_unused_is_fun_sym_concCode(any(tomMatch4_1).( CodeList )) { var tomMatch4_end_8  CodeList  = tomMatch4_1; for { { if !(tom_unused_is_empty_concCode_CodeList(tomMatch4_end_8)) { 
+ r = max(r, g.readsCode(tom_unused_get_head_concCode_CodeList(tomMatch4_end_8), name)) ;  }; if tom_unused_is_empty_concCode_CodeList(tomMatch4_end_8) { tomMatch4_end_8 = tomMatch4_1;  } else { tomMatch4_end_8 = tom_unused_get_tail_concCode_CodeList(tomMatch4_end_8);  };  };  if !(!(tom_unused_equal_term_CodeList(tomMatch4_end_8, tomMatch4_1))) { break; }; };  };  };  };  }; { if tom_unused_is_sort_Code(code) { if tom_unused_is_fun_sym_TargetLanguageToCode(any(code).( Code )) { 
  r = g.readsTargetLanguage(tom_unused_get_slot_TargetLanguageToCode_Tl(any(code).( Code )), name) ;  };  };  }; { if tom_unused_is_sort_Code(code) { if tom_unused_is_fun_sym_InstructionToCode(any(code).( Code )) { 
  r = g.readsInstruction(tom_unused_get_slot_InstructionToCode_AstInstruction(any(code).( Code )), name) ;  };  };  }; { if tom_unused_is_sort_Code(code) { if tom_unused_is_fun_sym_BQTermToCode(any(code).( Code )) { 
  r = g.readsBQTerm(tom_unused_get_slot_BQTermToCode_Bq(any(code).( Code )), name) ;  };  };  };  }; 
@@ -200,8 +204,8 @@ func (g *goGenerator) readsTargetLanguage(tl TargetLanguage, name string) int {
 
 func (g *goGenerator) readsBQTermList(l BQTermList, name string) int {
 	r := readNone
-	; { { if tom_unused_is_sort_BQTermList(l) { if tom_unused_is_fun_sym_concBQTerm(any(l).( BQTermList )) { var tomMatch7_end_4  BQTermList  = any(l).( BQTermList ); for { { if !(tom_unused_is_empty_concBQTerm_BQTermList(tomMatch7_end_4)) { 
- r = max(r, g.readsBQTerm(tom_unused_get_head_concBQTerm_BQTermList(tomMatch7_end_4), name)) ;  }; if tom_unused_is_empty_concBQTerm_BQTermList(tomMatch7_end_4) { tomMatch7_end_4 = any(l).( BQTermList );  } else { tomMatch7_end_4 = tom_unused_get_tail_concBQTerm_BQTermList(tomMatch7_end_4);  };  };  if !(!(tom_unused_equal_term_BQTermList(tomMatch7_end_4, any(l).( BQTermList )))) { break; }; };  };  };  };  }; 
+	; { { if tom_unused_is_sort_BQTermList(l) { if tom_unused_is_fun_sym_concBQTerm(any(l).( BQTermList )) { var tomMatch6_end_4  BQTermList  = any(l).( BQTermList ); for { { if !(tom_unused_is_empty_concBQTerm_BQTermList(tomMatch6_end_4)) { 
+ r = max(r, g.readsBQTerm(tom_unused_get_head_concBQTerm_BQTermList(tomMatch6_end_4), name)) ;  }; if tom_unused_is_empty_concBQTerm_BQTermList(tomMatch6_end_4) { tomMatch6_end_4 = any(l).( BQTermList );  } else { tomMatch6_end_4 = tom_unused_get_tail_concBQTerm_BQTermList(tomMatch6_end_4);  };  };  if !(!(tom_unused_equal_term_BQTermList(tomMatch6_end_4, any(l).( BQTermList )))) { break; }; };  };  };  };  }; 
 
 	return r
 }
@@ -211,26 +215,26 @@ func (g *goGenerator) readsBQTermList(l BQTermList, name string) int {
 
 func (g *goGenerator) readsBQTerm(t BQTerm, name string) int {
 	r := readNone
-	; { { if tom_unused_is_sort_BQTerm(t) { var tomMatch8_4 bool =  false ; var tomMatch8_2  BQTerm  =  *new(BQTerm) ; _ = tomMatch8_2; var tomMatch8_3  BQTerm  =  *new(BQTerm) ; _ = tomMatch8_3; if tom_unused_is_fun_sym_BQVariable(any(t).( BQTerm )) { { tomMatch8_4 =  true ; tomMatch8_2 = any(t).( BQTerm );  };  } else { if tom_unused_is_fun_sym_BQVariableStar(any(t).( BQTerm )) { { tomMatch8_4 =  true ; tomMatch8_3 = any(t).( BQTerm );  };  };  }; if tomMatch8_4 { 
+	; { { if tom_unused_is_sort_BQTerm(t) { var tomMatch7_4 bool =  false ; var tomMatch7_2  BQTerm  =  *new(BQTerm) ; _ = tomMatch7_2; var tomMatch7_3  BQTerm  =  *new(BQTerm) ; _ = tomMatch7_3; if tom_unused_is_fun_sym_BQVariable(any(t).( BQTerm )) { { tomMatch7_4 =  true ; tomMatch7_2 = any(t).( BQTerm );  };  } else { if tom_unused_is_fun_sym_BQVariableStar(any(t).( BQTerm )) { { tomMatch7_4 =  true ; tomMatch7_3 = any(t).( BQTerm );  };  };  }; if tomMatch7_4 { 
 
 			if name == g.localName(any(t).( BQTerm )) {
 				return readRead
 			}
 			return readNone
 		;  };  };  }; { if tom_unused_is_sort_BQTerm(t) { if tom_unused_is_fun_sym_FunctionCall(any(t).( BQTerm )) { 
- return g.readsBQTermList(tom_unused_get_slot_FunctionCall_Args(any(t).( BQTerm )), name) ;  };  };  }; { if tom_unused_is_sort_BQTerm(t) { var tomMatch8_18 bool =  false ; var tomMatch8_13  BQTerm  =  *new(BQTerm) ; var tomMatch8_14  BQTerm  =  *new(BQTerm) ; var tomMatch8_17  BQTerm  =  *new(BQTerm) ; var tomMatch8_16  BQTerm  =  *new(BQTerm) ; var tomMatch8_12  TomName  =  *new(TomName) ; _ = tomMatch8_12; if tom_unused_is_fun_sym_BuildAppendList(any(t).( BQTerm )) { { tomMatch8_18 =  true ; tomMatch8_16 = any(t).( BQTerm ); tomMatch8_12 = tom_unused_get_slot_BuildAppendList_AstName(tomMatch8_16); tomMatch8_13 = tom_unused_get_slot_BuildAppendList_HeadTerm(tomMatch8_16); tomMatch8_14 = tom_unused_get_slot_BuildAppendList_TailTerm(tomMatch8_16);  };  } else { if tom_unused_is_fun_sym_BuildAppendArray(any(t).( BQTerm )) { { tomMatch8_18 =  true ; tomMatch8_17 = any(t).( BQTerm ); tomMatch8_12 = tom_unused_get_slot_BuildAppendArray_AstName(tomMatch8_17); tomMatch8_13 = tom_unused_get_slot_BuildAppendArray_HeadTerm(tomMatch8_17); tomMatch8_14 = tom_unused_get_slot_BuildAppendArray_TailTerm(tomMatch8_17);  };  };  }; if tomMatch8_18 { 
+ return g.readsBQTermList(tom_unused_get_slot_FunctionCall_Args(any(t).( BQTerm )), name) ;  };  };  }; { if tom_unused_is_sort_BQTerm(t) { var tomMatch7_18 bool =  false ; var tomMatch7_14  BQTerm  =  *new(BQTerm) ; var tomMatch7_12  TomName  =  *new(TomName) ; _ = tomMatch7_12; var tomMatch7_13  BQTerm  =  *new(BQTerm) ; var tomMatch7_17  BQTerm  =  *new(BQTerm) ; var tomMatch7_16  BQTerm  =  *new(BQTerm) ; if tom_unused_is_fun_sym_BuildAppendList(any(t).( BQTerm )) { { tomMatch7_18 =  true ; tomMatch7_16 = any(t).( BQTerm ); tomMatch7_12 = tom_unused_get_slot_BuildAppendList_AstName(tomMatch7_16); tomMatch7_13 = tom_unused_get_slot_BuildAppendList_HeadTerm(tomMatch7_16); tomMatch7_14 = tom_unused_get_slot_BuildAppendList_TailTerm(tomMatch7_16);  };  } else { if tom_unused_is_fun_sym_BuildAppendArray(any(t).( BQTerm )) { { tomMatch7_18 =  true ; tomMatch7_17 = any(t).( BQTerm ); tomMatch7_12 = tom_unused_get_slot_BuildAppendArray_AstName(tomMatch7_17); tomMatch7_13 = tom_unused_get_slot_BuildAppendArray_HeadTerm(tomMatch7_17); tomMatch7_14 = tom_unused_get_slot_BuildAppendArray_TailTerm(tomMatch7_17);  };  };  }; if tomMatch7_18 { 
 
-			return max(g.readsBQTerm(tomMatch8_13, name), g.readsBQTerm(tomMatch8_14, name))
+			return max(g.readsBQTerm(tomMatch7_13, name), g.readsBQTerm(tomMatch7_14, name))
 		;  };  };  }; { if tom_unused_is_sort_BQTerm(t) { if tom_unused_is_fun_sym_ExpressionToBQTerm(any(t).( BQTerm )) { 
- return g.readsExpression(tom_unused_get_slot_ExpressionToBQTerm_Exp(any(t).( BQTerm )), name) ;  };  };  }; { if tom_unused_is_sort_BQTerm(t) { if tom_unused_is_fun_sym_Composite(any(t).( BQTerm )) { var tomMatch8_end_27  BQTerm  = any(t).( BQTerm ); for { { if !(tom_unused_is_empty_Composite_BQTerm(tomMatch8_end_27)) { var tomMatch8_31  CompositeMember  = tom_unused_get_head_Composite_BQTerm(tomMatch8_end_27); if tom_unused_is_fun_sym_CompositeBQTerm(any(tomMatch8_31).( CompositeMember )) { 
- r = max(r, g.readsBQTerm(tom_unused_get_slot_CompositeBQTerm_term(tomMatch8_31), name)) ;  };  }; if tom_unused_is_empty_Composite_BQTerm(tomMatch8_end_27) { tomMatch8_end_27 = any(t).( BQTerm );  } else { tomMatch8_end_27 = tom_unused_get_tail_Composite_BQTerm(tomMatch8_end_27);  };  };  if !(!(tom_unused_equal_term_BQTerm(tomMatch8_end_27, any(t).( BQTerm )))) { break; }; };  };  };  }; { if tom_unused_is_sort_BQTerm(t) { if tom_unused_is_fun_sym_Composite(any(t).( BQTerm )) { var tomMatch8_end_37  BQTerm  = any(t).( BQTerm ); for { { if !(tom_unused_is_empty_Composite_BQTerm(tomMatch8_end_37)) { var tomMatch8_41  CompositeMember  = tom_unused_get_head_Composite_BQTerm(tomMatch8_end_37); if tom_unused_is_fun_sym_CompositeTL(any(tomMatch8_41).( CompositeMember )) { 
- r = max(r, g.readsTargetLanguage(tom_unused_get_slot_CompositeTL_Tl(tomMatch8_41), name)) ;  };  }; if tom_unused_is_empty_Composite_BQTerm(tomMatch8_end_37) { tomMatch8_end_37 = any(t).( BQTerm );  } else { tomMatch8_end_37 = tom_unused_get_tail_Composite_BQTerm(tomMatch8_end_37);  };  };  if !(!(tom_unused_equal_term_BQTerm(tomMatch8_end_37, any(t).( BQTerm )))) { break; }; };  };  };  };  }; 
+ return g.readsExpression(tom_unused_get_slot_ExpressionToBQTerm_Exp(any(t).( BQTerm )), name) ;  };  };  }; { if tom_unused_is_sort_BQTerm(t) { if tom_unused_is_fun_sym_Composite(any(t).( BQTerm )) { var tomMatch7_end_27  BQTerm  = any(t).( BQTerm ); for { { if !(tom_unused_is_empty_Composite_BQTerm(tomMatch7_end_27)) { var tomMatch7_31  CompositeMember  = tom_unused_get_head_Composite_BQTerm(tomMatch7_end_27); if tom_unused_is_fun_sym_CompositeBQTerm(any(tomMatch7_31).( CompositeMember )) { 
+ r = max(r, g.readsBQTerm(tom_unused_get_slot_CompositeBQTerm_term(tomMatch7_31), name)) ;  };  }; if tom_unused_is_empty_Composite_BQTerm(tomMatch7_end_27) { tomMatch7_end_27 = any(t).( BQTerm );  } else { tomMatch7_end_27 = tom_unused_get_tail_Composite_BQTerm(tomMatch7_end_27);  };  };  if !(!(tom_unused_equal_term_BQTerm(tomMatch7_end_27, any(t).( BQTerm )))) { break; }; };  };  };  }; { if tom_unused_is_sort_BQTerm(t) { if tom_unused_is_fun_sym_Composite(any(t).( BQTerm )) { var tomMatch7_end_37  BQTerm  = any(t).( BQTerm ); for { { if !(tom_unused_is_empty_Composite_BQTerm(tomMatch7_end_37)) { var tomMatch7_41  CompositeMember  = tom_unused_get_head_Composite_BQTerm(tomMatch7_end_37); if tom_unused_is_fun_sym_CompositeTL(any(tomMatch7_41).( CompositeMember )) { 
+ r = max(r, g.readsTargetLanguage(tom_unused_get_slot_CompositeTL_Tl(tomMatch7_41), name)) ;  };  }; if tom_unused_is_empty_Composite_BQTerm(tomMatch7_end_37) { tomMatch7_end_37 = any(t).( BQTerm );  } else { tomMatch7_end_37 = tom_unused_get_tail_Composite_BQTerm(tomMatch7_end_37);  };  };  if !(!(tom_unused_equal_term_BQTerm(tomMatch7_end_37, any(t).( BQTerm )))) { break; }; };  };  };  };  }; 
 
 	if !g.inline {
 		; { { if tom_unused_is_sort_BQTerm(t) { if tom_unused_is_fun_sym_BuildTerm(any(t).( BQTerm )) { 
- return g.readsBQTermList(tom_unused_get_slot_BuildTerm_Args(any(t).( BQTerm )), name) ;  };  };  }; { if tom_unused_is_sort_BQTerm(t) { var tomMatch9_13 bool =  false ; var tomMatch9_11  BQTerm  =  *new(BQTerm) ; var tomMatch9_8  BQTerm  =  *new(BQTerm) ; var tomMatch9_9  BQTerm  =  *new(BQTerm) ; var tomMatch9_7  TomName  =  *new(TomName) ; _ = tomMatch9_7; var tomMatch9_12  BQTerm  =  *new(BQTerm) ; if tom_unused_is_fun_sym_BuildConsList(any(t).( BQTerm )) { { tomMatch9_13 =  true ; tomMatch9_11 = any(t).( BQTerm ); tomMatch9_7 = tom_unused_get_slot_BuildConsList_AstName(tomMatch9_11); tomMatch9_8 = tom_unused_get_slot_BuildConsList_HeadTerm(tomMatch9_11); tomMatch9_9 = tom_unused_get_slot_BuildConsList_TailTerm(tomMatch9_11);  };  } else { if tom_unused_is_fun_sym_BuildConsArray(any(t).( BQTerm )) { { tomMatch9_13 =  true ; tomMatch9_12 = any(t).( BQTerm ); tomMatch9_7 = tom_unused_get_slot_BuildConsArray_AstName(tomMatch9_12); tomMatch9_8 = tom_unused_get_slot_BuildConsArray_HeadTerm(tomMatch9_12); tomMatch9_9 = tom_unused_get_slot_BuildConsArray_TailTerm(tomMatch9_12);  };  };  }; if tomMatch9_13 { 
+ return g.readsBQTermList(tom_unused_get_slot_BuildTerm_Args(any(t).( BQTerm )), name) ;  };  };  }; { if tom_unused_is_sort_BQTerm(t) { var tomMatch8_13 bool =  false ; var tomMatch8_12  BQTerm  =  *new(BQTerm) ; var tomMatch8_11  BQTerm  =  *new(BQTerm) ; var tomMatch8_7  TomName  =  *new(TomName) ; _ = tomMatch8_7; var tomMatch8_8  BQTerm  =  *new(BQTerm) ; var tomMatch8_9  BQTerm  =  *new(BQTerm) ; if tom_unused_is_fun_sym_BuildConsList(any(t).( BQTerm )) { { tomMatch8_13 =  true ; tomMatch8_11 = any(t).( BQTerm ); tomMatch8_7 = tom_unused_get_slot_BuildConsList_AstName(tomMatch8_11); tomMatch8_8 = tom_unused_get_slot_BuildConsList_HeadTerm(tomMatch8_11); tomMatch8_9 = tom_unused_get_slot_BuildConsList_TailTerm(tomMatch8_11);  };  } else { if tom_unused_is_fun_sym_BuildConsArray(any(t).( BQTerm )) { { tomMatch8_13 =  true ; tomMatch8_12 = any(t).( BQTerm ); tomMatch8_7 = tom_unused_get_slot_BuildConsArray_AstName(tomMatch8_12); tomMatch8_8 = tom_unused_get_slot_BuildConsArray_HeadTerm(tomMatch8_12); tomMatch8_9 = tom_unused_get_slot_BuildConsArray_TailTerm(tomMatch8_12);  };  };  }; if tomMatch8_13 { 
 
-				return max(g.readsBQTerm(tomMatch9_8, name), g.readsBQTerm(tomMatch9_9, name))
+				return max(g.readsBQTerm(tomMatch8_8, name), g.readsBQTerm(tomMatch8_9, name))
 			;  };  };  }; { if tom_unused_is_sort_BQTerm(t) { if tom_unused_is_fun_sym_BuildEmptyArray(any(t).( BQTerm )) { 
  return g.readsBQTerm(tom_unused_get_slot_BuildEmptyArray_Size(any(t).( BQTerm )), name) ;  };  };  };  }; 
 
@@ -246,24 +250,24 @@ func (g *goGenerator) readsExpression(e Expression, name string) int {
  return scanHostText(tom_unused_get_slot_Code_Code(any(e).( Expression )), name) ;  };  };  }; { if tom_unused_is_sort_Expression(e) { if tom_unused_is_fun_sym_BQTermToExpression(any(e).( Expression )) { 
  return g.readsBQTerm(tom_unused_get_slot_BQTermToExpression_AstTerm(any(e).( Expression )), name) ;  };  };  }; { if tom_unused_is_sort_Expression(e) { if tom_unused_is_fun_sym_TomInstructionToExpression(any(e).( Expression )) { 
  return g.readsInstruction(tom_unused_get_slot_TomInstructionToExpression_Instruction(any(e).( Expression )), name) ;  };  };  }; { if tom_unused_is_sort_Expression(e) { if tom_unused_is_fun_sym_Negation(any(e).( Expression )) { 
- return g.readsExpression(tom_unused_get_slot_Negation_Arg(any(e).( Expression )), name) ;  };  };  }; { if tom_unused_is_sort_Expression(e) { var tomMatch10_26 bool =  false ; var tomMatch10_25  Expression  =  *new(Expression) ; var tomMatch10_24  Expression  =  *new(Expression) ; var tomMatch10_17  Expression  =  *new(Expression) ; var tomMatch10_18  Expression  =  *new(Expression) ; var tomMatch10_21  Expression  =  *new(Expression) ; var tomMatch10_20  Expression  =  *new(Expression) ; var tomMatch10_22  Expression  =  *new(Expression) ; var tomMatch10_23  Expression  =  *new(Expression) ; if tom_unused_is_fun_sym_And(any(e).( Expression )) { { tomMatch10_26 =  true ; tomMatch10_20 = any(e).( Expression ); tomMatch10_17 = tom_unused_get_slot_And_Arg1(tomMatch10_20); tomMatch10_18 = tom_unused_get_slot_And_Arg2(tomMatch10_20);  };  } else { if tom_unused_is_fun_sym_Or(any(e).( Expression )) { { tomMatch10_26 =  true ; tomMatch10_21 = any(e).( Expression ); tomMatch10_17 = tom_unused_get_slot_Or_Arg1(tomMatch10_21); tomMatch10_18 = tom_unused_get_slot_Or_Arg2(tomMatch10_21);  };  } else { if tom_unused_is_fun_sym_GreaterThan(any(e).( Expression )) { { tomMatch10_26 =  true ; tomMatch10_22 = any(e).( Expression ); tomMatch10_17 = tom_unused_get_slot_GreaterThan_Arg1(tomMatch10_22); tomMatch10_18 = tom_unused_get_slot_GreaterThan_Arg2(tomMatch10_22);  };  } else { if tom_unused_is_fun_sym_GreaterOrEqualThan(any(e).( Expression )) { { tomMatch10_26 =  true ; tomMatch10_23 = any(e).( Expression ); tomMatch10_17 = tom_unused_get_slot_GreaterOrEqualThan_Arg1(tomMatch10_23); tomMatch10_18 = tom_unused_get_slot_GreaterOrEqualThan_Arg2(tomMatch10_23);  };  } else { if tom_unused_is_fun_sym_LessThan(any(e).( Expression )) { { tomMatch10_26 =  true ; tomMatch10_24 = any(e).( Expression ); tomMatch10_17 = tom_unused_get_slot_LessThan_Arg1(tomMatch10_24); tomMatch10_18 = tom_unused_get_slot_LessThan_Arg2(tomMatch10_24);  };  } else { if tom_unused_is_fun_sym_LessOrEqualThan(any(e).( Expression )) { { tomMatch10_26 =  true ; tomMatch10_25 = any(e).( Expression ); tomMatch10_17 = tom_unused_get_slot_LessOrEqualThan_Arg1(tomMatch10_25); tomMatch10_18 = tom_unused_get_slot_LessOrEqualThan_Arg2(tomMatch10_25);  };  };  };  };  };  };  }; if tomMatch10_26 { 
+ return g.readsExpression(tom_unused_get_slot_Negation_Arg(any(e).( Expression )), name) ;  };  };  }; { if tom_unused_is_sort_Expression(e) { var tomMatch9_26 bool =  false ; var tomMatch9_24  Expression  =  *new(Expression) ; var tomMatch9_21  Expression  =  *new(Expression) ; var tomMatch9_18  Expression  =  *new(Expression) ; var tomMatch9_20  Expression  =  *new(Expression) ; var tomMatch9_22  Expression  =  *new(Expression) ; var tomMatch9_17  Expression  =  *new(Expression) ; var tomMatch9_25  Expression  =  *new(Expression) ; var tomMatch9_23  Expression  =  *new(Expression) ; if tom_unused_is_fun_sym_And(any(e).( Expression )) { { tomMatch9_26 =  true ; tomMatch9_20 = any(e).( Expression ); tomMatch9_17 = tom_unused_get_slot_And_Arg1(tomMatch9_20); tomMatch9_18 = tom_unused_get_slot_And_Arg2(tomMatch9_20);  };  } else { if tom_unused_is_fun_sym_Or(any(e).( Expression )) { { tomMatch9_26 =  true ; tomMatch9_21 = any(e).( Expression ); tomMatch9_17 = tom_unused_get_slot_Or_Arg1(tomMatch9_21); tomMatch9_18 = tom_unused_get_slot_Or_Arg2(tomMatch9_21);  };  } else { if tom_unused_is_fun_sym_GreaterThan(any(e).( Expression )) { { tomMatch9_26 =  true ; tomMatch9_22 = any(e).( Expression ); tomMatch9_17 = tom_unused_get_slot_GreaterThan_Arg1(tomMatch9_22); tomMatch9_18 = tom_unused_get_slot_GreaterThan_Arg2(tomMatch9_22);  };  } else { if tom_unused_is_fun_sym_GreaterOrEqualThan(any(e).( Expression )) { { tomMatch9_26 =  true ; tomMatch9_23 = any(e).( Expression ); tomMatch9_17 = tom_unused_get_slot_GreaterOrEqualThan_Arg1(tomMatch9_23); tomMatch9_18 = tom_unused_get_slot_GreaterOrEqualThan_Arg2(tomMatch9_23);  };  } else { if tom_unused_is_fun_sym_LessThan(any(e).( Expression )) { { tomMatch9_26 =  true ; tomMatch9_24 = any(e).( Expression ); tomMatch9_17 = tom_unused_get_slot_LessThan_Arg1(tomMatch9_24); tomMatch9_18 = tom_unused_get_slot_LessThan_Arg2(tomMatch9_24);  };  } else { if tom_unused_is_fun_sym_LessOrEqualThan(any(e).( Expression )) { { tomMatch9_26 =  true ; tomMatch9_25 = any(e).( Expression ); tomMatch9_17 = tom_unused_get_slot_LessOrEqualThan_Arg1(tomMatch9_25); tomMatch9_18 = tom_unused_get_slot_LessOrEqualThan_Arg2(tomMatch9_25);  };  };  };  };  };  };  }; if tomMatch9_26 { 
 
-			return max(g.readsExpression(tomMatch10_17, name), g.readsExpression(tomMatch10_18, name))
+			return max(g.readsExpression(tomMatch9_17, name), g.readsExpression(tomMatch9_18, name))
 		;  };  };  }; { if tom_unused_is_sort_Expression(e) { if tom_unused_is_fun_sym_Conditional(any(e).( Expression )) { 
 
 			return max(g.readsExpression(tom_unused_get_slot_Conditional_Cond(any(e).( Expression )), name), g.readsExpression(tom_unused_get_slot_Conditional_Then(any(e).( Expression )), name), g.readsExpression(tom_unused_get_slot_Conditional_Else(any(e).( Expression )), name))
 		;  };  };  }; { if tom_unused_is_sort_Expression(e) { if tom_unused_is_fun_sym_Cast(any(e).( Expression )) { 
- return g.readsExpression(tom_unused_get_slot_Cast_Source(any(e).( Expression )), name) ;  };  };  }; { if tom_unused_is_sort_Expression(e) { if tom_unused_is_fun_sym_EqualTerm(any(e).( Expression )) { var tomMatch10_41  TomTerm  = tom_unused_get_slot_EqualTerm_Kid2(any(e).( Expression )); var tomMatch10_47 bool =  false ; var tomMatch10_46  TomTerm  =  *new(TomTerm) ; _ = tomMatch10_46; var tomMatch10_45  TomTerm  =  *new(TomTerm) ; _ = tomMatch10_45; if tom_unused_is_fun_sym_Variable(any(tomMatch10_41).( TomTerm )) { { tomMatch10_47 =  true ; tomMatch10_45 = tomMatch10_41;  };  } else { if tom_unused_is_fun_sym_VariableStar(any(tomMatch10_41).( TomTerm )) { { tomMatch10_47 =  true ; tomMatch10_46 = tomMatch10_41;  };  };  }; if tomMatch10_47 { 
+ return g.readsExpression(tom_unused_get_slot_Cast_Source(any(e).( Expression )), name) ;  };  };  }; { if tom_unused_is_sort_Expression(e) { if tom_unused_is_fun_sym_EqualTerm(any(e).( Expression )) { var tomMatch9_41  TomTerm  = tom_unused_get_slot_EqualTerm_Kid2(any(e).( Expression )); var tomMatch9_47 bool =  false ; var tomMatch9_45  TomTerm  =  *new(TomTerm) ; _ = tomMatch9_45; var tomMatch9_46  TomTerm  =  *new(TomTerm) ; _ = tomMatch9_46; if tom_unused_is_fun_sym_Variable(any(tomMatch9_41).( TomTerm )) { { tomMatch9_47 =  true ; tomMatch9_45 = tomMatch9_41;  };  } else { if tom_unused_is_fun_sym_VariableStar(any(tomMatch9_41).( TomTerm )) { { tomMatch9_47 =  true ; tomMatch9_46 = tomMatch9_41;  };  };  }; if tomMatch9_47 { 
 
 			r := g.readsBQTerm(tom_unused_get_slot_EqualTerm_Kid1(any(e).( Expression )), name)
-			if name == g.getVariableNameAbstract(tomMatch10_41) {
+			if name == g.getVariableNameAbstract(tomMatch9_41) {
 				r = max(r, readRead)
 			}
 			return r
 		;  };  };  };  }; { if tom_unused_is_sort_Expression(e) { if tom_unused_is_fun_sym_EqualTerm(any(e).( Expression )) { 
  return g.readsBQTerm(tom_unused_get_slot_EqualTerm_Kid1(any(e).( Expression )), name) ;  };  };  }; { if tom_unused_is_sort_Expression(e) { if tom_unused_is_fun_sym_EqualBQTerm(any(e).( Expression )) { 
- return max(g.readsBQTerm(tom_unused_get_slot_EqualBQTerm_t1(any(e).( Expression )), name), g.readsBQTerm(tom_unused_get_slot_EqualBQTerm_t2(any(e).( Expression )), name)) ;  };  };  }; { if tom_unused_is_sort_Expression(e) { var tomMatch10_65 bool =  false ; var tomMatch10_63  Expression  =  *new(Expression) ; var tomMatch10_61  BQTerm  =  *new(BQTerm) ; var tomMatch10_64  Expression  =  *new(Expression) ; if tom_unused_is_fun_sym_AddOne(any(e).( Expression )) { { tomMatch10_65 =  true ; tomMatch10_63 = any(e).( Expression ); tomMatch10_61 = tom_unused_get_slot_AddOne_Variable(tomMatch10_63);  };  } else { if tom_unused_is_fun_sym_SubstractOne(any(e).( Expression )) { { tomMatch10_65 =  true ; tomMatch10_64 = any(e).( Expression ); tomMatch10_61 = tom_unused_get_slot_SubstractOne_Variable(tomMatch10_64);  };  };  }; if tomMatch10_65 { 
- return g.readsBQTerm(tomMatch10_61, name) ;  };  };  }; { if tom_unused_is_sort_Expression(e) { if tom_unused_is_fun_sym_Substract(any(e).( Expression )) { 
+ return max(g.readsBQTerm(tom_unused_get_slot_EqualBQTerm_t1(any(e).( Expression )), name), g.readsBQTerm(tom_unused_get_slot_EqualBQTerm_t2(any(e).( Expression )), name)) ;  };  };  }; { if tom_unused_is_sort_Expression(e) { var tomMatch9_65 bool =  false ; var tomMatch9_64  Expression  =  *new(Expression) ; var tomMatch9_63  Expression  =  *new(Expression) ; var tomMatch9_61  BQTerm  =  *new(BQTerm) ; if tom_unused_is_fun_sym_AddOne(any(e).( Expression )) { { tomMatch9_65 =  true ; tomMatch9_63 = any(e).( Expression ); tomMatch9_61 = tom_unused_get_slot_AddOne_Variable(tomMatch9_63);  };  } else { if tom_unused_is_fun_sym_SubstractOne(any(e).( Expression )) { { tomMatch9_65 =  true ; tomMatch9_64 = any(e).( Expression ); tomMatch9_61 = tom_unused_get_slot_SubstractOne_Variable(tomMatch9_64);  };  };  }; if tomMatch9_65 { 
+ return g.readsBQTerm(tomMatch9_61, name) ;  };  };  }; { if tom_unused_is_sort_Expression(e) { if tom_unused_is_fun_sym_Substract(any(e).( Expression )) { 
  return max(g.readsBQTerm(tom_unused_get_slot_Substract_Term1(any(e).( Expression )), name), g.readsBQTerm(tom_unused_get_slot_Substract_Term2(any(e).( Expression )), name)) ;  };  };  }; { if tom_unused_is_sort_Expression(e) { if tom_unused_is_fun_sym_GetSliceList(any(e).( Expression )) { 
 
 			return max(g.readsBQTerm(tom_unused_get_slot_GetSliceList_VariableBeginAST(any(e).( Expression )), name), g.readsBQTerm(tom_unused_get_slot_GetSliceList_VariableEndAST(any(e).( Expression )), name), g.readsBQTerm(tom_unused_get_slot_GetSliceList_Tail(any(e).( Expression )), name))
@@ -295,7 +299,7 @@ func (g *goGenerator) readsExpression(e Expression, name string) int {
 
 
 func (g *goGenerator) localName(v BQTerm) string {
-	; { { if tom_unused_is_sort_BQTerm(v) { var tomMatch12_4 bool =  false ; var tomMatch12_2  BQTerm  =  *new(BQTerm) ; _ = tomMatch12_2; var tomMatch12_3  BQTerm  =  *new(BQTerm) ; _ = tomMatch12_3; if tom_unused_is_fun_sym_BQVariable(any(v).( BQTerm )) { { tomMatch12_4 =  true ; tomMatch12_2 = any(v).( BQTerm );  };  } else { if tom_unused_is_fun_sym_BQVariableStar(any(v).( BQTerm )) { { tomMatch12_4 =  true ; tomMatch12_3 = any(v).( BQTerm );  };  };  }; if tomMatch12_4 { 
+	; { { if tom_unused_is_sort_BQTerm(v) { var tomMatch11_4 bool =  false ; var tomMatch11_3  BQTerm  =  *new(BQTerm) ; _ = tomMatch11_3; var tomMatch11_2  BQTerm  =  *new(BQTerm) ; _ = tomMatch11_2; if tom_unused_is_fun_sym_BQVariable(any(v).( BQTerm )) { { tomMatch11_4 =  true ; tomMatch11_2 = any(v).( BQTerm );  };  } else { if tom_unused_is_fun_sym_BQVariableStar(any(v).( BQTerm )) { { tomMatch11_4 =  true ; tomMatch11_3 = any(v).( BQTerm );  };  };  }; if tomMatch11_4 { 
  return g.getVariableNameBQAbstract(v) ;  };  };  };  }; 
 
 	return ""
@@ -327,9 +331,13 @@ func scanHostText(text, name string) int {
 			}
 			if prev == "func" || (prev == ")" && prevClosed == "f(") {
 				stack = append(stack, "f(")
+			} else if prev == "var" || prev == "const" || prev == "type" {
+				stack = append(stack, "g(")
 			} else {
 				stack = append(stack, "(")
 			}
+		case tok == "{" && i > 0 && (toks[i-1] == "struct" || toks[i-1] == "interface"):
+			stack = append(stack, "s{")
 		case tok == "[" || tok == "{":
 			stack = append(stack, tok)
 		case tok == ")" || tok == "]" || tok == "}":
@@ -360,7 +368,7 @@ func hostOccurrence(toks []string, i int, stack []string) int {
 	if hasNext {
 		next = toks[i+1]
 	}
-	if containsString(stack, "f(") {
+	if containsString(stack, "f(") || containsString(stack, "g(") || containsString(stack, "s{") {
 		return readUnsure
 	}
 	if prev == "." || prev == "goto" || prev == "break" || prev == "continue" {
@@ -529,6 +537,39 @@ func goTokens(s string) (toks []string, ok bool) {
 		}
 	}
 	return toks, true
+}
+
+
+
+
+
+
+func (g *goGenerator) readsInstructionRuns(l InstructionList, name string) int {
+	r := readNone
+	var run strings.Builder
+	; { { if tom_unused_is_sort_InstructionList(l) { if tom_unused_is_fun_sym_concInstruction(any(l).( InstructionList )) { var tomMatch12_end_4  InstructionList  = any(l).( InstructionList ); for { { if !(tom_unused_is_empty_concInstruction_InstructionList(tomMatch12_end_4)) { var tom___i  Instruction  = tom_unused_get_head_concInstruction_InstructionList(tomMatch12_end_4); 
+
+			if text, ok := hostText(tom___i); ok {
+				run.WriteString(text)
+			} else {
+				r = max(r, scanHostText(run.String(), name))
+				run.Reset()
+				r = max(r, g.readsInstruction(tom___i, name))
+			};  }; if tom_unused_is_empty_concInstruction_InstructionList(tomMatch12_end_4) { tomMatch12_end_4 = any(l).( InstructionList );  } else { tomMatch12_end_4 = tom_unused_get_tail_concInstruction_InstructionList(tomMatch12_end_4);  };  };  if !(!(tom_unused_equal_term_InstructionList(tomMatch12_end_4, any(l).( InstructionList )))) { break; }; };  };  };  };  }; 
+
+
+	return max(r, scanHostText(run.String(), name))
+}
+
+
+
+
+func hostText(i Instruction) (string, bool) {
+	; { { if tom_unused_is_sort_Instruction(i) { if tom_unused_is_fun_sym_CodeToInstruction(any(i).( Instruction )) { var tomMatch13_1  Code  = tom_unused_get_slot_CodeToInstruction_Code(any(i).( Instruction )); if tom_unused_is_fun_sym_TargetLanguageToCode(any(tomMatch13_1).( Code )) { var tomMatch13_4  TargetLanguage  = tom_unused_get_slot_TargetLanguageToCode_Tl(tomMatch13_1); if tom_unused_is_fun_sym_TL(any(tomMatch13_4).( TargetLanguage )) { 
+ return tom_unused_get_slot_TL_Code(tomMatch13_4), true ;  };  };  };  };  }; { if tom_unused_is_sort_Instruction(i) { if tom_unused_is_fun_sym_CodeToInstruction(any(i).( Instruction )) { var tomMatch13_13  Code  = tom_unused_get_slot_CodeToInstruction_Code(any(i).( Instruction )); if tom_unused_is_fun_sym_TargetLanguageToCode(any(tomMatch13_13).( Code )) { var tomMatch13_16  TargetLanguage  = tom_unused_get_slot_TargetLanguageToCode_Tl(tomMatch13_13); if tom_unused_is_fun_sym_ITL(any(tomMatch13_16).( TargetLanguage )) { 
+ return tom_unused_get_slot_ITL_Code(tomMatch13_16), true ;  };  };  };  };  };  }; 
+
+	return "", false
 }
 
 

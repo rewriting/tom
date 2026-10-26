@@ -58,6 +58,14 @@ autonomes), comparés à ceux de Java Gom (`legacy/`) :
   `ToATerm`, `ToArray`/`GetHead…`, `CompareTo`, et ordre d'énumération
   des solutions d'un filtrage AC. L'égalité des termes et l'ensemble des
   solutions sont les mêmes (test/java/gom/TestACU.t, test/java/acmatching).
+- **`--inline`, `--inlineplus` avec `-go`.** Le backend Go n'inline jamais
+  les hooks des mappings (`is_fsym`, `get_slot`, `make`…) : `-go` éteint
+  `jCode`, donc `inline` est déjà faux dans `GenericGenerator`, et le
+  constructeur de `GoGenerator` éteint aussi `inlineplus` (qui, seul,
+  changeait encore la forme des appels de tableaux). La sortie est celle
+  d'une compilation sans ces options (smoke `inline_go`) ; l'analyse
+  `readsInstruction` (`_ = x`) en dépend : elle parcourt les appels de
+  hooks.
 - **Coût des listes.** Comme en Java, une liste d'un opérateur variadique
   (de tout module compilé par gomgo) est une chaîne de cellules `Cons<op>(tête, queue)` / `Empty<op>()`
   partagées au maximum (`gom/backend/cells.go`) : `Cons<Op>`,

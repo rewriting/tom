@@ -90,7 +90,7 @@ public class GoGenerator extends GenericGenerator {
 
   public GoGenerator(OutputCode output, OptionManager optionManager,
                      SymbolTable symbolTable) {
-    super(output, optionManager, symbolTable);
+    super(output, optionManager, symbolTable); inline = false; inlineplus = false; /* the Go backend never inlines the hooks (-go clears jCode: inline is already false; inlineplus is cleared here) */
   }
 
   public void setDeclPrefix(String prefix) {
@@ -1019,7 +1019,7 @@ matchBlock: {
         return Math.max(r, readsInstruction(`body,name));
       }
       Assign(_,e) -> { return readsExpression(`e,name); }
-      AssignArray(_,_,e) -> { return readsExpression(`e,name); }
+      AssignArray(_,i,e) -> { return Math.max(readsBQTerm(`i,name), readsExpression(`e,name)); }
       Return(t) -> { return readsBQTerm(`t,name); }
       (AbstractBlock|UnamedBlock)(l) -> { return readsInstructionList(`l,name); }
       NamedBlock(_,l) -> { return readsInstructionList(`l,name); }
@@ -1037,11 +1037,11 @@ matchBlock: {
   }
 
   private int readsInstructionList(InstructionList l, String name) {
-    int r = NO_READ;
-    %match(l) {
-      concInstruction(_*,i,_*) -> { r = Math.max(r, readsInstruction(`i,name)); }
-    }
-    return r;
+    /* the island parser cuts host code at each brace and backquote term into
+     * several TL/ITL siblings: the adjacent ones are scanned as one text
+     * (readsInstructionRuns, at the end of the class); the scan
+     * needs the brackets of a declaration group or of a struct body */
+    return readsInstructionRuns(l,name);
   }
 
   private int readsCode(Code code, String name) {
@@ -1158,7 +1158,7 @@ matchBlock: {
    *  - nothing after "." (a selector), after goto/break/continue (a
    *    label), before ":" (a label, a key, a case, a slice bound) or
    *    before "=" (an assignment, which Go does not count as a use);
-   *  - UNSURE inside the parameters/results of a func literal, after
+   *  - UNSURE inside the parameters/results of a func literal, a var/const/type ( ) group or a struct/interface { } body, after
    *    var/const/type/func, in a statement starting with var/const/type,
    *    before ":=" or an identifier (a declaration), and before "," out
    *    of ( ) and [ ] when the statement holds ":=" or ends the text (the
@@ -1187,9 +1187,9 @@ matchBlock: {
       if(tok.equals("(")) {
         String prev = i > 0 ? toks.get(i-1) : null;
         boolean decl = "func".equals(prev) || (")".equals(prev) && "f(".equals(prevClosed));
-        stack.add(decl ? "f(" : "(");
+        stack.add(decl ? "f(" : (("var".equals(prev) || "const".equals(prev) || "type".equals(prev)) ? "g(" : "("));
       } else if(tok.equals("[") || tok.equals("{")) {
-        stack.add(tok);
+        stack.add(tok.equals("{") && i > 0 && (toks.get(i-1).equals("struct") || toks.get(i-1).equals("interface")) ? "s{" : tok);
       } else if(tok.equals(")") || tok.equals("]") || tok.equals("}")) {
         if(!stack.isEmpty()) {
           closed = stack.remove(stack.size()-1);
@@ -1208,7 +1208,7 @@ matchBlock: {
   private static int hostOccurrence(ArrayList<String> toks, int i, ArrayList<String> stack) {
     String prev = i > 0 ? toks.get(i-1) : null;
     String next = i+1 < toks.size() ? toks.get(i+1) : null;
-    if(stack.contains("f(")) {
+    if(stack.contains("f(") || stack.contains("g(") || stack.contains("s{")) {
       return UNSURE;
     }
     if(".".equals(prev) || "goto".equals(prev) || "break".equals(prev) || "continue".equals(prev)) {
@@ -1360,5 +1360,40 @@ matchBlock: {
       }
     }
     return toks;
+  }
+
+  /*
+   * readsInstructionList: the host code TL/ITL instructions that follow
+   * one another are scanned as one text, since the island parser cuts the
+   * host code at every brace ("interface", "{", " x ", "}" are four
+   * pieces) and the scan needs the brackets to tell a struct or interface
+   * body, or a declaration group, from an expression. A backquote term or
+   * any other instruction ends the run.
+   */
+  private int readsInstructionRuns(InstructionList l, String name) {
+    int r = NO_READ;
+    StringBuilder run = new StringBuilder();
+    %match(l) {
+      concInstruction(_*,i,_*) -> {
+        String text = hostText(`i);
+        if(text != null) {
+          run.append(text);
+        } else {
+          r = Math.max(r, scanHostText(run.toString(),name));
+          run.setLength(0);
+          r = Math.max(r, readsInstruction(`i,name));
+        }
+      }
+    }
+    return Math.max(r, scanHostText(run.toString(),name));
+  }
+
+  /* the text of a host code instruction, null for any other instruction */
+  private static String hostText(Instruction i) {
+    %match(i) {
+      CodeToInstruction(TargetLanguageToCode(TL(t,_,_))) -> { return `t; }
+      CodeToInstruction(TargetLanguageToCode(ITL(t))) -> { return `t; }
+    }
+    return null;
   }
 }

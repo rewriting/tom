@@ -1,6 +1,6 @@
 package backend
 
-// "_ = x": the variables Go would reject as unused (GoGenerator.t:904-1342,
+// "_ = x": the variables Go would reject as unused (GoGenerator.t:904-1399,
 // see the comment there for the rule). buildLet (filtrage.t) writes
 // "_ = x" after "var x T = e" unless readsInstruction(body, x) is
 // readRead; generateInstruction (generate.t) writes buildUnreadSubjects
@@ -118,7 +118,7 @@ func (g *goGenerator) readsInstruction(inst Instruction, name string) int {
 			return max(r, g.readsInstruction(`body, name))
 		}
 		Assign(_, e) -> { return g.readsExpression(`e, name) }
-		AssignArray(_, _, e) -> { return g.readsExpression(`e, name) }
+		AssignArray(_, i, e) -> { return max(g.readsBQTerm(`i, name), g.readsExpression(`e, name)) }
 		Return(t) -> { return g.readsBQTerm(`t, name) }
 		(AbstractBlock|UnamedBlock)(l) -> { return g.readsInstructionList(`l, name) }
 		NamedBlock(_, l) -> { return g.readsInstructionList(`l, name) }
@@ -136,12 +136,12 @@ func (g *goGenerator) readsInstruction(inst Instruction, name string) int {
 }
 
 // readsInstructionList is GoGenerator.readsInstructionList (GoGenerator.t:1039).
+//
+// The host code TL/ITL instructions that follow one another are scanned as
+// one text, since the island parser cuts the host code at every brace and
+// backquote term (readsInstructionRuns, GoGenerator.t:1373).
 func (g *goGenerator) readsInstructionList(l InstructionList, name string) int {
-	r := readNone
-	%match(l) {
-		concInstruction(_*, i, _*) -> { r = max(r, g.readsInstruction(`i, name)) }
-	}
-	return r
+	return g.readsInstructionRuns(l, name)
 }
 
 // readsCode is GoGenerator.readsCode (GoGenerator.t:1047).
@@ -284,9 +284,13 @@ func scanHostText(text, name string) int {
 			}
 			if prev == "func" || (prev == ")" && prevClosed == "f(") {
 				stack = append(stack, "f(")
+			} else if prev == "var" || prev == "const" || prev == "type" {
+				stack = append(stack, "g(")
 			} else {
 				stack = append(stack, "(")
 			}
+		case tok == "{" && i > 0 && (toks[i-1] == "struct" || toks[i-1] == "interface"):
+			stack = append(stack, "s{")
 		case tok == "[" || tok == "{":
 			stack = append(stack, tok)
 		case tok == ")" || tok == "]" || tok == "}":
@@ -315,7 +319,7 @@ func hostOccurrence(toks []string, i int, stack []string) int {
 	if hasNext {
 		next = toks[i+1]
 	}
-	if containsString(stack, "f(") {
+	if containsString(stack, "f(") || containsString(stack, "g(") || containsString(stack, "s{") {
 		return readUnsure
 	}
 	if prev == "." || prev == "goto" || prev == "break" || prev == "continue" {
@@ -469,6 +473,34 @@ func goTokens(s string) (toks []string, ok bool) {
 		}
 	}
 	return toks, true
+}
+
+// readsInstructionRuns is GoGenerator.readsInstructionRuns (GoGenerator.t:1373): the
+// host code instructions that follow one another are scanned as one text.
+func (g *goGenerator) readsInstructionRuns(l InstructionList, name string) int {
+	r := readNone
+	var run strings.Builder
+	%match(l) {
+		concInstruction(_*, i, _*) -> {
+			if text, ok := hostText(`i); ok {
+				run.WriteString(text)
+			} else {
+				r = max(r, scanHostText(run.String(), name))
+				run.Reset()
+				r = max(r, g.readsInstruction(`i, name))
+			}
+		}
+	}
+	return max(r, scanHostText(run.String(), name))
+}
+
+// hostText is GoGenerator.hostText (GoGenerator.t:1392).
+func hostText(i Instruction) (string, bool) {
+	%match(i) {
+		CodeToInstruction(TargetLanguageToCode(TL(t, _, _))) -> { return `t, true }
+		CodeToInstruction(TargetLanguageToCode(ITL(t))) -> { return `t, true }
+	}
+	return "", false
 }
 
 // The generated mapping code (adt.tom) names aterm types; this keeps the import used.

@@ -1,4 +1,4 @@
-// tom-source-sha256: b979a283eb7101ff2b4e97d9f25f745810a97a2f1ddeeb0d2b7f0ceeaf893393
+// tom-source-sha256: 8f7f26ebc6c52e1dd67a7cc8d820d90f45278a209486fc02978b8cd7cddc1e2f
 
 package backend
 
@@ -73,6 +73,7 @@ func newGoGenerator(output *tools.OutputCode, opts *platform.Options, st *tools.
 	g.inlineplus = opts.Bool("inlineplus")
 	g.inline = g.inline || g.inlineplus
 	g.inline = g.inline && (cCode || jCode) 
+	g.inlineplus = false 
 	return g
 }
 
