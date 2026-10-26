@@ -120,6 +120,15 @@ autonomes), comparés à ceux de Java Gom (`legacy/`) :
   octet (`test/tools/smoke` `TestGoPretty`). Si `gofmt` est absent ou
   échoue, le fichier reste non formaté et un avertissement est émis.
   Sans `-p` ni `-O2`, rien ne change.
+- **`-O2` : `incompatible()` corrigé (src/ et legacy/ diffèrent).**
+  `OptimizerPlugin.incompatible(c1, c2)` testait `And(c2,c2)` au lieu de
+  `And(c1,c2)` (aussi dans `legacy/`, qu'on ne modifie pas) : `IfSwapping`
+  et `InterBlock` ne se déclenchaient presque jamais. La correction ne
+  touche que `-O2` : la sortie par défaut (`-O`) reste identique à
+  `legacy/` (T0), mais celle de `-O2` diffère de `legacy -O2` quand deux
+  `if` voisins ont des conditions incompatibles (sur `test/java` : 2 des
+  90 `.t`, `andor/TestAndOr.t` et `andor/TestAndOrConstraintOnly.t`, deux
+  `if` échangés ; mêmes résultats JUnit que `legacy/`).
 - **Plusieurs `.t` par paquetage Go (préfixe par fichier, J4.0b).**
   Toutes les déclarations de niveau paquetage générées pour Go (fonctions
   `tom_<hook>_…` des mappings, aides AC ci-dessus) portent le préfixe

@@ -682,7 +682,7 @@ public class OptimizerPlugin extends TomGenericPlugin {
    */
   private boolean incompatible(Expression c1, Expression c2) {
     try {
-      Expression res = `InnermostId(NormExpr(this)).visitLight(`And(c2,c2));
+      Expression res = `InnermostId(NormExpr(this)).visitLight(`And(c1,c2));
       return res ==`FalseTL();
     } catch(VisitFailure e) {
       return false;
