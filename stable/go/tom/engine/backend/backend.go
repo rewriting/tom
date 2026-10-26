@@ -1,6 +1,8 @@
 package backend
 
 import (
+	"bytes"
+	"go/format"
 	"io"
 	"time"
 
@@ -29,7 +31,15 @@ func Generate(b *bridge.Bundle, w io.Writer, r *platform.Reporter) (ok bool) {
 			return
 		}
 		start := time.Now()
-		output := tools.NewOutputCode(w, opts)
+		// Go with pretty (-p, -O2): the code is formatted like gofmt does
+		// (BackendPlugin.formatGo); a failure keeps the unformatted code.
+		var formatted *bytes.Buffer
+		out := w
+		if opts.Bool("goCode") && opts.Bool("pretty") {
+			formatted = &bytes.Buffer{}
+			out = formatted
+		}
+		output := tools.NewOutputCode(out, opts)
 		if !opts.Bool("goCode") {
 			// Java: CGenerator, CamlGenerator, PythonGenerator, AdaGenerator,
 			// CSharpGenerator, JavaGenerator (D5)
@@ -45,6 +55,17 @@ func Generate(b *bridge.Bundle, w io.Writer, r *platform.Reporter) (ok bool) {
 		if err := output.Close(); err != nil {
 			// Java passes one argument: {1} stays in the text
 			r.Error(file, 0, platform.BackendIOException, err.Error())
+		}
+		if formatted != nil {
+			code := formatted.Bytes()
+			if src, err := format.Source(code); err == nil {
+				code = src
+			} else {
+				r.Warning(file, 0, platform.GoFormatFailed, err.Error())
+			}
+			if _, err := w.Write(code); err != nil {
+				r.Error(file, 0, platform.BackendIOException, err.Error())
+			}
 		}
 	})
 	return ran && !r.HasError()

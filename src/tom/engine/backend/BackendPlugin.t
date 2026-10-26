@@ -152,6 +152,9 @@ public class BackendPlugin extends TomGenericPlugin {
               0, TomMessage.tomGenerationPhase,
               Integer.valueOf((int)(System.currentTimeMillis()-startChrono)));
           output.close();
+          if(getOptionBooleanValue(BackendPlugin.GOCODE) && getOptionBooleanValue("pretty")) {
+            formatGo(getStreamManager().getOutputFile(), getStreamManager().getInputFileName());
+          }
         } catch (IOException e) {
           TomMessage.error(getLogger(), getStreamManager().getInputFileName(),
               0, TomMessage.backendIOException, e.getMessage());
@@ -180,6 +183,65 @@ public class BackendPlugin extends TomGenericPlugin {
       TomMessage.error(getLogger(),null,0,PluginPlatformMessage.platformStopped);
       return;
     }
+  }
+
+  /**
+   * Go only (-p, -O2): the generated file is formatted with gofmt
+   * ($GOROOT/bin/gofmt, then gofmt in the PATH). When gofmt is missing or
+   * fails, the file is kept as it is and a warning is reported.
+   */
+  private void formatGo(java.io.File outputFile, String inputName) {
+    List<String> candidates = new ArrayList<String>();
+    String goroot = System.getenv("GOROOT");
+    if(goroot != null && goroot.length() > 0) {
+      candidates.add(new java.io.File(new java.io.File(goroot, "bin"), "gofmt").getPath());
+    }
+    candidates.add("gofmt");
+    String failure = "gofmt not found";
+    for(String gofmt : candidates) {
+      try {
+        Process p = new ProcessBuilder(gofmt, outputFile.getPath()).start();
+        final java.io.InputStream err = p.getErrorStream();
+        final java.io.ByteArrayOutputStream errBytes = new java.io.ByteArrayOutputStream();
+        Thread t = new Thread() {
+          public void run() {
+            try {
+              byte[] buf = new byte[4096];
+              int n;
+              while((n = err.read(buf)) > 0) { errBytes.write(buf, 0, n); }
+            } catch(IOException e) { }
+          }
+        };
+        t.start();
+        java.io.ByteArrayOutputStream out = new java.io.ByteArrayOutputStream();
+        java.io.InputStream in = p.getInputStream();
+        byte[] buf = new byte[65536];
+        int n;
+        while((n = in.read(buf)) > 0) { out.write(buf, 0, n); }
+        int status = p.waitFor();
+        t.join();
+        if(status == 0) {
+          FileOutputStream fos = new FileOutputStream(outputFile);
+          try {
+            fos.write(out.toByteArray());
+          } finally {
+            fos.close();
+          }
+          return;
+        }
+        failure = errBytes.toString("UTF-8").trim();
+        if(failure.length() == 0) {
+          failure = "exit status " + status;
+        }
+        break;
+      } catch(IOException e) {
+        failure = e.getMessage();
+      } catch(InterruptedException e) {
+        failure = "interrupted";
+        break;
+      }
+    }
+    TomMessage.warning(getLogger(), inputName, 0, TomMessage.goFormatFailed, failure);
   }
 
   public void optionChanged(String optionName, Object optionValue) {

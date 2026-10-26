@@ -97,22 +97,19 @@ func TestStringOutputCode(t *testing.T) {
 	}
 }
 
+// TestPretty: under Go, pretty adds no line break (Go would insert a ';');
+// the backend formats the file afterwards. The output is the one without
+// pretty.
 func TestPretty(t *testing.T) {
-	for _, c := range []struct{ s, want string }{
-		{"  a\n\n  b\n\n", "a\n\nb\n"},
-		{"\n\n", ""},
-		{"", "\n"},
-	} {
-		o, sb := newGo(true)
-		o.WriteTL(2, c.s, 1, int64(strings.Count(c.s, "\n")))
-		if sb.String() != c.want {
-			t.Errorf("WriteTL(%q) = %q, want %q", c.s, sb.String(), c.want)
+	for _, s := range []string{"  a\n\n  b\n\n", "\n\n", "", "return x"} {
+		p, psb := newGo(true)
+		n, nsb := newGo(false)
+		p.WriteTL(2, s, 1, int64(strings.Count(s, "\n")))
+		n.WriteTL(2, s, 1, int64(strings.Count(s, "\n")))
+		p.Writeln()
+		if psb.String() != nsb.String() {
+			t.Errorf("WriteTL(%q) pretty = %q, not pretty = %q", s, psb.String(), nsb.String())
 		}
-	}
-	o, sb := newGo(true)
-	o.Writeln()
-	if sb.String() != "\n" {
-		t.Fatalf("Writeln = %q", sb.String())
 	}
 }
 

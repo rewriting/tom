@@ -19,6 +19,8 @@ var (
 	BackendInactivated = Message{"backendInactivated", "The BackendPlugin is not activated and thus WILL NOT RUN:No output will be generated "}
 	// BackendIOException is TomMessage.backendIOException (TomMessage.java:208).
 	BackendIOException = Message{"backendIOException", "BackendPlugin : IOException occurs writting to file ''{0}'': {1} "}
+	// GoFormatFailed is TomMessage.goFormatFailed (Go only: -p formats the Go).
+	GoFormatFailed = Message{"goFormatFailed", "gofmt: {0}: the generated Go is left unformatted"}
 	// ExceptionMessage is TomMessage.exceptionMessage (TomMessage.java:72).
 	ExceptionMessage = Message{"exceptionMessage", "{0}: Unhandled exception\n"}
 	// NotReturnedPluginOption is TomMessage.notReturnedPluginOption (TomMessage.java:101).

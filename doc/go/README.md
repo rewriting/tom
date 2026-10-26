@@ -109,6 +109,17 @@ autonomes), comparés à ceux de Java Gom (`legacy/`) :
   `__getTermForMult_<op>`, `__computeLength_<op>`, …) sont, en Java, des
   méthodes de la classe générée ; en Go, ce sont des fonctions de niveau
   paquetage, émises dans chaque fichier généré qui en a besoin.
+- **`-p` / `-O2` avec `-go`.** `-O2` force `pretty` (`OptimizerPlugin`).
+  Java coupe alors chaque fragment hôte par un saut de ligne, ce que Go
+  ne tolère pas (insertion automatique de `;` : `return` + saut de ligne,
+  saut de ligne dans une condition). Avec `-go`, `pretty` ne produit donc
+  aucun saut de ligne (`OutputCode`), et le fichier Go terminé est mis en
+  forme par `gofmt` (`$GOROOT/bin/gofmt`, puis `gofmt` du `PATH` ;
+  `BackendPlugin`), ou par `go/format` quand c'est le backend Tom+Go
+  (`--goFrom Backend`) qui écrit le fichier : même résultat octet pour
+  octet (`test/tools/smoke` `TestGoPretty`). Si `gofmt` est absent ou
+  échoue, le fichier reste non formaté et un avertissement est émis.
+  Sans `-p` ni `-O2`, rien ne change.
 - **Plusieurs `.t` par paquetage Go (préfixe par fichier, J4.0b).**
   Toutes les déclarations de niveau paquetage générées pour Go (fonctions
   `tom_<hook>_…` des mappings, aides AC ci-dessus) portent le préfixe

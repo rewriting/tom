@@ -55,6 +55,12 @@ public class OutputCode {
     this.pretty = ((Boolean)optionManager.getOptionValue("pretty")).booleanValue();
     Object go = optionManager.getOptionValue("goCode");
     this.goCode = (go instanceof Boolean) && ((Boolean)go).booleanValue();
+    /* Go only: no pretty line breaks (Go inserts a ';' at the end of a line,
+     * which breaks the one-line code of GoGenerator); the generated file is
+     * formatted afterwards (BackendPlugin) */
+    if(this.goCode) {
+      this.pretty = false;
+    }
   }
 
   public OutputCode(Writer file) {

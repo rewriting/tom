@@ -419,6 +419,9 @@ func generateGo(t *testing.T, c portCase, dir string) (map[string]string, string
 	t.Helper()
 	dist := harness.NewDist(t)
 	args := []string{"-go", "-np"}
+	// TOMGO_TOMARGS: extra tom options for every compilation (e.g. -O2:
+	// T2 then checks the behaviour; the goldens are skipped, see checkGolden)
+	args = append(args, strings.Fields(os.Getenv("TOMGO_TOMARGS"))...)
 	if len(c.Gom) > 0 {
 		args = append(args, "-I", dir)
 	}
@@ -498,6 +501,9 @@ func regressDiagnostics(t *testing.T, c portCase, dir string) (string, string, e
 // Regress case) with testdata/golden/<rel>.go (.log).
 func checkGolden(t *testing.T, rel, gen string) {
 	t.Helper()
+	if os.Getenv("TOMGO_TOMARGS") != "" {
+		return
+	}
 	got, err := os.ReadFile(gen)
 	if err != nil {
 		t.Fatal(err)

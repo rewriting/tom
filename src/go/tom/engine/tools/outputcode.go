@@ -30,7 +30,10 @@ func NewOutputCode(w io.Writer, opts *platform.Options) *OutputCode {
 	if opts.Bool("cCode") || opts.Bool("aCode") || opts.Bool("pCode") {
 		panic(&platform.RuntimeError{Msg: "OutputCode: the Go suffix generates Go only (cCode, aCode or pCode is set)"})
 	}
-	return &OutputCode{w: w, lineCounter: 1, pretty: opts.Bool("pretty"), goCode: opts.Bool("goCode")}
+	// Go only: no pretty line breaks (OutputCode.java: Go inserts a ';' at the
+	// end of a line); the generated file is formatted afterwards (backend.Generate).
+	goCode := opts.Bool("goCode")
+	return &OutputCode{w: w, lineCounter: 1, pretty: opts.Bool("pretty") && !goCode, goCode: goCode}
 }
 
 // NewStringOutputCode is new OutputCode(new StringWriter())

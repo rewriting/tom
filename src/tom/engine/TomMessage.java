@@ -476,6 +476,8 @@ public class TomMessage extends BasicPlatformMessage {
       new TomMessage("bridge: the {0} term contains a newline and cannot be written on one line");
   public static final TomMessage goBridgeMismatch =
       new TomMessage("bridge round trip differs at line {0}: {1}");
+  public static final TomMessage goFormatFailed =
+      new TomMessage("gofmt: {0}: the generated Go is left unformatted");
   public static final TomMessage goBridgeError =
       new TomMessage("{0}: {1}");
   public static final TomMessage goBridgeFailure =
