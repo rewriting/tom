@@ -38,14 +38,14 @@ func (g *goGenerator) buildTerm(deep int, opname string, argList BQTermList, mod
 		for !argList.IsEmptyconcBQTerm() {
 			bqt := argList.GetHeadconcBQTerm()
 			generatebqt := true
-			; { _ = bqt; { if tom_declarations_is_sort_BQTerm(bqt) { if tom_declarations_is_fun_sym_BQDefault(any(bqt).( BQTerm )) { 
+			; { { if tom_declarations_is_sort_BQTerm(bqt) { if tom_declarations_is_fun_sym_BQDefault(any(bqt).( BQTerm )) { 
 
 					
 					tomSymbol := g.getSymbolTable(moduleName).GetSymbolFromName(opname)
 					slotName := tools.GetSlotName(tomSymbol, index)
 					g.buildExpGetDefault(deep, opname, slotName.GetString(), moduleName)
 					generatebqt = false
-				;  };  };  }; { if tom_declarations_is_sort_BQTerm(bqt) { if tom_declarations_is_fun_sym_Composite(any(bqt).( BQTerm )) { if !(tom_declarations_is_empty_Composite_BQTerm(any(bqt).( BQTerm ))) { var tomMatch1_8  CompositeMember  = tom_declarations_get_head_Composite_BQTerm(any(bqt).( BQTerm )); _ = tomMatch1_8; if tom_declarations_is_fun_sym_CompositeBQTerm(any(tomMatch1_8).( CompositeMember )) { if tom_declarations_is_fun_sym_BQDefault(any(tom_declarations_get_slot_CompositeBQTerm_term(tomMatch1_8)).( BQTerm )) { 
+				;  };  };  }; { if tom_declarations_is_sort_BQTerm(bqt) { if tom_declarations_is_fun_sym_Composite(any(bqt).( BQTerm )) { if !(tom_declarations_is_empty_Composite_BQTerm(any(bqt).( BQTerm ))) { var tomMatch1_8  CompositeMember  = tom_declarations_get_head_Composite_BQTerm(any(bqt).( BQTerm )); if tom_declarations_is_fun_sym_CompositeBQTerm(any(tomMatch1_8).( CompositeMember )) { if tom_declarations_is_fun_sym_BQDefault(any(tom_declarations_get_slot_CompositeBQTerm_term(tomMatch1_8)).( BQTerm )) { 
 
 					
 					tomSymbol := g.getSymbolTable(moduleName).GetSymbolFromName(opname)
@@ -99,14 +99,14 @@ func (g *goGenerator) instantiateTemplate(deep int, template string, hasTemplate
 			g.output = tools.NewStringOutputCode()
 			bqt := termList.GetHeadconcBQTerm()
 			generatebqt := true
-			; { _ = bqt; { if tom_declarations_is_sort_BQTerm(bqt) { if tom_declarations_is_fun_sym_BQDefault(any(bqt).( BQTerm )) { 
+			; { { if tom_declarations_is_sort_BQTerm(bqt) { if tom_declarations_is_fun_sym_BQDefault(any(bqt).( BQTerm )) { 
 
 					
 					tomSymbol := g.getSymbolTable(moduleName).GetSymbolFromName(opname)
 					slotName := tools.GetSlotName(tomSymbol, index)
 					g.buildExpGetDefault(deep, opname, slotName.GetString(), moduleName)
 					generatebqt = false
-				;  };  };  }; { if tom_declarations_is_sort_BQTerm(bqt) { if tom_declarations_is_fun_sym_Composite(any(bqt).( BQTerm )) { if !(tom_declarations_is_empty_Composite_BQTerm(any(bqt).( BQTerm ))) { var tomMatch2_8  CompositeMember  = tom_declarations_get_head_Composite_BQTerm(any(bqt).( BQTerm )); _ = tomMatch2_8; if tom_declarations_is_fun_sym_CompositeBQTerm(any(tomMatch2_8).( CompositeMember )) { if tom_declarations_is_fun_sym_BQDefault(any(tom_declarations_get_slot_CompositeBQTerm_term(tomMatch2_8)).( BQTerm )) { 
+				;  };  };  }; { if tom_declarations_is_sort_BQTerm(bqt) { if tom_declarations_is_fun_sym_Composite(any(bqt).( BQTerm )) { if !(tom_declarations_is_empty_Composite_BQTerm(any(bqt).( BQTerm ))) { var tomMatch2_8  CompositeMember  = tom_declarations_get_head_Composite_BQTerm(any(bqt).( BQTerm )); if tom_declarations_is_fun_sym_CompositeBQTerm(any(tomMatch2_8).( CompositeMember )) { if tom_declarations_is_fun_sym_BQDefault(any(tom_declarations_get_slot_CompositeBQTerm_term(tomMatch2_8)).( BQTerm )) { 
 
 					tomSymbol := g.getSymbolTable(moduleName).GetSymbolFromName(opname)
 					slotName := tools.GetSlotName(tomSymbol, index)
@@ -322,11 +322,11 @@ func (g *goGenerator) genDeclMake(prefix, funName string, returnType TomType, ar
 	if g.nodeclMode {
 		return
 	}
-	; { _ = instr; { if tom_declarations_is_sort_Instruction(instr) { if tom_declarations_is_fun_sym_ExpressionToInstruction(any(instr).( Instruction )) { var tomMatch3_1  Expression  = tom_declarations_get_slot_ExpressionToInstruction_Expr(any(instr).( Instruction )); _ = tomMatch3_1; if tom_declarations_is_fun_sym_Code(any(tomMatch3_1).( Expression )) { 
+	; { { if tom_declarations_is_sort_Instruction(instr) { if tom_declarations_is_fun_sym_ExpressionToInstruction(any(instr).( Instruction )) { var tomMatch3_1  Expression  = tom_declarations_get_slot_ExpressionToInstruction_Expr(any(instr).( Instruction )); if tom_declarations_is_fun_sym_Code(any(tomMatch3_1).( Expression )) { 
 
 			ncode := tom_declarations_get_slot_Code_Code(tomMatch3_1)
 			index := 0
-			; { _ = argList; { if tom_declarations_is_sort_BQTermList(argList) { if tom_declarations_is_fun_sym_concBQTerm(any(argList).( BQTermList )) { var tomMatch4_end_4  BQTermList  = any(argList).( BQTermList ); _ = tomMatch4_end_4; for { { if !(tom_declarations_is_empty_concBQTerm_BQTermList(tomMatch4_end_4)) { var tomMatch4_8  BQTerm  = tom_declarations_get_head_concBQTerm_BQTermList(tomMatch4_end_4); _ = tomMatch4_8; if tom_declarations_is_fun_sym_BQVariable(any(tomMatch4_8).( BQTerm )) { var tomMatch4_7  TomName  = tom_declarations_get_slot_BQVariable_AstName(tomMatch4_8); _ = tomMatch4_7; if tom_declarations_is_fun_sym_Name(any(tomMatch4_7).( TomName )) { 
+			; { { if tom_declarations_is_sort_BQTermList(argList) { if tom_declarations_is_fun_sym_concBQTerm(any(argList).( BQTermList )) { var tomMatch4_end_4  BQTermList  = any(argList).( BQTermList ); for { { if !(tom_declarations_is_empty_concBQTerm_BQTermList(tomMatch4_end_4)) { var tomMatch4_8  BQTerm  = tom_declarations_get_head_concBQTerm_BQTermList(tomMatch4_end_4); if tom_declarations_is_fun_sym_BQVariable(any(tomMatch4_8).( BQTerm )) { var tomMatch4_7  TomName  = tom_declarations_get_slot_BQVariable_AstName(tomMatch4_8); if tom_declarations_is_fun_sym_Name(any(tomMatch4_7).( TomName )) { 
 
 					ncode = strings.ReplaceAll(ncode, "{"+strconv.Itoa(index)+"}", tom_declarations_get_slot_Name_String(tomMatch4_7))
 					index++
@@ -339,7 +339,7 @@ func (g *goGenerator) genDeclMake(prefix, funName string, returnType TomType, ar
 	s.WriteString("func " + prefix + funName + "(")
 	for !argList.IsEmptyconcBQTerm() {
 		arg := argList.GetHeadconcBQTerm()
-		; { _ = arg; { if tom_declarations_is_sort_BQTerm(arg) { if tom_declarations_is_fun_sym_BQVariable(any(arg).( BQTerm )) { var tomMatch5_1  TomName  = tom_declarations_get_slot_BQVariable_AstName(any(arg).( BQTerm )); _ = tomMatch5_1; var tomMatch5_2  TomType  = tom_declarations_get_slot_BQVariable_AstType(any(arg).( BQTerm )); _ = tomMatch5_2; if tom_declarations_is_fun_sym_Name(any(tomMatch5_1).( TomName )) { if tom_declarations_is_fun_sym_Type(any(tomMatch5_2).( TomType )) { var tomMatch5_8  TargetLanguageType  = tom_declarations_get_slot_Type_TlType(tomMatch5_2); _ = tomMatch5_8; if tom_declarations_is_fun_sym_TLType(any(tomMatch5_8).( TargetLanguageType )) { 
+		; { { if tom_declarations_is_sort_BQTerm(arg) { if tom_declarations_is_fun_sym_BQVariable(any(arg).( BQTerm )) { var tomMatch5_1  TomName  = tom_declarations_get_slot_BQVariable_AstName(any(arg).( BQTerm )); var tomMatch5_2  TomType  = tom_declarations_get_slot_BQVariable_AstType(any(arg).( BQTerm )); if tom_declarations_is_fun_sym_Name(any(tomMatch5_1).( TomName )) { if tom_declarations_is_fun_sym_Type(any(tomMatch5_2).( TomType )) { var tomMatch5_8  TargetLanguageType  = tom_declarations_get_slot_Type_TlType(tomMatch5_2); if tom_declarations_is_fun_sym_TLType(any(tomMatch5_8).( TargetLanguageType )) { 
 
 				s.WriteString(tom_declarations_get_slot_Name_String(tomMatch5_1) + " " + tools.GetTLCode(tomMatch5_8))
 				argList = argList.GetTailconcBQTerm()

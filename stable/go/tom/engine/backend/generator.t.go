@@ -149,7 +149,7 @@ func (g *goGenerator) declName(name string) string {
 
 
 func (g *goGenerator) goType(ty TomType) string {
-	; { _ = ty; { if tom_generator_is_sort_TomType(ty) { if tom_generator_is_fun_sym_Type(any(ty).( TomType )) { var tomMatch1_1  TargetLanguageType  = tom_generator_get_slot_Type_TlType(any(ty).( TomType )); _ = tomMatch1_1; if tom_generator_is_fun_sym_TLType(any(tomMatch1_1).( TargetLanguageType )) { 
+	; { { if tom_generator_is_sort_TomType(ty) { if tom_generator_is_fun_sym_Type(any(ty).( TomType )) { var tomMatch1_1  TargetLanguageType  = tom_generator_get_slot_Type_TlType(any(ty).( TomType )); if tom_generator_is_fun_sym_TLType(any(tomMatch1_1).( TargetLanguageType )) { 
  return tom_generator_get_slot_TLType_String(tomMatch1_1);  };  };  };  };  }; 
 
 	return "any"
@@ -159,7 +159,7 @@ func (g *goGenerator) goType(ty TomType) string {
 
 
 func (g *goGenerator) goTLCode(tlType TargetLanguageType) string {
-	; { _ = tlType; { if tom_generator_is_sort_TargetLanguageType(tlType) { if tom_generator_is_fun_sym_TLType(any(tlType).( TargetLanguageType )) { 
+	; { { if tom_generator_is_sort_TargetLanguageType(tlType) { if tom_generator_is_fun_sym_TLType(any(tlType).( TargetLanguageType )) { 
  return tom_generator_get_slot_TLType_String(any(tlType).( TargetLanguageType ));  };  };  };  }; 
 
 	return "any"
@@ -190,7 +190,7 @@ func (g *goGenerator) sortGoType(sort string, moduleName string) string {
 
 
 func (g *goGenerator) knownGoType(ty TomType, moduleName string) (string, bool) {
-	; { _ = ty; { if tom_generator_is_sort_TomType(ty) { if tom_generator_is_fun_sym_Type(any(ty).( TomType )) { var tomMatch3_1  TargetLanguageType  = tom_generator_get_slot_Type_TlType(any(ty).( TomType )); _ = tomMatch3_1; if tom_generator_is_fun_sym_TLType(any(tomMatch3_1).( TargetLanguageType )) { 
+	; { { if tom_generator_is_sort_TomType(ty) { if tom_generator_is_fun_sym_Type(any(ty).( TomType )) { var tomMatch3_1  TargetLanguageType  = tom_generator_get_slot_Type_TlType(any(ty).( TomType )); if tom_generator_is_fun_sym_TLType(any(tomMatch3_1).( TargetLanguageType )) { 
  return tom_generator_get_slot_TLType_String(tomMatch3_1), true ;  };  };  };  };  }; 
 
 	sort, ok := tools.GetTomType(ty)
@@ -202,7 +202,7 @@ func (g *goGenerator) knownGoType(ty TomType, moduleName string) (string, bool) 
 		return g.goType(st.GetBuiltinType(sort)), true
 	}
 	if t := st.GetType(sort); t != nil {
-		; { _ = t; { if tom_generator_is_sort_TomType(t) { if tom_generator_is_fun_sym_Type(any(t).( TomType )) { var tomMatch4_1  TargetLanguageType  = tom_generator_get_slot_Type_TlType(any(t).( TomType )); _ = tomMatch4_1; if tom_generator_is_fun_sym_TLType(any(tomMatch4_1).( TargetLanguageType )) { 
+		; { { if tom_generator_is_sort_TomType(t) { if tom_generator_is_fun_sym_Type(any(t).( TomType )) { var tomMatch4_1  TargetLanguageType  = tom_generator_get_slot_Type_TlType(any(t).( TomType )); if tom_generator_is_fun_sym_TLType(any(tomMatch4_1).( TargetLanguageType )) { 
  return tom_generator_get_slot_TLType_String(tomMatch4_1), true ;  };  };  };  };  }; 
 
 	}
@@ -215,7 +215,7 @@ func (g *goGenerator) knownGoType(ty TomType, moduleName string) (string, bool) 
 
 
 func (g *goGenerator) codomainGoType(opName TomName, moduleName string) (string, bool) {
-	; { _ = opName; { if tom_generator_is_sort_TomName(opName) { if tom_generator_is_fun_sym_Name(any(opName).( TomName )) { 
+	; { { if tom_generator_is_sort_TomName(opName) { if tom_generator_is_fun_sym_Name(any(opName).( TomName )) { 
 
 			symbol := g.getSymbolTable(moduleName).GetSymbolFromName(tom_generator_get_slot_Name_String(any(opName).( TomName )))
 			if symbol != nil {
@@ -236,9 +236,9 @@ func (g *goGenerator) codomainGoType(opName TomName, moduleName string) (string,
 
 
 func (g *goGenerator) expressionGoType(exp Expression, moduleName string) (string, bool) {
-	; { _ = exp; { if tom_generator_is_sort_Expression(exp) { if tom_generator_is_fun_sym_BQTermToExpression(any(exp).( Expression )) { var tomMatch6_1  BQTerm  = tom_generator_get_slot_BQTermToExpression_AstTerm(any(exp).( Expression )); _ = tomMatch6_1; if tom_generator_is_fun_sym_BQVariable(any(tomMatch6_1).( BQTerm )) { 
- return g.knownGoType(tom_generator_get_slot_BQVariable_AstType(tomMatch6_1), moduleName) ;  };  };  };  }; { if tom_generator_is_sort_Expression(exp) { if tom_generator_is_fun_sym_BQTermToExpression(any(exp).( Expression )) { var tomMatch6_8  BQTerm  = tom_generator_get_slot_BQTermToExpression_AstTerm(any(exp).( Expression )); _ = tomMatch6_8; if tom_generator_is_fun_sym_BuildEmptyList(any(tomMatch6_8).( BQTerm )) { 
- return g.codomainGoType(tom_generator_get_slot_BuildEmptyList_AstName(tomMatch6_8), moduleName) ;  };  };  };  }; { if tom_generator_is_sort_Expression(exp) { if tom_generator_is_fun_sym_BQTermToExpression(any(exp).( Expression )) { var tomMatch6_15  BQTerm  = tom_generator_get_slot_BQTermToExpression_AstTerm(any(exp).( Expression )); _ = tomMatch6_15; if tom_generator_is_fun_sym_BuildEmptyArray(any(tomMatch6_15).( BQTerm )) { 
+	; { { if tom_generator_is_sort_Expression(exp) { if tom_generator_is_fun_sym_BQTermToExpression(any(exp).( Expression )) { var tomMatch6_1  BQTerm  = tom_generator_get_slot_BQTermToExpression_AstTerm(any(exp).( Expression )); if tom_generator_is_fun_sym_BQVariable(any(tomMatch6_1).( BQTerm )) { 
+ return g.knownGoType(tom_generator_get_slot_BQVariable_AstType(tomMatch6_1), moduleName) ;  };  };  };  }; { if tom_generator_is_sort_Expression(exp) { if tom_generator_is_fun_sym_BQTermToExpression(any(exp).( Expression )) { var tomMatch6_8  BQTerm  = tom_generator_get_slot_BQTermToExpression_AstTerm(any(exp).( Expression )); if tom_generator_is_fun_sym_BuildEmptyList(any(tomMatch6_8).( BQTerm )) { 
+ return g.codomainGoType(tom_generator_get_slot_BuildEmptyList_AstName(tomMatch6_8), moduleName) ;  };  };  };  }; { if tom_generator_is_sort_Expression(exp) { if tom_generator_is_fun_sym_BQTermToExpression(any(exp).( Expression )) { var tomMatch6_15  BQTerm  = tom_generator_get_slot_BQTermToExpression_AstTerm(any(exp).( Expression )); if tom_generator_is_fun_sym_BuildEmptyArray(any(tomMatch6_15).( BQTerm )) { 
  return g.codomainGoType(tom_generator_get_slot_BuildEmptyArray_AstName(tomMatch6_15), moduleName) ;  };  };  };  }; { if tom_generator_is_sort_Expression(exp) { if tom_generator_is_fun_sym_GetHead(any(exp).( Expression )) { 
  return g.knownGoType(tom_generator_get_slot_GetHead_Codomain(any(exp).( Expression )), moduleName) ;  };  };  }; { if tom_generator_is_sort_Expression(exp) { if tom_generator_is_fun_sym_GetTail(any(exp).( Expression )) { 
  return g.codomainGoType(tom_generator_get_slot_GetTail_Opname(any(exp).( Expression )), moduleName) ;  };  };  }; { if tom_generator_is_sort_Expression(exp) { if tom_generator_is_fun_sym_GetElement(any(exp).( Expression )) { 

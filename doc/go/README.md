@@ -300,11 +300,16 @@ suffixe Go (`<dist>/bin/tomgo`, installé par `mage installGo`) :
   exemples en commentaire de `GeneralPurposePropagator.t` ne comptent pas).
 - **Accolades du code hôte** : sous `-go`, les `{ … }` du code hôte d'une
   action (que `-np` analyse comme des blocs) restent du texte hôte
-  (`AstBuilder`), et le compilateur écrit `_ = s` (une fois par nom) pour
-  chaque sujet variable d'un `%match` qui n'est pas lié par un motif de la
-  même règle, c'est-à-dire une variable du code hôte ou d'une action
-  englobante (une telle variable que les motifs n'inspectent pas
-  resterait inutilisée, ce que Go refuse).
+  (`AstBuilder`).
+- **`_ = x`** (Go refuse une variable locale inutilisée) : seul le backend
+  Go l'écrit (`GoGenerator.t`, section « `_ = x` », port `unused.t`),
+  après un `Let` dont le corps ne lit pas sûrement `x`, et en tête d'un
+  `CompiledMatch` pour chaque sujet variable du code hôte ou d'une action
+  englobante que l'automate ne lit pas sûrement ; le compilateur partagé
+  n'en produit plus (jusqu'au lot qualité B1, `Compiler.t` ajoutait un
+  `Assign(_,s)` sous `-go`). « Lit sûrement » : une référence dans l'IR
+  écrite par le générateur, ou un usage sûr dans le texte hôte (analyse
+  prudente des jetons Go) ; dans le doute, `_ = x` reste.
 - **Filtrage AC dont les variables ne servent pas dans l'action** : un
   `%match` AC comme `f??(_*,a(),_*) -> { n++ }` ne termine jamais (l'optimiseur
   inline le `LetRef` du tableau de solutions AC dans la condition du
@@ -356,10 +361,11 @@ suffixe Go (`<dist>/bin/tomgo`, installé par `mage installGo`) :
   d'une erreur doit continuer à désigner le bon endroit du `.t`.
 - **Points à régler au début de J4.**
   - Le pont doit exporter l'AST produit **avec `-go`** : les branches
-    propres à Go (`_ = s` des sujets non liés, accolades des `ITL`,
-    `LocalIntrospector` Go, `next_minimal_extract` Go) sont déjà dans
-    l'AST avant le backend ; les phases portées plus tard devront
-    reproduire `collectHostSubjects` et la règle des accolades.
+    propres à Go (accolades des `ITL`, `LocalIntrospector` Go,
+    `next_minimal_extract` Go) sont déjà dans l'AST avant le backend ; les
+    phases portées plus tard devront reproduire la règle des accolades
+    (`_ = s` des sujets non liés : écrit par le backend Go depuis le lot
+    qualité B1).
   - ~~Décider comment plusieurs `.t` partagent un paquetage Go~~ : réglé
     en J4.0b, préfixe `tom_<F>_` des déclarations de niveau paquetage
     générées (voir « Plusieurs `.t` par paquetage Go »).

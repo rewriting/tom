@@ -290,9 +290,9 @@ public class GoGenerator extends GenericGenerator {
    */
   public void generateInstruction(int deep, Instruction subject, String moduleName) throws IOException {
     %match(subject) {
-      UnamedBlock(concInstruction(CompiledMatch[],_*)) -> {
-        output.write("; ");
-      }
+      UnamedBlock(concInstruction(CompiledMatch[],_*)) -> { output.write("; "); }
+      /* "_ = s" for the host subjects of a %match ("_ = x" below) */
+      CompiledMatch(automata,_) -> { buildUnreadSubjects(`automata); }
     }
     super.generateInstruction(deep, subject, moduleName);
     %match(subject) {
@@ -309,7 +309,7 @@ public class GoGenerator extends GenericGenerator {
     generateInstructionList(deep, instructionList, moduleName);
   }
 
-  /* Go rejects unused variables: every Let is followed by "_ = x" */
+  /* Go rejects unused variables: "_ = x" when the body may not read x (below) */
   protected void buildLet(int deep, BQTerm var, OptionList optionList, TargetLanguageType tlType,
       Expression exp, Instruction body, String moduleName) throws IOException {
     output.write("var ");
@@ -317,8 +317,8 @@ public class GoGenerator extends GenericGenerator {
     output.write(deep,name);
     output.write(" " + goTLCode(tlType) + " = ");
     generateTypedExpression(deep,goTLCode(tlType),exp,moduleName);
-    output.write("; _ = " + name + "; ");
     boolean shadows = classFields.remove(name);
+    output.write(readsInstruction(body,name) == READ ? "; " : "; _ = " + name + "; ");
     generateInstruction(deep,body,moduleName);
     if(shadows) { classFields.add(name); }
   }
@@ -899,5 +899,466 @@ matchBlock: {
 
   protected void buildResolve(int deep, BQTerm bqterm, String moduleName) throws IOException {
     throw new TomRuntimeException("%transformation is not supported with -go");
+  }
+
+  // ---------------------------------------------------------------- "_ = x"
+
+  /*
+   * Go rejects a local variable that is never used (Java does not care,
+   * so the shared IR carries nothing for it). The backend writes "_ = x"
+   * where a declaration may be left unused:
+   *  - buildLet/buildLetRef: after "var x T = e", unless the body reads x;
+   *  - a CompiledMatch (buildUnreadSubjects): for each host subject s (a
+   *    variable of the host code or of an enclosing action that is a
+   *    subject of the %match, see hostSubjects), unless the automata read
+   *    s: a rule whose patterns do not inspect the subject (_, x@y, a
+   *    builtin sort whose is_sort is true, after -O) may compile to code
+   *    that does not read it. The compiler used to build an Assign(_,s)
+   *    for each of them under -go (Compiler.t, CompileMatch).
+   * readsInstruction(i,x) is READ only when the Go code written for i
+   * surely reads the variable x of the enclosing scope; a superfluous
+   * "_ = x" is harmless, a missing one breaks the compilation, so every
+   * doubt answers NO_READ or UNSURE (both keep "_ = x"):
+   *  - only the IR the generator writes is walked (the options, types,
+   *    declarations are not), following
+   *    AbstractGenerator.generateInstruction/generateExpression/
+   *    generateBQTerm: a reference is a BQVariable/BQVariableStar (or a
+   *    Variable/VariableStar, AbstractGenerator.generateTomTerm) whose
+   *    name is x; the target of an Assign is not a read (Go does not count
+   *    it); a Let/LetRef of x hides x in its body; IsSort is not walked
+   *    (GenericGenerator.buildExpIsSort writes "true" for a builtin sort),
+   *    nor any hook call when the hooks are inlined (instantiateTemplate:
+   *    the template may drop its argument; never the case with -go);
+   *  - a nested CompiledMatch whose host subjects contain x reads it
+   *    (buildUnreadSubjects writes "_ = x" when its automata do not);
+   *  - host code (TL, ITL, Code) is scanned by scanHostText.
+   */
+  private static final int NO_READ = 0;
+  private static final int READ = 1;
+  private static final int UNSURE = 2;
+
+  /* "_ = s; " for each host subject s of a CompiledMatch that its automata do not read */
+  private void buildUnreadSubjects(Instruction automata) throws IOException {
+    for(String name : hostSubjects(automata)) {
+      if(!classFields.contains(name) && readsInstruction(automata,name) != READ) {
+        output.write("_ = " + name + "; ");
+      }
+    }
+  }
+
+  /*
+   * The host subjects of a CompiledMatch: the variables its automata
+   * mention out of the actions (RawAction) without declaring them (a
+   * Let/LetRef of the same name around the mention), in the order of a
+   * pre-order walk. The compiler drops the constraints of the rules
+   * (Compiler.t, findRenameVariable replaces each CompiledPattern by its
+   * instruction), but the automata always mention every variable subject
+   * at least once: in the Let of its fresh copy, or after -O inlines it,
+   * in the IsSort test (Compiler.t, renameSubjects). Such a variable is
+   * in scope before the %match: the automata declare the variables of the
+   * patterns with Let/LetRef, and the host code of the actions is not
+   * walked. Only the parts the generator writes are walked: instructions,
+   * expressions, terms and code (not the options, types, names,
+   * declarations); IsSort and the hook calls are walked even when they
+   * do not read their argument.
+   */
+  private ArrayList<String> hostSubjects(Instruction automata) {
+    ArrayList<String> names = new ArrayList<String>();
+    collectHostSubjects(automata,new HashSet<String>(),names);
+    return names;
+  }
+
+  private void collectHostSubjects(tom.library.sl.Visitable t, HashSet<String> declared, ArrayList<String> names) {
+    if(t instanceof Instruction) {
+      Instruction inst = (Instruction) t;
+      %match(inst) {
+        RawAction[] -> { return; }
+        (Let|LetRef)(v,e,body) -> {
+          collectHostSubjects(`e,declared,names);
+          HashSet<String> inner = new HashSet<String>(declared);
+          inner.add(localName(`v));
+          collectHostSubjects(`body,inner,names);
+          return;
+        }
+      }
+    } else if(t instanceof BQTerm) {
+      BQTerm term = (BQTerm) t;
+      %match(term) {
+        v@(BQVariable|BQVariableStar)[] -> {
+          String name = localName(`v);
+          if(!declared.contains(name) && !names.contains(name)) {
+            names.add(name);
+          }
+          return;
+        }
+      }
+    } else if(!(t instanceof InstructionList || t instanceof Expression || t instanceof BQTermList
+          || t instanceof Code || t instanceof CodeList || t instanceof CompositeMember)) {
+      return;
+    }
+    for(int i = 0; i < t.getChildCount(); i++) {
+      collectHostSubjects(t.getChildAt(i),declared,names);
+    }
+  }
+
+  private int readsInstruction(Instruction inst, String name) {
+    %match(inst) {
+      CodeToInstruction(c) -> { return readsCode(`c,name); }
+      BQTermToInstruction(t) -> { return readsBQTerm(`t,name); }
+      ExpressionToInstruction(e) -> { return readsExpression(`e,name); }
+      If(c,s,f) -> {
+        return Math.max(readsExpression(`c,name), Math.max(readsInstruction(`s,name), readsInstruction(`f,name)));
+      }
+      DoWhile(i,c) -> { return Math.max(readsInstruction(`i,name), readsExpression(`c,name)); }
+      WhileDo(c,i) -> { return Math.max(readsExpression(`c,name), readsInstruction(`i,name)); }
+      (Let|LetRef)(v,e,body) -> {
+        int r = readsExpression(`e,name);
+        if(name.equals(localName(`v))) {
+          return r;
+        }
+        return Math.max(r, readsInstruction(`body,name));
+      }
+      Assign(_,e) -> { return readsExpression(`e,name); }
+      AssignArray(_,_,e) -> { return readsExpression(`e,name); }
+      Return(t) -> { return readsBQTerm(`t,name); }
+      (AbstractBlock|UnamedBlock)(l) -> { return readsInstructionList(`l,name); }
+      NamedBlock(_,l) -> { return readsInstructionList(`l,name); }
+      RawAction(i) -> { return readsInstruction(`i,name); }
+      CompiledMatch(i,_) -> {
+        int r = readsInstruction(`i,name);
+        if(!classFields.contains(name) && hostSubjects(`i).contains(name)) {
+          r = Math.max(r, READ);
+        }
+        return r;
+      }
+      CompiledPattern(_,i) -> { return readsInstruction(`i,name); }
+    }
+    return NO_READ;
+  }
+
+  private int readsInstructionList(InstructionList l, String name) {
+    int r = NO_READ;
+    %match(l) {
+      concInstruction(_*,i,_*) -> { r = Math.max(r, readsInstruction(`i,name)); }
+    }
+    return r;
+  }
+
+  private int readsCode(Code code, String name) {
+    int r = NO_READ;
+    %match(code) {
+      (Tom|TomInclude)(concCode(_*,c,_*)) -> { r = Math.max(r, readsCode(`c,name)); }
+      TargetLanguageToCode(tl) -> { r = readsTargetLanguage(`tl,name); }
+      InstructionToCode(i) -> { r = readsInstruction(`i,name); }
+      BQTermToCode(t) -> { r = readsBQTerm(`t,name); }
+    }
+    return r;
+  }
+
+  private int readsTargetLanguage(TargetLanguage tl, String name) {
+    %match(tl) {
+      TL(code,_,_) -> { return scanHostText(`code,name); }
+      ITL(code) -> { return scanHostText(`code,name); }
+    }
+    return NO_READ;
+  }
+
+  private int readsBQTermList(BQTermList l, String name) {
+    int r = NO_READ;
+    %match(l) {
+      concBQTerm(_*,t,_*) -> { r = Math.max(r, readsBQTerm(`t,name)); }
+    }
+    return r;
+  }
+
+  private int readsBQTerm(BQTerm t, String name) {
+    int r = NO_READ;
+    %match(t) {
+      v@(BQVariable|BQVariableStar)[] -> {
+        return name.equals(localName(`v)) ? READ : NO_READ;
+      }
+      FunctionCall(_,_,args) -> { return readsBQTermList(`args,name); }
+      (BuildAppendList|BuildAppendArray)(_,h,tl) -> {
+        return Math.max(readsBQTerm(`h,name), readsBQTerm(`tl,name));
+      }
+      ExpressionToBQTerm(e) -> { return readsExpression(`e,name); }
+      Composite(_*,CompositeBQTerm(b),_*) -> { r = Math.max(r, readsBQTerm(`b,name)); }
+      Composite(_*,CompositeTL(tl),_*) -> { r = Math.max(r, readsTargetLanguage(`tl,name)); }
+    }
+    if(!inline) {
+      %match(t) {
+        BuildTerm(_,args,_) -> { return readsBQTermList(`args,name); }
+        (BuildConsList|BuildConsArray)(_,h,tl) -> {
+          return Math.max(readsBQTerm(`h,name), readsBQTerm(`tl,name));
+        }
+        BuildEmptyArray(_,s) -> { return readsBQTerm(`s,name); }
+      }
+    }
+    return r;
+  }
+
+  private int readsExpression(Expression e, String name) {
+    %match(e) {
+      Code(code) -> { return scanHostText(`code,name); }
+      BQTermToExpression(t) -> { return readsBQTerm(`t,name); }
+      TomInstructionToExpression(i) -> { return readsInstruction(`i,name); }
+      Negation(a) -> { return readsExpression(`a,name); }
+      (And|Or|GreaterThan|GreaterOrEqualThan|LessThan|LessOrEqualThan)(a,b) -> {
+        return Math.max(readsExpression(`a,name), readsExpression(`b,name));
+      }
+      Conditional(c,a,b) -> {
+        return Math.max(readsExpression(`c,name), Math.max(readsExpression(`a,name), readsExpression(`b,name)));
+      }
+      Cast(_,a) -> { return readsExpression(`a,name); }
+      EqualTerm(_,a,v@(Variable|VariableStar)[]) -> {
+        return Math.max(readsBQTerm(`a,name), name.equals(super.getVariableName(`v)) ? READ : NO_READ);
+      }
+      EqualTerm(_,a,_) -> { return readsBQTerm(`a,name); }
+      EqualBQTerm(_,a,b) -> { return Math.max(readsBQTerm(`a,name), readsBQTerm(`b,name)); }
+      (AddOne|SubstractOne)(a) -> { return readsBQTerm(`a,name); }
+      Substract(a,b) -> { return Math.max(readsBQTerm(`a,name), readsBQTerm(`b,name)); }
+      GetSliceList(_,a,b,c) -> {
+        return Math.max(readsBQTerm(`a,name), Math.max(readsBQTerm(`b,name), readsBQTerm(`c,name)));
+      }
+      GetSliceArray(_,a,b,c) -> {
+        return Math.max(readsBQTerm(`a,name), Math.max(readsBQTerm(`b,name), readsBQTerm(`c,name)));
+      }
+    }
+    if(!inline) {
+      %match(e) {
+        GetSlot(_,_,_,a) -> { return readsBQTerm(`a,name); }
+        IsFsym(_,a) -> { return readsBQTerm(`a,name); }
+        GetHead(_,_,a) -> { return readsBQTerm(`a,name); }
+        GetTail(_,a) -> { return readsBQTerm(`a,name); }
+        IsEmptyList(_,a) -> { return readsBQTerm(`a,name); }
+        GetSize(_,a) -> { return readsBQTerm(`a,name); }
+        IsEmptyArray(_,a,b) -> { return Math.max(readsBQTerm(`a,name), readsBQTerm(`b,name)); }
+        GetElement(_,_,a,b) -> { return Math.max(readsBQTerm(`a,name), readsBQTerm(`b,name)); }
+      }
+    }
+    return NO_READ;
+  }
+
+  /* AbstractGenerator.getVariableName (no %strategy receiver); null for a non-variable */
+  private String localName(BQTerm var) {
+    %match(var) {
+      (BQVariable|BQVariableStar)[] -> { return super.getVariableName(var); }
+    }
+    return null;
+  }
+
+  /*
+   * Whether the Go host code text surely reads the variable name (READ),
+   * does not mention it (NO_READ), or may declare it (UNSURE: a host
+   * declaration of the same name in a nested block would make the other
+   * occurrences, and the IR references after it, refer to that one). The
+   * text is cut into Go tokens (comments, string, rune and raw string
+   * literals skipped; newlines kept as tokens); an occurrence of the
+   * identifier is:
+   *  - nothing after "." (a selector), after goto/break/continue (a
+   *    label), before ":" (a label, a key, a case, a slice bound) or
+   *    before "=" (an assignment, which Go does not count as a use);
+   *  - UNSURE inside the parameters/results of a func literal, after
+   *    var/const/type/func, in a statement starting with var/const/type,
+   *    before ":=" or an identifier (a declaration), and before "," out
+   *    of ( ) and [ ] when the statement holds ":=" or ends the text (the
+   *    rest is in another piece of host code, after a backquote term);
+   *  - READ otherwise (an operand, a call, x++ and x op= y, which Go
+   *    counts as uses; last of the text: a piece of host code ends at
+   *    the end of an action or before a backquote term, which cannot
+   *    follow an identifier that is declared or assigned).
+   * An unterminated literal or comment (a piece of host code cut by a
+   * backquote term) makes any mention UNSURE.
+   */
+  static int scanHostText(String text, String name) {
+    if(name == null || text.indexOf(name) < 0) {
+      return NO_READ;
+    }
+    ArrayList<String> toks = goTokens(text);
+    if(toks == null) {
+      return UNSURE;
+    }
+    int result = NO_READ;
+    ArrayList<String> stack = new ArrayList<String>();
+    String prevClosed = null;
+    for(int i = 0; i < toks.size(); i++) {
+      String tok = toks.get(i);
+      String closed = null;
+      if(tok.equals("(")) {
+        String prev = i > 0 ? toks.get(i-1) : null;
+        boolean decl = "func".equals(prev) || (")".equals(prev) && "f(".equals(prevClosed));
+        stack.add(decl ? "f(" : "(");
+      } else if(tok.equals("[") || tok.equals("{")) {
+        stack.add(tok);
+      } else if(tok.equals(")") || tok.equals("]") || tok.equals("}")) {
+        if(!stack.isEmpty()) {
+          closed = stack.remove(stack.size()-1);
+        }
+      } else if(tok.equals(name)) {
+        result = Math.max(result, hostOccurrence(toks,i,stack));
+        if(result == UNSURE) {
+          return UNSURE;
+        }
+      }
+      prevClosed = closed;
+    }
+    return result;
+  }
+
+  private static int hostOccurrence(ArrayList<String> toks, int i, ArrayList<String> stack) {
+    String prev = i > 0 ? toks.get(i-1) : null;
+    String next = i+1 < toks.size() ? toks.get(i+1) : null;
+    if(stack.contains("f(")) {
+      return UNSURE;
+    }
+    if(".".equals(prev) || "goto".equals(prev) || "break".equals(prev) || "continue".equals(prev)) {
+      return NO_READ;
+    }
+    if("var".equals(prev) || "const".equals(prev) || "type".equals(prev) || "func".equals(prev)) {
+      return UNSURE;
+    }
+    int start = i;
+    while(start > 0 && !isStatementEnd(toks.get(start-1))) {
+      start--;
+    }
+    String first = toks.get(start);
+    if(first.equals("var") || first.equals("const") || first.equals("type")) {
+      return UNSURE;
+    }
+    if(next == null) {
+      return READ;
+    }
+    if(next.equals(":=") || isGoIdentStart(next.charAt(0))) {
+      return UNSURE;
+    }
+    if(next.equals(":") || next.equals("=")) {
+      return NO_READ;
+    }
+    if(next.equals(",")) {
+      String top = stack.isEmpty() ? null : stack.get(stack.size()-1);
+      if("(".equals(top) || "[".equals(top)) {
+        return READ;
+      }
+      int depth = 0;
+      for(int j = i+1; j < toks.size(); j++) {
+        String t = toks.get(j);
+        if(t.equals("(") || t.equals("[") || t.equals("{")) {
+          depth++;
+        } else if(t.equals(")") || t.equals("]") || t.equals("}")) {
+          if(depth == 0) {
+            return READ;
+          }
+          depth--;
+        } else if(depth == 0) {
+          if(t.equals(":=")) {
+            return UNSURE;
+          } else if(t.equals("=")) {
+            return NO_READ;
+          } else if(t.equals(";") || (t.equals("\n") && !toks.get(j-1).equals(","))) {
+            return READ;
+          }
+        }
+      }
+      return UNSURE;
+    }
+    return READ;
+  }
+
+  private static boolean isStatementEnd(String tok) {
+    return tok.equals(";") || tok.equals("\n") || tok.equals("{") || tok.equals("}");
+  }
+
+  private static boolean isGoIdentStart(char c) {
+    return c == '_' || (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c >= 0x80;
+  }
+
+  private static boolean isGoIdentPart(char c) {
+    return isGoIdentStart(c) || (c >= '0' && c <= '9');
+  }
+
+  /* the delimiter of a Go raw string (a backquote would start a Tom term here) */
+  private static final char BACKQUOTE = (char) 96;
+
+  private static final String[] GO_OPERATORS = {
+    "<<=", ">>=", "&^=", "...",
+    ":=", "==", "!=", "<=", ">=", "&&", "||", "<-", "++", "--",
+    "+=", "-=", "*=", "/=", "%=", "&=", "|=", "^=", "<<", ">>", "&^"
+  };
+
+  /*
+   * The Go tokens of text: identifiers and operators as they are, a
+   * literal (number, string, rune) as "0", every newline outside a literal
+   * (or a comment holding one) as "\n"; null when a literal or a comment
+   * is not terminated.
+   */
+  static ArrayList<String> goTokens(String s) {
+    ArrayList<String> toks = new ArrayList<String>();
+    int n = s.length();
+    int i = 0;
+    while(i < n) {
+      char c = s.charAt(i);
+      if(c == '\n') {
+        toks.add("\n");
+        i++;
+      } else if(c == ' ' || c == '\t' || c == '\r' || c == '\f') {
+        i++;
+      } else if(c == '/' && i+1 < n && s.charAt(i+1) == '/') {
+        while(i < n && s.charAt(i) != '\n') {
+          i++;
+        }
+      } else if(c == '/' && i+1 < n && s.charAt(i+1) == '*') {
+        int end = s.indexOf("*/",i+2);
+        if(end < 0) {
+          return null;
+        }
+        if(s.substring(i+2,end).indexOf('\n') >= 0) {
+          toks.add("\n");
+        }
+        i = end + 2;
+      } else if(c == '"' || c == '\'') {
+        int j = i + 1;
+        while(j < n && s.charAt(j) != c && s.charAt(j) != '\n') {
+          if(s.charAt(j) == '\\') {
+            j++;
+          }
+          j++;
+        }
+        if(j >= n || s.charAt(j) != c) {
+          return null;
+        }
+        toks.add("0");
+        i = j + 1;
+      } else if(c == BACKQUOTE) {
+        int end = s.indexOf(BACKQUOTE,i+1);
+        if(end < 0) {
+          return null;
+        }
+        toks.add("0");
+        i = end + 1;
+      } else if(isGoIdentStart(c)) {
+        int j = i;
+        while(j < n && isGoIdentPart(s.charAt(j))) {
+          j++;
+        }
+        toks.add(s.substring(i,j));
+        i = j;
+      } else if(c >= '0' && c <= '9') {
+        while(i < n && (isGoIdentPart(s.charAt(i)) || s.charAt(i) == '.')) {
+          i++;
+        }
+        toks.add("0");
+      } else {
+        String op = String.valueOf(c);
+        for(String o : GO_OPERATORS) {
+          if(s.startsWith(o,i)) {
+            op = o;
+            break;
+          }
+        }
+        toks.add(op);
+        i += op.length();
+      }
+    }
+    return toks;
   }
 }

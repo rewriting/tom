@@ -227,16 +227,11 @@ public class Compiler extends TomGenericPlugin {
         TomList automataList = `concTomTerm();	
         ArrayList<BQTerm> subjectList = new ArrayList<BQTerm>();
         ArrayList<TomTerm> renamedSubjects = new ArrayList<TomTerm>();
-        ArrayList<BQTerm> hostSubjects = new ArrayList<BQTerm>();
-        HashSet<TomName> hostNames = new HashSet<TomName>();
         // for each pattern action <term>,...,<term> -> { action }
         // build a matching automata
         %match(constraintInstructionList) {
           concConstraintInstruction(_*,ConstraintInstruction(constraint,action,optionList),_*) -> {
             actionNumber++;
-            if(compiler.getOptionBooleanValue("goCode")) {
-              Compiler.collectHostSubjects(`constraint,hostSubjects,hostNames);
-            }
             try {
               // get the new names for subjects and generates casts -- needed especially for lists
               // this is performed here, and not above, because in the case of nested matches, we do not want 
@@ -262,17 +257,6 @@ public class Compiler extends TomGenericPlugin {
          * return the compiled Match construction
          */        
         InstructionList astAutomataList = Compiler.automataListCompileMatchingList(automataList);
-        /*
-         * Go target: "_ = s" for each variable subject s, which the
-         * automata may not reference (a rule whose patterns do not inspect
-         * the subject: _, x@y, a sort whose is_sort is true); Go rejects a
-         * local variable that is never used (Java does not reference it
-         * either).
-         */
-        for(int i = hostSubjects.size()-1 ; i >= 0 ; i--) {
-          BQTerm subject = hostSubjects.get(i);
-          astAutomataList = `concInstruction(Assign(BQVariable(concOption(),Name("_"),EmptyType()),BQTermToExpression(subject)),astAutomataList*);
-        }
         // the block is useful in case we have a label on the %match: we would like it to be on the whole Match instruction 
         return `UnamedBlock(concInstruction(CompiledMatch(AbstractBlock(astAutomataList), matchOptionList)));
       }
@@ -287,38 +271,6 @@ public class Compiler extends TomGenericPlugin {
    * 
    * @param subjectList the list of old subjects
    */
-  /*
-   * Adds to hostSubjects (once per name) the subjects of the
-   * MatchConstraints of constraint that are variables not bound by a
-   * pattern of the same constraint: variables of the host code (or of an
-   * enclosing action), in scope before the compiled %match.
-   * hostNames holds the names of the subjects already in hostSubjects.
-   */
-  private static void collectHostSubjects(Constraint constraint, ArrayList<BQTerm> hostSubjects, HashSet<TomName> hostNames) {
-    ArrayList<BQTerm> subjects = new ArrayList<BQTerm>();
-    HashSet<TomName> bound = new HashSet<TomName>();
-    try {
-      `TopDown(CollectSubjects(subjects,bound)).visitLight(constraint);
-    } catch(VisitFailure e) {
-      throw new TomRuntimeException("collectHostSubjects: " + e);
-    }
-    for(BQTerm subject:subjects) {
-      TomName name = subject.getAstName();
-      if(!bound.contains(name) && hostNames.add(name)) {
-        hostSubjects.add(subject);
-      }
-    }
-  }
-
-  %strategy CollectSubjects(ArrayList subjects, HashSet bound) extends Identity() {
-    visit Constraint {
-      MatchConstraint[Subject=subject@BQVariable[]] -> { subjects.add(`subject); }
-    }
-    visit TomTerm {
-      (Variable|VariableStar)[AstName=name] -> { bound.add(`name); }
-    }
-  }
-
   %strategy renameSubjects(ArrayList subjectList,ArrayList renamedSubjects, Compiler compiler) extends Identity() {
     visit Constraint {
       constr@MatchConstraint[Pattern=pattern,Subject=subject,AstType=castType] -> {

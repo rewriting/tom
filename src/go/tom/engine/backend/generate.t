@@ -343,10 +343,12 @@ func (g *goGenerator) generateArray(deep int, subject BQTerm, index BQTerm, modu
 
 // generateInstruction is GoGenerator.generateInstruction (GoGenerator.t:291),
 // which masks AbstractGenerator.generateInstruction (AbstractGenerator.t:461):
-// "; " before a block that starts with a CompiledMatch and after a RawAction.
+// "; " before a block that starts with a CompiledMatch, "_ = s" for the
+// host subjects of a CompiledMatch (unused.t), "; " after a RawAction.
 func (g *goGenerator) generateInstruction(deep int, subject Instruction, moduleName string) {
 	%match(subject) {
 		UnamedBlock(concInstruction(CompiledMatch[], _*)) -> { g.output.Write("; ") }
+		CompiledMatch(automata, _) -> { g.buildUnreadSubjects(`automata) }
 	}
 	g.generateInstructionAbstract(deep, subject, moduleName)
 	%match(subject) {

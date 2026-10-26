@@ -47,7 +47,7 @@ func (g *goGenerator) buildExpIsEmptyArray(deep int, opNameAST TomName, ty TomTy
 	deep = 0 
 	g.generateBQTerm(deep, expIndex, moduleName)
 	g.output.Write(" >= ")
-	; { _ = opNameAST; { if tom_listes_is_sort_TomName(opNameAST) { if tom_listes_is_fun_sym_EmptyName(any(opNameAST).( TomName )) { 
+	; { { if tom_listes_is_sort_TomName(opNameAST) { if tom_listes_is_fun_sym_EmptyName(any(opNameAST).( TomName )) { 
 
 			panic(&platform.RuntimeError{Msg: genericBadCase + platform.JavaString(opNameAST)})
 		;  };  };  };  }; 
@@ -106,7 +106,7 @@ func (g *goGenerator) buildExpIsEmptyList(deep int, opName string, ty TomType, v
 
 func (g *goGenerator) buildExpGetSize(deep int, opNameAST TomName, ty TomType, v BQTerm, moduleName string) {
 	deep = 0 
-	; { _ = opNameAST; { if tom_listes_is_sort_TomName(opNameAST) { if tom_listes_is_fun_sym_EmptyName(any(opNameAST).( TomName )) { 
+	; { { if tom_listes_is_sort_TomName(opNameAST) { if tom_listes_is_fun_sym_EmptyName(any(opNameAST).( TomName )) { 
 
 			panic(&platform.RuntimeError{Msg: genericBadCase + platform.JavaString(opNameAST)})
 		;  };  };  };  }; 
@@ -178,7 +178,7 @@ func (g *goGenerator) buildGetHeadDecl(deep int, opNameAST TomName, varName, suf
 		returnType := ""
 		argType := ""
 		functionName := g.declName("tom_get_head_" + opname)
-		; { _ = opNameAST; { if tom_listes_is_sort_TomName(opNameAST) { if tom_listes_is_fun_sym_EmptyName(any(opNameAST).( TomName )) { 
+		; { { if tom_listes_is_sort_TomName(opNameAST) { if tom_listes_is_fun_sym_EmptyName(any(opNameAST).( TomName )) { 
 
 				panic(&platform.RuntimeError{Msg: genericBadCase + platform.JavaString(opNameAST)})
 			;  };  };  }; { if tom_listes_is_sort_TomName(opNameAST) { if tom_listes_is_fun_sym_Name(any(opNameAST).( TomName )) { 
@@ -213,7 +213,7 @@ func (g *goGenerator) buildGetTailDecl(deep int, opNameAST TomName, varName, ty 
 		returnType := ""
 		argType := ""
 		functionName := g.declName("tom_get_tail_" + opname)
-		; { _ = opNameAST; { if tom_listes_is_sort_TomName(opNameAST) { if tom_listes_is_fun_sym_EmptyName(any(opNameAST).( TomName )) { 
+		; { { if tom_listes_is_sort_TomName(opNameAST) { if tom_listes_is_fun_sym_EmptyName(any(opNameAST).( TomName )) { 
 
 				panic(&platform.RuntimeError{Msg: genericBadCase + platform.JavaString(opNameAST)})
 			;  };  };  }; { if tom_listes_is_sort_TomName(opNameAST) { if tom_listes_is_fun_sym_Name(any(opNameAST).( TomName )) { 
@@ -247,7 +247,7 @@ func (g *goGenerator) buildIsEmptyDecl(deep int, opNameAST TomName, varName, ty 
 	if !g.inline || !code.IsCode() || !inlined {
 		argType := ""
 		functionName := g.declName("tom_is_empty_" + opname)
-		; { _ = opNameAST; { if tom_listes_is_sort_TomName(opNameAST) { if tom_listes_is_fun_sym_EmptyName(any(opNameAST).( TomName )) { 
+		; { { if tom_listes_is_sort_TomName(opNameAST) { if tom_listes_is_fun_sym_EmptyName(any(opNameAST).( TomName )) { 
 
 				panic(&platform.RuntimeError{Msg: genericBadCase + platform.JavaString(opNameAST)})
 			;  };  };  }; { if tom_listes_is_sort_TomName(opNameAST) { if tom_listes_is_fun_sym_Name(any(opNameAST).( TomName )) { 
@@ -280,7 +280,7 @@ func (g *goGenerator) buildGetElementDecl(deep int, opNameAST TomName, name1, na
 	}
 	if !g.inline || !code.IsCode() || !inlined {
 		functionName := g.declName("tom_get_element")
-		; { _ = opNameAST; { if tom_listes_is_sort_TomName(opNameAST) { if tom_listes_is_fun_sym_EmptyName(any(opNameAST).( TomName )) { 
+		; { { if tom_listes_is_sort_TomName(opNameAST) { if tom_listes_is_fun_sym_EmptyName(any(opNameAST).( TomName )) { 
 
 				panic(&platform.RuntimeError{Msg: genericBadCase + platform.JavaString(opNameAST)})
 			;  };  };  };  }; 
@@ -338,7 +338,7 @@ func (g *goGenerator) buildGetSizeDeclGeneric(deep int, opNameAST TomName, name1
 	if !g.inline || !code.IsCode() || !inlined {
 		argType := ""
 		functionName := g.declName("tom_get_size")
-		; { _ = opNameAST; { if tom_listes_is_sort_TomName(opNameAST) { if tom_listes_is_fun_sym_EmptyName(any(opNameAST).( TomName )) { 
+		; { { if tom_listes_is_sort_TomName(opNameAST) { if tom_listes_is_fun_sym_EmptyName(any(opNameAST).( TomName )) { 
 
 				panic(&platform.RuntimeError{Msg: genericBadCase + platform.JavaString(opNameAST)})
 			;  };  };  }; { if tom_listes_is_sort_TomName(opNameAST) { if tom_listes_is_fun_sym_Name(any(opNameAST).( TomName )) { 
@@ -359,7 +359,7 @@ func (g *goGenerator) buildGetSizeDeclGeneric(deep int, opNameAST TomName, name1
 
 func (g *goGenerator) buildExpGetElement(deep int, opNameAST TomName, domain TomType, varName, varIndex BQTerm, moduleName string) {
 	deep = 0 
-	; { _ = opNameAST; { if tom_listes_is_sort_TomName(opNameAST) { if tom_listes_is_fun_sym_EmptyName(any(opNameAST).( TomName )) { 
+	; { { if tom_listes_is_sort_TomName(opNameAST) { if tom_listes_is_fun_sym_EmptyName(any(opNameAST).( TomName )) { 
 
 			panic(&platform.RuntimeError{Msg: genericBadCase + platform.JavaString(opNameAST)})
 		;  };  };  };  }; 
@@ -381,7 +381,7 @@ func (g *goGenerator) buildExpGetElement(deep int, opNameAST TomName, domain Tom
 
 func (g *goGenerator) buildListOrArray(deep int, list BQTerm, moduleName string) {
 	deep = 0 
-	; { _ = list; { if tom_listes_is_sort_BQTerm(list) { if tom_listes_is_fun_sym_BuildEmptyList(any(list).( BQTerm )) { var tomMatch9_1  TomName  = tom_listes_get_slot_BuildEmptyList_AstName(any(list).( BQTerm )); _ = tomMatch9_1; if tom_listes_is_fun_sym_Name(any(tomMatch9_1).( TomName )) { var tom___name  string  = tom_listes_get_slot_Name_String(tomMatch9_1); _ = tom___name; 
+	; { { if tom_listes_is_sort_BQTerm(list) { if tom_listes_is_fun_sym_BuildEmptyList(any(list).( BQTerm )) { var tomMatch9_1  TomName  = tom_listes_get_slot_BuildEmptyList_AstName(any(list).( BQTerm )); if tom_listes_is_fun_sym_Name(any(tomMatch9_1).( TomName )) { var tom___name  string  = tom_listes_get_slot_Name_String(tomMatch9_1); 
 
 			prefix := g.declName("tom_empty_list_")
 			template, hasTemplate := g.getSymbolTable(moduleName).GetMakeEmptyList(tom___name)
@@ -389,7 +389,7 @@ func (g *goGenerator) buildListOrArray(deep int, list BQTerm, moduleName string)
 				g.output.Write(prefix + tom___name + "()")
 			}
 			return
-		;  };  };  };  }; { if tom_listes_is_sort_BQTerm(list) { if tom_listes_is_fun_sym_BuildConsList(any(list).( BQTerm )) { var tomMatch9_8  TomName  = tom_listes_get_slot_BuildConsList_AstName(any(list).( BQTerm )); _ = tomMatch9_8; if tom_listes_is_fun_sym_Name(any(tomMatch9_8).( TomName )) { var tom___name  string  = tom_listes_get_slot_Name_String(tomMatch9_8); _ = tom___name; var tom___headTerm  BQTerm  = tom_listes_get_slot_BuildConsList_HeadTerm(any(list).( BQTerm )); _ = tom___headTerm; var tom___tailTerm  BQTerm  = tom_listes_get_slot_BuildConsList_TailTerm(any(list).( BQTerm )); _ = tom___tailTerm; 
+		;  };  };  };  }; { if tom_listes_is_sort_BQTerm(list) { if tom_listes_is_fun_sym_BuildConsList(any(list).( BQTerm )) { var tomMatch9_8  TomName  = tom_listes_get_slot_BuildConsList_AstName(any(list).( BQTerm )); if tom_listes_is_fun_sym_Name(any(tomMatch9_8).( TomName )) { var tom___name  string  = tom_listes_get_slot_Name_String(tomMatch9_8); var tom___headTerm  BQTerm  = tom_listes_get_slot_BuildConsList_HeadTerm(any(list).( BQTerm )); var tom___tailTerm  BQTerm  = tom_listes_get_slot_BuildConsList_TailTerm(any(list).( BQTerm )); 
 
 			prefix := g.declName("tom_cons_list_")
 			template, hasTemplate := g.getSymbolTable(moduleName).GetMakeAddList(tom___name)
@@ -401,7 +401,7 @@ func (g *goGenerator) buildListOrArray(deep int, list BQTerm, moduleName string)
 				g.output.Write(")")
 			}
 			return
-		;  };  };  };  }; { if tom_listes_is_sort_BQTerm(list) { if tom_listes_is_fun_sym_BuildAppendList(any(list).( BQTerm )) { var tomMatch9_17  TomName  = tom_listes_get_slot_BuildAppendList_AstName(any(list).( BQTerm )); _ = tomMatch9_17; if tom_listes_is_fun_sym_Name(any(tomMatch9_17).( TomName )) { 
+		;  };  };  };  }; { if tom_listes_is_sort_BQTerm(list) { if tom_listes_is_fun_sym_BuildAppendList(any(list).( BQTerm )) { var tomMatch9_17  TomName  = tom_listes_get_slot_BuildAppendList_AstName(any(list).( BQTerm )); if tom_listes_is_fun_sym_Name(any(tomMatch9_17).( TomName )) { 
 
 			g.output.Write(g.declName("tom_append_list_"+tom_listes_get_slot_Name_String(tomMatch9_17)) + "(")
 			g.generateBQTerm(deep, tom_listes_get_slot_BuildAppendList_HeadTerm(any(list).( BQTerm )), moduleName)
@@ -409,7 +409,7 @@ func (g *goGenerator) buildListOrArray(deep int, list BQTerm, moduleName string)
 			g.generateBQTerm(deep, tom_listes_get_slot_BuildAppendList_TailTerm(any(list).( BQTerm )), moduleName)
 			g.output.Write(")")
 			return
-		;  };  };  };  }; { if tom_listes_is_sort_BQTerm(list) { if tom_listes_is_fun_sym_BuildEmptyArray(any(list).( BQTerm )) { var tomMatch9_26  TomName  = tom_listes_get_slot_BuildEmptyArray_AstName(any(list).( BQTerm )); _ = tomMatch9_26; if tom_listes_is_fun_sym_Name(any(tomMatch9_26).( TomName )) { var tom___name  string  = tom_listes_get_slot_Name_String(tomMatch9_26); _ = tom___name; var tom___size  BQTerm  = tom_listes_get_slot_BuildEmptyArray_Size(any(list).( BQTerm )); _ = tom___size; 
+		;  };  };  };  }; { if tom_listes_is_sort_BQTerm(list) { if tom_listes_is_fun_sym_BuildEmptyArray(any(list).( BQTerm )) { var tomMatch9_26  TomName  = tom_listes_get_slot_BuildEmptyArray_AstName(any(list).( BQTerm )); if tom_listes_is_fun_sym_Name(any(tomMatch9_26).( TomName )) { var tom___name  string  = tom_listes_get_slot_Name_String(tomMatch9_26); var tom___size  BQTerm  = tom_listes_get_slot_BuildEmptyArray_Size(any(list).( BQTerm )); 
 
 			prefix := g.declName("tom_empty_array_")
 			template, hasTemplate := g.getSymbolTable(moduleName).GetMakeEmptyArray(tom___name)
@@ -419,7 +419,7 @@ func (g *goGenerator) buildListOrArray(deep int, list BQTerm, moduleName string)
 				g.output.Write(")")
 			}
 			return
-		;  };  };  };  }; { if tom_listes_is_sort_BQTerm(list) { if tom_listes_is_fun_sym_BuildConsArray(any(list).( BQTerm )) { var tomMatch9_34  TomName  = tom_listes_get_slot_BuildConsArray_AstName(any(list).( BQTerm )); _ = tomMatch9_34; if tom_listes_is_fun_sym_Name(any(tomMatch9_34).( TomName )) { var tom___name  string  = tom_listes_get_slot_Name_String(tomMatch9_34); _ = tom___name; var tom___headTerm  BQTerm  = tom_listes_get_slot_BuildConsArray_HeadTerm(any(list).( BQTerm )); _ = tom___headTerm; var tom___tailTerm  BQTerm  = tom_listes_get_slot_BuildConsArray_TailTerm(any(list).( BQTerm )); _ = tom___tailTerm; 
+		;  };  };  };  }; { if tom_listes_is_sort_BQTerm(list) { if tom_listes_is_fun_sym_BuildConsArray(any(list).( BQTerm )) { var tomMatch9_34  TomName  = tom_listes_get_slot_BuildConsArray_AstName(any(list).( BQTerm )); if tom_listes_is_fun_sym_Name(any(tomMatch9_34).( TomName )) { var tom___name  string  = tom_listes_get_slot_Name_String(tomMatch9_34); var tom___headTerm  BQTerm  = tom_listes_get_slot_BuildConsArray_HeadTerm(any(list).( BQTerm )); var tom___tailTerm  BQTerm  = tom_listes_get_slot_BuildConsArray_TailTerm(any(list).( BQTerm )); 
 
 			template, hasTemplate := g.getSymbolTable(moduleName).GetMakeAddArray(tom___name)
 			if !g.instantiateTemplate(deep, template, hasTemplate, tom___name, tom_listes_cons_list_concBQTerm(tom___headTerm,tom_listes_cons_list_concBQTerm(tom___tailTerm,tom_listes_empty_list_concBQTerm())), moduleName) {
@@ -431,7 +431,7 @@ func (g *goGenerator) buildListOrArray(deep int, list BQTerm, moduleName string)
 				g.output.Write(")")
 			}
 			return
-		;  };  };  };  }; { if tom_listes_is_sort_BQTerm(list) { if tom_listes_is_fun_sym_BuildAppendArray(any(list).( BQTerm )) { var tomMatch9_43  TomName  = tom_listes_get_slot_BuildAppendArray_AstName(any(list).( BQTerm )); _ = tomMatch9_43; if tom_listes_is_fun_sym_Name(any(tomMatch9_43).( TomName )) { 
+		;  };  };  };  }; { if tom_listes_is_sort_BQTerm(list) { if tom_listes_is_fun_sym_BuildAppendArray(any(list).( BQTerm )) { var tomMatch9_43  TomName  = tom_listes_get_slot_BuildAppendArray_AstName(any(list).( BQTerm )); if tom_listes_is_fun_sym_Name(any(tomMatch9_43).( TomName )) { 
 
 			g.output.Write(g.declName("tom_append_array_"+tom_listes_get_slot_Name_String(tomMatch9_43)) + "(")
 			g.generateBQTerm(deep, tom_listes_get_slot_BuildAppendArray_HeadTerm(any(list).( BQTerm )), moduleName)

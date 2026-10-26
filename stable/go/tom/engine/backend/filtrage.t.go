@@ -1,4 +1,4 @@
-// tom-source-sha256: 22902cfdbad4277310daa9783317e8a444d1d49cc783364fa31417ad421409ac
+// tom-source-sha256: e2b58de01df63bbeb8da4741940200333896ecb63b4f4621be7175f7ddb2bd5d
 
 package backend
 
@@ -93,7 +93,7 @@ func (g *goGenerator) buildAssign(deep int, v BQTerm, optionList OptionList, exp
 	g.generateBQTerm(deep, v, moduleName)
 	g.output.Write(" = ")
 	var varType *string
-	; { _ = v; { if tom_filtrage_is_sort_BQTerm(v) { if tom_filtrage_is_fun_sym_BQVariable(any(v).( BQTerm )) { 
+	; { { if tom_filtrage_is_sort_BQTerm(v) { if tom_filtrage_is_fun_sym_BQVariable(any(v).( BQTerm )) { 
 
 			s, ok := g.knownGoType(tom_filtrage_get_slot_BQVariable_AstType(any(v).( BQTerm )), moduleName)
 			varType = optString(s, ok)
@@ -158,6 +158,8 @@ func (g *goGenerator) buildIfWithFailure(deep int, exp Expression, succes, failu
 
 
 
+
+
 func (g *goGenerator) buildLet(deep int, v BQTerm, optionList OptionList, tlType TargetLanguageType, exp Expression, body Instruction, moduleName string) {
 	g.output.Write("var ")
 	name := g.getVariableNameBQAbstract(v)
@@ -165,9 +167,13 @@ func (g *goGenerator) buildLet(deep int, v BQTerm, optionList OptionList, tlType
 	letType := g.goTLCode(tlType)
 	g.output.Write(" " + letType + " = ")
 	g.generateTypedExpression(deep, &letType, exp, moduleName)
-	g.output.Write("; _ = " + name + "; ")
 	shadows := g.classFields[name]
 	delete(g.classFields, name)
+	if g.readsInstruction(body, name) == readRead {
+		g.output.Write("; ")
+	} else {
+		g.output.Write("; _ = " + name + "; ")
+	}
 	g.generateInstruction(deep, body, moduleName)
 	if shadows {
 		g.classFields[name] = true
@@ -309,7 +315,7 @@ func (g *goGenerator) buildExpConditional(deep int, cond, exp1, exp2 Expression,
 
 
 func (g *goGenerator) buildExpCast(deep int, tlType TargetLanguageType, exp Expression, moduleName string) {
-	; { _ = tlType; { if tom_filtrage_is_sort_TargetLanguageType(tlType) { if tom_filtrage_is_fun_sym_TLType(any(tlType).( TargetLanguageType )) { 
+	; { { if tom_filtrage_is_sort_TargetLanguageType(tlType) { if tom_filtrage_is_fun_sym_TLType(any(tlType).( TargetLanguageType )) { 
 
 			g.output.Write("any(")
 			g.generateExpression(deep, exp, moduleName)

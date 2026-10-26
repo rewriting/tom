@@ -121,7 +121,8 @@ func (g *goGenerator) buildIfWithFailure(deep int, exp Expression, succes, failu
 }
 
 // buildLet is GoGenerator.buildLet (GoGenerator.t:313): Go rejects unused
-// variables, so every Let is followed by "_ = x". super.getVariableName is
+// variables, so "_ = x" follows the Let when its body may not read x
+// (readsInstruction, unused.t). super.getVariableName is
 // getVariableNameBQAbstract (R4); a Let shadows a %strategy field of the
 // same name in its body.
 func (g *goGenerator) buildLet(deep int, v BQTerm, optionList OptionList, tlType TargetLanguageType, exp Expression, body Instruction, moduleName string) {
@@ -131,9 +132,13 @@ func (g *goGenerator) buildLet(deep int, v BQTerm, optionList OptionList, tlType
 	letType := g.goTLCode(tlType)
 	g.output.Write(" " + letType + " = ")
 	g.generateTypedExpression(deep, &letType, exp, moduleName)
-	g.output.Write("; _ = " + name + "; ")
 	shadows := g.classFields[name]
 	delete(g.classFields, name)
+	if g.readsInstruction(body, name) == readRead {
+		g.output.Write("; ")
+	} else {
+		g.output.Write("; _ = " + name + "; ")
+	}
 	g.generateInstruction(deep, body, moduleName)
 	if shadows {
 		g.classFields[name] = true

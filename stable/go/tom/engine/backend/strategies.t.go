@@ -72,7 +72,7 @@ func (g *goGenerator) buildMethod(deep int, tomName string, varList BQTermList, 
 	for !varList.IsEmptyconcBQTerm() {
 		localVar := varList.GetHeadconcBQTerm()
 		matched := false 
-		; { _ = localVar; { if tom_strategies_is_sort_BQTerm(localVar) { if tom_strategies_is_fun_sym_BQVariable(any(localVar).( BQTerm )) { 
+		; { { if tom_strategies_is_sort_BQTerm(localVar) { if tom_strategies_is_fun_sym_BQVariable(any(localVar).( BQTerm )) { 
 
 				name := g.getVariableNameBQAbstract(any(localVar).( BQTerm )) 
 				g.output.WriteDeep(deep, name)
@@ -115,7 +115,7 @@ func (g *goGenerator) buildClass(deep int, tomName string, extendsType TomType, 
 		types = append(types, g.goType(ty))
 		name := tools.GetSlotName(tomSymbol, index).GetString()
 		names = append(names, name)
-		; { _ = ty; { if tom_strategies_is_sort_TomType(ty) { if tom_strategies_is_fun_sym_Type(any(ty).( TomType )) { if tom_strategies_equal_term_String("Strategy", tom_strategies_get_slot_Type_TomType(any(ty).( TomType ))) { 
+		; { { if tom_strategies_is_sort_TomType(ty) { if tom_strategies_is_fun_sym_Type(any(ty).( TomType )) { if tom_strategies_equal_term_String("Strategy", tom_strategies_get_slot_Type_TomType(any(ty).( TomType ))) { 
 
 				stratParams = append(stratParams, name)
 			;  };  };  };  };  }; 

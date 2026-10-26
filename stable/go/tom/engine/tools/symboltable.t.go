@@ -87,7 +87,7 @@ func FromBundle(b *bridge.Bundle) *SymbolTable {
 	st := NewSymbolTable()
 	st.FromTerm(b.Table)
 	for _, ty := range b.Types {
-		; { _ = ty; { if tom_symboltable_is_sort_TomType(ty) { if tom_symboltable_is_fun_sym_Type(any(ty).( TomType )) { 
+		; { { if tom_symboltable_is_sort_TomType(ty) { if tom_symboltable_is_fun_sym_Type(any(ty).( TomType )) { 
  st.PutType(tom_symboltable_get_slot_Type_TomType(any(ty).( TomType )), ty) ;  };  };  };  }; 
 
 	}
