@@ -21,6 +21,21 @@
   `mage -d magefiles -w . -l`. [`prototype/tomgo`](prototype/tomgo/README.md)
   is the frozen hand-written Go prototype.
 
+### Getting the last 100% human-written version from git
+
+The last commit written entirely by the human authors of Tom is
+`2918e95c7`, tagged `v3-human-final`. Everything after it was written with
+the help of an AI assistant. To work on that version:
+
+```bash
+git clone git@github.com:rewriting/tom.git
+cd tom
+git switch -c human v3-human-final   # or: git checkout v3-human-final
+```
+
+The same sources are also kept, frozen, in [`legacy/`](legacy/README.md) of
+the current tree, with their installation instructions.
+
 ## Documentation
 
 The documentation is available [here](doc/README.md)

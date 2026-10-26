@@ -16,6 +16,19 @@ TOM - To One Matching Compiler
   Details of the latest version can be found on the Tom Project
   web site <http://tom.loria.fr/>.
 
+  The last 100% human-written version
+  -----------------------------------
+
+  The last commit written entirely by the human authors of Tom is
+  2918e95c7, tagged v3-human-final; later commits were written with the
+  help of an AI assistant (see README.md). To get that version:
+
+    git clone git@github.com:rewriting/tom.git
+    cd tom
+    git switch -c human v3-human-final
+
+  A frozen copy of it is also kept in legacy/ (see legacy/README.md).
+
 
   Documentation
   -------------
