@@ -36,7 +36,7 @@ import (
   }
 
   func elim(l List) List {
-    ; { _ = l; { if tom_BenchConsGom_is_sort_List(l) { if tom_BenchConsGom_is_fun_sym_conc(any(l).( List )) { var tomMatch1_end_4  List  = any(l).( List ); _ = tomMatch1_end_4; for { { if !(tom_BenchConsGom_is_empty_conc_List(tomMatch1_end_4)) { var tom___e1  int64  = tom_BenchConsGom_get_head_conc_List(tomMatch1_end_4); _ = tom___e1; var tomMatch1_5  List  = tom_BenchConsGom_get_tail_conc_List(tomMatch1_end_4); _ = tomMatch1_5; var tomMatch1_end_8  List  = tomMatch1_5; _ = tomMatch1_end_8; for { { if !(tom_BenchConsGom_is_empty_conc_List(tomMatch1_end_8)) { 
+    ; { { if tom_BenchConsGom_is_sort_List(l) { if tom_BenchConsGom_is_fun_sym_conc(any(l).( List )) { var tomMatch1_end_4  List  = any(l).( List ); for { { if !(tom_BenchConsGom_is_empty_conc_List(tomMatch1_end_4)) { var tom___e1  int64  = tom_BenchConsGom_get_head_conc_List(tomMatch1_end_4); var tomMatch1_5  List  = tom_BenchConsGom_get_tail_conc_List(tomMatch1_end_4); var tomMatch1_end_8  List  = tomMatch1_5; for { { if !(tom_BenchConsGom_is_empty_conc_List(tomMatch1_end_8)) { 
 
         if(tom_BenchConsGom_get_head_conc_List(tomMatch1_end_8)%tom___e1 == 0) {
           return elim(tom_BenchConsGom_append_list_conc(tom_BenchConsGom_get_slice_conc(any(l).( List ),tomMatch1_end_4,tom_BenchConsGom_empty_list_conc()),tom_BenchConsGom_cons_list_conc(tom___e1,tom_BenchConsGom_append_list_conc(tom_BenchConsGom_get_slice_conc(tomMatch1_5,tomMatch1_end_8,tom_BenchConsGom_empty_list_conc()),tom_BenchConsGom_append_list_conc(tom_BenchConsGom_get_tail_conc_List(tomMatch1_end_8),tom_BenchConsGom_empty_list_conc())))))};  }; if tom_BenchConsGom_is_empty_conc_List(tomMatch1_end_8) { tomMatch1_end_8 = tomMatch1_5;  } else { tomMatch1_end_8 = tom_BenchConsGom_get_tail_conc_List(tomMatch1_end_8);  };  };  if !(!(tom_BenchConsGom_equal_term_List(tomMatch1_end_8, tomMatch1_5))) { break; }; };  }; if tom_BenchConsGom_is_empty_conc_List(tomMatch1_end_4) { tomMatch1_end_4 = any(l).( List );  } else { tomMatch1_end_4 = tom_BenchConsGom_get_tail_conc_List(tomMatch1_end_4);  };  };  if !(!(tom_BenchConsGom_equal_term_List(tomMatch1_end_4, any(l).( List )))) { break; }; };  };  };  };  }; 
@@ -49,7 +49,7 @@ import (
   func reverse(l List) List {
     var res List = tom_BenchConsGom_empty_list_conc()
     for {
-      ; { _ = l; { if tom_BenchConsGom_is_sort_List(l) { if tom_BenchConsGom_is_fun_sym_conc(any(l).( List )) { if tom_BenchConsGom_is_empty_conc_List(any(l).( List )) { 
+      ; { { if tom_BenchConsGom_is_sort_List(l) { if tom_BenchConsGom_is_fun_sym_conc(any(l).( List )) { if tom_BenchConsGom_is_empty_conc_List(any(l).( List )) { 
  return res ;  };  };  };  }; { if tom_BenchConsGom_is_sort_List(l) { if tom_BenchConsGom_is_fun_sym_conc(any(l).( List )) { if !(tom_BenchConsGom_is_empty_conc_List(any(l).( List ))) { 
 
           res = tom_BenchConsGom_cons_list_conc(tom_BenchConsGom_get_head_conc_List(any(l).( List )),tom_BenchConsGom_append_list_conc(res,tom_BenchConsGom_empty_list_conc()))

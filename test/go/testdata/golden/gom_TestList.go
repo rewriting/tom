@@ -179,7 +179,7 @@ func TestNReverse(t *testing.T) {
 }
 
   func getListReverse(l List) List {
-    ; { _ = l; { if tom_TestList_is_sort_List(l) { if tom_TestList_is_fun_sym_conc(any(l).( List )) { if !(tom_TestList_is_empty_conc_List(any(l).( List ))) { 
+    ; { { if tom_TestList_is_sort_List(l) { if tom_TestList_is_fun_sym_conc(any(l).( List )) { if !(tom_TestList_is_empty_conc_List(any(l).( List ))) { 
 
         var nt List = getListReverse(tom_TestList_get_tail_conc_List(any(l).( List )))
         return tom_TestList_append_list_conc(nt,tom_TestList_cons_list_conc(tom_TestList_get_head_conc_List(any(l).( List )),tom_TestList_empty_list_conc()));  };  };  };  };  }; 
@@ -191,7 +191,7 @@ func TestNReverse(t *testing.T) {
   func getListArray(l List) []Element {
     length := getListLength(l)
     var array []Element = make([]Element, length)
-    ; { _ = l; { if tom_TestList_is_sort_List(l) { if tom_TestList_is_fun_sym_conc(any(l).( List )) { if !(tom_TestList_is_empty_conc_List(any(l).( List ))) { 
+    ; { { if tom_TestList_is_sort_List(l) { if tom_TestList_is_fun_sym_conc(any(l).( List )) { if !(tom_TestList_is_empty_conc_List(any(l).( List ))) { 
 
         array[0]=tom_TestList_get_head_conc_List(any(l).( List ))
         var tailArray []Element = getListArray(tom_TestList_get_tail_conc_List(any(l).( List )))
@@ -204,7 +204,7 @@ func TestNReverse(t *testing.T) {
   }
 
   func getListLength(l List) int {
-    ; { _ = l; { if tom_TestList_is_sort_List(l) { if tom_TestList_is_fun_sym_conc(any(l).( List )) { if tom_TestList_is_empty_conc_List(any(l).( List )) { 
+    ; { { if tom_TestList_is_sort_List(l) { if tom_TestList_is_fun_sym_conc(any(l).( List )) { if tom_TestList_is_empty_conc_List(any(l).( List )) { 
  return 0 ;  };  };  };  }; { if tom_TestList_is_sort_List(l) { if tom_TestList_is_fun_sym_conc(any(l).( List )) { if !(tom_TestList_is_empty_conc_List(any(l).( List ))) { 
  return 1+getListLength(tom_TestList_get_tail_conc_List(any(l).( List ))) ;  };  };  };  };  }; 
 

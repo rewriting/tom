@@ -45,7 +45,7 @@ func tom_TestVarVarStar_equal_term_A(t1  A , t2  A ) bool { return (t1).Equivale
 
 
 func Test1(t *testing.T) {
-  var a A = tom_TestVarVarStar_make_a(tom_TestVarVarStar_empty_list_conc(),tom_TestVarVarStar_empty_list_conc()); { _ = a; { if tom_TestVarVarStar_is_sort_A(a) { if tom_TestVarVarStar_is_fun_sym_a(any(a).( A )) { var tomMatch1_1  BList  = tom_TestVarVarStar_get_slot_a_s1(any(a).( A )); _ = tomMatch1_1; var tomMatch1_2  BList  = tom_TestVarVarStar_get_slot_a_s2(any(a).( A )); _ = tomMatch1_2; if tom_TestVarVarStar_is_sort_BList(tomMatch1_1) { if tom_TestVarVarStar_is_fun_sym_conc(any(tomMatch1_2).( BList )) { if tom_TestVarVarStar_equal_term_BList(tomMatch1_1, tomMatch1_2) { 
+  var a A = tom_TestVarVarStar_make_a(tom_TestVarVarStar_empty_list_conc(),tom_TestVarVarStar_empty_list_conc()); { { if tom_TestVarVarStar_is_sort_A(a) { if tom_TestVarVarStar_is_fun_sym_a(any(a).( A )) { var tomMatch1_1  BList  = tom_TestVarVarStar_get_slot_a_s1(any(a).( A )); var tomMatch1_2  BList  = tom_TestVarVarStar_get_slot_a_s2(any(a).( A )); if tom_TestVarVarStar_is_sort_BList(tomMatch1_1) { if tom_TestVarVarStar_is_fun_sym_conc(any(tomMatch1_2).( BList )) { if tom_TestVarVarStar_equal_term_BList(tomMatch1_1, tomMatch1_2) { 
 
  return ;  };  };  };  };  };  };  }; 
 
@@ -55,7 +55,7 @@ func Test1(t *testing.T) {
 
 
 func Test2(t *testing.T) {
-  var a A = tom_TestVarVarStar_make_a(tom_TestVarVarStar_cons_list_conc(tom_TestVarVarStar_make_b(),tom_TestVarVarStar_empty_list_conc()),tom_TestVarVarStar_cons_list_conc(tom_TestVarVarStar_make_b(),tom_TestVarVarStar_empty_list_conc())); { _ = a; { if tom_TestVarVarStar_is_sort_A(a) { if tom_TestVarVarStar_is_fun_sym_a(any(a).( A )) { var tomMatch2_1  BList  = tom_TestVarVarStar_get_slot_a_s1(any(a).( A )); _ = tomMatch2_1; var tomMatch2_2  BList  = tom_TestVarVarStar_get_slot_a_s2(any(a).( A )); _ = tomMatch2_2; if tom_TestVarVarStar_is_sort_BList(tomMatch2_1) { if tom_TestVarVarStar_is_fun_sym_conc(any(tomMatch2_2).( BList )) { if tom_TestVarVarStar_equal_term_BList(tomMatch2_1, tomMatch2_2) { 
+  var a A = tom_TestVarVarStar_make_a(tom_TestVarVarStar_cons_list_conc(tom_TestVarVarStar_make_b(),tom_TestVarVarStar_empty_list_conc()),tom_TestVarVarStar_cons_list_conc(tom_TestVarVarStar_make_b(),tom_TestVarVarStar_empty_list_conc())); { { if tom_TestVarVarStar_is_sort_A(a) { if tom_TestVarVarStar_is_fun_sym_a(any(a).( A )) { var tomMatch2_1  BList  = tom_TestVarVarStar_get_slot_a_s1(any(a).( A )); var tomMatch2_2  BList  = tom_TestVarVarStar_get_slot_a_s2(any(a).( A )); if tom_TestVarVarStar_is_sort_BList(tomMatch2_1) { if tom_TestVarVarStar_is_fun_sym_conc(any(tomMatch2_2).( BList )) { if tom_TestVarVarStar_equal_term_BList(tomMatch2_1, tomMatch2_2) { 
 
  return ;  };  };  };  };  };  };  }; 
 
@@ -67,7 +67,7 @@ func Test2(t *testing.T) {
 func Test3(t *testing.T) {
   counter := 0
   _ = counter
-  var a A = tom_TestVarVarStar_make_a(tom_TestVarVarStar_cons_list_conc(tom_TestVarVarStar_make_b(),tom_TestVarVarStar_empty_list_conc()),tom_TestVarVarStar_cons_list_conc(tom_TestVarVarStar_make_b(),tom_TestVarVarStar_cons_list_conc(tom_TestVarVarStar_make_b(),tom_TestVarVarStar_empty_list_conc()))); { _ = a; { if tom_TestVarVarStar_is_sort_A(a) { if tom_TestVarVarStar_is_fun_sym_a(any(a).( A )) { var tomMatch3_1  BList  = tom_TestVarVarStar_get_slot_a_s1(any(a).( A )); _ = tomMatch3_1; var tomMatch3_2  BList  = tom_TestVarVarStar_get_slot_a_s2(any(a).( A )); _ = tomMatch3_2; if tom_TestVarVarStar_is_sort_BList(tomMatch3_1) { if tom_TestVarVarStar_is_fun_sym_conc(any(tomMatch3_2).( BList )) { if tom_TestVarVarStar_equal_term_BList(tomMatch3_1, tomMatch3_2) { 
+  var a A = tom_TestVarVarStar_make_a(tom_TestVarVarStar_cons_list_conc(tom_TestVarVarStar_make_b(),tom_TestVarVarStar_empty_list_conc()),tom_TestVarVarStar_cons_list_conc(tom_TestVarVarStar_make_b(),tom_TestVarVarStar_cons_list_conc(tom_TestVarVarStar_make_b(),tom_TestVarVarStar_empty_list_conc()))); { { if tom_TestVarVarStar_is_sort_A(a) { if tom_TestVarVarStar_is_fun_sym_a(any(a).( A )) { var tomMatch3_1  BList  = tom_TestVarVarStar_get_slot_a_s1(any(a).( A )); var tomMatch3_2  BList  = tom_TestVarVarStar_get_slot_a_s2(any(a).( A )); if tom_TestVarVarStar_is_sort_BList(tomMatch3_1) { if tom_TestVarVarStar_is_fun_sym_conc(any(tomMatch3_2).( BList )) { if tom_TestVarVarStar_equal_term_BList(tomMatch3_1, tomMatch3_2) { 
 
  t.FailNow();  };  };  };  };  };  };  }; 
 

@@ -41,7 +41,7 @@ func tom_loulou_is_sort_Nat(t any) bool { return (0==0);  }; func tom_loulou_is_
 
 
 func plus(t1 int, t2 int) int {
-  ; { _ = t1; _ = t2; { if tom_loulou_is_sort_Nat(t1) { if tom_loulou_is_sort_Nat(t2) { if tom_loulou_is_fun_sym_zero(any(t2).( int )) { 
+  ; { { if tom_loulou_is_sort_Nat(t1) { if tom_loulou_is_sort_Nat(t2) { if tom_loulou_is_fun_sym_zero(any(t2).( int )) { 
  return any(t1).( int );  };  };  };  }; { if tom_loulou_is_sort_Nat(t1) { if tom_loulou_is_sort_Nat(t2) { if tom_loulou_is_fun_sym_suc(any(t2).( int )) { 
  return tom_loulou_make_suc(plus(any(t1).( int ),tom_loulou_get_slot_suc_p(any(t2).( int ))));  };  };  };  };  }; 
 

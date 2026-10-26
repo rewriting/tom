@@ -96,7 +96,7 @@ func TestMatchInt(tt *testing.T) {
     
     
     var res string = ""
-    var t Wrapper = tom_TestBuiltin_make_Int(32); { _ = t; { if tom_TestBuiltin_is_sort_Wrapper(t) { if tom_TestBuiltin_is_fun_sym_Int(any(t).( Wrapper )) { if tom_TestBuiltin_equal_term_int(10, tom_TestBuiltin_get_slot_Int_i(any(t).( Wrapper ))) { 
+    var t Wrapper = tom_TestBuiltin_make_Int(32); { { if tom_TestBuiltin_is_sort_Wrapper(t) { if tom_TestBuiltin_is_fun_sym_Int(any(t).( Wrapper )) { if tom_TestBuiltin_equal_term_int(10, tom_TestBuiltin_get_slot_Int_i(any(t).( Wrapper ))) { 
 
  res += "10" ;  };  };  };  }; { if tom_TestBuiltin_is_sort_Wrapper(t) { if tom_TestBuiltin_is_fun_sym_Int(any(t).( Wrapper )) { if tom_TestBuiltin_equal_term_int(32, tom_TestBuiltin_get_slot_Int_i(any(t).( Wrapper ))) { 
  res += "32" ;  };  };  };  };  }; 
@@ -108,7 +108,7 @@ func TestMatchInt(tt *testing.T) {
 
 func TestMatchLong(tt *testing.T) {
     var res string = ""
-    var t Wrapper = tom_TestBuiltin_make_Long(1234567890); { _ = t; { if tom_TestBuiltin_is_sort_Wrapper(t) { if tom_TestBuiltin_is_fun_sym_Long(any(t).( Wrapper )) { if tom_TestBuiltin_equal_term_long(32, tom_TestBuiltin_get_slot_Long_l(any(t).( Wrapper ))) { 
+    var t Wrapper = tom_TestBuiltin_make_Long(1234567890); { { if tom_TestBuiltin_is_sort_Wrapper(t) { if tom_TestBuiltin_is_fun_sym_Long(any(t).( Wrapper )) { if tom_TestBuiltin_equal_term_long(32, tom_TestBuiltin_get_slot_Long_l(any(t).( Wrapper ))) { 
 
  res += "32l" ;  };  };  };  }; { if tom_TestBuiltin_is_sort_Wrapper(t) { if tom_TestBuiltin_is_fun_sym_Long(any(t).( Wrapper )) { if tom_TestBuiltin_equal_term_long(1234567890, tom_TestBuiltin_get_slot_Long_l(any(t).( Wrapper ))) { 
  res += "1234567890l" ;  };  };  };  };  }; 
@@ -120,7 +120,7 @@ func TestMatchLong(tt *testing.T) {
 
 func TestMatchChar(tt *testing.T) {
     var res string = ""
-    var t Wrapper = tom_TestBuiltin_make_Char('b'); { _ = t; { if tom_TestBuiltin_is_sort_Wrapper(t) { if tom_TestBuiltin_is_fun_sym_Char(any(t).( Wrapper )) { if tom_TestBuiltin_equal_term_char('a', tom_TestBuiltin_get_slot_Char_c(any(t).( Wrapper ))) { 
+    var t Wrapper = tom_TestBuiltin_make_Char('b'); { { if tom_TestBuiltin_is_sort_Wrapper(t) { if tom_TestBuiltin_is_fun_sym_Char(any(t).( Wrapper )) { if tom_TestBuiltin_equal_term_char('a', tom_TestBuiltin_get_slot_Char_c(any(t).( Wrapper ))) { 
 
  res += "a" ;  };  };  };  }; { if tom_TestBuiltin_is_sort_Wrapper(t) { if tom_TestBuiltin_is_fun_sym_Char(any(t).( Wrapper )) { if tom_TestBuiltin_equal_term_char('b', tom_TestBuiltin_get_slot_Char_c(any(t).( Wrapper ))) { 
  res += "b" ;  };  };  };  };  }; 
@@ -132,7 +132,7 @@ func TestMatchChar(tt *testing.T) {
 
 func TestMatchString(t *testing.T) {
     var res string = ""
-    var nm Wrapper = tom_TestBuiltin_make_Name("Germain"); { _ = nm; { if tom_TestBuiltin_is_sort_Wrapper(nm) { if tom_TestBuiltin_is_fun_sym_Name(any(nm).( Wrapper )) { if tom_TestBuiltin_equal_term_String("Pem", tom_TestBuiltin_get_slot_Name_n(any(nm).( Wrapper ))) { 
+    var nm Wrapper = tom_TestBuiltin_make_Name("Germain"); { { if tom_TestBuiltin_is_sort_Wrapper(nm) { if tom_TestBuiltin_is_fun_sym_Name(any(nm).( Wrapper )) { if tom_TestBuiltin_equal_term_String("Pem", tom_TestBuiltin_get_slot_Name_n(any(nm).( Wrapper ))) { 
 
  res += "pem" ;  };  };  };  }; { if tom_TestBuiltin_is_sort_Wrapper(nm) { if tom_TestBuiltin_is_fun_sym_Name(any(nm).( Wrapper )) { if tom_TestBuiltin_equal_term_String("Germain", tom_TestBuiltin_get_slot_Name_n(any(nm).( Wrapper ))) { 
  res += "G" ;  };  };  };  };  }; 
@@ -144,7 +144,7 @@ func TestMatchString(t *testing.T) {
 
 func TestDisjunctionInt(t *testing.T) {
     var res bool = false
-    var wi Wrapper = tom_TestBuiltin_make_Int(42); { _ = wi; { if tom_TestBuiltin_is_sort_Wrapper(wi) { var tomMatch5_7 bool =  false ; _ = tomMatch5_7; var tomMatch5_4  Wrapper  =  *new(Wrapper) ; _ = tomMatch5_4; var tomMatch5_1  int64  =  0 ; _ = tomMatch5_1; var tomMatch5_3  Wrapper  =  *new(Wrapper) ; _ = tomMatch5_3; if tom_TestBuiltin_is_fun_sym_Int(any(wi).( Wrapper )) { { tomMatch5_7 =  true ; tomMatch5_3 = any(wi).( Wrapper ); tomMatch5_1 = tom_TestBuiltin_get_slot_Int_i(tomMatch5_3);  };  } else { if tom_TestBuiltin_is_fun_sym_IntBis(any(wi).( Wrapper )) { { tomMatch5_7 =  true ; tomMatch5_4 = any(wi).( Wrapper ); tomMatch5_1 = tom_TestBuiltin_get_slot_IntBis_i(tomMatch5_4);  };  };  }; if tomMatch5_7 { if tom_TestBuiltin_equal_term_int(42, tomMatch5_1) { 
+    var wi Wrapper = tom_TestBuiltin_make_Int(42); { { if tom_TestBuiltin_is_sort_Wrapper(wi) { var tomMatch5_7 bool =  false ; var tomMatch5_4  Wrapper  =  *new(Wrapper) ; var tomMatch5_1  int64  =  0 ; var tomMatch5_3  Wrapper  =  *new(Wrapper) ; if tom_TestBuiltin_is_fun_sym_Int(any(wi).( Wrapper )) { { tomMatch5_7 =  true ; tomMatch5_3 = any(wi).( Wrapper ); tomMatch5_1 = tom_TestBuiltin_get_slot_Int_i(tomMatch5_3);  };  } else { if tom_TestBuiltin_is_fun_sym_IntBis(any(wi).( Wrapper )) { { tomMatch5_7 =  true ; tomMatch5_4 = any(wi).( Wrapper ); tomMatch5_1 = tom_TestBuiltin_get_slot_IntBis_i(tomMatch5_4);  };  };  }; if tomMatch5_7 { if tom_TestBuiltin_equal_term_int(42, tomMatch5_1) { 
 
  res = true ;  };  };  };  };  }; 
 
@@ -155,7 +155,7 @@ func TestDisjunctionInt(t *testing.T) {
 
 func TestDisjunctionString(t *testing.T) {
     var res bool = false
-    var wi Wrapper = tom_TestBuiltin_make_Name("42"); { _ = wi; { if tom_TestBuiltin_is_sort_Wrapper(wi) { var tomMatch6_7 bool =  false ; _ = tomMatch6_7; var tomMatch6_3  Wrapper  =  *new(Wrapper) ; _ = tomMatch6_3; var tomMatch6_1  string  =  "" ; _ = tomMatch6_1; var tomMatch6_4  Wrapper  =  *new(Wrapper) ; _ = tomMatch6_4; if tom_TestBuiltin_is_fun_sym_Name(any(wi).( Wrapper )) { { tomMatch6_7 =  true ; tomMatch6_3 = any(wi).( Wrapper ); tomMatch6_1 = tom_TestBuiltin_get_slot_Name_n(tomMatch6_3);  };  } else { if tom_TestBuiltin_is_fun_sym_NameBis(any(wi).( Wrapper )) { { tomMatch6_7 =  true ; tomMatch6_4 = any(wi).( Wrapper ); tomMatch6_1 = tom_TestBuiltin_get_slot_NameBis_n(tomMatch6_4);  };  };  }; if tomMatch6_7 { if tom_TestBuiltin_equal_term_String("42", tomMatch6_1) { 
+    var wi Wrapper = tom_TestBuiltin_make_Name("42"); { { if tom_TestBuiltin_is_sort_Wrapper(wi) { var tomMatch6_7 bool =  false ; var tomMatch6_3  Wrapper  =  *new(Wrapper) ; var tomMatch6_1  string  =  "" ; var tomMatch6_4  Wrapper  =  *new(Wrapper) ; if tom_TestBuiltin_is_fun_sym_Name(any(wi).( Wrapper )) { { tomMatch6_7 =  true ; tomMatch6_3 = any(wi).( Wrapper ); tomMatch6_1 = tom_TestBuiltin_get_slot_Name_n(tomMatch6_3);  };  } else { if tom_TestBuiltin_is_fun_sym_NameBis(any(wi).( Wrapper )) { { tomMatch6_7 =  true ; tomMatch6_4 = any(wi).( Wrapper ); tomMatch6_1 = tom_TestBuiltin_get_slot_NameBis_n(tomMatch6_4);  };  };  }; if tomMatch6_7 { if tom_TestBuiltin_equal_term_String("42", tomMatch6_1) { 
 
  res = true ;  };  };  };  };  }; 
 
@@ -178,14 +178,14 @@ func TestBoolean(t *testing.T) {
 
 func TestMatchBoolean(t *testing.T) {
     var res bool = false
-    var nm Wrapper = tom_TestBuiltin_make_Bool(tom_TestBuiltin_make_true()); { _ = nm; { if tom_TestBuiltin_is_sort_Wrapper(nm) { if tom_TestBuiltin_is_fun_sym_Bool(any(nm).( Wrapper )) { if tom_TestBuiltin_is_fun_sym_false(tom_TestBuiltin_get_slot_Bool_b(any(nm).( Wrapper ))) { 
+    var nm Wrapper = tom_TestBuiltin_make_Bool(tom_TestBuiltin_make_true()); { { if tom_TestBuiltin_is_sort_Wrapper(nm) { if tom_TestBuiltin_is_fun_sym_Bool(any(nm).( Wrapper )) { if tom_TestBuiltin_is_fun_sym_false(tom_TestBuiltin_get_slot_Bool_b(any(nm).( Wrapper ))) { 
 
  res = false ;  };  };  };  }; { if tom_TestBuiltin_is_sort_Wrapper(nm) { if tom_TestBuiltin_is_fun_sym_Bool(any(nm).( Wrapper )) { if tom_TestBuiltin_is_fun_sym_true(tom_TestBuiltin_get_slot_Bool_b(any(nm).( Wrapper ))) { 
  res = true ;  };  };  };  };  }; 
 
     assertTrueMsg(t, "Match in the second branch",res)
 
-    nm = tom_TestBuiltin_make_Bool(tom_TestBuiltin_make_false()); { _ = nm; { if tom_TestBuiltin_is_sort_Wrapper(nm) { if tom_TestBuiltin_is_fun_sym_Bool(any(nm).( Wrapper )) { if tom_TestBuiltin_is_fun_sym_false(tom_TestBuiltin_get_slot_Bool_b(any(nm).( Wrapper ))) { 
+    nm = tom_TestBuiltin_make_Bool(tom_TestBuiltin_make_false()); { { if tom_TestBuiltin_is_sort_Wrapper(nm) { if tom_TestBuiltin_is_fun_sym_Bool(any(nm).( Wrapper )) { if tom_TestBuiltin_is_fun_sym_false(tom_TestBuiltin_get_slot_Bool_b(any(nm).( Wrapper ))) { 
 
  res = false ;  };  };  };  }; { if tom_TestBuiltin_is_sort_Wrapper(nm) { if tom_TestBuiltin_is_fun_sym_Bool(any(nm).( Wrapper )) { if tom_TestBuiltin_is_fun_sym_true(tom_TestBuiltin_get_slot_Bool_b(any(nm).( Wrapper ))) { 
  res = true ;  };  };  };  };  }; 

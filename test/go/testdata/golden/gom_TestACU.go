@@ -86,7 +86,7 @@ func TestNeutral2(t *testing.T) {
 func TestNeutral3(t *testing.T) {
     var l L = tom_TestACU_make_bb()
     cnt := 0
-    ; { _ = l; { if tom_TestACU_is_sort_L(l) { if tom_TestACU_is_sort_L(any(l).( L )) { var tomMatch1_end_4  L  = any(l).( L ); _ = tomMatch1_end_4; for { { var tom___x  L  = tom_TestACU_get_slice_list(any(l).( L ),tomMatch1_end_4,tom_TestACU_empty_list_list()); _ = tom___x; var tom___y  L  = tomMatch1_end_4; _ = tom___y; 
+    ; { { if tom_TestACU_is_sort_L(l) { if tom_TestACU_is_sort_L(any(l).( L )) { var tomMatch1_end_4  L  = any(l).( L ); for { { var tom___x  L  = tom_TestACU_get_slice_list(any(l).( L ),tomMatch1_end_4,tom_TestACU_empty_list_list()); var tom___y  L  = tomMatch1_end_4; 
 
         if(tom___x == tom_TestACU_make_bb() && tom___y == tom_TestACU_make_aa()) {
           cnt += 2
@@ -107,7 +107,7 @@ func TestNeutral3(t *testing.T) {
 func TestNeutral4(tt *testing.T) {
     var t T = tom_TestACU_make_b()
     cnt := 0
-    ; { _ = t; { if tom_TestACU_is_sort_T(t) { if tom_TestACU_is_sort_T(any(t).( T )) { var tomMatch2_end_4  T  = any(t).( T ); _ = tomMatch2_end_4; for { { var tom___x  T  = tom_TestACU_get_slice_conc(any(t).( T ),tomMatch2_end_4,tom_TestACU_empty_list_conc()); _ = tom___x; var tom___y  T  = tomMatch2_end_4; _ = tom___y; 
+    ; { { if tom_TestACU_is_sort_T(t) { if tom_TestACU_is_sort_T(any(t).( T )) { var tomMatch2_end_4  T  = any(t).( T ); for { { var tom___x  T  = tom_TestACU_get_slice_conc(any(t).( T ),tomMatch2_end_4,tom_TestACU_empty_list_conc()); var tom___y  T  = tomMatch2_end_4; 
 
         if (tom___x == tom_TestACU_make_b() && tom___y == tom_TestACU_empty_list_conc()) {
           cnt += 2
@@ -128,7 +128,7 @@ func TestNeutral4(tt *testing.T) {
 func TestNeutral5(tt *testing.T) {
     var t NAU = tom_TestACU_make_m()
     cnt := 0
-    ; { _ = t; { if tom_TestACU_is_sort_NAU(t) { if tom_TestACU_is_fun_sym_p(any(t).( NAU )) { var tomMatch3_end_4  NAU  = any(t).( NAU ); _ = tomMatch3_end_4; for { { 
+    ; { { if tom_TestACU_is_sort_NAU(t) { if tom_TestACU_is_fun_sym_p(any(t).( NAU )) { var tomMatch3_end_4  NAU  = any(t).( NAU ); for { { 
 
         cnt += 2
       ; if  (tom_TestACU_is_empty_p_NAU(tomMatch3_end_4) || tom_TestACU_equal_term_NAU(tomMatch3_end_4, tom_TestACU_empty_list_p()))  { tomMatch3_end_4 = any(t).( NAU );  } else { tomMatch3_end_4 = func()  NAU  { if tom_TestACU_is_fun_sym_p(tomMatch3_end_4) { return tom_TestACU_get_tail_p_NAU(tomMatch3_end_4) }; return tom_TestACU_empty_list_p() }();  };  };  if !(!(tom_TestACU_equal_term_NAU(tomMatch3_end_4, any(t).( NAU )))) { break; }; };  };  };  };  }; 

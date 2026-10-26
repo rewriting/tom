@@ -596,12 +596,12 @@ func is[T any](t any) bool { _, ok := t.(T); return ok }
 func TestCombinations(t *testing.T) {
     var subject natList = tom_TestConstraintCombination_cons_list_nList(tom_TestConstraintCombination_make_zero(),tom_TestConstraintCombination_empty_list_nList())
     nbCasesOK := 0
-    ; { { var tomMatch1_0  tNat  = tom_TestConstraintCombination_make_suc(tom_TestConstraintCombination_make_zero()); _ = tomMatch1_0; if tom_TestConstraintCombination_is_sort_tNat(tomMatch1_0) { var tom___x  tNat  = any(tomMatch1_0).( tNat ); _ = tom___x; if !(tom_TestConstraintCombination_equal_term_tNat(tom___x, tom_TestConstraintCombination_make_zero())) { 
+    ; { { var tomMatch1_0  tNat  = tom_TestConstraintCombination_make_suc(tom_TestConstraintCombination_make_zero()); if tom_TestConstraintCombination_is_sort_tNat(tomMatch1_0) { var tom___x  tNat  = any(tomMatch1_0).( tNat ); if !(tom_TestConstraintCombination_equal_term_tNat(tom___x, tom_TestConstraintCombination_make_zero())) { 
 
 
         nbCasesOK++
         fmt.Println("Case #1: x = " + fmt.Sprint(tom___x))
-      ;  };  }; var tomMatch1_1  tNat  = tom_TestConstraintCombination_make_suc(tom_TestConstraintCombination_make_suc(tom_TestConstraintCombination_make_zero())); _ = tomMatch1_1; if tom_TestConstraintCombination_is_sort_tNat(tomMatch1_1) { var tom___x  tNat  = any(tomMatch1_1).( tNat ); _ = tom___x; if !(tom_TestConstraintCombination_equal_term_tNat(tom___x, tom_TestConstraintCombination_make_zero())) {          nbCasesOK++;         fmt.Println("Case #1: x = " + fmt.Sprint(tom___x));       ;  };  };  };  }; 
+      ;  };  }; var tomMatch1_1  tNat  = tom_TestConstraintCombination_make_suc(tom_TestConstraintCombination_make_suc(tom_TestConstraintCombination_make_zero())); if tom_TestConstraintCombination_is_sort_tNat(tomMatch1_1) { var tom___x  tNat  = any(tomMatch1_1).( tNat ); if !(tom_TestConstraintCombination_equal_term_tNat(tom___x, tom_TestConstraintCombination_make_zero())) {          nbCasesOK++;         fmt.Println("Case #1: x = " + fmt.Sprint(tom___x));       ;  };  };  };  }; 
 
 
 
